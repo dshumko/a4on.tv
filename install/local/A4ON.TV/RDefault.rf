@@ -1,0 +1,7 @@
+[Common]
+Records=1
+[RECORD0]
+DATE_FROM=01.07.2014
+INVERSION=0
+NEXT_CONDITION=1
+repeated=0

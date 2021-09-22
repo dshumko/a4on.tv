@@ -1,0 +1,31 @@
+execute ibeblock
+as
+begin
+  DB = ibec_CreateConnection(__ctInterBase,
+                             'DBName="localhost:A4ON_DB";
+                              ClientLib=D:\SUBD\Firebird\30X\fbclient.dll;
+                              User=SYSDBA; Password=masterkey; Names=UTF8; SqlDialect=3');
+  try
+    ibec_ExtractMetadata(DB, 'D:\PROJECTS\a4on.tv\Sources\SQL\A4ON_DB.sql',
+                             'GenerateCreate;
+                              SuppressComments;
+                              IncludePassword;
+                              SetGenerators;
+                              ExtractDescriptions;
+                              UseComment;
+                              ExcludeIBE;
+                              ExcludeTMP;
+                              UseCreateOrAlter;
+                              ExtractBLOBs;
+                              DontUseSetTerm;
+                              DateFormat=YYYY-MM-DD', 
+                              cbb);
+    ibec_ExtractMetadata(DB, 'D:\PROJECTS\a4on.tv\Sources\SQL\A4ON_DATA.sql',
+                             'GenerateConnect;IncludePassword;Domains=NONE; Tables=NONE; Views=NONE; Triggers=NONE; Procedures=NONE; Generators=NONE; Exceptions=NONE; UDFs=NONE; Roles=NONE;
+                             DataTables=SETTINGS, LETTERTYPE, MONTH_NAME, OBJECTS_TYPE, OBJECTS, SERVICES_TYPE, SERVICES, STREET_TYPE, SYS$RIGHTS, EPG_GENRE, REPORTS, COMPANY, DOC_TYPE, PAYSOURCE, MODULES;
+                             ExtractBLOBs;SuppressComments; CommitAfter=1000', nil);
+
+  finally
+    ibec_CloseConnection(DB);
+  end;
+end;

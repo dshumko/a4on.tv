@@ -1,0 +1,305 @@
+object apgCustomerBonus: TapgCustomerBonus
+  Left = 0
+  Top = 0
+  Caption = #1041#1086#1085#1091#1089#1099' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+  ClientHeight = 172
+  ClientWidth = 911
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  ShowHint = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  object dbgGrid: TDBGridEh
+    Left = 26
+    Top = 0
+    Width = 885
+    Height = 172
+    Align = alClient
+    AllowedOperations = []
+    DataSource = srcBonus
+    DynProps = <>
+    Flat = True
+    FooterRowCount = 1
+    FooterParams.Color = clWindow
+    GridLineParams.VertEmptySpaceStyle = dessNonEh
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    SumList.Active = True
+    TabOrder = 1
+    TitleParams.MultiTitle = True
+    TitleParams.VTitleMargin = 4
+    Columns = <
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'BONUS_DATE'
+        Footers = <>
+        Title.Caption = #1044#1072#1090#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'O_NAME'
+        Footer.Value = #1048#1090#1086#1075#1086
+        Footer.ValueType = fvtStaticText
+        Footers = <>
+        Title.Caption = #1041#1086#1085#1091#1089
+        Title.TitleButton = True
+        Width = 170
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'UNITS'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1050#1086#1083'-'#1074#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'BONUS'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1057#1091#1084#1084#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'NOTICE'
+        Footers = <>
+        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
+        Width = 192
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADDED_BY'
+        Footers = <>
+        Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1090#1086
+        Title.TitleButton = True
+        Width = 77
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADDED_ON'
+        Footers = <>
+        Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1086#1075#1076#1072
+        Title.TitleButton = True
+        Width = 86
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'EDIT_BY'
+        Footers = <>
+        Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1090#1086
+        Title.TitleButton = True
+        Width = 63
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'EDIT_ON'
+        Footers = <>
+        Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1086#1075#1076#1072
+        Title.TitleButton = True
+        Width = 69
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object pnlButtons: TPanel
+    Left = 0
+    Top = 0
+    Width = 26
+    Height = 172
+    Align = alLeft
+    BevelOuter = bvNone
+    TabOrder = 0
+    DesignSize = (
+      26
+      172)
+    object btnDel1: TSpeedButton
+      Left = 2
+      Top = 149
+      Width = 22
+      Height = 22
+      Action = actDel
+      Anchors = [akLeft, akBottom]
+      Flat = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000000000000000000000000000000000000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF008C98D600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF008390D500FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF008693D600334CCC003D54CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00465CCE00334CCC007584D300FF00FF00FF00FF00FF00FF00909C
+        D700334CCC00334CCC00334CCC003D54CD00FF00FF00FF00FF00FF00FF00FF00
+        FF00465CCE00334CCC00334CCC00334CCC00808ED500FF00FF00FF00FF00FF00
+        FF00445ACE00334CCC00334CCC00334CCC003D54CD00FF00FF00FF00FF00465C
+        CE00334CCC00334CCC00334CCC004057CD00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00445ACE00334CCC00334CCC00334CCC003D54CD00455BCE00334C
+        CC00334CCC00334CCC004057CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00445ACE00334CCC00334CCC00334CCC00334CCC00334C
+        CC00334CCC004057CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00445ACE00334CCC00334CCC00334CCC00334C
+        CC004057CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00465CCE00334CCC00334CCC00334CCC00334C
+        CC003D54CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00465CCE00334CCC00334CCC00334CCC00334CCC00334C
+        CC00334CCC003D54CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00465CCE00334CCC00334CCC00334CCC004057CD00445ACE00334C
+        CC00334CCC00334CCC003D54CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00465CCE00334CCC00334CCC00334CCC004057CD00FF00FF00FF00FF00445A
+        CE00334CCC00334CCC00334CCC003D54CD00FF00FF00FF00FF00FF00FF00ABB2
+        DA00364ECC00334CCC00334CCC004057CD00FF00FF00FF00FF00FF00FF00FF00
+        FF00445ACE00334CCC00334CCC00354DCC00A4ACD900FF00FF00FF00FF00FF00
+        FF00A7AFDA00364ECC004057CD00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00445ACE00354DCC00A2ABD900FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00A9B1DA00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00A6AED900FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+      Layout = blGlyphTop
+    end
+    object btnAdd1: TSpeedButton
+      Left = 2
+      Top = 3
+      Width = 22
+      Height = 22
+      Action = actAdd
+      Flat = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000000000000000000000000000000000000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF008BAE
+        5A0089AD560089AD560089AD560089AD560089AD560089AD560089AD560089AD
+        560089AD560089AD560089AD560089AD560089AD5600FF00FF00FF00FF008BAE
+        5A0089AD560089AD560089AD560089AD560089AD560089AD560089AD560089AD
+        560089AD560089AD560089AD560089AD560089AD5600FF00FF00FF00FF008BAE
+        5A0089AD560089AD560089AD560089AD560089AD560089AD560089AD560089AD
+        560089AD560089AD560089AD560089AD560089AD5600FF00FF00FF00FF008DAF
+        5D008BAE59008BAE59008BAE59008BAE590089AD560089AD560089AD560089AD
+        56008BAE59008BAE59008BAE59008BAE59008BAE5900FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD560089AD560089AD560089AD
+        5600FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF008FB160008FB160008FB160008FB1
+        6000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+    end
+  end
+  object dsBonus: TpFIBDataSet
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    CUSTOMER_BONUSES'
+      'WHERE'
+      '        ID = :OLD_ID'
+      '    ')
+    SelectSQL.Strings = (
+      'Select b.*, o.O_Name'
+      'from Customer_Bonuses b'
+      
+        'left outer join objects o on (b.Bt_Id = o.O_Id and o.O_Type = 30' +
+        ')'
+      'where b.CUSTOMER_ID = :Customer_id'
+      'order by b.Bonus_Date desc, o.O_Name')
+    AutoUpdateOptions.UpdateTableName = 'DISCOUNT_FACTOR'
+    AutoUpdateOptions.KeyFields = 'DISCOUNT_ID'
+    AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
+    AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    AutoCalcFields = False
+    AfterOpen = dsBonusAfterOpen
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    AutoCommit = True
+    Left = 277
+    Top = 66
+    WaitEndMasterScroll = True
+    dcForceMasterRefresh = True
+  end
+  object srcBonus: TDataSource
+    AutoEdit = False
+    DataSet = dsBonus
+    Left = 169
+    Top = 47
+  end
+  object ActListCustomers: TActionList
+    Images = A4MainForm.ICONS_ACTIVE
+    Left = 105
+    Top = 98
+    object actAdd: TAction
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1073#1086#1085#1091#1089
+      ImageIndex = 2
+    end
+    object actDel: TAction
+      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1073#1086#1085#1091#1089
+      ImageIndex = 3
+      OnExecute = actDelExecute
+    end
+  end
+  object trRead: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 700
+    Top = 58
+  end
+  object trWrite: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 744
+    Top = 58
+  end
+end

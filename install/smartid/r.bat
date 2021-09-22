@@ -1,0 +1,1 @@
+smartid.exe %1 passport_rf.zip >%1.txt

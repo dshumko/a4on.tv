@@ -1,0 +1,20 @@
+ALTER TABLE MATERIALS_IN_DOC  ADD SC_N NUMERIC(15,3);
+UPDATE MATERIALS_IN_DOC SET SC_N = SHIPPER_COST;
+COMMIT;
+ALTER TABLE MATERIALS_IN_DOC DROP SHIPPER_COST;
+ALTER TABLE MATERIALS_IN_DOC  ADD SHIPPER_COST D_N15_3;
+UPDATE MATERIALS_IN_DOC SET SHIPPER_COST = SC_N;
+COMMIT;
+ALTER TABLE MATERIALS_IN_DOC DROP SC_N;
+
+alter table MATERIALS_IN_DOC alter ID position 1;
+alter table MATERIALS_IN_DOC alter DOC_ID position 2;
+alter table MATERIALS_IN_DOC alter M_ID position 3;
+alter table MATERIALS_IN_DOC alter M_QUANT position 4;
+alter table MATERIALS_IN_DOC alter M_COST position 5;
+alter table MATERIALS_IN_DOC alter M_NOTICE position 6;
+alter table MATERIALS_IN_DOC alter SHIPPER_COST position 7;
+alter table MATERIALS_IN_DOC alter ADDED_BY position 8;
+alter table MATERIALS_IN_DOC alter ADDED_ON position 9;
+alter table MATERIALS_IN_DOC alter EDIT_BY position 10;
+alter table MATERIALS_IN_DOC alter EDIT_ON position 11;

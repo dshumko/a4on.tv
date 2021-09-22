@@ -1,0 +1,327 @@
+﻿unit RequestFilterForma;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DBGridEh, DBCtrlsEh, StdCtrls, Mask, DBLookupEh, DB,
+  FIBDataSet, pFIBDataSet, Buttons, ExtCtrls, ActnList, DBCtrls, PrjConst, System.Actions, MemTableEh,
+  Vcl.ComCtrls, PropFilerEh, PropStorageEh;
+
+type
+  TRequestFilterForm = class(TForm)
+    pnlOKCancel: TPanel;
+    SpeedButton3: TSpeedButton;
+    dsStreets: TpFIBDataSet;
+    srcStreets: TDataSource;
+    dsHomes: TpFIBDataSet;
+    srcHomes: TDataSource;
+    dsArea: TpFIBDataSet;
+    srcArea: TDataSource;
+    dsSubArea: TpFIBDataSet;
+    srcSubArea: TDataSource;
+    dsRequestType: TpFIBDataSet;
+    srcRequestType: TDataSource;
+    dsExecutor: TpFIBDataSet;
+    srcExecutor: TDataSource;
+    srcWORKAREA: TDataSource;
+    dsWORKAREA: TpFIBDataSet;
+    dsWORKGROUP: TpFIBDataSet;
+    srcWORKGROUP: TDataSource;
+    srcANALYS: TDataSource;
+    dsANALYS: TpFIBDataSet;
+    chkDefaultFilter: TCheckBox;
+    pnlBtns: TPanel;
+    lbl4: TLabel;
+    lbl5: TLabel;
+    dbnvgr1: TDBNavigator;
+    chk1: TDBCheckBoxEh;
+    btnAnd: TButton;
+    btnOR: TButton;
+    btnLoad: TSpeedButton;
+    btnSave: TSpeedButton;
+    dlgOpen: TOpenDialog;
+    dsOrg: TpFIBDataSet;
+    srcOrg: TDataSource;
+    srcMH: TDataSource;
+    dsMH: TpFIBDataSet;
+    dsWorks: TpFIBDataSet;
+    srcWorks: TDataSource;
+    dsResult: TpFIBDataSet;
+    srcResult: TDataSource;
+    dsErrors: TpFIBDataSet;
+    srcErrors: TDataSource;
+    bbOk: TBitBtn;
+    bbCancel: TBitBtn;
+    pgcFilter: TPageControl;
+    tsMain: TTabSheet;
+    srcFilter: TDataSource;
+    actlst: TActionList;
+    actOk: TAction;
+    tsList: TTabSheet;
+    mmoListBids: TDBMemoEh;
+    lblOrAND: TLabel;
+    cbbWhose: TDBComboBoxEh;
+    luDBLookupComboBox1: TDBLookupComboboxEh;
+    luResult: TDBLookupComboboxEh;
+    luAnalysGrp: TDBLookupComboboxEh;
+    luType: TDBLookupComboboxEh;
+    Label2: TLabel;
+    edExpired: TDBNumberEditEh;
+    dePLANTO: TDBDateTimeEditEh;
+    dePLANFROM: TDBDateTimeEditEh;
+    luUpCuststreetFilter: TDBLookupComboboxEh;
+    lucbb1: TDBLookupComboboxEh;
+    lbl1: TLabel;
+    lbl8: TLabel;
+    lbl12: TLabel;
+    lbl11: TLabel;
+    lbl3: TLabel;
+    lblResult: TLabel;
+    lbl10: TLabel;
+    lbl17: TLabel;
+    cbbSUBAREA: TDBLookupComboboxEh;
+    lbl9: TLabel;
+    lblHE: TLabel;
+    luHE: TDBLookupComboboxEh;
+    luOgz: TDBLookupComboboxEh;
+    lblOgz: TLabel;
+    lblWork: TLabel;
+    luWork: TDBLookupComboboxEh;
+    luTemplate: TDBLookupComboboxEh;
+    Label1: TLabel;
+    lbl16: TLabel;
+    deTimeFrom: TDBDateTimeEditEh;
+    lbl15: TLabel;
+    deTimeTo: TDBDateTimeEditEh;
+    DBCheckBoxEh1: TDBCheckBoxEh;
+    edAfter: TDBNumberEditEh;
+    lbl14: TLabel;
+    edTo: TDBNumberEditEh;
+    lbl13: TLabel;
+    lbl7: TLabel;
+    luHouseNo: TDBLookupComboboxEh;
+    lbl6: TLabel;
+    ed1: TDBEditEh;
+    lucbb2: TDBLookupComboboxEh;
+    lbl2: TLabel;
+    PropStorageEh1: TPropStorageEh;
+    procedure SpeedButton3Click(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure actOkExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btnAndClick(Sender: TObject);
+    procedure btnORClick(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
+    procedure btnLoadClick(Sender: TObject);
+    procedure srcFilterDataChange(Sender: TObject; Field: TField);
+    procedure luWorkEnter(Sender: TObject);
+  private
+    { Private declarations }
+    procedure SaveFilter(const filename: string);
+    procedure CheckDateAndCorrect();
+  public
+    { Public declarations }
+  end;
+
+var
+  RequestFilterForm: TRequestFilterForm;
+
+implementation
+
+uses DM, RequestsForma, MAIN, AtrCommon;
+
+{$R *.dfm}
+
+procedure TRequestFilterForm.SaveFilter(const filename: string);
+var
+  s: string;
+begin
+  if Length(filename) = 0 then
+    exit;
+  s := A4MainForm.GetUserFilterFolder + filename + '.JRF';
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
+  DatasetToJson(srcFilter.DataSet, s);
+end;
+
+procedure TRequestFilterForm.btnAndClick(Sender: TObject);
+begin
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
+  srcFilter.DataSet.Append;
+  srcFilter.DataSet['next_condition'] := 1;
+end;
+
+procedure TRequestFilterForm.btnORClick(Sender: TObject);
+begin
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
+  srcFilter.DataSet.Append;
+  srcFilter.DataSet['next_condition'] := 0;
+end;
+
+procedure TRequestFilterForm.btnLoadClick(Sender: TObject);
+begin
+  dlgOpen.InitialDir := A4MainForm.GetUserFilterFolder;
+  if dlgOpen.Execute then begin
+    srcFilter.DataSet.DisableControls;
+    if not srcFilter.DataSet.Active then
+      srcFilter.DataSet.Open;
+    (srcFilter.DataSet as TMemTableEh).EmptyTable;
+    DatasetFromJson(srcFilter.DataSet, dlgOpen.filename);
+    srcFilter.DataSet.EnableControls;
+  end;
+end;
+
+procedure TRequestFilterForm.btnSaveClick(Sender: TObject);
+var
+  filename: string;
+begin
+  filename := InputBox(rsInputFilterName, rsTitle, rsFilter);
+  if Length(filename) = 0 then
+    exit;
+  SaveFilter(rsRequests + filename);
+end;
+
+procedure TRequestFilterForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if dsStreets.Active then
+    dsStreets.Close;
+  if dsHomes.Active then
+    dsHomes.Close;
+  if dsArea.Active then
+    dsArea.Close;
+  if dsSubArea.Active then
+    dsSubArea.Close;
+  if dsRequestType.Active then
+    dsRequestType.Close;
+  if dsExecutor.Active then
+    dsExecutor.Close;
+  if dsWORKAREA.Active then
+    dsWORKAREA.Close;
+  if dsWORKGROUP.Active then
+    dsWORKGROUP.Close;
+  if dsANALYS.Active then
+    dsANALYS.Close;
+  if dsOrg.Active then
+    dsOrg.Close;
+  if dsMH.Active then
+    dsMH.Close;
+  if dsWorks.Active then
+    dsWorks.Close;
+  if dsErrors.Active then
+    dsErrors.Open;
+end;
+
+procedure TRequestFilterForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
+    actOkExecute(Sender);
+end;
+
+procedure TRequestFilterForm.FormKeyPress(Sender: TObject; var Key: Char);
+var
+  go: boolean;
+begin
+  if (Key = #13) then begin
+    go := true;
+    if (ActiveControl is TDBLookupComboboxEh) then
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+    if (ActiveControl is TDBGridEh) then
+      go := False;
+
+    if go then begin
+      Key := #0; // eat enter key
+      PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+    end;
+  end;
+end;
+
+procedure TRequestFilterForm.FormShow(Sender: TObject);
+begin
+
+  dsStreets.Open;
+  dsHomes.Open;
+  dsArea.Open;
+  dsSubArea.Open;
+  dsRequestType.Open;
+  dsExecutor.Open;
+  dsWORKAREA.Open;
+  dsWORKGROUP.Open;
+  dsANALYS.Open;
+  dsOrg.Open;
+  dsMH.Open;
+  dsWorks.Open;
+  dsResult.Open;
+  dsErrors.Open;
+  if srcFilter.DataSet.RecordCount > 1 then
+    srcFilter.DataSet.First;
+  if ((not srcFilter.DataSet.FieldByName('ListBids').IsNull) and (srcFilter.DataSet.FieldByName('ListBids').AsString <>
+    '')) then
+    pgcFilter.ActivePage := tsList;
+
+end;
+
+procedure TRequestFilterForm.luWorkEnter(Sender: TObject);
+begin
+  if (Sender is TDBLookupComboboxEh) then begin
+    if not(Sender as TDBLookupComboboxEh).ListSource.DataSet.Active then
+      (Sender as TDBLookupComboboxEh).ListSource.DataSet.Open;
+
+  end;
+
+end;
+
+procedure TRequestFilterForm.SpeedButton3Click(Sender: TObject);
+begin
+  with srcFilter.DataSet do begin
+    DisableControls;
+    if not Active then
+      Open;
+    (srcFilter.DataSet as TMemTableEh).EmptyTable;
+    EnableControls;
+  end;
+end;
+
+procedure TRequestFilterForm.srcFilterDataChange(Sender: TObject; Field: TField);
+begin
+  if srcFilter.DataSet['next_condition'] = 0 then
+    lblOrAND.Caption := rsOR
+  else
+    lblOrAND.Caption := rsAND;
+  lblOrAND.Visible := srcFilter.DataSet.RecNo > 1;
+end;
+
+procedure TRequestFilterForm.CheckDateAndCorrect();
+var
+  d1, d2: TDate;
+begin
+  if (not srcFilter.DataSet.FieldByName('DATE_FROM').IsNull and not srcFilter.DataSet.FieldByName('DATE_TO').IsNull)
+  then begin
+    if (srcFilter.DataSet['DATE_FROM'] > srcFilter.DataSet['DATE_TO']) then begin
+      d1 := srcFilter.DataSet['DATE_FROM'];
+      d2 := srcFilter.DataSet['DATE_TO'];
+      srcFilter.DataSet.Edit;
+      srcFilter.DataSet['DATE_TO'] := d1;
+      srcFilter.DataSet['DATE_FROM'] := d2;
+      srcFilter.DataSet.post;
+    end;
+  end;
+end;
+
+procedure TRequestFilterForm.actOkExecute(Sender: TObject);
+begin
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
+
+  CheckDateAndCorrect();
+
+  if chkDefaultFilter.Checked then
+    SaveFilter('RDefault');
+  ModalResult := mrOk;
+end;
+
+end.

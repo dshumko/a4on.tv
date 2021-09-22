@@ -1,0 +1,306 @@
+﻿object SelectColumnsForm: TSelectColumnsForm
+  Left = 0
+  Top = 0
+  Hint = 'Gjl]tpl'
+  BorderStyle = bsDialog
+  Caption = #1042#1099#1073#1086#1088' '#1074#1080#1076#1080#1084#1086#1089#1090#1080' '#1082#1086#1083#1086#1085#1086#1082
+  ClientHeight = 349
+  ClientWidth = 382
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poMainFormCenter
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  object grpMulti: TGroupBox
+    Left = 6
+    Top = 167
+    Width = 370
+    Height = 137
+    TabOrder = 2
+    object lbl1: TLabel
+      Left = 2
+      Top = 15
+      Width = 366
+      Height = 52
+      Align = alTop
+      Caption = 
+        ' '#1042#1085#1080#1084#1072#1085#1080#1077'!  '#13#10'   '#1055#1088#1080' '#1074#1099#1073#1086#1088#1077' '#1074#1086#1079#1084#1086#1078#1085#1086' '#1076#1091#1073#1083#1080#1088#1086#1074#1072#1085#1080#1077' '#1079#1072#1087#1080#1089#1077#1081' '#1074' '#1090#1072#1073#1083 +
+        #1080#1094#1077','#13#10'   '#1072' '#1090#1072#1082#1078#1077' '#1079#1072#1084#1077#1076#1083#1077#1085#1080#1077' '#1074#1099#1074#1086#1076#1072' '#1089#1087#1080#1089#1082#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1074'!'#13#10
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ExplicitWidth = 341
+    end
+    object chk1: TCheckBox
+      Tag = 32768
+      Left = 2
+      Top = 67
+      Width = 366
+      Height = 17
+      Align = alTop
+      Caption = #1050#1086#1101#1092#1092#1080#1094#1080#1077#1085#1090#1099
+      TabOrder = 0
+    end
+    object chkdec: TCheckBox
+      Tag = 65536
+      Left = 2
+      Top = 84
+      Width = 366
+      Height = 17
+      Align = alTop
+      Caption = #1044#1077#1082#1086#1076#1077#1088#1099
+      TabOrder = 1
+    end
+    object chkIP: TCheckBox
+      Tag = 131072
+      Left = 2
+      Top = 101
+      Width = 366
+      Height = 17
+      Align = alTop
+      Caption = 'IP - MAC'
+      TabOrder = 2
+    end
+    object chk4: TCheckBox
+      Tag = 256
+      Left = 2
+      Top = 118
+      Width = 366
+      Height = 17
+      Align = alTop
+      Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+      TabOrder = 3
+    end
+  end
+  inline okcnclfrm1: TOkCancelFrame
+    Left = 0
+    Top = 314
+    Width = 382
+    Height = 35
+    Align = alBottom
+    TabOrder = 3
+    TabStop = True
+    ExplicitTop = 314
+    inherited bbOk: TBitBtn
+      Left = 185
+      Top = 6
+      Width = 110
+      OnClick = okcnclfrm1bbOkClick
+      ExplicitLeft = 185
+      ExplicitTop = 6
+      ExplicitWidth = 110
+    end
+    inherited bbCancel: TBitBtn
+      Top = 6
+      ExplicitTop = 6
+    end
+  end
+  object pnl1: TPanel
+    Left = 8
+    Top = 7
+    Width = 171
+    Height = 161
+    BevelOuter = bvNone
+    TabOrder = 0
+    object chk7: TCheckBox
+      Tag = 32
+      Left = 0
+      Top = 85
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      TabOrder = 5
+    end
+    object chk8: TCheckBox
+      Tag = 64
+      Left = 0
+      Top = 102
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1055#1086#1076#1098#1077#1079#1076'/'#1101#1090#1072#1078
+      TabOrder = 6
+    end
+    object chk3: TCheckBox
+      Tag = 16
+      Left = 0
+      Top = 68
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1050#1086#1076
+      TabOrder = 4
+    end
+    object CheckBox3: TCheckBox
+      Tag = 4
+      Left = 0
+      Top = 34
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1058#1077#1083#1077#1092#1086#1085
+      TabOrder = 2
+    end
+    object CheckBox4: TCheckBox
+      Tag = 8
+      Left = 0
+      Top = 51
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1052#1086#1073'. '#1090#1077#1083#1077#1092#1086#1085
+      TabOrder = 3
+    end
+    object CheckBox8: TCheckBox
+      Tag = 2
+      Left = 0
+      Top = 17
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1057#1086#1082#1088#1072#1097#1077#1085#1085#1086#1077' '#1048'.'#1054'.'
+      TabOrder = 1
+    end
+    object CheckBox9: TCheckBox
+      Tag = 1
+      Left = 0
+      Top = 0
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1055#1086#1083#1085#1086#1077' '#1048'.'#1054'.'
+      TabOrder = 0
+    end
+    object chk6: TCheckBox
+      Tag = 2097152
+      Left = 0
+      Top = 136
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1057#1087#1080#1089#1086#1082' '#1072#1090#1088#1080#1073#1091#1090#1086#1074
+      TabOrder = 8
+      ExplicitTop = 119
+    end
+    object CheckBox12: TCheckBox
+      Tag = 1048576
+      Left = 0
+      Top = 119
+      Width = 171
+      Height = 17
+      Align = alTop
+      Caption = #1054#1090#1074#1086#1076
+      TabOrder = 7
+    end
+  end
+  object Panel1: TPanel
+    Left = 185
+    Top = 7
+    Width = 185
+    Height = 161
+    BevelOuter = bvNone
+    TabOrder = 1
+    object CheckBox5: TCheckBox
+      Tag = 512
+      Left = 0
+      Top = 17
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1044#1086#1075#1086#1074#1086#1088' '#8470
+      TabOrder = 1
+    end
+    object chk5: TCheckBox
+      Tag = 1024
+      Left = 0
+      Top = 34
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1044#1072#1090#1072' '#1076#1086#1075#1086#1074#1086#1088#1072
+      TabOrder = 2
+    end
+    object CheckBox6: TCheckBox
+      Tag = 2048
+      Left = 0
+      Top = 51
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1044#1086#1075#1086#1074#1086#1088' '#1076#1086' '#1076#1072#1090#1099
+      TabOrder = 3
+    end
+    object CheckBox2: TCheckBox
+      Tag = 8192
+      Left = 0
+      Top = 85
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1070#1088'. '#1083#1080#1094#1086
+      TabOrder = 5
+    end
+    object CheckBox10: TCheckBox
+      Tag = 4096
+      Left = 0
+      Top = 68
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1044#1072#1090#1072' '#1087#1077#1088#1074#1086#1075#1086' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103
+      TabOrder = 4
+    end
+    object CheckBox1: TCheckBox
+      Tag = 16384
+      Left = 0
+      Top = 102
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1057#1090#1072#1090#1091#1089
+      TabOrder = 6
+    end
+    object CheckBox11: TCheckBox
+      Tag = 262144
+      Left = 0
+      Top = 119
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = 'Email'
+      TabOrder = 7
+    end
+    object chkOtvod: TCheckBox
+      Tag = 524288
+      Left = 0
+      Top = 136
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1057#1091#1084#1084#1072' '#1086#1073#1077#1097#1072#1085#1085#1086#1075#1086' '#1087#1083#1072#1090#1077#1078#1072
+      TabOrder = 8
+    end
+    object CheckBox7: TCheckBox
+      Tag = 128
+      Left = 0
+      Top = 0
+      Width = 185
+      Height = 17
+      Align = alTop
+      Caption = #1055#1072#1089#1087#1086#1088#1090
+      TabOrder = 0
+    end
+  end
+end

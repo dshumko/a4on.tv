@@ -1,0 +1,37 @@
+Named Commercial license.
+Copyright (c) 2006-2021 Shumko Dmitry, A4on.TV
+
+Лицензия
+--------
+
+Лицензия позволяет использовать продукт в коммерческих целях.
+Но при соблюдении следующих условий: 
+1. Данное ПО поставляется "как есть", автор не гарантирует правильную работу 
+   софта и не несет ответственности за возможный ущерб в результате его
+   использования.
+
+2. На распространение изменённых версий ПО накладываются следующие ограничения:
+2.1. Запрещается утверждать, что это вы написали оригинальный продукт;
+2.2. Изменённые версии не должны выдаваться за оригинальный продукт;
+2.3. Запрещено продавать или передавать бинарные (исполняемые) файлы третьим лицам;
+2.4. Все изменения исходных кодов должно быть возвращены автору данного продукта.
+
+License
+--------
+
+This license allows the use of the product for commercial purposes.
+But subject to the following conditions:
+1. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+   INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+2. The distribution of modified versions of the software is subject to the following restrictions:
+2.1. It is forbidden to claim that you wrote the original product;
+2.2. Version changes should not be passed off as the original product; 
+2.3. Do not have to sell or distribute binary files of this product.
+2.4. All changes may return to this repository.
+---

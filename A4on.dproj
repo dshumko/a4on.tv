@@ -1,0 +1,1550 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Base>True</Base>
+        <AppType>Application</AppType>
+        <Config Condition="'$(Config)'==''">Release</Config>
+        <FrameworkType>VCL</FrameworkType>
+        <MainSource>a4on.DPR</MainSource>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <ProjectGuid>{E247B3A7-35AE-4920-90B5-531E02A2FD69}</ProjectGuid>
+        <ProjectVersion>16.1</ProjectVersion>
+        <TargetedPlatforms>1</TargetedPlatforms>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_Define>EUREKALOG;EUREKALOG_VER7;$(DCC_Define)</DCC_Define>
+        <Icon_MainIcon>A4on_Icon.ico</Icon_MainIcon>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_UnitSearchPath>units;units\twain;units\jedi;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_DcuOutput>$(TMP)\Delphi\$(MSBuildProjectName)\$(PLATFORM)\$(Config)</DCC_DcuOutput>
+        <SanitizedProjectName>A4ON</SanitizedProjectName>
+        <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
+        <DCC_E>false</DCC_E>
+        <DCC_ExeOutput>..\EXE\</DCC_ExeOutput>
+        <DCC_F>false</DCC_F>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_K>false</DCC_K>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_N>true</DCC_N>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_OutputDRCFile>true</DCC_OutputDRCFile>
+        <DCC_S>false</DCC_S>
+        <Manifest_File>PerMonitorDpiAwareness.manifest</Manifest_File>
+        <VerInfo_Build>672</VerInfo_Build>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.4.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Locale>1049</VerInfo_Locale>
+        <VerInfo_MajorVer>21</VerInfo_MajorVer>
+        <VerInfo_MinorVer>4</VerInfo_MinorVer>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <Debugger_RunParams>/p:masterkey</Debugger_RunParams>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.690;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>690</VerInfo_Build>
+        <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
+        <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
+        <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.679;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>679</VerInfo_Build>
+        <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_DebugInfoInTds>true</DCC_DebugInfoInTds>
+        <DCC_LocalDebugSymbols>true</DCC_LocalDebugSymbols>
+        <DCC_MapFile>3</DCC_MapFile>
+        <Debugger_RunParams>/p:masterkey</Debugger_RunParams>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_Debug>true</VerInfo_Debug>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="FORMS\MAIN.PAS">
+            <Form>A4MainForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\CustomersFilter.pas">
+            <Form>CustomersFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="FRAME\OkCancel_frame.pas">
+            <Form>OkCancelFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FORMS\PeriodForma.pas">
+            <Form>PeriodForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\SubscrHistory.pas">
+            <Form>CustSubscrHistoryForma</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\DM.pas">
+            <Form>dmMain</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FORMS\OnOffServicesForma.pas">
+            <Form>OnOffServiceForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\ChoiseForma.pas">
+            <Form>ChoiseForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\CompanyForma.pas">
+            <Form>CompanyForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\GridForma.pas">
+            <Form>GridForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\StreetForma.pas">
+            <Form>StreetForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\ServicesForma.pas">
+            <Form>ServicesForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\SelectLetterTypeForma.pas">
+            <Form>frmSelectLetterType</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\CancelContractForma.pas">
+            <Form>CancelContractForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EquipmentForma.pas">
+            <Form>EquipmentForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\AboutForma.pas">
+            <Form>AboutForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestTypeForma.pas">
+            <Form>RequestTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\WorkersForma.pas">
+            <Form>WorkersForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestsForma.pas">
+            <Form>RequestsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestForma.pas">
+            <Form>RequestForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqExecutersForma.pas">
+            <Form>ReqExecutorsForm</Form>
+        </DCCReference>
+        <DCCReference Include="frame\ReqMaterialsFrame.pas">
+            <Form>frmReqMaterials</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestFilterForma.pas">
+            <Form>RequestFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\UserLoginDlg.pas">
+            <Form>UserLoginDialog</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SettingsForma.pas">
+            <Form>SettingsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PaymentTypeForma.pas">
+            <Form>PaymentTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\AttributesForma.pas">
+            <Form>AttributesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DiscountForma.pas">
+            <Form>DiscountForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\TarifForma.pas">
+            <Form>TarifForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\LettersForma.pas">
+            <Form>LettersForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\StreetEditForma.pas">
+            <Form>StreetViewForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EditAttributeForma.pas">
+            <Form>EditAttributForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqMaterialsForma.pas">
+            <Form>ReqMaterialsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PaymentForma.pas">
+            <Form>PaymentForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PayDocsForma.pas">
+            <Form>PayDocsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PaymentDocForma.pas">
+            <Form>PaymentDocForm</Form>
+        </DCCReference>
+        <DCCReference Include="Units\LibMoney.pas"/>
+        <DCCReference Include="forms\HouseForma.pas">
+            <Form>HouseForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\AttributeForma.pas">
+            <Form>AttributeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ChannelsForma.pas">
+            <Form>ChannelsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ChannelEditForma.pas">
+            <Form>ChannelEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\CustomerLanForma.pas">
+            <Form>CustomerLanForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ServiceForma.pas">
+            <Form>ServiceForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CardSerialsForma.pas">
+            <Form>fmCardPaySerials</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CardSerialForma.pas">
+            <Form>fmCardSerial</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CardsPayForma.pas">
+            <Form>fmCardsPay</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CardPayGenerateForma.pas">
+            <Form>fmCardPayGenerate</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CardPayActivateForma.pas">
+            <Form>fmCardPayActivate</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CardsPaySettingsForma.pas">
+            <Form>CardsPaySettingsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\HouseWorkForma.pas">
+            <Form>HouseWorkForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\WorkWithGrids.pas"/>
+        <DCCReference Include="forms\LoaderReestrForma.pas">
+            <Form>LoaderReestrForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\LoaderProfileForma.pas">
+            <Form>LoaderProfileForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\AtrStrUtils.pas"/>
+        <DCCReference Include="units\atrCmdUtils.pas"/>
+        <DCCReference Include="forms\EquipAttributesForma.pas">
+            <Form>EquipAttributesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EquipCoverage.pas">
+            <Form>EquipCoverageForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\VlansForma.pas">
+            <Form>VlansForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PaymentEditForma.pas">
+            <Form>PaymentEditFrm</Form>
+        </DCCReference>
+        <DCCReference Include="frame\CustomerInfoFrame.pas">
+            <Form>CustomerInfoFrm</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\JournalForma.pas">
+            <Form>JournalForm</Form>
+        </DCCReference>
+        <DCCReference Include="admin\QueryForma.pas">
+            <Form>QueryForm</Form>
+        </DCCReference>
+        <DCCReference Include="admin\UserForma.pas">
+            <Form>UF</Form>
+        </DCCReference>
+        <DCCReference Include="admin\UsersForma.pas">
+            <Form>UsersForm</Form>
+        </DCCReference>
+        <DCCReference Include="admin\GroupForma.pas">
+            <Form>GF</Form>
+        </DCCReference>
+        <DCCReference Include="admin\uFBServices.pas"/>
+        <DCCReference Include="admin\SrvServiceForma.pas">
+            <Form>SrvServiceForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ScriptModule.pas">
+            <Form>SM</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\ScripEditorForma.pas">
+            <Form>ScripEditorForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\BarSettingForma.pas">
+            <Form>BarSettingForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EventsForma.pas">
+            <Form>EventsForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\pFIBExtract.pas"/>
+        <DCCReference Include="forms\EquipmentComands.pas">
+            <Form>EquipmentCommandsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SelectColumnsForma.pas">
+            <Form>SelectColumnsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ExportSettingsForma.pas">
+            <Form>ExportSettingsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\OrganForma.pas">
+            <Form>OrganForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EQGroupsForma.pas">
+            <Form>EQGroupsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EquipEditForma.pas">
+            <Form>EquipEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EquipmentCommandForma.pas">
+            <Form>EquipmentCommandForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqForAdresForma.pas">
+            <Form>ReqForAdresForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\TextEditForma.pas">
+            <Form>TextEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\HouseMapForma.pas">
+            <Form>HouseMapForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SendMessagesForma.pas">
+            <Form>SendMessagesForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\atrMAil.pas"/>
+        <DCCReference Include="forms\Requests\ReqTypeForma.pas">
+            <Form>ReqTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqTemplateForma.pas">
+            <Form>ReqTemplateForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\HeadEndForma.pas">
+            <Form>HeadEndForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\HeadEndsForma.pas">
+            <Form>HeadEndsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\RecourseTPLForma.pas">
+            <Form>RecoursesTPLForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\RecoursesForma.pas">
+            <Form>RecoursesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqWorkForma.pas">
+            <Form>ReqWorkForm</Form>
+        </DCCReference>
+        <DCCReference Include="frame\ReqWorksFrame.pas">
+            <Form>frmReqWorks</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\RecourseForma.pas">
+            <Form>RecourseForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestWorksForma.pas">
+            <Form>RequestWorksForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SUBDIVForma.pas">
+            <Form>SubDivForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\WorkTeamForma.pas">
+            <Form>WorkTeamForm</Form>
+        </DCCReference>
+        <DCCReference Include="frame\frmDateSelect.pas">
+            <Form>frmRequestDate</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\SelectDateForma.pas">
+            <Form>SelectDateForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\WHForma.pas">
+            <Form>WHform</Form>
+        </DCCReference>
+        <DCCReference Include="admin\monitoringUnitMain.pas">
+            <Form>MonDBForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\VATForma.pas">
+            <Form>VATForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqCancelForma.pas">
+            <Form>ReqCancelForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SelDateForma.pas">
+            <Form>SelDateForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\OrgnzEditForma.pas">
+            <Form>OrgnzEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ChangePwdForma.pas">
+            <Form>ChangePwdForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\WorkAreaLimitForma.pas">
+            <Form>WorkAreaLimitForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestNewForma.pas">
+            <Form>RequestNewForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqAddWorkForma.pas">
+            <Form>ReqAddWork</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\RequestResultsForma.pas">
+            <Form>RequestResult</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqGiveForma.pas">
+            <Form>ReqGiveForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\AtrCommon.pas"/>
+        <DCCReference Include="forms\HETypesForma.pas">
+            <Form>HETypesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\FlatsAddForma.pas">
+            <Form>FlatsAddForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\BanksForma.pas">
+            <Form>BanksForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SettinsUserForma.pas">
+            <Form>SettingsUserForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PaymentsForma.pas">
+            <Form>PaymentsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\TelnetForma.pas">
+            <Form>TelnetForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\CustomerForma.pas">
+            <Form>CustomerForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\AtrPages.pas"/>
+        <DCCReference Include="forms\Customer\fmuCustomerSrv.pas">
+            <Form>apgCustomerSrv</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerInfo.pas">
+            <Form>apgCustomerInfo</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerPayments.pas">
+            <Form>apgCustomerPayments</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerSingleSrv.pas">
+            <Form>apgCustomerSingleSrv</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerLetters.pas">
+            <Form>apgCustomerLetters</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerRecourse.pas">
+            <Form>apgCustomerRecourse</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerRequests.pas">
+            <Form>apgCustomerRequests</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerAttributes.pas">
+            <Form>apgCustomerAttributes</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerLan.pas">
+            <Form>apgCustomerLan</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerKoef.pas">
+            <Form>apgCustomerKoef</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerDigit.pas">
+            <Form>apgCustomerDigit</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerInternet.pas">
+            <Form>apgCustomerInternet</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerCard.pas">
+            <Form>apgCustomerCard</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\CF.pas">
+            <Form>CustomersForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\PayDocSelectForma.pas">
+            <Form>PayDocSelectForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\MessagesForma.pas">
+            <Form>MessagesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DecoderPacketForma.pas">
+            <Form>DecoderPacketForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DigitCardForma.pas">
+            <Form>DigitCardForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ReportDesignerForma.pas">
+            <Form>ReportDesignerForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ReportPreview.pas">
+            <Form>ReportChild</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBEquipmentForma.pas">
+            <Form>DVBEquipmentForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBEqGenForma.pas">
+            <Form>DVBEqGenForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBEqEditForma.pas">
+            <Form>DVBEqEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ManForma.pas">
+            <Form>ManForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\IPPacketForma.pas">
+            <Form>IPPacketForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\Encoding.pas"/>
+        <DCCReference Include="forms\DVB\EPGImport.pas">
+            <Form>EPGImportForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\EPGSource.pas">
+            <Form>EPGSourceForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\EPGView.pas">
+            <Form>EPGViewForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\uDBImages.pas"/>
+        <DCCReference Include="forms\DVB\EPGEdit.pas">
+            <Form>EPGEditEvent</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBStreamForma.pas">
+            <Form>DVBStreamForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\OrdersTP\OTPTypesForma.pas">
+            <Form>OTPTypesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\OrdersTP\OrdersTPForma.pas">
+            <Form>OrdersTPForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\OrdersTP\OrderTPForma.pas">
+            <Form>OrderTPForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerNew.pas">
+            <Form>apgCustomerNew</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerEdit.pas">
+            <Form>apgCustomerEdit</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerBalance.pas">
+            <Form>apgCustomerBalance</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SubAreaEditForma.pas">
+            <Form>SubAreaViewForm</Form>
+        </DCCReference>
+        <DCCReference Include="FORMS\AreaForma.pas">
+            <Form>AreaForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\AreaEditForma.pas">
+            <Form>AreaViewForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\FeedbackForma.pas">
+            <Form>FeedbackForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DBEditor.pas">
+            <Form>fmDBEditor</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ChannImport.pas">
+            <Form>ChImportForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBSettings.pas">
+            <Form>DVBSettinsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBNetworkForma.pas">
+            <Form>DVBNetworkForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DVBGanresForma.pas">
+            <Form>DVBGanresForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\BillEditForma.pas">
+            <Form>BillEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\TetrisForm.pas">
+            <Form>FormTetris</Form>
+        </DCCReference>
+        <DCCReference Include="units\apiSMS.pas"/>
+        <DCCReference Include="forms\PaymentSourcesForma.pas">
+            <Form>PaymentSourcesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MaterialForma.pas">
+            <Form>MaterailForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatDocsForma.pas">
+            <Form>MatDocsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatIncomeDocForma.pas">
+            <Form>MatIncomeDocForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatCorrectionDocForma.pas">
+            <Form>MatCorrectionDocForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatOutDocForma.pas">
+            <Form>MatOutDocForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatMoveDocForma.pas">
+            <Form>MatMoveDocForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MaterialsForma.pas">
+            <Form>MaterialsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatSelectUnit.pas">
+            <Form>MaterialsSelect</Form>
+            <DesignClass>TCustomDropDownFormEh</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DecoderDeleteDlgForma.pas">
+            <Form>DecoderDeleteDlg</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatMoveSelectUnit.pas">
+            <Form>MaterialsMoveSelect</Form>
+            <DesignClass>TCustomDropDownFormEh</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\EPGAdForma.pas">
+            <Form>EPGAdForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ShippersForma.pas">
+            <Form>ShippersForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqMatReturnForma.pas">
+            <Form>ReqMatReturnForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\BonusesForma.pas">
+            <Form>BonusesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerBonus.pas">
+            <Form>apgCustomerBonus</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerFiles.pas">
+            <Form>apgCustomerFiles</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ChangeOffForma.pas">
+            <Form>ChangeOffForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\BlackListForma.pas">
+            <Form>BlackListForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\sevenzip.pas"/>
+        <DCCReference Include="forms\RatesForma.pas">
+            <Form>RatesForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\SendEmail.pas"/>
+        <DCCReference Include="forms\Circuit\AlignDlg.pas">
+            <Form>AlignDialog</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\CircuitMain.pas">
+            <Form>CircuitForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\DesignProp.pas">
+            <Form>DesignerProperties</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\LinkProp.pas">
+            <Form>LinkProperties</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\MarginsProp.pas">
+            <Form>MarginDialog</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\NodeProp.pas">
+            <Form>NodeProperties</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\ObjectProp.pas">
+            <Form>ObjectProperties</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\SimpleGraph.pas"/>
+        <DCCReference Include="forms\Circuit\SizeDlg.pas">
+            <Form>SizeDialog</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Circuit\UsageHelp.pas">
+            <Form>HelpOnActions</Form>
+        </DCCReference>
+        <DCCReference Include="forms\IPTV\IPTVGroupForma.pas">
+            <Form>IPTVGroupForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\IPTV\IPTVSettings.pas">
+            <Form>IPTVSettinsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\FileTypeForma.pas">
+            <Form>FileTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EditCFileForma.pas">
+            <Form>EditCFileForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\NPSAddForma.pas">
+            <Form>NPSAddForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\MapForma.pas">
+            <Form>MapForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqPlanerForma.pas">
+            <Form>ReqPlanerForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\SelectOneForma.pas">
+            <Form>SelectOneForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodesFilter.pas">
+            <Form>NodesFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodesForma.pas">
+            <Form>NodesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodeTypeForma.pas">
+            <Form>NodeTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodeAttributeForma.pas">
+            <Form>NodeAttributForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeFiles.pas">
+            <Form>apgNodeFiles</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeRequests.pas">
+            <Form>apgNodeRequests</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeAttributes.pas">
+            <Form>apgNodeAttributes</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeCIRCUIT.pas">
+            <Form>apgNodeCIRCUIT</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeFlats.pas">
+            <Form>apgNodeFlats</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeMaterialsMove.pas">
+            <Form>apgNodeMaterialsMove</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeMaterials.pas">
+            <Form>apgNodeMaterials</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeLayout.pas">
+            <Form>apgNodeLayout</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\EditNFileForma.pas">
+            <Form>EditNFileForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NFileTypeForma.pas">
+            <Form>NFileTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\EditNodeFlatsForma.pas">
+            <Form>edtNodeFlats</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\EditRFileForma.pas">
+            <Form>EditRFileForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Task\TaskForma.pas">
+            <Form>TaskForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\CustChannelForma.pas">
+            <Form>CustChannelForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\A4onTypeUnit.pas"/>
+        <DCCReference Include="forms\Task\TaskFilterForma.pas">
+            <Form>TaskFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Task\NewTaskForma.pas">
+            <Form>NewTaskForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\CallCenter\CallCenterForma.pas">
+            <Form>CallCenterForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\HtmlForma.pas">
+            <Form>HtmlForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ChanSourcesForma.pas">
+            <Form>ChanSourcesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ChanSrcForma.pas">
+            <Form>ChanSrcForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ChanForSrcForma.pas">
+            <Form>ChanForSrcForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\twain\ScanImageForma.pas">
+            <Form>ScanImageForm</Form>
+        </DCCReference>
+        <DCCReference Include="units\twain\DelphiTwain.pas"/>
+        <DCCReference Include="units\twain\DelphiTwain_VCL.pas"/>
+        <DCCReference Include="forms\Customer\CustFilesForma.pas">
+            <Form>CustFilesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\PersonalTarifForma.pas">
+            <Form>PersonalTarifForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\DistribForma.pas">
+            <Form>DistribForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\SatCardsForma.pas"/>
+        <DCCReference Include="forms\DVB\DistrContractForma.pas">
+            <Form>DistrContractForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ScreenShotForma.pas">
+            <Form>ScreenShotForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ContractChForma.pas">
+            <Form>ContractChForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\ContactForma.pas">
+            <Form>ContactForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatInventoryDocForma.pas">
+            <Form>MatInventoryDocForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatInvSelectUnit.pas">
+            <Form>MaterialsInvSelect</Form>
+            <DesignClass>TCustomDropDownFormEh</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\FreqPlanForma.pas">
+            <Form>FreqPlanForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\TimeShiftForma.pas">
+            <Form>TimeShiftForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\ChangeChannelForma.pas">
+            <Form>frmChangeChannelForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DeviceTypesForma.pas">
+            <Form>DeviceTypesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodeLayouteForma.pas">
+            <Form>NodeLayouteForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodeMaterialForma.pas">
+            <Form>NodeMaterialForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\html\WebBrowserForma.pas">
+            <Form>WebBrowserForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatDocFilter.pas">
+            <Form>MatDocFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\distrPeriodForma.pas">
+            <Form>distrPeriodForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\distrValuePeriodForma.pas">
+            <Form>distrValuePeriodForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\BCIssuesForma.pas">
+            <Form>BCIssuesForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\BCIssuesTypeForma.pas">
+            <Form>BCIssuesTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\BCIForma.pas">
+            <Form>BCIForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\DVB\BCIssuesSolutionForma.pas">
+            <Form>BCIssuesSolutionForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\StreetHousesViewForma.pas">
+            <Form>StreetHouseViewForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerMaterialsMove.pas">
+            <Form>apgCustomerMaterialsMove</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\fmuCustomerAppl.pas">
+            <Form>apgCustomerAppl</Form>
+        </DCCReference>
+        <DCCReference Include="forms\EditApplianceForma.pas">
+            <Form>EditApplianceForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeAppl.pas">
+            <Form>apgNodeAppl</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqPhotosForma.pas">
+            <Form>ReqPhotosForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Mobile\NewsForma.pas">
+            <Form>NewsForm</Form>
+        </DCCReference>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">a4on.DPR</Source>
+                </Source>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">True</VersionInfo>
+                    <VersionInfo Name="MajorVer">3</VersionInfo>
+                    <VersionInfo Name="MinorVer">11</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">202</VersionInfo>
+                    <VersionInfo Name="Debug">True</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1049</VersionInfo>
+                    <VersionInfo Name="CodePage">65001</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">www.a4on.tv</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileDescription">Учет абонентов кабельного телевидения</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">3.11.0.202</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright"/>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename">A4on.EXE</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductName">A4ON.TV</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">3</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                    <VersionInfoKeys Name="CFBundleName"/>
+                    <VersionInfoKeys Name="CFBundleDisplayName"/>
+                    <VersionInfoKeys Name="CFBundleIdentifier"/>
+                    <VersionInfoKeys Name="CFBundleVersion"/>
+                    <VersionInfoKeys Name="CFBundlePackageType"/>
+                    <VersionInfoKeys Name="CFBundleSignature"/>
+                    <VersionInfoKeys Name="CFBundleAllowMixedLocalizations"/>
+                    <VersionInfoKeys Name="CFBundleExecutable"/>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\fmxdesigner210.bpl">FMX Form designer and property and component editors</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k210.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp210.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+                <Language>
+                    <Language Name="ProjectLang">$00000419</Language>
+                </Language>
+                <RDP_Source_Files>
+                    <RDP_Source_Files Name="Item0">FORMS\EditCustomerForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item1">FORMS\PaymentSourceForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item2">forms\MaterialsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item3">forms\AdresSearchForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item4">forms\MaterialForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item5">forms\AttributesForEQForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item6">forms\WorkerForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item7">forms\MatMoveForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item8">forms\MatOutForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item9">FORMS\MAIN.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item10">forms\Customer\CustomersFilter.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item11">FRAME\OkCancel_frame.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item12">FORMS\PeriodForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item13">FORMS\SubscrHistory.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item14">FORMS\DM.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item15">FORMS\OnOffServicesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item16">FORMS\ChoiseForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item17">FORMS\CompanyForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item18">FORMS\GridForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item19">FORMS\StreetForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item20">FORMS\ServicesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item21">FORMS\SelectLetterTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item22">FORMS\CancelContractForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item23">forms\EquipmentForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item24">forms\AboutForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item25">forms\Requests\RequestTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item26">forms\WorkersForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item27">forms\Requests\RequestsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item28">forms\Requests\RequestForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item29">forms\Requests\ReqExecutersForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item30">frame\ReqMaterialsFrame.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item31">forms\Requests\RequestFilterForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item32">forms\UserLoginDlg.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item33">forms\SettingsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item34">forms\PaymentTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item35">forms\AttributesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item36">forms\DiscountForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item37">forms\TarifForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item38">forms\LettersForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item39">forms\StreetEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item40">forms\EditAttributeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item41">forms\Requests\ReqMaterialsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item42">forms\PaymentForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item43">forms\PayDocsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item44">forms\PaymentDocForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item45">forms\HouseForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item46">forms\AttributeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item47">forms\ChannelsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item48">forms\ChannelEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item49">forms\CustomerLanForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item50">forms\ServiceForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item51">forms\CardSerialsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item52">forms\CardSerialForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item53">forms\CardsPayForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item54">forms\CardPayGenerateForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item55">forms\CardPayActivateForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item56">forms\CardsPaySettingsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item57">forms\HouseWorkForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item58">forms\LoaderReestrForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item59">forms\LoaderProfileForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item60">forms\EquipAttributesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item61">forms\EquipCoverage.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item62">forms\VlansForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item63">forms\PaymentEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item64">frame\CustomerInfoFrame.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item65">forms\JournalForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item66">admin\QueryForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item67">admin\UserForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item68">admin\UsersForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item69">admin\GroupForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item70">admin\SrvServiceForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item71">forms\ScriptModule.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item72">forms\ScripEditorForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item73">forms\BarSettingForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item74">forms\EventsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item75">forms\EquipmentComands.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item76">forms\SelectColumnsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item77">forms\ExportSettingsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item78">forms\OrganForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item79">forms\EQGroupsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item80">forms\EquipEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item81">forms\EquipmentCommandForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item82">forms\Requests\ReqForAdresForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item83">forms\TextEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item84">forms\HouseMapForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item85">forms\SendMessagesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item86">forms\Requests\ReqTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item87">forms\Requests\ReqTemplateForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item88">forms\HeadEndForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item89">forms\HeadEndsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item90">forms\RecourseTPLForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item91">forms\RecoursesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item92">forms\Requests\ReqWorkForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item93">frame\ReqWorksFrame.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item94">forms\RecourseForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item95">forms\Requests\RequestWorksForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item96">forms\SUBDIVForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item97">forms\WorkTeamForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item98">frame\frmDateSelect.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item99">forms\SelectDateForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item100">forms\WHForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item101">admin\monitoringUnitMain.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item102">forms\VATForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item103">forms\Requests\ReqCancelForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item104">forms\SelDateForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item105">forms\OrgnzEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item106">forms\ChangePwdForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item107">forms\WorkAreaLimitForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item108">forms\Requests\RequestNewForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item109">forms\Requests\ReqAddWorkForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item110">forms\Requests\RequestResultsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item111">forms\Requests\ReqGiveForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item112">forms\HETypesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item113">forms\FlatsAddForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item114">forms\BanksForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item115">forms\SettinsUserForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item116">forms\PaymentsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item117">forms\TelnetForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item118">forms\Customer\CustomerForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item119">forms\Customer\fmuCustomerSrv.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item120">forms\Customer\fmuCustomerInfo.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item121">forms\Customer\fmuCustomerPayments.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item122">forms\Customer\fmuCustomerSingleSrv.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item123">forms\Customer\fmuCustomerLetters.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item124">forms\Customer\fmuCustomerRecourse.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item125">forms\Customer\fmuCustomerRequests.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item126">forms\Customer\fmuCustomerAttributes.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item127">forms\Customer\fmuCustomerLan.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item128">forms\Customer\fmuCustomerKoef.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item129">forms\Customer\fmuCustomerDigit.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item130">forms\Customer\fmuCustomerInternet.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item131">forms\Customer\fmuCustomerCard.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item132">forms\Customer\CF.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item133">forms\PayDocSelectForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item134">forms\MessagesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item135">forms\DecoderPacketForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item136">forms\DigitCardForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item137">forms\ReportDesignerForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item138">forms\ReportPreview.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item139">forms\DVB\DVBEquipmentForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item140">forms\DVB\DVBEqGenForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item141">forms\DVB\DVBEqEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item142">forms\ManForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item143">forms\IPPacketForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item144">forms\DVB\EPGImport.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item145">forms\DVB\EPGSource.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item146">forms\DVB\EPGView.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item147">forms\DVB\EPGEdit.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item148">forms\DVB\DVBStreamForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item149">forms\OrdersTP\OTPTypesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item150">forms\OrdersTP\OrdersTPForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item151">forms\OrdersTP\OrderTPForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item152">forms\Customer\fmuCustomerNew.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item153">forms\Customer\fmuCustomerEdit.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item154">forms\SubAreaEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item155">FORMS\AreaForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item156">forms\AreaEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item157">forms\FeedbackForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item158">forms\DBEditor.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item159">forms\ChannImport.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item160">forms\DVB\DVBSettings.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item161">forms\DVB\DVBNetworkForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item162">forms\DVB\DVBGanresForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item163">forms\BillEditForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item164">forms\TetrisForm.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item165">forms\PaymentSourcesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item166">forms\Materials\MaterialForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item167">forms\Materials\MatDocsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item168">forms\Materials\MatIncomeDocForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item169">forms\Materials\MatInventoryDocForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item170">forms\Materials\MatOutDocForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item171">forms\Materials\MatMoveDocForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item172">forms\Materials\MaterialsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item173">forms\Materials\MatSelectUnit.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item174">forms\DVB\DecoderDeleteDlgForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item175">forms\Materials\MatMoveSelectUnit.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item176">forms\DVB\EPGAdForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item177">forms\ShippersForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item178">forms\Requests\ReqMatReturnForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item179">forms\BonusesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item180">forms\Customer\fmuCustomerBonus.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item181">forms\ChangeOffForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item182">forms\BlackListForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item183">forms\RatesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item184">forms\Circuit\AlignDlg.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item185">forms\Circuit\CircuitMain.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item186">forms\Circuit\DesignProp.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item187">forms\Circuit\LinkProp.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item188">forms\Circuit\MarginsProp.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item189">forms\Circuit\NodeProp.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item190">forms\Circuit\ObjectProp.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item191">forms\Circuit\SizeDlg.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item192">forms\Circuit\UsageHelp.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item193">forms\IPTV\IPTVGroupForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item194">forms\IPTV\IPTVSettings.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item195">forms\Customer\fmuCustomerFiles.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item196">forms\FileTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item197">forms\EditCFileForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item198">forms\NPSAddForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item199">forms\MapForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item200">forms\Requests\ReqPlanerForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item201">forms\SelectOneForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item202">forms\nodes\fmuNodeRequests.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item203">forms\nodes\NodesFilter.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item204">forms\nodes\NodesForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item205">forms\nodes\NodeTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item206">forms\nodes\fmuNodeAttributes.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item207">forms\nodes\NodeAttributeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item208">forms\nodes\fmuNodeFiles.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item209">forms\nodes\EditNFileForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item210">forms\nodes\NFileTypeForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item211">forms\nodes\fmuNodeCIRCUIT.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item212">forms\nodes\fmuNodeFlats.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item213">forms\nodes\EditNodeFlatsForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item214">forms\Requests\EditRFileForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item215">forms\nodes\fmuNodeMaterials.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item216">forms\Task\TaskForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item217">forms\Customer\CustChannelForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item218">forms\Task\TaskFilterForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item219">forms\Task\NewTaskForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item220">forms\CallCenter\CallCenterForma.dfm</RDP_Source_Files>
+                    <RDP_Source_Files Name="Item221">..\EXE\A4on.drc</RDP_Source_Files>
+                </RDP_Source_Files>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+            </Platforms>
+            <Deployment>
+                <DeployFile LocalName="..\EXE\a4on.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>A4on.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="FORMS\MAIN.PAS" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="FORMS\MAIN.PAS" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\EXE\a4on.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>A4on.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployClass Required="true" Name="DependencyPackage">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch2048">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXInfoPList">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceDebug">
+                    <Platform Name="iOSDevice">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage470">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-normal</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeX86File">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\x86</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSResource">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXEntitlements">
+                    <Platform Name="OSX32">
+                        <RemoteDir>../</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidGDBServer">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch640">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage960">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon96">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch320">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon144">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xxhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeMipsFile">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\mips</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashImageDef">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DebugSymbols">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyFramework">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage426">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-small</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSEntitlements">
+                    <Platform Name="iOSDevice">
+                        <RemoteDir>../</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AdditionalDebugSymbols">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClassesDexFile">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSInfoPList">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch1024">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_DefaultAppIcon">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch768">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Required="true" Name="ProjectOutput">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeArmeabiFile">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage640">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-large</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="File">
+                    <Platform Name="iOSDevice">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Android">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch640x1136">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon36">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-ldpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStyles">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch1536">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon48">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-mdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon72">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-hdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectAndroidManifest">
+                    <Platform Name="Android">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+            </Deployment>
+            <ModelSupport>False</ModelSupport>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+</Project>

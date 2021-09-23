@@ -669,6 +669,7 @@ begin
     Exit;
   if FCustomerInfo.CUSTOMER_ID = -1 then
     Exit;
+
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
@@ -689,9 +690,10 @@ begin
           Transaction.Commit;
         end;
 
-        sql.Text := 'execute procedure Add_Single_Service(:CID, :SID, :Units, CURRENT_DATE, :Notice, :HID)';
+        sql.Text := 'execute procedure Add_Single_Service(:CID, :SID, :Units, :date, :Notice, :HID)';
         ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
         ParamByName('SID').AsInteger := FSingleSrv;
+        ParamByName('date').AsDate := dsOrderTP['OTP_DATE'];;
         if (not VarIsNull(ednAMOUNT.Value)) then
           ParamByName('Units').AsCurrency := ednAMOUNT.Value
         else

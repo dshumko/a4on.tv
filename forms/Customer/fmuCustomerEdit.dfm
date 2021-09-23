@@ -131,7 +131,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Left = 102
           Top = 0
           Width = 21
-          Height = 18
+          Height = 13
           Align = alLeft
           Caption = '       '
         end
@@ -211,7 +211,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Left = 381
           Top = 0
           Width = 21
-          Height = 18
+          Height = 13
           Align = alRight
           Caption = '       '
         end

@@ -1550,7 +1550,7 @@ object UserLoginDialog: TUserLoginDialog
       object cbSERVER: TDBComboBoxEh
         Left = 85
         Top = 6
-        Width = 193
+        Width = 191
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         AutoSize = False
@@ -1566,6 +1566,7 @@ object UserLoginDialog: TUserLoginDialog
             Style = ebsEllipsisEh
             Width = 20
           end>
+        Flat = True
         LimitTextToListValues = True
         ParentCtl3D = False
         ShowHint = True
@@ -1576,8 +1577,8 @@ object UserLoginDialog: TUserLoginDialog
       object edUser: TDBEditEh
         Left = 85
         Top = 30
-        Width = 193
-        Height = 21
+        Width = 191
+        Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone
         CharCase = ecUpperCase
@@ -1585,6 +1586,7 @@ object UserLoginDialog: TUserLoginDialog
         DynProps = <>
         EditButtons = <>
         EmptyDataInfo.Text = #1048#1084#1103' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
+        Flat = True
         ParentCtl3D = False
         ShowHint = True
         TabOrder = 1
@@ -1594,14 +1596,15 @@ object UserLoginDialog: TUserLoginDialog
       object edPassword: TDBEditEh
         Left = 85
         Top = 54
-        Width = 193
-        Height = 21
+        Width = 191
+        Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone
         Ctl3D = True
         DynProps = <>
         EditButtons = <>
         EmptyDataInfo.Text = #1055#1072#1088#1086#1083#1100
+        Flat = True
         ParentCtl3D = False
         PasswordChar = '*'
         ShowHint = True

@@ -932,7 +932,7 @@ begin
   ActAddPayment.Visible := (FullAccess or dmMain.AllowedAction(rght_Pays_add) or
     dmMain.AllowedAction(rght_Pays_AddToday));
   actDelete.Enabled := (not dmMain.InStrictMode) and (dmMain.AllowedAction(rght_Customer_del) or FullAccess);
-  actOrderTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add);
+  actOrderTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or dmMain.AllowedAction(rght_OrdersTP_View);
   // actPrepay.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
   // actTask.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
   // actCheckPassport.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));

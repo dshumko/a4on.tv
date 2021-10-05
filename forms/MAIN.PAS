@@ -2576,8 +2576,9 @@ begin
   actFileTypes.Visible := rFull;
 
   ActOrdersTPType.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_OrdersTPType);
-  ActOrdersTP.Visible := rFull or dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
-    dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_del);
+  ActOrdersTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
+    dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_del)
+    or dmMain.AllowedAction(rght_OrdersTP_View);
 
   actMessages.Visible := rFull or dmMain.AllowedAction(rght_Messages_add);
 

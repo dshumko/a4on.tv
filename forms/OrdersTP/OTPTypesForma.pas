@@ -39,6 +39,8 @@ type
     spl1: TSplitter;
     pmAddons: TPopupMenu;
     miDel: TMenuItem;
+    Label1: TLabel;
+    ednMax: TDBNumberEditEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -285,6 +287,12 @@ begin
         ednMoreCost.Value := JO.F['MCost'];
     end;
 
+    if JO.Contains('MaxC') then
+    begin
+      if not JO['MaxC'].IsNull then
+        ednMax.Value := JO.I['MaxC'];
+    end;
+
     if JO.Contains('Period') then
     begin
       if not JO['Period'].IsNull then
@@ -343,6 +351,8 @@ begin
       JO.F['BCost'] := ednBasicCost.Value;
     if not ednMoreCost.Text.IsEmpty then
       JO.F['MCost'] := ednMoreCost.Value;
+    if not ednMax.Text.IsEmpty then
+      JO.I['MaxC'] := ednMax.Value;// Text.ToInteger;
 
     JO.B['Period'] := chkPeriod.Checked;
 

@@ -4,7 +4,6 @@ inherited EquipmentForm: TEquipmentForm
   Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1074' '#1089#1077#1090#1080
   ClientHeight = 608
   ClientWidth = 930
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter [0]
@@ -145,6 +144,7 @@ inherited EquipmentForm: TEquipmentForm
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
+        OnGetCellParams = dbGridColumns10GetCellParams
       end
       item
         CellButtons = <>
@@ -1425,7 +1425,7 @@ inherited EquipmentForm: TEquipmentForm
       TabOrder = 0
       object chkTREE: TCheckBox
         Left = 3
-        Top = 0
+        Top = -3
         Width = 165
         Height = 22
         Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072

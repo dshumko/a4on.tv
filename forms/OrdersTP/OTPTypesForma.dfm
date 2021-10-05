@@ -7,13 +7,13 @@ inherited OTPTypesForm: TOTPTypesForm
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Top = 321
+    Top = 353
     Width = 698
   end
   inherited dbGrid: TDBGridEh
-    Top = 324
+    Top = 356
     Width = 698
-    Height = 139
+    Height = 107
     AllowedOperations = []
     Columns = <
       item
@@ -89,15 +89,15 @@ inherited OTPTypesForm: TOTPTypesForm
   end
   inherited pnlEdit: TPanel
     Width = 698
-    Height = 296
+    Height = 328
     inherited btnSaveLink: TBitBtn
-      Top = 266
+      Top = 298
       Width = 512
       TabOrder = 1
     end
     inherited btnCancelLink: TBitBtn
       Left = 603
-      Top = 266
+      Top = 298
       Width = 90
       TabOrder = 2
     end
@@ -105,7 +105,7 @@ inherited OTPTypesForm: TOTPTypesForm
       Left = 0
       Top = 0
       Width = 698
-      Height = 262
+      Height = 294
       Align = alCustom
       Anchors = [akLeft, akTop, akRight, akBottom]
       BevelOuter = bvNone
@@ -113,20 +113,20 @@ inherited OTPTypesForm: TOTPTypesForm
       object spl1: TSplitter
         Left = 375
         Top = 0
-        Height = 262
+        Height = 294
         Align = alRight
       end
       object pnl1: TPanel
         Left = 0
         Top = 0
         Width = 375
-        Height = 262
+        Height = 294
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
           375
-          262)
+          294)
         object lbl2: TLabel
           Left = 5
           Top = 9
@@ -138,7 +138,7 @@ inherited OTPTypesForm: TOTPTypesForm
           Left = 5
           Top = 60
           Width = 370
-          Height = 202
+          Height = 234
           ScrollBars = ssVertical
           Anchors = [akLeft, akTop, akRight, akBottom]
           AutoSize = False
@@ -185,13 +185,13 @@ inherited OTPTypesForm: TOTPTypesForm
         Left = 378
         Top = 0
         Width = 320
-        Height = 262
+        Height = 294
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
           320
-          262)
+          294)
         object lbl1: TLabel
           Left = 16
           Top = 9
@@ -219,6 +219,13 @@ inherited OTPTypesForm: TOTPTypesForm
           Width = 174
           Height = 13
           Caption = #1062#1077#1085#1072' '#1073#1086#1083#1077#1077' '#1061' '#1089#1080#1084#1074#1086#1083#1086#1074', '#1079#1072' '#1089#1080#1084#1074#1086#1083
+        end
+        object Label1: TLabel
+          Left = 6
+          Top = 160
+          Width = 160
+          Height = 13
+          Caption = #1052#1072#1082#1089#1080#1084#1072#1083#1100#1085#1086#1077' '#1082#1086#1083'-'#1074#1086' '#1089#1080#1084#1074#1086#1083#1086#1074
         end
         object lcbSinglSrv: TDBLookupComboboxEh
           Left = 6
@@ -260,9 +267,9 @@ inherited OTPTypesForm: TOTPTypesForm
         end
         object dbgAddons: TDBGridEh
           Left = 6
-          Top = 159
+          Top = 185
           Width = 309
-          Height = 101
+          Height = 107
           Anchors = [akLeft, akTop, akRight, akBottom]
           DataSource = srcAddons
           DynProps = <>
@@ -279,7 +286,7 @@ inherited OTPTypesForm: TOTPTypesForm
               Footers = <>
               Title.Alignment = taCenter
               Title.Caption = #1044#1086#1087'. '#1091#1089#1083#1091#1075#1072
-              Width = 142
+              Width = 141
             end
             item
               CellButtons = <>
@@ -361,6 +368,20 @@ inherited OTPTypesForm: TOTPTypesForm
           EditButtons = <>
           ShowHint = True
           TabOrder = 5
+          Visible = True
+        end
+        object ednMax: TDBNumberEditEh
+          Left = 193
+          Top = 157
+          Width = 80
+          Height = 21
+          Hint = #1052#1072#1082#1089#1080#1084#1072#1083#1100#1085#1086' '#1095#1080#1089#1083#1086' '#1089#1080#1084#1074#1086#1083#1086#1074' '#1074' '#1090#1077#1089#1090#1082#1077' '#1079#1072#1082#1072#1079#1072
+          DecimalPlaces = 0
+          DynProps = <>
+          EmptyDataInfo.Text = 'Max '#1057#1080#1084'-'#1074
+          EditButtons = <>
+          ShowHint = True
+          TabOrder = 7
           Visible = True
         end
       end

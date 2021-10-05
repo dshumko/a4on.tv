@@ -1,5 +1,4 @@
 object HeadEndForm: THeadEndForm
-  ShowHint = True
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
@@ -15,6 +14,7 @@ object HeadEndForm: THeadEndForm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -115,6 +115,7 @@ object HeadEndForm: THeadEndForm
       DataSource = srcHE
       DynProps = <>
       EditButtons = <>
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -127,6 +128,7 @@ object HeadEndForm: THeadEndForm
       DataSource = srcHE
       DynProps = <>
       EditButtons = <>
+      ShowHint = True
       TabOrder = 5
       Visible = True
     end
@@ -139,6 +141,7 @@ object HeadEndForm: THeadEndForm
       DataSource = srcHE
       DynProps = <>
       EditButtons = <>
+      ShowHint = True
       TabOrder = 7
       Visible = True
     end
@@ -172,6 +175,7 @@ object HeadEndForm: THeadEndForm
       KeyField = 'STREET_ID'
       ListField = 'STREET_NAME'
       ListSource = srcStreet
+      ShowHint = True
       TabOrder = 3
       Visible = True
     end
@@ -187,6 +191,7 @@ object HeadEndForm: THeadEndForm
       KeyField = 'HOUSE_ID'
       ListField = 'HOUSE_NO'
       ListSource = srcHouse
+      ShowHint = True
       TabOrder = 4
       Visible = True
     end
@@ -200,6 +205,7 @@ object HeadEndForm: THeadEndForm
       DataSource = srcHE
       DynProps = <>
       EditButtons = <>
+      ShowHint = True
       TabOrder = 6
       Visible = True
       WantReturns = True
@@ -216,6 +222,7 @@ object HeadEndForm: THeadEndForm
       KeyField = 'O_ID'
       ListField = 'O_NAME'
       ListSource = srcType
+      ShowHint = True
       TabOrder = 1
       Visible = True
     end
@@ -241,6 +248,7 @@ object HeadEndForm: THeadEndForm
       KeyField = 'HE_ID'
       ListField = 'HE_NAME'
       ListSource = srcParent
+      ShowHint = True
       TabOrder = 2
       Visible = True
     end
@@ -320,7 +328,6 @@ object HeadEndForm: THeadEndForm
             Height = 304
             Align = alClient
             AllowedOperations = [alopUpdateEh]
-            AutoFitColWidths = False
             DataSource = srcHC
             DynProps = <>
             Flat = True
@@ -336,6 +343,7 @@ object HeadEndForm: THeadEndForm
             Columns = <
               item
                 AutoFitColWidth = False
+                CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'CH_NUMBER'
@@ -344,6 +352,7 @@ object HeadEndForm: THeadEndForm
                 Title.Caption = #1053#1086#1084#1077#1088
               end
               item
+                CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'CH_NAME'
@@ -351,6 +360,7 @@ object HeadEndForm: THeadEndForm
                 Title.Caption = #1050#1072#1085#1072#1083
               end
               item
+                CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'CH_FREQ'
@@ -467,7 +477,6 @@ object HeadEndForm: THeadEndForm
             Height = 304
             Align = alClient
             AllowedOperations = []
-            AutoFitColWidths = False
             DataSource = srcC
             DynProps = <>
             Flat = True
@@ -483,6 +492,7 @@ object HeadEndForm: THeadEndForm
             Columns = <
               item
                 AutoFitColWidth = False
+                CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'CH_NUMBER'
@@ -490,6 +500,7 @@ object HeadEndForm: THeadEndForm
                 Title.Caption = #1053#1086#1084#1077#1088
               end
               item
+                CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'CH_NAME'
@@ -512,7 +523,6 @@ object HeadEndForm: THeadEndForm
         Height = 317
         Align = alClient
         AllowedOperations = [alopUpdateEh]
-        AutoFitColWidths = False
         DataSource = srcHouses
         DynProps = <>
         Flat = True
@@ -528,6 +538,7 @@ object HeadEndForm: THeadEndForm
         TitleParams.MultiTitle = True
         Columns = <
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'STRT'
@@ -538,6 +549,7 @@ object HeadEndForm: THeadEndForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'HOUSE_NO'
@@ -549,37 +561,44 @@ object HeadEndForm: THeadEndForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Q_FLAT'
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1050#1074#1072#1088#1090#1080#1088
+            Title.Hint = #1050#1074#1072#1088#1090#1080#1088
             Title.Orientation = tohVertical
             Width = 33
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'CONNECTED'
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1055#1086#1076#1082#1083'.'
+            Title.Hint = #1055#1086#1076#1082#1083'.'
             Title.Orientation = tohVertical
             Width = 32
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'DISCONNECTED'
             Footers = <>
             Title.Caption = #1054#1090#1082#1083'.'
+            Title.Hint = #1054#1090#1082#1083'.'
             Title.Orientation = tohVertical
             Width = 27
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'HOUSE_CODE'
@@ -587,6 +606,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1050#1086#1076
           end
           item
+            CellButtons = <>
             DropDownBox.Columns = <
               item
                 FieldName = 'SUBAREA_NAME'
@@ -600,6 +620,7 @@ object HeadEndForm: THeadEndForm
             Width = 75
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'NAME'
@@ -609,31 +630,37 @@ object HeadEndForm: THeadEndForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'EXIST_TV'
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|TB'
+            Title.Hint = 'TB'
             Title.Orientation = tohVertical
             Width = 20
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'EXIST_LAN'
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|'#1057#1055#1044
+            Title.Hint = #1057#1055#1044
             Title.Orientation = tohVertical
             Width = 23
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'EXIST_DTV'
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|'#1062'TB'
+            Title.Hint = #1062'TB'
             Title.Orientation = tohVertical
             Width = 24
           end>
@@ -708,8 +735,8 @@ object HeadEndForm: THeadEndForm
       'select c.Ch_Id, c.Ch_Number, c.Ch_Name'
       'FROM Channels c'
       
-        'where not exists(select hc.ch_id FROM headend_channels hc w' +
-        'here hc.ch_id = c.Ch_Id and hc.he_id = :HE_ID)'
+        'where not exists(select hc.ch_id FROM headend_channels hc where ' +
+        'hc.ch_id = c.Ch_Id and hc.he_id = :HE_ID)'
       'order by c.Ch_Number, c.Ch_Name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

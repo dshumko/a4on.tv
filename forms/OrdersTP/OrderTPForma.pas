@@ -278,6 +278,12 @@ procedure TOrderTPForm.FormShow(Sender: TObject);
 var
   s: string;
 begin
+  btnOk.Enabled := dmMain.AllowedAction(rght_OrdersTP_full);
+  if (dsOrderTP.State = dsInsert) then
+    btnOk.Enabled := (btnOk.Enabled or dmMain.AllowedAction(rght_OrdersTP_add))
+  else if (dsOrderTP.State = dsEdit) then
+    btnOk.Enabled := (btnOk.Enabled or dmMain.AllowedAction(rght_OrdersTP_edit));
+
   s := ExtractFileDir(Application.ExeName) + '\russian.adm';
   if FileExists(s) then
   begin
@@ -437,6 +443,7 @@ begin
       edtAdress.Text := Copy(trim(ci.STREET + ' ' + ci.HOUSE_no + ' ' + ci.FLAT_NO), 1, 500);
     if edtPhone.Text.IsEmpty then
       edtPhone.Text := Copy(trim(ci.phone_no + ' ' + ci.mobile), 1, 50);
+
     ShowAddons;
   end
   else
@@ -474,13 +481,16 @@ begin
       if not JO['MCost'].IsNull then
         FMoreCnt := JO.F['MCost'];
     end;
-
+    if JO.Contains('MaxC') then
+    begin
+      if not JO['MaxC'].IsNull then
+        mmoText.MaxLength := JO.i['MaxC'];
+    end;
     if JO.Contains('report') then
     begin
       if not JO['report'].IsNull then
         FReport := JO.i['report'];
     end;
-
     if JO.Contains('SnglSrv') then
     begin
       if not JO['SnglSrv'].IsNull then
@@ -509,13 +519,15 @@ begin
         mtAddons.Append;
         mtAddons['name'] := JO.A['Params'].O[i].s['name'];
         mtAddons['cost'] := JO.A['Params'].O[i].F['cost'];
-        if JO.A['Params'].O[i].Contains('dc') then begin
+        if JO.A['Params'].O[i].Contains('dc') then
+        begin
           mtAddons['dc'] := JO.A['Params'].O[i].i['dc'];
           ShowD := ShowD or (JO.A['Params'].O[i].i['dc'] = 1);
         end
         else
           mtAddons['dc'] := 0;
-        if JO.A['Params'].O[i].Contains('rc') then begin
+        if JO.A['Params'].O[i].Contains('rc') then
+        begin
           ShowK := ShowK or (JO.A['Params'].O[i].i['rc'] = 1);
           mtAddons['NeedK'] := (JO.A['Params'].O[i].i['rc'] = 1);
         end
@@ -551,6 +563,7 @@ begin
   FBasicCnt := 0;
   FMoreCnt := 0;
   FSingleSrv := -1;
+  mmoText.MaxLength := 1000;
 
   pnlAddons.Visible := False;
 
@@ -645,6 +658,29 @@ procedure TOrderTPForm.btnOkClick(Sender: TObject);
 var
   allright: Boolean;
 begin
+  if not (dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
+    dmMain.AllowedAction(rght_OrdersTP_edit)) then
+  begin
+    ModalResult := mrCancel;
+    Exit;
+  end;
+
+  if ((dsOrderTP.State = dsEdit) and (not(dmMain.AllowedAction(rght_OrdersTP_full) or
+    dmMain.AllowedAction(rght_OrdersTP_edit)))) then
+  begin
+    ModalResult := mrCancel;
+    Exit;
+  end
+  else
+  begin
+    if ((dsOrderTP.State = dsInsert) and (not(dmMain.AllowedAction(rght_OrdersTP_full) or
+      dmMain.AllowedAction(rght_OrdersTP_add)))) then
+    begin
+      ModalResult := mrCancel;
+      Exit;
+    end;
+  end;
+
   if not FSpellCheck then
     AddictSpell.CheckWinControl(mmoText, ctAll);
 
@@ -788,7 +824,8 @@ begin
   end;
 
   c := mmoText.Lines.Text.Length;
-  lblCharCNT.Caption := format(rsAdCharCount, [c, d]); // FCharCnt,FBasicCnt, FMoreCnt]);
+  lblCharCNT.Caption := format(rsAdCharCount, [c, d]);
+  // FCharCnt,FBasicCnt, FMoreCnt]);
 
   ednAMOUNT.Value := cost;
 end;

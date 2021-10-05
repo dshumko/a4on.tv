@@ -191,6 +191,8 @@ type
     procedure actCustTelnetExecute(Sender: TObject);
     procedure actCustHttpExecute(Sender: TObject);
     procedure actCloneExecute(Sender: TObject);
+    procedure dbGridColumns10GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FUpdatetNotice: Boolean;
@@ -599,6 +601,14 @@ begin
   inherited;
   if Button = mbRight then
     GenerateCustomerLANPopUp;
+end;
+
+procedure TEquipmentForm.dbGridColumns10GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  inherited;
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, '. ', [rfReplaceAll]);
 end;
 
 procedure TEquipmentForm.dbGridCustReqDblClick(Sender: TObject);

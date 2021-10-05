@@ -2,8 +2,8 @@ object ReqTemplateForm: TReqTemplateForm
   Left = 0
   Top = 0
   Caption = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
-  ClientHeight = 336
-  ClientWidth = 454
+  ClientHeight = 356
+  ClientWidth = 673
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,8 @@ object ReqTemplateForm: TReqTemplateForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    454
-    336)
+    673
+    356)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
@@ -46,7 +46,7 @@ object ReqTemplateForm: TReqTemplateForm
   end
   object lbl3: TLabel
     Left = 8
-    Top = 176
+    Top = 172
     Width = 164
     Height = 13
     Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086' '#1076#1083#1103' '#1079#1072#1087#1086#1083#1085#1077#1085#1080#1103
@@ -58,12 +58,25 @@ object ReqTemplateForm: TReqTemplateForm
     Height = 13
     Caption = #1055#1077#1088#1077#1089#1086#1079#1076#1072#1074#1072#1090#1100' '#1079#1072#1103#1074#1082#1091' '#1095#1077#1088#1077#1079
   end
+  object lbl4: TLabel
+    Left = 423
+    Top = 172
+    Width = 225
+    Height = 13
+    Caption = #1058#1077#1082#1089#1090' SMS '#1072#1073#1086#1085#1077#1085#1090#1091' '#1087#1086#1089#1083#1077' '#1079#1072#1082#1088#1099#1090#1080#1103' '#1079#1072#1103#1074#1082#1080
+  end
+  object lbl5: TLabel
+    Left = 423
+    Top = 8
+    Width = 223
+    Height = 13
+    Caption = #1058#1077#1082#1089#1090' SMS '#1072#1073#1086#1085#1077#1085#1090#1091' '#1087#1086#1089#1083#1077' '#1089#1086#1079#1076#1072#1085#1080#1103' '#1079#1072#1103#1074#1082#1080
+  end
   object edContent: TDBEditEh
     Left = 78
     Top = 5
-    Width = 368
+    Width = 339
     Height = 21
-    Anchors = [akLeft, akTop, akRight]
     DataField = 'RQ_CONTENT'
     DataSource = srcRQTL
     DynProps = <>
@@ -76,10 +89,9 @@ object ReqTemplateForm: TReqTemplateForm
   object luAnalysGrp: TDBLookupComboboxEh
     Left = 78
     Top = 31
-    Width = 368
+    Width = 339
     Height = 21
     Hint = #1043#1088#1091#1087#1087#1072' '#1072#1085#1072#1083#1080#1090#1080#1082#1080' ('#1074#1086#1079#1084#1086#1078#1085#1086' '#1091#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1075#1088#1091#1087#1087#1077')'
-    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = 'ANALYSE_ID'
     DataSource = srcRQTL
@@ -95,10 +107,9 @@ object ReqTemplateForm: TReqTemplateForm
   object luWork: TDBLookupComboboxEh
     Left = 78
     Top = 57
-    Width = 368
+    Width = 339
     Height = 21
     Hint = #1044#1086#1073#1072#1074#1083#1103#1090#1100' '#1074' '#1079#1072#1103#1074#1082#1091' '#1088#1072#1073#1086#1090#1091' '#1087#1088#1080' '#1074#1099#1073#1086#1088#1077' '
-    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = 'ADD_WORK'
     DataSource = srcRQTL
@@ -111,54 +122,52 @@ object ReqTemplateForm: TReqTemplateForm
     TabOrder = 2
     Visible = True
   end
-  object mmo1: TDBMemoEh
+  object mmoAddons: TDBMemoEh
     Left = 8
     Top = 192
-    Width = 438
-    Height = 105
+    Width = 409
+    Height = 124
     Hint = 
       #1057#1087#1080#1089#1086#1082' '#1079#1085#1072#1095#1077#1085#1080#1081' '#1076#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086#1075#1086' '#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1075#1086' '#1087#1086#1083#1103' '#1087#1088#1080' '#1086#1092#1086#1088#1084#1083#1077#1085#1080 +
       #1080' '#1079#1072#1103#1074#1082#1080#13#10#1054#1076#1085#1072' '#1089#1090#1088#1086#1082#1072' - '#1086#1076#1085#1086' '#1079#1085#1072#1095#1077#1085#1080#1077
-    Lines.Strings = (
-      'mmo1')
     ScrollBars = ssVertical
-    Anchors = [akLeft, akTop, akRight, akBottom]
+    Anchors = [akLeft, akTop, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1044#1086#1087'. '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1076#1083#1103' '#1079#1072#1087#1086#1083#1085#1077#1085#1080#1103' '#1087#1088#1080' '#1087#1088#1080#1077#1084#1077' '#1079#1072#1103#1074#1082#1080
     ShowHint = True
-    TabOrder = 5
+    TabOrder = 7
     Visible = True
     WantReturns = True
   end
   object btnCancel: TBitBtn
-    Left = 371
-    Top = 303
+    Left = 590
+    Top = 323
     Width = 75
     Height = 27
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 7
+    TabOrder = 11
   end
   object btnOk: TBitBtn
-    Left = 78
-    Top = 303
-    Width = 277
+    Left = 8
+    Top = 322
+    Width = 566
     Height = 27
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     ModalResult = 1
     NumGlyphs = 2
-    TabOrder = 6
+    TabOrder = 10
     OnClick = btnOkClick
   end
   object chkNeedPhoto: TDBCheckBoxEh
     Left = 8
-    Top = 86
+    Top = 88
     Width = 224
     Height = 17
     Alignment = taLeftJustify
@@ -198,16 +207,15 @@ object ReqTemplateForm: TReqTemplateForm
     EmptyDataInfo.Text = #1076#1085#1077#1081
     EditButtons = <>
     ShowHint = True
-    TabOrder = 8
+    TabOrder = 5
     Visible = True
   end
   object cbbRecreateType: TDBLookupComboboxEh
     Left = 240
     Top = 143
-    Width = 206
+    Width = 177
     Height = 21
     Hint = #1058#1080#1087' '#1085#1086#1074#1086#1081' '#1079#1072#1103#1074#1082#1080' '#1080#1083#1080' '#1090#1072#1082#1086#1081' '#1078#1077' '#1077#1089#1083#1080' '#1086#1089#1090#1072#1074#1080#1090#1100' '#1087#1091#1089#1090#1099#1084
-    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = 'RECREATE_TYPE'
     DataSource = srcRQTL
@@ -217,38 +225,72 @@ object ReqTemplateForm: TReqTemplateForm
     ListField = 'NAME'
     ListSource = srcTypes
     ShowHint = True
-    TabOrder = 9
+    TabOrder = 6
     Visible = True
     OnDropDownBoxGetCellParams = cbbRecreateTypeDropDownBoxGetCellParams
   end
   object btnClear: TButton
-    Left = 356
-    Top = 84
+    Left = 327
+    Top = 112
     Width = 90
     Height = 25
     Hint = #1054#1095#1080#1089#1090#1080#1090#1100' '#1094#1074#1077#1090' '#1092#1086#1085#1072' '#1090#1080#1087#1072' '#1079#1072#1103#1074#1082#1080
-    Anchors = [akTop, akRight]
     Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085
-    TabOrder = 10
+    TabOrder = 12
     TabStop = False
     OnClick = btnClearClick
   end
   object btnColor: TBitBtn
-    Left = 257
+    Left = 327
     Top = 84
     Width = 90
     Height = 25
     Hint = #1042#1099#1073#1088#1072#1090#1100' '#1094#1074#1077#1090' '#1092#1086#1085#1072' '#1076#1083#1103' '#1076#1072#1085#1085#1086#1075#1086' '#1090#1080#1087#1072' '#1079#1072#1103#1074#1086#1082
-    Anchors = [akTop, akRight]
     Caption = #1042#1099#1073#1088#1072#1090#1100' '#1092#1086#1085
-    TabOrder = 11
+    TabOrder = 13
     TabStop = False
     OnClick = btnColorClick
   end
+  object mmoCreate: TDBMemoEh
+    Left = 423
+    Top = 32
+    Width = 242
+    Height = 131
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
+    DataField = 'SMS_CREATE'
+    DataSource = srcRQTL
+    DynProps = <>
+    EditButtons = <>
+    EmptyDataInfo.Text = #1058#1077#1082#1089#1090' SMS '#1072#1073#1086#1085#1077#1085#1090#1091' '#1087#1086#1089#1083#1077' '#1089#1086#1079#1076#1072#1085#1080#1103' '#1079#1072#1103#1074#1082#1080
+    PopupMenu = pmSMS
+    ShowHint = True
+    TabOrder = 8
+    Visible = True
+    WantReturns = True
+  end
+  object mmoClose: TDBMemoEh
+    Left = 423
+    Top = 192
+    Width = 242
+    Height = 125
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    AutoSize = False
+    DataField = 'SMS_CLOSE'
+    DataSource = srcRQTL
+    DynProps = <>
+    EditButtons = <>
+    EmptyDataInfo.Text = #1058#1077#1082#1089#1090' SMS '#1072#1073#1086#1085#1077#1085#1090#1091' '#1087#1086#1089#1083#1077' '#1079#1072#1082#1088#1099#1090#1080#1103' '#1079#1072#1103#1074#1082#1080
+    PopupMenu = pmSMS
+    ShowHint = True
+    TabOrder = 9
+    Visible = True
+    WantReturns = True
+  end
   object srcRQTL: TDataSource
     DataSet = dsRQTL
-    Left = 380
-    Top = 253
+    Left = 332
+    Top = 261
   end
   object dsRQTL: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -265,6 +307,8 @@ object ReqTemplateForm: TReqTemplateForm
       '    , NEED_NODE_RQ = :NEED_NODE_RQ '
       '    , RECREATE_DAYS = :RECREATE_DAYS'
       '    , RECREATE_TYPE = :RECREATE_TYPE'
+      '    , SMS_CREATE = :SMS_CREATE'
+      '    , SMS_CLOSE = :SMS_CLOSE    '
       'WHERE'
       '    RQTL_ID = :OLD_RQTL_ID'
       '    ')
@@ -288,6 +332,8 @@ object ReqTemplateForm: TReqTemplateForm
       '    , NEED_NODE_RQ'
       '    , RECREATE_DAYS'
       '    , RECREATE_TYPE'
+      '    , SMS_CREATE'
+      '    , SMS_CLOSE'
       ')'
       'VALUES('
       '    :RQTL_ID'
@@ -301,7 +347,9 @@ object ReqTemplateForm: TReqTemplateForm
       '    , :NEED_PHOTO'
       '    , :NEED_NODE_RQ'
       '    , :RECREATE_DAYS'
-      '    , :RECREATE_TYPE  '
+      '    , :RECREATE_TYPE '
+      '    , :SMS_CREATE'
+      '    , :SMS_CLOSE     '
       ')')
     RefreshSQL.Strings = (
       'select *'
@@ -331,8 +379,8 @@ object ReqTemplateForm: TReqTemplateForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 104
-    Top = 192
+    Left = 72
+    Top = 200
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -343,8 +391,8 @@ object ReqTemplateForm: TReqTemplateForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 171
-    Top = 193
+    Left = 123
+    Top = 201
   end
   object dsANALYS: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -394,13 +442,13 @@ object ReqTemplateForm: TReqTemplateForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    Left = 113
-    Top = 246
+    Left = 81
+    Top = 254
   end
   object srcANALYS: TDataSource
     DataSet = dsANALYS
-    Left = 194
-    Top = 247
+    Left = 146
+    Top = 255
   end
   object dsWorks: TpFIBDataSet
     SelectSQL.Strings = (
@@ -413,13 +461,13 @@ object ReqTemplateForm: TReqTemplateForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 308
-    Top = 193
+    Left = 260
+    Top = 201
   end
   object srcWorks: TDataSource
     DataSet = dsWorks
-    Left = 361
-    Top = 196
+    Left = 313
+    Top = 204
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = True
@@ -429,8 +477,8 @@ object ReqTemplateForm: TReqTemplateForm
   object srcTypes: TDataSource
     AutoEdit = False
     DataSet = dsTypes
-    Left = 344
-    Top = 256
+    Left = 264
+    Top = 264
   end
   object dsTypes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -447,11 +495,30 @@ object ReqTemplateForm: TReqTemplateForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 256
-    Top = 256
+    Left = 208
+    Top = 264
   end
   object dlgColor: TColorDialog
-    Left = 240
-    Top = 208
+    Left = 192
+    Top = 216
+  end
+  object pmSMS: TPopupMenu
+    Left = 536
+    Top = 88
+    object miNN1: TMenuItem
+      Caption = #1053#1086#1084#1077#1088' '#1079#1072#1103#1074#1082#1080' [NN]'
+      Hint = '[NN]'
+      OnClick = miTEXTClick
+    end
+    object miPD1: TMenuItem
+      Caption = #1055#1083#1072#1085#1086#1074#1072#1103' '#1076#1072#1090#1072' [PD]'
+      Hint = '[PD]'
+      OnClick = miTEXTClick
+    end
+    object miTEXT: TMenuItem
+      Caption = #1058#1077#1082#1089#1090' '#1079#1072#1103#1074#1082#1080' [TEXT]'
+      Hint = '[TEXT]'
+      OnClick = miTEXTClick
+    end
   end
 end

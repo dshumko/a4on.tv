@@ -49,9 +49,9 @@ object OrderTPForm: TOrderTPForm
       TabOrder = 1
     end
     object btnOk: TBitBtn
-      Left = 8
+      Left = 7
       Top = 9
-      Width = 665
+      Width = 682
       Height = 26
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akRight, akBottom]

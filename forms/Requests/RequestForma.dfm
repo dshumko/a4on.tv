@@ -446,17 +446,25 @@ object RequestForm: TRequestForm
     OnChanging = PageControlChanging
     object tabRequest: TTabSheet
       Caption = #1055#1088#1080#1077#1084
+      object Splitter: TSplitter
+        Left = 0
+        Top = 112
+        Width = 776
+        Height = 3
+        Cursor = crVSplit
+        Align = alTop
+      end
       object Panel2: TPanel
         Left = 0
-        Top = 118
+        Top = 115
         Width = 776
-        Height = 150
+        Height = 153
         Align = alClient
         BevelOuter = bvNone
-        TabOrder = 2
+        TabOrder = 1
         object Label5: TLabel
           Left = 0
-          Top = 0
+          Top = 29
           Width = 776
           Height = 13
           Align = alTop
@@ -464,9 +472,9 @@ object RequestForm: TRequestForm
         end
         object dbContent: TDBMemoEh
           Left = 0
-          Top = 13
+          Top = 42
           Width = 776
-          Height = 137
+          Height = 111
           ScrollBars = ssVertical
           Align = alClient
           AutoSize = False
@@ -474,22 +482,65 @@ object RequestForm: TRequestForm
           DataSource = srcRequest
           DynProps = <>
           EditButtons = <>
-          TabOrder = 0
+          EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1082' '#1079#1072#1103#1074#1082#1077
+          TabOrder = 1
           Visible = True
           WantReturns = True
         end
+        object pnlAddInfo: TPanel
+          Left = 0
+          Top = 0
+          Width = 776
+          Height = 29
+          Align = alTop
+          BevelOuter = bvNone
+          TabOrder = 0
+          Visible = False
+          DesignSize = (
+            776
+            29)
+          object lbl14: TLabel
+            Left = 4
+            Top = 6
+            Width = 53
+            Height = 13
+            Anchors = [akLeft, akBottom]
+            Caption = #1044#1086#1087'. '#1080#1085#1092#1086
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object cbbAdd: TDBComboBoxEh
+            Left = 96
+            Top = 3
+            Width = 673
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            DataField = 'ADD_INFO'
+            DataSource = srcRequest
+            DynProps = <>
+            DropDownBox.Sizable = True
+            EmptyDataInfo.Text = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1072#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1072' '#1082' '#1079#1072#1087#1086#1083#1085#1077#1085#1080#1102')'
+            EditButtons = <>
+            TabOrder = 0
+            Visible = True
+          end
+        end
       end
-      object Panel11: TPanel
+      object pnlBid: TPanel
         Left = 0
         Top = 0
         Width = 776
-        Height = 89
+        Height = 112
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
           776
-          89)
+          112)
         object Label11: TLabel
           Left = 4
           Top = 6
@@ -527,6 +578,7 @@ object RequestForm: TRequestForm
           DataSource = srcRequest
           DynProps = <>
           EditButtons = <>
+          EmptyDataInfo.Text = #1050#1086#1075#1076#1072' '#1087#1088#1080#1089#1090#1091#1087#1080#1090#1100
           Kind = dtkDateEh
           TabOrder = 0
           Visible = True
@@ -602,14 +654,15 @@ object RequestForm: TRequestForm
           Left = 96
           Top = 55
           Width = 673
-          Height = 32
+          Height = 55
           ScrollBars = ssVertical
-          Anchors = [akLeft, akTop, akRight]
+          Anchors = [akLeft, akTop, akRight, akBottom]
           AutoSize = False
           DataField = 'RQ_CONTENT'
           DataSource = srcRequest
           DynProps = <>
           EditButtons = <>
+          EmptyDataInfo.Text = #1063#1090#1086' '#1085#1077#1086#1073#1093#1086#1076#1080#1084#1086' '#1074#1099#1087#1086#1083#1085#1080#1090#1100
           TabOrder = 6
           Visible = True
           WantReturns = True
@@ -621,7 +674,7 @@ object RequestForm: TRequestForm
         Width = 776
         Height = 41
         Align = alBottom
-        TabOrder = 3
+        TabOrder = 2
         object btnCancel: TButton
           Left = 4
           Top = 9
@@ -630,46 +683,6 @@ object RequestForm: TRequestForm
           Caption = #1054#1090#1084#1077#1085#1080#1090#1100' '#1079#1072#1103#1074#1082#1091
           TabOrder = 0
           OnClick = btnCancelClick
-        end
-      end
-      object pnlAddInfo: TPanel
-        Left = 0
-        Top = 89
-        Width = 776
-        Height = 29
-        Align = alTop
-        BevelOuter = bvNone
-        TabOrder = 1
-        Visible = False
-        DesignSize = (
-          776
-          29)
-        object lbl14: TLabel
-          Left = 4
-          Top = 6
-          Width = 53
-          Height = 13
-          Caption = #1044#1086#1087'. '#1080#1085#1092#1086
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object cbbAdd: TDBComboBoxEh
-          Left = 96
-          Top = 2
-          Width = 673
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          DataField = 'ADD_INFO'
-          DataSource = srcRequest
-          DynProps = <>
-          DropDownBox.Sizable = True
-          EditButtons = <>
-          TabOrder = 0
-          Visible = True
         end
       end
     end
@@ -2055,8 +2068,8 @@ object RequestForm: TRequestForm
   object srcWorks: TDataSource
     AutoEdit = False
     DataSet = dsWorks
-    Left = 374
-    Top = 296
+    Left = 430
+    Top = 344
   end
   object srcMaterials: TDataSource
     AutoEdit = False
@@ -2295,14 +2308,15 @@ object RequestForm: TRequestForm
   end
   object srcMSG: TDataSource
     DataSet = dsMSG
-    Left = 384
-    Top = 472
+    Left = 448
+    Top = 432
   end
   object PropStorageEh: TPropStorageEh
     Section = 'Request'
     StorageManager = dmMain.iniPropStorage
     StoredProps.Strings = (
-      'PageControl.tabExecute.pnlNotice.<P>.Height')
+      'PageControl.tabExecute.pnlNotice.<P>.Height'
+      'PageControl.tabRequest.pnlBid.<P>.Height')
     OnReadProp = PropStorageEhReadProp
     Left = 674
     Top = 152

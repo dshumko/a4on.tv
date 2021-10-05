@@ -419,6 +419,7 @@ object BCIForm: TBCIForm
               FieldName = 'DEFINITION'
               Footers = <>
               Title.Caption = #1063#1077#1090#1082'-'#1090#1100
+              Title.Hint = #1063#1077#1090#1082'-'#1090#1100
               Title.TitleButton = True
               Title.Orientation = tohVertical
               Width = 33
@@ -648,6 +649,7 @@ object BCIForm: TBCIForm
               FieldName = 'DEFINITION'
               Footers = <>
               Title.Caption = #1063#1077#1090#1082'-'#1090#1100
+              Title.Hint = #1063#1077#1090#1082'-'#1090#1100
               Title.TitleButton = True
               Title.Orientation = tohVertical
               Width = 33

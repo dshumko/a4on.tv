@@ -4,7 +4,6 @@ inherited StreetForm: TStreetForm
   Caption = #1059#1083#1080#1094#1099' '#1080' '#1076#1086#1084#1072
   ClientHeight = 565
   ClientWidth = 993
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter [0]
@@ -182,6 +181,7 @@ inherited StreetForm: TStreetForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1050#1074#1072#1088#1090#1080#1088
+          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1082#1074#1072#1088#1090#1080#1088
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 41
@@ -195,6 +195,7 @@ inherited StreetForm: TStreetForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1055#1086#1076#1082#1083'.'
+          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1087#1086#1076#1083#1102#1095#1077#1085#1085#1099#1093' '#1082#1074#1072#1088#1090#1080#1088
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 39
@@ -207,6 +208,7 @@ inherited StreetForm: TStreetForm
           FieldName = 'DISCONNECTED'
           Footers = <>
           Title.Caption = #1054#1090#1082#1083'.'
+          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1086#1090#1082#1083#1102#1095#1077#1085#1085#1099#1093' '#1082#1074#1072#1088#1090#1080#1088
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 34
@@ -221,6 +223,7 @@ inherited StreetForm: TStreetForm
           Footer.ValueType = fvtAvg
           Footers = <>
           Title.Caption = '% '#1087#1086#1076#1082#1083'.'
+          Title.Hint = '% '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 34
@@ -269,6 +272,7 @@ inherited StreetForm: TStreetForm
           FieldName = 'EXIST_TV'
           Footers = <>
           Title.Caption = 'TB'
+          Title.Hint = 'TB'
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 20
@@ -281,6 +285,7 @@ inherited StreetForm: TStreetForm
           FieldName = 'EXIST_LAN'
           Footers = <>
           Title.Caption = #1057#1055#1044
+          Title.Hint = #1057#1055#1044
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 20
@@ -293,6 +298,7 @@ inherited StreetForm: TStreetForm
           FieldName = 'EXIST_DTV'
           Footers = <>
           Title.Caption = #1062'TB'
+          Title.Hint = #1062'TB'
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 20
@@ -607,7 +613,7 @@ inherited StreetForm: TStreetForm
               object Label6: TLabel
                 Left = 0
                 Top = 0
-                Width = 61
+                Width = 297
                 Height = 13
                 Align = alTop
                 Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -1833,10 +1839,10 @@ inherited StreetForm: TStreetForm
       OnClick = tbCancelClick
     end
     inherited ToolButton20: TToolButton
-      Left = 173
+      Left = 150
     end
     inherited btnQuickFilter: TToolButton
-      Left = 150
+      Left = 158
     end
     object ToolButton12: TToolButton
       Left = 181

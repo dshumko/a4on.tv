@@ -83,6 +83,12 @@ type
     miAddPayment: TMenuItem;
     actMakeCopy: TAction;
     miMakeCopy: TMenuItem;
+    actCancel: TAction;
+    miSC: TMenuItem;
+    miCancel: TMenuItem;
+    miMakeCopyMM: TMenuItem;
+    actPrintOrder: TAction;
+    miPrintOrder: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -110,10 +116,13 @@ type
     procedure dbgOrdersTPDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
       var GroupRowText: string);
     procedure FormCreate(Sender: TObject);
-    procedure miN15Click(Sender: TObject);
     procedure actCustomersExecute(Sender: TObject);
     procedure actAddPaymentExecute(Sender: TObject);
     procedure actMakeCopyExecute(Sender: TObject);
+    procedure actPrintOrderExecute(Sender: TObject);
+    procedure actCancelExecute(Sender: TObject);
+    procedure dbgOrdersTPColumns9GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     FFirstOpen: Boolean;
     fStartDate: TDateTime;
@@ -124,6 +133,7 @@ type
     procedure SetOrdersTPFilter;
     procedure PrintOrderReport;
     procedure SetOrderPayDate();
+    procedure CancelOrder();
   public
     procedure FindOrOpenOrder(const OrderID : Integer);
   end;
@@ -136,7 +146,7 @@ procedure ShowOrders(const aOrderID:Integer);
 implementation
 
 uses
-  DM, MAIN, CF, AtrCommon, PeriodForma, AtrStrUtils,
+  DM, MAIN, CF, AtrCommon, PeriodForma, AtrStrUtils, TextEditForma,
   OrderTPForma, ReportPreview, PaymentForma, JsonDataObjects, A4onTypeUnit;
 
 {$R *.dfm}
@@ -145,9 +155,8 @@ procedure ShowOrders(const aOrderID:Integer);
 var
   canView : Boolean;
 begin
-  canView := dmMain.AllowedAction(rght_Dictionary_full);
-  canView := canView or dmMain.AllowedAction(rght_Dictionary_View);
-  canView := canView or dmMain.AllowedAction(rght_OrdersTP_full);
+  canView := dmMain.AllowedAction(rght_OrdersTP_full);
+  canView := canView or dmMain.AllowedAction(rght_OrdersTP_View);
   canView := canView or dmMain.AllowedAction(rght_OrdersTP_add);
   canView := canView or dmMain.AllowedAction(rght_OrdersTP_edit);
   canView := canView or dmMain.AllowedAction(rght_OrdersTP_del);
@@ -370,8 +379,10 @@ begin
 
   vSF := dmMain.AllowedAction(rght_OrdersTP_add); // добавление
   actOTPNew.Visible := (vSF or FullAccess);
-  actOTPEdit.Visible := (vSF or FullAccess);
   actMakeCopy.Visible := (vSF or FullAccess);
+  actOTPEdit.Visible := (dmMain.AllowedAction(rght_OrdersTP_edit) or FullAccess);
+  actCancel.Visible := (dmMain.AllowedAction(rght_OrdersTP_edit) or FullAccess);
+  miSC.Visible := actCancel.Visible;
 
   vSF := dmMain.AllowedAction(rght_OrdersTP_del); // удаление
   actOTPDel.Visible := (vSF or FullAccess);
@@ -400,6 +411,13 @@ procedure TOrdersTPForm.dbgOrdersTPKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
     actOTPEdit.Execute;
+end;
+
+procedure TOrdersTPForm.dbgOrdersTPColumns9GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, '. ', [rfReplaceAll]);
 end;
 
 procedure TOrdersTPForm.dbgOrdersTPDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
@@ -462,6 +480,11 @@ begin
   dsOrdersTP.EnableControls;
 end;
 
+procedure TOrdersTPForm.actPrintOrderExecute(Sender: TObject);
+begin
+  PrintOrderReport;
+end;
+
 procedure TOrdersTPForm.frxDBOrdersTPCheckEOF(Sender: TObject; var Eof: Boolean);
 begin
   if dbgOrdersTP.SelectedRows.Count > 0 then
@@ -485,11 +508,6 @@ begin
       dbgOrdersTP.DataSource.DataSet.Bookmark := dbgOrdersTP.SelectedRows[fSelectedRow];
     inc(fSelectedRow);
   end
-end;
-
-procedure TOrdersTPForm.miN15Click(Sender: TObject);
-begin
-  PrintOrderReport;
 end;
 
 procedure TOrdersTPForm.actAddPaymentExecute(Sender: TObject);
@@ -542,6 +560,11 @@ begin
     dsOrdersTP.Refresh;
   end;
 
+end;
+
+procedure TOrdersTPForm.actCancelExecute(Sender: TObject);
+begin
+  CancelOrder();
 end;
 
 procedure TOrdersTPForm.actCustomersExecute(Sender: TObject);
@@ -781,6 +804,38 @@ begin
     dsOrdersTP.ParamByName('otptype').AsString := 'AND o.Otp_Id = ' + IntToStr(OrderID);
     dsOrdersTP.Open;
   end;
+end;
+
+
+procedure TOrdersTPForm.CancelOrder();
+var
+  fq : TpFIBQuery;
+  RESON : String;
+begin
+  if dsOrdersTP.FieldByName('Otp_Id').IsNull then
+    exit;
+
+  RESON := '';
+  if (not  ShowText(RESON, rsReson, ''))
+  then Exit;
+
+  if (RESON.IsEmpty)
+  then Exit;
+
+  fq := TpFIBQuery.Create(Self);
+  try
+    fq.Database := dmMain.dbTV;
+    fq.Transaction := dmMain.trWriteQ;
+    fq.sql.Text := 'update Orders_Tp set CANCEL_TIME = localtimestamp, CANCEL_RESON = :RESON where Otp_Id = :Otp_Id and CANCEL_TIME is null';
+    fq.ParamByName('Otp_Id').AsInteger := dsOrdersTP['Otp_Id'];
+    fq.ParamByName('RESON').AsString := RESON;
+    fq.Transaction.StartTransaction;
+    fq.ExecQuery;
+    fq.Transaction.Commit;
+  finally
+    fq.Free;
+  end;
+  dsOrdersTP.Refresh;
 end;
 
 end.

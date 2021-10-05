@@ -40,7 +40,7 @@ type
     tabExecute: TTabSheet;
     pnlExecTop: TPanel;
     pnlExecTime: TPanel;
-    Panel11: TPanel;
+    pnlBid: TPanel;
     Label11: TLabel;
     PLANDATE: TDBDateTimeEditEh;
     Label12: TLabel;
@@ -114,9 +114,6 @@ type
     edReceipt: TDBEditEh;
     lbl3: TLabel;
     edExExecutors: TDBEditEh;
-    pnlAddInfo: TPanel;
-    lbl14: TLabel;
-    cbbAdd: TDBComboBoxEh;
     pnlNotice: TPanel;
     Label6: TLabel;
     dbMemDefect: TDBMemoEh;
@@ -186,6 +183,10 @@ type
     actReqDel: TAction;
     miN3: TMenuItem;
     miReqDel: TMenuItem;
+    Splitter: TSplitter;
+    pnlAddInfo: TPanel;
+    lbl14: TLabel;
+    cbbAdd: TDBComboBoxEh;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);

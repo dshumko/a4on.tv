@@ -6,16 +6,18 @@ inherited WorkTeamForm: TWorkTeamForm
   ClientWidth = 697
   Constraints.MinHeight = 244
   Menu = MainMenu1
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter [0]
     Left = 0
-    Top = 270
+    Top = 273
     Width = 697
     Height = 5
     Cursor = crVSplit
     Align = alTop
+  end
+  inherited splPG: TSplitter
+    Width = 697
   end
   inherited dbGrid: TDBGridEh
     Width = 697
@@ -109,20 +111,11 @@ inherited WorkTeamForm: TWorkTeamForm
         Title.Caption = #1052#1072#1089#1090#1077#1088
       end>
   end
-  inherited tlbMain: TToolBar
-    Width = 697
-    inherited tbOk: TToolButton
-      OnClick = tbOkClick
-    end
-    inherited tbCancel: TToolButton
-      OnClick = tbCancelClick
-    end
-  end
   object pgcADD: TPageControl [3]
     Left = 0
-    Top = 275
+    Top = 278
     Width = 697
-    Height = 184
+    Height = 181
     ActivePage = tsTeams
     Align = alClient
     TabOrder = 3
@@ -133,7 +126,7 @@ inherited WorkTeamForm: TWorkTeamForm
         Left = 0
         Top = 0
         Width = 689
-        Height = 156
+        Height = 153
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -141,7 +134,7 @@ inherited WorkTeamForm: TWorkTeamForm
           Left = 0
           Top = 23
           Width = 689
-          Height = 133
+          Height = 130
           Align = alClient
           AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh]
           DataSource = srcWORKGROUPS
@@ -254,7 +247,7 @@ inherited WorkTeamForm: TWorkTeamForm
         Left = 0
         Top = 25
         Width = 689
-        Height = 131
+        Height = 128
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcHouses
@@ -303,6 +296,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1050#1074#1072#1088#1090#1080#1088
+            Title.Hint = #1050#1074#1072#1088#1090#1080#1088
             Title.Orientation = tohVertical
             Width = 33
           end
@@ -315,6 +309,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1055#1086#1076#1082#1083'.'
+            Title.Hint = #1055#1086#1076#1082#1083'.'
             Title.Orientation = tohVertical
             Width = 32
           end
@@ -326,6 +321,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'DISCONNECTED'
             Footers = <>
             Title.Caption = #1054#1090#1082#1083'.'
+            Title.Hint = #1054#1090#1082#1083'.'
             Title.Orientation = tohVertical
             Width = 27
           end
@@ -368,6 +364,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'EXIST_TV'
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|TB'
+            Title.Hint = 'TB'
             Title.Orientation = tohVertical
             Width = 20
           end
@@ -379,6 +376,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'EXIST_LAN'
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|'#1057#1055#1044
+            Title.Hint = #1057#1055#1044
             Title.Orientation = tohVertical
             Width = 23
           end
@@ -390,6 +388,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'EXIST_DTV'
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|'#1062'TB'
+            Title.Hint = #1062'TB'
             Title.Orientation = tohVertical
             Width = 24
           end>
@@ -456,7 +455,7 @@ inherited WorkTeamForm: TWorkTeamForm
         Left = 0
         Top = 23
         Width = 689
-        Height = 133
+        Height = 130
         Align = alClient
         DataSource = srcLimit
         DynProps = <>
@@ -554,6 +553,15 @@ inherited WorkTeamForm: TWorkTeamForm
           Action = actLimitDEl
         end
       end
+    end
+  end
+  inherited tlbMain: TToolBar
+    Width = 697
+    inherited tbOk: TToolButton
+      OnClick = tbOkClick
+    end
+    inherited tbCancel: TToolButton
+      OnClick = tbCancelClick
     end
   end
   inherited pnlEdit: TPanel

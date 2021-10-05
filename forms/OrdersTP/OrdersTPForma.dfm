@@ -2,8 +2,8 @@ object OrdersTPForm: TOrdersTPForm
   Left = 256
   Top = 314
   Caption = #1057#1090#1086#1088#1086#1085#1085#1080#1077' '#1079#1072#1082#1072#1079#1099
-  ClientHeight = 457
-  ClientWidth = 809
+  ClientHeight = 461
+  ClientWidth = 901
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,15 +25,15 @@ object OrdersTPForm: TOrdersTPForm
   object pnlAll: TPanel
     Left = 0
     Top = 0
-    Width = 809
-    Height = 457
+    Width = 901
+    Height = 461
     Align = alClient
     TabOrder = 0
     object dbgOrdersTP: TDBGridEh
       Left = 1
       Top = 30
-      Width = 807
-      Height = 426
+      Width = 899
+      Height = 430
       Align = alClient
       AllowedOperations = []
       AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -160,12 +160,13 @@ object OrdersTPForm: TOrdersTPForm
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
           Title.TitleButton = True
           Width = 133
+          OnGetCellParams = dbgOrdersTPColumns9GetCellParams
         end
         item
           CellButtons = <>
           DynProps = <>
           EditButtons = <>
-          FieldName = 'ADDED_BY'
+          FieldName = 'ADDED_NAME'
           Footers = <>
           Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1090#1086
           Title.TitleButton = True
@@ -183,7 +184,7 @@ object OrdersTPForm: TOrdersTPForm
           CellButtons = <>
           DynProps = <>
           EditButtons = <>
-          FieldName = 'EDIT_BY'
+          FieldName = 'EDIT_NAME'
           Footers = <>
           Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1090#1086
           Title.TitleButton = True
@@ -214,6 +215,22 @@ object OrdersTPForm: TOrdersTPForm
           Footers = <>
           Title.Caption = #1044#1072#1090#1072'|'#1087#1086
           Title.TitleButton = True
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CANCEL_TIME'
+          Footers = <>
+          Title.Caption = #1054#1090#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CANCEL_RESON'
+          Footers = <>
+          Title.Caption = #1054#1090#1084#1077#1085#1077#1085'|'#1055#1088#1080#1095#1080#1085#1072
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -221,7 +238,7 @@ object OrdersTPForm: TOrdersTPForm
     object ToolBar3: TToolBar
       Left = 1
       Top = 1
-      Width = 807
+      Width = 899
       Height = 29
       Caption = 'ToolBar2'
       EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
@@ -460,16 +477,30 @@ object OrdersTPForm: TOrdersTPForm
       Caption = #1057#1076#1077#1083#1072#1090#1100' '#1082#1086#1087#1080#1102' '#1079#1072#1082#1072#1079#1072
       OnExecute = actMakeCopyExecute
     end
+    object actCancel: TAction
+      Caption = #1057#1085#1103#1090#1100' '#1079#1072#1082#1072#1079
+      Hint = #1057#1085#1103#1090#1100'/'#1054#1090#1084#1077#1085#1080#1090#1100' '#1079#1072#1082#1072#1079
+      OnExecute = actCancelExecute
+    end
+    object actPrintOrder: TAction
+      Caption = #1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100' '#1079#1072#1082#1072#1079
+      OnExecute = actPrintOrderExecute
+    end
   end
   object gridPopUp: TPopupMenu
     Left = 132
     Top = 142
     object miN15: TMenuItem
-      Caption = #1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100' '#1079#1072#1082#1072#1079
-      OnClick = miN15Click
+      Action = actPrintOrder
     end
     object miMakeCopy: TMenuItem
       Action = actMakeCopy
+    end
+    object miSC: TMenuItem
+      Caption = '-'
+    end
+    object miCancel: TMenuItem
+      Action = actCancel
     end
     object miN14: TMenuItem
       Caption = '-'
@@ -507,39 +538,21 @@ object OrdersTPForm: TOrdersTPForm
       'end')
     RefreshSQL.Strings = (
       'select'
-      '    O.Otp_Id'
-      '  , O.Ottp_Type'
-      '  , O.Otp_Number'
-      '  , O.Otp_Date'
-      '  , O.Fio'
-      '  , O.Adress'
-      '  , O.Passport'
-      '  , O.Phone'
-      '  , O.Notice'
-      '  , O.Quant'
-      '  , O.Price'
-      '  , O.Amount'
-      '  , O.Pay_Date'
-      '  , O.Customer_Id'
-      '  , O.Date_From'
-      '  , O.Date_To'
-      '  , O.Addons'
+      '    O.*'
       '  , t.O_Name'
       '  , t.O_Charfield'
-      '  , o.Added_On'
-      '  , o.Edit_On'
       '  , coalesce((select first 1'
       '                  w.Surname'
       '                from worker w'
       
         '                where w.Ibname = o.ADDED_BY), o.ADDED_BY) as ADD' +
-        'ED_BY'
+        'ED_NAME'
       '  , coalesce((select first 1'
       '                  w.Surname'
       '                from worker w'
       
         '                where w.Ibname = o.Edit_By), o.Edit_By) as Edit_' +
-        'By'
+        'NAME'
       '  from Orders_Tp O'
       
         '       left outer join Objects t on (o.Ottp_Type = t.O_Id and t.' +
@@ -547,39 +560,21 @@ object OrdersTPForm: TOrdersTPForm
       '  where O.OTP_ID = :OLD_OTP_ID')
     SelectSQL.Strings = (
       'select'
-      '    O.Otp_Id'
-      '  , O.Ottp_Type'
-      '  , O.Otp_Number'
-      '  , O.Otp_Date'
-      '  , O.Fio'
-      '  , O.Adress'
-      '  , O.Passport'
-      '  , O.Phone'
-      '  , O.Notice'
-      '  , O.Quant'
-      '  , O.Price'
-      '  , O.Amount'
-      '  , O.Pay_Date'
-      '  , O.Customer_Id'
-      '  , O.Date_From'
-      '  , O.Date_To'
-      '  , O.Addons'
+      '    O.*'
       '  , t.O_Name'
       '  , t.O_Charfield'
-      '  , o.Added_On'
-      '  , o.Edit_On'
       '  , coalesce((select first 1'
       '                  w.Surname'
       '                from worker w'
       
         '                where w.Ibname = o.ADDED_BY), o.ADDED_BY) as ADD' +
-        'ED_BY'
+        'ED_NAME'
       '  , coalesce((select first 1'
       '                  w.Surname'
       '                from worker w'
       
         '                where w.Ibname = o.Edit_By), o.Edit_By) as Edit_' +
-        'By'
+        'NAME'
       '  from Orders_Tp O'
       
         '       left outer join Objects t on (o.Ottp_Type = t.O_Id and t.' +
@@ -708,11 +703,17 @@ object OrdersTPForm: TOrdersTPForm
       object N7: TMenuItem
         Action = actOTPEdit
       end
+      object miMakeCopyMM: TMenuItem
+        Action = actMakeCopy
+      end
       object N8: TMenuItem
         Caption = '-'
       end
       object N12: TMenuItem
         Action = actPrintDoc
+      end
+      object miPrintOrder: TMenuItem
+        Action = actPrintOrder
       end
       object miN16: TMenuItem
         Caption = '-'

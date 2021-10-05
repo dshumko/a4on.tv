@@ -115,6 +115,7 @@ const
   rght_OrdersTP_edit = 122;
   rght_OrdersTP_del = 123;
   rght_OrdersTP_Today = 124;
+  rght_OrdersTP_View = 125;
 
   rght_Dictionary_View = 5;
   rght_Dictionary_Areas = 141;
@@ -256,6 +257,7 @@ resourcestring
   rsReportNameHint = 'Введите наименование отчета:';
   rsInputFilterName = 'Введите наименование фильтра';
   rsFindHint = 'Введите текст для поиска абонента';
+  rsReson = 'Введите причину отмены';
 
   // rsAaeain3 = 'Баланс ';
 

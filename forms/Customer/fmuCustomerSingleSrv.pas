@@ -201,13 +201,16 @@ end;
 procedure TapgCustomerSingleSrv.dbgSingleServDblClick(Sender: TObject);
 begin
   if dsSingleService.FieldByName('HISTORY_ID').IsNull then
-  Exit;
+    Exit;
   if dsSingleService.FieldByName('NOTICE').IsNull then
-  Exit;
+    Exit;
 
   if dsSingleService.FieldByName('NOTICE').AsString.Contains(rsOrderN) then
-    ShowOrders(dsSingleService['HISTORY_ID']);
-
+  begin
+    if (dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
+      dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_View)) then
+      ShowOrders(dsSingleService['HISTORY_ID']);
+  end;
 end;
 
 end.

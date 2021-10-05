@@ -63,6 +63,8 @@ type
     procedure dbGridDblClick(Sender: TObject);
     procedure dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure FormCreate(Sender: TObject);
+    procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   protected
     { Private declarations }
     FCanEdit: Boolean;
@@ -76,7 +78,7 @@ type
 
 implementation
 
-uses DM, MAIN, AtrStrUtils;
+uses DM, MAIN, AtrStrUtils, fs_iinterpreter;
 
 {$R *.dfm}
 
@@ -114,12 +116,31 @@ end;
 procedure TGridForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
+  v: TfsCustomVariable;
+
 begin
+  if fsGlobalUnit <> nil then
+  begin
+    v := fsGlobalUnit.Find(Self.Name);
+    if v <> nil then
+      fsGlobalUnit.RemoveItems(Self);
+  end;
+
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, True);
   Action := caFree;
+end;
+
+procedure TGridForm.FormCreate(Sender: TObject);
+begin
+  with fsGlobalUnit do
+  begin
+    AddedBy := Self;
+    AddForm(Self);
+    AddedBy := nil;
+  end;
 end;
 
 procedure TGridForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -157,9 +178,9 @@ end;
 
 procedure TGridForm.FormShow(Sender: TObject);
 var
-  i: Integer;
+  i, c: Integer;
   Font_size: Integer;
-  Font_name: string;
+  Font_name, s: string;
   Row_height: Integer;
 begin
   Font_size := 0;
@@ -185,6 +206,13 @@ begin
         (Components[i] as TDBGridEh).Font.Size := Font_size;
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+        begin
+          s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+          if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
+            (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
+            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+        end;
       end;
     end;
   end;
@@ -342,6 +370,12 @@ begin
   end;
 end;
 
+procedure TGridForm.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
+end;
+
 procedure TGridForm.dbGridDblClick(Sender: TObject);
 begin
   if srcDataSource.DataSet.RecordCount > 0 then
@@ -378,7 +412,7 @@ begin
   Result := '';
   for i := 0 to pred(Grid.SortMarkedColumns.Count) do
   begin
-    Result := Result + Grid.SortMarkedColumns[i].fieldname;
+    Result := Result + Grid.SortMarkedColumns[i].FieldName;
     if Grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
       Result := Result + ' desc';
     Result := Result + ','

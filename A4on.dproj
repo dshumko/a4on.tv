@@ -98,8 +98,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.679;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>679</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.680;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>680</VerInfo_Build>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>

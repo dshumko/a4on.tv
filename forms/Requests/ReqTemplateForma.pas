@@ -3,10 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, StdCtrls, FIBDatabase, pFIBDatabase, DB,
-  FIBDataSet, pFIBDataSet, Mask, DBCtrls, DBCtrlsEh, DBLookupEh,
-  FIBQuery, pFIBQuery, DBGridEh, Vcl.Buttons, GridsEh, CnErrorProvider;
+
+  System.SysUtils, System.Variants, System.Classes,
+  VCL.Graphics, VCL.Forms, VCL.DBCtrls, VCL.Menus,
+  VCL.StdCtrls, VCL.Controls, VCL.Mask, Data.DB,
+  VCL.Dialogs, VCL.Buttons, WinAPI.Windows, WinAPI.Messages,
+  OkCancel_frame, CnErrorProvider,
+  FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet,
+  pFIBDataSet, DBGridEh, GridsEh, DBCtrlsEh, DBLookupEh;
 
 type
   TReqTemplateForm = class(TForm)
@@ -25,7 +29,7 @@ type
     dsWorks: TpFIBDataSet;
     srcWorks: TDataSource;
     lbl3: TLabel;
-    mmo1: TDBMemoEh;
+    mmoAddons: TDBMemoEh;
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
     CnErrors: TCnErrorProvider;
@@ -39,6 +43,14 @@ type
     btnClear: TButton;
     btnColor: TBitBtn;
     dlgColor: TColorDialog;
+    mmoCreate: TDBMemoEh;
+    mmoClose: TDBMemoEh;
+    lbl4: TLabel;
+    lbl5: TLabel;
+    pmSMS: TPopupMenu;
+    miNN1: TMenuItem;
+    miPD1: TMenuItem;
+    miTEXT: TMenuItem;
     procedure dsRQTLAfterOpen(DataSet: TDataSet);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);
@@ -48,6 +60,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnColorClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
+    procedure miTEXTClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -78,14 +91,14 @@ begin
       dsRQTL.ParamByName('RQTL_ID').AsInteger := aRQTL_ID;
       dsRQTL.Open;
 
-      mmo1.Lines.Delimiter := ';';
-      mmo1.Lines.Clear;
+      mmoAddons.Lines.Delimiter := ';';
+      mmoAddons.Lines.Clear;
       if aRQTL_ID = -1 then
         dsRQTL.Insert
       else
       begin
         if not dsRQTL.FieldByName('ADD_FIELD').IsNull then
-          mmo1.Lines.DelimitedText := dsRQTL['ADD_FIELD'];
+          mmoAddons.Lines.DelimitedText := dsRQTL['ADD_FIELD'];
       end;
 
       if ShowModal = mrOk then
@@ -95,21 +108,21 @@ begin
           result := dmMain.dbTV.Gen_Id('GEN_OPERATIONS_UID', 1);
           dsRQTL.ParamByName('RQTL_ID').AsInteger := result;
           dsRQTL['RQ_TYPE'] := aRT_ID;
-          if mmo1.Lines.DelimitedText <> '' then
-            dsRQTL['ADD_FIELD'] := mmo1.Lines.DelimitedText;
+          if mmoAddons.Lines.DelimitedText <> '' then
+            dsRQTL['ADD_FIELD'] := mmoAddons.Lines.DelimitedText;
         end
         else
         begin
           if not dsRQTL.FieldByName('ADD_FIELD').IsNull then
-            needAdd := mmo1.Lines.DelimitedText <> dsRQTL['ADD_FIELD']
+            needAdd := mmoAddons.Lines.DelimitedText <> dsRQTL['ADD_FIELD']
           else
-            needAdd := mmo1.Lines.DelimitedText <> '';
+            needAdd := mmoAddons.Lines.DelimitedText <> '';
 
           if needAdd then
           begin
             if not(dsRQTL.State in [dsEdit]) then
               dsRQTL.Edit;
-            dsRQTL['ADD_FIELD'] := mmo1.Lines.DelimitedText;
+            dsRQTL['ADD_FIELD'] := mmoAddons.Lines.DelimitedText;
           end;
         end;
         if dsRQTL.State in [dsEdit, dsInsert] then
@@ -170,6 +183,12 @@ end;
 procedure TReqTemplateForm.FormShow(Sender: TObject);
 begin
   dsTypes.Open;
+end;
+
+procedure TReqTemplateForm.miTEXTClick(Sender: TObject);
+begin
+  if (Sender is TMenuItem) then
+    (ActiveControl as TDBMemoEh).SelText := (Sender as TMenuItem).Hint;
 end;
 
 procedure TReqTemplateForm.btnOkClick(Sender: TObject);

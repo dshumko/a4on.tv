@@ -62,6 +62,7 @@ type
     procedure Start;
     procedure UpdatePage;
     property DataSource: TDataSource read GetDataSource;
+    procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
     class function GetPageName: string; virtual; abstract;
     procedure UpdateObject; virtual;
@@ -191,10 +192,10 @@ end;
 
 procedure TA4onPage.InitControls;
 var
-  i: Integer;
+  i, c: Integer;
   Font_size: Integer;
   Row_height : Integer;
-  Font_name: string;
+  Font_name, s: string;
   ini: string;
   formName : String;
 begin
@@ -226,9 +227,22 @@ begin
         (Components[i] as TDBGridEh).Font.Size := Font_size;
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+        begin
+          s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+          if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
+            (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
+            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+        end;
       end;
     end;
   end;
+end;
+
+procedure TA4onPage.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
 end;
 
 function TA4onPage.GetDataSource: TDataSource;

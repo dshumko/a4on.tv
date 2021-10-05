@@ -2121,13 +2121,12 @@ object CustomersForm: TCustomersForm
   end
   object dsFLAT: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT '
-      '  distinct iif(FLAT_NO<>'#39#39', FLAT_NO, '#39'-'#39') FLAT_NO, FLAT_DIGIT'
-      'FROM'
-      '  CUSTOMER C'
-      'where '
-      '  c.HOUSE_ID = :HOUSE_id'
-      'order by FLAT_NO')
+      'select distinct'
+      '    iif(FLAT_NO <> '#39#39', FLAT_NO, '#39'-'#39') FLAT_NO'
+      '  , FLAT_DIGIT'
+      'from CUSTOMER C'
+      'where c.HOUSE_ID = :HOUSE_id'
+      'order by 1 ')
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcHouse

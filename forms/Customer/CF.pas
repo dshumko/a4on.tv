@@ -278,6 +278,8 @@ type
     procedure actCheckPassportExecute(Sender: TObject);
     procedure actRecAddWAdresExecute(Sender: TObject);
     procedure actOrderTPExecute(Sender: TObject);
+    procedure dbgCustomersColumnsGetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -520,6 +522,13 @@ begin
     SetPageIndex(i);
   end;
 
+end;
+
+procedure TCustomersForm.dbgCustomersColumnsGetCellParams(
+  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
 end;
 
 procedure TCustomersForm.dbgCustomersDblClick(Sender: TObject);
@@ -2184,6 +2193,7 @@ begin
       Title.Caption := rsClmnNotice;
       Title.TitleButton := True;
       Width := 200;
+      OnGetCellParams := dbgCustomersColumnsGetCellParams;
     end;
   if (Mask and clc_DogovorN) <> 0 then
     with dbgCustomers.Columns.Add do
@@ -4531,8 +4541,8 @@ begin
       begin
         s := lcbFLAT.Text;
         if s = '-' then
-          s := '';
-        filter := Format('%s and FLAT_NO = ''%s''', [filter, s]);
+          s := ''' or  FLAT_NO = ''-'; // некоторые операторы вместо пустого номера ставят -
+        filter := Format('%s and (FLAT_NO = ''%s'')', [filter, s]);
       end;
     end
     else

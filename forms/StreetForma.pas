@@ -320,11 +320,15 @@ end;
 procedure TStreetForm.FormShow(Sender: TObject);
 var
   vFINE: Boolean;
+  vHideItog : Boolean;
   i: Integer;
   s: string;
 begin
   inherited;
-  if dmMain.SuperMode = 0 then
+  vHideItog := (dmMain.SuperMode = 0);
+  // or (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Programm_ViewMoney))) ;
+
+  if vHideItog then
   begin
     dbGrid.FooterRowCount := 0;
     dbGrid.SumList.Active := False;

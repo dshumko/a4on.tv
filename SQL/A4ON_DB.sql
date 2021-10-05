@@ -266,22 +266,22 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 50279;
+SET GENERATOR GEN_OPERATIONS_UID TO 50281;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_ORDER_TP TO 4;
+SET GENERATOR GEN_ORDER_TP TO 5;
 
 CREATE GENERATOR GEN_PAYMENT START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_PAYMENT TO 272;
 
 CREATE GENERATOR GEN_QUEUE START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_QUEUE TO 4221;
+SET GENERATOR GEN_QUEUE TO 4225;
 
 CREATE GENERATOR GEN_REPORT_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_REPORT_ID TO 537;
 
 CREATE GENERATOR GEN_REQUEST START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_REQUEST TO 164;
+SET GENERATOR GEN_REQUEST TO 172;
 
 CREATE GENERATOR GEN_TASK START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_TASK TO 74;
@@ -293,7 +293,7 @@ CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 287;
+SET GENERATOR G_LOG_ID TO 288;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -5073,27 +5073,29 @@ CREATE TABLE OPERATION_LOG (
 );
 
 CREATE TABLE ORDERS_TP (
-    OTP_ID       UID,
-    OTTP_TYPE    D_UID_NULL,
-    OTP_NUMBER   D_VARCHAR50,
-    OTP_DATE     D_DATE,
-    FIO          D_VARCHAR255,
-    ADRESS       D_VARCHAR500,
-    PASSPORT     D_VARCHAR500,
-    PHONE        D_VARCHAR50,
-    NOTICE       D_NOTICE,
-    QUANT        D_N15_2,
-    PRICE        D_N15_2,
-    AMOUNT       D_N15_2,
-    PAY_DATE     D_TIMESTAMP,
-    CUSTOMER_ID  D_UID_NULL,
-    DATE_FROM    D_DATE,
-    DATE_TO      D_DATE,
-    ADDONS       D_VARCHAR1000,
-    ADDED_BY     D_VARCHAR50,
-    ADDED_ON     D_DATETIME,
-    EDIT_BY      D_VARCHAR50,
-    EDIT_ON      D_DATETIME
+    OTP_ID        UID,
+    OTTP_TYPE     D_UID_NULL,
+    OTP_NUMBER    D_VARCHAR50,
+    OTP_DATE      D_DATE,
+    FIO           D_VARCHAR255,
+    ADRESS        D_VARCHAR500,
+    PASSPORT      D_VARCHAR500,
+    PHONE         D_VARCHAR50,
+    NOTICE        D_NOTICE,
+    QUANT         D_N15_2,
+    PRICE         D_N15_2,
+    AMOUNT        D_N15_2,
+    PAY_DATE      D_TIMESTAMP,
+    CUSTOMER_ID   D_UID_NULL,
+    DATE_FROM     D_DATE,
+    DATE_TO       D_DATE,
+    ADDONS        D_VARCHAR1000,
+    ADDED_BY      D_VARCHAR50,
+    ADDED_ON      D_DATETIME,
+    EDIT_BY       D_VARCHAR50,
+    EDIT_ON       D_DATETIME,
+    CANCEL_TIME   D_TIMESTAMP,
+    CANCEL_RESON  D_VARCHAR255
 );
 
 CREATE TABLE ORGANIZATION (
@@ -5481,7 +5483,13 @@ CREATE TABLE REQUEST_TEMPLATES (
     NEED_PHOTO     D_IBOOLEAN,
     NEED_NODE_RQ   D_IBOOLEAN,
     RECREATE_DAYS  D_INTEGER,
-    RECREATE_TYPE  D_UID_NULL
+    RECREATE_TYPE  D_UID_NULL,
+    SMS_CREATE     D_VARCHAR255,
+    SMS_CLOSE      D_VARCHAR255,
+    ADDED_BY       D_VARCHAR50,
+    ADDED_ON       D_DATETIME,
+    EDIT_BY        D_VARCHAR50,
+    EDIT_ON        D_DATETIME
 );
 
 CREATE TABLE REQUEST_TYPES (
@@ -9356,12 +9364,45 @@ begin
   values (0, 'ЗАЯВКА', old.RQ_ID);
 end;
 
+CREATE OR ALTER TRIGGER REQUEST_AI FOR REQUEST
+ACTIVE AFTER INSERT POSITION 0
+as
+declare variable SMS varchar(255);
+declare variable PN  varchar(255);
+begin
+  if (not((new.RQ_CUSTOMER is null)
+      or
+      (new.RQTL_ID is null))) then begin
+    select
+        Sms_Create
+      from Request_Templates
+      where Rqtl_Id = new.Rqtl_Id
+    into :SMS;
+    if (coalesce(SMS, '') <> '') then begin
+      select first 1
+          C.CC_VAL_REVERSE
+        from CUSTOMER_CONTACTS C
+        where C.CC_TYPE = 1
+              and C.CUSTOMER_ID = new.RQ_CUSTOMER
+        order by C.CC_NOTIFY desc
+      into :PN;
+      PN = coalesce(reverse(PN), '');
+      if (PN <> '') then begin
+        SMS = replace(SMS, '[NN]', coalesce(new.Rq_Id, ''));
+        SMS = replace(SMS, '[PD]', coalesce(new.Rq_Plan_Date || coalesce(' ' || new.Rq_Time_From || ':' || new.Rq_Time_To, ''), ''));
+        SMS = replace(SMS, '[TEXT]', coalesce(new.RQ_CONTENT, ''));
+        insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_RESULT)
+        values (new.RQ_CUSTOMER, 'SMS', :PN, null, :SMS, 0);
+      end
+    end
+  end
+end;
+
 CREATE OR ALTER TRIGGER REQUEST_AU FOR REQUEST
 ACTIVE AFTER UPDATE POSITION 0
 as
 declare variable NEED_FEE   D_INTEGER;
 declare variable DT         D_DATE;
-
 declare variable Fee_Name   D_Varchar1000;
 declare variable DEM        D_Varchar1000;
 declare variable Units      D_N15_2;
@@ -9713,7 +9754,11 @@ CREATE OR ALTER TRIGGER REQUEST_TEMPLATES_BI FOR REQUEST_TEMPLATES
 ACTIVE BEFORE INSERT POSITION 0
 as
 begin
- if (new.RQTL_ID is null) then new.RQTL_ID = GEN_ID(gen_operations_uid,1);
+  if (new.RQTL_ID is null) then
+    new.RQTL_ID = gen_id(gen_operations_uid, 1);
+
+  new.added_by = current_user;
+  new.added_on = localtimestamp;
 end;
 
 CREATE OR ALTER TRIGGER REQUEST_TEMPLATES_BIU1 FOR REQUEST_TEMPLATES
@@ -9721,11 +9766,17 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 1
 as
 declare variable s D_VARCHAR2000;
 begin
-  if (not NEW.add_field is null)
-  then begin
-    select list(STR,';') from EXPLODE_NO_EMPTY(';', NEW.add_field)
+  if (not new.add_field is null) then begin
+    select
+        list(STR, ';')
+      from EXPLODE_NO_EMPTY(';', new.add_field)
     into :s;
-    NEW.ADD_FIELD = s;
+    new.ADD_FIELD = s;
+  end
+
+  if (updating) then begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
   end
 end;
 
@@ -10648,6 +10699,26 @@ begin
   if (new.Rq_Plan_Date is distinct from old.Rq_Plan_Date) then
     insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
     values ('REQUEST', 0, new.Rq_Id, 'RQ_PLAN_DATE', old.Rq_Plan_Date, new.Rq_Plan_Date);
+
+  if (new.RQ_TYPE is distinct from old.RQ_TYPE) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, new.Rq_Id, 'RQ_TYPE', old.RQ_TYPE, new.RQ_TYPE);
+
+  if (new.RQTL_ID is distinct from old.RQTL_ID) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, new.Rq_Id, 'RQTL_ID', old.RQTL_ID, new.RQTL_ID);
+
+  if (new.RQ_NOTICE is distinct from old.RQ_NOTICE) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, new.Rq_Id, 'RQ_NOTICE', old.RQ_NOTICE, new.RQ_NOTICE);
+
+  if (new.ADD_INFO is distinct from old.ADD_INFO) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, new.Rq_Id, 'ADD_INFO', old.ADD_INFO, new.ADD_INFO);
+
+  if (new.RQ_CONTENT is distinct from old.RQ_CONTENT) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, new.Rq_Id, 'RQ_CONTENT', old.RQ_CONTENT, new.RQ_CONTENT);
 end;
 
 CREATE OR ALTER TRIGGER TV_LAN_AD FOR TV_LAN
@@ -21839,16 +21910,23 @@ declare variable Switch_Date D_Date;
 declare variable Notice      D_Notice;
 declare variable Sw_Res      D_Integer;
 declare variable Srv_Exists  D_Integer;
+declare variable Srv_Sate    D_Integer;
+declare variable Srv_SDate   D_Date;
 begin
   UNITS = 0;
   SW_RES = 2;
   NOTICE = null;
   for select
-          Customer_Id, Srv_From, Switch_Date, Srv_To, Srv_Act
+          Customer_Id
+        , Srv_From
+        , Switch_Date
+        , Srv_To
+        , Srv_Act
         from Queue_Switch_Srv
         where Switch_Date = current_date
               and coalesce(COMPLETED, 0) = 0
-              and ((:FOR_CUSTOMER_ID is null) or (Customer_Id = :FOR_CUSTOMER_ID))
+              and ((:FOR_CUSTOMER_ID is null)
+                or (Customer_Id = :FOR_CUSTOMER_ID))
       into :Customer_Id, :FROM_SRV, :SWITCH_DATE, :TO_SRV, :SWITCH_SRV
   do begin
     if (SWITCH_SRV is null) then begin
@@ -21861,25 +21939,90 @@ begin
       into :SWITCH_SRV;
     end
     if (SWITCH_SRV is not null) then begin
-      execute procedure Onoff_Service_By_Id(:CUSTOMER_ID, :FROM_SRV, :SWITCH_SRV, :SWITCH_DATE, 1, :NOTICE, :UNITS, 0);
-      SRV_EXISTS = null;
+      /* Проверим статус услуги, и если она включена, то переключим иначе - нет */
       select
-          ss.State_Sgn
+          ss.State_Srv
+        , ss.State_Sgn
+        , ss.State_Date
         from Subscr_Serv ss
         where ss.Customer_Id = :Customer_Id
-              and ss.Serv_Id = :To_Srv
-      into :SRV_EXISTS;
+              and ss.Serv_Id = :FROM_SRV
+      into :SRV_EXISTS, :Srv_Sate, :Srv_SDate;
 
-      /* если услуги у абонента нет, то добавим ее иначе просто включим */
-      if (SRV_EXISTS is null) then
-        execute procedure Add_Subscr_Service(:Customer_Id, :To_Srv, :SWITCH_SRV, :SWITCH_DATE, :NOTICE, :UNITS, null, null, 0);
-      else
-        execute procedure Onoff_Service_By_Id(:Customer_Id, :To_Srv, :SWITCH_SRV, :SWITCH_DATE, 0, :NOTICE, :UNITS, 0);
+      Srv_SDate = coalesce(Srv_SDate, current_date);
+      if (Srv_SDate <= current_date) then begin
+        if (Srv_Sate = 1) then begin
+          -- услуга активна, отключим ее
+          execute procedure Onoff_Service_By_Id(:CUSTOMER_ID, :FROM_SRV, :SWITCH_SRV, :SWITCH_DATE, 1, :NOTICE, :UNITS, 0);
+          Srv_Sate = -11; -- просто признак что можно отключать :)
+        end
+        else begin
+          -- Автоблокировка
+          if (SRV_EXISTS = -3) then begin
+            -- сменим автоблокировку на постоянное отключение
+            update SUBSCR_HIST SH
+            set SH.DISACT_SERV_ID = :SWITCH_SRV
+            where SH.Customer_Id = :Customer_Id
+                  and sh.Serv_Id = :FROM_SRV
+                  and SH.DISACT_SERV_ID = -3;
 
-      -- execute procedure FULL_RECALC_CUSTOMER(:CUSTOMER_ID);
+            update Subscr_Serv SS
+            set SS.State_Srv = :SWITCH_SRV
+            where SS.Customer_Id = :Customer_Id
+                  and sS.Serv_Id = :FROM_SRV
+                  and SS.State_Srv = -3;
+            Srv_Sate = -11; -- просто признак что можно отключать :)
+          end
+          else begin
+            if (Srv_Sate = 0) then
+              SW_RES = 3;
+          end
+        end
+      end
+      else begin
+        -- если подключен будущим числом, то отключим сегодняшним
+        if ((Srv_Sate = 1) and (Srv_SDate > current_date)) then begin
+          update SUBSCR_HIST SH
+          set SH.DATE_TO = (current_date - 1),
+              SH.DISACT_SERV_ID = :SWITCH_SRV
+          where SH.Customer_Id = :Customer_Id
+                and sh.Serv_Id = :FROM_SRV
+                and SH.DISACT_SERV_ID = -1;
 
-      SW_RES = 1;
+          update SUBSCR_SERV ss
+          set STATE_SGN = 0,
+              STATE_DATE = current_date,
+              STATE_SRV = :SWITCH_SRV
+          where ss.Customer_Id = :Customer_Id
+                and ss.Serv_Id = :FROM_SRV
+                and ss.STATE_SGN = 1;
+
+          Srv_Sate = -11; -- просто признак что можно отключать :)
+        end
+        else -- нужно подумать что делать, если услуга отключена будущим числом
+          SW_RES = 3; -- услуга отключена
+      end
+
+      if (Srv_Sate = -11) then begin -- если признак не установлен, то не переключаем
+        SRV_EXISTS = null;
+        select
+            ss.State_Sgn
+          from Subscr_Serv ss
+          where ss.Customer_Id = :Customer_Id
+                and ss.Serv_Id = :To_Srv
+        into :SRV_EXISTS;
+
+        /* если услуги у абонента нет, то добавим ее иначе просто включим */
+        if (SRV_EXISTS is null) then
+          execute procedure Add_Subscr_Service(:Customer_Id, :To_Srv, :SWITCH_SRV, :SWITCH_DATE, :NOTICE, :UNITS, null, null, 0);
+        else
+          execute procedure Onoff_Service_By_Id(:Customer_Id, :To_Srv, :SWITCH_SRV, :SWITCH_DATE, 0, :NOTICE, :UNITS, 0);
+
+        -- execute procedure FULL_RECALC_CUSTOMER(:CUSTOMER_ID);
+        SW_RES = 1;
+      end
     end
+
     update Queue_Switch_Srv
     set Completed = :SW_RES
     where Customer_Id = :Customer_Id
@@ -26304,6 +26447,12 @@ COMMENT ON COLUMN ORDERS_TP.DATE_TO IS
 COMMENT ON COLUMN ORDERS_TP.ADDONS IS
 'Храним дополнительные параметры по начислениям заказа';
 
+COMMENT ON COLUMN ORDERS_TP.CANCEL_TIME IS
+'Время отмены';
+
+COMMENT ON COLUMN ORDERS_TP.CANCEL_RESON IS
+'Причина отмены';
+
 COMMENT ON COLUMN PAYMENT.PAYMENT_ID IS
 'ID Платежа';
 
@@ -26538,8 +26687,9 @@ COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_ACT IS
 'какой услугой переключать';
 
 COMMENT ON COLUMN QUEUE_SWITCH_SRV.COMPLETED IS
-'1  - обработан удачно
-2 - обработано с ошибкой';
+'1 - обработан удачно
+2 - обработано с ошибкой
+3 - просрочен или услуга была отключена';
 
 COMMENT ON COLUMN RATES.RDATE IS
 'Дата курса';
@@ -26821,6 +26971,12 @@ COMMENT ON COLUMN REQUEST_TEMPLATES.RECREATE_DAYS IS
 
 COMMENT ON COLUMN REQUEST_TEMPLATES.RECREATE_TYPE IS
 'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CREATE IS
+'Текст SMS абоненту при создании заявки';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CLOSE IS
+'Текст SMS абоненту после закрытия заявки';
 
 COMMENT ON COLUMN REQUEST_TYPES.RT_ID IS
 'код';

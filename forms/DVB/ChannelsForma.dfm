@@ -15,9 +15,12 @@ inherited ChannelsForm: TChannelsForm
     Align = alBottom
     Visible = False
   end
+  inherited splPG: TSplitter
+    Width = 929
+  end
   inherited dbGrid: TDBGridEh
     Width = 929
-    Height = 276
+    Height = 273
     IncludeImageModules = [iimJpegImageModuleEh, iimGIFImageModuleEh, iimPNGImageModuleEh]
     DrawGraphicData = True
     FooterRowCount = 1
@@ -55,6 +58,7 @@ inherited ChannelsForm: TChannelsForm
         FieldName = 'DEFINITION'
         Footers = <>
         Title.Caption = #1063#1077#1090#1082#1086#1089#1090#1100
+        Title.Hint = #1063#1077#1090#1082#1086#1089#1090#1100
         Title.TitleButton = True
         Title.Orientation = tohVertical
         Width = 33
@@ -103,8 +107,10 @@ inherited ChannelsForm: TChannelsForm
         Footer.FieldName = 'IS_CODED'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Caption = #1050#1086#1076#1080'- '#1088#1086#1074#1072#1085
+        Title.Caption = #1050#1086#1076#1080#1088#1086#1074#1072#1085
+        Title.Hint = #1050#1086#1076#1080#1088#1086#1074#1072#1085
         Title.TitleButton = True
+        Title.Orientation = tohVertical
         Width = 36
       end
       item
@@ -341,15 +347,6 @@ inherited ChannelsForm: TChannelsForm
       Action = actShowIssue
     end
   end
-  inherited pnlEdit: TPanel
-    Width = 929
-    inherited btnSaveLink: TBitBtn
-      Width = 497
-    end
-    inherited btnCancelLink: TBitBtn
-      Left = 588
-    end
-  end
   object pnlAddons: TPanel [4]
     Left = 0
     Top = 360
@@ -492,6 +489,15 @@ inherited ChannelsForm: TChannelsForm
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
+    end
+  end
+  inherited pnlEdit: TPanel
+    Width = 929
+    inherited btnSaveLink: TBitBtn
+      Width = 497
+    end
+    inherited btnCancelLink: TBitBtn
+      Left = 588
     end
   end
   inherited srcDataSource: TDataSource

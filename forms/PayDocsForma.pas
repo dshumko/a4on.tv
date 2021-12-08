@@ -95,7 +95,7 @@ type
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure FormCreate(Sender: TObject);
   private
-    FFirstOpen : Boolean; // Первое открытие Формы
+    FFirstOpen: Boolean; // Первое открытие Формы
     fStartDate: TDateTime;
     fEndDate: TDateTime;
     FTodayOnly: Boolean;
@@ -135,7 +135,7 @@ end;
 
 procedure TPayDocsForm.FormCreate(Sender: TObject);
 begin
-  FFirstOpen := True;
+  FFirstOpen := true;
 end;
 
 procedure TPayDocsForm.ppmSaveSelectionClick(Sender: TObject);
@@ -148,25 +148,31 @@ begin
 
   A4MainForm.SaveDialog.FileName := rsPayDocs;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then begin
+    if A4MainForm.SaveDialog.Execute then
+    begin
       case A4MainForm.SaveDialog.FilterIndex of
-        1: begin
+        1:
+          begin
             ExpClass := TDBGridEhExportAsUnicodeText;
             Ext := 'txt';
           end;
-        2: begin
+        2:
+          begin
             ExpClass := TDBGridEhExportAsCSV;
             Ext := 'csv';
           end;
-        3: begin
+        3:
+          begin
             ExpClass := TDBGridEhExportAsHTML;
             Ext := 'htm';
           end;
-        4: begin
+        4:
+          begin
             ExpClass := TDBGridEhExportAsRTF;
             Ext := 'rtf';
           end;
-        5: begin
+        5:
+          begin
             ExpClass := TDBGridEhExportAsOLEXLS;
             Ext := 'xls';
           end;
@@ -174,7 +180,8 @@ begin
         ExpClass := nil;
         Ext := '';
       end;
-      if ExpClass <> nil then begin
+      if ExpClass <> nil then
+      begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
           AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
@@ -199,7 +206,8 @@ var
 
 begin
 
-  if (ActiveControl is TDBGridEh) then begin
+  if (ActiveControl is TDBGridEh) then
+  begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
@@ -214,11 +222,13 @@ procedure TPayDocsForm.actPaySourceFilterExecute(Sender: TObject);
 begin
   actPaySourceFilter.Checked := not actPaySourceFilter.Checked;
   actPaySourceFilter.Checked := actPaySourceFilter.Checked and not VarIsNull(luPayment.KeyValue);
-  if actPaySourceFilter.Checked then begin
+  if actPaySourceFilter.Checked then
+  begin
     actPaySourceFilter.Caption := rsFilterOff;
     actPaySourceFilter.Hint := rsFilterOffCondition;
   end
-  else begin
+  else
+  begin
     actPaySourceFilter.Caption := rsFilterOn;
     actPaySourceFilter.Hint := rsFilterOnCondition;
   end;
@@ -231,7 +241,8 @@ var
 begin
   bDate := fStartDate;
   eDate := fEndDate;
-  if ChangePeriod(bDate, eDate) then begin
+  if ChangePeriod(bDate, eDate) then
+  begin
     fStartDate := bDate;
     fEndDate := eDate;
     dmMain.SetIniValue('PAYDOC_BEGIN', DateToStr(fStartDate));
@@ -249,31 +260,27 @@ end;
 procedure TPayDocsForm.SetPayDocFilter;
 var
   cr: TCursor;
+  ws: string;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   try
+    ws := '';
     dsPayDocs.Close;
-    if not FOnlyTheir then begin
-      dsPayDocs.ParamByName('StartDate').AsDate := fStartDate;
-      dsPayDocs.ParamByName('EndDate').AsDate := fEndDate;
-      Caption := Format(rsPaymentsPeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
 
-      if (actPaySourceFilter.Checked) and (not(VarIsNull(luPayment.KeyValue) or VarIsEmpty(luPayment.KeyValue))) then
-      begin
-        dsPayDocs.ParamByName('source').AsString := 'AND d.paysource_id = ' + VarToStr(luPayment.KeyValue);
-        Caption := Caption + Format(rsPaySource, [luPayment.DisplayTextForPaintCopy]);
-      end
-      else
-        dsPayDocs.ParamByName('source').AsString := ' and 1=1';
-    end
-    else begin
-      dsPayDocs.ParamByName('StartDate').AsDate := Date();
-      dsPayDocs.ParamByName('EndDate').AsDate := Date();
-      dsPayDocs.ParamByName('source').AsString :=
-        ' and exists (select p.Payment_Id from payment p where p.Pay_Doc_Id = d.Pay_Doc_Id and p.Added_By = current_user)';
+    dsPayDocs.ParamByName('StartDate').AsDate := fStartDate;
+    dsPayDocs.ParamByName('EndDate').AsDate := fEndDate;
+    Caption := Format(rsPaymentsPeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
+    if (actPaySourceFilter.Checked) and (not(VarIsNull(luPayment.KeyValue) or VarIsEmpty(luPayment.KeyValue))) then
+    begin
+      ws := 'AND d.paysource_id = ' + VarToStr(luPayment.KeyValue);
+      Caption := Caption + Format(rsPaySource, [luPayment.DisplayTextForPaintCopy]);
     end;
 
+    if ws.IsEmpty then
+      ws := ' and 1=1 ';
+
+    dsPayDocs.ParamByName('source').AsString := ws;
     dsPayDocs.Open;
   finally
     Screen.Cursor := cr;
@@ -287,11 +294,14 @@ var
   Font_size, f: Integer;
   Font_name: string;
 begin
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), f) then begin
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), f) then
+  begin
     Font_size := f;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for f := 0 to ComponentCount - 1 do begin
-      if Components[f] is TDBGridEh then begin
+    for f := 0 to ComponentCount - 1 do
+    begin
+      if Components[f] is TDBGridEh then
+      begin
         (Components[f] as TDBGridEh).Font.Name := Font_name;
         (Components[f] as TDBGridEh).Font.Size := Font_size;
       end;
@@ -320,7 +330,8 @@ begin
 
   GenDocSQL;
 
-  for f := 0 to dbgPayDoc.Columns.Count - 1 do begin
+  for f := 0 to dbgPayDoc.Columns.Count - 1 do
+  begin
     if (AnsiUpperCase(dbgPayDoc.Columns[f].FieldName) = 'FINE_SUM') then
       dbgPayDoc.Columns[f].Visible := FFine;
     if (AnsiUpperCase(dbgPayDoc.Columns[f].FieldName) = 'SUM_INTERED') then
@@ -374,7 +385,8 @@ procedure TPayDocsForm.dbgPayDocGetFooterParams(Sender: TObject; DataCol, Row: I
 var
   i: Integer;
 begin
-  if (DataCol = 1) and (Row = 0) then begin
+  if (DataCol = 1) and (Row = 0) then
+  begin
     i := (Sender as TDBGridEh).SelectedRows.Count;
     if i > 1 then
       Text := IntToStr(i);
@@ -437,7 +449,8 @@ end;
 
 procedure TPayDocsForm.frxDBPayDocsFirst(Sender: TObject);
 begin
-  if dbgPayDoc.SelectedRows.Count > 0 then begin
+  if dbgPayDoc.SelectedRows.Count > 0 then
+  begin
     fSelectedRow := 1;
     dbgPayDoc.DataSource.DataSet.Bookmark := dbgPayDoc.SelectedRows[0];
   end
@@ -445,7 +458,8 @@ end;
 
 procedure TPayDocsForm.frxDBPayDocsNext(Sender: TObject);
 begin
-  if (dbgPayDoc.SelectedRows.Count > 0) then begin
+  if (dbgPayDoc.SelectedRows.Count > 0) then
+  begin
     if fSelectedRow < dbgPayDoc.SelectedRows.Count then
       dbgPayDoc.DataSource.DataSet.Bookmark := dbgPayDoc.SelectedRows[fSelectedRow];
     inc(fSelectedRow);
@@ -475,14 +489,17 @@ begin
   if i > 0 then
     MessageDlg(ms_CANT_DALETE_PAY_DOC, mtWarning, [mbOk], 0)
   else if MessageDlg(Format(ms_DELETE_PAY_DOC, [dsPayDocs.FieldByName('PAY_DOC_NO').AsString,
-    dsPayDocs.FieldByName('PAY_DOC_DATE').AsString]), mtConfirmation, [mbNo, mbYes], 0) = mrYes then begin
+    dsPayDocs.FieldByName('PAY_DOC_DATE').AsString]), mtConfirmation, [mbNo, mbYes], 0) = mrYes then
+  begin
     try
       dsPayDocs.Delete;
     except
-      on E: Exception do begin
+      on E: Exception do
+      begin
         s := '';
         i := Pos('#', E.Message);
-        if (i > 0) then begin
+        if (i > 0) then
+        begin
           j := Pos(' ', E.Message, i + 1);
           s := Copy(E.Message, i + 1, j - i - 1);
         end;
@@ -503,34 +520,35 @@ end;
 
 procedure TPayDocsForm.FormActivate(Sender: TObject);
 var
-  i: integer;
+  i: Integer;
   filter: string;
   inFilter: Boolean;
 begin
-  if FFirstOpen then begin
+  if FFirstOpen then
+  begin
     FFirstOpen := False;
-    Exit;
+    exit;
   end;
 
-  if not((dsPayDocs.Active) and (dsPayDocs.RecordCount > 0) and
-    (not dsPayDocs.FieldByName('PAY_DOC_ID').IsNull)) then
-    dsPayDocs.CloseOpen(True)
-  else begin
+  if not((dsPayDocs.Active) and (dsPayDocs.RecordCount > 0) and (not dsPayDocs.FieldByName('PAY_DOC_ID').IsNull)) then
+    dsPayDocs.CloseOpen(true)
+  else
+  begin
     inFilter := dsPayDocs.Filtered;
     filter := dsPayDocs.filter;
     if (not dsPayDocs.FieldByName('PAY_DOC_ID').IsNull) then
       i := dsPayDocs['PAY_DOC_ID']
-    else i:= -1;
+    else
+      i := -1;
     dsPayDocs.CloseOpen(true);
     if inFilter then
     begin
       dsPayDocs.filter := filter;
       dsPayDocs.Filtered := inFilter;
-      if ((dbgPayDoc.SearchPanel.Visible) and
-        (dbgPayDoc.SearchPanel.SearchingText <> '')) then
+      if ((dbgPayDoc.SearchPanel.Visible) and (dbgPayDoc.SearchPanel.SearchingText <> '')) then
         dbgPayDoc.SearchPanel.ApplySearchFilter;
     end;
-    if i>=0 then
+    if i >= 0 then
       dsPayDocs.Locate('PAY_DOC_ID', i, []);
   end;
 end;
@@ -538,10 +556,11 @@ end;
 procedure TPayDocsForm.GenDocSQL;
 begin
   dsPayDocs.SQLs.SelectSQL.Clear;
-  dsPayDocs.SQLs.SelectSQL.Add
-    ('select D.PAY_DOC_ID, D.PAYSOURCE_ID, D.PAY_DOC_NO, D.PAY_DOC_DATE, D.PAY_DOC_SUM, D.NOTICE, ps.paysource_descr, ps.leak_prc');
+  dsPayDocs.SQLs.SelectSQL.Add('select D.PAY_DOC_ID, D.PAYSOURCE_ID, D.PAY_DOC_NO, D.PAY_DOC_DATE ');
+  dsPayDocs.SQLs.SelectSQL.Add(' , D.PAY_DOC_SUM, d.Added_By , d.Added_On, D.NOTICE, ps.paysource_descr, ps.leak_prc');
 
-  with dsPayDocs.SQLs.SelectSQL do begin
+  with dsPayDocs.SQLs.SelectSQL do
+  begin
     Add(', CNT_PAYS, p.SUM_INTERED, p.FINE_SUM ');
     Add(', p.c_SUM_leak');
     Add(', round(ps.tax_prc * p.c_SUM_leak / 100, 2) as c_SUM_TAX');
@@ -549,11 +568,7 @@ begin
     Add(', (coalesce(D.PAY_DOC_SUM,0) - coalesce(p.SUM_INTERED,0) - coalesce(p.FINE_SUM, 0) ) SUM_DIFFERENCE');
     Add(', (coalesce(p.SUM_INTERED,0) + coalesce(p.FINE_SUM, 0) ) SUM_PAID');
     Add(', (select count(*) from pay_errors pe where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors');
-
     Add('from PAY_DOC D');
-    if (FTodayOnly) then begin
-      Add('inner join (select distinct pt.Pay_Doc_Id from payment pt where pt.Pay_Date = current_date ) tp on (d.Pay_Doc_Id = tp.Pay_Doc_Id)');
-    end;
     Add('left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYSOURCE_ID)');
     Add('left outer join(select p.PAY_DOC_ID, count(*) as CNT_PAYS, sum(p.PAY_SUM) as SUM_INTERED');
     Add(', sum(coalesce(Fine_Sum, 0)) as FINE_SUM ');
@@ -571,6 +586,23 @@ begin
   dsPayDocs.SQLs.RefreshSQL.Add('where D.PAY_DOC_ID = :OLD_PAY_DOC_ID');
 
   dsPayDocs.SQLs.SelectSQL.Add('where d.PAY_DOC_DATE between :StartDate and :EndDate @source');
+
+  if (FTodayOnly) then
+  begin
+    dsPayDocs.SQLs.SelectSQL.Add(' and (exists(select pt.Pay_Doc_Id from payment pt ');
+    dsPayDocs.SQLs.SelectSQL.Add(' where p.Pay_Doc_Id = d.Pay_Doc_Id ');
+    dsPayDocs.SQLs.SelectSQL.Add(' and pt.Pay_Date = current_date and pt.Added_By = current_user) ');
+    dsPayDocs.SQLs.SelectSQL.Add(' or (d.Added_By = current_user and cast(d.Added_on as date) = current_date)) ');
+  end;
+
+  if FOnlyTheir then
+  begin
+    dsPayDocs.SQLs.SelectSQL.Add(' and (exists (select p.Payment_Id from payment p ');
+    dsPayDocs.SQLs.SelectSQL.Add(' where p.Pay_Doc_Id = d.Pay_Doc_Id and p.Added_By = current_user) ');
+    dsPayDocs.SQLs.SelectSQL.Add(' or ( d.Added_By = current_user )) ');
+  end;
+
+  dsPayDocs.SQLs.SelectSQL.Add(' @source ');
   dsPayDocs.SQLs.SelectSQL.Add('order by PAY_DOC_DATE, PAY_DOC_NO');
 end;
 

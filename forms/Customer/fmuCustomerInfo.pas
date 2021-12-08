@@ -9,40 +9,23 @@ uses
   DBGridEh, DBCtrls, DBCtrlsEh, Mask, Buttons, ExtCtrls, DB, FIBDataSet,
   pFIBDataSet, Menus, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh, FIBDatabase,
-  pFIBDatabase, System.Actions, Vcl.ActnList, dnSplitter, CnErrorProvider;
+  pFIBDatabase, System.Actions, Vcl.ActnList, dnSplitter,
+  PropFilerEh, PropStorageEh,
+  // , Langji.Wke.Webbrowser
+  HtmlView, HTMLUn2, FramView, FramBrwz, Vcl.StdActns;
 
 type
   TapgCustomerInfo = class(TA4onPage)
     dsContacts: TpFIBDataSet;
     srcContacts: TDataSource;
-    pnlInfo: TPanel;
-    Label11: TLabel;
-    lblPN: TLabel;
-    Label6: TLabel;
-    Label5: TLabel;
-    Label3: TLabel;
-    lblPREG: TLabel;
-    Label10: TLabel;
-    Label2: TLabel;
-    Label1: TLabel;
-    edtPASSPORT_NUMBER: TDBEditEh;
-    dbeACCOUNT_NO: TDBEditEh;
-    edtPASP_REG: TDBEditEh;
-    DBDateTimeEditCONTRACT_DATE: TDBDateTimeEditEh;
-    DBDateTimeEditEh1: TDBDateTimeEditEh;
-    DBEdit9: TDBEditEh;
-    edFIO: TEdit;
-    edtAddress: TEdit;
-    memState: TDBMemoEh;
     pmRecalc: TPopupMenu;
     N2: TMenuItem;
-    ds: TDataSource;
     pnlAddInfo: TPanel;
     Splitter1: TdnSplitter;
     pnlDP: TPanel;
     sbRecalc: TSpeedButton;
     gbSaldo: TGroupBox;
-    DBTextDebt: TDBText;
+    dbtxtDEBT: TDBText;
     pnlPrepay: TPanel;
     dbtxtPrepay: TDBText;
     pnlContacts: TPanel;
@@ -61,18 +44,23 @@ type
     btnCdel: TSpeedButton;
     lbl2: TLabel;
     btnSaveNotice: TButton;
-    lblBD: TLabel;
-    edBIRTHDAY: TDBDateTimeEditEh;
-    edtBP: TDBEditEh;
-    dnSplitter1: TdnSplitter;
+    dnSplitterHTML: TdnSplitter;
     btnCEdit: TSpeedButton;
     actCAdd: TAction;
     actCEdit: TAction;
     actCDel: TAction;
-    CnErrors: TCnErrorProvider;
-    lblPR: TLabel;
-    edtPASSPORT_REGISTRATION: TDBEditEh;
-    procedure srcCustomerDataChange(Sender: TObject; Field: TField);
+    pmHV: TPopupMenu;
+    miCopy: TMenuItem;
+    dsCustomer: TpFIBDataSet;
+    PropStorageEh: TPropStorageEh;
+    dnSplitterPhone: TdnSplitter;
+    pnlHTML: TPanel;
+    HtmlViewer: THtmlViewer;
+    srcCustomer: TDataSource;
+    pnlACC: TPanel;
+    lblACCNT: TLabel;
+    dbeACCOUNT_NO: TDBEditEh;
+    btnCopy: TButton;
     procedure memCustNoticeExit(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure sbRecalcClick(Sender: TObject);
@@ -80,7 +68,6 @@ type
     procedure dsContactsBeforePost(DataSet: TDataSet);
     procedure dbgrdhContactsExit(Sender: TObject);
     procedure srcContactsUpdateData(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure dbgrdhContactsDblClick(Sender: TObject);
     procedure actMakeCallExecute(Sender: TObject);
     procedure btnSaveNoticeClick(Sender: TObject);
@@ -90,30 +77,47 @@ type
     procedure actCDelExecute(Sender: TObject);
     procedure dbgrdhContactsKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure miCopyClick(Sender: TObject);
+    procedure srcCustomerDataChange(Sender: TObject; Field: TField);
+    procedure HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
-    FSaveNotice: String;
     fVisibleColumns: Integer;
     FCheckPassport: Boolean;
+    FHtmlParams: TStringList;
+    FVisibleSum: Boolean;
+    FAsBalance: Boolean;
+    FVisiblePassport: Boolean;
+    FDec: Integer;
+    FHtml: string;
+    FWkeHtml: Boolean;
+    // FWkeWebbrowser: TWkeWebbrowser;
     procedure RecalcCustomer(const CUSTOMER_ID: Int64);
-    procedure dsCustomers_Refresh;
     procedure SaveContact;
     procedure SaveNotice;
+    procedure GetHtmlParams;
+    procedure MakeHtmlWithParams;
+    procedure infoPanelConfig;
+    procedure HtmlViewConfig;
+    procedure SetSaveBtnVisible;
+    procedure UpdateInfoPanel;
+    function GetParamValue(const param: String): String;
   public
     procedure InitForm; override;
     procedure OpenData; override;
     procedure CloseData; override;
+    procedure UpdateObject; override;
     class function GetPageName: string; override;
   end;
 
 implementation
 
-uses DM, pFIBQuery, Typinfo, MAIN, ContactForma;
+uses System.RegularExpressions, A4onTypeUnit, AtrCommon, DM, pFIBQuery, Typinfo,
+  MAIN, ContactForma;
 
 {$R *.dfm}
-
-const
-  clc_PE = 64; // Подъезд'/'этаж Город
 
 function PropertyExists(aObject: TObject; const aPropertyName: String): Boolean;
 begin
@@ -127,56 +131,56 @@ end;
 
 procedure TapgCustomerInfo.InitForm;
 var
-  vVisibleSum: Boolean;
-  vAsBalance: Boolean;
-  vVisiblePassport: Boolean;
-  vDec: Integer;
   DispNum: string;
   i: Integer;
 begin
+  HtmlViewConfig;
+  infoPanelConfig;
+  GetHtmlParams;
+
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     memCustNotice.Font.Size := i;
     memCustNotice.Font.Name := dmMain.GetIniValue('FONT_NAME');
+    HtmlViewer.DefFontSize := i;
+    HtmlViewer.DefFontName := dmMain.GetIniValue('FONT_NAME');
+    lblACCNT.Font.Size := i;
+    lblACCNT.Font.Name := dmMain.GetIniValue('FONT_NAME');
+    dbeACCOUNT_NO.Font.Name := dmMain.GetIniValue('FONT_NAME');
   end;
 
+  dsCustomer.DataSource := FDataSource;
   dsContacts.DataSource := FDataSource;
-  ds.DataSet := FDataSource.DataSet;
-{$IFNDEF DEMOVERSION}
+  dbeACCOUNT_NO.DataSource := FDataSource;
   if Assigned(FGrid) then
     sbRecalc.PopupMenu := pmRecalc;
-{$ENDIF}
-  {
-    for i := 0 to pnlInfo.ControlCount - 1 do begin
-    if PropertyExists(pnlInfo.Controls[i], 'DataSource')
-    then SetObjectProp(pnlInfo.Controls[i],'DataSource',FDataSource);
-    end;
-  }
-  // actCustomerEdit.Enabled   :=  (ds.RecordCount>0) and actCustomerAdd.Enabled;
-  // actCustomerDelete.Enabled :=  (ds.RecordCount>0) and (dmMain.AllowedAction(rght_Customer_del) or dmMain.AllowedAction(rght_Customer_full));
-  vVisibleSum := (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full));
-  vVisiblePassport := (dmMain.AllowedAction(rght_Customer_add)) or (dmMain.AllowedAction(rght_Customer_edit)) or (dmMain.AllowedAction(rght_Customer_full));
+
+  FVisibleSum := (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full));
+  FVisiblePassport := (dmMain.AllowedAction(rght_Customer_add)) or (dmMain.AllowedAction(rght_Customer_edit)) or
+    (dmMain.AllowedAction(rght_Customer_full));
   // просмотр сумм
-  vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
-  vDec := dmMain.GetSettingsValue('FEE_ROUND');
-  if vDec > 0 then
+  FAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
+  FDec := dmMain.GetSettingsValue('FEE_ROUND');
+  if FDec > 0 then
     DispNum := '#,##0.00'
   else
     DispNum := '#,##0';
 
-  gbSaldo.Visible := vVisibleSum;
-  if vVisibleSum then
+  gbSaldo.Visible := FVisibleSum;
+  if FVisibleSum then
   begin
-    if vAsBalance then
+    dbtxtDEBT.DataSource := FDataSource;
+    dbtxtPrepay.DataSource := FDataSource;
+
+    if FAsBalance then
     begin
       gbSaldo.Caption := rsBALANCE;
-      DBTextDebt.DataField := 'BALANCE';
-      // DBTextDebt.DisplayFormat := DispNum;
+      dbtxtDEBT.DataField := 'BALANCE';
     end
     else
     begin
       gbSaldo.Caption := rsSALDO;
-      DBTextDebt.DataField := 'DEBT_SUM';
+      dbtxtDEBT.DataField := 'DEBT_SUM';
     end;
   end;
 
@@ -185,25 +189,10 @@ begin
     fVisibleColumns := 0;
   end;
 
-  edBIRTHDAY.Visible := vVisiblePassport;
-  edtPASSPORT_REGISTRATION.Visible := vVisiblePassport;
-  edtPASSPORT_NUMBER.Visible := vVisiblePassport;
-  edtPASP_REG.Visible := vVisiblePassport;
-  lblBD.Visible := vVisiblePassport;
-  lblPR.Visible := vVisiblePassport;
-  lblPN.Visible := vVisiblePassport;
-  lblPREG.Visible := vVisiblePassport;
-
-  if not vVisiblePassport then begin
-    memState.Top := edtAddress.Top + edtAddress.Height + 4;
-  end;
-
   sbRecalc.Visible := (dmMain.AllowedAction(rght_Customer_AddSrv)) or (dmMain.AllowedAction(rght_Customer_full));
   dbgrdhContacts.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full));
   memCustNotice.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full));
-{$IFNDEF DEMOVERSION}
   sbRecalc.PopupMenu := pmRecalc;
-{$ENDIF}
 end;
 
 procedure TapgCustomerInfo.memCustNoticeExit(Sender: TObject);
@@ -211,45 +200,67 @@ begin
   SaveNotice;
 end;
 
+procedure TapgCustomerInfo.SetSaveBtnVisible;
+var
+  s: String;
+begin
+  if FDataSource.DataSet.FieldByName('Notice').IsNull then
+    s := ''
+  else
+    s := FDataSource.DataSet.FieldByName('Notice').AsString;
+  btnSaveNotice.Visible := (s <> memCustNotice.Lines.Text);
+end;
+
 procedure TapgCustomerInfo.memCustNoticeKeyPress(Sender: TObject; var Key: Char);
 begin
-  btnSaveNotice.Visible := (FSaveNotice <> memCustNotice.Lines.Text);
+  SetSaveBtnVisible;
+end;
+
+procedure TapgCustomerInfo.miCopyClick(Sender: TObject);
+begin
+  HtmlViewer.CopyToClipboard;
 end;
 
 procedure TapgCustomerInfo.SaveNotice;
+var
+  s: String;
 begin
   if (not FDataSource.DataSet.Active) or (FDataSource.DataSet.RecordCount = 0) then
     exit;
 
-  if FSaveNotice <> memCustNotice.Lines.Text then
+  if FDataSource.DataSet.FieldByName('Notice').IsNull then
+    s := ''
+  else
+    s := FDataSource.DataSet.FieldByName('Notice').AsString;
+
+  if s <> memCustNotice.Lines.Text then
   begin
-    FSaveNotice := memCustNotice.Lines.Text;
+    s := memCustNotice.Lines.Text;
     with TpFIBQuery.Create(Nil) do
+    begin
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
         SQL.Text := 'UPDATE Customer SET Notice = :Notice WHERE (Customer_Id = :Customer_Id)';
-        ParamByName('Notice').AsString := FSaveNotice;
+        ParamByName('Notice').AsString := s;
         ParamByName('Customer_Id').AsInt64 := FDataSource.DataSet['Customer_id'];
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
-        FDataSource.DataSet.Refresh;
+        UpdatePage;
       finally
         Free;
       end;
+    end;
   end;
-  btnSaveNotice.Visible := (FSaveNotice <> memCustNotice.Lines.Text);
+  SetSaveBtnVisible;
 end;
 
 procedure TapgCustomerInfo.N2Click(Sender: TObject);
-{$IFNDEF DEMOVERSION}
 var
   Save_Cursor: TCursor;
   i: Integer;
-{$ENDIF}
 begin
-{$IFNDEF DEMOVERSION}
   Save_Cursor := Screen.Cursor;
   Screen.Cursor := crHourGlass; { Show hourglass cursor }
   try
@@ -276,7 +287,6 @@ begin
   finally
     Screen.Cursor := Save_Cursor; { Always restore to normal }
   end
-{$ENDIF}
 end;
 
 procedure TapgCustomerInfo.RecalcCustomer(const CUSTOMER_ID: Int64);
@@ -290,7 +300,7 @@ begin
       ParamByName('CUST').AsInt64 := CUSTOMER_ID;
       ExecQuery;
       Transaction.Commit;
-      dsCustomers_Refresh;
+      UpdatePage;
     finally
       Free;
     end
@@ -303,16 +313,13 @@ begin
   dsContacts['Cc_Notify'] := 1;
 end;
 
-procedure TapgCustomerInfo.dsCustomers_Refresh;
-begin
-  FDataSource.DataSet.Refresh;
-  FSaveNotice := memCustNotice.Lines.Text;
-end;
-
 procedure TapgCustomerInfo.OpenData;
 begin
-  dsContacts.Open;
-  FSaveNotice := memCustNotice.Lines.Text;
+  if (not dsCustomer.Active) then
+    dsCustomer.Open;
+
+  if (not dsContacts.Active) then
+    dsContacts.Open;
 end;
 
 procedure TapgCustomerInfo.sbRecalcClick(Sender: TObject);
@@ -330,68 +337,6 @@ begin
   end;
   b := b - Now();
   ShowMessage(Format(rsCalculateComplite, [TimeToStr(b)]));
-end;
-
-procedure TapgCustomerInfo.srcCustomerDataChange(Sender: TObject; Field: TField);
-var
-  ds: TDataSet;
-  s: string;
-begin
-  ds := FDataSource.DataSet;
-
-  s := ds.FieldByName('SURNAME').AsString;
-  if not ds.FieldByName('FIRSTNAME').IsNull then
-    s := s + ' ' + ds.FieldByName('FIRSTNAME').AsString;
-  if not ds.FieldByName('MIDLENAME').IsNull then
-    s := s + ' ' + ds.FieldByName('MIDLENAME').AsString;
-  edFIO.Text := s;
-  s := ds.FieldByName('STREET_SHORT').AsString + ' ' + ds.FieldByName('STREET_NAME').AsString + rsHouse +
-    ds.FieldByName('HOUSE_NO').AsString;
-
-  if not ds.FieldByName('Flat_no').IsNull then
-    s := s + rsFlatShort + ds.FieldByName('Flat_no').AsString;
-  if (fVisibleColumns and clc_PE) <> 0 then
-  begin
-    if (ds.FieldDefs.IndexOf('Area_Name') >= 0) and (not ds.FieldByName('Area_Name').IsNull) then
-      s := ds.FieldByName('Area_Name').AsString + ' ' + s;
-  end;
-  edtAddress.Text := s;
-
-  if ds.FieldByName('Notice').IsNull then
-    memCustNotice.Lines.Text := ''
-  else
-    memCustNotice.Lines.Text := ds.FieldByName('Notice').AsString;
-  FSaveNotice := memCustNotice.Lines.Text;
-
-  pnlPrepay.Visible := False;
-  if not ds.FieldByName('PREPAY').IsNull then
-    pnlPrepay.Visible := (ds.FieldByName('PREPAY').AsCurrency > 0);
-
-  if not ds.FieldByName('HIS_COLOR').IsNull then
-    try
-      Self.Color := StringToColor(ds.FieldByName('HIS_COLOR').Value);
-    except
-      Self.Color := clBtnFace
-    end
-  else
-    Self.Color := clBtnFace;
-
-  if FCheckPassport then
-  begin
-    if (not ds.FieldByName('JURIDICAL').IsNull) and (ds['JURIDICAL'] = 0) then
-    begin
-      if (ds.FieldByName('PASSPORT_VALID').IsNull) then
-        CnErrors.Dispose(edtPASSPORT_NUMBER)
-      else if ds['PASSPORT_VALID'] = 0 then
-        CnErrors.SetError(edtPASSPORT_NUMBER, rsPassportNotValid, iaMiddleLeft, bsNeverBlink)
-      else if ds['PASSPORT_VALID'] = -1 then
-        CnErrors.SetError(edtPASSPORT_NUMBER, rsError + '. ' + rsNeedPassportCheck, iaMiddleLeft, bsNeverBlink)
-      else
-        CnErrors.Dispose(edtPASSPORT_NUMBER);
-    end
-    else
-      CnErrors.Dispose(edtPASSPORT_NUMBER);
-  end;
 end;
 
 procedure TapgCustomerInfo.actCAddExecute(Sender: TObject);
@@ -502,7 +447,11 @@ end;
 
 procedure TapgCustomerInfo.CloseData;
 begin
-  dsContacts.Close;
+  if dsCustomer.Active then
+    dsCustomer.Close;
+
+  if dsContacts.Active then
+    dsContacts.Close;
 end;
 
 procedure TapgCustomerInfo.dsContactsBeforePost(DataSet: TDataSet);
@@ -542,7 +491,10 @@ end;
 procedure TapgCustomerInfo.SaveContact;
 begin
   if dsContacts.State in [dsInsert, dsEdit] then
+  begin
     dsContacts.Post;
+    UpdatePage;
+  end;
 end;
 
 procedure TapgCustomerInfo.srcContactsUpdateData(Sender: TObject);
@@ -552,14 +504,282 @@ begin
       dsContacts.Cancel;
 end;
 
-procedure TapgCustomerInfo.FormResize(Sender: TObject);
+procedure TapgCustomerInfo.srcCustomerDataChange(Sender: TObject; Field: TField);
 begin
-  memState.Height := Self.Height - memState.Top - 5;
+  UpdateInfoPanel;
+end;
+
+procedure TapgCustomerInfo.FormCreate(Sender: TObject);
+begin
+  FHtmlParams := TStringList.Create;
+  FHtmlParams.Sorted := true;
+  FHtmlParams.Duplicates := dupIgnore;
+end;
+
+procedure TapgCustomerInfo.FormDestroy(Sender: TObject);
+begin
+  // if Assigned(FWkeWebbrowser) then
+  // FWkeWebbrowser.Free;
+
+  if Assigned(FHtmlParams) then
+    FHtmlParams.Free;
 end;
 
 procedure TapgCustomerInfo.FormShow(Sender: TObject);
 begin
-  FCheckPassport := True; // (dmMain.GetSettingsValue('KEY_MVD') <> '');
+  FCheckPassport := true; // (dmMain.GetSettingsValue('KEY_MVD') <> '');
+end;
+
+procedure TapgCustomerInfo.GetHtmlParams;
+var
+  M: TMatchCollection;
+  i: Integer;
+  s: string;
+begin
+  M := TRegEx.Matches(FHtml, '<!--(.*?)-->', [roMultiLine]); // получаем коллекцию совпадений
+  for i := 0 to M.Count - 1 do
+  begin
+    s := M.Item[i].Groups[1].Value;
+    FHtmlParams.Add(s); // выводим совпадение
+  end;
+end;
+
+procedure TapgCustomerInfo.MakeHtmlWithParams;
+var
+  i: Integer;
+  P, V, s: string;
+  resMemo: string;
+  PASS_STATE: Integer;
+begin
+  resMemo := FHtml;
+  i := FHtmlParams.IndexOf('PASS_STATE');
+  if i >= 0 then
+  begin
+    PASS_STATE := 0;
+    V := '';
+    if FCheckPassport and (not FDataSource.DataSet.FieldByName('JURIDICAL').IsNull) and
+      (FDataSource.DataSet['JURIDICAL'] = 0) then
+    begin
+      if FDataSource.DataSet['PASSPORT_VALID'] = 0 then
+      begin
+        PASS_STATE := 1;
+        V := '<hr>' + rsPassportNotValid + '<hr>';
+      end
+      else if FDataSource.DataSet['PASSPORT_VALID'] = -1 then
+      begin
+        PASS_STATE := 2;
+        V := '<hr>' + rsError + '. ' + rsNeedPassportCheck + '<hr>';
+      end
+
+    end;
+    resMemo := StringReplace(resMemo, '<!--PASS_STATE-->', PASS_STATE.ToString, [rfReplaceAll, rfIgnoreCase]);
+    resMemo := StringReplace(resMemo, '<!--PASS_ERROR-->', V, [rfReplaceAll, rfIgnoreCase]);
+
+  end;
+
+  for i := 0 to FHtmlParams.Count - 1 do
+  begin
+    P := FHtmlParams[i];
+    V := GetParamValue(P);
+
+    if (not FVisiblePassport) and (not V.IsEmpty) then
+    begin
+      s := P.ToUpper;
+      if ((s = 'PASSPORT_NUMBER') or (s = 'PASSPORT_REGISTRATION') or (s = 'BIRTHDAY')) then
+        V := '';
+    end;
+
+    resMemo := StringReplace(resMemo, '<!--' + P + '-->', V, [rfReplaceAll, rfIgnoreCase]);
+  end;
+
+  // if FWkeHtml then
+  // FWkeWebbrowser.LoadHtml(resMemo)
+  // else
+  HtmlViewer.LoadFromString(resMemo);
+end;
+
+procedure TapgCustomerInfo.infoPanelConfig;
+var
+  s, gi: string;
+  a: TArray<string>;
+  allSQL, groupSQL: string;
+begin
+  s := dmMain.GetSettingsValue('INFO_PANEL');
+  s := s + dmMain.GetSettingsValue('INFO_PANEL_1');
+  s := s + dmMain.GetSettingsValue('INFO_PANEL_2');
+  FHtml := s;
+
+  s := dmMain.UserGroups.Trim;
+  if not s.IsEmpty then
+  begin
+    a := s.Split([',']);
+    gi := a[0].Trim;
+    s := dmMain.GetSettingsValue('INFO_PANEL_GR' + gi);
+    s := s + dmMain.GetSettingsValue('INFO_PANEL_GR' + gi + '_1');
+    s := s + dmMain.GetSettingsValue('INFO_PANEL_GR' + gi + '_2');
+    if not s.IsEmpty then
+      FHtml := s;
+  end;
+
+  if FHtml.IsEmpty then
+    FHtml := '<html><head><style>body{font-family:Tahoma;line-height:170%}.pass1{color:blue;}.pass2{color:red;}</style>'
+      + '</head><body>' + // для соохранения форматирования
+      'Договор <strong><!--DOGOVOR_NO--></strong> от <strong><!--CONTRACT_DATE--></strong> Перв. подкл. <strong>' +
+      '<!--ACTIVIZ_DATE--></strong><br>' + // для соохранения форматирования
+      'ФИО <strong><!--SURNAME--> <!--FIRSTNAME--> <!--MIDLENAME--></strong><br>' + // для соохранения форматирования
+      'Адрес <strong><!--STREET_SHORT--> <!--STREET_NAME--> д. <!--HOUSE_NO--> кв. <!--FLAT_NO--></strong><br>' +
+    // для соохранения форматирования
+      '<font class="pass<!--PASS_STATE-->">Паспорт <strong><!--PASSPORT_NUMBER--></strong> выдан <strong>' +
+      '<!--PASSPORT_REGISTRATION--></strong><!--PASS_ERROR--><br></font>' + // для соохранения форматирования
+      'Прописка <strong><!--ADRES_REGISTR--></strong><br>' + // для соохранения форматирования
+      'ДР <strong><!--BIRTHDAY--></strong><br>' + // для соохранения форматирования
+      'Статус <strong><!--CUST_STATE_DESCR--></strong>' + // для соохранения форматирования
+      '</body></html>';
+
+  groupSQL := '';
+  groupSQL := dmMain.UserGroups.Trim;
+  if not groupSQL.IsEmpty then
+  begin
+    a := groupSQL.Split([',']);
+    gi := a[0].Trim;
+    groupSQL := dmMain.GetSettingsValue('INFO_PANEL_SQL_GR' + gi);
+    groupSQL := groupSQL + #13#10 + dmMain.GetSettingsValue('INFO_PANEL_SQL_GR' + gi + '_1');
+    groupSQL := groupSQL + #13#10 + dmMain.GetSettingsValue('INFO_PANEL_SQL_GR' + gi + '_2');
+    groupSQL := groupSQL.Trim;
+  end;
+
+  if groupSQL.IsEmpty then
+  begin
+    allSQL := dmMain.GetSettingsValue('INFO_PANEL_SQL');
+    allSQL := allSQL + #13#10 + dmMain.GetSettingsValue('INFO_PANEL_SQL_1');
+    allSQL := allSQL + #13#10 + dmMain.GetSettingsValue('INFO_PANEL_SQL_2');
+    allSQL := allSQL.Trim;
+  end
+  else
+    allSQL := groupSQL;
+
+  if not allSQL.IsEmpty then
+    dsCustomer.SQLs.SelectSQL.Text := allSQL
+  else
+    dsCustomer.SQLs.SelectSQL.Text := 'SELECT CUSTOMER_ID from customer where CUSTOMER_ID = :CUSTOMER_ID';
+end;
+
+procedure TapgCustomerInfo.HtmlViewConfig;
+begin
+  FWkeHtml := False;
+  {
+    FWkeHtml := FileExists(ExtractFilePath(Application.ExeName) + 'miniblink.dll');
+    if FWkeHtml then
+    begin
+    FWkeWebbrowser := TWkeWebbrowser.Create(Self);
+
+    FWkeWebbrowser.Name := 'WkeWebBrowser';
+    FWkeWebbrowser.Parent := pnlHTML;
+    FWkeWebbrowser.Align := alClient;
+    FWkeWebbrowser.Color := Self.Color;
+    FWkeWebbrowser.Taborder := 0;
+    // fWkeWebbrowser.UserAgent := 'miniblink A4on.TV';
+    // FWkeWebbrowser.CspEnabled := true;
+    FWkeWebbrowser.Headless := False;
+    FWkeWebbrowser.TouchEnabled := False;
+    FWkeWebbrowser.DragEnabled := False;
+    FWkeWebbrowser.LocalStoragePath := GetUserCacheFolder();
+    FWkeWebbrowser.CookiePath := GetUserCacheFolder();
+    FWkeWebbrowser.PopupEnabled := False;
+    FWkeWebbrowser.Visible := true;
+    end;
+    HtmlViewer.Visible := not FWkeHtml;
+  }
+end;
+
+procedure TapgCustomerInfo.HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  Str : WideString;
+begin
+  if (Shift = [ssCtrl]) then
+  begin
+    case Key of
+      67: begin
+        HtmlViewer.CopyToClipboard; // Ctrl+C
+        // далее чистим буфер от лишних данных
+        // так как HtmlViewer помещает в буфер и текст и html
+        Str := GetStringFromClipboard;
+        PutStringIntoClipBoard(Str);
+      end;
+      65:
+        HtmlViewer.SelectAll; // Ctrl+A
+    end;
+  end;
+end;
+
+function TapgCustomerInfo.GetParamValue(const param: String): String;
+var
+  V: string;
+  fld: TField;
+  NeedCHK: Boolean;
+begin
+  V := '';
+  NeedCHK := true;
+  if dsCustomer.Active then
+  begin
+    fld := dsCustomer.FindField(param);
+    if (not(fld = nil)) then
+    begin
+      NeedCHK := False;
+      if not fld.IsNull then
+        V := fld.AsString;
+    end;
+  end;
+
+  if NeedCHK and V.IsEmpty then
+  begin
+    fld := FDataSource.DataSet.FindField(param);
+    if (not(fld = nil)) then
+    begin
+      if not fld.IsNull then
+        V := fld.AsString;
+    end;
+  end;
+
+  Result := V;
+end;
+
+procedure TapgCustomerInfo.UpdateInfoPanel;
+begin
+  if FDataSource.DataSet.FieldByName('Notice').IsNull then
+    memCustNotice.Lines.Text := ''
+  else
+    memCustNotice.Lines.Text := FDataSource.DataSet.FieldByName('Notice').AsString;
+
+  pnlPrepay.Visible := False;
+  if not FDataSource.DataSet.FieldByName('PREPAY').IsNull then
+    pnlPrepay.Visible := (FDataSource.DataSet.FieldByName('PREPAY').AsCurrency <> 0);
+
+  if not FDataSource.DataSet.FieldByName('HIS_COLOR').IsNull then
+    try
+      Self.Color := StringToColor(FDataSource.DataSet.FieldByName('HIS_COLOR').Value);
+    except
+      Self.Color := clBtnFace
+    end
+  else
+    Self.Color := clBtnFace;
+
+  pnlHTML.Color := Self.Color;
+  // if FWkeHtml then
+  // FWkeWebbrowser.Color := Self.Color
+  // else
+
+  MakeHtmlWithParams;
+  HtmlViewer.defBackground := Self.Color;
+end;
+
+procedure TapgCustomerInfo.UpdateObject;
+begin
+  // обновим инфо панель.
+  if dsCustomer.Active then
+    dsCustomer.CloseOpen(true)
+  else
+    UpdateInfoPanel;
 end;
 
 end.

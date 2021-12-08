@@ -118,6 +118,7 @@ object OrderTPForm: TOrderTPForm
         Visible = True
         WantReturns = True
         OnChange = mmoTextChange
+        OnExit = mmoTextExit
       end
       object ednAMOUNT: TDBNumberEditEh
         Left = 64
@@ -342,7 +343,7 @@ object OrderTPForm: TOrderTPForm
         ParentFont = False
       end
       object lcbOTTP_TYPE: TDBLookupComboboxEh
-        Left = 62
+        Left = 64
         Top = 6
         Width = 361
         Height = 22
@@ -650,8 +651,8 @@ object OrderTPForm: TOrderTPForm
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
-    Left = 400
-    Top = 304
+    Left = 344
+    Top = 328
   end
   object pmSpell: TPopupMenu
     Left = 256
@@ -673,83 +674,6 @@ object OrderTPForm: TOrderTPForm
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1086#1088#1092#1086#1075#1088#1072#1092#1080#1080
       OnClick = miN3Click
     end
-  end
-  object AddictSpell: TAddictSpell
-    ConfigStorage = csRegistry
-    ConfigID = '%UserName%'
-    ConfigFilename = '%UserProfile%\Spell.cfg'
-    ConfigRegistryKey = 'Software\Addictive Software\%AppName%'
-    ConfigDictionaryDir.Strings = (
-      '%AppDir%')
-    ConfigAvailableOptions = [soLiveSpelling, soLiveCorrect, soUpcase, soNumbers, soHTML, soInternet, soQuoted, soAbbreviations, soPrimaryOnly, soRepeated, soDUalCaps]
-    ConfigUseMSWordCustom = True
-    ConfigDefaultMain.Strings = (
-      'American.adm')
-    ConfigDefaultCustom.Strings = (
-      'Autocorrect.adu')
-    ConfigDefaultActiveCustomPrevent.Strings = (
-      'autocorrect.adu'
-      'autocorrect-british.adu')
-    ConfigDefaultActiveCustom = 'russian.adu'
-    ConfigDefaultOptions = [soLiveSpelling, soLiveCorrect, soInternet, soAbbreviations, soRepeated, soDUalCaps]
-    ConfigDefaultUseMSWordCustom = False
-    SuggestionsAutoReplace = False
-    SuggestionsLearning = True
-    SuggestionsLearningDict = '%UserProfile%\%UserName%_sp.adl'
-    QuoteChars = '>'
-    DialogInitialPos = ipLastUserPos
-    DialogSelectionAvoid = saAvoid
-    DialogShowImmediate = False
-    DialogShowModal = False
-    EndMessage = emExceptCancel
-    EndCursorPosition = epOriginal
-    EndMessageWordCount = False
-    MaxUndo = -1
-    MaxSuggestions = -1
-    KeepDictionariesActive = False
-    SynchronousCheck = True
-    UseHourglassCursor = True
-    CommandsVisible = [sdcIgnore, sdcIgnoreAll, sdcChange, sdcChangeAll, sdcAdd, sdcAutoCorrect, sdcUndo, sdcHelp, sdcCancel, sdcOptions, sdcCustomDictionary, sdcCustomDictionaries, sdcConfigOK, sdcAddedEdit, sdcAutoCorrectEdit, sdcExcludedEdit, sdcInternalEdit, sdcMainDictFolderBrowse, sdcResetDefaults, sdcConfigCancel, sdcConfigLearningLink, sdcConfigDownloadLink]
-    CommandsEnabled = [sdcIgnore, sdcIgnoreAll, sdcChange, sdcChangeAll, sdcAdd, sdcAutoCorrect, sdcUndo, sdcHelp, sdcCancel, sdcOptions, sdcCustomDictionary, sdcCustomDictionaries, sdcConfigOK, sdcAddedEdit, sdcAutoCorrectEdit, sdcExcludedEdit, sdcInternalEdit, sdcMainDictFolderBrowse, sdcResetDefaults, sdcConfigCancel, sdcConfigLearningLink, sdcConfigDownloadLink]
-    PhoneticSuggestions = True
-    PhoneticMaxDistance = 4
-    PhoneticDivisor = 2
-    PhoneticDepth = 1
-    MappingAutoReplace = True
-    UseExcludeWords = True
-    UseAutoCorrectFirst = False
-    RecheckReplacedWords = True
-    ResumeFromLastPosition = True
-    AllowedCases = cmInitialCapsOrUpcase
-    UILanguage = ltRussian
-    UIType = suiDialog
-    OnShowEndMessage = AddictSpellShowEndMessage
-    UILanguageFontControls.Charset = DEFAULT_CHARSET
-    UILanguageFontControls.Color = clWindowText
-    UILanguageFontControls.Height = -11
-    UILanguageFontControls.Name = 'Tahoma'
-    UILanguageFontControls.Style = []
-    UILanguageFontText.Charset = DEFAULT_CHARSET
-    UILanguageFontText.Color = clWindowText
-    UILanguageFontText.Height = -11
-    UILanguageFontText.Name = 'Tahoma'
-    UILanguageFontText.Style = []
-    UILanguageUseFonts = False
-    ParentFont = False
-    DialogTypeSpelling = sdOffice
-    DialogTypeConfiguration = sdOffice
-    DialogMisspelledWordColor = clRed
-    DialogMisspelledWordStyle = [fsBold]
-    URLDownloadDictionaries = 'http://a4on.tv/'
-    URLEditDictionaries = 'http://a4on.tv/'
-    AggressiveContextMenu = True
-    DoubleBuffered = False
-    TimingWindow = 800
-    TimingBadTimeCount = 2
-    TimingNoActivityRestart = 1600
-    TimingCutoff = 300
-    Left = 360
-    Top = 256
   end
   object srcAddons: TDataSource
     DataSet = mtAddons

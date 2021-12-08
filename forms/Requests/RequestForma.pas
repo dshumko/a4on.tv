@@ -7,9 +7,9 @@ interface
 uses
   Vcl.Menus, System.Classes, System.Actions, Vcl.ActnList,
   Data.DB, FIBDataSet, pFIBDataSet, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
-  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, VCL.Graphics,
+  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, System.SysUtils, System.Variants,
-  VCL.Dialogs, System.UITypes, VCL.dbcgrids, VCL.Grids,
+  Vcl.Dialogs, System.UITypes, Vcl.dbcgrids, Vcl.Grids,
   Winapi.Windows, Winapi.Messages,
 
   frxClass, EhLibFIB, frxDBSet, DM, CustomerInfoFrame,
@@ -36,7 +36,7 @@ type
     tabRequest: TTabSheet;
     Panel2: TPanel;
     Label5: TLabel;
-    dbContent: TDBMemoEh;
+    mmoNotice: TDBMemoEh;
     tabExecute: TTabSheet;
     pnlExecTop: TPanel;
     pnlExecTime: TPanel;
@@ -117,7 +117,7 @@ type
     pnlNotice: TPanel;
     Label6: TLabel;
     dbMemDefect: TDBMemoEh;
-    mmoContetnt: TDBMemoEh;
+    mmoContent: TDBMemoEh;
     btnPrint: TButton;
     actPrint: TAction;
     frxReport: TfrxReport;
@@ -150,12 +150,7 @@ type
     dbgPhotos: TDBGridEh;
     imgJPG: TDBImageEh;
     spl1: TSplitter;
-    tlbFiles: TToolBar;
-    btnAdd: TToolButton;
-    btnDel: TToolButton;
-    btnView: TToolButton;
     actFileAdd: TAction;
-    btn1: TToolButton;
     pmGridMat: TPopupMenu;
     tabComments: TTabSheet;
     miDelMat: TMenuItem;
@@ -172,7 +167,7 @@ type
     dbgMsg: TDBGridEh;
     spl3: TSplitter;
     pnlMSGText: TPanel;
-    dbmText: TDBMemoEh;
+    mmoComment: TDBMemoEh;
     pnlMSGButton: TPanel;
     btnMSGSave: TButton;
     btnMSGCancel: TButton;
@@ -187,6 +182,10 @@ type
     pnlAddInfo: TPanel;
     lbl14: TLabel;
     cbbAdd: TDBComboBoxEh;
+    actFileDel: TAction;
+    Panel1: TPanel;
+    btnFileDel: TSpeedButton;
+    btnFileAdd: TSpeedButton;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -246,11 +245,11 @@ type
     procedure PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
       var Processed: Boolean);
     procedure actReqDelExecute(Sender: TObject);
-    procedure luTypeDropDownBoxGetCellParams(Sender: TObject;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
+    procedure luTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure LupHOUSEChange(Sender: TObject);
     procedure luTypeChange(Sender: TObject);
+    procedure actFileDelExecute(Sender: TObject);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -435,6 +434,21 @@ begin
   end
 end;
 
+procedure TRequestForm.actFileDelExecute(Sender: TObject);
+begin
+  if not(dmMain.AllowedAction(rght_Customer_Files_Add) or dmMain.AllowedAction(rght_Customer_Files_Edit)) then
+    Exit;
+
+  if (dsPhotos.RecordCount = 0) or (dsPhotos.FieldByName('ID').IsNull) then
+    Exit;
+
+  if MessageDlg(Format(ms_DELETE_PAY_DOC, [dsPhotos.FieldByName('NOTICE').AsString,
+    dsPhotos.FieldByName('ADDED_ON').AsString]), mtConfirmation, [mbNo, mbYes], 0) = mrYes then
+  begin
+    dsPhotos.Delete;
+  end;
+end;
+
 procedure TRequestForm.actFindCustomerExecute(Sender: TObject);
 var
   flat, p, f: String;
@@ -532,7 +546,7 @@ begin
     0) = mrNo) then
     Exit;
 
-  dsRequest.Delete;
+  dsRequest.DElete;
   Close;
 end;
 
@@ -624,6 +638,14 @@ procedure TRequestForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 begin
+  if A4MainForm.AddictSpell.tag = 1 then
+  begin
+    A4MainForm.AddictSpell.RemoveControl(mmoNotice);
+    A4MainForm.AddictSpell.RemoveControl(mmoContent);
+    A4MainForm.AddictSpell.RemoveControl(dbMemDefect);
+    A4MainForm.AddictSpell.RemoveControl(mmoComment);
+  end;
+
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
@@ -774,6 +796,14 @@ begin
 
     actReqDel.Visible := (dmMain.AllowedAction(rght_Request_full) or dmMain.AllowedAction(rght_Request_del));
   end;
+
+  if A4MainForm.AddictSpell.tag = 1 then
+  begin
+    A4MainForm.AddictSpell.AddControl(mmoNotice);
+    A4MainForm.AddictSpell.AddControl(mmoContent);
+    A4MainForm.AddictSpell.AddControl(dbMemDefect);
+    A4MainForm.AddictSpell.AddControl(mmoComment);
+  end;
 end;
 
 procedure TRequestForm.luResultChange(Sender: TObject);
@@ -811,12 +841,13 @@ begin
     luType.Color := clWindow;
 end;
 
-procedure TRequestForm.luTypeDropDownBoxGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TRequestForm.luTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
   if (dsRequestType.Active) and (not dsRequestType.FieldByName('COLOR').IsNull) then
-    Background := StringToColor(dsRequestType['COLOR']);
+    Background := StringToColor(dsRequestType['COLOR'])
+  else
+    Background := clWindow;
 end;
 
 procedure TRequestForm.luTypeEnter(Sender: TObject);
@@ -829,7 +860,7 @@ procedure TRequestForm.miDelWorkClick(Sender: TObject);
 begin
   if (actWorks.Enabled) and (dsWorks.RecordCount > 0) then
   begin
-    dsWorks.Delete;
+    dsWorks.DElete;
   end;
 end;
 
@@ -837,7 +868,7 @@ procedure TRequestForm.miDelMatClick(Sender: TObject);
 begin
   if (actMaterials.Enabled) and (dsMaterials.RecordCount > 0) then
   begin
-    dsMaterials.Delete;
+    dsMaterials.DElete;
   end;
 end;
 
@@ -997,7 +1028,7 @@ begin
     if FindCustomer(edLicevoy.Text, '', -1) >= 0 then
     begin
       if tabRequest.Enabled then
-        dbContent.SetFocus;
+        mmoNotice.SetFocus;
     end
     else
       LupStreets.SetFocus;
@@ -1089,7 +1120,7 @@ begin
     if FindCustomer('', edCode.Text, -1) >= 0 then
     begin
       if tabRequest.Enabled then
-        dbContent.SetFocus
+        mmoNotice.SetFocus
     end
     else
       LupStreets.SetFocus;
@@ -1307,7 +1338,7 @@ begin
   varBool := (FCanGive and NotClosed) or FFullAccess;
   pnlGiveTime.Enabled := varBool;
   actExecutors.Enabled := varBool;
-  actSMS.Enabled := (FCanGive and NotClosed) or  varBool;
+  actSMS.Enabled := (FCanGive and NotClosed) or varBool;
   dbgWorkers.ReadOnly := not varBool;
 
   actMaterials.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
@@ -1449,7 +1480,7 @@ begin
   if Application.MessageBox(PWideChar(Format(rsDeleteRecord, [dsMSG.FieldByName('TEXT').AsString])),
     PWideChar(rsWarning), MB_OKCANCEL + MB_ICONQUESTION + MB_DEFBUTTON2) = IDOK then
   begin
-    dsMSG.Delete;
+    dsMSG.DElete;
   end;
 end;
 
@@ -1560,17 +1591,17 @@ end;
 procedure TRequestForm.NewMSG;
 begin
   srcMSG.AutoEdit := true;
-  dbmText.DataField := '';
-  dbmText.DataSource := nil;
+  mmoComment.DataField := '';
+  mmoComment.DataSource := nil;
   pnlMSGButton.Visible := true;
-  dbmText.SetFocus;
+  mmoComment.SetFocus;
 end;
 
 procedure TRequestForm.SaveMSG;
 var
   s: String;
 begin
-  s := Trim(dbmText.Lines.Text);
+  s := Trim(mmoComment.Lines.Text);
   if (not s.IsEmpty) then
   begin
     dsMSG.Insert;
@@ -1585,8 +1616,8 @@ end;
 procedure TRequestForm.CancelMSG;
 begin
   srcMSG.AutoEdit := False;
-  dbmText.DataSource := srcMSG;
-  dbmText.DataField := 'TEXT';
+  mmoComment.DataSource := srcMSG;
+  mmoComment.DataField := 'TEXT';
   pnlMSGButton.Visible := False;
 end;
 

@@ -45,7 +45,8 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, DM, NodesForma, NodeLayouteForma, FIBQuery, pFIBQuery;
+uses
+  MAIN, A4onTypeUnit, AtrCommon, DM, NodesForma, NodeLayouteForma, FIBQuery, pFIBQuery;
 
 class function TapgNodeLayout.GetPageName: string;
 begin
@@ -75,8 +76,7 @@ begin
   dsLayout.Open;
 end;
 
-procedure TapgNodeLayout.srcLayoutDataChange(Sender: TObject;
-  Field: TField);
+procedure TapgNodeLayout.srcLayoutDataChange(Sender: TObject; Field: TField);
 begin
   EnableControls;
 end;

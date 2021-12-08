@@ -523,6 +523,9 @@ begin
   dsNetwork.Open;
   dsTS.Open;
   dsChannels.Open;
+  if not dsNetwork.FieldByName('TIMEOFFSET').IsNull
+  then dsEPG.ParamByName('h_shift').AsInteger := -1 * dsNetwork['TIMEOFFSET']
+  else dsEPG.ParamByName('h_shift').AsInteger := 0;
   dsEPG.Open;
 end;
 

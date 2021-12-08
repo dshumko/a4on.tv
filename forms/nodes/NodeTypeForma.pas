@@ -66,7 +66,7 @@ var
 
 implementation
 
-uses DM, MAIN, NodeLayouteForma;
+uses DM, MAIN, A4onTypeUnit, NodeLayouteForma;
 
 {$R *.dfm}
 

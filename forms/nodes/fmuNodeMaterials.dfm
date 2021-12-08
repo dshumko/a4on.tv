@@ -228,9 +228,9 @@ object apgNodeMaterials: TapgNodeMaterials
       '  , i.Serial'
       '  , m.Dimension'
       '  , i.M_Id'
-      '--  , i.OwnerShip'
       '  , i.Quant'
       '  , i.Notice'
+      '  , '#39'm'#39' ROW_TYPE'
       '  from Inventory i'
       '       inner join materials m on (m.M_Id = i.M_Id)'
       
@@ -238,7 +238,23 @@ object apgNodeMaterials: TapgNodeMaterials
         'ype = 48)'
       '  where i.Owner = :node_id'
       '        and i.OWNER_TYPE = 2'
-      '  order by o.O_Name, m.Name, i.Serial')
+      'union'
+      'select'
+      '  o.o_name'
+      '  ,  E.Name'
+      '  , e.Mac Serial'
+      '  , '#39#39' Dimension'
+      '  , e.Eid M_Id'
+      '  ,  1 Quant'
+      '  , e.Notice'
+      '  , '#39'e'#39' ROW_TYPE'
+      '  from EQUIPMENT E'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      '  where e.Node_Id = :node_id'
+      ''
+      'order by 1,2,3')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV

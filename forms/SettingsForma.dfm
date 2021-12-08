@@ -29,6 +29,12 @@ object SettingsForm: TSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 291
       Top = 9
@@ -46,7 +52,7 @@ object SettingsForm: TSettingsForm
     Top = 0
     Width = 397
     Height = 509
-    ActivePage = tsGlobal
+    ActivePage = tsLAN
     Align = alClient
     MultiLine = True
     TabOrder = 1

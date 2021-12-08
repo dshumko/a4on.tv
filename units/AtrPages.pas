@@ -12,7 +12,6 @@ type
   TA4onPageClass = class of TA4onPage;
 
   { TA4onPages }
-
   TA4onPages = class
   private
     FList: TList;
@@ -30,7 +29,6 @@ type
   end;
 
   { TA4onPageItem }
-
   TA4onPageItem = class
   private
     FOwner: TA4onPages;
@@ -85,7 +83,7 @@ type
 implementation
 
 uses
-  MAIN, DM, ToolCtrlsEh, Vcl.StdCtrls;
+  MAIN, DM, ToolCtrlsEh, VCL.StdCtrls;
 
 { TA4onPages }
 
@@ -194,16 +192,16 @@ procedure TA4onPage.InitControls;
 var
   i, c: Integer;
   Font_size: Integer;
-  Row_height : Integer;
-  Font_name, s: string;
+  Row_height: Integer;
+  Font_name, S: string;
   ini: string;
-  formName : String;
+  formName: String;
 begin
   ini := A4MainForm.GetIniFileName;
   formName := Self.Name;
-  i := Pos('_',  formName );
-  if i>0 then
-     formName := copy(formName, 1, i -1);
+  i := Pos('_', formName);
+  if i > 0 then
+    formName := copy(formName, 1, i - 1);
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -219,21 +217,24 @@ begin
     begin
       (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(ini, formName + '.' + Components[i].Name,
         [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if (Components[i] as TDBGridEh).DataSource.DataSet.Active
-      then (Components[i] as TDBGridEh).DefaultApplySorting;
+      if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
+        (Components[i] as TDBGridEh).DefaultApplySorting;
       if Font_size <> 0 then
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
-        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
-        begin
-          s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
-          if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
-            (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
-            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
-        end;
+      end;
+      for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+      begin
+        S := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+        if (S.Contains('NOTICE') or S.Contains('DESCRIPTION')) and
+          (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
+          (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
     end;
   end;
@@ -296,13 +297,13 @@ procedure TA4onPage.SaveState;
 var
   i: Integer;
   ini: string;
-  formName : String;
+  formName: String;
 begin
   ini := A4MainForm.GetIniFileName;
   formName := Self.Name;
-  i := Pos('_',  formName );
-  if i>0 then
-     formName := copy(formName, 1, i -1);
+  i := Pos('_', formName);
+  if i > 0 then
+    formName := copy(formName, 1, i - 1);
 
   ini := A4MainForm.GetIniFileName;
   for i := 0 to ComponentCount - 1 do
@@ -327,19 +328,20 @@ end;
 
 function TA4onPage.GetOrderClause(grid: TDBGridEh): string;
 var
-  s: string;
+  S: string;
   i, J: Integer;
 begin
   J := grid.SortMarkedColumns.Count;
-  s := '';
-  for i := 0 to pred(J) do begin
-    s := s + grid.SortMarkedColumns[i].FieldName;
+  S := '';
+  for i := 0 to pred(J) do
+  begin
+    S := S + grid.SortMarkedColumns[i].FieldName;
     if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
-      s := s + ' desc';
+      S := S + ' desc';
     if i <> pred(J) then
-      s := s + ', ';
+      S := S + ', ';
   end;
-  Result := s;
+  Result := S;
 end;
 
 end.

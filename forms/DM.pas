@@ -78,12 +78,14 @@ type
     procedure frxAddFunctions(Report: TfrxReport);
     procedure DataModuleCreate(Sender: TObject);
     procedure frxDesignerShow(Sender: TObject);
+    procedure dbTVAfterConnect(Sender: TObject);
   private
     { Private declarations }
     fLicRec: Integer;
     fSuperMode: Integer;
     // режим отображения абонентов -1 - режим отключен 0 - все 1 - скрыть абонентов
     FRightsList: TStringList;
+    FUserGroups: TStringList;
     FSettingsList: TStringList;
     FA4onList: TStringList;
     fCurrentMonth: TDateTime;
@@ -106,6 +108,7 @@ type
     function GetServer: String;
     function GetDatabase: String;
     function GetUser: String;
+    function GetUserGroups: String;
     function GetPassword: String;
     function GetCashBoxPSWD: String;
     function GetClientLib: String;
@@ -115,6 +118,7 @@ type
     procedure CreateKL;
     function FindCustomerSQL(const SQL: string; const NODE_SQL: string = ' 1=2 '): TCustomerInfo;
     function GetCompanyCountry: String;
+    procedure CheckFirebirdVersion;
   public
     { Public declarations }
     frxChartObject1: TfrxChartObject;
@@ -150,6 +154,7 @@ type
     property DBAlias: string read FDBAlias write FDBAlias;
     property Database: string read GetDatabase;
     property User: string read GetUser;
+    property UserGroups: string read GetUserGroups;
     property UserFio: string read FUserFIO;
     property Password: string read GetPassword;
     property CashBoxPSWD: string read GetCashBoxPSWD;
@@ -636,6 +641,33 @@ begin
     end;
   end;
 
+  FUserGroups.Clear;
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dbTV;
+      Transaction := trReadQ;
+      SQL.Clear;
+      SQL.Add('select distinct coalesce(ug.group_id, -999) group_id                 ');
+      SQL.Add('  from sys$user u                                                    ');
+      SQL.Add('       inner join sys$user_groups ug on (u.id = ug.user_id)          ');
+      SQL.Add('       inner join sys$group g on (ug.group_id = g.id)                ');
+      SQL.Add('  where (g.lockedout = 0)                                            ');
+      SQL.Add('        and u.ibname = current_user                                  ');
+      Transaction.StartTransaction;
+      ExecQuery;
+      while not Eof do
+      begin
+        FUserGroups.Add(FieldByName('group_id').Value);
+        Next;
+      end;
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
+
   if FNeedDelExport then
   begin
     frxTXTExport := TfrxTXTExport.Create(self);
@@ -738,6 +770,7 @@ end;
 function TdmMain.GetSettingsValue(const aSettingName: string): Variant;
 var
   v: Variant;
+  s: string;
 begin
   if (FA4onList.Count = 0) or (aSettingName = 'ReloadSettingsFromDB') then
   begin
@@ -746,9 +779,14 @@ begin
     FA4onList.Clear;
     while not dsSettings.Eof do
     begin
+      s := '';
+      if (not dsSettings.FieldByName('VAR_VALUE').IsNull) then
+        s := dsSettings['VAR_VALUE'];
+
       if dsSettings['VAR_NAME'] = 'STRICT_MODE' then
-        FInStrictMode := (dsSettings['VAR_VALUE'] = '1');
-      FA4onList.Values[dsSettings['VAR_NAME']] := dsSettings['VAR_VALUE'];
+        FInStrictMode := (s = '1');
+
+      FA4onList.Values[dsSettings['VAR_NAME']] := s;
       dsSettings.Next;
     end;
     dsSettings.Close;
@@ -860,6 +898,9 @@ begin
   FRightsList := TStringList.Create;
   FRightsList.Sorted := true;
   FRightsList.Duplicates := dupIgnore;
+  FUserGroups := TStringList.Create;
+  FUserGroups.Sorted := true;
+  FUserGroups.Duplicates := dupIgnore;
   FSettingsList := TStringList.Create;
   FA4onList := TStringList.Create;
   dbTV.RegisterBlobFilter(-15, @PackBuffer, @UnpackBuffer);
@@ -920,6 +961,7 @@ begin
     FreeAndNil(FKeyboradLocalesList);
 
   FRightsList.Free;
+  FUserGroups.Free;
   FSettingsList.Free;
   FA4onList.Free;
   fTelNetAnswer.Free;
@@ -979,6 +1021,11 @@ begin
   end;
   mdsCompany.Post;
   aDS.EnableControls;
+end;
+
+procedure TdmMain.dbTVAfterConnect(Sender: TObject);
+begin
+  CheckFirebirdVersion;
 end;
 
 procedure TdmMain.dbTVAfterDisconnect(Sender: TObject);
@@ -1114,6 +1161,11 @@ end;
 function TdmMain.GetUser: String;
 begin
   Result := dbTV.ConnectParams.UserName;
+end;
+
+function TdmMain.GetUserGroups: String;
+begin
+  Result := FUserGroups.text;
 end;
 
 function TdmMain.GetPassword: String;
@@ -1879,7 +1931,7 @@ end;
 
 function TdmMain.GetServerDateTime: TDateTime;
 begin
-  qRead.SQL.Text := 'select localtimestamp CD from rdb$database';
+  qRead.SQL.text := 'select localtimestamp CD from rdb$database';
   qRead.Transaction.StartTransaction;
   qRead.ExecQuery;
   Result := qRead.FN('CD').AsDateTime;
@@ -2062,6 +2114,17 @@ begin
 
   TfrxDesignerForm(Sender).SaveAsMI.Visible := False;
   TfrxDesignerForm(Sender).SaveAsCmd.Visible := False;
+end;
+
+procedure TdmMain.CheckFirebirdVersion;
+begin
+  if (not dbTV.Version.Contains(' 4.')) then
+    exit;
+
+  dbTV.Execute('SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;');
+  dbTV.Execute('SET BIND OF TIME WITH TIME ZONE TO LEGACY;');
+  dbTV.Execute('SET BIND OF DECFLOAT TO LEGACY;');
+  dbTV.Execute('SET BIND OF NUMERIC(38) TO LEGACY;');
 end;
 
 end.

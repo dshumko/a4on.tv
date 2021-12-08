@@ -344,8 +344,8 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     AutoCommit = True
-    Left = 70
-    Top = 74
+    Left = 78
+    Top = 66
     WaitEndMasterScroll = True
     dcForceMasterRefresh = True
   end
@@ -353,8 +353,8 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     AutoEdit = False
     DataSet = dsSingleService
     OnDataChange = srcSingleSerivceDataChange
-    Left = 205
-    Top = 61
+    Left = 173
+    Top = 69
   end
   object ActListCustomers: TActionList
     Images = A4MainForm.ICONS_ACTIVE
@@ -390,7 +390,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 216
+    Left = 560
     Top = 58
   end
   object trRead: TpFIBTransaction
@@ -402,7 +402,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 172
+    Left = 620
     Top = 58
   end
 end

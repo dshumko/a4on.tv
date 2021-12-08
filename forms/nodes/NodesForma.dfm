@@ -129,6 +129,7 @@ object NodesForm: TNodesForm
     OnGetCellParams = dbgNodesGetCellParams
     OnGetFooterParams = dbgNodesGetFooterParams
     OnSortMarkingChanged = dbgNodesSortMarkingChanged
+    OnSelectedRowsItemChanged = dbgNodesSelectedRowsItemChanged
     Columns = <
       item
         CellButtons = <>
@@ -1142,6 +1143,10 @@ object NodesForm: TNodesForm
       ShortCut = 121
       OnExecute = actTaskExecute
     end
+    object actLinkNodes: TAction
+      Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080
+      OnExecute = actLinkNodesExecute
+    end
   end
   object mmMenu: TMainMenu
     Left = 840
@@ -1164,6 +1169,12 @@ object NodesForm: TNodesForm
       object N33: TMenuItem
         Caption = #1055#1086#1080#1089#1082
         ImageIndex = 7
+      end
+      object miN2: TMenuItem
+        Caption = '-'
+      end
+      object miLinkNodes: TMenuItem
+        Action = actLinkNodes
       end
       object N48: TMenuItem
         Caption = '-'
@@ -1243,6 +1254,9 @@ object NodesForm: TNodesForm
       Caption = #1047#1072#1103#1074#1082#1080
       OnClick = N10Click
     end
+    object miLinkNodes1: TMenuItem
+      Action = actLinkNodes
+    end
     object mniN28: TMenuItem
       Caption = '-'
     end
@@ -1314,6 +1328,7 @@ object NodesForm: TNodesForm
   end
   object dsFilter: TMemTableEh
     Params = <>
+    OnNewRecord = dsFilterNewRecord
     Left = 27
     Top = 355
     object MemTableData: TMemTableDataEh

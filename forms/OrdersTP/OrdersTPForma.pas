@@ -36,18 +36,11 @@ type
     ToolButton14: TToolButton;
     ToolButton6: TToolButton;
     ToolButton16: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton3: TToolButton;
     ToolButton5: TToolButton;
     ToolButton1: TToolButton;
-    Panel4: TPanel;
-    luOTPType: TDBLookupComboboxEh;
     ToolButton20: TToolButton;
-    ToolButton7: TToolButton;
+    btnSetFilter: TToolButton;
     ToolButton27: TToolButton;
-    dsOTPTypes: TpFIBDataSet;
-    srcOTPTypes: TDataSource;
-    pmPeriod: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
@@ -64,7 +57,6 @@ type
     N11: TMenuItem;
     N12: TMenuItem;
     N15: TMenuItem;
-    chkGroup: TCheckBox;
     btn1: TToolButton;
     actGroup: TAction;
     N13: TMenuItem;
@@ -77,7 +69,6 @@ type
     actCustomers: TAction;
     actAddPayment: TAction;
     btnAddPayment: TToolButton;
-    btn2: TToolButton;
     miN16: TMenuItem;
     miCustomers: TMenuItem;
     miAddPayment: TMenuItem;
@@ -89,11 +80,20 @@ type
     miMakeCopyMM: TMenuItem;
     actPrintOrder: TAction;
     miPrintOrder: TMenuItem;
+    ToolButton3: TToolButton;
+    chkTREE: TCheckBox;
+    pmFilter: TPopupMenu;
+    miEnableFilter: TMenuItem;
+    N42: TMenuItem;
+    N36: TMenuItem;
+    dsFilter: TMemTableEh;
+    miN17: TMenuItem;
+    actEnableFilter: TAction;
+    actSetNewFilterNew: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
     procedure ppmCopyClick(Sender: TObject);
-    procedure actOTPFilterExecute(Sender: TObject);
     procedure actOTPSetPeriodExecute(Sender: TObject);
     procedure actQuickFilterExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -101,7 +101,6 @@ type
     procedure N2Click(Sender: TObject);
     procedure dbgOrdersTPDblClick(Sender: TObject);
     procedure actOTPEditExecute(Sender: TObject);
-    procedure bbDownClick(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure actPrintDocExecute(Sender: TObject);
@@ -121,8 +120,11 @@ type
     procedure actMakeCopyExecute(Sender: TObject);
     procedure actPrintOrderExecute(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
-    procedure dbgOrdersTPColumns9GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgOrdersTPColumns9GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure actEnableFilterExecute(Sender: TObject);
+    procedure dsFilterNewRecord(DataSet: TDataSet);
+    procedure actSetFilterExecute(Sender: TObject);
+    procedure miSetNewFilterNewClick(Sender: TObject);
   private
     FFirstOpen: Boolean;
     fStartDate: TDateTime;
@@ -134,26 +136,27 @@ type
     procedure PrintOrderReport;
     procedure SetOrderPayDate();
     procedure CancelOrder();
+    function GenerateFilter: string;
   public
-    procedure FindOrOpenOrder(const OrderID : Integer);
+    procedure FindOrOpenOrder(const OrderID: Integer);
   end;
 
 var
   OrdersTPForm: TOrdersTPForm;
 
-procedure ShowOrders(const aOrderID:Integer);
+procedure ShowOrders(const aOrderID: Integer);
 
 implementation
 
 uses
   DM, MAIN, CF, AtrCommon, PeriodForma, AtrStrUtils, TextEditForma,
-  OrderTPForma, ReportPreview, PaymentForma, JsonDataObjects, A4onTypeUnit;
+  OrderTPForma, ReportPreview, PaymentForma, JsonDataObjects, A4onTypeUnit, OrdersTPFilter;
 
 {$R *.dfm}
 
-procedure ShowOrders(const aOrderID:Integer);
+procedure ShowOrders(const aOrderID: Integer);
 var
-  canView : Boolean;
+  canView: Boolean;
 begin
   canView := dmMain.AllowedAction(rght_OrdersTP_full);
   canView := canView or dmMain.AllowedAction(rght_OrdersTP_View);
@@ -161,8 +164,8 @@ begin
   canView := canView or dmMain.AllowedAction(rght_OrdersTP_edit);
   canView := canView or dmMain.AllowedAction(rght_OrdersTP_del);
 
-  if not canView
-  then Exit;
+  if not canView then
+    Exit;
 
   if Not Assigned(OrdersTPForm) then
     OrdersTPForm := TOrdersTPForm.Create(Application);
@@ -180,6 +183,9 @@ begin
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, True);
 
+  if dsFilter.Active then
+    dsFilter.Close;
+
   if srcOrdersTP.DataSet.Active then
     srcOrdersTP.DataSet.Close;
   OrdersTPForm := nil;
@@ -188,7 +194,7 @@ end;
 
 procedure TOrdersTPForm.FormCreate(Sender: TObject);
 begin
-  FFirstOpen := true;
+  FFirstOpen := True;
 end;
 
 procedure TOrdersTPForm.ppmSaveSelectionClick(Sender: TObject);
@@ -270,23 +276,6 @@ begin
 
 end;
 
-procedure TOrdersTPForm.actOTPFilterExecute(Sender: TObject);
-begin
-  actOTPFilter.Checked := not actOTPFilter.Checked;
-  actOTPFilter.Checked := actOTPFilter.Checked and (not VarIsNull(luOTPType.KeyValue));
-  if actOTPFilter.Checked then
-  begin
-    actOTPFilter.Caption := rsFilterOff;
-    actOTPFilter.Hint := rsFilterOffCondition;
-  end
-  else
-  begin
-    actOTPFilter.Caption := rsFilterOn;
-    actOTPFilter.Hint := rsFilterOnCondition;
-  end;
-  SetOrdersTPFilter;
-end;
-
 procedure TOrdersTPForm.actOTPSetPeriodExecute(Sender: TObject);
 var
   bDate, eDate: TDateTime;
@@ -307,28 +296,58 @@ begin
   dbgOrdersTP.STFilter.Visible := actQuickFilter.Checked;
 end;
 
-procedure TOrdersTPForm.SetOrdersTPFilter;
+procedure TOrdersTPForm.actSetFilterExecute(Sender: TObject);
+var
+  filter: string;
 begin
-  dsOrdersTP.Close;
-  if FViewTodayOnly
-  then begin
-    fStartDate := dmMain.GetServerDateTime;
-    fEndDate := fStartDate;
+  if not(srcOrdersTP.DataSet is TpFIBDataSet) then
+    Exit;
+
+  filter := '';
+  if not dsFilter.Active then
+    dsFilter.Open;
+
+  with TOrdersTPFilterForm.Create(Application) do
+    try
+      if ShowModal = mrOk then
+      begin
+        actEnableFilter.Checked := True;
+        filter := GenerateFilter;
+      end;
+    finally
+      Free;
+    end;
+
+  if (dsOrdersTP.Filtered) then
+  begin
+    dsOrdersTP.filter := '';
+    dsOrdersTP.Filtered := False;
   end;
 
-  dsOrdersTP.ParamByName('StartDate').AsDate := fStartDate;
-  dsOrdersTP.ParamByName('EndDate').AsDate := fEndDate;
-
-  Caption := Format(rsOrdersPeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
-  if actOTPFilter.Checked then
+  if filter <> '' then
   begin
-    dsOrdersTP.ParamByName('otptype').AsString := 'AND o.Ottp_Type = ' + VarToStr(luOTPType.KeyValue);
-    Caption := Caption + rsTypeW + luOTPType.DisplayTextForPaintCopy;
-  end
-  else
-    dsOrdersTP.ParamByName('otptype').AsString := '';
-  dsOrdersTP.Open;
+    dsOrdersTP.Close;
+    dsOrdersTP.ParamByName('Filter').Value := filter;
+    dsOrdersTP.CloseOpen(True);
+  end;
+end;
 
+procedure TOrdersTPForm.SetOrdersTPFilter;
+var
+  s: string;
+begin
+  if not dsFilter.Active then
+    dsFilter.Open;
+  dsFilter.EmptyTable;
+  dsFilter.Insert;
+  dsFilter['DT'] := 0;
+  dsFilter['DS'] := fStartDate;
+  dsFilter['DE'] := fEndDate;
+  dsFilter.Post;
+  actEnableFilter.Checked := True;
+  s := GenerateFilter;
+  dsOrdersTP.ParamByName('Filter').Value := s;
+  dsOrdersTP.CloseOpen(True);
 end;
 
 procedure TOrdersTPForm.FormShow(Sender: TObject);
@@ -361,6 +380,9 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
@@ -375,7 +397,6 @@ begin
   fStartDate := MonthFirstDay(dmMain.CurrentMonth);
 
   SetOrdersTPFilter;
-  dsOTPTypes.Open;
 
   vSF := dmMain.AllowedAction(rght_OrdersTP_add); // добавление
   actOTPNew.Visible := (vSF or FullAccess);
@@ -413,8 +434,13 @@ begin
     actOTPEdit.Execute;
 end;
 
-procedure TOrdersTPForm.dbgOrdersTPColumns9GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TOrdersTPForm.dsFilterNewRecord(DataSet: TDataSet);
+begin
+  DataSet['inversion'] := False; // инверсия фильтра т.е. добавляем not
+  DataSet['next_condition'] := 0; // следующее условие AND/OR
+end;
+
+procedure TOrdersTPForm.dbgOrdersTPColumns9GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if not Params.Text.IsEmpty then
     Params.Text := StringReplace(Params.Text, #13#10, '. ', [rfReplaceAll]);
@@ -441,18 +467,13 @@ var
   bm: TBookmark;
 begin
   if dsOrdersTP.FieldByName('otp_id').IsNull then
-    exit;
+    Exit;
   if CreateOrderTP(dsOrdersTP.FieldByName('otp_id').AsInteger) > -1 then
   begin
     bm := dsOrdersTP.GetBookmark;
-    dsOrdersTP.CloseOpen(true);
+    dsOrdersTP.CloseOpen(True);
     dsOrdersTP.GotoBookmark(bm);
   end;
-end;
-
-procedure TOrdersTPForm.bbDownClick(Sender: TObject);
-begin
-  pmPeriod.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 procedure TOrdersTPForm.N3Click(Sender: TObject);
@@ -516,17 +537,21 @@ var
   sm: Currency;
   notice: string;
   vCanPay: Boolean;
-  vSrv : Integer;
+  vSrv: Integer;
   JO: TJsonObject;
 begin
   if dsOrdersTP.FieldByName('CUSTOMER_ID').IsNull then
-    exit;
+    Exit;
+
+  if ((not dsOrdersTP.FieldByName('O_NAME').IsNull) and
+    (dsOrdersTP.FieldByName('O_NAME').AsString.ToUpper.Contains(rsFree.ToUpper))) then
+    Exit;
 
   vCanPay := (dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_full) or
     dmMain.AllowedAction(rght_Pays_AddToday));
 
   if not vCanPay then
-    exit;
+    Exit;
 
   if dsOrdersTP.FieldByName('AMOUNT').IsNull then
     sm := 0
@@ -542,7 +567,8 @@ begin
     notice := notice + #13#10 + dsOrdersTP.FieldByName('FIO').AsString;
   if not dsOrdersTP.FieldByName('ADRESS').IsNull then
     notice := notice + #13#10 + dsOrdersTP.FieldByName('ADRESS').AsString;
-  if not dsOrdersTP.FieldByName('ADDONS').IsNull then begin
+  if not dsOrdersTP.FieldByName('ADDONS').IsNull then
+  begin
     JO := TJsonObject.Parse(dsOrdersTP['ADDONS']) as TJsonObject;
     try
       if JO.Contains('srv') then
@@ -551,7 +577,7 @@ begin
           vSrv := JO.i['srv'];
       end;
     finally
-      JO.free;
+      JO.Free;
     end;
   end;
   if ReceivePayment(dsOrdersTP['CUSTOMER_ID'], -1, -1, dt, sm, Trim(notice), vSrv) <> -1 then
@@ -578,7 +604,7 @@ begin
   grid := dbgOrdersTP;
 
   customers := TStringList.Create;
-  customers.Sorted := true;
+  customers.Sorted := True;
   customers.Duplicates := dupIgnore;
 
   if (grid.SelectedRows.Count = 0) then
@@ -612,6 +638,16 @@ begin
     ShowCustomers(7, s);
 end;
 
+procedure TOrdersTPForm.actEnableFilterExecute(Sender: TObject);
+begin
+  if srcOrdersTP.DataSet is TpFIBDataSet then
+  begin
+    actEnableFilter.Checked := not actEnableFilter.Checked;
+    dsOrdersTP.ParamByName('Filter').Value := GenerateFilter;
+    dsOrdersTP.CloseOpen(True);
+  end;
+end;
+
 procedure TOrdersTPForm.actGroupExecute(Sender: TObject);
 var
   Crsr: TCursor;
@@ -622,10 +658,10 @@ begin
   if actGroup.Checked then
   begin
     srcOrdersTP.DataSet := mtOrdersTP;
-    dbgOrdersTP.DataGrouping.Active := true;
-    dbgOrdersTP.DataGrouping.GroupPanelVisible := true;
+    dbgOrdersTP.DataGrouping.Active := True;
+    dbgOrdersTP.DataGrouping.GroupPanelVisible := True;
     dbgOrdersTP.DataGrouping.GroupLevels.Clear;
-    srcOrdersTP.DataSet.Active := true;
+    srcOrdersTP.DataSet.Active := True;
   end
   else
   begin
@@ -642,15 +678,16 @@ end;
 procedure TOrdersTPForm.actMakeCopyExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-  n, o : Integer;
+  n, o: Integer;
 begin
-  if (dsOrdersTP.FieldByName('Otp_Id').IsNull)
-  then Exit;
+  if (dsOrdersTP.FieldByName('Otp_Id').IsNull) then
+    Exit;
 
   ci.CUSTOMER_ID := -1;
   o := dsOrdersTP['Otp_Id'];
   n := CreateOrderTPForCustomer(-1, ci, o);
-  if n > -1 then begin
+  if n > -1 then
+  begin
     FindOrOpenOrder(n);
   end;
 end;
@@ -660,11 +697,11 @@ var
   AR: Boolean;
 begin
   if (not dsOrdersTP.Active) or (dsOrdersTP.RecordCount = 0) then
-    exit;
+    Exit;
 
   AR := dmMain.AllowedAction(rght_OrdersTP_del); // Удаление
   if not(AR or FullAccess) then
-    exit;
+    Exit;
 
   if (dsOrdersTP.FieldByName('OTP_NUMBER').IsNull) or
     (MessageDlg(Format(rsDeleteOrder, [dsOrdersTP['OTP_NUMBER']]), mtConfirmation, [mbNo, mbYes], 0) = mrYes) then
@@ -679,7 +716,7 @@ begin
   if CreateOrderTP(-1) > -1 then
   begin
     bm := dsOrdersTP.GetBookmark;
-    dsOrdersTP.CloseOpen(true);
+    dsOrdersTP.CloseOpen(True);
     dsOrdersTP.GotoBookmark(bm);
   end;
 end;
@@ -693,17 +730,17 @@ begin
   if FFirstOpen then
   begin
     FFirstOpen := False;
-    exit;
+    Exit;
   end;
 
   if not((dsOrdersTP.Active) and (dsOrdersTP.RecordCount > 0) and (not dsOrdersTP.FieldByName('OTP_ID').IsNull)) then
-    dsOrdersTP.CloseOpen(true)
+    dsOrdersTP.CloseOpen(True)
   else
   begin
     inFilter := dsOrdersTP.Filtered;
     filter := dsOrdersTP.filter;
     i := dsOrdersTP['OTP_ID'];
-    dsOrdersTP.CloseOpen(true);
+    dsOrdersTP.CloseOpen(True);
     if inFilter then
     begin
       dsOrdersTP.filter := filter;
@@ -724,7 +761,7 @@ var
   FReport: Integer;
 begin
   if (dsOrdersTP.RecordCount = 0) or dsOrdersTP.FieldByName('O_Charfield').IsNull then
-    exit;
+    Exit;
 
   json := dsOrdersTP.FieldByName('O_Charfield').AsString.Trim;
   FReport := -1;
@@ -738,12 +775,12 @@ begin
         FReport := JO.i['report'];
     end;
   finally
-    JO.free;
+    JO.Free;
   end;
 
   if (FReport > -1) and (Order_id > -1) then
   begin
-    with TReportChild.Create(application) do
+    with TReportChild.Create(Application) do
     begin
       REPORT_ID := FReport;
       LoadReportBody;
@@ -760,10 +797,10 @@ end;
 
 procedure TOrdersTPForm.SetOrderPayDate();
 var
-  fq : TpFIBQuery;
+  fq: TpFIBQuery;
 begin
   if dsOrdersTP.FieldByName('Otp_Id').IsNull then
-    exit;
+    Exit;
 
   fq := TpFIBQuery.Create(Self);
   try
@@ -779,54 +816,55 @@ begin
   end;
 end;
 
-procedure TOrdersTPForm.FindOrOpenOrder(const OrderID : Integer);
+procedure TOrdersTPForm.FindOrOpenOrder(const OrderID: Integer);
 var
-  Finded : Boolean;
+  Finded: Boolean;
 begin
-  if OrderID = -1 then Exit;
+  if OrderID = -1 then
+    Exit;
 
   Finded := False;
-  if dsOrdersTP.Active then begin
-     Finded := dsOrdersTP.Locate('Otp_Id', OrderID, []);
-     if not Finded then begin
-       dsOrdersTP.CloseOpen(True);
-       Finded := dsOrdersTP.Locate('Otp_Id', OrderID, []);
-     end;
+  if dsOrdersTP.Active then
+  begin
+    Finded := dsOrdersTP.Locate('Otp_Id', OrderID, []);
+    if not Finded then
+    begin
+      dsOrdersTP.CloseOpen(True);
+      Finded := dsOrdersTP.Locate('Otp_Id', OrderID, []);
+    end;
   end;
 
-  if not Finded
-  then begin
+  if not Finded then
+  begin
     if dsOrdersTP.Active then
       dsOrdersTP.Close;
 
-    dsOrdersTP.ParamByName('StartDate').AsString := '2000-01-01';
-    dsOrdersTP.ParamByName('EndDate').AsString := '2100-01-01';
-    dsOrdersTP.ParamByName('otptype').AsString := 'AND o.Otp_Id = ' + IntToStr(OrderID);
+    dsOrdersTP.ParamByName('filter').AsString := ' o.Otp_Id = ' + IntToStr(OrderID);
     dsOrdersTP.Open;
   end;
 end;
 
-
 procedure TOrdersTPForm.CancelOrder();
 var
-  fq : TpFIBQuery;
-  RESON : String;
+  fq: TpFIBQuery;
+  RESON: String;
 begin
   if dsOrdersTP.FieldByName('Otp_Id').IsNull then
-    exit;
+    Exit;
 
   RESON := '';
-  if (not  ShowText(RESON, rsReson, ''))
-  then Exit;
+  if (not ShowText(RESON, rsReson, '')) then
+    Exit;
 
-  if (RESON.IsEmpty)
-  then Exit;
+  if (RESON.IsEmpty) then
+    Exit;
 
   fq := TpFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
-    fq.sql.Text := 'update Orders_Tp set CANCEL_TIME = localtimestamp, CANCEL_RESON = :RESON where Otp_Id = :Otp_Id and CANCEL_TIME is null';
+    fq.sql.Text :=
+      'update Orders_Tp set CANCEL_TIME = localtimestamp, CANCEL_RESON = :RESON where Otp_Id = :Otp_Id and CANCEL_TIME is null';
     fq.ParamByName('Otp_Id').AsInteger := dsOrdersTP['Otp_Id'];
     fq.ParamByName('RESON').AsString := RESON;
     fq.Transaction.StartTransaction;
@@ -838,4 +876,132 @@ begin
   dsOrdersTP.Refresh;
 end;
 
+function TOrdersTPForm.GenerateFilter: string;
+
+  function RecordToFilter: string;
+  var
+    tmpSQL: string;
+    s: string;
+  begin
+    tmpSQL := '';
+
+    if FViewTodayOnly then
+      tmpSQL := ' (o.ADDED_ON >= current_date) and (o.ADDED_ON < dateadd(day, 1, current_date)) ';
+
+    if (not dsFilter.FieldByName('DT').IsNull) then
+    begin
+      if not tmpSQL.IsEmpty then
+        tmpSQL := tmpSQL + ' and ';
+
+      case dsFilter['DT'] of
+        1:
+          s := 'o.DATE_FROM';
+        2:
+          s := 'o.DATE_TO';
+      else
+        s := 'o.Otp_Date'
+      end;
+      if (not dsFilter.FieldByName('DS').IsNull) then
+      begin
+        if (dsFilter.FieldByName('DE').IsNull) then
+          tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DS'])])
+        else
+          tmpSQL := Format('( %s between ''%s'' and ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DS']),
+            FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
+      end
+      else
+      begin
+        if (not dsFilter.FieldByName('DE').IsNull) then
+          tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
+      end;
+    end;
+
+    if (not dsFilter.FieldByName('ORDER_TYPE').IsNull) then
+    begin
+      if not tmpSQL.IsEmpty then
+        tmpSQL := tmpSQL + ' and ';
+
+      tmpSQL := tmpSQL + Format('( o.Ottp_Type= %s) ', [dsFilter.FieldByName('ORDER_TYPE').AsString]);
+    end;
+
+    if (not dsFilter.FieldByName('INCL').IsNull) then
+    begin
+      s := dsFilter['INCL'];
+      s := '%' + s.Trim(['%']) + '%';
+      if not tmpSQL.IsEmpty then
+        tmpSQL := tmpSQL + ' and ';
+      tmpSQL := tmpSQL + Format('( upper(o.NOTICE) like upper(''%s'')) ', [s]);
+    end;
+
+    if (tmpSQL <> '') then
+    begin
+      Result := TrimAnd(tmpSQL);
+      if dsFilter['inversion'] then
+        Result := Format(' NOT (%s)', [Result]);
+    end
+    else
+      Result := '';
+  end;
+
+var
+  whereStr: string;
+  default: string;
+begin
+  Result := '';
+  whereStr := '';
+
+  if (dsFilter.RecordCount = 0) or (not actEnableFilter.Checked) then
+    Exit;
+  srcOrdersTP.DataSet.DisableControls;
+
+  try
+    dsFilter.First;
+
+    whereStr := '';
+    while not dsFilter.Eof do
+    begin
+      default := RecordToFilter;
+      if not default.IsEmpty then
+      begin
+        whereStr := whereStr + ' ( ' + default +' ) ';
+        // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+        dsFilter.next;
+        if not dsFilter.Eof then
+          if dsFilter['next_condition'] = 0 then
+            whereStr := whereStr + ' OR '
+          else
+            whereStr := whereStr + ' AND '
+      end;
+    end;
+  except
+    whereStr := '';
+    ShowMessage(rsErrorSetFilter);
+  end;
+
+  if not whereStr.IsEmpty then
+    Result := whereStr
+  else
+    Result := ' o.Otp_Date = current_date ';
+
+  srcOrdersTP.DataSet.EnableControls;
+end;
+
+procedure TOrdersTPForm.miSetNewFilterNewClick(Sender: TObject);
+begin
+  if not(srcOrdersTP.DataSet is TpFIBDataSet) then
+    Exit;
+
+  with dsFilter do
+  begin
+    DisableControls;
+    if not dsFilter.Active then
+      dsFilter.Open;
+    EmptyTable;
+    Insert;
+    EnableControls;
+  end;
+  actSetFilterExecute(Sender);
+end;
+
 end.
+

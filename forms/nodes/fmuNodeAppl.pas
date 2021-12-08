@@ -3,12 +3,15 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh,
-  ComCtrls, ToolWin, DB, FIBDataSet, pFIBDataSet, ActnList, DM, Menus,
-  DBGridEhToolCtrls, Buttons, ExtCtrls, DBAxisGridsEh, StdCtrls,
-  System.Actions, PrjConst, EhLibVCL, System.UITypes, DBGridEhGrouping,
-  DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
+
+  System.Classes, System.Actions, System.SysUtils, System.Variants,
+  WinAPI.Windows, WinAPI.Messages, Data.DB, System.UITypes,
+  Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls,
+  Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus, Vcl.ToolWin, Vcl.Dialogs,
+  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase,
+  pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, DBAxisGridsEh, GridsEh, EhLibVCL,
+  DM, PrjConst, AtrPages, A4onTypeUnit;
 
 type
   TapgNodeAppl = class(TA4onPage)
@@ -96,13 +99,14 @@ end;
 procedure TapgNodeAppl.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-  aid : Integer;
+  aid: Integer;
 begin
   ci := GetCustomerInfo;
   if ci.CUSTOMER_ID = -1 then
     Exit;
   aid := EditAppliance(ci, -1);
-  if aid > -1 then begin
+  if aid > -1 then
+  begin
     dsAppliance.CloseOpen(true);
     dsAppliance.Locate('ID', aid, []);
   end;
@@ -122,7 +126,7 @@ end;
 procedure TapgNodeAppl.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-  aid : Integer;
+  aid: Integer;
 begin
   if (dsAppliance.RecordCount = 0) or (dsAppliance.FieldByName('ID').IsNull) then
     Exit;
@@ -131,7 +135,8 @@ begin
   if ci.CUSTOMER_ID <> -1 then
   begin
     aid := EditAppliance(ci, dsAppliance['ID']);
-    if aid > -1 then begin
+    if aid > -1 then
+    begin
       dsAppliance.CloseOpen(true);
       dsAppliance.Locate('ID', aid, []);
     end;

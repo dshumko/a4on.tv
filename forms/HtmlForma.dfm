@@ -118,7 +118,7 @@ object HtmlForm: THtmlForm
     Top = 61
     Width = 584
     Height = 240
-    ActivePage = tsBrowser
+    ActivePage = tsViewer
     Align = alClient
     TabOrder = 1
     object tsViewer: TTabSheet

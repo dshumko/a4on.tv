@@ -62,14 +62,14 @@
         <Manifest_File>PerMonitorDpiAwareness.manifest</Manifest_File>
         <VerInfo_Build>672</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.4.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.4.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <VerInfo_MajorVer>21</VerInfo_MajorVer>
         <VerInfo_MinorVer>4</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.11.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Debugger_RunParams>/p:masterkey</Debugger_RunParams>
     </PropertyGroup>
@@ -80,9 +80,9 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.691;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>691</VerInfo_Build>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.11.0.704;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>704</VerInfo_Build>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
         <DCC_MapFile>3</DCC_MapFile>
@@ -97,9 +97,9 @@
         <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for Cable TV operators;FileVersion=21.9.0.680;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>680</VerInfo_Build>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.11.0.688;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>688</VerInfo_Build>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
@@ -114,6 +114,10 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="Units\NHunspell.pas"/>
+        <DCCReference Include="Units\NHunXml.pas"/>
+        <DCCReference Include="Units\PasZip.pas"/>
+        <DCCReference Include="Units\ad3MainDictionary.pas"/>
         <DCCReference Include="FORMS\MAIN.PAS">
             <Form>A4MainForm</Form>
         </DCCReference>
@@ -158,7 +162,7 @@
         <DCCReference Include="FORMS\CancelContractForma.pas">
             <Form>CancelContractForm</Form>
         </DCCReference>
-        <DCCReference Include="forms\EquipmentForma.pas">
+        <DCCReference Include="forms\infrastructure\EquipmentForma.pas">
             <Form>EquipmentForm</Form>
         </DCCReference>
         <DCCReference Include="forms\AboutForma.pas">
@@ -274,10 +278,10 @@
         </DCCReference>
         <DCCReference Include="units\AtrStrUtils.pas"/>
         <DCCReference Include="units\atrCmdUtils.pas"/>
-        <DCCReference Include="forms\EquipAttributesForma.pas">
+        <DCCReference Include="forms\infrastructure\EquipAttributesForma.pas">
             <Form>EquipAttributesForm</Form>
         </DCCReference>
-        <DCCReference Include="forms\EquipCoverage.pas">
+        <DCCReference Include="forms\infrastructure\EquipCoverage.pas">
             <Form>EquipCoverageForm</Form>
         </DCCReference>
         <DCCReference Include="forms\VlansForma.pas">
@@ -323,7 +327,7 @@
             <Form>EventsForm</Form>
         </DCCReference>
         <DCCReference Include="units\pFIBExtract.pas"/>
-        <DCCReference Include="forms\EquipmentComands.pas">
+        <DCCReference Include="forms\infrastructure\EquipmentComands.pas">
             <Form>EquipmentCommandsForm</Form>
         </DCCReference>
         <DCCReference Include="forms\SelectColumnsForma.pas">
@@ -335,13 +339,13 @@
         <DCCReference Include="forms\OrganForma.pas">
             <Form>OrganForm</Form>
         </DCCReference>
-        <DCCReference Include="forms\EQGroupsForma.pas">
+        <DCCReference Include="forms\infrastructure\EQGroupsForma.pas">
             <Form>EQGroupsForm</Form>
         </DCCReference>
-        <DCCReference Include="forms\EquipEditForma.pas">
+        <DCCReference Include="forms\infrastructure\EquipEditForma.pas">
             <Form>EquipEditForm</Form>
         </DCCReference>
-        <DCCReference Include="forms\EquipmentCommandForma.pas">
+        <DCCReference Include="forms\infrastructure\EquipmentCommandForma.pas">
             <Form>EquipmentCommandForm</Form>
         </DCCReference>
         <DCCReference Include="forms\Requests\ReqForAdresForma.pas">
@@ -892,6 +896,51 @@
         </DCCReference>
         <DCCReference Include="forms\Mobile\NewsForma.pas">
             <Form>NewsForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\fmuNodeLink.pas">
+            <Form>apgNodeLink</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\WireTypeForma.pas">
+            <Form>WireTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\nodes\NodeLinkForma.pas">
+            <Form>NodeLinkForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\WireForma.pas">
+            <Form>WireForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\OrdersTP\OrdersTPFilter.pas">
+            <Form>OrdersTPFilterForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\EQPort.pas">
+            <Form>EQPortForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\PortListForma.pas">
+            <Form>PortListForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\fmuEqpmntPorts.pas">
+            <Form>apgEqpmntPort</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\fmuEqpmntAttributes.pas">
+            <Form>apgEqpmntAttributes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\fmuEqpmntRequests.pas">
+            <Form>apgEqpmntRequests</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\fmuEqpmntRegion.pas">
+            <Form>apgEqpmntRegion</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\fmuEqpmntInfo.pas">
+            <Form>apgEqpmntInfo</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

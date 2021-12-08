@@ -68,13 +68,14 @@ function SelectCustomerColumns(Selected:Cardinal):Cardinal;
 var
   SelectColumnsForm: TSelectColumnsForm;
 begin
-  Application.CreateForm(TSelectColumnsForm,SelectColumnsForm);
+  Result:= Selected;
+  // Application.CreateForm(TSelectColumnsForm,SelectColumnsForm);
+  SelectColumnsForm := TSelectColumnsForm.Create(Application);
   try
     SelectColumnsForm.Columns := Selected;
     SelectColumnsForm.ShowModal;
     if SelectColumnsForm.ModalResult=mrOk
-    then Result:= SelectColumnsForm.Columns
-    else Result:= Selected;
+    then Result:= SelectColumnsForm.Columns;
   finally
     FreeAndNil(SelectColumnsForm);
   end;

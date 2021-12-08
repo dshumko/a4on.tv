@@ -8,7 +8,7 @@ uses
   FIBDataSet, pFIBDataSet, GridsEh, Menus, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, CnErrorProvider, PrjConst, System.UITypes, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh;
+  DBGridEhGrouping, DynVarsEh, dnSplitter;
 
 type
   TRequestTypeForm = class(TGridForm)
@@ -63,6 +63,7 @@ type
     actQuickRes: TAction;
     dsResult: TpFIBDataSet;
     srcResult: TDataSource;
+    dnspltr1: TdnSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);

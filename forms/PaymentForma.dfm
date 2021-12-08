@@ -61,7 +61,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1059#1089#1083#1091#1075#1072
-          Width = 77
+          Width = 76
         end
         item
           Alignment = taRightJustify
@@ -71,7 +71,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'DOLG_SUM'
           Footers = <>
           Title.Caption = #1053#1072#1095#1080#1089'.'
-          Width = 44
+          Width = 64
         end
         item
           AutoFitColWidth = False
@@ -93,7 +93,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'FINE_DAYS'
           Footers = <>
           Title.Caption = #1055#1077#1085#1103'|'#1044#1085#1077#1081
-          Width = 45
+          Width = 39
         end
         item
           Alignment = taRightJustify
@@ -104,7 +104,7 @@ object PaymentForm: TPaymentForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1055#1077#1085#1103'|'#1057#1091#1084#1084#1072
-          Width = 43
+          Width = 68
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -302,23 +302,28 @@ object PaymentForm: TPaymentForm
         DropDownBox.Columns = <
           item
             FieldName = 'PAY_DOC_NO'
+            Width = 40
+          end
+          item
+            FieldName = 'PAYSOURCE_DESCR'
+            Width = 60
           end
           item
             AutoFitColWidth = False
             FieldName = 'PAY_DOC_DATE'
             Width = 60
-          end
-          item
-            FieldName = 'PAYSOURCE_DESCR'
-            Width = 40
           end>
         DropDownBox.ListSource = srcPaymentDocs
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterAllColumns = True
+        DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1055#1083#1072#1090#1077#1078#1085#1099#1081' '#1076#1086#1082#1091#1084#1077#1085#1090
         EditButtons = <>
         KeyField = 'PAY_DOC_ID'
-        ListField = 'PAY_DOC_NO'
+        ListField = 'PD_NAME'
         ListSource = srcPaymentDocs
+        Style = csDropDownEh
         TabOrder = 0
         Visible = True
       end
@@ -643,14 +648,12 @@ object PaymentForm: TPaymentForm
           inherited lblFIO: TLabel
             Width = 196
             Height = 14
-            Margins.Bottom = 0
             Font.Height = -12
           end
           inherited lblDebt: TLabel
             Top = 29
             Width = 196
             Height = 14
-            Margins.Bottom = 0
             Font.Height = -12
           end
           inherited memAbonent: TMemo
@@ -721,11 +724,29 @@ object PaymentForm: TPaymentForm
   end
   object dsPaymentSRV: TpFIBDataSet
     SelectSQL.Strings = (
-      'select s.service_id, s.name, s.description'
+      'select'
+      '    s.service_id'
+      '  , s.name'
+      '  , s.description'
+      '  from services s'
+      '  where exists(select'
+      '                   sl.Child'
+      '                 from Services_Links sl'
+      '                 where sl.Child = s.Service_Id'
+      '                       and sl.Parent is null)'
+      '          or exists(select'
+      '                        w.As_Service'
+      '                      from WORKS w'
+      '                      where w.As_Service = s.Service_Id)'
+      '          or exists(select'
+      '                        s.Service_Id'
+      '                      from objects o'
+      '                      where o.o_type = 22'
+      '                            and not o.O_Charfield is null'
       
-        'from services s inner join Services_Links sl on (s.Service_Id = ' +
-        'sl.Child and sl.Parent is null)'
-      'order by name')
+        '                            and Get_Json_Value(o.O_Charfield, '#39'S' +
+        'nglSrv'#39') = s.Service_Id)'
+      '  order by name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -763,7 +784,11 @@ object PaymentForm: TPaymentForm
   object dsPaymentDocs: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
-      '    *'
+      '    a.*'
+      
+        '    , PAY_DOC_NO||'#39' ('#39'||paysource_descr||'#39') '#39'||'#39' '#39'||extract(day ' +
+        'from PAY_DOC_DATE)||'#39'.'#39'||extract(month from PAY_DOC_DATE)||'#39'.'#39'||' +
+        'extract(year from PAY_DOC_DATE) as PD_NAME'
       '  from (select'
       '            D.PAY_DOC_ID'
       '          , D.PAYSOURCE_ID'
@@ -797,8 +822,9 @@ object PaymentForm: TPaymentForm
         ' PS.PAYSOURCE_ID)'
       '          where @filter%1=0 and @OWN_PD%1=1'
       '            and d.Pay_Doc_Date = current_DATE'
-      '            )'
-      '  order by 4, 3')
+      '            ) a'
+      '  order by PAY_DOC_DATE, PAY_DOC_NO'
+      '')
     AutoUpdateOptions.UpdateTableName = 'PAY_DOC'
     AutoUpdateOptions.KeyFields = 'PAY_DOC_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

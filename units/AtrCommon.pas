@@ -121,6 +121,11 @@ procedure DeleteDir(const DirName: string);
 function FileGetTempName(const Prefix: string): string;
 // Procedure PostKeyEx
 procedure PostKeyExHWND(hWindow: HWnd; key: Word; const shift: TShiftState; specialkey: Boolean);
+// Каталог для кэша WKE браузера
+function GetUserCacheFolder(): string;
+
+procedure PutStringIntoClipBoard(const Str: WideString);
+function GetStringFromClipboard: WideString;
 
 implementation
 
@@ -1338,6 +1343,75 @@ begin
     Result := ExtractFilePath(Application.ExeName) + Prefix + '.update';
     // .TrimRight(['\', '/']);
   end
+end;
+
+function GetUserCacheFolder(): string;
+var
+  s: string;
+  f: string;
+begin
+  s := rsAplicationName;
+  f := GetSpecialFolderPath();
+  if f <> '' then
+    f := f + '\' + s + '\Cache\'
+  else
+    f := ExtractFilePath(Application.ExeName) + 'FILTERS\';
+  ForceDirectories(f);
+  Result := f
+end;
+
+procedure PutStringIntoClipBoard(const Str: WideString);
+var
+  Size: Integer;
+  Data: THandle;
+  DataPtr: Pointer;
+begin
+  Size := Length(Str);
+  if Size = 0 then
+    exit;
+  Clipboard.Clear;
+  if not IsClipboardFormatAvailable(CF_UNICODETEXT) then
+    Clipboard.AsText := Str
+  else
+  begin
+    Size := Size shl 1 + 2;
+    Data := GlobalAlloc(GMEM_MOVEABLE + GMEM_DDESHARE, Size);
+    try
+      DataPtr := GlobalLock(Data);
+      try
+        Move(Pointer(Str)^, DataPtr^, Size);
+        Clipboard.SetAsHandle(CF_UNICODETEXT, Data);
+      finally
+        GlobalUnlock(Data);
+      end;
+    except
+      GlobalFree(Data);
+      raise;
+    end;
+  end;
+end;
+
+function GetStringFromClipboard: WideString;
+var
+  Data: THandle;
+begin
+  if not IsClipboardFormatAvailable(CF_UNICODETEXT) then
+    Result := Clipboard.AsText
+  else
+  begin
+    Clipboard.Open;
+    Data := GetClipboardData(CF_UNICODETEXT);
+    try
+      if Data <> 0 then
+        Result := PWideChar(GlobalLock(Data))
+      else
+        Result := '';
+    finally
+      if Data <> 0 then
+        GlobalUnlock(Data);
+      Clipboard.Close;
+    end;
+  end;
 end;
 
 initialization

@@ -337,7 +337,9 @@ end;
 
 function TMatInventoryDocForm.CheckRowData: Boolean;
 begin
-  Result := fAddedMatID <> -1;
+  Result := (fAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
+  if edtQuant.Text.IsEmpty then
+    edtQuant.SetFocus;
 end;
 
 procedure TMatInventoryDocForm.actDelRecordExecute(Sender: TObject);

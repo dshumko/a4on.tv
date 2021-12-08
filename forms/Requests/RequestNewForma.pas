@@ -916,6 +916,11 @@ end;
 
 procedure TRequestNewForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  if A4MainForm.AddictSpell.Tag = 1 then begin
+    A4MainForm.AddictSpell.RemoveControl(mmoNotice);
+    A4MainForm.AddictSpell.RemoveControl(mmoContent);
+  end;
+
   dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', true);
   Action := caFree;
   // Free;
@@ -977,6 +982,11 @@ end;
 
 procedure TRequestNewForm.FormShow(Sender: TObject);
 begin
+  if A4MainForm.AddictSpell.Tag = 1 then begin
+    A4MainForm.AddictSpell.AddControl(mmoContent);
+    A4MainForm.AddictSpell.AddControl(mmoNotice);
+  end;
+
   // спрячем кнопку + для добавления адреса если это запрещено
   LupStreets.EditButtons[0].Visible :=
     ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
@@ -1063,7 +1073,9 @@ procedure TRequestNewForm.lupTypeDropDownBoxGetCellParams(Sender: TObject; Colum
   var Background: TColor; State: TGridDrawState);
 begin
   if (dsRequestType.Active) and (not dsRequestType.FieldByName('COLOR').IsNull) then
-    Background := StringToColor(dsRequestType['COLOR']);
+    Background := StringToColor(dsRequestType['COLOR'])
+  else
+    Background := clWindow;
 end;
 
 procedure TRequestNewForm.lupTypeEditButtons0Click(Sender: TObject; var Handled: Boolean);

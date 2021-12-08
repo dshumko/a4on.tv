@@ -4,36 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, DBCtrlsEh, ExtCtrls, DB, FIBDataSet, pFIBDataSet, PrjConst;
-
+  Dialogs, StdCtrls, Mask, DBCtrlsEh, ExtCtrls, DB, FIBDataSet, pFIBDataSet, 
+  PrjConst, A4onTypeUnit;
 type
-
-  TFlat = record
-    flat_no: string;
-    flat_id: integer;
-    customer_id: integer;
-    Debt_SUM: Currency;
-    customer_info: string;
-  end;
-
-  TFloor = record
-    floor_id: integer;
-    floor_n: string;
-    // porch_id  : Integer;
-    // porch_n   : string;
-    flats_n: string;
-    flats_cnt: integer;
-    flats: array of TFlat;
-  end;
-
-  TPorch = record
-    porch_id: integer;
-    porch_n: string;
-    floor_cnt: integer;
-    garret: boolean;
-    cellar: boolean;
-    floors: array of TFloor;
-  end;
 
   THouseMapForm = class(TForm)
     pnlSettings: TPanel;

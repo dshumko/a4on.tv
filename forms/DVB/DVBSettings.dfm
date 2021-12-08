@@ -1350,7 +1350,9 @@ object DVBSettinsForm: TDVBSettinsForm
       '  , e.Description'
       '  from Get_Epg(:DVBS_Id, null, null, 0) e'
       '  where e.CH_ID = :CH_ID'
-      '        and cast(e.Date_Start as date) = current_date'
+      
+        '    and cast(e.Date_Start as date) = cast(dateadd(minute, :h_shi' +
+        'ft, cast(current_date as timestamp)) as date)'
       '  order by e.DATE_START  ')
     AutoCalcFields = False
     Transaction = trRead

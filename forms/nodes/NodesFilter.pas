@@ -152,10 +152,10 @@ var
 begin
   if Length(filename) = 0 then
     exit;
-  s := A4MainForm.GetUserFilterFolder + filename + '.ftr';
+  s := A4MainForm.GetUserFilterFolder + filename + '.JNF';
   if srcFilter.DataSet.State in [dsEdit, dsInsert] then
     srcFilter.DataSet.post;
-  DatasetToINI(srcFilter.DataSet, s);
+  DatasetToJson(srcFilter.DataSet, s);
 end;
 
 procedure TNodesFilterForm.SpeedButton1Click(Sender: TObject);
@@ -175,9 +175,8 @@ begin
   begin
     srcFilter.DataSet.Close;
     srcFilter.DataSet.Open;
-    DatasetFromINI(srcFilter.DataSet, OpenDialog1.filename);
+    DatasetFromJson(srcFilter.DataSet, OpenDialog1.filename);
   end;
-
 end;
 
 procedure TNodesFilterForm.srcFilterDataChange(Sender: TObject; Field: TField);

@@ -1,5 +1,5 @@
 ﻿unit CustomerLanForma;
-
+
 interface
 
 {$I defines.inc}
@@ -21,7 +21,6 @@ type
     dsLAN: TpFIBDataSet;
     GroupBox2: TPanel;
     Label4: TLabel;
-    ePort: TDBNumberEditEh;
     Label2: TLabel;
     eMAC: TDBEditEh;
     Label1: TLabel;
@@ -63,6 +62,11 @@ type
     edtPLACE: TDBEditEh;
     pnlMemo: TPanel;
     mmoNOTICE: TDBMemoEh;
+    lcbPort: TDBLookupComboboxEh;
+    dsPort: TpFIBDataSet;
+    srcPort: TDataSource;
+    actAddPort: TAction;
+    actEditPort: TAction;
     procedure eMACEnter(Sender: TObject);
     procedure eMACExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -85,14 +89,22 @@ type
     procedure actLanTelnetExecute(Sender: TObject);
     procedure actLanHttpExecute(Sender: TObject);
     procedure btn1Click(Sender: TObject);
-    procedure ePortExit(Sender: TObject);
     procedure dbleEquipmentExit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure lcbHOUSE_IDChange(Sender: TObject);
     procedure dbleEquipmentEditButtons1Click(Sender: TObject; var Handled: Boolean);
+    procedure actAddPortExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure lcbPortDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure lcbPortExit(Sender: TObject);
+    procedure ePortExit(Sender: TObject);
+    procedure actEditPortExecute(Sender: TObject);
+    procedure lcbPortChange(Sender: TObject);
   private
     { Private declarations }
     fCI: TCustomerInfo;
+    FCanEditPort: Boolean;
     function CheckData: Boolean;
     function CheckIP(const ip: String; const VLAN_ID: Integer = -1): string;
     function CheckUniqMAC(const MAC: String): string;
@@ -111,11 +123,15 @@ var
 
 implementation
 
-uses MAIN, AtrCommon, AtrStrUtils, StrUtils, EquipEditForma, pFIBQuery, TelnetForma, atrCmdUtils;
+uses
+  MAIN, AtrCommon, AtrStrUtils, StrUtils, EquipEditForma,
+  pFIBQuery, TelnetForma, atrCmdUtils, EQPort, HtmlForma;
 
 {$R *.dfm}
 
 function EditCustomerLAN(const aCI: TCustomerInfo; aLan_ID: Int64): Boolean;
+var
+  f1, f2, lvl: Integer;
 begin
   Result := False;
   if aCI.CUSTOMER_ID = -1 then
@@ -131,6 +147,7 @@ begin
       dsEQ.ParamByName('CUSTOMER_ID').AsInt64 := aCI.CUSTOMER_ID;
       dsEQ.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
       dsEQ.Open;
+      dsPort.Open;
 
       dsVlans.ParamByName('CUSTOMER_ID').AsInt64 := aCI.CUSTOMER_ID;
       dsVlans.Open;
@@ -140,20 +157,43 @@ begin
       if aLan_ID = -1 then
       begin
         dsLAN.Insert;
-        // если нашли влан - пропишем его
-        if not dsVlans.EOF then
-          if dsVlans['finded'] = 1 then
-          begin
-            dbleVLAN.Value := dsVlans['V_ID'];
-            // actFindIP.Execute;
-          end;
-
         if (dmMain.GetSettingsValue('LAN_DELEQPMNT') <> '1') then
         begin
           // если нашли оборудование - пропишем его
           if not dsEQ.EOF then
-            if dsEQ['finded'] = 1 then
-              dbleEquipment.Value := dsEQ['EID'];
+          begin
+            f1 := -1;
+            f2 := -1;
+            lvl := 999;
+            dsEQ.DisableControls;
+            while not dsEQ.EOF do
+            begin
+              if (f1 = -1) and (dsEQ['finded'] = 1) then
+                f1 := dsEQ['EID'];
+              if (lvl > dsEQ['LVL']) then
+              begin
+                f2 := dsEQ['EID'];
+                lvl := dsEQ['LVL']
+              end;
+              dsEQ.Next;
+            end;
+            dsEQ.First;
+            dsEQ.EnableControls;
+            if f2 <> -1 then
+              dbleEquipment.Value := f2
+            else if f1 <> -1 then
+              dbleEquipment.Value := f1
+          end;
+        end;
+
+        // если нашли влан - пропишем его
+        if not dsVlans.EOF then
+        begin
+          if (dsVlans['finded'] = 1) and (dbleVLAN.Text.IsEmpty) then
+          begin
+            dbleVLAN.Value := dsVlans['V_ID'];
+            // actFindIP.Execute;
+          end;
         end;
       end
       else
@@ -179,14 +219,14 @@ begin
   if dbleEquipment.Text.IsEmpty then
   begin
     dbleEquipment.EditButtons.Items[0].Hint := rsAdd;
-    dbleEquipment.EditButtons.Items[0].Visible := True;
+    dbleEquipment.EditButtons.Items[0].Visible := True and FCanEditPort;
     dbleEquipment.EditButtons.Items[1].Visible := False;
   end
   else
   begin
     dbleEquipment.EditButtons.Items[1].Hint := rsChange;
     dbleEquipment.EditButtons.Items[0].Visible := False;
-    dbleEquipment.EditButtons.Items[1].Visible := True;
+    dbleEquipment.EditButtons.Items[1].Visible := True and FCanEditPort;
 {$IFDEF NETLAND}
     // TODO:Нужно ли прописывать мак адрес от адреса модема?
     if (dsLAN.FieldByName('MAC').IsNull) and (not dsEQ.FieldByName('MAC').IsNull) and (dsLAN.State = dsInsert) then
@@ -244,6 +284,20 @@ begin
   CheckPort();
 end;
 
+procedure TCustomerLanForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if dsVlans.Active then
+    dsVlans.Close;
+  if dsPort.Active then
+    dsPort.Close;
+  if dsEQ.Active then
+    dsEQ.Close;
+  if dsHomes.Active then
+    dsHomes.Close;
+  if dsStreets.Active then
+    dsStreets.Close;
+end;
+
 procedure TCustomerLanForm.FormCreate(Sender: TObject);
 begin
   if (dmMain.GetSettingsValue('LAN_ADDRES') = '1') then
@@ -286,12 +340,16 @@ end;
 
 procedure TCustomerLanForm.FormShow(Sender: TObject);
 begin
+  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment);
+
+  dbleEquipment.EditButtons.Items[0].Visible := FCanEditPort;
+  lcbPort.EditButtons.Items[0].Visible := FCanEditPort;
+
   if (dsLAN.State = dsInsert) and (not VarIsNull(dbleVLAN.Value)) then
   begin
     actFindIP.Execute;
     eMAC.SetFocus;
   end;
-
 end;
 
 procedure TCustomerLanForm.eIPExit(Sender: TObject);
@@ -303,7 +361,6 @@ begin
     SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
   else
     dmMain.RestoreKL;
-
 end;
 
 function TCustomerLanForm.CheckIP(const ip: String; const VLAN_ID: Integer = -1): string;
@@ -390,16 +447,16 @@ end;
 procedure TCustomerLanForm.CheckPort();
 var
   EQ_ID: Integer;
-  PORT: Integer;
+  PORT: String;
   Result: string;
 begin
 
-  if ((ePort.Text = '') or (dbleEquipment.Text = '')) then
+  if ((lcbPort.Text = '') or (dbleEquipment.Text = '')) then
     Exit;
 
   Result := '';
   EQ_ID := dbleEquipment.Value;
-  PORT := ePort.Value;
+  PORT := lcbPort.Value;
   with TpFIBQuery.Create(Nil) do
   begin
     try
@@ -418,7 +475,7 @@ begin
       sql.Add('select 1 OT, e.Name as Account_No, e.Ip');
       sql.Add('from Equipment e where e.Parent_Id = :EQ and e.Parent_Port = :PT');
       ParamByName('EQ').AsInteger := EQ_ID;
-      ParamByName('PT').AsInteger := PORT;
+      ParamByName('PT').asString := PORT;
       Transaction.StartTransaction;
       ExecQuery;
       while not EOF do
@@ -435,7 +492,7 @@ begin
         if not FieldByName('Ip').IsNull then
           Result := Result + ' IP ' + FieldByName('Ip').Value + ' ';
         Result := Result + #13#10;
-        next;
+        Next;
       end;
       Close;
       Result := Result.Trim;
@@ -448,15 +505,80 @@ begin
   if Result <> '' then
   begin
     Result := rsWarningPort + #13#10 + Result;
-    cnError.SetError(ePort, Result, iaMiddleLeft, bsNeverBlink);
+    cnError.SetError(lcbPort, Result, iaMiddleLeft, bsNeverBlink);
   end
   else
-    cnError.Dispose(ePort);
+  begin
+    if (not dsPort.FieldByName('P_STATE').IsNull) and (dsPort['P_STATE'] = 0) then
+    begin
+      cnError.SetError(lcbPort, rsPORTdefective, iaMiddleLeft, bsNeverBlink);
+    end
+    else
+      cnError.Dispose(lcbPort);
+  end;
 end;
 
 procedure TCustomerLanForm.OkCancelFrame1bbCancelClick(Sender: TObject);
 begin
   dsLAN.Cancel;
+end;
+
+procedure TCustomerLanForm.actAddPortExecute(Sender: TObject);
+var
+  EQ: TEquipmentRecord;
+begin
+  inherited;
+
+  if (dsEQ.RecordCount = 0) then
+    Exit;
+
+  EQ.id := dsEQ.FieldByName('Eid').AsInteger;
+  // if not dsEQ.FieldByName('Eq_Type').IsNull then
+  // EQ.TypeID := dsEQ.FieldByName('Eq_Type').AsInteger;
+  // if not dsEQ.FieldByName('eqgroup').IsNull then
+  // EQ.TypeName := dsEQ.FieldByName('eqgroup').asString;
+  if not dsEQ.FieldByName('Name').IsNull then
+    EQ.Name := dsEQ.FieldByName('Name').asString;
+  if not dsEQ.FieldByName('Ip').IsNull then
+    EQ.ip := dsEQ.FieldByName('Ip').asString;
+  if not dsEQ.FieldByName('Mac').IsNull then
+    EQ.MAC := dsEQ.FieldByName('Mac').asString;
+  // if not dsEQ.FieldByName('Notice').IsNull then
+  // EQ.notice := dsEQ.FieldByName('Notice').asString;
+
+  if CreatePort(EQ) then
+    dsPort.CloseOpen(True);
+end;
+
+procedure TCustomerLanForm.actEditPortExecute(Sender: TObject);
+var
+  EQ: TEquipmentRecord;
+  PORT: string;
+begin
+  inherited;
+
+  if (dsEQ.RecordCount = 0) then
+    Exit;
+  if (lcbPort.Text.IsEmpty) then
+    Exit;
+
+  PORT := lcbPort.Value;
+  EQ.id := dsEQ.FieldByName('Eid').AsInteger;
+  // if not dsEQ.FieldByName('Eq_Type').IsNull then
+  // EQ.TypeID := dsEQ.FieldByName('Eq_Type').AsInteger;
+  // if not dsEQ.FieldByName('eqgroup').IsNull then
+  // EQ.TypeName := dsEQ.FieldByName('eqgroup').asString;
+  if not dsEQ.FieldByName('Name').IsNull then
+    EQ.Name := dsEQ.FieldByName('Name').asString;
+  if not dsEQ.FieldByName('Ip').IsNull then
+    EQ.ip := dsEQ.FieldByName('Ip').asString;
+  if not dsEQ.FieldByName('Mac').IsNull then
+    EQ.MAC := dsEQ.FieldByName('Mac').asString;
+  // if not dsEQ.FieldByName('Notice').IsNull then
+  // EQ.notice := dsEQ.FieldByName('Notice').asString;
+
+  if EditPort(EQ, PORT) then
+    dsPort.CloseOpen(True);
 end;
 
 procedure TCustomerLanForm.actLanHttpExecute(Sender: TObject);
@@ -521,7 +643,16 @@ begin
     En := False;
   end
   else
-    cnError.Dispose(eIP);
+  begin
+    if (not dbleVLAN.Text.IsEmpty) and (eIP.Text.IsEmpty) then
+    begin
+      cnError.SetError(eIP, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+      eIP.SetFocus;
+      En := False;
+    end
+    else
+      cnError.Dispose(eIP);
+  end;
 
   if (ValidateMAC(eMAC.Text) = '') and (eMAC.Text <> '') then
   begin
@@ -542,6 +673,14 @@ begin
       cnError.Dispose(eMAC);
   end;
 
+  // запрет пустого MAC если это DOCSYS
+  if ((dmMain.GetSettingsValue('LAN_DELEQPMNT') = '1') and (eMAC.Text.IsEmpty)) then
+  begin
+    cnError.SetError(eMAC, rsMACIncorrect, iaMiddleLeft, bsNeverBlink);
+    eMAC.SetFocus;
+    En := False;
+  end;
+
   if ((dmMain.GetSettingsValue('VLAN_REQUIRED') = '1') and (not VarIsNumeric(dbleVLAN.Value))) then
   begin
     cnError.SetError(dbleVLAN, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
@@ -550,9 +689,10 @@ begin
   end
   else
     cnError.Dispose(dbleVLAN);
+
   // хоть что-то должно быть заполнено
   EmptyIP_MAC_PORT := (eIPv6.Text = '') and (eIP.Text = '') and (eMAC.Text = '') and
-    ((ePort.Text = '') or (dbleEquipment.Text = ''));
+    ((lcbPort.Text = '') or (dbleEquipment.Text = ''));
   if EmptyIP_MAC_PORT then
   begin
     cnError.SetError(OkCancelFrame.bbOk, rsLANIncorrect, iaMiddleLeft, bsNeverBlink);
@@ -670,8 +810,8 @@ var
   NewItem: TMenuItem;
   rCursor: TPoint;
 begin
-  if dsLAN.RecordCount = 0 then
-    Exit;
+  // if dsLAN.RecordCount = 0 then
+  // Exit;
   pmLanPopUp.Items.Clear;
   NewItem := TMenuItem.Create(pmLanPopUp);
   NewItem.Caption := 'Ping IP';
@@ -693,11 +833,16 @@ begin
     with dmMain.qRead do
     begin
       sql.Clear;
-      sql.Add('select ec.ec_id, ec.name, ec.command');
-      sql.Add('from equipment_cmd_grp ec');
-      sql.Add('   inner join equipment e on (ec.eg_id = e.eq_group)');
-      sql.Add('where ec.in_gui = 1 and e.eid = :eq_id');
-      sql.Add('order by ec.name');
+      sql.Add('select distinct * ');
+      sql.Add('  from (select ec.ec_id, ec.name, ec.command ');
+      sql.Add('          from equipment_cmd_grp ec');
+      sql.Add('               left outer join equipment e on (ec.eg_id = e.eq_group)');
+      sql.Add('          where ec.in_gui = 1 and e.eid = :eq_id');
+      sql.Add('        union');
+      sql.Add('        select ec.ec_id, ec.name , ec.command');
+      sql.Add('          from equipment_cmd_grp ec');
+      sql.Add('          where ec.in_gui = 1 and ec.Eg_Id = -1)');
+      sql.Add('  order by name');
       ParamByName('eq_id').AsInteger := dbleEquipment.Value;
       Transaction.StartTransaction;
       ExecQuery;
@@ -708,7 +853,7 @@ begin
         NewItem.Tag := FieldByName('ec_id').AsInteger;
         NewItem.OnClick := miLanClickClick;
         pmLanPopUp.Items.Add(NewItem);
-        next;
+        Next;
       end;
       Close;
       Transaction.Rollback;
@@ -733,6 +878,47 @@ begin
   else
     dsEQ.ParamByName('HOUSE_ID').AsInteger := dsHomes['HOUSE_ID'];
   dsEQ.Open;
+  dsPort.CloseOpen(True);
+end;
+
+procedure TCustomerLanForm.lcbPortChange(Sender: TObject);
+begin
+  if lcbPort.Text.IsEmpty then
+  begin
+    lcbPort.EditButtons.Items[0].Hint := rsAdd;
+    lcbPort.EditButtons.Items[0].Visible := True and FCanEditPort;
+    lcbPort.EditButtons.Items[1].Visible := False;
+  end
+  else
+  begin
+    lcbPort.EditButtons.Items[1].Hint := rsChange;
+    lcbPort.EditButtons.Items[0].Visible := False;
+    lcbPort.EditButtons.Items[1].Visible := True and FCanEditPort;
+  end;
+  if (dsLAN.State = dsInsert) then
+  begin
+    if (not dsPort.FieldByName('VLAN_ID').IsNull) then
+      dbleVLAN.Value := dsPort['VLAN_ID'];
+  end;
+end;
+
+procedure TCustomerLanForm.lcbPortDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not dsPort.FieldByName('CON').IsNull then
+    AFont.Color := clGray;
+  if (not dsPort.FieldByName('P_STATE').IsNull) then
+  begin
+    if (dsPort['P_STATE'] = 0) then
+      AFont.Style := [fsStrikeOut]
+    else if (dsPort['P_STATE'] > 1) then
+      AFont.Style := [fsItalic]
+  end;
+end;
+
+procedure TCustomerLanForm.lcbPortExit(Sender: TObject);
+begin
+  CheckPort();
 end;
 
 procedure TCustomerLanForm.miLanClickClick(Sender: TObject);
@@ -744,6 +930,29 @@ var
   C_TAG, C_TAGSTR: string;
   cmd: string;
   eol_chars: Integer;
+  CMD_TYPE: Integer;
+  URL, AUT_USER, AUT_PSWD: String;
+
+  procedure replaceParams(var InStr: String);
+  begin
+    InStr := ReplaceStr(InStr, '<e_admin>', user);
+    InStr := ReplaceStr(InStr, '<e_pass>', pswd);
+    InStr := ReplaceStr(InStr, '<e_mac>', H_MAC);
+    InStr := ReplaceStr(InStr, '<e_mac_h>', H_MAC.Replace(':', '-'));
+    InStr := ReplaceStr(InStr, '<e_mac_d>', H_MAC.Replace(':', '.'));
+    InStr := ReplaceStr(InStr, '<e_mac_j>', FormatMACas4CD(H_MAC));
+    InStr := ReplaceStr(InStr, '<e_ip>', Host);
+    InStr := ReplaceStr(InStr, '<c_ip>', C_IP);
+    InStr := ReplaceStr(InStr, '<c_mac>', C_MAC);
+    InStr := ReplaceStr(InStr, '<c_mac_h>', C_MAC.Replace(':', '-'));
+    InStr := ReplaceStr(InStr, '<c_mac_d>', C_MAC.Replace(':', '.'));
+    InStr := ReplaceStr(InStr, '<c_mac_j>', FormatMACas4CD(C_MAC));
+    InStr := ReplaceStr(InStr, '<c_port>', C_PORT);
+    InStr := ReplaceStr(InStr, '<c_vlan>', C_VLAN);
+    InStr := ReplaceStr(InStr, '<c_tag>', C_TAG);
+    InStr := ReplaceStr(InStr, '<c_tagstr>', C_TAGSTR);
+  end;
+
 begin
   if not(Sender is TMenuItem) then
     Exit;
@@ -753,22 +962,31 @@ begin
 
   C_IP := eIP.Text;
 
-  if (not dsLAN.FieldByName('MAC').IsNull) then
-    C_MAC := dsLAN.FieldByName('MAC').asString;
+  if (not eMAC.Text.IsEmpty) then
+    C_MAC := eMAC.Text;
 
   C_TAG := edtTAG.Text;
   C_TAGSTR := edtTAGSTR.Text;
-  C_PORT := ePort.Text;
+  if not lcbPort.Text.IsEmpty then
+    C_PORT := lcbPort.Value
+  else
+    C_PORT := '';
   C_VLAN := '';
 
   with dmMain.qRead do
   begin
     sql.Clear;
     sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
-    sql.Add('from equipment_cmd_grp ec inner join equipment e on (ec.eg_id = e.eq_group)');
-    sql.Add('where ec.ec_id = :ec_id and e.eid = :eq_id');
-    ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
-    ParamByName('eq_id').AsInteger := dbleEquipment.Value;
+    sql.Add(' , ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
+    sql.Add('from equipment e');
+    sql.Add('  inner join equipment_cmd_grp ec');
+    sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
+    sql.Add('where e.eid = :eq_id');
+    eol_chars := (Sender as TMenuItem).Tag;
+    ParamByName('ec_id').AsInteger := eol_chars;
+    eol_chars := dbleEquipment.Value;
+    ParamByName('eq_id').AsInteger := eol_chars;
+    dbleEquipment.Value;
     Transaction.StartTransaction;
     ExecQuery;
     if FieldByName('ip').IsNull then
@@ -812,30 +1030,35 @@ begin
         eol_chars := 0
     end;
 
+    if FieldByName('CMD_TYPE').IsNull then
+      CMD_TYPE := 0
+    else
+      CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
+    if not FieldByName('URL').IsNull then
+      URL := FieldByName('URL').asString;
+    if not FieldByName('AUT_USER').IsNull then
+      AUT_USER := FieldByName('AUT_USER').asString;
+    if not FieldByName('AUT_PSWD').IsNull then
+      AUT_PSWD := FieldByName('AUT_PSWD').asString;
+
     Close;
     Transaction.Rollback;
   end;
-  if cmd <> '' then
-  begin
-    cmd := ReplaceStr(cmd, '<e_admin>', user);
-    cmd := ReplaceStr(cmd, '<e_pass>', pswd);
-    cmd := ReplaceStr(cmd, '<e_mac>', H_MAC);
-    cmd := ReplaceStr(cmd, '<e_mac_h>', H_MAC.Replace(':', '-'));
-    cmd := ReplaceStr(cmd, '<e_mac_d>', H_MAC.Replace(':', '.'));
-    cmd := ReplaceStr(cmd, '<e_mac_j>', FormatMACas4CD(H_MAC));
-    cmd := ReplaceStr(cmd, '<e_ip>', Host);
-    cmd := ReplaceStr(cmd, '<c_ip>', C_IP);
-    cmd := ReplaceStr(cmd, '<c_mac>', C_MAC);
-    cmd := ReplaceStr(cmd, '<c_mac_h>', C_MAC.Replace(':', '-'));
-    cmd := ReplaceStr(cmd, '<c_mac_d>', C_MAC.Replace(':', '.'));
-    cmd := ReplaceStr(cmd, '<c_mac_j>', FormatMACas4CD(C_MAC));
-    cmd := ReplaceStr(cmd, '<c_port>', C_PORT);
-    cmd := ReplaceStr(cmd, '<c_vlan>', C_VLAN);
-    cmd := ReplaceStr(cmd, '<c_tag>', C_TAG);
-    cmd := ReplaceStr(cmd, '<c_tagstr>', C_TAGSTR);
 
-    cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, True);
+  if cmd <> '' then
+    replaceParams(cmd);
+
+  if URL <> '' then
+    replaceParams(URL);
+
+  case CMD_TYPE of
+    2:
+      cmd := GetHtml(URL, AUT_USER, AUT_PSWD, cmd, True, (Sender as TMenuItem).Caption);
+  else
+    if cmd <> '' then
+      cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, True);
   end;
 end;
 
 end.
+

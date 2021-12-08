@@ -493,7 +493,13 @@ end;
 
 procedure TCustomerForm.UpdatePage(Sender: TObject);
 begin
-  //
+  if not FInEditState then begin
+    dsCustomer.Refresh;
+    if Assigned(FInfoPage) then
+    begin
+      FInfoPage.UpdateObject;
+    end;
+  end;
 end;
 
 procedure TCustomerForm.ShowPage(const index: Integer);

@@ -44,6 +44,7 @@ object dmMain: TdmMain
     UseRepositories = []
     LibraryName = 'fbclient.dll'
     WaitForRestoreConnect = 0
+    AfterConnect = dbTVAfterConnect
     Left = 22
     Top = 25
   end

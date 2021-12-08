@@ -496,7 +496,7 @@ begin
   if (dsFiles.RecordCount = 0) or (dsFiles.FieldByName('FILE_ID').IsNull) then
     Exit;
 
-  if MessageDlg(Format(ms_DELETE_ACT, [dsFiles.FieldByName('FILE_NOTICE').AsString,
+  if MessageDlg(Format(ms_DELETE_PAY_DOC, [dsFiles.FieldByName('FILE_NOTICE').AsString,
     dsFiles.FieldByName('ADDED_ON').AsString]), mtConfirmation, [mbNo, mbYes], 0) = mrYes then
   begin
     dsFiles.DElete;

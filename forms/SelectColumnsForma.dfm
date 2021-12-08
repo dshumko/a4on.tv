@@ -1,7 +1,6 @@
 object SelectColumnsForm: TSelectColumnsForm
   Left = 0
   Top = 0
-  Hint = 'Gjl]tpl'
   BorderStyle = bsDialog
   Caption = #1042#1099#1073#1086#1088' '#1074#1080#1076#1080#1084#1086#1089#1090#1080' '#1082#1086#1083#1086#1085#1086#1082
   ClientHeight = 398
@@ -96,12 +95,6 @@ object SelectColumnsForm: TSelectColumnsForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 185
       Width = 110

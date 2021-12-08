@@ -85,7 +85,7 @@ var
 implementation
 
 uses
-  RequestNewForma, MAIN, AtrStrUtils;
+  RequestNewForma, MAIN, AtrStrUtils, ad3SpellBase;
 
 {$R *.dfm}
 
@@ -196,6 +196,7 @@ begin
     if not s.IsEmpty then
       edtContact.Items.Add(s);
   end;
+
   {
 
     with TpFIBQuery.Create(Nil) do
@@ -272,6 +273,9 @@ end;
 
 procedure TRecourseForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  if A4MainForm.AddictSpell.Tag = 1 then begin
+    A4MainForm.AddictSpell.RemoveControl(mmoNotice);
+  end;
   // RecourseForm:=nil;
   Action := caFree;
 end;
@@ -304,11 +308,18 @@ begin
 end;
 
 procedure TRecourseForm.FormShow(Sender: TObject);
+var
+  s: string;
+  f: string;
 begin
   if pnlAdres.Visible then
     LupStreets.SetFocus
   else
     cbRecourse.SetFocus;
+
+  if A4MainForm.AddictSpell.Tag = 1 then begin
+    A4MainForm.AddictSpell.AddControl(mmoNotice);
+  end;
 end;
 
 procedure TRecourseForm.LupHOUSEChange(Sender: TObject);

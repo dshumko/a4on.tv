@@ -9,7 +9,7 @@ uses
   Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.Buttons, Data.DB, System.DateUtils,
 
   FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh,
-  DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase, ad3Spell, ad4Live,
+  DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
   MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, MemTableEh, PropFilerEh,
   PropStorageEh;
@@ -28,7 +28,6 @@ type
     pnl3: TPanel;
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
-    AddictSpell: TAddictSpell;
     pnlMain: TPanel;
     pnlText: TPanel;
     mmoText: TDBMemoEh;
@@ -83,6 +82,7 @@ type
     procedure dbgAddonsExit(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pnlAddonsResize(Sender: TObject);
+    procedure mmoTextExit(Sender: TObject);
   private
     FCustomerInfo: TCustomerInfo;
     FReport: Integer;
@@ -92,6 +92,7 @@ type
     FMoreCnt: Double;
     FSingleSrv: Integer;
     FInUpdateMode: Boolean;
+    FOldService: Integer;
     FSpellCheck: Boolean;
     procedure SetCustomerInfo(ci: TCustomerInfo);
     function ParseJson(const json: String): Boolean;
@@ -100,9 +101,10 @@ type
     function CheckData: Boolean;
     procedure RecalAmount;
     procedure SaveOrderAddons;
+    procedure SetInUpdateMode(const value: Boolean);
   public
     property CustomerInfo: TCustomerInfo read FCustomerInfo write SetCustomerInfo;
-    property InUpdateMode: Boolean write FInUpdateMode;
+    property InUpdateMode: Boolean write SetInUpdateMode;
     procedure MakeFrom(const FromOrder: Integer);
     procedure ShowAddons;
     procedure LoadOrderAddons(const jAddons: String);
@@ -156,7 +158,7 @@ begin
         if (not dsOrderTP.FieldByName('Addons').IsNull) then
           LoadOrderAddons(dsOrderTP['Addons']);
         if not dsOrderTP.FieldByName('AMOUNT').IsNull then
-          ednAMOUNT.Value := dsOrderTP['AMOUNT'];
+          ednAMOUNT.value := dsOrderTP['AMOUNT'];
       end;
 
       if ShowModal = mrOk then
@@ -192,8 +194,8 @@ end;
 
 procedure TOrderTPForm.dsOrderTPBeforePost(DataSet: TDataSet);
 begin
-  if not VarIsNull(ednAMOUNT.Value) then
-    dsOrderTP['AMOUNT'] := ednAMOUNT.Value;
+  if not VarIsNull(ednAMOUNT.value) then
+    dsOrderTP['AMOUNT'] := ednAMOUNT.value;
 
   if (dsOrderTP.FieldByName('OTP_ID').IsNull or dsOrderTP['OTP_ID'] = -1) then
   begin
@@ -215,6 +217,12 @@ procedure TOrderTPForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 begin
+  if A4MainForm.AddictSpell.Tag = 1 then
+  begin
+    A4MainForm.AddictSpell.RemoveControl(mmoText);
+    A4MainForm.AddictSpell.OnShowEndMessage := nil;
+  end;
+
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
@@ -260,6 +268,9 @@ begin
         begin
           (Components[i] as TDBGridEh).Font.Name := Font_name;
           (Components[i] as TDBGridEh).Font.Size := Font_size;
+        end;
+        if Row_height <> 0 then
+        begin
           (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
           (Components[i] as TDBGridEh).RowHeight := Row_height;
         end;
@@ -284,17 +295,21 @@ begin
   else if (dsOrderTP.State = dsEdit) then
     btnOk.Enabled := (btnOk.Enabled or dmMain.AllowedAction(rght_OrdersTP_edit));
 
-  s := ExtractFileDir(Application.ExeName) + '\russian.adm';
-  if FileExists(s) then
+  if A4MainForm.AddictSpell.Tag = 1 then
   begin
-    AddictSpell.ConfigDefaultMain.Clear;
-    AddictSpell.ConfigDefaultMain.Add(s);
-    AddictSpell.SuggestionsLearningDict := '%UserProfile%\%UserName%_sp.adl';
-    AddictSpell.AddControl(mmoText);
+    A4MainForm.AddictSpell.AddControl(mmoText);
+    A4MainForm.AddictSpell.OnShowEndMessage := AddictSpellShowEndMessage;
     FSpellCheck := False;
   end
   else
     FSpellCheck := True;
+
+  if FInUpdateMode then
+  begin
+    mmoText.SetFocus;
+    mmoText.SelStart := mmoText.Text.Length;
+    mmoText.SelLength := 0;
+  end;
 end;
 
 procedure TOrderTPForm.lcbOTTP_TYPEChange(Sender: TObject);
@@ -304,17 +319,23 @@ end;
 
 procedure TOrderTPForm.miN2Click(Sender: TObject);
 begin
-  AddictSpell.CheckWinControl(mmoText, ctAll);
+  A4MainForm.AddictSpell.CheckWinControl(mmoText, ctAll);
 end;
 
 procedure TOrderTPForm.miN3Click(Sender: TObject);
 begin
-  AddictSpell.Setup;
+  A4MainForm.AddictSpell.Setup;
 end;
 
 procedure TOrderTPForm.mmoTextChange(Sender: TObject);
 begin
   RecalAmount;
+end;
+
+procedure TOrderTPForm.mmoTextExit(Sender: TObject);
+begin
+  if (dsOrderTP.State in [dsInsert, dsEdit]) and (mmoText.Lines.Text.Trim <> mmoText.Lines.Text) then
+    mmoText.Lines.Text := mmoText.Lines.Text.Trim;
 end;
 
 procedure TOrderTPForm.mtAddonsAfterPost(DataSet: TDataSet);
@@ -337,9 +358,9 @@ begin
     d := 1;
     if ((not DataSet.FieldByName('dc').IsNull) and (DataSet.FieldByName('dc').AsInteger = 1)) then
     begin
-      if pnlPeriod.Visible and (not(VarIsNull(edFROM.Value) or VarIsNull(edTO.Value))) then
+      if pnlPeriod.Visible and (not(VarIsNull(edFROM.value) or VarIsNull(edTO.value))) then
       begin
-        d := (DaysBetween(edTO.Value, edFROM.Value) + 1);
+        d := (DaysBetween(edTO.value, edFROM.value) + 1);
       end
       else
         d := 0;
@@ -376,7 +397,7 @@ begin
   else
     CnErrors.Dispose(edtFIO);
 
-  if VarIsNull(ednAMOUNT.Value) then
+  if VarIsNull(ednAMOUNT.value) then
   begin
     errors := True;
     CnErrors.SetError(ednAMOUNT, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
@@ -392,7 +413,7 @@ begin
   else
     CnErrors.Dispose(lcbOTTP_TYPE);
 
-  if VarIsNull(edOTP_DATE.Value) then
+  if VarIsNull(edOTP_DATE.value) then
   begin
     errors := True;
     CnErrors.SetError(edOTP_DATE, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
@@ -405,13 +426,13 @@ begin
   if (pnlPeriod.Visible) then
   begin
     NotFullRight := (not dmMain.AllowedAction(rght_Dictionary_full));
-    if (VarIsNull(edFROM.Value)) or ((edFROM.Value < Date()) and NotFullRight) then
+    if (VarIsNull(edFROM.value)) or ((edFROM.value < Date()) and NotFullRight) then
     begin
       errors := True;
       CnErrors.SetError(edFROM, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end;
 
-    if VarIsNull(edTO.Value) or (edTO.Value < edFROM.Value) or ((edTO.Value < Date()) and NotFullRight) then
+    if VarIsNull(edTO.value) or (edTO.value < edFROM.value) or ((edTO.value < Date()) and NotFullRight) then
     begin
       errors := True;
       CnErrors.SetError(edTO, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
@@ -421,7 +442,7 @@ begin
   CnErrors.Dispose(mmoText);
   if (FCharCalc) then
   begin
-    if (mmoText.Lines.Text = '') then
+    if (mmoText.Lines.Text.Trim = '') then
     begin
       errors := True;
       CnErrors.SetError(mmoText, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
@@ -440,10 +461,11 @@ begin
     if edtFIO.Text.IsEmpty then
       edtFIO.Text := Copy(ci.FIO, 1, 255);
     if edtAdress.Text.IsEmpty then
-      edtAdress.Text := Copy(trim(ci.STREET + ' ' + ci.HOUSE_no + ' ' + ci.FLAT_NO), 1, 500);
+      edtAdress.Text := Copy(Trim(ci.STREET + ' ' + ci.HOUSE_no + ' ' + ci.FLAT_NO), 1, 500);
     if edtPhone.Text.IsEmpty then
-      edtPhone.Text := Copy(trim(ci.phone_no + ' ' + ci.mobile), 1, 50);
-
+      edtPhone.Text := Copy(Trim(ci.phone_no + ' ' + ci.mobile), 1, 50);
+    if mmoText.Lines.Text.IsEmpty then
+      mmoText.Lines.Text := ci.notice;
     ShowAddons;
   end
   else
@@ -570,6 +592,17 @@ begin
   if lcbOTTP_TYPE.Text.IsEmpty then
     Exit;
 
+  if lcbOTTP_TYPE.Text.ToUpper.Contains(rsFree.ToUpper) then
+  begin
+    edPAY_DATE.Enabled := False;
+    edPAY_DATE.EmptyDataInfo.Text := rsFree;
+  end
+  else
+  begin
+    edPAY_DATE.Enabled := True;
+    edPAY_DATE.EmptyDataInfo.Text := '';
+  end;
+
   pnlPeriod.Visible := False;
   if mtAddons.Active then
   begin
@@ -651,14 +684,16 @@ begin
   if dsOrderTP.FieldByName('OTP_ID').IsNull then
     Exit;
   ExecuteAddons;
-  PrintReport;
+  // если бесплатноЮ, то не печатаю шаблон заказа
+  if edPAY_DATE.Enabled then
+    PrintReport;
 end;
 
 procedure TOrderTPForm.btnOkClick(Sender: TObject);
 var
   allright: Boolean;
 begin
-  if not (dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
+  if not(dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
     dmMain.AllowedAction(rght_OrdersTP_edit)) then
   begin
     ModalResult := mrCancel;
@@ -682,11 +717,12 @@ begin
   end;
 
   if not FSpellCheck then
-    AddictSpell.CheckWinControl(mmoText, ctAll);
+    A4MainForm.AddictSpell.CheckWinControl(mmoText, ctAll);
 
   allright := CheckData;
   if allright and FSpellCheck then
   begin
+    // Post;
     SaveOrderAddons;
     ModalResult := mrOk;
   end;
@@ -719,7 +755,7 @@ begin
         begin
           sql.Text := 'DELETE FROM SINGLE_SERV WHERE Customer_Id = :CID and Service_Id = :SID and HISTORY_ID = :HID';
           ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-          ParamByName('SID').AsInteger := FSingleSrv;
+          ParamByName('SID').AsInteger := FOldService; // FSingleSrv;
           ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
           Transaction.StartTransaction;
           ExecQuery;
@@ -729,9 +765,9 @@ begin
         sql.Text := 'execute procedure Add_Single_Service(:CID, :SID, :Units, :date, :Notice, :HID)';
         ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
         ParamByName('SID').AsInteger := FSingleSrv;
-        ParamByName('date').AsDate := dsOrderTP['OTP_DATE'];;
-        if (not VarIsNull(ednAMOUNT.Value)) then
-          ParamByName('Units').AsCurrency := ednAMOUNT.Value
+        ParamByName('date').AsDate := dsOrderTP['OTP_DATE'];
+        if (not VarIsNull(ednAMOUNT.value)) then
+          ParamByName('Units').AsCurrency := ednAMOUNT.value
         else
           ParamByName('Units').AsCurrency := 1;
 
@@ -740,8 +776,8 @@ begin
         else
           s := edtNumber.Text;
 
-        s := rsOrderN + s + ' ' + lcbOTTP_TYPE.Text + ' '#13#10 + edtFIO.Text + ' '#13#10 + edtAdress.Text + ' '#13#10 +
-          ednAMOUNT.Text;
+        s := rsOrderN + s + ' '#13#10 + lcbOTTP_TYPE.Text + ' '#13#10 + edtFIO.Text + ' '#13#10 + edtAdress.Text +
+          ' '#13#10 + ednAMOUNT.Text;
         ParamByName('Notice').AsString := s;
 
         ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
@@ -768,9 +804,9 @@ begin
   cost := 0;
 
   d := 0;
-  if pnlPeriod.Visible and (not(VarIsNull(edFROM.Value) or VarIsNull(edTO.Value))) then
+  if pnlPeriod.Visible and (not(VarIsNull(edFROM.value) or VarIsNull(edTO.value))) then
   begin
-    d := (DaysBetween(edTO.Value, edFROM.Value) + 1);
+    d := (DaysBetween(edTO.value, edFROM.value) + 1);
   end;
 
   if mtAddons.Active then
@@ -809,7 +845,7 @@ begin
 
   if FCharCalc then
   begin
-    c := mmoText.Lines.Text.Length;
+    c := mmoText.Lines.Text.Trim.Length;
     charcost := FBasicCnt;
     c := c - FCharCnt;
     if (c > 0) then
@@ -823,11 +859,11 @@ begin
       cost := cost + charcost;
   end;
 
-  c := mmoText.Lines.Text.Length;
+  c := mmoText.Lines.Text.Trim.Length;
   lblCharCNT.Caption := format(rsAdCharCount, [c, d]);
   // FCharCnt,FBasicCnt, FMoreCnt]);
 
-  ednAMOUNT.Value := cost;
+  ednAMOUNT.value := cost;
 end;
 
 procedure TOrderTPForm.LoadOrderAddons(const jAddons: String);
@@ -845,7 +881,7 @@ begin
       pnlPeriod.Visible := True;
       ShowPanel := True;
       if (dsOrderTP.FieldByName('DATE_FROM').IsNull) then
-        edFROM.Value := JO.d['ps'];
+        edFROM.value := JO.d['ps'];
     end;
 
     if JO.Contains('pe') then
@@ -853,7 +889,7 @@ begin
       pnlPeriod.Visible := True;
       ShowPanel := True;
       if (dsOrderTP.FieldByName('DATE_TO').IsNull) then
-        edTO.Value := JO.d['pe'];
+        edTO.value := JO.d['pe'];
     end;
 
     if JO.Contains('add') then
@@ -907,10 +943,10 @@ begin
     try
       if pnlPeriod.Visible then
       begin
-        if not VarIsNull(edFROM.Value) then
-          JO.d['ps'] := edFROM.Value;
-        if not VarIsNull(edTO.Value) then
-          JO.d['pe'] := edTO.Value;
+        if not VarIsNull(edFROM.value) then
+          JO.d['ps'] := edFROM.value;
+        if not VarIsNull(edTO.value) then
+          JO.d['pe'] := edTO.value;
       end;
 
       if (mtAddons.Active and (mtAddons.RecordCount > 0)) then
@@ -1001,6 +1037,13 @@ begin
   finally
     Screen.Cursor := Save_Cursor;
   end;
+end;
+
+procedure TOrderTPForm.SetInUpdateMode(const value: Boolean);
+begin
+  FInUpdateMode := value;
+  if FInUpdateMode then
+    FOldService := FSingleSrv;
 end;
 
 end.

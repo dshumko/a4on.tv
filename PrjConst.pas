@@ -301,7 +301,7 @@ resourcestring
 
   rsDeleteCustomerWarning = 'Внимание, удаление абонента приведет к потере всей информацией о нем?';
   rsDeleteNodeWarning = 'Внимание, удаление узла приведет к потере всей информацией о нем?';
-  rsNodeLayotEmpty = 'Заполнить компановку согласно типа узла?';
+  rsNodeLayotEmpty = 'Заполнить компоновку согласно типа узла?';
   rsPayDocN = ' Документ №';
   rsAccessDenied = 'Доступ запрещен';
   rsAmount = 'Сумма';
@@ -420,6 +420,7 @@ resourcestring
   rsFileLocked = 'Файл заблокирован (открыт в другом приложении)';
   rsMACIncorrect = 'Неверный MAC';
   rsLANIncorrect = 'Необходимо IP или MAC или IPv6 или Порт';
+  rsPORTdefective = 'Порт помечен как неисправный';
   rsDayNotZerro = 'Количество дней должно быть больше 0';
   rsNotCustomer = 'НЕ АБОНЕНТ';
 
@@ -626,7 +627,7 @@ resourcestring
   rsDigitNotice = 'Цифра|Примечание';
   rsDigitSTBCAM = 'Цифра|STB/CAM';
   rsDigitTV = 'Цифра|ТВ модель';
-
+  rsEqpmntPorts = 'Порты оборудования';
   rsFunctionBarCode = 'Формируем штрих-код';
   rsFunctionsA4onTV = 'функции A4ON.TV';
   rsPeriodicheskieUslugi = 'Периодические услуги';
@@ -761,6 +762,9 @@ resourcestring
   rsLanMACCustomerD = 'MAC абонента(.)';
   rsLanMACCustomerJun = 'MAC абонента(xxxx.)';
   rsLanPortCustomer = 'Порт абонента';
+  rsLanCustomerAccnt = 'Лицевой абонента';
+  rsLanCustomerFIO = 'Фио абонента';
+  rsLanCustomerAddr = 'Код абонента';
   rsLanVLANCustomer = 'VLAN абонента';
   rsLanTAGCustomer = 'Tag абонента';
   rsLanTAGSTRCustomer = 'TagSTR абонента';
@@ -813,6 +817,7 @@ resourcestring
   rsClmnContractDate = 'Дата договора';
   rsClmnFirstConnect = 'Дата перв. подкл.';
   rsClmnAttributes = 'Атрибуты';
+  rsClmnServiceRegion = 'Зона обслуживания';
   rsClmnLayout = 'Компоновка';
   rsLayoutNotDefined = 'Нет элементов для редактирования.'#13#10'Отображается компоновка типа узла.';
   rsClmnCircuit = 'Схема';
@@ -820,6 +825,7 @@ resourcestring
   rsHeadEnd = 'ГС';
   rsOrg = 'Обсл. орг.';
   rsClmnFiles = 'Файлы';
+  rsClmnLink = 'Линии связи';
   rsClmnFlats = 'Квартиры';
   rsClmnValidTo = 'Договор до';
   rsClmnJur = 'Юр. лицо';
@@ -845,7 +851,7 @@ resourcestring
   rsOrderN = 'CЗ:';
   rsNeedChannel = 'Необходимо выбрать канал';
   rsCloseTask = 'Закрыть задачу';
-  //rsAdCharCount = 'Симовлов %d (до %d = %m, более %m)';
+  //rsAdCharCount = 'Символов %d (до %d = %m, более %m)';
   rsAdCharCount = 'Символов %d на %d дня(ей)';
   rsCloseSelectedTask = 'Закрыть все выделенные задачи?';
   rsEmptyOrIncorrect = 'Пустое поле или русский вместо латиницы';
@@ -853,10 +859,11 @@ resourcestring
   rsRequiredDict = 'Необходимо выбрать из справочника';
   rsCheckWrite = 'Убедитесь в правильности написания';
   rsCheckPassportURL = 'https://apimgw.core.oais.by:8247/mvd-30903-directservice/v1/mvd/passpData?';
+  rsEditFromStartNode = 'Редактировать нужно из начального узла';
 
   rsOn = 'Включить';
   rsOff = 'Отключить';
-
+  rsFree = 'БЕСПЛАТНО';
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';
   ms_DELETE_ACT = 'Удалить отметку выполнения № %s от %s';

@@ -502,12 +502,15 @@ object PaymentDocForm: TPaymentDocForm
     object pnlPayDocHeader: TPanel
       Left = 0
       Top = 0
-      Width = 537
+      Width = 553
       Height = 89
       Align = alLeft
       BevelInner = bvLowered
       BevelOuter = bvNone
       TabOrder = 0
+      DesignSize = (
+        553
+        89)
       object Label1: TLabel
         Left = 8
         Top = 3
@@ -532,7 +535,7 @@ object PaymentDocForm: TPaymentDocForm
       end
       object Label9: TLabel
         Left = 8
-        Top = 43
+        Top = 45
         Width = 31
         Height = 13
         Caption = #1057#1091#1084#1084#1072
@@ -571,8 +574,8 @@ object PaymentDocForm: TPaymentDocForm
       end
       object Panel3: TPanel
         Left = 128
-        Top = 42
-        Width = 405
+        Top = 43
+        Width = 420
         Height = 43
         BevelInner = bvLowered
         Enabled = False
@@ -677,11 +680,12 @@ object PaymentDocForm: TPaymentDocForm
         end
       end
       object tbButtons: TToolBar
-        Left = 413
+        Left = 430
         Top = 11
         Width = 120
         Height = 29
         Align = alNone
+        Anchors = [akTop, akRight]
         ButtonHeight = 25
         ButtonWidth = 25
         Caption = 'tbButtons'
@@ -730,7 +734,7 @@ object PaymentDocForm: TPaymentDocForm
       object DocType: TDBLookupComboboxEh
         Left = 209
         Top = 19
-        Width = 200
+        Width = 215
         Height = 21
         DynProps = <>
         DataField = 'PAYSOURCE_ID'
@@ -748,6 +752,9 @@ object PaymentDocForm: TPaymentDocForm
             FieldName = 'TAX_PRC'
             Width = 35
           end>
+        DropDownBox.ListSource = srcPaymentSource
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1043#1076#1077' '#1073#1099#1083#1072' '#1086#1087#1083#1072#1090#1072
         EditButtons = <>
@@ -756,12 +763,13 @@ object PaymentDocForm: TPaymentDocForm
         ListSource = srcPaymentSource
         ParentShowHint = False
         ShowHint = True
+        Style = csDropDownEh
         TabOrder = 3
         Visible = True
       end
       object dbePAY_DOC_SUM: TDBNumberEditEh
         Left = 8
-        Top = 60
+        Top = 61
         Width = 114
         Height = 21
         DataField = 'PAY_DOC_SUM'
@@ -776,9 +784,9 @@ object PaymentDocForm: TPaymentDocForm
       end
     end
     object pnlNotice: TPanel
-      Left = 537
+      Left = 553
       Top = 0
-      Width = 530
+      Width = 514
       Height = 89
       Align = alClient
       BevelOuter = bvNone
@@ -787,7 +795,7 @@ object PaymentDocForm: TPaymentDocForm
       object Label14: TLabel
         Left = 0
         Top = 0
-        Width = 530
+        Width = 514
         Height = 13
         Align = alTop
         Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077':'
@@ -795,7 +803,7 @@ object PaymentDocForm: TPaymentDocForm
       object mmoNotice: TDBMemoEh
         Left = 0
         Top = 13
-        Width = 530
+        Width = 514
         Height = 76
         Align = alClient
         AutoSize = False

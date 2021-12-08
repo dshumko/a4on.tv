@@ -14,10 +14,14 @@ inherited NodeTypeForm: TNodeTypeForm
     Cursor = crVSplit
     Align = alBottom
   end
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 169
     Width = 713
-    Height = 92
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 172
+    Width = 713
+    Height = 89
     AllowedOperations = [alopUpdateEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -73,6 +77,110 @@ inherited NodeTypeForm: TNodeTypeForm
     end
     inherited tbCancel: TToolButton
       Visible = False
+    end
+  end
+  object pnlBottom: TPanel [4]
+    Left = 0
+    Top = 264
+    Width = 713
+    Height = 222
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 3
+    object lbl4: TLabel
+      Left = 0
+      Top = 0
+      Width = 168
+      Height = 13
+      Align = alTop
+      Caption = ' '#1050#1086#1084#1087#1086#1085#1086#1074#1082#1072' '#1091#1079#1083#1086#1074' '#1076#1072#1085#1085#1086#1075#1086' '#1090#1080#1087#1072
+    end
+    object dbgLayout: TDBGridEh
+      Left = 28
+      Top = 13
+      Width = 685
+      Height = 209
+      Align = alClient
+      DataSource = srcLayout
+      DynProps = <>
+      Flat = True
+      FooterRowCount = 1
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
+      SumList.Active = True
+      TabOrder = 0
+      Columns = <
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'O_NAME'
+          Footer.ValueType = fvtCount
+          Footers = <>
+          Title.Caption = #1058#1080#1087' '#1084#1072#1090#1077#1088#1080#1072#1083#1072' / '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
+          Title.TitleButton = True
+          Width = 188
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'DEV_CNT'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #1050#1086#1083'-'#1074#1086
+          Title.TitleButton = True
+          Width = 66
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'NOTICE'
+          Footers = <>
+          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
+          Width = 175
+        end>
+      object RowDetailData: TRowDetailPanelControlEh
+      end
+    end
+    object pnlBottLeft: TPanel
+      Left = 0
+      Top = 13
+      Width = 28
+      Height = 209
+      Align = alLeft
+      BevelOuter = bvNone
+      TabOrder = 1
+      DesignSize = (
+        28
+        209)
+      object btnAddL: TSpeedButton
+        Left = 2
+        Top = 6
+        Width = 23
+        Height = 22
+        Action = actAddL
+        Flat = True
+      end
+      object btnEditL: TSpeedButton
+        Left = 2
+        Top = 34
+        Width = 23
+        Height = 22
+        Action = actEditL
+        Flat = True
+      end
+      object btnDelL: TSpeedButton
+        Left = 2
+        Top = 185
+        Width = 23
+        Height = 22
+        Action = actDelL
+        Anchors = [akLeft, akBottom]
+        Flat = True
+      end
     end
   end
   inherited pnlEdit: TPanel
@@ -181,110 +289,6 @@ inherited NodeTypeForm: TNodeTypeForm
       TabOrder = 6
       TabStop = False
       OnClick = btnColorClearClick
-    end
-  end
-  object pnlBottom: TPanel [4]
-    Left = 0
-    Top = 264
-    Width = 713
-    Height = 222
-    Align = alBottom
-    BevelOuter = bvNone
-    TabOrder = 3
-    object lbl4: TLabel
-      Left = 0
-      Top = 0
-      Width = 713
-      Height = 13
-      Align = alTop
-      Caption = ' '#1050#1086#1084#1087#1086#1085#1086#1074#1082#1072' '#1091#1079#1083#1086#1074' '#1076#1072#1085#1085#1086#1075#1086' '#1090#1080#1087#1072
-    end
-    object dbgLayout: TDBGridEh
-      Left = 28
-      Top = 13
-      Width = 685
-      Height = 209
-      Align = alClient
-      DataSource = srcLayout
-      DynProps = <>
-      Flat = True
-      FooterRowCount = 1
-      SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
-      SumList.Active = True
-      TabOrder = 0
-      Columns = <
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'O_NAME'
-          Footer.ValueType = fvtCount
-          Footers = <>
-          Title.Caption = #1058#1080#1087' '#1084#1072#1090#1077#1088#1080#1072#1083#1072' / '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
-          Title.TitleButton = True
-          Width = 188
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'DEV_CNT'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #1050#1086#1083'-'#1074#1086
-          Title.TitleButton = True
-          Width = 66
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'NOTICE'
-          Footers = <>
-          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          Title.TitleButton = True
-          Width = 175
-        end>
-      object RowDetailData: TRowDetailPanelControlEh
-      end
-    end
-    object pnlBottLeft: TPanel
-      Left = 0
-      Top = 13
-      Width = 28
-      Height = 209
-      Align = alLeft
-      BevelOuter = bvNone
-      TabOrder = 1
-      DesignSize = (
-        28
-        209)
-      object btnAddL: TSpeedButton
-        Left = 2
-        Top = 6
-        Width = 23
-        Height = 22
-        Action = actAddL
-        Flat = True
-      end
-      object btnEditL: TSpeedButton
-        Left = 2
-        Top = 34
-        Width = 23
-        Height = 22
-        Action = actEditL
-        Flat = True
-      end
-      object btnDelL: TSpeedButton
-        Left = 2
-        Top = 185
-        Width = 23
-        Height = 22
-        Action = actDelL
-        Anchors = [akLeft, akBottom]
-        Flat = True
-      end
     end
   end
   inherited srcDataSource: TDataSource

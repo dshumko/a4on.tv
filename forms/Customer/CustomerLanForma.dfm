@@ -15,6 +15,7 @@ object CustomerLanForm: TCustomerLanForm
   OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
+  OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -32,14 +33,8 @@ object CustomerLanForm: TCustomerLanForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
-      Left = 75
+      Left = 74
       Top = 6
       Width = 363
       Anchors = [akLeft, akRight, akBottom]
@@ -56,7 +51,7 @@ object CustomerLanForm: TCustomerLanForm
   end
   object GroupBox2: TPanel
     Left = 0
-    Top = 35
+    Top = 29
     Width = 534
     Height = 181
     Align = alTop
@@ -67,14 +62,14 @@ object CustomerLanForm: TCustomerLanForm
       181)
     object Label4: TLabel
       Left = 8
-      Top = 33
+      Top = 34
       Width = 25
       Height = 13
       Caption = #1055#1086#1088#1090
     end
     object Label2: TLabel
       Left = 8
-      Top = 107
+      Top = 108
       Width = 22
       Height = 13
       Caption = 'MAC'
@@ -101,7 +96,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object Label6: TLabel
       Left = 8
-      Top = 8
+      Top = 9
       Width = 45
       Height = 13
       Hint = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1102
@@ -128,28 +123,10 @@ object CustomerLanForm: TCustomerLanForm
       Hint = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1076#1083#1103' '#1074#1085#1091#1090#1088#1077#1085#1085#1086#1075#1086' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1103
       Caption = 'TAG'
     end
-    object ePort: TDBNumberEditEh
-      Left = 75
-      Top = 30
-      Width = 454
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'PORT'
-      DataSource = srcLan
-      DecimalPlaces = 0
-      DynProps = <>
-      EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091
-      EditButton.Visible = True
-      EditButtons = <>
-      ShowHint = True
-      TabOrder = 1
-      Visible = True
-      OnExit = ePortExit
-    end
     object eMAC: TDBEditEh
-      Left = 75
-      Top = 104
-      Width = 454
+      Left = 74
+      Top = 105
+      Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       CharCase = ecUpperCase
@@ -166,9 +143,9 @@ object CustomerLanForm: TCustomerLanForm
       EditMask = ''
     end
     object eIP: TDBEditEh
-      Left = 75
+      Left = 74
       Top = 80
-      Width = 454
+      Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'IP'
@@ -188,9 +165,9 @@ object CustomerLanForm: TCustomerLanForm
       OnExit = eIPExit
     end
     object dbleVLAN: TDBLookupComboboxEh
-      Left = 75
+      Left = 74
       Top = 55
-      Width = 454
+      Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -203,39 +180,52 @@ object CustomerLanForm: TCustomerLanForm
           Width = 57
         end
         item
+          AutoFitColWidth = False
           FieldName = 'IP_BEGIN'
           Title.Caption = 'IP c'
         end
         item
+          AutoFitColWidth = False
           FieldName = 'IP_END'
           Title.Caption = 'IP '#1076#1086
         end
         item
+          AutoFitColWidth = False
           FieldName = 'C_CNT'
-          Title.Caption = #1055#1086#1076#1082'. '#1072#1073#1086#1085'.'
+          Title.Caption = #1055#1040
+          Title.Hint = #1055#1086#1076#1082'. '#1072#1073#1086#1085#1077#1085#1090#1086#1074
           Width = 30
         end
         item
+          AutoFitColWidth = False
           FieldName = 'E_CNT'
-          Title.Caption = #1055#1086#1076#1082'. '#1086#1073#1086#1088'.'
+          Title.Caption = #1055#1054
+          Title.Hint = #1055#1086#1076#1082'. '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
           Width = 30
         end>
+      DropDownBox.ListSource = srcVLANS
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+      DropDownBox.SortLocal = True
+      DropDownBox.AutoDrop = True
       DropDownBox.ShowTitles = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1042' '#1082#1072#1082#1086#1081' '#1089#1077#1090#1080' '#1088#1072#1073#1086#1090#1072#1077#1090
       EditButtons = <>
       KeyField = 'V_ID'
-      ListField = 'NAME'
+      ListField = 'NAME_IP'
       ListSource = srcVLANS
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 2
       Visible = True
       OnDropDownBoxGetCellParams = dbleVLANDropDownBoxGetCellParams
     end
     object dbleEquipment: TDBLookupComboboxEh
-      Left = 75
-      Top = 5
-      Width = 454
+      Left = 74
+      Top = 6
+      Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -292,6 +282,7 @@ object CustomerLanForm: TCustomerLanForm
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
       DropDownBox.SortLocal = True
+      DropDownBox.AutoDrop = True
       DropDownBox.ShowTitles = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1091
@@ -335,7 +326,7 @@ object CustomerLanForm: TCustomerLanForm
           OnClick = dbleEquipmentEditButtons1Click
         end>
       KeyField = 'EID'
-      ListField = 'NAME'
+      ListField = 'NAME_IP'
       ListSource = srcEQ
       ShowHint = True
       Style = csDropDownEh
@@ -346,9 +337,9 @@ object CustomerLanForm: TCustomerLanForm
       OnExit = dbleEquipmentExit
     end
     object eIPv6: TDBEditEh
-      Left = 75
+      Left = 74
       Top = 129
-      Width = 454
+      Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       CharCase = ecLowerCase
@@ -382,10 +373,11 @@ object CustomerLanForm: TCustomerLanForm
       EditMask = ''
     end
     object edtTAG: TDBNumberEditEh
-      Left = 75
+      Left = 74
       Top = 154
       Width = 120
       Height = 21
+      Alignment = taLeftJustify
       DataField = 'TAG'
       DataSource = srcLan
       DecimalPlaces = 0
@@ -395,6 +387,92 @@ object CustomerLanForm: TCustomerLanForm
       ShowHint = True
       TabOrder = 6
       Visible = True
+    end
+    object lcbPort: TDBLookupComboboxEh
+      Left = 74
+      Top = 31
+      Width = 455
+      Height = 21
+      Hint = 
+        #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091#13#10#1089#1077#1088#1099#1081' '#1094#1074#1077#1090' - '#1087#1086#1088#1090' '#1079#1072#1085#1103#1090', '#1082#1091#1088#1089#1080#1074' - '#1089#1083#1091#1078#1077#1073#1085#1099#1081' '#1087 +
+        #1086#1088#1090', '#1079#1072#1095#1077#1088#1082#1085#1091#1090' - '#1085#1077#1080#1089#1087#1088#1072#1074#1077#1085
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = 'PORT'
+      DataSource = srcLan
+      DropDownBox.Columns = <
+        item
+          AutoFitColWidth = False
+          FieldName = 'PORT'
+          Title.Caption = #1055#1086#1088#1090
+          Title.Hint = 
+            #1089#1077#1088#1099#1081' '#1094#1074#1077#1090' - '#1087#1086#1088#1090' '#1079#1072#1085#1103#1090', '#1082#1091#1088#1089#1080#1074' - '#1089#1083#1091#1078#1077#1073#1085#1099#1081' '#1087#1086#1088#1090', '#1079#1072#1095#1077#1088#1082#1085#1091#1090' - '#1085#1077 +
+            #1080#1089#1087#1088#1072#1074#1077#1085
+          Width = 25
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'SPEED'
+          Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100
+          Width = 25
+        end
+        item
+          FieldName = 'O_NAME'
+          Title.Caption = #1058#1080#1087
+          Width = 20
+        end
+        item
+          FieldName = 'NOTICE'
+          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Width = 40
+        end
+        item
+          FieldName = 'V_NAME'
+          Title.Caption = #1057#1077#1090#1100
+          Width = 30
+        end>
+      DropDownBox.ListSource = srcPort
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+      DropDownBox.SortLocal = True
+      DropDownBox.ShowTitles = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091
+      EditButtons = <
+        item
+          Action = actAddPort
+          DefaultAction = False
+          ShortCut = 45
+          Style = ebsPlusEh
+        end
+        item
+          Action = actEditPort
+          DefaultAction = False
+          Glyph.Data = {
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000000000000000000000000
+            8000008000000080800080000000800080008080000080808000C0C0C0000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFFFFFFFFFF
+            FFFF878FFFFFFFFFFFFFF807FFFFFFFFFFFFFF7778FFFFFFFFFFFFF7008FFFFF
+            FFFFFFF80008FFFFFFFFFFFF80008FFFFFFFFFFFF80008FFFFFFFFFFFF80008F
+            FFFFFFFFFFF80008FFFFFFFFFFFF80008FFFFFFFFFFFF80708FFFFFFFFFFFF80
+            788FFFFFFFFFFFF8870FFFFFFFFFFFFF807FFFFFFFFFFFFFF8FF}
+          ShortCut = 113
+          Style = ebsGlyphEh
+          Visible = False
+        end>
+      KeyField = 'PORT'
+      ListField = 'NAME'
+      ListSource = srcPort
+      ShowHint = True
+      Style = csDropDownEh
+      TabOrder = 1
+      Visible = True
+      OnChange = lcbPortChange
+      OnDropDownBoxGetCellParams = lcbPortDropDownBoxGetCellParams
+      OnExit = lcbPortExit
     end
   end
   object btn1: TButton
@@ -412,13 +490,13 @@ object CustomerLanForm: TCustomerLanForm
     Left = 0
     Top = 0
     Width = 534
-    Height = 35
+    Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
       534
-      35)
+      29)
     object Label3: TLabel
       Left = 7
       Top = 10
@@ -506,7 +584,7 @@ object CustomerLanForm: TCustomerLanForm
       Tag = 7
       Left = 447
       Top = 7
-      Width = 84
+      Width = 82
       Height = 21
       Anchors = [akTop, akRight]
       DataField = 'PLACE'
@@ -521,9 +599,9 @@ object CustomerLanForm: TCustomerLanForm
   end
   object pnlMemo: TPanel
     Left = 0
-    Top = 216
+    Top = 210
     Width = 534
-    Height = 86
+    Height = 92
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 4
@@ -531,7 +609,7 @@ object CustomerLanForm: TCustomerLanForm
       Left = 0
       Top = 0
       Width = 534
-      Height = 86
+      Height = 92
       Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       Align = alClient
       AutoSize = False
@@ -548,8 +626,8 @@ object CustomerLanForm: TCustomerLanForm
   end
   object srcLan: TDataSource
     DataSet = dsLAN
-    Left = 28
-    Top = 242
+    Left = 32
+    Top = 232
   end
   object dsLAN: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -640,8 +718,8 @@ object CustomerLanForm: TCustomerLanForm
   end
   object srcVLANS: TDataSource
     DataSet = dsVlans
-    Left = 94
-    Top = 234
+    Left = 96
+    Top = 232
   end
   object dsVlans: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -666,9 +744,10 @@ object CustomerLanForm: TCustomerLanForm
       '                      and c.customer_id = :CUSTOMER_ID'
       '                      and (v.v_id = oc.o_id)), 2) as finded'
       '  , v.v_id'
+      '  , v.name'
       
-        '  , v.name || coalesce('#39' / '#39'||v.ip_begin||'#39'-'#39'||v.ip_end, '#39#39') nam' +
-        'e'
+        '  , v.name || coalesce('#39' / '#39'||v.ip_begin||'#39'-'#39'||v.ip_end, '#39#39') NAM' +
+        'E_IP'
       '  , v.ip_begin'
       '  , v.ip_end'
       '  , l.C_CNT'
@@ -691,13 +770,13 @@ object CustomerLanForm: TCustomerLanForm
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
-    Left = 102
-    Top = 247
+    Left = 104
+    Top = 248
   end
   object srcEQ: TDataSource
     DataSet = dsEQ
-    Left = 151
-    Top = 244
+    Left = 160
+    Top = 232
   end
   object dsEQ: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -723,6 +802,11 @@ object CustomerLanForm: TCustomerLanForm
       '  , E.MAC'
       '  , E.PORCH_N'
       '  , E.FLOOR_N'
+      '  , E.NAME||coalesce('#39' / '#39'||E.IP,'#39#39') NAME_IP'
+      '  , e.Node_Id'
+      
+        '  , coalesce((select LVL from GET_NODE_FLAT_LVL(e.Node_Id) where' +
+        '  POSITION (:CUSTOMER_ID IN  CST_LIST) > 0) , 999) LVL'
       '  from EQUIPMENT E'
       '       inner join HOUSE H on (H.HOUSE_ID = E.HOUSE_ID)'
       '       inner join STREET S on (S.STREET_ID = H.STREET_ID)'
@@ -746,24 +830,33 @@ object CustomerLanForm: TCustomerLanForm
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
-    Left = 202
-    Top = 247
+    Left = 168
+    Top = 248
     oFetchAll = True
   end
   object actlst1: TActionList
-    Left = 298
-    Top = 247
+    Left = 392
+    Top = 224
     object actFindIP: TAction
       Caption = #1053#1072#1081#1090#1080' IP'
       Hint = #1053#1072#1081#1090#1080' '#1089#1074#1086#1073#1086#1076#1085#1099#1081' IP (F7)'
       ImageIndex = 7
       ShortCut = 118
     end
+    object actAddPort: TAction
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1086#1088#1090'/'#1099
+      OnExecute = actAddPortExecute
+    end
+    object actEditPort: TAction
+      Caption = 'actEditPort'
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1088#1090
+      OnExecute = actEditPortExecute
+    end
   end
   object cnError: TCnErrorProvider
     DoubleBuffer = False
-    Left = 360
-    Top = 240
+    Left = 480
+    Top = 208
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -774,8 +867,8 @@ object CustomerLanForm: TCustomerLanForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 248
-    Top = 106
+    Left = 216
+    Top = 112
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -786,16 +879,16 @@ object CustomerLanForm: TCustomerLanForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 288
-    Top = 122
+    Left = 256
+    Top = 128
   end
   object pmLanPopUp: TPopupMenu
-    Left = 101
-    Top = 96
+    Left = 424
+    Top = 248
   end
   object ActListEQ: TActionList
-    Left = 194
-    Top = 81
+    Left = 160
+    Top = 88
     object ActLanPing: TAction
       Caption = 'ActLanPing'
       Hint = 'PING IP adress'
@@ -810,6 +903,11 @@ object CustomerLanForm: TCustomerLanForm
       OnExecute = actLanHttpExecute
     end
   end
+  object srcStreet: TDataSource
+    DataSet = dsStreets
+    Left = 344
+    Top = 232
+  end
   object dsStreets: TpFIBDataSet
     SelectSQL.Strings = (
       
@@ -819,18 +917,13 @@ object CustomerLanForm: TCustomerLanForm
       'ORDER BY STREET_NAME, a.area_name')
     Transaction = trRead
     Database = dmMain.dbTV
-    Left = 373
-    Top = 119
-  end
-  object srcStreet: TDataSource
-    DataSet = dsStreets
-    Left = 432
-    Top = 115
+    Left = 360
+    Top = 240
   end
   object srcHouse: TDataSource
     DataSet = dsHomes
-    Left = 427
-    Top = 81
+    Left = 288
+    Top = 232
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -847,7 +940,52 @@ object CustomerLanForm: TCustomerLanForm
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcStreet
-    Left = 370
-    Top = 81
+    Left = 296
+    Top = 240
+  end
+  object srcPort: TDataSource
+    DataSet = dsPort
+    Left = 216
+    Top = 232
+  end
+  object dsPort: TpFIBDataSet
+    UpdateSQL.Strings = (
+      '')
+    DeleteSQL.Strings = (
+      ''
+      '    ')
+    InsertSQL.Strings = (
+      '')
+    RefreshSQL.Strings = (
+      ''
+      '    ')
+    SelectSQL.Strings = (
+      'select'
+      '    p.Port'
+      '  , p.Notice'
+      '  , o.O_Name'
+      '  , p.Speed'
+      '  , p.CON'
+      '  , p.P_STATE'
+      
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
+        'Name,  '#39#39') NAME'
+      '  , p.VLAN_ID'
+      '  , v.Name V_NAME'
+      '  from port p'
+      
+        '       inner join objects o on (p.P_Type = o.O_Id and o.O_Type =' +
+        ' 57)'
+      '       left outer join VLANS v on (v.V_ID = p.Vlan_Id)'
+      '  where p.Eid = :EID'
+      '  order by p.Port  ')
+    AutoCalcFields = False
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    DataSource = srcEQ
+    Left = 232
+    Top = 248
+    oFetchAll = True
   end
 end

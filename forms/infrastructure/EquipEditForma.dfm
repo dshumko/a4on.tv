@@ -1,10 +1,10 @@
 object EquipEditForm: TEquipEditForm
   Left = 0
   Top = 0
-  BorderStyle = bsDialog
+  BorderStyle = bsSizeToolWin
   Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
-  ClientHeight = 464
-  ClientWidth = 382
+  ClientHeight = 481
+  ClientWidth = 419
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,9 +23,9 @@ object EquipEditForm: TEquipEditForm
   TextHeight = 13
   object pgcTypeInfo: TPageControl
     Left = 0
-    Top = 223
-    Width = 382
-    Height = 200
+    Top = 244
+    Width = 419
+    Height = 194
     ActivePage = tsLan
     Align = alClient
     Style = tsButtons
@@ -33,8 +33,8 @@ object EquipEditForm: TEquipEditForm
     object tsLan: TTabSheet
       Caption = #1057#1077#1090#1100
       DesignSize = (
-        374
-        169)
+        411
+        163)
       object Label4: TLabel
         Left = 0
         Top = 27
@@ -70,7 +70,7 @@ object EquipEditForm: TEquipEditForm
         ParentFont = False
       end
       object btnPing: TSpeedButton
-        Left = 255
+        Left = 292
         Top = 48
         Width = 51
         Height = 21
@@ -87,10 +87,11 @@ object EquipEditForm: TEquipEditForm
         Caption = 'Login'
       end
       object lbl5: TLabel
-        Left = 175
+        Left = 208
         Top = 123
         Width = 46
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = 'Password'
         OnDblClick = lbl5DblClick
       end
@@ -108,7 +109,7 @@ object EquipEditForm: TEquipEditForm
         ParentFont = False
       end
       object btnTelnet: TSpeedButton
-        Left = 312
+        Left = 350
         Top = 48
         Width = 57
         Height = 21
@@ -127,9 +128,10 @@ object EquipEditForm: TEquipEditForm
       object edtMAC: TDBEditEh
         Left = 37
         Top = 24
-        Width = 132
+        Width = 165
         Height = 21
         Hint = #1052#1040#1057' '#1072#1076#1088#1077#1089
+        Anchors = [akLeft, akTop, akRight]
         CharCase = ecUpperCase
         DataField = 'MAC'
         DataSource = srcDataSource
@@ -146,9 +148,10 @@ object EquipEditForm: TEquipEditForm
       object edtIP: TDBEditEh
         Left = 37
         Top = 48
-        Width = 132
+        Width = 165
         Height = 21
         Hint = 'IP '#1072#1076#1088#1077#1089
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'IP'
         DataSource = srcDataSource
         DynProps = <>
@@ -165,9 +168,10 @@ object EquipEditForm: TEquipEditForm
       object edtMASK: TDBEditEh
         Left = 37
         Top = 72
-        Width = 132
+        Width = 165
         Height = 21
         Hint = #1052#1072#1089#1082#1072' '#1089#1077#1090#1080
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'MASK'
         DataSource = srcDataSource
         DynProps = <>
@@ -183,8 +187,9 @@ object EquipEditForm: TEquipEditForm
       object dbleVLAN: TDBLookupComboboxEh
         Left = 37
         Top = 0
-        Width = 337
+        Width = 370
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = 'VLAN_ID'
         DataSource = srcDataSource
@@ -215,9 +220,10 @@ object EquipEditForm: TEquipEditForm
       object edtADMIN: TDBEditEh
         Left = 37
         Top = 120
-        Width = 132
+        Width = 165
         Height = 21
         Hint = 'IP '#1072#1076#1088#1077#1089
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'E_ADMIN'
         DataSource = srcDataSource
         DynProps = <>
@@ -231,11 +237,12 @@ object EquipEditForm: TEquipEditForm
         EditMask = ''
       end
       object edtPWD: TDBEditEh
-        Left = 227
+        Left = 260
         Top = 120
         Width = 147
         Height = 21
         Hint = #1055#1072#1088#1086#1083#1100' '#1072#1076#1084#1080#1085#1080#1089#1090#1088#1072#1090#1086#1088#1072
+        Anchors = [akTop, akRight]
         DataField = 'E_PASS'
         DataSource = srcDataSource
         DynProps = <>
@@ -252,8 +259,9 @@ object EquipEditForm: TEquipEditForm
       object cbbEQG: TDBLookupComboboxEh
         Left = 37
         Top = 144
-        Width = 337
+        Width = 370
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = 'EQ_GROUP'
         DataSource = srcDataSource
@@ -278,7 +286,7 @@ object EquipEditForm: TEquipEditForm
         Visible = True
       end
       object btnFindIP: TBitBtn
-        Left = 174
+        Left = 211
         Top = 47
         Width = 75
         Height = 23
@@ -326,9 +334,10 @@ object EquipEditForm: TEquipEditForm
       object edtIP1: TDBEditEh
         Left = 37
         Top = 96
-        Width = 337
+        Width = 370
         Height = 21
         Hint = 'IP '#1072#1076#1088#1077#1089
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'IPV6'
         DataSource = srcDataSource
         DynProps = <>
@@ -432,14 +441,17 @@ object EquipEditForm: TEquipEditForm
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 382
-    Height = 223
+    Width = 419
+    Height = 244
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    DesignSize = (
+      419
+      244)
     object Label1: TLabel
       Left = 5
-      Top = 51
+      Top = 56
       Width = 31
       Height = 13
       Caption = #1059#1083#1080#1094#1072
@@ -452,7 +464,7 @@ object EquipEditForm: TEquipEditForm
     end
     object Label2: TLabel
       Left = 5
-      Top = 73
+      Top = 79
       Width = 20
       Height = 13
       Caption = #1044#1086#1084
@@ -465,7 +477,7 @@ object EquipEditForm: TEquipEditForm
     end
     object Label3: TLabel
       Left = 5
-      Top = 28
+      Top = 33
       Width = 55
       Height = 13
       Caption = #1053#1072#1079#1074#1072#1085#1080#1077
@@ -476,30 +488,25 @@ object EquipEditForm: TEquipEditForm
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label11: TLabel
-      Left = 5
-      Top = 140
-      Width = 61
-      Height = 13
-      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    end
     object lbl1: TLabel
-      Left = 259
-      Top = 73
+      Left = 292
+      Top = 79
       Width = 18
       Height = 13
+      Anchors = [akTop, akRight]
       Caption = #1055'-'#1076
     end
     object Label6: TLabel
-      Left = 317
-      Top = 73
+      Left = 350
+      Top = 79
       Width = 19
       Height = 13
+      Anchors = [akTop, akRight]
       Caption = #1069'-'#1078
     end
     object lbl4: TLabel
       Left = 5
-      Top = 5
+      Top = 10
       Width = 20
       Height = 13
       Caption = #1058#1080#1087
@@ -512,14 +519,14 @@ object EquipEditForm: TEquipEditForm
     end
     object Label8: TLabel
       Left = 146
-      Top = 73
+      Top = 79
       Width = 31
       Height = 13
       Caption = #1052#1077#1089#1090#1086
     end
     object lbl6: TLabel
-      Left = 5
-      Top = 119
+      Left = 4
+      Top = 149
       Width = 54
       Height = 13
       Caption = #1057#1077#1088#1080#1081#1085#1099#1081' '
@@ -531,28 +538,38 @@ object EquipEditForm: TEquipEditForm
       ParentFont = False
     end
     object lbl10: TLabel
-      Left = 5
-      Top = 97
+      Left = 4
+      Top = 127
       Width = 68
       Height = 13
       Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082
     end
     object lbl11: TLabel
-      Left = 309
-      Top = 97
+      Left = 336
+      Top = 127
       Width = 24
       Height = 13
+      Anchors = [akTop, akRight]
       Caption = #1087#1086#1088#1090
+    end
+    object lblNODE: TLabel
+      Left = 5
+      Top = 102
+      Width = 24
+      Height = 13
+      Caption = #1059#1079#1077#1083
     end
     object luStreet: TDBLookupComboboxEh
       Left = 76
-      Top = 48
-      Width = 302
+      Top = 53
+      Width = 335
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = 'STREET_ID'
       DataSource = srcDataSource
       DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1059#1083#1080#1094#1072
       EditButtons = <>
       KeyField = 'STREET_ID'
       ListField = 'STREET_NAME'
@@ -563,13 +580,14 @@ object EquipEditForm: TEquipEditForm
     end
     object luHouse: TDBLookupComboboxEh
       Left = 76
-      Top = 70
+      Top = 76
       Width = 65
       Height = 21
       DynProps = <>
       DataField = 'HOUSE_ID'
       DataSource = srcDataSource
       DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1044#1086#1084
       EditButtons = <>
       KeyField = 'HOUSE_ID'
       ListField = 'HOUSE_NO'
@@ -581,9 +599,10 @@ object EquipEditForm: TEquipEditForm
     end
     object edtNAME: TDBEditEh
       Left = 76
-      Top = 25
-      Width = 302
+      Top = 30
+      Width = 335
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DataField = 'NAME'
       DataSource = srcDataSource
       DynProps = <>
@@ -595,25 +614,28 @@ object EquipEditForm: TEquipEditForm
     object DBMemo1: TDBMemoEh
       Tag = 9
       Left = 6
-      Top = 156
-      Width = 372
+      Top = 179
+      Width = 405
       Height = 59
       ScrollBars = ssVertical
+      Anchors = [akLeft, akTop, akRight]
       AutoSize = False
       DataField = 'NOTICE'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
+      EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       ShowHint = True
-      TabOrder = 10
+      TabOrder = 11
       Visible = True
       WantReturns = True
     end
     object dbedt1: TDBEditEh
-      Left = 280
-      Top = 70
+      Left = 313
+      Top = 76
       Width = 35
       Height = 21
+      Anchors = [akTop, akRight]
       DataField = 'PORCH_N'
       DataSource = srcDataSource
       DynProps = <>
@@ -623,10 +645,11 @@ object EquipEditForm: TEquipEditForm
       Visible = True
     end
     object DBEdit1: TDBEditEh
-      Left = 339
-      Top = 70
+      Left = 372
+      Top = 76
       Width = 39
       Height = 21
+      Anchors = [akTop, akRight]
       DataField = 'FLOOR_N'
       DataSource = srcDataSource
       DynProps = <>
@@ -637,9 +660,10 @@ object EquipEditForm: TEquipEditForm
     end
     object cbTypeEQ: TDBComboBoxEh
       Left = 76
-      Top = 2
-      Width = 302
+      Top = 7
+      Width = 335
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DataField = 'EQ_TYPE'
       DataSource = srcDataSource
       DynProps = <>
@@ -659,14 +683,16 @@ object EquipEditForm: TEquipEditForm
     end
     object edtPlace: TDBEditEh
       Left = 183
-      Top = 70
-      Width = 70
+      Top = 76
+      Width = 103
       Height = 21
       Hint = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' / '#1071#1097#1080#1082
+      Anchors = [akLeft, akTop, akRight]
       DataField = 'PLACE'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
+      EmptyDataInfo.Text = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080
       ShowHint = True
       TabOrder = 4
       Visible = True
@@ -674,22 +700,24 @@ object EquipEditForm: TEquipEditForm
     end
     object edtSerial: TDBEditEh
       Left = 76
-      Top = 116
-      Width = 302
+      Top = 146
+      Width = 335
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DataField = 'SERIAL_N'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 10
       Visible = True
     end
     object luParent: TDBLookupComboboxEh
       Left = 76
-      Top = 93
-      Width = 227
+      Top = 123
+      Width = 254
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = 'PARENT_ID'
       DataSource = srcDataSource
@@ -706,37 +734,72 @@ object EquipEditForm: TEquipEditForm
       ListField = 'NAME'
       ListSource = srcParent
       ShowHint = True
-      TabOrder = 7
+      TabOrder = 8
       Visible = True
     end
     object edtPort: TDBEditEh
-      Left = 339
-      Top = 94
-      Width = 39
+      Left = 365
+      Top = 123
+      Width = 46
       Height = 21
+      Anchors = [akTop, akRight]
       DataField = 'PARENT_PORT'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
       ShowHint = True
-      TabOrder = 8
+      TabOrder = 9
       Visible = True
+    end
+    object lcbNODE: TDBLookupComboboxEh
+      Left = 76
+      Top = 100
+      Width = 335
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = 'NODE_ID'
+      DataSource = srcDataSource
+      DropDownBox.Columns = <
+        item
+          FieldName = 'NAME'
+          Width = 30
+        end
+        item
+          FieldName = 'O_NAME'
+          Width = 20
+        end>
+      DropDownBox.ListSource = srcNODE
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1056#1072#1089#1087#1086#1083#1086#1078#1077#1085' '#1074' '#1091#1079#1083#1077
+      EditButtons = <>
+      KeyField = 'NODE_ID'
+      ListField = 'NODE_NAME'
+      ListSource = srcNODE
+      ShowHint = True
+      Style = csDropDownEh
+      TabOrder = 7
+      Visible = True
+      OnDropDownBoxGetCellParams = lcbNODEDropDownBoxGetCellParams
     end
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 423
-    Width = 382
-    Height = 41
+    Top = 438
+    Width = 419
+    Height = 43
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      382
-      41)
+      419
+      43)
     object btnCancel: TBitBtn
-      Left = 296
-      Top = 8
+      Left = 336
+      Top = 10
       Width = 75
       Height = 27
       Anchors = [akRight, akBottom]
@@ -746,9 +809,9 @@ object EquipEditForm: TEquipEditForm
       TabOrder = 1
     end
     object btnOk: TBitBtn
-      Left = 36
-      Top = 8
-      Width = 254
+      Left = 41
+      Top = 10
+      Width = 286
       Height = 27
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akRight, akBottom]
@@ -864,7 +927,8 @@ object EquipEditForm: TEquipEditForm
       '    SIGNAL_IN = :SIGNAL_IN,'
       '    SIGNAL_OUT = :SIGNAL_OUT,'
       '    EQ_ACTIVE = :EQ_ACTIVE ,'
-      '    IPV6 = :IPV6'
+      '    IPV6 = :IPV6,'
+      '    NODE_ID = :NODE_ID'
       'WHERE'
       '    EID = :OLD_EID'
       '    ')
@@ -898,7 +962,8 @@ object EquipEditForm: TEquipEditForm
       '    SIGNAL_IN,'
       '    SIGNAL_OUT,'
       '    EQ_ACTIVE,'
-      '    IPV6'
+      '    IPV6,'
+      '    NODE_ID'
       ')'
       'VALUES('
       '    :EID,'
@@ -923,7 +988,8 @@ object EquipEditForm: TEquipEditForm
       '    :SIGNAL_IN,'
       '    :SIGNAL_OUT,'
       '    :EQ_ACTIVE,'
-      '    :IPV6'
+      '    :IPV6,'
+      '    :NODE_ID'
       ')')
     RefreshSQL.Strings = (
       'SELECT E.*, h.street_id'
@@ -947,8 +1013,8 @@ object EquipEditForm: TEquipEditForm
     Transaction = trSRead
     Database = dmMain.dbTV
     UpdateTransaction = trSWrite
-    Left = 334
-    Top = 111
+    Left = 62
+    Top = 383
   end
   object srcDataSource: TDataSource
     AutoEdit = False
@@ -1063,5 +1129,37 @@ object EquipEditForm: TEquipEditForm
     DoubleBuffer = False
     Left = 24
     Top = 176
+  end
+  object srcNODE: TDataSource
+    DataSet = dsNODE
+    Left = 149
+    Top = 274
+  end
+  object dsNODE: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    N.Node_Id'
+      
+        '  , n.Name || '#39'/'#39' || o.O_Name || coalesce('#39' ('#39' || N.Notice || '#39')' +
+        #39', '#39#39') as NODE_NAME'
+      '  , N.Name'
+      '  , N.Notice'
+      '  , N.Floor_N'
+      '  , N.Porch_N'
+      '  , N.Place'
+      '  , o.O_Name'
+      '  , o.O_DIMENSION as COLOR'
+      '  from NODES n'
+      
+        '       inner join objects o on (o.O_Id = n.Type_Id and o.O_Type ' +
+        '= 38)'
+      'where n.HOUSE_ID = :HOUSE_ID'
+      'order by 2')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    DataSource = srcHouse
+    Left = 87
+    Top = 273
   end
 end

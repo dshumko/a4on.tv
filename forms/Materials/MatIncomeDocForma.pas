@@ -368,9 +368,9 @@ end;
 
 function TMatIncomeDocForm.CheckRowData: Boolean;
 begin
-  Result := fAddedMatID <> -1;
-  if Result then
-    Result := VarIsFloat(edtQuant.value)
+  Result := (fAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
+  if edtQuant.Text.IsEmpty then
+    edtQuant.SetFocus;
 end;
 
 procedure TMatIncomeDocForm.actDelRecordExecute(Sender: TObject);

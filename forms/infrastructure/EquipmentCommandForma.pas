@@ -209,6 +209,30 @@ begin
   pmMemo.Items.Add(NewItem);
 
   NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanCustomerAccnt;
+  NewItem.Hint := '<c_accnt>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanCustomerFIO;
+  NewItem.Hint := '<c_fio>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanCustomerAddr;
+  NewItem.Hint := '<c_addr>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'Дата в формате Y-m-d h:n ' + FormatDateTime('Y-m-d h:n', Now());
+  NewItem.Hint := '<date>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsLanTelnetWait;
   NewItem.Hint := 'wait';
   NewItem.OnClick := IP1Click;

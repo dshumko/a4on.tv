@@ -14,7 +14,7 @@ uses
   AtrPages, FIBQuery, pFIBQuery, DBGridEhToolCtrls,
   PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet,
   DBAxisGridsEh, MemTableDataEh, MemTableEh, PrjConst,
-  EhLibVCL, dnSplitter, DBGridEhGrouping, DynVarsEh;
+  EhLibVCL, dnSplitter, DBGridEhGrouping, DynVarsEh, A4onTypeUnit;
 
 type
   TCustomersForm = class(TForm)
@@ -278,8 +278,7 @@ type
     procedure actCheckPassportExecute(Sender: TObject);
     procedure actRecAddWAdresExecute(Sender: TObject);
     procedure actOrderTPExecute(Sender: TObject);
-    procedure dbgCustomersColumnsGetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgCustomersColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -332,6 +331,7 @@ type
     procedure RefreshCustomerRecords;
     procedure OpenDataSet(const FindCustomerID: Integer = -1);
     procedure ValidatePassport;
+    procedure CopyOrderTP(const FromOrder: Integer; const ci: TCustomerInfo);
   public
     constructor CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
     procedure SetDefaultFilter;
@@ -357,9 +357,9 @@ uses
   TextEditForma, SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, AtrStrUtils,
   RxStrUtils, StrUtils, EhLibFIB, pFIBProps, fmuCustomerInfo, fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv,
   fmuCustomerKoef, fmuCustomerLetters, fmuCustomerRecourse, fmuCustomerRequests, fmuCustomerMaterialsMove,
-  fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerCard, fmuCustomerDigit, fmuCustomerAppl,
+  fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerDigit, fmuCustomerAppl, fmuCustomerCard,
   PaymentForma, CancelContractForma, SelectLetterTypeForma, CustomersFilter, ReportPreview, fmuCustomerNew,
-  fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma, A4onTypeUnit,
+  fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma,
   OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl;
 
 const
@@ -524,8 +524,7 @@ begin
 
 end;
 
-procedure TCustomersForm.dbgCustomersColumnsGetCellParams(
-  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+procedure TCustomersForm.dbgCustomersColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if not Params.Text.IsEmpty then
     Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
@@ -4785,19 +4784,20 @@ end;
 procedure TCustomersForm.actOrderTPExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
+  OID, i, FromOrder: Integer;
+  Save_Cursor: TCursor;
 begin
   ci.CUSTOMER_ID := dsCustomers.FieldByName('CUSTOMER_ID').AsInteger;
   ci.cust_code := dsCustomers.FieldByName('cust_code').AsString;
   ci.Account_No := dsCustomers.FieldByName('Account_No').AsString;
-  ci.CUST_STATE_DESCR := dsCustomers.FieldByName('CUST_STATE_DESCR').AsString;
 
   if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
     ci.Debt_sum := -1 * dsCustomers.FieldByName('Debt_sum').AsCurrency
   else
     ci.Debt_sum := dsCustomers.FieldByName('Debt_sum').AsCurrency;
 
-  ci.FIO := Trim(dsCustomers.FieldByName('Surname').AsString + ' ' + dsCustomers.FieldByName('Firstname').AsString + ' ' +
-    dsCustomers.FieldByName('Midlename').AsString);
+  ci.FIO := Trim(dsCustomers.FieldByName('Surname').AsString + ' ' + dsCustomers.FieldByName('Firstname').AsString + ' '
+    + dsCustomers.FieldByName('Midlename').AsString);
   ci.STREET_ID := dsCustomers.FieldByName('street_ID').AsInteger;
   ci.STREET := dsCustomers.FieldByName('STREET_SHORT').AsString + ' ' + dsCustomers.FieldByName('STREET_NAME').AsString;
   ci.HOUSE_ID := dsCustomers.FieldByName('HOUSE_ID').AsInteger;
@@ -4805,14 +4805,137 @@ begin
   ci.FLAT_NO := dsCustomers.FieldByName('FLAT_No').AsString;
   ci.phone_no := dsCustomers.FieldByName('phone_no').AsString;
   ci.mobile := dsCustomers.FieldByName('MOBILE_PHONE').AsString;
-  ci.notice := dsCustomers.FieldByName('notice').AsString;
-  ci.Color := dsCustomers.FieldByName('HIS_COLOR').AsString;
+  ci.notice := '';
   ci.isType := 0;
-  ci.INN := dsCustomers.FieldByName('JUR_INN').AsString;
   ci.isJur := dsCustomers.FieldByName('Juridical').AsInteger;
   if ci.isJur = 1 then
     ci.FIO := Trim(dsCustomers.FieldByName('Firstname').AsString + ' ' + dsCustomers.FieldByName('Surname').AsString);
-  CreateOrderTPForCustomer(-1, ci);
+
+  if (dbgCustomers.SelectedRows.Count > 1) then
+  begin
+    // если много абонентов выделено, передадим это в заказ.
+    // а там можно удалить.
+    for i := 0 to dbgCustomers.SelectedRows.Count - 1 do
+    begin
+      dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[i];
+      ci.notice := ci.notice + //
+        Trim(dsCustomers.FieldByName('Surname').AsString + ' ' + //
+        dsCustomers.FieldByName('Firstname').AsString + ' ' + //
+        dsCustomers.FieldByName('Midlename').AsString) + #13#10;
+    end;
+    ci.notice := ci.notice.Trim;
+    dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[dbgCustomers.SelectedRows.Count - 1];
+  end;
+
+  FromOrder := CreateOrderTPForCustomer(-1, ci);
+
+  if (FromOrder > 0) and (dbgCustomers.SelectedRows.Count > 1) then
+  begin
+    if (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      Save_Cursor := Screen.Cursor;
+      try
+        Screen.Cursor := crSQLWait;
+        OID := dsCustomers.FieldByName('CUSTOMER_ID').AsInteger;
+        for i := 0 to dbgCustomers.SelectedRows.Count - 1 do
+        begin
+          dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[i];
+          if OID <> dsCustomers.FieldByName('CUSTOMER_ID').AsInteger then
+          begin
+            ci.CUSTOMER_ID := dsCustomers.FieldByName('CUSTOMER_ID').AsInteger;
+            ci.FIO := Trim(dsCustomers.FieldByName('Surname').AsString + ' ' + //
+              dsCustomers.FieldByName('Firstname').AsString + ' ' + //
+              dsCustomers.FieldByName('Midlename').AsString);
+            ci.STREET := dsCustomers.FieldByName('STREET_SHORT').AsString + ' ' +
+              dsCustomers.FieldByName('STREET_NAME').AsString;
+            ci.HOUSE_no := dsCustomers.FieldByName('House_No').AsString;
+            ci.FLAT_NO := dsCustomers.FieldByName('FLAT_No').AsString;
+            ci.phone_no := dsCustomers.FieldByName('phone_no').AsString;
+            CopyOrderTP(FromOrder, ci);
+          end;
+        end;
+        dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[dbgCustomers.SelectedRows.Count - 1];
+      finally
+        Screen.Cursor := Save_Cursor;
+      end;
+    end;
+  end;
+end;
+
+procedure TCustomersForm.CopyOrderTP(const FromOrder: Integer; const ci: TCustomerInfo);
+var
+  fq: TpFIBQuery;
+begin
+  fq := TpFIBQuery.Create(Self);
+  try
+    fq.Database := dmMain.dbTV;
+    fq.Transaction := dmMain.trWriteQ;
+    fq.sql.Add('execute block (                                                                                   ');
+    fq.sql.Add('    FROM_ORDER integer = :FROM_ORDER,                                                             ');
+    fq.sql.Add('    CID        integer = :CID,                                                                    ');
+    fq.sql.Add('    Fio        varchar(255) = :FIO,                                                               ');
+    fq.sql.Add('    Adress     varchar(500) = :Adress,                                                            ');
+    fq.sql.Add('    Passport   varchar(500) = :Passport,                                                          ');
+    fq.sql.Add('    Phone      varchar(50) = :Phone)                                                              ');
+    fq.sql.Add('as                                                                                                ');
+    fq.sql.Add('declare variable NEW_ORDER  integer;                                                              ');
+    fq.sql.Add('declare variable Ottp_Type  integer;                                                              ');
+    fq.sql.Add('declare variable Otp_Number varchar(50);                                                          ');
+    fq.sql.Add('declare variable Otp_Date   date;                                                                 ');
+    fq.sql.Add('declare variable Notice     varchar(1000);                                                        ');
+    fq.sql.Add('declare variable Quant      numeric(15,2);                                                        ');
+    fq.sql.Add('declare variable Price      numeric(15,2);                                                        ');
+    fq.sql.Add('declare variable Amount     numeric(15,2);                                                        ');
+    fq.sql.Add('declare variable Pay_Date   timestamp;                                                            ');
+    fq.sql.Add('declare variable OLD_CID    integer;                                                              ');
+    fq.sql.Add('declare variable Date_From  date;                                                                 ');
+    fq.sql.Add('declare variable Date_To    date;                                                                 ');
+    fq.sql.Add('declare variable Addons     varchar(1000);                                                        ');
+    fq.sql.Add('declare variable srv        varchar(10);                                                          ');
+    fq.sql.Add('declare variable t_name     varchar(500);                                                         ');
+    fq.sql.Add('begin                                                                                             ');
+    fq.sql.Add('                                                                                                  ');
+    fq.sql.Add('  select                                                                                          ');
+    fq.sql.Add('      Ottp_Type, Otp_Number, Otp_Date, Notice,                                                    ');
+    fq.sql.Add('      Quant, Price, Amount, Pay_Date, Customer_Id                                                 ');
+    fq.sql.Add('    , Date_From, Date_To, Addons, O_Name                                                          ');
+    fq.sql.Add('    , Get_Json_Value(Addons, ''srv'')                                                             ');
+    fq.sql.Add('    from Orders_Tp                                                                                ');
+    fq.sql.Add('         left outer join objects c on (Ottp_Type = c.O_Id and                                     ');
+    fq.sql.Add('               c.O_Type = 22)                                                                     ');
+    fq.sql.Add('    where Otp_Id = :FROM_ORDER                                                                    ');
+    fq.sql.Add('  into :Ottp_Type, :Otp_Number, :Otp_Date, :Notice, --                                            ');
+    fq.sql.Add('       :Quant, :Price, :Amount, :Pay_Date, :OLD_CID, --                                           ');
+    fq.sql.Add('       :Date_From, :Date_To, :Addons, :t_name, :srv;                                              ');
+    fq.sql.Add('                                                                                                  ');
+    fq.sql.Add('  NEW_ORDER = gen_id(GEN_ORDER_TP, 1);                                                            ');
+    fq.sql.Add('                                                                                                  ');
+    fq.sql.Add('  insert into Orders_Tp (Otp_Id, Ottp_Type, Otp_Number, Otp_Date, Fio, Adress, Passport, Phone,   ');
+    fq.sql.Add('     Notice, Quant, Price, Amount, Pay_Date, Customer_Id, Date_From, Date_To, Addons)             ');
+    fq.sql.Add('  values (:NEW_ORDER, :Ottp_Type, :Otp_Number, :Otp_Date, :Fio, :Adress, :Passport, :Phone,       ');
+    fq.sql.Add('     :Notice, :Quant, :Price, :Amount, :Pay_Date, :CID, :Date_From, :Date_To, :Addons);           ');
+    fq.sql.Add('                                                                                                  ');
+    fq.sql.Add('  if (not srv is null) then begin                                                                 ');
+    fq.sql.Add('    Notice = ''CЗ:'' || Otp_Number || '' '' || ascii_char(13) || ascii_char(10) ||                ');
+    fq.sql.Add('             t_name || '' '' || ascii_char(13) || ascii_char(10) ||                               ');
+    fq.sql.Add('             Fio || '' '' || ascii_char(13) || ascii_char(10) ||                                  ');
+    fq.sql.Add('             Adress || '' '' || ascii_char(13) || ascii_char(10) || Amount;                       ');
+    fq.sql.Add('    execute procedure Add_Single_Service(:CID, :srv, :Amount, :Otp_Date, :Notice, :NEW_ORDER);    ');
+    fq.sql.Add('  end                                                                                             ');
+    fq.sql.Add('end                                                                                               ');
+
+    fq.ParamByName('FROM_ORDER').AsInteger := FromOrder;
+    fq.ParamByName('CID').AsInteger := ci.CUSTOMER_ID;
+    fq.ParamByName('Fio').AsString := ci.FIO;
+    fq.ParamByName('Adress').AsString := Copy(Trim(ci.STREET + ' ' + ci.HOUSE_no + ' ' + ci.FLAT_NO), 1, 500);
+    fq.ParamByName('Passport').AsString := '';
+    fq.ParamByName('Phone').AsString := Copy(Trim(ci.phone_no + ' ' + ci.mobile), 1, 50);
+    fq.Transaction.StartTransaction;
+    fq.ExecQuery;
+    fq.Transaction.Commit;
+  finally
+    fq.Free;
+  end;
 end;
 
 procedure TCustomersForm.InitForm;
@@ -4834,10 +4957,16 @@ begin
     begin
       if Components[i] is TDBGridEh then
       begin
-        (Components[i] as TDBGridEh).Font.Name := Font_name;
-        (Components[i] as TDBGridEh).Font.Size := Font_size;
-        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
-        (Components[i] as TDBGridEh).RowHeight := Row_height;
+        if Font_size <> 0 then
+        begin
+          (Components[i] as TDBGridEh).Font.Name := Font_name;
+          (Components[i] as TDBGridEh).Font.Size := Font_size;
+        end;
+        if Row_height <> 0 then
+        begin
+          (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+          (Components[i] as TDBGridEh).RowHeight := Row_height;
+        end;
       end;
     end;
   end;

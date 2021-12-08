@@ -104,21 +104,6 @@ begin
     end;
 end;
 
-function GetUserCacheFolder(): string;
-var
-  s: string;
-  f: string;
-begin
-  s := rsAplicationName;
-  f := GetSpecialFolderPath();
-  if f <> '' then
-    f := f + '\' + s + '\Cache\'
-  else
-    f := ExtractFilePath(Application.ExeName) + 'FILTERS\';
-  ForceDirectories(f);
-  Result := f
-end;
-
 procedure THtmlForm.actShowControlExecute(Sender: TObject);
 begin
   pnlControl.Visible := True;

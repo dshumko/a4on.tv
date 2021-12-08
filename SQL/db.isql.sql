@@ -77,6 +77,7 @@ CREATE DOMAIN D_N18 AS NUMERIC(18, 0);
 CREATE DOMAIN D_NAME AS VARCHAR(50) NOT NULL;
 CREATE DOMAIN D_NOTICE AS VARCHAR(1000);
 CREATE DOMAIN D_PATH AS VARCHAR(5000);
+CREATE DOMAIN D_PORT_NS AS VARCHAR(12) CHARACTER SET UTF8 COLLATE NUMBERSORT;
 CREATE DOMAIN D_SERVICE_NAME AS VARCHAR(60);
 CREATE DOMAIN D_SMALLINT AS SMALLINT;
 CREATE DOMAIN D_TIME AS TIME;
@@ -804,14 +805,14 @@ CREATE TABLE EQUIPMENT (EID UID NOT NULL,
         MASK D_IP,
         VLAN_ID D_UID_NULL,
         IP_BIN D_INT_IP,
-        PLACE D_VARCHAR10,
+        PLACE D_VARCHAR50,
         EQ_GROUP D_UID_NULL,
         E_ADMIN D_VARCHAR20,
         E_PASS D_VARCHAR20,
         LAST_UPDATE D_DATETIME,
         SERIAL_N D_VARCHAR100,
         PARENT_ID D_UID_NULL,
-        PARENT_PORT D_VARCHAR10,
+        PARENT_PORT D_PORT_NS,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -1323,7 +1324,7 @@ CREATE TABLE NODES (NODE_ID UID NOT NULL,
         LON D_GEOPOINT,
         FLOOR_N D_VARCHAR10,
         PORCH_N D_VARCHAR10,
-        PLACE D_VARCHAR10,
+        PLACE D_VARCHAR50,
         PARENT_ID D_UID_NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
@@ -1592,6 +1593,23 @@ CREATE GLOBAL TEMPORARY TABLE PERS_TARIF_TMP (SERV_ID UID,
         T_DAY D_DATE NOT NULL,
         TARIF D_DAY_TARIF DEFAULT 0)
 ON COMMIT DELETE ROWS;
+
+/* Table: PORT, Owner: SYSDBA */
+CREATE TABLE PORT (EID UID,
+        PORT D_PORT_NS NOT NULL,
+        NOTICE D_NOTICE,
+        P_TYPE D_UID_NULL,
+        P_STATE D_UID_NULL,
+        CON D_UID_NULL,
+        CON_ID D_UID_NULL,
+        CON_PORT D_PORT_NS,
+        SPEED D_INTEGER,
+        VLAN_ID D_UID_NULL,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+CONSTRAINT PK_PORT PRIMARY KEY (EID, PORT));
 
 /* Table: PREPAY_DETAIL, Owner: SYSDBA */
 CREATE TABLE PREPAY_DETAIL (PPD_ID UID NOT NULL,
@@ -2199,7 +2217,7 @@ CREATE TABLE TV_LAN (LAN_ID UID NOT NULL,
         IPV6 D_IPV6,
         MAC D_MAC,
         IP_ADD D_IP,
-        PORT D_INTEGER,
+        PORT D_PORT_NS,
         NOTICE D_NOTICE,
         IP_BIN D_INT_IP,
         IP_ADD_BIN D_INT_IP,
@@ -2252,6 +2270,24 @@ CREATE TABLE VPN_SESSIONS (ID UID,
         INTERFACE D_VARCHAR50,
         SERVER D_IP,
         STATUS D_VARCHAR50 NOT NULL);
+
+/* Table: WIRE, Owner: SYSDBA */
+CREATE TABLE WIRE (WID UID,
+        WTYPE UID,
+        NAME D_NAME,
+        METERS D_N15_2,
+        STOCK D_N15_2,
+        POINT_S D_UID_NULL,
+        POINT_E D_UID_NULL,
+        NOTICE D_NOTICE,
+        PATH D_VARCHAR1000,
+        CAPACITY D_INTEGER,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+        M_ID D_UID_NULL,
+CONSTRAINT PK_WIRE_ID PRIMARY KEY (WID) USING INDEX PK_WIRE);
 
 /* Table: WORKAREA, Owner: SYSDBA */
 CREATE TABLE WORKAREA (WA_ID UID NOT NULL,
@@ -3376,6 +3412,19 @@ LANG D_INTEGER,
 NOTICE D_NOTICE)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_NODE_FLAT_LVL (NODE_ID INTEGER)
+RETURNS (HOUSE_ID INTEGER,
+LVL INTEGER,
+FLAT_NO D_FLAT_NS,
+PORCH_N D_FLAT_NS,
+FLOOR_N D_FLAT_NS,
+SRV_LIST VARCHAR(400) CHARACTER SET UTF8,
+CST_LIST VARCHAR(400) CHARACTER SET UTF8,
+STREET_NAME VARCHAR(250) CHARACTER SET UTF8,
+HOUSE_NO VARCHAR(80) CHARACTER SET UTF8,
+NOTICE D_NOTICE)
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_PAY_DOC (PAYSOURCE_ID D_INTEGER,
 PAY_DATE D_DATE,
 PAY_DOC_NO D_VARCHAR255)
@@ -4092,6 +4141,8 @@ CREATE INDEX TQUEUE_IDX_STATE ON TQUEUE (STATUS);
 CREATE INDEX TV_LAN_EID ON TV_LAN (EQ_ID);
 CREATE INDEX TV_LAN_IDX_IP_BIN ON TV_LAN (IP_BIN);
 CREATE INDEX TV_LAN_VLAN ON TV_LAN (VLAN_ID);
+CREATE INDEX WIRE_IDX_END ON WIRE (POINT_E);
+CREATE INDEX WIRE_IDX_START ON WIRE (POINT_S);
 CREATE INDEX WORKER_IDX1 ON WORKER (IBNAME);
 CREATE INDEX WORKER_IDX_TEAM ON WORKER (TEAM);
 CREATE INDEX WORKS_IDX1 ON WORKS (RQ_TYPE);
@@ -6457,7 +6508,7 @@ begin
           end
         end
         fine_sum = round(fine_sum, V_FEE_ROUND);
-        if (fine_sum > DOLG_SUM) then
+        if ((fine_sum > DOLG_SUM) and (DOLG_SUM > 0)) then
           fine_sum = DOLG_SUM;
         suspend;
       end
@@ -11556,6 +11607,12 @@ begin
         DEBT = -1*pays_total;
         fee = v_fee;
       end
+      else begin
+        if ((pays_total > 0) and (not debt_date is null)) then begin
+          debt_date = null;
+          DEBT = null;
+        end
+      end
     end
 
     if (not debt_date is null) then begin
@@ -12639,6 +12696,78 @@ begin
   end
 end ^
 
+ALTER PROCEDURE GET_NODE_FLAT_LVL (NODE_ID INTEGER)
+RETURNS (HOUSE_ID INTEGER,
+LVL INTEGER,
+FLAT_NO D_FLAT_NS,
+PORCH_N D_FLAT_NS,
+FLOOR_N D_FLAT_NS,
+SRV_LIST VARCHAR(400) CHARACTER SET UTF8,
+CST_LIST VARCHAR(400) CHARACTER SET UTF8,
+STREET_NAME VARCHAR(250) CHARACTER SET UTF8,
+HOUSE_NO VARCHAR(80) CHARACTER SET UTF8,
+NOTICE D_NOTICE)
+AS 
+declare variable T_NODE integer;
+begin
+  if (NODE_ID is null) then
+    suspend;
+  else begin
+    for with recursive Node_tree
+        as (select
+                t.Node_Id
+              , t.parent_id
+              , 1 lvl
+              from Nodes t
+              where node_id = :NODE_ID
+            union all
+            select
+                t.Node_Id
+              , t.parent_id
+              , prior.lvl + 1 lvl
+              from Nodes t
+                   inner join Node_tree prior on prior.Node_Id = t.parent_id)
+        select
+            nt.Node_Id
+          , nt.lvl
+          from Node_tree nt
+        into :T_NODE, :LVL
+    do begin
+      for select
+              nF.House_Id
+            , nf.Flat_No
+            , f.Porch_N
+            , f.Floor_N
+            , s.Street_Name || ' ' || s.Street_Short as Street_Name
+            , h.House_No
+            , nf.NOTICE
+            from Node_Flats NF
+                 inner join house h on (nf.House_Id = h.House_Id)
+                 inner join street s on (s.Street_Id = h.Street_Id)
+                 left outer join houseflats F on (f.House_Id = nf.House_Id and
+                       f.Flat_No = nf.Flat_No)
+            where nf.NODE_ID = :T_NODE
+            order by f.porch_n, f.Floor_N, f.Flat_No
+          into :HOUSE_ID, :FLAT_NO, :PORCH_N, :FLOOR_N, :STREET_NAME, :HOUSE_NO, :NOTICE
+      do begin
+        SRV_LIST = null;
+        CST_LIST = null;
+        select
+            list(distinct c.CUSTOMER_ID) CST_LIST
+          , list(distinct R.Shortname) SRV_LIST
+          from customer c
+               left outer join subscr_serv ss on (ss.Customer_Id = c.Customer_Id and
+                     ss.State_Sgn = 1)
+               left outer join services r on (r.Service_Id = ss.Serv_Id)
+          where c.House_Id = :HOUSE_ID
+                and c.Flat_No = :Flat_No
+        into :CST_LIST, :SRV_LIST;
+        suspend;
+      end
+    end
+  end
+end ^
+
 ALTER PROCEDURE GET_PAY_DOC (PAYSOURCE_ID D_INTEGER,
 PAY_DATE D_DATE,
 PAY_DOC_NO D_VARCHAR255)
@@ -13310,7 +13439,7 @@ begin
     end
     M_Tarif = coalesce(M_Tarif, 0) + coalesce(ALL_SUM, 0);
   end
-
+  M_TARIF = round(M_TARIF, 2);
   suspend;
 end ^
 
@@ -18306,6 +18435,32 @@ begin
   end
 end ^
 
+CREATE TRIGGER EQUIPMENT_AIU0 FOR EQUIPMENT 
+ACTIVE AFTER INSERT OR UPDATE POSITION 0 
+as
+begin
+  if (not((NEW.Parent_Id is null)
+      or
+      (NEW.Parent_Port is null))) then begin
+    update or insert into Port (Eid, Port, Con, Con_Id)
+    values (NEW.Parent_Id, NEW.Parent_Port, 0, NEW.Eid)
+    matching (Eid, Port);
+  end
+end ^
+
+CREATE TRIGGER EQUIPMENT_AUD0 FOR EQUIPMENT 
+ACTIVE AFTER UPDATE OR DELETE POSITION 0 
+as
+begin
+  if (not((OLD.Parent_Id is null)
+      or
+      (OLD.Parent_Port is null))) then begin
+    update or insert into Port (Eid, Port, Con, Con_Id)
+    values (OLD.Parent_Id, OLD.Parent_Port, null, null)
+    matching (Eid, Port);
+  end
+end ^
+
 CREATE TRIGGER EQUIPMENT_ATTRIBUTES_BIU0 FOR EQUIPMENT_ATTRIBUTES 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
@@ -19587,6 +19742,23 @@ begin
   end
 end ^
 
+CREATE TRIGGER PORT_BIU0 FOR PORT 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
+as
+begin
+  new.P_Type = coalesce(new.P_Type, 0);/* RJ45 */
+  new.P_State = coalesce(new.P_State, 1);/* Исправен */
+
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
+  end
+end ^
+
 CREATE TRIGGER PREPAY_DETAIL_BI0 FOR PREPAY_DETAIL 
 ACTIVE BEFORE INSERT POSITION 0 
 as
@@ -20362,6 +20534,8 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
   new.VAR_NAME = upper(new.VAR_NAME);
+  new.Var_Value = coalesce(new.Var_Value, '');
+
   if (inserting) then begin
     new.Added_By = current_user;
     new.Added_On = localtimestamp;
@@ -20931,6 +21105,32 @@ begin
     where e.eid = new.eq_id;
 end ^
 
+CREATE TRIGGER TV_LAN_AIU0 FOR TV_LAN 
+ACTIVE AFTER INSERT OR UPDATE POSITION 0 
+as
+begin
+  if (not((NEW.Eq_Id is null)
+      or
+      (NEW.Port is null))) then begin
+    update or insert into Port (Eid, Port, Con, Con_Id)
+    values (NEW.Eq_Id, NEW.Port, 1, NEW.Customer_Id)
+    matching (Eid, Port);
+  end
+end ^
+
+CREATE TRIGGER TV_LAN_AUD0 FOR TV_LAN 
+ACTIVE AFTER UPDATE OR DELETE POSITION 0 
+as
+begin
+  if (not((old.Eq_Id is null)
+      or
+      (old.Port is null))) then begin
+    update or insert into Port (Eid, Port, Con, Con_Id)
+    values (old.Eq_Id, old.Port, null, null)
+    matching (Eid, Port);
+  end
+end ^
+
 CREATE TRIGGER TV_LAN_PACKETS_AI FOR TV_LAN_PACKETS 
 ACTIVE AFTER INSERT POSITION 0 
 as
@@ -20984,6 +21184,25 @@ as
 begin
   if (new.id is null) then
     new.id = gen_id(gen_VPN_SESSIONS_id,1);
+end ^
+
+CREATE TRIGGER WIRE_BIU0 FOR WIRE 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
+as
+begin
+  NEW.WId = coalesce(NEW.WID, gen_id(Gen_Devices_Id, 1));
+  NEW.Meters = coalesce(NEW.Meters, 1);
+  NEW.Capacity = coalesce(NEW.Capacity, 1);
+  NEW.Stock = coalesce(NEW.Stock, 0);
+
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
+  end
 end ^
 
 CREATE TRIGGER WORKAREA_BIU FOR WORKAREA 
@@ -22109,6 +22328,11 @@ COMMENT ON    COLUMN    CUSTOMER_FILES.ACT IS 'Рассмотрен / Обраб
 COMMENT ON    COLUMN    CUSTOMER_FILES.ANOTICE IS 'Комментарий к обработке';
 COMMENT ON TABLE        DAYS_TARIF IS 'Временная таблица для расчетов';
 COMMENT ON TABLE        DECODER_PACKETS IS 'Таблица пакетов для декодера (цифрового оборудования)';
+COMMENT ON TABLE        DEVICES IS 'будет удалена. Таблица для карты.';
+COMMENT ON TABLE        DEVPORTS IS 'будет удалена. Таблица для карты.';
+COMMENT ON    COLUMN    DEVPORTS.ID IS 'будет удалена. Таблица для карты.';
+COMMENT ON    COLUMN    DEVPORTS.LINK IS 'будет удалена. Таблица для карты.';
+COMMENT ON TABLE        DEVPROFILES IS 'будет удалена. Таблица для карты.';
 COMMENT ON TABLE        DISCOUNT_FACTOR IS 'Таблица скидок для абонентов';
 COMMENT ON    COLUMN    DISCOUNT_FACTOR.SRV_TYPE IS 'Если';
 COMMENT ON TABLE        DISTRIBUTOR IS 'ДИСТРИБЬЮТОР каналов';
@@ -22624,6 +22848,18 @@ COMMENT ON    COLUMN    PERSONAL_TARIF.ADD_METHOD IS 'Как добавлен
  1 - при расчете скидок
  2 - акция';
 COMMENT ON TABLE        PERS_TARIF_TMP IS 'Временная таблица для расчетов';
+COMMENT ON TABLE        PORT IS 'Таблица портов оборудования сети';
+COMMENT ON    COLUMN    PORT.EID IS 'Устройство';
+COMMENT ON    COLUMN    PORT.PORT IS 'Номер порта';
+COMMENT ON    COLUMN    PORT.NOTICE IS 'Примечание';
+COMMENT ON    COLUMN    PORT.P_TYPE IS 'Тип порта (OBJECT_TYPE 57)';
+COMMENT ON    COLUMN    PORT.P_STATE IS 'Статус порта (OBJECT_TYPE 60)';
+COMMENT ON    COLUMN    PORT.CON IS 'Тип подключения 0-оборудование, 1-абонент, 2-кабель и т.д.
+ID оборудования/абонента в CON_ID';
+COMMENT ON    COLUMN    PORT.CON_ID IS 'ID абонента/оборудования/кабеля подключения (ставить автоматом) или NULL Если нет подключения';
+COMMENT ON    COLUMN    PORT.CON_PORT IS 'Подключен к порту оборудования (ставить автоматом)';
+COMMENT ON    COLUMN    PORT.SPEED IS 'Скорость порта МБит';
+COMMENT ON    COLUMN    PORT.VLAN_ID IS 'Влан на порту';
 COMMENT ON TABLE        PREPAY_DETAIL IS 'История обещаных платежей';
 COMMENT ON TABLE        PROFILES IS 'Проифили загрузчика платежей и начислений';
 COMMENT ON    COLUMN    PROFILES.PROFILE IS 'Название профиля';
@@ -23069,6 +23305,18 @@ COMMENT ON    COLUMN    VPN_SESSIONS.USERNAME IS 'Имя пользовател�
 COMMENT ON    COLUMN    VPN_SESSIONS.INTERFACE IS 'Имя интерфейса на VPN-сервере ppp*';
 COMMENT ON    COLUMN    VPN_SESSIONS.SERVER IS 'IP-адрес VPN-сервера';
 COMMENT ON    COLUMN    VPN_SESSIONS.STATUS IS 'Статус сессии: Открыта, Закрыта, Открыта автоматически, Закрыта автоматически';
+COMMENT ON TABLE        WIRE IS 'Кабельная инфраструктура';
+COMMENT ON    COLUMN    WIRE.WID IS 'ID кабеля';
+COMMENT ON    COLUMN    WIRE.WTYPE IS 'Тип кабеля OBJECTS_TYPE = 56';
+COMMENT ON    COLUMN    WIRE.NAME IS 'Название/номер';
+COMMENT ON    COLUMN    WIRE.METERS IS 'Длина в метрах';
+COMMENT ON    COLUMN    WIRE.STOCK IS 'Запас кабеля';
+COMMENT ON    COLUMN    WIRE.POINT_S IS 'Подключен к узлу';
+COMMENT ON    COLUMN    WIRE.POINT_E IS 'Подключен к узлу';
+COMMENT ON    COLUMN    WIRE.NOTICE IS 'Примечание';
+COMMENT ON    COLUMN    WIRE.PATH IS 'Координаты для отображения на карте';
+COMMENT ON    COLUMN    WIRE.CAPACITY IS 'Кол-во жил';
+COMMENT ON    COLUMN    WIRE.M_ID IS 'ID Материала';
 COMMENT ON TABLE        WORKAREA IS 'Участки обслуживания';
 COMMENT ON    COLUMN    WORKAREA.REQ_LIMIT IS 'Ограничение заявок на участок. -1 не ограничивать';
 COMMENT ON    COLUMN    WORKAREA.WH_ID IS 'Склад участка';
@@ -23355,6 +23603,8 @@ COMMENT ON    PROCEDURE PARAMETER GET_MAT_GIVE_OUT.MG_ID IS '-1 - все без 
 COMMENT ON    PROCEDURE PARAMETER GET_MAT_GIVE_OUT.RQ_OWNER IS 'Списать со склада монтажника заявки';
 COMMENT ON PROCEDURE    GET_MAX_INET_IP IS 'Выдает max свободный IP для определенного тарифного плана';
 COMMENT ON PROCEDURE    GET_MODULES_FOR_MENU IS 'Выборка всех модулей пользователя для построения меню';
+COMMENT ON PROCEDURE    GET_NODE_FLAT_LVL IS 'Вывод списка квартир узла по уровням
+уровни: 1 - подключен к узлу, 2 - к дочернему узлу, 3 дочернему дочернего узла...';
 COMMENT ON PROCEDURE    GET_PAY_DOC IS 'Возвращает ид платежного документа. если документа нет на эту дату, то создает его.';
 COMMENT ON PROCEDURE    GET_REPORT_ID IS 'Получить ID_REPORT по полному имени отчета (обратная GET_FULLNAME_REPORT)';
 COMMENT ON PROCEDURE    GET_REQUEST_BUSY_DAYS IS 'Возвращает занятые дни для принятия заявок по адресу';

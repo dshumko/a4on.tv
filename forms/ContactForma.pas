@@ -6,17 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
   DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes, Vcl.Buttons;
+  PrjConst, System.UITypes, Vcl.Buttons, A4onTypeUnit;
 
 type
-  TContact = Record
-    cID: Integer;
-    cType: String;
-    Contact: String;
-    Notice: String;
-    Notify: Integer;
-  End;
-
   TMaskEdit = class(Mask.TMaskEdit)
   protected
     procedure ValidateError; override;

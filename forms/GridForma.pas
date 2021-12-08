@@ -72,6 +72,7 @@ type
     FinEditMode: Boolean;
     procedure StartEdit(const New: Boolean = False);
     procedure StopEdit(const Cancel: Boolean);
+    procedure ResizeButtonImagesforHighDPI(const container: TWinControl);
   public
     function GetGridSortOrder(Grid: TDBGridEh): String;
   end;
@@ -81,6 +82,56 @@ implementation
 uses DM, MAIN, AtrStrUtils, fs_iinterpreter;
 
 {$R *.dfm}
+
+// http://zarko-gajic.iz.hr/making-the-glyph-property-high-dpi-aware-for-tbitbtn-and-tspeedbutton/
+procedure TGridForm.ResizeButtonImagesforHighDPI(const container: TWinControl);
+var
+  b : Vcl.Graphics.TBitmap;
+  i : integer;
+
+  procedure ResizeGlyph(const sb : TSpeedButton; const bb : TBitBtn);
+  var
+    ng : integer;
+  begin
+    ng := 1;
+    if Assigned(sb) then ng := sb.NumGlyphs;
+    if Assigned(bb) then ng := bb.NumGlyphs;
+
+    b := Vcl.Graphics.TBitmap.Create;
+    try
+      b.Width := ng * MulDiv(16, Screen.PixelsPerInch, 96);
+      b.Height := MulDiv(16, Screen.PixelsPerInch, 96);
+      b.Canvas.FillRect(b.Canvas.ClipRect);
+
+      if Assigned(sb) AND (NOT sb.Glyph.Empty) then
+      begin
+        b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), sb.Glyph) ;
+        sb.Glyph.Assign(b);
+      end;
+
+      if Assigned(bb) AND (NOT bb.Glyph.Empty) then
+      begin
+        b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), bb.Glyph) ;
+        bb.Glyph.Assign(b);
+      end;
+    finally
+      b.Free;
+    end;
+  end; (*ResizeGlyph*)
+begin
+  if Screen.PixelsPerInch = 96 then Exit;
+  if Screen.PixelsPerInch * 100 / 96 <= 150 then Exit;
+
+  for i := 0 to -1 + container.ControlCount do
+  begin
+    if container.Controls[i] IS TBitBtn then ResizeGlyph(nil, TBitBtn(container.Controls[i]));
+    if container.Controls[i] IS TSpeedButton then ResizeGlyph(TSpeedButton(container.Controls[i]), nil);
+
+    if container.Controls[i] is TWinControl then
+      ResizeButtonImagesforHighDPI(TWinControl(container.Controls[i]));
+  end;
+
+end;
 
 procedure TGridForm.actFilterFLDExecute(Sender: TObject);
 begin
@@ -117,7 +168,6 @@ procedure TGridForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
   v: TfsCustomVariable;
-
 begin
   if fsGlobalUnit <> nil then
   begin
@@ -135,6 +185,12 @@ end;
 
 procedure TGridForm.FormCreate(Sender: TObject);
 begin
+  // http://zarko-gajic.iz.hr/making-the-glyph-property-high-dpi-aware-for-tbitbtn-and-tspeedbutton/
+  if Screen.PixelsPerInch <> 96 then
+  begin
+    ResizeButtonImagesforHighDPI(self);
+  end;
+
   with fsGlobalUnit do
   begin
     AddedBy := Self;
@@ -204,15 +260,18 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
-        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
-        begin
-          s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
-          if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
-            (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
-            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
-        end;
+      end;
+      for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+      begin
+        s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+        if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
+          (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
+          (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
     end;
   end;

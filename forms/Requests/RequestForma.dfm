@@ -35,6 +35,12 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 359
       Top = 6
@@ -470,7 +476,7 @@ object RequestForm: TRequestForm
           Align = alTop
           Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         end
-        object dbContent: TDBMemoEh
+        object mmoNotice: TDBMemoEh
           Left = 0
           Top = 42
           Width = 776
@@ -650,7 +656,7 @@ object RequestForm: TRequestForm
           Visible = True
           OnChange = luTemplateChange
         end
-        object mmoContetnt: TDBMemoEh
+        object mmoContent: TDBMemoEh
           Left = 96
           Top = 55
           Width = 673
@@ -1216,7 +1222,7 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 115
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
@@ -1244,12 +1250,12 @@ object RequestForm: TRequestForm
       Caption = #1060#1086#1090#1086
       ImageIndex = 3
       object spl1: TSplitter
-        Left = 371
+        Left = 369
         Top = 0
         Height = 309
       end
       object dbgPhotos: TDBGridEh
-        Left = 26
+        Left = 24
         Top = 0
         Width = 345
         Height = 309
@@ -1260,7 +1266,7 @@ object RequestForm: TRequestForm
         DynProps = <>
         Flat = True
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
-        TabOrder = 1
+        TabOrder = 0
         Columns = <
           item
             CellButtons = <>
@@ -1284,52 +1290,45 @@ object RequestForm: TRequestForm
         end
       end
       object imgJPG: TDBImageEh
-        Left = 374
+        Left = 372
         Top = 0
-        Width = 402
+        Width = 404
         Height = 309
         Align = alClient
         DataField = 'JPG'
         DataSource = srcPhotos
         DynProps = <>
-        TabOrder = 2
+        TabOrder = 1
         OnDblClick = imgJPGDblClick
       end
-      object tlbFiles: TToolBar
+      object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 26
+        Width = 24
         Height = 309
         Align = alLeft
-        ButtonHeight = 23
-        EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-        Images = A4MainForm.ICONS_ACTIVE
-        TabOrder = 0
-        object btnAdd: TToolButton
-          Left = 0
-          Top = 0
+        BevelOuter = bvNone
+        TabOrder = 2
+        DesignSize = (
+          24
+          309)
+        object btnFileDel: TSpeedButton
+          Left = 1
+          Top = 285
+          Width = 22
+          Height = 22
+          Action = actFileDel
+          Anchors = [akLeft, akBottom]
+          Flat = True
+          Layout = blGlyphTop
+        end
+        object btnFileAdd: TSpeedButton
+          Left = 1
+          Top = 3
+          Width = 22
+          Height = 22
           Action = actFileAdd
-          ParentShowHint = False
-          Wrap = True
-          ShowHint = True
-        end
-        object btnDel: TToolButton
-          Left = 0
-          Top = 23
-          ParentShowHint = False
-          ShowHint = True
-        end
-        object btnView: TToolButton
-          Left = 23
-          Top = 23
-        end
-        object btn1: TToolButton
-          Left = 46
-          Top = 23
-          Width = 8
-          Caption = 'btn1'
-          ImageIndex = 0
-          Style = tbsSeparator
+          Flat = True
         end
       end
     end
@@ -1447,7 +1446,7 @@ object RequestForm: TRequestForm
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
-          object dbmText: TDBMemoEh
+          object mmoComment: TDBMemoEh
             Left = 0
             Top = 0
             Width = 750
@@ -1807,9 +1806,14 @@ object RequestForm: TRequestForm
       OnExecute = actExAddressEditExecute
     end
     object actFileAdd: TAction
-      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1092#1072#1081#1083
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1092#1072#1081#1083
       ImageIndex = 2
       OnExecute = actFileAddExecute
+    end
+    object actFileDel: TAction
+      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1092#1072#1081#1083
+      ImageIndex = 3
+      OnExecute = actFileDelExecute
     end
     object actMSGAdd: TAction
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1084#1084#1077#1085#1090#1072#1088#1080#1081

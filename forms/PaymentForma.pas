@@ -4,9 +4,9 @@ interface
 
 uses
   WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  VCL.Graphics, System.Classes, System.Actions, Vcl.ActnList, Vcl.Menus,
-  VCL.Dialogs, Data.DB, Vcl.Buttons, Vcl.Forms, Vcl.StdCtrls,
-  Vcl.DBCtrls, Vcl.Mask, Vcl.Controls, Vcl.ExtCtrls, Vcl.ComCtrls,
+  VCL.Graphics, System.Classes, System.Actions, VCL.ActnList, VCL.Menus,
+  VCL.Dialogs, Data.DB, VCL.Buttons, VCL.Forms, VCL.StdCtrls,
+  VCL.DBCtrls, VCL.Mask, VCL.Controls, VCL.ExtCtrls, VCL.ComCtrls,
 
   DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, FIBDataSet,
   pFIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
@@ -16,30 +16,6 @@ uses
   DynVarsEh, CnErrorProvider;
 
 type
-
-  TCheckResult = packed record
-    CheckN: Integer;
-    Summa: Integer;
-    Peni: Integer;
-    PayType: Integer; // String;
-    Notify: PWCHAR; // string;
-  end;
-
-  TStrCheckResult = packed record
-    CheckN: PWCHAR;
-    Summa: Integer;
-    Peni: Integer;
-    PayType: Integer; // String;
-    Notify: PWCHAR; // string;
-  end;
-
-  TPrintCheckResult = record
-    CheckN: String;
-    Summa: Integer;
-    Peni: Integer;
-    PayType: Integer; // String;
-    Notify: String; // string;
-  end;
 
   TPaymentForm = class(TBaseForm) // подробней http://www.delphinotes.ru/2013/06/vcl-form-and-frame-scale-fix.html
     pnlFine: TPanel;
@@ -172,7 +148,7 @@ var
   PaymentForm: TPaymentForm;
 
 function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; const aPayment_id: int64;
-  var aPayDate: TDate; var aPaySum: Currency; const aNotice : string = ''; const aSrv : integer = -1): int64;
+  var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1): int64;
 
 implementation
 
@@ -219,7 +195,7 @@ begin
 end;
 
 function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; const aPayment_id: int64;
-  var aPayDate: TDate; var aPaySum: Currency; const aNotice : string = ''; const aSrv : integer = -1): int64;
+  var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1): int64;
 var
   pf: TPaymentForm;
   OpenedPayDocs: string;
@@ -255,8 +231,9 @@ begin
 
       if dmMain.AllowedAction(rght_Pays_TheirAdd) then
         pf.dsPaymentDocs.ParamByName('OWN_PD').Value := ' (exists(select ps.paysource_id from paysource ps ' +
-          'inner join worker w on (upper(w.surname) = upper(ps.paysource_descr)) ' +
-          'where ps.paysource_id = d.Paysource_Id and upper(w.ibname) = upper(current_user)))';
+          ' inner join worker w on (upper(w.surname) = upper(ps.paysource_descr)) ' +
+          ' where ps.paysource_id = d.Paysource_Id and upper(w.ibname) = upper(current_user)) ' +
+          ' or ( d.Added_By = current_user )) ';
 
       pf.dsPaymentDocs.Active := true;
       if pf.dsPaymentDocs.RecordCount > 0 then

@@ -352,12 +352,17 @@ begin
   with dmMain.qRead do
   begin
     SQL.Clear;
-    SQL.Add('select distinct ec.ec_id, ec.name, ec.command');
+    sql.Add('select distinct *');
+    sql.Add('  from (select ec.ec_id, ec.name, ec.command');
     SQL.Add('from equipment_cmd_grp ec');
     SQL.Add('   inner join equipment e on (ec.eg_id = e.eq_group)');
     SQL.Add('   inner join tv_lan t on (e.eid = t.eq_id)');
     SQL.Add('where ec.in_gui = 1 and t.customer_id = :customer_id');
-    SQL.Add('order by ec.name');
+    sql.Add('        union');
+    sql.Add('        select ec.ec_id, ec.name, ec.command');
+    sql.Add('          from equipment_cmd_grp ec');
+    sql.Add('          where ec.in_gui = 1 and ec.Eg_Id = -1)');
+    SQL.Add('order by name');
     ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
     Transaction.StartTransaction;
     ExecQuery;
@@ -439,8 +444,10 @@ begin
     SQL.Clear;
     SQL.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
     SQL.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
-    SQL.Add('from equipment_cmd_grp ec inner join equipment e on (ec.eg_id = e.eq_group)');
-    SQL.Add('where ec.ec_id = :ec_id and e.eid = :eq_id');
+    sql.Add('from equipment e');
+    sql.Add('  inner join equipment_cmd_grp ec');
+    sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
+    SQL.Add('where e.eid = :eq_id');
     ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
     ParamByName('eq_id').AsInteger := dsLAN['eq_id'];
     Transaction.StartTransaction;

@@ -7,12 +7,11 @@ inherited RequestTypeForm: TRequestTypeForm
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Top = 282
     Width = 975
     Height = 4
   end
   inherited dbGrid: TDBGridEh
-    Top = 81
+    Top = 85
     Width = 975
     Height = 201
     Align = alTop
@@ -108,9 +107,9 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   object pgcAddons: TPageControl [2]
     Left = 0
-    Top = 286
+    Top = 294
     Width = 975
-    Height = 257
+    Height = 249
     ActivePage = tsTemplates
     Align = alClient
     TabOrder = 3
@@ -176,7 +175,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 204
+        Height = 196
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcReqTemplates
@@ -276,7 +275,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 204
+        Height = 196
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcWorks
@@ -493,7 +492,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 204
+        Height = 196
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcResult
@@ -571,6 +570,13 @@ inherited RequestTypeForm: TRequestTypeForm
     inherited btnCancelLink: TBitBtn
       Left = 613
     end
+  end
+  object dnspltr1: TdnSplitter [5]
+    Left = 0
+    Top = 286
+    AlignControl = dbGrid
+    MinSize = 100
+    ResizeStyle = rsPattern
   end
   inherited srcDataSource: TDataSource
     DataSet = dsRequestType

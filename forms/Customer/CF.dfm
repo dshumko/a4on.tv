@@ -670,8 +670,8 @@ object CustomersForm: TCustomersForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 205
-    Top = 411
+    Left = 237
+    Top = 403
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -681,8 +681,8 @@ object CustomersForm: TCustomersForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 259
-    Top = 415
+    Left = 299
+    Top = 407
   end
   object dsCustomers: TpFIBDataSet
     DeleteSQL.Strings = (

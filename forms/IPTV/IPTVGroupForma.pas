@@ -8,7 +8,7 @@ uses
   DBGridEh, StdCtrls, ExtCtrls, Mask, DBCtrls, FIBDatabase, pFIBDatabase,
   DBCtrlsEh, OkCancel_frame, ComCtrls, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh;
+  DynVarsEh, PropFilerEh, PropStorageEh;
 
 type
   TIPTVGroupForm = class(TForm)
@@ -23,13 +23,13 @@ type
     OkCancelFrame1: TOkCancelFrame;
     pnlChannels: TPanel;
     spl1: TSplitter;
-    pnl2: TPanel;
+    pnlSelected: TPanel;
     lbl1: TLabel;
     dbgrdGridSC: TDBGridEh;
     pnlProgrBtn: TPanel;
     btnChanAdd: TSpeedButton;
     btnChanRemove: TSpeedButton;
-    pnl3: TPanel;
+    pnlExists: TPanel;
     lbl2: TLabel;
     dbgrdGridC: TDBGridEh;
     pnlHead: TPanel;
@@ -43,11 +43,14 @@ type
     edtCODE: TDBEditEh;
     lblCode: TLabel;
     chkDISABLED: TDBCheckBoxEh;
+    PropStorageEh: TPropStorageEh;
     procedure btnChanAddClick(Sender: TObject);
     procedure btnChanRemoveClick(Sender: TObject);
     procedure dbgrdGridCDblClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -59,7 +62,7 @@ function IPTVGroupModify(const aIG_ID: Integer): Integer;
 implementation
 
 uses
-  DM;
+  DM, MAIN;
 
 {$R *.dfm}
 
@@ -144,6 +147,17 @@ begin
   btnChanAddClick(Sender);
 end;
 
+procedure TIPTVGroupForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+var
+  i: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TDBGridEh then
+      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, True);
+end;
+
 procedure TIPTVGroupForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl])
@@ -154,6 +168,44 @@ begin
     then btnChanAddClick(Sender)
     else if (Ord(Key) = VK_RIGHT)
     then btnChanRemoveClick(Sender);
+  end;
+end;
+
+procedure TIPTVGroupForm.FormShow(Sender: TObject);
+var
+  i, c: Integer;
+  Font_size: Integer;
+  Font_name, s: string;
+  Row_height: Integer;
+begin
+  Font_size := 0;
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
+    Font_size := i;
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+  end;
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+      if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
+        (Components[i] as TDBGridEh).DefaultApplySorting;
+      if Font_size <> 0 then
+      begin
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end;
   end;
 end;
 

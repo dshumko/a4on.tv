@@ -347,8 +347,13 @@ object PayDocsForm: TPayDocsForm
             FieldName = 'TAX_PRC'
             Title.Caption = #1055#1088#1086#1094#1077#1085#1090'|'#1053#1044#1057
           end>
+        DropDownBox.ListSource = srcPaymentSource
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+        DropDownBox.SortLocal = True
         DropDownBox.UseMultiTitle = True
+        DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 150
@@ -359,6 +364,7 @@ object PayDocsForm: TPayDocsForm
         ListSource = srcPaymentSource
         ParentShowHint = False
         ShowHint = True
+        Style = csDropDownEh
         TabOrder = 0
         Visible = True
       end

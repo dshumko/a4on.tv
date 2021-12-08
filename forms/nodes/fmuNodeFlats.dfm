@@ -27,12 +27,14 @@ object apgNodeFlats: TapgNodeFlats
     FooterRowCount = 1
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
-    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    SearchPanel.Enabled = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgNodeFilesDblClick
+    OnSortMarkingChanged = dbgNodeFilesSortMarkingChanged
     Columns = <
       item
         CellButtons = <>
@@ -41,6 +43,7 @@ object apgNodeFlats: TapgNodeFlats
         FieldName = 'LVL'
         Footers = <>
         Title.Caption = #1059#1088#1086#1074#1077#1085#1100
+        Title.TitleButton = True
       end
       item
         AutoFitColWidth = False
@@ -62,6 +65,7 @@ object apgNodeFlats: TapgNodeFlats
         Footers = <>
         ShowImageAndText = True
         Title.Caption = #1059#1089#1083#1091#1075#1080' '#1082#1074#1072#1088#1090#1080#1088#1099
+        Title.TitleButton = True
         Width = 139
       end
       item
@@ -159,90 +163,19 @@ object apgNodeFlats: TapgNodeFlats
       '        CF_ID = :OLD_CF_ID'
       '    ')
     SelectSQL.Strings = (
-      'execute block ('
-      '    NODE_ID integer = :NODE_ID)'
-      'returns ('
-      '    HOUSE_ID    integer,'
-      '    LVL         integer,'
-      '    FLAT_NO     varchar(400),'
-      '    PORCH_N     varchar(40),'
-      '    FLOOR_N     varchar(40),'
-      '    SRV_LIST    varchar(400),'
-      '    CST_LIST    varchar(400),'
-      '    STREET_NAME varchar(250),'
-      '    HOUSE_NO    varchar(80),'
-      '    NOTICE      D_Notice)'
-      'as'
-      'declare variable T_NODE integer;'
-      'begin'
-      '  for with recursive Node_tree'
-      '      as (select'
-      '              t.Node_Id'
-      '            , t.parent_id'
-      '            , 1 lvl'
-      '            from Nodes t'
-      '            where node_id = :NODE_ID'
-      '          union all'
-      '          select'
-      '              t.Node_Id'
-      '            , t.parent_id'
-      '            , prior.lvl + 1 lvl'
-      '            from Nodes t'
-      
-        '                 inner join Node_tree prior on prior.Node_Id = t' +
-        '.parent_id'
-      ''
-      '      )'
-      '      select'
-      '          nt.Node_Id'
-      '        , nt.lvl'
-      '        from Node_tree nt'
-      '      into :T_NODE, :LVL'
-      '  do begin'
-      '    for select'
-      '            nF.House_Id'
-      '          , nf.Flat_No'
-      '          , f.Porch_N'
-      '          , f.Floor_N'
-      
-        '          , s.Street_Name || '#39' '#39' || s.Street_Short as Street_Nam' +
-        'e'
-      '          , h.House_No'
-      '          , nf.NOTICE'
-      '          from Node_Flats NF'
-      '               inner join house h on (nf.House_Id = h.House_Id)'
-      
-        '               inner join street s on (s.Street_Id = h.Street_Id' +
-        ')'
-      
-        '               left outer join houseflats F on (f.House_Id = nf.' +
-        'House_Id and f.Flat_No = nf.Flat_No)'
-      '          where nf.NODE_ID = :T_NODE'
-      '          order by f.porch_n, f.Floor_N, f.Flat_No'
-      
-        '        into :HOUSE_ID, :FLAT_NO, :PORCH_N, :FLOOR_N, :STREET_NA' +
-        'ME, :HOUSE_NO, :NOTICE'
-      '    do begin'
-      '      SRV_LIST = null;'
-      '      CST_LIST = null;'
-      '      select'
-      '        -- list(distinct c.CUSTOMER_ID) CST_LIST , '
-      '        list(distinct R.Shortname) SRV_LIST'
-      '        from customer c'
-      
-        '             left outer join subscr_serv ss on (ss.Customer_Id =' +
-        ' c.Customer_Id and ss.State_Sgn = 1)'
-      
-        '             left outer join services r on (r.Service_Id = ss.Se' +
-        'rv_Id)'
-      '        where c.House_Id = :HOUSE_ID'
-      '              and c.Flat_No = :Flat_No'
-      '      into -- :CST_LIST, '
-      '           :SRV_LIST;'
-      '      suspend;'
-      '    end'
-      '  end'
-      'end')
+      'select'
+      '    House_Id'
+      '  , Lvl'
+      '  , Flat_No'
+      '  , Porch_N'
+      '  , Floor_N'
+      '  , Srv_List'
+      '  , Cst_List'
+      '  , Street_Name'
+      '  , House_No'
+      '  , Notice'
+      '  from Get_Node_Flat_Lvl(:Node_Id)'
+      '  ')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV

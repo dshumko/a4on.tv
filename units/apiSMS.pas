@@ -6,25 +6,14 @@ interface
 
 uses SysUtils, Classes, DateUtils, Types, Windows, vcl.dialogs,
   httpsend, SynaUtil, DB, FIBQuery, pFIBQuery,
-  System.Generics.Collections, JsonDataObjects;
+  System.Generics.Collections, JsonDataObjects,
+  A4onTypeUnit;
 
 const
   // Константы для отправки SMS по SMTP
   API_URL: String = 'http://a4on.tv/sms/sms/';
 
 type
-  TCountry = (cRU, cBY, cUA);
-
-  TSMS = record
-    a4ID: Integer;
-    smsID: Integer;
-    phone: string;
-    Text: string;
-    date: TDateTime;
-    status: Integer;
-  end;
-
-  TSMSList = TList<TSMS>;
 
   TSMSapi = class
   private

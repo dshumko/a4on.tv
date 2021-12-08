@@ -6,17 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
   DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes;
+  PrjConst, System.UITypes, A4onTypeUnit;
 
 type
-
-  TNodeLayoutItem = record
-    M_TYPE: Integer;
-    Name: string;
-    NODE_ID: Integer;
-    quant: Double;
-    notice: string;
-  end;
 
   TNodeLayouteForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;

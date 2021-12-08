@@ -13,7 +13,7 @@ uses
   frxExportBIFF, frxExportDBF, frxExportODF, frxExportMail,
   JvDesktopAlert, DBCtrlsEh, frxClass, frxExportXML,
   EhLibLangConsts, EhLibEmbeddedLangConsts, LanguageResManEh,
-  MDIChildBar, A4onTypeUnit, DM;
+  MDIChildBar, A4onTypeUnit, DM, ad3SpellBase, ad3Spell, ad4Live;
 
 type
   TA4MainForm = class(TForm)
@@ -268,6 +268,16 @@ type
     actMobileNews1: TMenuItem;
     edtcpy1: TEditCopy;
     edtpst1: TEditPaste;
+    AddictSpell: TAddictSpell;
+    miCommunication: TMenuItem;
+    actLinks: TAction;
+    miLinks: TMenuItem;
+    actSearch: TAction;
+    actPortView: TAction;
+    actCableType: TAction;
+    miCableType: TMenuItem;
+    highDPIImageListContainer: TImageList;
+    miPortView: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -275,7 +285,6 @@ type
     procedure actZonesExecute(Sender: TObject);
     procedure miCompanyClick(Sender: TObject);
     procedure actPaymentSourcesExecute(Sender: TObject);
-    procedure tbMainResize(Sender: TObject);
     procedure OpenPaymentsDocExecute(Sender: TObject);
     procedure OpenCustomersExecute(Sender: TObject);
     procedure ApplicationExitExecute(Sender: TObject);
@@ -381,6 +390,10 @@ type
     procedure actBCISolutionExecute(Sender: TObject);
     procedure actReqPhotosExecute(Sender: TObject);
     procedure actMobileNewsExecute(Sender: TObject);
+    procedure actSearchExecute(Sender: TObject);
+    procedure actCableTypeExecute(Sender: TObject);
+    procedure actLinksExecute(Sender: TObject);
+    procedure actPortViewExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -411,6 +424,7 @@ type
     procedure AppOnMessage(var Msg: TMsg; var Handled: Boolean);
     procedure CloseAllConnect;
     procedure CreateScreenShot(scrsht: TBitMap);
+    procedure ResizeImageListImagesforHighDPI(const ImgList: TImageList);
     // procedure AppOnIdle(Sender: TObject; var Done: Boolean);
   public
     property ApplicarionInIdle: Boolean read fApplicarionInIdle;
@@ -445,7 +459,10 @@ implementation
 
 {$R *.dfm}
 
-uses System.Threading, RxStrUtils, AtrCommon, System.DateUtils,
+uses
+  System.Threading, Winapi.CommCtrl, System.DateUtils,
+{$IFDEF EurekaLog} FeedbackForma, {$ENDIF}
+  RxStrUtils, AtrCommon, PrjConst,
   PeriodForma, PaymentSourcesForma, ScreenShotForma,
   CompanyForma, AreaForma, StreetForma, ServicesForma, EquipmentForma,
   AboutForma, WorkersForma, RequestTypeForma, RequestsForma,
@@ -461,7 +478,6 @@ uses System.Threading, RxStrUtils, AtrCommon, System.DateUtils,
   SettinsUserForma, PaymentsForma, CF,
   MessagesForma, PaymentDocForma, ReportDesignerForma,
   DVBEquipmentForma, ManForma, EPGView, OTPTypesForma, OrdersTPForma,
-  PrjConst, {$IFDEF EurekaLog} FeedbackForma, {$ENDIF}
   DVBSettings, MatDocsForma,
   EPGAdForma, ShippersForma, atrCmdUtils, BonusesForma, BlackListForma,
   RequestForma, RatesForma, IPTVSettings,
@@ -469,7 +485,7 @@ uses System.Threading, RxStrUtils, AtrCommon, System.DateUtils,
   NodeTypeForma, NFileTypeForma, TaskForma,
   NewTaskForma, CallCenterForma, ChanSourcesForma, CustFilesForma, BCIssuesForma, BCIssuesTypeForma,
   SatCardsForma, DistribForma, FreqPlanForma, JclLocales, DeviceTypesForma, WebBrowserForma, BCIssuesSolutionForma,
-  ReqPhotosForma, NewsForma;
+  ReqPhotosForma, NewsForma, NHunspell, WireTypeForma, WireForma, PortListForma;
 
 type
 
@@ -559,6 +575,81 @@ begin
   end;
   Screen.Cursor := CrDefault;
 
+end;
+
+procedure TA4MainForm.ResizeImageListImagesforHighDPI(const ImgList: TImageList);
+const
+  DevImgSIZE = 16;
+var
+  ii: Integer;
+  mb, ib, sib, smb: TBitMap;
+begin
+
+  // http://zarko-gajic.iz.hr/resizing-delphis-timagelist-bitmaps-to-fit-high-dpi-scaling-size-for-menus-toolbars-trees-etc/
+
+  if Screen.PixelsPerInch = 96 then
+    Exit;
+
+  // clear images
+  highDPIImageListContainer.Clear;
+
+  // add from source image list
+  for ii := 0 to -1 + ImgList.Count do
+    highDPIImageListContainer.AddImage(ImgList, ii);
+
+  // set size to match DPI size (like 250% of 16px = 40px)
+  ImgList.SetSize(MulDiv(DevImgSIZE, Screen.PixelsPerInch, 96), MulDiv(DevImgSIZE, Screen.PixelsPerInch, 96));
+
+  // add images back to original ImageList stretched (if DPI scaling > 150%) or centered (if DPI scaling <= 150%)
+  for ii := 0 to -1 + highDPIImageListContainer.Count do
+  begin
+    sib := TBitMap.Create; // stretched (or centered) image
+    smb := TBitMap.Create; // stretched (or centered) mask
+    try
+      sib.Width := ImgList.Width;
+      sib.Height := ImgList.Height;
+      sib.Canvas.FillRect(sib.Canvas.ClipRect);
+      smb.Width := ImgList.Width;
+      smb.Height := ImgList.Height;
+      smb.Canvas.FillRect(smb.Canvas.ClipRect);
+
+      ib := TBitMap.Create;
+      mb := TBitMap.Create;
+      try
+        ib.Width := DevImgSIZE;
+        ib.Height := DevImgSIZE;
+        ib.Canvas.FillRect(ib.Canvas.ClipRect);
+
+        mb.Width := DevImgSIZE;
+        mb.Height := DevImgSIZE;
+        mb.Canvas.FillRect(mb.Canvas.ClipRect);
+
+        ImageList_DrawEx(highDPIImageListContainer.Handle, ii, ib.Canvas.Handle, 0, 0, ib.Width, ib.Height, CLR_NONE,
+          CLR_NONE, ILD_NORMAL);
+        ImageList_DrawEx(highDPIImageListContainer.Handle, ii, mb.Canvas.Handle, 0, 0, mb.Width, mb.Height, CLR_NONE,
+          CLR_NONE, ILD_MASK);
+
+        if Screen.PixelsPerInch * 100 / 96 <= 150 then // center if <= 150%
+        begin
+          sib.Canvas.Draw((sib.Width - ib.Width) DIV 2, (sib.Height - ib.Height) DIV 2, ib);
+          smb.Canvas.Draw((smb.Width - mb.Width) DIV 2, (smb.Height - mb.Height) DIV 2, mb);
+        end
+        else // stretch if > 150%
+        begin
+          sib.Canvas.StretchDraw(Rect(0, 0, sib.Width, sib.Width), ib);
+          smb.Canvas.StretchDraw(Rect(0, 0, smb.Width, smb.Width), mb);
+        end;
+      finally
+        ib.Free;
+        mb.Free;
+      end;
+
+      ImgList.Add(sib, smb);
+    finally
+      sib.Free;
+      smb.Free;
+    end;
+  end;
 end;
 
 function TA4MainForm.FindOpenPayDoc(): string;
@@ -759,7 +850,7 @@ end;
 procedure TA4MainForm.ReadUserSettings;
 var
   AppIni: TIniFile;
-  s: string;
+  s, f: string;
 
   procedure SetFromIniSettings(const section: String; const Settings: String; const default: string = '0');
   var
@@ -838,6 +929,37 @@ begin
     actSettingUser.Execute;
   end;
 
+  f := ExtractFileDir(Application.ExeName);
+  if FileExists(f + '\hunspell.dll') and FileExists(f + '\dict_ru_ru.oxt') then
+  begin
+    s := ExtractFileDir(GetIniFileName);
+    AddictSpell.ConfigFilename := s + '\A4on.TV_spell.cfg';
+    AddictSpell.ConfigStorage := csFile;
+
+    if not FileExists(AddictSpell.ConfigFilename) then
+    begin
+      AddictSpell.ConfigDictionaryDir.Clear;
+      AddictSpell.ConfigDictionaryDir.Add(f);
+      AddictSpell.ConfigDefaultMain.Clear;
+      AddictSpell.ConfigDefaultCustom.Clear;
+      AddictSpell.ConfigDefaultCustom.Add(s + '\Autocorrect.adu');
+      AddictSpell.ConfigDefaultCustom.Add(s + '\A4on.TV.adu');
+      AddictSpell.ConfigDefaultActiveCustom := s + '\A4on.TV.adu';
+      AddictSpell.SuggestionsLearningDict := ChangeFileExt(AddictSpell.ConfigFilename, '.adl');
+      AddictSpell.ConfigUseMSWordCustom := False; // не использовать словарь MS office
+      AddictSpell.KeepDictionariesActive := False; // хранить словарь в ОЗУ или нет
+    end;
+
+    Hunspell.ReadFolder(f);
+    with AddictSpell.Configuration.MainDictionaries do
+    begin
+      Clear;
+      Add('dict_ru_ru.oxt::russian-aot.aff::russian-aot.dic');
+      // default value, this is the "InternalFileID" of the US English dictionary
+    end;
+    Hunspell.UpdateAndLoadDictionaries;
+    AddictSpell.Tag := 1;
+  end;
 end;
 
 procedure TA4MainForm.ReadInitSettings;
@@ -932,7 +1054,7 @@ var
   rt: string;
 begin
   if Pos('.fr3', (Sender as TMenuItem).Hint) = 0 then
-    exit;
+    Exit;
   rt := (Sender as TMenuItem).Hint;
   ShowReport(rt);
 end;
@@ -942,12 +1064,12 @@ var
   text: String;
 begin
   if (not dmMain.AllowedAction(rght_Modules_Exec)) then
-    exit;
+    Exit;
 
   if FRunning then
   begin
     FStopped := False;
-    exit;
+    Exit;
   end;
 
   SM.fs.Clear;
@@ -991,7 +1113,7 @@ begin
       text := SM.fs.ErrorUnit + ': ' + SM.fs.ErrorMsg;
     text := SM.fs.ErrorPos + ' Error' + text;
     ShowMessage(text);
-    exit;
+    Exit;
   end;
   FRunning := True;
   try
@@ -1034,7 +1156,17 @@ begin
 end;
 
 procedure TA4MainForm.FormCreate(Sender: TObject);
+var
+  i: Integer;
 begin
+  // ”dm” is the name of the TDataModule instance
+  if Screen.PixelsPerInch <> 96 then
+  begin
+    for i := 0 to -1 + ComponentCount do
+      if Components[i] is TImageList then
+        ResizeImageListImagesforHighDPI(TImageList(Components[i]));
+  end;
+
   FLogedRight := False;
   FToolTipStack := TjvDesktopAlertStack.Create(self);
   LoadLang;
@@ -1045,7 +1177,7 @@ procedure TA4MainForm.OpenPaymentsDocExecute(Sender: TObject);
 begin
   if not(dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Programm_ViewMoney) or
     dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_AddToday)) then
-    exit;
+    Exit;
 
   if Not Assigned(PayDocsForm) then
     PayDocsForm := TPayDocsForm.Create(Application);
@@ -1071,11 +1203,6 @@ begin
     cbSearchType.Width := Round((btnSearchCustomer.Left - 2) / 3);
   edtSearch.Left := cbSearchType.Width + 6;
   edtSearch.Width := btnSearchCustomer.Left - edtSearch.Left - 2;
-end;
-
-procedure TA4MainForm.tbMainResize(Sender: TObject);
-begin
-  // pnlSearch.Width := tbMain.Width - pnlSearch.Left - pnlDate.Width - 5;
 end;
 
 procedure TA4MainForm.actPaymentsExecute(Sender: TObject);
@@ -1160,6 +1287,12 @@ begin
     SearchHandle(sv, i);
 end;
 
+procedure TA4MainForm.actSearchExecute(Sender: TObject);
+begin
+  if edtSearch.Visible then
+    edtSearch.SetFocus;
+end;
+
 procedure TA4MainForm.actServicesExecute(Sender: TObject);
 begin
   if Not Assigned(ServicesForm) then
@@ -1174,7 +1307,7 @@ var
   Save_Cursor: TCursor;
 begin
   if (not dmMain.AllowedAction(rght_Calc_CLose)) then
-    exit;
+    Exit;
 
   Save_Cursor := Screen.Cursor;
   s := dmMain.CurrentMonth;
@@ -1236,7 +1369,7 @@ var
   s: TDate;
 begin
   if (not dmMain.AllowedAction(rght_Calc_Back)) then
-    exit;
+    Exit;
   s := dmMain.CurrentMonth;
   if (MessageDlg(s_ReturnMonth + FormatDateTime('mmmm yyyy', s - 15) + ') ?',
 
@@ -1722,10 +1855,17 @@ begin
   PaymentTypeForm.Show;
 end;
 
+procedure TA4MainForm.actPortViewExecute(Sender: TObject);
+begin
+  if Not Assigned(PortListForm) then
+    PortListForm := TPortListForm.Create(Application);
+  PortListForm.Show;
+end;
+
 procedure TA4MainForm.actAdminQueryExecute(Sender: TObject);
 begin
   if (dmMain.User <> 'SYSDBA') then
-    exit;
+    Exit;
   if Not Assigned(QueryForm) then
     QueryForm := TQueryForm.Create(Application);
   QueryForm.Show;
@@ -1734,7 +1874,7 @@ end;
 procedure TA4MainForm.actAdminServiceExecute(Sender: TObject);
 begin
   if (dmMain.User <> 'SYSDBA') then
-    exit;
+    Exit;
   if Not Assigned(SrvServiceForm) then
     SrvServiceForm := TSrvServiceForm.Create(Application);
   SrvServiceForm.Show;
@@ -1743,7 +1883,7 @@ end;
 procedure TA4MainForm.actAdminUsersExecute(Sender: TObject);
 begin
   if (dmMain.User <> 'SYSDBA') then
-    exit;
+    Exit;
 
   if Not Assigned(UsersForm) then
     UsersForm := TUsersForm.Create(Application);
@@ -1773,7 +1913,7 @@ var
 
 begin
   if (not dmMain.AllowedAction(rght_Calc_Recalc)) then
-    exit;
+    Exit;
   bDate := Now;
   eDate := Now;
 
@@ -1834,6 +1974,13 @@ begin
     LettersForm := TLettersForm.Create(Application);
   LettersForm.Show;
 
+end;
+
+procedure TA4MainForm.actLinksExecute(Sender: TObject);
+begin
+  if Not Assigned(WireForm) then
+    WireForm := TWireForm.Create(Application);
+  WireForm.Show;
 end;
 
 procedure TA4MainForm.actChangePWDExecute(Sender: TObject);
@@ -1978,7 +2125,7 @@ var
 begin
   // Отключено автообновление
   if dmMain.GetIniValue('NOTAUTOUPDATE') = '1' then
-    exit;
+    Exit;
 
   // определение даты файла
   FindFirst(Application.ExeName, faanyfile, SearchRec);
@@ -2198,7 +2345,7 @@ procedure TA4MainForm.CreateReportMenu;
       if miParent.Items[i].Tag = parentTag then
       begin
         Result := miParent.Items[i];
-        exit;
+        Exit;
       end;
       if miParent.Items[i].Count >= 1 then
         Result := findMenuItem(miParent.Items[i], parentTag);
@@ -2383,7 +2530,7 @@ var
   b: TDateTime;
 begin
   if (not dmMain.AllowedAction(rght_Calc_CLose)) then
-    exit;
+    Exit;
 
   if (MessageDlg(Format(rsCloseDay, [FormatDateTime('dd mmmm', Now())]),
 
@@ -2532,6 +2679,9 @@ begin
   actBCItypes.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
   actBCISolution.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
 
+  actLinks.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or DictFull;
+  actPortView.Visible := dmMain.AllowedAction(rght_Dictionary_Equipment) or DictFull;
+
   InitSecurityDictionary;
   InitSecurityMobile;
 end;
@@ -2574,11 +2724,12 @@ begin
   actWorkTeams.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_WorkAreas);
   actZones.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Areas);
   actFileTypes.Visible := rFull;
+  actCableType.Visible := rFull;
 
   ActOrdersTPType.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_OrdersTPType);
   ActOrdersTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
-    dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_del)
-    or dmMain.AllowedAction(rght_OrdersTP_View);
+    dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_del) or
+    dmMain.AllowedAction(rght_OrdersTP_View);
 
   actMessages.Visible := rFull or dmMain.AllowedAction(rght_Messages_add);
 
@@ -2714,7 +2865,7 @@ var
   i: Integer;
 begin
   if not dmMain.AllowedAction(rght_Customer_add) then
-    exit;
+    Exit;
 
   i := NewCustomer;
   if i > 0 then
@@ -2758,6 +2909,13 @@ begin
   FreqPlanForm.Show;
 end;
 
+procedure TA4MainForm.actCableTypeExecute(Sender: TObject);
+begin
+  if Not Assigned(WireTypeForm) then
+    WireTypeForm := TWireTypeForm.Create(Application);
+  WireTypeForm.Show;
+end;
+
 procedure TA4MainForm.actCallCenterExecute(Sender: TObject);
 begin
   if Not Assigned(CallCenterForm) then
@@ -2777,7 +2935,7 @@ var
   s: string;
 begin
   if CallNumber.Trim = '' then
-    exit;
+    Exit;
 
   case CallType of
     0:
@@ -2965,7 +3123,7 @@ begin
   end;
 
   if search_field = 0 then
-    exit;
+    Exit;
 
   if (search_field <> 12) and (search_field <> 13) // 12 - поиск по заявке Заявка, 13 - Задача
   then
@@ -3009,14 +3167,14 @@ begin
   // ТИП = P - поиск по телефону
   pcd := PCopyDataStruct(Msg.LParam);
   Msg.Result := 1;
-  SetLength(Data, pcd.cbData div SizeOf(char));
+  SetLength(Data, pcd.cbData div SizeOf(Char));
   Move(pcd.lpData^, PChar(Data)^, pcd.cbData and (not 1));
 
   // Data := string(pcd.lpData);
 
   Params := explode(';', Data);
   if (Params[0] <> UpperCase(dmMain.DataBase)) then
-    exit;
+    Exit;
   if (Params[1] = 'P') then
   begin
     // в сообщении поиск по телефону
@@ -3046,7 +3204,7 @@ begin
       with cData do
       begin
         DWData := 0;
-        cbData := Length(Data) * SizeOf(char);
+        cbData := Length(Data) * SizeOf(Char);
         lpData := PChar(Data);
       end;
       wHandle := FindWindow(PChar('TA4CallListenerForm'), nil);
@@ -3078,13 +3236,13 @@ var
   i, E: Integer;
 begin
   if not actChangePWD.Visible then
-    exit;
+    Exit;
 
   if (not TryStrToInt(dmMain.GetSettingsValue('PSWD_EXPIRE'), i)) then
     i := 0;
 
   if i <= 0 then
-    exit;
+    Exit;
 
   E := -1;
   with TpFIBQuery.Create(self) do
@@ -3104,7 +3262,7 @@ begin
     end;
 
   if E < i then
-    exit;
+    Exit;
 
   // если не меняли уже 10 дней. то заставим
   if E > (i + 10) then

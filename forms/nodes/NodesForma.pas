@@ -164,6 +164,10 @@ type
     miTreeExpand: TMenuItem;
     miTreeCollapse: TMenuItem;
     drv1: TpFIBDataDriverEh;
+    actLinkNodes: TAction;
+    miN2: TMenuItem;
+    miLinkNodes: TMenuItem;
+    miLinkNodes1: TMenuItem;
     procedure lstFormsClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtSearchChange(Sender: TObject);
@@ -215,6 +219,10 @@ type
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure dbgNodesGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure dbgNodesSelectedRowsItemChanged(Sender: TCustomDBGridEh; Item: TArray<System.Byte>;
+      Action: TListNotification);
+    procedure actLinkNodesExecute(Sender: TObject);
+    procedure dsFilterNewRecord(DataSet: TDataSet);
   private
     FLastPage: TA4onPage;
     FAutoGen: Boolean; // автогенерация название
@@ -253,14 +261,15 @@ var
 
 implementation
 
-uses AtrCommon, MAIN, DM, CustomerForma, DBGridEhFindDlgs, DateUtils,
+uses
+  A4onTypeUnit, AtrCommon, MAIN, DM, CustomerForma, DBGridEhFindDlgs, DateUtils,
   SelectColumnsForma, ExportSettingsForma, TextEditForma,
   SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma,
   DBGridEhImpExp, NodesFilter,
   AtrStrUtils, RxStrUtils, StrUtils, EhLibFIB, pFIBProps,
   fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT,
   fmuNodeFlats, fmuNodeMaterialsMove, fmuNodeLayout, fmuNodeMaterials,
-  fmuNodeAppl;
+  fmuNodeAppl, fmuNodeLink, NodeLinkForma;
 
 const
   const_default_filter: string = ' 1=1 ';
@@ -320,10 +329,15 @@ procedure TNodesForm.dbgNodesGetCellParams(Sender: TObject; Column: TColumnEh; A
   State: TGridDrawState);
 begin
   if not srcNodes.DataSet.FieldByName('COLOR').IsNull then
+  begin
     try
       Background := StringToColor(srcNodes.DataSet.FieldByName('COLOR').Value);
     except
+      Background := clWindow;
     end;
+  end
+  else
+    Background := clWindow;
 end;
 
 procedure TNodesForm.dbgNodesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -337,6 +351,12 @@ begin
     if i > 1 then
       Text := IntToStr(i);
   end;
+end;
+
+procedure TNodesForm.dbgNodesSelectedRowsItemChanged(Sender: TCustomDBGridEh; Item: TArray<System.Byte>;
+  Action: TListNotification);
+begin
+  actLinkNodes.Visible := actLinkNodes.Enabled and (Sender.Selection.Rows.Count = 2);
 end;
 
 procedure TNodesForm.dbgNodesSortMarkingChanged(Sender: TObject);
@@ -447,6 +467,7 @@ begin
   FPageList.Add(TapgNodeMaterials);
   FPageList.Add(TapgNodeLayout);
   FPageList.Add(TapgNodeFiles);
+  FPageList.Add(TapgNodeLink);
   FPageList.Add(TapgNodeCIRCUIT);
   FPageList.Add(TapgNodeMaterialsMove);
   FPageList.Add(TapgNodeAppl);
@@ -484,10 +505,16 @@ begin
     begin
       if Components[i] is TDBGridEh then
       begin
-        (Components[i] as TDBGridEh).Font.Name := Font_name;
-        (Components[i] as TDBGridEh).Font.Size := Font_size;
-        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
-        (Components[i] as TDBGridEh).RowHeight := Row_height;
+        if Font_size <> 0 then
+        begin
+          (Components[i] as TDBGridEh).Font.Name := Font_name;
+          (Components[i] as TDBGridEh).Font.Size := Font_size;
+        end;
+        if Row_height <> 0 then
+        begin
+          (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+          (Components[i] as TDBGridEh).RowHeight := Row_height;
+        end;
       end;
     end;
   end;
@@ -713,6 +740,37 @@ begin
   end;
 end;
 
+procedure TNodesForm.actLinkNodesExecute(Sender: TObject);
+var
+  LinkItem, SecondItem: TNodeLinkItem;
+begin
+  if ((not dsNodes.Active) or (dsNodes.RecordCount = 0)) then
+    Exit;
+
+  if (dbgNodes.SelectedRows.Count <> 2) then
+    Exit;
+
+  dbgNodes.DataSource.DataSet.Bookmark := dbgNodes.SelectedRows[0];
+  LinkItem.NODE_ID := dbgNodes.DataSource.DataSet['NODE_ID'];
+  LinkItem.NODE_Name := dbgNodes.DataSource.DataSet['NAME'];
+  LinkItem.LINK_ID := -1;
+
+  dbgNodes.DataSource.DataSet.Bookmark := dbgNodes.SelectedRows[0];
+  LinkItem.NODE_ID := dbgNodes.DataSource.DataSet['NODE_ID'];
+  LinkItem.LINK_ID := -1;
+
+  dbgNodes.DataSource.DataSet.Bookmark := dbgNodes.SelectedRows[1];
+  SecondItem.NODE_ID := dbgNodes.DataSource.DataSet['NODE_ID'];
+  SecondItem.NODE_Name := dbgNodes.DataSource.DataSet['NAME'];
+  SecondItem.LINK_ID := -1;
+
+  if LinkNodes(LinkItem, SecondItem) then
+  begin
+    if (rsClmnLink = FPageList[lstForms.ItemIndex].PageClass.GetPageName) then
+      FPageList[lstForms.ItemIndex].Page.UpdateObject;
+  end
+end;
+
 procedure TNodesForm.actNodeAddExecute(Sender: TObject);
 begin
   StartEdit(True);
@@ -784,6 +842,8 @@ begin
 end;
 
 procedure TNodesForm.actFilterSearchTextExecute(Sender: TObject);
+var
+  cr: TCursor;
 begin
   if actFilterSearchText.Checked then
   begin
@@ -795,8 +855,14 @@ begin
   begin
     if edtSearch.Text <> '' then
     begin
-      actFilterSearchText.Checked := True;
-      dbgNodes.SearchPanel.ApplySearchFilter;
+      cr := Screen.Cursor;
+      Screen.Cursor := crSQLWait;
+      try
+        actFilterSearchText.Checked := True;
+        dbgNodes.SearchPanel.ApplySearchFilter;
+      finally
+        Screen.Cursor := cr;
+      end;
     end;
   end;
 end;
@@ -1181,7 +1247,6 @@ end;
 procedure TNodesForm.SetDefaultFilter;
 var
   f: string;
-
 begin
   dsFilter.Close;
   dsFilter.Open;
@@ -1208,8 +1273,15 @@ begin
   actNodeDelete.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
   actNodeEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
   actNodeAdd.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
+  actLinkNodes.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
 
   actRequest.Enabled := dmMain.AllowedAction(rght_Request_add) or dmMain.AllowedAction(rght_Request_full);
+end;
+
+procedure TNodesForm.dsFilterNewRecord(DataSet: TDataSet);
+begin
+  DataSet['inversion'] := False; // инверсия фильтра т.е. добавляем not
+  DataSet['next_condition'] := 0; // следующее условие AND/OR
 end;
 
 procedure TNodesForm.dsNodesAfterOpen(DataSet: TDataSet);

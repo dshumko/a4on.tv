@@ -1,5 +1,4 @@
 object IPTVGroupForm: TIPTVGroupForm
-  ShowHint = True
   Left = 0
   Top = 0
   ActiveControl = edtNAME
@@ -16,7 +15,10 @@ object IPTVGroupForm: TIPTVGroupForm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
+  OnClose = FormClose
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame1: TOkCancelFrame
@@ -53,13 +55,14 @@ object IPTVGroupForm: TIPTVGroupForm
       Left = 497
       Top = 0
       Height = 318
+      Align = alRight
     end
-    object pnl2: TPanel
+    object pnlSelected: TPanel
       Left = 0
       Top = 0
       Width = 497
       Height = 318
-      Align = alLeft
+      Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object lbl1: TLabel
@@ -77,7 +80,6 @@ object IPTVGroupForm: TIPTVGroupForm
         Height = 305
         Align = alClient
         AllowedOperations = [alopUpdateEh]
-        AutoFitColWidths = False
         DataSource = srcIGC
         DynProps = <>
         Flat = True
@@ -241,12 +243,12 @@ object IPTVGroupForm: TIPTVGroupForm
         end
       end
     end
-    object pnl3: TPanel
+    object pnlExists: TPanel
       Left = 500
       Top = 0
       Width = 311
       Height = 318
-      Align = alClient
+      Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
       object lbl2: TLabel
@@ -264,7 +266,6 @@ object IPTVGroupForm: TIPTVGroupForm
         Height = 305
         Align = alClient
         AllowedOperations = []
-        AutoFitColWidths = False
         DataSource = srcC
         DynProps = <>
         Flat = True
@@ -384,6 +385,7 @@ object IPTVGroupForm: TIPTVGroupForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077' '#1075#1088#1091#1087#1087#1099
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -398,6 +400,7 @@ object IPTVGroupForm: TIPTVGroupForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1072#1076#1088#1077#1089
+      ShowHint = True
       TabOrder = 2
       Visible = True
     end
@@ -413,6 +416,7 @@ object IPTVGroupForm: TIPTVGroupForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ShowHint = True
       TabOrder = 4
       Visible = True
       WantReturns = True
@@ -428,6 +432,7 @@ object IPTVGroupForm: TIPTVGroupForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1050#1086#1076' '#1075#1088#1091#1087#1087#1099
+      ShowHint = True
       TabOrder = 1
       Visible = True
     end
@@ -523,8 +528,8 @@ object IPTVGroupForm: TIPTVGroupForm
       'select c.Ch_Id, c.Ch_Name, c.Definition, c.CH_NOTICE'
       'FROM Channels c'
       
-        'where not exists(select hc.ch_id FROM Iptv_Group_Channels h' +
-        'c where hc.ch_id = c.Ch_Id and hc.Ig_Id = :IG_ID)'
+        'where not exists(select hc.ch_id FROM Iptv_Group_Channels hc whe' +
+        're hc.ch_id = c.Ch_Id and hc.Ig_Id = :IG_ID)'
       'order by c.Ch_Number, c.Ch_Name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
@@ -623,5 +628,17 @@ object IPTVGroupForm: TIPTVGroupForm
     DataSet = dsIPTVGroup
     Left = 183
     Top = 216
+  end
+  object PropStorageEh: TPropStorageEh
+    StorageManager = dmMain.iniPropStorage
+    StoredProps.Strings = (
+      '<P>.Height'
+      '<P>.Left'
+      '<P>.PixelsPerInch'
+      '<P>.Top'
+      '<P>.Width'
+      'pnlChannels.pnlExists.<P>.Width')
+    Left = 314
+    Top = 75
   end
 end

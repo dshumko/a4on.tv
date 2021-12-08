@@ -77,6 +77,9 @@ begin
   if ((not dsMat.Active) or (dsMat.RecordCount = 0) or (srcMat.DataSet.FieldByName('NAME').IsNull)) then
     Exit;
 
+  if ((srcMat.DataSet.FieldByName('ROW_TYPE').AsString = 'e')) then
+    Exit;
+
   if (MessageDlg(Format(rsDeleteWithName, [srcMat.DataSet['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     srcMat.DataSet.Delete;

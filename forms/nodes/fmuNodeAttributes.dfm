@@ -20,7 +20,6 @@ object apgNodeAttributes: TapgNodeAttributes
     Height = 138
     Align = alClient
     AllowedOperations = []
-    AutoFitColWidths = False
     DataSource = srcAttributes
     DynProps = <>
     Flat = True

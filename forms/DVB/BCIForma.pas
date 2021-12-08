@@ -10,7 +10,7 @@ uses
   DynVarsEh, EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL,
   GridsEh, DBAxisGridsEh, Data.DB, FIBDataSet, pFIBDataSet, Vcl.Mask,
   DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, MemTableDataEh,
-  MemTableEh, dnSplitter, FIBQuery, pFIBQuery;
+  MemTableEh, FIBQuery, pFIBQuery;
 
 type
   TBCIForm = class(TForm)
@@ -281,6 +281,9 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;

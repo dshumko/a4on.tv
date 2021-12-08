@@ -4,8 +4,8 @@ object OnOffServiceForm: TOnOffServiceForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077' / '#1074#1099#1082#1083#1102#1095#1077#1085#1080#1077' '#1091#1089#1083#1091#1075
-  ClientHeight = 342
-  ClientWidth = 426
+  ClientHeight = 346
+  ClientWidth = 425
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,20 +22,14 @@ object OnOffServiceForm: TOnOffServiceForm
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 305
-    Width = 426
+    Top = 309
+    Width = 425
     Height = 37
     Align = alBottom
     TabOrder = 8
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
-      Left = 137
+      Left = 136
       Top = 6
       Width = 183
       Height = 25
@@ -43,22 +37,23 @@ object OnOffServiceForm: TOnOffServiceForm
       OnClick = OkCancelFramebbOkClick
     end
     inherited bbCancel: TBitBtn
-      Left = 339
+      Left = 338
       Top = 6
+      Width = 80
       Height = 25
     end
   end
   object servPanel: TPanel
     Left = 0
     Top = 0
-    Width = 426
+    Width = 425
     Height = 25
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     Visible = False
     DesignSize = (
-      426
+      425
       25)
     object Label3: TLabel
       Left = 8
@@ -69,8 +64,8 @@ object OnOffServiceForm: TOnOffServiceForm
     end
     object luService: TDBLookupComboboxEh
       Left = 136
-      Top = 4
-      Width = 278
+      Top = 3
+      Width = 282
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -90,11 +85,14 @@ object OnOffServiceForm: TOnOffServiceForm
   object pnlDate: TPanel
     Left = 0
     Top = 86
-    Width = 426
+    Width = 425
     Height = 28
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
+    DesignSize = (
+      425
+      28)
     object Label2: TLabel
       Left = 8
       Top = 8
@@ -116,10 +114,11 @@ object OnOffServiceForm: TOnOffServiceForm
       OnExit = eDateExit
     end
     object eDateTo: TDBDateTimeEditEh
-      Left = 304
+      Left = 303
       Top = 5
-      Width = 110
+      Width = 115
       Height = 21
+      Anchors = [akTop, akRight]
       DynProps = <>
       EditButtons = <>
       Kind = dtkDateEh
@@ -132,13 +131,13 @@ object OnOffServiceForm: TOnOffServiceForm
   object pnlONOFF: TPanel
     Left = 0
     Top = 114
-    Width = 426
+    Width = 425
     Height = 25
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 4
     DesignSize = (
-      426
+      425
       25)
     object Label1: TLabel
       Left = 8
@@ -150,7 +149,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object luOnOffService: TDBLookupComboboxEh
       Left = 136
       Top = 4
-      Width = 278
+      Width = 282
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -169,7 +168,7 @@ object OnOffServiceForm: TOnOffServiceForm
   object pnlQUANT: TPanel
     Left = 0
     Top = 139
-    Width = 426
+    Width = 425
     Height = 29
     Align = alTop
     BevelOuter = bvNone
@@ -212,15 +211,15 @@ object OnOffServiceForm: TOnOffServiceForm
   object Panel1: TPanel
     Left = 0
     Top = 197
-    Width = 426
-    Height = 108
+    Width = 425
+    Height = 112
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 7
     object Label4: TLabel
       Left = 0
       Top = 0
-      Width = 426
+      Width = 425
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -228,8 +227,8 @@ object OnOffServiceForm: TOnOffServiceForm
     object memNotice: TDBMemoEh
       Left = 0
       Top = 13
-      Width = 426
-      Height = 95
+      Width = 425
+      Height = 99
       Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       Align = alClient
       Anchors = [akLeft, akTop, akRight]
@@ -245,12 +244,12 @@ object OnOffServiceForm: TOnOffServiceForm
   object pnlSRV2: TPanel
     Left = 0
     Top = 56
-    Width = 426
+    Width = 425
     Height = 30
     Align = alTop
     TabOrder = 2
     DesignSize = (
-      426
+      425
       30)
     object Label6: TLabel
       Left = 9
@@ -262,7 +261,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object dblSwitchTo: TDBLookupComboboxEh
       Left = 136
       Top = 5
-      Width = 278
+      Width = 282
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -281,25 +280,30 @@ object OnOffServiceForm: TOnOffServiceForm
   object pnlDogovor: TPanel
     Left = 0
     Top = 25
-    Width = 426
+    Width = 425
     Height = 31
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
     Visible = False
+    DesignSize = (
+      425
+      31)
     object lblContr: TLabel
-      Left = 267
+      Left = 266
       Top = 8
       Width = 12
       Height = 13
+      Anchors = [akTop, akRight]
       Caption = #1086#1090
       Visible = False
     end
     object edtDogDate: TDBDateTimeEditEh
-      Left = 304
+      Left = 303
       Top = 5
-      Width = 110
+      Width = 115
       Height = 21
+      Anchors = [akTop, akRight]
       DynProps = <>
       EditButtons = <>
       Kind = dtkDateEh
@@ -332,14 +336,14 @@ object OnOffServiceForm: TOnOffServiceForm
   object pnlVAT: TPanel
     Left = 0
     Top = 168
-    Width = 426
+    Width = 425
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 6
     Visible = False
     DesignSize = (
-      426
+      425
       29)
     object lblVAT: TLabel
       Left = 8
@@ -351,7 +355,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object cbbVATG: TDBLookupComboboxEh
       Left = 136
       Top = 5
-      Width = 278
+      Width = 282
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -513,7 +517,7 @@ object OnOffServiceForm: TOnOffServiceForm
       '    ID, DESCRIPTION, SERVICE_TYPE, s.Name || coalesce('#39' / '#39' ||'
       '    case s.SERVICE_TYPE'
       '      when 2 then null'
-      '      else (select'
+      '      else (select first 1 '
       
         '                iif((coalesce(t.Tarif_Sum, 0) = coalesce(t.TARIF' +
         '_SUM_JUR, 0)), coalesce(t.Tarif_Sum, 0), coalesce(t.Tarif_Sum, 0' +

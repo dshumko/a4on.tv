@@ -277,7 +277,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 561
+      Width = 44
       Height = 13
       Align = alTop
       Caption = #1050#1086#1084#1072#1085#1076#1072

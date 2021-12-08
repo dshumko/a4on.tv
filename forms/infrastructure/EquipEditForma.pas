@@ -3,11 +3,15 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, OkCancel_frame, DBCtrlsEh, DBCtrls, StdCtrls,
-  ExtCtrls, DBLookupEh, Mask, Buttons, ComCtrls, DB, FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, ActnList, DM, GridsEH,
-  System.Actions, PrjConst, A4onTypeUnit, CnErrorProvider;
+  WINAPI.Windows, WINAPI.Messages, System.SysUtils, System.Variants, Vcl.Graphics,
+  System.Classes, System.Actions,
+  Vcl.ActnList, Data.DB, Vcl.Forms,
+  Vcl.Controls, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.Mask, Vcl.ComCtrls, Vcl.Dialogs,
+  DBGridEh, OkCancel_frame, DBCtrlsEh, DBCtrls,
+  DBLookupEh, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase, DM, GridsEH,
+  PrjConst, A4onTypeUnit, CnErrorProvider;
 
 type
   TEquipEditForm = class(TForm)
@@ -34,7 +38,6 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Label11: TLabel;
     lbl1: TLabel;
     Label6: TLabel;
     lbl4: TLabel;
@@ -85,6 +88,10 @@ type
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
     cnError: TCnErrorProvider;
+    lblNODE: TLabel;
+    lcbNODE: TDBLookupComboboxEh;
+    srcNODE: TDataSource;
+    dsNODE: TpFIBDataSet;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTypeEQChange(Sender: TObject);
@@ -109,6 +116,8 @@ type
     procedure okcnclfrmbbOkClick(Sender: TObject);
     procedure edtIP1Exit(Sender: TObject);
     procedure edtIP1Enter(Sender: TObject);
+    procedure lcbNODEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     fCI: TCustomerInfo;
     function CheckData: Boolean;
@@ -375,7 +384,17 @@ begin
       result := False;
     end
     else
-      cnError.Dispose(edtMAC);
+    begin
+      s := CheckUniqMAC(edtMAC.Text);
+      if not s.IsEmpty then
+      begin
+        cnError.SetError(edtMAC, s, iaMiddleLeft, bsNeverBlink);
+        edtMAC.SetFocus;
+        result := False;
+      end
+      else
+        cnError.Dispose(edtMAC);
+    end;
 
     if ((not edtIP.Text.IsEmpty) and (not CheckIP(edtIP.Text))) then
     begin
@@ -527,9 +546,11 @@ procedure TEquipEditForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   f: string;
 begin
+
   dsEQGroups.Close;
   dsVlans.Close;
   dsStreets.Close;
+  dsNODE.Close;
   dsHomes.Close;
   dsParent.Close;
 
@@ -577,6 +598,8 @@ begin
   dsStreets.Open;
   dsHomes.Open;
   dsParent.Open;
+  dsNODE.Open;
+
   if dsEquipment.State = dsInsert then
   begin
     cbTypeEQ.SetFocus;
@@ -602,6 +625,21 @@ begin
     edtPWD.PasswordChar := #0
   else
     edtPWD.PasswordChar := '*';
+end;
+
+procedure TEquipEditForm.lcbNODEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not srcNODE.DataSet.FieldByName('COLOR').IsNull then
+  begin
+    try
+      Background := StringToColor(srcNODE.DataSet.FieldByName('COLOR').Value);
+    except
+      Background := clWindow;
+    end;
+  end
+  else
+    Background := clWindow;
 end;
 
 procedure TEquipEditForm.luHouseChange(Sender: TObject);

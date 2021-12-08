@@ -520,7 +520,7 @@ object NodesFilterForm: TNodesFilterForm
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'FTR'
-    Filter = #1060#1080#1083#1100#1090#1088#1099'|*.FTR'
+    Filter = #1060#1080#1083#1100#1090#1088#1099'|*.JNF'
     InitialDir = 'filters'
     Options = [ofHideReadOnly, ofNoChangeDir, ofNoNetworkButton, ofEnableSizing]
     OptionsEx = [ofExNoPlacesBar]

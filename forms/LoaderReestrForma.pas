@@ -204,8 +204,9 @@ var
   FormatSettings: TFormatSettings;
   kopeyki: Byte;
   nc, nl, sl, dc, sc, dl, rl, rc: Integer;
-  Notice, srcCode: string;
+  Notice, srcCode : string;
   tmps: string;
+  vPaySum : Double;
 begin
 
   FormatSettings := TFormatSettings.Create;
@@ -307,8 +308,24 @@ begin
       try
         if i = nl then
           edtDocNumber.Text := sa[nc];
-        if i = sl then
-          edtDocSum.Value := strtofloat(sa[sc], FormatSettings) / kopeyki;
+        if i = sl then begin
+          vPaySum := 0;
+          // strtofloat(sa[sc], FormatSettings)
+          // попытка понять какой разделитель дроби
+          if sa[sc] <> '' then begin
+            if not TryStrToFloat(sa[sc], vPaySum, FormatSettings) then begin
+              tmps := FormatSettings.DecimalSeparator;
+              if tmps = '.' then
+                FormatSettings.DecimalSeparator := ','
+              else
+                FormatSettings.DecimalSeparator := '.';
+              if not TryStrToFloat(sa[sc], vPaySum, FormatSettings)
+              then vPaySum := 0;
+              FormatSettings.DecimalSeparator := tmps[1];
+            end;
+          end;
+          edtDocSum.Value := vPaySum / kopeyki;
+        end;
         if i = dl then
           deDocDate.Value := DateTimeStrEval(dat_format, sa[dc]);
         if i = rl then
@@ -458,13 +475,25 @@ begin
         mdsReestr['pDate'] := DateTimeStrEval(dat_format, sa[dat_i])
       else
         mdsReestr['pDate'] := deDocDate.Value;
+
       if sum_i >= 0 then
       begin
         tmps := sa[sum_i];
-        if tmps <> '' then
-          mdsReestr['pSum'] := strtofloat(tmps, FormatSettings) / kopeyki
-        else
-          mdsReestr['pSum'] := 0;
+        vPaySum := 0;
+        if tmps <> '' then begin
+          //  TryStrToFloat(const S: string; out Value: Extended; const AFormatSettings: TFormatSettings)
+          if not TryStrToFloat(sa[sum_i], vPaySum, FormatSettings) then begin
+            tmps := FormatSettings.DecimalSeparator;
+            if tmps = '.' then
+              FormatSettings.DecimalSeparator := ','
+            else
+              FormatSettings.DecimalSeparator := '.';
+            if not TryStrToFloat(sa[sum_i], vPaySum, FormatSettings)
+            then vPaySum := 0;
+            FormatSettings.DecimalSeparator := tmps[1];
+          end;
+        end;
+        mdsReestr['pSum'] := vPaySum / kopeyki;
       end;
 
       if adres_i >= 0 then

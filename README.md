@@ -10,8 +10,6 @@
 
 #### _дополнительно, но не обязательно_
 - [ZeosLIB](https://sourceforge.net/projects/zeoslib/)
-- [EurekaLog](https://www.eurekalog.com/)
-- [Addict](http://www.addictivesoftware.com/)
 
 **Лицензия** 
 

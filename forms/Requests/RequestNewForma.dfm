@@ -281,9 +281,11 @@ object RequestNewForm: TRequestNewForm
           Height = 129
           inherited lblFIO: TLabel
             Width = 386
+            Margins.Bottom = 0
           end
           inherited lblDebt: TLabel
             Width = 386
+            Margins.Bottom = 0
           end
           inherited memAbonent: TMemo
             Width = 386
@@ -301,6 +303,12 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6

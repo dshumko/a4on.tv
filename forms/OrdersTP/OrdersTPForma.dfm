@@ -50,6 +50,7 @@ object OrdersTPForm: TOrdersTPForm
       ParentShowHint = False
       PopupMenu = gridPopUp
       ReadOnly = True
+      SearchPanel.Enabled = True
       ShowHint = True
       SortLocal = True
       STFilter.Local = True
@@ -269,93 +270,41 @@ object OrdersTPForm: TOrdersTPForm
         ImageIndex = 1
         Style = tbsSeparator
       end
-      object ToolButton4: TToolButton
-        Left = 77
-        Top = 0
-        Action = actOTPSetPeriod
-        Caption = 'W4w4'
-        DropdownMenu = pmPeriod
-        Style = tbsDropDown
-      end
-      object ToolButton3: TToolButton
-        Left = 115
-        Top = 0
-        Width = 8
-        Caption = 'W4w4'
-        ImageIndex = 1
-        Style = tbsSeparator
-      end
       object ToolButton5: TToolButton
-        Left = 123
+        Left = 77
         Top = 0
         Action = actPrintDoc
       end
       object ToolButton1: TToolButton
-        Left = 146
+        Left = 100
         Top = 0
         Width = 8
         Caption = 'ToolButton1'
         ImageIndex = 1
         Style = tbsSeparator
       end
-      object Panel4: TPanel
-        Left = 154
-        Top = 0
-        Width = 58
-        Height = 22
-        Align = alLeft
-        BevelOuter = bvNone
-        Caption = #1058#1080#1087
-        TabOrder = 0
-      end
-      object luOTPType: TDBLookupComboboxEh
-        Left = 212
-        Top = 0
-        Width = 220
-        Height = 22
-        AutoSize = False
-        DynProps = <>
-        DataField = ''
-        DropDownBox.Columns = <
-          item
-            FieldName = 'O_NAME'
-          end
-          item
-            FieldName = 'O_DESCRIPTION'
-          end>
-        DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
-        DropDownBox.UseMultiTitle = True
-        DropDownBox.Sizable = True
-        DropDownBox.Width = 150
-        EditButtons = <>
-        KeyField = 'O_ID'
-        ListField = 'O_NAME'
-        ListSource = srcOTPTypes
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-        Visible = True
-      end
       object ToolButton20: TToolButton
-        Left = 432
+        Left = 108
         Top = 0
         Width = 3
         Caption = 'ToolButton20'
         ImageIndex = 1
         Style = tbsSeparator
       end
-      object ToolButton7: TToolButton
-        Left = 435
+      object btnSetFilter: TToolButton
+        Left = 111
         Top = 0
-        Action = actOTPFilter
+        Action = actSetFilter
+        PopupMenu = pmFilter
+        Style = tbsDropDown
       end
       object ToolButton27: TToolButton
-        Left = 458
+        Left = 149
         Top = 0
         Action = actQuickFilter
       end
       object btn1: TToolButton
-        Left = 481
+        Left = 172
         Top = 0
         Width = 18
         Caption = 'btn1'
@@ -363,12 +312,12 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object btnCustomers: TToolButton
-        Left = 499
+        Left = 190
         Top = 0
         Action = actCustomers
       end
       object ToolButton9: TToolButton
-        Left = 522
+        Left = 213
         Top = 0
         Width = 8
         Caption = 'ToolButton9'
@@ -376,27 +325,27 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object btnAddPayment: TToolButton
-        Left = 530
+        Left = 221
         Top = 0
         Action = actAddPayment
       end
-      object btn2: TToolButton
-        Left = 553
+      object ToolButton3: TToolButton
+        Left = 244
         Top = 0
         Width = 8
-        Caption = 'btn2'
+        Caption = 'ToolButton3'
         ImageIndex = 56
         Style = tbsSeparator
       end
-      object chkGroup: TCheckBox
-        Left = 561
+      object chkTREE: TCheckBox
+        Left = 252
         Top = 0
-        Width = 144
+        Width = 165
         Height = 22
         Action = actGroup
-        Alignment = taLeftJustify
-        Caption = '  '#1042#1082#1083#1102#1095#1080#1090#1100' '#1075#1088#1091#1087#1087#1080#1088#1086#1074#1082#1091'  '
-        TabOrder = 2
+        BiDiMode = bdRightToLeft
+        ParentBiDiMode = False
+        TabOrder = 0
       end
     end
   end
@@ -441,7 +390,6 @@ object OrdersTPForm: TOrdersTPForm
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1090#1080#1087#1091
       Hint = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1090#1080#1087#1091' '#1079#1072#1082#1072#1079#1072
       ImageIndex = 0
-      OnExecute = actOTPFilterExecute
     end
     object actPrintDoc: TAction
       Caption = #1055#1077#1095#1072#1090#1100
@@ -486,10 +434,28 @@ object OrdersTPForm: TOrdersTPForm
       Caption = #1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100' '#1079#1072#1082#1072#1079
       OnExecute = actPrintOrderExecute
     end
+    object actSetFilter: TAction
+      Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      ImageIndex = 0
+      ShortCut = 114
+      OnExecute = actSetFilterExecute
+    end
+    object actEnableFilter: TAction
+      Caption = #1042#1082#1083'/'#1042#1099#1082#1083'. '#1092#1080#1083#1100#1090#1088
+      Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      ShortCut = 16498
+      OnExecute = actEnableFilterExecute
+    end
+    object actSetNewFilterNew: TAction
+      Caption = #1053#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088
+      Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088' '#1089' '#1086#1095#1080#1089#1090#1082#1086#1081' '#1089#1090#1072#1088#1086#1075#1086
+      ImageIndex = 0
+      ShortCut = 8306
+    end
   end
   object gridPopUp: TPopupMenu
-    Left = 132
-    Top = 142
+    Left = 164
+    Top = 150
     object miN15: TMenuItem
       Action = actPrintOrder
     end
@@ -579,8 +545,7 @@ object OrdersTPForm: TOrdersTPForm
       
         '       left outer join Objects t on (o.Ottp_Type = t.O_Id and t.' +
         'O_Type = 22)'
-      '  where o.Otp_Date between :StartDate and :EndDate'
-      '  @@otptype%and 1=1@'
+      '  where @@filter%1=1@ '
       '         ')
     AutoUpdateOptions.UpdateTableName = 'PAY_DOC'
     AutoUpdateOptions.KeyFields = 'PAY_DOC_ID'
@@ -626,46 +591,6 @@ object OrdersTPForm: TOrdersTPForm
     BCDToCurrency = False
     Left = 315
     Top = 211
-  end
-  object dsOTPTypes: TpFIBDataSet
-    SelectSQL.Strings = (
-      'select O_Id, O_Name, O_Description'
-      'from objects'
-      'where O_Type = 22'
-      'order by O_Name')
-    Transaction = dmMain.trRead
-    Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
-    Left = 351
-    Top = 281
-    oStartTransaction = False
-    oFetchAll = True
-  end
-  object srcOTPTypes: TDataSource
-    AutoEdit = False
-    DataSet = dsOTPTypes
-    Left = 451
-    Top = 295
-  end
-  object pmPeriod: TPopupMenu
-    Left = 225
-    Top = 201
-    object N1: TMenuItem
-      Caption = #1047#1072' '#1089#1077#1075#1086#1076#1085#1103
-      OnClick = N1Click
-    end
-    object N4: TMenuItem
-      Caption = #1047#1072' '#1087#1088#1086#1096#1083#1099#1081' '#1076#1077#1085#1100
-      OnClick = N4Click
-    end
-    object N2: TMenuItem
-      Caption = #1047#1072' '#1085#1077#1076#1077#1083#1102
-      OnClick = N2Click
-    end
-    object N3: TMenuItem
-      Caption = #1047#1072' '#1084#1077#1089#1103#1094
-      OnClick = N3Click
-    end
   end
   object qDetailCount: TpFIBQuery
     Transaction = dmMain.trReadQ
@@ -820,5 +745,100 @@ object OrdersTPForm: TOrdersTPForm
     KeyFields = 'payment_id'
     Left = 457
     Top = 135
+  end
+  object pmFilter: TPopupMenu
+    Left = 52
+    Top = 202
+    object N1: TMenuItem
+      Caption = #1047#1072' '#1089#1077#1075#1086#1076#1085#1103
+      OnClick = N1Click
+    end
+    object N4: TMenuItem
+      Caption = #1047#1072' '#1087#1088#1086#1096#1083#1099#1081' '#1076#1077#1085#1100
+      OnClick = N4Click
+    end
+    object N2: TMenuItem
+      Caption = #1047#1072' '#1085#1077#1076#1077#1083#1102
+      OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = #1047#1072' '#1084#1077#1089#1103#1094
+      OnClick = N3Click
+    end
+    object miN17: TMenuItem
+      Caption = '-'
+    end
+    object miEnableFilter: TMenuItem
+      Action = actEnableFilter
+    end
+    object miSetNewFilterNew: TMenuItem
+      Action = actSetNewFilterNew
+      OnClick = miSetNewFilterNewClick
+    end
+    object N42: TMenuItem
+      Caption = '-'
+    end
+    object N36: TMenuItem
+      Action = actQuickFilter
+    end
+  end
+  object dsFilter: TMemTableEh
+    Params = <>
+    OnNewRecord = dsFilterNewRecord
+    Left = 515
+    Top = 283
+    object MemTableData: TMemTableDataEh
+      object DataStruct: TMTDataStructEh
+        object inversion: TMTBooleanDataFieldEh
+          FieldName = 'inversion'
+          DefaultExpression = 'False'
+          DisplayWidth = 20
+        end
+        object next_condition: TMTNumericDataFieldEh
+          FieldName = 'next_condition'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DefaultExpression = '0'
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object DT: TMTNumericDataFieldEh
+          FieldName = 'DT'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object DS: TMTDateTimeDataFieldEh
+          FieldName = 'DS'
+          DateTimeDataType = fdtDateEh
+          DisplayWidth = 20
+        end
+        object DE: TMTDateTimeDataFieldEh
+          FieldName = 'DE'
+          DateTimeDataType = fdtDateEh
+          DisplayWidth = 20
+        end
+        object ORDER_TYPE: TMTNumericDataFieldEh
+          FieldName = 'ORDER_TYPE'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'LETTERS_TYPE'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object INCL: TMTStringDataFieldEh
+          FieldName = 'INCL'
+          StringDataType = fdtStringEh
+          DisplayWidth = 100
+          Size = 100
+        end
+      end
+      object RecordsList: TRecordsListEh
+      end
+    end
   end
 end

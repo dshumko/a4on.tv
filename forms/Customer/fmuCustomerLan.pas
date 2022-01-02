@@ -158,7 +158,6 @@ end;
 procedure TapgCustomerLan.actDelExecute(Sender: TObject);
 var
   eq_id: Integer;
-  need_del: Boolean;
 begin
   if dsLAN.RecordCount = 0 then
     Exit;

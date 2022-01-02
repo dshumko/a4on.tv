@@ -157,6 +157,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
         Flat = True
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
         TabOrder = 0
         OnExit = dbgCustSubscrServExit

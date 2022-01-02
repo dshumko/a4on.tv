@@ -136,7 +136,6 @@ object IPTVSettinsForm: TIPTVSettinsForm
           Height = 227
           Align = alClient
           AllowedOperations = []
-          AutoFitColWidths = False
           DataSource = srcIPTVGroup
           DynProps = <>
           EditActions = [geaCopyEh, geaSelectAllEh]
@@ -144,7 +143,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
           FooterRowCount = 1
           FooterParams.Color = clWindow
           GridLineParams.VertEmptySpaceStyle = dessNonEh
-          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
           PopupMenu = pmPopUp
           SearchPanel.Enabled = True
@@ -342,7 +341,6 @@ object IPTVSettinsForm: TIPTVSettinsForm
         Height = 277
         Align = alClient
         AllowedOperations = []
-        AutoFitColWidths = False
         DataSource = srcChannels
         DynProps = <>
         EditActions = [geaCopyEh, geaSelectAllEh]

@@ -3,13 +3,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, DBGridEh, ToolCtrlsEh,
-  Buttons, GridsEh, DBCtrlsEh, DBLookupEh, Mask, DBCtrls, ComCtrls,
-  FIBDatabase, pFIBDatabase, DB, FIBDataSet, pFIBDataSet, AtrPages, Menus,
-  FIBQuery, pFIBQuery, ToolWin, ActnList, System.Actions, PropFilerEh,
-  PropStorageEh, DBGridEhGrouping, DBGridEhToolCtrls, DynVarsEh,
-  MemTableDataEh, MemTableEh, EhLibVCL, DBAxisGridsEh, fmuCustomerBalance;
+
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, Vcl.Graphics, Vcl.Forms,
+  Vcl.Dialogs, Vcl.StdCtrls, System.UITypes, System.Actions,
+  Data.DB, System.Classes, Vcl.ActnList, Vcl.ExtCtrls, Vcl.Buttons,
+  Vcl.Menus, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls,
+
+  PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase,
+  pFIBDatabase, GridsEh, DBGridEh, MemTableDataEh, MemTableEh,
+  EhLibVCL, DBAxisGridsEh, fmuCustomerBalance,
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PropFilerEh,
+  DBCtrlsEh, DBLookupEh, AtrPages;
 
 type
   TCustomerForm = class(TForm)
@@ -209,9 +213,7 @@ end;
 
 procedure TCustomerForm.actDeleteExecute(Sender: TObject);
 var
-  i: Integer;
   s: string;
-  Save_Cursor: TCursor;
 begin
   if dmMain.InStrictMode then
     Exit;
@@ -302,9 +304,7 @@ procedure TCustomerForm.actPrepayExecute(Sender: TObject);
 var
   s: string;
   v: Extended;
-  all: Boolean;
   Save_Cursor: TCursor;
-  i: Integer;
 
   procedure AddPrepay(const psum: Extended; cid: Integer);
   begin
@@ -493,7 +493,8 @@ end;
 
 procedure TCustomerForm.UpdatePage(Sender: TObject);
 begin
-  if not FInEditState then begin
+  if not FInEditState then
+  begin
     dsCustomer.Refresh;
     if Assigned(FInfoPage) then
     begin
@@ -938,7 +939,8 @@ begin
   ActAddPayment.Visible := (FullAccess or dmMain.AllowedAction(rght_Pays_add) or
     dmMain.AllowedAction(rght_Pays_AddToday));
   actDelete.Enabled := (not dmMain.InStrictMode) and (dmMain.AllowedAction(rght_Customer_del) or FullAccess);
-  actOrderTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or dmMain.AllowedAction(rght_OrdersTP_View);
+  actOrderTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
+    dmMain.AllowedAction(rght_OrdersTP_View);
   // actPrepay.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
   // actTask.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
   // actCheckPassport.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));

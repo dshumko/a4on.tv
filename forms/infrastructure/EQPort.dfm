@@ -3,8 +3,8 @@ object EQPortForm: TEQPortForm
   Top = 0
   BorderStyle = bsSizeToolWin
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077' '#1087#1086#1088#1090#1072'/'#1086#1074
-  ClientHeight = 307
-  ClientWidth = 426
+  ClientHeight = 325
+  ClientWidth = 478
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,18 +18,18 @@ object EQPortForm: TEQPortForm
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   DesignSize = (
-    426
-    307)
+    478
+    325)
   PixelsPerInch = 96
   TextHeight = 13
-  object lbl1: TLabel
+  object lblCNT: TLabel
     Left = 8
     Top = 45
     Width = 74
     Height = 13
     Caption = #1050#1086#1083'-'#1074#1086' '#1087#1086#1088#1090#1086#1074
   end
-  object lbl2: TLabel
+  object lblStart: TLabel
     Left = 146
     Top = 45
     Width = 63
@@ -79,19 +79,26 @@ object EQPortForm: TEQPortForm
     Height = 13
     Caption = #1057#1077#1090#1100' '#1085#1072' '#1087#1086#1088#1090#1091
   end
+  object lblWire: TLabel
+    Left = 8
+    Top = 173
+    Width = 56
+    Height = 13
+    Caption = #1051#1080#1085#1080' c'#1074#1103#1079#1080
+  end
   object pnlBottom: TPanel
     Left = 0
-    Top = 264
-    Width = 426
+    Top = 282
+    Width = 478
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 7
     DesignSize = (
-      426
+      478
       43)
     object btnCancel: TBitBtn
-      Left = 343
+      Left = 395
       Top = 10
       Width = 75
       Height = 27
@@ -104,7 +111,7 @@ object EQPortForm: TEQPortForm
     object btnOk: TBitBtn
       Left = 16
       Top = 10
-      Width = 318
+      Width = 370
       Height = 27
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akRight, akBottom]
@@ -142,8 +149,9 @@ object EQPortForm: TEQPortForm
   object lcbType: TDBLookupComboboxEh
     Left = 88
     Top = 68
-    Width = 330
+    Width = 382
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
     DropDownBox.Columns = <
@@ -163,9 +171,9 @@ object EQPortForm: TEQPortForm
   end
   object mmoNotice: TDBMemoEh
     Left = 8
-    Top = 172
-    Width = 410
-    Height = 94
+    Top = 200
+    Width = 462
+    Height = 84
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
@@ -178,12 +186,11 @@ object EQPortForm: TEQPortForm
   object ednSpeed: TDBNumberEditEh
     Left = 88
     Top = 145
-    Width = 121
+    Width = 89
     Height = 21
     DecimalPlaces = 0
     DynProps = <>
-    EmptyDataInfo.Text = #1057#1082#1086#1088#1086#1089#1090#1100
-    EditButton.Visible = True
+    EmptyDataInfo.Text = #1057#1082#1086#1088#1086#1089#1090#1100', '#1052#1041'/'#1089
     EditButtons = <>
     TabOrder = 5
     Visible = True
@@ -191,8 +198,9 @@ object EQPortForm: TEQPortForm
   object lcbState: TDBLookupComboboxEh
     Left = 88
     Top = 94
-    Width = 330
+    Width = 382
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
     DropDownBox.Columns = <
@@ -213,7 +221,7 @@ object EQPortForm: TEQPortForm
   object lcbVLAN: TDBLookupComboboxEh
     Left = 88
     Top = 119
-    Width = 330
+    Width = 382
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -267,6 +275,55 @@ object EQPortForm: TEQPortForm
     TabOrder = 4
     Visible = True
   end
+  object lcbWIRE: TDBLookupComboboxEh
+    Left = 88
+    Top = 170
+    Width = 382
+    Height = 21
+    Anchors = [akLeft, akTop, akRight]
+    DynProps = <>
+    DataField = ''
+    DropDownBox.Columns = <
+      item
+        FieldName = 'name'
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080
+      end
+      item
+        FieldName = 'NODE_S'
+        Title.Caption = #1059#1079#1077#1083' '#1089
+      end
+      item
+        FieldName = 'NODE_E'
+        Title.Caption = #1059#1079#1077#1083' '#1076#1086
+      end
+      item
+        FieldName = 'Capacity'
+        Title.Caption = #1045#1084#1082#1086#1089#1090#1100
+      end
+      item
+        FieldName = 'FREE'
+        Title.Caption = #1057#1074#1086#1073#1086#1076#1085#1086
+      end>
+    DropDownBox.ListSource = srcWire
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterAllColumns = True
+    DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+    DropDownBox.SortLocal = True
+    DropDownBox.AutoDrop = True
+    DropDownBox.ShowTitles = True
+    DropDownBox.Sizable = True
+    EmptyDataInfo.Text = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'/'#1082#1072#1073#1077#1083#1100' '#1085#1072' '#1087#1086#1088#1090#1091' '
+    EditButtons = <>
+    KeyField = 'Wid'
+    ListField = 'NAME'
+    ListSource = srcWire
+    ParentShowHint = False
+    ShowHint = True
+    Style = csDropDownEh
+    TabOrder = 8
+    Visible = True
+    OnDropDownBoxGetCellParams = lcbWIREDropDownBoxGetCellParams
+  end
   object cnError: TCnErrorProvider
     DoubleBuffer = False
     Left = 360
@@ -297,14 +354,14 @@ object EQPortForm: TEQPortForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    Left = 56
-    Top = 208
+    Left = 24
+    Top = 216
   end
   object srcType: TDataSource
     AutoEdit = False
     DataSet = dsType
-    Left = 112
-    Top = 208
+    Left = 72
+    Top = 216
   end
   object dsState: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -331,19 +388,19 @@ object EQPortForm: TEQPortForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    Left = 184
-    Top = 208
+    Left = 136
+    Top = 216
   end
   object srcState: TDataSource
     AutoEdit = False
     DataSet = dsState
-    Left = 232
-    Top = 208
+    Left = 176
+    Top = 216
   end
   object srcVLANS: TDataSource
     DataSet = dsVlans
-    Left = 342
-    Top = 202
+    Left = 286
+    Top = 210
   end
   object dsVlans: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -392,7 +449,79 @@ object EQPortForm: TEQPortForm
       '  order by 1, 2')
     AutoCalcFields = False
     Database = dmMain.dbTV
-    Left = 294
-    Top = 199
+    Left = 238
+    Top = 207
+  end
+  object dsWire: TpFIBDataSet
+    RefreshSQL.Strings = (
+      'select'
+      '    T.O_NAME CT_NAME'
+      '  , t.O_Dimension COLOR'
+      '  , C.*'
+      '  , m.NAME MAT_NAME'
+      '  , s.Node_Id NODE_S_ID'
+      '  , s.Name NODE_S'
+      '  , e.Node_Id NODE_E_ID'
+      '  , e.Name NODE_E'
+      '  , ST.O_Name S_TYPE'
+      '  , SS.Street_Name || '#39' '#39' || SS.street_short S_STREET'
+      '  , SH.House_No S_HOUSE'
+      '  , ET.O_Name E_TYPE'
+      '  , ES.Street_Name || '#39' '#39' || ES.street_short E_STREET'
+      '  , EH.House_No E_HOUSE'
+      '  from Wire C'
+      
+        '       inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O_TYPE = ' +
+        '56)'
+      ''
+      '       inner join NODEs s on (s.Node_Id = c.Point_S)'
+      '       inner join HOUSE SH on (SH.HOUSE_ID = S.HOUSE_ID)'
+      '       inner join STREET SS on (SS.STREET_ID = SH.STREET_ID)'
+      
+        '       inner join objects ST on (ST.O_Id = s.Type_Id and ST.O_Ty' +
+        'pe = 38)'
+      ''
+      '       left outer join MATERIALS m on (m.M_Id =  c.M_ID)'
+      ''
+      '       left outer join NODEs e on (e.Node_Id = c.Point_E)'
+      '       left outer join HOUSE EH on (EH.HOUSE_ID = E.HOUSE_ID)'
+      
+        '       left outer join STREET ES on (ES.STREET_ID = EH.STREET_ID' +
+        ')'
+      
+        '       left outer join objects ET on (ET.O_Id = e.Type_Id and ET' +
+        '.O_Type = 38)'
+      ''
+      ' WHERE '
+      '        C.WID = :OLD_WID'
+      '    ')
+    SelectSQL.Strings = (
+      'select'
+      '    c.Wid'
+      '  , C.Name||'#39' ('#39'||T.O_NAME||'#39')'#39' name'
+      '  , s.Name NODE_S'
+      '  , e.Name NODE_E'
+      '  , t.O_Dimension COLOR'
+      '  , c.Capacity  '
+      '  , c.Capacity FREE -- '#1090#1091#1090' '#1085#1091#1078#1085#1086' '#1089#1095#1080#1090#1072#1090#1100
+      '  from Wire C'
+      
+        '       inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O_TYPE = ' +
+        '56)'
+      '       inner join NODEs s on (s.Node_Id = c.Point_S)'
+      '       left outer join NODEs e on (e.Node_Id = c.Point_E)'
+      '  where (c.Point_S = :node)'
+      '          or (c.Point_E = :node)'
+      '  order by c.Name  ')
+    AutoCalcFields = False
+    Database = dmMain.dbTV
+    Left = 352
+    Top = 208
+  end
+  object srcWire: TDataSource
+    AutoEdit = False
+    DataSet = dsWire
+    Left = 366
+    Top = 242
   end
 end

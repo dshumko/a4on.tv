@@ -676,16 +676,16 @@ object SettingsForm: TSettingsForm
       Caption = 'C'#1077#1090#1080' '#1087#1077#1088#1077#1076#1072#1095#1080' '#1076#1072#1085#1085#1099#1093
       ImageIndex = 2
       object Label10: TLabel
-        Left = 6
-        Top = 195
+        Left = 8
+        Top = 211
         Width = 117
         Height = 13
         Caption = #1048#1089#1087#1086#1083#1100#1079#1091#1077#1084#1099#1081' '#1073#1080#1083#1083#1080#1085#1075
         Visible = False
       end
       object cbBilling: TDBComboBoxEh
-        Left = 133
-        Top = 192
+        Left = 135
+        Top = 208
         Width = 164
         Height = 21
         Ctl3D = True
@@ -708,10 +708,10 @@ object SettingsForm: TSettingsForm
         OnChange = cbBillingChange
       end
       object pnlBilling: TPanel
-        Left = 3
-        Top = 219
+        Left = 8
+        Top = 243
         Width = 243
-        Height = 153
+        Height = 158
         BevelOuter = bvNone
         TabOrder = 5
         Visible = False
@@ -832,8 +832,8 @@ object SettingsForm: TSettingsForm
           Visible = True
         end
         object chkAddTarif: TCheckBox
-          Left = 0
-          Top = 124
+          Left = 5
+          Top = 125
           Width = 186
           Height = 17
           Hint = #1044#1086#1073#1072#1074#1083#1103#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1082#1072#1082' '#1058#1055' '#1080#1083#1080' '#1082#1072#1082' '#1088#1072#1079#1086#1074#1091#1102
@@ -852,7 +852,7 @@ object SettingsForm: TSettingsForm
         OnClick = btnInetSettingsClick
       end
       object chkIPTVPacket: TCheckBox
-        Left = 7
+        Left = 8
         Top = 55
         Width = 290
         Height = 17
@@ -862,8 +862,8 @@ object SettingsForm: TSettingsForm
         TabOrder = 1
       end
       object chkVlanRequired: TCheckBox
-        Left = 7
-        Top = 80
+        Left = 8
+        Top = 84
         Width = 290
         Height = 17
         Hint = #1054#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086' '#1091#1082#1072#1079#1099#1074#1072#1090#1100' '#1042#1051#1040#1053' '#1074' '#1085#1072#1089#1090#1088#1086#1081#1082#1072#1093' '#1089#1077#1090#1080
@@ -872,8 +872,8 @@ object SettingsForm: TSettingsForm
         TabOrder = 2
       end
       object chkLANAddr: TCheckBox
-        Left = 7
-        Top = 106
+        Left = 8
+        Top = 112
         Width = 290
         Height = 17
         Hint = 
@@ -884,8 +884,8 @@ object SettingsForm: TSettingsForm
         TabOrder = 3
       end
       object chkDelLanEq: TCheckBox
-        Left = 7
-        Top = 147
+        Left = 8
+        Top = 140
         Width = 290
         Height = 17
         Hint = 
@@ -894,6 +894,16 @@ object SettingsForm: TSettingsForm
         Alignment = taLeftJustify
         Caption = #1055#1088#1080' '#1091#1076#1072#1083#1077#1085#1080#1080' '#1057#1055#1044' '#1091#1076#1072#1083#1103#1090#1100' '#1089#1074#1103#1079#1085#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
         TabOrder = 6
+      end
+      object chkVlans4Home: TCheckBox
+        Left = 8
+        Top = 169
+        Width = 290
+        Height = 17
+        Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1089#1077#1090#1080' '#1076#1086#1084#1072' '#1074' '#1082#1072#1088#1090#1086#1095#1082#1077' '#1057#1055#1044' '#1072#1073#1086#1085#1077#1085#1090#1072
+        Alignment = taLeftJustify
+        Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1089#1077#1090#1080' '#1076#1086#1084#1072' '#1072#1073#1086#1085#1077#1085#1090#1072
+        TabOrder = 7
       end
     end
     object tsVisual: TTabSheet

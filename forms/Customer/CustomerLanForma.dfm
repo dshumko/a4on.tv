@@ -35,8 +35,8 @@ object CustomerLanForm: TCustomerLanForm
     TabStop = True
     inherited bbOk: TBitBtn
       Left = 74
-      Top = 6
       Width = 363
+      Height = 27
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
@@ -44,8 +44,8 @@ object CustomerLanForm: TCustomerLanForm
     end
     inherited bbCancel: TBitBtn
       Left = 444
-      Top = 6
       Width = 85
+      Height = 27
       OnClick = OkCancelFrame1bbCancelClick
     end
   end
@@ -430,6 +430,19 @@ object CustomerLanForm: TCustomerLanForm
           FieldName = 'V_NAME'
           Title.Caption = #1057#1077#1090#1100
           Width = 30
+        end
+        item
+          Alignment = taLeftJustify
+          AutoFitColWidth = False
+          FieldName = 'WHOSE'
+          Title.Caption = #1063#1090#1086
+          Width = 10
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'WHOSE_NAME'
+          Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+          Width = 40
         end>
       DropDownBox.ListSource = srcPort
       DropDownBox.ListSourceAutoFilter = True
@@ -477,9 +490,9 @@ object CustomerLanForm: TCustomerLanForm
   end
   object btn1: TButton
     Left = 8
-    Top = 308
+    Top = 306
     Width = 55
-    Height = 23
+    Height = 27
     Anchors = [akLeft, akBottom]
     Caption = 'CMD'
     DropDownMenu = pmLanPopUp
@@ -734,26 +747,23 @@ object CustomerLanForm: TCustomerLanForm
       '    ')
     SelectSQL.Strings = (
       'select'
-      '    coalesce((select'
-      '                  1'
-      '                from objects_coverage oc'
-      
-        '                     inner join customer c on (c.house_id = oc.h' +
-        'ouse_id)'
-      '                where oc.oc_type = 2'
-      '                      and c.customer_id = :CUSTOMER_ID'
-      '                      and (v.v_id = oc.o_id)), 2) as finded'
+      '    iif(oc.o_id is null, 2, 1) as finded'
       '  , v.v_id'
       '  , v.name'
       
-        '  , v.name || coalesce('#39' / '#39'||v.ip_begin||'#39'-'#39'||v.ip_end, '#39#39') NAM' +
-        'E_IP'
+        '  , v.name || coalesce('#39' / '#39' || v.ip_begin || '#39'-'#39' || v.ip_end, '#39 +
+        #39') NAME_IP'
       '  , v.ip_begin'
       '  , v.ip_end'
       '  , l.C_CNT'
       '  , e.E_CNT'
       '  from vlans v'
-      '       left outer join(select'
+      
+        '       left outer join objects_coverage oc on (oc.oc_type = 2 an' +
+        'd'
+      '             v.v_id = oc.o_id and'
+      '             oc.house_id = :House_Id)'
+      '         left outer join(select'
       '                           Vlan_Id'
       '                         , count(*) C_CNT'
       '                         from Tv_Lan'
@@ -763,9 +773,9 @@ object CustomerLanForm: TCustomerLanForm
       '                         , count(*) E_CNT'
       '                         from Equipment'
       '                         group by 1) e on (e.Vlan_Id = v.V_Id)'
-      '  where (coalesce(v.for_objects, 0) = 0'
-      '          or (coalesce(v.for_objects, 0) = 1))'
-      '  order by 1, 2')
+      '  where ((v.for_objects is null)'
+      '          or (v.for_objects = 0)'
+      '          or (v.for_objects = 1))')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -802,30 +812,36 @@ object CustomerLanForm: TCustomerLanForm
       '  , E.MAC'
       '  , E.PORCH_N'
       '  , E.FLOOR_N'
-      '  , E.NAME||coalesce('#39' / '#39'||E.IP,'#39#39') NAME_IP'
+      '  , E.NAME || coalesce('#39' / '#39' || E.IP, '#39#39') NAME_IP'
       '  , e.Node_Id'
+      '  , coalesce((select'
+      '                  min(LVL)'
+      '                from GET_NODE_FLAT_LVL(e.Node_Id)'
+      '                where (position(:CUSTOMER_ID in CST_LIST) > 0)'
+      '                      and (exists(select'
+      '                                      STR'
       
-        '  , coalesce((select LVL from GET_NODE_FLAT_LVL(e.Node_Id) where' +
-        '  POSITION (:CUSTOMER_ID IN  CST_LIST) > 0) , 999) LVL'
+        '                                    from Explode_No_Empty('#39','#39', C' +
+        'ST_LIST)'
+      
+        '                                    where STR = :CUSTOMER_ID))),' +
+        ' 999) LVL'
       '  from EQUIPMENT E'
       '       inner join HOUSE H on (H.HOUSE_ID = E.HOUSE_ID)'
       '       inner join STREET S on (S.STREET_ID = H.STREET_ID)'
       '  where E.EQ_TYPE = 1'
-      '        and ('
-      '            (exists(select'
+      '        and ((exists(select'
       '                         EC.HOUSE_ID'
       '                       from EQUIPMENT_COVERAGE ec'
       '                       where EC.EID = E.EID'
       '                             and ec.House_Id = :House_Id))'
       ''
-      '             or (exists(select'
+      '          or (exists(select'
       '                         L.EQ_ID'
       '                       from TV_LAN L'
       '                       where L.CUSTOMER_ID = :CUSTOMER_ID'
-      '                             and L.EQ_ID = E.EID))'
-      '           )'
-      ''
-      '  order by 1 desc, 3')
+      '                             and L.EQ_ID = E.EID)))'
+      'order by 1 desc, 3')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -972,11 +988,33 @@ object CustomerLanForm: TCustomerLanForm
         'Name,  '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
+      '  , case p.Con'
+      '      when 0 then '#39#1054#39
+      '      when 1 then '#39#1040#39
+      '      else '#39#39
+      '    end whose'
+      
+        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, e.Name, null)) WHOSE_' +
+        'NAME'
+      '  , coalesce(c.HIS_COLOR, et.O_DIMENSION) as COLOR'
+      '  , p.Con_Id  '
       '  from port p'
       
         '       inner join objects o on (p.P_Type = o.O_Id and o.O_Type =' +
         ' 57)'
       '       left outer join VLANS v on (v.V_ID = p.Vlan_Id)'
+      
+        '       left outer join tv_lan t on (t.Eq_Id = p.Eid and t.Port =' +
+        ' p.Port and p.Con = 1)'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      
+        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
+        'n = 0)'
+      
+        '       left outer join objects et on (e.eq_group = et.o_id and o' +
+        '.O_TYPE = 7)'
       '  where p.Eid = :EID'
       '  order by p.Port  ')
     AutoCalcFields = False

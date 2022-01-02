@@ -173,9 +173,9 @@ end;
 
 procedure TIPTVGroupForm.FormShow(Sender: TObject);
 var
-  i, c: Integer;
+  i: Integer;
   Font_size: Integer;
-  Font_name, s: string;
+  Font_name: string;
   Row_height: Integer;
 begin
   Font_size := 0;

@@ -67,8 +67,9 @@ inherited PortListForm: TPortListForm
         DynProps = <>
         EditButtons = <>
         FieldName = 'Speed'
+        Footer.ValueType = fvtSum
         Footers = <>
-        Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100', '#1052#1073
+        Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100', '#1052#1041'/'#1089
         Title.TitleButton = True
         Width = 65
       end
@@ -172,6 +173,33 @@ inherited PortListForm: TPortListForm
         FieldName = 'OP_MAC'
         Footers = <>
         Title.Caption = #1053#1072' '#1087#1086#1088#1090#1091'|MAC'
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'V_NAME'
+        Footers = <>
+        Title.Caption = 'VLAN|'#1057#1077#1090#1100
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'IP_BEGIN'
+        Footers = <>
+        Title.Caption = 'VLAN|IP '#1089
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'IP_END'
+        Footers = <>
+        Title.Caption = 'VLAN|IP '#1087#1086
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
@@ -260,6 +288,9 @@ inherited PortListForm: TPortListForm
       '  , coalesce(l.Ip, ce.Ip, '#39#39') OP_IP'
       '  , coalesce(l.MAC, ce.MAC, '#39#39') OP_MAC'
       '  , ps.O_Name PS_NAME'
+      '  , v.Name V_NAME'
+      '  , v.Ip_Begin'
+      '  , v.Ip_End'
       '  from port p'
       
         '       inner join objects pt on (p.P_Type = pt.O_Id and pt.O_Typ' +
@@ -268,6 +299,7 @@ inherited PortListForm: TPortListForm
         '       inner join objects ps on (p.P_State = ps.O_Id and ps.O_Ty' +
         'pe = 60)'
       '       inner join EQUIPMENT E on (e.Eid = p.Eid)'
+      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
       '       left outer join house h on (e.house_id = h.house_id)'
       '       left outer join street s on (s.street_id = h.street_id)'
       
@@ -286,7 +318,7 @@ inherited PortListForm: TPortListForm
       
         '       left outer join tv_lan l on (l.Customer_Id = cc.Customer_' +
         'Id and l.Port = p.Port)'
-      ' WHERE '
+      'WHERE'
       '        P.PORT = :OLD_PORT'
       '    and P.EID = :OLD_EID'
       '    ')
@@ -317,6 +349,9 @@ inherited PortListForm: TPortListForm
       '  , coalesce(l.Ip, ce.Ip, '#39#39') OP_IP'
       '  , coalesce(l.MAC, ce.MAC, '#39#39') OP_MAC'
       '  , ps.O_Name PS_NAME'
+      '  , v.Name V_NAME'
+      '  , v.Ip_Begin'
+      '  , v.Ip_End'
       '  from port p'
       
         '       inner join objects pt on (p.P_Type = pt.O_Id and pt.O_Typ' +
@@ -325,6 +360,7 @@ inherited PortListForm: TPortListForm
         '       inner join objects ps on (p.P_State = ps.O_Id and ps.O_Ty' +
         'pe = 60)'
       '       inner join EQUIPMENT E on (e.Eid = p.Eid)'
+      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
       '       left outer join house h on (e.house_id = h.house_id)'
       '       left outer join street s on (s.street_id = h.street_id)'
       

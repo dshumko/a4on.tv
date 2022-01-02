@@ -90,6 +90,7 @@ type
     miN17: TMenuItem;
     actEnableFilter: TAction;
     actSetNewFilterNew: TAction;
+    miN18: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -137,6 +138,7 @@ type
     procedure SetOrderPayDate();
     procedure CancelOrder();
     function GenerateFilter: string;
+    // function GetPayDocForLTV: Integer;
   public
     procedure FindOrOpenOrder(const OrderID: Integer);
   end;
@@ -415,17 +417,39 @@ begin
 end;
 
 procedure TOrdersTPForm.N1Click(Sender: TObject);
+var
+  s : string;
 begin
-  fStartDate := now;
-  fEndDate := now;
-  SetOrdersTPFilter;
+  if not dsFilter.Active then
+    dsFilter.Open;
+  dsFilter.EmptyTable;
+  dsFilter.Insert;
+  dsFilter['DT'] := 0;
+  dsFilter['DS'] := now;
+  dsFilter['DE'] := now;
+  dsFilter.Post;
+  actEnableFilter.Checked := True;
+  s := GenerateFilter;
+  dsOrdersTP.ParamByName('Filter').Value := s;
+  dsOrdersTP.CloseOpen(True);
 end;
 
 procedure TOrdersTPForm.N2Click(Sender: TObject);
+var
+  s : string;
 begin
-  fStartDate := now - 7;
-  fEndDate := now;
-  SetOrdersTPFilter;
+  if not dsFilter.Active then
+    dsFilter.Open;
+  dsFilter.EmptyTable;
+  dsFilter.Insert;
+  dsFilter['DT'] := 4;
+  dsFilter['DS'] := now;
+  dsFilter['DE'] := now;
+  dsFilter.Post;
+  actEnableFilter.Checked := True;
+  s := GenerateFilter;
+  dsOrdersTP.ParamByName('Filter').Value := s;
+  dsOrdersTP.CloseOpen(True);
 end;
 
 procedure TOrdersTPForm.dbgOrdersTPKeyPress(Sender: TObject; var Key: Char);
@@ -477,17 +501,39 @@ begin
 end;
 
 procedure TOrdersTPForm.N3Click(Sender: TObject);
+var
+  s : string;
 begin
-  fStartDate := MonthFirstDay(now);
-  fEndDate := MonthLastDay(now);
-  SetOrdersTPFilter;
+  if not dsFilter.Active then
+    dsFilter.Open;
+  dsFilter.EmptyTable;
+  dsFilter.Insert;
+  dsFilter['DT'] := 4;
+  dsFilter['DS'] := now-1;
+  dsFilter['DE'] := now;
+  dsFilter.Post;
+  actEnableFilter.Checked := True;
+  s := GenerateFilter;
+  dsOrdersTP.ParamByName('Filter').Value := s;
+  dsOrdersTP.CloseOpen(True);
 end;
 
 procedure TOrdersTPForm.N4Click(Sender: TObject);
+var
+  s : string;
 begin
-  fStartDate := (now - 1);
-  fEndDate := (now - 1);
-  SetOrdersTPFilter;
+  if not dsFilter.Active then
+    dsFilter.Open;
+  dsFilter.EmptyTable;
+  dsFilter.Insert;
+  dsFilter['DT'] := 0;
+  dsFilter['DS'] := (now - 1);
+  dsFilter['DE'] := (now - 1);
+  dsFilter.Post;
+  actEnableFilter.Checked := True;
+  s := GenerateFilter;
+  dsOrdersTP.ParamByName('Filter').Value := s;
+  dsOrdersTP.CloseOpen(True);
 end;
 
 procedure TOrdersTPForm.actPrintDocExecute(Sender: TObject);
@@ -539,8 +585,12 @@ var
   vCanPay: Boolean;
   vSrv: Integer;
   JO: TJsonObject;
+  pd_id: Integer;
 begin
   if dsOrdersTP.FieldByName('CUSTOMER_ID').IsNull then
+    Exit;
+
+  if (not dsOrdersTP.FieldByName('PAY_DATE').IsNull) then
     Exit;
 
   if ((not dsOrdersTP.FieldByName('O_NAME').IsNull) and
@@ -580,7 +630,8 @@ begin
       JO.Free;
     end;
   end;
-  if ReceivePayment(dsOrdersTP['CUSTOMER_ID'], -1, -1, dt, sm, Trim(notice), vSrv) <> -1 then
+
+  if ReceivePayment(dsOrdersTP['CUSTOMER_ID'], -1, -1, dt, sm, Trim(notice), vSrv, 'OTP') <> -1 then
   begin
     SetOrderPayDate();
     dsOrdersTP.Refresh;
@@ -893,27 +944,40 @@ function TOrdersTPForm.GenerateFilter: string;
       if not tmpSQL.IsEmpty then
         tmpSQL := tmpSQL + ' and ';
 
-      case dsFilter['DT'] of
-        1:
-          s := 'o.DATE_FROM';
-        2:
-          s := 'o.DATE_TO';
-      else
-        s := 'o.Otp_Date'
-      end;
-      if (not dsFilter.FieldByName('DS').IsNull) then
-      begin
-        if (dsFilter.FieldByName('DE').IsNull) then
-          tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DS'])])
+      if (dsFilter['DT'] <> 4) then begin
+        case dsFilter['DT'] of
+          1:
+            s := 'o.DATE_FROM';
+          2:
+            s := 'o.DATE_TO';
         else
-          tmpSQL := Format('( %s between ''%s'' and ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DS']),
-            FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
+          s := 'o.Otp_Date'
+        end;
+        if (not dsFilter.FieldByName('DS').IsNull) then
+        begin
+          if (dsFilter.FieldByName('DE').IsNull) then
+            tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DS'])])
+          else
+            tmpSQL := Format('( %s between ''%s'' and ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DS']),
+              FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
+        end
+        else
+        begin
+          if (not dsFilter.FieldByName('DE').IsNull) then
+            tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
+        end;
       end
-      else
-      begin
-        if (not dsFilter.FieldByName('DE').IsNull) then
-          tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
+      else begin
+          if (not dsFilter.FieldByName('DE').IsNull) then
+            tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', dsFilter['DS']),
+              'o.DATE_FROM', 'o.DATE_TO'])
+          else
+            tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', now),
+              'o.DATE_FROM', 'o.DATE_TO'])
       end;
+
+
+
     end;
 
     if (not dsFilter.FieldByName('ORDER_TYPE').IsNull) then
@@ -1003,5 +1067,33 @@ begin
   actSetFilterExecute(Sender);
 end;
 
-end.
+{
+function TOrdersTPForm.GetPayDocForLTV: Integer;
+var
+  s: string;
+  fq: TpFIBQuery;
+begin
+  Result := -1;
 
+
+  s := dmMain.GetCompanyValue('NAME');
+  if not s.Contains('ЛТВ') then
+    Exit;
+
+  // возвращаем документ с источником Банк РЕКЛАМА для платежей по рекламе
+  fq := TpFIBQuery.Create(Self);
+  try
+    fq.Database := dmMain.dbTV;
+    fq.Transaction := dmMain.trWriteQ;
+    fq.sql.Text := 'select Pay_Doc_Id from Get_Pay_Doc(720148, null, null)'; // 720148 Банк РЕКЛАМА
+    fq.Transaction.StartTransaction;
+    fq.ExecQuery;
+    if not fq.FN('Pay_Doc_Id').IsNull then
+      Result := fq.FN('Pay_Doc_Id').AsInteger;
+    fq.Transaction.Commit;
+  finally
+    fq.Free;
+  end;
+end;
+}
+end.

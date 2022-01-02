@@ -164,7 +164,7 @@ object MaterialsForm: TMaterialsForm
         Flat = True
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
-        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         SortLocal = True
         STFilter.Local = True
@@ -1527,7 +1527,7 @@ object MaterialsForm: TMaterialsForm
     Top = 331
   end
   object frxReport: TfrxReport
-    Version = '6.6'
+    Version = '2021.2.8'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]

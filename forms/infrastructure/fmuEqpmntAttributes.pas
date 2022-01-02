@@ -23,16 +23,20 @@ type
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
     pnlButtons: TPanel;
-    btnDel1: TSpeedButton;
-    btnAdd1: TSpeedButton;
-    btnEdit1: TSpeedButton;
+    btnDel: TSpeedButton;
+    btnAdd: TSpeedButton;
+    btnEdit: TSpeedButton;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dbgCustAttrDblClick(Sender: TObject);
     procedure srcAttributesDataChange(Sender: TObject; Field: TField);
+    procedure FormCreate(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
+    FIsVertical: Boolean;
     procedure EnableControls;
+    procedure SwitchLayout(const InVertical: Boolean);
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -52,6 +56,34 @@ begin
   Result := rsClmnAttributes;
 end;
 
+procedure TapgEqpmntAttributes.SwitchLayout(const InVertical: Boolean);
+begin
+  if (FIsVertical = InVertical)
+  then Exit;
+
+  FIsVertical := InVertical;
+  if not FIsVertical then
+  begin
+    pnlButtons.Align := alLeft;
+    pnlButtons.Width := 26;
+    btnEdit.Left := 2;
+    btnEdit.Top := 30;
+    btnDel.Left := 2;
+    btnDel.Top := pnlButtons.Height - btnDel.Height - 4;
+    btnDel.Anchors := [akLeft,akBottom];
+  end
+  else
+  begin
+    pnlButtons.Align := alTop;
+    pnlButtons.Height := 26;
+    btnEdit.Top := 2;
+    btnEdit.Left := 30;
+    btnDel.Top := 2;
+    btnDel.Left := pnlButtons.Width - btnDel.Width - 4;
+    btnDel.Anchors := [akTop,akRight];
+  end;
+end;
+
 procedure TapgEqpmntAttributes.InitForm;
 var
   FullAccess: Boolean;
@@ -68,6 +100,20 @@ procedure TapgEqpmntAttributes.EnableControls;
 begin
   actEdit.Enabled := dsAttributes.RecordCount > 0;
   actDel.Enabled := dsAttributes.RecordCount > 0;
+end;
+
+procedure TapgEqpmntAttributes.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FIsVertical := False;
+end;
+
+procedure TapgEqpmntAttributes.FormResize(Sender: TObject);
+var
+  b : Boolean;
+begin
+  b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
+  SwitchLayout(b);
 end;
 
 procedure TapgEqpmntAttributes.OpenData;

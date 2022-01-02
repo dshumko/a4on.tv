@@ -186,6 +186,7 @@ type
     chkRWD: TCheckBox;
     chkLANAddr: TCheckBox;
     chkDelLanEq: TCheckBox;
+    chkVlans4Home: TCheckBox;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -467,6 +468,7 @@ begin
       SaveSettingsBoolean('VLAN_REQUIRED', chkVlanRequired);
       SaveSettingsBoolean('LAN_ADDRES', chkLANAddr);
       SaveSettingsBoolean('LAN_DELEQPMNT', chkDelLanEq);
+      SaveSettingsBoolean('LAN_VALAN4HOME', chkVlans4Home);
 
       SaveSettingsBoolean('PAYMENT_SRV', cbPaymentSrv);
       SaveSettingsBoolean('NEGATIVE_PAY', cbNegativePay);
@@ -768,6 +770,8 @@ begin
         chkLANAddr.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_DELEQPMNT' then
         chkDelLanEq.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_VALAN4HOME' then
+        chkVlans4Home.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PAYMENT_SRV' then
         cbPaymentSrv.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_FORMAT' then

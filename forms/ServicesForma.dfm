@@ -51,6 +51,7 @@ object ServicesForm: TServicesForm
         Flat = True
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         ParentShowHint = False
         SearchPanel.Enabled = True
@@ -596,7 +597,7 @@ object ServicesForm: TServicesForm
                 object Label1: TLabel
                   Left = 0
                   Top = 0
-                  Width = 125
+                  Width = 321
                   Height = 13
                   Align = alTop
                   Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
@@ -737,7 +738,7 @@ object ServicesForm: TServicesForm
                 object Label2: TLabel
                   Left = 0
                   Top = 0
-                  Width = 106
+                  Width = 448
                   Height = 13
                   Align = alTop
                   Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
@@ -1588,6 +1589,7 @@ object ServicesForm: TServicesForm
         Flat = True
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         ParentShowHint = False
         SearchPanel.Enabled = True
@@ -2055,6 +2057,7 @@ object ServicesForm: TServicesForm
         Flat = True
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         ParentShowHint = False
         SearchPanel.Enabled = True

@@ -56,6 +56,7 @@ object UsersForm: TUsersForm
           DynProps = <>
           Flat = True
           FooterParams.Color = clWindow
+          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           TabOrder = 1
           OnDblClick = dbgGroupsDblClick
           Columns = <
@@ -372,7 +373,7 @@ object UsersForm: TUsersForm
           DynProps = <>
           Flat = True
           FooterParams.Color = clWindow
-          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
           PopupMenu = PopupMenu1
           STFilter.Local = True

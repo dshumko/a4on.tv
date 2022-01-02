@@ -2,7 +2,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
   Left = 0
   Top = 0
   Caption = #1040#1090#1088#1080#1073#1091#1090#1099
-  ClientHeight = 203
+  ClientHeight = 235
   ClientWidth = 909
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,28 +11,35 @@ object apgEqpmntInfo: TapgEqpmntInfo
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
-  object spl2: TSplitter
-    Left = 667
+  object splMemo: TSplitter
+    Left = 665
     Top = 0
-    Height = 203
+    Height = 235
+    Color = clBtnFace
+    ParentColor = False
   end
-  object spl1: TSplitter
+  object splR: TSplitter
     Left = 313
     Top = 0
-    Height = 203
+    Height = 235
+    Color = clBtnFace
+    ParentColor = False
   end
-  object Panel1: TPanel
+  object pnlInfo: TPanel
     Left = 0
     Top = 0
     Width = 313
-    Height = 203
+    Height = 235
     Align = alLeft
+    BevelOuter = bvNone
     TabOrder = 0
     object Label1: TLabel
       Left = 4
-      Top = 25
+      Top = 47
       Width = 31
       Height = 13
       Caption = #1059#1083#1080#1094#1072
@@ -45,7 +52,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
     object Label2: TLabel
       Left = 4
-      Top = 47
+      Top = 69
       Width = 20
       Height = 13
       Caption = #1044#1086#1084
@@ -70,22 +77,22 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object lbl1: TLabel
-      Left = 121
-      Top = 47
-      Width = 45
+      Left = 147
+      Top = 69
+      Width = 31
       Height = 13
-      Caption = #1055#1086#1076#1098#1077#1079#1076
+      Caption = #1055#1086#1076'-'#1076
     end
     object Label4: TLabel
-      Left = 197
-      Top = 47
+      Left = 224
+      Top = 69
       Width = 19
       Height = 13
       Caption = #1069'-'#1078
     end
     object lbl4: TLabel
-      Left = 121
-      Top = 69
+      Left = 3
+      Top = 25
       Width = 18
       Height = 13
       Caption = #1058#1080#1087
@@ -98,7 +105,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
     object Label5: TLabel
       Left = 4
-      Top = 69
+      Top = 91
       Width = 31
       Height = 13
       Caption = #1052#1077#1089#1090#1086
@@ -121,8 +128,8 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object dbtxtdbedt1: TDBText
-      Left = 169
-      Top = 45
+      Left = 184
+      Top = 67
       Width = 81
       Height = 16
       AutoSize = True
@@ -138,8 +145,8 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object dbtxtDBEdit1: TDBText
-      Left = 219
-      Top = 45
+      Left = 246
+      Top = 67
       Width = 84
       Height = 16
       AutoSize = True
@@ -156,7 +163,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
     object dbtxtDBEdit2: TDBText
       Left = 58
-      Top = 67
+      Top = 89
       Width = 84
       Height = 16
       Hint = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' / '#1071#1097#1080#1082
@@ -174,7 +181,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
     object dbtxtHOUSE: TDBText
       Left = 58
-      Top = 45
+      Top = 67
       Width = 76
       Height = 16
       Hint = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' / '#1071#1097#1080#1082
@@ -192,7 +199,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
     object dbtxtSTREET: TDBText
       Left = 58
-      Top = 23
+      Top = 45
       Width = 80
       Height = 16
       AutoSize = True
@@ -208,11 +215,11 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object lbl5: TLabel
-      Left = 4
-      Top = 93
-      Width = 68
+      Left = 3
+      Top = 113
+      Width = 51
       Height = 13
-      Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082
+      Caption = #1055#1086#1076#1082#1083'-'#1085' '#1082
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -221,8 +228,8 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object dbtxtSTREET1: TDBText
-      Left = 61
-      Top = 109
+      Left = 58
+      Top = 111
       Width = 88
       Height = 16
       AutoSize = True
@@ -238,8 +245,8 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object dbtxtparent_name: TDBText
-      Left = 61
-      Top = 126
+      Left = 58
+      Top = 133
       Width = 122
       Height = 16
       AutoSize = True
@@ -255,8 +262,8 @@ object apgEqpmntInfo: TapgEqpmntInfo
       ParentFont = False
     end
     object cbTypeEQ: TDBComboBoxEh
-      Left = 143
-      Top = 67
+      Left = 58
+      Top = 23
       Width = 159
       Height = 16
       AutoSelect = False
@@ -290,26 +297,27 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
   end
   object pnlMemo: TPanel
-    Left = 670
+    Left = 668
     Top = 0
-    Width = 239
-    Height = 203
+    Width = 241
+    Height = 235
     Align = alClient
+    BevelOuter = bvNone
     TabOrder = 1
     object lbl2: TLabel
-      Left = 1
-      Top = 1
-      Width = 237
+      Left = 0
+      Top = 0
+      Width = 241
       Height = 13
       Align = alTop
-      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     end
     object mmoNotice: TDBMemoEh
       Tag = 9
-      Left = 1
-      Top = 14
-      Width = 237
-      Height = 188
+      Left = 0
+      Top = 13
+      Width = 241
+      Height = 222
       ScrollBars = ssVertical
       Align = alClient
       AutoSize = False
@@ -325,288 +333,298 @@ object apgEqpmntInfo: TapgEqpmntInfo
       OnExit = mmoNoticeExit
     end
   end
-  object pgcTypeInfo: TPageControl
+  object pnlPages: TPanel
     Left = 316
     Top = 0
-    Width = 351
-    Height = 203
-    ActivePage = tsLan
+    Width = 349
+    Height = 235
     Align = alLeft
-    DoubleBuffered = True
-    ParentDoubleBuffered = False
+    BevelOuter = bvNone
     TabOrder = 2
-    TabPosition = tpBottom
-    object tsLan: TTabSheet
-      Caption = #1057#1077#1090#1100
-      DesignSize = (
-        343
-        177)
-      object Label6: TLabel
-        Left = 0
-        Top = 3
-        Width = 22
-        Height = 13
-        Caption = #1052#1040#1057
-      end
-      object Label7: TLabel
-        Left = 0
-        Top = 26
-        Width = 10
-        Height = 13
-        Caption = 'IP'
-      end
-      object Label8: TLabel
-        Left = 0
-        Top = 49
-        Width = 27
-        Height = 13
-        Caption = 'MASK'
-      end
-      object lbl3: TLabel
-        Left = 0
-        Top = 96
-        Width = 25
-        Height = 13
-        Caption = 'VLAN'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label9: TLabel
-        Left = 0
-        Top = 119
-        Width = 36
-        Height = 13
-        Caption = #1043#1088#1091#1087#1087#1072
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label10: TLabel
-        Left = 0
-        Top = 72
-        Width = 22
-        Height = 13
-        Caption = 'IPv6'
-      end
-      object eMAC: TDBEditEh
-        Left = 37
-        Top = 0
-        Width = 306
-        Height = 21
-        Hint = #1052#1040#1057' '#1072#1076#1088#1077#1089
-        Anchors = [akLeft, akTop, akRight]
-        DataField = 'MAC'
-        DataSource = srcData
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = 'MAC'
-        MaxLength = 17
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 0
-        Visible = True
-        EditMask = 'AA:AA:AA:AA:AA:AA'
-      end
-      object eIP: TDBEditEh
-        Left = 37
-        Top = 23
-        Width = 306
-        Height = 21
-        Hint = 'IP '#1072#1076#1088#1077#1089
-        Anchors = [akLeft, akTop, akRight]
-        DataField = 'IP'
-        DataSource = srcData
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = 'IP '#1072#1076#1088#1077#1089
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 1
-        Visible = True
-        EditMask = ''
-      end
-      object DBEditEh1: TDBEditEh
-        Left = 37
-        Top = 46
-        Width = 306
-        Height = 21
-        Hint = #1052#1072#1089#1082#1072' '#1089#1077#1090#1080
-        Anchors = [akLeft, akTop, akRight]
-        DataField = 'MASK'
-        DataSource = srcData
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = #1052#1072#1089#1082#1072' '#1089#1077#1090#1080
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 2
-        Visible = True
-        EditMask = ''
-      end
-      object edtGroup: TDBEditEh
-        Left = 37
-        Top = 116
-        Width = 306
-        Height = 21
-        Anchors = [akLeft, akTop, akRight]
-        DataField = 'EQGROUP'
-        DataSource = srcData
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = #1043#1088#1091#1087#1087#1072' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 4
-        Visible = True
-      end
-      object edtIP: TDBEditEh
-        Left = 37
-        Top = 69
-        Width = 306
-        Height = 21
-        Hint = 'IP '#1072#1076#1088#1077#1089
-        Anchors = [akLeft, akTop, akRight]
-        DataField = 'IPV6'
-        DataSource = srcData
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = 'IP v6'
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 3
-        Visible = True
-        EditMask = ''
-      end
-      object btnCMD: TButton
-        Left = 37
-        Top = 139
-        Width = 306
-        Height = 19
-        Anchors = [akLeft, akTop, akRight]
-        Caption = 'CMD'
-        TabOrder = 5
-        OnClick = btnCMDClick
-      end
-      object edtIPV6: TDBEditEh
-        Left = 37
-        Top = 93
-        Width = 306
-        Height = 21
-        Hint = 'IP '#1072#1076#1088#1077#1089
-        Anchors = [akLeft, akTop, akRight]
-        DataField = 'V_NAME'
-        DataSource = srcData
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = 'VLAN'
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 6
-        Visible = True
-        EditMask = ''
-      end
-    end
-    object tsTV: TTabSheet
-      Caption = #1058#1042
-      ImageIndex = 1
-      object lbl7: TLabel
-        Left = 3
-        Top = 29
-        Width = 25
-        Height = 13
+    object pgcTypeInfo: TPageControl
+      Left = 0
+      Top = 0
+      Width = 349
+      Height = 235
+      ActivePage = tsLan
+      Align = alClient
+      DoubleBuffered = True
+      ParentDoubleBuffered = False
+      Style = tsFlatButtons
+      TabOrder = 0
+      StyleElements = [seFont, seClient]
+      object tsLan: TTabSheet
         Caption = #1057#1077#1090#1100
+        DesignSize = (
+          341
+          204)
+        object Label6: TLabel
+          Left = 0
+          Top = 3
+          Width = 22
+          Height = 13
+          Caption = #1052#1040#1057
+        end
+        object Label7: TLabel
+          Left = 0
+          Top = 26
+          Width = 10
+          Height = 13
+          Caption = 'IP'
+        end
+        object Label8: TLabel
+          Left = 0
+          Top = 49
+          Width = 27
+          Height = 13
+          Caption = 'MASK'
+        end
+        object lbl3: TLabel
+          Left = 0
+          Top = 96
+          Width = 25
+          Height = 13
+          Caption = 'VLAN'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label9: TLabel
+          Left = 0
+          Top = 119
+          Width = 36
+          Height = 13
+          Caption = #1043#1088#1091#1087#1087#1072
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label10: TLabel
+          Left = 0
+          Top = 72
+          Width = 22
+          Height = 13
+          Caption = 'IPv6'
+        end
+        object eMAC: TDBEditEh
+          Left = 37
+          Top = 0
+          Width = 304
+          Height = 21
+          Hint = #1052#1040#1057' '#1072#1076#1088#1077#1089
+          Anchors = [akLeft, akTop, akRight]
+          DataField = 'MAC'
+          DataSource = srcData
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = 'MAC'
+          MaxLength = 17
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 0
+          Visible = True
+          EditMask = 'AA:AA:AA:AA:AA:AA'
+        end
+        object eIP: TDBEditEh
+          Left = 37
+          Top = 23
+          Width = 304
+          Height = 21
+          Hint = 'IP '#1072#1076#1088#1077#1089
+          Anchors = [akLeft, akTop, akRight]
+          DataField = 'IP'
+          DataSource = srcData
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = 'IP '#1072#1076#1088#1077#1089
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 1
+          Visible = True
+          EditMask = ''
+        end
+        object DBEditEh1: TDBEditEh
+          Left = 37
+          Top = 46
+          Width = 304
+          Height = 21
+          Hint = #1052#1072#1089#1082#1072' '#1089#1077#1090#1080
+          Anchors = [akLeft, akTop, akRight]
+          DataField = 'MASK'
+          DataSource = srcData
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = #1052#1072#1089#1082#1072' '#1089#1077#1090#1080
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 2
+          Visible = True
+          EditMask = ''
+        end
+        object edtGroup: TDBEditEh
+          Left = 37
+          Top = 116
+          Width = 304
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          DataField = 'EQGROUP'
+          DataSource = srcData
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = #1043#1088#1091#1087#1087#1072' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 4
+          Visible = True
+        end
+        object edtIP: TDBEditEh
+          Left = 37
+          Top = 69
+          Width = 304
+          Height = 21
+          Hint = 'IP '#1072#1076#1088#1077#1089
+          Anchors = [akLeft, akTop, akRight]
+          DataField = 'IPV6'
+          DataSource = srcData
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = 'IP v6'
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 3
+          Visible = True
+          EditMask = ''
+        end
+        object btnCMD: TButton
+          Left = 37
+          Top = 139
+          Width = 304
+          Height = 19
+          Anchors = [akLeft, akTop, akRight]
+          Caption = 'CMD'
+          TabOrder = 5
+          OnClick = btnCMDClick
+        end
+        object edtIPV6: TDBEditEh
+          Left = 37
+          Top = 93
+          Width = 304
+          Height = 21
+          Hint = 'IP '#1072#1076#1088#1077#1089
+          Anchors = [akLeft, akTop, akRight]
+          DataField = 'V_NAME'
+          DataSource = srcData
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = 'VLAN'
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 6
+          Visible = True
+          EditMask = ''
+        end
       end
-      object lbl9: TLabel
-        Left = 3
-        Top = 79
-        Width = 97
-        Height = 13
-        Caption = #1059#1088#1086#1074#1077#1085#1100' '#1074#1099#1093#1086#1076#1085#1086#1081
+      object tsTV: TTabSheet
+        Caption = #1058#1042
+        ImageIndex = 1
+        object lbl7: TLabel
+          Left = 3
+          Top = 29
+          Width = 25
+          Height = 13
+          Caption = #1057#1077#1090#1100
+        end
+        object lbl9: TLabel
+          Left = 3
+          Top = 79
+          Width = 97
+          Height = 13
+          Caption = #1059#1088#1086#1074#1077#1085#1100' '#1074#1099#1093#1086#1076#1085#1086#1081
+        end
+        object lbl8: TLabel
+          Left = 3
+          Top = 54
+          Width = 89
+          Height = 13
+          Caption = #1059#1088#1086#1074#1077#1085#1100' '#1074#1093#1086#1076#1085#1086#1081
+        end
+        object dbckActive: TDBCheckBoxEh
+          Left = 3
+          Top = 3
+          Width = 116
+          Height = 18
+          Alignment = taLeftJustify
+          Caption = #1040#1082#1090#1080#1074#1085#1086#1077
+          DataField = 'EQ_ACTIVE'
+          DynProps = <>
+          ReadOnly = True
+          TabOrder = 0
+        end
+        object cbbLine: TDBComboBoxEh
+          Left = 106
+          Top = 26
+          Width = 121
+          Height = 21
+          DataField = 'EQ_LINE'
+          DynProps = <>
+          EditButtons = <>
+          Items.Strings = (
+            #1052#1072#1075#1080#1089#1090#1088'.'
+            #1044#1086#1084#1086#1074#1072#1103)
+          KeyItems.Strings = (
+            '0'
+            '1')
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 1
+          Visible = True
+        end
+        object edSIN: TDBNumberEditEh
+          Left = 106
+          Top = 51
+          Width = 121
+          Height = 21
+          DataField = 'SIGNAL_IN'
+          DynProps = <>
+          EditButtons = <>
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 2
+          Visible = True
+        end
+        object edSOUT: TDBNumberEditEh
+          Left = 106
+          Top = 76
+          Width = 121
+          Height = 21
+          DataField = 'SIGNAL_OUT'
+          DynProps = <>
+          EditButtons = <>
+          ParentShowHint = False
+          ReadOnly = True
+          ShowHint = True
+          TabOrder = 3
+          Visible = True
+        end
       end
-      object lbl8: TLabel
-        Left = 3
-        Top = 54
-        Width = 89
-        Height = 13
-        Caption = #1059#1088#1086#1074#1077#1085#1100' '#1074#1093#1086#1076#1085#1086#1081
+      object tsOther: TTabSheet
+        Caption = #1055#1088#1086#1095#1077#1077
+        ImageIndex = 2
       end
-      object dbckActive: TDBCheckBoxEh
-        Left = 3
-        Top = 3
-        Width = 116
-        Height = 18
-        Alignment = taLeftJustify
-        Caption = #1040#1082#1090#1080#1074#1085#1086#1077
-        DataField = 'EQ_ACTIVE'
-        DynProps = <>
-        ReadOnly = True
-        TabOrder = 0
-      end
-      object cbbLine: TDBComboBoxEh
-        Left = 106
-        Top = 26
-        Width = 121
-        Height = 21
-        DataField = 'EQ_LINE'
-        DynProps = <>
-        EditButtons = <>
-        Items.Strings = (
-          #1052#1072#1075#1080#1089#1090#1088'.'
-          #1044#1086#1084#1086#1074#1072#1103)
-        KeyItems.Strings = (
-          '0'
-          '1')
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 1
-        Visible = True
-      end
-      object edSIN: TDBNumberEditEh
-        Left = 106
-        Top = 51
-        Width = 121
-        Height = 21
-        DataField = 'SIGNAL_IN'
-        DynProps = <>
-        EditButtons = <>
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 2
-        Visible = True
-      end
-      object edSOUT: TDBNumberEditEh
-        Left = 106
-        Top = 76
-        Width = 121
-        Height = 21
-        DataField = 'SIGNAL_OUT'
-        DynProps = <>
-        EditButtons = <>
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 3
-        Visible = True
-      end
-    end
-    object tsOther: TTabSheet
-      Caption = #1055#1088#1086#1095#1077#1077
-      ImageIndex = 2
     end
   end
   object pmLanPopUp: TPopupMenu

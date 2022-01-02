@@ -832,6 +832,7 @@ begin
     AppIni.WriteString('MAIN', 'PRINT_CHECK_AND_REPORT', dmMain.GetIniValue('PRINT_CHECK_AND_REPORT'));
     AppIni.WriteString('MAIN', 'CASHBOXPSWD', dmMain.GetIniValue('CASHBOXPSWD'));
     AppIni.WriteString('MAIN', 'DISCOUNT', dmMain.GetIniValue('DISCOUNT'));
+
     if dmMain.GetIniValue('FONT_SIZE') <> '' then
     begin
       AppIni.WriteString('MAIN', 'FONT_SIZE', dmMain.GetIniValue('FONT_SIZE'));
@@ -842,6 +843,12 @@ begin
     AppIni.WriteString('GRIDS', 'ServiceGrid', dmMain.GetIniValue('ServiceGrid'));
     AppIni.WriteString('GRIDS', 'StreetGrid', dmMain.GetIniValue('StreetGrid'));
 
+    AppIni.WriteString('EQPMNT', 'EQUIPMENTASTREE', dmMain.GetIniValue('EQUIPMENTASTREE'));
+    AppIni.WriteString('EQPMNT', 'EQUIPMENT_INFOLAYOUT', dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT'));
+    AppIni.WriteString('EQPMNT', 'EQUIPMENT_FSIZE', dmMain.GetIniValue('EQUIPMENT_FSIZE'));
+    AppIni.WriteString('EQPMNT', 'EQUIPMENT_LSIZE', dmMain.GetIniValue('EQUIPMENT_LSIZE'));
+    AppIni.WriteString('EQPMNT', 'EQUIPMENT_ISIZE', dmMain.GetIniValue('EQUIPMENT_ISIZE'));
+    AppIni.WriteString('EQPMNT', 'EQUIPMENT_PSIZE', dmMain.GetIniValue('EQUIPMENT_PSIZE'));
   finally
     FreeAndNil(AppIni);
   end;
@@ -894,6 +901,14 @@ begin
     SetFromIniSettings('MAIN', 'RECTOCUSTOMER', '0');
     SetFromIniSettings('MAIN', 'DBSETTINGS', '0');
     SetFromIniSettings('MAIN', 'ROW_HEIGHT', '0');
+
+    SetFromIniSettings('EQPMNT', 'EQUIPMENTASTREE', '0');
+    SetFromIniSettings('EQPMNT', 'EQUIPMENT_INFOLAYOUT', '0');
+    SetFromIniSettings('EQPMNT', 'EQUIPMENT_FSIZE', '200');
+    SetFromIniSettings('EQPMNT', 'EQUIPMENT_LSIZE', '120');
+    SetFromIniSettings('EQPMNT', 'EQUIPMENT_ISIZE', '330');
+    SetFromIniSettings('EQPMNT', 'EQUIPMENT_PSIZE', '350');
+
     s := AppIni.ReadString('MAIN', 'FONT_SIZE', '0');
     if s <> '0' then
     begin

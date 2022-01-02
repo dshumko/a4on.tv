@@ -33,7 +33,9 @@ type
     edtFine: TDBNumberEditEh;
     pnlTYPE: TPanel;
     Label3: TLabel;
-    cbbPayTypeStr: TDBComboBoxEh;
+    cbbPayTypeStr: TDBLookupComboboxEh;
+    srcPT: TDataSource;
+    dsPT: TpFIBDataSet;
     procedure FormShow(Sender: TObject);
     procedure dePaySumChange(Sender: TObject);
     procedure edLicevoyChange(Sender: TObject);
@@ -41,6 +43,7 @@ type
     procedure bbOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     FPayment_id: Integer;
@@ -120,6 +123,12 @@ begin
   bbOk.Enabled := ((cr.CUSTOMER_ID > -1) and (dePaySum.Value > 0));
 end;
 
+procedure TPaymentEditFrm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  dsPT.Close;
+end;
+
 procedure TPaymentEditFrm.FormCreate(Sender: TObject);
 var
   vSF: string;
@@ -135,6 +144,7 @@ begin
 
   vSF := dmMain.GetSettingsValue('NEGATIVE_PAY');
   FPayNegative := (vSF = '1');
+  dsPT.Open;
 end;
 
 procedure TPaymentEditFrm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -164,7 +174,7 @@ begin
           luPaymentSrv.Value := FldByName['PAYMENT_SRV'].AsInteger;
       end;
       if not FldByName['PAY_TYPE_STR'].IsNull then
-        cbbPayTypeStr.Text := FldByName['PAY_TYPE_STR'].AsString;
+        cbbPayTypeStr.Value := FldByName['PAY_TYPE_STR'].AsString;
       Transaction.Commit;
       Close;
     finally
@@ -229,7 +239,7 @@ begin
         ParamByName('PAYMENT_SRV').IsNull := true;
 
       if cbbPayTypeStr.Text <> '' then
-        ParamByName('PAY_TYPE_STR').AsString := cbbPayTypeStr.Text
+        ParamByName('PAY_TYPE_STR').AsString := cbbPayTypeStr.Value
       else
         ParamByName('PAY_TYPE_STR').IsNull := true;
 

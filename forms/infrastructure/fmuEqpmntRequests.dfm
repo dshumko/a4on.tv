@@ -12,6 +12,8 @@ object apgEqpmntRequests: TapgEqpmntRequests
   Font.Style = []
   OldCreateOrder = False
   ShowHint = True
+  OnClose = FormClose
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object dbGridCustReq: TDBGridEh
@@ -298,7 +300,7 @@ object apgEqpmntRequests: TapgEqpmntRequests
     DesignSize = (
       26
       273)
-    object btnDel1: TSpeedButton
+    object btnDel: TSpeedButton
       Left = 2
       Top = 250
       Width = 22
@@ -343,7 +345,7 @@ object apgEqpmntRequests: TapgEqpmntRequests
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
       Layout = blGlyphTop
     end
-    object btnAdd1: TSpeedButton
+    object btnAdd: TSpeedButton
       Left = 2
       Top = 3
       Width = 22
@@ -386,7 +388,7 @@ object apgEqpmntRequests: TapgEqpmntRequests
         FF00FF00FF00FF00FF00ADADAD007F7F7F006666660061616100666666008080
         8000AEAEAE00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
-    object btnEdit1: TSpeedButton
+    object btnEdit: TSpeedButton
       Left = 2
       Top = 31
       Width = 22

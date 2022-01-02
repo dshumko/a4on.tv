@@ -14,7 +14,6 @@ type
     srcPaymentDocs: TDataSource;
     dsPaymentDocs: TpFIBDataSet;
     pnlPayDoc: TPanel;
-    Label6: TLabel;
     dbluPayDoc: TDBLookupComboboxEh;
     bbOk: TBitBtn;
     bbCancel: TBitBtn;

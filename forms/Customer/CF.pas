@@ -696,6 +696,17 @@ var
   v: TfsCustomVariable;
   i: Integer;
 begin
+  if UpdateTimer.Enabled
+  then UpdateTimer.Enabled := False;
+
+  if actAddressSearch.Checked then
+    dmMain.SetIniValue('SHOWADDRESSFILTER', '1')
+  else
+    dmMain.SetIniValue('SHOWADDRESSFILTER', '0');
+
+  if (mtbPages.RecordCount > 0) and (not mtbPages.FieldByName('ID').IsNull) then
+    dmMain.SetIniValue('LASTPAGE', IntToStr(mtbPages['ID']));
+
   if Assigned(FPageList) then
   begin
     for i := 0 to FPageList.Count - 1 do
@@ -713,14 +724,6 @@ begin
       fsGlobalUnit.RemoveItems(Self);
   end;
 
-  if actAddressSearch.Checked then
-    dmMain.SetIniValue('SHOWADDRESSFILTER', '1')
-  else
-    dmMain.SetIniValue('SHOWADDRESSFILTER', '0');
-
-  if (mtbPages.RecordCount > 0) and (not mtbPages.FieldByName('ID').IsNull) then
-    dmMain.SetIniValue('LASTPAGE', IntToStr(mtbPages['ID']));
-
   if mtbPages.Active then
   begin
     mtbPages.EmptyTable;
@@ -728,8 +731,8 @@ begin
   end;
 
   dbgCustomers.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'CustGrid', False);
-  CustomersForm := nil;
 
+  CustomersForm := nil;
   Action := caFree;
 end;
 

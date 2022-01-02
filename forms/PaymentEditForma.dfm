@@ -2,8 +2,8 @@ object PaymentEditFrm: TPaymentEditFrm
   Left = 0
   Top = 0
   Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1077' '#1087#1083#1072#1090#1077#1078#1072
-  ClientHeight = 278
-  ClientWidth = 364
+  ClientHeight = 328
+  ClientWidth = 400
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,6 +13,7 @@ object PaymentEditFrm: TPaymentEditFrm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
@@ -21,7 +22,7 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlAbonent: TPanel
     Left = 0
     Top = 0
-    Width = 364
+    Width = 400
     Height = 130
     Align = alTop
     BevelOuter = bvNone
@@ -101,7 +102,7 @@ object PaymentEditFrm: TPaymentEditFrm
     object memAbonent: TDBMemoEh
       Left = 172
       Top = 0
-      Width = 192
+      Width = 228
       Height = 130
       TabStop = False
       Align = alClient
@@ -118,19 +119,19 @@ object PaymentEditFrm: TPaymentEditFrm
   end
   object pnlButtons: TPanel
     Left = 0
-    Top = 240
-    Width = 364
+    Top = 290
+    Width = 400
     Height = 38
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
     DesignSize = (
-      364
+      400
       38)
     object bbOk: TBitBtn
       Left = 59
       Top = 6
-      Width = 213
+      Width = 249
       Height = 25
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
@@ -139,9 +140,9 @@ object PaymentEditFrm: TPaymentEditFrm
       OnClick = bbOkClick
     end
     object bbCancel: TBitBtn
-      Left = 278
+      Left = 314
       Top = 6
-      Width = 75
+      Width = 80
       Height = 25
       Anchors = [akRight, akBottom]
       Cancel = True
@@ -152,9 +153,9 @@ object PaymentEditFrm: TPaymentEditFrm
   end
   object mmoNotice: TDBMemoEh
     Left = 0
-    Top = 217
-    Width = 364
-    Height = 23
+    Top = 210
+    Width = 400
+    Height = 80
     Align = alClient
     AutoSize = False
     DynProps = <>
@@ -166,25 +167,25 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlSRV: TPanel
     Left = 0
     Top = 182
-    Width = 364
-    Height = 35
+    Width = 400
+    Height = 28
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      364
-      35)
+      400
+      28)
     object lPaymentSrv: TLabel
       Left = 5
-      Top = 10
+      Top = 5
       Width = 35
       Height = 13
       Caption = #1059#1089#1083#1091#1075#1072
     end
     object luPaymentSrv: TDBLookupComboboxEh
       Left = 89
-      Top = 8
-      Width = 264
+      Top = 2
+      Width = 305
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -202,7 +203,7 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlFine: TPanel
     Left = 0
     Top = 156
-    Width = 364
+    Width = 400
     Height = 26
     Align = alTop
     BevelOuter = bvNone
@@ -234,13 +235,13 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlTYPE: TPanel
     Left = 0
     Top = 130
-    Width = 364
+    Width = 400
     Height = 26
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 5
     DesignSize = (
-      364
+      400
       26)
     object Label3: TLabel
       Left = 5
@@ -249,22 +250,21 @@ object PaymentEditFrm: TPaymentEditFrm
       Height = 13
       Caption = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
     end
-    object cbbPayTypeStr: TDBComboBoxEh
-      Left = 88
-      Top = 3
-      Width = 265
+    object cbbPayTypeStr: TDBLookupComboboxEh
+      Left = 89
+      Top = 2
+      Width = 305
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
+      DataField = ''
+      EmptyDataInfo.Text = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
       EditButtons = <>
-      Items.Strings = (
-        'CASH'
-        'CARD'
-        'WEB')
-      KeyItems.Strings = (
-        'CASH'
-        'CARD'
-        'WEB')
+      KeyField = 'O_NAME'
+      ListField = 'O_NAME'
+      ListSource = srcPT
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -272,8 +272,8 @@ object PaymentEditFrm: TPaymentEditFrm
   object srcPaymentSRV: TDataSource
     AutoEdit = False
     DataSet = dsPaymentSRV
-    Left = 250
-    Top = 88
+    Left = 218
+    Top = 72
   end
   object dsPaymentSRV: TpFIBDataSet
     SelectSQL.Strings = (
@@ -283,8 +283,27 @@ object PaymentEditFrm: TPaymentEditFrm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 250
-    Top = 32
+    Left = 218
+    Top = 24
+    oStartTransaction = False
+    oFetchAll = True
+  end
+  object srcPT: TDataSource
+    AutoEdit = False
+    DataSet = dsPT
+    Left = 290
+    Top = 72
+  end
+  object dsPT: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select o.O_Name'
+      'from objects o'
+      'where o.O_Type = 61'
+      'order by 1')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    Left = 290
+    Top = 24
     oStartTransaction = False
     oFetchAll = True
   end

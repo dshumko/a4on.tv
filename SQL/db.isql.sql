@@ -1548,6 +1548,7 @@ CREATE TABLE PAYSOURCE (PAYSOURCE_ID UID,
         LEAK_PRC D_N15_3 NOT NULL,
         TAX_PRC D_N15_3 NOT NULL,
         CODE D_VARCHAR10,
+        FOR_FORM D_VARCHAR50,
 CONSTRAINT PK_PAYSOURCE PRIMARY KEY (PAYSOURCE_ID));
 
 /* Table: PAY_DOC, Owner: SYSDBA */
@@ -1605,6 +1606,7 @@ CREATE TABLE PORT (EID UID,
         CON_PORT D_PORT_NS,
         SPEED D_INTEGER,
         VLAN_ID D_UID_NULL,
+        WID D_UID_NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -3844,7 +3846,8 @@ DESCRIPTION D_VARCHAR1000,
 SERVICE_TYPE D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE SELECTPAYDOC RETURNS (PAY_DOC_ID D_INTEGER)
+CREATE OR ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null)
+RETURNS (PAY_DOC_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE SELECTSWITCHSERVICE (FROM_SRV TYPE OF UID,
@@ -15867,12 +15870,25 @@ begin
   end
 end ^
 
-ALTER PROCEDURE SELECTPAYDOC RETURNS (PAY_DOC_ID D_INTEGER)
+ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null)
+RETURNS (PAY_DOC_ID D_INTEGER)
 AS 
+declare variable vPSID D_INTEGER;
 begin
+  vPSID = null;
+  ForForm = coalesce(ForForm, '');
+  if (ForForm <> '') then begin
+    select first 1
+        ps.Paysource_Id
+      from paysource ps
+      where position(:ForForm in ps.For_Form) > 0
+      order by 1
+    into :vPSID;
+  end
+
   select
       Pay_Doc_Id
-    from Get_Pay_Doc(null, null, null)
+    from Get_Pay_Doc(:vPSID, null, null)
   into :Pay_Doc_Id;
 
   suspend;
@@ -22834,6 +22850,8 @@ COMMENT ON TABLE        PAYMENT_HOLD IS 'Платежи ожидающие об�
 COMMENT ON TABLE        PAYSOURCE IS 'Источник платежа';
 COMMENT ON    COLUMN    PAYSOURCE.PAYSOURCE_DESCR IS 'Название источника';
 COMMENT ON    COLUMN    PAYSOURCE.CODE IS 'Код в платежны системах';
+COMMENT ON    COLUMN    PAYSOURCE.FOR_FORM IS 'В этом поле будут служебные признаки. разделены ;
+OTP - для сторонних заказов; CL - списко абонентов и т.д.';
 COMMENT ON TABLE        PAY_DOC IS 'Список платежных документов (мемориалный оредер) документ с кодом (-1), реестр обещаных платежей';
 COMMENT ON    COLUMN    PAY_DOC.PAY_DOC_ID IS 'внутренний код документа';
 COMMENT ON    COLUMN    PAY_DOC.PAYSOURCE_ID IS 'код источника платежей (таблица PAYSOURCE)';
@@ -22860,6 +22878,7 @@ COMMENT ON    COLUMN    PORT.CON_ID IS 'ID абонента/оборудован
 COMMENT ON    COLUMN    PORT.CON_PORT IS 'Подключен к порту оборудования (ставить автоматом)';
 COMMENT ON    COLUMN    PORT.SPEED IS 'Скорость порта МБит';
 COMMENT ON    COLUMN    PORT.VLAN_ID IS 'Влан на порту';
+COMMENT ON    COLUMN    PORT.WID IS 'Линия связи/кабель на порту';
 COMMENT ON TABLE        PREPAY_DETAIL IS 'История обещаных платежей';
 COMMENT ON TABLE        PROFILES IS 'Проифили загрузчика платежей и начислений';
 COMMENT ON    COLUMN    PROFILES.PROFILE IS 'Название профиля';

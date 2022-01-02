@@ -1,6 +1,6 @@
 unit apiSMS;
 
-{ DEFINE TEST_SMS}
+{ DEFINE TEST_SMS }
 
 interface
 
@@ -48,11 +48,12 @@ constructor TSMSapi.Create(const user: string; const key: string; const country:
 begin
   fA4ON_USER := user;
   fA4ON_KEY := key;
-  if AnsiUpperCase(country) = 'BY'
-  then fCountry := cBY
-  else if AnsiUpperCase(country) = 'UA'
-  then fCountry := cUA
-  else fCountry := cRU;
+  if AnsiUpperCase(country) = 'BY' then
+    fCountry := cBY
+  else if AnsiUpperCase(country) = 'UA' then
+    fCountry := cUA
+  else
+    fCountry := cRU;
 
   fHTTP := THTTPSend.Create;
   // Получим баланс сразу
@@ -85,25 +86,27 @@ begin
     fHTTP.MimeType := 'application/x-www-form-urlencoded';
     // fHTTP.Headers.Add('Accept-Encoding: gzip,deflate');
     fHTTP.Document.LoadFromStream(strmData);
-    {$IFDEF TEST_SMS}
+{$IFDEF TEST_SMS}
     fHTTP.Document.SaveToFile('b:\' + action + '.request.JDO.js'); // for debug
-    {$ENDIF}
+{$ENDIF}
     fHTTP.HTTPMethod('post', API_URL + action + '/');
     strmData.Clear;
     HeadersToList(fHTTP.Headers);
-    if Trim(fHTTP.Headers.Values['Content-Encoding']) = 'gzip'
-    then begin
+    if Trim(fHTTP.Headers.Values['Content-Encoding']) = 'gzip' then
+    begin
       GZDecompressStream(fHTTP.Document, strmData);
       Result := strmData.DataString;
     end
-    else begin
+    else
+    begin
       strmData.LoadFromStream(fHTTP.Document);
-      {$IFDEF TEST_SMS}
+{$IFDEF TEST_SMS}
       fHTTP.Document.SaveToFile('b:\' + action + '.Answer.js'); // for debug
-      {$ENDIF}
+{$ENDIF}
       Result := strmData.DataString;
     end;
-  finally strmData.Free;
+  finally
+    strmData.Free;
   end
 
 end;
@@ -115,24 +118,28 @@ var
 begin
   Result := 0;
   Obj := JsonDataObjects.TJSONObject.Create;
-  try Str := POST2A4ON('balance', Obj);
-  finally Obj.Free;
+  try
+    Str := POST2A4ON('balance', Obj);
+  finally
+    Obj.Free;
   end;
 
   Obj := TJSONObject.Parse(Str) as TJSONObject;
   try
-    if Obj.IndexOf('sms_count') >= 0
-    then begin
+    if Obj.IndexOf('sms_count') >= 0 then
+    begin
       Result := Obj['sms_count'];
     end
-    else begin
-      if Obj.IndexOf('error') >= 0
-      then fError := Obj['error'];
+    else
+    begin
+      if Obj.IndexOf('error') >= 0 then
+        fError := Obj['error'];
 
-      if Obj.IndexOf('text') >= 0
-      then fError := fError + ':' + Obj['text'];
+      if Obj.IndexOf('text') >= 0 then
+        fError := fError + ':' + Obj['text'];
     end
-  finally Obj.Free;
+  finally
+    Obj.Free;
   end;
 end;
 
@@ -142,62 +149,6 @@ begin
 end;
 
 function TSMSapi.CorrectPhone(const phone: string): string;
-const
-  pfRU: string = '^79[0-9]{9}$';
-  pfBY: string = '^375(24|25|29|33|44)[1-9]{1}[0-9]{6}$';
-  pfUA: string = '^380(50|63|66|67|68|91|92|93|94|95|96|97|98|99)[0-9]{7}$';
-
-  function CorrectBY(const p: string): string;
-  const
-    prefix: string = '375';
-  var
-    l: Integer;
-    s: string;
-  begin
-    Result := '';
-    l := Length(p);
-    case l of
-      12: if Copy(p, 1, 3) = prefix then Result := p;
-      9: Result := prefix + p; // 297346934
-    else begin
-        if l >= 11
-        then begin
-          // 80297349634
-          s := Copy(p, 1, 2);
-          if s = '80'
-          then Result := prefix + Copy(p, 3, 9);
-        end;
-      end;
-    end;
-    if not TRegEx.IsMatch(Result, pfBY)
-    then Result := '';
-  end;
-
-  function CorrectUA(const p: string): string;
-  const
-    prefix: string = '380';
-  begin
-    Result := p;
-    if not TRegEx.IsMatch(Result, pfUA)
-    then Result := '';
-  end;
-
-  function CorrectRU(const p: string): string;
-  const
-    prefix: string = '7';
-  var
-    l: Integer;
-  begin
-    Result := '';
-    l := Length(p);
-    case l of
-      11: if Copy(p, 1, 1) = '8' then Result := prefix + Copy(p, 2, 10);
-      10: Result := prefix + p; // 297346934
-    end;
-    if not TRegEx.IsMatch(Result, pfRU)
-    then Result := '';
-  end;
-
 var
   s: string;
   tp: string;
@@ -205,21 +156,14 @@ begin
   Result := '';
   tp := DigitsOnly(phone);
   case fCountry of
-    cRU: s := pfRU;
-    cBY: s := pfBY;
-    cUA: s := pfUA;
+    cRU:
+      s := 'RU';
+    cUA:
+      s := 'UA';
+    else
+      s := 'BY'
   end;
-
-  if not TRegEx.IsMatch(tp, s)
-  then begin
-    s := tp;
-    case fCountry of
-      cRU: Result := CorrectRU(s);
-      cBY: Result := CorrectBY(s);
-      cUA: Result := CorrectUA(s);
-    end;
-  end
-  else Result := tp;
+  Result := AtrStrUtils.CorrectPhone(phone, s);
 end;
 
 function TSMSapi.SMSCount(const Text: string): Integer;
@@ -265,35 +209,37 @@ var
   Obj, ChildObj: JsonDataObjects.TJSONObject;
 begin
   Result := 0;
-  if not Assigned(list)
-  then Exit;
-  if list.Count = 0
-  then Exit;
+  if not Assigned(list) then
+    Exit;
+  if list.Count = 0 then
+    Exit;
 
   Obj := JsonDataObjects.TJSONObject.Create;
 
-  for i := 0 to list.Count - 1 do begin
+  for i := 0 to list.Count - 1 do
+  begin
     Str := CorrectPhone(list[i].phone);
-    if Str <> ''
-    then begin
+    if Str <> '' then
+    begin
       // если корректный номер - то продолжим
       ChildObj := Obj.A['messages'].AddObject;
       ChildObj['a4id'] := list[i].a4ID;
       ChildObj['phone'] := Str;
       ChildObj['text'] := list[i].Text;
-      if list[i].date <> 0
-      then ChildObj['date'] := FormatDateTime('YYYY-mm-dd', list[i].date) + 'T' + FormatDateTime('hh:nn:00+00:00',
+      if list[i].date <> 0 then
+        ChildObj['date'] := FormatDateTime('YYYY-mm-dd', list[i].date) + 'T' + FormatDateTime('hh:nn:00+00:00',
           list[i].date);
     end
-    else begin
+    else
+    begin
       sms := list[i];
       sms.status := -6; // не верный номер
       list[i] := sms;
     end;
   end;
 
-  if Obj.Count > 0
-  then begin
+  if Obj.Count > 0 then
+  begin
     try
       Str := POST2A4ON('send', Obj);
     finally
@@ -302,24 +248,25 @@ begin
 
     Obj := TJSONObject.Parse(Str) as TJSONObject;
     try
-      if Obj.IndexOf('sms_count') = 0
-      then fBalance := Obj['sms_count'];
+      if Obj.IndexOf('sms_count') = 0 then
+        fBalance := Obj['sms_count'];
 
       // Если массив с заданным именем найден
-      if Obj.IndexOf('messages') >= 0
-      then begin
+      if Obj.IndexOf('messages') >= 0 then
+      begin
         // Получили массив по имени
-        for i := 0 to Obj['messages'].Count - 1 do begin
-        a4ID := Obj['messages'].Items[i]['a4id'];
-        for j := 0 to list.Count - 1 do
-          if a4ID = list[j].a4ID
-          then begin
-            sms := list[j];
-            sms.smsID := Obj['messages'].Items[i]['smsId'];
-            sms.status := Obj['messages'].Items[i]['state'];
-            sms.Text := Obj['messages'].Items[i]['text'];
-            list[j] := sms;
-          end;
+        for i := 0 to Obj['messages'].Count - 1 do
+        begin
+          a4ID := Obj['messages'].Items[i]['a4id'];
+          for j := 0 to list.Count - 1 do
+            if a4ID = list[j].a4ID then
+            begin
+              sms := list[j];
+              sms.smsID := Obj['messages'].Items[i]['smsId'];
+              sms.status := Obj['messages'].Items[i]['state'];
+              sms.Text := Obj['messages'].Items[i]['text'];
+              list[j] := sms;
+            end;
         end;
         Result := Obj['messages'].Count;
       end;
@@ -327,7 +274,8 @@ begin
       Obj.Free;
     end;
   end
-  else Obj.Free;
+  else
+    Obj.Free;
 
 end;
 
@@ -357,7 +305,8 @@ begin
 
     rSMS.Transaction.StartTransaction;
     rSMS.ExecQuery;
-    while not rSMS.EOF do begin
+    while not rSMS.EOF do
+    begin
       sms.a4ID := rSMS.fn('Mes_Id').AsInteger;
       sms.phone := rSMS.fn('PHONE').AsString;
       sms.Text := rSMS.fn('Mes_Text').AsString;
@@ -366,14 +315,15 @@ begin
     end;
     rSMS.Transaction.Commit;
 
-    if SMSList.Count > 0
-    then begin
+    if SMSList.Count > 0 then
+    begin
       // если есть что отправлять
       SendList(SMSList);
       uSMS.DataBase := dmMain.dbTV;
       uSMS.Transaction := dmMain.trWriteQ;
       uSMS.SQL.Text := ' update Messages set Mes_Result = :Mes_Result, ext_id = :ext_id where Mes_Id = :Mes_Id ';
-      for i := 0 to SMSList.Count - 1 do begin
+      for i := 0 to SMSList.Count - 1 do
+      begin
         uSMS.Transaction.StartTransaction;
         uSMS.ParamByName('Mes_Id').AsInteger := SMSList[i].a4ID;
         uSMS.ParamByName('Mes_Result').AsInteger := SMSList[i].status;
@@ -398,22 +348,23 @@ var
   Obj, ChildObj: JsonDataObjects.TJSONObject;
 begin
   Result := 0;
-  if not Assigned(list)
-  then Exit;
-  if list.Count = 0
-  then Exit;
+  if not Assigned(list) then
+    Exit;
+  if list.Count = 0 then
+    Exit;
 
   Obj := JsonDataObjects.TJSONObject.Create;
 
-  for i := 0 to list.Count - 1 do begin
+  for i := 0 to list.Count - 1 do
+  begin
     // если корректный номер - то продолжим
     ChildObj := Obj.A['messages'].AddObject;
     ChildObj['a4id'] := list[i].a4ID;
     ChildObj['smsId'] := list[i].smsID;
   end;
 
-  if Obj.Count > 0
-  then begin
+  if Obj.Count > 0 then
+  begin
     try
       Str := POST2A4ON('status', Obj);
     finally
@@ -422,22 +373,23 @@ begin
 
     Obj := TJSONObject.Parse(Str) as TJSONObject;
     try
-      if Obj.IndexOf('sms_count') = 0
-      then fBalance := Obj['sms_count'];
+      if Obj.IndexOf('sms_count') = 0 then
+        fBalance := Obj['sms_count'];
 
       // Если массив с заданным именем найден
-      if Obj.IndexOf('messages') >= 0
-      then begin
+      if Obj.IndexOf('messages') >= 0 then
+      begin
         // Получили массив по имени
-        for i := 0 to Obj['messages'].Count - 1 do begin
-        a4ID := Obj['messages'].Items[i]['a4id'];
-        for j := 0 to list.Count - 1 do
-          if a4ID = list[j].a4ID
-          then begin
-            sms := list[j];
-            sms.status := Obj['messages'].Items[i]['state'];
-            list[j] := sms;
-          end;
+        for i := 0 to Obj['messages'].Count - 1 do
+        begin
+          a4ID := Obj['messages'].Items[i]['a4id'];
+          for j := 0 to list.Count - 1 do
+            if a4ID = list[j].a4ID then
+            begin
+              sms := list[j];
+              sms.status := Obj['messages'].Items[i]['state'];
+              list[j] := sms;
+            end;
         end;
         Result := Obj['messages'].Count;
       end;
@@ -445,7 +397,8 @@ begin
       Obj.Free;
     end;
   end
-  else Obj.Free;
+  else
+    Obj.Free;
 
 end;
 
@@ -465,11 +418,13 @@ begin
   try
     rSMS.DataBase := dmMain.dbTV;
     rSMS.Transaction := dmMain.trReadQ;
-    rSMS.SQL.Add('select Mes_Id, ext_id from messages m where m.mes_result = 1 and (not ext_id is NULL) and m.Mes_Type = ''SMS'' ');
+    rSMS.SQL.Add
+      ('select Mes_Id, ext_id from messages m where m.mes_result = 1 and (not ext_id is NULL) and m.Mes_Type = ''SMS'' ');
 
     rSMS.Transaction.StartTransaction;
     rSMS.ExecQuery;
-    while not rSMS.EOF do begin
+    while not rSMS.EOF do
+    begin
       sms.a4ID := rSMS.fn('Mes_Id').AsInteger;
       sms.smsID := rSMS.fn('ext_id').AsInteger;
       SMSList.Add(sms);
@@ -477,16 +432,18 @@ begin
     end;
     rSMS.Transaction.Commit;
 
-    if SMSList.Count > 0
-    then begin
+    if SMSList.Count > 0 then
+    begin
       // если есть что отправлять
       StatusList(SMSList);
       uSMS.DataBase := dmMain.dbTV;
       uSMS.Transaction := dmMain.trWriteQ;
       uSMS.SQL.Text := ' update Messages set Mes_Result = :Mes_Result where Mes_Id = :Mes_Id ';
-      for i := 0 to SMSList.Count - 1 do begin
+      for i := 0 to SMSList.Count - 1 do
+      begin
         // 18, 19 - в очереди на сервере отправки смс
-        if not (SMSList[i].status in [0,1,18,19])  then begin
+        if not(SMSList[i].status in [0, 1, 18, 19]) then
+        begin
           uSMS.Transaction.StartTransaction;
           uSMS.ParamByName('Mes_Id').AsInteger := SMSList[i].a4ID;
           uSMS.ParamByName('Mes_Result').AsInteger := SMSList[i].status;

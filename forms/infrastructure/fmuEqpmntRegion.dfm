@@ -11,6 +11,8 @@ object apgEqpmntRegion: TapgEqpmntRegion
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object pnlButtons: TPanel
@@ -24,7 +26,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
     DesignSize = (
       26
       208)
-    object btnDel1: TSpeedButton
+    object btnDel: TSpeedButton
       Left = 2
       Top = 185
       Width = 22
@@ -34,7 +36,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
       Flat = True
       Layout = blGlyphTop
     end
-    object btnAdd1: TSpeedButton
+    object btnAdd: TSpeedButton
       Left = 2
       Top = 3
       Width = 22
@@ -42,7 +44,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
       Action = actAdd
       Flat = True
     end
-    object btnEdit1: TSpeedButton
+    object btnEdit: TSpeedButton
       Left = 2
       Top = 31
       Width = 22

@@ -56,8 +56,8 @@ var
       Result.IP := srcDataSource.DataSet.FieldByName('Ip').asString;
     if not srcDataSource.DataSet.FieldByName('Mac').IsNull then
       Result.MAC := srcDataSource.DataSet.FieldByName('Mac').asString;
-    //if not srcDataSource.DataSet.FieldByName('Notice').IsNull then
-    //  Result.notice := srcDataSource.DataSet.FieldByName('Notice').asString;
+    // if not srcDataSource.DataSet.FieldByName('Notice').IsNull then
+    // Result.notice := srcDataSource.DataSet.FieldByName('Notice').asString;
   end;
 
 begin
@@ -137,25 +137,25 @@ begin
   for i := 0 to pred(J) do
   begin
     {
-    if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'ACCOUNT_NO') then
+      if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'ACCOUNT_NO') then
       s := s + 'C.account_no'
-    else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'STREET_NAME') then
+      else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'STREET_NAME') then
       s := s + 'S.Street_Name||s.street_short'
-    else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'FLAT_NO') then
+      else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'FLAT_NO') then
       s := s + 'C.Flat_No'
-    else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'HOUSE_NO') then
+      else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'HOUSE_NO') then
       s := s + 'H.HOUSE_NO '
-    else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'ATR_LINE') then
+      else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'ATR_LINE') then
       s := s + 'cast(cal.ATR_LINE as varchar(50))'
-    else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'NOTICE') then
+      else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'NOTICE') then
       s := s + 'C.NOTICE'
-    else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'CUST_CODE')
-    // then s := s + 'FOR_ADRES_SORT'
-    then
+      else if (AnsiUpperCase(grid.SortMarkedColumns[i].FieldName) = 'CUST_CODE')
+      // then s := s + 'FOR_ADRES_SORT'
+      then
       s := s + 'C.CUST_CODE'
-    else
+      else
     }
-      s := s + grid.SortMarkedColumns[i].FieldName;
+    s := s + grid.SortMarkedColumns[i].FieldName;
     // s := s + ' COLLATE UNICODE_CI_AI ';
     if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
       s := s + ' desc';

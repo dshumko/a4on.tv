@@ -864,6 +864,13 @@ resourcestring
   rsOn = 'Включить';
   rsOff = 'Отключить';
   rsFree = 'БЕСПЛАТНО';
+
+  rsSetPayDate = 'После внесения оплаты';
+
+  rsVlanHouse = 'VLAN не в зоне обслуживания дома';
+  rsIpVlan = 'IP не входит в диапазон адресов VLAN';
+  rsWarningQuestStop  = 'Исправить ошибки?';
+
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';
   ms_DELETE_ACT = 'Удалить отметку выполнения № %s от %s';

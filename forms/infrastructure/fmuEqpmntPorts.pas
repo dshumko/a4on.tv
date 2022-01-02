@@ -20,9 +20,9 @@ type
     actEdit: TAction;
     actDel: TAction;
     pnlButtons: TPanel;
-    btnDel1: TSpeedButton;
+    btnDel: TSpeedButton;
     btnAdd1: TSpeedButton;
-    btnEdit1: TSpeedButton;
+    btnEdit: TSpeedButton;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
     srcData: TDataSource;
@@ -31,7 +31,7 @@ type
     actFindCustomer: TAction;
     actCmd: TAction;
     actEditCustLan: TAction;
-    btnEdit: TSpeedButton;
+    btnFind: TSpeedButton;
     actPEdit: TAction;
     pmCustomerLanPopUp: TPopupMenu;
     actCustPing: TAction;
@@ -55,14 +55,20 @@ type
     procedure actCustHttpExecute(Sender: TObject);
     procedure dbgCustomerMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure dbgCustomerSortMarkingChanged(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure dbgCustomerGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
+    FIsVertical: Boolean;
     procedure EnableControls;
     function GetCustomerInfo: TCustomerInfo;
     procedure GenerateCustomerLANPopUp;
     function GetEquipmentRecord: TEquipmentRecord;
     procedure miCustomerLanClick(Sender: TObject);
+    procedure SwitchLayout(const InVertical: Boolean);
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -109,6 +115,20 @@ procedure TapgEqpmntPort.EnableControls;
 begin
   actEdit.Enabled := dsData.RecordCount > 0;
   actDel.Enabled := dsData.RecordCount > 0;
+end;
+
+procedure TapgEqpmntPort.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FIsVertical := False;
+end;
+
+procedure TapgEqpmntPort.FormResize(Sender: TObject);
+var
+  b: Boolean;
+begin
+  b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
+  SwitchLayout(b);
 end;
 
 procedure TapgEqpmntPort.OpenData;
@@ -190,11 +210,17 @@ begin
 end;
 
 procedure TapgEqpmntPort.actDelExecute(Sender: TObject);
+var
+  s: string;
 begin
   if dsData.RecordCount = 0 then
     exit;
 
-  if (MessageDlg(Format(rsDeleteWithName, [dsData['Name']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if not dsData.FieldByName('Port').IsNull then
+    s := dsData['Port']
+  else
+    s := '';
+  if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     dsData.Delete;
   end;
@@ -336,6 +362,24 @@ begin
     actPEdit.Execute
   else
     actEditCustLan.Execute;
+end;
+
+procedure TapgEqpmntPort.dbgCustomerGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+var
+  s: string;
+begin
+  if not(dsData.FieldByName('COLOR').IsNull) then
+  begin
+    s := dsData['COLOR'];
+    if not s.IsEmpty then
+      Background := StringToColor(s);
+  end;
+  if not(dsData.FieldByName('P_State').IsNull) then
+  begin
+    if dsData['P_State'] = 0 then
+      AFont.Style := [fsStrikeOut];
+  end;
 end;
 
 procedure TapgEqpmntPort.dbgCustomerMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -674,6 +718,39 @@ begin
     Result.MAC := dsData.DataSource.DataSet.FieldByName('Mac').asString;
   if not dsData.DataSource.DataSet.FieldByName('Notice').IsNull then
     Result.notice := dsData.DataSource.DataSet.FieldByName('Notice').asString;
+end;
+
+procedure TapgEqpmntPort.SwitchLayout(const InVertical: Boolean);
+begin
+  FIsVertical := InVertical;
+  if not FIsVertical then
+  begin
+    pnlButtons.Align := alLeft;
+    pnlButtons.Width := 26;
+    btnEdit.Left := 2;
+    btnEdit.Top := 30;
+    btnFind.Left := 2;
+    btnFind.Top := 71;
+    btnCmd.Left := 2;
+    btnCmd.Top := 109;
+    btnDel.Left := 2;
+    btnDel.Top := pnlButtons.Height - btnDel.Height - 4;
+    btnDel.Anchors := [akLeft, akBottom];
+  end
+  else
+  begin
+    pnlButtons.Align := alTop;
+    pnlButtons.Height := 26;
+    btnEdit.Top := 2;
+    btnEdit.Left := 30;
+    btnFind.Top := 2;
+    btnFind.Left := 71;
+    btnCmd.Top := 2;
+    btnCmd.Left := 109;
+    btnDel.Top := 2;
+    btnDel.Left := pnlButtons.Width - btnDel.Width - 4;
+    btnDel.Anchors := [akTop, akRight];
+  end;
 end;
 
 end.

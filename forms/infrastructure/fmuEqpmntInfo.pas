@@ -15,10 +15,8 @@ uses
 
 type
 
-  THask = class(TPageControl);
-
   TapgEqpmntInfo = class(TA4onPage)
-    Panel1: TPanel;
+    pnlInfo: TPanel;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -36,29 +34,6 @@ type
     pnlMemo: TPanel;
     lbl2: TLabel;
     mmoNotice: TDBMemoEh;
-    pgcTypeInfo: TPageControl;
-    tsLan: TTabSheet;
-    Label6: TLabel;
-    Label7: TLabel;
-    Label8: TLabel;
-    lbl3: TLabel;
-    Label9: TLabel;
-    Label10: TLabel;
-    eMAC: TDBEditEh;
-    eIP: TDBEditEh;
-    DBEditEh1: TDBEditEh;
-    edtGroup: TDBEditEh;
-    edtIP: TDBEditEh;
-    btnCMD: TButton;
-    tsTV: TTabSheet;
-    lbl7: TLabel;
-    lbl9: TLabel;
-    lbl8: TLabel;
-    dbckActive: TDBCheckBoxEh;
-    cbbLine: TDBComboBoxEh;
-    edSIN: TDBNumberEditEh;
-    edSOUT: TDBNumberEditEh;
-    tsOther: TTabSheet;
     pmLanPopUp: TPopupMenu;
     actlstLAN: TActionList;
     ActLanPing: TAction;
@@ -73,10 +48,34 @@ type
     trWrite: TpFIBTransaction;
     lbl5: TLabel;
     dbtxtSTREET1: TDBText;
-    edtIPV6: TDBEditEh;
     dbtxtparent_name: TDBText;
-    spl2: TSplitter;
-    spl1: TSplitter;
+    splMemo: TSplitter;
+    splR: TSplitter;
+    pnlPages: TPanel;
+    pgcTypeInfo: TPageControl;
+    tsLan: TTabSheet;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    lbl3: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    eMAC: TDBEditEh;
+    eIP: TDBEditEh;
+    DBEditEh1: TDBEditEh;
+    edtGroup: TDBEditEh;
+    edtIP: TDBEditEh;
+    btnCMD: TButton;
+    edtIPV6: TDBEditEh;
+    tsTV: TTabSheet;
+    lbl7: TLabel;
+    lbl9: TLabel;
+    lbl8: TLabel;
+    dbckActive: TDBCheckBoxEh;
+    cbbLine: TDBComboBoxEh;
+    edSIN: TDBNumberEditEh;
+    edSOUT: TDBNumberEditEh;
+    tsOther: TTabSheet;
     procedure btnCMDClick(Sender: TObject);
     procedure ActLanPingExecute(Sender: TObject);
     procedure actLanTelnetExecute(Sender: TObject);
@@ -87,10 +86,14 @@ type
     procedure mmoNoticeChange(Sender: TObject);
     procedure mmoNoticeExit(Sender: TObject);
     procedure FDataSourceDataChange(Sender: TObject; Field: TField);
+    procedure FormResize(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FUpdatetNotice: Boolean;
+    FIsVertical: Boolean;
     procedure GenerateLANPopUp;
     procedure miLanGroupCMDClick(Sender: TObject);
+    procedure SwitchLayout(const InVertical: Boolean);
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -117,35 +120,17 @@ var
   i: Integer;
 begin
   Caption := GetPageName;
-  THask(pgcTypeInfo).Color := clBtnFace;
 
   for i := 0 to pgcTypeInfo.PageCount - 1 do
     pgcTypeInfo.Pages[i].TabVisible := False;
 
-  dsData.DataSource  := FDataSource;
-  {
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if (Components[i] is TDBText) then
-      (Components[i] as TDBText).DataSource := FDataSource
-      // else if (Components[i] is TDBMemoEh) then
-      // (Components[i] as TDBMemoEh).DataSource := FDataSource
-    else if (Components[i] is TDBLookupComboboxEh) then
-      (Components[i] as TDBLookupComboboxEh).DataSource := FDataSource
-    else if (Components[i] is TDBComboBoxEh) then
-      (Components[i] as TDBComboBoxEh).DataSource := FDataSource
-
-  end;
-  FDataSource.OnDataChange := FDataSourceDataChange;
-  }
+  dsData.DataSource := FDataSource;
   mmoNotice.ReadOnly := not(dmMain.AllowedAction(rght_Dictionary_full) or
     dmMain.AllowedAction(rght_Dictionary_Equipment));
 end;
 
 procedure TapgEqpmntInfo.OpenData;
 begin
-  // srcData.DataSet  := FDataSource.DataSet;
-
   dsData.Open;
 end;
 
@@ -153,11 +138,6 @@ procedure TapgEqpmntInfo.CloseData;
 begin
   if dsData.Active then
     dsData.Close;
-end;
-
-procedure TapgEqpmntInfo.SaveState;
-begin
-//
 end;
 
 procedure TapgEqpmntInfo.GenerateLANPopUp;
@@ -409,6 +389,20 @@ begin
   FUpdatetNotice := False;
 end;
 
+procedure TapgEqpmntInfo.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FIsVertical := False;
+end;
+
+procedure TapgEqpmntInfo.FormResize(Sender: TObject);
+var
+  b : Boolean;
+begin
+  b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
+  SwitchLayout(b);
+end;
+
 procedure TapgEqpmntInfo.actLanHttpExecute(Sender: TObject);
 var
   s: string;
@@ -478,6 +472,66 @@ end;
 procedure TapgEqpmntInfo.btnCMDClick(Sender: TObject);
 begin
   GenerateLANPopUp;
+end;
+
+procedure TapgEqpmntInfo.SaveState;
+begin
+  if FIsVertical then
+  begin
+    dmMain.SetIniValue('EQUIPMENT_ISIZE', pnlInfo.Height.ToString);
+    dmMain.SetIniValue('EQUIPMENT_PSIZE', pnlPages.Height.ToString);
+  end
+  else
+  begin
+    dmMain.SetIniValue('EQUIPMENT_ISIZE', pnlInfo.Width.ToString);
+    dmMain.SetIniValue('EQUIPMENT_PSIZE', pnlPages.Width.ToString);
+  end;
+end;
+
+procedure TapgEqpmntInfo.SwitchLayout(const InVertical: Boolean);
+var
+  i, m: Integer;
+begin
+  if (FIsVertical = InVertical) then
+    exit;
+
+  FIsVertical := InVertical;
+
+  if (Self.Width > Self.Height) then
+    m := Trunc(Self.Width / 3)
+  else
+    m := Trunc(Self.Height / 3);
+
+  if FIsVertical then
+  begin
+    pnlInfo.Align := alTop;
+    splR.Align := alTop;
+    pnlPages.Align := alTop;
+    splMemo.Align := alTop;
+
+    if (not TryStrToInt(dmMain.GetIniValue('EQUIPMENT_ISIZE'), i)) or (i > m) then
+      i := m;
+    pnlInfo.Height := i;
+
+    if (not TryStrToInt(dmMain.GetIniValue('EQUIPMENT_PSIZE'), i)) or (i > m) then
+      i := m;
+    pnlPages.Height := i
+  end
+  else
+  begin
+    splMemo.Align := alLeft;
+    pnlPages.Align := alLeft;
+    splR.Align := alLeft;
+    pnlInfo.Align := alLeft;
+
+    if (not TryStrToInt(dmMain.GetIniValue('EQUIPMENT_ISIZE'), i)) or (i > m) then
+      i := m;
+    pnlInfo.Width := i;
+
+    if (not TryStrToInt(dmMain.GetIniValue('EQUIPMENT_PSIZE'), i)) or (i > m) then
+      i := m;
+    pnlPages.Width := i;
+  end;
 end;
 
 end.

@@ -599,8 +599,16 @@ begin
   end
   else
   begin
-    edPAY_DATE.Enabled := True;
-    edPAY_DATE.EmptyDataInfo.Text := '';
+    if FCustomerInfo.CUSTOMER_ID > 0 then
+    begin
+      edPAY_DATE.Enabled := (dmMain.User = 'SYSDBA');
+      edPAY_DATE.EmptyDataInfo.Text := rsSetPayDate;
+    end
+    else
+    begin
+      edPAY_DATE.Enabled := True;
+      edPAY_DATE.EmptyDataInfo.Text := '';
+    end;
   end;
 
   pnlPeriod.Visible := False;

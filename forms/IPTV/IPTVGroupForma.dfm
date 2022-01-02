@@ -29,6 +29,12 @@ object IPTVGroupForm: TIPTVGroupForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 100
       Top = 5
@@ -68,7 +74,7 @@ object IPTVGroupForm: TIPTVGroupForm
       object lbl1: TLabel
         Left = 0
         Top = 0
-        Width = 497
+        Width = 116
         Height = 13
         Align = alTop
         Caption = '.:: '#1050#1072#1085#1072#1083#1099' '#1074' '#1075#1088#1091#1087#1087#1077' ::.'
@@ -254,7 +260,7 @@ object IPTVGroupForm: TIPTVGroupForm
       object lbl2: TLabel
         Left = 0
         Top = 0
-        Width = 311
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '.:: '#1055#1077#1088#1077#1095#1077#1085#1100' '#1074#1089#1077#1093' '#1082#1072#1085#1072#1083#1086#1074' ::.'

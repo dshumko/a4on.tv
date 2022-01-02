@@ -26,7 +26,7 @@ inherited EquipmentForm: TEquipmentForm
     FooterRowCount = 1
     IndicatorTitle.ShowDropDownSign = True
     IndicatorTitle.TitleButton = True
-    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     SumList.Active = True
     OnGetCellParams = dbGridGetCellParams
     OnSortMarkingChanged = dbGridSortMarkingChanged
@@ -293,14 +293,14 @@ inherited EquipmentForm: TEquipmentForm
     object btn1: TToolButton
       Left = 209
       Top = 0
-      Width = 16
+      Width = 24
       Caption = 'btn1'
       ImageIndex = 41
       Style = tbsSeparator
       Visible = False
     end
     object pnlChkTree: TPanel
-      Left = 225
+      Left = 233
       Top = 0
       Width = 166
       Height = 22
@@ -318,7 +318,7 @@ inherited EquipmentForm: TEquipmentForm
       end
     end
     object chkGroup: TCheckBox
-      Left = 391
+      Left = 399
       Top = 0
       Width = 224
       Height = 22
@@ -328,6 +328,19 @@ inherited EquipmentForm: TEquipmentForm
       TabOrder = 1
       Visible = False
       OnClick = chkGroupClick
+    end
+    object btn3: TToolButton
+      Left = 623
+      Top = 0
+      Width = 18
+      Caption = 'btn3'
+      ImageIndex = 42
+      Style = tbsSeparator
+    end
+    object btnLayout: TToolButton
+      Left = 641
+      Top = 0
+      Action = actLayout
     end
   end
   inherited pnlEdit: TPanel
@@ -353,7 +366,7 @@ inherited EquipmentForm: TEquipmentForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 3
-    object spl1: TSplitter
+    object splLst: TSplitter
       Left = 118
       Top = 0
       Height = 207
@@ -472,6 +485,11 @@ inherited EquipmentForm: TEquipmentForm
       Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1088#1090
       ImageIndex = 4
     end
+    object actLayout: TAction
+      Hint = #1055#1077#1088#1077#1082#1083#1102#1095#1080#1090#1100' '#1088#1077#1078#1080#1084' '#1092#1086#1088#1084#1099'. '#1043#1086#1088#1080#1079#1086#1085#1090#1072#1083#1100#1085#1086'/'#1042#1077#1088#1090#1080#1082#1072#1083#1100#1085#1086
+      ImageIndex = 93
+      OnExecute = actLayoutExecute
+    end
   end
   inherited pmPopUp: TPopupMenu
     Top = 140
@@ -509,6 +527,11 @@ inherited EquipmentForm: TEquipmentForm
       Caption = #1056#1072#1079#1074#1077#1088#1085#1091#1090#1100' '#1074#1089#1077
       Visible = False
       OnClick = miTreeExpandClick
+    end
+    object miTreeExpandCurrent: TMenuItem
+      Caption = #1056#1072#1079#1074#1077#1088#1085#1091#1090#1100' '#1074#1077#1090#1082#1091
+      Visible = False
+      OnClick = miTreeExpandCurrentClick
     end
   end
   object dsEquipments: TpFIBDataSet
@@ -628,34 +651,36 @@ inherited EquipmentForm: TEquipmentForm
     GetrecCommand.Params = <
       item
         DataType = ftInteger
-        Name = 'OLD_EID'
+        Name = 'EID'
         ParamType = ptInput
       end>
     GetrecCommand.CommandText.Strings = (
+      'select'
+      '    E.*'
+      '  , h.house_no'
+      '  , s.street_name || '#39' '#39' || s.street_short as street'
+      '  , o.o_name as eqgroup'
+      '  , p.name as parent_name'
+      '  , o.O_DIMENSION as COLOR'
+      '  , n.NAME NODE_NAME'
+      '  , nt.o_name as node_type '
+      '  from EQUIPMENT E'
+      '       left outer join house h on (e.house_id = h.house_id)'
+      '       left outer join street s on (s.street_id = h.street_id)'
       
-        'SELECT E.*, h.house_no, s.street_name || '#39' '#39'|| s.street_short as' +
-        ' street, o.o_name as eqgroup'
-      ', p.name as parent_name, o.O_DIMENSION as COLOR'
-      'FROM EQUIPMENT E'
-      '  left outer join house h on (e.house_id = h.house_id)'
-      '  left outer join street s on (s.street_id = h.street_id)'
-      '  left outer join objects o on (e.eq_group = o.o_id)'
-      '  left outer join equipment p on (e.parent_id = p.eid)'
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      '       left outer join equipment p on (e.parent_id = p.eid)'
+      '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
+      
+        '       left join objects nt on (nt.O_Id = n.Type_Id and o.O_Type' +
+        ' = 38) '
       ''
       ' WHERE '
-      '        E.EID = :OLD_EID'
-      '    ')
+      '        E.EID = :EID')
     ProviderDataSet = dsEquipments
+    KeyFields = 'EID'
     Left = 258
     Top = 258
-  end
-  object PropStorage: TPropStorageEh
-    Section = 'EQPMNT'
-    StorageManager = dmMain.iniPropStorage
-    StoredProps.Strings = (
-      'pnlForms.<P>.Height'
-      'pnlForms.lstForms.<P>.Width')
-    Left = 185
-    Top = 265
   end
 end

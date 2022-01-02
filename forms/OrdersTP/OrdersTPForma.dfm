@@ -295,7 +295,7 @@ object OrdersTPForm: TOrdersTPForm
         Left = 111
         Top = 0
         Action = actSetFilter
-        PopupMenu = pmFilter
+        DropdownMenu = pmFilter
         Style = tbsDropDown
       end
       object ToolButton27: TToolButton
@@ -750,19 +750,22 @@ object OrdersTPForm: TOrdersTPForm
     Left = 52
     Top = 202
     object N1: TMenuItem
-      Caption = #1047#1072' '#1089#1077#1075#1086#1076#1085#1103
+      Caption = #1055#1088#1080#1085#1103#1090#1099' '#1089#1077#1075#1086#1076#1085#1103
       OnClick = N1Click
     end
     object N4: TMenuItem
-      Caption = #1047#1072' '#1087#1088#1086#1096#1083#1099#1081' '#1076#1077#1085#1100
+      Caption = #1055#1088#1080#1085#1103#1090#1099' '#1074#1095#1077#1088#1072
       OnClick = N4Click
     end
+    object miN18: TMenuItem
+      Caption = '-'
+    end
     object N2: TMenuItem
-      Caption = #1047#1072' '#1085#1077#1076#1077#1083#1102
+      Caption = #1053#1072' '#1089#1077#1075#1086#1076#1085#1103
       OnClick = N2Click
     end
     object N3: TMenuItem
-      Caption = #1047#1072' '#1084#1077#1089#1103#1094
+      Caption = #1053#1072' '#1074#1095#1077#1088#1072
       OnClick = N3Click
     end
     object miN17: TMenuItem

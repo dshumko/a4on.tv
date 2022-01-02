@@ -39,7 +39,7 @@ object EPGViewForm: TEPGViewForm
     object Label2: TLabel
       Left = 0
       Top = 0
-      Width = 84
+      Width = 185
       Height = 13
       Align = alTop
       Caption = ' '#1057#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074
@@ -55,6 +55,7 @@ object EPGViewForm: TEPGViewForm
       DynProps = <>
       Flat = True
       FooterRowCount = 1
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
       SearchPanel.FilterOnTyping = True
@@ -101,7 +102,7 @@ object EPGViewForm: TEPGViewForm
     object Label1: TLabel
       Left = 0
       Top = 0
-      Width = 108
+      Width = 713
       Height = 13
       Align = alTop
       Caption = #1056#1072#1089#1087#1080#1089#1072#1085#1080#1077' '#1087#1088#1086#1075#1088#1072#1084#1084

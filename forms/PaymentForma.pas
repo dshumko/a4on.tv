@@ -121,12 +121,14 @@ type
     FPixelsPerInch: Integer;
     FProcessPay: Boolean;
     FCurrentDate: TDate;
+    FForForm: string;
     procedure FindCustomer(const lic: string; const code: string; id: Integer);
     function InsertPayment(const NeedPrintCheck: Boolean): Boolean;
     function SelectPayDoc: int64;
     procedure CalculateFine;
     procedure AddMorePayment; // проверка на ввод нескольких платеже
     procedure SetPayDoc_Id(Value: int64);
+    procedure SetForForm(Value: String);
     procedure RefreshPayDoc;
     function ParseBarCode: Boolean;
     function PrintCheck: TPrintCheckResult;
@@ -141,6 +143,7 @@ type
   public
     { Public declarations }
     property CurrentDate: TDate read FCurrentDate write FCurrentDate;
+    property ForForm: String write SetForForm;
     property PayDoc_id: int64 write SetPayDoc_Id;
   end;
 
@@ -148,7 +151,8 @@ var
   PaymentForm: TPaymentForm;
 
 function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; const aPayment_id: int64;
-  var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1): int64;
+  var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1;
+  const aFromForm: string = ''): int64;
 
 implementation
 
@@ -195,11 +199,13 @@ begin
 end;
 
 function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; const aPayment_id: int64;
-  var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1): int64;
+  var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1;
+  const aFromForm: string = ''): int64;
 var
   pf: TPaymentForm;
   OpenedPayDocs: string;
   UserFilter: String;
+  s: string;
 begin
   Result := -1;
   pf := TPaymentForm.Create(application);
@@ -230,24 +236,34 @@ begin
       pf.dsPaymentDocs.ParamByName('filter').Value := UserFilter;
 
       if dmMain.AllowedAction(rght_Pays_TheirAdd) then
-        pf.dsPaymentDocs.ParamByName('OWN_PD').Value := ' (exists(select ps.paysource_id from paysource ps ' +
+      begin
+        UserFilter := ' (exists(select ps.paysource_id from paysource ps ' +
           ' inner join worker w on (upper(w.surname) = upper(ps.paysource_descr)) ' +
           ' where ps.paysource_id = d.Paysource_Id and upper(w.ibname) = upper(current_user)) ' +
           ' or ( d.Added_By = current_user )) ';
 
-      pf.dsPaymentDocs.Active := true;
-      if pf.dsPaymentDocs.RecordCount > 0 then
-      begin
-        pf.CurrentDate := pf.dsPaymentDocs['CD'];
-        pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
-      end;
+        if (aFromForm.IsEmpty) then
+          UserFilter := UserFilter + ' and ( coalesce(ps.For_FORM, '''') = '''' )'
+        else
+          UserFilter := UserFilter + ' and (( ps.For_FORM is null ) or '+
+            ' (POSITION(''' + aFromForm + ''' in ps.For_FORM) > 0))';
 
-      if (OpenedPayDocs <> '') and (OpenedPayDocs <> '-1') and (Pos(',', OpenedPayDocs) = 0) then
-      begin
-        if (not dmMain.AllowedAction(rght_Pays_TheirAdd)) then
-          pf.dbluPayDoc.KeyValue := OpenedPayDocs;
+        pf.dsPaymentDocs.ParamByName('OWN_PD').Value := UserFilter;
       end;
+    end;
 
+    pf.ForForm := aFromForm;
+    pf.dsPaymentDocs.Active := true;
+    if pf.dsPaymentDocs.RecordCount > 0 then
+    begin
+      pf.CurrentDate := pf.dsPaymentDocs['CD'];
+      pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
+    end;
+
+    if (OpenedPayDocs <> '') and (OpenedPayDocs <> '-1') and (Pos(',', OpenedPayDocs) = 0) then
+    begin
+      if (not dmMain.AllowedAction(rght_Pays_TheirAdd)) then
+        pf.dbluPayDoc.KeyValue := OpenedPayDocs;
     end;
 
     if aCustomer_id > -1 then
@@ -271,97 +287,6 @@ begin
   finally
     pf.Free;
   end;
-end;
-
-function CorrectPhone(const phone: string; const fCountry: String): string;
-const
-  pfRU: string = '^79[0-9]{9}$';
-  pfBY: string = '^375(24|25|29|33|44)[1-9]{1}[0-9]{6}$';
-  pfUA: string = '^380(50|63|66|67|68|91|92|93|94|95|96|97|98|99)[0-9]{7}$';
-
-  function CorrectBY(const p: string): string;
-  const
-    prefix: string = '375';
-  var
-    l: Integer;
-    s: string;
-  begin
-    Result := '';
-    l := Length(p);
-    case l of
-      12:
-        if Copy(p, 1, 3) = prefix then
-          Result := p;
-      9:
-        Result := prefix + p; // 297346934
-    else
-      begin
-        if l >= 11 then
-        begin
-          // 80297349634
-          s := Copy(p, 1, 2);
-          if s = '80' then
-            Result := prefix + Copy(p, 3, 9);
-        end;
-      end;
-    end;
-    if not TRegEx.IsMatch(Result, pfBY) then
-      Result := '';
-  end;
-
-  function CorrectUA(const p: string): string;
-  const
-    prefix: string = '380';
-  begin
-    Result := p;
-    if not TRegEx.IsMatch(Result, pfUA) then
-      Result := '';
-  end;
-
-  function CorrectRU(const p: string): string;
-  const
-    prefix: string = '7';
-  var
-    l: Integer;
-  begin
-    Result := '';
-    l := Length(p);
-    case l of
-      11:
-        if Copy(p, 1, 1) = '8' then
-          Result := prefix + Copy(p, 2, 10);
-      10:
-        Result := prefix + p; // 297346934
-    end;
-    if not TRegEx.IsMatch(Result, pfRU) then
-      Result := '';
-  end;
-
-var
-  s: string;
-  tp: string;
-begin
-  Result := '';
-  tp := DigitsOnly(phone);
-  if fCountry = 'BY' then
-    s := pfBY
-  else if fCountry = 'UA' then
-    s := pfUA
-  else
-    s := pfRU;
-
-  if not TRegEx.IsMatch(tp, s) then
-  begin
-    s := tp;
-    if fCountry = 'BY' then
-      Result := CorrectBY(s)
-    else if fCountry = 'UA' then
-      Result := CorrectUA(s)
-    else
-      Result := CorrectRU(s);
-  end
-  else
-    Result := tp;
 end;
 
 procedure TPaymentForm.RefreshPayDoc;
@@ -397,7 +322,7 @@ begin
   FPayDoc_id := -1;
   FDatePay := Now;
   FSumPay := 0;
-
+  FForForm := '';
   if dmMain.AllowedAction(rght_Pays_AddToday) then
     FCurrentDate := dmMain.GetServerDateTime
   else
@@ -800,7 +725,7 @@ begin
         else
           ChequeInfo.ADRES := PWCHAR(Format(rsPrintCheckAdrWOF, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO]));
 
-        ChequeInfo.Notify := PWCHAR(CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry));
+        ChequeInfo.Notify := PWCHAR(AtrStrUtils.CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry));
         ChequeInfo.Summa := Summa;
         if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
           ChequeInfo.Balance := -1 * FCustomerRecord.Debt_sum
@@ -860,7 +785,8 @@ begin
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
-      SQL.Text := 'select pay_doc_id from selectpaydoc';
+      SQL.Text := 'select pay_doc_id from SelectPayDoc(:FF)';
+      ParamByName('FF').AsString := FForForm;
       Transaction.StartTransaction;
       ExecQuery;
       if not eof then
@@ -992,7 +918,7 @@ begin
   with qInsertPayment do
   begin
     if not dsMemPayment.FieldByName('notice').IsNull then
-      ParamByName('notice').asString := dsMemPayment['notice']
+      ParamByName('notice').AsString := dsMemPayment['notice']
     else
       ParamByName('notice').Clear;
 
@@ -1048,11 +974,11 @@ begin
       ParamByName('PAYMENT_SRV').Clear;
 
     if not dsMemPayment.FieldByName('EXT_PAY_ID').IsNull then
-      ParamByName('EXT_PAY_ID').asString := dsMemPayment['EXT_PAY_ID']
+      ParamByName('EXT_PAY_ID').AsString := dsMemPayment['EXT_PAY_ID']
     else
       ParamByName('EXT_PAY_ID').Clear;
 
-    ParamByName('PAY_TYPE_STR').asString := 'CASH';
+    ParamByName('PAY_TYPE_STR').AsString := 'CASH';
     ParamByName('FISCAL').AsInteger := 0;
     // Признак без пробития чека
 
@@ -1063,7 +989,7 @@ begin
       begin
         if ci.CheckN <> '0' then
         begin
-          ParamByName('EXT_PAY_ID').asString := ci.CheckN;
+          ParamByName('EXT_PAY_ID').AsString := ci.CheckN;
           ParamByName('FISCAL').AsInteger := 1; // Признак с пробитием чека
         end;
         if ci.Summa > 0 then
@@ -1076,7 +1002,7 @@ begin
           s := 'CARD'
         else
           s := 'CASH';
-        ParamByName('PAY_TYPE_STR').asString := s;
+        ParamByName('PAY_TYPE_STR').AsString := s;
 
         Transaction.StartTransaction;
         ExecQuery;
@@ -1153,7 +1079,7 @@ begin
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
         dmMain.frxModalReport.LoadFromStream(Stream);
-        dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').asString;
+        dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
         Caption := dmMain.frxModalReport.FILENAME;
       finally
         Stream.Free;
@@ -1316,6 +1242,11 @@ begin
     ScaleControl(Self, Screen.PixelsPerInch, FPixelsPerInch);
 
   inherited Loaded;
+end;
+
+procedure TPaymentForm.SetForForm(Value: String);
+begin
+  FForForm := Value;
 end;
 
 end.

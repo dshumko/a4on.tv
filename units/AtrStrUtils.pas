@@ -2,7 +2,7 @@
 
 interface
 
-uses Classes, SysUtils, Variants, RxStrUtils, DB;
+uses System.Classes, System.SysUtils, System.Variants, Data.DB;
 
 const
   Codes64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
@@ -86,10 +86,13 @@ function CheckRusBA(BA: string; BIK: String): Boolean;
 // форматирование MAC как xxxx.xxxx.xxxx
 function FormatMACas4Cd(const S: string): String;
 
+// корректировка номера для страны
+function CorrectPhone(const phone: string; const aCountry: String = 'BY'): string;
+
 implementation
 
 uses
-  DateUtils, ClipBrd, Windows;
+  System.DateUtils, VCL.ClipBrd, System.RegularExpressions, WinAPI.Windows, RxStrUtils;
 
 const
   SErrWrongBase64EncodedString = 'Формат строки не соответствует способу кодирования Base64.';
@@ -703,6 +706,98 @@ begin
     Result := LowerCase( aMac[0] + aMac[1] + '.' + aMac[2] + aMac[3] + '.' + aMac[4] + aMac[5] );
   end;
 end;
+
+function CorrectPhone(const phone: string; const aCountry: String = 'BY'): string;
+const
+  pfRU: string = '^79[0-9]{9}$';
+  pfBY: string = '^375(24|25|29|33|44)[1-9]{1}[0-9]{6}$';
+  pfUA: string = '^380(50|63|66|67|68|91|92|93|94|95|96|97|98|99)[0-9]{7}$';
+
+  function CorrectBY(const p: string): string;
+  const
+    prefix: string = '375';
+  var
+    l: Integer;
+    s: string;
+  begin
+    Result := '';
+    l := Length(p);
+    case l of
+      12:
+        if Copy(p, 1, 3) = prefix then
+          Result := p;
+      9:
+        Result := prefix + p; // 297346934
+    else
+      begin
+        if l >= 11 then
+        begin
+          // 80297349634
+          s := Copy(p, 1, 2);
+          if s = '80' then
+            Result := prefix + Copy(p, 3, 9);
+        end;
+      end;
+    end;
+    if not TRegEx.IsMatch(Result, pfBY) then
+      Result := '';
+  end;
+
+  function CorrectUA(const p: string): string;
+  const
+    prefix: string = '380';
+  begin
+    Result := p;
+    if not TRegEx.IsMatch(Result, pfUA) then
+      Result := '';
+  end;
+
+  function CorrectRU(const p: string): string;
+  const
+    prefix: string = '7';
+  var
+    l: Integer;
+  begin
+    Result := '';
+    l := Length(p);
+    case l of
+      11:
+        if Copy(p, 1, 1) = '8' then
+          Result := prefix + Copy(p, 2, 10);
+      10:
+        Result := prefix + p; // 297346934
+    end;
+    if not TRegEx.IsMatch(Result, pfRU) then
+      Result := '';
+  end;
+
+var
+  s: string;
+  tp: string;
+begin
+  Result := '';
+  tp := DigitsOnly(phone);
+  if aCountry = 'BY' then
+    s := pfBY
+  else if aCountry = 'UA' then
+    s := pfUA
+  else
+    s := pfRU;
+
+  if not TRegEx.IsMatch(tp, s) then
+  begin
+    s := tp;
+    if aCountry = 'BY' then
+      Result := CorrectBY(s)
+    else if aCountry = 'UA' then
+      Result := CorrectUA(s)
+    else
+      Result := CorrectRU(s);
+  end
+  else
+    Result := tp;
+end;
+
 
 initialization
 

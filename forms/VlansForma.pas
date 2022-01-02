@@ -61,6 +61,9 @@ type
     lbl6: TLabel;
     edtCONFIG_FILE: TDBEditEh;
     actCancel: TAction;
+    tbPersTar: TToolBar;
+    btnPersAdd: TToolButton;
+    actEditAdr: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -75,12 +78,12 @@ type
     procedure dbgExistsDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure pgcInfoChange(Sender: TObject);
     procedure actViewInfoExecute(Sender: TObject);
-    procedure actEditZonesExecute(Sender: TObject);
     procedure btnFindIPClick(Sender: TObject);
     procedure btnSaveLinkClick(Sender: TObject);
     procedure edtIP_BEGINExit(Sender: TObject);
     procedure edtDNSEnter(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
+    procedure actEditAdrExecute(Sender: TObject);
   private
     { Private declarations }
     procedure AddToCoverage;
@@ -195,6 +198,9 @@ begin
   begin
     pgcInfo.Enabled := True;
     inherited;
+     if actEditAdr.Checked
+     then dsExists.CloseOpen(True);
+    dsEnabled.CloseOpen(True);
   end;
 end;
 
@@ -237,9 +243,12 @@ end;
 
 procedure TVlansForm.actCancelExecute(Sender: TObject);
 begin
+  if not FinEditMode then
+    Exit;
   inherited;
   StopEdit(True);
   pgcInfo.Enabled := True;
+  dsEnabled.CloseOpen(True);
   actCancel.Enabled := False;
 end;
 
@@ -252,27 +261,32 @@ begin
       srcDataSource.DataSet.Delete;
 end;
 
+procedure TVlansForm.actEditAdrExecute(Sender: TObject);
+begin
+  inherited;
+  actEditAdr.Checked := not actEditAdr.Checked;
+  dsEnabled.Filtered := False;
+  dsEnabled.Filter := '';
+  dsExists.Filtered := False;
+  dsExists.Filter := '';
+  dsExists.Active := actEditAdr.Checked;
+  pnlAddAdres.Visible := actEditAdr.Checked;
+  pnlAddAdres.Width := trunc(pnlCoverage.Width / 2);
+  spl2.Align := alLeft;
+  spl2.Align := alRight;
+end;
+
 procedure TVlansForm.actEditExecute(Sender: TObject);
 begin
   inherited;
   if fCanEdit then
   begin
+    actEditAdr.Checked := False;
+    actEditAdrExecute(sender);
     actCancel.Enabled := True;
     pgcInfo.Enabled := False;
     StartEdit();
   end;
-end;
-
-procedure TVlansForm.actEditZonesExecute(Sender: TObject);
-begin
-  inherited;
-  pnlAddAdres.Visible := not pnlAddAdres.Visible;
-  dsEnabled.Filter := '';
-  dsEnabled.Filtered := False;
-  pnlAddAdres.Width := trunc(pnlCoverage.Width / 2);
-  pgcInfoChange(Sender);
-  spl2.Align := alLeft;
-  spl2.Align := alRight;
 end;
 
 procedure TVlansForm.FormShow(Sender: TObject);
@@ -285,9 +299,7 @@ begin
   actNew.Visible := fCanCreate;
   actDelete.Visible := fCanEdit;
   actEdit.Visible := fCanEdit;
-  actEditZones.Visible := fCanEdit or fCanCreate;
-  pnlAddAdres.Visible := fCanEdit or fCanCreate;
-
+  actEditAdr.Visible := fCanEdit or fCanCreate;
   dsVlans.Open;
   pgcInfoChange(Sender);
 end;
@@ -297,7 +309,7 @@ begin
   inherited;
   dsEnabled.Active := (pgcInfo.ActivePage = tsCoverage) and pgcInfo.Visible;
   dsExists.Filtered := False;
-  dsExists.Active := (pgcInfo.ActivePage = tsCoverage) and pgcInfo.Visible and pnlAddAdres.Visible;
+  dsExists.Active := (pgcInfo.ActivePage = tsCoverage) and pgcInfo.Visible and pnlAddAdres.Visible and actEditAdr.Checked;
   dsUsed.Active := (pgcInfo.ActivePage = tsUsers) and pgcInfo.Visible;
 end;
 
@@ -365,7 +377,7 @@ begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   dbgExists.DataSource.DataSet.DisableControls;
-  dbgExists.DataSource.DataSet.DisableControls;
+  dbgEnabled.DataSource.DataSet.DisableControls;
   dbgEnabled.SaveBookmark;
   if dbgEnabled.SelectedRows.Count > 0 then
   begin

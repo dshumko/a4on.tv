@@ -8,7 +8,7 @@ uses
   WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
   System.Classes, VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Menus,
   VCL.Dialogs, VCL.StdCtrls, VCL.Mask, Data.DB, VCL.DBCtrls,
-  VCL.Buttons, VCL.ActnList, System.Actions, VCL.ExtCtrls,
+  VCL.Buttons, VCL.ActnList, System.Actions, VCL.ExtCtrls, System.UITypes,
 
   OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh,
   DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider, FIBDatabase,
@@ -105,9 +105,13 @@ type
     { Private declarations }
     fCI: TCustomerInfo;
     FCanEditPort: Boolean;
-    function CheckData: Boolean;
+    FWarnings: string;
+    function CheckData(): Integer;
+    function CheckWarnings(): Boolean;
     function CheckIP(const ip: String; const VLAN_ID: Integer = -1): string;
-    function CheckUniqMAC(const MAC: String): string;
+    function CheckIPForVlan(const ip: String; const VLAN_ID: Integer = -1): Boolean;
+    function CheckVlanForHouse(const VLAN_ID: Integer; const HOUSE_ID: Integer): Boolean;
+    function CheckUniqMAC(const MAC: String): String;
     procedure CheckPort();
     procedure miLanClickClick(Sender: TObject);
     procedure GenerateLANPopUp;
@@ -149,7 +153,10 @@ begin
       dsEQ.Open;
       dsPort.Open;
 
-      dsVlans.ParamByName('CUSTOMER_ID').AsInt64 := aCI.CUSTOMER_ID;
+      if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then
+        dsVlans.SQLs.SelectSQL.Add('  and oc.house_id = :House_Id');
+      dsVlans.SQLs.SelectSQL.Add('order by finded, NAME_IP');
+      dsVlans.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
       dsVlans.Open;
 
       dsLAN.ParamByName('Lan_ID').AsInt64 := aLan_ID;
@@ -620,14 +627,15 @@ begin
   // pmLanPopUp.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
-function TCustomerLanForm.CheckData: Boolean;
+function TCustomerLanForm.CheckData: Integer;
 var
-  En: Boolean;
+  vErrors: Boolean;
   s: string;
   EmptyIP_MAC_PORT: Boolean;
   vid: Integer;
 begin
-  En := True;
+  vErrors := False;
+  Result := 0;
   // проверим IP в базе
   if VarIsNumeric(dbleVLAN.Value) then
     vid := dbleVLAN.Value
@@ -640,7 +648,7 @@ begin
     // если такой ип есть сообщим где
     cnError.SetError(eIP, s, iaMiddleLeft, bsNeverBlink);
     eIP.SetFocus;
-    En := False;
+    vErrors := True;
   end
   else
   begin
@@ -648,17 +656,19 @@ begin
     begin
       cnError.SetError(eIP, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
       eIP.SetFocus;
-      En := False;
+      vErrors := True;
     end
     else
+    begin
       cnError.Dispose(eIP);
+    end;
   end;
 
   if (ValidateMAC(eMAC.Text) = '') and (eMAC.Text <> '') then
   begin
     cnError.SetError(eMAC, rsMACIncorrect, iaMiddleLeft, bsNeverBlink);
     eMAC.SetFocus;
-    En := False;
+    vErrors := True;
   end
   else
   begin
@@ -667,7 +677,7 @@ begin
     begin
       cnError.SetError(eMAC, s, iaMiddleLeft, bsNeverBlink);
       eMAC.SetFocus;
-      En := False;
+      vErrors := True;
     end
     else
       cnError.Dispose(eMAC);
@@ -678,14 +688,15 @@ begin
   begin
     cnError.SetError(eMAC, rsMACIncorrect, iaMiddleLeft, bsNeverBlink);
     eMAC.SetFocus;
-    En := False;
+    vErrors := True;
   end;
 
+  // проверим влан
   if ((dmMain.GetSettingsValue('VLAN_REQUIRED') = '1') and (not VarIsNumeric(dbleVLAN.Value))) then
   begin
     cnError.SetError(dbleVLAN, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     dbleVLAN.SetFocus;
-    En := False;
+    vErrors := True;
   end
   else
     cnError.Dispose(dbleVLAN);
@@ -696,17 +707,63 @@ begin
   if EmptyIP_MAC_PORT then
   begin
     cnError.SetError(OkCancelFrame.bbOk, rsLANIncorrect, iaMiddleLeft, bsNeverBlink);
+    vErrors := True;
   end
   else
     cnError.Dispose(OkCancelFrame.bbOk);
 
-  Result := En and (not EmptyIP_MAC_PORT);
+  if (not vErrors) then
+  begin
+    if (CheckWarnings()) then
+      Result := 2
+    else
+      Result := 1;
+  end;
+end;
+
+function TCustomerLanForm.CheckWarnings(): Boolean;
+begin
+  Result := False;
+  FWarnings := '';
+  if (not dbleVLAN.Text.IsEmpty) then
+  begin
+    if not CheckVlanForHouse(dbleVLAN.Value, fCI.HOUSE_ID) then
+    begin
+      // EP_WARNING
+      cnError.SetError(dbleVLAN, rsVlanHouse, iaMiddleLeft, bsNeverBlink).IconType := EP_WARNING;
+      FWarnings := FWarnings + rsVlanHouse + rsEOL;
+      Result := True;
+    end
+  end
+  else
+    cnError.Dispose(dbleVLAN);
+
+  if (not dbleVLAN.Text.IsEmpty) and (not eIP.Text.IsEmpty) then
+  begin
+    if not CheckIPForVlan(eIP.Text, dbleVLAN.Value) then
+    begin
+      cnError.SetError(eIP, rsIpVlan, iaMiddleLeft, bsNeverBlink).IconType := EP_WARNING;
+      FWarnings := FWarnings + rsIpVlan + rsEOL;
+      Result := True;
+    end
+  end
+  else
+    cnError.Dispose(eIP);
 end;
 
 procedure TCustomerLanForm.OkCancelFrame1bbOkClick(Sender: TObject);
 begin
-  if CheckData then
-    ModalResult := mrOk;
+  case CheckData() of
+    1: // нет ошибок
+      ModalResult := mrOk;
+    2: // нет ошибок, но есть предупреждения
+      begin
+        FWarnings := FWarnings + rsEOL + rsWarningQuestStop;
+        if (MessageDlg(FWarnings, mtWarning, [mbYes, mbNo], 0) = mrNo) then
+          // if (MessageBox(0, PChar(FWarnings), PChar('Внимание'), MB_ICONWARNING or MB_OKCANCEL or MB_DEFBUTTON3) = idOk)
+          ModalResult := mrOk;
+      end;
+  end;
 end;
 
 procedure TCustomerLanForm.eIPEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -766,7 +823,6 @@ begin
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
     Exit;
 
-  eid := -1;
   if not VarIsNull(dbleEquipment.Value) then
   begin
     eid := dbleEquipment.Value;
@@ -883,7 +939,7 @@ end;
 
 procedure TCustomerLanForm.lcbPortChange(Sender: TObject);
 begin
-  if lcbPort.Text.IsEmpty then
+  if (lcbPort.Text.IsEmpty) or (VarIsNull(lcbPort.Value)) then
   begin
     lcbPort.EditButtons.Items[0].Hint := rsAdd;
     lcbPort.EditButtons.Items[0].Visible := True and FCanEditPort;
@@ -904,15 +960,36 @@ end;
 
 procedure TCustomerLanForm.lcbPortDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
+var
+  s : string;
 begin
-  if not dsPort.FieldByName('CON').IsNull then
-    AFont.Color := clGray;
+  Background := clWindow;
+  if not dsPort.FieldByName('CON').IsNull then begin
+    if (not dsPort.FieldByName('CON_ID').IsNull) and (dsPort['CON_ID'] = fCI.CUSTOMER_ID) then begin
+      AFont.Style := [fsBold];
+    end
+    else begin
+      AFont.Style := [fsItalic];
+      AFont.Color := clGray;
+      Background := clBtnShadow;
+    end;
+  end;
   if (not dsPort.FieldByName('P_STATE').IsNull) then
   begin
-    if (dsPort['P_STATE'] = 0) then
-      AFont.Style := [fsStrikeOut]
-    else if (dsPort['P_STATE'] > 1) then
-      AFont.Style := [fsItalic]
+    if (dsPort['P_STATE'] = 0) then begin
+      AFont.Style := [fsStrikeOut];
+      Background := clBtnShadow;
+    end
+    else if (dsPort['P_STATE'] > 1) then begin
+      AFont.Style := [fsItalic];
+      Background := clBtnShadow;
+    end;
+  end;
+  if not( dsPort.FieldByName('COLOR').IsNull) then
+  begin
+      s := dsPort['COLOR'];
+      if not s.IsEmpty then
+        Background := StringToColor(s);
   end;
 end;
 
@@ -1057,6 +1134,67 @@ begin
   else
     if cmd <> '' then
       cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, True);
+  end;
+end;
+
+function TCustomerLanForm.CheckIPForVlan(const ip: String; const VLAN_ID: Integer = -1): Boolean;
+begin
+  Result := True;
+  if (ip = '') or (VLAN_ID = -1) then
+    Exit;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      sql.Text := 'select count(V_Id) cnt from Vlans v';
+      sql.Add('where V_Id = :VLAN_ID and Inet_Aton(:IP) between v.Ip_Begin_Bin and v.Ip_End_Bin');
+      ParamByName('VLAN_id').AsInteger := VLAN_ID;
+      ParamByName('ip').asString := ip;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Result := (FieldByName('cnt').AsInteger = 1);
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
+  end;
+end;
+
+function TCustomerLanForm.CheckVlanForHouse(const VLAN_ID: Integer; const HOUSE_ID: Integer): Boolean;
+begin
+  Result := True;
+  if (VLAN_ID = -1) or (HOUSE_ID = -1) then
+    Exit;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      sql.Text := 'select count(c.House_Id) H_COUNT, sum(iif((c.House_Id = :HOUSE_ID), 1, 0)) H_FINDED';
+      sql.Add(' from objects_coverage c where c.oc_type = 2 and c.o_id = :VLAN_ID');
+
+      ParamByName('VLAN_ID').AsInteger := VLAN_ID;
+      ParamByName('HOUSE_ID').AsInteger := HOUSE_ID;
+
+      Transaction.StartTransaction;
+      ExecQuery;
+      Result := (FieldByName('H_COUNT').AsInteger = 0);
+      if (not Result) then
+      begin
+        if not FieldByName('H_FINDED').IsNull then
+          Result := (FieldByName('H_FINDED').AsInteger > 0)
+        else
+          Result := False;
+      end;
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
   end;
 end;
 

@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, CnErrorProvider, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls,
-  DM, DBGridEh, DBCtrlsEh, DBLookupEh, Vcl.Mask, Data.DB, FIBDataSet,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Data.DB,
+  DM, DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh, FIBDataSet,
   pFIBDataSet, pFIBQuery, A4onTypeUnit;
 
 type
@@ -18,8 +18,8 @@ type
     ednCount: TDBNumberEditEh;
     lcbType: TDBLookupComboboxEh;
     mmoNotice: TDBMemoEh;
-    lbl1: TLabel;
-    lbl2: TLabel;
+    lblCNT: TLabel;
+    lblStart: TLabel;
     edtNumber: TDBEditEh;
     lbl3: TLabel;
     ednSpeed: TDBNumberEditEh;
@@ -35,14 +35,22 @@ type
     srcVLANS: TDataSource;
     dsVlans: TpFIBDataSet;
     lcbVLAN: TDBLookupComboboxEh;
+    lblWire: TLabel;
+    lcbWIRE: TDBLookupComboboxEh;
+    dsWire: TpFIBDataSet;
+    srcWire: TDataSource;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
+    procedure lcbWIREDropDownBoxGetCellParams(Sender: TObject;
+      Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     fEr: TEquipmentRecord;
     fPort: String;
+    FNode_ID : Integer;
     function CheckData: Boolean;
     procedure SaveAndClose;
     procedure SetEquipment(const value: TEquipmentRecord);
@@ -104,6 +112,9 @@ begin
 
   if dsVlans.Active then
     dsVlans.Close;
+
+  if dsWire.Active then
+    dsWire.Close;
 end;
 
 procedure TEQPortForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -136,11 +147,19 @@ end;
 
 procedure TEQPortForm.FormShow(Sender: TObject);
 begin
+  FNode_ID := -1;
   dsType.Open;
   dsState.Open;
   dsVlans.Open;
-  if FPort <> '' then
+  if FPort <> '' then begin
     GetPortInfo;
+    if FNode_ID > -1 then begin
+       if dsWire.Active
+       then dsWire.Close;
+       dsWire.ParamByName('NODE').AsInteger := FNode_ID;
+       dsWire.Open;
+    end;
+  end;
 end;
 
 procedure TEQPortForm.SetEquipment(const value: TEquipmentRecord);
@@ -172,8 +191,8 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
-    fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id) ' +
-      ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id) matching (Eid, Port) ';
+    fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, WID) ' +
+      ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id, :WID) matching (Eid, Port) ';
 
     fq.ParamByName('Eid').AsInteger := fEr.ID;
     fq.ParamByName('P_Type').AsInteger := lcbType.value;
@@ -183,6 +202,8 @@ begin
       fq.ParamByName('Speed').AsInteger := ednSpeed.value;
     if not lcbVLAN.Text.IsEmpty then
       fq.ParamByName('Vlan_Id').AsInteger := lcbVLAN.value;
+    if not lcbWIRE.Text.IsEmpty then
+      fq.ParamByName('WID').AsInteger := lcbWIRE.value;
 
     if fPort = '' then
     begin
@@ -222,15 +243,20 @@ end;
 procedure TEQPortForm.SetPort(const value: String);
 begin
   fPort := value;
-  lbl2.Visible := fPort.IsEmpty;
+  lblStart.Visible := fPort.IsEmpty;
   ednCount.Visible := fPort.IsEmpty;
   edtNumber.ReadOnly := not fPort.IsEmpty;
   if not fPort.IsEmpty then begin
     edtNumber.Text := fPort;
     edtNumber.Left := ednCount.Left;
-    lbl1.Caption := 'Port';
+    lblCnt.Caption := 'Port';
     Caption := 'Редактрование порта ' + fPort;
   end;
+
+  lcbWIRE.Visible := not fPort.IsEmpty;
+  lblWire.Visible := lcbWIRE.Visible;
+  if not lcbWIRE.Visible then
+    mmoNotice.Top := lcbWIRE.Top;
 end;
 
 function TEQPortForm.CheckData: Boolean;
@@ -279,7 +305,9 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trReadQ;
-    fq.sql.Text := ' select Notice, P_Type, P_State, Speed, Vlan_Id ' + ' from Port where Eid = :Eid and Port = :Port ';
+    fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id';
+    fq.sql.Add('from Port p inner join Equipment e on (p.Eid = e.Eid)');
+    fq.sql.Add('where p.Eid = :Eid and p.Port = :Port');
     fq.ParamByName('Eid').AsInteger := fEr.ID;
     fq.ParamByName('Port').AsString := fPort;
 
@@ -297,6 +325,12 @@ begin
         ednSpeed.value := fq.FN('Speed').AsInteger;
       if not fq.FN('Notice').IsNull then
         mmoNotice.Lines.Text := fq.FN('Notice').AsString;
+      if not fq.FN('Node_Id').IsNull then
+        FNode_ID := fq.FN('Node_Id').AsInteger
+      else
+        FNode_ID := -1;
+      if not fq.FN('WID').IsNull then
+        lcbWIRE.Value := fq.FN('WID').AsInteger;
     end;
     fq.Transaction.Commit;
     fq.Close;
@@ -304,6 +338,16 @@ begin
     fq.Free;
   end;
   ModalResult := mrOk;
+end;
+
+procedure TEQPortForm.lcbWIREDropDownBoxGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if (not dsWire.FieldByName('COLOR').IsNull) then
+    Background := StringToColor(dsWire['COLOR'])
+  else
+    Background := clWindow;
 end;
 
 end.

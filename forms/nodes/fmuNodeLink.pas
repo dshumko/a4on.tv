@@ -28,12 +28,20 @@ type
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnAdd: TSpeedButton;
+    pnlRow: TPanel;
+    dbgDetail: TDBGridEh;
+    dsEQ: TpFIBDataSet;
+    srcEQ: TDataSource;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dbgNodeLinkGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure dbgNodeLinkDblClick(Sender: TObject);
+    procedure dbgNodeLinkRowDetailPanelShow(Sender: TCustomDBGridEh;
+      var CanShow: Boolean);
+    procedure dbgNodeLinkRowDetailPanelHide(Sender: TCustomDBGridEh;
+      var CanHide: Boolean);
   private
     { Private declarations }
     procedure EnableControls;
@@ -199,6 +207,18 @@ procedure TapgNodeLink.dbgNodeLinkGetCellParams(Sender: TObject; Column: TColumn
 begin
   if (dsLink.RecordCount > 0) and (not(dsLink.FieldByName('COLOR').IsNull)) then
     Background := StringToColor(dsLink.FieldByName('COLOR').Value);
+end;
+
+procedure TapgNodeLink.dbgNodeLinkRowDetailPanelHide(
+  Sender: TCustomDBGridEh; var CanHide: Boolean);
+begin
+  dsEQ.Close;
+end;
+
+procedure TapgNodeLink.dbgNodeLinkRowDetailPanelShow(
+  Sender: TCustomDBGridEh; var CanShow: Boolean);
+begin
+  dsEQ.Open;
 end;
 
 procedure TapgNodeLink.UpdateObject;

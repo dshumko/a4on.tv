@@ -11,6 +11,8 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object dbgCustAttr: TDBGridEh
@@ -44,7 +46,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'NA_VALUE'
+        FieldName = 'CA_VALUE'
         Footers = <>
         Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
         Width = 155
@@ -72,7 +74,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
     DesignSize = (
       26
       208)
-    object btnDel1: TSpeedButton
+    object btnDel: TSpeedButton
       Left = 2
       Top = 185
       Width = 22
@@ -82,7 +84,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
       Flat = True
       Layout = blGlyphTop
     end
-    object btnAdd1: TSpeedButton
+    object btnAdd: TSpeedButton
       Left = 2
       Top = 3
       Width = 22
@@ -90,7 +92,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
       Action = actAdd
       Flat = True
     end
-    object btnEdit1: TSpeedButton
+    object btnEdit: TSpeedButton
       Left = 2
       Top = 31
       Width = 22

@@ -24,7 +24,7 @@ inherited VlansForm: TVlansForm
     Height = 153
     AllowedOperations = []
     FooterRowCount = 1
-    Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+    Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize]
     SumList.Active = True
     Columns = <
@@ -187,9 +187,9 @@ inherited VlansForm: TVlansForm
           Align = alRight
         end
         object pnlLeft: TPanel
-          Left = 0
+          Left = 27
           Top = 0
-          Width = 333
+          Width = 306
           Height = 158
           Align = alClient
           BevelOuter = bvNone
@@ -197,7 +197,7 @@ inherited VlansForm: TVlansForm
           object lbl1: TLabel
             Left = 0
             Top = 0
-            Width = 333
+            Width = 306
             Height = 19
             Align = alTop
             AutoSize = False
@@ -206,7 +206,7 @@ inherited VlansForm: TVlansForm
           object dbgEnabled: TDBGridEh
             Left = 0
             Top = 19
-            Width = 333
+            Width = 306
             Height = 139
             Align = alClient
             AllowedOperations = []
@@ -297,6 +297,7 @@ inherited VlansForm: TVlansForm
             ReadOnly = True
             SearchPanel.Enabled = True
             SearchPanel.FilterOnTyping = True
+            SortLocal = True
             STFilter.InstantApply = True
             SumList.Active = True
             TabOrder = 1
@@ -425,6 +426,24 @@ inherited VlansForm: TVlansForm
                 00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
               OnClick = btnUGremoveClick
             end
+          end
+        end
+        object tbPersTar: TToolBar
+          Left = 0
+          Top = 0
+          Width = 27
+          Height = 158
+          Align = alLeft
+          EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
+          Images = A4MainForm.ICONS_ACTIVE
+          TabOrder = 2
+          object btnPersAdd: TToolButton
+            Left = 0
+            Top = 0
+            Action = actEditAdr
+            ParentShowHint = False
+            Wrap = True
+            ShowHint = True
           end
         end
       end
@@ -639,6 +658,7 @@ inherited VlansForm: TVlansForm
     inherited btnCancelLink: TBitBtn
       Left = 650
       Top = 137
+      Action = actCancel
       TabOrder = 11
     end
     object dbmmoNotice: TDBMemoEh
@@ -844,13 +864,18 @@ inherited VlansForm: TVlansForm
     end
     object actEditZones: TAction
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1079#1086#1085#1091' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103
-      OnExecute = actEditZonesExecute
     end
     object actCancel: TAction
       Caption = #1054#1090#1084#1077#1085#1072
       Enabled = False
       ShortCut = 27
       OnExecute = actCancelExecute
+    end
+    object actEditAdr: TAction
+      Hint = #1048#1079#1084#1077#1085#1080#1090#1100' '#1079#1086#1085#1091' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103
+      ImageIndex = 4
+      ShortCut = 115
+      OnExecute = actEditAdrExecute
     end
   end
   inherited CnErrors: TCnErrorProvider

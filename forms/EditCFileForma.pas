@@ -453,7 +453,6 @@ end;
 
 procedure TEditCFileForm.ExecuteAddons;
 var
-  s: String;
   Save_Cursor: TCursor;
   d: TDate;
 begin

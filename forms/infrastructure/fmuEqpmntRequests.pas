@@ -21,9 +21,9 @@ type
     actEdit: TAction;
     actDel: TAction;
     pnlButtons: TPanel;
-    btnDel1: TSpeedButton;
-    btnAdd1: TSpeedButton;
-    btnEdit1: TSpeedButton;
+    btnDel: TSpeedButton;
+    btnAdd: TSpeedButton;
+    btnEdit: TSpeedButton;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
     pnlPhoto: TPanel;
@@ -44,13 +44,17 @@ type
       var CanHide: Boolean);
     procedure dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh;
       var CanShow: Boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormResize(Sender: TObject);
   private
     CE: Boolean;
     CC: Boolean;
     CG: Boolean;
     CA: Boolean;
     FullAccess: Boolean;
+    FIsVertical: Boolean;
     procedure EnableControls;
+    procedure SwitchLayout(const InVertical: Boolean);
   public
     procedure RefreshDS;
     procedure InitForm; override;
@@ -68,6 +72,34 @@ uses MAIN, AtrCommon, RequestNewForma, RequestForma, DM;
 class function TapgEqpmntRequests.GetPageName: string;
 begin
   Result := rsRequests;
+end;
+
+procedure TapgEqpmntRequests.SwitchLayout(const InVertical: Boolean);
+begin
+  if (FIsVertical = InVertical)
+  then Exit;
+
+  FIsVertical := InVertical;
+  if not FIsVertical then
+  begin
+    pnlButtons.Align := alLeft;
+    pnlButtons.Width := 26;
+    btnEdit.Left := 2;
+    btnEdit.Top := 30;
+    btnDel.Left := 2;
+    btnDel.Top := pnlButtons.Height - btnDel.Height - 4;
+    btnDel.Anchors := [akLeft,akBottom];
+  end
+  else
+  begin
+    pnlButtons.Align := alTop;
+    pnlButtons.Height := 26;
+    btnEdit.Top := 2;
+    btnEdit.Left := 30;
+    btnDel.Top := 2;
+    btnDel.Left := pnlButtons.Width - btnDel.Width - 4;
+    btnDel.Anchors := [akTop,akRight];
+  end;
 end;
 
 procedure TapgEqpmntRequests.imgJPGDblClick(Sender: TObject);
@@ -113,6 +145,21 @@ procedure TapgEqpmntRequests.EnableControls;
 begin
   actEdit.Enabled := dsRequests.RecordCount > 0;
   actDel.Enabled := dsRequests.RecordCount > 0;
+end;
+
+procedure TapgEqpmntRequests.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  FIsVertical := False;
+end;
+
+procedure TapgEqpmntRequests.FormResize(Sender: TObject);
+var
+  b : Boolean;
+begin
+  b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
+  SwitchLayout(b);
 end;
 
 procedure TapgEqpmntRequests.OpenData;

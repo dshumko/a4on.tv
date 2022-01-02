@@ -517,6 +517,8 @@ object CustomersFilterForm: TCustomersFilterForm
                 Title.Caption = #1056#1072#1081#1086#1085
                 Width = 55
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -526,6 +528,7 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'STREET_NAME'
             ListSource = srcStreets
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 0
             Visible = True
             OnEnter = cbbSTREETEnter

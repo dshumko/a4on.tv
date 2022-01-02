@@ -224,7 +224,10 @@ begin
   else
   begin
     if not fData.IsEmpty then
-      JsonToSend := TStringStream.Create(fData, TEncoding.UTF8);
+      JsonToSend := TStringStream.Create(fData, TEncoding.UTF8)
+    else
+      JsonToSend := TStringStream.Create('', TEncoding.UTF8);
+
     try
       // HTTP1.Request.ContentType := 'application/json';
       HTTP.Request.CharSet := 'utf-8';

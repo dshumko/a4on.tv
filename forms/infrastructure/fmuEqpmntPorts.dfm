@@ -12,6 +12,8 @@ object apgEqpmntPort: TapgEqpmntPort
   Font.Style = []
   OldCreateOrder = False
   ShowHint = True
+  OnCreate = FormCreate
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object pnlButtons: TPanel
@@ -25,7 +27,7 @@ object apgEqpmntPort: TapgEqpmntPort
     DesignSize = (
       26
       253)
-    object btnDel1: TSpeedButton
+    object btnDel: TSpeedButton
       Left = 2
       Top = 230
       Width = 22
@@ -72,7 +74,7 @@ object apgEqpmntPort: TapgEqpmntPort
     end
     object btnAdd1: TSpeedButton
       Left = 2
-      Top = 3
+      Top = 2
       Width = 22
       Height = 22
       Action = actAdd
@@ -113,9 +115,9 @@ object apgEqpmntPort: TapgEqpmntPort
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
-    object btnEdit1: TSpeedButton
+    object btnEdit: TSpeedButton
       Left = 2
-      Top = 31
+      Top = 28
       Width = 22
       Height = 22
       Action = actEdit
@@ -156,9 +158,9 @@ object apgEqpmntPort: TapgEqpmntPort
         8E005A5A5A005A5A5A005A5A5A005A5A5A005A5A5A005A5A5A005A5A5A007F7F
         7F00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
-    object btnEdit: TSpeedButton
+    object btnFind: TSpeedButton
       Left = 2
-      Top = 79
+      Top = 71
       Width = 22
       Height = 22
       Action = actFindCustomer
@@ -200,6 +202,7 @@ object apgEqpmntPort: TapgEqpmntPort
     TitleParams.MultiTitle = True
     TitleParams.VTitleMargin = 8
     OnDblClick = dbgCustomerDblClick
+    OnGetCellParams = dbgCustomerGetCellParams
     OnMouseDown = dbgCustomerMouseDown
     OnSortMarkingChanged = dbgCustomerSortMarkingChanged
     Columns = <
@@ -215,6 +218,54 @@ object apgEqpmntPort: TapgEqpmntPort
         Title.SortIndex = 1
         Title.SortMarker = smUpEh
         Width = 54
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PS_NAME'
+        Footers = <>
+        Title.Caption = #1057#1090#1072#1090#1091#1089
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PT_NAME'
+        Footers = <>
+        Title.Caption = #1058#1080#1087' '#1087#1086#1088#1090#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SPEED'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100' '#1052#1041'/'#1089
+        Title.TitleButton = True
+        Width = 65
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'V_NAME'
+        Footers = <>
+        Title.Caption = 'VLAN'
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PORT_NOTICE'
+        Footers = <>
+        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1087#1086#1088#1090#1072
+        Title.TitleButton = True
+        Width = 117
       end
       item
         CellButtons = <>
@@ -373,6 +424,42 @@ object apgEqpmntPort: TapgEqpmntPort
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 200
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'W_NAME'
+        Footers = <>
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1053#1072#1079#1074#1072#1085#1080#1077
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WT_NAME'
+        Footers = <>
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1058#1080#1087
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WS_NODE'
+        Footers = <>
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1059#1079#1077#1083' '#1089
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WE_NODE'
+        Footers = <>
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1059#1079#1077#1083' '#1074
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -464,12 +551,21 @@ object apgEqpmntPort: TapgEqpmntPort
     Top = 153
   end
   object dsData: TpFIBDataSet
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    PORT'
+      'WHERE'
+      '    PORT = :OLD_PORT')
     RefreshSQL.Strings = (
       'select'
-      '    c.CUSTOMER_ID'
+      '    a.port'
+      '  , a.EID'
+      '  , c.CUSTOMER_ID'
       '  , c.CUST_CODE'
-      '  , c.ACCOUNT_NO'
-      '  , c.SURNAME'
+      
+        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, '#39#1086#1073#1086#1088#39', null)) ACCOUN' +
+        'T_NO'
+      '  , coalesce(c.SURNAME, e.Name) surname'
       '  , c.MIDLENAME'
       '  , c.INITIALS'
       '  , c.PHONE_NO'
@@ -494,35 +590,83 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , t.LAN_ID'
       '  , t.ip'
       '  , t.mac'
-      '  , t.port'
-      '  from CUSTOMER C'
-      '       inner join HOUSE H on (C.HOUSE_ID = H.HOUSE_ID)'
-      '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
+      '  , pt.O_Name PT_NAME'
+      '  , ps.O_Name PS_NAME'
+      '  , v.Name V_NAME'
+      '  , p.Notice PORT_NOTICE '
+      '  , p.SPEED '
+      '  , case p.Con'
+      '      when 0 then '#39#1054#39
+      '      when 1 then '#39#1040#39
+      '      else '#39#39
+      '    end whose'
+      '  , p.Con'
+      '  , p.Con_Id'
+      '  , p.P_State'
+      '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
+      '  , w.Name W_NAME'
+      '  , wt.O_Type WT_NAME'
+      '  , sn.Name WS_NODE'
+      '  , en.Name WE_NODE'
+      '  , w.Wid'
+      '  , w.Point_S'
+      '  , w.Point_E'
+      '  from (select distinct Eid, port'
+      '          from (select Eid, port from port where Eid = :EID'
+      '                union'
       
-        '       left outer join tv_lan t on (t.customer_id = c.customer_i' +
-        'd) left outer join Houseflats f on (f.House_Id = c.House_Id and'
-      '             f.Flat_No = c.Flat_No)'
-      '  where (1 = :EQ_TYPE      -- '#1057#1055#1044
-      '        and t.EQ_ID = :EID)'
-      '          or (2 = :EQ_TYPE -- '#1058#1042
-      '        and exists(select'
-      '                       house_id'
-      '                     from equipment_coverage ec'
-      '                     where ec.eid = :eid'
-      '                           and ec.House_Id = c.House_Id))'
-      ' and (     C.CUSTOMER_ID = :OLD_CUSTOMER_ID     )'
+        '                select EQ_ID EID , Port from tv_lan where EQ_ID ' +
+        '= :EID and coalesce(Port,'#39#39')<> '#39#39')) a'
+      
+        '       left outer join port p on (p.Eid = a.EID and p.Port = a.p' +
+        'ort)'
+      
+        '       left outer join tv_lan t on (t.Eq_Id = a.Eid and t.Port =' +
+        ' a.Port)'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      
+        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
+        'n = 0)'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      
+        '       left outer join HOUSE H on (((not C.HOUSE_ID is null) and' +
+        ' C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) and e.HOUS' +
+        'E_ID = H.HOUSE_ID))'
+      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+      
+        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
+        'and f.Flat_No = c.Flat_No)'
+      
+        '       left outer join objects pt on (p.P_Type = pt.O_Id and pt.' +
+        'O_Type = 57)'
+      
+        '       left outer join objects ps on (p.P_State = ps.O_Id and ps' +
+        '.O_Type = 60)'
+      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
+      '       left outer join Wire w on (w.Wid = p.Wid)'
+      
+        '       left outer join OBJECTS wt on (w.WTYPE = wt.O_ID and wt.O' +
+        '_TYPE = 56)'
+      '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
+      '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
+      '       '
+      'where a.EID = :OLD_EID'
+      '  and a.PORT = :OLD_PORT'
       '')
     SelectSQL.Strings = (
       'select'
-      '*'
-      'from'
-      '('
-      'select'
-      '  t.port'
+      '    a.port'
+      '  , a.EID'
       '  , c.CUSTOMER_ID'
       '  , c.CUST_CODE'
-      '  , c.ACCOUNT_NO'
-      '  , c.SURNAME'
+      
+        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, '#39#1086#1073#1086#1088#39', null)) ACCOUN' +
+        'T_NO'
+      '  , coalesce(c.SURNAME, e.Name) surname'
       '  , c.MIDLENAME'
       '  , c.INITIALS'
       '  , c.PHONE_NO'
@@ -547,56 +691,72 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , t.LAN_ID'
       '  , t.ip'
       '  , t.mac'
-      '  from CUSTOMER C'
-      '       inner join HOUSE H on (C.HOUSE_ID = H.HOUSE_ID)'
-      '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
+      '  , pt.O_Name PT_NAME'
+      '  , ps.O_Name PS_NAME'
+      '  , v.Name V_NAME'
+      '  , p.Notice PORT_NOTICE '
+      '  , p.SPEED '
+      '  , case p.Con'
+      '      when 0 then '#39#1054#39
+      '      when 1 then '#39#1040#39
+      '      else '#39#39
+      '    end whose'
+      '  , p.Con'
+      '  , p.Con_Id'
+      '  , p.P_State'
+      '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
+      '  , w.Name W_NAME'
+      '  , wt.O_Type WT_NAME'
+      '  , sn.Name WS_NODE'
+      '  , en.Name WE_NODE'
+      '  , w.Wid'
+      '  , w.Point_S'
+      '  , w.Point_E'
+      '  from (select distinct Eid, port'
+      '          from (select Eid, port from port where Eid = :EID'
+      '                union'
       
-        '       left outer join tv_lan t on (t.customer_id = c.customer_i' +
-        'd) left outer join Houseflats f on (f.House_Id = c.House_Id and'
-      '             f.Flat_No = c.Flat_No)'
-      '  where (1 = :EQ_TYPE      -- '#1057#1055#1044
-      '        and t.EQ_ID = :EID)'
-      '          or (2 = :EQ_TYPE -- '#1058#1042
-      '        and exists(select'
-      '                       house_id'
-      '                     from equipment_coverage ec'
-      '                     where ec.eid = :eid'
-      '                           and ec.House_Id = c.House_Id))'
-      'union'
-      'select'
-      '  p.port'
-      '  , null CUSTOMER_ID'
-      '  , null CUST_CODE'
-      '  , null ACCOUNT_NO'
-      '  , null SURNAME'
-      '  , null MIDLENAME'
-      '  , null INITIALS'
-      '  , null PHONE_NO'
-      '  , null NOTICE'
-      '  , null CUST_STATE_DESCR'
-      '  , null FLAT_NO'
-      '  , null DEBT_SUM'
-      '  , null HIS_COLOR'
-      '  , null street_short'
-      '  , null Street_Name'
-      '  , null House_No'
-      '  , null Street_ID'
-      '  , null HOUSE_ID'
-      '  , null  BALANCE'
-      '  , null  connected'
-      '  , null FLOOR_N'
-      '  , null PORCH_N'
-      '  , null LAN_ID'
-      '  , null ip'
-      '  , null mac'
-      'from port p'
+        '                select EQ_ID EID , Port from tv_lan where EQ_ID ' +
+        '= :EID and coalesce(Port,'#39#39')<> '#39#39')) a'
       
-        'where not exists(select t.Lan_Id from tv_lan t where t.Eq_Id = p' +
-        '.Eid and t.Port = p.Port)'
-      'and p.Eid = :EID'
-      ')'
-      'order by port, account_no'
-      '')
+        '       left outer join port p on (p.Eid = a.EID and p.Port = a.p' +
+        'ort)'
+      
+        '       left outer join tv_lan t on (t.Eq_Id = a.Eid and t.Port =' +
+        ' a.Port)'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      
+        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
+        'n = 0)'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      
+        '       left outer join HOUSE H on (((not C.HOUSE_ID is null) and' +
+        ' C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) and e.HOUS' +
+        'E_ID = H.HOUSE_ID))'
+      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+      
+        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
+        'and f.Flat_No = c.Flat_No)'
+      
+        '       left outer join objects pt on (p.P_Type = pt.O_Id and pt.' +
+        'O_Type = 57)'
+      
+        '       left outer join objects ps on (p.P_State = ps.O_Id and ps' +
+        '.O_Type = 60)'
+      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
+      '       left outer join Wire w on (w.Wid = p.Wid)'
+      
+        '       left outer join OBJECTS wt on (w.WTYPE = wt.O_ID and wt.O' +
+        '_TYPE = 56)'
+      '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
+      '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
+      '       '
+      '  where a.EID = :EID'
+      'order by a.PORT  ')
     AutoUpdateOptions.UpdateTableName = 'CUSTOMER'
     AutoUpdateOptions.KeyFields = 'CUSTOMER_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_CUSTOMER_UID'

@@ -16,7 +16,7 @@ inherited TaskForm: TTaskForm
     ColumnDefValues.ToolTips = True
     DrawMemoText = True
     FooterRowCount = 1
-    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     ParentShowHint = False
     RowDetailPanel.Active = True
     RowDetailPanel.Height = 184
@@ -516,17 +516,17 @@ inherited TaskForm: TTaskForm
       Visible = False
     end
     object ToolButton19: TToolButton
-      Left = 0
+      Left = 178
       Top = 0
       Visible = False
     end
     object btnClose: TToolButton
-      Left = 178
+      Left = 201
       Top = 0
       Action = actClose
     end
     object btnSPclose: TToolButton
-      Left = 201
+      Left = 224
       Top = 0
       Width = 8
       Caption = 'btnSPclose'
@@ -534,17 +534,17 @@ inherited TaskForm: TTaskForm
       Style = tbsSeparator
     end
     object btnFilter: TToolButton
-      Left = 209
+      Left = 232
       Top = 0
       Action = actFilter
     end
     object btnRefresh: TToolButton
-      Left = 232
+      Left = 255
       Top = 0
       Action = actRefresh
     end
     object btn2: TToolButton
-      Left = 255
+      Left = 278
       Top = 0
       Width = 8
       Caption = 'btn2'
@@ -552,7 +552,7 @@ inherited TaskForm: TTaskForm
       Style = tbsSeparator
     end
     object btn1: TToolButton
-      Left = 263
+      Left = 286
       Top = 0
       Hint = #1047#1072#1082#1088#1099#1090#1100' '#1074#1089#1077' '#1091#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103
       Caption = 'btn1'

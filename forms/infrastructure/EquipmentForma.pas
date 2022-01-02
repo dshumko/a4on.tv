@@ -49,11 +49,14 @@ type
     actPAdd: TAction;
     actPEdit: TAction;
     pnlForms: TPanel;
-    spl1: TSplitter;
+    splLst: TSplitter;
     pnlDATA: TPanel;
     splMain: TSplitter;
     lstForms: TListBox;
-    PropStorage: TPropStorageEh;
+    btn3: TToolButton;
+    btnLayout: TToolButton;
+    actLayout: TAction;
+    miTreeExpandCurrent: TMenuItem;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -79,11 +82,14 @@ type
     procedure actCloneExecute(Sender: TObject);
     procedure dbGridColumns10GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure lstFormsClick(Sender: TObject);
+    procedure actLayoutExecute(Sender: TObject);
+    procedure miTreeExpandCurrentClick(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FAutoGen: Boolean; // автогенерация название
     FPageList: TA4onPages;
     FCanSave: Boolean;
+    FIsVertical: Boolean;
     procedure SetGridTreeMode(const inTree: Boolean);
     procedure ShowPage(Page: TA4onPage);
     procedure UpdateCommands;
@@ -93,8 +99,11 @@ type
     function IndexToPage(Index: Integer): TA4onPage;
     procedure InitSecurity;
     procedure RefreshGridRecords;
+    procedure SwitchLayout(const InVertical: Boolean);
+    procedure SetLayout(Value: Boolean);
   public
     { Public declarations }
+    property IsVertical: Boolean read FIsVertical write SetLayout;
   end;
 
 var
@@ -172,20 +181,26 @@ procedure TEquipmentForm.RefreshGridRecords;
 var
   i: Integer;
 begin
-  if (dsEquipments.Active) and (not dsEquipments.FieldByName('EID').IsNull) then
-    i := dsEquipments['EID']
-  else
-    i := -1;
-  dsEquipments.Close;
-  dsEquipments.Open;
-  if i > 0 then
-    dsEquipments.Locate('EID', i, []);
+  if (srcDataSource.DataSet = mtEQ) then
+    Exit;
 
-  if Assigned(FLastPage) then
-  begin
+  dsEquipments.Refresh;
+  {
+    if (srcDataSource.DataSet.Active) and (not srcDataSource.DataSet.FieldByName('EID').IsNull) then
+    i := srcDataSource.DataSet['EID']
+    else
+    i := -1;
+    srcDataSource.DataSet.Close;
+    srcDataSource.DataSet.Open;
+    if i > 0 then
+    srcDataSource.DataSet.Locate('EID', i, []);
+
+    if Assigned(FLastPage) then
+    begin
     FLastPage.CloseData;
     FLastPage.OpenData;
-  end;
+    end;
+  }
 end;
 
 procedure TEquipmentForm.ShowPage(Page: TA4onPage);
@@ -222,12 +237,28 @@ begin
   end;
 
   if FCanSave then
-    dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', true);
+    dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', True);
 
   if chkTREE.Checked then
     dmMain.SetIniValue('EQUIPMENTASTREE', '1')
   else
     dmMain.SetIniValue('EQUIPMENTASTREE', '0');
+
+  if FIsVertical then
+    dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', '1')
+  else
+    dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', '0');
+
+  if FIsVertical then
+  begin
+    dmMain.SetIniValue('EQUIPMENT_FSIZE', pnlForms.Width.ToString);
+    dmMain.SetIniValue('EQUIPMENT_LSIZE', lstForms.Height.ToString);
+  end
+  else
+  begin
+    dmMain.SetIniValue('EQUIPMENT_FSIZE', pnlForms.Height.ToString);
+    dmMain.SetIniValue('EQUIPMENT_LSIZE', lstForms.Width.ToString);
+  end;
 
   srcDataSource.DataSet.Close;
   EquipmentForm := nil;
@@ -236,6 +267,7 @@ end;
 procedure TEquipmentForm.FormCreate(Sender: TObject);
 begin
   inherited;
+
   FPageList := TA4onPages.Create;
   FPageList.Add(TapgEqpmntInfo);
   FPageList.Add(TapgEqpmntAttributes);
@@ -243,7 +275,7 @@ begin
   FPageList.Add(TapgEqpmntRequests);
   FPageList.Add(TapgEqpmntRegion);
 
-  FCanSave := true;
+  FCanSave := True;
 end;
 
 procedure TEquipmentForm.actCloneExecute(Sender: TObject);
@@ -253,10 +285,10 @@ var
 begin
   inherited;
   if (dsEquipments.RecordCount = 0) then
-    exit;
+    Exit;
 
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   ci.CUSTOMER_ID := -1;
 
   id := CloneEquipment(dbGrid.DataSource.DataSet['EID']);
@@ -272,7 +304,7 @@ procedure TEquipmentForm.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   if (MessageDlg(rsDeleteSelectedRecords, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     dbGrid.DataSource.DataSet.Delete;
 end;
@@ -284,16 +316,16 @@ var
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   ci.CUSTOMER_ID := -1;
 
   id := EditEquipment(-1, ci, -1);
   if id <> -1 then
   begin
-    dsEquipments.CloseOpen(True);
-    dsEquipments.Locate('EID', id, []);
+    srcDataSource.DataSet.Close;
+    srcDataSource.DataSet.Open;
+    srcDataSource.DataSet.Locate('EID', id, []);
   end;
-
 end;
 
 procedure TEquipmentForm.SetGridTreeMode(const inTree: Boolean);
@@ -322,8 +354,8 @@ begin
   begin
     srcDataSource.DataSet := mtEQ;
     mtEQ.Open;
-    mtEQ.TreeList.Active := true;
-    mtEQ.TreeList.DefaultNodeExpanded := true;
+    mtEQ.TreeList.Active := True;
+    mtEQ.TreeList.DefaultNodeExpanded := True;
     FCanSave := False;
   end
   else
@@ -336,6 +368,7 @@ begin
   miTreeBreak.Visible := inTree;
   miTreeCollapse.Visible := inTree;
   miTreeExpand.Visible := inTree;
+  miTreeExpandCurrent.Visible := inTree;
   if inTree then
     mtEQ.TreeList.FullCollapse;
 
@@ -343,10 +376,16 @@ begin
   begin
     if not inTree then
       srcDataSource.DataSet.Locate('EID', id, [])
-    else begin
+    else
+    begin
       mtEQ.TreeList.Locate('EID', id, []);
       // mtEQ.TreeList.E
     end;
+  end;
+  if FLastPage <> nil then
+  begin
+    FLastPage.CloseData;
+    FLastPage.OpenData;
   end;
   dbGrid.SetFocus;
 end;
@@ -401,7 +440,7 @@ var
 begin
   inherited;
   if not(Sender is TCustomDBGridEh) then
-    exit;
+    Exit;
   cr := Screen.Cursor;
   Screen.Cursor := crSqlWait;
   try
@@ -467,29 +506,36 @@ end;
 
 procedure TEquipmentForm.actEditExecute(Sender: TObject);
 var
-  bm: TBookmark;
   ci: TCustomerInfo;
-  Fltrd : Boolean;
-  Fltr : String;
+  id : Integer;
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   ci.CUSTOMER_ID := -1;
   if (dsEquipments.RecordCount = 0) then
-    exit;
+    Exit;
   if EditEquipment(dbGrid.DataSource.DataSet['EID'], ci, -1) <> -1 then
   begin
     if (srcDataSource.DataSet is TMemTableEh) then
     begin
-      drvEQ.GetrecCommand.Params.ParamByName('OLD_EID').Value := dbGrid.DataSource.DataSet['EID'];
-      mtEQ.RefreshRecord;
+      {TODO: Переделать обновление записи}
+      id := dbGrid.DataSource.DataSet['EID'];
+      mtEQ.Close;
+      mtEQ.Open;
+      mtEQ.TreeList.Locate('EID', id, []);
     end
     else
     begin
       dsEquipments.Refresh;
     end;
   end;
+end;
+
+procedure TEquipmentForm.actLayoutExecute(Sender: TObject);
+begin
+  inherited;
+  SwitchLayout(not FIsVertical);
 end;
 
 procedure TEquipmentForm.tbCancelClick(Sender: TObject);
@@ -513,7 +559,7 @@ end;
 procedure TEquipmentForm.FormShow(Sender: TObject);
 var
   i: Integer;
-  s: string;
+  b: Boolean;
 begin
   inherited;
 
@@ -522,6 +568,24 @@ begin
   dbGridSortMarkingChanged(dbGrid);
   if not dsEquipments.Active then
     dsEquipments.Open;
+
+  FIsVertical := False;
+  b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
+  SwitchLayout(b);
+  if FIsVertical then
+  begin
+    if TryStrToInt(dmMain.GetIniValue('EQUIPMENT_FSIZE'), i) then
+      pnlForms.Width := i;
+    if TryStrToInt(dmMain.GetIniValue('EQUIPMENT_LSIZE'), i) then
+      lstForms.Height := i;
+  end
+  else
+  begin
+    if TryStrToInt(dmMain.GetIniValue('EQUIPMENT_FSIZE'), i) then
+      pnlForms.Height := i;
+    if TryStrToInt(dmMain.GetIniValue('EQUIPMENT_LSIZE'), i) then
+      lstForms.Width := i;
+  end;
 
   InitSecurity;
   DoCreatePages;
@@ -575,6 +639,42 @@ begin
   //
 end;
 
+procedure TEquipmentForm.miTreeExpandCurrentClick(Sender: TObject);
+var
+  EID: Integer;
+  CurrNode: TMemRecViewEh;
+
+  procedure OpenTreeNode(Node: TMemRecViewEh);
+  var
+    i, id: Integer;
+    CurSubNode: TMemRecViewEh;
+  begin
+    for i := 0 to Node.NodesCount - 1 do
+    begin
+      CurSubNode := Node.NodeItems[i];
+      // CurSubNode.NodeExpanded := True;
+      id := CurSubNode.Rec.DataValues['EID', dvvValueEh];
+      mtEQ.TreeList.Locate('EID', id, []);
+      OpenTreeNode(CurSubNode);
+    end;
+  end;
+
+begin
+  inherited;
+  if dbGrid.DataSource.DataSet.FieldByName('EID').IsNull then
+    Exit;
+
+  {TODO: Переделатью сделано через ...}
+  EID := dbGrid.DataSource.DataSet['EID'];
+  dbGrid.DataSource.DataSet.DisableControls;
+  mtEQ.TreeList.FullCollapse;
+  mtEQ.TreeList.Locate('EID', EID, []);
+  CurrNode := mtEQ.RecView;
+  OpenTreeNode(CurrNode);
+  mtEQ.TreeList.Locate('EID', EID, []);
+  dbGrid.DataSource.DataSet.EnableControls;
+end;
+
 procedure TEquipmentForm.miTreeCollapseClick(Sender: TObject);
 begin
   inherited;
@@ -595,7 +695,7 @@ var
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   ci.CUSTOMER_ID := -1;
   prnt := -1;
   if not dbGrid.DataSource.DataSet.FieldByName('EID').IsNull then
@@ -621,9 +721,9 @@ begin
   begin
     srcDataSource.DataSet := mtEQ;
     dsEquipments.Close;
-    dbGrid.DataGrouping.GroupPanelVisible := true;
-    dbGrid.DataGrouping.Active := true;
-    srcDataSource.DataSet.Active := true;
+    dbGrid.DataGrouping.GroupPanelVisible := True;
+    dbGrid.DataGrouping.Active := True;
+    srcDataSource.DataSet.Active := True;
     FCanSave := False;
   end
   else
@@ -632,9 +732,14 @@ begin
     dbGrid.DataGrouping.GroupPanelVisible := False;
     srcDataSource.DataSet := dsEquipments;
     mtEQ.Active := False;
-    srcDataSource.DataSet.Active := true;
+    srcDataSource.DataSet.Active := True;
   end;
   chkTREE.Enabled := not chkGroup.Checked;
+  if FLastPage <> nil then
+  begin
+    FLastPage.CloseData;
+    FLastPage.OpenData;
+  end;
   Screen.Cursor := Crsr;
 end;
 
@@ -655,6 +760,54 @@ begin
     srcDataSource.DataSet.Locate('EID', i, []);
   end;
   srcDataSource.DataSet.EnableControls;
+end;
+
+procedure TEquipmentForm.SetLayout(Value: Boolean);
+begin
+  SwitchLayout(Value);
+end;
+
+procedure TEquipmentForm.SwitchLayout(const InVertical: Boolean);
+var
+  sp, sl: Integer;
+begin
+  if (FIsVertical = InVertical) then
+    Exit;
+
+  FIsVertical := InVertical;
+  if FIsVertical then
+    dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', '1')
+  else
+    dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', '0');
+
+  if not FIsVertical then
+  begin
+    sp := pnlForms.Width;
+    if sp > (Self.Height / 2) then
+      sp := Trunc(Self.Height / 2);
+
+    sl := lstForms.Height;
+    pnlForms.Align := alBottom;
+    splMain.Align := alBottom;
+    pnlForms.Height := sp;
+    splLst.Align := alLeft;
+    lstForms.Align := alLeft;
+    lstForms.Width := sl;
+  end
+  else
+  begin
+    sp := pnlForms.Height;
+    if sp > (Self.Width / 2) then
+      sp := Trunc(Self.Width / 2);
+
+    sl := lstForms.Width;
+    pnlForms.Align := alRight;
+    splMain.Align := alRight;
+    pnlForms.Width := sp;
+    lstForms.Align := alTop;
+    splLst.Align := alTop;
+    lstForms.Height := sl;
+  end;
 end;
 
 end.

@@ -187,7 +187,7 @@ object CustomersFilterForm: TCustomersFilterForm
             Font.Style = [fsItalic]
             ParentFont = False
           end
-          object DBLookupComboboxEh1: TDBLookupComboboxEh
+          object lcbSERVICE: TDBLookupComboboxEh
             Left = 75
             Top = 49
             Width = 507
@@ -197,6 +197,9 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'SERV_ID'
             DataSource = srcFilter
+            DropDownBox.ListSource = srcServices
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1059#1089#1083#1091#1075#1072', '#1077#1089#1083#1080' '#1085#1077' '#1091#1082#1072#1079#1072' '#1089#1084#1086#1090#1088#1080#1084' '#1085#1072' '#1042#1080#1076' '#1091#1089#1083#1091#1075
@@ -205,8 +208,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'NAME'
             ListSource = srcServices
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 1
             Visible = True
+            OnEnter = lcbSERVICEEnter
           end
           object DBComboBoxEh1: TDBComboBoxEh
             Left = 75
@@ -274,25 +279,18 @@ object CustomersFilterForm: TCustomersFilterForm
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 5
           object lblBalance: TLabel
-            Left = 31
+            Left = 6
             Top = 25
             Width = 28
             Height = 13
             Caption = #1044#1086#1083#1075' '
           end
-          object lblFrom: TLabel
-            Left = 133
-            Top = 25
-            Width = 5
-            Height = 13
-            Caption = 'c'
-          end
           object lblto: TLabel
-            Left = 221
+            Left = 229
             Top = 25
-            Width = 12
+            Width = 4
             Height = 13
-            Caption = #1087#1086
+            Caption = '-'
           end
           object Label3: TLabel
             Left = 303
@@ -315,7 +313,7 @@ object CustomersFilterForm: TCustomersFilterForm
             Caption = #1047#1072#1076#1086#1083#1078#1077#1085#1085#1086#1089#1090#1100' '#1073#1086#1083#1077#1077' '
           end
           object lbl11: TLabel
-            Left = 536
+            Left = 538
             Top = 25
             Width = 41
             Height = 13
@@ -335,9 +333,9 @@ object CustomersFilterForm: TCustomersFilterForm
             Visible = True
           end
           object DBNumberEditEh1: TDBNumberEditEh
-            Left = 142
+            Left = 154
             Top = 22
-            Width = 75
+            Width = 71
             Height = 21
             DataField = 'DEBT_SUM'
             DataSource = srcFilter
@@ -350,22 +348,22 @@ object CustomersFilterForm: TCustomersFilterForm
             OnExit = DBNumberEditEh1Exit
           end
           object cbDolgType: TDBComboBoxEh
-            Left = 72
+            Left = 48
             Top = 22
-            Width = 55
+            Width = 99
             Height = 21
             DataField = 'DEBT_SIGN'
             DataSource = srcFilter
             DynProps = <>
             EditButtons = <>
             Items.Strings = (
-              '<'
-              '<='
-              '='
-              '>='
-              '>'
-              '<>'
-              #1048#1085#1090#1077#1088#1074#1072#1083)
+              #1084#1077#1085#1100#1096#1077
+              #1084#1077#1085#1100#1096#1077' '#1080#1083#1080' '#1088#1072#1074#1085#1086
+              #1088#1072#1074#1085#1086
+              #1073#1086#1083#1100#1096#1077
+              #1073#1086#1083#1100#1096#1077' '#1080#1083#1080' '#1088#1072#1074#1085#1086
+              #1085#1077#1088#1072#1074#1085#1086
+              #1080#1085#1090#1077#1088#1074#1072#1083)
             KeyItems.Strings = (
               '0'
               '1'
@@ -380,8 +378,8 @@ object CustomersFilterForm: TCustomersFilterForm
             OnChange = cbDolgTypeChange
           end
           object chkNoCurrent: TDBCheckBoxEh
-            Left = 72
-            Top = 47
+            Left = 48
+            Top = 50
             Width = 185
             Height = 24
             Caption = #1053#1077' '#1091#1095#1080#1090#1099#1074#1072#1090#1100' '#1090#1077#1082#1091#1097#1080#1081' '#1087#1077#1088#1080#1086#1076
@@ -393,7 +391,7 @@ object CustomersFilterForm: TCustomersFilterForm
             ValueUnchecked = '0'
           end
           object edtMonth: TDBNumberEditEh
-            Left = 459
+            Left = 463
             Top = 22
             Width = 70
             Height = 21
@@ -410,7 +408,7 @@ object CustomersFilterForm: TCustomersFilterForm
           end
           object chkPrepay: TDBCheckBoxEh
             Left = 338
-            Top = 47
+            Top = 51
             Width = 239
             Height = 23
             Caption = #1059#1095#1080#1090#1099#1074#1072#1090#1100' '#1086#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
@@ -517,6 +515,7 @@ object CustomersFilterForm: TCustomersFilterForm
                 Title.Caption = #1056#1072#1081#1086#1085
                 Width = 55
               end>
+            DropDownBox.ListSource = srcStreets
             DropDownBox.ListSourceAutoFilter = True
             DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
@@ -542,6 +541,8 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'HOUSE_ID'
             DataSource = srcFilter
+            DropDownBox.ListSource = srcHomes
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1044#1086#1084
@@ -550,8 +551,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'HOUSE_NO'
             ListSource = srcHomes
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 1
             Visible = True
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
           object cbbAREA: TDBLookupComboboxEh
@@ -562,6 +565,8 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'AREA_ID'
             DataSource = srcFilter
+            DropDownBox.ListSource = srcArea
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
@@ -570,9 +575,11 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'AREA_NAME'
             ListSource = srcArea
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 3
             Visible = True
             OnChange = cbbAREAChange
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
           object DBLookupComboBox2: TDBLookupComboboxEh
@@ -593,6 +600,8 @@ object CustomersFilterForm: TCustomersFilterForm
                 FieldName = 'AREA_NAME'
                 Title.Caption = #1056#1072#1081#1086#1085
               end>
+            DropDownBox.ListSource = srcSubArea
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -602,8 +611,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'SUBAREA_NAME'
             ListSource = srcSubArea
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 4
             Visible = True
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
           object DBEditEh1: TDBEditEh
@@ -635,6 +646,8 @@ object CustomersFilterForm: TCustomersFilterForm
                 FieldName = 'ORG_NAME'
                 Title.Caption = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1102#1097#1072#1103' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
               end>
+            DropDownBox.ListSource = srcOrg
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.Options = []
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
@@ -645,8 +658,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'ORG_NAME'
             ListSource = srcOrg
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 5
             Visible = True
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
           object cbb1: TDBLookupComboboxEh
@@ -657,6 +672,8 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'WORKAREA'
             DataSource = srcFilter
+            DropDownBox.ListSource = srcWORKAREA
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.AutoDrop = True
             EmptyDataInfo.Text = #1059#1095#1072#1089#1090#1086#1082
             EditButtons = <>
@@ -664,8 +681,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'NAME'
             ListSource = srcWORKAREA
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 7
             Visible = True
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
           object cbb2: TDBLookupComboboxEh
@@ -684,6 +703,8 @@ object CustomersFilterForm: TCustomersFilterForm
               item
                 FieldName = 'WA_NAME'
               end>
+            DropDownBox.ListSource = srcWORKGROUP
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1047#1074#1077#1085#1086
@@ -692,8 +713,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'WG_NAME'
             ListSource = srcWORKGROUP
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 8
             Visible = True
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
           object cbbMH: TDBLookupComboboxEh
@@ -714,6 +737,8 @@ object CustomersFilterForm: TCustomersFilterForm
                 FieldName = 'NOTICE'
                 Width = 20
               end>
+            DropDownBox.ListSource = srcMH
+            DropDownBox.ListSourceAutoFilter = True
             DropDownBox.Options = []
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
@@ -723,8 +748,10 @@ object CustomersFilterForm: TCustomersFilterForm
             ListField = 'HE_NAME'
             ListSource = srcMH
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 6
             Visible = True
+            OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
         end
@@ -889,6 +916,9 @@ object CustomersFilterForm: TCustomersFilterForm
         DynProps = <>
         DataField = 'CUST_ATTRIBUTE'
         DataSource = srcFilter
+        DropDownBox.ListSource = srcAttributes
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EmptyDataInfo.Text = #1040#1090#1088#1080#1073#1091#1090
         EditButtons = <>
@@ -896,6 +926,7 @@ object CustomersFilterForm: TCustomersFilterForm
         ListField = 'O_NAME'
         ListSource = srcAttributes
         ShowHint = True
+        Style = csDropDownEh
         TabOrder = 12
         Visible = True
         OnChange = cbAttributeChange
@@ -1199,6 +1230,7 @@ object CustomersFilterForm: TCustomersFilterForm
           DynProps = <>
           DataField = 'single_id'
           DataSource = srcFilter
+          DropDownBox.ListSource = srcSingleServ
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1050#1072#1082#1072#1103' '#1088#1072#1079#1086#1074#1072#1103' '#1091#1089#1083#1091#1075#1072' '#1073#1099#1083#1072' '#1079#1072' '#1087#1077#1088#1080#1086#1076
@@ -1207,8 +1239,10 @@ object CustomersFilterForm: TCustomersFilterForm
           ListField = 'NAME'
           ListSource = srcSingleServ
           ShowHint = True
+          Style = csDropDownEh
           TabOrder = 6
           Visible = True
+          OnEnter = cbb3Enter
         end
         object chkMESSGS_NOT_SEND: TDBCheckBoxEh
           Left = 388

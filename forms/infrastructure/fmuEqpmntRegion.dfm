@@ -1,7 +1,7 @@
 object apgEqpmntRegion: TapgEqpmntRegion
   Left = 0
   Top = 0
-  Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+  Caption = #1047#1086#1085#1072' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103
   ClientHeight = 208
   ClientWidth = 698
   Color = clBtnFace

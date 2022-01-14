@@ -315,6 +315,10 @@ begin
   if dsServices.RecordCount = 0 then
     exit;
 
+  // включаем только если услуга активна
+  if dsServices['SRV_ACTIVE'] = 0 then
+    exit;
+
   if FDataSource.DataSet.FieldByName('VALID_TO').IsNull then
     CanAdd := true
   else
@@ -392,8 +396,9 @@ begin
     exit;
 
   bm := dsServices.GetBookmark;
-  if ShowCustSubscrHistory(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['Serv_ID']) and
-    ((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_History))) then
+  if ShowCustSubscrHistory(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['Serv_ID'])
+    // and ((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_History)))
+    then
   begin
     dsServices.CloseOpen(true);
     dsServices.GotoBookmark(bm);

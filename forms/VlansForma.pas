@@ -84,6 +84,7 @@ type
     procedure edtDNSEnter(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
     procedure actEditAdrExecute(Sender: TObject);
+    procedure btnCancelLinkClick(Sender: TObject);
   private
     { Private declarations }
     procedure AddToCoverage;
@@ -133,6 +134,12 @@ begin
   pgcInfoChange(Sender);
   spl1.Align := alTop;
   spl1.Align := alBottom;
+end;
+
+procedure TVlansForm.btnCancelLinkClick(Sender: TObject);
+begin
+  inherited;
+  pgcInfo.Enabled := True;
 end;
 
 procedure TVlansForm.btnFindIPClick(Sender: TObject);
@@ -196,10 +203,8 @@ begin
 
   if not errors then
   begin
-    pgcInfo.Enabled := True;
     inherited;
-     if actEditAdr.Checked
-     then dsExists.CloseOpen(True);
+    pgcInfo.Enabled := True;
     dsEnabled.CloseOpen(True);
   end;
 end;
@@ -281,8 +286,8 @@ begin
   inherited;
   if fCanEdit then
   begin
-    actEditAdr.Checked := False;
-    actEditAdrExecute(sender);
+    if actEditAdr.Checked then
+      actEditAdrExecute(sender);
     actCancel.Enabled := True;
     pgcInfo.Enabled := False;
     StartEdit();

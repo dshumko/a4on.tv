@@ -287,22 +287,29 @@ object EQPortForm: TEQPortForm
       item
         FieldName = 'name'
         Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080
+        Width = 70
       end
       item
         FieldName = 'NODE_S'
         Title.Caption = #1059#1079#1077#1083' '#1089
+        Width = 35
       end
       item
         FieldName = 'NODE_E'
         Title.Caption = #1059#1079#1077#1083' '#1076#1086
+        Width = 35
       end
       item
+        AutoFitColWidth = False
         FieldName = 'Capacity'
         Title.Caption = #1045#1084#1082#1086#1089#1090#1100
+        Width = 20
       end
       item
+        AutoFitColWidth = False
         FieldName = 'FREE'
         Title.Caption = #1057#1074#1086#1073#1086#1076#1085#1086
+        Width = 20
       end>
     DropDownBox.ListSource = srcWire
     DropDownBox.ListSourceAutoFilter = True
@@ -503,7 +510,9 @@ object EQPortForm: TEQPortForm
       '  , e.Name NODE_E'
       '  , t.O_Dimension COLOR'
       '  , c.Capacity  '
-      '  , c.Capacity FREE -- '#1090#1091#1090' '#1085#1091#1078#1085#1086' '#1089#1095#1080#1090#1072#1090#1100
+      
+        '  , (coalesce(c.Capacity, 0) - (select count(*) from port p wher' +
+        'e p.Wid = c.Wid)) FREE -- '#1090#1091#1090' '#1085#1091#1078#1085#1086' '#1089#1095#1080#1090#1072#1090#1100
       '  from Wire C'
       
         '       inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O_TYPE = ' +
@@ -512,7 +521,7 @@ object EQPortForm: TEQPortForm
       '       left outer join NODEs e on (e.Node_Id = c.Point_E)'
       '  where (c.Point_S = :node)'
       '          or (c.Point_E = :node)'
-      '  order by c.Name  ')
+      '  order by c.Name ')
     AutoCalcFields = False
     Database = dmMain.dbTV
     Left = 352

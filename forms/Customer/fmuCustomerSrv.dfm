@@ -393,6 +393,9 @@ object apgCustomerSrv: TapgCustomerSrv
         '  , coalesce(sl.tarif_sum / extract(day from dateadd(-1 day to(d' +
         'ateadd(1 month to current_date - extract(day from current_date) ' +
         '+ 1)))), 0) as tarif_day'
+      
+        '  , iif(exists(select l.Link_Id from SERVICES_LINKS l where l.PA' +
+        'RENT is null and l.CHILD = sl.SERV_ID), 1, 0) as SRV_ACTIVE  '
       '  from (select'
       '            SS.*'
       '          , s.name'
@@ -445,11 +448,13 @@ object apgCustomerSrv: TapgCustomerSrv
         '  , coalesce(sl.tarif_sum / extract(day from dateadd(-1 day to(d' +
         'ateadd(1 month to current_date - extract(day from current_date) ' +
         '+ 1)))), 0) as tarif_day'
+      
+        '  , iif(exists(select l.Link_Id from SERVICES_LINKS l where l.PA' +
+        'RENT is null and l.CHILD = sl.SERV_ID), 1, 0) as SRV_ACTIVE'
       '  from (select'
       '            SS.*'
       '          , s.name'
-      '          ,'
-      '            case ss.state_sgn'
+      '          , case ss.state_sgn'
       '              when 0 then '#39#1054#1090#1082#1083#1102#1095#1077#1085#39
       '              when 1 then '#39#1055#1086#1076#1082#1083#1102#1095#1077#1085#39
       '              else '#39#1085#1077#1087#1086#1085#1103#1090#1082#1080' '#39#39#39' || ss.state_sgn || '#39#39#39#39
@@ -457,8 +462,7 @@ object apgCustomerSrv: TapgCustomerSrv
       '            coalesce(w.Surname, ss.State_Change_By) as WHO_LAST'
       '          , sd.Name as STATE_SRV_NAME'
       '          , o.o_name as VAT_GROUP'
-      '          ,'
-      '            (select'
+      '          , (select'
       '                 M_TARIF'
       
         '               from Get_Tarif_Sum_Customer_Srv(ss.Customer_Id, s' +
@@ -472,8 +476,7 @@ object apgCustomerSrv: TapgCustomerSrv
         'Id)'
       
         '               inner join objects b on (b.O_Id = s.BUSINESS_TYPE' +
-        ' and'
-      '                     b.O_TYPE = 15)'
+        ' and b.O_TYPE = 15)'
       
         '               left outer join services sd on (ss.State_Srv = sd' +
         '.Service_Id)'
@@ -482,8 +485,7 @@ object apgCustomerSrv: TapgCustomerSrv
         'Change_By)'
       
         '               left outer join objects o on (o.o_id = ss.vatg_id' +
-        ' and'
-      '                     o.o_type = 13)'
+        ' and o.o_type = 13)'
       '          where ss.CUSTOMER_ID = :CUSTOMER_ID) sl'
       '  order by state_sgn desc, name')
     AutoUpdateOptions.UpdateTableName = 'SUBSCR_SERV'

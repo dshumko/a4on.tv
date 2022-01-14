@@ -865,6 +865,7 @@ resourcestring
   rsOff = 'Отключить';
   rsFree = 'БЕСПЛАТНО';
 
+  rsEqpmntCstmrs = 'К оборудованию подключены абоненты';
   rsSetPayDate = 'После внесения оплаты';
 
   rsVlanHouse = 'VLAN не в зоне обслуживания дома';

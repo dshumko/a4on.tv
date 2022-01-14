@@ -272,7 +272,8 @@ object apgEqpmntPort: TapgEqpmntPort
         DynProps = <>
         EditButtons = <>
         FieldName = 'ACCOUNT_NO'
-        Footer.ValueType = fvtStaticText
+        Footer.FieldName = 'IN_USE'
+        Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1051#1080#1094' '#1089#1095#1077#1090
         Title.TitleButton = True
@@ -554,8 +555,8 @@ object apgEqpmntPort: TapgEqpmntPort
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    PORT'
-      'WHERE'
-      '    PORT = :OLD_PORT')
+      'WHERE EID = :OLD_EID'
+      '  and PORT = :OLD_PORT')
     RefreshSQL.Strings = (
       'select'
       '    a.port'
@@ -611,6 +612,9 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , w.Wid'
       '  , w.Point_S'
       '  , w.Point_E'
+      
+        '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
+        '_USE  '
       '  from (select distinct Eid, port'
       '          from (select Eid, port from port where Eid = :EID'
       '                union'
@@ -658,6 +662,9 @@ object apgEqpmntPort: TapgEqpmntPort
       '  and a.PORT = :OLD_PORT'
       '')
     SelectSQL.Strings = (
+      'select'
+      '*'
+      'from('
       'select'
       '    a.port'
       '  , a.EID'
@@ -712,6 +719,9 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , w.Wid'
       '  , w.Point_S'
       '  , w.Point_E'
+      
+        '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
+        '_USE '
       '  from (select distinct Eid, port'
       '          from (select Eid, port from port where Eid = :EID'
       '                union'
@@ -754,9 +764,69 @@ object apgEqpmntPort: TapgEqpmntPort
         '_TYPE = 56)'
       '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
       '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
-      '       '
       '  where a.EID = :EID'
-      'order by a.PORT  ')
+      'union'
+      'select'
+      '    null'
+      '  , t.Eq_Id EID'
+      '  , c.CUSTOMER_ID'
+      '  , c.CUST_CODE'
+      '  , c.ACCOUNT_NO'
+      '  , null'
+      '  , c.MIDLENAME'
+      '  , c.INITIALS'
+      '  , c.PHONE_NO'
+      '  , c.NOTICE'
+      '  , c.CUST_STATE_DESCR'
+      '  , c.FLAT_NO'
+      '  , c.DEBT_SUM'
+      '  , c.HIS_COLOR'
+      '  , s.street_short'
+      '  , S.Street_Name'
+      '  , H.House_No'
+      '  , h.Street_ID'
+      '  , c.HOUSE_ID'
+      '  , -1 * c.debt_sum as BALANCE'
+      '  , (select'
+      '         count(*)'
+      '       from SUBSCR_SERV ss'
+      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
+      '             and ss.STATE_SGN = 1) as connected'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  from tv_lan t'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      '       left outer join HOUSE H on (C.HOUSE_ID = H.HOUSE_ID)'
+      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+      
+        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
+        'and f.Flat_No = c.Flat_No)'
+      '  where t.Eq_Id = :EID and t.Port is null'
+      ')'
+      'order by 1')
     AutoUpdateOptions.UpdateTableName = 'CUSTOMER'
     AutoUpdateOptions.KeyFields = 'CUSTOMER_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_CUSTOMER_UID'

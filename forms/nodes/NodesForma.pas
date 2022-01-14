@@ -262,10 +262,10 @@ var
 implementation
 
 uses
-  A4onTypeUnit, AtrCommon, MAIN, DM, CustomerForma, DBGridEhFindDlgs, DateUtils,
-  SelectColumnsForma, ExportSettingsForma, TextEditForma,
-  SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma,
-  DBGridEhImpExp, NodesFilter,
+  A4onTypeUnit, AtrCommon, MAIN, DM, CustomerForma,
+  DBGridEhFindDlgs, DateUtils, SelectColumnsForma, ExportSettingsForma,
+  TextEditForma, SendMessagesForma, fs_iinterpreter, RecourseForma,
+  RequestNewForma, DBGridEhImpExp, NodesFilter,
   AtrStrUtils, RxStrUtils, StrUtils, EhLibFIB, pFIBProps,
   fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT,
   fmuNodeFlats, fmuNodeMaterialsMove, fmuNodeLayout, fmuNodeMaterials,
@@ -445,7 +445,15 @@ end;
 procedure TNodesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
+  v: TfsCustomVariable;
 begin
+  if fsGlobalUnit <> nil then
+  begin
+    v := fsGlobalUnit.Find(Self.Name);
+    if v <> nil then
+      fsGlobalUnit.RemoveItems(Self);
+  end;
+
   if FCanSave then
   begin
     for i := 0 to FPageList.Count - 1 do
@@ -460,6 +468,13 @@ end;
 
 procedure TNodesForm.FormCreate(Sender: TObject);
 begin
+  with fsGlobalUnit do
+  begin
+    AddedBy := Self;
+    AddForm(Self);
+    AddedBy := nil;
+  end;
+
   FPageList := TA4onPages.Create;
   FPageList.Add(TapgNodeFlats);
   FPageList.Add(TapgNodeRequests);

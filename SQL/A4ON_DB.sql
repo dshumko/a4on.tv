@@ -270,7 +270,7 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 50338;
+SET GENERATOR GEN_OPERATIONS_UID TO 50340;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_ORDER_TP TO 8;
@@ -7953,12 +7953,16 @@ CREATE OR ALTER TRIGGER EQUIPMENT_AIU0 FOR EQUIPMENT
 ACTIVE AFTER INSERT OR UPDATE POSITION 0
 as
 begin
-  if (not((NEW.Parent_Id is null)
+  if (not((new.Parent_Id is null)
       or
-      (NEW.Parent_Port is null))) then begin
-    update or insert into Port (Eid, Port, Con, Con_Id)
-    values (NEW.Parent_Id, NEW.Parent_Port, 0, NEW.Eid)
-    matching (Eid, Port);
+      (new.Parent_Port is null))) then begin
+    if (new.Parent_Id is distinct from old.Parent_Id) then begin
+      if (new.Parent_Port is distinct from old.Parent_Port) then begin
+        update or insert into Port (Eid, Port, Con, Con_Id)
+        values (new.Parent_Id, new.Parent_Port, 0, new.Eid)
+        matching (Eid, Port);
+      end
+    end
   end
 end;
 
@@ -8000,12 +8004,17 @@ CREATE OR ALTER TRIGGER EQUIPMENT_AUD0 FOR EQUIPMENT
 ACTIVE AFTER UPDATE OR DELETE POSITION 0
 as
 begin
-  if (not((OLD.Parent_Id is null)
+  -- если порт очистили, сборсим в таблице портов
+  if (not((old.Parent_Id is null)
       or
-      (OLD.Parent_Port is null))) then begin
-    update or insert into Port (Eid, Port, Con, Con_Id)
-    values (OLD.Parent_Id, OLD.Parent_Port, null, null)
-    matching (Eid, Port);
+      (old.Parent_Port is null))) then begin
+    if (new.Parent_Id is distinct from old.Parent_Id) then begin
+      if (new.Parent_Port is distinct from old.Parent_Port) then begin
+        update or insert into Port (Eid, Port, Con, Con_Id)
+        values (old.Parent_Id, old.Parent_Port, null, null)
+        matching (Eid, Port);
+      end
+    end
   end
 end;
 
@@ -8024,24 +8033,17 @@ begin
     exception E_CANNOT_DELETE;
 end;
 
-CREATE OR ALTER TRIGGER EQUIPMENT_BI0 FOR EQUIPMENT
-ACTIVE BEFORE INSERT POSITION 0
+CREATE OR ALTER TRIGGER EQUIPMENT_BIU FOR EQUIPMENT
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
+declare variable mac d_mac;
 begin
   if (new.EID is null) then
     new.EID = gen_id(gen_operations_uid, 1);
 
-  new.last_update = localtimestamp;
-
-  new.added_by = current_user;
-  new.added_on = localtimestamp;
-end;
-
-CREATE OR ALTER TRIGGER EQUIPMENT_BIU1 FOR EQUIPMENT
-ACTIVE BEFORE INSERT OR UPDATE POSITION 1
-as
-declare variable mac d_mac;
-begin
+  if ((new.Parent_Port <> '0') and (new.Parent_Port starting with '0')) then begin
+    new.Parent_Port = trim(leading '0' from new.Parent_Port); /* Удалим 0 в начале */
+  end
   if (new.Ip is not null) then
     select
         Int_Ip
@@ -8057,15 +8059,16 @@ begin
     into :Mac;
     new.mac = mac;
   end
-end;
 
-CREATE OR ALTER TRIGGER EQUIPMENT_BU FOR EQUIPMENT
-ACTIVE BEFORE UPDATE POSITION 0
-as
-begin
   new.last_update = localtimestamp;
-  new.Edit_by = current_user;
-  new.Edit_on = localtimestamp;
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
+  end
 end;
 
 CREATE OR ALTER TRIGGER EQUIPMENT_CMD_GRP_BIU0 FOR EQUIPMENT_CMD_GRP
@@ -9342,6 +9345,9 @@ CREATE OR ALTER TRIGGER PORT_BIU0 FOR PORT
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
+  if ((new.port <> '0') and (new.port starting with '0')) then begin
+    new.port = trim(leading '0' from new.port); /* Удалим 0 в начале */
+  end
   new.P_Type = coalesce(new.P_Type, 0);/* RJ45 */
   new.P_State = coalesce(new.P_State, 1);/* Исправен */
 
@@ -10987,6 +10993,9 @@ begin
 
   if (not new.Ipv6 is null) then
     new.Ipv6 = lower(new.Ipv6);
+
+  if ((not new.Port is null) and (new.port <> '0')) then
+    new.port = trim(leading '0' from new.port);
 
   new.last_update = localtimestamp;
 end;

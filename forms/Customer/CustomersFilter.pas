@@ -46,11 +46,10 @@ type
     Label8: TLabel;
     Label9: TLabel;
     Label10: TLabel;
-    DBLookupComboboxEh1: TDBLookupComboboxEh;
+    lcbSERVICE: TDBLookupComboboxEh;
     DBComboBoxEh1: TDBComboBoxEh;
     grpDolg: TGroupBox;
     lblBalance: TLabel;
-    lblFrom: TLabel;
     lblto: TLabel;
     edtSumTo: TDBEditEh;
     DBNumberEditEh1: TDBNumberEditEh;
@@ -191,6 +190,9 @@ type
     procedure cbbAREAChange(Sender: TObject);
     procedure cbbATTRTYPEChange(Sender: TObject);
     procedure dbnvgrClick(Sender: TObject; Button: TNavigateBtn);
+    procedure cbb2Enter(Sender: TObject);
+    procedure lcbSERVICEEnter(Sender: TObject);
+    procedure cbb3Enter(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFilter(const filename: string);
@@ -476,7 +478,6 @@ begin
   except
     interval := False
   end;
-  lblFrom.Visible := interval;
   lblto.Visible := interval;
   edtSumTo.Visible := interval;
 end;
@@ -487,6 +488,16 @@ begin
     if not VarIsClear((Sender as TDBLookupComboboxEh).Value) then
       if not cbAdress.Checked then
         cbAdress.Checked := true;
+end;
+
+procedure TCustomersFilterForm.cbb2Enter(Sender: TObject);
+begin
+  (sender as TDBLookupComboboxEh).SelectAll;
+end;
+
+procedure TCustomersFilterForm.cbb3Enter(Sender: TObject);
+begin
+  (sender as TDBLookupComboboxEh).SelectAll;
 end;
 
 procedure TCustomersFilterForm.cbbAREAChange(Sender: TObject);
@@ -520,6 +531,12 @@ begin
     dsStreets.Filter := 'AREA_ID = ' + VarAsType(cbbAREA.Value, varString);
   end;
   dsStreets.Filtered := (VarIsNumeric(cbbAREA.Value));
+  cbbSTREET.SelectAll;
+end;
+
+procedure TCustomersFilterForm.lcbSERVICEEnter(Sender: TObject);
+begin
+  (sender as TDBLookupComboboxEh).SelectAll;
 end;
 
 procedure TCustomersFilterForm.DBNumberEditEh1Exit(Sender: TObject);

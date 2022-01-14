@@ -13,11 +13,6 @@ uses
 
 type
   TCustSubscrHistoryForma = class(TForm)
-    ScrollBox1: TScrollBox;
-    Panel1: TPanel;
-    dbgCustSubscrServHist: TDBGridEh;
-    Panel3: TPanel;
-    dbgCustSubscrServ: TDBGridEh;
     ActionList1: TActionList;
     actDeleteService: TAction;
     srcServices: TDataSource;
@@ -30,15 +25,21 @@ type
     miDeleteHistory: TMenuItem;
     pmServices: TPopupMenu;
     miDeleteServices: TMenuItem;
-    pnlBtns: TPanel;
-    btnOk: TSpeedButton;
     actOk: TAction;
     actCancel: TAction;
     actBack: TAction;
+    actDisconnect: TAction;
+    actDel: TAction;
+    Panel3: TPanel;
+    dbgCustSubscrServ: TDBGridEh;
+    pnlBtns: TPanel;
+    btnOk: TSpeedButton;
     btnCancel: TSpeedButton;
     btnBack: TSpeedButton;
     btnDisconnect: TSpeedButton;
-    actDisconnect: TAction;
+    Panel1: TPanel;
+    dbgCustSubscrServHist: TDBGridEh;
+    spl1: TSplitter;
     procedure dbgCustSubscrServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure dbgCustSubscrServExit(Sender: TObject);
@@ -54,13 +55,14 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure srcServicesDataChange(Sender: TObject; Field: TField);
     procedure actDisconnectExecute(Sender: TObject);
+    procedure actDelExecute(Sender: TObject);
   private
-    fNeedRecalc: Boolean;
-    fChangeHistory: Boolean;
-    fFullAccess: Boolean;
+    FNeedRecalc: Boolean;
+    FChangeHistory: Boolean;
+    FFullAccess: Boolean;
   public
     { Public declarations }
-    property NeedRecalc: Boolean read fNeedRecalc;
+    property NeedRecalc: Boolean read FNeedRecalc;
 
   end;
 
@@ -116,13 +118,19 @@ end;
 
 procedure TCustSubscrHistoryForma.srcServicesStateChange(Sender: TObject);
 begin
+  if not(FFullAccess or FChangeHistory) then
+    Exit;
+
   actOk.Enabled := not((Sender as TDataSource).DataSet.State = dsBrowse);
   actCancel.Enabled := actOk.Enabled;
-  fNeedRecalc := True;
+  FNeedRecalc := True;
 end;
 
 procedure TCustSubscrHistoryForma.actDeleteSubscrHistExecute(Sender: TObject);
 begin
+  if not(FFullAccess or FChangeHistory) then
+    Exit;
+
   if (dmMain.InStrictMode and ((dsServicesHistory['DATE_FROM'] < dmMain.CurrentMonth) or
     (dsServicesHistory['DATE_TO'] < dmMain.CurrentMonth))) then
   begin
@@ -133,12 +141,24 @@ begin
   if (MessageDlg(rsDeleteSrvHistory, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     dsServicesHistory.Delete;
-    fNeedRecalc := True;
+    FNeedRecalc := True;
   end;
+end;
+
+procedure TCustSubscrHistoryForma.actDelExecute(Sender: TObject);
+begin
+  if dbgCustSubscrServ.Focused then
+    actDeleteService.Execute;
+
+  if dbgCustSubscrServHist.Focused then
+    actDeleteSubscrHist.Execute;
 end;
 
 procedure TCustSubscrHistoryForma.actDeleteServiceExecute(Sender: TObject);
 begin
+  if not(FFullAccess or FChangeHistory) then
+    Exit;
+
   if dsServices.RecordCount = 0 then
     Exit;
 
@@ -151,7 +171,7 @@ begin
   if (MessageDlg(rsDeleteSrvHistory, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     dsServices.Delete;
-    fNeedRecalc := True;
+    FNeedRecalc := True;
   end;
 end;
 
@@ -191,22 +211,22 @@ begin
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
     end;
-  fFullAccess := (dmMain.AllowedAction(rght_Customer_full));
-  fChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
-  actDeleteService.Visible := fChangeHistory or fFullAccess;
+  FFullAccess := (dmMain.AllowedAction(rght_Customer_full));
+  FChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
+  actDeleteService.Visible := FChangeHistory or FFullAccess;
   actDeleteSubscrHist.Visible := actDeleteService.Visible;
   actDisconnect.Visible := actDeleteService.Visible;
-  fNeedRecalc := False;
+  FNeedRecalc := False;
 end;
 
 procedure TCustSubscrHistoryForma.srcServicesHistoryStateChange(Sender: TObject);
 begin
-  fNeedRecalc := True;
+  FNeedRecalc := True;
 end;
 
 procedure TCustSubscrHistoryForma.actOkExecute(Sender: TObject);
 begin
-  if fFullAccess or fChangeHistory then
+  if FFullAccess or FChangeHistory then
     dsServices.Post
   else
     dsServices.cancel;
@@ -224,6 +244,7 @@ var
 begin
   if dsServicesHistory.RecordCount = 0 then
     Exit;
+
   dsServicesHistory.First;
   if dsServicesHistory['DISACT_SERV_ID'] <> srv_Null then
   begin
@@ -236,7 +257,7 @@ begin
     srv_name := 'ON_NAME';
   end;
 
-  if fFullAccess or fChangeHistory or (dsServicesHistory[srv_date] >= dmMain.CurrentMonth) then
+  if FFullAccess or FChangeHistory or (dsServicesHistory[srv_date] >= dmMain.CurrentMonth) then
   begin
     if MessageDlg(PChar(Format(rsHistoryQuestion, [dsServicesHistory[srv_name], dsServices['NAME']])), mtConfirmation,
       [mbYes, mbNo], 0) = mrYes then
@@ -255,7 +276,7 @@ begin
         end;
       dsServices.Refresh;
       dsServicesHistory.CloseOpen(True);
-      fNeedRecalc := True;
+      FNeedRecalc := True;
     end;
   end;
 end;
@@ -286,7 +307,7 @@ var
   offSrv: Integer;
   Units: Double;
 begin
-  if not(dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_EditSrv)) then
+  if not(FFullAccess or FChangeHistory) then
     Exit;
 
   if dsServices.FieldByName('SERV_ID').IsNull then
@@ -294,6 +315,12 @@ begin
 
   if ((dsServices.FieldByName('STATE_SGN').IsNull) and (dsServices['STATE_SGN'] = 1)) then
     Exit; // Услуга не отключена выйдем
+
+  if (dsServices.FieldByName('State_Srv').AsInteger <> srv_AutoBlock)  then
+    Exit;
+
+  if not(FFullAccess or FChangeHistory or (dsServices['STATE_DATE'] >= dmMain.CurrentMonth)) then
+    Exit; // проверим дату статуса и права
 
   Units := 0;
   offSrv := 0;
@@ -315,7 +342,7 @@ begin
     SQL.Clear;
   end;
   dsServicesHistory.CloseOpen(True);
-  fNeedRecalc := True;
+  FNeedRecalc := True;
 end;
 
 end.

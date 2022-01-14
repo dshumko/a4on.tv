@@ -24,8 +24,11 @@ type
     btnAdd1: TSpeedButton;
     actAdd: TAction;
     actDel: TAction;
+    btnFind: TSpeedButton;
+    actFind: TAction;
     procedure actDelExecute(Sender: TObject);
     procedure actAddExecute(Sender: TObject);
+    procedure actFindExecute(Sender: TObject);
   private
     FullAccess: Boolean;
   public
@@ -39,7 +42,7 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, DM, RequestForma, NodeMaterialForma;
+uses MAIN, AtrCommon, DM, RequestForma, NodeMaterialForma, EquipmentForma;
 
 class function TapgNodeMaterials.GetPageName: string;
 begin
@@ -85,6 +88,22 @@ begin
     srcMat.DataSet.Delete;
     UpdatePage;
   end;
+end;
+
+procedure TapgNodeMaterials.actFindExecute(Sender: TObject);
+begin
+  if (not dsMat.Active) or (dsMat.RecordCount = 0) then
+    Exit;
+
+  if (dsMat.FieldByName('NAME').IsNull) then
+    Exit;
+
+  if not Assigned(EquipmentForm) then begin
+    EquipmentForm := TEquipmentForm.Create(Application);
+    EquipmentForm.Show;
+  end;
+  EquipmentForm.dbGrid.DataSource.DataSet.Locate('NAME', dsMat['NAME'], [loCaseInsensitive]);
+  // NAME
 end;
 
 procedure TapgNodeMaterials.CloseData;

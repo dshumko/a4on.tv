@@ -10,7 +10,7 @@ uses
 
   PrjConst, AtrPages, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet,
-  pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh;
+  pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, A4onTypeUnit;
 
 type
   TapgNodeLink = class(TA4onPage)
@@ -32,19 +32,21 @@ type
     dbgDetail: TDBGridEh;
     dsEQ: TpFIBDataSet;
     srcEQ: TDataSource;
+    actPEdit: TAction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dbgNodeLinkGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure dbgNodeLinkDblClick(Sender: TObject);
-    procedure dbgNodeLinkRowDetailPanelShow(Sender: TCustomDBGridEh;
-      var CanShow: Boolean);
-    procedure dbgNodeLinkRowDetailPanelHide(Sender: TCustomDBGridEh;
-      var CanHide: Boolean);
+    procedure dbgNodeLinkRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
+    procedure dbgNodeLinkRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
+    procedure dbgDetailDblClick(Sender: TObject);
+    procedure actPEditExecute(Sender: TObject);
   private
     { Private declarations }
     procedure EnableControls;
+    function GetEquipmentRecord: TEquipmentRecord;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -58,7 +60,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, A4onTypeUnit, AtrCommon, DM, NodeLinkForma;
+  MAIN, AtrCommon, DM, NodeLinkForma, EQPort;
 
 class function TapgNodeLink.GetPageName: string;
 begin
@@ -75,6 +77,8 @@ begin
   actAdd.Visible := pnlButtons.Visible;
   actDel.Visible := pnlButtons.Visible;
   actEdit.Visible := pnlButtons.Visible;
+
+  actPEdit.Enabled := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
 
   dsLink.DataSource := FDataSource;
 end;
@@ -183,9 +187,50 @@ begin
   end
 end;
 
+procedure TapgNodeLink.actPEditExecute(Sender: TObject);
+var
+  EQ: TEquipmentRecord;
+  Port: string;
+begin
+  inherited;
+
+  if not dsEQ.FieldByName('PORT').IsNull then
+    Port := dsEQ.FieldByName('PORT').asString
+  else
+    Exit;
+
+  EQ := GetEquipmentRecord;
+
+  if EQ.id = -1 then
+    Exit;
+
+  if EditPort(EQ, Port) then
+  begin
+    dsLink.Refresh;
+    dsEQ.CloseOpen(true);
+  end;
+end;
+
 procedure TapgNodeLink.CloseData;
 begin
   dsLink.Close;
+end;
+
+procedure TapgNodeLink.dbgDetailDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
+begin
+  inherited;
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgDetail.ScreenToClient(ScrPt);
+  Cell := dbgDetail.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgDetail.Fields[Cell.X - 1].FieldName);
+  if (s = 'PORT') then
+  begin
+    actPEdit.Execute;
+  end;
 end;
 
 procedure TapgNodeLink.dbgNodeLinkDblClick(Sender: TObject);
@@ -209,14 +254,12 @@ begin
     Background := StringToColor(dsLink.FieldByName('COLOR').Value);
 end;
 
-procedure TapgNodeLink.dbgNodeLinkRowDetailPanelHide(
-  Sender: TCustomDBGridEh; var CanHide: Boolean);
+procedure TapgNodeLink.dbgNodeLinkRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
 begin
   dsEQ.Close;
 end;
 
-procedure TapgNodeLink.dbgNodeLinkRowDetailPanelShow(
-  Sender: TCustomDBGridEh; var CanShow: Boolean);
+procedure TapgNodeLink.dbgNodeLinkRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
 begin
   dsEQ.Open;
 end;
@@ -233,6 +276,27 @@ begin
   dsLink.CloseOpen(true);
   if Assigned(bm) then
     dsLink.GotoBookmark(bm);
+end;
+
+function TapgNodeLink.GetEquipmentRecord: TEquipmentRecord;
+begin
+  if (dbgDetail.DataSource.DataSet.RecordCount = 0) then
+  begin
+    Result.id := -1;
+    Exit;
+  end;
+
+  Result.id := dbgDetail.DataSource.DataSet.FieldByName('Eid').AsInteger;
+  if not dbgDetail.DataSource.DataSet.FieldByName('Eq_Type').IsNull then
+    Result.TypeID := dbgDetail.DataSource.DataSet.FieldByName('Eq_Type').AsInteger;
+  if not dbgDetail.DataSource.DataSet.FieldByName('Eq_Group').IsNull then
+    Result.TypeName := dbgDetail.DataSource.DataSet.FieldByName('Eq_Group').asString;
+  if not dbgDetail.DataSource.DataSet.FieldByName('Name').IsNull then
+    Result.Name := dbgDetail.DataSource.DataSet.FieldByName('Name').asString;
+  if not dbgDetail.DataSource.DataSet.FieldByName('EIp').IsNull then
+    Result.IP := dbgDetail.DataSource.DataSet.FieldByName('EIp').asString;
+  if not dbgDetail.DataSource.DataSet.FieldByName('EMac').IsNull then
+    Result.MAC := dbgDetail.DataSource.DataSet.FieldByName('EMac').asString;
 end;
 
 end.

@@ -29,12 +29,6 @@ object NodeLinkForm: TNodeLinkForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 67
       Width = 332
@@ -342,12 +336,13 @@ object NodeLinkForm: TNodeLinkForm
       Top = 116
       Width = 75
       Height = 21
+      Hint = #1050#1086#1083'-'#1074#1086' '#1074#1086#1079#1084#1086#1078#1085#1099#1093' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1081' '#1082#1072#1073#1077#1083#1077#1084
       Anchors = [akLeft, akTop, akRight]
       DataField = 'CAPACITY'
       DataSource = srcLink
       DecimalPlaces = 0
       DynProps = <>
-      EmptyDataInfo.Text = #1046#1080#1083
+      EmptyDataInfo.Text = #1082#1086#1083'-'#1074#1086' '#1087#1086#1076#1082#1083'.'
       EditButtons = <>
       ShowHint = True
       TabOrder = 6

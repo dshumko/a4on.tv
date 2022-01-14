@@ -60,16 +60,14 @@
         <DCC_OutputDRCFile>true</DCC_OutputDRCFile>
         <DCC_S>false</DCC_S>
         <Manifest_File>PerMonitorDpiAwareness.manifest</Manifest_File>
-        <VerInfo_Build>672</VerInfo_Build>
+        <VerInfo_Build>715</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.4.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.1.0.715;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
-        <VerInfo_MajorVer>21</VerInfo_MajorVer>
-        <VerInfo_MinorVer>4</VerInfo_MinorVer>
+        <VerInfo_MajorVer>22</VerInfo_MajorVer>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.12.0.672;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_MinorVer>12</VerInfo_MinorVer>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Debugger_RunParams>/p:masterkey</Debugger_RunParams>
     </PropertyGroup>
@@ -80,9 +78,8 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_MinorVer>12</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.12.0.713;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>713</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.1.0.716;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>716</VerInfo_Build>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
         <DCC_MapFile>3</DCC_MapFile>
@@ -97,9 +94,8 @@
         <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_MinorVer>12</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=21.12.0.688;LegalCopyright=Copyright (C) 2005-2021, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=21.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>688</VerInfo_Build>
+        <VerInfo_Build>717</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.1.0.717;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>

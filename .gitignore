@@ -51,3 +51,5 @@ A4ON.ficfg
 *.eof
 A4ON.dproj.eureka
 _git_.txt
+SQL/extract.bat
+SQL/extract.ibeblock

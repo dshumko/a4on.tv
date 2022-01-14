@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, System.Actions, Vcl.ActnList, Vcl.Controls,
-  System.UITypes,  Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Data.DB,
-  VCL.Graphics, VCL.Forms, VCL.Dialogs, VCL.ToolWin,
+  System.UITypes, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Data.DB,
+  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
   AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh;
@@ -34,7 +34,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
   private
-    FIsVertical : Boolean;
+    FIsVertical: Boolean;
     procedure EnableControls;
     procedure SwitchLayout(const InVertical: Boolean);
   public
@@ -58,8 +58,8 @@ end;
 
 procedure TapgEqpmntRegion.SwitchLayout(const InVertical: Boolean);
 begin
-  if (FIsVertical = InVertical)
-  then Exit;
+  if (FIsVertical = InVertical) then
+    Exit;
 
   FIsVertical := InVertical;
   if not FIsVertical then
@@ -70,7 +70,7 @@ begin
     btnEdit.Top := 30;
     btnDel.Left := 2;
     btnDel.Top := pnlButtons.Height - btnDel.Height - 4;
-    btnDel.Anchors := [akLeft,akBottom];
+    btnDel.Anchors := [akLeft, akBottom];
   end
   else
   begin
@@ -80,7 +80,7 @@ begin
     btnEdit.Left := 30;
     btnDel.Top := 2;
     btnDel.Left := pnlButtons.Width - btnDel.Width - 4;
-    btnDel.Anchors := [akTop,akRight];
+    btnDel.Anchors := [akTop, akRight];
   end;
 end;
 
@@ -112,7 +112,7 @@ end;
 
 procedure TapgEqpmntRegion.FormResize(Sender: TObject);
 var
-  b : Boolean;
+  b: Boolean;
 begin
   b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
   SwitchLayout(b);
@@ -124,8 +124,7 @@ begin
   EnableControls;
 end;
 
-procedure TapgEqpmntRegion.srcDataDataChange(Sender: TObject;
-  Field: TField);
+procedure TapgEqpmntRegion.srcDataDataChange(Sender: TObject; Field: TField);
 begin
   actEdit.Enabled := actEdit.Visible and (srcData.DataSet.RecordCount > 0);
   actDel.Enabled := actDel.Visible and (srcData.DataSet.RecordCount > 0);
@@ -134,7 +133,7 @@ end;
 procedure TapgEqpmntRegion.actAddExecute(Sender: TObject);
 begin
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   if EditEQCoverage(FDataSource.DataSet['EID'], -1) then
   begin
     dsData.Close;
@@ -148,13 +147,13 @@ var
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
 
   if dsData.RecordCount = 0 then
-    exit;
+    Exit;
 
   if (dsData.FieldByName('eid').IsNull) or (dsData.FieldByName('HOUSE_ID').IsNull) then
-    exit;
+    Exit;
 
   cnt := 0;
   try
@@ -179,22 +178,29 @@ begin
     cnt := 0;
   end;
 
-  if (cnt = 0) and (Application.MessageBox(PWideChar(rsHouseInService), PWideChar(rsWarning),
-    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES) then
+  if (cnt > 0) then
   begin
-    if (MessageDlg(rsDeleteHouseZone, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-      dsData.Delete;
+    MessageDlg(rsEqpmntCstmrs, mtWarning, [mbOK], 0);
+  end
+  else
+  begin
+    if (Application.MessageBox(PWideChar(rsHouseInService), PWideChar(rsWarning),
+      MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES) then
+    begin
+      if (MessageDlg(rsDeleteHouseZone, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+        dsData.Delete;
+    end;
   end;
 end;
 
 procedure TapgEqpmntRegion.actEditExecute(Sender: TObject);
 begin
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
-    exit;
+    Exit;
   if EditEQCoverage(FDataSource.DataSet['EID'], dsData['HOUSE_ID']) then
   begin
     dsData.Close;
-    dsData.OPen;
+    dsData.Open;
   end;
 end;
 

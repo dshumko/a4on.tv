@@ -27,6 +27,7 @@ inherited EquipmentForm: TEquipmentForm
     IndicatorTitle.ShowDropDownSign = True
     IndicatorTitle.TitleButton = True
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    SortLocal = False
     SumList.Active = True
     OnGetCellParams = dbGridGetCellParams
     OnSortMarkingChanged = dbGridSortMarkingChanged
@@ -224,7 +225,7 @@ inherited EquipmentForm: TEquipmentForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'PARENT_PORT'
+        FieldName = 'Parent_Port_sort'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082'|'#1055#1086#1088#1090
         Title.TitleButton = True
@@ -302,23 +303,48 @@ inherited EquipmentForm: TEquipmentForm
     object pnlChkTree: TPanel
       Left = 233
       Top = 0
-      Width = 166
+      Width = 172
       Height = 22
       BevelOuter = bvNone
       TabOrder = 0
       object chkTREE: TCheckBox
-        Left = 0
+        Left = 10
         Top = 0
-        Width = 166
+        Width = 162
         Height = 22
         Align = alClient
         Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072
         TabOrder = 0
         OnClick = chkTREEClick
       end
+      object pnl1: TPanel
+        Left = 0
+        Top = 0
+        Width = 10
+        Height = 22
+        ParentCustomHint = False
+        Align = alLeft
+        BevelOuter = bvNone
+        BiDiMode = bdLeftToRight
+        Ctl3D = True
+        DoubleBuffered = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentBiDiMode = False
+        ParentBackground = False
+        ParentCtl3D = False
+        ParentDoubleBuffered = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = False
+        TabOrder = 1
+      end
     end
     object chkGroup: TCheckBox
-      Left = 399
+      Left = 405
       Top = 0
       Width = 224
       Height = 22
@@ -330,7 +356,7 @@ inherited EquipmentForm: TEquipmentForm
       OnClick = chkGroupClick
     end
     object btn3: TToolButton
-      Left = 623
+      Left = 629
       Top = 0
       Width = 18
       Caption = 'btn3'
@@ -338,7 +364,7 @@ inherited EquipmentForm: TEquipmentForm
       Style = tbsSeparator
     end
     object btnLayout: TToolButton
-      Left = 641
+      Left = 647
       Top = 0
       Action = actLayout
     end
@@ -553,6 +579,11 @@ inherited EquipmentForm: TEquipmentForm
       '  , o.O_DIMENSION as COLOR'
       '  , n.NAME NODE_NAME'
       '  , nt.o_name as node_type '
+      '  , case(char_length(e.Parent_Port))'
+      '      when 1 then '#39'0'#39' || e.Parent_Port'
+      '      when 3 then '#39'0'#39' || e.Parent_Port'
+      '      else e.Parent_Port'
+      '    end Parent_Port_sort  '
       '  from EQUIPMENT E'
       '       left outer join house h on (e.house_id = h.house_id)'
       '       left outer join street s on (s.street_id = h.street_id)'
@@ -577,6 +608,11 @@ inherited EquipmentForm: TEquipmentForm
       '  , o.O_DIMENSION as COLOR'
       '  , n.NAME NODE_NAME'
       '  , nt.o_name as node_type '
+      '  , case(char_length(e.Parent_Port))'
+      '      when 1 then '#39'0'#39' || e.Parent_Port'
+      '      when 3 then '#39'0'#39' || e.Parent_Port'
+      '      else e.Parent_Port'
+      '    end Parent_Port_sort  '
       '  from EQUIPMENT E'
       '       left outer join house h on (e.house_id = h.house_id)'
       '       left outer join street s on (s.street_id = h.street_id)'
@@ -602,6 +638,7 @@ inherited EquipmentForm: TEquipmentForm
   end
   object mtEQ: TMemTableEh
     FieldDefs = <>
+    FetchAllOnOpen = True
     IndexDefs = <
       item
         Name = 'mtEQIndexEID'

@@ -547,7 +547,6 @@ begin
   if not(Sender as TDBGridEh).DataSource.DataSet.Active then
     Exit;
 
-  // DBTextDebt.Color:=AFont.Color;
   if (gdSelected in State) then
   begin
     AFont.Color := clHighlightText;
@@ -696,8 +695,8 @@ var
   v: TfsCustomVariable;
   i: Integer;
 begin
-  if UpdateTimer.Enabled
-  then UpdateTimer.Enabled := False;
+  if UpdateTimer.Enabled then
+    UpdateTimer.Enabled := False;
 
   if actAddressSearch.Checked then
     dmMain.SetIniValue('SHOWADDRESSFILTER', '1')

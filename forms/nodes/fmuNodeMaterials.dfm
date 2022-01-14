@@ -144,11 +144,19 @@ object apgNodeMaterials: TapgNodeMaterials
       Layout = blGlyphTop
     end
     object btnAdd1: TSpeedButton
-      Left = -2
-      Top = 0
+      Left = 2
+      Top = 4
       Width = 22
       Height = 22
       Action = actAdd
+      Flat = True
+    end
+    object btnFind: TSpeedButton
+      Left = 2
+      Top = 40
+      Width = 22
+      Height = 22
+      Action = actFind
       Flat = True
     end
   end
@@ -194,6 +202,11 @@ object apgNodeMaterials: TapgNodeMaterials
       Hint = #1059#1076#1072#1083#1080#1090#1100' '#1079#1072#1087#1080#1089#1100
       ImageIndex = 3
       OnExecute = actDelExecute
+    end
+    object actFind: TAction
+      Hint = #1053#1072#1081#1090#1080' '#1074' '#1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1080' '#1074' '#1089#1077#1090#1080
+      ImageIndex = 7
+      OnExecute = actFindExecute
     end
   end
   object dsMat: TpFIBDataSet

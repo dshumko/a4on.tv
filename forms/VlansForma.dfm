@@ -540,6 +540,9 @@ inherited VlansForm: TVlansForm
   end
   inherited tlbMain: TToolBar
     Width = 740
+    inherited ToolButton6: TToolButton
+      Visible = False
+    end
     inherited tbOk: TToolButton
       Visible = False
     end

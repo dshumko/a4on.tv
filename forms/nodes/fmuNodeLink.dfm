@@ -23,6 +23,7 @@ object apgNodeLink: TapgNodeLink
     DataSource = srcLink
     DynProps = <>
     Flat = True
+    FooterRowCount = 1
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
@@ -33,6 +34,7 @@ object apgNodeLink: TapgNodeLink
     RowDetailPanel.BevelOuter = bvNone
     RowDetailPanel.BorderStyle = bsNone
     RowDetailPanel.VertSizing = True
+    SumList.Active = True
     TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgNodeLinkDblClick
@@ -55,6 +57,7 @@ object apgNodeLink: TapgNodeLink
         DynProps = <>
         EditButtons = <>
         FieldName = 'CONN_NODE'
+        Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083'. '#1091#1079#1077#1083
         Title.TitleButton = True
@@ -113,6 +116,27 @@ object apgNodeLink: TapgNodeLink
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
+        EditMask = 'CAPACITY'
+        FieldName = 'CAPACITY'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1045#1084#1082#1086#1089#1090#1100'|'#1042#1089#1077#1075#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'USED'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1045#1084#1082#1086#1089#1090#1100'|'#1047#1072#1085#1103#1090#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -136,13 +160,18 @@ object apgNodeLink: TapgNodeLink
           Align = alClient
           DataSource = srcEQ
           DynProps = <>
+          Flat = True
+          FooterRowCount = 1
+          SumList.Active = True
           TabOrder = 0
+          OnDblClick = dbgDetailDblClick
           Columns = <
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
               FieldName = 'Name'
+              Footer.ValueType = fvtCount
               Footers = <>
               Title.Alignment = taCenter
               Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
@@ -250,6 +279,9 @@ object apgNodeLink: TapgNodeLink
       'select'
       '    l.*'
       '    , m.NAME MAT_NAME'
+      
+        '    , (select count(*) from port p where p.Wid = l.Wid) as USED ' +
+        '   '
       '  from (select'
       '            '#39'>'#39' FLOW'
       '          , T.O_NAME'
@@ -286,6 +318,7 @@ object apgNodeLink: TapgNodeLink
       'select'
       '    l.*'
       '    , m.NAME MAT_NAME'
+      '    , (select count(*) from port p where p.Wid = l.Wid) as USED'
       '  from (select'
       '            '#39'>'#39' FLOW'
       '          , T.O_NAME'
@@ -331,12 +364,12 @@ object apgNodeLink: TapgNodeLink
   end
   object srcLink: TDataSource
     DataSet = dsLink
-    Left = 119
-    Top = 115
+    Left = 95
+    Top = 99
   end
   object ActList: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 198
+    Left = 190
     Top = 101
     object actAdd: TAction
       ImageIndex = 2
@@ -349,6 +382,10 @@ object apgNodeLink: TapgNodeLink
     object actDel: TAction
       ImageIndex = 3
       OnExecute = actDelExecute
+    end
+    object actPEdit: TAction
+      Caption = 'actPEdit'
+      OnExecute = actPEditExecute
     end
   end
   object trRead: TpFIBTransaction
@@ -386,16 +423,26 @@ object apgNodeLink: TapgNodeLink
   object dsEQ: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
+      '    e.Name'
+      '  , p.Port'
+      '  , c.Customer_Id'
+      '  , c.Account_No'
+      '  , c.Cust_Code'
+      '  , l.Ip'
+      '  , l.Mac'
+      '  , e.Eid'
+      '  , e.Eq_Type'
+      '  , e.Eq_Group'
+      '  , e.Ip eIP'
+      '  , e.Mac EMAC'
+      '  from port p'
+      '       inner join Equipment e on (e.Eid = p.Eid)'
+      '       left outer join tv_lan l on (l.Eq_Id = e.Eid and'
+      '             l.Port = p.Port)'
       
-        '  e.Name, p.Port, c.Customer_Id, c.Account_No, c.Cust_Code, l.Ip' +
-        ', l.Mac'
-      'from port p'
-      '  inner join Equipment e on (e.Eid = p.Eid)'
-      
-        '  left outer join tv_lan l on (l.Eq_Id = e.Eid and l.Port = p.Po' +
-        'rt)'
-      '  left outer join customer c on (c.Customer_Id = l.Customer_Id)'
-      'where p.Wid = :WID')
+        '       left outer join customer c on (c.Customer_Id = l.Customer' +
+        '_Id)'
+      '  where p.Wid = :WID')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'

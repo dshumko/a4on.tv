@@ -57,6 +57,7 @@ type
     btnLayout: TToolButton;
     actLayout: TAction;
     miTreeExpandCurrent: TMenuItem;
+    pnl1: TPanel;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -112,15 +113,16 @@ var
 implementation
 
 uses
-  DM, MAIN, AtrCommon, AtrStrUtils, EquipAttributesForma,
-  EquipCoverage, StrUtils, atrCmdUtils, RequestForma,
-  EquipEditForma, TelnetForma, HtmlForma, pFIBQuery,
-  CF, CustomerLanForma, EQPort,
-  fmuEqpmntPorts, fmuEqpmntAttributes, fmuEqpmntRequests,
-  fmuEqpmntRegion, fmuEqpmntInfo;
+  DM, MAIN, AtrCommon, AtrStrUtils, fs_iinterpreter,
+  EquipAttributesForma, EquipCoverage, StrUtils, atrCmdUtils,
+  RequestForma, EquipEditForma, TelnetForma, HtmlForma,
+  pFIBQuery, CF, CustomerLanForma, EQPort, fmuEqpmntPorts,
+  fmuEqpmntAttributes, fmuEqpmntRequests, fmuEqpmntRegion,
+  fmuEqpmntInfo;
 
 {$R *.dfm}
 
+//TODO: Убрать костыль в виде Parent_Port_sort
 procedure TEquipmentForm.DoCreatePages;
 var
   i: Integer;
@@ -223,8 +225,16 @@ end;
 procedure TEquipmentForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
+  v: TfsCustomVariable;
 begin
   inherited;
+
+  if fsGlobalUnit <> nil then
+  begin
+    v := fsGlobalUnit.Find(Self.Name);
+    if v <> nil then
+      fsGlobalUnit.RemoveItems(Self);
+  end;
 
   if Assigned(FPageList) then
   begin
@@ -593,6 +603,13 @@ begin
   begin
     lstForms.ItemIndex := 0;
     ShowPage(IndexToPage(0));
+  end;
+
+  with fsGlobalUnit do
+  begin
+    AddedBy := Self;
+    AddForm(Self);
+    AddedBy := nil;
   end;
 
   UpdateCommands;

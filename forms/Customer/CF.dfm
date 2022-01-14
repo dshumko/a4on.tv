@@ -123,7 +123,7 @@ object CustomersForm: TCustomersForm
     DrawMemoText = True
     DynProps = <>
     EditActions = [geaCopyEh, geaSelectAllEh]
-    EvenRowColor = clWindow
+    EvenRowColor = clNone
     Flat = True
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
@@ -133,8 +133,8 @@ object CustomersForm: TCustomersForm
     IndicatorTitle.TitleButton = True
     IndicatorTitle.UseGlobalMenu = False
     EmptyDataInfo.Text = #1053#1077#1090' '#1079#1072#1087#1080#1089#1077#1081
-    OddRowColor = clWindow
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgCancelOnExit, dgMultiSelect]
+    OddRowColor = clNone
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     ParentShowHint = False
     PopupMenu = gridPopUp

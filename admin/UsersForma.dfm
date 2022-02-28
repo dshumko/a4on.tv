@@ -34,14 +34,14 @@ object UsersForm: TUsersForm
     object tabGroup: TTabSheet
       Caption = #1043#1088#1091#1087#1087#1099
       object Splitter1: TSplitter
-        Left = 209
+        Left = 305
         Top = 0
         Height = 459
       end
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 209
+        Width = 305
         Height = 459
         Align = alLeft
         BevelOuter = bvNone
@@ -49,14 +49,18 @@ object UsersForm: TUsersForm
         object dbgGroups: TDBGridEh
           Left = 0
           Top = 25
-          Width = 209
+          Width = 305
           Height = 434
           Align = alClient
           DataSource = srcGroups
+          DrawMemoText = True
           DynProps = <>
           Flat = True
           FooterParams.Color = clWindow
           Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+          SearchPanel.Enabled = True
+          SearchPanel.FilterOnTyping = True
           TabOrder = 1
           OnDblClick = dbgGroupsDblClick
           Columns = <
@@ -67,6 +71,7 @@ object UsersForm: TUsersForm
               FieldName = 'GROUP_NAME'
               Footers = <>
               Title.Caption = #1043#1088#1091#1087#1087#1072
+              Title.TitleButton = True
               Width = 72
             end
             item
@@ -76,6 +81,7 @@ object UsersForm: TUsersForm
               FieldName = 'LOCKEDOUT'
               Footers = <>
               Title.Caption = #1041#1083#1086#1082#1080#1088#1086#1074#1072#1085#1072
+              Title.TitleButton = True
               Width = 42
             end
             item
@@ -85,6 +91,18 @@ object UsersForm: TUsersForm
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
+              Width = 67
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'USER_LST'
+              Footers = <>
+              Title.Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
+              Title.TitleButton = True
+              Width = 82
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -92,7 +110,7 @@ object UsersForm: TUsersForm
         object ToolBar2: TToolBar
           Left = 0
           Top = 0
-          Width = 209
+          Width = 305
           Height = 25
           Caption = 'ToolBar1'
           Images = ICONS_ACTIVE
@@ -139,9 +157,9 @@ object UsersForm: TUsersForm
         end
       end
       object pgcRights: TPageControl
-        Left = 212
+        Left = 308
         Top = 0
-        Width = 497
+        Width = 401
         Height = 459
         ActivePage = tsRights
         Align = alClient
@@ -153,7 +171,7 @@ object UsersForm: TUsersForm
           object dbgRights: TDBGridEh
             Left = 0
             Top = 0
-            Width = 489
+            Width = 393
             Height = 431
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -230,7 +248,7 @@ object UsersForm: TUsersForm
           object dbgReports: TDBGridEh
             Left = 0
             Top = 0
-            Width = 489
+            Width = 393
             Height = 431
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -294,7 +312,7 @@ object UsersForm: TUsersForm
           object dbgModules: TDBGridEh
             Left = 0
             Top = 0
-            Width = 489
+            Width = 393
             Height = 431
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -376,8 +394,9 @@ object UsersForm: TUsersForm
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
           PopupMenu = PopupMenu1
+          SearchPanel.Enabled = True
+          SearchPanel.FilterOnTyping = True
           STFilter.Local = True
-          STFilter.Visible = True
           TabOrder = 1
           OnDblClick = dbgUsersDblClick
           Columns = <
@@ -1092,16 +1111,33 @@ object UsersForm: TUsersForm
       '    :NOTICE'
       ')')
     RefreshSQL.Strings = (
-      'select id, group_name, lockedout, notice'
-      'from sys$group'
-      ''
-      ' WHERE '
-      '        SYS$GROUP.ID = :OLD_ID'
+      'select'
+      '    id'
+      '  , group_name'
+      '  , lockedout'
+      '  , notice'
+      '  , (select'
+      '         list(u.Ibname, '#39', '#39')'
+      '       from Sys$User_Groups ug'
+      '            inner join Sys$User u on (ug.User_Id = u.Id)'
+      '       where ug.Group_Id = g.Id) USER_LST'
+      '  from sys$group g'
+      'where'
+      '  ID = :OLD_ID'
       '    ')
     SelectSQL.Strings = (
-      'select id, group_name, lockedout, notice'
-      'from sys$group'
-      'order by group_name')
+      'select'
+      '    id'
+      '  , group_name'
+      '  , lockedout'
+      '  , notice'
+      '  , (select'
+      '         list(u.Ibname, '#39', '#39')'
+      '       from Sys$User_Groups ug'
+      '            inner join Sys$User u on (ug.User_Id = u.Id)'
+      '       where ug.Group_Id = g.Id) USER_LST'
+      '  from sys$group g'
+      '  order by group_name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -1281,8 +1317,8 @@ object UsersForm: TUsersForm
     Top = 174
   end
   object PopupMenu1: TPopupMenu
-    Left = 219
-    Top = 208
+    Left = 147
+    Top = 368
     object N1: TMenuItem
       Action = actGrant
     end

@@ -1214,6 +1214,9 @@ function TNodesForm.GenerateFilter: string;
     if (not dsFilter.FieldByName('NODE_TYPE').IsNull) then
       tmpSQL := tmpSQL + Format(' and ( n.TYPE_ID = %s) ', [dsFilter.FieldByName('NODE_TYPE').AsString]);
 
+    if (not dsFilter.FieldByName('NODE_ID').IsNull) then
+      tmpSQL := tmpSQL + Format(' and ( n.NODE_ID = %s) ', [dsFilter.FieldByName('NODE_ID').AsString]);
+
     if (tmpSQL <> '') then
       Result := TrimAnd(tmpSQL)
     else
@@ -1317,7 +1320,7 @@ procedure TNodesForm.SetFilter(const FilterFIELD: Integer; const FilterVALUE: st
 var
   cr: TCursor;
   val: TStringArray;
-
+  i: Integer;
 begin
   if not(srcNodes.DataSet is TpFIBDataSet) or (FilterFIELD < 1) then
     Exit;
@@ -1337,6 +1340,16 @@ begin
           dsFilter['FLAT'] := val[1];
           dsFilter.Post;
         end;
+      2:
+        begin // По ID узла
+          if not TryStrToInt(FilterVALUE, i) then
+            i := -999;
+          dsFilter.EmptyTable;
+          dsFilter.Insert;
+          dsFilter['NODE_ID'] := i;
+          dsFilter.Post;
+        end;
+
     end;
     actEnableFilter.Checked := True;
 

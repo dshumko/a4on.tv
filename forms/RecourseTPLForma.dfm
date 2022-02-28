@@ -6,74 +6,17 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 178
-    Top = 145
-    Height = 137
+    Top = 148
+    Height = 134
   end
-  inherited pnlEdit: TPanel [1]
+  inherited splPG: TSplitter
+    Top = 145
     Width = 689
-    Height = 120
-    object lbl2: TLabel [0]
-      Left = 5
-      Top = 9
-      Width = 78
-      Height = 13
-      Caption = #1058#1080#1087' '#1086#1073#1088#1072#1097#1077#1085#1080#1103
-    end
-    object lbl3: TLabel [1]
-      Left = 5
-      Top = 37
-      Width = 61
-      Height = 13
-      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    end
-    inherited btnSaveLink: TBitBtn
-      Left = 92
-      Top = 89
-      Width = 493
-      TabOrder = 2
-    end
-    inherited btnCancelLink: TBitBtn
-      Left = 596
-      Top = 89
-      TabOrder = 3
-    end
-    object edtName: TDBEditEh
-      Left = 92
-      Top = 6
-      Width = 590
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'O_NAME'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1058#1080#1087' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
-      ShowHint = True
-      TabOrder = 0
-      Visible = True
-    end
-    object mmoNotice: TDBMemoEh
-      Left = 92
-      Top = 34
-      Width = 590
-      Height = 49
-      Anchors = [akLeft, akTop, akRight, akBottom]
-      AutoSize = False
-      DataField = 'O_DESCRIPTION'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-      ShowHint = True
-      TabOrder = 1
-      Visible = True
-      WantReturns = True
-    end
   end
-  inherited dbGrid: TDBGridEh [2]
-    Top = 145
+  inherited dbGrid: TDBGridEh
+    Top = 148
     Width = 178
-    Height = 137
+    Height = 134
     Align = alLeft
     AllowedOperations = []
     TitleParams.MultiTitle = False
@@ -96,7 +39,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       end>
   end
-  inherited tlbMain: TToolBar [3]
+  inherited tlbMain: TToolBar
     Width = 689
     inherited tbOk: TToolButton
       Visible = False
@@ -115,9 +58,9 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   end
   object pnlGrid: TPanel [4]
     Left = 181
-    Top = 145
+    Top = 148
     Width = 508
-    Height = 137
+    Height = 134
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
@@ -125,7 +68,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       Left = 0
       Top = 25
       Width = 508
-      Height = 112
+      Height = 109
       Align = alClient
       DataSource = srcTPL
       DynProps = <>
@@ -258,6 +201,67 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       end
     end
   end
+  inherited pnlEdit: TPanel
+    Width = 689
+    Height = 120
+    object lbl2: TLabel [0]
+      Left = 5
+      Top = 9
+      Width = 78
+      Height = 13
+      Caption = #1058#1080#1087' '#1086#1073#1088#1072#1097#1077#1085#1080#1103
+    end
+    object lbl3: TLabel [1]
+      Left = 5
+      Top = 37
+      Width = 61
+      Height = 13
+      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+    end
+    inherited btnSaveLink: TBitBtn
+      Left = 92
+      Top = 89
+      Width = 493
+      TabOrder = 2
+    end
+    inherited btnCancelLink: TBitBtn
+      Left = 596
+      Top = 89
+      TabOrder = 3
+    end
+    object edtName: TDBEditEh
+      Left = 92
+      Top = 6
+      Width = 590
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'O_NAME'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1058#1080#1087' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
+    end
+    object mmoNotice: TDBMemoEh
+      Left = 92
+      Top = 34
+      Width = 590
+      Height = 49
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      AutoSize = False
+      DataField = 'O_DESCRIPTION'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ShowHint = True
+      TabOrder = 1
+      Visible = True
+      WantReturns = True
+    end
+  end
   inherited srcDataSource: TDataSource
     DataSet = dsType
     OnStateChange = srcDataSourceStateChange
@@ -343,7 +347,9 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION'
       'FROM OBJECTS'
-      'WHERE O_TYPE = 8 AND O_DELETED = 0'
+      
+        'WHERE O_TYPE = 8 AND ( (CURRENT_USER = '#39'SYSDBA'#39') or (O_DELETED =' +
+        ' 0))'
       'order BY O_NAME')
     AutoUpdateOptions.UpdateTableName = 'OBJECTS'
     AutoUpdateOptions.KeyFields = 'O_ID'

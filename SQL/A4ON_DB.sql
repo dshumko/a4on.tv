@@ -270,7 +270,7 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 50340;
+SET GENERATOR GEN_OPERATIONS_UID TO 50350;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_ORDER_TP TO 8;
@@ -279,7 +279,7 @@ CREATE GENERATOR GEN_PAYMENT START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_PAYMENT TO 284;
 
 CREATE GENERATOR GEN_QUEUE START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_QUEUE TO 4225;
+SET GENERATOR GEN_QUEUE TO 4228;
 
 CREATE GENERATOR GEN_REPORT_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_REPORT_ID TO 537;
@@ -291,13 +291,13 @@ CREATE GENERATOR GEN_TASK START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_TASK TO 74;
 
 CREATE GENERATOR GEN_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_UID TO 2045;
+SET GENERATOR GEN_UID TO 2047;
 
 CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 368;
+SET GENERATOR G_LOG_ID TO 412;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -1909,6 +1909,16 @@ RETURNS (
 AS
 BEGIN
   SUSPEND;
+END;
+
+
+
+
+
+CREATE OR ALTER PROCEDURE FIX_PORT_CONNECT
+AS
+BEGIN
+  EXIT;
 END;
 
 
@@ -3673,7 +3683,8 @@ END;
 CREATE OR ALTER FUNCTION GET_SRV_TARIF_FOR_CUSTOMER (
     CUSTOMER_ID UID,
     SERVICE_ID D_UID_NULL,
-    FOR_DAY D_DATE = null)
+    FOR_DAY D_DATE = null,
+    JUR D_INTEGER = null)
 RETURNS D_N15_4
 AS
 BEGIN
@@ -3776,6 +3787,19 @@ CREATE TABLE AREA (
     AREA_NAME  D_VARCHAR30,
     NOTICE     D_NOTICE,
     AREA_CODE  D_VARCHAR5
+);
+
+CREATE TABLE ATTRIBUTE (
+    TYPE_ID    UID NOT NULL,
+    OBJECT_ID  UID NOT NULL,
+    AID        UID NOT NULL,
+    AVALUE     D_VARCHAR100,
+    NOTICE     D_NOTICE,
+    ADELETED   D_IBOOLEAN,
+    ADDED_BY   D_VARCHAR50,
+    ADDED_ON   D_DATETIME,
+    EDIT_BY    D_VARCHAR50,
+    EDIT_ON    D_DATETIME
 );
 
 CREATE TABLE BCI_CHANNELS (
@@ -4672,8 +4696,8 @@ CREATE TABLE HOUSEFLOOR (
     FLOOR_ID   UID NOT NULL,
     PORCH_ID   UID,
     FLOOR_N    D_VARCH10_NS,
-    FLAT_FROM  D_INTEGER,
-    FLAT_TO    D_INTEGER,
+    FLAT_FROM  D_FLAT_NS,
+    FLAT_TO    D_FLAT_NS,
     NOTICE     D_NOTICE,
     FLATS      D_VARCHAR1000
 );
@@ -4685,8 +4709,8 @@ CREATE TABLE HOUSEPORCH (
     FLOORS     D_SMALLINT DEFAULT 1,
     GARRET     D_IBOOLEAN DEFAULT 1,
     CELLAR     D_IBOOLEAN DEFAULT 1,
-    FLAT_FROM  D_INTEGER,
-    FLAT_TO    D_INTEGER,
+    FLAT_FROM  D_FLAT_NS,
+    FLAT_TO    D_FLAT_NS,
     NOTICE     D_NOTICE
 );
 
@@ -4773,7 +4797,7 @@ CREATE TABLE JOURNAL (
 CREATE TABLE LETTERTYPE (
     LETTERTYPEID     UID,
     LETTERTYPEDESCR  D_VARCHAR30,
-    FILENAME         D_NAME,
+    FILENAME         D_VARCHAR500,
     RECORDINDB       D_IBOOLEAN,
     FOR_FORM         D_SMALLINT DEFAULT 0,
     SAVE_PDF         D_IBOOLEAN
@@ -5282,6 +5306,7 @@ CREATE TABLE PORT (
     SPEED     D_INTEGER,
     VLAN_ID   D_UID_NULL,
     WID       D_UID_NULL,
+    WLABEL    D_VARCHAR50,
     ADDED_BY  D_VARCHAR50,
     ADDED_ON  D_DATETIME,
     EDIT_BY   D_VARCHAR50,
@@ -5976,7 +6001,8 @@ CREATE TABLE WIRE (
     ADDED_ON  D_DATETIME,
     EDIT_BY   D_VARCHAR50,
     EDIT_ON   D_DATETIME,
-    M_ID      D_UID_NULL
+    M_ID      D_UID_NULL,
+    LABELS    D_VARCHAR1000
 );
 
 CREATE TABLE WORKAREA (
@@ -6174,6 +6200,7 @@ USING INDEX UNQ_LAN_MAC;
 ALTER TABLE TV_LAN ADD CONSTRAINT UNQ_TV_IP_VLAN UNIQUE (IP, VLAN_ID);
 ALTER TABLE VLANS ADD CONSTRAINT UNQ1_VLANS UNIQUE (IP_BEGIN_BIN);
 ALTER TABLE AREA ADD CONSTRAINT PK_AREA PRIMARY KEY (AREA_ID);
+ALTER TABLE ATTRIBUTE ADD CONSTRAINT PK_ATTRIBUTE PRIMARY KEY (TYPE_ID, AID, OBJECT_ID);
 ALTER TABLE BCISSUE ADD CONSTRAINT PK_BCISSUE PRIMARY KEY (BI_ID);
 ALTER TABLE BCI_CHANNELS ADD CONSTRAINT PK_BCI_CHANNELS PRIMARY KEY (BI_ID, CH_ID);
 ALTER TABLE BILLING ADD CONSTRAINT PK_BILLING PRIMARY KEY (BLNG_ID);
@@ -6332,6 +6359,8 @@ CREATE INDEX ALL_USED_IP_IDX1 ON ALL_USED_IP (IP);
 CREATE INDEX ALL_USED_IP_IDX2 ON ALL_USED_IP (IP_BIN);
 CREATE INDEX APPLIANCE_OWNER ON APPLIANCE (OWN_TYPE, OWN_ID);
 CREATE INDEX PK_APPLIANCE_ID ON APPLIANCE (ID);
+CREATE INDEX ATTRIBUTE_IDX_ATTR ON ATTRIBUTE (AID, OBJECT_ID, TYPE_ID);
+CREATE INDEX ATTRIBUTE_IDX_OBJECT ON ATTRIBUTE (OBJECT_ID, AID, TYPE_ID);
 CREATE INDEX BCISSUE_IDX1 ON BCISSUE (ADDED_ON);
 CREATE INDEX BILLING_IDX_CID ON BILLING (CUSTOMER_ID);
 CREATE INDEX BILLING_IDX_IP ON BILLING (IP_INET);
@@ -6592,6 +6621,23 @@ ACTIVE BEFORE UPDATE POSITION 0
 as
 begin
  if (new.Area_Code='') then new.Area_Code = null;
+end;
+
+CREATE OR ALTER TRIGGER ATTRIBUTE_BIU0 FOR ATTRIBUTE
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0
+as
+begin
+  new.AValue = coalesce(new.AValue, '');
+  new.ADeleted = coalesce(new.ADeleted, 0);
+
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.edit_by = current_user;
+    new.edit_on = localtimestamp;
+  end
 end;
 
 CREATE OR ALTER TRIGGER BCISSUE_BIU FOR BCISSUE
@@ -7026,14 +7072,46 @@ begin
   where C.CUSTOMER_ID = OLD.CUSTOMER_ID;
 end;
 
+CREATE OR ALTER TRIGGER CUSTOMER_BONUSES_AI FOR CUSTOMER_BONUSES
+ACTIVE AFTER INSERT POSITION 0
+as
+begin
+  update CUSTOMER C
+  set C.DEBT_SUM = C.DEBT_SUM - round(NEW.Bonus, 2)
+  where C.CUSTOMER_ID = NEW.CUSTOMER_ID;
+end;
+
+CREATE OR ALTER TRIGGER CUSTOMER_BONUSES_AU FOR CUSTOMER_BONUSES
+ACTIVE AFTER UPDATE POSITION 0
+as
+begin
+  if (new.Customer_Id is distinct from old.Customer_Id) then begin
+    update CUSTOMER C
+    set C.DEBT_SUM = C.DEBT_SUM + round(old.Bonus, 2)
+    where C.CUSTOMER_ID = old.CUSTOMER_ID;
+
+    update CUSTOMER C
+    set C.DEBT_SUM = C.DEBT_SUM - round(new.Bonus, 2)
+    where C.CUSTOMER_ID = new.CUSTOMER_ID;
+  end
+  else begin
+    if (new.Bonus is distinct from old.Bonus) then begin
+      update CUSTOMER C
+      set C.DEBT_SUM = C.DEBT_SUM + round(old.Bonus, 2) - round(new.Bonus, 2)
+      where C.CUSTOMER_ID = new.CUSTOMER_ID;
+    end
+  end
+end;
+
 CREATE OR ALTER TRIGGER CUSTOMER_BONUSES_BIU0 FOR CUSTOMER_BONUSES
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
   if (new.Id is null) then
     new.Id = gen_id(gen_uid, 1);
-  if (new.Bonus_Date is null) then
-    new.Bonus_Date = current_date;
+
+  new.Bonus = coalesce(new.Bonus, 0);
+  new.Bonus_Date = coalesce(new.Bonus_Date, current_date);
 
   if (inserting) then begin
     new.added_by = current_user;
@@ -10282,6 +10360,11 @@ as
 begin
   if (new.DISACT_SERV_ID is null) then
     new.DISACT_SERV_ID = -1;
+
+  if (new.DISACT_SERV_ID = -1) then begin
+    new.Closed_By = null;
+    new.Closed_ON = null;
+  end
   else begin
     new.Closed_By = current_user;
     new.Closed_ON = localtimestamp;
@@ -17523,6 +17606,28 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE FIX_PORT_CONNECT
+AS
+declare variable CId  integer;
+declare variable Port varchar(12);
+declare variable EId  integer;
+begin
+  for select
+          l.Customer_Id
+        , l.Port
+        , l.Eq_Id
+        from Tv_Lan l
+        where not((l.Port is null)
+                or (l.Eq_Id is null))
+      into :cid, :Port, :eid
+  do begin
+    update or insert into Port (Eid, Port, P_State, Con, Con_Id)
+    values (:Eid, :Port, 1, 1, :CId)
+    matching (Eid, Port);
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE FORMAT_DATE (
     A_DATE DATE = current_date,
     FORMAT VARCHAR(1000) = null,
@@ -20206,8 +20311,6 @@ RETURNS (
 AS
 declare variable Jur     D_Integer;
 declare variable SRV     UID;
-declare variable Bus     D_Integer;
-declare variable K       D_N15_4;
 declare variable ALL_SUM D_N15_4;
 begin
   For_Day = coalesce(For_Day, current_date);
@@ -20236,47 +20339,8 @@ begin
                 or (:Service_Id is null))
       into :srv
   do begin
-    ALL_SUM = null;
-    K = null;
-    select first 1
-        p.Tarif_Sum
-      from Personal_Tarif p
-      where p.Customer_Id = :Customer_Id
-            and p.Service_Id = :srv
-            and :For_Day between p.Date_From and p.Date_To
-    into :ALL_SUM;
+    ALL_SUM = GET_SRV_TARIF_FOR_CUSTOMER(:Customer_Id, :SRV, :FOR_DAY, :Jur);
 
-    if (ALL_SUM is null) then begin
-      select
-          s.Business_Type
-        from services s
-        where s.service_id = :srv
-      into :BUS;
-
-      select first 1
-          k.Factor_Value
-        from Discount_Factor k
-        where k.Customer_Id = :Customer_Id
-              and :For_Day between k.Date_From and k.Date_To
-              and ((k.Serv_Id = :srv)
-                or (k.Serv_Id = -1))
-              and ((k.Srv_Type = :BUS)
-                or (k.Srv_Type = -1))
-      into :K;
-      K = coalesce(K, 1);
-      if (k <> 0) then begin
-        select
-            iif(:JUR = 0, t.Tarif_Sum, t.Tarif_Sum_Jur)
-          from Tarif t
-          where t.Service_Id = :srv
-                and :For_Day between t.Date_From and t.Date_To
-        into :ALL_SUM;
-
-        ALL_SUM = k * ALL_SUM;
-      end
-      else
-        ALL_SUM = 0;
-    end
     M_Tarif = coalesce(M_Tarif, 0) + coalesce(ALL_SUM, 0);
   end
   M_TARIF = round(M_TARIF, 2);
@@ -23783,13 +23847,13 @@ end;
 CREATE OR ALTER FUNCTION GET_SRV_TARIF_FOR_CUSTOMER (
     CUSTOMER_ID UID,
     SERVICE_ID D_UID_NULL,
-    FOR_DAY D_DATE = null)
+    FOR_DAY D_DATE = null,
+    JUR D_INTEGER = null)
 RETURNS D_N15_4
 AS
-declare variable Jur     D_Integer;
 declare variable Bus     D_Integer;
 declare variable K       D_N15_4;
-declare variable ALL_SUM D_N15_4;
+declare variable All_Sum D_N15_4;
 begin
   For_Day = coalesce(For_Day, current_date);
 
@@ -23823,11 +23887,13 @@ begin
     into :K;
     K = coalesce(K, 1);
     if (k <> 0) then begin
-      select
-          c.Juridical
-        from customer c
-        where c.Customer_Id = :Customer_Id
-      into :JUR;
+      if (JUR is null) then begin
+        select
+            c.Juridical
+          from customer c
+          where c.Customer_Id = :Customer_Id
+        into :JUR;
+      end
       jur = coalesce(JUR, 0);
       -- тариф на услугу
       select
@@ -23965,6 +24031,9 @@ COMMENT ON TABLE APPLIANCE IS
 
 COMMENT ON TABLE AREA IS
 'Участки';
+
+COMMENT ON TABLE ATTRIBUTE IS
+'Универсальная таблица хранения атрибутов на объекты';
 
 COMMENT ON TABLE BCISSUE IS
 'Проблемы/Сбои вещания каналов';
@@ -24771,6 +24840,9 @@ COMMENT ON PROCEDURE EXTRACT_NUMBER IS
 'Извлекает из строки цифры до первого не цифрового символа.
 например 17/2 - 17';
 
+COMMENT ON PROCEDURE FIX_PORT_CONNECT IS
+'исправляем иноформацию порта по подключению к абоненту/устройству';
+
 COMMENT ON PROCEDURE FORMAT_DATE IS
 'Вывод даты согласно формату:
 D — день без лидирующего пробела
@@ -25109,6 +25181,28 @@ COMMENT ON COLUMN APPLIANCE.SN IS
 
 COMMENT ON COLUMN APPLIANCE.PROPERTY IS
 'Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.';
+
+COMMENT ON COLUMN ATTRIBUTE.TYPE_ID IS
+'Тип атрибута. соответствует типам с таблицу object_type
+например:
+32-Атрибуты IPTV групп, 6-Атрибуты ТВ оборудования,
+4-Атрибуты абонента, 50-Атрибуты для типа, 37-Атрибуты домов,
+5-Атрибуты сетевого оборудования, 39-Атрибуты узлов, 25-Атрибуты услуг';
+
+COMMENT ON COLUMN ATTRIBUTE.OBJECT_ID IS
+'Объект чей атрибут (абонент. заявка. заказ. задача и т.д.)';
+
+COMMENT ON COLUMN ATTRIBUTE.AID IS
+'Значение из таблицы objects';
+
+COMMENT ON COLUMN ATTRIBUTE.AVALUE IS
+'Значение';
+
+COMMENT ON COLUMN ATTRIBUTE.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN ATTRIBUTE.ADELETED IS
+'если 1, считаем, что атрибут удален';
 
 COMMENT ON COLUMN BCISSUE.BI_TYPE IS
 'Тип сбоя';
@@ -26876,6 +26970,9 @@ COMMENT ON COLUMN PORT.VLAN_ID IS
 COMMENT ON COLUMN PORT.WID IS
 'Линия связи/кабель на порту';
 
+COMMENT ON COLUMN PORT.WLABEL IS
+'Метка на кабеле (пучок/жила)';
+
 COMMENT ON COLUMN PROFILES.PROFILE IS
 'Название профиля';
 
@@ -27934,6 +28031,9 @@ COMMENT ON COLUMN WIRE.CAPACITY IS
 
 COMMENT ON COLUMN WIRE.M_ID IS
 'ID Материала';
+
+COMMENT ON COLUMN WIRE.LABELS IS
+'метки на кабеле. через ;';
 
 COMMENT ON COLUMN WORKAREA.REQ_LIMIT IS
 'Ограничение заявок на участок. -1 не ограничивать';

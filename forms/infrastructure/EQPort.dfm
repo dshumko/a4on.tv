@@ -1,10 +1,10 @@
 object EQPortForm: TEQPortForm
   Left = 0
   Top = 0
-  BorderStyle = bsSizeToolWin
+  BorderIcons = [biSystemMenu]
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077' '#1087#1086#1088#1090#1072'/'#1086#1074
-  ClientHeight = 325
-  ClientWidth = 478
+  ClientHeight = 337
+  ClientWidth = 534
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,8 +18,8 @@ object EQPortForm: TEQPortForm
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   DesignSize = (
-    478
-    325)
+    534
+    337)
   PixelsPerInch = 96
   TextHeight = 13
   object lblCNT: TLabel
@@ -86,19 +86,26 @@ object EQPortForm: TEQPortForm
     Height = 13
     Caption = #1051#1080#1085#1080' c'#1074#1103#1079#1080
   end
+  object lblLabel: TLabel
+    Left = 8
+    Top = 200
+    Width = 71
+    Height = 13
+    Caption = #1052#1077#1090#1082#1072' '#1082#1072#1073#1077#1083#1103
+  end
   object pnlBottom: TPanel
     Left = 0
-    Top = 282
-    Width = 478
+    Top = 294
+    Width = 534
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 7
+    TabOrder = 8
     DesignSize = (
-      478
+      534
       43)
     object btnCancel: TBitBtn
-      Left = 395
+      Left = 451
       Top = 10
       Width = 75
       Height = 27
@@ -111,7 +118,7 @@ object EQPortForm: TEQPortForm
     object btnOk: TBitBtn
       Left = 16
       Top = 10
-      Width = 370
+      Width = 426
       Height = 27
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akRight, akBottom]
@@ -149,7 +156,7 @@ object EQPortForm: TEQPortForm
   object lcbType: TDBLookupComboboxEh
     Left = 88
     Top = 68
-    Width = 382
+    Width = 438
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -171,15 +178,15 @@ object EQPortForm: TEQPortForm
   end
   object mmoNotice: TDBMemoEh
     Left = 8
-    Top = 200
-    Width = 462
-    Height = 84
+    Top = 224
+    Width = 518
+    Height = 72
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    TabOrder = 6
+    TabOrder = 7
     Visible = True
     WantReturns = True
   end
@@ -198,7 +205,7 @@ object EQPortForm: TEQPortForm
   object lcbState: TDBLookupComboboxEh
     Left = 88
     Top = 94
-    Width = 382
+    Width = 438
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -221,7 +228,7 @@ object EQPortForm: TEQPortForm
   object lcbVLAN: TDBLookupComboboxEh
     Left = 88
     Top = 119
-    Width = 382
+    Width = 438
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -278,7 +285,7 @@ object EQPortForm: TEQPortForm
   object lcbWIRE: TDBLookupComboboxEh
     Left = 88
     Top = 170
-    Width = 382
+    Width = 438
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -320,16 +327,33 @@ object EQPortForm: TEQPortForm
     DropDownBox.ShowTitles = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'/'#1082#1072#1073#1077#1083#1100' '#1085#1072' '#1087#1086#1088#1090#1091' '
-    EditButtons = <>
+    EditButtons = <
+      item
+        Action = actEditLink
+        Style = ebsEllipsisEh
+      end>
     KeyField = 'Wid'
     ListField = 'NAME'
     ListSource = srcWire
     ParentShowHint = False
     ShowHint = True
     Style = csDropDownEh
-    TabOrder = 8
+    TabOrder = 6
     Visible = True
+    OnChange = lcbWIREChange
     OnDropDownBoxGetCellParams = lcbWIREDropDownBoxGetCellParams
+  end
+  object cbLABELS: TDBComboBoxEh
+    Left = 88
+    Top = 197
+    Width = 438
+    Height = 21
+    Anchors = [akLeft, akTop, akRight]
+    DynProps = <>
+    EmptyDataInfo.Text = #1052#1077#1090#1082#1072' '#1085#1072' '#1082#1072#1073#1077#1083#1077' ('#1094#1074#1077#1090' '#1087#1091#1095#1082#1072'/'#1078#1080#1083#1099')'
+    EditButtons = <>
+    TabOrder = 9
+    Visible = True
   end
   object cnError: TCnErrorProvider
     DoubleBuffer = False
@@ -513,6 +537,12 @@ object EQPortForm: TEQPortForm
       
         '  , (coalesce(c.Capacity, 0) - (select count(*) from port p wher' +
         'e p.Wid = c.Wid)) FREE -- '#1090#1091#1090' '#1085#1091#1078#1085#1086' '#1089#1095#1080#1090#1072#1090#1100
+      '  , c.LABELS'
+      '  , s.Node_Id NODE_S_ID'
+      '  , e.Node_Id NODE_E_ID'
+      
+        '  , (select list(p.Port||'#39'('#39'||p.Wlabel||'#39')'#39','#39';'#39') from port p whe' +
+        're p.Wid = c.Wid and not p.Wlabel is null) WlabelS'
       '  from Wire C'
       
         '       inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O_TYPE = ' +
@@ -521,16 +551,26 @@ object EQPortForm: TEQPortForm
       '       left outer join NODEs e on (e.Node_Id = c.Point_E)'
       '  where (c.Point_S = :node)'
       '          or (c.Point_E = :node)'
-      '  order by c.Name ')
+      '  order by c.Name '
+      '')
     AutoCalcFields = False
     Database = dmMain.dbTV
     Left = 352
-    Top = 208
+    Top = 232
   end
   object srcWire: TDataSource
     AutoEdit = False
     DataSet = dsWire
-    Left = 366
-    Top = 242
+    Left = 398
+    Top = 250
+  end
+  object actlst: TActionList
+    Left = 448
+    Top = 248
+    object actEditLink: TAction
+      Caption = #1051#1080#1085#1080' '#1089#1074#1103#1079#1080
+      Hint = #1057#1086#1079#1076#1072#1090#1100'/'#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1083#1080#1085#1080#1102' '#1089#1074#1103#1079#1080
+      OnExecute = actEditLinkExecute
+    end
   end
 end

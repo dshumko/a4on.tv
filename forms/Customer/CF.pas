@@ -4149,41 +4149,66 @@ begin
     s := ReplaceStr(s, rsFldMonth, FormatDateTime('mm', NOW()));
     s := ReplaceStr(s, rsFldCurrentYear, FormatDateTime('yyyy', NOW()));
 
-    if dsCustomers.FieldExist('MonPay', i) then
+    // выведем тариф на услуги в месяц. и сумму доплаты
+    if (((pos(rsFldMonthNeed, s) > 0) or (pos(rsFldMonthFee, s) > 0)) and dsCustomers.FieldExist('MonPay', i) and
+      (not dsCustomers.FieldByName('MonPay').IsNull)) then
     begin
-      // выведем тариф на услуги в месяц. и сумму доплаты
-      if not FieldByName('MonPay').IsNull then
-      begin
-        form_perc := 2;
-        need := FieldByName('MonPay').AsFloat;
-        perc := Trunc(Frac(need) * 100);
-        if perc = 0 then
-          form_perc := 0
-        else
-          form_perc := 2;
-
-        s := ReplaceStr(s, rsFldMonthFee, FloatToStrF(need, ffFixed, 8, form_perc, fs));
-        need := need + FieldByName('DEBT_SUM').AsFloat;
-        if (need < 0) then
-          need := 0;
-        perc := Trunc(Frac(need) * 100);
-        if perc = 0 then
-          form_perc := 0
-        else
-          form_perc := 2;
-        s := ReplaceStr(s, rsFldMonthNeed, FloatToStrF(need, ffFixed, 8, form_perc, fs));
-      end
+      form_perc := 2;
+      need := FieldByName('MonPay').AsFloat;
+      perc := Trunc(Frac(need) * 100);
+      if perc = 0 then
+        form_perc := 0
       else
-      begin
-        s := ReplaceStr(s, rsFldMonthNeed, '');
-        s := ReplaceStr(s, rsFldMonthFee, '');
-      end;
+        form_perc := 2;
+
+      s := ReplaceStr(s, rsFldMonthFee, FloatToStrF(need, ffFixed, 8, form_perc, fs));
+      need := need + FieldByName('DEBT_SUM').AsFloat;
+      if (need < 0) then
+        need := 0;
+      perc := Trunc(Frac(need) * 100);
+      if perc = 0 then
+        form_perc := 0
+      else
+        form_perc := 2;
+      s := ReplaceStr(s, rsFldMonthNeed, FloatToStrF(need, ffFixed, 8, form_perc, fs));
     end
     else
     begin
       s := ReplaceStr(s, rsFldMonthNeed, '');
       s := ReplaceStr(s, rsFldMonthFee, '');
     end;
+  end;
+  // выведем тариф на услуги в месяц. и сумму доплаты
+  // rsFldNextNeed = '[ДОПЛАТА+СЛ_МЕСЯЦ]';
+  if ((pos(rsFldNextFee, s) > 0) or (pos(rsFldNextNeed, s) > 0)) then
+  begin
+    need := 0;
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        sql.Text :=
+          'select sum(M_Tarif) ST from '+
+          ' Get_Tarif_Sum_Customer_Srv(:Customer_Id, null,  dateadd(month, 1, Month_First_Day(current_date)))';
+        ParamByName('Customer_Id').Value := dsCustomers.FieldByName('Customer_Id').AsInteger;
+        Transaction.StartTransaction;
+        ExecQuery;
+        i := 1;
+        if (not Eof) then
+        begin
+          if not FieldByName('ST').IsNull then
+            need := FieldByName('ST').AsExtended;
+        end;
+        Close;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+    s := ReplaceStr(s, rsFldNextFee, FloatToStrF(need, ffFixed, 8, 2, fs));
+    need := need + dsCustomers.FieldByName('DEBT_SUM').AsFloat;
+    s := ReplaceStr(s, rsFldNextNeed, FloatToStrF(need, ffFixed, 8, 2, fs));
   end;
   Result := s;
 end;
@@ -4760,6 +4785,10 @@ procedure TCustomersForm.FormShow(Sender: TObject);
 var
   i: Integer;
 begin
+  if (TryStrToInt(dmMain.GetIniValue('ALWAYSSHOW'), i)) then
+    if (i <> 0) then
+      dbgCustomers.Options := dbgCustomers.Options + [dgAlwaysShowSelection];  
+   
   if (TryStrToInt(dmMain.GetIniValue('SHOWADDRESSFILTER'), i)) then
   begin
     if (i <> 0) then

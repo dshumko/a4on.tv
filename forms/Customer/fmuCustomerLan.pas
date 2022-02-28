@@ -43,6 +43,11 @@ type
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
     splitter: TSplitter;
+    actOpenObject: TAction;
+    actOpenEqpmnt: TAction;
+    btnOpen: TSpeedButton;
+    pmOpen: TPopupMenu;
+    miEqpmnt: TMenuItem;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -57,6 +62,8 @@ type
     procedure actLanHttpExecute(Sender: TObject);
     procedure dbgCustLANDblClick(Sender: TObject);
     procedure srcLanDataChange(Sender: TObject; Field: TField);
+    procedure actOpenObjectExecute(Sender: TObject);
+    procedure actOpenEqpmntExecute(Sender: TObject);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
@@ -553,6 +560,19 @@ begin
 
   if (s <> '') then
     atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'open', 'telnet', s, '', SW_SHOW);
+end;
+
+procedure TapgCustomerLan.actOpenEqpmntExecute(Sender: TObject);
+begin
+  if ((dsLAN.RecordCount = 0) or (dsLAN.FieldByName('E_NAME').IsNull)) then
+    Exit;
+
+  A4MainForm.OpenEquipmentByName(dsLAN['E_NAME']);
+end;
+
+procedure TapgCustomerLan.actOpenObjectExecute(Sender: TObject);
+begin
+  pmOpen.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 procedure TapgCustomerLan.actLanHttpExecute(Sender: TObject);

@@ -188,7 +188,6 @@ begin
         SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
       end;
     end;
-
 end;
 
 procedure TPayDocsForm.ppmSelectAllClick(Sender: TObject);
@@ -200,12 +199,9 @@ begin
 end;
 
 procedure TPayDocsForm.ppmCopyClick(Sender: TObject);
-
 var
   dbg: TDBGridEh;
-
 begin
-
   if (ActiveControl is TDBGridEh) then
   begin
     dbg := (ActiveControl as TDBGridEh);
@@ -215,7 +211,6 @@ begin
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
-
 end;
 
 procedure TPayDocsForm.actPaySourceFilterExecute(Sender: TObject);

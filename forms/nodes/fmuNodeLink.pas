@@ -10,7 +10,8 @@ uses
 
   PrjConst, AtrPages, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet,
-  pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, A4onTypeUnit;
+  pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, A4onTypeUnit,
+  VCL.Menus;
 
 type
   TapgNodeLink = class(TA4onPage)
@@ -33,6 +34,14 @@ type
     dsEQ: TpFIBDataSet;
     srcEQ: TDataSource;
     actPEdit: TAction;
+    pnlDBtns: TPanel;
+    actOpenObject: TAction;
+    btnFindCustomer: TSpeedButton;
+    pmOpen: TPopupMenu;
+    miEqpmnt: TMenuItem;
+    miNodeFrom: TMenuItem;
+    actOpenEqpmnt: TAction;
+    actOpenCustomer: TAction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -43,6 +52,9 @@ type
     procedure dbgNodeLinkRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
     procedure dbgDetailDblClick(Sender: TObject);
     procedure actPEditExecute(Sender: TObject);
+    procedure actOpenObjectExecute(Sender: TObject);
+    procedure actOpenEqpmntExecute(Sender: TObject);
+    procedure actOpenCustomerExecute(Sender: TObject);
   private
     { Private declarations }
     procedure EnableControls;
@@ -71,7 +83,7 @@ procedure TapgNodeLink.InitForm;
 var
   FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
+  FullAccess := (dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
 
   pnlButtons.Visible := FullAccess;
   actAdd.Visible := pnlButtons.Visible;
@@ -102,11 +114,13 @@ begin
   if (FDataSource.DataSet.RecordCount = 0) then
     Exit;
   LinkItem.LINK_ID := -1;
+  LinkItem.NODE_Name := '';
+  LinkItem.NODE_TYPE := '';
   LinkItem.NODE_ID := FDataSource.DataSet['NODE_ID'];
-  if (not FDataSource.DataSet.FieldByName('NAME').IsNull) then
-    LinkItem.NODE_Name := FDataSource.DataSet['NAME']
-  else
-    LinkItem.NODE_Name := '';
+  if (not FDataSource.DataSet.FieldByName('NAME').IsNull) then begin
+    LinkItem.NODE_Name := FDataSource.DataSet['NAME'];
+    LinkItem.NODE_TYPE := FDataSource.DataSet['O_NAME']; // тип узла
+  end;
   SecondItem.NODE_ID := -1;
 
   if LinkNodes(LinkItem, SecondItem) then
@@ -185,6 +199,28 @@ begin
     EnableControls;
     UpdatePage;
   end
+end;
+
+procedure TapgNodeLink.actOpenCustomerExecute(Sender: TObject);
+begin
+  if dsEQ.RecordCount = 0 then
+    Exit;
+
+  if not dsEQ.FieldByName('CUSTOMER_ID').IsNull then
+    A4MainForm.ShowCustomers(7, IntToStr(dsEQ['CUSTOMER_ID']));
+end;
+
+procedure TapgNodeLink.actOpenEqpmntExecute(Sender: TObject);
+begin
+  if ((dsEQ.RecordCount = 0) or (dsEQ.FieldByName('Name').IsNull)) then
+    Exit;
+
+  A4MainForm.OpenEquipmentByName(dsEQ['Name']);
+end;
+
+procedure TapgNodeLink.actOpenObjectExecute(Sender: TObject);
+begin
+  pmOpen.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 procedure TapgNodeLink.actPEditExecute(Sender: TObject);

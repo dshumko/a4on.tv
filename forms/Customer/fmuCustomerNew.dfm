@@ -1386,6 +1386,7 @@ object apgCustomerNew: TapgCustomerNew
       '  , H.ORG_ID'
       'from HOUSE H'
       'where h.street_id = :street_id'
+      '  @@AREA_LOCK% @ -- '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1088#1072#1081#1086#1085#1072#1084
       'order by h.HOUSE_NO')
     Transaction = trRead
     Database = dmMain.dbTV
@@ -1442,63 +1443,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 765
     Top = 246
   end
-  object pFIBDataSet1: TpFIBDataSet
-    UpdateSQL.Strings = (
-      'UPDATE CUSTOMER_CONTACTS'
-      'SET '
-      '    CC_VALUE  = :CC_VALUE,'
-      '    CC_TYPE   = :CC_TYPE,'
-      '    CC_NOTICE = :CC_NOTICE'
-      'WHERE'
-      '    CUSTOMER_ID = :OLD_CUSTOMER_ID'
-      '    and CC_VALUE = :OLD_CC_VALUE'
-      '    ')
-    DeleteSQL.Strings = (
-      'DELETE FROM'
-      '    CUSTOMER_CONTACTS'
-      'WHERE'
-      '        CUSTOMER_ID = :OLD_CUSTOMER_ID'
-      '    and CC_VALUE = :OLD_CC_VALUE'
-      '    ')
-    InsertSQL.Strings = (
-      'INSERT INTO CUSTOMER_CONTACTS('
-      '    CUSTOMER_ID,'
-      '    CC_VALUE,'
-      '    CC_TYPE,'
-      '    CC_NOTICE'
-      ')'
-      'VALUES('
-      '    :CUSTOMER_ID,'
-      '    :CC_VALUE,'
-      '    :CC_TYPE,'
-      '    :CC_NOTICE'
-      ')')
-    RefreshSQL.Strings = (
-      'select * from customer_contacts cc'
-      'where(  cc.customer_id = :CUSTOMER_ID'
-      '     ) and (     CC.CUSTOMER_ID = :OLD_CUSTOMER_ID'
-      '    and CC.CC_VALUE = :OLD_CC_VALUE'
-      '     )'
-      '    ')
-    SelectSQL.Strings = (
-      'select '
-      '    CUSTOMER_ID,'
-      '    CC_VALUE,'
-      '    CC_TYPE,'
-      '    CC_NOTICE'
-      'from customer_contacts cc'
-      'where customer_id = :CUSTOMER_ID')
-    AutoCalcFields = False
-    Transaction = trRead
-    Database = dmMain.dbTV
-    UpdateTransaction = trWrite
-    AutoCommit = True
-    DataSource = CustomersForm.srcCustomer
-    Left = 817
-    Top = 209
-  end
   object DataSource1: TDataSource
-    DataSet = pFIBDataSet1
     Left = 832
     Top = 270
   end

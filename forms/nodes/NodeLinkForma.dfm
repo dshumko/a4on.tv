@@ -3,8 +3,8 @@ object NodeLinkForm: TNodeLinkForm
   Top = 390
   BorderIcons = [biSystemMenu]
   Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080
-  ClientHeight = 300
-  ClientWidth = 488
+  ClientHeight = 337
+  ClientWidth = 534
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -21,35 +21,35 @@ object NodeLinkForm: TNodeLinkForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  inline OkCancelFrame1: TOkCancelFrame
+  inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 265
-    Width = 488
+    Top = 302
+    Width = 534
     Height = 35
     Align = alBottom
     TabOrder = 2
     TabStop = True
     inherited bbOk: TBitBtn
       Left = 67
-      Width = 332
+      Width = 378
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
     end
     inherited bbCancel: TBitBtn
-      Left = 405
+      Left = 451
     end
   end
   object pnlMain: TPanel
     Left = 0
     Top = 0
-    Width = 488
+    Width = 534
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      488
+      534
       29)
     object Label3: TLabel
       Left = 8
@@ -61,7 +61,7 @@ object NodeLinkForm: TNodeLinkForm
     object lcbPOINT_S: TDBLookupComboboxEh
       Left = 76
       Top = 8
-      Width = 404
+      Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -118,14 +118,14 @@ object NodeLinkForm: TNodeLinkForm
   object pnlSecond: TPanel
     Left = 0
     Top = 29
-    Width = 488
-    Height = 236
+    Width = 534
+    Height = 273
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      488
-      236)
+      534
+      273)
     object lbl3: TLabel
       Left = 8
       Top = 119
@@ -175,11 +175,18 @@ object NodeLinkForm: TNodeLinkForm
       Height = 13
       Caption = #1045#1084#1082#1086#1089#1090#1100
     end
+    object lbl6: TLabel
+      Left = 8
+      Top = 146
+      Width = 62
+      Height = 13
+      Caption = #1052#1072#1088#1082#1080#1088#1086#1074#1082#1072
+    end
     object mmoNOTICE: TDBMemoEh
       Left = 8
-      Top = 144
-      Width = 472
-      Height = 87
+      Top = 170
+      Width = 518
+      Height = 98
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DataField = 'NOTICE'
@@ -188,7 +195,7 @@ object NodeLinkForm: TNodeLinkForm
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       ShowHint = True
-      TabOrder = 7
+      TabOrder = 8
       Visible = True
       WantReturns = True
     end
@@ -223,7 +230,7 @@ object NodeLinkForm: TNodeLinkForm
     object edtNAME: TDBEditEh
       Left = 76
       Top = 89
-      Width = 404
+      Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'NAME'
@@ -240,7 +247,7 @@ object NodeLinkForm: TNodeLinkForm
     object lcbLinkType: TDBLookupComboboxEh
       Left = 76
       Top = 35
-      Width = 404
+      Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -273,7 +280,7 @@ object NodeLinkForm: TNodeLinkForm
     object lcbNode: TDBLookupComboboxEh
       Left = 76
       Top = 8
-      Width = 404
+      Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -334,7 +341,7 @@ object NodeLinkForm: TNodeLinkForm
     object ednSTOCK1: TDBNumberEditEh
       Left = 405
       Top = 116
-      Width = 75
+      Width = 121
       Height = 21
       Hint = #1050#1086#1083'-'#1074#1086' '#1074#1086#1079#1084#1086#1078#1085#1099#1093' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1081' '#1082#1072#1073#1077#1083#1077#1084
       Anchors = [akLeft, akTop, akRight]
@@ -351,7 +358,7 @@ object NodeLinkForm: TNodeLinkForm
     object lcbApplMID: TDBLookupComboboxEh
       Left = 76
       Top = 62
-      Width = 404
+      Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -393,29 +400,61 @@ object NodeLinkForm: TNodeLinkForm
       TabOrder = 2
       Visible = True
     end
+    object lcbLabel: TDBLookupComboboxEh
+      Left = 76
+      Top = 143
+      Width = 450
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = 'LABELS'
+      DataSource = srcLink
+      DropDownBox.Columns = <
+        item
+          FieldName = 'NAME'
+        end
+        item
+          FieldName = 'LABELS'
+        end>
+      DropDownBox.ListSource = srcLabel
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1052#1072#1088#1082#1080#1088#1086#1074#1082#1072' '#1082#1072#1073#1077#1083#1103
+      EditButtons = <>
+      KeyField = 'LABELS'
+      ListField = 'NAME'
+      ListSource = srcLabel
+      ShowHint = True
+      Style = csDropDownEh
+      TabOrder = 7
+      Visible = True
+      OnChange = lcbLinkTypeChange
+    end
   end
   object srcLink: TDataSource
     AutoEdit = False
     DataSet = dsLink
-    Left = 70
-    Top = 166
+    Left = 214
+    Top = 70
   end
   object dsLink: TpFIBDataSet
     UpdateSQL.Strings = (
       
         'update or insert into Wire (WID, WTYPE, Name, Meters, Stock, Poi' +
-        'nt_S, Point_E, Notice, CAPACITY, M_ID)'
+        'nt_S, Point_E, Notice, CAPACITY, M_ID, LABELS)'
       
         'values (:WID, :WTYPE, :Name, :Meters, :Stock, :Point_S, :Point_E' +
-        ', :Notice, :CAPACITY, :M_ID)'
+        ', :Notice, :CAPACITY, :M_ID, :LABELS)'
       'matching (WID)')
     InsertSQL.Strings = (
       
         'update or insert into Wire (WID, WTYPE, Name, Meters, Stock, Poi' +
-        'nt_S, Point_E, Notice, CAPACITY, M_ID)'
+        'nt_S, Point_E, Notice, CAPACITY, M_ID, LABELS)'
       
         'values (:WID, :WTYPE, :Name, :Meters, :Stock, :Point_S, :Point_E' +
-        ', :Notice, :CAPACITY, :M_ID)'
+        ', :Notice, :CAPACITY, :M_ID, :LABELS)'
       'matching (WID)')
     SelectSQL.Strings = (
       'select'
@@ -427,13 +466,13 @@ object NodeLinkForm: TNodeLinkForm
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     AutoCommit = True
-    Left = 26
-    Top = 166
+    Left = 274
+    Top = 70
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = True
-    Left = 144
-    Top = 166
+    Left = 256
+    Top = 22
   end
   object dsType: TpFIBDataSet
     SelectSQL.Strings = (
@@ -451,14 +490,14 @@ object NodeLinkForm: TNodeLinkForm
     Database = dmMain.dbTV
     UpdateTransaction = trRead
     AutoCommit = True
-    Left = 296
-    Top = 166
+    Left = 104
+    Top = 198
   end
   object srcType: TDataSource
     AutoEdit = False
     DataSet = dsType
-    Left = 220
-    Top = 166
+    Left = 108
+    Top = 246
   end
   object dsNodes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -491,8 +530,8 @@ object NodeLinkForm: TNodeLinkForm
     Database = dmMain.dbTV
     UpdateTransaction = trRead
     AutoCommit = True
-    Left = 365
-    Top = 170
+    Left = 221
+    Top = 202
     poUseBooleanField = False
     poSetRequiredFields = True
     oVisibleRecno = True
@@ -501,8 +540,8 @@ object NodeLinkForm: TNodeLinkForm
   object srcNodes: TDataSource
     AutoEdit = False
     DataSet = dsNodes
-    Left = 420
-    Top = 174
+    Left = 220
+    Top = 246
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -513,8 +552,8 @@ object NodeLinkForm: TNodeLinkForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 43
-    Top = 226
+    Left = 27
+    Top = 202
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -525,14 +564,14 @@ object NodeLinkForm: TNodeLinkForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 99
-    Top = 226
+    Left = 27
+    Top = 250
   end
   object srcMain: TDataSource
     AutoEdit = False
     DataSet = dsNodes
-    Left = 364
-    Top = 222
+    Left = 356
+    Top = 54
   end
   object dsMat: TpFIBDataSet
     SelectSQL.Strings = (
@@ -553,13 +592,41 @@ object NodeLinkForm: TNodeLinkForm
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
-    Left = 202
-    Top = 226
+    Left = 162
+    Top = 194
   end
   object srcMat: TDataSource
     AutoEdit = False
     DataSet = dsMat
-    Left = 260
-    Top = 228
+    Left = 164
+    Top = 244
+  end
+  object srcLabel: TDataSource
+    AutoEdit = False
+    DataSet = dsLabel
+    Left = 276
+    Top = 246
+  end
+  object dsLabel: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      'o.O_Name NAME, coalesce(o.O_Charfield, '#39#39') LABELS'
+      'from objects o'
+      'where o.O_Type = 62'
+      'order by o.O_Name')
+    AutoUpdateOptions.UpdateTableName = 'NODES'
+    AutoUpdateOptions.KeyFields = 'NODE_ID'
+    AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
+    AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trRead
+    AutoCommit = True
+    Left = 277
+    Top = 202
+    poUseBooleanField = False
+    poSetRequiredFields = True
+    oVisibleRecno = True
+    oFetchAll = True
   end
 end

@@ -14,7 +14,7 @@ uses
 type
 
   TNodeLinkForm = class(TForm)
-    OkCancelFrame1: TOkCancelFrame;
+    OkCancelFrame: TOkCancelFrame;
     srcLink: TDataSource;
     dsLink: TpFIBDataSet;
     CnErrors: TCnErrorProvider;
@@ -46,6 +46,10 @@ type
     dsMat: TpFIBDataSet;
     srcMat: TDataSource;
     lcbApplMID: TDBLookupComboboxEh;
+    lcbLabel: TDBLookupComboboxEh;
+    lbl6: TLabel;
+    srcLabel: TDataSource;
+    dsLabel: TpFIBDataSet;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure lcbLinkTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -73,9 +77,22 @@ function LinkNodes(var MainItem, SecondItem: TNodeLinkItem): Boolean;
 
 implementation
 
-uses DM, pFIBQuery;
+uses DM, pFIBQuery, AtrStrUtils;
 
 {$R *.dfm}
+
+function getFirstLetters(const s: String): String;
+var
+  w : TStringArray;
+  i : Integer;
+begin
+  Result := '';
+  w := Explode(' ', s);
+  for I := 0 to Length(w)-1 do begin
+    Result := Result + Copy(w[i],1,1);
+  end;
+  Result := UpperCase(Result, loUserLocale);
+end;
 
 function LinkNodes(var MainItem, SecondItem: TNodeLinkItem): Boolean;
 begin
@@ -111,6 +128,8 @@ begin
     dsType.Close;
   if dsMat.Active then
     dsMat.Close;
+  if dsLabel.Active then
+    dsLabel.Close;
 end;
 
 procedure TNodeLinkForm.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -121,10 +140,12 @@ end;
 
 procedure TNodeLinkForm.FormShow(Sender: TObject);
 begin
+  OkCancelFrame.bbOk.Visible := ((dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes)));
   dsNodes.ParamByName('NODE_ID').value := FMainLink.NODE_ID;
   dsNodes.Open;
   dsType.Open;
   dsMat.Open;
+  dsLabel.Open;
 
   dsLink.ParamByName('WID').value := FMainLink.LINK_ID;
   dsLink.Open;
@@ -162,8 +183,10 @@ end;
 
 procedure TNodeLinkForm.lcbNodeChange(Sender: TObject);
 begin
-  if (FSecondLink.NODE_ID <= 0) and (lcbNode.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then
+  if (FSecondLink.NODE_ID <= 0) and (lcbNode.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then begin
     FSecondLink.NODE_Name := dsNodes['Name'];
+    FSecondLink.NODE_TYPE := dsNodes['O_Name'];
+  end;
   GenName();
 end;
 
@@ -187,6 +210,12 @@ procedure TNodeLinkForm.OkCancelFrame1bbOkClick(Sender: TObject);
 var
   errors: Boolean;
 begin
+  if not ((dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes)))
+  then begin
+    errors := True;
+    Exit;
+  end;
+
   errors := false;
   if VarIsNull(lcbLinkType.value) then
   begin
@@ -228,8 +257,8 @@ begin
     if (lcbLinkType.Text <> '') and (not dsType.FieldByName('O_NAME').IsNull) then
       s := dsType['O_NAME'] + ':';
 
-    s := s + FMainLink.NODE_Name + '>';
-    s := s + FSecondLink.NODE_Name;
+    s := s + getFirstLetters(FMainLink.NODE_TYPE) +'-'+ FMainLink.NODE_Name + '>';
+    s := s + getFirstLetters(FSecondLink.NODE_TYPE) +'-' + FSecondLink.NODE_Name;
 
     edtNAME.Text := s
   end;

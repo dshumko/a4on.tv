@@ -339,7 +339,8 @@ begin
       ParamByName('SID').AsInteger := dsService['SERVICE_ID'];
       Transaction.StartTransaction;
       ExecQuery;
-      cbCalcType.ReadOnly := (FieldByName('cnt').Value > 0);
+      if RecordCount>0 then
+        cbCalcType.ReadOnly := (FieldByName('cnt').Value > 0);
       Close;
       Transaction.Commit;
     finally

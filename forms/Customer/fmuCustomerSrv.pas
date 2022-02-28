@@ -315,9 +315,15 @@ begin
   if dsServices.RecordCount = 0 then
     exit;
 
-  // включаем только если услуга активна
-  if dsServices['SRV_ACTIVE'] = 0 then
+  // включаем только если услуга отключена
+  if dsServices['state_sgn'] = 1 then
     exit;
+
+  // включаем только если услуга неактивна (нет галки услуга Активна )
+  if (dsServices['SRV_ACTIVE'] = 0) and ((dmMain.GetSettingsValue('ON_DISACT')) = '0') then begin
+    ShowMessage(rsSrvNotActive);
+    exit;
+  end;
 
   if FDataSource.DataSet.FieldByName('VALID_TO').IsNull then
     CanAdd := true

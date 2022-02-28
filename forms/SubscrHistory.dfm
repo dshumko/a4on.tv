@@ -49,6 +49,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+      PopupMenu = pmServices
       SearchPanel.Enabled = True
       SearchPanel.FilterOnTyping = True
       TabOrder = 0
@@ -61,7 +62,6 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'NAME'
           Footers = <>
-          PopupMenu = pmServices
           ReadOnly = True
           Title.Alignment = taCenter
           Title.Caption = #1058#1080#1087' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1086#1081' '#1091#1089#1083#1091#1075#1080
@@ -78,8 +78,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
             '0'
             '1')
           PickList.Strings = (
-            #1054#1090#1082#1083#1102#1095#1077#1085
-            #1055#1086#1076#1082#1083#1102#1095#1077#1085)
+            #1054#1090#1082#1083'.'
+            #1055#1086#1076#1082#1083'.')
           Title.Caption = #1057#1090#1072#1090#1091#1089
           Width = 92
         end
@@ -148,6 +148,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
         Width = 23
         Height = 22
         Action = actOk
+        Flat = True
       end
       object btnCancel: TSpeedButton
         Left = 2
@@ -155,6 +156,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
         Width = 23
         Height = 22
         Action = actCancel
+        Flat = True
       end
       object btnBack: TSpeedButton
         Left = 2
@@ -162,6 +164,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
         Width = 23
         Height = 22
         Action = actBack
+        Flat = True
       end
       object btnDisconnect: TSpeedButton
         Left = 2
@@ -169,6 +172,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
         Width = 23
         Height = 22
         Action = actDisconnect
+        Flat = True
       end
     end
   end
@@ -343,8 +347,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     AutoEdit = False
     DataSet = dsServicesHistory
     OnStateChange = srcServicesHistoryStateChange
-    Left = 130
-    Top = 229
+    Left = 90
+    Top = 293
   end
   object dsServicesHistory: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -402,8 +406,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcServices
-    Left = 120
-    Top = 224
+    Left = 96
+    Top = 240
     oFetchAll = True
   end
   object dsServices: TpFIBDataSet
@@ -467,15 +471,30 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     Top = 60
   end
   object pmHistory: TPopupMenu
-    Left = 216
-    Top = 208
+    Left = 208
+    Top = 240
+    object miN2: TMenuItem
+      Caption = '-'
+    end
     object miDeleteHistory: TMenuItem
       Action = actDeleteSubscrHist
     end
   end
   object pmServices: TPopupMenu
+    Images = A4MainForm.ICONS_ACTIVE
     Left = 196
     Top = 60
+    object miBack: TMenuItem
+      Action = actBack
+      Caption = #1054#1090#1084#1077#1085#1080#1090#1100' '#1087#1086#1089#1083#1077#1076#1085#1080#1077' '#1076#1077#1081#1089#1090#1074#1080#1077
+    end
+    object miDisconnect: TMenuItem
+      Action = actDisconnect
+      Caption = #1057#1084#1077#1085#1080#1090#1100' '#1072#1074#1090#1086#1073#1083#1086#1082#1080#1088#1086#1074#1082#1091
+    end
+    object miN1: TMenuItem
+      Caption = '-'
+    end
     object miDeleteServices: TMenuItem
       Action = actDeleteService
     end

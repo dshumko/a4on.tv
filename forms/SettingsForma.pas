@@ -187,6 +187,8 @@ type
     chkLANAddr: TCheckBox;
     chkDelLanEq: TCheckBox;
     chkVlans4Home: TCheckBox;
+    chkDisableVlan: TCheckBox;
+    chkOnDisact: TCheckBox;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -462,6 +464,7 @@ begin
       SaveSettingsBoolean('EMAIL_REQ', chkEMAIL_REQ);
       SaveSettingsBoolean('PERSONEL_TARIF', cbPersonalTarrif);
       SaveSettingsBoolean('COMPLEX', chkComplex);
+      SaveSettingsBoolean('ON_DISACT', chkOnDisact);
       SaveSettingsBoolean('IGNORE_CONTRACT', chkIgnoreDate);
       SaveSettingsBoolean('STRICT_MODE', chkStrictMode);
       SaveSettingsBoolean('IPTV_PACKET', chkIPTVPacket);
@@ -469,6 +472,7 @@ begin
       SaveSettingsBoolean('LAN_ADDRES', chkLANAddr);
       SaveSettingsBoolean('LAN_DELEQPMNT', chkDelLanEq);
       SaveSettingsBoolean('LAN_VALAN4HOME', chkVlans4Home);
+      SaveSettingsBoolean('LAN_VALANDISABLE', chkDisableVlan);
 
       SaveSettingsBoolean('PAYMENT_SRV', cbPaymentSrv);
       SaveSettingsBoolean('NEGATIVE_PAY', cbNegativePay);
@@ -760,6 +764,8 @@ begin
         cbPersonalTarrif.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COMPLEX' then
         chkComplex.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ON_DISACT' then
+        chkOnDisact.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'IGNORE_CONTRACT' then
         chkIgnoreDate.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'IPTV_PACKET' then
@@ -772,6 +778,8 @@ begin
         chkDelLanEq.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_VALAN4HOME' then
         chkVlans4Home.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_VALANDISABLE' then
+        chkDisableVlan.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PAYMENT_SRV' then
         cbPaymentSrv.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_FORMAT' then

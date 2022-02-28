@@ -160,7 +160,7 @@ object apgEqpmntPort: TapgEqpmntPort
     end
     object btnFind: TSpeedButton
       Left = 2
-      Top = 71
+      Top = 67
       Width = 22
       Height = 22
       Action = actFindCustomer
@@ -168,11 +168,54 @@ object apgEqpmntPort: TapgEqpmntPort
     end
     object btnCmd: TSpeedButton
       Left = 2
-      Top = 109
+      Top = 106
       Width = 22
       Height = 22
       Action = actCmd
       Flat = True
+    end
+    object btnFindCustomer: TSpeedButton
+      Left = 2
+      Top = 149
+      Width = 22
+      Height = 22
+      Action = actObjectOpen
+      Flat = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000000000000000000000000000000000000FF00FF00A924
+        C46A982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982C
+        B97F982CB97F982CB97F982CB97F992CB97ED807DD2BFF00FF00F902FA0762B2
+        E7FD63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FEAA5CEF86FF00FF00E909F01A63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FEA06BF099FF00FF00DB0FE62C63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE9578EEABFF00FF00CC15DC3F63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE8985ECBEFF00FF00BC1CD15263B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE7E92EAD1FF00FF00AE22C76463B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE729FE8E3FF00FF009E29BD7763B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+        E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE67ACE6F6FF00FF00D807DD2B992C
+        B97E982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982C
+        B97F982CB97F982CB97F982CB97F982CB97FA924C46AFF00FF00FF00FF008A1C
+        A47F2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B74
+        94FE2B7494FE2B7494FE2B7494FE2B7494FEFF00FF00FF00FF00FF00FF008A1C
+        A47F2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B74
+        94FE2B7494FE2B7494FE2B7494FE3C699CE9FF00FF00FF00FF00FF00FF008B1C
+        A57E2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE8E2BB680FC00FC03FF00
+        FF00FF00FF00FF00FF00F401F30CA225977A9E27927F9E27927FFF00FF00D504
+        DA2B8B1CA57E8A1CA47F8A1CA47F8A1CA47FAE13C058FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00C915C346A93E9687809852F67D9E4DFEFF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00F701F708A0727DB8A26F81B37D9E4DFEFF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00E304
+        E21F9E27927F9E27927F9A7876C2A56B85ADF900F9069D7679BEFF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00E404
+        E31E9E27927F9E27927FB31EAA63FB00FB04FF00FF00F501F40B}
     end
   end
   object dbgCustomer: TDBGridEh
@@ -434,6 +477,7 @@ object apgEqpmntPort: TapgEqpmntPort
         Footers = <>
         Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1053#1072#1079#1074#1072#1085#1080#1077
         Title.TitleButton = True
+        Width = 61
       end
       item
         CellButtons = <>
@@ -450,7 +494,7 @@ object apgEqpmntPort: TapgEqpmntPort
         EditButtons = <>
         FieldName = 'WS_NODE'
         Footers = <>
-        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1059#1079#1077#1083' '#1089
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1059#1079#1077#1083' '#1080#1079
         Title.TitleButton = True
       end
       item
@@ -461,6 +505,14 @@ object apgEqpmntPort: TapgEqpmntPort
         Footers = <>
         Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1059#1079#1077#1083' '#1074
         Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WLABEL'
+        Footers = <>
+        Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1084#1077#1090#1082#1072
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -520,6 +572,26 @@ object apgEqpmntPort: TapgEqpmntPort
     object Action1: TAction
       Caption = 'Action1'
     end
+    object actObjectOpen: TAction
+      Hint = #1055#1077#1088#1077#1081#1090#1080' '#1082' '#1086#1073#1098#1077#1082#1090#1091'...'
+      ImageIndex = 99
+      OnExecute = actObjectOpenExecute
+    end
+    object actNodeFrom: TAction
+      Category = 'Open'
+      Caption = #1059#1079#1077#1083' '#1080#1079
+      OnExecute = actNodeFromExecute
+    end
+    object actNodeTo: TAction
+      Category = 'Open'
+      Caption = #1059#1079#1077#1083' '#1074
+      OnExecute = actNodeToExecute
+    end
+    object actEqpmnt: TAction
+      Category = 'Open'
+      Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      OnExecute = actEqpmntExecute
+    end
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -558,110 +630,6 @@ object apgEqpmntPort: TapgEqpmntPort
       'WHERE EID = :OLD_EID'
       '  and PORT = :OLD_PORT')
     RefreshSQL.Strings = (
-      'select'
-      '    a.port'
-      '  , a.EID'
-      '  , c.CUSTOMER_ID'
-      '  , c.CUST_CODE'
-      
-        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, '#39#1086#1073#1086#1088#39', null)) ACCOUN' +
-        'T_NO'
-      '  , coalesce(c.SURNAME, e.Name) surname'
-      '  , c.MIDLENAME'
-      '  , c.INITIALS'
-      '  , c.PHONE_NO'
-      '  , c.NOTICE'
-      '  , c.CUST_STATE_DESCR'
-      '  , c.FLAT_NO'
-      '  , c.DEBT_SUM'
-      '  , c.HIS_COLOR'
-      '  , s.street_short'
-      '  , S.Street_Name'
-      '  , H.House_No'
-      '  , h.Street_ID'
-      '  , c.HOUSE_ID'
-      '  , -1 * c.debt_sum as BALANCE'
-      '  , (select'
-      '         count(*)'
-      '       from SUBSCR_SERV ss'
-      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
-      '             and ss.STATE_SGN = 1) as connected'
-      '  , f.FLOOR_N'
-      '  , f.PORCH_N'
-      '  , t.LAN_ID'
-      '  , t.ip'
-      '  , t.mac'
-      '  , pt.O_Name PT_NAME'
-      '  , ps.O_Name PS_NAME'
-      '  , v.Name V_NAME'
-      '  , p.Notice PORT_NOTICE '
-      '  , p.SPEED '
-      '  , case p.Con'
-      '      when 0 then '#39#1054#39
-      '      when 1 then '#39#1040#39
-      '      else '#39#39
-      '    end whose'
-      '  , p.Con'
-      '  , p.Con_Id'
-      '  , p.P_State'
-      '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
-      '  , w.Name W_NAME'
-      '  , wt.O_Type WT_NAME'
-      '  , sn.Name WS_NODE'
-      '  , en.Name WE_NODE'
-      '  , w.Wid'
-      '  , w.Point_S'
-      '  , w.Point_E'
-      
-        '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
-        '_USE  '
-      '  from (select distinct Eid, port'
-      '          from (select Eid, port from port where Eid = :EID'
-      '                union'
-      
-        '                select EQ_ID EID , Port from tv_lan where EQ_ID ' +
-        '= :EID and coalesce(Port,'#39#39')<> '#39#39')) a'
-      
-        '       left outer join port p on (p.Eid = a.EID and p.Port = a.p' +
-        'ort)'
-      
-        '       left outer join tv_lan t on (t.Eq_Id = a.Eid and t.Port =' +
-        ' a.Port)'
-      
-        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
-        '_id)'
-      
-        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
-        'n = 0)'
-      
-        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
-        '_TYPE = 7)'
-      
-        '       left outer join HOUSE H on (((not C.HOUSE_ID is null) and' +
-        ' C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) and e.HOUS' +
-        'E_ID = H.HOUSE_ID))'
-      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
-      
-        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
-        'and f.Flat_No = c.Flat_No)'
-      
-        '       left outer join objects pt on (p.P_Type = pt.O_Id and pt.' +
-        'O_Type = 57)'
-      
-        '       left outer join objects ps on (p.P_State = ps.O_Id and ps' +
-        '.O_Type = 60)'
-      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
-      '       left outer join Wire w on (w.Wid = p.Wid)'
-      
-        '       left outer join OBJECTS wt on (w.WTYPE = wt.O_ID and wt.O' +
-        '_TYPE = 56)'
-      '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
-      '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
-      '       '
-      'where a.EID = :OLD_EID'
-      '  and a.PORT = :OLD_PORT'
-      '')
-    SelectSQL.Strings = (
       'select'
       '*'
       'from('
@@ -721,7 +689,8 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , w.Point_E'
       
         '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
-        '_USE '
+        '_USE'
+      '  , p.WLABEL '
       '  from (select distinct Eid, port'
       '          from (select Eid, port from port where Eid = :EID'
       '                union'
@@ -815,6 +784,177 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , null'
       '  , null'
       '  , null'
+      '  , null  '
+      '  from tv_lan t'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      '       left outer join HOUSE H on (C.HOUSE_ID = H.HOUSE_ID)'
+      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+      
+        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
+        'and f.Flat_No = c.Flat_No)'
+      '  where t.Eq_Id = :EID and t.Port is null'
+      ')'
+      'where EID = :OLD_EID'
+      '  and PORT = :OLD_PORT'
+      '')
+    SelectSQL.Strings = (
+      'select'
+      '*'
+      'from('
+      'select'
+      '    a.port'
+      '  , a.EID'
+      '  , c.CUSTOMER_ID'
+      '  , c.CUST_CODE'
+      
+        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, '#39#1086#1073#1086#1088#39', null)) ACCOUN' +
+        'T_NO'
+      '  , coalesce(c.SURNAME, e.Name) surname'
+      '  , c.MIDLENAME'
+      '  , c.INITIALS'
+      '  , c.PHONE_NO'
+      '  , c.NOTICE'
+      '  , c.CUST_STATE_DESCR'
+      '  , c.FLAT_NO'
+      '  , c.DEBT_SUM'
+      '  , c.HIS_COLOR'
+      '  , s.street_short'
+      '  , S.Street_Name'
+      '  , H.House_No'
+      '  , h.Street_ID'
+      '  , c.HOUSE_ID'
+      '  , -1 * c.debt_sum as BALANCE'
+      '  , (select'
+      '         count(*)'
+      '       from SUBSCR_SERV ss'
+      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
+      '             and ss.STATE_SGN = 1) as connected'
+      '  , f.FLOOR_N'
+      '  , f.PORCH_N'
+      '  , t.LAN_ID'
+      '  , t.ip'
+      '  , t.mac'
+      '  , pt.O_Name PT_NAME'
+      '  , ps.O_Name PS_NAME'
+      '  , v.Name V_NAME'
+      '  , p.Notice PORT_NOTICE '
+      '  , p.SPEED '
+      '  , case p.Con'
+      '      when 0 then '#39#1054#39
+      '      when 1 then '#39#1040#39
+      '      else '#39#39
+      '    end whose'
+      '  , p.Con'
+      '  , p.Con_Id'
+      '  , p.P_State'
+      '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
+      '  , w.Name W_NAME'
+      '  , wt.O_Type WT_NAME'
+      '  , sn.Name WS_NODE'
+      '  , en.Name WE_NODE'
+      '  , w.Wid'
+      '  , w.Point_S'
+      '  , w.Point_E'
+      
+        '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
+        '_USE'
+      '  , p.WLABEL '
+      '  from (select distinct Eid, port'
+      '          from (select Eid, port from port where Eid = :EID'
+      '                union'
+      
+        '                select EQ_ID EID , Port from tv_lan where EQ_ID ' +
+        '= :EID and coalesce(Port,'#39#39')<> '#39#39')) a'
+      
+        '       left outer join port p on (p.Eid = a.EID and p.Port = a.p' +
+        'ort)'
+      
+        '       left outer join tv_lan t on (t.Eq_Id = a.Eid and t.Port =' +
+        ' a.Port)'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      
+        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
+        'n = 0)'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      
+        '       left outer join HOUSE H on (((not C.HOUSE_ID is null) and' +
+        ' C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) and e.HOUS' +
+        'E_ID = H.HOUSE_ID))'
+      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+      
+        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
+        'and f.Flat_No = c.Flat_No)'
+      
+        '       left outer join objects pt on (p.P_Type = pt.O_Id and pt.' +
+        'O_Type = 57)'
+      
+        '       left outer join objects ps on (p.P_State = ps.O_Id and ps' +
+        '.O_Type = 60)'
+      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
+      '       left outer join Wire w on (w.Wid = p.Wid)'
+      
+        '       left outer join OBJECTS wt on (w.WTYPE = wt.O_ID and wt.O' +
+        '_TYPE = 56)'
+      '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
+      '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
+      '  where a.EID = :EID'
+      'union'
+      'select'
+      '    null'
+      '  , t.Eq_Id EID'
+      '  , c.CUSTOMER_ID'
+      '  , c.CUST_CODE'
+      '  , c.ACCOUNT_NO'
+      '  , null'
+      '  , c.MIDLENAME'
+      '  , c.INITIALS'
+      '  , c.PHONE_NO'
+      '  , c.NOTICE'
+      '  , c.CUST_STATE_DESCR'
+      '  , c.FLAT_NO'
+      '  , c.DEBT_SUM'
+      '  , c.HIS_COLOR'
+      '  , s.street_short'
+      '  , S.Street_Name'
+      '  , H.House_No'
+      '  , h.Street_ID'
+      '  , c.HOUSE_ID'
+      '  , -1 * c.debt_sum as BALANCE'
+      '  , (select'
+      '         count(*)'
+      '       from SUBSCR_SERV ss'
+      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
+      '             and ss.STATE_SGN = 1) as connected'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null'
+      '  , null  '
       '  from tv_lan t'
       
         '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
@@ -846,5 +986,18 @@ object apgEqpmntPort: TapgEqpmntPort
   object pmCustomerLanPopUp: TPopupMenu
     Left = 456
     Top = 153
+  end
+  object pmOpen: TPopupMenu
+    Left = 176
+    Top = 152
+    object miEqpmnt: TMenuItem
+      Action = actEqpmnt
+    end
+    object miNodeFrom: TMenuItem
+      Action = actNodeFrom
+    end
+    object miNodeTo: TMenuItem
+      Action = actNodeTo
+    end
   end
 end

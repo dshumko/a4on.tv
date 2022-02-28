@@ -29,12 +29,6 @@ object SettingsForm: TSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 291
       Top = 9
@@ -52,7 +46,7 @@ object SettingsForm: TSettingsForm
     Top = 0
     Width = 397
     Height = 509
-    ActivePage = tsLAN
+    ActivePage = tsGlobal
     Align = alClient
     MultiLine = True
     TabOrder = 1
@@ -367,6 +361,16 @@ object SettingsForm: TSettingsForm
         Caption = #1053#1077' '#1087#1083#1072#1085#1080#1088#1086#1074#1072#1090#1100' '#1079#1072#1103#1074#1082#1080' '#1085#1072' '#1074#1099#1093#1086#1076#1085#1099#1077
         TabOrder = 7
       end
+      object chkOnDisact: TCheckBox
+        Left = 9
+        Top = 434
+        Width = 320
+        Height = 17
+        Hint = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1082#1083#1102#1095#1080#1090#1100' '#1053#1045#1040#1050#1058#1048#1042#1053#1067#1045' '#1091#1089#1083#1091#1075#1080
+        Alignment = taLeftJustify
+        Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1082#1083#1102#1095#1080#1090#1100' '#1053#1045#1040#1050#1058#1048#1042#1053#1067#1045' '#1091#1089#1083#1091#1075#1080
+        TabOrder = 13
+      end
     end
     object tsPayment: TTabSheet
       Tag = 1
@@ -677,7 +681,7 @@ object SettingsForm: TSettingsForm
       ImageIndex = 2
       object Label10: TLabel
         Left = 8
-        Top = 211
+        Top = 245
         Width = 117
         Height = 13
         Caption = #1048#1089#1087#1086#1083#1100#1079#1091#1077#1084#1099#1081' '#1073#1080#1083#1083#1080#1085#1075
@@ -685,7 +689,7 @@ object SettingsForm: TSettingsForm
       end
       object cbBilling: TDBComboBoxEh
         Left = 135
-        Top = 208
+        Top = 242
         Width = 164
         Height = 21
         Ctl3D = True
@@ -709,7 +713,7 @@ object SettingsForm: TSettingsForm
       end
       object pnlBilling: TPanel
         Left = 8
-        Top = 243
+        Top = 277
         Width = 243
         Height = 158
         BevelOuter = bvNone
@@ -904,6 +908,16 @@ object SettingsForm: TSettingsForm
         Alignment = taLeftJustify
         Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1089#1077#1090#1080' '#1076#1086#1084#1072' '#1072#1073#1086#1085#1077#1085#1090#1072
         TabOrder = 7
+      end
+      object chkDisableVlan: TCheckBox
+        Left = 8
+        Top = 196
+        Width = 290
+        Height = 17
+        Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1089#1077#1090#1080' '#1076#1086#1084#1072' '#1074' '#1082#1072#1088#1090#1086#1095#1082#1077' '#1057#1055#1044' '#1072#1073#1086#1085#1077#1085#1090#1072
+        Alignment = taLeftJustify
+        Caption = #1055#1088#1080#1074#1103#1079#1082#1072' '#1089#1077#1090#1080' '#1082' '#1087#1086#1088#1090#1091' ('#1079#1072#1087#1088#1077#1090' '#1074#1099#1073#1086#1088#1072' '#1089#1077#1090#1080')'
+        TabOrder = 8
       end
     end
     object tsVisual: TTabSheet

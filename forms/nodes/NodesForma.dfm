@@ -1417,6 +1417,14 @@ object NodesForm: TNodesForm
           StringDataType = fdtStringEh
           DisplayWidth = 20
         end
+        object NODE_ID: TMTNumericDataFieldEh
+          FieldName = 'NODE_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
       end
       object RecordsList: TRecordsListEh
       end

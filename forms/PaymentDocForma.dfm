@@ -335,6 +335,7 @@ object PaymentDocForm: TPaymentDocForm
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
           Title.TitleButton = True
           Width = 203
+          OnGetCellParams = dbgPayDocPaymentColumns6GetCellParams
         end
         item
           CellButtons = <>

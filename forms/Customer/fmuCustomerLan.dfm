@@ -188,6 +188,31 @@ object apgCustomerLan: TapgCustomerLan
         FieldName = 'PLACE'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103'|'#1052#1077#1089#1090#1086
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WNAME'
+        Footers = <>
+        Title.Caption = #1050#1072#1073#1077#1083#1100
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WLABEL'
+        Footers = <>
+        Title.Caption = #1052#1077#1090#1082#1072
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SPEED'
+        Footers = <>
+        Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100' '#1087#1086#1088#1090#1072
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -378,6 +403,32 @@ object apgCustomerLan: TapgCustomerLan
       PopupMenu = pmLanPopUp
       OnClick = btnActLanPingClick
     end
+    object btnOpen: TSpeedButton
+      Left = 2
+      Top = 101
+      Width = 22
+      Height = 22
+      Action = actOpenObject
+      Flat = True
+      Glyph.Data = {
+        EE010000424DEE01000000000000EE0000002800000010000000100000000100
+        08000000000000010000C40E0000C40E00002E0000002E000000F0F0F000BFCE
+        AA00B2C59800B2BF9F00AEB5A500D7D9D500B4C39F00B5B8B1008DAC6400B4B7
+        B100759648007DA14D00D7D9D300B9CAA300ABC1CC008DB2C200C3CBCF002B75
+        96004887A3009AAFB800A5B1B600D2D5D7008DB1C200A1AFB600163E5000A3B0
+        B70090BFDC0070BBE90063B6E9009EC5DD005CA9D80090C1DF005398C3008FBB
+        D6004B89AE0092B6CD004279990094B3C7003969850096B0C0003059720099AF
+        BB001F3A4A0062B4E70063B5E800A1AEB6002A2B1C1C1C1C1C1C1C1C1C1C1C2C
+        2D00281C1C1C1C1C1C1C1C1C1C1C1C1C2900261C1C1C1C1C1C1C1C1C1C1C1C1C
+        2700241C1C1C1C1C1C1C1C1C1C1C1C1C2500221C1C1C1C1C1C1C1C1C1C1C1C1C
+        2300201C1C1C1C1C1C1C1C1C1C1C1C1C21001E1C1C1C1C1C1C1C1C1C1C1C1C1C
+        1F001A1B1C1C1C1C1C1C1C1C1C1C1C1B1D000017181818181818181818181819
+        0000000F1111111111111111111111160000000F111111111213141414141415
+        0000000E0F0F0F0F100000000000000000000000000000000000000000000C0D
+        020200000000000000000000000000090A0B0000000000000000000000000506
+        070800000000000000000001020203000004}
+      PopupMenu = pmLanPopUp
+    end
   end
   object PanelIPTV: TPanel
     Left = 538
@@ -390,7 +441,7 @@ object apgCustomerLan: TapgCustomerLan
     object Label7: TLabel
       Left = 0
       Top = 0
-      Width = 148
+      Width = 330
       Height = 13
       Hint = 
         #1059#1089#1083#1091#1075#1080' '#1076#1083#1103' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1072', '#13#10#1077#1089#1083#1080' '#1085#1077' '#1091#1082#1072#1079#1099#1074#1072#1090#1100' '#1090#1086' '#1074#1089#1077' '#1087#1072#1082#1077#1090#1099' '#1085#1072' '#1082#1086#1090#1086 +
@@ -479,11 +530,18 @@ object apgCustomerLan: TapgCustomerLan
       '  , v.VLAN_NUM'
       '  , s.Street_Name||'#39' '#39'||s.Street_Short Street_Name'
       '  , h.House_No'
+      '  , p.Speed'
+      '  , p.Wlabel'
+      '  , w.Name WNAME'
       '  from tv_lan f'
       '       left outer join vlans v on (f.vlan_id = v.v_id)'
       '       left outer join equipment e on (f.eq_id = e.eid)'
       '       left outer join house h on (h.House_Id = f.House_Id)'
       '       left outer join street s on (s.Street_Id = h.Street_Id)'
+      
+        '       left outer join port p on (p.Eid = f.Eq_Id and p.Port = f' +
+        '.Port)'
+      '       left outer join wire w on (w.Wid = p.Wid)'
       'where(  f.CUSTOMER_ID = :CUSTOMER_ID'
       '     ) and (     F.LAN_ID = :OLD_LAN_ID'
       '     )'
@@ -500,11 +558,18 @@ object apgCustomerLan: TapgCustomerLan
       '  , v.VLAN_NUM'
       '  , s.Street_Name||'#39' '#39'||s.Street_Short Street_Name'
       '  , h.House_No'
+      '  , p.Speed'
+      '  , p.Wlabel'
+      '  , w.Name WNAME'
       '  from tv_lan f'
       '       left outer join vlans v on (f.vlan_id = v.v_id)'
       '       left outer join equipment e on (f.eq_id = e.eid)'
       '       left outer join house h on (h.House_Id = f.House_Id)'
       '       left outer join street s on (s.Street_Id = h.Street_Id)'
+      
+        '       left outer join port p on (p.Eid = f.Eq_Id and p.Port = f' +
+        '.Port)'
+      '       left outer join wire w on (w.Wid = p.Wid)'
       '  where f.CUSTOMER_ID = :CUSTOMER_ID   '
       ''
       '')
@@ -570,6 +635,16 @@ object apgCustomerLan: TapgCustomerLan
     object actLanHttp: TAction
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' IP'
       OnExecute = actLanHttpExecute
+    end
+    object actOpenObject: TAction
+      Hint = #1055#1077#1088#1077#1081#1090#1080' '#1082' '#1086#1073#1098#1077#1082#1090#1091
+      ImageIndex = 99
+      OnExecute = actOpenObjectExecute
+    end
+    object actOpenEqpmnt: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      OnExecute = actOpenEqpmntExecute
     end
   end
   object pmLanPopUp: TPopupMenu
@@ -639,5 +714,12 @@ object apgCustomerLan: TapgCustomerLan
     TPBMode = tpbDefault
     Left = 424
     Top = 42
+  end
+  object pmOpen: TPopupMenu
+    Left = 80
+    Top = 136
+    object miEqpmnt: TMenuItem
+      Action = actOpenEqpmnt
+    end
   end
 end

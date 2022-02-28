@@ -42,7 +42,7 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, DM, RequestForma, NodeMaterialForma, EquipmentForma;
+uses MAIN, AtrCommon, DM, RequestForma, NodeMaterialForma;
 
 class function TapgNodeMaterials.GetPageName: string;
 begin
@@ -98,12 +98,7 @@ begin
   if (dsMat.FieldByName('NAME').IsNull) then
     Exit;
 
-  if not Assigned(EquipmentForm) then begin
-    EquipmentForm := TEquipmentForm.Create(Application);
-    EquipmentForm.Show;
-  end;
-  EquipmentForm.dbGrid.DataSource.DataSet.Locate('NAME', dsMat['NAME'], [loCaseInsensitive]);
-  // NAME
+  A4MainForm.OpenEquipmentByName(dsMat['NAME']);
 end;
 
 procedure TapgNodeMaterials.CloseData;

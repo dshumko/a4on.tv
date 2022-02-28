@@ -281,11 +281,9 @@ object RequestNewForm: TRequestNewForm
           Height = 129
           inherited lblFIO: TLabel
             Width = 386
-            Margins.Bottom = 0
           end
           inherited lblDebt: TLabel
             Width = 386
-            Margins.Bottom = 0
           end
           inherited memAbonent: TMemo
             Width = 386
@@ -1032,6 +1030,7 @@ object RequestNewForm: TRequestNewForm
       '    left outer join workarea wa on (wa.wa_id = wg.wa_id)'
       '    left outer join headend he on ( h.headend_id = he.he_id )'
       'where h.street_id = :street_id'
+      '@@AREA_LOCK% @ -- '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1088#1072#1081#1086#1085#1072#1084
       'order by h.HOUSE_NO')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

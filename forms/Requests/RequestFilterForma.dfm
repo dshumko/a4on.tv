@@ -1001,10 +1001,12 @@ object RequestFilterForm: TRequestFilterForm
   end
   object dsRequestType: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT'
-      ' W.*'
-      'FROM REQUEST_TYPES W'
-      'order BY W.RT_NAME')
+      'select'
+      '    W.*'
+      '  from REQUEST_TYPES W'
+      '  where (current_user = '#39'SYSDBA'#39')'
+      '          or (RT_DELETED = 0)'
+      '  order by W.RT_NAME')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

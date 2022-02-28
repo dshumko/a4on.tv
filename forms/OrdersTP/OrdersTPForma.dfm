@@ -634,11 +634,17 @@ object OrdersTPForm: TOrdersTPForm
       object N8: TMenuItem
         Caption = '-'
       end
-      object N12: TMenuItem
-        Action = actPrintDoc
+      object mmiCancel: TMenuItem
+        Action = actCancel
+      end
+      object miN19: TMenuItem
+        Caption = '-'
       end
       object miPrintOrder: TMenuItem
         Action = actPrintOrder
+      end
+      object N12: TMenuItem
+        Action = actPrintDoc
       end
       object miN16: TMenuItem
         Caption = '-'

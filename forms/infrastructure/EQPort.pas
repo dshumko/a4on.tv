@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, CnErrorProvider, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Data.DB,
   DM, DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh, FIBDataSet,
-  pFIBDataSet, pFIBQuery, A4onTypeUnit;
+  pFIBDataSet, pFIBQuery, A4onTypeUnit, System.Actions, Vcl.ActnList;
 
 type
   TEQPortForm = class(TForm)
@@ -39,18 +39,24 @@ type
     lcbWIRE: TDBLookupComboboxEh;
     dsWire: TpFIBDataSet;
     srcWire: TDataSource;
+    lblLabel: TLabel;
+    cbLABELS: TDBComboBoxEh;
+    actlst: TActionList;
+    actEditLink: TAction;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
-    procedure lcbWIREDropDownBoxGetCellParams(Sender: TObject;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
+    procedure lcbWIREDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure lcbWIREChange(Sender: TObject);
+    procedure actEditLinkExecute(Sender: TObject);
   private
     fEr: TEquipmentRecord;
     fPort: String;
-    FNode_ID : Integer;
+    FNode_ID: Integer;
+    FCanEditPort: Boolean;
     function CheckData: Boolean;
     procedure SaveAndClose;
     procedure SetEquipment(const value: TEquipmentRecord);
@@ -66,7 +72,7 @@ function EditPort(const ER: TEquipmentRecord; const vPort: string): Boolean;
 
 implementation
 
-uses PrjConst;
+uses PrjConst, NodeLinkForma, System.Types, System.StrUtils;
 
 {$R *.dfm}
 
@@ -151,15 +157,19 @@ begin
   dsType.Open;
   dsState.Open;
   dsVlans.Open;
-  if FPort <> '' then begin
+  if fPort <> '' then
+  begin
     GetPortInfo;
-    if FNode_ID > -1 then begin
-       if dsWire.Active
-       then dsWire.Close;
-       dsWire.ParamByName('NODE').AsInteger := FNode_ID;
-       dsWire.Open;
+    if FNode_ID > -1 then
+    begin
+      if dsWire.Active then
+        dsWire.Close;
+      dsWire.ParamByName('NODE').AsInteger := FNode_ID;
+      dsWire.Open;
     end;
   end;
+  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
+  lcbWIRE.EditButtons.Items[0].Visible := FCanEditPort;
 end;
 
 procedure TEQPortForm.SetEquipment(const value: TEquipmentRecord);
@@ -191,8 +201,8 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
-    fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, WID) ' +
-      ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id, :WID) matching (Eid, Port) ';
+    fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, WID, WLABEL) ' +
+      ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id, :WID, :WLABEL) matching (Eid, Port) ';
 
     fq.ParamByName('Eid').AsInteger := fEr.ID;
     fq.ParamByName('P_Type').AsInteger := lcbType.value;
@@ -204,6 +214,7 @@ begin
       fq.ParamByName('Vlan_Id').AsInteger := lcbVLAN.value;
     if not lcbWIRE.Text.IsEmpty then
       fq.ParamByName('WID').AsInteger := lcbWIRE.value;
+    fq.ParamByName('WLABEL').AsString := cbLABELS.Value;
 
     if fPort = '' then
     begin
@@ -234,6 +245,43 @@ begin
   ModalResult := mrOk;
 end;
 
+procedure TEQPortForm.actEditLinkExecute(Sender: TObject);
+var
+  LinkItem, SecondItem: TNodeLinkItem;
+  need_refresh: Boolean;
+begin
+  if not FCanEditPort then
+    Exit;
+
+  if (lcbWIRE.Text.IsEmpty) then
+  begin
+    LinkItem.NODE_ID := -1;
+    LinkItem.NODE_Name := '';
+    LinkItem.LINK_ID := -1;
+
+    SecondItem.NODE_ID := -1;
+    SecondItem.NODE_Name := '';
+    SecondItem.LINK_ID := -1;
+  end
+  else
+  begin
+    LinkItem.LINK_ID := dsWire['WID'];
+    LinkItem.NODE_ID := dsWire['NODE_S_ID'];
+    LinkItem.NODE_Name := dsWire['NODE_S'];
+
+    SecondItem.LINK_ID := dsWire['WID'];
+    SecondItem.NODE_ID := dsWire['NODE_E_ID'];
+    SecondItem.NODE_Name := dsWire['NODE_E'];
+  end;
+
+  need_refresh := LinkNodes(LinkItem, SecondItem);
+  if need_refresh then
+  begin
+    dsWire.CloseOpen(true);
+    dsWire.Locate('WID', LinkItem.LINK_ID, []);
+  end
+end;
+
 procedure TEQPortForm.btnOkClick(Sender: TObject);
 begin
   if CheckData then
@@ -246,17 +294,24 @@ begin
   lblStart.Visible := fPort.IsEmpty;
   ednCount.Visible := fPort.IsEmpty;
   edtNumber.ReadOnly := not fPort.IsEmpty;
-  if not fPort.IsEmpty then begin
+  if not fPort.IsEmpty then
+  begin
     edtNumber.Text := fPort;
     edtNumber.Left := ednCount.Left;
-    lblCnt.Caption := 'Port';
+    lblCNT.Caption := 'Port';
     Caption := 'Редактрование порта ' + fPort;
   end;
 
+  // спрячем при создании портов.
   lcbWIRE.Visible := not fPort.IsEmpty;
   lblWire.Visible := lcbWIRE.Visible;
+  cbLABELS.Visible := lcbWIRE.Visible;
+  lblLabel.Visible := lcbWIRE.Visible;
   if not lcbWIRE.Visible then
+  begin
     mmoNotice.Top := lcbWIRE.Top;
+    mmoNotice.Height := pnlBottom.Top - mmoNotice.Top;
+  end;
 end;
 
 function TEQPortForm.CheckData: Boolean;
@@ -305,7 +360,7 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trReadQ;
-    fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id';
+    fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id, p.WLABEL';
     fq.sql.Add('from Port p inner join Equipment e on (p.Eid = e.Eid)');
     fq.sql.Add('where p.Eid = :Eid and p.Port = :Port');
     fq.ParamByName('Eid').AsInteger := fEr.ID;
@@ -330,7 +385,9 @@ begin
       else
         FNode_ID := -1;
       if not fq.FN('WID').IsNull then
-        lcbWIRE.Value := fq.FN('WID').AsInteger;
+        lcbWIRE.value := fq.FN('WID').AsInteger;
+      if not fq.FN('WLABEL').IsNull then
+        cbLABELS.Text := fq.FN('WLABEL').AsString;
     end;
     fq.Transaction.Commit;
     fq.Close;
@@ -340,9 +397,44 @@ begin
   ModalResult := mrOk;
 end;
 
-procedure TEQPortForm.lcbWIREDropDownBoxGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TEQPortForm.lcbWIREChange(Sender: TObject);
+var
+  i,j : Integer;
+  s, v : string;
+  ports: TStringDynArray;
+begin
+  cbLABELS.Items.Clear;
+  cbLABELS.KeyItems.Clear;
+  if dsWire.FieldByName('LABELS').IsNull then
+    Exit;
+
+  cbLABELS.Items.Delimiter := ',';
+  cbLABELS.Items.StrictDelimiter := True;
+  cbLABELS.Items.DelimitedText := dsWire['LABELS'];
+
+  cbLABELS.KeyItems.Delimiter := ',';
+  cbLABELS.KeyItems.StrictDelimiter := True;
+  cbLABELS.KeyItems.DelimitedText := dsWire['LABELS'];
+
+  if (not dsWire.FieldByName('WlabelS').IsNull) then begin
+     ports:= SplitString(dsWire['WlabelS'],';');
+     for I := 0 to cbLABELS.Items.Count-1 do begin
+       s := '('+cbLABELS.Items[i]+')';
+       for j := 0 to Length(ports)-1 do begin
+         if ports[j].Contains(s) then begin
+           v := copy(ports[j], 1, pos(s, ports[j])-1);
+            if v <> fPort then
+              cbLABELS.Items[i] := cbLABELS.Items[i] + ' на порту ' + v
+            else
+              cbLABELS.Items[i] := cbLABELS.Items[i] + ' на текущем порту ' + v;
+         end;
+       end;
+     end;
+  end;
+end;
+
+procedure TEQPortForm.lcbWIREDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
   if (not dsWire.FieldByName('COLOR').IsNull) then
     Background := StringToColor(dsWire['COLOR'])

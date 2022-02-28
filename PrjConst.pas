@@ -28,6 +28,7 @@ const
   rght_Programm_ViewMoney = 2;
   rght_Programm_ViewLog = 3;
   rght_Programm_ChangePswd = 4;
+  rght_Programm_NotLockArea = 6;
 
   rght_Calc_CLose = 11;
   rght_Calc_Back = 12;
@@ -291,6 +292,7 @@ resourcestring
   rsPauseSrv = 'Временное отключение с даты до даты';
   rsErrorSrvOnOff = 'Для услуги "%s" неверно настроены услуги включения/отключения.';
   rsAdd = 'Добавить';
+  rsAddEdit = 'Добавить/редактировать';
   rsAddPhone = 'Добавить телефон %s\nабоненту %s %s %s ?';
 
   rsContractWT = 'Договор : %s';
@@ -541,6 +543,7 @@ resourcestring
   rsErrorAccountDouble = 'Совпадение лицевых';
   rsErrorIncorrectUserName = 'Не верное имя пользователя. %s недопустимы';
   rsErrorNeedHouseClear = 'Удаление невозможно. На дом ссылаются %s : %d';
+  rsErrorNeedLinkClear = 'Удаление невозможно. Ссылаются %s : %d';
   rsErrorNeedDeleteHistory = 'Сначала нужно удалить всю историю подключений/отключений!';
 
   rsMessagesPeriod = 'Сообщения за период с %s по %s';
@@ -649,6 +652,7 @@ resourcestring
 
   rsSrvSwitchNotCongigure = 'Не настроена связка переключений услуг';
   rsSrvAlreadyOff = 'Услуга уже отключена';
+  rsSrvNotActive = 'Услуга неактивна';
   rsNoMoney = 'Нет денег на счете';
   rsContractNotValid = 'Абонент расторг договор';
 
@@ -736,6 +740,8 @@ resourcestring
   rsFldPassportN = '[ПАСПОРТ_N]';
   rsFldMonthFee = '[ОПЛАТА_В_МЕСЯЦ]';
   rsFldMonthNeed = '[ДОПЛАТА]';
+  rsFldNextFee = '[ОПЛАТА_СЛ_МЕСЯЦ]';
+  rsFldNextNeed = '[ДОПЛАТА_СЛ_МЕСЯЦ]';
   rsFldPrevYEAR = '[ПРЕД_ГОД]';
   rsFldPrevMONTH = '[ПРЕД_МЕСЯЦ]';
   rsFldCOUNTER = '[СЧЕТЧИК]';

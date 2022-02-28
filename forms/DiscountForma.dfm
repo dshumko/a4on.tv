@@ -177,7 +177,7 @@ object DiscountForm: TDiscountForm
     TabOrder = 1
     Visible = True
   end
-  object edtnumValue: TDBNumberEditEh
+  object ednDiscountValue: TDBNumberEditEh
     Left = 144
     Top = 90
     Width = 180
@@ -188,7 +188,6 @@ object DiscountForm: TDiscountForm
     EmptyDataInfo.Text = #1050#1086#1101#1092#1092#1080#1094#1077#1085#1090
     EditButton.Visible = True
     EditButtons = <>
-    Increment = 0.000000000000000000
     ShowHint = True
     TabOrder = 5
     Visible = True

@@ -128,11 +128,9 @@ object RecourseForm: TRecourseForm
         Height = 71
         inherited lblFIO: TLabel
           Width = 463
-          Margins.Bottom = 0
         end
         inherited lblDebt: TLabel
           Width = 463
-          Margins.Bottom = 0
         end
         inherited memAbonent: TMemo
           Width = 463
@@ -423,6 +421,7 @@ object RecourseForm: TRecourseForm
       'FROM'
       '    HOUSE H'
       'where h.street_id = :street_id'
+      '@@AREA_LOCK% @ -- '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1088#1072#1081#1086#1085#1072#1084
       'order by h.HOUSE_NO'
       '')
     Transaction = dmMain.trRead

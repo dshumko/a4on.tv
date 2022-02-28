@@ -90,6 +90,8 @@ uses
 {$R *.dfm}
 
 function EditRecourse(const Customer_ID: integer; CallBack: TCallBack = nil): Boolean;
+var
+  s : string;
 begin
   Result := True;
   with TRecourseForm.Create(Application) do
@@ -106,6 +108,11 @@ begin
     else
     begin
       dsStreets.Open;
+      s := dmMain.GetSettingsValue('AREA_LOCK');
+      if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
+      begin
+        dsHomes.ParamByName('AREA_LOCK').Value := Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
+      end;
       dsHomes.Open;
       pnlAdres.Visible := True;
       ActiveControl := LupStreets;
@@ -116,6 +123,8 @@ begin
 end;
 
 function EditRecourseByAdres(const Street_ID: integer; const House_ID: integer; const Flat: String): Boolean;
+var
+  s : string;
 begin
   Result := True;
   with TRecourseForm.Create(Application) do
@@ -124,6 +133,11 @@ begin
     dsRecourses.Open;
     FindCustomer('', '', -1);
     dsStreets.Open;
+    s := dmMain.GetSettingsValue('AREA_LOCK');
+    if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
+    begin
+      dsHomes.ParamByName('AREA_LOCK').Value := Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
+    end;
     dsHomes.Open;
     pnlAdres.Visible := True;
     fCallBack := nil;

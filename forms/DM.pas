@@ -704,7 +704,6 @@ end;
 
 function TdmMain.AllowedAction(const aRightsID: Integer): Boolean;
 begin
-{$IFDEF WITHRIGHTS}
   if (dbTV.ConnectParams.UserName <> 'SYSDBA') then
   begin
     Result := (FRightsList.IndexOf(IntToStr(aRightsID)) >= 0);
@@ -715,9 +714,6 @@ begin
     Result := true and (not(aRightsID in [rght_Customer_View, rght_Pays_AddToday, rght_Customer_Only_ONE,
       rght_Pays_TheirAdd, rght_Recourses_owner, rght_OrdersTP_Today]));
   end;
-{$ELSE}
-  Result := true;
-{$ENDIF}
 end;
 
 // Функция подсчета количества записей из таблицы aTableName
@@ -1052,6 +1048,8 @@ begin
     Result := GenerateBarCode(Params[0], Params[1], Params[2], Params[3], Params[4], Params[5], Params[5])
   else if MethodName = 'INMODE' then
     Result := SuperMode
+  else if MethodName = 'MONTHASSTRING' then
+    Result := MonthAsString(Params[0], Params[1], Params[2])
   else
     Result := null;
 end;
@@ -1082,6 +1080,13 @@ begin
   Report.AddFunction('function GEN_BARCODE(const ACCOUNT : string; const DEBT : Currency;' +
     ' const ID : INTEGER; const UL, HOUSE, FLAT, FIO : string):string', rsFunctionsA4onTV, rsFunctionBarCode);
   Report.AddFunction('function INMODE:Integer', rsFunctionsA4onTV, rsSOFTMODE);
+  Report.AddFunction('function StrReplace(const S, OldS, NewS: string): string',
+    'Функции определенные пользователем',
+    'Заменяет в строке S подстроку OldS на подстроку NewS');
+  Report.AddFunction('function MonthAsString(D: TDateTime; const beforeDay : string; const AfterDay :string): string',
+    'Функции определенные пользователем',
+    'Вывод месяца как строка, например 01.01.2013 - «1» января 2013');
+
 end;
 
 function TdmMain.GetNextIP(InetIP: Boolean; const mask: string = ''): string;

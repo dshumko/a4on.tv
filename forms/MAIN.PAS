@@ -278,6 +278,10 @@ type
     miCableType: TMenuItem;
     highDPIImageListContainer: TImageList;
     miPortView: TMenuItem;
+    actContactTypes: TAction;
+    miContactType: TMenuItem;
+    actLabelType: TAction;
+    miLabelType: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -394,6 +398,8 @@ type
     procedure actCableTypeExecute(Sender: TObject);
     procedure actLinksExecute(Sender: TObject);
     procedure actPortViewExecute(Sender: TObject);
+    procedure actContactTypesExecute(Sender: TObject);
+    procedure actLabelTypeExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -447,6 +453,9 @@ type
     procedure SearchFromTask(const Object_Type: string; const Object_ID: string);
     procedure ReceiveMessage(var Msg: TMessage); message WM_COPYDATA;
     procedure OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
+    procedure OpnenNodeByID(const ID: Integer);
+    procedure OpenEquipmentByName(const name:String);
+    function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
   end;
 
 var
@@ -485,7 +494,7 @@ uses
   NodeTypeForma, NFileTypeForma, TaskForma,
   NewTaskForma, CallCenterForma, ChanSourcesForma, CustFilesForma, BCIssuesForma, BCIssuesTypeForma,
   SatCardsForma, DistribForma, FreqPlanForma, JclLocales, DeviceTypesForma, WebBrowserForma, BCIssuesSolutionForma,
-  ReqPhotosForma, NewsForma, NHunspell, WireTypeForma, WireForma, PortListForma;
+  ReqPhotosForma, NewsForma, NHunspell, WireTypeForma, WireForma, PortListForma, ContactTypeForma, LabelTypeForma;
 
 type
 
@@ -819,6 +828,7 @@ begin
     AppIni.WriteString('MAIN', 'REQOPENNEW', dmMain.GetIniValue('REQOPENNEW'));
     AppIni.WriteString('MAIN', 'REQTOADRES', dmMain.GetIniValue('REQTOADRES'));
     AppIni.WriteString('MAIN', 'RECTOCUSTOMER', dmMain.GetIniValue('RECTOCUSTOMER'));
+    AppIni.WriteString('MAIN', 'ALWAYSSHOW', dmMain.GetIniValue('ALWAYSSHOW'));
     AppIni.WriteString('MAIN', 'REQUNION', dmMain.GetIniValue('REQUNION'));
     AppIni.WriteString('MAIN', 'REQALL', dmMain.GetIniValue('REQALL'));
     AppIni.WriteString('MAIN', 'AUTOOPEN', dmMain.GetIniValue('AUTOOPEN'));
@@ -886,6 +896,7 @@ begin
     SetFromIniSettings('MAIN', 'REQALL', '0');
     SetFromIniSettings('MAIN', 'REQTOADRES', '0');
     SetFromIniSettings('MAIN', 'RECTOCUSTOMER', '0');
+    SetFromIniSettings('MAIN', 'ALWAYSSHOW', '0');
     SetFromIniSettings('MAIN', 'AUTOOPEN', '0');
     SetFromIniSettings('MAIN', 'HIDEHINT', '0');
     SetFromIniSettings('MAIN', 'DEFSEARCH', '0');
@@ -898,7 +909,6 @@ begin
     SetFromIniSettings('MAIN', 'PRINT_CHECK_AND_REPORT', '0');
     SetFromIniSettings('MAIN', 'CASHBOXPSWD', '');
     SetFromIniSettings('MAIN', 'DISCOUNT', '0');
-    SetFromIniSettings('MAIN', 'RECTOCUSTOMER', '0');
     SetFromIniSettings('MAIN', 'DBSETTINGS', '0');
     SetFromIniSettings('MAIN', 'ROW_HEIGHT', '0');
 
@@ -940,6 +950,7 @@ begin
     dmMain.SetIniValue('SMS_LAT', '1');
     dmMain.SetIniValue('PRINT_CHECK_AND_REPORT', '0');
     dmMain.SetIniValue('RECTOCUSTOMER', '0');
+    dmMain.SetIniValue('ALWAYSSHOW', '0');
     dmMain.SetIniValue('DBSETTINGS', '0');
     actSettingUser.Execute;
   end;
@@ -1358,6 +1369,13 @@ begin
 
 end;
 
+procedure TA4MainForm.actContactTypesExecute(Sender: TObject);
+begin
+  if Not Assigned(ContactTypeForm) then
+    ContactTypeForm := TContactTypeForm.Create(Application);
+  ContactTypeForm.Show;
+end;
+
 procedure TA4MainForm.actDecodersExecute(Sender: TObject);
 begin
   if Not Assigned(DVBEquipmentForm) then
@@ -1471,6 +1489,13 @@ begin
   if Not Assigned(EquipmentForm) then
     EquipmentForm := TEquipmentForm.Create(Application);
   EquipmentForm.Show;
+end;
+
+procedure TA4MainForm.OpenEquipmentByName(const name:String);
+begin
+  if not actEquipment.Visible then Exit;
+  actEquipmentExecute(self);
+  EquipmentForm.dbGrid.DataSource.DataSet.Locate('NAME', name, [loCaseInsensitive]);
 end;
 
 procedure TA4MainForm.actHeadEndsExecute(Sender: TObject);
@@ -1981,6 +2006,13 @@ begin
   if Not Assigned(JournalForm) then
     JournalForm := TJournalForm.Create(Application);
   JournalForm.Show;
+end;
+
+procedure TA4MainForm.actLabelTypeExecute(Sender: TObject);
+begin
+  if Not Assigned(LabelTypeForm) then
+    LabelTypeForm := TLabelTypeForm.Create(Application);
+  LabelTypeForm.Show;
 end;
 
 procedure TA4MainForm.actLettersExecute(Sender: TObject);
@@ -2739,7 +2771,9 @@ begin
   actWorkTeams.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_WorkAreas);
   actZones.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Areas);
   actFileTypes.Visible := rFull;
+  actContactTypes.Visible := rFull;
   actCableType.Visible := rFull;
+  actLabelType.Visible := rFull;
 
   ActOrdersTPType.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_OrdersTPType);
   ActOrdersTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
@@ -3239,10 +3273,25 @@ end;
 
 procedure TA4MainForm.OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
 begin
+  if (not actNodes.Visible) then
+    Exit;
+
   // TNodesForm.SetFilter(const FilterFIELD: Integer; const FilterVALUE: string; var FindResult: Boolean);
   if Not Assigned(NodesForm) then
     NodesForm := TNodesForm.Create(Application);
   NodesForm.SetFilter(1, IntToStr(HOUSE) + '~' + Flat);
+  NodesForm.Show;
+end;
+
+procedure TA4MainForm.OpnenNodeByID(const ID: Integer);
+begin
+  if (not actNodes.Visible) then
+    Exit;
+
+  // TNodesForm.SetFilter(const FilterFIELD: Integer; const FilterVALUE: string; var FindResult: Boolean);
+  if Not Assigned(NodesForm) then
+    NodesForm := TNodesForm.Create(Application);
+  NodesForm.SetFilter(2, IntToStr(ID));
   NodesForm.Show;
 end;
 
@@ -3330,6 +3379,11 @@ begin
   finally
     ReleaseDC(DC, HWND_DESKTOP);
   end;
+end;
+
+function TA4MainForm.ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
+begin
+  Result := CF.ShowCustomers(FilterFIELD, FilterVALUE);
 end;
 
 end.

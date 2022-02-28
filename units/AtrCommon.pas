@@ -55,6 +55,7 @@ procedure UpdateFonts(Control: TWinControl);
 
 procedure DatasetToJson(DS: TDataset; const FileName: string);
 procedure DatasetFromJson(DS: TDataset; const FileName: string);
+procedure DatasetFromJsonStr(DS: TDataset; const AJson: string);
 
 procedure DatasetToINI(Dataset: TDataset; const FileName: string);
 procedure DatasetFromINI(Dataset: TDataset; const FileName: string);
@@ -722,15 +723,12 @@ begin
   end;
 end;
 
-procedure DatasetFromJson(DS: TDataset; const FileName: string);
+procedure DatasetFromJsonStr(DS: TDataset; const AJson: string);
 var
   J, I: Integer;
   Obj, O: TJsonObject;
 begin
-  if not FileExists(FileName) then
-    Exit;
-
-  Obj := TJsonObject.ParseFromFile(FileName) as TJsonObject;
+  Obj := TJsonObject.Parse(AJson) as TJsonObject;
   try
     DS.DisableControls;
     for I := 0 to Obj.A['records'].Count - 1 do
@@ -763,6 +761,31 @@ begin
   finally
     Obj.Free;
   end;
+end;
+
+procedure DatasetFromJson(DS: TDataset; const FileName: string);
+var
+  JsonStr: string;
+  FileStream: TFileStream;
+  Bytes: TBytes;
+begin
+  if not FileExists(FileName) then
+    Exit;
+
+  FileStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  try
+    if FileStream.Size>0 then begin
+      SetLength(Bytes, FileStream.Size);
+      FileStream.Read(Bytes[0], FileStream.Size);
+    end;
+    JsonStr:= TEncoding.UTF8.GetString(Bytes);
+
+    // JsonStr := Stream.ToString;
+  finally
+    FileStream.Free;
+  end;
+  // JsonStr := TFile.ReadAllText(FileName, TEncoding.UTF8);
+  DatasetFromJsonStr(DS, JsonStr);
 end;
 
 procedure DatasetToINI(Dataset: TDataset; const FileName: string);

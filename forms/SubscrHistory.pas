@@ -40,6 +40,10 @@ type
     Panel1: TPanel;
     dbgCustSubscrServHist: TDBGridEh;
     spl1: TSplitter;
+    miN1: TMenuItem;
+    miDisconnect: TMenuItem;
+    miBack: TMenuItem;
+    miN2: TMenuItem;
     procedure dbgCustSubscrServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure dbgCustSubscrServExit(Sender: TObject);
@@ -215,7 +219,7 @@ begin
   FChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
   actDeleteService.Visible := FChangeHistory or FFullAccess;
   actDeleteSubscrHist.Visible := actDeleteService.Visible;
-  actDisconnect.Visible := actDeleteService.Visible;
+  // actDisconnect.Visible := actDeleteService.Visible;
   FNeedRecalc := False;
 end;
 
@@ -307,20 +311,23 @@ var
   offSrv: Integer;
   Units: Double;
 begin
-  if not(FFullAccess or FChangeHistory) then
+  // Есть услгуа
+  if dsServices.FieldByName('SERV_ID').IsNull then
     Exit;
 
-  if dsServices.FieldByName('SERV_ID').IsNull then
-    Exit; // Есть услгуа
-
+  // Услуга не отключена выйдем
   if ((dsServices.FieldByName('STATE_SGN').IsNull) and (dsServices['STATE_SGN'] = 1)) then
-    Exit; // Услуга не отключена выйдем
+    Exit;
 
+  // Это точно автоблокировка
   if (dsServices.FieldByName('State_Srv').AsInteger <> srv_AutoBlock)  then
     Exit;
 
-  if not(FFullAccess or FChangeHistory or (dsServices['STATE_DATE'] >= dmMain.CurrentMonth)) then
-    Exit; // проверим дату статуса и права
+  // проверим дату статуса и права
+  if not(FFullAccess or FChangeHistory or (dsServices['STATE_DATE'] >= dmMain.CurrentMonth)) then begin
+    ShowMessage(rsPastDateIncorrect);
+    Exit;
+  end;
 
   Units := 0;
   offSrv := 0;

@@ -353,7 +353,7 @@ begin
   dsLetterTypes.Open;
   dsTemplate.Open;
 
-  val := Explode(';', export_fields);
+  val := Explode(';', export_fields + ';[ОПЛАТА_СЛ_МЕСЯЦ];[ДОПЛАТА_СЛ_МЕСЯЦ]');
   for I := 0 to Length(val) - 1 do
   begin
     pmMemo.Items.Add(NewItem(val[I], 0, False, True, miClick, 0,

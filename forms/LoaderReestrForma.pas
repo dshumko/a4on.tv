@@ -106,6 +106,7 @@ type
     procedure DBFFileProcess;
     procedure addError(const Fileline: Integer; const error: string; const Reestrline: Integer);
     function GetLineWithError(const Reestrline: Integer): string;
+    procedure SaveProfiles;
   public
     { Public declarations }
     property Profile: string read fProfile write setProfile;
@@ -204,9 +205,9 @@ var
   FormatSettings: TFormatSettings;
   kopeyki: Byte;
   nc, nl, sl, dc, sc, dl, rl, rc: Integer;
-  Notice, srcCode : string;
+  Notice, srcCode: string;
   tmps: string;
-  vPaySum : Double;
+  vPaySum: Double;
 begin
 
   FormatSettings := TFormatSettings.Create;
@@ -308,19 +309,22 @@ begin
       try
         if i = nl then
           edtDocNumber.Text := sa[nc];
-        if i = sl then begin
+        if i = sl then
+        begin
           vPaySum := 0;
           // strtofloat(sa[sc], FormatSettings)
           // попытка понять какой разделитель дроби
-          if sa[sc] <> '' then begin
-            if not TryStrToFloat(sa[sc], vPaySum, FormatSettings) then begin
+          if sa[sc] <> '' then
+          begin
+            if not TryStrToFloat(sa[sc], vPaySum, FormatSettings) then
+            begin
               tmps := FormatSettings.DecimalSeparator;
               if tmps = '.' then
                 FormatSettings.DecimalSeparator := ','
               else
                 FormatSettings.DecimalSeparator := '.';
-              if not TryStrToFloat(sa[sc], vPaySum, FormatSettings)
-              then vPaySum := 0;
+              if not TryStrToFloat(sa[sc], vPaySum, FormatSettings) then
+                vPaySum := 0;
               FormatSettings.DecimalSeparator := tmps[1];
             end;
           end;
@@ -480,16 +484,18 @@ begin
       begin
         tmps := sa[sum_i];
         vPaySum := 0;
-        if tmps <> '' then begin
-          //  TryStrToFloat(const S: string; out Value: Extended; const AFormatSettings: TFormatSettings)
-          if not TryStrToFloat(sa[sum_i], vPaySum, FormatSettings) then begin
+        if tmps <> '' then
+        begin
+          // TryStrToFloat(const S: string; out Value: Extended; const AFormatSettings: TFormatSettings)
+          if not TryStrToFloat(sa[sum_i], vPaySum, FormatSettings) then
+          begin
             tmps := FormatSettings.DecimalSeparator;
             if tmps = '.' then
               FormatSettings.DecimalSeparator := ','
             else
               FormatSettings.DecimalSeparator := '.';
-            if not TryStrToFloat(sa[sum_i], vPaySum, FormatSettings)
-            then vPaySum := 0;
+            if not TryStrToFloat(sa[sum_i], vPaySum, FormatSettings) then
+              vPaySum := 0;
             FormatSettings.DecimalSeparator := tmps[1];
           end;
         end;
@@ -1068,33 +1074,50 @@ begin
 end;
 
 procedure TLoaderReestrForm.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  DB: string;
 begin
-  DB := GetTempDir + ProfilesFile;
-  DeleteFile(DB + '.txt');
-  DatasetToINI(mdsFileFormats, DB + '.txt');
-  Compress(DB + '.txt', DB + '.$$$');
+  SaveProfiles;
+  Action := caFree;
+  LoaderReestrForm := nil;
+end;
+
+procedure TLoaderReestrForm.SaveProfiles;
+var
+  profFile: string;
+begin
+  if mdsFileFormats.RecordCount = 0 then
+    Exit;
+
+  mdsFileFormats.DisableControls;
+  mdsFileFormats.First;
+  while not mdsFileFormats.EOF do
+  begin
+    if mdsFileFormats.FieldByName('Profile').IsNull then
+      mdsFileFormats.Delete
+    else
+      mdsFileFormats.Next;
+  end;
+  profFile := GetTempDir + ProfilesFile;
+  DeleteFile(profFile + '.txt');
+  DatasetToJson(mdsFileFormats, profFile + '.txt');
+  //GZCompressFile(profFile + '.txt', profFile + '.gz');
+  // Compress(profFile + '.txt', profFile + '.$$$');
   with TpFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := trWriteQ;
       Transaction.StartTransaction;
-      SQL.Text :=
-        'UPDATE OR INSERT INTO BLOB_TBL (Bl_Id, BL_BODY, BL_NAME) Values(-2, :BLOB, ''PayLoader profiles'') MATCHING (BL_ID)';
-      prepare;
-      Params[0].LoadFromFile(DB + '.$$$');
+      SQL.Text := 'UPDATE OR INSERT INTO BLOB_TBL (Bl_Id, BL_BODY, BL_NAME) ' +
+        'Values(-2, :BLOB, ''PayLoader profiles'') MATCHING (BL_ID)';
+      Prepare;
+      Params[0].LoadFromFile(profFile + '.txt');
       ExecQuery;
       Transaction.Commit;
-      if FileExists(DB + '.$$$') then
-        DeleteFile(DB + '.$$$');
       Close;
-      DeleteFile(DB + '.txt');
     finally
       Free;
     end;
-  Action := caFree;
-  LoaderReestrForm := nil;
+  if FileExists(profFile + '.txt') then
+    DeleteFile(profFile + '.txt');
 end;
 
 procedure TLoaderReestrForm.FormCreate(Sender: TObject);
@@ -1145,7 +1168,7 @@ procedure TLoaderReestrForm.FormShow(Sender: TObject);
 const
   passprefix: string = 'tv';
 var
-  DB: String;
+  profFile: String;
   i: Integer;
 begin
 
@@ -1162,7 +1185,10 @@ begin
     deDocDate.Value := now();
     mmoNotice.Lines.Clear;
 
-    DB := GetTempDir + ProfilesFile;
+    profFile := GetTempDir + ProfilesFile;
+    if FileExists(profFile + '.txt') then
+      DeleteFile(profFile + '.txt');
+
     with TpFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
@@ -1171,13 +1197,7 @@ begin
         SQL.Text := 'select BL_BODY from BLOB_TBL b where b.Bl_Id = -2';
         ExecQuery;
         if not EOF then
-        begin
-          FN('BL_BODY').SaveToFile(DB + '.$$$');
-          if FileExists(DB + '.txt') then
-            DeleteFile(DB + '.txt');
-          Uncompress(DB + '.$$$', DB + '.txt');
-          DeleteFile(DB + '.$$$');
-        end;
+          FN('BL_BODY').SaveToFile(profFile + '.txt');
         Transaction.Commit;
         Close;
       finally
@@ -1186,7 +1206,21 @@ begin
 
     mdsFileFormats.Open;
     mdsFileFormats.EmptyTable;
-    DatasetFromINI(mdsFileFormats, DB + '.txt');
+
+    if FileExists(profFile + '.txt') then
+    begin
+      try
+        DatasetFromJson(mdsFileFormats, profFile + '.txt');
+      except
+        RenameFile(profFile + '.txt', profFile + '.gz');
+        Uncompress(profFile + '.gz', profFile + '.txt');
+        DatasetFromINI(mdsFileFormats, profFile + '.txt');
+        if FileExists(profFile + '.gz') then
+          DeleteFile(profFile + '.gz');
+      end;
+    end;
+    if FileExists(profFile + '.txt') then
+      DeleteFile(profFile + '.txt');
 
     if mdsFileFormats.RecordCount > 0 then
     begin
@@ -1201,7 +1235,6 @@ begin
     begin
       btnEditProfile.Enabled := False;
     end;
-
   end;
 end;
 

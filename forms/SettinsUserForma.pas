@@ -19,17 +19,6 @@ type
     cbAuto: TCheckBox;
     lbl7: TLabel;
     edMinutes: TDBNumberEditEh;
-    grpCallCenter: TGroupBox;
-    Label4: TLabel;
-    Label23: TLabel;
-    Label24: TLabel;
-    edtPASS: TEdit;
-    edtUSER: TEdit;
-    chkShowCallExit: TCheckBox;
-    chkShowCallDialog: TCheckBox;
-    chkShowParam: TCheckBox;
-    chkShowSmartBar: TCheckBox;
-    edtPHONE: TDBNumberEditEh;
     lbl1: TLabel;
     cbbSearchType: TDBComboBoxEh;
     chkReqUnion: TCheckBox;
@@ -61,6 +50,7 @@ type
     chkDBsettings: TCheckBox;
     ednRH: TDBNumberEditEh;
     lbl2: TLabel;
+    chkAlwaysShow: TCheckBox;
     procedure frmOkCancelbbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbAutoClick(Sender: TObject);
@@ -144,6 +134,7 @@ begin
   ReadCheckSettings('REQALL', chkReqAll);
   ReadCheckSettings('PRINT_CHECK_AND_REPORT', chkPrintBothCheck);
   ReadCheckSettings('RECTOCUSTOMER', chkRecToCustomer);
+  ReadCheckSettings('ALWAYSSHOW', chkAlwaysShow);
   ReadCheckSettings('DBSETTINGS', chkDBsettings);
 
   if not TryStrToInt(dmMain.GetIniValue('KBDSWITCH'), i) then
@@ -193,9 +184,6 @@ begin
   chkBtnN.Checked := ((i and chkBtnN.Tag) <> 0);
   chkBtnT.Checked := ((i and chkBtnT.Tag) <> 0);
 
-  grpCallCenter.Visible := False;
-  Self.Height := Self.Height - grpCallCenter.Height;
-
   chkPrintBothCheck.Enabled := FileExists(ExtractFilePath(Application.ExeName) + 'cashrgst.dll');
   edtCBPSWD.Enabled := chkPrintBothCheck.Enabled;
 end;
@@ -220,6 +208,7 @@ begin
   SetCheckSettings(chkNotUpdate.Checked, 'NOTAUTOUPDATE');
   SetCheckSettings(chkReqToAddress.Checked, 'REQTOADRES');
   SetCheckSettings(chkRecToCustomer.Checked, 'RECTOCUSTOMER');
+  SetCheckSettings(chkAlwaysShow.Checked, 'ALWAYSSHOW');
   SetCheckSettings(chkReqOpen.Checked, 'REQOPENNEW');
   SetCheckSettings(chkToday.Checked, 'SET_AS_CURRENT_DATE');
   SetCheckSettings(chkDBsettings.Checked, 'DBSETTINGS');

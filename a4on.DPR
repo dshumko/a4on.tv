@@ -308,7 +308,9 @@ uses
   fmuEqpmntAttributes in 'forms\infrastructure\fmuEqpmntAttributes.pas' {apgEqpmntAttributes},
   fmuEqpmntRequests in 'forms\infrastructure\fmuEqpmntRequests.pas' {apgEqpmntRequests},
   fmuEqpmntRegion in 'forms\infrastructure\fmuEqpmntRegion.pas' {apgEqpmntRegion},
-  fmuEqpmntInfo in 'forms\infrastructure\fmuEqpmntInfo.pas' {apgEqpmntInfo};
+  fmuEqpmntInfo in 'forms\infrastructure\fmuEqpmntInfo.pas' {apgEqpmntInfo},
+  ContactTypeForma in 'forms\Dict\ContactTypeForma.pas' {ContactTypeForm},
+  LabelTypeForma in 'forms\Dict\LabelTypeForma.pas' {LabelTypeForm};
 
 {$R *.RES}
 // var
@@ -318,21 +320,7 @@ begin
   // ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.HelpFile := '';
-  Application.Title := rsAplicationName;
-
-  {
-    // Application.DefaultFont is the font used when TForm.ParentFont=True.
-    // It is Tahoma by default but should be Segoe UI on Vista and later (according to MS UI guide lines).
-    // See InitDefFontData() in graphics.pas
-    // DefFontData.Name specifies the default font for everything that doesn't specify a specific font.
-    // For now we leave it as is (Tahoma). At some point it should follow the system default like above:
-    // DefFontData.Name := Screen.MessageFont.Name;
-
-    if (CheckWin32Version(6, 0)) then
-    Application.DefaultFont.Assign(Screen.MessageFont);
-  }
-
-  // Application.MainFormOnTaskBar := True;
+  Application.Title := 'A4on.TV';
   Application.CreateForm(TdmMain, dmMain);
   Application.CreateForm(TSM, SM);
   Application.CreateForm(TA4MainForm, A4MainForm);

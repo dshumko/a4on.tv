@@ -2,7 +2,7 @@ object apgNodeLink: TapgNodeLink
   Left = 0
   Top = 0
   Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1085#1099#1077' '#1091#1079#1083#1099
-  ClientHeight = 211
+  ClientHeight = 229
   ClientWidth = 797
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object apgNodeLink: TapgNodeLink
     Left = 26
     Top = 0
     Width = 771
-    Height = 211
+    Height = 229
     Align = alClient
     AllowedOperations = []
     DataSource = srcLink
@@ -29,11 +29,13 @@ object apgNodeLink: TapgNodeLink
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     RowDetailPanel.Active = True
-    RowDetailPanel.Height = 100
+    RowDetailPanel.Height = 106
     RowDetailPanel.BevelInner = bvNone
     RowDetailPanel.BevelOuter = bvNone
     RowDetailPanel.BorderStyle = bsNone
     RowDetailPanel.VertSizing = True
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
     SumList.Active = True
     TabOrder = 0
     TitleParams.MultiTitle = True
@@ -148,20 +150,21 @@ object apgNodeLink: TapgNodeLink
         Left = 0
         Top = 0
         Width = 738
-        Height = 92
+        Height = 98
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
         object dbgDetail: TDBGridEh
-          Left = 0
+          Left = 29
           Top = 0
-          Width = 738
-          Height = 92
+          Width = 709
+          Height = 98
           Align = alClient
           DataSource = srcEQ
           DynProps = <>
           Flat = True
           FooterRowCount = 1
+          PopupMenu = pmOpen
           SumList.Active = True
           TabOrder = 0
           OnDblClick = dbgDetailDblClick
@@ -223,8 +226,70 @@ object apgNodeLink: TapgNodeLink
               Title.Alignment = taCenter
               Title.Caption = 'MAC'
               Width = 97
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'WLABEL'
+              Footers = <>
+              Title.Caption = #1052#1077#1090#1082#1072' '#1082#1072#1073#1077#1083#1103
+              Title.TitleButton = True
+              Width = 105
             end>
           object RowDetailData: TRowDetailPanelControlEh
+          end
+        end
+        object pnlDBtns: TPanel
+          Left = 0
+          Top = 0
+          Width = 29
+          Height = 98
+          Align = alLeft
+          BevelOuter = bvNone
+          TabOrder = 1
+          object btnFindCustomer: TSpeedButton
+            Left = 4
+            Top = 6
+            Width = 22
+            Height = 22
+            Action = actOpenObject
+            Flat = True
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000000000000000000000000000000000000FF00FF00A924
+              C46A982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982C
+              B97F982CB97F982CB97F982CB97F992CB97ED807DD2BFF00FF00F902FA0762B2
+              E7FD63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FEAA5CEF86FF00FF00E909F01A63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FEA06BF099FF00FF00DB0FE62C63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE9578EEABFF00FF00CC15DC3F63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE8985ECBEFF00FF00BC1CD15263B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE7E92EAD1FF00FF00AE22C76463B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE729FE8E3FF00FF009E29BD7763B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE63B3
+              E7FE63B3E7FE63B3E7FE63B3E7FE63B3E7FE67ACE6F6FF00FF00D807DD2B992C
+              B97E982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982CB97F982C
+              B97F982CB97F982CB97F982CB97F982CB97FA924C46AFF00FF00FF00FF008A1C
+              A47F2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B74
+              94FE2B7494FE2B7494FE2B7494FE2B7494FEFF00FF00FF00FF00FF00FF008A1C
+              A47F2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE2B74
+              94FE2B7494FE2B7494FE2B7494FE3C699CE9FF00FF00FF00FF00FF00FF008B1C
+              A57E2B7494FE2B7494FE2B7494FE2B7494FE2B7494FE8E2BB680FC00FC03FF00
+              FF00FF00FF00FF00FF00F401F30CA225977A9E27927F9E27927FFF00FF00D504
+              DA2B8B1CA57E8A1CA47F8A1CA47F8A1CA47FAE13C058FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00C915C346A93E9687809852F67D9E4DFEFF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00F701F708A0727DB8A26F81B37D9E4DFEFF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00E304
+              E21F9E27927F9E27927F9A7876C2A56B85ADF900F9069D7679BEFF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00E404
+              E31E9E27927F9E27927FB31EAA63FB00FB04FF00FF00F501F40B}
           end
         end
       end
@@ -234,16 +299,16 @@ object apgNodeLink: TapgNodeLink
     Left = 0
     Top = 0
     Width = 26
-    Height = 211
+    Height = 229
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
       26
-      211)
+      229)
     object btnDel1: TSpeedButton
       Left = 2
-      Top = 188
+      Top = 206
       Width = 22
       Height = 22
       Action = actDel
@@ -318,7 +383,9 @@ object apgNodeLink: TapgNodeLink
       'select'
       '    l.*'
       '    , m.NAME MAT_NAME'
-      '    , (select count(*) from port p where p.Wid = l.Wid) as USED'
+      
+        '    , (select count(*) from port p where p.Wid = l.Wid and not p' +
+        '.Con_Id is null) as USED'
       '  from (select'
       '            '#39'>'#39' FLOW'
       '          , T.O_NAME'
@@ -359,17 +426,17 @@ object apgNodeLink: TapgNodeLink
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     AutoCommit = True
-    Left = 131
-    Top = 61
+    Left = 155
+    Top = 77
   end
   object srcLink: TDataSource
     DataSet = dsLink
-    Left = 95
-    Top = 99
+    Left = 175
+    Top = 107
   end
   object ActList: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 190
+    Left = 230
     Top = 101
     object actAdd: TAction
       ImageIndex = 2
@@ -386,6 +453,19 @@ object apgNodeLink: TapgNodeLink
     object actPEdit: TAction
       Caption = 'actPEdit'
       OnExecute = actPEditExecute
+    end
+    object actOpenObject: TAction
+      Hint = #1055#1077#1088#1077#1081#1090#1080' '#1082' '#1086#1073#1098#1077#1082#1090#1091
+      ImageIndex = 99
+      OnExecute = actOpenObjectExecute
+    end
+    object actOpenEqpmnt: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      OnExecute = actOpenEqpmntExecute
+    end
+    object actOpenCustomer: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072
+      OnExecute = actOpenCustomerExecute
     end
   end
   object trRead: TpFIBTransaction
@@ -423,7 +503,43 @@ object apgNodeLink: TapgNodeLink
   object dsEQ: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
-      '    e.Name'
+      '    w.WID'
+      '  , w.LABEL WLABEL'
+      '  , e.Name'
+      '  , p.Port'
+      '  , c.Customer_Id'
+      '  , c.Account_No'
+      '  , c.Cust_Code'
+      '  , l.Ip'
+      '  , l.Mac'
+      '  , e.Eid'
+      '  , e.Eq_Type'
+      '  , e.Eq_Group'
+      '  , e.Ip eIP'
+      '  , e.Mac EMAC'
+      '  from (select'
+      '            cast(:WID as integer) WID'
+      '          , STR as LABEL'
+      '          from Explode_No_Empty('#39','#39', coalesce((select'
+      '                                          w.Labels'
+      '                                        from WIRE w'
+      
+        '                                        where w.Wid = :WID), '#39#39')' +
+        ')) w'
+      '       left outer join port p on (w.wid = p.Wid and'
+      '             w.LABEL = p.Wlabel)'
+      '       left outer join Equipment e on (e.Eid = p.Eid)'
+      '       left outer join tv_lan l on (l.Eq_Id = e.Eid and'
+      '             l.Port = p.Port)'
+      
+        '       left outer join customer c on (c.Customer_Id = l.Customer' +
+        '_Id)'
+      '  where w.Wid = :WID'
+      'union'
+      'select'
+      '    P.WID'
+      '  , P.WLABEL'
+      '  , e.Name'
       '  , p.Port'
       '  , c.Customer_Id'
       '  , c.Account_No'
@@ -436,13 +552,23 @@ object apgNodeLink: TapgNodeLink
       '  , e.Ip eIP'
       '  , e.Mac EMAC'
       '  from port p'
-      '       inner join Equipment e on (e.Eid = p.Eid)'
+      '       left outer join Equipment e on (e.Eid = p.Eid)'
       '       left outer join tv_lan l on (l.Eq_Id = e.Eid and'
       '             l.Port = p.Port)'
       
         '       left outer join customer c on (c.Customer_Id = l.Customer' +
         '_Id)'
-      '  where p.Wid = :WID')
+      '  where p.Wid = :WID'
+      '        and (p.Wlabel is null'
+      '          or not exists(select'
+      '                            STR'
+      '                          from Explode_No_Empty('#39','#39', (select'
+      '                                                 w.Labels'
+      '                                               from WIRE w'
+      
+        '                                               where w.Wid = :WI' +
+        'D))'
+      '                          where STR = p.Wlabel))')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'
@@ -460,5 +586,15 @@ object apgNodeLink: TapgNodeLink
     DataSet = dsEQ
     Left = 518
     Top = 95
+  end
+  object pmOpen: TPopupMenu
+    Left = 600
+    Top = 96
+    object miEqpmnt: TMenuItem
+      Action = actOpenEqpmnt
+    end
+    object miNodeFrom: TMenuItem
+      Action = actOpenCustomer
+    end
   end
 end

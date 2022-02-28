@@ -42,7 +42,6 @@ type
     Query: TpFIBQuery;
     srcExecutor: TDataSource;
     dsExecutor: TpFIBDataSet;
-    pFIBDataSet1: TpFIBDataSet;
     DataSource1: TDataSource;
     Panel1: TPanel;
     chkJURIDICAL: TDBCheckBoxEh;
@@ -270,6 +269,8 @@ begin
 end;
 
 procedure TapgCustomerNew.InitForm;
+var
+ s: string;
 begin
   // i := (dmMain.AllowedAction(rght_Customer_edit));      // Изменение инфы о абоненте
   FFullAccess := (dmMain.AllowedAction(rght_Customer_full)); // полный доступ
@@ -284,6 +285,11 @@ begin
   dsVATG.Open;
   dsStreets.Open;
   dsAttributes.Open;
+  s := dmMain.GetSettingsValue('AREA_LOCK');
+  if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
+  begin
+    dsHouses.ParamByName('AREA_LOCK').Value := Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
+  end;
   dsHouses.Open;
   dsBANKS.Open;
   dsExecutor.Open;

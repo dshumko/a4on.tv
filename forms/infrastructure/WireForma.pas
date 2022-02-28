@@ -29,6 +29,14 @@ type
     btnFilterNew: TToolButton;
     actEnableFilter: TAction;
     actFilterSet: TAction;
+    btn2: TToolButton;
+    btn3: TToolButton;
+    actOpenObject: TAction;
+    actOpenNodeFrom: TAction;
+    actOpenNodeTo: TAction;
+    miN1: TMenuItem;
+    miOpenNodeFrom: TMenuItem;
+    miOpenNodeTo: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -37,6 +45,9 @@ type
     function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
+    procedure actOpenNodeFromExecute(Sender: TObject);
+    procedure actOpenNodeToExecute(Sender: TObject);
+    procedure actDeleteExecute(Sender: TObject);
   private
     FFullAccess: Boolean;
     procedure InitForm;
@@ -51,7 +62,7 @@ var
 implementation
 
 uses
-  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma;
+  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, FIBQuery, pFIBQuery;
 
 const
   const_default_filter: string = ' 1=1 ';
@@ -91,6 +102,54 @@ begin
   InitSecurity;
 
   dsWire.Open;
+end;
+
+procedure TWireForm.actDeleteExecute(Sender: TObject);
+var
+  i, j: Integer;
+  s: string;
+begin
+  inherited;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      SQL.Clear;
+      SQL.Add('execute block (WID D_INTEGER = :WID) returns ( CWHAT  D_Varchar10,  CCOUNT d_INTEGER) as ');
+      SQL.Add('begin ');
+      SQL.Add('  ccount = 0; ');
+      SQL.Add('  CWHAT = ''''; ');
+      SQL.Add('  select count(*) from port p where p.Wid = :WID into :CCOUNT; ');
+      SQL.Add('  if (ccount > 0) then ');
+      SQL.Add('    CWHAT = ''Порты''; ');
+      SQL.Add('  suspend; ');
+      SQL.Add('end ');
+      ParamByName('WID').AsInteger := dsWire['WID'];
+      Transaction.StartTransaction;
+      ExecQuery;
+      i := FN('CCOUNT').AsInteger;
+      if i > 0 then
+        s := FN('CWHAT').AsString
+      else
+        s := '';
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
+  if i > 0 then
+    ShowMessageFmt(rsErrorNeedLinkClear, [s, i])
+  else begin
+    if (MessageDlg( Format(rsDeleteWithName, [dsWire['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      dsWire.UpdateTransaction.StartTransaction;
+      dsWire.Delete;
+      dsWire.UpdateTransaction.Commit;
+    end
+  end;
 end;
 
 procedure TWireForm.actEditExecute(Sender: TObject);
@@ -154,6 +213,24 @@ begin
     dsWire.CloseOpen(true);
     dsWire.Locate('WID', LinkItem.LINK_ID, []);
   end
+end;
+
+procedure TWireForm.actOpenNodeFromExecute(Sender: TObject);
+begin
+  inherited;
+  if dsWire.FieldByName('NODE_S_ID').IsNull then
+    exit;
+
+  A4MainForm.OpnenNodeByID(dsWire['NODE_S_ID']);
+end;
+
+procedure TWireForm.actOpenNodeToExecute(Sender: TObject);
+begin
+  inherited;
+  if dsWire.FieldByName('NODE_E_ID').IsNull then
+    exit;
+
+  A4MainForm.OpnenNodeByID(dsWire['NODE_E_ID']);
 end;
 
 procedure TWireForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;

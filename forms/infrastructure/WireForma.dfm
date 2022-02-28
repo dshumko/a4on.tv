@@ -187,6 +187,20 @@ inherited WireForm: TWireForm
       Top = 0
       Action = actPrint
     end
+    object btn2: TToolButton
+      Left = 232
+      Top = 0
+      Width = 8
+      Caption = 'btn2'
+      ImageIndex = 6
+      Style = tbsSeparator
+    end
+    object btn3: TToolButton
+      Left = 240
+      Top = 0
+      Caption = 'btn3'
+      ImageIndex = 6
+    end
   end
   inherited pnlEdit: TPanel
     Width = 914
@@ -217,6 +231,7 @@ inherited WireForm: TWireForm
     end
     inherited actDelete: TAction [2]
       Caption = #1059#1076#1072#1083#1080#1090#1100' '#1089#1074#1103#1079#1100
+      OnExecute = actDeleteExecute
     end
     object actPrint: TAction [3]
       Caption = 'actPrint'
@@ -243,15 +258,42 @@ inherited WireForm: TWireForm
       Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
       ShortCut = 16498
     end
+    object actOpenObject: TAction
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1086#1073#1098#1077#1082#1090
+      ImageIndex = 99
+    end
+    object actOpenNodeFrom: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1059#1079#1077#1083' '#1048#1047
+      OnExecute = actOpenNodeFromExecute
+    end
+    object actOpenNodeTo: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1059#1079#1077#1083' '#1042
+      OnExecute = actOpenNodeToExecute
+    end
   end
   inherited pmPopUp: TPopupMenu
     Left = 507
     Top = 199
+    object miOpenNodeFrom: TMenuItem [2]
+      Action = actOpenNodeFrom
+    end
+    object miOpenNodeTo: TMenuItem [3]
+      Action = actOpenNodeTo
+    end
+    object miN1: TMenuItem [4]
+      Caption = '-'
+    end
   end
   inherited CnErrors: TCnErrorProvider
     Top = 24
   end
   object dsWire: TpFIBDataSet
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    WIRE'
+      'WHERE'
+      '        WID = :OLD_WID'
+      '    ')
     RefreshSQL.Strings = (
       'select'
       '    T.O_NAME CT_NAME'

@@ -1,5 +1,5 @@
 ﻿unit CustomerLanForma;
-
+
 interface
 
 {$I defines.inc}
@@ -77,7 +77,6 @@ type
       var Background: TColor; State: TGridDrawState);
     procedure dbleVLANDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
-    procedure dbleEquipmentChange(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure eIPEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -105,6 +104,7 @@ type
     { Private declarations }
     fCI: TCustomerInfo;
     FCanEditPort: Boolean;
+    FVlanDisabled: Boolean;
     FWarnings: string;
     function CheckData(): Integer;
     function CheckWarnings(): Boolean;
@@ -153,12 +153,6 @@ begin
       dsEQ.Open;
       dsPort.Open;
 
-      if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then
-        dsVlans.SQLs.SelectSQL.Add('  and oc.house_id = :House_Id');
-      dsVlans.SQLs.SelectSQL.Add('order by finded, NAME_IP');
-      dsVlans.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
-      dsVlans.Open;
-
       dsLAN.ParamByName('Lan_ID').AsInt64 := aLan_ID;
       dsLAN.Open;
       if aLan_ID = -1 then
@@ -193,6 +187,11 @@ begin
           end;
         end;
 
+        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then
+          dsVlans.SQLs.SelectSQL.Add('  and oc.house_id = :House_Id');
+        dsVlans.SQLs.SelectSQL.Add('order by finded, NAME_IP');
+        dsVlans.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
+        dsVlans.Open;
         // если нашли влан - пропишем его
         if not dsVlans.EOF then
         begin
@@ -205,6 +204,18 @@ begin
       end
       else
       begin
+        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then begin
+          if (not dsLAN.FieldByName('VLAN_ID').IsNUll) then begin
+            dsVlans.SQLs.SelectSQL.Add(' and ( oc.house_id = :House_Id or v.v_id = :OV_ID)');
+            dsVlans.ParamByName('OV_ID').AsInt64 := dsLAN['VLAN_ID'];
+          end
+          else
+            dsVlans.SQLs.SelectSQL.Add(' and oc.house_id = :House_Id ');
+        end;
+        dsVlans.SQLs.SelectSQL.Add('order by finded, NAME_IP');
+        dsVlans.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
+        dsVlans.Open;
+
         ActiveControl := eIP;
         dsLAN.Edit;
         CheckPort();
@@ -219,30 +230,6 @@ begin
     finally
       free;
     end;
-end;
-
-procedure TCustomerLanForm.dbleEquipmentChange(Sender: TObject);
-begin
-  if dbleEquipment.Text.IsEmpty then
-  begin
-    dbleEquipment.EditButtons.Items[0].Hint := rsAdd;
-    dbleEquipment.EditButtons.Items[0].Visible := True and FCanEditPort;
-    dbleEquipment.EditButtons.Items[1].Visible := False;
-  end
-  else
-  begin
-    dbleEquipment.EditButtons.Items[1].Hint := rsChange;
-    dbleEquipment.EditButtons.Items[0].Visible := False;
-    dbleEquipment.EditButtons.Items[1].Visible := True and FCanEditPort;
-{$IFDEF NETLAND}
-    // TODO:Нужно ли прописывать мак адрес от адреса модема?
-    if (dsLAN.FieldByName('MAC').IsNull) and (not dsEQ.FieldByName('MAC').IsNull) and (dsLAN.State = dsInsert) then
-    begin
-      if CheckMAC(dsEQ['MAC']) then
-        dsLAN.FieldByName('MAC').asString := IncMac(dsEQ['MAC']);
-    end;
-{$ENDIF}
-  end;
 end;
 
 procedure TCustomerLanForm.dbleEquipmentDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -351,6 +338,8 @@ begin
 
   dbleEquipment.EditButtons.Items[0].Visible := FCanEditPort;
   lcbPort.EditButtons.Items[0].Visible := FCanEditPort;
+  FVlanDisabled := (dmMain.GetSettingsValue('LAN_VALANDISABLE') = '1');
+  dbleVLAN.Enabled := (not FVlanDisabled);
 
   if (dsLAN.State = dsInsert) and (not VarIsNull(dbleVLAN.Value)) then
   begin
@@ -457,7 +446,6 @@ var
   PORT: String;
   Result: string;
 begin
-
   if ((lcbPort.Text = '') or (dbleEquipment.Text = '')) then
     Exit;
 
@@ -536,25 +524,24 @@ var
 begin
   inherited;
 
-  if (dsEQ.RecordCount = 0) then
+  if (dsEQ.RecordCount = 0) or (not FCanEditPort) then
     Exit;
 
-  EQ.id := dsEQ.FieldByName('Eid').AsInteger;
-  // if not dsEQ.FieldByName('Eq_Type').IsNull then
-  // EQ.TypeID := dsEQ.FieldByName('Eq_Type').AsInteger;
-  // if not dsEQ.FieldByName('eqgroup').IsNull then
-  // EQ.TypeName := dsEQ.FieldByName('eqgroup').asString;
-  if not dsEQ.FieldByName('Name').IsNull then
-    EQ.Name := dsEQ.FieldByName('Name').asString;
-  if not dsEQ.FieldByName('Ip').IsNull then
-    EQ.ip := dsEQ.FieldByName('Ip').asString;
-  if not dsEQ.FieldByName('Mac').IsNull then
-    EQ.MAC := dsEQ.FieldByName('Mac').asString;
-  // if not dsEQ.FieldByName('Notice').IsNull then
-  // EQ.notice := dsEQ.FieldByName('Notice').asString;
+  if (lcbPort.Text.IsEmpty) or (VarIsNull(lcbPort.Value)) then
+  begin
+    EQ.id := dsEQ.FieldByName('Eid').AsInteger;
+    if not dsEQ.FieldByName('Name').IsNull then
+      EQ.Name := dsEQ.FieldByName('Name').asString;
+    if not dsEQ.FieldByName('Ip').IsNull then
+      EQ.ip := dsEQ.FieldByName('Ip').asString;
+    if not dsEQ.FieldByName('Mac').IsNull then
+      EQ.MAC := dsEQ.FieldByName('Mac').asString;
 
-  if CreatePort(EQ) then
-    dsPort.CloseOpen(True);
+    if CreatePort(EQ) then
+      dsPort.CloseOpen(True);
+  end
+  else
+    actEditPort.Execute;
 end;
 
 procedure TCustomerLanForm.actEditPortExecute(Sender: TObject);
@@ -564,25 +551,17 @@ var
 begin
   inherited;
 
-  if (dsEQ.RecordCount = 0) then
-    Exit;
-  if (lcbPort.Text.IsEmpty) then
+  if (dsEQ.RecordCount = 0) or (not FCanEditPort) or (lcbPort.Text.IsEmpty) then
     Exit;
 
   PORT := lcbPort.Value;
   EQ.id := dsEQ.FieldByName('Eid').AsInteger;
-  // if not dsEQ.FieldByName('Eq_Type').IsNull then
-  // EQ.TypeID := dsEQ.FieldByName('Eq_Type').AsInteger;
-  // if not dsEQ.FieldByName('eqgroup').IsNull then
-  // EQ.TypeName := dsEQ.FieldByName('eqgroup').asString;
   if not dsEQ.FieldByName('Name').IsNull then
     EQ.Name := dsEQ.FieldByName('Name').asString;
   if not dsEQ.FieldByName('Ip').IsNull then
     EQ.ip := dsEQ.FieldByName('Ip').asString;
   if not dsEQ.FieldByName('Mac').IsNull then
     EQ.MAC := dsEQ.FieldByName('Mac').asString;
-  // if not dsEQ.FieldByName('Notice').IsNull then
-  // EQ.notice := dsEQ.FieldByName('Notice').asString;
 
   if EditPort(EQ, PORT) then
     dsPort.CloseOpen(True);
@@ -939,36 +918,32 @@ end;
 
 procedure TCustomerLanForm.lcbPortChange(Sender: TObject);
 begin
-  if (lcbPort.Text.IsEmpty) or (VarIsNull(lcbPort.Value)) then
-  begin
-    lcbPort.EditButtons.Items[0].Hint := rsAdd;
-    lcbPort.EditButtons.Items[0].Visible := True and FCanEditPort;
-    lcbPort.EditButtons.Items[1].Visible := False;
-  end
-  else
-  begin
-    lcbPort.EditButtons.Items[1].Hint := rsChange;
-    lcbPort.EditButtons.Items[0].Visible := False;
-    lcbPort.EditButtons.Items[1].Visible := True and FCanEditPort;
-  end;
-  if (dsLAN.State = dsInsert) then
+  if (dsLAN.State = dsInsert) or (FVlanDisabled) then
   begin
     if (not dsPort.FieldByName('VLAN_ID').IsNull) then
+    begin
+      dbleVLAN.Enabled := not FVlanDisabled;
       dbleVLAN.Value := dsPort['VLAN_ID'];
+    end
+    else
+      dbleVLAN.Enabled := True;
   end;
 end;
 
 procedure TCustomerLanForm.lcbPortDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 var
-  s : string;
+  s: string;
 begin
   Background := clWindow;
-  if not dsPort.FieldByName('CON').IsNull then begin
-    if (not dsPort.FieldByName('CON_ID').IsNull) and (dsPort['CON_ID'] = fCI.CUSTOMER_ID) then begin
+  if not dsPort.FieldByName('CON').IsNull then
+  begin
+    if (not dsPort.FieldByName('CON_ID').IsNull) and (dsPort['CON_ID'] = fCI.CUSTOMER_ID) then
+    begin
       AFont.Style := [fsBold];
     end
-    else begin
+    else
+    begin
       AFont.Style := [fsItalic];
       AFont.Color := clGray;
       Background := clBtnShadow;
@@ -976,20 +951,22 @@ begin
   end;
   if (not dsPort.FieldByName('P_STATE').IsNull) then
   begin
-    if (dsPort['P_STATE'] = 0) then begin
+    if (dsPort['P_STATE'] = 0) then
+    begin
       AFont.Style := [fsStrikeOut];
       Background := clBtnShadow;
     end
-    else if (dsPort['P_STATE'] > 1) then begin
+    else if (dsPort['P_STATE'] > 1) then
+    begin
       AFont.Style := [fsItalic];
       Background := clBtnShadow;
     end;
   end;
-  if not( dsPort.FieldByName('COLOR').IsNull) then
+  if not(dsPort.FieldByName('COLOR').IsNull) then
   begin
-      s := dsPort['COLOR'];
-      if not s.IsEmpty then
-        Background := StringToColor(s);
+    s := dsPort['COLOR'];
+    if not s.IsEmpty then
+      Background := StringToColor(s);
   end;
 end;
 

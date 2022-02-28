@@ -24,7 +24,7 @@ type
     luOnOffService: TDBLookupComboboxEh;
     deStart: TDBDateTimeEditEh;
     deStop: TDBDateTimeEditEh;
-    edtnumValue: TDBNumberEditEh;
+    ednDiscountValue: TDBNumberEditEh;
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
     cnErrors: TCnErrorProvider;
@@ -91,7 +91,7 @@ end;
 
 procedure TDiscountForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  dmMain.SetIniValue('DISCOUNT', edtnumValue.Value);
+  dmMain.SetIniValue('DISCOUNT', ednDiscountValue.Value);
   Action := caFree;
 end;
 
@@ -130,7 +130,7 @@ begin
       if not FN('SERV_ID').IsNull then
         cbAll.Checked := (FN('SERV_ID').AsInteger = -1);
       if not FN('FACTOR_VALUE').IsNull then
-        edtnumValue.Value := FN('FACTOR_VALUE').AsFloat;
+        ednDiscountValue.Value := FN('FACTOR_VALUE').AsFloat;
       if not FN('SERV_ID').IsNull then
         luOnOffService.Value := FN('SERV_ID').AsInteger;
       if not FN('SRV_TYPE').IsNull then
@@ -144,11 +144,19 @@ begin
       Close;
       Transaction.Rollback;
     end;
+    if FNotChangeHistory and (deStart.Value < dmMain.CurrentMonth) then
+      deStart.Enabled := False;
+    if FNotChangeHistory and (deStop.Value < dmMain.CurrentMonth) then
+      deStop.Enabled := False;
+    if FNotChangeHistory and (not deStart.Enabled) and (not deStop.Enabled)  then begin
+      luOnOffService.Enabled := False;
+      ednDiscountValue.Enabled := False;
+    end;
   end
   else begin
     if not TryStrToFloat(dmMain.GetIniValue('DISCOUNT'), v) then
       v := 0.5;
-    edtnumValue.Value := v;
+    ednDiscountValue.Value := v;
   end;
 end;
 
@@ -172,7 +180,7 @@ begin
     if FDiscount_ID = -1 then
       ParamByName('Discount_Id').Clear;
     ParamByName('Customer_Id').AsInteger := FCustomer_ID;
-    ParamByName('Factor_Value').AsFloat := edtnumValue.Value;
+    ParamByName('Factor_Value').AsFloat := ednDiscountValue.Value;
     ParamByName('Date_From').AsDate := deStart.Value;
     ParamByName('Date_To').AsDate := deStop.Value;
     if cbAll.Checked then begin
@@ -239,7 +247,7 @@ begin
   end
   else begin
     cnErrors.Dispose(deStart);
-    if FNotChangeHistory and (VarToDateTime(deStart.Value) < dmMain.CurrentMonth) then begin
+    if FNotChangeHistory and deStart.Enabled and (VarToDateTime(deStart.Value) < dmMain.CurrentMonth) then begin
       allOk := False;
       cnErrors.SetError(deStart, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
     end
@@ -253,7 +261,7 @@ begin
   end
   else begin
     cnErrors.Dispose(deStop);
-    if FNotChangeHistory and (VarToDateTime(deStop.Value) < dmMain.CurrentMonth) then begin
+    if FNotChangeHistory and deStop.Enabled and (VarToDateTime(deStop.Value) < dmMain.CurrentMonth) then begin
       allOk := False;
       cnErrors.SetError(deStop, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
     end
@@ -276,12 +284,12 @@ begin
     end
   end;
 
-  if edtnumValue.Text = '' then begin
+  if ednDiscountValue.Text = '' then begin
     allOk := False;
-    cnErrors.SetError(edtnumValue, rsERROR_NOT_FILL_ALL, iaMiddleLeft, bsNeverBlink);
+    cnErrors.SetError(ednDiscountValue, rsERROR_NOT_FILL_ALL, iaMiddleLeft, bsNeverBlink);
   end
   else
-    cnErrors.Dispose(edtnumValue);
+    cnErrors.Dispose(ednDiscountValue);
 
   Result := allOk;
 end;

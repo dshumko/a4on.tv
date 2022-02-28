@@ -89,6 +89,9 @@ function FormatMACas4Cd(const S: string): String;
 // корректировка номера для страны
 function CorrectPhone(const phone: string; const aCountry: String = 'BY'): string;
 
+// Вывод месяца как строка, например 01.01.2013 - «1» января 2013
+function MonthAsString(const D: TDateTime; const beforeDay : string = '«'; const AfterDay : string = '»'): string;
+
 implementation
 
 uses
@@ -796,6 +799,18 @@ begin
   end
   else
     Result := tp;
+end;
+
+function MonthAsString(const D: TDateTime; const beforeDay : string = '«'; const AfterDay : string = '»'): string;
+const
+   Mes: array[1..12] of string = ('января', 'февраля', 'марта', 'апреля',
+      'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября',
+      'декабря');
+var
+   Year, Month, Day: Word;
+begin
+   DecodeDate(D, Year, Month, Day);
+   Result := beforeDay+IntToStr(day) +AfterDay+ ' ' + Mes[Month] +' ' + IntToStr(Year);
 end;
 
 

@@ -39,6 +39,15 @@ type
     actCustHttp: TAction;
     Action1: TAction;
     btnCmd: TSpeedButton;
+    btnFindCustomer: TSpeedButton;
+    actObjectOpen: TAction;
+    pmOpen: TPopupMenu;
+    actNodeFrom: TAction;
+    actNodeTo: TAction;
+    actEqpmnt: TAction;
+    miNodeFrom: TMenuItem;
+    miNodeTo: TMenuItem;
+    miEqpmnt: TMenuItem;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -59,6 +68,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure dbgCustomerGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure actObjectOpenExecute(Sender: TObject);
+    procedure actNodeToExecute(Sender: TObject);
+    procedure actNodeFromExecute(Sender: TObject);
+    procedure actEqpmntExecute(Sender: TObject);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
@@ -270,6 +283,14 @@ begin
     dsData.Refresh;
 end;
 
+procedure TapgEqpmntPort.actEqpmntExecute(Sender: TObject);
+begin
+  if ((dsData.FieldByName('Con').IsNull) or (dsData['Con'] <> 0) or (dsData.FieldByName('SURNAME').IsNull)) then
+    exit;
+
+  A4MainForm.OpenEquipmentByName(dsData['SURNAME']);
+end;
+
 procedure TapgEqpmntPort.actFindCustomerExecute(Sender: TObject);
 var
   Grid: TDBGridEh;
@@ -306,6 +327,27 @@ begin
 
   if (customers <> '') then
     ShowCustomers(7, customers);
+end;
+
+procedure TapgEqpmntPort.actNodeFromExecute(Sender: TObject);
+begin
+  if dsData.FieldByName('Point_S').IsNull then
+    exit;
+
+  A4MainForm.OpnenNodeByID(dsData['Point_S']);
+end;
+
+procedure TapgEqpmntPort.actNodeToExecute(Sender: TObject);
+begin
+  if dsData.FieldByName('Point_E').IsNull then
+    exit;
+
+  A4MainForm.OpnenNodeByID(dsData['Point_E']);
+end;
+
+procedure TapgEqpmntPort.actObjectOpenExecute(Sender: TObject);
+begin
+  pmOpen.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 procedure TapgEqpmntPort.actPEditExecute(Sender: TObject);
@@ -505,6 +547,14 @@ begin
     exit;
   if dsData.DataSource.DataSet.RecordCount = 0 then
     exit;
+
+  pmCustomerLanPopUp.Items.Clear;
+  NewItem := TMenuItem.Create(pmCustomerLanPopUp);
+  NewItem.Action := actObjectOpen;
+  pmCustomerLanPopUp.Items.Add(NewItem);
+  NewItem := TMenuItem.Create(pmCustomerLanPopUp);
+  NewItem.Caption := '-';
+  pmCustomerLanPopUp.Items.Add(NewItem);
 
   pmCustomerLanPopUp.Items.Clear;
   NewItem := TMenuItem.Create(pmCustomerLanPopUp);

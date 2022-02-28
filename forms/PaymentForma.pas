@@ -256,8 +256,20 @@ begin
     pf.dsPaymentDocs.Active := true;
     if pf.dsPaymentDocs.RecordCount > 0 then
     begin
-      pf.CurrentDate := pf.dsPaymentDocs['CD'];
-      pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
+      if (aPayDoc_id > -1) then begin
+        if (pf.dsPaymentDocs.Locate('PAY_DOC_ID', aPayDoc_id, [])) then begin
+          pf.CurrentDate := pf.dsPaymentDocs['CD'];
+          pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
+        end
+        else begin
+          pf.CurrentDate := Now();
+          pf.dbluPayDoc.KeyValue := aPayDoc_id;
+        end;
+      end
+      else begin
+        pf.CurrentDate := pf.dsPaymentDocs['CD'];
+        pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
+      end;
     end;
 
     if (OpenedPayDocs <> '') and (OpenedPayDocs <> '-1') and (Pos(',', OpenedPayDocs) = 0) then

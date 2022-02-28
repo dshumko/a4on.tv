@@ -927,10 +927,17 @@ begin
 end;
 
 procedure TRequestNewForm.FormCreate(Sender: TObject);
+var
+  s : string;
 begin
   dbgSame.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame',
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
   dsStreets.Open;
+  s := dmMain.GetSettingsValue('AREA_LOCK');
+  if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
+  begin
+    dsHouse.ParamByName('AREA_LOCK').Value := Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
+  end;
   dsHouse.Open;
   dsRequestType.Open;
   dsWorks.Open;

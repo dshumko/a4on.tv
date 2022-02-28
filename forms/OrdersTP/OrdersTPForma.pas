@@ -91,6 +91,8 @@ type
     actEnableFilter: TAction;
     actSetNewFilterNew: TAction;
     miN18: TMenuItem;
+    miN19: TMenuItem;
+    mmiCancel: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -396,7 +398,10 @@ begin
   FViewTodayOnly := dmMain.AllowedAction(rght_OrdersTP_Today);
 
   fEndDate := now;
-  fStartDate := MonthFirstDay(dmMain.CurrentMonth);
+  if not FViewTodayOnly then
+    fStartDate := MonthFirstDay(dmMain.CurrentMonth)
+  else
+    fStartDate := Now;
 
   SetOrdersTPFilter;
 
@@ -936,14 +941,8 @@ function TOrdersTPForm.GenerateFilter: string;
   begin
     tmpSQL := '';
 
-    if FViewTodayOnly then
-      tmpSQL := ' (o.ADDED_ON >= current_date) and (o.ADDED_ON < dateadd(day, 1, current_date)) ';
-
     if (not dsFilter.FieldByName('DT').IsNull) then
     begin
-      if not tmpSQL.IsEmpty then
-        tmpSQL := tmpSQL + ' and ';
-
       if (dsFilter['DT'] <> 4) then begin
         case dsFilter['DT'] of
           1:
@@ -975,9 +974,6 @@ function TOrdersTPForm.GenerateFilter: string;
             tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', now),
               'o.DATE_FROM', 'o.DATE_TO'])
       end;
-
-
-
     end;
 
     if (not dsFilter.FieldByName('ORDER_TYPE').IsNull) then
@@ -1005,6 +1001,14 @@ function TOrdersTPForm.GenerateFilter: string;
     end
     else
       Result := '';
+
+    if FViewTodayOnly then  begin
+      tmpSQL := ' (o.ADDED_ON >= current_date) and (o.ADDED_ON < dateadd(day, 1, current_date)) ';
+      if not Result.IsEmpty then
+        Result := tmpSQL + ' and (' + Result + ')'
+      else
+        Result := tmpSQL;
+    end;
   end;
 
 var

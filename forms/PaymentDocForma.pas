@@ -145,6 +145,8 @@ type
     procedure actTaskExecute(Sender: TObject);
     procedure dbgPayDocPaymentGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure dbgPayDocPaymentColumns6GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FullAccess: boolean;
@@ -762,6 +764,13 @@ begin
     Exit;
 
   A4MainForm.MakeTask('P', dsPayDocDetail.FieldByName('PAYMENT_ID').AsString);
+end;
+
+procedure TPaymentDocForm.dbgPayDocPaymentColumns6GetCellParams(
+  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
 end;
 
 procedure TPaymentDocForm.dbgPayDocPaymentDblClick(Sender: TObject);

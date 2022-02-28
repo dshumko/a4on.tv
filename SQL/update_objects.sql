@@ -9,6 +9,14 @@ begin
     values ('STRICT_MODE', '0', 'BOOLEAN', 'Строгий режим', 'Запрет изменений начислений и платежей в прошлых периодах')
     matching (VAR_NAME);
   end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'AREA_LOCK'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('AREA_LOCK', '', 'STRING', NULL, 'список ид (1,2) райнов для которых можно принимать заявки и обращения')
+    matching (VAR_NAME);
+  end
 end;
 commit;
 
@@ -78,6 +86,7 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (58, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (59, 'Вид коннектора', 'Вид коннектора кабеля') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (60, 'Состояние порта', '') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (61, 'Способ оплаты', 'Каким способом внесен платеж. нал. безнал.') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (62, 'Типы меток линий связи', 'нумерация жил на кабелях') MATCHING (OT_ID);
 
 commit;
 

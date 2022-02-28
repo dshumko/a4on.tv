@@ -121,6 +121,7 @@ type
     LINK_ID: Integer;
     NODE_ID: Integer;
     NODE_Name: string;
+    NODE_TYPE: string;
   end;
 
   TCountry = (cRU, cBY, cUA);

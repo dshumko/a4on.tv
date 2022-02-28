@@ -1,7 +1,7 @@
 object CustomerLanForm: TCustomerLanForm
   Left = 593
   Top = 259
-  ActiveControl = dbleEquipment
+  ActiveControl = lcbPort
   Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1057#1055#1044
   ClientHeight = 337
   ClientWidth = 534
@@ -33,6 +33,12 @@ object CustomerLanForm: TCustomerLanForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 74
       Width = 363
@@ -332,7 +338,6 @@ object CustomerLanForm: TCustomerLanForm
       Style = csDropDownEh
       TabOrder = 0
       Visible = True
-      OnChange = dbleEquipmentChange
       OnDropDownBoxGetCellParams = dbleEquipmentDropDownBoxGetCellParams
       OnExit = dbleEquipmentExit
     end
@@ -457,24 +462,8 @@ object CustomerLanForm: TCustomerLanForm
         item
           Action = actAddPort
           DefaultAction = False
-          ShortCut = 45
-          Style = ebsPlusEh
-        end
-        item
-          Action = actEditPort
-          DefaultAction = False
-          Glyph.Data = {
-            F6000000424DF600000000000000760000002800000010000000100000000100
-            0400000000008000000000000000000000001000000000000000000000000000
-            8000008000000080800080000000800080008080000080808000C0C0C0000000
-            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFFFFFFFFFF
-            FFFF878FFFFFFFFFFFFFF807FFFFFFFFFFFFFF7778FFFFFFFFFFFFF7008FFFFF
-            FFFFFFF80008FFFFFFFFFFFF80008FFFFFFFFFFFF80008FFFFFFFFFFFF80008F
-            FFFFFFFFFFF80008FFFFFFFFFFFF80008FFFFFFFFFFFF80708FFFFFFFFFFFF80
-            788FFFFFFFFFFFF8870FFFFFFFFFFFFF807FFFFFFFFFFFFFF8FF}
           ShortCut = 113
-          Style = ebsGlyphEh
-          Visible = False
+          Style = ebsEllipsisEh
         end>
       KeyField = 'PORT'
       ListField = 'NAME'
@@ -860,7 +849,7 @@ object CustomerLanForm: TCustomerLanForm
       ShortCut = 118
     end
     object actAddPort: TAction
-      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1086#1088#1090'/'#1099
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100'/'#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1088#1090'/'#1099
       OnExecute = actAddPortExecute
     end
     object actEditPort: TAction

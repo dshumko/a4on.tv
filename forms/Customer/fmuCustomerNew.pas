@@ -525,6 +525,7 @@ begin
     dsContacts.Open;
 
   Contact.cID := -1;
+  Contact.CustID := -1;
   if EditContact(Contact) then
   begin
     dsContacts.Insert;
@@ -582,6 +583,7 @@ begin
   else
     Contact.cID := -1;
 
+  Contact.CustID := -1;
   if EditContact(Contact) then
   begin
     if dsContacts.RecordCount > 0 then
@@ -1231,15 +1233,19 @@ var
 begin
   // NT 0 - Личный номер 1 - номер паспота
   CnErrors.Dispose(Sender);
-  if (Sender.Text = '') then
+  if (Sender.Text = '') then begin
+    btnSAVE.Enabled := True;
     exit;
+  end;
   s := '';
   n := Trim(Sender.Text);
   if ds.DataSet.State in [dsInsert, dsEdit] then
   begin
     Query.SQL.Clear;
     Query.SQL.Add('select o.O_Name, o.O_Description, o.O_Charfield');
-    Query.SQL.Add('from objects o where o.O_Type = 31 and upper(o.O_Name) = upper(:PN)');
+    Query.SQL.Add('from objects o where o.O_Type = 31 ');
+    Query.SQL.Add(' and upper(replace(replace(o.O_Name, '' '', ''''), ''№'', '''')) ');
+    Query.SQL.Add('     = upper(replace(replace(cast(:PN as VARCHAR(500)), '' '', ''''), ''№'', ''''))');
     Query.ParamByName('PN').AsString := n;
     Query.Transaction.StartTransaction;
     Query.ExecQuery;
@@ -1253,6 +1259,8 @@ begin
     Query.Close;
   end;
 
+  // отключим сохранение если нет полных прав и в черном списке
+  btnSAVE.Enabled := (s.IsEmpty) or FFullAccess;
   if s <> '' then
   begin
     CnErrors.SetError(Sender, rsCustomerInBlackList + #13#10 + s, iaTopCenter, bsNeverBlink);
@@ -1272,8 +1280,8 @@ begin
     bav := CheckIBAN(edtBANK_ACCOUNT.Text)
   else if dmMain.CompanyCountry = 'RU' then
   begin
-    if (not lcbBANK.Text.IsEmpty) and (not dsBANKS.FieldByName('BUK').IsNull) then
-      bav := CheckRusBA(edtBANK_ACCOUNT.Text, dsBANKS['BUK']);
+    if (not lcbBANK.Text.IsEmpty) and (not dsBANKS.FieldByName('BIK').IsNull) then
+      bav := CheckRusBA(edtBANK_ACCOUNT.Text, dsBANKS['BIK']);
   end;
 
   if bav then

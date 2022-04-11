@@ -145,20 +145,20 @@ type
     procedure actTaskExecute(Sender: TObject);
     procedure dbgPayDocPaymentGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
-    procedure dbgPayDocPaymentColumns6GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dsPayDocAfterOpen(DataSet: TDataSet);
   private
     { Private declarations }
-    FullAccess: boolean;
-    FCanAdd: boolean;
-    FTodayOnly: boolean;
-    FOnlyTheir: boolean;
-    FCanDelete: boolean;
+    FullAccess: Boolean;
+    FCanAdd: Boolean;
+    FTodayOnly: Boolean;
+    FOnlyTheir: Boolean;
+    FCanDelete: Boolean;
     fPayDocId: Integer;
     fPayDate: TDate;
     fPaySum: Currency;
-    FCalcFine: boolean;
-    vPaymentSRV: boolean;
+    FCalcFine: Boolean;
+    vPaymentSRV: Boolean;
     procedure SetPayDocId(Value: Integer);
   public
     { Public declarations }
@@ -179,7 +179,7 @@ procedure CreatePayDoc(aPayDocID: Integer; const PAYMENT_ID: Integer = -1);
 var
   PDF: TPaymentDocForm;
   i: Integer;
-  b: boolean;
+  b: Boolean;
 begin
   b := dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Programm_ViewMoney) or
     dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_AddToday) or
@@ -336,7 +336,7 @@ end;
 
 procedure TPaymentDocForm.ActPayDocPostExecute(Sender: TObject);
 var
-  vErrors: boolean;
+  vErrors: Boolean;
 begin
   vErrors := false;
   if (dbedtPAY_DOC_NO.Text = '') then
@@ -410,6 +410,7 @@ begin
       Add('    p.SUM_INTERED,');
       Add('    ( coalesce(D.PAY_DOC_SUM,0) - coalesce(p.SUM_INTERED,0) - coalesce(p.FINE_SUM, 0) ) SUM_DIFFERENCE ,');
       Add('    (select count(*) from pay_errors pe where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors');
+      Add('    , ps.FOR_FORM ');
       Add('  from PAY_DOC D');
       Add('       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYSOURCE_ID)');
       Add('       left outer join(select p.PAY_DOC_ID, sum(p.PAY_SUM) as SUM_INTERED , sum(coalesce(p.Fine_Sum, 0)) as FINE_SUM ');
@@ -454,7 +455,7 @@ end;
 
 procedure TPaymentDocForm.tbPostDocClick(Sender: TObject);
 var
-  i: boolean;
+  i: Boolean;
 begin
 
   if dbedtPAY_DOC_NO.Text = '' then
@@ -503,7 +504,7 @@ end;
 
 procedure TPaymentDocForm.FormCreate(Sender: TObject);
 var
-  vAsBalance: boolean;
+  vAsBalance: Boolean;
   i: Integer;
 begin
   vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
@@ -546,11 +547,18 @@ begin
   pnlPayments.Visible := not dsPayDoc.FieldByName('Pay_DOC_ID').IsNull;
 end;
 
+procedure TPaymentDocForm.dsPayDocAfterOpen(DataSet: TDataSet);
+begin
+  // отключим внесение платежа если форма только для объявлений
+  if (not dsPayDoc.FieldByName('FOR_FORM').IsNull) then
+    actPaymentNew.Enabled := actPaymentNew.Enabled and ((dsPayDoc['FOR_FORM'] <> 'OTP') or FullAccess);
+end;
+
 procedure TPaymentDocForm.FormShow(Sender: TObject);
 var
   i: Integer;
-  b: boolean;
-  bal: boolean;
+  b: Boolean;
+  bal: Boolean;
 
   Font_size: Integer;
   Font_name: string;
@@ -638,7 +646,7 @@ end;
 
 procedure TPaymentDocForm.actPaymentNewExecute(Sender: TObject);
 var
-  AR: boolean;
+  AR: Boolean;
   pay_id: Int64;
 begin
   if (dmMain.InStrictMode and (dsPayDoc['PAY_DOC_DATE'] < dmMain.CurrentMonth)) then
@@ -702,7 +710,7 @@ end;
 procedure TPaymentDocForm.actPaymentDeleteExecute(Sender: TObject);
 var
   i: Integer;
-  AR: boolean;
+  AR: Boolean;
 begin
   if (dmMain.InStrictMode and (dsPayDoc['PAY_DOC_DATE'] < dmMain.CurrentMonth)) then
   begin
@@ -766,8 +774,8 @@ begin
   A4MainForm.MakeTask('P', dsPayDocDetail.FieldByName('PAYMENT_ID').AsString);
 end;
 
-procedure TPaymentDocForm.dbgPayDocPaymentColumns6GetCellParams(
-  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+procedure TPaymentDocForm.dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean;
+  Params: TColCellParamsEh);
 begin
   if not Params.Text.IsEmpty then
     Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
@@ -818,7 +826,7 @@ end;
 
 procedure TPaymentDocForm.dsPayDocNewRecord(DataSet: TDataSet);
 var
-  vToday: boolean;
+  vToday: Boolean;
 begin
   vToday := dmMain.AllowedAction(rght_Pays_AddToday);
   dsPayDoc['PAY_DOC_SUM'] := 0;
@@ -928,7 +936,7 @@ end;
 
 procedure TPaymentDocForm.srcsPayDocDetailDataChange(Sender: TObject; Field: TField);
 var
-  dsNotEmpty: boolean;
+  dsNotEmpty: Boolean;
 begin
   dsNotEmpty := not(dsPayDocDetail.FieldByName('PAYMENT_ID').IsNull);
   actPaymentDelete.Enabled := (FCanDelete or FullAccess) and dsNotEmpty; // полный доступ или удаление
@@ -982,7 +990,7 @@ end;
 
 procedure TPaymentDocForm.actErrorProceedExecute(Sender: TObject);
 var
-  AR: boolean;
+  AR: Boolean;
   vPayDate: TDate;
   vPaySum: Currency;
   pay_id: Int64;
@@ -1016,7 +1024,7 @@ end;
 
 procedure TPaymentDocForm.actErrorsDelExecute(Sender: TObject);
 var
-  all: boolean;
+  all: Boolean;
   i: Integer;
 begin
   if (MessageDlg(PWideChar(Format(rsDeleteWithName, [''])), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then

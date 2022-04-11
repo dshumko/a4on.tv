@@ -6,16 +6,20 @@ inherited FreqPlanForm: TFreqPlanForm
   ClientWidth = 987
   PixelsPerInch = 96
   TextHeight = 13
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 193
     Width = 987
-    Height = 310
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 196
+    Width = 987
+    Height = 307
     AllowedOperations = [alopUpdateEh]
-    AutoFitColWidths = False
     DrawMemoText = True
     FooterRowCount = 1
     SortLocal = False
     SumList.Active = True
+    OnGetCellParams = dbGridGetCellParams
     Columns = <
       item
         CellButtons = <>
@@ -274,7 +278,9 @@ inherited FreqPlanForm: TFreqPlanForm
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
-      EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' / '#1044#1080#1072#1087#1072#1079#1086#1085
+      EmptyDataInfo.Text = 
+        #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' / '#1044#1080#1072#1087#1072#1079#1086#1085'. '#1045#1089#1083#1080' '#1074' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1080' '#1073#1091#1076#1077#1090' '#1074#1089#1090#1088#1077#1095#1072#1090#1100#1089#1103' '#1089#1083#1086#1074#1086 +
+        ' '#1055#1054#1052#1045#1061' ('#1087#1086#1084#1077#1093#1072' '#1087#1086#1084#1077#1093#1080') '#1090#1086' '#1089#1090#1088#1086#1082#1072' '#1073#1091#1076#1077#1090' '#1082#1088#1072#1089#1085#1086#1081
       ShowHint = True
       TabOrder = 7
       Visible = True

@@ -533,7 +533,7 @@ inherited StreetForm: TStreetForm
         Top = 0
         Width = 644
         Height = 286
-        ActivePage = InfoSheet
+        ActivePage = tsCircuit
         Align = alClient
         TabOrder = 0
         OnChange = pcHouseInfoChange
@@ -2768,7 +2768,8 @@ inherited StreetForm: TStreetForm
       Caption = '-'
     end
     object miPNG1: TMenuItem
-      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' PNG'
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1082#1072#1088#1090#1080#1085#1082#1091
+      Hint = #1060#1072#1081#1083' '#1092#1086#1088#1084#1072#1090#1072' JPG '#1080#1083#1080' PNG'
       OnClick = miPNG1Click
     end
     object miN4: TMenuItem

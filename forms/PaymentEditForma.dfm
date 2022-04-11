@@ -208,12 +208,22 @@ object PaymentEditFrm: TPaymentEditFrm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      400
+      26)
     object lbl1: TLabel
       Left = 5
       Top = 5
       Width = 25
       Height = 13
       Caption = #1055#1077#1085#1103
+    end
+    object lbl2: TLabel
+      Left = 221
+      Top = 5
+      Width = 41
+      Height = 13
+      Caption = #1042#1085#1077#1089#1077#1085#1086
     end
     object edtFine: TDBNumberEditEh
       Tag = 13
@@ -230,6 +240,30 @@ object PaymentEditFrm: TPaymentEditFrm
       Value = 0.000000000000000000
       Visible = True
       OnChange = dePaySumChange
+    end
+    object ednItogo: TDBNumberEditEh
+      Tag = 13
+      Left = 280
+      Top = 2
+      Width = 114
+      Height = 21
+      TabStop = False
+      Anchors = [akLeft, akTop, akRight]
+      Color = clBtnFace
+      DisplayFormat = '### ### ### ##0.##'
+      DynProps = <>
+      EditButtons = <>
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ReadOnly = True
+      ShowHint = True
+      TabOrder = 1
+      Visible = True
     end
   end
   object pnlTYPE: TPanel

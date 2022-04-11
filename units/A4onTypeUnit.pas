@@ -46,6 +46,7 @@ type
     Contact: String;
     Notice: String;
     Notify: Integer;
+    CustID: Integer;
   End;
 
   TEquipmentRecord = record
@@ -56,6 +57,7 @@ type
     Notice: String;
     IP: String;
     MAC: String;
+    Node_Id : Integer;
   end;
 
   TFlat = record
@@ -122,6 +124,15 @@ type
     NODE_ID: Integer;
     NODE_Name: string;
     NODE_TYPE: string;
+  end;
+
+  TAttribute = record
+    TYPE_ID: Integer;
+    OBJECT_ID: Integer;
+    ATTR_ID: Integer;
+    Name: String;
+    Value: String;
+    Notice: String;
   end;
 
   TCountry = (cRU, cBY, cUA);

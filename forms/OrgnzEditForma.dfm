@@ -136,8 +136,8 @@ object OrgnzEditForm: TOrgnzEditForm
   object lbl15: TLabel
     Left = 336
     Top = 131
-    Width = 25
-    Height = 12
+    Width = 24
+    Height = 13
     Anchors = [akTop, akRight]
     Caption = 'Email'
   end
@@ -148,14 +148,6 @@ object OrgnzEditForm: TOrgnzEditForm
     Height = 13
     Anchors = [akRight]
     Caption = #1053#1044#1057
-  end
-  object lbl17: TLabel
-    Left = 8
-    Top = 275
-    Width = 61
-    Height = 13
-    Anchors = [akLeft]
-    Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
   end
   inline frmOk: TOkCancelFrame
     Left = 0
@@ -420,9 +412,9 @@ object OrgnzEditForm: TOrgnzEditForm
     Visible = True
   end
   object dbmNotice: TDBMemoEh
-    Left = 94
+    Left = 8
     Top = 272
-    Width = 477
+    Width = 563
     Height = 114
     ScrollBars = ssHorizontal
     Anchors = [akLeft, akRight, akBottom]
@@ -431,6 +423,7 @@ object OrgnzEditForm: TOrgnzEditForm
     DataSource = srcDataSource
     DynProps = <>
     EditButtons = <>
+    EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
     TabOrder = 16
     Visible = True
@@ -606,5 +599,10 @@ object OrgnzEditForm: TOrgnzEditForm
     DataSet = dsBANKS
     Left = 440
     Top = 131
+  end
+  object CnErrors: TCnErrorProvider
+    DoubleBuffer = False
+    Left = 24
+    Top = 312
   end
 end

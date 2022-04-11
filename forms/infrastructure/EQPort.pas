@@ -53,8 +53,8 @@ type
     procedure lcbWIREChange(Sender: TObject);
     procedure actEditLinkExecute(Sender: TObject);
   private
-    fEr: TEquipmentRecord;
-    fPort: String;
+    FEqRecord: TEquipmentRecord;
+    FPort: String;
     FNode_ID: Integer;
     FCanEditPort: Boolean;
     function CheckData: Boolean;
@@ -63,8 +63,8 @@ type
     procedure SetPort(const value: String);
     procedure GetPortInfo;
   public
-    property Equipment: TEquipmentRecord read fEr write SetEquipment;
-    property Port: String read fPort write SetPort;
+    property Equipment: TEquipmentRecord read FEqRecord write SetEquipment;
+    property Port: String read FPort write SetPort;
   end;
 
 function CreatePort(const ER: TEquipmentRecord): Boolean;
@@ -154,10 +154,12 @@ end;
 procedure TEQPortForm.FormShow(Sender: TObject);
 begin
   FNode_ID := -1;
+
   dsType.Open;
   dsState.Open;
   dsVlans.Open;
-  if fPort <> '' then
+
+  if FPort <> '' then
   begin
     GetPortInfo;
     if FNode_ID > -1 then
@@ -168,14 +170,18 @@ begin
       dsWire.Open;
     end;
   end;
-  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
+
+  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Nodes);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Node_Links);
+
   lcbWIRE.EditButtons.Items[0].Visible := FCanEditPort;
 end;
 
 procedure TEQPortForm.SetEquipment(const value: TEquipmentRecord);
 begin
-  fEr := value;
-  lblEquipment.Caption := fEr.Name + ' / ' + fEr.IP + ' / ' + fEr.TypeName;
+  FEqRecord := value;
+  lblEquipment.Caption := FEqRecord.Name + ' / ' + FEqRecord.IP + ' / ' + FEqRecord.TypeName;
 end;
 
 procedure TEQPortForm.SaveAndClose;
@@ -204,7 +210,7 @@ begin
     fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, WID, WLABEL) ' +
       ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id, :WID, :WLABEL) matching (Eid, Port) ';
 
-    fq.ParamByName('Eid').AsInteger := fEr.ID;
+    fq.ParamByName('Eid').AsInteger := FEqRecord.ID;
     fq.ParamByName('P_Type').AsInteger := lcbType.value;
     fq.ParamByName('P_State').AsInteger := lcbState.value;
     fq.ParamByName('Notice').AsString := mmoNotice.Lines.Text;
@@ -214,9 +220,9 @@ begin
       fq.ParamByName('Vlan_Id').AsInteger := lcbVLAN.value;
     if not lcbWIRE.Text.IsEmpty then
       fq.ParamByName('WID').AsInteger := lcbWIRE.value;
-    fq.ParamByName('WLABEL').AsString := cbLABELS.Value;
+    fq.ParamByName('WLABEL').AsString := cbLABELS.value;
 
-    if fPort = '' then
+    if FPort = '' then
     begin
       cnt := ednCount.value;
       for i := 0 to cnt - 1 do
@@ -233,7 +239,7 @@ begin
     end
     else
     begin
-      fq.ParamByName('Port').AsString := fPort;
+      fq.ParamByName('Port').AsString := FPort;
       fq.Transaction.StartTransaction;
       fq.ExecQuery;
       fq.Transaction.Commit;
@@ -290,20 +296,20 @@ end;
 
 procedure TEQPortForm.SetPort(const value: String);
 begin
-  fPort := value;
-  lblStart.Visible := fPort.IsEmpty;
-  ednCount.Visible := fPort.IsEmpty;
-  edtNumber.ReadOnly := not fPort.IsEmpty;
-  if not fPort.IsEmpty then
+  FPort := value;
+  lblStart.Visible := FPort.IsEmpty;
+  ednCount.Visible := FPort.IsEmpty;
+  edtNumber.ReadOnly := not FPort.IsEmpty;
+  if not FPort.IsEmpty then
   begin
-    edtNumber.Text := fPort;
+    edtNumber.Text := FPort;
     edtNumber.Left := ednCount.Left;
     lblCNT.Caption := 'Port';
-    Caption := 'Редактрование порта ' + fPort;
+    Caption := 'Редактрование порта ' + FPort;
   end;
 
   // спрячем при создании портов.
-  lcbWIRE.Visible := not fPort.IsEmpty;
+  lcbWIRE.Visible := not FPort.IsEmpty;
   lblWire.Visible := lcbWIRE.Visible;
   cbLABELS.Visible := lcbWIRE.Visible;
   lblLabel.Visible := lcbWIRE.Visible;
@@ -363,8 +369,8 @@ begin
     fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id, p.WLABEL';
     fq.sql.Add('from Port p inner join Equipment e on (p.Eid = e.Eid)');
     fq.sql.Add('where p.Eid = :Eid and p.Port = :Port');
-    fq.ParamByName('Eid').AsInteger := fEr.ID;
-    fq.ParamByName('Port').AsString := fPort;
+    fq.ParamByName('Eid').AsInteger := FEqRecord.ID;
+    fq.ParamByName('Port').AsString := FPort;
 
     fq.Transaction.StartTransaction;
     fq.ExecQuery;
@@ -399,8 +405,8 @@ end;
 
 procedure TEQPortForm.lcbWIREChange(Sender: TObject);
 var
-  i,j : Integer;
-  s, v : string;
+  i, j: Integer;
+  s, v: string;
   ports: TStringDynArray;
 begin
   cbLABELS.Items.Clear;
@@ -409,27 +415,31 @@ begin
     Exit;
 
   cbLABELS.Items.Delimiter := ',';
-  cbLABELS.Items.StrictDelimiter := True;
+  cbLABELS.Items.StrictDelimiter := true;
   cbLABELS.Items.DelimitedText := dsWire['LABELS'];
 
   cbLABELS.KeyItems.Delimiter := ',';
-  cbLABELS.KeyItems.StrictDelimiter := True;
+  cbLABELS.KeyItems.StrictDelimiter := true;
   cbLABELS.KeyItems.DelimitedText := dsWire['LABELS'];
 
-  if (not dsWire.FieldByName('WlabelS').IsNull) then begin
-     ports:= SplitString(dsWire['WlabelS'],';');
-     for I := 0 to cbLABELS.Items.Count-1 do begin
-       s := '('+cbLABELS.Items[i]+')';
-       for j := 0 to Length(ports)-1 do begin
-         if ports[j].Contains(s) then begin
-           v := copy(ports[j], 1, pos(s, ports[j])-1);
-            if v <> fPort then
-              cbLABELS.Items[i] := cbLABELS.Items[i] + ' на порту ' + v
-            else
-              cbLABELS.Items[i] := cbLABELS.Items[i] + ' на текущем порту ' + v;
-         end;
-       end;
-     end;
+  if (not dsWire.FieldByName('WlabelS').IsNull) then
+  begin
+    ports := SplitString(dsWire['WlabelS'], ';');
+    for i := 0 to cbLABELS.Items.Count - 1 do
+    begin
+      s := '(' + cbLABELS.Items[i] + ')';
+      for j := 0 to Length(ports) - 1 do
+      begin
+        if ports[j].Contains(s) then
+        begin
+          v := copy(ports[j], 1, pos(s, ports[j]) - 1);
+          if v <> FPort then
+            cbLABELS.Items[i] := cbLABELS.Items[i] + ' / подкл. к порту ' + v
+          else
+            cbLABELS.Items[i] := cbLABELS.Items[i] + ' / подкл. к текущем порту ' + v;
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -440,6 +450,16 @@ begin
     Background := StringToColor(dsWire['COLOR'])
   else
     Background := clWindow;
+
+  if FEqRecord.NODE_ID > 0 then
+  begin
+    // пометим лини связи из узла или в узел
+    if ((not dsWire.FieldByName('NODE_S_ID').IsNull) and (dsWire['NODE_S_ID'] = FEqRecord.NODE_ID)) then
+      AFont.Style := [fsBold];
+
+    if ((not dsWire.FieldByName('NODE_E_ID').IsNull) and (dsWire['NODE_E_ID'] = FEqRecord.NODE_ID)) then
+      AFont.Style := [fsBold];
+  end;
 end;
 
 end.

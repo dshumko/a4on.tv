@@ -537,6 +537,102 @@ inherited VlansForm: TVlansForm
         end
       end
     end
+    object tsAttr: TTabSheet
+      Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+      ImageIndex = 2
+      object dbgCustAttr: TDBGridEh
+        Left = 26
+        Top = 0
+        Width = 706
+        Height = 158
+        Align = alClient
+        AllowedOperations = []
+        DataSource = srcAttributes
+        DynProps = <>
+        Flat = True
+        FooterParams.Color = clWindow
+        GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+        STFilter.InstantApply = True
+        STFilter.Local = True
+        STFilter.Location = stflInTitleFilterEh
+        STFilter.Visible = True
+        TabOrder = 0
+        TitleParams.MultiTitle = True
+        Columns = <
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'TA_NAME'
+            Footers = <>
+            Title.Caption = #1040#1090#1088#1080#1073#1091#1090
+            Title.TitleButton = True
+            Width = 132
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'AVALUE'
+            Footers = <>
+            Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+            Title.TitleButton = True
+            Width = 186
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'NOTICE'
+            Footers = <>
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
+            Width = 301
+          end>
+        object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+      object pnlAttrBtns: TPanel
+        Left = 0
+        Top = 0
+        Width = 26
+        Height = 158
+        Align = alLeft
+        BevelOuter = bvNone
+        TabOrder = 1
+        DesignSize = (
+          26
+          158)
+        object btnDel1: TSpeedButton
+          Left = 1
+          Top = 133
+          Width = 22
+          Height = 22
+          Action = actAttrDel
+          Anchors = [akLeft, akBottom]
+          Flat = True
+          Layout = blGlyphTop
+        end
+        object btnAdd1: TSpeedButton
+          Left = 1
+          Top = 3
+          Width = 22
+          Height = 22
+          Action = actAttrAdd
+          Flat = True
+        end
+        object btnAdd: TSpeedButton
+          Left = 1
+          Top = 35
+          Width = 22
+          Height = 22
+          Action = actAttrEdit
+          Flat = True
+        end
+      end
+    end
   end
   inherited tlbMain: TToolBar
     Width = 740
@@ -596,14 +692,14 @@ inherited VlansForm: TVlansForm
       Caption = #1053#1072#1079#1074#1072#1085#1080#1077
     end
     object lbl3: TLabel [2]
-      Left = 4
+      Left = 5
       Top = 90
       Width = 49
       Height = 13
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
     end
     object Label3: TLabel [3]
-      Left = 6
+      Left = 5
       Top = 36
       Width = 57
       Height = 13
@@ -624,7 +720,7 @@ inherited VlansForm: TVlansForm
       Caption = #1087#1086
     end
     object Label5: TLabel [6]
-      Left = 6
+      Left = 5
       Top = 63
       Width = 30
       Height = 13
@@ -1108,5 +1204,111 @@ inherited VlansForm: TVlansForm
     DataSource = srcDataSource
     Left = 407
     Top = 291
+  end
+  object srcAttributes: TDataSource
+    DataSet = dsAttributes
+    Left = 479
+    Top = 411
+  end
+  object dsAttributes: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE ATTRIBUTE'
+      'SET '
+      '    AVALUE = :AVALUE,'
+      '    NOTICE = :NOTICE'
+      'WHERE'
+      '    TYPE_ID = :OLD_TYPE_ID'
+      '    and OBJECT_ID = :OLD_OBJECT_ID'
+      '    and AID = :OLD_AID'
+      '    ')
+    DeleteSQL.Strings = (
+      'UPDATE ATTRIBUTE'
+      'SET '
+      '    ADELETED = 1'
+      'WHERE'
+      '    TYPE_ID = :OLD_TYPE_ID'
+      '    and OBJECT_ID = :OLD_OBJECT_ID'
+      '    and AID = :OLD_AID'
+      '    ')
+    InsertSQL.Strings = (
+      'INSERT INTO ATTRIBUTE('
+      '    TYPE_ID,'
+      '    OBJECT_ID,'
+      '    AID,'
+      '    AVALUE,'
+      '    NOTICE,'
+      '    ADELETED'
+      ')'
+      'VALUES('
+      '    63,'
+      '    :OBJECT_ID,'
+      '    :AID,'
+      '    :AVALUE,'
+      '    :NOTICE,'
+      '    0'
+      ')')
+    RefreshSQL.Strings = (
+      'select'
+      '    TA.O_NAME TA_NAME'
+      '  , A.TYPE_ID'
+      '  , A.OBJECT_ID'
+      '  , A.AID'
+      '  , A.AVALUE'
+      '  , A.NOTICE'
+      '  , A.ADELETED'
+      '  from ATTRIBUTE A'
+      
+        '       inner join OBJECTS TA on (TA.O_ID = A.Aid and TA.O_TYPE =' +
+        ' 63)'
+      'where '
+      '   A.Object_Id = :V_ID'
+      '   and  A.TYPE_ID = :OLD_TYPE_ID'
+      '   and A.AID = :OLD_AID'
+      '   and A.ADELETED = 0'
+      ''
+      '    ')
+    SelectSQL.Strings = (
+      'select'
+      '    TA.O_NAME TA_NAME'
+      '  , A.TYPE_ID'
+      '  , A.OBJECT_ID'
+      '  , A.AID'
+      '  , A.AVALUE'
+      '  , A.NOTICE'
+      '  , A.ADELETED'
+      '  from ATTRIBUTE A'
+      
+        '       inner join OBJECTS TA on (TA.O_ID = A.Aid and TA.O_TYPE =' +
+        ' 63)'
+      '  where A.Object_Id = :V_ID and A.ADELETED = 0')
+    AutoCalcFields = False
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    AutoCommit = True
+    DataSource = srcDataSource
+    Left = 571
+    Top = 405
+    WaitEndMasterScroll = True
+  end
+  object ActListAttr: TActionList
+    Images = A4MainForm.ICONS_ACTIVE
+    Left = 566
+    Top = 453
+    object actAttrAdd: TAction
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1072#1090#1088#1080#1073#1091#1090
+      ImageIndex = 2
+      OnExecute = actAttrAddExecute
+    end
+    object actAttrEdit: TAction
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1072#1090#1088#1080#1073#1091#1090
+      ImageIndex = 4
+      OnExecute = actAttrEditExecute
+    end
+    object actAttrDel: TAction
+      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1072#1090#1088#1080#1073#1091#1090
+      ImageIndex = 3
+      OnExecute = actAttrDelExecute
+    end
   end
 end

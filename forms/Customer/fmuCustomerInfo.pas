@@ -60,7 +60,6 @@ type
     pnlACC: TPanel;
     lblACCNT: TLabel;
     dbeACCOUNT_NO: TDBEditEh;
-    btnCopy: TButton;
     procedure memCustNoticeExit(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure sbRecalcClick(Sender: TObject);
@@ -350,6 +349,7 @@ begin
     dsContacts.Open;
 
   Contact.cID := -1;
+  Contact.CustID := FDataSource.DataSet['CUSTOMER_ID'];
   if EditContact(Contact) then
   begin
     dsContacts.Insert;
@@ -412,7 +412,7 @@ begin
   end
   else
     Contact.cID := -1;
-
+  Contact.CustID := FDataSource.DataSet['CUSTOMER_ID'];
   if EditContact(Contact) then
   begin
     if dsContacts.RecordCount > 0 then

@@ -128,6 +128,8 @@ function GetUserCacheFolder(): string;
 procedure PutStringIntoClipBoard(const Str: WideString);
 function GetStringFromClipboard: WideString;
 
+function myQuestion(const Caption, Text: String): Boolean;
+
 implementation
 
 uses
@@ -774,11 +776,12 @@ begin
 
   FileStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   try
-    if FileStream.Size>0 then begin
+    if FileStream.Size > 0 then
+    begin
       SetLength(Bytes, FileStream.Size);
       FileStream.Read(Bytes[0], FileStream.Size);
     end;
-    JsonStr:= TEncoding.UTF8.GetString(Bytes);
+    JsonStr := TEncoding.UTF8.GetString(Bytes);
 
     // JsonStr := Stream.ToString;
   finally
@@ -1340,22 +1343,21 @@ begin
   end;
 end; { PostKeyEx }
 
-
 function FileGetTempName(const Prefix: string): string;
 var
   TempPath, TempFile: string;
-  R: Cardinal;
+  r: Cardinal;
 begin
   Result := '';
-  R := GetTempPath(0, nil);
-  SetLength(TempPath, R);
-  R := GetTempPath(R, PChar(TempPath));
-  if R <> 0 then
+  r := GetTempPath(0, nil);
+  SetLength(TempPath, r);
+  r := GetTempPath(r, PChar(TempPath));
+  if r <> 0 then
   begin
     SetLength(TempPath, StrLen(PChar(TempPath)));
     SetLength(TempFile, MAX_PATH);
-    R := GetTempFileName(PChar(TempPath), PChar(Prefix), 0, PChar(TempFile));
-    if R <> 0 then
+    r := GetTempFileName(PChar(TempPath), PChar(Prefix), 0, PChar(TempFile));
+    if r <> 0 then
     begin
       SetLength(TempFile, StrLen(PChar(TempFile)));
       Result := TempFile;
@@ -1370,17 +1372,17 @@ end;
 
 function GetUserCacheFolder(): string;
 var
-  s: string;
-  f: string;
+  S: string;
+  F: string;
 begin
-  s := rsAplicationName;
-  f := GetSpecialFolderPath();
-  if f <> '' then
-    f := f + '\' + s + '\Cache\'
+  S := rsAplicationName;
+  F := GetSpecialFolderPath();
+  if F <> '' then
+    F := F + '\' + S + '\Cache\'
   else
-    f := ExtractFilePath(Application.ExeName) + 'FILTERS\';
-  ForceDirectories(f);
-  Result := f
+    F := ExtractFilePath(Application.ExeName) + 'FILTERS\';
+  ForceDirectories(F);
+  Result := F
 end;
 
 procedure PutStringIntoClipBoard(const Str: WideString);
@@ -1391,7 +1393,7 @@ var
 begin
   Size := Length(Str);
   if Size = 0 then
-    exit;
+    Exit;
   Clipboard.Clear;
   if not IsClipboardFormatAvailable(CF_UNICODETEXT) then
     Clipboard.AsText := Str
@@ -1435,6 +1437,11 @@ begin
       Clipboard.Close;
     end;
   end;
+end;
+
+function myQuestion(const Caption, Text: String): Boolean;
+begin
+  Result := Application.MessageBox(PChar(Text), PChar(Caption), MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES;
 end;
 
 initialization

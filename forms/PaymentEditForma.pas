@@ -36,6 +36,8 @@ type
     cbbPayTypeStr: TDBLookupComboboxEh;
     srcPT: TDataSource;
     dsPT: TpFIBDataSet;
+    ednItogo: TDBNumberEditEh;
+    lbl2: TLabel;
     procedure FormShow(Sender: TObject);
     procedure dePaySumChange(Sender: TObject);
     procedure edLicevoyChange(Sender: TObject);
@@ -191,8 +193,23 @@ begin
 end;
 
 procedure TPaymentEditFrm.dePaySumChange(Sender: TObject);
+var
+  f : Double;
 begin
   bbOk.Enabled := ((cr.CUSTOMER_ID > -1) and ((dePaySum.Value > 0) or ((dePaySum.Value < 0) and FPayNegative)));
+  ednItogo.Value := 0;
+  try
+    f := dePaySum.Value;
+  except
+    f := 0;
+  end;
+  ednItogo.Value := ednItogo.Value + f;
+  try
+    f := edtFine.Value;
+  except
+    f := 0;
+  end;
+  ednItogo.Value := ednItogo.Value + f;
 end;
 
 procedure TPaymentEditFrm.edCodeChange(Sender: TObject);

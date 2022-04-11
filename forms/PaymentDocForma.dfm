@@ -1186,6 +1186,7 @@ object PaymentDocForm: TPaymentDocForm
       '         count(*)'
       '       from pay_errors pe'
       '       where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors'
+      '  , ps.FOR_FORM     '
       '  from PAY_DOC D'
       
         '       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYS' +
@@ -1235,6 +1236,7 @@ object PaymentDocForm: TPaymentDocForm
       '         count(*)'
       '       from pay_errors pe'
       '       where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors'
+      '  , ps.FOR_FORM     '
       '  from PAY_DOC D'
       
         '       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYS' +
@@ -1263,6 +1265,7 @@ object PaymentDocForm: TPaymentDocForm
     AutoUpdateOptions.AutoReWriteSqls = True
     AutoCalcFields = False
     AfterCancel = dsPayDocAfterCancel
+    AfterOpen = dsPayDocAfterOpen
     AfterPost = dsPayDocAfterPost
     OnNewRecord = dsPayDocNewRecord
     Transaction = trRead

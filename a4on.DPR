@@ -310,7 +310,11 @@ uses
   fmuEqpmntRegion in 'forms\infrastructure\fmuEqpmntRegion.pas' {apgEqpmntRegion},
   fmuEqpmntInfo in 'forms\infrastructure\fmuEqpmntInfo.pas' {apgEqpmntInfo},
   ContactTypeForma in 'forms\Dict\ContactTypeForma.pas' {ContactTypeForm},
-  LabelTypeForma in 'forms\Dict\LabelTypeForma.pas' {LabelTypeForm};
+  LabelTypeForma in 'forms\Dict\LabelTypeForma.pas' {LabelTypeForm},
+  EquipFilter in 'forms\infrastructure\EquipFilter.pas' {EquipFilterForm},
+  PortLinkForma in 'forms\infrastructure\PortLinkForma.pas' {PortLinkForm},
+  WireLinkForma in 'forms\infrastructure\WireLinkForma.pas' {WireLinkForm},
+  AttributeEditForma in 'forms\AttributeEditForma.pas' {AttributeEditForm};
 
 {$R *.RES}
 // var

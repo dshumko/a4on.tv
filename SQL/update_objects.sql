@@ -87,6 +87,7 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (59, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (60, 'Состояние порта', '') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (61, 'Способ оплаты', 'Каким способом внесен платеж. нал. безнал.') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (62, 'Типы меток линий связи', 'нумерация жил на кабелях') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (63, 'Атрибуты сетей', 'Атрибуты сетей') MATCHING (OT_ID);
 
 commit;
 
@@ -186,16 +187,16 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (3, 6
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (0, 61, 'CASH', '') MATCHING (O_ID, O_TYPE);      
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (1, 61, 'CARD', '') MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (2, 61, 'WEB', '') MATCHING (O_ID, O_TYPE);
-
 commit;
 
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK');
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (26, 'ДОБАВЛЕНИЕ ТОЛЬКО ТЕКУЩИМ ДНЕМ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Добавление и просмотр платежей только текущим днем!') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (27, 'ТОЛЬКО СВОИ ПЛАТЕЖИ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Оператор видит только свои платежи и пл.документы со своими платежами') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (44, 'ФАЙЛЫ ДОБАВЛЕНИЕ', 'АБОНЕНТЫ', 'Добавление файлов абонента (сканов , документов)') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (46, '1 ЗАПИСЬ', 'АБОНЕНТЫ', 'Внимание, ограничение! Отображать только одну запись в списке абонентов.') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (49, 'ФАЙЛЫ ИЗМЕНЕНИЕ/УДАЛЕНИЕ', 'АБОНЕНТЫ', 'Изменение / Удаление файлов абонента') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (70, 'Интернет просмотр', 'АБОНЕНТЫ', 'Просмотри информации закладки Интернет') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (71, 'Интерент изменение', 'АБОНЕНТЫ', 'Изменение, добавление, удаление информации закладки Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (71, 'ИНТЕРНЕТ ИЗМЕНЕНИЕ', 'АБОНЕНТЫ', 'Изменение, добавление, удаление информации закладки Интернет');
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (84, 'ПРОСМОТР ТОЛЬКО СВОИХ', 'ОБРАЩЕНИЯ', 'Внимание, ограничение! Просмотр в списке Обращений только те, которые создал пользователь.') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (124, 'ОТОБРАЖАТЬ ТЕКУЩИЙ ДЕНЬ', 'СТОРОННИЕ ЗАКАЗЫ', 'Отображать сторонних заказов только за текущий день') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (125, 'ПРОСМОТР', 'СТОРОННИЕ ЗАКАЗЫ', 'ТОлько просмотр сторонних заказов') MATCHING (ID);
@@ -224,4 +225,6 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (192, 'П
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (193, 'ПРОБЛЕМЫ ВЕЩАНИЯ. Справочники', 'ТВ', 'Типы проблем. Решения проблем') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (200, 'ПОЛНЫЙ ДОСТУП', 'МОБИЛЬНОЕ ПРИЛОЖЕНИЕ', 'Полный доступ к настройкам моб. приложений') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (201, 'НОВОСТИ', 'МОБИЛЬНОЕ ПРИЛОЖЕНИЕ', 'Публиковать новости') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (210, 'ПОРТЫ', 'ОБОРУДОВАНИЕ', 'Создание/редактирование портов оборудования') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (211, 'ЛИНИИ СВЯЗИ', 'УЗЛЫ', 'Создание/редактирование линий связи узлов ') MATCHING (ID);
 commit;

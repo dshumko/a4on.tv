@@ -469,13 +469,6 @@ object NodesForm: TNodesForm
       Height = 13
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1072#1076#1088#1077#1089#1091
     end
-    object lbl1: TLabel
-      Left = 117
-      Top = 11
-      Width = 30
-      Height = 13
-      Caption = #1091#1083#1080#1094#1072
-    end
     object Label2: TLabel
       Left = 370
       Top = 11
@@ -484,9 +477,9 @@ object NodesForm: TNodesForm
       Caption = #1076#1086#1084
     end
     object lcbStreets: TDBLookupComboboxEh
-      Left = 154
+      Left = 103
       Top = 8
-      Width = 207
+      Width = 240
       Height = 19
       Hint = #1059#1083#1080#1094#1072
       DynProps = <>
@@ -999,8 +992,8 @@ object NodesForm: TNodesForm
       '   left outer JOIN HOUSE pH ON (pH.HOUSE_ID = p.HOUSE_ID)'
       '   left outer JOIN STREET pS ON (pS.STREET_ID = pH.STREET_ID)'
       
-        '   left outer join objects po on (po.O_Id = p.Type_Id and o.O_Ty' +
-        'pe = 38)'
+        '   left outer join objects po on (po.O_Id = p.Type_Id and po.O_T' +
+        'ype = 38)'
       'where(     N.NODE_ID = :OLD_NODE_ID     )')
     SelectSQL.Strings = (
       'select'
@@ -1025,8 +1018,8 @@ object NodesForm: TNodesForm
       '   left outer JOIN HOUSE pH ON (pH.HOUSE_ID = p.HOUSE_ID)'
       '   left outer JOIN STREET pS ON (pS.STREET_ID = pH.STREET_ID)'
       
-        '   left outer join objects po on (po.O_Id = p.Type_Id and o.O_Ty' +
-        'pe = 38)'
+        '   left outer join objects po on (po.O_Id = p.Type_Id and po.O_T' +
+        'ype = 38)'
       'WHERE @@filter%1=1@ ')
     AutoUpdateOptions.UpdateTableName = 'NODES'
     AutoUpdateOptions.KeyFields = 'NODE_ID'

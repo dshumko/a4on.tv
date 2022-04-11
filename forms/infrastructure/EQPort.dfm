@@ -330,6 +330,7 @@ object EQPortForm: TEQPortForm
     EditButtons = <
       item
         Action = actEditLink
+        DefaultAction = False
         Style = ebsEllipsisEh
       end>
     KeyField = 'Wid'
@@ -479,6 +480,7 @@ object EQPortForm: TEQPortForm
       '          or (coalesce(v.for_objects, 0) = 1))'
       '  order by 1, 2')
     AutoCalcFields = False
+    Transaction = dmMain.trRead
     Database = dmMain.dbTV
     Left = 238
     Top = 207
@@ -554,6 +556,7 @@ object EQPortForm: TEQPortForm
       '  order by c.Name '
       '')
     AutoCalcFields = False
+    Transaction = dmMain.trRead
     Database = dmMain.dbTV
     Left = 352
     Top = 232

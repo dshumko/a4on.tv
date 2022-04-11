@@ -276,8 +276,15 @@ inherited EquipmentForm: TEquipmentForm
     inherited ToolButton20: TToolButton
       Visible = False
     end
-    object btn2: TToolButton
+    object btnActSetFilter: TToolButton
       Left = 178
+      Top = 0
+      Action = ActSetFilter
+      DropdownMenu = pmFilter
+      Style = tbsDropDown
+    end
+    object btn2: TToolButton
+      Left = 216
       Top = 0
       Width = 8
       Caption = 'btn2'
@@ -285,14 +292,14 @@ inherited EquipmentForm: TEquipmentForm
       Style = tbsSeparator
     end
     object btnRefresh: TToolButton
-      Left = 186
+      Left = 224
       Top = 0
       Caption = 'btnRefresh'
       ImageIndex = 27
       OnClick = btnRefreshClick
     end
     object btn1: TToolButton
-      Left = 209
+      Left = 247
       Top = 0
       Width = 24
       Caption = 'btn1'
@@ -301,7 +308,7 @@ inherited EquipmentForm: TEquipmentForm
       Visible = False
     end
     object pnlChkTree: TPanel
-      Left = 233
+      Left = 271
       Top = 0
       Width = 172
       Height = 22
@@ -344,7 +351,7 @@ inherited EquipmentForm: TEquipmentForm
       end
     end
     object chkGroup: TCheckBox
-      Left = 405
+      Left = 443
       Top = 0
       Width = 224
       Height = 22
@@ -356,7 +363,7 @@ inherited EquipmentForm: TEquipmentForm
       OnClick = chkGroupClick
     end
     object btn3: TToolButton
-      Left = 629
+      Left = 667
       Top = 0
       Width = 18
       Caption = 'btn3'
@@ -364,7 +371,7 @@ inherited EquipmentForm: TEquipmentForm
       Style = tbsSeparator
     end
     object btnLayout: TToolButton
-      Left = 647
+      Left = 685
       Top = 0
       Action = actLayout
     end
@@ -516,6 +523,26 @@ inherited EquipmentForm: TEquipmentForm
       ImageIndex = 93
       OnExecute = actLayoutExecute
     end
+    object ActSetFilter: TAction
+      Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1077' '#1092#1080#1083#1100#1090#1088#1072
+      Hint = #1048#1079#1084#1077#1085#1077#1085#1080#1077' '#1092#1080#1083#1100#1090#1088#1072
+      ImageIndex = 0
+      ShortCut = 114
+      OnExecute = ActSetFilterExecute
+    end
+    object actEnableFilter: TAction
+      Caption = #1074#1082#1083'/'#1074#1099#1082#1083' '#1092#1080#1083#1100#1090#1088
+      Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      ShortCut = 16498
+      OnExecute = actEnableFilterExecute
+    end
+    object actSetFilterN: TAction
+      Caption = #1053#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088
+      Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088' '#1089' '#1086#1095#1080#1089#1090#1082#1086#1081' '#1089#1090#1072#1088#1086#1075#1086
+      ImageIndex = 0
+      ShortCut = 8306
+      OnExecute = actSetFilterNExecute
+    end
   end
   inherited pmPopUp: TPopupMenu
     Top = 140
@@ -622,9 +649,10 @@ inherited EquipmentForm: TEquipmentForm
       '       left outer join equipment p on (e.parent_id = p.eid)'
       '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
       
-        '       left join objects nt on (nt.O_Id = n.Type_Id and o.O_Type' +
-        ' = 38)              '
-      '  order by NAME')
+        '       left join objects nt on (nt.O_Id = n.Type_Id and nt.O_Typ' +
+        'e = 38)    '
+      'WHERE @@filter%1=1@                  '
+      'order by NAME')
     AutoUpdateOptions.UpdateTableName = 'EQUIPMENT'
     AutoUpdateOptions.KeyFields = 'EID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -719,5 +747,121 @@ inherited EquipmentForm: TEquipmentForm
     KeyFields = 'EID'
     Left = 258
     Top = 258
+  end
+  object dsFilter: TMemTableEh
+    Params = <>
+    Left = 483
+    Top = 163
+    object MemTableData: TMemTableDataEh
+      object DataStruct: TMTDataStructEh
+        object inversion: TMTBooleanDataFieldEh
+          FieldName = 'inversion'
+          DefaultExpression = 'False'
+          DisplayWidth = 20
+        end
+        object next_condition: TMTNumericDataFieldEh
+          FieldName = 'next_condition'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DefaultExpression = '0'
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object FLOOR: TMTStringDataFieldEh
+          FieldName = 'FLOOR'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+        object PORCH: TMTStringDataFieldEh
+          FieldName = 'PORCH'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+        object CHECK_ADRESS: TMTNumericDataFieldEh
+          FieldName = 'CHECK_ADRESS'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DefaultExpression = '0'
+          DisplayLabel = 'CHECK_ADRESS'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object STREET_ID: TMTNumericDataFieldEh
+          FieldName = 'STREET_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'STREET_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object HOUSE_ID: TMTNumericDataFieldEh
+          FieldName = 'HOUSE_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'HOUSE_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object AREA_ID: TMTNumericDataFieldEh
+          FieldName = 'AREA_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'AREA_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object SUBAREA_ID: TMTNumericDataFieldEh
+          FieldName = 'SUBAREA_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'SUBAREA_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object EQ_TYPE: TMTNumericDataFieldEh
+          FieldName = 'EQ_TYPE'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'LETTERS_TYPE'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object FLAT: TMTStringDataFieldEh
+          FieldName = 'FLAT'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+        object PLACE: TMTStringDataFieldEh
+          FieldName = 'PLACE'
+          StringDataType = fdtStringEh
+          DisplayWidth = 100
+        end
+      end
+      object RecordsList: TRecordsListEh
+      end
+    end
+  end
+  object pmFilter: TPopupMenu
+    Left = 668
+    Top = 218
+    object N31: TMenuItem
+      Action = actEnableFilter
+    end
+    object miSetFilterN: TMenuItem
+      Action = actSetFilterN
+    end
+    object N42: TMenuItem
+      Caption = '-'
+    end
+    object N36: TMenuItem
+      Action = actQuickFilter
+    end
   end
 end

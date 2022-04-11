@@ -1309,8 +1309,8 @@ object apgCustomerNew: TapgCustomerNew
   end
   object srcOrg: TDataSource
     DataSet = dsOrg
-    Left = 602
-    Top = 387
+    Left = 594
+    Top = 411
   end
   object dsVATG: TpFIBDataSet
     SelectSQL.Strings = (

@@ -35,8 +35,7 @@ type
     procedure srcDataSourceDataChange(Sender: TObject; Field: TField);
     procedure FormShow(Sender: TObject);
     procedure btnSaveLinkClick(Sender: TObject);
-    procedure cbRegularNotInList(Sender: TObject; NewText: string;
-      var RecheckInList: Boolean);
+    procedure cbRegularNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
   private
     { Private declarations }
   public
@@ -52,8 +51,7 @@ uses DM;
 
 {$R *.dfm}
 
-procedure TAttributesForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TAttributesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
   dsAttributes.Close;
@@ -63,8 +61,8 @@ end;
 procedure TAttributesForm.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if fCanEdit
-  then begin
+  if fCanEdit then
+  begin
     cbAtrType.Enabled := True;
     StartEdit(True);
   end;
@@ -72,45 +70,47 @@ end;
 
 procedure TAttributesForm.btnSaveLinkClick(Sender: TObject);
 var
-  errors : Boolean;
+  errors: Boolean;
 begin
   errors := False;
   dsAttributes['OT_NAME'] := cbAtrType.Text;
 
-  if (cbAtrType.Text = '')
-  then begin
+  if (cbAtrType.Text = '') then
+  begin
     errors := True;
     CnErrors.SetError(cbAtrType, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
-  else CnErrors.Dispose(cbAtrType);
+  else
+    CnErrors.Dispose(cbAtrType);
 
-  if (edtName.Text = '')
-  then begin
+  if (edtName.Text = '') then
+  begin
     errors := True;
     CnErrors.SetError(edtName, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
-  else CnErrors.Dispose(edtName);
+  else
+    CnErrors.Dispose(edtName);
 
-  if not errors
-  then inherited;
+  if not errors then
+    inherited;
 end;
 
 procedure TAttributesForm.actDeleteExecute(Sender: TObject);
 begin
   inherited;
-  if srcDataSource.DataSet.RecordCount = 0 then Exit;
-  if fCanEdit
-  then
-    if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo],
-      0) = mrYes)
-    then srcDataSource.DataSet.Delete;
+  if srcDataSource.DataSet.RecordCount = 0 then
+    Exit;
+  if fCanEdit then
+    if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
+      = mrYes) then
+      srcDataSource.DataSet.Delete;
 end;
 
 procedure TAttributesForm.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if fCanEdit
-  then begin
+  if fCanEdit then
+  begin
     cbAtrType.Enabled := False;
     StartEdit();
   end;
@@ -118,85 +118,97 @@ end;
 
 procedure TAttributesForm.FormShow(Sender: TObject);
 var
-  vFull : Boolean;
+  vFull: Boolean;
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full);
-  fCanEdit   := False;
+  fCanEdit := False;
 
   cbAtrType.KeyItems.Clear;
   cbAtrType.Items.Clear;
 
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrAbonents))
-  then begin
-    cbAtrType.KeyItems.Add('4');
-    cbAtrType.Items.Add('Атрибуты абонента');
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrAbonents)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_cust));
+    cbAtrType.Items.Add(rsAttrName_cust);
     fCanEdit := True;
   end;
 
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrEquipments))
-  then begin
-    cbAtrType.KeyItems.Add('5');
-    cbAtrType.Items.Add('Атрибуты сетевого оборудования');
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrEquipments)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_elan));
+    cbAtrType.Items.Add(rsAttrName_elan);
     fCanEdit := True;
   end;
 
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrEquipments))
-  then begin
-    cbAtrType.KeyItems.Add('6');
-    cbAtrType.Items.Add('Атрибуты ТВ оборудования');
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrEquipments)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_etv));
+    cbAtrType.Items.Add(rsAttrName_etv);
     fCanEdit := True;
   end;
 
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrServices))
-  then begin
-    cbAtrType.KeyItems.Add('25');
-    cbAtrType.Items.Add('Атрибуты услуг');
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrServices)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_srv));
+    cbAtrType.Items.Add(rsAttrName_srv);
     fCanEdit := True;
   end;
 
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrIPTV))
-  then begin
-    cbAtrType.KeyItems.Add('32');
-    cbAtrType.Items.Add('Атрибуты IPTV групп');
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrIPTV)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_eiptv));
+    cbAtrType.Items.Add(rsAttrName_eiptv);
     fCanEdit := True;
   end;
 
- if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrHOUSE))
- then begin
-   cbAtrType.KeyItems.Add('37');
-   cbAtrType.Items.Add('Атрибуты домов');
-   fCanEdit := True;
- end;
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrHOUSE)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_home));
+    cbAtrType.Items.Add(rsAttrName_home);
+    fCanEdit := True;
+  end;
 
-if (vFull or dmMain.AllowedAction(rght_Dictionary_Nodes))
-then begin
-  cbAtrType.KeyItems.Add('39');
-  cbAtrType.Items.Add('Атрибуты узлов');
-  fCanEdit := True;
-end;
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_Nodes)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_node));
+    cbAtrType.Items.Add(rsAttrName_node);
+    fCanEdit := True;
+  end;
+
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_Vlans)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_vlan));
+    cbAtrType.Items.Add(rsAttrName_vlan);
+    fCanEdit := True;
+  end;
+
+  if (vFull or dmMain.AllowedAction(rght_Dictionary_Vlans)) then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_etype));
+    cbAtrType.Items.Add(rsAttrName_etype);
+    fCanEdit := True;
+  end;
 
   fCanCreate := fCanEdit;
 
-  actNew.Visible    := fCanEdit;
+  actNew.Visible := fCanEdit;
   actDelete.Visible := fCanEdit;
-  actEdit.Visible   := fCanEdit;
+  actEdit.Visible := fCanEdit;
 
   dsAttributes.Open;
   dbGrid.DefaultApplySorting;
   dsAttributes.First;
 end;
 
-procedure TAttributesForm.srcDataSourceDataChange(Sender: TObject;
-  Field: TField);
+procedure TAttributesForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
 begin
   inherited;
-  actEdit.Enabled   :=  ((sender as TDataSource).DataSet.RecordCount>0) and fCanEdit;
-  actDelete.Enabled :=  ((sender as TDataSource).DataSet.RecordCount>0) and fCanEdit;
+  actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
+  actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
 end;
 
-procedure TAttributesForm.cbRegularNotInList(Sender: TObject;
-  NewText: string; var RecheckInList: Boolean);
+procedure TAttributesForm.cbRegularNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
 begin
   inherited;
   cbRegular.KeyItems.Add(NewText);

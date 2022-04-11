@@ -13,10 +13,13 @@ uses
 type
   TPortListForm = class(TGridForm)
     dsPort: TpFIBDataSet;
+    btnLinkPort: TToolButton;
+    actLinkPort: TAction;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actEditExecute(Sender: TObject);
     procedure dbGridSortMarkingChanged(Sender: TObject);
+    procedure actLinkPortExecute(Sender: TObject);
   private
     function GetOrderClause(grid: TCustomDBGridEh): string;
   public
@@ -28,7 +31,7 @@ var
 
 implementation
 
-uses DM, EQPort, A4onTypeUnit;
+uses DM, EQPort, A4onTypeUnit, PortLinkForma;
 
 {$R *.dfm}
 
@@ -75,6 +78,16 @@ begin
 
   if EditPort(EQ, Port) then
     dsPort.Refresh;
+end;
+
+procedure TPortListForm.actLinkPortExecute(Sender: TObject);
+begin
+  inherited;
+  if ((dsPort.RecordCount = 0) or (dsPort.FieldByName('PORT').IsNull)) then
+    exit;
+
+  if LinkPort(dsPort['Eid'], dsPort['PORT'])
+  then dsPort.Refresh;
 end;
 
 procedure TPortListForm.dbGridSortMarkingChanged(Sender: TObject);

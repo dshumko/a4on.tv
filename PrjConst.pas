@@ -14,6 +14,25 @@ const
   ls_fields = '[СЧЕТЧИК];[КОД Н.ПУНКТ];[КОД УЧАСТКА];[КОД УЛИЦЫ];[КОД ДОМА];[ДОМ];[КВАРТИРА];[ТИП УСЛУГИ];[ПН ДОГОВОРА];[ДЕНЬ];[МЕСЯЦ];[ГОД]';
   barcode_fields ='[КОД_АБОНЕНТА];[ЛИЦЕВОЙ];[СУММА];[СУММА_В_КОПЕЙКАХ];[ФИО];[ФАМИЛИЯ];[УЛИЦА];[ДОМ];[КВАРТИРА];[МЕСЯЦ];[ГОД];[ПРЕД_МЕСЯЦ];[ПРЕД_ГОД]';
 
+  // Типы атрибутов и их название
+  rsAttrID_eiptv  = 32;
+  rsAttrName_eiptv= 'Атрибуты IPTV групп';
+  rsAttrID_etv    = 6 ;
+  rsAttrName_etv  = 'Атрибуты ТВ оборудования';
+  rsAttrID_cust   = 4 ;
+  rsAttrName_cust = 'Атрибуты абонента';
+  rsAttrID_etype  = 50;
+  rsAttrName_etype= 'Атрибуты для типа оборудования';
+  rsAttrID_home   = 37;
+  rsAttrName_home = 'Атрибуты домов';
+  rsAttrID_elan   = 5 ;
+  rsAttrName_elan = 'Атрибуты сетевого оборудования';
+  rsAttrID_vlan   = 63;
+  rsAttrName_vlan = 'Атрибуты сетей';
+  rsAttrID_node   = 39;
+  rsAttrName_node = 'Атрибуты узлов';
+  rsAttrID_srv    = 25;
+  rsAttrName_srv  = 'Атрибуты услуг';
 
   // константа для пароля. чтоб абоненты не могли войти в обход системы
 {$IFDEF WITHRIGHTS}
@@ -161,12 +180,14 @@ const
   rght_Dictionary_Company = 160;
   rght_Dictionary_HeadEndEQP = 161;
   rght_Dictionary_Equipment = 162;
+  rght_Dictionary_Equipment_Ports = 210;
   rght_Dictionary_Reports = 163;
   rght_Dictionary_Warehouses = 164;
   rght_Dictionary_MANUFACTURERS = 166;
   rght_Dictionary_Banks = 167;
   rght_Dictionary_OrdersTPType = 168;
   rght_Dictionary_Nodes = 178;
+  rght_Dictionary_Node_Links = 211;
 
   rght_Messages_add = 172;
 
@@ -206,6 +227,8 @@ resourcestring
   rsRecognize = 'Распознать';
   rsSave = 'Сохранить';
   rsCancel = 'Отмена';
+
+  filter_1_1 = ' 1=1 ';
 
   rsERROR_CONNECT = 'Невозможно подключиться к базе данных.';
   rsERROR_CONNECT_LOST = 'Соединение с БД прервано .';
@@ -870,13 +893,19 @@ resourcestring
   rsOn = 'Включить';
   rsOff = 'Отключить';
   rsFree = 'БЕСПЛАТНО';
+  rsTreeMode = 'Включен режим дерева';
 
   rsEqpmntCstmrs = 'К оборудованию подключены абоненты';
   rsSetPayDate = 'После внесения оплаты';
 
   rsVlanHouse = 'VLAN не в зоне обслуживания дома';
   rsIpVlan = 'IP не входит в диапазон адресов VLAN';
+  rsNotWireLabel = 'Нет линии связи или метки кабеля';
+  rsWireUnLinkQuest = 'Кабель будет отключен от портов?';
+  rsWireUnLink = 'Отключить кабель';
   rsWarningQuestStop  = 'Исправить ошибки?';
+
+  rsDeleteCaption = 'Удаление';
 
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';

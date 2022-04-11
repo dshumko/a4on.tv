@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, StdCtrls, Mask, DBLookupEh, DBCtrls, DBGridEh;
+  DBCtrlsEh, StdCtrls, Mask, DBLookupEh, DBCtrls, DBGridEh, CnErrorProvider;
 
 type
   TOrgnzEditForm = class(TForm)
@@ -28,7 +28,6 @@ type
     lbl14: TLabel;
     lbl15: TLabel;
     lbl16: TLabel;
-    lbl17: TLabel;
     dsVATG: TpFIBDataSet;
     srcVATG: TDataSource;
     cbbVATG: TDBLookupComboboxEh;
@@ -50,6 +49,7 @@ type
     dbmNotice: TDBMemoEh;
     dsBANKS: TpFIBDataSet;
     srcBanks: TDataSource;
+    CnErrors: TCnErrorProvider;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbbVATGExit(Sender: TObject);
@@ -67,7 +67,7 @@ Function EditOrganization(var ORG_ID : Integer):Boolean;
 implementation
 
 uses
-  DM;
+  DM, prjConst;
 
 {$R *.dfm}
 
@@ -115,12 +115,33 @@ end;
 
 procedure TOrgnzEditForm.cbbVATGExit(Sender: TObject);
 begin
-ChekData;
+  ChekData;
 end;
 
 procedure TOrgnzEditForm.ChekData;
+var
+  errors: Boolean;
+  nid: Integer;
 begin
-  frmOk.bbOk.Enabled := (edName.Text <> '') and (not VarIsNull(cbbVATG.Value) );
+  errors := False;
+
+  if (edName.Text = '') then
+  begin
+    errors := True;
+    CnErrors.SetError(edName, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(edName);
+
+  if (cbbVATG.Text = '') then
+  begin
+    errors := True;
+    CnErrors.SetError(cbbVATG, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(cbbVATG);
+
+  frmOk.bbOk.Enabled := not errors;
 end;
 
 end.

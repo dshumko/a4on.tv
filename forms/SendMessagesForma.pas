@@ -78,16 +78,14 @@ type
     procedure btnAddFileClick(Sender: TObject);
     procedure lvFilesDblClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    function frxReportUserFunction(const MethodName: string;
-      var Params: Variant): Variant;
+    function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
   private
     FReportLoaded: Boolean;
     function GetMessage(const msg: String): string;
     procedure SendEmailMessage;
     procedure SendMessage(const mes_type: string);
-    procedure SendMessageWR(const mes_type, head, Text: String;
-      const Res: Integer);
-    procedure LoadReportBody;
+    procedure SendMessageWR(const mes_type, head, Text: String; const Res: Integer);
+    procedure LoadReportBody(FR: TfrxReport);
     procedure InitEmailClient(emailClient: TEmailClient);
   public
     { Public declarations }
@@ -134,10 +132,8 @@ begin
     exit;
   with qrySaveMessages do
   begin
-    sql.Text :=
-      'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null)';
-    ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers
-      ['CUSTOMER_ID'];
+    sql.Text := 'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null)';
+    ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
     ParamByName('MES_TEXT').AsString := s;
     ParamByName('MES_HEAD').AsString := edtHEAD.Text;
     ParamByName('MES_TYPE').AsString := mes_type;
@@ -148,15 +144,13 @@ begin
   end;
 end;
 
-procedure TSendMessagesForm.SendMessageWR(const mes_type, head, Text: String;
-  const Res: Integer);
+procedure TSendMessagesForm.SendMessageWR(const mes_type, head, Text: String; const Res: Integer);
 begin
   with qrySaveMessages do
   begin
     sql.Text :=
       'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null, :MES_RESULT)';
-    ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers
-      ['CUSTOMER_ID'];
+    ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
     ParamByName('MES_TEXT').AsString := Text;
     ParamByName('MES_HEAD').AsString := head;
     ParamByName('MES_TYPE').AsString := mes_type;
@@ -177,10 +171,9 @@ var
   I: Integer;
 begin
   progress.StepIt;
-  qryRead.sql.Text :=
-    'select cast(list(Cc_Value) as varchar(1000)) Cc_Value from customer_contacts where Cc_Type=2 and CC_NOTIFY = 1 and Customer_Id=:c_id';
-  qryRead.ParamByName('C_ID').AsInteger := CustomersForm.dsCustomers
-    ['CUSTOMER_ID'];
+  qryRead.sql.Text := ' select cast(list(Cc_Value) as varchar(1000)) Cc_Value from customer_contacts ' +
+    ' where Cc_Type=2 and CC_NOTIFY = 1 and Customer_Id=:c_id ';
+  qryRead.ParamByName('C_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
   qryRead.Transaction.StartTransaction;
   qryRead.ExecQuery;
 
@@ -199,16 +192,15 @@ begin
   InitEmailClient(emailClient);
   try
     FReportLoaded := False;
-    frxReport.OnUserFunction := frxReportUserFunction;
+    // frxReport.OnUserFunction := frxReportUserFunction;
     if VarIsNumeric(lcbReportAsPDF.KeyValue) then
-      LoadReportBody;
+      LoadReportBody(frxReport);
 
     if FReportLoaded then
     begin
       ci := frxReport.Variables.IndexOf('CUSTOMER_ID');
       if ci > 0 then
-        frxReport.Variables['CUSTOMER_ID'] := CustomersForm.dsCustomers
-          ['CUSTOMER_ID'];
+        frxReport.Variables['CUSTOMER_ID'] := CustomersForm.dsCustomers['CUSTOMER_ID'];
 
       if frxReport.PrepareReport(True) then
       begin
@@ -241,10 +233,9 @@ begin
     Application.ProcessMessages;
   finally
     FreeAndNil(emailClient);
+    if FReportLoaded and FileExists(frxReport.FileName) then
+      DeleteFile(frxReport.FileName);
   end;
-
-  if FReportLoaded and FileExists(frxReport.FileName) then
-    DeleteFile(frxReport.FileName);
 end;
 
 procedure TSendMessagesForm.actSendExecute(Sender: TObject);
@@ -257,8 +248,7 @@ begin
   crsr := Screen.Cursor;
   Screen.Cursor := crHourGlass;
   actSend.Enabled := False;
-  if not(dmMain.AllowedAction(rght_Messages_add) or
-    dmMain.AllowedAction(rght_Customer_full)) then
+  if not(dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full)) then
     exit;
 
   mmoLog.Visible := True;
@@ -280,8 +270,7 @@ begin
         progress.Max := dbgCustomers.SelectedRows.Count;
         for j := 0 to dbgCustomers.SelectedRows.Count - 1 do
         begin
-          dbgCustomers.DataSource.DataSet.Bookmark :=
-            dbgCustomers.SelectedRows[j];
+          dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[j];
           if not itsEmail then
             SendMessage(mes_t)
           else
@@ -331,8 +320,7 @@ begin
   pnlReport.Visible := cbMessType.Text.Contains('EMAIL');
 end;
 
-procedure TSendMessagesForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TSendMessagesForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
     actSendExecute(Sender);
@@ -356,8 +344,7 @@ begin
   val := Explode(';', export_fields + ';[ОПЛАТА_СЛ_МЕСЯЦ];[ДОПЛАТА_СЛ_МЕСЯЦ]');
   for I := 0 to Length(val) - 1 do
   begin
-    pmMemo.Items.Add(NewItem(val[I], 0, False, True, miClick, 0,
-      'mi' + IntToStr(I)));
+    pmMemo.Items.Add(NewItem(val[I], 0, False, True, miClick, 0, 'mi' + IntToStr(I)));
   end;
 
   if CustomersForm.dbgCustomers.SelectedRows.Count > 0 then
@@ -367,8 +354,7 @@ begin
   btnOk.Caption := btnOk.Caption + ' ( ' + s + ' ' + rsPiece + ')';
 end;
 
-function TSendMessagesForm.frxReportUserFunction(const MethodName: string;
-  var Params: Variant): Variant;
+function TSendMessagesForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
 begin
   Result := dmMain.frxReportUserFunction(MethodName, Params);
 end;
@@ -376,8 +362,7 @@ end;
 procedure TSendMessagesForm.miClick(Sender: TObject);
 begin
   if (Sender is TMenuItem) then
-    (ActiveControl as TDBMemoEh).SelText :=
-      ReplaceStr((Sender as TMenuItem).Caption, '&', '');
+    (ActiveControl as TDBMemoEh).SelText := ReplaceStr((Sender as TMenuItem).Caption, '&', '');
 end;
 
 procedure TSendMessagesForm.mmoMessageChange(Sender: TObject);
@@ -419,8 +404,7 @@ begin
   //
 end;
 
-procedure TSendMessagesForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TSendMessagesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if dsLetterTypes.Active then
     dsLetterTypes.Close;
@@ -441,8 +425,7 @@ begin
   if dsTemplate.RecordCount = 0 then
     exit;
 
-  if MessageDlg('Удалить шаблон сообщения?', mtConfirmation, [mbYes, mbNo], 0) = mrYes
-  then
+  if MessageDlg('Удалить шаблон сообщения?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     dsTemplate.Delete;
   end;
@@ -460,25 +443,22 @@ begin
     cbMessType.Value := dsMessType['O_NAME']
 end;
 
-procedure TSendMessagesForm.LoadReportBody;
+procedure TSendMessagesForm.LoadReportBody(FR: TfrxReport);
 var
   Stream: TStream;
 begin
   try
-    dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value :=
-      lcbReportAsPDF.KeyValue;
+    dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value := lcbReportAsPDF.KeyValue;
     dmMain.fdsLoadReport.Open;
     if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').Value <> NULL then
     begin
       Stream := TMemoryStream.Create;
       try
-        TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY'))
-          .SaveToStream(Stream);
+        TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
-        frxReport.LoadFromStream(Stream);
-        frxReport.FileName := GetTempDir() + CustomersForm.dsCustomers
-          ['ACCOUNT_NO'] + '.' + dmMain.fdsLoadReport.FieldByName('REPORT_NAME')
-          .AsString + '.PDF';
+        FR.LoadFromStream(Stream);
+        FR.FileName := GetTempDir() + CustomersForm.dsCustomers['ACCOUNT_NO'] + '.' +
+          dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString + '.PDF';
         FReportLoaded := True;
       finally
         Stream.Free;

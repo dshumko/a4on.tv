@@ -103,7 +103,7 @@ CREATE DOMAIN D_MAC AS
 VARCHAR(18);
 
 CREATE DOMAIN D_MESSAGE AS
-VARCHAR(400);
+VARCHAR(1000);
 
 CREATE DOMAIN D_N10 AS
 NUMERIC(10,0);
@@ -249,7 +249,7 @@ CREATE GENERATOR GEN_DIGIT_SEQ START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_DIGIT_SEQ TO 1;
 
 CREATE GENERATOR GEN_EPG START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_EPG TO 118246;
+SET GENERATOR GEN_EPG TO 119178;
 
 CREATE GENERATOR GEN_EQ_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_EQ_ID TO 611;
@@ -270,19 +270,19 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 50350;
+SET GENERATOR GEN_OPERATIONS_UID TO 50354;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_ORDER_TP TO 8;
 
 CREATE GENERATOR GEN_PAYMENT START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_PAYMENT TO 284;
+SET GENERATOR GEN_PAYMENT TO 285;
 
 CREATE GENERATOR GEN_QUEUE START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_QUEUE TO 4228;
 
 CREATE GENERATOR GEN_REPORT_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_REPORT_ID TO 537;
+SET GENERATOR GEN_REPORT_ID TO 538;
 
 CREATE GENERATOR GEN_REQUEST START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_REQUEST TO 174;
@@ -291,13 +291,13 @@ CREATE GENERATOR GEN_TASK START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_TASK TO 74;
 
 CREATE GENERATOR GEN_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_UID TO 2047;
+SET GENERATOR GEN_UID TO 2048;
 
 CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 412;
+SET GENERATOR G_LOG_ID TO 413;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -930,6 +930,22 @@ CREATE OR ALTER PROCEDURE ATRIBUTES_LINE (
     CUST_ID TYPE OF UID)
 RETURNS (
     A_LINE D_VARCHAR500)
+AS
+BEGIN
+  SUSPEND;
+END;
+
+
+
+
+
+CREATE OR ALTER PROCEDURE ATTRIBUTE_CHECK_UNIQ (
+    TYPE_ID INTEGER /* TYPE OF COLUMN ATTRIBUTE.TYPE_ID */,
+    OBJECT_ID INTEGER /* TYPE OF COLUMN ATTRIBUTE.OBJECT_ID */,
+    AID INTEGER /* TYPE OF COLUMN ATTRIBUTE.AID */,
+    AVALUE VARCHAR(100) /* TYPE OF COLUMN ATTRIBUTE.AVALUE */)
+RETURNS (
+    RESULT VARCHAR(255))
 AS
 BEGIN
   SUSPEND;
@@ -2085,7 +2101,8 @@ RETURNS (
     NAME TYPE OF D_VARCHAR60,
     STATE_SGN D_INTEGER,
     STATE_SRV TYPE OF UID,
-    STATE_DATE D_DATE)
+    STATE_DATE D_DATE,
+    BUSINESS_TYPE D_INTEGER)
 AS
 BEGIN
   SUSPEND;
@@ -3799,7 +3816,8 @@ CREATE TABLE ATTRIBUTE (
     ADDED_BY   D_VARCHAR50,
     ADDED_ON   D_DATETIME,
     EDIT_BY    D_VARCHAR50,
-    EDIT_ON    D_DATETIME
+    EDIT_ON    D_DATETIME,
+    OVALUE     D_VARCHAR100
 );
 
 CREATE TABLE BCI_CHANNELS (
@@ -6200,7 +6218,7 @@ USING INDEX UNQ_LAN_MAC;
 ALTER TABLE TV_LAN ADD CONSTRAINT UNQ_TV_IP_VLAN UNIQUE (IP, VLAN_ID);
 ALTER TABLE VLANS ADD CONSTRAINT UNQ1_VLANS UNIQUE (IP_BEGIN_BIN);
 ALTER TABLE AREA ADD CONSTRAINT PK_AREA PRIMARY KEY (AREA_ID);
-ALTER TABLE ATTRIBUTE ADD CONSTRAINT PK_ATTRIBUTE PRIMARY KEY (TYPE_ID, AID, OBJECT_ID);
+ALTER TABLE ATTRIBUTE ADD CONSTRAINT PK_ATTRIBUTE PRIMARY KEY (TYPE_ID, OBJECT_ID, AID);
 ALTER TABLE BCISSUE ADD CONSTRAINT PK_BCISSUE PRIMARY KEY (BI_ID);
 ALTER TABLE BCI_CHANNELS ADD CONSTRAINT PK_BCI_CHANNELS PRIMARY KEY (BI_ID, CH_ID);
 ALTER TABLE BILLING ADD CONSTRAINT PK_BILLING PRIMARY KEY (BLNG_ID);
@@ -6473,6 +6491,7 @@ CREATE INDEX PAY_DOC_DATE ON PAY_DOC (PAY_DOC_DATE);
 CREATE INDEX PAY_ERRORS_PDOC ON PAY_ERRORS (PAY_DOC_ID);
 CREATE INDEX PTARIF_SERVID ON PERSONAL_TARIF (SERVICE_ID, DATE_FROM);
 CREATE INDEX PERS_TARIF_TMP_IDX1 ON PERS_TARIF_TMP (SERV_ID, T_DAY);
+CREATE INDEX PORT_IDX_WID ON PORT (WID);
 CREATE INDEX PREPAY_DETAIL_DATE ON PREPAY_DETAIL (PPD_DATE);
 CREATE INDEX QRATING_IDX_DATE ON QRATING (QR_DATE);
 CREATE INDEX QRATING_IDX_OID ON QRATING (QR_TYPE, OBJECT_ID);
@@ -6637,6 +6656,10 @@ begin
   else begin
     new.edit_by = current_user;
     new.edit_on = localtimestamp;
+    if (old.AValue is distinct from new.AValue) then
+      new.OValue = old.AValue;
+    else
+      new.OValue = null;
   end
 end;
 
@@ -8013,9 +8036,20 @@ end;
 
 CREATE OR ALTER TRIGGER EQUIPMENT_AD0 FOR EQUIPMENT
 ACTIVE AFTER DELETE POSITION 0
-AS
+as
 begin
-  delete from equipment_coverage where eid = OLD.eid and house_id = OLD.house_id;
+  -- если порт очистили, сборсим в таблице портов
+  if (not((old.Parent_Id is null)
+      or
+      (old.Parent_Port is null))) then begin
+    update or insert into Port (Eid, Port, Con, Con_Id)
+    values (old.Parent_Id, old.Parent_Port, null, null)
+    matching (Eid, Port);
+  end
+
+  delete from equipment_coverage
+      where eid = old.eid
+            and house_id = old.house_id;
 end;
 
 CREATE OR ALTER TRIGGER EQUIPMENT_AI0 FOR EQUIPMENT
@@ -8076,22 +8110,16 @@ begin
     values ('EQUIPMENT', 1, new.eid, 'ADRES', old.house_id, new.house_id);
   end
 
-end;
-
-CREATE OR ALTER TRIGGER EQUIPMENT_AUD0 FOR EQUIPMENT
-ACTIVE AFTER UPDATE OR DELETE POSITION 0
-as
-begin
   -- если порт очистили, сборсим в таблице портов
   if (not((old.Parent_Id is null)
       or
       (old.Parent_Port is null))) then begin
-    if (new.Parent_Id is distinct from old.Parent_Id) then begin
-      if (new.Parent_Port is distinct from old.Parent_Port) then begin
-        update or insert into Port (Eid, Port, Con, Con_Id)
-        values (old.Parent_Id, old.Parent_Port, null, null)
-        matching (Eid, Port);
-      end
+    if ((new.Parent_Port is distinct from old.Parent_Port)
+        or
+        (new.Parent_Id is distinct from old.Parent_Id)) then begin
+      update or insert into Port (Eid, Port, Con, Con_Id)
+      values (old.Parent_Id, old.Parent_Port, null, null)
+      matching (Eid, Port);
     end
   end
 end;
@@ -12686,6 +12714,80 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE ATTRIBUTE_CHECK_UNIQ (
+    TYPE_ID TYPE OF COLUMN ATTRIBUTE.TYPE_ID,
+    OBJECT_ID TYPE OF COLUMN ATTRIBUTE.OBJECT_ID,
+    AID TYPE OF COLUMN ATTRIBUTE.AID,
+    AVALUE TYPE OF COLUMN ATTRIBUTE.AVALUE)
+RETURNS (
+    RESULT VARCHAR(255))
+AS
+declare variable OID D_Uid_Null;
+begin
+  result = '';
+  OID = null;
+
+  select
+      Object_Id
+    from Attribute
+    where (Type_Id = :Type_Id)
+          and (Aid = :Aid)
+          and (Object_Id <> :Object_Id)
+          and (ADELETED = 0)
+          and (upper(Avalue) = upper(:Avalue))
+  into :OID;
+
+  if (not OID is null) then begin
+    -- 4  'Атрибуты абонента';
+    if (Type_Id = 4) then
+      select
+          c.Account_No || ' код ' || c.Cust_Code || ' ФИО ' || c.Firstname || ' ' || c.Initials
+        from customer c
+        where c.Customer_Id = :OID
+      into :result;
+
+    -- 63 'Атрибуты сетей';
+    if (Type_Id = 63) then
+      select
+          v.Name || ' / ' || coalesce(v.Ip_Begin, '') || '-' || coalesce(v.Ip_End, '')
+        from vlans v
+        where v.V_Id = :OID
+      into :result;
+
+    -- 25 'Атрибуты услуг';
+    if (Type_Id = 25) then
+      select
+          v.Name
+        from services v
+        where v.Service_Id = :OID
+      into :result;
+
+    -- 37 'Атрибуты домов';
+    if (Type_Id = 37) then
+      select
+          s.Street_Short || ' ' || s.Street_Name || ' ' || h.House_No
+        from house h
+             inner join street s on (h.Street_Id = s.Street_Id)
+        where h.House_Id = :OID
+      into :result;
+
+    -- 39 'Атрибуты узлов';
+    if (Type_Id = 39) then
+      select
+          n.Name
+        from Nodes n
+        where n.Node_Id = :OID
+      into :result;
+
+    -- 32 'Атрибуты IPTV групп';
+    -- 6  'Атрибуты ТВ оборудования';
+    -- 50 'Атрибуты для типа оборудования';
+    -- 5  'Атрибуты сетевого оборудования';
+  end
+  suspend;
+end;
+
+
 CREATE OR ALTER PROCEDURE ATTRIBUTES_IUD (
     O_ID TYPE OF UID,
     O_NAME D_VARCHAR50,
@@ -12707,7 +12809,8 @@ begin
         O_DIMENSION = :O_DIMENSION,
         O_CHARFIELD = :O_CHARFIELD,
         O_CHECK = :O_CHECK,
-        O_Numericfield = :O_Numericfield
+        O_Numericfield = :O_Numericfield,
+        O_DELETED = coalesce(:O_DELETED, 0)
     where O_ID = :O_ID
           and O_TYPE = :O_TYPE;
   end
@@ -18333,10 +18436,11 @@ RETURNS (
     NAME TYPE OF D_VARCHAR60,
     STATE_SGN D_INTEGER,
     STATE_SRV TYPE OF UID,
-    STATE_DATE D_DATE)
+    STATE_DATE D_DATE,
+    BUSINESS_TYPE D_INTEGER)
 AS
 begin
-  for select S.SERVICE_ID, S.NAME, SS.STATE_SGN, SS.STATE_SRV, SS.STATE_DATE
+  for select S.SERVICE_ID, S.NAME, SS.STATE_SGN, SS.STATE_SRV, SS.STATE_DATE, S.BUSINESS_TYPE
       from SUBSCR_SERV SS
       inner join SERVICES S on (S.SERVICE_ID = SS.SERV_ID)
       where (S.BUSINESS_TYPE = coalesce(:BUSINESS_TP, S.BUSINESS_TYPE))
@@ -18347,7 +18451,7 @@ begin
               (SS.STATE_SGN = 0 and (SS.STATE_SRV = -3 or SS.STATE_DATE > current_date))
             )
 
-      into :SERVICE_ID, :NAME, :STATE_SGN, :STATE_SRV, :STATE_DATE
+      into :SERVICE_ID, :NAME, :STATE_SGN, :STATE_SRV, :STATE_DATE, :BUSINESS_TYPE
   do
     suspend;
 end;
@@ -21253,8 +21357,8 @@ begin
     for select
             CC_VALUE
           from CUSTOMER_CONTACTS CC
-          where ((CC.CC_NOTIFY = 1
-                and CC.CC_TYPE = 1
+          where CC.CC_NOTIFY = 1
+                and ((CC.CC_TYPE = 1
                 and :MES_TYPE = 'SMS')
                   or (CC.CC_TYPE = 2
                 and :MES_TYPE = 'EMAIL'))
@@ -24674,6 +24778,9 @@ COMMENT ON PROCEDURE ATRIBUTES_LINE IS
 COMMENT ON PROCEDURE ATTRIBUTES_IUD IS
 'Процедура добавления/редактирования/удаления атрибутов абонента';
 
+COMMENT ON PROCEDURE ATTRIBUTE_CHECK_UNIQ IS
+'проверим на уникальность значение атрибута, если он есть у кого-то вернем его';
+
 COMMENT ON PROCEDURE AUTO_OFF_SERVICE IS
 'Авто блокировка услуги';
 
@@ -25190,7 +25297,7 @@ COMMENT ON COLUMN ATTRIBUTE.TYPE_ID IS
 5-Атрибуты сетевого оборудования, 39-Атрибуты узлов, 25-Атрибуты услуг';
 
 COMMENT ON COLUMN ATTRIBUTE.OBJECT_ID IS
-'Объект чей атрибут (абонент. заявка. заказ. задача и т.д.)';
+'Объект чей атрибут (ID абонент. ID заявка. ID заказа. ID задачи и т.д.)';
 
 COMMENT ON COLUMN ATTRIBUTE.AID IS
 'Значение из таблицы objects';
@@ -25203,6 +25310,9 @@ COMMENT ON COLUMN ATTRIBUTE.NOTICE IS
 
 COMMENT ON COLUMN ATTRIBUTE.ADELETED IS
 'если 1, считаем, что атрибут удален';
+
+COMMENT ON COLUMN ATTRIBUTE.OVALUE IS
+'сохраним старое значение';
 
 COMMENT ON COLUMN BCISSUE.BI_TYPE IS
 'Тип сбоя';
@@ -27483,7 +27593,7 @@ COMMENT ON COLUMN SERVICES.IP_END IS
 'Конец диапазона IP зоны (сделано для связки с UTM)';
 
 COMMENT ON COLUMN SERVICES.BUSINESS_TYPE IS
-'Управление услугами
+'Управление услугами (в таблице OBJECTS O_TYPE = 15)
 0 - общая услуга
 1 - Сеть передачи данных
 все что больше или = 2 - Цифровое ТВ';

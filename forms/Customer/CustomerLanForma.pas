@@ -102,7 +102,7 @@ type
     procedure lcbPortChange(Sender: TObject);
   private
     { Private declarations }
-    fCI: TCustomerInfo;
+    FCI: TCustomerInfo;
     FCanEditPort: Boolean;
     FVlanDisabled: Boolean;
     FWarnings: string;
@@ -115,9 +115,10 @@ type
     procedure CheckPort();
     procedure miLanClickClick(Sender: TObject);
     procedure GenerateLANPopUp;
+    function GetNodeID:Integer;
   public
     { Public declarations }
-    property CI: TCustomerInfo write fCI;
+    property CI: TCustomerInfo write FCI;
   end;
 
 function EditCustomerLAN(const aCI: TCustomerInfo; aLan_ID: Int64): Boolean;
@@ -187,8 +188,10 @@ begin
           end;
         end;
 
-        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then
-          dsVlans.SQLs.SelectSQL.Add('  and oc.house_id = :House_Id');
+        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then begin
+          dsVlans.SQLs.SelectSQL.Add('  and ((oc.house_id = :House_Id) or (v.v_id = :VID))');
+          dsVlans.ParamByName('VID').AsInt64 := -1;
+        end;
         dsVlans.SQLs.SelectSQL.Add('order by finded, NAME_IP');
         dsVlans.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
         dsVlans.Open;
@@ -206,8 +209,8 @@ begin
       begin
         if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then begin
           if (not dsLAN.FieldByName('VLAN_ID').IsNUll) then begin
-            dsVlans.SQLs.SelectSQL.Add(' and ( oc.house_id = :House_Id or v.v_id = :OV_ID)');
-            dsVlans.ParamByName('OV_ID').AsInt64 := dsLAN['VLAN_ID'];
+            dsVlans.SQLs.SelectSQL.Add(' and ( oc.house_id = :House_Id or v.v_id = :VID)');
+            dsVlans.ParamByName('VID').AsInt64 := dsLAN['VLAN_ID'];
           end
           else
             dsVlans.SQLs.SelectSQL.Add(' and oc.house_id = :House_Id ');
@@ -335,6 +338,7 @@ end;
 procedure TCustomerLanForm.FormShow(Sender: TObject);
 begin
   FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Equipment_Ports);
 
   dbleEquipment.EditButtons.Items[0].Visible := FCanEditPort;
   lcbPort.EditButtons.Items[0].Visible := FCanEditPort;
@@ -536,6 +540,7 @@ begin
       EQ.ip := dsEQ.FieldByName('Ip').asString;
     if not dsEQ.FieldByName('Mac').IsNull then
       EQ.MAC := dsEQ.FieldByName('Mac').asString;
+    EQ.Node_Id := GetNodeID;
 
     if CreatePort(EQ) then
       dsPort.CloseOpen(True);
@@ -562,9 +567,12 @@ begin
     EQ.ip := dsEQ.FieldByName('Ip').asString;
   if not dsEQ.FieldByName('Mac').IsNull then
     EQ.MAC := dsEQ.FieldByName('Mac').asString;
+  EQ.Node_Id := GetNodeID;
 
-  if EditPort(EQ, PORT) then
-    dsPort.CloseOpen(True);
+  if EditPort(EQ, PORT) then begin
+    // dsPort.CloseOpen(True);
+    dsPort.Refresh;
+  end;
 end;
 
 procedure TCustomerLanForm.actLanHttpExecute(Sender: TObject);
@@ -728,6 +736,18 @@ begin
   end
   else
     cnError.Dispose(eIP);
+
+  // ЛТВ проверяем
+  if (dmMain.GetSettingsValue('LAN_VALANDISABLE') = '1') then begin
+    if (dsPort.FieldByName('Wid').IsNull) or (dsPort['Wlabel'] = '') then
+    begin
+      cnError.SetError(lcbPort, rsNotWireLabel, iaMiddleLeft, bsNeverBlink).IconType := EP_WARNING;
+      FWarnings := FWarnings + rsNotWireLabel + rsEOL;
+      Result := True;
+    end
+    else
+      cnError.Dispose(lcbPort);
+  end;
 end;
 
 procedure TCustomerLanForm.OkCancelFrame1bbOkClick(Sender: TObject);
@@ -924,6 +944,12 @@ begin
     begin
       dbleVLAN.Enabled := not FVlanDisabled;
       dbleVLAN.Value := dsPort['VLAN_ID'];
+      // если не нашли сеть, то перечитаем из базы
+      if ((dbleVLAN.Text = '') and (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1')) then begin
+        dsVlans.Close;
+        dsVlans.ParamByName('VID').AsInt64 := dsPort['VLAN_ID'];
+        dsVlans.Open;
+      end;
     end
     else
       dbleVLAN.Enabled := True;
@@ -952,6 +978,7 @@ begin
   if (not dsPort.FieldByName('P_STATE').IsNull) then
   begin
     if (dsPort['P_STATE'] = 0) then
+    if (dsPort['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'SPEED')) then
     begin
       AFont.Style := [fsStrikeOut];
       Background := clBtnShadow;
@@ -1173,6 +1200,30 @@ begin
       free;
     end;
   end;
+end;
+
+function TCustomerLanForm.GetNodeID:Integer;
+begin
+  Result := -1;
+  with TpFIBQuery.Create(Nil) do
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      sql.Text := 'select first 1 n.Node_Id';
+      sql.Add(' from customer c ');
+      sql.Add(' inner join node_flats f on (f.House_Id = c.House_Id and f.Flat_No = c.flat_no) ');
+      sql.Add(' inner join nodes n on (n.Node_Id = f.Node_Id) ');
+      sql.Add(' where c.Customer_Id = :CID ');
+      ParamByName('CID').AsInt64 := FCI.CUSTOMER_ID;
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not FieldByName('Node_Id').IsNull then
+        Result := FieldByName('Node_Id').Value;
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
 end;
 
 end.

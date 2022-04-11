@@ -29,6 +29,12 @@ object NodeLinkForm: TNodeLinkForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 67
       Width = 378
@@ -128,65 +134,65 @@ object NodeLinkForm: TNodeLinkForm
       273)
     object lbl3: TLabel
       Left = 8
-      Top = 119
+      Top = 107
       Width = 45
       Height = 13
       Caption = #1044#1083#1080#1085#1072', '#1084
     end
     object lbl4: TLabel
       Left = 200
-      Top = 119
+      Top = 107
       Width = 42
       Height = 13
       Caption = #1047#1072#1087#1072#1089', '#1084
     end
     object Label1: TLabel
       Left = 8
-      Top = 92
+      Top = 82
       Width = 48
       Height = 13
       Caption = #1053#1072#1079#1074#1072#1085#1080#1077
     end
     object lbl2: TLabel
       Left = 8
-      Top = 65
+      Top = 57
       Width = 50
       Height = 13
       Caption = #1052#1072#1090#1077#1088#1080#1072#1083
     end
     object lbl1: TLabel
       Left = 8
-      Top = 38
+      Top = 32
       Width = 57
       Height = 13
       Caption = #1058#1080#1087' '#1082#1072#1073#1077#1083#1103
     end
     object Label2: TLabel
       Left = 8
-      Top = 11
+      Top = 7
       Width = 33
       Height = 13
       Caption = #1050' '#1091#1079#1083#1091
     end
     object lbl5: TLabel
       Left = 347
-      Top = 119
+      Top = 107
       Width = 41
       Height = 13
       Caption = #1045#1084#1082#1086#1089#1090#1100
     end
     object lbl6: TLabel
       Left = 8
-      Top = 146
+      Top = 132
       Width = 62
       Height = 13
       Caption = #1052#1072#1088#1082#1080#1088#1086#1074#1082#1072
     end
     object mmoNOTICE: TDBMemoEh
       Left = 8
-      Top = 170
+      Top = 156
       Width = 518
-      Height = 98
+      Height = 112
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DataField = 'NOTICE'
@@ -201,7 +207,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object ednLength: TDBNumberEditEh
       Left = 76
-      Top = 116
+      Top = 104
       Width = 107
       Height = 21
       DataField = 'METERS'
@@ -214,8 +220,8 @@ object NodeLinkForm: TNodeLinkForm
       Visible = True
     end
     object ednStock: TDBNumberEditEh
-      Left = 258
-      Top = 116
+      Left = 255
+      Top = 104
       Width = 75
       Height = 21
       DataField = 'STOCK'
@@ -229,7 +235,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object edtNAME: TDBEditEh
       Left = 76
-      Top = 89
+      Top = 79
       Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -246,7 +252,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object lcbLinkType: TDBLookupComboboxEh
       Left = 76
-      Top = 35
+      Top = 29
       Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -279,7 +285,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object lcbNode: TDBLookupComboboxEh
       Left = 76
-      Top = 8
+      Top = 4
       Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -340,7 +346,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object ednSTOCK1: TDBNumberEditEh
       Left = 405
-      Top = 116
+      Top = 104
       Width = 121
       Height = 21
       Hint = #1050#1086#1083'-'#1074#1086' '#1074#1086#1079#1084#1086#1078#1085#1099#1093' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1081' '#1082#1072#1073#1077#1083#1077#1084
@@ -357,7 +363,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object lcbApplMID: TDBLookupComboboxEh
       Left = 76
-      Top = 62
+      Top = 54
       Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -402,7 +408,7 @@ object NodeLinkForm: TNodeLinkForm
     end
     object lcbLabel: TDBLookupComboboxEh
       Left = 76
-      Top = 143
+      Top = 129
       Width = 450
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -459,6 +465,9 @@ object NodeLinkForm: TNodeLinkForm
     SelectSQL.Strings = (
       'select'
       '   c.*'
+      
+        '   , (select count(*) from wire w where (not w.Point_S is null) ' +
+        'and (w.Point_S = c.Point_S)) WIRE_CNT'
       '  from Wire c'
       'where c.WID = :WID')
     AutoCalcFields = False
@@ -490,14 +499,14 @@ object NodeLinkForm: TNodeLinkForm
     Database = dmMain.dbTV
     UpdateTransaction = trRead
     AutoCommit = True
-    Left = 104
-    Top = 198
+    Left = 184
+    Top = 214
   end
   object srcType: TDataSource
     AutoEdit = False
     DataSet = dsType
-    Left = 108
-    Top = 246
+    Left = 188
+    Top = 254
   end
   object dsNodes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -515,6 +524,9 @@ object NodeLinkForm: TNodeLinkForm
       '  , o.O_DIMENSION as COLOR'
       '  , S.Street_Name||'#39' '#39'||s.street_short Street_Name '
       '  , H.House_No'
+      
+        '  , (select count(*) from wire w where w.Point_S = n.Node_Id) WI' +
+        'RE_CNT'
       '  from NODES n'
       '       inner join HOUSE H on (n.HOUSE_ID = H.HOUSE_ID)'
       '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
@@ -530,8 +542,8 @@ object NodeLinkForm: TNodeLinkForm
     Database = dmMain.dbTV
     UpdateTransaction = trRead
     AutoCommit = True
-    Left = 221
-    Top = 202
+    Left = 301
+    Top = 210
     poUseBooleanField = False
     poSetRequiredFields = True
     oVisibleRecno = True
@@ -540,8 +552,8 @@ object NodeLinkForm: TNodeLinkForm
   object srcNodes: TDataSource
     AutoEdit = False
     DataSet = dsNodes
-    Left = 220
-    Top = 246
+    Left = 300
+    Top = 254
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -552,8 +564,8 @@ object NodeLinkForm: TNodeLinkForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 27
-    Top = 202
+    Left = 107
+    Top = 210
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -564,8 +576,8 @@ object NodeLinkForm: TNodeLinkForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 27
-    Top = 250
+    Left = 107
+    Top = 258
   end
   object srcMain: TDataSource
     AutoEdit = False
@@ -592,20 +604,20 @@ object NodeLinkForm: TNodeLinkForm
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
-    Left = 162
-    Top = 194
+    Left = 242
+    Top = 210
   end
   object srcMat: TDataSource
     AutoEdit = False
     DataSet = dsMat
-    Left = 164
-    Top = 244
+    Left = 244
+    Top = 252
   end
   object srcLabel: TDataSource
     AutoEdit = False
     DataSet = dsLabel
-    Left = 276
-    Top = 246
+    Left = 356
+    Top = 254
   end
   object dsLabel: TpFIBDataSet
     SelectSQL.Strings = (
@@ -622,8 +634,8 @@ object NodeLinkForm: TNodeLinkForm
     Database = dmMain.dbTV
     UpdateTransaction = trRead
     AutoCommit = True
-    Left = 277
-    Top = 202
+    Left = 357
+    Top = 210
     poUseBooleanField = False
     poSetRequiredFields = True
     oVisibleRecno = True

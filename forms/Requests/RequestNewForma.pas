@@ -1321,6 +1321,7 @@ begin
   Contact.Contact := Phone;
   Contact.Notify := 1;
   Contact.Notice := '';
+  Contact.CustID := FCustomerInfo.Customer_id;
   if EditContact(Contact) then
   begin
     with TpFIBQuery.Create(Nil) do

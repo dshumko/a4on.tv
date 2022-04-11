@@ -694,16 +694,30 @@ object CustomerLanForm: TCustomerLanForm
       'select'
       '    f.*'
       '  , h.Street_Id'
+      '  , (select first 1'
+      '         n.Node_Id'
+      '       from node_flats f'
+      '            inner join nodes n on (n.Node_Id = f.Node_Id)'
+      '       where f.House_Id = c.house_id'
+      '             and f.Flat_No = c.flat_no) as NODE_ID'
       '  from TV_LAN f'
+      '       inner join customer c on (c.Customer_Id = f.Customer_Id)'
       '       left outer join house h on (h.House_Id = f.House_Id)'
-      'where    F.LAN_ID = :OLD_LAN_ID')
+      '  where F.LAN_ID = :OLD_LAN_ID')
     SelectSQL.Strings = (
       'select'
       '    f.*'
       '  , h.Street_Id'
+      '  , (select first 1'
+      '         n.Node_Id'
+      '       from node_flats f'
+      '            inner join nodes n on (n.Node_Id = f.Node_Id)'
+      '       where f.House_Id = c.house_id'
+      '             and f.Flat_No = c.flat_no) as NODE_ID'
       '  from TV_LAN f'
+      '       inner join customer c on (c.Customer_Id = f.Customer_Id)'
       '       left outer join house h on (h.House_Id = f.House_Id)'
-      '  where f.LAN_ID = :LAN_ID   ')
+      '  where f.LAN_ID = :LAN_ID')
     AutoUpdateOptions.UpdateTableName = 'DISCOUNT_FACTOR'
     AutoUpdateOptions.KeyFields = 'DISCOUNT_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -764,7 +778,9 @@ object CustomerLanForm: TCustomerLanForm
       '                         group by 1) e on (e.Vlan_Id = v.V_Id)'
       '  where ((v.for_objects is null)'
       '          or (v.for_objects = 0)'
-      '          or (v.for_objects = 1))')
+      '          or (v.for_objects = 1))'
+      '  '
+      '  ')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -962,8 +978,52 @@ object CustomerLanForm: TCustomerLanForm
     InsertSQL.Strings = (
       '')
     RefreshSQL.Strings = (
-      ''
-      '    ')
+      'select'
+      '    p.Port'
+      '  , p.Notice'
+      '  , o.O_Name'
+      '  , p.Speed'
+      '  , p.CON'
+      '  , p.P_STATE'
+      
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
+        'Name,  '#39#39') NAME'
+      '  , p.VLAN_ID'
+      '  , v.Name V_NAME'
+      '  , case p.Con'
+      '      when 0 then '#39#1054#39
+      '      when 1 then '#39#1040#39
+      '      else '#39#39
+      '    end whose'
+      
+        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, e.Name, null)) WHOSE_' +
+        'NAME'
+      '  , coalesce(c.HIS_COLOR, et.O_DIMENSION) as COLOR'
+      '  , p.Con_Id  '
+      '  , p.Wid'
+      '  , coalesce(p.Wlabel, '#39#39') Wlabel'
+      '  from port p'
+      
+        '       inner join objects o on (p.P_Type = o.O_Id and o.O_Type =' +
+        ' 57)'
+      '       left outer join VLANS v on (v.V_ID = p.Vlan_Id)'
+      
+        '       left outer join tv_lan t on (t.Eq_Id = p.Eid and t.Port =' +
+        ' p.Port and p.Con = 1)'
+      
+        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
+        '_id)'
+      
+        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
+        'n = 0)'
+      
+        '       left outer join objects et on (e.eq_group = et.o_id and o' +
+        '.O_TYPE = 7)'
+      '  where(  p.Eid = :EID'
+      '     ) and (     P.PORT = :OLD_PORT'
+      '     )'
+      '    '
+      '  ')
     SelectSQL.Strings = (
       'select'
       '    p.Port'
@@ -987,6 +1047,8 @@ object CustomerLanForm: TCustomerLanForm
         'NAME'
       '  , coalesce(c.HIS_COLOR, et.O_DIMENSION) as COLOR'
       '  , p.Con_Id  '
+      '  , p.Wid'
+      '  , coalesce(p.Wlabel, '#39#39') Wlabel'
       '  from port p'
       
         '       inner join objects o on (p.P_Type = o.O_Id and o.O_Type =' +

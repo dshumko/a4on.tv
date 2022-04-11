@@ -58,6 +58,16 @@ type
     actLayout: TAction;
     miTreeExpandCurrent: TMenuItem;
     pnl1: TPanel;
+    dsFilter: TMemTableEh;
+    btnActSetFilter: TToolButton;
+    ActSetFilter: TAction;
+    actEnableFilter: TAction;
+    pmFilter: TPopupMenu;
+    N31: TMenuItem;
+    miSetFilterN: TMenuItem;
+    N42: TMenuItem;
+    N36: TMenuItem;
+    actSetFilterN: TAction;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -85,12 +95,16 @@ type
     procedure lstFormsClick(Sender: TObject);
     procedure actLayoutExecute(Sender: TObject);
     procedure miTreeExpandCurrentClick(Sender: TObject);
+    procedure ActSetFilterExecute(Sender: TObject);
+    procedure actEnableFilterExecute(Sender: TObject);
+    procedure actSetFilterNExecute(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FAutoGen: Boolean; // автогенерация название
     FPageList: TA4onPages;
     FCanSave: Boolean;
     FIsVertical: Boolean;
+    function GenerateFilter: string;
     procedure SetGridTreeMode(const inTree: Boolean);
     procedure ShowPage(Page: TA4onPage);
     procedure UpdateCommands;
@@ -99,12 +113,14 @@ type
     procedure UpdatePage(Sender: TObject);
     function IndexToPage(Index: Integer): TA4onPage;
     procedure InitSecurity;
+    procedure UpdateInfoPanel;
     procedure RefreshGridRecords;
     procedure SwitchLayout(const InVertical: Boolean);
     procedure SetLayout(Value: Boolean);
   public
     { Public declarations }
     property IsVertical: Boolean read FIsVertical write SetLayout;
+    procedure SetDefaultFilter;
   end;
 
 var
@@ -118,11 +134,11 @@ uses
   RequestForma, EquipEditForma, TelnetForma, HtmlForma,
   pFIBQuery, CF, CustomerLanForma, EQPort, fmuEqpmntPorts,
   fmuEqpmntAttributes, fmuEqpmntRequests, fmuEqpmntRegion,
-  fmuEqpmntInfo;
+  fmuEqpmntInfo, EquipFilter;
 
 {$R *.dfm}
 
-//TODO: Убрать костыль в виде Parent_Port_sort
+// TODO: Убрать костыль в виде Parent_Port_sort
 procedure TEquipmentForm.DoCreatePages;
 var
   i: Integer;
@@ -338,6 +354,100 @@ begin
   end;
 end;
 
+procedure TEquipmentForm.ActSetFilterExecute(Sender: TObject);
+var
+  filter: string;
+begin
+  inherited;
+  if not(srcDataSource.DataSet is TpFIBDataSet) then
+    Exit;
+  if chkTREE.Checked then begin
+    ShowMessage(rsTreeMode);
+    Exit;
+  end;
+
+  filter := '';
+
+  with TEquipFilterForm.Create(Application) do
+    try
+      if not dsFilter.Active then
+        SetDefaultFilter;
+
+      actEnableFilter.Checked := (ShowModal = mrOk);
+      filter := GenerateFilter;
+    finally
+      Free;
+    end;
+
+  if (srcDataSource.DataSet.Filtered) then
+  begin
+    srcDataSource.DataSet.filter := '';
+    srcDataSource.DataSet.Filtered := False;
+  end;
+
+  if filter <> '' then
+  begin
+    dsEquipments.Close;
+    dsEquipments.ParamByName('Filter').Value := filter;
+    try
+      dsEquipments.Open;
+    except
+      ShowMessage(rsErrorFilter);
+      dsEquipments.Close;
+      dsEquipments.ParamByName('Filter').Clear;
+      dsEquipments.Open;
+    end;
+  end;
+  UpdateInfoPanel;
+end;
+
+procedure TEquipmentForm.actSetFilterNExecute(Sender: TObject);
+var
+  filter: string;
+begin
+  inherited;
+
+  if not(srcDataSource.DataSet is TpFIBDataSet) then
+    Exit;
+
+  filter := '';
+  with dsFilter do
+  begin
+    DisableControls;
+    if Active then
+      Close;
+    Open;
+    EmptyTable;
+    Insert;
+    EnableControls;
+  end;
+
+  with TEquipFilterForm.Create(Application) do
+    try
+      if ShowModal = mrOk then
+      begin
+        actEnableFilter.Checked := True;
+        filter := GenerateFilter;
+      end;
+    finally
+      Free;
+    end;
+
+  if (dsEquipments.Filtered) then
+  begin
+    dsEquipments.filter := '';
+    dsEquipments.Filtered := False;
+  end;
+
+  if filter <> '' then
+  begin
+    dsEquipments.Close;
+    dsEquipments.ParamByName('Filter').Value := filter;
+    dsEquipments.Open;
+    UpdateInfoPanel;
+  end;
+end;
+
 procedure TEquipmentForm.SetGridTreeMode(const inTree: Boolean);
   function findInex(const FLD_NAME: string; Grid: TDBGridEh): Integer;
   var
@@ -517,7 +627,7 @@ end;
 procedure TEquipmentForm.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-  id : Integer;
+  id: Integer;
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
@@ -529,7 +639,7 @@ begin
   begin
     if (srcDataSource.DataSet is TMemTableEh) then
     begin
-      {TODO: Переделать обновление записи}
+      { TODO: Переделать обновление записи }
       id := dbGrid.DataSource.DataSet['EID'];
       mtEQ.Close;
       mtEQ.Open;
@@ -539,6 +649,17 @@ begin
     begin
       dsEquipments.Refresh;
     end;
+  end;
+end;
+
+procedure TEquipmentForm.actEnableFilterExecute(Sender: TObject);
+begin
+  inherited;
+  if srcDataSource.DataSet is TpFIBDataSet then
+  begin
+    actEnableFilter.Checked := not actEnableFilter.Checked;
+    dsEquipments.ParamByName('Filter').Value := GenerateFilter;
+    dsEquipments.CloseOpen(True);
   end;
 end;
 
@@ -681,7 +802,7 @@ begin
   if dbGrid.DataSource.DataSet.FieldByName('EID').IsNull then
     Exit;
 
-  {TODO: Переделатью сделано через ...}
+  { TODO: Переделатью сделано через ... }
   EID := dbGrid.DataSource.DataSet['EID'];
   dbGrid.DataSource.DataSet.DisableControls;
   mtEQ.TreeList.FullCollapse;
@@ -825,6 +946,113 @@ begin
     splLst.Align := alTop;
     lstForms.Height := sl;
   end;
+end;
+
+function TEquipmentForm.GenerateFilter: string;
+
+  function RecordToFilter: string;
+  var
+    tmpSQL: string;
+  begin
+    tmpSQL := '';
+
+    // Условие отбора по адресу
+    if (dsFilter['CHECK_ADRESS'] = 1) then
+    begin
+      if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
+      begin
+        tmpSQL := tmpSQL + Format(' and (e.House_Id = %d)', [dsFilter.FieldByName('HOUSE_ID').AsInteger])
+      end
+      else if (not dsFilter.FieldByName('Street_Id').IsNull) then
+        tmpSQL := tmpSQL + Format(' and (S.STREET_ID = %s)', [dsFilter.FieldByName('Street_Id').AsString]);
+
+      if (not dsFilter.FieldByName('PLACE').IsNull) and (dsFilter['PLACE'] <> '') then
+        tmpSQL := tmpSQL + Format(' and (e.PLACE  = ''%s'')', [dsFilter.FieldByName('PLACE').AsString]);
+
+      if (not dsFilter.FieldByName('PORCH').IsNull) and (dsFilter['PORCH'] <> '') then
+        tmpSQL := tmpSQL + Format(' and (e.PORCH_N  = ''%s'')', [dsFilter.FieldByName('PORCH').AsString]);
+
+      if (not dsFilter.FieldByName('FLOOR').IsNull) and (dsFilter['FLOOR'] <> '') then
+        tmpSQL := tmpSQL + Format(' and (e.FLOOR_N  = ''%s'')', [dsFilter.FieldByName('FLOOR').AsString]);
+
+      if (not dsFilter.FieldByName('SUBAREA_ID').IsNull) then
+        tmpSQL := tmpSQL + Format(' and (h.SUBAREA_ID  = %s)', [dsFilter.FieldByName('SUBAREA_ID').AsString]);
+
+      if (not dsFilter.FieldByName('AREA_ID').IsNull) then
+        tmpSQL := tmpSQL + Format(' and ( S.AREA_ID = %s) ', [dsFilter.FieldByName('AREA_ID').AsString]);
+    end;
+
+    // if (not dsFilter.FieldByName('NODE_TYPE').IsNull) then
+    // tmpSQL := tmpSQL + Format(' and ( n.TYPE_ID = %s) ', [dsFilter.FieldByName('NODE_TYPE').AsString]);
+
+    if (tmpSQL <> '') then
+      Result := TrimAnd(tmpSQL)
+    else
+      Result := filter_1_1;
+
+    if dsFilter['inversion'] then
+      Result := Format(' NOT (%s)', [Result]);
+  end;
+
+var
+  whereStr: string;
+  default: string;
+begin
+  default := filter_1_1;
+  Result := default;
+  whereStr := '';
+
+  if (dsFilter.RecordCount = 0) or (not actEnableFilter.Checked) then
+    Exit;
+
+  srcDataSource.DataSet.DisableControls;
+
+  try
+    dsFilter.First;
+
+    whereStr := '';
+    while not dsFilter.Eof do
+    begin
+      whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
+      // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+      dsFilter.next;
+      if not dsFilter.Eof then
+        if dsFilter['next_condition'] = 0 then
+          whereStr := whereStr + ' OR '
+        else
+          whereStr := whereStr + ' AND '
+    end;
+  except
+    whereStr := default;
+    ShowMessage(rsErrorSetFilter);
+  end;
+
+  Result := whereStr;
+  srcDataSource.DataSet.EnableControls;
+end;
+
+procedure TEquipmentForm.UpdateInfoPanel;
+begin
+  ShowPage(IndexToPage(lstForms.ItemIndex));
+end;
+
+procedure TEquipmentForm.SetDefaultFilter;
+var
+  f: string;
+begin
+  dsFilter.Close;
+  dsFilter.Open;
+  dsFilter.EmptyTable;
+  f := A4MainForm.GetUserFilterFolder + 'eqpmnt_default.jnf';
+  if FileExists(f) then
+  begin
+    if dsFilter.State in [dsEdit, dsInsert] then
+      dsFilter.Post;
+    DatasetFromJson(dsFilter, f);
+  end;
+
+  if dsFilter.RecordCount > 0 then
+    actEnableFilter.Checked := True;
 end;
 
 end.

@@ -1075,6 +1075,8 @@ begin
   Contact.Contact := Trim(Phone);
   Contact.Notify := 1;
   Contact.Notice := '';
+  Contact.CustID := -1;
+  Contact.CustID := FCustomerInfo.Customer_id;
   if EditContact(Contact) then
   begin
     with TpFIBQuery.Create(Nil) do

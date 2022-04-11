@@ -42,6 +42,9 @@ type
     miNodeFrom: TMenuItem;
     actOpenEqpmnt: TAction;
     actOpenCustomer: TAction;
+    btnLink: TSpeedButton;
+    actWireLink: TAction;
+    btnDel: TSpeedButton;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -55,8 +58,11 @@ type
     procedure actOpenObjectExecute(Sender: TObject);
     procedure actOpenEqpmntExecute(Sender: TObject);
     procedure actOpenCustomerExecute(Sender: TObject);
+    procedure actWireLinkExecute(Sender: TObject);
+    procedure btnDelClick(Sender: TObject);
   private
-    { Private declarations }
+    FRightEdit: Boolean;
+    FRightFull: Boolean;
     procedure EnableControls;
     function GetEquipmentRecord: TEquipmentRecord;
   public
@@ -72,7 +78,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, DM, NodeLinkForma, EQPort;
+  MAIN, AtrCommon, DM, NodeLinkForma, WireLinkForma, EQPort;
 
 class function TapgNodeLink.GetPageName: string;
 begin
@@ -80,17 +86,17 @@ begin
 end;
 
 procedure TapgNodeLink.InitForm;
-var
-  FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
+  FRightFull := (dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
+  FRightEdit := (dmMain.AllowedAction(rght_Dictionary_Node_Links));
 
-  pnlButtons.Visible := FullAccess;
+  pnlButtons.Visible := FRightFull or FRightEdit;
   actAdd.Visible := pnlButtons.Visible;
   actDel.Visible := pnlButtons.Visible;
   actEdit.Visible := pnlButtons.Visible;
 
-  actPEdit.Enabled := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
+  actPEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment) or
+    dmMain.AllowedAction(rght_Dictionary_Equipment_Ports);
 
   dsLink.DataSource := FDataSource;
 end;
@@ -117,7 +123,8 @@ begin
   LinkItem.NODE_Name := '';
   LinkItem.NODE_TYPE := '';
   LinkItem.NODE_ID := FDataSource.DataSet['NODE_ID'];
-  if (not FDataSource.DataSet.FieldByName('NAME').IsNull) then begin
+  if (not FDataSource.DataSet.FieldByName('NAME').IsNull) then
+  begin
     LinkItem.NODE_Name := FDataSource.DataSet['NAME'];
     LinkItem.NODE_TYPE := FDataSource.DataSet['O_NAME']; // тип узла
   end;
@@ -245,6 +252,59 @@ begin
     dsLink.Refresh;
     dsEQ.CloseOpen(true);
   end;
+end;
+
+procedure TapgNodeLink.actWireLinkExecute(Sender: TObject);
+var
+  s: string;
+begin
+  inherited;
+  if (dsLink.FieldByName('POINT_S').IsNull) or (dsLink.FieldByName('POINT_E').IsNull) then
+    Exit;
+
+  if (dsLink.FieldByName('LABELS').IsNull) then
+    s := ''
+  else
+    s := dsLink['LABELS'];
+
+  WireLink(dsLink['WID'], s, dsLink['POINT_S'], dsLink['POINT_E']);
+  if dsEQ.Active then
+    dsEQ.CloseOpen(true);
+end;
+
+procedure TapgNodeLink.btnDelClick(Sender: TObject);
+begin
+  if not(FRightFull or FRightEdit) then
+    Exit;
+
+  if (dsEQ.RecordCount = 0) or (dsEQ.FieldByName('WID').IsNull) then
+    Exit;
+
+  if Application.MessageBox(PWideChar(rsWireUnLinkQuest), PWideChar(rsWireUnLink),
+    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
+    Exit;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      SQL.Text := 'update Port set WID = null, WLABEL = null where WID = :WID ';
+      if not dsEQ.FieldByName('Wlabel').IsNull then
+      begin
+        SQL.Add(' and WLABEL = :WLABEL ');
+        ParamByName('WLABEL').asString := dsEQ['WLABEL'];
+      end;
+      ParamByName('WID').AsInteger := dsEQ['WID'];
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
+
+  dsEQ.CloseOpen(true);
 end;
 
 procedure TapgNodeLink.CloseData;

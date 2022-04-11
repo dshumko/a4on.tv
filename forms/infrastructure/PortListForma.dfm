@@ -234,6 +234,12 @@ inherited PortListForm: TPortListForm
     inherited btnQuickFilter: TToolButton
       Visible = False
     end
+    object btnLinkPort: TToolButton
+      Left = 178
+      Top = 0
+      Action = actLinkPort
+      ImageIndex = 100
+    end
   end
   inherited pnlEdit: TPanel
     Width = 782
@@ -251,6 +257,10 @@ inherited PortListForm: TPortListForm
     inherited actEdit: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1088#1090
       OnExecute = actEditExecute
+    end
+    object actLinkPort: TAction
+      Caption = 'actLinkPort'
+      OnExecute = actLinkPortExecute
     end
   end
   object dsPort: TpFIBDataSet

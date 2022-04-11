@@ -506,7 +506,7 @@ object apgCustomerInfo: TapgCustomerInfo
   end
   object actlst1: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 304
+    Left = 296
     Top = 160
     object actMakeCall: TAction
       Hint = #1055#1086#1079#1074#1086#1085#1080#1090#1100' ('#1085#1072#1087#1080#1089#1072#1090#1100') '#1085#1072' '#1082#1086#1085#1090#1072#1082#1090

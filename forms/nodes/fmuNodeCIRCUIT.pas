@@ -32,13 +32,17 @@ type
     mniN2: TMenuItem;
     N3: TMenuItem;
     N2: TMenuItem;
+    miN1: TMenuItem;
+    miLoadPNG: TMenuItem;
+    dlgOpen: TOpenDialog;
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure actViewExecute(Sender: TObject);
     procedure imgPNGDblClick(Sender: TObject);
+    procedure miLoadPNGClick(Sender: TObject);
   private
-    { Private declarations }
     procedure EnableControls;
+    procedure actViewFile;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -69,11 +73,39 @@ begin
   FullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
 
   tbAttributes.Visible := FullAccess;
-  //actAdd.Visible := tbAttributes.Visible;
+  // actAdd.Visible := tbAttributes.Visible;
   actDel.Visible := tbAttributes.Visible;
   actEdit.Visible := tbAttributes.Visible;
 
   dsCircuit.DataSource := FDataSource;
+end;
+
+procedure TapgNodeCIRCUIT.miLoadPNGClick(Sender: TObject);
+begin
+  if FDataSource.DataSet.RecordCount = 0 then
+    Exit;
+
+  if (not dmMain.AllowedAction(rght_Dictionary_Nodes)) then
+    Exit;
+
+  if dlgOpen.Execute then
+  begin
+    if not dsCircuit.Active then
+      dsCircuit.Open;
+
+    if dsCircuit.RecordCount > 0 then
+      dsCircuit.Edit
+    else
+    begin
+      dsCircuit.Insert;
+      dsCircuit['NOTICE'] := '';
+      dsCircuit['HOUSE_ID'] := FDataSource.DataSet['NODE_ID'];
+    end;
+    dsCircuit['NAME'] := ExtractFileName(dlgOpen.FileName);
+    dsCircuit.FieldByName('CIRCUIT').Clear;
+    TBlobField(dsCircuit.FieldByName('PNG')).LoadFromFile(dlgOpen.FileName);
+    dsCircuit.Post;
+  end;
 end;
 
 procedure TapgNodeCIRCUIT.EnableControls;
@@ -107,8 +139,9 @@ var
   NeedSave: Boolean;
 begin
   inherited;
-  if FDataSource.DataSet.RecordCount = 0 then Exit;
-  
+  if FDataSource.DataSet.RecordCount = 0 then
+    Exit;
+
   if (not dmMain.AllowedAction(rght_Dictionary_Nodes)) then
     Exit;
 
@@ -152,18 +185,46 @@ var
 begin
   inherited;
 
-  if (dsCircuit.FieldByName('CIRCUIT').IsNull) then
-    Exit;
+  if (not dsCircuit.FieldByName('CIRCUIT').IsNull) then
+  begin
+    CircuitData := TMemoryStream.Create;
+    PngData := TMemoryStream.Create;
+    try
+      TBlobField(dsCircuit.FieldByName('CIRCUIT')).SaveToStream(CircuitData);
+      CircuitData.Seek(0, soBeginning);
+      EditCircuit(CircuitData, PngData, True);
+    finally
+      CircuitData.free;
+      PngData.free;
+    end;
+  end
+  else if (not dsCircuit.FieldByName('PNG').IsNull) then
+  begin
+    actViewFile;
+  end;
+end;
 
-  CircuitData := TMemoryStream.Create;
-  PngData := TMemoryStream.Create;
-  try
-    TBlobField(dsCircuit.FieldByName('CIRCUIT')).SaveToStream(CircuitData);
-    CircuitData.Seek(0, soBeginning);
-    EditCircuit(CircuitData, PngData, True);
-  finally
-    CircuitData.free;
-    PngData.free;
+procedure TapgNodeCIRCUIT.actViewFile;
+var
+  FileName: string;
+  PngData: TFileStream;
+begin
+  inherited;
+
+  if (not dsCircuit.FieldByName('PNG').IsNull) then
+  begin
+    FileName := GetTempDir + 'A4on\';
+    if not DirectoryExists(FileName) then
+      CreateDir(FileName);
+    FileName := FileName + dsCircuit.FieldByName('NAME').AsString;
+    PngData := TFileStream.Create(FileName, fmCreate, fmShareDenyWrite);
+    try
+      TBlobField(dsCircuit.FieldByName('PNG')).SaveToStream(PngData);
+    finally
+      PngData.free;
+    end;
+    if FileExists(FileName) then
+      ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
   end;
 end;
 

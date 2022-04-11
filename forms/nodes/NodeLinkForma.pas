@@ -62,6 +62,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure lcbPOINT_SChange(Sender: TObject);
   private
+    FCanEdit: Boolean;
+    FLineCnt: Integer;
     FMainLink: TNodeLinkItem;
     FSecondLink: TNodeLinkItem;
     procedure GenName();
@@ -83,20 +85,21 @@ uses DM, pFIBQuery, AtrStrUtils;
 
 function getFirstLetters(const s: String): String;
 var
-  w : TStringArray;
-  i : Integer;
+  w: TStringArray;
+  i: Integer;
 begin
   Result := '';
   w := Explode(' ', s);
-  for I := 0 to Length(w)-1 do begin
-    Result := Result + Copy(w[i],1,1);
+  for i := 0 to Length(w) - 1 do
+  begin
+    Result := Result + Copy(w[i], 1, 1);
   end;
   Result := UpperCase(Result, loUserLocale);
 end;
 
 function LinkNodes(var MainItem, SecondItem: TNodeLinkItem): Boolean;
 begin
-  result := false;
+  Result := false;
   with TNodeLinkForm.Create(Application) do
   begin
     try
@@ -106,7 +109,7 @@ begin
       if ShowModal = mrOk then
       begin
         MainItem.LINK_ID := MainLink.LINK_ID;
-        result := true;
+        Result := true;
       end;
     finally
       free
@@ -140,7 +143,12 @@ end;
 
 procedure TNodeLinkForm.FormShow(Sender: TObject);
 begin
-  OkCancelFrame.bbOk.Visible := ((dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes)));
+  FLineCnt := 0;
+  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
+  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Dictionary_Node_Links);
+
+  OkCancelFrame.bbOk.Visible := FCanEdit;
+
   dsNodes.ParamByName('NODE_ID').value := FMainLink.NODE_ID;
   dsNodes.Open;
   dsType.Open;
@@ -149,6 +157,8 @@ begin
 
   dsLink.ParamByName('WID').value := FMainLink.LINK_ID;
   dsLink.Open;
+  if not dsLink.FieldByName('WIRE_CNT').IsNull then
+    FLineCnt := dsLink['WIRE_CNT'];
 
   if FMainLink.LINK_ID <= 0 then
     dsLink.Insert
@@ -183,7 +193,8 @@ end;
 
 procedure TNodeLinkForm.lcbNodeChange(Sender: TObject);
 begin
-  if (FSecondLink.NODE_ID <= 0) and (lcbNode.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then begin
+  if (FSecondLink.NODE_ID <= 0) and (lcbNode.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then
+  begin
     FSecondLink.NODE_Name := dsNodes['Name'];
     FSecondLink.NODE_TYPE := dsNodes['O_Name'];
   end;
@@ -202,7 +213,12 @@ end;
 procedure TNodeLinkForm.lcbPOINT_SChange(Sender: TObject);
 begin
   if (FMainLink.NODE_ID <= 0) and (lcbPOINT_S.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then
+  begin
     FMainLink.NODE_Name := dsNodes['Name'];
+    FMainLink.NODE_TYPE := dsNodes['O_Name']; // Тип ноды
+    if not dsNodes.FieldByName('WIRE_CNT').IsNull then
+      FLineCnt := dsNodes['WIRE_CNT'];
+  end;
   GenName;
 end;
 
@@ -210,9 +226,9 @@ procedure TNodeLinkForm.OkCancelFrame1bbOkClick(Sender: TObject);
 var
   errors: Boolean;
 begin
-  if not ((dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes)))
-  then begin
-    errors := True;
+  if not(FCanEdit) then
+  begin
+    errors := true;
     Exit;
   end;
 
@@ -257,8 +273,9 @@ begin
     if (lcbLinkType.Text <> '') and (not dsType.FieldByName('O_NAME').IsNull) then
       s := dsType['O_NAME'] + ':';
 
-    s := s + getFirstLetters(FMainLink.NODE_TYPE) +'-'+ FMainLink.NODE_Name + '>';
-    s := s + getFirstLetters(FSecondLink.NODE_TYPE) +'-' + FSecondLink.NODE_Name;
+    s := s + getFirstLetters(FMainLink.NODE_TYPE) + '-' + FMainLink.NODE_Name + '>';
+    s := s + getFirstLetters(FSecondLink.NODE_TYPE) + '-' + FSecondLink.NODE_Name;
+    s := s + Format(' (%d)', [FLineCnt + 1]);
 
     edtNAME.Text := s
   end;

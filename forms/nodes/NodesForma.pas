@@ -119,7 +119,6 @@ type
     Label1: TLabel;
     lcbStreets: TDBLookupComboboxEh;
     lcbHOUSE: TDBLookupComboboxEh;
-    lbl1: TLabel;
     Label2: TLabel;
     pnlEdit: TPanel;
     lbl2: TLabel;
@@ -270,9 +269,6 @@ uses
   fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT,
   fmuNodeFlats, fmuNodeMaterialsMove, fmuNodeLayout, fmuNodeMaterials,
   fmuNodeAppl, fmuNodeLink, NodeLinkForma;
-
-const
-  const_default_filter: string = ' 1=1 ';
 
 {$R *.dfm}
 
@@ -1220,7 +1216,7 @@ function TNodesForm.GenerateFilter: string;
     if (tmpSQL <> '') then
       Result := TrimAnd(tmpSQL)
     else
-      Result := const_default_filter;
+      Result := filter_1_1;
 
     if dsFilter['inversion'] then
       Result := Format(' NOT (%s)', [Result]);
@@ -1230,7 +1226,7 @@ var
   whereStr: string;
   default: string;
 begin
-  default := const_default_filter;
+  default := filter_1_1;
   Result := default;
   whereStr := '';
 
@@ -1274,7 +1270,7 @@ begin
   begin
     if dsFilter.State in [dsEdit, dsInsert] then
       dsFilter.Post;
-    DatasetFromINI(dsFilter, f);
+    DatasetFromJSON(dsFilter, f);
   end;
 
   if dsFilter.RecordCount > 0 then
@@ -1694,3 +1690,5 @@ begin
 end;
 
 end.
+
+

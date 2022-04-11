@@ -37,6 +37,24 @@ type
     miN1: TMenuItem;
     miOpenNodeFrom: TMenuItem;
     miOpenNodeTo: TMenuItem;
+    pnlPorts: TPanel;
+    spl1: TSplitter;
+    dbgWireLink: TDBGridEh;
+    dsPorts: TpFIBDataSet;
+    srcPorts: TDataSource;
+    pnlButtons: TPanel;
+    btnDel: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnPortLinkEdit: TSpeedButton;
+    actPortLinkAdd: TAction;
+    actPortLinkEdit: TAction;
+    btnOpen: TSpeedButton;
+    pmOpen: TPopupMenu;
+    miOpenEq: TMenuItem;
+    miOpenNode: TMenuItem;
+    btn4: TToolButton;
+    btnError: TToolButton;
+    actErrors: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -48,6 +66,12 @@ type
     procedure actOpenNodeFromExecute(Sender: TObject);
     procedure actOpenNodeToExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
+    procedure actPortLinkAddExecute(Sender: TObject);
+    procedure btnDelClick(Sender: TObject);
+    procedure miOpenEqClick(Sender: TObject);
+    procedure btnOpenClick(Sender: TObject);
+    procedure miOpenNodeClick(Sender: TObject);
+    procedure actErrorsExecute(Sender: TObject);
   private
     FFullAccess: Boolean;
     procedure InitForm;
@@ -62,7 +86,7 @@ var
 implementation
 
 uses
-  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, FIBQuery, pFIBQuery;
+  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, WireLinkForma, FIBQuery, pFIBQuery;
 
 const
   const_default_filter: string = ' 1=1 ';
@@ -72,13 +96,12 @@ const
 procedure TWireForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
+  dsPorts.Close;
   dsWire.Close;
   WireForm := nil;
 end;
 
 procedure TWireForm.InitSecurity;
-var
-  s: String;
 begin
   inherited;
   FFullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes));
@@ -88,6 +111,24 @@ begin
   actDelete.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
   actEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
   actNew.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
+end;
+
+procedure TWireForm.miOpenEqClick(Sender: TObject);
+begin
+  inherited;
+  if ((dsPorts.FieldByName('Eid').IsNull) or (dsPorts.FieldByName('ENAME').IsNull)) then
+    exit;
+
+  A4MainForm.OpenEquipmentByName(dsPorts['ENAME']);
+end;
+
+procedure TWireForm.miOpenNodeClick(Sender: TObject);
+begin
+  inherited;
+  if dsPorts.FieldByName('NODE_ID').IsNull then
+    exit;
+
+  A4MainForm.OpnenNodeByID(dsPorts['NODE_ID']);
 end;
 
 procedure TWireForm.InitForm;
@@ -102,11 +143,12 @@ begin
   InitSecurity;
 
   dsWire.Open;
+  dsPorts.Open;
 end;
 
 procedure TWireForm.actDeleteExecute(Sender: TObject);
 var
-  i, j: Integer;
+  i: Integer;
   s: string;
 begin
   inherited;
@@ -142,8 +184,9 @@ begin
   end;
   if i > 0 then
     ShowMessageFmt(rsErrorNeedLinkClear, [s, i])
-  else begin
-    if (MessageDlg( Format(rsDeleteWithName, [dsWire['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  else
+  begin
+    if (MessageDlg(Format(rsDeleteWithName, [dsWire['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
       dsWire.UpdateTransaction.StartTransaction;
       dsWire.Delete;
@@ -159,7 +202,7 @@ begin
   inherited;
 
   if (not dsWire.Active) then
-    Exit;
+    exit;
 
   LinkItem.LINK_ID := dsWire['WID'];
   if not dsWire.FieldByName('NODE_S_ID').IsNull then
@@ -191,6 +234,22 @@ begin
   end
 end;
 
+procedure TWireForm.actErrorsExecute(Sender: TObject);
+begin
+  inherited;
+  actErrors.Checked := not actErrors.Checked;
+
+  dsPorts.Close;
+  dsWire.Close;
+  if actErrors.Checked then
+    dsWire.ParamByName('filter').Value := '(not (c.Capacity is null or c.Capacity = 1)) ' +
+      'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)'
+  else
+    dsWire.ParamByName('filter').Value := '1=1';
+  dsWire.Open;
+  dsPorts.Open;
+end;
+
 procedure TWireForm.actNewExecute(Sender: TObject);
 var
   LinkItem, SecondItem: TNodeLinkItem;
@@ -198,7 +257,7 @@ begin
   inherited;
 
   if (not dsWire.Active) then
-    Exit;
+    exit;
 
   LinkItem.NODE_ID := -1;
   LinkItem.NODE_Name := '';
@@ -231,6 +290,63 @@ begin
     exit;
 
   A4MainForm.OpnenNodeByID(dsWire['NODE_E_ID']);
+end;
+
+procedure TWireForm.actPortLinkAddExecute(Sender: TObject);
+var
+  s: string;
+begin
+  inherited;
+  if (dsWire.FieldByName('NODE_S_ID').IsNull) or (dsWire.FieldByName('NODE_E_ID').IsNull) then
+    exit;
+
+  if (dsWire.FieldByName('LABELS').IsNull) then
+    s := ''
+  else
+    s := dsWire['LABELS'];
+
+  WireLink(dsWire['WID'], s, dsWire['NODE_S_ID'], dsWire['NODE_E_ID']);
+  dsPorts.CloseOpen(true);
+end;
+
+procedure TWireForm.btnDelClick(Sender: TObject);
+begin
+  inherited;
+
+  if (dsPorts.RecordCount = 0) or (dsPorts.FieldByName('WID').IsNull) then
+    exit;
+
+  if Application.MessageBox(PWideChar(rsWireUnLinkQuest), PWideChar(rsWireUnLink),
+    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
+    exit;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      SQL.Text := 'update Port set WID = null, WLABEL = null where WID = :WID ';
+      if not dsPorts.FieldByName('Wlabel').IsNull then
+      begin
+        SQL.Add(' and WLABEL = :WLABEL ');
+        ParamByName('WLABEL').AsString := dsPorts['Wlabel'];
+      end;
+      ParamByName('WID').AsInteger := dsPorts['WID'];
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
+
+  dsPorts.CloseOpen(true);
+end;
+
+procedure TWireForm.btnOpenClick(Sender: TObject);
+begin
+  inherited;
+  pmOpen.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 procedure TWireForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;

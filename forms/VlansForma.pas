@@ -3,12 +3,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  FIBDataSet, pFIBDataSet, GridsEh, Menus, StdCtrls,
-  Buttons, ExtCtrls, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, PrjConst, CnErrorProvider, DBCtrlsEh, Vcl.Mask,
-  Vcl.DBCtrls, EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh;
+
+  System.SysUtils, System.Variants, System.UITypes,
+  System.Classes, System.Actions, Data.DB,
+  WinAPI.Windows, WinAPI.Messages, VCL.Graphics, VCL.Forms,
+  VCL.Dialogs, VCL.Grids, VCL.Mask, VCL.DBCtrls, VCL.StdCtrls,
+  VCL.Buttons, VCL.ComCtrls, VCL.Menus, VCL.ActnList,
+  VCL.ExtCtrls, VCL.ToolWin, VCL.Controls,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh,
+  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet,
+  pFIBDataSet, DBCtrlsEh, CnErrorProvider, GridsEh,
+  DBAxisGridsEh, DBGridEh, PrjConst;
 
 type
   TVlansForm = class(TGridForm)
@@ -64,6 +69,18 @@ type
     tbPersTar: TToolBar;
     btnPersAdd: TToolButton;
     actEditAdr: TAction;
+    tsAttr: TTabSheet;
+    dbgCustAttr: TDBGridEh;
+    srcAttributes: TDataSource;
+    dsAttributes: TpFIBDataSet;
+    ActListAttr: TActionList;
+    actAttrAdd: TAction;
+    actAttrEdit: TAction;
+    actAttrDel: TAction;
+    pnlAttrBtns: TPanel;
+    btnDel1: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnAdd: TSpeedButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -85,6 +102,9 @@ type
     procedure actCancelExecute(Sender: TObject);
     procedure actEditAdrExecute(Sender: TObject);
     procedure btnCancelLinkClick(Sender: TObject);
+    procedure actAttrEditExecute(Sender: TObject);
+    procedure actAttrDelExecute(Sender: TObject);
+    procedure actAttrAddExecute(Sender: TObject);
   private
     { Private declarations }
     procedure AddToCoverage;
@@ -98,7 +118,8 @@ var
 
 implementation
 
-uses DM, pFIBQuery, StrUtils, AtrStrUtils, AtrCommon;
+uses DM, pFIBQuery, A4onTypeUnit, AttributeEditForma,
+  StrUtils, AtrStrUtils, AtrCommon;
 
 {$R *.dfm}
 
@@ -246,6 +267,57 @@ begin
   Accept := (Source = dbgEnabled);
 end;
 
+procedure TVlansForm.actAttrAddExecute(Sender: TObject);
+var
+  vAttribute: TAttribute;
+begin
+  inherited;
+  if dsVlans.FieldByName('V_ID').IsNull then
+    Exit;
+
+  vAttribute.TYPE_ID := rsAttrID_vlan;
+  vAttribute.OBJECT_ID := dsVlans['V_ID'];
+  vAttribute.ATTR_ID := -1;
+  vAttribute.Name := '';
+  vAttribute.Value := '';
+  vAttribute.Notice := '';
+  if AttributeEdit(vAttribute) then
+    dsAttributes.CloseOpen(true);
+end;
+
+procedure TVlansForm.actAttrDelExecute(Sender: TObject);
+begin
+  inherited;
+  if (dsAttributes.RecordCount = 0) or (dsAttributes.FieldByName('OBJECT_ID').IsNull) then
+    Exit;
+
+  if myQuestion(rsDeleteCaption, Format(rsDeleteRecord,[dsAttributes['TA_NAME']])) then
+  begin
+    dsAttributes.Delete;
+    dsAttributes.CloseOpen(true);
+  end;
+end;
+
+procedure TVlansForm.actAttrEditExecute(Sender: TObject);
+var
+  vAttribute: TAttribute;
+begin
+  inherited;
+  if (dsAttributes.RecordCount = 0) or (dsAttributes.FieldByName('OBJECT_ID').IsNull) then
+    Exit;
+
+  vAttribute.TYPE_ID := rsAttrID_vlan;
+  vAttribute.OBJECT_ID := dsAttributes['OBJECT_ID'];
+  vAttribute.ATTR_ID := dsAttributes['AID'];
+  vAttribute.Name := dsAttributes['TA_NAME'];
+  if not dsAttributes.FieldByName('AVALUE').IsNull then
+     vAttribute.Value := dsAttributes['AVALUE'];
+  if not dsAttributes.FieldByName('NOTICE').IsNull then
+     vAttribute.Notice := dsAttributes['NOTICE'];
+  if AttributeEdit(vAttribute) then
+    dsAttributes.Refresh
+end;
+
 procedure TVlansForm.actCancelExecute(Sender: TObject);
 begin
   if not FinEditMode then
@@ -287,7 +359,7 @@ begin
   if fCanEdit then
   begin
     if actEditAdr.Checked then
-      actEditAdrExecute(sender);
+      actEditAdrExecute(Sender);
     actCancel.Enabled := True;
     pgcInfo.Enabled := False;
     StartEdit();
@@ -314,8 +386,10 @@ begin
   inherited;
   dsEnabled.Active := (pgcInfo.ActivePage = tsCoverage) and pgcInfo.Visible;
   dsExists.Filtered := False;
-  dsExists.Active := (pgcInfo.ActivePage = tsCoverage) and pgcInfo.Visible and pnlAddAdres.Visible and actEditAdr.Checked;
+  dsExists.Active := (pgcInfo.ActivePage = tsCoverage) and pgcInfo.Visible and pnlAddAdres.Visible and
+    actEditAdr.Checked;
   dsUsed.Active := (pgcInfo.ActivePage = tsUsers) and pgcInfo.Visible;
+  dsAttributes.Active := (pgcInfo.ActivePage = tsAttr) and pgcInfo.Visible;
 end;
 
 procedure TVlansForm.srcDataSourceDataChange(Sender: TObject; Field: TField);

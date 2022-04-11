@@ -16,6 +16,12 @@ object apgEqpmntPort: TapgEqpmntPort
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
+  object splInfo: TSplitter
+    Left = 637
+    Top = 0
+    Height = 253
+    Align = alRight
+  end
   object pnlButtons: TPanel
     Left = 0
     Top = 0
@@ -117,7 +123,7 @@ object apgEqpmntPort: TapgEqpmntPort
     end
     object btnEdit: TSpeedButton
       Left = 2
-      Top = 28
+      Top = 29
       Width = 22
       Height = 22
       Action = actEdit
@@ -160,7 +166,7 @@ object apgEqpmntPort: TapgEqpmntPort
     end
     object btnFind: TSpeedButton
       Left = 2
-      Top = 67
+      Top = 90
       Width = 22
       Height = 22
       Action = actFindCustomer
@@ -168,7 +174,7 @@ object apgEqpmntPort: TapgEqpmntPort
     end
     object btnCmd: TSpeedButton
       Left = 2
-      Top = 106
+      Top = 120
       Width = 22
       Height = 22
       Action = actCmd
@@ -217,11 +223,54 @@ object apgEqpmntPort: TapgEqpmntPort
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00E404
         E31E9E27927F9E27927FB31EAA63FB00FB04FF00FF00F501F40B}
     end
+    object btnEditLink: TSpeedButton
+      Left = 2
+      Top = 57
+      Width = 22
+      Height = 22
+      Action = actEditLink
+      Flat = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        20000000000000040000000000000000000000000000000000007D9E4DFF7D9E
+        4DFF7D9E4DFF7D9E4DFFBB49A8FF706C6CFF706C6CFF706C6CFF706C6CFF706C
+        6CFF706C6CFFBB48A9FF7D9E4DFF7D9E4DFF7D9E4DFF7D9E4DFF7D9E4DFF7D9E
+        4DFF7D9E4DFF7D9E4DFFBB49A8FF706C6CFF706C6CFF706C6CFF706C6CFF706C
+        6CFF706C6CFFBB48A9FF7D9E4DFF7D9E4DFF7D9E4DFF7D9E4DFFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FF706C6CFF706C6CFFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFB83CB0FFB83CB0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FF7D9E4DFF7D9E4DFFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FF7D9E4DFF7D9E4DFFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFBB47AAFFBB47A9FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FF786474FF706C
+        6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C
+        6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF786474FF706C6CFFFDFC
+        FDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFC
+        FDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFF6F6A6BFF706C6CFFD4D1
+        D3FFAEABACFFA6A3A4FFD4D1D3FF5A5757FFD4D1D3FFAEABACFFA6A3A4FFD4D1
+        D3FF5A5757FFD4D1D3FFAEABACFFA6A3A4FFD4D1D3FF6F6A6BFF706C6CFFFDFC
+        FDFF8F8C8DFF8A8788FFFCFAFCFFFDFBFDFFFDFBFDFF8F8C8DFF8A8788FFFCFA
+        FCFFFDFBFDFFFDFBFDFF8F8C8DFF8A8788FFFCFAFCFF6F6A6BFF706C6CFFFDFC
+        FDFF908D8EFF979395FFFDFBFDFFFDFBFDFFFDFBFDFF908D8EFF979395FFFDFB
+        FDFFFDFBFDFFFDFBFDFF908D8EFF979395FFFDFCFDFF6F6A6BFF706C6CFFDAD8
+        DAFF9F9B9DFFA7A4A6FFDBD9DBFFFDFBFDFFDAD8DAFF9F9B9DFFA7A4A6FFDBD9
+        DBFFFDFBFDFFDAD8DAFF9F9B9DFFA7A4A6FFDBD9DBFF6F6A6BFF706C6CFFFDFC
+        FDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFC
+        FDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFFFDFCFDFF6F6A6BFF786375FF706C
+        6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C
+        6CFF706C6CFF706C6CFF706C6CFF706C6CFF706C6CFF786375FFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0
+        F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FF}
+    end
   end
   object dbgCustomer: TDBGridEh
     Left = 26
     Top = 0
-    Width = 842
+    Width = 611
     Height = 253
     Align = alClient
     AllowedOperations = []
@@ -232,6 +281,7 @@ object apgEqpmntPort: TapgEqpmntPort
     Flat = True
     FooterRowCount = 1
     FooterParams.Color = clWindow
+    FrozenCols = 1
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     OddRowColor = clWindow
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgCancelOnExit, dgMultiSelect]
@@ -260,7 +310,7 @@ object apgEqpmntPort: TapgEqpmntPort
         Title.TitleButton = True
         Title.SortIndex = 1
         Title.SortMarker = smUpEh
-        Width = 54
+        Width = 45
       end
       item
         CellButtons = <>
@@ -517,6 +567,271 @@ object apgEqpmntPort: TapgEqpmntPort
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
+  object dbVertGrid: TDBVertGridEh
+    Left = 640
+    Top = 0
+    Width = 228
+    Height = 253
+    Align = alRight
+    AllowedOperations = []
+    AllowedSelections = []
+    RowCategories.Active = True
+    RowCategories.CategoryProps = <
+      item
+        Name = 'Eth'
+        DisplayText = #1057#1077#1090#1100
+        DefaultExpanded = True
+      end
+      item
+        Name = 'con'
+        DisplayText = #1055#1086#1076#1082#1083#1102#1095#1077#1085
+        DefaultExpanded = True
+      end
+      item
+        Name = 'port'
+        DisplayText = #1055#1086#1088#1090' '#1080#1085#1092#1086
+      end
+      item
+        Name = 'con_info'
+        DisplayText = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
+      end
+      item
+        Name = 'lines'
+        DisplayText = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080
+        DefaultExpanded = True
+      end
+      item
+        Name = 'address'
+        DisplayText = #1040#1076#1088#1077#1089
+      end
+      item
+      end>
+    PrintService.ColorSchema = pcsFullColorEh
+    DataSource = srcData
+    DrawGraphicData = True
+    DrawMemoText = True
+    Flat = True
+    TabOrder = 2
+    LabelColWidth = 82
+    OnRowCategoriesNodeExpanded = dbVertGridRowCategoriesNodeExpanded
+    OnRowCategoriesNodeCollapsed = dbVertGridRowCategoriesNodeCollapsed
+    Rows = <
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PORT'
+        RowLabel.Caption = #1055#1086#1088#1090
+        WordWrap = True
+        CategoryName = 'Eth'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'IP'
+        WordWrap = True
+        CategoryName = 'Eth'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'MAC'
+        WordWrap = True
+        CategoryName = 'Eth'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'V_NAME'
+        RowLabel.Caption = 'VLAN'
+        WordWrap = True
+        CategoryName = 'Eth'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PS_NAME'
+        RowLabel.Caption = #1057#1090#1072#1090#1091#1089
+        WordWrap = True
+        CategoryName = 'port'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PT_NAME'
+        RowLabel.Caption = #1058#1080#1087' '#1087#1086#1088#1090#1072
+        WordWrap = True
+        CategoryName = 'port'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SPEED'
+        RowLabel.Caption = #1057#1082#1086#1088#1086#1089#1090#1100' '#1052#1041'/'#1089
+        WordWrap = True
+        CategoryName = 'port'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PORT_NOTICE'
+        RowLabel.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1087#1086#1088#1090#1072
+        WordWrap = True
+        CategoryName = 'Eth'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ACCOUNT_NO'
+        RowLabel.Caption = #1051#1080#1094' '#1089#1095#1077#1090
+        WordWrap = True
+        CategoryName = 'con'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SURNAME'
+        RowLabel.Caption = #1060#1072#1084#1080#1083#1080#1103'/'#1054#1073#1086#1088'-'#1080#1077
+        WordWrap = True
+        CategoryName = 'con'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CUST_CODE'
+        RowLabel.Caption = #1050#1086#1076
+        WordWrap = True
+        CategoryName = 'con_info'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'INITIALS'
+        RowLabel.Caption = #1048'.'#1054'.'
+        WordWrap = True
+        CategoryName = 'con_info'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PHONE_NO'
+        RowLabel.Caption = #1058#1077#1083#1077#1092#1086#1085
+        WordWrap = True
+        CategoryName = 'con_info'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'STREET_SHORT'
+        RowLabel.Caption = #1087#1088'.'
+        WordWrap = True
+        CategoryName = 'address'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'STREET_NAME'
+        RowLabel.Caption = #1059#1083#1080#1094#1072
+        WordWrap = True
+        CategoryName = 'address'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'HOUSE_NO'
+        RowLabel.Caption = #1044#1086#1084
+        WordWrap = True
+        CategoryName = 'address'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'FLAT_NO'
+        RowLabel.Caption = #1050#1074
+        WordWrap = True
+        CategoryName = 'address'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PORCH_N'
+        RowLabel.Caption = #1055'-'#1076
+        WordWrap = True
+        CategoryName = 'address'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'FLOOR_N'
+        RowLabel.Caption = #1069'-'#1078
+        WordWrap = True
+        CategoryName = 'address'
+      end
+      item
+        DisplayFormat = '#,##0.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'DEBT_SUM'
+        RowLabel.Caption = #1057#1072#1083#1100#1076#1086' '#1088#1072#1089#1095#1077#1090#1086#1074
+        WordWrap = True
+        CategoryName = 'con_info'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CUST_STATE_DESCR'
+        RowLabel.Caption = #1057#1090#1072#1090#1091#1089
+        WordWrap = True
+        CategoryName = 'con_info'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'NOTICE'
+        RowLabel.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        WordWrap = True
+        CategoryName = 'con_info'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'W_NAME'
+        RowLabel.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+        WordWrap = True
+        CategoryName = 'lines'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WT_NAME'
+        RowLabel.Caption = #1058#1080#1087
+        WordWrap = True
+        CategoryName = 'lines'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WS_NODE'
+        RowLabel.Caption = #1059#1079#1077#1083' '#1080#1079
+        WordWrap = True
+        CategoryName = 'lines'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WE_NODE'
+        RowLabel.Caption = #1059#1079#1077#1083' '#1074
+        WordWrap = True
+        CategoryName = 'lines'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WLABEL'
+        RowLabel.Caption = #1084#1077#1090#1082#1072
+        WordWrap = True
+        CategoryName = 'lines'
+      end>
+  end
   object ActListFrame: TActionList
     Images = A4MainForm.ICONS_ACTIVE
     Left = 274
@@ -591,6 +906,11 @@ object apgEqpmntPort: TapgEqpmntPort
       Category = 'Open'
       Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
       OnExecute = actEqpmntExecute
+    end
+    object actEditLink: TAction
+      Hint = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100' '#1082' '#1087#1086#1088#1090#1091' '#1086#1073#1098#1077#1082#1090
+      ImageIndex = 100
+      OnExecute = actEditLinkExecute
     end
   end
   object trRead: TpFIBTransaction
@@ -681,7 +1001,7 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , p.P_State'
       '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
       '  , w.Name W_NAME'
-      '  , wt.O_Type WT_NAME'
+      '  , wt.O_Name WT_NAME'
       '  , sn.Name WS_NODE'
       '  , en.Name WE_NODE'
       '  , w.Wid'
@@ -851,7 +1171,7 @@ object apgEqpmntPort: TapgEqpmntPort
       '  , p.P_State'
       '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
       '  , w.Name W_NAME'
-      '  , wt.O_Type WT_NAME'
+      '  , wt.O_Name WT_NAME'
       '  , sn.Name WS_NODE'
       '  , en.Name WE_NODE'
       '  , w.Wid'

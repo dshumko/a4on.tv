@@ -104,6 +104,7 @@ object PayDocsForm: TPayDocsForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1050#1086#1083'-'#1074#1086' '#1087#1083#1072#1090#1077#1078#1077#1081
+          Title.TitleButton = True
           Width = 70
         end
         item
@@ -249,6 +250,7 @@ object PayDocsForm: TPayDocsForm
           FieldName = 'ADDED_BY'
           Footers = <>
           Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1090#1086
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -257,6 +259,7 @@ object PayDocsForm: TPayDocsForm
           FieldName = 'ADDED_ON'
           Footers = <>
           Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1086#1075#1076#1072
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

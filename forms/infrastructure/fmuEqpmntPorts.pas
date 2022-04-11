@@ -11,7 +11,8 @@ uses
   FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase,
   pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, GridsEh, EhLibVCL,
-  DM, PrjConst, AtrPages, A4onTypeUnit;
+  DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh,
+  PropStorageEh;
 
 type
   TapgEqpmntPort = class(TA4onPage)
@@ -48,6 +49,10 @@ type
     miNodeFrom: TMenuItem;
     miNodeTo: TMenuItem;
     miEqpmnt: TMenuItem;
+    dbVertGrid: TDBVertGridEh;
+    splInfo: TSplitter;
+    btnEditLink: TSpeedButton;
+    actEditLink: TAction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -72,6 +77,11 @@ type
     procedure actNodeToExecute(Sender: TObject);
     procedure actNodeFromExecute(Sender: TObject);
     procedure actEqpmntExecute(Sender: TObject);
+    procedure dbVertGridRowCategoriesNodeExpanded(Grid: TCustomDBVertGridEh; Node: TDBVertGridCategoryTreeNodeEh;
+      CategoryProp: TDBVertGridCategoryPropEh);
+    procedure dbVertGridRowCategoriesNodeCollapsed(Grid: TCustomDBVertGridEh; Node: TDBVertGridCategoryTreeNodeEh;
+      CategoryProp: TDBVertGridCategoryPropEh);
+    procedure actEditLinkExecute(Sender: TObject);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
@@ -95,7 +105,7 @@ implementation
 
 uses
   System.StrUtils, MAIN, AtrCommon, AtrStrUtils, CF, EQPort,
-  atrCmdUtils, HtmlForma, TelnetForma,
+  atrCmdUtils, HtmlForma, TelnetForma, PortLinkForma,
   EditApplianceForma, CustomerLanForma;
 
 class function TapgEqpmntPort.GetPageName: string;
@@ -110,6 +120,10 @@ var
 begin
   Caption := GetPageName;
 
+  FRightFull := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
+  // полный доступ
+  FRightEdit := (dmMain.AllowedAction(rght_Dictionary_Equipment_Ports)); // полный доступ
+
   vFINE := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
   if vFINE then
     for i := 0 to dbgCustomer.Columns.Count - 1 do
@@ -122,11 +136,16 @@ begin
     end;
 
   dsData.DataSource := FDataSource;
+  actAdd.Visible := FRightFull or FRightEdit;
+  actEdit.Visible := FRightFull or FRightEdit;
+  actEditLink.Visible := FRightFull or FRightEdit;
+  actDel.Visible := FRightFull or FRightEdit;
 end;
 
 procedure TapgEqpmntPort.EnableControls;
 begin
   actEdit.Enabled := dsData.RecordCount > 0;
+  actEditLink.Enabled := dsData.RecordCount > 0;
   actDel.Enabled := dsData.RecordCount > 0;
 end;
 
@@ -283,6 +302,15 @@ begin
     dsData.Refresh;
 end;
 
+procedure TapgEqpmntPort.actEditLinkExecute(Sender: TObject);
+begin
+  if ((dsData.RecordCount = 0) or (dsData.FieldByName('PORT').IsNull)) then
+    exit;
+
+  if LinkPort(dsData['Eid'], dsData['PORT']) then
+    dsData.Refresh;
+end;
+
 procedure TapgEqpmntPort.actEqpmntExecute(Sender: TObject);
 begin
   if ((dsData.FieldByName('Con').IsNull) or (dsData['Con'] <> 0) or (dsData.FieldByName('SURNAME').IsNull)) then
@@ -419,7 +447,7 @@ begin
   end;
   if not(dsData.FieldByName('P_State').IsNull) then
   begin
-    if dsData['P_State'] = 0 then
+    if (dsData['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'PS_NAME')) then
       AFont.Style := [fsStrikeOut];
   end;
 end;
@@ -465,6 +493,18 @@ begin
     end;
   end;
   Screen.Cursor := cr;
+end;
+
+procedure TapgEqpmntPort.dbVertGridRowCategoriesNodeCollapsed(Grid: TCustomDBVertGridEh;
+  Node: TDBVertGridCategoryTreeNodeEh; CategoryProp: TDBVertGridCategoryPropEh);
+begin
+  // Node.CategoryDisplayText := CategoryProp.DisplayText;
+end;
+
+procedure TapgEqpmntPort.dbVertGridRowCategoriesNodeExpanded(Grid: TCustomDBVertGridEh;
+  Node: TDBVertGridCategoryTreeNodeEh; CategoryProp: TDBVertGridCategoryPropEh);
+begin
+  // Node.CategoryDisplayText := CategoryProp.DisplayText;
 end;
 
 function TapgEqpmntPort.GetCustomerInfo: TCustomerInfo;
@@ -778,9 +818,11 @@ begin
     pnlButtons.Align := alLeft;
     pnlButtons.Width := 26;
     btnEdit.Left := 2;
-    btnEdit.Top := 30;
+    btnEdit.Top := 26;
+    btnEditLink.Left := 2;
+    btnEditLink.Top := 50;
     btnFind.Left := 2;
-    btnFind.Top := 71;
+    btnFind.Top := 79;
     btnCmd.Left := 2;
     btnCmd.Top := 109;
     btnDel.Left := 2;
@@ -792,15 +834,19 @@ begin
     pnlButtons.Align := alTop;
     pnlButtons.Height := 26;
     btnEdit.Top := 2;
-    btnEdit.Left := 30;
+    btnEdit.Left := 26;
+    btnEditLink.Top := 2;
+    btnEditLink.Left := 50;
     btnFind.Top := 2;
-    btnFind.Left := 71;
+    btnFind.Left := 79;
     btnCmd.Top := 2;
     btnCmd.Left := 109;
     btnDel.Top := 2;
     btnDel.Left := pnlButtons.Width - btnDel.Width - 4;
     btnDel.Anchors := [akTop, akRight];
   end;
+  dbVertGrid.Visible := not FIsVertical;
+  splInfo.Visible := not FIsVertical;
 end;
 
 end.

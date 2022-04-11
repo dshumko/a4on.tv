@@ -43,6 +43,8 @@ type
     procedure btnSaveLinkClick(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure dbGridDblClick(Sender: TObject);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
     procedure CreateOIRT;
@@ -217,5 +219,19 @@ begin
   end;
 end;
 
+
+procedure TFreqPlanForm.dbGridGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+var
+  s : string;
+begin
+  inherited;
+  if (not dsFreqPlan.FieldByName('Notice').IsNull) then begin
+    s := AnsiUpperCase(dsFreqPlan['Notice']);
+    if s.Contains('ПОМЕХ') then
+      Background := TColor($00BEAFFA);
+  end;
+end;
 
 end.

@@ -42,7 +42,7 @@ procedure TOrganForm.FormClose(Sender: TObject;
 begin
   inherited;
   dsOrgan.Close;
-  dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'CustGrid', true);
+  dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'CustGrid', false);
   OrganForm:=nil;
 end;
 

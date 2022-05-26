@@ -416,7 +416,7 @@ object AboutForm: TAboutForm
   end
   object WWW: TStaticText
     Left = 5
-    Top = 47
+    Top = 70
     Width = 54
     Height = 19
     Cursor = crHandPoint
@@ -448,6 +448,24 @@ object AboutForm: TAboutForm
     ParentColor = False
     ParentFont = False
     TabOrder = 0
+  end
+  object txttelega: TStaticText
+    Left = 5
+    Top = 46
+    Width = 77
+    Height = 19
+    Cursor = crHandPoint
+    Caption = 't.me/a4on_tv'
+    Color = 1531899
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 3
+    OnClick = txttelegaClick
   end
   object ActionList1: TActionList
     Left = 144

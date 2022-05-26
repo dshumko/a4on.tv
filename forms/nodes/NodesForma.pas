@@ -162,7 +162,6 @@ type
     miTreeBreak: TMenuItem;
     miTreeExpand: TMenuItem;
     miTreeCollapse: TMenuItem;
-    drv1: TpFIBDataDriverEh;
     actLinkNodes: TAction;
     miN2: TMenuItem;
     miLinkNodes: TMenuItem;
@@ -222,8 +221,12 @@ type
       Action: TListNotification);
     procedure actLinkNodesExecute(Sender: TObject);
     procedure dsFilterNewRecord(DataSet: TDataSet);
+    procedure PropStorageWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
+    procedure PropStorageReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
+      var Processed: Boolean);
   private
     FLastPage: TA4onPage;
+    FSavedPageIndex: Integer;
     FAutoGen: Boolean; // автогенерация название
     FPageList: TA4onPages;
     FullAccess: Boolean;
@@ -464,6 +467,7 @@ end;
 
 procedure TNodesForm.FormCreate(Sender: TObject);
 begin
+  FSavedPageIndex := -1;
   with fsGlobalUnit do
   begin
     AddedBy := Self;
@@ -554,8 +558,10 @@ begin
   DoCreatePages;
   if FPageList.Count > 0 then
   begin
-    lstForms.ItemIndex := 0;
-    ShowPage(IndexToPage(0));
+    if FSavedPageIndex < 0 then
+      FSavedPageIndex := 0;
+    lstForms.ItemIndex := FSavedPageIndex;
+    ShowPage(IndexToPage(FSavedPageIndex));
   end;
 
   UpdateCommands;
@@ -1036,6 +1042,7 @@ begin
     end;
   end;
   UpdateInfoPanel;
+  dbgNodes.SetFocus;
 end;
 
 procedure TNodesForm.actSetFilterNewExecute(Sender: TObject);
@@ -1689,6 +1696,25 @@ begin
   GenNodeName();
 end;
 
+procedure TNodesForm.PropStorageReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
+  var Processed: Boolean);
+var
+  h: Integer;
+begin
+  if PropName = 'LastPage' then
+  begin
+    FSavedPageIndex := Reader.ReadInteger();
+    Processed := True;
+  end;
+end;
+
+procedure TNodesForm.PropStorageWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
+begin
+  Writer.WritePropName('LastPage');
+  if lstForms.Items.Count > 0 then
+    Writer.WriteInteger(lstForms.ItemIndex)
+  else
+    Writer.WriteInteger(-1);
+end;
+
 end.
-
-

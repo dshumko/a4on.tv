@@ -171,7 +171,6 @@ procedure TMatOutDocForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 begin
-  // dbgPayDocPayment.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment', true);
   if dsDoc.State in [dsEdit, dsInsert] then
     dsDoc.Cancel;
   if dsMaterials.Active then
@@ -186,7 +185,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, true);
+        Self.Name + '.' + Components[i].Name, false);
   Action := caFree;
 end;
 

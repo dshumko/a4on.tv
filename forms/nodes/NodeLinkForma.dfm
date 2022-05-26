@@ -280,8 +280,8 @@ object NodeLinkForm: TNodeLinkForm
       Style = csDropDownEh
       TabOrder = 1
       Visible = True
-      OnChange = lcbLinkTypeChange
       OnDropDownBoxGetCellParams = lcbLinkTypeDropDownBoxGetCellParams
+      OnExit = lcbLinkTypeExit
     end
     object lcbNode: TDBLookupComboboxEh
       Left = 76
@@ -343,6 +343,7 @@ object NodeLinkForm: TNodeLinkForm
       Visible = True
       OnChange = lcbNodeChange
       OnDropDownBoxGetCellParams = lcbNodeDropDownBoxGetCellParams
+      OnExit = lcbNodeExit
     end
     object ednSTOCK1: TDBNumberEditEh
       Left = 405
@@ -436,7 +437,6 @@ object NodeLinkForm: TNodeLinkForm
       Style = csDropDownEh
       TabOrder = 7
       Visible = True
-      OnChange = lcbLinkTypeChange
     end
   end
   object srcLink: TDataSource
@@ -500,7 +500,7 @@ object NodeLinkForm: TNodeLinkForm
     UpdateTransaction = trRead
     AutoCommit = True
     Left = 184
-    Top = 214
+    Top = 206
   end
   object srcType: TDataSource
     AutoEdit = False
@@ -524,14 +524,12 @@ object NodeLinkForm: TNodeLinkForm
       '  , o.O_DIMENSION as COLOR'
       '  , S.Street_Name||'#39' '#39'||s.street_short Street_Name '
       '  , H.House_No'
-      
-        '  , (select count(*) from wire w where w.Point_S = n.Node_Id) WI' +
-        'RE_CNT'
       '  from NODES n'
       '       inner join HOUSE H on (n.HOUSE_ID = H.HOUSE_ID)'
       '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
-      '       inner join objects o on (o.O_Id = n.Type_Id and'
-      '             o.O_Type = 38)'
+      
+        '       inner join objects o on (o.O_Id = n.Type_Id and o.O_Type ' +
+        '= 38)'
       '  where n.NODE_ID <> :NODE_ID'
       'order by NODE_NAME')
     AutoUpdateOptions.UpdateTableName = 'NODES'

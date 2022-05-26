@@ -73,6 +73,7 @@ type
     procedure StartEdit(const New: Boolean = False);
     procedure StopEdit(const Cancel: Boolean);
     procedure ResizeButtonImagesforHighDPI(const container: TWinControl);
+    procedure CloseDatasets;
   public
     function GetGridSortOrder(Grid: TDBGridEh): String;
   end;
@@ -179,8 +180,25 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, True);
+        Self.Name + '.' + Components[i].Name, false);
+
+  CloseDatasets;
+
   Action := caFree;
+end;
+
+procedure TGridForm.CloseDatasets;
+var
+  i: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDataSet then
+    begin
+      if (Components[i] as TDataSet).Active then
+        (Components[i] as TDataSet).Close;
+    end;
+  end;
 end;
 
 procedure TGridForm.FormCreate(Sender: TObject);
@@ -254,7 +272,7 @@ begin
     begin
       (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
+      if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active) then
         (Components[i] as TDBGridEh).DefaultApplySorting;
       if Font_size <> 0 then
       begin

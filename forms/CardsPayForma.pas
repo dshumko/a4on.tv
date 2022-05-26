@@ -91,7 +91,7 @@ procedure TfmCardsPay.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   dsCardPay.Close;
   fmCardsPay := nil;
-  dbgrdhCardPay.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'CardPay', true);
+  dbgrdhCardPay.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'CardPay', false);
   Action := caFree;
 end;
 

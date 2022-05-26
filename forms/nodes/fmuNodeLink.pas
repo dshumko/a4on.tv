@@ -45,6 +45,11 @@ type
     btnLink: TSpeedButton;
     actWireLink: TAction;
     btnDel: TSpeedButton;
+    pmGrid: TPopupMenu;
+    miWireLink: TMenuItem;
+    miAdd: TMenuItem;
+    miN1: TMenuItem;
+    miEdit: TMenuItem;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);

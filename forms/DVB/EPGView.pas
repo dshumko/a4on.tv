@@ -356,7 +356,7 @@ begin
     Exit;
   curTime := Now();
   if dsEPG.FieldByName('DATE_STOP').AsDateTime < curTime then
-    AFont.Color := clInactiveCaptionText
+    AFont.Color := clGrayText // clGray clInactiveCaptionText
   else
   begin
     if (dsEPG.FieldByName('DATE_START').AsDateTime < curTime) and (dsEPG.FieldByName('DATE_STOP').AsDateTime > curTime)

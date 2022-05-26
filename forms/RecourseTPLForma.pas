@@ -24,8 +24,6 @@ type
     btn8: TToolButton;
     btn10: TToolButton;
     btnCancelTPL: TToolButton;
-    btn12: TToolButton;
-    btn4: TToolButton;
     dsType: TpFIBDataSet;
     dsTPL: TpFIBDataSet;
     srcTPL: TDataSource;
@@ -48,7 +46,6 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure srcTPLStateChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure actTPLFilterExecute(Sender: TObject);
     procedure dsTPLBeforePost(DataSet: TDataSet);
     procedure btnOkTPLClick(Sender: TObject);
     procedure btnCancelTPLClick(Sender: TObject);
@@ -57,6 +54,7 @@ type
     procedure actCONTEDITExecute(Sender: TObject);
     procedure actCONTDELExecute(Sender: TObject);
     procedure srcTPLDataChange(Sender: TObject; Field: TField);
+    procedure actQuickFilterExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -123,13 +121,16 @@ begin
     StartEdit(True);
 end;
 
-procedure TRecoursesTPLForm.actTPLFilterExecute(Sender: TObject);
+procedure TRecoursesTPLForm.actQuickFilterExecute(Sender: TObject);
 begin
   inherited;
   actTPLFilter.Checked := not actTPLFilter.Checked;
   dbgrdTPL.STFilter.Visible := actTPLFilter.Checked;
-  if not actTPLFilter.Checked then
+  dbGrid.STFilter.Visible := actTPLFilter.Checked;
+  if not actTPLFilter.Checked then begin
+    dbGrid.DataSource.DataSet.Filtered := False;
     dbgrdTPL.DataSource.DataSet.Filtered := False;
+  end;
 end;
 
 procedure TRecoursesTPLForm.btnCancelTPLClick(Sender: TObject);

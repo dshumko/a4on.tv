@@ -128,12 +128,16 @@ function GetUserCacheFolder(): string;
 procedure PutStringIntoClipBoard(const Str: WideString);
 function GetStringFromClipboard: WideString;
 
+procedure Jpeg2Png(aPicStream: TMemoryStream);
+procedure Png2Jpeg(aPicStream: TMemoryStream);
+
 function myQuestion(const Caption, Text: String): Boolean;
 
 implementation
 
 uses
   WinApi.Messages, System.DateUtils, System.IniFiles, VCL.ClipBrd, WinApi.ShlObj, WinApi.ActiveX, System.Zlib,
+  VCL.Imaging.jpeg, VCL.Imaging.pngimage,
   System.ZlibConst, System.IOUtils, SHFolder, JsonDataObjects, PrjConst;
 
 function GetTempDir: String;
@@ -1443,6 +1447,60 @@ function myQuestion(const Caption, Text: String): Boolean;
 begin
   Result := Application.MessageBox(PChar(Text), PChar(Caption), MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES;
 end;
+
+procedure Jpeg2Png(aPicStream: TMemoryStream);
+var
+  JPG: TJpegImage;
+  PNG: TPngImage;
+  BMP: TBitmap;
+begin
+  JPG := TJpegImage.Create;
+  PNG := TPngImage.Create;
+  BMP := TBitmap.Create;
+  try
+    aPicStream.Position := 0;
+    JPG.LoadFromStream(aPicStream);
+    BMP.PixelFormat := pf24Bit;
+    BMP.Width := JPG.Width;
+    BMP.Height := JPG.Height;
+    BMP.Canvas.Draw(0, 0, JPG);
+    PNG.Assign(BMP);
+    aPicStream.Clear;
+    aPicStream.Position := 0;
+    PNG.SaveToStream(aPicStream);
+  finally
+    FreeAndNil(JPG);
+    FreeAndNil(PNG);
+    FreeAndNil(BMP);
+  end;
+end; (* все работает *)
+
+procedure Png2Jpeg(aPicStream: TMemoryStream);
+var
+  JPG: TJpegImage;
+  PNG: TPngImage;
+  BMP: TBitmap;
+begin
+  JPG := TJpegImage.Create;
+  PNG := TPngImage.Create;
+  BMP := TBitmap.Create;
+  try
+    aPicStream.Position := 0;
+    PNG.LoadFromStream(aPicStream);
+    BMP.PixelFormat := pf24Bit;
+    BMP.Width := PNG.Width;
+    BMP.Height := PNG.Height;
+    BMP.Canvas.Draw(0, 0, PNG);
+    JPG.Assign(BMP);
+    aPicStream.Clear;
+    aPicStream.Position := 0;
+    JPG.SaveToStream(aPicStream);
+  finally
+    FreeAndNil(JPG);
+    FreeAndNil(PNG);
+    FreeAndNil(BMP);
+  end;
+end; (* все работает *)
 
 initialization
 

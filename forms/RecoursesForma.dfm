@@ -3,12 +3,14 @@ inherited RecoursesForm: TRecoursesForm
   ClientHeight = 306
   ClientWidth = 739
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  inherited splPG: TSplitter
+    Width = 739
+  end
   inherited dbGrid: TDBGridEh
     Width = 739
-    Height = 225
+    Height = 222
     AllowedOperations = [alopInsertEh, alopUpdateEh, alopAppendEh]
     FooterRowCount = 1
     STFilter.InstantApply = False
@@ -65,6 +67,7 @@ inherited RecoursesForm: TRecoursesForm
         Title.Caption = #1060#1072#1084#1080#1083#1080#1103
         Title.TitleButton = True
         Width = 113
+        OnGetCellParams = dbGridColumns4GetCellParams
       end
       item
         CellButtons = <>

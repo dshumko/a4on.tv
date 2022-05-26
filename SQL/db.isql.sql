@@ -1937,6 +1937,7 @@ CREATE TABLE SERVICES (SERVICE_ID UID NOT NULL,
         TAG D_INTEGER,
         TAG_STR D_VARCHAR255,
         OPENLY D_IBOOLEAN DEFAULT 0,
+        UNBL_METH D_INTEGER,
 CONSTRAINT PK_SERVICES PRIMARY KEY (SERVICE_ID));
 
 /* Table: SERVICES_ATTRIBUTES, Owner: SYSDBA */
@@ -2306,6 +2307,17 @@ CREATE TABLE WIRE (WID UID,
         M_ID D_UID_NULL,
         LABELS D_VARCHAR1000,
 CONSTRAINT PK_WIRE_ID PRIMARY KEY (WID) USING INDEX PK_WIRE);
+
+/* Table: WIRE_POINT, Owner: SYSDBA */
+CREATE TABLE WIRE_POINT (WID UID,
+        NODE_ID UID,
+        METERS D_N15_2,
+        NOTICE D_NOTICE,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+CONSTRAINT PK_WIRE_PWN PRIMARY KEY (WID, NODE_ID) USING INDEX PK_WIRE_POINT);
 
 /* Table: WORKAREA, Owner: SYSDBA */
 CREATE TABLE WORKAREA (WA_ID UID NOT NULL,
@@ -3909,9 +3921,10 @@ POSITIVE_ONLY D_IBOOLEAN,
 PRIORITY D_INTEGER,
 ONLY_ONE D_IBOOLEAN,
 NOTE D_DESCRIPTION = '',
-TAG D_INTEGER = '',
+TAG D_INTEGER = null,
 TAG_STR D_VARCHAR255 = '',
-OPENLY D_IBOOLEAN = 0)
+OPENLY D_IBOOLEAN = 0,
+UNBL_METH D_INTEGER = 0)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE SET_DISTRIB_REPORT (DISTRIB_ID D_INTEGER,
@@ -4176,6 +4189,7 @@ CREATE INDEX TV_LAN_IDX_IP_BIN ON TV_LAN (IP_BIN);
 CREATE INDEX TV_LAN_VLAN ON TV_LAN (VLAN_ID);
 CREATE INDEX WIRE_IDX_END ON WIRE (POINT_E);
 CREATE INDEX WIRE_IDX_START ON WIRE (POINT_S);
+CREATE INDEX WIRE_POINT_IDX_NODE ON WIRE_POINT (NODE_ID);
 CREATE INDEX WORKER_IDX1 ON WORKER (IBNAME);
 CREATE INDEX WORKER_IDX_TEAM ON WORKER (TEAM);
 CREATE INDEX WORKS_IDX1 ON WORKS (RQ_TYPE);
@@ -8779,6 +8793,7 @@ ALTER PROCEDURE CHECK_FOR_UNBLOCK (CUSTOMER_ID UID)
 AS 
 declare variable SERVICE_ID    type of UID;
 declare variable VTARIF        D_N15_2;
+declare variable MTARIF        D_N15_2;
 declare variable DEBT          D_N15_2;
 declare variable FEE_ROUND     D_INTEGER;
 declare variable CALC_TYPE     D_INTEGER;
@@ -8789,9 +8804,11 @@ declare variable VDISCOUNT     D_N15_4;
 declare variable vResult       D_INTEGER;
 declare variable POSITIVE_ONLY D_IBOOLEAN;
 declare variable SrvType       D_Integer;
+declare variable UnblMeth      D_Integer;
 begin
   select -- баланс и юрик
-      (C.DEBT_SUM - coalesce(C.PREPAY, 0)), coalesce(C.JURIDICAL, 0)
+  (C.DEBT_SUM - coalesce(C.PREPAY, 0))
+    , coalesce(C.JURIDICAL, 0)
     from CUSTOMER C
     where C.CUSTOMER_ID = :CUSTOMER_ID
   into :DEBT, :JUR;
@@ -8804,7 +8821,11 @@ begin
   into :FEE_ROUND;
 
   for select
-          SERVICE_ID, S.CALC_TYPE, coalesce(POSITIVE_ONLY, 0), s.BUSINESS_TYPE
+          SERVICE_ID
+        , S.CALC_TYPE
+        , coalesce(POSITIVE_ONLY, 0)
+        , s.BUSINESS_TYPE
+        , coalesce(s.Unbl_Meth, 0)
         from SERVICES S
              inner join SUBSCR_SERV SS on (SS.SERV_ID = S.SERVICE_ID)
         where S.SRV_TYPE_ID = 0
@@ -8812,7 +8833,7 @@ begin
               and SS.STATE_SRV < -1
               and S.AUTOOFF = 1
               and SS.CUSTOMER_ID = :CUSTOMER_ID
-      into :SERVICE_ID, :CALC_TYPE, :POSITIVE_ONLY, :SrvType
+      into :SERVICE_ID, :CALC_TYPE, :POSITIVE_ONLY, :SrvType, :UnblMeth
   do begin
     VTARIF = null;
     VDISCOUNT = null;
@@ -8832,7 +8853,9 @@ begin
         where D.CUSTOMER_ID = :CUSTOMER_ID
               and current_date between D.DATE_FROM and D.DATE_TO
               and ((D.SERV_ID = :SERVICE_ID)
-               or ((D.SERV_ID = -1) and ((D.Srv_Type = -1) or (d.Srv_Type = :SrvType))))
+                or ((D.SERV_ID = -1)
+              and ((D.Srv_Type = -1)
+                or (d.Srv_Type = :SrvType))))
         order by D.SERV_ID desc
       into :VDISCOUNT;
       if (VDISCOUNT is null) then
@@ -8845,34 +8868,41 @@ begin
       into :VTARIF;
       VTARIF = VTARIF * VDISCOUNT;
     end
+    MTARIF = VTARIF;
 
+    -- 2 - ежедневное начисление
     if (CALC_TYPE = 2) then begin
       V_MONTH = current_date - extract(day from current_date) + 1;
       V_DAYS = extract(day from (dateadd(-1 day to(dateadd(1 month to V_MONTH)))));
       VTARIF = round(VTARIF / V_DAYS, FEE_ROUND);
-      if ((DEBT >= VTARIF)
-          or
-          ((DEBT >= 0) and (POSITIVE_ONLY = 0))) then begin
-        execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
-            returning_values :vResult;
-        --execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :SERVICE_ID, current_date, :VTARIF, :VTARIF_JUR, 1, :FEE_ROUND, 0);
-      end
     end
-    else begin /* если баланс больше тарифа, включим */
-      if ((DEBT >= VTARIF)
-          or
-          ((DEBT >= 0) and (POSITIVE_ONLY = 0))) then begin
-        execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
-            returning_values :vResult;
-      end
-    end
-    --    if (CALC_TYPE = 0) then begin
-    --      V_MONTH = CURRENT_DATE - extract(day from CURRENT_DATE) + 1;
-    --      execute procedure CALC_DAY_TARIF(:V_MONTH, :CALC_TYPE);
-    --      execute procedure CALC_MONTH_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :V_MONTH, :FEE_ROUND, :CALC_TYPE, 1);
-    --    end
-  end
 
+    if ((DEBT >= VTARIF)
+        or
+        ((DEBT >= 0) and (POSITIVE_ONLY = 0))) then begin
+      -- при оплате на месяц
+      if (UnblMeth = 2) then begin
+        if (DEBT >= MTARIF) then
+          execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
+              returning_values :vResult;
+      end
+      else begin
+        -- при оплате на день
+        if (UnblMeth = 1) then begin
+          V_MONTH = current_date - extract(day from current_date) + 1;
+          V_DAYS = extract(day from (dateadd(-1 day to(dateadd(1 month to V_MONTH)))));
+          MTARIF = round(MTARIF / V_DAYS, FEE_ROUND);
+          if (DEBT >= MTARIF) then
+            execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
+                returning_values :vResult;
+        end
+        else
+          -- в других случаях
+          execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
+              returning_values :vResult;
+      end
+    end
+  end
 end ^
 
 ALTER PROCEDURE CHECK_IN_BLOCK (CUSTOMER_ID UID,
@@ -14590,7 +14620,50 @@ begin
             STATE_SRV = :P_ACTSERVICE
         where SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
       end
+      else begin
+        /* проверим, может отключена позднее чем текущее отключение. если да. то сменим на текущее */
+        select first 1
+            max(SH.Date_To)
+          from SUBSCR_HIST SH
+          where SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
+        into :FROMD;
+        if (not FROMD is null) then begin
 
+          if (FROMD > P_DATE) then begin
+            -- найдему услугу отключения и удалим ее.
+            H_ID = null;
+            select
+                sh.Subscr_Hist_Id
+              , sh.Disact_Serv_Id
+              from SUBSCR_HIST SH
+              where SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
+                    and SH.Date_To = :FROMD
+            into :H_ID, :D_Act;
+            if (not H_ID is null) then begin
+              delete from Single_Serv ss
+                  where ss.Customer_Id = :P_CUSTOMER_ID
+                        and ss.Service_Id = :D_ACT
+                        and ss.History_Id = :H_ID
+                        and ss.Serv_Date = dateadd(day, 1, :FROMD);
+            end
+            D_Act = null;
+
+            update SUBSCR_HIST SH
+            set SH.DATE_TO = (:P_DATE - 1),
+                SH.DISACT_SERV_ID = :P_ACTSERVICE
+            where SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
+                  and SH.Date_To = :FROMD;
+
+            update SUBSCR_SERV
+            set STATE_SGN = 0,
+                NOTICE = :P_NOTICE,
+                STATE_DATE = :P_DATE,
+                STATE_SRV = :P_ACTSERVICE
+            where SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
+
+          end
+        end
+      end
     end
 
     H_ID = P_SUBSCR_SERV_ID;
@@ -14621,10 +14694,12 @@ begin
   end
 
   if (Result >= 0) then begin
-    if (ADD_SGL = 1) then
-      execute procedure ADD_SINGLE_SERVICE(:P_CUSTOMER_ID, :P_ACTSERVICE, :P_UNITS, :P_DATE, :P_NOTICE, :H_ID, 0);
-
-    execute procedure FULL_RECALC_CUSTOMER(:P_CUSTOMER_ID, :P_DATE);
+    if (ADD_SGL = 1) then begin
+      execute procedure ADD_SINGLE_SERVICE(:P_CUSTOMER_ID, :P_ACTSERVICE, :P_UNITS, :P_DATE, :P_NOTICE, :H_ID, :RECALC);
+    end
+    else if (RECALC = 1) then begin
+      execute procedure FULL_RECALC_CUSTOMER(:P_CUSTOMER_ID, :P_DATE);
+    end
 
     if (BUSINESS_TYPE >= 2) then begin
       if (P_OFF = 1) then
@@ -16048,9 +16123,10 @@ POSITIVE_ONLY D_IBOOLEAN,
 PRIORITY D_INTEGER,
 ONLY_ONE D_IBOOLEAN,
 NOTE D_DESCRIPTION = '',
-TAG D_INTEGER = '',
+TAG D_INTEGER = null,
 TAG_STR D_VARCHAR255 = '',
-OPENLY D_IBOOLEAN = 0)
+OPENLY D_IBOOLEAN = 0,
+UNBL_METH D_INTEGER = 0)
 AS 
 begin
   if (exists(select
@@ -16081,11 +16157,12 @@ begin
         NOTE = :NOTE,
         OPENLY = :OPENLY,
         TAG = :TAG,
-        TAG_STR = :TAG_STR
+        TAG_STR = :TAG_STR,
+        Unbl_Meth = :Unbl_Meth
     where (Service_Id = :Service_Id);
   else
-    insert into Services (Service_Id, Srv_Type_Id, Shift_Months, Name, CALC_TYPE, Shortname, Description, Dimension, Expense_Type, Extra, External_Id, Inet_Srv, Ip_Begin, Ip_End, BUSINESS_TYPE, AUTOOFF, Positive_Only, PRIORITY, ONLY_ONE, Note, Tag, Tag_Str, Openly)
-    values (:Service_Id, :Srv_Type_Id, :Shift_Months, :Name, :CALC_TYPE, :Shortname, :Description, :Dimension, :Expense_Type, :Extra, :External_Id, :Inet_Srv, :Ip_Begin, :Ip_End, :BUSINESS_TYPE, :AUTOOFF, :Positive_Only, :PRIORITY, :ONLY_ONE, :Note, :Tag, :Tag_Str, :Openly);
+    insert into Services (Service_Id, Srv_Type_Id, Shift_Months, Name, CALC_TYPE, Shortname, Description, Dimension, Expense_Type, Extra, External_Id, Inet_Srv, Ip_Begin, Ip_End, BUSINESS_TYPE, AUTOOFF, Positive_Only, PRIORITY, ONLY_ONE, Note, Tag, Tag_Str, Openly, Unbl_Meth)
+    values (:Service_Id, :Srv_Type_Id, :Shift_Months, :Name, :CALC_TYPE, :Shortname, :Description, :Dimension, :Expense_Type, :Extra, :External_Id, :Inet_Srv, :Ip_Begin, :Ip_End, :BUSINESS_TYPE, :AUTOOFF, :Positive_Only, :PRIORITY, :ONLY_ONE, :Note, :Tag, :Tag_Str, :Openly, :Unbl_Meth);
 
   -- если услугу можно добавлять абоненту
   -- то добавим ее в таблицу SERVICES_LINKS
@@ -16104,8 +16181,9 @@ begin
     end
   end
   else
-    delete from SERVICES_LINKS sl where sl.PARENT is null
-          and sl.CHILD = :SERVICE_ID;
+    delete from SERVICES_LINKS sl
+        where sl.PARENT is null
+              and sl.CHILD = :SERVICE_ID;
 end ^
 
 ALTER PROCEDURE SET_DISTRIB_REPORT (DISTRIB_ID D_INTEGER,
@@ -16230,7 +16308,7 @@ begin
     insert into PREPAY_DETAIL (CUSTOMER_ID, PPD_SUM)
     values (:Customer_Id, :Prepay_Sum);
 
-  execute procedure CHECK_FOR_UNBLOCK(:Customer_Id);
+  -- execute procedure CHECK_FOR_UNBLOCK(:Customer_Id); -- вызов в триггере
 end ^
 
 ALTER PROCEDURE SET_SETTINGS (ANAME D_VARCHAR50,
@@ -18517,15 +18595,15 @@ begin
     end
 
     insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('EQUIPMENT', 1, new.eid, 'ADRES', old.house_id, new.house_id);
+    values ('EQUIPMENT', 1, new.eid, 'ADDRESS', old.house_id, new.house_id);
   end
 
   -- если порт очистили, сборсим в таблице портов
-  if (not((old.Parent_Id is null)
-      or
-      (old.Parent_Port is null))) then begin
+  if ((not old.Parent_Id is null)
+      and
+      (not old.Parent_Port is null)) then begin
     if ((new.Parent_Port is distinct from old.Parent_Port)
-        or
+        and
         (new.Parent_Id is distinct from old.Parent_Id)) then begin
       update or insert into Port (Eid, Port, Con, Con_Id)
       values (old.Parent_Id, old.Parent_Port, null, null)
@@ -20578,6 +20656,8 @@ begin
     new.Ip_Begin = null;
     new.Ip_End = null;
   end
+  if (new.Unbl_Meth is null) then
+    new.Unbl_Meth = 0;
   if (new.EXTERNAL_ID is not null) then begin
     select
         list(STR)
@@ -20843,6 +20923,7 @@ begin
   if (new.DISACT_SERV_ID = -1) then begin
     new.Closed_By = null;
     new.Closed_ON = null;
+    new.date_to = '2100-01-01';
   end
   else begin
     new.Closed_By = current_user;
@@ -21187,26 +21268,39 @@ begin
   if (new.eq_id is distinct from old.eq_id) then
     insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
     values ('LAN', 0, new.customer_id, 'MODEM', old.eq_id, new.eq_id);
+
+  if (new.Tag is distinct from old.Tag) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, new.customer_id, 'TAG', old.Tag, new.Tag);
+
+  if (new.Tag_Str is distinct from old.Tag_Str) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, new.customer_id, 'TAG_STR', old.Tag_Str, new.Tag_Str);
 end ^
 
 CREATE TRIGGER TV_LAN_AD FOR TV_LAN 
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-  if (not ((OLD.ip is null)))
-  then
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, OLD.customer_id, 'IP', OLD.ip, null);
+  if (not((old.ip is null))) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, old.customer_id, 'IP', old.ip, null);
 
-  if (not ((OLD.mac is null)))
-  then
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, OLD.customer_id, 'MAC', OLD.mac, null);
+  if (not((old.mac is null))) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, old.customer_id, 'MAC', old.mac, null);
 
-  if (not old.eq_id is null)
-  then
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, OLD.customer_id, 'MODEM',  old.eq_id, null);
+  if (not old.eq_id is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, old.customer_id, 'MODEM', old.eq_id, null);
+
+  if (not old.Tag is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, old.customer_id, 'TAG', old.Tag, null);
+
+  if (not old.Tag_Str is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('LAN', 0, old.customer_id, 'TAG_STR', old.Tag_Str, null);
 end ^
 
 CREATE TRIGGER TV_LAN_BIU0 FOR TV_LAN 
@@ -21265,27 +21359,25 @@ CREATE TRIGGER TV_LAN_AI FOR TV_LAN
 ACTIVE AFTER INSERT OR UPDATE POSITION 0 
 as
 begin
-  if (new.eq_id is distinct from old.eq_id) then begin
-    if (not old.eq_id is null) then
-      update equipment e
-      set e.last_update = localtimestamp
-      where e.eid = old.eq_id;
-  end
-  if (not new.eq_id is null) then
+  if (not new.eq_id is null) then begin
     update equipment e
     set e.last_update = localtimestamp
     where e.eid = new.eq_id;
+  end
+  if ((not old.eq_id is null) and (new.eq_id is distinct from old.eq_id)) then begin
+    update equipment e
+    set e.last_update = localtimestamp
+    where e.eid = old.eq_id;
+  end
 end ^
 
 CREATE TRIGGER TV_LAN_AIU0 FOR TV_LAN 
 ACTIVE AFTER INSERT OR UPDATE POSITION 0 
 as
 begin
-  if (not((NEW.Eq_Id is null)
-      or
-      (NEW.Port is null))) then begin
+  if ((not new.Eq_Id is null) and (not new.Port is null)) then begin
     update or insert into Port (Eid, Port, Con, Con_Id)
-    values (NEW.Eq_Id, NEW.Port, 1, NEW.Customer_Id)
+    values (new.Eq_Id, new.Port, 1, new.Customer_Id)
     matching (Eid, Port);
   end
 end ^
@@ -21294,9 +21386,7 @@ CREATE TRIGGER TV_LAN_AUD0 FOR TV_LAN
 ACTIVE AFTER UPDATE OR DELETE POSITION 0 
 as
 begin
-  if (not((old.Eq_Id is null)
-      or
-      (old.Port is null))) then begin
+  if ((not old.Eq_Id is null) and (not old.Port is null)) then begin
     update or insert into Port (Eid, Port, Con, Con_Id)
     values (old.Eq_Id, old.Port, null, null)
     matching (Eid, Port);
@@ -21366,6 +21456,22 @@ begin
   NEW.Meters = coalesce(NEW.Meters, 1);
   NEW.Capacity = coalesce(NEW.Capacity, 1);
   NEW.Stock = coalesce(NEW.Stock, 0);
+
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
+  end
+end ^
+
+CREATE TRIGGER WIRE_POINT_BIU0 FOR WIRE_POINT 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
+as
+begin
+  NEW.Meters = coalesce(NEW.Meters, 1);
 
   if (inserting) then begin
     new.added_by = current_user;
@@ -23270,6 +23376,10 @@ COMMENT ON    COLUMN    SERVICES.NOTE IS 'Примечание';
 COMMENT ON    COLUMN    SERVICES.TAG IS 'Цифровое поле для свих нужд';
 COMMENT ON    COLUMN    SERVICES.TAG_STR IS 'Текстовое поле для свих нужд';
 COMMENT ON    COLUMN    SERVICES.OPENLY IS 'Показывать абоненту в ЛК или мобильном приложении';
+COMMENT ON    COLUMN    SERVICES.UNBL_METH IS 'Снять блок при
+0 - любом плюсе
+1 - дневной тариф
+2 - месячный тариф';
 COMMENT ON TABLE        SERVICES_ATTRIBUTES IS 'Атрибуты услуг';
 COMMENT ON    COLUMN    SERVICES_ATTRIBUTES.SA_VALUE IS 'Значение атрибута';
 COMMENT ON TABLE        SERVICES_CMPLX IS 'Таблица для комплексных услуг. Услуга которая состит из нескольких подразделов';
@@ -23551,6 +23661,7 @@ COMMENT ON    COLUMN    WORKS.W_ATR_ID IS 'ID добавляемого атри�
 COMMENT ON    COLUMN    WORKS.AS_SERVICE IS 'Работа равна услуге.
 т.е. добавляет абоненту разовую услугу';
 COMMENT ON    COLUMN    WORKS.ON_DEFAULT IS 'при выбое типа заявок, добавлять работу в заявку';
+COMMENT ON VIEW         RAYON IS 'УДАЛИТЬ. непонтяно что это и кто создал. позже удалю';
 COMMENT ON VIEW         V_ALL_IP IS 'Все IP адреса системы';
 COMMENT ON VIEW         V_ALL_MAC IS 'Все MAC адреса системы';
 COMMENT ON PROCEDURE    ADD_FLAT_TO_HOUSE IS 'Добавим новую квартиру в дом';

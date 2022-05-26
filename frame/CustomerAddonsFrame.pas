@@ -424,11 +424,11 @@ end;
 
 destructor TCustomerAddons.Destroy;
 begin
-  dbgCustSubscrServ.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustSubscrServ', true);
-  dbgSingleServ.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSingleServ', true);
-  dbgCustPayment.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustPayment', true);
-  dbGridCustReq.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGridCustReq', true);
-  dbgCustAttr.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustAttr', true);
+  dbgCustSubscrServ.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustSubscrServ', false);
+  dbgSingleServ.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSingleServ', false);
+  dbgCustPayment.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustPayment', false);
+  dbGridCustReq.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGridCustReq', false);
+  dbgCustAttr.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustAttr', false);
 end;
 
 procedure TCustomerAddons.dsBillingAfterOpen(DataSet: TDataSet);

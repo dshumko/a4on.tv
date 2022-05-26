@@ -5,7 +5,6 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   ClientHeight = 422
   ClientWidth = 778
   Position = poDesigned
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object splitter: TSplitter [0]
@@ -17,9 +16,12 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
     Align = alBottom
     Visible = False
   end
+  inherited splPG: TSplitter
+    Width = 778
+  end
   inherited dbGrid: TDBGridEh
     Width = 778
-    Height = 209
+    Height = 206
     AllowedOperations = []
     FooterRowCount = 1
     SumList.Active = True
@@ -98,6 +100,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
         Footers = <>
         Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
         Title.TitleButton = True
+        OnGetCellParams = dbGridColumns7GetCellParams
       end
       item
         CellButtons = <>
@@ -197,9 +200,6 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       Top = 0
       Action = actFindCustomer
     end
-  end
-  inherited pnlEdit: TPanel
-    Width = 778
   end
   object pnlHistory: TPanel [4]
     Left = 0
@@ -322,6 +322,9 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
         Flat = True
       end
     end
+  end
+  inherited pnlEdit: TPanel
+    Width = 778
   end
   inherited srcDataSource: TDataSource
     DataSet = dsEQ

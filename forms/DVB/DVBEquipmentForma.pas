@@ -38,7 +38,10 @@ type
     procedure actFindCustomerExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actCustHistExecute(Sender: TObject);
+    procedure dbGridColumns7GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
+    FPersonalData: Boolean;
     procedure GetGridCustomer(Grid: TDBGridEh);
   public
     { Public declarations }
@@ -49,7 +52,7 @@ var
 
 implementation
 
-uses DM, DVBEqGenForma, DVBEqEditForma, MAIN, CF;
+uses DM, AtrStrUtils, DVBEqGenForma, DVBEqEditForma, MAIN, CF;
 
 {$R *.dfm}
 
@@ -67,6 +70,14 @@ begin
     exit;
   if GenerateDecoders() then
     dsEQ.CloseOpen(True);
+end;
+
+procedure TDVBEquipmentForm.dbGridColumns7GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  inherited;
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TDVBEquipmentForm.actCustHistExecute(Sender: TObject);
@@ -158,6 +169,7 @@ var
   a: Boolean;
 begin
   inherited;
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   if dmMain.SuperMode = 0 then begin
     a := dsEQ.Active;
     if a then

@@ -282,6 +282,10 @@ type
     miContactType: TMenuItem;
     actLabelType: TAction;
     miLabelType: TMenuItem;
+    actConnectType: TAction;
+    miConnectType: TMenuItem;
+    actPortType: TAction;
+    miPortType: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -400,6 +404,8 @@ type
     procedure actPortViewExecute(Sender: TObject);
     procedure actContactTypesExecute(Sender: TObject);
     procedure actLabelTypeExecute(Sender: TObject);
+    procedure actConnectTypeExecute(Sender: TObject);
+    procedure actPortTypeExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -494,7 +500,8 @@ uses
   NodeTypeForma, NFileTypeForma, TaskForma,
   NewTaskForma, CallCenterForma, ChanSourcesForma, CustFilesForma, BCIssuesForma, BCIssuesTypeForma,
   SatCardsForma, DistribForma, FreqPlanForma, JclLocales, DeviceTypesForma, WebBrowserForma, BCIssuesSolutionForma,
-  ReqPhotosForma, NewsForma, NHunspell, WireTypeForma, WireForma, PortListForma, ContactTypeForma, LabelTypeForma;
+  ReqPhotosForma, NewsForma, NHunspell, WireTypeForma, WireForma, PortListForma,
+  ContactTypeForma, LabelTypeForma, ConnectTypeForma, PortTypeForma;
 
 type
 
@@ -1369,6 +1376,13 @@ begin
 
 end;
 
+procedure TA4MainForm.actConnectTypeExecute(Sender: TObject);
+begin
+  if Not Assigned(ConnectTypeForm) then
+    ConnectTypeForm := TConnectTypeForm.Create(Application);
+  ConnectTypeForm.Show;
+end;
+
 procedure TA4MainForm.actContactTypesExecute(Sender: TObject);
 begin
   if Not Assigned(ContactTypeForm) then
@@ -1893,6 +1907,13 @@ begin
   if Not Assigned(PaymentTypeForm) then
     PaymentTypeForm := TPaymentTypeForm.Create(Application);
   PaymentTypeForm.Show;
+end;
+
+procedure TA4MainForm.actPortTypeExecute(Sender: TObject);
+begin
+  if Not Assigned(PortTypeForm) then
+    PortTypeForm := TPortTypeForm.Create(Application);
+  PortTypeForm.Show;
 end;
 
 procedure TA4MainForm.actPortViewExecute(Sender: TObject);
@@ -2774,6 +2795,8 @@ begin
   actContactTypes.Visible := rFull;
   actCableType.Visible := rFull;
   actLabelType.Visible := rFull;
+  actConnectType.Visible := rFull;
+  actPortType.Visible := rFull;
 
   ActOrdersTPType.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_OrdersTPType);
   ActOrdersTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or

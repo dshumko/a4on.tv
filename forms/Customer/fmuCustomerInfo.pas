@@ -21,7 +21,7 @@ type
     pmRecalc: TPopupMenu;
     N2: TMenuItem;
     pnlAddInfo: TPanel;
-    Splitter1: TdnSplitter;
+    spltMemo: TdnSplitter;
     pnlDP: TPanel;
     sbRecalc: TSpeedButton;
     gbSaldo: TGroupBox;
@@ -30,7 +30,7 @@ type
     dbtxtPrepay: TDBText;
     pnlContacts: TPanel;
     dbgrdhContacts: TDBGridEh;
-    GroupBox2: TGroupBox;
+    gbMemo: TGroupBox;
     memCustNotice: TDBMemoEh;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
@@ -60,6 +60,9 @@ type
     pnlACC: TPanel;
     lblACCNT: TLabel;
     dbeACCOUNT_NO: TDBEditEh;
+    btnAlign: TSpeedButton;
+    pmMemo: TPopupMenu;
+    miN1: TMenuItem;
     procedure memCustNoticeExit(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure sbRecalcClick(Sender: TObject);
@@ -81,6 +84,11 @@ type
     procedure miCopyClick(Sender: TObject);
     procedure srcCustomerDataChange(Sender: TObject; Field: TField);
     procedure HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btnAlignClick(Sender: TObject);
+    procedure miN1Click(Sender: TObject);
+    procedure PropStorageEhWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
+    procedure PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
+      var Processed: Boolean);
   private
     { Private declarations }
     fVisibleColumns: Integer;
@@ -89,9 +97,11 @@ type
     FVisibleSum: Boolean;
     FAsBalance: Boolean;
     FVisiblePassport: Boolean;
+    FPersonalData: Boolean;
     FDec: Integer;
     FHtml: string;
     FWkeHtml: Boolean;
+    FMemoNeedRealign: Boolean;
     // FWkeWebbrowser: TWkeWebbrowser;
     procedure RecalcCustomer(const CUSTOMER_ID: Int64);
     procedure SaveContact;
@@ -103,6 +113,7 @@ type
     procedure SetSaveBtnVisible;
     procedure UpdateInfoPanel;
     function GetParamValue(const param: String): String;
+    procedure MemoAlign;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -113,8 +124,8 @@ type
 
 implementation
 
-uses System.RegularExpressions, A4onTypeUnit, AtrCommon, DM, pFIBQuery, Typinfo,
-  MAIN, ContactForma;
+uses System.RegularExpressions, A4onTypeUnit, AtrCommon, AtrStrUtils,
+  DM, pFIBQuery, Typinfo, MAIN, ContactForma;
 
 {$R *.dfm}
 
@@ -133,6 +144,7 @@ var
   DispNum: string;
   i: Integer;
 begin
+  FMemoNeedRealign := True;
   HtmlViewConfig;
   infoPanelConfig;
   GetHtmlParams;
@@ -155,8 +167,7 @@ begin
     sbRecalc.PopupMenu := pmRecalc;
 
   FVisibleSum := (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full));
-  FVisiblePassport := (dmMain.AllowedAction(rght_Customer_add)) or (dmMain.AllowedAction(rght_Customer_edit)) or
-    (dmMain.AllowedAction(rght_Customer_full));
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   // просмотр сумм
   FAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
   FDec := dmMain.GetSettingsValue('FEE_ROUND');
@@ -173,12 +184,12 @@ begin
 
     if FAsBalance then
     begin
-      gbSaldo.Caption := rsBALANCE;
+      gbSaldo.Caption := '       ' + rsBALANCE;
       dbtxtDEBT.DataField := 'BALANCE';
     end
     else
     begin
-      gbSaldo.Caption := rsSALDO;
+      gbSaldo.Caption := '       ' + rsSALDO;
       dbtxtDEBT.DataField := 'DEBT_SUM';
     end;
   end;
@@ -218,6 +229,11 @@ end;
 procedure TapgCustomerInfo.miCopyClick(Sender: TObject);
 begin
   HtmlViewer.CopyToClipboard;
+end;
+
+procedure TapgCustomerInfo.miN1Click(Sender: TObject);
+begin
+  MemoAlign;
 end;
 
 procedure TapgCustomerInfo.SaveNotice;
@@ -319,6 +335,33 @@ begin
 
   if (not dsContacts.Active) then
     dsContacts.Open;
+end;
+
+procedure TapgCustomerInfo.PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
+  var Processed: Boolean);
+var
+  h: Integer;
+begin
+  if PropName = 'MemoHeight' then
+  begin
+    h := Reader.ReadInteger();
+    if h > 0 then
+    begin
+      FMemoNeedRealign := True;
+      MemoAlign;
+      pnlDP.Height := h;
+    end;
+    Processed := True;
+  end;
+end;
+
+procedure TapgCustomerInfo.PropStorageEhWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
+begin
+  Writer.WritePropName('MemoHeight');
+  if spltMemo.Align = alTop then
+    Writer.WriteInteger(pnlDP.Height)
+  else
+    Writer.WriteInteger(0);
 end;
 
 procedure TapgCustomerInfo.sbRecalcClick(Sender: TObject);
@@ -440,6 +483,11 @@ begin
   A4MainForm.MakeCall(dsContacts['CC_TYPE'], dsContacts['CC_VALUE']);
 end;
 
+procedure TapgCustomerInfo.btnAlignClick(Sender: TObject);
+begin
+  MemoAlign;
+end;
+
 procedure TapgCustomerInfo.btnSaveNoticeClick(Sender: TObject);
 begin
   SaveNotice;
@@ -512,7 +560,7 @@ end;
 procedure TapgCustomerInfo.FormCreate(Sender: TObject);
 begin
   FHtmlParams := TStringList.Create;
-  FHtmlParams.Sorted := true;
+  FHtmlParams.Sorted := True;
   FHtmlParams.Duplicates := dupIgnore;
 end;
 
@@ -527,7 +575,7 @@ end;
 
 procedure TapgCustomerInfo.FormShow(Sender: TObject);
 begin
-  FCheckPassport := true; // (dmMain.GetSettingsValue('KEY_MVD') <> '');
+  FCheckPassport := True; // (dmMain.GetSettingsValue('KEY_MVD') <> '');
 end;
 
 procedure TapgCustomerInfo.GetHtmlParams;
@@ -582,11 +630,14 @@ begin
     P := FHtmlParams[i];
     V := GetParamValue(P);
 
-    if (not FVisiblePassport) and (not V.IsEmpty) then
+    if (not FPersonalData) and (not V.IsEmpty) then
     begin
       s := P.ToUpper;
       if ((s = 'PASSPORT_NUMBER') or (s = 'PASSPORT_REGISTRATION') or (s = 'BIRTHDAY')) then
-        V := '';
+        V := ''
+      else if (s = 'SURNAME') then begin
+        v := HideSurname(v);
+      end;
     end;
 
     resMemo := StringReplace(resMemo, '<!--' + P + '-->', V, [rfReplaceAll, rfIgnoreCase]);
@@ -694,18 +745,19 @@ end;
 
 procedure TapgCustomerInfo.HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
-  Str : WideString;
+  Str: WideString;
 begin
   if (Shift = [ssCtrl]) then
   begin
     case Key of
-      67: begin
-        HtmlViewer.CopyToClipboard; // Ctrl+C
-        // далее чистим буфер от лишних данных
-        // так как HtmlViewer помещает в буфер и текст и html
-        Str := GetStringFromClipboard;
-        PutStringIntoClipBoard(Str);
-      end;
+      67:
+        begin
+          HtmlViewer.CopyToClipboard; // Ctrl+C
+          // далее чистим буфер от лишних данных
+          // так как HtmlViewer помещает в буфер и текст и html
+          Str := GetStringFromClipboard;
+          PutStringIntoClipBoard(Str);
+        end;
       65:
         HtmlViewer.SelectAll; // Ctrl+A
     end;
@@ -719,7 +771,7 @@ var
   NeedCHK: Boolean;
 begin
   V := '';
-  NeedCHK := true;
+  NeedCHK := True;
   if dsCustomer.Active then
   begin
     fld := dsCustomer.FindField(param);
@@ -777,9 +829,35 @@ procedure TapgCustomerInfo.UpdateObject;
 begin
   // обновим инфо панель.
   if dsCustomer.Active then
-    dsCustomer.CloseOpen(true)
+    dsCustomer.CloseOpen(True)
   else
     UpdateInfoPanel;
+end;
+
+procedure TapgCustomerInfo.MemoAlign;
+begin
+  if FMemoNeedRealign then
+  begin
+    pnlDP.Align := alTop;
+    spltMemo.Align := alTop;
+    pnlDP.Height := Trunc(Self.Height / 2);
+    pnlDP.Realign;
+    gbMemo.Height := Trunc(Self.Height / 2);
+
+    FMemoNeedRealign := False;
+  end
+  else
+  begin
+    pnlDP.Align := alLeft;
+    spltMemo.Align := alRight;
+    spltMemo.Align := alLeft;
+    pnlDP.Height := Self.Height;
+    gbMemo.Height := Self.Height;
+    pnlDP.Realign;
+
+
+    FMemoNeedRealign := True;
+  end;
 end;
 
 end.

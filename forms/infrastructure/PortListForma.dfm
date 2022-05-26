@@ -13,6 +13,7 @@ inherited PortListForm: TPortListForm
     FooterRowCount = 1
     SortLocal = False
     SumList.Active = True
+    OnGetCellParams = dbGridGetCellParams
     OnSortMarkingChanged = dbGridSortMarkingChanged
     Columns = <
       item
@@ -234,11 +235,57 @@ inherited PortListForm: TPortListForm
     inherited btnQuickFilter: TToolButton
       Visible = False
     end
-    object btnLinkPort: TToolButton
+    object btnFilterSet: TToolButton
       Left = 178
+      Top = 0
+      Action = actFilterSet
+      DropdownMenu = pmFilter
+      Style = tbsDropDown
+    end
+    object btn1: TToolButton
+      Left = 216
+      Top = 0
+      Width = 8
+      Caption = 'btn1'
+      ImageIndex = 101
+      Style = tbsSeparator
+    end
+    object btnLinkPort: TToolButton
+      Left = 224
       Top = 0
       Action = actLinkPort
       ImageIndex = 100
+    end
+    object btn2: TToolButton
+      Left = 247
+      Top = 0
+      Width = 8
+      Caption = 'btn2'
+      ImageIndex = 101
+      Style = tbsSeparator
+    end
+    object btnOpenCustomer: TToolButton
+      Left = 255
+      Top = 0
+      Action = actOpenCustomer
+    end
+    object btn3: TToolButton
+      Left = 278
+      Top = 0
+      Width = 8
+      Caption = 'btn3'
+      ImageIndex = 10
+      Style = tbsSeparator
+    end
+    object chkShowOFF: TCheckBox
+      Left = 286
+      Top = 0
+      Width = 123
+      Height = 22
+      Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1087#1086#1076#1089#1074#1077#1090#1082#1091' '#1087#1086#1090#1088#1086#1074' '#1086#1090#1082#1083#1102#1095#1077#1085#1085#1099#1093' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+      Caption = #1055#1086#1076#1089#1074#1077#1090#1080#1090#1100' '#1086#1090#1082#1083'.'
+      TabOrder = 0
+      OnClick = chkShowOFFClick
     end
   end
   inherited pnlEdit: TPanel
@@ -254,6 +301,7 @@ inherited PortListForm: TPortListForm
     DataSet = dsPort
   end
   inherited actions: TActionList
+    Images = A4MainForm.ICONS_ACTIVE
     inherited actEdit: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1088#1090
       OnExecute = actEditExecute
@@ -261,6 +309,30 @@ inherited PortListForm: TPortListForm
     object actLinkPort: TAction
       Caption = 'actLinkPort'
       OnExecute = actLinkPortExecute
+    end
+    object actFilterSet: TAction
+      Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      ImageIndex = 0
+      ShortCut = 114
+      OnExecute = actFilterSetExecute
+    end
+    object actEnableFilter: TAction
+      Caption = #1042#1082#1083'/'#1042#1099#1082#1083'. '#1092#1080#1083#1100#1090#1088
+      Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      ShortCut = 16498
+      OnExecute = actEnableFilterExecute
+    end
+    object actSetFilterNew: TAction
+      Caption = #1053#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088
+      Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088' '#1089' '#1086#1095#1080#1089#1090#1082#1086#1081' '#1089#1090#1072#1088#1086#1075#1086
+      ShortCut = 8306
+    end
+    object actOpenCustomer: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1089#1087#1080#1089#1082#1077
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+      ImageIndex = 9
+      OnExecute = actOpenCustomerExecute
     end
   end
   object dsPort: TpFIBDataSet
@@ -301,6 +373,7 @@ inherited PortListForm: TPortListForm
       '  , v.Name V_NAME'
       '  , v.Ip_Begin'
       '  , v.Ip_End'
+      '  , @@ShowColor%2@ CUST_CONNECTED  '
       '  from port p'
       
         '       inner join objects pt on (p.P_Type = pt.O_Id and pt.O_Typ' +
@@ -334,7 +407,7 @@ inherited PortListForm: TPortListForm
       '    ')
     SelectSQL.Strings = (
       'select'
-      '  E.Name EQ_NAME'
+      '    E.Name EQ_NAME'
       '  , p.Port'
       '  , p.Notice'
       '  , pt.O_Name PT_NAME'
@@ -349,12 +422,12 @@ inherited PortListForm: TPortListForm
       '  , eg.O_DIMENSION as COLOR'
       '  , n.NAME NODE_NAME'
       '  , nt.o_name as node_type'
-      '  , p.Eid '
+      '  , p.Eid'
       '  , e.eq_group'
       '  , p.P_Type'
       '  , n.Type_Id'
       '  , e.eq_type'
-      '  , p.Con'
+      '  , p.Con_id'
       '  , coalesce(cc.Account_No, ce.Name, '#39#39') OP_NAME'
       '  , coalesce(l.Ip, ce.Ip, '#39#39') OP_IP'
       '  , coalesce(l.MAC, ce.MAC, '#39#39') OP_MAC'
@@ -362,6 +435,7 @@ inherited PortListForm: TPortListForm
       '  , v.Name V_NAME'
       '  , v.Ip_Begin'
       '  , v.Ip_End'
+      '  , @@ShowColor%2@ CUST_CONNECTED'
       '  from port p'
       
         '       inner join objects pt on (p.P_Type = pt.O_Id and pt.O_Typ' +
@@ -385,10 +459,11 @@ inherited PortListForm: TPortListForm
         'Con = 0)'
       
         '       left outer join customer cc on (cc.Customer_Id = p.Con_Id' +
-        ' and p.Con = 1)'
+        ' and coalesce(p.Con,1) = 1)'
       
         '       left outer join tv_lan l on (l.Customer_Id = cc.Customer_' +
         'Id and l.Port = p.Port)'
+      'WHERE @@filter%1=1@       '
       'order by p.Port')
     AutoCalcFields = False
     Transaction = dmMain.trRead
@@ -396,5 +471,131 @@ inherited PortListForm: TPortListForm
     Left = 184
     Top = 224
     oFetchAll = True
+  end
+  object dsFilter: TMemTableEh
+    Params = <>
+    Left = 571
+    Top = 163
+    object MemTableData: TMemTableDataEh
+      object DataStruct: TMTDataStructEh
+        object inversion: TMTBooleanDataFieldEh
+          FieldName = 'inversion'
+          DefaultExpression = 'False'
+          DisplayWidth = 20
+        end
+        object next_condition: TMTNumericDataFieldEh
+          FieldName = 'next_condition'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DefaultExpression = '0'
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object FLOOR: TMTStringDataFieldEh
+          FieldName = 'FLOOR'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+        object PORCH: TMTStringDataFieldEh
+          FieldName = 'PORCH'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+        object CHECK_ADRESS: TMTNumericDataFieldEh
+          FieldName = 'CHECK_ADRESS'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DefaultExpression = '0'
+          DisplayLabel = 'CHECK_ADRESS'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object STREET_ID: TMTNumericDataFieldEh
+          FieldName = 'STREET_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'STREET_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object HOUSE_ID: TMTNumericDataFieldEh
+          FieldName = 'HOUSE_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'HOUSE_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object AREA_ID: TMTNumericDataFieldEh
+          FieldName = 'AREA_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'AREA_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object SUBAREA_ID: TMTNumericDataFieldEh
+          FieldName = 'SUBAREA_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'SUBAREA_ID'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object EQ_TYPE: TMTNumericDataFieldEh
+          FieldName = 'EQ_TYPE'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = 'LETTERS_TYPE'
+          DisplayWidth = 10
+          currency = False
+          Precision = 15
+        end
+        object FLAT: TMTStringDataFieldEh
+          FieldName = 'FLAT'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+        object PLACE: TMTStringDataFieldEh
+          FieldName = 'PLACE'
+          StringDataType = fdtStringEh
+          DisplayWidth = 100
+        end
+        object PROBLEM: TMTNumericDataFieldEh
+          FieldName = 'PROBLEM'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+      end
+      object RecordsList: TRecordsListEh
+      end
+    end
+  end
+  object pmFilter: TPopupMenu
+    Left = 79
+    Top = 298
+    object N31: TMenuItem
+      Caption = #1042#1082#1083'/'#1042#1099#1082#1083'. '#1092#1080#1083#1100#1090#1088
+      Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      ShortCut = 16498
+    end
+    object N53: TMenuItem
+      Action = actSetFilterNew
+    end
+    object N42: TMenuItem
+      Caption = '-'
+    end
+    object N36: TMenuItem
+      Action = actQuickFilter
+    end
   end
 end

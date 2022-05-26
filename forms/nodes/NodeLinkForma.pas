@@ -58,15 +58,17 @@ type
       State: TGridDrawState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure lcbNodeChange(Sender: TObject);
-    procedure lcbLinkTypeChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lcbPOINT_SChange(Sender: TObject);
+    procedure lcbNodeExit(Sender: TObject);
+    procedure lcbLinkTypeExit(Sender: TObject);
   private
     FCanEdit: Boolean;
     FLineCnt: Integer;
     FMainLink: TNodeLinkItem;
     FSecondLink: TNodeLinkItem;
     procedure GenName();
+    procedure GenWireCnt;
     procedure SetMainLink(value: TNodeLinkItem);
     procedure SetSecondLink(value: TNodeLinkItem);
     procedure SaveLink;
@@ -143,7 +145,7 @@ end;
 
 procedure TNodeLinkForm.FormShow(Sender: TObject);
 begin
-  FLineCnt := 0;
+//  FLineCnt := 0;
   FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
   FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Dictionary_Node_Links);
 
@@ -157,8 +159,8 @@ begin
 
   dsLink.ParamByName('WID').value := FMainLink.LINK_ID;
   dsLink.Open;
-  if not dsLink.FieldByName('WIRE_CNT').IsNull then
-    FLineCnt := dsLink['WIRE_CNT'];
+//  if not dsLink.FieldByName('WIRE_CNT').IsNull then
+//    FLineCnt := dsLink['WIRE_CNT'];
 
   if FMainLink.LINK_ID <= 0 then
     dsLink.Insert
@@ -177,11 +179,6 @@ begin
     lcbNode.value := FSecondLink.NODE_ID;
 end;
 
-procedure TNodeLinkForm.lcbLinkTypeChange(Sender: TObject);
-begin
-  GenName();
-end;
-
 procedure TNodeLinkForm.lcbLinkTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
@@ -191,14 +188,19 @@ begin
     Background := clWindow;
 end;
 
+procedure TNodeLinkForm.lcbLinkTypeExit(Sender: TObject);
+begin
+  GenName();
+end;
+
 procedure TNodeLinkForm.lcbNodeChange(Sender: TObject);
 begin
-  if (FSecondLink.NODE_ID <= 0) and (lcbNode.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then
+  if (not VarIsNull(lcbNode.value)) and (not dsNodes.FieldByName('Name').IsNull) then
   begin
     FSecondLink.NODE_Name := dsNodes['Name'];
     FSecondLink.NODE_TYPE := dsNodes['O_Name'];
   end;
-  GenName();
+  FLineCnt := 0;
 end;
 
 procedure TNodeLinkForm.lcbNodeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -210,14 +212,19 @@ begin
     Background := clWindow;
 end;
 
+procedure TNodeLinkForm.lcbNodeExit(Sender: TObject);
+begin
+  GenName();
+end;
+
 procedure TNodeLinkForm.lcbPOINT_SChange(Sender: TObject);
 begin
   if (FMainLink.NODE_ID <= 0) and (lcbPOINT_S.Text <> '') and (not dsNodes.FieldByName('Name').IsNull) then
   begin
     FMainLink.NODE_Name := dsNodes['Name'];
     FMainLink.NODE_TYPE := dsNodes['O_Name']; // Тип ноды
-    if not dsNodes.FieldByName('WIRE_CNT').IsNull then
-      FLineCnt := dsNodes['WIRE_CNT'];
+//    if not dsNodes.FieldByName('WIRE_CNT').IsNull then
+//      FLineCnt := dsNodes['WIRE_CNT'];
   end;
   GenName;
 end;
@@ -275,9 +282,42 @@ begin
 
     s := s + getFirstLetters(FMainLink.NODE_TYPE) + '-' + FMainLink.NODE_Name + '>';
     s := s + getFirstLetters(FSecondLink.NODE_TYPE) + '-' + FSecondLink.NODE_Name;
+    GenWireCnt;
     s := s + Format(' (%d)', [FLineCnt + 1]);
 
     edtNAME.Text := s
+  end;
+end;
+
+procedure TNodeLinkForm.GenWireCnt;
+begin
+  if ((FMainLink.NODE_ID < 0) and (lcbPOINT_S.Text.IsEmpty)) or (VarIsNull(lcbNode.Value)) then begin
+    Exit;
+  end;
+
+  if (FLineCnt <> 0) then begin
+    Exit;
+  end;
+
+  with TpFIBQuery.Create(Nil) do begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      SQL.Text := 'select count(*) wcnt from wire w where w.Point_S = :ns and w.Point_E = :ne';
+      if FMainLink.NODE_ID > 0 then
+        ParamByName('ns').AsInteger := FMainLink.NODE_ID
+      else
+        ParamByName('ns').AsInteger := lcbPOINT_S.value;
+      ParamByName('ne').AsInteger := lcbNode.Value;
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not EOF then
+        FLineCnt := FieldByName('wcnt').Value;
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
   end;
 end;
 

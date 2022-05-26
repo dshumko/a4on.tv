@@ -191,9 +191,9 @@ object EQPortForm: TEQPortForm
     WantReturns = True
   end
   object ednSpeed: TDBNumberEditEh
-    Left = 88
+    Left = 89
     Top = 145
-    Width = 89
+    Width = 121
     Height = 21
     DecimalPlaces = 0
     DynProps = <>

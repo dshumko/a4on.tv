@@ -147,9 +147,12 @@ type
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dsPayDocAfterOpen(DataSet: TDataSet);
+    procedure dbgPayDocPaymentColumns5GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FullAccess: Boolean;
+    FPersonalData: Boolean;
     FCanAdd: Boolean;
     FTodayOnly: Boolean;
     FOnlyTheir: Boolean;
@@ -498,7 +501,7 @@ end;
 
 procedure TPaymentDocForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  dbgPayDocPayment.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment', true);
+  dbgPayDocPayment.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment', false);
   Action := caFree;
 end;
 
@@ -577,15 +580,13 @@ begin
     end;
   end;
 
-  dbgPayDocPayment.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment',
-    [crpColIndexEh, crpColWidthsEh]);
-
   // права пользователей
   FTodayOnly := dmMain.AllowedAction(rght_Pays_AddToday);
   FOnlyTheir := dmMain.AllowedAction(rght_Pays_TheirAdd);
   FullAccess := dmMain.AllowedAction(rght_Pays_full); // полный доступ
   FCanAdd := dmMain.AllowedAction(rght_Pays_add); // добавление
   FCanDelete := dmMain.AllowedAction(rght_Pays_del); // удаление
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
   actPaymentNew.Enabled := FCanAdd or FullAccess or FTodayOnly; // полный доступ или добавление
   actPaymentDelete.Enabled := FCanDelete or FullAccess; // полный доступ или удаление
@@ -632,6 +633,9 @@ begin
     if (AnsiUpperCase(dbgPayDocPayment.Columns[i].FieldName) = 'DEBT_SUM') then
       dbgPayDocPayment.Columns[i].Visible := not bal;
   end;
+
+  dbgPayDocPayment.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment',
+    [crpColIndexEh, crpColWidthsEh, crpSortMarkerEh]);
 
   if dmMain.SuperMode = 0 then
     dbgPayDocPayment.FooterRowCount := 0;
@@ -772,6 +776,13 @@ begin
     Exit;
 
   A4MainForm.MakeTask('P', dsPayDocDetail.FieldByName('PAYMENT_ID').AsString);
+end;
+
+procedure TPaymentDocForm.dbgPayDocPaymentColumns5GetCellParams(
+  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TPaymentDocForm.dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean;

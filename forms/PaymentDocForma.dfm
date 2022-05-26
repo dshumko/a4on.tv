@@ -252,6 +252,7 @@ object PaymentDocForm: TPaymentDocForm
       STFilter.Local = True
       SumList.Active = True
       TabOrder = 1
+      TitleParams.MultiTitle = True
       OnDblClick = dbgPayDocPaymentDblClick
       OnGetCellParams = dbgPayDocPaymentGetCellParams
       OnGetFooterParams = dbgPayDocPaymentGetFooterParams
@@ -325,6 +326,7 @@ object PaymentDocForm: TPaymentDocForm
           Title.Caption = #1060#1048#1054
           Title.TitleButton = True
           Width = 136
+          OnGetCellParams = dbgPayDocPaymentColumns5GetCellParams
         end
         item
           CellButtons = <>
@@ -417,19 +419,6 @@ object PaymentDocForm: TPaymentDocForm
           Title.Caption = #1057#1090#1072#1090#1091#1089
           Title.TitleButton = True
           Width = 181
-        end
-        item
-          AutoFitColWidth = False
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'PAYMENT_ID'
-          Footers = <>
-          Title.Caption = #8470' '#1087#1083#1072#1090#1077#1078#1082#1080
-          Title.Hint = #1059#1085#1080#1082#1072#1083#1085#1099#1081' '#8470' '#1087#1083#1072#1090#1077#1078#1082#1080' '#1074' '#1089#1080#1089#1090#1077#1084#1077
-          Title.TitleButton = True
-          Visible = False
-          Width = 70
         end
         item
           AutoFitColWidth = False
@@ -1037,6 +1026,7 @@ object PaymentDocForm: TPaymentDocForm
     Top = 274
   end
   object alPayment: TActionList
+    Images = A4MainForm.ICONS_ACTIVE
     Left = 234
     Top = 210
     object actPaymentNew: TAction

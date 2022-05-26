@@ -189,6 +189,7 @@ object CustomersForm: TCustomersForm
         Title.Caption = #1050#1083#1080#1077#1085#1090'|'#1060#1072#1084#1080#1083#1080#1103
         Title.TitleButton = True
         Width = 99
+        OnGetCellParams = dbgCustomersColumns2GetCellParams
       end
       item
         CellButtons = <>

@@ -174,6 +174,7 @@ type
   private
     { Private declarations }
     FullAccess: Boolean;
+    FPersonalData: Boolean;
     FNotIgnoreContract: Boolean;
     FDisableAddressEdit: Boolean;
     procedure GenerateAccountN;
@@ -222,6 +223,7 @@ begin
   FullAccess := dmMain.AllowedAction(rght_Customer_full); // полный доступ
   FullAccess := FullAccess or dmMain.AllowedAction(rght_Customer_History); // изменение истории
   FNotIgnoreContract := dmMain.GetSettingsValue('IGNORE_CONTRACT') <> '1';
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
   dsContacts.DataSource := FDataSource;
   ds.DataSet := FDataSource.DataSet;
@@ -714,6 +716,12 @@ begin
   begin
     pnlJUR.Visible := False;
     pnlFIZ.Visible := True;
+
+    eSURNAME.Visible := FPersonalData;
+    edtPASSPORT_NUMBER.Visible := FPersonalData;
+    edRegistration.Visible := FPersonalData;
+    edtBIRTHDAY.Visible := FPersonalData;
+    edtPERSONAL_N.Visible := FPersonalData;
   end;
   dsBANKS.Active := pnlJUR.Visible;
   // scrlbx1.Realign;
@@ -793,7 +801,7 @@ begin
       CnErrors.Dispose(eACCOUNT_NO);
   end;
 
-  if (not edtPERSONAL_N.Text.IsEmpty) then
+  if (FPersonalData) and (not edtPERSONAL_N.Text.IsEmpty) then
   begin
     if CheckControlText(edtPERSONAL_N, dmMain.GetSettingsValue('REG_PERSN'))
     then begin
@@ -804,7 +812,7 @@ begin
   end
   else CnErrors.Dispose(edtPERSONAL_N);
 
-  if (not edtPASSPORT_NUMBER.Text.IsEmpty) then
+  if (FPersonalData) and (not edtPASSPORT_NUMBER.Text.IsEmpty) then
   begin
     if CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'))
     then begin

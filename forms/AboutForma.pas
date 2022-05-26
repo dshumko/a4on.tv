@@ -15,11 +15,13 @@ type
     CnWaterImage1: TCnWaterImage;
     WWW: TStaticText;
     lblVersion: TStaticText;
+    txttelega: TStaticText;
     procedure ActionExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure EmailClick(Sender: TObject);
     procedure WWWClick(Sender: TObject);
     procedure CnWaterImage1DblClick(Sender: TObject);
+    procedure txttelegaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -67,11 +69,19 @@ begin
    WWW.Caption   := rsApplicationFullNAME;
 end;
 
+procedure TAboutForm.txttelegaClick(Sender: TObject);
+var
+  s: string;
+begin
+  s := 'https://'+txttelega.Caption;
+  atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s);
+end;
+
 procedure TAboutForm.WWWClick(Sender: TObject);
 var
   s: string;
 begin
-  s := 'http://'+rsWWW;
+  s := 'https://'+rsWWW;
   atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s);
 end;
 

@@ -28,6 +28,7 @@ object apgNodeLink: TapgNodeLink
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    PopupMenu = pmGrid
     RowDetailPanel.Active = True
     RowDetailPanel.Height = 106
     RowDetailPanel.BevelInner = bvNone
@@ -476,8 +477,8 @@ object apgNodeLink: TapgNodeLink
       '    l.*'
       '    , m.NAME MAT_NAME'
       
-        '    , (select count(*) from port p where p.Wid = l.Wid and not p' +
-        '.Con_Id is null) as USED'
+        '    , (select count(*) from port p where p.Wid = l.Wid /* and no' +
+        't p.Con_Id is null*/) as USED'
       '  from (select'
       '            '#39'>'#39' FLOW'
       '          , T.O_NAME'
@@ -531,10 +532,12 @@ object apgNodeLink: TapgNodeLink
     Left = 230
     Top = 101
     object actAdd: TAction
+      Hint = #1053#1086#1074#1072#1103' '#1083#1080#1085#1080#1103' '#1089#1074#1103#1079#1080' '#1086#1090' '#1091#1079#1083#1072
       ImageIndex = 2
       OnExecute = actAddExecute
     end
     object actEdit: TAction
+      Hint = #1048#1079#1084#1077#1085#1080#1090#1100' '#1083#1080#1085#1080#1102' '#1089#1074#1103#1079#1080
       ImageIndex = 4
       OnExecute = actEditExecute
     end
@@ -560,6 +563,7 @@ object apgNodeLink: TapgNodeLink
       OnExecute = actOpenCustomerExecute
     end
     object actWireLink: TAction
+      Hint = #1055#1088#1086#1087#1080#1089#1072#1090#1100' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077' '#1082' '#1087#1086#1088#1090#1072#1084
       ImageIndex = 100
       OnExecute = actWireLinkExecute
     end
@@ -691,6 +695,25 @@ object apgNodeLink: TapgNodeLink
     end
     object miNodeFrom: TMenuItem
       Action = actOpenCustomer
+    end
+  end
+  object pmGrid: TPopupMenu
+    Left = 728
+    Top = 94
+    object miAdd: TMenuItem
+      Action = actAdd
+      Caption = #1053#1086#1074#1072#1103' '#1083#1080#1085#1080#1103' '#1089#1074#1103#1079#1080
+    end
+    object miEdit: TMenuItem
+      Action = actEdit
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1083#1080#1085#1080#1102' '#1089#1074#1103#1079#1080
+    end
+    object miN1: TMenuItem
+      Caption = '-'
+    end
+    object miWireLink: TMenuItem
+      Action = actWireLink
+      Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100' '#1083#1080#1085#1080#1102
     end
   end
 end

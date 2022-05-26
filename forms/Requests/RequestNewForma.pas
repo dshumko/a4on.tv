@@ -921,7 +921,7 @@ begin
     A4MainForm.AddictSpell.RemoveControl(mmoContent);
   end;
 
-  dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', true);
+  dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', false);
   Action := caFree;
   // Free;
 end;

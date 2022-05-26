@@ -43,12 +43,15 @@ type
     procedure actFilterCustomerExecute(Sender: TObject);
     procedure chkGroupClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure dbGridColumns4GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FFirstOpen: Boolean;
     fStartDate: TDateTime;
     fEndDate: TDateTime;
     FCanSaveColumns: Boolean;
+    FPersonalData: Boolean;
     procedure SetFilter;
     procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
   public
@@ -132,6 +135,15 @@ begin
   SwitchTreeMode(chkGroup, dbGrid, dsRecourses, mtRecourses);
 end;
 
+procedure TRecoursesForm.dbGridColumns4GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  inherited;
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
+
+end;
+
 procedure TRecoursesForm.FormActivate(Sender: TObject);
 var
   b: integer;
@@ -177,6 +189,7 @@ procedure TRecoursesForm.FormCreate(Sender: TObject);
 begin
   inherited;
   FFirstOpen := true;
+
 end;
 
 procedure TRecoursesForm.FormShow(Sender: TObject);
@@ -189,6 +202,7 @@ begin
   actNew.Visible := (dmMain.AllowedAction(rght_Recourses_add));
   actEdit.Visible := (dmMain.AllowedAction(rght_Recourses_edit)) and False;
   actDelete.Visible := (dmMain.AllowedAction(rght_Recourses_del));
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
   fStartDate := now - 7;
   fEndDate := now;

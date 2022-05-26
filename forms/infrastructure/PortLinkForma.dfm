@@ -281,7 +281,7 @@ object PortLinkForm: TPortLinkForm
             Width = 327
             Height = 158
             Align = alClient
-            Caption = ' .:: '#1054#1041#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' ::. '
+            Caption = ' .:: '#1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' ::. '
             TabOrder = 1
             DesignSize = (
               327

@@ -8,20 +8,47 @@ uses
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, Vcl.Menus,
   System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB;
+  DBAxisGridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB,
+  MemTableDataEh, MemTableEh;
 
 type
   TPortListForm = class(TGridForm)
     dsPort: TpFIBDataSet;
     btnLinkPort: TToolButton;
     actLinkPort: TAction;
+    dsFilter: TMemTableEh;
+    btn1: TToolButton;
+    btnFilterSet: TToolButton;
+    actFilterSet: TAction;
+    actEnableFilter: TAction;
+    actSetFilterNew: TAction;
+    pmFilter: TPopupMenu;
+    N31: TMenuItem;
+    N53: TMenuItem;
+    N42: TMenuItem;
+    N36: TMenuItem;
+    actOpenCustomer: TAction;
+    btn2: TToolButton;
+    btnOpenCustomer: TToolButton;
+    btn3: TToolButton;
+    chkShowOFF: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actEditExecute(Sender: TObject);
     procedure dbGridSortMarkingChanged(Sender: TObject);
     procedure actLinkPortExecute(Sender: TObject);
+    procedure actFilterSetExecute(Sender: TObject);
+    procedure actEnableFilterExecute(Sender: TObject);
+    procedure actOpenCustomerExecute(Sender: TObject);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure chkShowOFFClick(Sender: TObject);
   private
+    FShowColorOFF: Boolean;
+    procedure SetShowColorOff(const aShow: Boolean);
     function GetOrderClause(grid: TCustomDBGridEh): string;
+    procedure SetDefaultFilter;
+    function GenerateFilter: string;
   public
     { Public declarations }
   end;
@@ -31,7 +58,8 @@ var
 
 implementation
 
-uses DM, EQPort, A4onTypeUnit, PortLinkForma;
+uses MAIN, DM, EQPort, A4onTypeUnit, PortLinkForma, PrjConst,
+  PortFilter, FIBQuery, pFIBQuery, AtrCommon, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -86,8 +114,101 @@ begin
   if ((dsPort.RecordCount = 0) or (dsPort.FieldByName('PORT').IsNull)) then
     exit;
 
-  if LinkPort(dsPort['Eid'], dsPort['PORT'])
-  then dsPort.Refresh;
+  if LinkPort(dsPort['Eid'], dsPort['PORT']) then
+    dsPort.Refresh;
+end;
+
+procedure TPortListForm.actOpenCustomerExecute(Sender: TObject);
+var
+  grid: TDBGridEh;
+  i: Integer;
+  b: TBookmark;
+  customers: TStringList;
+  s: string;
+begin
+  inherited;
+  grid := dbGrid;
+
+  customers := TStringList.Create;
+  customers.Sorted := true;
+  customers.Duplicates := dupIgnore;
+
+  if (grid.SelectedRows.Count = 0) then
+  begin
+    if (grid.DataSource.DataSet.FieldByName('CON').IsNull) or (grid.DataSource.DataSet.FieldByName('CON').AsInteger = 1)
+    then
+    begin
+
+      if not grid.DataSource.DataSet.FieldByName('CON_ID').IsNull then
+        customers.Add(IntToStr(grid.DataSource.DataSet['CON_ID']));
+    end
+  end
+  else
+  begin
+    b := grid.DataSource.DataSet.GetBookmark;
+    grid.DataSource.DataSet.Disablecontrols;
+    grid.DataSource.DataSet.First;
+    for i := 0 to grid.SelectedRows.Count - 1 do
+    begin
+      grid.DataSource.DataSet.Bookmark := grid.SelectedRows[i];
+      if (grid.DataSource.DataSet.FieldByName('CON').IsNull) or
+        (grid.DataSource.DataSet.FieldByName('CON').AsInteger = 1) then
+      begin
+
+        if not grid.DataSource.DataSet.FieldByName('CON_ID').IsNull then
+          customers.Add(IntToStr(grid.DataSource.DataSet['CON_ID']));
+      end
+    end;
+    grid.DataSource.DataSet.GotoBookmark(b);
+    grid.DataSource.DataSet.EnableControls;
+  end;
+
+  if (customers.Count > 0) then
+    s := customers.CommaText
+  else
+    s := '';
+
+  FreeAndNil(customers);
+
+  if (s <> '') then
+    A4MainForm.ShowCustomers(7, s);
+end;
+
+procedure TPortListForm.chkShowOFFClick(Sender: TObject);
+begin
+  inherited;
+
+  SetShowColorOff(chkShowOFF.Checked);
+end;
+
+procedure TPortListForm.SetShowColorOff(const aShow: Boolean);
+begin
+  FShowColorOFF := aShow;
+  dsPort.Close;
+  if not FShowColorOFF then
+    dsPort.ParamByName('ShowColor').Clear
+  else
+    dsPort.ParamByName('ShowColor').Value := 'iif(coalesce(p.con,1) = 1, (iif(exists(select sh.Customer_Id' + #13#10 +
+      ' from Subscr_hist sh  inner join services s on (sh.Serv_Id = s.Service_Id)' + #13#10 +
+      ' inner join TV_LAN l on (l.Customer_Id = sh.Customer_Id) where s.Business_Type in (1, 3)' + #13#10 +
+      ' and sh.Customer_Id = p.Con_Id and current_date between sh.Date_From and sh.Date_To), 1,0)), 2)';
+  dsPort.CloseOpen(true);
+end;
+
+procedure TPortListForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if not FShowColorOFF then
+    exit;
+
+  if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('CUST_CONNECTED').IsNull then
+  begin
+    if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CUST_CONNECTED').AsInteger = 0) then
+      Background := clYellow
+    else
+      Background := clWindow;
+  end;
 end;
 
 procedure TPortListForm.dbGridSortMarkingChanged(Sender: TObject);
@@ -176,6 +297,203 @@ begin
       s := s + ', ';
   end;
   Result := s;
+end;
+
+procedure TPortListForm.actEnableFilterExecute(Sender: TObject);
+begin
+  inherited;
+  if srcDataSource.DataSet is TpFIBDataSet then
+  begin
+    actEnableFilter.Checked := not actEnableFilter.Checked;
+    dsPort.ParamByName('Filter').Value := GenerateFilter;
+    dsPort.CloseOpen(true);
+  end;
+end;
+
+procedure TPortListForm.actFilterSetExecute(Sender: TObject);
+var
+  filter: string;
+begin
+  inherited;
+  if not(srcDataSource.DataSet is TpFIBDataSet) then
+    exit;
+
+  filter := '';
+
+  with TPortFilterForm.Create(Application) do
+    try
+      if not dsFilter.Active then
+        SetDefaultFilter;
+
+      actEnableFilter.Checked := (ShowModal = mrOk);
+      filter := GenerateFilter;
+    finally
+      Free;
+    end;
+
+  if (srcDataSource.DataSet.Filtered) then
+  begin
+    srcDataSource.DataSet.filter := '';
+    srcDataSource.DataSet.Filtered := False;
+  end;
+
+  if filter <> '' then
+  begin
+    dsPort.Close;
+    dsPort.ParamByName('Filter').Value := filter;
+    try
+      dsPort.Open;
+    except
+      ShowMessage(rsErrorFilter);
+      dsPort.Close;
+      dsPort.ParamByName('Filter').Clear;
+      dsPort.Open;
+    end;
+  end;
+end;
+
+function TPortListForm.GenerateFilter: string;
+
+  function RecordToFilter: string;
+  var
+    tmpSQL, s: string;
+  begin
+    tmpSQL := '';
+
+    // Условие отбора по адресу
+    if (dsFilter['CHECK_ADRESS'] = 1) then
+    begin
+      if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
+      begin
+        s := ' and (h.House_Id = %d) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('HOUSE_ID').AsInteger])
+      end
+      else if (not dsFilter.FieldByName('Street_Id').IsNull) then
+      begin
+        s := ' and (s.Street_Id = %d) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('Street_Id').AsInteger])
+      end;
+      {
+        if (not dsFilter.FieldByName('PORCH').IsNull) then
+        begin
+        s := ' and ((s.Porch_N = ''%s'') or (e.Porch_N = ''%s'')) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('PORCH').asString, dsFilter.FieldByName('PORCH').asString])
+        end;
+
+        if (not dsFilter.FieldByName('FLOOR').IsNull) then
+        begin
+        s := ' and ((s.Floor_N = ''%s'') or (e.Floor_N = ''%s'')) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('FLOOR').asString, dsFilter.FieldByName('FLOOR').asString])
+        end;
+
+        if (not dsFilter.FieldByName('PLACE').IsNull) then
+        begin
+        s := ' and ((s.Place = ''%s'') or (e.Place = ''%s'')) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('PLACE').asString, dsFilter.FieldByName('PLACE').asString])
+        end;
+      }
+      if (not dsFilter.FieldByName('SUBAREA_ID').IsNull) then
+      begin
+        s := ' and (h.Subarea_Id = %d) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('SUBAREA_ID').AsInteger])
+      end;
+
+      if (not dsFilter.FieldByName('AREA_ID').IsNull) then
+      begin
+        s := ' and (s.AREA_ID = %d) ';
+        tmpSQL := tmpSQL + Format(s, [dsFilter.FieldByName('AREA_ID').AsInteger])
+      end;
+
+    end;
+
+    if (not dsFilter.FieldByName('PROBLEM').IsNull) then
+    begin
+      // 1 Линии свободны
+      // 2 Подключена одна точка
+      // 3 Линия подключена к откл. абоненту
+
+      case dsFilter['PROBLEM'] of
+        1: // 3 Линия подключена к откл. абоненту
+          tmpSQL := tmpSQL + '  and (exists(select l.Lan_Id from TV_LAN l' + #13#10 +
+            'where l.Port = p.Port and l.Eq_Id = p.Eid' + #13#10 + 'and not exists(select sh.Customer_Id' + #13#10 +
+            'from Subscr_hist sh inner join services s on (sh.Serv_Id = s.Service_Id)' + #13#10 +
+            'where s.Business_Type in (1, 3)' + #13#10 + 'and sh.Customer_Id = l.Customer_Id' + #13#10 +
+            'and current_date between sh.Date_From and sh.Date_To)))';
+        {
+          3: // 1 Линии свободны
+          tmpSQL := tmpSQL + ' and (not (c.Capacity is null or c.Capacity = 1)) ' +
+          'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)';
+
+          2: // 2 Подключена одна точка
+          tmpSQL := tmpSQL + ' and (not (c.Capacity is null or c.Capacity = 1)) ' +
+          'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)';
+        }
+      end;
+    end;
+
+    if (tmpSQL <> '') then
+      Result := TrimAnd(tmpSQL)
+    else
+      Result := filter_1_1;
+
+    if dsFilter['inversion'] then
+      Result := Format(' NOT (%s)', [Result]);
+  end;
+
+var
+  whereStr: string;
+  default: string;
+begin
+  default := filter_1_1;
+  Result := default;
+  whereStr := '';
+
+  if (dsFilter.RecordCount = 0) or (not actEnableFilter.Checked) then
+    exit;
+
+  srcDataSource.DataSet.Disablecontrols;
+
+  try
+    dsFilter.First;
+
+    whereStr := '';
+    while not dsFilter.Eof do
+    begin
+      whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
+      // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+      dsFilter.next;
+      if not dsFilter.Eof then
+        if dsFilter['next_condition'] = 0 then
+          whereStr := whereStr + ' OR '
+        else
+          whereStr := whereStr + ' AND '
+    end;
+  except
+    whereStr := default;
+    ShowMessage(rsErrorSetFilter);
+  end;
+
+  Result := whereStr;
+  srcDataSource.DataSet.EnableControls;
+end;
+
+procedure TPortListForm.SetDefaultFilter;
+var
+  f: string;
+begin
+  dsFilter.Close;
+  dsFilter.Open;
+  dsFilter.EmptyTable;
+  f := A4MainForm.GetUserFilterFolder + 'port_default.jpf';
+  if FileExists(f) then
+  begin
+    if dsFilter.State in [dsEdit, dsInsert] then
+      dsFilter.Post;
+    DatasetFromJson(dsFilter, f);
+  end;
+
+  if dsFilter.RecordCount > 0 then
+    actEnableFilter.Checked := true;
 end;
 
 end.

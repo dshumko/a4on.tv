@@ -203,10 +203,19 @@ type
     procedure actTaskExecute(Sender: TObject);
     procedure dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure dbgPlanColumns13GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgGiveColumns13GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgExecColumns15GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgGridColumns14GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     fSelectedRow: Integer; // число помеченных строк
     FullAccess: Boolean; // полный доступ
+    FPersonalData: Boolean;
     CE: Boolean; // может изменять результат выполнения
     CC: Boolean; // может закрыть заявку
     CA: Boolean; // может добавить заявку
@@ -237,7 +246,7 @@ var
 implementation
 
 uses DateUtils, RequestForma, RequestFilterForma, MAIN, DM,
-  AtrCommon, StrUtils,
+  AtrCommon, AtrStrUtils, StrUtils,
   pFIBQuery, SelDateForma, RequestNewForma, ReqGiveForma, CF, ReportPreview,
   ReqPlanerForma;
 
@@ -725,10 +734,10 @@ begin
   // dbgPlan.DataGrouping.Active := False;
   if FCanSaveColumns then
   begin
-    dbgPlan.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqPlan', true);
-    dbgGive.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGive', true);
-    dbgGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGrid', true);
-    dbgExec.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqExec', true);
+    dbgPlan.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqPlan', false);
+    dbgGive.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGive', false);
+    dbgGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGrid', false);
+    dbgExec.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqExec', false);
   end;
   RequestsForm := nil;
   Action := caFree;
@@ -1504,6 +1513,30 @@ begin
   // end;
 end;
 
+procedure TRequestsForm.dbgExecColumns15GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
+
+end;
+
+procedure TRequestsForm.dbgGiveColumns13GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
+
+end;
+
+procedure TRequestsForm.dbgGridColumns14GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
+
+end;
+
 procedure TRequestsForm.dbgGridDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
   var GroupRowText: string);
 var
@@ -1548,6 +1581,13 @@ begin
     finally
     end;
   }
+end;
+
+procedure TRequestsForm.dbgPlanColumns13GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TRequestsForm.dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -1824,6 +1864,7 @@ begin
   end;
 
   FullAccess := dmMain.AllowedAction(rght_Request_full);
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   // (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ');
   CE := dmMain.AllowedAction(rght_Request_edit);
   // (52, 'РЕДАКТИРОВАНИЕ', 'ЗАЯВКИ', 'Редактирование заявки');

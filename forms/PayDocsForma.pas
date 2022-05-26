@@ -126,7 +126,7 @@ uses DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPrevi
 
 procedure TPayDocsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  dbgPayDoc.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDoc', true);
+  dbgPayDoc.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDoc', false);
   dmMain.SetIniValue('PAYDOC_BEGIN', DateToStr(fStartDate));
   dmMain.SetIniValue('PAYDOC_END', DateToStr(fEndDate));
   PayDocsForm := nil;

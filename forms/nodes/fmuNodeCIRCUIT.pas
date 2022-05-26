@@ -81,6 +81,9 @@ begin
 end;
 
 procedure TapgNodeCIRCUIT.miLoadPNGClick(Sender: TObject);
+var
+  e, f: string;
+  aPicStream: TMemoryStream;
 begin
   if FDataSource.DataSet.RecordCount = 0 then
     Exit;
@@ -88,6 +91,7 @@ begin
   if (not dmMain.AllowedAction(rght_Dictionary_Nodes)) then
     Exit;
 
+  dlgOpen.Filter := 'Изображения|*.png; *.jpg; *.jpeg|jpg|*.jpg; *.jpeg|png|*.png';
   if dlgOpen.Execute then
   begin
     if not dsCircuit.Active then
@@ -101,9 +105,27 @@ begin
       dsCircuit['NOTICE'] := '';
       dsCircuit['HOUSE_ID'] := FDataSource.DataSet['NODE_ID'];
     end;
-    dsCircuit['NAME'] := ExtractFileName(dlgOpen.FileName);
+
+    f := ExtractFileName(dlgOpen.FileName);
+    e := UpperCase(ExtractFileExt(f));
     dsCircuit.FieldByName('CIRCUIT').Clear;
-    TBlobField(dsCircuit.FieldByName('PNG')).LoadFromFile(dlgOpen.FileName);
+    if e = '.PNG' then
+    begin
+      TBlobField(dsCircuit.FieldByName('PNG')).LoadFromFile(dlgOpen.FileName);
+    end
+    else
+    begin
+      aPicStream := TMemoryStream.Create;
+      try
+        aPicStream.LoadFromFile(dlgOpen.FileName);
+        Jpeg2Png(aPicStream);
+        TBlobField(dsCircuit.FieldByName('PNG')).LoadFromStream(aPicStream);
+      finally
+        aPicStream.Free;
+      end;
+      f := ChangeFileExt(f, '.PNG');
+    end;
+    dsCircuit['NAME'] := f;
     dsCircuit.Post;
   end;
 end;
@@ -173,8 +195,8 @@ begin
       dsCircuit.Post;
     end;
   finally
-    CircuitData.free;
-    PngData.free;
+    CircuitData.Free;
+    PngData.Free;
   end;
 end;
 
@@ -194,8 +216,8 @@ begin
       CircuitData.Seek(0, soBeginning);
       EditCircuit(CircuitData, PngData, True);
     finally
-      CircuitData.free;
-      PngData.free;
+      CircuitData.Free;
+      PngData.Free;
     end;
   end
   else if (not dsCircuit.FieldByName('PNG').IsNull) then
@@ -221,7 +243,7 @@ begin
     try
       TBlobField(dsCircuit.FieldByName('PNG')).SaveToStream(PngData);
     finally
-      PngData.free;
+      PngData.Free;
     end;
     if FileExists(FileName) then
       ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);

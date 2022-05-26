@@ -205,6 +205,9 @@ begin
       if frxReport.PrepareReport(True) then
       begin
         dmMain.frxPDFExport.ShowDialog := False;
+        dmMain.frxPDFExport.Author := dmMain.mdsCompany['NAME'];
+        dmMain.frxPDFExport.EmbeddedFonts := True;
+        dmMain.frxPDFExport.PrintOptimized := True;
         // dmMain.frxPDFExport.Transparency := True;
         dmMain.frxPDFExport.FileName := frxReport.FileName;
         frxReport.Export(dmMain.frxPDFExport);
@@ -341,7 +344,14 @@ begin
   dsLetterTypes.Open;
   dsTemplate.Open;
 
-  val := Explode(';', export_fields + ';[ОПЛАТА_СЛ_МЕСЯЦ];[ДОПЛАТА_СЛ_МЕСЯЦ]');
+  // val := Explode(';', export_fields + ';[ОПЛАТА_СЛ_МЕСЯЦ];[ДОПЛАТА_СЛ_МЕСЯЦ]');
+  s := rsFldACCOUNT + ';' + rsFldBalance + ';' + rsFldContract + ';' + rsFldCurrentDay + ';' + rsFldCurrentYear + ';' +
+    rsFldDaysOfMonth + ';' + rsFldEmail + ';' + rsFldFIRSTNAME + ';' + rsFldFlat + ';' + rsFldHouse + ';' +
+    rsFldINITIALS + ';' + rsFldMiddleName + ';' + rsFldMobile + ';' + rsFldMonth + ';' + rsFldMonthFee + ';' +
+    rsFldMonthNeed + ';' + rsFldNextFee + ';' + rsFldNextNeed + ';' + rsFldPASSPORTDATE + ';' + rsFldPHONE + ';' +
+    rsFldPassportN + ';' + rsFldSTREET + ';' + rsFldSURNAME + ';' + rsFldSaldo + ';' + rsFldSecret + ';' +
+    rsFldStreetShort;
+  val := Explode(';', s);
   for I := 0 to Length(val) - 1 do
   begin
     pmMemo.Items.Add(NewItem(val[I], 0, False, True, miClick, 0, 'mi' + IntToStr(I)));

@@ -194,7 +194,7 @@ object apgNodeCIRCUIT: TapgNodeCIRCUIT
       Caption = '-'
     end
     object miLoadPNG: TMenuItem
-      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1082#1072#1088#1090#1080#1085#1082#1091' PNG'
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1082#1072#1088#1090#1080#1085#1082#1091
       OnClick = miLoadPNGClick
     end
     object miN1: TMenuItem
@@ -206,6 +206,7 @@ object apgNodeCIRCUIT: TapgNodeCIRCUIT
   end
   object dlgOpen: TOpenDialog
     DefaultExt = '*.png'
+    Filter = 'jpg, png|*.png; *.jp*g|jpg|*.jp*g|png|*.png'
     Left = 528
     Top = 95
   end

@@ -581,6 +581,10 @@ inherited EquipmentForm: TEquipmentForm
       Visible = False
       OnClick = miTreeExpandClick
     end
+    object miN6: TMenuItem
+      Caption = #1057#1074#1077#1088#1085#1091#1090#1100' '#1074#1077#1090#1082#1091
+      OnClick = miN6Click
+    end
     object miTreeExpandCurrent: TMenuItem
       Caption = #1056#1072#1079#1074#1077#1088#1085#1091#1090#1100' '#1074#1077#1090#1082#1091
       Visible = False
@@ -684,69 +688,6 @@ inherited EquipmentForm: TEquipmentForm
     TreeList.DefaultNodeExpanded = True
     Left = 351
     Top = 228
-  end
-  object drvEQ: TpFIBDataDriverEh
-    Database = dmMain.dbTV
-    SelectCommand.Params = <>
-    UpdateCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'NOTICE'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'EID'
-        ParamType = ptUnknown
-      end>
-    UpdateCommand.CommandText.Strings = (
-      'UPDATE EQUIPMENT SET NOTICE = :NOTICE WHERE EID = :EID')
-    InsertCommand.Params = <>
-    DeleteCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'EID'
-        ParamType = ptUnknown
-      end>
-    DeleteCommand.CommandText.Strings = (
-      'DELETE FROM'
-      '    EQUIPMENT'
-      'WHERE'
-      '        EID = :EID')
-    GetrecCommand.Params = <
-      item
-        DataType = ftInteger
-        Name = 'EID'
-        ParamType = ptInput
-      end>
-    GetrecCommand.CommandText.Strings = (
-      'select'
-      '    E.*'
-      '  , h.house_no'
-      '  , s.street_name || '#39' '#39' || s.street_short as street'
-      '  , o.o_name as eqgroup'
-      '  , p.name as parent_name'
-      '  , o.O_DIMENSION as COLOR'
-      '  , n.NAME NODE_NAME'
-      '  , nt.o_name as node_type '
-      '  from EQUIPMENT E'
-      '       left outer join house h on (e.house_id = h.house_id)'
-      '       left outer join street s on (s.street_id = h.street_id)'
-      
-        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
-        '_TYPE = 7)'
-      '       left outer join equipment p on (e.parent_id = p.eid)'
-      '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
-      
-        '       left join objects nt on (nt.O_Id = n.Type_Id and o.O_Type' +
-        ' = 38) '
-      ''
-      ' WHERE '
-      '        E.EID = :EID')
-    ProviderDataSet = dsEquipments
-    KeyFields = 'EID'
-    Left = 258
-    Top = 258
   end
   object dsFilter: TMemTableEh
     Params = <>
@@ -863,5 +804,11 @@ inherited EquipmentForm: TEquipmentForm
     object N36: TMenuItem
       Action = actQuickFilter
     end
+  end
+  object drvEQ: TDataSetDriverEh
+    KeyFields = 'EID'
+    ProviderDataSet = dsEquipments
+    Left = 320
+    Top = 296
   end
 end

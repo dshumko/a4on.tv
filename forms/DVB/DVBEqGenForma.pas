@@ -231,13 +231,13 @@ begin
             ParamByName('TEXT_ENCODE').Clear;
 
           for i := 0 to count - 1 do begin
-            //if (count > 1) then begin
+            if (count > 1) then begin
               newN := pref + lpad(IntToStr(StartN + i), digits);
               newN := AddSum(newN);
-            //end
-            //else begin
-            //  newN := edtNumber.Text;
-            //end;
+            end
+            else begin
+              newN := edtNumber.Text;
+            end;
             ParamByName('EQ_N').AsString := newN;
             if isMAC and BigNumberAddWord(StartNum, 1) then begin
               ParamByName('NOTICE').AsString := formatAsMac(StartNum);

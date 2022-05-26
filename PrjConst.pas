@@ -84,6 +84,7 @@ const
   rght_Customer_Debt = 47;
   rght_Customer_PSWD = 48; // сброс пароля
   rght_Customer_Attribute = 189;
+  rght_Customer_PersonalData = 220;
 
   rght_Dictionary_full = 40;
 
@@ -904,7 +905,7 @@ resourcestring
   rsWireUnLinkQuest = 'Кабель будет отключен от портов?';
   rsWireUnLink = 'Отключить кабель';
   rsWarningQuestStop  = 'Исправить ошибки?';
-
+  rsIpnotSetOrNotFound  = 'Для услуги не заданы IP или нет свободных адресов';
   rsDeleteCaption = 'Удаление';
 
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';

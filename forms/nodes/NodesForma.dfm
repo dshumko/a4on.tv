@@ -1,6 +1,7 @@
 object NodesForm: TNodesForm
   Left = 0
   Top = 0
+  ActiveControl = dbgNodes
   Caption = #1057#1087#1080#1089#1086#1082' '#1091#1079#1083#1086#1074
   ClientHeight = 554
   ClientWidth = 894
@@ -930,8 +931,8 @@ object NodesForm: TNodesForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 165
-    Top = 371
+    Left = 149
+    Top = 355
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -941,8 +942,8 @@ object NodesForm: TNodesForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 163
-    Top = 423
+    Left = 147
+    Top = 407
   end
   object dsNodes: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -1044,8 +1045,8 @@ object NodesForm: TNodesForm
   end
   object ActListNodes: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 518
-    Top = 449
+    Left = 558
+    Top = 441
     object actNodeAdd: TAction
       Caption = #1053#1086#1074#1099#1081' '#1091#1079#1077#1083
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1091#1079#1077#1083
@@ -1213,7 +1214,7 @@ object NodesForm: TNodesForm
   end
   object actlstSearch: TActionList
     Images = A4MainForm.ilFilter
-    Left = 593
+    Left = 649
     Top = 445
     object actFilterSearchText: TAction
       Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086'  '#1074#1074#1077#1076#1077#1085#1085#1086#1084#1091' '#1090#1077#1082#1089#1090#1091
@@ -1311,11 +1312,14 @@ object NodesForm: TNodesForm
     end
   end
   object PropStorage: TPropStorageEh
+    Section = 'NODES'
     StorageManager = dmMain.iniPropStorage
     StoredProps.Strings = (
       'pnlBtns.Panel2.chkFldOnly.<P>.Checked'
       'pnlForms.<P>.Height'
       'pnlForms.pnl1.<P>.Width')
+    OnWriteCustomProps = PropStorageWriteCustomProps
+    OnReadProp = PropStorageReadProp
     Left = 25
     Top = 457
   end
@@ -1434,7 +1438,7 @@ object NodesForm: TNodesForm
       '  order by STREET_NAME, a.area_name  ')
     Transaction = trRead
     Database = dmMain.dbTV
-    Left = 161
+    Left = 145
     Top = 474
   end
   object srcStreet: TDataSource
@@ -1457,8 +1461,8 @@ object NodesForm: TNodesForm
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcStreet
-    Left = 221
-    Top = 471
+    Left = 213
+    Top = 479
   end
   object srcHouse: TDataSource
     DataSet = dsHomes
@@ -1487,8 +1491,8 @@ object NodesForm: TNodesForm
       '  order by o.O_Name  ')
     Transaction = trRead
     Database = dmMain.dbTV
-    Left = 345
-    Top = 448
+    Left = 329
+    Top = 488
     oFetchAll = True
   end
   object trReadQ: TpFIBTransaction
@@ -1551,8 +1555,8 @@ object NodesForm: TNodesForm
     Database = dmMain.dbTV
     AutoCommit = True
     DataSource = srcNodes
-    Left = 341
-    Top = 352
+    Left = 333
+    Top = 368
     poUseBooleanField = False
     poSetRequiredFields = True
     oVisibleRecno = True
@@ -1567,13 +1571,13 @@ object NodesForm: TNodesForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 397
-    Top = 363
+    Left = 421
+    Top = 355
   end
   object srcParent: TDataSource
     DataSet = dsParentNode
-    Left = 342
-    Top = 400
+    Left = 334
+    Top = 424
   end
   object mtNodes: TMemTableEh
     FieldDefs = <>
@@ -1593,7 +1597,7 @@ object NodesForm: TNodesForm
     TreeList.KeyFieldName = 'NODE_ID'
     TreeList.RefParentFieldName = 'PARENT_ID'
     TreeList.DefaultNodeExpanded = True
-    Left = 215
+    Left = 207
     Top = 412
   end
   object drvNodes: TpFIBDataDriverEh
@@ -1604,185 +1608,8 @@ object NodesForm: TNodesForm
     DeleteCommand.Params = <>
     GetrecCommand.Params = <>
     ProviderDataSet = dsNodes
+    KeyFields = 'NODE_ID'
     Left = 266
     Top = 410
-  end
-  object drv1: TpFIBDataDriverEh
-    Database = dmMain.dbTV
-    SelectCommand.Params = <>
-    UpdateCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'House_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Type_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Name'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'NOTICE'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Lat'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Lon'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Floor_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Porch_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'PLACE'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Parent_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Node_Id'
-        ParamType = ptUnknown
-      end>
-    UpdateCommand.CommandText.Strings = (
-      'update Nodes'
-      'set House_Id = :House_Id,'
-      '    Type_Id = :Type_Id,'
-      '    Name = :Name,'
-      '    Notice = :Notice,'
-      '    Lat = :Lat,'
-      '    Lon = :Lon,'
-      '    Floor_N = :Floor_N,'
-      '    Porch_N = :Porch_N,'
-      '    PLACE = :PLACE,'
-      '    Parent_Id = :Parent_Id'
-      'where Node_Id = :Node_Id')
-    InsertCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'Node_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'House_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Type_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Name'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Notice'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Lat'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Lon'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Floor_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Porch_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'PLACE'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Parent_Id'
-        ParamType = ptUnknown
-      end>
-    InsertCommand.CommandText.Strings = (
-      
-        'insert into Nodes (Node_Id, House_Id, Type_Id, Name, Notice, Lat' +
-        ', Lon, Floor_N, Porch_N, PLACE, Parent_Id)'
-      
-        'values (:Node_Id, :House_Id, :Type_Id, :Name, :Notice, :Lat, :Lo' +
-        'n, :Floor_N, :Porch_N, :PLACE, :Parent_Id)')
-    DeleteCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'NODE_ID'
-        ParamType = ptUnknown
-      end>
-    DeleteCommand.CommandText.Strings = (
-      'execute procedure Delete_Node(:NODE_ID)')
-    GetrecCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'NODE_ID'
-        ParamType = ptUnknown
-      end>
-    GetrecCommand.CommandText.Strings = (
-      'select'
-      '  n.*'
-      ', o.O_Name'
-      ', s.street_short'
-      ', S.Street_Name'
-      ', H.House_No'
-      ', h.Street_ID'
-      ', p.Name P_NAME'
-      ', po.O_Name P_TYPE'
-      ', pS.Street_Name||'#39' '#39'||ps.street_short P_STREET'
-      ', pH.House_No P_HOUSE'
-      'FROM NODES n'
-      '   INNER JOIN HOUSE H ON (n.HOUSE_ID = H.HOUSE_ID)'
-      '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
-      
-        '   INNER join objects o on (o.O_Id = n.Type_Id and o.O_Type = 38' +
-        ')'
-      '   left outer join NODES p on (p.Node_Id = n.Parent_Id)'
-      '   left outer JOIN HOUSE pH ON (pH.HOUSE_ID = p.HOUSE_ID)'
-      '   left outer JOIN STREET pS ON (pS.STREET_ID = pH.STREET_ID)'
-      
-        '   left outer join objects po on (po.O_Id = p.Type_Id and o.O_Ty' +
-        'pe = 38)'
-      'where(     N.NODE_ID = :NODE_ID     )')
-    ProviderDataSet = dsNodes
-    Left = 266
-    Top = 354
   end
 end

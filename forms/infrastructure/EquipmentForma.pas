@@ -25,7 +25,6 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     mtEQ: TMemTableEh;
-    drvEQ: TpFIBDataDriverEh;
     N4: TMenuItem;
     telnet1: TMenuItem;
     actAtrADD: TAction;
@@ -68,6 +67,8 @@ type
     N42: TMenuItem;
     N36: TMenuItem;
     actSetFilterN: TAction;
+    drvEQ: TDataSetDriverEh;
+    miN6: TMenuItem;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -98,11 +99,13 @@ type
     procedure ActSetFilterExecute(Sender: TObject);
     procedure actEnableFilterExecute(Sender: TObject);
     procedure actSetFilterNExecute(Sender: TObject);
+    procedure miN6Click(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FAutoGen: Boolean; // автогенерация название
     FPageList: TA4onPages;
     FCanSave: Boolean;
+    FInTreeView: Boolean;
     FIsVertical: Boolean;
     function GenerateFilter: string;
     procedure SetGridTreeMode(const inTree: Boolean);
@@ -263,7 +266,7 @@ begin
   end;
 
   if FCanSave then
-    dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', True);
+    dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', false);
 
   if chkTREE.Checked then
     dmMain.SetIniValue('EQUIPMENTASTREE', '1')
@@ -285,6 +288,7 @@ begin
     dmMain.SetIniValue('EQUIPMENT_FSIZE', pnlForms.Height.ToString);
     dmMain.SetIniValue('EQUIPMENT_LSIZE', lstForms.Width.ToString);
   end;
+  dmMain.SetIniValue('EQUIPMENT_LASTPAGE', lstForms.ItemIndex.ToString);
 
   srcDataSource.DataSet.Close;
   EquipmentForm := nil;
@@ -302,6 +306,7 @@ begin
   FPageList.Add(TapgEqpmntRegion);
 
   FCanSave := True;
+  FInTreeView := False;
 end;
 
 procedure TEquipmentForm.actCloneExecute(Sender: TObject);
@@ -361,7 +366,8 @@ begin
   inherited;
   if not(srcDataSource.DataSet is TpFIBDataSet) then
     Exit;
-  if chkTREE.Checked then begin
+  if chkTREE.Checked then
+  begin
     ShowMessage(rsTreeMode);
     Exit;
   end;
@@ -470,6 +476,7 @@ begin
   else
     id := -666;
 
+  FInTreeView := inTree;
   if inTree then
   begin
     srcDataSource.DataSet := mtEQ;
@@ -557,12 +564,19 @@ var
   FIBDS: TpFIBDataSet;
   beOpened: Boolean;
   fn: string;
+  id: Integer;
 begin
   inherited;
   if not(Sender is TCustomDBGridEh) then
     Exit;
   cr := Screen.Cursor;
   Screen.Cursor := crSqlWait;
+
+  if (dbGrid.DataSource.DataSet.Active) and (not dbGrid.DataSource.DataSet.FieldByName('EID').IsNull) then
+    id := dbGrid.DataSource.DataSet['EID']
+  else
+    id := -666;
+
   try
     Grid := TCustomDBGridEh(Sender);
     if not chkTREE.Checked then
@@ -618,16 +632,21 @@ begin
       if Trim(s) <> '' then
         mtEQ.SortOrder := s;
     end;
+    if id <> -666 then
+      dbGrid.DataSource.DataSet.Locate('EID', id, []);
+
   finally
     Screen.Cursor := cr;
   end;
-
 end;
 
 procedure TEquipmentForm.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
   id: Integer;
+  s : string;
+  R : TMemRecViewEh;
+  expanded : Boolean;
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
@@ -635,15 +654,29 @@ begin
   ci.CUSTOMER_ID := -1;
   if (dsEquipments.RecordCount = 0) then
     Exit;
-  if EditEquipment(dbGrid.DataSource.DataSet['EID'], ci, -1) <> -1 then
+
+  if (srcDataSource.DataSet is TMemTableEh) then
+    expanded := mtEQ.RecView.NodeExpanded
+  else
+    expanded := False;
+
+  id := dbGrid.DataSource.DataSet['EID'];
+  if EditEquipment(id, ci, -1) <> -1 then
   begin
     if (srcDataSource.DataSet is TMemTableEh) then
     begin
       { TODO: Переделать обновление записи }
-      id := dbGrid.DataSource.DataSet['EID'];
+      s := mtEQ.SortOrder;
       mtEQ.Close;
       mtEQ.Open;
+      mtEQ.SortOrder := s;
       mtEQ.TreeList.Locate('EID', id, []);
+      R:= mtEQ.RecView;
+      // mtEQ.RecordsView.MemoryTreeList.Collapse(r.NodeParent, True);
+      // mtEQ.RecordsView.MemoryTreeList.Expand(r, expanded);
+      // dbGridSortMarkingChanged(dbGrid);
+
+      // mtEQ.RefreshRecord;
     end
     else
     begin
@@ -722,8 +755,10 @@ begin
   DoCreatePages;
   if FPageList.Count > 0 then
   begin
-    lstForms.ItemIndex := 0;
-    ShowPage(IndexToPage(0));
+    if not TryStrToInt(dmMain.GetIniValue('EQUIPMENT_LASTPAGE'), i) then
+      i := 0;
+    lstForms.ItemIndex := i;
+    ShowPage(IndexToPage(i));
   end;
 
   with fsGlobalUnit do
@@ -811,6 +846,16 @@ begin
   OpenTreeNode(CurrNode);
   mtEQ.TreeList.Locate('EID', EID, []);
   dbGrid.DataSource.DataSet.EnableControls;
+end;
+
+procedure TEquipmentForm.miN6Click(Sender: TObject);
+var
+  CurrNode: TMemRecViewEh;
+begin
+  inherited;
+
+  CurrNode := mtEQ.RecView;
+  mtEQ.RecordsView.MemoryTreeList.Collapse(CurrNode, True);
 end;
 
 procedure TEquipmentForm.miTreeCollapseClick(Sender: TObject);

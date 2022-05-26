@@ -544,6 +544,9 @@ object ServiceForm: TServiceForm
     BevelOuter = bvNone
     TabOrder = 4
     Visible = False
+    DesignSize = (
+      405
+      28)
     object chkAUTOOFF: TDBCheckBoxEh
       Left = 8
       Top = 5
@@ -557,6 +560,29 @@ object ServiceForm: TServiceForm
       Flat = True
       TabOrder = 0
       OnClick = chkAUTOOFFClick
+    end
+    object cbUnblMeth: TDBComboBoxEh
+      Left = 269
+      Top = 3
+      Width = 128
+      Height = 21
+      Hint = #1088#1072#1079#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080' '#1091#1089#1083#1086#1074#1080#1080', '#1095#1090#1086' '#1073#1072#1083#1072#1085#1089
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'Unbl_Meth'
+      DataSource = srcService
+      DynProps = <>
+      EmptyDataInfo.Text = #1088#1072#1079#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080' '#1091#1089#1083#1086#1074#1080#1080', '#1095#1090#1086' '#1073#1072#1083#1072#1085#1089
+      EditButtons = <>
+      Items.Strings = (
+        #1055#1083#1102#1089'. '#1087#1088#1080' '#1074#1099#1093#1086#1076#1077' '#1074' '#1087#1083#1102#1089
+        #1044#1077#1085#1100'. '#1093#1074#1072#1090#1072#1077#1090' '#1085#1072' '#1076#1077#1085#1100
+        #1052#1077#1089#1103#1094'. '#1093#1074#1072#1090#1072#1077#1090' '#1085#1072' '#1084#1077#1089#1103#1094)
+      KeyItems.Strings = (
+        '0'
+        '1'
+        '2')
+      TabOrder = 1
+      Visible = False
     end
   end
   object pnlAddToMin: TPanel
@@ -705,16 +731,16 @@ object ServiceForm: TServiceForm
       'order BY O.O_NAME')
     Transaction = trSRead
     Database = dmMain.dbTV
-    Left = 294
-    Top = 151
+    Left = 198
+    Top = 231
     oStartTransaction = False
     oFetchAll = True
   end
   object srcPaymentType: TDataSource
     AutoEdit = False
     DataSet = dsPaymentType
-    Left = 362
-    Top = 133
+    Left = 258
+    Top = 237
   end
   object dsService: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -742,7 +768,8 @@ object ServiceForm: TServiceForm
       '    :Note,'
       '    :Tag,'
       '    :Tag_Str,'
-      '    :Openly'
+      '    :Openly,'
+      '    :Unbl_Meth'
       ')'
       '')
     InsertSQL.Strings = (
@@ -770,7 +797,8 @@ object ServiceForm: TServiceForm
       '    :Note,'
       '    :Tag,'
       '    :Tag_Str,'
-      '    :Openly'
+      '    :Openly,'
+      '    :Unbl_Meth'
       ')')
     SelectSQL.Strings = (
       'SELECT '
@@ -793,14 +821,14 @@ object ServiceForm: TServiceForm
     Database = dmMain.dbTV
     UpdateTransaction = trSWrite
     AutoCommit = True
-    Left = 334
-    Top = 359
+    Left = 318
+    Top = 327
     oFetchAll = True
   end
   object srcService: TDataSource
     DataSet = dsService
-    Left = 288
-    Top = 360
+    Left = 208
+    Top = 320
   end
   object trSWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV

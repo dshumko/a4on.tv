@@ -534,6 +534,7 @@ object dmMain: TdmMain
       'begin'
       ''
       'end.')
+    OnPreview = frxModalReportPreview
     OnUserFunction = frxReportUserFunction
     Left = 693
     Top = 189

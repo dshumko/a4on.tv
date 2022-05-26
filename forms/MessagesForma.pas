@@ -125,10 +125,13 @@ type
     procedure dbgMessagesGetFooterParams(Sender: TObject; DataCol, Row: Integer;
       Column: TColumnEh; AFont: TFont; var Background: TColor;
       var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure dbgMessagesColumns7GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     FFirstOpen : Boolean; // Первое открытие Формы
     CanEdit: Boolean;
     CanCreate: Boolean;
+    FPersonalData: Boolean;
     inEditMode: Boolean;
     fStartDate: TDateTime;
     fEndDate: TDateTime;
@@ -155,7 +158,7 @@ uses DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPrevi
 procedure TMessagesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if fCanSave then
-    dbgMessages.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgMessages', true);
+    dbgMessages.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgMessages', false);
   if srcMessages.DataSet.Active then
     srcMessages.DataSet.Close;
   dsMessages.Close;
@@ -286,6 +289,7 @@ begin
 
   CanEdit := (dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full));
   CanCreate := (dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full));
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
   // права пользователей
   actNew.Visible := CanEdit;
@@ -308,6 +312,13 @@ begin
   fStartDate := now - 7;
   fEndDate := now;
   SetMessagesFilter;
+end;
+
+procedure TMessagesForm.dbgMessagesColumns7GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TMessagesForm.dbgMessagesDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;

@@ -197,8 +197,8 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, true);
-  // dbgPayDocPayment.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment', true);
+        Self.Name + '.' + Components[i].Name, false);
+
   if dsDoc.State in [dsEdit, dsInsert] then
     dsDoc.Cancel;
   if dsMaterials.Active then

@@ -79,12 +79,14 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure frxDesignerShow(Sender: TObject);
     procedure dbTVAfterConnect(Sender: TObject);
+    procedure frxModalReportPreview(Sender: TObject);
   private
     { Private declarations }
     fLicRec: Integer;
     fSuperMode: Integer;
     // режим отображения абонентов -1 - режим отключен 0 - все 1 - скрыть абонентов
     FRightsList: TStringList;
+    FPersonalData: Boolean;
     FUserGroups: TStringList;
     FSettingsList: TStringList;
     FA4onList: TStringList;
@@ -312,7 +314,7 @@ begin
     frxDesigner := TfrxDesigner.Create(self);
     frxDesigner.OnShow := frxDesignerShow;
   end;
-
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   // пароль для работы с кассой или из настроек или из базы
   CPSWD := GetIniValue('CASHBOXPSWD');
   if CPSWD <> '' then
@@ -403,6 +405,9 @@ begin
         INN := '';
         isJur := 0;
       end;
+
+      if (isJur = 0) and (not FPersonalData) then
+        FIO := HideSurname(FIO);
     end;
   end;
   dsFindCN.Close;
@@ -711,8 +716,10 @@ begin
   else
   begin
     // исключим ограничивающие права для SYSDBA
-    Result := true and (not(aRightsID in [rght_Customer_View, rght_Pays_AddToday, rght_Customer_Only_ONE,
-      rght_Pays_TheirAdd, rght_Recourses_owner, rght_OrdersTP_Today]));
+    Result := true and (not(aRightsID in [rght_Customer_View, rght_Customer_Only_ONE
+      , rght_Customer_PersonalData
+      , rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner, rght_OrdersTP_Today
+      ]));
   end;
 end;
 
@@ -967,8 +974,10 @@ begin
   if Assigned(frxzscmpnts1) then
     FreeAndNil(frxzscmpnts1);
 {$ENDIF}
-  if dbTV.Connected then
+  if dbTV.Connected then begin
+    dbTV.CloseDataSets;
     dbTV.Close;
+  end;
 end;
 
 procedure TdmMain.Company2MemDS(aDS: TDataSet);
@@ -1080,12 +1089,10 @@ begin
   Report.AddFunction('function GEN_BARCODE(const ACCOUNT : string; const DEBT : Currency;' +
     ' const ID : INTEGER; const UL, HOUSE, FLAT, FIO : string):string', rsFunctionsA4onTV, rsFunctionBarCode);
   Report.AddFunction('function INMODE:Integer', rsFunctionsA4onTV, rsSOFTMODE);
-  Report.AddFunction('function StrReplace(const S, OldS, NewS: string): string',
-    'Функции определенные пользователем',
+  Report.AddFunction('function StrReplace(const S, OldS, NewS: string): string', 'Функции определенные пользователем',
     'Заменяет в строке S подстроку OldS на подстроку NewS');
   Report.AddFunction('function MonthAsString(D: TDateTime; const beforeDay : string; const AfterDay :string): string',
-    'Функции определенные пользователем',
-    'Вывод месяца как строка, например 01.01.2013 - «1» января 2013');
+    'Функции определенные пользователем', 'Вывод месяца как строка, например 01.01.2013 - «1» января 2013');
 
 end;
 
@@ -2119,6 +2126,12 @@ begin
 
   TfrxDesignerForm(Sender).SaveAsMI.Visible := False;
   TfrxDesignerForm(Sender).SaveAsCmd.Visible := False;
+end;
+
+procedure TdmMain.frxModalReportPreview(Sender: TObject);
+begin
+  if (Sender is TfrxReport) then
+    (Sender as TfrxReport).PreviewForm.Caption := (Sender as TfrxReport).FILENAME;
 end;
 
 procedure TdmMain.CheckFirebirdVersion;

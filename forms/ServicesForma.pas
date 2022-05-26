@@ -299,10 +299,10 @@ end;
 
 procedure TServicesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  ASGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ASGrid', True);
-  ssGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ssGrid', True);
-  fsGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'fsGrid', True);
-  trfGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'trfGrid', True);
+  ASGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ASGrid', false);
+  ssGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ssGrid', false);
+  fsGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'fsGrid', false);
+  trfGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'trfGrid', false);
   dmMain.SetIniValue('ServiceGrid', IntToStr(ASGrid.Height));
   Action := caFree;
 end;

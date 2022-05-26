@@ -108,6 +108,7 @@ var
 begin
   i := (dmMain.AllowedAction(rght_Customer_full)); // Изменение инфы о абоненте
   i := i or (dmMain.AllowedAction(rght_Dictionary_full)); // полный доступ
+  i := i or dmMain.AllowedAction(rght_Dictionary_Equipment); // доступ к оборудованию
   i := i and not VarIsNull(LupHOUSE_ID.Value);
 
   OkCancelFrame.bbOk.Enabled := i;
@@ -115,10 +116,8 @@ end;
 
 procedure TEquipCoverageForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-
   dsStreets.Close;
   dsHouses.Close;
-
 end;
 
 procedure TEquipCoverageForm.FormDestroy(Sender: TObject);

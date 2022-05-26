@@ -76,6 +76,7 @@ type
     edtTAGSTR: TDBEditEh;
     edtTAGINT: TDBNumberEditEh;
     chkONLY_ONE: TDBCheckBoxEh;
+    cbUnblMeth: TDBComboBoxEh;
     procedure cbItsInetClick(Sender: TObject);
     procedure eIPEndEnter(Sender: TObject);
     procedure eIPEndExit(Sender: TObject);
@@ -245,6 +246,7 @@ end;
 procedure TServiceForm.chkAUTOOFFClick(Sender: TObject);
 begin
   pnlAUTO.Visible := chkAUTOOFF.Checked;
+  cbUnblMeth.Visible := chkAUTOOFF.Checked;
 end;
 
 procedure TServiceForm.dsServiceAfterOpen(DataSet: TDataSet);
@@ -258,6 +260,7 @@ begin
   dsService['EXTRA'] := 0;
   dsService['SHOW_SERVICE'] := 1;
   dsService['SRV_TYPE_ID'] := fSrvType;
+  dsService['Unbl_Meth'] := 0;
 end;
 
 procedure TServiceForm.edtDigExtIDKeyPress(Sender: TObject; var Key: Char);

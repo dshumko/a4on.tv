@@ -119,6 +119,8 @@ type
     procedure dbgPaymentsGetFooterParams(Sender: TObject; DataCol, Row: Integer;
       Column: TColumnEh; AFont: TFont; var Background: TColor;
       var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure dbgPaymentsColumns2GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     fStartDate: TDateTime;
     fEndDate: TDateTime;
@@ -126,6 +128,7 @@ type
     FullAccess: Boolean;
     FTodayOnly: Boolean;
     FOnlyTheir: Boolean;
+    FPersonalData: Boolean;
     procedure SetPaymentsFilter;
   public
     { Public declarations }
@@ -143,7 +146,7 @@ uses DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, CF, Custome
 procedure TPaymentsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if not actGroup.Checked then
-    dbgPayments.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayments', true);
+    dbgPayments.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayments', false);
   if dsErrors.Active then
     dsErrors.Close;
   if srcPayments.DataSet.Active then
@@ -358,6 +361,7 @@ begin
 
   // права пользователей
   FullAccess := dmMain.AllowedAction(rght_Pays_full);
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   vSF := dmMain.AllowedAction(rght_Pays_add) or FTodayOnly; // добавление
   actPayDocNew.Visible := (vSF or FullAccess);
   actPayDocEdit.Visible := (vSF or FullAccess);
@@ -404,6 +408,13 @@ procedure TPaymentsForm.dbgPaymentsKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
     actPayDocEdit.Execute;
+end;
+
+procedure TPaymentsForm.dbgPaymentsColumns2GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TPaymentsForm.dbgPaymentsDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;

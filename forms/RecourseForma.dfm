@@ -32,12 +32,15 @@ object RecourseForm: TRecourseForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 4
+    DesignSize = (
+      467
+      102)
     object mmoNotice: TDBMemoEh
-      Left = 0
+      Left = 5
       Top = 0
-      Width = 467
+      Width = 457
       Height = 102
-      Align = alClient
+      Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DynProps = <>
       EditButtons = <>
@@ -56,11 +59,12 @@ object RecourseForm: TRecourseForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    OnEnter = pnlRecourseEnter
     DesignSize = (
       467
       25)
     object lblAttribute: TLabel
-      Left = 7
+      Left = 5
       Top = 6
       Width = 64
       Height = 13
@@ -93,6 +97,10 @@ object RecourseForm: TRecourseForm
           FieldName = 'NEED_REQUEST'
           Width = 10
         end>
+      DropDownBox.ListSource = srcRecourse
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
@@ -101,9 +109,11 @@ object RecourseForm: TRecourseForm
       ListField = 'NAME'
       ListSource = srcRecourse
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 0
       Visible = True
       OnChange = cbRecourseChange
+      OnClick = cbRecourseClick
     end
   end
   object pnlInfo: TPanel
@@ -195,9 +205,9 @@ object RecourseForm: TRecourseForm
       TabOrder = 3
     end
     object LupStreets: TDBLookupComboboxEh
-      Left = 2
+      Left = 5
       Top = 15
-      Width = 207
+      Width = 203
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -278,7 +288,7 @@ object RecourseForm: TRecourseForm
       467
       31)
     object lbl2: TLabel
-      Left = 7
+      Left = 5
       Top = 8
       Width = 43
       Height = 13
@@ -310,7 +320,7 @@ object RecourseForm: TRecourseForm
       467
       35)
     object btnOkandRequest: TBitBtn
-      Left = 7
+      Left = 5
       Top = 4
       Width = 142
       Height = 27

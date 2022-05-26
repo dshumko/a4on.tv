@@ -82,9 +82,12 @@ type
     procedure dbVertGridRowCategoriesNodeCollapsed(Grid: TCustomDBVertGridEh; Node: TDBVertGridCategoryTreeNodeEh;
       CategoryProp: TDBVertGridCategoryPropEh);
     procedure actEditLinkExecute(Sender: TObject);
+    procedure dbgCustomerColumns8GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
+    FPersonalData: Boolean;
     FIsVertical: Boolean;
     procedure EnableControls;
     function GetCustomerInfo: TCustomerInfo;
@@ -121,6 +124,7 @@ begin
   Caption := GetPageName;
 
   FRightFull := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   // полный доступ
   FRightEdit := (dmMain.AllowedAction(rght_Dictionary_Equipment_Ports)); // полный доступ
 
@@ -415,6 +419,13 @@ begin
     if actAdd.Enabled then
       actAdd.Execute;
   end;
+end;
+
+procedure TapgEqpmntPort.dbgCustomerColumns8GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TapgEqpmntPort.dbgCustomerDblClick(Sender: TObject);

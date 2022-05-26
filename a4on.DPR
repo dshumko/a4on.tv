@@ -314,7 +314,12 @@ uses
   EquipFilter in 'forms\infrastructure\EquipFilter.pas' {EquipFilterForm},
   PortLinkForma in 'forms\infrastructure\PortLinkForma.pas' {PortLinkForm},
   WireLinkForma in 'forms\infrastructure\WireLinkForma.pas' {WireLinkForm},
-  AttributeEditForma in 'forms\AttributeEditForma.pas' {AttributeEditForm};
+  AttributeEditForma in 'forms\AttributeEditForma.pas' {AttributeEditForm},
+  WireFilter in 'forms\infrastructure\WireFilter.pas' {WireFilterForm},
+  WirePointForma in 'forms\infrastructure\WirePointForma.pas' {WirePointForm},
+  PortFilter in 'forms\infrastructure\PortFilter.pas' {PortFilterForm},
+  ConnectTypeForma in 'forms\infrastructure\ConnectTypeForma.pas' {ConnectTypeForm},
+  PortTypeForma in 'forms\infrastructure\PortTypeForma.pas' {PortTypeForm};
 
 {$R *.RES}
 // var

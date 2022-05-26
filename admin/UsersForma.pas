@@ -279,6 +279,7 @@ procedure TUsersForm.garntTables(const aUserName: string);
 var
   grants: TStrings;
   I: Integer;
+
 begin
   if Trim(aUserName) = '' then
     Exit;
@@ -286,7 +287,48 @@ begin
   grants := TStringList.Create;
   try
     with TpFIBQuery.Create(Nil) do
+    begin
       try
+        if dmMain.dbTV.ServerMajorVersion >= 3 then
+        begin
+          DataBase := dmMain.dbTV;
+          Transaction := dmMain.trReadQ;
+          // tables and views
+          SQL.Text := 'select Rdb$Generator_Name NAME from Rdb$Generators where Rdb$System_Flag = 0';
+          Transaction.StartTransaction;
+          ExecQuery;
+          grants.Clear;
+          while not EOF do
+          begin
+            grants.Add(Fields[0].Value);
+            Next;
+          end;
+          Transaction.Commit;
+          Close;
+
+          Transaction := dmMain.trWriteQ;
+          ParamCheck := False;
+          for I := 0 to grants.Count - 1 do
+          begin
+            Transaction.StartTransaction;
+            SQL.Text := ' GRANT USAGE ON SEQUENCE ' + grants.Strings[I] + ' TO ' + aUserName;
+            ExecQuery;
+            Transaction.Commit;
+          end;
+          Close;
+
+        end
+        else
+        begin
+          Transaction := dmMain.trWriteQ;
+          ParamCheck := False;
+          Transaction.StartTransaction;
+          SQL.Text := ' GRANT SELECT, UPDATE ON RDB$GENERATORS TO ' + aUserName;
+          ExecQuery;
+          Transaction.Commit;
+          Close;
+        end;
+
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trReadQ;
         // tables and views
@@ -294,6 +336,7 @@ begin
           ' WHERE (V.RDB$SYSTEM_FLAG IS NULL OR V.RDB$SYSTEM_FLAG <> 1) AND (V.RDB$FLAGS = 1)';
         Transaction.StartTransaction;
         ExecQuery;
+        grants.Clear;
         while not EOF do
         begin
           grants.Add(Fields[0].Value);
@@ -304,26 +347,6 @@ begin
 
         Transaction := dmMain.trWriteQ;
         ParamCheck := False;
-
-        if dmMain.dbTV.ServerMajorVersion >= 3 then
-        begin
-          Transaction.StartTransaction;
-          SQL.Text := ' GRANT USAGE ON SEQUENCE GEN_ACCOUNT_NO TO ' + aUserName;
-          ExecQuery;
-          Transaction.Commit;
-          Transaction.StartTransaction;
-          SQL.Text := ' GRANT USAGE ON SEQUENCE GEN_TASK TO ' + aUserName;
-          ExecQuery;
-          Transaction.Commit;
-        end
-        else
-        begin
-          Transaction.StartTransaction;
-          SQL.Text := ' GRANT SELECT, UPDATE ON RDB$GENERATORS TO ' + aUserName;
-          ExecQuery;
-          Transaction.Commit;
-        end;
-
         for I := 0 to grants.Count - 1 do
         begin
           Transaction.StartTransaction;
@@ -335,6 +358,7 @@ begin
       finally
         Free;
       end;
+    end;
   finally
     grants.Free;
   end;
@@ -437,7 +461,7 @@ begin
   for I := 0 to ComponentCount - 1 do
     if Components[I] is TDBGridEh then
       (Components[I] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[I].Name, true);
+        Self.Name + '.' + Components[I].Name, False);
   Action := caFree;
   UsersForm := nil;
 end;
@@ -578,8 +602,8 @@ begin
     begin
       (Components[I] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[I].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if (Components[i] as TDBGridEh).DataSource.DataSet.Active
-      then (Components[i] as TDBGridEh).DefaultApplySorting;
+      if (Components[I] as TDBGridEh).DataSource.DataSet.Active then
+        (Components[I] as TDBGridEh).DefaultApplySorting;
       if Font_size <> 0 then
       begin
         (Components[I] as TDBGridEh).Font.Name := Font_name;
@@ -903,6 +927,14 @@ begin
   end
   else
     AFont.Style := AFont.Style - [fsBold];
+
+  if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('Right_Id').AsInteger in [ // rght_Customer_View,
+    rght_Customer_Only_ONE, rght_Customer_PersonalData, rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner,
+    rght_OrdersTP_Today]) then
+    Background := clRed
+  else
+    Background := clWindow;
+
 end;
 
 procedure TUsersForm.dbgRightsExit(Sender: TObject);
@@ -966,7 +998,7 @@ begin
           UserSQL(SQL);
           UserSQL(SQL, 'Legacy_UserManager');
           UserSQL(SQL, 'Srp');
-          added := True;
+          added := true;
 
           if added then
           begin

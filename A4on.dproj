@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Base>True</Base>
         <AppType>Application</AppType>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>a4on.DPR</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -83,8 +83,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.2.0.736;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>736</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.2.0.756;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>756</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
@@ -100,9 +100,9 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_MinorVer>4</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.4.0.720;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.4.0.723;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Build>720</VerInfo_Build>
+        <VerInfo_Build>723</VerInfo_Build>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
@@ -966,6 +966,26 @@
         </DCCReference>
         <DCCReference Include="forms\AttributeEditForma.pas">
             <Form>AttributeEditForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\WireFilter.pas">
+            <Form>WireFilterForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\WirePointForma.pas">
+            <Form>WirePointForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\PortFilter.pas">
+            <Form>PortFilterForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\ConnectTypeForma.pas">
+            <Form>ConnectTypeForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\infrastructure\PortTypeForma.pas">
+            <Form>PortTypeForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">

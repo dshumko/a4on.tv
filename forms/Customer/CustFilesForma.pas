@@ -130,7 +130,7 @@ uses DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils, CF, CustomerFo
 
 procedure TCustFilesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  dbgFiles.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + dbgFiles.Name, True);
+  dbgFiles.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + dbgFiles.Name, false);
 
   if srcFiles.DataSet.Active then
     srcFiles.DataSet.Close;

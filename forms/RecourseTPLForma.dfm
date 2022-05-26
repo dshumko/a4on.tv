@@ -1,23 +1,26 @@
 inherited RecoursesTPLForm: TRecoursesTPLForm
   Caption = #1058#1080#1087#1099' '#1086#1073#1088#1072#1097#1077#1085#1080#1081
-  ClientHeight = 282
-  ClientWidth = 689
+  ClientHeight = 508
+  ClientWidth = 758
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
-    Left = 178
-    Top = 148
-    Height = 134
+    Left = 0
+    Top = 327
+    Width = 758
+    Height = 3
+    Cursor = crVSplit
+    Align = alTop
   end
   inherited splPG: TSplitter
     Top = 145
-    Width = 689
+    Width = 758
   end
   inherited dbGrid: TDBGridEh
     Top = 148
-    Width = 178
-    Height = 134
-    Align = alLeft
+    Width = 758
+    Height = 179
+    Align = alTop
     AllowedOperations = []
     TitleParams.MultiTitle = False
     Columns = <
@@ -37,10 +40,11 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Width = 572
       end>
   end
   inherited tlbMain: TToolBar
-    Width = 689
+    Width = 758
     inherited tbOk: TToolButton
       Visible = False
       OnClick = tbOkClick
@@ -57,23 +61,24 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     end
   end
   object pnlGrid: TPanel [4]
-    Left = 181
-    Top = 148
-    Width = 508
-    Height = 134
+    Left = 0
+    Top = 330
+    Width = 758
+    Height = 178
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object dbgrdTPL: TDBGridEh
       Left = 0
       Top = 25
-      Width = 508
-      Height = 109
+      Width = 758
+      Height = 153
       Align = alClient
       DataSource = srcTPL
       DynProps = <>
       Flat = True
       FooterParams.Color = clWindow
+      SearchPanel.Enabled = True
       TabOrder = 1
       Columns = <
         item
@@ -92,8 +97,9 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
           EditButtons = <>
           FieldName = 'NEED_REQUEST'
           Footers = <>
-          Title.Caption = #1079#1072#1103#1074#1082#1072
-          Width = 39
+          Title.Alignment = taCenter
+          Title.Caption = #1047#1072#1103#1074#1082#1072
+          Width = 53
         end
         item
           CellButtons = <>
@@ -102,6 +108,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Width = 432
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -109,7 +116,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     object tlbBtns: TToolBar
       Left = 0
       Top = 0
-      Width = 508
+      Width = 758
       Height = 25
       Caption = 'ToolBar1'
       Images = A4MainForm.ICONS_ACTIVE
@@ -185,24 +192,10 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         ImageIndex = 26
         OnClick = btnCancelTPLClick
       end
-      object btn12: TToolButton
-        Left = 147
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton20'
-        Enabled = False
-        ImageIndex = 28
-        Style = tbsSeparator
-      end
-      object btn4: TToolButton
-        Left = 155
-        Top = 0
-        Action = actTPLFilter
-      end
     end
   end
   inherited pnlEdit: TPanel
-    Width = 689
+    Width = 758
     Height = 120
     object lbl2: TLabel [0]
       Left = 5
@@ -221,18 +214,18 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     inherited btnSaveLink: TBitBtn
       Left = 92
       Top = 89
-      Width = 493
+      Width = 562
       TabOrder = 2
     end
     inherited btnCancelLink: TBitBtn
-      Left = 596
+      Left = 665
       Top = 89
       TabOrder = 3
     end
     object edtName: TDBEditEh
       Left = 92
       Top = 6
-      Width = 590
+      Width = 659
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'O_NAME'
@@ -247,7 +240,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     object mmoNotice: TDBMemoEh
       Left = 92
       Top = 34
-      Width = 590
+      Width = 659
       Height = 49
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -285,7 +278,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     object actTPLFilter: TAction
       Caption = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
       ImageIndex = 40
-      OnExecute = actTPLFilterExecute
     end
     object ActCONTAdd: TAction
       Caption = #1076#1086#1073#1072#1074#1080#1090#1100' '#1089#1086#1076#1088#1078#1072#1085#1080#1077
@@ -417,8 +409,8 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcDataSource
-    Left = 296
-    Top = 172
+    Left = 176
+    Top = 228
     dcForceOpen = True
   end
   object srcTPL: TDataSource

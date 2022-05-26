@@ -169,7 +169,7 @@ object apgCustomerLetters: TapgCustomerLetters
       'select'
       '    m.Mes_Id,'
       '    0,'
-      '    cast(m.Send_Date as DATE) Send_Date,'
+      '    cast(coalesce(m.Send_Date, m.Added_On) as DATE) Send_Date,'
       '    m.Mes_Type,'
       '    m.Mes_Text,'
       '    m.Mes_Head'

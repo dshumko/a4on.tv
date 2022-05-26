@@ -13,7 +13,6 @@ type
     okcnclfrm1: TOkCancelFrame;
     lblName: TLabel;
     lblPrint: TLabel;
-    lblNotice: TLabel;
     srcRT: TDataSource;
     dbedt1: TDBEditEh;
     dbedt2: TDBEditEh;

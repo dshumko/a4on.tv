@@ -341,6 +341,7 @@ object RequestsForm: TRequestsForm
             Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
             Title.TitleButton = True
             Width = 120
+            OnGetCellParams = dbgPlanColumns13GetCellParams
           end
           item
             AutoFitColWidth = False
@@ -732,6 +733,7 @@ object RequestsForm: TRequestsForm
             Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
             Title.TitleButton = True
             Width = 120
+            OnGetCellParams = dbgGiveColumns13GetCellParams
           end
           item
             CellButtons = <>
@@ -1153,6 +1155,7 @@ object RequestsForm: TRequestsForm
             Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
             Title.TitleButton = True
             Width = 120
+            OnGetCellParams = dbgExecColumns15GetCellParams
           end
           item
             AutoFitColWidth = False
@@ -1854,6 +1857,7 @@ object RequestsForm: TRequestsForm
             Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
             Title.TitleButton = True
             Width = 120
+            OnGetCellParams = dbgGridColumns14GetCellParams
           end
           item
             AutoFitColWidth = False
@@ -2417,7 +2421,7 @@ object RequestsForm: TRequestsForm
     Top = 364
   end
   object frxReport: TfrxReport
-    Version = '6.6'
+    Version = '2021.2.8'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]

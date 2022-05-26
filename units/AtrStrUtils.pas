@@ -92,6 +92,9 @@ function CorrectPhone(const phone: string; const aCountry: String = 'BY'): strin
 // Вывод месяца как строка, например 01.01.2013 - «1» января 2013
 function MonthAsString(const D: TDateTime; const beforeDay : string = '«'; const AfterDay : string = '»'): string;
 
+// Форматируем Фамилию как Ф***я
+function HideSurname(const s: String): string;
+
 implementation
 
 uses
@@ -813,6 +816,10 @@ begin
    Result := beforeDay+IntToStr(day) +AfterDay+ ' ' + Mes[Month] +' ' + IntToStr(Year);
 end;
 
+function HideSurname(const s: String): string;
+begin
+  Result := Copy(s, 1, 1)+'***'+Copy(s, Length(s), 1);
+end;
 
 initialization
 

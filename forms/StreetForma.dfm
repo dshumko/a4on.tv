@@ -533,7 +533,7 @@ inherited StreetForm: TStreetForm
         Top = 0
         Width = 644
         Height = 286
-        ActivePage = tsCircuit
+        ActivePage = InfoSheet
         Align = alClient
         TabOrder = 0
         OnChange = pcHouseInfoChange
@@ -1684,6 +1684,7 @@ inherited StreetForm: TStreetForm
                 Title.Caption = #1050#1083#1080#1077#1085#1090'|'#1060#1072#1084#1080#1083#1080#1103
                 Title.TitleButton = True
                 Width = 99
+                OnGetCellParams = dbgCustomerColumns1GetCellParams
               end
               item
                 CellButtons = <>
@@ -3047,6 +3048,7 @@ inherited StreetForm: TStreetForm
   end
   object dlgOpen: TOpenDialog
     DefaultExt = '*.png'
+    Filter = 'png, jpg|*.png;*.jp*g'
     Left = 680
     Top = 344
   end

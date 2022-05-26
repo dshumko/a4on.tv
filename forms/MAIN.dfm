@@ -539,6 +539,12 @@ object A4MainForm: TA4MainForm
         object miLabelType: TMenuItem
           Action = actLabelType
         end
+        object miPortType: TMenuItem
+          Action = actPortType
+        end
+        object miConnectType: TMenuItem
+          Action = actConnectType
+        end
       end
       object N45: TMenuItem
         Caption = '-'
@@ -1292,6 +1298,18 @@ object A4MainForm: TA4MainForm
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
       Caption = #1058#1080#1087#1099' '#1084#1072#1088#1082#1080#1088#1086#1074#1086#1082' '#1083#1080#1085#1080#1081' '#1089#1074#1103#1079#1080
       OnExecute = actLabelTypeExecute
+    end
+    object actConnectType: TAction
+      Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
+      Caption = #1042#1080#1076' '#1082#1086#1085#1085#1077#1082#1090#1086#1088#1072
+      Hint = #1042#1080#1076' '#1082#1086#1085#1085#1077#1082#1090#1086#1088#1072
+      OnExecute = actConnectTypeExecute
+    end
+    object actPortType: TAction
+      Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
+      Caption = #1058#1080#1087' '#1087#1086#1088#1090#1072
+      Hint = #1058#1080#1087' '#1087#1086#1088#1090#1072
+      OnExecute = actPortTypeExecute
     end
   end
   object ICONS_ACTIVE: TImageList

@@ -29,6 +29,7 @@ type
     procedure edtNEWKeyPress(Sender: TObject; var Key: Char);
   private
     procedure UpdateKbdState;
+    procedure ExecSQL(const aSQL: string);
   public
     { Public declarations }
   end;
@@ -57,52 +58,61 @@ begin
   edtNEW.Text := '';
   edtCONFRM.Text := '';
 
-  if (dmMain.GetIniValue('KBDSWITCH') = '0')
-  then SetKeyboardLayout('EN')
-  else dmMain.SaveKLAndSelectEnglish;
+  if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+    SetKeyboardLayout('EN')
+  else
+    dmMain.SaveKLAndSelectEnglish;
+end;
+
+procedure TChangePwdForm.ExecSQL(const aSQL: string);
+begin
+  with TpFIBQuery.Create(Self) do
+  begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      SQL.Text := aSQL;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
 end;
 
 procedure TChangePwdForm.frm1bbOkClick(Sender: TObject);
 var
   Changed: Boolean;
-  p: string;
+  p, SQL: string;
 begin
   Changed := False;
-  if pswdPrefix + edtOLD.Text = dmMain.Password
-  then begin
+  if pswdPrefix + edtOLD.Text = dmMain.Password then
+  begin
     p := pswdPrefix + edtNEW.Text;
-    if (Length(edtNEW.Text) <> 0) and (dmMain.User <> 'SYSDBA') and ( p = (pswdPrefix +edtCONFRM.Text)) and ( p <> dmMain.Password)
-    then begin
-      try
-        with TpFIBQuery.Create(Self) do
-          try
-            DataBase := dmMain.dbTV;
-            Transaction := dmMain.trWriteQ;
-            p := rsQUOTE + ReplaceStr(p, rsQUOTE, rsQUOTE + rsQUOTE) + rsQUOTE;
-            SQL.Text := Format('ALTER USER %s PASSWORD %s', [dmMain.User, p]);
-            Transaction.StartTransaction;
-            ExecQuery;
-            Transaction.Commit;
+    if (Length(edtNEW.Text) <> 0) and (dmMain.User <> 'SYSDBA') and (p = (pswdPrefix + edtCONFRM.Text)) and
+      (p <> dmMain.Password) then
+    begin
+      p := rsQUOTE + ReplaceStr(p, rsQUOTE, rsQUOTE + rsQUOTE) + rsQUOTE;
+      SQL := Format('ALTER USER %s PASSWORD %s', [dmMain.User, p]);
+      ExecSQL(SQL);
+      ExecSQL(SQL + ' ACTIVE USING PLUGIN Legacy_UserManager');
+      ExecSQL(SQL + ' ACTIVE USING PLUGIN Srp');
 
-            SQL.Text := Format('update Sys$User set Pswd_Changed = CURRENT_TIMESTAMP where Ibname = ''%s''', [dmMain.User]);
-            Transaction.StartTransaction;
-            ExecQuery;
-            Transaction.Commit;
-
-            Changed := True;
-          finally Free;
-          end;
-      except
-      end;
+      SQL := Format('update Sys$User set Pswd_Changed = LOCALTIMESTAMP where Ibname = ''%s''', [dmMain.User]);
+      ExecSQL(SQL);
+      Changed := True;
     end;
-  end;
 
-  if not Changed
-  then ShowMessage(rsPasswordNotChange)
-  else begin
-    if (dmMain.GetIniValue('KBDSWITCH') = '0')
-    then SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
-    else dmMain.RestoreKL;
+    if not Changed then
+      ShowMessage(rsPasswordNotChange)
+    else
+    begin
+      if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+        SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
+      else
+        dmMain.RestoreKL;
+    end;
   end;
 end;
 
@@ -113,7 +123,7 @@ end;
 
 procedure TChangePwdForm.UpdateKbdState;
 var
-  Buf: array [0 .. KL_NAMELENGTH] of char;
+  Buf: array [0 .. KL_NAMELENGTH] of Char;
   Pk: PChar;
   C, i: Integer;
 begin

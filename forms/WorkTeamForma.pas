@@ -121,8 +121,8 @@ end;
 procedure TWorkTeamForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-  dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrid', true);
-  dbSubArea.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbSubArea', true);
+  dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrid', false);
+  dbSubArea.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbSubArea', false);
   dsWORKGROUPS.Close;
   dsAreas.Close;
   WorkTeamForm := nil;

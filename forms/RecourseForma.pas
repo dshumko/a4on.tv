@@ -65,6 +65,8 @@ type
     procedure actClearExecute(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure pnlRecourseEnter(Sender: TObject);
+    procedure cbRecourseClick(Sender: TObject);
   private
     { Private declarations }
     vCustomerInfo: TCustomerInfo;
@@ -326,19 +328,26 @@ var
   s: string;
   f: string;
 begin
-  if pnlAdres.Visible then
-    LupStreets.SetFocus
-  else
-    cbRecourse.SetFocus;
-
   if A4MainForm.AddictSpell.Tag = 1 then begin
     A4MainForm.AddictSpell.AddControl(mmoNotice);
+  end;
+
+  if pnlAdres.Visible then
+    LupStreets.SetFocus
+  else begin
+    cbRecourse.SetFocus;
   end;
 end;
 
 procedure TRecourseForm.LupHOUSEChange(Sender: TObject);
 begin
   btnFind.Enabled := not VarIsNull(LupHOUSE.Value);
+end;
+
+procedure TRecourseForm.pnlRecourseEnter(Sender: TObject);
+begin
+  if not cbRecourse.ListVisible
+  then cbRecourse.DropDown;
 end;
 
 procedure TRecourseForm.FormCreate(Sender: TObject);
@@ -466,6 +475,13 @@ begin
   if (not dsRecourses.fn('NEED_REQUEST').IsNull) then
     showBtn := (dsRecourses.fn('NEED_REQUEST').AsInteger <> 1);
   btnOkandRequest.Enabled := showBtn;
+end;
+
+procedure TRecourseForm.cbRecourseClick(Sender: TObject);
+begin
+  if not cbRecourse.ListVisible
+  then cbRecourse.DropDown
+  else cbRecourse.CloseUp(False);
 end;
 
 end.

@@ -279,6 +279,7 @@ type
     procedure actRecAddWAdresExecute(Sender: TObject);
     procedure actOrderTPExecute(Sender: TObject);
     procedure dbgCustomersColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgCustomersColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -297,6 +298,7 @@ type
     FFilterField: Integer;
     FFilterValue: string;
     FCheckPassport: Boolean;
+    FPersonalData: Boolean;
     function GenerateFilter: String;
     function ReplaceFields(const str: string): string;
     procedure ShowPage(Page: TA4onPage);
@@ -332,6 +334,7 @@ type
     procedure OpenDataSet(const FindCustomerID: Integer = -1);
     procedure ValidatePassport;
     procedure CopyOrderTP(const FromOrder: Integer; const ci: TCustomerInfo);
+    procedure CloseDatasets;
   public
     constructor CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
     procedure SetDefaultFilter;
@@ -457,6 +460,9 @@ begin
   end
   else
   begin
+    dsFilter.Open;
+    dsFilter.EmptyTable;
+    dsFilter.Close;
     // откроем окно фильтра или установим фильтр по умолчанию
     if not(TryStrToInt(dmMain.GetIniValue('SHOWFILTER'), i)) then
       i := 0;
@@ -522,6 +528,13 @@ begin
     SetPageIndex(i);
   end;
 
+end;
+
+procedure TCustomersForm.dbgCustomersColumns2GetCellParams(Sender: TObject; EditMode: Boolean;
+  Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TCustomersForm.dbgCustomersColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
@@ -731,8 +744,35 @@ begin
 
   dbgCustomers.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'CustGrid', False);
 
-  CustomersForm := nil;
+  CloseDatasets;
+
   Action := caFree;
+  CustomersForm := nil;
+end;
+
+procedure TCustomersForm.CloseDatasets;
+var
+  i: Integer;
+begin
+  if dsFLAT.Active then
+    dsFLAT.Close;
+  if dsHomes.Active then
+    dsHomes.Close;
+  if dsStreets.Active then
+    dsStreets.Close;
+  if dsArea.Active then
+    dsArea.Close;
+  if dsCustomers.Active then
+    dsCustomers.Close;
+
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDataSet then
+    begin
+      if (Components[i] as TDataSet).Active then
+        (Components[i] as TDataSet).Close;
+    end;
+  end;
 end;
 
 procedure TCustomersForm.FormDeactivate(Sender: TObject);
@@ -1018,7 +1058,7 @@ begin
           try
             fq.Database := dmMain.dbTV;
             fq.Transaction := dmMain.trWriteQ;
-            fq.sql.Text := 'EXECUTE PROCEDURE CANCEL_CONTRACT (:CUSTOMER_ID,:CANCEL_DATE,:OFF_SERV_ID)';
+            fq.sql.Text := 'EXECUTE PROCEDURE CANCEL_CONTRACT(:CUSTOMER_ID, :CANCEL_DATE, :OFF_SERV_ID)';
 
             for i := 0 to dbgCustomers.SelectedRows.Count - 1 do
             begin
@@ -1999,6 +2039,8 @@ begin
     Title.Caption := rsClientSN;
     Title.TitleButton := True;
     Width := 99;
+    if (not FPersonalData) then
+      onGetCellParams := dbgCustomersColumns2GetCellParams;
   end;
   if (Mask and clc_IO) <> 0 then
     with dbgCustomers.Columns.Add do
@@ -2194,7 +2236,7 @@ begin
       Title.Caption := rsClmnNotice;
       Title.TitleButton := True;
       Width := 200;
-      OnGetCellParams := dbgCustomersColumnsGetCellParams;
+      onGetCellParams := dbgCustomersColumnsGetCellParams;
     end;
   if (Mask and clc_DogovorN) <> 0 then
     with dbgCustomers.Columns.Add do
@@ -3623,16 +3665,15 @@ begin
   ChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
   FVisiblePassport := (dmMain.AllowedAction(rght_Customer_add)) or (dmMain.AllowedAction(rght_Customer_edit)) or
     FullAccess;
-
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   // Экспорт информации
   actSaveAs.Visible := notEmptyDS and ((dmMain.AllowedAction(rght_Export)));
   miExport.Visible := notEmptyDS and ((dmMain.AllowedAction(rght_Export)));
 
-  actCustomerDelete.Enabled := notEmptyDS and (not dmMain.InStrictMode) and
-    (dmMain.AllowedAction(rght_Customer_del) or FullAccess);
-
   actCustomerEdit.Enabled := notEmptyDS and (dmMain.AllowedAction(rght_Customer_edit) or FullAccess);
   actCustomerAdd.Enabled := dmMain.AllowedAction(rght_Customer_add) or FullAccess;
+  actCustomerDelete.Enabled := notEmptyDS and (not dmMain.InStrictMode) and
+    (dmMain.AllowedAction(rght_Customer_del) or FullAccess);
   ActCancelContract.Enabled := notEmptyDS and (dmMain.AllowedAction(rght_Customer_EditSrv) or FullAccess);
   actRequest.Enabled := notEmptyDS and (dmMain.AllowedAction(rght_Request_Add) or
     dmMain.AllowedAction(rght_Request_Full));
@@ -3694,6 +3735,7 @@ var
   mi: TMenuItem;
 begin
   with TpFIBQuery.Create(Nil) do
+  begin
     try
       // ActBalanceExecute
       // ActPrintGridExecute
@@ -3733,6 +3775,7 @@ begin
     finally
       Free;
     end;
+  end;
 end;
 
 procedure TCustomersForm.dsCustomersAfterOpen(DataSet: TDataSet);
@@ -4001,7 +4044,7 @@ begin
       end;
     end;
   finally
-    freeAndNil(dbf);
+    FreeAndNil(dbf);
   end;
 end;
 
@@ -4100,7 +4143,7 @@ begin
       body.SaveToFile(s, TEncoding.ANSI);
     end;
   finally
-    freeAndNil(body);
+    FreeAndNil(body);
   end;
   dsCustomers.EnableControls
 end;
@@ -4188,10 +4231,9 @@ begin
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trReadQ;
-        sql.Text :=
-          'select sum(M_Tarif) ST from '+
+        sql.Text := 'select sum(M_Tarif) ST from ' +
           ' Get_Tarif_Sum_Customer_Srv(:Customer_Id, null,  dateadd(month, 1, Month_First_Day(current_date)))';
-        ParamByName('Customer_Id').Value := dsCustomers.FieldByName('Customer_Id').AsInteger;
+        ParamByName('Customer_Id').value := dsCustomers.FieldByName('Customer_Id').AsInteger;
         Transaction.StartTransaction;
         ExecQuery;
         i := 1;
@@ -4416,7 +4458,8 @@ var
   periodFrom: TDateTime;
   FILENAME: String;
   Stream: TStream;
-
+  bm: TBookMark;
+  vQRY: TpFIBQuery;
 begin
   if not(Sender is TMenuItem) then
     Exit;
@@ -4447,7 +4490,7 @@ begin
           Stream.Position := 0;
           dmMain.frxModalReport.LoadFromStream(Stream);
           dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-          Caption := dmMain.frxModalReport.FILENAME;
+          // Caption := dmMain.frxModalReport.FILENAME;
         finally
           Stream.Free;
         end;
@@ -4465,48 +4508,53 @@ begin
     if MessageDlg(rsSaveLetterDate, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       dsCustomers.DisableControls;
-      dsCustomers.First;
-      with TpFIBQuery.Create(Nil) do
-        try
-          Database := dmMain.dbTV;
-          Transaction := dmMain.trWriteQ;
-          sql.Add('insert into CustLetter (customer_id, custletterid, lettertypeid, custletterdate)');
-          sql.Add('values (:customer_id, GEN_ID(gen_operations_uid,1), :lettertypeid, :custletterdate);');
-          ParamByName('lettertypeid').AsInteger := i;
-
-          try
-            periodFrom := frxReport.Script.Variables['DATEFROM'];
-          except
-            periodFrom := NOW;
+      vQRY := TpFIBQuery.Create(Self);
+      try
+        vQRY.Database := dmMain.dbTV;
+        vQRY.Transaction := dmMain.trWriteQ;
+        vQRY.sql.Text := ' insert into CustLetter (customer_id, custletterid, lettertypeid, custletterdate) ';
+        vQRY.sql.Add(' values (:customer_id, GEN_ID(gen_operations_uid,1), :lettertypeid, :custletterdate) ');
+        // try
+        // periodFrom := frxReport.Script.Variables['DATEFROM'];
+        // except
+        // periodFrom := NOW;
+        // end;
+        periodFrom := NOW;
+        vQRY.ParamByName('custletterdate').AsDate := periodFrom;
+        vQRY.ParamByName('lettertypeid').AsInteger := ReportID;
+        vQRY.Transaction.StartTransaction;
+        if dbgCustomers.SelectedRows.Count > 0 then
+        begin
+          for i := 0 to dbgCustomers.SelectedRows.Count - 1 do
+          begin
+            dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[i];
+            vQRY.ParamByName('custletterdate').AsDate := periodFrom;
+            vQRY.ParamByName('lettertypeid').AsInteger := ReportID;
+            vQRY.ParamByName('customer_id').AsInteger := dsCustomers['customer_ID'];
+            vQRY.ExecQuery;
+          end
+        end
+        else
+        begin
+          bm := dsCustomers.GetBookmark;
+          dsCustomers.First;
+          while not dsCustomers.Eof do
+          begin
+            vQRY.ParamByName('custletterdate').AsDate := periodFrom;
+            vQRY.ParamByName('lettertypeid').AsInteger := ReportID;
+            vQRY.ParamByName('customer_id').AsInteger := dsCustomers['customer_ID'];
+            vQRY.ExecQuery;
+            dsCustomers.next;
           end;
-          ParamByName('custletterdate').AsDate := periodFrom;
-          Transaction.StartTransaction;
-          if dbgCustomers.SelectedRows.Count > 0 then
-            for i := 0 to dbgCustomers.SelectedRows.Count - 1 do
-            begin
-              dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[i];
-              ParamByName('custletterdate').AsDate := periodFrom;
-              ParamByName('lettertypeid').AsInteger := ReportID;
-              ParamByName('customer_id').AsInteger := dsCustomers['customer_ID'];
-              ExecQuery;
-            end
-          else
-            while not dsCustomers.Eof do
-            begin
-              ParamByName('custletterdate').AsDate := periodFrom;
-              ParamByName('lettertypeid').AsInteger := ReportID;
-              ParamByName('customer_id').AsInteger := dsCustomers['customer_ID'];
-              ExecQuery;
-              dsCustomers.next;
-            end;
-          Transaction.Commit;
-        finally
-          Free;
+          dsCustomers.GotoBookmark(bm);
         end;
+        vQRY.Transaction.Commit;
+      finally
+        FreeAndNil(vQRY);
+      end;
       dsCustomers.EnableControls;
     end;
   end;
-
 end;
 
 procedure TCustomersForm.N10Click(Sender: TObject);
@@ -4787,8 +4835,8 @@ var
 begin
   if (TryStrToInt(dmMain.GetIniValue('ALWAYSSHOW'), i)) then
     if (i <> 0) then
-      dbgCustomers.Options := dbgCustomers.Options + [dgAlwaysShowSelection];  
-   
+      dbgCustomers.Options := dbgCustomers.Options + [dgAlwaysShowSelection];
+
   if (TryStrToInt(dmMain.GetIniValue('SHOWADDRESSFILTER'), i)) then
   begin
     if (i <> 0) then

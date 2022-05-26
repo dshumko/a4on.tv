@@ -139,6 +139,7 @@ object MessagesForm: TMessagesForm
           Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1072#1084#1080#1083#1080#1103
           Title.TitleButton = True
           Width = 105
+          OnGetCellParams = dbgMessagesColumns7GetCellParams
         end
         item
           CellButtons = <>

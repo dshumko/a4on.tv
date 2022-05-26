@@ -60,7 +60,6 @@ object apgCustomerSrv: TapgCustomerSrv
         ReadOnly = True
         STFilter.InstantApply = True
         STFilter.Local = True
-        STFilter.Location = stflInTitleFilterEh
         STFilter.Visible = True
         SumList.Active = True
         TabOrder = 0
@@ -236,6 +235,7 @@ object apgCustomerSrv: TapgCustomerSrv
               EditButtons = <>
               FieldName = 'TARIF_ID'
               Footers = <>
+              Title.TitleButton = True
               Visible = False
             end
             item
@@ -246,6 +246,9 @@ object apgCustomerSrv: TapgCustomerSrv
               FieldName = 'DATE_FROM'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072' '#1089
+              Title.TitleButton = True
+              Title.SortIndex = 1
+              Title.SortMarker = smDownEh
               Width = 95
             end
             item
@@ -256,6 +259,7 @@ object apgCustomerSrv: TapgCustomerSrv
               FieldName = 'DATE_TO'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072' '#1087#1086
+              Title.TitleButton = True
               Width = 87
             end
             item
@@ -266,6 +270,7 @@ object apgCustomerSrv: TapgCustomerSrv
               FieldName = 'TARIF_SUM'
               Footers = <>
               Title.Caption = #1058#1072#1088#1080#1092
+              Title.TitleButton = True
               Width = 111
             end
             item
@@ -275,6 +280,7 @@ object apgCustomerSrv: TapgCustomerSrv
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
               Width = 118
             end>
           object RowDetailData: TRowDetailPanelControlEh
@@ -528,8 +534,7 @@ object apgCustomerSrv: TapgCustomerSrv
       'from personal_tarif pt'
       'where pt.service_id = :serv_id'
       '  and pt.customer_id = :customer_id'
-      ''
-      '')
+      'order by pt.date_from desc')
     AutoUpdateOptions.UpdateTableName = 'SUBSCR_SERV'
     AutoUpdateOptions.KeyFields = 'TARIF_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

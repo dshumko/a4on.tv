@@ -294,7 +294,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, True);
+        Self.Name + '.' + Components[i].Name, false);
 
   Action := caFree;
 end;

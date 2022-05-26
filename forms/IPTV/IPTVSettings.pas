@@ -150,8 +150,8 @@ end;
 procedure TIPTVSettinsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   // Grid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name+'.'+dbGrid.Name, true);
-  dbgIPTVGroup.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'IPTVSettings', true);
-  dbgCh.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'IPTVChannels', true);
+  dbgIPTVGroup.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'IPTVSettings', false);
+  dbgCh.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'IPTVChannels', false);
   dsAttributes.Close;
   dsChannels.Close;
   dsIPTVGroup.Close;

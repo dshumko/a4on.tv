@@ -27,7 +27,7 @@ object UsersForm: TUsersForm
     Top = 0
     Width = 717
     Height = 487
-    ActivePage = tabGroup
+    ActivePage = tabUsers
     Align = alClient
     TabOrder = 0
     OnChange = pcChange

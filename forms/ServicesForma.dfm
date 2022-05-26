@@ -216,6 +216,17 @@ object ServicesForm: TServicesForm
             Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077' '#1076#1083#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 150
+          end
+          item
+            CellButtons = <>
+            Checkboxes = True
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'AUTOOFF'
+            Footers = <>
+            Title.Caption = #1040#1041
+            Title.Hint = #1040#1074#1090#1086#1073#1083#1086#1082#1110#1088#1086#1074#1082#1072
+            Width = 34
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -2478,7 +2489,7 @@ object ServicesForm: TServicesForm
       'select'
       
         '    Service_Id, Srv_Type_Id, Shift_Months, Name, Shortname, Desc' +
-        'ription, Dimension, Extra, Priority, CALC_TYPE, Note,'
+        'ription, Dimension, Extra, Priority, CALC_TYPE, Note, AUTOOFF,'
       '    case(select'
       '             1'
       '           from SERVICES_LINKS sl'
@@ -2520,7 +2531,7 @@ object ServicesForm: TServicesForm
       'select'
       
         '    Service_Id, Srv_Type_Id, Shift_Months, Name, Shortname, Desc' +
-        'ription, Dimension, Extra, Priority, CALC_TYPE, Note,'
+        'ription, Dimension, Extra, Priority, CALC_TYPE, Note, AUTOOFF,'
       '    case(select'
       '             1'
       '           from SERVICES_LINKS sl'

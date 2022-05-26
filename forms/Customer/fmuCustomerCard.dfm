@@ -29,10 +29,13 @@ object apgCustomerCard: TapgCustomerCard
     OutlineVisible = False
     OutlineWidth = 120
     ThumbnailVisible = False
+    FindFmVisible = False
     UseReportHints = False
+    OutlineTreeSortType = dtsUnsorted
+    HideScrolls = False
   end
   object frxReport: TfrxReport
-    Version = '6.4.11'
+    Version = '2021.2.8'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     Preview = frxPreview
@@ -49,7 +52,7 @@ object apgCustomerCard: TapgCustomerCard
     ShowProgress = False
     StoreInDFM = False
     OnUserFunction = frxReportUserFunction
-    Left = 120
+    Left = 144
     Top = 48
   end
   object dsForScroolWait: TpFIBDataSet

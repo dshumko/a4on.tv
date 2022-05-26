@@ -39,6 +39,8 @@ object StreetHouseViewForm: TStreetHouseViewForm
           item
           end
           item
+          end
+          item
             ValueType = gfvCountEh
           end
           item
@@ -129,6 +131,15 @@ object StreetHouseViewForm: TStreetHouseViewForm
         FieldName = 'SUBAREA_ID'
         Footers = <>
         Visible = False
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CITY'
+        Footers = <>
+        Title.Caption = #1053#1072#1089'. '#1087#1091#1085#1082#1090
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -418,7 +429,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '          , he.he_name'
       '          , st.Street_Code'
       '          , st.Street_Name||'#39' '#39'||st.Street_Short Street_Name'
-      ''
+      '          , coalesce(a.AREA_NAME,'#39#39') CITY'
       '          from HOUSE H'
       
         '               inner join STREET st on (st.STREET_ID = h.street_' +
@@ -429,14 +440,17 @@ object StreetHouseViewForm: TStreetHouseViewForm
       
         '               left outer join SUBAREA s on (s.SUBAREA_ID = h.SU' +
         'BAREA_ID)'
-      '               left outer join area a on (a.area_id = s.Area_Id)'
+      
+        '               left outer join area a on (a.area_id = st.Area_Id' +
+        ')'
       
         '               left outer join WORKGROUPS w on (w.WG_ID = h.WG_I' +
         'D)'
       
         '               left outer join headend he on (he.he_id = h.heade' +
         'nd_id)) ah'
-      'order by Street_Name, House_No')
+      ''
+      'order by CITY,Street_Name, House_No')
     UpdateCommand.Params = <>
     InsertCommand.Params = <>
     DeleteCommand.Params = <>

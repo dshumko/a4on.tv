@@ -104,7 +104,7 @@ end;
 procedure THeadEndsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-  dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'HeadEnds', True);
+  dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'HeadEnds', false);
   dsHE.Close;
   Action := caFree;
   HeadEndsForm := nil;

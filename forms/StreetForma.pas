@@ -242,9 +242,11 @@ type
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure actViewCubeExecute(Sender: TObject);
     procedure miPNG1Click(Sender: TObject);
+    procedure dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FCanEdit: Boolean;
+    FPersonalData: Boolean;
     procedure SaveFlatGrid;
     procedure StartAttr(const New: Boolean = True);
     procedure StopAttr(const Cancel: Boolean);
@@ -258,7 +260,7 @@ var
 
 implementation
 
-uses DM, AtrCommon, StreetEditForma, MAIN, HouseForma, HouseWorkForma, FIBQuery, pFIBQuery,
+uses DM, AtrCommon, AtrStrUtils, StreetEditForma, MAIN, HouseForma, HouseWorkForma, FIBQuery, pFIBQuery,
   ReportPreview, HouseMapForma, EquipEditForma, FlatsAddForma, CF, CircuitMain, StreetHousesViewForma;
 
 {$R *.dfm}
@@ -282,8 +284,9 @@ end;
 procedure TStreetForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-  DbGridHouse.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + DbGridHouse.Name, True);
+  DbGridHouse.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + DbGridHouse.Name, false);
   dmMain.SetIniValue('StreetGrid', IntToStr(dbGrid.Height));
+  dmMain.SetIniValue('StreetActivePage', IntToStr(pcHouseInfo.ActivePageIndex));
   dsHouses.Close;
   dsStreets.Close;
   StreetForm := nil;
@@ -305,13 +308,14 @@ begin
   actHouseEdit.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
   actHouseDel.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
   FCanEdit := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
   memHouseNotice.ReadOnly := not FCanEdit;
 
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
   begin
-    srcPorch.AutoEdit := False;
-    srcFloor.AutoEdit := False;
+    srcPorch.AutoEdit := false;
+    srcFloor.AutoEdit := false;
   end;
   DbGridHouse.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + DbGridHouse.Name,
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
@@ -320,7 +324,7 @@ end;
 procedure TStreetForm.FormShow(Sender: TObject);
 var
   vFINE: Boolean;
-  vHideItog : Boolean;
+  vHideItog: Boolean;
   i: Integer;
   s: string;
 begin
@@ -331,21 +335,21 @@ begin
   if vHideItog then
   begin
     dbGrid.FooterRowCount := 0;
-    dbGrid.SumList.Active := False;
+    dbGrid.SumList.Active := false;
     DbGridHouse.FooterRowCount := 0;
-    DbGridHouse.SumList.Active := False;
-    dbgServices.Visible := False;
+    DbGridHouse.SumList.Active := false;
+    dbgServices.Visible := false;
     i := GetColumnIndex(DbGridHouse, 'CONNECTED');
-    DbGridHouse.Columns[i].Visible := False;
+    DbGridHouse.Columns[i].Visible := false;
     i := GetColumnIndex(DbGridHouse, 'DISCONNECTED');
-    DbGridHouse.Columns[i].Visible := False;
+    DbGridHouse.Columns[i].Visible := false;
     i := GetColumnIndex(DbGridHouse, 'PERCENT');
-    DbGridHouse.Columns[i].Visible := False;
+    DbGridHouse.Columns[i].Visible := false;
     i := GetColumnIndex(DbGridHouse, 'PERCENT');
-    DbGridHouse.Columns[i].Visible := False;
+    DbGridHouse.Columns[i].Visible := false;
     i := GetColumnIndex(dbGrid, 'FLATS');
-    dbGrid.Columns[i].Visible := False;
-    tsAbonents.TabVisible := False;
+    dbGrid.Columns[i].Visible := false;
+    tsAbonents.TabVisible := false;
   end;
 
   s := dmMain.GetIniValue('StreetGrid');
@@ -353,7 +357,7 @@ begin
     dbGrid.Height := i;
 
   vFINE := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
-  if vFINE then
+  if vFINE then begin
     for i := 0 to dbgCustomer.Columns.Count - 1 do
     begin
       if (AnsiUpperCase(dbgCustomer.Columns[i].FieldName) = 'DEBT_SUM') then
@@ -362,7 +366,13 @@ begin
         dbgCustomer.Columns[i].FieldName := 'BALANCE';
       end;
     end;
+  end;
 
+  s := dmMain.GetIniValue('StreetActivePage');
+  if TryStrToInt(s, i) then
+    pcHouseInfo.ActivePageIndex := i
+  else
+    pcHouseInfo.ActivePageIndex := 0;
   pcHouseInfoChange(Sender);
 end;
 
@@ -647,7 +657,7 @@ begin
   actQuickFilterHouse.Checked := not actQuickFilterHouse.Checked;
   DbGridHouse.STFilter.Visible := actQuickFilterHouse.Checked;
   if not actQuickFilter.Checked then
-    DbGridHouse.DataSource.DataSet.Filtered := False;
+    DbGridHouse.DataSource.DataSet.Filtered := false;
 end;
 
 procedure TStreetForm.actViewCubeExecute(Sender: TObject);
@@ -737,8 +747,8 @@ begin
   dsAttributes.Open;
 
   pnlAttr.Visible := True;
-  dbgAttr.Enabled := False;
-  tlbAttr.Enabled := False;
+  dbgAttr.Enabled := false;
+  tlbAttr.Enabled := false;
   if New then
   begin
     dsHousesAttr.Append;
@@ -748,7 +758,7 @@ begin
   else
   begin
     dsHousesAttr.Edit;
-    dbluAttribute.Enabled := False;
+    dbluAttribute.Enabled := false;
     if edtAtrValue.Visible then
       edtAtrValue.SetFocus
     else if cbbList.Visible then
@@ -761,7 +771,7 @@ var
   errors: Boolean;
   s, reg: string;
 begin
-  errors := False;
+  errors := false;
   if not Cancel then
   begin
     if dbluAttribute.Text = '' then
@@ -789,7 +799,7 @@ begin
 
   if not errors then
   begin
-    pnlAttr.Visible := False;
+    pnlAttr.Visible := false;
     dbgAttr.Enabled := True;
     tlbAttr.Enabled := True;
     if not(dsHousesAttr.State in [dsEdit, dsInsert]) then
@@ -825,7 +835,7 @@ procedure TStreetForm.btnAttrEditClick(Sender: TObject);
 begin
   inherited;
   if FCanEdit and (not dsHousesAttr.FieldByName('O_NAME').IsNull) then
-    StartAttr(False);
+    StartAttr(false);
 end;
 
 procedure TStreetForm.btnCancelAttrClick(Sender: TObject);
@@ -871,7 +881,7 @@ end;
 procedure TStreetForm.btnSaveAttrClick(Sender: TObject);
 begin
   inherited;
-  StopAttr(False);
+  StopAttr(false);
 end;
 
 procedure TStreetForm.dsCirciutNewRecord(DataSet: TDataSet);
@@ -1033,6 +1043,13 @@ begin
   dsCustomers.Active := (pcHouseInfo.ActivePage = tsAbonents);
   dsCirciut.Active := (pcHouseInfo.ActivePage = tsCircuit);
   dsHousesAttr.Active := (pcHouseInfo.ActivePage = tsAtributes);
+end;
+
+procedure TStreetForm.dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  inherited;
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TStreetForm.dbgCustomerGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -1273,11 +1290,16 @@ begin
 end;
 
 procedure TStreetForm.miPNG1Click(Sender: TObject);
+var
+  E, f: string;
+  aPicStream: TMemoryStream;
 begin
   inherited;
   if (dsHouses.RecordCount = 0) then
     Exit;
 
+  // dlgOpen.Filter := 'png, jpg|*.png;*.jp*g';
+  dlgOpen.Filter := 'Изображения|*.png; *.jpg; *.jpeg|jpg|*.jpg; *.jpeg|png|*.png';
   if dlgOpen.Execute then
   begin
     if not dsCirciut.Active then
@@ -1291,9 +1313,26 @@ begin
       dsCirciut['NOTICE'] := '';
       dsCirciut['HOUSE_ID'] := dsHouses['HOUSE_ID'];
     end;
-    dsCirciut['NAME'] := ExtractFileName(dlgOpen.FileName);
+    f := ExtractFileName(dlgOpen.FileName);
+    E := UpperCase(ExtractFileExt(f));
     dsCirciut.FieldByName('CIRCUIT').Clear;
-    TBlobField(dsCirciut.FieldByName('PNG')).LoadFromFile(dlgOpen.FileName);
+    if E = '.PNG' then
+    begin
+      TBlobField(dsCirciut.FieldByName('PNG')).LoadFromFile(dlgOpen.FileName);
+    end
+    else
+    begin
+      aPicStream := TMemoryStream.Create;
+      try
+        aPicStream.LoadFromFile(dlgOpen.FileName);
+        Jpeg2Png(aPicStream);
+        TBlobField(dsCirciut.FieldByName('PNG')).LoadFromStream(aPicStream);
+      finally
+        aPicStream.Free;
+      end;
+      f := ChangeFileExt(f, '.PNG');
+    end;
+    dsCirciut['NAME'] := f;
     dsCirciut.Post;
   end;
 end;

@@ -86,6 +86,7 @@ object PaymentsForm: TPaymentsForm
           Title.Caption = #1060#1048#1054
           Title.TitleButton = True
           Width = 134
+          OnGetCellParams = dbgPaymentsColumns2GetCellParams
         end
         item
           CellButtons = <>
@@ -481,7 +482,6 @@ object PaymentsForm: TPaymentsForm
       Width = 917
       Height = 195
       Align = alClient
-      AutoFitColWidths = False
       DataSource = srcErrors
       DynProps = <>
       Flat = True

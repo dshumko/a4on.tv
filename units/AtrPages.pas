@@ -308,7 +308,7 @@ begin
   ini := A4MainForm.GetIniFileName;
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
-      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(ini, formName + '.' + Components[i].Name, true);
+      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(ini, formName + '.' + Components[i].Name, false);
 end;
 
 procedure TA4onPage.CloseData;

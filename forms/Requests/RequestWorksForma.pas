@@ -112,7 +112,7 @@ procedure TRequestWorksForm.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
 
-dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'RecWorkGrid', true);
+dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'RecWorkGrid', false);
 end;
 
 procedure TRequestWorksForm.FormKeyDown(Sender: TObject; var Key: Word;

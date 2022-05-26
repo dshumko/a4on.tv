@@ -25,10 +25,13 @@ object apgCustomerInfo: TapgCustomerInfo
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 0
-    object Splitter1: TdnSplitter
+    object spltMemo: TdnSplitter
       Left = 257
       Top = 0
       AlignControl = pnlDP
+      Color = clBtnFace
+      ParentBackground = False
+      ParentColor = False
       ResizeStyle = rsLine
       Size = 5
       ButtonVisible = False
@@ -62,6 +65,20 @@ object apgCustomerInfo: TapgCustomerInfo
         Spacing = 10
         OnClick = sbRecalcClick
       end
+      object btnAlign: TSpeedButton
+        Left = 2
+        Top = 2
+        Width = 23
+        Height = 13
+        Caption = #1074'/'#1075
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        OnClick = btnAlignClick
+      end
       object gbSaldo: TGroupBox
         Left = 0
         Top = 0
@@ -69,7 +86,7 @@ object apgCustomerInfo: TapgCustomerInfo
         Height = 60
         Hint = #1057#1072#1083#1100#1076#1086' '#1088#1072#1089#1095#1077#1090#1086#1074
         Align = alTop
-        Caption = ' '#1057#1072#1083#1100#1076#1086' '
+        Caption = '          '#1057#1072#1083#1100#1076#1086' '
         Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -270,7 +287,7 @@ object apgCustomerInfo: TapgCustomerInfo
         end
       end
     end
-    object GroupBox2: TGroupBox
+    object gbMemo: TGroupBox
       Left = 262
       Top = 0
       Width = 238
@@ -294,6 +311,7 @@ object apgCustomerInfo: TapgCustomerInfo
         EditButtons = <>
         EmptyDataInfo.Text = #1056#1077#1076#1072#1082#1090#1080#1088#1091#1077#1084#1086#1077' '#1087#1086#1083#1077'. '
         MaxLength = 999
+        PopupMenu = pmMemo
         TabOrder = 0
         Visible = True
         WantReturns = True
@@ -551,6 +569,8 @@ object apgCustomerInfo: TapgCustomerInfo
     StoredProps.Strings = (
       'pnlAddInfo.pnlDP.<P>.Width'
       'pnlHTML.<P>.Width')
+    OnWriteCustomProps = PropStorageEhWriteCustomProps
+    OnReadProp = PropStorageEhReadProp
     Left = 282
     Top = 41
   end
@@ -559,5 +579,13 @@ object apgCustomerInfo: TapgCustomerInfo
     OnDataChange = srcCustomerDataChange
     Left = 178
     Top = 162
+  end
+  object pmMemo: TPopupMenu
+    Left = 780
+    Top = 144
+    object miN1: TMenuItem
+      Caption = #1056#1072#1089#1087#1086#1083#1086#1078#1077#1085#1080#1077' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1103
+      OnClick = miN1Click
+    end
   end
 end

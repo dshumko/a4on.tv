@@ -3,15 +3,13 @@
 interface
 
 uses
-
-  System.Classes, System.Actions, System.SysUtils, System.Variants,
-  WinAPI.Windows, WinAPI.Messages, Data.DB, System.UITypes,
-  Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls,
-  Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus, Vcl.ToolWin, Vcl.Dialogs,
-  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase,
-  pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, GridsEh, EhLibVCL,
-  DM, PrjConst, AtrPages, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.Actions, System.SysUtils, System.Variants, System.UITypes,
+  Data.DB,
+  Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus,
+  Vcl.ToolWin, Vcl.Dialogs,
+  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit;
 
 type
   TapgNodeAppl = class(TA4onPage)

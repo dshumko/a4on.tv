@@ -138,9 +138,11 @@ object RecourseForm: TRecourseForm
         Height = 71
         inherited lblFIO: TLabel
           Width = 463
+          Margins.Bottom = 0
         end
         inherited lblDebt: TLabel
           Width = 463
+          Margins.Bottom = 0
         end
         inherited memAbonent: TMemo
           Width = 463

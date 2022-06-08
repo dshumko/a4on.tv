@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, StdCtrls, DBCtrls, Mask,
-  DBCtrlsEh, DBLookupEh, Buttons, ExtCtrls, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, DBGridEh;
 
 type
   TIPPacketForm = class(TForm)

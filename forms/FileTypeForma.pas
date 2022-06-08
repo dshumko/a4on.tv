@@ -3,13 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  FIBDataSet, pFIBDataSet, GridsEh, Menus, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, PrjConst, CnErrorProvider, Vcl.DBCtrls,
-  Vcl.Mask, DBCtrlsEh, EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh,
-  DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh;
 
 type
   TFileTypeForm = class(TGridForm)
@@ -59,7 +59,8 @@ var
 
 implementation
 
-uses DM, JsonDataObjects;
+uses
+  DM, JsonDataObjects;
 
 {$R *.dfm}
 

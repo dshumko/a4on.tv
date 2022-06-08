@@ -1,15 +1,14 @@
-unit MatMoveDocForma;
+п»їunit MatMoveDocForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, Vcl.StdCtrls,
-  DBLookupEh, DBCtrlsEh, Vcl.Mask, EhLibVCL, GridsEh, DBAxisGridsEh,
-  Data.DB, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase,
-  CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, Vcl.Buttons,
-  Vcl.Menus, System.Actions, Vcl.ActnList;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.Menus, Vcl.ActnList,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
 
 type
   TMatMoveDocForm = class(TForm)
@@ -395,7 +394,7 @@ begin
   else
     s := dsDocMat.FieldByName('M_Notice').AsString;
 
-  if EditText(s, 'Примечание', 'Примечание для услуги') then
+  if EditText(s, 'РџСЂРёРјРµС‡Р°РЅРёРµ', 'РџСЂРёРјРµС‡Р°РЅРёРµ РґР»СЏ СѓСЃР»СѓРіРё') then
   begin
     with TpFIBQuery.Create(Self) do
       try
@@ -438,7 +437,7 @@ end;
 
 procedure TMatMoveDocForm.dsDocNewRecord(DataSet: TDataSet);
 begin
-  dsDoc['DT_ID'] := DocumentType; // приходный документ
+  dsDoc['DT_ID'] := DocumentType; // РїСЂРёС…РѕРґРЅС‹Р№ РґРѕРєСѓРјРµРЅС‚
   if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
     dsDoc['DOC_DATE'] := Now;
 end;
@@ -474,7 +473,7 @@ begin
       = IDYES) then
       s := '';
   end;
-  // если с колвом все хорошо или согласны закрыть - закрываем
+  // РµСЃР»Рё СЃ РєРѕР»РІРѕРј РІСЃРµ С…РѕСЂРѕС€Рѕ РёР»Рё СЃРѕРіР»Р°СЃРЅС‹ Р·Р°РєСЂС‹С‚СЊ - Р·Р°РєСЂС‹РІР°РµРј
   if s = '' then
   begin
     if (not dsDocMat.IsEmpty) and (dsDoc['DOC_CLOSED'] = 0) then

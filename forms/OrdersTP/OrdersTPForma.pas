@@ -3,13 +3,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, ComCtrls,
-  ToolWin, frxClass, frxDBSet, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, GridsEh, ExtCtrls, Buttons, DBGridEhImpExp, FIBQuery, pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
-  MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, PrjConst, System.UITypes, EhLibVCL, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
+  Vcl.ActnList,
+  Vcl.ExtCtrls, Vcl.Buttons,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery,
+  pFIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh,
+  PrjConst, EhLibVCL, DynVarsEh;
 
 type
   TOrdersTPForm = class(TForm)
@@ -153,8 +157,9 @@ procedure ShowOrders(const aOrderID: Integer);
 implementation
 
 uses
-  DM, MAIN, CF, AtrCommon, PeriodForma, AtrStrUtils, TextEditForma,
-  OrderTPForma, ReportPreview, PaymentForma, JsonDataObjects, A4onTypeUnit, OrdersTPFilter;
+  DM, MAIN, CF, AtrCommon, PeriodForma, AtrStrUtils, TextEditForma, OrderTPForma, ReportPreview, PaymentForma,
+  JsonDataObjects,
+  A4onTypeUnit, OrdersTPFilter;
 
 {$R *.dfm}
 
@@ -247,7 +252,7 @@ begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
           AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
+        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
       end;
     end;
 
@@ -273,7 +278,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        DBGridEh_DoCopyAction(dbg, false)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -325,7 +330,7 @@ begin
   if (dsOrdersTP.Filtered) then
   begin
     dsOrdersTP.filter := '';
-    dsOrdersTP.Filtered := False;
+    dsOrdersTP.Filtered := false;
   end;
 
   if filter <> '' then
@@ -401,7 +406,7 @@ begin
   if not FViewTodayOnly then
     fStartDate := MonthFirstDay(dmMain.CurrentMonth)
   else
-    fStartDate := Now;
+    fStartDate := now;
 
   SetOrdersTPFilter;
 
@@ -423,7 +428,7 @@ end;
 
 procedure TOrdersTPForm.N1Click(Sender: TObject);
 var
-  s : string;
+  s: string;
 begin
   if not dsFilter.Active then
     dsFilter.Open;
@@ -441,7 +446,7 @@ end;
 
 procedure TOrdersTPForm.N2Click(Sender: TObject);
 var
-  s : string;
+  s: string;
 begin
   if not dsFilter.Active then
     dsFilter.Open;
@@ -465,7 +470,7 @@ end;
 
 procedure TOrdersTPForm.dsFilterNewRecord(DataSet: TDataSet);
 begin
-  DataSet['inversion'] := False; // инверсия фильтра т.е. добавляем not
+  DataSet['inversion'] := false; // инверсия фильтра т.е. добавляем not
   DataSet['next_condition'] := 0; // следующее условие AND/OR
 end;
 
@@ -507,14 +512,14 @@ end;
 
 procedure TOrdersTPForm.N3Click(Sender: TObject);
 var
-  s : string;
+  s: string;
 begin
   if not dsFilter.Active then
     dsFilter.Open;
   dsFilter.EmptyTable;
   dsFilter.Insert;
   dsFilter['DT'] := 4;
-  dsFilter['DS'] := now-1;
+  dsFilter['DS'] := now - 1;
   dsFilter['DE'] := now;
   dsFilter.Post;
   actEnableFilter.Checked := True;
@@ -525,7 +530,7 @@ end;
 
 procedure TOrdersTPForm.N4Click(Sender: TObject);
 var
-  s : string;
+  s: string;
 begin
   if not dsFilter.Active then
     dsFilter.Open;
@@ -590,7 +595,6 @@ var
   vCanPay: Boolean;
   vSrv: Integer;
   JO: TJsonObject;
-  pd_id: Integer;
 begin
   if dsOrdersTP.FieldByName('CUSTOMER_ID').IsNull then
     Exit;
@@ -723,9 +727,9 @@ begin
   begin
     srcOrdersTP.DataSet := dsOrdersTP;
     dbgOrdersTP.DataGrouping.GroupLevels.Clear;
-    dbgOrdersTP.DataGrouping.Active := False;
-    dbgOrdersTP.DataGrouping.GroupPanelVisible := False;
-    mtOrdersTP.Active := False;
+    dbgOrdersTP.DataGrouping.Active := false;
+    dbgOrdersTP.DataGrouping.GroupPanelVisible := false;
+    mtOrdersTP.Active := false;
     dsOrdersTP.Open;
   end;
   Screen.Cursor := Crsr;
@@ -785,7 +789,7 @@ var
 begin
   if FFirstOpen then
   begin
-    FFirstOpen := False;
+    FFirstOpen := false;
     Exit;
   end;
 
@@ -879,7 +883,7 @@ begin
   if OrderID = -1 then
     Exit;
 
-  Finded := False;
+  Finded := false;
   if dsOrdersTP.Active then
   begin
     Finded := dsOrdersTP.Locate('Otp_Id', OrderID, []);
@@ -943,7 +947,8 @@ function TOrdersTPForm.GenerateFilter: string;
 
     if (not dsFilter.FieldByName('DT').IsNull) then
     begin
-      if (dsFilter['DT'] <> 4) then begin
+      if (dsFilter['DT'] <> 4) then
+      begin
         case dsFilter['DT'] of
           1:
             s := 'o.DATE_FROM';
@@ -966,13 +971,14 @@ function TOrdersTPForm.GenerateFilter: string;
             tmpSQL := Format('( %s = ''%s'') ', [s, FormatDateTime('yyyy-mm-dd', dsFilter['DE'])])
         end;
       end
-      else begin
-          if (not dsFilter.FieldByName('DE').IsNull) then
-            tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', dsFilter['DS']),
-              'o.DATE_FROM', 'o.DATE_TO'])
-          else
-            tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', now),
-              'o.DATE_FROM', 'o.DATE_TO'])
+      else
+      begin
+        if (not dsFilter.FieldByName('DE').IsNull) then
+          tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', dsFilter['DS']), 'o.DATE_FROM',
+            'o.DATE_TO'])
+        else
+          tmpSQL := Format(' (''%s'' between %s and %s) ', [FormatDateTime('yyyy-mm-dd', now), 'o.DATE_FROM',
+            'o.DATE_TO'])
       end;
     end;
 
@@ -1002,7 +1008,8 @@ function TOrdersTPForm.GenerateFilter: string;
     else
       Result := '';
 
-    if FViewTodayOnly then  begin
+    if FViewTodayOnly then
+    begin
       tmpSQL := ' (o.ADDED_ON >= current_date) and (o.ADDED_ON < dateadd(day, 1, current_date)) ';
       if not Result.IsEmpty then
         Result := tmpSQL + ' and (' + Result + ')'
@@ -1072,33 +1079,32 @@ begin
 end;
 
 {
-function TOrdersTPForm.GetPayDocForLTV: Integer;
-var
+  function TOrdersTPForm.GetPayDocForLTV: Integer;
+  var
   s: string;
   fq: TpFIBQuery;
-begin
+  begin
   Result := -1;
 
 
   s := dmMain.GetCompanyValue('NAME');
   if not s.Contains('ЛТВ') then
-    Exit;
+  Exit;
 
   // возвращаем документ с источником Банк РЕКЛАМА для платежей по рекламе
   fq := TpFIBQuery.Create(Self);
   try
-    fq.Database := dmMain.dbTV;
-    fq.Transaction := dmMain.trWriteQ;
-    fq.sql.Text := 'select Pay_Doc_Id from Get_Pay_Doc(720148, null, null)'; // 720148 Банк РЕКЛАМА
-    fq.Transaction.StartTransaction;
-    fq.ExecQuery;
-    if not fq.FN('Pay_Doc_Id').IsNull then
-      Result := fq.FN('Pay_Doc_Id').AsInteger;
-    fq.Transaction.Commit;
+  fq.Database := dmMain.dbTV;
+  fq.Transaction := dmMain.trWriteQ;
+  fq.sql.Text := 'select Pay_Doc_Id from Get_Pay_Doc(720148, null, null)'; // 720148 Банк РЕКЛАМА
+  fq.Transaction.StartTransaction;
+  fq.ExecQuery;
+  if not fq.FN('Pay_Doc_Id').IsNull then
+  Result := fq.FN('Pay_Doc_Id').AsInteger;
+  fq.Transaction.Commit;
   finally
-    fq.Free;
+  fq.Free;
   end;
-end;
+  end;
 }
 end.
-

@@ -1,10 +1,12 @@
-unit LinkProp;
+﻿unit LinkProp;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, System.UITypes, Classes, Graphics, Controls, Forms,
-  Dialogs, SimpleGraph, ExtCtrls, StdCtrls, CheckLst, ComCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.UITypes, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.CheckLst, Vcl.ComCtrls,
+  SimpleGraph;
 
 type
   TLinkProperties = class(TForm)

@@ -3,13 +3,15 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  System.Actions, Vcl.Graphics, VCL.Controls, VCL.Forms,
-  VCL.Dialogs, VCL.StdCtrls, VCL.ExtCtrls, VCL.ActnList,
-  VCL.Buttons, Data.DB,  VCL.DBCtrls, VCL.ComCtrls,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet,
-  SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
-  pFIBQuery, PrjConst, PropFilerEh, PropStorageEh, Vcl.Mask;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
+  Vcl.DBCtrls,
+  Vcl.ComCtrls, Vcl.Mask,
+  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
+  pFIBQuery,
+  PrjConst, PropFilerEh, PropStorageEh;
 
 type
   TCustomersFilterForm = class(TForm)
@@ -206,7 +208,8 @@ var
 
 implementation
 
-uses DM, CF, MAIN, AtrCommon, MemTableEh;
+uses
+  DM, CF, MAIN, AtrCommon, MemTableEh;
 
 {$R *.dfm}
 
@@ -252,7 +255,8 @@ procedure TCustomersFilterForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: boolean;
 begin
-  if (Key = #13) then begin
+  if (Key = #13) then
+  begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
@@ -263,7 +267,8 @@ begin
     else if (ActiveControl is TDBSynEdit) then
       go := False;
 
-    if go then begin
+    if go then
+    begin
       Key := #0; // eat enter key
       PostMessage(self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -354,7 +359,8 @@ end;
 procedure TCustomersFilterForm.SpeedButton2Click(Sender: TObject);
 begin
   OpenDialog1.InitialDir := A4MainForm.GetUserFilterFolder;
-  if OpenDialog1.Execute then begin
+  if OpenDialog1.Execute then
+  begin
     srcFilter.DataSet.DisableControls;
     if not srcFilter.DataSet.Active then
       srcFilter.DataSet.Open;
@@ -367,7 +373,8 @@ end;
 
 procedure TCustomersFilterForm.JURCHEKExit(Sender: TObject);
 begin
-  if JURCHEK.State = cbGrayed then begin
+  if JURCHEK.State = cbGrayed then
+  begin
     if (not(srcFilter.DataSet.State in [dsEdit])) then
       srcFilter.DataSet.Edit;
     srcFilter.DataSet['JURIDICAL'] := -1;
@@ -404,18 +411,21 @@ var
 begin
   // проверим на какой закладке открыто окно.
   // для того чтоб понять по чем выставлять фильтр
-  if srcFilter.DataSet.State in [dsEdit, dsInsert] then begin
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+  begin
     if srcFilter.DataSet.State = dsInsert then
       v := (srcFilter.DataSet.RecordCount = 0)
     else
       v := (srcFilter.DataSet.RecordCount = 1);
     if v then
-      if (not srcFilter.DataSet.FieldByName('ListValues').IsNull) and (pgcFilter.ActivePage = tsList) then begin
+      if (not srcFilter.DataSet.FieldByName('ListValues').IsNull) and (pgcFilter.ActivePage = tsList) then
+      begin
         if (srcFilter.DataSet.FieldByName('ListType').IsNull) then
           srcFilter.DataSet['ListType'] := 0;
         srcFilter.DataSet['EXTENDED_FLTR'] := 1
       end
-      else if (not srcFilter.DataSet.FieldByName('SQL_FLTR').IsNull) and (pgcFilter.ActivePage = tsSQL) then begin
+      else if (not srcFilter.DataSet.FieldByName('SQL_FLTR').IsNull) and (pgcFilter.ActivePage = tsSQL) then
+      begin
         q := TpFIBQuery.Create(Nil);
         try
           try
@@ -492,12 +502,12 @@ end;
 
 procedure TCustomersFilterForm.cbb2Enter(Sender: TObject);
 begin
-  (sender as TDBLookupComboboxEh).SelectAll;
+  (Sender as TDBLookupComboboxEh).SelectAll;
 end;
 
 procedure TCustomersFilterForm.cbb3Enter(Sender: TObject);
 begin
-  (sender as TDBLookupComboboxEh).SelectAll;
+  (Sender as TDBLookupComboboxEh).SelectAll;
 end;
 
 procedure TCustomersFilterForm.cbbAREAChange(Sender: TObject);
@@ -527,7 +537,8 @@ end;
 
 procedure TCustomersFilterForm.cbbSTREETEnter(Sender: TObject);
 begin
-  if VarIsNumeric(cbbAREA.Value) then begin
+  if VarIsNumeric(cbbAREA.Value) then
+  begin
     dsStreets.Filter := 'AREA_ID = ' + VarAsType(cbbAREA.Value, varString);
   end;
   dsStreets.Filtered := (VarIsNumeric(cbbAREA.Value));
@@ -536,7 +547,7 @@ end;
 
 procedure TCustomersFilterForm.lcbSERVICEEnter(Sender: TObject);
 begin
-  (sender as TDBLookupComboboxEh).SelectAll;
+  (Sender as TDBLookupComboboxEh).SelectAll;
 end;
 
 procedure TCustomersFilterForm.DBNumberEditEh1Exit(Sender: TObject);
@@ -552,6 +563,3 @@ begin
 end;
 
 end.
-
-
-

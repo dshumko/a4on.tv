@@ -3,15 +3,13 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Controls, VCL.Forms, Vcl.Menus, System.Actions,
-  VCL.Dialogs, Data.DB, VCL.ComCtrls, VCL.ToolWin, VCL.ActnList,
-
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
-  MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, AtrPages,
-  ToolCtrlsEh, DBGridEhToolCtrls, Buttons, ExtCtrls,
-  DBAxisGridsEh, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh,
+  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, AtrPages, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst;
 
 type
   TapgCustomerBalance = class(TA4onPage)
@@ -43,7 +41,8 @@ type
 
 implementation
 
-uses DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN;
+uses
+  DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN;
 
 {$R *.dfm}
 

@@ -14,11 +14,9 @@
 {$IFNDEF VER180}
 {$DEFINE UTF}
 {$ENDIF}
-
 { DEFINE LOCALIZER } // Локализация программы
 { DEFINE ATIRRA }    // Если нужен модуль Атирра
 { DEFINE COMPOSITE } // Используем COMPOSITE, кроме МТИС никому не нужен был
 
 {$DEFINE Scale4k}
 { -$DEFINE DELPHI_STYLE_SCALING }
-

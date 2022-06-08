@@ -3,16 +3,13 @@
 interface
 
 uses
-
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs,
-  Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.Buttons, Data.DB, System.DateUtils,
-
-  FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh,
-  DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
-  MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
-  DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, MemTableEh, PropFilerEh,
-  PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.DateUtils,
+  Data.DB,
+  Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.Buttons,
+  FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh, DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
+  MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, MemTableEh,
+  PropFilerEh, PropStorageEh;
 
 type
   TOrderTPForm = class(TForm)
@@ -117,7 +114,8 @@ function CreateOrderTPForCustomer(const aOTPID: Integer; const ACustomerInfo: TC
 
 implementation
 
-uses DM, PrjConst, JsonDataObjects, pFIBQuery, DBSumLst, MAIN, ReportPreview;
+uses
+  DM, PrjConst, JsonDataObjects, pFIBQuery, DBSumLst, MAIN, ReportPreview;
 
 {$R *.dfm}
 

@@ -3,12 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  ExtCtrls, FIBDataSet, pFIBDataSet, FIBQuery, GridsEh, Menus,
-  StdCtrls, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, Vcl.Buttons, CnErrorProvider, PrjConst, System.UITypes,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls, Vcl.Menus,
+  Vcl.StdCtrls, Vcl.Buttons,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TWorkTeamForm = class(TGridForm)
@@ -106,7 +107,8 @@ var
 
 implementation
 
-uses DM, MAIN, WorkAreaLimitForma, HouseForma;
+uses
+  DM, MAIN, WorkAreaLimitForma, HouseForma;
 
 {$R *.dfm}
 

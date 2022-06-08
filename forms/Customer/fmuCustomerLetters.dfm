@@ -169,7 +169,9 @@ object apgCustomerLetters: TapgCustomerLetters
       'select'
       '    m.Mes_Id,'
       '    0,'
-      '    cast(coalesce(m.Send_Date, m.Added_On) as DATE) Send_Date,'
+      
+        '    cast(coalesce(m.Send_Date, iif(m.Mes_Type <> '#39'SMS'#39', m.Added_' +
+        'On, null)) as DATE) Send_Date,'
       '    m.Mes_Type,'
       '    m.Mes_Text,'
       '    m.Mes_Head'

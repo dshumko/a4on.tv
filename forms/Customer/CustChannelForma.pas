@@ -1,11 +1,13 @@
-unit CustChannelForma;
+Ôªøunit CustChannelForma;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, DB, FIBDataSet, pFIBDataSet, StdCtrls, DBCtrls,
-  DBCtrlsEh, Mask, DBLookupEh, OkCancel_frame;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OkCancel_frame;
 
 type
   TCustChannelForm = class(TForm)
@@ -71,13 +73,13 @@ procedure TCustChannelForm.OkCancelFrame1bbOkClick(Sender: TObject);
 begin
   if VarIsNull(DBLChannels.Value)
   then begin
-    ShowMessage('”Í‡ÊËÂÚ Í‡Ì‡Î!');
+    ShowMessage('–£–∫–∞–∂–∏–µ—Ç –∫–∞–Ω–∞–ª!');
     DBLChannels.SetFocus;
     exit;
   end;
   if VarIsNull(deStart.Value)
   then begin
-    ShowMessage('”Í‡ÊËÂÚ ‰‡ÚÛ!');
+    ShowMessage('–£–∫–∞–∂–∏–µ—Ç –¥–∞—Ç—É!');
     deStart.SetFocus;
     exit;
   end;

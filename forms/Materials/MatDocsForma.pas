@@ -1,16 +1,16 @@
-unit MatDocsForma;
+п»їunit MatDocsForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GridForma, System.UITypes,
-  ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh, FIBDataSet, pFIBDataSet, frxClass,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh,
-  MemTableEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin,
+  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
+  pFIBDataSet,
+  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh;
 
 type
   TMatDocsForm = class(TGridForm)
@@ -103,9 +103,9 @@ var
 implementation
 
 uses
-  MAIN, DM, PrjConst, synacode, PeriodForma, AtrStrUtils, AtrCommon,
-  MatCorrectionDocForma, MatIncomeDocForma, MatMoveDocForma, MatOutDocForma,
-  MatInventoryDocForma, MatDocFilter;
+  MAIN, DM, PrjConst, synacode, PeriodForma, AtrStrUtils, AtrCommon, MatCorrectionDocForma, MatIncomeDocForma,
+  MatMoveDocForma,
+  MatOutDocForma, MatInventoryDocForma, MatDocFilter;
 
 const
   const_default_filter: string = ' 1=1 ';
@@ -137,7 +137,7 @@ begin
   actDocOUT.Visible := FFullAccess or FAccessOut;
   actDocInventory.Visible := FFullAccess or FAccessInv;
 
-  // если не все типы, то поставим фильтр
+  // РµСЃР»Рё РЅРµ РІСЃРµ С‚РёРїС‹, С‚Рѕ РїРѕСЃС‚Р°РІРёРј С„РёР»СЊС‚СЂ
   if not(FFullAccess or (FAccessNew and FAccessMove and FAccessOut and FAccessInv)) then
   begin
     s := '';
@@ -196,19 +196,19 @@ begin
   case dsDocs['DT_ID'] of
     1:
       if (FFullAccess or FAccessNew) then
-        MaterialIncomeDocument(dsDocs['DOC_ID']); // Приход материалов
+        MaterialIncomeDocument(dsDocs['DOC_ID']); // РџСЂРёС…РѕРґ РјР°С‚РµСЂРёР°Р»РѕРІ
     2:
       if (FFullAccess or FAccessMove) then
-        MaterialMoveDocument(dsDocs['DOC_ID']); // Перемещение по складам
+        MaterialMoveDocument(dsDocs['DOC_ID']); // РџРµСЂРµРјРµС‰РµРЅРёРµ РїРѕ СЃРєР»Р°РґР°Рј
     3:
       if (FFullAccess or FAccessOut) then
-        MaterialOutDocument(dsDocs['DOC_ID']); // Списание материалов
+        MaterialOutDocument(dsDocs['DOC_ID']); // РЎРїРёСЃР°РЅРёРµ РјР°С‚РµСЂРёР°Р»РѕРІ
     4:
       if (FFullAccess or FAccessInv) then
-        MaterialCorrectionDocument(dsDocs['DOC_ID']); // Инвентаризация
+        MaterialCorrectionDocument(dsDocs['DOC_ID']); // РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ
     5:
       if (FFullAccess or FAccessInv) then
-        MaterialInventoryDocument(dsDocs['DOC_ID']); // Инвентаризация
+        MaterialInventoryDocument(dsDocs['DOC_ID']); // РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ
   end;
 end;
 
@@ -345,7 +345,7 @@ procedure TMatDocsForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; A
   State: TGridDrawState);
 begin
   inherited;
-  if (not dsDocs.FieldByName('Doc_Closed').IsNull) // Подключен
+  if (not dsDocs.FieldByName('Doc_Closed').IsNull) // РџРѕРґРєР»СЋС‡РµРЅ
   then
   begin
     if (dsDocs['Doc_Closed'] = 0) then
@@ -471,13 +471,13 @@ begin
 
   case dsDocs['DT_ID'] of
     1:
-      CanDelete := (FFullAccess or FAccessNew); // Приход материалов
+      CanDelete := (FFullAccess or FAccessNew); // РџСЂРёС…РѕРґ РјР°С‚РµСЂРёР°Р»РѕРІ
     2:
-      CanDelete := (FFullAccess or FAccessMove); // Перемещение по складам
+      CanDelete := (FFullAccess or FAccessMove); // РџРµСЂРµРјРµС‰РµРЅРёРµ РїРѕ СЃРєР»Р°РґР°Рј
     3:
-      CanDelete := (FFullAccess or FAccessOut); // Списание материалов
+      CanDelete := (FFullAccess or FAccessOut); // РЎРїРёСЃР°РЅРёРµ РјР°С‚РµСЂРёР°Р»РѕРІ
     4:
-      CanDelete := (FFullAccess or FAccessInv); // Инвентаризация
+      CanDelete := (FFullAccess or FAccessInv); // РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ
   else
     CanDelete := FFullAccess;
   end;
@@ -639,7 +639,7 @@ begin
     while not dsFilter.Eof do
     begin
       whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
-      // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+      // РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РѕРіСЂР°РЅРёС‡РµРЅРёРµ РѕРґРЅРѕР№ Р·Р°РїРёСЃРё Рё С„РёР»СЊС‚СЂ РїРѕ РєРІР°СЂС‚РёСЂРµ. С‚Рѕ СЃРєРёРЅРµРј РѕРіСЂР°РЅРёС‡РµРЅРёРµ
       dsFilter.next;
       if not dsFilter.Eof then
         if dsFilter['next_condition'] = 0 then

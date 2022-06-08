@@ -1,19 +1,62 @@
-п»їunit MAIN;
+unit MAIN;
 {$I defines.inc}
 
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, VCL.Graphics, VCL.Forms, VCL.Controls, VCL.Menus, System.Variants,
-  VCL.StdCtrls, VCL.Dialogs, VCL.Buttons, Winapi.Messages, VCL.ExtCtrls, VCL.ComCtrls, VCL.StdActns,
-  VCL.ActnList, VCL.ToolWin, VCL.ImgList, Data.DB, System.UITypes, VCL.Mask, System.Win.ComObj,
-  VCL.AppEvnts, System.Actions, {$IFDEF VER290} System.ImageList, {$ENDIF}
-  FIBQuery, pFIBQuery, frxExportPDF, frxExportRTF, frxExportTXT,
-  frxExportHTML, frxExportXLS, frxExportImage, frxExportCSV,
-  frxExportBIFF, frxExportDBF, frxExportODF, frxExportMail,
-  JvDesktopAlert, DBCtrlsEh, frxClass, frxExportXML,
-  EhLibLangConsts, EhLibEmbeddedLangConsts, LanguageResManEh,
-  MDIChildBar, A4onTypeUnit, DM, ad3SpellBase, ad3Spell, ad4Live;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.Win.ComObj,
+  System.SysUtils,
+  System.Classes,
+  System.Variants,
+  System.UITypes,
+  System.Actions,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Forms,
+  Vcl.Controls,
+  Vcl.Menus,
+  Vcl.StdCtrls,
+  Vcl.Dialogs,
+  Vcl.Buttons,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  Vcl.StdActns,
+  Vcl.ActnList,
+  Vcl.ToolWin,
+  Vcl.ImgList,
+  Vcl.Mask,
+  Vcl.AppEvnts,
+{$IFDEF VER290}
+  System.ImageList,
+{$ENDIF}
+  FIBQuery,
+  pFIBQuery,
+  frxExportPDF,
+  frxExportRTF,
+  frxExportTXT,
+  frxExportHTML,
+  frxExportXLS,
+  frxExportImage,
+  frxExportCSV,
+  frxExportBIFF,
+  frxExportDBF,
+  frxExportODF,
+  frxExportMail,
+  JvDesktopAlert,
+  DBCtrlsEh,
+  frxClass,
+  frxExportXML,
+  EhLibLangConsts,
+  EhLibEmbeddedLangConsts,
+  LanguageResManEh,
+  MDIChildBar,
+  A4onTypeUnit,
+  DM,
+  ad3SpellBase,
+  ad3Spell,
+  ad4Live;
 
 type
   TA4MainForm = class(TForm)
@@ -408,9 +451,9 @@ type
     procedure actPortTypeExecute(Sender: TObject);
   private
     { Private declarations }
-    FRunning: Boolean; // СЃРєСЂРёРїС‚ СЂР°Р±РѕС‚Р°РµС‚
-    FStopped: Boolean; // СЃРєСЂРёРїС‚ РѕСЃС‚Р°РЅРѕРІР»РµРЅ
-    fApplicarionInIdle: Boolean; // РїСЂРѕРіСЂР°РјРјР° РїСЂРѕСЃС‚Р°РёРІР°РµС‚. РјРѕР¶РµРј РѕР±РЅРѕРІРёС‚СЊ СЃРїРёСЃРѕРє
+    FRunning: Boolean; // скрипт работает
+    FStopped: Boolean; // скрипт остановлен
+    fApplicarionInIdle: Boolean; // программа простаивает. можем обновить список
     FLogedRight: Boolean;
     FToolTipStack: TjvDesktopAlertStack;
     procedure LoadLang;
@@ -430,7 +473,7 @@ type
     procedure InitSecurityMobile;
     procedure SearchHandle(const SearchValue: String = ''; const SearchType: Integer = 0);
     procedure SendMessagesToCallListiner(const alias: String = '');
-    // Р·Р°РєСЂРѕРµРј РїСЂРёР»РѕР¶РµРЅРёРµ РїСЂРё РїРµСЂРµС…РѕРґРµ РІ СЃРїСЏС‰РёР№ СЂРµР¶РёРј
+    // закроем приложение при переходе в спящий режим
     procedure PowerStatusChange(var Message: TMessage); message WM_POWERBROADCAST;
     procedure CheckAndChangePassword;
     procedure AppOnMessage(var Msg: TMsg; var Handled: Boolean);
@@ -441,7 +484,7 @@ type
   public
     property ApplicarionInIdle: Boolean read fApplicarionInIdle;
     property ApplicationPath: string read GetApplicationPath;
-    // Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РІ РєРѕС‚РѕСЂРѕРј СЃРѕС…СЂР°РЅРёРј РїРѕСЃР»РµРґРЅРµРіРѕ СЋР·РІРµСЂР°
+    // Возвращает имя файла в котором сохраним последнего юзвера
     function GetLastIniFileName: string;
     function GetIniFileName: String;
     function GetUserFilterFolder: String;
@@ -460,7 +503,7 @@ type
     procedure ReceiveMessage(var Msg: TMessage); message WM_COPYDATA;
     procedure OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
     procedure OpnenNodeByID(const ID: Integer);
-    procedure OpenEquipmentByName(const name:String);
+    procedure OpenEquipmentByName(const name: String);
     function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
   end;
 
@@ -468,40 +511,125 @@ var
   A4MainForm: TA4MainForm;
   idOper: Integer;
 
-  // TODO: РЅСѓР¶РЅРѕ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ Р»РѕРіРёС‡РЅРѕСЃС‚СЊ РґР°С‚ РїСЂРµРґРѕСЃС‚Р°РІР»РµРЅРёСЏ СѓСЃР»СѓРі
+  // TODO: нужно контролировать логичность дат предоставления услуг
 
 implementation
 
 {$R *.dfm}
 
 uses
-  System.Threading, Winapi.CommCtrl, System.DateUtils,
-{$IFDEF EurekaLog} FeedbackForma, {$ENDIF}
-  RxStrUtils, AtrCommon, PrjConst,
-  PeriodForma, PaymentSourcesForma, ScreenShotForma,
-  CompanyForma, AreaForma, StreetForma, ServicesForma, EquipmentForma,
-  AboutForma, WorkersForma, RequestTypeForma, RequestsForma,
-  MaterialsForma, FIBDatabase, UserLoginDlg, SettingsForma, StrUtils,
-  PaymentTypeForma, AttributesForma, LettersForma,
-  PayDocsForma, ChannelsForma, CardsPayForma, CardSerialsForma,
-  ReportPreview, LoaderReestrForma, IniFiles, AtrStrUtils,
-  VlansForma, JournalForma, QueryForma, UsersForma,
-  SrvServiceForma, ScriptModule, fs_iinterpreter, ScripEditorForma, EventsForma,
-  EquipmentComands, OrganForma, EQGroupsForma, HeadEndsForma, RecourseTPLForma,
-  RecoursesForma, SUBDIVForma, WorkTeamForma, WHForma,
-  monitoringUnitMain, VATForma, ChangePwdForma, HETypesForma, BanksForma,
-  SettinsUserForma, PaymentsForma, CF,
-  MessagesForma, PaymentDocForma, ReportDesignerForma,
-  DVBEquipmentForma, ManForma, EPGView, OTPTypesForma, OrdersTPForma,
-  DVBSettings, MatDocsForma,
-  EPGAdForma, ShippersForma, atrCmdUtils, BonusesForma, BlackListForma,
-  RequestForma, RatesForma, IPTVSettings,
-  fmuCustomerNew, CustomerForma, FileTypeForma, MapForma, NodesForma,
-  NodeTypeForma, NFileTypeForma, TaskForma,
-  NewTaskForma, CallCenterForma, ChanSourcesForma, CustFilesForma, BCIssuesForma, BCIssuesTypeForma,
-  SatCardsForma, DistribForma, FreqPlanForma, JclLocales, DeviceTypesForma, WebBrowserForma, BCIssuesSolutionForma,
-  ReqPhotosForma, NewsForma, NHunspell, WireTypeForma, WireForma, PortListForma,
-  ContactTypeForma, LabelTypeForma, ConnectTypeForma, PortTypeForma;
+  Winapi.CommCtrl,
+  System.Threading,
+  System.DateUtils,
+{$IFDEF EurekaLog}
+  FeedbackForma,
+{$ENDIF}
+  System.StrUtils,
+  System.IniFiles,
+  RxStrUtils,
+  AtrCommon,
+  PrjConst,
+  PeriodForma,
+  PaymentSourcesForma,
+  ScreenShotForma,
+  CompanyForma,
+  AreaForma,
+  StreetForma,
+  ServicesForma,
+  EquipmentForma,
+  AboutForma,
+  WorkersForma,
+  RequestTypeForma,
+  RequestsForma,
+  MaterialsForma,
+  FIBDatabase,
+  UserLoginDlg,
+  SettingsForma,
+  PaymentTypeForma,
+  AttributesForma,
+  LettersForma,
+  PayDocsForma,
+  ChannelsForma,
+  CardsPayForma,
+  CardSerialsForma,
+  ReportPreview,
+  LoaderReestrForma,
+  AtrStrUtils,
+  VlansForma,
+  JournalForma,
+  QueryForma,
+  UsersForma,
+  SrvServiceForma,
+  ScriptModule,
+  fs_iinterpreter,
+  ScripEditorForma,
+  EventsForma,
+  EquipmentComands,
+  OrganForma,
+  EQGroupsForma,
+  HeadEndsForma,
+  RecourseTPLForma,
+  RecoursesForma,
+  SUBDIVForma,
+  WorkTeamForma,
+  WHForma,
+  monitoringUnitMain,
+  VATForma,
+  ChangePwdForma,
+  HETypesForma,
+  BanksForma,
+  SettinsUserForma,
+  PaymentsForma,
+  CF,
+  MessagesForma,
+  PaymentDocForma,
+  ReportDesignerForma,
+  DVBEquipmentForma,
+  ManForma,
+  EPGView,
+  OTPTypesForma,
+  OrdersTPForma,
+  DVBSettings,
+  MatDocsForma,
+  EPGAdForma,
+  ShippersForma,
+  atrCmdUtils,
+  BonusesForma,
+  BlackListForma,
+  RequestForma,
+  RatesForma,
+  IPTVSettings,
+  fmuCustomerNew,
+  CustomerForma,
+  FileTypeForma,
+  MapForma,
+  NodesForma,
+  NodeTypeForma,
+  NFileTypeForma,
+  TaskForma,
+  NewTaskForma,
+  CallCenterForma,
+  ChanSourcesForma,
+  CustFilesForma,
+  BCIssuesForma,
+  BCIssuesTypeForma,
+  SatCardsForma,
+  DistribForma,
+  FreqPlanForma,
+  JclLocales,
+  DeviceTypesForma,
+  WebBrowserForma,
+  BCIssuesSolutionForma,
+  ReqPhotosForma,
+  NewsForma,
+  NHunspell,
+  WireTypeForma,
+  WireForma,
+  PortListForma,
+  ContactTypeForma,
+  LabelTypeForma,
+  ConnectTypeForma,
+  PortTypeForma;
 
 type
 
@@ -723,7 +851,7 @@ begin
   end
 end;
 
-// Р’РѕР·РІСЂР°С‰Р°РµС‚ РєР°С‚Р°Р»РѕРі СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+// Возвращает каталог с настройками пользователя
 function TA4MainForm.GetUserFilterFolder: string;
 var
   s: string;
@@ -740,7 +868,7 @@ begin
   Result := f
 end;
 
-// Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+// Возвращает имя файла с настройками пользователя
 function TA4MainForm.GetIniFileName: string;
 var
   s: string;
@@ -775,7 +903,7 @@ begin
   Result := f;
 end;
 
-// Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РІ РєРѕС‚РѕСЂРѕРј СЃРѕС…СЂР°РЅРёРј РїРѕСЃР»РµРґРЅРµРіРѕ СЋР·РІРµСЂР°
+// Возвращает имя файла в котором сохраним последнего юзвера
 function TA4MainForm.GetLastIniFileName: string;
 var
   s: string;
@@ -798,7 +926,7 @@ begin
   Result := f
 end;
 
-// Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РїРѕРґРєР»СЋС‡РµРЅРёСЏ
+// Возвращает имя файла с настройками подключения
 function TA4MainForm.GetMainIniFileName: string;
 begin
   Result := ChangeFileExt(Application.ExeName, '.INI');
@@ -979,8 +1107,8 @@ begin
       AddictSpell.ConfigDefaultCustom.Add(s + '\A4on.TV.adu');
       AddictSpell.ConfigDefaultActiveCustom := s + '\A4on.TV.adu';
       AddictSpell.SuggestionsLearningDict := ChangeFileExt(AddictSpell.ConfigFilename, '.adl');
-      AddictSpell.ConfigUseMSWordCustom := False; // РЅРµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃР»РѕРІР°СЂСЊ MS office
-      AddictSpell.KeepDictionariesActive := False; // С…СЂР°РЅРёС‚СЊ СЃР»РѕРІР°СЂСЊ РІ РћР—РЈ РёР»Рё РЅРµС‚
+      AddictSpell.ConfigUseMSWordCustom := False; // не использовать словарь MS office
+      AddictSpell.KeepDictionariesActive := False; // хранить словарь в ОЗУ или нет
     end;
 
     Hunspell.ReadFolder(f);
@@ -1033,7 +1161,7 @@ begin
     s := 'EN';
   s := AppIni.ReadString('MAIN', 'KEYBOARD', s);
   dmMain.SetIniValue('KEYBOARD', s);
-  s := AppIni.ReadString('MAIN', 'CONNECTDLL', 'gds32.dll');
+  s := AppIni.ReadString('MAIN', 'CONNECTDLL', '');
   dmMain.SetIniValue('CONNECTDLL', s);
   FreeAndNil(AppIni);
 
@@ -1192,7 +1320,7 @@ procedure TA4MainForm.FormCreate(Sender: TObject);
 var
   i: Integer;
 begin
-  // вЂќdmвЂќ is the name of the TDataModule instance
+  // ”dm” is the name of the TDataModule instance
   if Screen.PixelsPerInch <> 96 then
   begin
     for i := 0 to -1 + ComponentCount do
@@ -1367,7 +1495,7 @@ begin
     dmMain.GetSettingsValue('ReloadSettingsFromDB');
     dmMain.CurrentMonth := FBdateToDate(VarToStr(dmMain.GetSettingsValue('CURRENT_DATE')));
 
-    pnlDate.Caption := FormatDateTime('mmmm yyyy Рі.', dmMain.CurrentMonth);
+    pnlDate.Caption := FormatDateTime('mmmm yyyy г.', dmMain.CurrentMonth);
 
     Screen.Cursor := Save_Cursor;
     b := b - Now();
@@ -1438,7 +1566,7 @@ begin
     dmMain.GetSettingsValue('ReloadSettingsFromDB');
     dmMain.CurrentMonth := FBdateToDate(VarToStr(dmMain.GetSettingsValue('CURRENT_DATE')));
 
-    pnlDate.Caption := FormatDateTime('mmmm yyyy Рі.', dmMain.CurrentMonth);
+    pnlDate.Caption := FormatDateTime('mmmm yyyy г.', dmMain.CurrentMonth);
 
     Screen.Cursor := CrDefault;
   end;
@@ -1505,9 +1633,10 @@ begin
   EquipmentForm.Show;
 end;
 
-procedure TA4MainForm.OpenEquipmentByName(const name:String);
+procedure TA4MainForm.OpenEquipmentByName(const name: String);
 begin
-  if not actEquipment.Visible then Exit;
+  if not actEquipment.Visible then
+    Exit;
   actEquipmentExecute(self);
   EquipmentForm.dbGrid.DataSource.DataSet.Locate('NAME', name, [loCaseInsensitive]);
 end;
@@ -1531,7 +1660,7 @@ end;
 
 procedure TA4MainForm.FormShow(Sender: TObject);
 var
-  DB, User, pass, alias: String;
+  DB, User, pass, alias, s: String;
   hiden_pass, setting_pass, strError: string;
   VERSION_DB, i: Integer;
   Handle: THandle;
@@ -1540,21 +1669,43 @@ begin
   User := dmMain.GetIniValue('LASTUSERNAME');
   dmMain.dbTV.ConnectParams.CharSet := dmMain.GetIniValue('CHARSET');
 
-  // РїРѕРїС‹С‚РєР° РїСЂРѕРІРµСЂРёС‚СЊ РµСЃС‚СЊ Р»Рё РґР»Р» РІ СЃРёСЃС‚РµРјРµ. Рё РЅР°Р№С‚Рё РЅСѓР¶РЅСѓСЋ
-  pass := dmMain.GetIniValue('CONNECTDLL');
-  Handle := LoadLibrary(PWideChar(pass));
+  // попытка проверить есть ли длл в системе. и найти нужную
+  s := dmMain.GetIniValue('CONNECTDLL');
+  if s.IsEmpty then
+  begin
+    s := dmMain.GetIniValue('CLIENTDLL');
+    if s.IsEmpty then
+    begin
+      // если не нашли нужный параметр, прочитаем второй возможный
+      s := 'fbclient.dll';
+      dmMain.SetIniValue('CONNECTDLL', s);
+    end;
+  end;
+
+  Handle := LoadLibrary(PWideChar(s));
   if Handle <> 0 then
     FreeLibrary(Handle)
   else
   begin
-    if pass.ToUpper.Contains('FBCLIENT') then
-      pass := 'gds32.dll'
+    if s.ToUpper.Contains('FBCLIENT') then
+      s := 'gds32.dll'
     else
-      pass := 'fbclient.dll';
-    dmMain.SetIniValue('CONNECTDLL', pass);
+      s := 'fbclient.dll';
+
+    Handle := LoadLibrary(PWideChar(s));
+    if Handle <> 0 then
+    begin
+      FreeLibrary(Handle);
+      dmMain.SetIniValue('CONNECTDLL', s);
+    end
+    else
+    begin
+      ShowMessage(Format(rsErrorDll, [dmMain.GetIniValue('CONNECTDLL')]));
+      Halt;
+    end;
   end;
 
-  dmMain.dbTV.LibraryName := pass;
+  dmMain.dbTV.LibraryName := s;
 
   pass := Copy(ParamStr(1), 1, 3);
   if (pass = '/p:') then
@@ -1573,12 +1724,16 @@ begin
   if not LoginDialogA(DB, User, pass, alias) then
     Halt;
 
-  SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'));
+  s := dmMain.GetIniValue('KEYBOARD');
+  if not s.IsEmpty then
+  begin
+    SetKeyboardLayout(s);
+  end;
 
   dmMain.DBAlias := alias;
   dmMain.dbTV.DatabaseName := DB;
   dmMain.dbTV.ConnectParams.UserName := User;
-  if User <> 'SYSDBA' then
+  if User.ToUpper <> 'SYSDBA' then
   begin
     pass := passprefix + pass;
     dmMain.dbTV.ConnectParams.RoleName := 'ROLE_A4USER';
@@ -1591,13 +1746,18 @@ begin
     dmMain.dbTV.Open;
   except
     On E: Exception do
+    begin
       strError := E.Message;
+      strError := strError + #13#10 + dmMain.dbTV.DatabaseName;
+      strError := strError + #13#10 + dmMain.dbTV.ConnectParams.UserName;
+      strError := strError + #13#10 + dmMain.dbTV.LibraryName;
+    end;
   end;
 
   if ((not dmMain.dbTV.Connected) and (dmMain.dbTV.Tag = 1)) then
   begin
-    // РїСЂРѕРІРµСЂРёРј РЅРµ Р·Р°С‰РёС‚Р° Р»Рё РґР»СЏ СЃРѕРєСЂС‹С‚РёСЏ РїР»СЊР·РѕРІР°С‚РµР»РµР№
-    if User = 'SYSDBA' then
+    // проверим не защита ли для сокрытия пльзователей
+    if User.ToUpper = 'SYSDBA' then
     begin
       hiden_pass := Copy(pass, 1, 4);
       pass := Copy(pass, 5, Length(pass) - 4)
@@ -1615,7 +1775,12 @@ begin
       dmMain.dbTV.Open;
     except
       On E: Exception do
+      begin
         strError := E.Message;
+        strError := strError + #13#10 + dmMain.dbTV.DatabaseName;
+        strError := strError + #13#10 + dmMain.dbTV.ConnectParams.UserName;
+        strError := strError + #13#10 + dmMain.dbTV.LibraryName;
+      end;
     end;
   end;
 
@@ -1629,7 +1794,7 @@ begin
 
   dmMain.iniPropStorage.IniFileName := A4MainForm.GetIniFileName;
 
-  // Р•СЃР»Рё СЃРјРµРЅРёР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РїРµСЂРµС‡РёС‚Р°РµРј РЅР°СЃС‚СЂРѕР№РєРё
+  // Если сменили пользователя, перечитаем настройки
   ReadUserSettings;
 
   dmMain.InitData;
@@ -1672,12 +1837,12 @@ begin
 
   dmMain.CurrentMonth := FBdateToDate(VarToStr(dmMain.GetSettingsValue('CURRENT_DATE')));
 
-  pnlDate.Caption := FormatDateTime('mmmm yyyy Рі.', dmMain.CurrentMonth);
+  pnlDate.Caption := FormatDateTime('mmmm yyyy г.', dmMain.CurrentMonth);
 
-  // РІС‹СЃС‚Р°РІРёРј СЂРµР¶РёРј СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹
-  // -1 РѕС‚РєР»СЋС‡РµРЅРѕ СЃРєСЂС‹С‚РёРµ Р°Р±РѕРЅРµРЅС‚РѕРІ
-  // 0 РѕС‚РѕР±СЂРѕР¶Р°С‚СЊ С‚РѕР»СЊРєРѕ РЅРµ СЃРєСЂС‹С‚С‹С… Р°Р±РѕРЅРµРЅС‚РѕРІ
-  // 1 РѕС‚РѕР±СЂРѕР¶Р°С‚СЊ РІСЃРµС… (Рё СЃРєСЂС‹С‚С‹С… Р°Р±РѕРЅРµРЅС‚РѕРІ)
+  // выставим режим работы программы
+  // -1 отключено скрытие абонентов
+  // 0 отоброжать только не скрытых абонентов
+  // 1 отоброжать всех (и скрытых абонентов)
   dmMain.SuperMode := -1;
   setting_pass := dmMain.GetSettingsValue('SECRET');
 
@@ -1708,14 +1873,22 @@ begin
   fsGlobalUnit.AddConst('ATIRRA_USER', 'string', dmMain.User);
   fsGlobalUnit.AddConst('ATIRRA_PASSWORD', 'string', dmMain.Password);
 
-  // РџСЂРѕРІРµСЂРёРј РІСЃРµ РїСЂР°РІР°
+  // Проверим все права
   InitSecurity;
-  // СЃРѕР·РґР°РґРёРј РјРµРЅСЋ РѕС‚С‡РµС‚РѕРІ
+  // создадим меню отчетов
   CreateReportMenu;
-  // СЃРѕР·РґР°РґРёРј РјРµРЅСЋ РїРѕРґРіСЂСѓР¶Р°РµРјС‹С… РјРѕРґСѓР»РµР№
+  // создадим меню подгружаемых модулей
   CreateModulesMenu;
-  // РїРѕРєР°Р¶РµРј РєРЅРѕРїРєРё
+  // покажем кнопки
   SetVisibleButtons;
+
+  if dmMain.GetIniValue('DEFSEARCH') <> '' then
+  begin
+    cbSearchType.OnChange := nil; // иначе срабатывает открытие абонентов
+    cbSearchType.value := dmMain.GetIniValue('DEFSEARCH');
+    cbSearchType.OnChange := cbSearchTypeChange;
+  end;
+
   if TryStrToInt(dmMain.GetIniValue('AUTOOPEN'), i) then
     case i of
       1:
@@ -1730,14 +1903,17 @@ begin
         actTaskList.Execute;
     end;
 
-  if dmMain.GetIniValue('DEFSEARCH') <> '' then
-    cbSearchType.value := dmMain.GetIniValue('DEFSEARCH');
-
   if TryStrToInt(dmMain.GetIniValue('HIDEHINT'), i) then
   begin
     // StatusBar.AutoHint := (i = 1);
     StatusBar.SimplePanel := (i = 1);
     Application.ShowHint := (i <> 1);
+  end
+  else
+  begin
+    // показываем подсказку всегда
+    StatusBar.SimplePanel := False;
+    Application.ShowHint := True;
   end;
 
   tmrTaskCheck.Enabled := True;
@@ -1748,9 +1924,9 @@ begin
   begin
     if TryStrToInt(dmMain.GetSettingsValue('IDLEHOURS'), i) and (i > 0) then
     begin
-      // РЅРµ РґР°РµРј РїСЂРѕРіСЂР°РјРјРµ РІРёСЃРµС‚СЊ IDLE С‡Р°СЃРѕРІ
+      // не даем программе висеть IDLE часов
       tmrIdleClose.Interval := i * 60 * 60 * 1000;
-      // 24*60*60 24 С‡Р°СЃР° 60 РјРёРЅСѓС‚ 60 СЃРµРєСѓРЅРґ
+      // 24*60*60 24 часа 60 минут 60 секунд
       Application.OnMessage := AppOnMessage;
     end;
   end;
@@ -2191,11 +2367,11 @@ var
   DTF: Extended;
   dstr: string;
 begin
-  // РћС‚РєР»СЋС‡РµРЅРѕ Р°РІС‚РѕРѕР±РЅРѕРІР»РµРЅРёРµ
+  // Отключено автообновление
   if dmMain.GetIniValue('NOTAUTOUPDATE') = '1' then
     Exit;
 
-  // РѕРїСЂРµРґРµР»РµРЅРёРµ РґР°С‚С‹ С„Р°Р№Р»Р°
+  // определение даты файла
   FindFirst(Application.ExeName, faanyfile, SearchRec);
   DateFile := SearchRec.TimeStamp;
   findclose(SearchRec);
@@ -2325,7 +2501,7 @@ begin
 
     if FileExists(iFileNameBak) then
     begin
-      // СЃРЅР°С‡Р°Р»Р° РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ, Р° РїРѕС‚РѕРј СѓРґР°Р»РёРј
+      // сначала во временную, а потом удалим
       s := FileGetTempName('a4on');
       MoveFile(PChar(iFileNameBak), PChar(s));
       DeleteFile(s);
@@ -2378,7 +2554,7 @@ end;
 function TA4MainForm.TelnetQuery(const host: string; const commands: String; const EOL_CHRS: Integer = 0): string;
 begin
   Result := '';
-  // РћРєРЅРѕ С‚РµР»РЅРµС‚Р°
+  // Окно телнета
   // Result := telnet(host, 'telnet', ReplaceStr(commands,#13#10,'\r'), EOL_CHRS, True);
 end;
 
@@ -2434,7 +2610,7 @@ procedure TA4MainForm.CreateReportMenu;
 
     NewItem := TMenuItem.Create(miParent);
     try
-      NewItem.Name := 'miReport' + IntToStr(miTag);
+      NewItem.name := 'miReport' + IntToStr(miTag);
       NewItem.Caption := miName;
       NewItem.Tag := miTag;
       NewItem.onclick := miPreviewReportClick;
@@ -2543,7 +2719,7 @@ begin
         while not EOF do
         begin
           NewItem := TMenuItem.Create(miPlugIns);
-          NewItem.Name := 'miModules' + IntToStr(fn('Id_Module').AsInteger);
+          NewItem.name := 'miModules' + IntToStr(fn('Id_Module').AsInteger);
           NewItem.Caption := fn('Name').AsString;
           NewItem.Tag := fn('Id_Module').AsInteger;
           if not fn('NOTICE').IsNull then
@@ -2575,7 +2751,7 @@ begin
     miPlugIns.Visible := False;
 end;
 
-// Р·Р°РєСЂРѕРµРј РїСЂРёР»РѕР¶РµРЅРёРµ РїСЂРё РїРµСЂРµС…РѕРґРµ РІ СЃРїСЏС‰РёР№ СЂРµР¶РёРј
+// закроем приложение при переходе в спящий режим
 procedure TA4MainForm.PowerStatusChange(var Message: TMessage);
 begin
   if (message.WParam = PBT_APMSUSPEND) or (message.WParam = PBT_APMSTANDBY) then
@@ -2695,17 +2871,17 @@ var
   DictFull: Boolean;
 begin
   DictFull := dmMain.AllowedAction(rght_Dictionary_full);
-  // РїСЂРѕРІРµСЂРёРј РїСЂР°РІР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
+  // проверим права пользователей
   actClosePeriod.Visible := dmMain.AllowedAction(rght_Calc_CLose);
   actCloseDay.Visible := dmMain.AllowedAction(rght_Calc_CLose);
   actReturnToPreviosMonth.Visible := dmMain.AllowedAction(rght_Calc_Back);
   actRecalcPeriod.Visible := False; // dmMain.AllowedAction(rght_Calc_Recalc);
   actCallCenter.Visible := dmMain.AllowedAction(rght_CallCenter);
 
-  // СЃРјРѕС‚СЂРµС‚СЊ Р Р Р•Р”РђРљРўРР РћР’РђРќРР• Р¶СѓСЂРЅР°Р»
+  // смотреть И РЕДАКТИРОВАНИЕ журнал
   actJournal.Visible := dmMain.AllowedAction(rght_Programm_ViewLog);
 
-  // РµСЃР»Рё РјРѕР¶РЅРѕ РЅР°СЃС‚СЂР°РёРІР°С‚СЊ СЃРёСЃС‚РµРјСѓ
+  // если можно настраивать систему
   actSettings.Visible := dmMain.AllowedAction(rght_Programm_Settings);
 
   actDVB.Visible := DictFull or (dmMain.AllowedAction(rght_DVB_edit) or dmMain.AllowedAction(rght_DVB_view));
@@ -2758,7 +2934,7 @@ procedure TA4MainForm.InitSecurityDictionary;
 var
   rFull: Boolean;
 begin
-  // РЎРїСЂР°РІРѕС‡РЅРёРєРё
+  // Справочники
   rFull := dmMain.AllowedAction(rght_Dictionary_full);
   rFull := rFull or dmMain.AllowedAction(rght_Dictionary_View);
 
@@ -3060,7 +3236,7 @@ begin
       Colors.CaptionTo := StringToColor(Alert.FrameColor);
       Colors.WindowTo := StringToColor(Alert.FrameColor);
     end;
-    StyleOptions.DisplayDuration := 60 * 1000; // 60 СЃРµРє
+    StyleOptions.DisplayDuration := 60 * 1000; // 60 сек
     Options := [daoCanMove, daoCanMoveAnywhere, daoCanClose, daoCanClick];
     // daoCanClick,
     OnMessageClick := AlertClick;
@@ -3099,14 +3275,14 @@ begin
   end
   else if Object_Type = 'ALL_CUST' then
   begin
-    ShowCustomers(100, Object_ID); // 100 = РЎРїРёСЃРѕРє Р»РёС†РµРІС‹С… РєРѕРґ
+    ShowCustomers(100, Object_ID); // 100 = Список лицевых код
   end
   else if Object_Type = 'ALL_CUST_ADDR' then
   begin
-    ShowCustomers(101, Object_ID); // 101 РљРѕРґ Р°Р±РѕРЅРµРЅС‚Р°
+    ShowCustomers(101, Object_ID); // 101 Код абонента
   end
-  // else if Object_Type = 'P' then s := 'РџР»Р°С‚РµР¶'
-  // else if Object_Type = 'N' then s := 'РЈР·РµР»';
+  // else if Object_Type = 'P' then s := 'Платеж'
+  // else if Object_Type = 'N' then s := 'Узел';
 end;
 
 procedure TA4MainForm.AlertClick(Sender: TObject);
@@ -3168,7 +3344,7 @@ begin
     search_word := ExtractWord(1, search_text, [' ']);
     search_field := SetSearchField(search_word);
   end;
-  // РїСЂРѕРІРµСЂРёРј, РјРѕР¶РµС‚ РїРµСЂРІРѕРµ СЃР»РѕРІРѕ СЌС‚Рѕ СЃРѕРєСЂР°С‰РµРЅРёРµ РґР»СЏ РїРѕРёСЃРєР° Рђ Р— Рё С‚.Рґ.
+  // проверим, может первое слово это сокращение для поиска А З и т.д.
   if search_field <> 0 then
   begin
     search_text := Trim(Copy(search_text, Length(search_word) + 2, Length(search_text)));
@@ -3197,13 +3373,13 @@ begin
   if search_field = 0 then
     Exit;
 
-  if (search_field <> 12) and (search_field <> 13) // 12 - РїРѕРёСЃРє РїРѕ Р·Р°СЏРІРєРµ Р—Р°СЏРІРєР°, 13 - Р—Р°РґР°С‡Р°
+  if (search_field <> 12) and (search_field <> 13) // 12 - поиск по заявке Заявка, 13 - Задача
   then
   begin
     if (search_text <> '+') then
     begin
       FindResult := ShowCustomers(search_field, search_text);
-      { TODO: РїРµСЂРµРґРµР»Р°С‚СЊ РїРѕРёСЃРє РІ РіР»Р°РІРЅРѕРј РѕРєРЅРµ }
+      { TODO: переделать поиск в главном окне }
       if FindResult = 0 then
       begin
         edtSearch.Color := clRed;
@@ -3234,9 +3410,9 @@ var
   Data: String;
   Params: TStringArray;
 begin
-  // Р’ PCopyDataStruct РїРµСЂРµРґР°РґРёРј РґР°РЅРЅС‹Рµ РІРёРґР°
-  // Р‘РђР—Рђ;РўРРџ;РґР°РЅРЅС‹Рµ РґР»СЏ С‚РёРїР°
-  // РўРРџ = P - РїРѕРёСЃРє РїРѕ С‚РµР»РµС„РѕРЅСѓ
+  // В PCopyDataStruct передадим данные вида
+  // БАЗА;ТИП;данные для типа
+  // ТИП = P - поиск по телефону
   pcd := PCopyDataStruct(Msg.LParam);
   Msg.Result := 1;
   SetLength(Data, pcd.cbData div SizeOf(Char));
@@ -3249,7 +3425,7 @@ begin
     Exit;
   if (Params[1] = 'P') then
   begin
-    // РІ СЃРѕРѕР±С‰РµРЅРёРё РїРѕРёСЃРє РїРѕ С‚РµР»РµС„РѕРЅСѓ
+    // в сообщении поиск по телефону
     SearchHandle(rsFindPhone + ' ' + Params[2], 6);
     Application.BringToFront;
   end;
@@ -3261,12 +3437,12 @@ var
   Data: String;
   Handle: HWnd;
 begin
-  // СЃРѕРѕР±С‰РµРЅРёРµ С‚РёРїР°
-  // P;С…СЌРЅРґР» РѕРєРЅР°;Р°Р»РёР°СЃ;Р±Р°Р·Р°;Р»РѕРіРёРЅ;РїР°СЂРѕР»СЊ
+  // сообщение типа
+  // P;хэндл окна;алиас;база;логин;пароль
   Handle := self.Handle;
   Data := 'P;' + IntToStr(Handle) + ';' + alias + ';' + dmMain.dbTV.DBName + ';' + dmMain.User + ';' +
     dmMain.dbTV.ConnectParams.Password;
-  // РЎРѕР·РґР°С‘Рј РїРѕС‚РѕРє РїРѕРёСЃРєР° Рё РµСЃР»Рё РЅР°С…РѕРґРёРј, С‚Рѕ
+  // Создаём поток поиска и если находим, то
   task := TTask.Create(
     procedure()
     var
@@ -3283,7 +3459,7 @@ begin
       if (wHandle <> 0) then
         SendMessage(wHandle, WM_COPYDATA, 0, LParam(@cData));
     end);
-  // Р—Р°РїСѓСЃРєР°РµРј Р·Р°РґР°С‡Сѓ.
+  // Запускаем задачу.
   task.Start;
 end;
 
@@ -3351,7 +3527,7 @@ begin
   if E < i then
     Exit;
 
-  // РµСЃР»Рё РЅРµ РјРµРЅСЏР»Рё СѓР¶Рµ 10 РґРЅРµР№. С‚Рѕ Р·Р°СЃС‚Р°РІРёРј
+  // если не меняли уже 10 дней. то заставим
   if E > (i + 10) then
     actChangePWD.Execute
   else

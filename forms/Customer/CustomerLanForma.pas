@@ -5,13 +5,14 @@ interface
 {$I defines.inc}
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  System.Classes, VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Menus,
-  VCL.Dialogs, VCL.StdCtrls, VCL.Mask, Data.DB, VCL.DBCtrls,
-  VCL.Buttons, VCL.ActnList, System.Actions, VCL.ExtCtrls, System.UITypes,
-
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh,
-  DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider, FIBDatabase,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons,
+  Vcl.ActnList,
+  Vcl.ExtCtrls,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
+  FIBDatabase,
   pFIBDatabase, A4onTypeUnit, EhlibFIB;
 
 type
@@ -115,7 +116,7 @@ type
     procedure CheckPort();
     procedure miLanClickClick(Sender: TObject);
     procedure GenerateLANPopUp;
-    function GetNodeID:Integer;
+    function GetNodeID: Integer;
   public
     { Public declarations }
     property CI: TCustomerInfo write FCI;
@@ -129,8 +130,8 @@ var
 implementation
 
 uses
-  MAIN, AtrCommon, AtrStrUtils, StrUtils, EquipEditForma,
-  pFIBQuery, TelnetForma, atrCmdUtils, EQPort, HtmlForma;
+  System.StrUtils,
+  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery, TelnetForma, atrCmdUtils, EQPort, HtmlForma;
 
 {$R *.dfm}
 
@@ -188,7 +189,8 @@ begin
           end;
         end;
 
-        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then begin
+        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then
+        begin
           dsVlans.SQLs.SelectSQL.Add('  and ((oc.house_id = :House_Id) or (v.v_id = :VID))');
           dsVlans.ParamByName('VID').AsInt64 := -1;
         end;
@@ -207,8 +209,10 @@ begin
       end
       else
       begin
-        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then begin
-          if (not dsLAN.FieldByName('VLAN_ID').IsNUll) then begin
+        if (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1') then
+        begin
+          if (not dsLAN.FieldByName('VLAN_ID').IsNUll) then
+          begin
             dsVlans.SQLs.SelectSQL.Add(' and ( oc.house_id = :House_Id or v.v_id = :VID)');
             dsVlans.ParamByName('VID').AsInt64 := dsLAN['VLAN_ID'];
           end
@@ -396,11 +400,11 @@ begin
       ParamByName('ip').asString := ip;
       Transaction.StartTransaction;
       ExecQuery;
-      if not FieldByName('Account_No').IsNull then
+      if not FieldByName('Account_No').IsNUll then
         Result := Result + rsACCOUNT + ' ' + FieldByName('Account_No').Value + ' ';
-      if not FieldByName('Ip').IsNull then
+      if not FieldByName('Ip').IsNUll then
         Result := Result + ' IP ' + FieldByName('Ip').Value + ' ';
-      if not FieldByName('Mac').IsNull then
+      if not FieldByName('Mac').IsNUll then
         Result := Result + ' MAC ' + FieldByName('Mac').Value + ' ';
       Close;
       Transaction.Commit;
@@ -431,11 +435,11 @@ begin
       ParamByName('Mac').asString := MAC;
       Transaction.StartTransaction;
       ExecQuery;
-      if not FieldByName('Account_No').IsNull then
+      if not FieldByName('Account_No').IsNUll then
         Result := Result + rsACCOUNT + ' ' + FieldByName('Account_No').Value + ' ';
-      if not FieldByName('Ip').IsNull then
+      if not FieldByName('Ip').IsNUll then
         Result := Result + ' IP ' + FieldByName('Ip').Value + ' ';
-      if not FieldByName('Mac').IsNull then
+      if not FieldByName('Mac').IsNUll then
         Result := Result + ' MAC ' + FieldByName('Mac').Value + ' ';
       Close;
       Transaction.Commit;
@@ -465,7 +469,7 @@ begin
       sql.Add('from Tv_Lan t inner join customer c on (t.Customer_Id = c.Customer_Id)');
       sql.Add('where t.Eq_Id = :EQ and t.Port = :PT');
 
-      if not dsLAN.FieldByName('Lan_ID').IsNull then
+      if not dsLAN.FieldByName('Lan_ID').IsNUll then
       begin
         sql.Add('and t.Lan_Id <> :lan_id');
         ParamByName('Lan_id').AsInteger := dsLAN.FieldByName('Lan_ID').AsInteger;
@@ -479,7 +483,7 @@ begin
       ExecQuery;
       while not EOF do
       begin
-        if not FieldByName('Account_No').IsNull then
+        if not FieldByName('Account_No').IsNUll then
         begin
           case FieldByName('OT').AsInteger of
             0:
@@ -488,7 +492,7 @@ begin
             Result := Result + rsEQUIPMENT + ': ' + FieldByName('Account_No').Value + ' ';
           end;
         end;
-        if not FieldByName('Ip').IsNull then
+        if not FieldByName('Ip').IsNUll then
           Result := Result + ' IP ' + FieldByName('Ip').Value + ' ';
         Result := Result + #13#10;
         Next;
@@ -508,7 +512,7 @@ begin
   end
   else
   begin
-    if (not dsPort.FieldByName('P_STATE').IsNull) and (dsPort['P_STATE'] = 0) then
+    if (not dsPort.FieldByName('P_STATE').IsNUll) and (dsPort['P_STATE'] = 0) then
     begin
       cnError.SetError(lcbPort, rsPORTdefective, iaMiddleLeft, bsNeverBlink);
     end
@@ -534,11 +538,11 @@ begin
   if (lcbPort.Text.IsEmpty) or (VarIsNull(lcbPort.Value)) then
   begin
     EQ.id := dsEQ.FieldByName('Eid').AsInteger;
-    if not dsEQ.FieldByName('Name').IsNull then
+    if not dsEQ.FieldByName('Name').IsNUll then
       EQ.Name := dsEQ.FieldByName('Name').asString;
-    if not dsEQ.FieldByName('Ip').IsNull then
+    if not dsEQ.FieldByName('Ip').IsNUll then
       EQ.ip := dsEQ.FieldByName('Ip').asString;
-    if not dsEQ.FieldByName('Mac').IsNull then
+    if not dsEQ.FieldByName('Mac').IsNUll then
       EQ.MAC := dsEQ.FieldByName('Mac').asString;
     EQ.Node_Id := GetNodeID;
 
@@ -561,15 +565,16 @@ begin
 
   PORT := lcbPort.Value;
   EQ.id := dsEQ.FieldByName('Eid').AsInteger;
-  if not dsEQ.FieldByName('Name').IsNull then
+  if not dsEQ.FieldByName('Name').IsNUll then
     EQ.Name := dsEQ.FieldByName('Name').asString;
-  if not dsEQ.FieldByName('Ip').IsNull then
+  if not dsEQ.FieldByName('Ip').IsNUll then
     EQ.ip := dsEQ.FieldByName('Ip').asString;
-  if not dsEQ.FieldByName('Mac').IsNull then
+  if not dsEQ.FieldByName('Mac').IsNUll then
     EQ.MAC := dsEQ.FieldByName('Mac').asString;
   EQ.Node_Id := GetNodeID;
 
-  if EditPort(EQ, PORT) then begin
+  if EditPort(EQ, PORT) then
+  begin
     // dsPort.CloseOpen(True);
     dsPort.Refresh;
   end;
@@ -714,7 +719,7 @@ begin
   FWarnings := '';
   if (not dbleVLAN.Text.IsEmpty) then
   begin
-    if not CheckVlanForHouse(dbleVLAN.Value, fCI.HOUSE_ID) then
+    if not CheckVlanForHouse(dbleVLAN.Value, FCI.HOUSE_ID) then
     begin
       // EP_WARNING
       cnError.SetError(dbleVLAN, rsVlanHouse, iaMiddleLeft, bsNeverBlink).IconType := EP_WARNING;
@@ -738,8 +743,9 @@ begin
     cnError.Dispose(eIP);
 
   // ЛТВ проверяем
-  if (dmMain.GetSettingsValue('LAN_VALANDISABLE') = '1') then begin
-    if (dsPort.FieldByName('Wid').IsNull) or (dsPort['Wlabel'] = '') then
+  if (dmMain.GetSettingsValue('LAN_VALANDISABLE') = '1') then
+  begin
+    if (dsPort.FieldByName('Wid').IsNUll) or (dsPort['Wlabel'] = '') then
     begin
       cnError.SetError(lcbPort, rsNotWireLabel, iaMiddleLeft, bsNeverBlink).IconType := EP_WARNING;
       FWarnings := FWarnings + rsNotWireLabel + rsEOL;
@@ -803,7 +809,7 @@ begin
   eid := -1;
   if VarIsNull(dbleEquipment.Value) then
   begin
-    eid := EditEquipment(eid, fCI, 1);
+    eid := EditEquipment(eid, FCI, 1);
     if eid <> -1 then
     begin
       dsEQ.CloseOpen(True);
@@ -825,7 +831,7 @@ begin
   if not VarIsNull(dbleEquipment.Value) then
   begin
     eid := dbleEquipment.Value;
-    EditEquipment(eid, fCI, 1);
+    EditEquipment(eid, FCI, 1);
   end;
 
   Handled := True;
@@ -928,7 +934,7 @@ begin
     Exit;
 
   dsEQ.Close;
-  if dsHomes.FieldByName('HOUSE_ID').IsNull then
+  if dsHomes.FieldByName('HOUSE_ID').IsNUll then
     dsEQ.ParamByName('HOUSE_ID').Clear
   else
     dsEQ.ParamByName('HOUSE_ID').AsInteger := dsHomes['HOUSE_ID'];
@@ -940,12 +946,13 @@ procedure TCustomerLanForm.lcbPortChange(Sender: TObject);
 begin
   if (dsLAN.State = dsInsert) or (FVlanDisabled) then
   begin
-    if (not dsPort.FieldByName('VLAN_ID').IsNull) then
+    if (not dsPort.FieldByName('VLAN_ID').IsNUll) then
     begin
       dbleVLAN.Enabled := not FVlanDisabled;
       dbleVLAN.Value := dsPort['VLAN_ID'];
       // если не нашли сеть, то перечитаем из базы
-      if ((dbleVLAN.Text = '') and (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1')) then begin
+      if ((dbleVLAN.Text = '') and (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1')) then
+      begin
         dsVlans.Close;
         dsVlans.ParamByName('VID').AsInt64 := dsPort['VLAN_ID'];
         dsVlans.Open;
@@ -962,9 +969,9 @@ var
   s: string;
 begin
   Background := clWindow;
-  if not dsPort.FieldByName('CON').IsNull then
+  if not dsPort.FieldByName('CON').IsNUll then
   begin
-    if (not dsPort.FieldByName('CON_ID').IsNull) and (dsPort['CON_ID'] = fCI.CUSTOMER_ID) then
+    if (not dsPort.FieldByName('CON_ID').IsNUll) and (dsPort['CON_ID'] = FCI.CUSTOMER_ID) then
     begin
       AFont.Style := [fsBold];
     end
@@ -975,21 +982,21 @@ begin
       Background := clBtnShadow;
     end;
   end;
-  if (not dsPort.FieldByName('P_STATE').IsNull) then
+  if (not dsPort.FieldByName('P_STATE').IsNUll) then
   begin
     if (dsPort['P_STATE'] = 0) then
-    if (dsPort['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'SPEED')) then
-    begin
-      AFont.Style := [fsStrikeOut];
-      Background := clBtnShadow;
-    end
-    else if (dsPort['P_STATE'] > 1) then
-    begin
-      AFont.Style := [fsItalic];
-      Background := clBtnShadow;
-    end;
+      if (dsPort['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'SPEED')) then
+      begin
+        AFont.Style := [fsStrikeOut];
+        Background := clBtnShadow;
+      end
+      else if (dsPort['P_STATE'] > 1) then
+      begin
+        AFont.Style := [fsItalic];
+        Background := clBtnShadow;
+      end;
   end;
-  if not(dsPort.FieldByName('COLOR').IsNull) then
+  if not(dsPort.FieldByName('COLOR').IsNUll) then
   begin
     s := dsPort['COLOR'];
     if not s.IsEmpty then
@@ -1070,32 +1077,32 @@ begin
     dbleEquipment.Value;
     Transaction.StartTransaction;
     ExecQuery;
-    if FieldByName('ip').IsNull then
+    if FieldByName('ip').IsNUll then
       Host := ''
     else
       Host := FieldByName('ip').asString;
 
-    if FieldByName('e_admin').IsNull then
+    if FieldByName('e_admin').IsNUll then
       user := ''
     else
       user := FieldByName('e_admin').asString;
 
-    if FieldByName('e_pass').IsNull then
+    if FieldByName('e_pass').IsNUll then
       pswd := ''
     else
       pswd := FieldByName('e_pass').asString;
 
     H_MAC := '';
-    if (not FieldByName('mac').IsNull) then
+    if (not FieldByName('mac').IsNUll) then
     begin
       H_MAC := FieldByName('mac').asString;
     end;
 
-    if FieldByName('command').IsNull then
+    if FieldByName('command').IsNUll then
       cmd := ''
     else
       cmd := FieldByName('command').asString;
-    if FieldByName('eol_chrs').IsNull then
+    if FieldByName('eol_chrs').IsNUll then
       eol_chars := 0
     else
     begin
@@ -1111,15 +1118,15 @@ begin
         eol_chars := 0
     end;
 
-    if FieldByName('CMD_TYPE').IsNull then
+    if FieldByName('CMD_TYPE').IsNUll then
       CMD_TYPE := 0
     else
       CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
-    if not FieldByName('URL').IsNull then
+    if not FieldByName('URL').IsNUll then
       URL := FieldByName('URL').asString;
-    if not FieldByName('AUT_USER').IsNull then
+    if not FieldByName('AUT_USER').IsNUll then
       AUT_USER := FieldByName('AUT_USER').asString;
-    if not FieldByName('AUT_PSWD').IsNull then
+    if not FieldByName('AUT_PSWD').IsNUll then
       AUT_PSWD := FieldByName('AUT_PSWD').asString;
 
     Close;
@@ -1189,7 +1196,7 @@ begin
       Result := (FieldByName('H_COUNT').AsInteger = 0);
       if (not Result) then
       begin
-        if not FieldByName('H_FINDED').IsNull then
+        if not FieldByName('H_FINDED').IsNUll then
           Result := (FieldByName('H_FINDED').AsInteger > 0)
         else
           Result := False;
@@ -1202,7 +1209,7 @@ begin
   end;
 end;
 
-function TCustomerLanForm.GetNodeID:Integer;
+function TCustomerLanForm.GetNodeID: Integer;
 begin
   Result := -1;
   with TpFIBQuery.Create(Nil) do
@@ -1217,7 +1224,7 @@ begin
       ParamByName('CID').AsInt64 := FCI.CUSTOMER_ID;
       Transaction.StartTransaction;
       ExecQuery;
-      if not FieldByName('Node_Id').IsNull then
+      if not FieldByName('Node_Id').IsNUll then
         Result := FieldByName('Node_Id').Value;
       Close;
       Transaction.Commit;

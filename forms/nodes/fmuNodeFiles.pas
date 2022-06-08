@@ -3,12 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, ComCtrls, ToolWin,
-  GridsEh, DBGridEh, DB, FIBDataSet, pFIBDataSet, ActnList,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, PrjConst,
-  EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh, FIBDatabase,
-  pFIBDatabase, FIBQuery, pFIBQuery;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
 
 type
   TapgNodeFiles = class(TA4onPage)
@@ -48,7 +48,9 @@ implementation
 
 {$R *.dfm}
 
-uses ShellApi, MAIN, AtrCommon, DM, EditNFileForma;
+uses
+  Winapi.ShellAPI,
+  MAIN, AtrCommon, DM, EditNFileForma;
 
 class function TapgNodeFiles.GetPageName: string;
 begin

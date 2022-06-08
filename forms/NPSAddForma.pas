@@ -1,11 +1,12 @@
-unit NPSAddForma;
+﻿unit NPSAddForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, DBCtrlsEh,
-  Vcl.ImgList, Vcl.Buttons, FIBQuery, pFIBQuery;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ImgList, Vcl.Buttons,
+  DBCtrlsEh, FIBQuery, pFIBQuery;
 
 type
   TNPSAddForm = class(TForm)

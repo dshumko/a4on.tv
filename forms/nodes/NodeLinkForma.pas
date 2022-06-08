@@ -3,13 +3,13 @@
 interface
 
 uses
+  Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
-  WinAPI.Windows, WinAPI.Messages, Data.DB,
+  Data.DB,
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms,
-  FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
-  GridsEh, DBGridEh, OkCancel_frame, FIBDatabase, pFIBDatabase,
-  A4onTypeUnit;
+  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  OkCancel_frame,
+  FIBDatabase, pFIBDatabase, A4onTypeUnit;
 
 type
 
@@ -81,7 +81,8 @@ function LinkNodes(var MainItem, SecondItem: TNodeLinkItem): Boolean;
 
 implementation
 
-uses DM, pFIBQuery, AtrStrUtils;
+uses
+  DM, pFIBQuery, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -145,7 +146,7 @@ end;
 
 procedure TNodeLinkForm.FormShow(Sender: TObject);
 begin
-//  FLineCnt := 0;
+  // FLineCnt := 0;
   FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
   FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Dictionary_Node_Links);
 
@@ -159,8 +160,8 @@ begin
 
   dsLink.ParamByName('WID').value := FMainLink.LINK_ID;
   dsLink.Open;
-//  if not dsLink.FieldByName('WIRE_CNT').IsNull then
-//    FLineCnt := dsLink['WIRE_CNT'];
+  // if not dsLink.FieldByName('WIRE_CNT').IsNull then
+  // FLineCnt := dsLink['WIRE_CNT'];
 
   if FMainLink.LINK_ID <= 0 then
     dsLink.Insert
@@ -223,8 +224,8 @@ begin
   begin
     FMainLink.NODE_Name := dsNodes['Name'];
     FMainLink.NODE_TYPE := dsNodes['O_Name']; // Тип ноды
-//    if not dsNodes.FieldByName('WIRE_CNT').IsNull then
-//      FLineCnt := dsNodes['WIRE_CNT'];
+    // if not dsNodes.FieldByName('WIRE_CNT').IsNull then
+    // FLineCnt := dsNodes['WIRE_CNT'];
   end;
   GenName;
 end;
@@ -291,15 +292,18 @@ end;
 
 procedure TNodeLinkForm.GenWireCnt;
 begin
-  if ((FMainLink.NODE_ID < 0) and (lcbPOINT_S.Text.IsEmpty)) or (VarIsNull(lcbNode.Value)) then begin
+  if ((FMainLink.NODE_ID < 0) and (lcbPOINT_S.Text.IsEmpty)) or (VarIsNull(lcbNode.value)) then
+  begin
     Exit;
   end;
 
-  if (FLineCnt <> 0) then begin
+  if (FLineCnt <> 0) then
+  begin
     Exit;
   end;
 
-  with TpFIBQuery.Create(Nil) do begin
+  with TpFIBQuery.Create(Nil) do
+  begin
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
@@ -308,15 +312,15 @@ begin
         ParamByName('ns').AsInteger := FMainLink.NODE_ID
       else
         ParamByName('ns').AsInteger := lcbPOINT_S.value;
-      ParamByName('ne').AsInteger := lcbNode.Value;
+      ParamByName('ne').AsInteger := lcbNode.value;
       Transaction.StartTransaction;
       ExecQuery;
       if not EOF then
-        FLineCnt := FieldByName('wcnt').Value;
+        FLineCnt := FieldByName('wcnt').value;
       Close;
       Transaction.Commit;
     finally
-      Free;
+      free;
     end;
   end;
 end;

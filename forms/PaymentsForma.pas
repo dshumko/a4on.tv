@@ -3,14 +3,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, ComCtrls,
-  ToolWin, frxClass, frxDBSet, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, GridsEh, ExtCtrls, Buttons, DBGridEhImpExp, FIBQuery, pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
-  MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  System.Actions, EhLibVCL, System.UITypes, DynVarsEh, FIBDatabase,
-  pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
+  Vcl.ActnList,
+  Vcl.ExtCtrls, Vcl.Buttons,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery,
+  pFIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh,
+  PrjConst, EhLibVCL, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TPaymentsForm = class(TForm)
@@ -116,11 +119,9 @@ type
     procedure miAbonentClick(Sender: TObject);
     procedure dbgPaymentsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
-    procedure dbgPaymentsGetFooterParams(Sender: TObject; DataCol, Row: Integer;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
-      var Alignment: TAlignment; State: TGridDrawState; var Text: string);
-    procedure dbgPaymentsColumns2GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgPaymentsGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure dbgPaymentsColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     fStartDate: TDateTime;
     fEndDate: TDateTime;
@@ -139,7 +140,8 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, CF, CustomerForma, ReportPreview;
+uses
+  DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, CF, CustomerForma, ReportPreview;
 
 {$R *.dfm}
 
@@ -202,7 +204,7 @@ begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
           AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
+        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
       end;
     end;
 
@@ -228,7 +230,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        DBGridEh_DoCopyAction(dbg, false)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -320,7 +322,7 @@ begin
   end
   else
   begin
-    pnlErrors.Visible := False;
+    pnlErrors.Visible := false;
     dsErrors.Close;
   end;
 
@@ -333,15 +335,17 @@ var
   vPaymentSRV: Boolean;
   vFine: Boolean;
   vBalance: Boolean;
-  Font_size : Integer;
-  Font_name : string;
+  Font_size: Integer;
+  Font_name: string;
 begin
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i)
-  then begin
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do begin
-      if Components[i] is TDBGridEh then begin
+    for i := 0 to ComponentCount - 1 do
+    begin
+      if Components[i] is TDBGridEh then
+      begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
@@ -410,8 +414,7 @@ begin
     actPayDocEdit.Execute;
 end;
 
-procedure TPaymentsForm.dbgPaymentsColumns2GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TPaymentsForm.dbgPaymentsColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
@@ -575,9 +578,9 @@ begin
   begin
     srcPayments.DataSet := dsPayments;
     dbgPayments.DataGrouping.GroupLevels.Clear;
-    dbgPayments.DataGrouping.Active := False;
-    dbgPayments.DataGrouping.GroupPanelVisible := False;
-    mtPayments.Active := False;
+    dbgPayments.DataGrouping.Active := false;
+    dbgPayments.DataGrouping.GroupPanelVisible := false;
+    mtPayments.Active := false;
     dsPayments.Open;
   end;
   Screen.Cursor := Crsr;
@@ -632,16 +635,16 @@ begin
     Background := StringToColor(dsPayments.FieldByName('HIS_COLOR').Value);
 end;
 
-procedure TPaymentsForm.dbgPaymentsGetFooterParams(Sender: TObject; DataCol,
-  Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
-  var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+procedure TPaymentsForm.dbgPaymentsGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh;
+  AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
 var
-  i : Integer;
+  i: Integer;
 begin
-  if (DataCol = 1) and (Row = 0)
-  then begin
-    i := (Sender as TDBgridEh).SelectedRows.Count;
-    if i > 1 then Text := IntToStr(i);
+  if (DataCol = 1) and (Row = 0) then
+  begin
+    i := (Sender as TDBGridEh).SelectedRows.Count;
+    if i > 1 then
+      Text := IntToStr(i);
   end;
 end;
 

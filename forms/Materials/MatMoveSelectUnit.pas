@@ -1,15 +1,23 @@
-unit MatMoveSelectUnit;
+﻿unit MatMoveSelectUnit;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  DBGridEh, Buttons, Db, ExtCtrls, ComCtrls, GridsEh,
-{$IFDEF EH_LIB_7} Themes, UxTheme, {$ENDIF}
-{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
-  ADODB, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh,
-  DBAxisGridsEh, StdCtrls, DropDownFormEh, DataDriverEh,
-  DBVertGridsEh, DynVarsEh, DBCtrls, EhLibVCL,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls,
+  DBGridEh, GridsEh,
+  {$IFDEF EH_LIB_7}
+  Winapi.UxTheme,
+  Vcl.Themes,
+  {$ENDIF}
+  {$IFDEF EH_LIB_17}
+  System.UITypes,
+  {$ENDIF}
+  Data.Win.ADODB,
+  Vcl.StdCtrls, Vcl.DBCtrls,
+  ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, DBAxisGridsEh, DropDownFormEh, DataDriverEh, DBVertGridsEh, DynVarsEh, EhLibVCL,
   FIBDatabase, FIBDataSet, DBGridEhGrouping;
 
 type
@@ -42,7 +50,8 @@ var
 
 implementation
 
-uses DBConsts;
+uses
+  Data.DBConsts;
 
 {$R *.DFM}
 

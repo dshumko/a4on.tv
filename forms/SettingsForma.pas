@@ -5,12 +5,13 @@ interface
 {$I defines.inc}
 
 uses
-  Vcl.Menus, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Data.DB,
-  Vcl.ComCtrls, Vcl.Mask, System.Classes, Vcl.Forms, Winapi.Windows,
-  System.SysUtils, System.Variants, Vcl.Graphics, Vcl.Dialogs,
-
-  FIBQuery, pFIBQuery, OkCancel_frame, FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, PrjConst, FIBDatabase, pFIBDatabase, DBGridEh, DBLookupEh;
+  Winapi.Windows,
+  System.Classes, System.SysUtils, System.Variants,
+  Data.DB,
+  Vcl.Menus, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs,
+  FIBQuery, pFIBQuery, OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, PrjConst, FIBDatabase, pFIBDatabase,
+  DBGridEh,
+  DBLookupEh;
 
 type
   TSettingsForm = class(TForm)
@@ -218,7 +219,7 @@ type
     procedure SaveSettingsInt(const name: string; const value: integer = 0);
     procedure SaveSettingsBoolean(const name: string; const chBox: TCheckBox); overload;
     procedure SaveSettingsBoolean(const name: string; const chBox: TDBCheckBoxEh); overload;
-    procedure SaveSettingsBoolean(const name: string; const Checked: Boolean); overload;
+    procedure SaveSettingsBoolean(const name: string; const Checked: boolean); overload;
     procedure miClick(Sender: TObject);
     function Internet: boolean;
   public
@@ -230,7 +231,8 @@ var
 
 implementation
 
-uses DM, AtrStrUtils, BarSettingForma, ibase, synacode, atrCmdUtils;
+uses
+  DM, AtrStrUtils, BarSettingForma, ibase, synacode, atrCmdUtils;
 
 type
   TCashSettingsDialog = function(AppHandle: THandle; OPER: PWChar; OPER_PASS: PWChar): integer; stdcall;
@@ -249,7 +251,7 @@ begin
   Query.Transaction.Commit;
 end;
 
-procedure TSettingsForm.SaveSettingsBoolean(const name: string; const Checked: Boolean);
+procedure TSettingsForm.SaveSettingsBoolean(const name: string; const Checked: boolean);
 begin
   if Checked then
     SaveSettingsStr(name, '1')

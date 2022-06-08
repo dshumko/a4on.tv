@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, FIBDatabase,
-  pFIBDatabase, FIBQuery, pFIBQuery, DBGridEh, StdCtrls, DBCtrls,
-  DBCtrlsEh, Mask, DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, DBGridEh, DBCtrlsEh, DBLookupEh;
 
 type
   TMatMoveForm = class(TForm)

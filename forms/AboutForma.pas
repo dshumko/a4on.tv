@@ -3,9 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, Buttons,
-  ActnList, Vcl.Imaging.pngimage, CnWaterImage, System.Actions, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.ActnList, Vcl.Imaging.pngimage,
+  CnWaterImage, PrjConst;
 
 type
   TAboutForm = class(TForm)
@@ -30,7 +31,9 @@ type
 
 implementation
 
-uses AtrCommon, TetrisForm, atrCmdUtils, ShellAPI, MAIN;
+uses
+  Winapi.ShellAPI,
+  AtrCommon, TetrisForm, atrCmdUtils, MAIN;
 
 {$R *.dfm}
 

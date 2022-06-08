@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, Grids, DBGridEh, ExtCtrls, EhLibFIB,
-  OkCancel_frame, GridsEh, StdCtrls, PropFilerEh,
-  PropStorageEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, System.Math, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Math,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
+  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrjConst;
 
 type
   TReqMaterialsForm = class(TForm)
@@ -51,7 +52,8 @@ var
 
 implementation
 
-uses DM, MAIN;
+uses
+  DM, MAIN;
 
 {$R *.dfm}
 

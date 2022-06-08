@@ -3,13 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes, Vcl.Buttons, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
+  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, A4onTypeUnit;
 
 type
-  TMaskEdit = class(Mask.TMaskEdit)
+  TMaskEdit = class(Vcl.Mask.TMaskEdit)
   protected
     procedure ValidateError; override;
   end;
@@ -42,7 +43,10 @@ function EditContact(var aContact: TContact): Boolean;
 
 implementation
 
-uses DM, RegularExpressions, pFIBQuery, Vcl.Consts, System.MaskUtils;
+uses
+  System.RegularExpressions, System.MaskUtils,
+  Vcl.Consts,
+  DM, pFIBQuery;
 
 {$R *.dfm}
 
@@ -205,6 +209,7 @@ var
   result: string;
   fio: string;
   Warning: Boolean;
+  ShowBalance: Boolean;
 begin
   // проверим только телефоны
   if (cbbContactType.Value > 1) then
@@ -217,6 +222,7 @@ begin
   if (Length(fio) < 5) then
     Exit;
 
+  ShowBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
   with TpFIBQuery.Create(Nil) do
   begin
     try
@@ -248,8 +254,13 @@ begin
           if not FieldByName('Midlename').IsNull then
             fio := fio + ' ' + FieldByName('Midlename').Value;
 
-          result := result + format('Л/С: %s ФИО: %s Баланс: %f', [FieldByName('Account_No').Value, fio,
-            -1 * FieldByName('Debt_Sum').AsFloat]) + #13#10;
+          if ShowBalance then
+            result := result + format('Л/С: %s ФИО: %s Баланс: %f', [FieldByName('Account_No').Value, fio,
+              -1 * FieldByName('Debt_Sum').AsFloat]) + #13#10
+          else
+            result := result + format('Л/С: %s ФИО: %s Сальдо: %f', [FieldByName('Account_No').Value, fio,
+              FieldByName('Debt_Sum').AsFloat]) + #13#10;
+
           if ((not FieldByName('Debt_Sum').IsNull) and (FieldByName('Debt_Sum').AsFloat > 1)) then
             Warning := True;
         end;

@@ -5,9 +5,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, uFBServices, FIBDatabase, pFIBDatabase, RxPlacemnt,
-  ImgList, pFIBErrorHandler, FIB;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ImgList,
+  uFBServices, FIBDatabase, pFIBDatabase, RxPlacemnt, pFIBErrorHandler, FIB;
 
 type
   TAdminForm = class(TForm)
@@ -55,7 +56,8 @@ var
 
 implementation
 
-uses UserLoginDlg, ServiceForma, UsersForma, QueryForma;
+uses
+  UserLoginDlg, ServiceForma, UsersForma, QueryForma;
 
 {$R *.dfm}
 function TAdminForm.GetUser:string;

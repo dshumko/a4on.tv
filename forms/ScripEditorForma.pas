@@ -4,11 +4,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ImgList, fs_tree, fs_synmemo, StdCtrls, ExtCtrls, ComCtrls,
-  ToolWin, fs_iinterpreter, Mask, DBCtrlsEh,
-  SynEditHighlighter, ActnList, System.Actions, PrjConst, Vcl.Buttons,
-  CnErrorProvider, Vcl.Menus;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ImgList, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.Mask, Vcl.ActnList, Vcl.Buttons, Vcl.Menus,
+  fs_tree, fs_synmemo, fs_iinterpreter, DBCtrlsEh, SynEditHighlighter, PrjConst, CnErrorProvider;
 
 type
   TScripEditorForm = class(TForm)
@@ -91,7 +91,8 @@ var
 
 implementation
 
-uses fs_iTools, ScriptModule, pFIBQuery, DM;
+uses
+  fs_iTools, ScriptModule, pFIBQuery, DM;
 
 {$R *.dfm}
 

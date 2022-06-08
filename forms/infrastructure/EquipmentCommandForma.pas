@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, SynEditHighlighter, OkCancel_frame,
-  Mask, DBCtrlsEh, StdCtrls, DBCtrls, DB,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBLookupEh, Menus, PrjConst,
-  DBGridEh, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Menus, Vcl.ExtCtrls,
+  SynEditHighlighter, OkCancel_frame, DBCtrlsEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst,
+  DBGridEh;
 
 type
   TEquipmentCommandForm = class(TForm)

@@ -3,10 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, OkCancel_frame, StdCtrls,
-  DBCtrls, DBCtrlsEh, DBLookupEh, Mask, ExtCtrls, FIBDatabase, pFIBDatabase,
-  FIBQuery, pFIBQuery, DBGridEh, PrjConst, Vcl.Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
+  FIBDataSet, pFIBDataSet, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, DBGridEh,
+  PrjConst;
 
 type
   THouseForm = class(TForm)
@@ -83,7 +85,8 @@ function EditHouse(const aHouse_ID, aStreet_ID: Int64): Int64;
 
 implementation
 
-uses DM, SubAreaEditForma, atrCmdUtils;
+uses
+  DM, SubAreaEditForma, atrCmdUtils;
 
 {$R *.dfm}
 

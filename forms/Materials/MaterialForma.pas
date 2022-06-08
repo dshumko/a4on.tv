@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBCtrls, StdCtrls, DBLookupEh, Mask, DBCtrlsEh,
-  DB, FIBDataSet, pFIBDataSet, Vcl.Buttons, DBGridEh, CnErrorProvider,
-  FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
 
 type
   TMaterailForm = class(TForm)
@@ -83,7 +84,8 @@ var
 implementation
 
 uses
-  MaterialsForma, DM, PrjConst, ScanImageForma, AtrCommon, Winapi.ShellAPI;
+  Winapi.ShellAPI,
+  MaterialsForma, DM, PrjConst, ScanImageForma, AtrCommon;
 
 {$R *.dfm}
 

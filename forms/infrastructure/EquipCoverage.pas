@@ -5,10 +5,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Controls, Forms,
-  DB, FIBDataSet, pFIBDataSet, DBLookupEh, Dialogs, System.UITypes,
-  DBCtrlsEh, OkCancel_frame, FIBQuery, pFIBQuery, StdCtrls, DBCtrls, Mask,
-  GridsEh, ExtCtrls, PrjConst, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  FIBDataSet, pFIBDataSet, DBLookupEh, DBCtrlsEh, OkCancel_frame, FIBQuery, pFIBQuery, GridsEh, PrjConst, DBGridEh;
 
 type
   TEquipCoverageForm = class(TForm)
@@ -48,7 +49,8 @@ function EditEQCoverage(const EID: Integer; const HOUSE: Integer): Boolean;
 
 implementation
 
-uses DM, AtrCommon, StreetEditForma, HouseForma;
+uses
+  DM, AtrCommon, StreetEditForma, HouseForma;
 
 {$R *.dfm}
 

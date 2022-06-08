@@ -3,15 +3,13 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.Actions, Vcl.ActnList, Vcl.Controls,
-  System.UITypes, System.StrUtils, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Data.DB,
-  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
-
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh,
-  Vcl.StdCtrls, Vcl.Mask, DBCtrlsEh, Vcl.DBCtrls, DBLookupEh, Vcl.Menus;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.StrUtils,
+  Data.DB,
+  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
+  Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh, DBCtrlsEh, DBLookupEh;
 
 type
 
@@ -107,8 +105,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, DM, AtrStrUtils,
-  atrCmdUtils, HtmlForma, TelnetForma;
+  MAIN, AtrCommon, DM, AtrStrUtils, atrCmdUtils, HtmlForma, TelnetForma;
 
 class function TapgEqpmntInfo.GetPageName: string;
 begin

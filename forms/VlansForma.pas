@@ -3,17 +3,14 @@
 interface
 
 uses
-
-  System.SysUtils, System.Variants, System.UITypes,
-  System.Classes, System.Actions, Data.DB,
-  WinAPI.Windows, WinAPI.Messages, VCL.Graphics, VCL.Forms,
-  VCL.Dialogs, VCL.Grids, VCL.Mask, VCL.DBCtrls, VCL.StdCtrls,
-  VCL.Buttons, VCL.ComCtrls, VCL.Menus, VCL.ActnList,
-  VCL.ExtCtrls, VCL.ToolWin, VCL.Controls,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet,
-  pFIBDataSet, DBCtrlsEh, CnErrorProvider, GridsEh,
-  DBAxisGridsEh, DBGridEh, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.UITypes, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
+  Vcl.Menus,
+  Vcl.ActnList, Vcl.ExtCtrls, Vcl.ToolWin, Vcl.Controls,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, DBCtrlsEh,
+  CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst;
 
 type
   TVlansForm = class(TGridForm)
@@ -118,8 +115,9 @@ var
 
 implementation
 
-uses DM, pFIBQuery, A4onTypeUnit, AttributeEditForma,
-  StrUtils, AtrStrUtils, AtrCommon;
+uses
+  System.StrUtils,
+  DM, pFIBQuery, A4onTypeUnit, AttributeEditForma, AtrStrUtils, AtrCommon;
 
 {$R *.dfm}
 
@@ -282,7 +280,7 @@ begin
   vAttribute.Value := '';
   vAttribute.Notice := '';
   if AttributeEdit(vAttribute) then
-    dsAttributes.CloseOpen(true);
+    dsAttributes.CloseOpen(True);
 end;
 
 procedure TVlansForm.actAttrDelExecute(Sender: TObject);
@@ -291,10 +289,10 @@ begin
   if (dsAttributes.RecordCount = 0) or (dsAttributes.FieldByName('OBJECT_ID').IsNull) then
     Exit;
 
-  if myQuestion(rsDeleteCaption, Format(rsDeleteRecord,[dsAttributes['TA_NAME']])) then
+  if myQuestion(rsDeleteCaption, Format(rsDeleteRecord, [dsAttributes['TA_NAME']])) then
   begin
     dsAttributes.Delete;
-    dsAttributes.CloseOpen(true);
+    dsAttributes.CloseOpen(True);
   end;
 end;
 
@@ -311,9 +309,9 @@ begin
   vAttribute.ATTR_ID := dsAttributes['AID'];
   vAttribute.Name := dsAttributes['TA_NAME'];
   if not dsAttributes.FieldByName('AVALUE').IsNull then
-     vAttribute.Value := dsAttributes['AVALUE'];
+    vAttribute.Value := dsAttributes['AVALUE'];
   if not dsAttributes.FieldByName('NOTICE').IsNull then
-     vAttribute.Notice := dsAttributes['NOTICE'];
+    vAttribute.Notice := dsAttributes['NOTICE'];
   if AttributeEdit(vAttribute) then
     dsAttributes.Refresh
 end;

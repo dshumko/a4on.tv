@@ -3,12 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, DB, FIBDataSet,
-  pFIBDataSet, GridsEh, DBGridEh, StdCtrls, Buttons, ExtCtrls, ActnList,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, PrjConst, Vcl.Menus, EhLibVCL, System.UITypes, DBGridEhGrouping,
-  DynVarsEh,
-  FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Menus,
+  AtrPages, ToolCtrlsEh, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TapgCustomerSingleSrv = class(TA4onPage)
@@ -47,7 +47,8 @@ type
 
 implementation
 
-uses DM, pFIBQuery, OnOffServicesForma, MAIN, TextEditForma, OrdersTPForma;
+uses
+  DM, pFIBQuery, OnOffServicesForma, MAIN, TextEditForma, OrdersTPForma;
 
 {$R *.dfm}
 

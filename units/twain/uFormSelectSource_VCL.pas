@@ -9,8 +9,16 @@ unit uFormSelectSource_VCL;
 interface
 
 uses
-  SysUtils, Types, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, ExtCtrls, StdCtrls;
+  System.SysUtils,
+  System.Types,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls;
 
 type
   TFormSelectSource = class(TForm)
@@ -27,7 +35,8 @@ type
 
 implementation
 
-uses DelphiTwainLang;
+uses
+  DelphiTwainLang;
 
 procedure TFormSelectSource.DoCreate;
 var

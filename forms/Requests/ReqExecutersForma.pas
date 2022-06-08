@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, Grids, DBGridEh, ExtCtrls,
-  OkCancel_frame, GridsEh, StdCtrls, EhLibFIB,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, RxPlacemnt,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, GridsEh, EhLibFIB, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, RxPlacemnt,
   EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
@@ -48,7 +49,8 @@ function ReqExecutors(const aRequest: Integer; const aEditMode: Byte): boolean;
 
 implementation
 
-uses DM, MAIN;
+uses
+  DM, MAIN;
 
 {$R *.dfm}
 

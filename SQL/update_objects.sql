@@ -192,8 +192,10 @@ commit;
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK');
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (26, 'ДОБАВЛЕНИЕ ТОЛЬКО ТЕКУЩИМ ДНЕМ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Добавление и просмотр платежей только текущим днем!') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (27, 'ТОЛЬКО СВОИ ПЛАТЕЖИ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Оператор видит только свои платежи и пл.документы со своими платежами') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (28, 'ПРАВКА ПЕНИ', 'ПЛАТЕЖИ', 'Разрешать изменять сумма платежа и пени при работе в режиме ПЕНИ');
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (44, 'ФАЙЛЫ ДОБАВЛЕНИЕ', 'АБОНЕНТЫ', 'Добавление файлов абонента (сканов , документов)') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (46, '1 ЗАПИСЬ', 'АБОНЕНТЫ', 'Внимание, ограничение! Отображать только одну запись в списке абонентов.') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (48, 'СБРОС ПАРОЛЯ', 'АБОНЕНТЫ', 'Сгенерировать новый пароль и отобразить оператору');
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (49, 'ФАЙЛЫ ИЗМЕНЕНИЕ/УДАЛЕНИЕ', 'АБОНЕНТЫ', 'Изменение / Удаление файлов абонента') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (63, 'ЭКСПОРТ', 'ЭКСПОРТ', 'Экспорт отчетов и данных. Просмотр итоговой информации.');
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (70, 'Интернет просмотр', 'АБОНЕНТЫ', 'Просмотри информации закладки Интернет') MATCHING (ID);
@@ -230,3 +232,8 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (210, 'П
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (211, 'ЛИНИИ СВЯЗИ', 'УЗЛЫ', 'Создание/редактирование линий связи узлов ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным');
 commit;
+
+UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('ROW_HL_COLOR', '', 'STRING', 'Цвет выделения строки') MATCHING (VAR_NAME);
+UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('ROW_HL_ID', '', 'INTEGER', 'ID объекта выделения') MATCHING (VAR_NAME);
+UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('ROW_HL_TYPE', '', 'INTEGER', 'Тип подцветки. 0-есть разовая услуга') MATCHING (VAR_NAME);
+COMMIT;

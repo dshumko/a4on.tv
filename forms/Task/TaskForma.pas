@@ -1,18 +1,17 @@
-unit TaskForma;
+п»їunit TaskForma;
 
 {$I defines.inc}
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GridForma, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet,
-  pFIBDataSet, DBCtrlsEh, Vcl.Mask, MemTableDataEh, MemTableEh, System.UITypes;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
+  GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh,
+  DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh;
 
 type
   TTaskForm = class(TGridForm)
@@ -129,7 +128,8 @@ implementation
 
 {$R *.dfm}
 
-uses PrjConst, DM, pFIBQuery, MAIN, TaskFilterForma, AtrCommon, SelDateForma;
+uses
+  PrjConst, DM, pFIBQuery, MAIN, TaskFilterForma, AtrCommon, SelDateForma;
 
 procedure FindTask(const Value: integer);
 begin
@@ -881,7 +881,7 @@ var
     if (not dsFilter.FieldByNAme('NotClosed').IsNull) and (dsFilter['NotClosed']) then
       addToFilter('t.EXEC_DATE is null');
 
-    // Фильтр по исполнителю
+    // Р¤РёР»СЊС‚СЂ РїРѕ РёСЃРїРѕР»РЅРёС‚РµР»СЋ
     if (not dsFilter.FieldByNAme('WORKER').IsNull) then
       addToFilter
         (Format(' (exists(select tu.Foruser from Taskuser tu where tu.Task_Id = t.Id and tu.Foruser = ''%s''))',

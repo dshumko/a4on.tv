@@ -4,10 +4,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBCtrlsEh, Mask, StdCtrls, DBCtrls, OkCancel_frame, ExtCtrls,
-  DB, FIBDataSet, pFIBDataSet, DBLookupEh, Buttons, PrjConst,
-  FIBDatabase, pFIBDatabase, DBGridEh, CnErrorProvider, Vcl.ComCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Buttons,
+  Vcl.ComCtrls,
+  DBCtrlsEh, OkCancel_frame, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, FIBDatabase, pFIBDatabase, DBGridEh, CnErrorProvider;
 
 type
   TServiceForm = class(TForm)
@@ -104,7 +106,8 @@ function ViewService(const aServ_ID, aType_ID: int64): int64;
 implementation
 
 uses
-  DM, AtrCommon, StrUtils, AtrStrUtils, pFIBQuery;
+  System.StrUtils,
+  DM, AtrCommon, AtrStrUtils, pFIBQuery;
 
 {$R *.dfm}
 

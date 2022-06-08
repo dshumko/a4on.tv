@@ -3,14 +3,14 @@ unit LoaderNewForma;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DBGridEh, Vcl.StdCtrls,
-  Vcl.Mask, DBCtrlsEh, DBLookupEh, Vcl.ButtonGroup, Vcl.ExtCtrls, RxPlacemnt,
-  Data.DB, FIBDataSet, pFIBDataSet, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, GridsEh, DBAxisGridsEh, Vcl.Grids, Vcl.ComCtrls,
-  Vcl.Buttons, MemTableDataEh, MemTableEh, FIBQuery,
-  pFIBQuery, FIBDatabase, pFIBDatabase, Data.Win.ADODB, pFIBScripter, VKDBFDataSet,
-  Vcl.ExtDlgs, RxToolEdit, EhLibVCL, System.Actions, Vcl.ActnList;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB, Data.Win.ADODB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ButtonGroup, Vcl.ExtCtrls, Vcl.Grids,
+  Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtDlgs, Vcl.ActnList,
+  DBGridEh, DBCtrlsEh, DBLookupEh, RxPlacemnt, FIBDataSet, pFIBDataSet, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  DynVarsEh, GridsEh, DBAxisGridsEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, pFIBScripter,
+  VKDBFDataSet, RxToolEdit, EhLibVCL;
 
 type
   TLoaderForm = class(TForm)
@@ -122,8 +122,8 @@ procedure ShowLoader(const LoaderType: Integer = 0);
 implementation
 
 uses
-  MAIN, DM, WorkWithGrids, PrjConst, AtrStrUtils, AtrCommon, DateUtils, StrUtils,
-  LoaderNewProfile;
+  System.DateUtils, System.StrUtils,
+  MAIN, DM, WorkWithGrids, PrjConst, AtrStrUtils, AtrCommon, LoaderNewProfile;
 
 {$R *.dfm}
 // Добавление ошибки в протокол

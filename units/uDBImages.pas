@@ -2,7 +2,11 @@
 
 interface
 
-uses Windows, Messages, Classes, Controls, Graphics, DB, DBCtrls, Forms;
+uses
+  Winapi.Windows, Winapi.Messages,
+  System.Classes,
+  Data.DB,
+  Vcl.Controls, Vcl.Graphics, Vcl.DBCtrls, Vcl.Forms;
 
 type
   TImageType  = (itUnknown, itBitmap, itJPG, itICO, itPNG);
@@ -116,7 +120,9 @@ procedure Register;
 
 implementation
 
-uses Clipbrd, Vcl.Imaging.Jpeg, Types, Vcl.Imaging.pngimage;
+uses
+  System.Types,
+  Vcl.Clipbrd, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage;
 
 type
   TSign = array [0 .. 2] of Char;

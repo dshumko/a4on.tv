@@ -1,15 +1,15 @@
-unit ReqPlanerForma;
+Ôªøunit ReqPlanerForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, PlannersEh, SpreadGridsEh,
-  PlannerCalendarPickerEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh,
-  Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, DBCtrlsEh, PlannerDataEh,
-  MemTableDataEh, Data.DB, MemTableEh, FIBDataSet, pFIBDataSet,
-  DataDriverEh, pFIBDataDriverEh, FIBDatabase, pFIBDatabase, Vcl.DBCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PlannersEh, SpreadGridsEh, PlannerCalendarPickerEh, EhLibVCL,
+  GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, PlannerDataEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet, DataDriverEh,
+  pFIBDataDriverEh, FIBDatabase, pFIBDatabase;
 
 type
   TReqPlanerForm = class(TForm)
@@ -79,8 +79,9 @@ implementation
 
 {$R *.dfm}
 
-uses System.DateUtils, Generics.Collections, DM, RequestForma, RequestNewForma,
-  pFIBQuery, PrjConst;
+uses
+  System.DateUtils, System.Generics.Collections,
+  DM, RequestForma, RequestNewForma, pFIBQuery, PrjConst;
 
 function TReqPlanerForm.GetItemText: String;
 var
@@ -92,12 +93,12 @@ begin
   if not dsRequest.FieldByName('ACCOUNT_NO').IsNull then
   begin
     if not dsRequest.FieldByName('FIO').IsNull then
-      s := s + '‘»Œ ' + dsRequest['FIO'] + ' ';
-    s := s + 'ÎËˆÂ‚ÓÈ ' + dsRequest['ACCOUNT_NO'];
+      s := s + '–§–ò–û ' + dsRequest['FIO'] + ' ';
+    s := s + '–ª–∏—Ü–µ–≤–æ–π ' + dsRequest['ACCOUNT_NO'];
   end;
 
   if (not dsRequest.FieldByName('WORKERS').IsNull) and (dsRequest['WORKERS'] <> '') then
-    s := s + sLineBreak + '»ÒÔ.: ' + dsRequest['WORKERS'];
+    s := s + sLineBreak + '–ò—Å–ø.: ' + dsRequest['WORKERS'];
 
   result := s;
 end;
@@ -109,7 +110,7 @@ begin
   s := '[' + IntToStr(dsRequest['RQ_ID']) + '] ' + dsRequest['RT_NAME'] + sLineBreak;
   if (not dsRequest.FieldByName('Subarea_Name').IsNull) and (dsRequest['Subarea_Name'] <> '') then
     s := s + '[' + dsRequest['Subarea_Name']+']';
-  s := s + dsRequest['STREET_NAME'] + ' ‰.' + dsRequest['HOUSE_NO'] + ' ' + dsRequest['FLAT_NO'];
+  s := s + dsRequest['STREET_NAME'] + ' –¥.' + dsRequest['HOUSE_NO'] + ' ' + dsRequest['FLAT_NO'];
 
   result := s;
 end;
@@ -123,9 +124,9 @@ begin
     Exit;
   if (Item.StartTime <> OldValuesItem.StartTime) or (Item.EndTime <> OldValuesItem.EndTime) then
   begin
-    if Application.MessageBox(PChar(Format('ÕÓ‚ÓÂ ‚ÂÏˇ Á‡ˇ‚ÍË %s - %s',
+    if Application.MessageBox(PChar(Format('–ù–æ–≤–æ–µ –≤—Ä–µ–º—è –∑–∞—è–≤–∫–∏ %s - %s',
       [FormatDateTime('dd.mm.yy hh:nn', Item.StartTime), FormatDateTime('dd.mm.yy hh:nn', Item.EndTime)])),
-      PChar('œÂÂÌÓÒ ‚ÂÏÂÌË'), MB_YESNO + MB_ICONQUESTION) = IDYES then
+      PChar('–ü–µ—Ä–µ–Ω–æ—Å –≤—Ä–µ–º–µ–Ω–∏'), MB_YESNO + MB_ICONQUESTION) = IDYES then
     begin
       Query := TpFIBQuery.Create(self);
       try
@@ -208,7 +209,7 @@ begin
       c := StringToColor(dsRequest['RT_COLOR'])
     else
       c := clWhite;
-    // ÂÒÎË ‚˚ÔÓÎÌÂÌ‡. ÓÚÏÂÚËÏ Â„Ó
+    // –µ—Å–ª–∏ –≤—ã–ø–æ–ª–Ω–µ–Ω–∞. –æ—Ç–º–µ—Ç–∏–º –µ–≥–æ
     if (dsRequest['REQ_RESULT'] > 1) then
       c := clMoneyGreen;
   end;

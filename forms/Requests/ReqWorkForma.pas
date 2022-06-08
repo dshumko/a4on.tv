@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, StdCtrls, FIBDatabase, pFIBDatabase, DB,
-  FIBDataSet, pFIBDataSet, Mask, DBCtrls, DBCtrlsEh, DBLookupEh,
-  FIBQuery, pFIBQuery, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
+  OkCancel_frame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, DBGridEh;
 
 type
   TReqWorkForm = class(TForm)

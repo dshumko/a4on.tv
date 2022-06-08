@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ActnList, DB, FIBDataSet, pFIBDataSet, Menus, ComCtrls, ToolWin,
-  GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls,
-  DBAxisGridsEh, PrjConst, System.UITypes, System.Actions, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin,
+  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
+  DynVarsEh;
 
 type
   TfmCardPaySerials = class(TForm)

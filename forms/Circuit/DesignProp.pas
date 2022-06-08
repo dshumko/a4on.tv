@@ -1,10 +1,12 @@
-unit DesignProp;
+﻿unit DesignProp;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, SimpleGraph, ExtCtrls, StdCtrls, ComCtrls, System.UITypes;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes, System.UITypes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls,
+  SimpleGraph;
 
 type
   TDesignerProperties = class(TForm)

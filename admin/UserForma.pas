@@ -3,10 +3,10 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Forms, VCL.StdCtrls, VCL.ComCtrls, VCL.Mask,
-  VCL.Controls, VCL.ExtCtrls, VCL.Dialogs, VCL.DBCtrls, Data.DB,
-
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Forms, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.Controls, Vcl.ExtCtrls, Vcl.Dialogs, Vcl.DBCtrls,
   DBCtrlsEh, PrjConst, CnErrorProvider;
 
 type
@@ -57,7 +57,8 @@ var
 
 implementation
 
-uses UsersForma, DM, AtrCommon;
+uses
+  UsersForma, DM, AtrCommon;
 
 {$R *.dfm}
 

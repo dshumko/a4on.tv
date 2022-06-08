@@ -1,11 +1,12 @@
-unit distrPeriodForma;
+﻿unit distrPeriodForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DBCtrlsEh, Vcl.Mask,
-  CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
+  DBCtrlsEh, CnErrorProvider;
 
 type
   TdistrPeriodForm = class(TForm)
@@ -39,7 +40,9 @@ implementation
 
 {$R *.dfm}
 
-uses DateUtils, PrjConst;
+uses
+  System.DateUtils,
+  PrjConst;
 
 procedure TdistrPeriodForm.btnOkClick(Sender: TObject);
 var

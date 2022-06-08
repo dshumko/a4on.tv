@@ -4,12 +4,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase,
-  pFIBDatabase, DB, FIBDataSet, pFIBDataSet, StdCtrls, GridsEh,
-  DBAxisGridsEh, DBGridEh, ExtCtrls, EhLibFIB, FIBQuery,
-  pFIBQuery, ActnList, ComCtrls, ToolWin, System.Actions, MemTableDataEh,
-  EhLibVCL, DBCtrlsEh, Vcl.Mask, DBGridEhGrouping, DynVarsEh, System.UITypes;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.Mask,
+  ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh, EhLibFIB,
+  FIBQuery, pFIBQuery, MemTableDataEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh;
 
 type
   TEPGAdForm = class(TForm)
@@ -87,8 +88,8 @@ var
 implementation
 
 uses
-  DM, MAIN, PrjConst,
-  System.TimeSpan, System.DateUtils;
+  System.TimeSpan, System.DateUtils,
+  DM, MAIN, PrjConst;
 
 {$R *.dfm}
 

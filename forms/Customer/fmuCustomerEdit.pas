@@ -4,13 +4,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, StdCtrls, ToolCtrlsEh, GridsEh,
-  DBGridEh, DBCtrls, DBCtrlsEh, Mask, Buttons, ExtCtrls, DB, FIBDataSet,
-  pFIBDataSet, Menus, DBGridEhToolCtrls, DBAxisGridsEh, DBLookupEh,
-  FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider,
-  EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh, FIBDatabase,
-  pFIBDatabase, System.Actions, Vcl.ActnList, PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Menus,
+  Vcl.ActnList,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, DBLookupEh,
+  FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  PropFilerEh, PropStorageEh;
 
 type
   TapgCustomerEdit = class(TA4onPage)
@@ -203,8 +204,10 @@ type
 
 implementation
 
-uses DM, Typinfo, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, MAIN, ScanImageForma, CustomerForma,
-  RegularExpressions, AtrCommon, EditCFileForma, A4onTypeUnit, ContactForma;
+uses
+  System.TypInfo, System.RegularExpressions,
+  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, MAIN, ScanImageForma, CustomerForma, AtrCommon, EditCFileForma,
+  A4onTypeUnit, ContactForma;
 
 {$R *.dfm}
 

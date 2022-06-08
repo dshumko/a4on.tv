@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, StdCtrls, Mask, DBLookupEh, DBCtrls, DBGridEh, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, DBGridEh, CnErrorProvider;
 
 type
   TOrgnzEditForm = class(TForm)
@@ -53,8 +55,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbbVATGExit(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     procedure ChekData;
@@ -62,7 +63,7 @@ type
     { Public declarations }
   end;
 
-Function EditOrganization(var ORG_ID : Integer):Boolean;
+Function EditOrganization(var ORG_ID: Integer): Boolean;
 
 implementation
 
@@ -71,40 +72,40 @@ uses
 
 {$R *.dfm}
 
-Function EditOrganization(var ORG_ID : Integer):Boolean;
+Function EditOrganization(var ORG_ID: Integer): Boolean;
 begin
-   Result := False;
-   with TOrgnzEditForm.Create(Application) do
-   try
-     dsOrgan.ParamByName('ORG_ID').AsInteger := ORG_ID;
-     dsOrgan.Open;
-     if ORG_ID<0
-     then dsOrgan.Insert
-     else dsOrgan.Edit;
+  Result := False;
+  with TOrgnzEditForm.Create(Application) do
+    try
+      dsOrgan.ParamByName('ORG_ID').AsInteger := ORG_ID;
+      dsOrgan.Open;
+      if ORG_ID < 0 then
+        dsOrgan.Insert
+      else
+        dsOrgan.Edit;
 
-     if ShowModal = mrOk
-     then begin
-       dsOrgan.Post;
-       Result := True;
-     end
-     else dsOrgan.Cancel;
-   finally
-     Free;
-   end;
+      if ShowModal = mrOk then
+      begin
+        dsOrgan.Post;
+        Result := True;
+      end
+      else
+        dsOrgan.Cancel;
+    finally
+      Free;
+    end;
 end;
 
-procedure TOrgnzEditForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TOrgnzEditForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   dsBANKS.Close;
   dsVATG.Close;
 end;
 
-procedure TOrgnzEditForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TOrgnzEditForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (frmOk.bbOk.Enabled)
-  then ModalResult := mrOk;
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (frmOk.bbOk.Enabled) then
+    ModalResult := mrOk;
 end;
 
 procedure TOrgnzEditForm.FormShow(Sender: TObject);
@@ -121,7 +122,6 @@ end;
 procedure TOrgnzEditForm.ChekData;
 var
   errors: Boolean;
-  nid: Integer;
 begin
   errors := False;
 

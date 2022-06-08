@@ -798,6 +798,7 @@ object PaymentForm: TPaymentForm
       '          , D.NOTICE'
       '          , ps.paysource_descr'
       '          , CURRENT_DATE CD'
+      '          , d.Added_By'
       '          from PAY_DOC D'
       
         '               left outer join PAYSOURCE PS on (D.PAYSOURCE_ID =' +
@@ -815,7 +816,8 @@ object PaymentForm: TPaymentForm
       '          , D.PAY_DOC_SUM'
       '          , D.NOTICE'
       '          , ps.paysource_descr'
-      '          , CURRENT_DATE CD          '
+      '          , CURRENT_DATE CD '
+      '          , d.Added_By         '
       '          from PAY_DOC D'
       
         '               left outer join PAYSOURCE PS on (D.PAYSOURCE_ID =' +
@@ -823,7 +825,8 @@ object PaymentForm: TPaymentForm
       '          where @filter%1=0 and @OWN_PD%1=1'
       '            and d.Pay_Doc_Date = current_DATE'
       '            ) a'
-      '  order by PAY_DOC_DATE, PAY_DOC_NO'
+      '  order by iif(Added_By = current_user, 0, 1), -- '#1089#1085#1072#1095#1072#1083#1072' '#1089#1074#1086#1080' '
+      '           PAY_DOC_DATE, PAY_DOC_NO'
       '')
     AutoUpdateOptions.UpdateTableName = 'PAY_DOC'
     AutoUpdateOptions.KeyFields = 'PAY_DOC_ID'

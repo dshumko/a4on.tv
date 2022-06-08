@@ -1,11 +1,12 @@
-unit DecoderDeleteDlgForma;
+ο»Ώunit DecoderDeleteDlgForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, DBCtrlsEh,
-  Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  DBCtrlsEh;
 
 type
   TDecoderDeleteDlg = class(TForm)
@@ -30,7 +31,8 @@ implementation
 
 {$R *.dfm}
 
-uses DM, PrjConst;
+uses
+  DM, PrjConst;
 
 function DeleteDecoderDialog(const decoder: String): integer;
 var
@@ -42,7 +44,7 @@ begin
       lblState.Caption := lblState.Caption + decoder;
       cbbState.Value := 1;
       if (not(dmMain.AllowedAction(rght_Digit_DelEQP))) then begin
-        cbbState.Items.Text := 'Νΰ ρκλΰδε';
+        cbbState.Items.Text := 'ΠΠ° ΡΠΊΠ»Π°Π΄Πµ';
         cbbState.KeyItems.Text := '1';
       end;
       if ShowModal = mrOk
@@ -66,9 +68,9 @@ begin
       lblState.Caption := lblState.Caption + ' ' + decoder;
       cbbState.Value := 1;
       if (not(dmMain.AllowedAction(rght_Digit_DelEQP))) then begin
-        cbbState.Items.Text := 'Νΰ ρκλΰδε';
+        cbbState.Items.Text := 'ΠΠ° ΡΠΊΠ»Π°Π΄Πµ';
         cbbState.KeyItems.Text := '1';
-        cbSTB.Items.Text := 'Νΰ ρκλΰδε';
+        cbSTB.Items.Text := 'ΠΠ° ΡΠΊΠ»Π°Π΄Πµ';
         cbSTB.KeyItems.Text := '1';
       end;
 

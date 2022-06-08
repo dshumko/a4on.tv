@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, Grids, DBGridEh, ExtCtrls, EhLibFIB,
-  OkCancel_frame, GridsEh, StdCtrls, PropFilerEh,
-  PropStorageEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
+  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TReqMatReturnForm = class(TForm)
@@ -50,7 +51,8 @@ var
 
 implementation
 
-uses DM, MAIN, PrjConst;
+uses
+  DM, MAIN, PrjConst;
 
 {$R *.dfm}
 

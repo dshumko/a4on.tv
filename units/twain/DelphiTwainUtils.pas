@@ -90,7 +90,7 @@ implementation
 
 {Units used below}
 uses
-  Windows;
+  Winapi.Windows;
 
 {Convert from extended to Fix32}
 function FloatToFix32 (floater: extended): TW_FIX32;
@@ -188,7 +188,7 @@ var
 begin
   {Calls format message to translate from the error code ID to}
   {a text understandable error}
-  Len := Windows.FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM or
+  Len := Winapi.Windows.FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM or
     FORMAT_MESSAGE_ARGUMENT_ARRAY, nil, GetLastError(),
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), Buffer, sizeof(Buffer), nil);
   {Remove this chars from the ending of the result}
@@ -219,15 +219,15 @@ const
     {Test the directory needed by the parameter}
     case DirectoryKind of
       {Windows directory}
-      dkWindows: Result := Windows.GetWindowsDirectory(Buffer, Size);
+      dkWindows: Result := Winapi.Windows.GetWindowsDirectory(Buffer, Size);
       {System directory}
-      dkSystem : Result := Windows.GetSystemDirectory(Buffer, Size);
+      dkSystem : Result := Winapi.Windows.GetSystemDirectory(Buffer, Size);
       {Current directory}
-      dkCurrent: Result := Windows.GetCurrentDirectory(Size, Buffer);
+      dkCurrent: Result := Winapi.Windows.GetCurrentDirectory(Size, Buffer);
       {Application directory}
-      dkApplication: Result := Windows.GetModuleFileName(0, Buffer, Size);
+      dkApplication: Result := Winapi.Windows.GetModuleFileName(0, Buffer, Size);
       {Temp directory}
-      dkTemp   : Result := Windows.GetTempPath(Size, Buffer);
+      dkTemp   : Result := Winapi.Windows.GetTempPath(Size, Buffer);
       {Unknown directory}
       else Result := 0;
     end {case}

@@ -3,9 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBCtrlsEh, StdCtrls, Mask, FIBQuery, pFIBQuery, PrjConst,
-  Vcl.Buttons, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  DBCtrlsEh, FIBQuery, pFIBQuery, PrjConst, CnErrorProvider;
 
 type
   TPersonalTarifForm = class(TForm)
@@ -36,7 +37,9 @@ function EditTarif(const aSerivce: String; const aService_ID: Integer; const aCu
 
 implementation
 
-uses DM, DateUtils;
+uses
+  System.DateUtils,
+  DM;
 
 {$R *.dfm}
 

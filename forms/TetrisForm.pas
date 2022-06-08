@@ -1,36 +1,37 @@
-unit TetrisForm;
+п»їunit TetrisForm;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls;
 
 type
 
   TBig = array [0 .. 0] of Integer;
 
-  TPanelColor = Record // панели фигуры
-    R1, G1, B1, R2, G2, B2: Byte; //цвет панели
+  TPanelColor = Record // РїР°РЅРµР»Рё С„РёРіСѓСЂС‹
+    R1, G1, B1, R2, G2, B2: Byte; //С†РІРµС‚ РїР°РЅРµР»Рё
   end;
 
-  TPixelToClear = Record // пиксель панели
-    mX, mY: ShortInt; // направление пикселя
-    R1, G1, B1: Byte; // цвет пиксиля
-    cTop, cLeft: Word; // положение фигуры
+  TPixelToClear = Record // РїРёРєСЃРµР»СЊ РїР°РЅРµР»Рё
+    mX, mY: ShortInt; // РЅР°РїСЂР°РІР»РµРЅРёРµ РїРёРєСЃРµР»СЏ
+    R1, G1, B1: Byte; // С†РІРµС‚ РїРёРєСЃРёР»СЏ
+    cTop, cLeft: Word; // РїРѕР»РѕР¶РµРЅРёРµ С„РёРіСѓСЂС‹
   end;
 
-  TObjectColor = Record // фигура
-    Top, Left:     ShortInt; // положение фигуры
-    Height, Width: Byte; // размерность фигуры
-    PanelColor:    TPanelColor; // размещение и информация о цвете
+  TObjectColor = Record // С„РёРіСѓСЂР°
+    Top, Left:     ShortInt; // РїРѕР»РѕР¶РµРЅРёРµ С„РёРіСѓСЂС‹
+    Height, Width: Byte; // СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ С„РёРіСѓСЂС‹
+    PanelColor:    TPanelColor; // СЂР°Р·РјРµС‰РµРЅРёРµ Рё РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ С†РІРµС‚Рµ
     PanelArray: array of array of Boolean;
     Visible:       Boolean;
   end;
 
-  TFormPanelColor = Record // панели на форме
-    Visible:    Boolean; // видимость (если нет, значит пустое пространство)
-    PanelColor: TPanelColor; // размещение и информация о цвете
+  TFormPanelColor = Record // РїР°РЅРµР»Рё РЅР° С„РѕСЂРјРµ
+    Visible:    Boolean; // РІРёРґРёРјРѕСЃС‚СЊ (РµСЃР»Рё РЅРµС‚, Р·РЅР°С‡РёС‚ РїСѓСЃС‚РѕРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ)
+    PanelColor: TPanelColor; // СЂР°Р·РјРµС‰РµРЅРёРµ Рё РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ С†РІРµС‚Рµ
   end;
 
   TFormTetris = class(TForm)
@@ -43,44 +44,44 @@ type
     procedure TimerGravityTimer(Sender: TObject);
   private
     { Private declarations }
-    Scr: Pointer; // указатель
-    ScrBitmap: TBitmap; // BitMap для фоновой прорисовки
-    CanvaGamePanel: array of array of TColor; // массив пикселей дисплея
-    // переменные текущей игры
-    GameOver: Boolean; // игра закончена?
-    CurrGamePause: Boolean; // пауза?
+    Scr: Pointer; // СѓРєР°Р·Р°С‚РµР»СЊ
+    ScrBitmap: TBitmap; // BitMap РґР»СЏ С„РѕРЅРѕРІРѕР№ РїСЂРѕСЂРёСЃРѕРІРєРё
+    CanvaGamePanel: array of array of TColor; // РјР°СЃСЃРёРІ РїРёРєСЃРµР»РµР№ РґРёСЃРїР»РµСЏ
+    // РїРµСЂРµРјРµРЅРЅС‹Рµ С‚РµРєСѓС‰РµР№ РёРіСЂС‹
+    GameOver: Boolean; // РёРіСЂР° Р·Р°РєРѕРЅС‡РµРЅР°?
+    CurrGamePause: Boolean; // РїР°СѓР·Р°?
     CurScore, CurLevel, CurLines: String;
-    // объекты (фигуры)
-    ObjectColorCurr, // текущая падающая фигура
-    ObjectColorBuff, // переменная для помещения объекта в буфер обмена
-    ObjectColorCapt, // фигура в захвате
-    ObjectColorShad, // тень падающей фигуры (показывает, куда упадет падающая фигура если её бросить)
-    ObjectColorNext: TObjectColor; // следующая фигура
-    // массив закрипившихся панелей
+    // РѕР±СЉРµРєС‚С‹ (С„РёРіСѓСЂС‹)
+    ObjectColorCurr, // С‚РµРєСѓС‰Р°СЏ РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°
+    ObjectColorBuff, // РїРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ РїРѕРјРµС‰РµРЅРёСЏ РѕР±СЉРµРєС‚Р° РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°
+    ObjectColorCapt, // С„РёРіСѓСЂР° РІ Р·Р°С…РІР°С‚Рµ
+    ObjectColorShad, // С‚РµРЅСЊ РїР°РґР°СЋС‰РµР№ С„РёРіСѓСЂС‹ (РїРѕРєР°Р·С‹РІР°РµС‚, РєСѓРґР° СѓРїР°РґРµС‚ РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР° РµСЃР»Рё РµС‘ Р±СЂРѕСЃРёС‚СЊ)
+    ObjectColorNext: TObjectColor; // СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°
+    // РјР°СЃСЃРёРІ Р·Р°РєСЂРёРїРёРІС€РёС…СЃСЏ РїР°РЅРµР»РµР№
     FormPanelColor: array of array of TFormPanelColor;
-    // массив стираемых линий (попиксельно)
+    // РјР°СЃСЃРёРІ СЃС‚РёСЂР°РµРјС‹С… Р»РёРЅРёР№ (РїРѕРїРёРєСЃРµР»СЊРЅРѕ)
     PixelToClear: array of array of array of array of TPixelToClear;
-    yNumLines: Byte; // кол-во стираемых линий
+    yNumLines: Byte; // РєРѕР»-РІРѕ СЃС‚РёСЂР°РµРјС‹С… Р»РёРЅРёР№
   public
     { Public declarations }
-    function IncScore(const n: Word; const InScore: String): String; // увеличчение/уменьшение счета
-    procedure CreateScrBitMap(BitMapH, BitMapW: Integer); // выделение памяти под BitMap
-    procedure RefreshBackGround; // перерисовка фона
-    procedure PaintGrid; // рисование сетки
-    procedure FillBackGround; // заливка массива фоном
-    procedure SetLengthCanvaGamePanel; // установка размера массива пикселей дисплея
-    Procedure PaintingAllPanels; // перерисовка панеляк
-    procedure CreateNextObjectColor(NumObj: Byte); // создаем новую "Следующая фигуруа"
-    procedure PaintClockFace(const sNumber: string; const cLeft, cHeight: Word; R, G, B: Byte; const VisibleZero: Boolean); // рисуем циферблат
-    procedure WriteText; // выводим подписи
-    procedure SetLengthFormPanelColor; // создаем массив панелей на игровой панели
-    procedure MoweObjectColor(mw: Byte); // набор процедур для перемещения панелей
-    procedure ReStartGame; // рестарт игры
-    procedure ChangeObjectColor; //переместить "падающая фигура" в "захваченная фигура"
-    procedure TurnObjectColor(angle: ShortInt); //поворот фигуры на заданный угол
-    procedure EraseLinePanel; // процедура стирания полноценной линии из панелей
-    function DropObject(MyObjectColor: TObjectColor): TObjectColor; // опускание требуемой фигуры как можно ниже
-    procedure ReShowScore; // покажем циферблаты и их значения
+    function IncScore(const n: Word; const InScore: String): String; // СѓРІРµР»РёС‡С‡РµРЅРёРµ/СѓРјРµРЅСЊС€РµРЅРёРµ СЃС‡РµС‚Р°
+    procedure CreateScrBitMap(BitMapH, BitMapW: Integer); // РІС‹РґРµР»РµРЅРёРµ РїР°РјСЏС‚Рё РїРѕРґ BitMap
+    procedure RefreshBackGround; // РїРµСЂРµСЂРёСЃРѕРІРєР° С„РѕРЅР°
+    procedure PaintGrid; // СЂРёСЃРѕРІР°РЅРёРµ СЃРµС‚РєРё
+    procedure FillBackGround; // Р·Р°Р»РёРІРєР° РјР°СЃСЃРёРІР° С„РѕРЅРѕРј
+    procedure SetLengthCanvaGamePanel; // СѓСЃС‚Р°РЅРѕРІРєР° СЂР°Р·РјРµСЂР° РјР°СЃСЃРёРІР° РїРёРєСЃРµР»РµР№ РґРёСЃРїР»РµСЏ
+    Procedure PaintingAllPanels; // РїРµСЂРµСЂРёСЃРѕРІРєР° РїР°РЅРµР»СЏРє
+    procedure CreateNextObjectColor(NumObj: Byte); // СЃРѕР·РґР°РµРј РЅРѕРІСѓСЋ "РЎР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂСѓР°"
+    procedure PaintClockFace(const sNumber: string; const cLeft, cHeight: Word; R, G, B: Byte; const VisibleZero: Boolean); // СЂРёСЃСѓРµРј С†РёС„РµСЂР±Р»Р°С‚
+    procedure WriteText; // РІС‹РІРѕРґРёРј РїРѕРґРїРёСЃРё
+    procedure SetLengthFormPanelColor; // СЃРѕР·РґР°РµРј РјР°СЃСЃРёРІ РїР°РЅРµР»РµР№ РЅР° РёРіСЂРѕРІРѕР№ РїР°РЅРµР»Рё
+    procedure MoweObjectColor(mw: Byte); // РЅР°Р±РѕСЂ РїСЂРѕС†РµРґСѓСЂ РґР»СЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ РїР°РЅРµР»РµР№
+    procedure ReStartGame; // СЂРµСЃС‚Р°СЂС‚ РёРіСЂС‹
+    procedure ChangeObjectColor; //РїРµСЂРµРјРµСЃС‚РёС‚СЊ "РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РІ "Р·Р°С…РІР°С‡РµРЅРЅР°СЏ С„РёРіСѓСЂР°"
+    procedure TurnObjectColor(angle: ShortInt); //РїРѕРІРѕСЂРѕС‚ С„РёРіСѓСЂС‹ РЅР° Р·Р°РґР°РЅРЅС‹Р№ СѓРіРѕР»
+    procedure EraseLinePanel; // РїСЂРѕС†РµРґСѓСЂР° СЃС‚РёСЂР°РЅРёСЏ РїРѕР»РЅРѕС†РµРЅРЅРѕР№ Р»РёРЅРёРё РёР· РїР°РЅРµР»РµР№
+    function DropObject(MyObjectColor: TObjectColor): TObjectColor; // РѕРїСѓСЃРєР°РЅРёРµ С‚СЂРµР±СѓРµРјРѕР№ С„РёРіСѓСЂС‹ РєР°Рє РјРѕР¶РЅРѕ РЅРёР¶Рµ
+    procedure ReShowScore; // РїРѕРєР°Р¶РµРј С†РёС„РµСЂР±Р»Р°С‚С‹ Рё РёС… Р·РЅР°С‡РµРЅРёСЏ
     procedure CalculateLevel(SumLines: Word);
   end;
 
@@ -90,18 +91,18 @@ type
 implementation
 
 const
-  PanelColorH = 24; // высота панели
-  PanelColorW = 24; // ширина панели
-  PanelColorSummH = 20; // кол-во панелей в высоту
-  PanelColorSummW = 10; // кол-во панелей в ширину
-  FrameDepth = 20; // толщина рамки
-  PanelGameH = PanelColorH * PanelColorSummH + PanelColorSummH; // высота игрового поля
-  PanelGameW = PanelColorW * PanelColorSummW + PanelColorSummW; // ширина игрового поля
-  PanelInfoH = PanelGameH; // высота инфо поля
-  PanelInfoW = (PanelColorW + 1) * 6; // ширина инфо поля
-  FormH = PanelGameH + FrameDepth * 2; // высота формы (учитывая рамку)
-  FormW = PanelGameW + FrameDepth * 4 + PanelInfoW; // ширина формы (учитывая рамку)
-  StepSplashingH = 3; // взрыв/разброс стираемой линии (размер кусков)
+  PanelColorH = 24; // РІС‹СЃРѕС‚Р° РїР°РЅРµР»Рё
+  PanelColorW = 24; // С€РёСЂРёРЅР° РїР°РЅРµР»Рё
+  PanelColorSummH = 20; // РєРѕР»-РІРѕ РїР°РЅРµР»РµР№ РІ РІС‹СЃРѕС‚Сѓ
+  PanelColorSummW = 10; // РєРѕР»-РІРѕ РїР°РЅРµР»РµР№ РІ С€РёСЂРёРЅСѓ
+  FrameDepth = 20; // С‚РѕР»С‰РёРЅР° СЂР°РјРєРё
+  PanelGameH = PanelColorH * PanelColorSummH + PanelColorSummH; // РІС‹СЃРѕС‚Р° РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ
+  PanelGameW = PanelColorW * PanelColorSummW + PanelColorSummW; // С€РёСЂРёРЅР° РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ
+  PanelInfoH = PanelGameH; // РІС‹СЃРѕС‚Р° РёРЅС„Рѕ РїРѕР»СЏ
+  PanelInfoW = (PanelColorW + 1) * 6; // С€РёСЂРёРЅР° РёРЅС„Рѕ РїРѕР»СЏ
+  FormH = PanelGameH + FrameDepth * 2; // РІС‹СЃРѕС‚Р° С„РѕСЂРјС‹ (СѓС‡РёС‚С‹РІР°СЏ СЂР°РјРєСѓ)
+  FormW = PanelGameW + FrameDepth * 4 + PanelInfoW; // С€РёСЂРёРЅР° С„РѕСЂРјС‹ (СѓС‡РёС‚С‹РІР°СЏ СЂР°РјРєСѓ)
+  StepSplashingH = 3; // РІР·СЂС‹РІ/СЂР°Р·Р±СЂРѕСЃ СЃС‚РёСЂР°РµРјРѕР№ Р»РёРЅРёРё (СЂР°Р·РјРµСЂ РєСѓСЃРєРѕРІ)
   StepSplashingW = StepSplashingH;
 
 {$R *.dfm}
@@ -126,21 +127,21 @@ var
   CanMowe: Boolean;
   Label NextMoweObjectColor;
 begin
-  NextMoweObjectColor: // КОГО НЕ УСТРАИВАЕТ, ЗАРУБИТЕСЬ !!! =D
-  CanMowe := true; // предположим, что объект может переместится вниз
+  NextMoweObjectColor: // РљРћР“Рћ РќР• РЈРЎРўР РђРР’РђР•Рў, Р—РђР РЈР‘РРўР•РЎР¬ !!! =D
+  CanMowe := true; // РїСЂРµРґРїРѕР»РѕР¶РёРј, С‡С‚Рѕ РѕР±СЉРµРєС‚ РјРѕР¶РµС‚ РїРµСЂРµРјРµСЃС‚РёС‚СЃСЏ РІРЅРёР·
   with MyObjectColor do
-    // если объект виден
+    // РµСЃР»Рё РѕР±СЉРµРєС‚ РІРёРґРµРЅ
     if Visible then begin
       for x := 0 to Width - 1 do begin
-        // если уже известно что фигура не может опустится ниже, выходи из цикла
+        // РµСЃР»Рё СѓР¶Рµ РёР·РІРµСЃС‚РЅРѕ С‡С‚Рѕ С„РёРіСѓСЂР° РЅРµ РјРѕР¶РµС‚ РѕРїСѓСЃС‚РёС‚СЃСЏ РЅРёР¶Рµ, РІС‹С…РѕРґРё РёР· С†РёРєР»Р°
         if not CanMowe then
           Break;
-        // иначе, продолжаем проверять
+        // РёРЅР°С‡Рµ, РїСЂРѕРґРѕР»Р¶Р°РµРј РїСЂРѕРІРµСЂСЏС‚СЊ
         for y := 0 to Height - 1 do begin
-          // запомним координаты на 1-н ниже текущих
+          // Р·Р°РїРѕРјРЅРёРј РєРѕРѕСЂРґРёРЅР°С‚С‹ РЅР° 1-РЅ РЅРёР¶Рµ С‚РµРєСѓС‰РёС…
           cX := Left + x;
           cY := Top + y + 1;
-          // если в данной ячейке массива фигуры есть панель
+          // РµСЃР»Рё РІ РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ РјР°СЃСЃРёРІР° С„РёРіСѓСЂС‹ РµСЃС‚СЊ РїР°РЅРµР»СЊ
           if PanelArray[x, y] = true then begin
             if cY < 0 then
               cY := 0;
@@ -156,14 +157,14 @@ begin
         end;
       end;
     end;
-  // если под фигурой ничего не оказалось
+  // РµСЃР»Рё РїРѕРґ С„РёРіСѓСЂРѕР№ РЅРёС‡РµРіРѕ РЅРµ РѕРєР°Р·Р°Р»РѕСЃСЊ
   if CanMowe then
   begin
     with MyObjectColor do
       if Visible then
-        // опустим её ниже
+        // РѕРїСѓСЃС‚РёРј РµС‘ РЅРёР¶Рµ
         inc(Top);
-    // и проверим заного, есть ли теперь под ней что-нибудь?
+    // Рё РїСЂРѕРІРµСЂРёРј Р·Р°РЅРѕРіРѕ, РµСЃС‚СЊ Р»Рё С‚РµРїРµСЂСЊ РїРѕРґ РЅРµР№ С‡С‚Рѕ-РЅРёР±СѓРґСЊ?
     goto NextMoweObjectColor;
   end;
 
@@ -197,10 +198,10 @@ var
 begin
 
   yNumLines := 0;
-  // перебираем по строчно сверху в низ
+  // РїРµСЂРµР±РёСЂР°РµРј РїРѕ СЃС‚СЂРѕС‡РЅРѕ СЃРІРµСЂС…Сѓ РІ РЅРёР·
   for y := 0 to PanelColorSummH - 1 do
   begin
-    // перебираем массив линии панелей на полноценность
+    // РїРµСЂРµР±РёСЂР°РµРј РјР°СЃСЃРёРІ Р»РёРЅРёРё РїР°РЅРµР»РµР№ РЅР° РїРѕР»РЅРѕС†РµРЅРЅРѕСЃС‚СЊ
     FindLine := true;
     for x := 0 to PanelColorSummW - 1 do
     begin
@@ -210,26 +211,26 @@ begin
         Break;
       end;
     end;
-    // проверяем, это линия?
+    // РїСЂРѕРІРµСЂСЏРµРј, СЌС‚Рѕ Р»РёРЅРёСЏ?
     if FindLine = true then
     begin
-      inc(yNumLines); // кол-во линий на стирание
-      CurScore := IncScore(200, CurScore); // линия на стирание есть, увеличиваем очки
+      inc(yNumLines); // РєРѕР»-РІРѕ Р»РёРЅРёР№ РЅР° СЃС‚РёСЂР°РЅРёРµ
+      CurScore := IncScore(200, CurScore); // Р»РёРЅРёСЏ РЅР° СЃС‚РёСЂР°РЅРёРµ РµСЃС‚СЊ, СѓРІРµР»РёС‡РёРІР°РµРј РѕС‡РєРё
       SetLength(yErase, yNumLines);
-      yErase[yNumLines - 1] := y; // положение линии на стирание
+      yErase[yNumLines - 1] := y; // РїРѕР»РѕР¶РµРЅРёРµ Р»РёРЅРёРё РЅР° СЃС‚РёСЂР°РЅРёРµ
     end;
   end;
-  //если полноценных линий нет, выходим из процедуры
+  //РµСЃР»Рё РїРѕР»РЅРѕС†РµРЅРЅС‹С… Р»РёРЅРёР№ РЅРµС‚, РІС‹С…РѕРґРёРј РёР· РїСЂРѕС†РµРґСѓСЂС‹
   if yNumLines = 0 then
     Exit;
 
-  CurLines := IncScore(yNumLines, CurLines); //увеличим очки на 1
+  CurLines := IncScore(yNumLines, CurLines); //СѓРІРµР»РёС‡РёРј РѕС‡РєРё РЅР° 1
 
-  // вычисляем текущий уровень игры
+  // РІС‹С‡РёСЃР»СЏРµРј С‚РµРєСѓС‰РёР№ СѓСЂРѕРІРµРЅСЊ РёРіСЂС‹
   CalculateLevel(StrToInt(CurLines));
   TimerGravity.Interval := 800 - (StrToInt(CurLevel) - 1) * 40;
 
-  // скопируем линии на стирание в массив и опустим их ниже
+  // СЃРєРѕРїРёСЂСѓРµРј Р»РёРЅРёРё РЅР° СЃС‚РёСЂР°РЅРёРµ РІ РјР°СЃСЃРёРІ Рё РѕРїСѓСЃС‚РёРј РёС… РЅРёР¶Рµ
   for x := 0 to PanelColorSummW - 1 do
   begin
     cLeft := FrameDepth + PanelColorW * x + x + 1;
@@ -245,17 +246,17 @@ begin
         begin
           //
           StepH := (iH + 1 - (PanelColorH div 2)) div StepSplashingH;
-          //вытащим цвет пикселя
+          //РІС‹С‚Р°С‰РёРј С†РІРµС‚ РїРёРєСЃРµР»СЏ
           PixelR := GetRValue(ScrBitmap.Canvas.Pixels[cLeft + iW + 1, cTop + iH + 1]);
           PixelG := GetGValue(ScrBitmap.Canvas.Pixels[cLeft + iW + 1, cTop + iH + 1]);
           PixelB := GetBValue(ScrBitmap.Canvas.Pixels[cLeft + iW + 1, cTop + iH + 1]);
-          // запишем значения в массив
+          // Р·Р°РїРёС€РµРј Р·РЅР°С‡РµРЅРёСЏ РІ РјР°СЃСЃРёРІ
 
-          { Эффект № 1 "Всплеск" }
+          { Р­С„С„РµРєС‚ в„– 1 "Р’СЃРїР»РµСЃРє" }
           {PixelToClear[x, y, iW, iH].mX := ((PanelColorW div 2) - iW) div 3;
           PixelToClear[x, y, iW, iH].mY := (PanelColorH div 2) - iH; }
 
-          { Эффект № 2 "Раздрабливание" }
+          { Р­С„С„РµРєС‚ в„– 2 "Р Р°Р·РґСЂР°Р±Р»РёРІР°РЅРёРµ" }
           PixelToClear[x, y, iW, iH].mX := StepW * 2;
           PixelToClear[x, y, iW, iH].mY := StepH - 6;
 
@@ -266,12 +267,12 @@ begin
           PixelToClear[x, y, iW, iH].cLeft := cLeft + iW;
         end;
       end;
-      // очистим панели (уберем видимость)
+      // РѕС‡РёСЃС‚РёРј РїР°РЅРµР»Рё (СѓР±РµСЂРµРј РІРёРґРёРјРѕСЃС‚СЊ)
       FormPanelColor[x,yMy].Visible := false;
     end;
   end;
 
-  //опускаем каждую панель ниже
+  //РѕРїСѓСЃРєР°РµРј РєР°Р¶РґСѓСЋ РїР°РЅРµР»СЊ РЅРёР¶Рµ
   for x := 0 to PanelColorSummW - 1 do
   begin
     for y := yErase[yNumLines - 1] downto yNumLines - 1 do
@@ -293,41 +294,41 @@ procedure TFormTetris.TurnObjectColor(angle: ShortInt);
     cX, cY: ShortInt;
     CanMowe: Boolean;
   begin
-    if not ObjectColorCurr.Visible then // если объект не виден, выходим из процедуры
+    if not ObjectColorCurr.Visible then // РµСЃР»Рё РѕР±СЉРµРєС‚ РЅРµ РІРёРґРµРЅ, РІС‹С…РѕРґРёРј РёР· РїСЂРѕС†РµРґСѓСЂС‹
       Exit;
-    // предположим, что объект может переместится
+    // РїСЂРµРґРїРѕР»РѕР¶РёРј, С‡С‚Рѕ РѕР±СЉРµРєС‚ РјРѕР¶РµС‚ РїРµСЂРµРјРµСЃС‚РёС‚СЃСЏ
     CanMowe := true;
-    // копируем панель в буфер панелей
+    // РєРѕРїРёСЂСѓРµРј РїР°РЅРµР»СЊ РІ Р±СѓС„РµСЂ РїР°РЅРµР»РµР№
     ObjectColorBuff := ObjectColorCurr;
-    // меняем значение высоты на ширину и наоборот
+    // РјРµРЅСЏРµРј Р·РЅР°С‡РµРЅРёРµ РІС‹СЃРѕС‚С‹ РЅР° С€РёСЂРёРЅСѓ Рё РЅР°РѕР±РѕСЂРѕС‚
     ObjectColorBuff.Height := ObjectColorCurr.Width;
     ObjectColorBuff.Width  := ObjectColorCurr.Height;
     SetLength(ObjectColorBuff.PanelArray, ObjectColorBuff.Width, ObjectColorBuff.Height);
-    // учитывая изменившуюся высоту и ширину фигуры, надо пересчитать Left и Top
+    // СѓС‡РёС‚С‹РІР°СЏ РёР·РјРµРЅРёРІС€СѓСЋСЃСЏ РІС‹СЃРѕС‚Сѓ Рё С€РёСЂРёРЅСѓ С„РёРіСѓСЂС‹, РЅР°РґРѕ РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Left Рё Top
     ObjectColorBuff.Top  := ObjectColorCurr.Top  + ObjectColorCurr.Height - ObjectColorBuff.Height;
     ObjectColorBuff.Left := ObjectColorCurr.Left + ObjectColorCurr.Width  - ObjectColorBuff.Width;
 
-    // инвертируем координаты фигуры
+    // РёРЅРІРµСЂС‚РёСЂСѓРµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ С„РёРіСѓСЂС‹
     with ObjectColorCurr do
       for x := 0 to Width - 1 do
         for y := 0 to Height - 1 do
-          if b then // опрокидываем фигуру против часовой стрелки
+          if b then // РѕРїСЂРѕРєРёРґС‹РІР°РµРј С„РёРіСѓСЂСѓ РїСЂРѕС‚РёРІ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРё
             ObjectColorBuff.PanelArray[y, (Width - 1) - x] :=  ObjectColorCurr.PanelArray[x,y]
-            else // опрокидываем фигуру по часовой стрелки
+            else // РѕРїСЂРѕРєРёРґС‹РІР°РµРј С„РёРіСѓСЂСѓ РїРѕ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРё
               ObjectColorBuff.PanelArray[(Height - 1) - y, x] :=  ObjectColorCurr.PanelArray[x,y];
 
-    // преобразование готово, проверим, возможно-ли такое положение фигуры?
+    // РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РіРѕС‚РѕРІРѕ, РїСЂРѕРІРµСЂРёРј, РІРѕР·РјРѕР¶РЅРѕ-Р»Рё С‚Р°РєРѕРµ РїРѕР»РѕР¶РµРЅРёРµ С„РёРіСѓСЂС‹?
     with ObjectColorBuff do
       for x := 0 to Width - 1 do
         for y := 0 to Height - 1 do
-          // если в данной ячейке массива есть панель
+          // РµСЃР»Рё РІ РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ РјР°СЃСЃРёРІР° РµСЃС‚СЊ РїР°РЅРµР»СЊ
           if PanelArray[x, y] = true then begin
             cX := Left + x;
             cY := Top  + y;
-            // если фигуры выше граници, надо разрешить перемещать фигуру
+            // РµСЃР»Рё С„РёРіСѓСЂС‹ РІС‹С€Рµ РіСЂР°РЅРёС†Рё, РЅР°РґРѕ СЂР°Р·СЂРµС€РёС‚СЊ РїРµСЂРµРјРµС‰Р°С‚СЊ С„РёРіСѓСЂСѓ
             if cY < 0 then
               cY := 0;
-            // проверяем на возможность переворачивания
+            // РїСЂРѕРІРµСЂСЏРµРј РЅР° РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РїРµСЂРµРІРѕСЂР°С‡РёРІР°РЅРёСЏ
             if (cX < 0) or (cX > PanelColorSummW - 1) then
             begin
               CanMowe := false;
@@ -340,8 +341,8 @@ procedure TFormTetris.TurnObjectColor(angle: ShortInt);
             end;
           end;
 
-    // если такое положение объекта возможно
-    if CanMowe then // переносим модернизированную фигуру из буфера обратно в "Падающая панель"
+    // РµСЃР»Рё С‚Р°РєРѕРµ РїРѕР»РѕР¶РµРЅРёРµ РѕР±СЉРµРєС‚Р° РІРѕР·РјРѕР¶РЅРѕ
+    if CanMowe then // РїРµСЂРµРЅРѕСЃРёРј РјРѕРґРµСЂРЅРёР·РёСЂРѕРІР°РЅРЅСѓСЋ С„РёРіСѓСЂСѓ РёР· Р±СѓС„РµСЂР° РѕР±СЂР°С‚РЅРѕ РІ "РџР°РґР°СЋС‰Р°СЏ РїР°РЅРµР»СЊ"
       ObjectColorCurr := ObjectColorBuff;
   end;
 
@@ -350,18 +351,18 @@ begin
      90: TurnObject(false);
     -90: TurnObject(true);
   end;
-  MoweObjectColor(5); // перерисовка тени
+  MoweObjectColor(5); // РїРµСЂРµСЂРёСЃРѕРІРєР° С‚РµРЅРё
 end;
 
 procedure TFormTetris.MoweObjectColor(mw: Byte);
 
-  procedure FreezeObject;  // замораживаем объект
+  procedure FreezeObject;  // Р·Р°РјРѕСЂР°Р¶РёРІР°РµРј РѕР±СЉРµРєС‚
   var
     x, y: Byte;
   begin
     for x := 0 to ObjectColorCurr.Width - 1 do
       for y := 0 to ObjectColorCurr.Height - 1 do
-        // если в данной ячейке массива есть панель
+        // РµСЃР»Рё РІ РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ РјР°СЃСЃРёРІР° РµСЃС‚СЊ РїР°РЅРµР»СЊ
         if ObjectColorCurr.PanelArray[x, y] = true then
           with FormPanelColor[x + ObjectColorCurr.Left, y + ObjectColorCurr.Top] do
           begin
@@ -376,11 +377,11 @@ procedure TFormTetris.MoweObjectColor(mw: Byte);
               B2 := ObjectColorCurr.PanelColor.B2;
             end;
           end;
-    // получаем новую "Падающая фигура" из "Следующая фигура"
+    // РїРѕР»СѓС‡Р°РµРј РЅРѕРІСѓСЋ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РёР· "РЎР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
     ObjectColorCurr := ObjectColorNext;
-    // генерируем "следующая фигура"
+    // РіРµРЅРµСЂРёСЂСѓРµРј "СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
     CreateNextObjectColor(random(7));
-    // проверяем, есть ли полноценная линия для стирания
+    // РїСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё РїРѕР»РЅРѕС†РµРЅРЅР°СЏ Р»РёРЅРёСЏ РґР»СЏ СЃС‚РёСЂР°РЅРёСЏ
     EraseLinePanel;
   end;
 
@@ -390,13 +391,13 @@ procedure TFormTetris.MoweObjectColor(mw: Byte);
     cX, cY: ShortInt;
     CanMowe: Boolean;
   begin
-    CanMowe := true; // предположим, что объект может переместится вниз
+    CanMowe := true; // РїСЂРµРґРїРѕР»РѕР¶РёРј, С‡С‚Рѕ РѕР±СЉРµРєС‚ РјРѕР¶РµС‚ РїРµСЂРµРјРµСЃС‚РёС‚СЃСЏ РІРЅРёР·
     with ObjectColorCurr do
-      // если объект виден
+      // РµСЃР»Рё РѕР±СЉРµРєС‚ РІРёРґРµРЅ
       if Visible then
         for x := 0 to Width - 1 do
           for y := 0 to Height - 1 do
-            // если в данной ячейке массива есть панель
+            // РµСЃР»Рё РІ РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ РјР°СЃСЃРёРІР° РµСЃС‚СЊ РїР°РЅРµР»СЊ
             if PanelArray[x, y] = true then begin
               cX := Left + x;
               cY := Top  + y + 1;
@@ -411,24 +412,24 @@ procedure TFormTetris.MoweObjectColor(mw: Byte);
               end;
               if FormPanelColor[cX, cY].Visible then
               begin
-                // "Падающая фигура" не может опуститься ниже
+                // "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РЅРµ РјРѕР¶РµС‚ РѕРїСѓСЃС‚РёС‚СЊСЃСЏ РЅРёР¶Рµ
                 CanMowe := false;
-                //проверим, а есть-ли место под фигуру чтобы её зафиксировать...
+                //РїСЂРѕРІРµСЂРёРј, Р° РµСЃС‚СЊ-Р»Рё РјРµСЃС‚Рѕ РїРѕРґ С„РёРіСѓСЂСѓ С‡С‚РѕР±С‹ РµС‘ Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ...
                 if cY = 0 then
                   GameOver := true;
                 break;
               end;
             end;
-    // результативное действие с фигурой
+    // СЂРµР·СѓР»СЊС‚Р°С‚РёРІРЅРѕРµ РґРµР№СЃС‚РІРёРµ СЃ С„РёРіСѓСЂРѕР№
     if ObjectColorCurr.Visible and not GameOver then
       if CanMowe then
       begin
-        // перемещаем объект на ячейку вниз
+        // РїРµСЂРµРјРµС‰Р°РµРј РѕР±СЉРµРєС‚ РЅР° СЏС‡РµР№РєСѓ РІРЅРёР·
         with ObjectColorCurr do
           inc(Top);
       end else
       begin
-        // замораживаем объект
+        // Р·Р°РјРѕСЂР°Р¶РёРІР°РµРј РѕР±СЉРµРєС‚
         FreezeObject;
       end;
   end;
@@ -439,17 +440,17 @@ procedure TFormTetris.MoweObjectColor(mw: Byte);
     cX, cY: ShortInt;
     CanMowe: Boolean;
   begin
-    CanMowe := true; // предположим, что объект может переместится в лево
+    CanMowe := true; // РїСЂРµРґРїРѕР»РѕР¶РёРј, С‡С‚Рѕ РѕР±СЉРµРєС‚ РјРѕР¶РµС‚ РїРµСЂРµРјРµСЃС‚РёС‚СЃСЏ РІ Р»РµРІРѕ
     with ObjectColorCurr do
-      // если объект виден
+      // РµСЃР»Рё РѕР±СЉРµРєС‚ РІРёРґРµРЅ
       if Visible then
         for x := 0 to Width - 1 do
           for y := 0 to Height - 1 do
-            // если в данной ячейке массива есть панель
+            // РµСЃР»Рё РІ РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ РјР°СЃСЃРёРІР° РµСЃС‚СЊ РїР°РЅРµР»СЊ
             if PanelArray[x, y] = true then begin
               cX := Left + x + n;
               cY := Top  + y;
-              // если фигуры выше граници, надо разрешить перемещать фигуру
+              // РµСЃР»Рё С„РёРіСѓСЂС‹ РІС‹С€Рµ РіСЂР°РЅРёС†Рё, РЅР°РґРѕ СЂР°Р·СЂРµС€РёС‚СЊ РїРµСЂРµРјРµС‰Р°С‚СЊ С„РёРіСѓСЂСѓ
               if cY < 0 then begin
                 cY := 0;
                 //cX := 0;
@@ -466,10 +467,10 @@ procedure TFormTetris.MoweObjectColor(mw: Byte);
                 break;
               end;
             end;
-    // результативное действие с фигурой
+    // СЂРµР·СѓР»СЊС‚Р°С‚РёРІРЅРѕРµ РґРµР№СЃС‚РІРёРµ СЃ С„РёРіСѓСЂРѕР№
     if CanMowe and ObjectColorCurr.Visible then
     begin
-      // перемещаем объект на ячейку вниз
+      // РїРµСЂРµРјРµС‰Р°РµРј РѕР±СЉРµРєС‚ РЅР° СЏС‡РµР№РєСѓ РІРЅРёР·
       with ObjectColorCurr do
         inc(Left, n);
     end;
@@ -477,34 +478,34 @@ procedure TFormTetris.MoweObjectColor(mw: Byte);
 
   procedure DroppingObject;
   begin
-    // опускаем фигуру как можно ниже
+    // РѕРїСѓСЃРєР°РµРј С„РёРіСѓСЂСѓ РєР°Рє РјРѕР¶РЅРѕ РЅРёР¶Рµ
     ObjectColorBuff := DropObject(ObjectColorCurr);
-    // считаем очки
+    // СЃС‡РёС‚Р°РµРј РѕС‡РєРё
     CurScore := IncScore(ObjectColorBuff.Top - ObjectColorCurr.Top, CurScore);
-    // переносим обратно из буфера фигур
+    // РїРµСЂРµРЅРѕСЃРёРј РѕР±СЂР°С‚РЅРѕ РёР· Р±СѓС„РµСЂР° С„РёРіСѓСЂ
     ObjectColorCurr := ObjectColorBuff;
-    // результативное действие с фигурой
+    // СЂРµР·СѓР»СЊС‚Р°С‚РёРІРЅРѕРµ РґРµР№СЃС‚РІРёРµ СЃ С„РёРіСѓСЂРѕР№
     FreezeObject;
   end;
 
   procedure ShowShandow;
   begin
     ObjectColorShad := ObjectColorCurr;
-    // опускаем тень фигуры как можно ниже
+    // РѕРїСѓСЃРєР°РµРј С‚РµРЅСЊ С„РёРіСѓСЂС‹ РєР°Рє РјРѕР¶РЅРѕ РЅРёР¶Рµ
     ObjectColorShad := DropObject(ObjectColorShad);
   end;
 
 begin
 
   case mw of
-  0: MoweDownObject; // перемещение "Падающая фигура" в низ
-  1: MoweLeftOrRightObject(-1); // перемещение "Падающая фигура" в лево
-  2: MoweLeftOrRightObject(1); // перемещение "Падающая фигура" в право
-  3: MoweDownObject; // перемещение "Падающая фигура" в низ
-  4: DroppingObject; // мгновенное приземление "падающая фигура" (бабах :) )
+  0: MoweDownObject; // РїРµСЂРµРјРµС‰РµРЅРёРµ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РІ РЅРёР·
+  1: MoweLeftOrRightObject(-1); // РїРµСЂРµРјРµС‰РµРЅРёРµ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РІ Р»РµРІРѕ
+  2: MoweLeftOrRightObject(1); // РїРµСЂРµРјРµС‰РµРЅРёРµ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РІ РїСЂР°РІРѕ
+  3: MoweDownObject; // РїРµСЂРµРјРµС‰РµРЅРёРµ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РІ РЅРёР·
+  4: DroppingObject; // РјРіРЅРѕРІРµРЅРЅРѕРµ РїСЂРёР·РµРјР»РµРЅРёРµ "РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" (Р±Р°Р±Р°С… :) )
   end;
 
-  ShowShandow; // перерисуем тень фигуры
+  ShowShandow; // РїРµСЂРµСЂРёСЃСѓРµРј С‚РµРЅСЊ С„РёРіСѓСЂС‹
 
 end;
 
@@ -525,18 +526,18 @@ begin
     case NumObj of
       0:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 2;  Top  := - Height;
         Width  := 3;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
         ClearArray(Width, Height);
-        // показываем, где находятся панели
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[0,0] := true;
         PanelArray[1,0] := true;
         PanelArray[1,1] := true;
         PanelArray[2,1] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 100;  R2 := 0; //156/56
           G1 := 143;  G2 := 43; //160/60
@@ -545,18 +546,18 @@ begin
       end;
       1:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 2;  Top  := - Height;
         Width  := 3;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
         ClearArray(Width, Height);
-        // показываем, где находятся панели
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[0,1] := true;
         PanelArray[1,1] := true;
         PanelArray[1,0] := true;
         PanelArray[2,0] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 104;  R2 := 4; //161/61
           G1 := 166;  G2 := 66; //198/98
@@ -565,18 +566,18 @@ begin
       end;
       2:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 2;  Top  := - Height;
         Width  := 3;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
         ClearArray(Width, Height);
-        // показываем, где находятся панели
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[1,0] := true;
         PanelArray[0,1] := true;
         PanelArray[1,1] := true;
         PanelArray[2,1] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 237;  R2 := 138; //247/147
           G1 := 128;  G2 := 28;  //176/76
@@ -585,18 +586,18 @@ begin
       end;
       3:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 2;  Top  := - Height;
         Width  := 2;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
-          {"квадрат" занимает все выделенное пространство, обнулять ненадо}
-        // показываем, где находятся панели
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
+          {"РєРІР°РґСЂР°С‚" Р·Р°РЅРёРјР°РµС‚ РІСЃРµ РІС‹РґРµР»РµРЅРЅРѕРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ, РѕР±РЅСѓР»СЏС‚СЊ РЅРµРЅР°РґРѕ}
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[0,0] := true;
         PanelArray[1,0] := true;
         PanelArray[0,1] := true;
         PanelArray[1,1] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 163;  R2 := 63; //198/98
           G1 := 133;  G2 := 33; //171/71
@@ -605,18 +606,18 @@ begin
       end;
       4:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 2;  Top  := - Height;
         Width  := 3;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
         ClearArray(Width, Height);
-        // показываем, где находятся панели
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[0,0] := true;
         PanelArray[1,0] := true;
         PanelArray[2,0] := true;
         PanelArray[2,1] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 160;  R2 := 60;  //166/66
           G1 := 101;  G2 := 1;   //161/61
@@ -625,18 +626,18 @@ begin
       end;
       5:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 2;  Top  := - Height;
         Width  := 3;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
         ClearArray(Width, Height);
-        // показываем, где находятся панели
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[0,0] := true;
         PanelArray[1,0] := true;
         PanelArray[2,0] := true;
         PanelArray[0,1] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 206;  R2 := 106; //159/59
           G1 := 110;  G2 := 10;  //209/109
@@ -645,18 +646,18 @@ begin
       end;
       6:
       begin
-        //требуемая размерность
+        //С‚СЂРµР±СѓРµРјР°СЏ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ
         Height := 1;  Top  := - Height;
         Width  := 4;  Left := (PanelColorSummW - Width) div 2;
         SetLength(PanelArray, Width, Height);
-        // обнуляем положение панелей
-          {"палка" занимает все выделенное пространство, обнулять ненадо}
-        // показываем, где находятся панели
+        // РѕР±РЅСѓР»СЏРµРј РїРѕР»РѕР¶РµРЅРёРµ РїР°РЅРµР»РµР№
+          {"РїР°Р»РєР°" Р·Р°РЅРёРјР°РµС‚ РІСЃРµ РІС‹РґРµР»РµРЅРЅРѕРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ, РѕР±РЅСѓР»СЏС‚СЊ РЅРµРЅР°РґРѕ}
+        // РїРѕРєР°Р·С‹РІР°РµРј, РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїР°РЅРµР»Рё
         PanelArray[0,0] := true;
         PanelArray[1,0] := true;
         PanelArray[2,0] := true;
         PanelArray[3,0] := true;
-        //цветовая палитра
+        //С†РІРµС‚РѕРІР°СЏ РїР°Р»РёС‚СЂР°
         with PanelColor do begin
           R1 := 137;  R2 := 37;  //243/143
           G1 := 122;  G2 := 22;  //160/60
@@ -673,7 +674,7 @@ procedure TFormTetris.PaintingAllPanels;
   var
     y: integer;
   begin
-    // заливаем градиентом
+    // Р·Р°Р»РёРІР°РµРј РіСЂР°РґРёРµРЅС‚РѕРј
     for y:=0 to cHeight do
       with ScrBitmap.Canvas do
       begin
@@ -683,7 +684,7 @@ procedure TFormTetris.PaintingAllPanels;
         MoveTo(cLeft + 1, cTop + y + 1);
         LineTo(cLeft + cWidth + 1, cTop + y + 1);
       end;
-    // рисуем внешнюю рамку
+    // СЂРёСЃСѓРµРј РІРЅРµС€РЅСЋСЋ СЂР°РјРєСѓ
     ScrBitmap.Canvas.Pen.Color := RGB(R2, G2, B2);
     ScrBitmap.Canvas.Moveto(cLeft, cTop + 1);
     ScrBitmap.Canvas.LineTo(cLeft + 1, cTop);
@@ -706,26 +707,26 @@ var
   x, y, iW, iH: Byte;
   cTop, cLeft: integer;
 begin
-  // перерисовка зафиксированных панелей
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹С… РїР°РЅРµР»РµР№
   for x := 0 to PanelColorSummW - 1 do
     for y := 0 to PanelColorSummH - 1 do
       if FormPanelColor[x,y].Visible then
       begin
-        // поправка на положение текущей панели
+        // РїРѕРїСЂР°РІРєР° РЅР° РїРѕР»РѕР¶РµРЅРёРµ С‚РµРєСѓС‰РµР№ РїР°РЅРµР»Рё
         cLeft := FrameDepth + PanelColorW * x + x;
         cTop  := FrameDepth + PanelColorH * y + y;
-        // рисуем зафиксированные панельки
+        // СЂРёСЃСѓРµРј Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹Рµ РїР°РЅРµР»СЊРєРё
         with FormPanelColor[x,y].PanelColor do
           PaintingPanel(R1, G1, B1, R2, G2, B2,
                         cLeft, cTop,
                         PanelColorH - 3, PanelColorW - 2);
       end;
 
-  // перерисовка "следующая фигура"
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° "СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
   cTop  := FrameDepth + (PanelColorH + 1) * 9;
   cLeft := FrameDepth * 3 + (PanelColorW + 1) * (PanelColorSummW + 1);
   with ObjectColorNext do
-    if ObjectColorNext.Visible then // если объект создан... то , рисуем тогда :)
+    if ObjectColorNext.Visible then // РµСЃР»Рё РѕР±СЉРµРєС‚ СЃРѕР·РґР°РЅ... С‚Рѕ , СЂРёСЃСѓРµРј С‚РѕРіРґР° :)
       for x := 0 to Width - 1 do
         for y := 0 to Height - 1 do
           if PanelArray[x,y] = true then
@@ -735,11 +736,11 @@ begin
                             cTop  + (y + (4 - ObjectColorNext.Height) div 2) * (PanelColorH + 1),
                             PanelColorH - 3, PanelColorW - 2);
 
-  // перерисовка "захваченная фигура"
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° "Р·Р°С…РІР°С‡РµРЅРЅР°СЏ С„РёРіСѓСЂР°"
   cTop  := FrameDepth + (PanelColorH + 1) * 15;
   cLeft := FrameDepth * 3 + (PanelColorW + 1) * (PanelColorSummW + 1);
   with ObjectColorCapt do
-    if ObjectColorCapt.Visible then // если объект создан... то , рисуем тогда :)
+    if ObjectColorCapt.Visible then // РµСЃР»Рё РѕР±СЉРµРєС‚ СЃРѕР·РґР°РЅ... С‚Рѕ , СЂРёСЃСѓРµРј С‚РѕРіРґР° :)
       for x := 0 to Width - 1 do
         for y := 0 to Height - 1 do
           if PanelArray[x,y] = true then
@@ -749,11 +750,11 @@ begin
                             cTop  + (y + (4 - ObjectColorCapt.Height) div 2) * (PanelColorH + 1),
                             PanelColorH - 3, PanelColorW - 2);
   {
-  // перерисовка тени падающих объектов
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° С‚РµРЅРё РїР°РґР°СЋС‰РёС… РѕР±СЉРµРєС‚РѕРІ
   cTop  := FrameDepth + (PanelColorH + 1) * ObjectColorShad.Top;
   cLeft := FrameDepth + (PanelColorW + 1) * ObjectColorShad.Left;
   with ObjectColorShad do
-    if Visible then // если объект создан... то , рисуем тогда :)
+    if Visible then // РµСЃР»Рё РѕР±СЉРµРєС‚ СЃРѕР·РґР°РЅ... С‚Рѕ , СЂРёСЃСѓРµРј С‚РѕРіРґР° :)
       for x := 0 to Width - 1 do
         for y := 0 to Height - 1 do
           if PanelArray[x,y] = true then
@@ -768,11 +769,11 @@ begin
                             cTop  + y * (PanelColorH + 1),
                             PanelColorH - 3, PanelColorW - 2);
   }
-  // перерисовка падающих объектов
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° РїР°РґР°СЋС‰РёС… РѕР±СЉРµРєС‚РѕРІ
   cTop  := FrameDepth + (PanelColorH + 1) * ObjectColorCurr.Top;
   cLeft := FrameDepth + (PanelColorW + 1) * ObjectColorCurr.Left;
   with ObjectColorCurr do
-    if Visible then // если объект создан... то , рисуем тогда :)
+    if Visible then // РµСЃР»Рё РѕР±СЉРµРєС‚ СЃРѕР·РґР°РЅ... С‚Рѕ , СЂРёСЃСѓРµРј С‚РѕРіРґР° :)
       for x := 0 to Width - 1 do
         for y := 0 to Height - 1 do
           if PanelArray[x,y] = true then
@@ -782,7 +783,7 @@ begin
                             cTop  + y * (PanelColorH + 1),
                             PanelColorH - 3, PanelColorW - 2);
 
-  // перерисовка эффекта стирания линии
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° СЌС„С„РµРєС‚Р° СЃС‚РёСЂР°РЅРёСЏ Р»РёРЅРёРё
   if yNumLines > 0 then
     for x := 0 to PanelColorSummW - 1 do
     begin
@@ -793,14 +794,14 @@ begin
           for iH := 0 to PanelColorH - 1 do
           begin
             with PixelToClear[x, y, iW, iH] do begin
-              // рисуем пиксель
+              // СЂРёСЃСѓРµРј РїРёРєСЃРµР»СЊ
               PaintingPixel(R1,G1,B1,cLeft,cTop);
-              // пересчитываем положение пикселя
+              // РїРµСЂРµСЃС‡РёС‚С‹РІР°РµРј РїРѕР»РѕР¶РµРЅРёРµ РїРёРєСЃРµР»СЏ
               inc(cTop, mY);
               inc(cLeft, mX);
-              // увеличиваем притяжение
+              // СѓРІРµР»РёС‡РёРІР°РµРј РїСЂРёС‚СЏР¶РµРЅРёРµ
               if mY<12 then inc(mY);
-              // уменьшаем кинетическую энергию
+              // СѓРјРµРЅСЊС€Р°РµРј РєРёРЅРµС‚РёС‡РµСЃРєСѓСЋ СЌРЅРµСЂРіРёСЋ
               if not mX=0 then
                 if mx<0 then
                   inc(mX)
@@ -817,7 +818,7 @@ procedure TFormTetris.RefreshBackGround;
 var
   X, Y: word;
 begin
-  // перерисовка всего фона
+  // РїРµСЂРµСЂРёСЃРѕРІРєР° РІСЃРµРіРѕ С„РѕРЅР°
   for X := 0 to FormW - 1 do
     for Y := 0 to FormH - 1 do
       TBig(Scr^)[X + Y * FormW] := RGB(GetRValue(CanvaGamePanel[X, Y]),
@@ -897,15 +898,15 @@ var
   MyLeft: Word;
 begin
   for i := 1 to 8 do begin
-    // поправка на положение цифры
+    // РїРѕРїСЂР°РІРєР° РЅР° РїРѕР»РѕР¶РµРЅРёРµ С†РёС„СЂС‹
     MyLeft := cLeft + (i - 1) * 15;
-    // узнаем какая цифра
+    // СѓР·РЅР°РµРј РєР°РєР°СЏ С†РёС„СЂР°
     n := StrToInt(sNumber[i]);
     if (n = 0) and (VisibleZero = false) and (i <= 8 - Length(IntToStr(StrToInt(sNumber)))) then
     begin
 
     end else
-    // отрисовываем требуемую
+    // РѕС‚СЂРёСЃРѕРІС‹РІР°РµРј С‚СЂРµР±СѓРµРјСѓСЋ
     case n of
       0:
       begin
@@ -995,35 +996,35 @@ procedure TFormTetris.PaintGrid;
   procedure NewGrid(cTop, cLeft, cHeight, cWidth, cMaxH, cMaxW: Word);
   var
     R,G,B: Byte;
-    X, Y, I: word; // счетчики
+    X, Y, I: word; // СЃС‡РµС‚С‡РёРєРё
     cMyLeft, cMyTop: Word;
   begin
     inc(cMaxW, -1); inc (cMaxH, -1);
     R := 138; G := R; B := R;
-    // по вертикали
+    // РїРѕ РІРµСЂС‚РёРєР°Р»Рё
     for X := 0 to cMaxW do
       begin
-        // поправка на положение текущей панели
+        // РїРѕРїСЂР°РІРєР° РЅР° РїРѕР»РѕР¶РµРЅРёРµ С‚РµРєСѓС‰РµР№ РїР°РЅРµР»Рё
         cMyLeft := cLeft + (PanelColorW + 1) * X;
-        // рисуем линию
+        // СЂРёСЃСѓРµРј Р»РёРЅРёСЋ
         for I := cTop to cTop + cHeight - 1 do
           CanvaGamePanel[cMyLeft, I] := RGB(B, G, R);
-        // если цикл завершен
+        // РµСЃР»Рё С†РёРєР» Р·Р°РІРµСЂС€РµРЅ
         if X = cMaxW then
-          // рисуем завершающую линию
+          // СЂРёСЃСѓРµРј Р·Р°РІРµСЂС€Р°СЋС‰СѓСЋ Р»РёРЅРёСЋ
           for I := cTop to cTop + cHeight - 1 do
             CanvaGamePanel[cMyLeft + PanelColorW + 1, I] := RGB(B, G, R);
       end;
-    // по горизонтали
+    // РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
     for Y := 0 to cMaxH do
       begin
-        // поправка на положение текущей панели
+        // РїРѕРїСЂР°РІРєР° РЅР° РїРѕР»РѕР¶РµРЅРёРµ С‚РµРєСѓС‰РµР№ РїР°РЅРµР»Рё
         cMyTop  := cTop + (PanelColorH + 1) * Y;
-        // если цикл завершен
+        // РµСЃР»Рё С†РёРєР» Р·Р°РІРµСЂС€РµРЅ
         for I := cLeft to cLeft + cWidth - 1 do
           CanvaGamePanel[I, cMyTop] := RGB(B, G, R);
         if Y = cMaxH then
-          // рисуем завершающую линию
+          // СЂРёСЃСѓРµРј Р·Р°РІРµСЂС€Р°СЋС‰СѓСЋ Р»РёРЅРёСЋ
           for I := cLeft to cLeft + cWidth - 1 do
             CanvaGamePanel[I, cMyTop + (PanelColorH + 1)] := RGB(B, G, R);
       end;
@@ -1032,7 +1033,7 @@ procedure TFormTetris.PaintGrid;
 var
   cTop, cLeft, cHeight, cWidth, cMaxH, cMaxW: Word;
 begin
-  // рисуем сетку на PanelGame (игровое поле)
+  // СЂРёСЃСѓРµРј СЃРµС‚РєСѓ РЅР° PanelGame (РёРіСЂРѕРІРѕРµ РїРѕР»Рµ)
   cTop    := FrameDepth - 1;
   cLeft   := FrameDepth - 1;
   cHeight := (PanelColorH + 1) * PanelColorSummH;
@@ -1041,7 +1042,7 @@ begin
   cMaxW   := PanelColorSummW;
   NewGrid(cTop, cLeft, cHeight, cWidth, cMaxH, cMaxW);
 
-  // рисуем 1-ю сетку на PanelInfo (следующая фигура)
+  // СЂРёСЃСѓРµРј 1-СЋ СЃРµС‚РєСѓ РЅР° PanelInfo (СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°)
   cTop    := FrameDepth + (PanelColorH + 1) * 9 - 1;
   cLeft   := FrameDepth * 3 + (PanelColorW + 1) * (PanelColorSummW + 1) - 1;
   cHeight := (PanelColorH + 1) * 4;
@@ -1050,7 +1051,7 @@ begin
   cMaxW   := 4;
   NewGrid(cTop, cLeft, cHeight, cWidth, cMaxH, cMaxW);
 
-  // рисуем 2-ю сетку на PanelInfo (захваченная фигура)
+  // СЂРёСЃСѓРµРј 2-СЋ СЃРµС‚РєСѓ РЅР° PanelInfo (Р·Р°С…РІР°С‡РµРЅРЅР°СЏ С„РёРіСѓСЂР°)
   cTop    := FrameDepth + (PanelColorH + 1) * 15 - 1;
   cLeft   := FrameDepth * 3 + (PanelColorW + 1) * (PanelColorSummW + 1) - 1;
   cHeight := (PanelColorH + 1) * 4;
@@ -1062,12 +1063,12 @@ end;
 
 procedure TFormTetris.FillBackGround;
 var
-  X, Y: word; // счетчики
-  R, G, B: Byte; // храним цветность
-  PanelGameShiftX: word; // смещение по оси Х
+  X, Y: word; // СЃС‡РµС‚С‡РёРєРё
+  R, G, B: Byte; // С…СЂР°РЅРёРј С†РІРµС‚РЅРѕСЃС‚СЊ
+  PanelGameShiftX: word; // СЃРјРµС‰РµРЅРёРµ РїРѕ РѕСЃРё РҐ
 begin
 
-  // верхняя рамка
+  // РІРµСЂС…РЅСЏСЏ СЂР°РјРєР°
   R := 64; G := R; B := R;
   for Y := 0 to FrameDepth - 1 do
   begin
@@ -1076,7 +1077,7 @@ begin
     Inc(R, 3); Inc(G, 3); Inc(B, 3);
   end;
 
-  // правая рамка
+  // РїСЂР°РІР°СЏ СЂР°РјРєР°
   R := 64; G := R; B := R;
   for X := FormW - 1 downto FormW - FrameDepth do
   begin
@@ -1085,7 +1086,7 @@ begin
     Inc(R, 3); Inc(G, 3); Inc(B, 3);
   end;
 
-  // нижняя рамка
+  // РЅРёР¶РЅСЏСЏ СЂР°РјРєР°
   R := 64; G := R; B := R;
   for Y := FormH - 1 downto FormH - FrameDepth - 1 do
   begin
@@ -1094,7 +1095,7 @@ begin
     Inc(R, 3); Inc(G, 3); Inc(B, 3);
   end;
 
-  // левая рамка
+  // Р»РµРІР°СЏ СЂР°РјРєР°
   R := 64; G := R; B := R;
   for X := 0 to FrameDepth - 1 do
   begin
@@ -1103,7 +1104,7 @@ begin
     Inc(R, 3); Inc(G, 3); Inc(B, 3);
   end;
 
-  // рамка по середине (правая)
+  // СЂР°РјРєР° РїРѕ СЃРµСЂРµРґРёРЅРµ (РїСЂР°РІР°СЏ)
   R := 64; G := R; B := R;
   PanelGameShiftX := PanelGameW + FrameDepth * 2;
   for X := PanelGameShiftX to PanelGameShiftX + FrameDepth - 1 do
@@ -1113,7 +1114,7 @@ begin
     Inc(R, 3); Inc(G, 3); Inc(B, 3);
   end;
 
-  // рамка по середине (левая)
+  // СЂР°РјРєР° РїРѕ СЃРµСЂРµРґРёРЅРµ (Р»РµРІР°СЏ)
   R := 64; G := R; B := R;
   PanelGameShiftX := PanelGameW + FrameDepth * 2;
   for X := PanelGameShiftX - 1 downto PanelGameShiftX - FrameDepth - 1 do
@@ -1123,7 +1124,7 @@ begin
     Inc(R, 3); Inc(G, 3); Inc(B, 3);
   end;
 
-  // заполняем оставшиеся пустые области
+  // Р·Р°РїРѕР»РЅСЏРµРј РѕСЃС‚Р°РІС€РёРµСЃСЏ РїСѓСЃС‚С‹Рµ РѕР±Р»Р°СЃС‚Рё
   PanelGameShiftX := PanelGameW + FrameDepth;
   for X := FrameDepth - 1 to PanelGameShiftX - 1 do
     for Y := FrameDepth - 1 to FormH - FrameDepth - 1 do
@@ -1137,36 +1138,36 @@ end;
 
 procedure TFormTetris.SetLengthCanvaGamePanel;
 begin
-  SetLength(CanvaGamePanel, FormW, FormH); // новый размер канвы
-  FillBackGround; // перезаливка фона
-  PaintGrid; // перерисовка сетки
+  SetLength(CanvaGamePanel, FormW, FormH); // РЅРѕРІС‹Р№ СЂР°Р·РјРµСЂ РєР°РЅРІС‹
+  FillBackGround; // РїРµСЂРµР·Р°Р»РёРІРєР° С„РѕРЅР°
+  PaintGrid; // РїРµСЂРµСЂРёСЃРѕРІРєР° СЃРµС‚РєРё
 end;
 
 procedure TFormTetris.WriteText;
 begin
   SetBkMode(ScrBitmap.Canvas.Handle, TRANSPARENT);
   ScrBitmap.Canvas.Font.Size := 16;
-  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 48, 'Очки:');
+  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 48, 'РћС‡РєРё:');
   SetBkMode(ScrBitmap.Canvas.Handle, OPAQUE);
 
   SetBkMode(ScrBitmap.Canvas.Handle, TRANSPARENT);
   ScrBitmap.Canvas.Font.Size := 16;
-  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 96, 'Уровень:');
+  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 96, 'РЈСЂРѕРІРµРЅСЊ:');
   SetBkMode(ScrBitmap.Canvas.Handle, OPAQUE);
 
   SetBkMode(ScrBitmap.Canvas.Handle, TRANSPARENT);
   ScrBitmap.Canvas.Font.Size := 16;
-  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 144, 'Линии:');
+  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 144, 'Р›РёРЅРёРё:');
   SetBkMode(ScrBitmap.Canvas.Handle, OPAQUE);
 
   SetBkMode(ScrBitmap.Canvas.Handle, TRANSPARENT);
   ScrBitmap.Canvas.Font.Size := 16;
-  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 216, 'Следующая:');
+  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 216, 'РЎР»РµРґСѓСЋС‰Р°СЏ:');
   SetBkMode(ScrBitmap.Canvas.Handle, OPAQUE);
 
   SetBkMode(ScrBitmap.Canvas.Handle, TRANSPARENT);
   ScrBitmap.Canvas.Font.Size := 16;
-  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 368, 'Захваченная:');
+  ScrBitmap.Canvas.TextOut(PanelGameW + FrameDepth * 2 + 36, 368, 'Р—Р°С…РІР°С‡РµРЅРЅР°СЏ:');
   SetBkMode(ScrBitmap.Canvas.Handle, OPAQUE);
 end;
 
@@ -1201,33 +1202,33 @@ procedure TFormTetris.TimerFPSTimer(Sender: TObject);
     ScrBitmap.Canvas.TextOut(x1 + 16, y1 + 8, txt);
 
     ScrBitmap.Canvas.Font.Size := 12;
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 40,  'ESC    - Закрыть игру');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 60,  'ENTER  - Старт/Рестарт игры');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 80,  'DEL    - захват фигуры');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 100, 'PAUSE  - Пауза/Продолжить');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 120, 'Вверх  - поворот фигуры');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 140, 'Вниз   - опустить фигуру');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 160, 'Влево  - переместить влево');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 180, 'Вправо - переместить вправо');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 200, 'Пробел - бросить фигуру');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 40,  'ESC    - Р—Р°РєСЂС‹С‚СЊ РёРіСЂСѓ');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 60,  'ENTER  - РЎС‚Р°СЂС‚/Р РµСЃС‚Р°СЂС‚ РёРіСЂС‹');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 80,  'DEL    - Р·Р°С…РІР°С‚ С„РёРіСѓСЂС‹');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 100, 'PAUSE  - РџР°СѓР·Р°/РџСЂРѕРґРѕР»Р¶РёС‚СЊ');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 120, 'Р’РІРµСЂС…  - РїРѕРІРѕСЂРѕС‚ С„РёРіСѓСЂС‹');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 140, 'Р’РЅРёР·   - РѕРїСѓСЃС‚РёС‚СЊ С„РёРіСѓСЂСѓ');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 160, 'Р’Р»РµРІРѕ  - РїРµСЂРµРјРµСЃС‚РёС‚СЊ РІР»РµРІРѕ');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 180, 'Р’РїСЂР°РІРѕ - РїРµСЂРµРјРµСЃС‚РёС‚СЊ РІРїСЂР°РІРѕ');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 200, 'РџСЂРѕР±РµР» - Р±СЂРѕСЃРёС‚СЊ С„РёРіСѓСЂСѓ');
   end;
 
 begin
-  RefreshBackGround; // перерисовываем фон
-  PaintingAllPanels; // рисуем объекты
-  ReShowScore; // отобразим циферблаты и очки
-  WriteText; // отобразим текст
-  // если игра завершена
+  RefreshBackGround; // РїРµСЂРµСЂРёСЃРѕРІС‹РІР°РµРј С„РѕРЅ
+  PaintingAllPanels; // СЂРёСЃСѓРµРј РѕР±СЉРµРєС‚С‹
+  ReShowScore; // РѕС‚РѕР±СЂР°Р·РёРј С†РёС„РµСЂР±Р»Р°С‚С‹ Рё РѕС‡РєРё
+  WriteText; // РѕС‚РѕР±СЂР°Р·РёРј С‚РµРєСЃС‚
+  // РµСЃР»Рё РёРіСЂР° Р·Р°РІРµСЂС€РµРЅР°
   if GameOver then
   begin
-    // выводим форму о завершении игры
-    PainPanelInfo('Игра окончена...');
+    // РІС‹РІРѕРґРёРј С„РѕСЂРјСѓ Рѕ Р·Р°РІРµСЂС€РµРЅРёРё РёРіСЂС‹
+    PainPanelInfo('РРіСЂР° РѕРєРѕРЅС‡РµРЅР°...');
   end else if CurrGamePause then
   begin
-    // выводим форму о завершении игры
-    PainPanelInfo('Пауза');
+    // РІС‹РІРѕРґРёРј С„РѕСЂРјСѓ Рѕ Р·Р°РІРµСЂС€РµРЅРёРё РёРіСЂС‹
+    PainPanelInfo('РџР°СѓР·Р°');
   end;
-  FormPaint(Self); // перерисовываем канву
+  FormPaint(Self); // РїРµСЂРµСЂРёСЃРѕРІС‹РІР°РµРј РєР°РЅРІСѓ
 end;
 
 procedure TFormTetris.TimerGravityTimer(Sender: TObject);
@@ -1256,9 +1257,9 @@ procedure TFormTetris.SetLengthFormPanelColor;
 var
   x, y: Byte;
 begin
-  // устанавливаем размер массива
+  // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°
   SetLength(FormPanelColor, PanelColorSummW, PanelColorSummH);
-  // обнуляем каждый элемент
+  // РѕР±РЅСѓР»СЏРµРј РєР°Р¶РґС‹Р№ СЌР»РµРјРµРЅС‚
   for x := 0 to PanelColorSummW - 1 do
     for y := 0 to PanelColorSummH - 1 do
       with FormPanelColor[x,y] do begin
@@ -1279,18 +1280,18 @@ begin
   CurLines := '00000000';
   yNumLines := 0;
   CurrGamePause := false;
-  // размеры клиентской формы
+  // СЂР°Р·РјРµСЂС‹ РєР»РёРµРЅС‚СЃРєРѕР№ С„РѕСЂРјС‹
   ClientHeight := FormH;
   ClientWidth  := FormW;
-  // указываем размерность BitMap'а
+  // СѓРєР°Р·С‹РІР°РµРј СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ BitMap'Р°
   CreateScrBitmap(ClientWidth, ClientHeight);
-  // указываем размерность массива пикселей и рисуем фон
+  // СѓРєР°Р·С‹РІР°РµРј СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ РјР°СЃСЃРёРІР° РїРёРєСЃРµР»РµР№ Рё СЂРёСЃСѓРµРј С„РѕРЅ
   SetLengthCanvaGamePanel;
-  // присваиваем полученный фон канве
+  // РїСЂРёСЃРІР°РёРІР°РµРј РїРѕР»СѓС‡РµРЅРЅС‹Р№ С„РѕРЅ РєР°РЅРІРµ
   RefreshBackGround;
-  // выделяем память под массив панелей
+  // РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ РјР°СЃСЃРёРІ РїР°РЅРµР»РµР№
   SetLengthFormPanelColor;
-  // выделим памяьб под пиксели рассыпания панелей
+  // РІС‹РґРµР»РёРј РїР°РјСЏСЊР± РїРѕРґ РїРёРєСЃРµР»Рё СЂР°СЃСЃС‹РїР°РЅРёСЏ РїР°РЅРµР»РµР№
   SetLength(PixelToClear, PanelColorSummW, 4, PanelColorW, PanelColorH);
 end;
 
@@ -1300,40 +1301,40 @@ begin
   CurLevel := '00000001';
   CurLines := '00000000';
   CurrGamePause := false;
-  // обнуляем все фигуры
-  ObjectColorCurr.Visible := false; // текущая падающая фигура
-  ObjectColorBuff.Visible := false; // переменная для помещения объекта в буфер обмена
-  ObjectColorCapt.Visible := false; // фигура в захвате
-  ObjectColorShad.Visible := false; // тень падающей фигуры (показывает, куда упадет падающая фигура если её бросить)
-  ObjectColorNext.Visible := false; // следующая фигура
-  // выделяем память под массив панелей (очищаем массив)
+  // РѕР±РЅСѓР»СЏРµРј РІСЃРµ С„РёРіСѓСЂС‹
+  ObjectColorCurr.Visible := false; // С‚РµРєСѓС‰Р°СЏ РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°
+  ObjectColorBuff.Visible := false; // РїРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ РїРѕРјРµС‰РµРЅРёСЏ РѕР±СЉРµРєС‚Р° РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°
+  ObjectColorCapt.Visible := false; // С„РёРіСѓСЂР° РІ Р·Р°С…РІР°С‚Рµ
+  ObjectColorShad.Visible := false; // С‚РµРЅСЊ РїР°РґР°СЋС‰РµР№ С„РёРіСѓСЂС‹ (РїРѕРєР°Р·С‹РІР°РµС‚, РєСѓРґР° СѓРїР°РґРµС‚ РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР° РµСЃР»Рё РµС‘ Р±СЂРѕСЃРёС‚СЊ)
+  ObjectColorNext.Visible := false; // СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°
+  // РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ РјР°СЃСЃРёРІ РїР°РЅРµР»РµР№ (РѕС‡РёС‰Р°РµРј РјР°СЃСЃРёРІ)
   SetLengthFormPanelColor;
-  // генерируем "следующая фигура"
+  // РіРµРЅРµСЂРёСЂСѓРµРј "СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
   CreateNextObjectColor(random(7));
-  // передаем полученную фигуру в "падающая фигура"
+  // РїРµСЂРµРґР°РµРј РїРѕР»СѓС‡РµРЅРЅСѓСЋ С„РёРіСѓСЂСѓ РІ "РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°"
   ObjectColorCurr := ObjectColorNext;
-  // генерируем "следующая фигура"
+  // РіРµРЅРµСЂРёСЂСѓРµРј "СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
   CreateNextObjectColor(random(7));
-  // игра началась
+  // РёРіСЂР° РЅР°С‡Р°Р»Р°СЃСЊ
   GameOver := false;
 end;
 
 procedure TFormTetris.ChangeObjectColor;
 begin
-  // поместим падающую фигуру в буфер обмена фигур
+  // РїРѕРјРµСЃС‚РёРј РїР°РґР°СЋС‰СѓСЋ С„РёРіСѓСЂСѓ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР° С„РёРіСѓСЂ
   ObjectColorBuff := ObjectColorCurr;
-  // если уже что-то есть в "Захваченная фигура"
+  // РµСЃР»Рё СѓР¶Рµ С‡С‚Рѕ-С‚Рѕ РµСЃС‚СЊ РІ "Р—Р°С…РІР°С‡РµРЅРЅР°СЏ С„РёРіСѓСЂР°"
   if ObjectColorCapt.Visible then
   begin
-    // перемещаем в "Падающая фигура"
+    // РїРµСЂРµРјРµС‰Р°РµРј РІ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°"
     ObjectColorCurr := ObjectColorCapt;
-    // в "Захваченная фигура" передаем из буфера обмена фигур
+    // РІ "Р—Р°С…РІР°С‡РµРЅРЅР°СЏ С„РёРіСѓСЂР°" РїРµСЂРµРґР°РµРј РёР· Р±СѓС„РµСЂР° РѕР±РјРµРЅР° С„РёРіСѓСЂ
     ObjectColorCapt := ObjectColorBuff;
   end else
   begin
-    // получаем новую "Падающая фигура" из "Следующая фигура"
+    // РїРѕР»СѓС‡Р°РµРј РЅРѕРІСѓСЋ "РџР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РёР· "РЎР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
     ObjectColorCurr := ObjectColorNext;
-    // генерируем "следующая фигура"
+    // РіРµРЅРµСЂРёСЂСѓРµРј "СЃР»РµРґСѓСЋС‰Р°СЏ С„РёРіСѓСЂР°"
     CreateNextObjectColor(random(7));
   end;
   ObjectColorCapt := ObjectColorBuff;
@@ -1347,23 +1348,23 @@ procedure TFormTetris.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   case key of
-    VK_ESCAPE : Close; // 'ESC   - Закрыть игру'
-    VK_RETURN : ReStartGame; // 'ENTER - Старт/Рестарт игры
-    VK_LEFT   : if not GameOver and not CurrGamePause then MoweObjectColor(1); //'Влево  - переместить влево'
-    VK_RIGHT  : if not GameOver and not CurrGamePause then MoweObjectColor(2); //'Вправо - переместить вправо'
+    VK_ESCAPE : Close; // 'ESC   - Р—Р°РєСЂС‹С‚СЊ РёРіСЂСѓ'
+    VK_RETURN : ReStartGame; // 'ENTER - РЎС‚Р°СЂС‚/Р РµСЃС‚Р°СЂС‚ РёРіСЂС‹
+    VK_LEFT   : if not GameOver and not CurrGamePause then MoweObjectColor(1); //'Р’Р»РµРІРѕ  - РїРµСЂРµРјРµСЃС‚РёС‚СЊ РІР»РµРІРѕ'
+    VK_RIGHT  : if not GameOver and not CurrGamePause then MoweObjectColor(2); //'Р’РїСЂР°РІРѕ - РїРµСЂРµРјРµСЃС‚РёС‚СЊ РІРїСЂР°РІРѕ'
     VK_DOWN   : if not GameOver and not CurrGamePause then
                 begin
-                  MoweObjectColor(3); //'Вниз   - опустить фигуру'
-                  CurScore := IncScore(1, CurScore); //увеличим очки на 1
+                  MoweObjectColor(3); //'Р’РЅРёР·   - РѕРїСѓСЃС‚РёС‚СЊ С„РёРіСѓСЂСѓ'
+                  CurScore := IncScore(1, CurScore); //СѓРІРµР»РёС‡РёРј РѕС‡РєРё РЅР° 1
                 end;
-    VK_SPACE  : if not GameOver and not CurrGamePause then MoweObjectColor(4); //'Пробел - бросить фигуру'
-    VK_DELETE : if not GameOver and not CurrGamePause then //'X - захват фигуры'
+    VK_SPACE  : if not GameOver and not CurrGamePause then MoweObjectColor(4); //'РџСЂРѕР±РµР» - Р±СЂРѕСЃРёС‚СЊ С„РёРіСѓСЂСѓ'
+    VK_DELETE : if not GameOver and not CurrGamePause then //'X - Р·Р°С…РІР°С‚ С„РёРіСѓСЂС‹'
                 begin
-                  ChangeObjectColor;  //переместить "падающая фигура" в "захваченная фигура"
+                  ChangeObjectColor;  //РїРµСЂРµРјРµСЃС‚РёС‚СЊ "РїР°РґР°СЋС‰Р°СЏ С„РёРіСѓСЂР°" РІ "Р·Р°С…РІР°С‡РµРЅРЅР°СЏ С„РёРіСѓСЂР°"
                   MoweObjectColor(5);
                 end;
-    VK_UP     : if not GameOver and not CurrGamePause then TurnObjectColor(90); //'Вверх  - поворот фигуры'
-    VK_PAUSE  : if not GameOver then CurrGamePause := not CurrGamePause; //'P - Пауза/Продолжить'
+    VK_UP     : if not GameOver and not CurrGamePause then TurnObjectColor(90); //'Р’РІРµСЂС…  - РїРѕРІРѕСЂРѕС‚ С„РёРіСѓСЂС‹'
+    VK_PAUSE  : if not GameOver then CurrGamePause := not CurrGamePause; //'P - РџР°СѓР·Р°/РџСЂРѕРґРѕР»Р¶РёС‚СЊ'
     //90: if not GameOver and not CurrGamePause then TurnObjectColor(-90);
   end;
 end;

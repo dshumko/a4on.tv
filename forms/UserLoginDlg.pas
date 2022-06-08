@@ -4,9 +4,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, ActnList, Buttons, DBCtrlsEh, Mask, Grids, pngimage,
-  System.Actions, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Buttons, Vcl.Mask, Vcl.Grids,
+  Vcl.Imaging.pngimage,
+  DBCtrlsEh, PrjConst;
 
 {$IFDEF Scale4k}
 
@@ -72,7 +74,9 @@ implementation
 {$R *.DFM}
 
 uses
-  ShellApi, Commctrl, ShlObj, IniFiles, DBEditor, DM, MAIN, atrCmdUtils;
+  Winapi.ShellAPI, Winapi.CommCtrl, Winapi.ShlObj,
+  System.IniFiles,
+  DBEditor, DM, MAIN, atrCmdUtils;
 
 function LoginDialog(var ADatabaseName, AUserName, APassword: string): Boolean;
 var
@@ -294,15 +298,6 @@ end;
 
 procedure TUserLoginDialog.actLoginExecute(Sender: TObject);
 begin
-
-  // MessageBox(Handle, 'Неверно введена подсистема.', 'Внимание', MB_OK or MB_ICONEXCLAMATION);
-  // edSubSystem.SetFocus;
-  //
-  // MessageBox(Handle, 'Неверно введен пользователь.', 'Внимание', MB_OK or MB_ICONEXCLAMATION);
-  // edUser.SetFocus;
-  //
-  // MessageBox(Handle, 'Неверно введен пароль.', 'Внимание', MB_OK or MB_ICONEXCLAMATION);
-  // edPassword.SetFocus;
   ModalResult := mrOk;
 end;
 

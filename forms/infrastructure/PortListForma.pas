@@ -1,15 +1,16 @@
-unit PortListForma;
+п»їunit PortListForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GridForma, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB,
-  MemTableDataEh, MemTableEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin,
+  GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
+  DBAxisGridsEh,
+  DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB, MemTableDataEh, MemTableEh;
 
 type
   TPortListForm = class(TGridForm)
@@ -58,8 +59,8 @@ var
 
 implementation
 
-uses MAIN, DM, EQPort, A4onTypeUnit, PortLinkForma, PrjConst,
-  PortFilter, FIBQuery, pFIBQuery, AtrCommon, AtrStrUtils;
+uses
+  MAIN, DM, EQPort, A4onTypeUnit, PortLinkForma, PrjConst, PortFilter, FIBQuery, pFIBQuery, AtrCommon, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -360,7 +361,7 @@ function TPortListForm.GenerateFilter: string;
   begin
     tmpSQL := '';
 
-    // Условие отбора по адресу
+    // РЈСЃР»РѕРІРёРµ РѕС‚Р±РѕСЂР° РїРѕ Р°РґСЂРµСЃСѓ
     if (dsFilter['CHECK_ADRESS'] = 1) then
     begin
       if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
@@ -408,23 +409,23 @@ function TPortListForm.GenerateFilter: string;
 
     if (not dsFilter.FieldByName('PROBLEM').IsNull) then
     begin
-      // 1 Линии свободны
-      // 2 Подключена одна точка
-      // 3 Линия подключена к откл. абоненту
+      // 1 Р›РёРЅРёРё СЃРІРѕР±РѕРґРЅС‹
+      // 2 РџРѕРґРєР»СЋС‡РµРЅР° РѕРґРЅР° С‚РѕС‡РєР°
+      // 3 Р›РёРЅРёСЏ РїРѕРґРєР»СЋС‡РµРЅР° Рє РѕС‚РєР». Р°Р±РѕРЅРµРЅС‚Сѓ
 
       case dsFilter['PROBLEM'] of
-        1: // 3 Линия подключена к откл. абоненту
+        1: // 3 Р›РёРЅРёСЏ РїРѕРґРєР»СЋС‡РµРЅР° Рє РѕС‚РєР». Р°Р±РѕРЅРµРЅС‚Сѓ
           tmpSQL := tmpSQL + '  and (exists(select l.Lan_Id from TV_LAN l' + #13#10 +
             'where l.Port = p.Port and l.Eq_Id = p.Eid' + #13#10 + 'and not exists(select sh.Customer_Id' + #13#10 +
             'from Subscr_hist sh inner join services s on (sh.Serv_Id = s.Service_Id)' + #13#10 +
             'where s.Business_Type in (1, 3)' + #13#10 + 'and sh.Customer_Id = l.Customer_Id' + #13#10 +
             'and current_date between sh.Date_From and sh.Date_To)))';
         {
-          3: // 1 Линии свободны
+          3: // 1 Р›РёРЅРёРё СЃРІРѕР±РѕРґРЅС‹
           tmpSQL := tmpSQL + ' and (not (c.Capacity is null or c.Capacity = 1)) ' +
           'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)';
 
-          2: // 2 Подключена одна точка
+          2: // 2 РџРѕРґРєР»СЋС‡РµРЅР° РѕРґРЅР° С‚РѕС‡РєР°
           tmpSQL := tmpSQL + ' and (not (c.Capacity is null or c.Capacity = 1)) ' +
           'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)';
         }
@@ -460,7 +461,7 @@ begin
     while not dsFilter.Eof do
     begin
       whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
-      // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+      // РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РѕРіСЂР°РЅРёС‡РµРЅРёРµ РѕРґРЅРѕР№ Р·Р°РїРёСЃРё Рё С„РёР»СЊС‚СЂ РїРѕ РєРІР°СЂС‚РёСЂРµ. С‚Рѕ СЃРєРёРЅРµРј РѕРіСЂР°РЅРёС‡РµРЅРёРµ
       dsFilter.next;
       if not dsFilter.Eof then
         if dsFilter['next_condition'] = 0 then

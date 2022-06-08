@@ -3,13 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, ExtCtrls, CustomerInfoFrame, FIBQuery,
-  pFIBQuery, DM, ActnList, System.Actions, CnErrorProvider, PrjConst,
-  Vcl.Buttons, A4onTypeUnit, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, MemTableDataEh, MemTableEh, EhLibVCL,
-  GridsEh, DBAxisGridsEh, PropFilerEh, PropStorageEh, Main;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList,
+  Vcl.Buttons,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CustomerInfoFrame, FIBQuery, pFIBQuery, DM,
+  CnErrorProvider, PrjConst, A4onTypeUnit, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
+  MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, PropFilerEh, PropStorageEh, Main;
 
 type
   TNewTaskForm = class(TForm)

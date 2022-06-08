@@ -3,14 +3,12 @@
 interface
 
 uses
-
+  Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Forms, VCL.DBCtrls, VCL.Menus,
-  VCL.StdCtrls, VCL.Controls, VCL.Mask, Data.DB,
-  VCL.Dialogs, VCL.Buttons, WinAPI.Windows, WinAPI.Messages,
-  OkCancel_frame, CnErrorProvider,
-  FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet,
-  pFIBDataSet, DBGridEh, GridsEh, DBCtrlsEh, DBLookupEh;
+  Data.DB,
+  Vcl.Graphics, Vcl.Forms, Vcl.DBCtrls, Vcl.Menus, Vcl.StdCtrls, Vcl.Controls, Vcl.Mask, Vcl.Dialogs, Vcl.Buttons,
+  OkCancel_frame, CnErrorProvider, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBGridEh, GridsEh,
+  DBCtrlsEh, DBLookupEh;
 
 type
   TReqTemplateForm = class(TForm)

@@ -4,13 +4,15 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase,
-  pFIBDatabase, DB, FIBDataSet, pFIBDataSet, StdCtrls, GridsEh,
-  DBAxisGridsEh, DBGridEh, ExtCtrls, EhLibFIB, FIBQuery,
-  pFIBQuery, ActnList, ComCtrls, ToolWin, System.Actions, MemTableDataEh,
-  MemTableEh, EhLibVCL, DBCtrlsEh, Vcl.Mask, DBGridEhGrouping, DynVarsEh,
-  Vcl.Menus, Vcl.Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
+  Vcl.ToolWin,
+  Vcl.Mask, Vcl.Menus, Vcl.Buttons,
+  ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh,
+  EhLibFIB,
+  FIBQuery, pFIBQuery, MemTableDataEh, MemTableEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh;
 
 type
   TEPGViewForm = class(TForm)
@@ -147,8 +149,9 @@ var
 implementation
 
 uses
-  System.TimeSpan, StringListUnicodeSupport, Encoding, DM, EPGImport, MAIN, PrjConst,
-  DVBGanresForma, AtrStrUtils, System.DateUtils, TextEditForma, TimeShiftForma;
+  System.TimeSpan, System.DateUtils,
+  StringListUnicodeSupport, Encoding, DM, EPGImport, MAIN, PrjConst, DVBGanresForma, AtrStrUtils, TextEditForma,
+  TimeShiftForma;
 
 {$R *.dfm}
 
@@ -356,7 +359,7 @@ begin
     Exit;
   curTime := Now();
   if dsEPG.FieldByName('DATE_STOP').AsDateTime < curTime then
-    AFont.Color := clGrayText // clGray clInactiveCaptionText
+    AFont.Color := clGrayText
   else
   begin
     if (dsEPG.FieldByName('DATE_START').AsDateTime < curTime) and (dsEPG.FieldByName('DATE_STOP').AsDateTime > curTime)
@@ -636,7 +639,7 @@ begin
             Query.SQL.Add
               ('Epg_Date = dateadd(minute, :mns, Epg_Date), Date_Start = dateadd(minute, :mns, Date_Start), Date_Stop = dateadd(minute, :mns, Date_Stop)');
           if ch_id > 0 then
-            Query.SQL.Add('where Ch_Id = '+ ch_id.ToString );
+            Query.SQL.Add('where Ch_Id = ' + ch_id.ToString);
           Query.SQL.Add(';');
           if chkUpdateDVB.Checked then
             Query.SQL.Add('update Dvb_Streams set EPG_UPDATED = CURRENT_TIMESTAMP;');

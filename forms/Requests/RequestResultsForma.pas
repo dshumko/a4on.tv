@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, StdCtrls, DBCtrls, DB, FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, Mask, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, PrjConst;
 
 type
   TRequestResult = class(TForm)

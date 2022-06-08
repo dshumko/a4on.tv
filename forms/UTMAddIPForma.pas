@@ -3,8 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, OkCancel_frame, Mask, DBCtrlsEh, Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  OkCancel_frame, DBCtrlsEh;
 
 type
   TUTMAddIPForm = class(TForm)
@@ -34,7 +36,8 @@ var
 
 implementation
 
-uses AtrCommon, AtrStrUtils, RxStrUtils, DM, CustBillUTMForma;
+uses
+  AtrCommon, AtrStrUtils, RxStrUtils, DM, CustBillUTMForma;
 {$R *.dfm}
 
 procedure TUTMAddIPForm.chkNotVPNClick(Sender: TObject);

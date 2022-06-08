@@ -3,14 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, ComCtrls,
-  ToolWin, frxClass, frxDBSet, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, GridsEh, ExtCtrls, Buttons, DBGridEhImpExp, FIBQuery, pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  System.Actions, EhLibVCL, System.UITypes, FIBDatabase,
-  pFIBDatabase, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus, Vcl.ActnList,
+  Vcl.ExtCtrls, Vcl.Buttons,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery, pFIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh;
 
 type
   TCustFilesForm = class(TForm)
@@ -122,9 +122,9 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils, CF, CustomerForma, ReportPreview,
+uses
   Winapi.ShellAPI,
-  TextEditForma, EditCFileForma;
+  DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils, CF, CustomerForma, ReportPreview, TextEditForma, EditCFileForma;
 
 {$R *.dfm}
 

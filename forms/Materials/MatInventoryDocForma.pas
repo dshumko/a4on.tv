@@ -1,15 +1,14 @@
-unit MatInventoryDocForma;
+п»їunit MatInventoryDocForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, Vcl.StdCtrls,
-  DBLookupEh, DBCtrlsEh, Vcl.Mask, EhLibVCL, GridsEh, DBAxisGridsEh,
-  Data.DB, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase,
-  CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Vcl.Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ActnList, Vcl.Buttons,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
 
 type
   TMatInventoryDocForm = class(TForm)
@@ -380,7 +379,7 @@ begin
   else
     s := dsDocMat.FieldByName('M_Notice').AsString;
 
-  if EditText(s, 'Примечание', 'Примечание для услуги') then
+  if EditText(s, 'РџСЂРёРјРµС‡Р°РЅРёРµ', 'РџСЂРёРјРµС‡Р°РЅРёРµ РґР»СЏ СѓСЃР»СѓРіРё') then
   begin
     with TpFIBQuery.Create(Self) do
       try
@@ -446,7 +445,7 @@ end;
 
 procedure TMatInventoryDocForm.dsDocNewRecord(DataSet: TDataSet);
 begin
-  dsDoc['DT_ID'] := DocumentType; // приходный документ
+  dsDoc['DT_ID'] := DocumentType; // РїСЂРёС…РѕРґРЅС‹Р№ РґРѕРєСѓРјРµРЅС‚
   if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
     dsDoc['DOC_DATE'] := Now;
 end;

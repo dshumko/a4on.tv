@@ -1,15 +1,16 @@
-unit StreetHousesViewForma;
+п»їunit StreetHousesViewForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, DataDriverEh,
-  pFIBDataDriverEh, DBGridEhImpExp, PrnDbgeh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin,
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh,
+  DBGridEh,
+  MemTableDataEh, MemTableEh, DataDriverEh, pFIBDataDriverEh, DBGridEhImpExp, PrnDbgeh;
 
 type
   TStreetHouseViewForm = class(TForm)
@@ -45,7 +46,8 @@ var
 
 implementation
 
-uses DM, MAIN, AtrStrUtils, PrjConst;
+uses
+  DM, MAIN, AtrStrUtils, PrjConst;
 
 {$R *.dfm}
 
@@ -62,7 +64,7 @@ begin
   end;
   Action := caFree;
 
-  mtView.Active := False;
+  mtView.Active := false;
   StreetHouseViewForm := nil;
 end;
 
@@ -120,7 +122,7 @@ begin
     dbgView.SearchPanel.Active := True;
   except
     dbgView.SearchPanel.CancelSearchFilter;
-    dbgView.SearchPanel.Visible := False;
+    dbgView.SearchPanel.Visible := false;
   end;
 end;
 
@@ -134,9 +136,9 @@ begin
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
       begin
-        // Экспорт информации
+        // Р­РєСЃРїРѕСЂС‚ РёРЅС„РѕСЂРјР°С†РёРё
         if (dmMain.AllowedAction(rght_Export)) then
-          DBGridEh_DoCopyAction(dbg, False);
+          DBGridEh_DoCopyAction(dbg, false);
       end
       else
         StrToClipbrd(dbg.SelectedField.AsString);
@@ -148,7 +150,7 @@ var
   ExpClass: TDBGridEhExportClass;
   Ext: String;
 begin
-  // Экспорт информации
+  // Р­РєСЃРїРѕСЂС‚ РёРЅС„РѕСЂРјР°С†РёРё
   if (not dmMain.AllowedAction(rght_Export)) then
     Exit;
 
@@ -191,7 +193,7 @@ begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
           AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
+        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
       end;
     end;
 end;

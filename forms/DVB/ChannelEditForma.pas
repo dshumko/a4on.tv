@@ -3,11 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, FIBDatabase,
-  pFIBDatabase, StdCtrls, DBCtrls, Mask, DBCtrlsEh, ExtDlgs,
-  uDBImages, Vcl.Imaging.Jpeg, Vcl.Imaging.pngimage, EhLibVCL, Vcl.Buttons,
-  DBGridEh, Vcl.Menus, CnErrorProvider, PrjConst, DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs, Vcl.Imaging.jpeg,
+  Vcl.Imaging.pngimage, Vcl.Buttons, Vcl.Menus,
+  FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, EhLibVCL, DBGridEh, CnErrorProvider, PrjConst,
+  DBLookupEh;
 
 type
   TDBImage = class(TpDBImage);

@@ -4,7 +4,12 @@ interface
 
 {$I defines.inc}
 
-uses Classes, Forms, Controls , Graphics,SysUtils, Windows, Variants, RxStrUtils, DB;
+uses
+  Winapi.Windows,
+  System.Classes, System.SysUtils, System.Variants,
+  Data.DB,
+  Vcl.Forms, Vcl.Controls, Vcl.Graphics,
+  RxStrUtils;
 
 type
   TShowFont = class(TControl)
@@ -54,7 +59,10 @@ function GetTempDir: String;
 implementation
 
 uses
-  DateUtils, IniFiles, ClipBrd, ShlObj, ActiveX, Zlib, ZlibConst, AtrStrUtils, SHFolder;
+  Winapi.ShlObj, Winapi.ActiveX, Winapi.SHFolder,
+  System.DateUtils, System.IniFiles, System.ZLib, System.ZLibConst,
+  Vcl.Clipbrd,
+  AtrStrUtils;
 
   function GetTempDir: String;
   var

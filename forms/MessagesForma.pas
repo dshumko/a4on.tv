@@ -3,14 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, StdCtrls, Mask, DBCtrlsEh, ComCtrls,
-  ToolWin, frxClass, frxDBSet, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, GridsEh, ExtCtrls, Buttons, DBGridEhImpExp, FIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
-  MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, PrjConst, EhLibVCL, System.UITypes, DynVarsEh,
-  CnErrorProvider, DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
+  Vcl.ActnList,
+  Vcl.ExtCtrls, Vcl.Buttons,
+  DBGridEh, DBCtrlsEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery, DBGridEhGrouping,
+  MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DynVarsEh, CnErrorProvider, DBLookupEh;
 
 type
   TMessagesForm = class(TForm)
@@ -122,13 +124,11 @@ type
     procedure lcbMessTypeChange(Sender: TObject);
     procedure mmoMessageChange(Sender: TObject);
     procedure cbbTYPEChange(Sender: TObject);
-    procedure dbgMessagesGetFooterParams(Sender: TObject; DataCol, Row: Integer;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
-      var Alignment: TAlignment; State: TGridDrawState; var Text: string);
-    procedure dbgMessagesColumns7GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgMessagesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+    procedure dbgMessagesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
-    FFirstOpen : Boolean; // Первое открытие Формы
+    FFirstOpen: Boolean; // Первое открытие Формы
     CanEdit: Boolean;
     CanCreate: Boolean;
     FPersonalData: Boolean;
@@ -150,15 +150,15 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPreview,
-  apiSMS, CF, pFIBQuery;
+uses
+  DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPreview, apiSMS, CF, pFIBQuery;
 
 {$R *.dfm}
 
 procedure TMessagesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if fCanSave then
-    dbgMessages.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgMessages', false);
+    dbgMessages.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgMessages', False);
   if srcMessages.DataSet.Active then
     srcMessages.DataSet.Close;
   dsMessages.Close;
@@ -314,8 +314,7 @@ begin
   SetMessagesFilter;
 end;
 
-procedure TMessagesForm.dbgMessagesColumns7GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TMessagesForm.dbgMessagesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
@@ -462,19 +461,20 @@ end;
 
 procedure TMessagesForm.FormActivate(Sender: TObject);
 var
-  i: integer;
+  i: Integer;
   filter: string;
   inFilter: Boolean;
 begin
-  if FFirstOpen then begin
+  if FFirstOpen then
+  begin
     FFirstOpen := False;
-    Exit;
+    exit;
   end;
 
-  if not((dsMessages.Active) and (dsMessages.RecordCount > 0) and
-    (not dsMessages.FieldByName('MES_ID').IsNull)) then
-    dsMessages.CloseOpen(True)
-  else begin
+  if not((dsMessages.Active) and (dsMessages.RecordCount > 0) and (not dsMessages.FieldByName('MES_ID').IsNull)) then
+    dsMessages.CloseOpen(true)
+  else
+  begin
     inFilter := dsMessages.Filtered;
     filter := dsMessages.filter;
     i := dsMessages['MES_ID'];
@@ -536,7 +536,7 @@ begin
           balance := g.balance;
           ErrorText := g.ErrorText;
           // TODO: Сделать проверку статуса СМС
-          //g.CheckAll;
+          // g.CheckAll;
           ErrorText := g.ErrorText;
           if balance <> -1 then
             ShowMessage(Format(rsSMSBalance, [balance]))
@@ -568,7 +568,7 @@ end;
 
 procedure TMessagesForm.FormCreate(Sender: TObject);
 begin
-  FFirstOpen := True;
+  FFirstOpen := true;
   fShowNotSended := true;
   fCanSave := true;
 end;
@@ -724,13 +724,13 @@ begin
   end;
 end;
 
-procedure TMessagesForm.dbgMessagesGetFooterParams(Sender: TObject; DataCol,
-  Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
-  var Alignment: TAlignment; State: TGridDrawState; var Text: string);
+procedure TMessagesForm.dbgMessagesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh;
+  AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
 var
   i: Integer;
 begin
-  if (DataCol = 1) and (Row = 0) then begin
+  if (DataCol = 1) and (Row = 0) then
+  begin
     i := (Sender as TDBGridEh).SelectedRows.Count;
     if i > 1 then
       Text := IntToStr(i);

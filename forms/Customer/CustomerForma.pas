@@ -3,17 +3,14 @@
 interface
 
 uses
-
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, Vcl.Graphics, Vcl.Forms,
-  Vcl.Dialogs, Vcl.StdCtrls, System.UITypes, System.Actions,
-  Data.DB, System.Classes, Vcl.ActnList, Vcl.ExtCtrls, Vcl.Buttons,
-  Vcl.Menus, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls,
-
-  PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase,
-  pFIBDatabase, GridsEh, DBGridEh, MemTableDataEh, MemTableEh,
-  EhLibVCL, DBAxisGridsEh, fmuCustomerBalance,
-  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PropFilerEh,
-  DBCtrlsEh, DBLookupEh, AtrPages;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.UITypes, System.Actions, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, Vcl.Controls,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls,
+  PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, GridsEh, DBGridEh, MemTableDataEh,
+  MemTableEh, EhLibVCL, DBAxisGridsEh, fmuCustomerBalance, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
+  PropFilerEh, DBCtrlsEh, DBLookupEh, AtrPages;
 
 type
   TCustomerForm = class(TForm)
@@ -128,15 +125,11 @@ implementation
 {$R *.dfm}
 
 uses
-  AtrCommon, AtrStrUtils, MAIN, DM, CF, PrjConst,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl,
-  fmuCustomerInfo, fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv,
-  fmuCustomerKoef, fmuCustomerLetters, fmuCustomerRecourse, fmuCustomerRequests,
-  fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerCard,
-  fmuCustomerDigit, fmuCustomerEdit, fmuCustomerBonus, fmuCustomerFiles,
-  fmuCustomerMaterialsMove, fmuCustomerAppl,
-  PaymentForma, RequestNewForma, RecourseForma, NPSAddForma, OrderTPForma, A4onTypeUnit,
-  TextEditForma;
+  AtrCommon, AtrStrUtils, MAIN, DM, CF, PrjConst, OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl,
+  fmuCustomerInfo, fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv, fmuCustomerKoef, fmuCustomerLetters,
+  fmuCustomerRecourse, fmuCustomerRequests, fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerCard,
+  fmuCustomerDigit, fmuCustomerEdit, fmuCustomerBonus, fmuCustomerFiles, fmuCustomerMaterialsMove, fmuCustomerAppl, PaymentForma,
+  RequestNewForma, RecourseForma, NPSAddForma, OrderTPForma, A4onTypeUnit, TextEditForma;
 
 procedure ShowCustomer(aCustomer: Integer; const Edit: Boolean = False);
 var

@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEhGrouping, DBCtrlsEh, StdCtrls, Buttons, ComCtrls,
-  ToolWin, GridsEh, DBGridEh, ExtCtrls, DBCtrls, Mask, DB, FIBDataSet,
-  pFIBDataSet, ActnList, pFIBProps, pFIBQuery, FIBQuery, DateUtils, DBGridEhImpExp,
-  Menus ;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.DateUtils,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
+  Vcl.DBCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus,
+  DBGridEhGrouping, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, pFIBProps, pFIBQuery, FIBQuery, DBGridEhImpExp;
 
 type
   TCustomerAddons = class(TFrame)
@@ -307,13 +308,10 @@ type
 implementation
 
 uses
-  DM , MAIN, SubscrHistory, OnOffServicesForma, ChoiseForma, SelectLetterTypeForma, PeriodForma,
-  CancelContractForma, RequestForma, DiscountForma,
-  EditAttributeForma, RequestsForma, PaymentForma,
-  PaymentDocForma, CustomerLanForma, CustChannelForma, AtrStrUtils,
-  CustBillingForma, RxStrUtils, atrCmdUtils, CustBillUTMForma, ScriptModule,
-  SelectColumnsForma, ExportSettingsForma, TextEditForma, HouseMapForma,
-  SendMessagesForma, fs_iinterpreter;
+  DM, MAIN, SubscrHistory, OnOffServicesForma, ChoiseForma, SelectLetterTypeForma, PeriodForma, CancelContractForma, RequestForma,
+  DiscountForma, EditAttributeForma, RequestsForma, PaymentForma, PaymentDocForma, CustomerLanForma, CustChannelForma,
+  AtrStrUtils, CustBillingForma, RxStrUtils, atrCmdUtils, CustBillUTMForma, ScriptModule, SelectColumnsForma, ExportSettingsForma,
+  TextEditForma, HouseMapForma, SendMessagesForma, fs_iinterpreter;
 
 {$R *.dfm}
 

@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, StdCtrls, ToolCtrlsEh, Buttons,
-  ComCtrls, ToolWin, GridsEh, DBGridEh, ExtCtrls, DB, FIBDataSet,
-  pFIBDataSet, ActnList, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, VCL.Menus, PrjConst, EhLibVCL, System.UITypes,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
+  Vcl.ActnList, Vcl.Menus,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -95,8 +96,8 @@ type
 implementation
 
 uses
-  DM, OnOffServicesForma, SubscrHistory, pFIBQuery, AtrCommon, MAIN, DateUtils,
-  DBGridEhImpExp, TextEditForma, PersonalTarifForma;
+  System.DateUtils,
+  DM, OnOffServicesForma, SubscrHistory, pFIBQuery, AtrCommon, MAIN, DBGridEhImpExp, TextEditForma, PersonalTarifForma;
 
 {$R *.dfm}
 

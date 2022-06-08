@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DBCtrlsEh, Mask, DBLookupEh, OkCancel_frame,
-  DB, FIBDataSet, pFIBDataSet, ExtCtrls, FIBQuery, pFIBQuery, DBCtrls,
-  DBGridEh, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls,
+  DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, DBGridEh, A4onTypeUnit;
 
 type
   TfmCardPayActivate = class(TForm)
@@ -77,7 +78,8 @@ function CardPayActivate(aCard_ID: Integer; aCUSTOMER_ID: Integer): Boolean;
 
 implementation
 
-uses PrjConst, DM;
+uses
+  PrjConst, DM;
 
 {$R *.dfm}
 

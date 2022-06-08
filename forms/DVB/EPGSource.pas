@@ -3,16 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
-  ExtCtrls, ToolCtrlsEh, DBGridEhToolCtrls,
-  MemTableDataEh, MemTableEh, GridsEh, DBAxisGridsEh, DBGridEh, StdCtrls,
-  EhLibMTE, System.UITypes,
-  DBCtrlsEh, Mask, FIBQuery, pFIBQuery,
-
-  OXmlReadWrite, OXmlUtils, OXmlPDOM, OTextReadWrite, PrjConst, Vcl.Menus,
-  EhLibVCL, Vcl.ComCtrls, DBGridEhGrouping, DynVarsEh,
-  httpsend, synacode, blcksock, ftpsend, synsock;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ComCtrls,
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh, GridsEh,
+  DBAxisGridsEh, DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, pFIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, OTextReadWrite, PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, httpsend, synacode, blcksock, ftpsend, synsock;
 
 type
   TEPGSourceForm = class(TForm)
@@ -123,9 +120,9 @@ var
 implementation
 
 uses
-{$IFNDEF VER300}
+  {$IFNDEF VER300}
   EConsts, ETypes, EClasses, EHash, ESysInfo, ESend, ESendAPIMantis,
-{$ENDIF}
+  {$ENDIF}
   DM, AtrCommon, JsonDataObjects, sevenzip;
 
 {$R *.dfm}

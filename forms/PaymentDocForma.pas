@@ -3,13 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, DB, FIBDataSet, ActnList, frxClass,
-  pFIBDataSet, StdCtrls, Buttons, ExtCtrls, GridsEh, DBLookupEh, ComCtrls,
-  ToolWin, DBCtrlsEh, Mask, DBCtrls, FIBDatabase, pFIBDatabase, Menus, DBGridEhImpExp,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, PrjConst, EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh,
-  DBVertGridsEh, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
+  DBGridEh, FIBDataSet, frxClass, pFIBDataSet, GridsEh, DBLookupEh, DBCtrlsEh, FIBDatabase, pFIBDatabase,
+  DBGridEhImpExp,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBVertGridsEh,
+  CnErrorProvider;
 
 type
   TPaymentDocForm = class(TForm)
@@ -147,8 +150,7 @@ type
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dsPayDocAfterOpen(DataSet: TDataSet);
-    procedure dbgPayDocPaymentColumns5GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgPayDocPaymentColumns5GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FullAccess: Boolean;
@@ -173,8 +175,10 @@ procedure CreatePayDoc(aPayDocID: Integer; const PAYMENT_ID: Integer = -1);
 
 implementation
 
-uses DM, MAIN, AtrCommon, AtrStrUtils, PaymentForma, DBGridEhFindDlgs,
-  PaymentEditForma, pFIBQuery, PayDocSelectForma, ReportPreview, CF, CustomerForma;
+uses
+  DM, MAIN, AtrCommon, AtrStrUtils, PaymentForma, DBGridEhFindDlgs, PaymentEditForma, pFIBQuery, PayDocSelectForma,
+  ReportPreview,
+  CF, CustomerForma;
 
 {$R *.dfm}
 
@@ -778,8 +782,8 @@ begin
   A4MainForm.MakeTask('P', dsPayDocDetail.FieldByName('PAYMENT_ID').AsString);
 end;
 
-procedure TPaymentDocForm.dbgPayDocPaymentColumns5GetCellParams(
-  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+procedure TPaymentDocForm.dbgPayDocPaymentColumns5GetCellParams(Sender: TObject; EditMode: Boolean;
+  Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);

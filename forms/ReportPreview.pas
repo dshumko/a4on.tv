@@ -2,13 +2,17 @@
 
 interface
 
-uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, frxClass, System.Types,
-  frxPreview, ComCtrls, ToolWin, ImgList, ActnList,
-{$IFDEF USE_ZEOS}
+uses
+  Winapi.Windows,
+  System.Classes, System.Types,
+  Vcl.Graphics, Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.ActnList,
+  frxClass, frxPreview,
+  {$IFDEF USE_ZEOS}
   frxZeosComponents,
-{$ENDIF}
-  frxGradient, frxChBox, frxDCtrl, frxExportPDF, Menus, frxCross, Buttons,
-  frxCtrls, ExtCtrls, frxDock, frxRes, PrjConst, System.Actions;
+  {$ENDIF}
+  System.Actions,
+  Vcl.Menus, Vcl.Buttons, Vcl.ExtCtrls,
+  frxGradient, frxChBox, frxDCtrl, frxExportPDF, frxCross, frxCtrls, frxDock, frxRes, PrjConst;
 
 type
   TReportChild = class(TForm)
@@ -124,8 +128,9 @@ procedure ShowReport(const aPATH: String); overload;
 implementation
 
 uses
-  DB, Variants, SysUtils, frxDsgnIntf, frxUtils, MAIN,
-  DM, AtrCommon, CF;
+  System.Variants, System.SysUtils,
+  Data.DB,
+  frxDsgnIntf, frxUtils, MAIN, DM, AtrCommon, CF;
 
 {$R *.dfm}
 

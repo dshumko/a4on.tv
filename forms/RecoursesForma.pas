@@ -3,13 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, ComCtrls, ToolWin, GridsEh, DBGridEh, ToolCtrlsEh, System.UITypes,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, CnErrorProvider, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
-  MemTableEh, EhLibFIB;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls,
+  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB;
 
 type
   TRecoursesForm = class(TGridForm)
@@ -43,8 +44,7 @@ type
     procedure actFilterCustomerExecute(Sender: TObject);
     procedure chkGroupClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure dbGridColumns4GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridColumns4GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     FFirstOpen: Boolean;
@@ -90,9 +90,10 @@ begin
   cr := Screen.Cursor;
   Screen.Cursor := crHourGlass;
   dsRecourses.Close;
-  if dmMain.AllowedAction(rght_Recourses_owner)
-  then dsRecourses.ParamByName('owned').AsString := 'r.ADDED_BY = CURRENT_USER'
-  else dsRecourses.ParamByName('owned').AsString := '1=1';
+  if dmMain.AllowedAction(rght_Recourses_owner) then
+    dsRecourses.ParamByName('owned').AsString := 'r.ADDED_BY = CURRENT_USER'
+  else
+    dsRecourses.ParamByName('owned').AsString := '1=1';
   dsRecourses.ParamByName('Start_Date').AsDate := fStartDate;
   dsRecourses.ParamByName('End_Date').AsDate := fEndDate;
   Caption := Format(rsRecoursePeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
@@ -135,8 +136,7 @@ begin
   SwitchTreeMode(chkGroup, dbGrid, dsRecourses, mtRecourses);
 end;
 
-procedure TRecoursesForm.dbGridColumns4GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TRecoursesForm.dbGridColumns4GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   inherited;
   if (not FPersonalData) and (not Params.Text.IsEmpty) then

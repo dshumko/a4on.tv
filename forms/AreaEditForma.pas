@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBCtrlsEh, DBLookupEh, DB, FIBDataSet, pFIBDataSet,
-  Mask, OkCancel_frame, DBCtrls, StdCtrls, FIBDatabase, pFIBDatabase,
-  CnErrorProvider, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst;
 
 type
   TAreaViewForm = class(TForm)
@@ -41,7 +42,8 @@ function EditArea(const aArea_ID:Int64): Int64;
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 
 {$R *.dfm}

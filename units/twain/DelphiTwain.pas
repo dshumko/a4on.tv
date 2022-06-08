@@ -56,9 +56,14 @@ interface
 
 {Used units}
 uses
-  SysUtils, Windows, Messages,
-  {$IFDEF FPC}Classes, {$ENDIF}
-  Twain, DelphiTwainUtils;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  {$IFDEF FPC}
+  System.Classes,
+  {$ENDIF}
+  Twain,
+  DelphiTwainUtils;
 
 const
   {Name of the Twain library for 32 bits enviroment}
@@ -848,7 +853,7 @@ begin
     if TwainDirectory <> '' then
     begin
 
-      fHandle := Windows.LoadLibrary(PChar(TwainDirectory + TWAINLIBRARY));
+      fHandle := Winapi.Windows.LoadLibrary(PChar(TwainDirectory + TWAINLIBRARY));
       {If the library was sucessfully loaded}
       if (fHandle <> INVALID_HANDLE_VALUE) then
       begin
@@ -862,7 +867,7 @@ begin
         if not Result then
         begin
           {Free the handle and clears the variable}
-          Windows.FreeLibrary(fHandle);
+          Winapi.Windows.FreeLibrary(fHandle);
           fHandle := 0;
         end {if not Result}
       end
@@ -892,7 +897,7 @@ begin
     {Unloads the source manager}
     SourceManagerLoaded := FALSE;
     {Just call windows method to unload}
-    Result := Windows.FreeLibrary(Handle);
+    Result := Winapi.Windows.FreeLibrary(Handle);
     {If it was sucessfull, also clears handle value}
     if Result then fHandle := 0;
     {Updates property}
@@ -1932,7 +1937,7 @@ var
   {Memory information from the image}
   Xfer   : TW_IMAGEMEMXFER;
   {Image processing variables}
-  ImageInfo : Windows.TBitmap;
+  ImageInfo : Winapi.Windows.TBitmap;
   Ptr       : PAnsiChar;//ccc
   LineLength,
   CurLine: Cardinal;
@@ -1951,7 +1956,7 @@ begin
     MSG_GET, @Setup);
 
   {Get information on the bitmap}
-  GetObject(ImageHandle, sizeof(Windows.TBitmap), @ImageInfo);
+  GetObject(ImageHandle, sizeof(Winapi.Windows.TBitmap), @ImageInfo);
   LineLength := (((ImageInfo.bmWidth * ImageInfo.bmBitsPixel + 31) div 32) * 4);
   {Get pointer for the last line}
   CurLine := ImageInfo.bmHeight - 1;

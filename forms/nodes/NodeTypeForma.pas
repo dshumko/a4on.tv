@@ -3,13 +3,13 @@
 interface
 
 uses
-  WinAPI.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Controls, VCL.Forms, Vcl.Dialogs, Vcl.ActnList, Data.DB, Vcl.ComCtrls,
-  Vcl.ToolWin, Vcl.Grids, Vcl.Menus, System.Actions, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask, System.UITypes, VCLTee.TeCanvas,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
+  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider, DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TNodeTypeForm = class(TGridForm)
@@ -66,7 +66,8 @@ var
 
 implementation
 
-uses DM, MAIN, A4onTypeUnit, NodeLayouteForma;
+uses
+  DM, MAIN, A4onTypeUnit, NodeLayouteForma;
 
 {$R *.dfm}
 

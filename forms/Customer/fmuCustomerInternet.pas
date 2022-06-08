@@ -3,12 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, ComCtrls, ToolWin,
-  DBCtrlsEh, StdCtrls, Mask, ExtCtrls, GridsEh, DBGridEh, DB, FIBDataSet,
-  pFIBDataSet, ActnList, ibase, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, PrjConst, EhLibVCL, System.UITypes, DBGridEhGrouping,
-  DynVarsEh, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  Vcl.ActnList,
+  AtrPages, ToolCtrlsEh, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ibase, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TDllForm = procedure(AppHandle: THandle; DBHandle: TISC_DB_HANDLE; ID: Integer; UserName: PWChar;
@@ -55,7 +56,8 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, DM, BillEditForma;
+uses
+  MAIN, AtrCommon, DM, BillEditForma;
 
 class function TapgCustomerInternet.GetPageName: string;
 begin

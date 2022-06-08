@@ -9,9 +9,18 @@ unit DelphiTwain_VCL;
 interface
 
 uses
-  Windows, SysUtils, Classes, Forms, ExtCtrls, Messages, Graphics,
-  {$IFDEF FPC}interfacebase,{$ENDIF}
-  DelphiTwain, Twain;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.Forms,
+  Vcl.ExtCtrls,
+  Vcl.Graphics,
+  {$IFDEF FPC}
+  interfacebase,
+  {$ENDIF}
+  DelphiTwain,
+  Twain;
 
 type
   TOnTwainAcquire = procedure(Sender: TObject; const Index: Integer; Image:
@@ -55,7 +64,9 @@ type
 
 implementation
 
-uses uFormSelectSource_VCL, Controls;
+uses
+  Vcl.Controls,
+  uFormSelectSource_VCL;
 
 {$IFDEF FPC}
 var
@@ -189,7 +200,7 @@ begin
   inherited;
 
   if IsLibrary then begin
-    fVirtualWindow := Classes.AllocateHWnd(WndProc);
+    fVirtualWindow := System.Classes.AllocateHWnd(WndProc);
   end else begin
     {$IFDEF FPC}
     if Assigned(Application.MainForm) and (Application.MainForm.Visible) then

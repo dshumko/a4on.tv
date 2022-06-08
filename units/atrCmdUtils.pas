@@ -2,7 +2,9 @@
 
 interface
 
-uses Classes, SysUtils, Windows, ActiveX, ShellApi;
+uses
+  Winapi.Windows, Winapi.ActiveX, Winapi.ShellAPI,
+  System.Classes, System.SysUtils;
 
 procedure WinExec(const ACmdLine: String; const ACmdShow: UINT = SW_SHOWNORMAL);
 function ShellExecute(const AWnd: HWND; const AOperation, AFileName: String; const AParameters: String = '';

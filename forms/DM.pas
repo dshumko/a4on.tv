@@ -5,21 +5,23 @@
 interface
 
 uses
-  System.SysUtils, System.Classes, Data.DB, VCL.ImgList, VCL.Dialogs,
-  System.UITypes, Winapi.Windows, System.Variants,
-  FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery,
-  pFIBErrorHandler, FIBDatabase, FIB, pFIBDatabase,
-  OverbyteIcsWndControl, MemTableDataEh, frxDMPExport,
-  frxGradient, frxOLE, frxRich, frxChart, frxChBox, frxDCtrl, frxCross,
-  frxExportText, frxExportHTML, frxExportMail, frxExportImage,
-  frxExportXML, frxExportODF, frxExportRTF, frxExportPDF, frxExportBIFF,
-  frxExportXLS, frxExportTXT, frxExportCSV, frxClass, frxExportDBF,
-  frxExportDOCX, frxExportXLSX, frxExportHTMLDiv, frxExportPPTX,
-  MemTableEh, DataDriverEh, pFIBDataDriverEh, frxDesgn, frxADOComponents,
-  frxFIBComponents, frxBarcode, frxDBSet, JclLocales,
-{$IFDEF USE_ZEOS} frxZeosComponents, {$ENDIF}
-  PrjConst, frxExportSVG, PropStorageEh, A4onTypeUnit, frxGZip, frxTableObject,
-  frxZipCode, frxCellularTextObject, frxMap, frxGaugeView, frxPDFViewer;
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.UITypes, System.Variants,
+  Data.DB,
+  Vcl.ImgList, Vcl.Dialogs,
+  FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBErrorHandler, FIBDatabase, FIB, pFIBDatabase, OverbyteIcsWndControl,
+  MemTableDataEh, frxDMPExport, frxGradient, frxOLE, frxRich, frxChart, frxChBox, frxDCtrl, frxCross, frxExportText,
+  frxExportHTML, frxExportMail, frxExportImage, frxExportXML, frxExportODF, frxExportRTF, frxExportPDF, frxExportBIFF,
+  frxExportXLS, frxExportTXT, frxExportCSV, frxClass, frxExportDBF, frxExportDOCX, frxExportXLSX, frxExportHTMLDiv,
+  frxExportPPTX,
+  MemTableEh, DataDriverEh, pFIBDataDriverEh, frxDesgn, frxADOComponents, frxFIBComponents, frxBarcode, frxDBSet,
+  JclLocales,
+{$IFDEF USE_ZEOS}
+  frxZeosComponents,
+{$ENDIF}
+  PrjConst, frxExportSVG, PropStorageEh, A4onTypeUnit, frxGZip, frxTableObject, frxZipCode, frxCellularTextObject,
+  frxMap,
+  frxGaugeView, frxPDFViewer;
 
 type
   TCallBack = procedure of object;
@@ -120,6 +122,7 @@ type
     procedure CreateKL;
     function FindCustomerSQL(const SQL: string; const NODE_SQL: string = ' 1=2 '): TCustomerInfo;
     function GetCompanyCountry: String;
+    function GetCompanyName: String;
     procedure CheckFirebirdVersion;
   public
     { Public declarations }
@@ -163,6 +166,7 @@ type
     property ClientLib: string read GetClientLib;
     property UserAreas: string read GetUserAreas;
     property CompanyCountry: string read GetCompanyCountry;
+    property CompanyName: string read GetCompanyName;
     property InStrictMode: Boolean read FInStrictMode;
     property CurrentMonth: TDateTime read fCurrentMonth write SetCurrentMonth;
     function GetRecordsCount(const aTableName, aWhereStr: String): Integer;
@@ -210,10 +214,11 @@ var
 
 implementation
 
-uses pFIBProps, AtrStrUtils, StrUtils, System.Rtti,
-  RxStrUtils, pFIBExtract, LibMoney, synacode,
-  httpsend, SynCrypto, synautil, ZLibExGZ, JsonDataObjects, SelectOneForma,
-  MAIN;
+uses
+  System.StrUtils, System.Rtti,
+  pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, synacode, httpsend, SynCrypto, synautil, ZLibExGZ,
+  JsonDataObjects,
+  SelectOneForma, MAIN;
 
 {$R *.dfm}
 
@@ -716,10 +721,8 @@ begin
   else
   begin
     // исключим ограничивающие права для SYSDBA
-    Result := true and (not(aRightsID in [rght_Customer_View, rght_Customer_Only_ONE
-      , rght_Customer_PersonalData
-      , rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner, rght_OrdersTP_Today
-      ]));
+    Result := true and (not(aRightsID in [rght_Customer_View, rght_Customer_Only_ONE, rght_Customer_PersonalData,
+      rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner, rght_OrdersTP_Today]));
   end;
 end;
 
@@ -974,7 +977,8 @@ begin
   if Assigned(frxzscmpnts1) then
     FreeAndNil(frxzscmpnts1);
 {$ENDIF}
-  if dbTV.Connected then begin
+  if dbTV.Connected then
+  begin
     dbTV.CloseDataSets;
     dbTV.Close;
   end;
@@ -1019,7 +1023,7 @@ begin
   mdsCompany.Open;
   mdsCompany.Append;
   aDS.First;
-  While not aDS.Eof do
+  while not aDS.Eof do
   begin
     mdsCompany.FieldByName(aDS.FieldByName('C_CODE').AsString).AsString := aDS.FieldByName('C_VALUE').AsString;
     aDS.Next;
@@ -1050,9 +1054,9 @@ begin
   else if MethodName = 'STRREPLACE' then
     Result := StringReplace(Params[0], Params[1], Params[2], [rfReplaceAll, rfIgnoreCase])
   else if MethodName = 'BASE64_DECODE' then
-    Result := DecodeBase64(Params[0])
+    Result := DecodeBase64(AnsiString(Params[0]))
   else if MethodName = 'BASE64_ENCODE' then
-    Result := EncodeBase64(Params[0])
+    Result := EncodeBase64(AnsiString(Params[0]))
   else if MethodName = 'GEN_BARCODE' then
     Result := GenerateBarCode(Params[0], Params[1], Params[2], Params[3], Params[4], Params[5], Params[5])
   else if MethodName = 'INMODE' then
@@ -2119,6 +2123,11 @@ begin
   Result := UpperCase(GetSettingsValue('FORMATN'));
 end;
 
+function TdmMain.GetCompanyName: String;
+begin
+  Result := mdsCompany.FieldByName('NAME').AsString;
+end;
+
 procedure TdmMain.frxDesignerShow(Sender: TObject);
 begin
   if not(Sender is TfrxDesignerForm) then
@@ -2131,7 +2140,7 @@ end;
 procedure TdmMain.frxModalReportPreview(Sender: TObject);
 begin
   if (Sender is TfrxReport) then
-    (Sender as TfrxReport).PreviewForm.Caption := (Sender as TfrxReport).FILENAME;
+    (Sender as TfrxReport).PreviewForm.Caption := (Sender as TfrxReport).FileName;
 end;
 
 procedure TdmMain.CheckFirebirdVersion;

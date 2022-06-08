@@ -3,14 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ToolWin, ComCtrls, StdActns, ActnList, Menus, DB, Grids,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp,
-  DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls,
-  DBAxisGridsEh, System.Actions, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, PrjConst, FIBDatabase, pFIBDatabase,
-  Vcl.Mask, DBCtrlsEh, System.UITypes, EhLibVCL, MemTableDataEh, MemTableEh,
-  DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
+  Vcl.Grids,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEhToolCtrls,
+  DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
+  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   TIPTVSettinsForm = class(TForm)
@@ -100,33 +102,34 @@ var
 
 implementation
 
-uses DM, MAIN, AtrStrUtils, DVBStreamForma, DVBNetworkForma, IPTVGroupForma, EquipAttributesForma;
+uses
+  DM, MAIN, AtrStrUtils, DVBStreamForma, DVBNetworkForma, IPTVGroupForma, EquipAttributesForma;
 
 {$R *.dfm}
 
 procedure TIPTVSettinsForm.actGroupDelExecute(Sender: TObject);
 begin
-  if (dsIPTVGroup.RecordCount = 0) or (dsIPTVGroup.FieldByName('IG_ID').IsNull)
-  then Exit;
-  if (not(dmMain.AllowedAction(rght_IPTV_edit)))
-  then Exit;
+  if (dsIPTVGroup.RecordCount = 0) or (dsIPTVGroup.FieldByName('IG_ID').IsNull) then
+    Exit;
+  if (not(dmMain.AllowedAction(rght_IPTV_edit))) then
+    Exit;
 
-  if (dsChannels.Active) and (dsChannels.RecordCount > 0)
-  then Exit;
+  if (dsChannels.Active) and (dsChannels.RecordCount > 0) then
+    Exit;
 
-  if (MessageDlg(Format(rsDeleteWithName, [dsIPTVGroup['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
-  then dsIPTVGroup.Delete;
+  if (MessageDlg(Format(rsDeleteWithName, [dsIPTVGroup['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    dsIPTVGroup.Delete;
 end;
 
 procedure TIPTVSettinsForm.actGroupEditExecute(Sender: TObject);
 begin
-  if dsIPTVGroup.FieldByName('IG_ID').IsNull
-  then Exit;
+  if dsIPTVGroup.FieldByName('IG_ID').IsNull then
+    Exit;
 
-  if (not(dmMain.AllowedAction(rght_IPTV_edit)))
-  then Exit;
-  if IPTVGroupModify(dsIPTVGroup['IG_ID']) > -1
-  then begin
+  if (not(dmMain.AllowedAction(rght_IPTV_edit))) then
+    Exit;
+  if IPTVGroupModify(dsIPTVGroup['IG_ID']) > -1 then
+  begin
     srcIPTVGroup.DataSet.Refresh;
     dsChannels.CloseOpen(true);
   end;
@@ -136,11 +139,11 @@ procedure TIPTVSettinsForm.actGroupNEWExecute(Sender: TObject);
 var
   i: Integer;
 begin
-  if (not(dmMain.AllowedAction(rght_IPTV_edit)))
-  then Exit;
+  if (not(dmMain.AllowedAction(rght_IPTV_edit))) then
+    Exit;
   i := IPTVGroupModify(-1);
-  if i > -1
-  then begin
+  if i > -1 then
+  begin
     dsIPTVGroup.CloseOpen(true);
     dsIPTVGroup.Locate('IG_ID', i, []);
     dsChannels.CloseOpen(true);
@@ -164,15 +167,17 @@ var
   b: Boolean;
   f: Boolean;
   i: Integer;
-  Font_size : Integer;
-  Font_name : string;
+  Font_size: Integer;
+  Font_name: string;
 begin
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i)
-  then begin
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do begin
-      if Components[i] is TDBGridEh then begin
+    for i := 0 to ComponentCount - 1 do
+    begin
+      if Components[i] is TDBGridEh then
+      begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
@@ -211,28 +216,27 @@ var
   dbg: TDBGridEh;
 begin
 
-  if (ActiveControl is TDBGridEh)
-  then begin
+  if (ActiveControl is TDBGridEh) then
+  begin
     dbg := (ActiveControl as TDBGridEh);
-    if (geaCopyEh in dbg.EditActions)
-    then
-      if dbg.CheckCopyAction
-      then begin
+    if (geaCopyEh in dbg.EditActions) then
+      if dbg.CheckCopyAction then
+      begin
         // Экспорт информации
-        if (dmMain.AllowedAction(rght_Export))
-        then DBGridEh_DoCopyAction(dbg, False);
+        if (dmMain.AllowedAction(rght_Export)) then
+          DBGridEh_DoCopyAction(dbg, false);
       end
-      else StrToClipbrd(dbg.SelectedField.AsString);
+      else
+        StrToClipbrd(dbg.SelectedField.AsString);
   end;
 end;
 
 procedure TIPTVSettinsForm.pmgSelectAllClick(Sender: TObject);
 begin
-  if (ActiveControl is TDBGridEh)
-  then
+  if (ActiveControl is TDBGridEh) then
     with TDBGridEh(ActiveControl) do
-      if CheckSelectAllAction and (geaSelectAllEh in EditActions)
-      then Selection.SelectAll;
+      if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
+        Selection.SelectAll;
 end;
 
 procedure TIPTVSettinsForm.pgcModeChange(Sender: TObject);
@@ -252,44 +256,49 @@ var
 
 begin
   // Экспорт информации
-  if (not dmMain.AllowedAction(rght_Export))
-  then Exit;
+  if (not dmMain.AllowedAction(rght_Export)) then
+    Exit;
 
   A4MainForm.SaveDialog.FileName := rsTable;
-  if (ActiveControl is TDBGridEh)
-  then
-    if A4MainForm.SaveDialog.Execute
-    then begin
+  if (ActiveControl is TDBGridEh) then
+    if A4MainForm.SaveDialog.Execute then
+    begin
       case A4MainForm.SaveDialog.FilterIndex of
-        1: begin
+        1:
+          begin
             ExpClass := TDBGridEhExportAsUnicodeText;
             Ext := 'txt';
           end;
-        2: begin
+        2:
+          begin
             ExpClass := TDBGridEhExportAsCSV;
             Ext := 'csv';
           end;
-        3: begin
+        3:
+          begin
             ExpClass := TDBGridEhExportAsHTML;
             Ext := 'htm';
           end;
-        4: begin
+        4:
+          begin
             ExpClass := TDBGridEhExportAsRTF;
             Ext := 'rtf';
           end;
-        5: begin
+        5:
+          begin
             ExpClass := TDBGridEhExportAsOLEXLS;
             Ext := 'xls';
           end;
-      else ExpClass := nil;
+      else
+        ExpClass := nil;
         Ext := '';
       end;
-      if ExpClass <> nil
-      then begin
+      if ExpClass <> nil then
+      begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext)
-        then A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
+          AnsiUpperCase(Ext) then
+          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
+        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
       end;
     end;
 end;
@@ -301,14 +310,14 @@ end;
 
 procedure TIPTVSettinsForm.actAtrAddExecute(Sender: TObject);
 begin
-  if (dsIPTVGroup.RecordCount = 0)
-  then Exit;
+  if (dsIPTVGroup.RecordCount = 0) then
+    Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_IPTV_edit)))
-  then Exit;
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_IPTV_edit))) then
+    Exit;
 
-  if AttributeIPTV(dsIPTVGroup['IG_ID'], -1)
-  then begin
+  if AttributeIPTV(dsIPTVGroup['IG_ID'], -1) then
+  begin
     dsAttributes.Close;
     dsAttributes.Open;
   end;
@@ -316,14 +325,14 @@ end;
 
 procedure TIPTVSettinsForm.actAtrEditExecute(Sender: TObject);
 begin
-  if (dsAttributes.RecordCount = 0)
-  then Exit;
+  if (dsAttributes.RecordCount = 0) then
+    Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_IPTV_edit)))
-  then Exit;
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_IPTV_edit))) then
+    Exit;
 
-  if AttributeIPTV(dsIPTVGroup['IG_ID'], dsAttributes['O_ID'])
-  then begin
+  if AttributeIPTV(dsIPTVGroup['IG_ID'], dsAttributes['O_ID']) then
+  begin
     dsAttributes.Close;
     dsAttributes.Open;
   end;
@@ -333,18 +342,19 @@ procedure TIPTVSettinsForm.actAtrDelExecute(Sender: TObject);
 var
   s: string;
 begin
-  if (dsAttributes.RecordCount = 0)
-  then Exit;
+  if (dsAttributes.RecordCount = 0) then
+    Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment)))
-  then Exit;
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+    Exit;
 
-  if not(dsAttributes.FieldByName('O_NAME').IsNull)
-  then s := dsAttributes['O_NAME']
-  else s := '';
+  if not(dsAttributes.FieldByName('O_NAME').IsNull) then
+    s := dsAttributes['O_NAME']
+  else
+    s := '';
 
-  if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
-  then dsAttributes.Delete;
+  if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    dsAttributes.Delete;
 
 end;
 
@@ -356,15 +366,13 @@ end;
 procedure TIPTVSettinsForm.dbgIPTVGroupGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
-  if (dsIPTVGroup.FieldByName('Disabled').IsNull)
-  then Exit;
+  if (dsIPTVGroup.FieldByName('Disabled').IsNull) then
+    Exit;
 
-  if (dsIPTVGroup['Disabled'] <> 0)
-  then AFont.Color := clGrayText
-  else AFont.Color := clWindowText;
+  if (dsIPTVGroup['Disabled'] <> 0) then
+    AFont.Color := clGrayText
+  else
+    AFont.Color := clWindowText;
 end;
 
 end.
-
-
-

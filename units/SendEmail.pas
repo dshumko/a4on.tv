@@ -1,8 +1,10 @@
-unit SendEmail;
+﻿unit SendEmail;
 
 interface
 
-uses SysUtils, Classes, OverbyteIcsWSocket, OverbyteIcsSmtpProt;
+uses
+  System.SysUtils, System.Classes,
+  OverbyteIcsWSocket, OverbyteIcsSmtpProt;
 
 type
   TEmailClient = class(TComponent)

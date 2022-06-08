@@ -3,10 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, DBCtrlsEh, StdCtrls, Mask, DBLookupEh, DB,
-  FIBDataSet, pFIBDataSet, Buttons, ExtCtrls, ActnList, DBCtrls, PrjConst, System.Actions, MemTableEh,
-  Vcl.ComCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
+  Vcl.DBCtrls, Vcl.ComCtrls,
+  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh;
 
 type
   TTaskFilterForm = class(TForm)
@@ -73,7 +75,8 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, TaskForma;
+uses
+  DM, MAIN, AtrCommon, TaskForma;
 
 {$R *.dfm}
 

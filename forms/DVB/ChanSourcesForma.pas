@@ -3,15 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ToolWin, ComCtrls, StdActns, ActnList, Menus, DB, Grids,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp,
-  DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls, System.TimeSpan,
-  DBAxisGridsEh, System.Actions, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, PrjConst, FIBDatabase, pFIBDatabase,
-  Vcl.Mask, DBCtrlsEh, System.UITypes, EhLibVCL, MemTableDataEh, MemTableEh,
-  DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh,
-  PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.TimeSpan, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
+  Vcl.Grids,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEhToolCtrls,
+  DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
+  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh;
 
 type
   TChanSourcesForm = class(TForm)
@@ -106,8 +107,9 @@ procedure ShowChanSource(const SRC_ID: Integer; const CH_ID: Integer = -1);
 
 implementation
 
-uses System.DateUtils, DM, MAIN, AtrStrUtils, atrCmdUtils,
-  DVBStreamForma, pFIBQuery, pFIBProps, ChanSrcForma, ChanForSrcForma;
+uses
+  System.DateUtils,
+  DM, MAIN, AtrStrUtils, atrCmdUtils, DVBStreamForma, pFIBQuery, pFIBProps, ChanSrcForma, ChanForSrcForma;
 
 {$R *.dfm}
 

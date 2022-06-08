@@ -3,13 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, SynEditHighlighter, StdCtrls, OverbyteIcsWndControl,
-  OverbyteIcsTnCnx, ExtCtrls, Mask, DBCtrlsEh, ActnList, System.Actions,
-  HTMLUn2, HtmlView, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
-  Vcl.Menus, UrlConn, PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser,
-  Vcl.ComCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus, Vcl.ComCtrls,
+  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, UrlConn,
+  PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser;
 
 type
   THtmlForm = class(TForm)
@@ -76,7 +75,8 @@ function GetHtml(const Url: string = 'localhost'; const User: string = ''; const
 implementation
 
 uses
-  AtrCommon, PrjConst, MAIN, StrUtils, URLSubs;
+  System.StrUtils,
+  AtrCommon, PrjConst, MAIN, URLSubs;
 
 {$R *.dfm}
 

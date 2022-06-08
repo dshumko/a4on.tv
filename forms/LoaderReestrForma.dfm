@@ -443,7 +443,7 @@ object LoaderReestrForm: TLoaderReestrForm
           object Label1: TLabel
             Left = 0
             Top = 0
-            Width = 213
+            Width = 61
             Height = 13
             Align = alTop
             Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077

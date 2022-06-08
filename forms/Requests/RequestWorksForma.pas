@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, Grids, DBGridEh, ExtCtrls,
-  OkCancel_frame, GridsEh, StdCtrls, PropFilerEh,
-  PropStorageEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  DBGridEhGrouping, DynVarsEh, EhLibVCL;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, EhLibVCL;
 
 type
   TRequestWorksForm = class(TForm)
@@ -48,7 +49,8 @@ var
 
 implementation
 
-uses DM, MAIN;
+uses
+  DM, MAIN;
 
 {$R *.dfm}
 function ReqWorks(const aRequest:Integer; const aEditMode : Byte; const RQ_TYPE : Integer = -1): boolean;

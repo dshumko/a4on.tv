@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst;
 
 type
   TEditAttributForm = class(TForm)
@@ -36,7 +37,9 @@ function EditAttribute(const Customer_ID: Integer; const Attribut: string; const
 
 implementation
 
-uses DM, CF, RegularExpressions, pFIBQuery;
+uses
+  System.RegularExpressions,
+  DM, CF, pFIBQuery;
 
 {$R *.dfm}
 

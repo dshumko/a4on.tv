@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, StdCtrls, DBCtrlsEh, Mask, DBLookupEh, System.UITypes,
-  DB, FIBDataSet, pFIBDataSet, ExtCtrls, DBCtrls, FIBQuery, DBGridEh,
-  Vcl.Buttons, CnErrorProvider, pFIBQuery, FIBDatabase, pFIBDatabase,
-  PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Buttons,
+  OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBQuery, DBGridEh, CnErrorProvider, pFIBQuery, FIBDatabase,
+  pFIBDatabase, PropFilerEh, PropStorageEh;
 
 type
   TDiscountForm = class(TForm)
@@ -62,7 +63,9 @@ function AddEditDiscount(aDISCOUNT_ID: Integer; const aCUSTOMER_ID: Integer): Bo
 
 implementation
 
-uses System.DateUtils, DM, CF, AtrCommon, PrjConst;
+uses
+  System.DateUtils,
+  DM, CF, AtrCommon, PrjConst;
 
 function AddEditDiscount(aDISCOUNT_ID: Integer; const aCUSTOMER_ID: Integer): Boolean;
 begin

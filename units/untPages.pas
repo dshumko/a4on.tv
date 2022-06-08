@@ -2,9 +2,11 @@
 
 interface
 
-Uses
-  // VCL
-  Classes, SysUtils, Forms, Grids, Controls, ComObj, DB;
+uses
+  System.Win.ComObj,
+  System.Classes, System.SysUtils,
+  Data.DB,
+  Vcl.Forms, Vcl.Grids, Vcl.Controls;
 
 type
   TPage = class;

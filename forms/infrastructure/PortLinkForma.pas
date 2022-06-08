@@ -3,14 +3,13 @@
 interface
 
 uses
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
-  WinAPI.Windows, WinAPI.Messages, Data.DB, System.StrUtils,
-  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms,
-  FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
-  GridsEh, DBGridEh, OkCancel_frame, FIBDatabase, pFIBDatabase,
-  A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, Vcl.ComCtrls,
-  CustomerInfoFrame, System.Actions, Vcl.ActnList;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types, System.StrUtils, System.Actions,
+  Data.DB,
+  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
+  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  OkCancel_frame,
+  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame;
 
 type
 
@@ -91,7 +90,8 @@ function LinkPort(const aEqID: Integer; const aPORT: String): Boolean;
 
 implementation
 
-uses DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
+uses
+  DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -187,22 +187,22 @@ begin
 
   if (lcbWIRE.Text.IsEmpty) then
   begin
-    LinkItem.NODE_ID := -1;
+    LinkItem.Node_Id := -1;
     LinkItem.NODE_Name := '';
     LinkItem.LINK_ID := -1;
 
-    SecondItem.NODE_ID := -1;
+    SecondItem.Node_Id := -1;
     SecondItem.NODE_Name := '';
     SecondItem.LINK_ID := -1;
   end
   else
   begin
     LinkItem.LINK_ID := dsWire['WID'];
-    LinkItem.NODE_ID := dsWire['NODE_S_ID'];
+    LinkItem.Node_Id := dsWire['NODE_S_ID'];
     LinkItem.NODE_Name := dsWire['NODE_S'];
 
     SecondItem.LINK_ID := dsWire['WID'];
-    SecondItem.NODE_ID := dsWire['NODE_E_ID'];
+    SecondItem.Node_Id := dsWire['NODE_E_ID'];
     SecondItem.NODE_Name := dsWire['NODE_E'];
   end;
 
@@ -402,7 +402,7 @@ end;
 
 procedure TPortLinkForm.FindEqpmnt(var vName: string; var vIp: string; var vId: Integer);
 var
-  query, tmp: string;
+  query: string;
 begin
   if dsEndPort.Active then
     dsEndPort.Close;

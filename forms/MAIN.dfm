@@ -1117,7 +1117,7 @@ object A4MainForm: TA4MainForm
     end
     object actDVB: TAction
       Category = 'TV'
-      Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' DVB'
+      Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' DVB'
       Hint = #1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1089#1077#1090#1080' DVB'
       OnExecute = actDVBExecute
     end

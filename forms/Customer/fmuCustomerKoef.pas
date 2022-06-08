@@ -3,12 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh,
-  ComCtrls, ToolWin, DB, FIBDataSet, pFIBDataSet, ActnList,
-  DBGridEhToolCtrls, Buttons, ExtCtrls, DBAxisGridsEh,
-  System.Actions, PrjConst, EhLibVCL, System.UITypes, DBGridEhGrouping,
-  DynVarsEh, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TapgCustomerKoef = class(TA4onPage)
@@ -40,7 +42,8 @@ type
 
 implementation
 
-uses DM, DiscountForma, pFIBQuery, MAIN;
+uses
+  DM, DiscountForma, pFIBQuery, MAIN;
 
 {$R *.dfm}
 
@@ -121,18 +124,21 @@ end;
 procedure TapgCustomerKoef.RecalcCustomer;
 begin
   with TpFIBQuery.Create(Self) do
+  begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
       Transaction.StartTransaction;
-      sql.text := 'EXECUTE PROCEDURE FULL_RECALC_CUSTOMER(' + FDataSource.DataSet.FieldByName('customer_id')
-        .AsString + ')';
+      SQL.Text := 'EXECUTE PROCEDURE FULL_RECALC_CUSTOMER(:CUST)';
+      ParamByName('CUST').AsInt64 := FDataSource.DataSet.FieldByName('customer_id').AsInteger;
       ExecQuery;
       Transaction.Commit;
       UpdatePage;
     finally
       free;
-    end
+    end;
+  end;
 end;
 
 end.
+

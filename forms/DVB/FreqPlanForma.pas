@@ -3,13 +3,15 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  FIBDataSet, pFIBDataSet, GridsEh, Menus, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, PrjConst, CnErrorProvider, Vcl.DBCtrls,
-  Vcl.Mask, DBCtrlsEh, EhLibVCL, System.UITypes,
-  FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider,
+  DBCtrlsEh, EhLibVCL, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, DBGridEhGrouping, DynVarsEh;
 
 type
   TFreqPlanForm = class(TGridForm)
@@ -43,8 +45,8 @@ type
     procedure btnSaveLinkClick(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure dbGridDblClick(Sender: TObject);
-    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     procedure CreateOIRT;
@@ -57,7 +59,8 @@ var
 
 implementation
 
-uses DM, MAIN, DVBSettings, ChannelsForma, ChanSourcesForma, ReportPreview, SatCardsForma;
+uses
+  DM, MAIN, DVBSettings, ChannelsForma, ChanSourcesForma, ReportPreview, SatCardsForma;
 
 {$R *.dfm}
 
@@ -77,9 +80,8 @@ begin
     Exit;
   wi := True;
   if ((dsFreqPlan.RecordCount = 0) and
-    (MessageDlg
-    ('Создать частотный план на основе OIRT?'#13#10'В дальнейшем возможно изменить',
-    mtConfirmation, [mbYes, mbNo], 0) = mrYes)) then
+    (MessageDlg('Создать частотный план на основе OIRT?'#13#10'В дальнейшем возможно изменить', mtConfirmation,
+    [mbYes, mbNo], 0) = mrYes)) then
   begin
     wi := False;
     CreateOIRT;
@@ -134,8 +136,8 @@ begin
   inherited;
   if (srcDataSource.DataSet.RecordCount = 0) or (not fCanEdit) then
     Exit;
-  if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['NAME']]),
-    mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
+  then
     srcDataSource.DataSet.Delete;
 end;
 
@@ -153,8 +155,7 @@ var
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full);
-  fCanEdit := vFull or dmMain.AllowedAction(rght_DVB_edit) or
-    dmMain.AllowedAction(rght_Dictionary_Channels);
+  fCanEdit := vFull or dmMain.AllowedAction(rght_DVB_edit) or dmMain.AllowedAction(rght_Dictionary_Channels);
   fCanCreate := fCanEdit;
   actNew.Visible := fCanEdit;
   actDelete.Visible := fCanEdit;
@@ -168,10 +169,8 @@ end;
 procedure TFreqPlanForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
 begin
   inherited;
-  actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0)
-    and fCanEdit;
-  actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0)
-    and fCanEdit;
+  actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
+  actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
 end;
 
 procedure TFreqPlanForm.CreateOIRT;
@@ -195,41 +194,47 @@ begin
   S := UpperCase(dbGrid.Fields[Cell.X - 1].FieldName);
   if ((S = 'CH_NUMBER') or (S = 'CH_NAME')) then
   begin
-    if not dsFreqPlan.FieldByName('I_TYPE').IsNull then begin
+    if not dsFreqPlan.FieldByName('I_TYPE').IsNull then
+    begin
       case dsFreqPlan['I_TYPE'] of
-        0:ShowTransponder(dsFreqPlan['Dvbs_Id']);
-        1:ShowChannel(dsFreqPlan['CH_ID']);
+        0:
+          ShowTransponder(dsFreqPlan['Dvbs_Id']);
+        1:
+          ShowChannel(dsFreqPlan['CH_ID']);
       end;
     end;
   end
   else if (S = 'SRC_NAME') then
   begin
-    if not dsFreqPlan.FieldByName('I_TYPE').IsNull then begin
+    if not dsFreqPlan.FieldByName('I_TYPE').IsNull then
+    begin
       case dsFreqPlan['I_TYPE'] of
-        0:ShowChanSource(dsFreqPlan['SRC_ID']);
-        1:ShowChanSource(dsFreqPlan['SRC_ID']);
+        0:
+          ShowChanSource(dsFreqPlan['SRC_ID']);
+        1:
+          ShowChanSource(dsFreqPlan['SRC_ID']);
       end;
     end;
   end
-  else if(S = 'CARD_NAME') then
+  else if (S = 'CARD_NAME') then
   begin
-    if not dsFreqPlan.FieldByName('CARD_NAME').IsNull then begin
-        ShowSatCard(dsFreqPlan['CARD_NAME']);
+    if not dsFreqPlan.FieldByName('CARD_NAME').IsNull then
+    begin
+      ShowSatCard(dsFreqPlan['CARD_NAME']);
     end;
   end;
 end;
 
-
-procedure TFreqPlanForm.dbGridGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
+procedure TFreqPlanForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 var
-  s : string;
+  S: string;
 begin
   inherited;
-  if (not dsFreqPlan.FieldByName('Notice').IsNull) then begin
-    s := AnsiUpperCase(dsFreqPlan['Notice']);
-    if s.Contains('ПОМЕХ') then
+  if (not dsFreqPlan.FieldByName('Notice').IsNull) then
+  begin
+    S := AnsiUpperCase(dsFreqPlan['Notice']);
+    if S.Contains('ПОМЕХ') then
       Background := TColor($00BEAFFA);
   end;
 end;

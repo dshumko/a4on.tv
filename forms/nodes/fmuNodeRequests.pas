@@ -3,13 +3,12 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  System.Actions, System.UITypes, VCL.Graphics, VCL.Controls, VCL.Forms,
-  VCL.Dialogs, VCL.Buttons, VCL.ExtCtrls, VCL.ActnList,
-  VCL.ComCtrls, VCL.ToolWin, Data.DB, WinAPI.ShellAPI,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
-  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh;
+  Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh;
 
 type
   TapgNodeRequests = class(TA4onPage)
@@ -63,7 +62,8 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, RequestNewForma, RequestForma, DM;
+uses
+  MAIN, AtrCommon, RequestNewForma, RequestForma, DM;
 
 class function TapgNodeRequests.GetPageName: string;
 begin

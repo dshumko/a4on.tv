@@ -5,9 +5,10 @@ interface
 {$I defines.inc}
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, OkCancel_frame, PrjConst, FIBQuery, pFIBQuery, Vcl.Buttons,
-  Vcl.ExtCtrls, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  OkCancel_frame, PrjConst, FIBQuery, pFIBQuery, CnErrorProvider;
 
 type
   TChangePwdForm = class(TForm)
@@ -37,13 +38,14 @@ type
 implementation
 
 uses
-  DM, System.StrUtils, AtrCommon;
+  System.StrUtils,
+  DM, AtrCommon;
 
 {$R *.dfm}
 
 procedure TChangePwdForm.edtNEWKeyPress(Sender: TObject; var Key: Char);
 begin
-  if not(Key in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '!', '@', '#', '$', '%', '&', '*', '_', #8]) then
+  if not(CharInSet(Key, ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '!', '@', '#', '$', '%', '&', '*', '_', #8])) then
   begin
     Key := #0;
     cnErrors.SetError((Sender as TEdit), rsEmptyOrIncorrect, iaMiddleLeft, bsNeverBlink);

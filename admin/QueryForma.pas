@@ -3,13 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, StdCtrls, GridsEh, DBGridEh, ExtCtrls, Buttons,
-  FIBDatabase, pFIBDatabase, DB, FIBDataSet, pFIBDataSet, SynEditHighlighter,
-  SynHighlighterSQL, SynEdit, pFIBScripter, DBGridEhImpExp,
-  Menus, SynEditMiscClasses, SynEditSearch, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  System.UITypes, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus,
+  GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit,
+  pFIBScripter, DBGridEhImpExp, SynEditMiscClasses, SynEditSearch, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TQueryForm = class(TForm)
@@ -57,14 +58,14 @@ var
 
 implementation
 
-uses DM, MAIN, atrStrUtils;
+uses
+  DM, MAIN, atrStrUtils;
 
 {$R *.dfm}
 
 procedure TQueryForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if DataSet.Active
-  then
+  if DataSet.Active then
     DataSet.Close;
   Action := caFree;
   QueryForm := nil;
@@ -76,13 +77,11 @@ var
 
 begin
 
-  if (ActiveControl is TDBGridEh)
-  then begin
+  if (ActiveControl is TDBGridEh) then
+  begin
     dbg := (ActiveControl as TDBGridEh);
-    if (geaCopyEh in dbg.EditActions)
-    then
-      if dbg.CheckCopyAction
-      then
+    if (geaCopyEh in dbg.EditActions) then
+      if dbg.CheckCopyAction then
         DBGridEh_DoCopyAction(dbg, False)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
@@ -97,28 +96,32 @@ var
 begin
 
   A4MainForm.SaveDialog.FileName := rsCaigin;
-  if (ActiveControl is TDBGridEh)
-  then
-    if A4MainForm.SaveDialog.Execute
-    then begin
+  if (ActiveControl is TDBGridEh) then
+    if A4MainForm.SaveDialog.Execute then
+    begin
       case A4MainForm.SaveDialog.FilterIndex of
-        1: begin
+        1:
+          begin
             ExpClass := TDBGridEhExportAsUnicodeText;
             Ext := 'txt';
           end;
-        2: begin
+        2:
+          begin
             ExpClass := TDBGridEhExportAsCSV;
             Ext := 'csv';
           end;
-        3: begin
+        3:
+          begin
             ExpClass := TDBGridEhExportAsHTML;
             Ext := 'htm';
           end;
-        4: begin
+        4:
+          begin
             ExpClass := TDBGridEhExportAsRTF;
             Ext := 'rtf';
           end;
-        5: begin
+        5:
+          begin
             ExpClass := TDBGridEhExportAsOLEXLS;
             Ext := 'xls';
           end;
@@ -126,10 +129,10 @@ begin
         ExpClass := nil;
         Ext := '';
       end;
-      if ExpClass <> nil
-      then begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <> AnsiUpperCase(Ext)
-        then
+      if ExpClass <> nil then
+      begin
+        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
+          AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
         SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
       end;
@@ -138,11 +141,9 @@ end;
 
 procedure TQueryForm.ppmSelectAllClick(Sender: TObject);
 begin
-  if (ActiveControl is TDBGridEh)
-  then
+  if (ActiveControl is TDBGridEh) then
     with TDBGridEh(ActiveControl) do
-      if CheckSelectAllAction and (geaSelectAllEh in EditActions)
-      then
+      if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
         Selection.SelectAll;
 end;
 
@@ -159,30 +160,27 @@ begin
   itsSelect := False;
   FIBScript.Parse();
   i := FIBScript.StatementsCount;
-  if i = 1
-  then
+  if i = 1 then
     itsSelect := (Pos('SELECT', Trim(AnsiUpperCase(FIBScript.Script.Text))) = 1);
 
   c := FIBScript.Database.Connected;
-  if not c
-  then
+  if not c then
     FIBScript.Database.Open;
 
-  if itsSelect
-  then begin
-    if DataSet.Active
-    then
+  if itsSelect then
+  begin
+    if DataSet.Active then
       DataSet.Close;
     pc.ActivePage := tsResultSelect;
     DataSet.SelectSQL.Text := FIBScript.Script.Text;
     DataSet.Open;
   end
-  else begin
+  else
+  begin
     pc.ActivePage := tsResultScript;
     memResult.Lines.clear;
     FIBScript.ExecuteScript(1);
-    if FIBScript.transaction.InTransaction
-    then
+    if FIBScript.transaction.InTransaction then
       FIBScript.transaction.Commit;
     memResult.Lines.Add(rsQueryCompite);
   end;
@@ -191,11 +189,11 @@ end;
 
 procedure TQueryForm.SpeedButton2Click(Sender: TObject);
 var
-  myEncoding : TEncoding;
+  myEncoding: TEncoding;
 begin
-  if OpenDialog1.Execute
-  then begin
-    //myEncoding := TEncoding.Default;
+  if OpenDialog1.Execute then
+  begin
+    // myEncoding := TEncoding.Default;
     myEncoding := TEncoding.UTF8;
     seScript.Lines.LoadFromFile(OpenDialog1.FileName, myEncoding);
   end;
@@ -204,8 +202,7 @@ end;
 
 procedure TQueryForm.SpeedButton3Click(Sender: TObject);
 begin
-  if SaveDialog1.Execute
-  then
+  if SaveDialog1.Execute then
     seScript.Lines.SaveToFile(SaveDialog1.FileName);
 end;
 
@@ -213,7 +210,7 @@ procedure TQueryForm.FIBScriptExecuteError(Sender: TObject; StatementNo, Line: I
   SQLCode: Integer; const Msg: String; var doRollBack, Stop: Boolean);
 begin
   memResult.Lines.Add(format(rsErrorInLine, [Line, Statement.Text]));
-  Stop := ((MessageDlg(Format(rsErrorQuestWT, [Statement.Text]), mtConfirmation, [mbYes, mbNo], 0) = mrNo));
+  Stop := ((MessageDlg(format(rsErrorQuestWT, [Statement.Text]), mtConfirmation, [mbYes, mbNo], 0) = mrNo));
 
 end;
 

@@ -3,12 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, StdCtrls, ExtCtrls, Menus,
-  ActnList, DB, ComCtrls, ToolWin, GridsEh, DBGridEh, FIBDataSet,
-  pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, Vcl.Buttons, CnErrorProvider, PrjConst, Vcl.DBCtrls,
-  Vcl.Mask, DBCtrlsEh, System.UITypes, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls,
+  Vcl.ToolWin, Vcl.Buttons, Vcl.DBCtrls, Vcl.Mask,
+  GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TVATForm = class(TGridForm)
@@ -49,7 +50,8 @@ var
 
 implementation
 
-uses DM, TarifForma, MAIN;
+uses
+  DM, TarifForma, MAIN;
 
 {$R *.dfm}
 

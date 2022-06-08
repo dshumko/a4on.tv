@@ -3,9 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, SynEditHighlighter, StdCtrls, OverbyteIcsWndControl,
-  OverbyteIcsTnCnx, ExtCtrls, Mask, DBCtrlsEh, ActnList, System.Actions, PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList,
+  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, PropFilerEh, PropStorageEh;
 
 type
   TTelnetForm = class(TForm)
@@ -66,7 +67,9 @@ function telnet(const host:string='localhost'; const port:string='telnet';const 
 
 implementation
 
-uses StrUtils, OverbyteIcsWSocket;
+uses
+  System.StrUtils,
+  OverbyteIcsWSocket;
 
 {$R *.dfm}
 const

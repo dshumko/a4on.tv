@@ -1,16 +1,15 @@
-unit PaymentSourcesForma;
+п»їunit PaymentSourcesForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  GridForma, ToolCtrlsEh, DBGridEhToolCtrls,
-  Data.DB, FIBDataSet, System.UITypes,
-  pFIBDataSet, CnErrorProvider, Vcl.Menus, System.Actions, Vcl.ActnList,
-  Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin,
-  GridsEh, DBAxisGridsEh, DBGridEh, PrjConst, Vcl.Mask, DBCtrlsEh, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
+  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst,
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TPaymentSourcesForm = class(TGridForm)
@@ -54,7 +53,7 @@ begin
   FCanCreate := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_PaySources));
 
   dsPaymentSource.Open;
-  // права пользователей
+  // РїСЂР°РІР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
   actNew.Visible := FCanCreate;
   actDelete.Visible := FCanEdit;
   actEdit.Visible := FCanEdit;

@@ -3,17 +3,13 @@
 interface
 
 uses
-
-  System.Classes, System.Actions, Vcl.ActnList, Data.DB,
-  Vcl.Controls, Vcl.Buttons, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
-  winAPI.Windows, winAPI.Messages, System.SysUtils, System.Variants,
-  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, System.UITypes,
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.Actions, System.SysUtils, System.Variants, System.UITypes,
+  Data.DB,
+  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs,
   Vcl.ComCtrls, Vcl.ToolWin,
-
-  FIBDataSet, pFIBDataSet, ToolCtrlsEh, GridsEh, DBGridEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, AtrPages,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
-  DBCtrlsEh;
+  FIBDataSet, pFIBDataSet, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, AtrPages, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh;
 
 type
   TapgCustomerRecourse = class(TA4onPage)
@@ -53,7 +49,8 @@ type
 
 implementation
 
-uses DM, RecourseForma, MAIN, TextEditForma, TaskForma;
+uses
+  DM, RecourseForma, MAIN, TextEditForma, TaskForma;
 
 {$R *.dfm}
 

@@ -4,17 +4,14 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.UITypes, System.Actions,
-  VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, VCL.StdCtrls, VCL.ActnList,
-  VCL.DBCtrls, VCL.Mask, VCL.Buttons, VCL.ExtCtrls, VCL.Menus,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
   Data.DB,
-  AtrPages,
-  FIBDatabase, pFIBDataSet, FIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase,
-  ToolCtrlsEh, GridsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBLookupEh, DBCtrlsEh, DBGridEh,
-  MemTableDataEh, MemTableEh, CnErrorProvider,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  PropFilerEh, PropStorageEh, EhlibFIB;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
+  Vcl.ExtCtrls, Vcl.Menus,
+  AtrPages, FIBDatabase, pFIBDataSet, FIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, ToolCtrlsEh, GridsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh, DBLookupEh, DBCtrlsEh, DBGridEh, MemTableDataEh, MemTableEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping,
+  DynVarsEh, PropFilerEh, PropStorageEh, EhlibFIB;
 
 type
   TapgCustomerNew = class(TA4onPage)
@@ -208,10 +205,9 @@ function NewCustomer: Int64;
 
 implementation
 
-uses System.Typinfo, System.RegularExpressions,
-  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils,
-  ScanImageForma, AtrCommon,
-  EditCFileForma, A4onTypeUnit, ContactForma,
+uses
+  System.TypInfo, System.RegularExpressions,
+  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit, ContactForma,
   OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl;
 
 {$R *.dfm}

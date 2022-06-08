@@ -1,16 +1,15 @@
-unit BCIForma;
+﻿unit BCIForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, PropFilerEh, System.Actions,
-  Vcl.ActnList, CnErrorProvider, PropStorageEh, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
-  DynVarsEh, EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL,
-  GridsEh, DBAxisGridsEh, Data.DB, FIBDataSet, pFIBDataSet, Vcl.Mask,
-  DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, MemTableDataEh,
-  MemTableEh, FIBQuery, pFIBQuery;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
+  PropFilerEh, CnErrorProvider, PropStorageEh, DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
+  EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh,
+  FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery;
 
 type
   TBCIForm = class(TForm)

@@ -5,12 +5,24 @@ unit uFormSelectSource_FMX;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.Layouts, FMX.ListBox,
-  FMX.Objects
-  {$IFDEF DELPHI_XE4_UP}, FMX.StdCtrls{$ENDIF}
-  {$IFDEF DELPHI_XE5_UP}, FMX.Graphics{$ENDIF}
-  ;
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Classes,
+  System.Variants,
+  FMX.Types,
+  FMX.Controls,
+  FMX.Forms,
+  FMX.Dialogs,
+  FMX.Layouts,
+  FMX.ListBox,
+  FMX.Objects,
+  {$IFDEF DELPHI_XE4_UP}
+  FMX.StdCtrls,
+  {$ENDIF}
+  {$IFDEF DELPHI_XE5_UP}
+  FMX.Graphics;
+  {$ENDIF}
 
 type
   TFormSelectSource = class(TForm)
@@ -34,7 +46,8 @@ type
 
 implementation
 
-uses DelphiTwainLang;
+uses
+  DelphiTwainLang;
 
 constructor TFormSelectSource.CreateNew(AOwner: TComponent;
   Dummy: {$IFDEF DELPHI_XE5_UP}NativeInt{$ELSE}Integer{$ENDIF} = 0);

@@ -3,14 +3,13 @@
 interface
 
 uses
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
-  WinAPI.Windows, WinAPI.Messages, Data.DB, System.StrUtils,
-  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms,
-  FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
-  GridsEh, DBGridEh, OkCancel_frame, FIBDatabase, pFIBDatabase,
-  A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, Vcl.ComCtrls,
-  CustomerInfoFrame, System.Actions, Vcl.ActnList;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types, System.StrUtils, System.Actions,
+  Data.DB,
+  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
+  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  OkCancel_frame,
+  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame;
 
 type
 
@@ -69,15 +68,18 @@ type
     property NodeEnd: Integer write FNodeEnd;
   end;
 
-function WireLink(const aWid: Integer; const aLabels: string; const aPoint_S: Integer; const aPoint_E: Integer): Boolean;
+function WireLink(const aWid: Integer; const aLabels: string; const aPoint_S: Integer; const aPoint_E: Integer)
+  : Boolean;
 
 implementation
 
-uses DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
+uses
+  DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
 
 {$R *.dfm}
 
-function WireLink(const aWid: Integer; const aLabels: string; const aPoint_S: Integer; const aPoint_E: Integer): Boolean;
+function WireLink(const aWid: Integer; const aLabels: string; const aPoint_S: Integer; const aPoint_E: Integer)
+  : Boolean;
 begin
   Result := false;
   with TWireLinkForm.Create(Application) do
@@ -98,10 +100,6 @@ begin
 end;
 
 procedure TWireLinkForm.SetLabel(const Value: string);
-var
-  i, j: Integer;
-  s, v: string;
-  ports: TStringDynArray;
 begin
   cbLABELS.Items.Clear;
   cbLABELS.KeyItems.Clear;
@@ -119,8 +117,8 @@ begin
 end;
 
 procedure TWireLinkForm.actAddPortExecute(Sender: TObject);
-var
-  EQ: TEquipmentRecord;
+// var
+// EQ: TEquipmentRecord;
 begin
   {
     if (dsEndPort.RecordCount = 0) or (not FCanEdit) then
@@ -147,9 +145,9 @@ begin
 end;
 
 procedure TWireLinkForm.actEditPortExecute(Sender: TObject);
-var
-  EQ: TEquipmentRecord;
-  Port: string;
+// var
+// EQ: TEquipmentRecord;
+// Port: string;
 begin
   {
     if (dsEndPort.RecordCount = 0) or (not FCanEdit) or (lcbPortS.Text.IsEmpty) then
@@ -234,7 +232,8 @@ var
   eid: Integer;
   port: string;
 begin
-  if not dbleEqpmntS.Text.IsEmpty then begin
+  if not dbleEqpmntS.Text.IsEmpty then
+  begin
     eid := dbleEqpmntS.KeyValue;
     if not lcbPortS.Text.IsEmpty then
       port := lcbPortS.KeyValue
@@ -243,7 +242,8 @@ begin
     SaveEndpoint(eid, port);
   end;
 
-  if not dbleEqpmntE.Text.IsEmpty then begin
+  if not dbleEqpmntE.Text.IsEmpty then
+  begin
     eid := dbleEqpmntE.KeyValue;
     if not lcbPortE.Text.IsEmpty then
       port := lcbPortE.KeyValue
@@ -269,7 +269,7 @@ begin
       ParamByName('Port').asString := port;
       ParamByName('WID').AsInteger := FWID;
       if not cbLABELS.Text.IsEmpty then
-          ParamByName('WLABEL').asString := cbLABELS.Text;
+        ParamByName('WLABEL').asString := cbLABELS.Text;
 
       Transaction.StartTransaction;
       ExecQuery;

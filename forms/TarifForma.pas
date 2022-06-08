@@ -3,9 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBCtrlsEh, StdCtrls, Mask, FIBQuery, pFIBQuery, PrjConst,
-  Vcl.Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  DBCtrlsEh, FIBQuery, pFIBQuery, PrjConst;
 
 type
   TTarifForm = class(TForm)
@@ -33,7 +34,8 @@ function NewChTarif (const aChannel :String; const aChannae_ID : Integer; const 
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 {$R *.dfm}
 

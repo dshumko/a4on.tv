@@ -1,16 +1,18 @@
-unit apiSMS;
+п»їunit apiSMS;
 
 { DEFINE TEST_SMS }
 
 interface
 
-uses SysUtils, Classes, DateUtils, Types, Windows, vcl.dialogs,
-  httpsend, SynaUtil, DB, FIBQuery, pFIBQuery,
-  System.Generics.Collections, JsonDataObjects,
-  A4onTypeUnit;
+uses
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.DateUtils, System.Types, System.Generics.Collections,
+  Data.DB,
+  Vcl.Dialogs,
+  httpsend, SynaUtil, FIBQuery, pFIBQuery, JsonDataObjects, A4onTypeUnit;
 
 const
-  // Константы для отправки SMS по SMTP
+  // РљРѕРЅСЃС‚Р°РЅС‚С‹ РґР»СЏ РѕС‚РїСЂР°РІРєРё SMS РїРѕ SMTP
   API_URL: String = 'http://a4on.tv/sms/sms/';
 
 type
@@ -30,7 +32,7 @@ type
   public
     property ErrorText: string read fError;
     property Balance: Integer read GetBalance;
-    // Отправить список смс и вернуть кол-во отправленных смс
+    // РћС‚РїСЂР°РІРёС‚СЊ СЃРїРёСЃРѕРє СЃРјСЃ Рё РІРµСЂРЅСѓС‚СЊ РєРѕР»-РІРѕ РѕС‚РїСЂР°РІР»РµРЅРЅС‹С… СЃРјСЃ
     function SMSCount(const Text: string): Integer;
     function SendList(list: TSMSList): Integer;
     function SendAll(var ErrorText: String): Integer;
@@ -42,7 +44,9 @@ type
 
 implementation
 
-uses SynCrypto, ZLibExGZ, RegularExpressions, DM, AtrStrUtils;
+uses
+  System.RegularExpressions,
+  SynCrypto, ZLibExGZ, DM, AtrStrUtils;
 
 constructor TSMSapi.Create(const user: string; const key: string; const country: string = 'RU');
 begin
@@ -56,7 +60,7 @@ begin
     fCountry := cRU;
 
   fHTTP := THTTPSend.Create;
-  // Получим баланс сразу
+  // РџРѕР»СѓС‡РёРј Р±Р°Р»Р°РЅСЃ СЃСЂР°Р·Сѓ
   fBalance := BalanceFromA4on();
 end;
 
@@ -160,8 +164,8 @@ begin
       s := 'RU';
     cUA:
       s := 'UA';
-    else
-      s := 'BY'
+  else
+    s := 'BY'
   end;
   Result := AtrStrUtils.CorrectPhone(phone, s);
 end;
@@ -170,7 +174,7 @@ function TSMSapi.SMSCount(const Text: string): Integer;
 begin
   Result := 1;
   // public function abtSMScount($text) {
-  // /* Считаем Приблизительное количество SMS в сообщении
+  // /* РЎС‡РёС‚Р°РµРј РџСЂРёР±Р»РёР·РёС‚РµР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ SMS РІ СЃРѕРѕР±С‰РµРЅРёРё
   // SMS	CYR 	ENG
   // 1 	70  	160
   // 2 	134 	306
@@ -179,7 +183,7 @@ begin
   // */
   // $len = mb_strlen($text, 'UTF-8');
   // $cnt = 0;
-  // if (preg_match('/[А-Я\^\{\}\[\]\|\\\~]/i',$text)) {
+  // if (preg_match('/[Рђ-РЇ\^\{\}\[\]\|\\\~]/i',$text)) {
   // if ($len<=70) 						  $cnt = 1;
   // elseif (($len>70)   and ($len < 134)) $cnt = 2;
   // elseif (($len>=134) and ($len < 201)) $cnt = 3;
@@ -221,7 +225,7 @@ begin
     Str := CorrectPhone(list[i].phone);
     if Str <> '' then
     begin
-      // если корректный номер - то продолжим
+      // РµСЃР»Рё РєРѕСЂСЂРµРєС‚РЅС‹Р№ РЅРѕРјРµСЂ - С‚Рѕ РїСЂРѕРґРѕР»Р¶РёРј
       ChildObj := Obj.A['messages'].AddObject;
       ChildObj['a4id'] := list[i].a4ID;
       ChildObj['phone'] := Str;
@@ -233,7 +237,7 @@ begin
     else
     begin
       sms := list[i];
-      sms.status := -6; // не верный номер
+      sms.status := -6; // РЅРµ РІРµСЂРЅС‹Р№ РЅРѕРјРµСЂ
       list[i] := sms;
     end;
   end;
@@ -251,10 +255,10 @@ begin
       if Obj.IndexOf('sms_count') = 0 then
         fBalance := Obj['sms_count'];
 
-      // Если массив с заданным именем найден
+      // Р•СЃР»Рё РјР°СЃСЃРёРІ СЃ Р·Р°РґР°РЅРЅС‹Рј РёРјРµРЅРµРј РЅР°Р№РґРµРЅ
       if Obj.IndexOf('messages') >= 0 then
       begin
-        // Получили массив по имени
+        // РџРѕР»СѓС‡РёР»Рё РјР°СЃСЃРёРІ РїРѕ РёРјРµРЅРё
         for i := 0 to Obj['messages'].Count - 1 do
         begin
           a4ID := Obj['messages'].Items[i]['a4id'];
@@ -317,7 +321,7 @@ begin
 
     if SMSList.Count > 0 then
     begin
-      // если есть что отправлять
+      // РµСЃР»Рё РµСЃС‚СЊ С‡С‚Рѕ РѕС‚РїСЂР°РІР»СЏС‚СЊ
       SendList(SMSList);
       uSMS.DataBase := dmMain.dbTV;
       uSMS.Transaction := dmMain.trWriteQ;
@@ -357,7 +361,7 @@ begin
 
   for i := 0 to list.Count - 1 do
   begin
-    // если корректный номер - то продолжим
+    // РµСЃР»Рё РєРѕСЂСЂРµРєС‚РЅС‹Р№ РЅРѕРјРµСЂ - С‚Рѕ РїСЂРѕРґРѕР»Р¶РёРј
     ChildObj := Obj.A['messages'].AddObject;
     ChildObj['a4id'] := list[i].a4ID;
     ChildObj['smsId'] := list[i].smsID;
@@ -376,10 +380,10 @@ begin
       if Obj.IndexOf('sms_count') = 0 then
         fBalance := Obj['sms_count'];
 
-      // Если массив с заданным именем найден
+      // Р•СЃР»Рё РјР°СЃСЃРёРІ СЃ Р·Р°РґР°РЅРЅС‹Рј РёРјРµРЅРµРј РЅР°Р№РґРµРЅ
       if Obj.IndexOf('messages') >= 0 then
       begin
-        // Получили массив по имени
+        // РџРѕР»СѓС‡РёР»Рё РјР°СЃСЃРёРІ РїРѕ РёРјРµРЅРё
         for i := 0 to Obj['messages'].Count - 1 do
         begin
           a4ID := Obj['messages'].Items[i]['a4id'];
@@ -434,14 +438,14 @@ begin
 
     if SMSList.Count > 0 then
     begin
-      // если есть что отправлять
+      // РµСЃР»Рё РµСЃС‚СЊ С‡С‚Рѕ РѕС‚РїСЂР°РІР»СЏС‚СЊ
       StatusList(SMSList);
       uSMS.DataBase := dmMain.dbTV;
       uSMS.Transaction := dmMain.trWriteQ;
       uSMS.SQL.Text := ' update Messages set Mes_Result = :Mes_Result where Mes_Id = :Mes_Id ';
       for i := 0 to SMSList.Count - 1 do
       begin
-        // 18, 19 - в очереди на сервере отправки смс
+        // 18, 19 - РІ РѕС‡РµСЂРµРґРё РЅР° СЃРµСЂРІРµСЂРµ РѕС‚РїСЂР°РІРєРё СЃРјСЃ
         if not(SMSList[i].status in [0, 1, 18, 19]) then
         begin
           uSMS.Transaction.StartTransaction;

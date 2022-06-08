@@ -3,14 +3,13 @@
 interface
 
 uses
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
-  WinAPI.Windows, WinAPI.Messages, Data.DB, System.StrUtils,
-  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms,
-  FIBDataSet, pFIBDataSet,
-  DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
-  GridsEh, DBGridEh, OkCancel_frame, FIBDatabase, pFIBDatabase,
-  A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, Vcl.ComCtrls,
-  CustomerInfoFrame, System.Actions, Vcl.ActnList;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types, System.StrUtils, System.Actions,
+  Data.DB,
+  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
+  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  OkCancel_frame,
+  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame;
 
 type
 
@@ -40,8 +39,7 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
-    procedure lcbNodeDropDownBoxGetCellParams(Sender: TObject;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
+    procedure lcbNodeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
   private
     FCanEdit: Boolean;
@@ -49,7 +47,7 @@ type
     FCustomerRecord: TCustomerInfo;
     FNodeID: Integer;
     FWID: Integer;
-    function CheckData:Boolean;
+    function CheckData: Boolean;
     procedure SavePoint;
   public
     property WID: Integer write FWID;
@@ -60,7 +58,8 @@ function WirePoint(const aWid: Integer): Boolean;
 
 implementation
 
-uses DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
+uses
+  DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -105,9 +104,8 @@ begin
   dsNodes.Open;
 end;
 
-procedure TWirePointForm.lcbNodeDropDownBoxGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TWirePointForm.lcbNodeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
   if (dsNodes.Active) and (not dsNodes.FieldByName('COLOR').IsNull) then
     Background := StringToColor(dsNodes['COLOR'])
@@ -128,14 +126,13 @@ begin
 
   errors := CheckData;
 
-
   if not errors then
     SavePoint
   else
     ModalResult := mrNone;
 end;
 
-function TWirePointForm.CheckData:Boolean;
+function TWirePointForm.CheckData: Boolean;
 begin
   Result := false;
   if VarIsNull(lcbNode.value) then
@@ -148,9 +145,6 @@ begin
 end;
 
 procedure TWirePointForm.SavePoint;
-var
-  eid: Integer;
-  port: string;
 begin
   with TpFIBQuery.Create(Nil) do
   begin
@@ -161,11 +155,10 @@ begin
       sql.Add('values (:Wid, :Node_Id, :Meters, :Notice)');
       sql.Add('matching (Wid, Node_Id)');
       ParamByName('WID').AsInteger := FWID;
-      ParamByName('Node_Id').AsInteger := lcbNode.Value;
+      ParamByName('Node_Id').AsInteger := lcbNode.value;
       if not ednMeters.Text.IsEmpty then
-        ParamByName('Meters').AsDouble := ednMeters.Value;
+        ParamByName('Meters').AsDouble := ednMeters.value;
       ParamByName('Notice').asString := mmoNotice.Lines.Text;
-
 
       Transaction.StartTransaction;
       ExecQuery;

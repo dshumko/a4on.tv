@@ -3,12 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, Vcl.Buttons, EhLibVCL, GridsEh,
-  DBAxisGridsEh, Vcl.ExtCtrls, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase;
 
 type
   TedtNodeFlats = class(TForm)
@@ -56,7 +56,8 @@ function EditFlats(const NODE_ID: Integer): Boolean;
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 {$R *.dfm}
 

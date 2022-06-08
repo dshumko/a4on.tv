@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DBCtrlsEh, Mask, DBLookupEh, DB, FIBDataSet,
-  pFIBDataSet, Buttons, ExtCtrls, Vcl.DBCtrls, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh;
 
 type
   TChangeOffForm = class(TForm)
@@ -30,7 +32,8 @@ function SelectOffService(const ForService: Integer; var OFF_SERVICE: Integer; v
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 {$R *.dfm}
 

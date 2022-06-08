@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh,
-  ComCtrls, ToolWin, DB, FIBDataSet, pFIBDataSet, ActnList,
-  DBGridEhToolCtrls, Buttons, ExtCtrls, DBAxisGridsEh, System.Actions, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TapgCustomerRequests = class(TA4onPage)
@@ -53,7 +54,8 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, RequestNewForma, RequestForma, DM;
+uses
+  MAIN, AtrCommon, RequestNewForma, RequestForma, DM;
 
 class function TapgCustomerRequests.GetPageName: string;
 begin

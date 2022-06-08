@@ -3,14 +3,15 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Data.DB, Vcl.DBCtrls, Vcl.Mask,
-
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame,
-  FIBQuery, pFIBQuery, CnErrorProvider, PropFilerEh, PropStorageEh,
-  DM, PrjConst, CustomerInfoFrame, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.DBCtrls,
+  Vcl.Mask,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, FIBQuery, pFIBQuery, CnErrorProvider,
+  PropFilerEh,
+  PropStorageEh, DM, PrjConst, CustomerInfoFrame, A4onTypeUnit;
 
 type
   TRecourseForm = class(TForm)
@@ -93,7 +94,7 @@ uses
 
 function EditRecourse(const Customer_ID: integer; CallBack: TCallBack = nil): Boolean;
 var
-  s : string;
+  s: string;
 begin
   Result := True;
   with TRecourseForm.Create(Application) do
@@ -113,7 +114,8 @@ begin
       s := dmMain.GetSettingsValue('AREA_LOCK');
       if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
       begin
-        dsHomes.ParamByName('AREA_LOCK').Value := Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
+        dsHomes.ParamByName('AREA_LOCK').Value :=
+          Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
       end;
       dsHomes.Open;
       pnlAdres.Visible := True;
@@ -126,7 +128,7 @@ end;
 
 function EditRecourseByAdres(const Street_ID: integer; const House_ID: integer; const Flat: String): Boolean;
 var
-  s : string;
+  s: string;
 begin
   Result := True;
   with TRecourseForm.Create(Application) do
@@ -289,7 +291,8 @@ end;
 
 procedure TRecourseForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if A4MainForm.AddictSpell.Tag = 1 then begin
+  if A4MainForm.AddictSpell.Tag = 1 then
+  begin
     A4MainForm.AddictSpell.RemoveControl(mmoNotice);
   end;
   // RecourseForm:=nil;
@@ -324,17 +327,16 @@ begin
 end;
 
 procedure TRecourseForm.FormShow(Sender: TObject);
-var
-  s: string;
-  f: string;
 begin
-  if A4MainForm.AddictSpell.Tag = 1 then begin
+  if A4MainForm.AddictSpell.Tag = 1 then
+  begin
     A4MainForm.AddictSpell.AddControl(mmoNotice);
   end;
 
   if pnlAdres.Visible then
     LupStreets.SetFocus
-  else begin
+  else
+  begin
     cbRecourse.SetFocus;
   end;
 end;
@@ -346,8 +348,8 @@ end;
 
 procedure TRecourseForm.pnlRecourseEnter(Sender: TObject);
 begin
-  if not cbRecourse.ListVisible
-  then cbRecourse.DropDown;
+  if not cbRecourse.ListVisible then
+    cbRecourse.DropDown;
 end;
 
 procedure TRecourseForm.FormCreate(Sender: TObject);
@@ -479,9 +481,10 @@ end;
 
 procedure TRecourseForm.cbRecourseClick(Sender: TObject);
 begin
-  if not cbRecourse.ListVisible
-  then cbRecourse.DropDown
-  else cbRecourse.CloseUp(False);
+  if not cbRecourse.ListVisible then
+    cbRecourse.DropDown
+  else
+    cbRecourse.CloseUp(False);
 end;
 
 end.

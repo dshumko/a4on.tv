@@ -4,17 +4,17 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  System.Actions, System.UITypes,
-  Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList,
-  Vcl.Buttons, Vcl.Mask, Data.DB, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin,
-  DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
-  AtrPages, FIBQuery, pFIBQuery, DBGridEhToolCtrls,
-  PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet,
-  DBAxisGridsEh, MemTableDataEh, MemTableEh, PrjConst,
-  EhLibVCL, dnSplitter, DBGridEhGrouping, DynVarsEh, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
+  Vcl.Mask,
+  Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin,
+  DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, AtrPages,
+  FIBQuery,
+  pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
+  MemTableDataEh,
+  MemTableEh, PrjConst, EhLibVCL, dnSplitter, DBGridEhGrouping, DynVarsEh, A4onTypeUnit;
 
 type
   TCustomersForm = class(TForm)
@@ -299,6 +299,8 @@ type
     FFilterValue: string;
     FCheckPassport: Boolean;
     FPersonalData: Boolean;
+    FHL_ROW: Boolean;
+    FHL_COLOR: TColor;
     function GenerateFilter: String;
     function ReplaceFields(const str: string): string;
     procedure ShowPage(Page: TA4onPage);
@@ -356,14 +358,19 @@ implementation
 {$R *.dfm}
 
 uses
-  AtrCommon, DM, MAIN, CustomerForma, DBGridEhFindDlgs, DateUtils, SelectColumnsForma, ExportSettingsForma,
-  TextEditForma, SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, AtrStrUtils,
-  RxStrUtils, StrUtils, EhLibFIB, pFIBProps, fmuCustomerInfo, fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv,
-  fmuCustomerKoef, fmuCustomerLetters, fmuCustomerRecourse, fmuCustomerRequests, fmuCustomerMaterialsMove,
-  fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerDigit, fmuCustomerAppl, fmuCustomerCard,
-  PaymentForma, CancelContractForma, SelectLetterTypeForma, CustomersFilter, ReportPreview, fmuCustomerNew,
-  fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl;
+  System.DateUtils, System.StrUtils,
+  AtrCommon, DM, MAIN, CustomerForma, DBGridEhFindDlgs, SelectColumnsForma, ExportSettingsForma, TextEditForma,
+  SendMessagesForma,
+  fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, AtrStrUtils, RxStrUtils, EhLibFIB, pFIBProps,
+  fmuCustomerInfo,
+  fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv, fmuCustomerKoef, fmuCustomerLetters, fmuCustomerRecourse,
+  fmuCustomerRequests, fmuCustomerMaterialsMove, fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet,
+  fmuCustomerDigit,
+  fmuCustomerAppl, fmuCustomerCard, PaymentForma, CancelContractForma, SelectLetterTypeForma, CustomersFilter,
+  ReportPreview,
+  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma, OverbyteIcsWndControl,
+  OverbyteIcsHttpProt,
+  OverbyteIcsWSocket, OverbyteIcsUrl;
 
 const
   cst_OneRecord: string = ' first 1 ';
@@ -589,6 +596,12 @@ begin
         AFont.Color := FgCustDisconted
       else
         AFont.Color := FgCustDiscontedWithMoney;
+    end;
+
+    if FHL_ROW then
+    begin
+      if (not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('ROW_HL_COLOR').IsNull) then
+        Background := FHL_COLOR; // TColor($00FF7B9E);// Purple
     end;
   end;
 end;
@@ -1958,6 +1971,19 @@ begin
   if (Mask and clc_Pasport) <> 0 then
   begin
     select := select + rsEOL + ', datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) as YEARS';
+  end;
+
+  if (FHL_ROW) then
+  begin
+    if dmMain.GetSettingsValue('ROW_HL_TYPE') = '0' then
+    begin
+      select := select + rsEOL + ', rtc.Single_Service_Id ROW_HL_COLOR ';
+      from := from + rsEOL +
+        ' left outer join Single_Serv rtc on (rtc.Customer_Id = c.Customer_Id and rtc.Service_Id = ' +
+        dmMain.GetSettingsValue('ROW_HL_ID') + ') ';
+    end
+    else
+      FHL_ROW := False;
   end;
 
   from := from + rsEOL + '@from_add';
@@ -5047,6 +5073,18 @@ begin
           (Components[i] as TDBGridEh).RowHeight := Row_height;
         end;
       end;
+    end;
+  end;
+
+  // проверим, нужно ли вклюсать подсветку по доп условию из настроек
+  FHL_ROW := (dmMain.GetSettingsValue('ROW_HL_COLOR') <> '') and (dmMain.GetSettingsValue('ROW_HL_ID') <> '') and
+    (dmMain.GetSettingsValue('ROW_HL_TYPE') <> '');
+  if FHL_ROW then
+  begin
+    try
+      FHL_COLOR := StringToColor(dmMain.GetSettingsValue('ROW_HL_COLOR'));
+    except
+      FHL_COLOR := clPurple;
     end;
   end;
 

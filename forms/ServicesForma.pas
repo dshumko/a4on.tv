@@ -4,12 +4,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, ComCtrls, ToolWin, Grids, DBGridEh, DB, FIBDataSet,
-  pFIBDataSet, GridsEh, Buttons, StdCtrls, ActnList,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase,
-  System.Actions, DBCtrlsEh, Vcl.DBCtrls, Vcl.Mask, DBLookupEh, PrjConst,
-  EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Buttons,
+  Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh,
+  DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
 
 type
   TServicesForm = class(TForm)
@@ -288,7 +289,9 @@ var
 
 implementation
 
-uses DM, TarifForma, pFIBQuery, ServiceForma, MAIN, RegularExpressions;
+uses
+  System.RegularExpressions,
+  DM, TarifForma, pFIBQuery, ServiceForma, MAIN;
 
 {$R *.dfm}
 

@@ -1,10 +1,12 @@
-unit NodeProp;
+﻿unit NodeProp;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, System.UITypes,
-  Dialogs, SimpleGraph, ExtCtrls, StdCtrls, ComCtrls, ExtDlgs, CheckLst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes, System.UITypes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtDlgs, Vcl.CheckLst,
+  SimpleGraph;
 
 type
   TNodeProperties = class(TForm)
@@ -72,7 +74,8 @@ function PrettyNodeClassName(const AClassName: string): string;
 
 implementation
 
-uses MarginsProp;
+uses
+  MarginsProp;
 
 {$R *.dfm}
 

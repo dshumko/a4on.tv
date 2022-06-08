@@ -3,13 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  ExtCtrls, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, GridsEh, Menus,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, Vcl.StdCtrls, Vcl.Buttons, CnErrorProvider, PrjConst,
-  EhLibVCL, FIBDatabase, pFIBDatabase, Vcl.DBCtrls, DBCtrlsEh,
-  System.UITypes, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls, Vcl.Menus,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.DBCtrls,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  CnErrorProvider, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DBCtrlsEh, DBGridEhGrouping, DynVarsEh;
 
 type
   TAreaForm = class(TGridForm)
@@ -71,7 +71,8 @@ var
 
 implementation
 
-uses DM, MAIN, AreaEditForma, SubAreaEditForma;
+uses
+  DM, MAIN, AreaEditForma, SubAreaEditForma;
 
 {$R *.dfm}
 

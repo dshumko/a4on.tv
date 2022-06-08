@@ -3,15 +3,14 @@
 interface
 
 uses
-  WINAPI.Windows, WINAPI.Messages, System.SysUtils, System.Variants, Vcl.Graphics,
-  System.Classes, System.Actions,
-  Vcl.ActnList, Data.DB, Vcl.Forms,
-  Vcl.Controls, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.Mask, Vcl.ComCtrls, Vcl.Dialogs,
-  DBGridEh, OkCancel_frame, DBCtrlsEh, DBCtrls,
-  DBLookupEh, FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, DM, GridsEH,
-  PrjConst, A4onTypeUnit, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.ActnList, Vcl.Forms, Vcl.Controls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ComCtrls,
+  Vcl.Dialogs, Vcl.DBCtrls,
+  DBGridEh, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DM, GridsEH,
+  PrjConst,
+  A4onTypeUnit, CnErrorProvider;
 
 type
   TEquipEditForm = class(TForm)
@@ -142,7 +141,8 @@ function CloneEquipment(const aEQ_ID: Int64): Int64;
 implementation
 
 uses
-  AtrStrUtils, atrCmdUtils, AtrCommon, StrUtils, TelnetForma, pFibQuery, MAIN;
+  System.StrUtils,
+  AtrStrUtils, atrCmdUtils, AtrCommon, TelnetForma, pFibQuery, MAIN;
 
 {$R *.dfm}
 

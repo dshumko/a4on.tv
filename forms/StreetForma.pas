@@ -3,13 +3,16 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, WinAPI.ShellAPI, System.SysUtils, System.Variants, System.Classes,
-  System.Actions, System.UITypes, Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons, Vcl.Mask,
-  Data.DB, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin, System.RegularExpressions,
-  GridForma, Grids, DBGridEh, FIBDataSet, pFIBDataSet, frxClass, frxDBSet, EhLibFIB,
-  DBCtrlsEh, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
+  Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.RegularExpressions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
+  Vcl.Mask,
+  Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, frxClass, frxDBSet, EhLibFIB, DBCtrlsEh, GridsEh, PropFilerEh,
+  PropStorageEh,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
+  FIBDatabase,
   pFIBDatabase, DBLookupEh;
 
 type
@@ -260,8 +263,9 @@ var
 
 implementation
 
-uses DM, AtrCommon, AtrStrUtils, StreetEditForma, MAIN, HouseForma, HouseWorkForma, FIBQuery, pFIBQuery,
-  ReportPreview, HouseMapForma, EquipEditForma, FlatsAddForma, CF, CircuitMain, StreetHousesViewForma;
+uses
+  DM, AtrCommon, AtrStrUtils, StreetEditForma, MAIN, HouseForma, HouseWorkForma, FIBQuery, pFIBQuery, ReportPreview,
+  HouseMapForma, EquipEditForma, FlatsAddForma, CF, CircuitMain, StreetHousesViewForma;
 
 {$R *.dfm}
 
@@ -357,7 +361,8 @@ begin
     dbGrid.Height := i;
 
   vFINE := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
-  if vFINE then begin
+  if vFINE then
+  begin
     for i := 0 to dbgCustomer.Columns.Count - 1 do
     begin
       if (AnsiUpperCase(dbgCustomer.Columns[i].FieldName) = 'DEBT_SUM') then

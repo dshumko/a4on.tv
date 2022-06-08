@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, A4onTypeUnit;
 
 type
 
@@ -30,7 +31,8 @@ function EditLayoute(var NodeLayoutItem: TNodeLayoutItem): Boolean;
 
 implementation
 
-uses DM, pFIBQuery;
+uses
+  DM, pFIBQuery;
 
 {$R *.dfm}
 

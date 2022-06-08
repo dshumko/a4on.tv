@@ -27,7 +27,7 @@ object UsersForm: TUsersForm
     Top = 0
     Width = 717
     Height = 487
-    ActivePage = tabUsers
+    ActivePage = tabGroup
     Align = alClient
     TabOrder = 0
     OnChange = pcChange
@@ -264,7 +264,6 @@ object UsersForm: TUsersForm
             STFilter.Visible = True
             TabOrder = 0
             OnExit = dbgRightsExit
-            OnGetCellParams = dbgRightsGetCellParams
             Columns = <
               item
                 AutoFitColWidth = False
@@ -328,7 +327,6 @@ object UsersForm: TUsersForm
             STFilter.Visible = True
             TabOrder = 0
             OnExit = dbgRightsExit
-            OnGetCellParams = dbgRightsGetCellParams
             Columns = <
               item
                 AutoFitColWidth = False
@@ -801,7 +799,7 @@ object UsersForm: TUsersForm
               object lbl2: TLabel
                 Left = 0
                 Top = 0
-                Width = 337
+                Width = 89
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -941,7 +939,7 @@ object UsersForm: TUsersForm
               object lbl1: TLabel
                 Left = 0
                 Top = 0
-                Width = 361
+                Width = 104
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '

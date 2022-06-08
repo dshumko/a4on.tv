@@ -3,8 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBGridEh, StdCtrls, DBCtrlsEh, Mask, DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
+  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh;
 
 type
   TOnOffServiceForm = class(TForm)

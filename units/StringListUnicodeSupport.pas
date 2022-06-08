@@ -3,12 +3,11 @@
 interface
 
 uses
-  SysUtils,
-  Classes,
+  System.SysUtils, System.Classes,
   Encoding;
 
 type
-  TStringList = class(Classes.TStringList)
+  TStringList = class(System.Classes.TStringList)
   public
     procedure LoadFromFile(const FileName: string); overload; override;
     procedure LoadFromFile(const FileName: string; Encoding: TEncoding); reintroduce; overload; virtual;

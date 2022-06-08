@@ -3,13 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Grids, DBGridEh,
-  DBCtrls, ComCtrls,
-  GridsEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DB,
-  SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit, Menus,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.Menus,
+  DBGridEh, GridsEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, SynEditHighlighter, SynHighlighterSQL, SynEdit,
+  SynDBEdit, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TMonDBForm = class(TForm)

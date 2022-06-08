@@ -2,7 +2,10 @@
 
 interface
 
-uses Classes, Grids, Winapi.Windows;
+uses
+  Winapi.Windows,
+  System.Classes,
+  Vcl.Grids;
 
 // показать файл в стринггриде
 // CodePage  - 0 = DOS866 1 - win1251
@@ -16,7 +19,9 @@ procedure FileToStrings(const FileName: string; sl: TStringList; const CodePage:
 
 implementation
 
-uses RxStrUtils, SysUtils;
+uses
+  System.SysUtils,
+  RxStrUtils;
 
 procedure FileToStrings(const FileName: string; sl: TStringList; const CodePage: Integer;
   const SkeepEmpty: Boolean = False);

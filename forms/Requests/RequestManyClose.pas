@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBGridEh, StdCtrls, DBCtrls, DBLookupEh,
-  DBCtrlsEh, Mask, ExtCtrls, DBGridEhGrouping, GridsEh, MemTableDataEh, Db,
-  MemTableEh, FIBDataSet, pFIBDataSet;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  OkCancel_frame, DBGridEh, DBLookupEh, DBCtrlsEh, DBGridEhGrouping, GridsEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet;
 
 type
   TRequestManyCloseForm = class(TForm)
@@ -57,7 +58,8 @@ var
 implementation
 
 {$R *.dfm}
-uses DM, ReqAddWorkForma;
+uses
+  DM, ReqAddWorkForma;
 
 procedure TRequestManyCloseForm.btnAddWorkClick(Sender: TObject);
 var

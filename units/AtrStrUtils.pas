@@ -2,7 +2,9 @@
 
 interface
 
-uses System.Classes, System.SysUtils, System.Variants, Data.DB;
+uses
+  System.Classes, System.SysUtils, System.Variants,
+  Data.DB;
 
 const
   Codes64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
@@ -90,15 +92,18 @@ function FormatMACas4Cd(const S: string): String;
 function CorrectPhone(const phone: string; const aCountry: String = 'BY'): string;
 
 // Вывод месяца как строка, например 01.01.2013 - «1» января 2013
-function MonthAsString(const D: TDateTime; const beforeDay : string = '«'; const AfterDay : string = '»'): string;
+function MonthAsString(const D: TDateTime; const beforeDay: string = '«'; const AfterDay: string = '»'): string;
 
 // Форматируем Фамилию как Ф***я
-function HideSurname(const s: String): string;
+function HideSurname(const S: String): string;
 
 implementation
 
 uses
-  System.DateUtils, VCL.ClipBrd, System.RegularExpressions, WinAPI.Windows, RxStrUtils;
+  Winapi.Windows,
+  System.DateUtils, System.RegularExpressions,
+  Vcl.Clipbrd,
+  RxStrUtils;
 
 const
   SErrWrongBase64EncodedString = 'Формат строки не соответствует способу кодирования Base64.';
@@ -228,12 +233,12 @@ end;
 
 function DateTOFBdate(const aDate: TDateTime): String;
 var
-  y, m, d: word;
+  y, m, D: word;
 begin
   // TODO:Дату из строки в TDate
   try
-    DecodeDate(aDate, y, m, d);
-    Result := '''' + IntToStr(y) + '-' + IntToStr(m) + '-' + IntToStr(d) + '''';
+    DecodeDate(aDate, y, m, D);
+    Result := '''' + IntToStr(y) + '-' + IntToStr(m) + '-' + IntToStr(D) + '''';
   except
     Result := 'null';
   end;
@@ -241,7 +246,7 @@ end;
 
 function FBdateToDate(const aFBDAte: String): TDateTime;
 var
-  y, m, d: Integer;
+  y, m, D: Integer;
   S: string;
 begin
   // TODO:Дату из строки в TDate
@@ -252,8 +257,8 @@ begin
   S := Copy(aFBDAte, Pos('-', aFBDAte) + 1, 100);
   m := StrToInt(Copy(S, 0, Pos('-', S) - 1));
   S := Copy(S, Pos('-', S) + 1, 100);
-  d := StrToInt(S);
-  Result := EncodeDate(y, m, d);
+  D := StrToInt(S);
+  Result := EncodeDate(y, m, D);
 end;
 
 function LeftTrimChar(const S: string; const chr: Char): string;
@@ -701,7 +706,7 @@ begin
     Result := S;
 end;
 
-function FormatMACas4CD(const S: string): String;
+function FormatMACas4Cd(const S: string): String;
 var
   aMac: TStringArray;
 begin
@@ -709,7 +714,7 @@ begin
   if CheckMAC(S) then
   begin
     aMac := Explode(':', S);
-    Result := LowerCase( aMac[0] + aMac[1] + '.' + aMac[2] + aMac[3] + '.' + aMac[4] + aMac[5] );
+    Result := LowerCase(aMac[0] + aMac[1] + '.' + aMac[2] + aMac[3] + '.' + aMac[4] + aMac[5]);
   end;
 end;
 
@@ -724,7 +729,7 @@ const
     prefix: string = '375';
   var
     l: Integer;
-    s: string;
+    S: string;
   begin
     Result := '';
     l := Length(p);
@@ -739,8 +744,8 @@ const
         if l >= 11 then
         begin
           // 80297349634
-          s := Copy(p, 1, 2);
-          if s = '80' then
+          S := Copy(p, 1, 2);
+          if S = '80' then
             Result := prefix + Copy(p, 3, 9);
         end;
       end;
@@ -778,47 +783,46 @@ const
   end;
 
 var
-  s: string;
+  S: string;
   tp: string;
 begin
   Result := '';
   tp := DigitsOnly(phone);
   if aCountry = 'BY' then
-    s := pfBY
+    S := pfBY
   else if aCountry = 'UA' then
-    s := pfUA
+    S := pfUA
   else
-    s := pfRU;
+    S := pfRU;
 
-  if not TRegEx.IsMatch(tp, s) then
+  if not TRegEx.IsMatch(tp, S) then
   begin
-    s := tp;
+    S := tp;
     if aCountry = 'BY' then
-      Result := CorrectBY(s)
+      Result := CorrectBY(S)
     else if aCountry = 'UA' then
-      Result := CorrectUA(s)
+      Result := CorrectUA(S)
     else
-      Result := CorrectRU(s);
+      Result := CorrectRU(S);
   end
   else
     Result := tp;
 end;
 
-function MonthAsString(const D: TDateTime; const beforeDay : string = '«'; const AfterDay : string = '»'): string;
+function MonthAsString(const D: TDateTime; const beforeDay: string = '«'; const AfterDay: string = '»'): string;
 const
-   Mes: array[1..12] of string = ('января', 'февраля', 'марта', 'апреля',
-      'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября',
-      'декабря');
+  Mes: array [1 .. 12] of string = ('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа',
+    'сентября', 'октября', 'ноября', 'декабря');
 var
-   Year, Month, Day: Word;
+  Year, Month, Day: word;
 begin
-   DecodeDate(D, Year, Month, Day);
-   Result := beforeDay+IntToStr(day) +AfterDay+ ' ' + Mes[Month] +' ' + IntToStr(Year);
+  DecodeDate(D, Year, Month, Day);
+  Result := beforeDay + IntToStr(Day) + AfterDay + ' ' + Mes[Month] + ' ' + IntToStr(Year);
 end;
 
-function HideSurname(const s: String): string;
+function HideSurname(const S: String): string;
 begin
-  Result := Copy(s, 1, 1)+'***'+Copy(s, Length(s), 1);
+  Result := Copy(S, 1, 1) + '***' + Copy(S, Length(S), 1);
 end;
 
 initialization

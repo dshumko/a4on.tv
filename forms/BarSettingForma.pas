@@ -5,11 +5,12 @@ interface
 {$I defines.inc}
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, MemTableDataEh, Db, MemTableEh, GridsEh, DBGridEh, FIBQuery, pFIBQuery,
-  OkCancel_frame, StdCtrls, ComCtrls, ToolWin, ExtCtrls,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, System.UITypes,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
+  MemTableDataEh, MemTableEh, GridsEh, DBGridEh, FIBQuery, pFIBQuery, OkCancel_frame, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TBarSettingForm = class(TForm)
@@ -59,7 +60,8 @@ var
 
 implementation
 
-uses AtrStrUtils, DM;
+uses
+  AtrStrUtils, DM;
 
 {$R *.dfm}
 

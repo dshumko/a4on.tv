@@ -1,15 +1,15 @@
-unit CallCenterForma;
+﻿unit CallCenterForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DBGridEh, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh,
-  DBAxisGridsEh, Vcl.StdCtrls, Vcl.Mask, DBCtrlsEh, DBLookupEh,
-  Vcl.ExtCtrls, System.Actions, Vcl.ActnList, FIBDatabase, pFIBDatabase,
-  Data.DB, FIBDataSet, pFIBDataSet, Vcl.ComCtrls, Vcl.ToolWin, Vcl.DBCtrls,
-  Vcl.Buttons, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
+  Vcl.ToolWin, Vcl.DBCtrls, Vcl.Buttons,
+  DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBCtrlsEh, DBLookupEh,
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh;
 
 type
   TCallCenterForm = class(TForm)

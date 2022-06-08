@@ -1,12 +1,13 @@
-unit CircuitMain;
+п»їunit CircuitMain;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  SimpleGraph, Dialogs, ExtDlgs, System.UITypes,
-  Menus, ActnList, ImgList, StdCtrls, ComCtrls, ToolWin, JPEG, Buttons,
-  System.Actions, PNGImage;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes, System.UITypes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtDlgs, Vcl.Menus, Vcl.ActnList, Vcl.ImgList, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage,
+  SimpleGraph;
 
 type
   TCircuitForm = class(TForm)
@@ -390,31 +391,31 @@ implementation
 {$R *.dfm}
 
 uses
-  Clipbrd, Printers, DesignProp, ObjectProp, NodeProp, LinkProp, UsageHelp,
-  AlignDlg, SizeDlg, DM;
+  Vcl.Clipbrd, Vcl.Printers,
+  DesignProp, ObjectProp, NodeProp, LinkProp, UsageHelp, AlignDlg, SizeDlg, DM;
 
 resourcestring
-  SSaveChanges = 'Схема изменена, Вы хотите ее сохранить?';
-  SViewOnly = 'Только просмотр';
-  SEditing = 'Редактирование';
-  SPan = 'Режим просмотра';
-  SInsertingLink = 'Вставить связь/линию';
-  SInsertingNode = 'Вставить узел';
-  SModified = 'Изменено';
-  SUntitled = 'Без названия';
-  SMultiSelect = '%d выделено объектов';
-  SNumOfPoints = '%d точек';
-  SStartPoint = 'Точка начала';
-  SEndPoint = 'Точка окончания';
+  SSaveChanges = 'РЎС…РµРјР° РёР·РјРµРЅРµРЅР°, Р’С‹ С…РѕС‚РёС‚Рµ РµРµ СЃРѕС…СЂР°РЅРёС‚СЊ?';
+  SViewOnly = 'РўРѕР»СЊРєРѕ РїСЂРѕСЃРјРѕС‚СЂ';
+  SEditing = 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ';
+  SPan = 'Р РµР¶РёРј РїСЂРѕСЃРјРѕС‚СЂР°';
+  SInsertingLink = 'Р’СЃС‚Р°РІРёС‚СЊ СЃРІСЏР·СЊ/Р»РёРЅРёСЋ';
+  SInsertingNode = 'Р’СЃС‚Р°РІРёС‚СЊ СѓР·РµР»';
+  SModified = 'РР·РјРµРЅРµРЅРѕ';
+  SUntitled = 'Р‘РµР· РЅР°Р·РІР°РЅРёСЏ';
+  SMultiSelect = '%d РІС‹РґРµР»РµРЅРѕ РѕР±СЉРµРєС‚РѕРІ';
+  SNumOfPoints = '%d С‚РѕС‡РµРє';
+  SStartPoint = 'РўРѕС‡РєР° РЅР°С‡Р°Р»Р°';
+  SEndPoint = 'РўРѕС‡РєР° РѕРєРѕРЅС‡Р°РЅРёСЏ';
   SNoName = 'NONAME';
-  SCanDelete = 'Удалить объект ''%s''?';
-  SCanHook = 'Подключить %s ''%s'' связью к ''%s''?';
-  SCanLink = 'Связать ''%s'' и ''%s'' используя связь ''%s''?';
-  SHooked = 'Подключен';
-  SNodeInfo = '%s Узел: %s' + #13#10 + 'Позиция: %d, %d; Размер: %d x %d' + #13#10 +
-    'Входящих связей: %d; Исходящих связей: %d';
-  SLinkInfo = 'Связь: %s' + #13#10 + 'Начало: (%d, %d) %s' + #13#10 + 'Окончание: (%d, %d) %s' + #13#10 +
-    'Количество узлов: %d';
+  SCanDelete = 'РЈРґР°Р»РёС‚СЊ РѕР±СЉРµРєС‚ ''%s''?';
+  SCanHook = 'РџРѕРґРєР»СЋС‡РёС‚СЊ %s ''%s'' СЃРІСЏР·СЊСЋ Рє ''%s''?';
+  SCanLink = 'РЎРІСЏР·Р°С‚СЊ ''%s'' Рё ''%s'' РёСЃРїРѕР»СЊР·СѓСЏ СЃРІСЏР·СЊ ''%s''?';
+  SHooked = 'РџРѕРґРєР»СЋС‡РµРЅ';
+  SNodeInfo = '%s РЈР·РµР»: %s' + #13#10 + 'РџРѕР·РёС†РёСЏ: %d, %d; Р Р°Р·РјРµСЂ: %d x %d' + #13#10 +
+    'Р’С…РѕРґСЏС‰РёС… СЃРІСЏР·РµР№: %d; РСЃС…РѕРґСЏС‰РёС… СЃРІСЏР·РµР№: %d';
+  SLinkInfo = 'РЎРІСЏР·СЊ: %s' + #13#10 + 'РќР°С‡Р°Р»Рѕ: (%d, %d) %s' + #13#10 + 'РћРєРѕРЅС‡Р°РЅРёРµ: (%d, %d) %s' + #13#10 +
+    'РљРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ: %d';
 
 const
   // ForEachObject Actions

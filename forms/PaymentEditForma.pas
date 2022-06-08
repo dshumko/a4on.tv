@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Mask, DBCtrlsEh, StdCtrls, Buttons, ExtCtrls, FIBQuery, pFIBQuery,
-  DBLookupEh, DB, FIBDataSet, pFIBDataSet, DBGridEh, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  DBCtrlsEh, FIBQuery, pFIBQuery, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, A4onTypeUnit;
 
 type
   TPaymentEditFrm = class(TForm)
@@ -66,7 +68,8 @@ function EditPayment(const aPayment_id: int64; const aCustomer_id: int64; const 
 
 implementation
 
-uses PrjConst, DM;
+uses
+  PrjConst, DM;
 
 {$R *.dfm}
 

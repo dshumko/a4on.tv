@@ -3,14 +3,12 @@
 interface
 
 uses
-
-  System.Classes, System.SysUtils, System.Variants, WinAPI.Windows, WinAPI.Messages,
-  VCL.Graphics, VCL.Dialogs, VCL.DBCtrls, VCL.StdCtrls, VCL.Mask, VCL.Controls, VCL.Forms,
-  System.UITypes, Data.DB, System.RegularExpressions,
-  OkCancel_frame,
-  DBLookupEh, A4onTypeUnit, DBGridEh, CnErrorProvider,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, FIBQuery, PrjConst, FIBDatabase,
-  pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.SysUtils, System.Variants, System.UITypes, System.RegularExpressions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms,
+  OkCancel_frame, DBLookupEh, A4onTypeUnit, DBGridEh, CnErrorProvider, FIBDataSet, pFIBDataSet, DBCtrlsEh, FIBQuery, PrjConst,
+  FIBDatabase, pFIBDatabase;
 
 type
   TAttributeEditForm = class(TForm)
@@ -45,7 +43,8 @@ function AttributeEdit(var aAttribute: TAttribute): Boolean;
 
 implementation
 
-uses DM, pFIBQuery;
+uses
+  DM, pFIBQuery;
 
 {$R *.dfm}
 

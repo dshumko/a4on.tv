@@ -5,11 +5,12 @@ interface
 {$I defines.inc}
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ActnList, DB, ComCtrls, DBGridEh, Grids, ToolWin, GridsEh,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, DBGridEhGrouping, DynVarsEh, EhLibVCL, Vcl.Mask,
-  DBCtrlsEh, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.Grids, Vcl.ToolWin, Vcl.Mask, Vcl.StdCtrls,
+  Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, EhLibVCL, DBCtrlsEh,
   CnErrorProvider;
 
 type
@@ -74,7 +75,8 @@ var
 
 implementation
 
-uses DM, MAIN, PrjConst;
+uses
+  DM, MAIN, PrjConst;
 
 {$R *.dfm}
 

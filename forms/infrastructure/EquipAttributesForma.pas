@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh;
 
 type
   TEquipAttributesForm = class(TForm)
@@ -38,7 +40,9 @@ function AttributeIPTV(const IPTV_ID: Integer; const Attribut: Integer): boolean
 
 implementation
 
-uses DM, RegularExpressions, pFIBQuery;
+uses
+  System.RegularExpressions,
+  DM, pFIBQuery;
 
 {$R *.dfm}
 

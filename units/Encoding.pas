@@ -5,8 +5,8 @@
 interface
 
 uses
-  Windows,
-  SysUtils;
+  Winapi.Windows,
+  System.SysUtils;
 
 type
   EEncodingError = class(Exception);

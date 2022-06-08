@@ -3,17 +3,17 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.Actions, System.UITypes,
-  Data.DB, VCL.Forms, VCL.StdCtrls, VCL.ComCtrls, VCL.Mask, VCL.DBCtrls,
-  VCL.Menus, VCL.ActnList, VCL.Dialogs, VCL.Grids,
-  VCL.Buttons, VCL.ExtCtrls, VCL.ToolWin, VCL.Controls, VCL.Graphics,
-  GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
-  DBGridEh, MemTableDataEh, PropFilerEh, PropStorageEh, DataDriverEh,
-  pFIBDataDriverEh, MemTableEh, FIBDataSet, pFIBDataSet, DBCtrlsEh,
-  DBLookupEh, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh,
-  EhLibFIB, EhLibMTE, FIBQuery, DBGridEhImpExp, PrjConst, A4onTypeUnit,
-  AtrPages;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Forms, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus, Vcl.ActnList, Vcl.Dialogs, Vcl.Grids,
+  Vcl.Buttons,
+  Vcl.ExtCtrls, Vcl.ToolWin, Vcl.Controls, Vcl.Graphics,
+  GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, MemTableDataEh, PropFilerEh,
+  PropStorageEh,
+  DataDriverEh, pFIBDataDriverEh, MemTableEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL,
+  GridsEh,
+  DBAxisGridsEh, EhLibFIB, EhLibMTE, FIBQuery, DBGridEhImpExp, PrjConst, A4onTypeUnit, AtrPages;
 
 type
   TEquipmentForm = class(TGridForm)
@@ -132,12 +132,10 @@ var
 implementation
 
 uses
-  DM, MAIN, AtrCommon, AtrStrUtils, fs_iinterpreter,
-  EquipAttributesForma, EquipCoverage, StrUtils, atrCmdUtils,
-  RequestForma, EquipEditForma, TelnetForma, HtmlForma,
-  pFIBQuery, CF, CustomerLanForma, EQPort, fmuEqpmntPorts,
-  fmuEqpmntAttributes, fmuEqpmntRequests, fmuEqpmntRegion,
-  fmuEqpmntInfo, EquipFilter;
+  System.StrUtils,
+  DM, MAIN, AtrCommon, AtrStrUtils, fs_iinterpreter, EquipAttributesForma, EquipCoverage, atrCmdUtils, RequestForma,
+  EquipEditForma, TelnetForma, HtmlForma, pFIBQuery, CF, CustomerLanForma, EQPort, fmuEqpmntPorts, fmuEqpmntAttributes,
+  fmuEqpmntRequests, fmuEqpmntRegion, fmuEqpmntInfo, EquipFilter;
 
 {$R *.dfm}
 
@@ -199,8 +197,6 @@ begin
 end;
 
 procedure TEquipmentForm.RefreshGridRecords;
-var
-  i: Integer;
 begin
   if (srcDataSource.DataSet = mtEQ) then
     Exit;
@@ -266,7 +262,7 @@ begin
   end;
 
   if FCanSave then
-    dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', false);
+    dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', False);
 
   if chkTREE.Checked then
     dmMain.SetIniValue('EQUIPMENTASTREE', '1')
@@ -644,9 +640,9 @@ procedure TEquipmentForm.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
   id: Integer;
-  s : string;
-  R : TMemRecViewEh;
-  expanded : Boolean;
+  s: string;
+  // R : TMemRecViewEh;
+  // expanded : Boolean;
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
@@ -655,10 +651,10 @@ begin
   if (dsEquipments.RecordCount = 0) then
     Exit;
 
-  if (srcDataSource.DataSet is TMemTableEh) then
-    expanded := mtEQ.RecView.NodeExpanded
-  else
-    expanded := False;
+  // if (srcDataSource.DataSet is TMemTableEh) then
+  // expanded := mtEQ.RecView.NodeExpanded
+  // else
+  // expanded := False;
 
   id := dbGrid.DataSource.DataSet['EID'];
   if EditEquipment(id, ci, -1) <> -1 then
@@ -671,7 +667,7 @@ begin
       mtEQ.Open;
       mtEQ.SortOrder := s;
       mtEQ.TreeList.Locate('EID', id, []);
-      R:= mtEQ.RecView;
+      // R:= mtEQ.RecView;
       // mtEQ.RecordsView.MemoryTreeList.Collapse(r.NodeParent, True);
       // mtEQ.RecordsView.MemoryTreeList.Expand(r, expanded);
       // dbGridSortMarkingChanged(dbGrid);

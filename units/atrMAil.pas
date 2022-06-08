@@ -2,7 +2,9 @@
 
 interface
 
-uses mimemess, mimepart, smtpsend, Classes;
+uses
+  System.Classes,
+  mimemess, mimepart, smtpsend;
 
 Procedure SendMail (const Host, Subject, pTo, From , TextBody, login,password : string);
 

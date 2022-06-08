@@ -327,7 +327,7 @@ object ExportSettingsForm: TExportSettingsForm
         object lbl1: TLabel
           Left = 0
           Top = 120
-          Width = 484
+          Width = 81
           Height = 13
           Align = alTop
           Caption = #1054#1089#1085#1086#1074#1085#1072#1103' '#1095#1072#1089#1090#1100
@@ -335,7 +335,7 @@ object ExportSettingsForm: TExportSettingsForm
         object lbl3: TLabel
           Left = 0
           Top = 222
-          Width = 484
+          Width = 96
           Height = 13
           Align = alBottom
           Caption = #1055#1086#1076#1074#1072#1083' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
@@ -445,7 +445,6 @@ object ExportSettingsForm: TExportSettingsForm
           Width = 484
           Height = 300
           Align = alClient
-          AutoFitColWidths = False
           DataSource = srcDBF
           DynProps = <>
           Flat = True
@@ -561,12 +560,6 @@ object ExportSettingsForm: TExportSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 530
       Top = 6

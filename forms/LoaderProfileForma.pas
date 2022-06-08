@@ -4,10 +4,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Grids, ExtCtrls, RxToolEdit, Mask, DBCtrlsEh, Menus,
-  DBCtrls, DB, DBLookupEh, AtrStrUtils, DBGrids, ComCtrls,
-  MemTableDataEh, MemTableEh, PrjConst, DBGridEh, VKDBFDataSet;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls, Vcl.Mask, Vcl.Menus,
+  Vcl.DBCtrls,
+  Vcl.DBGrids, Vcl.ComCtrls,
+  RxToolEdit, DBCtrlsEh, DBLookupEh, AtrStrUtils, MemTableDataEh, MemTableEh, PrjConst, DBGridEh, VKDBFDataSet;
 
 type
 
@@ -195,7 +198,8 @@ function EditProfile(const ProfName: string): Boolean;
 implementation
 
 uses
-  WorkWithGrids, LoaderReestrForma, StrUtils;
+  System.StrUtils,
+  WorkWithGrids, LoaderReestrForma;
 
 {$R *.dfm}
 
@@ -416,7 +420,7 @@ end;
 procedure TLoaderProfileForm.ParseFile(const FileName: string);
 begin
   if FileExists(FileName) then
-    FileToStrings(FileName, FileStrings, LoaderReestrForm.mdsFileFormats['CodePage'], true);
+    FileToStrings(FileName, FileStrings, LoaderReestrForm.mdsFileFormats['CodePage'], True);
 end;
 
 procedure TLoaderProfileForm.initGrid(SG: TStringGrid; const Rows: Integer; const sa: TStringArray);
@@ -574,7 +578,7 @@ end;
 procedure TLoaderProfileForm.feExampleChange(Sender: TObject);
 begin
   if cbFileFormat.Value = 0 then
-    ShowFileInStringGrid(sgFile, feExample.FileName, cbdbCodePage.Value, true)
+    ShowFileInStringGrid(sgFile, feExample.FileName, cbdbCodePage.Value, True)
   else
     LoadDBF;
 end;

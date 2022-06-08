@@ -3,12 +3,14 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ExtCtrls, Menus, ActnList, DB,
-  ComCtrls, ToolWin, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, System.UITypes,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, System.Actions,
-  Vcl.StdCtrls, Vcl.Buttons, PrjConst, CnErrorProvider, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, Vcl.Mask, DBCtrlsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
+  GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh;
 
 type
   TRecoursesTPLForm = class(TGridForm)
@@ -127,7 +129,8 @@ begin
   actTPLFilter.Checked := not actTPLFilter.Checked;
   dbgrdTPL.STFilter.Visible := actTPLFilter.Checked;
   dbGrid.STFilter.Visible := actTPLFilter.Checked;
-  if not actTPLFilter.Checked then begin
+  if not actTPLFilter.Checked then
+  begin
     dbGrid.DataSource.DataSet.Filtered := False;
     dbgrdTPL.DataSource.DataSet.Filtered := False;
   end;

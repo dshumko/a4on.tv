@@ -4,15 +4,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, StdCtrls, ToolCtrlsEh, GridsEh,
-  DBGridEh, DBCtrls, DBCtrlsEh, Mask, Buttons, ExtCtrls, DB, FIBDataSet,
-  pFIBDataSet, Menus, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh, FIBDatabase,
-  pFIBDatabase, System.Actions, Vcl.ActnList, dnSplitter,
-  PropFilerEh, PropStorageEh,
-  // , Langji.Wke.Webbrowser
-  HtmlView, HTMLUn2, FramView, FramBrwz, Vcl.StdActns;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.Menus,
+  Vcl.ActnList, Vcl.StdActns,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh,
+  PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, dnSplitter, PropFilerEh, PropStorageEh, HtmlView,
+  HTMLUn2,
+  FramView, FramBrwz;
 
 type
   TapgCustomerInfo = class(TA4onPage)
@@ -63,9 +65,9 @@ type
     btnAlign: TSpeedButton;
     pmMemo: TPopupMenu;
     miN1: TMenuItem;
+    actRecalc: TAction;
     procedure memCustNoticeExit(Sender: TObject);
     procedure N2Click(Sender: TObject);
-    procedure sbRecalcClick(Sender: TObject);
     procedure dsContactsNewRecord(DataSet: TDataSet);
     procedure dsContactsBeforePost(DataSet: TDataSet);
     procedure dbgrdhContactsExit(Sender: TObject);
@@ -89,6 +91,9 @@ type
     procedure PropStorageEhWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
     procedure PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
       var Processed: Boolean);
+    procedure actRecalcExecute(Sender: TObject);
+    procedure sbRecalcClick(Sender: TObject);
+    procedure sbRecalcMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     fVisibleColumns: Integer;
@@ -102,6 +107,10 @@ type
     FHtml: string;
     FWkeHtml: Boolean;
     FMemoNeedRealign: Boolean;
+    FRunUnderWine: Boolean;
+    FSkipRecalc: Boolean;
+    FHL_ROW: Boolean;
+    FHL_COLOR: TColor;
     // FWkeWebbrowser: TWkeWebbrowser;
     procedure RecalcCustomer(const CUSTOMER_ID: Int64);
     procedure SaveContact;
@@ -124,8 +133,9 @@ type
 
 implementation
 
-uses System.RegularExpressions, A4onTypeUnit, AtrCommon, AtrStrUtils,
-  DM, pFIBQuery, Typinfo, MAIN, ContactForma;
+uses
+  System.RegularExpressions, System.TypInfo,
+  A4onTypeUnit, AtrCommon, AtrStrUtils, DM, pFIBQuery, MAIN, ContactForma;
 
 {$R *.dfm}
 
@@ -148,6 +158,17 @@ begin
   HtmlViewConfig;
   infoPanelConfig;
   GetHtmlParams;
+
+  FHL_ROW := (dmMain.GetSettingsValue('ROW_HL_COLOR') <> '') and (dmMain.GetSettingsValue('ROW_HL_ID') <> '') and
+    (dmMain.GetSettingsValue('ROW_HL_TYPE') <> '');
+  if FHL_ROW then
+  begin
+    try
+      FHL_COLOR := StringToColor(dmMain.GetSettingsValue('ROW_HL_COLOR'));
+    except
+      FHL_COLOR := clPurple;
+    end;
+  end;
 
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -199,10 +220,12 @@ begin
     fVisibleColumns := 0;
   end;
 
-  sbRecalc.Visible := (dmMain.AllowedAction(rght_Customer_AddSrv)) or (dmMain.AllowedAction(rght_Customer_full));
+  actRecalc.Visible := (dmMain.AllowedAction(rght_Customer_AddSrv)) or (dmMain.AllowedAction(rght_Customer_full));
+  sbRecalc.Visible := actRecalc.Visible;
   dbgrdhContacts.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full));
   memCustNotice.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full));
-  sbRecalc.PopupMenu := pmRecalc;
+  if actRecalc.Visible then
+    sbRecalc.PopupMenu := pmRecalc;
 end;
 
 procedure TapgCustomerInfo.memCustNoticeExit(Sender: TObject);
@@ -271,6 +294,18 @@ begin
   SetSaveBtnVisible;
 end;
 
+procedure TapgCustomerInfo.sbRecalcClick(Sender: TObject);
+begin
+  if actRecalc.Visible then
+    actRecalc.Execute;
+end;
+
+procedure TapgCustomerInfo.sbRecalcMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  // попытка обойти ошибку Wine + ESC
+  FSkipRecalc := not FRunUnderWine;
+end;
+
 procedure TapgCustomerInfo.N2Click(Sender: TObject);
 var
   Save_Cursor: TCursor;
@@ -307,6 +342,7 @@ end;
 procedure TapgCustomerInfo.RecalcCustomer(const CUSTOMER_ID: Int64);
 begin
   with TpFIBQuery.Create(Self) do
+  begin
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -318,7 +354,8 @@ begin
       UpdatePage;
     finally
       Free;
-    end
+    end;
+  end;
 end;
 
 procedure TapgCustomerInfo.dsContactsNewRecord(DataSet: TDataSet);
@@ -362,23 +399,6 @@ begin
     Writer.WriteInteger(pnlDP.Height)
   else
     Writer.WriteInteger(0);
-end;
-
-procedure TapgCustomerInfo.sbRecalcClick(Sender: TObject);
-var
-  b: TDateTime;
-  Save_Cursor: TCursor;
-begin
-  Save_Cursor := Screen.Cursor;
-  b := Now();
-  Screen.Cursor := crSQLWait;
-  try
-    RecalcCustomer(FDataSource.DataSet['CUSTOMER_ID']);
-  finally
-    Screen.Cursor := Save_Cursor;
-  end;
-  b := b - Now();
-  ShowMessage(Format(rsCalculateComplite, [TimeToStr(b)]));
 end;
 
 procedure TapgCustomerInfo.actCAddExecute(Sender: TObject);
@@ -483,6 +503,29 @@ begin
   A4MainForm.MakeCall(dsContacts['CC_TYPE'], dsContacts['CC_VALUE']);
 end;
 
+procedure TapgCustomerInfo.actRecalcExecute(Sender: TObject);
+var
+  b: TDateTime;
+  Save_Cursor: TCursor;
+begin
+  // попытка обойти ошибку Wine + ESC
+  if FRunUnderWine and FSkipRecalc then
+    exit;
+
+  Save_Cursor := Screen.Cursor;
+  b := Now();
+  Screen.Cursor := crSQLWait;
+  try
+    RecalcCustomer(FDataSource.DataSet['CUSTOMER_ID']);
+  finally
+    Screen.Cursor := Save_Cursor;
+  end;
+  b := b - Now();
+  ShowMessage(Format(rsCalculateComplite, [TimeToStr(b)]));
+
+  FSkipRecalc := FRunUnderWine;
+end;
+
 procedure TapgCustomerInfo.btnAlignClick(Sender: TObject);
 begin
   MemoAlign;
@@ -562,6 +605,8 @@ begin
   FHtmlParams := TStringList.Create;
   FHtmlParams.Sorted := True;
   FHtmlParams.Duplicates := dupIgnore;
+  FRunUnderWine := GetWineAvail;
+  FSkipRecalc := FRunUnderWine;
 end;
 
 procedure TapgCustomerInfo.FormDestroy(Sender: TObject);
@@ -635,8 +680,9 @@ begin
       s := P.ToUpper;
       if ((s = 'PASSPORT_NUMBER') or (s = 'PASSPORT_REGISTRATION') or (s = 'BIRTHDAY')) then
         V := ''
-      else if (s = 'SURNAME') then begin
-        v := HideSurname(v);
+      else if (s = 'SURNAME') then
+      begin
+        V := HideSurname(V);
       end;
     end;
 
@@ -816,7 +862,18 @@ begin
   else
     Self.Color := clBtnFace;
 
+  if FHL_ROW then
+  begin
+    try
+      if (not dsCustomer.FieldByName('ROW_HL_COLOR').IsNull) then
+        Self.Color := FHL_COLOR; // TColor($00FF7B9E);// Purple
+    except
+      FHL_ROW := False;
+    end;
+  end;
+
   pnlHTML.Color := Self.Color;
+  pnlBtns.Color := Self.Color;
   // if FWkeHtml then
   // FWkeWebbrowser.Color := Self.Color
   // else
@@ -854,7 +911,6 @@ begin
     pnlDP.Height := Self.Height;
     gbMemo.Height := Self.Height;
     pnlDP.Realign;
-
 
     FMemoNeedRealign := True;
   end;

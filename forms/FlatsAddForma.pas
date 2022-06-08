@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, DBCtrlsEh, ExtCtrls, GridsEh,
-  DBGridEh, DB, FIBDatabase, FIBQuery, pFIBQuery,
-  ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  DBCtrlsEh, GridsEh, DBGridEh, FIBDatabase, FIBQuery, pFIBQuery, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
   DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type

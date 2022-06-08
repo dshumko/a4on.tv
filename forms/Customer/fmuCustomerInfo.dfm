@@ -29,9 +29,7 @@ object apgCustomerInfo: TapgCustomerInfo
       Left = 257
       Top = 0
       AlignControl = pnlDP
-      Color = clBtnFace
       ParentBackground = False
-      ParentColor = False
       ResizeStyle = rsLine
       Size = 5
       ButtonVisible = False
@@ -50,7 +48,6 @@ object apgCustomerInfo: TapgCustomerInfo
         Top = 60
         Width = 257
         Height = 19
-        Hint = #1057#1076#1077#1083#1072#1090#1100' '#1087#1086#1083#1085#1099#1081' '#1087#1077#1088#1077#1088#1072#1089#1095#1077#1090' '#1072#1073#1086#1085#1077#1085#1090#1072
         Align = alTop
         Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100
         Flat = True
@@ -64,6 +61,7 @@ object apgCustomerInfo: TapgCustomerInfo
         ShowHint = True
         Spacing = 10
         OnClick = sbRecalcClick
+        OnMouseDown = sbRecalcMouseDown
       end
       object btnAlign: TSpeedButton
         Left = 2
@@ -98,8 +96,8 @@ object apgCustomerInfo: TapgCustomerInfo
         object dbtxtDEBT: TDBText
           Left = 2
           Top = 15
-          Width = 253
-          Height = 22
+          Width = 99
+          Height = 25
           Align = alClient
           Alignment = taCenter
           AutoSize = True
@@ -131,8 +129,8 @@ object apgCustomerInfo: TapgCustomerInfo
           object dbtxtPrepay: TDBText
             Left = 0
             Top = 0
-            Width = 253
-            Height = 21
+            Width = 84
+            Height = 19
             Hint = #1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
             Align = alClient
             Alignment = taCenter
@@ -245,7 +243,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 96
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alLeft
             Caption = '       '
           end
@@ -271,7 +269,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 218
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alRight
             Caption = '       '
           end
@@ -545,6 +543,10 @@ object apgCustomerInfo: TapgCustomerInfo
       Hint = #1059#1076#1072#1083#1080#1090#1100' '#1082#1086#1085#1090#1072#1082#1090
       ImageIndex = 3
       OnExecute = actCDelExecute
+    end
+    object actRecalc: TAction
+      Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100
+      OnExecute = actRecalcExecute
     end
   end
   object pmHV: TPopupMenu

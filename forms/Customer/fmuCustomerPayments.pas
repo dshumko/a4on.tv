@@ -3,11 +3,14 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, Data.DB,
-  System.Actions, VCL.ActnList, VCL.ComCtrls, VCL.ToolWin, VCL.Buttons, VCL.ExtCtrls,
-  ToolCtrlsEh, GridsEh, DBGridEh, AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  ToolCtrlsEh, GridsEh, DBGridEh, AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
+  DynVarsEh,
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet;
 
 type
   TapgCustomerPayments = class(TA4onPage)
@@ -45,7 +48,8 @@ type
 
 implementation
 
-uses DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN;
+uses
+  DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN;
 
 {$R *.dfm}
 

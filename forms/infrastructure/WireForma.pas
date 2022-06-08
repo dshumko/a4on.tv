@@ -1,16 +1,16 @@
-unit WireForma;
+п»їunit WireForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GridForma, System.UITypes,
-  ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh, FIBDataSet, pFIBDataSet, frxClass,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh,
-  MemTableEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin,
+  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
+  pFIBDataSet,
+  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh;
 
 type
   TWireForm = class(TGridForm)
@@ -87,8 +87,8 @@ type
     procedure pgcWireChange(Sender: TObject);
     procedure actPointAddExecute(Sender: TObject);
     procedure actPointDelExecute(Sender: TObject);
-    procedure dbgWireLinkGetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure dbgWireLinkGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     FFullAccess: Boolean;
     procedure InitForm;
@@ -104,8 +104,9 @@ var
 implementation
 
 uses
-  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, WireLinkForma, WirePointForma,
-  WireFilter, FIBQuery, pFIBQuery, AtrCommon, AtrStrUtils;
+  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, WireLinkForma, WirePointForma, WireFilter, FIBQuery, pFIBQuery,
+  AtrCommon,
+  AtrStrUtils;
 
 const
   const_default_filter: string = ' 1=1 ';
@@ -124,7 +125,7 @@ procedure TWireForm.InitSecurity;
 begin
   inherited;
   FFullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes));
-  // Экспорт информации
+  // Р­РєСЃРїРѕСЂС‚ РёРЅС„РѕСЂРјР°С†РёРё
   pmgSaveSelection.Visible := (dmMain.AllowedAction(rght_Export));
 
   actDelete.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
@@ -198,7 +199,7 @@ begin
       SQL.Add('  CWHAT = ''''; ');
       SQL.Add('  select count(*) from port p where p.Wid = :WID into :CCOUNT; ');
       SQL.Add('  if (ccount > 0) then ');
-      SQL.Add('    CWHAT = ''Порты''; ');
+      SQL.Add('    CWHAT = ''РџРѕСЂС‚С‹''; ');
       SQL.Add('  suspend; ');
       SQL.Add('end ');
       ParamByName('WID').AsInteger := dsWire['WID'];
@@ -476,19 +477,17 @@ begin
     Background := StringToColor(dsWire['COLOR']);
 end;
 
-procedure TWireForm.dbgWireLinkGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
+procedure TWireForm.dbgWireLinkGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
   inherited;
- //
+  //
   if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('CUST_CONNECTED').IsNull then
   begin
-    if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CUST_CONNECTED').AsInteger = 0)
-    then
-      Background:= clYellow
+    if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CUST_CONNECTED').AsInteger = 0) then
+      Background := clYellow
     else
-      Background:= clWindow;
+      Background := clWindow;
   end;
 end;
 
@@ -512,7 +511,7 @@ function TWireForm.GenerateFilter: string;
   begin
     tmpSQL := '';
 
-    // Условие отбора по адресу
+    // РЈСЃР»РѕРІРёРµ РѕС‚Р±РѕСЂР° РїРѕ Р°РґСЂРµСЃСѓ
     if (dsFilter['CHECK_ADRESS'] = 1) then
     begin
       if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
@@ -578,20 +577,20 @@ function TWireForm.GenerateFilter: string;
 
     if (not dsFilter.FieldByName('PROBLEM').IsNull) then
     begin
-      // 1 Линии свободны
-      // 2 Подключена одна точка
-      // 3 Линия подключена к откл. абоненту
+      // 1 Р›РёРЅРёРё СЃРІРѕР±РѕРґРЅС‹
+      // 2 РџРѕРґРєР»СЋС‡РµРЅР° РѕРґРЅР° С‚РѕС‡РєР°
+      // 3 Р›РёРЅРёСЏ РїРѕРґРєР»СЋС‡РµРЅР° Рє РѕС‚РєР». Р°Р±РѕРЅРµРЅС‚Сѓ
 
       case dsFilter['PROBLEM'] of
-        1: // 1 Линии свободны
+        1: // 1 Р›РёРЅРёРё СЃРІРѕР±РѕРґРЅС‹
           tmpSQL := tmpSQL + ' and (not (c.Capacity is null or c.Capacity = 1)) ' +
             'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)';
 
-        2: // 2 Подключена одна точка
+        2: // 2 РџРѕРґРєР»СЋС‡РµРЅР° РѕРґРЅР° С‚РѕС‡РєР°
           tmpSQL := tmpSQL + ' and (not (c.Capacity is null or c.Capacity = 1)) ' +
             'and (mod((select count(*) from port ip where ip.Wid = c.Wid), 2) <> 0)';
 
-        3: // 3 Линия подключена к откл. абоненту
+        3: // 3 Р›РёРЅРёСЏ РїРѕРґРєР»СЋС‡РµРЅР° Рє РѕС‚РєР». Р°Р±РѕРЅРµРЅС‚Сѓ
           tmpSQL := tmpSQL + ' and (exists(select p.Wid from TV_LAN l' + #13#10 +
             ' inner join equipment e on (l.Eq_Id = e.Eid)' + #13#10 +
             ' inner join port p on (p.Eid = e.Eid and l.Port = p.Port) where p.Wid = c.wid' + #13#10 +
@@ -631,7 +630,7 @@ begin
     while not dsFilter.Eof do
     begin
       whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
-      // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+      // РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РѕРіСЂР°РЅРёС‡РµРЅРёРµ РѕРґРЅРѕР№ Р·Р°РїРёСЃРё Рё С„РёР»СЊС‚СЂ РїРѕ РєРІР°СЂС‚РёСЂРµ. С‚Рѕ СЃРєРёРЅРµРј РѕРіСЂР°РЅРёС‡РµРЅРёРµ
       dsFilter.next;
       if not dsFilter.Eof then
         if dsFilter['next_condition'] = 0 then

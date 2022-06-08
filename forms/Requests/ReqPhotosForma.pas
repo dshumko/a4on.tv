@@ -3,15 +3,17 @@
 interface
 
 uses
-  Vcl.Menus, Data.DB, System.Classes, System.Actions, Vcl.ActnList,
-  Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.ComCtrls,
-  Vcl.ToolWin, Vcl.Forms, Vcl.Graphics, System.SysUtils, System.Variants,
-  Vcl.Dialogs, Winapi.Windows, System.UITypes,
-
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet,
-  GridsEh, DBGridEhImpExp, FIBQuery, pFIBQuery, DBGridEhGrouping, MemTableDataEh,
-  DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh, PropFilerEh, PropStorageEh;
+  Winapi.Windows,
+  System.Classes, System.Actions, System.SysUtils, System.Variants, System.UITypes,
+  Data.DB,
+  Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms,
+  Vcl.Graphics,
+  Vcl.Dialogs,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery,
+  pFIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  PrjConst,
+  EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh, PropFilerEh, PropStorageEh;
 
 type
   TReqPhotosForm = class(TForm)
@@ -124,9 +126,9 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma,
-  AtrStrUtils, CF, CustomerForma, ReportPreview,
-  Winapi.ShellAPI, RequestForma;
+uses
+  Winapi.ShellAPI,
+  DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils, CF, CustomerForma, ReportPreview, RequestForma;
 
 {$R *.dfm}
 
@@ -190,7 +192,7 @@ begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
           AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
+        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
       end;
     end;
 
@@ -216,7 +218,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        DBGridEh_DoCopyAction(dbg, false)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -579,7 +581,7 @@ var
 begin
   if FFirstOpen then
   begin
-    FFirstOpen := False;
+    FFirstOpen := false;
     Exit;
   end;
 

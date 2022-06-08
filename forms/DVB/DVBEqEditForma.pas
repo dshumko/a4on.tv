@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBCtrlsEh, DB, FIBDataSet,
-  pFIBDataSet, StdCtrls, Mask, DBLookupEh, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh;
 
 type
   TDVBEqEditForm = class(TForm)
@@ -41,7 +43,8 @@ function EditDigitEQ(const EQ_N: String; const EQ_TYPE: Integer = 0): boolean;
 implementation
 
 uses
-  DM, DateUtils, pFIBQuery, FIBQuery, PrjConst;
+  System.DateUtils,
+  DM, pFIBQuery, FIBQuery, PrjConst;
 
 {$R *.dfm}
 

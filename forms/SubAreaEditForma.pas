@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBCtrlsEh, DBLookupEh, DB, FIBDataSet, pFIBDataSet,
-  Mask, OkCancel_frame, DBCtrls, StdCtrls, FIBDatabase, pFIBDatabase,
-  CnErrorProvider, PrjConst, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst, DBGridEh;
 
 type
   TSubAreaViewForm = class(TForm)
@@ -42,7 +43,8 @@ function EditSubArea(const aArea_ID:Integer; const aSubArea_ID:Integer): Integer
 
 implementation
 
-uses DM, AreaEditForma;
+uses
+  DM, AreaEditForma;
 
 
 {$R *.dfm}

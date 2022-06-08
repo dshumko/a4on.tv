@@ -3,12 +3,15 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, AtrPages, ToolCtrlsEh, ExtCtrls, GridsEh,
-  DBGridEh, ComCtrls, ToolWin, StdCtrls, DB, FIBDataSet, pFIBDataSet,
-  ActnList, DBGridEhToolCtrls, Buttons, DBAxisGridsEh, System.Actions, PrjConst,
-  EhLibVCL, System.UITypes, Vcl.Menus, DBGridEhGrouping, DynVarsEh,
-  FIBDatabase, pFIBDatabase, PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
+  Vcl.ActnList,
+  Vcl.Buttons, Vcl.Menus,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, PropFilerEh, PropStorageEh;
 
 type
   TapgCustomerDigit = class(TA4onPage)
@@ -87,8 +90,8 @@ implementation
 
 {$R *.dfm}
 
-uses MAIN, AtrCommon, DM, DecoderPacketForma, DigitCardForma,
-  DecoderDeleteDlgForma, pFIBQuery, CustChannelForma;
+uses
+  MAIN, AtrCommon, DM, DecoderPacketForma, DigitCardForma, DecoderDeleteDlgForma, pFIBQuery, CustChannelForma;
 
 class function TapgCustomerDigit.GetPageName: string;
 begin
@@ -366,30 +369,30 @@ end;
 procedure TapgCustomerDigit.AddSrvAfterEvent(const Srv: String; const DECODER: String);
 // var i: integer;
 begin
-{
-  if (Srv.IsEmpty) or (not TryStrToInt(Srv, i)) or (FDataSource.DataSet.RecordCount = 0) or
+  {
+    if (Srv.IsEmpty) or (not TryStrToInt(Srv, i)) or (FDataSource.DataSet.RecordCount = 0) or
     (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
-  begin
+    with TpFIBQuery.Create(Self) do
+    begin
     try
-      DataBase := dmMain.dbTV;
-      Transaction := dmMain.trWriteQ;
-      SQL.Text := 'execute procedure Add_Single_Service(:P_Customer_Id, :P_Service_Id, :P_Units, :P_Date, :P_Notice)';
-      ParamByName('P_Customer_Id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
-      ParamByName('P_Service_Id').AsInteger := i;
-      ParamByName('P_Units').AsInteger := 1;
-      ParamByName('P_Date').AsDate := now();
-      ParamByName('P_Notice').AsString := DECODER;
-      Transaction.StartTransaction;
-      ExecQuery;
-      Transaction.Commit;
+    DataBase := dmMain.dbTV;
+    Transaction := dmMain.trWriteQ;
+    SQL.Text := 'execute procedure Add_Single_Service(:P_Customer_Id, :P_Service_Id, :P_Units, :P_Date, :P_Notice)';
+    ParamByName('P_Customer_Id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
+    ParamByName('P_Service_Id').AsInteger := i;
+    ParamByName('P_Units').AsInteger := 1;
+    ParamByName('P_Date').AsDate := now();
+    ParamByName('P_Notice').AsString := DECODER;
+    Transaction.StartTransaction;
+    ExecQuery;
+    Transaction.Commit;
     finally
-      Free;
+    Free;
     end;
-  end;
-}
+    end;
+  }
 end;
 
 end.

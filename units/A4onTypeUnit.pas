@@ -1,10 +1,10 @@
-unit A4onTypeUnit;
+п»їunit A4onTypeUnit;
 
 interface
 
 uses
-  System.SysUtils, System.Classes, System.Types, 
-  System.Generics.Collections, Winapi.Windows;
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.Types, System.Generics.Collections;
 
 type
 
@@ -27,8 +27,8 @@ type
     floor_n: string;
     mobile: string;
     itBalance: Boolean;
-    isType: Integer; // 0 - абонент, 1 - узел
-    isJur : Integer; // 0 - физик 1 - юрик
+    isType: Integer; // 0 - Р°Р±РѕРЅРµРЅС‚, 1 - СѓР·РµР»
+    isJur : Integer; // 0 - С„РёР·РёРє 1 - СЋСЂРёРє
     INN : String;
   end;
 

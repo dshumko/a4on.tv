@@ -4,18 +4,16 @@
 interface
 
 uses
-  System.UITypes, Vcl.Menus, System.Classes, Vcl.ActnList,
-  Data.DB, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms,
-  Vcl.Graphics, Winapi.Windows, Winapi.Messages, System.SysUtils,
-  System.Actions, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Vcl.Mask, Vcl.DBCtrls, System.Variants, Vcl.Dialogs,
-  DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, AtrPages,
-  FIBQuery, pFIBQuery, DBGridEhToolCtrls, PropFilerEh,
-  frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
-  MemTableDataEh, MemTableEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh,
-  pFIBDataDriverEh;
+  Winapi.Windows, Winapi.Messages,
+  System.UITypes, System.Classes, System.SysUtils, System.Actions, System.Variants,
+  Data.DB,
+  Vcl.Menus, Vcl.ActnList, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Dialogs,
+  DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, AtrPages,
+  FIBQuery,
+  pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
+  MemTableDataEh,
+  MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh, pFIBDataDriverEh;
 
 type
   TNodesForm = class(TForm)
@@ -264,14 +262,14 @@ var
 implementation
 
 uses
-  A4onTypeUnit, AtrCommon, MAIN, DM, CustomerForma,
-  DBGridEhFindDlgs, DateUtils, SelectColumnsForma, ExportSettingsForma,
-  TextEditForma, SendMessagesForma, fs_iinterpreter, RecourseForma,
-  RequestNewForma, DBGridEhImpExp, NodesFilter,
-  AtrStrUtils, RxStrUtils, StrUtils, EhLibFIB, pFIBProps,
-  fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT,
-  fmuNodeFlats, fmuNodeMaterialsMove, fmuNodeLayout, fmuNodeMaterials,
-  fmuNodeAppl, fmuNodeLink, NodeLinkForma;
+  System.DateUtils, System.StrUtils,
+  A4onTypeUnit, AtrCommon, MAIN, DM, CustomerForma, DBGridEhFindDlgs, SelectColumnsForma, ExportSettingsForma,
+  TextEditForma,
+  SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, NodesFilter, AtrStrUtils,
+  RxStrUtils,
+  EhLibFIB, pFIBProps, fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT, fmuNodeFlats,
+  fmuNodeMaterialsMove,
+  fmuNodeLayout, fmuNodeMaterials, fmuNodeAppl, fmuNodeLink, NodeLinkForma;
 
 {$R *.dfm}
 
@@ -1698,8 +1696,6 @@ end;
 
 procedure TNodesForm.PropStorageReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
   var Processed: Boolean);
-var
-  h: Integer;
 begin
   if PropName = 'LastPage' then
   begin

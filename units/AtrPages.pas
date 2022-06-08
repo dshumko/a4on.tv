@@ -2,9 +2,11 @@
 
 interface
 
-Uses
-  // VCL
-  System.Classes, System.SysUtils, VCL.Forms, Data.DB, System.Types, DBGridEh;
+uses
+  System.Classes, System.SysUtils, System.Types,
+  Data.DB,
+  Vcl.Forms,
+  DBGridEh;
 
 type
   TA4onPage = class;
@@ -83,7 +85,8 @@ type
 implementation
 
 uses
-  MAIN, DM, ToolCtrlsEh, VCL.StdCtrls;
+  Vcl.StdCtrls,
+  MAIN, DM, ToolCtrlsEh;
 
 { TA4onPages }
 

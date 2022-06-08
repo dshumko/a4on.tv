@@ -29,12 +29,6 @@ object SettingsForm: TSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 291
       Top = 9
@@ -1824,7 +1818,7 @@ object SettingsForm: TSettingsForm
     object Label15: TLabel
       Left = 1
       Top = 1
-      Width = 150
+      Width = 57
       Height = 13
       Align = alTop
       Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1080

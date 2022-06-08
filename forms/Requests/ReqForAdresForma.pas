@@ -3,10 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet,
-  GridsEh, DBGridEh, StdCtrls, ExtCtrls, ToolCtrlsEh, DBGridEhToolCtrls,
-  DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, EhLibVCL;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh,
+  EhLibVCL;
 
 type
   TReqForAdresForm = class(TForm)

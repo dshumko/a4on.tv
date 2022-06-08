@@ -3,12 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  FIBDataSet, pFIBDataSet, EhLibFIB, GridsEh,
-  ToolCtrlsEh, Menus, DBGridEhToolCtrls, DBAxisGridsEh,
-  System.Actions, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, PrjConst,
-  CnErrorProvider, EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TPaymentTypeForm = class(TGridForm)
@@ -32,7 +33,8 @@ var
 
 implementation
 
-uses MAIN;
+uses
+  MAIN;
 
 {$R *.dfm}
 

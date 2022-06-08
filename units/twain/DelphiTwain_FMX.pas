@@ -5,10 +5,18 @@ unit DelphiTwain_FMX;
 interface
 
 uses
-  SysUtils, Classes, DelphiTwain, Twain, Messages, Windows, FMX.Types, UITypes,
-  FMX.Forms
-  {$IFDEF DELPHI_XE5_UP}, FMX.Graphics{$ENDIF}
-  ;
+  Winapi.Messages,
+  Winapi.Windows,
+  System.SysUtils,
+  System.Classes,
+  System.UITypes,
+  DelphiTwain,
+  Twain,
+  FMX.Types,
+  FMX.Forms,
+  {$IFDEF DELPHI_XE5_UP}
+  FMX.Graphics;
+  {$ENDIF}
 
 type
   TOnTwainAcquire = procedure(Sender: TObject; const Index: Integer;
@@ -53,7 +61,8 @@ implementation
 
 { TDelphiTwain }
 
-uses uFormSelectSource_FMX;
+uses
+  uFormSelectSource_FMX;
 
 function ColorToAlpha(const aColor: Cardinal): TAlphaColor; inline;
 begin

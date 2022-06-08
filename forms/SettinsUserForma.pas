@@ -4,9 +4,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DBCtrlsEh, Mask, ExtCtrls, ComObj,
-  Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.Win.ComObj,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
+  DBCtrlsEh;
 
 type
   TSettingsUserForm = class(TForm)
@@ -69,7 +71,8 @@ type
 implementation
 
 uses
-  DM, MAIN, Winapi.ShellAPI;
+  Winapi.ShellAPI,
+  DM, MAIN;
 
 {$R *.dfm}
 
@@ -174,7 +177,6 @@ begin
   else
     ednRH.Value := 0;
 
-
   if not TryStrToInt(dmMain.GetIniValue('BUTTONS'), i) then
     i := 0;
   chkBtnA.Checked := ((i and chkBtnA.Tag) <> 0);
@@ -248,7 +250,7 @@ begin
 
   dmMain.SetIniValue('FONT_SIZE', IntToStr(btnFont.Font.Size));
   dmMain.SetIniValue('FONT_NAME', btnFont.Font.Name);
-  dmMain.SetIniValue('ROW_HEIGHT', ednRH.text);
+  dmMain.SetIniValue('ROW_HEIGHT', ednRH.Text);
 
   ModalResult := mrOk;
 end;

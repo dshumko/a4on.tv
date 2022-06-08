@@ -3,10 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, EhLibFIB, DBGridEhFindDlgs,
-  Menus, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus,
+  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh;
 
 type
   TJournalForm = class(TForm)

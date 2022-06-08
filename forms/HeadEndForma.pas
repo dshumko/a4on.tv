@@ -3,12 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, Buttons, GridsEh,
-  DBGridEh, StdCtrls, ExtCtrls, Mask, DBCtrls, FIBDatabase, pFIBDatabase,
-  DBCtrlsEh, DBLookupEh, OkCancel_frame, pFIBQuery, ComCtrls, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
+  Vcl.ComCtrls,
+  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, DBLookupEh, OkCancel_frame, pFIBQuery,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
 
 type
   THeadEndForm = class(TForm)

@@ -3,13 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, ComCtrls, ToolWin, GridsEh, DBGridEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, CnErrorProvider, PrjConst, EhLibVCL,
-  Vcl.DBCtrls, Vcl.Mask, DBCtrlsEh, System.UITypes, DBGridEhGrouping, DynVarsEh,
-  DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
+  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
+  EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, DBLookupEh;
 
 type
   TWHform = class(TGridForm)
@@ -47,7 +47,8 @@ var
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 {$R *.dfm}
 

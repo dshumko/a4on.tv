@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, FIBDataSet,
-  pFIBDataSet, OkCancel_frame, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, DBGridEh;
 
 type
   TChoiseForm = class(TForm)
@@ -21,7 +23,8 @@ type
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 {$R *.dfm}
 

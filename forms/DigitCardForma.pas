@@ -3,9 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DBCtrls, Buttons, ExtCtrls, Mask, DBCtrlsEh,
-  CnErrorProvider, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
+  DBCtrlsEh, CnErrorProvider, PrjConst;
 
 type
   TDigitCardForm = class(TForm)
@@ -35,7 +36,7 @@ type
     fDecoder: string;
     fSTB: string;
     fDECID: Integer;
-    fCustomer_id : Integer;
+    fCustomer_id: Integer;
     procedure SetDecoder(const Value: string);
     procedure SetStb(const Value: string);
     procedure SetID(const Value: Integer);
@@ -66,8 +67,8 @@ begin
     try
       DEC_ID := -1;
       CUSTOMER_ID := pCUSTOMER_ID;
-      if ShowModal = mrOk
-      then begin
+      if ShowModal = mrOk then
+      begin
         with TpFIBQuery.Create(dmMain) do
           try
             Database := dmMain.dbTV;
@@ -78,22 +79,24 @@ begin
             ParamByName('DECODER_N').AsString := edtNumber.Text;
             ParamByName('NOTICE').AsString := mmoNotice.Lines.Text;
 
-            if edtSTB.Text <> ''
-            then ParamByName('STB_N').AsString := edtSTB.Text;
-            if edtTV.Text <> ''
-            then ParamByName('TV_MODEL').AsString := edtTV.Text;
-            if edtTVSoft.Text <> ''
-            then ParamByName('TV_SOFT').AsString := edtTVSoft.Text;
+            if edtSTB.Text <> '' then
+              ParamByName('STB_N').AsString := edtSTB.Text;
+            if edtTV.Text <> '' then
+              ParamByName('TV_MODEL').AsString := edtTV.Text;
+            if edtTVSoft.Text <> '' then
+              ParamByName('TV_SOFT').AsString := edtTVSoft.Text;
 
             Transaction.StartTransaction;
             ExecQuery;
             Transaction.Commit;
             Result := edtNumber.Text;
-          finally free;
+          finally
+            free;
           end;
 
       end;
-    finally free;
+    finally
+      free;
     end;
 end;
 
@@ -114,23 +117,24 @@ begin
           Transaction.StartTransaction;
           ExecQuery;
           DEC_ID := CUST_DEC_ID;
-          if not FieldByName('CUSTOMER_ID').IsNull
-          then CUSTOMER_ID := FieldByName('CUSTOMER_ID').AsInteger;
-          if not FieldByName('DECODER_N').IsNull
-          then DECODER := FieldByName('DECODER_N').AsString;
-          if not FieldByName('STB_N').IsNull
-          then STB := FieldByName('STB_N').AsString;
-          if not FieldByName('TV_MODEL').IsNull
-          then edtTV.Text := FieldByName('TV_MODEL').AsString;
-          if not FieldByName('TV_SOFT').IsNull
-          then edtTVSoft.Text := FieldByName('TV_SOFT').AsString;
-          if not FieldByName('NOTICE').IsNull
-          then mmoNotice.Lines.Text := FieldByName('NOTICE').AsString;
+          if not FieldByName('CUSTOMER_ID').IsNull then
+            CUSTOMER_ID := FieldByName('CUSTOMER_ID').AsInteger;
+          if not FieldByName('DECODER_N').IsNull then
+            DECODER := FieldByName('DECODER_N').AsString;
+          if not FieldByName('STB_N').IsNull then
+            STB := FieldByName('STB_N').AsString;
+          if not FieldByName('TV_MODEL').IsNull then
+            edtTV.Text := FieldByName('TV_MODEL').AsString;
+          if not FieldByName('TV_SOFT').IsNull then
+            edtTVSoft.Text := FieldByName('TV_SOFT').AsString;
+          if not FieldByName('NOTICE').IsNull then
+            mmoNotice.Lines.Text := FieldByName('NOTICE').AsString;
           Transaction.Commit;
-        finally free;
+        finally
+          free;
         end;
-      if ShowModal = mrOk
-      then begin
+      if ShowModal = mrOk then
+      begin
         with TpFIBQuery.Create(dmMain) do
           try
             Database := dmMain.dbTV;
@@ -139,24 +143,28 @@ begin
               ' , TV_MODEL = :TV_MODEL, TV_SOFT = :TV_SOFT where (DEC_ID = :DEC_ID)';
             ParamByName('DEC_ID').AsInteger := CUST_DEC_ID;
             ParamByName('DECODER_N').AsString := edtNumber.Text;
-            if edtSTB.Text <> ''
-            then ParamByName('STB_N').AsString := edtSTB.Text;
-            if edtTV.Text <> ''
-            then ParamByName('TV_MODEL').AsString := edtTV.Text
-            else ParamByName('TV_MODEL').Clear;
-            if edtTVSoft.Text <> ''
-            then ParamByName('TV_SOFT').AsString := edtTVSoft.Text
-            else ParamByName('TV_SOFT').Clear;
+            if edtSTB.Text <> '' then
+              ParamByName('STB_N').AsString := edtSTB.Text;
+            if edtTV.Text <> '' then
+              ParamByName('TV_MODEL').AsString := edtTV.Text
+            else
+              ParamByName('TV_MODEL').Clear;
+            if edtTVSoft.Text <> '' then
+              ParamByName('TV_SOFT').AsString := edtTVSoft.Text
+            else
+              ParamByName('TV_SOFT').Clear;
 
             ParamByName('NOTICE').AsString := mmoNotice.Lines.Text;
             Transaction.StartTransaction;
             ExecQuery;
             Transaction.Commit;
-            Result := true;
-          finally free;
+            Result := True;
+          finally
+            free;
           end;
       end;
-    finally free;
+    finally
+      free;
     end;
 end;
 
@@ -169,8 +177,8 @@ end;
 
 procedure TDigitCardForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN)
-  then btnOkClick(Sender);
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
+    btnOkClick(Sender);
 end;
 
 procedure TDigitCardForm.SetDecoder(const Value: string);
@@ -197,8 +205,8 @@ end;
 
 procedure TDigitCardForm.btnOkClick(Sender: TObject);
 begin
-  if CheckDecoder and CheckSTB
-  then ModalResult := mrOk;
+  if CheckDecoder and CheckSTB then
+    ModalResult := mrOk;
 end;
 
 procedure TDigitCardForm.edtNumberEnter(Sender: TObject);
@@ -215,18 +223,19 @@ function TDigitCardForm.CheckDecoder: Boolean;
 var
   i: Integer;
 begin
-  Result := true;
-  btnOk.Enabled := true;
+  Result := True;
+  btnOk.Enabled := True;
 
-  if edtNumber.Text = ''
-  then begin
+  if edtNumber.Text = '' then
+  begin
     edtNumber.SelectAll;
     btnOk.Enabled := False;
     Result := False;
     CnErrors.SetError(edtNumber, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     Exit;
   end
-  else CnErrors.Dispose(edtNumber);
+  else
+    CnErrors.Dispose(edtNumber);
 
   with TpFIBQuery.Create(dmMain) do
     try
@@ -248,24 +257,26 @@ begin
       Transaction.StartTransaction;
       ExecQuery;
       i := FieldByName('CN_EXISTS').AsInteger;
-      if i = 0
-      then begin
+      if i = 0 then
+      begin
         edtNumber.SelectAll;
         btnOk.Enabled := False;
         Result := False;
         CnErrors.SetError(edtNumber, rsNOT_FOUND_DECODER, iaMiddleLeft, bsNeverBlink);
       end
-      else if not FieldByName('ACCNTS').IsNull
-      then begin
+      else if not FieldByName('ACCNTS').IsNull then
+      begin
         edtNumber.SelectAll;
         btnOk.Enabled := False;
         Result := False;
         CnErrors.SetError(edtNumber, rsDECODER_USED + FieldByName('ACCNTS').AsString, iaMiddleLeft, bsNeverBlink);
       end
-      else CnErrors.Dispose(edtNumber);
+      else
+        CnErrors.Dispose(edtNumber);
 
       Transaction.Commit;
-    finally free;
+    finally
+      free;
     end;
 end;
 
@@ -273,9 +284,9 @@ function TDigitCardForm.CheckSTB: Boolean;
 var
   i: Integer;
 begin
-  Result := true;
-  if edtSTB.Text = ''
-  then Exit;
+  Result := True;
+  if edtSTB.Text = '' then
+    Exit;
 
   with TpFIBQuery.Create(dmMain) do
     try
@@ -292,21 +303,23 @@ begin
       Transaction.StartTransaction;
       ExecQuery;
       i := FieldByName('CN_EXISTS').AsInteger;
-      if i = 0
-      then begin
+      if i = 0 then
+      begin
         edtSTB.SelectAll;
         Result := False;
         CnErrors.SetError(edtSTB, rsSTB_NOT_FOUND, iaMiddleLeft, bsNeverBlink);
       end
-      else if not FieldByName('ACCNTS').IsNull
-      then begin
+      else if not FieldByName('ACCNTS').IsNull then
+      begin
         edtSTB.SelectAll;
         Result := False;
         CnErrors.SetError(edtSTB, rsSTB_USED + FieldByName('ACCNTS').AsString, iaMiddleLeft, bsNeverBlink);
       end
-      else CnErrors.Dispose(edtSTB);
+      else
+        CnErrors.Dispose(edtSTB);
       Transaction.Commit;
-    finally free;
+    finally
+      free;
     end;
   btnOk.Enabled := btnOk.Enabled and Result;
 end;

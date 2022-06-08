@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes, Vcl.Buttons, FIBDatabase, pFIBDatabase,
-  A4onTypeUnit, PropFilerEh, PropStorageEh, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, FIBDatabase, pFIBDatabase,
+  A4onTypeUnit, PropFilerEh, PropStorageEh;
 
 type
   TEditCFileForm = class(TForm)
@@ -78,8 +79,9 @@ function EditFile(const ci: TCustomerInfo; const Name: string; const CF_ID: Inte
 
 implementation
 
-uses DM, JsonDataObjects, pFIBQuery, StrUtils,
-  ScanImageForma, BillEditForma, RequestNewForma;
+uses
+  System.StrUtils,
+  DM, JsonDataObjects, pFIBQuery, ScanImageForma, BillEditForma, RequestNewForma;
 
 {$R *.dfm}
 

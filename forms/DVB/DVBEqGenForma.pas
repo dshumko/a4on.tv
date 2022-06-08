@@ -3,10 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBCtrlsEh, DB, FIBDataSet,
-  pFIBDataSet, StdCtrls, Mask, DBLookupEh, System.UITypes, DBGridEh,
-  Vcl.Buttons, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh, CnErrorProvider;
 
 type
   TDVBEqGenForm = class(TForm)
@@ -48,8 +49,8 @@ function GenerateDecoders(): Boolean;
 implementation
 
 uses
-  System.RegularExpressions, System.DateUtils, System.Math,
-  StrUtils, pFIBQuery, DM, PrjConst, atrCommon, CnBigNumber;
+  System.RegularExpressions, System.DateUtils, System.Math, System.StrUtils,
+  pFIBQuery, DM, PrjConst, atrCommon, CnBigNumber;
 
 {$R *.dfm}
 
@@ -62,15 +63,17 @@ end;
 
 function rpad(const s: string; const n: Integer): string;
 var
- l : Integer;
+  l: Integer;
 begin
   Result := s;
   l := Length(Result);
-  if l < n then begin
+  if l < n then
+  begin
     while Length(Result) < n do
       Result := Result + '0';
   end
-  else Result := Result.Substring(l-n);
+  else
+    Result := Result.Substring(l - n);
 end;
 
 function AddSum(const card: string): string;
@@ -88,11 +91,13 @@ begin
   p := LeftStr(card, i - 1);
   o := RightStr(card, card.Length - j);
   sum := 0;
-  for i := 1 to p.Length do begin
+  for i := 1 to p.Length do
+  begin
     if TryStrToInt(p[i], j) then
       sum := sum + j
   end;
-  for i := 1 to o.Length do begin
+  for i := 1 to o.Length do
+  begin
     if TryStrToInt(o[i], j) then
       sum := sum + j
   end;
@@ -114,11 +119,14 @@ end;
 
 function GenerateDecoders(): Boolean;
 begin
-  with TDVBEqGenForm.Create(Application) do begin
-    if ShowModal = mrOk then begin
+  with TDVBEqGenForm.Create(Application) do
+  begin
+    if ShowModal = mrOk then
+    begin
       Result := GenEquipment;
     end
-    else begin
+    else
+    begin
       Result := False;
       // ShowMessage(rsERROR_NOT_CORRECT_NUMBER);
     end;
@@ -178,7 +186,8 @@ begin
     if not TryStrToInt(edCount.Value, count) then
       count := 1;
 
-    if (edtNumber.Text.Trim <> '') and (not TryStrToInt64(edtNumber.Text, StartN)) then begin
+    if (edtNumber.Text.Trim <> '') and (not TryStrToInt64(edtNumber.Text, StartN)) then
+    begin
       // попытка преобразовать номер в число
       // если не удалось, попытаемся вырезать часть кода и в число
       i := 0;
@@ -189,7 +198,8 @@ begin
         pref := LeftStr(edtNumber.Text, Length(edtNumber.Text) - digits);
         if TryStrToInt64(newN, StartN) then
           exitRepeat := not(Length(IntToStr(StartN + count)) > digits)
-        else begin
+        else
+        begin
           StartN := -1;
           exitRepeat := true;
         end;
@@ -198,15 +208,18 @@ begin
 
     s := mmoNotice.Lines.Text.Trim;
     isMAC := CheckMAC(s);
-    if isMAC then begin
+    if isMAC then
+    begin
       s := StringReplace(s, ':', '', [rfReplaceAll]);
       StartNum.SetHex(s);
       BigNumberSubWord(StartNum, 1);
     end;
 
     if ((StartN <> -1) or (count = 1)) and (MessageDlg(Format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtNumber.Text]),
-      mtConfirmation, [mbYes, mbNo], 0) = mrYes) then begin
-      with TpFIBQuery.Create(dmMain) do begin
+      mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      with TpFIBQuery.Create(dmMain) do
+      begin
         try
           Database := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -230,16 +243,20 @@ begin
           else
             ParamByName('TEXT_ENCODE').Clear;
 
-          for i := 0 to count - 1 do begin
-            if (count > 1) then begin
+          for i := 0 to count - 1 do
+          begin
+            if (count > 1) then
+            begin
               newN := pref + lpad(IntToStr(StartN + i), digits);
               newN := AddSum(newN);
             end
-            else begin
+            else
+            begin
               newN := edtNumber.Text;
             end;
             ParamByName('EQ_N').AsString := newN;
-            if isMAC and BigNumberAddWord(StartNum, 1) then begin
+            if isMAC and BigNumberAddWord(StartNum, 1) then
+            begin
               ParamByName('NOTICE').AsString := formatAsMac(StartNum);
             end;
             ExecQuery;
@@ -261,35 +278,43 @@ function TDVBEqGenForm.CheckData: Boolean;
 begin
   Result := true;
 
-  if VarIsNull(edtNumber.Value) or (edtNumber.Text.Trim = '') then begin
+  if VarIsNull(edtNumber.Value) or (edtNumber.Text.Trim = '') then
+  begin
     Result := False;
     cnErrors.SetError(edtNumber, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
   end
-  else begin
+  else
+  begin
     cnErrors.Dispose(edtNumber);
   end;
 
-  if VarIsNull(edCount.Value) then begin
+  if VarIsNull(edCount.Value) then
+  begin
     Result := False;
     cnErrors.SetError(edCount, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
   end
-  else begin
+  else
+  begin
     cnErrors.Dispose(edCount);
   end;
 
-  if VarIsNull(cbMAN.Value) then begin
+  if VarIsNull(cbMAN.Value) then
+  begin
     Result := False;
     cnErrors.SetError(cbMAN, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
   end
-  else begin
+  else
+  begin
     cnErrors.Dispose(cbMAN);
   end;
 
-  if VarIsNull(cbType.Value) then begin
+  if VarIsNull(cbType.Value) then
+  begin
     Result := False;
     cnErrors.SetError(cbType, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
   end
-  else begin
+  else
+  begin
     cnErrors.Dispose(cbType);
   end;
 end;
@@ -323,8 +348,10 @@ begin
     // для начала уменьшим на единицу. потом будем накидывать
     // избавляет от лишней логики
     if BigNumberSubWord(StartNum, 1) and (MessageDlg(Format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtNumber.Text]),
-      mtConfirmation, [mbYes, mbNo], 0) = mrYes) then begin
-      with TpFIBQuery.Create(dmMain) do begin
+      mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      with TpFIBQuery.Create(dmMain) do
+      begin
         try
           Database := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -345,8 +372,10 @@ begin
           else
             ParamByName('TEXT_ENCODE').Clear;
 
-          for i := 0 to count - 1 do begin
-            if BigNumberAddWord(StartNum, 1) then begin
+          for i := 0 to count - 1 do
+          begin
+            if BigNumberAddWord(StartNum, 1) then
+            begin
               ParamByName('EQ_N').AsString := formatAsMac(StartNum);
               ExecQuery;
             end;

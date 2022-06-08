@@ -4,14 +4,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, GridsEh, DBGridEh, ExtCtrls, DBCtrlsEh, StdCtrls,
-  RxToolEdit, RxCurrEdit, Mask, DBLookupEh, FIBQuery, pFIBQuery, Grids,
-  DBGrids, ComCtrls, ExtDlgs, pFIBScripter,
-  FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase,
-  ToolCtrlsEh, DBGridEhToolCtrls, EhLibMTE,
-  DBAxisGridsEh, MemTableDataEh, MemTableEh, EhLibVCL, RxPlacemnt,
-  CnErrorProvider, VKDBFDataSet, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.ExtDlgs,
+  GridsEh, DBGridEh, DBCtrlsEh, RxToolEdit, RxCurrEdit, DBLookupEh, FIBQuery, pFIBQuery, pFIBScripter, FIBDataSet,
+  pFIBDataSet,
+  FIBDatabase, pFIBDatabase, ToolCtrlsEh, DBGridEhToolCtrls, EhLibMTE, DBAxisGridsEh, MemTableDataEh, MemTableEh,
+  EhLibVCL,
+  RxPlacemnt, CnErrorProvider, VKDBFDataSet, DBGridEhGrouping, DynVarsEh;
 
 type
   TLoaderReestrForm = class(TForm)
@@ -120,8 +123,8 @@ var
 implementation
 
 uses
-  AtrCommon, WorkWithGrids, LoaderProfileForma, DM, AtrStrUtils, madZip, MAIN,
-  DateUtils, StrUtils, PrjConst;
+  System.DateUtils, System.StrUtils,
+  AtrCommon, WorkWithGrids, LoaderProfileForma, DM, AtrStrUtils, madZip, MAIN, PrjConst;
 
 {$R *.dfm}
 
@@ -999,7 +1002,7 @@ end;
 
 procedure TLoaderReestrForm.dbgehErrorsDblClick(Sender: TObject);
 var
-  myRect: TGridRect;
+  myRect: Vcl.Grids.TGridRect;
   i: Integer;
 begin
   if (not mdsErrors.FieldByName('FileLine').IsNull) and (mdsErrors['FileLine'] >= 0) then
@@ -1099,7 +1102,7 @@ begin
   profFile := GetTempDir + ProfilesFile;
   DeleteFile(profFile + '.txt');
   DatasetToJson(mdsFileFormats, profFile + '.txt');
-  //GZCompressFile(profFile + '.txt', profFile + '.gz');
+  // GZCompressFile(profFile + '.txt', profFile + '.gz');
   // Compress(profFile + '.txt', profFile + '.$$$');
   with TpFIBQuery.Create(Nil) do
     try

@@ -3,14 +3,14 @@
 interface
 
 uses
-  WINAPI.Windows, WINAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, System.Actions,
-  VCL.Buttons, VCL.ExtCtrls, VCL.StdCtrls, VCL.ActnList, VCL.Menus,
-  VCL.ComCtrls, VCL.ToolWin, Data.DB, System.UITypes,
-
-  FIBDataSet, pFIBDataSet, DM, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus,
+  Vcl.ComCtrls, Vcl.ToolWin,
+  FIBDataSet, pFIBDataSet, DM, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
 
 type
   TapgCustomerLan = class(TA4onPage)
@@ -83,8 +83,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, AtrStrUtils, CustomerLanForma, RxStrUtils, TelnetForma, IPPacketForma,
-  atrCmdUtils, HtmlForma;
+  MAIN, AtrCommon, AtrStrUtils, CustomerLanForma, RxStrUtils, TelnetForma, IPPacketForma, atrCmdUtils, HtmlForma;
 
 class function TapgCustomerLan.GetPageName: string;
 begin
@@ -175,7 +174,7 @@ begin
     if (dmMain.GetSettingsValue('LAN_DELEQPMNT') = '1') then
     begin
       if not dsLAN.FieldByName('EQ_ID').IsNull then
-      eq_id := dsLAN['EQ_ID'];
+        eq_id := dsLAN['EQ_ID'];
     end;
     dsLAN.Delete;
     if eq_id <> -1 then
@@ -358,16 +357,16 @@ begin
   with dmMain.qRead do
   begin
     SQL.Clear;
-    sql.Add('select distinct *');
-    sql.Add('  from (select ec.ec_id, ec.name, ec.command');
+    SQL.Add('select distinct *');
+    SQL.Add('  from (select ec.ec_id, ec.name, ec.command');
     SQL.Add('from equipment_cmd_grp ec');
     SQL.Add('   inner join equipment e on (ec.eg_id = e.eq_group)');
     SQL.Add('   inner join tv_lan t on (e.eid = t.eq_id)');
     SQL.Add('where ec.in_gui = 1 and t.customer_id = :customer_id');
-    sql.Add('        union');
-    sql.Add('        select ec.ec_id, ec.name, ec.command');
-    sql.Add('          from equipment_cmd_grp ec');
-    sql.Add('          where ec.in_gui = 1 and ec.Eg_Id = -1)');
+    SQL.Add('        union');
+    SQL.Add('        select ec.ec_id, ec.name, ec.command');
+    SQL.Add('          from equipment_cmd_grp ec');
+    SQL.Add('          where ec.in_gui = 1 and ec.Eg_Id = -1)');
     SQL.Add('order by name');
     ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
     Transaction.StartTransaction;
@@ -450,9 +449,9 @@ begin
     SQL.Clear;
     SQL.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
     SQL.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
-    sql.Add('from equipment e');
-    sql.Add('  inner join equipment_cmd_grp ec');
-    sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
+    SQL.Add('from equipment e');
+    SQL.Add('  inner join equipment_cmd_grp ec');
+    SQL.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
     SQL.Add('where e.eid = :eq_id');
     ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
     ParamByName('eq_id').AsInteger := dsLAN['eq_id'];
@@ -612,3 +611,4 @@ begin
 end;
 
 end.
+

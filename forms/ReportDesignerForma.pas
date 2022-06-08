@@ -3,19 +3,17 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, MemTableDataEh, Db, GridsEh, System.UITypes,
-  DBGridEh, MemTableEh, ComCtrls, ToolWin,
-  DataDriverEh,
-  pFIBDataDriverEh, FIBDataSet, pFIBDataSet, DM,
-  {$WARN UNIT_PLATFORM OFF}
-  {$IFDEF MSWINDOWS}
-  FileCtrl,
-  {$ENDIF}
-  {$WARN UNIT_PLATFORM ON}
-  ToolCtrlsEh, DBGridEhToolCtrls, ReportPreview,
-  Menus, ActnList, ExtCtrls, StdCtrls, frxClass, ImgList,
-  DBAxisGridsEh, PrjConst, System.Actions, RxSplit, EhLibVCL, DBGridEhGrouping,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin,
+  MemTableDataEh, GridsEh, DBGridEh, MemTableEh, DataDriverEh, pFIBDataDriverEh, FIBDataSet, pFIBDataSet, DM,
+{$IFDEF MSWINDOWS}
+  Vcl.FileCtrl,
+{$ENDIF}
+  System.Actions,
+  Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ImgList,
+  ToolCtrlsEh, DBGridEhToolCtrls, ReportPreview, frxClass, DBAxisGridsEh, PrjConst, RxSplit, EhLibVCL, DBGridEhGrouping,
   DynVarsEh;
 
 type
@@ -120,7 +118,8 @@ type
     // создает новый отчет с ReportTitle, MasterData и PageFooter
     procedure NewReport(Sender: TObject);
     // копирует файлы каталога в одноименную категорию БД
-    procedure CopyFiles2BD(const StartDir: string { каталог с отчетами }; id_category: Integer { ID_REPORT категории } );
+    procedure CopyFiles2BD(const StartDir: string { каталог с отчетами };
+      id_category: Integer { ID_REPORT категории } );
     (* ********************************************************************** *)
     (* БД от DataDrive определяет где находятся таблица для хранения отчетов *)
     (* DefaultDataBase определяет с какой БД отчеты работают *)
@@ -133,7 +132,9 @@ var
 
 implementation
 
-uses FIBDatabase, IniFiles, FIBQuery, atrCmdUtils;
+uses
+  System.IniFiles,
+  FIBDatabase, FIBQuery, atrCmdUtils;
 
 {$R *.dfm}
 
@@ -142,13 +143,13 @@ var
   val: string;
   i: Integer;
 begin
-  if InputQuery(rsReportCategoryName, rsReportCategoryNameHint, val)
-  then
-    if dmMain.mtReportsTree.State = dsBrowse
-    then begin
-      if (dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull)
-      then i := dmMain.mtReportsTree.FieldByName('ID_REPORT').AsInteger
-      else i := dmMain.mtReportsTree.FieldByName('ID_PARENT').AsInteger;
+  if InputQuery(rsReportCategoryName, rsReportCategoryNameHint, val) then
+    if dmMain.mtReportsTree.State = dsBrowse then
+    begin
+      if (dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull) then
+        i := dmMain.mtReportsTree.FieldByName('ID_REPORT').AsInteger
+      else
+        i := dmMain.mtReportsTree.FieldByName('ID_PARENT').AsInteger;
 
       dmMain.mtReportsTree.Append;
       dmMain.mtReportsTree.FieldByName('REPORT_NAME').Value := val;
@@ -168,15 +169,15 @@ end;
 procedure TReportDesignerForm.aSaveRepToFileExecute(Sender: TObject);
 begin
   // Сохранить в файл
-  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-  then begin
+  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
+  begin
     ShowMessage(rsCategorySaveError);
     Exit;
   end;
   // имя файла как имя отчета
   SaveDialog1.FileName := dmMain.mtReportsTree.FieldByName('REPORT_NAME').AsString;
-  if SaveDialog1.Execute
-  then TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).SaveToFile(SaveDialog1.FileName);
+  if SaveDialog1.Execute then
+    TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).SaveToFile(SaveDialog1.FileName);
 end;
 
 procedure TReportDesignerForm.aLoadRepFromFileExecute(Sender: TObject);
@@ -185,15 +186,16 @@ var
   id_parent: Integer;
   ReportName: string;
 begin
-  if not OpenDialog1.Execute
-  then Exit;
+  if not OpenDialog1.Execute then
+    Exit;
   rStream := TFileStream.Create(OpenDialog1.FileName, fmOpenRead);
   try
-    if dmMain.mtReportsTree.State = dsBrowse
-    then begin
-      if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-      then id_parent := dmMain.mtReportsTree.FieldValues['ID_REPORT']
-      else id_parent := dmMain.mtReportsTree.FieldValues['ID_PARENT'];
+    if dmMain.mtReportsTree.State = dsBrowse then
+    begin
+      if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
+        id_parent := dmMain.mtReportsTree.FieldValues['ID_REPORT']
+      else
+        id_parent := dmMain.mtReportsTree.FieldValues['ID_PARENT'];
       ReportName := ExtractFileName(ChangeFileExt(OpenDialog1.FileName, ''));
       dmMain.mtReportsTree.Insert;
       dmMain.mtReportsTree.FieldValues['REPORT_NAME'] := ReportName;
@@ -209,7 +211,8 @@ begin
       dmMain.mtReportsTree.Locate('ID_PARENT;REPORT_NAME', VarArrayOf([id_parent, ReportName]), []);
       dmMain.mtReportsTree.EnableControls;
     end;
-  finally rStream.Free;
+  finally
+    rStream.Free;
   end;
 end;
 
@@ -217,15 +220,16 @@ procedure TReportDesignerForm.aDesignerExecute(Sender: TObject);
 var
   rStream: TStream;
 begin
-  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-  then Exit;
+  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
+    Exit;
   rStream := TMemoryStream.Create;
   try
     TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).SaveToStream(rStream);
     rStream.Position := 0;
     FormPreview.frxReport.LoadFromStream(rStream);
     FormPreview.frxReport.FileName := dmMain.mtReportsTree.FieldByName('REPORT_NAME').AsString;
-  finally rStream.Free;
+  finally
+    rStream.Free;
   end;
 
   FormPreview.frxReport.DesignReport; // (False);
@@ -233,15 +237,14 @@ end;
 
 procedure TReportDesignerForm.aViewPrewievExecute(Sender: TObject);
 begin
-  if (dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull)
-      or
-     (dmMain.mtReportsTree.FieldByName('REPORT_BODY').AsString = '')
-  then Exit;
+  if (dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull) or
+    (dmMain.mtReportsTree.FieldByName('REPORT_BODY').AsString = '') then
+    Exit;
 
   GroupBox1.Caption := Format(rsPreviewTitle, [dmMain.mtReportsTree.FieldByName('REPORT_NAME').AsString]);
 
-  if (assigned(FormPreview.frxPreview) and (FormPreview.frxPreview.Visible))
-  then begin
+  if (assigned(FormPreview.frxPreview) and (FormPreview.frxPreview.Visible)) then
+  begin
     try
       FormPreview.frxPreview.SetFocus;
       FormPreview.REPORT_ID := dmMain.mtReportsTree.FieldByName('ID_REPORT').AsInteger;
@@ -267,7 +270,8 @@ begin
       // SaveAs:=true;  // Зачем это?
       Result := true;
     end;
-  finally rStream.Free;
+  finally
+    rStream.Free;
   end;
 end;
 
@@ -302,10 +306,9 @@ end;
 procedure TReportDesignerForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
   var Handled: Boolean);
 begin
-  if Assigned(FormPreview.frxPreview)
-  then
-    if (FormPreview.frxPreview.PageCount > 0)
-    then FormPreview.frxPreview.MouseWheelScroll(WheelDelta, Shift, MousePos, False);
+  if assigned(FormPreview.frxPreview) then
+    if (FormPreview.frxPreview.PageCount > 0) then
+      FormPreview.frxPreview.MouseWheelScroll(WheelDelta, Shift, MousePos, False);
 end;
 
 procedure TReportDesignerForm.aNewReportExecute(Sender: TObject);
@@ -315,15 +318,16 @@ var
   ReportName: string;
 begin
   ReportName := rsNewReportName;
-  if InputQuery(rsReportName, rsReportNameHint, ReportName)
-  then begin
+  if InputQuery(rsReportName, rsReportNameHint, ReportName) then
+  begin
     rStream := TMemoryStream.Create;
     try
-      if dmMain.mtReportsTree.State = dsBrowse
-      then begin
-        if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-        then id_parent := dmMain.mtReportsTree.FieldValues['ID_REPORT']
-        else id_parent := dmMain.mtReportsTree.FieldValues['ID_PARENT'];
+      if dmMain.mtReportsTree.State = dsBrowse then
+      begin
+        if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
+          id_parent := dmMain.mtReportsTree.FieldValues['ID_REPORT']
+        else
+          id_parent := dmMain.mtReportsTree.FieldValues['ID_PARENT'];
         dmMain.mtReportsTree.Append;
         dmMain.mtReportsTree.FieldValues['REPORT_NAME'] := ReportName;
         dmMain.mtReportsTree.FieldValues['NO_VISIBLE'] := 0;
@@ -335,7 +339,8 @@ begin
         rStream.Position := 0;
         // грузим в поле таблицы БД из потока
         TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).LoadFromStream(rStream);
-        try dmMain.mtReportsTree.Post;
+        try
+          dmMain.mtReportsTree.Post;
         except
           dmMain.mtReportsTree.Cancel;
           raise;
@@ -348,7 +353,8 @@ begin
         dmMain.mtReportsTree.Locate('ID_PARENT;REPORT_NAME', VarArrayOf([id_parent, ReportName]), []);
         dmMain.mtReportsTree.EnableControls;
       end;
-    finally rStream.Free;
+    finally
+      rStream.Free;
     end;
   end;
 end;
@@ -420,10 +426,9 @@ end;
 procedure TReportDesignerForm.aNoVisibleReportExecute(Sender: TObject);
 begin
   // cкрыть/показать отчет
-  if not dmMain.mtReportsTree.FieldByName('NO_VISIBLE').AsBoolean
-  then
-    if MessageDlg(rsReporHide, mtConfirmation, [mbYes, mbNo], 0) = mrNo
-    then Exit;
+  if not dmMain.mtReportsTree.FieldByName('NO_VISIBLE').AsBoolean then
+    if MessageDlg(rsReporHide, mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
   dmMain.mtReportsTree.Edit;
   try
     dmMain.mtReportsTree.FieldByName('NO_VISIBLE').AsBoolean := not dmMain.mtReportsTree.FieldByName('NO_VISIBLE')
@@ -438,15 +443,15 @@ end;
 
 procedure TReportDesignerForm.aDeleteExecute(Sender: TObject);
 begin
-  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-  then begin
+  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
+  begin
     if (MessageDlg(Format(rsRepordCategoryDelete, [dmMain.mtReportsTree.FieldByName('REPORT_NAME').AsString]),
-      mtWarning, [mbYes, mbNo], 0) = mrYes)
-    then dmMain.mtReportsTree.Delete;
+      mtWarning, [mbYes, mbNo], 0) = mrYes) then
+      dmMain.mtReportsTree.Delete;
   end
   else if (MessageDlg(Format(rsRepordDelete, [dmMain.mtReportsTree.FieldByName('REPORT_NAME').AsString]), mtWarning,
-    [mbYes, mbNo], 0) = mrYes)
-  then dmMain.mtReportsTree.Delete;
+    [mbYes, mbNo], 0) = mrYes) then
+    dmMain.mtReportsTree.Delete;
 
   aCloseOpenExecute(Sender);
 end;
@@ -465,8 +470,8 @@ procedure TReportDesignerForm.FormDestroy(Sender: TObject);
 begin
   try
     // TODO: Не понятно с закрытием дизайнера отчетов. ошибка
-    if Assigned(FormPreview)
-    then FreeAndNil(FormPreview);
+    if assigned(FormPreview) then
+      FreeAndNil(FormPreview);
   finally
     //
   end;
@@ -476,16 +481,16 @@ procedure TReportDesignerForm.ReportsTreeDrawColumnCell(Sender: TObject; const R
   Column: TColumnEh; State: TGridDrawState);
 begin
   // ReportsTree.Canvas.Font.Size:=Column.Font.Size;
-  if Assigned(dmMain)
-  then begin
-    if dmMain.mtReportsTree.FieldByName('NO_VISIBLE').AsBoolean
-    then // Скрытые отчеты
-        ReportsTree.Canvas.Font.Color := clGrayText
-    else ReportsTree.Canvas.Font.Color := clWindowText;
-    if not dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-    then // Отчеты
-        ReportsTree.Canvas.Font.Style := ReportsTree.Canvas.Font.Style + [fsUnderline]
-    else begin
+  if assigned(dmMain) then
+  begin
+    if dmMain.mtReportsTree.FieldByName('NO_VISIBLE').AsBoolean then // Скрытые отчеты
+      ReportsTree.Canvas.Font.Color := clGrayText
+    else
+      ReportsTree.Canvas.Font.Color := clWindowText;
+    if not dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then // Отчеты
+      ReportsTree.Canvas.Font.Style := ReportsTree.Canvas.Font.Style + [fsUnderline]
+    else
+    begin
       ReportsTree.Canvas.Font.Style := ReportsTree.Canvas.Font.Style + [fsBold]; // категории
       // ReportsTree.Canvas.Font.Size:=ReportsTree.Canvas.Font.Size+2;
     end;
@@ -496,8 +501,8 @@ end;
 
 procedure TReportDesignerForm.dsReportDataChange(Sender: TObject; Field: TField);
 begin
-  if dmMain.mtReportsTree.Active
-  then begin
+  if dmMain.mtReportsTree.Active then
+  begin
     StatusBar1.Panels[0].Text := dmMain.mtReportsTree.FieldByName('ID_REPORT').AsString;
     // FID_REPORT:=dmMain.mtReportsTree.FieldByName('ID_REPORT').AsInteger;
   end;
@@ -505,8 +510,8 @@ end;
 
 procedure TReportDesignerForm.aTruePreviewExecute(Sender: TObject);
 begin
-  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull
-  then Exit;
+  if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
+    Exit;
 
   FormPreview.REPORT_ID := dmMain.mtReportsTree.FieldByName('ID_REPORT').AsInteger;
 
@@ -519,11 +524,11 @@ var
 begin
   // создание стартовой директории
   // StartDir:='D:\test_fr';
-  if SelectDirectory(rsSelectFolder, StartDir, StartDir)
-  then begin
+  if SelectDirectory(rsSelectFolder, StartDir, StartDir) then
+  begin
 
-    if not SysUtils.DirectoryExists(StartDir)
-    then CreateDir(StartDir);
+    if not System.SysUtils.DirectoryExists(StartDir) then
+      CreateDir(StartDir);
 
     dmMain.mtReportsTree.Close;
     // DataDriver.SelectCommand.Params.ParamByName('IS_VISIBLE').Value:='';
@@ -533,49 +538,53 @@ begin
     dmMain.qCommon.SQL.Text := 'select fn.full_name from get_fullname_report(:id_report, ''\'') fn';
     try
       dmMain.qCommon.Prepare;
-      while not dmMain.mtReportsTree.Eof do begin
+      while not dmMain.mtReportsTree.Eof do
+      begin
 
         dmMain.qCommon.ParamByName('ID_REPORT').Value := dmMain.mtReportsTree.FieldByName('ID_REPORT').Value;
         dmMain.qCommon.ExecQuery;
         FullFileName := StartDir + '\' + dmMain.qCommon.FieldByName('FULL_NAME').AsString;
 
-        if dmMain.mtReportsTree.FieldByName('REPORT_BODY').AsString = ''
-        then begin
-          if not SysUtils.DirectoryExists(FullFileName)
-          then
-            if not SysUtils.ForceDirectories(FullFileName)
-            then raise Exception.Create( Format(rsErrorCrateDirectory, [FullFileName]));
+        if dmMain.mtReportsTree.FieldByName('REPORT_BODY').AsString = '' then
+        begin
+          if not System.SysUtils.DirectoryExists(FullFileName) then
+            if not System.SysUtils.ForceDirectories(FullFileName) then
+              raise Exception.Create(Format(rsErrorCrateDirectory, [FullFileName]));
         end
-        else begin
+        else
+        begin
           // вычисление полного имени отчета
           FullFileName := FullFileName + '.fr3';
           DirName := ExtractFilePath(FullFileName);
-          if not SysUtils.DirectoryExists(DirName)
-          then
-            if not SysUtils.ForceDirectories(DirName)
-            then raise Exception.Create( Format(rsErrorCrateDirectory, [DirName]));
-          try TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).SaveToFile(FullFileName);
+          if not System.SysUtils.DirectoryExists(DirName) then
+            if not System.SysUtils.ForceDirectories(DirName) then
+              raise Exception.Create(Format(rsErrorCrateDirectory, [DirName]));
+          try
+            TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).SaveToFile(FullFileName);
           except
-            on E: Exception do MessageDlg(E.Message, mtError, [mbOK], 0);
+            on E: Exception do
+              MessageDlg(E.Message, mtError, [mbOK], 0);
           end;
           // установка атрубута скрытый файл если отчет скрыт
-          if FileExists(FullFileName)
-          then begin
-            {$IFDEF MSWINDOWS}
-            {$WARN SYMBOL_PLATFORM OFF}
-            if dmMain.mtReportsTree.FieldByName('no_visible').AsBoolean
-            then SetFileAttributes(PChar(FullFileName), faHidden);
-            {$WARN SYMBOL_PLATFORM ON}
-            {$ENDIF}
+          if FileExists(FullFileName) then
+          begin
+{$IFDEF MSWINDOWS}
+{$WARN SYMBOL_PLATFORM OFF}
+            if dmMain.mtReportsTree.FieldByName('no_visible').AsBoolean then
+              SetFileAttributes(PChar(FullFileName), faHidden);
+{$WARN SYMBOL_PLATFORM ON}
+{$ENDIF}
           end
-          else MessageDlg(format(rsFileNotFoundWT, [FullFileName]), mtWarning, [mbOK], 0);
+          else
+            MessageDlg(Format(rsFileNotFoundWT, [FullFileName]), mtWarning, [mbOK], 0);
         end;
 
         dmMain.mtReportsTree.Next;
       end;
-      if (MessageDlg(Format(rsSaveReportsAsFiles, [StartDir]), mtInformation, [mbYes, mbNo], 0) = mrYes)
-      then atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'open', StartDir);
-    finally dmMain.qCommon.Close;
+      if (MessageDlg(Format(rsSaveReportsAsFiles, [StartDir]), mtInformation, [mbYes, mbNo], 0) = mrYes) then
+        atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'open', StartDir);
+    finally
+      dmMain.qCommon.Close;
     end;
   end;
 end;
@@ -585,20 +594,21 @@ var
   StartDir: string; (* имя стартового каталога *)
   inRep: Integer;
 begin
-  if SelectDirectory(rsSelectReportsDir, StartDir, StartDir)
-  then begin
+  if SelectDirectory(rsSelectReportsDir, StartDir, StartDir) then
+  begin
     CopyFiles2BD(StartDir, 0);
     // Обновим все отчеты в невидимые если он не в каталоге InMENU
     inRep := -1;
     try
       dmMain.qCommon.SQL.Text := 'select r.id_report from reports r where upper(r.report_name) = ''INMENU''';
       dmMain.qCommon.ExecQuery;
-      if not dmMain.qCommon.FieldByName('ID_REPORT').IsNull
-      then inRep := dmMain.qCommon.FieldByName('ID_REPORT').AsInteger;
-    finally dmMain.qCommon.Close;
+      if not dmMain.qCommon.FieldByName('ID_REPORT').IsNull then
+        inRep := dmMain.qCommon.FieldByName('ID_REPORT').AsInteger;
+    finally
+      dmMain.qCommon.Close;
     end;
-    if inRep <> -1
-    then begin
+    if inRep <> -1 then
+    begin
       dmMain.Query.SQL.Text := 'execute block as begin';
       dmMain.Query.SQL.Add('update reports r set r.NO_VISIBLE = 1 where r.ID_PARENT = 0;');
       dmMain.Query.SQL.Add('update reports r set r.ID_PARENT = 0 where r.ID_PARENT = ' + IntToStr(inRep) + ';');
@@ -622,20 +632,20 @@ var
   ID_REPORT: Variant;
   sr: TSearchRec;
   rStream: TStream;
-  i : Integer;
+  i: Integer;
 begin
   i := 0;
-  if FindFirst(StartDir + '\*.*', faAnyFile, sr) = 0
-  then begin
+  if FindFirst(StartDir + '\*.*', faAnyFile, sr) = 0 then
+  begin
     repeat
-      if (sr.Name = '.') or (sr.Name = '..')
-      then Continue;
-      if not dmMain.fdsReport.Active
-      then dmMain.fdsReport.Open;
-      if ((sr.Attr and faDirectory) <> faDirectory)
-      then begin // файлы
-        if AnsiUpperCase(ExtractFileExt(sr.Name)) = '.FR3'
-        then begin
+      if (sr.Name = '.') or (sr.Name = '..') then
+        Continue;
+      if not dmMain.fdsReport.Active then
+        dmMain.fdsReport.Open;
+      if ((sr.Attr and faDirectory) <> faDirectory) then
+      begin // файлы
+        if AnsiUpperCase(ExtractFileExt(sr.Name)) = '.FR3' then
+        begin
           // ищем похожий
           try
             dmMain.qCommon.SQL.Text := 'select r.id_report from reports r ' + 'where r.id_parent = ' +
@@ -643,72 +653,79 @@ begin
               ChangeFileExt(sr.Name, '') + ''')';
             dmMain.qCommon.ExecQuery;
             ID_REPORT := dmMain.qCommon.FieldByName('ID_REPORT').Value;
-          finally dmMain.qCommon.Close;
+          finally
+            dmMain.qCommon.Close;
           end;
           // отчет вставляем в БД
-          if ID_REPORT = NULL
-          then // нет отчета
-              dmMain.fdsReport.Insert
-          else begin
+          if ID_REPORT = NULL then // нет отчета
+            dmMain.fdsReport.Insert
+          else
+          begin
             dmMain.fdsReport.ParamByName('ID_REPORT').Value := ID_REPORT;
             dmMain.fdsReport.CloseOpen(False);
             dmMain.fdsReport.Edit;
           end;
           dmMain.fdsReport.FieldByName('REPORT_NAME').Value := ChangeFileExt(sr.Name, '');
-          {$IFDEF MSWINDOWS}
-          {$WARN SYMBOL_PLATFORM OFF}
+{$IFDEF MSWINDOWS}
+{$WARN SYMBOL_PLATFORM OFF}
           dmMain.fdsReport.FieldByName('NO_VISIBLE').AsBoolean := (sr.Attr and faHidden) = faHidden;
-          {$WARN SYMBOL_PLATFORM ON}
-          {$ENDIF}
+{$WARN SYMBOL_PLATFORM ON}
+{$ENDIF}
           dmMain.fdsReport.FieldByName('ID_PARENT').Value := id_category;
           // тело отчета
           rStream := TFileStream.Create(StartDir + '\' + sr.Name, fmOpenRead);
-          try TBlobField(dmMain.fdsReport.FieldByName('REPORT_BODY')).LoadFromStream(rStream);
-          finally rStream.Free;
+          try
+            TBlobField(dmMain.fdsReport.FieldByName('REPORT_BODY')).LoadFromStream(rStream);
+          finally
+            rStream.Free;
           end;
-          try dmMain.fdsReport.Post;
+          try
+            dmMain.fdsReport.Post;
           except
-            on E: Exception do MessageDlg(E.Message, mtWarning, [mbOK], 0);
+            on E: Exception do
+              MessageDlg(E.Message, mtWarning, [mbOK], 0);
           end;
           StatusBar1.Panels[1].Text := 'Отчет ' + sr.Name;
         end;
       end
-      else begin // каталоги
+      else
+      begin // каталоги
         // ищем категорию
         try
           dmMain.qCommon.SQL.Text := 'select r.id_report from reports r ' + 'where upper(r.report_name) = upper(''' +
             sr.Name + ''')' + ' and r.report_body is null';
-          if id_category = 0
-          then // самая начальная категория
-              dmMain.qCommon.SQL.Add('  and ((r.id_parent = 0) or (r.id_parent is null))');
+          if id_category = 0 then // самая начальная категория
+            dmMain.qCommon.SQL.Add('  and ((r.id_parent = 0) or (r.id_parent is null))');
           dmMain.qCommon.ExecQuery;
           ID_REPORT := dmMain.qCommon.FieldByName('ID_REPORT').Value;
-        finally dmMain.qCommon.Close;
+        finally
+          dmMain.qCommon.Close;
         end;
         (* Не использована mtReportsTree из-за тупой (!!!) ошибки при вставке:
           Can not delete Record if it present in active list. *)
         // не нашли - создаем
-        if ID_REPORT = NULL
-        then begin
+        if ID_REPORT = NULL then
+        begin
           dmMain.fdsReport.Insert;
           dmMain.fdsReport.FieldByName('REPORT_NAME').Value := sr.Name;
           dmMain.fdsReport.FieldByName('ID_PARENT').Value := id_category;
           ID_REPORT := dmMain.fdsReport.FieldByName('ID_REPORT').Value;
         end
-        else dmMain.fdsReport.Edit;
-        {$IFDEF MSWINDOWS}
-        {$WARN SYMBOL_PLATFORM OFF}
+        else
+          dmMain.fdsReport.Edit;
+{$IFDEF MSWINDOWS}
+{$WARN SYMBOL_PLATFORM OFF}
         dmMain.fdsReport.FieldByName('NO_VISIBLE').AsBoolean := (sr.Attr and faHidden) = faHidden;
-        {$WARN SYMBOL_PLATFORM ON}
-        {$ENDIF}
+{$WARN SYMBOL_PLATFORM ON}
+{$ENDIF}
         dmMain.fdsReport.Post;
         // рекурсия в каталог
         CopyFiles2BD(StartDir + '\' + sr.Name, ID_REPORT);
         StatusBar1.Panels[1].Text := rsChange + sr.Name;
       end;
-      if (i mod 100) = 0
-      then Application.ProcessMessages;
-      i := i+1;
+      if (i mod 100) = 0 then
+        Application.ProcessMessages;
+      i := i + 1;
     until FindNext(sr) <> 0;
     FindClose(sr);
   end;

@@ -1,5 +1,4 @@
 object fmCardsPay: TfmCardsPay
-  ShowHint = True
   Left = 450
   Top = 293
   Caption = #1050#1072#1088#1090#1099' '#1086#1087#1083#1072#1090#1099
@@ -15,6 +14,7 @@ object fmCardsPay: TfmCardsPay
   Menu = mm1
   OldCreateOrder = False
   Position = poDefault
+  ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
@@ -28,7 +28,6 @@ object fmCardsPay: TfmCardsPay
     Height = 451
     Align = alClient
     AllowedOperations = []
-    AutoFitColWidths = False
     DataSource = srcCardPay
     DynProps = <>
     EditActions = [geaCopyEh, geaSelectAllEh]

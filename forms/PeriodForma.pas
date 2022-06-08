@@ -3,9 +3,12 @@
 
 interface
 
-uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls, Mask, ComCtrls, ToolWin, ActnList,
-  OkCancel_frame, System.Actions, Vcl.ImgList;
+uses
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.ActnList, Vcl.ImgList,
+  OkCancel_frame;
 
 type
   TPeriodForm = class(TForm)
@@ -44,7 +47,8 @@ function ChangePeriod(var aPeriodFrom, aPeriodTo: TDateTime): boolean;
 
 implementation
 
-uses AtrCommon, AtrStrUtils;
+uses
+  AtrCommon, AtrStrUtils;
 {$R *.DFM}
 // возвращает период отбора данных
 // true - ecли отбор произведен корректно

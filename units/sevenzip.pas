@@ -1,4 +1,4 @@
-(********************************************************************************)
+﻿(********************************************************************************)
 (*                        7-ZIP DELPHI API                                      *)
 (*                                                                              *)
 (* The contents of this file are subject to the Mozilla Public License Version  *)
@@ -19,7 +19,9 @@ unit sevenzip;
 {$WARN SYMBOL_PLATFORM OFF}	
 
 interface
-uses SysUtils, Windows, ActiveX, Classes, Contnrs;
+uses
+  Winapi.Windows, Winapi.ActiveX,
+  System.SysUtils, System.Classes, System.Contnrs;
 
 type
   PVarType = ^TVarType;
@@ -1456,7 +1458,7 @@ var
         if (f.Name[1] <> '.') then
           Traverse(IncludeTrailingPathDelimiter(p + f.Name));
       until FindNext(f) <> 0;
-      SysUtils.FindClose(f);
+      System.SysUtils.FindClose(f);
     end;
 
     for i := 0 to willlist.Count - 1 do
@@ -1479,7 +1481,7 @@ var
         item.Ownership := soOwned;
         FBatchList.Add(item);
       until FindNext(f) <> 0;
-      SysUtils.FindClose(f);
+      System.SysUtils.FindClose(f);
     end;
   end;
 begin

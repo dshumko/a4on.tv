@@ -1,22 +1,23 @@
-unit MapForma;
+п»їunit MapForma;
 
 {$I defines.inc}
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, GMMap, GMLinkedComponents, GMInfoWindow, GMClasses,
-  GMMapVCL, Vcl.Buttons, Vcl.CheckLst, Vcl.ExtCtrls, Vcl.ComCtrls,
-  Vcl.Samples.Spin, Vcl.OleCtrls, GMConstants, GMMarker, GMMarkerVCL,
-  Vcl.Menus, GMPolyline, GMPolylineVCL, GMGeoCode, FIBDatabase,
-  pFIBDatabase, FIBQuery, pFIBQuery, System.Actions, Vcl.ActnList,
-{$IFDEF EMBEDDEDWB}
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.CheckLst, Vcl.ExtCtrls, Vcl.ComCtrls,
+  Vcl.Samples.Spin, Vcl.OleCtrls, Vcl.Menus, Vcl.ActnList,
+  GMMap, GMLinkedComponents, GMInfoWindow, GMClasses, GMMapVCL, GMConstants, GMMarker, GMMarkerVCL, GMPolyline, GMPolylineVCL,
+  GMGeoCode, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  {$IFDEF EMBEDDEDWB}
   SHDocVw_EWB, EwbCore, EmbeddedWB,
-{$ELSE}
+  {$ELSE}
   SHDocVw,
-{$ENDIF}
-  System.TimeSpan, PropFilerEh, PropStorageEh;
+  {$ENDIF}
+  System.TimeSpan,
+  PropFilerEh, PropStorageEh;
 
 type
   TMapForm = class(TForm)
@@ -88,8 +89,10 @@ var
 implementation
 
 uses
-  PrjConst, System.IniFiles, ShellAPI, Types, System.Win.Registry, GMFunctionsVCL, DM,
-  MAIN;
+  Winapi.ShellAPI,
+  System.Win.Registry,
+  System.IniFiles, System.Types,
+  PrjConst, GMFunctionsVCL, DM, MAIN;
 
 {$R *.dfm}
 
@@ -136,7 +139,7 @@ begin
     res := GetGeo(adres, lat, lng);
     if res > 0 then
     begin
-      // пропишем в базу
+      // РїСЂРѕРїРёС€РµРј РІ Р±Р°Р·Сѓ
       qWrite.ParamByName('hid').AsInteger := qRead.FN('House_Id').AsInteger;
       qWrite.ParamByName('lat').AsExtended := lat;
       qWrite.ParamByName('lon').AsExtended := lng;
@@ -377,7 +380,7 @@ var
   s: string;
   m: TMarker;
 begin
-  // покажем заявки
+  // РїРѕРєР°Р¶РµРј Р·Р°СЏРІРєРё
   if qRead.Open then
     qRead.Close;
   qRead.SQL.Text := 'select C.CUSTOMER_ID, R.RQ_ID, RT.Rt_Name,' + #13#10 +
@@ -427,7 +430,7 @@ var
   s: string;
   m: TMarker;
 begin
-  // покажем заявки
+  // РїРѕРєР°Р¶РµРј Р·Р°СЏРІРєРё
   if qRead.Open then
     qRead.Close;
   qRead.SQL.Clear;
@@ -476,7 +479,7 @@ var
   ul: string;
   pl: TPolyline;
 begin
-  // покажем заявки
+  // РїРѕРєР°Р¶РµРј Р·Р°СЏРІРєРё
   if qRead.Open then
     qRead.Close;
   qRead.SQL.Text := 'select ' + #13#10 + //

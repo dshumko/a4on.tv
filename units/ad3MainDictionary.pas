@@ -1,4 +1,4 @@
-(*************************************************************
+﻿(*************************************************************
 
 Main dictionary class for reading Hunspell dictionaries with Addict v4
 
@@ -24,13 +24,10 @@ unit ad3MainDictionary;
 interface
 
 uses
-    classes,
-    Windows,
-    SysUtils,
-    Dialogs,
-    ad3Util,
-    ad3PhoneticsMap,
-    NHunspell;
+  Winapi.Windows,
+  System.Classes, System.SysUtils,
+  Vcl.Dialogs,
+  ad3Util, ad3PhoneticsMap, NHunspell;
 
 
 type

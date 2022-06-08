@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, Mask, DBCtrlsEh, Buttons, DB, FIBDataSet, pFIBDataSet,
-  DBLookupEh, DBGridEh, FIBQuery, pFIBQuery;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh, FIBQuery, pFIBQuery;
 
 type
   TfrmChangeChannelForm = class(TForm)
@@ -35,7 +37,9 @@ function ChangeChannel(const CH_from: Integer; const FromName: String): Integer;
 
 implementation
 
-uses DM, AtrCommon, System.Variants;
+uses
+  System.Variants,
+  DM, AtrCommon;
 
 {$R *.DFM}
 

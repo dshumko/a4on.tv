@@ -3,12 +3,14 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  Vcl.ExtCtrls, Data.DB, Vcl.Buttons, VCL.DBCtrls, System.Actions,
-  Vcl.ComCtrls, VCL.ActnList,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, SynEditHighlighter,
-  SynHighlighterSQL, SynEdit, SynDBEdit, pFIBQuery, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
+  Vcl.ComCtrls, Vcl.ActnList,
+  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
+  pFIBQuery,
+  PrjConst;
 
 type
   TEquipFilterForm = class(TForm)
@@ -84,7 +86,8 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, EquipmentForma;
+uses
+  DM, MAIN, AtrCommon, EquipmentForma;
 
 {$R *.dfm}
 

@@ -1,14 +1,13 @@
-unit BillEditForma;
+ï»¿unit BillEditForma;
 
 interface
 
 uses
+  Winapi.Windows, Winapi.Messages,
   System.Classes, System.SysUtils, System.Variants,
-  WinAPI.Windows, WinAPI.Messages, VCL.Graphics, VCL.Dialogs,
-  Data.DB, VCL.Controls, VCL.Mask, VCL.Buttons,
-  VCL.StdCtrls, VCL.Forms,
-  CnErrorProvider, FIBDataSet, pFIBDataSet, FIBDatabase,
-  pFIBDatabase, OkCancel_frame, DBCtrlsEh;
+  Data.DB,
+  Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.Mask, Vcl.Buttons, Vcl.StdCtrls, Vcl.Forms,
+  CnErrorProvider, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, OkCancel_frame, DBCtrlsEh;
 
 type
   TBillEditForm = class(TForm)
@@ -126,7 +125,7 @@ begin
   (Sender as TDBEditEh).Text := ReplaceStr((Sender as TDBEditEh).Text, ',', '.');
   if not CheckIP((Sender as TDBEditEh).Text) then
   begin
-    ShowMessage('Íåâåðíàÿ ìàñêà');
+    ShowMessage('ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ Ð¼Ð°ÑÐºÐ°');
     (Sender as TDBEditEh).SetFocus;
   end;
 end;
@@ -162,7 +161,7 @@ begin
   (Sender as TDBEditEh).Text := ReplaceStr((Sender as TDBEditEh).Text, ',', '.');
   if not CheckIP((Sender as TDBEditEh).Text) then
   begin
-    ShowMessage('Íåâåðíûé IP');
+    ShowMessage('ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ IP');
     (Sender as TDBEditEh).SetFocus;
   end;
 end;
@@ -211,7 +210,7 @@ begin
   end
   else begin
     CnErrors.Dispose(edtInetIP);
-    // åñëè íàøëè ìíîãî IP òî ïðåäëîæèì âûáîð
+    // ÐµÑÐ»Ð¸ Ð½Ð°ÑˆÐ»Ð¸ Ð¼Ð½Ð¾Ð³Ð¾ IP Ñ‚Ð¾ Ð¿Ñ€ÐµÐ´Ð»Ð¾Ð¶Ð¸Ð¼ Ð²Ñ‹Ð±Ð¾Ñ€
     if edtInetIP.MRUList.Items.Count > 1 then begin
       edtInetIP.MRUList.Active := True;
       edtInetIP.Text := '';

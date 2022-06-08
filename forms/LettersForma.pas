@@ -3,12 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GridForma, DB, FIBDataSet, pFIBDataSet, ActnList, ComCtrls,
-  ToolWin, Grids, DBGridEh, GridsEh, Menus, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, Vcl.ExtCtrls, System.Actions,
-  Vcl.StdCtrls, Vcl.Buttons, DBCtrlsEh, Vcl.Mask, CnErrorProvider, PrjConst,
-  EhLibVCL, System.UITypes, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
+  GridForma, FIBDataSet, pFIBDataSet, DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
+  CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TLettersForm = class(TGridForm)
@@ -46,7 +47,8 @@ var
 
 implementation
 
-uses DM, MAIN;
+uses
+  DM, MAIN;
 
 {$R *.dfm}
 

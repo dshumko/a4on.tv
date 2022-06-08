@@ -1,5 +1,4 @@
 object DVBNetworkForm: TDVBNetworkForm
-  ShowHint = True
   Left = 410
   Top = 243
   Caption = #1057#1077#1090#1100' DVB'
@@ -14,6 +13,7 @@ object DVBNetworkForm: TDVBNetworkForm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 13
@@ -74,12 +74,6 @@ object DVBNetworkForm: TDVBNetworkForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 190
       Top = 7
@@ -105,6 +99,7 @@ object DVBNetworkForm: TDVBNetworkForm
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077' '#1089#1077#1090#1080
+    ShowHint = True
     TabOrder = 0
     Visible = True
   end
@@ -120,6 +115,7 @@ object DVBNetworkForm: TDVBNetworkForm
     EmptyDataInfo.Text = #1063#1072#1089#1086#1074#1086#1081' '#1087#1086#1103#1089' '#1089#1077#1090#1080', '#1084#1080#1085'      .'
     EditButton.Visible = True
     EditButtons = <>
+    ShowHint = True
     TabOrder = 5
     Visible = True
   end
@@ -134,6 +130,7 @@ object DVBNetworkForm: TDVBNetworkForm
     DynProps = <>
     EmptyDataInfo.Text = 'NID'
     EditButtons = <>
+    ShowHint = True
     TabOrder = 1
     Visible = True
   end
@@ -220,6 +217,7 @@ object DVBNetworkForm: TDVBNetworkForm
     DataSource = srcNetwork
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 8
     Visible = True
     WantReturns = True
@@ -263,6 +261,7 @@ object DVBNetworkForm: TDVBNetworkForm
       'BUL'
       'ARM'
       'KAZ')
+    ShowHint = True
     TabOrder = 7
     Visible = True
   end
@@ -304,6 +303,7 @@ object DVBNetworkForm: TDVBNetworkForm
       'SRP'
       'BUL'
       'ARM')
+    ShowHint = True
     TabOrder = 6
     Visible = True
   end
@@ -317,6 +317,7 @@ object DVBNetworkForm: TDVBNetworkForm
     DynProps = <>
     EmptyDataInfo.Text = 'ONID'
     EditButtons = <>
+    ShowHint = True
     TabOrder = 2
     Visible = True
   end

@@ -1,4 +1,4 @@
-{ ************************************************************************************** }
+﻿{ ************************************************************************************** }
 {                                                                                        }
 { Wrapper for NHunspell for Delphi 2007+                                                 }
 { Version 1.1.0                                                                          }
@@ -90,7 +90,11 @@ unit NHunspell;
 interface
 
 uses
-  Types, Classes, Windows, SysUtils, {$IFNDEF UNICODE}Widestrings,{$ENDIF}
+  Winapi.Windows,
+  System.Types, System.Classes, System.SysUtils,
+  {$IFNDEF UNICODE}
+  System.WideStrings,
+  {$ENDIF}
   NHunXml;
 
 const
@@ -1026,7 +1030,7 @@ function TNHunspell.ReadFolder(FolderName: String): Boolean;
 var
   FindResult: Integer;
   SearchRec: TSearchRec;
-  intIndex: Integer;
+  // intIndex: Integer;
 begin
   Result := false;
   if copy(Foldername, length(Foldername), 1) <> '\' then Foldername := FolderName + '\';

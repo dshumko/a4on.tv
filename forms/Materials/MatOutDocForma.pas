@@ -1,14 +1,14 @@
-unit MatOutDocForma;
+п»їunit MatOutDocForma;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, Vcl.StdCtrls,
-  DBLookupEh, DBCtrlsEh, Vcl.Mask, EhLibVCL, GridsEh, DBAxisGridsEh,
-  Data.DB, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase,
-  CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, Vcl.Buttons;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
 
 type
   TMatOutDocForm = class(TForm)
@@ -350,7 +350,7 @@ end;
 
 procedure TMatOutDocForm.dsDocNewRecord(DataSet: TDataSet);
 begin
-  dsDoc['DT_ID'] := DocumentType; // приходный документ
+  dsDoc['DT_ID'] := DocumentType; // РїСЂРёС…РѕРґРЅС‹Р№ РґРѕРєСѓРјРµРЅС‚
   if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
     dsDoc['DOC_DATE'] := Now;
   if dsWH.RecordCount = 1 then
@@ -382,7 +382,7 @@ begin
       = idYes) then
       s := '';
   end;
-  // если с колвом все хорошо или согласны закрыть - закрываем
+  // РµСЃР»Рё СЃ РєРѕР»РІРѕРј РІСЃРµ С…РѕСЂРѕС€Рѕ РёР»Рё СЃРѕРіР»Р°СЃРЅС‹ Р·Р°РєСЂС‹С‚СЊ - Р·Р°РєСЂС‹РІР°РµРј
   if s = '' then
   begin
     if (not dsDocMat.IsEmpty) and (dsDoc['DOC_CLOSED'] = 0) then

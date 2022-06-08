@@ -3,17 +3,16 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  VCL.Graphics, System.Classes, System.Actions, VCL.ActnList, VCL.Menus,
-  VCL.Dialogs, Data.DB, VCL.Buttons, VCL.Forms, VCL.StdCtrls,
-  VCL.DBCtrls, VCL.Mask, VCL.Controls, VCL.ExtCtrls, VCL.ComCtrls,
-
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, FIBDataSet,
-  pFIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
-  CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  MemTableDataEh, MemTableEh, PrjConst, EhLibVCL, PropFilerEh,
-  PropStorageEh, BaseForms, A4onTypeUnit, DBGridEhGrouping,
-  DynVarsEh, CnErrorProvider;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.ActnList, Vcl.Menus, Vcl.Dialogs, Vcl.Buttons, Vcl.Forms, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  Vcl.Controls,
+  Vcl.ExtCtrls, Vcl.ComCtrls,
+  DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
+  CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, MemTableDataEh, MemTableEh, PrjConst, EhLibVCL,
+  PropFilerEh,
+  PropStorageEh, BaseForms, A4onTypeUnit, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
 
 type
 
@@ -157,7 +156,8 @@ function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; cons
 implementation
 
 uses
-  System.RegularExpressions, AtrCommon, MAIN, ReportPreview, AtrStrUtils;
+  System.RegularExpressions,
+  AtrCommon, MAIN, ReportPreview, AtrStrUtils;
 
 type
 
@@ -205,7 +205,6 @@ var
   pf: TPaymentForm;
   OpenedPayDocs: string;
   UserFilter: String;
-  s: string;
 begin
   Result := -1;
   pf := TPaymentForm.Create(application);
@@ -245,8 +244,8 @@ begin
         if (aFromForm.IsEmpty) then
           UserFilter := UserFilter + ' and ( coalesce(ps.For_FORM, '''') = '''' )'
         else
-          UserFilter := UserFilter + ' and (( ps.For_FORM is null ) or '+
-            ' (POSITION(''' + aFromForm + ''' in ps.For_FORM) > 0))';
+          UserFilter := UserFilter + ' and (( ps.For_FORM is null ) or ' + ' (POSITION(''' + aFromForm +
+            ''' in ps.For_FORM) > 0))';
 
         pf.dsPaymentDocs.ParamByName('OWN_PD').Value := UserFilter;
       end;
@@ -256,17 +255,21 @@ begin
     pf.dsPaymentDocs.Active := true;
     if pf.dsPaymentDocs.RecordCount > 0 then
     begin
-      if (aPayDoc_id > -1) then begin
-        if (pf.dsPaymentDocs.Locate('PAY_DOC_ID', aPayDoc_id, [])) then begin
+      if (aPayDoc_id > -1) then
+      begin
+        if (pf.dsPaymentDocs.Locate('PAY_DOC_ID', aPayDoc_id, [])) then
+        begin
           pf.CurrentDate := pf.dsPaymentDocs['CD'];
           pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
         end
-        else begin
+        else
+        begin
           pf.CurrentDate := Now();
           pf.dbluPayDoc.KeyValue := aPayDoc_id;
         end;
       end
-      else begin
+      else
+      begin
         pf.CurrentDate := pf.dsPaymentDocs['CD'];
         pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
       end;

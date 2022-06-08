@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, DB, FIBDataSet,
-  pFIBDataSet, Buttons, ExtCtrls, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh;
 
 type
   TPayDocSelectForm = class(TForm)

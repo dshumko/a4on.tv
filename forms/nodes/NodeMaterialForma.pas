@@ -3,10 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DB, FIBDataSet, pFIBDataSet, DBGridEh, StdCtrls,
-  DBCtrls, Mask, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
-  PrjConst, System.UITypes, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, FIBDatabase,
+  pFIBDatabase;
 
 type
   TNodeMaterialForm = class(TForm)
@@ -34,7 +36,9 @@ function AddMaterial(const NODE_ID: Integer): Boolean;
 
 implementation
 
-uses DM, NodesForma, RegularExpressions, pFIBQuery;
+uses
+  System.RegularExpressions,
+  DM, NodesForma, pFIBQuery;
 
 {$R *.dfm}
 

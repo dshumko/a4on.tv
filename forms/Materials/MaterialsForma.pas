@@ -3,18 +3,16 @@
 interface
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.Actions,
-  VCL.Graphics, VCL.Forms, VCL.Dialogs, System.UITypes, Data.DB,
-  VCL.Menus, VCL.ActnList, VCL.StdCtrls,
-  VCL.Buttons, VCL.ComCtrls, VCL.ToolWin, VCL.Controls, VCL.ExtCtrls,
-
-  pFIBDatabase, FIBDataSet, pFIBDataSet,
-  EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhImpExp,
-  frxClass, PropStorageEh, FIBQuery, pFIBQuery, FIBDatabase,
-  PropFilerEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
-  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
-  PrjConst, MemTableEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.Controls, Vcl.ExtCtrls,
+  pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhImpExp, frxClass,
+  PropStorageEh,
+  FIBQuery, pFIBQuery, FIBDatabase, PropFilerEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping,
+  ToolCtrlsEh,
+  DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh;
 
 type
   TMaterialsForm = class(TForm)
@@ -168,10 +166,11 @@ var
 
 implementation
 
-uses DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview, RequestForma,
-  MatCorrectionDocForma, MatIncomeDocForma, MatOutDocForma,
-  MatMoveDocForma, MatInventoryDocForma, CustomerForma,
-  VCL.Imaging.pngimage, VCL.Imaging.jpeg;
+uses
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
+  DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview, RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
+  MatOutDocForma,
+  MatMoveDocForma, MatInventoryDocForma, CustomerForma;
 
 const
   // макс. размеры сторон хинта

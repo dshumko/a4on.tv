@@ -5,14 +5,14 @@ interface
 {$I defines.inc}
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, SynEditHighlighter,
-  StdCtrls, Menus, ActnList, ExtCtrls, ComCtrls, FIBQuery,
-  pFIBQuery, Mask, DBCtrlsEh, System.Actions, DBGridEh, DBLookupEh, Data.DB,
-  FIBDataSet, pFIBDataSet, PrjConst, ToolCtrlsEh,
-  DBGridEhToolCtrls, Vcl.Buttons, EhLibVCL, GridsEh, DBAxisGridsEh,
-  System.UITypes, FIBDatabase, pFIBDatabase,
-  frxClass, SendEmail, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask,
+  Vcl.Buttons,
+  SynEditHighlighter, FIBQuery, pFIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, ToolCtrlsEh,
+  DBGridEhToolCtrls, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase, frxClass, SendEmail, DBGridEhGrouping,
+  DynVarsEh;
 
 type
   TSendMessagesForm = class(TForm)

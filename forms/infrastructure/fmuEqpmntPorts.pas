@@ -3,16 +3,14 @@
 interface
 
 uses
-
-  System.Classes, System.Actions, System.SysUtils, System.Variants,
-  WinAPI.Windows, WinAPI.Messages, Data.DB, System.UITypes,
-  Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls,
-  Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus, Vcl.ToolWin, Vcl.Dialogs,
-  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase,
-  pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, GridsEh, EhLibVCL,
-  DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh,
-  PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.Actions, System.SysUtils, System.Variants, System.UITypes,
+  Data.DB,
+  Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus,
+  Vcl.ToolWin, Vcl.Dialogs,
+  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls,
+  DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh, PropStorageEh;
 
 type
   TapgEqpmntPort = class(TA4onPage)
@@ -82,8 +80,7 @@ type
     procedure dbVertGridRowCategoriesNodeCollapsed(Grid: TCustomDBVertGridEh; Node: TDBVertGridCategoryTreeNodeEh;
       CategoryProp: TDBVertGridCategoryPropEh);
     procedure actEditLinkExecute(Sender: TObject);
-    procedure dbgCustomerColumns8GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgCustomerColumns8GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
@@ -107,9 +104,9 @@ implementation
 {$R *.dfm}
 
 uses
-  System.StrUtils, MAIN, AtrCommon, AtrStrUtils, CF, EQPort,
-  atrCmdUtils, HtmlForma, TelnetForma, PortLinkForma,
-  EditApplianceForma, CustomerLanForma;
+  System.StrUtils,
+  MAIN, AtrCommon, AtrStrUtils, CF, EQPort, atrCmdUtils, HtmlForma, TelnetForma, PortLinkForma, EditApplianceForma,
+  CustomerLanForma;
 
 class function TapgEqpmntPort.GetPageName: string;
 begin
@@ -190,7 +187,6 @@ end;
 procedure TapgEqpmntPort.actAddExecute(Sender: TObject);
 var
   EQ: TEquipmentRecord;
-  Port: string;
 begin
   EQ := GetEquipmentRecord;
 
@@ -421,8 +417,7 @@ begin
   end;
 end;
 
-procedure TapgEqpmntPort.dbgCustomerColumns8GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TapgEqpmntPort.dbgCustomerColumns8GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);

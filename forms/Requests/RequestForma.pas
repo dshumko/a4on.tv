@@ -5,19 +5,16 @@
 interface
 
 uses
-  Vcl.Menus, System.Classes, System.Actions, Vcl.ActnList,
-  Data.DB, FIBDataSet, pFIBDataSet, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
-  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, System.SysUtils, System.Variants,
-  Vcl.Dialogs, System.UITypes, Vcl.dbcgrids, Vcl.Grids,
   Winapi.Windows, Winapi.Messages,
-
-  frxClass, EhLibFIB, frxDBSet, DM, CustomerInfoFrame,
-  ToolCtrlsEh, DBGridEhToolCtrls, FIBQuery, pFIBQuery,
-  DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh,
-  CnErrorProvider, FIBDatabase, pFIBDatabase, GridsEh, DBCtrlsEh,
-  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh,
-  DBGridEh, OkCancel_frame;
+  System.Classes, System.Actions, System.SysUtils, System.Variants, System.UITypes,
+  Data.DB,
+  Vcl.Menus, Vcl.ActnList, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCGrids, Vcl.Grids,
+  FIBDataSet, pFIBDataSet, frxClass, EhLibFIB, frxDBSet, DM, CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls,
+  FIBQuery,
+  pFIBQuery, DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh, CnErrorProvider, FIBDatabase, pFIBDatabase, GridsEh,
+  DBCtrlsEh,
+  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, OkCancel_frame;
 
 type
   TRequestForm = class(TForm)
@@ -295,9 +292,12 @@ function ReguestNodeExecute(aRequest: Integer; const aNodeId: Integer = -1; cons
 
 implementation
 
-uses Winapi.ShellAPI, ReqMaterialsForma, AtrCommon, MAIN, ReqExecutersForma, DateUtils,
-  ReqForAdresForma, SelectDateForma, RequestWorksForma, CustomerForma,
-  ReqMatReturnForma, EditRFileForma, ContactForma, System.StrUtils;
+uses
+  Winapi.ShellAPI,
+  System.DateUtils, System.StrUtils,
+  ReqMaterialsForma, AtrCommon, MAIN, ReqExecutersForma, ReqForAdresForma, SelectDateForma, RequestWorksForma,
+  CustomerForma,
+  ReqMatReturnForma, EditRFileForma, ContactForma;
 
 {$R *.dfm}
 
@@ -546,7 +546,7 @@ begin
     0) = mrNo) then
     Exit;
 
-  dsRequest.DElete;
+  dsRequest.Delete;
   Close;
 end;
 
@@ -649,7 +649,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
   Action := caFree;
 end;
 
@@ -861,7 +861,7 @@ procedure TRequestForm.miDelWorkClick(Sender: TObject);
 begin
   if (actWorks.Enabled) and (dsWorks.RecordCount > 0) then
   begin
-    dsWorks.DElete;
+    dsWorks.Delete;
   end;
 end;
 
@@ -869,7 +869,7 @@ procedure TRequestForm.miDelMatClick(Sender: TObject);
 begin
   if (actMaterials.Enabled) and (dsMaterials.RecordCount > 0) then
   begin
-    dsMaterials.DElete;
+    dsMaterials.Delete;
   end;
 end;
 
@@ -1076,7 +1076,7 @@ begin
   Contact.Notify := 1;
   Contact.Notice := '';
   Contact.CustID := -1;
-  Contact.CustID := FCustomerInfo.Customer_id;
+  Contact.CustID := FCustomerInfo.CUSTOMER_ID;
   if EditContact(Contact) then
   begin
     with TpFIBQuery.Create(Nil) do
@@ -1483,7 +1483,7 @@ begin
   if Application.MessageBox(PWideChar(Format(rsDeleteRecord, [dsMSG.FieldByName('TEXT').AsString])),
     PWideChar(rsWarning), MB_OKCANCEL + MB_ICONQUESTION + MB_DEFBUTTON2) = IDOK then
   begin
-    dsMSG.DElete;
+    dsMSG.Delete;
   end;
 end;
 

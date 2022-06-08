@@ -39,7 +39,7 @@ object EPGViewForm: TEPGViewForm
     object Label2: TLabel
       Left = 0
       Top = 0
-      Width = 84
+      Width = 185
       Height = 13
       Align = alTop
       Caption = ' '#1057#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074

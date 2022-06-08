@@ -1,14 +1,15 @@
-unit LoaderNewProfile;
+п»їunit LoaderNewProfile;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Grids, ExtCtrls, RxToolEdit, Mask, DBCtrlsEh, Menus,
-  DBCtrls, DB, DBGridEh, DBLookupEh, AtrStrUtils, DBGrids, ComCtrls,
-  VKDBFDataSet, MemTableDataEh, MemTableEh, PrjConst, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh, CnButtons, RxLookup,
-  FIBDataSet, pFIBDataSet;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls, Vcl.Mask, Vcl.Menus, Vcl.DBCtrls,
+  Vcl.DBGrids, Vcl.ComCtrls,
+  RxToolEdit, DBCtrlsEh, DBGridEh, DBLookupEh, AtrStrUtils, VKDBFDataSet, MemTableDataEh, MemTableEh, PrjConst, DBGridEhGrouping,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh, CnButtons, RxLookup, FIBDataSet, pFIBDataSet;
 
 type
   TLoaderProfileNew = class(TForm)
@@ -353,7 +354,7 @@ begin
     Exit;
 
   if (cbdbCodePage.Text = '') then begin
-    ShowMessage('Выберите кодировку файла!');
+    ShowMessage('Р’С‹Р±РµСЂРёС‚Рµ РєРѕРґРёСЂРѕРІРєСѓ С„Р°Р№Р»Р°!');
     cbdbCodePage.SetFocus;
     edtExample.Text := '';
     Exit;
@@ -376,7 +377,7 @@ begin
     FileToStrings(FileName, FileStrings, dsFileFormats.FieldByName('CodePage').AsInteger);
 end;
 
-// Инициализация стринггрида
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЃС‚СЂРёРЅРіРіСЂРёРґР°
 
 procedure TLoaderProfileNew.initGrid(SG: TStringGrid; const Rows: Integer; const sa: TStringArray);
 var
@@ -399,7 +400,7 @@ begin
   end;
 end;
 
-// Чтение заголовка
+// Р§С‚РµРЅРёРµ Р·Р°РіРѕР»РѕРІРєР°
 
 procedure TLoaderProfileNew.ReadHeaderFile;
 var

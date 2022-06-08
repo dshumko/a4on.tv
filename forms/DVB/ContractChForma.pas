@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, DB, FIBDataSet, pFIBDataSet, StdCtrls, DBCtrls,
-  DBCtrlsEh, Mask, DBLookupEh, OkCancel_frame, CnErrorProvider, FIBDatabase, pFIBDatabase;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OkCancel_frame, CnErrorProvider, FIBDatabase, pFIBDatabase;
 
 type
   TContractChForm = class(TForm)

@@ -1550,7 +1550,7 @@ object UserLoginDialog: TUserLoginDialog
       object cbSERVER: TDBComboBoxEh
         Left = 85
         Top = 6
-        Width = 191
+        Width = 187
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         AutoSize = False
@@ -1577,11 +1577,10 @@ object UserLoginDialog: TUserLoginDialog
       object edUser: TDBEditEh
         Left = 85
         Top = 30
-        Width = 191
+        Width = 187
         Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone
-        CharCase = ecUpperCase
         Ctl3D = True
         DynProps = <>
         EditButtons = <>
@@ -1596,7 +1595,7 @@ object UserLoginDialog: TUserLoginDialog
       object edPassword: TDBEditEh
         Left = 85
         Top = 54
-        Width = 191
+        Width = 187
         Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone

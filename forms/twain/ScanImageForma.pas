@@ -1,12 +1,12 @@
-unit ScanImageForma;
+п»їunit ScanImageForma;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, DelphiTwain, DelphiTwain_Vcl, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.Mask, DBCtrlsEh, Vcl.ExtDlgs, PropFilerEh,
-  PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ExtDlgs,
+  DelphiTwain, DelphiTwain_Vcl, DBCtrlsEh, PropFilerEh, PropStorageEh;
 
 type
   TScanImageForm = class(TForm)
@@ -48,7 +48,10 @@ implementation
 
 {$R *.dfm}
 
-uses JPEG, pngimage, GIFImg, System.IOUtils, PrjConst;
+uses
+  System.IOUtils,
+  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, Vcl.Imaging.GIFImg,
+  PrjConst;
 
 { TScanImageForm }
 
@@ -102,7 +105,7 @@ begin
     try
       jpg_img.Assign(ImgHolder.Picture.Bitmap);
       jpg_img.DIBNeeded;
-      jpg_img.CompressionQuality := 75; // от 0 до 100, где 100 -самое лучшее качество
+      jpg_img.CompressionQuality := 75; // РѕС‚ 0 РґРѕ 100, РіРґРµ 100 -СЃР°РјРѕРµ Р»СѓС‡С€РµРµ РєР°С‡РµСЃС‚РІРѕ
       jpg_img.Compress;
       jpg_img.SaveToFile(FTempFile);
     finally

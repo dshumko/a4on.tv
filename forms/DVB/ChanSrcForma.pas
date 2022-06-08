@@ -4,10 +4,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase,
-  pFIBDatabase, StdCtrls, DBCtrls, Mask, DBCtrlsEh, ExtDlgs, uDBImages,
-  CnErrorProvider, DBGridEh, DBLookupEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs,
+  FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh, DBLookupEh;
 
 type
 

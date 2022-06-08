@@ -1,15 +1,15 @@
-unit DBEditor;
+п»їunit DBEditor;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, MemTableDataEh, Data.DB, MemTableEh,
-  Vcl.ExtCtrls, ToolCtrlsEh, DBGridEhToolCtrls,
-  GridsEh, DBAxisGridsEh, DBGridEh, Vcl.StdCtrls, Vcl.Buttons, Vcl.Menus,
-  Vcl.Mask, DBCtrlsEh, System.Actions, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
-  DBGridEhGrouping, DynVarsEh, EhLibVCL;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Menus, Vcl.Mask, Vcl.ActnList,
+  Vcl.ComCtrls, Vcl.ToolWin,
+  MemTableDataEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, DBGridEhGrouping,
+  DynVarsEh, EhLibVCL;
 
 type
   TfmDBEditor = class(TForm)
@@ -85,7 +85,7 @@ procedure TfmDBEditor.ActDelExecute(Sender: TObject);
 var
   i: Integer;
 begin
-  i := Application.MessageBox('Вы хотите удалить базу данных?', 'Внимание', MB_ICONWARNING + MB_YESNO + MB_DEFBUTTON2 + MB_SYSTEMMODAL);
+  i := Application.MessageBox('Р’С‹ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…?', 'Р’РЅРёРјР°РЅРёРµ', MB_ICONWARNING + MB_YESNO + MB_DEFBUTTON2 + MB_SYSTEMMODAL);
   if (i = 6) then
     temp.Delete;
 end;

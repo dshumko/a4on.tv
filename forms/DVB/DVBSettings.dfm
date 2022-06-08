@@ -1,7 +1,7 @@
 object DVBSettinsForm: TDVBSettinsForm
   Left = 496
   Top = 494
-  Caption = 'DVB '#1085#1072#1089#1090#1088#1086#1081#1082#1080
+  Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' DVB'
   ClientHeight = 543
   ClientWidth = 827
   Color = clBtnFace
@@ -1275,8 +1275,8 @@ object DVBSettinsForm: TDVBSettinsForm
   object srcEPG: TDataSource
     AutoEdit = False
     DataSet = dsEPG
-    Left = 360
-    Top = 336
+    Left = 592
+    Top = 456
   end
   object dsNetwork: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -1351,16 +1351,17 @@ object DVBSettinsForm: TDVBSettinsForm
       '  from Get_Epg(:DVBS_Id, null, null, 0) e'
       '  where e.CH_ID = :CH_ID'
       
-        '    and cast(e.Date_Start as date) = cast(dateadd(minute, :h_shi' +
-        'ft, cast(current_date as timestamp)) as date)'
+        '    -- and cast(e.Date_Start as date) = cast(dateadd(minute, :h_' +
+        'shift, cast(current_date as timestamp)) as date)'
+      '    and cast(e.Date_Start as date) = current_date'
       '  order by e.DATE_START  ')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     DataSource = srcChannels
-    Left = 406
-    Top = 362
+    Left = 670
+    Top = 458
     WaitEndMasterScroll = True
   end
   object mtView: TMemTableEh

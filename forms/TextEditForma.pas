@@ -3,10 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, SynEditHighlighter, SynHighlighterGeneral, SynEdit,
-  OkCancel_frame, StdCtrls, PrjConst, PropFilerEh, PropStorageEh,
-  Vcl.Buttons, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  SynEditHighlighter, SynHighlighterGeneral, SynEdit, OkCancel_frame, PrjConst, PropFilerEh, PropStorageEh;
 
 type
   TTextEditForm = class(TForm)
@@ -32,7 +32,8 @@ function ShowText(var txt: String; const title: string=''; const notice : string
 
 implementation
 
-uses MAIN, DM;
+uses
+  MAIN, DM;
 
 {$R *.dfm}
 

@@ -3,7 +3,9 @@
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls, Graphics, Forms, Types, ExtCtrls;
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.Types,
+  Vcl.Controls, Vcl.Graphics, Vcl.Forms, Vcl.ExtCtrls;
 
 type
 

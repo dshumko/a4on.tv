@@ -1,10 +1,12 @@
-unit SizeDlg;
+﻿unit SizeDlg;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, SimpleGraph, StdCtrls, ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  SimpleGraph;
 
 type
   TSizeDialog = class(TForm)

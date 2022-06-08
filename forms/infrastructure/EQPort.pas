@@ -1,13 +1,13 @@
-unit EQPort;
+п»їunit EQPort;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, CnErrorProvider, Vcl.StdCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Data.DB,
-  DM, DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh, FIBDataSet,
-  pFIBDataSet, pFIBQuery, A4onTypeUnit, System.Actions, Vcl.ActnList;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList,
+  CnErrorProvider, DM, DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh, FIBDataSet, pFIBDataSet, pFIBQuery, A4onTypeUnit;
 
 type
   TEQPortForm = class(TForm)
@@ -72,7 +72,9 @@ function EditPort(const ER: TEquipmentRecord; const vPort: string): Boolean;
 
 implementation
 
-uses PrjConst, NodeLinkForma, System.Types, System.StrUtils;
+uses
+  System.Types, System.StrUtils,
+  PrjConst, NodeLinkForma;
 
 {$R *.dfm}
 
@@ -305,10 +307,10 @@ begin
     edtNumber.Text := FPort;
     edtNumber.Left := ednCount.Left;
     lblCNT.Caption := 'Port';
-    Caption := 'Редактрование порта ' + FPort;
+    Caption := 'Р РµРґР°РєС‚СЂРѕРІР°РЅРёРµ РїРѕСЂС‚Р° ' + FPort;
   end;
 
-  // спрячем при создании портов.
+  // СЃРїСЂСЏС‡РµРј РїСЂРё СЃРѕР·РґР°РЅРёРё РїРѕСЂС‚РѕРІ.
   lcbWIRE.Visible := not FPort.IsEmpty;
   lblWire.Visible := lcbWIRE.Visible;
   cbLABELS.Visible := lcbWIRE.Visible;
@@ -434,9 +436,9 @@ begin
         begin
           v := copy(ports[j], 1, pos(s, ports[j]) - 1);
           if v <> FPort then
-            cbLABELS.Items[i] := cbLABELS.Items[i] + ' / подкл. к порту ' + v
+            cbLABELS.Items[i] := cbLABELS.Items[i] + ' / РїРѕРґРєР». Рє РїРѕСЂС‚Сѓ ' + v
           else
-            cbLABELS.Items[i] := cbLABELS.Items[i] + ' / подкл. к текущем порту ' + v;
+            cbLABELS.Items[i] := cbLABELS.Items[i] + ' / РїРѕРґРєР». Рє С‚РµРєСѓС‰РµРј РїРѕСЂС‚Сѓ ' + v;
         end;
       end;
     end;
@@ -453,7 +455,7 @@ begin
 
   if FEqRecord.NODE_ID > 0 then
   begin
-    // пометим лини связи из узла или в узел
+    // РїРѕРјРµС‚РёРј Р»РёРЅРё СЃРІСЏР·Рё РёР· СѓР·Р»Р° РёР»Рё РІ СѓР·РµР»
     if ((not dsWire.FieldByName('NODE_S_ID').IsNull) and (dsWire['NODE_S_ID'] = FEqRecord.NODE_ID)) then
       AFont.Style := [fsBold];
 

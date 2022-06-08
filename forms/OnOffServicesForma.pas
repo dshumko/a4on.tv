@@ -4,10 +4,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBGridEh, StdCtrls, DBCtrlsEh, Mask, DBLookupEh,
-  DB, FIBDataSet, pFIBDataSet, ExtCtrls, DBCtrls, FIBQuery, pFIBQuery,
-  CnErrorProvider, PrjConst, System.UITypes;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls,
+  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, CnErrorProvider, PrjConst;
 
 type
   TOnOffServiceForm = class(TForm)
@@ -111,7 +112,8 @@ function PauseService(const aCustomer_ID, aService_ID, aSubscr_Serv_ID: Integer;
 
 implementation
 
-uses DM, AtrCommon, CF;
+uses
+  DM, AtrCommon, CF;
 
 function PauseService(const aCustomer_ID, aService_ID, aSubscr_Serv_ID: Integer; const Notice: String): Boolean;
 var

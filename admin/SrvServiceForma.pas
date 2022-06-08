@@ -3,9 +3,10 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, IB_Services, uFBServices, pFIBExtract,
-  FIBDatabase, pFIBDatabase, PrjConst, DBCtrlsEh, Vcl.Mask;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
+  IB_Services, uFBServices, pFIBExtract, FIBDatabase, pFIBDatabase, PrjConst, DBCtrlsEh;
 
 type
   TSrvServiceForm = class(TForm)
@@ -54,7 +55,8 @@ var
 
 implementation
 
-uses DM, AtrCommon, MAIN;
+uses
+  DM, AtrCommon, MAIN;
 
 {$R *.dfm}
 

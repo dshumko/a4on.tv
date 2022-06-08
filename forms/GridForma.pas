@@ -3,13 +3,13 @@
 interface
 
 uses
-  System.UITypes, Vcl.Menus, System.Classes, Vcl.ActnList,
-  Data.DB, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms,
-  Vcl.Graphics, Winapi.Windows, Winapi.Messages, System.SysUtils,
-  System.Actions, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh,
-  EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls,
-  DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst;
+  Winapi.Windows, Winapi.Messages,
+  System.UITypes, System.Classes, System.SysUtils, System.Actions,
+  Data.DB,
+  Vcl.Menus, Vcl.ActnList, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst;
 
 type
   TGridForm = class(TForm)
@@ -80,23 +80,26 @@ type
 
 implementation
 
-uses DM, MAIN, AtrStrUtils, fs_iinterpreter;
+uses
+  DM, MAIN, AtrStrUtils, fs_iinterpreter;
 
 {$R *.dfm}
 
 // http://zarko-gajic.iz.hr/making-the-glyph-property-high-dpi-aware-for-tbitbtn-and-tspeedbutton/
 procedure TGridForm.ResizeButtonImagesforHighDPI(const container: TWinControl);
 var
-  b : Vcl.Graphics.TBitmap;
-  i : integer;
+  b: Vcl.Graphics.TBitmap;
+  i: Integer;
 
-  procedure ResizeGlyph(const sb : TSpeedButton; const bb : TBitBtn);
+  procedure ResizeGlyph(const sb: TSpeedButton; const bb: TBitBtn);
   var
-    ng : integer;
+    ng: Integer;
   begin
     ng := 1;
-    if Assigned(sb) then ng := sb.NumGlyphs;
-    if Assigned(bb) then ng := bb.NumGlyphs;
+    if Assigned(sb) then
+      ng := sb.NumGlyphs;
+    if Assigned(bb) then
+      ng := bb.NumGlyphs;
 
     b := Vcl.Graphics.TBitmap.Create;
     try
@@ -106,27 +109,32 @@ var
 
       if Assigned(sb) AND (NOT sb.Glyph.Empty) then
       begin
-        b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), sb.Glyph) ;
+        b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), sb.Glyph);
         sb.Glyph.Assign(b);
       end;
 
       if Assigned(bb) AND (NOT bb.Glyph.Empty) then
       begin
-        b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), bb.Glyph) ;
+        b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), bb.Glyph);
         bb.Glyph.Assign(b);
       end;
     finally
       b.Free;
     end;
-  end; (*ResizeGlyph*)
+  end; (* ResizeGlyph *)
+
 begin
-  if Screen.PixelsPerInch = 96 then Exit;
-  if Screen.PixelsPerInch * 100 / 96 <= 150 then Exit;
+  if Screen.PixelsPerInch = 96 then
+    Exit;
+  if Screen.PixelsPerInch * 100 / 96 <= 150 then
+    Exit;
 
   for i := 0 to -1 + container.ControlCount do
   begin
-    if container.Controls[i] IS TBitBtn then ResizeGlyph(nil, TBitBtn(container.Controls[i]));
-    if container.Controls[i] IS TSpeedButton then ResizeGlyph(TSpeedButton(container.Controls[i]), nil);
+    if container.Controls[i] IS TBitBtn then
+      ResizeGlyph(nil, TBitBtn(container.Controls[i]));
+    if container.Controls[i] IS TSpeedButton then
+      ResizeGlyph(TSpeedButton(container.Controls[i]), nil);
 
     if container.Controls[i] is TWinControl then
       ResizeButtonImagesforHighDPI(TWinControl(container.Controls[i]));
@@ -180,7 +188,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
 
   CloseDatasets;
 
@@ -206,7 +214,7 @@ begin
   // http://zarko-gajic.iz.hr/making-the-glyph-property-high-dpi-aware-for-tbitbtn-and-tspeedbutton/
   if Screen.PixelsPerInch <> 96 then
   begin
-    ResizeButtonImagesforHighDPI(self);
+    ResizeButtonImagesforHighDPI(Self);
   end;
 
   with fsGlobalUnit do
@@ -272,7 +280,8 @@ begin
     begin
       (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active) then
+      if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
+      then
         (Components[i] as TDBGridEh).DefaultApplySorting;
       if Font_size <> 0 then
       begin

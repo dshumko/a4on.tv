@@ -5,8 +5,10 @@ interface
 {$I defines.inc}
 
 uses
-  System.Classes, System.SysUtils, WinApi.Windows, System.Variants,
-  Data.DB, VCL.Forms, VCL.Controls, VCL.Graphics;
+  Winapi.Windows,
+  System.Classes, System.SysUtils, System.Variants,
+  Data.DB,
+  Vcl.Forms, Vcl.Controls, Vcl.Graphics;
 
 type
   TShowFont = class(TControl)
@@ -133,12 +135,16 @@ procedure Png2Jpeg(aPicStream: TMemoryStream);
 
 function myQuestion(const Caption, Text: String): Boolean;
 
+// Работаем под wine
+function GetWineAvail: Boolean;
+
 implementation
 
 uses
-  WinApi.Messages, System.DateUtils, System.IniFiles, VCL.ClipBrd, WinApi.ShlObj, WinApi.ActiveX, System.Zlib,
-  VCL.Imaging.jpeg, VCL.Imaging.pngimage,
-  System.ZlibConst, System.IOUtils, SHFolder, JsonDataObjects, PrjConst;
+  Winapi.Messages, Winapi.ShlObj, Winapi.ActiveX, Winapi.SHFolder,
+  System.DateUtils, System.IniFiles, System.ZLib, System.ZLibConst, System.IOUtils,
+  Vcl.Clipbrd, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
+  JsonDataObjects, PrjConst;
 
 function GetTempDir: String;
 begin
@@ -1282,13 +1288,13 @@ type
   TBuffers = array [0 .. 1] of TKeyboardState;
 var
   pKeyBuffers: ^TBuffers;
-  lParam: LongInt;
+  lParam: LongWord;
 begin
   (* check if the target window exists *)
   if IsWindow(hWindow) then
   begin
     (* set local variables to default values *)
-    pKeyBuffers := nil;
+    // pKeyBuffers := nil; // hide compiler Hint
     lParam := MakeLong(0, MapVirtualKey(key, 0));
 
     (* modify lparam if special key requested *)
@@ -1501,6 +1507,24 @@ begin
     FreeAndNil(BMP);
   end;
 end; (* все работает *)
+
+function GetWineAvail: Boolean;
+// использование
+// if GetWineAvail() then
+// ShowMessage('Ура! Мы под Винищем!')
+// else
+// ShowMessage('Чистейший Виндовз, сэр!');
+var
+  H: Cardinal;
+begin
+  Result := False;
+  H := LoadLibrary('ntdll.dll');
+  if H > 0 then
+  begin
+    Result := Assigned(GetProcAddress(H, 'wine_get_version'));
+    FreeLibrary(H);
+  end;
+end;
 
 initialization
 

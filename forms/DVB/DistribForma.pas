@@ -3,16 +3,14 @@
 interface
 
 uses
-  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, VCL.ActnList, DATA.DB,
-  VCL.ComCtrls, VCL.ToolWin, VCL.Grids, VCL.Menus, System.Actions, VCL.StdCtrls,
-  VCL.Buttons, VCL.ExtCtrls, VCL.DBCtrls, VCL.Mask, System.UITypes,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh, PropFilerEh, PropStorageEh, frxClass,
-  frxDBSet, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
-  GridForma, SendEmail, distrValuePeriodForma;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, DBCtrlsEh,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, frxClass, frxDBSet, FIBDatabase, pFIBDatabase, FIBQuery,
+  pFIBQuery, GridForma, SendEmail, distrValuePeriodForma;
 
 type
   TDistribForm = class(TGridForm)
@@ -148,7 +146,9 @@ procedure ShowDistribChan(const Distrib_ID: Integer; const Contract_ID: Integer 
 
 implementation
 
-uses VCL.FileCtrl, DM, MAIN, DistrContractForma, ReportPreview, ContractChForma, AtrCommon, distrPeriodForma;
+uses
+  Vcl.FileCtrl,
+  DM, MAIN, DistrContractForma, ReportPreview, ContractChForma, AtrCommon, distrPeriodForma;
 
 {$R *.dfm}
 

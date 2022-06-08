@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, DBCtrlsEh, ExtCtrls, DB, FIBDataSet, pFIBDataSet, 
-  PrjConst, A4onTypeUnit;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  DBCtrlsEh, FIBDataSet, pFIBDataSet, PrjConst, A4onTypeUnit;
 type
 
   THouseMapForm = class(TForm)

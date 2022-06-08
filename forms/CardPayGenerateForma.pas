@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBCtrlsEh, DB, FIBDataSet,
-  pFIBDataSet, StdCtrls, Mask, DBLookupEh, PrjConst, System.UITypes, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, DBGridEh;
 
 type
   TfmCardPayGenerate = class(TForm)
@@ -35,7 +37,8 @@ function GenerateCardPay(): Boolean;
 implementation
 
 uses
-  DM, CardSerialForma, DateUtils, pFIBQuery;
+  System.DateUtils,
+  DM, CardSerialForma, pFIBQuery;
 
 {$R *.dfm}
 

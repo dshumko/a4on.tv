@@ -1,10 +1,12 @@
-unit ObjectProp;
+﻿unit ObjectProp;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, System.UITypes, Classes, Graphics, Controls, Forms,
-  Dialogs, SimpleGraph, ExtCtrls, StdCtrls, ComCtrls, CheckLst;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.UITypes, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.CheckLst,
+  SimpleGraph;
 
 type
   TObjectProperties = class(TForm)

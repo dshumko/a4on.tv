@@ -3,7 +3,6 @@ inherited MatDocsForm: TMatDocsForm
   ClientHeight = 524
   ClientWidth = 814
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]

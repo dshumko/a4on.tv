@@ -3,13 +3,12 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.Actions, Vcl.ActnList, Vcl.Controls,
-  System.UITypes,  Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Data.DB,
-  VCL.Graphics, VCL.Forms, VCL.Dialogs, VCL.ToolWin,
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh;
 
 type
   TapgEqpmntAttributes = class(TA4onPage)

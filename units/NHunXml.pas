@@ -1,4 +1,4 @@
-{ ************************************************************************************** }
+﻿{ ************************************************************************************** }
 { }
 { Tiny XML parser of OpenOffice (.OXT) dictionaries, for Delphi 2007+ }
 { Version 1.0.0 (2010-07-26) }
@@ -34,7 +34,8 @@ unit NHunXml;
 interface
 
 uses
-  Windows, Messages, Classes, SysUtils, StrUtils, Widestrings;
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.SysUtils, System.StrUtils, System.WideStrings;
 
 type
 {$IFNDEF UNICODE}

@@ -1,10 +1,12 @@
-unit UsageHelp;
+﻿unit UsageHelp;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls, Vcl.Mask, DBCtrlsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Mask,
+  DBCtrlsEh;
 
 type
   THelpOnActions = class(TForm)

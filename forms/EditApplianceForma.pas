@@ -5,13 +5,13 @@ interface
 {$I defines.inc}
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants, System.Classes,
-  VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Menus, VCL.Dialogs, VCL.StdCtrls,
-  VCL.Mask, Data.DB, VCL.DBCtrls, VCL.Buttons, VCL.ActnList, System.Actions,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet,
-  pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst,
-  CnErrorProvider, FIBDatabase, pFIBDatabase, A4onTypeUnit,
-  EhlibFIB, VCL.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons, Vcl.ActnList,
+  Vcl.ExtCtrls,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider, FIBDatabase,
+  pFIBDatabase, A4onTypeUnit, EhlibFIB;
 
 type
   TEditApplianceForm = class(TForm)
@@ -67,7 +67,9 @@ function EditAppliance(const aCI: TCustomerInfo; aAppl_ID: Int64): Integer;
 
 implementation
 
-uses MAIN, AtrCommon, AtrStrUtils, StrUtils, EquipEditForma, pFIBQuery, TelnetForma, atrCmdUtils;
+uses
+  System.StrUtils,
+  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery, TelnetForma, atrCmdUtils;
 
 {$R *.dfm}
 

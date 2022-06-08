@@ -5,14 +5,13 @@ interface
 {$I defines.inc}
 
 uses
-  WinAPI.Windows, WinAPI.Messages, System.SysUtils, System.Variants,
-  VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, System.Classes,
-  System.Actions, VCL.ActnList, VCL.Buttons, VCL.ExtCtrls,
-  VCL.Mask, VCL.DBCtrls, System.UITypes, Data.DB, VCL.StdCtrls,
-
-  DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
-  MemTableDataEh, PropFilerEh, CnErrorProvider, PropStorageEh, CustomerInfoFrame,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableEh, DBCtrlsEh, DBLookupEh,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
+  Vcl.StdCtrls,
+  DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh, PropFilerEh, CnErrorProvider,
+  PropStorageEh, CustomerInfoFrame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableEh, DBCtrlsEh, DBLookupEh,
   EhLibVCL, GridsEh, DBAxisGridsEh, OkCancel_frame, PrjConst, DM, A4onTypeUnit;
 
 type
@@ -180,9 +179,10 @@ implementation
 
 {$R *.dfm}
 
-uses System.StrUtils, SelectDateForma, pFIBQuery, DateUtils, ReqAddWorkForma, MAIN,
-  FIBQuery, pFIBProps, AtrCommon, HouseForma, StreetEditForma,
-  CF, RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma, System.MaskUtils;
+uses
+  System.StrUtils, System.DateUtils, System.MaskUtils,
+  SelectDateForma, pFIBQuery, ReqAddWorkForma, MAIN, FIBQuery, pFIBProps, AtrCommon, HouseForma, StreetEditForma, CF,
+  RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False)
   : Integer;

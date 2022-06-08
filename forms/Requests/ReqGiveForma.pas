@@ -3,11 +3,12 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, OkCancel_frame, DBGridEh, DBCtrlsEh, StdCtrls, Mask, DBLookupEh,
-  DB, FIBDataSet, pFIBDataSet, ToolCtrlsEh,
-  MemTableDataEh, MemTableEh, GridsEh, DBGridEhGrouping, DBGridEhToolCtrls,
-  DynVarsEh, EhLibVCL, DBAxisGridsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
+  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, MemTableDataEh, MemTableEh, GridsEh,
+  DBGridEhGrouping, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, DBAxisGridsEh;
 
 type
   TReqGiveForm = class(TForm)

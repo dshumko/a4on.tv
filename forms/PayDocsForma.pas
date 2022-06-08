@@ -3,13 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBGridEh, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, ComCtrls,
-  ToolWin, frxClass, frxDBSet, DB, FIBDataSet, pFIBDataSet, Menus,
-  ActnList, GridsEh, ExtCtrls, Buttons, DBGridEhImpExp, FIBQuery, pFIBQuery,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  FIBDatabase, pFIBDatabase, PrjConst, System.Actions, EhLibVCL,
-  System.UITypes, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
+  Vcl.ActnList,
+  Vcl.ExtCtrls, Vcl.Buttons,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery,
+  pFIBQuery,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase, PrjConst, EhLibVCL, DBGridEhGrouping,
+  DynVarsEh;
 
 type
   TPayDocsForm = class(TForm)
@@ -120,7 +123,8 @@ var
 
 implementation
 
-uses DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPreview;
+uses
+  DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPreview;
 
 {$R *.dfm}
 
@@ -185,7 +189,7 @@ begin
         if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
           AnsiUpperCase(Ext) then
           A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
+        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
       end;
     end;
 end;
@@ -207,7 +211,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        DBGridEh_DoCopyAction(dbg, false)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -521,7 +525,7 @@ var
 begin
   if FFirstOpen then
   begin
-    FFirstOpen := False;
+    FFirstOpen := false;
     exit;
   end;
 

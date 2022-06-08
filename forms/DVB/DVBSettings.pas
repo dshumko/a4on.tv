@@ -3,15 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ToolWin, ComCtrls, StdActns, ActnList, Menus, DB, Grids,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp,
-  DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls, System.TimeSpan,
-  DBAxisGridsEh, System.Actions, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, PrjConst, FIBDatabase, pFIBDatabase,
-  Vcl.Mask, DBCtrlsEh, System.UITypes, EhLibVCL, MemTableDataEh, MemTableEh,
-  DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh,
-  PropFilerEh, PropStorageEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.TimeSpan, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
+  Vcl.Grids,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEhToolCtrls,
+  DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
+  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh;
 
 type
   TDVBSettinsForm = class(TForm)
@@ -142,8 +143,9 @@ procedure ShowTransponder(const DVBS_ID: Integer; const CH_ID: Integer = -1);
 
 implementation
 
-uses System.DateUtils, DM, MAIN, AtrStrUtils, DVBStreamForma, DVBNetworkForma,
-  pFIBQuery, pFIBProps;
+uses
+  System.DateUtils,
+  DM, MAIN, AtrStrUtils, DVBStreamForma, DVBNetworkForma, pFIBQuery, pFIBProps;
 
 {$R *.dfm}
 
@@ -379,7 +381,7 @@ begin
   curTime := IncMinute(Now(), FTimeZone);
 
   if dsEPG.FieldByName('DATE_STOP').AsDateTime < curTime then
-    AFont.Color := clInactiveCaptionText
+    AFont.Color := clGrayText
   else
   begin
     if (dsEPG.FieldByName('DATE_START').AsDateTime < curTime) and (dsEPG.FieldByName('DATE_STOP').AsDateTime > curTime)
@@ -473,7 +475,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
 
   dsEPG.Close;
   dsChannels.Close;
@@ -523,9 +525,11 @@ begin
   dsNetwork.Open;
   dsTS.Open;
   dsChannels.Open;
-  if not dsNetwork.FieldByName('TIMEOFFSET').IsNull
-  then dsEPG.ParamByName('h_shift').AsInteger := -1 * dsNetwork['TIMEOFFSET']
-  else dsEPG.ParamByName('h_shift').AsInteger := 0;
+  {
+    if not dsNetwork.FieldByName('TIMEOFFSET').IsNull
+    then dsEPG.ParamByName('h_shift').AsInteger := -1 * dsNetwork['TIMEOFFSET']
+    else dsEPG.ParamByName('h_shift').AsInteger := 0;
+  }
   dsEPG.Open;
 end;
 

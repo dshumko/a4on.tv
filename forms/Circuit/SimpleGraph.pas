@@ -1,4 +1,4 @@
-{ ------------------------------------------------------------------------------ }
+Ôªø{ ------------------------------------------------------------------------------ }
 { }
 { TSimpleGraph v2.91 }
 { by Kambiz R. Khojasteh }
@@ -19,7 +19,6 @@
 {$IFDEF WIN32}
 {$H+} // Use long strings by default
 {$ENDIF}
-
 { Assume the latest version of compiler is available }
 
 {$DEFINE COMPILER_XE3_UP}
@@ -36,52 +35,51 @@
 {$DEFINE COMPILER4_UP}
 {$DEFINE COMPILER3_UP}
 {$DEFINE COMPILER2_UP}
-
-
 {$IFDEF COMPILER2010_UP}
-  {$INLINE AUTO}
+{$INLINE AUTO}
 {$ELSE}
-  {$IFDEF COMPILER2009_UP}
-    {$INLINE ON}
-  {$ENDIF}
+{$IFDEF COMPILER2009_UP}
+{$INLINE ON}
 {$ENDIF}
-
+{$ENDIF}
 unit SimpleGraph;
 
 interface
 
 uses
-  Windows, Messages, Classes, Graphics, Controls, StdCtrls, Forms, Menus;
+  Winapi.Windows, Winapi.Messages,
+  System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.StdCtrls, Vcl.Forms, Vcl.Menus;
 
 const
   // Custom Cursors
-  crHandFlat  = 51;
-  crHandGrab  = 52;
-  crHandPnt   = 53;
-  crXHair1    = 54;
-  crXHair2    = 55;
-  crXHair3    = 56;
+  crHandFlat = 51;
+  crHandGrab = 52;
+  crHandPnt = 53;
+  crXHair1 = 54;
+  crXHair2 = 55;
+  crXHair3 = 56;
   crXHairLink = 57;
 
 const
   // Default Graph Hit Test Flags
-  GHT_NOWHERE     = $00000000;
+  GHT_NOWHERE = $00000000;
   GHT_TRANSPARENT = $00000001;
-  GHT_LEFT        = $00000002;
-  GHT_TOP         = $00000004;
-  GHT_RIGHT       = $00000008;
-  GHT_BOTTOM      = $00000010;
-  GHT_TOPLEFT     = $00000020;
-  GHT_TOPRIGHT    = $00000040;
-  GHT_BOTTOMLEFT  = $00000080;
+  GHT_LEFT = $00000002;
+  GHT_TOP = $00000004;
+  GHT_RIGHT = $00000008;
+  GHT_BOTTOM = $00000010;
+  GHT_TOPLEFT = $00000020;
+  GHT_TOPRIGHT = $00000040;
+  GHT_BOTTOMLEFT = $00000080;
   GHT_BOTTOMRIGHT = $00000100;
-  GHT_CLIENT      = $00000200;
-  GHT_CAPTION     = $00000400;
-  GHT_POINT       = $00000800; // High word contains the point's index
-  GHT_LINE        = $00001000; // High word contains the line's index
+  GHT_CLIENT = $00000200;
+  GHT_CAPTION = $00000400;
+  GHT_POINT = $00000800; // High word contains the point's index
+  GHT_LINE = $00001000; // High word contains the line's index
 
 const
-  GHT_BODY_MASK  = GHT_CLIENT or GHT_CAPTION;
+  GHT_BODY_MASK = GHT_CLIENT or GHT_CAPTION;
   GHT_SIDES_MASK = GHT_LEFT or GHT_TOP or GHT_RIGHT or GHT_BOTTOM or GHT_TOPLEFT or GHT_TOPRIGHT or GHT_BOTTOMLEFT or
     GHT_BOTTOMRIGHT;
 
@@ -89,14 +87,14 @@ type
 
   TSimpleGraph = class;
   TGraphObject = class;
-  TGraphLink   = class;
-  TGraphNode   = class;
+  TGraphLink = class;
+  TGraphNode = class;
 
   TPoints = array of TPoint;
 
-  EGraphStreamError      = class(EStreamError);
+  EGraphStreamError = class(EStreamError);
   EGraphInvalidOperation = class(EInvalidOperation);
-  EPointListError        = class(EListError);
+  EPointListError = class(EListError);
 
   { TGraphScrollBar -- for internal use only }
 
@@ -278,15 +276,15 @@ type
     osDragDisabled, osConverting);
   TGraphObjectStates = set of TGraphObjectState;
 
-  TGraphChangeFlag  = (gcView, gcData, gcText, gcPlacement, gcDependency);
+  TGraphChangeFlag = (gcView, gcData, gcText, gcPlacement, gcDependency);
   TGraphChangeFlags = set of TGraphChangeFlag;
 
   TGraphDependencyChangeFlag = (gdcChanged, gdcRemoved);
 
-  TGraphObjectOption  = (goLinkable, goSelectable, goShowCaption);
+  TGraphObjectOption = (goLinkable, goSelectable, goShowCaption);
   TGraphObjectOptions = set of TGraphObjectOption;
 
-  TObjectSide  = (osLeft, osTop, osRight, osBottom);
+  TObjectSide = (osLeft, osTop, osRight, osBottom);
   TObjectSides = set of TObjectSide;
 
   TGraphObjectClass = class of TGraphObject;
@@ -609,7 +607,7 @@ type
 
   { TGraphNode }
 
-  TGraphNodeOption  = (gnoMovable, gnoResizable, gnoShowBackground);
+  TGraphNodeOption = (gnoMovable, gnoResizable, gnoShowBackground);
   TGraphNodeOptions = set of TGraphNodeOption;
 
   TGraphNode = class(TGraphObject)
@@ -808,9 +806,9 @@ type
   TGraphNodeClass = class of TGraphNode;
   TGraphLinkClass = class of TGraphLink;
 
-  TGridSize   = 4 .. 128;
+  TGridSize = 4 .. 128;
   TMarkerSize = 3 .. 9;
-  TZoom       = 5 .. 36863;
+  TZoom = 5 .. 36863;
 
   TGraphBoundsKind = (bkGraph, bkSelected, bkDragging);
 
@@ -818,7 +816,7 @@ type
 
   TGraphDrawOrder = (doDefault, doNodesOnTop, doLinksOnTop);
 
-  TGraphClipboardFormat  = (cfNative, cfMetafile, cfBitmap);
+  TGraphClipboardFormat = (cfNative, cfMetafile, cfBitmap);
   TGraphClipboardFormats = set of TGraphClipboardFormat;
 
   TGraphZoomOrigin = (zoTopLeft, zoCenter, zoCursor, zoCursorCenter);
@@ -828,13 +826,13 @@ type
 
   TResizeOption = (roNoChange, roSmallest, roLargest);
 
-  TGraphNotifyEvent       = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject) of object;
+  TGraphNotifyEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject) of object;
   TGraphContextPopupEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; const MousePos: TPoint;
     var Handled: Boolean) of object;
-  TGraphDrawEvent       = procedure(Graph: TSimpleGraph; Canvas: TCanvas) of object;
+  TGraphDrawEvent = procedure(Graph: TSimpleGraph; Canvas: TCanvas) of object;
   TGraphObjectDrawEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; Canvas: TCanvas) of object;
-  TGraphInfoTipEvent    = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; var InfoTip: String) of object;
-  TGraphHookEvent       = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; Link: TGraphLink; Index: Integer)
+  TGraphInfoTipEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; var InfoTip: String) of object;
+  TGraphHookEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; Link: TGraphLink; Index: Integer)
     of object;
   TGraphCanHookEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; Link: TGraphLink; Index: Integer;
     var CanHook: Boolean) of object;
@@ -843,9 +841,9 @@ type
   TCanMoveResizeNodeEvent = procedure(Graph: TSimpleGraph; Node: TGraphNode;
     var NewLeft, NewTop, NewWidth, NewHeight: Integer; var CanMove, CanResize: Boolean) of object;
   TGraphNodeResizeEvent = procedure(Graph: TSimpleGraph; Node: TGraphNode) of object;
-  TGraphCanRemoveEvent  = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; var CanRemove: Boolean) of object;
-  TGraphBeginDragEvent  = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; HT: DWORD) of object;
-  TGraphEndDragEvent    = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; HT: DWORD; Cancelled: Boolean)
+  TGraphCanRemoveEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; var CanRemove: Boolean) of object;
+  TGraphBeginDragEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; HT: DWORD) of object;
+  TGraphEndDragEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; HT: DWORD; Cancelled: Boolean)
     of object;
   TGraphStreamEvent = procedure(Graph: TSimpleGraph; GraphObject: TGraphObject; Stream: TStream) of object;
 
@@ -1299,9 +1297,15 @@ procedure Register;
 implementation
 
 uses
-{$IFDEF COMPILER6_UP} Types, {$ENDIF}
-{$IFDEF COMPILER_XE3_UP} UITypes, {$ENDIF}
-  Math, SysUtils, CommCtrl, Clipbrd, pngimage, AnsiStrings;
+{$IFDEF COMPILER6_UP}
+  System.Types,
+{$ENDIF}
+{$IFDEF COMPILER_XE3_UP}
+  System.UITypes,
+{$ENDIF}
+  Winapi.CommCtrl,
+  System.Math, System.SysUtils, System.AnsiStrings,
+  Vcl.Clipbrd, Vcl.Imaging.pngimage;
 
 resourcestring
   SListIndexError = 'Index out of range (%d)';
@@ -1313,11 +1317,11 @@ const
   StreamSignature: DWORD = (Ord('S') shl 24) or (Ord('G') shl 16) or (Ord('.') shl 8) or Ord('0');
 
 const
-  TextAlignFlags: array [TAlignment] of Integer   = (DT_LEFT, DT_RIGHT, DT_CENTER);
+  TextAlignFlags: array [TAlignment] of Integer = (DT_LEFT, DT_RIGHT, DT_CENTER);
   TextLayoutFlags: array [TTextLayout] of Integer = (DT_TOP, DT_VCENTER, DT_BOTTOM);
 
 const
-  Pi: Double        = System.Pi;
+  Pi: Double = System.Pi;
   MaxDouble: Double = +1.7E+308;
 
 const
@@ -1339,9 +1343,10 @@ var
   SelfR, CtlR: TRect;
   NextControl: TControl;
 begin
-  if (Control = nil) or (Control.Parent = nil)
-  then Exit;
-  with Control.Parent do ControlState := ControlState + [csPaintCopy];
+  if (Control = nil) or (Control.Parent = nil) then
+    Exit;
+  with Control.Parent do
+    ControlState := ControlState + [csPaintCopy];
   try
     SelfR := Control.BoundsRect;
     Inc(X, SelfR.Left);
@@ -1349,8 +1354,10 @@ begin
     SaveIndex := SaveDC(DC);
     try
       SetViewportOrgEx(DC, -X, -Y, nil);
-      with TParentControl(Control.Parent) do begin
-        with ClientRect do IntersectClipRect(DC, Left, Top, Right, Bottom);
+      with TParentControl(Control.Parent) do
+      begin
+        with ClientRect do
+          IntersectClipRect(DC, Left, Top, Right, Bottom);
 {$IFDEF COMPILER9_UP}
         Perform(WM_PRINT, DC, PRF_CHECKVISIBLE or WM_ERASEBKGND or PRF_CHILDREN);
 {$ELSE}
@@ -1358,18 +1365,21 @@ begin
         PaintWindow(DC);
 {$ENDIF}
       end;
-    finally RestoreDC(DC, SaveIndex);
+    finally
+      RestoreDC(DC, SaveIndex);
     end;
-    for I := 0 to Control.Parent.ControlCount - 1 do begin
+    for I := 0 to Control.Parent.ControlCount - 1 do
+    begin
       NextControl := Control.Parent.Controls[I];
-      if NextControl = Control
-      then Break
-      else if (NextControl <> nil) and (NextControl is TGraphicControl)
-      then begin
-        with TGraphicControl(NextControl) do begin
+      if NextControl = Control then
+        Break
+      else if (NextControl <> nil) and (NextControl is TGraphicControl) then
+      begin
+        with TGraphicControl(NextControl) do
+        begin
           CtlR := BoundsRect;
-          if Visible and OverlappedRect(SelfR, CtlR)
-          then begin
+          if Visible and OverlappedRect(SelfR, CtlR) then
+          begin
             ControlState := ControlState + [csPaintCopy];
             SaveIndex := SaveDC(DC);
             try
@@ -1386,7 +1396,8 @@ begin
       end;
     end;
   finally
-    with Control.Parent do ControlState := ControlState - [csPaintCopy];
+    with Control.Parent do
+      ControlState := ControlState - [csPaintCopy];
   end;
 end;
 
@@ -1402,59 +1413,68 @@ begin
   DC := Canvas.Handle;
   IsFirstLine := True;
   P := PChar(Text);
-  while P^ = ' ' do Inc(P);
-  while P^ <> #0 do begin
+  while P^ = ' ' do
+    Inc(P);
+  while P^ <> #0 do
+  begin
     S := P;
     E := nil;
-    while (P^ <> #0) and (P^ <> #13) and (P^ <> #10) do begin
+    while (P^ <> #0) and (P^ <> #13) and (P^ <> #10) do
+    begin
       GetTextExtentPoint32(DC, S, P - S + 1, TextExtent);
-      if (TextExtent.CX > MaxWidth) and (E <> nil)
-      then begin
-        if (P^ <> ' ') and (P^ <> ^I)
-        then begin
+      if (TextExtent.CX > MaxWidth) and (E <> nil) then
+      begin
+        if (P^ <> ' ') and (P^ <> ^I) then
+        begin
           while (E >= S) do
             case E^ of
-              '.', ',', ';', '?', '!', '-', ':', ')', ']', '}', '>', '/', '\', ' ': Break;
-            else Dec(E);
+              '.', ',', ';', '?', '!', '-', ':', ')', ']', '}', '>', '/', '\', ' ':
+                Break;
+            else
+              Dec(E);
             end;
-          if E < S
-          then E := P - 1;
+          if E < S then
+            E := P - 1;
         end;
         Break;
       end;
       E := P;
       Inc(P);
     end;
-    if E <> nil
-    then begin
-      while (E >= S) and (E^ = ' ') do Dec(E);
+    if E <> nil then
+    begin
+      while (E >= S) and (E^ = ' ') do
+        Dec(E);
     end;
-    if E <> nil
-    then SetString(Line, S, E - S + 1)
-    else SetLength(Line, 0);
-    if (P^ = #13) or (P^ = #10)
-    then begin
+    if E <> nil then
+      SetString(Line, S, E - S + 1)
+    else
+      SetLength(Line, 0);
+    if (P^ = #13) or (P^ = #10) then
+    begin
       Inc(P);
-      if (P^ <> (P - 1)^) and ((P^ = #13) or (P^ = #10))
-      then Inc(P);
-      if P^ = #0
-      then Line := Line + #13#10;
+      if (P^ <> (P - 1)^) and ((P^ = #13) or (P^ = #10)) then
+        Inc(P);
+      if P^ = #0 then
+        Line := Line + #13#10;
     end
-    else if P^ <> ' '
-    then P := E + 1;
-    while P^ = ' ' do Inc(P);
-    if IsFirstLine
-    then begin
+    else if P^ <> ' ' then
+      P := E + 1;
+    while P^ = ' ' do
+      Inc(P);
+    if IsFirstLine then
+    begin
       Result := Line;
       IsFirstLine := False;
     end
-    else Result := Result + #13#10 + Line;
+    else
+      Result := Result + #13#10 + Line;
   end;
 end;
 
 function MinimizeText(Canvas: TCanvas; const Text: String; const Rect: TRect): String;
 const
-  EllipsisSingle: String = 'Ö';
+  EllipsisSingle: String = '‚Ä¶';
   EllipsisTriple: String = '...';
 var
   DC: HDC;
@@ -1472,42 +1492,50 @@ begin
   DC := Canvas.Handle;
   TextHeight := 0;
   S := PChar(Result);
-  while S^ <> #0 do begin
+  while S^ <> #0 do
+  begin
     E := S;
-    while (E^ <> #0) and (E^ <> #13) and (E^ <> #10) do Inc(E);
-    if E > S
-    then GetTextExtentPoint32(DC, S, E - S, TextExtent)
-    else GetTextExtentPoint32(DC, ' ', 1, TextExtent);
+    while (E^ <> #0) and (E^ <> #13) and (E^ <> #10) do
+      Inc(E);
+    if E > S then
+      GetTextExtentPoint32(DC, S, E - S, TextExtent)
+    else
+      GetTextExtentPoint32(DC, ' ', 1, TextExtent);
     Inc(TextHeight, TextExtent.CY);
-    if TextHeight <= MaxHeight
-    then begin
+    if TextHeight <= MaxHeight then
+    begin
       S := E;
-      if S^ <> #0
-      then begin
+      if S^ <> #0 then
+      begin
         Inc(S);
-        if (S^ <> (S - 1)^) and ((S^ = #13) or (S^ = #10))
-        then Inc(S);
+        if (S^ <> (S - 1)^) and ((S^ = #13) or (S^ = #10)) then
+          Inc(S);
       end;
     end
-    else begin
-      repeat Dec(S);
+    else
+    begin
+      repeat
+        Dec(S);
       until (S < PChar(Result)) or ((S^ <> #13) and (S^ <> #10));
       SetLength(Result, S - PChar(Result) + 1);
-      if S >= PChar(Result)
-      then begin
+      if S >= PChar(Result) then
+      begin
         E := StrEnd(PChar(Result));
         S := E;
-        repeat Dec(S)
+        repeat
+          Dec(S)
         until (S < PChar(Result)) or ((S^ = #13) or (S^ = #10));
         SetString(LastLine, S + 1, E - S - 1);
         SetLength(Result, S - PChar(Result) + 1);
         GetGlyphIndices(DC, PChar(EllipsisSingle), 1, @GlyphIndex, GGI_MARK_NONEXISTING_GLYPHS);
-        if GlyphIndex = $FFFF
-        then Ellipsis := @EllipsisTriple
-        else Ellipsis := @EllipsisSingle;
+        if GlyphIndex = $FFFF then
+          Ellipsis := @EllipsisTriple
+        else
+          Ellipsis := @EllipsisSingle;
         LastLine := LastLine + Ellipsis^;
         GetTextExtentPoint32(DC, PChar(LastLine), Length(LastLine), TextExtent);
-        while (TextExtent.CX > MaxWidth) and (Length(LastLine) > Length(Ellipsis^)) do begin
+        while (TextExtent.CX > MaxWidth) and (Length(LastLine) > Length(Ellipsis^)) do
+        begin
           Delete(LastLine, Length(LastLine) - Length(Ellipsis^), 1);
           GetTextExtentPoint32(DC, PChar(LastLine), Length(LastLine), TextExtent);
         end;
@@ -1525,9 +1553,10 @@ end;
 
 function IsBetween(Value: Integer; Bound1, Bound2: Integer): Boolean;
 begin
-  if Bound1 <= Bound2
-  then Result := (Value >= Bound1) and (Value <= Bound2)
-  else Result := (Value >= Bound2) and (Value <= Bound1);
+  if Bound1 <= Bound2 then
+    Result := (Value >= Bound1) and (Value <= Bound2)
+  else
+    Result := (Value >= Bound2) and (Value <= Bound1);
 end;
 
 function EqualPoint(const Pt1, Pt2: TPoint): Boolean;
@@ -1540,7 +1569,8 @@ var
   I: Integer;
 begin
   for I := Low(Points) to High(Points) do
-    with Points[I], XForm do begin
+    with Points[I], XForm do
+    begin
       X := Round(X * eM11 + Y * eM21 + eDx);
       Y := Round(X * eM12 + Y * eM22 + eDy);
     end;
@@ -1554,7 +1584,8 @@ var
 begin
   SinCos(NormalizeAngle(Angle), Sin, Cos);
   for I := Low(Points) to High(Points) do
-    with Points[I] do begin
+    with Points[I] do
+    begin
       Prime.X := X - OrgPt.X;
       Prime.Y := Y - OrgPt.Y;
       X := Round(Prime.X * Cos - Prime.Y * Sin) + OrgPt.X;
@@ -1567,7 +1598,8 @@ var
   I: Integer;
 begin
   for I := Low(Points) to High(Points) do
-    with Points[I] do begin
+    with Points[I] do
+    begin
       Inc(X, dX);
       Inc(Y, dY);
     end;
@@ -1579,7 +1611,8 @@ var
   Angle: Double;
   Distance: Double;
 begin
-  for I := Low(Points) to High(Points) do begin
+  for I := Low(Points) to High(Points) do
+  begin
     Angle := LineSlopeAngle(Points[I], RefPt);
     Distance := LineLength(Points[I], RefPt);
     Points[I] := NextPointOfLine(Angle, RefPt, Distance * Factor);
@@ -1591,15 +1624,16 @@ var
   I: Integer;
 begin
   for I := Low(Points) to High(Points) do
-    with Points[I] do begin
-      if X < RefPt.X
-      then Dec(X, dX)
-      else if X > RefPt.X
-      then Inc(X, dX);
-      if Y < RefPt.Y
-      then Dec(Y, dY)
-      else if Y > RefPt.Y
-      then Inc(Y, dY);
+    with Points[I] do
+    begin
+      if X < RefPt.X then
+        Dec(X, dX)
+      else if X > RefPt.X then
+        Inc(X, dX);
+      if Y < RefPt.Y then
+        Dec(Y, dY)
+      else if Y > RefPt.Y then
+        Inc(Y, dY);
     end;
 end;
 
@@ -1611,7 +1645,8 @@ begin
   Sum.X := 0;
   Sum.Y := 0;
   for I := Low(Points) to High(Points) do
-    with Points[I] do begin
+    with Points[I] do
+    begin
       Inc(Sum.X, X);
       Inc(Sum.Y, Y);
     end;
@@ -1625,15 +1660,16 @@ var
 begin
   SetRect(Result, MaxInt, MaxInt, -MaxInt, -MaxInt);
   for I := Low(Points) to High(Points) do
-    with Points[I], Result do begin
-      if X < Left
-      then Left := X;
-      if Y < Top
-      then Top := Y;
-      if X > Right
-      then Right := X;
-      if Y > Bottom
-      then Bottom := Y;
+    with Points[I], Result do
+    begin
+      if X < Left then
+        Left := X;
+      if Y < Top then
+        Top := Y;
+      if X > Right then
+        Right := X;
+      if Y > Bottom then
+        Bottom := Y;
     end;
 end;
 
@@ -1645,16 +1681,17 @@ var
 begin
   Result := -1;
   NearestDistance := MaxDouble;
-  for I := Low(Points) to High(Points) do begin
+  for I := Low(Points) to High(Points) do
+  begin
     Distance := LineLength(Points[I], RefPt);
-    if Distance < NearestDistance
-    then begin
+    if Distance < NearestDistance then
+    begin
       NearestDistance := Distance;
       Result := I;
     end;
   end;
-  if Result >= 0
-  then NearestPt := Points[Result];
+  if Result >= 0 then
+    NearestPt := Points[Result];
 end;
 
 function MakeSquare(const Center: TPoint; Radius: Integer): TRect;
@@ -1666,21 +1703,23 @@ end;
 
 function MakeRect(const Corner1, Corner2: TPoint): TRect;
 begin
-  if Corner1.X > Corner2.X
-  then begin
+  if Corner1.X > Corner2.X then
+  begin
     Result.Left := Corner2.X;
     Result.Right := Corner1.X;
   end
-  else begin
+  else
+  begin
     Result.Left := Corner1.X;
     Result.Right := Corner2.X;
   end;
-  if Corner1.Y > Corner2.Y
-  then begin
+  if Corner1.Y > Corner2.Y then
+  begin
     Result.Top := Corner2.Y;
     Result.Bottom := Corner1.Y;
   end
-  else begin
+  else
+  begin
     Result.Top := Corner1.Y;
     Result.Bottom := Corner2.Y;
   end
@@ -1694,26 +1733,26 @@ end;
 
 procedure UnionRect(var DstRect: TRect; const SrcRect: TRect);
 begin
-  if DstRect.Left > SrcRect.Left
-  then DstRect.Left := SrcRect.Left;
-  if DstRect.Top > SrcRect.Top
-  then DstRect.Top := SrcRect.Top;
-  if DstRect.Right < SrcRect.Right
-  then DstRect.Right := SrcRect.Right;
-  if DstRect.Bottom < SrcRect.Bottom
-  then DstRect.Bottom := SrcRect.Bottom;
+  if DstRect.Left > SrcRect.Left then
+    DstRect.Left := SrcRect.Left;
+  if DstRect.Top > SrcRect.Top then
+    DstRect.Top := SrcRect.Top;
+  if DstRect.Right < SrcRect.Right then
+    DstRect.Right := SrcRect.Right;
+  if DstRect.Bottom < SrcRect.Bottom then
+    DstRect.Bottom := SrcRect.Bottom;
 end;
 
 procedure IntersectRect(var DstRect: TRect; const SrcRect: TRect);
 begin
-  if DstRect.Left < SrcRect.Left
-  then DstRect.Left := SrcRect.Left;
-  if DstRect.Top < SrcRect.Top
-  then DstRect.Top := SrcRect.Top;
-  if DstRect.Right > SrcRect.Right
-  then DstRect.Right := SrcRect.Right;
-  if DstRect.Bottom > SrcRect.Bottom
-  then DstRect.Bottom := SrcRect.Bottom;
+  if DstRect.Left < SrcRect.Left then
+    DstRect.Left := SrcRect.Left;
+  if DstRect.Top < SrcRect.Top then
+    DstRect.Top := SrcRect.Top;
+  if DstRect.Right > SrcRect.Right then
+    DstRect.Right := SrcRect.Right;
+  if DstRect.Bottom > SrcRect.Bottom then
+    DstRect.Bottom := SrcRect.Bottom;
 end;
 
 function OverlappedRect(const Rect1, Rect2: TRect): Boolean;
@@ -1729,13 +1768,14 @@ var
 begin
   Result := 0;
   RgnDataSize := GetRegionData(Rgn, 0, nil);
-  if RgnDataSize > 0
-  then begin
+  if RgnDataSize > 0 then
+  begin
     GetMem(RgnData, RgnDataSize);
     try
       GetRegionData(Rgn, RgnDataSize, RgnData);
       Result := ExtCreateRegion(@XForm, RgnDataSize, RgnData^);
-    finally FreeMem(RgnData);
+    finally
+      FreeMem(RgnData);
     end;
   end;
 end;
@@ -1743,8 +1783,10 @@ end;
 function NormalizeAngle(const Angle: Double): Double;
 begin
   Result := Angle;
-  while Result > Pi do Result := Result - 2 * Pi;
-  while Result < -Pi do Result := Result + 2 * Pi;
+  while Result > Pi do
+    Result := Result - 2 * Pi;
+  while Result < -Pi do
+    Result := Result + 2 * Pi;
 end;
 
 function LineLength(const LinePt1, LinePt2: TPoint): Double;
@@ -1754,13 +1796,14 @@ end;
 
 function LineSlopeAngle(const LinePt1, LinePt2: TPoint): Double;
 begin
-  if LinePt1.X <> LinePt2.X
-  then Result := ArcTan2(LinePt2.Y - LinePt1.Y, LinePt2.X - LinePt1.X)
-  else if LinePt1.Y > LinePt2.Y
-  then Result := -Pi / 2
-  else if LinePt1.Y < LinePt2.Y
-  then Result := +Pi / 2
-  else Result := 0;
+  if LinePt1.X <> LinePt2.X then
+    Result := ArcTan2(LinePt2.Y - LinePt1.Y, LinePt2.X - LinePt1.X)
+  else if LinePt1.Y > LinePt2.Y then
+    Result := -Pi / 2
+  else if LinePt1.Y < LinePt2.Y then
+    Result := +Pi / 2
+  else
+    Result := 0;
 end;
 
 function DistanceToLine(const LinePt1, LinePt2: TPoint; const QueryPt: TPoint): Double;
@@ -1777,21 +1820,24 @@ var
   Angle: Double;
 begin
   Angle := NormalizeAngle(LineAngle);
-  if Abs(Angle) <> Pi / 2
-  then begin
+  if Abs(Angle) <> Pi / 2 then
+  begin
     M := Tan(LineAngle);
-    if Abs(Angle) < Pi / 2
-    then X := ThisPt.X - DistanceFromThisPt / Sqrt(1 + Sqr(M))
-    else X := ThisPt.X + DistanceFromThisPt / Sqrt(1 + Sqr(M));
+    if Abs(Angle) < Pi / 2 then
+      X := ThisPt.X - DistanceFromThisPt / Sqrt(1 + Sqr(M))
+    else
+      X := ThisPt.X + DistanceFromThisPt / Sqrt(1 + Sqr(M));
     Y := ThisPt.Y + M * (X - ThisPt.X);
     Result.X := Round(X);
     Result.Y := Round(Y);
   end
-  else begin
+  else
+  begin
     Result.X := ThisPt.X;
-    if Angle > 0
-    then Result.Y := ThisPt.Y - Round(DistanceFromThisPt)
-    else Result.Y := ThisPt.Y + Round(DistanceFromThisPt);
+    if Angle > 0 then
+      Result.Y := ThisPt.Y - Round(DistanceFromThisPt)
+    else
+      Result.Y := ThisPt.Y + Round(DistanceFromThisPt);
   end;
 end;
 
@@ -1804,12 +1850,14 @@ begin
   HiPt := LinePt2;
   Result.X := (LoPt.X + HiPt.X) div 2;
   Result.Y := (LoPt.Y + HiPt.Y) div 2;
-  while ((Result.X <> LoPt.X) or (Result.Y <> LoPt.Y)) and ((Result.X <> HiPt.X) or (Result.Y <> HiPt.Y)) do begin
+  while ((Result.X <> LoPt.X) or (Result.Y <> LoPt.Y)) and ((Result.X <> HiPt.X) or (Result.Y <> HiPt.Y)) do
+  begin
     LoDis := Sqrt(Sqr(RefPt.X - (LoPt.X + Result.X) div 2) + Sqr(RefPt.Y - (LoPt.Y + Result.Y) div 2));
     HiDis := Sqrt(Sqr(RefPt.X - (HiPt.X + Result.X) div 2) + Sqr(RefPt.Y - (HiPt.Y + Result.Y) div 2));
-    if LoDis < HiDis
-    then HiPt := Result
-    else LoPt := Result;
+    if LoDis < HiDis then
+      HiPt := Result
+    else
+      LoPt := Result;
     Result.X := (LoPt.X + HiPt.X) div 2;
     Result.Y := (LoPt.Y + HiPt.Y) div 2;
   end;
@@ -1822,32 +1870,32 @@ var
   C1, C2: Double;
 begin
   Result := True;
-  if (Abs(Line1Angle) = Pi / 2) and (Abs(Line2Angle) = Pi / 2)
-  then
+  if (Abs(Line1Angle) = Pi / 2) and (Abs(Line2Angle) = Pi / 2) then
     // Lines have identical slope, so they are either parallel or identical
-      Result := False
-  else if Abs(Line1Angle) = Pi / 2
-  then begin
+    Result := False
+  else if Abs(Line1Angle) = Pi / 2 then
+  begin
     M2 := Tan(Line2Angle);
     C2 := Line2Pt.Y - M2 * Line2Pt.X;
     Intersect.X := Line1Pt.X;
     Intersect.Y := Round(M2 * Intersect.X + C2);
   end
-  else if Abs(Line2Angle) = Pi / 2
-  then begin
+  else if Abs(Line2Angle) = Pi / 2 then
+  begin
     M1 := Tan(Line1Angle);
     C1 := Line1Pt.Y - M1 * Line1Pt.X;
     Intersect.X := Line2Pt.X;
     Intersect.Y := Round(M1 * Intersect.X + C1);
   end
-  else begin
+  else
+  begin
     M1 := Tan(Line1Angle);
     M2 := Tan(Line2Angle);
-    if M1 = M2
-    then
+    if M1 = M2 then
       // Lines have identical slope, so they are either parallel or identical
-        Result := False
-    else begin
+      Result := False
+    else
+    begin
       C1 := Line1Pt.Y - M1 * Line1Pt.X;
       C2 := Line2Pt.Y - M2 * Line2Pt.X;
       Intersect.X := Round((C1 - C2) / (M2 - M1));
@@ -1878,24 +1926,25 @@ var
   Xc, Yc, X, Y: Double;
 begin
   SetLength(Result, 0);
-  if IsRectEmpty(Bounds)
-  then Exit;
+  if IsRectEmpty(Bounds) then
+    Exit;
   Xc := (Bounds.Left + Bounds.Right) / 2;
   Yc := (Bounds.Top + Bounds.Bottom) / 2;
   A2 := Sqr((Bounds.Right - Bounds.Left) / 2);
   B2 := Sqr((Bounds.Bottom - Bounds.Top) / 2);
-  if Abs(LineAngle) = Pi / 2
-  then begin
+  if Abs(LineAngle) = Pi / 2 then
+  begin
     d := 1 - (Sqr(LinePt.X - Xc) / A2);
-    if d >= 0
-    then begin
-      if d = 0
-      then begin
+    if d >= 0 then
+    begin
+      if d = 0 then
+      begin
         SetLength(Result, 1);
         Result[0].X := LinePt.X;
         Result[0].Y := Round(Yc);
       end
-      else begin
+      else
+      begin
         C := Sqrt(B2) * Sqrt(d);
         SetLength(Result, 2);
         Result[0].X := LinePt.X;
@@ -1905,23 +1954,25 @@ begin
       end;
     end;
   end
-  else begin
+  else
+  begin
     M := Tan(LineAngle);
     C := LinePt.Y - M * LinePt.X;
     a := (B2 + A2 * Sqr(M));
     b := (A2 * M * (C - Yc)) - B2 * Xc;
     d := Sqr(b) - a * (B2 * Sqr(Xc) + A2 * Sqr(C - Yc) - A2 * B2);
-    if (d >= 0) and (a <> 0)
-    then begin
-      if d = 0
-      then begin
+    if (d >= 0) and (a <> 0) then
+    begin
+      if d = 0 then
+      begin
         SetLength(Result, 1);
         X := -b / a;
         Y := M * X + C;
         Result[0].X := Round(X);
         Result[0].Y := Round(Y);
       end
-      else begin
+      else
+      begin
         SetLength(Result, 2);
         X := (-b - Sqrt(d)) / a;
         Y := M * X + C;
@@ -1945,30 +1996,32 @@ var
   W, H, Xc, Yc, dX, dY: Integer;
 begin
   Result := IntersectLineRect(LinePt, LineAngle, Bounds);
-  if Length(Result) > 0
-  then begin
+  if Length(Result) > 0 then
+  begin
     W := Bounds.Right - Bounds.Left;
     H := Bounds.Bottom - Bounds.Top;
     Xc := (Bounds.Left + Bounds.Right) div 2;
     Yc := (Bounds.Top + Bounds.Bottom) div 2;
-    for I := 0 to Length(Result) - 1 do begin
+    for I := 0 to Length(Result) - 1 do
+    begin
       dX := Result[I].X - Xc;
       dY := Result[I].Y - Yc;
-      if ((W div 2) - (Abs(dX)) < (CW div 2)) and (((H div 2) - Abs(dY)) < (CH div 2))
-      then begin
+      if ((W div 2) - (Abs(dX)) < (CW div 2)) and (((H div 2) - Abs(dY)) < (CH div 2)) then
+      begin
         SetRect(CornerBounds, Bounds.Left, Bounds.Top, Bounds.Left + CW, Bounds.Top + CH);
-        if dX > 0
-        then OffsetRect(CornerBounds, W - CW, 0);
-        if dY > 0
-        then OffsetRect(CornerBounds, 0, H - CH);
+        if dX > 0 then
+          OffsetRect(CornerBounds, W - CW, 0);
+        if dY > 0 then
+          OffsetRect(CornerBounds, 0, H - CH);
         CornerIntersects := IntersectLineEllipse(LinePt, LineAngle, CornerBounds);
         try
-          if Length(CornerIntersects) = 2
-          then
-            if dX < 0
-            then Result[I] := CornerIntersects[0]
-            else Result[I] := CornerIntersects[1];
-        finally SetLength(CornerIntersects, 0);
+          if Length(CornerIntersects) = 2 then
+            if dX < 0 then
+              Result[I] := CornerIntersects[0]
+            else
+              Result[I] := CornerIntersects[1];
+        finally
+          SetLength(CornerIntersects, 0);
         end;
       end;
     end;
@@ -1983,13 +2036,15 @@ var
   Intersect: TPoint;
 begin
   SetLength(Result, 0);
-  for I := Low(Vertices) to High(Vertices) do begin
+  for I := Low(Vertices) to High(Vertices) do
+  begin
     V1 := I;
     V2 := Succ(I) mod Length(Vertices);
     EdgeAngle := LineSlopeAngle(Vertices[V1], Vertices[V2]);
     if IntersectLines(LinePt, LineAngle, Vertices[V1], EdgeAngle, Intersect) and
       IsBetween(Intersect.X, Vertices[V1].X, Vertices[V2].X) and IsBetween(Intersect.Y, Vertices[V1].Y, Vertices[V2].Y)
-    then begin
+    then
+    begin
       SetLength(Result, Length(Result) + 1);
       Result[Length(Result) - 1] := Intersect;
     end;
@@ -2004,13 +2059,15 @@ var
   Intersect: TPoint;
 begin
   SetLength(Result, 0);
-  for I := Low(Vertices) to Pred(High(Vertices)) do begin
+  for I := Low(Vertices) to Pred(High(Vertices)) do
+  begin
     V1 := I;
     V2 := Succ(I);
     EdgeAngle := LineSlopeAngle(Vertices[V1], Vertices[V2]);
     if IntersectLines(LinePt, LineAngle, Vertices[V1], EdgeAngle, Intersect) and
       IsBetween(Intersect.X, Vertices[V1].X, Vertices[V2].X) and IsBetween(Intersect.Y, Vertices[V1].Y, Vertices[V2].Y)
-    then begin
+    then
+    begin
       SetLength(Result, Length(Result) + 1);
       Result[Length(Result) - 1] := Intersect;
     end;
@@ -2043,8 +2100,8 @@ end;
 
 procedure TGraphScrollBar.Assign(Source: TPersistent);
 begin
-  if Source is TGraphScrollBar
-  then begin
+  if Source is TGraphScrollBar then
+  begin
     DoSetRange(TGraphScrollBar(Source).Range);
     Visible := TGraphScrollBar(Source).Visible;
     Position := TGraphScrollBar(Source).Position;
@@ -2059,18 +2116,18 @@ begin
     ThumbSize := TGraphScrollBar(Source).ThumbSize;
     Tracking := TGraphScrollBar(Source).Tracking;
   end
-  else inherited Assign(Source);
+  else
+    inherited Assign(Source);
 end;
 
 procedure TGraphScrollBar.ChangeBiDiPosition;
 begin
-  if Kind = sbHorizontal
-  then
-    if IsScrollBarVisible
-    then
-      if not Owner.UseRightToLeftScrollBar
-      then Position := 0
-      else Position := Range;
+  if Kind = sbHorizontal then
+    if IsScrollBarVisible then
+      if not Owner.UseRightToLeftScrollBar then
+        Position := 0
+      else
+        Position := Range;
 end;
 
 procedure TGraphScrollBar.CalcAutoRange;
@@ -2079,23 +2136,25 @@ var
 
   procedure ProcessHorz(Control: TControl);
   begin
-    if Control.Visible
-    then
+    if Control.Visible then
       case Control.Align of
-        alLeft, alNone: if (Control.Align = alLeft) or (Control.Anchors * [akLeft, akRight] = [akLeft]) then
-              NewRange := Max(NewRange, Position + Control.Left + Control.Width);
-        alRight: Inc(AlignMargin, Control.Width);
+        alLeft, alNone:
+          if (Control.Align = alLeft) or (Control.Anchors * [akLeft, akRight] = [akLeft]) then
+            NewRange := Max(NewRange, Position + Control.Left + Control.Width);
+        alRight:
+          Inc(AlignMargin, Control.Width);
       end;
   end;
 
   procedure ProcessVert(Control: TControl);
   begin
-    if Control.Visible
-    then
+    if Control.Visible then
       case Control.Align of
-        alTop, alNone: if (Control.Align = alTop) or (Control.Anchors * [akTop, akBottom] = [akTop]) then
-              NewRange := Max(NewRange, Position + Control.Top + Control.Height);
-        alBottom: Inc(AlignMargin, Control.Height);
+        alTop, alNone:
+          if (Control.Align = alTop) or (Control.Anchors * [akTop, akBottom] = [akTop]) then
+            NewRange := Max(NewRange, Position + Control.Top + Control.Height);
+        alBottom:
+          Inc(AlignMargin, Control.Height);
       end;
   end;
 
@@ -2103,37 +2162,44 @@ var
   I: Integer;
 begin
   case Kind of
-    sbHorizontal: if not Owner.FixedScrollBars then begin
+    sbHorizontal:
+      if not Owner.FixedScrollBars then
+      begin
         NewRange := 1;
-        if Owner.ValidMarkedArea
-        then
+        if Owner.ValidMarkedArea then
           with Owner.MarkedArea do
-            if NewRange < Right
-            then NewRange := Right;
+            if NewRange < Right then
+              NewRange := Right;
         with Owner.GraphBounds do
-          if NewRange < Right
-          then NewRange := Right;
+          if NewRange < Right then
+            NewRange := Right;
       end
-      else NewRange := Owner.GraphConstraints.MaxRight;
-    sbVertical: if not Owner.FixedScrollBars then begin
+      else
+        NewRange := Owner.GraphConstraints.MaxRight;
+    sbVertical:
+      if not Owner.FixedScrollBars then
+      begin
         NewRange := 1;
-        if Owner.ValidMarkedArea
-        then
+        if Owner.ValidMarkedArea then
           with Owner.MarkedArea do
-            if NewRange < Bottom
-            then NewRange := Bottom;
+            if NewRange < Bottom then
+              NewRange := Bottom;
         with Owner.GraphBounds do
-          if NewRange < Bottom
-          then NewRange := Bottom;
+          if NewRange < Bottom then
+            NewRange := Bottom;
       end
-      else NewRange := Owner.GraphConstraints.MaxBottom;
-  else Exit;
+      else
+        NewRange := Owner.GraphConstraints.MaxBottom;
+  else
+    Exit;
   end;
   AlignMargin := 0;
   for I := 0 to Owner.ControlCount - 1 do
     case Kind of
-      sbHorizontal: ProcessHorz(Owner.Controls[I]);
-      sbVertical: ProcessVert(Owner.Controls[I]);
+      sbHorizontal:
+        ProcessHorz(Owner.Controls[I]);
+      sbVertical:
+        ProcessVert(Owner.Controls[I]);
     end;
   DoSetRange(NewRange + AlignMargin + Margin);
 end;
@@ -2142,9 +2208,10 @@ function TGraphScrollBar.IsScrollBarVisible: Boolean;
 var
   Style: Longint;
 begin
-  if Kind = sbVertical
-  then Style := WS_VSCROLL
-  else Style := WS_HSCROLL;
+  if Kind = sbVertical then
+    Style := WS_VSCROLL
+  else
+    Style := WS_HSCROLL;
   Result := Visible and ((GetWindowLong(Owner.Handle, GWL_STYLE) and Style) <> 0);
 end;
 
@@ -2157,34 +2224,34 @@ var
     Style: Longint;
   begin
     Style := WS_HSCROLL;
-    if Code = SB_VERT
-    then Style := WS_VSCROLL;
+    if Code = SB_VERT then
+      Style := WS_VSCROLL;
     Result := GetWindowLong(Owner.Handle, GWL_STYLE) and Style <> 0;
   end;
 
   function Adjustment(Code, Metric: Word): Integer;
   begin
     Result := 0;
-    if not ControlSB
-    then
-      if AssumeSB and not ScrollBarVisible(Code)
-      then Result := -(GetSystemMetrics(Metric) - BorderAdjust)
-      else if not AssumeSB and ScrollBarVisible(Code)
-      then Result := GetSystemMetrics(Metric) - BorderAdjust;
+    if not ControlSB then
+      if AssumeSB and not ScrollBarVisible(Code) then
+        Result := -(GetSystemMetrics(Metric) - BorderAdjust)
+      else if not AssumeSB and ScrollBarVisible(Code) then
+        Result := GetSystemMetrics(Metric) - BorderAdjust;
   end;
 
 begin
   BorderAdjust := Integer((GetWindowLong(Owner.Handle, GWL_STYLE) and (WS_BORDER or WS_THICKFRAME)) <> 0);
-  if Kind = sbVertical
-  then Result := Owner.ClientHeight + Adjustment(SB_HORZ, SM_CXHSCROLL)
-  else Result := Owner.ClientWidth + Adjustment(SB_VERT, SM_CYVSCROLL);
+  if Kind = sbVertical then
+    Result := Owner.ClientHeight + Adjustment(SB_HORZ, SM_CXHSCROLL)
+  else
+    Result := Owner.ClientWidth + Adjustment(SB_VERT, SM_CYVSCROLL);
 end;
 
 function TGraphScrollBar.GetScrollPos: Integer;
 begin
   Result := 0;
-  if Visible
-  then Result := Position;
+  if Visible then
+    Result := Position;
 end;
 
 function TGraphScrollBar.NeedsScrollBarVisible: Boolean;
@@ -2205,74 +2272,99 @@ var
     SI.cbSize := SizeOf(TScrollInfo);
     SI.fMask := SIF_TRACKPOS;
     Code := SB_HORZ;
-    if fKind = sbVertical
-    then Code := SB_VERT;
+    if fKind = sbVertical then
+      Code := SB_VERT;
     Result := Msg.Pos;
-    if FlatSB_GetScrollInfo(Owner.Handle, Code, SI)
-    then Result := SI.nTrackPos;
+    if FlatSB_GetScrollInfo(Owner.Handle, Code, SI) then
+      Result := SI.nTrackPos;
   end;
 
 begin
-  with Msg do begin
-    if fSmooth and (ScrollCode in [SB_LINEUP, SB_LINEDOWN, SB_PAGEUP, SB_PAGEDOWN])
-    then begin
+  with Msg do
+  begin
+    if fSmooth and (ScrollCode in [SB_LINEUP, SB_LINEDOWN, SB_PAGEUP, SB_PAGEDOWN]) then
+    begin
       case ScrollCode of
-        SB_LINEUP, SB_LINEDOWN: begin
+        SB_LINEUP, SB_LINEDOWN:
+          begin
             Incr := fIncrement div fLineDiv;
             FinalIncr := fIncrement mod fLineDiv;
             Count := fLineDiv;
           end;
-        SB_PAGEUP, SB_PAGEDOWN: begin
+        SB_PAGEUP, SB_PAGEDOWN:
+          begin
             Incr := fPageIncrement;
             FinalIncr := Incr mod fPageDiv;
             Incr := Incr div fPageDiv;
             Count := fPageDiv;
           end;
-      else Count := 0;
+      else
+        Count := 0;
         Incr := 0;
         FinalIncr := 0;
       end;
       CurrentTime := 0;
-      while Count > 0 do begin
+      while Count > 0 do
+      begin
         StartTime := GetTickCount;
         ElapsedTime := StartTime - CurrentTime;
-        if ElapsedTime < fDelay
-        then Sleep(fDelay - ElapsedTime);
+        if ElapsedTime < fDelay then
+          Sleep(fDelay - ElapsedTime);
         CurrentTime := StartTime;
         case ScrollCode of
-          SB_LINEUP: SetPosition(fPosition - Incr);
-          SB_LINEDOWN: SetPosition(fPosition + Incr);
-          SB_PAGEUP: SetPosition(fPosition - Incr);
-          SB_PAGEDOWN: SetPosition(fPosition + Incr);
+          SB_LINEUP:
+            SetPosition(fPosition - Incr);
+          SB_LINEDOWN:
+            SetPosition(fPosition + Incr);
+          SB_PAGEUP:
+            SetPosition(fPosition - Incr);
+          SB_PAGEDOWN:
+            SetPosition(fPosition + Incr);
         end;
         Owner.Update;
         Dec(Count);
       end;
-      if FinalIncr > 0
-      then begin
+      if FinalIncr > 0 then
+      begin
         case ScrollCode of
-          SB_LINEUP: SetPosition(fPosition - FinalIncr);
-          SB_LINEDOWN: SetPosition(fPosition + FinalIncr);
-          SB_PAGEUP: SetPosition(fPosition - FinalIncr);
-          SB_PAGEDOWN: SetPosition(fPosition + FinalIncr);
+          SB_LINEUP:
+            SetPosition(fPosition - FinalIncr);
+          SB_LINEDOWN:
+            SetPosition(fPosition + FinalIncr);
+          SB_PAGEUP:
+            SetPosition(fPosition - FinalIncr);
+          SB_PAGEDOWN:
+            SetPosition(fPosition + FinalIncr);
         end;
       end;
     end
     else
       case ScrollCode of
-        SB_LINEUP: SetPosition(fPosition - fIncrement);
-        SB_LINEDOWN: SetPosition(fPosition + fIncrement);
-        SB_PAGEUP: SetPosition(fPosition - ControlSize(True, False));
-        SB_PAGEDOWN: SetPosition(fPosition + ControlSize(True, False));
-        SB_THUMBPOSITION: if fCalcRange > 32767 then SetPosition(GetRealScrollPosition)
-          else SetPosition(Pos);
-        SB_THUMBTRACK: if Tracking then
-            if fCalcRange > 32767
-            then SetPosition(GetRealScrollPosition)
-            else SetPosition(Pos);
-        SB_TOP: SetPosition(0);
-        SB_BOTTOM: SetPosition(fCalcRange);
-        SB_ENDSCROLL: begin
+        SB_LINEUP:
+          SetPosition(fPosition - fIncrement);
+        SB_LINEDOWN:
+          SetPosition(fPosition + fIncrement);
+        SB_PAGEUP:
+          SetPosition(fPosition - ControlSize(True, False));
+        SB_PAGEDOWN:
+          SetPosition(fPosition + ControlSize(True, False));
+        SB_THUMBPOSITION:
+          if fCalcRange > 32767 then
+            SetPosition(GetRealScrollPosition)
+          else
+            SetPosition(Pos);
+        SB_THUMBTRACK:
+          if Tracking then
+            if fCalcRange > 32767 then
+              SetPosition(GetRealScrollPosition)
+            else
+              SetPosition(Pos);
+        SB_TOP:
+          SetPosition(0);
+        SB_BOTTOM:
+          SetPosition(fCalcRange);
+        SB_ENDSCROLL:
+          begin
           end;
       end;
   end;
@@ -2284,23 +2376,23 @@ const
 var
   NewValue: Integer;
 begin
-  if Value <> ButtonSize
-  then begin
+  if Value <> ButtonSize then
+  begin
     NewValue := Value;
-    if NewValue = 0
-    then Value := GetSystemMetrics(SysConsts[Kind]);
+    if NewValue = 0 then
+      Value := GetSystemMetrics(SysConsts[Kind]);
     fButtonSize := Value;
     fUpdateNeeded := True;
     Owner.UpdateScrollBars;
-    if NewValue = 0
-    then fButtonSize := 0;
+    if NewValue = 0 then
+      fButtonSize := 0;
   end;
 end;
 
 procedure TGraphScrollBar.SetColor(Value: TColor);
 begin
-  if Value <> Color
-  then begin
+  if Value <> Color then
+  begin
     fColor := Value;
     fParentColor := False;
     fUpdateNeeded := True;
@@ -2310,11 +2402,11 @@ end;
 
 procedure TGraphScrollBar.SetParentColor(Value: Boolean);
 begin
-  if ParentColor <> Value
-  then begin
+  if ParentColor <> Value then
+  begin
     fParentColor := Value;
-    if Value
-    then Color := clBtnHighlight;
+    if Value then
+      Color := clBtnHighlight;
   end;
 end;
 
@@ -2324,32 +2416,35 @@ var
   Form: TCustomForm;
   OldPos: Integer;
 begin
-  if csReading in Owner.ComponentState
-  then fPosition := Value
-  else begin
-    if Value > fCalcRange
-    then Value := fCalcRange
-    else if Value < 0
-    then Value := 0;
-    if Kind = sbHorizontal
-    then Code := SB_HORZ
-    else Code := SB_VERT;
-    if Value <> fPosition
-    then begin
+  if csReading in Owner.ComponentState then
+    fPosition := Value
+  else
+  begin
+    if Value > fCalcRange then
+      Value := fCalcRange
+    else if Value < 0 then
+      Value := 0;
+    if Kind = sbHorizontal then
+      Code := SB_HORZ
+    else
+      Code := SB_VERT;
+    if Value <> fPosition then
+    begin
       OldPos := fPosition;
       fPosition := Value;
-      if Kind = sbHorizontal
-      then Owner.ScrollBy(OldPos - Value, 0)
-      else Owner.ScrollBy(0, OldPos - Value);
-      if csDesigning in Owner.ComponentState
-      then begin
+      if Kind = sbHorizontal then
+        Owner.ScrollBy(OldPos - Value, 0)
+      else
+        Owner.ScrollBy(0, OldPos - Value);
+      if csDesigning in Owner.ComponentState then
+      begin
         Form := GetParentForm(Owner);
-        if Assigned(Form) and Assigned(Form.Designer)
-        then Form.Designer.Modified;
+        if Assigned(Form) and Assigned(Form.Designer) then
+          Form.Designer.Modified;
       end;
     end;
-    if FlatSB_GetScrollPos(Owner.Handle, Code) <> fPosition
-    then FlatSB_SetScrollPos(Owner.Handle, Code, fPosition, True);
+    if FlatSB_GetScrollPos(Owner.Handle, Code) <> fPosition then
+      FlatSB_SetScrollPos(Owner.Handle, Code, fPosition, True);
   end;
 end;
 
@@ -2359,23 +2454,23 @@ const
 var
   NewValue: Integer;
 begin
-  if Value <> Size
-  then begin
+  if Value <> Size then
+  begin
     NewValue := Value;
-    if NewValue = 0
-    then Value := GetSystemMetrics(SysConsts[Kind]);
+    if NewValue = 0 then
+      Value := GetSystemMetrics(SysConsts[Kind]);
     fSize := Value;
     fUpdateNeeded := True;
     Owner.UpdateScrollBars;
-    if NewValue = 0
-    then fSize := 0;
+    if NewValue = 0 then
+      fSize := 0;
   end;
 end;
 
 procedure TGraphScrollBar.SetStyle(Value: TScrollBarStyle);
 begin
-  if Style <> Value
-  then begin
+  if Style <> Value then
+  begin
     fStyle := Value;
     fUpdateNeeded := True;
     Owner.UpdateScrollBars;
@@ -2384,8 +2479,8 @@ end;
 
 procedure TGraphScrollBar.SetThumbSize(Value: Integer);
 begin
-  if ThumbSize <> Value
-  then begin
+  if ThumbSize <> Value then
+  begin
     fThumbSize := Value;
     fUpdateNeeded := True;
     Owner.UpdateScrollBars;
@@ -2396,11 +2491,12 @@ procedure TGraphScrollBar.DoSetRange(Value: Integer);
 var
   NewRange: Integer;
 begin
-  if Value <= 0
-  then NewRange := 0
-  else NewRange := MulDiv(Value, Owner.Zoom, 100);
-  if fRange <> NewRange
-  then begin
+  if Value <= 0 then
+    NewRange := 0
+  else
+    NewRange := MulDiv(Value, Owner.Zoom, 100);
+  if fRange <> NewRange then
+  begin
     fRange := NewRange;
     Owner.UpdateScrollBars;
   end;
@@ -2408,8 +2504,8 @@ end;
 
 procedure TGraphScrollBar.SetVisible(Value: Boolean);
 begin
-  if fVisible <> Value
-  then begin
+  if fVisible <> Value then
+  begin
     fVisible := Value;
     Owner.UpdateScrollBars;
   end;
@@ -2419,8 +2515,8 @@ procedure TGraphScrollBar.Update(ControlSB, AssumeSB: Boolean);
 type
   TPropKind = (pkStyle, pkButtonSize, pkThumbSize, pkSize, pkBkColor);
 const
-  Kinds: array [TScrollBarKind] of Integer            = (WSB_PROP_HSTYLE, WSB_PROP_VSTYLE);
-  Styles: array [TScrollBarStyle] of Integer          = (FSB_REGULAR_MODE, FSB_ENCARTA_MODE, FSB_FLAT_MODE);
+  Kinds: array [TScrollBarKind] of Integer = (WSB_PROP_HSTYLE, WSB_PROP_VSTYLE);
+  Styles: array [TScrollBarStyle] of Integer = (FSB_REGULAR_MODE, FSB_ENCARTA_MODE, FSB_FLAT_MODE);
   Props: array [TScrollBarKind, TPropKind] of Integer = (
     { Horizontal }
     (WSB_PROP_HSTYLE, WSB_PROP_CXHSCROLL, WSB_PROP_CXHTHUMB, WSB_PROP_CYHSCROLL, WSB_PROP_HBKGCOLOR),
@@ -2433,32 +2529,34 @@ var
   procedure UpdateScrollProperties(Redraw: Boolean);
   begin
     FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkStyle], Styles[Style], Redraw);
-    if ButtonSize > 0
-    then FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkButtonSize], ButtonSize, False);
-    if ThumbSize > 0
-    then FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkThumbSize], ThumbSize, False);
-    if Size > 0
-    then FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkSize], Size, False);
+    if ButtonSize > 0 then
+      FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkButtonSize], ButtonSize, False);
+    if ThumbSize > 0 then
+      FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkThumbSize], ThumbSize, False);
+    if Size > 0 then
+      FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkSize], Size, False);
     FlatSB_SetScrollProp(Owner.Handle, Props[Kind, pkBkColor], ColorToRGB(Color), False);
   end;
 
 begin
   fCalcRange := 0;
-  if Kind = sbVertical
-  then Code := SB_VERT
-  else Code := SB_HORZ;
-  if Visible
-  then begin
+  if Kind = sbVertical then
+    Code := SB_VERT
+  else
+    Code := SB_HORZ;
+  if Visible then
+  begin
     fCalcRange := Range - ControlSize(ControlSB, AssumeSB);
-    if fCalcRange < 0
-    then fCalcRange := 0;
+    if fCalcRange < 0 then
+      fCalcRange := 0;
   end;
   ScrollInfo.cbSize := SizeOf(ScrollInfo);
   ScrollInfo.fMask := SIF_ALL;
   ScrollInfo.nMin := 0;
-  if fCalcRange > 0
-  then ScrollInfo.nMax := Range
-  else ScrollInfo.nMax := 0;
+  if fCalcRange > 0 then
+    ScrollInfo.nMax := Range
+  else
+    ScrollInfo.nMax := 0;
   ScrollInfo.nPage := ControlSize(ControlSB, AssumeSB) + 1;
   ScrollInfo.nPos := fPosition;
   ScrollInfo.nTrackPos := fPosition;
@@ -2467,8 +2565,8 @@ begin
   FlatSB_SetScrollInfo(Owner.Handle, Code, ScrollInfo, True);
   SetPosition(fPosition);
   fPageIncrement := (ControlSize(True, False) * 9) div 10;
-  if Smooth
-  then fIncrement := fPageIncrement div 10;
+  if Smooth then
+    fIncrement := fPageIncrement div 10;
 end;
 
 { TMemoryHandleStream }
@@ -2476,17 +2574,17 @@ end;
 constructor TMemoryHandleStream.Create(MemHandle: THandle);
 begin
   fHandle := MemHandle;
-  if fHandle <> 0
-  then Size := GlobalSize(fHandle);
+  if fHandle <> 0 then
+    Size := GlobalSize(fHandle);
 end;
 
 destructor TMemoryHandleStream.Destroy;
 begin
-  if not fReleaseHandle and (fHandle <> 0)
-  then begin
+  if not fReleaseHandle and (fHandle <> 0) then
+  begin
     GlobalUnlock(fHandle);
-    if Capacity > Size
-    then GlobalReAlloc(fHandle, Size, GMEM_MOVEABLE);
+    if Capacity > Size then
+      GlobalReAlloc(fHandle, Size, GMEM_MOVEABLE);
     fHandle := 0;
   end;
   inherited Destroy;
@@ -2496,25 +2594,27 @@ function TMemoryHandleStream.Realloc(var NewCapacity: Integer): Pointer;
 const
   MemoryDelta = $2000; { Must be a power of 2 }
 begin
-  if (NewCapacity > 0) and (NewCapacity <> Size)
-  then NewCapacity := (NewCapacity + (MemoryDelta - 1)) and not(MemoryDelta - 1);
+  if (NewCapacity > 0) and (NewCapacity <> Size) then
+    NewCapacity := (NewCapacity + (MemoryDelta - 1)) and not(MemoryDelta - 1);
   Result := Memory;
-  if NewCapacity <> Capacity
-  then begin
-    if NewCapacity = 0
-    then begin
-      if fHandle <> 0
-      then begin
+  if NewCapacity <> Capacity then
+  begin
+    if NewCapacity = 0 then
+    begin
+      if fHandle <> 0 then
+      begin
         GlobalUnlock(fHandle);
         GlobalFree(fHandle);
         fHandle := 0;
       end;
       Result := nil;
     end
-    else begin
-      if fHandle = 0
-      then fHandle := GlobalAlloc(GMEM_MOVEABLE, NewCapacity)
-      else begin
+    else
+    begin
+      if fHandle = 0 then
+        fHandle := GlobalAlloc(GMEM_MOVEABLE, NewCapacity)
+      else
+      begin
         GlobalUnlock(fHandle);
         fHandle := GlobalReAlloc(fHandle, NewCapacity, GMEM_MOVEABLE);
       end;
@@ -2545,8 +2645,8 @@ end;
 
 procedure TCanvasRecall.Store;
 begin
-  if Assigned(fReference)
-  then begin
+  if Assigned(fReference) then
+  begin
     fFont.Assign(fReference.Font);
     fPen.Assign(fReference.Pen);
     fBrush.Assign(fReference.Brush);
@@ -2557,8 +2657,8 @@ end;
 
 procedure TCanvasRecall.Retrieve;
 begin
-  if Assigned(fReference)
-  then begin
+  if Assigned(fReference) then
+  begin
     fReference.Font.Assign(fFont);
     fReference.Pen.Assign(fPen);
     fReference.Brush.Assign(fBrush);
@@ -2569,8 +2669,8 @@ end;
 
 procedure TCanvasRecall.SetReference(Value: TCanvas);
 begin
-  if fReference <> Value
-  then begin
+  if fReference <> Value then
+  begin
     Retrieve;
     fReference := Value;
     Store;
@@ -2591,8 +2691,8 @@ var
 begin
   DC := Handle;
   Handle := 0;
-  if DC <> 0
-  then DeleteObject(DC);
+  if DC <> 0 then
+    DeleteObject(DC);
   inherited Destroy;
 end;
 
@@ -2606,45 +2706,48 @@ end;
 
 procedure TGraphObjectList.SetCapacity(Value: Integer);
 begin
-  if fCapacity <> Value
-  then begin
+  if fCapacity <> Value then
+  begin
     fCapacity := Value;
-    while fCapacity < fCount do Delete(fCount - 1);
+    while fCapacity < fCount do
+      Delete(fCount - 1);
     SetLength(fItems, fCapacity);
   end;
 end;
 
 function TGraphObjectList.GetItems(Index: Integer): TGraphObject;
 begin
-  if (Index < 0) or (Index >= fCount)
-  then raise EListError.CreateFmt(SListIndexError, [Index]);
+  if (Index < 0) or (Index >= fCount) then
+    raise EListError.CreateFmt(SListIndexError, [Index]);
   Result := fItems[Index];
 end;
 
 procedure TGraphObjectList.Grow;
 begin
-  if fCount < 64
-  then SetCapacity(fCapacity + 16)
-  else SetCapacity(fCapacity + 8);
+  if fCount < 64 then
+    SetCapacity(fCapacity + 16)
+  else
+    SetCapacity(fCapacity + 8);
 end;
 
 function TGraphObjectList.Replace(OldItem, NewItem: TGraphObject): Integer;
 begin
   Result := IndexOf(OldItem);
-  if Result >= 0
-  then fItems[Result] := NewItem;
+  if Result >= 0 then
+    fItems[Result] := NewItem;
 end;
 
 procedure TGraphObjectList.NotifyAction(Item: TGraphObject; Action: TGraphObjectListAction);
 begin
-  if Assigned(Item) and Assigned(OnChange)
-  then OnChange(Self, Item, Action);
+  if Assigned(Item) and Assigned(OnChange) then
+    OnChange(Self, Item, Action);
 end;
 
 procedure TGraphObjectList.AdjustDeleted(Index: Integer; var EnumState: TListEnumState);
 begin
   if (EnumState.Dir <> 0) and ((Index < EnumState.Current) or ((EnumState.Dir = +1) and (Index = EnumState.Current)))
-  then Dec(EnumState.Current);
+  then
+    Dec(EnumState.Current);
 end;
 
 procedure TGraphObjectList.Clear;
@@ -2657,13 +2760,15 @@ procedure TGraphObjectList.Assign(Source: TPersistent);
 var
   I: Integer;
 begin
-  if Source is TGraphObjectList
-  then begin
+  if Source is TGraphObjectList then
+  begin
     Clear;
     Capacity := TGraphObjectList(Source).Count;
-    for I := 0 to TGraphObjectList(Source).Count - 1 do Add(TGraphObjectList(Source).Items[I]);
+    for I := 0 to TGraphObjectList(Source).Count - 1 do
+      Add(TGraphObjectList(Source).Items[I]);
   end
-  else inherited Assign(Source);
+  else
+    inherited Assign(Source);
 end;
 
 function TGraphObjectList.IndexOf(Item: TGraphObject): Integer;
@@ -2672,8 +2777,8 @@ var
 begin
   Result := -1;
   for I := Count - 1 downto 0 do
-    if fItems[I] = Item
-    then begin
+    if fItems[I] = Item then
+    begin
       Result := I;
       Exit;
     end;
@@ -2681,8 +2786,8 @@ end;
 
 function TGraphObjectList.Add(Item: TGraphObject): Integer;
 begin
-  if Count = Capacity
-  then Grow;
+  if Count = Capacity then
+    Grow;
   Result := fCount;
   fItems[Result] := Item;
   Inc(fCount);
@@ -2691,12 +2796,12 @@ end;
 
 procedure TGraphObjectList.Insert(Index: Integer; Item: TGraphObject);
 begin
-  if (Index < 0) or (Index > fCount)
-  then raise EListError.CreateFmt(SListIndexError, [Index]);
-  if Count = Capacity
-  then Grow;
-  if Index < fCount
-  then System.Move(fItems[Index], fItems[Index + 1], (fCount - Index) * SizeOf(TGraphObject));
+  if (Index < 0) or (Index > fCount) then
+    raise EListError.CreateFmt(SListIndexError, [Index]);
+  if Count = Capacity then
+    Grow;
+  if Index < fCount then
+    System.Move(fItems[Index], fItems[Index + 1], (fCount - Index) * SizeOf(TGraphObject));
   fItems[Index] := Item;
   Inc(fCount);
   NotifyAction(Item, glAdded);
@@ -2707,34 +2812,35 @@ var
   Item: TGraphObject;
   I: Integer;
 begin
-  if (Index < 0) or (Index >= fCount)
-  then raise EListError.CreateFmt(SListIndexError, [Index]);
+  if (Index < 0) or (Index >= fCount) then
+    raise EListError.CreateFmt(SListIndexError, [Index]);
   Item := fItems[Index];
   Dec(fCount);
-  if Index < fCount
-  then System.Move(fItems[Index + 1], fItems[Index], (fCount - Index) * SizeOf(TGraphObject));
+  if Index < fCount then
+    System.Move(fItems[Index + 1], fItems[Index], (fCount - Index) * SizeOf(TGraphObject));
   AdjustDeleted(Index, Enum);
-  for I := 0 to EnumStackPos - 1 do AdjustDeleted(Index, EnumStack[I]);
+  for I := 0 to EnumStackPos - 1 do
+    AdjustDeleted(Index, EnumStack[I]);
   NotifyAction(Item, glRemoved);
 end;
 
 function TGraphObjectList.Remove(Item: TGraphObject): Integer;
 begin
   Result := IndexOf(Item);
-  if Result >= 0
-  then Delete(Result);
+  if Result >= 0 then
+    Delete(Result);
 end;
 
 procedure TGraphObjectList.Move(CurIndex, NewIndex: Integer);
 var
   Item: TGraphObject;
 begin
-  if CurIndex <> NewIndex
-  then begin
-    if (CurIndex < 0) or (CurIndex >= fCount)
-    then raise EListError.CreateFmt(SListIndexError, [CurIndex]);
-    if (NewIndex < 0) or (NewIndex >= fCount)
-    then raise EListError.CreateFmt(SListIndexError, [NewIndex]);
+  if CurIndex <> NewIndex then
+  begin
+    if (CurIndex < 0) or (CurIndex >= fCount) then
+      raise EListError.CreateFmt(SListIndexError, [CurIndex]);
+    if (NewIndex < 0) or (NewIndex >= fCount) then
+      raise EListError.CreateFmt(SListIndexError, [NewIndex]);
     Item := fItems[CurIndex];
     fItems[CurIndex] := nil;
     Delete(CurIndex);
@@ -2746,13 +2852,14 @@ end;
 
 function TGraphObjectList.First: TGraphObject;
 begin
-  if fCount > 0
-  then begin
+  if fCount > 0 then
+  begin
     Enum.Dir := +1;
     Enum.Current := 0;
     Result := fItems[0]
   end
-  else begin
+  else
+  begin
     Enum.Dir := 0;
     Result := nil;
   end;
@@ -2761,38 +2868,41 @@ end;
 function TGraphObjectList.Prior: TGraphObject;
 begin
   Dec(Enum.Current);
-  if (Enum.Current >= 0) and (Enum.Current < fCount)
-  then Result := fItems[Enum.Current]
-  else if Enum.Dir <> 0
-  then begin
+  if (Enum.Current >= 0) and (Enum.Current < fCount) then
+    Result := fItems[Enum.Current]
+  else if Enum.Dir <> 0 then
+  begin
     Enum.Dir := 0;
     Result := nil;
   end
-  else raise EListError.Create(SListEnumerateError);
+  else
+    raise EListError.Create(SListEnumerateError);
 end;
 
 function TGraphObjectList.Next: TGraphObject;
 begin
   Inc(Enum.Current);
-  if (Enum.Current >= 0) and (Enum.Current < fCount)
-  then Result := fItems[Enum.Current]
-  else if Enum.Dir <> 0
-  then begin
+  if (Enum.Current >= 0) and (Enum.Current < fCount) then
+    Result := fItems[Enum.Current]
+  else if Enum.Dir <> 0 then
+  begin
     Enum.Dir := 0;
     Result := nil;
   end
-  else raise EListError.Create(SListEnumerateError);
+  else
+    raise EListError.Create(SListEnumerateError);
 end;
 
 function TGraphObjectList.Last: TGraphObject;
 begin
-  if fCount > 0
-  then begin
+  if fCount > 0 then
+  begin
     Enum.Dir := -1;
     Enum.Current := fCount - 1;
     Result := fItems[fCount - 1]
   end
-  else begin
+  else
+  begin
     Enum.Dir := 0;
     Result := nil;
   end;
@@ -2801,10 +2911,10 @@ end;
 function TGraphObjectList.Push: Boolean;
 begin
   Result := False;
-  if Enum.Dir <> 0
-  then begin
-    if EnumStackPos = Length(EnumStack)
-    then SetLength(EnumStack, EnumStackPos + 1);
+  if Enum.Dir <> 0 then
+  begin
+    if EnumStackPos = Length(EnumStack) then
+      SetLength(EnumStack, EnumStackPos + 1);
     EnumStack[EnumStackPos] := Enum;
     Inc(EnumStackPos);
     Result := True;
@@ -2814,8 +2924,8 @@ end;
 function TGraphObjectList.Pop: Boolean;
 begin
   Result := False;
-  if EnumStackPos > 0
-  then begin
+  if EnumStackPos > 0 then
+  begin
     Dec(EnumStackPos);
     Enum := EnumStack[EnumStackPos];
     Result := True;
@@ -2837,7 +2947,8 @@ begin
     AGraphObject.SaveToStream(Stream);
     Stream.Seek(0, soFromBeginning);
     LoadFromStream(Stream);
-  finally Stream.Free;
+  finally
+    Stream.Free;
   end;
   Data := AGraphObject.Data;
   LinkInputList.Assign(AGraphObject.LinkInputList);
@@ -2845,7 +2956,8 @@ begin
   DependentList.Assign(AGraphObject.DependentList);
   Owner.Objects.Replace(AGraphObject, Self);
   Owner.SelectedObjects.Replace(AGraphObject, Self);
-  for I := Owner.Objects.Count - 1 downto 0 do Owner.Objects[I].ReplaceObject(AGraphObject, Self);
+  for I := Owner.Objects.Count - 1 downto 0 do
+    Owner.Objects[I].ReplaceObject(AGraphObject, Self);
 end;
 
 constructor TGraphObject.CreateFromStream(AOwner: TSimpleGraph; AStream: TStream);
@@ -2892,16 +3004,17 @@ end;
 procedure TGraphObject.AfterConstruction;
 begin
   inherited AfterConstruction;
-  if osConverting in States
-  then begin
+  if osConverting in States then
+  begin
     Exclude(fStates, osConverting);
     Exclude(fStates, osCreating);
     Initialize;
     Changed([gcView, gcData, gcPlacement]);
   end
-  else begin
-    if not(osLoading in States)
-    then begin
+  else
+  begin
+    if not(osLoading in States) then
+    begin
       fID := Owner.CreateUniqueID(Self);
       Owner.DoObjectInitInstance(Self);
     end;
@@ -2913,11 +3026,11 @@ end;
 
 procedure TGraphObject.BeforeDestruction;
 begin
-  if not(osDestroying in States)
-  then begin
+  if not(osDestroying in States) then
+  begin
     Include(fStates, osDestroying);
-    if not(osConverting in States)
-    then begin
+    if not(osConverting in States) then
+    begin
       Owner.Objects.Remove(Self);
       NotifyDependents(gdcRemoved);
     end;
@@ -2932,8 +3045,8 @@ end;
 
 procedure TGraphObject.Initialize;
 begin
-  if not(osLoading in States)
-  then LookupDependencies;
+  if not(osLoading in States) then
+    LookupDependencies;
   UpdateTextPlacement(True, 0, 0);
   QueryVisualRect(fVisualRect);
   NotifyDependents(gdcChanged);
@@ -2947,8 +3060,8 @@ end;
 
 procedure TGraphObject.ReplaceID(OldID, NewID: DWORD);
 begin
-  if ID = OldID
-  then fID := NewID;
+  if ID = OldID then
+    fID := NewID;
 end;
 
 procedure TGraphObject.ReplaceObject(OldObject, NewObject: TGraphObject);
@@ -2978,10 +3091,13 @@ var
   DependentObject: TGraphObject;
 begin
   DependentObject := DependentList.First;
-  while Assigned(DependentObject) do begin
+  while Assigned(DependentObject) do
+  begin
     DependentList.Push;
-    try DependentObject.UpdateDependencyTo(Self, Flag);
-    finally DependentList.Pop;
+    try
+      DependentObject.UpdateDependencyTo(Self, Flag);
+    finally
+      DependentList.Pop;
     end;
     DependentObject := DependentList.Next;
   end;
@@ -2996,30 +3112,31 @@ procedure TGraphObject.Changed(Flags: TGraphChangeFlags);
 var
   NewVisualRect: TRect;
 begin
-  if not IsUpdateLocked
-  then begin
-    if gcDependency in Flags
-    then UpdateDependencies;
-    if (gcText in Flags) and ((Text <> '') or (TextToShow <> ''))
-    then UpdateTextPlacement(True, 0, 0);
-    if gcPlacement in Flags
-    then NotifyDependents(gdcChanged);
-    if (gcView in Flags) and ((Flags * VisualRectFlags) <> [])
-    then begin
+  if not IsUpdateLocked then
+  begin
+    if gcDependency in Flags then
+      UpdateDependencies;
+    if (gcText in Flags) and ((Text <> '') or (TextToShow <> '')) then
+      UpdateTextPlacement(True, 0, 0);
+    if gcPlacement in Flags then
+      NotifyDependents(gdcChanged);
+    if (gcView in Flags) and ((Flags * VisualRectFlags) <> []) then
+    begin
       QueryVisualRect(NewVisualRect);
-      if not EqualRect(NewVisualRect, VisualRect)
-      then begin
+      if not EqualRect(NewVisualRect, VisualRect) then
+      begin
         Include(Flags, gcPlacement);
-        if gcView in Flags
-        then Invalidate;
+        if gcView in Flags then
+          Invalidate;
         fVisualRect := NewVisualRect;
       end;
     end;
-    if (gcData in Flags) or (gcPlacement in Flags)
-    then Owner.DoObjectChange(Self);
+    if (gcData in Flags) or (gcPlacement in Flags) then
+      Owner.DoObjectChange(Self);
     Owner.ObjectChanged(Self, Flags);
   end
-  else PendingChanges := PendingChanges + Flags;
+  else
+    PendingChanges := PendingChanges + Flags;
 end;
 
 procedure TGraphObject.BoundsChanged(dX, dY, dCX, dCY: Integer);
@@ -3028,18 +3145,19 @@ var
   SavedVisualRectFlags: TGraphChangeFlags;
 begin
   Shifted := (dCX = 0) and (dCY = 0);
-  if Text <> ''
-  then UpdateTextPlacement(not Shifted, dX, dY);
+  if Text <> '' then
+    UpdateTextPlacement(not Shifted, dX, dY);
   SavedVisualRectFlags := VisualRectFlags;
   try
-    if Shifted
-    then begin
+    if Shifted then
+    begin
       Invalidate;
       OffsetRect(fVisualRect, dX, dY);
       VisualRectFlags := VisualRectFlags - [gcData, gcPlacement];
     end;
     Changed([gcView, gcData, gcPlacement]);
-  finally VisualRectFlags := SavedVisualRectFlags;
+  finally
+    VisualRectFlags := SavedVisualRectFlags;
   end;
 end;
 
@@ -3050,26 +3168,32 @@ end;
 procedure TGraphObject.LinkInputChanged(GraphObject: TGraphObject; Action: TGraphObjectListAction);
 begin
   case Action of
-    glAdded: DependentList.Add(GraphObject);
-    glRemoved: DependentList.Remove(GraphObject);
+    glAdded:
+      DependentList.Add(GraphObject);
+    glRemoved:
+      DependentList.Remove(GraphObject);
   end;
 end;
 
 procedure TGraphObject.LinkOutputChanged(GraphObject: TGraphObject; Action: TGraphObjectListAction);
 begin
   case Action of
-    glAdded: DependentList.Add(GraphObject);
-    glRemoved: DependentList.Remove(GraphObject);
+    glAdded:
+      DependentList.Add(GraphObject);
+    glRemoved:
+      DependentList.Remove(GraphObject);
   end;
 end;
 
 procedure TGraphObject.ParentFontChanged;
 begin
-  if ParentFont
-  then begin
+  if ParentFont then
+  begin
     Font.OnChange := nil;
-    try Font.Assign(Owner.Font);
-    finally Font.OnChange := StyleChanged;
+    try
+      Font.Assign(Owner.Font);
+    finally
+      Font.OnChange := StyleChanged;
     end;
     Changed([gcView, gcText]);
   end;
@@ -3103,33 +3227,34 @@ procedure TGraphObject.MouseDown(Button: TMouseButton; Shift: TShiftState; const
 var
   HT: DWORD;
 begin
-  if Dragging
-  then EndDrag(True);
-  if Selected and (ssShift in Shift)
-  then Selected := False
-  else if not Selected and (goSelectable in Options)
-  then begin
-    if not(ssShift in Shift)
-    then Owner.SelectedObjects.Clear;
+  if Dragging then
+    EndDrag(True);
+  if Selected and (ssShift in Shift) then
+    Selected := False
+  else if not Selected and (goSelectable in Options) then
+  begin
+    if not(ssShift in Shift) then
+      Owner.SelectedObjects.Clear;
     Selected := True;
   end;
   HT := HitTest(Pt);
-  if (Button = mbLeft) and not(ssDouble in Shift) and Selected and not IsLocked
-  then BeginDrag(Pt, HT);
+  if (Button = mbLeft) and not(ssDouble in Shift) and Selected and not IsLocked then
+    BeginDrag(Pt, HT);
   Screen.Cursor := QueryCursor(HT);
 end;
 
 procedure TGraphObject.MouseMove(Shift: TShiftState; const Pt: TPoint);
 begin
-  if Dragging
-  then DragTo(Pt, Owner.SnapToGrid xor (ssCtrl in Shift))
-  else Screen.Cursor := QueryCursor(HitTest(Pt));
+  if Dragging then
+    DragTo(Pt, Owner.SnapToGrid xor (ssCtrl in Shift))
+  else
+    Screen.Cursor := QueryCursor(HitTest(Pt));
 end;
 
 procedure TGraphObject.MouseUp(Button: TMouseButton; Shift: TShiftState; const Pt: TPoint);
 begin
-  if Dragging
-  then begin
+  if Dragging then
+  begin
     EndDrag(True);
     Screen.Cursor := QueryCursor(HitTest(Pt));
   end;
@@ -3145,36 +3270,46 @@ begin
   dX := 0;
   dY := 0;
   case Key of
-    VK_ESCAPE: begin
-        if Dragging
-        then begin
+    VK_ESCAPE:
+      begin
+        if Dragging then
+        begin
           Result := True;
           EndDrag(False);
         end;
       end;
-    VK_LEFT: if (Shift - [ssCtrl]) <= [ssShift] then dX := -1;
-    VK_RIGHT: if (Shift - [ssCtrl]) <= [ssShift] then dX := +1;
-    VK_UP: if (Shift - [ssCtrl]) <= [ssShift] then dY := -1;
-    VK_DOWN: if (Shift - [ssCtrl]) <= [ssShift] then dY := +1;
+    VK_LEFT:
+      if (Shift - [ssCtrl]) <= [ssShift] then
+        dX := -1;
+    VK_RIGHT:
+      if (Shift - [ssCtrl]) <= [ssShift] then
+        dX := +1;
+    VK_UP:
+      if (Shift - [ssCtrl]) <= [ssShift] then
+        dY := -1;
+    VK_DOWN:
+      if (Shift - [ssCtrl]) <= [ssShift] then
+        dY := +1;
   end;
-  if (dX <> 0) or (dY <> 0)
-  then begin
-    if Owner.SnapToGrid xor (ssCtrl in Shift)
-    then begin
+  if (dX <> 0) or (dY <> 0) then
+  begin
+    if Owner.SnapToGrid xor (ssCtrl in Shift) then
+    begin
       dX := dX * Owner.GridSize;
       dY := dY * Owner.GridSize;
     end;
-    if ssShift in Shift
-    then begin
+    if ssShift in Shift then
+    begin
       Mobility := [osRight, osBottom];
       HT := GHT_BOTTOMRIGHT;
     end
-    else begin
+    else
+    begin
       Mobility := [osLeft, osTop, osRight, osBottom];
       HT := GHT_CLIENT;
     end;
-    if Owner.GraphConstraints.ConfineOffset(dX, dY, Mobility)
-    then OffsetHitTest(HT, dX, dY);
+    if Owner.GraphConstraints.ConfineOffset(dX, dY, Mobility) then
+      OffsetHitTest(HT, dX, dY);
     Result := True;
   end;
 end;
@@ -3182,12 +3317,12 @@ end;
 function TGraphObject.BeginDrag(const Pt: TPoint; HT: DWORD): Boolean;
 begin
   Result := False;
-  if not(osDragDisabled in States) and (not Assigned(Owner.DragSource) or (Owner.DragSource = Self))
-  then begin
-    if HT = $FFFFFFFF
-    then HT := HitTest(Pt);
-    if Owner.BeginDragObject(Self, Pt, HT)
-    then begin
+  if not(osDragDisabled in States) and (not Assigned(Owner.DragSource) or (Owner.DragSource = Self)) then
+  begin
+    if HT = $FFFFFFFF then
+      HT := HitTest(Pt);
+    if Owner.BeginDragObject(Self, Pt, HT) then
+    begin
       Include(fStates, osDragging);
       Changed([gcView]);
       Result := True;
@@ -3197,18 +3332,19 @@ end;
 
 function TGraphObject.DragTo(const Pt: TPoint; SnapToGrid: Boolean): Boolean;
 begin
-  with Owner.DragTargetPt do Result := DragBy(Pt.X - X, Pt.Y - Y, SnapToGrid);
+  with Owner.DragTargetPt do
+    Result := DragBy(Pt.X - X, Pt.Y - Y, SnapToGrid);
 end;
 
 function TGraphObject.DragBy(dX, dY: Integer; SnapToGrid: Boolean): Boolean;
 begin
   Result := False;
-  if Owner.DragSource = Self
-  then begin
-    if (dX <> 0) or (dY <> 0)
-    then begin
-      if SnapToGrid
-      then SnapHitTestOffset(Owner.DragHitTest, dX, dY);
+  if Owner.DragSource = Self then
+  begin
+    if (dX <> 0) or (dY <> 0) then
+    begin
+      if SnapToGrid then
+        SnapHitTestOffset(Owner.DragHitTest, dX, dY);
       Owner.PerformDragBy(dX, dY);
     end;
     Result := True;
@@ -3218,8 +3354,8 @@ end;
 function TGraphObject.EndDrag(Accept: Boolean): Boolean;
 begin
   Result := False;
-  if Owner.DragSource = Self
-  then begin
+  if Owner.DragSource = Self then
+  begin
     Exclude(fStates, osDragging);
     Changed([gcView]);
     Owner.EndDragObject(Accept);
@@ -3230,8 +3366,8 @@ end;
 function TGraphObject.BeginFollowDrag(HT: DWORD): Boolean;
 begin
   Result := False;
-  if not(osDragDisabled in States) or IsLocked
-  then begin
+  if not(osDragDisabled in States) or IsLocked then
+  begin
     Include(fStates, osDragging);
     Changed([gcView]);
     Result := True;
@@ -3241,8 +3377,8 @@ end;
 function TGraphObject.EndFollowDrag: Boolean;
 begin
   Result := False;
-  if Dragging
-  then begin
+  if Dragging then
+  begin
     Exclude(fStates, osDragging);
     Changed([gcView]);
     Result := True;
@@ -3251,16 +3387,16 @@ end;
 
 procedure TGraphObject.DisableDrag;
 begin
-  if DragDisableCount = 0
-  then Include(fStates, osDragDisabled);
+  if DragDisableCount = 0 then
+    Include(fStates, osDragDisabled);
   Inc(DragDisableCount);
 end;
 
 procedure TGraphObject.EnableDrag;
 begin
   Dec(DragDisableCount);
-  if DragDisableCount = 0
-  then Exclude(fStates, osDragDisabled);
+  if DragDisableCount = 0 then
+    Exclude(fStates, osDragDisabled);
 end;
 
 function TGraphObject.IsFontStored: Boolean;
@@ -3275,25 +3411,28 @@ end;
 
 procedure TGraphObject.SetParentFont(Value: Boolean);
 begin
-  if ParentFont <> Value
-  then begin
+  if ParentFont <> Value then
+  begin
     fParentFont := Value;
-    if ParentFont
-    then begin
+    if ParentFont then
+    begin
       Font.OnChange := nil;
-      try Font.Assign(Owner.Font);
-      finally Font.OnChange := StyleChanged;
+      try
+        Font.Assign(Owner.Font);
+      finally
+        Font.OnChange := StyleChanged;
       end;
       Changed([gcView, gcData, gcText]);
     end
-    else Changed([gcData]);
+    else
+      Changed([gcData]);
   end;
 end;
 
 procedure TGraphObject.SetOptions(Value: TGraphObjectOptions);
 begin
-  if Options <> Value
-  then begin
+  if Options <> Value then
+  begin
     fOptions := Value;
     Changed([gcView, gcData]);
   end;
@@ -3301,8 +3440,8 @@ end;
 
 procedure TGraphObject.SetHasCustomData(Value: Boolean);
 begin
-  if HasCustomData <> Value
-  then begin
+  if HasCustomData <> Value then
+  begin
     fHasCustomData := Value;
     Changed([gcData]);
   end;
@@ -3320,8 +3459,8 @@ end;
 
 procedure TGraphObject.SetText(const Value: String);
 begin
-  if Text <> Value
-  then begin
+  if Text <> Value then
+  begin
     fText := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -3329,8 +3468,8 @@ end;
 
 procedure TGraphObject.SetHint(const Value: String);
 begin
-  if Hint <> Value
-  then begin
+  if Hint <> Value then
+  begin
     fHint := Value;
     Changed([gcData]);
   end;
@@ -3343,29 +3482,30 @@ end;
 
 procedure TGraphObject.SetZOrder(Value: Integer);
 begin
-  if (Value < 0) or (Value >= Owner.Objects.Count)
-  then Value := Owner.Objects.Count - 1;
+  if (Value < 0) or (Value >= Owner.Objects.Count) then
+    Value := Owner.Objects.Count - 1;
   Owner.Objects.Move(ZOrder, Value);
 end;
 
 procedure TGraphObject.SetSelected(Value: Boolean);
 begin
-  if not(goSelectable in Options)
-  then Value := False;
-  if Selected <> Value
-  then begin
+  if not(goSelectable in Options) then
+    Value := False;
+  if Selected <> Value then
+  begin
     fSelected := Value;
-    if Selected
-    then Owner.SelectedObjects.Add(Self)
-    else Owner.SelectedObjects.Remove(Self);
+    if Selected then
+      Owner.SelectedObjects.Add(Self)
+    else
+      Owner.SelectedObjects.Remove(Self);
     Changed([gcView]);
   end;
 end;
 
 procedure TGraphObject.SetVisible(Value: Boolean);
 begin
-  if Visible <> Value
-  then begin
+  if Visible <> Value then
+  begin
     fVisible := Value;
     Changed([gcView, gcData]);
   end;
@@ -3373,24 +3513,25 @@ end;
 
 procedure TGraphObject.StyleChanged(Sender: TObject);
 begin
-  if Sender = Font
-  then begin
+  if Sender = Font then
+  begin
     fParentFont := False;
     Changed([gcView, gcData, gcText]);
   end
-  else if Sender = Pen
-  then Changed([gcView, gcData, gcText, gcPlacement])
-  else Changed([gcView, gcData]);
+  else if Sender = Pen then
+    Changed([gcView, gcData, gcText, gcPlacement])
+  else
+    Changed([gcView, gcData]);
 end;
 
 procedure TGraphObject.ListChanged(Sender: TObject; GraphObject: TGraphObject; Action: TGraphObjectListAction);
 begin
-  if Sender = DependentList
-  then DependentChanged(GraphObject, Action)
-  else if Sender = LinkInputList
-  then LinkInputChanged(GraphObject, Action)
-  else if Sender = LinkOutputList
-  then LinkOutputChanged(GraphObject, Action);
+  if Sender = DependentList then
+    DependentChanged(GraphObject, Action)
+  else if Sender = LinkInputList then
+    LinkInputChanged(GraphObject, Action)
+  else if Sender = LinkOutputList then
+    LinkOutputChanged(GraphObject, Action);
 end;
 
 function TGraphObject.GetSelectedVisualRect: TRect;
@@ -3399,8 +3540,8 @@ var
 begin
   Result := VisualRect;
   d := Owner.MarkerSize - Pen.Width div 2;
-  if d > 0
-  then InflateRect(Result, d, d);
+  if d > 0 then
+    InflateRect(Result, d, d);
 end;
 
 function TGraphObject.GetShowing: Boolean;
@@ -3455,22 +3596,23 @@ end;
 
 function TGraphObject.IsLocked: Boolean;
 begin
-  if IsLink
-  then Result := Owner.LockLinks
-  else if IsNode
-  then Result := Owner.LockNodes
-  else Result := False;
+  if IsLink then
+    Result := Owner.LockLinks
+  else if IsNode then
+    Result := Owner.LockNodes
+  else
+    Result := False;
 end;
 
 function TGraphObject.IsVisibleOn(Canvas: TCanvas): Boolean;
 begin
-  if Showing
-  then
-    if not(Canvas is TMetafileCanvas)
-    then // Windows.RectVisible bug!!!
-        Result := RectVisible(Canvas.Handle, SelectedVisualRect)
-    else Result := True
-  else Result := False;
+  if Showing then
+    if not(Canvas is TMetafileCanvas) then // Windows.RectVisible bug!!!
+      Result := RectVisible(Canvas.Handle, SelectedVisualRect)
+    else
+      Result := True
+  else
+    Result := False;
 end;
 
 function TGraphObject.IsUpdateLocked: Boolean;
@@ -3481,8 +3623,8 @@ end;
 function TGraphObject.NeighborhoodRadius: Integer;
 begin
   Result := Pen.Width div 2;
-  if Result < Owner.MarkerSize
-  then Result := Owner.MarkerSize;
+  if Result < Owner.MarkerSize then
+    Result := Owner.MarkerSize;
 end;
 
 procedure TGraphObject.BringToFront;
@@ -3498,8 +3640,8 @@ end;
 function TGraphObject.Delete: Boolean;
 begin
   Result := False;
-  if (Self <> nil) and CanDelete
-  then begin
+  if (Self <> nil) and CanDelete then
+  begin
     Destroy;
     Result := True;
   end;
@@ -3514,11 +3656,11 @@ end;
 function TGraphObject.HitTest(const Pt: TPoint): DWORD;
 begin
   Result := GHT_NOWHERE;
-  if Showing and ((Selected and PtInRect(SelectedVisualRect, Pt)) or (not Selected and PtInRect(VisualRect, Pt)))
-  then begin
+  if Showing and ((Selected and PtInRect(SelectedVisualRect, Pt)) or (not Selected and PtInRect(VisualRect, Pt))) then
+  begin
     Result := QueryHitTest(Pt);
-    if (Result <> GHT_NOWHERE) and not(goSelectable in Options)
-    then Result := GHT_TRANSPARENT;
+    if (Result <> GHT_NOWHERE) and not(goSelectable in Options) then
+      Result := GHT_TRANSPARENT;
   end;
 end;
 
@@ -3529,18 +3671,19 @@ end;
 
 function TGraphObject.ContainsRect(const Rect: TRect): Boolean;
 begin
-  if Showing
-  then
-    if Selected
-    then Result := OverlappedRect(Rect, SelectedVisualRect)
-    else Result := OverlappedRect(Rect, VisualRect)
-  else Result := False;
+  if Showing then
+    if Selected then
+      Result := OverlappedRect(Rect, SelectedVisualRect)
+    else
+      Result := OverlappedRect(Rect, VisualRect)
+  else
+    Result := False;
 end;
 
 procedure TGraphObject.Assign(Source: TPersistent);
 begin
-  if Source is TGraphObject
-  then begin
+  if Source is TGraphObject then
+  begin
     BeginUpdate;
     try
       Text := TGraphObject(Source).Text;
@@ -3551,17 +3694,20 @@ begin
       ParentFont := TGraphObject(Source).ParentFont;
       Visible := TGraphObject(Source).Visible;
       Options := TGraphObject(Source).Options;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end
-  else inherited Assign(Source);
+  else
+    inherited Assign(Source);
 end;
 
 procedure TGraphObject.AssignTo(Dest: TPersistent);
 begin
-  if Dest is TGraphObject
-  then Dest.Assign(Self)
-  else inherited AssignTo(Dest);
+  if Dest is TGraphObject then
+    Dest.Assign(Self)
+  else
+    inherited AssignTo(Dest);
 end;
 
 procedure TGraphObject.DrawControlPoint(Canvas: TCanvas; const Pt: TPoint; Enabled: Boolean);
@@ -3570,8 +3716,8 @@ var
 begin
   R := MakeSquare(Pt, Owner.MarkerSize);
   Canvas.Rectangle(R.Left, R.Top, R.Right, R.Bottom);
-  if not Enabled
-  then begin
+  if not Enabled then
+  begin
     InflateRect(R, -2, -2);
     Canvas.Rectangle(R.Left, R.Top, R.Right, R.Bottom);
   end;
@@ -3579,35 +3725,36 @@ end;
 
 procedure TGraphObject.Draw(Canvas: TCanvas);
 begin
-  if IsVisibleOn(Canvas)
-  then begin
+  if IsVisibleOn(Canvas) then
+  begin
     Canvas.Brush := Brush;
     Canvas.Pen := Pen;
     Canvas.Font := Font;
     Owner.DoObjectBeforeDraw(Canvas, Self);
     DrawBody(Canvas);
-    if goShowCaption in Options
-    then DrawText(Canvas);
+    if goShowCaption in Options then
+      DrawText(Canvas);
     Owner.DoObjectAfterDraw(Canvas, Self);
   end;
 end;
 
 procedure TGraphObject.DrawState(Canvas: TCanvas);
 begin
-  if IsVisibleOn(Canvas)
-  then begin
-    if Dragging
-    then begin
+  if IsVisibleOn(Canvas) then
+  begin
+    if Dragging then
+    begin
       Canvas.Brush.Style := bsClear;
       Canvas.Pen.Mode := pmNot;
       Canvas.Pen.Style := psSolid;
-      if Pen.Width >= 2
-      then Canvas.Pen.Width := (Pen.Width - 1) div 2
-      else Canvas.Pen.Width := Pen.Width + 2;
+      if Pen.Width >= 2 then
+        Canvas.Pen.Width := (Pen.Width - 1) div 2
+      else
+        Canvas.Pen.Width := Pen.Width + 2;
       DrawHighlight(Canvas);
     end
-    else if Selected
-    then begin
+    else if Selected then
+    begin
       Canvas.Pen.Width := 1;
       Canvas.Pen.Mode := pmCopy;
       Canvas.Pen.Style := psInsideFrame;
@@ -3623,8 +3770,8 @@ function TGraphObject.ConvertTo(AnotherClass: TGraphObjectClass): TGraphObject;
 begin
   Result := Self;
   if Assigned(AnotherClass) and (ClassType <> AnotherClass) and
-    ((IsLink and AnotherClass.IsLink) or (IsNode and AnotherClass.IsNode))
-  then begin
+    ((IsLink and AnotherClass.IsLink) or (IsNode and AnotherClass.IsNode)) then
+  begin
     Result := AnotherClass.CreateAsReplacement(Self);
     Self.Free;
   end;
@@ -3643,13 +3790,16 @@ begin
         Streamable.G := Self;
         Stream.ReadComponent(Streamable);
         Self.fID := Streamable.ID;
-      finally Streamable.Free;
+      finally
+        Streamable.Free;
       end;
-    finally Exclude(fStates, osReading);
+    finally
+      Exclude(fStates, osReading);
     end;
-    if not(osCreating in States)
-    then Initialize;
-  finally EndUpdate;
+    if not(osCreating in States) then
+      Initialize;
+  finally
+    EndUpdate;
   end;
 end;
 
@@ -3664,16 +3814,18 @@ begin
       Streamable.G := Self;
       Streamable.ID := Self.ID;
       Stream.WriteComponent(Streamable);
-    finally Streamable.Free;
+    finally
+      Streamable.Free;
     end;
-  finally Exclude(fStates, osWriting);
+  finally
+    Exclude(fStates, osWriting);
   end;
 end;
 
 procedure TGraphObject.BeginUpdate;
 begin
-  if UpdateCount = 0
-  then begin
+  if UpdateCount = 0 then
+  begin
     Include(fStates, osUpdating);
     PendingChanges := [];
   end;
@@ -3683,11 +3835,11 @@ end;
 procedure TGraphObject.EndUpdate;
 begin
   Dec(UpdateCount);
-  if UpdateCount = 0
-  then begin
+  if UpdateCount = 0 then
+  begin
     Exclude(fStates, osUpdating);
-    if PendingChanges <> []
-    then Changed(PendingChanges);
+    if PendingChanges <> [] then
+      Changed(PendingChanges);
   end;
 end;
 
@@ -3708,14 +3860,15 @@ var
   CustomDataSize: Integer;
 begin
   Stream.Read(CustomDataSize, SizeOf(CustomDataSize));
-  if CustomDataSize > 0
-  then begin
+  if CustomDataSize > 0 then
+  begin
     TmpStream := TMemoryStream.Create;
     try
       TmpStream.CopyFrom(Stream, CustomDataSize);
       TmpStream.Seek(0, soFromBeginning);
       Owner.DoObjectRead(Self, TmpStream);
-    finally TmpStream.Free;
+    finally
+      TmpStream.Free;
     end;
   end;
 end;
@@ -3730,12 +3883,13 @@ begin
     Owner.DoObjectWrite(Self, TmpStream);
     CustomDataSize := TmpStream.Size;
     Stream.Write(CustomDataSize, SizeOf(CustomDataSize));
-    if CustomDataSize > 0
-    then begin
+    if CustomDataSize > 0 then
+    begin
       TmpStream.Seek(0, soFromBeginning);
       Stream.CopyFrom(TmpStream, CustomDataSize);
     end;
-  finally TmpStream.Free;
+  finally
+    TmpStream.Free;
   end;
 end;
 
@@ -3761,25 +3915,26 @@ var
   I: Integer;
 begin
   Create(AOwner);
-  if Assigned(ASource)
-  then AddPoint(ASource.FixHookAnchor);
-  for I := Low(Pts) to High(Pts) do AddPoint(Pts[I]);
-  if Assigned(ATarget)
-  then AddPoint(ATarget.FixHookAnchor);
-  if Assigned(ASource) and Assigned(ATarget)
-  then Link(ASource, ATarget)
-  else if Assigned(ASource)
-  then Hook(0, ASource)
-  else if Assigned(ATarget)
-  then Hook(PointCount - 1, ATarget);
-  if (Source <> ASource) or (Target <> ATarget)
-  then raise EGraphInvalidOperation.Create(SLinkCreateError);
+  if Assigned(ASource) then
+    AddPoint(ASource.FixHookAnchor);
+  for I := Low(Pts) to High(Pts) do
+    AddPoint(Pts[I]);
+  if Assigned(ATarget) then
+    AddPoint(ATarget.FixHookAnchor);
+  if Assigned(ASource) and Assigned(ATarget) then
+    Link(ASource, ATarget)
+  else if Assigned(ASource) then
+    Hook(0, ASource)
+  else if Assigned(ATarget) then
+    Hook(PointCount - 1, ATarget);
+  if (Source <> ASource) or (Target <> ATarget) then
+    raise EGraphInvalidOperation.Create(SLinkCreateError);
 end;
 
 destructor TGraphLink.Destroy;
 begin
-  if TextRegion <> 0
-  then DeleteObject(TextRegion);
+  if TextRegion <> 0 then
+    DeleteObject(TextRegion);
   SetLength(fPoints, 0);
   inherited Destroy;
 end;
@@ -3789,8 +3944,8 @@ begin
   BeginUpdate;
   try
     inherited Assign(Source);
-    if Source is TGraphLink
-    then begin
+    if Source is TGraphLink then
+    begin
       Polyline := TGraphLink(Source).Polyline;
       BeginStyle := TGraphLink(Source).BeginStyle;
       BeginSize := TGraphLink(Source).BeginSize;
@@ -3799,14 +3954,16 @@ begin
       LinkOptions := TGraphLink(Source).LinkOptions;
       TextPosition := TGraphLink(Source).TextPosition;
       TextSpacing := TGraphLink(Source).TextSpacing;
-      if Assigned(TGraphLink(Source).Source) and Assigned(TGraphLink(Source).Target)
-      then Link(TGraphLink(Source).Source, TGraphLink(Source).Target)
-      else begin
+      if Assigned(TGraphLink(Source).Source) and Assigned(TGraphLink(Source).Target) then
+        Link(TGraphLink(Source).Source, TGraphLink(Source).Target)
+      else
+      begin
         Source := TGraphLink(Source).Source;
         Target := TGraphLink(Source).Target;
       end;
     end;
-  finally EndUpdate;
+  finally
+    EndUpdate;
   end;
 end;
 
@@ -3821,26 +3978,28 @@ function TGraphLink.ContainsRect(const Rect: TRect): Boolean;
     Intersects := IntersectLinePolyline(Pt, Angle, Polyline);
     try
       for I := 0 to Length(Intersects) - 1 do
-        if PtInRect(Rect, Intersects[I])
-        then begin
+        if PtInRect(Rect, Intersects[I]) then
+        begin
           Result := True;
           Break;
         end;
-    finally SetLength(Intersects, 0);
+    finally
+      SetLength(Intersects, 0);
     end;
   end;
 
 var
   I: Integer;
 begin
-  if inherited ContainsRect(Rect)
-  then begin
-    if (TextRegion <> 0) and (goShowCaption in Options) and RectInRegion(TextRegion, Rect)
-    then Result := True
-    else begin
+  if inherited ContainsRect(Rect) then
+  begin
+    if (TextRegion <> 0) and (goShowCaption in Options) and RectInRegion(TextRegion, Rect) then
+      Result := True
+    else
+    begin
       for I := 0 to PointCount - 1 do
-        if PtInRect(Rect, Points[I])
-        then begin
+        if PtInRect(Rect, Points[I]) then
+        begin
           Result := True;
           Exit;
         end;
@@ -3848,15 +4007,19 @@ begin
         or ContainsEdge(Rect.BottomRight, Pi / 2)
     end;
   end
-  else Result := False;
+  else
+    Result := False;
 end;
 
 function TGraphLink.PointStyleOffset(Style: TLinkBeginEndStyle; Size: Integer): Integer;
 begin
   case Style of
-    lsArrow, lsArrowSimple: Result := 2 * (Size + Pen.Width);
-    lsCircle, lsDiamond: Result := (Size + Pen.Width + 1) div 2;
-  else Result := 0;
+    lsArrow, lsArrowSimple:
+      Result := 2 * (Size + Pen.Width);
+    lsCircle, lsDiamond:
+      Result := (Size + Pen.Width + 1) div 2;
+  else
+    Result := 0;
   end;
 end;
 
@@ -3868,25 +4031,29 @@ var
 begin
   Size := PointStyleOffset(Style, Size);
   case Style of
-    lsArrow: begin
+    lsArrow:
+      begin
         Pts[1] := Pt;
         Pts[2] := NextPointOfLine(Angle + Pi / 9, Pt, Size);
         Pts[3] := NextPointOfLine(Angle - Pi / 9, Pt, Size);
         Result := BoundsRectOfPoints(Pts);
       end;
-    lsArrowSimple: begin
+    lsArrowSimple:
+      begin
         Pts[1] := NextPointOfLine(Angle + Pi / 6, Pt, Size);
         Pts[2] := Pt;
         Pts[3] := NextPointOfLine(Angle - Pi / 6, Pt, Size);
         Result := BoundsRectOfPoints(Pts);
       end;
-    lsCircle, lsDiamond: begin
+    lsCircle, lsDiamond:
+      begin
         Result := MakeSquare(Pt, Size);
       end;
-  else Result := MakeSquare(Pt, 1);
+  else
+    Result := MakeSquare(Pt, 1);
   end;
-  if Pen.Style <> psInsideFrame
-  then begin
+  if Pen.Style <> psInsideFrame then
+  begin
     M := (Pen.Width div 2) + 1;
     InflateRect(Result, M, M);
   end;
@@ -3899,7 +4066,8 @@ var
 begin
   Size := PointStyleOffset(Style, Size);
   case Style of
-    lsArrow: begin
+    lsArrow:
+      begin
         Pts[1] := Pt;
         Pts[2] := NextPointOfLine(Angle + Pi / 9, Pt, Size);
         Pts[3] := NextPointOfLine(Angle, Pt, MulDiv(Size, 6, 10));
@@ -3907,18 +4075,21 @@ begin
         Canvas.Polygon(Pts);
         Result := Pts[3];
       end;
-    lsArrowSimple: begin
+    lsArrowSimple:
+      begin
         Pts[1] := NextPointOfLine(Angle + Pi / 6, Pt, Size);
         Pts[2] := Pt;
         Pts[3] := NextPointOfLine(Angle - Pi / 6, Pt, Size);
         Canvas.Polyline(Slice(Pts, 3));
         Result := Pt;
       end;
-    lsCircle: begin
+    lsCircle:
+      begin
         Canvas.Ellipse(Pt.X - Size, Pt.Y - Size, Pt.X + Size, Pt.Y + Size);
         Result := NextPointOfLine(Angle, Pt, Size);
       end;
-    lsDiamond: begin
+    lsDiamond:
+      begin
         Pts[1] := NextPointOfLine(Angle, Pt, Size);
         Pts[2] := NextPointOfLine(Angle + Pi / 2, Pt, Size);
         Pts[3] := NextPointOfLine(Angle, Pt, -Size);
@@ -3926,7 +4097,8 @@ begin
         Canvas.Polygon(Pts);
         Result := Pts[1];
       end;
-  else Result := Pt;
+  else
+    Result := Pt;
   end;
 end;
 
@@ -3936,7 +4108,7 @@ var
 begin
   DrawControlPoint(Canvas, fPoints[0], not(Owner.LockLinks or (gloFixedStartPoint in LinkOptions)));
   for I := 1 to PointCount - 2 do
-      DrawControlPoint(Canvas, fPoints[I], not(Owner.LockLinks or (gloFixedBreakPoints in LinkOptions)));
+    DrawControlPoint(Canvas, fPoints[I], not(Owner.LockLinks or (gloFixedBreakPoints in LinkOptions)));
   DrawControlPoint(Canvas, fPoints[PointCount - 1], not(Owner.LockLinks or (gloFixedEndPoint in LinkOptions)));
 end;
 
@@ -3945,22 +4117,25 @@ var
   PtRect: TRect;
   First, Last: Integer;
 begin
-  if PointCount > 1
-  then begin
-    if (MovingPoint >= 0) and (MovingPoint < PointCount)
-    then begin
-      if MovingPoint > 0
-      then First := MovingPoint - 1
-      else First := MovingPoint;
-      if MovingPoint < PointCount - 1
-      then Last := MovingPoint + 1
-      else Last := MovingPoint;
+  if PointCount > 1 then
+  begin
+    if (MovingPoint >= 0) and (MovingPoint < PointCount) then
+    begin
+      if MovingPoint > 0 then
+        First := MovingPoint - 1
+      else
+        First := MovingPoint;
+      if MovingPoint < PointCount - 1 then
+        Last := MovingPoint + 1
+      else
+        Last := MovingPoint;
       Canvas.Polyline(Copy(Polyline, First, Last - First + 1));
     end
-    else Canvas.Polyline(Polyline)
+    else
+      Canvas.Polyline(Polyline)
   end
-  else if PointCount = 1
-  then begin
+  else if PointCount = 1 then
+  begin
     PtRect := MakeSquare(Points[0], Canvas.Pen.Width);
     Canvas.Ellipse(PtRect.Left, PtRect.Top, PtRect.Right, PtRect.Bottom);
   end;
@@ -3974,21 +4149,23 @@ var
   TextFlags: Integer;
   BkMode, TextAlign: Integer;
 begin
-  if TextRegion <> 0
-  then begin
+  if TextRegion <> 0 then
+  begin
     GetObject(Canvas.Font.Handle, SizeOf(LogFont), @LogFont);
-    if Abs(TextAngle) > Pi / 2
-    then LogFont.lfEscapement := Round(-1800 * (TextAngle - Pi) / Pi)
-    else LogFont.lfEscapement := Round(-1800 * TextAngle / Pi);
+    if Abs(TextAngle) > Pi / 2 then
+      LogFont.lfEscapement := Round(-1800 * (TextAngle - Pi) / Pi)
+    else
+      LogFont.lfEscapement := Round(-1800 * TextAngle / Pi);
     LogFont.lfOrientation := LogFont.lfEscapement;
     LogFont.lfQuality := PROOF_QUALITY;
     DC := Canvas.Handle;
     FontHandle := SelectObject(DC, CreateFontIndirect(LogFont));
     BkMode := SetBkMode(DC, Transparent);
     TextAlign := SetTextAlign(DC, TA_BOTTOM or TA_CENTER);
-    if Owner.UseRightToLeftReading
-    then TextFlags := ETO_RTLREADING
-    else TextFlags := 0;
+    if Owner.UseRightToLeftReading then
+      TextFlags := ETO_RTLREADING
+    else
+      TextFlags := 0;
     ExtTextOut(DC, TextCenter.X, TextCenter.Y, TextFlags, nil, PChar(TextToShow), Length(TextToShow), nil);
     SetTextAlign(DC, TextAlign);
     SetBkMode(DC, BkMode);
@@ -4005,46 +4182,50 @@ var
   PtRect: TRect;
 begin
   ModifiedPolyline := nil;
-  if PointCount = 1
-  then begin
+  if PointCount = 1 then
+  begin
     PtRect := MakeSquare(Points[0], Pen.Width div 2);
-    while not IsRectEmpty(PtRect) do begin
+    while not IsRectEmpty(PtRect) do
+    begin
       Canvas.Ellipse(PtRect.Left, PtRect.Top, PtRect.Right, PtRect.Bottom);
       InflateRect(PtRect, -1, -1);
     end;
   end
-  else if PointCount >= 2
-  then begin
-    if (BeginStyle <> lsNone) or (EndStyle <> lsNone)
-    then begin
+  else if PointCount >= 2 then
+  begin
+    if (BeginStyle <> lsNone) or (EndStyle <> lsNone) then
+    begin
       OldPenStyle := Canvas.Pen.Style;
       Canvas.Pen.Style := psSolid;
       try
-        if BeginStyle <> lsNone
-        then begin
-          if ModifiedPolyline = nil
-          then ModifiedPolyline := Copy(Polyline, 0, PointCount);
+        if BeginStyle <> lsNone then
+        begin
+          if ModifiedPolyline = nil then
+            ModifiedPolyline := Copy(Polyline, 0, PointCount);
           Angle := LineSlopeAngle(fPoints[1], fPoints[0]);
           ModifiedPolyline[0] := DrawPointStyle(Canvas, fPoints[0], Angle, BeginStyle, BeginSize);
         end;
-        if EndStyle <> lsNone
-        then begin
-          if ModifiedPolyline = nil
-          then ModifiedPolyline := Copy(Polyline, 0, PointCount);
+        if EndStyle <> lsNone then
+        begin
+          if ModifiedPolyline = nil then
+            ModifiedPolyline := Copy(Polyline, 0, PointCount);
           Angle := LineSlopeAngle(fPoints[PointCount - 2], fPoints[PointCount - 1]);
           ModifiedPolyline[PointCount - 1] := DrawPointStyle(Canvas, fPoints[PointCount - 1], Angle, EndStyle,
             EndSize);;
         end;
-      finally Canvas.Pen.Style := OldPenStyle;
+      finally
+        Canvas.Pen.Style := OldPenStyle;
       end;
     end;
     OldBrushStyle := Canvas.Brush.Style;
     try
       Canvas.Brush.Style := bsClear;
-      if ModifiedPolyline <> nil
-      then Canvas.Polyline(ModifiedPolyline)
-      else Canvas.Polyline(Polyline);
-    finally Canvas.Brush.Style := OldBrushStyle;
+      if ModifiedPolyline <> nil then
+        Canvas.Polyline(ModifiedPolyline)
+      else
+        Canvas.Polyline(Polyline);
+    finally
+      Canvas.Brush.Style := OldBrushStyle;
     end;
   end;
   ModifiedPolyline := nil;
@@ -4069,21 +4250,21 @@ begin
   Rect := BoundsRect;
   Margin := (Pen.Width div 2) + 1;
   InflateRect(Rect, Margin, Margin);
-  if PointCount >= 2
-  then begin
-    if BeginStyle <> lsNone
-    then begin
+  if PointCount >= 2 then
+  begin
+    if BeginStyle <> lsNone then
+    begin
       Angle := LineSlopeAngle(fPoints[1], fPoints[0]);
       UnionRect(Rect, PointStyleRect(fPoints[0], Angle, BeginStyle, BeginSize));
     end;
-    if EndStyle <> lsNone
-    then begin
+    if EndStyle <> lsNone then
+    begin
       Angle := LineSlopeAngle(fPoints[PointCount - 2], fPoints[PointCount - 1]);
       UnionRect(Rect, PointStyleRect(fPoints[PointCount - 1], Angle, EndStyle, EndSize));
     end;
   end;
-  if (TextRegion <> 0) and (goShowCaption in Options)
-  then begin
+  if (TextRegion <> 0) and (goShowCaption in Options) then
+  begin
     GetRgnBox(TextRegion, TextRect);
     UnionRect(Rect, TextRect)
   end;
@@ -4098,14 +4279,16 @@ function TGraphLink.FixHookAnchor: TPoint;
 var
   MidPoint: Integer;
 begin
-  if PointCount > 0
-  then begin
+  if PointCount > 0 then
+  begin
     MidPoint := PointCount div 2;
-    if Odd(PointCount)
-    then Result := fPoints[MidPoint]
-    else Result := CenterOfPoints([fPoints[MidPoint - 1], fPoints[MidPoint]]);
+    if Odd(PointCount) then
+      Result := fPoints[MidPoint]
+    else
+      Result := CenterOfPoints([fPoints[MidPoint - 1], fPoints[MidPoint]]);
   end
-  else Result := CenterOfRect(Owner.VisibleBounds);
+  else
+    Result := CenterOfRect(Owner.VisibleBounds);
 end;
 
 function TGraphLink.RelativeHookAnchor(RefPt: TPoint): TPoint;
@@ -4124,25 +4307,28 @@ var
   Index: Integer;
 begin
   Line := IndexOfNearestLine(RefPt, MaxInt);
-  if Line >= 0
-  then begin
+  if Line >= 0 then
+  begin
     Pt := NearestPointOnLine(fPoints[Line], fPoints[Line + 1], RefPt);
     Index := IndexOfPoint(Pt, NeighborhoodRadius);
-    if Index < 0
-    then Result := Pt
-    else if ValidAnchor(Index)
-    then Result := fPoints[Index]
-    else begin
-      if (Index = 0) and ValidAnchor(Index + 1)
-      then Result := Points[Index + 1]
-      else if (Index = PointCount - 1) and ValidAnchor(Index - 1)
-      then Result := fPoints[Index - 1]
-      else Result := FixHookAnchor
+    if Index < 0 then
+      Result := Pt
+    else if ValidAnchor(Index) then
+      Result := fPoints[Index]
+    else
+    begin
+      if (Index = 0) and ValidAnchor(Index + 1) then
+        Result := Points[Index + 1]
+      else if (Index = PointCount - 1) and ValidAnchor(Index - 1) then
+        Result := fPoints[Index - 1]
+      else
+        Result := FixHookAnchor
     end;
   end
-  else if PointCount = 1
-  then Result := fPoints[0]
-  else Result := RefPt;
+  else if PointCount = 1 then
+    Result := fPoints[0]
+  else
+    Result := RefPt;
 end;
 
 function TGraphLink.IndexOfLongestLine: Integer;
@@ -4153,10 +4339,11 @@ var
 begin
   Result := -1;
   LongestLength := -MaxInt;
-  for I := 0 to PointCount - 2 do begin
+  for I := 0 to PointCount - 2 do
+  begin
     Length := LineLength(fPoints[I], fPoints[I + 1]);
-    if Length > LongestLength
-    then begin
+    if Length > LongestLength then
+    begin
       LongestLength := Length;
       Result := I;
     end;
@@ -4171,10 +4358,11 @@ var
 begin
   Result := -1;
   NearestDistance := MaxDouble;
-  for I := 0 to PointCount - 2 do begin
+  for I := 0 to PointCount - 2 do
+  begin
     Distance := DistanceToLine(fPoints[I], fPoints[I + 1], Pt);
-    if (Trunc(Distance) <= Neighborhood) and (Distance < NearestDistance)
-    then begin
+    if (Trunc(Distance) <= Neighborhood) and (Distance < NearestDistance) then
+    begin
       NearestDistance := Distance;
       Result := I;
     end;
@@ -4188,40 +4376,45 @@ var
 begin
   Neighborhood := NeighborhoodRadius;
   for I := PointCount - 1 downto 0 do
-    if PtInRect(MakeSquare(fPoints[I], Neighborhood), Pt)
-    then begin
-      if Selected
-      then Result := GHT_POINT or (I shl 16)
-      else Result := GHT_CLIENT;
+    if PtInRect(MakeSquare(fPoints[I], Neighborhood), Pt) then
+    begin
+      if Selected then
+        Result := GHT_POINT or (I shl 16)
+      else
+        Result := GHT_CLIENT;
       Exit;
     end;
   for I := 0 to PointCount - 2 do
-    if DistanceToLine(fPoints[I], fPoints[I + 1], Pt) <= Neighborhood
-    then begin
-      if Selected
-      then Result := GHT_LINE or (I shl 16) or GHT_CLIENT
-      else Result := GHT_CLIENT;
+    if DistanceToLine(fPoints[I], fPoints[I + 1], Pt) <= Neighborhood then
+    begin
+      if Selected then
+        Result := GHT_LINE or (I shl 16) or GHT_CLIENT
+      else
+        Result := GHT_CLIENT;
       Exit;
     end;
-  if (TextRegion <> 0) and (goShowCaption in Options) and PtInRegion(TextRegion, Pt.X, Pt.Y)
-  then Result := GHT_CAPTION or GHT_CLIENT
-  else Result := inherited QueryHitTest(Pt);
+  if (TextRegion <> 0) and (goShowCaption in Options) and PtInRegion(TextRegion, Pt.X, Pt.Y) then
+    Result := GHT_CAPTION or GHT_CLIENT
+  else
+    Result := inherited QueryHitTest(Pt);
 end;
 
 procedure TGraphLink.SnapHitTestOffset(HT: DWORD; var dX, dY: Integer);
 begin
-  if (HT and GHT_POINT) <> 0
-  then Owner.SnapOffset(fPoints[HiWord(HT)], dX, dY)
-  else if (HT and GHT_BODY_MASK) <> 0
-  then Owner.SnapOffset(fPoints[0], dX, dY)
-  else inherited SnapHitTestOffset(HT, dX, dY);
+  if (HT and GHT_POINT) <> 0 then
+    Owner.SnapOffset(fPoints[HiWord(HT)], dX, dY)
+  else if (HT and GHT_BODY_MASK) <> 0 then
+    Owner.SnapOffset(fPoints[0], dX, dY)
+  else
+    inherited SnapHitTestOffset(HT, dX, dY);
 end;
 
 function TGraphLink.QueryMobility(HT: DWORD): TObjectSides;
 begin
-  if (HT and (GHT_POINT or GHT_BODY_MASK)) <> 0
-  then Result := [osLeft, osTop, osRight, osBottom]
-  else Result := inherited QueryMobility(HT);
+  if (HT and (GHT_POINT or GHT_BODY_MASK)) <> 0 then
+    Result := [osLeft, osTop, osRight, osBottom]
+  else
+    Result := inherited QueryMobility(HT);
 end;
 
 function TGraphLink.OffsetHitTest(HT: DWORD; dX, dY: Integer): Boolean;
@@ -4231,12 +4424,13 @@ var
   ShiftRef: TPoint;
 begin
   Result := False;
-  if (HT and GHT_POINT) <> 0
-  then begin
+  if (HT and GHT_POINT) <> 0 then
+  begin
     Index := HiWord(HT);
-    if not IsFixedPoint(Index, True)
-    then begin
-      with fPoints[Index] do begin
+    if not IsFixedPoint(Index, True) then
+    begin
+      with fPoints[Index] do
+      begin
         Inc(X, dX);
         Inc(Y, dY);
       end;
@@ -4244,124 +4438,162 @@ begin
       Result := True;
     end;
   end
-  else if (HT and GHT_BODY_MASK) <> 0
-  then begin
+  else if (HT and GHT_BODY_MASK) <> 0 then
+  begin
     MovedPoints := 0;
     for Index := 0 to PointCount - 1 do
-      if not IsFixedPoint(Index, True)
-      then begin
-        with fPoints[Index] do begin
+      if not IsFixedPoint(Index, True) then
+      begin
+        with fPoints[Index] do
+        begin
           Inc(X, dX);
           Inc(Y, dY);
         end;
         Inc(MovedPoints);
       end;
-    if MovedPoints > 0
-    then begin
-      if (MovedPoints = PointCount) and not IsUpdateLocked
-      then BoundsChanged(dX, dY, 0, 0)
-      else Changed([gcView, gcData, gcText, gcPlacement]);
+    if MovedPoints > 0 then
+    begin
+      if (MovedPoints = PointCount) and not IsUpdateLocked then
+        BoundsChanged(dX, dY, 0, 0)
+      else
+        Changed([gcView, gcData, gcText, gcPlacement]);
       Result := True;
     end;
   end
-  else if (HT and GHT_SIDES_MASK) <> 0
-  then begin
+  else if (HT and GHT_SIDES_MASK) <> 0 then
+  begin
     case HT of
-      GHT_LEFT: with BoundsRect do begin
+      GHT_LEFT:
+        with BoundsRect do
+        begin
           ShiftRef.X := Right;
           ShiftRef.Y := (Top + Bottom) div 2;
           dX := -dX;
           dY := 0;
         end;
-      GHT_TOP: with BoundsRect do begin
+      GHT_TOP:
+        with BoundsRect do
+        begin
           ShiftRef.X := (Left + Right) div 2;
           ShiftRef.Y := Bottom;
           dX := 0;
           dY := -dY;
         end;
-      GHT_RIGHT: with BoundsRect do begin
+      GHT_RIGHT:
+        with BoundsRect do
+        begin
           ShiftRef.X := Left;
           ShiftRef.Y := (Top + Bottom) div 2;
           dY := 0;
         end;
-      GHT_BOTTOM: with BoundsRect do begin
+      GHT_BOTTOM:
+        with BoundsRect do
+        begin
           ShiftRef.X := (Left + Right) div 2;
           ShiftRef.Y := Top;
           dX := 0;
         end;
-      GHT_TOPLEFT: with BoundsRect do begin
+      GHT_TOPLEFT:
+        with BoundsRect do
+        begin
           ShiftRef.X := Right;
           ShiftRef.Y := Bottom;
           dX := -dX;
           dY := -dY;
         end;
-      GHT_TOPRIGHT: with BoundsRect do begin
+      GHT_TOPRIGHT:
+        with BoundsRect do
+        begin
           ShiftRef.X := Left;
           ShiftRef.Y := Bottom;
           dY := -dY;
         end;
-      GHT_BOTTOMLEFT: with BoundsRect do begin
+      GHT_BOTTOMLEFT:
+        with BoundsRect do
+        begin
           ShiftRef.X := Right;
           ShiftRef.Y := Top;
           dX := -dX;
         end;
-      GHT_BOTTOMRIGHT: with BoundsRect do begin
+      GHT_BOTTOMRIGHT:
+        with BoundsRect do
+        begin
           ShiftRef.X := Left;
           ShiftRef.Y := Top;
         end;
     end;
-    if CanMove
-    then begin
+    if CanMove then
+    begin
       ShiftPoints(fPoints, dX, dY, ShiftRef);
       Changed([gcView, gcData, gcText, gcPlacement]);
       Result := True;
     end;
   end
-  else inherited OffsetHitTest(HT, dX, dY);
+  else
+    inherited OffsetHitTest(HT, dX, dY);
 end;
 
 procedure TGraphLink.MoveBy(dX, dY: Integer);
 var
   I: Integer;
 begin
-  if (PointCount > 0) and ((dX <> 0) or (dY <> 0))
-  then begin
+  if (PointCount > 0) and ((dX <> 0) or (dY <> 0)) then
+  begin
     for I := 0 to PointCount - 1 do
-      with fPoints[I] do begin
+      with fPoints[I] do
+      begin
         Inc(X, dX);
         Inc(Y, dY);
       end;
-    if not IsUpdateLocked
-    then BoundsChanged(dX, dY, 0, 0)
-    else Changed([gcView, gcData, gcText, gcPlacement]);
+    if not IsUpdateLocked then
+      BoundsChanged(dX, dY, 0, 0)
+    else
+      Changed([gcView, gcData, gcText, gcPlacement]);
   end;
 end;
 
 function TGraphLink.BeginFollowDrag(HT: DWORD): Boolean;
 begin
-  if (HT and GHT_BODY_MASK) <> 0
-  then Result := inherited BeginFollowDrag(HT)
-  else Result := False;
+  if (HT and GHT_BODY_MASK) <> 0 then
+    Result := inherited BeginFollowDrag(HT)
+  else
+    Result := False;
 end;
 
 function TGraphLink.QueryCursor(HT: DWORD): TCursor;
 begin
   case LoWord(HT) and not GHT_CLIENT of
-    GHT_POINT: case ChangeMode of
-        lcmRemovePoint: Result := crXHair3;
-        lcmMovePoint: if AcceptingHook then Result := crXHairLink
-          else Result := crXHair2;
-      else Result := crHandPoint;
+    GHT_POINT:
+      case ChangeMode of
+        lcmRemovePoint:
+          Result := crXHair3;
+        lcmMovePoint:
+          if AcceptingHook then
+            Result := crXHairLink
+          else
+            Result := crXHair2;
+      else
+        Result := crHandPoint;
       end;
-    GHT_LINE: case ChangeMode of
-        lcmInsertPoint: Result := crXHair1;
-        lcmMovePolyline: Result := crSizeAll;
-      else Result := crHandPoint;
+    GHT_LINE:
+      case ChangeMode of
+        lcmInsertPoint:
+          Result := crXHair1;
+        lcmMovePolyline:
+          Result := crSizeAll;
+      else
+        Result := crHandPoint;
       end;
-    GHT_CAPTION: if ChangeMode = lcmMovePolyline then Result := crSizeAll
-      else Result := crHandPoint;
-  else if HT = GHT_CLIENT then Result := crHandPoint
-    else Result := inherited QueryCursor(HT);
+    GHT_CAPTION:
+      if ChangeMode = lcmMovePolyline then
+        Result := crSizeAll
+      else
+        Result := crHandPoint;
+  else
+    if HT = GHT_CLIENT then
+      Result := crHandPoint
+    else
+      Result := inherited QueryCursor(HT);
   end;
 end;
 
@@ -4372,19 +4604,25 @@ begin
   ChangeMode := lcmNone;
   Index := HiWord(HT);
   case LoWord(HT) and not GHT_CLIENT of
-    GHT_POINT: if not IsFixedPoint(Index, False) then begin
-        if ssAlt in Shift
-        then ChangeMode := lcmRemovePoint
-        else ChangeMode := lcmMovePoint;
+    GHT_POINT:
+      if not IsFixedPoint(Index, False) then
+      begin
+        if ssAlt in Shift then
+          ChangeMode := lcmRemovePoint
+        else
+          ChangeMode := lcmMovePoint;
       end;
-    GHT_LINE: if not(gloFixedBreakPoints in LinkOptions) then begin
-        if ssAlt in Shift
-        then ChangeMode := lcmInsertPoint
-        else if not IsFixedPoint(Index, True) and not IsFixedPoint(Index + 1, True)
-        then ChangeMode := lcmMovePolyline;
-      end;
-    GHT_CAPTION: if not(gloFixedBreakPoints in LinkOptions) and (HookedPointCount < PointCount) then
+    GHT_LINE:
+      if not(gloFixedBreakPoints in LinkOptions) then
+      begin
+        if ssAlt in Shift then
+          ChangeMode := lcmInsertPoint
+        else if not IsFixedPoint(Index, True) and not IsFixedPoint(Index + 1, True) then
           ChangeMode := lcmMovePolyline;
+      end;
+    GHT_CAPTION:
+      if not(gloFixedBreakPoints in LinkOptions) and (HookedPointCount < PointCount) then
+        ChangeMode := lcmMovePolyline;
   end;
 end;
 
@@ -4398,84 +4636,92 @@ var
 begin
   Handled := False;
   WasDragging := False;
-  if Dragging
-  then begin
+  if Dragging then
+  begin
     WasDragging := True;
     EndDrag(True);
   end;
   DragDisabled := False;
-  if WasDragging and (ssRight in Shift) and (ChangeMode = lcmMovePoint)
-  then begin
-    if Owner.SnapToGrid xor (ssCtrl in Shift)
-    then NewPt := Owner.SnapPoint(Pt)
-    else NewPt := Pt;
+  if WasDragging and (ssRight in Shift) and (ChangeMode = lcmMovePoint) then
+  begin
+    if Owner.SnapToGrid xor (ssCtrl in Shift) then
+      NewPt := Owner.SnapPoint(Pt)
+    else
+      NewPt := Pt;
     Owner.GraphConstraints.ConfinePt(NewPt);
-    if MovingPoint = 0
-    then begin
+    if MovingPoint = 0 then
+    begin
       BeginDrag(Pt, MakeLong(GHT_POINT, MovingPoint));
       InsertPoint(MovingPoint + 1, NewPt)
     end
-    else begin
+    else
+    begin
       BeginDrag(Pt, MakeLong(GHT_POINT, MovingPoint + 1));
       InsertPoint(MovingPoint, NewPt);
       Inc(fMovingPoint);
     end;
     Handled := True;
   end
-  else if (Button = mbLeft) and Selected and not IsLocked
-  then begin
+  else if (Button = mbLeft) and Selected and not IsLocked then
+  begin
     HT := HitTest(Pt);
     UpdateChangeMode(HT, Shift);
     case ChangeMode of
-      lcmMovePoint: begin
+      lcmMovePoint:
+        begin
           fMovingPoint := HiWord(HT);
           fHookingObject := HookedObjectOf(MovingPoint);
           fAcceptingHook := Assigned(fHookingObject);
           Unhook(fMovingPoint);
         end;
-      lcmRemovePoint: begin
+      lcmRemovePoint:
+        begin
           RemovePoint(HiWord(HT));
-          if PointCount = 0
-          then begin
+          if PointCount = 0 then
+          begin
             Free; // We don't need TSimpleGraph.OnCanRemoveObject event
             Exit;
           end;
           Handled := True;
         end;
-      lcmInsertPoint: begin
+      lcmInsertPoint:
+        begin
           fMovingPoint := AddBreakPoint(Pt);
-          if MovingPoint >= 0
-          then ChangeMode := lcmMovePoint
-          else Handled := True;
+          if MovingPoint >= 0 then
+            ChangeMode := lcmMovePoint
+          else
+            Handled := True;
         end;
-      lcmMovePolyline: fMovingPoint := -1;
-    else DisableDrag;
+      lcmMovePolyline:
+        fMovingPoint := -1;
+    else
+      DisableDrag;
       DragDisabled := True;
     end;
-    if Handled
-    then begin
-      if Dragging
-      then EndDrag(True);
+    if Handled then
+    begin
+      if Dragging then
+        EndDrag(True);
       Screen.Cursor := QueryCursor(HT);
     end;
   end;
-  if not Handled
-  then begin
+  if not Handled then
+  begin
     inherited MouseDown(Button, Shift, Pt);
-    if DragDisabled
-    then EnableDrag;
+    if DragDisabled then
+      EnableDrag;
   end;
 end;
 
 procedure TGraphLink.MouseMove(Shift: TShiftState; const Pt: TPoint);
 begin
-  if not Dragging and Selected and not IsLocked
-  then UpdateChangeMode(HitTest(Pt), Shift)
-  else if (ChangeMode = lcmMovePoint) and (MovingPoint in [0, PointCount - 1])
-  then begin
+  if not Dragging and Selected and not IsLocked then
+    UpdateChangeMode(HitTest(Pt), Shift)
+  else if (ChangeMode = lcmMovePoint) and (MovingPoint in [0, PointCount - 1]) then
+  begin
     fHookingObject := Owner.FindObjectAt(Pt.X, Pt.Y);
-    if (not(ssAlt in Shift) and CanHook(MovingPoint, HookingObject)) xor AcceptingHook
-    then begin
+    if (not(ssAlt in Shift) and CanHook(MovingPoint, HookingObject)) xor AcceptingHook then
+    begin
       fAcceptingHook := not fAcceptingHook;
       Screen.Cursor := QueryCursor(MakeLong(GHT_POINT, MovingPoint));
     end;
@@ -4485,11 +4731,11 @@ end;
 
 procedure TGraphLink.MouseUp(Button: TMouseButton; Shift: TShiftState; const Pt: TPoint);
 begin
-  if not Dragging or (Button <> mbRight) or (ChangeMode <> lcmMovePoint)
-  then begin
+  if not Dragging or (Button <> mbRight) or (ChangeMode <> lcmMovePoint) then
+  begin
     inherited MouseUp(Button, Shift, Pt);
-    if (ChangeMode = lcmMovePoint) and AcceptingHook
-    then Hook(MovingPoint, HookingObject);
+    if (ChangeMode = lcmMovePoint) and AcceptingHook then
+      Hook(MovingPoint, HookingObject);
     fMovingPoint := -1;
     fHookingObject := nil;
     fAcceptingHook := False;
@@ -4501,30 +4747,30 @@ function TGraphLink.CanHook(Index: Integer; GraphObject: TGraphObject): Boolean;
 begin
   Result := False;
   if Assigned(GraphObject) and (GraphObject <> Self) and
-    (not(GraphObject is TGraphLink) or (TGraphLink(GraphObject).HookedIndexOf(Self) < 0))
-  then begin
-    if Index = 0
-    then begin
-      if GraphObject = Source
-      then Result := True
-      else if CheckingLink or (GraphObject <> Target)
-      then begin
+    (not(GraphObject is TGraphLink) or (TGraphLink(GraphObject).HookedIndexOf(Self) < 0)) then
+  begin
+    if Index = 0 then
+    begin
+      if GraphObject = Source then
+        Result := True
+      else if CheckingLink or (GraphObject <> Target) then
+      begin
         Result := goLinkable in GraphObject.Options;
         Owner.DoCanHookLink(GraphObject, Self, Index, Result);
-        if Result and not CheckingLink and Assigned(Target)
-        then Owner.DoCanLinkObjects(Self, GraphObject, Target, Result);
+        if Result and not CheckingLink and Assigned(Target) then
+          Owner.DoCanLinkObjects(Self, GraphObject, Target, Result);
       end;
     end
-    else if Index >= PointCount - 1
-    then begin
-      if GraphObject = Target
-      then Result := True
-      else if CheckingLink or (GraphObject <> Source)
-      then begin
+    else if Index >= PointCount - 1 then
+    begin
+      if GraphObject = Target then
+        Result := True
+      else if CheckingLink or (GraphObject <> Source) then
+      begin
         Result := goLinkable in GraphObject.Options;
         Owner.DoCanHookLink(GraphObject, Self, Index, Result);
-        if Result and not CheckingLink and Assigned(Source)
-        then Owner.DoCanLinkObjects(Self, Source, GraphObject, Result);
+        if Result and not CheckingLink and Assigned(Source) then
+          Owner.DoCanLinkObjects(Self, Source, GraphObject, Result);
       end;
     end;
   end;
@@ -4533,45 +4779,47 @@ end;
 function TGraphLink.Hook(Index: Integer; GraphObject: TGraphObject): Boolean;
 begin
   Result := False;
-  if Assigned(GraphObject)
-  then begin
-    if Index = 0
-    then begin
-      if GraphObject = Source
-      then Result := True
-      else if CanHook(Index, GraphObject)
-      then begin
+  if Assigned(GraphObject) then
+  begin
+    if Index = 0 then
+    begin
+      if GraphObject = Source then
+        Result := True
+      else if CanHook(Index, GraphObject) then
+      begin
         BeginUpdate;
         try
           Unhook(Source);
-          if PointCount < 1
-          then InsertPoint(0, GraphObject.FixHookAnchor);
+          if PointCount < 1 then
+            InsertPoint(0, GraphObject.FixHookAnchor);
           fSource := GraphObject;
           SourceID := GraphObject.ID;
           GraphObject.LinkOutputList.Add(Self);
           Changed([gcView, gcData, gcDependency]);
-        finally EndUpdate;
+        finally
+          EndUpdate;
         end;
         Owner.DoObjectHook(GraphObject, Self, Index);
         Result := True;
       end;
     end
-    else if Index >= PointCount - 1
-    then begin
-      if GraphObject = Target
-      then Result := True
-      else if CanHook(Index, GraphObject)
-      then begin
+    else if Index >= PointCount - 1 then
+    begin
+      if GraphObject = Target then
+        Result := True
+      else if CanHook(Index, GraphObject) then
+      begin
         BeginUpdate;
         try
           Unhook(Target);
-          if PointCount < 2
-          then AddPoint(GraphObject.FixHookAnchor);
+          if PointCount < 2 then
+            AddPoint(GraphObject.FixHookAnchor);
           fTarget := GraphObject;
           TargetID := GraphObject.ID;
           GraphObject.LinkInputList.Add(Self);
           Changed([gcView, gcData, gcDependency]);
-        finally EndUpdate;
+        finally
+          EndUpdate;
         end;
         Owner.DoObjectHook(GraphObject, Self, Index);
         Result := True;
@@ -4583,25 +4831,25 @@ end;
 function TGraphLink.Unhook(GraphObject: TGraphObject): Integer;
 begin
   Result := -1;
-  if Assigned(GraphObject)
-  then begin
-    if fSource = GraphObject
-    then begin
+  if Assigned(GraphObject) then
+  begin
+    if fSource = GraphObject then
+    begin
       fSource := nil;
       SourceID := 0;
       Result := 0;
       GraphObject.LinkOutputList.Remove(Self);
     end;
-    if fTarget = GraphObject
-    then begin
+    if fTarget = GraphObject then
+    begin
       fTarget := nil;
       TargetID := 0;
       Result := PointCount - 1;
       GraphObject.LinkInputList.Remove(Self);
     end;
   end;
-  if Result >= 0
-  then begin
+  if Result >= 0 then
+  begin
     Changed([gcData]);
     Owner.DoObjectUnhook(GraphObject, Self, Result);
   end;
@@ -4610,10 +4858,10 @@ end;
 function TGraphLink.Unhook(Index: Integer): Boolean;
 begin
   Result := False;
-  if Index = 0
-  then Result := (Unhook(Source) >= 0)
-  else if Index = PointCount - 1
-  then Result := (Unhook(Target) >= 0);
+  if Index = 0 then
+    Result := (Unhook(Source) >= 0)
+  else if Index = PointCount - 1 then
+    Result := (Unhook(Target) >= 0);
 end;
 
 function TGraphLink.CanLink(ASource, ATarget: TGraphObject): Boolean;
@@ -4621,45 +4869,47 @@ begin
   Result := False;
   CheckingLink := True;
   try
-    if (ASource <> ATarget) and CanHook(0, ASource) and CanHook(PointCount - 1, ATarget)
-    then begin
+    if (ASource <> ATarget) and CanHook(0, ASource) and CanHook(PointCount - 1, ATarget) then
+    begin
       Result := True;
       Owner.DoCanLinkObjects(Self, ASource, ATarget, Result);
     end;
-  finally CheckingLink := False;
+  finally
+    CheckingLink := False;
   end;
 end;
 
 function TGraphLink.Link(ASource, ATarget: TGraphObject): Boolean;
 begin
   Result := False;
-  if CanLink(ASource, ATarget)
-  then begin
+  if CanLink(ASource, ATarget) then
+  begin
     BeginUpdate;
     try
-      if ASource <> Source
-      then begin
+      if ASource <> Source then
+      begin
         Unhook(Source);
-        if PointCount < 1
-        then InsertPoint(0, ASource.FixHookAnchor);
+        if PointCount < 1 then
+          InsertPoint(0, ASource.FixHookAnchor);
         fSource := ASource;
         SourceID := ASource.ID;
         ASource.LinkOutputList.Add(Self);
         Changed([gcView, gcData, gcDependency]);
         Owner.DoObjectHook(ASource, Self, 0);
       end;
-      if ATarget <> Target
-      then begin
+      if ATarget <> Target then
+      begin
         Unhook(Target);
-        if PointCount < 2
-        then AddPoint(ATarget.FixHookAnchor);
+        if PointCount < 2 then
+          AddPoint(ATarget.FixHookAnchor);
         fTarget := ATarget;
         TargetID := ATarget.ID;
         ATarget.LinkInputList.Add(Self);
         Changed([gcView, gcData, gcDependency]);
         Owner.DoObjectHook(ATarget, Self, PointCount - 1);
       end;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
 end;
@@ -4671,39 +4921,42 @@ var
   RecheckCount: Integer;
   StartPt, EndPt: TPoint;
 begin
-  if not UpdatingEndPoints and (PointCount >= 2) and (Assigned(Source) or Assigned(Target))
-  then begin
+  if not UpdatingEndPoints and (PointCount >= 2) and (Assigned(Source) or Assigned(Target)) then
+  begin
     UpdatingEndPoints := True;
     try
       Recheck := False;
       StartPt := Points[0];
       EndPt := Points[PointCount - 1];
-      if Assigned(Source)
-      then begin
-        if gloFixedAnchorStartPoint in LinkOptions
-        then fPoints[0] := Source.FixHookAnchor
-        else if not Assigned(Target) or (PointCount > 2)
-        then fPoints[0] := Source.RelativeHookAnchor(fPoints[1])
-        else begin
+      if Assigned(Source) then
+      begin
+        if gloFixedAnchorStartPoint in LinkOptions then
+          fPoints[0] := Source.FixHookAnchor
+        else if not Assigned(Target) or (PointCount > 2) then
+          fPoints[0] := Source.RelativeHookAnchor(fPoints[1])
+        else
+        begin
           fPoints[0] := Source.RelativeHookAnchor(Target.FixHookAnchor);
-          if Target is TGraphLink
-          then Recheck := True;
+          if Target is TGraphLink then
+            Recheck := True;
         end;
       end;
-      if Assigned(Target)
-      then begin
-        if gloFixedAnchorEndPoint in LinkOptions
-        then fPoints[PointCount - 1] := Target.FixHookAnchor
-        else if not Assigned(Source) or (PointCount > 2)
-        then fPoints[PointCount - 1] := Target.RelativeHookAnchor(fPoints[PointCount - 2])
-        else begin
+      if Assigned(Target) then
+      begin
+        if gloFixedAnchorEndPoint in LinkOptions then
+          fPoints[PointCount - 1] := Target.FixHookAnchor
+        else if not Assigned(Source) or (PointCount > 2) then
+          fPoints[PointCount - 1] := Target.RelativeHookAnchor(fPoints[PointCount - 2])
+        else
+        begin
           fPoints[PointCount - 1] := Target.RelativeHookAnchor(Source.FixHookAnchor);
-          if Source is TGraphLink
-          then Recheck := True;
+          if Source is TGraphLink then
+            Recheck := True;
         end;
       end;
       RecheckCount := 0;
-      while Recheck and (RecheckCount < 5) do begin
+      while Recheck and (RecheckCount < 5) do
+      begin
         Recheck := False;
         OldPt := fPoints[0];
         fPoints[0] := Source.RelativeHookAnchor(fPoints[1]);
@@ -4713,9 +4966,10 @@ begin
         Recheck := Recheck or not EqualPoint(OldPt, fPoints[PointCount - 1]);
         Inc(RecheckCount);
       end;
-      if not EqualPoint(StartPt, Points[0]) or not EqualPoint(EndPt, Points[PointCount - 1])
-      then Changed([gcView, gcText, gcPlacement]);
-    finally UpdatingEndPoints := False;
+      if not EqualPoint(StartPt, Points[0]) or not EqualPoint(EndPt, Points[PointCount - 1]) then
+        Changed([gcView, gcText, gcPlacement]);
+    finally
+      UpdatingEndPoints := False;
     end;
   end;
 end;
@@ -4723,18 +4977,18 @@ end;
 function TGraphLink.UpdateTextPlacement(Recalc: Boolean; dX, dY: Integer): Boolean;
 begin
   Result := False;
-  if Recalc
-  then begin
-    if fTextRegion <> 0
-    then begin
+  if Recalc then
+  begin
+    if fTextRegion <> 0 then
+    begin
       DeleteObject(TextRegion);
       fTextRegion := 0;
     end;
     fTextRegion := CreateTextRegion;
     Result := True;
   end
-  else if fTextRegion <> 0
-  then begin
+  else if fTextRegion <> 0 then
+  begin
     Inc(fTextCenter.X, dX);
     Inc(fTextCenter.Y, dY);
     OffsetRgn(fTextRegion, dX, dY);
@@ -4754,42 +5008,44 @@ var
 begin
   Result := 0;
   fTextToShow := '';
-  if (Text <> '') and (PointCount >= 2)
-  then begin
+  if (Text <> '') and (PointCount >= 2) then
+  begin
     fTextLine := TextPosition;
-    if (fTextLine < 0) or (fTextLine >= PointCount - 1)
-    then begin
+    if (fTextLine < 0) or (fTextLine >= PointCount - 1) then
+    begin
       fTextLine := IndexOfLongestLine;
-      if fTextLine < 0
-      then Exit;
+      if fTextLine < 0 then
+        Exit;
     end;
     StartMargin := Pen.Width + 1;
-    if fTextLine = 0
-    then Inc(StartMargin, PointStyleOffset(BeginStyle, BeginSize));
+    if fTextLine = 0 then
+      Inc(StartMargin, PointStyleOffset(BeginStyle, BeginSize));
     EndMargin := Pen.Width + 1;
-    if fTextLine = PointCount - 2
-    then Inc(EndMargin, PointStyleOffset(EndStyle, EndSize));
+    if fTextLine = PointCount - 2 then
+      Inc(EndMargin, PointStyleOffset(EndStyle, EndSize));
     fTextCenter := CenterOfPoints([fPoints[fTextLine], fPoints[fTextLine + 1]]);
     fTextAngle := LineSlopeAngle(fPoints[fTextLine], fPoints[fTextLine + 1]);
     LineWidth := Trunc(LineLength(fPoints[fTextLine], fPoints[fTextLine + 1]));
     Dec(LineWidth, StartMargin + EndMargin);
-    if LineWidth > 0
-    then begin
+    if LineWidth > 0 then
+    begin
       SetRect(TextRect, 0, 0, LineWidth, 0);
       SetString(fTextToShow, nil, Length(Text) + 8);
       StrCopy(PChar(fTextToShow), PChar(Text));
       Canvas := TCompatibleCanvas.Create;
       try
         Canvas.Font := Font;
-        Windows.DrawText(Canvas.Handle, PChar(fTextToShow), Length(Text), TextRect,
+        Winapi.Windows.DrawText(Canvas.Handle, PChar(fTextToShow), Length(Text), TextRect,
           Owner.DrawTextBiDiModeFlags(DrawTextFlags));
-      finally Canvas.Free;
+      finally
+        Canvas.Free;
       end;
       SetLength(fTextToShow, StrLen(PChar(fTextToShow)));
       Distance := TextSpacing + (Pen.Width + 1) div 2;
-      if (TextAngle > Pi / 2) or (TextAngle < -Pi / 2)
-      then Distance := TextRect.Top + Distance
-      else Distance := TextRect.Top - Distance;
+      if (TextAngle > Pi / 2) or (TextAngle < -Pi / 2) then
+        Distance := TextRect.Top + Distance
+      else
+        Distance := TextRect.Top - Distance;
       fTextCenter := NextPointOfLine(TextAngle - Pi / 2, fTextCenter, Distance);
       fTextCenter := NextPointOfLine(TextAngle, fTextCenter, (EndMargin - StartMargin) div 2);
       OffsetRect(TextRect, fTextCenter.X - TextRect.Right div 2, fTextCenter.Y - TextRect.Bottom);
@@ -4797,9 +5053,10 @@ begin
       RgnPts[2] := Point(TextRect.Right, TextRect.Top);
       RgnPts[3] := TextRect.BottomRight;
       RgnPts[4] := Point(TextRect.Left, TextRect.Bottom);
-      if Abs(TextAngle) > Pi / 2
-      then RotatePoints(RgnPts, TextAngle - Pi, TextCenter)
-      else RotatePoints(RgnPts, TextAngle, TextCenter);
+      if Abs(TextAngle) > Pi / 2 then
+        RotatePoints(RgnPts, TextAngle - Pi, TextCenter)
+      else
+        RotatePoints(RgnPts, TextAngle, TextCenter);
       Result := CreatePolygonRgn(RgnPts, 4, ALTERNATE);
     end;
   end;
@@ -4808,23 +5065,24 @@ end;
 function TGraphLink.HookedPointCount: Integer;
 begin
   Result := 0;
-  if Assigned(Source)
-  then Inc(Result);
-  if Assigned(Target)
-  then Inc(Result);
+  if Assigned(Source) then
+    Inc(Result);
+  if Assigned(Target) then
+    Inc(Result);
 end;
 
 function TGraphLink.IsFixedPoint(Index: Integer; HookedPointsAsFixed: Boolean): Boolean;
 begin
-  if (Index > 0) and (Index < PointCount - 1)
-  then Result := (gloFixedBreakPoints in LinkOptions)
-  else if (Index = 0) and (gloFixedStartPoint in LinkOptions)
-  then Result := True
-  else if (Index = PointCount - 1) and (gloFixedEndPoint in LinkOptions)
-  then Result := True
-  else if HookedPointsAsFixed and IsHookedPoint(Index)
-  then Result := True
-  else Result := False;
+  if (Index > 0) and (Index < PointCount - 1) then
+    Result := (gloFixedBreakPoints in LinkOptions)
+  else if (Index = 0) and (gloFixedStartPoint in LinkOptions) then
+    Result := True
+  else if (Index = PointCount - 1) and (gloFixedEndPoint in LinkOptions) then
+    Result := True
+  else if HookedPointsAsFixed and IsHookedPoint(Index) then
+    Result := True
+  else
+    Result := False;
 end;
 
 function TGraphLink.IsHookedPoint(Index: Integer): Boolean;
@@ -4834,30 +5092,31 @@ end;
 
 function TGraphLink.HookedObjectOf(Index: Integer): TGraphObject;
 begin
-  if Index = PointCount - 1
-  then Result := Target
-  else if Index = 0
-  then Result := Source
-  else Result := nil;
+  if Index = PointCount - 1 then
+    Result := Target
+  else if Index = 0 then
+    Result := Source
+  else
+    Result := nil;
 end;
 
 function TGraphLink.HookedIndexOf(GraphObject: TGraphObject): Integer;
 begin
   Result := -1;
-  if Assigned(GraphObject)
-  then begin
-    if GraphObject = Source
-    then Result := 0
-    else if GraphObject = Target
-    then Result := PointCount - 1;
+  if Assigned(GraphObject) then
+  begin
+    if GraphObject = Source then
+      Result := 0
+    else if GraphObject = Target then
+      Result := PointCount - 1;
   end;
 end;
 
 function TGraphLink.AddPoint(const Pt: TPoint): Integer;
 begin
   Unhook(Target);
-  if Length(fPoints) = fPointCount
-  then SetLength(fPoints, fPointCount + 1);
+  if Length(fPoints) = fPointCount then
+    SetLength(fPoints, fPointCount + 1);
   Result := fPointCount;
   fPoints[Result] := Pt;
   Inc(fPointCount);
@@ -4868,16 +5127,17 @@ procedure TGraphLink.InsertPoint(Index: Integer; const Pt: TPoint);
 var
   I: Integer;
 begin
-  if Index < 0
-  then begin
+  if Index < 0 then
+  begin
     Index := 0;
     Unhook(Index);
   end
-  else if Index > fPointCount
-  then Index := fPointCount;
-  if Length(fPoints) = fPointCount
-  then SetLength(fPoints, fPointCount + 1);
-  for I := fPointCount - 1 downto Index do fPoints[I + 1] := fPoints[I];
+  else if Index > fPointCount then
+    Index := fPointCount;
+  if Length(fPoints) = fPointCount then
+    SetLength(fPoints, fPointCount + 1);
+  for I := fPointCount - 1 downto Index do
+    fPoints[I + 1] := fPoints[I];
   fPoints[Index] := Pt;
   Inc(fPointCount);
   Changed([gcView, gcData, gcText, gcPlacement]);
@@ -4887,10 +5147,11 @@ procedure TGraphLink.RemovePoint(Index: Integer);
 var
   I: Integer;
 begin
-  if (Index >= 0) and (Index < fPointCount)
-  then begin
+  if (Index >= 0) and (Index < fPointCount) then
+  begin
     Unhook(Index);
-    for I := Index to fPointCount - 2 do fPoints[I] := fPoints[I + 1];
+    for I := Index to fPointCount - 2 do
+      fPoints[I] := fPoints[I + 1];
     Dec(fPointCount);
     SetLength(fPoints, fPointCount);
     Changed([gcView, gcData, gcText, gcPlacement]);
@@ -4905,8 +5166,8 @@ begin
   Result := -1;
   NeighborhoodArea := MakeSquare(Pt, Neighborhood);
   for I := 0 to fPointCount - 1 do
-    if PtInRect(NeighborhoodArea, fPoints[I])
-    then begin
+    if PtInRect(NeighborhoodArea, fPoints[I]) then
+    begin
       Result := I;
       Break;
     end;
@@ -4915,8 +5176,8 @@ end;
 function TGraphLink.AddBreakPoint(const Pt: TPoint): Integer;
 begin
   Result := IndexOfNearestLine(Pt, Pen.Width div 2 + Owner.MarkerSize) + 1;
-  if Result > 0
-  then InsertPoint(Result, Pt);
+  if Result > 0 then
+    InsertPoint(Result, Pt);
 end;
 
 function TGraphLink.NormalizeBreakPoints(Options: TLinkNormalizeOptions): Boolean;
@@ -4926,45 +5187,52 @@ var
   LastAngle, Angle: Double;
 begin
   Result := False;
-  if (PointCount > 2) and (Options <> [])
-  then begin
+  if (PointCount > 2) and (Options <> []) then
+  begin
     BeginUpdate;
     try
       // Delete breakpoints on same point
-      if lnoDeleteSamePoint in Options
-      then begin
+      if lnoDeleteSamePoint in Options then
+      begin
         Neighborhood := NeighborhoodRadius;
         I := 1;
-        while I < PointCount do begin
-          if LineLength(Points[I - 1], Points[I]) <= Neighborhood
-          then begin
-            if I = PointCount - 1
-            then RemovePoint(I - 1)
-            else RemovePoint(I);
+        while I < PointCount do
+        begin
+          if LineLength(Points[I - 1], Points[I]) <= Neighborhood then
+          begin
+            if I = PointCount - 1 then
+              RemovePoint(I - 1)
+            else
+              RemovePoint(I);
             Result := True;
           end
-          else Inc(I);
+          else
+            Inc(I);
         end;
       end;
       // Delete breakpoints on a straight line
-      if lnoDeleteSameAngle in Options
-      then begin
+      if lnoDeleteSameAngle in Options then
+      begin
         LastAngle := LineSlopeAngle(Points[0], Points[1]);
         I := 2;
-        while I < PointCount do begin
+        while I < PointCount do
+        begin
           Angle := LineSlopeAngle(Points[I - 1], Points[I]);
-          if Abs(Angle - LastAngle) < 0.05 * Pi
-          then begin
-            if I = PointCount - 1
-            then RemovePoint(I - 1)
-            else RemovePoint(I);
+          if Abs(Angle - LastAngle) < 0.05 * Pi then
+          begin
+            if I = PointCount - 1 then
+              RemovePoint(I - 1)
+            else
+              RemovePoint(I);
             Result := True;
           end
-          else Inc(I);
+          else
+            Inc(I);
           LastAngle := Angle;
         end;
       end;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
 end;
@@ -4980,17 +5248,18 @@ var
   NewPolyline: TPoints;
 begin
   Result := False;
-  if CanMove and (PointCount > 1)
-  then begin
+  if CanMove and (PointCount > 1) then
+  begin
     NewPolyline := Copy(Polyline, 0, PointCount);
     try
       RotatePoints(NewPolyline, Angle, Origin);
-      if Owner.GraphConstraints.WithinBounds(NewPolyline)
-      then begin
+      if Owner.GraphConstraints.WithinBounds(NewPolyline) then
+      begin
         Polyline := NewPolyline;
         Result := True;
       end;
-    finally SetLength(NewPolyline, 0);
+    finally
+      SetLength(NewPolyline, 0);
     end;
   end;
 end;
@@ -5000,17 +5269,18 @@ var
   NewPolyline: TPoints;
 begin
   Result := False;
-  if CanMove and (PointCount > 1)
-  then begin
+  if CanMove and (PointCount > 1) then
+  begin
     NewPolyline := Copy(Polyline, 0, PointCount);
     try
       ScalePoints(NewPolyline, Factor, CenterOfPoints(NewPolyline));
-      if Owner.GraphConstraints.WithinBounds(NewPolyline)
-      then begin
+      if Owner.GraphConstraints.WithinBounds(NewPolyline) then
+      begin
         Polyline := NewPolyline;
         Result := True;
       end;
-    finally SetLength(NewPolyline, 0);
+    finally
+      SetLength(NewPolyline, 0);
     end;
   end;
 end;
@@ -5028,9 +5298,10 @@ begin
   SourceID := TargetID;
   fTarget := GraphObject;
   TargetID := GraphObjectID;
-  if (fTextPosition >= 0) and (PointCount > 2)
-  then fTextPosition := PointCount - 2 - fTextPosition;
-  for I := 0 to (PointCount div 2) - 1 do begin
+  if (fTextPosition >= 0) and (PointCount > 2) then
+    fTextPosition := PointCount - 2 - fTextPosition;
+  for I := 0 to (PointCount div 2) - 1 do
+  begin
     Pt := fPoints[I];
     fPoints[I] := fPoints[PointCount - 1 - I];
     fPoints[PointCount - 1 - I] := Pt;
@@ -5040,34 +5311,36 @@ end;
 
 procedure TGraphLink.SetSource(Value: TGraphObject);
 begin
-  if Source <> Value
-  then begin
+  if Source <> Value then
+  begin
     BeginUpdate;
     try
       Unhook(0);
       Hook(0, Value);
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
 end;
 
 procedure TGraphLink.SetTarget(Value: TGraphObject);
 begin
-  if Target <> Value
-  then begin
+  if Target <> Value then
+  begin
     BeginUpdate;
     try
       Unhook(PointCount - 1);
       Hook(PointCount - 1, Value);
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
 end;
 
 procedure TGraphLink.SetLinkOptions(Value: TGraphLinkOptions);
 begin
-  if LinkOptions <> Value
-  then begin
+  if LinkOptions <> Value then
+  begin
     fLinkOptions := Value;
     Changed([gcView, gcData, gcPlacement]);
   end;
@@ -5075,8 +5348,8 @@ end;
 
 procedure TGraphLink.SetTextPosition(Value: Integer);
 begin
-  if TextPosition <> Value
-  then begin
+  if TextPosition <> Value then
+  begin
     fTextPosition := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5084,8 +5357,8 @@ end;
 
 procedure TGraphLink.SetTextSpacing(Value: Integer);
 begin
-  if TextSpacing <> Value
-  then begin
+  if TextSpacing <> Value then
+  begin
     fTextSpacing := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5093,8 +5366,8 @@ end;
 
 procedure TGraphLink.SetBeginStyle(Value: TLinkBeginEndStyle);
 begin
-  if BeginStyle <> Value
-  then begin
+  if BeginStyle <> Value then
+  begin
     fBeginStyle := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5102,8 +5375,8 @@ end;
 
 procedure TGraphLink.SetBeginSize(Value: Byte);
 begin
-  if BeginSize <> Value
-  then begin
+  if BeginSize <> Value then
+  begin
     fBeginSize := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5111,8 +5384,8 @@ end;
 
 procedure TGraphLink.SetEndStyle(Value: TLinkBeginEndStyle);
 begin
-  if EndStyle <> Value
-  then begin
+  if EndStyle <> Value then
+  begin
     fEndStyle := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5120,8 +5393,8 @@ end;
 
 procedure TGraphLink.SetEndSize(Value: Byte);
 begin
-  if EndSize <> Value
-  then begin
+  if EndSize <> Value then
+  begin
     fEndSize := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5129,17 +5402,17 @@ end;
 
 function TGraphLink.GetPoints(Index: Integer): TPoint;
 begin
-  if (Index < 0) or (Index >= PointCount)
-  then raise EPointListError.CreateFmt('Invalid point index. (%d)', [Index]);
+  if (Index < 0) or (Index >= PointCount) then
+    raise EPointListError.CreateFmt('Invalid point index. (%d)', [Index]);
   Result := fPoints[Index];
 end;
 
 procedure TGraphLink.SetPoints(Index: Integer; const Value: TPoint);
 begin
-  if (Index < 0) or (Index >= PointCount)
-  then raise EPointListError.CreateFmt('Invalid point index. (%d)', [Index]);
-  if not EqualPoint(fPoints[Index], Value)
-  then begin
+  if (Index < 0) or (Index >= PointCount) then
+    raise EPointListError.CreateFmt('Invalid point index. (%d)', [Index]);
+  if not EqualPoint(fPoints[Index], Value) then
+  begin
     Unhook(Index);
     fPoints[Index] := Value;
     Changed([gcView, gcData, gcText, gcPlacement]);
@@ -5149,8 +5422,8 @@ end;
 procedure TGraphLink.SetPolyline(const Value: TPoints);
 begin
   if (PointCount <> Length(Value)) or ((PointCount > 0) and not CompareMem(@fPoints[0], @Value[0],
-    PointCount * SizeOf(TPoint)))
-  then begin
+    PointCount * SizeOf(TPoint))) then
+  begin
     fPointCount := Length(Value);
     fPoints := Copy(Value, 0, fPointCount);
     Unhook(Source);
@@ -5163,8 +5436,8 @@ procedure TGraphLink.Loaded;
 begin
   inherited Loaded;
   // Backward compatibility
-  if (PointCount = 0) and Assigned(Source) and Assigned(Target)
-  then begin
+  if (PointCount = 0) and Assigned(Source) and Assigned(Target) then
+  begin
     Inc(fPointCount, 2);
     SetLength(fPoints, fPointCount);
     UpdateDependencies;
@@ -5174,21 +5447,21 @@ end;
 procedure TGraphLink.ReplaceID(OldID, NewID: DWORD);
 begin
   inherited ReplaceID(OldID, NewID);
-  if (SourceID <> 0) and (SourceID = OldID)
-  then SourceID := NewID;
-  if (TargetID <> 0) and (TargetID = OldID)
-  then TargetID := NewID;
+  if (SourceID <> 0) and (SourceID = OldID) then
+    SourceID := NewID;
+  if (TargetID <> 0) and (TargetID = OldID) then
+    TargetID := NewID;
 end;
 
 procedure TGraphLink.ReplaceObject(OldObject, NewObject: TGraphObject);
 begin
-  if Source = OldObject
-  then begin
+  if Source = OldObject then
+  begin
     fSource := NewObject;
     SourceID := NewObject.ID;
   end;
-  if Target = OldObject
-  then begin
+  if Target = OldObject then
+  begin
     fTarget := NewObject;
     TargetID := NewObject.ID;
   end;
@@ -5199,20 +5472,20 @@ procedure TGraphLink.LookupDependencies;
 var
   GraphObject: TGraphObject;
 begin
-  if (SourceID <> 0) and not Assigned(Source)
-  then begin
+  if (SourceID <> 0) and not Assigned(Source) then
+  begin
     GraphObject := Owner.FindObjectByID(SourceID);
-    if Assigned(GraphObject)
-    then begin
+    if Assigned(GraphObject) then
+    begin
       fSource := GraphObject;
       GraphObject.LinkOutputList.Add(Self);
     end;
   end;
-  if (TargetID <> 0) and not Assigned(Target)
-  then begin
+  if (TargetID <> 0) and not Assigned(Target) then
+  begin
     GraphObject := Owner.FindObjectByID(TargetID);
-    if Assigned(GraphObject)
-    then begin
+    if Assigned(GraphObject) then
+    begin
       fTarget := GraphObject;
       GraphObject.LinkInputList.Add(Self);
     end;
@@ -5222,11 +5495,12 @@ end;
 
 procedure TGraphLink.NotifyDependents(Flag: TGraphDependencyChangeFlag);
 begin
-  if HookedPointCount > 0
-  then
+  if HookedPointCount > 0 then
     case Flag of
-      gdcChanged: UpdateDependencies;
-      gdcRemoved: begin
+      gdcChanged:
+        UpdateDependencies;
+      gdcRemoved:
+        begin
           Unhook(Source);
           Unhook(Target);
         end;
@@ -5236,11 +5510,12 @@ end;
 
 procedure TGraphLink.UpdateDependencyTo(GraphObject: TGraphObject; Flag: TGraphDependencyChangeFlag);
 begin
-  if HookedIndexOf(GraphObject) >= 0
-  then
+  if HookedIndexOf(GraphObject) >= 0 then
     case Flag of
-      gdcChanged: UpdateDependencies;
-      gdcRemoved: Unhook(GraphObject);
+      gdcChanged:
+        UpdateDependencies;
+      gdcRemoved:
+        Unhook(GraphObject);
     end;
   inherited UpdateDependencyTo(GraphObject, Flag);
 end;
@@ -5282,15 +5557,15 @@ procedure TGraphLink.ReadPoints(Stream: TStream);
 begin
   Stream.Read(fPointCount, SizeOf(fPointCount));
   SetLength(fPoints, fPointCount);
-  if fPointCount > 0
-  then Stream.Read(fPoints[0], fPointCount * SizeOf(fPoints[0]));
+  if fPointCount > 0 then
+    Stream.Read(fPoints[0], fPointCount * SizeOf(fPoints[0]));
 end;
 
 procedure TGraphLink.WritePoints(Stream: TStream);
 begin
   Stream.Write(fPointCount, SizeOf(fPointCount));
-  if fPointCount > 0
-  then Stream.Write(fPoints[0], fPointCount * SizeOf(fPoints[0]));
+  if fPointCount > 0 then
+    Stream.Write(fPoints[0], fPointCount * SizeOf(fPoints[0]));
 end;
 
 // Obsolete - for backward compatibility
@@ -5311,10 +5586,10 @@ var
   Kind: String;
 begin
   Kind := Reader.ReadIdent;
-  if LowerCase(Kind) = 'lkundirected'
-  then EndStyle := lsNone
-  else if LowerCase(Kind) = 'lkbidirected'
-  then BeginStyle := lsArrow;
+  if LowerCase(Kind) = 'lkundirected' then
+    EndStyle := lsNone
+  else if LowerCase(Kind) = 'lkbidirected' then
+    BeginStyle := lsArrow;
 end;
 
 // Obsolete - for backward compatibility
@@ -5348,8 +5623,8 @@ end;
 
 destructor TGraphNode.Destroy;
 begin
-  if Region <> 0
-  then DeleteObject(Region);
+  if Region <> 0 then
+    DeleteObject(Region);
   fBackground.Free;
   inherited Destroy;
 end;
@@ -5359,9 +5634,9 @@ begin
   BeginUpdate;
   try
     inherited Assign(Source);
-    if Source is TGraphNode
-    then
-      with Source as TGraphNode do begin
+    if Source is TGraphNode then
+      with Source as TGraphNode do
+      begin
         Self.Background := Background;
         Self.Alignment := Alignment;
         Self.Layout := Layout;
@@ -5370,15 +5645,17 @@ begin
         Self.BackgroundMargins := BackgroundMargins;
         Self.SetBounds(Left, Top, Width, Height);
       end;
-  finally EndUpdate;
+  finally
+    EndUpdate;
   end;
 end;
 
 function TGraphNode.ContainsRect(const Rect: TRect): Boolean;
 begin
-  if Selected
-  then Result := inherited ContainsRect(Rect)
-  else Result := Showing and RectInRegion(Region, Rect);
+  if Selected then
+    Result := inherited ContainsRect(Rect)
+  else
+    Result := Showing and RectInRegion(Region, Rect);
 end;
 
 procedure TGraphNode.QueryVisualRect(out Rect: TRect);
@@ -5386,8 +5663,8 @@ var
   Margin: Integer;
 begin
   Rect := BoundsRect;
-  if Pen.Style <> psInsideFrame
-  then begin
+  if Pen.Style <> psInsideFrame then
+  begin
     Margin := Pen.Width div 2;
     InflateRect(Rect, Margin, Margin);
   end;
@@ -5397,73 +5674,75 @@ function TGraphNode.QueryHitTest(const Pt: TPoint): DWORD;
 var
   Neighborhood: Integer;
 begin
-  if Selected
-  then begin
+  if Selected then
+  begin
     Result := GHT_NOWHERE;
     Neighborhood := NeighborhoodRadius;
-    if PtInRect(MakeSquare(Point(Left + Width, Top + Height), Neighborhood), Pt)
-    then Result := GHT_BOTTOMRIGHT
-    else if PtInRect(MakeSquare(Point(Left, Top + Height), Neighborhood), Pt)
-    then Result := GHT_BOTTOMLEFT
-    else if PtInRect(MakeSquare(Point(Left + Width, Top), Neighborhood), Pt)
-    then Result := GHT_TOPRIGHT
-    else if PtInRect(MakeSquare(Point(Left, Top), Neighborhood), Pt)
-    then Result := GHT_TOPLEFT
-    else if PtInRect(MakeSquare(Point(Left + Width div 2, Top + Height), Neighborhood), Pt)
-    then Result := GHT_BOTTOM
-    else if PtInRect(MakeSquare(Point(Left + Width, Top + Height div 2), Neighborhood), Pt)
-    then Result := GHT_RIGHT
-    else if PtInRect(MakeSquare(Point(Left, Top + Height div 2), Neighborhood), Pt)
-    then Result := GHT_LEFT
-    else if PtInRect(MakeSquare(Point(Left + Width div 2, Top), Neighborhood), Pt)
-    then Result := GHT_TOP;
-    if Result <> GHT_NOWHERE
-    then Exit;
+    if PtInRect(MakeSquare(Point(Left + Width, Top + Height), Neighborhood), Pt) then
+      Result := GHT_BOTTOMRIGHT
+    else if PtInRect(MakeSquare(Point(Left, Top + Height), Neighborhood), Pt) then
+      Result := GHT_BOTTOMLEFT
+    else if PtInRect(MakeSquare(Point(Left + Width, Top), Neighborhood), Pt) then
+      Result := GHT_TOPRIGHT
+    else if PtInRect(MakeSquare(Point(Left, Top), Neighborhood), Pt) then
+      Result := GHT_TOPLEFT
+    else if PtInRect(MakeSquare(Point(Left + Width div 2, Top + Height), Neighborhood), Pt) then
+      Result := GHT_BOTTOM
+    else if PtInRect(MakeSquare(Point(Left + Width, Top + Height div 2), Neighborhood), Pt) then
+      Result := GHT_RIGHT
+    else if PtInRect(MakeSquare(Point(Left, Top + Height div 2), Neighborhood), Pt) then
+      Result := GHT_LEFT
+    else if PtInRect(MakeSquare(Point(Left + Width div 2, Top), Neighborhood), Pt) then
+      Result := GHT_TOP;
+    if Result <> GHT_NOWHERE then
+      Exit;
   end;
   Result := inherited QueryHitTest(Pt);
-  if PtInRegion(Region, Pt.X, Pt.Y)
-  then Result := Result or GHT_CLIENT;
-  if (goShowCaption in Options) and PtInRect(TextRect, Pt)
-  then Result := Result or GHT_CAPTION;
+  if PtInRegion(Region, Pt.X, Pt.Y) then
+    Result := Result or GHT_CLIENT;
+  if (goShowCaption in Options) and PtInRect(TextRect, Pt) then
+    Result := Result or GHT_CAPTION;
 end;
 
 procedure TGraphNode.SnapHitTestOffset(HT: DWORD; var dX, dY: Integer);
 var
   Pt: TPoint;
 begin
-  if (HT and (GHT_BODY_MASK or GHT_SIDES_MASK)) <> 0
-  then begin
+  if (HT and (GHT_BODY_MASK or GHT_SIDES_MASK)) <> 0 then
+  begin
     Pt.X := Left;
     Pt.Y := Top;
-    if (HT and (GHT_RIGHT or GHT_TOPRIGHT or GHT_BOTTOMRIGHT)) <> 0
-    then Inc(Pt.X, Width);
-    if (HT and (GHT_BOTTOM or GHT_BOTTOMLEFT or GHT_BOTTOMRIGHT)) <> 0
-    then Inc(Pt.Y, Height);
+    if (HT and (GHT_RIGHT or GHT_TOPRIGHT or GHT_BOTTOMRIGHT)) <> 0 then
+      Inc(Pt.X, Width);
+    if (HT and (GHT_BOTTOM or GHT_BOTTOMLEFT or GHT_BOTTOMRIGHT)) <> 0 then
+      Inc(Pt.Y, Height);
     Owner.SnapOffset(Pt, dX, dY);
   end
-  else inherited SnapHitTestOffset(HT, dX, dY);
+  else
+    inherited SnapHitTestOffset(HT, dX, dY);
 end;
 
 function TGraphNode.QueryMobility(HT: DWORD): TObjectSides;
 const
-  LeftSideHT   = GHT_BODY_MASK or GHT_LEFT or GHT_TOPLEFT or GHT_BOTTOMLEFT;
-  TopSideHT    = GHT_BODY_MASK or GHT_TOP or GHT_TOPLEFT or GHT_TOPRIGHT;
-  RightSideHT  = GHT_BODY_MASK or GHT_RIGHT or GHT_TOPRIGHT or GHT_BOTTOMRIGHT;
+  LeftSideHT = GHT_BODY_MASK or GHT_LEFT or GHT_TOPLEFT or GHT_BOTTOMLEFT;
+  TopSideHT = GHT_BODY_MASK or GHT_TOP or GHT_TOPLEFT or GHT_TOPRIGHT;
+  RightSideHT = GHT_BODY_MASK or GHT_RIGHT or GHT_TOPRIGHT or GHT_BOTTOMRIGHT;
   BottomSideHT = GHT_BODY_MASK or GHT_BOTTOM or GHT_BOTTOMLEFT or GHT_BOTTOMRIGHT;
 begin
-  if (HT and (GHT_BODY_MASK or GHT_SIDES_MASK)) <> 0
-  then begin
+  if (HT and (GHT_BODY_MASK or GHT_SIDES_MASK)) <> 0 then
+  begin
     Result := [];
-    if (HT and LeftSideHT) <> 0
-    then Include(Result, osLeft);
-    if (HT and TopSideHT) <> 0
-    then Include(Result, osTop);
-    if (HT and RightSideHT) <> 0
-    then Include(Result, osRight);
-    if (HT and BottomSideHT) <> 0
-    then Include(Result, osBottom);
+    if (HT and LeftSideHT) <> 0 then
+      Include(Result, osLeft);
+    if (HT and TopSideHT) <> 0 then
+      Include(Result, osTop);
+    if (HT and RightSideHT) <> 0 then
+      Include(Result, osRight);
+    if (HT and BottomSideHT) <> 0 then
+      Include(Result, osBottom);
   end
-  else Result := inherited QueryMobility(HT);
+  else
+    Result := inherited QueryMobility(HT);
 end;
 
 function TGraphNode.OffsetHitTest(HT: DWORD; dX, dY: Integer): Boolean;
@@ -5472,54 +5751,73 @@ var
 begin
   Result := False;
   case HT and (GHT_BODY_MASK or GHT_SIDES_MASK) of
-    GHT_CLIENT, GHT_CAPTION, GHT_CLIENT or GHT_CAPTION: if gnoMovable in NodeOptions then begin
+    GHT_CLIENT, GHT_CAPTION, GHT_CLIENT or GHT_CAPTION:
+      if gnoMovable in NodeOptions then
+      begin
         SetBounds(Left + dX, Top + dY, Width, Height);
         Result := True;
       end;
-    GHT_LEFT: if gnoResizable in NodeOptions then begin
+    GHT_LEFT:
+      if gnoResizable in NodeOptions then
+      begin
         OldWidth := Width;
         SetBounds(Left, Top, Width - dX, Height);
         SetBounds(Left + (OldWidth - Width), Top, Width, Height);
         Result := True;
       end;
-    GHT_RIGHT: if gnoResizable in NodeOptions then begin
+    GHT_RIGHT:
+      if gnoResizable in NodeOptions then
+      begin
         SetBounds(Left, Top, Width + dX, Height);
         Result := True;
       end;
-    GHT_TOP: if gnoResizable in NodeOptions then begin
+    GHT_TOP:
+      if gnoResizable in NodeOptions then
+      begin
         OldHeight := Height;
         SetBounds(Left, Top, Width, Height - dY);
         SetBounds(Left, Top + (OldHeight - Height), Width, Height);
         Result := True;
       end;
-    GHT_BOTTOM: if gnoResizable in NodeOptions then begin
+    GHT_BOTTOM:
+      if gnoResizable in NodeOptions then
+      begin
         SetBounds(Left, Top, Width, Height + dY);
         Result := True;
       end;
-    GHT_TOPLEFT: if gnoResizable in NodeOptions then begin
+    GHT_TOPLEFT:
+      if gnoResizable in NodeOptions then
+      begin
         OldWidth := Width;
         OldHeight := Height;
         SetBounds(Left, Top, Width - dX, Height - dY);
         SetBounds(Left + (OldWidth - Width), Top + (OldHeight - Height), Width, Height);
         Result := True;
       end;
-    GHT_TOPRIGHT: if gnoResizable in NodeOptions then begin
+    GHT_TOPRIGHT:
+      if gnoResizable in NodeOptions then
+      begin
         OldHeight := Height;
         SetBounds(Left, Top, Width + dX, Height - dY);
         SetBounds(Left, Top + (OldHeight - Height), Width, Height);
         Result := True;
       end;
-    GHT_BOTTOMLEFT: if gnoResizable in NodeOptions then begin
+    GHT_BOTTOMLEFT:
+      if gnoResizable in NodeOptions then
+      begin
         OldWidth := Width;
         SetBounds(Left, Top, Width - dX, Height + dY);
         SetBounds(Left + (OldWidth - Width), Top, Width, Height);
         Result := True;
       end;
-    GHT_BOTTOMRIGHT: if gnoResizable in NodeOptions then begin
+    GHT_BOTTOMRIGHT:
+      if gnoResizable in NodeOptions then
+      begin
         SetBounds(Left, Top, Width + dX, Height + dY);
         Result := True;
       end;
-  else inherited OffsetHitTest(HT, dX, dY);
+  else
+    inherited OffsetHitTest(HT, dX, dY);
   end;
 end;
 
@@ -5531,26 +5829,42 @@ end;
 function TGraphNode.QueryCursor(HT: DWORD): TCursor;
 begin
   case HT of
-    GHT_CLIENT, GHT_CAPTION, GHT_CLIENT or GHT_CAPTION: if (gnoMovable in NodeOptions) and not IsLocked then
-          Result := crSizeAll
-      else Result := crHandPoint;
-    GHT_LEFT, GHT_RIGHT: if (gnoResizable in NodeOptions) and not IsLocked then Result := crSizeWE
-      else Result := crHandPoint;
-    GHT_TOP, GHT_BOTTOM: if (gnoResizable in NodeOptions) and not IsLocked then Result := crSizeNS
-      else Result := crHandPoint;
-    GHT_TOPLEFT, GHT_BOTTOMRIGHT: if (gnoResizable in NodeOptions) and not IsLocked then Result := crSizeNWSE
-      else Result := crHandPoint;
-    GHT_TOPRIGHT, GHT_BOTTOMLEFT: if (gnoResizable in NodeOptions) and not IsLocked then Result := crSizeNESW
-      else Result := crHandPoint;
-  else Result := inherited QueryCursor(HT);
+    GHT_CLIENT, GHT_CAPTION, GHT_CLIENT or GHT_CAPTION:
+      if (gnoMovable in NodeOptions) and not IsLocked then
+        Result := crSizeAll
+      else
+        Result := crHandPoint;
+    GHT_LEFT, GHT_RIGHT:
+      if (gnoResizable in NodeOptions) and not IsLocked then
+        Result := crSizeWE
+      else
+        Result := crHandPoint;
+    GHT_TOP, GHT_BOTTOM:
+      if (gnoResizable in NodeOptions) and not IsLocked then
+        Result := crSizeNS
+      else
+        Result := crHandPoint;
+    GHT_TOPLEFT, GHT_BOTTOMRIGHT:
+      if (gnoResizable in NodeOptions) and not IsLocked then
+        Result := crSizeNWSE
+      else
+        Result := crHandPoint;
+    GHT_TOPRIGHT, GHT_BOTTOMLEFT:
+      if (gnoResizable in NodeOptions) and not IsLocked then
+        Result := crSizeNESW
+      else
+        Result := crHandPoint;
+  else
+    Result := inherited QueryCursor(HT);
   end;
 end;
 
 function TGraphNode.BeginFollowDrag(HT: DWORD): Boolean;
 begin
-  if (HT and (GHT_BODY_MASK or GHT_SIDES_MASK)) <> 0
-  then Result := inherited BeginFollowDrag(HT)
-  else Result := False;
+  if (HT and (GHT_BODY_MASK or GHT_SIDES_MASK)) <> 0 then
+    Result := inherited BeginFollowDrag(HT)
+  else
+    Result := False;
 end;
 
 function TGraphNode.CreateClipRgn(Canvas: TCanvas): HRGN;
@@ -5563,7 +5877,8 @@ begin
   GetViewportExtEx(Canvas.Handle, DevExt);
   GetWindowExtEx(Canvas.Handle, LogExt);
   GetViewportOrgEx(Canvas.Handle, Org);
-  with XForm do begin
+  with XForm do
+  begin
     eM11 := DevExt.CX / LogExt.CX;
     eM12 := 0;
     eM21 := 0;
@@ -5579,9 +5894,10 @@ var
   TextMargin: Integer;
 begin
   Rect := BoundsRect;
-  if Pen.Style = psInsideFrame
-  then TextMargin := Margin + Pen.Width
-  else TextMargin := Margin + Pen.Width div 2;
+  if Pen.Style = psInsideFrame then
+    TextMargin := Margin + Pen.Width
+  else
+    TextMargin := Margin + Pen.Width div 2;
   InflateRect(Rect, -TextMargin, -TextMargin);
 end;
 
@@ -5594,8 +5910,8 @@ var
   Canvas: TCanvas;
 begin
   TextToShow := '';
-  if (Text <> '')
-  then begin
+  if (Text <> '') then
+  begin
     QueryMaxTextRect(MaxTextRect);
     OffsetRect(MaxTextRect, -Left, -Top);
     Canvas := TCompatibleCanvas.Create;
@@ -5603,27 +5919,35 @@ begin
       Canvas.Font := Font;
       TextToShow := MinimizeText(Canvas, Text, MaxTextRect);
       Rect := MaxTextRect;
-      Windows.DrawText(Canvas.Handle, PChar(TextToShow), Length(TextToShow), Rect,
+      Winapi.Windows.DrawText(Canvas.Handle, PChar(TextToShow), Length(TextToShow), Rect,
         Owner.DrawTextBiDiModeFlags(DrawTextFlags));
-    finally Canvas.Free;
+    finally
+      Canvas.Free;
     end;
-    if Rect.Right > MaxTextRect.Right
-    then Rect.Right := MaxTextRect.Right;
-    if Rect.Bottom > MaxTextRect.Bottom
-    then Rect.Bottom := MaxTextRect.Bottom;
+    if Rect.Right > MaxTextRect.Right then
+      Rect.Right := MaxTextRect.Right;
+    if Rect.Bottom > MaxTextRect.Bottom then
+      Rect.Bottom := MaxTextRect.Bottom;
     case Alignment of
-      taLeftJustify: Offset.X := 0;
-      taRightJustify: Offset.X := MaxTextRect.Right - Rect.Right;
-    else Offset.X := (MaxTextRect.Right - Rect.Right) div 2;
+      taLeftJustify:
+        Offset.X := 0;
+      taRightJustify:
+        Offset.X := MaxTextRect.Right - Rect.Right;
+    else
+      Offset.X := (MaxTextRect.Right - Rect.Right) div 2;
     end;
     case Layout of
-      tlTop: Offset.Y := 0;
-      tlBottom: Offset.Y := MaxTextRect.Bottom - Rect.Bottom;
-    else Offset.Y := (MaxTextRect.Bottom - Rect.Bottom) div 2;
+      tlTop:
+        Offset.Y := 0;
+      tlBottom:
+        Offset.Y := MaxTextRect.Bottom - Rect.Bottom;
+    else
+      Offset.Y := (MaxTextRect.Bottom - Rect.Bottom) div 2;
     end;
     OffsetRect(Rect, Left + Offset.X, Top + Offset.Y);
   end
-  else FillChar(Rect, SizeOf(Rect), 0);
+  else
+    FillChar(Rect, SizeOf(Rect), 0);
 end;
 
 procedure TGraphNode.DrawText(Canvas: TCanvas);
@@ -5633,14 +5957,15 @@ var
   DrawTextFlags: Integer;
   BkMode, TextAlign: Integer;
 begin
-  if TextToShow <> ''
-  then begin
+  if TextToShow <> '' then
+  begin
     Rect := TextRect;
     DrawTextFlags := DT_NOPREFIX or DT_EDITCONTROL or DT_NOCLIP or TextAlignFlags[Alignment] or TextLayoutFlags[Layout];
     DC := Canvas.Handle;
     BkMode := SetBkMode(DC, Transparent);
     TextAlign := SetTextAlign(DC, TA_LEFT or TA_TOP);
-    Windows.DrawText(DC, PChar(TextToShow), Length(TextToShow), Rect, Owner.DrawTextBiDiModeFlags(DrawTextFlags));
+    Winapi.Windows.DrawText(DC, PChar(TextToShow), Length(TextToShow), Rect,
+      Owner.DrawTextBiDiModeFlags(DrawTextFlags));
     SetTextAlign(DC, TextAlign);
     SetBkMode(DC, BkMode);
   end;
@@ -5653,8 +5978,8 @@ var
   Graphic: TGraphic;
   ImageRect: TRect;
 begin
-  if Background.Graphic <> nil
-  then begin
+  if Background.Graphic <> nil then
+  begin
     ImageRect.Left := Left + MulDiv(Width, BackgroundMargins.Left, 100);
     ImageRect.Top := Top + MulDiv(Height, BackgroundMargins.Top, 100);
     ImageRect.Right := Left + Width - MulDiv(Width, BackgroundMargins.Right, 100);
@@ -5667,8 +5992,8 @@ begin
         Background.OnChange := nil;
         try
           if (Graphic is TMetafile) and (Canvas is TMetafileCanvas) and
-            ((ImageRect.Left >= Screen.Width) or (ImageRect.Top >= Screen.Height))
-          then begin // Workaround Windows bug!
+            ((ImageRect.Left >= Screen.Width) or (ImageRect.Top >= Screen.Height)) then
+          begin // Workaround Windows bug!
             Bitmap := TBitmap.Create;
             try
               Bitmap.Transparent := True;
@@ -5679,15 +6004,20 @@ begin
               Bitmap.PixelFormat := pf32bit;
               Bitmap.Canvas.StretchDraw(Rect(0, 0, Bitmap.Width, Bitmap.Height), Graphic);
               Canvas.Draw(ImageRect.Left, ImageRect.Top, Bitmap);
-            finally Bitmap.Free;
+            finally
+              Bitmap.Free;
             end;
           end
-          else Canvas.StretchDraw(ImageRect, Graphic);
-        finally Background.OnChange := BackgroundChanged;
+          else
+            Canvas.StretchDraw(ImageRect, Graphic);
+        finally
+          Background.OnChange := BackgroundChanged;
         end;
-      finally SelectClipRgn(Canvas.Handle, 0);
+      finally
+        SelectClipRgn(Canvas.Handle, 0);
       end;
-    finally DeleteObject(ClipRgn);
+    finally
+      DeleteObject(ClipRgn);
     end;
     Canvas.Brush.Style := bsClear;
     DrawBorder(Canvas);
@@ -5717,36 +6047,37 @@ end;
 procedure TGraphNode.DrawBody(Canvas: TCanvas);
 begin
   DrawBorder(Canvas);
-  if gnoShowBackground in NodeOptions
-  then DrawBackground(Canvas);
+  if gnoShowBackground in NodeOptions then
+    DrawBackground(Canvas);
 end;
 
 function TGraphNode.UpdateTextPlacement(Recalc: Boolean; dX, dY: Integer): Boolean;
 begin
-  if Recalc
-  then QueryTextRect(fTextRect)
-  else OffsetRect(fTextRect, dX, dY);
+  if Recalc then
+    QueryTextRect(fTextRect)
+  else
+    OffsetRect(fTextRect, dX, dY);
   Result := True;
 end;
 
 procedure TGraphNode.Initialize;
 begin
-  if fRegion <> 0
-  then DeleteObject(fRegion);
+  if fRegion <> 0 then
+    DeleteObject(fRegion);
   fRegion := CreateRegion;
   inherited Initialize;
 end;
 
 procedure TGraphNode.BoundsChanged(dX, dY, dCX, dCY: Integer);
 begin
-  if (dCX <> 0) or (dCY <> 0)
-  then begin
-    if fRegion <> 0
-    then DeleteObject(fRegion);
+  if (dCX <> 0) or (dCY <> 0) then
+  begin
+    if fRegion <> 0 then
+      DeleteObject(fRegion);
     fRegion := CreateRegion;
   end
-  else if (dX <> 0) or (dY <> 0)
-  then OffsetRgn(fRegion, dX, dY);
+  else if (dX <> 0) or (dY <> 0) then
+    OffsetRgn(fRegion, dX, dY);
   inherited BoundsChanged(dX, dY, dCX, dCY);
 end;
 
@@ -5767,14 +6098,15 @@ var
   Intersects: TPoints;
 begin
   Result := FixHookAnchor;
-  if not PtInRegion(Region, RefPt.X, RefPt.Y)
-  then begin
+  if not PtInRegion(Region, RefPt.X, RefPt.Y) then
+  begin
     Angle := LineSlopeAngle(RefPt, Result);
     Intersects := LinkIntersect(RefPt, Angle);
     try
-      if NearestPoint(Intersects, RefPt, Result) < 0
-      then Result := FixHookAnchor;
-    finally SetLength(Intersects, 0);
+      if NearestPoint(Intersects, RefPt, Result) < 0 then
+        Result := FixHookAnchor;
+    finally
+      SetLength(Intersects, 0);
     end;
   end;
 end;
@@ -5783,25 +6115,26 @@ procedure TGraphNode.CanMoveResize(var NewLeft, NewTop, NewWidth, NewHeight: Int
 begin
   CanMove := (gnoMovable in NodeOptions);
   CanResize := (gnoResizable in NodeOptions);
-  if NewWidth < Owner.MinNodeSize
-  then NewWidth := Owner.MinNodeSize;
-  if NewHeight < Owner.MinNodeSize
-  then NewHeight := Owner.MinNodeSize;
-  with Owner.GraphConstraints do begin
-    if NewLeft < BoundsRect.Left
-    then NewLeft := BoundsRect.Left;
-    if NewTop < BoundsRect.Top
-    then NewTop := BoundsRect.Top;
-    if NewLeft + NewWidth > BoundsRect.Right
-    then
-      if NewWidth = Width
-      then NewLeft := BoundsRect.Right - NewWidth
-      else NewWidth := BoundsRect.Right - NewLeft;
-    if NewTop + NewHeight > BoundsRect.Bottom
-    then
-      if NewHeight = Height
-      then NewTop := BoundsRect.Bottom - NewHeight
-      else NewHeight := BoundsRect.Bottom - NewTop;
+  if NewWidth < Owner.MinNodeSize then
+    NewWidth := Owner.MinNodeSize;
+  if NewHeight < Owner.MinNodeSize then
+    NewHeight := Owner.MinNodeSize;
+  with Owner.GraphConstraints do
+  begin
+    if NewLeft < BoundsRect.Left then
+      NewLeft := BoundsRect.Left;
+    if NewTop < BoundsRect.Top then
+      NewTop := BoundsRect.Top;
+    if NewLeft + NewWidth > BoundsRect.Right then
+      if NewWidth = Width then
+        NewLeft := BoundsRect.Right - NewWidth
+      else
+        NewWidth := BoundsRect.Right - NewLeft;
+    if NewTop + NewHeight > BoundsRect.Bottom then
+      if NewHeight = Height then
+        NewTop := BoundsRect.Bottom - NewHeight
+      else
+        NewHeight := BoundsRect.Bottom - NewTop;
   end;
   Owner.DoCanMoveResizeNode(Self, NewLeft, NewTop, NewWidth, NewHeight, CanMove, CanResize);
 end;
@@ -5812,12 +6145,12 @@ var
   dX, dY, dCX, dCY: Integer;
 begin
   CanMoveResize(aLeft, aTop, aWidth, aHeight, CanMove, CanResize);
-  if CanMove or CanResize
-  then begin
+  if CanMove or CanResize then
+  begin
     dX := 0;
     dY := 0;
-    if CanMove
-    then begin
+    if CanMove then
+    begin
       dX := aLeft - fLeft;
       fLeft := aLeft;
       dY := aTop - fTop;
@@ -5825,15 +6158,15 @@ begin
     end;
     dCX := 0;
     dCY := 0;
-    if CanResize
-    then begin
+    if CanResize then
+    begin
       dCX := aWidth - fWidth;
       fWidth := aWidth;
       dCY := aHeight - fHeight;
       fHeight := aHeight;
     end;
-    if (dX <> 0) or (dY <> 0) or (dCX <> 0) or (dCY <> 0)
-    then begin
+    if (dX <> 0) or (dY <> 0) or (dCX <> 0) or (dCY <> 0) then
+    begin
       BoundsChanged(dX, dY, dCX, dCY);
       Owner.DoNodeMoveResize(Self);
     end;
@@ -5842,7 +6175,8 @@ end;
 
 procedure TGraphNode.SetBoundsRect(const Rect: TRect);
 begin
-  with Rect do SetBounds(Left, Top, Right - Left, Bottom - Top);
+  with Rect do
+    SetBounds(Left, Top, Right - Left, Bottom - Top);
 end;
 
 function TGraphNode.GetBoundsRect: TRect;
@@ -5855,40 +6189,40 @@ end;
 
 procedure TGraphNode.SetLeft(Value: Integer);
 begin
-  if osReading in States
-  then fLeft := Value
-  else if Left <> Value
-  then SetBounds(Value, Top, Width, Height);
+  if osReading in States then
+    fLeft := Value
+  else if Left <> Value then
+    SetBounds(Value, Top, Width, Height);
 end;
 
 procedure TGraphNode.SetTop(Value: Integer);
 begin
-  if osReading in States
-  then fTop := Value
-  else if Top <> Value
-  then SetBounds(Left, Value, Width, Height);
+  if osReading in States then
+    fTop := Value
+  else if Top <> Value then
+    SetBounds(Left, Value, Width, Height);
 end;
 
 procedure TGraphNode.SetWidth(Value: Integer);
 begin
-  if osReading in States
-  then fWidth := Value
-  else if Width <> Value
-  then SetBounds(Left, Top, Value, Height);
+  if osReading in States then
+    fWidth := Value
+  else if Width <> Value then
+    SetBounds(Left, Top, Value, Height);
 end;
 
 procedure TGraphNode.SetHeight(Value: Integer);
 begin
-  if osReading in States
-  then fHeight := Value
-  else if Height <> Value
-  then SetBounds(Left, Top, Width, Value);
+  if osReading in States then
+    fHeight := Value
+  else if Height <> Value then
+    SetBounds(Left, Top, Width, Value);
 end;
 
 procedure TGraphNode.SetAlignment(Value: TAlignment);
 begin
-  if Alignment <> Value
-  then begin
+  if Alignment <> Value then
+  begin
     fAlignment := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5896,8 +6230,8 @@ end;
 
 procedure TGraphNode.SetLayout(Value: TTextLayout);
 begin
-  if Layout <> Value
-  then begin
+  if Layout <> Value then
+  begin
     fLayout := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5905,8 +6239,8 @@ end;
 
 procedure TGraphNode.SetMargin(Value: Integer);
 begin
-  if Margin <> Value
-  then begin
+  if Margin <> Value then
+  begin
     fMargin := Value;
     Changed([gcView, gcData, gcText]);
   end;
@@ -5914,8 +6248,8 @@ end;
 
 procedure TGraphNode.SetNodeOptions(Value: TGraphNodeOptions);
 begin
-  if NodeOptions <> Value
-  then begin
+  if NodeOptions <> Value then
+  begin
     fNodeOptions := Value;
     Changed([gcView, gcData]);
   end;
@@ -5923,14 +6257,14 @@ end;
 
 procedure TGraphNode.SetBackground(Value: TPicture);
 begin
-  if fBackground <> Value
-  then fBackground.Assign(Value);
+  if fBackground <> Value then
+    fBackground.Assign(Value);
 end;
 
 procedure TGraphNode.SetBackgroundMargins(const Value: TRect);
 begin
-  if not EqualRect(BackgroundMargins, Value)
-  then begin
+  if not EqualRect(BackgroundMargins, Value) then
+  begin
     fBackgroundMargins := Value;
     Changed([gcView, gcData]);
   end;
@@ -5961,7 +6295,8 @@ end;
 
 procedure TGraphNode.WriteBackgroundMargins(Writer: TWriter);
 begin
-  with BackgroundMargins do begin
+  with BackgroundMargins do
+  begin
     Writer.WriteInteger(Left);
     Writer.WriteInteger(Top);
     Writer.WriteInteger(Right);
@@ -5985,10 +6320,10 @@ end;
 
 procedure TPolygonalNode.BoundsChanged(dX, dY, dCX, dCY: Integer);
 begin
-  if (dCX <> 0) or (dCY <> 0)
-  then DefineVertices(BoundsRect, fVertices)
-  else if (dX <> 0) or (dY <> 0)
-  then OffsetPoints(fVertices, dX, dY);
+  if (dCX <> 0) or (dCY <> 0) then
+    DefineVertices(BoundsRect, fVertices)
+  else if (dX <> 0) or (dY <> 0) then
+    OffsetPoints(fVertices, dX, dY);
   inherited BoundsChanged(dX, dY, dCX, dCY);
 end;
 
@@ -6033,9 +6368,10 @@ function TRoundRectangularNode.LinkIntersect(const LinkPt: TPoint; const LinkAng
 var
   S: Integer;
 begin
-  if Width > Height
-  then S := Width div 4
-  else S := Height div 4;
+  if Width > Height then
+    S := Width div 4
+  else
+    S := Height div 4;
   Result := IntersectLineRoundRect(LinkPt, LinkAngle, BoundsRect, S, S);
 end;
 
@@ -6043,9 +6379,10 @@ function TRoundRectangularNode.CreateRegion: HRGN;
 var
   S: Integer;
 begin
-  if Width > Height
-  then S := Width div 4
-  else S := Height div 4;
+  if Width > Height then
+    S := Width div 4
+  else
+    S := Height div 4;
   Result := CreateRoundRectRgn(Left, Top, Left + Width + 1, Top + Height + 1, S, S);
 end;
 
@@ -6053,9 +6390,10 @@ procedure TRoundRectangularNode.DrawBorder(Canvas: TCanvas);
 var
   S: Integer;
 begin
-  if Width > Height
-  then S := Width div 4
-  else S := Height div 4;
+  if Width > Height then
+    S := Width div 4
+  else
+    S := Height div 4;
   Canvas.RoundRect(Left, Top, Left + Width, Top + Height, S, S);
 end;
 
@@ -6082,7 +6420,8 @@ procedure TTriangularNode.QueryMaxTextRect(out Rect: TRect);
 var
   R: TRect;
 begin
-  with Rect do begin
+  with Rect do
+  begin
     Left := (Vertices[0].X + Vertices[2].X) div 2;
     Top := (Vertices[0].Y + Vertices[2].Y) div 2;
     Right := (Vertices[0].X + Vertices[1].X) div 2;
@@ -6095,16 +6434,20 @@ end;
 procedure TTriangularNode.DefineVertices(const ARect: TRect; var Points: TPoints);
 begin
   SetLength(Points, 3);
-  with ARect do begin
-    with Points[0] do begin
+  with ARect do
+  begin
+    with Points[0] do
+    begin
       X := (Left + Right) div 2;
       Y := Top;
     end;
-    with Points[1] do begin
+    with Points[1] do
+    begin
       X := Right;
       Y := Bottom;
     end;
-    with Points[2] do begin
+    with Points[2] do
+    begin
       X := Left;
       Y := Bottom;
     end;
@@ -6117,7 +6460,8 @@ procedure TRhomboidalNode.QueryMaxTextRect(out Rect: TRect);
 var
   R: TRect;
 begin
-  with Rect do begin
+  with Rect do
+  begin
     Left := (Vertices[0].X + Vertices[3].X) div 2;
     Top := (Vertices[0].Y + Vertices[3].Y) div 2;
     Right := (Vertices[1].X + Vertices[2].X) div 2;
@@ -6130,20 +6474,25 @@ end;
 procedure TRhomboidalNode.DefineVertices(const ARect: TRect; var Points: TPoints);
 begin
   SetLength(Points, 4);
-  with ARect do begin
-    with Points[0] do begin
+  with ARect do
+  begin
+    with Points[0] do
+    begin
       X := (Left + Right) div 2;
       Y := Top;
     end;
-    with Points[1] do begin
+    with Points[1] do
+    begin
       X := Right;
       Y := (Top + Bottom) div 2;
     end;
-    with Points[2] do begin
+    with Points[2] do
+    begin
       X := (Left + Right) div 2;
       Y := Bottom;
     end;
-    with Points[3] do begin
+    with Points[3] do
+    begin
       X := Left;
       Y := (Top + Bottom) div 2;
     end;
@@ -6156,7 +6505,8 @@ procedure TPentagonalNode.QueryMaxTextRect(out Rect: TRect);
 var
   R: TRect;
 begin
-  with Rect do begin
+  with Rect do
+  begin
     Left := Vertices[3].X;
     Top := (Vertices[0].Y + Vertices[4].Y) div 2;
     Right := Vertices[2].X;
@@ -6169,24 +6519,30 @@ end;
 procedure TPentagonalNode.DefineVertices(const ARect: TRect; var Points: TPoints);
 begin
   SetLength(Points, 5);
-  with ARect do begin
-    with Points[0] do begin
+  with ARect do
+  begin
+    with Points[0] do
+    begin
       X := (Left + Right) div 2;
       Y := Top;
     end;
-    with Points[1] do begin
+    with Points[1] do
+    begin
       X := Right;
       Y := (Top + Bottom) div 2;
     end;
-    with Points[2] do begin
+    with Points[2] do
+    begin
       X := Right - (Right - Left) div 4;
       Y := Bottom;
     end;
-    with Points[3] do begin
+    with Points[3] do
+    begin
       X := Left + (Right - Left) div 4;
       Y := Bottom;
     end;
-    with Points[4] do begin
+    with Points[4] do
+    begin
       X := Left;
       Y := (Top + Bottom) div 2;
     end;
@@ -6199,7 +6555,8 @@ procedure THexagonalNode.QueryMaxTextRect(out Rect: TRect);
 var
   R: TRect;
 begin
-  with Rect do begin
+  with Rect do
+  begin
     Left := Vertices[0].X;
     Top := Vertices[0].Y;
     Right := Vertices[3].X;
@@ -6212,28 +6569,35 @@ end;
 procedure THexagonalNode.DefineVertices(const ARect: TRect; var Points: TPoints);
 begin
   SetLength(Points, 6);
-  with ARect do begin
-    with Points[0] do begin
+  with ARect do
+  begin
+    with Points[0] do
+    begin
       X := Left + (Right - Left) div 4;
       Y := Top;
     end;
-    with Points[1] do begin
+    with Points[1] do
+    begin
       X := Right - (Right - Left) div 4;
       Y := Top;
     end;
-    with Points[2] do begin
+    with Points[2] do
+    begin
       X := Right;
       Y := (Top + Bottom) div 2;
     end;
-    with Points[3] do begin
+    with Points[3] do
+    begin
       X := Right - (Right - Left) div 4;
       Y := Bottom;
     end;
-    with Points[4] do begin
+    with Points[4] do
+    begin
       X := Left + (Right - Left) div 4;
       Y := Bottom;
     end;
-    with Points[5] do begin
+    with Points[5] do
+    begin
       X := Left;
       Y := (Top + Bottom) div 2;
     end;
@@ -6256,20 +6620,21 @@ end;
 
 procedure TGraphConstraints.DoChange;
 begin
-  if Assigned(Owner)
-  then begin
+  if Assigned(Owner) then
+  begin
     Owner.CalcAutoRange;
     Owner.Invalidate;
   end;
-  if Assigned(OnChange)
-  then OnChange(Self);
+  if Assigned(OnChange) then
+    OnChange(Self);
 end;
 
 procedure TGraphConstraints.Assign(Source: TPersistent);
 begin
-  if Source is TGraphConstraints
-  then BoundsRect := TGraphConstraints(Source).BoundsRect
-  else inherited Assign(Source);
+  if Source is TGraphConstraints then
+    BoundsRect := TGraphConstraints(Source).BoundsRect
+  else
+    inherited Assign(Source);
 end;
 
 procedure TGraphConstraints.SetBounds(aLeft, aTop, aWidth, aHeight: Integer);
@@ -6283,8 +6648,8 @@ var
 begin
   Result := True;
   for I := Low(Pts) to High(Pts) do
-    if not PtInRect(BoundsRect, Pts[I])
-    then begin
+    if not PtInRect(BoundsRect, Pts[I]) then
+    begin
       Result := False;
       Exit;
     end;
@@ -6293,23 +6658,23 @@ end;
 function TGraphConstraints.ConfinePt(var Pt: TPoint): Boolean;
 begin
   Result := True;
-  if Pt.X < BoundsRect.Left
-  then begin
+  if Pt.X < BoundsRect.Left then
+  begin
     Pt.X := BoundsRect.Left;
     Result := False;
   end
-  else if Pt.X > BoundsRect.Right
-  then begin
+  else if Pt.X > BoundsRect.Right then
+  begin
     Pt.X := BoundsRect.Right;
     Result := False;
   end;
-  if Pt.Y < BoundsRect.Top
-  then begin
+  if Pt.Y < BoundsRect.Top then
+  begin
     Pt.Y := BoundsRect.Top;
     Result := False;
   end
-  else if Pt.Y > BoundsRect.Bottom
-  then begin
+  else if Pt.Y > BoundsRect.Bottom then
+  begin
     Pt.Y := BoundsRect.Bottom;
     Result := False;
   end;
@@ -6318,23 +6683,23 @@ end;
 function TGraphConstraints.ConfineRect(var Rect: TRect): Boolean;
 begin
   Result := True;
-  if Rect.Left < BoundsRect.Left
-  then begin
+  if Rect.Left < BoundsRect.Left then
+  begin
     Rect.Left := BoundsRect.Left;
     Result := False;
   end;
-  if Rect.Right > BoundsRect.Right
-  then begin
+  if Rect.Right > BoundsRect.Right then
+  begin
     Rect.Right := BoundsRect.Right;
     Result := False;
   end;
-  if Rect.Top < BoundsRect.Top
-  then begin
+  if Rect.Top < BoundsRect.Top then
+  begin
     Rect.Top := BoundsRect.Top;
     Result := False;
   end;
-  if Rect.Bottom > BoundsRect.Bottom
-  then begin
+  if Rect.Bottom > BoundsRect.Bottom then
+  begin
     Rect.Bottom := BoundsRect.Bottom;
     Result := False;
   end;
@@ -6342,23 +6707,24 @@ end;
 
 function TGraphConstraints.ConfineOffset(var dX, dY: Integer; Mobility: TObjectSides): Boolean;
 begin
-  with SourceRect do begin
-    if (osLeft in Mobility) and (Left + dX < BoundsRect.Left)
-    then dX := BoundsRect.Left - Left;
-    if (osTop in Mobility) and (Top + dY < BoundsRect.Top)
-    then dY := BoundsRect.Top - Top;
-    if (osRight in Mobility) and (Right + dX > BoundsRect.Right)
-    then dX := BoundsRect.Right - Right;
-    if (osBottom in Mobility) and (Bottom + dY > BoundsRect.Bottom)
-    then dY := BoundsRect.Bottom - Bottom;
+  with SourceRect do
+  begin
+    if (osLeft in Mobility) and (Left + dX < BoundsRect.Left) then
+      dX := BoundsRect.Left - Left;
+    if (osTop in Mobility) and (Top + dY < BoundsRect.Top) then
+      dY := BoundsRect.Top - Top;
+    if (osRight in Mobility) and (Right + dX > BoundsRect.Right) then
+      dX := BoundsRect.Right - Right;
+    if (osBottom in Mobility) and (Bottom + dY > BoundsRect.Bottom) then
+      dY := BoundsRect.Bottom - Bottom;
   end;
   Result := (dX <> 0) or (dY <> 0);
 end;
 
 procedure TGraphConstraints.SetBoundsRect(const Rect: TRect);
 begin
-  if not EqualRect(BoundsRect, Rect)
-  then begin
+  if not EqualRect(BoundsRect, Rect) then
+  begin
     fBoundsRect := Rect;
     DoChange;
   end;
@@ -6367,21 +6733,30 @@ end;
 function TGraphConstraints.GetField(Index: Integer): Integer;
 begin
   case Index of
-    0: Result := BoundsRect.Left;
-    1: Result := BoundsRect.Top;
-    2: Result := BoundsRect.Right;
-    3: Result := BoundsRect.Bottom;
-  else Result := 0;
+    0:
+      Result := BoundsRect.Left;
+    1:
+      Result := BoundsRect.Top;
+    2:
+      Result := BoundsRect.Right;
+    3:
+      Result := BoundsRect.Bottom;
+  else
+    Result := 0;
   end;
 end;
 
 procedure TGraphConstraints.SetField(Index, Value: Integer);
 begin
   case Index of
-    0: BoundsRect := Rect(Value, MinTop, MaxRight, MaxBottom);
-    1: BoundsRect := Rect(MinLeft, Value, MaxRight, MaxBottom);
-    2: BoundsRect := Rect(MinLeft, MinTop, Value, MaxBottom);
-    3: BoundsRect := Rect(MinLeft, MinTop, MaxRight, Value);
+    0:
+      BoundsRect := Rect(Value, MinTop, MaxRight, MaxBottom);
+    1:
+      BoundsRect := Rect(MinLeft, Value, MaxRight, MaxBottom);
+    2:
+      BoundsRect := Rect(MinLeft, MinTop, Value, MaxBottom);
+    3:
+      BoundsRect := Rect(MinLeft, MinTop, MaxRight, Value);
   end;
 end;
 
@@ -6417,10 +6792,10 @@ begin
   fModified := False;
   fMarkedArea := EmptyRect;
   fClipboardFormats := [cfNative];
-  if NodeClassCount > 0
-  then fDefaultNodeClass := NodeClasses(0);
-  if LinkClassCount > 0
-  then fDefaultLinkClass := LinkClasses(0);
+  if NodeClassCount > 0 then
+    fDefaultNodeClass := NodeClasses(0);
+  if LinkClassCount > 0 then
+    fDefaultLinkClass := LinkClasses(0);
 end;
 
 destructor TSimpleGraph.Destroy;
@@ -6450,9 +6825,10 @@ begin
   MousePos.Y := HiWord(Msg.LParam);
   MousePos := ScreenToClient(MousePos);
   DoContextPopup(MousePos, Handled);
-  if Handled
-  then Msg.Result := 1
-  else inherited;
+  if Handled then
+    Msg.Result := 1
+  else
+    inherited;
 end;
 {$ENDIF}
 
@@ -6464,9 +6840,10 @@ var
   Width, Height: Integer;
   SavedDC: Integer;
 begin
-  if Msg.DC <> 0
-  then PaintHandler(Msg)
-  else begin
+  if Msg.DC <> 0 then
+    PaintHandler(Msg)
+  else
+  begin
     DC := BeginPaint(WindowHandle, PS);
     try
       Width := (PS.rcPaint.Right - PS.rcPaint.Left);
@@ -6475,22 +6852,25 @@ begin
       MemBitmap := CreateCompatibleBitmap(DC, Width, Height);
       OldBitmap := SelectObject(MemDC, MemBitmap);
       try
-        if Transparent
-        then CopyParentImage(Self, MemDC, PS.rcPaint.Left, PS.rcPaint.Top)
-        else FillRect(MemDC, Rect(0, 0, Width, Height), Brush.Handle);
+        if Transparent then
+          CopyParentImage(Self, MemDC, PS.rcPaint.Left, PS.rcPaint.Top)
+        else
+          FillRect(MemDC, Rect(0, 0, Width, Height), Brush.Handle);
         SavedDC := SaveDC(MemDC);
         try
           AdjustDC(MemDC, @PS.rcPaint.TopLeft);
           PaintWindow(MemDC);
-        finally RestoreDC(MemDC, SavedDC);
+        finally
+          RestoreDC(MemDC, SavedDC);
         end;
-        if ControlCount > 0
-        then begin
+        if ControlCount > 0 then
+        begin
           SavedDC := SaveDC(MemDC);
           try
             SetViewportOrgEx(MemDC, -PS.rcPaint.Left, -PS.rcPaint.Top, nil);
             PaintControls(MemDC, nil);
-          finally RestoreDC(MemDC, SavedDC);
+          finally
+            RestoreDC(MemDC, SavedDC);
           end;
         end;
         BitBlt(DC, PS.rcPaint.Left, PS.rcPaint.Top, Width, Height, MemDC, 0, 0, SRCCOPY);
@@ -6499,7 +6879,8 @@ begin
         DeleteObject(MemBitmap);
         DeleteDC(MemDC);
       end;
-    finally EndPaint(WindowHandle, PS);
+    finally
+      EndPaint(WindowHandle, PS);
     end;
   end;
 end;
@@ -6509,31 +6890,35 @@ var
   Rect: TRect;
   SavedDC: Integer;
 begin
-  if Visible or not LongBool(Msg.Flags and PRF_CHECKVISIBLE)
-  then begin
-    if LongBool(Msg.Flags and PRF_ERASEBKGND)
-    then begin
-      if Transparent
-      then CopyParentImage(Self, Msg.DC, 0, 0)
-      else begin
+  if Visible or not LongBool(Msg.Flags and PRF_CHECKVISIBLE) then
+  begin
+    if LongBool(Msg.Flags and PRF_ERASEBKGND) then
+    begin
+      if Transparent then
+        CopyParentImage(Self, Msg.DC, 0, 0)
+      else
+      begin
         GetClipBox(Msg.DC, Rect);
         FillRect(Msg.DC, Rect, Brush.Handle);
       end;
     end;
-    if LongBool(Msg.Flags and PRF_CLIENT)
-    then begin
+    if LongBool(Msg.Flags and PRF_CLIENT) then
+    begin
       SavedDC := SaveDC(Msg.DC);
       try
         AdjustDC(Msg.DC);
         PaintWindow(Msg.DC);
-      finally RestoreDC(Msg.DC, SavedDC);
+      finally
+        RestoreDC(Msg.DC, SavedDC);
       end;
     end;
-    if (ControlCount > 0) and LongBool(Msg.Flags and PRF_CHILDREN)
-    then begin
+    if (ControlCount > 0) and LongBool(Msg.Flags and PRF_CHILDREN) then
+    begin
       SavedDC := SaveDC(Msg.DC);
-      try PaintControls(Msg.DC, nil);
-      finally RestoreDC(Msg.DC, SavedDC);
+      try
+        PaintControls(Msg.DC, nil);
+      finally
+        RestoreDC(Msg.DC, SavedDC);
       end;
     end;
   end;
@@ -6546,48 +6931,52 @@ end;
 
 procedure TSimpleGraph.WMWindowPosChanging(var Msg: TWMWindowPosChanging);
 begin
-  if Transparent
-  then
-    with Msg.WindowPos^ do Flags := (Flags or SWP_NOCOPYBITS) and not SWP_NOREDRAW;
+  if Transparent then
+    with Msg.WindowPos^ do
+      Flags := (Flags or SWP_NOCOPYBITS) and not SWP_NOREDRAW;
   inherited;
 end;
 
 procedure TSimpleGraph.WMSize(var Msg: TWMSize);
 begin
   UpdatingScrollBars := True;
-  try CalcAutoRange;
-  finally UpdatingScrollBars := False;
+  try
+    CalcAutoRange;
+  finally
+    UpdatingScrollBars := False;
   end;
-  if HorzScrollBar.Visible or VertScrollBar.Visible
-  then UpdateScrollBars;
+  if HorzScrollBar.Visible or VertScrollBar.Visible then
+    UpdateScrollBars;
   inherited;
 end;
 
 procedure TSimpleGraph.WMHScroll(var Msg: TWMHScroll);
 begin
-  if (Msg.ScrollBar = 0) and HorzScrollBar.Visible
-  then begin
+  if (Msg.ScrollBar = 0) and HorzScrollBar.Visible then
+  begin
     HorzScrollBar.ScrollMessage(Msg);
     Invalidate;
   end
-  else inherited;
+  else
+    inherited;
 end;
 
 procedure TSimpleGraph.WMVScroll(var Msg: TWMVScroll);
 begin
-  if (Msg.ScrollBar = 0) and VertScrollBar.Visible
-  then begin
+  if (Msg.ScrollBar = 0) and VertScrollBar.Visible then
+  begin
     VertScrollBar.ScrollMessage(Msg);
     Invalidate;
   end
-  else inherited;
+  else
+    inherited;
 end;
 
 procedure TSimpleGraph.CNKeyDown(var Msg: TWMKeyDown);
 begin
   Mouse.CursorPos := Mouse.CursorPos; // To force cursor update
-  if not(DefaultKeyMap and DefaultKeyHandler(Msg.CharCode, KeyDataToShiftState(Msg.KeyData)))
-  then inherited;
+  if not(DefaultKeyMap and DefaultKeyHandler(Msg.CharCode, KeyDataToShiftState(Msg.KeyData))) then
+    inherited;
 end;
 
 procedure TSimpleGraph.CNKeyUp(var Msg: TWMKeyUp);
@@ -6604,8 +6993,10 @@ begin
   BeginUpdate;
   try
     for I := 0 to Objects.Count - 1 do
-      with Objects[I] do ParentFontChanged;
-  finally EndUpdate;
+      with Objects[I] do
+        ParentFontChanged;
+  finally
+    EndUpdate;
   end;
 end;
 
@@ -6616,13 +7007,14 @@ begin
   Save := Msg.WParam;
   try
     { prevent inherited from calling Invalidate & RecreateWnd }
-    if not(Self is TSimpleGraph)
-    then Msg.WParam := 1;
+    if not(Self is TSimpleGraph) then
+      Msg.WParam := 1;
     inherited;
-  finally Msg.WParam := Save;
+  finally
+    Msg.WParam := Save;
   end;
-  if HandleAllocated
-  then begin
+  if HandleAllocated then
+  begin
     HorzScrollBar.ChangeBiDiPosition;
     UpdateScrollBars;
   end;
@@ -6631,8 +7023,8 @@ end;
 procedure TSimpleGraph.CMMouseLeave(var Msg: TMessage);
 begin
   inherited;
-  if (GetCapture <> WindowHandle)
-  then begin
+  if (GetCapture <> WindowHandle) then
+  begin
     RenewObjectAtCursor(nil);
     Screen.Cursor := crDefault;
   end;
@@ -6643,20 +7035,22 @@ var
   HintObject: TGraphObject;
 begin
   inherited;
-  with Msg.HintInfo^ do begin
-    with ClientToGraph(CursorPos.X, CursorPos.Y) do HintObject := FindObjectAt(X, Y);
-    if Assigned(HintObject)
-    then begin
-      if Assigned(OnInfoTip) or (HintObject.Hint <> '') or (HintObject.Text <> HintObject.TextToShow)
-      then begin
+  with Msg.HintInfo^ do
+  begin
+    with ClientToGraph(CursorPos.X, CursorPos.Y) do
+      HintObject := FindObjectAt(X, Y);
+    if Assigned(HintObject) then
+    begin
+      if Assigned(OnInfoTip) or (HintObject.Hint <> '') or (HintObject.Text <> HintObject.TextToShow) then
+      begin
         CursorRect := HintObject.VisualRect;
         GPToCP(CursorRect, 2);
         Application.Hint := HintObject.Hint;
         HintStr := GetShortHint(HintObject.Hint);
-        if (HintStr = '') and (HintObject.Text <> HintObject.TextToShow)
-        then HintStr := HintObject.Text;
-        if Assigned(OnInfoTip)
-        then OnInfoTip(Self, HintObject, HintStr);
+        if (HintStr = '') and (HintObject.Text <> HintObject.TextToShow) then
+          HintStr := HintObject.Text;
+        if Assigned(OnInfoTip) then
+          OnInfoTip(Self, HintObject, HintStr);
       end;
     end;
   end;
@@ -6665,14 +7059,15 @@ end;
 procedure TSimpleGraph.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
-  with Params.WindowClass do Style := Style and not(CS_HREDRAW or CS_VREDRAW);
+  with Params.WindowClass do
+    Style := Style and not(CS_HREDRAW or CS_VREDRAW);
 end;
 
 procedure TSimpleGraph.CreateWnd;
 begin
   inherited CreateWnd;
-  if not SysLocale.MiddleEast
-  then InitializeFlatSB(WindowHandle);
+  if not SysLocale.MiddleEast then
+    InitializeFlatSB(WindowHandle);
   UpdateScrollBars;
 end;
 
@@ -6682,63 +7077,73 @@ var
   NewPos: Integer;
 begin
   Result := False;
-  if Assigned(DragSource)
-  then begin
+  if Assigned(DragSource) then
+  begin
     GraphConstraints.SourceRect := DraggingBounds;
     Result := DragSource.KeyPress(Key, Shift);
   end
-  else if not(CommandMode in [cmViewOnly, cmPan])
-  then begin
+  else if not(CommandMode in [cmViewOnly, cmPan]) then
+  begin
     GraphConstraints.SourceRect := SelectionBounds;
     BeginUpdate;
     try
       GraphObject := SelectedObjects.First;
-      while Assigned(GraphObject) do begin
+      while Assigned(GraphObject) do
+      begin
         SelectedObjects.Push;
         try
-          if GraphObject.KeyPress(Key, Shift)
-          then Result := True;
-        finally SelectedObjects.Pop;
+          if GraphObject.KeyPress(Key, Shift) then
+            Result := True;
+        finally
+          SelectedObjects.Pop;
         end;
         GraphObject := SelectedObjects.Next;
       end;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
-  if not Result
-  then
+  if not Result then
     case Key of
-      VK_TAB: if not(CommandMode in [cmViewOnly, cmPan]) then begin
+      VK_TAB:
+        if not(CommandMode in [cmViewOnly, cmPan]) then
+        begin
           SelectNextObject(ssShift in Shift);
           Result := True;
         end;
-      VK_LEFT, VK_RIGHT: begin
+      VK_LEFT, VK_RIGHT:
+        begin
           with HorzScrollBar do
-            if (CommandMode = cmPan) and IsScrollBarVisible
-            then begin
-              if Key = VK_LEFT
-              then NewPos := Position - Increment
-              else NewPos := Position + Increment;
-              if NewPos < 0
-              then Position := 0
-              else if NewPos > Range
-              then Position := Range
-              else Position := NewPos;
+            if (CommandMode = cmPan) and IsScrollBarVisible then
+            begin
+              if Key = VK_LEFT then
+                NewPos := Position - Increment
+              else
+                NewPos := Position + Increment;
+              if NewPos < 0 then
+                Position := 0
+              else if NewPos > Range then
+                Position := Range
+              else
+                Position := NewPos;
             end;
           Result := (CommandMode = cmPan);
         end;
-      VK_UP, VK_DOWN: begin
+      VK_UP, VK_DOWN:
+        begin
           with VertScrollBar do
-            if (CommandMode = cmPan) and IsScrollBarVisible
-            then begin
-              if Key = VK_UP
-              then NewPos := Position - Increment
-              else NewPos := Position + Increment;
-              if NewPos < 0
-              then Position := 0
-              else if NewPos > Range
-              then Position := Range
-              else Position := NewPos;
+            if (CommandMode = cmPan) and IsScrollBarVisible then
+            begin
+              if Key = VK_UP then
+                NewPos := Position - Increment
+              else
+                NewPos := Position + Increment;
+              if NewPos < 0 then
+                Position := 0
+              else if NewPos > Range then
+                Position := Range
+              else
+                Position := NewPos;
             end;
           Result := (CommandMode = cmPan);
         end;
@@ -6752,46 +7157,47 @@ var
   Rect: TRect;
 begin
   Result := nil;
-  if GraphObjectClass.IsLink
-  then begin
+  if GraphObjectClass.IsLink then
+  begin
     ObjectAtPt := FindObjectAt(Pt.X, Pt.Y);
-    if Assigned(ObjectAtPt)
-    then Result := InsertLink(ObjectAtPt, [Pt], TGraphLinkClass(GraphObjectClass));
-    if not Assigned(Result)
-    then begin
-      if GridSnap
-      then Pt := SnapPoint(Pt);
-      if GraphConstraints.WithinBounds([Pt])
-      then Result := InsertLink([Pt, Pt], TGraphLinkClass(GraphObjectClass));
+    if Assigned(ObjectAtPt) then
+      Result := InsertLink(ObjectAtPt, [Pt], TGraphLinkClass(GraphObjectClass));
+    if not Assigned(Result) then
+    begin
+      if GridSnap then
+        Pt := SnapPoint(Pt);
+      if GraphConstraints.WithinBounds([Pt]) then
+        Result := InsertLink([Pt, Pt], TGraphLinkClass(GraphObjectClass));
     end;
-    if Assigned(Result)
-    then Pt := TGraphLink(Result).Points[TGraphLink(Result).PointCount - 1];
+    if Assigned(Result) then
+      Pt := TGraphLink(Result).Points[TGraphLink(Result).PointCount - 1];
   end
-  else if GraphObjectClass.IsNode
-  then begin
-    if GridSnap
-    then Pt := SnapPoint(Pt);
-    if GraphConstraints.WithinBounds([Pt])
-    then begin
+  else if GraphObjectClass.IsNode then
+  begin
+    if GridSnap then
+      Pt := SnapPoint(Pt);
+    if GraphConstraints.WithinBounds([Pt]) then
+    begin
       Rect.TopLeft := Pt;
-      if SnapToGrid and (MinNodeSize <= GridSize)
-      then begin
+      if SnapToGrid and (MinNodeSize <= GridSize) then
+      begin
         Rect.Right := Pt.X + GridSize;
         Rect.Bottom := Pt.Y + GridSize;
       end
-      else begin
+      else
+      begin
         Rect.Right := Pt.X + MinNodeSize;
         Rect.Bottom := Pt.Y + MinNodeSize;
-        if SnapToGrid and ((MinNodeSize mod GridSize) <> 0)
-        then begin
+        if SnapToGrid and ((MinNodeSize mod GridSize) <> 0) then
+        begin
           Inc(Rect.Right, GridSize - (MinNodeSize mod GridSize));
           Inc(Rect.Bottom, GridSize - (MinNodeSize mod GridSize));
         end;
       end;
       GraphConstraints.ConfinePt(Rect.BottomRight);
       Result := InsertNode(Rect, TGraphNodeClass(GraphObjectClass));
-      if Assigned(Result)
-      then Pt := Result.BoundsRect.BottomRight;
+      if Assigned(Result) then
+        Pt := Result.BoundsRect.BottomRight;
     end;
   end;
 end;
@@ -6803,26 +7209,29 @@ var
   RectSize, GraphSize: TPoint;
 begin
   GraphRect := GraphBounds;
-  if not IsRectEmpty(GraphRect)
-  then begin
+  if not IsRectEmpty(GraphRect) then
+  begin
     GraphSize.X := GraphRect.Right - GraphRect.Left;
     GraphSize.Y := GraphRect.Bottom - GraphRect.Top;
     RectSize.X := Rect.Right - Rect.Left;
     RectSize.Y := Rect.Bottom - Rect.Top;
-    if (RectSize.X / GraphSize.X) < (RectSize.Y / GraphSize.Y)
-    then begin
+    if (RectSize.X / GraphSize.X) < (RectSize.Y / GraphSize.Y) then
+    begin
       GraphSize.Y := MulDiv(GraphSize.Y, RectSize.X, GraphSize.X);
       GraphSize.X := RectSize.X;
     end
-    else begin
+    else
+    begin
       GraphSize.X := MulDiv(GraphSize.X, RectSize.Y, GraphSize.Y);
       GraphSize.Y := RectSize.Y;
     end;
     SetRect(GraphRect, 0, 0, GraphSize.X, GraphSize.Y);
     OffsetRect(GraphRect, Rect.Left + (RectSize.X - GraphSize.X) div 2, Rect.Top + (RectSize.Y - GraphSize.Y) div 2);
     Metafile := GetAsMetafile(Canvas.Handle, Objects);
-    try Canvas.StretchDraw(GraphRect, Metafile);
-    finally Metafile.Free;
+    try
+      Canvas.StretchDraw(GraphRect, Metafile);
+    finally
+      Metafile.Free;
     end;
   end;
 end;
@@ -6839,13 +7248,14 @@ procedure TSimpleGraph.DrawGrid(Canvas: TCanvas);
     M: Integer;
   begin
     M := Pos mod GridSize;
-    if M < 0
-    then Result := GridSize + M
-    else if M > 0
-    then Result := Pos + GridSize - M
-    else if Pos < 0
-    then Result := 0
-    else Result := Pos;
+    if M < 0 then
+      Result := GridSize + M
+    else if M > 0 then
+      Result := Pos + GridSize - M
+    else if Pos < 0 then
+      Result := 0
+    else
+      Result := Pos;
   end;
 
 var
@@ -6863,9 +7273,11 @@ begin
   Canvas.Pen.Mode := pmCopy;
   DC := Canvas.Handle;
   Y := SY;
-  while Y < Rect.Bottom do begin
+  while Y < Rect.Bottom do
+  begin
     X := SX;
-    while X < Rect.Right do begin
+    while X < Rect.Right do
+    begin
       SetPixel(DC, X, Y, DotColor);
       Inc(X, GridSize);
     end;
@@ -6881,29 +7293,34 @@ begin
   CanvasRecall.Reference := Canvas;
   try
     case DrawOrder of
-      doNodesOnTop: begin
+      doNodesOnTop:
+        begin
           for I := 0 to ObjectList.Count - 1 do
             with ObjectList[I] do
-              if IsLink
-              then Draw(Canvas);
+              if IsLink then
+                Draw(Canvas);
           for I := 0 to ObjectList.Count - 1 do
             with ObjectList[I] do
-              if IsNode
-              then Draw(Canvas);
+              if IsNode then
+                Draw(Canvas);
         end;
-      doLinksOnTop: begin
+      doLinksOnTop:
+        begin
           for I := 0 to ObjectList.Count - 1 do
             with ObjectList[I] do
-              if IsNode
-              then Draw(Canvas);
+              if IsNode then
+                Draw(Canvas);
           for I := 0 to ObjectList.Count - 1 do
             with ObjectList[I] do
-              if IsLink
-              then Draw(Canvas);
+              if IsLink then
+                Draw(Canvas);
         end;
-    else for I := 0 to ObjectList.Count - 1 do ObjectList[I].Draw(Canvas);
+    else
+      for I := 0 to ObjectList.Count - 1 do
+        ObjectList[I].Draw(Canvas);
     end;
-  finally CanvasRecall.Reference := nil;
+  finally
+    CanvasRecall.Reference := nil;
   end;
   DoAfterDraw(Canvas);
 end;
@@ -6912,17 +7329,18 @@ procedure TSimpleGraph.DrawEditStates(Canvas: TCanvas);
 var
   I: Integer;
 begin
-  if not HideSelection or Focused
-  then
+  if not HideSelection or Focused then
     for I := 0 to SelectedObjects.Count - 1 do
-      with SelectedObjects[I] do DrawState(Canvas);
-  if ValidMarkedArea and not IsRectEmpty(MarkedArea)
-  then begin
+      with SelectedObjects[I] do
+        DrawState(Canvas);
+  if ValidMarkedArea and not IsRectEmpty(MarkedArea) then
+  begin
     Canvas.Brush.Style := bsClear;
     Canvas.Pen.Mode := pmNot;
     Canvas.Pen.Style := psDot;
     Canvas.Pen.Width := 0;
-    with MarkedArea do Canvas.Rectangle(Left, Top, Right, Bottom);
+    with MarkedArea do
+      Canvas.Rectangle(Left, Top, Right, Bottom);
   end;
 end;
 
@@ -6930,21 +7348,23 @@ procedure TSimpleGraph.Paint;
 begin
   Canvas.Lock;
   try
-    if ShowGrid
-    then DrawGrid(Canvas);
+    if ShowGrid then
+      DrawGrid(Canvas);
     DrawObjects(Canvas, Objects);
     DrawEditStates(Canvas);
-    if csDesigning in ComponentState
-    then
-      with Canvas do begin
+    if csDesigning in ComponentState then
+      with Canvas do
+      begin
         Brush.Style := bsClear;
         Pen.Style := psDash;
         Pen.Mode := pmCopy;
         Pen.Color := clBlack;
         Pen.Width := 0;
-        with ClientRect do Rectangle(Left, Top, Right, Bottom);
+        with ClientRect do
+          Rectangle(Left, Top, Right, Bottom);
       end;
-  finally Canvas.Unlock;
+  finally
+    Canvas.Unlock;
   end;
 end;
 
@@ -6953,14 +7373,15 @@ var
   GraphObject: TGraphObject;
   I: Integer;
 begin
-  if not Assigned(GraphObjectClass)
-  then GraphObjectClass := TGraphObject;
-  for I := 0 to Objects.Count - 1 do begin
+  if not Assigned(GraphObjectClass) then
+    GraphObjectClass := TGraphObject;
+  for I := 0 to Objects.Count - 1 do
+  begin
     GraphObject := Objects[I];
-    if (GraphObject is GraphObjectClass) and GraphObject.ContainsRect(Rect)
-    then GraphObject.Selected := not(KeepOld and GraphObject.Selected)
-    else if not KeepOld
-    then GraphObject.Selected := False;
+    if (GraphObject is GraphObjectClass) and GraphObject.ContainsRect(Rect) then
+      GraphObject.Selected := not(KeepOld and GraphObject.Selected)
+    else if not KeepOld then
+      GraphObject.Selected := False;
   end;
 end;
 
@@ -6972,27 +7393,29 @@ var
   Pt: TPoint;
 begin
   Result := nil;
-  if Assigned(LookAfter)
-  then TopIndex := LookAfter.ZOrder
-  else TopIndex := Objects.Count;
+  if Assigned(LookAfter) then
+    TopIndex := LookAfter.ZOrder
+  else
+    TopIndex := Objects.Count;
   Pt := Point(X, Y);
-  for I := TopIndex - 1 downto 0 do begin
+  for I := TopIndex - 1 downto 0 do
+  begin
     GraphObject := Objects[I];
-    if GraphObject <> DragSource
-    then begin
+    if GraphObject <> DragSource then
+    begin
       HT := GraphObject.HitTest(Pt);
-      if HT <> GHT_NOWHERE
-      then begin
-        if not Assigned(Result)
-        then Result := GraphObject;
-        if SelectedObjects.Count = 0
-        then Exit
-        else if GraphObject.Selected
-        then begin
-          if GraphObject = Result
-          then Exit
-          else if GraphObject.IsLink or ((HT and GHT_BODY_MASK) = 0)
-          then begin
+      if HT <> GHT_NOWHERE then
+      begin
+        if not Assigned(Result) then
+          Result := GraphObject;
+        if SelectedObjects.Count = 0 then
+          Exit
+        else if GraphObject.Selected then
+        begin
+          if GraphObject = Result then
+            Exit
+          else if GraphObject.IsLink or ((HT and GHT_BODY_MASK) = 0) then
+          begin
             Result := GraphObject;
             Exit;
           end;
@@ -7004,22 +7427,23 @@ end;
 
 procedure TSimpleGraph.CheckObjectAtCursor(const Pt: TPoint);
 begin
-  if Assigned(DragSource)
-  then RenewObjectAtCursor(DragSource)
-  else RenewObjectAtCursor(FindObjectAt(Pt.X, Pt.Y));
+  if Assigned(DragSource) then
+    RenewObjectAtCursor(DragSource)
+  else
+    RenewObjectAtCursor(FindObjectAt(Pt.X, Pt.Y));
 end;
 
 procedure TSimpleGraph.RenewObjectAtCursor(NewObjectAtCursor: TGraphObject);
 begin
-  if NewObjectAtCursor <> ObjectAtCursor
-  then begin
-    if Assigned(ObjectAtCursor)
-    then DoObjectMouseLeave(ObjectAtCursor);
+  if NewObjectAtCursor <> ObjectAtCursor then
+  begin
+    if Assigned(ObjectAtCursor) then
+      DoObjectMouseLeave(ObjectAtCursor);
     fObjectAtCursor := NewObjectAtCursor;
-    if Assigned(ObjectAtCursor)
-    then DoObjectMouseEnter(ObjectAtCursor);
-    if not Assigned(DragSource)
-    then Application.CancelHint;
+    if Assigned(ObjectAtCursor) then
+      DoObjectMouseEnter(ObjectAtCursor);
+    if not Assigned(DragSource) then
+      Application.CancelHint;
   end;
 end;
 
@@ -7028,42 +7452,50 @@ var
   Pt: TPoint;
   NewObject: TGraphObject;
 begin
-  if not Focused
-  then SetFocus;
+  if not Focused then
+    SetFocus;
   inherited MouseDown(Button, Shift, X, Y);
   Pt := ClientToGraph(X, Y);
   CheckObjectAtCursor(Pt);
   case CommandMode of
-    cmInsertNode, cmInsertLink: if Assigned(DragSource) then DragSource.MouseDown(Button, Shift, Pt)
-      else if (Button = mbLeft) and not(ssDouble in Shift)
-      then begin
+    cmInsertNode, cmInsertLink:
+      if Assigned(DragSource) then
+        DragSource.MouseDown(Button, Shift, Pt)
+      else if (Button = mbLeft) and not(ssDouble in Shift) then
+      begin
         NewObject := nil;
         case CommandMode of
-          cmInsertNode: NewObject := InsertObjectByMouse(Pt, DefaultNodeClass, SnapToGrid xor (ssCtrl in Shift));
-          cmInsertLink: NewObject := InsertObjectByMouse(Pt, DefaultLinkClass, SnapToGrid xor (ssCtrl in Shift));
+          cmInsertNode:
+            NewObject := InsertObjectByMouse(Pt, DefaultNodeClass, SnapToGrid xor (ssCtrl in Shift));
+          cmInsertLink:
+            NewObject := InsertObjectByMouse(Pt, DefaultLinkClass, SnapToGrid xor (ssCtrl in Shift));
         end;
-        if Assigned(NewObject)
-        then begin
+        if Assigned(NewObject) then
+        begin
           NewObject.Selected := True;
           NewObject.MouseDown(Button, Shift, Pt);
-          if DragSource <> NewObject
-          then begin
+          if DragSource <> NewObject then
+          begin
             CommandMode := cmEdit;
             ObjectChanged(NewObject, [gcData]);
           end
-          else CursorPos := Pt;
+          else
+            CursorPos := Pt;
           RenewObjectAtCursor(NewObject);
         end;
       end;
-    cmPan: if (Button = mbLeft) and not(ssDouble in Shift) then begin
+    cmPan:
+      if (Button = mbLeft) and not(ssDouble in Shift) then
+      begin
         fDragSourcePt.X := X;
         fDragSourcePt.Y := Y;
         Screen.Cursor := crHandGrab
       end;
-  else if Assigned(ObjectAtCursor) and (CommandMode <> cmViewOnly) and (goSelectable in ObjectAtCursor.Options) then
-        ObjectAtCursor.MouseDown(Button, Shift, Pt)
-    else if (Button = mbLeft) and not(ssDouble in Shift)
-    then begin
+  else
+    if Assigned(ObjectAtCursor) and (CommandMode <> cmViewOnly) and (goSelectable in ObjectAtCursor.Options) then
+      ObjectAtCursor.MouseDown(Button, Shift, Pt)
+    else if (Button = mbLeft) and not(ssDouble in Shift) then
+    begin
       fDragSourcePt := Pt;
       fDragTargetPt := Pt;
       MarkedArea := MakeRect(fDragSourcePt, fDragTargetPt);
@@ -7079,47 +7511,50 @@ var
 begin
   Pt := ClientToGraph(X, Y);
   CheckObjectAtCursor(Pt);
-  if CommandMode = cmPan
-  then begin
-    if ssLeft in Shift
-    then begin
+  if CommandMode = cmPan then
+  begin
+    if ssLeft in Shift then
+    begin
       with HorzScrollBar do
-        if IsScrollBarVisible
-        then begin
+        if IsScrollBarVisible then
+        begin
           NewPos := Position + (fDragSourcePt.X - X);
-          if NewPos < 0
-          then NewPos := 0
-          else if NewPos > Range
-          then NewPos := Range;
+          if NewPos < 0 then
+            NewPos := 0
+          else if NewPos > Range then
+            NewPos := Range;
           Position := NewPos;
           fDragSourcePt.X := X;
         end;
       with VertScrollBar do
-        if IsScrollBarVisible
-        then begin
+        if IsScrollBarVisible then
+        begin
           NewPos := Position + (fDragSourcePt.Y - Y);
-          if NewPos < 0
-          then NewPos := 0
-          else if NewPos > Range
-          then NewPos := Range;
+          if NewPos < 0 then
+            NewPos := 0
+          else if NewPos > Range then
+            NewPos := Range;
           Position := NewPos;
           fDragSourcePt.Y := Y;
         end;
     end
-    else Screen.Cursor := crHandFlat;
+    else
+      Screen.Cursor := crHandFlat;
   end
-  else if ValidMarkedArea
-  then begin
+  else if ValidMarkedArea then
+  begin
     fDragTargetPt := Pt;
     MarkedArea := MakeRect(fDragSourcePt, fDragTargetPt);
     ScrollInView(fDragTargetPt);
   end
-  else begin
-    if Assigned(ObjectAtCursor) and (CommandMode <> cmViewOnly)
-    then ObjectAtCursor.MouseMove(Shift, Pt)
-    else if CommandMode in [cmInsertNode, cmInsertLink]
-    then Screen.Cursor := crXHair1
-    else Screen.Cursor := Cursor;
+  else
+  begin
+    if Assigned(ObjectAtCursor) and (CommandMode <> cmViewOnly) then
+      ObjectAtCursor.MouseMove(Shift, Pt)
+    else if CommandMode in [cmInsertNode, cmInsertLink] then
+      Screen.Cursor := crXHair1
+    else
+      Screen.Cursor := Cursor;
   end;
   inherited MouseMove(Shift, X, Y);
 end;
@@ -7130,142 +7565,158 @@ var
 begin
   Pt := ClientToGraph(X, Y);
   CheckObjectAtCursor(Pt);
-  if CommandMode = cmPan
-  then begin
-    if Button = mbLeft
-    then Screen.Cursor := crHandFlat;
+  if CommandMode = cmPan then
+  begin
+    if Button = mbLeft then
+      Screen.Cursor := crHandFlat;
   end
-  else if ValidMarkedArea
-  then begin
-    if not(ssAlt in Shift)
-    then begin
-      if CommandMode = cmEdit
-      then begin
-        if ssCtrl in Shift
-        then ToggleSelection(MarkedArea, ssShift in Shift, TGraphNode)
-        else ToggleSelection(MarkedArea, ssShift in Shift, TGraphObject);
+  else if ValidMarkedArea then
+  begin
+    if not(ssAlt in Shift) then
+    begin
+      if CommandMode = cmEdit then
+      begin
+        if ssCtrl in Shift then
+          ToggleSelection(MarkedArea, ssShift in Shift, TGraphNode)
+        else
+          ToggleSelection(MarkedArea, ssShift in Shift, TGraphObject);
       end;
     end
-    else if not IsRectEmpty(MarkedArea)
-    then ZoomRect(MarkedArea);
+    else if not IsRectEmpty(MarkedArea) then
+      ZoomRect(MarkedArea);
     MarkedArea := Rect(MaxInt, MaxInt, -MaxInt, -MaxInt);
     Screen.Cursor := Cursor;
   end
-  else begin
-    if Assigned(ObjectAtCursor) and (CommandMode <> cmViewOnly)
-    then ObjectAtCursor.MouseUp(Button, Shift, Pt)
-    else Screen.Cursor := Cursor;
+  else
+  begin
+    if Assigned(ObjectAtCursor) and (CommandMode <> cmViewOnly) then
+      ObjectAtCursor.MouseUp(Button, Shift, Pt)
+    else
+      Screen.Cursor := Cursor;
   end;
   inherited MouseUp(Button, Shift, X, Y);
 end;
 
 procedure TSimpleGraph.DoContextPopup(MousePos: TPoint; var Handled: Boolean);
 begin
-  if not Assigned(DragSource)
-  then begin
-    if SelectedObjects.Count > 0
-    then begin
+  if not Assigned(DragSource) then
+  begin
+    if SelectedObjects.Count > 0 then
+    begin
       DoObjectContextPopup(SelectedObjects[0], MousePos, Handled);
-      if not Handled and Assigned(ObjectPopupMenu)
-      then begin
-        with ClientToScreen(MousePos) do ObjectPopupMenu.Popup(X, Y);
+      if not Handled and Assigned(ObjectPopupMenu) then
+      begin
+        with ClientToScreen(MousePos) do
+          ObjectPopupMenu.Popup(X, Y);
         Handled := True;
       end;
     end;
-    if not Handled
-    then begin
+    if not Handled then
+    begin
 {$IFDEF COMPILER5_UP}
       inherited DoContextPopup(MousePos, Handled);
 {$ELSE}
-      if Assigned(fOnContextPopup)
-      then fOnContextPopup(Self, MousePos, Handled);
+      if Assigned(fOnContextPopup) then
+        fOnContextPopup(Self, MousePos, Handled);
 {$ENDIF}
     end;
   end
-  else Handled := True;
+  else
+    Handled := True;
 end;
 
 procedure TSimpleGraph.Click;
 begin
-  if SelectedObjects.Count > 0
-  then DoObjectClick(SelectedObjects[0])
-  else inherited Click;
+  if SelectedObjects.Count > 0 then
+    DoObjectClick(SelectedObjects[0])
+  else
+    inherited Click;
 end;
 
 procedure TSimpleGraph.DblClick;
 begin
-  if not Assigned(DragSource)
-  then
-    if SelectedObjects.Count > 0
-    then DoObjectDblClick(SelectedObjects[0])
-    else inherited DblClick;
+  if not Assigned(DragSource) then
+    if SelectedObjects.Count > 0 then
+      DoObjectDblClick(SelectedObjects[0])
+    else
+      inherited DblClick;
 end;
 
 procedure TSimpleGraph.DoEnter;
 begin
   inherited DoEnter;
-  if HideSelection and (SelectedObjects.Count > 0)
-  then InvalidateRect(SelectionBounds);
+  if HideSelection and (SelectedObjects.Count > 0) then
+    InvalidateRect(SelectionBounds);
 end;
 
 procedure TSimpleGraph.DoExit;
 begin
   inherited DoExit;
-  if HideSelection and (SelectedObjects.Count > 0)
-  then InvalidateRect(SelectionBounds);
+  if HideSelection and (SelectedObjects.Count > 0) then
+    InvalidateRect(SelectionBounds);
 end;
 
 function TSimpleGraph.InsertNode(const Bounds: TRect; ANodeClass: TGraphNodeClass): TGraphNode;
 begin
-  if not Assigned(ANodeClass)
-  then ANodeClass := DefaultNodeClass;
-  try Result := ANodeClass.CreateNew(Self, Bounds);
-  except Result := nil;
+  if not Assigned(ANodeClass) then
+    ANodeClass := DefaultNodeClass;
+  try
+    Result := ANodeClass.CreateNew(Self, Bounds);
+  except
+    Result := nil;
   end;
 end;
 
 function TSimpleGraph.InsertLink(Source, Target: TGraphObject; ALinkClass: TGraphLinkClass): TGraphLink;
 begin
-  if not Assigned(ALinkClass)
-  then ALinkClass := DefaultLinkClass;
-  try Result := ALinkClass.CreateNew(Self, Source, [], Target)
-  except Result := nil;
+  if not Assigned(ALinkClass) then
+    ALinkClass := DefaultLinkClass;
+  try
+    Result := ALinkClass.CreateNew(Self, Source, [], Target)
+  except
+    Result := nil;
   end;
 end;
 
 function TSimpleGraph.InsertLink(Source: TGraphObject; const Pts: array of TPoint; ALinkClass: TGraphLinkClass)
   : TGraphLink;
 begin
-  if not Assigned(ALinkClass)
-  then ALinkClass := DefaultLinkClass;
-  try Result := ALinkClass.CreateNew(Self, Source, Pts, nil);
-  except Result := nil;
+  if not Assigned(ALinkClass) then
+    ALinkClass := DefaultLinkClass;
+  try
+    Result := ALinkClass.CreateNew(Self, Source, Pts, nil);
+  except
+    Result := nil;
   end;
 end;
 
 function TSimpleGraph.InsertLink(const Pts: array of TPoint; Target: TGraphObject; ALinkClass: TGraphLinkClass)
   : TGraphLink;
 begin
-  if not Assigned(ALinkClass)
-  then ALinkClass := DefaultLinkClass;
-  try Result := ALinkClass.CreateNew(Self, nil, Pts, Target);
-  except Result := nil;
+  if not Assigned(ALinkClass) then
+    ALinkClass := DefaultLinkClass;
+  try
+    Result := ALinkClass.CreateNew(Self, nil, Pts, Target);
+  except
+    Result := nil;
   end;
 end;
 
 function TSimpleGraph.InsertLink(const Pts: array of TPoint; ALinkClass: TGraphLinkClass): TGraphLink;
 begin
-  if not Assigned(ALinkClass)
-  then ALinkClass := DefaultLinkClass;
-  try Result := ALinkClass.CreateNew(Self, nil, Pts, nil);
-  except Result := nil;
+  if not Assigned(ALinkClass) then
+    ALinkClass := DefaultLinkClass;
+  try
+    Result := ALinkClass.CreateNew(Self, nil, Pts, nil);
+  except
+    Result := nil;
   end;
 end;
 
 procedure TSimpleGraph.ScrollInView(GraphObject: TGraphObject);
 begin
-  if Assigned(GraphObject)
-  then ScrollInView(GraphObject.SelectedVisualRect);
+  if Assigned(GraphObject) then
+    ScrollInView(GraphObject.SelectedVisualRect);
 end;
 
 procedure TSimpleGraph.ScrollInView(const Rect: TRect);
@@ -7273,11 +7724,12 @@ var
   Pt: TPoint;
 begin
   Pt := Rect.TopLeft;
-  with VisibleBounds do begin
-    if ((Rect.Right - Rect.Left) <= (Right - Left)) and (Rect.Right > Right)
-    then Pt.X := Rect.Right;
-    if ((Rect.Bottom - Rect.Top) <= (Bottom - Top)) and (Rect.Bottom > Bottom)
-    then Pt.Y := Rect.Bottom;
+  with VisibleBounds do
+  begin
+    if ((Rect.Right - Rect.Left) <= (Right - Left)) and (Rect.Right > Right) then
+      Pt.X := Rect.Right;
+    if ((Rect.Bottom - Rect.Top) <= (Bottom - Top)) and (Rect.Bottom > Bottom) then
+      Pt.Y := Rect.Bottom;
   end;
   ScrollInView(Pt);
 end;
@@ -7289,20 +7741,20 @@ begin
   X := MulDiv(Pt.X, Zoom, 100);
   Y := MulDiv(Pt.Y, Zoom, 100);
   with HorzScrollBar do
-    if IsScrollBarVisible
-    then begin
-      if X < Position
-      then Position := X
-      else if X > Position + Self.ClientWidth
-      then Position := X - Self.ClientWidth;
+    if IsScrollBarVisible then
+    begin
+      if X < Position then
+        Position := X
+      else if X > Position + Self.ClientWidth then
+        Position := X - Self.ClientWidth;
     end;
   with VertScrollBar do
-    if IsScrollBarVisible
-    then begin
-      if Y < Position
-      then Position := Y
-      else if Y > Position + Self.ClientHeight
-      then Position := Y - Self.ClientHeight;
+    if IsScrollBarVisible then
+    begin
+      if Y < Position then
+        Position := Y
+      else if Y > Position + Self.ClientHeight then
+        Position := Y - Self.ClientHeight;
     end;
 end;
 
@@ -7323,25 +7775,28 @@ begin
   X := MulDiv(Pt.X, Zoom, 100);
   Y := MulDiv(Pt.Y, Zoom, 100);
   with HorzScrollBar do
-    if IsScrollBarVisible
-    then Position := X - Self.ClientWidth div 2;
+    if IsScrollBarVisible then
+      Position := X - Self.ClientWidth div 2;
   with VertScrollBar do
-    if IsScrollBarVisible
-    then Position := Y - Self.ClientHeight div 2;
+    if IsScrollBarVisible then
+      Position := Y - Self.ClientHeight div 2;
 end;
 
 procedure TSimpleGraph.ScrollBy(DeltaX, DeltaY: Integer);
 begin
-  if WindowHandle <> 0
-  then begin
+  if WindowHandle <> 0 then
+  begin
     SendMessage(WindowHandle, WM_SETREDRAW, 0, 0);
-    try inherited ScrollBy(DeltaX, DeltaY);
-    finally SendMessage(WindowHandle, WM_SETREDRAW, 1, 0);
+    try
+      inherited ScrollBy(DeltaX, DeltaY);
+    finally
+      SendMessage(WindowHandle, WM_SETREDRAW, 1, 0);
     end;
     Invalidate;
     UpdateWindow(WindowHandle);
   end
-  else inherited ScrollBy(DeltaX, DeltaY);
+  else
+    inherited ScrollBy(DeltaX, DeltaY);
 end;
 
 function TSimpleGraph.ForEachObject(Callback: TGraphForEachMethod; UserData: Integer; Selection: Boolean): Integer;
@@ -7350,24 +7805,28 @@ var
   ObjectList: TGraphObjectList;
 begin
   Result := 0;
-  if Selection
-  then ObjectList := SelectedObjects
-  else ObjectList := Objects;
-  if Assigned(Callback) and (ObjectList.Count > 0)
-  then begin
+  if Selection then
+    ObjectList := SelectedObjects
+  else
+    ObjectList := Objects;
+  if Assigned(Callback) and (ObjectList.Count > 0) then
+  begin
     BeginUpdate;
     try
       GraphObject := ObjectList.First;
-      while Assigned(GraphObject) do begin
+      while Assigned(GraphObject) do
+      begin
         ObjectList.Push;
         try
-          if not Callback(GraphObject, UserData)
-          then Break;
-        finally ObjectList.Pop;
+          if not Callback(GraphObject, UserData) then
+            Break;
+        finally
+          ObjectList.Pop;
         end;
         GraphObject := ObjectList.Next;
       end;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
 end;
@@ -7378,38 +7837,39 @@ var
   I: Integer;
 begin
   Result := nil;
-  if not Assigned(GraphObjectClass)
-  then GraphObjectClass := TGraphObject;
-  if Backward
-  then begin
+  if not Assigned(GraphObjectClass) then
+    GraphObjectClass := TGraphObject;
+  if Backward then
+  begin
     for I := StartIndex - Ord(not Inclusive) downto 0 do
-      if Objects[I] is GraphObjectClass
-      then begin
+      if Objects[I] is GraphObjectClass then
+      begin
         Result := Objects[I];
         Exit;
       end;
-    if Wrap
-    then begin
+    if Wrap then
+    begin
       for I := Objects.Count - 1 downto StartIndex + 1 do
-        if Objects[I] is GraphObjectClass
-        then begin
+        if Objects[I] is GraphObjectClass then
+        begin
           Result := Objects[I];
           Exit;
         end;
     end;
   end
-  else begin
+  else
+  begin
     for I := StartIndex + Ord(not Inclusive) to Objects.Count - 1 do
-      if Objects[I] is GraphObjectClass
-      then begin
+      if Objects[I] is GraphObjectClass then
+      begin
         Result := Objects[I];
         Exit;
       end;
-    if Wrap
-    then begin
+    if Wrap then
+    begin
       for I := 0 to StartIndex - 1 do
-        if Objects[I] is GraphObjectClass
-        then begin
+        if Objects[I] is GraphObjectClass then
+        begin
           Result := Objects[I];
           Exit;
         end;
@@ -7423,14 +7883,14 @@ var
   GraphObject: TGraphObject;
 begin
   Result := False;
-  if not Assigned(GraphObjectClass)
-  then GraphObjectClass := TGraphObject;
-  if Objects.Count > 0
-  then begin
+  if not Assigned(GraphObjectClass) then
+    GraphObjectClass := TGraphObject;
+  if Objects.Count > 0 then
+  begin
     GraphObject := nil;
     for I := 0 to SelectedObjects.Count - 1 do
-      if SelectedObjects[I] is GraphObjectClass
-      then begin
+      if SelectedObjects[I] is GraphObjectClass then
+      begin
         GraphObject := SelectedObjects[I];
         Break;
       end;
@@ -7438,8 +7898,8 @@ begin
       Index := Objects.IndexOf(GraphObject);
       GraphObject := FindNextObject(Index, False, Backward, True, GraphObjectClass);
     until not Assigned(GraphObject) or (goSelectable in GraphObject.Options);
-    if Assigned(GraphObject)
-    then begin
+    if Assigned(GraphObject) then
+    begin
       SelectedObjects.Clear;
       GraphObject.Selected := True;
       ScrollInView(GraphObject);
@@ -7452,34 +7912,36 @@ function TSimpleGraph.ObjectsCount(GraphObjectClass: TGraphObjectClass): Integer
 var
   I: Integer;
 begin
-  if Assigned(GraphObjectClass)
-  then begin
+  if Assigned(GraphObjectClass) then
+  begin
     Result := 0;
     for I := 0 to Objects.Count - 1 do
-      if Objects[I] is GraphObjectClass
-      then Inc(Result);
+      if Objects[I] is GraphObjectClass then
+        Inc(Result);
   end
-  else Result := Objects.Count;
+  else
+    Result := Objects.Count;
 end;
 
 function TSimpleGraph.SelectedObjectsCount(GraphObjectClass: TGraphObjectClass): Integer;
 var
   I: Integer;
 begin
-  if Assigned(GraphObjectClass)
-  then begin
+  if Assigned(GraphObjectClass) then
+  begin
     Result := 0;
     for I := 0 to SelectedObjects.Count - 1 do
-      if SelectedObjects[I] is GraphObjectClass
-      then Inc(Result);
+      if SelectedObjects[I] is GraphObjectClass then
+        Inc(Result);
   end
-  else Result := SelectedObjects.Count;
+  else
+    Result := SelectedObjects.Count;
 end;
 
 procedure TSimpleGraph.BeginUpdate;
 begin
-  if UpdateCount = 0
-  then begin
+  if UpdateCount = 0 then
+  begin
     SaveModified := 0;
     SaveRangeChange := False;
     SaveInvalidateRect := EmptyRect;
@@ -7490,17 +7952,17 @@ end;
 procedure TSimpleGraph.EndUpdate;
 begin
   Dec(UpdateCount);
-  if (UpdateCount = 0) and not(csDestroying in ComponentState)
-  then begin
-    if SaveRangeChange
-    then begin
+  if (UpdateCount = 0) and not(csDestroying in ComponentState) then
+  begin
+    if SaveRangeChange then
+    begin
       SaveBoundsChange := [Low(TGraphBoundsKind) .. High(TGraphBoundsKind)];
       CalcAutoRange;
     end;
-    if not IsRectEmpty(SaveInvalidateRect)
-    then PerformInvalidate(@SaveInvalidateRect);
-    if SaveModified <> 0
-    then begin
+    if not IsRectEmpty(SaveInvalidateRect) then
+      PerformInvalidate(@SaveInvalidateRect);
+    if SaveModified <> 0 then
+    begin
       Modified := (SaveModified = 1);
       DoGraphChange;
     end;
@@ -7509,9 +7971,10 @@ end;
 
 procedure TSimpleGraph.Invalidate;
 begin
-  if UpdateCount <> 0
-  then SaveInvalidateRect := Rect(0, 0, Screen.Width, Screen.Height)
-  else PerformInvalidate(nil);
+  if UpdateCount <> 0 then
+    SaveInvalidateRect := Rect(0, 0, Screen.Width, Screen.Height)
+  else
+    PerformInvalidate(nil);
 end;
 
 procedure TSimpleGraph.InvalidateRect(const Rect: TRect);
@@ -7522,22 +7985,25 @@ begin
   GPToCP(ScreenRect, 2);
   Inc(ScreenRect.Right);
   Inc(ScreenRect.Bottom);
-  if UpdateCount <> 0
-  then begin
-    if IsRectEmpty(SaveInvalidateRect)
-    then SaveInvalidateRect := ScreenRect
-    else UnionRect(SaveInvalidateRect, ScreenRect);
+  if UpdateCount <> 0 then
+  begin
+    if IsRectEmpty(SaveInvalidateRect) then
+      SaveInvalidateRect := ScreenRect
+    else
+      UnionRect(SaveInvalidateRect, ScreenRect);
   end
-  else PerformInvalidate(@ScreenRect);
+  else
+    PerformInvalidate(@ScreenRect);
 end;
 
 procedure TSimpleGraph.PerformInvalidate(pRect: pRect);
 begin
-  if WindowHandle <> 0
-  then begin
-    if ControlCount = 0
-    then Windows.InvalidateRect(WindowHandle, pRect, False)
-    else RedrawWindow(WindowHandle, pRect, 0, RDW_INVALIDATE or RDW_ALLCHILDREN);
+  if WindowHandle <> 0 then
+  begin
+    if ControlCount = 0 then
+      Winapi.Windows.InvalidateRect(WindowHandle, pRect, False)
+    else
+      RedrawWindow(WindowHandle, pRect, 0, RDW_INVALIDATE or RDW_ALLCHILDREN);
   end;
 end;
 
@@ -7547,8 +8013,8 @@ var
 begin
   Result := nil;
   for I := Objects.Count - 1 downto 0 do
-    if Objects[I].ID = ID
-    then begin
+    if Objects[I].ID = ID then
+    begin
       Result := Objects[I];
       Exit;
     end;
@@ -7556,16 +8022,19 @@ end;
 
 procedure TSimpleGraph.Clear;
 begin
-  if Objects.Count > 0
-  then begin
+  if Objects.Count > 0 then
+  begin
     BeginUpdate;
     try
       Inc(SuspendQueryEvents);
-      try Objects.Clear;
-      finally Dec(SuspendQueryEvents);
+      try
+        Objects.Clear;
+      finally
+        Dec(SuspendQueryEvents);
       end;
       SaveModified := 2;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
   CommandMode := cmEdit;
@@ -7585,15 +8054,17 @@ var
   ID: DWORD;
   I: Integer;
 begin
-  if GraphObject.ID <> 0
-  then ID := GraphObject.ID
-  else ID := Objects.Count + 1;
+  if GraphObject.ID <> 0 then
+    ID := GraphObject.ID
+  else
+    ID := Objects.Count + 1;
   repeat
     Unique := True;
-    for I := Objects.Count - 1 downto 0 do begin
+    for I := Objects.Count - 1 downto 0 do
+    begin
       G := Objects[I];
-      if (G <> GraphObject) and (G.ID = ID)
-      then begin
+      if (G <> GraphObject) and (G.ID = ID) then
+      begin
         Inc(ID);
         Unique := False;
         Break;
@@ -7624,7 +8095,7 @@ var
 begin
   ClassNameLen := Length(GraphObject.ClassName) + 1;
   Stream.Write(ClassNameLen, SizeOf(ClassNameLen));
-  AnsiStrings.StrPCopy(ClassName, AnsiString(GraphObject.ClassName));
+  System.AnsiStrings.StrPCopy(ClassName, AnsiString(GraphObject.ClassName));
   Stream.Write(ClassName, ClassNameLen);
   GraphObject.SaveToStream(Stream);
 end;
@@ -7640,18 +8111,21 @@ begin
   try
     OldObjectCount := Objects.Count;
     Stream.Read(ObjectCount, SizeOf(ObjectCount));
-    if ObjectCount > 0
-    then begin
+    if ObjectCount > 0 then
+    begin
       Objects.Capacity := OldObjectCount + ObjectCount;
-      for I := 0 to ObjectCount - 1 do ReadGraphObject(Stream);
-      for I := OldObjectCount to Objects.Count - 1 do begin
+      for I := 0 to ObjectCount - 1 do
+        ReadGraphObject(Stream);
+      for I := OldObjectCount to Objects.Count - 1 do
+      begin
         OldID := Objects[I].ID;
         NewID := CreateUniqueID(Objects[I]);
-        if OldID <> NewID
-        then
-          for J := OldObjectCount to Objects.Count - 1 do Objects[J].ReplaceID(OldID, NewID);
+        if OldID <> NewID then
+          for J := OldObjectCount to Objects.Count - 1 do
+            Objects[J].ReplaceID(OldID, NewID);
       end;
-      for I := OldObjectCount to Objects.Count - 1 do Objects[I].Loaded;
+      for I := OldObjectCount to Objects.Count - 1 do
+        Objects[I].Loaded;
     end;
   finally
     Dec(SuspendQueryEvents);
@@ -7666,7 +8140,8 @@ var
 begin
   ObjectCount := ObjectList.Count;
   Stream.Write(ObjectCount, SizeOf(ObjectCount));
-  for I := 0 to ObjectList.Count - 1 do WriteGraphObject(Stream, ObjectList[I]);
+  for I := 0 to ObjectList.Count - 1 do
+    WriteGraphObject(Stream, ObjectList[I]);
 end;
 
 procedure TSimpleGraph.RestoreObjects(Stream: TStream);
@@ -7680,7 +8155,8 @@ begin
   try
     ObjectCount := Objects.Count;
     Stream.Read(ObjectCount, SizeOf(ObjectCount));
-    for I := 0 to ObjectCount - 1 do begin
+    for I := 0 to ObjectCount - 1 do
+    begin
       Stream.Read(ID, SizeOf(ID));
       GraphObject := FindObjectByID(ID);
       GraphObject.LoadFromStream(Stream);
@@ -7698,7 +8174,8 @@ var
 begin
   ObjectCount := ObjectList.Count;
   Stream.Write(ObjectCount, SizeOf(ObjectCount));
-  for I := 0 to ObjectList.Count - 1 do begin
+  for I := 0 to ObjectList.Count - 1 do
+  begin
     ID := ObjectList[I].ID;
     Stream.Write(ID, SizeOf(ID));
     ObjectList[I].SaveToStream(Stream);
@@ -7713,13 +8190,15 @@ var
 begin
   AnyFound := False;
   FillChar(Result, SizeOf(TRect), 0);
-  for I := ObjectList.Count - 1 downto 0 do begin
+  for I := ObjectList.Count - 1 downto 0 do
+  begin
     GraphObject := ObjectList[I];
-    if GraphObject.Showing
-    then begin
-      if AnyFound
-      then UnionRect(Result, GraphObject.VisualRect)
-      else begin
+    if GraphObject.Showing then
+    begin
+      if AnyFound then
+        UnionRect(Result, GraphObject.VisualRect)
+      else
+      begin
         AnyFound := True;
         Result := GraphObject.VisualRect;
       end
@@ -7740,7 +8219,8 @@ begin
   try
     SetViewportOrgEx(MetaCanvas.Handle, -Rect.Left, -Rect.Top, nil);
     DrawObjects(MetaCanvas, ObjectList);
-  finally MetaCanvas.Free;
+  finally
+    MetaCanvas.Free;
   end;
 end;
 
@@ -7749,8 +8229,10 @@ var
   Metafile: TMetafile;
 begin
   Metafile := GetAsMetafile(0, Objects);
-  try Metafile.SaveToFile(Filename);
-  finally Metafile.Free;
+  try
+    Metafile.SaveToFile(Filename);
+  finally
+    Metafile.Free;
   end;
 end;
 
@@ -7773,8 +8255,10 @@ var
   Bitmap: TBitmap;
 begin
   Bitmap := GetAsBitmap(Objects);
-  try Bitmap.SaveToFile(Filename);
-  finally Bitmap.Free;
+  try
+    Bitmap.SaveToFile(Filename);
+  finally
+    Bitmap.Free;
   end;
 end;
 
@@ -7785,15 +8269,15 @@ var
 begin
   Bitmap := GetAsBitmap(Objects);
   try
-    pngMap := TPngImage.create;
+    pngMap := TPngImage.Create;
     try
-      pngMap.assign(Bitmap);
-      pngMap.SavetoFile(Filename); //ÒÓı‡ÌˇÂÏ png
+      pngMap.Assign(Bitmap);
+      pngMap.SaveToFile(Filename); // —Å–æ—Ö—Ä–∞–Ω—è–µ–º png
     finally
-      pngMap.free
+      pngMap.Free
     end;
   finally
-    Bitmap.free
+    Bitmap.Free
   end;
 end;
 
@@ -7804,15 +8288,15 @@ var
 begin
   Bitmap := GetAsBitmap(Objects);
   try
-    pngMap := TPngImage.create;
+    pngMap := TPngImage.Create;
     try
-      pngMap.assign(Bitmap);
-      pngMap.SaveToStream(Stream); //ÒÓı‡ÌˇÂÏ png
+      pngMap.Assign(Bitmap);
+      pngMap.SaveToStream(Stream); // —Å–æ—Ö—Ä–∞–Ω—è–µ–º png
     finally
-      pngMap.free
+      pngMap.Free
     end;
   finally
-    Bitmap.free
+    Bitmap.Free
   end;
 end;
 
@@ -7820,17 +8304,22 @@ procedure TSimpleGraph.CopyToGraphic(Graphic: TGraphic);
 var
   G: TGraphic;
 begin
-  if Graphic is TMetafile
-  then begin
+  if Graphic is TMetafile then
+  begin
     G := GetAsMetafile(0, Objects);
-    try Graphic.Assign(G);
-    finally G.Free;
+    try
+      Graphic.Assign(G);
+    finally
+      G.Free;
     end;
   end
-  else begin
+  else
+  begin
     G := GetAsBitmap(Objects);
-    try Graphic.Assign(G);
-    finally G.Free;
+    try
+      Graphic.Assign(G);
+    finally
+      G.Free;
     end;
   end;
 end;
@@ -7840,14 +8329,15 @@ var
   Signature: DWORD;
 begin
   Stream.Read(Signature, 4);
-  if Signature <> StreamSignature
-  then raise EGraphStreamError.Create(SStreamContentError);
+  if Signature <> StreamSignature then
+    raise EGraphStreamError.Create(SStreamContentError);
   BeginUpdate;
   try
     Clear;
     ReadObjects(Stream);
     SaveModified := 2;
-  finally EndUpdate;
+  finally
+    EndUpdate;
   end;
 end;
 
@@ -7866,38 +8356,43 @@ var
   NewObjectsBounds: TRect;
 begin
   Stream.Read(Signature, SizeOf(Signature));
-  if Signature <> StreamSignature
-  then raise EGraphStreamError.Create(SStreamContentError);
+  if Signature <> StreamSignature then
+    raise EGraphStreamError.Create(SStreamContentError);
   BeginUpdate;
   try
     SelectedObjects.Clear;
     OldObjectCount := Objects.Count;
     ReadObjects(Stream);
-    if OldObjectCount <> Objects.Count
-    then begin
+    if OldObjectCount <> Objects.Count then
+    begin
       ObjectList := TGraphObjectList.Create;
       try
         ObjectList.Capacity := Objects.Count - OldObjectCount;
-        for I := OldObjectCount to Objects.Count - 1 do ObjectList.Add(Objects[I]);
+        for I := OldObjectCount to Objects.Count - 1 do
+          ObjectList.Add(Objects[I]);
         NewObjectsBounds := GetObjectsBounds(ObjectList);
         GraphConstraints.SourceRect := NewObjectsBounds;
-        if GraphConstraints.ConfineOffset(OffsetX, OffsetY, [osLeft, osTop, osRight, osBottom])
-        then begin
+        if GraphConstraints.ConfineOffset(OffsetX, OffsetY, [osLeft, osTop, osRight, osBottom]) then
+        begin
           Inc(SuspendQueryEvents);
           try
-            for I := 0 to ObjectList.Count - 1 do ObjectList[I].MoveBy(OffsetX, OffsetY);
-          finally Dec(SuspendQueryEvents);
+            for I := 0 to ObjectList.Count - 1 do
+              ObjectList[I].MoveBy(OffsetX, OffsetY);
+          finally
+            Dec(SuspendQueryEvents);
           end;
           OffsetRect(NewObjectsBounds, OffsetX, OffsetY);
         end;
-      finally ObjectList.Free;
+      finally
+        ObjectList.Free;
       end;
     end;
-  finally EndUpdate;
+  finally
+    EndUpdate;
   end;
   CommandMode := cmEdit;
-  if OldObjectCount <> Objects.Count
-  then ScrollInView(NewObjectsBounds);
+  if OldObjectCount <> Objects.Count then
+    ScrollInView(NewObjectsBounds);
 end;
 
 procedure TSimpleGraph.LoadFromFile(const Filename: String);
@@ -7905,8 +8400,10 @@ var
   Stream: TFileStream;
 begin
   Stream := TFileStream.Create(Filename, fmOpenRead or fmShareDenyWrite);
-  try LoadFromStream(Stream);
-  finally Stream.Free;
+  try
+    LoadFromStream(Stream);
+  finally
+    Stream.Free;
   end;
 end;
 
@@ -7915,8 +8412,10 @@ var
   Stream: TFileStream;
 begin
   Stream := TFileStream.Create(Filename, fmCreate or fmShareExclusive);
-  try SaveToStream(Stream);
-  finally Stream.Free;
+  try
+    SaveToStream(Stream);
+  finally
+    Stream.Free;
   end;
 end;
 
@@ -7925,8 +8424,10 @@ var
   Stream: TFileStream;
 begin
   Stream := TFileStream.Create(Filename, fmOpenRead or fmShareDenyWrite);
-  try MergeFromStream(Stream, OffsetX, OffsetY);
-  finally Stream.Free;
+  try
+    MergeFromStream(Stream, OffsetX, OffsetY);
+  finally
+    Stream.Free;
   end;
 end;
 
@@ -7937,43 +8438,48 @@ var
   Metafile: TMetafile;
   Bitmap: TBitmap;
 begin
-  if Selection
-  then ObjectList := SelectedObjects
-  else ObjectList := Objects;
-  if ObjectList.Count > 0
-  then begin
+  if Selection then
+    ObjectList := SelectedObjects
+  else
+    ObjectList := Objects;
+  if ObjectList.Count > 0 then
+  begin
     Clipboard.Open;
     try
       Clipboard.Clear;
-      if cfNative in ClipboardFormats
-      then begin
+      if cfNative in ClipboardFormats then
+      begin
         Stream := TMemoryHandleStream.Create(0);
         try
           WriteObjects(Stream, ObjectList);
           Clipboard.SetAsHandle(CF_SIMPLEGRAPH, Stream.Handle);
-        finally Stream.Free;
+        finally
+          Stream.Free;
         end;
       end;
-      if cfMetafile in ClipboardFormats
-      then begin
+      if cfMetafile in ClipboardFormats then
+      begin
         Metafile := GetAsMetafile(0, ObjectList);
         try
           Clipboard.SetAsHandle(CF_ENHMETAFILE, Metafile.Handle);
           Metafile.Handle := 0;
-        finally Metafile.Free;
+        finally
+          Metafile.Free;
         end;
       end;
-      if cfBitmap in ClipboardFormats
-      then begin
+      if cfBitmap in ClipboardFormats then
+      begin
         Bitmap := GetAsBitmap(ObjectList);
         try
           Bitmap.HandleType := bmDDB;
           Clipboard.SetAsHandle(CF_BITMAP, Bitmap.Handle);
           Bitmap.Handle := 0;
-        finally Bitmap.Free;
+        finally
+          Bitmap.Free;
         end;
       end;
-    finally Clipboard.Close;
+    finally
+      Clipboard.Close;
     end;
   end;
 end;
@@ -7984,8 +8490,8 @@ var
   I, Count: Integer;
 begin
   Result := False;
-  if Clipboard.HasFormat(CF_SIMPLEGRAPH)
-  then begin
+  if Clipboard.HasFormat(CF_SIMPLEGRAPH) then
+  begin
     Clipboard.Open;
     try
       Stream := TMemoryHandleStream.Create(Clipboard.GetAsHandle(CF_SIMPLEGRAPH));
@@ -7996,25 +8502,32 @@ begin
           Count := Objects.Count;
           ReadObjects(Stream);
           SelectedObjects.Capacity := Objects.Count - Count;
-          for I := Objects.Count - 1 downto Count do Objects[I].Selected := True;
+          for I := Objects.Count - 1 downto Count do
+            Objects[I].Selected := True;
           Result := True;
-        finally EndUpdate;
+        finally
+          EndUpdate;
         end;
-      finally Stream.Free;
+      finally
+        Stream.Free;
       end;
-    finally Clipboard.Close;
+    finally
+      Clipboard.Close;
     end;
   end;
 end;
 
 function TSimpleGraph.GetBoundingRect(Kind: TGraphBoundsKind): TRect;
 begin
-  if Kind in SaveBoundsChange
-  then begin
+  if Kind in SaveBoundsChange then
+  begin
     case Kind of
-      bkGraph: SaveBounds[Kind] := GetObjectsBounds(Objects);
-      bkSelected: SaveBounds[Kind] := GetObjectsBounds(SelectedObjects);
-      bkDragging: SaveBounds[Kind] := GetObjectsBounds(DraggingObjects);
+      bkGraph:
+        SaveBounds[Kind] := GetObjectsBounds(Objects);
+      bkSelected:
+        SaveBounds[Kind] := GetObjectsBounds(SelectedObjects);
+      bkDragging:
+        SaveBounds[Kind] := GetObjectsBounds(DraggingObjects);
     end;
     Exclude(SaveBoundsChange, Kind);
   end;
@@ -8029,7 +8542,8 @@ end;
 
 function TSimpleGraph.GetCursorPos: TPoint;
 begin
-  with ScreenToClient(Mouse.CursorPos) do Result := ClientToGraph(X, Y);
+  with ScreenToClient(Mouse.CursorPos) do
+    Result := ClientToGraph(X, Y);
 end;
 
 procedure TSimpleGraph.SetCursorPos(const Pt: TPoint);
@@ -8039,28 +8553,28 @@ end;
 
 procedure TSimpleGraph.SetGridSize(Value: TGridSize);
 begin
-  if (GridSize <> Value) and (Value in [Low(TGridSize) .. High(TGridSize)])
-  then begin
+  if (GridSize <> Value) and (Value in [Low(TGridSize) .. High(TGridSize)]) then
+  begin
     fGridSize := Value;
-    if ShowGrid
-    then Invalidate;
+    if ShowGrid then
+      Invalidate;
   end;
 end;
 
 procedure TSimpleGraph.SetGridColor(Value: TColor);
 begin
-  if GridColor <> Value
-  then begin
+  if GridColor <> Value then
+  begin
     fGridColor := Value;
-    if ShowGrid
-    then Invalidate;
+    if ShowGrid then
+      Invalidate;
   end;
 end;
 
 procedure TSimpleGraph.SetShowGrid(Value: Boolean);
 begin
-  if ShowGrid <> Value
-  then begin
+  if ShowGrid <> Value then
+  begin
     fShowGrid := Value;
     Invalidate;
   end;
@@ -8068,16 +8582,18 @@ end;
 
 procedure TSimpleGraph.SetTransparent(Value: Boolean);
 begin
-  if Transparent <> Value
-  then begin
+  if Transparent <> Value then
+  begin
     fTransparent := Value;
-    if Transparent
-    then ControlStyle := ControlStyle - [csOpaque]
-    else ControlStyle := ControlStyle + [csOpaque];
+    if Transparent then
+      ControlStyle := ControlStyle - [csOpaque]
+    else
+      ControlStyle := ControlStyle + [csOpaque];
 {$IFDEF COMPILER7_UP}
-    if Transparent
-    then ControlStyle := ControlStyle + [csParentBackground]
-    else ControlStyle := ControlStyle - [csParentBackground];
+    if Transparent then
+      ControlStyle := ControlStyle + [csParentBackground]
+    else
+      ControlStyle := ControlStyle - [csParentBackground];
 {$ENDIF}
     Invalidate;
   end;
@@ -8085,8 +8601,8 @@ end;
 
 procedure TSimpleGraph.SetShowHiddenObjects(Value: Boolean);
 begin
-  if ShowHiddenObjects <> Value
-  then begin
+  if ShowHiddenObjects <> Value then
+  begin
     fShowHiddenObjects := Value;
     CalcAutoRange;
     Invalidate;
@@ -8095,18 +8611,18 @@ end;
 
 procedure TSimpleGraph.SetHideSelection(Value: Boolean);
 begin
-  if HideSelection <> Value
-  then begin
+  if HideSelection <> Value then
+  begin
     fHideSelection := Value;
-    if not Focused and (SelectedObjects.Count > 0)
-    then InvalidateRect(SelectionBounds);
+    if not Focused and (SelectedObjects.Count > 0) then
+      InvalidateRect(SelectionBounds);
   end;
 end;
 
 procedure TSimpleGraph.SetLockNodes(Value: Boolean);
 begin
-  if LockNodes <> Value
-  then begin
+  if LockNodes <> Value then
+  begin
     fLockNodes := Value;
     Invalidate;
   end;
@@ -8114,8 +8630,8 @@ end;
 
 procedure TSimpleGraph.SetLockLinks(Value: Boolean);
 begin
-  if LockLinks <> Value
-  then begin
+  if LockLinks <> Value then
+  begin
     fLockLinks := Value;
     Invalidate;
   end;
@@ -8123,32 +8639,32 @@ end;
 
 procedure TSimpleGraph.SetMarkerColor(Value: TColor);
 begin
-  if MarkerColor <> Value
-  then begin
+  if MarkerColor <> Value then
+  begin
     fMarkerColor := Value;
-    if SelectedObjects.Count > 0
-    then Invalidate;
+    if SelectedObjects.Count > 0 then
+      Invalidate;
   end;
 end;
 
 procedure TSimpleGraph.SetMarkerSize(Value: TMarkerSize);
 begin
-  if MarkerSize <> Value
-  then begin
+  if MarkerSize <> Value then
+  begin
     fMarkerSize := Value;
-    if SelectedObjects.Count > 0
-    then Invalidate;
+    if SelectedObjects.Count > 0 then
+      Invalidate;
   end;
 end;
 
 procedure TSimpleGraph.SetZoom(Value: TZoom);
 begin
-  if Value < Low(TZoom)
-  then Value := Low(TZoom)
-  else if Value > High(TZoom)
-  then Value := High(TZoom);
-  if Zoom <> Value
-  then begin
+  if Value < Low(TZoom) then
+    Value := Low(TZoom)
+  else if Value > High(TZoom) then
+    Value := High(TZoom);
+  if Zoom <> Value then
+  begin
     fZoom := Value;
     CalcAutoRange;
     Invalidate;
@@ -8158,8 +8674,8 @@ end;
 
 procedure TSimpleGraph.SetDrawOrder(Value: TGraphDrawOrder);
 begin
-  if DrawOrder <> Value
-  then begin
+  if DrawOrder <> Value then
+  begin
     fDrawOrder := Value;
     Invalidate;
   end;
@@ -8167,8 +8683,8 @@ end;
 
 procedure TSimpleGraph.SetFixedScrollBars(Value: Boolean);
 begin
-  if FixedScrollBars <> Value
-  then begin
+  if FixedScrollBars <> Value then
+  begin
     fFixedScrollBars := Value;
     CalcAutoRange;
   end;
@@ -8176,13 +8692,13 @@ end;
 
 procedure TSimpleGraph.SetCommandMode(Value: TGraphCommandMode);
 begin
-  if CommandMode <> Value
-  then begin
-    if Assigned(DragSource)
-    then DragSource.EndDrag(False);
+  if CommandMode <> Value then
+  begin
+    if Assigned(DragSource) then
+      DragSource.EndDrag(False);
     fCommandMode := Value;
-    if not(CommandMode in [cmPan, cmEdit])
-    then SelectedObjects.Clear;
+    if not(CommandMode in [cmPan, cmEdit]) then
+      SelectedObjects.Clear;
     CalcAutoRange;
     DoCommandModeChange;
   end;
@@ -8190,15 +8706,15 @@ end;
 
 procedure TSimpleGraph.SetMarkedArea(const Value: TRect);
 begin
-  if not EqualRect(MarkedArea, Value)
-  then begin
-    if fValidMarkedArea
-    then InvalidateRect(fMarkedArea);
+  if not EqualRect(MarkedArea, Value) then
+  begin
+    if fValidMarkedArea then
+      InvalidateRect(fMarkedArea);
     fMarkedArea := Value;
     fValidMarkedArea := (Value.Left <= Value.Right) and (Value.Top <= Value.Bottom);
     CalcAutoRange;
-    if fValidMarkedArea
-    then InvalidateRect(fMarkedArea);
+    if fValidMarkedArea then
+      InvalidateRect(fMarkedArea);
   end;
 end;
 
@@ -8219,25 +8735,27 @@ end;
 
 procedure TSimpleGraph.UpdateScrollBars;
 begin
-  if not UpdatingScrollBars and HandleAllocated
-  then begin
+  if not UpdatingScrollBars and HandleAllocated then
+  begin
     try
       UpdatingScrollBars := True;
-      if VertScrollBar.NeedsScrollBarVisible
-      then begin
+      if VertScrollBar.NeedsScrollBarVisible then
+      begin
         HorzScrollBar.Update(False, True);
         VertScrollBar.Update(True, False);
       end
-      else if HorzScrollBar.NeedsScrollBarVisible
-      then begin
+      else if HorzScrollBar.NeedsScrollBarVisible then
+      begin
         VertScrollBar.Update(False, True);
         HorzScrollBar.Update(True, False);
       end
-      else begin
+      else
+      begin
         VertScrollBar.Update(False, False);
         HorzScrollBar.Update(True, False);
       end;
-    finally UpdatingScrollBars := False;
+    finally
+      UpdatingScrollBars := False;
     end;
   end;
 end;
@@ -8246,15 +8764,16 @@ procedure TSimpleGraph.CalcAutoRange;
 begin
   HorzScrollBar.CalcAutoRange;
   VertScrollBar.CalcAutoRange;
-  if ControlCount > 0
-  then Realign;
+  if ControlCount > 0 then
+    Realign;
 end;
 
 procedure TSimpleGraph.AdjustDC(DC: HDC; Org: PPoint);
 begin
-  if Assigned(Org)
-  then SetViewportOrgEx(DC, -(Org^.X + HorzScrollBar.Position), -(Org^.Y + VertScrollBar.Position), nil)
-  else SetViewportOrgEx(DC, -HorzScrollBar.Position, -VertScrollBar.Position, nil);
+  if Assigned(Org) then
+    SetViewportOrgEx(DC, -(Org^.X + HorzScrollBar.Position), -(Org^.Y + VertScrollBar.Position), nil)
+  else
+    SetViewportOrgEx(DC, -HorzScrollBar.Position, -VertScrollBar.Position, nil);
   SetMapMode(DC, MM_ANISOTROPIC);
   SetWindowExtEx(DC, 100, 100, nil);
   SetViewPortExtEx(DC, Zoom, Zoom, nil);
@@ -8268,7 +8787,8 @@ begin
   try
     AdjustDC(MemDC);
     LPtoDP(MemDC, Points, Count);
-  finally DeleteDC(MemDC);
+  finally
+    DeleteDC(MemDC);
   end;
 end;
 
@@ -8280,7 +8800,8 @@ begin
   try
     AdjustDC(MemDC);
     DPtoLP(MemDC, Points, Count);
-  finally DeleteDC(MemDC);
+  finally
+    DeleteDC(MemDC);
   end;
 end;
 
@@ -8289,33 +8810,34 @@ var
   I: Integer;
 begin
   Result := False;
-  if Assigned(GraphObject)
-  then begin
+  if Assigned(GraphObject) then
+  begin
     UndoStorage.Clear;
     fDragSource := GraphObject;
     fDragHitTest := HT;
     fDragSourcePt := Pt;
     fDragTargetPt := Pt;
-    if not DragSource.Selected
-    then begin
+    if not DragSource.Selected then
+    begin
       SelectedObjects.Clear;
       DragSource.Selected := True;
     end;
     DraggingObjects.Clear;
     DraggingObjects.Capacity := SelectedObjects.Count;
     DraggingObjects.Add(DragSource);
-    if not(CommandMode in [cmInsertLink, cmInsertNode])
-    then begin
+    if not(CommandMode in [cmInsertLink, cmInsertNode]) then
+    begin
       fDragModified := False;
       UndoStorage.Seek(0, soFromBeginning);
       BackupObjects(UndoStorage, DraggingObjects);
       for I := 0 to SelectedObjects.Count - 1 do
         with SelectedObjects[I] do
-          if (DragSource.ID <> ID) and BeginFollowDrag(DragHitTest)
-          then DraggingObjects.Add(SelectedObjects[I]);
+          if (DragSource.ID <> ID) and BeginFollowDrag(DragHitTest) then
+            DraggingObjects.Add(SelectedObjects[I]);
       DoObjectBeginDrag(GraphObject, HT);
     end
-    else fDragModified := True;
+    else
+      fDragModified := True;
     Result := True;
   end;
 end;
@@ -8325,17 +8847,20 @@ var
   I: Integer;
   Mobility: TObjectSides;
 begin
-  if Assigned(DragSource) and ((dX <> 0) or (dY <> 0))
-  then begin
+  if Assigned(DragSource) and ((dX <> 0) or (dY <> 0)) then
+  begin
     Mobility := [];
-    for I := 0 to DraggingObjects.Count - 1 do Mobility := Mobility + DraggingObjects[I].QueryMobility(DragHitTest);
+    for I := 0 to DraggingObjects.Count - 1 do
+      Mobility := Mobility + DraggingObjects[I].QueryMobility(DragHitTest);
     GraphConstraints.SourceRect := DraggingBounds; // TODO: Fix needed for moving points
-    if not GraphConstraints.ConfineOffset(dX, dY, Mobility)
-    then Exit;
+    if not GraphConstraints.ConfineOffset(dX, dY, Mobility) then
+      Exit;
     BeginUpdate;
     try
-      for I := 0 to DraggingObjects.Count - 1 do DraggingObjects[I].OffsetHitTest(DragHitTest, dX, dY);
-    finally EndUpdate;
+      for I := 0 to DraggingObjects.Count - 1 do
+        DraggingObjects[I].OffsetHitTest(DragHitTest, dX, dY);
+    finally
+      EndUpdate;
     end;
     Inc(fDragTargetPt.X, dX);
     Inc(fDragTargetPt.Y, dY);
@@ -8348,28 +8873,31 @@ var
   I: Integer;
   Source: TGraphObject;
 begin
-  if Assigned(DragSource)
-  then begin
+  if Assigned(DragSource) then
+  begin
     Source := DragSource;
     fDragSource := nil;
-    for I := 1 to DraggingObjects.Count - 1 do DraggingObjects[I].EndFollowDrag;
+    for I := 1 to DraggingObjects.Count - 1 do
+      DraggingObjects[I].EndFollowDrag;
     DraggingObjects.Clear;
-    if not Accept
-    then begin
+    if not Accept then
+    begin
       fDragModified := False;
-      if not(CommandMode in [cmInsertLink, cmInsertNode])
-      then begin
+      if not(CommandMode in [cmInsertLink, cmInsertNode]) then
+      begin
         UndoStorage.Seek(0, soFromBeginning);
         RestoreObjects(UndoStorage);
       end
-      else Source.Free;
+      else
+        Source.Free;
     end;
     UndoStorage.Clear;
-    if not(CommandMode in [cmInsertLink, cmInsertNode])
-    then DoObjectEndDrag(Source, DragHitTest, not Accept)
-    else CommandMode := cmEdit;
-    if DragModified
-    then begin
+    if not(CommandMode in [cmInsertLink, cmInsertNode]) then
+      DoObjectEndDrag(Source, DragHitTest, not Accept)
+    else
+      CommandMode := cmEdit;
+    if DragModified then
+    begin
       Modified := True;
       DoGraphChange;
     end;
@@ -8378,69 +8906,83 @@ end;
 
 procedure TSimpleGraph.ObjectChanged(GraphObject: TGraphObject; Flags: TGraphChangeFlags);
 begin
-  if (csDestroying in ComponentState)
-  then Exit;
-  if UpdateCount = 0
-  then begin
-    if gcPlacement in Flags
-    then begin
+  if (csDestroying in ComponentState) then
+    Exit;
+  if UpdateCount = 0 then
+  begin
+    if gcPlacement in Flags then
+    begin
       SaveBoundsChange := [Low(TGraphBoundsKind) .. High(TGraphBoundsKind)];
       CalcAutoRange;
     end;
-    if gcData in Flags
-    then begin
-      if not Assigned(DragSource)
-      then begin
+    if gcData in Flags then
+    begin
+      if not Assigned(DragSource) then
+      begin
         Modified := True;
         DoGraphChange;
       end
-      else fDragModified := True;
+      else
+        fDragModified := True;
     end;
   end
-  else begin
-    if (gcData in Flags) and not(CommandMode in [cmInsertLink, cmInsertNode])
-    then SaveModified := 1;
-    if gcPlacement in Flags
-    then SaveRangeChange := True;
+  else
+  begin
+    if (gcData in Flags) and not(CommandMode in [cmInsertLink, cmInsertNode]) then
+      SaveModified := 1;
+    if gcPlacement in Flags then
+      SaveRangeChange := True;
   end;
-  if gcView in Flags
-  then GraphObject.Invalidate;
+  if gcView in Flags then
+    GraphObject.Invalidate;
 end;
 
 procedure TSimpleGraph.ObjectListChanged(Sender: TObject; GraphObject: TGraphObject; Action: TGraphObjectListAction);
 begin
   case Action of
-    glAdded: if GraphObject.Owner = Self then begin
+    glAdded:
+      if GraphObject.Owner = Self then
+      begin
         DoObjectInsert(GraphObject);
         ObjectChanged(GraphObject, [gcView, gcData, gcPlacement]);
       end
-      else TGraphObjectList(Sender).Remove(GraphObject);
-    glRemoved: if GraphObject.Owner = Self then begin
-        if GraphObject = DragSource
-        then GraphObject.EndDrag(False)
-        else if osDragging in GraphObject.States
-        then DraggingObjects.Remove(GraphObject);
-        if GraphObject = ObjectAtCursor
-        then RenewObjectAtCursor(nil);
+      else
+        TGraphObjectList(Sender).Remove(GraphObject);
+    glRemoved:
+      if GraphObject.Owner = Self then
+      begin
+        if GraphObject = DragSource then
+          GraphObject.EndDrag(False)
+        else if osDragging in GraphObject.States then
+          DraggingObjects.Remove(GraphObject);
+        if GraphObject = ObjectAtCursor then
+          RenewObjectAtCursor(nil);
         GraphObject.Selected := False;
         DoObjectRemove(GraphObject);
         ObjectChanged(GraphObject, [gcView, gcData, gcPlacement]);
-        if not(osDestroying in GraphObject.States)
-        then GraphObject.Free;
+        if not(osDestroying in GraphObject.States) then
+          GraphObject.Free;
       end;
-    glReordered: if GraphObject.Owner = Self then ObjectChanged(GraphObject, [gcView, gcData]);
+    glReordered:
+      if GraphObject.Owner = Self then
+        ObjectChanged(GraphObject, [gcView, gcData]);
   end;
 end;
 
 procedure TSimpleGraph.SelectedListChanged(Sender: TObject; GraphObject: TGraphObject; Action: TGraphObjectListAction);
 begin
   case Action of
-    glAdded: if (GraphObject.Owner = Self) and GraphObject.Selected then begin
+    glAdded:
+      if (GraphObject.Owner = Self) and GraphObject.Selected then
+      begin
         Include(SaveBoundsChange, bkSelected);
         DoObjectSelect(GraphObject);
       end
-      else TGraphObjectList(Sender).Remove(GraphObject);
-    glRemoved: if GraphObject.Owner = Self then begin
+      else
+        TGraphObjectList(Sender).Remove(GraphObject);
+    glRemoved:
+      if GraphObject.Owner = Self then
+      begin
         GraphObject.Selected := False;
         Include(SaveBoundsChange, bkSelected);
         DoObjectSelect(GraphObject);
@@ -8451,188 +8993,194 @@ end;
 procedure TSimpleGraph.DraggingListChanged(Sender: TObject; GraphObject: TGraphObject; Action: TGraphObjectListAction);
 begin
   case Action of
-    glAdded: if GraphObject.Owner = Self then Include(SaveBoundsChange, bkDragging)
-      else TGraphObjectList(Sender).Remove(GraphObject);
-    glRemoved: if GraphObject.Owner = Self then Include(SaveBoundsChange, bkDragging);
+    glAdded:
+      if GraphObject.Owner = Self then
+        Include(SaveBoundsChange, bkDragging)
+      else
+        TGraphObjectList(Sender).Remove(GraphObject);
+    glRemoved:
+      if GraphObject.Owner = Self then
+        Include(SaveBoundsChange, bkDragging);
   end;
 end;
 
 procedure TSimpleGraph.DoBeforeDraw(ACanvas: TCanvas);
 begin
-  if Assigned(OnBeforeDraw)
-  then OnBeforeDraw(Self, Canvas);
+  if Assigned(OnBeforeDraw) then
+    OnBeforeDraw(Self, Canvas);
 end;
 
 procedure TSimpleGraph.DoAfterDraw(ACanvas: TCanvas);
 begin
-  if Assigned(OnAfterDraw)
-  then OnAfterDraw(Self, Canvas);
+  if Assigned(OnAfterDraw) then
+    OnAfterDraw(Self, Canvas);
 end;
 
 procedure TSimpleGraph.DoCommandModeChange;
 begin
-  if not(csDestroying in ComponentState) and Assigned(fOnCommandModeChange)
-  then fOnCommandModeChange(Self);
+  if not(csDestroying in ComponentState) and Assigned(fOnCommandModeChange) then
+    fOnCommandModeChange(Self);
 end;
 
 procedure TSimpleGraph.DoGraphChange;
 begin
-  if Assigned(fOnGraphChange)
-  then fOnGraphChange(Self);
+  if Assigned(fOnGraphChange) then
+    fOnGraphChange(Self);
 end;
 
 procedure TSimpleGraph.DoZoomChange;
 begin
-  if Assigned(fOnZoomChange)
-  then fOnZoomChange(Self);
+  if Assigned(fOnZoomChange) then
+    fOnZoomChange(Self);
 end;
 
 procedure TSimpleGraph.DoObjectBeforeDraw(ACanvas: TCanvas; GraphObject: TGraphObject);
 begin
-  if Assigned(OnObjectBeforeDraw)
-  then OnObjectBeforeDraw(Self, GraphObject, ACanvas);
+  if Assigned(OnObjectBeforeDraw) then
+    OnObjectBeforeDraw(Self, GraphObject, ACanvas);
 end;
 
 procedure TSimpleGraph.DoObjectAfterDraw(ACanvas: TCanvas; GraphObject: TGraphObject);
 begin
-  if Assigned(OnObjectAfterDraw)
-  then OnObjectAfterDraw(Self, GraphObject, ACanvas);
+  if Assigned(OnObjectAfterDraw) then
+    OnObjectAfterDraw(Self, GraphObject, ACanvas);
 end;
 
 procedure TSimpleGraph.DoObjectClick(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectClick)
-  then fOnObjectClick(Self, GraphObject);
+  if Assigned(fOnObjectClick) then
+    fOnObjectClick(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectDblClick(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectDblClick)
-  then fOnObjectDblClick(Self, GraphObject);
+  if Assigned(fOnObjectDblClick) then
+    fOnObjectDblClick(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectInitInstance(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectInitInstance)
-  then fOnObjectInitInstance(Self, GraphObject);
+  if Assigned(fOnObjectInitInstance) then
+    fOnObjectInitInstance(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectInsert(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectInsert)
-  then fOnObjectInsert(Self, GraphObject);
+  if Assigned(fOnObjectInsert) then
+    fOnObjectInsert(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectRemove(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectRemove)
-  then fOnObjectRemove(Self, GraphObject);
+  if Assigned(fOnObjectRemove) then
+    fOnObjectRemove(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectChange(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectChange)
-  then fOnObjectChange(Self, GraphObject);
+  if Assigned(fOnObjectChange) then
+    fOnObjectChange(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectMouseEnter(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectMouseEnter)
-  then fOnObjectMouseEnter(Self, GraphObject);
+  if Assigned(fOnObjectMouseEnter) then
+    fOnObjectMouseEnter(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectMouseLeave(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectMouseLeave)
-  then fOnObjectMouseLeave(Self, GraphObject);
+  if Assigned(fOnObjectMouseLeave) then
+    fOnObjectMouseLeave(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectSelect(GraphObject: TGraphObject);
 begin
-  if Assigned(fOnObjectSelect)
-  then fOnObjectSelect(Self, GraphObject);
+  if Assigned(fOnObjectSelect) then
+    fOnObjectSelect(Self, GraphObject);
 end;
 
 procedure TSimpleGraph.DoObjectContextPopup(GraphObject: TGraphObject; const MousePos: TPoint; var Handled: Boolean);
 begin
-  if Assigned(fOnObjectContextPopup)
-  then fOnObjectContextPopup(Self, GraphObject, MousePos, Handled);
+  if Assigned(fOnObjectContextPopup) then
+    fOnObjectContextPopup(Self, GraphObject, MousePos, Handled);
 end;
 
 procedure TSimpleGraph.DoObjectBeginDrag(GraphObject: TGraphObject; HT: DWORD);
 begin
-  if Assigned(fOnObjectBeginDrag)
-  then fOnObjectBeginDrag(Self, GraphObject, HT);
+  if Assigned(fOnObjectBeginDrag) then
+    fOnObjectBeginDrag(Self, GraphObject, HT);
 end;
 
 procedure TSimpleGraph.DoObjectEndDrag(GraphObject: TGraphObject; HT: DWORD; Cancelled: Boolean);
 begin
-  if Assigned(fOnObjectEndDrag)
-  then fOnObjectEndDrag(Self, GraphObject, HT, Cancelled);
+  if Assigned(fOnObjectEndDrag) then
+    fOnObjectEndDrag(Self, GraphObject, HT, Cancelled);
 end;
 
 procedure TSimpleGraph.DoNodeMoveResize(Node: TGraphNode);
 begin
-  if Assigned(fOnNodeMoveResize)
-  then fOnNodeMoveResize(Self, Node);
+  if Assigned(fOnNodeMoveResize) then
+    fOnNodeMoveResize(Self, Node);
 end;
 
 procedure TSimpleGraph.DoObjectRead(GraphObject: TGraphObject; Stream: TStream);
 begin
-  if Assigned(fOnObjectRead)
-  then fOnObjectRead(Self, GraphObject, Stream);
+  if Assigned(fOnObjectRead) then
+    fOnObjectRead(Self, GraphObject, Stream);
 end;
 
 procedure TSimpleGraph.DoObjectWrite(GraphObject: TGraphObject; Stream: TStream);
 begin
-  if Assigned(fOnObjectWrite)
-  then fOnObjectWrite(Self, GraphObject, Stream);
+  if Assigned(fOnObjectWrite) then
+    fOnObjectWrite(Self, GraphObject, Stream);
 end;
 
 procedure TSimpleGraph.DoObjectHook(GraphObject: TGraphObject; Link: TGraphLink; Index: Integer);
 begin
-  if Assigned(fOnObjectHook)
-  then fOnObjectHook(Self, GraphObject, Link, Index);
+  if Assigned(fOnObjectHook) then
+    fOnObjectHook(Self, GraphObject, Link, Index);
 end;
 
 procedure TSimpleGraph.DoObjectUnhook(GraphObject: TGraphObject; Link: TGraphLink; Index: Integer);
 begin
-  if Assigned(fOnObjectUnhook)
-  then fOnObjectUnhook(Self, GraphObject, Link, Index);
+  if Assigned(fOnObjectUnhook) then
+    fOnObjectUnhook(Self, GraphObject, Link, Index);
 end;
 
 procedure TSimpleGraph.DoCanHookLink(GraphObject: TGraphObject; Link: TGraphLink; Index: Integer; var CanHook: Boolean);
 begin
-  if (SuspendQueryEvents = 0) and Assigned(fOnCanHookLink)
-  then fOnCanHookLink(Self, GraphObject, Link, Index, CanHook);
+  if (SuspendQueryEvents = 0) and Assigned(fOnCanHookLink) then
+    fOnCanHookLink(Self, GraphObject, Link, Index, CanHook);
 end;
 
 procedure TSimpleGraph.DoCanLinkObjects(Link: TGraphLink; Source, Target: TGraphObject; var CanLink: Boolean);
 begin
-  if (SuspendQueryEvents = 0) and Assigned(fOnCanLinkObjects)
-  then fOnCanLinkObjects(Self, Link, Source, Target, CanLink);
+  if (SuspendQueryEvents = 0) and Assigned(fOnCanLinkObjects) then
+    fOnCanLinkObjects(Self, Link, Source, Target, CanLink);
 end;
 
 procedure TSimpleGraph.DoCanMoveResizeNode(Node: TGraphNode; var aLeft, aTop, aWidth, aHeight: Integer;
   var CanMove, CanResize: Boolean);
 begin
-  if (SuspendQueryEvents = 0) and Assigned(fOnCanMoveResizeNode)
-  then fOnCanMoveResizeNode(Self, Node, aLeft, aTop, aWidth, aHeight, CanMove, CanResize);
+  if (SuspendQueryEvents = 0) and Assigned(fOnCanMoveResizeNode) then
+    fOnCanMoveResizeNode(Self, Node, aLeft, aTop, aWidth, aHeight, CanMove, CanResize);
 end;
 
 procedure TSimpleGraph.DoCanRemoveObject(GraphObject: TGraphObject; var CanRemove: Boolean);
 begin
-  if (SuspendQueryEvents = 0) and Assigned(fOnCanRemoveObject)
-  then fOnCanRemoveObject(Self, GraphObject, CanRemove);
+  if (SuspendQueryEvents = 0) and Assigned(fOnCanRemoveObject) then
+    fOnCanRemoveObject(Self, GraphObject, CanRemove);
 end;
 
 procedure TSimpleGraph.SnapOffset(const Pt: TPoint; var dX, dY: Integer);
 begin
-  with SnapPoint(Point(Pt.X + dX, Pt.Y + dY)) do begin
-    if dX <> 0
-    then dX := X - Pt.X;
-    if dY <> 0
-    then dY := Y - Pt.Y;
+  with SnapPoint(Point(Pt.X + dX, Pt.Y + dY)) do
+  begin
+    if dX <> 0 then
+      dX := X - Pt.X;
+    if dY <> 0 then
+      dY := Y - Pt.Y;
   end;
 end;
 
@@ -8658,7 +9206,8 @@ end;
 
 function TSimpleGraph.ScreenToGraph(X, Y: Integer): TPoint;
 begin
-  with ScreenToClient(Point(X, Y)) do Result := ClientToGraph(X, Y);
+  with ScreenToClient(Point(X, Y)) do
+    Result := ClientToGraph(X, Y);
 end;
 
 function TSimpleGraph.GraphToScreen(X, Y: Integer): TPoint;
@@ -8672,38 +9221,42 @@ var
   CRect: TRect;
 begin
   CRect := ClientRect;
-  if VertScrollBar.IsScrollBarVisible
-  then Dec(CRect.Right, GetSystemMetrics(SM_CXVSCROLL));
-  if HorzScrollBar.IsScrollBarVisible
-  then Dec(CRect.Bottom, GetSystemMetrics(SM_CYHSCROLL));
+  if VertScrollBar.IsScrollBarVisible then
+    Dec(CRect.Right, GetSystemMetrics(SM_CXVSCROLL));
+  if HorzScrollBar.IsScrollBarVisible then
+    Dec(CRect.Bottom, GetSystemMetrics(SM_CYHSCROLL));
   HZoom := MulDiv(100, CRect.Right - CRect.Left, Rect.Right - Rect.Left);
   VZoom := MulDiv(100, CRect.Bottom - CRect.Top, Rect.Bottom - Rect.Top);
-  if HZoom < VZoom
-  then Zoom := HZoom
-  else Zoom := VZoom;
+  if HZoom < VZoom then
+    Zoom := HZoom
+  else
+    Zoom := VZoom;
   ScrollCenter(Rect);
   Result := (Zoom = HZoom) or (Zoom = VZoom);
 end;
 
 function TSimpleGraph.ZoomObject(GraphObject: TGraphObject): Boolean;
 begin
-  if Assigned(GraphObject)
-  then Result := ZoomRect(GraphObject.VisualRect)
-  else Result := False;
+  if Assigned(GraphObject) then
+    Result := ZoomRect(GraphObject.VisualRect)
+  else
+    Result := False;
 end;
 
 function TSimpleGraph.ZoomSelection: Boolean;
 begin
-  if SelectedObjects.Count > 0
-  then Result := ZoomRect(SelectionBounds)
-  else Result := False;
+  if SelectedObjects.Count > 0 then
+    Result := ZoomRect(SelectionBounds)
+  else
+    Result := False;
 end;
 
 function TSimpleGraph.ZoomGraph: Boolean;
 begin
-  if Objects.Count > 0
-  then Result := ZoomRect(GraphBounds)
-  else Result := False;
+  if Objects.Count > 0 then
+    Result := ZoomRect(GraphBounds)
+  else
+    Result := False;
 end;
 
 function TSimpleGraph.ChangeZoom(NewZoom: Integer; Origin: TGraphZoomOrigin): Boolean;
@@ -8711,31 +9264,37 @@ var
   R: TRect;
 begin
   Result := False;
-  if NewZoom < Low(TZoom)
-  then NewZoom := Low(TZoom)
-  else if NewZoom > High(TZoom)
-  then NewZoom := High(TZoom);
-  if Zoom <> NewZoom
-  then begin
+  if NewZoom < Low(TZoom) then
+    NewZoom := Low(TZoom)
+  else if NewZoom > High(TZoom) then
+    NewZoom := High(TZoom);
+  if Zoom <> NewZoom then
+  begin
     case Origin of
-      zoTopLeft, zoCenter: R := VisibleBounds;
-      zoCursor, zoCursorCenter: R.TopLeft := CursorPos;
+      zoTopLeft, zoCenter:
+        R := VisibleBounds;
+      zoCursor, zoCursorCenter:
+        R.TopLeft := CursorPos;
     end;
     fZoom := NewZoom;
     CalcAutoRange;
     case Origin of
-      zoTopLeft: ScrollInView(R);
-      zoCenter: ScrollCenter(R);
-      zoCursor: begin
+      zoTopLeft:
+        ScrollInView(R);
+      zoCenter:
+        ScrollCenter(R);
+      zoCursor:
+        begin
           R.BottomRight := CursorPos;
           with HorzScrollBar do
-            if IsScrollBarVisible
-            then Position := Position - MulDiv(R.Right - R.Left, Zoom, 100);
+            if IsScrollBarVisible then
+              Position := Position - MulDiv(R.Right - R.Left, Zoom, 100);
           with VertScrollBar do
-            if IsScrollBarVisible
-            then Position := Position - MulDiv(R.Bottom - R.Top, Zoom, 100);
+            if IsScrollBarVisible then
+              Position := Position - MulDiv(R.Bottom - R.Top, Zoom, 100);
         end;
-      zoCursorCenter: ScrollCenter(R.TopLeft);
+      zoCursorCenter:
+        ScrollCenter(R.TopLeft);
     end;
     Invalidate;
     DoZoomChange;
@@ -8761,32 +9320,37 @@ function TSimpleGraph.AlignSelection(Horz: THAlignOption; Vert: TVAlignOption): 
     ObjectList := TGraphObjectList.Create;
     try
       ObjectList.Capacity := SelectedObjects.Count;
-      for I := 0 to SelectedObjects.Count - 1 do begin
+      for I := 0 to SelectedObjects.Count - 1 do
+      begin
         GraphObject := SelectedObjects[I];
         for J := 0 to ObjectList.Count - 1 do
-          if ObjectList[J].BoundsRect.Left > GraphObject.BoundsRect.Left
-          then begin
+          if ObjectList[J].BoundsRect.Left > GraphObject.BoundsRect.Left then
+          begin
             ObjectList.Insert(J, GraphObject);
             GraphObject := nil;
             Break;
           end;
-        if Assigned(GraphObject)
-        then ObjectList.Add(GraphObject);
+        if Assigned(GraphObject) then
+          ObjectList.Add(GraphObject);
       end;
       Space := ObjectList[ObjectList.Count - 1].BoundsRect.Right - ObjectList[0].BoundsRect.Left;
       for I := 0 to ObjectList.Count - 1 do
-        with ObjectList[I].BoundsRect do Dec(Space, Right - Left);
+        with ObjectList[I].BoundsRect do
+          Dec(Space, Right - Left);
       Space := Space div (ObjectList.Count - 1);
       dY := 0;
       Left := ObjectList[0].BoundsRect.Right + Space;
-      for I := 1 to ObjectList.Count - 2 do begin
+      for I := 1 to ObjectList.Count - 2 do
+      begin
         GraphConstraints.SourceRect := ObjectList[I].BoundsRect;
         dX := Left - ObjectList[I].BoundsRect.Left;
         if GraphConstraints.ConfineOffset(dX, dY, [osLeft, osRight]) and ObjectList[I].OffsetHitTest(GHT_CLIENT, dX, dY)
-        then Result := True;
+        then
+          Result := True;
         Left := ObjectList[I].BoundsRect.Right + Space;
       end;
-    finally ObjectList.Free;
+    finally
+      ObjectList.Free;
     end;
   end;
 
@@ -8801,32 +9365,37 @@ function TSimpleGraph.AlignSelection(Horz: THAlignOption; Vert: TVAlignOption): 
     ObjectList := TGraphObjectList.Create;
     try
       ObjectList.Capacity := SelectedObjects.Count;
-      for I := 0 to SelectedObjects.Count - 1 do begin
+      for I := 0 to SelectedObjects.Count - 1 do
+      begin
         GraphObject := SelectedObjects[I];
         for J := 0 to ObjectList.Count - 1 do
-          if ObjectList[J].BoundsRect.Top > GraphObject.BoundsRect.Top
-          then begin
+          if ObjectList[J].BoundsRect.Top > GraphObject.BoundsRect.Top then
+          begin
             ObjectList.Insert(J, GraphObject);
             GraphObject := nil;
             Break;
           end;
-        if Assigned(GraphObject)
-        then ObjectList.Add(GraphObject);
+        if Assigned(GraphObject) then
+          ObjectList.Add(GraphObject);
       end;
       Space := ObjectList[ObjectList.Count - 1].BoundsRect.Bottom - ObjectList[0].BoundsRect.Top;
       for I := 0 to ObjectList.Count - 1 do
-        with ObjectList[I].BoundsRect do Dec(Space, Bottom - Top);
+        with ObjectList[I].BoundsRect do
+          Dec(Space, Bottom - Top);
       Space := Space div (ObjectList.Count - 1);
       dX := 0;
       Top := ObjectList[0].BoundsRect.Bottom + Space;
-      for I := 1 to ObjectList.Count - 2 do begin
+      for I := 1 to ObjectList.Count - 2 do
+      begin
         GraphConstraints.SourceRect := ObjectList[I].BoundsRect;
         dY := Top - ObjectList[I].BoundsRect.Top;
         if GraphConstraints.ConfineOffset(dX, dY, [osTop, osBottom]) and ObjectList[I].OffsetHitTest(GHT_CLIENT, dX, dY)
-        then Result := True;
+        then
+          Result := True;
         Top := ObjectList[I].BoundsRect.Bottom + Space;
       end;
-    finally ObjectList.Free;
+    finally
+      ObjectList.Free;
     end;
   end;
 
@@ -8838,40 +9407,50 @@ function TSimpleGraph.AlignSelection(Horz: THAlignOption; Vert: TVAlignOption): 
   begin
     Result := False;
     RefRect := SelectedObjects[0].BoundsRect;
-    for I := 1 to SelectedObjects.Count - 1 do begin
+    for I := 1 to SelectedObjects.Count - 1 do
+    begin
       ObjRect := SelectedObjects[I].BoundsRect;
       case Horz of
-        haLeft: dX := RefRect.Left - ObjRect.Left;
-        haCenter: dX := CenterOfRect(RefRect).X - CenterOfRect(ObjRect).X;
-        haRight: dX := RefRect.Right - ObjRect.Right;
-      else dX := 0;
+        haLeft:
+          dX := RefRect.Left - ObjRect.Left;
+        haCenter:
+          dX := CenterOfRect(RefRect).X - CenterOfRect(ObjRect).X;
+        haRight:
+          dX := RefRect.Right - ObjRect.Right;
+      else
+        dX := 0;
       end;
       case Vert of
-        vaTop: dY := RefRect.Top - ObjRect.Top;
-        vaCenter: dY := CenterOfRect(RefRect).Y - CenterOfRect(ObjRect).Y;
-        vaBottom: dY := RefRect.Bottom - ObjRect.Bottom;
-      else dY := 0;
+        vaTop:
+          dY := RefRect.Top - ObjRect.Top;
+        vaCenter:
+          dY := CenterOfRect(RefRect).Y - CenterOfRect(ObjRect).Y;
+        vaBottom:
+          dY := RefRect.Bottom - ObjRect.Bottom;
+      else
+        dY := 0;
       end;
       GraphConstraints.SourceRect := ObjRect;
       if GraphConstraints.ConfineOffset(dX, dY, [osLeft, osTop, osRight, osBottom]) and
-        SelectedObjects[I].OffsetHitTest(GHT_CLIENT, dX, dY)
-      then Result := True;
+        SelectedObjects[I].OffsetHitTest(GHT_CLIENT, dX, dY) then
+        Result := True;
     end;
   end;
 
 begin
   Result := False;
-  if SelectedObjects.Count > 1
-  then begin
+  if SelectedObjects.Count > 1 then
+  begin
     BeginUpdate;
     try
-      if (Horz = haSpaceEqually) and (SelectedObjects.Count > 2) and DoHSpaceEqually
-      then Result := True;
-      if (Vert = vaSpaceEqually) and (SelectedObjects.Count > 2) and DoVSpaceEqually
-      then Result := True;
-      if ((Horz <> haSpaceEqually) or (Vert <> vaSpaceEqually)) and DoOtherAlignment
-      then Result := True;
-    finally EndUpdate;
+      if (Horz = haSpaceEqually) and (SelectedObjects.Count > 2) and DoHSpaceEqually then
+        Result := True;
+      if (Vert = vaSpaceEqually) and (SelectedObjects.Count > 2) and DoVSpaceEqually then
+        Result := True;
+      if ((Horz <> haSpaceEqually) or (Vert <> vaSpaceEqually)) and DoOtherAlignment then
+        Result := True;
+    finally
+      EndUpdate;
     end;
   end;
 end;
@@ -8885,55 +9464,64 @@ var
   I, V: Integer;
 begin
   Result := False;
-  if SelectedObjects.Count > 1
-  then begin
+  if SelectedObjects.Count > 1 then
+  begin
     MinWidth := MaxInt;
     MaxWidth := 0;
     MinHeight := MaxInt;
     MaxHeight := 0;
     for I := 0 to SelectedObjects.Count - 1 do
-      with SelectedObjects[I].BoundsRect do begin
+      with SelectedObjects[I].BoundsRect do
+      begin
         V := Right - Left;
-        if V < MinWidth
-        then MinWidth := V;
-        if V > MaxWidth
-        then MaxWidth := V;
+        if V < MinWidth then
+          MinWidth := V;
+        if V > MaxWidth then
+          MaxWidth := V;
         V := Bottom - Top;
-        if V < MinHeight
-        then MinHeight := V;
-        if V > MaxHeight
-        then MaxHeight := V;
+        if V < MinHeight then
+          MinHeight := V;
+        if V > MaxHeight then
+          MaxHeight := V;
       end;
     BeginUpdate;
     try
-      for I := 0 to SelectedObjects.Count - 1 do begin
+      for I := 0 to SelectedObjects.Count - 1 do
+      begin
         ObjRect := SelectedObjects[I].BoundsRect;
         case Horz of
-          roNoChange: dX := 0;
-          roSmallest: dX := MinWidth - (ObjRect.Right - ObjRect.Left);
-          roLargest: dX := MaxWidth - (ObjRect.Right - ObjRect.Left);
+          roNoChange:
+            dX := 0;
+          roSmallest:
+            dX := MinWidth - (ObjRect.Right - ObjRect.Left);
+          roLargest:
+            dX := MaxWidth - (ObjRect.Right - ObjRect.Left);
         end;
         case Vert of
-          roNoChange: dY := 0;
-          roSmallest: dY := MinHeight - (ObjRect.Bottom - ObjRect.Top);
-          roLargest: dY := MaxHeight - (ObjRect.Bottom - ObjRect.Top);
+          roNoChange:
+            dY := 0;
+          roSmallest:
+            dY := MinHeight - (ObjRect.Bottom - ObjRect.Top);
+          roLargest:
+            dY := MaxHeight - (ObjRect.Bottom - ObjRect.Top);
         end;
         GraphConstraints.SourceRect := ObjRect;
         if GraphConstraints.ConfineOffset(dX, dY, [osRight, osBottom]) and
-          SelectedObjects[I].OffsetHitTest(GHT_BOTTOMRIGHT, dX, dY)
-        then Result := True;
+          SelectedObjects[I].OffsetHitTest(GHT_BOTTOMRIGHT, dX, dY) then
+          Result := True;
       end;
-    finally EndUpdate;
+    finally
+      EndUpdate;
     end;
   end;
 end;
 
 class procedure TSimpleGraph.Register(ANodeClass: TGraphNodeClass);
 begin
-  if not Assigned(RegisteredNodeClasses)
-  then RegisteredNodeClasses := TList.Create;
-  if RegisteredNodeClasses.IndexOf(ANodeClass) < 0
-  then begin
+  if not Assigned(RegisteredNodeClasses) then
+    RegisteredNodeClasses := TList.Create;
+  if RegisteredNodeClasses.IndexOf(ANodeClass) < 0 then
+  begin
     RegisteredNodeClasses.Add(ANodeClass);
     RegisterClass(ANodeClass);
   end;
@@ -8941,12 +9529,12 @@ end;
 
 class procedure TSimpleGraph.Unregister(ANodeClass: TGraphNodeClass);
 begin
-  if Assigned(RegisteredNodeClasses)
-  then begin
+  if Assigned(RegisteredNodeClasses) then
+  begin
     UnregisterClass(ANodeClass);
     RegisteredNodeClasses.Remove(ANodeClass);
-    if RegisteredNodeClasses.Count = 0
-    then begin
+    if RegisteredNodeClasses.Count = 0 then
+    begin
       RegisteredNodeClasses.Free;
       RegisteredNodeClasses := nil;
     end;
@@ -8955,9 +9543,10 @@ end;
 
 class function TSimpleGraph.NodeClassCount: Integer;
 begin
-  if Assigned(RegisteredNodeClasses)
-  then Result := RegisteredNodeClasses.Count
-  else Result := 0;
+  if Assigned(RegisteredNodeClasses) then
+    Result := RegisteredNodeClasses.Count
+  else
+    Result := 0;
 end;
 
 class function TSimpleGraph.NodeClasses(Index: Integer): TGraphNodeClass;
@@ -8967,10 +9556,10 @@ end;
 
 class procedure TSimpleGraph.Register(ALinkClass: TGraphLinkClass);
 begin
-  if not Assigned(RegisteredLinkClasses)
-  then RegisteredLinkClasses := TList.Create;
-  if RegisteredLinkClasses.IndexOf(ALinkClass) < 0
-  then begin
+  if not Assigned(RegisteredLinkClasses) then
+    RegisteredLinkClasses := TList.Create;
+  if RegisteredLinkClasses.IndexOf(ALinkClass) < 0 then
+  begin
     RegisteredLinkClasses.Add(ALinkClass);
     RegisterClass(ALinkClass);
   end;
@@ -8978,12 +9567,12 @@ end;
 
 class procedure TSimpleGraph.Unregister(ALinkClass: TGraphLinkClass);
 begin
-  if Assigned(RegisteredLinkClasses)
-  then begin
+  if Assigned(RegisteredLinkClasses) then
+  begin
     UnregisterClass(ALinkClass);
     RegisteredLinkClasses.Remove(ALinkClass);
-    if RegisteredLinkClasses.Count = 0
-    then begin
+    if RegisteredLinkClasses.Count = 0 then
+    begin
       RegisteredLinkClasses.Free;
       RegisteredLinkClasses := nil;
     end;
@@ -8992,9 +9581,10 @@ end;
 
 class function TSimpleGraph.LinkClassCount: Integer;
 begin
-  if Assigned(RegisteredLinkClasses)
-  then Result := RegisteredLinkClasses.Count
-  else Result := 0;
+  if Assigned(RegisteredLinkClasses) then
+    Result := RegisteredLinkClasses.Count
+  else
+    Result := 0;
 end;
 
 class function TSimpleGraph.LinkClasses(Index: Integer): TGraphLinkClass;

@@ -3,14 +3,13 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ToolCtrlsEh, DBGridEhToolCtrls,
-  DB, GridsEh, System.UITypes,
-  DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, FIBQuery,
-  pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh,
-  Mask, DBLookupEh, ComCtrls, OXmlPDOM, OTextReadWrite, EhLibVCL,
-  httpsend, synacode, blcksock, ftpsend, synsock,
-  System.TimeSpan, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.TimeSpan,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ComCtrls,
+  ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase,
+  pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OXmlPDOM, OTextReadWrite, EhLibVCL, httpsend, synacode, blcksock,
+  ftpsend, synsock, DBGridEhGrouping, DynVarsEh;
 
 type
   TEPGImportForm = class(TForm)
@@ -83,7 +82,8 @@ var
 implementation
 
 uses
-  DM, EPGSource, StrUtils, OXmlUtils, PrjConst, AtrCommon, System.DateUtils, JsonDataObjects, sevenzip;
+  System.StrUtils, System.DateUtils,
+  DM, EPGSource, OXmlUtils, PrjConst, AtrCommon, JsonDataObjects, sevenzip;
 
 resourcestring
   srUnknownFormat = 'Не верный формат файла, настройте пожалуйста источник EPG';

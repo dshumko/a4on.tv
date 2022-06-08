@@ -5,16 +5,19 @@ interface
 {$I defines.inc}
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, ComCtrls, Grids, DBGridEh, ActnList, ToolWin, Buttons,
-  DB, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery,
-  FIBDatabase, pFIBDatabase, Menus, GridsEh, ImgList,
-  StdCtrls, DBCtrlsEh, EhLibFIB, ToolCtrlsEh,
-  DBGridEhToolCtrls, RxPlacemnt, DBAxisGridsEh, System.UITypes,
-  // {$IFDEF VER280}IBX.IBServices{$ELSE}IBServices{$ENDIF}, IB_Services,
-{$IFDEF VER290} System.ImageList, {$ENDIF}
-  PrjConst, System.Actions, EhLibVCL, MemTableDataEh,
-  DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Grids, Vcl.ActnList, Vcl.ToolWin,
+  Vcl.Buttons, Vcl.Menus, Vcl.ImgList, Vcl.StdCtrls,
+  DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, GridsEh, DBCtrlsEh, EhLibFIB,
+  ToolCtrlsEh,
+  DBGridEhToolCtrls, RxPlacemnt, DBAxisGridsEh,
+{$IFDEF VER290}
+  System.ImageList,
+{$ENDIF}
+  System.Actions,
+  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh;
 
 type
   TUsersForm = class(TForm)
@@ -137,10 +140,10 @@ type
     procedure dbgGroupsDblClick(Sender: TObject);
     procedure dbgUsersDblClick(Sender: TObject);
     procedure pgcRightsChange(Sender: TObject);
-    procedure dbgRightsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
-      State: TGridDrawState);
     procedure dbgRightsExit(Sender: TObject);
     procedure dsUsersNewRecord(DataSet: TDataSet);
+    procedure dbgRightsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     isVersion3plus: Boolean;
@@ -162,7 +165,10 @@ var
 
 implementation
 
-uses dm, GroupForma, UserForma, Mask, AtrStrUtils, MAIN, System.StrUtils;
+uses
+  System.StrUtils,
+  Vcl.Mask,
+  dm, GroupForma, UserForma, AtrStrUtils, MAIN;
 
 {$R *.dfm}
 
@@ -915,6 +921,12 @@ begin
   dsModules.Active := (pgcRights.ActivePageIndex = 2);
 end;
 
+procedure TUsersForm.dbgRightsExit(Sender: TObject);
+begin
+  if (Sender as TDBGridEh).DataSource.State in [dsEdit] then
+    (Sender as TDBGridEh).DataSource.DataSet.Post;
+end;
+
 procedure TUsersForm.dbgRightsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
@@ -934,13 +946,6 @@ begin
     Background := clRed
   else
     Background := clWindow;
-
-end;
-
-procedure TUsersForm.dbgRightsExit(Sender: TObject);
-begin
-  if (Sender as TDBGridEh).DataSource.State in [dsEdit] then
-    (Sender as TDBGridEh).DataSource.DataSet.Post;
 end;
 
 procedure TUsersForm.UserSQL(const SQL: string; const PLG: string = '');

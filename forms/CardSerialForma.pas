@@ -3,9 +3,11 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, DBCtrlsEh, DBLookupEh, OkCancel_frame,
-  DB, FIBDataSet, pFIBDataSet, DBCtrls, FIBDatabase, DBGridEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
+  DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh;
 
 type
   TfmCardSerial = class(TForm)
@@ -32,7 +34,8 @@ function EditCardSerial(const aSerial_ID:Int64): Int64;
 
 implementation
 
-uses DM;
+uses
+  DM;
 
 {$R *.dfm}
 

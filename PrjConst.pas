@@ -4,35 +4,38 @@
 interface
 
 const
-  LogFileName    = 'a4on.log';
-  DB_VERSION     = 100;
-  pswdPrefix     = 'tv';
+  LogFileName = 'a4on.log';
+  DB_VERSION = 100;
+  pswdPrefix = 'tv';
   // переменные для экспорта
   // заменяются на соответствующие данные из списка
-  export_fields       = '[ЛИЦЕВОЙ];[САЛЬДО];[БАЛАНС];[ФАМИЛИЯ];[ИМЯ];[ОТЧЕСТВО];[ИНИЦИАЛЫ];[УЛИЦА];[СОКР_УЛ];[ДОМ];[КВАРТИРА];[РАЙОН];[ТЕЛЕФОН];[МОБ_ТЕЛЕФОН];[ПАСПОРТ_N];[ПАСПОРТ_ВЫДАН];[ДЕНЬ];[МЕСЯЦ];[ГОД];[ДНЕЙ_В_МЕС];[SECRET];[ДОГОВОР];[ОПЛАТА_В_МЕСЯЦ];[ДОПЛАТА]';
+  export_fields =
+    '[ЛИЦЕВОЙ];[САЛЬДО];[БАЛАНС];[ФАМИЛИЯ];[ИМЯ];[ОТЧЕСТВО];[ИНИЦИАЛЫ];[УЛИЦА];[СОКР_УЛ];[ДОМ];[КВАРТИРА];[РАЙОН];[ТЕЛЕФОН];[МОБ_ТЕЛЕФОН];[ПАСПОРТ_N];[ПАСПОРТ_ВЫДАН];[ДЕНЬ];[МЕСЯЦ];[ГОД];[ДНЕЙ_В_МЕС];[SECRET];[ДОГОВОР];[ОПЛАТА_В_МЕСЯЦ];[ДОПЛАТА]';
   export_fields_total = '[ДЕНЬ];[МЕСЯЦ];[ГОД];[КОЛВО_ЗАПИСЕЙ];[ИТОГО_ДОЛГ];[ИТОГО_САЛЬДО];[ДНЕЙ_В_МЕС];';
-  ls_fields = '[СЧЕТЧИК];[КОД Н.ПУНКТ];[КОД УЧАСТКА];[КОД УЛИЦЫ];[КОД ДОМА];[ДОМ];[КВАРТИРА];[ТИП УСЛУГИ];[ПН ДОГОВОРА];[ДЕНЬ];[МЕСЯЦ];[ГОД]';
-  barcode_fields ='[КОД_АБОНЕНТА];[ЛИЦЕВОЙ];[СУММА];[СУММА_В_КОПЕЙКАХ];[ФИО];[ФАМИЛИЯ];[УЛИЦА];[ДОМ];[КВАРТИРА];[МЕСЯЦ];[ГОД];[ПРЕД_МЕСЯЦ];[ПРЕД_ГОД]';
+  ls_fields =
+    '[СЧЕТЧИК];[КОД Н.ПУНКТ];[КОД УЧАСТКА];[КОД УЛИЦЫ];[КОД ДОМА];[ДОМ];[КВАРТИРА];[ТИП УСЛУГИ];[ПН ДОГОВОРА];[ДЕНЬ];[МЕСЯЦ];[ГОД]';
+  barcode_fields =
+    '[КОД_АБОНЕНТА];[ЛИЦЕВОЙ];[СУММА];[СУММА_В_КОПЕЙКАХ];[ФИО];[ФАМИЛИЯ];[УЛИЦА];[ДОМ];[КВАРТИРА];[МЕСЯЦ];[ГОД];[ПРЕД_МЕСЯЦ];[ПРЕД_ГОД]';
 
   // Типы атрибутов и их название
-  rsAttrID_eiptv  = 32;
-  rsAttrName_eiptv= 'Атрибуты IPTV групп';
-  rsAttrID_etv    = 6 ;
-  rsAttrName_etv  = 'Атрибуты ТВ оборудования';
-  rsAttrID_cust   = 4 ;
+  rsAttrID_eiptv = 32;
+  rsAttrName_eiptv = 'Атрибуты IPTV групп';
+  rsAttrID_etv = 6;
+  rsAttrName_etv = 'Атрибуты ТВ оборудования';
+  rsAttrID_cust = 4;
   rsAttrName_cust = 'Атрибуты абонента';
-  rsAttrID_etype  = 50;
-  rsAttrName_etype= 'Атрибуты для типа оборудования';
-  rsAttrID_home   = 37;
+  rsAttrID_etype = 50;
+  rsAttrName_etype = 'Атрибуты для типа оборудования';
+  rsAttrID_home = 37;
   rsAttrName_home = 'Атрибуты домов';
-  rsAttrID_elan   = 5 ;
+  rsAttrID_elan = 5;
   rsAttrName_elan = 'Атрибуты сетевого оборудования';
-  rsAttrID_vlan   = 63;
+  rsAttrID_vlan = 63;
   rsAttrName_vlan = 'Атрибуты сетей';
-  rsAttrID_node   = 39;
+  rsAttrID_node = 39;
   rsAttrName_node = 'Атрибуты узлов';
-  rsAttrID_srv    = 25;
-  rsAttrName_srv  = 'Атрибуты услуг';
+  rsAttrID_srv = 25;
+  rsAttrName_srv = 'Атрибуты услуг';
 
   // константа для пароля. чтоб абоненты не могли войти в обход системы
 {$IFDEF WITHRIGHTS}
@@ -198,6 +201,7 @@ const
 
   rght_Mobile_full = 200;
   rght_Mobile_news = 201;
+
 resourcestring
 {$IFNDEF ATIRRA}
   rsWWW = 'A4ON.TV';
@@ -493,7 +497,7 @@ resourcestring
   rsNoRights = 'Нет прав';
   rsError = 'Ошибка';
   rsErrorQuestWT = 'Ошибка %s. Продолжить?';
-  rsErrorQuestContinue =  'Есть ошибки. Продолжить?';
+  rsErrorQuestContinue = 'Есть ошибки. Продолжить?';
 
   rsErrorConnect = 'Ошибка подключения к БД'#13#10'%s';
   rsErrorDll = 'Ошибка в библиотеке %s';
@@ -834,7 +838,8 @@ resourcestring
 
   rsBlackListLine = 'Лицевой %s долг %s '#13#10'%s д. %s кв. %s '#13#10'телефон %s мобильный %s '#13#10'Статус %s';
   rsBlackListTitle = 'Причина блокировки';
-  rsBlackListHint = ' Переменные:'#13#10'Лицевой %s долг %s '#13#10'Улица %s дом %s кв. %s '#13#10'телефон %s мобильный %s '#13#10'Статус %s';
+  rsBlackListHint =
+    ' Переменные:'#13#10'Лицевой %s долг %s '#13#10'Улица %s дом %s кв. %s '#13#10'телефон %s мобильный %s '#13#10'Статус %s';
 
   rsReportMaterialHistory = 'История материала';
 
@@ -881,7 +886,7 @@ resourcestring
   rsOrderN = 'CЗ:';
   rsNeedChannel = 'Необходимо выбрать канал';
   rsCloseTask = 'Закрыть задачу';
-  //rsAdCharCount = 'Символов %d (до %d = %m, более %m)';
+  // rsAdCharCount = 'Символов %d (до %d = %m, более %m)';
   rsAdCharCount = 'Символов %d на %d дня(ей)';
   rsCloseSelectedTask = 'Закрыть все выделенные задачи?';
   rsEmptyOrIncorrect = 'Пустое поле или русский вместо латиницы';
@@ -904,8 +909,8 @@ resourcestring
   rsNotWireLabel = 'Нет линии связи или метки кабеля';
   rsWireUnLinkQuest = 'Кабель будет отключен от портов?';
   rsWireUnLink = 'Отключить кабель';
-  rsWarningQuestStop  = 'Исправить ошибки?';
-  rsIpnotSetOrNotFound  = 'Для услуги не заданы IP или нет свободных адресов';
+  rsWarningQuestStop = 'Исправить ошибки?';
+  rsIpnotSetOrNotFound = 'Для услуги не заданы IP или нет свободных адресов';
   rsDeleteCaption = 'Удаление';
 
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
@@ -916,4 +921,3 @@ resourcestring
 implementation
 
 end.
-

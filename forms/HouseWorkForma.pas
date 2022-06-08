@@ -3,11 +3,11 @@
 interface
 
 uses
-  Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, System.Classes,
-  Data.DB, WinAPI.Windows, WinAPI.Messages, System.SysUtils,
-  System.Variants, VCL.Graphics, VCL.Dialogs, Vcl.DBCtrls,
-  DBLookupEh, OkCancel_frame, DBGridEh, FIBDatabase,
-  pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.SysUtils, System.Variants,
+  Data.DB,
+  Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls,
+  DBLookupEh, OkCancel_frame, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh;
 
 type
   THouseWorkForm = class(TForm)

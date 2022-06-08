@@ -1,13 +1,14 @@
-unit DVBGanresForma;
+﻿unit DVBGanresForma;
 {$I defines.inc}
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, MemTableDataEh, Data.DB,
-  ToolCtrlsEh, DBGridEhToolCtrls, GridsEh,
-  DBAxisGridsEh, DBGridEh, MemTableEh, OkCancel_frame, FIBDatabase,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  MemTableDataEh, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableEh, OkCancel_frame, FIBDatabase,
   pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type

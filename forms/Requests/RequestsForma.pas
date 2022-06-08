@@ -3,15 +3,15 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ActnList, DB, ComCtrls, ToolWin, Grids, DBGridEh,
-  ExtCtrls, FIBDataSet, pFIBDataSet, StdCtrls, DBCtrls, Mask,
-  DBCtrlsEh, frxClass, frxDBSet, EhLibFIB, DBGridEhImpExp,
-  Menus, GridsEh, DBGridEhGrouping, ReqWorksFrame,
-  MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh,
-  ReqMaterialsFrame, PropFilerEh, PropStorageEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, System.Actions, PrjConst,
-  EhLibVCL, System.UITypes, FIBDatabase, pFIBDatabase, DynVarsEh;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  Data.DB,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Menus,
+  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, frxClass, frxDBSet, EhLibFIB, DBGridEhImpExp, GridsEh, DBGridEhGrouping,
+  ReqWorksFrame, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ReqMaterialsFrame, PropFilerEh,
+  PropStorageEh,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh;
 
 type
   TRequestsForm = class(TForm)
@@ -203,14 +203,10 @@ type
     procedure actTaskExecute(Sender: TObject);
     procedure dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
-    procedure dbgPlanColumns13GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
-    procedure dbgGiveColumns13GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
-    procedure dbgExecColumns15GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
-    procedure dbgGridColumns14GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgPlanColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgGiveColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgExecColumns15GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgGridColumns14GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     fSelectedRow: Integer; // число помеченных строк
@@ -245,10 +241,11 @@ var
 
 implementation
 
-uses DateUtils, RequestForma, RequestFilterForma, MAIN, DM,
-  AtrCommon, AtrStrUtils, StrUtils,
-  pFIBQuery, SelDateForma, RequestNewForma, ReqGiveForma, CF, ReportPreview,
-  ReqPlanerForma;
+uses
+  System.DateUtils, System.StrUtils,
+  RequestForma, RequestFilterForma, MAIN, DM, AtrCommon, AtrStrUtils, pFIBQuery, SelDateForma, RequestNewForma,
+  ReqGiveForma, CF,
+  ReportPreview, ReqPlanerForma;
 
 {$R *.dfm}
 
@@ -734,10 +731,10 @@ begin
   // dbgPlan.DataGrouping.Active := False;
   if FCanSaveColumns then
   begin
-    dbgPlan.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqPlan', false);
-    dbgGive.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGive', false);
-    dbgGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGrid', false);
-    dbgExec.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqExec', false);
+    dbgPlan.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqPlan', False);
+    dbgGive.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGive', False);
+    dbgGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGrid', False);
+    dbgExec.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqExec', False);
   end;
   RequestsForm := nil;
   Action := caFree;
@@ -1513,24 +1510,21 @@ begin
   // end;
 end;
 
-procedure TRequestsForm.dbgExecColumns15GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TRequestsForm.dbgExecColumns15GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
 
 end;
 
-procedure TRequestsForm.dbgGiveColumns13GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TRequestsForm.dbgGiveColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
 
 end;
 
-procedure TRequestsForm.dbgGridColumns14GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TRequestsForm.dbgGridColumns14GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
@@ -1583,8 +1577,7 @@ begin
   }
 end;
 
-procedure TRequestsForm.dbgPlanColumns13GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TRequestsForm.dbgPlanColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
@@ -2094,4 +2087,3 @@ begin
 end;
 
 end.
-

@@ -464,7 +464,7 @@ object MessagesForm: TMessagesForm
         object lblSMScount: TLabel
           Left = 0
           Top = 25
-          Width = 915
+          Width = 3
           Height = 13
           Align = alTop
         end

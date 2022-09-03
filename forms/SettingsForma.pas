@@ -190,6 +190,9 @@ type
     chkVlans4Home: TCheckBox;
     chkDisableVlan: TCheckBox;
     chkOnDisact: TCheckBox;
+    chkDisablePortDict: TCheckBox;
+    lbl181: TLabel;
+    cbbRQ_TO_NEGATIVE: TDBLookupComboboxEh;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -475,6 +478,7 @@ begin
       SaveSettingsBoolean('LAN_DELEQPMNT', chkDelLanEq);
       SaveSettingsBoolean('LAN_VALAN4HOME', chkVlans4Home);
       SaveSettingsBoolean('LAN_VALANDISABLE', chkDisableVlan);
+      SaveSettingsBoolean('LAN_PORTDICTDISABLE', chkDisablePortDict);
 
       SaveSettingsBoolean('PAYMENT_SRV', cbPaymentSrv);
       SaveSettingsBoolean('NEGATIVE_PAY', cbNegativePay);
@@ -564,6 +568,11 @@ begin
         SaveSettingsStr('RQ_TO_POSITIVE', '')
       else
         SaveSettingsStr('RQ_TO_POSITIVE', cbbRQ_TO_POSITIVE.KeyValue);
+
+      if VarIsNull(cbbRQ_TO_NEGATIVE.KeyValue) then
+        SaveSettingsStr('RQ_TO_NEGATIVE', '')
+      else
+        SaveSettingsStr('RQ_TO_NEGATIVE', cbbRQ_TO_NEGATIVE.KeyValue);
 
       if (edtSUM_POSITIVE.Text = '') then
         SaveSettingsStr('RQ_SUM_POSITIVE', '0')
@@ -782,6 +791,8 @@ begin
         chkVlans4Home.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_VALANDISABLE' then
         chkDisableVlan.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_PORTDICTDISABLE' then
+        chkDisablePortDict.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PAYMENT_SRV' then
         cbPaymentSrv.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_FORMAT' then
@@ -929,6 +940,12 @@ begin
       begin
         if (TryStrToInt(select.FN('VAR_VALUE').AsString, i)) then
           cbbRQ_TO_POSITIVE.KeyValue := i;
+      end;
+
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'RQ_TO_NEGATIVE' then
+      begin
+        if (TryStrToInt(select.FN('VAR_VALUE').AsString, i)) then
+          cbbRQ_TO_NEGATIVE.KeyValue := i;
       end;
 
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'RQ_SUM_POSITIVE' then

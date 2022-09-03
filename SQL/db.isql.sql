@@ -78,6 +78,8 @@ CREATE DOMAIN D_NAME AS VARCHAR(50) NOT NULL;
 CREATE DOMAIN D_NOTICE AS VARCHAR(1000);
 CREATE DOMAIN D_PATH AS VARCHAR(5000);
 CREATE DOMAIN D_PORT_NS AS VARCHAR(12) CHARACTER SET UTF8 COLLATE NUMBERSORT;
+CREATE DOMAIN D_SERIAL AS VARCHAR(50);
+CREATE DOMAIN D_SERIAL_NS AS VARCHAR(50) CHARACTER SET UTF8 COLLATE NUMBERSORT;
 CREATE DOMAIN D_SERVICE_NAME AS VARCHAR(60);
 CREATE DOMAIN D_SMALLINT AS SMALLINT;
 CREATE DOMAIN D_TIME AS TIME;
@@ -103,7 +105,7 @@ CREATE DOMAIN D_VARCHAR6 AS VARCHAR(6);
 CREATE DOMAIN D_VARCHAR60 AS VARCHAR(60);
 CREATE DOMAIN INT_NULL AS INTEGER;
 CREATE DOMAIN T_YESNO AS CHAR(1)
-         default 'n';
+         DEFAULT 'n';
 CREATE DOMAIN UID AS INTEGER NOT NULL;
 COMMIT WORK;
 
@@ -120,11 +122,14 @@ CREATE TABLE APPLIANCE (ID UID,
         OWN_TYPE UID DEFAULT 0,
         NAME D_VARCHAR100,
         NOTICE D_NOTICE,
-        M_ID D_UID_NULL,
         MAC D_MAC,
-        SN D_VARCHAR50,
+        SERIAL D_SERIAL_NS,
         COST D_N15_2,
         PROPERTY D_INTEGER,
+        S_VERSION D_VARCHAR255,
+        M_ID D_UID_NULL,
+        RQ_ID D_UID_NULL,
+        FROM_WH D_UID_NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -229,10 +234,10 @@ CONSTRAINT PK_BONUS_RATE PRIMARY KEY (ID));
 CREATE TABLE CARDS_PREPAY (CARD_ID UID NOT NULL,
         CARD_SERIAL D_UID_NULL,
         CARD_NUMBER D_VARCHAR20 NOT NULL,
-        CARD_NOMINAL D_INTEGER default 0 NOT NULL,
+        CARD_NOMINAL D_INTEGER DEFAULT 0 NOT NULL,
         CARD_PIN D_VARCHAR20,
         EXPIRATION_DATE D_DATE NOT NULL,
-        CARD_STATE D_SMALLINT default 0 NOT NULL,
+        CARD_STATE D_SMALLINT DEFAULT 0 NOT NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATE_NOW DEFAULT localtimestamp NOT NULL,
         PAYMENT_ID D_UID_NULL,
@@ -304,7 +309,8 @@ CREATE TABLE CHANNEL_SRC (CS_ID UID,
         EDIT_ON D_DATETIME);
 
 /* Table: CHANNEL_SRC_PARAM, Owner: SYSDBA */
-CREATE TABLE CHANNEL_SRC_PARAM (CS_ID UID NOT NULL,
+CREATE TABLE CHANNEL_SRC_PARAM (CSP_ID UID,
+        CS_ID UID NOT NULL,
         CH_ID UID NOT NULL,
         NOTICE D_NOTICE,
         FREQ D_VARCHAR50,
@@ -327,7 +333,8 @@ CREATE TABLE CHANNEL_SRC_PARAM (CS_ID UID NOT NULL,
         SID D_INTEGER,
         VPID D_INTEGER,
         APID D_INTEGER,
-        A2PID D_INTEGER);
+        A2PID D_INTEGER,
+CONSTRAINT PK_CHANNEL_SRC_PARAM PRIMARY KEY (CSP_ID));
 
 /* Table: CLIENT_FILES, Owner: SYSDBA */
 CREATE TABLE CLIENT_FILES (FILE_NAME D_VARCHAR1000,
@@ -497,15 +504,15 @@ CONSTRAINT UNQ1_CUSTOMER_DECODERS UNIQUE (DECODER_N));
 /* Table: CUSTOMER_EQUIPMENT, Owner: SYSDBA */
 CREATE TABLE CUSTOMER_EQUIPMENT (CE_ID UID NOT NULL,
         CUSTOMER_ID UID,
-        EQUIP_N D_DECODER NOT NULL,
+        M_ID D_UID_NULL,
+        SERIAL D_SERIAL_NS,
         SALE D_IBOOLEAN,
         NOTICE D_NOTICE,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
-CONSTRAINT PK_CUSTOMER_EQUIPMENT PRIMARY KEY (CE_ID),
-CONSTRAINT UNQ1_CUSTOMER_EQUIPMENT UNIQUE (EQUIP_N));
+CONSTRAINT PK_CUSTOMER_EQUIPMENT PRIMARY KEY (CE_ID));
 
 /* Table: CUSTOMER_FILES, Owner: SYSDBA */
 CREATE TABLE CUSTOMER_FILES (CF_ID UID,
@@ -574,7 +581,7 @@ CREATE TABLE DEVPORTS (ID UID NOT NULL,
         PORTTYPE D_VARCHAR20,
         MODULE D_VARCHAR30,
         COLOR D_VARCHAR30,
-        COLOROPT D_VARCHAR30 DEFAULT 'solid',
+        COLOROPT D_VARCHAR30 DEFAULT 'solid' /* COLLATE UTF8 - default */,
         BANDLE D_VARCHAR30,
         NOTE D_VARCHAR500,
         DIVIDE D_N15_2,
@@ -732,7 +739,7 @@ CREATE TABLE EPG (EPG_ID D_UID_NULL,
         DESCRIPTION D_EIT_EVENT,
         GENRES D_VARCHAR255,
         DVBGENRES D_VARCHAR255,
-        MINAGE D_INTEGER default 0,
+        MINAGE D_INTEGER DEFAULT 0,
         CREATE_YEAR D_VARCHAR255,
         ACTORS D_VARCHAR255,
         DIRECTED D_VARCHAR255,
@@ -771,7 +778,7 @@ CREATE TABLE EPG_LOCAL (CH_ID UID,
         DESCRIPTION D_EIT_EVENT,
         GENRES D_VARCHAR255,
         DVBGENRES D_VARCHAR255,
-        MINAGE D_INTEGER default 0,
+        MINAGE D_INTEGER DEFAULT 0,
         CREATE_YEAR D_VARCHAR10,
         ACTORS D_VARCHAR255,
         DIRECTED D_VARCHAR255,
@@ -840,6 +847,7 @@ CREATE TABLE EQUIPMENT (EID UID NOT NULL,
         EQ_REGNUBER D_VARCHAR10,
         IPV6 D_IPV6,
         NODE_ID D_UID_NULL,
+        M_ID D_UID_NULL,
 CONSTRAINT PK_EQUIPMENT PRIMARY KEY (EID));
 
 /* Table: EQUIPMENT_ATTRIBUTES, Owner: SYSDBA */
@@ -1069,19 +1077,6 @@ CREATE TABLE HOUSE_CIRCUIT (HC_ID UID NOT NULL,
         PNG D_BLOB1K,
         CIRCUIT D_BLOB1K);
 
-/* Table: INVENTORY, Owner: SYSDBA */
-CREATE TABLE INVENTORY (OWNER UID NOT NULL,
-        OWNER_TYPE UID NOT NULL,
-        M_ID UID,
-        SERIAL D_VARCHAR50 NOT NULL,
-        OWNERSHIP D_UID_NULL,
-        QUANT D_N15_5,
-        NOTICE D_NOTICE,
-        ADDED_BY D_VARCHAR50,
-        ADDED_ON D_DATETIME,
-        EDIT_BY D_VARCHAR50,
-        EDIT_ON D_DATETIME);
-
 /* Table: IPTV_GROUP, Owner: SYSDBA */
 CREATE TABLE IPTV_GROUP (IG_ID UID,
         NAME D_VARCHAR20,
@@ -1217,13 +1212,16 @@ CONSTRAINT PK_MATERIALS_IN_DOC PRIMARY KEY (ID));
 /* Table: MATERIALS_IN_DOC_UNIT, Owner: SYSDBA */
 CREATE TABLE MATERIALS_IN_DOC_UNIT (DOC_ID UID,
         M_ID UID,
-        SERIAL D_VARCHAR50 NOT NULL,
-        M_NOTICE D_NOTICE,
+        ID D_INTEGER NOT NULL,
+        SERIAL D_SERIAL_NS NOT NULL,
+        MAC D_MAC,
+        NOTICE D_NOTICE,
+        S_VERSION D_VARCHAR50,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
-CONSTRAINT PK_MATERIALS_IN_DOC_UNIT PRIMARY KEY (DOC_ID, M_ID, SERIAL));
+CONSTRAINT PK_MATERIALS_IN_DOC_UNIT PRIMARY KEY (DOC_ID, M_ID, SERIAL, ID));
 
 /* Table: MATERIALS_REMAIN, Owner: SYSDBA */
 CREATE TABLE MATERIALS_REMAIN (M_ID UID,
@@ -1250,8 +1248,8 @@ CREATE TABLE MATERIAL_DOCS (DOC_ID UID NOT NULL,
 CONSTRAINT PK_MATERIAL_DOCS PRIMARY KEY (DOC_ID));
 
 /* Table: MATERIAL_UNIT, Owner: SYSDBA */
-CREATE TABLE MATERIAL_UNIT (SERIAL D_VARCHAR50 NOT NULL,
-        M_ID UID,
+CREATE TABLE MATERIAL_UNIT (M_ID UID,
+        SERIAL D_SERIAL_NS NOT NULL,
         OWNER D_UID_NULL,
         OWNER_TYPE D_UID_NULL,
         STATE D_UID_NULL,
@@ -1259,12 +1257,12 @@ CREATE TABLE MATERIAL_UNIT (SERIAL D_VARCHAR50 NOT NULL,
         MAC D_MAC,
         DOC_INCOME D_UID_NULL,
         COST D_N15_2,
+        S_VERSION D_VARCHAR50,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
-        S_VERSION D_VARCHAR50,
-CONSTRAINT PK_MATERIAL_UNIT PRIMARY KEY (SERIAL, M_ID));
+CONSTRAINT PK_MATERIAL_UNIT PRIMARY KEY (M_ID, SERIAL));
 
 /* Table: MESSAGES, Owner: SYSDBA */
 CREATE TABLE MESSAGES (MES_ID UID,
@@ -1499,7 +1497,9 @@ CREATE TABLE OTHER_FEE (FEE_DATE D_DATE NOT NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
-        EDIT_ON D_DATETIME);
+        EDIT_ON D_DATETIME,
+        M_ID D_UID_NULL,
+        SERIAL D_SERIAL_NS);
 
 /* Table: PAYMENT, Owner: SYSDBA */
 CREATE TABLE PAYMENT (PAYMENT_ID UID NOT NULL,
@@ -1563,6 +1563,7 @@ CREATE TABLE PAYSOURCE (PAYSOURCE_ID UID,
         TAX_PRC D_N15_3 NOT NULL,
         CODE D_VARCHAR10,
         FOR_FORM D_VARCHAR50,
+        DELETED D_IBOOLEAN,
 CONSTRAINT PK_PAYSOURCE PRIMARY KEY (PAYSOURCE_ID));
 
 /* Table: PAY_DOC, Owner: SYSDBA */
@@ -1791,6 +1792,18 @@ CREATE TABLE REQUEST_EXECUTORS (RQ_ID UID NOT NULL,
         NOTICE D_NOTICE,
 CONSTRAINT PK_REQUEST_EXECUTORS PRIMARY KEY (RQ_ID, EXEC_ID));
 
+/* Table: REQUEST_FLATS, Owner: SYSDBA */
+CREATE TABLE REQUEST_FLATS (RQ_ID UID NOT NULL,
+        HOUSE_ID UID NOT NULL,
+        FLAT_NO D_FLAT_NS NOT NULL,
+        FLAT_RESULT D_VARCHAR50,
+        NOTICE D_NOTICE,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_TIMESTAMP,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_TIMESTAMP,
+CONSTRAINT PK_REQUEST_FLATS PRIMARY KEY (RQ_ID, HOUSE_ID, FLAT_NO));
+
 /* Table: REQUEST_MATERIALS, Owner: SYSDBA */
 CREATE TABLE REQUEST_MATERIALS (RM_ID UID NOT NULL,
         RQ_ID UID,
@@ -1800,6 +1813,7 @@ CREATE TABLE REQUEST_MATERIALS (RM_ID UID NOT NULL,
         RM_COST D_N15_2,
         NOT_CALC D_IBOOLEAN,
         RM_NOTICE D_NOTICE,
+        SERIAL D_SERIAL_NS,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_TIMESTAMP,
         EDIT_BY D_VARCHAR50,
@@ -1813,6 +1827,8 @@ CREATE TABLE REQUEST_MATERIALS_RETURN (ID UID NOT NULL,
         WH_ID UID,
         QUANT D_N15_5,
         NOTICE D_NOTICE,
+        SERIAL D_SERIAL_NS,
+        COST D_N15_2,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_TIMESTAMP,
         EDIT_BY D_VARCHAR50,
@@ -1872,6 +1888,8 @@ CREATE TABLE REQUEST_TEMPLATES (RQTL_ID UID NOT NULL,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        FLATS_NEED D_IBOOLEAN,
+        FLATS_RESULT D_VARCHAR500,
 CONSTRAINT PK_REQUEST_TEMPLATES PRIMARY KEY (RQTL_ID));
 
 /* Table: REQUEST_TYPES, Owner: SYSDBA */
@@ -1891,6 +1909,8 @@ CREATE TABLE REQUEST_TYPES (RT_ID UID NOT NULL,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        FLATS_NEED D_IBOOLEAN,
+        FLATS_RESULT D_VARCHAR500,
 CONSTRAINT PK_REQUEST_TYPES PRIMARY KEY (RT_ID));
 
 /* Table: REQUEST_WORKS, Owner: SYSDBA */
@@ -2259,6 +2279,15 @@ CREATE TABLE TV_LAN_PACKETS (LAN_ID UID,
         SERVICE_ID UID,
         NOTICE D_NOTICE);
 
+/* Table: UNIT_PORT, Owner: SYSDBA */
+CREATE TABLE UNIT_PORT (M_ID UID,
+        SERIAL D_SERIAL,
+        PORT D_PORT_NS NOT NULL,
+        P_TYPE D_UID_NULL,
+        P_STATE D_UID_NULL,
+        SPEED D_INTEGER,
+        NOTICE D_NOTICE);
+
 /* Table: VLANS, Owner: SYSDBA */
 CREATE TABLE VLANS (V_ID UID NOT NULL,
         NAME D_VARCHAR50,
@@ -2424,6 +2453,12 @@ AS
 BEGIN END ^
 CREATE OR ALTER FUNCTION INET_NTOA (INT_IP D_N10)
 RETURNS D_IP
+DETERMINISTIC 
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION MAC_FORMAT (AMAC D_MAC,
+ADLMTR D_CHAR1 = ':')
+RETURNS D_MAC
 DETERMINISTIC 
 AS 
 BEGIN END ^
@@ -2774,6 +2809,10 @@ LINK_ID TYPE OF UID)
 RETURNS (RESULT D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE APPLIANCE_TO_TABLE (APPL_ID UID,
+TO_FROM D_IBOOLEAN = 1)
+AS 
+BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE ATRIBUTES_LINE (CUST_ID TYPE OF UID)
 RETURNS (A_LINE D_VARCHAR500)
 AS 
@@ -2962,6 +3001,13 @@ DVB D_IBOOLEAN = null,
 IPTV D_IBOOLEAN = null)
 AS 
 BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE CHANGE_TO_NEGATIVE (CUSTOMER_ID UID,
+OLD_DEBT D_N15_2 = null,
+NEW_DEBT D_N15_2 = null,
+HOUSE_ID D_UID_NULL = null,
+FLAT D_FLAT = null /* COLLATE UTF8 - default */)
+AS 
+BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CHANGE_TO_POSITIVE (CUSTOMER_ID UID,
 OLD_DEBT D_N15_2 = null,
 NEW_DEBT D_N15_2 = null,
@@ -2986,6 +3032,29 @@ RETURNS (C_CHANNEL D_INTEGER,
 C_CHANNEL_ON D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE CHANNEL_SRC_PARAM_IU (CSP_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CSP_ID,
+CS_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_ID,
+CH_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CH_ID,
+NOTICE TYPE OF COLUMN CHANNEL_SRC_PARAM.NOTICE,
+FREQ TYPE OF COLUMN CHANNEL_SRC_PARAM.FREQ,
+SYMRATE TYPE OF COLUMN CHANNEL_SRC_PARAM.SYMRATE,
+IP TYPE OF COLUMN CHANNEL_SRC_PARAM.IP,
+V_CODEC TYPE OF COLUMN CHANNEL_SRC_PARAM.V_CODEC,
+S_CRYPT TYPE OF COLUMN CHANNEL_SRC_PARAM.S_CRYPT,
+CS_SYSTEM TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM,
+CARD_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CARD_ID,
+ON_ANALOG TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_ANALOG,
+ON_DVB TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_DVB,
+ON_IPTV TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_IPTV,
+NID TYPE OF COLUMN CHANNEL_SRC_PARAM.NID,
+ONID TYPE OF COLUMN CHANNEL_SRC_PARAM.ONID,
+TSID TYPE OF COLUMN CHANNEL_SRC_PARAM.TSID,
+SID TYPE OF COLUMN CHANNEL_SRC_PARAM.SID,
+VPID TYPE OF COLUMN CHANNEL_SRC_PARAM.VPID,
+APID TYPE OF COLUMN CHANNEL_SRC_PARAM.APID,
+A2PID TYPE OF COLUMN CHANNEL_SRC_PARAM.A2PID)
+AS 
+BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CHECKCONTRACT (CONTRACT TYPE OF D_VARCHAR20)
 RETURNS (CORRECT TYPE OF D_IBOOLEAN)
 AS 
@@ -3379,7 +3448,7 @@ CREATE OR ALTER PROCEDURE GET_FREE_INET_IP_CUSTOMER (CUSTOMER_ID UID)
 RETURNS (IP TYPE OF D_IP)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE GET_FREE_IP (IP_MASK D_IP = null)
+CREATE OR ALTER PROCEDURE GET_FREE_IP (IP_MASK D_IP = null /* COLLATE UTF8 - default */)
 RETURNS (IP TYPE OF D_IP)
 AS 
 BEGIN SUSPEND; END ^
@@ -3440,7 +3509,25 @@ QUANT_TOTAL D_N15_5,
 QUANT_IN_REQUEST D_N15_5,
 RQ_ID D_INTEGER,
 RM_NOTICE D_NOTICE,
-DESCRIPTION D_NOTICE)
+DESCRIPTION D_NOTICE,
+SERIAL D_SERIAL_NS)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_MAT_TAKE_IN (FOR_RQ_ID UID,
+MG_ID D_UID_NULL = -1,
+WH_FLTR D_IBOOLEAN = 0)
+RETURNS (M_ID UID,
+NAME D_VARCHAR100,
+DIMENSION D_VARCHAR10,
+WH_NAME D_DESCRIPTION,
+WH_ID D_UID_NULL,
+QUANT D_N15_5,
+M_NUMBER D_VARCHAR20,
+RQ_ID UID,
+ID D_UID_NULL,
+DESCRIPTION D_NOTICE,
+SERIAL D_SERIAL_NS,
+COST D_N15_2)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_MAX_INET_IP (SRV_ID UID)
@@ -3579,11 +3666,27 @@ CREATE OR ALTER PROCEDURE IP2INT (AIP D_IP)
 RETURNS (INT_IP D_N10)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (FOR_M_ID INTEGER)
+RETURNS (WH VARCHAR(2000) CHARACTER SET UTF8,
+M_ID INTEGER,
+M_DATE DATE,
+M_TYPE CHAR(72) CHARACTER SET UTF8,
+M_DOC VARCHAR(200) CHARACTER SET UTF8,
+QUANT NUMERIC(18, 5))
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID INTEGER)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC (M_ID TYPE OF UID,
 FOR_WH TYPE OF UID = null)
+AS 
+BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE MATERIAL_UNIT_MOVE (RQ_ID UID,
+WH_ID UID,
+M_ID UID,
+SERIAL D_SERIAL_NS,
+TO_FROM D_IBOOLEAN = 1)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE MAT_MOVE_DETAILS (M_ID TYPE OF UID,
@@ -3832,6 +3935,9 @@ CREATE OR ALTER PROCEDURE REQUEST_CLOSE_AS (RQ_ID TYPE OF UID,
 AS_RQ_ID TYPE OF UID)
 AS 
 BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE REQUEST_CLOSE_MATERIALS (RQ_ID UID)
+AS 
+BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE REQUEST_CLOSE_PROCESS (RQ_ID UID)
 AS 
 BEGIN EXIT; END ^
@@ -3847,16 +3953,20 @@ WH_ID TYPE OF UID,
 RM_COST D_N15_2,
 RM_NOTICE D_NOTICE,
 NOT_CALC D_IBOOLEAN,
-P_ACTION D_INTEGER)
+P_ACTION D_INTEGER,
+SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */)
+RETURNS (RET_RM_ID D_INTEGER)
 AS 
-BEGIN EXIT; END ^
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE REQUEST_MATERIALS_RETURN_IUD (ID TYPE OF UID,
 RQ_ID TYPE OF UID,
 M_ID TYPE OF UID,
 QUANT D_N15_5,
 WH_ID TYPE OF UID,
 NOTICE D_NOTICE,
-P_ACTION D_INTEGER)
+P_ACTION D_INTEGER,
+SERIAL D_SERIAL_NS = null,
+COST D_N15_2 = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE REQUEST_RECREATE (FROM_REQUEST D_INTEGER)
@@ -3885,7 +3995,7 @@ DESCRIPTION D_VARCHAR1000,
 SERVICE_TYPE D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null)
+CREATE OR ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */)
 RETURNS (PAY_DOC_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
@@ -3920,9 +4030,9 @@ AUTOOFF D_IBOOLEAN,
 POSITIVE_ONLY D_IBOOLEAN,
 PRIORITY D_INTEGER,
 ONLY_ONE D_IBOOLEAN,
-NOTE D_DESCRIPTION = '',
+NOTE D_DESCRIPTION = '' /* COLLATE UTF8 - default */,
 TAG D_INTEGER = null,
-TAG_STR D_VARCHAR255 = '',
+TAG_STR D_VARCHAR255 = '' /* COLLATE UTF8 - default */,
 OPENLY D_IBOOLEAN = 0,
 UNBL_METH D_INTEGER = 0)
 AS 
@@ -4021,6 +4131,8 @@ SET AUTODDL ON;
 /*  Index definitions for all user tables */
 CREATE INDEX ALL_USED_IP_IDX1 ON ALL_USED_IP (IP);
 CREATE INDEX ALL_USED_IP_IDX2 ON ALL_USED_IP (IP_BIN);
+CREATE INDEX APPLIANCE_IDX_MAT ON APPLIANCE (M_ID);
+CREATE INDEX APPLIANCE_IDX_SN ON APPLIANCE (SERIAL);
 CREATE INDEX APPLIANCE_OWNER ON APPLIANCE (OWN_TYPE, OWN_ID);
 CREATE INDEX PK_APPLIANCE_ID ON APPLIANCE (ID);
 CREATE INDEX ATTRIBUTE_IDX_ATTR ON ATTRIBUTE (AID, OBJECT_ID, TYPE_ID);
@@ -4092,7 +4204,6 @@ CREATE INDEX IDX_HOUSE_SA ON HOUSE (SUBAREA_ID);
 CREATE INDEX HOUSEFLOOR_IDX1 ON HOUSEFLOOR (PORCH_ID, FLAT_FROM, FLAT_TO);
 CREATE INDEX HOUSEPORCH_IDX1 ON HOUSEPORCH (PORCH_N, FLAT_FROM, FLAT_TO);
 CREATE INDEX HOUSES_ATTRIBUTES_OID ON HOUSES_ATTRIBUTES (O_ID);
-CREATE INDEX INVENTORY_IDX_OM ON INVENTORY (OWNER_TYPE, OWNER, M_ID);
 CREATE INDEX MAP_IDX_ADDRESS ON MAP (ADDRESS);
 CREATE INDEX MAP_IDX_MODIFIED ON MAP (MODIFIED);
 CREATE INDEX MAP_IDX_NAME ON MAP (NAME);
@@ -4154,6 +4265,7 @@ CREATE INDEX REQUEST_IDX3 ON REQUEST (ADDED_ON);
 CREATE INDEX REQUEST_IDX4 ON REQUEST (NODE_ID);
 CREATE INDEX REQUEST_PLAN_D ON REQUEST (RQ_PLAN_DATE);
 CREATE INDEX REQUEST_EXECUTORS_IDX1 ON REQUEST_EXECUTORS (EXEC_ID);
+CREATE INDEX REQUEST_FLATS_IDX1 ON REQUEST_FLATS (HOUSE_ID, FLAT_NO);
 CREATE INDEX REQUEST_MATERIALS_IDX1 ON REQUEST_MATERIALS (WH_ID, M_ID);
 CREATE INDEX REQUEST_MATERIALS_IDX2 ON REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID);
 CREATE INDEX REQUEST_MATERIALS_RETURN_IDX1 ON REQUEST_MATERIALS_RETURN (WH_ID, M_ID);
@@ -4286,21 +4398,6 @@ ALTER TABLE TV_LAN_PACKETS ADD CONSTRAINT FK_TV_LAN_PACKETS_1 FOREIGN KEY (LAN_I
 
 ALTER TABLE WORKGROUPS ADD CONSTRAINT FK_WORKGROUPS_1 FOREIGN KEY (WA_ID) REFERENCES WORKAREA (WA_ID);
 
-/* View: V_ADRESS, Owner: SYSDBA */
-CREATE VIEW V_ADRESS (STREET_ID, STREET_NAME, HOUSE_ID, HOUSE_NO) AS
-
-select
-    s.STREET_ID, s.STREET_NAME || ' ' || s.Street_Short STREET_NAME, h.HOUSE_ID, h.HOUSE_NO
-  from STREET s
-       inner join HOUSE h on (S.STREET_ID = h.STREET_ID);
-
-/* View: V_ALL_MAC, Owner: SYSDBA */
-CREATE VIEW V_ALL_MAC (MAC, O_ID, O_TYPE) AS
-
-select MAC, CUSTOMER_ID, 1 from tv_lan t where not MAC is null
-union
-select MAC, eid, 0 from equipment e where not MAC is null;
-
 /* View: V_ATTRIBUTES, Owner: SYSDBA */
 CREATE VIEW V_ATTRIBUTES (O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION) AS
 
@@ -4324,8 +4421,24 @@ SELECT
 FROM WORKER W
 WHERE w.working = 1;
 
+/* View: V_ALL_MAC, Owner: SYSDBA */
+CREATE VIEW V_ALL_MAC (MAC, O_ID, O_TYPE) AS
+
+select MAC, CUSTOMER_ID, 1 from tv_lan t where not MAC is null
+union
+select MAC, eid, 0 from equipment e where not MAC is null;
+
+/* View: V_ADRESS, Owner: SYSDBA */
+CREATE VIEW V_ADRESS (STREET_ID, STREET_NAME, HOUSE_ID, HOUSE_NO) AS
+
+select
+    s.STREET_ID, s.STREET_NAME || ' ' || s.Street_Short STREET_NAME, h.HOUSE_ID, h.HOUSE_NO
+  from STREET s
+       inner join HOUSE h on (S.STREET_ID = h.STREET_ID);
+
 /* View: V_PAYMENTTYPE, Owner: SYSDBA */
 CREATE VIEW V_PAYMENTTYPE (O_ID, O_NAME, O_DESCRIPTION) AS
+
 select
     O_ID
   , O_NAME
@@ -4568,6 +4681,43 @@ begin
   ip1 = bin_and(Int_Ip, 255);
 
   return ip4 || '.' || ip3 || '.' || ip2 || '.' || ip1;
+end ^
+
+ALTER FUNCTION MAC_FORMAT (AMAC D_MAC,
+ADLMTR D_CHAR1 = ':')
+RETURNS D_MAC
+DETERMINISTIC 
+AS 
+declare variable i      d_integer;
+declare variable j      d_integer;
+declare variable d      d_char1;
+declare variable DIGITS D_MAC;
+declare variable MAC    D_MAC;
+begin
+  aMAC = upper(aMAC);
+  MAC = null;
+  j = char_length(aMAC);
+  i = 1;
+  DIGITS = '';
+  if (aDlmtr is null) then
+    aDlmtr = ':';
+  while (i <= j) do begin
+    d = substring(aMAC from i for 1);
+    if ((d between '0' and '9')
+        or
+        (d between 'A' and 'F')) then
+      DIGITS = DIGITS || d;
+    i = i + 1;
+  end
+  if (char_length(DIGITS) = 12) then begin
+    MAC = substring(DIGITS from 1 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 3 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 5 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 7 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 9 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 11 for 2);
+  end
+  return MAC;
 end ^
 
 ALTER FUNCTION MONTH_FIRST_DAY (MON_DAY DATE)
@@ -5063,6 +5213,7 @@ begin
         s.paysource_id
       from paysource s
       where upper(s.code) = upper(:paysrc_code)
+        and coalesce(DELETED,0) = 0
     into :PAYSOURCE_ID;
 
     if (PAYSOURCE_ID is null) then begin
@@ -5120,6 +5271,7 @@ begin
         s.paysource_id
       from paysource s
       where upper(s.code) = upper(:paysrc_code)
+        and coalesce(DELETED,0) = 0
     into :PAYSOURCE_ID;
 
     if (PAYSOURCE_ID is null) then begin
@@ -5530,8 +5682,7 @@ begin
       ACCOUNT_NO = null;
   end
   suspend;
-end
- ^
+end ^
 
 ALTER PROCEDURE API_GET_SERVICES (P_CUSTOMER_ID TYPE OF UID,
 P_TYPE TYPE OF UID)
@@ -5985,6 +6136,143 @@ begin
   suspend;
 end ^
 
+ALTER PROCEDURE APPLIANCE_TO_TABLE (APPL_ID UID,
+TO_FROM D_IBOOLEAN = 1)
+AS 
+declare variable Own_Id   type of Uid;
+declare variable Own_Type type of Uid;
+declare variable Mac      type of D_Mac;
+declare variable Serial   type of D_Serial_Ns;
+declare variable IS_DIGIT D_IBOOLEAN;
+declare variable IS_NET   D_IBOOLEAN;
+declare variable uname    D_VARCHAR100;
+declare variable M_Id     type of Uid;
+declare variable utype    D_VARCHAR100;
+declare variable i        D_Integer;
+begin
+
+  -- добавили = 1, иначе удаляем
+  TO_FROM = coalesce(TO_FROM, 1);
+
+  select first 1
+      a.Own_Id
+    , a.Own_Type
+    , a.Mac
+    , a.Serial
+    , m.IS_DIGIT
+    , m.IS_NET
+    , m.Name
+    , m.M_Id
+    , o.O_Name
+    from Appliance a
+         left outer join materials m on (a.M_Id = m.M_Id)
+         left outer join objects o on (o.O_Id = m.M_Type and
+               o.O_Type = 48)
+    where Id = :APPL_ID
+  into :Own_Id, :Own_Type, :Mac, :Serial, :IS_DIGIT, :IS_NET, :uname, :M_ID, :utype;
+
+  IS_DIGIT = coalesce(IS_DIGIT, 0);
+  IS_NET = coalesce(IS_NET, 0);
+  utype = upper(coalesce(utype, ''));
+
+  -- 1-Абонент 2-Узел
+  if (Own_Type = 1) then begin
+    ---------------------------------------------------- АБОНЕНТ
+    -- таблицы абонента
+    if (TO_FROM = 1) then begin
+      -- добавим в таблицы
+
+      -- СПД
+      if ((IS_NET = 1) and (not MAC is null)) then begin
+        if (not exists(select
+                           lan_ID
+                         from Tv_Lan t
+                         where t.customer_id = :Own_Id
+                               and t.Mac = :MAC)) then begin
+          insert into Tv_Lan (Customer_Id, Mac)
+          values (:Own_Id, :Mac);
+        end
+      end
+
+      ---------------------------------------------------- АБОНЕНТ ЦИФРА
+      if ((IS_DIGIT = 1) and (not Serial is null)) then begin
+        -- OBJECT TYPE = 19 0 - Карточка 1-приставка 2-модуль
+        select
+            o.O_Id
+          from objects o
+          where o.O_Type = 19
+                and upper(o.O_Name) = :utype
+        into :i;
+
+        if (not exists(select
+                           Eq_N
+                         from Equipment_Dvb d
+                         where Eq_N = :Serial
+                               and Eq_Type = :i)) then begin
+
+          insert into Equipment_Dvb (Eq_Type, Eq_N)
+          values (:i, :Serial);
+        end
+
+        if (not exists(select
+                           Dec_Id
+                         from Customer_Decoders d
+                         where Customer_Id = :Own_Id
+                               and Decoder_N = :Serial)) then begin
+          insert into Customer_Decoders (Customer_Id, Decoder_N)
+          values (:Own_Id, :Serial);
+        end
+      end
+
+    end
+    else begin
+      -- удалим из таблиц
+      ---------------------------------------------------- АБОНЕНТ СПД
+      if ((IS_NET = 1) and (not MAC is null)) then begin
+        delete from Tv_Lan
+            where Customer_Id = :Own_Id
+                  and Mac = :Mac;
+      end
+
+      -- ЦИФРА
+      if ((IS_DIGIT = 1) and (not Serial is null)) then begin
+        delete from Customer_Decoders d
+            where Customer_Id = :Own_Id
+                  and Decoder_N = :Serial;
+      end
+    end
+  end
+  else begin
+    ---------------------------------------------------- УЗЕЛ
+    -- таблицы узла
+    if (TO_FROM = 1) then begin
+      -- добавим в таблицы
+      if ((IS_NET = 1) and (not MAC is null)) then begin
+        if (not exists(select
+                           t.Eid
+                         from Equipment t
+                         where t.Mac = :MAC)) then begin
+          insert into Equipment (House_Id, Name, Mac, Eq_Type, Serial_N, Node_Id, M_Id)
+          select
+              n.House_Id
+            , :uname
+            , :MAC
+            , 1
+            , :Serial
+            , n.Node_Id
+            , :m_id
+            from Nodes n
+            where n.Node_Id = :Own_Id;
+        end
+      end
+
+    end
+    -- else begin
+    -- удалим из таблиц
+    -- end
+  end
+end ^
+
 ALTER PROCEDURE ATRIBUTES_LINE (CUST_ID TYPE OF UID)
 RETURNS (A_LINE D_VARCHAR500)
 AS 
@@ -6272,14 +6560,7 @@ begin
       execute procedure DIGITAL_EVENT(:D_ACT, :P_CUSTOMER_ID, null, :P_SERV_ID, :ACT_TIMESTAMP, null);
     end
 
-    select
-        cast(s.Var_Value as date)
-      from settings s
-      where s.Var_Name = 'CURRENT_DATE'
-    into :fromd;
-
     execute procedure CLOSE_MONTH_PROC(:P_DATE, :P_CUSTOMER_ID);
-
   end
   else
     result = -2; -- E_WRONG_ONDATE;
@@ -6695,7 +6976,7 @@ begin
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
-        order by coalesce(s.Priority, 99)
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :AUTOOFF, :V_IS_JUR, :V_VATG_ID, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY
   do begin
 
@@ -6890,7 +7171,7 @@ begin
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
-        order by coalesce(s.Priority, 99)
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :AUTOOFF, :V_IS_JUR, :V_VATG_ID, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY
   do begin
 
@@ -7440,14 +7721,14 @@ begin
         , coalesce(POSITIVE_ONLY, 0)
         , coalesce(C.JURIDICAL, 0)
         , C.VATG_ID
-        , c.Debt_Sum
         from SERVICES S
              inner join Subscr_Serv ss on (ss.Serv_Id = s.Service_Id)
              inner join customer c on (c.Customer_Id = ss.Customer_Id)
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and ss.Customer_Id = :P_CUSTOMER_ID
-      into :V_SERVICE_ID, :V_MONTH_SHIFT, :AUTOOFF, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY, :V_IS_JUR, :V_VATG_ID, :Debt_Sum
+        order by coalesce(s.Priority, 99), s.Autooff
+      into :V_SERVICE_ID, :V_MONTH_SHIFT, :AUTOOFF, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY, :V_IS_JUR, :V_VATG_ID
   do begin
     V_UNITS = null;
 
@@ -7641,6 +7922,7 @@ begin
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :V_MONTH_SHIFT, :AUTOOFF, :SrvType, :POSITIVE_ONLY, :Debt_Sum, :V_VATG_ID, :V_IS_JUR, :hand_control
   do begin
 
@@ -7946,6 +8228,7 @@ begin
               and S.EXTRA > 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :V_MONTH_SHIFT, :V_EXTRA, :AUTOOFF, :SrvType, :POSITIVE_ONLY, :Debt_Sum, :V_IS_JUR, :hand_control
   do begin
 
@@ -8133,8 +8416,7 @@ begin
 
     i = i + 1;
   end
-end
- ^
+end ^
 
 ALTER PROCEDURE CALC_SINGLE_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
 P_MONTH D_DATE,
@@ -8599,6 +8881,72 @@ begin
   end
 end ^
 
+ALTER PROCEDURE CHANGE_TO_NEGATIVE (CUSTOMER_ID UID,
+OLD_DEBT D_N15_2 = null,
+NEW_DEBT D_N15_2 = null,
+HOUSE_ID D_UID_NULL = null,
+FLAT D_FLAT = null /* COLLATE UTF8 - default */)
+AS 
+declare variable V      D_Varchar50;
+declare variable RT     D_Uid_Null;
+declare variable SUM_RQ D_N15_2;
+begin
+  OLD_DEBT = -1 * OLD_DEBT;
+
+  -- проверим нужно ли создавать заявку
+  select
+      s.Var_Value
+    from Settings s
+    where s.Var_Name = 'RQ_TO_NEGATIVE'
+  into :V;
+  V = coalesce(V, '');
+  if (V <> '') then begin
+    RT = cast(V as integer);
+    -- сумма при какой создавать заявку
+    V = null;
+    select
+        s.Var_Value
+      from Settings s
+      where s.Var_Name = 'DOLG'
+    into :V;
+    V = coalesce(V, '');
+    begin
+      SUM_RQ = cast(V as numeric(15,2));
+      when gdscode convert_error do
+      begin
+        SUM_RQ = null;
+      end
+    end
+    if ((V <> '') and (NEW_DEBT >= SUM_RQ)) then begin
+      -- добавим заявку только если абонент отключен и у него нет услуг с автовключением
+      if (not exists(select
+                         Rq_Customer
+                       from Request
+                       where Rq_Type = :RT
+                             and Rq_Customer = :CUSTOMER_ID
+                             and Rq_Plan_Date = current_date)) then begin
+        if ((HOUSE_ID is null)
+            or
+            (FLAT is null)) then begin
+          select
+              c.House_Id
+            , c.Flat_No
+            from customer c
+            where c.Customer_Id = :CUSTOMER_ID
+          into :HOUSE_ID, :FLAT;
+        end
+        V = coalesce(:OLD_DEBT, '') || ' -> ' || coalesce(:NEW_DEBT, '');
+        insert into Request (Rq_Type, Rq_Customer, Rq_Content, Rq_Plan_Date, House_Id, Flat_No)
+        values (:RT, :CUSTOMER_ID, :V, current_date, :House_Id, :Flat);
+      end
+    end
+    when gdscode convert_error do
+    begin
+      V = 'N';
+    end
+  end
+end ^
+
 ALTER PROCEDURE CHANGE_TO_POSITIVE (CUSTOMER_ID UID,
 OLD_DEBT D_N15_2 = null,
 NEW_DEBT D_N15_2 = null,
@@ -8769,6 +9117,85 @@ DO BEGIN
 END
 
 
+end ^
+
+ALTER PROCEDURE CHANNEL_SRC_PARAM_IU (CSP_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CSP_ID,
+CS_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_ID,
+CH_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CH_ID,
+NOTICE TYPE OF COLUMN CHANNEL_SRC_PARAM.NOTICE,
+FREQ TYPE OF COLUMN CHANNEL_SRC_PARAM.FREQ,
+SYMRATE TYPE OF COLUMN CHANNEL_SRC_PARAM.SYMRATE,
+IP TYPE OF COLUMN CHANNEL_SRC_PARAM.IP,
+V_CODEC TYPE OF COLUMN CHANNEL_SRC_PARAM.V_CODEC,
+S_CRYPT TYPE OF COLUMN CHANNEL_SRC_PARAM.S_CRYPT,
+CS_SYSTEM TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM,
+CARD_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CARD_ID,
+ON_ANALOG TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_ANALOG,
+ON_DVB TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_DVB,
+ON_IPTV TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_IPTV,
+NID TYPE OF COLUMN CHANNEL_SRC_PARAM.NID,
+ONID TYPE OF COLUMN CHANNEL_SRC_PARAM.ONID,
+TSID TYPE OF COLUMN CHANNEL_SRC_PARAM.TSID,
+SID TYPE OF COLUMN CHANNEL_SRC_PARAM.SID,
+VPID TYPE OF COLUMN CHANNEL_SRC_PARAM.VPID,
+APID TYPE OF COLUMN CHANNEL_SRC_PARAM.APID,
+A2PID TYPE OF COLUMN CHANNEL_SRC_PARAM.A2PID)
+AS 
+begin
+  Csp_Id = coalesce(Csp_Id, gen_id(GEN_UID, 1));
+  if (Csp_Id = -1) then
+    Csp_Id = gen_id(GEN_UID, 1);
+  On_Analog = coalesce(On_Analog, 0);
+  On_Dvb = coalesce(On_Dvb, 0);
+  On_Iptv = coalesce(On_Iptv, 0);
+
+  if (exists(select
+                 Csp_Id
+               from Channel_Src_Param
+               where (Csp_Id = :Csp_Id))) then
+    update Channel_Src_Param
+    set Cs_Id = :Cs_Id,
+        Ch_Id = :Ch_Id,
+        Notice = :Notice,
+        Freq = :Freq,
+        Symrate = :Symrate,
+        Ip = :Ip,
+        V_Codec = :V_Codec,
+        S_Crypt = :S_Crypt,
+        Cs_System = :Cs_System,
+        Card_Id = :Card_Id,
+        On_Analog = :On_Analog,
+        On_Dvb = :On_Dvb,
+        On_Iptv = :On_Iptv,
+        Nid = :Nid,
+        Onid = :Onid,
+        Tsid = :Tsid,
+        Sid = :Sid,
+        Vpid = :Vpid,
+        Apid = :Apid,
+        A2pid = :A2pid
+    where (Csp_Id = :Csp_Id);
+  else
+    insert into Channel_Src_Param (Csp_Id, Cs_Id, Ch_Id, Notice, Freq, Symrate, Ip, V_Codec, S_Crypt, Cs_System, Card_Id, On_Analog, On_Dvb, On_Iptv, Nid, Onid, Tsid, Sid, Vpid, Apid, A2pid)
+    values (:Csp_Id, :Cs_Id, :Ch_Id, :Notice, :Freq, :Symrate, :Ip, :V_Codec, :S_Crypt, :Cs_System, :Card_Id, :On_Analog, :On_Dvb, :On_Iptv, :Nid, :Onid, :Tsid, :Sid, :Vpid, :Apid, :A2pid);
+
+  if (On_Analog = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Analog = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+
+  if (On_Dvb = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Dvb = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+
+  if (On_Iptv = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Iptv = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
 end ^
 
 ALTER PROCEDURE CHECKCONTRACT (CONTRACT TYPE OF D_VARCHAR20)
@@ -9086,6 +9513,7 @@ declare variable type_Id    type of Uid;
 declare variable doc_date   type of D_Date;
 declare variable Quant      type of D_N15_5;
 declare variable vCLOSED    D_INTEGER;
+declare variable SERIAL     D_SERIAL_NS;
 begin
   result = 1;
 
@@ -9108,6 +9536,45 @@ begin
     result = 0;
     suspend;
     exit;
+  end
+
+  -- обновим кол-во для материалов которые учитываем поштучно
+  delete from Materials_In_Doc_Unit u
+      where u.ID = -1
+            and u.Doc_Id = :DOC_ID;
+
+  update Materials_In_Doc md
+  set md.M_Quant = (select
+                        count(u.M_Id)
+                      from Materials_In_Doc_Unit u
+                      where u.Doc_Id = md.Doc_Id
+                            and u.M_Id = md.M_Id
+                            and u.ID = md.Id)
+  where md.Doc_Id = :Doc_Id
+        and exists(select
+                       Is_Unit
+                     from materials m
+                     where m.M_Id = md.M_Id
+                           and m.Is_Unit = 1);
+
+  -- перед закрытием снимим временный статус на юните материала
+  if (type_Id = 2) -- перемещение
+  then begin
+    for select
+            u.M_Id
+          , u.Serial
+          from Materials_In_Doc_Unit u
+          where u.Doc_Id = :DOC_ID
+        into :M_Id, :serial
+    do begin
+      update Material_Unit
+      set State = 0
+      where M_Id = :M_id
+            and Serial = :SERIAL
+            and Owner = :from_Wh_Id
+            and Owner_Type = 0
+            and State < 0;
+    end
   end
 
   -- перед закрытием проверим, хватает ли материала на складе
@@ -9224,12 +9691,67 @@ begin
     end
   end
 
+  -- оприходуем на склад UNIT
+
+  if (type_Id = 1) -- Приход материалов
+  then begin
+    insert into Material_Unit (Serial, M_Id, Owner, Owner_Type, State, Notice, Mac, Doc_Income, Cost, S_Version)
+    select
+        mu.Serial
+      , md.M_Id
+      , d.Wh_Id
+      , 0
+      , 0
+      , mu.Notice
+      , mu.Mac
+      , d.Doc_Id
+      , md.M_Cost
+      , mu.S_Version
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+           inner join Materials_In_Doc_Unit mu on (md.Doc_Id = mu.Doc_Id and
+                 md.M_Id = mu.M_Id and
+                 md.Id = mu.Id)
+      where d.Doc_Id = :DOC_ID;
+  end
+  else begin
+    if (type_Id = 2) -- перемещение
+    then begin
+      update Material_Unit mu
+      set Owner = :Wh_Id
+      where Owner = :from_Wh_Id
+            and Owner_Type = 0
+            and exists(select
+                           mdu.M_Id
+                         from Materials_In_Doc_Unit mdu
+                         where mdu.Doc_Id = :Doc_Id
+                               and mdu.M_Id = mu.M_Id
+                               and mdu.Serial = mu.Serial);
+    end
+    else begin
+      if (type_Id = 3) -- списание материалов
+      then begin
+        update Material_Unit mu
+        set state = 4
+        where Owner = :Wh_Id
+              and Owner_Type = 0
+              and exists(select
+                             mdu.M_Id
+                           from Materials_In_Doc_Unit mdu
+                           where mdu.Doc_Id = :Doc_Id
+                                 and mdu.M_Id = mu.M_Id
+                                 and mdu.Serial = mu.Serial);
+      end
+      -- (type_Id = 4) -- инвинтаризация (коррекция)
+      -- (type_Id = 5) -- инвинтаризация
+    end
+  end
+
   update material_docs
   set Doc_Closed = 1
   where doc_id = :DOC_ID;
 
   suspend;
-
 end ^
 
 ALTER PROCEDURE CLOSE_MONTH_PROC (P_MONTH D_DATE,
@@ -9261,6 +9783,12 @@ begin
           CALC_TYPE
         from services s
         where S.SRV_TYPE_ID = 0
+              and ((:P_CUSTOMER_ID is null)
+                or exists(select
+                              ss.Serv_Id
+                            from Subscr_Serv ss
+                            where ss.Customer_Id = :P_CUSTOMER_ID
+                                  and ss.Serv_Id = s.Service_Id))
       into :V_CALC_TYPE
   do begin
     if (V_CALC_TYPE = 0) then
@@ -10157,7 +10685,7 @@ begin
   DELETE FROM TV_LAN ss where ss.CUSTOMER_ID = :CID;
   DELETE FROM DISCOUNT_FACTOR ss where ss.CUSTOMER_ID = :CID;  
   DELETE FROM CUSTOMER ss where ss.CUSTOMER_ID = :CID;
-  DELETE FROM APPLIANCE where Own_Id  = :CID and Own_Type = 0;
+  DELETE FROM APPLIANCE where Own_Id  = :CID and Own_Type = 1;
 end ^
 
 ALTER PROCEDURE DELETE_CUSTOMER_DECODER (DEC_ID UID,
@@ -10220,7 +10748,7 @@ begin
     delete from House_Circuit n where n.House_Id = :ID;
     delete from Nodes_Attributes n where n.Node_Id = :ID;
     delete from nodes n where n.Node_Id = :ID;
-    delete from APPLIANCE where Own_Id = :Id and Own_Type = 1;
+    delete from APPLIANCE where Own_Id = :Id and Own_Type = 2;
   end
 end ^
 
@@ -10548,8 +11076,7 @@ begin
     else
       exception E_TARIF_EXISTS;
   end
-end
- ^
+end ^
 
 ALTER PROCEDURE DUBLICATE_REQUEST (FROM_REQUEST D_INTEGER,
 FOR_CUSTOMER D_INTEGER,
@@ -10972,38 +11499,13 @@ begin
     end
   end
   suspend;
-end
- ^
+end ^
 
 ALTER PROCEDURE FORMAT_MAC (AMAC D_MAC)
 RETURNS (MAC D_MAC)
 AS 
-declare variable i      d_integer;
-declare variable j      d_integer;
-declare variable d      d_char1;
-declare variable DIGITS D_MAC;
 begin
-  aMAC = upper(aMAC);
-  MAC = null;
-  j = char_length(aMAC);
-  i = 1;
-  DIGITS = '';
-  while (i <= j) do begin
-    d = substring(aMAC from i for 1);
-    if ((d between '0' and '9')
-        or
-        (d between 'A' and 'F')) then
-      DIGITS = DIGITS || d;
-    i = i + 1;
-  end
-  if (char_length(DIGITS) = 12) then begin
-    MAC = substring(DIGITS from 1 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 3 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 5 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 7 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 9 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 11 for 2);
-  end
+  MAC = Mac_Format(:Amac);
   suspend;
 end ^
 
@@ -12297,7 +12799,7 @@ begin
   end
 end ^
 
-ALTER PROCEDURE GET_FREE_IP (IP_MASK D_IP = null)
+ALTER PROCEDURE GET_FREE_IP (IP_MASK D_IP = null /* COLLATE UTF8 - default */)
 RETURNS (IP TYPE OF D_IP)
 AS 
 declare variable START_IP   type of D_INT_IP;
@@ -12670,7 +13172,8 @@ QUANT_TOTAL D_N15_5,
 QUANT_IN_REQUEST D_N15_5,
 RQ_ID D_INTEGER,
 RM_NOTICE D_NOTICE,
-DESCRIPTION D_NOTICE)
+DESCRIPTION D_NOTICE,
+SERIAL D_SERIAL_NS)
 AS 
 begin
   RQ_ID = coalesce(:FOR_RQ, 0);
@@ -12678,7 +13181,7 @@ begin
   for select
           rm.Rm_Id
         , m.M_ID
-        , m.Name
+        , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
         , m.Dimension
         , w.O_Name
         , w.O_ID as WH_ID
@@ -12687,24 +13190,32 @@ begin
         , coalesce(mr.Mr_Quant, 0)
         , rm.Rm_Cost
         , m.M_Number
-        , rm.Rm_Quant + coalesce(mr.Mr_Quant, 0)
+        , rm.Rm_Quant + coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
         , rm.Rm_Quant
         , rm.Rm_Notice
         , m.Description
+        , rm.Serial
         from MATERIALS M
              inner join Request_Materials rm on (rm.M_Id = m.M_Id)
              left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and
                    mr.wh_id = rm.Wh_Id)
              left outer join OBJECTS W on (W.O_ID = rm.Wh_Id and
                    W.O_TYPE = 10)
+             left outer join Material_Unit u on (u.M_Id = rm.M_Id and
+                   u.Serial = rm.Serial -- and u.Owner = rm.Wh_Id and ((u.State = 0) or (u.State = -1*:RQ_ID))
+                   )
         where rm.Rq_Id = :RQ_ID
-              and ((:MG_ID = -2) or ((:MG_ID = -1)
+              and ((:MG_ID = -2)
+                or ((:MG_ID = -1)
                 or (M.MG_ID = :MG_ID
               and not :MG_ID is null)
                 or (M.MG_ID is null
               and :MG_ID is null)))
-      into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT,
-           :RM_COST, :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description
+              -- спрячем материалы без серияника, если они должны быть
+              and ((coalesce(m.Is_Unit, 0) = 0) or (not u.Serial is null) or (not rm.Rm_Id is null))
+
+      into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT, :RM_COST, --
+           :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description, :SERIAL
   do begin
     suspend;
   end
@@ -12718,18 +13229,19 @@ begin
     for select
             null
           , m.M_ID
-          , m.Name
+          , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
           , m.Dimension
           , w.O_Name
-          , w.O_ID
+          , mr.Wh_Id
           , null
           , 0 NOT_CALC
           , mr.Mr_Quant
           , m.Cost
           , m.M_Number
-          , mr.Mr_Quant
+          , coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
           , 0
           , m.Description
+          , u.Serial
           from MATERIALS M
                left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and
                      (exists(select
@@ -12741,6 +13253,8 @@ begin
                                      and wh.wh_id = mr.Wh_Id) or current_user = 'SYSDBA'))
                left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and
                      W.O_TYPE = 10)
+               left outer join Material_Unit u on (u.M_Id = mr.M_Id and
+                      u.Owner = mr.Wh_Id and u.State = 0)
 
           where (not exists(select
                                 rm.Rm_Id
@@ -12762,8 +13276,124 @@ begin
                               from Request_Executors e
                               where e.Exec_Id = w.O_Numericfield
                                     and e.Rq_Id = :FOR_RQ))
-        into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT, :RM_COST, :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description
+        into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT, :RM_COST, --
+             :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description, :SERIAL
     do begin
+      suspend;
+    end
+  end
+end ^
+
+ALTER PROCEDURE GET_MAT_TAKE_IN (FOR_RQ_ID UID,
+MG_ID D_UID_NULL = -1,
+WH_FLTR D_IBOOLEAN = 0)
+RETURNS (M_ID UID,
+NAME D_VARCHAR100,
+DIMENSION D_VARCHAR10,
+WH_NAME D_DESCRIPTION,
+WH_ID D_UID_NULL,
+QUANT D_N15_5,
+M_NUMBER D_VARCHAR20,
+RQ_ID UID,
+ID D_UID_NULL,
+DESCRIPTION D_NOTICE,
+SERIAL D_SERIAL_NS,
+COST D_N15_2)
+AS 
+declare variable Is_Unit    D_Iboolean;
+declare variable Owner      integer;
+declare variable Owner_Type integer;
+declare variable Mac        varchar(18);
+declare variable tNAME      D_VARCHAR100;
+declare variable tQUANT     D_N15_5;
+declare variable tSerial    varchar(50);
+declare variable Notice     D_NOTICE;
+declare variable tCOST      D_N15_2;
+begin
+  -- на кого выдана заявка. абонента или узел
+  select
+      coalesce(r.Rq_Customer, r.Node_Id)
+    , iif(r.Rq_Customer is null, 2, 1)
+    from request r
+    where r.Rq_Id = :FOR_RQ_ID
+  into :Owner, :Owner_Type;
+  COST = null;
+  for select
+          m.M_ID
+        , m.Name
+        , m.Dimension
+        , w.O_Name
+        , w.O_ID as WH_ID
+        , rm.Quant
+        , m.M_Number
+        , rm.Id
+        , m.DESCRIPTION
+        , rm.Serial
+        , m.Is_Unit
+        , rm.Cost
+        from MATERIALS M
+             left outer join OBJECTS W on (W.O_TYPE = 10 and
+                   ((:WH_FLTR = 0) or exists(select
+                                                 e.Rq_Id
+                                               from Request_Executors e
+                                               where e.Exec_Id = w.O_Numericfield
+                                                     and e.Rq_Id = :FOR_RQ_ID)) and
+                   (exists(select
+                               wh.wh_id
+                             from SYS$USER u
+                                  inner join sys$user_wh wh on (wh.user_id = u.id)
+                             where u.ibname = current_user
+                                   and wh.can_view = 1
+                                   and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
+             left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and
+                   rm.Rq_Id = :FOR_RQ_ID and
+                   rm.WH_ID = w.O_Id)
+        where ((M.MG_ID = :MG_ID
+              and not :MG_ID is null)
+                or (M.MG_ID is null
+              and :MG_ID is null)
+                or (:MG_ID = -1))
+              and ((m.Deleted = 0)
+                or (coalesce(rm.Quant, 0) <> 0))
+
+        order by m.Name
+
+      into :M_ID, :tNAME, :DIMENSION, :WH_NAME, :WH_ID, :tQUANT, :M_NUMBER, :ID, :DESCRIPTION, :tSerial, :Is_Unit, :cost
+  do begin
+    RQ_ID = FOR_RQ_ID;
+    if (Is_Unit = 1) then begin
+      for select
+              u.Serial
+            , u.Mac
+            , a.Cost
+            , a.Notice
+
+              -- , u.Owner, u.Owner_Type
+            from Material_Unit u
+                 inner join Appliance a on (u.M_Id = a.M_Id and
+                       u.Serial = a.Serial)
+            where u.M_Id = :M_ID
+                  and a.Own_Id = :Owner
+                  and a.Own_Type = :Owner_Type
+          into :Serial, :Mac, :tCOST, :Notice
+               -- :Owner, :Owner_Type,
+      do begin
+        NAME = tName || coalesce('/' || Serial || coalesce('/' || MAC, ''), '');
+        if (SERIAL = tSerial) then begin
+          QUANT = tQUANT;
+          COST = coalesce(COST, tCOST);
+        end
+        else
+          QUANT = null;
+
+        DESCRIPTION = coalesce(Notice || ' ', '') || DESCRIPTION;
+        suspend;
+      end
+    end
+    else begin
+      SERIAL = tSerial;
+      NAME = tNAME;
+      QUANT = tQUANT;
       suspend;
     end
   end
@@ -12935,8 +13565,8 @@ declare variable fio d_varchar100;
 begin
   if (PAYSOURCE_ID is null) then begin
     -- посмотрим, есть ли источник для данного пользователя
-    select
-        first 1 coalesce(surname, '')
+    select first 1
+        coalesce(surname, '')
       from worker
       where upper(ibname) = upper(current_user)
     into :fio;
@@ -12945,6 +13575,7 @@ begin
         coalesce(ps.paysource_id, 0)
       from paysource ps
       where upper(ps.paysource_descr) = upper(:fio)
+            and coalesce(DELETED, 0) = 0
     into :Paysource_Id;
   end
 
@@ -12953,6 +13584,7 @@ begin
     select first 1
         Paysource_Id
       from Paysource p
+      where coalesce(DELETED, 0) = 0
       order by p.Paysource_Id
     into :PAYSOURCE_ID;
     -- если источника нет, то создадим
@@ -13809,6 +14441,88 @@ begin
   suspend;
 end ^
 
+ALTER PROCEDURE MATERIALS_SUMMARY (FOR_M_ID INTEGER)
+RETURNS (WH VARCHAR(2000) CHARACTER SET UTF8,
+M_ID INTEGER,
+M_DATE DATE,
+M_TYPE CHAR(72) CHARACTER SET UTF8,
+M_DOC VARCHAR(200) CHARACTER SET UTF8,
+QUANT NUMERIC(18, 5))
+AS 
+BEGIN
+  M_ID = FOR_M_ID;
+  FOR
+    select
+        w.O_Name WH, M_DATE, m_type, m_doc, quant
+      from (select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Приход' m_type, d.Doc_N m_doc, sum(md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 1 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'пер-ие НА склад' m_type, d.Doc_N m_doc, sum(md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 2 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.From_Wh Wh_Id, d.Doc_Date M_DATE, 'пер-ие СО склада' m_type, d.Doc_N m_doc, sum(-1 * md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 2 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Списание' m_type, d.Doc_N m_doc, sum(-1 * md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 3 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Корректировка' m_type, d.Doc_N m_doc, sum(md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 4 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Инвентаризация' m_type, d.Doc_N m_doc, sum(md.M_Quant - coalesce(md.B_Quant, 0)) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 5 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                rm.Wh_Id, cast(r.RQ_EXEC_TIME as date) M_DATE, 'возврат С заявки' m_type, r.Rq_Id m_doc, sum(rm.Quant) quant
+              from Request_Materials_Return rm
+                   inner join request r on (rm.Rq_Id = r.Rq_Id)
+              where rm.M_Id = :M_ID
+              group by 1,2,3,4
+            union
+            select
+                rm.Wh_Id, cast(r.RQ_EXEC_TIME as date) M_DATE, 'списание НА заявку' m_type, r.Rq_Id m_doc, sum(-1 * rm.Rm_Quant) quant
+              from Request_Materials rm
+                   inner join request r on (rm.Rq_Id = r.Rq_Id)
+              where rm.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+           ) m
+           inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
+      order by 1, 2, 3
+    INTO :WH,
+         :M_DATE,
+         :M_TYPE,
+         :M_DOC,
+         :QUANT
+  DO
+  BEGIN
+    SUSPEND;
+  END
+END ^
+
 ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID INTEGER)
 AS 
 declare variable DOC_CLOSED d_integer;
@@ -13901,6 +14615,97 @@ begin
     update or insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
     values (:M_Id, :Wh_Id, :Mr_Quant)
     matching (M_Id, Wh_Id);
+  end
+end ^
+
+ALTER PROCEDURE MATERIAL_UNIT_MOVE (RQ_ID UID,
+WH_ID UID,
+M_ID UID,
+SERIAL D_SERIAL_NS,
+TO_FROM D_IBOOLEAN = 1)
+AS 
+declare variable customer_id d_uid_null;
+declare variable node_id     d_uid_null;
+declare variable COST        D_N15_2;
+declare variable NOT_CALC    D_IBOOLEAN;
+declare variable MAC         D_Mac;
+declare variable NAME        D_VARCHAR100;
+declare variable Own_Id      d_uid_null;
+declare variable Own_Type    d_uid_null;
+declare variable A_TYPE      D_UID_NULL;
+declare variable PROPERTY    D_INTEGER;
+begin
+  -- добавили = 1, иначе удаляем
+  TO_FROM = coalesce(TO_FROM, 1);
+
+  if (TO_FROM = 1) then begin
+    -- добавим СЕРИЙНИК
+
+    for select
+            r.Rq_Customer
+          , r.Node_Id
+          , rm.Not_Calc
+          , rm.Rm_Cost
+          , u.Mac
+          , m.Name
+          , m.M_Type
+          from request r
+               inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
+               inner join MATERIALS M on (m.M_Id = rm.M_Id)
+               inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                     u.Serial = rm.Serial)
+          where RM.RQ_ID = :RQ_ID
+                and u.Serial = :SERIAL
+                and u.M_Id = :M_ID
+                and u.Owner = :WH_ID
+                and u.Owner_Type = 0
+        into :customer_id, :node_id, :NOT_CALC, :COST, :MAC, :NAME, :A_TYPE
+
+             -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
+             -- нужно вынести в процедуру
+
+    do begin
+      Own_Id = coalesce(customer_id, node_id);
+      Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
+      PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+      if ((Own_Type = 1) and (NOT_CALC = 0)) then
+        PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+
+      -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+
+      update Material_Unit u
+      set u.State = 1,
+          u.Owner = :Own_Id,
+          u.Owner_Type = :Own_Type
+      where u.M_Id = :M_Id
+            and u.Serial = :SERIAL
+            and u.Owner = :WH_ID
+            and u.Owner_Type = 0;
+
+      -- delete from Customer_Equipment ce where ce.M_Id = :M_ID and ce.Serial = :SERIAL;
+
+      update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id, FROM_WH)
+      values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id, :WH_ID)
+      matching (M_Id, Serial);
+
+      -- нужно дорабатывать. делать обмен данными оборудования
+      -- delete from Equipment e where e.Serial_N = :SERIAL and e.M_Id = :M_ID;
+    end
+  end
+  else begin
+    -- вернем на склад
+    update Material_Unit u
+    set u.State = 0,
+        u.Owner = :WH_Id,
+        u.Owner_Type = 0
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL
+          and u.Owner_Type <> 0;
+
+    delete from Appliance
+        where M_Id = :M_Id
+              and Rq_Id = :Rq_Id
+              and Serial = :Serial;
   end
 end ^
 
@@ -14453,8 +15258,7 @@ begin
         into :ERROR_CODE, :SALDO;
     end
     suspend;
-end
- ^
+end ^
 
 ALTER PROCEDURE MIGRATE_SERVICE_BY_CUSTOMER_ID (P_CUSTOMER_ID TYPE OF UID,
 V_SERVICE_ID D_INTEGER,
@@ -14777,9 +15581,8 @@ declare variable from_Wh_Id type of Uid;
 declare variable type_Id    type of Uid;
 declare variable doc_date   D_DATE;
 declare variable vCLOSED    D_INTEGER;
+declare variable vInt       D_INTEGER;
 begin
-  result = 1;
-
   select
       Wh_Id
     , Dt_Id
@@ -14790,12 +15593,35 @@ begin
   into :Wh_Id, :type_Id, :from_Wh_Id, :vCLOSED;
 
   if (vCLOSED = 0) then begin
+    result = 1;
     suspend;
     exit;
   end
 
-  if (type_Id is null) then begin
+  if (type_Id is null) then
     result = 0;
+
+  if ((type_Id = 1) -- Приход материалов
+      or
+      (type_Id = 2)) -- перемещение
+  then begin
+    select
+        count(*)
+      from Materials_In_Doc_Unit du
+           left outer join Material_Unit mu on (du.M_Id = mu.M_Id and
+                 du.Serial = mu.Serial)
+      where du.Doc_Id = :DOC_ID
+            and ((mu.Owner <> :WH_ID)
+              or (mu.Owner is null)
+              or (mu.Owner_Type <> 0)
+              or (mu.Owner_Type is null))
+    into :vInt;
+
+    if (vInt <> 0) then
+      result = 0;
+  end
+
+  if (result = 0) then begin
     suspend;
     exit;
   end
@@ -14870,7 +15696,8 @@ begin
   end
 
   -- списали со склада, вернем
-  if ((type_Id = 2)) then begin -- перемещение
+  if (type_Id = 2) -- перемещение
+  then begin
     for select
             M_Id
           , coalesce(M_Quant, 0)
@@ -14891,7 +15718,8 @@ begin
   end
 
   -- списали со склада, вернем
-  if ((type_Id = 3)) then begin -- списание материалов
+  if (type_Id = 3) -- списание материалов
+  then begin
     for select
             M_Id
           , coalesce(M_Quant, 0)
@@ -14911,12 +15739,49 @@ begin
     end
   end
 
-  delete from MATERIALS_REMAIN where MR_QUANT = 0;
+  -- обработка штучных позиций
+  if (type_Id = 1) -- Приход материалов
+  then begin
+    delete from Material_Unit mu
+        where (mu.Owner = :WH_ID)
+              and (mu.Owner_Type = 0)
+              and exists(select
+                             du.Doc_Id
+                           from Materials_In_Doc_Unit du
+                           where du.M_Id = mu.M_Id
+                                 and du.Serial = mu.Serial
+                                 and du.Doc_Id = :DOC_ID);
+  end
+  else begin
+    if (type_Id = 2) -- перемещение
+    then begin
+      update Material_Unit mu
+      set mu.Owner = :from_Wh_Id,
+          mu.State = -1 * :DOC_ID
+      where (mu.Owner = :WH_ID)
+            and (mu.Owner_Type = 0)
+            and exists(select
+                           du.Doc_Id
+                         from Materials_In_Doc_Unit du
+                         where du.M_Id = mu.M_Id
+                               and du.Serial = mu.Serial
+                               and du.Doc_Id = :DOC_ID);
+    end
+    -- else begin
+    --   (type_Id = 3) -- списание материалов
+    --   (type_Id = 4) -- инвинтаризация (коррекция)
+    --   (type_Id = 5) -- инвинтаризация
+    -- end
+  end
+
+  delete from MATERIALS_REMAIN
+      where MR_QUANT = 0;
 
   update material_docs
   set Doc_Closed = 0
   where doc_id = :DOC_ID;
 
+  result = 1;
   suspend;
 
 end ^
@@ -15727,6 +16592,117 @@ begin
   end
 end ^
 
+ALTER PROCEDURE REQUEST_CLOSE_MATERIALS (RQ_ID UID)
+AS 
+declare variable M_ID        Uid;
+declare variable WH_ID       uid;
+declare variable SERIAL      D_Serial_NS;
+declare variable customer_id d_uid_null;
+declare variable node_id     d_uid_null;
+declare variable COST        D_N15_2;
+declare variable NOT_CALC    D_IBOOLEAN;
+declare variable MAC         D_Mac;
+declare variable NAME        D_VARCHAR100;
+declare variable Own_Id      d_uid_null;
+declare variable Own_Type    d_uid_null;
+declare variable A_TYPE      D_UID_NULL;
+declare variable PROPERTY    D_INTEGER;
+begin /*$$IBE$$ 
+  -- добавим СЕРИЙНИК
+  for select
+          RM.m_Id
+        , RM.Wh_Id
+        , RM.Serial
+        , r.Rq_Customer
+        , r.Node_Id
+        , rm.Not_Calc
+        , rm.Rm_Cost
+        , u.Mac
+        , m.Name
+        , m.M_Type
+        from request r
+             inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
+             inner join MATERIALS M on (m.M_Id = rm.M_Id)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                   u.Serial = rm.Serial)
+        where RM.RQ_ID = :RQ_ID
+              and (coalesce(rm.Serial, '') <> '')
+              and u.State = -1 * :RQ_ID
+      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id, :NOT_CALC, :COST, :MAC, :NAME, :A_TYPE
+
+           -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
+           -- нужно вынести в процедуру
+
+  do begin
+    Own_Id = coalesce(customer_id, node_id);
+    Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
+    PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+    if ((Own_Type = 1) and (NOT_CALC = 0)) then
+      PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+
+    -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+
+    update Material_Unit u
+    set u.State = 1,
+        u.Owner = :Own_Id,
+        u.Owner_Type = :Own_Type
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL
+          and u.Owner = :WH_ID
+          and u.Owner_Type = 0
+          and u.State = -1 * :RQ_ID;
+
+    --delete from Customer_Equipment ce where ce.M_Id = :M_ID and ce.Serial = :SERIAL;
+
+    update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id)
+    values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id)
+    matching (M_Id, Serial);
+
+    -- нужно дорабатывать. делать обмен данными оборудования
+    -- delete from Equipment e
+    --    where e.Serial_N = :SERIAL
+    --          and e.M_Id = :M_ID;
+  end
+ $$IBE$$*/
+
+   -- возврат оборудования СЕРИЙНИК
+  for select
+          RM.m_Id
+        , RM.Wh_Id
+        , RM.Serial
+        , r.Rq_Customer
+        , r.Node_Id
+        from request r
+             inner join Request_Materials_Return RM on (r.Rq_Id = rm.Rq_Id)
+             inner join MATERIALS M on (m.M_Id = rm.M_Id)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                   u.Serial = rm.Serial)
+        where RM.RQ_ID = :RQ_ID
+              and (coalesce(rm.Serial, '') <> '')
+      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id
+
+           -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
+           -- нужно вынести в процедуру
+
+  do begin
+    -- вернем на склад
+    update Material_Unit u
+    set u.State = 0,
+        u.Owner = :WH_Id,
+        u.Owner_Type = 0
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL
+          and u.Owner_Type <> 0;
+
+    -- номер заявки откличается от текущей, поэтому удалим по ид абонента/узла
+    customer_id = coalesce(customer_id, node_id);
+    delete from Appliance
+        where M_Id = :M_Id
+              and Own_Id = :customer_id
+              and Serial = :Serial;
+  end
+end ^
+
 ALTER PROCEDURE REQUEST_CLOSE_PROCESS (RQ_ID UID)
 AS 
 declare variable quant       d_n15_3;
@@ -15734,24 +16710,39 @@ declare variable act         d_smallint;
 declare variable O_ID        d_uid_null;
 declare variable customer_id d_uid_null;
 declare variable notice      d_notice;
+declare variable EXEC_DATE   d_date;
 declare variable vDate       d_date;
+declare variable Fee_Name    D_Varchar1000;
+declare variable DEM         D_Varchar1000;
+declare variable Units       D_N15_2;
+declare variable Fee         D_N15_2;
+declare variable Fee_Type    Uid;
+declare variable M_ID        UID;
+declare variable SERIAL      D_SERIAL_NS;
 begin
+
+  select
+      r.Rq_Customer
+    , r.RQ_EXEC_TIME
+      --, r.Node_Id
+    from request r
+    where R.RQ_ID = :RQ_ID
+  into :customer_id, :EXEC_DATE;
+
   -- Установим, удалим атрибуты
-  for select
-          m.w_quant
-        , w.w_atr_ad
-        , w.w_atr_id
-        , rq.rq_customer
-        , m.notice
-        from WORKS w
-             inner join request_works m on (w.w_id = m.w_id)
-             inner join request rq on (m.rq_id = rq.rq_id)
-        where m.rq_id = :RQ_ID
-              and w.w_atr_ad in (1, 2)
-              and (not w.w_atr_id is null)
-      into :quant, :act, :O_ID, :customer_id, :notice
-  do begin
-    if (not customer_id is null) then begin
+  if (not customer_id is null) then begin
+    for select
+            m.w_quant
+          , w.w_atr_ad
+          , w.w_atr_id
+          , m.notice
+          from WORKS w
+               inner join request_works m on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and w.w_atr_ad in (1, 2)
+                and (not w.w_atr_id is null)
+        into :quant, :act, :O_ID, :notice
+    do begin
       if (act = 1) then
         if (not exists(select
                            CUSTOMER_ID
@@ -15766,46 +16757,155 @@ begin
                     and (O_ID = :O_ID);
     end
   end
+
   -- Установим разовые услуги
-  vDate = null;
-  for select
-          m.w_quant
-        , w.as_service
-        , rq.rq_customer
-        , w.Notice
-        , rq.Rq_Exec_Time
-        from WORKS w
-             inner join request_works m on (w.w_id = m.w_id)
-             inner join request rq on (m.rq_id = rq.rq_id)
-        where m.rq_id = :RQ_ID
-              and (not w.as_service is null)
-              and (rq.Node_Id is null)
-      into :quant, :O_ID, :customer_id, :notice, :vdate
-  do begin
-    if (not customer_id is null) then begin
-      notice = coalesce(notice||' /','')||RQ_ID;
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    for select
+            m.w_quant
+          , w.as_service
+          , w.Notice
+          from request_works m
+               inner join WORKS w on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and (not w.as_service is null)
+        into :quant, :O_ID, :notice
+    do begin
+      notice = coalesce(notice || ' /', '') || RQ_ID;
       insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE, HISTORY_ID, RQ_ID)
       values (:CUSTOMER_ID, :O_ID, :vDATE, :quant, :notice, null, :RQ_ID);
     end
   end
+
+  -- добавим материалы
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    Fee_Type = 1;
+    for select
+            M.NAME
+          , M.Demension
+          , RM.RM_QUANT
+          , RM.RM_QUANT * RM.RM_COST
+          , rm.M_Id
+          , rm.Serial
+          from REQUEST_MATERIALS RM
+               inner join MATERIALS M on (M.M_ID = RM.M_ID)
+          where RM.RQ_ID = :RQ_ID
+                and (coalesce(rm.Not_Calc, 0) = 0)
+        into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
+    do begin
+      if (not UNITS is null) then
+        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
+      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID, :M_ID, :SERIAL);
+    end
+  end
+
+  -- вернем стоимость за материалы возврата
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    Fee_Type = 2;
+    for select
+            M.NAME
+          , M.Demension
+          , RM.Quant
+          , RM.Quant * RM.COST
+          , rm.M_Id
+          , rm.Serial
+          from Request_Materials_Return RM
+               inner join MATERIALS M on (M.M_ID = RM.M_ID)
+          where RM.RQ_ID = :RQ_ID
+                and not rm.Serial is null
+                and coalesce(rm.Quant * RM.COST, 0) <> 0
+        into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
+    do begin
+      FEE = -1 * FEE;
+      if (not UNITS is null) then
+        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
+      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID, :M_ID, :SERIAL);
+    end
+  end
+
+  -- оборудование абоненту и узлам
+  execute procedure REQUEST_CLOSE_MATERIALS(RQ_ID);
+
+  -- добавим работы
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    Fee_Type = 2;
+    for select
+            M.NAME
+          , RM.W_QUANT
+          , RM.W_QUANT * RM.W_COST
+          from REQUEST_WORKS RM
+               inner join WORKS M on (M.W_ID = RM.W_ID)
+          where RM.RQ_ID = :RQ_ID
+                and (m.as_service is null)
+        into :FEE_NAME, :UNITS, :FEE
+    do begin
+      insert into OTHER_FEE (FEE_DATE, CUSTOMER_ID, FEE_NAME, UNITS, FEE, FEE_TYPE, IN_REQUEST)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID);
+    end
+  end
+
   -- начислим месяц
-  if (not vDate is null) then begin
-    vDate = vDate - extract(day from vDate) + 1;
-    execute procedure Close_Month_Proc(:vDate, :CUSTOMER_ID);
+  if (not EXEC_DATE is null) then begin
+    EXEC_DATE = EXEC_DATE - extract(day from EXEC_DATE) + 1;
+    execute procedure Close_Month_Proc(:EXEC_DATE, :CUSTOMER_ID);
   end
 end ^
 
 ALTER PROCEDURE REQUEST_CLOSE_ROLLBACK (RQ_ID TYPE OF UID,
 CUSTOMER_ID TYPE OF UID)
 AS 
+declare variable SERIAL D_SERIAL_NS;
+declare variable M_ID   UID;
+declare variable WH_ID  D_UID_NULL;
 begin
-  if ((not CUSTOMER_ID is null)
-     and (not RQ_ID is null))
-  then begin
-    delete from OTHER_FEE where CUSTOMER_ID = :CUSTOMER_ID and IN_REQUEST = :RQ_ID;
-    delete from CUSTOMER_ATTRIBUTES where CUSTOMER_ID = :CUSTOMER_ID and RQ_ID = :RQ_ID;
-    delete from SINGLE_SERV where CUSTOMER_ID = :CUSTOMER_ID and RQ_ID = :RQ_ID;
+  if (RQ_ID is null) then
+    exit;
+
+  delete from Other_Fee
+      where In_Request = :RQ_ID;
+
+  if (not CUSTOMER_ID is null) then begin
+    delete from CUSTOMER_ATTRIBUTES
+        where CUSTOMER_ID = :CUSTOMER_ID
+              and RQ_ID = :RQ_ID;
+    delete from SINGLE_SERV
+        where CUSTOMER_ID = :CUSTOMER_ID
+              and RQ_ID = :RQ_ID;
     execute procedure Full_Recalc_Customer(:Customer_Id);
+  end
+
+  -- вернем СЕРИЙНИК на склад
+  for select
+          RM.Rm_Id
+        , RM.Wh_Id
+        , RM.Serial
+        from request r
+             inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                   u.Serial = rm.Serial)
+        where RM.RQ_ID = :RQ_ID
+              and (coalesce(rm.Serial, '') <> '')
+      into :M_ID, :WH_ID, :SERIAL
+  do begin
+    update Material_Unit u
+    set u.State = 0,
+        u.Owner = :WH_ID,
+        u.Owner_Type = 0
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL;
+    delete from Customer_Equipment ce
+        where ce.M_Id = :M_ID
+              and ce.Serial = :SERIAL;
+
+    -- нужно дорабатывать. делать обмен данными оборудования
+    delete from Equipment e
+        where e.Serial_N = :SERIAL
+              and e.M_Id = :M_ID;
   end
 end ^
 
@@ -15817,33 +16917,109 @@ WH_ID TYPE OF UID,
 RM_COST D_N15_2,
 RM_NOTICE D_NOTICE,
 NOT_CALC D_IBOOLEAN,
-P_ACTION D_INTEGER)
+P_ACTION D_INTEGER,
+SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */)
+RETURNS (RET_RM_ID D_INTEGER)
 AS 
-declare variable Quant type of D_N15_5;
+declare variable WQuant type of D_N15_5;
+declare variable RQuant type of D_N15_5;
 begin
+  RM_QUANT = coalesce(RM_QUANT, 0);
+
+  -- если кол-во = 0 то удалим
   -- P_ACTION -0 insert 1-update 2-delete
+  if (RM_QUANT = 0) then
+    P_Action = 2;
 
-  delete from REQUEST_MATERIALS M
-      where m.RM_ID = :RM_ID;
+  if (P_Action = 2) then begin
+    -- если удаление - удалим
+    if ((M_ID is null)
+        or
+        (RQ_ID is null)
+        or
+        (M_ID is null)) then begin
+      select
+          Rq_Id
+        , M_Id
+        , Wh_Id
+        , Serial
+        from Request_Materials M
+        where m.Rm_Id = :RM_ID
+      into :Rq_Id, :M_Id, :Wh_Id, :Serial;
 
-  if ((P_Action <> 2) and (RM_QUANT > 0)) then begin
-    if (RM_QUANT is null) then
-      RM_QUANT = 0;
+    end
+    Serial = coalesce(SERIAL, '');
+    if (Serial <> '') then
+      execute procedure MATERIAL_UNIT_MOVE(:Rq_Id, :Wh_Id, :M_Id, :Serial, 0);
+
+    delete from REQUEST_MATERIALS M
+        where m.RM_ID = :RM_ID;
+    RM_ID = null;
+  end
+  else begin
+    -- добавим или обновим
+    -- Serial = coalesce(trim(SERIAL), '');
+    -- проверим, был ли такой серийный номер
+    if ((not Serial is null) and (not exists(select
+                                                 Serial
+                                               from Material_Unit u
+                                               where M_Id = :M_Id
+                                                     and Serial = :Serial))) then begin
+      Serial = null;
+    end
+
+    if (not SERIAL is null) then
+      RM_QUANT = 1;
+
     -- проверим есть ли нужно кол-во материала на складе
     if (RM_QUANT > 0) then begin
+      RQuant = null;
+      WQuant = null;
       select
           rm.Mr_Quant
         from Materials_Remain rm
         where rm.M_Id = :M_ID
               and rm.Wh_Id = :WH_ID
-      into :Quant;
-      Quant = coalesce(Quant, RM_QUANT - 1);
-      if (Quant < RM_QUANT) then
+      into :WQuant;
+      -- с учетом того что уже выдали
+      if (not RM_ID is null) then begin
+        select
+            Rm_Quant
+          from REQUEST_MATERIALS
+          where RM_ID = :RM_ID
+        into :RQuant;
+      end
+      WQuant = coalesce(WQuant, 0) + coalesce(RQuant, 0);
+      if (WQuant < RM_QUANT) then
         exception E_Mat_Quant_Less;
     end
-    insert into REQUEST_MATERIALS (RQ_ID, M_ID, WH_ID, RM_QUANT, RM_COST, RM_NOTICE, NOT_CALC)
-    values (:RQ_ID, :M_ID, :WH_ID, :RM_QUANT, :RM_COST, :RM_NOTICE, :NOT_CALC);
+
+    if (RM_ID is null) then begin
+      update or insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, NOT_CALC, SERIAL)
+      values (:RQ_ID, :WH_ID, :M_ID, :RM_QUANT, :RM_COST, :RM_NOTICE, :NOT_CALC, :SERIAL)
+      matching (RQ_ID, WH_ID, M_ID)
+      returning RM_ID
+      into :RM_ID;
+    end
+    else begin
+      update REQUEST_MATERIALS
+      set RQ_ID = :RQ_ID,
+          WH_ID = :WH_ID,
+          M_ID = :M_ID,
+          RM_QUANT = :RM_QUANT,
+          RM_COST = :RM_COST,
+          RM_NOTICE = :RM_NOTICE,
+          NOT_CALC = :NOT_CALC,
+          SERIAL = :SERIAL
+      where RM_ID = :RM_ID;
+    end
+
+    if (not SERIAL is null) then
+      execute procedure MATERIAL_UNIT_MOVE(:Rq_Id, :Wh_Id, :M_Id, :Serial, :RM_QUANT);
   end
+
+  RET_RM_ID = RM_ID;
+  suspend;
 end ^
 
 ALTER PROCEDURE REQUEST_MATERIALS_RETURN_IUD (ID TYPE OF UID,
@@ -15852,19 +17028,24 @@ M_ID TYPE OF UID,
 QUANT D_N15_5,
 WH_ID TYPE OF UID,
 NOTICE D_NOTICE,
-P_ACTION D_INTEGER)
+P_ACTION D_INTEGER,
+SERIAL D_SERIAL_NS = null,
+COST D_N15_2 = null)
 AS 
 begin
   -- P_ACTION -0 insert 1-update 2-delete
+  if (QUANT is null) then
+    QUANT = 0;
 
-  delete from Request_Materials_Return M where m.Id = :ID;
+  if (not ID is null) then
+    delete from Request_Materials_Return M
+        where m.Id = :ID;
 
-  if ((P_Action <> 2) and (QUANT > 0)) then begin
-    if (QUANT is null) then
-      QUANT = 0;
+  if ((P_Action <> 2) and (QUANT <> 0)) then begin
+    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, SERIAL, COST)
+    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :SERIAL, :COST);
 
-    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice)
-    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice);
+    -- серийник у абонента/узла удалим при закрытии заявки
   end
 end ^
 
@@ -16029,7 +17210,7 @@ begin
   end
 end ^
 
-ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null)
+ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */)
 RETURNS (PAY_DOC_ID D_INTEGER)
 AS 
 declare variable vPSID D_INTEGER;
@@ -16041,6 +17222,7 @@ begin
         ps.Paysource_Id
       from paysource ps
       where position(:ForForm in ps.For_Form) > 0
+        and coalesce(DELETED,0) = 0
       order by 1
     into :vPSID;
   end
@@ -16122,9 +17304,9 @@ AUTOOFF D_IBOOLEAN,
 POSITIVE_ONLY D_IBOOLEAN,
 PRIORITY D_INTEGER,
 ONLY_ONE D_IBOOLEAN,
-NOTE D_DESCRIPTION = '',
+NOTE D_DESCRIPTION = '' /* COLLATE UTF8 - default */,
 TAG D_INTEGER = null,
-TAG_STR D_VARCHAR255 = '',
+TAG_STR D_VARCHAR255 = '' /* COLLATE UTF8 - default */,
 OPENLY D_IBOOLEAN = 0,
 UNBL_METH D_INTEGER = 0)
 AS 
@@ -16735,8 +17917,14 @@ LOCKEDOUT D_INTEGER,
 ALL_AREAS D_SMALLINT)
 AS 
 begin
-  if (lockedout is null) then
+  if (WORKING is null) then
+    WORKING = 1;
+
+  if ((lockedout is null)
+      or
+      (WORKING = 0)) then
     lockedout = 1;
+
   if (operation = 1) --  добавим
   then begin
     if (worker_id is null) then begin
@@ -16776,8 +17964,15 @@ begin
 
   if (operation = 3) --  удалим
   then begin
-    delete from worker where worker_id = :worker_id;
-    delete from sys$user where id = :worker_id;
+    if ((worker_id is null) and (not Ibname is null)) then
+      delete from sys$user
+          where Ibname = :Ibname;
+    else begin
+      delete from worker
+          where worker_id = :worker_id;
+      delete from sys$user
+          where id = :worker_id;
+    end
   end
 end ^
 
@@ -16829,6 +18024,20 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
    NEW.IP_BIN = INET_ATON(NEW.IP);
+end ^
+
+CREATE TRIGGER APPLIANCE_AI FOR APPLIANCE 
+ACTIVE AFTER INSERT POSITION 0 
+as
+begin
+  execute procedure Appliance_To_Table(new.Id, 1);
+end ^
+
+CREATE TRIGGER APPLIANCE_BD FOR APPLIANCE 
+ACTIVE BEFORE DELETE POSITION 0 
+as
+begin
+  execute procedure Appliance_To_Table(old.Id, 0);/* Trigger text */
 end ^
 
 CREATE TRIGGER APPLIANCE_BI FOR APPLIANCE 
@@ -17094,22 +18303,6 @@ begin
   new.EDIT_ON = localtimestamp;
 end ^
 
-CREATE TRIGGER CHANNEL_SRC_PARAM_BI FOR CHANNEL_SRC_PARAM 
-ACTIVE BEFORE INSERT POSITION 0 
-as
-begin
-  new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
-end ^
-
-CREATE TRIGGER CHANNEL_SRC_PARAM_BU FOR CHANNEL_SRC_PARAM 
-ACTIVE BEFORE UPDATE POSITION 0 
-as
-begin
-  new.EDIT_BY = current_user;
-  new.EDIT_ON = localtimestamp;
-end ^
-
 CREATE TRIGGER CHANNEL_SRC_PARAM_AU FOR CHANNEL_SRC_PARAM 
 ACTIVE AFTER UPDATE POSITION 0 
 as
@@ -17128,31 +18321,23 @@ begin
   where s.Cs_Id = OLD.Cs_Id;
 end ^
 
-CREATE TRIGGER CHANNEL_SRC_PARAM_BIU0 FOR CHANNEL_SRC_PARAM 
+CREATE TRIGGER CHANNEL_SRC_PARAM_BIU FOR CHANNEL_SRC_PARAM 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
+  new.Csp_Id = coalesce(new.Csp_Id, gen_id(GEN_UID, 1));
   new.On_Analog = coalesce(new.On_Analog, 0);
   new.On_Dvb = coalesce(new.On_Dvb, 0);
   new.On_Iptv = coalesce(new.On_Iptv, 0);
 
-  if (new.On_Analog = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Analog = 0
-    where Ch_Id = new.Ch_Id
-          and Cs_Id <> new.Cs_Id;
-
-  if (new.On_Dvb = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Dvb = 0
-    where Ch_Id = new.Ch_Id
-          and Cs_Id <> new.Cs_Id;
-
-  if (new.On_Iptv = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Iptv = 0
-    where Ch_Id = new.Ch_Id
-          and Cs_Id <> new.Cs_Id;
+  if (inserting) then begin
+    new.ADDED_BY = current_user;
+    new.ADDED_ON = localtimestamp;
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
+  end
 end ^
 
 CREATE TRIGGER CONNECT_LOG_BI FOR CONNECT_LOG 
@@ -17465,6 +18650,9 @@ as
 begin
   if ((new.debt_sum < 0) and (old.debt_sum > 0)) then
     execute procedure Change_To_Positive(new.Customer_Id, old.Debt_Sum, new.Debt_Sum, new.House_Id, new.Flat_No);
+
+  if (new.debt_sum > 0) then
+    execute procedure CHANGE_TO_NEGATIVE(new.Customer_Id, old.Debt_Sum, new.Debt_Sum, new.House_Id, new.Flat_No);
 
   if (old.Contract_Date is distinct from new.Contract_Date) then
     execute procedure Full_Recalc_Customer(new.Customer_Id);
@@ -18124,8 +19312,8 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   -- номер декодера не может быть пустым
-  if (new.EQUIP_N is null) then
-    exception E_Not_Empty;
+  --if (new.EQUIP_N is null) then
+  --  exception E_Not_Empty;
 
   if (new.Customer_Id is null) then
     exception E_Not_Empty;
@@ -18648,7 +19836,6 @@ end ^
 CREATE TRIGGER EQUIPMENT_BIU FOR EQUIPMENT 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
-declare variable mac d_mac;
 begin
   if (new.EID is null) then
     new.EID = gen_id(gen_operations_uid, 1);
@@ -18665,11 +19852,7 @@ begin
     new.Ipv6 = lower(new.Ipv6);
 
   if (not new.MAC is null) then begin
-    select
-        MAC
-      from FORMAT_MAC(new.MAC)
-    into :Mac;
-    new.mac = mac;
+    new.mac = Mac_Format(new.MAC);
   end
 
   new.last_update = localtimestamp;
@@ -19084,26 +20267,6 @@ begin
   end
 end ^
 
-CREATE TRIGGER INVENTORY_BIU0 FOR INVENTORY 
-ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
-as
-begin
-  if (new.Quant is null) then
-    new.Quant = 1;
-  if (new.ownership is null) then
-    new.ownership = 1;
-  if (new.Serial is null) then
-    new.Serial = '';
-  if (inserting) then begin
-    new.added_by = current_user;
-    new.added_on = localtimestamp;
-  end
-  else begin
-    new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
-  end
-end ^
-
 CREATE TRIGGER IPTV_GROUP_BI FOR IPTV_GROUP 
 ACTIVE BEFORE INSERT POSITION 0 
 as
@@ -19279,6 +20442,19 @@ begin
   new.Added_By = current_user;
 end ^
 
+CREATE TRIGGER MATERIALS_IN_DOC_AI FOR MATERIALS_IN_DOC 
+ACTIVE AFTER INSERT POSITION 0 
+as
+begin
+  -- обновим связную таблицу
+  -- пропишем номер строки вместо временного значения
+  update Materials_In_Doc_Unit
+  set Id = new.Id
+  where (Doc_Id = new.Doc_Id)
+        and (M_Id = new.M_Id)
+        and (Id = -1);
+end ^
+
 CREATE TRIGGER MATERIALS_IN_DOC_BU FOR MATERIALS_IN_DOC 
 ACTIVE BEFORE UPDATE POSITION 0 
 as
@@ -19340,6 +20516,14 @@ begin
     exception E_CANNOT_DELETE;
 end ^
 
+CREATE TRIGGER MATERIAL_UNIT_BU FOR MATERIAL_UNIT 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  if (new.Mac is distinct from old.Mac) then
+    new.Mac = Mac_Format(new.Mac);
+end ^
+
 CREATE TRIGGER MESSAGES_BI FOR MESSAGES 
 ACTIVE BEFORE INSERT POSITION 0 
 as
@@ -19389,8 +20573,7 @@ begin
     execute procedure RecalcCustomerDebt(old.Customer_Id);
 
   execute procedure RecalcCustomerDebt(new.Customer_Id);
-end
- ^
+end ^
 
 CREATE TRIGGER MONTHLY_FEE_AD_0 FOR MONTHLY_FEE 
 ACTIVE AFTER DELETE POSITION 0 
@@ -19726,6 +20909,14 @@ begin
       end
     end
   end
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = localtimestamp;
+  end
 end ^
 
 CREATE TRIGGER PAYMENT_BI0 FOR PAYMENT 
@@ -19871,13 +21062,6 @@ begin
   new.ADDED_ON = localtimestamp;
 end ^
 
-CREATE TRIGGER PAYSOURCE_BI0 FOR PAYSOURCE 
-ACTIVE BEFORE INSERT POSITION 0 
-AS
-begin
- if (new.PAYSOURCE_ID is null) then new.PAYSOURCE_ID = GEN_ID(gen_operations_uid,1);
-end ^
-
 CREATE TRIGGER PAYSOURCE_BD FOR PAYSOURCE 
 ACTIVE BEFORE DELETE POSITION 0 
 as
@@ -19887,6 +21071,15 @@ begin
                from Pay_Doc p
                where p.Paysource_Id = old.Paysource_Id)) then
     exception E_Cannot_Delete;
+end ^
+
+CREATE TRIGGER PAYSOURCE_BI0 FOR PAYSOURCE 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
+as
+begin
+  if (new.PAYSOURCE_ID is null) then
+    new.PAYSOURCE_ID = gen_id(gen_operations_uid, 1);
+  new.DELETED = coalesce(new.DELETED, 0);
 end ^
 
 CREATE TRIGGER PAY_DOC_BI0 FOR PAY_DOC 
@@ -20190,14 +21383,6 @@ CREATE TRIGGER REQUEST_AU FOR REQUEST
 ACTIVE AFTER UPDATE POSITION 0 
 as
 declare variable NEED_FEE   D_INTEGER;
-declare variable DT         D_DATE;
-declare variable Fee_Name   D_Varchar1000;
-declare variable DEM        D_Varchar1000;
-declare variable Units      D_N15_2;
-declare variable Fee        D_N15_2;
-declare variable Fee_Type   Uid;
-declare variable In_Request D_Integer;
-
 begin
   NEED_FEE = 0;
   -- если заявка закрываеться
@@ -20218,46 +21403,9 @@ begin
   end
 
   -- если нужно то добавим новому абоненту начисления
-  if ((not new.RQ_CUSTOMER is null) and (NEED_FEE = 1)) then begin
+  if (NEED_FEE = 1) then begin
     -- начислим услуги и добавим атрибуты
     execute procedure REQUEST_CLOSE_PROCESS(new.rq_id);
-
-    DT = coalesce(cast(new.RQ_EXEC_TIME as date), current_date);
-    In_Request = new.RQ_ID;
-    -- добавим материалы
-    Fee_Type = 1;
-    for select
-            M.NAME
-          , M.Demension
-          , RM.RM_QUANT
-          , RM.RM_QUANT * RM.RM_COST
-          from REQUEST_MATERIALS RM
-               inner join MATERIALS M on (M.M_ID = RM.M_ID)
-          where RM.RQ_ID = new.RQ_ID
-                and (coalesce(rm.Not_Calc, 0) = 0)
-        into :FEE_NAME, :DEM, :UNITS, :FEE
-    do begin
-      if (not UNITS is null) then
-        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
-
-      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request)
-      values (:DT, new.RQ_CUSTOMER, :Fee_Name, :Units, :Fee, :Fee_Type, :In_Request);
-    end
-    -- добавим работы
-    Fee_Type = 2;
-    for select
-            M.NAME
-          , RM.W_QUANT
-          , RM.W_QUANT * RM.W_COST
-          from REQUEST_WORKS RM
-               inner join WORKS M on (M.W_ID = RM.W_ID)
-          where RM.RQ_ID = new.RQ_ID
-                and (m.as_service is null)
-        into :FEE_NAME, :UNITS, :FEE
-    do begin
-      insert into OTHER_FEE (FEE_DATE, CUSTOMER_ID, FEE_NAME, UNITS, FEE, FEE_TYPE, IN_REQUEST)
-      values (:DT, new.RQ_CUSTOMER, :Fee_Name, :Units, :Fee, :Fee_Type, :In_Request);
-    end
   end
 end ^
 
@@ -20300,10 +21448,64 @@ as
 begin
   -- вернем материалы и начисления
   execute procedure REQUEST_CLOSE_ROLLBACK(old.RQ_ID, old.RQ_CUSTOMER);
-  delete from Other_Fee o where o.In_Request = old.Rq_Id;
 
   insert into OPERATION_LOG (OPERATION, OPER_WHAT, OPER_NOTE)
   values (0, 'ЗАЯВКА', old.RQ_ID);
+
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('REQUEST', 0, old.Rq_Id, 'RQ_ID', old.Rq_Id, null);
+
+  if (not old.Rq_Customer is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'CUSTOMER_ID', old.Rq_Customer, null);
+
+  if (not old.HOUSE_ID is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'HOUSE_ID', old.HOUSE_ID, null);
+
+  if (not old.Rq_Plan_Date is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_PLAN_DATE', old.Rq_Plan_Date, null);
+
+  if (not old.RQ_TYPE is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_TYPE', old.RQ_TYPE, null);
+
+  if (not old.RQTL_ID is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQTL_ID', old.RQTL_ID, null);
+
+  if (not old.RQ_NOTICE is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_NOTICE', old.RQ_NOTICE, null);
+
+  if (not old.ADD_INFO is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'ADD_INFO', old.ADD_INFO, null);
+
+  if (not old.RQ_CONTENT is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_CONTENT', old.RQ_CONTENT, null);
+
+  if (not old.Node_Id is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'NODE_ID', old.Node_Id, null);
+end ^
+
+CREATE TRIGGER REQUEST_FLATS_BI FOR REQUEST_FLATS 
+ACTIVE BEFORE INSERT POSITION 0 
+as
+begin
+  new.added_by = current_user;
+  new.added_on = localtimestamp;
+end ^
+
+CREATE TRIGGER REQUEST_FLATS_BU FOR REQUEST_FLATS 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  new.edit_by = current_user;
+  new.edit_on = localtimestamp;
 end ^
 
 CREATE TRIGGER REQUEST_MATERIALS_BI FOR REQUEST_MATERIALS 
@@ -20313,7 +21515,10 @@ begin
   if (new.rm_id is null) then
     new.rm_id = gen_id(gen_operations_uid, 1);
 
-  new.Rm_Quant = coalesce(new.Rm_Quant, 0);
+  if ((not new.Serial is null) and (new.Serial <> '')) then
+    new.Rm_Quant = 1;
+  else
+    new.Rm_Quant = coalesce(new.Rm_Quant, 0);
   new.Rm_Cost = coalesce(new.Rm_Cost, 0);
   new.Not_Calc = coalesce(new.Not_Calc, 0);
 
@@ -20361,7 +21566,7 @@ begin
 
     if (old.Rm_Quant <> 0) then begin
       update Materials_Remain mr
-      set mr.Mr_Quant = coalesce(mr.Mr_Quant,0) + old.Rm_Quant
+      set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) + old.Rm_Quant
       where mr.M_Id = old.m_id
             and mr.Wh_Id = old.Wh_Id;
 
@@ -20372,13 +21577,39 @@ begin
 
     if (new.Rm_Quant <> 0) then begin
       update Materials_Remain mr
-      set mr.Mr_Quant = coalesce(mr.Mr_Quant,0) - new.Rm_Quant
+      set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) - new.Rm_Quant
       where mr.M_Id = new.m_id
             and mr.Wh_Id = new.Wh_Id;
 
       if (row_count = 0) then
         insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
         values (new.m_id, new.Wh_Id, new.Rm_Quant * (-1));
+    end
+  end
+
+  -- пометим статус материала временной меткой
+  if ((old.M_Id is distinct from new.M_Id)
+      or
+      (old.Serial is distinct from new.Serial)
+      or
+      (old.RQ_ID is distinct from new.RQ_ID)) then begin
+    if ((not old.Serial is null) and (old.Serial <> '')) then begin
+      update Material_Unit u
+      set u.State = 0
+      where u.M_Id = old.M_Id
+            and u.Serial = old.Serial
+            and u.State = -1 * old.Rq_Id
+            and u.Owner_Type = 0
+            and u.Owner = old.Wh_Id;
+    end
+    if ((not new.Serial is null) and (new.Serial <> '')) then begin
+      update Material_Unit u
+      set u.State = -1 * new.Rq_Id
+      where u.M_Id = new.M_Id
+            and u.Serial = old.Serial
+            and u.State = 0
+            and u.Owner_Type = 0
+            and u.Owner = new.Wh_Id;
     end
   end
 end ^
@@ -20652,6 +21883,8 @@ begin
     new.Only_One = 0;
   if (new.Shift_Months is null) then
     new.Shift_Months = 0;
+  if (new.Priority is null) then
+    new.Priority = 99;
   if (new.Inet_Srv = 0) then begin
     new.Ip_Begin = null;
     new.Ip_End = null;
@@ -21097,6 +22330,7 @@ ACTIVE AFTER DELETE POSITION 0
 as
 begin
   delete from sys$user_groups r where r.user_id = old.id;
+  delete from Sys$User_Areas r where r.user_id = old.id;
 end ^
 
 CREATE TRIGGER SYS$USER_BI FOR SYS$USER 
@@ -21306,7 +22540,6 @@ end ^
 CREATE TRIGGER TV_LAN_BIU0 FOR TV_LAN 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
-declare variable mac d_mac;
 begin
   if ((new.Ip is null) and (new.Ipv6 is null) and (new.Mac is null) and (new.Port is null)) then
     exception e_not_empty;
@@ -21339,11 +22572,7 @@ begin
     new.Ip_Add_Bin = null;
 
   if (not new.MAC is null) then begin
-    select
-        MAC
-      from FORMAT_MAC(new.MAC)
-    into :Mac;
-    new.mac = mac;
+    new.mac = Mac_Format(new.MAC);
   end
 
   if (not new.Ipv6 is null) then
@@ -21500,12 +22729,34 @@ end ^
 
 CREATE TRIGGER WORKER_BI0 FOR WORKER 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
-AS
+as
 begin
- if (new.WORKER_ID is null) then new.WORKER_ID = GEN_ID(gen_operations_uid,1);
- if (new.surname is null) then new.surname ='';
- if (new.firstname is null) then new.firstname ='';
- if (new.midlename is null) then new.midlename ='';
+  if (new.WORKER_ID is null) then
+    new.WORKER_ID = gen_id(gen_operations_uid, 1);
+  if (new.surname is null) then
+    new.surname = '';
+  if (new.firstname is null) then
+    new.firstname = '';
+  if (new.midlename is null) then
+    new.midlename = '';
+  if (new.Working is null) then
+    new.WORKING = 0;
+end ^
+
+CREATE TRIGGER WORKER_AIU0 FOR WORKER 
+ACTIVE AFTER INSERT OR UPDATE POSITION 0 
+as
+begin
+  if ((new.WORKING is distinct from old.Working) and (coalesce(new.Ibname, '') <> '') and (new.WORKING = 0)) then begin
+    update Sys$User
+    set Lockedout = 1
+    where Ibname = new.Ibname;
+  end
+  if ((old.Ibname is distinct from new.Ibname) and (coalesce(old.Ibname, '') <> '')) then begin
+    update Sys$User
+    set Lockedout = 1
+    where Ibname = old.Ibname;
+  end
 end ^
 
 CREATE TRIGGER WORKGROUPS_BI0 FOR WORKGROUPS 
@@ -21533,791 +22784,714 @@ COMMIT WORK;
 CREATE ROLE ROLE_A4USER;
 
 /* Grant permissions for this database */
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ALL_USED_IP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ALL_USED_IP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ALL_USED_IP TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON APPLIANCE TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON AREA TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON AREA TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON AREA TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ATTRIBUTE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BCISSUE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BCI_CHANNELS TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BILLING TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BILLING TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BILLING TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLB_GZIP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLB_GZIP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLB_GZIP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLOB_TBL TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLOB_TBL TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLOB_TBL TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BONUS_RATE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BONUS_RATE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BONUS_RATE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_PREPAY TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_PREPAY TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_PREPAY TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_SERIALS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_SERIALS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_SERIALS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANGELOG TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANGELOG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANGELOG TO USER RSDF;
-GRANT SELECT ON CHANNELS TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS_IN_SERVCE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS_IN_SERVCE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS_IN_SERVCE TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNEL_SRC TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNEL_SRC TO USER RSDF;
+GRANT INSERT, SELECT, UPDATE ON CHANNEL_SRC_PARAM TO PROCEDURE CHANNEL_SRC_PARAM_IU;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNEL_SRC_PARAM TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNEL_SRC_PARAM TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CLIENT_FILES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CLIENT_FILES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CLIENT_FILES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON COMPANY TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON COMPANY TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON COMPANY TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CONNECT_LOG TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CONNECT_LOG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CONNECT_LOG TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO USER RSDF;
-GRANT SELECT ON CUSTOMER TO PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ACCOUNTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ACCOUNTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ACCOUNTS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ATTRIBUTES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ATTRIBUTES TO USER RSDF;
 GRANT SELECT ON CUSTOMER_BONUSES TO PROCEDURE CUSTOMER_BALANCE;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_BONUSES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_BONUSES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_BONUSES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CHANNELS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CHANNELS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CHANNELS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_EQUIPMENT TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_FILES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_FILES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_FILES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DAYS_TARIF TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DAYS_TARIF TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DAYS_TARIF TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DECODER_PACKETS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DECODER_PACKETS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DECODER_PACKETS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DEVICES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DEVPORTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DEVPROFILES TO ROLE ROLE_A4USER;
-GRANT SELECT ON DISCOUNT_FACTOR TO PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISCOUNT_FACTOR TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISCOUNT_FACTOR TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISCOUNT_FACTOR TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIBUTOR TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIBUTOR TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIBUTOR TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CARDS TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACTS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_CH TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS_CH TO ROLE ROLE_A4USER;
-GRANT SELECT ON DVB_NETWORK TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO USER RSDF;
-GRANT SELECT ON DVB_STREAMS TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAMS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAMS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAMS TO USER RSDF;
-GRANT SELECT ON DVB_STREAM_CHANNELS TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAM_CHANNELS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAM_CHANNELS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAM_CHANNELS TO USER RSDF;
-GRANT SELECT ON EPG TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG TO USER RSDF;
-GRANT SELECT ON EPG_AD TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD TO USER RSDF;
-GRANT SELECT ON EPG_AD_CHANNELS TO PROCEDURE GET_EPG_APART;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD_CHANNELS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD_CHANNELS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD_CHANNELS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_GENRE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_GENRE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_GENRE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_LOCAL TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_LOCAL TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_LOCAL TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING_GENRE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING_GENRE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING_GENRE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_ATTRIBUTES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_ATTRIBUTES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_CMD_GRP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_CMD_GRP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_CMD_GRP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_COVERAGE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_COVERAGE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_COVERAGE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_DVB TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_DVB TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_DVB TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_HISTORY TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_HISTORY TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_HISTORY TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_LOG TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_LOG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_LOG TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EVENT_DETAIL TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EXPORTTYPES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EXPORTTYPES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EXPORTTYPES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON FREQPLAN TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON GPS_LOG TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON GPS_LOG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON GPS_LOG TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND_CHANNELS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND_CHANNELS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND_CHANNELS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLATS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLATS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLATS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLOOR TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLOOR TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLOOR TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEPORCH TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEPORCH TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEPORCH TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSES_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSES_ATTRIBUTES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO USER RSDF;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON INVENTORY TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_ATTRIBUTES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_ATTRIBUTES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_CHANNELS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_CHANNELS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_CHANNELS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON JOURNAL TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON JOURNAL TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON JOURNAL TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON LETTERTYPE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON LETTERTYPE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON LETTERTYPE TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP_LOG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP_XY TO ROLE ROLE_A4USER;
-GRANT SELECT ON MATERIALS TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC_UNIT TO ROLE ROLE_A4USER;
-GRANT SELECT ON MATERIALS_REMAIN TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_UNIT TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGE_TPL TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGE_TPL TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGE_TPL TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MODULES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MODULES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MODULES TO USER RSDF;
 GRANT SELECT ON MONTHLY_FEE TO PROCEDURE CUSTOMER_BALANCE;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FEE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FEE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FEE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FREEZE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FREEZE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FREEZE TO USER RSDF;
 GRANT SELECT ON MONTH_NAME TO PROCEDURE CUSTOMER_BALANCE;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES_ATTRIBUTES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FILES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FILES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FLATS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FLATS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_LAYOUT TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO USER RSDF;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE;
-GRANT SELECT ON OBJECTS TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OPERATION_LOG TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OPERATION_LOG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OPERATION_LOG TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORDERS_TP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORDERS_TP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORDERS_TP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORGANIZATION TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORGANIZATION TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORGANIZATION TO USER RSDF;
 GRANT SELECT ON OTHER_FEE TO PROCEDURE CUSTOMER_BALANCE;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OTHER_FEE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OTHER_FEE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OTHER_FEE TO USER RSDF;
 GRANT SELECT ON PAYMENT TO PROCEDURE CUSTOMER_BALANCE;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_DELETED TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_DELETED TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_DELETED TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_HOLD TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_HOLD TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYSOURCE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYSOURCE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYSOURCE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_DOC TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_DOC TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_DOC TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_ERRORS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_ERRORS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_ERRORS TO USER RSDF;
-GRANT SELECT ON PERSONAL_TARIF TO PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERSONAL_TARIF TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERSONAL_TARIF TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERSONAL_TARIF TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERS_TARIF_TMP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERS_TARIF_TMP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PORT TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PREPAY_DETAIL TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PREPAY_DETAIL TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PREPAY_DETAIL TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PROFILES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PROFILES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PROFILES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QRATING TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QRATING TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RATES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RATES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RATES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RAYON TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE_TEMPLATES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE_TEMPLATES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE_TEMPLATES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REMINDER TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REMINDER TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REMINDER TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO USER RSDF;
-GRANT SELECT ON REQUEST_EXECUTORS TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_EXECUTORS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_EXECUTORS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_EXECUTORS TO USER RSDF;
-GRANT SELECT ON REQUEST_MATERIALS TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MSG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MSG TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_PHOTOS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_PHOTOS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_PHOTOS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_RESULTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_RESULTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_RESULTS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TEMPLATES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TEMPLATES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TEMPLATES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TYPES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TYPES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TYPES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO USER RSDF;
 GRANT SELECT ON SERVICES TO PROCEDURE CUSTOMER_BALANCE;
-GRANT SELECT ON SERVICES TO PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_ATTRIBUTES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_ATTRIBUTES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_TYPE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_TYPE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_TYPE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SETTINGS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SETTINGS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SETTINGS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SINGLE_SERV TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SINGLE_SERV TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SINGLE_SERV TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STAT_IP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STAT_IP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STAT_IP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET_TYPE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET_TYPE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET_TYPE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBAREA TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBAREA TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBAREA TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO USER RSDF;
-GRANT SELECT ON SUBSCR_HIST TO PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP_RIGHTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP_RIGHTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP_RIGHTS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$RIGHTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$RIGHTS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$RIGHTS TO USER RSDF;
-GRANT SELECT ON SYS$USER TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_AREAS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_AREAS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_AREAS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_GROUPS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_GROUPS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_GROUPS TO USER RSDF;
-GRANT SELECT ON SYS$USER_WH TO PROCEDURE GET_MAT_GIVE_OUT;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO USER RSDF;
-GRANT SELECT ON TARIF TO PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKLIST TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKLIST TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKMSG TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKMSG TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKUSER TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKUSER TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMP_COL TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMP_COL TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN_PACKETS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN_PACKETS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN_PACKETS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VLANS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VLANS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VLANS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VPN_SESSIONS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VPN_SESSIONS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ADRESS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ADRESS TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_IP TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_MAC TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_MAC TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_MAC TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ATTRIBUTES TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_CUSTOMER_ATTRIBUTES TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_CUSTOMER_ATTRIBUTES TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ORDER_CREATOR TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ORDER_CREATOR TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ORDER_CREATOR TO USER RSDF;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_PAYMENTTYPE TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WIRE TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WIRE_POINT TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREA TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREA TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREA TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREALIMIT TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREALIMIT TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREALIMIT TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKER TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKER TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKER TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO USER RSDF;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO USER RSDF;
-GRANT ROLE_A4USER TO DASHA;
-GRANT ROLE_A4USER TO FIGURA;
-GRANT ROLE_A4USER TO FIO;
-GRANT ROLE_A4USER TO KOZHUKHOVAD;
-GRANT ROLE_A4USER TO NA;
-GRANT ROLE_A4USER TO OFF;
-GRANT ROLE_A4USER TO PAY;
-GRANT ROLE_A4USER TO RSDF;
 GRANT ROLE_A4USER TO S1;
 GRANT ROLE_A4USER TO S2;
-GRANT ROLE_A4USER TO SDG;
-GRANT ROLE_A4USER TO SEREDENKOZ;
-GRANT ROLE_A4USER TO SITN;
-GRANT ROLE_A4USER TO SSS;
-GRANT ROLE_A4USER TO TEST3;
-GRANT ROLE_A4USER TO TIT;
-GRANT ROLE_A4USER TO U1;
-GRANT ROLE_A4USER TO UBL;
-GRANT ROLE_A4USER TO USR;
+GRANT ROLE_A4USER TO S3;
+GRANT ROLE_A4USER TO S4;
+GRANT ROLE_A4USER TO S5;
+GRANT EXECUTE ON PROCEDURE ADD_FLAT_TO_HOUSE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_FLAT_TO_HOUSE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_FLAT_TO_HOUSE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_OR_MOVE_PAYMENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_OR_MOVE_PAYMENT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_OR_MOVE_PAYMENT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT_FINE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT_FINE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT_FINE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACC_SUR TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACC_SUR TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_BY_ACC_SUR TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_EXT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_EXT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_EXT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_FINE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_FINE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_FINE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_ACCOUNT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_ACCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_ACCOUNT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_CUSTID TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_CUSTID TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_CUSTID TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_DOG_FIO TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_DOG_FIO TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_PAYMENT_SRC_DOG_FIO TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_VAT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_VAT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_VAT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_STAT_IP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_STAT_IP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_STAT_IP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE_VAT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE_VAT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE_VAT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_BALANCE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_BALANCE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_BALANCE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE API_GET_NEW_ACCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_GET_NEW_ACCOUNT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_GET_SERVICES TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_GET_SERVICES TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_GET_SERVICES TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE API_REMAIN_DAYS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_REMAIN_DAYS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_REQUEST_CLOSE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_REQUEST_CLOSE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_REQUEST_CLOSE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_REQUEST_JOIN TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_REQUEST_JOIN TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_REQUEST_JOIN TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_REQUEST_REFUSE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_REQUEST_REFUSE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_REQUEST_REFUSE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_REQUEST_TAKE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_REQUEST_TAKE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_REQUEST_TAKE TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_DISCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_DISCOUNT TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_LAN TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_LAN TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_SET_CUSTOMER_SERVICE TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE API_SET_PREPAY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_SET_PREPAY TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE API_SET_SWITCH_QUEUE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_SET_SWITCH_QUEUE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE API_SET_SWITCH_QUEUE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ATRIBUTES_LINE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ATRIBUTES_LINE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ATRIBUTES_LINE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ATTRIBUTES_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ATTRIBUTES_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ATTRIBUTES_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ATTRIBUTE_CHECK_UNIQ TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE AUTO_OFF_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE AUTO_OFF_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE AUTO_OFF_SERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE AUTO_ON_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE AUTO_ON_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE AUTO_ON_SERVICE TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE BCISSUECH_ID TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE BONUS_ADD_AFTER_PAYMENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE BONUS_ADD_AFTER_PAYMENT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE BONUS_ADD_AFTER_PAYMENT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE BONUS_RATE_INS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE BONUS_RATE_INS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE BONUS_RATE_INS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE BONUS_RATE_UPD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE BONUS_RATE_UPD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE BONUS_RATE_UPD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALCULATE_FINE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALCULATE_FINE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALCULATE_FINE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALCULATE_SRV_TYPE_0 TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALCULATE_SRV_TYPE_0 TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALCULATE_SRV_TYPE_0 TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_DAY_INC_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_DAY_INC_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_DAY_INC_SRV_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_DAY_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_DAY_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_DAY_SRV_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_DAY_TARIF TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_DAY_TARIF TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_DAY_TARIF TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_DISCOUNT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_DISCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_DISCOUNT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_DISCOUNT_AFTER_PAY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_DISCOUNT_AFTER_PAY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_DISCOUNT_AFTER_PAY TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_FIXED_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_FIXED_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_FIXED_SRV_CUSTOMER TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CALC_KOEF_TARIF TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_KOEF_TARIF TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_MONTH_DAY_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_MONTH_DAY_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_MONTH_DAY_SRV_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_MONTH_FIX_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_MONTH_FIX_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_MONTH_FIX_SRV_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_MONTH_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_MONTH_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_MONTH_SRV_CUSTOMER TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CALC_PERS_TARIF TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_PERS_TARIF TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CANCEL_CONTRACT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CANCEL_CONTRACT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CANCEL_CONTRACT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CANCEL_LAST_SUBSCRIBE_ACTION TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CANCEL_LAST_SUBSCRIBE_ACTION TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CANCEL_LAST_SUBSCRIBE_ACTION TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CAN_USER_VIEW_ADDRESS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CAN_USER_VIEW_ADDRESS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_ACTIVATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_ACTIVATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_ACTIVATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_GENERATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_GENERATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_GENERATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CHANGE_AUTOBLOCK_OFF TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHANGE_AUTOBLOCK_OFF TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHANGE_AUTOBLOCK_OFF TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CHANGE_CH_TO_CH TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CHANGE_TO_POSITIVE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHANGE_TO_POSITIVE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CHANNELS_DEL TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHANNELS_DEL TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHANNELS_DEL TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CHANNELS_FOR_ALL_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHANNELS_FOR_ALL_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHANNELS_FOR_ALL_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CHANNELS_FOR_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHANNELS_FOR_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHANNELS_FOR_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CHANNEL_SRC_PARAM_IU TO PUBLIC;
+GRANT EXECUTE ON PROCEDURE CHECKCONTRACT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHECKCONTRACT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHECKCONTRACT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CHECK_FOR_UNBLOCK TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHECK_FOR_UNBLOCK TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHECK_FOR_UNBLOCK TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CHECK_IN_BLOCK TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHECK_IN_BLOCK TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CHECK_IN_OFF TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHECK_IN_OFF TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE CHECK_SRV_ACTIVE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CHECK_SRV_ACTIVE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CLOSE_DAY_PROC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_DAY_PROC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CLOSE_DAY_PROC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CLOSE_MATERIAL_DOC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_MATERIAL_DOC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CLOSE_MATERIAL_DOC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CLOSE_MONTH_PROC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_MONTH_PROC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CLOSE_MONTH_PROC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CLOSE_PERIOD_PROC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_PERIOD_PROC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CLOSE_PERIOD_PROC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CURRENCY_TO_STR TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CURRENCY_TO_STR TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CURRENCY_TO_STR TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CUSTOMERS_SERVICES_STATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CUSTOMERS_SERVICES_STATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CUSTOMERS_SERVICES_STATE TO USER RSDF;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_BALANCE TO USER PAYDEAMON;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_BALANCE TO USER PENKOVA;
+GRANT EXECUTE ON PROCEDURE CUSTOMER_BALANCE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CUSTOMER_BALANCE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_BALANCE TO USER RSDF;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_BALANCE TO USER WEBJOB;
+GRANT EXECUTE ON PROCEDURE CUSTOMER_CONTACTS_IU TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CUSTOMER_CONTACTS_IU TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_CONTACTS_IU TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CUSTOMER_DEBT_ADD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CUSTOMER_DEBT_ADD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_DEBT_ADD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE CUSTOMER_SERVICES_STATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CUSTOMER_SERVICES_STATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE CUSTOMER_SERVICES_STATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DAY_TARIF_FOR_SRV TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DAY_TARIF_FOR_SRV TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DAY_TARIF_FOR_SRV TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE DECL_OF_NUM TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DECL_OF_NUM TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DELETE_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DELETE_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DELETE_CUSTOMER_DECODER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_CUSTOMER_DECODER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DELETE_CUSTOMER_DECODER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DELETE_MONTH_PROC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_MONTH_PROC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DELETE_MONTH_PROC TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE DELETE_NODE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DELETE_NODE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DELETE_OBJECT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_OBJECT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DELETE_OBJECT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DELETE_SUBSCR_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_SUBSCR_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DELETE_SUBSCR_SERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_ADD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_ADD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_ADD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_DECODER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_DECODER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_DECODER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_DEL TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_DEL TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_DEL TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE DISCOUNT_IU TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE DUBLICATE_REQUEST TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DUBLICATE_REQUEST TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE DUBLICATE_REQUEST TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE EPG_ADD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EPG_ADD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EPG_ADD TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE EPG_ADD_BY_SC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EPG_ADD_BY_SC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE EXPLODE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXPLODE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EXPLODE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE EXTRACT_ALL_DIGITS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXTRACT_ALL_DIGITS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EXTRACT_ALL_DIGITS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE EXTRACT_NUMBER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXTRACT_NUMBER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE EXTRACT_NUMBER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE FIX_PORT_CONNECT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE FORMAT_DATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE FORMAT_DATE TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE FORMAT_MAC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE FORMAT_MAC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE FREELANEQUIPMENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE FREELANEQUIPMENT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE FREELANEQUIPMENT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GEN_PASSWORD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GEN_PASSWORD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GETSERVICES TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GETSERVICESTOSWITCH TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GETSERVICESTOSWITCH TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GETSERVICESTOSWITCH TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_ACTIVE_DAYS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_ACTIVE_DAYS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_ALL_REPORTS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_ALL_REPORTS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_ALL_REPORTS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_CONNECTED_DAYS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_CONNECTED_DAYS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_CONNECTED_DAYS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CHANNELS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CHANNELS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CHANNELS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CODE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CODE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CODE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CURRENT_SRV TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CURRENT_SRV TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CURRENT_SRV TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_DAYS_TOTAL TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE_CID TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE_CID TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE_CID TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_DISTANCE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_DISTANCE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_DISTANCE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_EPG TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_EPG TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_EPG TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_EPG_APART TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_EPG_APART TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_FLOOR TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_FLOOR TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_FLOOR TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP_CUSTOMER TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_FREE_IP TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_FREE_VLAN_IP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_FREE_VLAN_IP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_FREE_VLAN_IP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_FULLNAME_ALLREPORTS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_FULLNAME_ALLREPORTS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_FULLNAME_ALLREPORTS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_FULLNAME_REPORT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_FULLNAME_REPORT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_FULLNAME_REPORT TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_NODE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_REQUEST TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_REQUEST TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_MAT_GIVE_OUT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_MAX_INET_IP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_MAX_INET_IP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_MAX_INET_IP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_NODE_FLAT_LVL TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_PORCH TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_PORCH TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_PORCH TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_REPORT_ID TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_REPORT_ID TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_REPORT_ID TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_REQUEST_BUSY_DAYS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_REQUEST_BUSY_DAYS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_REQUEST_BUSY_DAYS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_REQUEST_FREEDAY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_REQUEST_FREEDAY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_REQUEST_FREEDAY TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_SERVICES_FOR_IP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_SERVICES_FOR_IP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_STATISTICS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_STATISTICS TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE HOUSE_MAP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE HOUSE_MAP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE HOUSE_MAP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE INDICES_REACTIVATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE INDICES_REACTIVATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE INDICES_REACTIVATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE INDICES_REBUILD_SELECTIVITY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE INDICES_REBUILD_SELECTIVITY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE INDICES_REBUILD_SELECTIVITY TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE INDICES_SWITCH TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE INDICES_SWITCH TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE INDICES_SWITCH TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE INT2IP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE INT2IP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE INT2IP TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE INTTOHEX TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE IP2INT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE IP2INT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE IP2INT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE MAT_MOVE_DETAILS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MD5 TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MD5 TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE MD5_F TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MD5_F TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE MD5_INTTOCHAR4 TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MD5_INTTOCHAR4 TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE MD5_INTTOHEX TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MD5_INTTOHEX TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE MESSAGE_FOR_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MESSAGE_FOR_CUSTOMER TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MESSAGE_FOR_CUSTOMER TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_ACCOUNT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_ACCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_ACCOUNT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_BILL_ACCOUNT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_BILL_ACCOUNT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_BILL_ACCOUNT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_CUSTOMER_ID TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_CUSTOMER_ID TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE MIGRATE_SERVICE_BY_CUSTOMER_ID TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE OBJECTS_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE OBJECTS_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE OBJECTS_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE_BY_ID TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE_BY_ID TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE_BY_ID TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE_FOR_GROUP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE_FOR_GROUP TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ONOFF_SERVICE_FOR_GROUP TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE OPEN_MATERIAL_DOC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE OPEN_MATERIAL_DOC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE OPEN_MATERIAL_DOC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PAYMENTTYPE_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENTTYPE_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PAYMENTTYPE_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PAYMENT_DEL_FROM_EXT_SYSTEMS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENT_DEL_FROM_EXT_SYSTEMS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PAYMENT_DEL_FROM_EXT_SYSTEMS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PAYMENT_EXT_STATE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENT_EXT_STATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PAYMENT_EXT_STATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PAYMENT_INSERT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENT_INSERT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PAYMENT_INSERT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PAYMENT_SPLIT_INSERT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENT_SPLIT_INSERT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PAYMENT_SPLIT_INSERT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE PREPAYEXPIRE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PREPAYEXPIRE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE PREPAYEXPIRE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_CANCEL TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_CANCEL TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_CANCEL TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_HANDLE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_HANDLE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_HANDLE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE RECALCCUSTOMERDEBT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE RECALCCUSTOMERDEBT TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE RECALCCUSTOMERDEBT TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUESTGIVE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUESTGIVE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUESTGIVE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUESTMOVE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUESTMOVE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUESTMOVE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_ADD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_ADD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_ADD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_ADD_EXECUTORS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_ADD_EXECUTORS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_ADD_EXECUTORS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_AS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_AS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_AS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_PROCESS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_PROCESS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_PROCESS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_ROLLBACK TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_ROLLBACK TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_CLOSE_ROLLBACK TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE REQUEST_RECREATE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_RECREATE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE REQUEST_WORKS_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_WORKS_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE REQUEST_WORKS_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SELECTONOFFSERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SELECTONOFFSERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SELECTONOFFSERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SELECTPAYDOC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SELECTPAYDOC TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SELECTPAYDOC TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SELECTSWITCHSERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SELECTSWITCHSERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SELECTSWITCHSERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SERVICES_D TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SERVICES_D TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SERVICES_D TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SERVICES_IU TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SERVICES_IU TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SERVICES_IU TO USER RSDF;
 GRANT EXECUTE ON PROCEDURE SET_DISTRIB_REPORT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE SET_DISTRIB_REPORT_AS_PERIOD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE SET_FLAT_PF TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE SET_PREPAY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SET_PREPAY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SET_PREPAY TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SET_SETTINGS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SET_SETTINGS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SET_SETTINGS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SPLIT_STR_TO_ROWS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SPLIT_STR_TO_ROWS TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SPLIT_STR_TO_ROWS TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SWITCH_CANCEL TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SWITCH_CANCEL TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SWITCH_CANCEL TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE SWITCH_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SWITCH_SERVICE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE SWITCH_SERVICE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE TARIF_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE TARIF_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE TARIF_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE UPDATECUSTOMERDEBT4PAY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE UPDATECUSTOMERDEBT4PAY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE UPDATECUSTOMERDEBT4PAY TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE UPDATE_SERVICES_TREE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE UPDATE_SERVICES_TREE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE UPDATE_SERVICES_TREE TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE WORKER_IUD TO USER RSDF;
+GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE YEARWEEK TO USER RSDF;
 GRANT EXECUTE ON FUNCTION DISTANCE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4USER;
@@ -22387,6 +23561,7 @@ GRANT USAGE ON EXCEPTION E_TARIF_EXISTS TO PUBLIC;
 GRANT USAGE ON EXCEPTION E_TARIF_EXISTS TO ROLE ROLE_A4USER;
 
 /* Comments for database objects. */
+COMMENT ON DOMAIN       D_SERIAL IS 'Для полей серийных номеров';
 COMMENT ON DOMAIN       D_UID_NULL IS 'Для полей ссылок которые могут содержать Null';
 COMMENT ON DOMAIN       UID IS 'FOR PRIMARY KEYS';
 COMMENT ON TABLE        ALL_USED_IP IS 'Список зарезервированных IP адресов, которые не выдаються абонентам и оборудованию.';
@@ -22396,13 +23571,17 @@ COMMENT ON TABLE        APPLIANCE IS 'Список устройств/прибо
 COMMENT ON    COLUMN    APPLIANCE.ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    APPLIANCE.A_TYPE IS 'Тип устройства. в справочнике Objects_type = 48';
 COMMENT ON    COLUMN    APPLIANCE.OWN_ID IS 'ID владельца (абонента/узла)';
-COMMENT ON    COLUMN    APPLIANCE.OWN_TYPE IS 'где установлен 0=абонента, 1=узел';
+COMMENT ON    COLUMN    APPLIANCE.OWN_TYPE IS 'Тип владелеца где установлен type=51. 1-Абонент 2-Узел';
 COMMENT ON    COLUMN    APPLIANCE.NAME IS 'Название';
 COMMENT ON    COLUMN    APPLIANCE.NOTICE IS 'Примечание';
-COMMENT ON    COLUMN    APPLIANCE.M_ID IS 'Ссылка на материал, если это собственность компании';
 COMMENT ON    COLUMN    APPLIANCE.MAC IS 'MAC адрес устройства';
-COMMENT ON    COLUMN    APPLIANCE.SN IS 'Серийный номер';
+COMMENT ON    COLUMN    APPLIANCE.SERIAL IS 'Серийный номер';
+COMMENT ON    COLUMN    APPLIANCE.COST IS 'Стоимость на момент передаци';
 COMMENT ON    COLUMN    APPLIANCE.PROPERTY IS 'Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.';
+COMMENT ON    COLUMN    APPLIANCE.S_VERSION IS 'Версия софта прошивки';
+COMMENT ON    COLUMN    APPLIANCE.M_ID IS 'Ссылка на материал, если это собственность компании';
+COMMENT ON    COLUMN    APPLIANCE.RQ_ID IS 'Какой заявкой передано';
+COMMENT ON    COLUMN    APPLIANCE.FROM_WH IS 'С какого склада пришло';
 COMMENT ON TABLE        AREA IS 'Участки';
 COMMENT ON TABLE        ATTRIBUTE IS 'Универсальная таблица хранения атрибутов на объекты';
 COMMENT ON    COLUMN    ATTRIBUTE.TYPE_ID IS 'Тип атрибута. соответствует типам с таблицу object_type
@@ -22487,6 +23666,7 @@ COMMENT ON    COLUMN    CHANNEL_SRC.NOTICE IS 'Примечание';
 COMMENT ON    COLUMN    CHANNEL_SRC.DEG IS 'Орбитальное положение';
 COMMENT ON    COLUMN    CHANNEL_SRC.URL IS 'Ссылка на источник в интернете';
 COMMENT ON TABLE        CHANNEL_SRC_PARAM IS 'Параметры канала в источнике';
+COMMENT ON    COLUMN    CHANNEL_SRC_PARAM.CSP_ID IS 'ID записи';
 COMMENT ON    COLUMN    CHANNEL_SRC_PARAM.CS_ID IS 'ID источника';
 COMMENT ON    COLUMN    CHANNEL_SRC_PARAM.CH_ID IS 'ID Канала';
 COMMENT ON    COLUMN    CHANNEL_SRC_PARAM.NOTICE IS 'Примечание';
@@ -22600,7 +23780,9 @@ COMMENT ON    COLUMN    CUSTOMER_DECODERS.TV_SOFT IS 'версия софта т
 COMMENT ON    COLUMN    CUSTOMER_DECODERS.PAIRING IS 'Связан ли декодер с устройством';
 COMMENT ON TABLE        CUSTOMER_EQUIPMENT IS 'Связка абонент-оборудование';
 COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.CUSTOMER_ID IS 'FOR PRIMARY KEYS';
-COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.EQUIP_N IS 'Номер оборудования';
+COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.M_ID IS 'ссылка на материал';
+COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.SERIAL IS 'Серийник материала';
+COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.SALE IS 'Признак продажи';
 COMMENT ON TABLE        CUSTOMER_FILES IS 'Документы абонента (сканы справок паспортов)';
 COMMENT ON    COLUMN    CUSTOMER_FILES.CF_ID IS 'ID файла';
 COMMENT ON    COLUMN    CUSTOMER_FILES.CUSTOMER_ID IS 'ID абонента';
@@ -22795,6 +23977,7 @@ COMMENT ON    COLUMN    EQUIPMENT.EQ_DELIVERY_DATE IS 'Дата ввода в э
 COMMENT ON    COLUMN    EQUIPMENT.EQ_DELIVERY_COST IS 'Стоимость на момент ввода в эксплуатацию';
 COMMENT ON    COLUMN    EQUIPMENT.EQ_REGNUBER IS 'Инвентарный номер';
 COMMENT ON    COLUMN    EQUIPMENT.NODE_ID IS 'ID узла';
+COMMENT ON    COLUMN    EQUIPMENT.M_ID IS 'ID материала';
 COMMENT ON TABLE        EQUIPMENT_ATTRIBUTES IS 'Атрибуты аоборудования';
 COMMENT ON TABLE        EQUIPMENT_CMD_GRP IS 'Связка КОММАНДА - ТИП ОБОРУДОВАНИЯ';
 COMMENT ON    COLUMN    EQUIPMENT_CMD_GRP.EC_ID IS 'Код комманды';
@@ -22888,14 +24071,6 @@ COMMENT ON TABLE        HOUSES_ATTRIBUTES IS 'Атрибуты домов';
 COMMENT ON    COLUMN    HOUSES_ATTRIBUTES.HA_VALUE IS 'Значение атрибута';
 COMMENT ON TABLE        HOUSEWORKS IS 'Работы по дому';
 COMMENT ON TABLE        HOUSE_CIRCUIT IS 'Схемы для дома';
-COMMENT ON TABLE        INVENTORY IS 'таблица установленного оборудования/материалов в сети';
-COMMENT ON    COLUMN    INVENTORY.OWNER IS 'ID владелеца согласно типа';
-COMMENT ON    COLUMN    INVENTORY.OWNER_TYPE IS 'Тип владелеца type=51 1-Абонент 2-Узел';
-COMMENT ON    COLUMN    INVENTORY.M_ID IS 'Материал';
-COMMENT ON    COLUMN    INVENTORY.SERIAL IS 'Серийник';
-COMMENT ON    COLUMN    INVENTORY.OWNERSHIP IS 'Владелец. 0-предприятие. 1-продано клиенту. 2-оборудование клиента';
-COMMENT ON    COLUMN    INVENTORY.QUANT IS 'Кол-во';
-COMMENT ON    COLUMN    INVENTORY.NOTICE IS 'Примечание';
 COMMENT ON TABLE        IPTV_GROUP IS 'Групп для IPTV';
 COMMENT ON    COLUMN    IPTV_GROUP.NAME IS 'Имя группы';
 COMMENT ON    COLUMN    IPTV_GROUP.CODE IS 'Код';
@@ -22941,6 +24116,13 @@ COMMENT ON TABLE        MATERIALS_IN_DOC IS 'Материалы в докуме�
 COMMENT ON    COLUMN    MATERIALS_IN_DOC.B_QUANT IS 'Количество до пересчета';
 COMMENT ON    COLUMN    MATERIALS_IN_DOC.TTN IS 'Номер в ТТН (для сортировки)';
 COMMENT ON TABLE        MATERIALS_IN_DOC_UNIT IS 'Материалы в документах прихода/расхода поштучно';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.DOC_ID IS 'ID документа';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.M_ID IS 'ID материала';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.ID IS 'ID строки с материалом в документе';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.SERIAL IS 'Серийный номер ИД оборудования/материала';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.MAC IS 'MAC';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.NOTICE IS 'Примечание';
+COMMENT ON    COLUMN    MATERIALS_IN_DOC_UNIT.S_VERSION IS 'Версия софта';
 COMMENT ON TABLE        MATERIALS_REMAIN IS 'Остаток материалов на складах';
 COMMENT ON    COLUMN    MATERIALS_REMAIN.M_ID IS 'ID материала';
 COMMENT ON    COLUMN    MATERIALS_REMAIN.WH_ID IS 'ID склада';
@@ -22960,9 +24142,10 @@ COMMENT ON    COLUMN    MATERIAL_DOCS.FROM_WH IS 'С какого склада';
 COMMENT ON    COLUMN    MATERIAL_DOCS.SHIPPER IS 'Поставщик';
 COMMENT ON TABLE        MATERIAL_UNIT IS 'Единичный учет материала/оборудования';
 COMMENT ON    COLUMN    MATERIAL_UNIT.SERIAL IS 'Серийный номер ИД оборудования/материала';
-COMMENT ON    COLUMN    MATERIAL_UNIT.OWNER IS 'Владелец (0-склад, 1-абонент, 2-узел) OBJECTS_TYPE = 51';
-COMMENT ON    COLUMN    MATERIAL_UNIT.OWNER_TYPE IS 'ID владельца';
-COMMENT ON    COLUMN    MATERIAL_UNIT.STATE IS 'Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4- списан';
+COMMENT ON    COLUMN    MATERIAL_UNIT.OWNER IS 'ID владельца';
+COMMENT ON    COLUMN    MATERIAL_UNIT.OWNER_TYPE IS 'Владелец (0-склад, 1-абонент, 2-узел) OBJECTS_TYPE = 51';
+COMMENT ON    COLUMN    MATERIAL_UNIT.STATE IS 'Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+или временный статус = -1*ID объекта (заявки, склада)';
 COMMENT ON    COLUMN    MATERIAL_UNIT.MAC IS 'MAC';
 COMMENT ON    COLUMN    MATERIAL_UNIT.DOC_INCOME IS 'Первичный документ прихода';
 COMMENT ON    COLUMN    MATERIAL_UNIT.COST IS 'Цена закупки';
@@ -23094,6 +24277,7 @@ COMMENT ON    COLUMN    ORDERS_TP.CANCEL_TIME IS 'Время отмены';
 COMMENT ON    COLUMN    ORDERS_TP.CANCEL_RESON IS 'Причина отмены';
 COMMENT ON TABLE        ORGANIZATION IS 'Обслуживающие организации';
 COMMENT ON TABLE        OTHER_FEE IS 'Прочие начисления абоненту';
+COMMENT ON    COLUMN    OTHER_FEE.FEE_TYPE IS '1 - списание материалов, 2 - возврат материалов';
 COMMENT ON TABLE        PAYMENT IS 'Таблица принятых платежей';
 COMMENT ON    COLUMN    PAYMENT.PAYMENT_ID IS 'ID Платежа';
 COMMENT ON    COLUMN    PAYMENT.PAY_DOC_ID IS 'ID платежного документа';
@@ -23126,6 +24310,7 @@ COMMENT ON    COLUMN    PAYSOURCE.PAYSOURCE_DESCR IS 'Название исто�
 COMMENT ON    COLUMN    PAYSOURCE.CODE IS 'Код в платежны системах';
 COMMENT ON    COLUMN    PAYSOURCE.FOR_FORM IS 'В этом поле будут служебные признаки. разделены ;
 OTP - для сторонних заказов; CL - списко абонентов и т.д.';
+COMMENT ON    COLUMN    PAYSOURCE.DELETED IS '1 - Пометка удаленного источника';
 COMMENT ON TABLE        PAY_DOC IS 'Список платежных документов (мемориалный оредер) документ с кодом (-1), реестр обещаных платежей';
 COMMENT ON    COLUMN    PAY_DOC.PAY_DOC_ID IS 'внутренний код документа';
 COMMENT ON    COLUMN    PAY_DOC.PAYSOURCE_ID IS 'код источника платежей (таблица PAYSOURCE)';
@@ -23279,6 +24464,7 @@ COMMENT ON    COLUMN    REQUEST.EDIT_ON IS 'Дата изменения';
 COMMENT ON    COLUMN    REQUEST.NODE_ID IS 'ID узла';
 COMMENT ON    COLUMN    REQUEST.PARENT_RQ IS 'Заявка - родитель';
 COMMENT ON TABLE        REQUEST_EXECUTORS IS 'Исполнители заявок';
+COMMENT ON TABLE        REQUEST_FLATS IS 'Поквартирный результат заявки для узла';
 COMMENT ON TABLE        REQUEST_MATERIALS IS 'Материалы для заявки';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.M_ID IS 'Код материала';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.WH_ID IS 'Склад';
@@ -23322,6 +24508,8 @@ COMMENT ON    COLUMN    REQUEST_TEMPLATES.RECREATE_DAYS IS 'Если не null, 
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.RECREATE_TYPE IS 'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.SMS_CREATE IS 'Текст SMS абоненту при создании заявки';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.SMS_CLOSE IS 'Текст SMS абоненту после закрытия заявки';
+COMMENT ON    COLUMN    REQUEST_TEMPLATES.FLATS_NEED IS 'При заявке на узел результат по каждой квартире';
+COMMENT ON    COLUMN    REQUEST_TEMPLATES.FLATS_RESULT IS 'Список результатов для квартир';
 COMMENT ON TABLE        REQUEST_TYPES IS 'Типы заявок';
 COMMENT ON    COLUMN    REQUEST_TYPES.RT_ID IS 'код';
 COMMENT ON    COLUMN    REQUEST_TYPES.RT_NAME IS 'Наименование';
@@ -23335,6 +24523,8 @@ COMMENT ON    COLUMN    REQUEST_TYPES.CAUSE_NEED IS 'Обязательна ли
 COMMENT ON    COLUMN    REQUEST_TYPES.RT_HC_NEED IS 'Только для домов введенных в эксплуатацию (стоит дата IN_DATE в доме)';
 COMMENT ON    COLUMN    REQUEST_TYPES.RECREATE_DAYS IS 'Если не null, то создать копию заявки через Х дней';
 COMMENT ON    COLUMN    REQUEST_TYPES.RECREATE_TYPE IS 'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
+COMMENT ON    COLUMN    REQUEST_TYPES.FLATS_NEED IS 'При заявке на узел результат по каждой квартире';
+COMMENT ON    COLUMN    REQUEST_TYPES.FLATS_RESULT IS 'Список результатов для квартир';
 COMMENT ON TABLE        REQUEST_WORKS IS 'Работы по заявке';
 COMMENT ON    COLUMN    REQUEST_WORKS.W_TIME IS 'Время выполнения факт';
 COMMENT ON    COLUMN    REQUEST_WORKS.W_QUANT IS 'Колв-во';
@@ -23577,6 +24767,7 @@ COMMENT ON    COLUMN    TV_LAN.ADDED_ON IS 'Когда добавил';
 COMMENT ON    COLUMN    TV_LAN.EDIT_BY IS 'Кто изменил';
 COMMENT ON    COLUMN    TV_LAN.EDIT_ON IS 'Когда изменил';
 COMMENT ON TABLE        TV_LAN_PACKETS IS 'Пакеты для сетевого оборудования';
+COMMENT ON TABLE        UNIT_PORT IS 'Порты оборудоания. сделано если мы снимае с сети, чтоб отсавалась история';
 COMMENT ON TABLE        VLANS IS 'Подсети СПД';
 COMMENT ON    COLUMN    VLANS.V_ID IS 'VLAN ID';
 COMMENT ON    COLUMN    VLANS.NAME IS 'название';
@@ -23758,6 +24949,7 @@ COMMENT ON    PROCEDURE PARAMETER API_SET_CUSTOMER_SERVICE.SET_ON IS '1 - Вкл
 COMMENT ON    PROCEDURE PARAMETER API_SET_CUSTOMER_SERVICE.SET_DATE IS 'когда это сделать';
 COMMENT ON PROCEDURE    API_SET_PREPAY IS 'Добавим обещанный с проверкой суммы и вернем удачно или нет';
 COMMENT ON PROCEDURE    API_SET_SWITCH_QUEUE IS 'ставим в очередь переключения услуг';
+COMMENT ON PROCEDURE    APPLIANCE_TO_TABLE IS 'перемещаем оборудование в спд/цифру в зависимости от типа';
 COMMENT ON PROCEDURE    ATRIBUTES_LINE IS 'Вывод всех атрибутов в строку';
 COMMENT ON PROCEDURE    ATTRIBUTES_IUD IS 'Процедура добавления/редактирования/удаления атрибутов абонента';
 COMMENT ON PROCEDURE    ATTRIBUTE_CHECK_UNIQ IS 'проверим на уникальность значение атрибута, если он есть у кого-то вернем его';
@@ -23793,6 +24985,7 @@ COMMENT ON PROCEDURE    CARDS_PREPAY_ACTIVATE IS 'Активация карты 
 COMMENT ON PROCEDURE    CARDS_PREPAY_GENERATE IS 'Генерация карт оплат';
 COMMENT ON PROCEDURE    CHANGE_AUTOBLOCK_OFF IS 'Замена услуги автоблокировка на другую услугу отключения';
 COMMENT ON PROCEDURE    CHANGE_CH_TO_CH IS 'Замена параметров одного канала на другой в указанных сетях';
+COMMENT ON PROCEDURE    CHANGE_TO_NEGATIVE IS 'Выполняем когда у абонента баланс отрицательный и он больше долга визуализации';
 COMMENT ON PROCEDURE    CHANGE_TO_POSITIVE IS 'Выполняем когда у абонента сменился баланс на положительный';
 COMMENT ON PROCEDURE    CHANNELS_DEL IS 'Процедура удаления каналов. Не удаляет если канал где-то задйствован';
 COMMENT ON PROCEDURE    CHANNELS_FOR_ALL_CUSTOMER IS 'Выборка всех каналов всех декодеров на определенную дату';
@@ -23901,8 +25094,9 @@ COMMENT ON PROCEDURE    GET_MAT_FOR_NODE IS 'список оборудовани
 COMMENT ON PROCEDURE    GET_MAT_FOR_REQUEST IS 'Вывод всех доступных материалов с количесвом потраченным на заявку';
 COMMENT ON PROCEDURE    GET_MAT_GIVE_OUT IS 'Материалы для заявки с учетом уже выданных';
 COMMENT ON    PROCEDURE PARAMETER GET_MAT_GIVE_OUT.FOR_RQ IS 'Номер заявки';
-COMMENT ON    PROCEDURE PARAMETER GET_MAT_GIVE_OUT.MG_ID IS '-1 - все без учета группы или ид группы материалов';
+COMMENT ON    PROCEDURE PARAMETER GET_MAT_GIVE_OUT.MG_ID IS 'ид группы материалов или null=БЕЗ ГРУППЫ -2=В ЗАЯВКЕ -1=ВСЕ';
 COMMENT ON    PROCEDURE PARAMETER GET_MAT_GIVE_OUT.RQ_OWNER IS 'Списать со склада монтажника заявки';
+COMMENT ON PROCEDURE    GET_MAT_TAKE_IN IS 'Материалы для возврата с заявки с учетом уже выданных';
 COMMENT ON PROCEDURE    GET_MAX_INET_IP IS 'Выдает max свободный IP для определенного тарифного плана';
 COMMENT ON PROCEDURE    GET_MODULES_FOR_MENU IS 'Выборка всех модулей пользователя для построения меню';
 COMMENT ON PROCEDURE    GET_NODE_FLAT_LVL IS 'Вывод списка квартир узла по уровням
@@ -23927,10 +25121,12 @@ COMMENT ON    PROCEDURE PARAMETER GET_STATISTICS.E_BLOCK IS 'в блоке на 
 COMMENT ON PROCEDURE    GET_TARIF_SUM_CUSTOMER_SRV IS 'Получим тариф абонента на все услуги или выбранную в определенный день';
 COMMENT ON PROCEDURE    INT2IP IS 'переводит двоичное представление IP в строковое';
 COMMENT ON PROCEDURE    IP2INT IS 'переводит строковое представление IP  в двоичное';
+COMMENT ON PROCEDURE    MATERIALS_SUMMARY IS 'процедура вывода сводных данных по перемещению';
 COMMENT ON PROCEDURE    MATERIAL_DOCS_DELETE IS 'Процедура удаления документа материалов';
 COMMENT ON PROCEDURE    MATERIAL_REMAIN_RECALC IS 'Процедура пересчета остатков материала на складах';
 COMMENT ON    PROCEDURE PARAMETER MATERIAL_REMAIN_RECALC.M_ID IS 'Какой материал пересчитаем';
 COMMENT ON    PROCEDURE PARAMETER MATERIAL_REMAIN_RECALC.FOR_WH IS 'Пересчитаем все или конкретный склад';
+COMMENT ON PROCEDURE    MATERIAL_UNIT_MOVE IS 'перенос материала абоненту или узлу при добавлении в заявку';
 COMMENT ON PROCEDURE    MAT_MOVE_DETAILS IS 'Процедура вывода детального лога перемещения материала';
 COMMENT ON    PROCEDURE PARAMETER MAT_MOVE_DETAILS.KEEP IS 'остатки после операции';
 COMMENT ON PROCEDURE    MESSAGE_FOR_CUSTOMER IS 'Отправка сообщений абоненту';
@@ -23973,6 +25169,8 @@ COMMENT ON PROCEDURE    REQUESTGIVE IS 'Выдать  заявку звену';
 COMMENT ON PROCEDURE    REQUESTMOVE IS 'Перенести заявку на другой день';
 COMMENT ON PROCEDURE    REQUEST_ADD IS 'Процедура добавления заявки';
 COMMENT ON PROCEDURE    REQUEST_CLOSE_AS IS 'Закрыть заявку аналогично закрытой заявке';
+COMMENT ON PROCEDURE    REQUEST_CLOSE_MATERIALS IS 'Удалить
+Процедура переноса сн оборудование абоненту и узлам, а также подменить одно оборудование на другое';
 COMMENT ON PROCEDURE    REQUEST_CLOSE_PROCESS IS 'Добавление/удаление работ из заявки абоненту';
 COMMENT ON PROCEDURE    REQUEST_CLOSE_ROLLBACK IS 'Удалим начисления за заявку';
 COMMENT ON PROCEDURE    REQUEST_MATERIALS_IUD IS 'добавление.изменение.удаление материалов в заявке';
@@ -24003,6 +25201,7 @@ COMMENT ON TRIGGER      TR_ON_CONNECT IS 'Выполняем при входе �
 COMMENT ON FUNCTION     GET_JSON_VALUE IS 'Извлечь значение парматра из json строки';
 COMMENT ON FUNCTION     INET_ATON IS 'переводит строковое представление IPv4 в двоичное';
 COMMENT ON FUNCTION     INET_NTOA IS 'переводит двоичное представление IPv4 в строковое';
+COMMENT ON FUNCTION     MAC_FORMAT IS 'Форматирование MAC разделитель :';
 COMMENT ON FUNCTION     MONTH_FIRST_DAY IS 'первое число месяца';
 COMMENT ON FUNCTION     MONTH_LAST_DAY IS 'Последнее число месяц';
 COMMENT ON FUNCTION     ONLY_DIGITS IS 'Возвращает только цифры из переданной строки, если цифр нет возвращает пустую строку';

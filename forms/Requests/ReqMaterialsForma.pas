@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrjConst;
+  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrjConst,
+  FIBDatabase, pFIBDatabase;
 
 type
   TReqMaterialsForm = class(TForm)
@@ -23,6 +24,8 @@ type
     srcMatGropups: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;
+    trRead: TpFIBTransaction;
+    trWrite: TpFIBTransaction;
     procedure dbGridExit(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
@@ -35,17 +38,18 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
-    fEditMode: Byte;
+    fEditMode: Boolean;
     fRequest: Integer;
     fVisibleCost: Boolean;
     procedure SetRequest(Value: Integer);
+    procedure SetEditMode(Value: Boolean);
   public
     { Public declarations }
-    property EditMode: Byte read fEditMode write fEditMode;
+    property EditMode: Boolean read fEditMode write SetEditMode;
     property pRequest: Integer read fRequest write SetRequest;
   end;
 
-function ReqMaterials(const aRequest: Integer; const aEditMode: Byte): Boolean;
+function ReqMaterials(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
 
 var
   ReqMaterialsForm: TReqMaterialsForm;
@@ -57,14 +61,14 @@ uses
 
 {$R *.dfm}
 
-function ReqMaterials(const aRequest: Integer; const aEditMode: Byte): Boolean;
+function ReqMaterials(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
 var
   FWHOwner: Boolean;
 begin
   result := false;
   with TReqMaterialsForm.Create(Application) do
     try
-      EditMode := aEditMode;
+      EditMode := not aReadOnly;
 
       FWHOwner := (dmMain.GetSettingsValue('WH_REQ_OWNER') = '1');
 
@@ -218,6 +222,12 @@ begin
     end;
   end;
   dsReqMaterials.EnableControls;
+end;
+
+procedure TReqMaterialsForm.SetEditMode(Value: Boolean);
+begin
+  fEditMode := Value;
+  dbGrid.ReadOnly := not fEditMode;
 end;
 
 end.

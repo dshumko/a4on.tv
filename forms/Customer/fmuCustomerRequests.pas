@@ -31,6 +31,8 @@ type
     procedure dbGridCustReqDblClick(Sender: TObject);
     procedure dbGridCustReqGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure dbGridCustReqColumns17GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     CE: Boolean;
     CC: Boolean;
@@ -38,6 +40,7 @@ type
     CA: Boolean;
     FullAccess: Boolean;
     FSavedID: Integer;
+    FPersonalData: Boolean;
     // FLastID: Integer;
     procedure EnableControls;
   public
@@ -55,7 +58,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, RequestNewForma, RequestForma, DM;
+  DM, MAIN, AtrCommon, RequestNewForma, RequestForma, AtrStrUtils;
 
 class function TapgCustomerRequests.GetPageName: string;
 begin
@@ -90,11 +93,12 @@ var
   i: Integer;
 begin
   // права пользователей
-  FullAccess := dmMain.AllowedAction(rght_Request_full); // (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ');
-  CA := dmMain.AllowedAction(rght_Request_add); // (51, 'ДОБАВЛЕНИЕ', 'ЗАЯВКИ', 'Добавление заявок');
-  CE := dmMain.AllowedAction(rght_Request_edit); // (52, 'РЕДАКТИРОВАНИЕ', 'ЗАЯВКИ', 'Редактирование заявки');
-  CC := dmMain.AllowedAction(rght_Request_Close); // (54, 'ЗАКРЫТИЕ', 'ЗАЯВКИ', 'Закрытие заявки');
-  CG := dmMain.AllowedAction(rght_Request_Give); // (53, 'ВЫДАЧА', 'ЗАЯВКИ', 'Выдача заявок в работу');
+  FullAccess := dmMain.AllowedAction(rght_Request_full);
+  CA := dmMain.AllowedAction(rght_Request_add);
+  CE := dmMain.AllowedAction(rght_Request_edit);
+  CC := dmMain.AllowedAction(rght_Request_Close);
+  CG := dmMain.AllowedAction(rght_Request_Give);
+  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
   actAdd.Visible := FullAccess or CA;
   actEdit.Visible := FullAccess or CE;
@@ -213,6 +217,13 @@ end;
 procedure TapgCustomerRequests.CloseData;
 begin
   dsRequests.Close;
+end;
+
+procedure TapgCustomerRequests.dbGridCustReqColumns17GetCellParams(
+  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+    Params.Text := HideSurname(Params.Text);
 end;
 
 procedure TapgCustomerRequests.dbGridCustReqDblClick(Sender: TObject);

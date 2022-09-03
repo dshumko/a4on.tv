@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.StrUtils,
   Data.DB,
-  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
+  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ToolWin,
   Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibVCL,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh, DBCtrlsEh, DBLookupEh;
 
 type
@@ -74,6 +76,7 @@ type
     edSIN: TDBNumberEditEh;
     edSOUT: TDBNumberEditEh;
     tsOther: TTabSheet;
+    actLanHttpName: TAction;
     procedure btnCMDClick(Sender: TObject);
     procedure ActLanPingExecute(Sender: TObject);
     procedure actLanTelnetExecute(Sender: TObject);
@@ -86,6 +89,7 @@ type
     procedure FDataSourceDataChange(Sender: TObject; Field: TField);
     procedure FormResize(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure actLanHttpNameExecute(Sender: TObject);
   private
     FUpdatetNotice: Boolean;
     FIsVertical: Boolean;
@@ -105,7 +109,8 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, DM, AtrStrUtils, atrCmdUtils, HtmlForma, TelnetForma;
+  MAIN, AtrCommon, DM, AtrStrUtils, atrCmdUtils,
+  HtmlForma, TelnetForma, System.NetEncoding;
 
 class function TapgEqpmntInfo.GetPageName: string;
 begin
@@ -153,6 +158,9 @@ begin
   pmLanPopUp.Items.Add(NewItem);
   NewItem := TMenuItem.Create(pmLanPopUp);
   NewItem.Action := actLanHttp;
+  pmLanPopUp.Items.Add(NewItem);
+  NewItem := TMenuItem.Create(pmLanPopUp);
+  NewItem.Action := actLanHttpName;
   pmLanPopUp.Items.Add(NewItem);
 
   if (not dsData.FieldByName('Parent_Id').IsNull) then
@@ -394,7 +402,7 @@ end;
 
 procedure TapgEqpmntInfo.FormResize(Sender: TObject);
 var
-  b : Boolean;
+  b: Boolean;
 begin
   b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
   SwitchLayout(b);
@@ -408,6 +416,17 @@ begin
     exit;
 
   s := 'http://' + dsData.FieldByName('IP').asString;
+  atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'Open', s, '', '', SW_SHOW);
+end;
+
+procedure TapgEqpmntInfo.actLanHttpNameExecute(Sender: TObject);
+var
+  s: string;
+begin
+  if (dsData.FieldByName('NAME').IsNull) then
+    exit;
+
+  s := 'http://' + TNetEncoding.URL.Encode(dsData.FieldByName('NAME').asString);
   atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'Open', s, '', '', SW_SHOW);
 end;
 

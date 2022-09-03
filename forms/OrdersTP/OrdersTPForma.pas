@@ -97,6 +97,8 @@ type
     miN18: TMenuItem;
     miN19: TMenuItem;
     mmiCancel: TMenuItem;
+    pmPrint: TPopupMenu;
+    miPrintOrder1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -500,13 +502,14 @@ procedure TOrdersTPForm.actOTPEditExecute(Sender: TObject);
 var
   bm: TBookmark;
 begin
-  if dsOrdersTP.FieldByName('otp_id').IsNull then
+  if srcOrdersTP.DataSet.FieldByName('otp_id').IsNull then
     Exit;
-  if CreateOrderTP(dsOrdersTP.FieldByName('otp_id').AsInteger) > -1 then
+  if CreateOrderTP(srcOrdersTP.DataSet.FieldByName('otp_id').AsInteger) > -1 then
   begin
-    bm := dsOrdersTP.GetBookmark;
-    dsOrdersTP.CloseOpen(True);
-    dsOrdersTP.GotoBookmark(bm);
+    bm := srcOrdersTP.DataSet.GetBookmark;
+    srcOrdersTP.DataSet.Close;
+    srcOrdersTP.DataSet.Open;
+    srcOrdersTP.DataSet.GotoBookmark(bm);
   end;
 end;
 
@@ -740,11 +743,11 @@ var
   ci: TCustomerInfo;
   n, o: Integer;
 begin
-  if (dsOrdersTP.FieldByName('Otp_Id').IsNull) then
+  if (srcOrdersTP.DataSet.FieldByName('Otp_Id').IsNull) then
     Exit;
 
   ci.CUSTOMER_ID := -1;
-  o := dsOrdersTP['Otp_Id'];
+  o := srcOrdersTP.DataSet['Otp_Id'];
   n := CreateOrderTPForCustomer(-1, ci, o);
   if n > -1 then
   begin
@@ -756,28 +759,37 @@ procedure TOrdersTPForm.actOTPDelExecute(Sender: TObject);
 var
   AR: Boolean;
 begin
-  if (not dsOrdersTP.Active) or (dsOrdersTP.RecordCount = 0) then
+  if (not srcOrdersTP.DataSet.Active) or (srcOrdersTP.DataSet.RecordCount = 0) then
     Exit;
 
   AR := dmMain.AllowedAction(rght_OrdersTP_del); // Удаление
   if not(AR or FullAccess) then
     Exit;
 
-  if (dsOrdersTP.FieldByName('OTP_NUMBER').IsNull) or
-    (MessageDlg(Format(rsDeleteOrder, [dsOrdersTP['OTP_NUMBER']]), mtConfirmation, [mbNo, mbYes], 0) = mrYes) then
-    dsOrdersTP.Delete;
-
+  if (srcOrdersTP.DataSet.FieldByName('OTP_NUMBER').IsNull) or
+    (MessageDlg(Format(rsDeleteOrder, [srcOrdersTP.DataSet['OTP_NUMBER']]), mtConfirmation, [mbNo, mbYes], 0) = mrYes) then
+    srcOrdersTP.DataSet.Delete;
 end;
 
 procedure TOrdersTPForm.actOTPNewExecute(Sender: TObject);
 var
   bm: TBookmark;
+var
+  ci: TCustomerInfo;
+  n, o: Integer;
 begin
+  if (srcOrdersTP.DataSet.FieldByName('Otp_Id').IsNull) then
+    Exit;
+
+  ci.CUSTOMER_ID := -1;
+  o := srcOrdersTP.DataSet['Otp_Id'];
+
   if CreateOrderTP(-1) > -1 then
   begin
-    bm := dsOrdersTP.GetBookmark;
-    dsOrdersTP.CloseOpen(True);
-    dsOrdersTP.GotoBookmark(bm);
+    bm := srcOrdersTP.DataSet.GetBookmark;
+    srcOrdersTP.DataSet.Close;
+    srcOrdersTP.DataSet.Open;
+    srcOrdersTP.DataSet.GotoBookmark(bm);
   end;
 end;
 
@@ -1108,3 +1120,4 @@ end;
   end;
 }
 end.
+

@@ -27,7 +27,7 @@ object UsersForm: TUsersForm
     Top = 0
     Width = 717
     Height = 487
-    ActivePage = tabGroup
+    ActivePage = tabUsers
     Align = alClient
     TabOrder = 0
     OnChange = pcChange
@@ -581,7 +581,7 @@ object UsersForm: TUsersForm
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
-              object DBGridEh5: TDBGridEh
+              object dbgGU: TDBGridEh
                 Left = 0
                 Top = 0
                 Width = 300
@@ -597,7 +597,7 @@ object UsersForm: TUsersForm
                 OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
                 ReadOnly = True
                 TabOrder = 0
-                OnDblClick = DBGridEh5DblClick
+                OnDblClick = dbgGUDblClick
                 Columns = <
                   item
                     CellButtons = <>
@@ -722,7 +722,7 @@ object UsersForm: TUsersForm
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
-              object DBGridEh6: TDBGridEh
+              object dbgG: TDBGridEh
                 Left = 0
                 Top = 0
                 Width = 361
@@ -738,7 +738,7 @@ object UsersForm: TUsersForm
                 OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
                 ReadOnly = True
                 TabOrder = 0
-                OnDblClick = DBGridEh6DblClick
+                OnDblClick = dbgGDblClick
                 Columns = <
                   item
                     CellButtons = <>
@@ -799,7 +799,7 @@ object UsersForm: TUsersForm
               object lbl2: TLabel
                 Left = 0
                 Top = 0
-                Width = 89
+                Width = 337
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -820,7 +820,7 @@ object UsersForm: TUsersForm
                 OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
                 ReadOnly = True
                 TabOrder = 0
-                OnDblClick = DBGridEh5DblClick
+                OnDblClick = dbgUGDblClick
                 Columns = <
                   item
                     AutoFitColWidth = False
@@ -898,32 +898,14 @@ object UsersForm: TUsersForm
                   Align = alBottom
                   Flat = True
                   Glyph.Data = {
-                    36030000424D3603000000000000360000002800000010000000100000000100
-                    18000000000000030000C30E0000C30E00000000000000000000FF00FFFF00FF
-                    FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-                    FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB3783EB3
-                    783EB3783EB1773EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-                    FF00FFFF00FFFF00FFFF00FFFF00FFB3783EB3783EB3783EB1773EFF00FFFF00
-                    FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-                    00FFB3783EB3783EB3783EB1773EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-                    FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB3783EB3783EB3783EB177
-                    3EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-                    00FFFF00FFFF00FFB3783EB3783EB3783EB1773EFF00FFFF00FFB3783FB3783E
-                    B3783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB378
-                    3EB3783EB1773EFF00FFB3783EB3783EB3783EB3783EB3783EB3783EB3783EB3
-                    783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB1773EB3783FB3783E
-                    B3783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB3783EB378
-                    3EB3783EB1773EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-                    00FFFF00FFFF00FFB3783EB3783EB3783EB1773EFF00FFFF00FFFF00FFFF00FF
-                    FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB3783EB3783EB3783EB177
-                    3EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-                    00FFB3783EB3783EB3783EB1773EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-                    FF00FFFF00FFFF00FFFF00FFFF00FFB3783EB3783EB3783EB1773EFF00FFFF00
-                    FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB3783EB3
-                    783EB3783EB1773EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-                    FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-                    FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-                    00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+                    F6000000424DF600000000000000760000002800000010000000100000000100
+                    0400000000008000000000000000000000001000000000000000000000000000
+                    8000008000000080800080000000800080008080000080808000C0C0C0000000
+                    FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDDD
+                    DDDDDDDDDD9999DDDDDDDDDDDDD9999DDDDDDDDDDDDD9999DDDDDDDDDDDDD999
+                    9DDDDDDDDDDDDD9999DD999999999999999D9999999999999999999999999999
+                    999DDDDDDDDDDD9999DDDDDDDDDDD9999DDDDDDDDDDD9999DDDDDDDDDDD9999D
+                    DDDDDDDDDD9999DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD}
                   OnClick = btnRemoveAreaClick
                 end
               end
@@ -939,7 +921,7 @@ object UsersForm: TUsersForm
               object lbl1: TLabel
                 Left = 0
                 Top = 0
-                Width = 104
+                Width = 361
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '
@@ -960,7 +942,7 @@ object UsersForm: TUsersForm
                 OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
                 ReadOnly = True
                 TabOrder = 0
-                OnDblClick = DBGridEh6DblClick
+                OnDblClick = dbgUGADblClick
                 Columns = <
                   item
                     AutoFitColWidth = False
@@ -1004,6 +986,8 @@ object UsersForm: TUsersForm
               DataSource = srcUsers
               DynProps = <>
               TabOrder = 0
+              OnClick = chkALL_AREASClick
+              OnExit = chkALL_AREASExit
             end
           end
         end
@@ -2053,11 +2037,13 @@ object UsersForm: TUsersForm
     Top = 162
   end
   object qModify: TpFIBQuery
-    Transaction = dmMain.trWriteQ
+    Transaction = trWriteQ
     Database = dmMain.dbTV
     GoToFirstRecordOnExecute = False
-    Left = 412
+    Left = 388
     Top = 160
+    qoAutoCommit = True
+    qoStartTransaction = True
   end
   object dsReports: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -2325,5 +2311,17 @@ object UsersForm: TUsersForm
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
+  end
+  object trWriteQ: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 393
+    Top = 104
   end
 end

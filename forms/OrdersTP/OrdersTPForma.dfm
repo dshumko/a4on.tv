@@ -274,9 +274,11 @@ object OrdersTPForm: TOrdersTPForm
         Left = 77
         Top = 0
         Action = actPrintDoc
+        DropdownMenu = pmPrint
+        Style = tbsDropDown
       end
       object ToolButton1: TToolButton
-        Left = 100
+        Left = 115
         Top = 0
         Width = 8
         Caption = 'ToolButton1'
@@ -284,7 +286,7 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object ToolButton20: TToolButton
-        Left = 108
+        Left = 123
         Top = 0
         Width = 3
         Caption = 'ToolButton20'
@@ -292,19 +294,19 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object btnSetFilter: TToolButton
-        Left = 111
+        Left = 126
         Top = 0
         Action = actSetFilter
         DropdownMenu = pmFilter
         Style = tbsDropDown
       end
       object ToolButton27: TToolButton
-        Left = 149
+        Left = 164
         Top = 0
         Action = actQuickFilter
       end
       object btn1: TToolButton
-        Left = 172
+        Left = 187
         Top = 0
         Width = 18
         Caption = 'btn1'
@@ -312,12 +314,12 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object btnCustomers: TToolButton
-        Left = 190
+        Left = 205
         Top = 0
         Action = actCustomers
       end
       object ToolButton9: TToolButton
-        Left = 213
+        Left = 228
         Top = 0
         Width = 8
         Caption = 'ToolButton9'
@@ -325,12 +327,12 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object btnAddPayment: TToolButton
-        Left = 221
+        Left = 236
         Top = 0
         Action = actAddPayment
       end
       object ToolButton3: TToolButton
-        Left = 244
+        Left = 259
         Top = 0
         Width = 8
         Caption = 'ToolButton3'
@@ -338,7 +340,7 @@ object OrdersTPForm: TOrdersTPForm
         Style = tbsSeparator
       end
       object chkTREE: TCheckBox
-        Left = 252
+        Left = 267
         Top = 0
         Width = 165
         Height = 22
@@ -848,6 +850,13 @@ object OrdersTPForm: TOrdersTPForm
       end
       object RecordsList: TRecordsListEh
       end
+    end
+  end
+  object pmPrint: TPopupMenu
+    Left = 712
+    Top = 184
+    object miPrintOrder1: TMenuItem
+      Action = actPrintOrder
     end
   end
 end

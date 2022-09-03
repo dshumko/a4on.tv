@@ -1,14 +1,17 @@
 ﻿unit MatIncomeDocForma;
-
+{$I defines.inc}
 interface
 
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.Menus, Vcl.ActnList,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.Menus,
+  Vcl.ActnList,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
+  FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping,
+  RxSplit;
 
 type
   TMatIncomeDocForm = class(TForm)
@@ -18,7 +21,6 @@ type
     dsDocMat: TpFIBDataSet;
     srcDoc: TDataSource;
     srcDocMat: TDataSource;
-    dbgDocMat: TDBGridEh;
     pnlMatAdd: TPanel;
     edtD_N: TDBEditEh;
     deD_DATE: TDBDateTimeEditEh;
@@ -73,6 +75,13 @@ type
     btnOpenFile: TButton;
     qReqFile: TpFIBQuery;
     qSaveFile: TpFIBQuery;
+    pnlGrids: TPanel;
+    dbgDocMat: TDBGridEh;
+    Splitter: TRxSplitter;
+    btnUNIT: TButton;
+    actUNITS: TAction;
+    trReadDS: TpFIBTransaction;
+    trWrite: TpFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh; var DropDownForm: TCustomForm;
       DynParams: TDynVarsEh);
@@ -95,6 +104,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure btnOpenFileClick(Sender: TObject);
     procedure dsDocAfterOpen(DataSet: TDataSet);
+    procedure actUNITSExecute(Sender: TObject);
+    procedure srcDocMatDataChange(Sender: TObject; Field: TField);
+    procedure dbgDocMatColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgDocMatDblClick(Sender: TObject);
   private
     { Private declarations }
     fMatDocID: Integer;
@@ -122,7 +135,8 @@ implementation
 
 uses
   Winapi.ShellAPI,
-  DM, MAIN, DropDownFormEh, PrjConst, TextEditForma, ScanImageForma, AtrCommon;
+  DM, MAIN, DropDownFormEh, PrjConst, TextEditForma, ScanImageForma, AtrCommon,
+  MatDocUnitForma;
 
 {$R *.dfm}
 
@@ -179,6 +193,7 @@ begin
   dsDoc.ParamByName('DOC_ID').value := value;
   dsDoc.ParamByName('DocumentType').value := DocumentType;
   dsDoc.Open;
+
   if value = -1 then
   begin
     dsDoc.Insert;
@@ -203,6 +218,8 @@ begin
     Caption := rsMadDocIn
   else
     Caption := dsDoc['Doc_N'] + ' ' + rsMadDocIn;
+
+  fMatDocID := dsDoc.FieldByName('DOC_ID').value;
 end;
 
 procedure TMatIncomeDocForm.FormCreate(Sender: TObject);
@@ -227,7 +244,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
 
   if dsDoc.State in [dsEdit, dsInsert] then
     dsDoc.Cancel;
@@ -251,19 +268,35 @@ begin
   DynParams['ID'].Clear;
   DynParams['NAME'].AsString := edtMaterial.Text;
   DynParams['DATASET'].AsRefObject := dsMaterials;
+  DynParams['WIDTH'].AsInteger := edtMaterial.Width;
 end;
 
 procedure TMatIncomeDocForm.edtMaterialCloseDropDownForm(EditControl: TControl; Button: TEditButtonEh; Accept: Boolean;
   DropDownForm: TCustomForm; DynParams: TDynVarsEh);
+var
+  qnt: Integer;
 begin
   if DynParams.FindDynVar('Name') <> nil then
     edtMaterial.Text := DynParams['Name'].AsString;
   if DynParams.FindDynVar('dimension') <> nil then
     lblDem.Caption := rsQuant + ', ' + DynParams['dimension'].AsString;
+
+  {$IFDEF IS_UNIT}
+  actUNITS.Visible := (DynParams.FindDynVar('IS_UNIT') <> nil);
+  edtQuant.Enabled := not actUNITS.Visible;
+  {$ENDIF}
+
   if DynParams.FindDynVar('ID') <> nil then
   begin
     fAddedMatID := DynParams['ID'].AsInteger;
-    edtQuant.SetFocus;
+    if actUNITS.Visible then
+    begin
+      qnt := InputUnits(fMatDocID, fAddedMatID, -1);
+      if qnt >= 0 then
+        edtQuant.value := qnt;
+    end
+    else
+      edtQuant.SetFocus;
   end;
   ednTTN.value := dsDocMat.RecordCount + 1;
 end;
@@ -366,10 +399,21 @@ begin
 end;
 
 function TMatIncomeDocForm.CheckRowData: Boolean;
+var
+  qnt: Integer;
 begin
   Result := (fAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
-  if edtQuant.Text.IsEmpty then
-    edtQuant.SetFocus;
+  if (edtQuant.Text.IsEmpty) then
+  begin
+    if edtQuant.Enabled then
+      edtQuant.SetFocus
+    else
+    begin
+      qnt := InputUnits(fMatDocID, dsDocMat['MAT_ID'], dsDocMat['ID']);
+      if qnt >= 0 then
+        edtQuant.value := qnt;
+    end;
+  end;
 end;
 
 procedure TMatIncomeDocForm.actDelRecordExecute(Sender: TObject);
@@ -417,6 +461,28 @@ begin
   end;
 end;
 
+procedure TMatIncomeDocForm.actUNITSExecute(Sender: TObject);
+var
+  qnt: Integer;
+begin
+  if (fAddedMatID <> -1) then
+  begin
+    qnt := InputUnits(fMatDocID, fAddedMatID, -1);
+    if qnt >= 0 then
+      edtQuant.value := qnt;
+  end
+  else
+  begin
+    qnt := InputUnits(fMatDocID, dsDocMat['M_Id'], dsDocMat['ID'], FReadOnly);
+    if qnt >= 0 then
+    begin
+      dsDocMat.Edit;
+      dsDocMat['M_QUANT'] := qnt;
+      dsDocMat.Post;
+    end;
+  end;
+end;
+
 procedure TMatIncomeDocForm.AddRow;
 begin
   if not dsDocMat.Active then
@@ -437,12 +503,31 @@ begin
   dsDocMat['M_Notice'] := memNotice.Lines.Text;
   dsDocMat['TTN'] := ednTTN.Text;
   dsDocMat.Post;
+
+  // обновим строку в записях штук материала
+
   dsDocMat.CloseOpen(true);
   edtQuant.Text := '';
   edtShipper.Text := '';
   memNotice.Lines.Text := '';
   fAddedMatID := -1;
   edtMaterial.SetFocus;
+end;
+
+procedure TMatIncomeDocForm.dbgDocMatColumns2GetCellParams(Sender: TObject; EditMode: Boolean;
+  Params: TColCellParamsEh);
+begin
+{$IFDEF IS_UNIT}
+  Params.readOnly := ((not dsDocMat.FieldByName('IS_UNIT').IsNull) and (dsDocMat['IS_UNIT']));
+{$ENDIF}
+end;
+
+procedure TMatIncomeDocForm.dbgDocMatDblClick(Sender: TObject);
+begin
+{$IFDEF IS_UNIT}
+  if ((not dsDocMat.FieldByName('IS_UNIT').IsNull) and (dsDocMat['IS_UNIT'])) then
+    actUNITS.Execute;
+{$ENDIF}
 end;
 
 procedure TMatIncomeDocForm.dsDocAfterOpen(DataSet: TDataSet);
@@ -470,6 +555,7 @@ begin
     dsDoc.Post;
     dsDoc.Refresh;
   end;
+
   if dsDocMat.State in [dsEdit, dsEdit] then
     dsDocMat.Post;
 
@@ -493,6 +579,13 @@ end;
 procedure TMatIncomeDocForm.btnDelClick(Sender: TObject);
 begin
   actDelRecord.Execute;
+end;
+
+procedure TMatIncomeDocForm.srcDocMatDataChange(Sender: TObject; Field: TField);
+begin
+{$IFDEF IS_UNIT}
+  actUNITS.Visible := ((not dsDocMat.FieldByName('IS_UNIT').IsNull) and (dsDocMat['IS_UNIT']));
+{$ENDIF}
 end;
 
 procedure TMatIncomeDocForm.srcDocStateChange(Sender: TObject);

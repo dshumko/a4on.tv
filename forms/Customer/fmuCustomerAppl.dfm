@@ -63,7 +63,7 @@ object apgCustomerAppl: TapgCustomerAppl
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'SN'
+        FieldName = 'SERIAL'
         Footers = <>
         Title.Caption = #1057'/'#1053#1086#1084#1077#1088
         Title.TitleButton = True
@@ -302,8 +302,7 @@ object apgCustomerAppl: TapgCustomerAppl
       'select'
       '    a.*'
       '  , o.O_Name'
-      '  ,'
-      '    case a.Property'
+      '  , case a.Property'
       '      when 0 then '#39'A'#1073#1086#1085#1077#1085#1090#1072#39
       '      when 1 then '#39#1050#1086#1084#1087#1072#1085#1080#1080#39
       '      when 2 then '#39#1056#1072#1089#1089#1088#1086#1095#1082#1072#39
@@ -312,11 +311,12 @@ object apgCustomerAppl: TapgCustomerAppl
       '    end Prop_TEXT,'
       '    coalesce(W.SURNAME, a.ADDED_BY) as WHO_ADD'
       '  from Appliance a'
-      '       left outer join objects o on (o.O_Id = a.A_Type and'
-      '             o.O_Type = 48)'
+      
+        '       left outer join objects o on (o.O_Id = a.A_Type and o.O_T' +
+        'ype = 48)'
       '       left outer join worker w on (w.Ibname = a.ADDED_BY)'
       '  where a.OWN_ID = :CUSTOMER_ID'
-      '        and a.OWN_TYPE = 0'
+      '        and a.OWN_TYPE = 1'
       '  order by a.Name')
     AutoUpdateOptions.UpdateTableName = 'DISCOUNT_FACTOR'
     AutoUpdateOptions.KeyFields = 'DISCOUNT_ID'

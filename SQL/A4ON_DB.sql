@@ -137,6 +137,13 @@ CREATE DOMAIN D_PORT_NS AS
 VARCHAR(12)
 COLLATE NUMBERSORT;
 
+CREATE DOMAIN D_SERIAL AS
+VARCHAR(50);
+
+CREATE DOMAIN D_SERIAL_NS AS
+VARCHAR(50)
+COLLATE NUMBERSORT;
+
 CREATE DOMAIN D_SERVICE_NAME AS
 VARCHAR(60);
 
@@ -214,7 +221,7 @@ INTEGER;
 
 CREATE DOMAIN T_YESNO AS
 CHAR(1)
-default 'n'
+DEFAULT 'n'
 check((value is null) or (value in ('n','y')));
 
 CREATE DOMAIN UID AS
@@ -222,22 +229,22 @@ INTEGER
 NOT NULL;
 
 CREATE GENERATOR GEN_ACCOUNT_NO START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_ACCOUNT_NO TO 82;
+SET GENERATOR GEN_ACCOUNT_NO TO 87159;
 
 CREATE GENERATOR GEN_APPLIANCE_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_APPLIANCE_UID TO 7;
+SET GENERATOR GEN_APPLIANCE_UID TO 17;
 
 CREATE GENERATOR GEN_BLB START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_BLB TO 5;
+SET GENERATOR GEN_BLB TO 0;
 
 CREATE GENERATOR GEN_CARD_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_CARD_ID TO 0;
 
 CREATE GENERATOR GEN_CUSTOMER_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_CUSTOMER_UID TO 44;
+SET GENERATOR GEN_CUSTOMER_UID TO 9797;
 
 CREATE GENERATOR GEN_DEVICES_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_DEVICES_ID TO 17;
+SET GENERATOR GEN_DEVICES_ID TO 0;
 
 CREATE GENERATOR GEN_DEVPORTS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_DEVPORTS_ID TO 0;
@@ -249,16 +256,16 @@ CREATE GENERATOR GEN_DIGIT_SEQ START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_DIGIT_SEQ TO 1;
 
 CREATE GENERATOR GEN_EPG START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_EPG TO 122657;
+SET GENERATOR GEN_EPG TO 0;
 
 CREATE GENERATOR GEN_EQ_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_EQ_ID TO 611;
+SET GENERATOR GEN_EQ_ID TO 91;
 
 CREATE GENERATOR GEN_ISSUE START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_ISSUE TO 0;
 
 CREATE GENERATOR GEN_JOURNAL START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_JOURNAL TO 355;
+SET GENERATOR GEN_JOURNAL TO 495;
 
 CREATE GENERATOR GEN_MAP_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MAP_ID TO 0;
@@ -270,34 +277,34 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 51242;
+SET GENERATOR GEN_OPERATIONS_UID TO 877645;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_ORDER_TP TO 8;
+SET GENERATOR GEN_ORDER_TP TO 0;
 
 CREATE GENERATOR GEN_PAYMENT START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_PAYMENT TO 294;
+SET GENERATOR GEN_PAYMENT TO 229830;
 
 CREATE GENERATOR GEN_QUEUE START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_QUEUE TO 4230;
+SET GENERATOR GEN_QUEUE TO 50001099;
 
 CREATE GENERATOR GEN_REPORT_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_REPORT_ID TO 539;
+SET GENERATOR GEN_REPORT_ID TO 369;
 
 CREATE GENERATOR GEN_REQUEST START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_REQUEST TO 174;
+SET GENERATOR GEN_REQUEST TO 15605;
 
 CREATE GENERATOR GEN_TASK START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_TASK TO 74;
+SET GENERATOR GEN_TASK TO 0;
 
 CREATE GENERATOR GEN_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_UID TO 2052;
+SET GENERATOR GEN_UID TO 29802;
 
 CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 530;
+SET GENERATOR G_LOG_ID TO 51224;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -926,6 +933,18 @@ END;
 
 
 
+CREATE OR ALTER PROCEDURE APPLIANCE_TO_TABLE (
+    APPL_ID UID,
+    TO_FROM D_IBOOLEAN = 1)
+AS
+BEGIN
+  EXIT;
+END;
+
+
+
+
+
 CREATE OR ALTER PROCEDURE ATRIBUTES_LINE (
     CUST_ID TYPE OF UID)
 RETURNS (
@@ -1361,12 +1380,58 @@ END;
 
 
 
+CREATE OR ALTER PROCEDURE CHANGE_TO_NEGATIVE (
+    CUSTOMER_ID UID,
+    OLD_DEBT D_N15_2 = null,
+    NEW_DEBT D_N15_2 = null,
+    HOUSE_ID D_UID_NULL = null,
+    FLAT D_FLAT = null /* COLLATE UTF8 - default */)
+AS
+BEGIN
+  EXIT;
+END;
+
+
+
+
+
 CREATE OR ALTER PROCEDURE CHANGE_TO_POSITIVE (
     CUSTOMER_ID UID,
     OLD_DEBT D_N15_2 = null,
     NEW_DEBT D_N15_2 = null,
     HOUSE_ID D_UID_NULL = null,
     FLAT D_FLAT = null /* COLLATE UTF8 - default */)
+AS
+BEGIN
+  EXIT;
+END;
+
+
+
+
+
+CREATE OR ALTER PROCEDURE CHANNEL_SRC_PARAM_IU (
+    CSP_ID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.CSP_ID */,
+    CS_ID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_ID */,
+    CH_ID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.CH_ID */,
+    NOTICE VARCHAR(1000) /* TYPE OF COLUMN CHANNEL_SRC_PARAM.NOTICE */,
+    FREQ VARCHAR(50) /* TYPE OF COLUMN CHANNEL_SRC_PARAM.FREQ */,
+    SYMRATE VARCHAR(50) /* TYPE OF COLUMN CHANNEL_SRC_PARAM.SYMRATE */,
+    IP VARCHAR(50) /* TYPE OF COLUMN CHANNEL_SRC_PARAM.IP */,
+    V_CODEC INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.V_CODEC */,
+    S_CRYPT INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.S_CRYPT */,
+    CS_SYSTEM INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM */,
+    CARD_ID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.CARD_ID */,
+    ON_ANALOG SMALLINT /* TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_ANALOG */,
+    ON_DVB SMALLINT /* TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_DVB */,
+    ON_IPTV SMALLINT /* TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_IPTV */,
+    NID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.NID */,
+    ONID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.ONID */,
+    TSID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.TSID */,
+    SID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.SID */,
+    VPID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.VPID */,
+    APID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.APID */,
+    A2PID INTEGER /* TYPE OF COLUMN CHANNEL_SRC_PARAM.A2PID */)
 AS
 BEGIN
   EXIT;
@@ -2279,7 +2344,7 @@ END;
 
 
 CREATE OR ALTER PROCEDURE GET_FREE_IP (
-    IP_MASK D_IP = null)
+    IP_MASK D_IP = null /* COLLATE UTF8 - default */)
 RETURNS (
     IP TYPE OF D_IP)
 AS
@@ -2395,7 +2460,34 @@ RETURNS (
     QUANT_IN_REQUEST D_N15_5,
     RQ_ID D_INTEGER,
     RM_NOTICE D_NOTICE,
-    DESCRIPTION D_NOTICE)
+    DESCRIPTION D_NOTICE,
+    SERIAL D_SERIAL_NS)
+AS
+BEGIN
+  SUSPEND;
+END;
+
+
+
+
+
+CREATE OR ALTER PROCEDURE GET_MAT_TAKE_IN (
+    FOR_RQ_ID UID,
+    MG_ID D_UID_NULL = -1,
+    WH_FLTR D_IBOOLEAN = 0)
+RETURNS (
+    M_ID UID,
+    NAME D_VARCHAR100,
+    DIMENSION D_VARCHAR10,
+    WH_NAME D_DESCRIPTION,
+    WH_ID D_UID_NULL,
+    QUANT D_N15_5,
+    M_NUMBER D_VARCHAR20,
+    RQ_ID UID,
+    ID D_UID_NULL,
+    DESCRIPTION D_NOTICE,
+    SERIAL D_SERIAL_NS,
+    COST D_N15_2)
 AS
 BEGIN
   SUSPEND;
@@ -2797,6 +2889,39 @@ CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC (
 AS
 BEGIN
   EXIT;
+END;
+
+
+
+
+
+CREATE OR ALTER PROCEDURE MATERIAL_UNIT_MOVE (
+    RQ_ID UID,
+    WH_ID UID,
+    M_ID UID,
+    SERIAL D_SERIAL_NS,
+    TO_FROM D_IBOOLEAN = 1)
+AS
+BEGIN
+  EXIT;
+END;
+
+
+
+
+
+CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (
+    FOR_M_ID INTEGER)
+RETURNS (
+    WH VARCHAR(2000),
+    M_ID INTEGER,
+    M_DATE DATE,
+    M_TYPE CHAR(72),
+    M_DOC VARCHAR(200),
+    QUANT NUMERIC(18,5))
+AS
+BEGIN
+  SUSPEND;
 END;
 
 
@@ -3255,6 +3380,17 @@ END;
 
 
 
+CREATE OR ALTER PROCEDURE REQUEST_CLOSE_MATERIALS (
+    RQ_ID UID)
+AS
+BEGIN
+  EXIT;
+END;
+
+
+
+
+
 CREATE OR ALTER PROCEDURE REQUEST_CLOSE_PROCESS (
     RQ_ID UID)
 AS
@@ -3287,10 +3423,13 @@ CREATE OR ALTER PROCEDURE REQUEST_MATERIALS_IUD (
     RM_COST D_N15_2,
     RM_NOTICE D_NOTICE,
     NOT_CALC D_IBOOLEAN,
-    P_ACTION D_INTEGER)
+    P_ACTION D_INTEGER,
+    SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */)
+RETURNS (
+    RET_RM_ID D_INTEGER)
 AS
 BEGIN
-  EXIT;
+  SUSPEND;
 END;
 
 
@@ -3304,7 +3443,9 @@ CREATE OR ALTER PROCEDURE REQUEST_MATERIALS_RETURN_IUD (
     QUANT D_N15_5,
     WH_ID TYPE OF UID,
     NOTICE D_NOTICE,
-    P_ACTION D_INTEGER)
+    P_ACTION D_INTEGER,
+    SERIAL D_SERIAL_NS = null,
+    COST D_N15_2 = null)
 AS
 BEGIN
   EXIT;
@@ -3401,7 +3542,7 @@ END;
 
 
 CREATE OR ALTER PROCEDURE SELECTPAYDOC (
-    FORFORM VARCHAR(10) = null)
+    FORFORM VARCHAR(10) = null /* COLLATE UTF8 - default */)
 RETURNS (
     PAY_DOC_ID D_INTEGER)
 AS
@@ -3462,9 +3603,9 @@ CREATE OR ALTER PROCEDURE SERVICES_IU (
     POSITIVE_ONLY D_IBOOLEAN,
     PRIORITY D_INTEGER,
     ONLY_ONE D_IBOOLEAN,
-    NOTE D_DESCRIPTION = '',
+    NOTE D_DESCRIPTION = '' /* COLLATE UTF8 - default */,
     TAG D_INTEGER = null,
-    TAG_STR D_VARCHAR255 = '',
+    TAG_STR D_VARCHAR255 = '' /* COLLATE UTF8 - default */,
     OPENLY D_IBOOLEAN = 0,
     UNBL_METH D_INTEGER = 0)
 AS
@@ -3737,6 +3878,19 @@ END;
 
 
 
+CREATE OR ALTER FUNCTION MAC_FORMAT (
+    AMAC D_MAC,
+    ADLMTR D_CHAR1 = ':')
+RETURNS D_MAC DETERMINISTIC
+AS
+BEGIN
+  RETURN NULL;
+END;
+
+
+
+
+
 CREATE OR ALTER FUNCTION MONTH_FIRST_DAY (
     MON_DAY DATE)
 RETURNS DATE DETERMINISTIC
@@ -3783,21 +3937,24 @@ CREATE TABLE ALL_USED_IP (
 );
 
 CREATE TABLE APPLIANCE (
-    ID        UID,
-    A_TYPE    D_UID_NULL,
-    OWN_ID    UID,
-    OWN_TYPE  UID DEFAULT 0,
-    NAME      D_VARCHAR100,
-    NOTICE    D_NOTICE,
-    M_ID      D_UID_NULL,
-    MAC       D_MAC,
-    SN        D_VARCHAR50,
-    COST      D_N15_2,
-    PROPERTY  D_INTEGER,
-    ADDED_BY  D_VARCHAR50,
-    ADDED_ON  D_DATETIME,
-    EDIT_BY   D_VARCHAR50,
-    EDIT_ON   D_DATETIME
+    ID         UID,
+    A_TYPE     D_UID_NULL,
+    OWN_ID     UID,
+    OWN_TYPE   UID DEFAULT 0,
+    NAME       D_VARCHAR100,
+    NOTICE     D_NOTICE,
+    MAC        D_MAC,
+    SERIAL     D_SERIAL_NS,
+    COST       D_N15_2,
+    PROPERTY   D_INTEGER,
+    S_VERSION  D_VARCHAR255,
+    M_ID       D_UID_NULL,
+    RQ_ID      D_UID_NULL,
+    FROM_WH    D_UID_NULL,
+    ADDED_BY   D_VARCHAR50,
+    ADDED_ON   D_DATETIME,
+    EDIT_BY    D_VARCHAR50,
+    EDIT_ON    D_DATETIME
 );
 
 CREATE TABLE AREA (
@@ -3899,10 +4056,10 @@ CREATE TABLE CARDS_PREPAY (
     CARD_ID          UID NOT NULL,
     CARD_SERIAL      D_UID_NULL,
     CARD_NUMBER      D_VARCHAR20 NOT NULL,
-    CARD_NOMINAL     D_INTEGER default 0 NOT NULL,
+    CARD_NOMINAL     D_INTEGER DEFAULT 0 NOT NULL,
     CARD_PIN         D_VARCHAR20,
     EXPIRATION_DATE  D_DATE NOT NULL,
-    CARD_STATE       D_SMALLINT default 0 NOT NULL,
+    CARD_STATE       D_SMALLINT DEFAULT 0 NOT NULL,
     ADDED_BY         D_VARCHAR50,
     ADDED_ON         D_DATE_NOW DEFAULT localtimestamp NOT NULL,
     PAYMENT_ID       D_UID_NULL,
@@ -3941,6 +4098,7 @@ CREATE TABLE CHANNEL_SRC (
 );
 
 CREATE TABLE CHANNEL_SRC_PARAM (
+    CSP_ID     UID,
     CS_ID      UID NOT NULL,
     CH_ID      UID NOT NULL,
     NOTICE     D_NOTICE,
@@ -4171,7 +4329,8 @@ CREATE TABLE CUSTOMER_DECODERS (
 CREATE TABLE CUSTOMER_EQUIPMENT (
     CE_ID        UID NOT NULL,
     CUSTOMER_ID  UID,
-    EQUIP_N      D_DECODER NOT NULL,
+    M_ID         D_UID_NULL,
+    SERIAL       D_SERIAL_NS,
     SALE         D_IBOOLEAN,
     NOTICE       D_NOTICE,
     ADDED_BY     D_VARCHAR50,
@@ -4248,7 +4407,7 @@ CREATE TABLE DEVPORTS (
     PORTTYPE  D_VARCHAR20,
     MODULE    D_VARCHAR30,
     COLOR     D_VARCHAR30,
-    COLOROPT  D_VARCHAR30 DEFAULT 'solid',
+    COLOROPT  D_VARCHAR30 DEFAULT 'solid' /* COLLATE UTF8 - default */,
     BANDLE    D_VARCHAR30,
     NOTE      D_VARCHAR500,
     DIVIDE    D_N15_2,
@@ -4407,7 +4566,7 @@ CREATE TABLE EPG (
     DESCRIPTION  D_EIT_EVENT,
     GENRES       D_VARCHAR255,
     DVBGENRES    D_VARCHAR255,
-    MINAGE       D_INTEGER default 0,
+    MINAGE       D_INTEGER DEFAULT 0,
     CREATE_YEAR  D_VARCHAR255,
     ACTORS       D_VARCHAR255,
     DIRECTED     D_VARCHAR255,
@@ -4448,7 +4607,7 @@ CREATE TABLE EPG_LOCAL (
     DESCRIPTION  D_EIT_EVENT,
     GENRES       D_VARCHAR255,
     DVBGENRES    D_VARCHAR255,
-    MINAGE       D_INTEGER default 0,
+    MINAGE       D_INTEGER DEFAULT 0,
     CREATE_YEAR  D_VARCHAR10,
     ACTORS       D_VARCHAR255,
     DIRECTED     D_VARCHAR255,
@@ -4517,7 +4676,8 @@ CREATE TABLE EQUIPMENT (
     EQ_DELIVERY_COST  D_N15_2,
     EQ_REGNUBER       D_VARCHAR10,
     IPV6              D_IPV6,
-    NODE_ID           D_UID_NULL
+    NODE_ID           D_UID_NULL,
+    M_ID              D_UID_NULL
 );
 
 CREATE TABLE EQUIPMENT_ATTRIBUTES (
@@ -4753,20 +4913,6 @@ CREATE TABLE HOUSEWORKS (
     NOTICE      D_NOTICE
 );
 
-CREATE TABLE INVENTORY (
-    OWNER       UID NOT NULL,
-    OWNER_TYPE  UID NOT NULL,
-    M_ID        UID,
-    SERIAL      D_VARCHAR50 NOT NULL,
-    OWNERSHIP   D_UID_NULL,
-    QUANT       D_N15_5,
-    NOTICE      D_NOTICE,
-    ADDED_BY    D_VARCHAR50,
-    ADDED_ON    D_DATETIME,
-    EDIT_BY     D_VARCHAR50,
-    EDIT_ON     D_DATETIME
-);
-
 CREATE TABLE IPTV_GROUP (
     IG_ID     UID,
     NAME      D_VARCHAR20,
@@ -4877,8 +5023,8 @@ CREATE TABLE MATERIAL_DOCS (
 );
 
 CREATE TABLE MATERIAL_UNIT (
-    SERIAL      D_VARCHAR50 NOT NULL,
     M_ID        UID,
+    SERIAL      D_SERIAL_NS NOT NULL,
     OWNER       D_UID_NULL,
     OWNER_TYPE  D_UID_NULL,
     STATE       D_UID_NULL,
@@ -4886,11 +5032,11 @@ CREATE TABLE MATERIAL_UNIT (
     MAC         D_MAC,
     DOC_INCOME  D_UID_NULL,
     COST        D_N15_2,
+    S_VERSION   D_VARCHAR50,
     ADDED_BY    D_VARCHAR50,
     ADDED_ON    D_DATETIME,
     EDIT_BY     D_VARCHAR50,
-    EDIT_ON     D_DATETIME,
-    S_VERSION   D_VARCHAR50
+    EDIT_ON     D_DATETIME
 );
 
 CREATE TABLE MATERIALS (
@@ -4940,14 +5086,17 @@ CREATE TABLE MATERIALS_IN_DOC (
 );
 
 CREATE TABLE MATERIALS_IN_DOC_UNIT (
-    DOC_ID    UID,
-    M_ID      UID,
-    SERIAL    D_VARCHAR50 NOT NULL,
-    M_NOTICE  D_NOTICE,
-    ADDED_BY  D_VARCHAR50,
-    ADDED_ON  D_DATETIME,
-    EDIT_BY   D_VARCHAR50,
-    EDIT_ON   D_DATETIME
+    DOC_ID     UID,
+    M_ID       UID,
+    ID         D_INTEGER NOT NULL,
+    SERIAL     D_SERIAL_NS NOT NULL,
+    MAC        D_MAC,
+    NOTICE     D_NOTICE,
+    S_VERSION  D_VARCHAR50,
+    ADDED_BY   D_VARCHAR50,
+    ADDED_ON   D_DATETIME,
+    EDIT_BY    D_VARCHAR50,
+    EDIT_ON    D_DATETIME
 );
 
 CREATE TABLE MATERIALS_REMAIN (
@@ -5201,7 +5350,9 @@ CREATE TABLE OTHER_FEE (
     ADDED_BY     D_VARCHAR50,
     ADDED_ON     D_DATETIME,
     EDIT_BY      D_VARCHAR50,
-    EDIT_ON      D_DATETIME
+    EDIT_ON      D_DATETIME,
+    M_ID         D_UID_NULL,
+    SERIAL       D_SERIAL_NS
 );
 
 CREATE TABLE PAY_DOC (
@@ -5289,7 +5440,8 @@ CREATE TABLE PAYSOURCE (
     LEAK_PRC         D_N15_3 NOT NULL,
     TAX_PRC          D_N15_3 NOT NULL,
     CODE             D_VARCHAR10,
-    FOR_FORM         D_VARCHAR50
+    FOR_FORM         D_VARCHAR50,
+    DELETED          D_IBOOLEAN
 );
 
 CREATE GLOBAL TEMPORARY TABLE PERS_TARIF_TMP (
@@ -5498,6 +5650,18 @@ CREATE TABLE REQUEST_EXECUTORS (
     NOTICE   D_NOTICE
 );
 
+CREATE TABLE REQUEST_FLATS (
+    RQ_ID        UID NOT NULL,
+    HOUSE_ID     UID NOT NULL,
+    FLAT_NO      D_FLAT_NS NOT NULL,
+    FLAT_RESULT  D_VARCHAR50,
+    NOTICE       D_NOTICE,
+    ADDED_BY     D_VARCHAR50,
+    ADDED_ON     D_TIMESTAMP,
+    EDIT_BY      D_VARCHAR50,
+    EDIT_ON      D_TIMESTAMP
+);
+
 CREATE TABLE REQUEST_MATERIALS (
     RM_ID      UID NOT NULL,
     RQ_ID      UID,
@@ -5507,6 +5671,7 @@ CREATE TABLE REQUEST_MATERIALS (
     RM_COST    D_N15_2,
     NOT_CALC   D_IBOOLEAN,
     RM_NOTICE  D_NOTICE,
+    SERIAL     D_SERIAL_NS,
     ADDED_BY   D_VARCHAR50,
     ADDED_ON   D_TIMESTAMP,
     EDIT_BY    D_VARCHAR50,
@@ -5520,6 +5685,8 @@ CREATE TABLE REQUEST_MATERIALS_RETURN (
     WH_ID     UID,
     QUANT     D_N15_5,
     NOTICE    D_NOTICE,
+    SERIAL    D_SERIAL_NS,
+    COST      D_N15_2,
     ADDED_BY  D_VARCHAR50,
     ADDED_ON  D_TIMESTAMP,
     EDIT_BY   D_VARCHAR50,
@@ -5579,7 +5746,9 @@ CREATE TABLE REQUEST_TEMPLATES (
     ADDED_BY       D_VARCHAR50,
     ADDED_ON       D_DATETIME,
     EDIT_BY        D_VARCHAR50,
-    EDIT_ON        D_DATETIME
+    EDIT_ON        D_DATETIME,
+    FLATS_NEED     D_IBOOLEAN,
+    FLATS_RESULT   D_VARCHAR500
 );
 
 CREATE TABLE REQUEST_TYPES (
@@ -5598,7 +5767,9 @@ CREATE TABLE REQUEST_TYPES (
     ADDED_BY       D_VARCHAR50,
     ADDED_ON       D_DATETIME,
     EDIT_BY        D_VARCHAR50,
-    EDIT_ON        D_DATETIME
+    EDIT_ON        D_DATETIME,
+    FLATS_NEED     D_IBOOLEAN,
+    FLATS_RESULT   D_VARCHAR500
 );
 
 CREATE TABLE REQUEST_WORKS (
@@ -5976,6 +6147,16 @@ CREATE TABLE TV_LAN_PACKETS (
     NOTICE      D_NOTICE
 );
 
+CREATE TABLE UNIT_PORT (
+    M_ID     UID,
+    SERIAL   D_SERIAL,
+    PORT     D_PORT_NS NOT NULL,
+    P_TYPE   D_UID_NULL,
+    P_STATE  D_UID_NULL,
+    SPEED    D_INTEGER,
+    NOTICE   D_NOTICE
+);
+
 CREATE TABLE VLANS (
     V_ID          UID NOT NULL,
     NAME          D_VARCHAR50,
@@ -6220,7 +6401,6 @@ ALTER TABLE CARDS_PREPAY ADD CONSTRAINT UNQ_SNP_CARDS_PREPAY UNIQUE (CARD_SERIAL
 ALTER TABLE CARDS_SERIALS ADD CONSTRAINT UNQ_SRL_CARDS_SERIALS UNIQUE (CS_SERIAL);
 ALTER TABLE CUSTOMER ADD CONSTRAINT UNQ_CUSTOMER_ACCOUNT UNIQUE (ACCOUNT_NO);
 ALTER TABLE CUSTOMER_DECODERS ADD CONSTRAINT UNQ1_CUSTOMER_DECODERS UNIQUE (DECODER_N);
-ALTER TABLE CUSTOMER_EQUIPMENT ADD CONSTRAINT UNQ1_CUSTOMER_EQUIPMENT UNIQUE (EQUIP_N);
 ALTER TABLE DISTRIB_CONTRACTS ADD CONSTRAINT UNQ1_DISTRIB_CONTRACTS UNIQUE (DISTRIBUTOR_ID, C_NUMBER);
 ALTER TABLE EPG_MAPPING ADD CONSTRAINT UNQ1_EPG_MAPPING UNIQUE (EPG_ID, CH_ID);
 ALTER TABLE HOUSEFLATS ADD CONSTRAINT UNQ_HOUSEFLATS UNIQUE (HOUSE_ID, FLAT_NO);
@@ -6242,6 +6422,7 @@ ALTER TABLE CARDS_PREPAY ADD CONSTRAINT PK_CARDS_PREPAY PRIMARY KEY (CARD_ID);
 ALTER TABLE CARDS_SERIALS ADD CONSTRAINT PK_CARDS_SERIALS PRIMARY KEY (CS_ID);
 ALTER TABLE CHANGELOG ADD CONSTRAINT PK_CHANGELOG PRIMARY KEY (LOG_ID);
 ALTER TABLE CHANNELS_IN_SERVCE ADD CONSTRAINT PK_CHANNELS_IN_SERVCE PRIMARY KEY (SRV_ID, CH_ID, ON_OFF);
+ALTER TABLE CHANNEL_SRC_PARAM ADD CONSTRAINT PK_CHANNEL_SRC_PARAM PRIMARY KEY (CSP_ID);
 ALTER TABLE CUSTLETTER ADD CONSTRAINT PK_CUSTLETTER PRIMARY KEY (CUSTLETTERID);
 ALTER TABLE CUSTOMER ADD CONSTRAINT CSTMR_PK PRIMARY KEY (CUSTOMER_ID);
 ALTER TABLE CUSTOMER_ATTRIBUTES ADD CONSTRAINT PK_CUSTOMER_ATTRIBUTES PRIMARY KEY (CUSTOMER_ID, O_ID);
@@ -6284,9 +6465,9 @@ ALTER TABLE MATERIALS ADD CONSTRAINT PK_MATERIALS PRIMARY KEY (M_ID)
 USING INDEX PK_MATERIALS_ID;
 ALTER TABLE MATERIALS_GROUP ADD CONSTRAINT PK_MATERIALS_GROUP PRIMARY KEY (MG_ID);
 ALTER TABLE MATERIALS_IN_DOC ADD CONSTRAINT PK_MATERIALS_IN_DOC PRIMARY KEY (ID);
-ALTER TABLE MATERIALS_IN_DOC_UNIT ADD CONSTRAINT PK_MATERIALS_IN_DOC_UNIT PRIMARY KEY (DOC_ID, M_ID, SERIAL);
+ALTER TABLE MATERIALS_IN_DOC_UNIT ADD CONSTRAINT PK_MATERIALS_IN_DOC_UNIT PRIMARY KEY (DOC_ID, M_ID, SERIAL, ID);
 ALTER TABLE MATERIAL_DOCS ADD CONSTRAINT PK_MATERIAL_DOCS PRIMARY KEY (DOC_ID);
-ALTER TABLE MATERIAL_UNIT ADD CONSTRAINT PK_MATERIAL_UNIT PRIMARY KEY (SERIAL, M_ID);
+ALTER TABLE MATERIAL_UNIT ADD CONSTRAINT PK_MATERIAL_UNIT PRIMARY KEY (M_ID, SERIAL);
 ALTER TABLE NODES ADD CONSTRAINT PK_NODES PRIMARY KEY (NODE_ID);
 ALTER TABLE NODES_ATTRIBUTES ADD CONSTRAINT PK_NODES_ATTRIBUTES PRIMARY KEY (NODE_ID, O_ID);
 ALTER TABLE NODE_LAYOUT ADD CONSTRAINT PK_NODE_LAYOUT PRIMARY KEY (NODE_ID, M_TYPE);
@@ -6308,6 +6489,7 @@ ALTER TABLE RECOURSE_TEMPLATES ADD CONSTRAINT PK_RECOURSE_TEMPLATES PRIMARY KEY 
 ALTER TABLE REPORTS ADD CONSTRAINT PK_REPORTS PRIMARY KEY (ID_REPORT);
 ALTER TABLE REQUEST ADD CONSTRAINT PK_REQUEST PRIMARY KEY (RQ_ID);
 ALTER TABLE REQUEST_EXECUTORS ADD CONSTRAINT PK_REQUEST_EXECUTORS PRIMARY KEY (RQ_ID, EXEC_ID);
+ALTER TABLE REQUEST_FLATS ADD CONSTRAINT PK_REQUEST_FLATS PRIMARY KEY (RQ_ID, HOUSE_ID, FLAT_NO);
 ALTER TABLE REQUEST_MATERIALS ADD CONSTRAINT PK_REQUEST_MATERIALS PRIMARY KEY (RM_ID);
 ALTER TABLE REQUEST_MATERIALS_RETURN ADD CONSTRAINT PK_REQUEST_MATERIALS_RETURN PRIMARY KEY (ID);
 ALTER TABLE REQUEST_MSG ADD CONSTRAINT PK_REQUEST_MSG PRIMARY KEY (ID);
@@ -6390,6 +6572,8 @@ ALTER TABLE TV_LAN_PACKETS ADD CONSTRAINT FK_TV_LAN_PACKETS_1 FOREIGN KEY (LAN_I
 ALTER TABLE WORKGROUPS ADD CONSTRAINT FK_WORKGROUPS_1 FOREIGN KEY (WA_ID) REFERENCES WORKAREA (WA_ID);
 CREATE INDEX ALL_USED_IP_IDX1 ON ALL_USED_IP (IP);
 CREATE INDEX ALL_USED_IP_IDX2 ON ALL_USED_IP (IP_BIN);
+CREATE INDEX APPLIANCE_IDX_MAT ON APPLIANCE (M_ID);
+CREATE INDEX APPLIANCE_IDX_SN ON APPLIANCE (SERIAL);
 CREATE INDEX APPLIANCE_OWNER ON APPLIANCE (OWN_TYPE, OWN_ID);
 CREATE INDEX PK_APPLIANCE_ID ON APPLIANCE (ID);
 CREATE INDEX ATTRIBUTE_IDX_ATTR ON ATTRIBUTE (AID, OBJECT_ID, TYPE_ID);
@@ -6461,7 +6645,6 @@ CREATE INDEX IDX_HOUSE_SA ON HOUSE (SUBAREA_ID);
 CREATE INDEX HOUSEFLOOR_IDX1 ON HOUSEFLOOR (PORCH_ID, FLAT_FROM, FLAT_TO);
 CREATE INDEX HOUSEPORCH_IDX1 ON HOUSEPORCH (PORCH_N, FLAT_FROM, FLAT_TO);
 CREATE INDEX HOUSES_ATTRIBUTES_OID ON HOUSES_ATTRIBUTES (O_ID);
-CREATE INDEX INVENTORY_IDX_OM ON INVENTORY (OWNER_TYPE, OWNER, M_ID);
 CREATE INDEX MAP_IDX_ADDRESS ON MAP (ADDRESS);
 CREATE INDEX MAP_IDX_MODIFIED ON MAP (MODIFIED);
 CREATE INDEX MAP_IDX_NAME ON MAP (NAME);
@@ -6523,6 +6706,7 @@ CREATE INDEX REQUEST_IDX3 ON REQUEST (ADDED_ON);
 CREATE INDEX REQUEST_IDX4 ON REQUEST (NODE_ID);
 CREATE INDEX REQUEST_PLAN_D ON REQUEST (RQ_PLAN_DATE);
 CREATE INDEX REQUEST_EXECUTORS_IDX1 ON REQUEST_EXECUTORS (EXEC_ID);
+CREATE INDEX REQUEST_FLATS_IDX1 ON REQUEST_FLATS (HOUSE_ID, FLAT_NO);
 CREATE INDEX REQUEST_MATERIALS_IDX1 ON REQUEST_MATERIALS (WH_ID, M_ID);
 CREATE INDEX REQUEST_MATERIALS_IDX2 ON REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID);
 CREATE INDEX REQUEST_MATERIALS_RETURN_IDX1 ON REQUEST_MATERIALS_RETURN (WH_ID, M_ID);
@@ -6584,6 +6768,20 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
    NEW.IP_BIN = INET_ATON(NEW.IP);
+end;
+
+CREATE OR ALTER TRIGGER APPLIANCE_AI FOR APPLIANCE
+ACTIVE AFTER INSERT POSITION 0
+as
+begin
+  execute procedure Appliance_To_Table(new.Id, 1);
+end;
+
+CREATE OR ALTER TRIGGER APPLIANCE_BD FOR APPLIANCE
+ACTIVE BEFORE DELETE POSITION 0
+as
+begin
+  execute procedure Appliance_To_Table(old.Id, 0);/* Trigger text */
 end;
 
 CREATE OR ALTER TRIGGER APPLIANCE_BI FOR APPLIANCE
@@ -6867,47 +7065,23 @@ begin
   where s.Cs_Id = NEW.Cs_Id;
 end;
 
-CREATE OR ALTER TRIGGER CHANNEL_SRC_PARAM_BI FOR CHANNEL_SRC_PARAM
-ACTIVE BEFORE INSERT POSITION 0
-as
-begin
-  new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
-end;
-
-CREATE OR ALTER TRIGGER CHANNEL_SRC_PARAM_BIU0 FOR CHANNEL_SRC_PARAM
+CREATE OR ALTER TRIGGER CHANNEL_SRC_PARAM_BIU FOR CHANNEL_SRC_PARAM
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
+  new.Csp_Id = coalesce(new.Csp_Id, gen_id(GEN_UID, 1));
   new.On_Analog = coalesce(new.On_Analog, 0);
   new.On_Dvb = coalesce(new.On_Dvb, 0);
   new.On_Iptv = coalesce(new.On_Iptv, 0);
 
-  if (new.On_Analog = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Analog = 0
-    where Ch_Id = new.Ch_Id
-          and Cs_Id <> new.Cs_Id;
-
-  if (new.On_Dvb = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Dvb = 0
-    where Ch_Id = new.Ch_Id
-          and Cs_Id <> new.Cs_Id;
-
-  if (new.On_Iptv = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Iptv = 0
-    where Ch_Id = new.Ch_Id
-          and Cs_Id <> new.Cs_Id;
-end;
-
-CREATE OR ALTER TRIGGER CHANNEL_SRC_PARAM_BU FOR CHANNEL_SRC_PARAM
-ACTIVE BEFORE UPDATE POSITION 0
-as
-begin
-  new.EDIT_BY = current_user;
-  new.EDIT_ON = localtimestamp;
+  if (inserting) then begin
+    new.ADDED_BY = current_user;
+    new.ADDED_ON = localtimestamp;
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = localtimestamp;
+  end
 end;
 
 CREATE OR ALTER TRIGGER CONNECT_LOG_BI FOR CONNECT_LOG
@@ -7031,6 +7205,9 @@ as
 begin
   if ((new.debt_sum < 0) and (old.debt_sum > 0)) then
     execute procedure Change_To_Positive(new.Customer_Id, old.Debt_Sum, new.Debt_Sum, new.House_Id, new.Flat_No);
+
+  if (new.debt_sum > 0) then
+    execute procedure CHANGE_TO_NEGATIVE(new.Customer_Id, old.Debt_Sum, new.Debt_Sum, new.House_Id, new.Flat_No);
 
   if (old.Contract_Date is distinct from new.Contract_Date) then
     execute procedure Full_Recalc_Customer(new.Customer_Id);
@@ -7607,8 +7784,8 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   -- номер декодера не может быть пустым
-  if (new.EQUIP_N is null) then
-    exception E_Not_Empty;
+  --if (new.EQUIP_N is null) then
+  --  exception E_Not_Empty;
 
   if (new.Customer_Id is null) then
     exception E_Not_Empty;
@@ -8158,7 +8335,6 @@ end;
 CREATE OR ALTER TRIGGER EQUIPMENT_BIU FOR EQUIPMENT
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
-declare variable mac d_mac;
 begin
   if (new.EID is null) then
     new.EID = gen_id(gen_operations_uid, 1);
@@ -8175,11 +8351,7 @@ begin
     new.Ipv6 = lower(new.Ipv6);
 
   if (not new.MAC is null) then begin
-    select
-        MAC
-      from FORMAT_MAC(new.MAC)
-    into :Mac;
-    new.mac = mac;
+    new.mac = Mac_Format(new.MAC);
   end
 
   new.last_update = localtimestamp;
@@ -8567,26 +8739,6 @@ begin
   end
 end;
 
-CREATE OR ALTER TRIGGER INVENTORY_BIU0 FOR INVENTORY
-ACTIVE BEFORE INSERT OR UPDATE POSITION 0
-as
-begin
-  if (new.Quant is null) then
-    new.Quant = 1;
-  if (new.ownership is null) then
-    new.ownership = 1;
-  if (new.Serial is null) then
-    new.Serial = '';
-  if (inserting) then begin
-    new.added_by = current_user;
-    new.added_on = localtimestamp;
-  end
-  else begin
-    new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
-  end
-end;
-
 CREATE OR ALTER TRIGGER IPTV_GROUP_ATTRIBUTES_BI FOR IPTV_GROUP_ATTRIBUTES
 ACTIVE BEFORE INSERT POSITION 0
 as
@@ -8748,6 +8900,19 @@ begin
   if (NEW.MG_ID is NULL) then NEW.MG_ID = GEN_ID(GEN_UID, 1);
 end;
 
+CREATE OR ALTER TRIGGER MATERIALS_IN_DOC_AI FOR MATERIALS_IN_DOC
+ACTIVE AFTER INSERT POSITION 0
+as
+begin
+  -- обновим связную таблицу
+  -- пропишем номер строки вместо временного значения
+  update Materials_In_Doc_Unit
+  set Id = new.Id
+  where (Doc_Id = new.Doc_Id)
+        and (M_Id = new.M_Id)
+        and (Id = -1);
+end;
+
 CREATE OR ALTER TRIGGER MATERIALS_IN_DOC_BI FOR MATERIALS_IN_DOC
 ACTIVE BEFORE INSERT POSITION 0
 as
@@ -8821,6 +8986,14 @@ as
 begin
   new.Edit_On = localtimestamp;
   new.Edit_By = current_user;
+end;
+
+CREATE OR ALTER TRIGGER MATERIAL_UNIT_BU FOR MATERIAL_UNIT
+ACTIVE BEFORE UPDATE POSITION 0
+as
+begin
+  if (new.Mac is distinct from old.Mac) then
+    new.Mac = Mac_Format(new.Mac);
 end;
 
 CREATE OR ALTER TRIGGER MESSAGES_BI FOR MESSAGES
@@ -9208,6 +9381,14 @@ begin
       end
     end
   end
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = localtimestamp;
+  end
+  else begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = localtimestamp;
+  end
 end;
 
 CREATE OR ALTER TRIGGER PAYMENT_AD0 FOR PAYMENT
@@ -9365,10 +9546,12 @@ begin
 end;
 
 CREATE OR ALTER TRIGGER PAYSOURCE_BI0 FOR PAYSOURCE
-ACTIVE BEFORE INSERT POSITION 0
-AS
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0
+as
 begin
- if (new.PAYSOURCE_ID is null) then new.PAYSOURCE_ID = GEN_ID(gen_operations_uid,1);
+  if (new.PAYSOURCE_ID is null) then
+    new.PAYSOURCE_ID = gen_id(gen_operations_uid, 1);
+  new.DELETED = coalesce(new.DELETED, 0);
 end;
 
 CREATE OR ALTER TRIGGER PAY_DOC_AD FOR PAY_DOC
@@ -9598,10 +9781,48 @@ as
 begin
   -- вернем материалы и начисления
   execute procedure REQUEST_CLOSE_ROLLBACK(old.RQ_ID, old.RQ_CUSTOMER);
-  delete from Other_Fee o where o.In_Request = old.Rq_Id;
 
   insert into OPERATION_LOG (OPERATION, OPER_WHAT, OPER_NOTE)
   values (0, 'ЗАЯВКА', old.RQ_ID);
+
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('REQUEST', 0, old.Rq_Id, 'RQ_ID', old.Rq_Id, null);
+
+  if (not old.Rq_Customer is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'CUSTOMER_ID', old.Rq_Customer, null);
+
+  if (not old.HOUSE_ID is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'HOUSE_ID', old.HOUSE_ID, null);
+
+  if (not old.Rq_Plan_Date is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_PLAN_DATE', old.Rq_Plan_Date, null);
+
+  if (not old.RQ_TYPE is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_TYPE', old.RQ_TYPE, null);
+
+  if (not old.RQTL_ID is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQTL_ID', old.RQTL_ID, null);
+
+  if (not old.RQ_NOTICE is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_NOTICE', old.RQ_NOTICE, null);
+
+  if (not old.ADD_INFO is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'ADD_INFO', old.ADD_INFO, null);
+
+  if (not old.RQ_CONTENT is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'RQ_CONTENT', old.RQ_CONTENT, null);
+
+  if (not old.Node_Id is null) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('REQUEST', 0, old.Rq_Id, 'NODE_ID', old.Node_Id, null);
 end;
 
 CREATE OR ALTER TRIGGER REQUEST_AI FOR REQUEST
@@ -9642,14 +9863,6 @@ CREATE OR ALTER TRIGGER REQUEST_AU FOR REQUEST
 ACTIVE AFTER UPDATE POSITION 0
 as
 declare variable NEED_FEE   D_INTEGER;
-declare variable DT         D_DATE;
-declare variable Fee_Name   D_Varchar1000;
-declare variable DEM        D_Varchar1000;
-declare variable Units      D_N15_2;
-declare variable Fee        D_N15_2;
-declare variable Fee_Type   Uid;
-declare variable In_Request D_Integer;
-
 begin
   NEED_FEE = 0;
   -- если заявка закрываеться
@@ -9670,46 +9883,9 @@ begin
   end
 
   -- если нужно то добавим новому абоненту начисления
-  if ((not new.RQ_CUSTOMER is null) and (NEED_FEE = 1)) then begin
+  if (NEED_FEE = 1) then begin
     -- начислим услуги и добавим атрибуты
     execute procedure REQUEST_CLOSE_PROCESS(new.rq_id);
-
-    DT = coalesce(cast(new.RQ_EXEC_TIME as date), current_date);
-    In_Request = new.RQ_ID;
-    -- добавим материалы
-    Fee_Type = 1;
-    for select
-            M.NAME
-          , M.Demension
-          , RM.RM_QUANT
-          , RM.RM_QUANT * RM.RM_COST
-          from REQUEST_MATERIALS RM
-               inner join MATERIALS M on (M.M_ID = RM.M_ID)
-          where RM.RQ_ID = new.RQ_ID
-                and (coalesce(rm.Not_Calc, 0) = 0)
-        into :FEE_NAME, :DEM, :UNITS, :FEE
-    do begin
-      if (not UNITS is null) then
-        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
-
-      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request)
-      values (:DT, new.RQ_CUSTOMER, :Fee_Name, :Units, :Fee, :Fee_Type, :In_Request);
-    end
-    -- добавим работы
-    Fee_Type = 2;
-    for select
-            M.NAME
-          , RM.W_QUANT
-          , RM.W_QUANT * RM.W_COST
-          from REQUEST_WORKS RM
-               inner join WORKS M on (M.W_ID = RM.W_ID)
-          where RM.RQ_ID = new.RQ_ID
-                and (m.as_service is null)
-        into :FEE_NAME, :UNITS, :FEE
-    do begin
-      insert into OTHER_FEE (FEE_DATE, CUSTOMER_ID, FEE_NAME, UNITS, FEE, FEE_TYPE, IN_REQUEST)
-      values (:DT, new.RQ_CUSTOMER, :Fee_Name, :Units, :Fee, :Fee_Type, :In_Request);
-    end
   end
 end;
 
@@ -9751,6 +9927,22 @@ begin
   if ((new.Rq_Completed is null) and (not new.Rq_Exec_Time is null)) then
     new.Rq_Completed = new.Rq_Exec_Time;
 
+  new.edit_by = current_user;
+  new.edit_on = localtimestamp;
+end;
+
+CREATE OR ALTER TRIGGER REQUEST_FLATS_BI FOR REQUEST_FLATS
+ACTIVE BEFORE INSERT POSITION 0
+as
+begin
+  new.added_by = current_user;
+  new.added_on = localtimestamp;
+end;
+
+CREATE OR ALTER TRIGGER REQUEST_FLATS_BU FOR REQUEST_FLATS
+ACTIVE BEFORE UPDATE POSITION 0
+as
+begin
   new.edit_by = current_user;
   new.edit_on = localtimestamp;
 end;
@@ -9801,7 +9993,7 @@ begin
 
     if (old.Rm_Quant <> 0) then begin
       update Materials_Remain mr
-      set mr.Mr_Quant = coalesce(mr.Mr_Quant,0) + old.Rm_Quant
+      set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) + old.Rm_Quant
       where mr.M_Id = old.m_id
             and mr.Wh_Id = old.Wh_Id;
 
@@ -9812,13 +10004,39 @@ begin
 
     if (new.Rm_Quant <> 0) then begin
       update Materials_Remain mr
-      set mr.Mr_Quant = coalesce(mr.Mr_Quant,0) - new.Rm_Quant
+      set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) - new.Rm_Quant
       where mr.M_Id = new.m_id
             and mr.Wh_Id = new.Wh_Id;
 
       if (row_count = 0) then
         insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
         values (new.m_id, new.Wh_Id, new.Rm_Quant * (-1));
+    end
+  end
+
+  -- пометим статус материала временной меткой
+  if ((old.M_Id is distinct from new.M_Id)
+      or
+      (old.Serial is distinct from new.Serial)
+      or
+      (old.RQ_ID is distinct from new.RQ_ID)) then begin
+    if ((not old.Serial is null) and (old.Serial <> '')) then begin
+      update Material_Unit u
+      set u.State = 0
+      where u.M_Id = old.M_Id
+            and u.Serial = old.Serial
+            and u.State = -1 * old.Rq_Id
+            and u.Owner_Type = 0
+            and u.Owner = old.Wh_Id;
+    end
+    if ((not new.Serial is null) and (new.Serial <> '')) then begin
+      update Material_Unit u
+      set u.State = -1 * new.Rq_Id
+      where u.M_Id = new.M_Id
+            and u.Serial = old.Serial
+            and u.State = 0
+            and u.Owner_Type = 0
+            and u.Owner = new.Wh_Id;
     end
   end
 end;
@@ -9830,7 +10048,10 @@ begin
   if (new.rm_id is null) then
     new.rm_id = gen_id(gen_operations_uid, 1);
 
-  new.Rm_Quant = coalesce(new.Rm_Quant, 0);
+  if ((not new.Serial is null) and (new.Serial <> '')) then
+    new.Rm_Quant = 1;
+  else
+    new.Rm_Quant = coalesce(new.Rm_Quant, 0);
   new.Rm_Cost = coalesce(new.Rm_Cost, 0);
   new.Not_Calc = coalesce(new.Not_Calc, 0);
 
@@ -10125,6 +10346,8 @@ begin
     new.Only_One = 0;
   if (new.Shift_Months is null) then
     new.Shift_Months = 0;
+  if (new.Priority is null) then
+    new.Priority = 99;
   if (new.Inet_Srv = 0) then begin
     new.Ip_Begin = null;
     new.Ip_End = null;
@@ -10546,6 +10769,7 @@ ACTIVE AFTER DELETE POSITION 0
 as
 begin
   delete from sys$user_groups r where r.user_id = old.id;
+  delete from Sys$User_Areas r where r.user_id = old.id;
 end;
 
 CREATE OR ALTER TRIGGER SYS$USER_AREAS_BI FOR SYS$USER_AREAS
@@ -11090,7 +11314,6 @@ end;
 CREATE OR ALTER TRIGGER TV_LAN_BIU0 FOR TV_LAN
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
-declare variable mac d_mac;
 begin
   if ((new.Ip is null) and (new.Ipv6 is null) and (new.Mac is null) and (new.Port is null)) then
     exception e_not_empty;
@@ -11123,11 +11346,7 @@ begin
     new.Ip_Add_Bin = null;
 
   if (not new.MAC is null) then begin
-    select
-        MAC
-      from FORMAT_MAC(new.MAC)
-    into :Mac;
-    new.mac = mac;
+    new.mac = Mac_Format(new.MAC);
   end
 
   if (not new.Ipv6 is null) then
@@ -11252,14 +11471,36 @@ begin
  if (new.WA_Code='') then new.WA_Code = null;
 end;
 
+CREATE OR ALTER TRIGGER WORKER_AIU0 FOR WORKER
+ACTIVE AFTER INSERT OR UPDATE POSITION 0
+as
+begin
+  if ((new.WORKING is distinct from old.Working) and (coalesce(new.Ibname, '') <> '') and (new.WORKING = 0)) then begin
+    update Sys$User
+    set Lockedout = 1
+    where Ibname = new.Ibname;
+  end
+  if ((old.Ibname is distinct from new.Ibname) and (coalesce(old.Ibname, '') <> '')) then begin
+    update Sys$User
+    set Lockedout = 1
+    where Ibname = old.Ibname;
+  end
+end;
+
 CREATE OR ALTER TRIGGER WORKER_BI0 FOR WORKER
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
-AS
+as
 begin
- if (new.WORKER_ID is null) then new.WORKER_ID = GEN_ID(gen_operations_uid,1);
- if (new.surname is null) then new.surname ='';
- if (new.firstname is null) then new.firstname ='';
- if (new.midlename is null) then new.midlename ='';
+  if (new.WORKER_ID is null) then
+    new.WORKER_ID = gen_id(gen_operations_uid, 1);
+  if (new.surname is null) then
+    new.surname = '';
+  if (new.firstname is null) then
+    new.firstname = '';
+  if (new.midlename is null) then
+    new.midlename = '';
+  if (new.Working is null) then
+    new.WORKING = 0;
 end;
 
 CREATE OR ALTER TRIGGER WORKGROUPS_BI0 FOR WORKGROUPS
@@ -11750,6 +11991,7 @@ begin
         s.paysource_id
       from paysource s
       where upper(s.code) = upper(:paysrc_code)
+        and coalesce(DELETED,0) = 0
     into :PAYSOURCE_ID;
 
     if (PAYSOURCE_ID is null) then begin
@@ -11810,6 +12052,7 @@ begin
         s.paysource_id
       from paysource s
       where upper(s.code) = upper(:paysrc_code)
+        and coalesce(DELETED,0) = 0
     into :PAYSOURCE_ID;
 
     if (PAYSOURCE_ID is null) then begin
@@ -12728,6 +12971,145 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE APPLIANCE_TO_TABLE (
+    APPL_ID UID,
+    TO_FROM D_IBOOLEAN = 1)
+AS
+declare variable Own_Id   type of Uid;
+declare variable Own_Type type of Uid;
+declare variable Mac      type of D_Mac;
+declare variable Serial   type of D_Serial_Ns;
+declare variable IS_DIGIT D_IBOOLEAN;
+declare variable IS_NET   D_IBOOLEAN;
+declare variable uname    D_VARCHAR100;
+declare variable M_Id     type of Uid;
+declare variable utype    D_VARCHAR100;
+declare variable i        D_Integer;
+begin
+
+  -- добавили = 1, иначе удаляем
+  TO_FROM = coalesce(TO_FROM, 1);
+
+  select first 1
+      a.Own_Id
+    , a.Own_Type
+    , a.Mac
+    , a.Serial
+    , m.IS_DIGIT
+    , m.IS_NET
+    , m.Name
+    , m.M_Id
+    , o.O_Name
+    from Appliance a
+         left outer join materials m on (a.M_Id = m.M_Id)
+         left outer join objects o on (o.O_Id = m.M_Type and
+               o.O_Type = 48)
+    where Id = :APPL_ID
+  into :Own_Id, :Own_Type, :Mac, :Serial, :IS_DIGIT, :IS_NET, :uname, :M_ID, :utype;
+
+  IS_DIGIT = coalesce(IS_DIGIT, 0);
+  IS_NET = coalesce(IS_NET, 0);
+  utype = upper(coalesce(utype, ''));
+
+  -- 1-Абонент 2-Узел
+  if (Own_Type = 1) then begin
+    ---------------------------------------------------- АБОНЕНТ
+    -- таблицы абонента
+    if (TO_FROM = 1) then begin
+      -- добавим в таблицы
+
+      -- СПД
+      if ((IS_NET = 1) and (not MAC is null)) then begin
+        if (not exists(select
+                           lan_ID
+                         from Tv_Lan t
+                         where t.customer_id = :Own_Id
+                               and t.Mac = :MAC)) then begin
+          insert into Tv_Lan (Customer_Id, Mac)
+          values (:Own_Id, :Mac);
+        end
+      end
+
+      ---------------------------------------------------- АБОНЕНТ ЦИФРА
+      if ((IS_DIGIT = 1) and (not Serial is null)) then begin
+        -- OBJECT TYPE = 19 0 - Карточка 1-приставка 2-модуль
+        select
+            o.O_Id
+          from objects o
+          where o.O_Type = 19
+                and upper(o.O_Name) = :utype
+        into :i;
+
+        if (not exists(select
+                           Eq_N
+                         from Equipment_Dvb d
+                         where Eq_N = :Serial
+                               and Eq_Type = :i)) then begin
+
+          insert into Equipment_Dvb (Eq_Type, Eq_N)
+          values (:i, :Serial);
+        end
+
+        if (not exists(select
+                           Dec_Id
+                         from Customer_Decoders d
+                         where Customer_Id = :Own_Id
+                               and Decoder_N = :Serial)) then begin
+          insert into Customer_Decoders (Customer_Id, Decoder_N)
+          values (:Own_Id, :Serial);
+        end
+      end
+
+    end
+    else begin
+      -- удалим из таблиц
+      ---------------------------------------------------- АБОНЕНТ СПД
+      if ((IS_NET = 1) and (not MAC is null)) then begin
+        delete from Tv_Lan
+            where Customer_Id = :Own_Id
+                  and Mac = :Mac;
+      end
+
+      -- ЦИФРА
+      if ((IS_DIGIT = 1) and (not Serial is null)) then begin
+        delete from Customer_Decoders d
+            where Customer_Id = :Own_Id
+                  and Decoder_N = :Serial;
+      end
+    end
+  end
+  else begin
+    ---------------------------------------------------- УЗЕЛ
+    -- таблицы узла
+    if (TO_FROM = 1) then begin
+      -- добавим в таблицы
+      if ((IS_NET = 1) and (not MAC is null)) then begin
+        if (not exists(select
+                           t.Eid
+                         from Equipment t
+                         where t.Mac = :MAC)) then begin
+          insert into Equipment (House_Id, Name, Mac, Eq_Type, Serial_N, Node_Id, M_Id)
+          select
+              n.House_Id
+            , :uname
+            , :MAC
+            , 1
+            , :Serial
+            , n.Node_Id
+            , :m_id
+            from Nodes n
+            where n.Node_Id = :Own_Id;
+        end
+      end
+
+    end
+    -- else begin
+    -- удалим из таблиц
+    -- end
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE ATRIBUTES_LINE (
     CUST_ID TYPE OF UID)
 RETURNS (
@@ -13027,14 +13409,7 @@ begin
       execute procedure DIGITAL_EVENT(:D_ACT, :P_CUSTOMER_ID, null, :P_SERV_ID, :ACT_TIMESTAMP, null);
     end
 
-    select
-        cast(s.Var_Value as date)
-      from settings s
-      where s.Var_Name = 'CURRENT_DATE'
-    into :fromd;
-
     execute procedure CLOSE_MONTH_PROC(:P_DATE, :P_CUSTOMER_ID);
-
   end
   else
     result = -2; -- E_WRONG_ONDATE;
@@ -13245,7 +13620,7 @@ begin
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
-        order by coalesce(s.Priority, 99)
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :AUTOOFF, :V_IS_JUR, :V_VATG_ID, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY
   do begin
 
@@ -13442,7 +13817,7 @@ begin
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
-        order by coalesce(s.Priority, 99)
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :AUTOOFF, :V_IS_JUR, :V_VATG_ID, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY
   do begin
 
@@ -14004,14 +14379,14 @@ begin
         , coalesce(POSITIVE_ONLY, 0)
         , coalesce(C.JURIDICAL, 0)
         , C.VATG_ID
-        , c.Debt_Sum
         from SERVICES S
              inner join Subscr_Serv ss on (ss.Serv_Id = s.Service_Id)
              inner join customer c on (c.Customer_Id = ss.Customer_Id)
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and ss.Customer_Id = :P_CUSTOMER_ID
-      into :V_SERVICE_ID, :V_MONTH_SHIFT, :AUTOOFF, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY, :V_IS_JUR, :V_VATG_ID, :Debt_Sum
+        order by coalesce(s.Priority, 99), s.Autooff
+      into :V_SERVICE_ID, :V_MONTH_SHIFT, :AUTOOFF, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY, :V_IS_JUR, :V_VATG_ID
   do begin
     V_UNITS = null;
 
@@ -14207,6 +14582,7 @@ begin
         where S.SRV_TYPE_ID = 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :V_MONTH_SHIFT, :AUTOOFF, :SrvType, :POSITIVE_ONLY, :Debt_Sum, :V_VATG_ID, :V_IS_JUR, :hand_control
   do begin
 
@@ -14514,6 +14890,7 @@ begin
               and S.EXTRA > 0
               and S.CALC_TYPE = :P_CALC_TYPE
               and c.Customer_Id = :P_CUSTOMER_ID
+        order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :V_MONTH_SHIFT, :V_EXTRA, :AUTOOFF, :SrvType, :POSITIVE_ONLY, :Debt_Sum, :V_IS_JUR, :hand_control
   do begin
 
@@ -15408,6 +15785,74 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE CHANGE_TO_NEGATIVE (
+    CUSTOMER_ID UID,
+    OLD_DEBT D_N15_2 = null,
+    NEW_DEBT D_N15_2 = null,
+    HOUSE_ID D_UID_NULL = null,
+    FLAT D_FLAT = null /* COLLATE UTF8 - default */)
+AS
+declare variable V      D_Varchar50;
+declare variable RT     D_Uid_Null;
+declare variable SUM_RQ D_N15_2;
+begin
+  OLD_DEBT = -1 * OLD_DEBT;
+
+  -- проверим нужно ли создавать заявку
+  select
+      s.Var_Value
+    from Settings s
+    where s.Var_Name = 'RQ_TO_NEGATIVE'
+  into :V;
+  V = coalesce(V, '');
+  if (V <> '') then begin
+    RT = cast(V as integer);
+    -- сумма при какой создавать заявку
+    V = null;
+    select
+        s.Var_Value
+      from Settings s
+      where s.Var_Name = 'DOLG'
+    into :V;
+    V = coalesce(V, '');
+    begin
+      SUM_RQ = cast(V as numeric(15,2));
+      when gdscode convert_error do
+      begin
+        SUM_RQ = null;
+      end
+    end
+    if ((V <> '') and (NEW_DEBT >= SUM_RQ)) then begin
+      -- добавим заявку только если абонент отключен и у него нет услуг с автовключением
+      if (not exists(select
+                         Rq_Customer
+                       from Request
+                       where Rq_Type = :RT
+                             and Rq_Customer = :CUSTOMER_ID
+                             and Rq_Plan_Date = current_date)) then begin
+        if ((HOUSE_ID is null)
+            or
+            (FLAT is null)) then begin
+          select
+              c.House_Id
+            , c.Flat_No
+            from customer c
+            where c.Customer_Id = :CUSTOMER_ID
+          into :HOUSE_ID, :FLAT;
+        end
+        V = coalesce(:OLD_DEBT, '') || ' -> ' || coalesce(:NEW_DEBT, '');
+        insert into Request (Rq_Type, Rq_Customer, Rq_Content, Rq_Plan_Date, House_Id, Flat_No)
+        values (:RT, :CUSTOMER_ID, :V, current_date, :House_Id, :Flat);
+      end
+    end
+    when gdscode convert_error do
+    begin
+      V = 'N';
+    end
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE CHANGE_TO_POSITIVE (
     CUSTOMER_ID UID,
     OLD_DEBT D_N15_2 = null,
@@ -15480,6 +15925,87 @@ begin
       V = 'N';
     end
   end
+end;
+
+
+CREATE OR ALTER PROCEDURE CHANNEL_SRC_PARAM_IU (
+    CSP_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CSP_ID,
+    CS_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_ID,
+    CH_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CH_ID,
+    NOTICE TYPE OF COLUMN CHANNEL_SRC_PARAM.NOTICE,
+    FREQ TYPE OF COLUMN CHANNEL_SRC_PARAM.FREQ,
+    SYMRATE TYPE OF COLUMN CHANNEL_SRC_PARAM.SYMRATE,
+    IP TYPE OF COLUMN CHANNEL_SRC_PARAM.IP,
+    V_CODEC TYPE OF COLUMN CHANNEL_SRC_PARAM.V_CODEC,
+    S_CRYPT TYPE OF COLUMN CHANNEL_SRC_PARAM.S_CRYPT,
+    CS_SYSTEM TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM,
+    CARD_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CARD_ID,
+    ON_ANALOG TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_ANALOG,
+    ON_DVB TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_DVB,
+    ON_IPTV TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_IPTV,
+    NID TYPE OF COLUMN CHANNEL_SRC_PARAM.NID,
+    ONID TYPE OF COLUMN CHANNEL_SRC_PARAM.ONID,
+    TSID TYPE OF COLUMN CHANNEL_SRC_PARAM.TSID,
+    SID TYPE OF COLUMN CHANNEL_SRC_PARAM.SID,
+    VPID TYPE OF COLUMN CHANNEL_SRC_PARAM.VPID,
+    APID TYPE OF COLUMN CHANNEL_SRC_PARAM.APID,
+    A2PID TYPE OF COLUMN CHANNEL_SRC_PARAM.A2PID)
+AS
+begin
+  Csp_Id = coalesce(Csp_Id, gen_id(GEN_UID, 1));
+  if (Csp_Id = -1) then
+    Csp_Id = gen_id(GEN_UID, 1);
+  On_Analog = coalesce(On_Analog, 0);
+  On_Dvb = coalesce(On_Dvb, 0);
+  On_Iptv = coalesce(On_Iptv, 0);
+
+  if (exists(select
+                 Csp_Id
+               from Channel_Src_Param
+               where (Csp_Id = :Csp_Id))) then
+    update Channel_Src_Param
+    set Cs_Id = :Cs_Id,
+        Ch_Id = :Ch_Id,
+        Notice = :Notice,
+        Freq = :Freq,
+        Symrate = :Symrate,
+        Ip = :Ip,
+        V_Codec = :V_Codec,
+        S_Crypt = :S_Crypt,
+        Cs_System = :Cs_System,
+        Card_Id = :Card_Id,
+        On_Analog = :On_Analog,
+        On_Dvb = :On_Dvb,
+        On_Iptv = :On_Iptv,
+        Nid = :Nid,
+        Onid = :Onid,
+        Tsid = :Tsid,
+        Sid = :Sid,
+        Vpid = :Vpid,
+        Apid = :Apid,
+        A2pid = :A2pid
+    where (Csp_Id = :Csp_Id);
+  else
+    insert into Channel_Src_Param (Csp_Id, Cs_Id, Ch_Id, Notice, Freq, Symrate, Ip, V_Codec, S_Crypt, Cs_System, Card_Id, On_Analog, On_Dvb, On_Iptv, Nid, Onid, Tsid, Sid, Vpid, Apid, A2pid)
+    values (:Csp_Id, :Cs_Id, :Ch_Id, :Notice, :Freq, :Symrate, :Ip, :V_Codec, :S_Crypt, :Cs_System, :Card_Id, :On_Analog, :On_Dvb, :On_Iptv, :Nid, :Onid, :Tsid, :Sid, :Vpid, :Apid, :A2pid);
+
+  if (On_Analog = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Analog = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+
+  if (On_Dvb = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Dvb = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+
+  if (On_Iptv = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Iptv = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
 end;
 
 
@@ -15923,6 +16449,7 @@ declare variable type_Id    type of Uid;
 declare variable doc_date   type of D_Date;
 declare variable Quant      type of D_N15_5;
 declare variable vCLOSED    D_INTEGER;
+declare variable SERIAL     D_SERIAL_NS;
 begin
   result = 1;
 
@@ -15945,6 +16472,45 @@ begin
     result = 0;
     suspend;
     exit;
+  end
+
+  -- обновим кол-во для материалов которые учитываем поштучно
+  delete from Materials_In_Doc_Unit u
+      where u.ID = -1
+            and u.Doc_Id = :DOC_ID;
+
+  update Materials_In_Doc md
+  set md.M_Quant = (select
+                        count(u.M_Id)
+                      from Materials_In_Doc_Unit u
+                      where u.Doc_Id = md.Doc_Id
+                            and u.M_Id = md.M_Id
+                            and u.ID = md.Id)
+  where md.Doc_Id = :Doc_Id
+        and exists(select
+                       Is_Unit
+                     from materials m
+                     where m.M_Id = md.M_Id
+                           and m.Is_Unit = 1);
+
+  -- перед закрытием снимим временный статус на юните материала
+  if (type_Id = 2) -- перемещение
+  then begin
+    for select
+            u.M_Id
+          , u.Serial
+          from Materials_In_Doc_Unit u
+          where u.Doc_Id = :DOC_ID
+        into :M_Id, :serial
+    do begin
+      update Material_Unit
+      set State = 0
+      where M_Id = :M_id
+            and Serial = :SERIAL
+            and Owner = :from_Wh_Id
+            and Owner_Type = 0
+            and State < 0;
+    end
   end
 
   -- перед закрытием проверим, хватает ли материала на складе
@@ -16061,12 +16627,67 @@ begin
     end
   end
 
+  -- оприходуем на склад UNIT
+
+  if (type_Id = 1) -- Приход материалов
+  then begin
+    insert into Material_Unit (Serial, M_Id, Owner, Owner_Type, State, Notice, Mac, Doc_Income, Cost, S_Version)
+    select
+        mu.Serial
+      , md.M_Id
+      , d.Wh_Id
+      , 0
+      , 0
+      , mu.Notice
+      , mu.Mac
+      , d.Doc_Id
+      , md.M_Cost
+      , mu.S_Version
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+           inner join Materials_In_Doc_Unit mu on (md.Doc_Id = mu.Doc_Id and
+                 md.M_Id = mu.M_Id and
+                 md.Id = mu.Id)
+      where d.Doc_Id = :DOC_ID;
+  end
+  else begin
+    if (type_Id = 2) -- перемещение
+    then begin
+      update Material_Unit mu
+      set Owner = :Wh_Id
+      where Owner = :from_Wh_Id
+            and Owner_Type = 0
+            and exists(select
+                           mdu.M_Id
+                         from Materials_In_Doc_Unit mdu
+                         where mdu.Doc_Id = :Doc_Id
+                               and mdu.M_Id = mu.M_Id
+                               and mdu.Serial = mu.Serial);
+    end
+    else begin
+      if (type_Id = 3) -- списание материалов
+      then begin
+        update Material_Unit mu
+        set state = 4
+        where Owner = :Wh_Id
+              and Owner_Type = 0
+              and exists(select
+                             mdu.M_Id
+                           from Materials_In_Doc_Unit mdu
+                           where mdu.Doc_Id = :Doc_Id
+                                 and mdu.M_Id = mu.M_Id
+                                 and mdu.Serial = mu.Serial);
+      end
+      -- (type_Id = 4) -- инвинтаризация (коррекция)
+      -- (type_Id = 5) -- инвинтаризация
+    end
+  end
+
   update material_docs
   set Doc_Closed = 1
   where doc_id = :DOC_ID;
 
   suspend;
-
 end;
 
 
@@ -16100,6 +16721,12 @@ begin
           CALC_TYPE
         from services s
         where S.SRV_TYPE_ID = 0
+              and ((:P_CUSTOMER_ID is null)
+                or exists(select
+                              ss.Serv_Id
+                            from Subscr_Serv ss
+                            where ss.Customer_Id = :P_CUSTOMER_ID
+                                  and ss.Serv_Id = s.Service_Id))
       into :V_CALC_TYPE
   do begin
     if (V_CALC_TYPE = 0) then
@@ -17019,7 +17646,7 @@ begin
   DELETE FROM TV_LAN ss where ss.CUSTOMER_ID = :CID;
   DELETE FROM DISCOUNT_FACTOR ss where ss.CUSTOMER_ID = :CID;  
   DELETE FROM CUSTOMER ss where ss.CUSTOMER_ID = :CID;
-  DELETE FROM APPLIANCE where Own_Id  = :CID and Own_Type = 0;
+  DELETE FROM APPLIANCE where Own_Id  = :CID and Own_Type = 1;
 end;
 
 
@@ -17088,7 +17715,7 @@ begin
     delete from House_Circuit n where n.House_Id = :ID;
     delete from Nodes_Attributes n where n.Node_Id = :ID;
     delete from nodes n where n.Node_Id = :ID;
-    delete from APPLIANCE where Own_Id = :Id and Own_Type = 1;
+    delete from APPLIANCE where Own_Id = :Id and Own_Type = 2;
   end
 end;
 
@@ -17887,32 +18514,8 @@ CREATE OR ALTER PROCEDURE FORMAT_MAC (
 RETURNS (
     MAC D_MAC)
 AS
-declare variable i      d_integer;
-declare variable j      d_integer;
-declare variable d      d_char1;
-declare variable DIGITS D_MAC;
 begin
-  aMAC = upper(aMAC);
-  MAC = null;
-  j = char_length(aMAC);
-  i = 1;
-  DIGITS = '';
-  while (i <= j) do begin
-    d = substring(aMAC from i for 1);
-    if ((d between '0' and '9')
-        or
-        (d between 'A' and 'F')) then
-      DIGITS = DIGITS || d;
-    i = i + 1;
-  end
-  if (char_length(DIGITS) = 12) then begin
-    MAC = substring(DIGITS from 1 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 3 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 5 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 7 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 9 for 2) || ':';
-    MAC = MAC || substring(DIGITS from 11 for 2);
-  end
+  MAC = Mac_Format(:Amac);
   suspend;
 end;
 
@@ -19193,7 +19796,7 @@ end;
 
 
 CREATE OR ALTER PROCEDURE GET_FREE_IP (
-    IP_MASK D_IP = null)
+    IP_MASK D_IP = null /* COLLATE UTF8 - default */)
 RETURNS (
     IP TYPE OF D_IP)
 AS
@@ -19585,7 +20188,8 @@ RETURNS (
     QUANT_IN_REQUEST D_N15_5,
     RQ_ID D_INTEGER,
     RM_NOTICE D_NOTICE,
-    DESCRIPTION D_NOTICE)
+    DESCRIPTION D_NOTICE,
+    SERIAL D_SERIAL_NS)
 AS
 begin
   RQ_ID = coalesce(:FOR_RQ, 0);
@@ -19593,7 +20197,7 @@ begin
   for select
           rm.Rm_Id
         , m.M_ID
-        , m.Name
+        , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
         , m.Dimension
         , w.O_Name
         , w.O_ID as WH_ID
@@ -19602,24 +20206,32 @@ begin
         , coalesce(mr.Mr_Quant, 0)
         , rm.Rm_Cost
         , m.M_Number
-        , rm.Rm_Quant + coalesce(mr.Mr_Quant, 0)
+        , rm.Rm_Quant + coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
         , rm.Rm_Quant
         , rm.Rm_Notice
         , m.Description
+        , rm.Serial
         from MATERIALS M
              inner join Request_Materials rm on (rm.M_Id = m.M_Id)
              left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and
                    mr.wh_id = rm.Wh_Id)
              left outer join OBJECTS W on (W.O_ID = rm.Wh_Id and
                    W.O_TYPE = 10)
+             left outer join Material_Unit u on (u.M_Id = rm.M_Id and
+                   u.Serial = rm.Serial -- and u.Owner = rm.Wh_Id and ((u.State = 0) or (u.State = -1*:RQ_ID))
+                   )
         where rm.Rq_Id = :RQ_ID
-              and ((:MG_ID = -2) or ((:MG_ID = -1)
+              and ((:MG_ID = -2)
+                or ((:MG_ID = -1)
                 or (M.MG_ID = :MG_ID
               and not :MG_ID is null)
                 or (M.MG_ID is null
               and :MG_ID is null)))
-      into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT,
-           :RM_COST, :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description
+              -- спрячем материалы без серияника, если они должны быть
+              and ((coalesce(m.Is_Unit, 0) = 0) or (not u.Serial is null) or (not rm.Rm_Id is null))
+
+      into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT, :RM_COST, --
+           :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description, :SERIAL
   do begin
     suspend;
   end
@@ -19633,18 +20245,19 @@ begin
     for select
             null
           , m.M_ID
-          , m.Name
+          , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
           , m.Dimension
           , w.O_Name
-          , w.O_ID
+          , mr.Wh_Id
           , null
           , 0 NOT_CALC
           , mr.Mr_Quant
           , m.Cost
           , m.M_Number
-          , mr.Mr_Quant
+          , coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
           , 0
           , m.Description
+          , u.Serial
           from MATERIALS M
                left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and
                      (exists(select
@@ -19656,6 +20269,8 @@ begin
                                      and wh.wh_id = mr.Wh_Id) or current_user = 'SYSDBA'))
                left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and
                      W.O_TYPE = 10)
+               left outer join Material_Unit u on (u.M_Id = mr.M_Id and
+                      u.Owner = mr.Wh_Id and u.State = 0)
 
           where (not exists(select
                                 rm.Rm_Id
@@ -19677,8 +20292,127 @@ begin
                               from Request_Executors e
                               where e.Exec_Id = w.O_Numericfield
                                     and e.Rq_Id = :FOR_RQ))
-        into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT, :RM_COST, :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description
+        into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :NOT_CALC, :MR_QUANT, :RM_COST, --
+             :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description, :SERIAL
     do begin
+      suspend;
+    end
+  end
+end;
+
+
+CREATE OR ALTER PROCEDURE GET_MAT_TAKE_IN (
+    FOR_RQ_ID UID,
+    MG_ID D_UID_NULL = -1,
+    WH_FLTR D_IBOOLEAN = 0)
+RETURNS (
+    M_ID UID,
+    NAME D_VARCHAR100,
+    DIMENSION D_VARCHAR10,
+    WH_NAME D_DESCRIPTION,
+    WH_ID D_UID_NULL,
+    QUANT D_N15_5,
+    M_NUMBER D_VARCHAR20,
+    RQ_ID UID,
+    ID D_UID_NULL,
+    DESCRIPTION D_NOTICE,
+    SERIAL D_SERIAL_NS,
+    COST D_N15_2)
+AS
+declare variable Is_Unit    D_Iboolean;
+declare variable Owner      integer;
+declare variable Owner_Type integer;
+declare variable Mac        varchar(18);
+declare variable tNAME      D_VARCHAR100;
+declare variable tQUANT     D_N15_5;
+declare variable tSerial    varchar(50);
+declare variable Notice     D_NOTICE;
+declare variable tCOST      D_N15_2;
+begin
+  -- на кого выдана заявка. абонента или узел
+  select
+      coalesce(r.Rq_Customer, r.Node_Id)
+    , iif(r.Rq_Customer is null, 2, 1)
+    from request r
+    where r.Rq_Id = :FOR_RQ_ID
+  into :Owner, :Owner_Type;
+  COST = null;
+  for select
+          m.M_ID
+        , m.Name
+        , m.Dimension
+        , w.O_Name
+        , w.O_ID as WH_ID
+        , rm.Quant
+        , m.M_Number
+        , rm.Id
+        , m.DESCRIPTION
+        , rm.Serial
+        , m.Is_Unit
+        , rm.Cost
+        from MATERIALS M
+             left outer join OBJECTS W on (W.O_TYPE = 10 and
+                   ((:WH_FLTR = 0) or exists(select
+                                                 e.Rq_Id
+                                               from Request_Executors e
+                                               where e.Exec_Id = w.O_Numericfield
+                                                     and e.Rq_Id = :FOR_RQ_ID)) and
+                   (exists(select
+                               wh.wh_id
+                             from SYS$USER u
+                                  inner join sys$user_wh wh on (wh.user_id = u.id)
+                             where u.ibname = current_user
+                                   and wh.can_view = 1
+                                   and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
+             left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and
+                   rm.Rq_Id = :FOR_RQ_ID and
+                   rm.WH_ID = w.O_Id)
+        where ((M.MG_ID = :MG_ID
+              and not :MG_ID is null)
+                or (M.MG_ID is null
+              and :MG_ID is null)
+                or (:MG_ID = -1))
+              and ((m.Deleted = 0)
+                or (coalesce(rm.Quant, 0) <> 0))
+
+        order by m.Name
+
+      into :M_ID, :tNAME, :DIMENSION, :WH_NAME, :WH_ID, :tQUANT, :M_NUMBER, :ID, :DESCRIPTION, :tSerial, :Is_Unit, :cost
+  do begin
+    RQ_ID = FOR_RQ_ID;
+    if (Is_Unit = 1) then begin
+      for select
+              u.Serial
+            , u.Mac
+            , a.Cost
+            , a.Notice
+
+              -- , u.Owner, u.Owner_Type
+            from Material_Unit u
+                 inner join Appliance a on (u.M_Id = a.M_Id and
+                       u.Serial = a.Serial)
+            where u.M_Id = :M_ID
+                  and a.Own_Id = :Owner
+                  and a.Own_Type = :Owner_Type
+          into :Serial, :Mac, :tCOST, :Notice
+               -- :Owner, :Owner_Type,
+      do begin
+        NAME = tName || coalesce('/' || Serial || coalesce('/' || MAC, ''), '');
+        if (SERIAL = tSerial) then begin
+          QUANT = tQUANT;
+          COST = coalesce(COST, tCOST);
+        end
+        else
+          QUANT = null;
+
+        DESCRIPTION = coalesce(Notice || ' ', '') || DESCRIPTION;
+        suspend;
+      end
+    end
+    else begin
+      SERIAL = tSerial;
+      NAME = tNAME;
+      QUANT = tQUANT;
       suspend;
     end
   end
@@ -19862,8 +20596,8 @@ declare variable fio d_varchar100;
 begin
   if (PAYSOURCE_ID is null) then begin
     -- посмотрим, есть ли источник для данного пользователя
-    select
-        first 1 coalesce(surname, '')
+    select first 1
+        coalesce(surname, '')
       from worker
       where upper(ibname) = upper(current_user)
     into :fio;
@@ -19872,6 +20606,7 @@ begin
         coalesce(ps.paysource_id, 0)
       from paysource ps
       where upper(ps.paysource_descr) = upper(:fio)
+            and coalesce(DELETED, 0) = 0
     into :Paysource_Id;
   end
 
@@ -19880,6 +20615,7 @@ begin
     select first 1
         Paysource_Id
       from Paysource p
+      where coalesce(DELETED, 0) = 0
       order by p.Paysource_Id
     into :PAYSOURCE_ID;
     -- если источника нет, то создадим
@@ -21202,6 +21938,184 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE MATERIAL_UNIT_MOVE (
+    RQ_ID UID,
+    WH_ID UID,
+    M_ID UID,
+    SERIAL D_SERIAL_NS,
+    TO_FROM D_IBOOLEAN = 1)
+AS
+declare variable customer_id d_uid_null;
+declare variable node_id     d_uid_null;
+declare variable COST        D_N15_2;
+declare variable NOT_CALC    D_IBOOLEAN;
+declare variable MAC         D_Mac;
+declare variable NAME        D_VARCHAR100;
+declare variable Own_Id      d_uid_null;
+declare variable Own_Type    d_uid_null;
+declare variable A_TYPE      D_UID_NULL;
+declare variable PROPERTY    D_INTEGER;
+begin
+  -- добавили = 1, иначе удаляем
+  TO_FROM = coalesce(TO_FROM, 1);
+
+  if (TO_FROM = 1) then begin
+    -- добавим СЕРИЙНИК
+
+    for select
+            r.Rq_Customer
+          , r.Node_Id
+          , rm.Not_Calc
+          , rm.Rm_Cost
+          , u.Mac
+          , m.Name
+          , m.M_Type
+          from request r
+               inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
+               inner join MATERIALS M on (m.M_Id = rm.M_Id)
+               inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                     u.Serial = rm.Serial)
+          where RM.RQ_ID = :RQ_ID
+                and u.Serial = :SERIAL
+                and u.M_Id = :M_ID
+                and u.Owner = :WH_ID
+                and u.Owner_Type = 0
+        into :customer_id, :node_id, :NOT_CALC, :COST, :MAC, :NAME, :A_TYPE
+
+             -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
+             -- нужно вынести в процедуру
+
+    do begin
+      Own_Id = coalesce(customer_id, node_id);
+      Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
+      PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+      if ((Own_Type = 1) and (NOT_CALC = 0)) then
+        PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+
+      -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+
+      update Material_Unit u
+      set u.State = 1,
+          u.Owner = :Own_Id,
+          u.Owner_Type = :Own_Type
+      where u.M_Id = :M_Id
+            and u.Serial = :SERIAL
+            and u.Owner = :WH_ID
+            and u.Owner_Type = 0;
+
+      -- delete from Customer_Equipment ce where ce.M_Id = :M_ID and ce.Serial = :SERIAL;
+
+      update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id, FROM_WH)
+      values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id, :WH_ID)
+      matching (M_Id, Serial);
+
+      -- нужно дорабатывать. делать обмен данными оборудования
+      -- delete from Equipment e where e.Serial_N = :SERIAL and e.M_Id = :M_ID;
+    end
+  end
+  else begin
+    -- вернем на склад
+    update Material_Unit u
+    set u.State = 0,
+        u.Owner = :WH_Id,
+        u.Owner_Type = 0
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL
+          and u.Owner_Type <> 0;
+
+    delete from Appliance
+        where M_Id = :M_Id
+              and Rq_Id = :Rq_Id
+              and Serial = :Serial;
+  end
+end;
+
+
+CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (
+    FOR_M_ID INTEGER)
+RETURNS (
+    WH VARCHAR(2000),
+    M_ID INTEGER,
+    M_DATE DATE,
+    M_TYPE CHAR(72),
+    M_DOC VARCHAR(200),
+    QUANT NUMERIC(18,5))
+AS
+BEGIN
+  M_ID = FOR_M_ID;
+  FOR
+    select
+        w.O_Name WH, M_DATE, m_type, m_doc, quant
+      from (select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Приход' m_type, d.Doc_N m_doc, sum(md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 1 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'пер-ие НА склад' m_type, d.Doc_N m_doc, sum(md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 2 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.From_Wh Wh_Id, d.Doc_Date M_DATE, 'пер-ие СО склада' m_type, d.Doc_N m_doc, sum(-1 * md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 2 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Списание' m_type, d.Doc_N m_doc, sum(-1 * md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 3 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Корректировка' m_type, d.Doc_N m_doc, sum(md.M_Quant) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 4 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                d.Wh_Id, d.Doc_Date M_DATE, 'Инвентаризация' m_type, d.Doc_N m_doc, sum(md.M_Quant - coalesce(md.B_Quant, 0)) quant
+              from Material_Docs d
+                   inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+              where d.Doc_Closed = 1 and d.Dt_Id = 5 and md.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+            union
+            select
+                rm.Wh_Id, cast(r.RQ_EXEC_TIME as date) M_DATE, 'возврат С заявки' m_type, r.Rq_Id m_doc, sum(rm.Quant) quant
+              from Request_Materials_Return rm
+                   inner join request r on (rm.Rq_Id = r.Rq_Id)
+              where rm.M_Id = :M_ID
+              group by 1,2,3,4
+            union
+            select
+                rm.Wh_Id, cast(r.RQ_EXEC_TIME as date) M_DATE, 'списание НА заявку' m_type, r.Rq_Id m_doc, sum(-1 * rm.Rm_Quant) quant
+              from Request_Materials rm
+                   inner join request r on (rm.Rq_Id = r.Rq_Id)
+              where rm.M_Id = :FOR_M_ID
+              group by 1,2,3,4
+           ) m
+           inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
+      order by 1, 2, 3
+    INTO :WH,
+         :M_DATE,
+         :M_TYPE,
+         :M_DOC,
+         :QUANT
+  DO
+  BEGIN
+    SUSPEND;
+  END
+END;
+
+
 CREATE OR ALTER PROCEDURE MD5 (
     SOURCE BLOB SUB_TYPE 1 SEGMENT SIZE 80)
 RETURNS (
@@ -21863,9 +22777,8 @@ declare variable from_Wh_Id type of Uid;
 declare variable type_Id    type of Uid;
 declare variable doc_date   D_DATE;
 declare variable vCLOSED    D_INTEGER;
+declare variable vInt       D_INTEGER;
 begin
-  result = 1;
-
   select
       Wh_Id
     , Dt_Id
@@ -21876,12 +22789,35 @@ begin
   into :Wh_Id, :type_Id, :from_Wh_Id, :vCLOSED;
 
   if (vCLOSED = 0) then begin
+    result = 1;
     suspend;
     exit;
   end
 
-  if (type_Id is null) then begin
+  if (type_Id is null) then
     result = 0;
+
+  if ((type_Id = 1) -- Приход материалов
+      or
+      (type_Id = 2)) -- перемещение
+  then begin
+    select
+        count(*)
+      from Materials_In_Doc_Unit du
+           left outer join Material_Unit mu on (du.M_Id = mu.M_Id and
+                 du.Serial = mu.Serial)
+      where du.Doc_Id = :DOC_ID
+            and ((mu.Owner <> :WH_ID)
+              or (mu.Owner is null)
+              or (mu.Owner_Type <> 0)
+              or (mu.Owner_Type is null))
+    into :vInt;
+
+    if (vInt <> 0) then
+      result = 0;
+  end
+
+  if (result = 0) then begin
     suspend;
     exit;
   end
@@ -21956,7 +22892,8 @@ begin
   end
 
   -- списали со склада, вернем
-  if ((type_Id = 2)) then begin -- перемещение
+  if (type_Id = 2) -- перемещение
+  then begin
     for select
             M_Id
           , coalesce(M_Quant, 0)
@@ -21977,7 +22914,8 @@ begin
   end
 
   -- списали со склада, вернем
-  if ((type_Id = 3)) then begin -- списание материалов
+  if (type_Id = 3) -- списание материалов
+  then begin
     for select
             M_Id
           , coalesce(M_Quant, 0)
@@ -21997,12 +22935,49 @@ begin
     end
   end
 
-  delete from MATERIALS_REMAIN where MR_QUANT = 0;
+  -- обработка штучных позиций
+  if (type_Id = 1) -- Приход материалов
+  then begin
+    delete from Material_Unit mu
+        where (mu.Owner = :WH_ID)
+              and (mu.Owner_Type = 0)
+              and exists(select
+                             du.Doc_Id
+                           from Materials_In_Doc_Unit du
+                           where du.M_Id = mu.M_Id
+                                 and du.Serial = mu.Serial
+                                 and du.Doc_Id = :DOC_ID);
+  end
+  else begin
+    if (type_Id = 2) -- перемещение
+    then begin
+      update Material_Unit mu
+      set mu.Owner = :from_Wh_Id,
+          mu.State = -1 * :DOC_ID
+      where (mu.Owner = :WH_ID)
+            and (mu.Owner_Type = 0)
+            and exists(select
+                           du.Doc_Id
+                         from Materials_In_Doc_Unit du
+                         where du.M_Id = mu.M_Id
+                               and du.Serial = mu.Serial
+                               and du.Doc_Id = :DOC_ID);
+    end
+    -- else begin
+    --   (type_Id = 3) -- списание материалов
+    --   (type_Id = 4) -- инвинтаризация (коррекция)
+    --   (type_Id = 5) -- инвинтаризация
+    -- end
+  end
+
+  delete from MATERIALS_REMAIN
+      where MR_QUANT = 0;
 
   update material_docs
   set Doc_Closed = 0
   where doc_id = :DOC_ID;
 
+  result = 1;
   suspend;
 
 end;
@@ -22748,6 +23723,119 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE REQUEST_CLOSE_MATERIALS (
+    RQ_ID UID)
+AS
+declare variable M_ID        Uid;
+declare variable WH_ID       uid;
+declare variable SERIAL      D_Serial_NS;
+declare variable customer_id d_uid_null;
+declare variable node_id     d_uid_null;
+declare variable COST        D_N15_2;
+declare variable NOT_CALC    D_IBOOLEAN;
+declare variable MAC         D_Mac;
+declare variable NAME        D_VARCHAR100;
+declare variable Own_Id      d_uid_null;
+declare variable Own_Type    d_uid_null;
+declare variable A_TYPE      D_UID_NULL;
+declare variable PROPERTY    D_INTEGER;
+begin /*$$IBE$$ 
+  -- добавим СЕРИЙНИК
+  for select
+          RM.m_Id
+        , RM.Wh_Id
+        , RM.Serial
+        , r.Rq_Customer
+        , r.Node_Id
+        , rm.Not_Calc
+        , rm.Rm_Cost
+        , u.Mac
+        , m.Name
+        , m.M_Type
+        from request r
+             inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
+             inner join MATERIALS M on (m.M_Id = rm.M_Id)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                   u.Serial = rm.Serial)
+        where RM.RQ_ID = :RQ_ID
+              and (coalesce(rm.Serial, '') <> '')
+              and u.State = -1 * :RQ_ID
+      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id, :NOT_CALC, :COST, :MAC, :NAME, :A_TYPE
+
+           -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
+           -- нужно вынести в процедуру
+
+  do begin
+    Own_Id = coalesce(customer_id, node_id);
+    Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
+    PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+    if ((Own_Type = 1) and (NOT_CALC = 0)) then
+      PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+
+    -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+
+    update Material_Unit u
+    set u.State = 1,
+        u.Owner = :Own_Id,
+        u.Owner_Type = :Own_Type
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL
+          and u.Owner = :WH_ID
+          and u.Owner_Type = 0
+          and u.State = -1 * :RQ_ID;
+
+    --delete from Customer_Equipment ce where ce.M_Id = :M_ID and ce.Serial = :SERIAL;
+
+    update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id)
+    values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id)
+    matching (M_Id, Serial);
+
+    -- нужно дорабатывать. делать обмен данными оборудования
+    -- delete from Equipment e
+    --    where e.Serial_N = :SERIAL
+    --          and e.M_Id = :M_ID;
+  end
+ $$IBE$$*/
+
+   -- возврат оборудования СЕРИЙНИК
+  for select
+          RM.m_Id
+        , RM.Wh_Id
+        , RM.Serial
+        , r.Rq_Customer
+        , r.Node_Id
+        from request r
+             inner join Request_Materials_Return RM on (r.Rq_Id = rm.Rq_Id)
+             inner join MATERIALS M on (m.M_Id = rm.M_Id)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                   u.Serial = rm.Serial)
+        where RM.RQ_ID = :RQ_ID
+              and (coalesce(rm.Serial, '') <> '')
+      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id
+
+           -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
+           -- нужно вынести в процедуру
+
+  do begin
+    -- вернем на склад
+    update Material_Unit u
+    set u.State = 0,
+        u.Owner = :WH_Id,
+        u.Owner_Type = 0
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL
+          and u.Owner_Type <> 0;
+
+    -- номер заявки откличается от текущей, поэтому удалим по ид абонента/узла
+    customer_id = coalesce(customer_id, node_id);
+    delete from Appliance
+        where M_Id = :M_Id
+              and Own_Id = :customer_id
+              and Serial = :Serial;
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE REQUEST_CLOSE_PROCESS (
     RQ_ID UID)
 AS
@@ -22756,24 +23844,39 @@ declare variable act         d_smallint;
 declare variable O_ID        d_uid_null;
 declare variable customer_id d_uid_null;
 declare variable notice      d_notice;
+declare variable EXEC_DATE   d_date;
 declare variable vDate       d_date;
+declare variable Fee_Name    D_Varchar1000;
+declare variable DEM         D_Varchar1000;
+declare variable Units       D_N15_2;
+declare variable Fee         D_N15_2;
+declare variable Fee_Type    Uid;
+declare variable M_ID        UID;
+declare variable SERIAL      D_SERIAL_NS;
 begin
+
+  select
+      r.Rq_Customer
+    , r.RQ_EXEC_TIME
+      --, r.Node_Id
+    from request r
+    where R.RQ_ID = :RQ_ID
+  into :customer_id, :EXEC_DATE;
+
   -- Установим, удалим атрибуты
-  for select
-          m.w_quant
-        , w.w_atr_ad
-        , w.w_atr_id
-        , rq.rq_customer
-        , m.notice
-        from WORKS w
-             inner join request_works m on (w.w_id = m.w_id)
-             inner join request rq on (m.rq_id = rq.rq_id)
-        where m.rq_id = :RQ_ID
-              and w.w_atr_ad in (1, 2)
-              and (not w.w_atr_id is null)
-      into :quant, :act, :O_ID, :customer_id, :notice
-  do begin
-    if (not customer_id is null) then begin
+  if (not customer_id is null) then begin
+    for select
+            m.w_quant
+          , w.w_atr_ad
+          , w.w_atr_id
+          , m.notice
+          from WORKS w
+               inner join request_works m on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and w.w_atr_ad in (1, 2)
+                and (not w.w_atr_id is null)
+        into :quant, :act, :O_ID, :notice
+    do begin
       if (act = 1) then
         if (not exists(select
                            CUSTOMER_ID
@@ -22788,32 +23891,102 @@ begin
                     and (O_ID = :O_ID);
     end
   end
+
   -- Установим разовые услуги
-  vDate = null;
-  for select
-          m.w_quant
-        , w.as_service
-        , rq.rq_customer
-        , w.Notice
-        , rq.Rq_Exec_Time
-        from WORKS w
-             inner join request_works m on (w.w_id = m.w_id)
-             inner join request rq on (m.rq_id = rq.rq_id)
-        where m.rq_id = :RQ_ID
-              and (not w.as_service is null)
-              and (rq.Node_Id is null)
-      into :quant, :O_ID, :customer_id, :notice, :vdate
-  do begin
-    if (not customer_id is null) then begin
-      notice = coalesce(notice||' /','')||RQ_ID;
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    for select
+            m.w_quant
+          , w.as_service
+          , w.Notice
+          from request_works m
+               inner join WORKS w on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and (not w.as_service is null)
+        into :quant, :O_ID, :notice
+    do begin
+      notice = coalesce(notice || ' /', '') || RQ_ID;
       insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE, HISTORY_ID, RQ_ID)
       values (:CUSTOMER_ID, :O_ID, :vDATE, :quant, :notice, null, :RQ_ID);
     end
   end
+
+  -- добавим материалы
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    Fee_Type = 1;
+    for select
+            M.NAME
+          , M.Demension
+          , RM.RM_QUANT
+          , RM.RM_QUANT * RM.RM_COST
+          , rm.M_Id
+          , rm.Serial
+          from REQUEST_MATERIALS RM
+               inner join MATERIALS M on (M.M_ID = RM.M_ID)
+          where RM.RQ_ID = :RQ_ID
+                and (coalesce(rm.Not_Calc, 0) = 0)
+        into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
+    do begin
+      if (not UNITS is null) then
+        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
+      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID, :M_ID, :SERIAL);
+    end
+  end
+
+  -- вернем стоимость за материалы возврата
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    Fee_Type = 2;
+    for select
+            M.NAME
+          , M.Demension
+          , RM.Quant
+          , RM.Quant * RM.COST
+          , rm.M_Id
+          , rm.Serial
+          from Request_Materials_Return RM
+               inner join MATERIALS M on (M.M_ID = RM.M_ID)
+          where RM.RQ_ID = :RQ_ID
+                and not rm.Serial is null
+                and coalesce(rm.Quant * RM.COST, 0) <> 0
+        into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
+    do begin
+      FEE = -1 * FEE;
+      if (not UNITS is null) then
+        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
+      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID, :M_ID, :SERIAL);
+    end
+  end
+
+  -- оборудование абоненту и узлам
+  execute procedure REQUEST_CLOSE_MATERIALS(RQ_ID);
+
+  -- добавим работы
+  if (not customer_id is null) then begin
+    vDATE = coalesce(EXEC_DATE, current_date);
+    Fee_Type = 2;
+    for select
+            M.NAME
+          , RM.W_QUANT
+          , RM.W_QUANT * RM.W_COST
+          from REQUEST_WORKS RM
+               inner join WORKS M on (M.W_ID = RM.W_ID)
+          where RM.RQ_ID = :RQ_ID
+                and (m.as_service is null)
+        into :FEE_NAME, :UNITS, :FEE
+    do begin
+      insert into OTHER_FEE (FEE_DATE, CUSTOMER_ID, FEE_NAME, UNITS, FEE, FEE_TYPE, IN_REQUEST)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID);
+    end
+  end
+
   -- начислим месяц
-  if (not vDate is null) then begin
-    vDate = vDate - extract(day from vDate) + 1;
-    execute procedure Close_Month_Proc(:vDate, :CUSTOMER_ID);
+  if (not EXEC_DATE is null) then begin
+    EXEC_DATE = EXEC_DATE - extract(day from EXEC_DATE) + 1;
+    execute procedure Close_Month_Proc(:EXEC_DATE, :CUSTOMER_ID);
   end
 end;
 
@@ -22822,14 +23995,53 @@ CREATE OR ALTER PROCEDURE REQUEST_CLOSE_ROLLBACK (
     RQ_ID TYPE OF UID,
     CUSTOMER_ID TYPE OF UID)
 AS
+declare variable SERIAL D_SERIAL_NS;
+declare variable M_ID   UID;
+declare variable WH_ID  D_UID_NULL;
 begin
-  if ((not CUSTOMER_ID is null)
-     and (not RQ_ID is null))
-  then begin
-    delete from OTHER_FEE where CUSTOMER_ID = :CUSTOMER_ID and IN_REQUEST = :RQ_ID;
-    delete from CUSTOMER_ATTRIBUTES where CUSTOMER_ID = :CUSTOMER_ID and RQ_ID = :RQ_ID;
-    delete from SINGLE_SERV where CUSTOMER_ID = :CUSTOMER_ID and RQ_ID = :RQ_ID;
+  if (RQ_ID is null) then
+    exit;
+
+  delete from Other_Fee
+      where In_Request = :RQ_ID;
+
+  if (not CUSTOMER_ID is null) then begin
+    delete from CUSTOMER_ATTRIBUTES
+        where CUSTOMER_ID = :CUSTOMER_ID
+              and RQ_ID = :RQ_ID;
+    delete from SINGLE_SERV
+        where CUSTOMER_ID = :CUSTOMER_ID
+              and RQ_ID = :RQ_ID;
     execute procedure Full_Recalc_Customer(:Customer_Id);
+  end
+
+  -- вернем СЕРИЙНИК на склад
+  for select
+          RM.Rm_Id
+        , RM.Wh_Id
+        , RM.Serial
+        from request r
+             inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and
+                   u.Serial = rm.Serial)
+        where RM.RQ_ID = :RQ_ID
+              and (coalesce(rm.Serial, '') <> '')
+      into :M_ID, :WH_ID, :SERIAL
+  do begin
+    update Material_Unit u
+    set u.State = 0,
+        u.Owner = :WH_ID,
+        u.Owner_Type = 0
+    where u.M_Id = :M_Id
+          and u.Serial = :SERIAL;
+    delete from Customer_Equipment ce
+        where ce.M_Id = :M_ID
+              and ce.Serial = :SERIAL;
+
+    -- нужно дорабатывать. делать обмен данными оборудования
+    delete from Equipment e
+        where e.Serial_N = :SERIAL
+              and e.M_Id = :M_ID;
   end
 end;
 
@@ -22843,33 +24055,110 @@ CREATE OR ALTER PROCEDURE REQUEST_MATERIALS_IUD (
     RM_COST D_N15_2,
     RM_NOTICE D_NOTICE,
     NOT_CALC D_IBOOLEAN,
-    P_ACTION D_INTEGER)
+    P_ACTION D_INTEGER,
+    SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */)
+RETURNS (
+    RET_RM_ID D_INTEGER)
 AS
-declare variable Quant type of D_N15_5;
+declare variable WQuant type of D_N15_5;
+declare variable RQuant type of D_N15_5;
 begin
+  RM_QUANT = coalesce(RM_QUANT, 0);
+
+  -- если кол-во = 0 то удалим
   -- P_ACTION -0 insert 1-update 2-delete
+  if (RM_QUANT = 0) then
+    P_Action = 2;
 
-  delete from REQUEST_MATERIALS M
-      where m.RM_ID = :RM_ID;
+  if (P_Action = 2) then begin
+    -- если удаление - удалим
+    if ((M_ID is null)
+        or
+        (RQ_ID is null)
+        or
+        (M_ID is null)) then begin
+      select
+          Rq_Id
+        , M_Id
+        , Wh_Id
+        , Serial
+        from Request_Materials M
+        where m.Rm_Id = :RM_ID
+      into :Rq_Id, :M_Id, :Wh_Id, :Serial;
 
-  if ((P_Action <> 2) and (RM_QUANT > 0)) then begin
-    if (RM_QUANT is null) then
-      RM_QUANT = 0;
+    end
+    Serial = coalesce(SERIAL, '');
+    if (Serial <> '') then
+      execute procedure MATERIAL_UNIT_MOVE(:Rq_Id, :Wh_Id, :M_Id, :Serial, 0);
+
+    delete from REQUEST_MATERIALS M
+        where m.RM_ID = :RM_ID;
+    RM_ID = null;
+  end
+  else begin
+    -- добавим или обновим
+    -- Serial = coalesce(trim(SERIAL), '');
+    -- проверим, был ли такой серийный номер
+    if ((not Serial is null) and (not exists(select
+                                                 Serial
+                                               from Material_Unit u
+                                               where M_Id = :M_Id
+                                                     and Serial = :Serial))) then begin
+      Serial = null;
+    end
+
+    if (not SERIAL is null) then
+      RM_QUANT = 1;
+
     -- проверим есть ли нужно кол-во материала на складе
     if (RM_QUANT > 0) then begin
+      RQuant = null;
+      WQuant = null;
       select
           rm.Mr_Quant
         from Materials_Remain rm
         where rm.M_Id = :M_ID
               and rm.Wh_Id = :WH_ID
-      into :Quant;
-      Quant = coalesce(Quant, RM_QUANT - 1);
-      if (Quant < RM_QUANT) then
+      into :WQuant;
+      -- с учетом того что уже выдали
+      if (not RM_ID is null) then begin
+        select
+            Rm_Quant
+          from REQUEST_MATERIALS
+          where RM_ID = :RM_ID
+        into :RQuant;
+      end
+      WQuant = coalesce(WQuant, 0) + coalesce(RQuant, 0);
+      if (WQuant < RM_QUANT) then
         exception E_Mat_Quant_Less;
     end
-    insert into REQUEST_MATERIALS (RQ_ID, M_ID, WH_ID, RM_QUANT, RM_COST, RM_NOTICE, NOT_CALC)
-    values (:RQ_ID, :M_ID, :WH_ID, :RM_QUANT, :RM_COST, :RM_NOTICE, :NOT_CALC);
+
+    if (RM_ID is null) then begin
+      update or insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, NOT_CALC, SERIAL)
+      values (:RQ_ID, :WH_ID, :M_ID, :RM_QUANT, :RM_COST, :RM_NOTICE, :NOT_CALC, :SERIAL)
+      matching (RQ_ID, WH_ID, M_ID)
+      returning RM_ID
+      into :RM_ID;
+    end
+    else begin
+      update REQUEST_MATERIALS
+      set RQ_ID = :RQ_ID,
+          WH_ID = :WH_ID,
+          M_ID = :M_ID,
+          RM_QUANT = :RM_QUANT,
+          RM_COST = :RM_COST,
+          RM_NOTICE = :RM_NOTICE,
+          NOT_CALC = :NOT_CALC,
+          SERIAL = :SERIAL
+      where RM_ID = :RM_ID;
+    end
+
+    if (not SERIAL is null) then
+      execute procedure MATERIAL_UNIT_MOVE(:Rq_Id, :Wh_Id, :M_Id, :Serial, :RM_QUANT);
   end
+
+  RET_RM_ID = RM_ID;
+  suspend;
 end;
 
 
@@ -22880,19 +24169,24 @@ CREATE OR ALTER PROCEDURE REQUEST_MATERIALS_RETURN_IUD (
     QUANT D_N15_5,
     WH_ID TYPE OF UID,
     NOTICE D_NOTICE,
-    P_ACTION D_INTEGER)
+    P_ACTION D_INTEGER,
+    SERIAL D_SERIAL_NS = null,
+    COST D_N15_2 = null)
 AS
 begin
   -- P_ACTION -0 insert 1-update 2-delete
+  if (QUANT is null) then
+    QUANT = 0;
 
-  delete from Request_Materials_Return M where m.Id = :ID;
+  if (not ID is null) then
+    delete from Request_Materials_Return M
+        where m.Id = :ID;
 
-  if ((P_Action <> 2) and (QUANT > 0)) then begin
-    if (QUANT is null) then
-      QUANT = 0;
+  if ((P_Action <> 2) and (QUANT <> 0)) then begin
+    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, SERIAL, COST)
+    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :SERIAL, :COST);
 
-    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice)
-    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice);
+    -- серийник у абонента/узла удалим при закрытии заявки
   end
 end;
 
@@ -23172,7 +24466,7 @@ end;
 
 
 CREATE OR ALTER PROCEDURE SELECTPAYDOC (
-    FORFORM VARCHAR(10) = null)
+    FORFORM VARCHAR(10) = null /* COLLATE UTF8 - default */)
 RETURNS (
     PAY_DOC_ID D_INTEGER)
 AS
@@ -23185,6 +24479,7 @@ begin
         ps.Paysource_Id
       from paysource ps
       where position(:ForForm in ps.For_Form) > 0
+        and coalesce(DELETED,0) = 0
       order by 1
     into :vPSID;
   end
@@ -23273,9 +24568,9 @@ CREATE OR ALTER PROCEDURE SERVICES_IU (
     POSITIVE_ONLY D_IBOOLEAN,
     PRIORITY D_INTEGER,
     ONLY_ONE D_IBOOLEAN,
-    NOTE D_DESCRIPTION = '',
+    NOTE D_DESCRIPTION = '' /* COLLATE UTF8 - default */,
     TAG D_INTEGER = null,
-    TAG_STR D_VARCHAR255 = '',
+    TAG_STR D_VARCHAR255 = '' /* COLLATE UTF8 - default */,
     OPENLY D_IBOOLEAN = 0,
     UNBL_METH D_INTEGER = 0)
 AS
@@ -23913,8 +25208,14 @@ CREATE OR ALTER PROCEDURE WORKER_IUD (
     ALL_AREAS D_SMALLINT)
 AS
 begin
-  if (lockedout is null) then
+  if (WORKING is null) then
+    WORKING = 1;
+
+  if ((lockedout is null)
+      or
+      (WORKING = 0)) then
     lockedout = 1;
+
   if (operation = 1) --  добавим
   then begin
     if (worker_id is null) then begin
@@ -23954,8 +25255,15 @@ begin
 
   if (operation = 3) --  удалим
   then begin
-    delete from worker where worker_id = :worker_id;
-    delete from sys$user where id = :worker_id;
+    if ((worker_id is null) and (not Ibname is null)) then
+      delete from sys$user
+          where Ibname = :Ibname;
+    else begin
+      delete from worker
+          where worker_id = :worker_id;
+      delete from sys$user
+          where id = :worker_id;
+    end
   end
 end;
 
@@ -24186,6 +25494,44 @@ begin
 end;
 
 
+CREATE OR ALTER FUNCTION MAC_FORMAT (
+    AMAC D_MAC,
+    ADLMTR D_CHAR1 = ':')
+RETURNS D_MAC DETERMINISTIC
+AS
+declare variable i      d_integer;
+declare variable j      d_integer;
+declare variable d      d_char1;
+declare variable DIGITS D_MAC;
+declare variable MAC    D_MAC;
+begin
+  aMAC = upper(aMAC);
+  MAC = null;
+  j = char_length(aMAC);
+  i = 1;
+  DIGITS = '';
+  if (aDlmtr is null) then
+    aDlmtr = ':';
+  while (i <= j) do begin
+    d = substring(aMAC from i for 1);
+    if ((d between '0' and '9')
+        or
+        (d between 'A' and 'F')) then
+      DIGITS = DIGITS || d;
+    i = i + 1;
+  end
+  if (char_length(DIGITS) = 12) then begin
+    MAC = substring(DIGITS from 1 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 3 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 5 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 7 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 9 for 2) || aDlmtr;
+    MAC = MAC || substring(DIGITS from 11 for 2);
+  end
+  return MAC;
+end;
+
+
 CREATE OR ALTER FUNCTION MONTH_FIRST_DAY (
     MON_DAY DATE)
 RETURNS DATE DETERMINISTIC
@@ -24229,6 +25575,9 @@ end;
 
 
 CREATE ROLE ROLE_A4USER;
+COMMENT ON DOMAIN D_SERIAL IS
+'Для полей серийных номеров';
+
 COMMENT ON DOMAIN D_UID_NULL IS
 'Для полей ссылок которые могут содержать Null';
 
@@ -24442,9 +25791,6 @@ COMMENT ON TABLE HOUSEWORKS IS
 COMMENT ON TABLE HOUSE_CIRCUIT IS
 'Схемы для дома';
 
-COMMENT ON TABLE INVENTORY IS
-'таблица установленного оборудования/материалов в сети';
-
 COMMENT ON TABLE IPTV_GROUP IS
 'Групп для IPTV';
 
@@ -24603,6 +25949,9 @@ COMMENT ON TABLE REQUEST IS
 COMMENT ON TABLE REQUEST_EXECUTORS IS
 'Исполнители заявок';
 
+COMMENT ON TABLE REQUEST_FLATS IS
+'Поквартирный результат заявки для узла';
+
 COMMENT ON TABLE REQUEST_MATERIALS IS
 'Материалы для заявки';
 
@@ -24713,6 +26062,9 @@ COMMENT ON TABLE TV_LAN IS
 
 COMMENT ON TABLE TV_LAN_PACKETS IS
 'Пакеты для сетевого оборудования';
+
+COMMENT ON TABLE UNIT_PORT IS
+'Порты оборудоания. сделано если мы снимае с сети, чтоб отсавалась история';
 
 COMMENT ON TABLE VLANS IS
 'Подсети СПД';
@@ -24883,6 +26235,9 @@ COMMENT ON PROCEDURE API_SET_PREPAY IS
 COMMENT ON PROCEDURE API_SET_SWITCH_QUEUE IS
 'ставим в очередь переключения услуг';
 
+COMMENT ON PROCEDURE APPLIANCE_TO_TABLE IS
+'перемещаем оборудование в спд/цифру в зависимости от типа';
+
 COMMENT ON PROCEDURE ATRIBUTES_LINE IS
 'Вывод всех атрибутов в строку';
 
@@ -24960,6 +26315,9 @@ COMMENT ON PROCEDURE CHANGE_AUTOBLOCK_OFF IS
 
 COMMENT ON PROCEDURE CHANGE_CH_TO_CH IS
 'Замена параметров одного канала на другой в указанных сетях';
+
+COMMENT ON PROCEDURE CHANGE_TO_NEGATIVE IS
+'Выполняем когда у абонента баланс отрицательный и он больше долга визуализации';
 
 COMMENT ON PROCEDURE CHANGE_TO_POSITIVE IS
 'Выполняем когда у абонента сменился баланс на положительный';
@@ -25159,6 +26517,9 @@ COMMENT ON PROCEDURE GET_MAT_FOR_REQUEST IS
 COMMENT ON PROCEDURE GET_MAT_GIVE_OUT IS
 'Материалы для заявки с учетом уже выданных';
 
+COMMENT ON PROCEDURE GET_MAT_TAKE_IN IS
+'Материалы для возврата с заявки с учетом уже выданных';
+
 COMMENT ON PROCEDURE GET_MAX_INET_IP IS
 'Выдает max свободный IP для определенного тарифного плана';
 
@@ -25199,11 +26560,17 @@ COMMENT ON PROCEDURE INT2IP IS
 COMMENT ON PROCEDURE IP2INT IS
 'переводит строковое представление IP  в двоичное';
 
+COMMENT ON PROCEDURE MATERIALS_SUMMARY IS
+'процедура вывода сводных данных по перемещению';
+
 COMMENT ON PROCEDURE MATERIAL_DOCS_DELETE IS
 'Процедура удаления документа материалов';
 
 COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC IS
 'Процедура пересчета остатков материала на складах';
+
+COMMENT ON PROCEDURE MATERIAL_UNIT_MOVE IS
+'перенос материала абоненту или узлу при добавлении в заявку';
 
 COMMENT ON PROCEDURE MAT_MOVE_DETAILS IS
 'Процедура вывода детального лога перемещения материала';
@@ -25277,6 +26644,10 @@ COMMENT ON PROCEDURE REQUEST_ADD IS
 COMMENT ON PROCEDURE REQUEST_CLOSE_AS IS
 'Закрыть заявку аналогично закрытой заявке';
 
+COMMENT ON PROCEDURE REQUEST_CLOSE_MATERIALS IS
+'Удалить
+Процедура переноса сн оборудование абоненту и узлам, а также подменить одно оборудование на другое';
+
 COMMENT ON PROCEDURE REQUEST_CLOSE_PROCESS IS
 'Добавление/удаление работ из заявки абоненту';
 
@@ -25349,6 +26720,9 @@ COMMENT ON FUNCTION INET_ATON IS
 COMMENT ON FUNCTION INET_NTOA IS
 'переводит двоичное представление IPv4 в строковое';
 
+COMMENT ON FUNCTION MAC_FORMAT IS
+'Форматирование MAC разделитель :';
+
 COMMENT ON FUNCTION MONTH_FIRST_DAY IS
 'первое число месяца';
 
@@ -25380,7 +26754,7 @@ COMMENT ON COLUMN APPLIANCE.OWN_ID IS
 'ID владельца (абонента/узла)';
 
 COMMENT ON COLUMN APPLIANCE.OWN_TYPE IS
-'где установлен 0=абонента, 1=узел';
+'Тип владелеца где установлен type=51. 1-Абонент 2-Узел';
 
 COMMENT ON COLUMN APPLIANCE.NAME IS
 'Название';
@@ -25388,17 +26762,29 @@ COMMENT ON COLUMN APPLIANCE.NAME IS
 COMMENT ON COLUMN APPLIANCE.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN APPLIANCE.M_ID IS
-'Ссылка на материал, если это собственность компании';
-
 COMMENT ON COLUMN APPLIANCE.MAC IS
 'MAC адрес устройства';
 
-COMMENT ON COLUMN APPLIANCE.SN IS
+COMMENT ON COLUMN APPLIANCE.SERIAL IS
 'Серийный номер';
+
+COMMENT ON COLUMN APPLIANCE.COST IS
+'Стоимость на момент передаци';
 
 COMMENT ON COLUMN APPLIANCE.PROPERTY IS
 'Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.';
+
+COMMENT ON COLUMN APPLIANCE.S_VERSION IS
+'Версия софта прошивки';
+
+COMMENT ON COLUMN APPLIANCE.M_ID IS
+'Ссылка на материал, если это собственность компании';
+
+COMMENT ON COLUMN APPLIANCE.RQ_ID IS
+'Какой заявкой передано';
+
+COMMENT ON COLUMN APPLIANCE.FROM_WH IS
+'С какого склада пришло';
 
 COMMENT ON COLUMN ATTRIBUTE.TYPE_ID IS
 'Тип атрибута. соответствует типам с таблицу object_type
@@ -25594,6 +26980,9 @@ COMMENT ON COLUMN CHANNEL_SRC.DEG IS
 
 COMMENT ON COLUMN CHANNEL_SRC.URL IS
 'Ссылка на источник в интернете';
+
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.CSP_ID IS
+'ID записи';
 
 COMMENT ON COLUMN CHANNEL_SRC_PARAM.CS_ID IS
 'ID источника';
@@ -25869,8 +27258,14 @@ COMMENT ON COLUMN CUSTOMER_DECODERS.PAIRING IS
 COMMENT ON COLUMN CUSTOMER_EQUIPMENT.CUSTOMER_ID IS
 'FOR PRIMARY KEYS';
 
-COMMENT ON COLUMN CUSTOMER_EQUIPMENT.EQUIP_N IS
-'Номер оборудования';
+COMMENT ON COLUMN CUSTOMER_EQUIPMENT.M_ID IS
+'ссылка на материал';
+
+COMMENT ON COLUMN CUSTOMER_EQUIPMENT.SERIAL IS
+'Серийник материала';
+
+COMMENT ON COLUMN CUSTOMER_EQUIPMENT.SALE IS
+'Признак продажи';
 
 COMMENT ON COLUMN CUSTOMER_FILES.CF_ID IS
 'ID файла';
@@ -26348,6 +27743,9 @@ COMMENT ON COLUMN EQUIPMENT.EQ_REGNUBER IS
 COMMENT ON COLUMN EQUIPMENT.NODE_ID IS
 'ID узла';
 
+COMMENT ON COLUMN EQUIPMENT.M_ID IS
+'ID материала';
+
 COMMENT ON COLUMN EQUIPMENT_CMD_GRP.EC_ID IS
 'Код комманды';
 
@@ -26560,27 +27958,6 @@ COMMENT ON COLUMN HOUSEPORCH.FLAT_TO IS
 COMMENT ON COLUMN HOUSES_ATTRIBUTES.HA_VALUE IS
 'Значение атрибута';
 
-COMMENT ON COLUMN INVENTORY.OWNER IS
-'ID владелеца согласно типа';
-
-COMMENT ON COLUMN INVENTORY.OWNER_TYPE IS
-'Тип владелеца type=51 1-Абонент 2-Узел';
-
-COMMENT ON COLUMN INVENTORY.M_ID IS
-'Материал';
-
-COMMENT ON COLUMN INVENTORY.SERIAL IS
-'Серийник';
-
-COMMENT ON COLUMN INVENTORY.OWNERSHIP IS
-'Владелец. 0-предприятие. 1-продано клиенту. 2-оборудование клиента';
-
-COMMENT ON COLUMN INVENTORY.QUANT IS
-'Кол-во';
-
-COMMENT ON COLUMN INVENTORY.NOTICE IS
-'Примечание';
-
 COMMENT ON COLUMN IPTV_GROUP.NAME IS
 'Имя группы';
 
@@ -26682,6 +28059,27 @@ COMMENT ON COLUMN MATERIALS_IN_DOC.B_QUANT IS
 COMMENT ON COLUMN MATERIALS_IN_DOC.TTN IS
 'Номер в ТТН (для сортировки)';
 
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.DOC_ID IS
+'ID документа';
+
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.M_ID IS
+'ID материала';
+
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.ID IS
+'ID строки с материалом в документе';
+
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.SERIAL IS
+'Серийный номер ИД оборудования/материала';
+
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.MAC IS
+'MAC';
+
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.S_VERSION IS
+'Версия софта';
+
 COMMENT ON COLUMN MATERIALS_REMAIN.M_ID IS
 'ID материала';
 
@@ -26731,13 +28129,14 @@ COMMENT ON COLUMN MATERIAL_UNIT.SERIAL IS
 'Серийный номер ИД оборудования/материала';
 
 COMMENT ON COLUMN MATERIAL_UNIT.OWNER IS
-'Владелец (0-склад, 1-абонент, 2-узел) OBJECTS_TYPE = 51';
-
-COMMENT ON COLUMN MATERIAL_UNIT.OWNER_TYPE IS
 'ID владельца';
 
+COMMENT ON COLUMN MATERIAL_UNIT.OWNER_TYPE IS
+'Владелец (0-склад, 1-абонент, 2-узел) OBJECTS_TYPE = 51';
+
 COMMENT ON COLUMN MATERIAL_UNIT.STATE IS
-'Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4- списан';
+'Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+или временный статус = -1*ID объекта (заявки, склада)';
 
 COMMENT ON COLUMN MATERIAL_UNIT.MAC IS
 'MAC';
@@ -27055,6 +28454,9 @@ COMMENT ON COLUMN ORDERS_TP.CANCEL_TIME IS
 COMMENT ON COLUMN ORDERS_TP.CANCEL_RESON IS
 'Причина отмены';
 
+COMMENT ON COLUMN OTHER_FEE.FEE_TYPE IS
+'1 - списание материалов, 2 - возврат материалов';
+
 COMMENT ON COLUMN PAYMENT.PAYMENT_ID IS
 'ID Платежа';
 
@@ -27132,6 +28534,9 @@ COMMENT ON COLUMN PAYSOURCE.CODE IS
 COMMENT ON COLUMN PAYSOURCE.FOR_FORM IS
 'В этом поле будут служебные признаки. разделены ;
 OTP - для сторонних заказов; CL - списко абонентов и т.д.';
+
+COMMENT ON COLUMN PAYSOURCE.DELETED IS
+'1 - Пометка удаленного источника';
 
 COMMENT ON COLUMN PAY_DOC.PAY_DOC_ID IS
 'внутренний код документа';
@@ -27621,6 +29026,12 @@ COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CREATE IS
 COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CLOSE IS
 'Текст SMS абоненту после закрытия заявки';
 
+COMMENT ON COLUMN REQUEST_TEMPLATES.FLATS_NEED IS
+'При заявке на узел результат по каждой квартире';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.FLATS_RESULT IS
+'Список результатов для квартир';
+
 COMMENT ON COLUMN REQUEST_TYPES.RT_ID IS
 'код';
 
@@ -27656,6 +29067,12 @@ COMMENT ON COLUMN REQUEST_TYPES.RECREATE_DAYS IS
 
 COMMENT ON COLUMN REQUEST_TYPES.RECREATE_TYPE IS
 'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
+
+COMMENT ON COLUMN REQUEST_TYPES.FLATS_NEED IS
+'При заявке на узел результат по каждой квартире';
+
+COMMENT ON COLUMN REQUEST_TYPES.FLATS_RESULT IS
+'Список результатов для квартир';
 
 COMMENT ON COLUMN REQUEST_WORKS.W_TIME IS
 'Время выполнения факт';
@@ -28509,7 +29926,7 @@ COMMENT ON PROCEDURE PARAMETER GET_MAT_GIVE_OUT.FOR_RQ IS
 'Номер заявки';
 
 COMMENT ON PROCEDURE PARAMETER GET_MAT_GIVE_OUT.MG_ID IS 
-'-1 - все без учета группы или ид группы материалов';
+'ид группы материалов или null=БЕЗ ГРУППЫ -2=В ЗАЯВКЕ -1=ВСЕ';
 
 COMMENT ON PROCEDURE PARAMETER GET_MAT_GIVE_OUT.RQ_OWNER IS 
 'Списать со склада монтажника заявки';

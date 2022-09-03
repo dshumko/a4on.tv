@@ -37,12 +37,6 @@ object ReqMaterialsForm: TReqMaterialsForm
       Align = alClient
       TabOrder = 0
       TabStop = True
-      inherited Label2: TLabel
-        Margins.Bottom = 0
-      end
-      inherited Label1: TLabel
-        Margins.Bottom = 0
-      end
       inherited bbOk: TBitBtn
         Left = 185
         Width = 497
@@ -83,6 +77,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       DataSource = srcDataSource
       DynProps = <>
       Flat = True
+      FooterRowCount = 1
       FooterParams.Color = clWindow
       GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
@@ -91,6 +86,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       SearchPanel.FilterOnTyping = True
       STFilter.Local = True
       STFilter.Visible = True
+      SumList.Active = True
       TabOrder = 1
       TitleParams.MultiTitle = True
       OnExit = dbGridExit
@@ -112,6 +108,8 @@ object ReqMaterialsForm: TReqMaterialsForm
           DynProps = <>
           EditButtons = <>
           FieldName = 'NAME'
+          Footer.FieldName = 'RM_QUANT'
+          Footer.ValueType = fvtCount
           Footers = <>
           ReadOnly = True
           Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
@@ -141,6 +139,8 @@ object ReqMaterialsForm: TReqMaterialsForm
           EditButton.Visible = True
           EditButtons = <>
           FieldName = 'RM_QUANT'
+          Footer.DisplayFormat = ',#0.###'
+          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1050'-'#1074#1086
           Title.Font.Charset = DEFAULT_CHARSET
@@ -175,6 +175,9 @@ object ReqMaterialsForm: TReqMaterialsForm
           DynProps = <>
           EditButtons = <>
           FieldName = 'RM_COST'
+          Footer.DisplayFormat = ',#0.##'
+          Footer.FieldName = 'ITOG'
+          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1062#1077#1085#1072
           Title.Font.Charset = DEFAULT_CHARSET
@@ -292,71 +295,72 @@ object ReqMaterialsForm: TReqMaterialsForm
   end
   object dsReqMaterials: TpFIBDataSet
     UpdateSQL.Strings = (
+      'select'
+      'RET_RM_ID Rm_Id'
       
-        'execute procedure Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :' +
-        'Rm_Quant, :Wh_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 1)')
+        'from Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :Rm_Quant, :Wh' +
+        '_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 1, :SERIAL)')
     DeleteSQL.Strings = (
+      'select'
+      'RET_RM_ID Rm_Id'
       
-        'execute procedure Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :' +
-        'Rm_Quant, :Wh_Id, :RM_COST, :Rm_Notice, :NOT_CALC,  2)')
+        'from Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :Rm_Quant, :Wh' +
+        '_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 2, :SERIAL)')
     InsertSQL.Strings = (
+      'select'
+      'RET_RM_ID Rm_Id'
       
-        'execute procedure Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :' +
-        'Rm_Quant, :Wh_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 0)')
+        'from Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :Rm_Quant, :Wh' +
+        '_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 0, :SERIAL)'
+      ' ')
     RefreshSQL.Strings = (
       'select'
-      
-        '   rm.Rm_Id, m.M_ID, m.Name, m.Dimension, w.O_Name, w.O_ID as WH' +
-        '_ID, w.O_NAME'
-      '    , rm.Rm_Quant, rm.NOT_CALC'
-      
-        '    , mr.Mr_Quant, iif(coalesce(rm.Rm_Quant,0) <> 0, rm.Rm_Cost,' +
-        ' m.Cost)  Rm_Cost'
-      '    , m.M_Number'
-      
-        '    ,     (coalesce(rm.Rm_Quant,0) + coalesce(mr.Mr_Quant,0)) QU' +
-        'ANT_TOTAL, coalesce(rm.Rm_Quant,0) quant_in_request'
-      '    , coalesce(:RQ_ID, 0) RQ_ID'
-      '    , rm.RM_NOTICE'
-      '    , m.Description    '
-      '  from MATERIALS M'
-      '       inner join Materials_Remain mr on (mr.M_Id = m.M_Id '
-      
-        '                                               and (exists(selec' +
-        't wh.wh_id from SYS$USER u'
-      
-        '                                                           inner' +
-        ' join sys$user_wh wh on (wh.user_id = u.id)'
-      
-        '                                                           where' +
-        ' u.ibname = current_user'
-      
-        '                                                              an' +
-        'd wh.can_view = 1'
-      
-        '                                                              an' +
-        'd wh.wh_id = mr.Wh_Id)'
-      
-        '                                                     or current_' +
-        'user = '#39'SYSDBA'#39
-      '                                               ))  '
-      
-        '       left outer join Request_Materials rm on (rm.M_Id = m.M_Id' +
-        ' and rm.Rq_Id = :RQ_ID and rm.WH_ID = mr.WH_ID)'
-      
-        '       left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and W.O_T' +
-        'YPE = 10)'
-      ''
-      
-        '    where RM.RQ_ID = :OLD_RQ_ID and rm.Wh_Id = :OLD_WH_ID and rm' +
-        '.M_Id = :OLD_M_ID')
+      '    Rm_Id'
+      '  , M_Id'
+      '  , Name'
+      '  , Dimension'
+      '  , O_Name'
+      '  , Wh_Id'
+      '  , Rm_Quant'
+      '  , Not_Calc'
+      '  , Mr_Quant'
+      '  , Rm_Cost'
+      '  , M_Number'
+      '  , Quant_Total'
+      '  , Quant_In_Request'
+      '  , Rq_Id'
+      '  , Rm_Notice'
+      '  , Description'
+      '  , Serial'
+      '  , iif(Not_Calc = 0, Mr_Quant * Rm_Cost, null) Itog '
+      'FROM get_mat_give_out(:RQ_ID, -2, :Rq_Owner)'
+      'where RM_ID = :OLD_RM_ID')
     SelectSQL.Strings = (
-      'SELECT * FROM get_mat_give_out(:RQ_ID, :Mg_Id, :Rq_Owner)'
+      'select'
+      '    Rm_Id'
+      '  , M_Id'
+      '  , Name'
+      '  , Dimension'
+      '  , O_Name'
+      '  , Wh_Id'
+      '  , Rm_Quant'
+      '  , Not_Calc'
+      '  , Mr_Quant'
+      '  , Rm_Cost'
+      '  , M_Number'
+      '  , Quant_Total'
+      '  , Quant_In_Request'
+      '  , Rq_Id'
+      '  , Rm_Notice'
+      '  , Description'
+      '  , Serial'
+      '  , iif(Not_Calc = 0, Mr_Quant * Rm_Cost, null) Itog '
+      '  FROM get_mat_give_out(:RQ_ID, :Mg_Id, :Rq_Owner)'
       'order by NAME')
     BeforePost = dsReqMaterialsBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcMatGropups
     Left = 234
@@ -386,9 +390,9 @@ object ReqMaterialsForm: TReqMaterialsForm
     AutoUpdateOptions.KeyFields = 'MG_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     Left = 48
     Top = 128
   end
@@ -408,5 +412,29 @@ object ReqMaterialsForm: TReqMaterialsForm
       '<P>.Width')
     Left = 505
     Top = 97
+  end
+  object trRead: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 424
+    Top = 262
+  end
+  object trWrite: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 424
+    Top = 196
   end
 end

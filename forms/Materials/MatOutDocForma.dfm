@@ -1,6 +1,7 @@
 object MatOutDocForm: TMatOutDocForm
   Left = 0
   Top = 0
+  Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099'. '#1044#1086#1082#1091#1084#1077#1085#1090' '#1089#1087#1080#1089#1072#1085#1080#1103
   ClientHeight = 397
   ClientWidth = 683
   Color = clBtnFace
@@ -99,7 +100,7 @@ object MatOutDocForm: TMatOutDocForm
       DynProps = <>
       DataField = 'WH_ID'
       DataSource = srcDoc
-      EmptyDataInfo.Text = #1055#1088#1080#1093#1086#1076' '#1085#1072' '#1089#1082#1083#1072#1076
+      EmptyDataInfo.Text = #1057#1087#1080#1089#1072#1085#1080#1077' '#1089#1086' '#1089#1082#1083#1072#1076#1072
       EditButtons = <>
       KeyField = 'O_ID'
       ListField = 'O_NAME'
@@ -506,66 +507,159 @@ object MatOutDocForm: TMatOutDocForm
       'WHERE'
       '        ID = :OLD_ID'
       '    and M_ID = :OLD_M_ID'
-      '    and DOC_ID = :OLD_DOC_ID'
-      '    ')
+      '    and DOC_ID = :OLD_DOC_ID')
     DeleteSQL.Strings = (
-      'DELETE FROM'
-      '    MATERIALS_IN_DOC'
-      'WHERE'
-      '        ID = :OLD_ID'
-      '    and M_ID = :OLD_M_ID'
-      '    and DOC_ID = :OLD_DOC_ID   ')
+      'execute block ('
+      '    OLD_ID     integer = :OLD_ID,'
+      '    OLD_M_ID   integer = :OLD_M_ID,'
+      '    OLD_DOC_ID integer = :OLD_DOC_ID,'
+      '    OLD_Serial   D_SERIAL = :OLD_Serial)'
+      'as'
+      'declare variable Wh_Id D_UID_NULL;'
+      'begin'
+      '  -- '#1091#1076#1072#1083#1080#1084' '#1090#1086#1083#1100#1082#1086' '#1077#1089#1083#1080' '#1076#1086#1082#1091#1084#1077#1085#1090' '#1085#1077' '#1079#1072#1082#1088#1099#1090
+      '  if (exists(select'
+      '                 Doc_Closed'
+      '               from Material_Docs'
+      '               where Doc_Id = :OLD_DOC_ID'
+      '                     and Doc_Closed = 0'
+      ''
+      '      )) then begin'
+      ''
+      '    OLD_Serial = coalesce(OLD_Serial, '#39#39');'
+      ''
+      '    delete from MATERIALS_IN_DOC'
+      '        where ID = :OLD_ID'
+      '              and M_ID = :OLD_M_ID'
+      '              and DOC_ID = :OLD_DOC_ID;'
+      ''
+      '    delete from Materials_In_Doc_Unit'
+      '        where (Doc_Id = :OLD_DOC_ID)'
+      '              and (M_Id = :OLD_M_ID)'
+      '              and (SERIAL = :OLD_Serial);'
+      ''
+      '    if (OLD_Serial <> '#39#39') then begin'
+      '      select'
+      '          d.Wh_Id'
+      '        from Material_Docs d'
+      '        where d.Doc_Id = :OLD_Doc_Id'
+      '      into :Wh_Id;'
+      ''
+      '      update Material_Unit u'
+      '      set State = 0'
+      '      where M_Id = :OLD_M_id'
+      '            and u.Serial = :OLD_SERIAL'
+      '            and u.Owner = :Wh_Id'
+      '            and u.Owner_Type = 0'
+      '            and u.State = :OLD_Doc_Id;'
+      '    end'
+      '  end'
+      'end')
     InsertSQL.Strings = (
-      'INSERT INTO MATERIALS_IN_DOC('
-      '    ID, '
-      '    M_ID,'
-      '    M_COST,'
-      '    M_QUANT,'
-      '    M_NOTICE,'
-      '    DOC_ID'
-      ')'
-      'VALUES('
-      '    :ID,'
-      '    :M_ID,'
-      '    :M_COST,'
-      '    :M_QUANT,    '
-      '    :M_NOTICE,'
-      '    :DOC_ID'
-      ')')
+      'execute block ('
+      '    Id       D_Uid_Null = :Id,'
+      '    M_Id     UID = :M_Id,'
+      '    M_Cost   D_N15_2 = :M_Cost,'
+      '    M_Quant  D_N15_5 = :M_Quant,'
+      '    M_Notice D_NOTICE = :M_Notice,'
+      '    Doc_Id   UID = :Doc_Id,'
+      '    Serial   D_SERIAL = :Serial)'
+      'as'
+      'declare variable WH_ID   D_UID_NULL;'
+      'begin'
+      '  Serial = coalesce(Serial, '#39#39');'
+      '  ID = coalesce(ID, gen_id(GEN_UID, 1));'
+      ''
+      
+        '  insert into MATERIALS_IN_DOC (ID, M_ID, M_COST, M_QUANT, M_NOT' +
+        'ICE, DOC_ID)'
+      '  values (:ID, :M_ID, :M_COST, :M_QUANT, :M_NOTICE, :DOC_ID);'
+      ''
+      '  if (Serial <> '#39#39') then begin'
+      '    select'
+      '        d.Wh_Id'
+      '      from Material_Docs d'
+      '      where d.Doc_Id = :Doc_Id'
+      '    into :Wh_Id;'
+      ''
+      
+        '    insert into Materials_In_Doc_Unit (Doc_Id, M_Id, Id, Serial,' +
+        ' Mac, Notice, S_Version)'
+      '    select'
+      '        :DOC_ID'
+      '      , m.M_Id'
+      '      , :ID'
+      '      , u.Serial'
+      '      , u.Mac'
+      '      , u.Notice'
+      '      , u.S_Version'
+      '      from materials m'
+      '           inner join Material_Unit u on (u.M_Id = m.M_Id)'
+      '      where u.Serial = :SERIAL'
+      '            and u.Owner = :Wh_Id'
+      '            and u.Owner_Type = 0'
+      '            and u.State = 0;'
+      ''
+      '    update Material_Unit u'
+      '    set State = -1*:Doc_Id'
+      '    where M_Id = :M_id'
+      '          and u.Serial = :SERIAL'
+      '          and u.Owner = :Wh_Id'
+      '          and u.Owner_Type = 0'
+      '          and u.State = 0;'
+      '  end'
+      'end')
     RefreshSQL.Strings = (
-      'select'
+      '  select'
       '    md.Id'
       '  , md.M_Id'
-      '  , m.Name'
+      
+        '  , m.Name || coalesce('#39'/'#39' || u.Serial || coalesce('#39'/'#39' || u.MAC,' +
+        ' '#39#39'), '#39#39') NAME'
+      '  , m.M_NUMBER'
       '  , md.M_Quant'
       '  , md.M_Cost'
       '  , md.M_Notice'
       '  , g.Mg_Name'
       '  , md.Doc_Id'
       '  , (coalesce(md.M_Quant, 0) * md.M_Cost) as Itogo'
+      '  , u.Serial'
       '  from materials m'
       '       inner join Materials_In_Doc md on (m.M_Id = md.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
+      
+        '       left outer join Materials_In_Doc_Unit u on (u.M_Id = m.M_' +
+        'Id and'
+      '             u.Id = md.Id and'
+      '             u.Doc_Id = md.Doc_Id)'
       '  where md.ID = :OLD_ID'
       '        and md.M_ID = :OLD_M_ID'
       '        and md.DOC_ID = :OLD_DOC_ID')
     SelectSQL.Strings = (
-      'select'
+      '  select'
       '    md.Id'
       '  , md.M_Id'
-      '  , m.Name'
-      '  , m.M_NUMBER  '
+      
+        '  , m.Name || coalesce('#39'/'#39' || u.Serial || coalesce('#39'/'#39' || u.MAC,' +
+        ' '#39#39'), '#39#39') NAME'
+      '  , m.M_NUMBER'
       '  , md.M_Quant'
       '  , md.M_Cost'
       '  , md.M_Notice'
       '  , g.Mg_Name'
       '  , md.Doc_Id'
       '  , (coalesce(md.M_Quant, 0) * md.M_Cost) as Itogo'
+      '  , u.Serial'
       '  from materials m'
       '       inner join Materials_In_Doc md on (m.M_Id = md.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
+      
+        '       left outer join Materials_In_Doc_Unit u on (u.M_Id = m.M_' +
+        'Id and'
+      '             u.Id = md.Id and'
+      '             u.Doc_Id = md.Doc_Id)'
       '  where md.Doc_Id = :doc_id'
-      '  order by m.Name')
+      '  order by m.Name ')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_IN_DOC'
     AutoUpdateOptions.KeyFields = 'ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
@@ -598,15 +692,30 @@ object MatOutDocForm: TMatOutDocForm
   end
   object dsMaterials: TpFIBDataSet
     SelectSQL.Strings = (
-      'select'
+      '  select'
+      '    m.M_Id'
       
-        '    m.M_Id, m.Name, m.Dimension, r.Mr_Quant, r.Mr_Cost, g.Mg_Nam' +
-        'e, m.DESCRIPTION'
+        '  , m.Name || coalesce('#39'/'#39' || u.Serial || coalesce('#39'/'#39' || u.MAC,' +
+        ' '#39#39'), '#39#39')  NAME'
+      '  , m.Dimension'
+      '  , iif(m.Is_Unit = 1, 1, r.Mr_Quant) Mr_Quant'
+      '  , r.Mr_Cost'
+      '  , g.Mg_Name'
+      '  , m.DESCRIPTION'
+      '  , u.Serial'
       '  from materials m'
       '       inner join Materials_Remain r on (m.M_Id = r.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
-      '  where r.Wh_Id = :WH and coalesce(m.deleted, 0) = 0'
-      '  order by m.Name, g.Mg_Name  ')
+      '       left outer join Material_Unit u on (u.M_Id = m.M_Id and'
+      '             u.Owner = :WH and'
+      '             u.Owner_Type = 0 and'
+      '             u.State = 0)'
+      '  where r.Wh_Id = :WH'
+      '        and coalesce(m.deleted, 0) = 0'
+      
+        '        and ((coalesce(m.Is_Unit, 0) = 0) or (not u.Serial is nu' +
+        'll))'
+      '  order by m.Name, g.Mg_Name')
     Transaction = trRead
     Database = dmMain.dbTV
     Left = 360

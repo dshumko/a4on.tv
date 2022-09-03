@@ -166,8 +166,8 @@ begin
     edtName.Text := dsAppl['NAME'];
   if not dsAppl.FieldByName('MAC').IsNull then
     edtMAC.Text := dsAppl['MAC'];
-  if not dsAppl.FieldByName('SN').IsNull then
-    edtSN.Text := dsAppl['SN'];
+  if not dsAppl.FieldByName('SERIAL').IsNull then
+    edtSN.Text := dsAppl['SERIAL'];
   if not dsAppl.FieldByName('NOTICE').IsNull then
     mmoNotice.Lines.Text := dsAppl['NOTICE'];
   if not dsAppl.FieldByName('COST').IsNull then
@@ -185,6 +185,12 @@ begin
     cbApplProperty.Value := 1;
     cbApplProperty.Enabled := False;
   end;
+
+  if not dsAppl.FieldByName('RQ_ID').IsNull then begin
+    lcbApplMID.Enabled := False;
+    edtSN.Enabled := False;
+    edtMAC.Enabled := edtMAC.Text.IsEmpty;
+  end;
 end;
 
 function TEditApplianceForm.CheckSN(const SN: String): string;
@@ -200,14 +206,14 @@ begin
       Transaction := dmMain.trReadQ;
       sql.Text := 'select c.Account_No, a.NAME';
       sql.Add(' from Appliance a left outer join customer c on (a.Own_Id = c.Customer_Id and Own_Type = 0)');
-      sql.Add(' where a.SN = :SN');
+      sql.Add(' where a.SERIAL = :SERIAL');
 
       if fApplID <> -1 then
       begin
         sql.Add('and a.ID <> :fApplID');
         ParamByName('fApplID').AsInteger := fApplID;
       end;
-      ParamByName('SN').asString := SN;
+      ParamByName('SERIAL').asString := SN;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('Account_No').IsNull then
@@ -356,13 +362,13 @@ begin
     dsAppl['ID'] := fApplID;
   end;
   if fCI.isType = 1 // узел
-  then dsAppl['OWN_TYPE'] := 1
-  else dsAppl['OWN_TYPE'] := 0; // абонент
+  then dsAppl['OWN_TYPE'] := 2  // узел
+  else dsAppl['OWN_TYPE'] := 1; // абонент
   dsAppl['OWN_ID'] := fCI.CUSTOMER_ID;
   dsAppl['NAME'] := edtName.Text;
   dsAppl['PROPERTY'] := cbApplProperty.Value;
   dsAppl['MAC'] := edtMAC.Text;
-  dsAppl['SN'] := edtSN.Text;
+  dsAppl['SERIAL'] := edtSN.Text;
   dsAppl['NOTICE'] := mmoNotice.Lines.Text;
   if ednCost.Text <> '' then
     dsAppl['COST'] := ednCost.Value;
@@ -380,7 +386,7 @@ begin
     NOTICE   Примечание
     M_ID     Ссылка на материал, если это собственность компании
     MAC      MAC адрес устройства
-    SN       Серийный номер
+    SERIAL   Серийный номер
     COST     D_N15_2
     PROPERTY Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
   }

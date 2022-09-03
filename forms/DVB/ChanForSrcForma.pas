@@ -8,7 +8,8 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs,
-  FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh, DBLookupEh;
+  FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh,
+  DBLookupEh;
 
 type
 
@@ -23,7 +24,7 @@ type
     cbbSYSTEM: TDBLookupComboboxEh;
     srcSYSTEM: TDataSource;
     lbl1: TLabel;
-    edtNAME1: TDBEditEh;
+    edSYMRATE: TDBEditEh;
     edtURL: TDBEditEh;
     Label3: TLabel;
     dbmNOTICE: TDBMemoEh;
@@ -75,7 +76,9 @@ type
     { Public declarations }
   end;
 
-function EditChanForSource(const aCH_ID: Int64; const aCS_ID: Int64): Boolean;
+function EditChanForSource(const aCH_ID: Int64; const aCS_ID: Int64; const aCSP_ID: Int64;
+  const Cs_System: integer = -1; const S_Crypt: integer = -1; const V_CODEC: integer = -1;
+  const FREQ: String = ''; const SYMRATE: String = ''; CARD_ID: Integer = -1): Boolean;
 
 implementation
 
@@ -84,7 +87,9 @@ uses
 
 {$R *.dfm}
 
-function EditChanForSource(const aCH_ID: Int64; const aCS_ID: Int64): Boolean;
+function EditChanForSource(const aCH_ID: Int64; const aCS_ID: Int64; const aCSP_ID: Int64;
+  const Cs_System: integer = -1; const S_Crypt: integer = -1; const V_CODEC: integer = -1;
+  const FREQ: String = ''; const SYMRATE: String = ''; CARD_ID: Integer = -1): Boolean;
 var
   ChanForSrcForm: TChanForSrcForm;
 begin
@@ -93,20 +98,37 @@ begin
   ChanForSrcForm := TChanForSrcForm.Create(Application);
   with ChanForSrcForm do
     try
+      dsChForSrc.ParamByName('CSP_ID').AsInt64 := aCSP_ID;
       dsChForSrc.ParamByName('CH_ID').AsInt64 := aCH_ID;
       dsChForSrc.ParamByName('CS_ID').AsInt64 := aCS_ID;
       dsChForSrc.Open;
       if aCH_ID > 0 then
         dsChForSrc.Edit
-      else
+      else begin
         dsChForSrc.Insert;
+        if (Cs_System <> -1) then
+          cbbSYSTEM.Value := Cs_System;
+        if (S_Crypt <> -1) then
+          cbbS_Crypt.Value := S_Crypt;
+        if (V_CODEC <> -1) then
+          cbbVideo.Value := V_CODEC;
+        if (FREQ <> '') then
+          edtURL.Value := FREQ;
+        if (SYMRATE <> '')  then
+          edSYMRATE.Value := SYMRATE;
+        if (CARD_ID <> -1) then
+          cbbCARD.Value := CARD_ID;
+      end;
+
       cbbChan.Enabled := (aCH_ID < 0);
-      if ShowModal = mrOk then begin
+      if ShowModal = mrOk then
+      begin
         dsChForSrc['CS_ID'] := aCS_ID;
         dsChForSrc.Post;
         result := true;
       end
-      else begin
+      else
+      begin
         if dsChForSrc.State in [dsEdit, dsInsert] then
           dsChForSrc.Cancel;
       end;
@@ -156,7 +178,8 @@ function TChanForSrcForm.CheckData: Boolean;
 begin
   result := true;
 
-  if (cbbChan.Text.IsEmpty) then begin
+  if (cbbChan.Text.IsEmpty) then
+  begin
     cnError.SetError(cbbChan, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     cbbChan.SetFocus;
     result := False;

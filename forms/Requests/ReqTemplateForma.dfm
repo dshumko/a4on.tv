@@ -2,8 +2,8 @@ object ReqTemplateForm: TReqTemplateForm
   Left = 0
   Top = 0
   Caption = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
-  ClientHeight = 356
-  ClientWidth = 673
+  ClientHeight = 421
+  ClientWidth = 670
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,8 @@ object ReqTemplateForm: TReqTemplateForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    673
-    356)
+    670
+    421)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
@@ -60,7 +60,7 @@ object ReqTemplateForm: TReqTemplateForm
   end
   object lbl4: TLabel
     Left = 423
-    Top = 172
+    Top = 117
     Width = 225
     Height = 13
     Caption = #1058#1077#1082#1089#1090' SMS '#1072#1073#1086#1085#1077#1085#1090#1091' '#1087#1086#1089#1083#1077' '#1079#1072#1082#1088#1099#1090#1080#1103' '#1079#1072#1103#1074#1082#1080
@@ -126,7 +126,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 8
     Top = 192
     Width = 409
-    Height = 124
+    Height = 189
     Hint = 
       #1057#1087#1080#1089#1086#1082' '#1079#1085#1072#1095#1077#1085#1080#1081' '#1076#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086#1075#1086' '#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1075#1086' '#1087#1086#1083#1103' '#1087#1088#1080' '#1086#1092#1086#1088#1084#1083#1077#1085#1080 +
       #1080' '#1079#1072#1103#1074#1082#1080#13#10#1054#1076#1085#1072' '#1089#1090#1088#1086#1082#1072' - '#1086#1076#1085#1086' '#1079#1085#1072#1095#1077#1085#1080#1077
@@ -142,8 +142,8 @@ object ReqTemplateForm: TReqTemplateForm
     WantReturns = True
   end
   object btnCancel: TBitBtn
-    Left = 590
-    Top = 323
+    Left = 587
+    Top = 388
     Width = 75
     Height = 27
     Anchors = [akRight, akBottom]
@@ -154,8 +154,8 @@ object ReqTemplateForm: TReqTemplateForm
   end
   object btnOk: TBitBtn
     Left = 8
-    Top = 322
-    Width = 566
+    Top = 387
+    Width = 563
     Height = 27
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
@@ -254,8 +254,8 @@ object ReqTemplateForm: TReqTemplateForm
   object mmoCreate: TDBMemoEh
     Left = 423
     Top = 32
-    Width = 242
-    Height = 131
+    Width = 239
+    Height = 77
     Anchors = [akLeft, akTop, akRight]
     AutoSize = False
     DataField = 'SMS_CREATE'
@@ -271,10 +271,10 @@ object ReqTemplateForm: TReqTemplateForm
   end
   object mmoClose: TDBMemoEh
     Left = 423
-    Top = 192
-    Width = 242
-    Height = 125
-    Anchors = [akLeft, akTop, akRight, akBottom]
+    Top = 133
+    Width = 239
+    Height = 108
+    Anchors = [akLeft, akTop, akRight]
     AutoSize = False
     DataField = 'SMS_CLOSE'
     DataSource = srcRQTL
@@ -284,6 +284,37 @@ object ReqTemplateForm: TReqTemplateForm
     PopupMenu = pmSMS
     ShowHint = True
     TabOrder = 9
+    Visible = True
+    WantReturns = True
+  end
+  object chkFlatsResult: TDBCheckBoxEh
+    Left = 423
+    Top = 246
+    Width = 224
+    Height = 17
+    Hint = 
+      #1042#1086#1079#1084#1086#1078#1085#1086#1089#1090#1100' '#1091#1082#1072#1079#1072#1090#1100' '#1088#1077#1079#1091#1083#1100#1090#1072#1090' '#1076#1083#1103' '#1082#1074#1072#1088#1090#1080#1088#1099' '#1087#1088#1080' '#1079#1072#1082#1088#1099#1090#1080#1080' '#1079#1072#1103#1074#1082#1080' '#1085 +
+      #1072' '#1091#1079#1077#1083
+    Caption = #1044#1083#1103' '#1091#1079#1083#1072' '#1087#1086#1082#1074#1072#1088#1090#1080#1088#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
+    DataField = 'FLATS_NEED'
+    DataSource = srcRQTL
+    DynProps = <>
+    Flat = True
+    TabOrder = 14
+  end
+  object mmoFlatsResult: TDBMemoEh
+    Left = 423
+    Top = 269
+    Width = 239
+    Height = 112
+    ScrollBars = ssVertical
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    AutoSize = False
+    DynProps = <>
+    EditButtons = <>
+    EmptyDataInfo.Text = #1042#1072#1088#1080#1085#1090#1099' '#1088#1077#1079#1091#1083#1100#1090#1072#1090#1086#1074' '#1076#1083#1103' '#1082#1074#1072#1088#1090#1080#1088
+    ShowHint = True
+    TabOrder = 15
     Visible = True
     WantReturns = True
   end
@@ -308,7 +339,9 @@ object ReqTemplateForm: TReqTemplateForm
       '    , RECREATE_DAYS = :RECREATE_DAYS'
       '    , RECREATE_TYPE = :RECREATE_TYPE'
       '    , SMS_CREATE = :SMS_CREATE'
-      '    , SMS_CLOSE = :SMS_CLOSE    '
+      '    , SMS_CLOSE = :SMS_CLOSE '
+      '    , FLATS_NEED = :FLATS_NEED'
+      '    , FLATS_RESULT = :FLATS_RESULT       '
       'WHERE'
       '    RQTL_ID = :OLD_RQTL_ID'
       '    ')
@@ -334,6 +367,8 @@ object ReqTemplateForm: TReqTemplateForm
       '    , RECREATE_TYPE'
       '    , SMS_CREATE'
       '    , SMS_CLOSE'
+      '    , FLATS_NEED'
+      '    , FLATS_RESULT'
       ')'
       'VALUES('
       '    :RQTL_ID'
@@ -349,7 +384,9 @@ object ReqTemplateForm: TReqTemplateForm
       '    , :RECREATE_DAYS'
       '    , :RECREATE_TYPE '
       '    , :SMS_CREATE'
-      '    , :SMS_CLOSE     '
+      '    , :SMS_CLOSE'
+      '    , :FLATS_NEED'
+      '    , :FLATS_RESULT         '
       ')')
     RefreshSQL.Strings = (
       'select *'
@@ -503,8 +540,8 @@ object ReqTemplateForm: TReqTemplateForm
     Top = 216
   end
   object pmSMS: TPopupMenu
-    Left = 536
-    Top = 88
+    Left = 336
+    Top = 160
     object miNN1: TMenuItem
       Caption = #1053#1086#1084#1077#1088' '#1079#1072#1103#1074#1082#1080' [NN]'
       Hint = '[NN]'

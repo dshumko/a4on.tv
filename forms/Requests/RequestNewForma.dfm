@@ -279,15 +279,16 @@ object RequestNewForm: TRequestNewForm
         inherited gbInfo: TGroupBox
           Width = 390
           Height = 129
-          inherited lblFIO: TLabel
-            Width = 386
-          end
           inherited lblDebt: TLabel
             Width = 386
+            Margins.Bottom = 0
           end
           inherited memAbonent: TMemo
             Width = 386
-            Height = 86
+            Height = 78
+          end
+          inherited lblFIO: TDBEditEh
+            Width = 386
           end
         end
       end

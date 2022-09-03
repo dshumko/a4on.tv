@@ -88,21 +88,8 @@ object MaterialsForm: TMaterialsForm
           ImageIndex = 27
           Style = tbsSeparator
         end
-        object ToolButton19: TToolButton
-          Left = 108
-          Top = 0
-          Action = actQuickFilter
-        end
-        object btn2: TToolButton
-          Left = 131
-          Top = 0
-          Width = 8
-          Caption = 'btn2'
-          ImageIndex = 42
-          Style = tbsSeparator
-        end
         object btnRemainRecalc: TToolButton
-          Left = 139
+          Left = 108
           Top = 0
           Hint = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
           Action = actRemainRecalc
@@ -265,6 +252,19 @@ object MaterialsForm: TMaterialsForm
           Top = 0
           Action = actCancelGroup
         end
+        object btn1: TToolButton
+          Left = 150
+          Top = 0
+          Width = 34
+          Caption = 'btn1'
+          ImageIndex = 27
+          Style = tbsSeparator
+        end
+        object btnQuickFilter: TToolButton
+          Left = 184
+          Top = 0
+          Action = actQuickFilter
+        end
       end
     end
   end
@@ -353,9 +353,10 @@ object MaterialsForm: TMaterialsForm
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
-        STFilter.Visible = True
         SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
@@ -430,6 +431,15 @@ object MaterialsForm: TMaterialsForm
             Title.Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'  '#1082' '#1084#1072#1090#1077#1088#1080#1072#1083#1091', '#1095#1077#1088#1077#1079' / '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 173
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'SERIAL'
+            Footers = <>
+            Title.Caption = #1057'/'#1053
+            Width = 82
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -453,9 +463,10 @@ object MaterialsForm: TMaterialsForm
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
-        STFilter.Visible = True
         SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
@@ -529,6 +540,15 @@ object MaterialsForm: TMaterialsForm
             Title.Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'  '#1082' '#1084#1072#1090#1077#1088#1080#1072#1083#1091', '#1095#1077#1088#1077#1079' / '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 108
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'SERIAL'
+            Footers = <>
+            Title.Caption = #1057'/'#1053
+            Width = 101
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -552,9 +572,10 @@ object MaterialsForm: TMaterialsForm
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
-        STFilter.Visible = True
         SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
@@ -672,9 +693,10 @@ object MaterialsForm: TMaterialsForm
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
-        STFilter.Visible = True
         SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
@@ -836,6 +858,7 @@ object MaterialsForm: TMaterialsForm
             Title.Caption = #1057#1087#1080#1089#1072#1085#1086'|'#1050#1086#1083#1080#1095#1077#1089#1090#1074#1086
             Title.TitleButton = True
             Width = 97
+            OnGetCellParams = dbgColumnsZerroCellParams
           end
           item
             CellButtons = <>
@@ -846,6 +869,7 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1057#1087#1080#1089#1072#1085#1086'|'#1062#1077#1085#1072
             Title.TitleButton = True
+            OnGetCellParams = dbgColumnsZerroCellParams
           end
           item
             CellButtons = <>
@@ -859,6 +883,7 @@ object MaterialsForm: TMaterialsForm
             Title.Caption = #1057#1087#1080#1089#1072#1085#1086'|'#1057#1090#1086#1080#1084#1086#1089#1090#1100
             Title.TitleButton = True
             Width = 61
+            OnGetCellParams = dbgColumnsZerroCellParams
           end
           item
             CellButtons = <>
@@ -872,6 +897,7 @@ object MaterialsForm: TMaterialsForm
             Title.Caption = #1042#1086#1079#1074#1088#1072#1090'|'#1050#1086#1083'-'#1074#1086
             Title.TitleButton = True
             Width = 83
+            OnGetCellParams = dbgColumnsZerroCellParams
           end
           item
             CellButtons = <>
@@ -890,6 +916,15 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1080#1079' '#1079#1072#1103#1074#1082#1080
             Width = 87
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'SERIAL'
+            Footers = <>
+            Title.Caption = #1057'/'#1053
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -915,7 +950,7 @@ object MaterialsForm: TMaterialsForm
     object tsItog: TTabSheet
       Caption = #1057#1074#1086#1076
       ImageIndex = 3
-      object DBGridEh1: TDBGridEh
+      object dbgGridPivot: TDBGridEh
         Left = 0
         Top = 0
         Width = 821
@@ -1021,6 +1056,155 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086
             Width = 100
+          end>
+        object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+    end
+    object tsSerials: TTabSheet
+      Caption = #1057#1077#1088'. '#1085#1086#1084#1077#1088#1072
+      ImageIndex = 7
+      object dbgSN: TDBGridEh
+        Left = 0
+        Top = 0
+        Width = 821
+        Height = 165
+        Align = alClient
+        AllowedOperations = [alopUpdateEh]
+        AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
+        DataSource = srcSerials
+        DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
+        Flat = True
+        FooterRowCount = 1
+        FooterParams.Color = clWindow
+        FrozenCols = 1
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+        ParentShowHint = False
+        PopupMenu = pmPopUp
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
+        ShowHint = True
+        EditButtonsShowOptions = [sebShowOnlyForCurCellEh]
+        SortLocal = True
+        STFilter.Local = True
+        SumList.Active = True
+        TabOrder = 0
+        TitleParams.MultiTitle = True
+        OnDataHintShow = DBGridEhDataHintShow
+        OnMouseMove = DBGridEhMouseMove
+        Columns = <
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'SERIAL'
+            Footer.ValueType = fvtCount
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1057'/'#1053
+            Width = 127
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'MAC'
+            Footers = <>
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'COST'
+            Footers = <>
+            Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'S_VERSION'
+            Footers = <>
+            Title.Caption = #1042#1077#1088#1089#1080#1103
+            Width = 103
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'STATE_STR'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1057#1090#1072#1090#1091#1089
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'OT_NAME'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1058#1080#1087
+            Width = 75
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'OWNER_STR'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1042#1083#1072#1076#1077#1083#1077#1094
+            Width = 98
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'NOTICE'
+            Footers = <>
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Width = 283
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_BY'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085#1086'|'#1050#1077#1084
+            Width = 115
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_ON'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085#1086'|'#1050#1086#1075#1076#1072
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_BY'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085#1086'|'#1050#1077#1084
+            Width = 97
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_ON'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085#1086'|'#1050#1077#1084
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1153,9 +1337,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     DataSource = srcDataSource
     Left = 59
@@ -1223,9 +1407,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MG_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     Left = 37
     Top = 131
@@ -1380,6 +1564,7 @@ object MaterialsForm: TMaterialsForm
   end
   object srcDataSource: TDataSource
     DataSet = dsMaterials
+    OnDataChange = srcDataSourceDataChange
     Left = 367
     Top = 125
   end
@@ -1425,6 +1610,7 @@ object MaterialsForm: TMaterialsForm
       '  , r.Rq_Customer Customer_Id'
       '  , r.Node_Id'
       '  , coalesce(rm.Not_Calc, 0) Not_Calc'
+      '  , rm.Serial'
       '  from request_materials rm'
       '       inner join request r on (rm.rq_id = r.rq_id)'
       
@@ -1449,6 +1635,7 @@ object MaterialsForm: TMaterialsForm
       '  , r.Rq_Customer Customer_Id'
       '  , r.Node_Id  '
       '  , 0 Not_Calc'
+      '  , rm.Serial'
       '  from Request_Materials_Return rm'
       '       inner join request r on (rm.rq_id = r.rq_id)'
       
@@ -1464,9 +1651,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     DataSource = srcDataSource
     Left = 434
@@ -1490,10 +1677,11 @@ object MaterialsForm: TMaterialsForm
         '    coalesce(im.M_Notice, '#39#39')||coalesce('#39'/'#39'||d.Notice, '#39#39') Notic' +
         'e,'
       '    w.O_Name wherehouse,'
-      '    im.M_Quant,'
+      '    iif(u.Serial is null, im.M_Quant, 1) M_Quant,'
       '    im.Shipper_Cost,'
       '    d.Dt_Id,'
-      '    d.Doc_Id'
+      '    d.Doc_Id,'
+      '    u.Serial'
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       
@@ -1502,6 +1690,9 @@ object MaterialsForm: TMaterialsForm
       
         '       left outer join objects w on ( w.O_Id = d.Wh_Id and w.O_T' +
         'ype = 10)'
+      
+        '       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.' +
+        'Doc_Id and u.M_Id = im.M_Id)'
       '  where d.Doc_Closed = 1'
       '        and d.Dt_Id = 1'
       '        and im.M_Id = :M_ID   '
@@ -1510,9 +1701,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     DataSource = srcDataSource
     Left = 131
@@ -1555,8 +1746,8 @@ object MaterialsForm: TMaterialsForm
     Params = <>
     DataDriver = drvFIB
     ReadOnly = True
-    Left = 524
-    Top = 275
+    Left = 548
+    Top = 283
   end
   object drvFIB: TpFIBDataDriverEh
     Database = dmMain.dbTV
@@ -1565,139 +1756,9 @@ object MaterialsForm: TMaterialsForm
         DataType = ftUnknown
         Name = 'M_ID'
         ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
       end>
     SelectCommand.CommandText.Strings = (
-      'select'
-      '    w.O_Name WH, M_Id, M_DATE, m_type, m_doc, quant'
-      '  from (select'
-      
-        '            md.M_Id, d.Wh_Id, d.Doc_Date M_DATE, '#39#1055#1088#1080#1093#1086#1076#39' m_type' +
-        ', d.Doc_N m_doc, md.M_Quant quant'
-      '          from Material_Docs d'
-      
-        '               inner join Materials_In_Doc md on (d.Doc_Id = md.' +
-        'Doc_Id)'
-      
-        '          where d.Doc_Closed = 1 and d.Dt_Id = 1 and md.M_Id = :' +
-        'M_ID'
-      '        union'
-      '        select'
-      
-        '            md.M_Id, d.Wh_Id, d.Doc_Date M_DATE, '#39#1087#1077#1088'-'#1080#1077' '#1053#1040' '#1089#1082#1083#1072 +
-        #1076#39' m_type, d.Doc_N m_doc, md.M_Quant quant'
-      '          from Material_Docs d'
-      
-        '               inner join Materials_In_Doc md on (d.Doc_Id = md.' +
-        'Doc_Id)'
-      
-        '          where d.Doc_Closed = 1 and d.Dt_Id = 2 and md.M_Id = :' +
-        'M_ID'
-      '        union'
-      '        select'
-      
-        '            md.M_Id, d.From_Wh Wh_Id, d.Doc_Date M_DATE, '#39#1087#1077#1088'-'#1080#1077 +
-        ' '#1057#1054' '#1089#1082#1083#1072#1076#1072#39' m_type, d.Doc_N m_doc, -1 * md.M_Quant quant'
-      '          from Material_Docs d'
-      
-        '               inner join Materials_In_Doc md on (d.Doc_Id = md.' +
-        'Doc_Id)'
-      
-        '          where d.Doc_Closed = 1 and d.Dt_Id = 2 and md.M_Id = :' +
-        'M_ID'
-      '        union'
-      '        select'
-      
-        '            md.M_Id, d.Wh_Id, d.Doc_Date M_DATE, '#39#1057#1087#1080#1089#1072#1085#1080#1077#39' m_ty' +
-        'pe, d.Doc_N m_doc, -1 * md.M_Quant quant'
-      '          from Material_Docs d'
-      
-        '               inner join Materials_In_Doc md on (d.Doc_Id = md.' +
-        'Doc_Id)'
-      
-        '          where d.Doc_Closed = 1 and d.Dt_Id = 3 and md.M_Id = :' +
-        'M_ID'
-      '        union'
-      '        select'
-      
-        '            md.M_Id, d.Wh_Id, d.Doc_Date M_DATE, '#39#1050#1086#1088#1088#1077#1082#1090#1080#1088#1086#1074#1082#1072#39 +
-        ' m_type, d.Doc_N m_doc,  md.M_Quant quant'
-      '          from Material_Docs d'
-      
-        '               inner join Materials_In_Doc md on (d.Doc_Id = md.' +
-        'Doc_Id)'
-      
-        '          where d.Doc_Closed = 1 and d.Dt_Id = 4 and md.M_Id = :' +
-        'M_ID'
-      '        union'
-      '        select'
-      
-        '            md.M_Id, d.Wh_Id, d.Doc_Date M_DATE, '#39#1048#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1103 +
-        #39' m_type, d.Doc_N m_doc,  (md.M_Quant - coalesce(md.B_Quant, 0))' +
-        ' quant'
-      '          from Material_Docs d'
-      
-        '               inner join Materials_In_Doc md on (d.Doc_Id = md.' +
-        'Doc_Id)'
-      
-        '          where d.Doc_Closed = 1 and d.Dt_Id = 5 and md.M_Id = :' +
-        'M_ID'
-      '        union'
-      '        select'
-      
-        '            rm.M_Id, rm.Wh_Id, cast(r.RQ_EXEC_TIME as date) M_DA' +
-        'TE, '#39#1074#1086#1079#1074#1088#1072#1090' '#1057' '#1079#1072#1103#1074#1082#1080#39' m_type, r.Rq_Id m_doc, rm.Quant quant'
-      '          from Request_Materials_Return rm'
-      '               inner join request r on (rm.Rq_Id = r.Rq_Id)'
-      '          where rm.M_Id = :M_ID'
-      '        union'
-      '        select'
-      
-        '            rm.M_Id, rm.Wh_Id, cast(r.RQ_EXEC_TIME as date) M_DA' +
-        'TE, '#39#1089#1087#1080#1089#1072#1085#1080#1077' '#1053#1040' '#1079#1072#1103#1074#1082#1091#39' m_type, r.Rq_Id m_doc, -1 * rm.Rm_Quant' +
-        ' quant'
-      '          from Request_Materials rm'
-      '               inner join request r on (rm.Rq_Id = r.Rq_Id)'
-      '          where rm.M_Id = :M_ID'
-      '       ) m'
-      
-        '       inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10' +
-        ')'
-      '  order by 1, 2, 3')
+      'select * from MATERIALS_SUMMARY(:M_ID)')
     UpdateCommand.Params = <>
     InsertCommand.Params = <>
     DeleteCommand.Params = <>
@@ -1726,11 +1787,12 @@ object MaterialsForm: TMaterialsForm
         '    coalesce(im.M_Notice, '#39#39')||coalesce('#39'/'#39'||d.Notice, '#39#39') Notic' +
         'e,'
       '    w.O_Name wherehouse,'
-      '    im.M_Quant M_Quant,'
+      '    iif(u.Serial is null, im.M_Quant, 1) M_Quant,'
       '    im.Shipper_Cost,'
       '    wo.O_Name FROM_WH,'
       '    d.Dt_Id,'
-      '    d.Doc_Id'
+      '    d.Doc_Id,'
+      '    u.Serial'
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       
@@ -1742,6 +1804,9 @@ object MaterialsForm: TMaterialsForm
       
         '       left outer join objects wo on (wo.O_Id = d.From_Wh and wo' +
         '.O_Type = 10)'
+      
+        '       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.' +
+        'Doc_Id and u.M_Id = im.M_Id)'
       '  where d.Doc_Closed = 1 '
       '        and d.Dt_Id = 2'
       '        and im.M_Id = :M_ID   '
@@ -1750,9 +1815,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     DataSource = srcDataSource
     Left = 195
@@ -1800,9 +1865,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     DataSource = srcDataSource
     Left = 251
@@ -1849,9 +1914,9 @@ object MaterialsForm: TMaterialsForm
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWriteDS
     AutoCommit = True
     DataSource = srcDataSource
     Left = 307
@@ -1866,5 +1931,123 @@ object MaterialsForm: TMaterialsForm
       'select b.Bl_Body from Blob_Tbl b where b.Bl_Id = :Bl_Id')
     Left = 669
     Top = 88
+  end
+  object dsSerials: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE MATERIAL_UNIT'
+      'SET '
+      '    NOTICE = :NOTICE,'
+      '    MAC = :MAC,'
+      '    COST = :COST,'
+      '    S_VERSION = :S_VERSION'
+      'WHERE'
+      '    M_ID = :OLD_M_ID'
+      '    and SERIAL = :OLD_SERIAL'
+      '    ')
+    RefreshSQL.Strings = (
+      'select'
+      '    u.*'
+      '  , case u.State'
+      '      when 0 then '#39#1085#1072' '#1089#1082#1083#1072#1076#1077#39
+      '      when 1 then '#39#1074#1099#1076#1072#1085#39
+      '      when 2 then '#39#1074' '#1088#1077#1084#1086#1085#1090#1077#39
+      '      when 3 then '#39#1087#1088#1086#1076#1072#1085#39
+      '      when 4 then '#39#1089#1087#1080#1089#1072#1085#39
+      '      else u.State || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
+      '    end STATE_STR'
+      '  , o.O_Name OT_NAME'
+      '  , case u.Owner_Type'
+      
+        '      when 0 then (select first 1 w.O_Name from Objects w where ' +
+        'u.Owner = w.O_Id and w.O_Type = 10)'
+      
+        '      when 1 then (select first 1 c.Account_No||'#39' '#39'||c.Surname||' +
+        #39' '#39'||c.Initials from customer c where u.Owner = c.Customer_Id)'
+      
+        '      when 2 then (select first 1 n.Name from Nodes n where u.Ow' +
+        'ner = n.Node_Id)'
+      '      else u.Owner_Type || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
+      '    end OWNER_STR'
+      '  from Material_Unit u'
+      
+        '  left outer join Objects o on (u.Owner_Type = o.O_Id and o.O_Ty' +
+        'pe = 51)'
+      '  where U.M_ID = :OLD_M_ID'
+      '    and U.SERIAL = :OLD_SERIAL'
+      ''
+      '    '
+      '  ')
+    SelectSQL.Strings = (
+      'select'
+      '    u.*'
+      '  , case u.State'
+      '      when 0 then '#39#1085#1072' '#1089#1082#1083#1072#1076#1077#39
+      '      when 1 then '#39#1074#1099#1076#1072#1085#39
+      '      when 2 then '#39#1074' '#1088#1077#1084#1086#1085#1090#1077#39
+      '      when 3 then '#39#1087#1088#1086#1076#1072#1085#39
+      '      when 4 then '#39#1089#1087#1080#1089#1072#1085#39
+      '      else u.State || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
+      '    end STATE_STR'
+      '  , o.O_Name OT_NAME'
+      '  , case u.Owner_Type'
+      
+        '      when 0 then (select first 1 w.O_Name from Objects w where ' +
+        'u.Owner = w.O_Id and w.O_Type = 10)'
+      
+        '      when 1 then (select first 1 c.Account_No||'#39' '#39'||c.Surname||' +
+        #39' '#39'||c.Initials from customer c where u.Owner = c.Customer_Id)'
+      
+        '      when 2 then (select first 1 n.Name from Nodes n where u.Ow' +
+        'ner = n.Node_Id)'
+      '      else u.Owner_Type || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
+      '    end OWNER_STR'
+      '  from Material_Unit u'
+      
+        '  left outer join Objects o on (u.Owner_Type = o.O_Id and o.O_Ty' +
+        'pe = 51)'
+      '  where u.M_Id = :M_ID'
+      '  order by u.Serial')
+    AutoUpdateOptions.UpdateTableName = 'MATERIALS_INCOME'
+    AutoUpdateOptions.KeyFields = 'MI_ID'
+    AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
+    AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    AutoCommit = True
+    DataSource = srcDataSource
+    Left = 650
+    Top = 278
+    WaitEndMasterScroll = True
+    dcForceOpen = True
+  end
+  object srcSerials: TDataSource
+    DataSet = dsSerials
+    Left = 652
+    Top = 326
+  end
+  object trWriteDS: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 720
+    Top = 312
+  end
+  object trReadDS: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 720
+    Top = 248
   end
 end

@@ -313,7 +313,7 @@ object RequestForm: TRequestForm
         end
         object EdPorch: TDBEditEh
           Tag = 7
-          Left = 59
+          Left = 61
           Top = 43
           Width = 34
           Height = 21
@@ -329,7 +329,7 @@ object RequestForm: TRequestForm
         end
         object EdFloor: TDBEditEh
           Tag = 7
-          Left = 145
+          Left = 150
           Top = 43
           Width = 33
           Height = 21
@@ -423,17 +423,18 @@ object RequestForm: TRequestForm
         inherited gbInfo: TGroupBox
           Width = 374
           Height = 137
-          inherited lblFIO: TLabel
-            Width = 370
-            OnDblClick = CustomerInfoFrmlblFIODblClick
-          end
           inherited lblDebt: TLabel
             Width = 370
+            Margins.Bottom = 0
             OnDblClick = CustomerInfoFrmlblFIODblClick
           end
           inherited memAbonent: TMemo
             Width = 370
-            Height = 94
+            Height = 86
+            OnDblClick = CustomerInfoFrmlblFIODblClick
+          end
+          inherited lblFIO: TDBEditEh
+            Width = 370
             OnDblClick = CustomerInfoFrmlblFIODblClick
           end
         end
@@ -445,7 +446,7 @@ object RequestForm: TRequestForm
     Top = 188
     Width = 784
     Height = 337
-    ActivePage = tabRequest
+    ActivePage = tabExecute
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
@@ -916,6 +917,7 @@ object RequestForm: TRequestForm
             TabOrder = 0
             Visible = True
             OnEnter = deEndExecDateTimeEnter
+            OnExit = deEndExecDateTimeExit
             OnUpdateData = deEndExecDateTimeUpdateData
             EditFormat = 'DD/MM/YY HH:NN'
           end
@@ -1057,6 +1059,7 @@ object RequestForm: TRequestForm
               DynProps = <>
               Flat = True
               FooterRowCount = 1
+              Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
               SumList.Active = True
               TabOrder = 0
               TitleParams.HorzLines = True
@@ -1128,6 +1131,7 @@ object RequestForm: TRequestForm
               DynProps = <>
               Flat = True
               FooterRowCount = 1
+              Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
               PopupMenu = pmGridMat
               SumList.Active = True
               TabOrder = 1
@@ -1222,15 +1226,22 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 115
+          Width = 776
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
         end
+        object splFlats: TSplitter
+          Left = 373
+          Top = 13
+          Height = 55
+          Align = alRight
+          Visible = False
+        end
         object dbMemDefect: TDBMemoEh
           Left = 0
           Top = 13
-          Width = 776
+          Width = 373
           Height = 55
           ScrollBars = ssVertical
           Align = alClient
@@ -1243,6 +1254,90 @@ object RequestForm: TRequestForm
           Visible = True
           WantReturns = True
           OnChange = dbMemDefectChange
+        end
+        object dbgFlats: TDBGridEh
+          Left = 376
+          Top = 13
+          Width = 400
+          Height = 55
+          Align = alRight
+          AllowedOperations = [alopUpdateEh, alopDeleteEh]
+          DataSource = srcFlats
+          DynProps = <>
+          Flat = True
+          FrozenCols = 1
+          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+          TabOrder = 1
+          Visible = False
+          OnColExit = dbgFlatsColExit
+          OnGetCellParams = dbgFlatsGetCellParams
+          Columns = <
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'FLAT_NO'
+              Footers = <>
+              ReadOnly = True
+              Title.Caption = #1050#1074'-'#1088#1072
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'PORCH_N'
+              Footers = <>
+              ReadOnly = True
+              Title.Caption = #1087'-'#1076
+              Width = 25
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'FLOOR_N'
+              Footers = <>
+              ReadOnly = True
+              Title.Caption = #1101#1090#1078
+              Width = 25
+            end
+            item
+              AutoDropDown = True
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'FLAT_RESULT'
+              Footers = <>
+              KeyList.Strings = (
+                '1'
+                '2')
+              PickList.Strings = (
+                '1'
+                '2')
+              Title.Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+              Width = 91
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'NOTICE'
+              Footers = <>
+              Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Width = 165
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'SRV_LIST'
+              Footers = <>
+              ReadOnly = True
+              Title.Caption = #1059#1089#1083#1091#1075#1080
+            end>
+          object RowDetailData: TRowDetailPanelControlEh
+          end
         end
       end
     end
@@ -1753,8 +1848,8 @@ object RequestForm: TRequestForm
   end
   object ActionList1: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 142
-    Top = 474
+    Left = 190
+    Top = 402
     object actExecutors: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100'/'#1080#1079#1084#1077#1085#1080#1090#1100' '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1103' (F5)'
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100'/'#1080#1079#1084#1077#1085#1080#1090#1100' '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1103' '#1079#1072#1103#1074#1082#1080
@@ -1829,6 +1924,11 @@ object RequestForm: TRequestForm
       Caption = #1059#1076#1072#1083#1080#1090#1100' '#1079#1072#1103#1074#1082#1091
       OnExecute = actReqDelExecute
     end
+    object actOpenHouse: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+      OnExecute = actOpenHouseExecute
+    end
   end
   object srcErrors: TDataSource
     DataSet = dsErrors
@@ -1837,10 +1937,15 @@ object RequestForm: TRequestForm
   end
   object dsErrors: TpFIBDataSet
     SelectSQL.Strings = (
-      'select rt.RQTL_ID, rt.rq_content, rt.ADD_FIELD'
-      'from request_templates rt'
-      'where rt.rq_type = :rt_id'
-      'order by rt.rq_content'
+      'select'
+      '    rt.RQTL_ID'
+      '  , rt.rq_content'
+      '  , rt.ADD_FIELD'
+      '  , coalesce(rt.FLATS_NEED, 0) FLATS_NEED'
+      '  , coalesce(rt.FLATS_RESULT, '#39#39') FLATS_RESULT'
+      '  from request_templates rt'
+      '  where rt.rq_type = :rt_id'
+      '  order by rt.rq_content '
       '')
     AutoCalcFields = False
     Transaction = trRead
@@ -2031,8 +2136,8 @@ object RequestForm: TRequestForm
       ''
       'end.')
     OnUserFunction = frxReportUserFunction
-    Left = 444
-    Top = 50
+    Left = 364
+    Top = 66
     Datasets = <>
     Variables = <>
     Style = <>
@@ -2066,68 +2171,88 @@ object RequestForm: TRequestForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcRequest
-    Left = 310
-    Top = 297
+    Left = 214
+    Top = 289
   end
   object srcWorks: TDataSource
     AutoEdit = False
     DataSet = dsWorks
-    Left = 430
-    Top = 344
+    Left = 278
+    Top = 288
   end
   object srcMaterials: TDataSource
     AutoEdit = False
     DataSet = dsMaterials
-    Left = 382
-    Top = 384
+    Left = 318
+    Top = 376
   end
   object dsMaterials: TpFIBDataSet
     DeleteSQL.Strings = (
+      'execute block ('
+      '    OLD_RM_ID UID = :OLD_RM_ID,'
+      '    OLD_MT    D_Integer = :OLD_MT)'
+      'as'
+      'declare variable Ret_Rm_Id integer;'
+      'begin'
+      '  if (OLD_MT = 1) then'
       
-        'execute block (OLD_RM_ID UID = :OLD_RM_ID, OLD_MT D_Integer = :O' +
-        'LD_MT)'
-      'as begin'
-      'if (OLD_MT = 1) then'
+        '    execute procedure REQUEST_MATERIALS_RETURN_IUD(:OLD_RM_ID, n' +
+        'ull, null, null, null, null, 2);'
+      '  else'
+      '    select'
+      '        Ret_Rm_Id'
       
-        '  execute procedure REQUEST_MATERIALS_RETURN_IUD(:OLD_RM_ID, nul' +
-        'l, null, null, null, null, 2) ;'
-      'else'
-      
-        '  execute procedure Request_Materials_Iud(:OLD_RM_ID, null, null' +
-        ', null, null, null, null, null,  2);  '
+        '      from Request_Materials_Iud(:OLD_RM_ID, null, null, null, n' +
+        'ull, null, null, null, 2)'
+      '    into :Ret_Rm_Id;'
       'end')
     SelectSQL.Strings = (
       'select'
+      '    m.M_ID ID'
       
-        '    m.M_ID ID, m.NAME, rM.RM_NOTICE notice, m.DIMENSION, rM.RM_Q' +
-        'UANT QNT'
-      
-        '    , rM.RM_QUANT * rm.rm_cost as COST, coalesce(rm.NOT_CALC, 0)' +
-        ' NOT_CALC'
-      '    , o.O_Name WH_NAME, 0 as MT, rm.Rm_Id'
-      '    from MATERIALS m'
-      '        inner join REQUEST_MATERIALS rM on (M.M_ID = rM.M_ID)'
-      
-        '        left outer join objects o on (o.O_Id = rm.Wh_Id and o.O_' +
-        'Type = 10)'
-      '    where rM.RQ_ID = :RQ_ID'
+        '  , m.Name || coalesce('#39'/'#39' || u.Serial || coalesce('#39'/'#39' || u.MAC,' +
+        ' '#39#39'), '#39#39') NAME'
+      '  , rM.RM_NOTICE notice'
+      '  , m.DIMENSION'
+      '  , rM.RM_QUANT QNT'
+      '  , rM.RM_QUANT * rm.rm_cost as COST'
+      '  , coalesce(rm.NOT_CALC, 0) NOT_CALC'
+      '  , o.O_Name WH_NAME'
+      '  , 0 as MT'
+      '  , rm.Rm_Id'
+      '  from MATERIALS m'
+      '       inner join REQUEST_MATERIALS rM on (M.M_ID = rM.M_ID)'
+      '       left outer join objects o on (o.O_Id = rm.Wh_Id and'
+      '             o.O_Type = 10)'
+      '       left outer join Material_Unit u on (u.M_Id = rm.M_Id and'
+      '             rm.Serial = u.Serial)'
+      '  where rM.RQ_ID = :RQ_ID'
       'union all'
       'select'
+      '    m.M_ID ID'
       
-        '    m.M_ID ID, m.NAME||'#39' ( '#1042#1086#1079#1074#1088#1072#1090' )'#39', rM.Notice notice, m.DEMEN' +
-        'SION, rM.Quant*(-1) QNT'
-      '    , rM.Quant*(-1) * m.Cost as COST, 0 as NOT_CALC '
-      '    , o.O_Name WH_NAME, 1 as MT, rm.ID Rm_Id'
-      '    from MATERIALS m'
+        '  , m.Name || coalesce('#39'/'#39' || u.Serial || coalesce('#39'/'#39' || u.MAC,' +
+        ' '#39#39'), '#39#39') || '#39' ( '#1042#1086#1079#1074#1088#1072#1090' )'#39' NAME'
+      '  , rM.Notice notice'
+      '  , m.DEMENSION'
+      '  , rM.Quant * (-1) QNT'
+      '  , rM.Quant * (-1) * m.Cost as COST'
+      '  , 0 as NOT_CALC'
+      '  , o.O_Name WH_NAME'
+      '  , 1 as MT'
+      '  , rm.ID Rm_Id'
+      '  from MATERIALS m'
       
-        '        inner join Request_Materials_Return rM on (M.M_ID = rM.M' +
-        '_ID)'
+        '       inner join Request_Materials_Return rM on (M.M_ID = rM.M_' +
+        'ID)'
+      '       left outer join objects o on (o.O_Id = rm.Wh_Id and'
+      '             o.O_Type = 10)'
       
-        '        left outer join objects o on (o.O_Id = rm.Wh_Id and o.O_' +
-        'Type = 10)'
-      '    where rM.RQ_ID = :RQ_ID'
-      'order by 2'
-      '    ')
+        '       left outer join Material_Unit u on (u.M_Id = rm.M_Id and ' +
+        ' rm.Serial = u.Serial)'
+      ''
+      '  where rM.RQ_ID = :RQ_ID'
+      '  order by 2')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'
@@ -2139,12 +2264,12 @@ object RequestForm: TRequestForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcRequest
-    Left = 302
-    Top = 385
+    Left = 246
+    Top = 377
   end
   object mmRequest: TMainMenu
-    Left = 432
-    Top = 65534
+    Left = 312
+    Top = 22
     object N1: TMenuItem
       Caption = #1047#1072#1103#1074#1082#1072
       GroupIndex = 2
@@ -2152,6 +2277,12 @@ object RequestForm: TRequestForm
         Action = actExAddressEdit
       end
       object miN3: TMenuItem
+        Caption = '-'
+      end
+      object miOpenHouse: TMenuItem
+        Action = actOpenHouse
+      end
+      object mi4: TMenuItem
         Caption = '-'
       end
       object miReqDel: TMenuItem
@@ -2188,8 +2319,8 @@ object RequestForm: TRequestForm
   end
   object srcPhotos: TDataSource
     DataSet = dsPhotos
-    Left = 558
-    Top = 472
+    Left = 550
+    Top = 160
   end
   object dsPhotos: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -2222,8 +2353,8 @@ object RequestForm: TRequestForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcRequest
-    Left = 494
-    Top = 473
+    Left = 502
+    Top = 161
   end
   object pmGridMat: TPopupMenu
     Left = 480
@@ -2312,17 +2443,91 @@ object RequestForm: TRequestForm
   end
   object srcMSG: TDataSource
     DataSet = dsMSG
-    Left = 448
-    Top = 432
+    Left = 432
+    Top = 392
   end
   object PropStorageEh: TPropStorageEh
     Section = 'Request'
     StorageManager = dmMain.iniPropStorage
     StoredProps.Strings = (
       'PageControl.tabExecute.pnlNotice.<P>.Height'
+      'PageControl.tabExecute.pnlNotice.dbgFlats.<P>.Width'
       'PageControl.tabRequest.pnlBid.<P>.Height')
     OnReadProp = PropStorageEhReadProp
     Left = 674
     Top = 152
+  end
+  object dsFlats: TpFIBDataSet
+    UpdateSQL.Strings = (
+      
+        'update or insert into Request_Flats (Rq_Id, House_Id, Flat_No, F' +
+        'lat_Result, Notice)'
+      'values (:Rq_Id, :House_Id, :Flat_No, :Flat_Result, :Notice)'
+      'matching (Rq_Id, House_Id, Flat_No)')
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '  REQUEST_FLATS'
+      'WHERE'
+      
+        '  Rq_Id = :Rq_Id and House_Id = :House_Id and Flat_No = :Flat_No' +
+        '        ')
+    InsertSQL.Strings = (
+      
+        'update or insert into Request_Flats (Rq_Id, House_Id, Flat_No, F' +
+        'lat_Result, Notice)'
+      'values (:Rq_Id, :House_Id, :Flat_No, :Flat_Result, :Notice)'
+      'matching (Rq_Id, House_Id, Flat_No)')
+    RefreshSQL.Strings = (
+      'select'
+      '    nf.House_Id'
+      '  , nf.SRV_LIST'
+      '  , nf.Flat_No'
+      '  , nf.Porch_N'
+      '  , nf.Floor_N'
+      '  , f.Flat_Result'
+      '  , f.Notice'
+      '  @@color% -- @  '
+      '  from Get_Node_Flat_Lvl(:Node_Id) nf'
+      '    left outer join Request_Flats f'
+      
+        '      on (nf.House_Id = f.House_Id and nf.Flat_No = f.Flat_No an' +
+        'd f.Rq_Id = :RQ_ID)'
+      'where'
+      '  nf.House_Id = :OLD_House_Id and nf.Flat_No = :OLD_Flat_No ')
+    SelectSQL.Strings = (
+      'select'
+      '    nf.House_Id'
+      '  , nf.SRV_LIST'
+      '  , nf.Flat_No'
+      '  , nf.Porch_N'
+      '  , nf.Floor_N'
+      '  , f.Flat_Result'
+      '  , f.Notice'
+      '  @@color% -- @'
+      '  from Get_Node_Flat_Lvl(:Node_Id) nf'
+      
+        '       left outer join Request_Flats f on (nf.House_Id = f.House' +
+        '_Id and'
+      '             nf.Flat_No = f.Flat_No and'
+      '             f.Rq_Id = :RQ_ID)'
+      '  order by nf.House_Id, nf.Flat_No')
+    AutoUpdateOptions.UpdateTableName = 'REQUEST'
+    AutoUpdateOptions.KeyFields = 'RQ_ID'
+    AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'
+    AutoUpdateOptions.WhenGetGenID = wgOnNewRecord
+    AutoCalcFields = False
+    AfterOpen = dsMaterialsAfterOpen
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    AutoCommit = True
+    DataSource = srcRequest
+    Left = 574
+    Top = 473
+  end
+  object srcFlats: TDataSource
+    DataSet = dsFlats
+    Left = 638
+    Top = 480
   end
 end

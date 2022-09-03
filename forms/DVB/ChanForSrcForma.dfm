@@ -64,7 +64,7 @@ object ChanForSrcForm: TChanForSrcForm
   end
   object lbl2: TLabel
     Left = 8
-    Top = 62
+    Top = 63
     Width = 56
     Height = 13
     Caption = #1050#1086#1076#1080#1088#1086#1074#1082#1072
@@ -90,7 +90,7 @@ object ChanForSrcForm: TChanForSrcForm
   end
   object lbl3: TLabel
     Left = 8
-    Top = 143
+    Top = 142
     Width = 49
     Height = 13
     Caption = 'IP '#1087#1086#1090#1086#1082#1072
@@ -156,7 +156,7 @@ object ChanForSrcForm: TChanForSrcForm
     TabOrder = 1
     Visible = True
   end
-  object edtNAME1: TDBEditEh
+  object edSYMRATE: TDBEditEh
     Left = 288
     Top = 113
     Width = 195
@@ -211,6 +211,19 @@ object ChanForSrcForm: TChanForSrcForm
     DynProps = <>
     DataField = 'Ch_Id'
     DataSource = srcChForSrc
+    DropDownBox.Columns = <
+      item
+        FieldName = 'Ch_Name'
+        Width = 70
+      end
+      item
+        FieldName = 'CH_NOTICE'
+        Width = 40
+      end>
+    DropDownBox.ListSource = srcChan
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.AutoDrop = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1050#1072#1085#1072#1083
     EditButtons = <>
@@ -218,12 +231,13 @@ object ChanForSrcForm: TChanForSrcForm
     ListField = 'Ch_Name'
     ListSource = srcChan
     ShowHint = True
+    Style = csDropDownEh
     TabOrder = 0
     Visible = True
   end
   object cbbS_Crypt: TDBLookupComboboxEh
     Left = 70
-    Top = 59
+    Top = 60
     Width = 413
     Height = 21
     Anchors = [akLeft, akTop, akRight]
@@ -261,7 +275,7 @@ object ChanForSrcForm: TChanForSrcForm
   end
   object edtSYMRATE: TDBEditEh
     Left = 70
-    Top = 140
+    Top = 139
     Width = 413
     Height = 21
     Anchors = [akLeft, akTop, akRight]
@@ -283,6 +297,14 @@ object ChanForSrcForm: TChanForSrcForm
     DynProps = <>
     DataField = 'CARD_ID'
     DataSource = srcChForSrc
+    DropDownBox.Columns = <
+      item
+        FieldName = 'O_NAME'
+      end>
+    DropDownBox.ListSource = srcCard
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.AutoDrop = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1082#1072#1088#1090#1086#1095#1082#1080
     EditButtons = <>
@@ -290,6 +312,7 @@ object ChanForSrcForm: TChanForSrcForm
     ListField = 'O_Name'
     ListSource = srcCard
     ShowHint = True
+    Style = csDropDownEh
     TabOrder = 7
     Visible = True
   end
@@ -491,100 +514,41 @@ object ChanForSrcForm: TChanForSrcForm
   end
   object dsChForSrc: TpFIBDataSet
     UpdateSQL.Strings = (
-      'UPDATE CHANNEL_SRC_PARAM'
-      'SET '
-      '    CS_ID = :CS_ID,'
-      '    CH_ID = :CH_ID,'
-      '    NOTICE = :NOTICE,'
-      '    FREQ = :FREQ,'
-      '    SYMRATE = :SYMRATE,'
-      '    IP = :IP,'
-      '    V_CODEC = :V_CODEC,'
-      '    S_CRYPT = :S_CRYPT,'
-      '    CS_SYSTEM = :CS_SYSTEM,'
-      '    CARD_ID = :CARD_ID,'
-      '    ON_ANALOG = :ON_ANALOG,'
-      '    ON_DVB = :ON_DVB,'
-      '    ON_IPTV = :ON_IPTV,'
-      '    NID = :NID,'
-      '    ONID = :ONID,'
-      '    TSID = :TSID,'
-      '    SID = :SID,'
-      '    VPID = :VPID,'
-      '    APID = :APID,'
-      '    A2PID = :A2PID'
-      'WHERE'
-      '    CS_ID = :OLD_CS_ID'
-      '    and CH_ID = :OLD_CH_ID'
-      '    ')
+      
+        'execute procedure Channel_Src_Param_Iu(:Csp_Id, :Cs_Id, :Ch_Id, ' +
+        ':Notice, :Freq, :Symrate, :Ip, :V_Codec, :S_Crypt, :Cs_System, :' +
+        'Card_Id, :On_Analog, :On_Dvb, :On_Iptv, :Nid, :Onid, :Tsid, :Sid' +
+        ', :Vpid, :Apid, :A2pid)  ')
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CHANNEL_SRC_PARAM'
       'WHERE'
       '        CS_ID = :OLD_CS_ID'
       '    and CH_ID = :OLD_CH_ID'
+      '    and CSP_ID = :OLD_CSP_ID'
       '    ')
     InsertSQL.Strings = (
-      'INSERT INTO CHANNEL_SRC_PARAM('
-      '    CS_ID,'
-      '    CH_ID,'
-      '    NOTICE,'
-      '    FREQ,'
-      '    SYMRATE,'
-      '    IP,'
-      '    V_CODEC,'
-      '    S_CRYPT,'
-      '    CS_SYSTEM,'
-      '    CARD_ID,'
-      '    ON_ANALOG,'
-      '    ON_DVB,'
-      '    ON_IPTV,'
-      '    NID,'
-      '    ONID,'
-      '    TSID,'
-      '    SID,'
-      '    VPID,'
-      '    APID,'
-      '    A2PID'
-      ')'
-      'VALUES('
-      '    :CS_ID,'
-      '    :CH_ID,'
-      '    :NOTICE,'
-      '    :FREQ,'
-      '    :SYMRATE,'
-      '    :IP,'
-      '    :V_CODEC,'
-      '    :S_CRYPT,'
-      '    :CS_SYSTEM,'
-      '    :CARD_ID,'
-      '    :ON_ANALOG,'
-      '    :ON_DVB,'
-      '    :ON_IPTV,'
-      '    :NID,'
-      '    :ONID,'
-      '    :TSID,'
-      '    :SID,'
-      '    :VPID,'
-      '    :APID,'
-      '    :A2PID'
-      ')')
+      
+        'execute procedure Channel_Src_Param_Iu(:Csp_Id, :Cs_Id, :Ch_Id, ' +
+        ':Notice, :Freq, :Symrate, :Ip, :V_Codec, :S_Crypt, :Cs_System, :' +
+        'Card_Id, :On_Analog, :On_Dvb, :On_Iptv, :Nid, :Onid, :Tsid, :Sid' +
+        ', :Vpid, :Apid, :A2pid)  ')
     RefreshSQL.Strings = (
       'select'
       '  p.*'
       '  from Channel_Src_Param p'
-      'where(  p.Cs_Id = :Cs_Id'
-      'and p.Ch_Id = :Ch_Id'
-      '     ) and (     P.CS_ID = :OLD_CS_ID'
+      'where P.CS_ID = :OLD_CS_ID'
       '    and P.CH_ID = :OLD_CH_ID'
-      '     )'
+      '    and RDB$DB_KEY = :OLD_RDB$DB_KEY     '
       '    ')
     SelectSQL.Strings = (
       'select'
       '  p.*'
+      '  , p.RDB$DB_KEY'
       '  from Channel_Src_Param p'
       'where p.Cs_Id = :Cs_Id'
-      'and p.Ch_Id = :Ch_Id')
+      '  and p.Ch_Id = :Ch_Id'
+      '  and p.CSP_ID = :CSP_ID ')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -650,6 +614,7 @@ object ChanForSrcForm: TChanForSrcForm
       'select'
       '    c.Ch_Id'
       '  , c.Ch_Name'
+      '  , c.CH_NOTICE'
       '  from Channels C'
       '  order by 2  ')
     Transaction = trRead

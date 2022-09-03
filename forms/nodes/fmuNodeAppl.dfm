@@ -63,7 +63,7 @@ object apgNodeAppl: TapgNodeAppl
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'SN'
+        FieldName = 'SERIAL'
         Footers = <>
         Title.Caption = #1057'/'#1053#1086#1084#1077#1088
         Title.TitleButton = True
@@ -296,11 +296,12 @@ object apgNodeAppl: TapgNodeAppl
       '  , o.O_Name'
       '  , coalesce(W.SURNAME, a.ADDED_BY) as WHO_ADD'
       '  from Appliance a'
-      '       left outer join objects o on (o.O_Id = a.A_Type and'
-      '             o.O_Type = 48)'
+      
+        '       left outer join objects o on (o.O_Id = a.A_Type and o.O_T' +
+        'ype = 48)'
       '       left outer join worker w on (w.Ibname = a.ADDED_BY)'
       '  where a.OWN_ID = :NODE_ID'
-      '        and a.OWN_TYPE = 1'
+      '        and a.OWN_TYPE = 2'
       '  order by a.Name')
     AutoUpdateOptions.UpdateTableName = 'DISCOUNT_FACTOR'
     AutoUpdateOptions.KeyFields = 'DISCOUNT_ID'

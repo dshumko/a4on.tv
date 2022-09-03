@@ -4,7 +4,7 @@ object ServiceForm: TServiceForm
   ActiveControl = edName
   BorderIcons = [biSystemMenu]
   Caption = #1059#1089#1083#1091#1075#1072
-  ClientHeight = 451
+  ClientHeight = 461
   ClientWidth = 405
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -137,7 +137,7 @@ object ServiceForm: TServiceForm
     Left = 0
     Top = 374
     Width = 405
-    Height = 36
+    Height = 46
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 10
@@ -145,8 +145,8 @@ object ServiceForm: TServiceForm
       Left = 0
       Top = 0
       Width = 405
-      Height = 36
-      ActivePage = tsNotice
+      Height = 46
+      ActivePage = tsWeb
       Align = alClient
       TabOrder = 0
       object tsNotice: TTabSheet
@@ -155,7 +155,7 @@ object ServiceForm: TServiceForm
           Left = 0
           Top = 0
           Width = 397
-          Height = 8
+          Height = 18
           ScrollBars = ssVertical
           Align = alClient
           AutoSize = False
@@ -176,7 +176,7 @@ object ServiceForm: TServiceForm
           Left = 0
           Top = 67
           Width = 397
-          Height = 5
+          Height = 2
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -192,7 +192,7 @@ object ServiceForm: TServiceForm
             Left = 0
             Top = 13
             Width = 397
-            Height = 6
+            Height = 1
             ScrollBars = ssVertical
             Align = alClient
             AutoSize = False
@@ -259,7 +259,9 @@ object ServiceForm: TServiceForm
             Top = 10
             Width = 255
             Height = 17
-            Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1074' '#1051#1050' '#1080' '#1084#1086#1073#1080#1083#1100#1085#1086#1084' '#1087#1088#1080#1083#1086#1078#1077#1085#1080#1080
+            Hint = 
+              #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1074' '#1051#1050' '#1080' '#1084#1086#1073#1080#1083#1100#1085#1086#1084' '#1087#1088#1080#1083#1086#1078#1077#1085#1080#1080'.'#13#10#1053#1072#1087#1088#1080#1084#1077#1088' '#1076#1083#1103' '#1074#1072#1088 +
+              #1080#1072#1085#1090#1086#1074', '#1082#1086#1075#1076#1072' '#1091#1089#1083#1091#1075#1086' '#1084#1086#1078#1085#1086' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1074' '#1051#1050' '#1072' '#1074#1082#1083'/'#1074#1099#1082#1083' '#1085#1077#1083#1100#1079#1103
             Alignment = taLeftJustify
             Anchors = [akTop, akRight]
             Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1072#1073#1086#1085#1077#1085#1090#1091
@@ -691,7 +693,7 @@ object ServiceForm: TServiceForm
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 410
+    Top = 420
     Width = 405
     Height = 41
     Align = alBottom

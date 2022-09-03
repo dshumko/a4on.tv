@@ -49,6 +49,8 @@ type
     miNN1: TMenuItem;
     miPD1: TMenuItem;
     miTEXT: TMenuItem;
+    chkFlatsResult: TDBCheckBoxEh;
+    mmoFlatsResult: TDBMemoEh;
     procedure dsRQTLAfterOpen(DataSet: TDataSet);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);
@@ -91,12 +93,16 @@ begin
 
       mmoAddons.Lines.Delimiter := ';';
       mmoAddons.Lines.Clear;
+      mmoFlatsResult.Lines.Delimiter := ';';
+      mmoFlatsResult.Lines.Clear;
       if aRQTL_ID = -1 then
         dsRQTL.Insert
       else
       begin
         if not dsRQTL.FieldByName('ADD_FIELD').IsNull then
           mmoAddons.Lines.DelimitedText := dsRQTL['ADD_FIELD'];
+        if not dsRQTL.FieldByName('FLATS_RESULT').IsNull then
+          mmoFlatsResult.Lines.DelimitedText := dsRQTL['FLATS_RESULT'];
       end;
 
       if ShowModal = mrOk then
@@ -108,6 +114,8 @@ begin
           dsRQTL['RQ_TYPE'] := aRT_ID;
           if mmoAddons.Lines.DelimitedText <> '' then
             dsRQTL['ADD_FIELD'] := mmoAddons.Lines.DelimitedText;
+          if mmoFlatsResult.Lines.DelimitedText <> '' then
+            dsRQTL['FLATS_RESULT'] := mmoFlatsResult.Lines.DelimitedText;
         end
         else
         begin
@@ -115,13 +123,24 @@ begin
             needAdd := mmoAddons.Lines.DelimitedText <> dsRQTL['ADD_FIELD']
           else
             needAdd := mmoAddons.Lines.DelimitedText <> '';
-
           if needAdd then
           begin
             if not(dsRQTL.State in [dsEdit]) then
               dsRQTL.Edit;
             dsRQTL['ADD_FIELD'] := mmoAddons.Lines.DelimitedText;
           end;
+
+          if not dsRQTL.FieldByName('FLATS_RESULT').IsNull then
+            needAdd := mmoFlatsResult.Lines.DelimitedText <> dsRQTL['FLATS_RESULT']
+          else
+            needAdd := mmoFlatsResult.Lines.DelimitedText <> '';
+          if needAdd then
+          begin
+            if not(dsRQTL.State in [dsEdit]) then
+              dsRQTL.Edit;
+            dsRQTL['FLATS_RESULT'] := mmoFlatsResult.Lines.DelimitedText;
+          end;
+
         end;
         if dsRQTL.State in [dsEdit, dsInsert] then
           dsRQTL.Post;

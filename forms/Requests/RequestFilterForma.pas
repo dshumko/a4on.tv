@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.DBCtrls, Vcl.ComCtrls,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh, PropFilerEh, PropStorageEh;
+  GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh, PropFilerEh, PropStorageEh;
 
 type
   TRequestFilterForm = class(TForm)
@@ -120,6 +120,9 @@ type
     procedure btnLoadClick(Sender: TObject);
     procedure srcFilterDataChange(Sender: TObject; Field: TField);
     procedure luWorkEnter(Sender: TObject);
+    procedure luTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure luTypeClick(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFilter(const filename: string);
@@ -169,7 +172,8 @@ end;
 procedure TRequestFilterForm.btnLoadClick(Sender: TObject);
 begin
   dlgOpen.InitialDir := A4MainForm.GetUserFilterFolder;
-  if dlgOpen.Execute then begin
+  if dlgOpen.Execute then
+  begin
     srcFilter.DataSet.DisableControls;
     if not srcFilter.DataSet.Active then
       srcFilter.DataSet.Open;
@@ -229,14 +233,16 @@ procedure TRequestFilterForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: boolean;
 begin
-  if (Key = #13) then begin
+  if (Key = #13) then
+  begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
     if (ActiveControl is TDBGridEh) then
       go := False;
 
-    if go then begin
+    if go then
+    begin
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -262,25 +268,44 @@ begin
   dsErrors.Open;
   if srcFilter.DataSet.RecordCount > 1 then
     srcFilter.DataSet.First;
-  if ((not srcFilter.DataSet.FieldByName('ListBids').IsNull) and (srcFilter.DataSet.FieldByName('ListBids').AsString <>
-    '')) then
+  if ((not srcFilter.DataSet.FieldByName('ListBids').IsNull) and (srcFilter.DataSet.FieldByName('ListBids').AsString
+    <> '')) then
     pgcFilter.ActivePage := tsList;
 
 end;
 
-procedure TRequestFilterForm.luWorkEnter(Sender: TObject);
+procedure TRequestFilterForm.luTypeClick(Sender: TObject);
 begin
   if (Sender is TDBLookupComboboxEh) then begin
+  if not (Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+end;
+
+procedure TRequestFilterForm.luTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if (dsRequestType.Active) and (not dsRequestType.FieldByName('COLOR').IsNull) then
+    Background := StringToColor(dsRequestType['COLOR'])
+  else
+    Background := clWindow;
+end;
+
+procedure TRequestFilterForm.luWorkEnter(Sender: TObject);
+begin
+  if (Sender is TDBLookupComboboxEh) then
+  begin
     if not(Sender as TDBLookupComboboxEh).ListSource.DataSet.Active then
       (Sender as TDBLookupComboboxEh).ListSource.DataSet.Open;
-
   end;
-
 end;
 
 procedure TRequestFilterForm.SpeedButton3Click(Sender: TObject);
 begin
-  with srcFilter.DataSet do begin
+  with srcFilter.DataSet do
+  begin
     DisableControls;
     if not Active then
       Open;
@@ -303,8 +328,10 @@ var
   d1, d2: TDate;
 begin
   if (not srcFilter.DataSet.FieldByName('DATE_FROM').IsNull and not srcFilter.DataSet.FieldByName('DATE_TO').IsNull)
-  then begin
-    if (srcFilter.DataSet['DATE_FROM'] > srcFilter.DataSet['DATE_TO']) then begin
+  then
+  begin
+    if (srcFilter.DataSet['DATE_FROM'] > srcFilter.DataSet['DATE_TO']) then
+    begin
       d1 := srcFilter.DataSet['DATE_FROM'];
       d2 := srcFilter.DataSet['DATE_TO'];
       srcFilter.DataSet.Edit;

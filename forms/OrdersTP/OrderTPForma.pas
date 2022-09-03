@@ -6,10 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.DateUtils,
   Data.DB,
-  Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.Buttons,
+  Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Menus,
+  Vcl.Buttons,
   FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh, DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
-  MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, MemTableEh,
-  PropFilerEh, PropStorageEh;
+  MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
+  MemTableEh,
+  PropFilerEh, PropStorageEh, System.Actions, Vcl.ActnList;
 
 type
   TOrderTPForm = class(TForm)
@@ -62,6 +64,9 @@ type
     miactCnPrefixWizard: TMenuItem;
     miactCnPrefixWizard1: TMenuItem;
     PropStorageEh: TPropStorageEh;
+    btnPrint: TBitBtn;
+    actlst1: TActionList;
+    actPrint: TAction;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure lcbOTTP_TYPEChange(Sender: TObject);
@@ -80,6 +85,9 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pnlAddonsResize(Sender: TObject);
     procedure mmoTextExit(Sender: TObject);
+    function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
+    procedure actPrintExecute(Sender: TObject);
+    procedure dsOrderTPAfterOpen(DataSet: TDataSet);
   private
     FCustomerInfo: TCustomerInfo;
     FReport: Integer;
@@ -88,14 +96,16 @@ type
     FBasicCnt: Double;
     FMoreCnt: Double;
     FSingleSrv: Integer;
+    FAfterOpen: Boolean;
     FInUpdateMode: Boolean;
     FOldService: Integer;
     FSpellCheck: Boolean;
     procedure SetCustomerInfo(ci: TCustomerInfo);
     function ParseJson(const json: String): Boolean;
-    procedure PrintReport();
+    procedure PrintReport(const Preview: Boolean = True);
     procedure ExecuteAddons();
     function CheckData: Boolean;
+    function CheckDataAndSave: Boolean;
     procedure RecalAmount;
     procedure SaveOrderAddons;
     procedure SetInUpdateMode(const value: Boolean);
@@ -105,7 +115,7 @@ type
     procedure MakeFrom(const FromOrder: Integer);
     procedure ShowAddons;
     procedure LoadOrderAddons(const jAddons: String);
-    procedure AfterSave;
+    procedure AfterSave(const HandPrint: Boolean = False);
   end;
 
 function CreateOrderTP(const aOTPID: Integer): Integer;
@@ -115,6 +125,7 @@ function CreateOrderTPForCustomer(const aOTPID: Integer; const ACustomerInfo: TC
 implementation
 
 uses
+  System.StrUtils, System.Math,
   DM, PrjConst, JsonDataObjects, pFIBQuery, DBSumLst, MAIN, ReportPreview;
 
 {$R *.dfm}
@@ -162,9 +173,17 @@ begin
       if ShowModal = mrOk then
       begin
         try
-          dsOrderTP.Post;
+          if dsOrderTP.State in [dsEdit, dsInsert] then
+          begin
+            dsOrderTP.Post;
+            AfterSave;
+          end
+          else
+          begin
+            if (not lcbOTTP_TYPE.Text.ToUpper.Contains(rsFree.ToUpper)) then
+              PrintReport();
+          end;
           result := dsOrderTP['OTP_ID'];
-          AfterSave;
         except
           result := -1;
         end;
@@ -188,6 +207,11 @@ procedure TOrderTPForm.dbgAddonsExit(Sender: TObject);
 begin
   if mtAddons.State in [dsEdit] then
     mtAddons.Post;
+end;
+
+procedure TOrderTPForm.dsOrderTPAfterOpen(DataSet: TDataSet);
+begin
+  FAfterOpen := True;
 end;
 
 procedure TOrderTPForm.dsOrderTPBeforePost(DataSet: TDataSet);
@@ -224,7 +248,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
   // Action := caFree;
 end;
 
@@ -235,6 +259,7 @@ var
   Font_name: string;
   Row_height: Integer;
 begin
+  FOldService := -1;
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -293,6 +318,8 @@ begin
   else if (dsOrderTP.State = dsEdit) then
     btnOk.Enabled := (btnOk.Enabled or dmMain.AllowedAction(rght_OrdersTP_edit));
 
+  actPrint.Visible := btnOk.Enabled;
+
   if A4MainForm.AddictSpell.Tag = 1 then
   begin
     A4MainForm.AddictSpell.AddControl(mmoText);
@@ -308,6 +335,11 @@ begin
     mmoText.SelStart := mmoText.Text.Length;
     mmoText.SelLength := 0;
   end;
+end;
+
+function TOrderTPForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
+begin
+  result := dmMain.frxReportUserFunction(MethodName, Params);
 end;
 
 procedure TOrderTPForm.lcbOTTP_TYPEChange(Sender: TObject);
@@ -370,22 +402,43 @@ begin
     DataSet.FieldByName('itog').Clear;
 end;
 
+function TOrderTPForm.CheckDataAndSave: Boolean;
+var
+  allright: Boolean;
+begin
+  result := False;
+  if not(dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
+    dmMain.AllowedAction(rght_OrdersTP_edit)) then
+    Exit;
+
+  if ((FInUpdateMode) and (not(dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_edit))))
+  then
+    Exit
+  else
+  begin
+    if ((not FInUpdateMode) and (not(dmMain.AllowedAction(rght_OrdersTP_full) or
+      dmMain.AllowedAction(rght_OrdersTP_add)))) then
+      Exit;
+  end;
+
+  if not FSpellCheck then
+    A4MainForm.AddictSpell.CheckWinControl(mmoText, ctAll);
+
+  allright := CheckData;
+  if allright and FSpellCheck then
+  begin
+    // Post;
+    SaveOrderAddons;
+    result := True;
+  end;
+end;
+
 function TOrderTPForm.CheckData: Boolean;
 var
   errors: Boolean;
   NotFullRight: Boolean;
 begin
   errors := False;
-
-  {
-    if (pnlNumber.Visible) and (edtNumber.Text = '') then
-    begin
-    errors := True;
-    CnErrors.SetError(edtNumber, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
-    end
-    else
-    CnErrors.Dispose(edtNumber);
-  }
 
   if (edtFIO.Text = '') then
   begin
@@ -513,8 +566,14 @@ begin
     end;
     if JO.Contains('SnglSrv') then
     begin
-      if not JO['SnglSrv'].IsNull then
+      if not JO['SnglSrv'].IsNull then begin
         FSingleSrv := JO.i['SnglSrv'];
+        if FAfterOpen then begin
+          // запомним старую услугу после открытием
+          FOldService := FSingleSrv;
+          FAfterOpen := False;
+        end;
+      end;
     end;
 
     if JO.Contains('Period') then
@@ -654,29 +713,92 @@ begin
   ednAMOUNT.ReadOnly := pnlAddons.Visible;
 end;
 
-procedure TOrderTPForm.PrintReport();
+procedure TOrderTPForm.PrintReport(const Preview: Boolean = True);
 var
   vi: Integer;
   Order_id: Integer;
 begin
+  // если редактируем объявление, то не будем печатать бланк
+  if FInUpdateMode and Preview
+  then Exit;
+
   if dsOrderTP.FieldByName('OTP_ID').IsNull then
     Exit;
 
   Order_id := dsOrderTP['OTP_ID'];
-  if (FReport > -1) and (Order_id > -1) then
+  if (FReport < 0) or (Order_id < 0) then
+    Exit;
+
+  with TReportChild.Create(Application) do
   begin
-    with TReportChild.Create(Application) do
+    REPORT_ID := FReport;
+    LoadReportBody;
+    vi := GetVariableID('ORDER_ID');
+    if vi > 0 then
     begin
-      REPORT_ID := FReport;
-      LoadReportBody;
-      vi := GetVariableID('ORDER_ID');
-      if vi > 0 then
-      begin
-        SetVariable('ORDER_ID', Order_id);
-      end;
+      SetVariable('ORDER_ID', Order_id);
+    end;
+
+    if Preview then
+    begin
       ShowReportBody;
       Show;
+    end
+    else
+    begin
+      PrepareReport;
+      PrintReport;
+      Close;
     end;
+  end;
+  {
+    или так
+    try
+    dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := fReport_ID;
+    dmMain.fdsLoadReport.Open;
+    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
+    begin
+    vFN := GetTempDir;
+    vFN := vFN + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+    Stream := TFileStream.Create(vFN, fmCreate);
+    try
+    TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
+    finally
+    Stream.free;
+    end;
+    if FileExists(vFN) then
+    begin
+    frxReport.LoadFromFile(vFN);
+    // frxReport.FileName:=dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+    // Caption := frxReport.FileName;
+    end;
+    end;
+    finally
+    if dmMain.fdsLoadReport.Active then
+    dmMain.fdsLoadReport.Close;
+    end;
+    vi := frxReport.Variables.IndexOf('ORDER_ID');
+
+    if vi > 0 then
+    frxReport.Variables['ORDER_ID'] := dsOrderTP['OTP_ID'];
+
+    frxReport.PrepareReport;
+    frxReport.Print;
+  }
+end;
+
+procedure TOrderTPForm.actPrintExecute(Sender: TObject);
+begin
+  if CheckDataAndSave then
+  begin
+    if dsOrderTP.State in [dsEdit, dsInsert] then
+    begin
+      dsOrderTP.Post;
+      AfterSave(True);
+    end
+    else
+      PrintReport(False);
+    dsOrderTP.Edit;
   end;
 end;
 
@@ -685,53 +807,22 @@ begin
   FSpellCheck := True;
 end;
 
-procedure TOrderTPForm.AfterSave;
+procedure TOrderTPForm.AfterSave(const HandPrint: Boolean = False);
 begin
   if dsOrderTP.FieldByName('OTP_ID').IsNull then
     Exit;
   ExecuteAddons;
   // если бесплатноЮ, то не печатаю шаблон заказа
-  if edPAY_DATE.Enabled then
-    PrintReport;
+  if (not lcbOTTP_TYPE.Text.ToUpper.Contains(rsFree.ToUpper)) or (HandPrint) then
+    PrintReport(not HandPrint);
 end;
 
 procedure TOrderTPForm.btnOkClick(Sender: TObject);
-var
-  allright: Boolean;
 begin
-  if not(dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
-    dmMain.AllowedAction(rght_OrdersTP_edit)) then
-  begin
-    ModalResult := mrCancel;
-    Exit;
-  end;
-
-  if ((dsOrderTP.State = dsEdit) and (not(dmMain.AllowedAction(rght_OrdersTP_full) or
-    dmMain.AllowedAction(rght_OrdersTP_edit)))) then
-  begin
-    ModalResult := mrCancel;
-    Exit;
-  end
+  if CheckDataAndSave then
+    ModalResult := mrOk
   else
-  begin
-    if ((dsOrderTP.State = dsInsert) and (not(dmMain.AllowedAction(rght_OrdersTP_full) or
-      dmMain.AllowedAction(rght_OrdersTP_add)))) then
-    begin
-      ModalResult := mrCancel;
-      Exit;
-    end;
-  end;
-
-  if not FSpellCheck then
-    A4MainForm.AddictSpell.CheckWinControl(mmoText, ctAll);
-
-  allright := CheckData;
-  if allright and FSpellCheck then
-  begin
-    // Post;
-    SaveOrderAddons;
-    ModalResult := mrOk;
-  end;
+    ModalResult := mrCancel;
 end;
 
 procedure TOrderTPForm.ExecuteAddons;
@@ -739,6 +830,7 @@ var
   Save_Cursor: TCursor;
   Order_id: Integer;
   s: String;
+  qnt: Double;
 begin
   if dsOrderTP.FieldByName('OTP_ID').IsNull then
     Exit;
@@ -757,36 +849,42 @@ begin
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
 
-        if FInUpdateMode then
+        // если ранее были начисления за это объявление. удалим
+        if FOldService <> -1 then
         begin
           sql.Text := 'DELETE FROM SINGLE_SERV WHERE Customer_Id = :CID and Service_Id = :SID and HISTORY_ID = :HID';
           ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-          ParamByName('SID').AsInteger := FOldService; // FSingleSrv;
+          ParamByName('SID').AsInteger := FOldService;
           ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
           Transaction.StartTransaction;
           ExecQuery;
           Transaction.Commit;
         end;
 
+        if FOldService <> FSingleSrv then
+        begin
+          sql.Text := 'DELETE FROM SINGLE_SERV WHERE Customer_Id = :CID and Service_Id = :SID and HISTORY_ID = :HID';
+          ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+          ParamByName('SID').AsInteger := FSingleSrv;
+          ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
+          Transaction.StartTransaction;
+          ExecQuery;
+          Transaction.Commit;
+        end;
+
+        // сохраним начисления как разовую услугу абоненту
+        qnt := IfThen((not VarIsNull(ednAMOUNT.value)), ednAMOUNT.value, 1.0);
         sql.Text := 'execute procedure Add_Single_Service(:CID, :SID, :Units, :date, :Notice, :HID)';
         ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
         ParamByName('SID').AsInteger := FSingleSrv;
         ParamByName('date').AsDate := dsOrderTP['OTP_DATE'];
-        if (not VarIsNull(ednAMOUNT.value)) then
-          ParamByName('Units').AsCurrency := ednAMOUNT.value
-        else
-          ParamByName('Units').AsCurrency := 1;
-
-        if edtNumber.Text.IsEmpty then
-          s := dsOrderTP.FieldByName('OTP_ID').AsString
-        else
-          s := edtNumber.Text;
-
+        ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
+        ParamByName('Units').AsDouble := qnt;
+        s := IfThen(edtNumber.Text.IsEmpty, dsOrderTP.FieldByName('OTP_ID').AsString, edtNumber.Text);
         s := rsOrderN + s + ' '#13#10 + lcbOTTP_TYPE.Text + ' '#13#10 + edtFIO.Text + ' '#13#10 + edtAdress.Text +
-          ' '#13#10 + ednAMOUNT.Text;
+          ' '#13#10 + qnt.ToString;
         ParamByName('Notice').AsString := s;
 
-        ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
@@ -875,10 +973,9 @@ end;
 procedure TOrderTPForm.LoadOrderAddons(const jAddons: String);
 var
   JO: TJsonObject;
-  srv_state, i: Integer;
+  i: Integer;
   ShowPanel: Boolean;
 begin
-  srv_state := -1;
   ShowPanel := False;
   JO := TJsonObject.Parse(jAddons) as TJsonObject;
   try

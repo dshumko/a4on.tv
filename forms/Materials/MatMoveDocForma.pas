@@ -1,5 +1,5 @@
 ﻿unit MatMoveDocForma;
-
+{$I defines.inc}
 interface
 
 uses
@@ -62,6 +62,8 @@ type
     miEditNote: TMenuItem;
     miN1: TMenuItem;
     miDelete: TMenuItem;
+    trReadDS: TpFIBTransaction;
+    trWrite: TpFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh; var DropDownForm: TCustomForm;
       DynParams: TDynVarsEh);
@@ -83,6 +85,7 @@ type
     { Private declarations }
     fMatDocID: Integer;
     fAddedMatID: Integer;
+    fSerial: string;
     FFullAccess: Boolean;
     FAccessNew: Boolean;
     FAccessMove: Boolean;
@@ -225,9 +228,11 @@ procedure TMatMoveDocForm.edtMaterialOpenDropDownForm(EditControl: TControl; But
   var DropDownForm: TCustomForm; DynParams: TDynVarsEh);
 begin
   fAddedMatID := -1;
+  fSerial := '';
   DynParams['ID'].Clear;
   DynParams['NAME'].AsString := edtMaterial.Text;
   DynParams['DATASET'].AsRefObject := dsMaterials;
+  DynParams['WIDTH'].AsInteger := edtMaterial.Width;
 end;
 
 procedure TMatMoveDocForm.edtMaterialCloseDropDownForm(EditControl: TControl; Button: TEditButtonEh; Accept: Boolean;
@@ -247,7 +252,16 @@ begin
   if DynParams.FindDynVar('ID') <> nil then
   begin
     fAddedMatID := DynParams['ID'].AsInteger;
-    edtQuant.SetFocus;
+    {$IFDEF IS_UNIT}
+    if DynParams.FindDynVar('SERIAL') <> nil then
+      fSerial := DynParams['SERIAL'].AsString;
+    edtQuant.Enabled := fSerial.IsEmpty;
+    {$ENDIF}
+    if edtQuant.Enabled then
+       edtQuant.SetFocus
+    else begin
+      edtQuant.Value := 1;
+    end;
   end;
 end;
 
@@ -358,8 +372,10 @@ end;
 
 procedure TMatMoveDocForm.btnAddClick(Sender: TObject);
 begin
-  if CheckRowData then
+  if CheckRowData then begin
     AddRow;
+    dsMaterials.CloseOpen(True);
+  end;
 end;
 
 function TMatMoveDocForm.CheckRowData: Boolean;
@@ -426,12 +442,14 @@ begin
   dsDocMat['M_QUANT'] := edtQuant.value;
   dsDocMat['M_Cost'] := edtCost.value;
   dsDocMat['M_Notice'] := memNotice.Lines.Text;
+  dsDocMat['SERIAL'] := fSerial;
   dsDocMat.Post;
 
   edtQuant.Text := '';
   edtCost.Text := '';
   memNotice.Lines.Text := '';
   fAddedMatID := -1;
+  fSerial := '';
   edtMaterial.SetFocus;
 end;
 

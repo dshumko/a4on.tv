@@ -219,7 +219,8 @@ begin
   FChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
   actDeleteService.Visible := FChangeHistory or FFullAccess;
   actDeleteSubscrHist.Visible := actDeleteService.Visible;
-  // actDisconnect.Visible := actDeleteService.Visible;
+  // Спрячем кнопку смены автоблока
+  actDisconnect.Visible := not (dmMain.GetSettingsValue('HIDE_HIST_ABLOCK_BTN') = '1');
   FNeedRecalc := False;
 end;
 

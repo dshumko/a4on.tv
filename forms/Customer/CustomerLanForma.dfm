@@ -33,12 +33,6 @@ object CustomerLanForm: TCustomerLanForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 74
       Width = 363
@@ -394,9 +388,9 @@ object CustomerLanForm: TCustomerLanForm
       Visible = True
     end
     object lcbPort: TDBLookupComboboxEh
-      Left = 74
+      Left = 201
       Top = 31
-      Width = 455
+      Width = 328
       Height = 21
       Hint = 
         #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091#13#10#1089#1077#1088#1099#1081' '#1094#1074#1077#1090' - '#1087#1086#1088#1090' '#1079#1072#1085#1103#1090', '#1082#1091#1088#1089#1080#1074' - '#1089#1083#1091#1078#1077#1073#1085#1099#1081' '#1087 +
@@ -475,6 +469,20 @@ object CustomerLanForm: TCustomerLanForm
       OnChange = lcbPortChange
       OnDropDownBoxGetCellParams = lcbPortDropDownBoxGetCellParams
       OnExit = lcbPortExit
+    end
+    object edtPort: TDBEditEh
+      Left = 74
+      Top = 31
+      Width = 121
+      Height = 21
+      DataField = 'PORT'
+      DataSource = srcLan
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091
+      ShowHint = True
+      TabOrder = 8
+      Visible = False
     end
   end
   object btn1: TButton

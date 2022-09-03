@@ -1,7 +1,8 @@
 object MatIncomeDocForm: TMatIncomeDocForm
   Left = 0
   Top = 0
-  ClientHeight = 405
+  Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099'. '#1044#1086#1082#1091#1084#1077#1085#1090' '#1087#1088#1080#1093#1086#1076#1072
+  ClientHeight = 517
   ClientWidth = 825
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -239,146 +240,10 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 0
     Top = 156
     Width = 825
-    Height = 249
+    Height = 361
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    object dbgDocMat: TDBGridEh
-      Left = 0
-      Top = 140
-      Width = 825
-      Height = 109
-      Align = alClient
-      AllowedOperations = [alopUpdateEh, alopDeleteEh]
-      DataSource = srcDocMat
-      DynProps = <>
-      Flat = True
-      FooterRowCount = 1
-      OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
-      PopupMenu = pmGrid
-      SumList.Active = True
-      TabOrder = 1
-      TitleParams.MultiTitle = True
-      Columns = <
-        item
-          AutoFitColWidth = False
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'TTN'
-          Footers = <>
-          Title.Caption = #8470#1087#1087
-          Title.TitleButton = True
-          Width = 35
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'NAME'
-          Footer.ValueType = fvtCount
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
-          Title.TitleButton = True
-          Width = 193
-        end
-        item
-          AutoFitColWidth = False
-          CellButtons = <>
-          DisplayFormat = '###,##0.#####'
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'M_QUANT'
-          Footer.DisplayFormat = ',#0.###'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #1050#1086#1083'-'#1074#1086
-          Title.TitleButton = True
-          Width = 68
-        end
-        item
-          CellButtons = <>
-          DisplayFormat = ',#0.###'
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'SHIPPER_COST'
-          Footer.DisplayFormat = ',#0.###'
-          Footers = <>
-          Title.Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
-          Width = 74
-        end
-        item
-          CellButtons = <>
-          DisplayFormat = ',#0.###'
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'COST'
-          Footer.DisplayFormat = ',#0.###'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
-          Width = 69
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'MG_NAME'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #1043#1088#1091#1087#1087#1072
-          Title.TitleButton = True
-          Width = 83
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'M_NUMBER'
-          Footers = <>
-          Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
-          Title.TitleButton = True
-          Width = 71
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'M_NOTICE'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          Title.TitleButton = True
-          Width = 137
-        end
-        item
-          CellButtons = <>
-          DisplayFormat = ',#0.###'
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'WH_COST'
-          Footer.DisplayFormat = ',#0.###'
-          Footers = <>
-          Title.Caption = #1062#1077#1085#1072' '#1085#1072' '#1089#1082#1083#1072#1076#1077
-          Width = 57
-        end
-        item
-          CellButtons = <>
-          DisplayFormat = ',#0.###'
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'WH_PRICE'
-          Footer.DisplayFormat = ',#0.###'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1085#1072' '#1089#1082#1083#1072#1076#1077
-          Width = 73
-        end>
-      object RowDetailData: TRowDetailPanelControlEh
-      end
-    end
     object pnlMatAdd: TPanel
       Left = 0
       Top = 0
@@ -588,6 +453,169 @@ object MatIncomeDocForm: TMatIncomeDocForm
         TabOrder = 3
         Visible = True
       end
+      object btnUNIT: TButton
+        Left = 745
+        Top = 30
+        Width = 75
+        Height = 21
+        Action = actUNITS
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 8
+      end
+    end
+    object pnlGrids: TPanel
+      Left = 0
+      Top = 140
+      Width = 825
+      Height = 221
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 1
+      object dbgDocMat: TDBGridEh
+        Left = 0
+        Top = 0
+        Width = 822
+        Height = 221
+        Align = alClient
+        AllowedOperations = [alopUpdateEh, alopDeleteEh]
+        DataSource = srcDocMat
+        DynProps = <>
+        Flat = True
+        FooterRowCount = 1
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+        PopupMenu = pmGrid
+        SumList.Active = True
+        TabOrder = 0
+        TitleParams.MultiTitle = True
+        OnDblClick = dbgDocMatDblClick
+        Columns = <
+          item
+            AutoFitColWidth = False
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'TTN'
+            Footers = <>
+            Title.Caption = #8470#1087#1087
+            Title.TitleButton = True
+            Width = 35
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'NAME'
+            Footer.ValueType = fvtCount
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
+            Title.TitleButton = True
+            Width = 193
+          end
+          item
+            AutoFitColWidth = False
+            CellButtons = <>
+            DisplayFormat = '###,##0.#####'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'M_QUANT'
+            Footer.DisplayFormat = ',#0.###'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Caption = #1050#1086#1083'-'#1074#1086
+            Title.TitleButton = True
+            Width = 68
+            OnGetCellParams = dbgDocMatColumns2GetCellParams
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = ',#0.###'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'SHIPPER_COST'
+            Footer.DisplayFormat = ',#0.###'
+            Footers = <>
+            Title.Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+            Width = 74
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = ',#0.###'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'COST'
+            Footer.DisplayFormat = ',#0.###'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+            Width = 69
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'MG_NAME'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1043#1088#1091#1087#1087#1072
+            Title.TitleButton = True
+            Width = 83
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'M_NUMBER'
+            Footers = <>
+            Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+            Title.TitleButton = True
+            Width = 71
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'M_NOTICE'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
+            Width = 137
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = ',#0.###'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'WH_COST'
+            Footer.DisplayFormat = ',#0.###'
+            Footers = <>
+            Title.Caption = #1062#1077#1085#1072' '#1085#1072' '#1089#1082#1083#1072#1076#1077
+            Width = 57
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = ',#0.###'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'WH_PRICE'
+            Footer.DisplayFormat = ',#0.###'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1085#1072' '#1089#1082#1083#1072#1076#1077
+            Width = 73
+          end>
+        object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+      object Splitter: TRxSplitter
+        Left = 822
+        Top = 0
+        Width = 3
+        Height = 221
+        Align = alRight
+      end
     end
   end
   object dsDoc: TpFIBDataSet
@@ -661,9 +689,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
     AutoUpdateOptions.WhenGetGenID = wgOnNewRecord
     AfterOpen = dsDocAfterOpen
     OnNewRecord = dsDocNewRecord
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     AutoCommit = True
     Left = 32
     Top = 288
@@ -682,12 +710,48 @@ object MatIncomeDocForm: TMatIncomeDocForm
       '    and DOC_ID = :OLD_DOC_ID   '
       '    ')
     DeleteSQL.Strings = (
-      'DELETE FROM'
-      '    MATERIALS_IN_DOC'
-      'WHERE'
-      '        ID = :OLD_ID'
-      '    and M_ID = :OLD_M_ID'
-      '    and DOC_ID = :OLD_DOC_ID')
+      'execute block ('
+      '    O_ID       integer = :OLD_ID,'
+      '    O_M_ID     integer = :OLD_M_ID,'
+      '    O_DOC_ID   integer = :OLD_DOC_ID,'
+      '    OLD_Serial D_SERIAL = :OLD_Serial)'
+      'as'
+      'begin'
+      '  -- '#1091#1076#1072#1083#1080#1084' '#1090#1086#1083#1100#1082#1086' '#1077#1089#1083#1080' '#1076#1086#1082#1091#1084#1077#1085#1090' '#1085#1077' '#1079#1072#1082#1088#1099#1090
+      '  if (exists(select'
+      '                 Doc_Closed'
+      '               from Material_Docs'
+      '               where Doc_Id = :O_DOC_ID'
+      '                     and Doc_Closed = 0'
+      ''
+      '      )) then begin'
+      ''
+      '    OLD_Serial = coalesce(OLD_Serial, '#39#39');'
+      ''
+      '    delete from MATERIALS_IN_DOC'
+      '        where ID = :O_ID'
+      '              and M_ID = :O_M_ID'
+      '              and DOC_ID = :O_DOC_ID;'
+      '    if (not OLD_Serial is null) then begin'
+      '      update MATERIAL_UNIT u'
+      '      set u.State = 0'
+      '      where M_Id = :O_M_ID'
+      '            and SERIAL = :OLD_Serial'
+      '            and u.State = -1 * :O_DOC_ID'
+      '            and exists(select'
+      '                           d.Wh_Id'
+      '                         from Material_Docs d'
+      '                         where d.Doc_Id = :O_DOC_ID'
+      '                               and d.Wh_Id = u.Owner);'
+      ''
+      '      delete from Materials_In_Doc_Unit'
+      '          where (Doc_Id = :O_DOC_ID)'
+      '                and (M_Id = :O_M_ID)'
+      '                and (SERIAL = :OLD_Serial);'
+      ''
+      '    end'
+      '  end'
+      'end')
     InsertSQL.Strings = (
       'INSERT INTO MATERIALS_IN_DOC('
       '    ID, '
@@ -743,6 +807,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
       '  , md.TTN'
       '  , m.Cost WH_COST'
       '  , md.M_Quant * m.Cost as WH_PRICE'
+      '  , m.IS_UNIT'
       '  from materials m'
       '       inner join Materials_In_Doc md on (m.M_Id = md.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
@@ -751,10 +816,10 @@ object MatIncomeDocForm: TMatIncomeDocForm
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_IN_DOC'
     AutoUpdateOptions.KeyFields = 'ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
-    AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = dmMain.trRead
+    AutoUpdateOptions.WhenGetGenID = wgOnNewRecord
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcDoc
     Left = 112
@@ -768,13 +833,14 @@ object MatIncomeDocForm: TMatIncomeDocForm
   end
   object srcDocMat: TDataSource
     DataSet = dsDocMat
+    OnDataChange = srcDocMatDataChange
     Left = 168
     Top = 288
   end
   object dsFindMat: TpFIBDataSet
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     Left = 224
     Top = 265
   end
@@ -786,8 +852,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
       '  where m.Deleted = 0'
       '  order by m.Name, g.Mg_Name  ')
-    Transaction = trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
+    UpdateTransaction = trWrite
     Left = 336
     Top = 240
     oFetchAll = True
@@ -801,8 +868,8 @@ object MatIncomeDocForm: TMatIncomeDocForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 424
-    Top = 230
+    Left = 216
+    Top = 406
   end
   object errors: TCnErrorProvider
     DoubleBuffer = False
@@ -828,24 +895,25 @@ object MatIncomeDocForm: TMatIncomeDocForm
       ''
       '        and coalesce(o.O_Deleted, 0) = 0'
       '  order by O_NAME')
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
+    UpdateTransaction = trWrite
     Left = 271
     Top = 217
   end
   object srcWH: TDataSource
     AutoEdit = False
     DataSet = dsWH
-    Left = 344
-    Top = 233
+    Left = 336
+    Top = 289
   end
   object qCloseDoc: TpFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Result from Close_Material_Doc(:Doc_Id) ')
-    Left = 528
-    Top = 308
+    Left = 760
+    Top = 220
   end
   object dsShippers: TpFIBDataSet
     SelectSQL.Strings = (
@@ -854,9 +922,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
       '  from OBJECTS o'
       '  where O_TYPE = 29'
       '  order by O_NAME')
-    Transaction = dmMain.trRead
+    Transaction = trReadDS
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     Left = 511
     Top = 209
   end
@@ -871,8 +939,8 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Result from Open_Material_Doc(:Doc_Id) ')
-    Left = 600
-    Top = 284
+    Left = 696
+    Top = 220
   end
   object actList: TActionList
     Left = 344
@@ -890,6 +958,12 @@ object MatIncomeDocForm: TMatIncomeDocForm
     object actEditNote: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1077
       OnExecute = actEditNoteExecute
+    end
+    object actUNITS: TAction
+      Caption = #1057'/'#1053#1086#1084#1077#1088#1072
+      Hint = #1054#1090#1082#1091#1088#1099#1090#1100' '#1092#1086#1088#1084#1091' '#1089#1077#1088#1080#1081#1085#1099#1081#1093' '#1085#1086#1084#1077#1088#1086#1074
+      Visible = False
+      OnExecute = actUNITSExecute
     end
   end
   object pmGrid: TPopupMenu
@@ -929,5 +1003,29 @@ object MatIncomeDocForm: TMatIncomeDocForm
       'matching (Bl_Type, Owner_Id)')
     Left = 552
     Top = 72
+  end
+  object trReadDS: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 48
+    Top = 422
+  end
+  object trWrite: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 120
+    Top = 428
   end
 end

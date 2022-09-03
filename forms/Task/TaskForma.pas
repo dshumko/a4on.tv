@@ -10,7 +10,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
-  GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh,
+  GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
+  DBAxisGridsEh,
   DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh;
 
 type
@@ -111,7 +112,8 @@ type
     procedure GetUsers;
     procedure SetUsers(const new: Boolean = False);
     procedure GoObject;
-    procedure GoObjects;
+    procedure GoCustomers;
+    function GetAccountFromObj(const oType: string; const oId: String): String;
     function GenerateFilter: string;
     procedure SetDefaultFilter;
     procedure CloseSelectedAsCurrent;
@@ -169,7 +171,7 @@ begin
       fq.Free;
     end;
     dsTask.DisableControls;
-    dsTask.CloseOpen(true);
+    dsTask.CloseOpen(True);
     dsTask.Locate('ID', id, []);
     dsTask.EnableControls;
   end;
@@ -267,7 +269,7 @@ procedure TTaskForm.actOpenCustAddrExecute(Sender: TObject);
 var
   ObjList: TStringList;
   s: string;
-  fq : TpFIBQuery;
+  fq: TpFIBQuery;
 begin
   inherited;
   if (dsTask.RecordCount = 0) or (dsMSG.RecordCount = 0) then
@@ -277,7 +279,7 @@ begin
   dsMSG.First;
   ObjList := TStringList.Create;
   try
-    ObjList.Sorted := true;
+    ObjList.Sorted := True;
     ObjList.Duplicates := dupIgnore;
     fq := TpFIBQuery.Create(Self);
     try
@@ -331,7 +333,7 @@ begin
   else
     i := -1;
 
-  dsTask.CloseOpen(true);
+  dsTask.CloseOpen(True);
 
   if i > 0 then
     dsTask.Locate('ID', i, []);
@@ -381,7 +383,7 @@ end;
 procedure TTaskForm.btnOpenAllClick(Sender: TObject);
 begin
   inherited;
-  GoObjects;
+  GoCustomers;
 end;
 
 procedure TTaskForm.btnSaveLinkClick(Sender: TObject);
@@ -392,7 +394,7 @@ begin
 
   if (edtTITLE.Text = '') then
   begin
-    errors := true;
+    errors := True;
     CnErrors.SetError(edtTITLE, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
@@ -487,7 +489,7 @@ begin
     begin
       mtbUsers.Edit;
       if mtbUsers.FieldByNAme('IN_TASK').IsNull then
-        mtbUsers['IN_TASK'] := true
+        mtbUsers['IN_TASK'] := True
       else
         mtbUsers['IN_TASK'] := not mtbUsers['IN_TASK'];
       mtbUsers.Post;
@@ -603,9 +605,9 @@ end;
 
 procedure TTaskForm.NewTask();
 begin
-  FCanEdit := true;
-  SetUsers(true);
-  StartEdit(true);
+  FCanEdit := True;
+  SetUsers(True);
+  StartEdit(True);
 end;
 
 procedure TTaskForm.NewMSG();
@@ -631,7 +633,7 @@ begin
 
   if (dsTask['ADDED_BY'] = dmMain.User) then
   begin
-    FCanEdit := true;
+    FCanEdit := True;
     dsUsers.Open;
     if not dsTask.FieldByNAme('COLOR').IsNull then
       pnlEdit.COLOR := StringToColor(dsTask['COLOR'])
@@ -748,7 +750,7 @@ begin
           if mtbUsers.Locate('IBNAME', FN('Foruser').AsString, []) then
           begin
             mtbUsers.Edit;
-            mtbUsers['IN_TASK'] := true;
+            mtbUsers['IN_TASK'] := True;
             mtbUsers.Post;
           end;
           Next;
@@ -786,10 +788,11 @@ begin
   A4MainForm.SearchFromTask(dsMSG['OBJ_TYPE'], dsMSG['OBJ_ID']);
 end;
 
-procedure TTaskForm.GoObjects;
+procedure TTaskForm.GoCustomers;
 var
   ObjList: TStringList;
   s: string;
+  id: string;
 begin
   inherited;
   if (dsTask.RecordCount = 0) or (dsMSG.RecordCount = 0) then
@@ -799,14 +802,23 @@ begin
   dsMSG.First;
   ObjList := TStringList.Create;
   try
-    ObjList.Sorted := true;
+    ObjList.Sorted := True;
     ObjList.Duplicates := dupIgnore;
 
     while not dsMSG.Eof do
     begin
-      if (not dsMSG.FieldByNAme('OBJ_TYPE').IsNull) and (dsMSG['OBJ_TYPE'] = 'A') and
-        (not dsMSG.FieldByNAme('OBJ_ID').IsNull) then
-        ObjList.Add(dsMSG['OBJ_ID']);
+      if (not dsMSG.FieldByNAme('OBJ_TYPE').IsNull) and (not dsMSG.FieldByNAme('OBJ_ID').IsNull) then
+      begin
+        if (dsMSG['OBJ_TYPE'] = 'A') then
+          ObjList.Add(dsMSG['OBJ_ID'])
+        else
+        begin
+          id := GetAccountFromObj(dsMSG['OBJ_TYPE'], dsMSG['OBJ_ID']);
+          if not id.IsEmpty then
+            ObjList.Add(id)
+        end;
+      end;
+
       dsMSG.Next;
     end;
 
@@ -982,7 +994,7 @@ begin
   else
   begin
     dsFilter.Insert;
-    dsFilter['NotClosed'] := true;
+    dsFilter['NotClosed'] := True;
     dsFilter.Post;
     dsTask.ParamByName('Filter').Value := GenerateFilter;
   end;
@@ -994,8 +1006,8 @@ begin
   begin
     if dsTask.Locate('ID', Value, []) then
     begin
-      dbGrid.RowDetailPanel.Visible := true;
-      dbGrid.RowDetailPanel.Active := true;
+      dbGrid.RowDetailPanel.Visible := True;
+      dbGrid.RowDetailPanel.Active := True;
       dbgMsg.SetFocus;
     end
     else
@@ -1050,8 +1062,43 @@ begin
     end;
   end;
   dbGrid.DataSource.DataSet.EnableControls;
-  dsTask.CloseOpen(true);
+  dsTask.CloseOpen(True);
   dsTask.Locate('id', id, []);
+end;
+
+function TTaskForm.GetAccountFromObj(const oType: string; const oId: String): String;
+var
+  vSQL: string;
+begin
+  Result := '';
+
+  if (oType = 'P') then
+    vSQL := 'PAYMENT p inner join customer c on (c.Customer_Id = p.Customer_Id) where p.Payment_Id'
+  else if (oType = 'R') then
+    vSQL := 'Request p inner join customer c on (c.Customer_Id = p.Rq_Customer) where p.Rq_Id'
+  else
+    vSQL := '';
+
+  if (not vSQL.IsEmpty) then
+  begin
+    vSQL := 'select c.Account_No ACCNT from ' + vSQL + ' = :ID';
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        sql.Text := vSQL;
+        ParamByName('ID').AsString := oId;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if (not FN('ACCNT').IsNull) then
+          Result := FN('ACCNT').AsString;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+  end;
 end;
 
 end.

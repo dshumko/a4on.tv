@@ -361,11 +361,11 @@ procedure TRecourseForm.SaveRecourse(const CreateRequest: Boolean = False);
 var
   NeedRequest: Boolean;
   allFine: Boolean;
-  s, h: integer;
+  s, h, cid: integer;
   f: String;
 begin
   NeedRequest := False;
-
+  cid := -1;
   if VarIsNull(cbRecourse.Value) or (cbRecourse.Text = '') then
   begin
     cbRecourse.SetFocus;
@@ -412,10 +412,11 @@ begin
       Transaction.StartTransaction;
       ExecQuery;
       Transaction.Commit;
+
       if NeedRequest then
       begin
         if vCustomerInfo.Customer_ID <> -1 then
-          NewRequest(vCustomerInfo.Customer_ID)
+          cid := vCustomerInfo.Customer_ID
         else
         begin
           if not VarIsEmpty(LupStreets.Value) then
@@ -430,7 +431,7 @@ begin
             f := eFLAT_NO.Value
           else
             f := '';
-          NewRequestByAdres(s, h, f);
+          // NewRequestByAdres(s, h, f);
         end;
       end;
       {
@@ -439,10 +440,12 @@ begin
         else ReguestExecute (aRequest, -1, aMode);
       }
       if Assigned(fCallBack) then
+      begin
         try // ловим момент если вдруг вызывающая форма закрыта
           fCallBack;
         except
         end;
+      end;
 
       Close;
       allFine := True;
@@ -452,6 +455,14 @@ begin
 
   if allFine then
     Close;
+
+  if NeedRequest then
+  begin
+    if cid <> -1 then
+      NewRequest(cid)
+    else
+      NewRequestByAdres(s, h, f);
+  end;
 end;
 
 procedure TRecourseForm.btnCancelClick(Sender: TObject);

@@ -179,16 +179,16 @@ inherited MatDocsForm: TMatDocsForm
       OnClick = ToolButton1Click
     end
     inherited btnEdit: TToolButton
-      Left = 74
+      Left = 43
     end
     inherited ToolButton5: TToolButton
-      Left = 43
+      Left = 66
     end
     inherited ToolButton6: TToolButton
       Left = 70
     end
     inherited btnDelete: TToolButton
-      Left = 47
+      Left = 74
     end
     inherited ToolButton9: TToolButton
       Left = 97
@@ -209,26 +209,29 @@ inherited MatDocsForm: TMatDocsForm
       Left = 162
       Visible = False
     end
-    object ToolButton19: TToolButton
+    inherited btnQuickFilter: TToolButton
       Left = 170
+    end
+    object ToolButton19: TToolButton
+      Left = 193
       Top = 0
     end
     object btnFilterNew: TToolButton
-      Left = 193
+      Left = 216
       Top = 0
       Action = actFilterSet
       DropdownMenu = pmFilter
       Style = tbsDropDown
     end
     object btnFilterDate: TToolButton
-      Left = 231
+      Left = 254
       Top = 0
       Action = actFilterDate
       DropdownMenu = pmPeriod
       Style = tbsDropDown
     end
     object btn1: TToolButton
-      Left = 269
+      Left = 292
       Top = 0
       Width = 8
       Caption = 'btn1'
@@ -236,7 +239,7 @@ inherited MatDocsForm: TMatDocsForm
       Style = tbsSeparator
     end
     object btnPrint: TToolButton
-      Left = 277
+      Left = 300
       Top = 0
       Action = actPrint
     end
@@ -254,7 +257,7 @@ inherited MatDocsForm: TMatDocsForm
       Left = 0
       Top = 0
       Width = 814
-      Height = 216
+      Height = 213
       Align = alClient
       AllowedOperations = []
       DataSource = srcMaterials
@@ -586,36 +589,47 @@ inherited MatDocsForm: TMatDocsForm
   end
   object dsMaterials: TpFIBDataSet
     SelectSQL.Strings = (
-      'select'
+      '  select'
       '    md.M_Id'
-      '  , m.Name'
+      
+        '  , m.Name || coalesce('#39'/'#39' || u.Serial || coalesce('#39'/'#39' || u.MAC,' +
+        ' '#39#39'), '#39#39') NAME'
       '  , m.M_NUMBER'
-      '  , md.M_Quant'
+      '  , iif(u.Serial is null, coalesce(md.M_Quant, 0), 1) M_Quant'
       '  , md.Shipper_Cost'
       '  , md.M_Notice'
       '  , g.Mg_Name'
       '  , md.Doc_Id'
-      '  , (coalesce(md.M_Quant, 0) * md.Shipper_Cost) as Shipper_Itogo'
-      '  , (coalesce(md.M_Quant, 0) * m.Cost) as Itogo'
+      
+        '  , (iif(u.Serial is null, coalesce(md.M_Quant, 0), 1) * md.Ship' +
+        'per_Cost) as Shipper_Itogo'
+      
+        '  , (iif(u.Serial is null, coalesce(md.M_Quant, 0), 1) * m.Cost)' +
+        ' as Itogo'
       '  , m.Cost'
       '  from materials m'
       '       inner join Materials_In_Doc md on (m.M_Id = md.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
+      
+        '       left outer join Materials_In_Doc_Unit u on (u.M_Id = m.M_' +
+        'Id and'
+      '             u.Id = md.Id and'
+      '             u.Doc_Id = md.Doc_Id)'
       '  where md.Doc_Id = :DOC_id'
       '  order by md.TTN, m.Name')
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcDataSource
-    Left = 521
-    Top = 257
+    Left = 457
+    Top = 425
     WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcIgnoreMasterClose = True
   end
   object srcMaterials: TDataSource
     DataSet = dsMaterials
-    Left = 529
-    Top = 201
+    Left = 353
+    Top = 417
   end
   object pmBTN: TPopupMenu
     Left = 312

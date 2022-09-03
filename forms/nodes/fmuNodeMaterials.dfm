@@ -1,7 +1,7 @@
 object apgNodeMaterials: TapgNodeMaterials
   Left = 0
   Top = 0
-  Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077'/'#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1091#1079#1083#1072
+  Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1091#1079#1083#1072' '#1074' '#1089#1077#1090#1080
   ClientHeight = 211
   ClientWidth = 779
   Color = clBtnFace
@@ -142,6 +142,7 @@ object apgNodeMaterials: TapgNodeMaterials
       Anchors = [akLeft, akBottom]
       Flat = True
       Layout = blGlyphTop
+      Visible = False
     end
     object btnAdd1: TSpeedButton
       Left = 2
@@ -150,6 +151,7 @@ object apgNodeMaterials: TapgNodeMaterials
       Height = 22
       Action = actAdd
       Flat = True
+      Visible = False
     end
     object btnFind: TSpeedButton
       Left = 2
@@ -189,7 +191,7 @@ object apgNodeMaterials: TapgNodeMaterials
     Left = 119
     Top = 83
   end
-  object ActListCustomers: TActionList
+  object ActList: TActionList
     Images = A4MainForm.ICONS_ACTIVE
     Left = 211
     Top = 78
@@ -210,48 +212,27 @@ object apgNodeMaterials: TapgNodeMaterials
     end
   end
   object dsMat: TpFIBDataSet
-    DeleteSQL.Strings = (
-      'delete from Inventory i'
-      '    where i.Owner = :OLD_NODE_ID'
-      '          and i.Owner_Type = 2'
-      '          and i.M_Id = :OLD_M_ID'
-      '          and i.Serial = :OLD_SERIAL   ')
     RefreshSQL.Strings = (
       'select'
-      '    m.Name'
-      '  , i.Serial'
-      '  , m.Dimension'
-      '  , i.M_Id'
-      '--  , i.State'
-      '  , i.Quant'
-      '  , i.Notice'
-      '  from Inventory i'
-      '       inner join materials m on (m.M_Id = i.M_Id)'
-      '  where(  i.Owner = :node_id'
-      '        and i.OWNER_TYPE = 2'
-      '     ) and (     I.SERIAL = :OLD_SERIAL'
-      '    and I.M_ID = :OLD_M_ID'
-      '     )'
+      '  o.o_name'
+      '  ,  E.Name'
+      '  , e.Mac Serial'
+      '  , '#39#39' Dimension'
+      '  , e.Eid M_Id'
+      '  ,  1 Quant'
+      '  , e.Notice'
+      '  , '#39'e'#39' ROW_TYPE'
+      '  from EQUIPMENT E'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      '  where'
+      '    e.Node_Id = :OLD_node_id'
+      '    and e.EID= :OLD_M_ID'
+      ''
       '    '
       '  ')
     SelectSQL.Strings = (
-      'select'
-      '    o.O_Name'
-      '  , m.Name'
-      '  , i.Serial'
-      '  , m.Dimension'
-      '  , i.M_Id'
-      '  , i.Quant'
-      '  , i.Notice'
-      '  , '#39'm'#39' ROW_TYPE'
-      '  from Inventory i'
-      '       inner join materials m on (m.M_Id = i.M_Id)'
-      
-        '       left outer join objects o on (o.O_Id = m.M_Type and o.O_T' +
-        'ype = 48)'
-      '  where i.Owner = :node_id'
-      '        and i.OWNER_TYPE = 2'
-      'union'
       'select'
       '  o.o_name'
       '  ,  E.Name'

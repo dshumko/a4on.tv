@@ -118,11 +118,11 @@ type
     function GetClientLib: String;
     function GetUserAreas: String;
     function GetDBName: String;
-    procedure GetCompany;
     procedure CreateKL;
     function FindCustomerSQL(const SQL: string; const NODE_SQL: string = ' 1=2 '): TCustomerInfo;
     function GetCompanyCountry: String;
     function GetCompanyName: String;
+    procedure GetCompany;
     procedure CheckFirebirdVersion;
   public
     { Public declarations }
@@ -207,6 +207,7 @@ type
     function GetServerDateTime: TDateTime;
     procedure ProceedTask(const EventName: String);
     function IpInfo(const ip: String): String;
+    procedure RefreshCompanyData;
   end;
 
 var
@@ -2152,6 +2153,22 @@ begin
   dbTV.Execute('SET BIND OF TIME WITH TIME ZONE TO LEGACY;');
   dbTV.Execute('SET BIND OF DECFLOAT TO LEGACY;');
   dbTV.Execute('SET BIND OF NUMERIC(38) TO LEGACY;');
+end;
+
+procedure TdmMain.RefreshCompanyData;
+var
+  i: Integer;
+begin
+  dsCompany.DisableControls;
+  i := -1;
+  if not dsCompany.FieldByName('C_ORDER').IsNull then
+    i := dsCompany.FieldByName('C_ORDER').AsInteger;
+  GetCompany;
+  if not dsCompany.Active then
+    dsCompany.Open;
+  if i <> -1 then
+    dsCompany.Locate('C_ORDER', i, []);
+  dsCompany.EnableControls;
 end;
 
 end.

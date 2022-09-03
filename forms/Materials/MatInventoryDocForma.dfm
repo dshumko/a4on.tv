@@ -1,6 +1,7 @@
 object MatInventoryDocForm: TMatInventoryDocForm
   Left = 0
   Top = 0
+  Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099'. '#1044#1086#1082#1091#1084#1077#1085#1090' '#1080#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1080
   ClientHeight = 451
   ClientWidth = 709
   Color = clBtnFace

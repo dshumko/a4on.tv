@@ -729,7 +729,7 @@ begin
   else
     dmMain.SetIniValue('SHOWADDRESSFILTER', '0');
 
-  if (mtbPages.RecordCount > 0) and (not mtbPages.FieldByName('ID').IsNull) then
+  if (mtbPages.Active) and (mtbPages.RecordCount > 0) and (not mtbPages.FieldByName('ID').IsNull) then
     dmMain.SetIniValue('LASTPAGE', IntToStr(mtbPages['ID']));
 
   if Assigned(FPageList) then
@@ -767,16 +767,29 @@ procedure TCustomersForm.CloseDatasets;
 var
   i: Integer;
 begin
-  if dsFLAT.Active then
-    dsFLAT.Close;
-  if dsHomes.Active then
-    dsHomes.Close;
-  if dsStreets.Active then
-    dsStreets.Close;
-  if dsArea.Active then
-    dsArea.Close;
   if dsCustomers.Active then
     dsCustomers.Close;
+
+  if dsFLAT.Active then
+  begin
+    lcbFLAT.OnChange := nil;
+    dsFLAT.Close;
+  end;
+  if dsHomes.Active then
+  begin
+    lcbHOUSE.OnChange := nil;
+    dsHomes.Close;
+  end;
+  if dsStreets.Active then
+  begin
+    lcbStreets.OnChange := nil;
+    dsStreets.Close;
+  end;
+  if dsArea.Active then
+  begin
+    cbbAREA.OnChange := nil;
+    dsArea.Close;
+  end;
 
   for i := 0 to ComponentCount - 1 do
   begin
@@ -1977,10 +1990,9 @@ begin
   begin
     if dmMain.GetSettingsValue('ROW_HL_TYPE') = '0' then
     begin
-      select := select + rsEOL + ', rtc.Single_Service_Id ROW_HL_COLOR ';
-      from := from + rsEOL +
-        ' left outer join Single_Serv rtc on (rtc.Customer_Id = c.Customer_Id and rtc.Service_Id = ' +
-        dmMain.GetSettingsValue('ROW_HL_ID') + ') ';
+      select := select + rsEOL + ', (select first 1 rtc.Single_Service_Id from Single_Serv rtc ' +
+        ' where rtc.Customer_Id = c.Customer_Id and rtc.Service_Id = ' + dmMain.GetSettingsValue('ROW_HL_ID') +
+        ') ROW_HL_COLOR ';
     end
     else
       FHL_ROW := False;
@@ -2764,44 +2776,34 @@ const
               rsEOL + ' f.month_id >= (select s.var_value from settings s where s.var_name = ''CURRENT_DATE'') )' +
               rsEOL;
           tmpSQL := tmpSQL + ')';
-          if (SaldoSign = 1) then
-          begin
-            case dsFilter['DEBT_SIGN'] of
-              0:
-                tmpSQL := tmpSQL + '<';
-              1:
-                tmpSQL := tmpSQL + '<=';
-              2:
-                tmpSQL := tmpSQL + '=';
-              3:
-                tmpSQL := tmpSQL + '>=';
-              4:
+          case dsFilter['DEBT_SIGN'] of
+            0: // меньше
+              if (SaldoSign = 1) then
+                tmpSQL := tmpSQL + '<'
+              else
                 tmpSQL := tmpSQL + '>';
-              5:
-                tmpSQL := tmpSQL + '<>';
-            else
-              tmpSQL := tmpSQL + '>';
-            end; // case
-          end
+            1: // меньше или равно
+              if (SaldoSign = 1) then
+                tmpSQL := tmpSQL + '<='
+              else
+                tmpSQL := tmpSQL + '>=';
+            2: // равно
+              tmpSQL := tmpSQL + '=';
+            3: // больше
+              if (SaldoSign = 1) then
+                tmpSQL := tmpSQL + '>'
+              else
+                tmpSQL := tmpSQL + '<';
+            4: // больше или равно
+              if (SaldoSign = 1) then
+                tmpSQL := tmpSQL + '>='
+              else
+                tmpSQL := tmpSQL + '<=';
+            5: // неравно
+              tmpSQL := tmpSQL + '<>';
           else
-          begin
-            case dsFilter['DEBT_SIGN'] of
-              0:
-                tmpSQL := tmpSQL + '>';
-              1:
-                tmpSQL := tmpSQL + '>=';
-              2:
-                tmpSQL := tmpSQL + '=';
-              3:
-                tmpSQL := tmpSQL + '<=';
-              4:
-                tmpSQL := tmpSQL + '<';
-              5:
-                tmpSQL := tmpSQL + '<>';
-            else
-              tmpSQL := tmpSQL + '>';
-            end; // case
-          end;
+            tmpSQL := tmpSQL + '>';
+          end; // case
           tmpSQL := tmpSQL + ' ' + FloatToStr(SaldoSign * dsFilter.FieldByName('DEBT_SUM').AsFloat,
             AFormatSettings) + ')';
         end
@@ -2980,6 +2982,7 @@ const
 
       tmpSQL := tmpSQL + '))';
     end;
+
     // имеющие персональный тариф
     if (dsFilter['PERS_TARIF'] = 1) then
     begin
@@ -2992,6 +2995,7 @@ const
       tmpSQL := tmpSQL + '))';
 
     end;
+
     // дата активизации меньше даты договора
     if (dsFilter['INVALID_CONTRACT_DATE'] = 1) then
       tmpSQL := tmpSQL + ' and (C.CONTRACT_DATE > C.ACTIVIZ_DATE)';
@@ -3430,6 +3434,8 @@ const
         Quote := '''';
       6: // 6 Телефон
         Quote := '''';
+      8: // 8 Список квартир
+        Quote := '''';
     else
       // если непонятно по чем, то по лицевому
       Quote := '''';
@@ -3488,6 +3494,8 @@ const
             + s + '))) ';
         7: // 7 ИНН / УНН
           startSQL := ' (C.Jur_Inn in (' + s + ')) ';
+        8: // 8 Список квартир
+          startSQL := ' (C.FLAT_NO in (' + s + ')) ';
       end;
     end
     else

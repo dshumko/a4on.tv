@@ -307,24 +307,31 @@ object UF: TUF
     DesignSize = (
       325
       29)
-    object chkWork: TDBCheckBoxEh
-      Left = 8
-      Top = 8
-      Width = 97
-      Height = 17
-      Caption = #1056#1072#1073#1086#1090#1072#1077#1090
-      DynProps = <>
-      TabOrder = 0
-    end
     object chkLock: TDBCheckBoxEh
-      Left = 219
+      Left = 224
       Top = 7
-      Width = 97
+      Width = 92
       Height = 17
+      Hint = #1047#1072#1087#1088#1077#1090' '#1074#1093#1086#1076#1080#1090#1100' '#1074' '#1087#1088#1086#1075#1088#1072#1084#1084#1091
       Alignment = taLeftJustify
       Anchors = [akTop, akRight]
       Caption = #1041#1083#1086#1082#1080#1088#1086#1074#1072#1085
       DynProps = <>
+      TabOrder = 0
+    end
+    object chkWork: TDBCheckBoxEh
+      Left = 8
+      Top = 7
+      Width = 92
+      Height = 17
+      Hint = #1056#1072#1073#1086#1090#1072#1077#1090' '#1083#1080' '#1089#1086#1090#1088#1091#1076#1085#1080#1082
+      Alignment = taLeftJustify
+      Anchors = [akTop, akRight]
+      BiDiMode = bdRightToLeft
+      Caption = #1056#1072#1073#1086#1090#1072#1077#1090
+      DynProps = <>
+      Enabled = False
+      ParentBiDiMode = False
       TabOrder = 1
     end
   end

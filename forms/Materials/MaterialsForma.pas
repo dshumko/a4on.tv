@@ -33,7 +33,6 @@ type
     ToolButton3: TToolButton;
     ToolButton2: TToolButton;
     ToolButton9: TToolButton;
-    ToolButton19: TToolButton;
     pnlGroup: TPanel;
     DBGridGroups: TDBGridEh;
     ToolBar3: TToolBar;
@@ -85,7 +84,6 @@ type
     dsIncome: TpFIBDataSet;
     srcIncome: TDataSource;
     btnRemainRecalc: TToolButton;
-    btn2: TToolButton;
     actRemainRecalc: TAction;
     actOpenMatDoc: TAction;
     pnl1: TPanel;
@@ -96,7 +94,7 @@ type
     dsItogo: TMemTableEh;
     drvFIB: TpFIBDataDriverEh;
     srcItog: TDataSource;
-    DBGridEh1: TDBGridEh;
+    dbgGridPivot: TDBGridEh;
     pmRecalcAll: TPopupMenu;
     actRecalcAll: TAction;
     N1: TMenuItem;
@@ -113,6 +111,14 @@ type
     srcOut: TDataSource;
     dsOut: TpFIBDataSet;
     qReqFile: TpFIBQuery;
+    tsSerials: TTabSheet;
+    dsSerials: TpFIBDataSet;
+    srcSerials: TDataSource;
+    dbgSN: TDBGridEh;
+    trWriteDS: TpFIBTransaction;
+    trReadDS: TpFIBTransaction;
+    btn1: TToolButton;
+    btnQuickFilter: TToolButton;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -150,6 +156,8 @@ type
     procedure DBGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos: TPoint; Cell: TGridCoord;
       InCellCursorPos: TPoint; Column: TColumnEh; var Params: TDBGridEhDataHintParams; var Processed: Boolean);
     procedure DBGridEhMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure dbgColumnsZerroCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -157,6 +165,7 @@ type
     FAccessMat: Boolean;
     FPictHintWindow: THintWindow;
     procedure InitDataSet;
+    procedure dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
     { Public declarations }
   end;
@@ -286,6 +295,7 @@ begin
     lk_Col.Footer.FieldName := lk_FldName;
     lk_Col.Footer.DisplayFormat := ',#0.###';
     lk_Col.Footer.Alignment := taRightJustify;
+    lk_Col.OnGetCellParams := dbGridGetCellParams;
 
     if fVisibleCost then
     begin
@@ -300,11 +310,14 @@ begin
       lk_Col.Footer.FieldName := lk_FldNameCst;
       lk_Col.Footer.DisplayFormat := ',#0.###';
       lk_Col.Footer.Alignment := taRightJustify;
+      lk_Col.OnGetCellParams := dbGridGetCellParams;
     end;
     QrTemp.Next;
   end;
+
   if TrTemp.InTransaction then
     TrTemp.Rollback;
+
   lk_FldName := FldPrfx + 'TOTAL';
   lk_FldNameCst := FldPrfxCst + 'TOTAL';
   lk_vars_s := lk_vars_s + '  ,' + lk_FldName + ' NUMERIC(15,3) ' + rsEOL;
@@ -324,6 +337,7 @@ begin
   lk_Col.Footer.FieldName := lk_FldName;
   lk_Col.Footer.DisplayFormat := ',#0.###';
   lk_Col.Footer.Alignment := taRightJustify;
+  lk_Col.OnGetCellParams := dbGridGetCellParams;
 
   if fVisibleCost then
   begin
@@ -418,6 +432,7 @@ begin
   dsOut.Active := (pgcInOut.ActivePage = tsOUT);
   dsInvent.Active := (pgcInOut.ActivePage = tsInventory);
   dsItogo.Active := (pgcInOut.ActivePage = tsItog);
+  dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
 end;
 
 procedure TMaterialsForm.ppmCopyClick(Sender: TObject);
@@ -543,8 +558,13 @@ var
 begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
-      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+    begin
+      if ((Components[i].Name <> 'dbgGridPivot') or (not(Components[i] as TDBGridEh).DataGrouping.IsGroupingWorks)) then
+      begin
+        (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
+          Self.Name + '.' + Components[i].Name, false);
+      end;
+    end;
   Action := caFree;
   dsMaterials.Close;
   dsMatGropups.Close;
@@ -630,11 +650,16 @@ begin
 end;
 
 procedure TMaterialsForm.actQuickFilterExecute(Sender: TObject);
+var
+  i: Integer;
 begin
   actQuickFilter.Checked := not actQuickFilter.Checked;
-  DBGridGroups.STFilter.Visible := actQuickFilter.Checked;
-  DBGridEh.STFilter.Visible := actQuickFilter.Checked;
-  DBGridIncome.STFilter.Visible := actQuickFilter.Checked;
+
+  for i := 0 to ComponentCount - 1 do begin
+    if Components[i] is TDBGridEh then
+      (Components[i] as TDBGridEh).STFilter.Visible := actQuickFilter.Checked;
+  end;
+
   if not actQuickFilter.Checked then
   begin
     DBGridGroups.DataSource.DataSet.Filtered := false;
@@ -738,6 +763,12 @@ begin
     FPictHintWindow.ReleaseHandle;
 end;
 
+procedure TMaterialsForm.dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if Params.Text = '0' then
+    Params.Text := '';
+end;
+
 procedure TMaterialsForm.DbGridMatDblClick(Sender: TObject);
 begin
   if not dsMaterials.FieldByName('M_ID').IsNull then
@@ -773,6 +804,7 @@ begin
   FAccessMat := dmMain.AllowedAction(rght_Dictionary_Materials);
   FAccessFull := dmMain.AllowedAction(rght_Dictionary_full);
   fVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
+
   b := FAccessFull or FAccessMat;
   InitDataSet;
   dsMatGropups.Open;
@@ -802,6 +834,16 @@ begin
       dbgJournal.Columns[i].Visible := fVisibleCost
     else if dbgJournal.Columns[i].FieldName = 'ITOGO' then
       dbgJournal.Columns[i].Visible := fVisibleCost;
+  end;
+
+  if FAccessFull then
+    dbgSN.AllowedOperations := [alopUpdateEh]
+  else
+    dbgSN.AllowedOperations := [];
+  for i := 0 to dbgSN.Columns.Count - 1 do
+  begin
+    if dbgSN.Columns[i].FieldName = 'COST' then
+      dbgSN.Columns[i].Visible := fVisibleCost;
   end;
 end;
 
@@ -839,6 +881,8 @@ begin
   actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and actNew.Enabled;
   actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and actNew.Enabled;
   actInNew.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and (FAccessFull or FAccessMat);
+
+  tsSerials.TabVisible := (not dsMaterials.FieldByName('IS_UNIT').IsNull) and (dsMaterials['IS_UNIT'] = 1);
 end;
 
 procedure TMaterialsForm.srcMatGropupsStateChange(Sender: TObject);
@@ -998,6 +1042,13 @@ begin
 
   frxReport.PrepareReport(True);
   frxReport.ShowPreparedReport;
+end;
+
+procedure TMaterialsForm.dbgColumnsZerroCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if Params.Text = '0' then
+    Params.Text := '';
 end;
 
 procedure TMaterialsForm.dbgJournalDblClick(Sender: TObject);

@@ -153,6 +153,8 @@ type
     splWork: TSplitter;
     btnTask: TToolButton;
     actTask: TAction;
+    actOpenHouse: TAction;
+    miOpenHouse: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -207,6 +209,7 @@ type
     procedure dbgGiveColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgExecColumns15GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgGridColumns14GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure actOpenHouseExecute(Sender: TObject);
   private
     { Private declarations }
     fSelectedRow: Integer; // число помеченных строк
@@ -570,10 +573,13 @@ var
           2:
             fld := 'R.RQ_EXEC_TIME';
         end;
-        s := DatesFltr(fld, period, before, after);
+        if (period <> '') then
+          s := DatesFltr(fld, period, '', '')
+        else
+          s := DatesFltr(fld, period, before, after);
 
         if s <> '' then
-          addToFilter(s);
+          addToFilter(' ( ' + s + ' ) ');
       end
       else
       begin
@@ -583,17 +589,17 @@ var
         s := format('( %s )', [fld]);
         fld := DatesFltr('R.RQ_COMPLETED', period, before, after);
         if s <> '' then
-          s := format('%s or ( %s )', [s, fld])
+          s := format('(( %s ) or ( %s ))', [s, fld])
         else
           s := format('( %s )', [fld]);
         fld := DatesFltr('R.RQ_PLAN_DATE', period, before, after);
         if s <> '' then
-          s := format('%s or ( %s )', [s, fld])
+          s := format('(( %s ) or ( %s ))', [s, fld])
         else
           s := format('( %s )', [fld]);
         fld := DatesFltr('R.RQ_EXEC_TIME', period, before, after);
         if s <> '' then
-          s := format('%s or ( %s )', [s, fld])
+          s := format('(( %s ) or ( %s ))', [s, fld])
         else
           s := format('( %s )', [fld]);
         if s <> '' then
@@ -809,6 +815,25 @@ begin
     dbgGive.DataSource.DataSet.EnableControls;
   end;
 
+end;
+
+procedure TRequestsForm.actOpenHouseExecute(Sender: TObject);
+var
+  s: String;
+  Grid: TDBGridEh;
+begin
+  Grid := GetActiveGrid();
+
+  if not(Grid.DataSource.DataSet).Active then
+    exit;
+
+  if ((Grid.DataSource.DataSet).FieldByName('STREET_ID').IsNull) or
+    ((Grid.DataSource.DataSet).FieldByName('HOUSE_ID').IsNull) then
+    exit;
+
+  s := (Grid.DataSource.DataSet).FieldByName('STREET_ID').AsString + '~' + (Grid.DataSource.DataSet)
+    .FieldByName('HOUSE_ID').AsString;
+  A4MainForm.ShowCustomers(14, s);
 end;
 
 procedure TRequestsForm.actEditExecute(Sender: TObject);

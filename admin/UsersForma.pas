@@ -73,12 +73,12 @@ type
     Panel5: TPanel;
     Splitter3: TSplitter;
     Panel6: TPanel;
-    DBGridEh5: TDBGridEh;
+    dbgGU: TDBGridEh;
     Panel10: TPanel;
     sbUGAdd: TSpeedButton;
     sbUGremove: TSpeedButton;
     Panel7: TPanel;
-    DBGridEh6: TDBGridEh;
+    dbgG: TDBGridEh;
     pnlAreas: TPanel;
     Splitter2: TSplitter;
     Panel12: TPanel;
@@ -113,6 +113,7 @@ type
     srcRights: TDataSource;
     dsRights: TpFIBDataSet;
     chkALL_AREAS: TDBCheckBoxEh;
+    trWriteQ: TpFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actAddGroupExecute(Sender: TObject);
     procedure actEditGroupExecute(Sender: TObject);
@@ -120,8 +121,8 @@ type
     procedure pcChange(Sender: TObject);
     procedure sbUGAddClick(Sender: TObject);
     procedure sbUGremoveClick(Sender: TObject);
-    procedure DBGridEh6DblClick(Sender: TObject);
-    procedure DBGridEh5DblClick(Sender: TObject);
+    procedure dbgGDblClick(Sender: TObject);
+    procedure dbgGUDblClick(Sender: TObject);
     procedure actAddUSerExecute(Sender: TObject);
     procedure actCloneUserExecute(Sender: TObject);
     procedure actEditUserExecute(Sender: TObject);
@@ -144,6 +145,9 @@ type
     procedure dsUsersNewRecord(DataSet: TDataSet);
     procedure dbgRightsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure dbgUGADblClick(Sender: TObject);
+    procedure dbgUGDblClick(Sender: TObject);
+    procedure chkALL_AREASExit(Sender: TObject);
   private
     { Private declarations }
     isVersion3plus: Boolean;
@@ -494,50 +498,65 @@ end;
 
 procedure TUsersForm.btnAddAreaClick(Sender: TObject);
 begin
+  if not dsA.Active then
+    dsA.Open;
+  if not dsAU.Active then
+    dsAU.Open;
   if (dsA.RecordCount = 0) or (dsA.FieldByName('WA_ID').IsNull) then
     Exit;
-  with TpFIBQuery.Create(Nil) do
-    try
-      DataBase := dmMain.dbTV;
-      Transaction := dmMain.trWriteQ;
-      SQL.Text := 'insert into sys$user_areas (area_id, user_id) values (:area_id, :user_id);';
-      ParamByName('user_id').Value := dsUsers['ID'];
-      ParamByName('area_id').Value := dsA['WA_ID'];
-      Transaction.StartTransaction;
-      ExecQuery;
-      Transaction.Commit;
-      dsAU.CloseOpen(true);
-      dsA.CloseOpen(true);
-    finally
-      Free;
-    end;
 
+  qModify.SQL.Text := 'update or insert into Sys$User_Areas (User_Id, Area_Id)' +
+    ' values (:User_Id, :Area_Id) matching(User_Id, Area_Id)';
+  qModify.ParamByName('user_id').Value := dsUsers['ID'];
+  qModify.ParamByName('area_id').Value := dsA['WA_ID'];
+  // qModify.Transaction.StartTransaction;
+  qModify.ExecQuery;
+  // qModify.Transaction.Commit;
+  // qModify.Transaction.Active := False;
+  dsA.CloseOpen(true);
+  dsAU.CloseOpen(true);
 end;
 
 procedure TUsersForm.btnRemoveAreaClick(Sender: TObject);
 begin
+  if not dsA.Active then
+    dsA.Open;
+  if not dsAU.Active then
+    dsAU.Open;
   if (dsAU.RecordCount = 0) or (dsAU.FieldByName('WA_ID').IsNull) then
     Exit;
-  with TpFIBQuery.Create(Nil) do
-    try
-      DataBase := dmMain.dbTV;
-      Transaction := dmMain.trWriteQ;
-      SQL.Text := 'delete from sys$user_areas where area_id = :area_id and  user_id = :user_id;';
-      ParamByName('user_id').Value := dsUsers['ID'];
-      ParamByName('area_id').Value := dsAU['WA_ID'];
-      Transaction.StartTransaction;
-      ExecQuery;
-      Transaction.Commit;
-      dsAU.CloseOpen(true);
-      dsA.CloseOpen(true);
-    finally
-      Free;
-    end;
+
+  qModify.SQL.Text := 'delete from sys$user_areas where area_id = :area_id and user_id = :user_id';
+  qModify.ParamByName('user_id').Value := dsUsers['ID'];
+  qModify.ParamByName('area_id').Value := dsAU['WA_ID'];
+  // qModify.Transaction.StartTransaction;
+  qModify.ExecQuery;
+  // qModify.Transaction.Commit;
+  // qModify.Transaction.Active := False;
+  dsA.CloseOpen(true);
+  dsAU.CloseOpen(true);
 end;
 
 procedure TUsersForm.chkALL_AREASClick(Sender: TObject);
 begin
   pnlAreas.Visible := not chkALL_AREAS.Checked;
+  {
+    if (dsUsers.RecordCount = 0) or (dsUsers.FieldByName('ID').IsNull) then
+    Exit;
+
+    dsUsers.Edit;
+    if chkALL_AREAS.Checked then
+    dsUsers['all_areas'] := 1
+    else
+    dsUsers['all_areas'] := 0;
+    dsUsers.Post;
+  }
+end;
+
+procedure TUsersForm.chkALL_AREASExit(Sender: TObject);
+begin
+  if dsUsers.State = dsEdit then
+    dsUsers.Post;
 end;
 
 procedure TUsersForm.actUserForWorkerExecute(Sender: TObject);
@@ -692,12 +711,12 @@ begin
   dsUsers.Refresh;
 end;
 
-procedure TUsersForm.DBGridEh6DblClick(Sender: TObject);
+procedure TUsersForm.dbgGDblClick(Sender: TObject);
 begin
   sbUGAddClick(Sender);
 end;
 
-procedure TUsersForm.DBGridEh5DblClick(Sender: TObject);
+procedure TUsersForm.dbgGUDblClick(Sender: TObject);
 begin
   sbUGremoveClick(Sender);
 end;
@@ -711,8 +730,8 @@ procedure TUsersForm.actCloneUserExecute(Sender: TObject);
 var
   u: string;
 begin
-  { IFNDEF DEMOVERSION }
   with TUF.Create(application) do
+  begin
     try
       pnlExistUser.Visible := true;
       pnlNewUser.Visible := False;
@@ -726,12 +745,12 @@ begin
         grantProcedures('ROLE_A4USER');
         grantFunctions('ROLE_A4USER');
         qModify.SQL.Text := Format('grant ROLE_A4USER to %s', [u]);
-        qModify.Transaction.StartTransaction;
+        // qModify.Transaction.StartTransaction;
         qModify.ExecQuery;
-        qModify.Transaction.Commit;
+        // qModify.Transaction.Commit;
 
         dsUsers.Insert;
-        dsUsers['working'] := chkWork.Checked;
+        // dsUsers['working'] := chkWork.Checked;
         dsUsers['ibname'] := u;
         dsUsers['lockedout'] := chkLock.Checked;
         if pgcWorker.ActivePageIndex = 0 then
@@ -753,7 +772,7 @@ begin
     finally
       Free;
     end;
-  { ENDIF }
+  end;
 end;
 
 procedure TUsersForm.actEditUserExecute(Sender: TObject);
@@ -767,14 +786,15 @@ begin
   with TUF.Create(application) do
     try
       edU.Text := dsUsers['IBNAME'];
-      if (dsUsers.FieldByName('working').IsNull or dsUsers['working'] = 0) then
-        chkWork.Checked := False
-      else
-        chkWork.Checked := true;
       if (dsUsers.FieldByName('lockedout').IsNull or dsUsers['lockedout'] = 0) then
         chkLock.Checked := False
       else
         chkLock.Checked := true;
+      if (dsUsers.FieldByName('working').IsNull or dsUsers['working'] = 0) then
+        chkWork.Checked := False
+      else
+        chkWork.Checked := true;
+
       edU.Enabled := False;
       pgcWorker.Visible := False;
       if ShowModal = mrOk then
@@ -792,8 +812,11 @@ begin
           end;
         end;
         dsUsers.Edit;
-        dsUsers['working'] := chkWork.Checked;
-        dsUsers['lockedout'] := chkLock.Checked;
+        // dsUsers['working'] := chkWork.Checked;
+        if chkLock.Checked then
+          dsUsers['lockedout'] := 1
+        else
+          dsUsers['lockedout'] := 0;
         dsUsers.Post;
       end
     finally
@@ -815,9 +838,9 @@ begin
     SQL := 'DROP USER ' + dsUsers['IBNAME'];
     try
       qModify.SQL.Text := SQL;
-      qModify.Transaction.StartTransaction;
+      // qModify.Transaction.StartTransaction;
       qModify.ExecQuery;
-      qModify.Transaction.Commit;
+      // qModify.Transaction.Commit;
     finally
       //
     end;
@@ -857,9 +880,9 @@ begin
   while not dsUsers.EOF do
   begin
     qModify.SQL.Text := 'grant ROLE_A4USER to ' + dsUsers['IBNAME'];
-    qModify.Transaction.StartTransaction;
+    // qModify.Transaction.StartTransaction;
     qModify.ExecQuery;
-    qModify.Transaction.Commit;
+    // qModify.Transaction.Commit;
     dsUsers.Next;
   end;
   dsUsers.First;
@@ -891,6 +914,16 @@ begin
   actEditGroup.Execute;
 end;
 
+procedure TUsersForm.dbgUGADblClick(Sender: TObject);
+begin
+  btnAddAreaClick(Sender);
+end;
+
+procedure TUsersForm.dbgUGDblClick(Sender: TObject);
+begin
+  btnRemoveAreaClick(Sender);
+end;
+
 procedure TUsersForm.dbgUsersDblClick(Sender: TObject);
 begin
   actEditUser.Execute;
@@ -904,9 +937,9 @@ begin
   if (I = 0) then
   begin
     qModify.SQL.Text := 'CREATE ROLE ROLE_A4USER;';
-    qModify.Transaction.StartTransaction;
+    // qModify.Transaction.StartTransaction;
     qModify.ExecQuery;
-    qModify.Transaction.Commit;
+    // qModify.Transaction.Commit;
     garntTables('ROLE_A4USER');
     garntExceptions('ROLE_A4USER');
     grantProcedures('ROLE_A4USER');
@@ -955,9 +988,9 @@ begin
       qModify.SQL.Text := SQL
     else
       qModify.SQL.Text := SQL + ' ACTIVE USING PLUGIN ' + PLG;
-    qModify.Transaction.StartTransaction;
+    // qModify.Transaction.StartTransaction;
     qModify.ExecQuery;
-    qModify.Transaction.Commit;
+    // qModify.Transaction.Commit;
   finally
     qModify.Close;
   end;
@@ -979,7 +1012,7 @@ begin
   begin
     try
       GetWorkersList(cbWorker.Items, cbWorker.KeyItems);
-      chkWork.Checked := true;
+      // chkWork.Checked := true;
       chkLock.Checked := False;
       if NewWorker then
         pgcWorker.ActivePageIndex := 0
@@ -1013,15 +1046,17 @@ begin
             grantFunctions('ROLE_A4USER');
             qModify.SQL.Clear;
             qModify.SQL.Text := Format('grant ROLE_A4USER to %s', [u]);
-            qModify.Transaction.StartTransaction;
+            // qModify.Transaction.StartTransaction;
             qModify.ExecQuery;
-            qModify.Transaction.Commit;
-            qModify.Close;
+            // qModify.Transaction.Commit;
 
             dsUsers.Insert;
-            dsUsers['working'] := chkWork.Checked;
+            // dsUsers['working'] := chkWork.Checked;
             dsUsers['ibname'] := u;
-            dsUsers['lockedout'] := chkLock.Checked;
+            if chkLock.Checked then
+              dsUsers['lockedout'] := 1
+            else
+              dsUsers['lockedout'] := 0;
             if pgcWorker.ActivePageIndex = 0 then
             begin
               dsUsers.FieldByName('WORKER_ID').Clear;
@@ -1034,6 +1069,7 @@ begin
             else
               dsUsers['WORKER_ID'] := cbWorker.Value;
             dsUsers.Post;
+            // dsUsers.Transaction.Commit;
           end;
         end;
       end;

@@ -665,7 +665,7 @@ inherited ChannelsForm: TChannelsForm
       '    left outer join DVB_NETWORK DN on (DN.DVBN_ID = DS.DVBN_ID)'
       
         '    left outer join(select -- '#1087#1086#1087#1099#1090#1082#1072' '#1074#1099#1073#1088#1072#1090#1100' '#1074' '#1090#1072#1082#1086#1084' '#1087#1086#1088#1103#1076#1082#1077' '#1080#1089 +
-        #1090#1086#1095#1085#1080#1082#1080'. '#1076#1083#1103' '#1085#1072#1083#1086#1075#1072'. '#1076#1083#1103' '#1094#1080#1092#1088#1099'. '#1087#1088#1086#1095#1080#1077
+        #1090#1086#1095#1085#1080#1082#1080'. '#1076#1083#1103' '#1072#1053#1083#1086#1075#1072'. '#1076#1083#1103' '#1094#1080#1092#1088#1099'. '#1087#1088#1086#1095#1080#1077
       '                        IC.CH_ID'
       '                      , coalesce((select first 1'
       '                                      S.CS_ID'
@@ -685,14 +685,13 @@ inherited ChannelsForm: TChannelsForm
       '    left outer join CHANNEL_SRC CS on (CS.CS_ID = OC.CS_ID)'
       
         '    left outer join CHANNEL_SRC_PARAM CSP on (CSP.CS_ID = OC.CS_' +
-        'ID and'
-      '          CSP.CH_ID = OC.CH_ID)'
-      '    left outer join OBJECTS AC on (AC.O_ID = CSP.CARD_ID and'
-      '          AC.O_TYPE = 44)'
+        'ID and CSP.CH_ID = OC.CH_ID)'
+      
+        '    left outer join OBJECTS AC on (AC.O_ID = CSP.CARD_ID and AC.' +
+        'O_TYPE = 44) -- '#1044#1077#1082#1086#1076#1077#1088#1099' '#1082#1072#1085#1072#1083#1086#1074
       '    left outer join(select'
       '                        DTC.CH_ID'
-      '                      ,'
-      '                        (select first 1'
+      '                      , (select first 1'
       '                             IDC.ID'
       '                         from DISTRIB_CONTRACTS IDC'
       

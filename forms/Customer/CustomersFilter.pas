@@ -277,6 +277,8 @@ end;
 
 procedure TCustomersFilterForm.FormShow(Sender: TObject);
 begin
+  cbbListType.DropDownBox.Rows := cbbListType.Items.Count;
+
   dsStreets.Open;
   dsHomes.Open;
   dsServices.Open;
@@ -300,8 +302,8 @@ begin
     7  Список лицевых
     8  Улица
     9  IP
-    10  MAC
-    11  Декодер
+    10 MAC
+    11 Декодер
     12 Тюнер
   }
 {$IFDEF LAN}

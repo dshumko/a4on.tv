@@ -1,5 +1,4 @@
 object FlatsAddForm: TFlatsAddForm
-  ShowHint = True
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
@@ -15,6 +14,7 @@ object FlatsAddForm: TFlatsAddForm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 13
@@ -28,8 +28,12 @@ object FlatsAddForm: TFlatsAddForm
     DynProps = <>
     Flat = True
     FooterParams.Color = clWindow
+    HorzScrollBar.ExtraPanel.NavigatorButtons = [nbInsertEh, nbDeleteEh, nbEditEh]
+    HorzScrollBar.ExtraPanel.Visible = True
+    HorzScrollBar.ExtraPanel.VisibleItems = [gsbiRecordsInfoEh, gsbiNavigator]
     Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghExtendVertLines]
+    SearchPanel.Location = splHorzScrollBarExtraPanelEh
     TabOrder = 0
     TitleParams.MultiTitle = True
     Columns = <
@@ -140,6 +144,7 @@ object FlatsAddForm: TFlatsAddForm
     AutoSize = False
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 1
     Visible = False
     WantReturns = True

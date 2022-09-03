@@ -271,7 +271,13 @@ begin
       else
       begin
         pf.CurrentDate := pf.dsPaymentDocs['CD'];
-        pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID'];
+        if (dmMain.GetSettingsValue('CREATE_PD') <> '1') then
+          pf.dbluPayDoc.KeyValue := pf.dsPaymentDocs['PAY_DOC_ID']
+        else
+        begin
+          pf.dbluPayDoc.EmptyDataInfo.Text := pf.dbluPayDoc.EmptyDataInfo.Text + ' ' +
+            'Если ПД не указан, то будет создан автоматически';
+        end;
       end;
     end;
 
@@ -437,7 +443,7 @@ begin
   vShowPaymentType := (vSF = '1');
   if vShowPaymentType then
     qInsertPayment.SQL.Text := 'execute procedure Payment_Insert(:Payment_Id, :Pay_Doc_Id, :Customer_Id, :Pay_Date, ' +
-      ':Pay_Sum, :Fine_Sum, :Payment_Type, :Notice, :Payment_Srv, :EXT_PAY_ID null, null, null)';
+      ':Pay_Sum, :Fine_Sum, :Payment_Type, :Notice, :Payment_Srv, :EXT_PAY_ID, null, null, null)';
   pnlPayType.Visible := vShowPaymentType;
   dsPaymentType.Active := vShowPaymentType;
   vSF := dmMain.GetSettingsValue('PAYMENT_SRV');

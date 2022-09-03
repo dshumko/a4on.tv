@@ -33,7 +33,7 @@ object ServicesForm: TServicesForm
       Caption = #1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
       object Splitter1: TSplitter
         Left = 0
-        Top = 273
+        Top = 235
         Width = 828
         Height = 5
         Cursor = crVSplit
@@ -43,7 +43,7 @@ object ServicesForm: TServicesForm
         Left = 0
         Top = 0
         Width = 828
-        Height = 273
+        Height = 235
         Align = alClient
         AllowedOperations = []
         DataSource = srcServices
@@ -233,9 +233,9 @@ object ServicesForm: TServicesForm
       end
       object AddonPage: TPageControl
         Left = 0
-        Top = 278
+        Top = 240
         Width = 828
-        Height = 205
+        Height = 243
         ActivePage = TarifPage
         Align = alBottom
         TabOrder = 1
@@ -246,7 +246,7 @@ object ServicesForm: TServicesForm
             Left = 27
             Top = 0
             Width = 793
-            Height = 177
+            Height = 215
             Align = alClient
             AllowedOperations = []
             DataSource = srcTarif
@@ -321,7 +321,7 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 27
-            Height = 177
+            Height = 215
             Align = alLeft
             Caption = 'ToolBar1'
             EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
@@ -351,7 +351,7 @@ object ServicesForm: TServicesForm
             Left = 795
             Top = 0
             Width = 25
-            Height = 177
+            Height = 215
             Align = alRight
             Caption = 'ToolBar1'
             EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
@@ -385,7 +385,7 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 795
-            Height = 177
+            Height = 215
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel2'
@@ -394,7 +394,7 @@ object ServicesForm: TServicesForm
               Left = 0
               Top = 100
               Width = 795
-              Height = 77
+              Height = 115
               Align = alClient
               AllowedOperations = []
               DataSource = srcLinks
@@ -574,7 +574,7 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 820
-            Height = 177
+            Height = 215
             Align = alClient
             MultiLine = True
             TabOrder = 0
@@ -585,30 +585,30 @@ object ServicesForm: TServicesForm
             TabIndex = 0
             OnChange = TabChannelStateChange
             object Panel5: TPanel
-              Left = 44
+              Left = 24
               Top = 4
-              Width = 772
-              Height = 169
+              Width = 792
+              Height = 207
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 0
               object Splitter3: TSplitter
                 Left = 321
                 Top = 0
-                Height = 169
+                Height = 207
               end
               object Panel6: TPanel
                 Left = 0
                 Top = 0
                 Width = 321
-                Height = 169
+                Height = 207
                 Align = alLeft
                 BevelOuter = bvNone
                 TabOrder = 0
                 object Label1: TLabel
                   Left = 0
                   Top = 0
-                  Width = 125
+                  Width = 321
                   Height = 13
                   Align = alTop
                   Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
@@ -617,7 +617,7 @@ object ServicesForm: TServicesForm
                   Left = 0
                   Top = 13
                   Width = 284
-                  Height = 156
+                  Height = 194
                   Align = alClient
                   AllowedOperations = []
                   DataSource = srcSC
@@ -627,8 +627,10 @@ object ServicesForm: TServicesForm
                   FooterParams.Color = clWindow
                   GridLineParams.VertEmptySpaceStyle = dessNonEh
                   Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
-                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
                   ReadOnly = True
+                  SearchPanel.Enabled = True
+                  SearchPanel.FilterOnTyping = True
                   SumList.Active = True
                   TabOrder = 0
                   OnDblClick = GridSCDblClick
@@ -642,6 +644,8 @@ object ServicesForm: TServicesForm
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #1053#1086#1084#1077#1088
+                      Title.TitleButton = True
+                      Width = 82
                     end
                     item
                       CellButtons = <>
@@ -650,6 +654,8 @@ object ServicesForm: TServicesForm
                       FieldName = 'CH_NAME'
                       Footers = <>
                       Title.Caption = #1050#1072#1085#1072#1083
+                      Title.TitleButton = True
+                      Width = 169
                     end>
                   object RowDetailData: TRowDetailPanelControlEh
                   end
@@ -658,7 +664,7 @@ object ServicesForm: TServicesForm
                   Left = 284
                   Top = 13
                   Width = 37
-                  Height = 156
+                  Height = 194
                   Align = alRight
                   BevelOuter = bvNone
                   TabOrder = 1
@@ -701,7 +707,7 @@ object ServicesForm: TServicesForm
                   end
                   object sbChanRemove: TSpeedButton
                     Left = 0
-                    Top = 96
+                    Top = 134
                     Width = 37
                     Height = 60
                     Hint = #1059#1076#1072#1083#1080#1090#1100' '#1087#1088#1086#1075#1088#1072#1084#1084#1091' '#1080#1079' '#1087#1072#1082#1077#1090#1072
@@ -741,15 +747,15 @@ object ServicesForm: TServicesForm
               object Panel7: TPanel
                 Left = 324
                 Top = 0
-                Width = 448
-                Height = 169
+                Width = 468
+                Height = 207
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 1
                 object Label2: TLabel
                   Left = 0
                   Top = 0
-                  Width = 106
+                  Width = 468
                   Height = 13
                   Align = alTop
                   Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
@@ -757,18 +763,22 @@ object ServicesForm: TServicesForm
                 object GridC: TDBGridEh
                   Left = 0
                   Top = 13
-                  Width = 448
-                  Height = 156
+                  Width = 468
+                  Height = 194
                   Align = alClient
                   AllowedOperations = []
                   DataSource = srcC
                   DynProps = <>
                   Flat = True
+                  FooterRowCount = 1
                   FooterParams.Color = clWindow
                   GridLineParams.VertEmptySpaceStyle = dessNonEh
                   Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
-                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
                   ReadOnly = True
+                  SearchPanel.Enabled = True
+                  SearchPanel.FilterOnTyping = True
+                  SumList.Active = True
                   TabOrder = 0
                   OnDblClick = GridCDblClick
                   Columns = <
@@ -778,8 +788,11 @@ object ServicesForm: TServicesForm
                       DynProps = <>
                       EditButtons = <>
                       FieldName = 'CH_NUMBER'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #1053#1086#1084#1077#1088
+                      Title.TitleButton = True
+                      Width = 85
                     end
                     item
                       CellButtons = <>
@@ -788,6 +801,8 @@ object ServicesForm: TServicesForm
                       FieldName = 'CH_NAME'
                       Footers = <>
                       Title.Caption = #1050#1072#1085#1072#1083
+                      Title.TitleButton = True
+                      Width = 329
                     end>
                   object RowDetailData: TRowDetailPanelControlEh
                   end
@@ -805,7 +820,7 @@ object ServicesForm: TServicesForm
             Left = 28
             Top = 0
             Width = 792
-            Height = 177
+            Height = 215
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DynProps = <>
@@ -841,7 +856,7 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 28
-            Height = 177
+            Height = 215
             Align = alLeft
             Caption = 'ToolBar1'
             EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
@@ -892,7 +907,7 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 28
-            Height = 177
+            Height = 215
             Align = alLeft
             EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
             Images = A4MainForm.ICONS_ACTIVE
@@ -922,7 +937,7 @@ object ServicesForm: TServicesForm
             Left = 28
             Top = 0
             Width = 792
-            Height = 177
+            Height = 215
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel1'
@@ -931,7 +946,7 @@ object ServicesForm: TServicesForm
               Left = 0
               Top = 100
               Width = 792
-              Height = 77
+              Height = 115
               Align = alClient
               AllowedOperations = []
               DataSource = srcSwitch
@@ -1141,7 +1156,7 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 27
-            Height = 177
+            Height = 215
             Align = alLeft
             EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
             Images = A4MainForm.ICONS_ACTIVE
@@ -1171,7 +1186,7 @@ object ServicesForm: TServicesForm
             Left = 27
             Top = 0
             Width = 793
-            Height = 177
+            Height = 215
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel1'
@@ -1180,7 +1195,7 @@ object ServicesForm: TServicesForm
               Left = 0
               Top = 100
               Width = 793
-              Height = 77
+              Height = 115
               Align = alClient
               AllowedOperations = []
               DataSource = srcSrvAttr
@@ -1370,7 +1385,7 @@ object ServicesForm: TServicesForm
             Left = 329
             Top = 0
             Width = 491
-            Height = 177
+            Height = 215
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = srcCMPLX
@@ -1459,16 +1474,16 @@ object ServicesForm: TServicesForm
             Left = 0
             Top = 0
             Width = 25
-            Height = 177
+            Height = 215
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 1
             DesignSize = (
               25
-              177)
+              215)
             object btnCmxDel: TSpeedButton
               Left = 1
-              Top = 153
+              Top = 191
               Width = 22
               Height = 22
               Action = actCmxDel
@@ -1489,7 +1504,7 @@ object ServicesForm: TServicesForm
             Left = 25
             Top = 0
             Width = 304
-            Height = 177
+            Height = 215
             Align = alLeft
             BevelOuter = bvLowered
             TabOrder = 2
@@ -2687,7 +2702,7 @@ object ServicesForm: TServicesForm
     AutoEdit = False
     DataSet = dsONOFFServices
     Left = 90
-    Top = 265
+    Top = 241
   end
   object dsONOFFServices: TpFIBDataSet
     SelectSQL.Strings = (
@@ -2701,7 +2716,7 @@ object ServicesForm: TServicesForm
     UpdateTransaction = trWrite
     AutoCommit = True
     Left = 90
-    Top = 209
+    Top = 193
     oFetchAll = True
   end
   object dsSC: TpFIBDataSet
@@ -2740,7 +2755,7 @@ object ServicesForm: TServicesForm
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     Left = 400
-    Top = 212
+    Top = 188
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
@@ -2750,7 +2765,7 @@ object ServicesForm: TServicesForm
     DataSet = dsC
     OnStateChange = srcCStateChange
     Left = 400
-    Top = 268
+    Top = 244
   end
   object ActionList1: TActionList
     Images = A4MainForm.ICONS_ACTIVE
@@ -2791,7 +2806,7 @@ object ServicesForm: TServicesForm
     AutoEdit = False
     DataSet = dsSwitch
     Left = 245
-    Top = 266
+    Top = 242
   end
   object dsSwitch: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -2862,7 +2877,7 @@ object ServicesForm: TServicesForm
     AutoCommit = True
     DataSource = srcServices
     Left = 243
-    Top = 214
+    Top = 190
     oFetchAll = True
   end
   object srcSwitchToSrv: TDataSource

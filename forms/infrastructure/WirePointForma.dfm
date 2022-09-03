@@ -272,14 +272,14 @@ object WirePointForm: TWirePointForm
       'ORDER BY STREET_NAME, a.area_name')
     Transaction = trRead
     Database = dmMain.dbTV
-    Left = 144
-    Top = 32
+    Left = 80
+    Top = 136
     oFetchAll = True
   end
   object srcStreets: TDataSource
     DataSet = dsStreets
-    Left = 141
-    Top = 88
+    Left = 149
+    Top = 144
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -290,20 +290,20 @@ object WirePointForm: TWirePointForm
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcStreets
-    Left = 228
-    Top = 28
+    Left = 244
+    Top = 148
     oFetchAll = True
   end
   object srcHomes: TDataSource
     DataSet = dsHomes
-    Left = 225
-    Top = 86
+    Left = 297
+    Top = 150
   end
   object srcNodes: TDataSource
     AutoEdit = False
     DataSet = dsNodes
-    Left = 420
-    Top = 86
+    Left = 452
+    Top = 142
   end
   object dsNodes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -331,8 +331,8 @@ object WirePointForm: TWirePointForm
     Database = dmMain.dbTV
     AutoCommit = True
     DataSource = srcHomes
-    Left = 421
-    Top = 34
+    Left = 397
+    Top = 138
     poUseBooleanField = False
     poSetRequiredFields = True
     oVisibleRecno = True

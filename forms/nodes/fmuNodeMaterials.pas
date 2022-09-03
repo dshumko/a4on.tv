@@ -17,7 +17,7 @@ type
     trWrite: TpFIBTransaction;
     dbgMat: TDBGridEh;
     srcMat: TDataSource;
-    ActListCustomers: TActionList;
+    ActList: TActionList;
     dsMat: TpFIBDataSet;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;

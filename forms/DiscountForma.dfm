@@ -1,10 +1,10 @@
 object DiscountForm: TDiscountForm
   Left = 410
   Top = 289
-  BorderIcons = [biMinimize, biMaximize]
+  BorderIcons = [biSystemMenu]
   Caption = #1050#1086#1101#1092#1092#1080#1094#1080#1077#1085#1090
   ClientHeight = 271
-  ClientWidth = 329
+  ClientWidth = 515
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,13 +13,13 @@ object DiscountForm: TDiscountForm
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
-  Position = poMainFormCenter
+  Position = poDesigned
   ShowHint = True
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    329
+    515
     271)
   PixelsPerInch = 96
   TextHeight = 13
@@ -54,7 +54,7 @@ object DiscountForm: TDiscountForm
   object pnlSrvType: TPanel
     Left = 87
     Top = 59
-    Width = 240
+    Width = 426
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     BevelOuter = bvNone
@@ -62,7 +62,7 @@ object DiscountForm: TDiscountForm
     TabOrder = 3
     Visible = False
     DesignSize = (
-      240
+      426
       25)
     object lbl1: TLabel
       Left = 1
@@ -74,7 +74,7 @@ object DiscountForm: TDiscountForm
     object lcbSrvType: TDBLookupComboboxEh
       Left = 56
       Top = 3
-      Width = 180
+      Width = 366
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -92,7 +92,7 @@ object DiscountForm: TDiscountForm
   object mmoNotice: TDBMemoEh
     Left = 8
     Top = 135
-    Width = 316
+    Width = 502
     Height = 100
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
@@ -107,13 +107,13 @@ object DiscountForm: TDiscountForm
   object pnlService: TPanel
     Left = 96
     Top = 59
-    Width = 228
+    Width = 414
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     BevelOuter = bvNone
     TabOrder = 4
     DesignSize = (
-      228
+      414
       25)
     object Label1: TLabel
       Left = 5
@@ -125,17 +125,23 @@ object DiscountForm: TDiscountForm
     object luOnOffService: TDBLookupComboboxEh
       Left = 47
       Top = 3
-      Width = 181
+      Width = 367
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.ListSource = srcService
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
       EmptyDataInfo.Text = #1057#1082#1080#1076#1082#1072' '#1076#1083#1103' '#1091#1089#1083#1091#1075#1080
       EditButtons = <>
       KeyField = 'SERVICE_ID'
       ListField = 'NAME'
       ListSource = srcService
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 0
       Visible = True
     end
@@ -152,7 +158,7 @@ object DiscountForm: TDiscountForm
   object deStart: TDBDateTimeEditEh
     Left = 144
     Top = 5
-    Width = 180
+    Width = 366
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -166,7 +172,7 @@ object DiscountForm: TDiscountForm
   object deStop: TDBDateTimeEditEh
     Left = 144
     Top = 33
-    Width = 180
+    Width = 366
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -180,7 +186,7 @@ object DiscountForm: TDiscountForm
   object ednDiscountValue: TDBNumberEditEh
     Left = 144
     Top = 90
-    Width = 180
+    Width = 366
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DecimalPlaces = 4
@@ -195,7 +201,7 @@ object DiscountForm: TDiscountForm
   object btnOk: TBitBtn
     Left = 8
     Top = 241
-    Width = 234
+    Width = 420
     Height = 24
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
@@ -205,7 +211,7 @@ object DiscountForm: TDiscountForm
     OnClick = btnOkClick
   end
   object btnCancel: TBitBtn
-    Left = 249
+    Left = 435
     Top = 241
     Width = 75
     Height = 24
@@ -222,10 +228,27 @@ object DiscountForm: TDiscountForm
   end
   object dsluService: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT SERVICE_ID, NAME, DESCRIPTION'
-      'FROM SERVICES'
-      'WHERE SRV_TYPE_ID in (0,1)'
-      'ORDER BY NAME')
+      'select'
+      '    s.Name || coalesce('#39' / '#39' ||(select'
+      
+        '                                    iif((coalesce(t.Tarif_Sum, 0' +
+        ') = coalesce(t.TARIF_SUM_JUR, 0)), coalesce(t.Tarif_Sum, 0), coa' +
+        'lesce(t.Tarif_Sum, 0) || '#39'/'#39' || coalesce(t.TARIF_SUM_JUR, 0))'
+      '                                  from tarif t'
+      
+        '                                  where t.Service_Id = s.Service' +
+        '_Id'
+      
+        '                                        and current_date between' +
+        ' t.Date_From and t.Date_To)'
+      ''
+      '    , '#39#39') Name'
+      ''
+      '  , s.SERVICE_ID'
+      '  , s.DESCRIPTION'
+      '  from SERVICES s'
+      '  where SRV_TYPE_ID in (0, 1)'
+      '  order by NAME')
     Transaction = trRead
     Database = dmMain.dbTV
     Left = 208
@@ -304,9 +327,14 @@ object DiscountForm: TDiscountForm
     Top = 150
   end
   object PropStorageEh: TPropStorageEh
-    Active = False
     Section = 'SETTINGS'
     StorageManager = dmMain.iniPropStorage
+    StoredProps.Strings = (
+      '<P>.Height'
+      '<P>.Left'
+      '<P>.PixelsPerInch'
+      '<P>.Top'
+      '<P>.Width')
     Left = 112
     Top = 96
   end

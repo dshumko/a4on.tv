@@ -17,6 +17,7 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
   OldCreateOrder = True
   Position = poDesigned
   ShowHint = True
+  OnClose = CustomDropDownFormEhClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = CustomDropDownFormEhShow
@@ -177,7 +178,6 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
         DCA77BDCA67ADAA47AD8A279D5A076D49E75D29D73CF9A72CE9970CB966FC994
         6CC79E80DBC3B6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-      OnClick = SpeedButton3Click
     end
     object SpeedButton4: TSpeedButton
       Left = 97
@@ -213,7 +213,6 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
         DCA77BDCA67ADAA47AD8A279D5A076D49E75D29D73CF9A72CE9970CB966FC994
         6CC79E80DBC3B6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-      OnClick = SpeedButton4Click
     end
     object sbOk: TSpeedButton
       Left = 531

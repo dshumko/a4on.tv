@@ -645,21 +645,21 @@ object PaymentForm: TPaymentForm
         inherited gbInfo: TGroupBox
           Width = 200
           Height = 92
-          inherited lblFIO: TLabel
-            Width = 196
-            Height = 14
-            Font.Height = -12
-          end
           inherited lblDebt: TLabel
             Top = 29
             Width = 196
             Height = 14
+            Margins.Bottom = 0
             Font.Height = -12
           end
           inherited memAbonent: TMemo
             Top = 43
             Width = 196
             Height = 47
+          end
+          inherited lblFIO: TDBEditEh
+            Width = 196
+            Height = 14
           end
         end
       end

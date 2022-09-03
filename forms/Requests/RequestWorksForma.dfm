@@ -274,8 +274,8 @@ object RequestWorksForm: TRequestWorksForm
     SelectSQL.Strings = (
       'select t.rt_id, t.rt_name, t.rt_notice'
       'from request_types t'
-      'order by 2'
-      '')
+      'where RT_DELETED = 0'
+      'order by 2')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'
     AutoUpdateOptions.KeyFields = 'MG_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'

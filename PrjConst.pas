@@ -257,7 +257,7 @@ resourcestring
 
   rsCustomerInfo = 'Лицевой : %s '#13#10'Договор : %s'#13#10'ФИО : %s'#13#10'Сальдо : %s'#13#10'Статус : %s';
   rsACCOUNT = 'Лицевой';
-  rsEQUIPMENT = 'Оборудование';
+  rsEQUIPMENT = 'Оборудование в сети';
   rsCONTRACT = 'Договор';
   rsCODE = 'Код';
   rsFIO = 'ФИО';
@@ -563,6 +563,8 @@ resourcestring
   rsPaymentCardExpired = ' Срок карты оплаты истек! ';
   rsLAN = 'СПД';
   rsAppliance = 'Оборудование';
+  rsApplianceCustomer = 'Оборудование у абонента';
+  rsApplianceNode = 'Оборудование на узле';
   rsErrorNeedDeleteHouseTeam = 'Сначала нужно удалить все дома звена, либо перенести дома на другое звено.';
   rsErrorNeedDeleteSubArea = 'Сначала нужно удалить все дома района или перенести дома на другой район.';
   rsErrorNeedDeleteHouse = 'Сначала нужно удалить все дома на улице!';
@@ -599,6 +601,8 @@ resourcestring
   rsDeleteSubArea = 'Удалить район %s ?';
   rsDeleteOrder = 'Удалить заказ №%s ?';
   rsDemo_Restrict = 'Ограничение Демо версии';
+
+  rsDeleteViaRequest = 'Удалить можно через заявку, вернуть на склад';
 
   rsDeleteMaterialGroup = 'Удалить запись о группе материалов?';
 

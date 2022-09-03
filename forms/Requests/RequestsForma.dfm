@@ -177,6 +177,8 @@ object RequestsForm: TRequestsForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = gridPopUp
         ReadOnly = True
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -571,6 +573,8 @@ object RequestsForm: TRequestsForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = gridPopUp
         ReadOnly = True
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -972,6 +976,8 @@ object RequestsForm: TRequestsForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = gridPopUp
         ReadOnly = True
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -1682,6 +1688,8 @@ object RequestsForm: TRequestsForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = gridPopUp
         ReadOnly = True
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -2185,6 +2193,11 @@ object RequestsForm: TRequestsForm
       ShortCut = 121
       OnExecute = actTaskExecute
     end
+    object actOpenHouse: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+      OnExecute = actOpenHouseExecute
+    end
   end
   object dsAll: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -2322,6 +2335,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,'
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -2487,6 +2501,9 @@ object RequestsForm: TRequestsForm
       object N16: TMenuItem
         Action = actChangeDay
       end
+      object miOpenHouse: TMenuItem
+        Action = actOpenHouse
+      end
       object N10: TMenuItem
         Caption = '-'
       end
@@ -2621,6 +2638,7 @@ object RequestsForm: TRequestsForm
       'r.RQ_NOTICE,'
       'r.EDIT_BY,'
       'r.EDIT_ON, '
+      's.STREET_ID,'
       'r.HOUSE_ID, '
       'r.FLAT_NO, '
       'r.PORCH_N, '
@@ -2713,6 +2731,7 @@ object RequestsForm: TRequestsForm
       'r.RQ_NOTICE,'
       'r.EDIT_BY,'
       'r.EDIT_ON, '
+      's.STREET_ID,'
       'r.HOUSE_ID, '
       'r.FLAT_NO, '
       'r.PORCH_N, '
@@ -2804,7 +2823,8 @@ object RequestsForm: TRequestsForm
       'coalesce(r.Rq_Defect, r.Rq_Content) as trouble,'
       'r.RQ_NOTICE,'
       'r.EDIT_BY,'
-      'r.EDIT_ON, '
+      'r.EDIT_ON,'
+      's.STREET_ID, '
       'r.HOUSE_ID, '
       'r.FLAT_NO, '
       'r.PORCH_N, '
@@ -2896,7 +2916,8 @@ object RequestsForm: TRequestsForm
       'coalesce(r.Rq_Defect, r.Rq_Content) as trouble,'
       'r.RQ_NOTICE,'
       'r.EDIT_BY,'
-      'r.EDIT_ON, '
+      'r.EDIT_ON,'
+      's.STREET_ID, '
       'r.HOUSE_ID, '
       'r.FLAT_NO, '
       'r.PORCH_N, '
@@ -3090,6 +3111,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,    '
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3329,6 +3351,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,'
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3566,6 +3589,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,'
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'

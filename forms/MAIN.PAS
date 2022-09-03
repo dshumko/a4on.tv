@@ -53,7 +53,7 @@ uses
   LanguageResManEh,
   MDIChildBar,
   A4onTypeUnit,
-  DM,
+  DM, DBGridEh,
   ad3SpellBase,
   ad3Spell,
   ad4Live;
@@ -938,64 +938,68 @@ var
   fName: string;
 begin
   fName := GetLastIniFileName;
-  WaitForFileWrite(fName);
-  AppIni := TIniFile.Create(fName);
-  try
-    AppIni.WriteString('MAIN', 'LASTDATABASE', dmMain.GetIniValue('LASTDATABASE'));
-    AppIni.WriteString('MAIN', 'LASTUSERNAME', dmMain.GetIniValue('LASTUSERNAME'));
-    AppIni.WriteString('MAIN', 'CONNECTDLL', dmMain.GetIniValue('CONNECTDLL'));
-    AppIni.WriteString('MAIN', 'DBSETTINGS', dmMain.GetIniValue('DBSETTINGS'));
-  finally
-    FreeAndNil(AppIni);
+  if WaitForFileWrite(fName) then
+  begin
+    AppIni := TIniFile.Create(fName);
+    try
+      AppIni.WriteString('MAIN', 'LASTDATABASE', dmMain.GetIniValue('LASTDATABASE'));
+      AppIni.WriteString('MAIN', 'LASTUSERNAME', dmMain.GetIniValue('LASTUSERNAME'));
+      AppIni.WriteString('MAIN', 'CONNECTDLL', dmMain.GetIniValue('CONNECTDLL'));
+      AppIni.WriteString('MAIN', 'DBSETTINGS', dmMain.GetIniValue('DBSETTINGS'));
+    finally
+      FreeAndNil(AppIni);
+    end;
   end;
 
   fName := GetIniFileName;
-  WaitForFileWrite(fName);
-  AppIni := TIniFile.Create(fName);
-  try
-    AppIni.WriteString('MAIN', 'SET_AS_CURRENT_DATE', dmMain.GetIniValue('SET_AS_CURRENT_DATE'));
-    AppIni.WriteString('MAIN', 'SHOWFILTER', dmMain.GetIniValue('SHOWFILTER'));
-    AppIni.WriteString('MAIN', 'SHOWADDRESSFILTER', dmMain.GetIniValue('SHOWADDRESSFILTER'));
-    AppIni.WriteString('MAIN', 'FETCHALL', dmMain.GetIniValue('FETCHALL'));
-    AppIni.WriteString('MAIN', 'PAYDOC_BEGIN', dmMain.GetIniValue('PAYDOC_BEGIN'));
-    AppIni.WriteString('MAIN', 'PAYDOC_END', dmMain.GetIniValue('PAYDOC_END'));
-    AppIni.WriteString('MAIN', 'PRINTREQ', dmMain.GetIniValue('PRINTREQ'));
-    AppIni.WriteString('MAIN', 'REQOPENNEW', dmMain.GetIniValue('REQOPENNEW'));
-    AppIni.WriteString('MAIN', 'REQTOADRES', dmMain.GetIniValue('REQTOADRES'));
-    AppIni.WriteString('MAIN', 'RECTOCUSTOMER', dmMain.GetIniValue('RECTOCUSTOMER'));
-    AppIni.WriteString('MAIN', 'ALWAYSSHOW', dmMain.GetIniValue('ALWAYSSHOW'));
-    AppIni.WriteString('MAIN', 'REQUNION', dmMain.GetIniValue('REQUNION'));
-    AppIni.WriteString('MAIN', 'REQALL', dmMain.GetIniValue('REQALL'));
-    AppIni.WriteString('MAIN', 'AUTOOPEN', dmMain.GetIniValue('AUTOOPEN'));
-    AppIni.WriteString('MAIN', 'DEFSEARCH', dmMain.GetIniValue('DEFSEARCH'));
-    AppIni.WriteString('MAIN', 'KBDSWITCH', dmMain.GetIniValue('KBDSWITCH'));
-    AppIni.WriteString('MAIN', 'AUTOUPDATE', dmMain.GetIniValue('AUTOUPDATE'));
-    AppIni.WriteString('MAIN', 'NOTAUTOUPDATE', dmMain.GetIniValue('NOTAUTOUPDATE'));
-    AppIni.WriteString('MAIN', 'COLUMNS', dmMain.GetIniValue('COLUMNS'));
-    AppIni.WriteString('MAIN', 'BUTTONS', dmMain.GetIniValue('BUTTONS'));
-    AppIni.WriteString('MAIN', 'HIDEHINT', dmMain.GetIniValue('HIDEHINT'));
-    AppIni.WriteString('MAIN', 'PRINT_CHECK_AND_REPORT', dmMain.GetIniValue('PRINT_CHECK_AND_REPORT'));
-    AppIni.WriteString('MAIN', 'CASHBOXPSWD', dmMain.GetIniValue('CASHBOXPSWD'));
-    AppIni.WriteString('MAIN', 'DISCOUNT', dmMain.GetIniValue('DISCOUNT'));
+  if WaitForFileWrite(fName) then
+  begin
+    AppIni := TIniFile.Create(fName);
+    try
+      AppIni.WriteString('MAIN', 'SET_AS_CURRENT_DATE', dmMain.GetIniValue('SET_AS_CURRENT_DATE'));
+      AppIni.WriteString('MAIN', 'SHOWFILTER', dmMain.GetIniValue('SHOWFILTER'));
+      AppIni.WriteString('MAIN', 'SHOWADDRESSFILTER', dmMain.GetIniValue('SHOWADDRESSFILTER'));
+      AppIni.WriteString('MAIN', 'FETCHALL', dmMain.GetIniValue('FETCHALL'));
+      AppIni.WriteString('MAIN', 'PAYDOC_BEGIN', dmMain.GetIniValue('PAYDOC_BEGIN'));
+      AppIni.WriteString('MAIN', 'PAYDOC_END', dmMain.GetIniValue('PAYDOC_END'));
+      AppIni.WriteString('MAIN', 'PRINTREQ', dmMain.GetIniValue('PRINTREQ'));
+      AppIni.WriteString('MAIN', 'REQOPENNEW', dmMain.GetIniValue('REQOPENNEW'));
+      AppIni.WriteString('MAIN', 'REQTOADRES', dmMain.GetIniValue('REQTOADRES'));
+      AppIni.WriteString('MAIN', 'RECTOCUSTOMER', dmMain.GetIniValue('RECTOCUSTOMER'));
+      AppIni.WriteString('MAIN', 'ALWAYSSHOW', dmMain.GetIniValue('ALWAYSSHOW'));
+      AppIni.WriteString('MAIN', 'REQUNION', dmMain.GetIniValue('REQUNION'));
+      AppIni.WriteString('MAIN', 'REQALL', dmMain.GetIniValue('REQALL'));
+      AppIni.WriteString('MAIN', 'AUTOOPEN', dmMain.GetIniValue('AUTOOPEN'));
+      AppIni.WriteString('MAIN', 'DEFSEARCH', dmMain.GetIniValue('DEFSEARCH'));
+      AppIni.WriteString('MAIN', 'KBDSWITCH', dmMain.GetIniValue('KBDSWITCH'));
+      AppIni.WriteString('MAIN', 'AUTOUPDATE', dmMain.GetIniValue('AUTOUPDATE'));
+      AppIni.WriteString('MAIN', 'NOTAUTOUPDATE', dmMain.GetIniValue('NOTAUTOUPDATE'));
+      AppIni.WriteString('MAIN', 'COLUMNS', dmMain.GetIniValue('COLUMNS'));
+      AppIni.WriteString('MAIN', 'BUTTONS', dmMain.GetIniValue('BUTTONS'));
+      AppIni.WriteString('MAIN', 'HIDEHINT', dmMain.GetIniValue('HIDEHINT'));
+      AppIni.WriteString('MAIN', 'PRINT_CHECK_AND_REPORT', dmMain.GetIniValue('PRINT_CHECK_AND_REPORT'));
+      AppIni.WriteString('MAIN', 'CASHBOXPSWD', dmMain.GetIniValue('CASHBOXPSWD'));
+      AppIni.WriteString('MAIN', 'DISCOUNT', dmMain.GetIniValue('DISCOUNT'));
 
-    if dmMain.GetIniValue('FONT_SIZE') <> '' then
-    begin
-      AppIni.WriteString('MAIN', 'FONT_SIZE', dmMain.GetIniValue('FONT_SIZE'));
-      AppIni.WriteString('MAIN', 'FONT_NAME', dmMain.GetIniValue('FONT_NAME'));
+      if dmMain.GetIniValue('FONT_SIZE') <> '' then
+      begin
+        AppIni.WriteString('MAIN', 'FONT_SIZE', dmMain.GetIniValue('FONT_SIZE'));
+        AppIni.WriteString('MAIN', 'FONT_NAME', dmMain.GetIniValue('FONT_NAME'));
+      end;
+      AppIni.WriteString('MAIN', 'ROW_HEIGHT', dmMain.GetIniValue('ROW_HEIGHT'));
+
+      AppIni.WriteString('GRIDS', 'ServiceGrid', dmMain.GetIniValue('ServiceGrid'));
+      AppIni.WriteString('GRIDS', 'StreetGrid', dmMain.GetIniValue('StreetGrid'));
+
+      AppIni.WriteString('EQPMNT', 'EQUIPMENTASTREE', dmMain.GetIniValue('EQUIPMENTASTREE'));
+      AppIni.WriteString('EQPMNT', 'EQUIPMENT_INFOLAYOUT', dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT'));
+      AppIni.WriteString('EQPMNT', 'EQUIPMENT_FSIZE', dmMain.GetIniValue('EQUIPMENT_FSIZE'));
+      AppIni.WriteString('EQPMNT', 'EQUIPMENT_LSIZE', dmMain.GetIniValue('EQUIPMENT_LSIZE'));
+      AppIni.WriteString('EQPMNT', 'EQUIPMENT_ISIZE', dmMain.GetIniValue('EQUIPMENT_ISIZE'));
+      AppIni.WriteString('EQPMNT', 'EQUIPMENT_PSIZE', dmMain.GetIniValue('EQUIPMENT_PSIZE'));
+    finally
+      FreeAndNil(AppIni);
     end;
-    AppIni.WriteString('MAIN', 'ROW_HEIGHT', dmMain.GetIniValue('ROW_HEIGHT'));
-
-    AppIni.WriteString('GRIDS', 'ServiceGrid', dmMain.GetIniValue('ServiceGrid'));
-    AppIni.WriteString('GRIDS', 'StreetGrid', dmMain.GetIniValue('StreetGrid'));
-
-    AppIni.WriteString('EQPMNT', 'EQUIPMENTASTREE', dmMain.GetIniValue('EQUIPMENTASTREE'));
-    AppIni.WriteString('EQPMNT', 'EQUIPMENT_INFOLAYOUT', dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT'));
-    AppIni.WriteString('EQPMNT', 'EQUIPMENT_FSIZE', dmMain.GetIniValue('EQUIPMENT_FSIZE'));
-    AppIni.WriteString('EQPMNT', 'EQUIPMENT_LSIZE', dmMain.GetIniValue('EQUIPMENT_LSIZE'));
-    AppIni.WriteString('EQPMNT', 'EQUIPMENT_ISIZE', dmMain.GetIniValue('EQUIPMENT_ISIZE'));
-    AppIni.WriteString('EQPMNT', 'EQUIPMENT_PSIZE', dmMain.GetIniValue('EQUIPMENT_PSIZE'));
-  finally
-    FreeAndNil(AppIni);
   end;
 end;
 
@@ -1796,7 +1800,7 @@ begin
 
   // Если сменили пользователя, перечитаем настройки
   ReadUserSettings;
-
+  // DBGridEhInplaceSearchTimeOut := 5000;
   dmMain.InitData;
 
   dmMain.SetIniValue('LASTDATABASE', dmMain.dbTV.DBName);

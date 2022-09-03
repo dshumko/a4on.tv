@@ -117,7 +117,7 @@ function GetTempDir: String;
 // Возвращает имя файла из урл
 function GetFileNameFromURL(const S: string): string;
 // ждем пока файл освободится для записи
-procedure WaitForFileWrite(const FileName: String);
+function WaitForFileWrite(const FileName: String): Boolean;
 // Удаляем каталог со всеми файлами и подкаталогами
 procedure DeleteDir(const DirName: string);
 // Получить временное имя файла
@@ -1214,13 +1214,14 @@ begin
     Result := Copy(Result, 1, I - 1);
 end;
 
-procedure WaitForFileWrite(const FileName: String);
+function WaitForFileWrite(const FileName: String): Boolean;
 var
   hFile: THandle;
   I: Integer;
   CanWrite: Boolean;
 begin
   // Если файл есть. проверим не залочен ли он
+  CanWrite := False;
   if FileExists(FileName) then
   begin
     I := 0;
@@ -1236,6 +1237,7 @@ begin
       Inc(I);
     until ((I > 3) or CanWrite);
   end;
+  Result := CanWrite;
 end;
 
 // Get Oracle beetween dates str
@@ -1509,11 +1511,6 @@ begin
 end; (* все работает *)
 
 function GetWineAvail: Boolean;
-// использование
-// if GetWineAvail() then
-// ShowMessage('Ура! Мы под Винищем!')
-// else
-// ShowMessage('Чистейший Виндовз, сэр!');
 var
   H: Cardinal;
 begin

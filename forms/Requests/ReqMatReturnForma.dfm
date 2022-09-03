@@ -151,10 +151,22 @@ object ReqMatReturnForm: TReqMatReturnForm
         end
         item
           CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'COST'
+          Footer.DisplayFormat = ',#0.##'
+          Footer.FieldName = 'ITOG'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #1062#1077#1085#1072
+          Width = 63
+        end
+        item
+          CellButtons = <>
           Color = clBtnFace
           DynProps = <>
           EditButtons = <>
-          FieldName = 'O_NAME'
+          FieldName = 'WH_NAME'
           Footers = <>
           ReadOnly = True
           Title.Caption = #1053#1072' '#1089#1082#1083#1072#1076
@@ -235,7 +247,7 @@ object ReqMatReturnForm: TReqMatReturnForm
     UpdateSQL.Strings = (
       
         'execute procedure REQUEST_MATERIALS_RETURN_IUD(:ID, :RQ_ID, :M_I' +
-        'D, :QUANT, :WH_ID, :NOTICE, 1)  ')
+        'D, :QUANT, :WH_ID, :NOTICE, 1, :SERIAL, :COST)  ')
     DeleteSQL.Strings = (
       
         'execute procedure REQUEST_MATERIALS_RETURN_IUD(:ID, :RQ_ID, :M_I' +
@@ -243,71 +255,54 @@ object ReqMatReturnForm: TReqMatReturnForm
     InsertSQL.Strings = (
       
         'execute procedure REQUEST_MATERIALS_RETURN_IUD(:ID, :RQ_ID, :M_I' +
-        'D, :QUANT, :WH_ID, :NOTICE, 0)  ')
+        'D, :QUANT, :WH_ID, :NOTICE, 0, :SERIAL, :COST)  ')
     RefreshSQL.Strings = (
       'select'
+      '    M_Id'
+      '  , Name'
+      '  , Dimension'
+      '  , Wh_Name'
+      '  , Wh_Id'
+      '  , Quant'
+      '  , M_Number'
+      '  , Rq_Id'
+      '  , Id'
+      '  , Description'
+      '  , Serial'
+      '  , Cost'
+      '  , (Quant * Cost) Itog'
+      '  from Get_Mat_Take_In(:OLD_Rq_Id, :OLD_Mg_Id, :OLD_Wh_Fltr)'
+      '    where '
+      '    ('
+      '      (not :OLD_ID is null)'
+      '      and (ID = :OLD_ID)'
+      '    )'
+      '    or '
+      '    ('
+      '          (:OLD_ID is null)'
+      '      and (M_Id = :OLD_M_ID)'
+      '      and (Wh_Id = :OLD_Wh_Id)'
       
-        '    m.M_ID, m.Name, m.Dimension, w.O_Name, w.O_ID as WH_ID, rm.Q' +
-        'uant, m.M_Number, coalesce(rm.Rq_Id, :RQ_ID) as RQ_ID, rm.Id, m.' +
-        'DESCRIPTION'
-      '  from MATERIALS M'
-      '       left outer join OBJECTS W on (W.O_TYPE = 10 @@WH_FLTR%@'
-      '             and (exists(select'
-      '                         wh.wh_id'
-      '                       from SYS$USER u'
-      
-        '                            inner join sys$user_wh wh on (wh.use' +
-        'r_id = u.id)'
-      '                       where u.ibname = current_user'
-      '                             and wh.can_view = 1'
-      
-        '                             and wh.wh_id = w.O_Id) or current_u' +
-        'ser = '#39'SYSDBA'#39'))'
-      
-        '       left outer join Request_Materials_Return rm on (rm.M_Id =' +
-        ' m.M_Id and'
-      '             rm.Rq_Id = :RQ_ID and'
-      '             rm.WH_ID = w.O_Id)'
-      ''
-      
-        '    where RM.RQ_ID = :OLD_RQ_ID and rm.Wh_Id = :OLD_WH_ID and rm' +
-        '.M_Id = :OLD_M_ID')
+        '      and ((:OLD_Serial is null) or (Serial = :OLD_Serial))     ' +
+        '        '
+      '    )')
     SelectSQL.Strings = (
-      '/*'
-      #1047#1072#1087#1088#1086#1089' '#1074#1099#1073#1086#1088#1082#1080' '#1074#1089#1077#1093' '#1086#1089#1090#1072#1090#1086#1082#1074' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074' '#1080' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074' '#1080#1079' '#1079#1072#1103#1074#1082#1080
-      
-        #1093#1080#1090#1088#1086#1089#1090#1100' '#1074' '#1090#1086#1084', '#1095#1090#1086' '#1087#1088#1086#1080#1089#1093#1086#1076#1080#1090' '#1086#1073#1098#1077#1076#1080#1085#1077#1085#1080#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074' '#1087#1086' '#1080#1093' '#1094#1077#1085#1077 +
-        ' '#1087#1088#1080#1093#1086#1076#1072
-      '*/'
       'select'
-      
-        '    m.M_ID, m.Name, m.Dimension, w.O_Name, w.O_ID as WH_ID, rm.Q' +
-        'uant, m.M_Number, coalesce(rm.Rq_Id, :RQ_ID) as RQ_ID, rm.Id, m.' +
-        'DESCRIPTION'
-      '  from MATERIALS M'
-      '       left outer join OBJECTS W on (W.O_TYPE = 10 @@WH_FLTR%@'
-      '             and (exists(select'
-      '                         wh.wh_id'
-      '                       from SYS$USER u'
-      
-        '                            inner join sys$user_wh wh on (wh.use' +
-        'r_id = u.id)'
-      '                       where u.ibname = current_user'
-      '                             and wh.can_view = 1'
-      
-        '                             and wh.wh_id = w.O_Id) or current_u' +
-        'ser = '#39'SYSDBA'#39'))'
-      
-        '       left outer join Request_Materials_Return rm on (rm.M_Id =' +
-        ' m.M_Id and'
-      '             rm.Rq_Id = :RQ_ID and'
-      '             rm.WH_ID = w.O_Id)'
-      ''
-      
-        'where @@FLTR_GROUP% ((M.MG_ID = :MG_ID and not :MG_ID is null) o' +
-        'r (M.MG_ID is null and :MG_ID is null) or (:MG_ID = -1))@'
-      'and ((m.Deleted = 0) or (coalesce(rm.Quant,0) > 0))'
-      'order by m.Name')
+      '    M_Id'
+      '  , Name'
+      '  , Dimension'
+      '  , Wh_Name'
+      '  , Wh_Id'
+      '  , Quant'
+      '  , M_Number'
+      '  , Rq_Id'
+      '  , Id'
+      '  , Description'
+      '  , Serial'
+      '  , Cost'
+      '  , (Quant * Cost) Itog'
+      '  from Get_Mat_Take_In(:Rq_Id, :Mg_Id, :Wh_Fltr)'
+      'order by Name, wh_name   ')
     BeforePost = dsReqMaterialsBeforePost
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

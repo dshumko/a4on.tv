@@ -3,7 +3,7 @@ object NodesFilterForm: TNodesFilterForm
   Top = 207
   ActiveControl = dblStreet
   BorderStyle = bsSizeToolWin
-  Caption = #1060#1080#1083#1100#1090#1088
+  Caption = #1060#1080#1083#1100#1090#1088' '#1089#1087#1080#1089#1082#1072' '#1091#1079#1083#1086#1074
   ClientHeight = 437
   ClientWidth = 575
   Color = clBtnFace

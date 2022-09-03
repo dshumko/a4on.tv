@@ -6,14 +6,14 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Dm, PrjConst, A4onTypeUnit;
+  Dm, PrjConst, A4onTypeUnit, Vcl.Mask, DBCtrlsEh;
 
 type
   TCustomerInfoFrm = class(TFrame)
     gbInfo: TGroupBox;
-    lblFIO: TLabel;
     lblDebt: TLabel;
     memAbonent: TMemo;
+    lblFIO: TDBEditEh;
   private
     { Private declarations }
     ci : TCustomerInfo;
@@ -33,16 +33,16 @@ var
 begin
   ci := Value;
   memAbonent.Lines.Clear;
-  lblFIO.Caption  := '';
+  lblFIO.Text  := '';
   lblDEBT.Caption := '';
 
   if Value.CUSTOMER_ID = -1
   then begin
-    lblFIO.Caption := rsNOT_FOUND_CUST;
+    lblFIO.Text := rsNOT_FOUND_CUST;
     exit;
   end;
 
-  lblFIO.Caption := Value.Account_no + ' ' +Value.FIO;
+  lblFIO.Text := Value.Account_no + ' ' +Value.FIO;
 
   if (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full)) // просмотр сумм
   then begin

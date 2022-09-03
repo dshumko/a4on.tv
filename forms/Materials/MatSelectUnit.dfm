@@ -3,7 +3,7 @@ object MaterialsSelect: TMaterialsSelect
   Top = 106
   BorderIcons = []
   ClientHeight = 438
-  ClientWidth = 706
+  ClientWidth = 687
   Color = clBtnFace
   Constraints.MinHeight = 200
   Constraints.MinWidth = 200
@@ -17,6 +17,7 @@ object MaterialsSelect: TMaterialsSelect
   OldCreateOrder = True
   Position = poDesigned
   ShowHint = True
+  OnClose = CustomDropDownFormEhClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = CustomDropDownFormEhShow
@@ -24,14 +25,14 @@ object MaterialsSelect: TMaterialsSelect
   OnInitForm = CustomDropDownFormEhInitForm
   OnReturnParams = CustomDropDownFormEhReturnParams
   DesignSize = (
-    706
+    687
     438)
   PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
     Left = 3
     Top = 37
-    Width = 699
+    Width = 680
     Height = 398
     Align = alClient
     BevelOuter = bvNone
@@ -42,7 +43,7 @@ object MaterialsSelect: TMaterialsSelect
     object MainGrid: TDBGridEh
       Left = 0
       Top = 0
-      Width = 699
+      Width = 680
       Height = 398
       Align = alClient
       Border.EdgeBorders = [ebTop, ebRight, ebBottom]
@@ -125,14 +126,14 @@ object MaterialsSelect: TMaterialsSelect
   object Panel3: TPanel
     Left = 3
     Top = 6
-    Width = 700
+    Width = 681
     Height = 31
     Align = alTop
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
     DesignSize = (
-      700
+      681
       31)
     object SpeedButton3: TSpeedButton
       Left = 10
@@ -168,7 +169,6 @@ object MaterialsSelect: TMaterialsSelect
         DCA77BDCA67ADAA47AD8A279D5A076D49E75D29D73CF9A72CE9970CB966FC994
         6CC79E80DBC3B6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-      OnClick = SpeedButton3Click
     end
     object SpeedButton4: TSpeedButton
       Left = 97
@@ -204,10 +204,9 @@ object MaterialsSelect: TMaterialsSelect
         DCA77BDCA67ADAA47AD8A279D5A076D49E75D29D73CF9A72CE9970CB966FC994
         6CC79E80DBC3B6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-      OnClick = SpeedButton4Click
     end
     object sbOk: TSpeedButton
-      Left = 512
+      Left = 493
       Top = 1
       Width = 150
       Height = 26
@@ -243,7 +242,7 @@ object MaterialsSelect: TMaterialsSelect
     end
   end
   object DBVertGridEh1: TDBVertGridEh
-    Left = 702
+    Left = 683
     Top = 37
     Width = 1
     Height = 398

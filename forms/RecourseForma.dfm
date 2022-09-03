@@ -136,17 +136,17 @@ object RecourseForm: TRecourseForm
       inherited gbInfo: TGroupBox
         Width = 467
         Height = 71
-        inherited lblFIO: TLabel
-          Width = 463
-          Margins.Bottom = 0
-        end
         inherited lblDebt: TLabel
           Width = 463
           Margins.Bottom = 0
         end
         inherited memAbonent: TMemo
           Width = 463
-          Height = 28
+          Height = 20
+        end
+        inherited lblFIO: TDBEditEh
+          Width = 463
+          Margins.Bottom = 0
         end
       end
     end

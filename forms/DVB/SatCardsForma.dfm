@@ -14,10 +14,14 @@ inherited SatCardsForm: TSatCardsForm
     Cursor = crVSplit
     Align = alBottom
   end
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 193
     Width = 790
-    Height = 127
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 196
+    Width = 790
+    Height = 124
     AllowedOperations = [alopUpdateEh]
     FooterRowCount = 1
     SumList.Active = True
@@ -108,6 +112,14 @@ inherited SatCardsForm: TSatCardsForm
         Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 310
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CAPACITY'
+        Footers = <>
+        Title.Caption = #1052#1072#1082#1089'. '#1082#1072#1085#1072#1083#1086#1074
       end>
   end
   inherited tlbMain: TToolBar
@@ -123,171 +135,6 @@ inherited SatCardsForm: TSatCardsForm
     end
     inherited tbCancel: TToolButton
       Visible = False
-    end
-  end
-  inherited pnlEdit: TPanel
-    Width = 790
-    Height = 168
-    ParentCtl3D = False
-    object lbl2: TLabel [0]
-      Left = 5
-      Top = 10
-      Width = 31
-      Height = 13
-      Caption = #1053#1086#1084#1077#1088
-    end
-    object lbl3: TLabel [1]
-      Left = 5
-      Top = 79
-      Width = 49
-      Height = 13
-      Caption = #1054#1087#1080#1089#1072#1085#1080#1077
-    end
-    object lbl1: TLabel [2]
-      Left = 590
-      Top = 10
-      Width = 66
-      Height = 13
-      Anchors = [akTop, akRight]
-      Caption = #1054#1087#1083#1072#1095#1077#1085#1086' '#1076#1086
-    end
-    object lbl4: TLabel [3]
-      Left = 590
-      Top = 33
-      Width = 56
-      Height = 13
-      Anchors = [akTop, akRight]
-      Caption = #1050#1086#1076#1080#1088#1086#1074#1082#1072
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object lbl5: TLabel [4]
-      Left = 5
-      Top = 33
-      Width = 35
-      Height = 13
-      Caption = 'Chip ID'
-    end
-    object lblPlace: TLabel [5]
-      Left = 5
-      Top = 56
-      Width = 31
-      Height = 13
-      Caption = #1052#1077#1089#1090#1086
-    end
-    inherited btnSaveLink: TBitBtn
-      Left = 72
-      Top = 137
-      Width = 605
-      TabOrder = 6
-    end
-    inherited btnCancelLink: TBitBtn
-      Left = 683
-      Top = 137
-      Width = 98
-      Cancel = True
-      TabOrder = 7
-    end
-    object edtName: TDBEditEh
-      Left = 72
-      Top = 7
-      Width = 512
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'O_NAME'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1053#1086#1084#1077#1088' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
-      ShowHint = True
-      TabOrder = 0
-      Visible = True
-    end
-    object dbmmoO_DESCRIPTION: TDBMemoEh
-      Left = 72
-      Top = 76
-      Width = 709
-      Height = 55
-      Anchors = [akLeft, akTop, akRight, akBottom]
-      AutoSize = False
-      DataField = 'O_DESCRIPTION'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077' '#1090#1080#1087#1072
-      ShowHint = True
-      TabOrder = 5
-      Visible = True
-      WantReturns = True
-    end
-    object DBDateTimeEditEh1: TDBDateTimeEditEh
-      Left = 660
-      Top = 7
-      Width = 121
-      Height = 21
-      Anchors = [akTop, akRight]
-      DataField = 'O_DATEEND'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1054#1087#1083#1072#1095#1077#1085#1086' '#1076#1086
-      Kind = dtkDateEh
-      ShowHint = True
-      TabOrder = 1
-      Visible = True
-    end
-    object cbbS_Crypt: TDBLookupComboboxEh
-      Left = 660
-      Top = 30
-      Width = 121
-      Height = 21
-      Anchors = [akTop, akRight]
-      DynProps = <>
-      DataField = 'CRYPT'
-      DataSource = srcDataSource
-      DropDownBox.Sizable = True
-      EmptyDataInfo.Text = #1050#1086#1076#1080#1088#1086#1074#1082#1072
-      EditButtons = <>
-      KeyField = 'O_Id'
-      ListField = 'O_Name'
-      ListSource = srcCrypt
-      ShowHint = True
-      TabOrder = 3
-      Visible = True
-    end
-    object edtURL: TDBEditEh
-      Left = 72
-      Top = 30
-      Width = 512
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'Chip_ID'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = 'Chip ID'
-      ShowHint = True
-      TabOrder = 2
-      Visible = True
-    end
-    object edtPlace: TDBEditEh
-      Left = 72
-      Top = 53
-      Width = 709
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'PLACE'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080
-      ShowHint = True
-      TabOrder = 4
-      Visible = True
     end
   end
   object pnlBottom: TPanel [4]
@@ -409,6 +256,196 @@ inherited SatCardsForm: TSatCardsForm
       end
     end
   end
+  inherited pnlEdit: TPanel
+    Width = 790
+    Height = 168
+    ParentCtl3D = False
+    object lbl2: TLabel [0]
+      Left = 5
+      Top = 10
+      Width = 31
+      Height = 13
+      Caption = #1053#1086#1084#1077#1088
+    end
+    object lbl3: TLabel [1]
+      Left = 5
+      Top = 79
+      Width = 49
+      Height = 13
+      Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+    end
+    object lbl1: TLabel [2]
+      Left = 590
+      Top = 10
+      Width = 66
+      Height = 13
+      Anchors = [akTop, akRight]
+      Caption = #1054#1087#1083#1072#1095#1077#1085#1086' '#1076#1086
+    end
+    object lbl4: TLabel [3]
+      Left = 590
+      Top = 33
+      Width = 56
+      Height = 13
+      Anchors = [akTop, akRight]
+      Caption = #1050#1086#1076#1080#1088#1086#1074#1082#1072
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lbl5: TLabel [4]
+      Left = 5
+      Top = 33
+      Width = 35
+      Height = 13
+      Caption = 'Chip ID'
+    end
+    object lblPlace: TLabel [5]
+      Left = 5
+      Top = 56
+      Width = 31
+      Height = 13
+      Caption = #1052#1077#1089#1090#1086
+    end
+    object lbl11: TLabel [6]
+      Left = 590
+      Top = 56
+      Width = 66
+      Height = 13
+      Anchors = [akTop, akRight]
+      Caption = #1052#1072#1082#1089'. '#1082#1072#1085'-'#1086#1074
+    end
+    inherited btnSaveLink: TBitBtn
+      Left = 72
+      Top = 137
+      Width = 605
+      TabOrder = 7
+    end
+    inherited btnCancelLink: TBitBtn
+      Left = 683
+      Top = 137
+      Width = 98
+      Cancel = True
+      TabOrder = 8
+    end
+    object edtName: TDBEditEh
+      Left = 72
+      Top = 7
+      Width = 512
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'O_NAME'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1053#1086#1084#1077#1088' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
+    end
+    object dbmmoO_DESCRIPTION: TDBMemoEh
+      Left = 72
+      Top = 76
+      Width = 709
+      Height = 55
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      AutoSize = False
+      DataField = 'O_DESCRIPTION'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077' '#1090#1080#1087#1072
+      ShowHint = True
+      TabOrder = 6
+      Visible = True
+      WantReturns = True
+    end
+    object DBDateTimeEditEh1: TDBDateTimeEditEh
+      Left = 660
+      Top = 7
+      Width = 121
+      Height = 21
+      Anchors = [akTop, akRight]
+      DataField = 'O_DATEEND'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1054#1087#1083#1072#1095#1077#1085#1086' '#1076#1086
+      Kind = dtkDateEh
+      ShowHint = True
+      TabOrder = 1
+      Visible = True
+    end
+    object cbbS_Crypt: TDBLookupComboboxEh
+      Left = 660
+      Top = 30
+      Width = 121
+      Height = 21
+      Anchors = [akTop, akRight]
+      DynProps = <>
+      DataField = 'CRYPT'
+      DataSource = srcDataSource
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1050#1086#1076#1080#1088#1086#1074#1082#1072
+      EditButtons = <>
+      KeyField = 'O_Id'
+      ListField = 'O_Name'
+      ListSource = srcCrypt
+      ShowHint = True
+      TabOrder = 3
+      Visible = True
+    end
+    object edtURL: TDBEditEh
+      Left = 72
+      Top = 30
+      Width = 512
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'Chip_ID'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = 'Chip ID'
+      ShowHint = True
+      TabOrder = 2
+      Visible = True
+    end
+    object edtPlace: TDBEditEh
+      Left = 72
+      Top = 53
+      Width = 512
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'PLACE'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080
+      ShowHint = True
+      TabOrder = 4
+      Visible = True
+    end
+    object ednCAPACITY: TDBNumberEditEh
+      Left = 660
+      Top = 53
+      Width = 121
+      Height = 21
+      Hint = #1052#1072#1082#1089#1110#1084#1072#1083#1100#1085#1086' '#1074#1086#1079#1084#1086#1078#1085#1086' '#1086#1090#1082#1088#1099#1090#1100' '#1082#1072#1085#1072#1083#1086#1074
+      Anchors = [akTop, akRight]
+      DataField = 'CAPACITY'
+      DataSource = srcDataSource
+      DecimalPlaces = 0
+      DynProps = <>
+      EmptyDataInfo.Text = #1052#1072#1082#1089'. '#1082#1072#1085#1072#1083#1086#1074' '#1085#1072' '#1082#1072#1088#1090#1077
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 5
+      Visible = True
+    end
+  end
   inherited srcDataSource: TDataSource
     DataSet = dsSatCards
     OnDataChange = srcDataSourceDataChange
@@ -443,13 +480,13 @@ inherited SatCardsForm: TSatCardsForm
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 44, :O_ID, :O_Name, :O_Descript' +
-        'ion, :Chip_ID, 0, null, :CRYPT, null, :O_DATEEND, :Place)')
+        'ion, :Chip_ID, 0, :CAPACITY, :CRYPT, null, :O_DATEEND, :Place)')
     DeleteSQL.Strings = (
       'execute procedure Objects_Iud(2, 44, :O_ID)')
     InsertSQL.Strings = (
       
         'execute procedure Objects_Iud(0, 44, :O_ID, :O_Name, :O_Descript' +
-        'ion, :Chip_ID, 0, null, :CRYPT, null, :O_DATEEND, :Place)')
+        'ion, :Chip_ID, 0, :CAPACITY, :CRYPT, null, :O_DATEEND, :Place)')
     RefreshSQL.Strings = (
       'select'
       '    o.O_ID'
@@ -460,7 +497,7 @@ inherited SatCardsForm: TSatCardsForm
       '  , o.O_CHECK PLACE'
       '  , c.O_Name CRYPT_NAME'
       '  , o.O_DIMENSION Chip_ID'
-      '  , d.Name Distrib'
+      '  , o.O_CHARFIELD CAPACITY  '
       '  , (select'
       '         count(distinct c.Ch_Name)'
       '       from Channel_Src_Param csp'
@@ -473,9 +510,6 @@ inherited SatCardsForm: TSatCardsForm
         '       left outer join OBJECTS C on (c.O_Id = o.O_Numericfield a' +
         'nd c.O_TYPE = 43)'
       '       left outer join Distrib_Cards dc on (dc.Card = o.O_Name)'
-      
-        '       left outer join Distributor d on (d.Id = dc.Distributor_I' +
-        'd)'
       '  where o.O_TYPE = 44'
       '        and o.O_DELETED = 0'
       '     and O.O_ID = :OLD_O_ID'
@@ -491,6 +525,7 @@ inherited SatCardsForm: TSatCardsForm
       '  , o.O_CHECK PLACE'
       '  , c.O_Name CRYPT_NAME'
       '  , o.O_DIMENSION Chip_ID'
+      '  , o.O_CHARFIELD CAPACITY  '
       '  , (select'
       '         count(distinct c.Ch_Name)'
       '       from Channel_Src_Param csp'
@@ -519,22 +554,7 @@ inherited SatCardsForm: TSatCardsForm
   end
   object dsChan: TpFIBDataSet
     UpdateSQL.Strings = (
-      'UPDATE SUBAREA'
-      'SET '
-      '    SUBAREA_NAME = :SUBAREA_NAME,'
-      '    NOTICE = :NOTICE'
-      'WHERE'
-      '    SUBAREA_ID = :OLD_SUBAREA_ID'
-      '    ')
-    DeleteSQL.Strings = (
-      'DELETE FROM'
-      '    SUBAREA S'
-      'WHERE'
-      '  S.SUBAREA_ID = :OLD_SUBAREA_ID'
-      
-        '  and not exists (select h.Subarea_Id from HOUSE h where h.Subar' +
-        'ea_Id = s.Subarea_Id)'
-      '    ')
+      '')
     RefreshSQL.Strings = (
       'select'
       '    c.Ch_Name'
@@ -548,6 +568,7 @@ inherited SatCardsForm: TSatCardsForm
       '  , cd.C_Number'
       '  , cd.C_Date'
       '  , cd.Name'
+      '  , csp.CSP_ID'
       '  from Channel_Src_Param csp'
       '       inner join Channel_Src cs on (csp.Cs_Id = cs.Cs_Id)'
       '       inner join Channels C on (c.Ch_Id = csp.Ch_Id)'
@@ -572,7 +593,7 @@ inherited SatCardsForm: TSatCardsForm
       '             ) cd on (cd.Ch_Id = c.Ch_Id)'
       'where csp.Card_Id = :O_Id and not csp.Card_Id is null'
       '  and CSP.CH_ID = :OLD_CH_ID'
-      '    ')
+      '  and csp.CSP_ID = :OLD_CSP_ID  ')
     SelectSQL.Strings = (
       'select'
       '    c.Ch_Name'
@@ -586,6 +607,7 @@ inherited SatCardsForm: TSatCardsForm
       '  , cd.C_Number'
       '  , cd.C_Date'
       '  , cd.Name'
+      '  , csp.CSP_ID'
       '  from Channel_Src_Param csp'
       '       inner join Channel_Src cs on (csp.Cs_Id = cs.Cs_Id)'
       '       inner join Channels C on (c.Ch_Id = csp.Ch_Id)'
@@ -620,13 +642,13 @@ inherited SatCardsForm: TSatCardsForm
     Database = dmMain.dbTV
     DataSource = srcDataSource
     Left = 240
-    Top = 432
+    Top = 416
   end
   object srcChan: TDataSource
     AutoEdit = False
     DataSet = dsChan
     Left = 160
-    Top = 432
+    Top = 416
   end
   object srcCrypt: TDataSource
     DataSet = dsCrypt

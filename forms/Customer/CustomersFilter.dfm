@@ -2,7 +2,7 @@ object CustomersFilterForm: TCustomersFilterForm
   Left = 394
   Top = 207
   BorderIcons = [biSystemMenu]
-  Caption = #1060#1080#1083#1100#1090#1088
+  Caption = #1060#1080#1083#1100#1090#1088' '#1089#1087#1080#1089#1082#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
   ClientHeight = 504
   ClientWidth = 607
   Color = clBtnFace
@@ -517,6 +517,7 @@ object CustomersFilterForm: TCustomersFilterForm
               end>
             DropDownBox.ListSource = srcStreets
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
             DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
@@ -1587,6 +1588,7 @@ object CustomersFilterForm: TCustomersFilterForm
             'IP '#1072#1076#1088#1077#1089
             'MAC '#1072#1076#1088#1077#1089
             #1048#1053#1053'/'#1059#1053#1055' '#1070#1088'. '#1083#1080#1094#1072
+            #1057#1087#1080#1089#1086#1082' '#1082#1074#1072#1088#1090#1080#1088
             'Customer_id')
           KeyItems.Strings = (
             '0'
@@ -1596,6 +1598,7 @@ object CustomersFilterForm: TCustomersFilterForm
             '2'
             '5'
             '7'
+            '8'
             '4')
           ShowHint = True
           TabOrder = 0

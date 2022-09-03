@@ -53,7 +53,7 @@ uses
 
 class function TapgNodeAppl.GetPageName: string;
 begin
-  Result := rsAppliance;
+  Result := rsApplianceNode;
 end;
 
 procedure TapgNodeAppl.InitForm;
@@ -114,6 +114,11 @@ procedure TapgNodeAppl.actDelExecute(Sender: TObject);
 begin
   if dsAppliance.RecordCount = 0 then
     Exit;
+
+  if not dsAppliance.FieldByName('RQ_ID').IsNull then begin
+    ShowMessage(rsDeleteViaRequest);
+    exit;
+  end;
 
   if (MessageDlg(Format(rsDeleteWithName, [dsAppliance['Name']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin

@@ -1,7 +1,7 @@
 object apgEqpmntInfo: TapgEqpmntInfo
   Left = 0
   Top = 0
-  Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+  Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
   ClientHeight = 235
   ClientWidth = 909
   Color = clBtnFace
@@ -307,7 +307,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     object lbl2: TLabel
       Left = 0
       Top = 0
-      Width = 241
+      Width = 64
       Height = 13
       Align = alTop
       Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -628,12 +628,12 @@ object apgEqpmntInfo: TapgEqpmntInfo
     end
   end
   object pmLanPopUp: TPopupMenu
-    Left = 685
-    Top = 39
+    Left = 693
+    Top = 47
   end
   object actlstLAN: TActionList
-    Left = 754
-    Top = 39
+    Left = 770
+    Top = 47
     object ActLanPing: TAction
       Caption = 'PING IP adress'
       Hint = 'PING IP adress'
@@ -660,6 +660,11 @@ object apgEqpmntInfo: TapgEqpmntInfo
     object actParentWeb: TAction
       Caption = 'Web '#1087#1086#1076#1082#1083#1102#1095#1077#1085' '#1082
       OnExecute = actParentWebExecute
+    end
+    object actLanHttpName: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' '#1048#1052#1071
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' '#1089#1089#1099#1083#1082#1091' '#1048#1052#1071' '#1086#1073#1088#1091#1076#1086#1074#1072#1085#1080#1103
+      OnExecute = actLanHttpNameExecute
     end
   end
   object dsData: TpFIBDataSet

@@ -2131,7 +2131,7 @@ object CustomersForm: TCustomersForm
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcHouse
-    Left = 526
+    Left = 518
     Top = 437
   end
   object srcFLAT: TDataSource

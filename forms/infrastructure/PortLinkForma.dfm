@@ -517,12 +517,6 @@ object PortLinkForm: TPortLinkForm
             inherited gbInfo: TGroupBox
               Width = 327
               Height = 158
-              inherited lblFIO: TLabel
-                Width = 323
-                Height = 14
-                Margins.Bottom = 0
-                Font.Height = -12
-              end
               inherited lblDebt: TLabel
                 Top = 29
                 Width = 323
@@ -534,6 +528,11 @@ object PortLinkForm: TPortLinkForm
                 Top = 43
                 Width = 323
                 Height = 113
+              end
+              inherited lblFIO: TDBEditEh
+                Width = 323
+                Height = 14
+                Margins.Bottom = 0
               end
             end
           end

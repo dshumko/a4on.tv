@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
+  FIBDataSet,
   pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
 
 type
@@ -70,6 +71,7 @@ type
     { Private declarations }
     fMatDocID: Integer;
     fAddedMatID: Integer;
+    fSerial: string;
     procedure SetMatDocID(value: Integer);
     function CheckRowData: Boolean;
     procedure AddRow;
@@ -193,9 +195,11 @@ procedure TMatOutDocForm.edtMaterialOpenDropDownForm(EditControl: TControl; Butt
   var DropDownForm: TCustomForm; DynParams: TDynVarsEh);
 begin
   fAddedMatID := -1;
+  fSerial := '';
   DynParams['ID'].Clear;
   DynParams['NAME'].AsString := edtMaterial.Text;
   DynParams['DATASET'].AsRefObject := dsMaterials;
+  DynParams['WIDTH'].AsInteger := edtMaterial.Width;
 end;
 
 procedure TMatOutDocForm.edtMaterialCloseDropDownForm(EditControl: TControl; Button: TEditButtonEh; Accept: Boolean;
@@ -215,7 +219,17 @@ begin
   if DynParams.FindDynVar('ID') <> nil then
   begin
     fAddedMatID := DynParams['ID'].AsInteger;
-    edtQuant.SetFocus;
+
+    if DynParams.FindDynVar('SERIAL') <> nil then
+      fSerial := DynParams['SERIAL'].AsString;
+    edtQuant.Enabled := fSerial.IsEmpty;
+
+    if edtQuant.Enabled then
+      edtQuant.SetFocus
+    else
+    begin
+      edtQuant.value := 1;
+    end;
   end;
 end;
 
@@ -229,7 +243,7 @@ begin
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False
+      go := false
     else if (ActiveControl is TDBMemoEh) then
       go := not((ActiveControl as TDBMemoEh).Lines.Text.Length > 20);
 
@@ -263,7 +277,7 @@ begin
   if dsMaterials.Filtered then
   begin
     dsMaterials.Filter := '';
-    dsMaterials.Filtered := False;
+    dsMaterials.Filtered := false;
   end;
   if TDBEditEhCrack(edtMaterial).FButtonsBox.ControlCount > 0 then
     TDBEditEhCrack(edtMaterial).FButtonsBox.BtnCtlList[1].EditButtonControl.EditButtonDown(1, AutoRepeat);
@@ -339,12 +353,14 @@ begin
   dsDocMat['M_QUANT'] := edtQuant.value;
   dsDocMat['M_Cost'] := edtCost.value;
   dsDocMat['M_Notice'] := memNotice.Lines.Text;
+  dsDocMat['SERIAL'] := fSerial;
   dsDocMat.Post;
 
   edtQuant.Text := '';
   edtCost.Text := '';
   memNotice.Lines.Text := '';
   fAddedMatID := -1;
+  fSerial := '';
   edtMaterial.SetFocus;
 end;
 
@@ -422,7 +438,7 @@ begin
     qOpenDoc.ExecQuery;
     qOpenDoc.Transaction.Commit;
     dsDoc.Refresh;
-    SetReadOnlyMode(False);
+    SetReadOnlyMode(false);
   end;
 end;
 

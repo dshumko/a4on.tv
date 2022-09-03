@@ -38,9 +38,9 @@ type
     lbl1: TLabel;
     dmN: TDBMemoEh;
     pnl1: TPanel;
-    chkWork: TDBCheckBoxEh;
     chkLock: TDBCheckBoxEh;
     cnErrors: TCnErrorProvider;
+    chkWork: TDBCheckBoxEh;
     procedure edUEnter(Sender: TObject);
     procedure edUExit(Sender: TObject);
     procedure Button1Click(Sender: TObject);

@@ -113,7 +113,8 @@ object ChanSourcesForm: TChanSourcesForm
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
               Title.TitleButton = True
-              Width = 125
+              Width = 256
+              OnGetCellParams = dbgSourceColumns3GetCellParams
             end
             item
               CellButtons = <>
@@ -123,7 +124,7 @@ object ChanSourcesForm: TChanSourcesForm
               FieldName = 'URL'
               Footers = <>
               Title.Caption = 'WEB'
-              Width = 66
+              Width = 234
               OnCellDataLinkClick = dbgSourceColumns5CellDataLinkClick
             end>
           object RowDetailData: TRowDetailPanelControlEh
@@ -299,6 +300,7 @@ object ChanSourcesForm: TChanSourcesForm
           Flat = True
           FooterRowCount = 1
           FooterParams.Color = clWindow
+          FrozenCols = 1
           GridLineParams.VertEmptySpaceStyle = dessNonEh
           Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
@@ -777,6 +779,7 @@ object ChanSourcesForm: TChanSourcesForm
       'WHERE'
       '        CS_ID = :OLD_CS_ID'
       '    and CH_ID = :OLD_CH_ID'
+      '    and Csp_Id = :OLD_Csp_Id'
       '    ')
     RefreshSQL.Strings = (
       'select'
@@ -802,7 +805,8 @@ object ChanSourcesForm: TChanSourcesForm
         '       left outer join objects cd on (cd.O_Id = p.Card_Id and cd' +
         '.O_Type = 44)'
       'where p.Cs_Id = :OLD_Cs_Id'
-      'and  p.Ch_Id = :OLD_Ch_Id ')
+      'and  p.Ch_Id = :OLD_Ch_Id '
+      'and p.CSP_ID = :OLD_CSP_ID')
     SelectSQL.Strings = (
       'select'
       '   c.Ch_Name'
@@ -925,6 +929,7 @@ object ChanSourcesForm: TChanSourcesForm
       '  , p.On_Iptv'
       '  , p.Cs_Id'
       '  , p.Ch_Id'
+      '  , p.Csp_Id'
       '  from Channel_Src s'
       '       inner join Channel_Src_Param p on (s.Cs_Id = p.Cs_Id)'
       '       inner join Channels c on (c.Ch_Id = p.Ch_Id)'

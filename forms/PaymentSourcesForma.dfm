@@ -4,10 +4,14 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
   ClientWidth = 655
   PixelsPerInch = 96
   TextHeight = 13
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 129
     Width = 655
-    Height = 264
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 132
+    Width = 655
+    Height = 261
     Columns = <
       item
         CellButtons = <>
@@ -116,6 +120,7 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -130,6 +135,7 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
       EmptyDataInfo.Text = '% '#1079#1072' '#1091#1089#1083#1091#1075#1080
       EditButton.Visible = True
       EditButtons = <>
+      ShowHint = True
       TabOrder = 1
       Visible = True
     end
@@ -144,6 +150,7 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
       EmptyDataInfo.Text = #1053#1044#1057
       EditButton.Visible = True
       EditButtons = <>
+      ShowHint = True
       TabOrder = 2
       Visible = True
     end
@@ -158,6 +165,7 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1050#1086#1076
+      ShowHint = True
       TabOrder = 3
       Visible = True
     end
@@ -193,11 +201,9 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
       '    PAYSOURCE_ID = :OLD_PAYSOURCE_ID'
       '    ')
     DeleteSQL.Strings = (
-      'DELETE FROM'
-      '    PAYSOURCE'
-      'WHERE'
-      '        PAYSOURCE_ID = :OLD_PAYSOURCE_ID'
-      '    ')
+      'update PAYSOURCE'
+      'set DELETED = 1'
+      'where PAYSOURCE_ID = :OLD_PAYSOURCE_ID')
     InsertSQL.Strings = (
       'INSERT INTO PAYSOURCE('
       '    PAYSOURCE_ID,'
@@ -214,16 +220,18 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
       '    :CODE'
       ')')
     RefreshSQL.Strings = (
-      'select * '
-      'from PAYSOURCE'
-      ''
-      ' WHERE '
-      '        PAYSOURCE.PAYSOURCE_ID = :OLD_PAYSOURCE_ID'
+      'select'
+      '    *'
+      '  from PAYSOURCE'
+      '  where PAYSOURCE.PAYSOURCE_ID = :OLD_PAYSOURCE_ID'
+      '        and coalesce(DELETED, 0) = 0   '
       '    ')
     SelectSQL.Strings = (
-      'select * '
-      'from PAYSOURCE'
-      'order by paysource_descr')
+      'select'
+      '    *'
+      '  from PAYSOURCE'
+      '  where coalesce(DELETED, 0) = 0'
+      '  order by paysource_descr')
     AutoUpdateOptions.UpdateTableName = 'PAYSOURCE'
     AutoUpdateOptions.KeyFields = 'PAYSOURCE_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

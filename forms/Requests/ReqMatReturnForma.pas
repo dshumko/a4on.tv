@@ -34,17 +34,18 @@ type
     procedure srcDataSourceUpdateData(Sender: TObject);
   private
     { Private declarations }
-    fEditMode: Byte;
+    fEditMode: Boolean;
     fRequest: Integer;
     procedure SetRequest(Value: Integer);
+    procedure SetEditMode(Value: Boolean);
     function GetGridSortOrder(Grid: TDBGridEh): String;
   public
     { Public declarations }
-    property EditMode: Byte read fEditMode write fEditMode;
+    property EditMode: Boolean read fEditMode write SetEditMode;
     property pRequest: Integer read fRequest write SetRequest;
   end;
 
-function ReqMaterialsReturn(const aRequest: Integer; const aEditMode: Byte): boolean;
+function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly:Boolean = True ): boolean;
 
 var
   ReqMatReturnForm: TReqMatReturnForm;
@@ -56,26 +57,24 @@ uses
 
 {$R *.dfm}
 
-function ReqMaterialsReturn(const aRequest: Integer; const aEditMode: Byte): boolean;
+function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly:Boolean = True ): boolean;
 var
   FWHOwner: boolean;
 begin
   result := false;
   with TReqMatReturnForm.Create(Application) do
     try
-      EditMode := aEditMode;
+      EditMode := not aReadOnly;
       dsMatGropups.Open;
       pRequest := aRequest;
 
       FWHOwner := (dmMain.GetSettingsValue('WH_REQ_OWNER') = '1');
 
       // if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full))))
-      if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full))))
-      then
-      begin
-        dsReqMaterials.ParamByName('WH_FLTR').Value := ' and exists(select e.Rq_Id from Request_Executors e ' +
-          ' where e.Exec_Id = w.O_Numericfield and e.Rq_Id = :RQ_ID)';
-      end;
+      if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full)))) then
+        dsReqMaterials.ParamByName('WH_FLTR').Value := '1'
+      else
+        dsReqMaterials.ParamByName('WH_FLTR').Value := '0';
 
       dsReqMaterials.ParamByName('RQ_ID').AsInteger := aRequest;
 
@@ -208,6 +207,12 @@ begin
     result := result + ','
   end;
   result := result.TrimRight([',']);
+end;
+
+procedure TReqMatReturnForm.SetEditMode(Value: Boolean);
+begin
+  fEditMode := Value;
+  dbGrid.ReadOnly := not fEditMode;
 end;
 
 end.

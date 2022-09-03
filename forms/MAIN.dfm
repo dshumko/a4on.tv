@@ -327,6 +327,7 @@ object A4MainForm: TA4MainForm
       Caption = #1060#1072#1081#1083
       object miLanguage: TMenuItem
         Caption = #1042#1099#1073#1086#1088' '#1071#1079#1099#1082#1072
+        Visible = False
         object N32: TMenuItem
           Tag = 1
           Caption = #1056#1091#1089#1089#1082#1080#1081' '#1103#1079#1099#1082

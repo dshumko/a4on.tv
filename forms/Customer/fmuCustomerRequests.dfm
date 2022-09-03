@@ -231,6 +231,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'FIO'
         Footers = <>
         Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
+        OnGetCellParams = dbGridCustReqColumns17GetCellParams
       end
       item
         CellButtons = <>

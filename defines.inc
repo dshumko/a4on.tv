@@ -20,3 +20,6 @@
 
 {$DEFINE Scale4k}
 { -$DEFINE DELPHI_STYLE_SCALING }
+
+// пока не доделал штучный учет, можно собрать без него
+{$DEFINE IS_UNIT}

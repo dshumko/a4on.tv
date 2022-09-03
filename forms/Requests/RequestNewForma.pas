@@ -11,7 +11,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.StdCtrls,
   DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh, PropFilerEh, CnErrorProvider,
-  PropStorageEh, CustomerInfoFrame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableEh, DBCtrlsEh, DBLookupEh,
+  PropStorageEh, CustomerInfoFrame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableEh, DBCtrlsEh,
+  DBLookupEh,
   EhLibVCL, GridsEh, DBAxisGridsEh, OkCancel_frame, PrjConst, DM, A4onTypeUnit;
 
 type
@@ -530,9 +531,7 @@ begin
       else
         ActiveControl := lupType;
     end;
-
   end;
-
 end;
 
 procedure TRequestNewForm.actSaveExecute(Sender: TObject);
@@ -916,19 +915,20 @@ end;
 
 procedure TRequestNewForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if A4MainForm.AddictSpell.Tag = 1 then begin
+  if A4MainForm.AddictSpell.Tag = 1 then
+  begin
     A4MainForm.AddictSpell.RemoveControl(mmoNotice);
     A4MainForm.AddictSpell.RemoveControl(mmoContent);
   end;
 
-  dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', false);
+  dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', False);
   Action := caFree;
   // Free;
 end;
 
 procedure TRequestNewForm.FormCreate(Sender: TObject);
 var
-  s : string;
+  s: string;
 begin
   dbgSame.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame',
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
@@ -936,7 +936,7 @@ begin
   s := dmMain.GetSettingsValue('AREA_LOCK');
   if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
   begin
-    dsHouse.ParamByName('AREA_LOCK').Value := Format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
+    dsHouse.ParamByName('AREA_LOCK').Value := format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
   end;
   dsHouse.Open;
   dsRequestType.Open;
@@ -989,7 +989,8 @@ end;
 
 procedure TRequestNewForm.FormShow(Sender: TObject);
 begin
-  if A4MainForm.AddictSpell.Tag = 1 then begin
+  if A4MainForm.AddictSpell.Tag = 1 then
+  begin
     A4MainForm.AddictSpell.AddControl(mmoContent);
     A4MainForm.AddictSpell.AddControl(mmoNotice);
   end;

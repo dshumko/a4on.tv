@@ -33,6 +33,8 @@ type
     lbl5: TLabel;
     edtPlace: TDBEditEh;
     lblPlace: TLabel;
+    lbl11: TLabel;
+    ednCAPACITY: TDBNumberEditEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -58,7 +60,7 @@ procedure ShowSatCard(const CARD: String; const CH_ID : Integer = -1);
 implementation
 
 uses
-  DM, ChanForSrcForma;
+  DM, ChanForSrcForma, System.Math;
 
 {$R *.dfm}
 
@@ -116,6 +118,8 @@ begin
 end;
 
 procedure TSatCardsForm.dbgSubAreaDblClick(Sender: TObject);
+var
+  Csp_Id: Integer;
 begin
   inherited;
   if (not dsChan.Active) or (dsChan.RecordCount = 0) then
@@ -126,8 +130,8 @@ begin
     Exit;
   if (not(dmMain.AllowedAction(rght_DVB_edit))) then
     Exit;
-
-  EditChanForSource(dsChan['CH_ID'], dsChan['CS_ID']);
+  Csp_Id := IfThen(dsChan.FieldByName('Csp_Id').IsNull, -1, dsChan['Csp_Id']);
+  EditChanForSource(dsChan['CH_ID'], dsChan['CS_ID'], Csp_Id);
   dsChan.Refresh;
 end;
 

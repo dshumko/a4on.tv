@@ -68,6 +68,7 @@ type
     srcPort: TDataSource;
     actAddPort: TAction;
     actEditPort: TAction;
+    edtPort: TDBEditEh;
     procedure eMACEnter(Sender: TObject);
     procedure eMACExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -106,6 +107,7 @@ type
     FCI: TCustomerInfo;
     FCanEditPort: Boolean;
     FVlanDisabled: Boolean;
+    FPortDictDisable: Boolean;
     FWarnings: string;
     function CheckData(): Integer;
     function CheckWarnings(): Boolean;
@@ -353,6 +355,20 @@ begin
   begin
     actFindIP.Execute;
     eMAC.SetFocus;
+  end;
+
+  FPortDictDisable := (dmMain.GetSettingsValue('LAN_PORTDICTDISABLE') = '1');
+  lcbPort.Visible := not FPortDictDisable;
+  edtPort.Visible := FPortDictDisable;
+  if FPortDictDisable then begin
+    edtPort.Left := dbleEquipment.Left;
+    edtPort.Width := dbleEquipment.Width;
+    edtPort.TabOrder := 1;
+  end
+  else begin
+    lcbPort.Left := dbleEquipment.Left;
+    lcbPort.Width := dbleEquipment.Width;
+    lcbPort.TabOrder := 1;
   end;
 end;
 

@@ -49,9 +49,9 @@ object OrderTPForm: TOrderTPForm
       TabOrder = 1
     end
     object btnOk: TBitBtn
-      Left = 7
+      Left = 68
       Top = 9
-      Width = 682
+      Width = 625
       Height = 26
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akRight, akBottom]
@@ -59,6 +59,17 @@ object OrderTPForm: TOrderTPForm
       NumGlyphs = 2
       TabOrder = 0
       OnClick = btnOkClick
+    end
+    object btnPrint: TBitBtn
+      Left = 7
+      Top = 9
+      Width = 51
+      Height = 26
+      Action = actPrint
+      Anchors = [akLeft, akRight, akBottom]
+      Caption = #1055#1077#1095#1072#1090#1100
+      NumGlyphs = 2
+      TabOrder = 2
     end
   end
   object pnlMain: TPanel
@@ -359,8 +370,13 @@ object OrderTPForm: TOrderTPForm
           item
             FieldName = 'O_DESCRIPTION'
           end>
+        DropDownBox.ListSource = srcOTPTypes
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.UseMultiTitle = True
+        DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 150
         EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087' '#1079#1072#1082#1072#1079#1072
@@ -370,6 +386,7 @@ object OrderTPForm: TOrderTPForm
         ListSource = srcOTPTypes
         ParentShowHint = False
         ShowHint = True
+        Style = csDropDownEh
         TabOrder = 0
         Visible = True
         OnChange = lcbOTTP_TYPEChange
@@ -610,6 +627,7 @@ object OrderTPForm: TOrderTPForm
       ' o.Otp_Id = :OTPID')
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
     AutoCalcFields = False
+    AfterOpen = dsOrderTPAfterOpen
     BeforePost = dsOrderTPBeforePost
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
@@ -756,5 +774,15 @@ object OrderTPForm: TOrderTPForm
       'pnlAddons.<P>.Width')
     Left = 474
     Top = 256
+  end
+  object actlst1: TActionList
+    Left = 328
+    Top = 216
+    object actPrint: TAction
+      Caption = #1055#1077#1095#1072#1090#1100
+      Hint = #1055#1077#1095#1072#1090#1100' '#1073#1083#1072#1085#1082#1072' (Ctrl+P)'
+      ShortCut = 16464
+      OnExecute = actPrintExecute
+    end
   end
 end

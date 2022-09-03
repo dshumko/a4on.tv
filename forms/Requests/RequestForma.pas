@@ -183,6 +183,13 @@ type
     Panel1: TPanel;
     btnFileDel: TSpeedButton;
     btnFileAdd: TSpeedButton;
+    mi4: TMenuItem;
+    actOpenHouse: TAction;
+    miOpenHouse: TMenuItem;
+    dbgFlats: TDBGridEh;
+    dsFlats: TpFIBDataSet;
+    srcFlats: TDataSource;
+    splFlats: TSplitter;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -247,6 +254,11 @@ type
     procedure LupHOUSEChange(Sender: TObject);
     procedure luTypeChange(Sender: TObject);
     procedure actFileDelExecute(Sender: TObject);
+    procedure actOpenHouseExecute(Sender: TObject);
+    procedure dbgFlatsColExit(Sender: TObject);
+    procedure deEndExecDateTimeExit(Sender: TObject);
+    procedure dbgFlatsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -257,6 +269,7 @@ type
     FFullAccess: Boolean; // полный доступ
     FCanEdit: Boolean; // может изменять результат выполнения
     FCanClose: Boolean; // может закрыть заявку
+    FClosed: Boolean; // Заявка закрыта
     FCanCloseDay: Boolean; // может закрыть заявку
     FCanUnclose: Boolean; // может закрыть заявку
     FCanCreate: Boolean; // может добавить заявку
@@ -265,6 +278,8 @@ type
     FNeedExecutor: Boolean; // Требовать исполнителя заявки
     fVisibleCost: Boolean;
     FDisableAddressEdit: Boolean;
+    FHL_ROW: Boolean;
+    FHL_COLOR: TColor;
     procedure CheckData;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure FindNearFreeDay;
@@ -272,6 +287,7 @@ type
     procedure SetCustomer(Value: Integer; const FindNode: Integer = 0);
     procedure InitSecurity;
     procedure ShowAddInfo;
+    procedure ShowFlats;
     procedure SetGridsHeight;
     procedure NewMSG;
     procedure SaveMSG;
@@ -281,6 +297,7 @@ type
     function SavePhone(Const Phone: String): String;
     procedure OpenLinkedReq();
     function HasLinkedReq(const OnlyClosed: Boolean = False): Boolean;
+    procedure SetIsClosed(const Closed: Boolean);
   public
     { Public declarations }
     constructor CreateA(aOwner: TComponent; aRequest: Integer; const aCustomer: Integer; const aEditMode: Byte;
@@ -436,7 +453,7 @@ end;
 
 procedure TRequestForm.actFileDelExecute(Sender: TObject);
 begin
-  if not(dmMain.AllowedAction(rght_Customer_Files_Add) or dmMain.AllowedAction(rght_Customer_Files_Edit)) then
+  if not(FFullAccess) then
     Exit;
 
   if (dsPhotos.RecordCount = 0) or (dsPhotos.FieldByName('ID').IsNull) then
@@ -513,8 +530,10 @@ end;
 
 procedure TRequestForm.actMaterialsExecute(Sender: TObject);
 begin
-  ReqMaterials(dsRequest['RQ_ID'], 1);
-  dsMaterials.CloseOpen(true);
+  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
+  ReqMaterials(dsRequest['RQ_ID'], FClosed);
+  if (not FClosed) then
+    dsMaterials.CloseOpen(true);
 end;
 
 procedure TRequestForm.actReqDelExecute(Sender: TObject);
@@ -656,6 +675,7 @@ end;
 procedure TRequestForm.FormCreate(Sender: TObject);
 var
   i: Integer;
+  SQL: String;
 begin
   FCustomerInfo.CUSTOMER_ID := -1;
   FPhoneSaved := true;
@@ -665,6 +685,29 @@ begin
   begin
     if dbgMaterials.Columns[i].FieldName = 'COST' then
       dbgMaterials.Columns[i].Visible := fVisibleCost;
+  end;
+
+  // проверим, нужно ли вклюсать подсветку по доп условию из настроек
+  FHL_ROW := (dmMain.GetSettingsValue('ROW_HL_COLOR') <> '') and (dmMain.GetSettingsValue('ROW_HL_ID') <> '') and
+    (dmMain.GetSettingsValue('ROW_HL_TYPE') <> '');
+  if FHL_ROW then
+  begin
+    try
+      FHL_COLOR := StringToColor(dmMain.GetSettingsValue('ROW_HL_COLOR'));
+    except
+      FHL_COLOR := clPurple;
+    end;
+
+    if dmMain.GetSettingsValue('ROW_HL_TYPE') = '0' then
+    begin
+      SQL := SQL + rsEOL + ' , (select first 1 rtc.Single_Service_Id' + #13#10 +
+        ' from customer c inner join Single_Serv rtc on (rtc.Customer_Id = c.Customer_Id)' + #13#10 +
+        ' where c.House_Id = nf.House_Id and c.Flat_No = nf.Flat_No ' + 'and rtc.Service_Id = ' +
+        dmMain.GetSettingsValue('ROW_HL_ID') + ') ROW_HL_COLOR';
+      dsFlats.ParamByName('color').AsString := SQL;
+    end
+    else
+      FHL_ROW := False;
   end;
 end;
 
@@ -678,7 +721,12 @@ begin
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBMemoEh) then
+      go := False
+    else if (ActiveControl is TDBAxisGridInplaceEdit) then
+      go := False
+    else if (ActiveControl is TDBGridEh) then
       go := False;
+
     if (go) then
     begin
       Key := #0; // eat enter key
@@ -1016,6 +1064,22 @@ begin
   CheckData;
 end;
 
+procedure TRequestForm.dbgFlatsColExit(Sender: TObject);
+begin
+  if srcFlats.DataSet.State in [dsEdit] then
+    srcFlats.DataSet.Post;
+end;
+
+procedure TRequestForm.dbgFlatsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if FHL_ROW then
+  begin
+    if (not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('ROW_HL_COLOR').IsNull) then
+      Background := FHL_COLOR; // TColor($00FF7B9E);// Purple
+  end;
+end;
+
 procedure TRequestForm.dbgWorkersDblClick(Sender: TObject);
 begin
   if actExecutors.Enabled then
@@ -1197,13 +1261,15 @@ begin
     actMaterials.ShortCut := TextToShortCut('F6');
     actMatIn.ShortCut := TextToShortCut('F8');
     luResult.TabStop := (dsResult.RecordCount > 0);
-  end;
-
-  if PageControl.ActivePage = tabGiveReq then
+  end
+  else
   begin
-    actExecutors.ShortCut := TextToShortCut('F5');
+    if PageControl.ActivePage = tabGiveReq then
+    begin
+      actExecutors.ShortCut := TextToShortCut('F5');
+    end;
   end;
-
+  ShowFlats;
 end;
 
 procedure TRequestForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
@@ -1258,14 +1324,21 @@ begin
   end;
 end;
 
+procedure TRequestForm.deEndExecDateTimeExit(Sender: TObject);
+begin
+  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
+end;
+
 procedure TRequestForm.dbMemDefectChange(Sender: TObject);
 begin
   if FCanClose or FFullAccess then
+  begin
     if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
     begin
       deEndExecDateTime.Value := NOW;
       // deEndExecTime.Value := time;
     end;
+  end;
 end;
 
 procedure TRequestForm.dbtParentDblClick(Sender: TObject);
@@ -1349,6 +1422,9 @@ begin
   actWorks.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
   miDelWork.Enabled := actWorks.Enabled;
   actMatIn.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
+  actFileDel.Enabled := FFullAccess;
+
+  srcFlats.AutoEdit := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
 
   OkCancelFrame.bbOk.Enabled := ((FCanCreate or FCanEdit or FCanCloseDay or FCanClose or FCanGive) and NotClosed) or
     ((not NotClosed) and FCanUnclose) or FFullAccess;
@@ -1416,6 +1492,58 @@ begin
   pnlAddInfo.Visible := cbbAdd.Items.Count > 0;
 end;
 
+procedure TRequestForm.ShowFlats;
+var
+  s: String;
+  lk_Col: TColumnEh;
+  i: Integer;
+begin
+  dbgFlats.Visible := False;
+  splFlats.Visible := False;
+  dsFlats.Active := False;
+
+  if PageControl.ActivePage <> tabExecute then
+    Exit;
+
+  if (not srcRequest.DataSet.FieldByName('RQ_CUSTOMER').IsNull) or (srcRequest.DataSet.FieldByName('NODE_ID').IsNull)
+  then
+    Exit;
+
+  if not dsErrors.Active then
+  begin
+    if (not srcRequest.DataSet.FieldByName('RQTL_ID').IsNull) then
+    begin
+      dsErrors.Open;
+      dsErrors.Locate('RQTL_ID', srcRequest.DataSet['RQTL_ID'], []);
+    end;
+  end;
+
+  if (not dsErrors.Active) or (dsErrors.FieldByName('FLATS_NEED').IsNull) or (dsErrors['FLATS_NEED'] = 0) then
+    Exit;
+
+  // FLATS_RESULT
+  dsFlats.Active := true;
+  dbgFlats.Visible := true;
+  splFlats.Visible := true;
+  i := -1;
+  for i := 0 to dbgFlats.Columns.Count - 1 do
+  begin
+    if dbgFlats.Columns[i].FieldName = 'FLAT_RESULT' then
+    begin
+      dbgFlats.Columns[i].PickList.Clear;
+      dbgFlats.Columns[i].KeyList.Clear;
+      s := Trim(dsErrors['FLATS_RESULT']);
+      if s <> '' then
+      begin
+        dbgFlats.Columns[i].PickList.Delimiter := ';';
+        dbgFlats.Columns[i].PickList.DelimitedText := s;
+        dbgFlats.Columns[i].KeyList.Delimiter := ';';
+        dbgFlats.Columns[i].KeyList.DelimitedText := s;
+      end;
+    end;
+  end;
+end;
+
 procedure TRequestForm.srcRequestDataChange(Sender: TObject; Field: TField);
 begin
   dbtParent.Visible := not(dsRequest.FieldByName('PARENT_INFO').IsNull);
@@ -1466,8 +1594,10 @@ end;
 
 procedure TRequestForm.actMatInExecute(Sender: TObject);
 begin
-  ReqMaterialsReturn(dsRequest['RQ_ID'], 1);
-  dsMaterials.CloseOpen(true);
+  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
+  ReqMaterialsReturn(dsRequest['RQ_ID'], FClosed);
+  if (not FClosed) then
+    dsMaterials.CloseOpen(true);
 end;
 
 procedure TRequestForm.actMSGAddExecute(Sender: TObject);
@@ -1487,6 +1617,18 @@ begin
   end;
 end;
 
+procedure TRequestForm.actOpenHouseExecute(Sender: TObject);
+var
+  s: String;
+begin
+
+  if (dsRequest.FieldByName('STREET_ID').IsNull) or (dsRequest.FieldByName('HOUSE_ID').IsNull) then
+    Exit;
+
+  s := dsRequest.FieldByName('STREET_ID').AsString + '~' + dsRequest.FieldByName('STREET_ID').AsString;
+  A4MainForm.ShowCustomers(14, s);
+end;
+
 procedure TRequestForm.dsWorksAfterOpen(DataSet: TDataSet);
 begin
   SetGridsHeight;
@@ -1502,6 +1644,8 @@ begin
   if (not dsRequest.FieldByName('PHONE').IsNull) then
     edPhone.Text := dsRequest['PHONE'];
   FPhoneSaved := true;
+
+  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
 end;
 
 procedure TRequestForm.SetGridsHeight;
@@ -1718,6 +1862,21 @@ begin
         Free;
       end;
     end;
+  end;
+end;
+
+procedure TRequestForm.SetIsClosed(const Closed: Boolean);
+begin
+  FClosed := Closed;
+  if FClosed then
+  begin
+    dbgFlats.ReadOnly := true;
+    dbgMaterials.PopupMenu := nil;
+  end
+  else
+  begin
+    dbgFlats.ReadOnly := False;
+    dbgMaterials.PopupMenu := pmGridMat;
   end;
 end;
 

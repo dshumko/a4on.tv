@@ -94,6 +94,8 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure dbgSourceColumns5CellDataLinkClick(Grid: TCustomDBGridEh; Column: TColumnEh);
     procedure dbgViewDblClick(Sender: TObject);
+    procedure dbgSourceColumns3GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     FTimeZone: Integer;
   public
@@ -108,7 +110,7 @@ procedure ShowChanSource(const SRC_ID: Integer; const CH_ID: Integer = -1);
 implementation
 
 uses
-  System.DateUtils,
+  System.DateUtils, System.Math,
   DM, MAIN, AtrStrUtils, atrCmdUtils, DVBStreamForma, pFIBQuery, pFIBProps, ChanSrcForma, ChanForSrcForma;
 
 {$R *.dfm}
@@ -180,6 +182,8 @@ begin
 end;
 
 procedure TChanSourcesForm.actCHeditExecute(Sender: TObject);
+var
+  Csp_Id: Integer;
 begin
   if (not dsChannel.Active) or (dsChannel.RecordCount = 0) then
     Exit;
@@ -189,12 +193,19 @@ begin
     Exit;
   if (not(dmMain.AllowedAction(rght_DVB_edit))) then
     Exit;
-
-  EditChanForSource(dsChannel['CH_ID'], dsSource['CS_ID']);
+  Csp_Id := IfThen(dsChannel.FieldByName('Csp_Id').IsNull, -1, dsChannel['Csp_Id']);
+  EditChanForSource(dsChannel['CH_ID'], dsSource['CS_ID'], Csp_Id);
   dsChannel.Refresh;
 end;
 
 procedure TChanSourcesForm.actCHnewExecute(Sender: TObject);
+var
+  Cs_System: Integer;
+  S_Crypt: Integer;
+  V_CODEC: Integer;
+  FREQ: String;
+  SYMRATE: String;
+  CARD_ID: Integer;
 begin
   if dsSource.FieldByName('CS_ID').IsNull then
     Exit;
@@ -202,7 +213,29 @@ begin
   if (not(dmMain.AllowedAction(rght_DVB_edit))) then
     Exit;
 
-  if EditChanForSource(-1, dsSource['CS_ID']) then
+  Cs_System := -1;
+  S_Crypt := -1;
+  V_CODEC := -1;
+  FREQ := '';
+  SYMRATE := '';
+  CARD_ID := -1;
+
+  if dsChannel.RecordCount > 0 then begin
+    if not dsChannel.FieldByName('Cs_System').IsNull then
+      Cs_System := dsChannel['Cs_System'];
+    if not dsChannel.FieldByName('S_Crypt').IsNull then
+      S_Crypt := dsChannel['S_Crypt'];
+    if not dsChannel.FieldByName('V_CODEC').IsNull then
+      V_CODEC := dsChannel['V_CODEC'];
+    if not dsChannel.FieldByName('FREQ').IsNull then
+      FREQ := dsChannel['FREQ'];
+    if not dsChannel.FieldByName('SYMRATE').IsNull then
+      SYMRATE := dsChannel['SYMRATE'];
+    if not dsChannel.FieldByName('CARD_ID').IsNull then
+      CARD_ID := dsChannel['CARD_ID'];
+  end;
+
+  if EditChanForSource(-1, dsSource['CS_ID'], -1, Cs_System, S_Crypt, V_CODEC, FREQ, SYMRATE, CARD_ID) then
   begin
     dsChannel.CloseOpen(True);
     dsSource.Refresh;
@@ -265,6 +298,13 @@ begin
   dsChannel.Open;
 end;
 
+procedure TChanSourcesForm.dbgSourceColumns3GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
+end;
+
 procedure TChanSourcesForm.dbgSourceColumns5CellDataLinkClick(Grid: TCustomDBGridEh; Column: TColumnEh);
 begin
   if dsSource.FieldByName('URL').IsNull then
@@ -281,7 +321,7 @@ end;
 
 procedure TChanSourcesForm.dbgViewDblClick(Sender: TObject);
 var
-  c, s: Integer;
+  c, s, Csp_Id: Integer;
 begin
   if (not mtView.Active) or (mtView.RecordCount = 0) then
     Exit;
@@ -294,8 +334,8 @@ begin
 
   c := mtView['CH_ID'];
   s := mtView['CS_ID'];
-
-  EditChanForSource(mtView['CH_ID'], mtView['CS_ID']);
+  Csp_Id := IfThen(mtView.FieldByName('Csp_Id').IsNull, -1, mtView['Csp_Id']);
+  EditChanForSource(mtView['CH_ID'], mtView['CS_ID'], Csp_Id);
   mtView.Refresh;
   mtView.Locate('CH_ID;CS_ID', VarArrayOf([c, s]), []);
 end;

@@ -190,6 +190,7 @@ begin
     lcbApplMID.Enabled := False;
     edtSN.Enabled := False;
     edtMAC.Enabled := edtMAC.Text.IsEmpty;
+    ednCost.Enabled := False;
   end;
 end;
 

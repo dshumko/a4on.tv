@@ -372,18 +372,21 @@ object ReqMaterialsForm: TReqMaterialsForm
       'from MATERIALS_GROUP'
       'union'
       
-        'select null as MG_ID, '#39'<'#1041#1045#1047' '#1043#1056#1059#1055#1055#1067'>'#39' MG_NAME, null as PARENT_ID,' +
-        ' '#39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
+        'select null as MG_ID, '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME, null as PARENT_ID, ' +
+        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
+      'from RDB$DATABASE'
+      
+        'where (exists(select m.M_Id from materials m where m.Mg_Id is nu' +
+        'll and m.DELETED = 0))'
+      'union'
+      
+        'select -2 as MG_ID, '#39'  '#1042' '#1047#1040#1071#1042#1050#1045#39' MG_NAME, null as PARENT_ID, '#39#1052#1072 +
+        #1090#1077#1088#1080#1072#1083#1099' '#1074#1099#1076#1072#1085#1099' '#1076#1083#1103' '#1079#1072#1103#1074#1082#1080#39' as MG_NOTICE'
       'from RDB$DATABASE'
       'union'
       
-        'select -2 as MG_ID, '#39'< '#1042' '#1047#1040#1071#1042#1050#1045' >'#39' MG_NAME, null as PARENT_ID, '#39 +
-        #1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1074#1099#1076#1072#1085#1099' '#1076#1083#1103' '#1079#1072#1103#1074#1082#1080#39' as MG_NOTICE'
-      'from RDB$DATABASE'
-      'union'
-      
-        'select -1 as MG_ID, '#39'< '#1042#1057#1045' >'#39' MG_NAME, null as PARENT_ID, '#39#1042#1089#1077' '#1084 +
-        #1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
+        'select -1 as MG_ID, '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME, null as PARENT_ID' +
+        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
       'from RDB$DATABASE'
       'order by 2')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'

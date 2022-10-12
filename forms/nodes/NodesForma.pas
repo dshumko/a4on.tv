@@ -477,7 +477,7 @@ begin
   FPageList.Add(TapgNodeFlats);
   FPageList.Add(TapgNodeRequests);
   FPageList.Add(TapgNodeAttributes);
-  FPageList.Add(TapgNodeMaterials);
+  // FPageList.Add(TapgNodeMaterials); ошибка отрисовки. не решил еще
   FPageList.Add(TapgNodeLayout);
   FPageList.Add(TapgNodeFiles);
   FPageList.Add(TapgNodeLink);

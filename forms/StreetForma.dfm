@@ -126,6 +126,26 @@ inherited StreetForm: TStreetForm
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 231
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SUBAREA_LIST'
+        Footers = <>
+        Title.Caption = #1056#1072#1081#1086#1085#1099
+        Title.TitleButton = True
+        Width = 84
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WG_LIST'
+        Footers = <>
+        Title.Caption = #1047#1074#1077#1085#1100#1103
+        Title.TitleButton = True
+        Width = 90
       end>
   end
   object Panel1: TPanel [3]
@@ -2193,6 +2213,21 @@ inherited StreetForm: TStreetForm
       '         sum(h.q_flat)'
       '       from house h'
       '       where (h.street_id = s.street_id)) as FLATS'
+      ''
+      '  , cast((select'
+      '    list(distinct sa.SUBAREA_NAME)'
+      '  from HOUSE H'
+      '       inner join SUBAREA sA on (sA.SUBAREA_ID = h.SUBAREA_ID)'
+      
+        '  where h.street_id = s.street_id ) as VARCHAR(500)) SUBAREA_LIS' +
+        'T'
+      ''
+      '  , cast((select'
+      '    list(distinct w.Name)'
+      '  from HOUSE H'
+      '       inner join WORKGROUPS w on (w.WG_ID = h.WG_ID)   '
+      '  where h.street_id = s.street_id ) as VARCHAR(500)) WG_LIST'
+      ''
       ''
       '  , p.q_porch'
       '  from STREET s'

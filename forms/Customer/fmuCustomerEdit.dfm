@@ -741,6 +741,7 @@ object apgCustomerEdit: TapgCustomerEdit
         ShowHint = True
         TabOrder = 0
         Visible = True
+        OnEnter = eSURNAMEEnter
         OnExit = eSURNAMEExit
       end
       object edtPASSPORT_NUMBER: TDBEditEh
@@ -825,6 +826,7 @@ object apgCustomerEdit: TapgCustomerEdit
         ShowHint = True
         TabOrder = 1
         Visible = True
+        OnEnter = eFIRSTNAMEEnter
         OnExit = eSURNAMEExit
       end
       object eMIDLENAME: TDBEditEh

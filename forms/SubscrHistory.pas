@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ToolWin,
   Vcl.ComCtrls, Vcl.Menus, Vcl.Buttons,
-  pFIBDataSet, GridsEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEh, PrjConst, EhLibVCL, DBGridEhGrouping,
+  pFIBDataSet, GridsEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEh, PrjConst, EhLibVCL,
+  DBGridEhGrouping,
   DynVarsEh;
 
 type
@@ -186,6 +187,7 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  chW: Boolean;
 begin
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
@@ -220,8 +222,17 @@ begin
   actDeleteService.Visible := FChangeHistory or FFullAccess;
   actDeleteSubscrHist.Visible := actDeleteService.Visible;
   // Спрячем кнопку смены автоблока
-  actDisconnect.Visible := not (dmMain.GetSettingsValue('HIDE_HIST_ABLOCK_BTN') = '1');
+  actDisconnect.Visible := not(dmMain.GetSettingsValue('HIDE_HIST_ABLOCK_BTN') = '1');
   FNeedRecalc := False;
+
+  chW := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') = '1');
+  for i := 0 to dbgCustSubscrServHist.Columns.Count - 1 do
+  begin
+    if (AnsiUpperCase(dbgCustSubscrServHist.Columns[i].FieldName) = 'WORKER_ON') then
+      dbgCustSubscrServHist.Columns[i].Visible := chW
+    else if (AnsiUpperCase(dbgCustSubscrServHist.Columns[i].FieldName) = 'WORKER_OFF') then
+      dbgCustSubscrServHist.Columns[i].Visible := chW;
+  end;
 end;
 
 procedure TCustSubscrHistoryForma.srcServicesHistoryStateChange(Sender: TObject);
@@ -295,7 +306,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
 
   Action := caFree;
 end;
@@ -321,11 +332,12 @@ begin
     Exit;
 
   // Это точно автоблокировка
-  if (dsServices.FieldByName('State_Srv').AsInteger <> srv_AutoBlock)  then
+  if (dsServices.FieldByName('State_Srv').AsInteger <> srv_AutoBlock) then
     Exit;
 
   // проверим дату статуса и права
-  if not(FFullAccess or FChangeHistory or (dsServices['STATE_DATE'] >= dmMain.CurrentMonth)) then begin
+  if not(FFullAccess or FChangeHistory or (dsServices['STATE_DATE'] >= dmMain.CurrentMonth)) then
+  begin
     ShowMessage(rsPastDateIncorrect);
     Exit;
   end;

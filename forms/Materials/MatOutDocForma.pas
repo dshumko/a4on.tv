@@ -42,7 +42,7 @@ type
     trRead: TpFIBTransaction;
     lbl4: TLabel;
     edtCost: TDBNumberEditEh;
-    errors: TCnErrorProvider;
+    CnErrors: TCnErrorProvider;
     dsWH: TpFIBDataSet;
     srcWH: TDataSource;
     qCloseDoc: TpFIBQuery;
@@ -328,7 +328,14 @@ end;
 
 procedure TMatOutDocForm.btnSaveClick(Sender: TObject);
 begin
-  dsDoc.Post;
+  if dsDoc.FieldByName('DOC_DATE').IsNull then begin
+    CnErrors.SetError(deD_DATE, rsSelectDate, iaTopCenter, bsNeverBlink);
+    deD_DATE.SetFocus;
+  end
+  else begin
+    CnErrors.Dispose(deD_DATE);
+    dsDoc.Post;
+  end;
 end;
 
 procedure TMatOutDocForm.btnAddClick(Sender: TObject);

@@ -36,15 +36,18 @@ object SettingsForm: TSettingsForm
       Margins.Bottom = 0
     end
     inherited bbOk: TBitBtn
-      Left = 291
-      Top = 9
-      Width = 167
+      Left = 3
+      Top = 5
+      Width = 455
+      Height = 27
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFrame1bbOkClick
     end
     inherited bbCancel: TBitBtn
       Left = 464
-      Top = 9
+      Top = 5
+      Width = 82
+      Height = 27
     end
   end
   object pgSettings: TPageControl
@@ -52,7 +55,7 @@ object SettingsForm: TSettingsForm
     Top = 0
     Width = 397
     Height = 509
-    ActivePage = tsVisual
+    ActivePage = tsOther
     Align = alClient
     MultiLine = True
     TabOrder = 1
@@ -1724,7 +1727,7 @@ object SettingsForm: TSettingsForm
       end
     end
     object tsOther: TTabSheet
-      Caption = #1055#1088#1086#1095#1077#1077
+      Caption = #1055#1088#1086#1095#1080#1077
       ImageIndex = 8
       DesignSize = (
         389
@@ -1853,6 +1856,17 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 5
         Visible = True
+      end
+      object chkSrvWorker: TCheckBox
+        Left = 11
+        Top = 222
+        Width = 350
+        Height = 17
+        Hint = #1042' '#1086#1082#1085#1077' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103' '#1091#1089#1083#1091#1075#1080' '#1074#1099#1073#1086#1088' '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1103
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akTop, akRight]
+        Caption = #1059#1082#1072#1079#1099#1074#1072#1090#1100' '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1103' '#1087#1088#1080' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1080' '#1091#1089#1083#1091#1075#1080
+        TabOrder = 6
       end
     end
   end

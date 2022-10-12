@@ -35,6 +35,7 @@ object MatDocUnitForm: TMatDocUnitForm
     Top = 156
     Width = 566
     Height = 342
+    Hint = #1045#1089#1083#1080' '#1103#1095#1077#1081#1082#1072' '#1078#1077#1083#1090#1072#1103', '#1079#1085#1072#1095#1080#1090' '#1074' '#1085#1077#1081' '#1077#1089#1090#1100' '#1088#1091#1089#1089#1082#1080#1077' '#1073#1091#1082#1074#1099
     Align = alClient
     AutoFitColWidths = True
     DataSource = srcDataSource
@@ -66,8 +67,10 @@ object MatDocUnitForm: TMatDocUnitForm
         Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1057'/'#1053
+        Title.Hint = #1045#1089#1083#1080' '#1103#1095#1077#1081#1082#1072' '#1078#1077#1083#1090#1072#1103', '#1079#1085#1072#1095#1080#1090' '#1074' '#1057'/'#1053' '#1077#1089#1090#1100' '#1088#1091#1089#1089#1082#1080#1077' '#1073#1091#1082#1074#1099
         Title.TitleButton = True
         Width = 150
+        OnGetCellParams = dbGridColumns0GetCellParams
       end
       item
         AutoFitColWidth = False
@@ -76,8 +79,10 @@ object MatDocUnitForm: TMatDocUnitForm
         EditButtons = <>
         FieldName = 'MAC'
         Footers = <>
+        Title.Hint = #1045#1089#1083#1080' '#1103#1095#1077#1081#1082#1072' '#1078#1077#1083#1090#1072#1103', '#1079#1085#1072#1095#1080#1090' '#1074' MAC '#1077#1089#1090#1100' '#1088#1091#1089#1089#1082#1080#1077' '#1073#1091#1082#1074#1099
         Title.TitleButton = True
         Width = 121
+        OnGetCellParams = dbGridColumns1GetCellParams
       end
       item
         CellButtons = <>
@@ -259,7 +264,7 @@ object MatDocUnitForm: TMatDocUnitForm
       Height = 25
       Anchors = [akTop, akRight]
       Cancel = True
-      Caption = #1047#1072#1082#1088#1099#1090#1100
+      Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
       TabOrder = 0
     end

@@ -134,7 +134,6 @@ procedure Jpeg2Png(aPicStream: TMemoryStream);
 procedure Png2Jpeg(aPicStream: TMemoryStream);
 
 function myQuestion(const Caption, Text: String): Boolean;
-
 // Работаем под wine
 function GetWineAvail: Boolean;
 

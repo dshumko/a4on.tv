@@ -20,8 +20,6 @@ type
     trWrite: TpFIBTransaction;
     lblAttribute: TLabel;
     dbluMat: TDBLookupComboboxEh;
-    ednCount: TDBNumberEditEh;
-    lbl1: TLabel;
     memNotice: TDBMemoEh;
     Label1: TLabel;
     edtSN: TDBEditEh;
@@ -106,16 +104,14 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := trWrite;
-    fq.sql.Text := 'insert into Inventory (Owner, Owner_Type, M_Id, Serial, ownership, Quant, Notice)';
-    fq.sql.add('values (:Owner, :Owner_Type, :M_Id, :Serial, :ownership, :Quant, :Notice)');
+    fq.sql.Text := 'insert into Appliance (OWN_ID, OWN_Type, M_Id, Serial, Property,  Notice)';
+    fq.sql.add('values (:Owner, :Owner_Type, :M_Id, :Serial, :ownership, :Notice)');
     fq.ParamByName('Owner').AsInteger := NODE_ID;
     fq.ParamByName('Owner_Type').AsInteger := 2; // 2=Узел
     fq.ParamByName('ownership').AsInteger := 0;
     fq.ParamByName('M_Id').AsInteger := dbluMat.KeyValue;
     fq.ParamByName('Serial').AsString := edtSN.Text;
     fq.ParamByName('Notice').AsString := memNotice.Lines.Text;
-    if not ednCount.Text.IsEmpty then
-      fq.ParamByName('Quant').AsDouble := ednCount.Value;
     fq.Transaction.StartTransaction;
     fq.ExecQuery;
     fq.Transaction.Commit;

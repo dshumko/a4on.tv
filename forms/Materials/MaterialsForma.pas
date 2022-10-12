@@ -12,7 +12,7 @@ uses
   PropStorageEh,
   FIBQuery, pFIBQuery, FIBDatabase, PropFilerEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping,
   ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh;
+  DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh, EhLibMTE, frxDBSet;
 
 type
   TMaterialsForm = class(TForm)
@@ -119,6 +119,14 @@ type
     trReadDS: TpFIBTransaction;
     btn1: TToolButton;
     btnQuickFilter: TToolButton;
+    tsPivotSN: TTabSheet;
+    dbgGridPivotSN: TDBGridEh;
+    srcPivotSN: TDataSource;
+    dsPivotSN: TMemTableEh;
+    drvPivotSN: TpFIBDataDriverEh;
+    pmPivot: TPopupMenu;
+    miRowHight: TMenuItem;
+    frxMaterials: TfrxDBDataset;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -156,14 +164,22 @@ type
     procedure DBGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos: TPoint; Cell: TGridCoord;
       InCellCursorPos: TPoint; Column: TColumnEh; var Params: TDBGridEhDataHintParams; var Processed: Boolean);
     procedure DBGridEhMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    procedure dbgColumnsZerroCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgColumnsZerroCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgGridPivotSNDblClick(Sender: TObject);
+    procedure miRowHightClick(Sender: TObject);
+    procedure dsPivotSNNewRecord(DataSet: TDataSet);
+    procedure dsMaterialsAfterScroll(DataSet: TDataSet);
+    procedure dsPivotSNAfterOpen(DataSet: TDataSet);
+    procedure dbgGridPivotSNSortMarkingChanged(Sender: TObject);
+    procedure dbgGridPivotSNColumns3GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgSNDblClick(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
     FAccessFull: Boolean;
     FAccessMat: Boolean;
     FPictHintWindow: THintWindow;
+    FSortSN: string;
     procedure InitDataSet;
     procedure dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
@@ -178,7 +194,7 @@ implementation
 uses
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
   DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview, RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
-  MatOutDocForma,
+  MatOutDocForma, TextEditForma,
   MatMoveDocForma, MatInventoryDocForma, CustomerForma;
 
 const
@@ -423,6 +439,15 @@ begin
   Screen.Cursor := crsr;
 end;
 
+procedure TMaterialsForm.miRowHightClick(Sender: TObject);
+begin
+  miRowHight.Checked := not miRowHight.Checked;
+  if miRowHight.Checked then
+    dbgGridPivotSN.OptionsEh := dbgGridPivotSN.OptionsEh + [dghAutoFitRowHeight]
+  else
+    dbgGridPivotSN.OptionsEh := dbgGridPivotSN.OptionsEh - [dghAutoFitRowHeight];
+end;
+
 procedure TMaterialsForm.pgcInOutChange(Sender: TObject);
 begin
   dsRemain.Active := (pgcInOut.ActivePage = tsIn);
@@ -433,6 +458,7 @@ begin
   dsInvent.Active := (pgcInOut.ActivePage = tsInventory);
   dsItogo.Active := (pgcInOut.ActivePage = tsItog);
   dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
+  dsPivotSN.Active := (pgcInOut.ActivePage = tsPivotSN);
 end;
 
 procedure TMaterialsForm.ppmCopyClick(Sender: TObject);
@@ -559,7 +585,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
     begin
-      if ((Components[i].Name <> 'dbgGridPivot') or (not(Components[i] as TDBGridEh).DataGrouping.IsGroupingWorks)) then
+      if (((Components[i] as TDBGridEh).DataGrouping.GroupLevels.Count = 0)) then
       begin
         (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
           Self.Name + '.' + Components[i].Name, false);
@@ -655,7 +681,8 @@ var
 begin
   actQuickFilter.Checked := not actQuickFilter.Checked;
 
-  for i := 0 to ComponentCount - 1 do begin
+  for i := 0 to ComponentCount - 1 do
+  begin
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).STFilter.Visible := actQuickFilter.Checked;
   end;
@@ -775,6 +802,40 @@ begin
     actEdit.Execute;
 end;
 
+procedure TMaterialsForm.dbgSNDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  S: String;
+  i: Integer;
+begin
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgSN.ScreenToClient(ScrPt);
+  Cell := dbgSN.MouseCoord(GrdPt.X, GrdPt.Y);
+  S := UpperCase(dbgSN.Fields[Cell.X - 1].FieldName);
+  if (S = 'OWNER_STR') and (not dsSerials.FieldByName('Owner_Type').IsNull) then
+  begin
+    if (dsSerials['Owner_Type'] = 1) and (not dsSerials.FieldByName('Owner').IsNull) then
+      A4MainForm.ShowCustomers(104, dsSerials['Owner']); // customer_id
+  end
+end;
+
+procedure TMaterialsForm.dsMaterialsAfterScroll(DataSet: TDataSet);
+begin
+  if dsPivotSN.Active then
+    dsPivotSN.SortOrder := FSortSN;
+end;
+
+procedure TMaterialsForm.dsPivotSNAfterOpen(DataSet: TDataSet);
+begin
+  dbgGridPivotSNSortMarkingChanged(dbgGridPivotSN);
+end;
+
+procedure TMaterialsForm.dsPivotSNNewRecord(DataSet: TDataSet);
+begin
+  dsPivotSN['M_ID'] := dsMaterials['M_ID'];
+end;
+
 procedure TMaterialsForm.tbCancelClick(Sender: TObject);
 begin
   srcDataSource.DataSet.Cancel;
@@ -804,6 +865,8 @@ begin
   FAccessMat := dmMain.AllowedAction(rght_Dictionary_Materials);
   FAccessFull := dmMain.AllowedAction(rght_Dictionary_full);
   fVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
+
+  tsPivotSN.TabVisible := dmMain.CompanyName.Contains('ЛТВ');
 
   b := FAccessFull or FAccessMat;
   InitDataSet;
@@ -1044,11 +1107,106 @@ begin
   frxReport.ShowPreparedReport;
 end;
 
-procedure TMaterialsForm.dbgColumnsZerroCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TMaterialsForm.dbgColumnsZerroCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if Params.Text = '0' then
     Params.Text := '';
+end;
+
+procedure TMaterialsForm.dbgGridPivotSNColumns3GetCellParams(Sender: TObject; EditMode: Boolean;
+  Params: TColCellParamsEh);
+
+  function HasCyrChar(S: String): Boolean;
+  const
+    rus: string = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+  var
+    p, i: Integer;
+  begin
+    Result := false;
+    if (Copy(S, 1, 6) = 'ПРОДАН') then
+      exit;
+
+    for i := 1 to Length(S) do
+    begin
+      p := Pos(S[i], rus);
+      if p > 1 then
+      begin
+        Result := True;
+        Break;
+      end;
+    end;
+  end;
+
+begin
+  if EditMode then
+    exit;
+
+  if HasCyrChar(Params.Text) then
+    Params.Background := clLime;
+end;
+
+procedure TMaterialsForm.dbgGridPivotSNDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  S: String;
+  i: Integer;
+begin
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgGridPivotSN.ScreenToClient(ScrPt);
+  Cell := dbgGridPivotSN.MouseCoord(GrdPt.X, GrdPt.Y);
+  S := UpperCase(dbgGridPivotSN.Fields[Cell.X - 1].FieldName);
+  if (S = 'ACCOUNT_NO') then
+  begin
+    if not dsPivotSN.FieldByName('ACCOUNT_NO').IsNull then
+      A4MainForm.ShowCustomers(2, dsPivotSN['ACCOUNT_NO']);
+  end
+  else
+  begin
+    if not dsPivotSN.FieldByName('RQ_ID').IsNull then
+    begin
+      if (S = 'RQ_DEFECT') and (dmMain.AllowedAction(rght_Request_full)) then
+      begin
+        if dsPivotSN.FieldByName('RQ_DEFECT').IsNull then
+          S := ''
+        else
+          S := dsPivotSN.FieldByName('RQ_DEFECT').AsString;
+
+        if EditText(S, 'Примечание', 'Примечание заявки') then
+        begin
+          if (dsPivotSN.State <> dsEdit) then
+            dsPivotSN.Edit;
+          dsPivotSN.FieldByName('RQ_DEFECT').AsString := S;
+          dsPivotSN.Post;
+        end;
+      end
+      else
+      begin
+        i := dsPivotSN['RQ_ID'];
+        ReguestExecute(i, -2, 1);
+      end;
+    end;
+  end;
+end;
+
+procedure TMaterialsForm.dbgGridPivotSNSortMarkingChanged(Sender: TObject);
+var
+  S: string;
+  i, J: Integer;
+begin
+  J := dbgGridPivotSN.SortMarkedColumns.Count;
+  S := ' ';
+  for i := 0 to pred(J) do
+  begin
+    S := S + ' ' + dbgGridPivotSN.SortMarkedColumns[i].FieldName;
+    if dbgGridPivotSN.SortMarkedColumns[i].Title.SortMarker = smDownEh then
+      S := S + ' desc';
+    if i <> pred(J) then
+      S := S + ',';
+  end;
+  FSortSN := S.Trim([',']);
+
+  dsPivotSN.SortOrder := FSortSN;
 end;
 
 procedure TMaterialsForm.dbgJournalDblClick(Sender: TObject);

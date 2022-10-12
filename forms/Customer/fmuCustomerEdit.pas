@@ -172,6 +172,8 @@ type
     procedure dbgrdhContactsKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure lcbBANKExit(Sender: TObject);
+    procedure eSURNAMEEnter(Sender: TObject);
+    procedure eFIRSTNAMEEnter(Sender: TObject);
   private
     { Private declarations }
     FullAccess: Boolean;
@@ -371,6 +373,17 @@ begin
   end;
   Query.Transaction.Commit;
   Query.Close;
+end;
+
+procedure TapgCustomerEdit.eFIRSTNAMEEnter(Sender: TObject);
+begin
+  if ((dmMain.CompanyCountry = 'BY') or (dmMain.CompanyCountry = 'RU')) then
+  begin
+    if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+      SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
+    else
+      dmMain.RestoreKL;
+  end;
 end;
 
 procedure TapgCustomerEdit.eFLAT_NOExit(Sender: TObject);
@@ -876,6 +889,17 @@ begin
   end;
 end;
 
+procedure TapgCustomerEdit.eSURNAMEEnter(Sender: TObject);
+begin
+  if ((dmMain.CompanyCountry = 'BY') or (dmMain.CompanyCountry = 'RU')) then
+  begin
+    if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+      SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
+    else
+      dmMain.RestoreKL;
+  end;
+end;
+
 procedure TapgCustomerEdit.eSURNAMEExit(Sender: TObject);
 var
   s: string;
@@ -937,7 +961,7 @@ end;
 
 procedure TapgCustomerEdit.edtPASSPORT_NUMBEREnter(Sender: TObject);
 begin
-  if dmMain.CompanyCountry = 'BY' then
+  if ((dmMain.CompanyCountry = 'BY') or (dmMain.CompanyCountry = 'RU')) then
   begin
     if (dmMain.GetIniValue('KBDSWITCH') = '0') then
       SetKeyboardLayout('EN')
@@ -948,7 +972,7 @@ end;
 
 procedure TapgCustomerEdit.edtPASSPORT_NUMBERExit(Sender: TObject);
 begin
-  if dmMain.CompanyCountry = 'BY' then
+  if ((dmMain.CompanyCountry = 'BY') or (dmMain.CompanyCountry = 'RU')) then
   begin
     if (dmMain.GetIniValue('KBDSWITCH') = '0') then
       SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))

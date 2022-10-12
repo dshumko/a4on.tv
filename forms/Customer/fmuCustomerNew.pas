@@ -308,7 +308,8 @@ begin
   end;
   dsCustomerMEM.Open;
   dsCustomerMEM.Insert;
-  dsCustomerMEM['CONTRACT_DATE'] := Now();
+  if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') = '1') then
+    dsCustomerMEM['CONTRACT_DATE'] := Now();
   dsCustomerMEM['HAND_CONTROL'] := 0;
   dsCustomerMEM['JURIDICAL'] := 0;
   edtSecret.Text := GenPassword(8);

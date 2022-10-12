@@ -65,6 +65,10 @@ type
       State: TGridDrawState);
     procedure mtUnitsNewRecord(DataSet: TDataSet);
     procedure actGenerateExecute(Sender: TObject);
+    procedure dbGridColumns0GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridColumns1GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     fMatDocID: Integer;
@@ -113,6 +117,27 @@ begin
     mfu.free;
   end;
 end;
+
+  function HasCyrChar(S: String): Boolean;
+  const
+    rus: string = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+  var
+    p, i: Integer;
+  begin
+    Result := false;
+    if (Copy(S, 1, 6) = 'ПРОДАН') then
+      exit;
+
+    for i := 1 to Length(S) do
+    begin
+      p := Pos(S[i], rus);
+      if p > 1 then
+      begin
+        Result := True;
+        Break;
+      end;
+    end;
+  end;
 
 procedure TMatDocUnitForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -440,6 +465,26 @@ begin
     with TDBGridEh(ActiveControl) do
       if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
         Selection.SelectAll;
+end;
+
+procedure TMatDocUnitForm.dbGridColumns0GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if EditMode then
+    exit;
+
+  if HasCyrChar(Params.Text) then
+    Params.Background := clYellow;
+end;
+
+procedure TMatDocUnitForm.dbGridColumns1GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if EditMode then
+    exit;
+
+  if HasCyrChar(Params.Text) then
+    Params.Background := clYellow;
 end;
 
 procedure TMatDocUnitForm.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);

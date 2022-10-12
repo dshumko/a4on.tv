@@ -193,6 +193,7 @@ type
     chkDisablePortDict: TCheckBox;
     lbl181: TLabel;
     cbbRQ_TO_NEGATIVE: TDBLookupComboboxEh;
+    chkSrvWorker: TCheckBox;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -484,6 +485,7 @@ begin
       SaveSettingsBoolean('NEGATIVE_PAY', cbNegativePay);
       SaveSettingsStr('ACCOUNT_FORMAT', edtORDER.Text);
       SaveSettingsBoolean('ACCOUNT_DOG', chkDOG);
+      SaveSettingsBoolean('SAVE_SRV_WORKER', chkSrvWorker);
 
       if FLastAccount <> AccNumber.value then
       begin
@@ -813,6 +815,8 @@ begin
         edtIdleHoure.value := select.FN('VAR_VALUE').AsInteger;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'WH_REQ_EXECUTOR' then
         chkWHExecutor.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'SAVE_SRV_WORKER' then
+        chkSrvWorker.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
 
       // пеня
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'SHOW_FINE' then

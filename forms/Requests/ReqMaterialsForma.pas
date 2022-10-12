@@ -225,9 +225,20 @@ begin
 end;
 
 procedure TReqMaterialsForm.SetEditMode(Value: Boolean);
+var
+  i: Integer;
 begin
   fEditMode := Value;
-  dbGrid.ReadOnly := not fEditMode;
+
+  for i := 0 to dbGrid.Columns.Count - 1 do
+  begin
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_QUANT') then
+      dbGrid.Columns[i].ReadOnly := not fEditMode;
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'NOT_CALC') then
+      dbGrid.Columns[i].ReadOnly := not fEditMode;
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_COST') then
+      dbGrid.Columns[i].ReadOnly := not fEditMode;
+  end;
 end;
 
 end.

@@ -871,7 +871,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 216
     Top = 406
   end
-  object errors: TCnErrorProvider
+  object CnErrors: TCnErrorProvider
     DoubleBuffer = False
     Left = 272
     Top = 345

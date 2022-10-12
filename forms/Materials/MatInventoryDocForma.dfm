@@ -684,7 +684,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 440
     Top = 286
   end
-  object errors: TCnErrorProvider
+  object CnErrors: TCnErrorProvider
     DoubleBuffer = False
     Left = 398
     Top = 70

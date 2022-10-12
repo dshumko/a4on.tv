@@ -1625,7 +1625,7 @@ begin
   if (dsRequest.FieldByName('STREET_ID').IsNull) or (dsRequest.FieldByName('HOUSE_ID').IsNull) then
     Exit;
 
-  s := dsRequest.FieldByName('STREET_ID').AsString + '~' + dsRequest.FieldByName('STREET_ID').AsString;
+  s := dsRequest.FieldByName('STREET_ID').AsString + '~' + dsRequest.FieldByName('HOUSE_ID').AsString;
   A4MainForm.ShowCustomers(14, s);
 end;
 

@@ -210,9 +210,16 @@ begin
 end;
 
 procedure TReqMatReturnForm.SetEditMode(Value: Boolean);
+var
+  i: Integer;
 begin
   fEditMode := Value;
-  dbGrid.ReadOnly := not fEditMode;
+
+  for i := 0 to dbGrid.Columns.Count - 1 do
+  begin
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'QUANT') then
+      dbGrid.Columns[i].ReadOnly := not fEditMode;
+  end;
 end;
 
 end.

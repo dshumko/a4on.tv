@@ -48,6 +48,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure mmoNoticeChange(Sender: TObject);
   private
     { Private declarations }
     FPayment_id: Integer;
@@ -161,6 +162,11 @@ end;
 procedure TPaymentEditFrm.FormShow(Sender: TObject);
 Begin
   bbOk.Visible := dmMain.AllowedAction(rght_Pays_full); // полный доступ
+end;
+
+procedure TPaymentEditFrm.mmoNoticeChange(Sender: TObject);
+begin
+  bbOk.Enabled := ((cr.CUSTOMER_ID > -1) and ((dePaySum.Value > 0) or ((dePaySum.Value < 0) and FPayNegative)));
 end;
 
 procedure TPaymentEditFrm.SetPayID(Value: Integer);

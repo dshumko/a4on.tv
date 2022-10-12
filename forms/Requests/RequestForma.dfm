@@ -35,12 +35,6 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 359
       Top = 6
@@ -425,7 +419,6 @@ object RequestForm: TRequestForm
           Height = 137
           inherited lblDebt: TLabel
             Width = 370
-            Margins.Bottom = 0
             OnDblClick = CustomerInfoFrmlblFIODblClick
           end
           inherited memAbonent: TMemo
@@ -446,7 +439,7 @@ object RequestForm: TRequestForm
     Top = 188
     Width = 784
     Height = 337
-    ActivePage = tabExecute
+    ActivePage = tabGiveReq
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
@@ -772,7 +765,7 @@ object RequestForm: TRequestForm
                 FieldName = 'NOTICE'
                 Footers = <>
                 Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-                Width = 355
+                Width = 440
               end>
             object RowDetailData: TRowDetailPanelControlEh
             end
@@ -1146,6 +1139,15 @@ object RequestForm: TRequestForm
                   Footers = <>
                   Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
                   Width = 261
+                end
+                item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'SERIAL'
+                  Footers = <>
+                  Title.Caption = #1057'/'#1053
+                  Width = 103
                 end
                 item
                   AutoFitColWidth = False
@@ -1617,10 +1619,10 @@ object RequestForm: TRequestForm
         'w.surname ||'#39' '#39'|| coalesce(w.firstname,'#39#39')||'#39' '#39'||coalesce(w.midl' +
         'ename,'#39#39') as FIO'
       ', w.Phone_NO'
-      ', re.notice'
-      'from request_executors re, worker w'
-      'where re.exec_id = w.worker_id'
-      'and re.rq_id = :RQ_ID'
+      ', coalesce(re.notice, '#39#39')||coalesce('#39'/'#39'||w.notice, '#39#39') notice'
+      'from request_executors re '
+      '  inner join worker w on (re.exec_id = w.worker_id)'
+      'where re.rq_id = :RQ_ID'
       'order by 2')
     Transaction = trRead
     Database = dmMain.dbTV
@@ -2220,6 +2222,7 @@ object RequestForm: TRequestForm
       '  , o.O_Name WH_NAME'
       '  , 0 as MT'
       '  , rm.Rm_Id'
+      '  , rm.Serial'
       '  from MATERIALS m'
       '       inner join REQUEST_MATERIALS rM on (M.M_ID = rM.M_ID)'
       '       left outer join objects o on (o.O_Id = rm.Wh_Id and'
@@ -2236,11 +2239,12 @@ object RequestForm: TRequestForm
       '  , rM.Notice notice'
       '  , m.DEMENSION'
       '  , rM.Quant * (-1) QNT'
-      '  , rM.Quant * (-1) * m.Cost as COST'
-      '  , 0 as NOT_CALC'
+      '  , rM.Quant * (-1) * coalesce(rm.Cost, m.Cost) as COST'
+      '  , rm.CALC as NOT_CALC'
       '  , o.O_Name WH_NAME'
       '  , 1 as MT'
       '  , rm.ID Rm_Id'
+      '  , rm.Serial'
       '  from MATERIALS m'
       
         '       inner join Request_Materials_Return rM on (M.M_ID = rM.M_' +

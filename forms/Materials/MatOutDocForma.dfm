@@ -734,7 +734,7 @@ object MatOutDocForm: TMatOutDocForm
     Left = 440
     Top = 286
   end
-  object errors: TCnErrorProvider
+  object CnErrors: TCnErrorProvider
     DoubleBuffer = False
     Left = 272
     Top = 345

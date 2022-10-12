@@ -163,6 +163,7 @@ object PaymentEditFrm: TPaymentEditFrm
     TabOrder = 3
     Visible = True
     WantReturns = True
+    OnChange = mmoNoticeChange
   end
   object pnlSRV: TPanel
     Left = 0

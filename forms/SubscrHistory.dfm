@@ -282,7 +282,25 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'CLOSED_ON'
           Footers = <>
           Title.Caption = #1050#1086#1075#1076#1072' '#1086#1090#1082#1083'.'
+          Visible = False
           Width = 101
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'WORKER_ON'
+          Footers = <>
+          Title.Caption = #1057#1086#1090#1088'-'#1082' '#1087#1086#1076#1082#1083'.'
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'WORKER_OFF'
+          Footers = <>
+          Title.Caption = #1057#1086#1090#1088'-'#1082' '#1086#1090#1082#1083'.'
+          Visible = False
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

@@ -195,6 +195,17 @@ object apgCustomerSrv: TapgCustomerSrv
             Footers = <>
             Title.Caption = #1042#1080#1076' '#1091#1089#1083#1091#1075#1080
             Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'WORKER'
+            Footers = <>
+            Title.Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
+            Title.TitleButton = True
+            Visible = False
+            Width = 67
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end

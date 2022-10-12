@@ -8,7 +8,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls,
-  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, CnErrorProvider, PrjConst;
+  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, CnErrorProvider,
+  PrjConst;
 
 type
   TOnOffServiceForm = class(TForm)
@@ -52,6 +53,11 @@ type
     dsService: TpFIBDataSet;
     dsOnOffService: TpFIBDataSet;
     CnErrors: TCnErrorProvider;
+    pnlWorker: TPanel;
+    lblWorker: TLabel;
+    lcbWorker: TDBLookupComboboxEh;
+    dsWorker: TpFIBDataSet;
+    srcWorker: TDataSource;
     procedure dsServiceAfterOpen(DataSet: TDataSet);
     procedure dsOnOffServiceAfterOpen(DataSet: TDataSet);
     procedure luServiceChange(Sender: TObject);
@@ -136,6 +142,10 @@ begin
       dsOnOffService.Open;
       eDateTo.Visible := True;
       pnlQUANT.Visible := (dsOnOffService['SERVICE_TYPE'] = 2);
+
+      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+      dsWorker.Active := pnlWorker.Visible;
+
       // OkCancelFrame.bbOk.Enabled := dsOnOffService.RecordCount>0;
       if ShowModal = mrOk then
       begin
@@ -144,7 +154,7 @@ begin
           exit;
 
         Query.SQL.Text :=
-          'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID, :SERV_ID, :ACTSERVICE, :DATE,:OFF,:NOTICE,:AUNITS);';
+          'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID,:SERV_ID,:ACTSERVICE,:DATE,:OFF,:NOTICE,:AUNITS,1,:WORKER);';
         Query.ParamByName('ACTSERVICE').AsInteger := luOnOffService.value;
         Query.ParamByName('SERV_ID').AsInteger := aService_ID;
         Query.ParamByName('NOTICE').AsString := memNotice.Lines.Text;
@@ -156,6 +166,10 @@ begin
           end
         else
           Query.ParamByName('AUNITS').AsFloat := 1;
+        if (pnlWorker.Visible) and (not lcbWorker.Text.IsEmpty) then
+          Query.ParamByName('WORKER').AsString := lcbWorker.Text
+        else
+          Query.ParamByName('WORKER').Clear;
         Query.Transaction := dmMain.trWriteQ;
 
         all := False;
@@ -234,6 +248,10 @@ begin
       dsSwitchTo.Open;
       if dsSwitchTo.RecordCount = 0 then
         exit;
+
+      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+      dsWorker.Active := pnlWorker.Visible;
+
       // dsOnOffService.ParamByName('From_Srv').Value := aSERVICE_ID;
       // dsOnOffService.ParamByName('To_Srv').Value   := dsSwitchTo['Service_id'];
       // dsOnOffService.Open;
@@ -252,7 +270,7 @@ begin
           exit;
 
         Query.SQL.Text :=
-          'select RESULT from Switch_Service(:Customer_Id, :From_Srv, :To_Srv, :Switch_Srv, :Units, :Switch_Date, :Notice);';
+          'select RESULT from Switch_Service(:Customer_Id, :From_Srv, :To_Srv, :Switch_Srv, :Units, :Switch_Date, :Notice, :WORKER);';
         Query.ParamByName('Customer_Id').AsInteger := aCustomer_ID;
         Query.ParamByName('From_Srv').AsInteger := fService_ID;
         Query.ParamByName('TO_Srv').AsInteger := dblSwitchTo.value;
@@ -271,7 +289,10 @@ begin
           end
         else
           Query.ParamByName('Units').AsFloat := 1;
-
+        if (pnlWorker.Visible) and (not lcbWorker.Text.IsEmpty) then
+          Query.ParamByName('WORKER').AsString := lcbWorker.Text
+        else
+          Query.ParamByName('WORKER').Clear;
         Query.Transaction := dmMain.trWriteQ;
 
         all := False;
@@ -346,6 +367,10 @@ begin
       memNotice.Lines.Text := Notice;
       dsOnOffService.Open;
       pnlQUANT.Visible := (dsOnOffService['SERVICE_TYPE'] = 2);
+
+      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+      dsWorker.Active := pnlWorker.Visible;
+
       OkCancelFrame.bbOk.Enabled := dsOnOffService.RecordCount > 0;
       if ShowModal = mrOk then
       begin
@@ -353,8 +378,8 @@ begin
         if not(fFullAccess or fCanAdd or fCanEdit or fChangeHistory) then
           exit;
 
-        Query.SQL.Text :=
-          'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID, :SERV_ID, :ACTSERVICE, :DATE,:OFF,:NOTICE,:AUNITS);';
+        Query.SQL.Text := 'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID,:SERV_ID,' +
+          ':ACTSERVICE,:DATE,:OFF,:NOTICE,:AUNITS,1,:WORKER);';
         Query.ParamByName('ACTSERVICE').AsInteger := luOnOffService.value;
         Query.ParamByName('SERV_ID').AsInteger := aService_ID;
         Query.ParamByName('DATE').AsDate := eDate.value;
@@ -372,6 +397,11 @@ begin
           Query.ParamByName('OFF').AsInteger := 1
         else
           Query.ParamByName('OFF').AsInteger := 0;
+        if (pnlWorker.Visible) and (not lcbWorker.Text.IsEmpty) then
+          Query.ParamByName('WORKER').AsString := lcbWorker.Text
+        else
+          Query.ParamByName('WORKER').Clear;
+
         Query.Transaction := dmMain.trWriteQ;
 
         all := False;
@@ -440,7 +470,12 @@ begin
 
       OkCancelFrame.bbOk.Enabled := dsService.RecordCount > 0;
       if aService_TYPE = 0 then
+      begin
+        pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+        dsWorker.Active := pnlWorker.Visible;
         luOnOffServiceChange(nil);
+      end;
+
       if ShowModal = mrOk then
       begin
         // если нельзя редактировать выходим
@@ -454,8 +489,8 @@ begin
             ShowMessage(format(rsErrorSrvOnOff, [luService.Text]));
             exit;
           end;
-          Query.SQL.Text :=
-            'EXECUTE PROCEDURE ADD_SUBSCR_SERVICE_VAT(:ACUSTOMER_ID, :ASERVICE_ID, :AACTSERVICE, :ADATE, :NOTICE, :AUNITS, :DOG, :DOG_DATE,:VATG_ID);';
+          Query.SQL.Text := 'EXECUTE PROCEDURE ADD_SUBSCR_SERVICE_VAT(:ACUSTOMER_ID,:ASERVICE_ID,:AACTSERVICE,:ADATE,' +
+            ':NOTICE,:AUNITS,:DOG,:DOG_DATE,:VATG_ID,1,:WORKER);';
           Query.ParamByName('AACTSERVICE').AsInteger := luOnOffService.value;
           if (dsOnOffService['SERVICE_TYPE'] = 2) then
             try
@@ -471,6 +506,10 @@ begin
             if not VarIsNull(edtDogDate.value) then
               Query.ParamByName('DOG_DATE').AsDate := edtDogDate.value;
           end;
+          if (pnlWorker.Visible) and (not lcbWorker.Text.IsEmpty) then
+            Query.ParamByName('WORKER').AsString := lcbWorker.Text
+          else
+            Query.ParamByName('WORKER').Clear;
 
           Query.ParamByName('ASERVICE_ID').AsInteger := luService.value;
         end
@@ -556,6 +595,7 @@ begin
   fCanEdit := dmMain.AllowedAction(rght_Customer_EditSrv);
   fCanAdd := dmMain.AllowedAction(rght_Customer_AddSrv);
   fChangeHistory := dmMain.AllowedAction(rght_Customer_History);
+
   OkCancelFrame.bbOk.Visible := fFullAccess or fCanEdit or fCanAdd;
 end;
 
@@ -607,19 +647,27 @@ begin
 end;
 
 procedure TOnOffServiceForm.dsOnOffServiceAfterOpen(DataSet: TDataSet);
+var
+  i: Integer;
 begin
-  luOnOffService.KeyValue := dsOnOffService['id'];
+  if (dsOnOffService.FieldExist('ID', i)) and (not dsOnOffService.FieldByName('ID').IsNull) then
+    luOnOffService.KeyValue := dsOnOffService['ID'];
 end;
 
 procedure TOnOffServiceForm.dsServiceAfterOpen(DataSet: TDataSet);
+var
+  i: Integer;
 begin
-  luService.KeyValue := dsService['SERVICE_ID'];
+  if (dsService.FieldExist('SERVICE_ID', i)) and (not dsService.FieldByName('SERVICE_ID').IsNull) then
+    luService.KeyValue := dsService['SERVICE_ID'];
 end;
 
 procedure TOnOffServiceForm.dsSwitchToAfterOpen(DataSet: TDataSet);
+var
+  i: Integer;
 begin
-  dblSwitchTo.KeyValue := dsSwitchTo['SERVICE_ID'];
-
+  if (dsSwitchTo.FieldExist('SERVICE_ID', i)) and (not dsSwitchTo.FieldByName('SERVICE_ID').IsNull) then
+    dblSwitchTo.KeyValue := dsSwitchTo['SERVICE_ID'];
 end;
 
 procedure TOnOffServiceForm.eDateExit(Sender: TObject);

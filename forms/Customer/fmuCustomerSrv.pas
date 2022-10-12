@@ -110,6 +110,7 @@ procedure TapgCustomerSrv.InitForm;
 var
   cAdd: Boolean;
   cChg: Boolean;
+  i: Integer;
 begin
   { TODO: Не давать править SRV в прошлом периоде }
   {

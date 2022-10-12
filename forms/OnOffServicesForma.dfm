@@ -4,7 +4,7 @@ object OnOffServiceForm: TOnOffServiceForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077' / '#1074#1099#1082#1083#1102#1095#1077#1085#1080#1077' '#1091#1089#1083#1091#1075
-  ClientHeight = 346
+  ClientHeight = 378
   ClientWidth = 425
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,12 +22,18 @@ object OnOffServiceForm: TOnOffServiceForm
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 309
+    Top = 341
     Width = 425
     Height = 37
     Align = alBottom
-    TabOrder = 8
+    TabOrder = 9
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 136
       Top = 6
@@ -210,12 +216,12 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object Panel1: TPanel
     Left = 0
-    Top = 197
+    Top = 227
     Width = 425
-    Height = 112
+    Height = 114
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 7
+    TabOrder = 8
     object Label4: TLabel
       Left = 0
       Top = 0
@@ -228,7 +234,7 @@ object OnOffServiceForm: TOnOffServiceForm
       Left = 0
       Top = 13
       Width = 425
-      Height = 99
+      Height = 101
       Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       Align = alClient
       Anchors = [akLeft, akTop, akRight]
@@ -247,6 +253,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Width = 425
     Height = 30
     Align = alTop
+    BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
       425
@@ -368,6 +375,44 @@ object OnOffServiceForm: TOnOffServiceForm
       ShowHint = True
       TabOrder = 0
       Visible = True
+    end
+  end
+  object pnlWorker: TPanel
+    Left = 0
+    Top = 197
+    Width = 425
+    Height = 30
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 7
+    Visible = False
+    DesignSize = (
+      425
+      30)
+    object lblWorker: TLabel
+      Left = 9
+      Top = 7
+      Width = 56
+      Height = 13
+      Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
+    end
+    object lcbWorker: TDBLookupComboboxEh
+      Left = 136
+      Top = 5
+      Width = 282
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = ''
+      DropDownBox.Sizable = True
+      EditButtons = <>
+      KeyField = 'FIO'
+      ListField = 'FIO'
+      ListSource = srcWorker
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
+      OnChange = dblSwitchToChange
     end
   end
   object srcOnOffService: TDataSource
@@ -541,7 +586,28 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
-    Left = 40
-    Top = 40
+    Left = 16
+    Top = 296
+  end
+  object dsWorker: TpFIBDataSet
+    SelectSQL.Strings = (
+      'Select'
+      
+        'w.Surname||coalesce('#39' '#39'||w.Firstname||coalesce('#39' '#39'||w.Midlename,' +
+        #39#39'),'#39#39') FIO'
+      'from worker w'
+      'order by 1')
+    AfterOpen = dsServiceAfterOpen
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 294
+    Top = 283
+  end
+  object srcWorker: TDataSource
+    AutoEdit = False
+    DataSet = dsWorker
+    Left = 270
+    Top = 269
   end
 end

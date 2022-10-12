@@ -68,6 +68,8 @@
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_MinorVer>10</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.780;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Debugger_RunParams>/p:masterkey</Debugger_RunParams>
@@ -79,6 +81,9 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_MinorVer>10</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.788;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>788</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
@@ -96,6 +101,9 @@
         <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_MinorVer>10</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.781;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>781</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
@@ -1042,7 +1050,6 @@
                     <VersionInfoKeys Name="CFBundleExecutable"/>
                 </VersionInfoKeys>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\fmxdesigner210.bpl">FMX Form designer and property and component editors</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k210.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp210.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>

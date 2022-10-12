@@ -29,13 +29,6 @@ object NodeMaterialForm: TNodeMaterialForm
     Height = 13
     Caption = #1054#1073#1086#1088'-'#1080#1077'/'#1052#1072#1090#1077#1088#1080#1072#1083
   end
-  object lbl1: TLabel
-    Left = 8
-    Top = 64
-    Width = 60
-    Height = 13
-    Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086
-  end
   object Label1: TLabel
     Left = 8
     Top = 39
@@ -49,7 +42,7 @@ object NodeMaterialForm: TNodeMaterialForm
     Width = 401
     Height = 35
     Align = alBottom
-    TabOrder = 4
+    TabOrder = 3
     TabStop = True
     inherited bbOk: TBitBtn
       Left = 67
@@ -79,30 +72,18 @@ object NodeMaterialForm: TNodeMaterialForm
     TabOrder = 0
     Visible = True
   end
-  object ednCount: TDBNumberEditEh
-    Left = 112
-    Top = 61
-    Width = 121
-    Height = 21
-    DynProps = <>
-    EmptyDataInfo.Text = #1082#1086#1083'-'#1074#1086' '#1091#1089#1090#1088#1086#1081#1089#1090#1074
-    EditButtons = <>
-    ShowHint = True
-    TabOrder = 2
-    Visible = True
-  end
   object memNotice: TDBMemoEh
     Left = 8
-    Top = 88
+    Top = 62
     Width = 385
-    Height = 105
+    Height = 131
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
-    TabOrder = 3
+    TabOrder = 2
     Visible = True
     WantReturns = True
   end

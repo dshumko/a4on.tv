@@ -4,7 +4,7 @@ object ReqExecutorsForm: TReqExecutorsForm
   ActiveControl = dbGrid
   Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1080' '#1079#1072#1103#1074#1082#1080
   ClientHeight = 451
-  ClientWidth = 632
+  ClientWidth = 716
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,7 +22,7 @@ object ReqExecutorsForm: TReqExecutorsForm
   object spl1: TSplitter
     Left = 0
     Top = 228
-    Width = 632
+    Width = 716
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -30,7 +30,7 @@ object ReqExecutorsForm: TReqExecutorsForm
   object Panel2: TPanel
     Left = 0
     Top = 414
-    Width = 632
+    Width = 716
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
@@ -38,19 +38,13 @@ object ReqExecutorsForm: TReqExecutorsForm
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
-      Width = 632
+      Width = 716
       Height = 37
       Align = alClient
       TabOrder = 0
       TabStop = True
-      inherited Label2: TLabel
-        Margins.Bottom = 0
-      end
-      inherited Label1: TLabel
-        Margins.Bottom = 0
-      end
       inherited bbOk: TBitBtn
-        Left = 352
+        Left = 436
         Top = 6
         Width = 196
         Height = 25
@@ -59,7 +53,7 @@ object ReqExecutorsForm: TReqExecutorsForm
         OnClick = OkCancelFrame1bbOkClick
       end
       inherited bbCancel: TBitBtn
-        Left = 554
+        Left = 638
         Top = 6
         Height = 25
         Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -69,7 +63,7 @@ object ReqExecutorsForm: TReqExecutorsForm
   object pnlWork: TPanel
     Left = 0
     Top = 0
-    Width = 632
+    Width = 716
     Height = 228
     Align = alClient
     BevelOuter = bvNone
@@ -78,7 +72,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     object Panel3: TPanel
       Left = 0
       Top = 0
-      Width = 632
+      Width = 716
       Height = 228
       Align = alClient
       BevelOuter = bvNone
@@ -91,7 +85,7 @@ object ReqExecutorsForm: TReqExecutorsForm
       object dbGrid: TDBGridEh
         Left = 232
         Top = 0
-        Width = 400
+        Width = 484
         Height = 228
         Align = alClient
         AllowedOperations = [alopUpdateEh]
@@ -137,9 +131,17 @@ object ReqExecutorsForm: TReqExecutorsForm
             EditButtons = <>
             FieldName = 'NOTICE'
             Footers = <>
-            ReadOnly = True
-            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-            Width = 100
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1079#1072#1103#1074#1082#1080
+            Width = 105
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'W_NOTICE'
+            Footers = <>
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1072
+            Width = 159
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -184,7 +186,7 @@ object ReqExecutorsForm: TReqExecutorsForm
   object pnlTime: TPanel
     Left = 0
     Top = 231
-    Width = 632
+    Width = 716
     Height = 183
     Align = alBottom
     BevelOuter = bvNone
@@ -193,7 +195,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 632
+      Width = 716
       Height = 13
       Align = alTop
       Caption = #1047#1072#1103#1074#1082#1080' '#1085#1072' '#1101#1090#1086' '#1074#1088#1077#1084#1103' '#1080' '#1085#1072' '#1072#1076#1088#1077#1089
@@ -201,7 +203,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     object dbgSame: TDBGridEh
       Left = 0
       Top = 13
-      Width = 632
+      Width = 716
       Height = 170
       Align = alClient
       DataSource = srcSame
@@ -343,6 +345,7 @@ object ReqExecutorsForm: TReqExecutorsForm
         'esce(w.midlename, '#39#39') as FIO,'
       '    w.phone_no,'
       '    re.notice,'
+      '    w.NOTICE W_NOTICE, '
       '    case'
       '      when re.rq_id is null then 0'
       '      else 1'

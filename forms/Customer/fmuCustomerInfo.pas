@@ -263,7 +263,9 @@ procedure TapgCustomerInfo.SaveNotice;
 var
   s: String;
 begin
-  if (not FDataSource.DataSet.Active) or (FDataSource.DataSet.RecordCount = 0) then
+  if (not FDataSource.DataSet.Active) //
+    or (FDataSource.DataSet.RecordCount = 0) //
+    or (FDataSource.DataSet.FindField('Customer_id') = nil) then
     exit;
 
   if FDataSource.DataSet.FieldByName('Notice').IsNull then

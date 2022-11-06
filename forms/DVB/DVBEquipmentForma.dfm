@@ -145,6 +145,16 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
+        FieldName = 'SRV_LIST'
+        Footers = <>
+        Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1059#1089#1083#1091#1075#1080
+        Title.TitleButton = True
+        Width = 82
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'ADDED_BY'
         Footers = <>
         Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085'|'#1050#1077#1084
@@ -453,7 +463,19 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       '    h.house_no,'
       '    c.flat_no,'
       '    d.added_by,'
-      '    d.added_on'
+      '    d.added_on,'
+      '    iif(not c.Customer_Id is null,'
+      '      cast((select list(srv.Shortname, '#39', '#39')'
+      '        from subscr_serv ss'
+      
+        '             inner join services srv on (ss.Serv_Id = srv.Servic' +
+        'e_Id)'
+      
+        '        where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = ' +
+        '1 and srv.Business_Type = 2'
+      '      ) as VARCHAR(255))'
+      '      , '#39#39
+      '      ) as SRV_LIST'
       'from EQUIPMENT_DVB  d'
       
         '   left outer join customer_decoders cd on ((d.eq_n = cd.decoder' +

@@ -28,10 +28,8 @@ uses
   PasZip in 'Units\PasZip.pas',
   ad3MainDictionary in 'Units\ad3MainDictionary.pas',
   MAIN in 'FORMS\MAIN.PAS' {A4MainForm},
-  CustomersFilter in 'forms\Customer\CustomersFilter.pas' {CustomersFilterForm},
   OkCancel_frame in 'FRAME\OkCancel_frame.pas' {OkCancelFrame: TFrame},
   PeriodForma in 'FORMS\PeriodForma.pas' {PeriodForm},
-  SubscrHistory in 'FORMS\SubscrHistory.pas' {CustSubscrHistoryForma},
   DM in 'FORMS\DM.pas' {dmMain: TDataModule},
   OnOffServicesForma in 'FORMS\OnOffServicesForma.pas' {OnOffServiceForm},
   ChoiseForma in 'FORMS\ChoiseForma.pas' {ChoiseForm},
@@ -146,6 +144,7 @@ uses
   TelnetForma in 'forms\TelnetForma.pas' {TelnetForm},
   CustomerForma in 'forms\Customer\CustomerForma.pas' {CustomerForm},
   AtrPages in 'units\AtrPages.pas',
+  CF in 'forms\Customer\CF.pas' {CustomersForm},
   fmuCustomerSrv in 'forms\Customer\fmuCustomerSrv.pas' {apgCustomerSrv},
   fmuCustomerInfo in 'forms\Customer\fmuCustomerInfo.pas' {apgCustomerInfo},
   fmuCustomerPayments in 'forms\Customer\fmuCustomerPayments.pas' {apgCustomerPayments},
@@ -159,7 +158,8 @@ uses
   fmuCustomerDigit in 'forms\Customer\fmuCustomerDigit.pas' {apgCustomerDigit},
   fmuCustomerInternet in 'forms\Customer\fmuCustomerInternet.pas' {apgCustomerInternet},
   fmuCustomerCard in 'forms\Customer\fmuCustomerCard.pas' {apgCustomerCard},
-  CF in 'forms\Customer\CF.pas' {CustomersForm},
+  CustomersFilter in 'forms\Customer\CustomersFilter.pas' {CustomersFilterForm},
+  SubscrHistory in 'forms\Customer\SubscrHistory.pas' {CustSubscrHistoryForma},
   PayDocSelectForma in 'forms\PayDocSelectForma.pas' {PayDocSelectForm},
   MessagesForma in 'forms\MessagesForma.pas' {MessagesForm},
   DecoderPacketForma in 'forms\DecoderPacketForma.pas' {DecoderPacketForm},
@@ -197,7 +197,7 @@ uses
   TetrisForm in 'forms\TetrisForm.pas' {FormTetris},
   apiSMS in 'units\apiSMS.pas',
   PaymentSourcesForma in 'forms\PaymentSourcesForma.pas' {PaymentSourcesForm},
-  MaterialForma in 'forms\Materials\MaterialForma.pas' {MaterailForm},
+  MaterialForma in 'forms\Materials\MaterialForma.pas' {MaterialForm},
   MatDocsForma in 'forms\Materials\MatDocsForma.pas' {MatDocsForm},
   MatIncomeDocForma in 'forms\Materials\MatIncomeDocForma.pas' {MatIncomeDocForm},
   MatCorrectionDocForma in 'forms\Materials\MatCorrectionDocForma.pas' {MatCorrectionDocForm},
@@ -319,7 +319,8 @@ uses
   PortFilter in 'forms\infrastructure\PortFilter.pas' {PortFilterForm},
   ConnectTypeForma in 'forms\infrastructure\ConnectTypeForma.pas' {ConnectTypeForm},
   PortTypeForma in 'forms\infrastructure\PortTypeForma.pas' {PortTypeForm},
-  MatDocUnitForma in 'forms\Materials\MatDocUnitForma.pas' {MatDocUnitForm};
+  MatDocUnitForma in 'forms\Materials\MatDocUnitForma.pas' {MatDocUnitForm},
+  MatGroupForma in 'forms\Materials\MatGroupForma.pas' {MatGroupForm};
 
 {$R *.RES}
 // var

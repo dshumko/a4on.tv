@@ -60,6 +60,8 @@ type
     actChangeNotice: TAction;
     N7: TMenuItem;
     N8: TMenuItem;
+    actServiceSummary: TAction;
+    miServiceSummary: TMenuItem;
     procedure actSubscrHistoryExecute(Sender: TObject);
     procedure actSrvAddExecute(Sender: TObject);
     procedure ActSrvOnExecute(Sender: TObject);
@@ -75,11 +77,14 @@ type
     procedure srcServicesDataChange(Sender: TObject; Field: TField);
     procedure dbgCustSubscrServSumListAfterRecalcAll(Sender: TObject);
     procedure actChangeNoticeExecute(Sender: TObject);
+    procedure actServiceSummaryExecute(Sender: TObject);
+    procedure dbgCustSubscrServDblClick(Sender: TObject);
   private
     FFullAccess: Boolean;
     FChangeHistory: Boolean;
     procedure RecalcCustomer;
     procedure EnableControls;
+    procedure ShowSummaryReport;
   public
     {
       pmGrid : TPopupMenu;
@@ -264,6 +269,11 @@ begin
   end;
 end;
 
+procedure TapgCustomerSrv.actServiceSummaryExecute(Sender: TObject);
+begin
+  ShowSummaryReport;
+end;
+
 procedure TapgCustomerSrv.actSrvAddExecute(Sender: TObject);
 var
   CanAdd: Boolean;
@@ -415,6 +425,11 @@ begin
   end;
 end;
 
+procedure TapgCustomerSrv.dbgCustSubscrServDblClick(Sender: TObject);
+begin
+  actSubscrHistory.Execute;
+end;
+
 procedure TapgCustomerSrv.dbgCustSubscrServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 var
@@ -513,6 +528,52 @@ begin
   di := FindByField('STATE_SRV_NAME');
   if di > -1 then
     dbgCustSubscrServ.Columns.Items[di].Footer.Value := s;
+end;
+
+
+procedure TapgCustomerSrv.ShowSummaryReport;
+var
+  ReportID, i, ci: Integer;
+  periodFrom: TDateTime;
+  FILENAME: String;
+  Stream: TStream;
+  bm: TBookMark;
+  vQRY: TpFIBQuery;
+begin
+  FILENAME := 'ServiceSummary';
+    // Загрузим отчет из БД
+    ReportID := dmMain.GET_ID_REPORT_BY_PATH(FILENAME);
+    if ReportID < 0 then
+      Exit;
+    try
+      dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := ReportID;
+      dmMain.fdsLoadReport.Open;
+      if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
+      begin
+        Stream := TMemoryStream.Create;
+        try
+          TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
+          Stream.Position := 0;
+          dmMain.frxModalReport.LoadFromStream(Stream);
+          dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+          // Caption := dmMain.frxModalReport.FILENAME;
+        finally
+          Stream.Free;
+        end;
+      end;
+    finally
+      dmMain.fdsLoadReport.Close;
+    end;
+
+    ci := dmMain.frxModalReport.Variables.IndexOf('CUSTOMER_ID');
+    if ci > 0 then
+      dmMain.frxModalReport.Variables['CUSTOMER_ID'] := dsServices['CUSTOMER_ID'];
+
+    ci := dmMain.frxModalReport.Variables.IndexOf('SERVICE_ID');
+    if ci > 0 then
+      dmMain.frxModalReport.Variables['SERVICE_ID'] := dsServices['SERV_ID'];
+
+    dmMain.frxModalReport.ShowReport(True);
 end;
 
 end.

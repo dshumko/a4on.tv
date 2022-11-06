@@ -76,7 +76,7 @@ function ShowCustSubscrHistory(const aCustomer_ID: Integer; const aService_ID: I
 implementation
 
 uses
-  MAIN, DM, AtrCommon, CF, pFIBQuery, ChangeOffForma;
+  MAIN, DM, AtrCommon, pFIBQuery, ChangeOffForma;
 
 {$R *.DFM}
 
@@ -87,6 +87,7 @@ begin
       // dsServices.ParamByName('CUST_ID').AsInteger := ID;
       dbgCustSubscrServ.ReadOnly := not((dmMain.AllowedAction(rght_Customer_full)) or
         (dmMain.AllowedAction(rght_Customer_History)));
+      dsServices.ParamByName('CUSTOMER_ID').AsInteger := aCUSTOMER_ID;
       dsServices.Open;
       if aService_ID > -1 then
         dsServices.Locate('SERV_ID', aService_ID, []);

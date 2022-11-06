@@ -111,6 +111,16 @@ object apgCustomerAppl: TapgCustomerAppl
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
+        FieldName = 'RQ_ID'
+        Footers = <>
+        Title.Caption = #1047#1072#1103#1074#1082#1072
+        Title.TitleButton = True
+        Width = 60
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'WHO_ADD'
         Footers = <>
         Title.Caption = #1044#1086#1073#1072#1074#1080#1083
@@ -358,6 +368,10 @@ object apgCustomerAppl: TapgCustomerAppl
       Hint = #1059#1076#1072#1083#1080#1090#1100
       ImageIndex = 3
       OnExecute = actDelExecute
+    end
+    object actOpenBid: TAction
+      Caption = 'actOpenBid'
+      OnExecute = actOpenBidExecute
     end
   end
   object trRead: TpFIBTransaction

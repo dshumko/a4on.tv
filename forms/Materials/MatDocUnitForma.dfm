@@ -2,8 +2,9 @@ object MatDocUnitForm: TMatDocUnitForm
   Left = 496
   Top = 494
   BorderIcons = [biSystemMenu]
-  ClientHeight = 531
-  ClientWidth = 566
+  Caption = #1042#1074#1086#1076'/'#1075#1077#1085#1077#1088#1072#1094#1080#1103' '#1089#1077#1088#1080#1081#1085#1099#1093' '#1085#1086#1084#1077#1088#1086#1074' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
+  ClientHeight = 437
+  ClientWidth = 540
   Color = clBtnFace
   Constraints.MinHeight = 320
   Constraints.MinWidth = 240
@@ -24,7 +25,7 @@ object MatDocUnitForm: TMatDocUnitForm
   object splPG: TSplitter
     Left = 0
     Top = 153
-    Width = 566
+    Width = 540
     Height = 3
     Cursor = crVSplit
     Align = alTop
@@ -33,8 +34,8 @@ object MatDocUnitForm: TMatDocUnitForm
   object dbGrid: TDBGridEh
     Left = 0
     Top = 156
-    Width = 566
-    Height = 342
+    Width = 540
+    Height = 248
     Hint = #1045#1089#1083#1080' '#1103#1095#1077#1081#1082#1072' '#1078#1077#1083#1090#1072#1103', '#1079#1085#1072#1095#1080#1090' '#1074' '#1085#1077#1081' '#1077#1089#1090#1100' '#1088#1091#1089#1089#1082#1080#1077' '#1073#1091#1082#1074#1099
     Align = alClient
     AutoFitColWidths = True
@@ -100,13 +101,13 @@ object MatDocUnitForm: TMatDocUnitForm
   object pnlEdit: TPanel
     Left = 0
     Top = 0
-    Width = 566
+    Width = 540
     Height = 153
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      566
+      540
       153)
     object lbl4: TLabel
       Left = 8
@@ -168,7 +169,7 @@ object MatDocUnitForm: TMatDocUnitForm
     object btnSaveLink: TBitBtn
       Left = 204
       Top = 127
-      Width = 261
+      Width = 235
       Height = 22
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
@@ -176,7 +177,7 @@ object MatDocUnitForm: TMatDocUnitForm
       OnClick = btnSaveLinkClick
     end
     object btnDelete: TBitBtn
-      Left = 471
+      Left = 445
       Top = 127
       Width = 86
       Height = 22
@@ -188,7 +189,7 @@ object MatDocUnitForm: TMatDocUnitForm
     object mmoNotice: TDBMemoEh
       Left = 8
       Top = 61
-      Width = 549
+      Width = 523
       Height = 60
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -203,7 +204,7 @@ object MatDocUnitForm: TMatDocUnitForm
     object edtSERIAL: TDBEditEh
       Left = 48
       Top = 8
-      Width = 509
+      Width = 483
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -230,17 +231,12 @@ object MatDocUnitForm: TMatDocUnitForm
       Top = 127
       Width = 161
       Height = 21
-      Hint = #1057#1086#1079#1076#1072#1090#1100' '#1082#1086#1083'-'#1074#1086' '#1087#1086#1079#1080#1094#1080#1081
+      Hint = #1057#1086#1079#1076#1072#1090#1100' '#1082#1086#1083'-'#1074#1086' '#1089'/'#1085#1086#1084#1077#1088#1086#1074' '
       Alignment = taLeftJustify
       DecimalPlaces = 0
       DynProps = <>
-      EmptyDataInfo.Text = #1057#1086#1079#1076#1072#1090#1100' '#1082#1086#1083'-'#1074#1086' '#1087#1086#1079#1080#1094#1080#1081
-      EditButtons = <
-        item
-          Action = actGenerate
-          DefaultAction = False
-          Style = ebsPlusEh
-        end>
+      EmptyDataInfo.Text = #1057#1086#1079#1076#1072#1090#1100' '#1082#1086#1083'-'#1074#1086' '#1089'/'#1085#1086#1084#1077#1088#1086#1074
+      EditButtons = <>
       ShowHint = True
       TabOrder = 5
       Visible = True
@@ -248,17 +244,17 @@ object MatDocUnitForm: TMatDocUnitForm
   end
   object pnlBtn: TPanel
     Left = 0
-    Top = 498
-    Width = 566
+    Top = 404
+    Width = 540
     Height = 33
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      566
+      540
       33)
     object btnClose: TButton
-      Left = 471
+      Left = 445
       Top = 5
       Width = 86
       Height = 25
@@ -271,7 +267,7 @@ object MatDocUnitForm: TMatDocUnitForm
     object btnSave: TButton
       Left = 8
       Top = 5
-      Width = 457
+      Width = 431
       Height = 25
       Anchors = [akLeft, akTop, akRight]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100

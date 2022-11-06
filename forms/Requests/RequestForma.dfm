@@ -35,6 +35,12 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 359
       Top = 6
@@ -419,6 +425,7 @@ object RequestForm: TRequestForm
           Height = 137
           inherited lblDebt: TLabel
             Width = 370
+            Margins.Bottom = 0
             OnDblClick = CustomerInfoFrmlblFIODblClick
           end
           inherited memAbonent: TMemo
@@ -439,7 +446,7 @@ object RequestForm: TRequestForm
     Top = 188
     Width = 784
     Height = 337
-    ActivePage = tabGiveReq
+    ActivePage = tabExecute
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
@@ -1170,14 +1177,27 @@ object RequestForm: TRequestForm
                   Width = 80
                 end
                 item
+                  Alignment = taLeftJustify
                   AutoFitColWidth = False
                   CellButtons = <>
-                  Checkboxes = True
+                  Checkboxes = False
                   DynProps = <>
                   EditButtons = <>
-                  FieldName = 'NOT_CALC'
+                  FieldName = 'PROP'
                   Footers = <>
-                  Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100
+                  KeyList.Strings = (
+                    '0'
+                    '1'
+                    '2'
+                    '3')
+                  NotInKeyListIndex = 0
+                  PickList.Strings = (
+                    #1053#1072#1095#1080#1089#1083#1103#1090#1100
+                    #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
+                    #1040#1088#1077#1085#1076#1072
+                    #1056#1072#1089#1089#1088#1086#1095#1082#1072)
+                  Title.Alignment = taCenter
+                  Title.Caption = #1053#1072#1095#1080#1089#1083'.'
                   Width = 38
                 end
                 item
@@ -2218,7 +2238,7 @@ object RequestForm: TRequestForm
       '  , m.DIMENSION'
       '  , rM.RM_QUANT QNT'
       '  , rM.RM_QUANT * rm.rm_cost as COST'
-      '  , coalesce(rm.NOT_CALC, 0) NOT_CALC'
+      '  , coalesce(rm.PROP, 0) PROP'
       '  , o.O_Name WH_NAME'
       '  , 0 as MT'
       '  , rm.Rm_Id'
@@ -2240,7 +2260,7 @@ object RequestForm: TRequestForm
       '  , m.DEMENSION'
       '  , rM.Quant * (-1) QNT'
       '  , rM.Quant * (-1) * coalesce(rm.Cost, m.Cost) as COST'
-      '  , rm.CALC as NOT_CALC'
+      '  , rm.CALC as PROP'
       '  , o.O_Name WH_NAME'
       '  , 1 as MT'
       '  , rm.ID Rm_Id'

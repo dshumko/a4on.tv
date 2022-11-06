@@ -464,7 +464,7 @@ object MessagesForm: TMessagesForm
         object lblSMScount: TLabel
           Left = 0
           Top = 25
-          Width = 3
+          Width = 915
           Height = 13
           Align = alTop
         end
@@ -676,9 +676,15 @@ object MessagesForm: TMessagesForm
       
         '       left outer join OBJECTS o on (o.O_Type = 24 and o.O_Id = ' +
         'm.Mes_Result)'
+      '  where ('
       
-        '  where M.ADDED_ON between :StartDate and dateadd(1 day to :EndD' +
-        'ate)'
+        '         (M.ADDED_ON between :StartDate and dateadd(1 day to :En' +
+        'dDate))'
+      '         or '
+      
+        '         (M.SEND_DATE between :StartDate and dateadd(1 day to :E' +
+        'ndDate))'
+      '         )'
       '    and (not m.MES_RESULT in (1,2) or 0 = :ShowNotSended)'
       '  order by M.MES_ID')
     AutoUpdateOptions.UpdateTableName = 'MESSAGES'

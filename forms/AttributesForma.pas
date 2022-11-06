@@ -140,13 +140,10 @@ begin
   begin
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_elan));
     cbAtrType.Items.Add(rsAttrName_elan);
-    fCanEdit := True;
-  end;
-
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_AtrEquipments)) then
-  begin
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_etv));
     cbAtrType.Items.Add(rsAttrName_etv);
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_eall));
+    cbAtrType.Items.Add(rsAttrName_eall);
     fCanEdit := True;
   end;
 

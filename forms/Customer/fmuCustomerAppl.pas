@@ -8,12 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Menus, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.StdCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DM, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DM, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
 
 type
   TapgCustomerAppl = class(TA4onPage)
-    dsAppliance: TpFIBDataSet;
     srcAppliance: TDataSource;
     dbgAppliance: TDBGridEh;
     ActListCustomers: TActionList;
@@ -26,12 +26,15 @@ type
     btnEdit1: TSpeedButton;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    actOpenBid: TAction;
+    dsAppliance: TpFIBDataSet;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dbgApplianceDblClick(Sender: TObject);
     procedure srcApplianceDataChange(Sender: TObject; Field: TField);
     procedure srcApplianceStateChange(Sender: TObject);
+    procedure actOpenBidExecute(Sender: TObject);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
@@ -49,7 +52,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, AtrStrUtils, EditApplianceForma;
+  MAIN, AtrCommon, AtrStrUtils, EditApplianceForma, RequestForma;
 
 class function TapgCustomerAppl.GetPageName: string;
 begin
@@ -98,13 +101,14 @@ end;
 procedure TapgCustomerAppl.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-  aid : Integer;
+  aid: Integer;
 begin
   ci := GetCustomerInfo;
   if ci.CUSTOMER_ID = -1 then
     Exit;
   aid := EditAppliance(ci, -1);
-  if aid > -1 then begin
+  if aid > -1 then
+  begin
     dsAppliance.CloseOpen(true);
     dsAppliance.Locate('ID', aid, []);
   end;
@@ -115,21 +119,22 @@ begin
   if dsAppliance.RecordCount = 0 then
     Exit;
 
-  if not dsAppliance.FieldByName('RQ_ID').IsNull then begin
+  if not dsAppliance.FieldByName('RQ_ID').IsNull then
+  begin
     ShowMessage(rsDeleteViaRequest);
-    exit;
+    Exit;
   end;
 
   if (MessageDlg(Format(rsDeleteWithName, [dsAppliance['Name']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
-      dsAppliance.Delete;
+    dsAppliance.Delete;
   end;
 end;
 
 procedure TapgCustomerAppl.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-  aid : Integer;
+  aid: Integer;
 begin
   if (dsAppliance.RecordCount = 0) or (dsAppliance.FieldByName('ID').IsNull) then
     Exit;
@@ -138,11 +143,41 @@ begin
   if ci.CUSTOMER_ID <> -1 then
   begin
     aid := EditAppliance(ci, dsAppliance['ID']);
-    if aid > -1 then begin
+    if aid > -1 then
+    begin
       dsAppliance.CloseOpen(true);
       dsAppliance.Locate('ID', aid, []);
     end;
   end;
+end;
+
+procedure TapgCustomerAppl.actOpenBidExecute(Sender: TObject);
+var
+  aRequest: Integer;
+  aCustomer: Integer;
+  aMode: Byte;
+  FullAccess, CE, CC, CG, CA: Boolean;
+Begin
+  if dsAppliance.FieldByName('RQ_ID').IsNull then
+    Exit;
+  if dsAppliance.FieldByName('OWN_ID').IsNull then
+    Exit;
+
+  // права пользователей
+  FullAccess := dmMain.AllowedAction(rght_Request_full);
+  CA := dmMain.AllowedAction(rght_Request_add);
+  CE := dmMain.AllowedAction(rght_Request_edit);
+  CC := dmMain.AllowedAction(rght_Request_Close);
+  CG := dmMain.AllowedAction(rght_Request_Give);
+
+  if not(FullAccess or CE or CC or CG or CA) then
+    Exit;
+
+  aRequest := dsAppliance.FieldByName('RQ_ID').AsInteger;
+  aCustomer := dsAppliance.FieldByName('OWN_ID').AsInteger;
+  aMode := 1;
+
+  ReguestExecute(aRequest, aCustomer, aMode)
 end;
 
 procedure TapgCustomerAppl.CloseData;
@@ -151,16 +186,32 @@ begin
 end;
 
 procedure TapgCustomerAppl.dbgApplianceDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  S: String;
+  i: Integer;
 begin
-  if (Sender as TDBGridEh).DataSource.DataSet.RecordCount > 0 then
+  ScrPt := Mouse.CursorPos;
+  GrdPt := (Sender as TDBGridEh).ScreenToClient(ScrPt);
+  Cell := (Sender as TDBGridEh).MouseCoord(GrdPt.X, GrdPt.Y);
+  S := UpperCase((Sender as TDBGridEh).Fields[Cell.X - 1].FieldName);
+  if (S = 'RQ_ID') and (not dsAppliance.FieldByName('RQ_ID').IsNull) then
   begin
-    if actEdit.Enabled then
-      actEdit.Execute;
+    actOpenBid.Execute;
   end
   else
   begin
-    if actAdd.Enabled then
-      actAdd.Execute;
+    if (Sender as TDBGridEh).DataSource.DataSet.RecordCount > 0 then
+    begin
+      if actEdit.Enabled then
+        actEdit.Execute;
+    end
+    else
+    begin
+      if actAdd.Enabled then
+        actAdd.Execute;
+    end;
   end;
 end;
 

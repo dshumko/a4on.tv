@@ -152,22 +152,32 @@ object ReqMaterialsForm: TReqMaterialsForm
           Width = 44
         end
         item
+          Alignment = taLeftJustify
           AutoFitColWidth = False
           CellButtons = <>
-          Checkboxes = True
+          Checkboxes = False
           DynProps = <>
           EditButtons = <>
-          FieldName = 'NOT_CALC'
+          FieldName = 'PROP'
           Footers = <>
-          Title.Alignment = taLeftJustify
-          Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100
+          KeyList.Strings = (
+            '0'
+            '1'
+            '2'
+            '3')
+          NotInKeyListIndex = 0
+          PickList.Strings = (
+            #1053#1072#1095#1080#1089#1083#1103#1090#1100
+            #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1085#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100')'
+            #1040#1088#1077#1085#1076#1072
+            #1056#1072#1089#1089#1088#1086#1095#1082#1072)
+          Title.Caption = #1053#1072#1095#1080#1089#1083'.'
           Title.Font.Charset = DEFAULT_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -11
           Title.Font.Name = 'Tahoma'
           Title.Font.Style = [fsBold]
           Title.Hint = #1053#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1091' '#1101#1090#1086#1090' '#1084#1072#1090#1077#1088#1080#1072#1083
-          Width = 28
         end
         item
           CellButtons = <>
@@ -299,19 +309,19 @@ object ReqMaterialsForm: TReqMaterialsForm
       'RET_RM_ID Rm_Id'
       
         'from Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :Rm_Quant, :Wh' +
-        '_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 1, :SERIAL)')
+        '_Id, :RM_COST, :Rm_Notice, :PROP, 1, :SERIAL)')
     DeleteSQL.Strings = (
       'select'
       'RET_RM_ID Rm_Id'
       
         'from Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :Rm_Quant, :Wh' +
-        '_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 2, :SERIAL)')
+        '_Id, :RM_COST, :Rm_Notice, :PROP, 2, :SERIAL)')
     InsertSQL.Strings = (
       'select'
       'RET_RM_ID Rm_Id'
       
         'from Request_Materials_Iud(:Rm_Id, :Rq_Id, :M_Id, :Rm_Quant, :Wh' +
-        '_Id, :RM_COST, :Rm_Notice, :NOT_CALC, 0, :SERIAL)'
+        '_Id, :RM_COST, :Rm_Notice, :PROP, 0, :SERIAL)'
       ' ')
     RefreshSQL.Strings = (
       'select'
@@ -322,7 +332,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       '  , O_Name'
       '  , Wh_Id'
       '  , Rm_Quant'
-      '  , Not_Calc'
+      '  , prop'
       '  , Mr_Quant'
       '  , Rm_Cost'
       '  , M_Number'
@@ -332,7 +342,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       '  , Rm_Notice'
       '  , Description'
       '  , Serial'
-      '  , iif(Not_Calc = 0, Mr_Quant * Rm_Cost, null) Itog '
+      '  , iif(prop = 0, Mr_Quant * Rm_Cost, null) Itog '
       'FROM get_mat_give_out(:RQ_ID, -2, :Rq_Owner)'
       'where RM_ID = :OLD_RM_ID')
     SelectSQL.Strings = (
@@ -344,7 +354,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       '  , O_Name'
       '  , Wh_Id'
       '  , Rm_Quant'
-      '  , Not_Calc'
+      '  , PROP'
       '  , Mr_Quant'
       '  , Rm_Cost'
       '  , M_Number'
@@ -354,7 +364,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       '  , Rm_Notice'
       '  , Description'
       '  , Serial'
-      '  , iif(Not_Calc = 0, Mr_Quant * Rm_Cost, null) Itog '
+      '  , iif(prop = 0, Mr_Quant * Rm_Cost, null) Itog '
       '  FROM get_mat_give_out(:RQ_ID, :Mg_Id, :Rq_Owner)'
       'order by NAME')
     BeforePost = dsReqMaterialsBeforePost

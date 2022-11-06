@@ -50,6 +50,12 @@ object EquipAttributesForm: TEquipAttributesForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 72
       Top = 1
@@ -147,12 +153,14 @@ object EquipAttributesForm: TEquipAttributesForm
         '  , cast(coalesce(O_Numericfield, 0) as integer) O_UNIQ -- '#1091#1085#1080#1082#1072 +
         #1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
       '  from OBJECTS o'
-      '  where O_TYPE = :TYPEEQ'
+      '  where O_TYPE in (65, :TYPEEQ)'
       '        and O_DELETED = 0'
       '        and not exists(select'
       '                             ca.o_id'
       '                           from EQUIPMENT_ATTRIBUTES ca'
-      '                           where ca.o_id = o.O_ID and ca.EID = :EID)'
+      
+        '                           where ca.o_id = o.O_ID and ca.EID = :' +
+        'EID)'
       '  order by O_NAME')
     AutoCalcFields = False
     Transaction = dmMain.trRead

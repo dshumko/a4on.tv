@@ -596,6 +596,7 @@ object OnOffServiceForm: TOnOffServiceForm
         'w.Surname||coalesce('#39' '#39'||w.Firstname||coalesce('#39' '#39'||w.Midlename,' +
         #39#39'),'#39#39') FIO'
       'from worker w'
+      'where IN_REQUEST = 1'
       'order by 1')
     AfterOpen = dsServiceAfterOpen
     Transaction = dmMain.trRead

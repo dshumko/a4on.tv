@@ -122,7 +122,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
       'FROM equipment_attributes CA'
       
         '   INNER JOIN OBJECTS A ON (CA.O_ID = A.O_ID and A.O_TYPE in (5,' +
-        '6))'
+        '6,65))'
       'where CA.eid = :eid')
     AutoCalcFields = False
     Transaction = trRead

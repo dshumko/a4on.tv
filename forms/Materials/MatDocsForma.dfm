@@ -616,7 +616,7 @@ inherited MatDocsForm: TMatDocsForm
       '             u.Id = md.Id and'
       '             u.Doc_Id = md.Doc_Id)'
       '  where md.Doc_Id = :DOC_id'
-      '  order by md.TTN, m.Name')
+      '  order by md.TTN, m.Name, coalesce(u.Serial, '#39#39') ')
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcDataSource

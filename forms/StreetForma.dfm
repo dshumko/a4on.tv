@@ -553,7 +553,7 @@ inherited StreetForm: TStreetForm
         Top = 0
         Width = 644
         Height = 286
-        ActivePage = InfoSheet
+        ActivePage = tsAtributes
         Align = alClient
         TabOrder = 0
         OnChange = pcHouseInfoChange

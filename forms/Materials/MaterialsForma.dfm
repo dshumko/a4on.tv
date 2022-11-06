@@ -157,6 +157,7 @@ object MaterialsForm: TMaterialsForm
         STFilter.Local = True
         TabOrder = 1
         TitleParams.MultiTitle = True
+        OnDblClick = DBGridGroupsDblClick
         Columns = <
           item
             CellButtons = <>
@@ -226,34 +227,8 @@ object MaterialsForm: TMaterialsForm
           Top = 0
           Action = ActDelGroup
         end
-        object ToolButton21: TToolButton
-          Left = 82
-          Top = 0
-          Width = 14
-          Caption = 'ToolButton21'
-          ImageIndex = 4
-          Style = tbsSeparator
-        end
-        object ToolButton22: TToolButton
-          Left = 96
-          Top = 0
-          Action = ActPostGroup
-        end
-        object ToolButton25: TToolButton
-          Left = 119
-          Top = 0
-          Width = 8
-          Caption = 'ToolButton25'
-          ImageIndex = 6
-          Style = tbsSeparator
-        end
-        object ToolButton24: TToolButton
-          Left = 127
-          Top = 0
-          Action = actCancelGroup
-        end
         object btn1: TToolButton
-          Left = 150
+          Left = 82
           Top = 0
           Width = 34
           Caption = 'btn1'
@@ -261,7 +236,7 @@ object MaterialsForm: TMaterialsForm
           Style = tbsSeparator
         end
         object btnQuickFilter: TToolButton
-          Left = 184
+          Left = 116
           Top = 0
           Action = actQuickFilter
         end
@@ -818,13 +793,24 @@ object MaterialsForm: TMaterialsForm
             Width = 62
           end
           item
+            Alignment = taLeftJustify
             CellButtons = <>
-            Checkboxes = True
+            Checkboxes = False
             DynProps = <>
             EditButtons = <>
-            FieldName = 'Not_Calc'
+            FieldName = 'PROP'
             Footers = <>
-            Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100
+            KeyList.Strings = (
+              '0'
+              '1'
+              '2'
+              '3')
+            PickList.Strings = (
+              #1053#1072#1095#1080#1089#1083#1103#1090#1100
+              #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
+              #1040#1088#1077#1085#1076#1072
+              #1056#1072#1089#1089#1088#1086#1095#1082#1072)
+            Title.Caption = #1053#1072#1095#1080#1089#1083'.'
             Title.Hint = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1085#1077' '#1085#1072#1095#1080#1089#1083#1103#1083#1072#1089#1100' '#1072#1073#1086#1085#1077#1085#1090#1091
             Title.TitleButton = True
             Width = 47
@@ -1066,7 +1052,7 @@ object MaterialsForm: TMaterialsForm
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
         ParentShowHint = False
-        PopupMenu = pmPopUp
+        PopupMenu = pmSerial
         SearchPanel.Enabled = True
         SearchPanel.FilterOnTyping = True
         ShowHint = True
@@ -1382,7 +1368,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'RQ_EXEC_TIME'
             Footers = <>
             ReadOnly = True
-            Title.Caption = #1079#1072#1103#1074#1082#1072' '#1042#1099#1087#1086#1083#1085#1077#1085#1072
+            Title.Caption = #1042#1099#1076#1072#1085#1086' / '#1079#1072#1103#1074#1082#1072' '#1042#1099#1087#1086#1083#1085#1077#1085#1072
           end
           item
             CellButtons = <>
@@ -1401,8 +1387,8 @@ object MaterialsForm: TMaterialsForm
   end
   object actions: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 38
-    Top = 80
+    Left = 142
+    Top = 64
     object actNew: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1083#1072#1090#1077#1078
       ImageIndex = 2
@@ -1454,12 +1440,14 @@ object MaterialsForm: TMaterialsForm
     object ActDelGroup: TAction
       Hint = #1059#1076#1072#1083#1080#1090#1100' '#1075#1088#1091#1087#1087#1091
       ImageIndex = 3
+      Visible = False
       OnExecute = ActDelGroupExecute
     end
     object ActPostGroup: TAction
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1075#1088#1091#1087#1087#1091' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
       ImageIndex = 25
+      Visible = False
       OnExecute = ActPostGroupExecute
     end
     object actCancelGroup: TAction
@@ -1497,6 +1485,11 @@ object MaterialsForm: TMaterialsForm
       Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1074#1089#1077' '#1086#1089#1090#1072#1090#1082#1080
       ImageIndex = 39
       OnExecute = actRecalcAllExecute
+    end
+    object actChangeSerial: TAction
+      Caption = #1057#1084#1077#1085#1080#1090#1100' '#1057'/'#1053
+      Hint = #1057#1084#1077#1085#1080#1090#1100' '#1090#1077#1082#1091#1097#1080#1081' '#1057'/'#1053' '#1085#1072' '#1085#1086#1074#1099#1081' '#1087#1086' '#1074#1089#1077#1081' '#1073#1072#1079#1077
+      OnExecute = actChangeSerialExecute
     end
   end
   object dsRemain: TpFIBDataSet
@@ -1548,7 +1541,9 @@ object MaterialsForm: TMaterialsForm
       'SET '
       '    MG_NAME = :MG_NAME,'
       '    PARENT_ID = :PARENT_ID,'
-      '    MG_NOTICE = :MG_NOTICE'
+      '    MG_NOTICE = :MG_NOTICE,'
+      '    RENT = :RENT,'
+      '    LOAN = :LOAN'
       'WHERE'
       '    MG_ID = :OLD_MG_ID'
       '    ')
@@ -1563,13 +1558,17 @@ object MaterialsForm: TMaterialsForm
       '    MG_ID,'
       '    MG_NAME,'
       '    PARENT_ID,'
-      '    MG_NOTICE'
+      '    MG_NOTICE,'
+      '    RENT,'
+      '    LOAN'
       ')'
       'VALUES('
       '    :MG_ID,'
       '    :MG_NAME,'
       '    :PARENT_ID,'
-      '    :MG_NOTICE'
+      '    :MG_NOTICE,'
+      '    :RENT,'
+      '    :LOAN'
       ')')
     RefreshSQL.Strings = (
       'Select * from materials_group'
@@ -1578,12 +1577,12 @@ object MaterialsForm: TMaterialsForm
       '        MATERIALS_GROUP.MG_ID = :OLD_MG_ID'
       '    ')
     SelectSQL.Strings = (
-      'select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE'
+      'select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE, RENT, LOAN'
       'from MATERIALS_GROUP'
       'union'
       
         'select null as MG_ID, '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME, null as PARENT_ID, ' +
-        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
+        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE, null RENT, null LOAN'
       'from RDB$DATABASE'
       
         'where (exists(select m.M_Id from materials m where m.Mg_Id is nu' +
@@ -1591,7 +1590,7 @@ object MaterialsForm: TMaterialsForm
       'union'
       
         'select -1 as MG_ID, '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME, null as PARENT_ID' +
-        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
+        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE, null RENT, null LOAN'
       'from RDB$DATABASE'
       'order by 2, 1')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'
@@ -1602,15 +1601,15 @@ object MaterialsForm: TMaterialsForm
     Database = dmMain.dbTV
     UpdateTransaction = trWriteDS
     AutoCommit = True
-    Left = 37
-    Top = 131
+    Left = 53
+    Top = 99
   end
   object srcMatGropups: TDataSource
     AutoEdit = False
     DataSet = dsMatGropups
     OnStateChange = srcMatGropupsStateChange
-    Left = 161
-    Top = 76
+    Left = 49
+    Top = 156
   end
   object dsMaterials: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -1626,7 +1625,9 @@ object MaterialsForm: TMaterialsForm
       '    IS_UNIT = :IS_UNIT,'
       '    IS_DIGIT = :IS_DIGIT, '
       '    IS_NET = :IS_NET,'
-      '    M_TYPE = :M_TYPE '
+      '    M_TYPE = :M_TYPE,'
+      '    RENT = :RENT, '
+      '    LOAN = :LOAN '
       'where (M_ID = :M_ID)')
     DeleteSQL.Strings = (
       'UPDATE Materials SET DELETED = 1 WHERE (M_ID = :M_ID)')
@@ -1634,11 +1635,11 @@ object MaterialsForm: TMaterialsForm
       
         'insert into MATERIALS (M_ID, NAME, DIMENSION, IS_UNIT, DESCRIPTI' +
         'ON, MG_ID, DELETED, M_NUMBER, COST, BEST_COST, BEST_SHIPPER_ID, ' +
-        'IS_DIGIT, IS_NET, M_TYPE)'
+        'IS_DIGIT, IS_NET, M_TYPE, RENT, LOAN)'
       
         'values (:M_ID, :NAME, :DIMENSION, :IS_UNIT, :DESCRIPTION, :GR_ID' +
         ', 0, :M_NUMBER, :COST, :BEST_COST, :BEST_SHIPPER_ID, :IS_DIGIT, ' +
-        ':IS_NET, :M_TYPE)'
+        ':IS_NET, :M_TYPE, :RENT, :LOAN)'
       '-- '#1042#1072#1078#1085#1086' MG_ID - GR_ID!!!')
     SelectSQL.Strings = (
       '-- Select SQL'
@@ -1661,6 +1662,8 @@ object MaterialsForm: TMaterialsForm
       '  ,IS_NET D_IBOOLEAN'
       '  ,IS_DIGIT D_IBOOLEAN'
       '  ,M_TYPE  INTEGER'
+      '  ,RENT D_UID_NULL'
+      '  ,LOAN D_UID_NULL  '
       '  ,TYPE_NAME VARCHAR(255)  '
       '  ,QNT00000020 NUMERIC(15,3) '
       '  ,CST00000020 NUMERIC(15,3) '
@@ -1680,7 +1683,8 @@ object MaterialsForm: TMaterialsForm
         'COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,'
       
         '         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME MT_NAME' +
-        ' from MATERIALS m'
+        ', RENT, LOAN '
+      '  from MATERIALS m'
       
         '    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and' +
         ' o.O_TYPE = 29) '
@@ -1698,7 +1702,9 @@ object MaterialsForm: TMaterialsForm
       
         '  into :M_ID, :NAME, :DIMENSION, :M_NUMBER, :DESCRIPTION, :IS_UN' +
         'IT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,'
-      '       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME'
+      
+        '       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :RENT, :' +
+        'LOAN'
       'DO BEGIN'
       '          QNTTOTAL = 0;'
       '    CSTTOTAL = 0;'
@@ -1761,8 +1767,8 @@ object MaterialsForm: TMaterialsForm
     Top = 125
   end
   object pmPopUp: TPopupMenu
-    Left = 156
-    Top = 126
+    Left = 220
+    Top = 70
     object ppmCopy: TMenuItem
       Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
       OnClick = ppmCopyClick
@@ -1801,7 +1807,7 @@ object MaterialsForm: TMaterialsForm
       '  , rm.Rm_Notice NOTICE'
       '  , r.Rq_Customer Customer_Id'
       '  , r.Node_Id'
-      '  , coalesce(rm.Not_Calc, 0) Not_Calc'
+      '  , coalesce(rm.PROP, 0) PROP'
       '  , rm.Serial'
       '  from request_materials rm'
       '       inner join request r on (rm.rq_id = r.rq_id)'
@@ -1826,7 +1832,7 @@ object MaterialsForm: TMaterialsForm
       '  , rm.Notice NOTICE'
       '  , r.Rq_Customer Customer_Id'
       '  , r.Node_Id  '
-      '  , 0 Not_Calc'
+      '  , 0 PROP'
       '  , rm.Serial'
       '  from Request_Materials_Return rm'
       '       inner join request r on (rm.rq_id = r.rq_id)'
@@ -1866,8 +1872,8 @@ object MaterialsForm: TMaterialsForm
       '    d.Doc_N,'
       '    d.Doc_Date,'
       
-        '    coalesce(im.M_Notice, '#39#39')||coalesce('#39'/'#39'||d.Notice, '#39#39') Notic' +
-        'e,'
+        '    trim('#39'/'#39' from coalesce(im.M_Notice, '#39#39') || coalesce('#39'/'#39' || d' +
+        '.Notice, '#39#39')) Notice,'
       '    w.O_Name wherehouse,'
       '    im.M_Quant,'
       '    im.Shipper_Cost,'
@@ -1969,32 +1975,37 @@ object MaterialsForm: TMaterialsForm
   object dsMove: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
-      '    d.Doc_N||'#39' ('#39'||t.O_Name||'#39')'#39' Doc_N,'
-      '    d.Doc_Date,'
+      '    d.Doc_N || '#39' ('#39' || t.O_Name || '#39')'#39' Doc_N'
+      '  , d.Doc_Date'
       
-        '    coalesce(im.M_Notice, '#39#39')||coalesce('#39'/'#39'||d.Notice, '#39#39') Notic' +
-        'e,'
-      '    w.O_Name wherehouse,'
-      '    im.M_Quant,'
-      '    im.Shipper_Cost,'
-      '    wo.O_Name FROM_WH,'
-      '    d.Dt_Id,'
-      '    d.Doc_Id'
+        '  , trim('#39'/'#39' from coalesce(im.M_Notice, '#39#39') || coalesce('#39'/'#39' || d' +
+        '.Notice, '#39#39')) Notice'
+      '  , w.O_Name wherehouse'
+      '  , im.M_Quant'
+      '  , im.Shipper_Cost'
+      '  , wo.O_Name FROM_WH'
+      '  , d.Dt_Id'
+      '  , d.Doc_Id'
       '  from Material_Docs d'
-      '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
+      '       inner join(select'
+      '                      im.Doc_Id'
+      '                    , im.Shipper_Cost'
+      '                    , coalesce(im.M_Notice, '#39#39') M_Notice'
+      '                    , sum(im.M_Quant) M_Quant'
+      '                    from Materials_In_Doc im'
+      '                    where im.M_Id = :M_ID'
       
-        '       inner join Objects t on (T.O_Id = d.Dt_Id and t.O_Type = ' +
-        '28)'
-      
-        '       left outer join objects w on ( w.O_Id = d.Wh_Id and w.O_T' +
-        'ype = 10)'
-      
-        '       left outer join objects wo on (wo.O_Id = d.From_Wh and wo' +
-        '.O_Type = 10)'
-      '  where d.Doc_Closed = 1 '
+        '                    group by 1, 2, 3) im on (d.Doc_Id = im.Doc_I' +
+        'd)'
+      '       inner join Objects t on (T.O_Id = d.Dt_Id and'
+      '             t.O_Type = 28)'
+      '       left outer join objects w on (w.O_Id = d.Wh_Id and'
+      '             w.O_Type = 10)'
+      '       left outer join objects wo on (wo.O_Id = d.From_Wh and'
+      '             wo.O_Type = 10)'
+      '  where d.Doc_Closed = 1'
       '        and d.Dt_Id = 2'
-      '        and im.M_Id = :M_ID   '
-      'order by d.Doc_Date desc, d.Doc_N')
+      '  order by d.Doc_Date desc, d.Doc_N')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_INCOME'
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -2021,8 +2032,8 @@ object MaterialsForm: TMaterialsForm
       '    d.Doc_N,'
       '    d.Doc_Date,'
       
-        '    coalesce(im.M_Notice, '#39#39')||coalesce('#39'/'#39'||d.Notice, '#39#39') Notic' +
-        'e,'
+        '    trim('#39'/'#39' from coalesce(im.M_Notice, '#39#39') || coalesce('#39'/'#39' || d' +
+        '.Notice, '#39#39')) Notice,'
       '    w.O_Name wherehouse,'
       '    im.M_Quant,'
       '    im.B_Quant,'
@@ -2077,8 +2088,8 @@ object MaterialsForm: TMaterialsForm
       '    d.Doc_N,'
       '    d.Doc_Date,'
       
-        '    coalesce(im.M_Notice, '#39#39')||coalesce('#39'/'#39'||d.Notice, '#39#39') Notic' +
-        'e,'
+        '    trim('#39'/'#39' from coalesce(im.M_Notice, '#39#39') || coalesce('#39'/'#39' || d' +
+        '.Notice, '#39#39')) Notice,'
       '    w.O_Name wherehouse,'
       '    -1*im.M_Quant M_Quant,'
       '    -1*im.M_Quant * m.Cost ITOGO,'
@@ -2282,7 +2293,7 @@ object MaterialsForm: TMaterialsForm
       'from ('
       '    select'
       '        a.Rq_Id, a.M_Id, a.In_Out, a.Tbl_Id'
-      '      , r.Rq_Exec_Time, r.Rq_Defect'
+      '      , cast(r.Rq_Exec_Time as DATE) Rq_Exec_Time, r.Rq_Defect'
       '      , t.Cost, t.Serial, t.Doc_N, t.Doc_Date, t.Sold'
       '      , c.Customer_Id, c.Account_No'
       '      from (select'
@@ -2304,7 +2315,7 @@ object MaterialsForm: TMaterialsForm
       '    union'
       '    select'
       '        null Rq_Id, t.M_Id, 0 In_Out, null Tbl_Id'
-      '      , null Rq_Exec_Time, null Rq_Defect'
+      '      , cast(t.RQ_DATE as DATE) Rq_Exec_Time, null Rq_Defect'
       '      , t.Cost, t.Serial, t.Doc_N, t.Doc_Date, t.Sold'
       '      , null Customer_Id, null Account_No'
       '    from UNIT_TMP t'
@@ -2593,5 +2604,30 @@ object MaterialsForm: TMaterialsForm
     BCDToCurrency = False
     Left = 611
     Top = 112
+  end
+  object pmSerial: TPopupMenu
+    Left = 628
+    Top = 326
+    object miChSerial: TMenuItem
+      Action = actChangeSerial
+    end
+    object miN2: TMenuItem
+      Caption = '-'
+    end
+    object mi1: TMenuItem
+      Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      OnClick = ppmCopyClick
+    end
+    object mi2: TMenuItem
+      Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
+      OnClick = ppmSelectAllClick
+    end
+    object mi3: TMenuItem
+      Caption = '-'
+    end
+    object mi4: TMenuItem
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
+      OnClick = ppmSaveSelectionClick
+    end
   end
 end

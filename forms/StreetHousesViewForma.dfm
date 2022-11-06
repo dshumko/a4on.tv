@@ -87,6 +87,8 @@ object StreetHouseViewForm: TStreetHouseViewForm
           item
           end
           item
+          end
+          item
           end>
         ParentColor = False
         ShowFunctionName = False
@@ -357,6 +359,14 @@ object StreetHouseViewForm: TStreetHouseViewForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
+        FieldName = 'H_ATTR'
+        Footers = <>
+        Title.Caption = #1040#1090#1088'-'#1090#1099' '#1076#1086#1084#1072
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'TAG'
         Footers = <>
         Title.TitleButton = True
@@ -430,6 +440,14 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '          , st.Street_Code'
       '          , st.Street_Name||'#39' '#39'||st.Street_Short Street_Name'
       '          , coalesce(a.AREA_NAME,'#39#39') CITY'
+      '          , cast((select list(o.O_DIMENSION) '
+      '                from Houses_Attributes sa'
+      
+        '                     inner join objects o on (o.O_Id = sa.O_Id a' +
+        'nd o.O_Type = 37)'
+      
+        '                where sa.HOUSE_Id = h.House_Id ) as VARCHAR(500)' +
+        ') H_ATTR'
       '          from HOUSE H'
       
         '               inner join STREET st on (st.STREET_ID = h.street_' +

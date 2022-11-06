@@ -16,55 +16,60 @@ type
     lblFIO: TDBEditEh;
   private
     { Private declarations }
-    ci : TCustomerInfo;
-    procedure SetCI(Value : TCustomerInfo);
+    ci: TCustomerInfo;
+    procedure SetCI(Value: TCustomerInfo);
   public
     { Public declarations }
-    property Customer : TCustomerInfo read ci write SetCI;
+    property Customer: TCustomerInfo read ci write SetCI;
   end;
 
 implementation
 
 {$R *.dfm}
-procedure TCustomerInfoFrm.SetCI(Value : TCustomerInfo);
+
+procedure TCustomerInfoFrm.SetCI(Value: TCustomerInfo);
 var
-  clr : TColor;
-  s : string;
+  clr: TColor;
+  s: string;
 begin
   ci := Value;
   memAbonent.Lines.Clear;
-  lblFIO.Text  := '';
-  lblDEBT.Caption := '';
+  lblFIO.Text := '';
+  lblDebt.Caption := '';
 
-  if Value.CUSTOMER_ID = -1
-  then begin
+  if Value.CUSTOMER_ID = -1 then
+  begin
     lblFIO.Text := rsNOT_FOUND_CUST;
     exit;
   end;
 
-  lblFIO.Text := Value.Account_no + ' ' +Value.FIO;
+  lblFIO.Text := Value.Account_no + ' ' + Value.FIO;
 
   if (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full)) // просмотр сумм
-  then begin
-    if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1')
-    then s := rsBALANCE+' '+floatToStr(Value.Debt_sum)
-    else s := rsSALDO+' '+floatToStr(Value.Debt_sum);
+  then
+  begin
+    if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
+      s := rsBALANCE + ' ' + floatToStr(Value.Debt_sum)
+    else
+      s := rsSALDO + ' ' + floatToStr(Value.Debt_sum);
     lblDebt.Caption := s;
   end;
-  s := '' + Value.Street+' '+ Value.HOUSE_NO+' '+ Value.flat_No;
+  s := '' + Value.Street + ' ' + Value.HOUSE_NO + ' ' + Value.flat_No;
   memAbonent.Lines.Add(s);
   memAbonent.Lines.Add(Value.CUST_STATE_DESCR);
   memAbonent.Lines.Add(Value.notice);
   s := rsCode + ' ' + Value.cust_code;
-  memAbonent.Lines.Insert(0,s);
-  memAbonent.Lines.Delete(memAbonent.Lines.Count-1);
-  if Value.color <> '' then Clr := StringToColor(Value.color)
-  else clr := clBtnFace;
+  memAbonent.Lines.Insert(0, s);
+  memAbonent.Lines.Delete(memAbonent.Lines.Count - 1);
+  if Value.color <> '' then
+    clr := StringToColor(Value.color)
+  else
+    clr := clBtnFace;
 
-  memAbonent.Color := clr;
-  lblFIO.Color     := clr;
-  lblDebt.Color    := clr;
-  gbInfo.Color     := clr;
+  memAbonent.color := clr;
+  lblFIO.color := clr;
+  lblDebt.color := clr;
+  gbInfo.color := clr;
 end;
 
 end.

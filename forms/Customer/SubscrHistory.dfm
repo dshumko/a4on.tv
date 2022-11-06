@@ -2,7 +2,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
   Left = 518
   Top = 190
   Caption = #1048#1089#1090#1086#1088#1080#1103' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1081
-  ClientHeight = 400
+  ClientHeight = 327
   ClientWidth = 894
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -48,7 +48,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       FooterParams.Color = clWindow
       GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
       PopupMenu = pmServices
       SearchPanel.Enabled = True
       SearchPanel.FilterOnTyping = True
@@ -65,6 +65,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           ReadOnly = True
           Title.Alignment = taCenter
           Title.Caption = #1058#1080#1087' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1086#1081' '#1091#1089#1083#1091#1075#1080
+          Title.SortIndex = 2
+          Title.SortMarker = smUpEh
           Width = 307
         end
         item
@@ -81,6 +83,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
             #1054#1090#1082#1083'.'
             #1055#1086#1076#1082#1083'.')
           Title.Caption = #1057#1090#1072#1090#1091#1089
+          Title.SortIndex = 1
+          Title.SortMarker = smUpEh
           Width = 92
         end
         item
@@ -180,7 +184,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     Left = 0
     Top = 153
     Width = 894
-    Height = 247
+    Height = 174
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -189,7 +193,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       Left = 0
       Top = 0
       Width = 894
-      Height = 247
+      Height = 174
       Align = alClient
       AllowedOperations = []
       DataSource = srcServicesHistory
@@ -292,6 +296,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'WORKER_ON'
           Footers = <>
           Title.Caption = #1057#1086#1090#1088'-'#1082' '#1087#1086#1076#1082#1083'.'
+          Width = 92
         end
         item
           CellButtons = <>
@@ -300,7 +305,6 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'WORKER_OFF'
           Footers = <>
           Title.Caption = #1057#1086#1090#1088'-'#1082' '#1086#1090#1082#1083'.'
-          Visible = False
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -365,8 +369,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     AutoEdit = False
     DataSet = dsServicesHistory
     OnStateChange = srcServicesHistoryStateChange
-    Left = 90
-    Top = 293
+    Left = 178
+    Top = 237
   end
   object dsServicesHistory: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -424,7 +428,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcServices
-    Left = 96
+    Left = 64
     Top = 240
     oFetchAll = True
   end
@@ -478,19 +482,18 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
         '       left outer join SERVICES st on (st.SERVICE_ID = ss.State_' +
         'Srv)'
       '  where SS.CUSTOMER_ID = :CUSTOMER_ID'
-      '  order by s.NAME')
+      '  order by ss.state_sgn desc, s.name ')
     AutoCalcFields = False
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    DataSource = CustomersForm.srcCustomer
     Left = 124
     Top = 60
   end
   object pmHistory: TPopupMenu
-    Left = 208
-    Top = 240
+    Left = 336
+    Top = 232
     object miN2: TMenuItem
       Caption = '-'
     end

@@ -82,8 +82,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_MinorVer>10</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.788;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>788</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.793;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>793</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
@@ -102,8 +102,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_MinorVer>10</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.781;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>781</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=22.10.0.782;LegalCopyright=Copyright (C) 2005-2022, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=22.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>782</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
@@ -125,18 +125,12 @@
         <DCCReference Include="FORMS\MAIN.PAS">
             <Form>A4MainForm</Form>
         </DCCReference>
-        <DCCReference Include="forms\Customer\CustomersFilter.pas">
-            <Form>CustomersFilterForm</Form>
-        </DCCReference>
         <DCCReference Include="FRAME\OkCancel_frame.pas">
             <Form>OkCancelFrame</Form>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FORMS\PeriodForma.pas">
             <Form>PeriodForm</Form>
-        </DCCReference>
-        <DCCReference Include="FORMS\SubscrHistory.pas">
-            <Form>CustSubscrHistoryForma</Form>
         </DCCReference>
         <DCCReference Include="FORMS\DM.pas">
             <Form>dmMain</Form>
@@ -468,6 +462,9 @@
             <Form>CustomerForm</Form>
         </DCCReference>
         <DCCReference Include="units\AtrPages.pas"/>
+        <DCCReference Include="forms\Customer\CF.pas">
+            <Form>CustomersForm</Form>
+        </DCCReference>
         <DCCReference Include="forms\Customer\fmuCustomerSrv.pas">
             <Form>apgCustomerSrv</Form>
         </DCCReference>
@@ -507,8 +504,11 @@
         <DCCReference Include="forms\Customer\fmuCustomerCard.pas">
             <Form>apgCustomerCard</Form>
         </DCCReference>
-        <DCCReference Include="forms\Customer\CF.pas">
-            <Form>CustomersForm</Form>
+        <DCCReference Include="forms\Customer\CustomersFilter.pas">
+            <Form>CustomersFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="forms\Customer\SubscrHistory.pas">
+            <Form>CustSubscrHistoryForma</Form>
         </DCCReference>
         <DCCReference Include="forms\PayDocSelectForma.pas">
             <Form>PayDocSelectForm</Form>
@@ -616,7 +616,7 @@
             <Form>PaymentSourcesForm</Form>
         </DCCReference>
         <DCCReference Include="forms\Materials\MaterialForma.pas">
-            <Form>MaterailForm</Form>
+            <Form>MaterialForm</Form>
         </DCCReference>
         <DCCReference Include="forms\Materials\MatDocsForma.pas">
             <Form>MatDocsForm</Form>
@@ -992,6 +992,10 @@
         </DCCReference>
         <DCCReference Include="forms\Materials\MatDocUnitForma.pas">
             <Form>MatDocUnitForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\Materials\MatGroupForma.pas">
+            <Form>MatGroupForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">

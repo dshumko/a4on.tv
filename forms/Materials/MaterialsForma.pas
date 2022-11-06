@@ -49,10 +49,6 @@ type
     actAddGroup: TAction;
     ActEditGroup: TAction;
     ActDelGroup: TAction;
-    ToolButton21: TToolButton;
-    ToolButton22: TToolButton;
-    ToolButton24: TToolButton;
-    ToolButton25: TToolButton;
     ActPostGroup: TAction;
     actCancelGroup: TAction;
     DBGridEh: TDBGridEh;
@@ -127,6 +123,14 @@ type
     pmPivot: TPopupMenu;
     miRowHight: TMenuItem;
     frxMaterials: TfrxDBDataset;
+    pmSerial: TPopupMenu;
+    mi1: TMenuItem;
+    mi2: TMenuItem;
+    mi3: TMenuItem;
+    mi4: TMenuItem;
+    miChSerial: TMenuItem;
+    actChangeSerial: TAction;
+    miN2: TMenuItem;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -173,6 +177,8 @@ type
     procedure dbgGridPivotSNSortMarkingChanged(Sender: TObject);
     procedure dbgGridPivotSNColumns3GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgSNDblClick(Sender: TObject);
+    procedure actChangeSerialExecute(Sender: TObject);
+    procedure DBGridGroupsDblClick(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -195,7 +201,7 @@ uses
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
   DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview, RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
   MatOutDocForma, TextEditForma,
-  MatMoveDocForma, MatInventoryDocForma, CustomerForma;
+  MatMoveDocForma, MatInventoryDocForma, CustomerForma, MatGroupForma;
 
 const
   // макс. размеры сторон хинта
@@ -398,6 +404,8 @@ begin
     Add('  ,IS_DIGIT D_IBOOLEAN');
     Add('  ,M_TYPE  D_INTEGER');
     Add('  ,TYPE_NAME D_VARCHAR255');
+    Add('  ,RENT D_UID_NULL');
+    Add('  ,LOAN D_UID_NULL');
     Add('  ,BL_ID  D_INTEGER');
     Add('  ,BL_NAME  D_VARCHAR255');
     Add(lk_vars_s);
@@ -406,7 +414,7 @@ begin
     // Add('GR_ID = MG_ID;');
     Add('FOR');
     Add('  select M_ID, NAME, DIMENSION, M_NUMBER, DESCRIPTION, IS_UNIT, COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,');
-    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, b.Bl_Id, b.Bl_Name ');
+    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, b.Bl_Id, b.Bl_Name, m.RENT, m.LOAN  ');
     Add('  from MATERIALS m');
     Add('    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and o.O_TYPE = 29) ');
     Add('    left outer join OBJECTS t on (t.O_ID = m.M_Type and t.O_TYPE = 48) ');
@@ -415,7 +423,7 @@ begin
     Add('    and ((:MG_ID = -1) or (((m.MG_ID = :MG_ID) and (not :MG_ID is null)) or ((coalesce(m.MG_ID, -1) = -1) and (:MG_ID is null))))');
     Add('  order by NAME');
     Add('  into :M_ID, :NAME, :DIMENSION, :M_NUMBER, :DESCRIPTION, :IS_UNIT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,');
-    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :BL_ID, :BL_NAME');
+    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :BL_ID, :BL_NAME, :RENT, :LOAN ');
     Add('DO BEGIN');
     Add('      ' + lk_body_s);
     Add('    SUSPEND;');
@@ -551,7 +559,18 @@ begin
   if (dsMaterials.State in [dsInsert, dsEdit]) then
     dsMaterials.Post;
   dsMatGropups.Insert;
-  DBGridGroups.SetFocus;
+
+  MatGroupForm := TMatGroupForm.Create(Application);
+  try
+    if MatGroupForm.ShowModal = mrOk then
+    begin
+      dsMatGropups.Post;
+    end
+    else
+      dsMatGropups.Cancel;
+  finally
+    FreeAndNil(MatGroupForm);
+  end;
 end;
 
 procedure TMaterialsForm.ActAllMaterialsExecute(Sender: TObject);
@@ -578,6 +597,42 @@ begin
   dsMatGropups.Cancel;
 end;
 
+procedure TMaterialsForm.actChangeSerialExecute(Sender: TObject);
+var
+  Serial: String;
+begin
+  if (dsSerials.FieldByName('M_ID').IsNull) or (dsSerials.FieldByName('SERIAL').IsNull) then
+    exit;
+
+  Serial := InputBox(rsChangeSerial, dsSerials['SERIAL'] + ' ->', dsSerials['SERIAL']);
+
+  if Serial.IsEmpty or (Serial = dsSerials['SERIAL']) then
+    exit;
+
+  if TrTemp.InTransaction then
+    TrTemp.Rollback;
+
+  QrTemp.Transaction := trWrite;
+  QrTemp.SQL.Text := 'execute procedure MATERIAL_CHANGE_SN(:M_Id, :Old_Serial, :New_Serial)';
+  QrTemp.ParamByName('M_Id').AsInteger := dsSerials['M_ID'];
+  QrTemp.ParamByName('Old_Serial').AsString := dsSerials['SERIAL'];
+  QrTemp.ParamByName('New_Serial').AsString := Serial;
+
+  try
+    QrTemp.Transaction.StartTransaction;
+    QrTemp.ExecQuery;
+    QrTemp.Transaction.Commit;
+  finally
+    if QrTemp.Transaction.InTransaction then
+      QrTemp.Transaction.Rollback;
+  end;
+  QrTemp.Transaction := TrTemp;
+  dsSerials.Close;
+  dsSerials.Open;
+  if not Serial.IsEmpty then
+    dsSerials.Locate('SERIAL', Serial, []);
+end;
+
 procedure TMaterialsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
@@ -602,19 +657,19 @@ begin
   if (not(FAccessFull or FAccessMat)) then
     exit;
   srcDataSource.DataSet.Insert;
-  MaterailForm := TMaterailForm.Create(Application);
+  MaterialForm := TMaterialForm.Create(Application);
   try
     if not dsMatGropups.FieldByName('MG_ID').IsNull then
-      MaterailForm.dblMatGroup.Value := dsMatGropups['MG_ID'];
+      MaterialForm.dblMatGroup.Value := dsMatGropups['MG_ID'];
 
-    if MaterailForm.ShowModal = mrOk then
+    if MaterialForm.ShowModal = mrOk then
     begin
       srcDataSource.DataSet.Post;
     end
     else
       srcDataSource.DataSet.Cancel;
   finally
-    FreeAndNil(MaterailForm);
+    FreeAndNil(MaterialForm);
   end;
 end;
 
@@ -641,14 +696,14 @@ begin
   if (srcDataSource.DataSet.Eof) then
     exit;
   srcDataSource.DataSet.Edit;
-  MaterailForm := TMaterailForm.Create(Application);
+  MaterialForm := TMaterialForm.Create(Application);
   try
-    if MaterailForm.ShowModal = mrOk then
+    if MaterialForm.ShowModal = mrOk then
       srcDataSource.DataSet.Post
     else
       srcDataSource.DataSet.Cancel;
   finally
-    FreeAndNil(MaterailForm);
+    FreeAndNil(MaterialForm);
   end;
 end;
 
@@ -660,11 +715,24 @@ begin
   if (dsMatGropups.FieldByName('MG_ID').IsNull) then
     exit;
 
+  if (dsMatGropups.FieldByName('MG_ID').AsInteger = -1) then
+    exit;
+
   if (dsMatGropups.State in [dsInsert, dsEdit]) then
     dsMaterials.Post;
 
   dsMatGropups.Edit;
-  DBGridGroups.SetFocus;
+  MatGroupForm := TMatGroupForm.Create(Application);
+  try
+    if MatGroupForm.ShowModal = mrOk then
+    begin
+      dsMatGropups.Post;
+    end
+    else
+      dsMatGropups.Cancel;
+  finally
+    FreeAndNil(MatGroupForm);
+  end;
 end;
 
 procedure TMaterialsForm.ActPostGroupExecute(Sender: TObject);
@@ -796,6 +864,11 @@ begin
     Params.Text := '';
 end;
 
+procedure TMaterialsForm.DBGridGroupsDblClick(Sender: TObject);
+begin
+  ActEditGroup.Execute;
+end;
+
 procedure TMaterialsForm.DbGridMatDblClick(Sender: TObject);
 begin
   if not dsMaterials.FieldByName('M_ID').IsNull then
@@ -807,7 +880,6 @@ var
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
   S: String;
-  i: Integer;
 begin
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgSN.ScreenToClient(ScrPt);
@@ -866,7 +938,7 @@ begin
   FAccessFull := dmMain.AllowedAction(rght_Dictionary_full);
   fVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
 
-  tsPivotSN.TabVisible := dmMain.CompanyName.Contains('ЛТВ');
+  tsPivotSN.TabVisible := (dmMain.CompanyName.Contains('ЛТВ') or dmMain.CompanyName.Contains('Призма'));
 
   b := FAccessFull or FAccessMat;
   InitDataSet;
@@ -882,6 +954,7 @@ begin
   actInNew.Enabled := FAccessFull;
   actInEdit.Visible := FAccessFull;
   ActInDelete.Visible := FAccessFull;
+  actChangeSerial.Visible := FAccessFull or FAccessMat;
   actRemainRecalc.Visible := FAccessFull or FAccessMat;
   pgcInOut.ActivePage := tsIn;
 
@@ -950,11 +1023,11 @@ end;
 
 procedure TMaterialsForm.srcMatGropupsStateChange(Sender: TObject);
 begin
-  ActPostGroup.Enabled := not((Sender as TDataSource).DataSet.State = dsBrowse);
-  actCancelGroup.Enabled := ActPostGroup.Enabled;
-  actAddGroup.Enabled := not ActPostGroup.Enabled;
-  ActEditGroup.Enabled := not ActPostGroup.Enabled;
-  ActDelGroup.Enabled := not ActPostGroup.Enabled;
+  //ActPostGroup.Enabled := not((Sender as TDataSource).DataSet.State = dsBrowse);
+  //actCancelGroup.Enabled := ActPostGroup.Enabled;
+  //actAddGroup.Enabled := not ActPostGroup.Enabled;
+  //ActEditGroup.Enabled := not ActPostGroup.Enabled;
+  //ActDelGroup.Enabled := not ActPostGroup.Enabled;
 end;
 
 procedure TMaterialsForm.actRecalcAllExecute(Sender: TObject);
@@ -1025,22 +1098,26 @@ procedure TMaterialsForm.actOpenMatDocExecute(Sender: TObject);
 var
   d_id: Integer;
   dt_id: Integer;
+  ds: TpFIBDataSet;
 begin
   d_id := -1;
   dt_id := -1;
-  if (dsOut.Active and (not dsOut.FieldByName('DOC_ID').IsNull) and (not dsOut.FieldByName('DT_ID').IsNull)) then
-  begin
-    d_id := dsOut['DOC_ID'];
-    dt_id := dsOut['DT_ID'];
-  end
+
+  if (dsOut.Active) then
+    ds := dsOut
+  else if (dsIncome.Active) then
+    ds := dsIncome
+  else if (dsMove.Active) then
+    ds := dsMove
+  else if (dsInvent.Active) then
+    ds := dsInvent
   else
+    exit;
+
+  if (not ds.FieldByName('DOC_ID').IsNull) and (not ds.FieldByName('DT_ID').IsNull) then
   begin
-    if (dsIncome.Active and (not dsIncome.FieldByName('DOC_ID').IsNull) and (not dsIncome.FieldByName('DT_ID').IsNull))
-    then
-    begin
-      d_id := dsIncome['DOC_ID'];
-      dt_id := dsIncome['DT_ID'];
-    end
+    d_id := ds['DOC_ID'];
+    dt_id := ds['DT_ID'];
   end;
 
   if d_id < 0 then
@@ -1058,7 +1135,6 @@ begin
     5:
       MaterialInventoryDocument(d_id); // Инвентаризация
   end;
-
 end;
 
 procedure TMaterialsForm.dbgIncomeDblClick(Sender: TObject);
@@ -1222,8 +1298,10 @@ begin
   S := UpperCase(dbgJournal.Fields[Cell.X - 1].FieldName);
   if (S = 'M_WHERE') then
   begin
-    if not dsJournal.FieldByName('Customer_Id').IsNull then
-      ShowCustomer(dsJournal['Customer_Id'], false);
+    if not dsJournal.FieldByName('Customer_Id').IsNull then begin
+      // ShowCustomer(dsJournal['Customer_Id'], false);
+      A4MainForm.ShowCustomers(104, dsJournal['Customer_Id']); // customer_id
+    end;
   end
   else
   begin

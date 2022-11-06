@@ -89,6 +89,7 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (61, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (62, 'Типы меток линий связи', 'нумерация жил на кабелях') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (63, 'Атрибуты сетей', 'Атрибуты сетей') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (64, 'Тип проч. начислений', 'Тип прочих начислений (OTHER_FEE)') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (65, 'Атрибуты любого оборудования', 'Атрибуты любого  оборудования') MATCHING (OT_ID);
 commit;
 
 -- Владелец оборудования/материала 51

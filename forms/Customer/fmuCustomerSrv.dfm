@@ -65,6 +65,7 @@ object apgCustomerSrv: TapgCustomerSrv
         TabOrder = 0
         TitleParams.MultiTitle = True
         TitleParams.VTitleMargin = 4
+        OnDblClick = dbgCustSubscrServDblClick
         OnGetCellParams = dbgCustSubscrServGetCellParams
         OnSumListAfterRecalcAll = dbgCustSubscrServSumListAfterRecalcAll
         Columns = <
@@ -641,6 +642,12 @@ object apgCustomerSrv: TapgCustomerSrv
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1077
       OnExecute = actChangeNoticeExecute
     end
+    object actServiceSummary: TAction
+      Category = 'Services'
+      Caption = #1057#1091#1084#1084#1072#1088#1085#1086' '#1087#1086' '#1091#1089#1083#1091#1075#1077
+      ImageIndex = 101
+      OnExecute = actServiceSummaryExecute
+    end
   end
   object pmGrid: TPopupMenu
     Images = A4MainForm.ICONS_ACTIVE
@@ -669,6 +676,10 @@ object apgCustomerSrv: TapgCustomerSrv
     end
     object N4: TMenuItem
       Action = actSubscrHistory
+      Default = True
+    end
+    object miServiceSummary: TMenuItem
+      Action = actServiceSummary
     end
     object N7: TMenuItem
       Caption = '-'

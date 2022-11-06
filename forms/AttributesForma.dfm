@@ -286,7 +286,7 @@ inherited AttributesForm: TAttributesForm
     end
     object cbAtrType: TDBComboBoxEh
       Left = 72
-      Top = 12
+      Top = 13
       Width = 858
       Height = 21
       Anchors = [akLeft, akTop, akRight]

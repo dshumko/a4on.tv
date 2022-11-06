@@ -65,10 +65,8 @@ type
       State: TGridDrawState);
     procedure mtUnitsNewRecord(DataSet: TDataSet);
     procedure actGenerateExecute(Sender: TObject);
-    procedure dbGridColumns0GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
-    procedure dbGridColumns1GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridColumns0GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
     fMatDocID: Integer;
@@ -93,7 +91,7 @@ implementation
 
 uses
   DM, MAIN, AtrStrUtils, CnBigNumber,
-  System.StrUtils, Vcl.Clipbrd, Vcl.Dialogs;
+  System.StrUtils, System.Math, Vcl.Clipbrd, Vcl.Dialogs;
 
 {$R *.dfm}
 
@@ -118,26 +116,26 @@ begin
   end;
 end;
 
-  function HasCyrChar(S: String): Boolean;
-  const
-    rus: string = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
-  var
-    p, i: Integer;
-  begin
-    Result := false;
-    if (Copy(S, 1, 6) = 'ПРОДАН') then
-      exit;
+function HasCyrChar(S: String): Boolean;
+const
+  rus: string = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+var
+  p, i: Integer;
+begin
+  Result := False;
+  if (Copy(S, 1, 6) = 'ПРОДАН') then
+    exit;
 
-    for i := 1 to Length(S) do
+  for i := 1 to Length(S) do
+  begin
+    p := Pos(S[i], rus);
+    if p > 1 then
     begin
-      p := Pos(S[i], rus);
-      if p > 1 then
-      begin
-        Result := True;
-        Break;
-      end;
+      Result := True;
+      Break;
     end;
   end;
+end;
 
 procedure TMatDocUnitForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -178,15 +176,15 @@ end;
 procedure TMatDocUnitForm.actClipPastExecute(Sender: TObject);
 var
   i: Integer;
-  s: String;
+  S: String;
   sL: TStringList;
   Delimiters: String;
   sa: TStringDynArray;
 begin
   if not Clipboard.HasFormat(CF_TEXT) then
-    Exit;
+    exit;
 
-  s := Clipboard.AsText;
+  S := Clipboard.AsText;
   // разделитель ; или табуляция
   Delimiters := ';' + Char(9);
 
@@ -197,11 +195,11 @@ begin
 
   sL := TStringList.Create;
   try
-    sL.Text := s;
+    sL.Text := S;
     for i := 0 to sL.Count - 1 do
     begin
-      s := sL[i];
-      sa := SplitString(s, Delimiters);
+      S := sL[i];
+      sa := SplitString(S, Delimiters);
       if Length(sa) > 0 then
       begin
         mtUnits.Append;
@@ -233,10 +231,10 @@ end;
 procedure TMatDocUnitForm.btnDeleteClick(Sender: TObject);
 begin
   if not(mtUnits.Active or (mtUnits.RecordCount = 0)) then
-    Exit;
+    exit;
 
   if mtUnits.FieldByName('SERIAL').IsNull then
-    Exit;
+    exit;
 
   if Application.MessageBox(PWideChar(format(rsDeleteRecord, [mtUnits.FieldByName('SERIAL').AsString])),
     PWideChar(rsDeleteFromDoc), MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
@@ -304,34 +302,14 @@ begin
     OpenDataset;
 
   if edtSERIAL.Text.IsEmpty then
-    Exit;
+    exit;
 
   if not edtMAC.Text.IsEmpty then
     edtMAC.Text := ValidateMAC(edtMAC.Text);
-  if edCount.Text.IsEmpty then
-  begin
-    if (mtUnits.State in [dsEdit]) then
-    begin
-      //
-      mtUnits.Post;
-    end
-    else
-    begin
-      mtUnits.Append;
-      mtUnits['Doc_Id'] := fMatDocID;
-      mtUnits['M_Id'] := fMaterialID;
-      mtUnits['Serial'] := edtSERIAL.Text;
-      if not edtMAC.Text.IsEmpty then
-        mtUnits['Mac'] := edtMAC.Text;
-      mtUnits['Notice'] := mmoNotice.Lines.Text;
-      mtUnits.Post;
-    end;
-  end
-  else
-  begin
-    actGenerate.Execute;
-    edCount.Text := '';
-  end;
+
+  actGenerate.Execute;
+  edCount.Text := '';
+
   FRecordCount := mtUnits.RecordCount;
 end;
 
@@ -346,7 +324,7 @@ procedure TMatDocUnitForm.FormShow(Sender: TObject);
 var
   i, c: Integer;
   Font_size: Integer;
-  Font_name, s: string;
+  Font_name, S: string;
   Row_height: Integer;
 begin
   Font_size := 0;
@@ -374,8 +352,8 @@ begin
       end;
       for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
       begin
-        s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
-        if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
+        S := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+        if (S.Contains('NOTICE') or S.Contains('DESCRIPTION')) and
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
@@ -413,7 +391,7 @@ begin
   inherited;
   // Экспорт информации
   if (not dmMain.AllowedAction(rght_Export)) then
-    Exit;
+    exit;
 
   A4MainForm.SaveDialog.FileName := rsTable;
   if (ActiveControl is TDBGridEh) then
@@ -467,8 +445,7 @@ begin
         Selection.SelectAll;
 end;
 
-procedure TMatDocUnitForm.dbGridColumns0GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TMatDocUnitForm.dbGridColumns0GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if EditMode then
     exit;
@@ -477,8 +454,7 @@ begin
     Params.Background := clYellow;
 end;
 
-procedure TMatDocUnitForm.dbGridColumns1GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TMatDocUnitForm.dbGridColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if EditMode then
     exit;
@@ -532,9 +508,37 @@ function TMatDocUnitForm.GenUNITS: Boolean;
 var
   Count: Integer;
   t, m, i: Integer;
-  mac, serial, s, e: String;
-  StartMac: TCnBigNumber;
-  StartSerial: TCnBigNumber;
+  mac, serial, S, e: String;
+  biStartMac: TCnBigNumber;
+  biStartSerial: TCnBigNumber;
+  itsBigInt: Boolean;
+
+  digits: Integer;
+  pref, newN: string;
+  exitRepeat: Boolean;
+  StartN: int64;
+
+  function lpad(const S: string; const n: Integer): string;
+  begin
+    Result := S;
+    while Length(Result) < n do
+      Result := '0' + Result;
+  end;
+
+  function rpad(const S: string; const n: Integer): string;
+  var
+    l: Integer;
+  begin
+    Result := S;
+    l := Length(Result);
+    if l < n then
+    begin
+      while Length(Result) < n do
+        Result := Result + '0';
+    end
+    else
+      Result := Result.Substring(l - n);
+  end;
 
   function formatAsMac(const bnMAC: TCnBigNumber): String;
   var
@@ -545,55 +549,132 @@ var
       Copy(hex, 9, 2) + ':' + Copy(hex, 11, 2);
   end;
 
+  function AddSum(const card: string): string;
+  var
+    i, sum, j: Integer;
+    S, r, p, o: string;
+  begin
+    Result := card;
+    if not card.toUpper.Contains('[S') then
+      exit;
+
+    i := Pos('[S', card.toUpper);
+    j := Pos(']', card, i + 2);
+    r := Copy(card, i, j - i + 1);
+    p := LeftStr(card, i - 1);
+    o := RightStr(card, card.Length - j);
+    sum := 0;
+    for i := 1 to p.Length do
+    begin
+      if TryStrToInt(p[i], j) then
+        sum := sum + j
+    end;
+    for i := 1 to o.Length do
+    begin
+      if TryStrToInt(o[i], j) then
+        sum := sum + j
+    end;
+    S := r.toUpper.Replace('[', '').Replace(']', '').Replace('S', '');
+    if not TryStrToInt(S, i) then
+      i := 0;
+
+    Result := p + rpad(IntToStr(sum), i) + o;
+  end;
+
 begin
   if (not mtUnits.Active) then
     OpenDataset;
 
   if edtSERIAL.Text.IsEmpty then
-    Exit;
+    exit;
 
   Count := 1;
   Result := False;
+  itsBigInt := False;
 
-  StartSerial := TCnBigNumber.Create;
-  BigNumberClear(StartSerial);
-  StartMac := TCnBigNumber.Create;
-  BigNumberClear(StartMac);
+  biStartSerial := TCnBigNumber.Create;
+  BigNumberClear(biStartSerial);
+  biStartMac := TCnBigNumber.Create;
+  BigNumberClear(biStartMac);
 
-  if not TryStrToInt(edCount.Value, Count) then
+  if (edCount.Text.IsEmpty) or (not TryStrToInt(edCount.Value, Count)) then
     Count := 1;
 
   serial := edtSERIAL.Text.Trim;
-  if not serial.IsEmpty then
+  // проверим может это цифровой серийник
+  if (Count > 1) and (not serial.IsEmpty) then
   begin
-    StartSerial.SetDec(serial);
-    if not BigNumberSubWord(StartSerial, 1) then
+    biStartSerial.SetDec(serial);
+    S := UpperCase(biStartSerial.DecString);
+    itsBigInt := (S = UpperCase(serial));
+    if (itsBigInt) and (not BigNumberSubWord(biStartSerial, 1)) then
       serial := '';
   end;
 
-  mac := ValidateMAC(edtMAC.Text);
-  mac := StringReplace(mac, ':', '', [rfReplaceAll]);
-  if not mac.IsEmpty then
+  // не число
+  if (Count > 1) and (not itsBigInt) then
   begin
-    StartMac.SetHex(mac);
-    if not BigNumberSubWord(StartMac, 1) then
-      mac := '';
+    // попытка преобразовать номер в число
+    // если не удалось, попытаемся вырезать часть кода и в число
+    i := 0;
+    repeat
+      i := i + 1;
+      digits := Trunc(Log10(Count)) + i;
+      newN := RightStr(serial, digits);
+      pref := LeftStr(serial, Length(serial) - digits);
+      if TryStrToInt64(newN, StartN) then
+        exitRepeat := not(Length(IntToStr(StartN + Count)) > digits)
+      else
+      begin
+        StartN := -1;
+        exitRepeat := True;
+      end;
+    until (exitRepeat);
+  end;
+
+  mac := ValidateMAC(edtMAC.Text);
+  if (Count > 1) then
+  begin
+    mac := StringReplace(mac, ':', '', [rfReplaceAll]);
+    if (not mac.IsEmpty) then
+    begin
+      biStartMac.SetHex(mac);
+      if not BigNumberSubWord(biStartMac, 1) then
+        mac := '';
+    end;
   end;
   // для начала уменьшим на единицу. потом будем накидывать
   // избавляет от лишней логики
-  if (MessageDlg(format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtSERIAL.Text]), mtConfirmation, [mbYes, mbNo], 0)
-    = mrYes) then
+  if (Count = 1) or // если много то спрсим
+    (MessageDlg(format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtSERIAL.Text]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
+  then
   begin
     mtUnits.DisableControls;
     for i := 0 to Count - 1 do
     begin
       mtUnits.Append;
-      if (not serial.IsEmpty) and (BigNumberAddWord(StartSerial, 1)) then
-        mtUnits.FieldByName('SERIAL').AsString := StartSerial.DecString
+      if (Count > 1) then
+      begin
+        if itsBigInt then
+        begin
+          if (BigNumberAddWord(biStartSerial, 1)) then
+            newN := biStartSerial.DecString;
+        end
+        else
+        begin
+          newN := pref + lpad(IntToStr(StartN + i), digits);
+          newN := AddSum(newN);
+        end;
+        if (not mac.IsEmpty) and (BigNumberAddWord(biStartMac, 1)) then
+          mtUnits.FieldByName('MAC').AsString := formatAsMac(biStartMac);
+      end
       else
-        mtUnits.FieldByName('SERIAL').AsString := edtSERIAL.Text;
-      if (not mac.IsEmpty) and (BigNumberAddWord(StartMac, 1)) then
-        mtUnits.FieldByName('MAC').AsString := formatAsMac(StartMac);
+      begin
+        newN := edtSERIAL.Text;
+        if (not mac.IsEmpty) then
+          mtUnits.FieldByName('MAC').AsString := mac;
+      end;
+      mtUnits.FieldByName('SERIAL').AsString := newN;
       mtUnits.FieldByName('NOTICE').AsString := mmoNotice.Lines.Text;
       mtUnits.Post;
     end;

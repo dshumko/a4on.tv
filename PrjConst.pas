@@ -22,6 +22,8 @@ const
   rsAttrName_eiptv = 'Атрибуты IPTV групп';
   rsAttrID_etv = 6;
   rsAttrName_etv = 'Атрибуты ТВ оборудования';
+  rsAttrID_eall = 65;
+  rsAttrName_eall = 'Атрибуты любого оборудования';
   rsAttrID_cust = 4;
   rsAttrName_cust = 'Атрибуты абонента';
   rsAttrID_etype = 50;
@@ -916,6 +918,8 @@ resourcestring
   rsWarningQuestStop = 'Исправить ошибки?';
   rsIpnotSetOrNotFound = 'Для услуги не заданы IP или нет свободных адресов';
   rsDeleteCaption = 'Удаление';
+
+  rsChangeSerial = 'Сменить С/Н на';
 
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';

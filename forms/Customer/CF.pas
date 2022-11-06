@@ -3129,6 +3129,7 @@ const
           tmpSQL := tmpSQL +
             ' and (not exists(select ss.customer_id from subscr_serv ss where ss.Customer_id = c.Customer_id )) ';
       end;
+
       // 6. Автоблокировка
       if (dsFilter['STATE_1'] = 6) then
       begin
@@ -3174,15 +3175,46 @@ const
         tmpSQL := tmpSQL + ')) ';
       end;
 
-      // 9. Подключен только к выбранной услуге
+      // 9. Подключен только к выбранной услуге или типу
       if (dsFilter['STATE_1'] = 9) then
       begin
         if not dsFilter.FieldByName('serv_id').IsNull then
         begin
           tmpSQL := tmpSQL +
-            Format(' and (%d = (select list(ss.Serv_Id) from Subscr_Serv ss where ss.State_Sgn = 1 and ss.Customer_Id = c.customer_id)) ',
-            [dsFilter.FieldByName('serv_id').AsInteger]);
-        end;
+          // Format(' and (%d = (select list(ss.Serv_Id) from Subscr_Serv ss where ss.State_Sgn = 1 and ss.Customer_Id = c.customer_id)) ',
+          // [dsFilter.FieldByName('serv_id').AsInteger]);
+            Format(' and (exists(select ss.Serv_Id from Subscr_Serv ss ' +
+            ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id = %d) ' +
+            ' and (not (exists(select ss.Serv_Id from Subscr_Serv ss ' +
+            ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id <> %d)))) ',
+            [dsFilter.FieldByName('serv_id').AsInteger, dsFilter.FieldByName('serv_id').AsInteger]);
+        end
+        else if not dsFilter.FieldByName('SRVTYPES').IsNull then
+        begin
+          tmpSQL := tmpSQL +
+            Format(' and (exists(select ss.Serv_Id from Subscr_Serv ss inner join services s on (ss.Serv_Id = s.Service_Id) '
+            + ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and s.Business_Type = %d) ' + //
+            ' and (not exists(select ss.Serv_Id from Subscr_Serv ss inner join services s on (ss.Serv_Id = s.Service_Id) '
+            + ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and s.Business_Type <> %d))) ' //
+            , [dsFilter.FieldByName('SRVTYPES').AsInteger, dsFilter.FieldByName('SRVTYPES').AsInteger]);
+        end
+
+        {
+          if (dsFilter['serv_id'] >= 0) then
+          begin
+          tmpSQL := tmpSQL + ' and (exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
+          dsFilter.FieldByName('serv_id').AsString;
+          tmpSQL := tmpSQL + ' and c.customer_id = ss.customer_id )) ';
+          end
+          else if not dsFilter.FieldByName('SRVTYPES').IsNull then
+          begin
+          tmpSQL := tmpSQL +
+          ' and (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+          + ' where st.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString +
+          ' and c.customer_id = ss.customer_id )) ';
+          end
+        }
+
       end;
     end;
 

@@ -10,7 +10,7 @@ uses
   DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
 
 type
-  TMaterailForm = class(TForm)
+  TMaterialForm = class(TForm)
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -51,6 +51,12 @@ type
     qReqFile: TpFIBQuery;
     qSaveFile: TpFIBQuery;
     dsDoc: TpFIBDataSet;
+    lbl41: TLabel;
+    lbl42: TLabel;
+    dsServices: TpFIBDataSet;
+    srcServices: TDataSource;
+    lcbRENT: TDBLookupComboboxEh;
+    lcbLAON: TDBLookupComboboxEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -79,7 +85,7 @@ type
   end;
 
 var
-  MaterailForm: TMaterailForm;
+  MaterialForm: TMaterialForm;
 
 implementation
 
@@ -89,31 +95,32 @@ uses
 
 {$R *.dfm}
 
-procedure TMaterailForm.edtM_NUMBERChange(Sender: TObject);
+procedure TMaterialForm.edtM_NUMBERChange(Sender: TObject);
 begin
   FNeedCheckNN := True;
 end;
 
-procedure TMaterailForm.edtM_NUMBERExit(Sender: TObject);
+procedure TMaterialForm.edtM_NUMBERExit(Sender: TObject);
 begin
   if FNeedCheckNN then
     isValidNomNumber
 end;
 
-procedure TMaterailForm.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TMaterialForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   dsMGropups.Close;
   dsShippers.Close;
   dsDevType.Close;
   dsDoc.Close;
+  dsServices.Close;
 end;
 
-procedure TMaterailForm.FormCreate(Sender: TObject);
+procedure TMaterialForm.FormCreate(Sender: TObject);
 begin
   FNeedCheckNN := False;
 end;
 
-procedure TMaterailForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TMaterialForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
   begin
@@ -121,7 +128,7 @@ begin
   end;
 end;
 
-procedure TMaterailForm.FormShow(Sender: TObject);
+procedure TMaterialForm.FormShow(Sender: TObject);
 begin
   dsMGropups.Open;
   dsShippers.Open;
@@ -131,9 +138,10 @@ begin
   else
     dsDoc.ParamByName('MAT_ID').AsInteger := -1;
   dsDoc.Open;
+  dsServices.Open;
 end;
 
-procedure TMaterailForm.OkCancelFrame1bbOkClick(Sender: TObject);
+procedure TMaterialForm.OkCancelFrame1bbOkClick(Sender: TObject);
 begin
   if isValidNomNumber then
   begin
@@ -142,7 +150,7 @@ begin
   end;
 end;
 
-function TMaterailForm.isValidNomNumber: Boolean;
+function TMaterialForm.isValidNomNumber: Boolean;
 var
   s, n: string;
 begin
@@ -173,17 +181,17 @@ begin
     CnErrors.SetError(edtM_NUMBER, Format(rsERROR_UNIQUE, [s]), iaMiddleLeft, bsNeverBlink);
 end;
 
-procedure TMaterailForm.btnOpenFileClick(Sender: TObject);
+procedure TMaterialForm.btnOpenFileClick(Sender: TObject);
 begin
   ViewFile();
 end;
 
-function TMaterailForm.GetFile: String;
+function TMaterialForm.GetFile: String;
 begin
   Result := FFileForSave;
 end;
 
-procedure TMaterailForm.SetFile(value: String);
+procedure TMaterialForm.SetFile(value: String);
 var
   s: String;
 begin
@@ -204,7 +212,7 @@ begin
   end;
 end;
 
-procedure TMaterailForm.edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
+procedure TMaterialForm.edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   if dlgOpen.Execute then
   begin
@@ -214,7 +222,7 @@ begin
   Handled := True;
 end;
 
-procedure TMaterailForm.btnScanerClick(Sender: TObject);
+procedure TMaterialForm.btnScanerClick(Sender: TObject);
 var
   FileName: String;
   NeedSave: Boolean;
@@ -226,7 +234,7 @@ begin
   FNeedDelete := True;
 end;
 
-procedure TMaterailForm.dsDocAfterOpen(DataSet: TDataSet);
+procedure TMaterialForm.dsDocAfterOpen(DataSet: TDataSet);
 begin
   if not dsDoc.FieldByname('Bl_Name').IsNull then
   begin
@@ -235,7 +243,7 @@ begin
   end;
 end;
 
-procedure TMaterailForm.ViewFile();
+procedure TMaterialForm.ViewFile();
 var
   FileName: string;
 begin
@@ -266,7 +274,7 @@ begin
   ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
 end;
 
-procedure TMaterailForm.SaveFileToDB();
+procedure TMaterialForm.SaveFileToDB();
 var
   fs: TFileStream;
 begin

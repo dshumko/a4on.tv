@@ -22,11 +22,13 @@ object CustomerInfoFrm: TCustomerInfoFrm
       Hint = #1044#1086#1083#1075' '#1072#1073#1086#1085#1077#1085#1090#1072
       Align = alTop
       Caption = #1044#1054#1051#1043
+      Color = clBtnFace
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
+      ParentColor = False
       ParentFont = False
     end
     object memAbonent: TMemo

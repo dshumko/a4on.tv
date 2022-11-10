@@ -222,6 +222,9 @@ object CustomersFilterForm: TCustomersFilterForm
             DataField = 'STATE_1'
             DataSource = srcFilter
             DynProps = <>
+            DropDownBox.AutoDrop = True
+            DropDownBox.AutoFilter = True
+            DropDownBox.AutoFilterType = lsftContainsEh
             DropDownBox.Rows = 10
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1057#1086#1089#1090#1086#1103#1085#1080#1077' '#1091#1089#1083#1091#1075#1080' '#1080#1083#1080' '#1074#1080#1076#1072' '#1091#1089#1083#1091#1075'  '

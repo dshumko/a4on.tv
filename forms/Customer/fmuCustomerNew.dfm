@@ -1227,9 +1227,9 @@ object apgCustomerNew: TapgCustomerNew
       OnClick = btnCancelClick
     end
     object btnSAVE: TButton
-      Left = 499
-      Top = 6
-      Width = 275
+      Left = 138
+      Top = 8
+      Width = 636
       Height = 25
       Anchors = [akTop, akRight]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100

@@ -109,6 +109,8 @@ type
     procedure RecalAmount;
     procedure SaveOrderAddons;
     procedure SetInUpdateMode(const value: Boolean);
+    procedure PreviewOrder;
+    function GetCostOrder:Double;
   public
     property CustomerInfo: TCustomerInfo read FCustomerInfo write SetCustomerInfo;
     property InUpdateMode: Boolean write SetInUpdateMode;
@@ -566,9 +568,11 @@ begin
     end;
     if JO.Contains('SnglSrv') then
     begin
-      if not JO['SnglSrv'].IsNull then begin
+      if not JO['SnglSrv'].IsNull then
+      begin
         FSingleSrv := JO.i['SnglSrv'];
-        if FAfterOpen then begin
+        if FAfterOpen then
+        begin
           // запомним старую услугу после открытием
           FOldService := FSingleSrv;
           FAfterOpen := False;
@@ -719,8 +723,8 @@ var
   Order_id: Integer;
 begin
   // если редактируем объявление, то не будем печатать бланк
-  if FInUpdateMode and Preview
-  then Exit;
+  if FInUpdateMode and Preview then
+    Exit;
 
   if dsOrderTP.FieldByName('OTP_ID').IsNull then
     Exit;
@@ -789,17 +793,22 @@ end;
 
 procedure TOrderTPForm.actPrintExecute(Sender: TObject);
 begin
-  if CheckDataAndSave then
-  begin
-    if dsOrderTP.State in [dsEdit, dsInsert] then
-    begin
-      dsOrderTP.Post;
-      AfterSave(True);
-    end
-    else
-      PrintReport(False);
-    dsOrderTP.Edit;
-  end;
+  //if dsOrderTP.State in [dsInsert] then
+    PreviewOrder
+//  else begin
+//    // если отчета нет, то напечатаем согласно типа
+//    if CheckDataAndSave then
+//    begin
+//      if dsOrderTP.State in [dsEdit, dsInsert] then
+//      begin
+//        dsOrderTP.Post;
+//        AfterSave(True);
+//      end
+//      else
+//        PrintReport(False);
+//      dsOrderTP.Edit;
+//    end;
+//  end;
 end;
 
 procedure TOrderTPForm.AddictSpellShowEndMessage(Sender: TObject);
@@ -1147,6 +1156,53 @@ begin
   FInUpdateMode := value;
   if FInUpdateMode then
     FOldService := FSingleSrv;
+end;
+
+procedure TOrderTPForm.PreviewOrder;
+var
+  ReportID, i, ci: Integer;
+  periodFrom: TDateTime;
+  FILENAME: String;
+  Stream: TStream;
+  bm: TBookmark;
+  vQRY: TpFIBQuery;
+begin
+  FILENAME := 'PreviewOrder';
+  // Загрузим отчет из БД
+  ReportID := dmMain.GET_ID_REPORT_BY_PATH(FILENAME);
+  if ReportID < 0 then
+  begin
+    Exit;
+  end;
+
+  // Отчет есть, значит подставим переменные и покажем
+  with TReportChild.Create(Application) do
+  begin
+    REPORT_ID := ReportID;
+    LoadReportBody;
+
+    i := GetVariableID('CUSTOMER_ID');
+    if i > 0 then
+      SetVariable('CUSTOMER_ID', CustomerInfo.CUSTOMER_ID );
+
+    i := GetVariableID('TEXT');
+    if i > 0 then
+      SetVariable('TEXT', ''''+ mmoText.Lines.Text + '''');
+
+    i := GetVariableID('COST');
+    if i > 0 then
+      SetVariable('COST', GetCostOrder);
+
+    PrepareReport;
+    PrintReport;
+    Close;
+  end;
+end;
+
+function TOrderTPForm.GetCostOrder:Double;
+begin
+  RecalAmount;
+  Result := IfThen((not VarIsNull(ednAMOUNT.value)), ednAMOUNT.value, 0);
 end;
 
 end.

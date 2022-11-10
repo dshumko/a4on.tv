@@ -4,7 +4,6 @@ inherited NewsForm: TNewsForm
   Caption = #1053#1086#1074#1086#1089#1090#1080' '#1076#1083#1103' '#1083#1080#1095#1085#1086#1075#1086' '#1082#1072#1073#1080#1085#1077#1090#1072
   ClientHeight = 435
   ClientWidth = 926
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -281,7 +280,9 @@ inherited NewsForm: TNewsForm
       'SET '
       '    O_DELETED = 1'
       'WHERE'
-      '    O_ID = :OLD_O_ID and O_TYPE = 18'
+      '    O_ID = :OLD_O_ID '
+      '    and O_TYPE = 34'
+      '    '
       '    ')
     InsertSQL.Strings = (
       'INSERT INTO OBJECTS('

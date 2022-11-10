@@ -35,12 +35,6 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 359
       Top = 6
@@ -425,7 +419,6 @@ object RequestForm: TRequestForm
           Height = 137
           inherited lblDebt: TLabel
             Width = 370
-            Margins.Bottom = 0
             OnDblClick = CustomerInfoFrmlblFIODblClick
           end
           inherited memAbonent: TMemo
@@ -446,7 +439,7 @@ object RequestForm: TRequestForm
     Top = 188
     Width = 784
     Height = 337
-    ActivePage = tabExecute
+    ActivePage = tabRequest
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
@@ -1248,7 +1241,7 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 115
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100

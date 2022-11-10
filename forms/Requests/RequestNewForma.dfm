@@ -129,6 +129,9 @@ object RequestNewForm: TRequestNewForm
             FieldName = 'AREA_NAME'
             Title.Caption = #1056#1072#1081#1086#1085
           end>
+        DropDownBox.ListSource = srcStreet
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EditButtons = <
@@ -281,7 +284,6 @@ object RequestNewForm: TRequestNewForm
           Height = 129
           inherited lblDebt: TLabel
             Width = 386
-            Margins.Bottom = 0
           end
           inherited memAbonent: TMemo
             Width = 386
@@ -302,12 +304,6 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6
@@ -524,6 +520,9 @@ object RequestNewForm: TRequestNewForm
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
             DataField = ''
+            DropDownBox.ListSource = srcRequestType
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EditButtons = <
@@ -537,6 +536,7 @@ object RequestNewForm: TRequestNewForm
             ListField = 'RT_NAME'
             ListSource = srcRequestType
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 0
             Visible = True
             OnChange = lupTypeChange
@@ -550,6 +550,9 @@ object RequestNewForm: TRequestNewForm
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
             DataField = ''
+            DropDownBox.ListSource = srcErrors
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EditButtons = <
@@ -563,6 +566,7 @@ object RequestNewForm: TRequestNewForm
             ListField = 'RQ_CONTENT'
             ListSource = srcErrors
             ShowHint = True
+            Style = csDropDownEh
             TabOrder = 1
             Visible = True
             OnChange = luTemplateChange

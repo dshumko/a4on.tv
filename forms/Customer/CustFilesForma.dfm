@@ -327,6 +327,10 @@ object CustFilesForm: TCustFilesForm
             Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
             Width = 90
           end>
+        DropDownBox.ListSource = srcFileType
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.UseMultiTitle = True
         DropDownBox.ShowTitles = True

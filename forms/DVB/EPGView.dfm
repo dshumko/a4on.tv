@@ -43,6 +43,7 @@ object EPGViewForm: TEPGViewForm
       Height = 13
       Align = alTop
       Caption = ' '#1057#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074
+      ExplicitWidth = 84
     end
     object dbgChannels: TDBGridEh
       Left = 0
@@ -86,6 +87,15 @@ object EPGViewForm: TEPGViewForm
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
           Title.TitleButton = True
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CH_NUMBER'
+          Footers = <>
+          Title.Caption = #1053#1086#1084#1077#1088
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -106,6 +116,7 @@ object EPGViewForm: TEPGViewForm
       Height = 13
       Align = alTop
       Caption = #1056#1072#1089#1087#1080#1089#1072#1085#1080#1077' '#1087#1088#1086#1075#1088#1072#1084#1084
+      ExplicitWidth = 108
     end
     object dbgEPG: TDBGridEh
       Left = 0
@@ -1035,5 +1046,13 @@ object EPGViewForm: TEPGViewForm
     DefaultDatabase = dmMain.dbTV
     Left = 522
     Top = 488
+  end
+  object PropStorageEh: TPropStorageEh
+    Section = 'EPG'
+    StorageManager = dmMain.iniPropStorage
+    StoredProps.Strings = (
+      'pnlChannels.<P>.Width')
+    Left = 290
+    Top = 89
   end
 end

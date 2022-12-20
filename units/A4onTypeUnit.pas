@@ -30,6 +30,7 @@ type
     isType: Integer; // 0 - абонент, 1 - узел
     isJur : Integer; // 0 - физик 1 - юрик
     INN : String;
+    City: string;
   end;
 
   TAlertItem = record

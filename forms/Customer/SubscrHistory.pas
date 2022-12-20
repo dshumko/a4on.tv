@@ -189,6 +189,7 @@ var
   Font_name: string;
   Row_height: Integer;
   chW: Boolean;
+  cNC: Boolean;
 begin
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
@@ -227,12 +228,17 @@ begin
   FNeedRecalc := False;
 
   chW := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') = '1');
+  cNC := (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
   for i := 0 to dbgCustSubscrServHist.Columns.Count - 1 do
   begin
     if (AnsiUpperCase(dbgCustSubscrServHist.Columns[i].FieldName) = 'WORKER_ON') then
       dbgCustSubscrServHist.Columns[i].Visible := chW
     else if (AnsiUpperCase(dbgCustSubscrServHist.Columns[i].FieldName) = 'WORKER_OFF') then
-      dbgCustSubscrServHist.Columns[i].Visible := chW;
+      dbgCustSubscrServHist.Columns[i].Visible := chW
+    else if (AnsiUpperCase(dbgCustSubscrServHist.Columns[i].FieldName) = 'CONTRACT') then
+      dbgCustSubscrServHist.Columns[i].Visible := cNC
+    else if (AnsiUpperCase(dbgCustSubscrServHist.Columns[i].FieldName) = 'CONTRACT_DATE') then
+      dbgCustSubscrServHist.Columns[i].Visible := cNC;
   end;
 end;
 

@@ -3,7 +3,7 @@ as
 begin
   DB = ibec_CreateConnection(__ctInterBase,
                              'DBName="localhost:A4ON_DB";
-                              ClientLib=D:\SUBD\Firebird\30X\fbclient.dll;
+                              ClientLib=D:\RDBMS\Firebird\30X\fbclient.dll;
                               User=SYSDBA; Password=masterkey; Names=UTF8; SqlDialect=3');
   try
     ibec_ExtractMetadata(DB, 'D:\PROJECTS\a4on.tv\Sources\SQL\A4ON_DB.sql',

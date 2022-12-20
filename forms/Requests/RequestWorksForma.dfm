@@ -55,6 +55,8 @@ object RequestWorksForm: TRequestWorksForm
       Align = alClient
       TabOrder = 0
       TabStop = True
+      ExplicitWidth = 620
+      ExplicitHeight = 37
       inherited Label2: TLabel
         Margins.Bottom = 0
       end
@@ -67,11 +69,15 @@ object RequestWorksForm: TRequestWorksForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
+        ExplicitLeft = 455
+        ExplicitTop = 6
       end
       inherited bbCancel: TBitBtn
         Left = 536
         Top = 6
         Caption = #1047#1072#1082#1088#1099#1090#1100
+        ExplicitLeft = 536
+        ExplicitTop = 6
       end
     end
   end

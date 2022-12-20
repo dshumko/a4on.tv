@@ -7,10 +7,13 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Menus,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.Menus,
   Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, DBLookupEh,
-  FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh,
+  DBLookupEh,
+  FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
+  pFIBDatabase,
   PropFilerEh, PropStorageEh;
 
 type
@@ -174,24 +177,32 @@ type
     procedure lcbBANKExit(Sender: TObject);
     procedure eSURNAMEEnter(Sender: TObject);
     procedure eFIRSTNAMEEnter(Sender: TObject);
+    procedure LupHOUSE_IDChange(Sender: TObject);
   private
     { Private declarations }
     FullAccess: Boolean;
     FPersonalData: Boolean;
     FNotIgnoreContract: Boolean;
     FDisableAddressEdit: Boolean;
+    FSavedFloor: string;
+    FSavedPorch: string;
+    FSavedFlat: string;
+    FSavedHouseID: Integer;
     procedure GenerateAccountN;
     procedure SetJurVisible;
     procedure SetExAddressEdit(const DisableEdit: Boolean = False);
     procedure SetColor(const COLOR: String);
     function FindSameAccount(const ACCNT: string; const CurID: Integer): String;
     function FindSameExtID(const ExternalID: string; const CustomerID: Integer): String;
+    procedure CheckPorchandFloor();
     procedure UpdateFloorPorch();
+    procedure SaveFlatOwner();
+    function CheckFlatOwner(var OldOwner: String): Boolean;
     procedure SaveContact;
     procedure TextToFileds(scResult: TStringList);
     function ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
     procedure CreateMainMenuItem;
-    function CheckInBlackList(const Sender: TDBEditEh; const NT: Integer = 0) : Boolean;
+    function CheckInBlackList(const Sender: TDBEditEh; const NT: Integer = 0): Boolean;
     procedure CheckBankAccount;
     function CheckControlText(const Contrl: TDBEditEh; const regexp: String): Boolean;
     procedure CheckIOfromDB();
@@ -208,7 +219,8 @@ implementation
 
 uses
   System.TypInfo, System.RegularExpressions,
-  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, MAIN, ScanImageForma, CustomerForma, AtrCommon, EditCFileForma,
+  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, MAIN, ScanImageForma, CustomerForma, AtrCommon,
+  EditCFileForma,
   A4onTypeUnit, ContactForma;
 
 {$R *.dfm}
@@ -265,6 +277,14 @@ end;
 procedure TapgCustomerEdit.lcbBANKExit(Sender: TObject);
 begin
   CheckBankAccount;
+end;
+
+procedure TapgCustomerEdit.LupHOUSE_IDChange(Sender: TObject);
+begin
+  if (ds.DataSet.FieldByName('HOUSE_ID').OldValue <> LupHOUSE_ID.Value) then
+  begin
+    CheckPorchandFloor;
+  end;
 end;
 
 procedure TapgCustomerEdit.LupHOUSE_IDEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -388,8 +408,17 @@ end;
 
 procedure TapgCustomerEdit.eFLAT_NOExit(Sender: TObject);
 begin
+  if (ds.DataSet.FieldByName('FLAT_NO').OldValue <> eFLAT_NO.Text) then
+  begin
+    CheckPorchandFloor;
+  end;
+end;
+
+procedure TapgCustomerEdit.CheckPorchandFloor;
+begin
   if VarIsNull(LupHOUSE_ID.KeyValue) then
     Exit;
+
   if ds.DataSet.State in [dsInsert, dsEdit] then
   begin
     Query.SQL.Clear;
@@ -409,9 +438,35 @@ begin
     Query.ExecQuery;
     Query.ExecQuery;
     if not(Query.FN('PORCH_N').IsNull) then
-      edPORCH.Text := Query.FN('PORCH_N').AsString;
+    begin
+      if (FSavedPorch <> Query.FN('PORCH_N').AsString) then begin
+        CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + FSavedPorch, iaTopCenter, bsNeverBlink);
+        edPORCH.Text := Query.FN('PORCH_N').AsString;
+      end;
+    end
+    else begin
+      if (not edPORCH.Text.IsEmpty) then
+      begin
+        CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + edPORCH.Text, iaTopCenter, bsNeverBlink);
+        edPORCH.Text := '';
+      end;
+    end;
+
     if not(Query.FN('FLOOR_N').IsNull) then
-      edFLOOR.Text := Query.FN('FLOOR_N').AsString;
+    begin
+      if (FSavedFloor <> Query.FN('FLOOR_N').AsString) then begin
+        CnErrors.SetError(edFLOOR, 'Проверьте этаж. был ' + FSavedFloor, iaTopCenter, bsNeverBlink);
+        edFLOOR.Text := Query.FN('FLOOR_N').AsString;
+      end;
+    end
+    else begin
+      if (not edFLOOR.Text.IsEmpty) then
+      begin
+        CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + edFLOOR.Text, iaTopCenter, bsNeverBlink);
+        edFLOOR.Text := '';
+      end;
+    end;
+
     if not(Query.FN('ACCOUNT_NO').IsNull) then
       ShowMessage(rsSAME_ADRES + rsEOL + Format(rsCustomerInfo, [Query.FN('ACCOUNT_NO').AsString,
         Query.FN('DOGOVOR_NO').AsString, Query.FN('FIO').AsString, Query.FN('DEBT_SUM').AsString,
@@ -423,7 +478,6 @@ begin
       GenerateAccountN;
   end;
 end;
-
 procedure TapgCustomerEdit.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
@@ -462,6 +516,21 @@ begin
   dsStreets.Open;
   dsHouses.Open;
   dsExecutor.Open;
+
+  if not ds.DataSet.FieldByName('PORCH_N').IsNull then
+    FSavedPorch := ds.DataSet['PORCH_N'];
+  if not ds.DataSet.FieldByName('FLOOR_N').IsNull then
+    FSavedFloor := ds.DataSet['FLOOR_N'];
+  if not ds.DataSet.FieldByName('FLOOR_N').IsNull then
+    FSavedFloor := ds.DataSet['FLOOR_N'];
+  if not ds.DataSet.FieldByName('FLAT_NO').IsNull then
+    FSavedFlat := ds.DataSet['FLAT_NO'];
+  if not ds.DataSet.FieldByName('HOUSE_ID').IsNull then
+    FSavedHouseID := ds.DataSet['HOUSE_ID']
+  else
+    FSavedHouseID := -1;
+
+  LupHOUSE_ID.OnChange := LupHOUSE_IDChange;
 end;
 
 procedure TapgCustomerEdit.actExAddressEditExecute(Sender: TObject);
@@ -683,8 +752,26 @@ begin
 end;
 
 procedure TapgCustomerEdit.SaveData;
+var
+  s: string;
+  b: Boolean;
 begin
   UpdateFloorPorch();
+  // Владелец квартиры
+  if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
+  begin
+    // проверим, владелиц ли квартиры и пометим если да
+    b := CheckFlatOwner(s);
+    if not s.IsEmpty then
+      s := rsQstFlatOwner + #13#10 + 'Прежний: ' + s
+    else
+      s := rsQstFlatOwner;
+    if (not b) and (Application.MessageBox(PWideChar(s), PWideChar(rsAplicationName),
+      MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES) then
+    begin
+      SaveFlatOwner;
+    end
+  end;
 end;
 
 procedure TapgCustomerEdit.CloseData;
@@ -819,25 +906,29 @@ begin
 
   if (FPersonalData) and (not edtPERSONAL_N.Text.IsEmpty) then
   begin
-    if CheckControlText(edtPERSONAL_N, dmMain.GetSettingsValue('REG_PERSN'))
-    then begin
-      if not CheckInBlackList(edtPERSONAL_N)
-      then Result := False;
+    if CheckControlText(edtPERSONAL_N, dmMain.GetSettingsValue('REG_PERSN')) then
+    begin
+      if not CheckInBlackList(edtPERSONAL_N) then
+        Result := False;
     end
-    else Result := False;
+    else
+      Result := False;
   end
-  else CnErrors.Dispose(edtPERSONAL_N);
+  else
+    CnErrors.Dispose(edtPERSONAL_N);
 
   if (FPersonalData) and (not edtPASSPORT_NUMBER.Text.IsEmpty) then
   begin
-    if CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'))
-    then begin
-      if not CheckInBlackList(edtPASSPORT_NUMBER, 1)
-      then Result := False;
+    if CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN')) then
+    begin
+      if not CheckInBlackList(edtPASSPORT_NUMBER, 1) then
+        Result := False;
     end
-    else Result := False;
+    else
+      Result := False;
   end
-  else CnErrors.Dispose(edtPASSPORT_NUMBER);
+  else
+    CnErrors.Dispose(edtPASSPORT_NUMBER);
 
   if (not FullAccess) and (FNotIgnoreContract) and
     (not(ds.DataSet.FieldByName('CONTRACT_DATE').IsNull and (VarIsEmpty(eCONTRACT_DATE.Value) or
@@ -857,16 +948,7 @@ begin
   ValidateData;
   if (ds.DataSet.FieldByName('HOUSE_ID').OldValue <> LupHOUSE_ID.Value) then
   begin
-    if (not edPORCH.Text.IsEmpty) then
-    begin
-      CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + edPORCH.Text, iaTopCenter, bsNeverBlink);
-      edPORCH.Text := '';
-    end;
-    if (not edFLOOR.Text.IsEmpty) then
-    begin
-      CnErrors.SetError(edFLOOR, 'Проверьте подъезд. был ' + edFLOOR.Text, iaTopCenter, bsNeverBlink);
-      edFLOOR.Text := '';
-    end;
+    CheckPorchandFloor;
   end;
 end;
 
@@ -1060,24 +1142,125 @@ var
 begin
   if ((edFLOOR.Text <> '') or (edPORCH.Text <> '')) and (eFLAT_NO.Text <> '') and (LupHOUSE_ID.Text <> '') then
   begin
-    qry := TpFIBQuery.Create(Nil);
-    with qry do
-      try
-        DataBase := dmMain.dbTV;
-        Transaction := dmMain.trWriteQ;
-        SQL.Text := 'execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N, :Floor_N)';
-        if (edPORCH.Text <> '') then
-          ParamByName('PORCH_N').Value := edPORCH.Text;
-        if (edFLOOR.Text <> '') then
-          ParamByName('FLOOR_N').Value := edFLOOR.Text;
-        ParamByName('FLAT_NO').Value := eFLAT_NO.Text;
-        ParamByName('HOUSE_ID').Value := LupHOUSE_ID.KeyValue;
-        Transaction.StartTransaction;
-        ExecQuery;
-        Transaction.Commit;
-      finally
-        Free;
-      end;
+    if (edFLOOR.Text <> FSavedFloor) or (edPORCH.Text <> FSavedPorch) or (eFLAT_NO.Text <> FSavedFlat) or
+      (LupHOUSE_ID.Value <> FSavedHouseID) then
+    begin
+      qry := TpFIBQuery.Create(Nil);
+      with qry do
+        try
+          DataBase := dmMain.dbTV;
+          Transaction := dmMain.trWriteQ;
+          SQL.Text := 'execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N, :Floor_N)';
+          if (edPORCH.Text <> '') then
+            ParamByName('PORCH_N').Value := edPORCH.Text;
+          if (edFLOOR.Text <> '') then
+            ParamByName('FLOOR_N').Value := edFLOOR.Text;
+          ParamByName('FLAT_NO').Value := eFLAT_NO.Text;
+          ParamByName('HOUSE_ID').Value := LupHOUSE_ID.KeyValue;
+
+          Transaction.StartTransaction;
+          ExecQuery;
+          Transaction.Commit;
+        finally
+          Free;
+        end;
+    end;
+  end;
+end;
+
+function TapgCustomerEdit.CheckFlatOwner(var OldOwner: String): Boolean;
+var
+  s, n: string;
+begin
+  Result := False;
+  OldOwner := '';
+  Query.Transaction := trReadQ;
+  n := trim(eSURNAME.Text + ' ' + eFIRSTNAME.Text + ' ' + eMIDLENAME.Text);
+
+  Query.SQL.Clear;
+  Query.SQL.Add('execute block (');
+  Query.SQL.Add('    House_Id   integer = :House_Id,');
+  Query.SQL.Add('    Flat_No    D_FLAT_NS = :Flat_No,');
+  Query.SQL.Add('    OWNER_NAME D_VARCHAR100 = :OWNER_NAME,');
+  Query.SQL.Add('    OWNER_DOC  D_VARCHAR255 = :OWNER_DOC)');
+  Query.SQL.Add('returns (itsOwner D_INTEGER, ownerS D_VARCHAR255)');
+  Query.SQL.Add('as');
+  Query.SQL.Add('begin');
+  Query.SQL.Add('  itsOwner = 0;');
+  Query.SQL.Add('  select');
+  Query.SQL.Add('      count(*)');
+  Query.SQL.Add('    from Houseflats');
+  Query.SQL.Add('    where House_Id = :House_Id');
+  Query.SQL.Add('          and Flat_No = :Flat_No');
+  Query.SQL.Add('          and Owner_Name = :Owner_Name');
+  Query.SQL.Add('          and Owner_Doc = :Owner_Doc');
+  Query.SQL.Add('  into :itsOwner;');
+  Query.SQL.Add('  if (itsOwner = 0) then');
+  Query.SQL.Add('    select');
+  Query.SQL.Add('        list(Owner_Name||'' ''||Owner_Doc)');
+  Query.SQL.Add('      from Houseflats');
+  Query.SQL.Add('      where House_Id = :House_Id');
+  Query.SQL.Add('            and Flat_No = :Flat_No');
+  Query.SQL.Add('    into :ownerS;');
+  Query.SQL.Add('  suspend;');
+  Query.SQL.Add('end');
+
+  Query.ParamByName('House_Id').asInteger := LupHOUSE_ID.KeyValue;
+  Query.ParamByName('Flat_No').AsString := eFLAT_NO.Text;
+  Query.ParamByName('OWNER_NAME').AsString := n;
+  Query.ParamByName('OWNER_DOC').AsString := edtPASSPORT_NUMBER.Text;
+  Query.Transaction.StartTransaction;
+  Query.ExecQuery;
+  if not(Query.FN('itsOwner').IsNull) then
+  begin
+    Result := (Query.FN('itsOwner').asInteger > 0);
+  end;
+  if not(Query.FN('ownerS').IsNull) then
+  begin
+    OldOwner := Query.FN('ownerS').AsString;
+  end;
+  Query.Transaction.Commit;
+  Query.Close;
+
+  Query.Transaction := trReadQ;
+end;
+
+procedure TapgCustomerEdit.SaveFlatOwner();
+var
+  oQuery: TpFIBQuery;
+  s: string;
+begin
+  s := trim(eSURNAME.Text + ' ' + eFIRSTNAME.Text + ' ' + eMIDLENAME.Text);
+  oQuery := TpFIBQuery.Create(Nil);
+  with oQuery do
+  begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+
+      oQuery.SQL.Clear;
+      oQuery.SQL.Add('execute block (');
+      oQuery.SQL.Add('    House_Id   integer = :House_Id,');
+      oQuery.SQL.Add('    Flat_No    D_FLAT_NS = :Flat_No,');
+      oQuery.SQL.Add('    OWNER_NAME D_VARCHAR100 = :OWNER_NAME,');
+      oQuery.SQL.Add('    OWNER_DOC  D_VARCHAR255 = :OWNER_DOC)');
+      oQuery.SQL.Add('as');
+      oQuery.SQL.Add('begin');
+      oQuery.SQL.Add('  update or insert into Houseflats (House_Id, Flat_No, Owner_Name, Owner_Doc)');
+      oQuery.SQL.Add('  values (:House_Id, :Flat_No, :Owner_Name, :Owner_Doc)');
+      oQuery.SQL.Add('  matching(House_Id, Flat_No);');
+      oQuery.SQL.Add('end');
+
+      oQuery.ParamByName('House_Id').asInteger := LupHOUSE_ID.KeyValue;
+      oQuery.ParamByName('Flat_No').AsString := eFLAT_NO.Text;
+      oQuery.ParamByName('OWNER_NAME').AsString := s;
+      oQuery.ParamByName('OWNER_DOC').AsString := edtPASSPORT_NUMBER.Text;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
   end;
 end;
 
@@ -1270,15 +1453,16 @@ begin
     CheckInBlackList((Sender as TDBEditEh));
 end;
 
-function TapgCustomerEdit.CheckInBlackList(const Sender: TDBEditEh; const NT: Integer = 0) : Boolean;
+function TapgCustomerEdit.CheckInBlackList(const Sender: TDBEditEh; const NT: Integer = 0): Boolean;
 var
   s, n: string;
 begin
   // NT 0 - Личный номер 1 - номер паспота
   CnErrors.Dispose(Sender);
-  Result:= True;
-  if (Sender.Text = '') then begin
-    if ((Owner<>Nil) and (Owner is TCustomerForm)) then
+  Result := True;
+  if (Sender.Text = '') then
+  begin
+    if ((Owner <> Nil) and (Owner is TCustomerForm)) then
       (Owner as TCustomerForm).actSave.Enabled := True;
     Exit;
   end;
@@ -1305,7 +1489,8 @@ begin
   end;
 
   Result := s.IsEmpty;
-  if ((Owner<>Nil) and (Owner is TCustomerForm)) then begin
+  if ((Owner <> Nil) and (Owner is TCustomerForm)) then
+  begin
     //
     (Owner as TCustomerForm).actSave.Enabled := (s.IsEmpty) or dmMain.AllowedAction(rght_Customer_full);
   end;

@@ -4,12 +4,16 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types, System.StrUtils, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.Types, System.StrUtils, System.Actions,
   Data.DB,
-  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask,
+  Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
+  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
+  PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame;
+  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh,
+  DBVertGridsEh, CustomerInfoFrame;
 
 type
 
@@ -43,8 +47,8 @@ type
       State: TGridDrawState);
   private
     FCanEdit: Boolean;
-    FCanEditPort: Boolean;
-    FCustomerRecord: TCustomerInfo;
+    // FCanEditPort: Boolean;
+    // FCustomerRecord: TCustomerInfo;
     FNodeID: Integer;
     FWID: Integer;
     function CheckData: Boolean;
@@ -117,10 +121,8 @@ procedure TWirePointForm.OkCancelFrame1bbOkClick(Sender: TObject);
 var
   errors: Boolean;
 begin
-  errors := false;
   if not(FCanEdit) then
   begin
-    errors := true;
     Exit;
   end;
 

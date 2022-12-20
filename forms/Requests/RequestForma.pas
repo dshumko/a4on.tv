@@ -256,7 +256,6 @@ type
     procedure actFileDelExecute(Sender: TObject);
     procedure actOpenHouseExecute(Sender: TObject);
     procedure dbgFlatsColExit(Sender: TObject);
-    procedure deEndExecDateTimeExit(Sender: TObject);
     procedure dbgFlatsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
   private
@@ -269,7 +268,7 @@ type
     FFullAccess: Boolean; // полный доступ
     FCanEdit: Boolean; // может изменять результат выполнения
     FCanClose: Boolean; // может закрыть заявку
-    FClosed: Boolean; // Заявка закрыта
+    FRequestClosed: Boolean; // Заявка закрыта
     FCanCloseDay: Boolean; // может закрыть заявку
     FCanUnclose: Boolean; // может закрыть заявку
     FCanCreate: Boolean; // может добавить заявку
@@ -530,9 +529,8 @@ end;
 
 procedure TRequestForm.actMaterialsExecute(Sender: TObject);
 begin
-  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
-  ReqMaterials(dsRequest['RQ_ID'], FClosed);
-  if (not FClosed) then
+  ReqMaterials(dsRequest['RQ_ID'], FRequestClosed);
+  if (not FRequestClosed) then
     dsMaterials.CloseOpen(true);
 end;
 
@@ -581,9 +579,17 @@ begin
 end;
 
 procedure TRequestForm.actWorksExecute(Sender: TObject);
+var
+  b: Byte;
 begin
-  ReqWorks(dsRequest['RQ_ID'], 1, dsRequest['RQ_TYPE']);
-  dsWorks.CloseOpen(true);
+  if (FRequestClosed) then
+    b := 0
+  else
+    b := 1;
+
+  ReqWorks(dsRequest['RQ_ID'], b, dsRequest['RQ_TYPE']);
+  if (not FRequestClosed) then
+    dsWorks.CloseOpen(true);
 end;
 
 procedure TRequestForm.btnCancelClick(Sender: TObject);
@@ -1324,11 +1330,6 @@ begin
   end;
 end;
 
-procedure TRequestForm.deEndExecDateTimeExit(Sender: TObject);
-begin
-  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
-end;
-
 procedure TRequestForm.dbMemDefectChange(Sender: TObject);
 begin
   if FCanClose or FFullAccess then
@@ -1495,7 +1496,7 @@ end;
 procedure TRequestForm.ShowFlats;
 var
   s: String;
-  lk_Col: TColumnEh;
+  // lk_Col: TColumnEh;
   i: Integer;
 begin
   dbgFlats.Visible := False;
@@ -1525,7 +1526,6 @@ begin
   dsFlats.Active := true;
   dbgFlats.Visible := true;
   splFlats.Visible := true;
-  i := -1;
   for i := 0 to dbgFlats.Columns.Count - 1 do
   begin
     if dbgFlats.Columns[i].FieldName = 'FLAT_RESULT' then
@@ -1594,9 +1594,8 @@ end;
 
 procedure TRequestForm.actMatInExecute(Sender: TObject);
 begin
-  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
-  ReqMaterialsReturn(dsRequest['RQ_ID'], FClosed);
-  if (not FClosed) then
+  ReqMaterialsReturn(dsRequest['RQ_ID'], FRequestClosed);
+  if (not FRequestClosed) then
     dsMaterials.CloseOpen(true);
 end;
 
@@ -1644,8 +1643,7 @@ begin
   if (not dsRequest.FieldByName('PHONE').IsNull) then
     edPhone.Text := dsRequest['PHONE'];
   FPhoneSaved := true;
-
-  SetIsClosed((not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
+  SetIsClosed((not dsRequest.FieldByName('REQ_RESULT').IsNull) and (not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull));
 end;
 
 procedure TRequestForm.SetGridsHeight;
@@ -1867,17 +1865,19 @@ end;
 
 procedure TRequestForm.SetIsClosed(const Closed: Boolean);
 begin
-  FClosed := Closed;
-  if FClosed then
+  FRequestClosed := Closed;
+  if FRequestClosed then
   begin
-    dbgFlats.ReadOnly := true;
     dbgMaterials.PopupMenu := nil;
   end
   else
   begin
-    dbgFlats.ReadOnly := False;
     dbgMaterials.PopupMenu := pmGridMat;
   end;
+
+  dbgFlats.ReadOnly := FRequestClosed;
+  dbgWorks.ReadOnly := FRequestClosed;
+  actExecutors.Enabled := not FRequestClosed;
 end;
 
 end.

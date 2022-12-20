@@ -618,12 +618,17 @@ object dmMain: TdmMain
       
         '                        and cc.Cc_Type = 1), c.MOBILE_PHONE, '#39#39')' +
         ' as MOBILE'
+      
+        '    , coalesce(a.Area_Name||coalesce('#39'. '#39'||sa.Subarea_Name, '#39#39'),' +
+        ' '#39#39') as City'
       'FROM CUSTOMER C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
       
         '   left outer join houseflats hf on (hf.house_id = c.house_id an' +
         'd hf.flat_no = c.flat_no)'
+      '   left outer join AREA a on (a.Area_Id = s.Area_Id)'
+      '   left outer join SUBAREA sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where'
       '  @@filter%1=2@'
       'union all'
@@ -648,12 +653,17 @@ object dmMain: TdmMain
       '    , 0 Juridical'
       '    , '#39#39' Jur_Inn'
       '    , '#39#39' as MOBILE'
+      
+        '    , coalesce(a.Area_Name||coalesce('#39'. '#39'||sa.Subarea_Name, '#39#39'),' +
+        ' '#39#39') as City'
       'FROM NODES C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
       
         '   inner join objects o on (o.O_Id = c.Type_Id and o.O_Type = 38' +
         ')'
+      '   left outer join AREA a on (a.Area_Id = s.Area_Id)'
+      '   left outer join SUBAREA sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where'
       '  @@filter_node%1=2@')
     AutoCalcFields = False

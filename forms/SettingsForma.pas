@@ -10,8 +10,7 @@ uses
   Data.DB,
   Vcl.Menus, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs,
   FIBQuery, pFIBQuery, OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, PrjConst, FIBDatabase, pFIBDatabase,
-  DBGridEh,
-  DBLookupEh;
+  DBGridEh, DBLookupEh;
 
 type
   TSettingsForm = class(TForm)
@@ -49,8 +48,6 @@ type
     pnl1: TPanel;
     Label15: TLabel;
     lstSettings: TListBox;
-    clrbxDolg: TColorBox;
-    clrbxOFF: TColorBox;
     Label19: TLabel;
     Label20: TLabel;
     pnlBilling: TPanel;
@@ -111,7 +108,6 @@ type
     edReqTime: TDateTimePicker;
     chkBARDELZERRO: TCheckBox;
     lbl9: TLabel;
-    clrbxOFFMONEY: TColorBox;
     chkBARADDPAY: TCheckBox;
     chkIgnoreDate: TCheckBox;
     tsA4ON: TTabSheet;
@@ -194,6 +190,19 @@ type
     lbl181: TLabel;
     cbbRQ_TO_NEGATIVE: TDBLookupComboboxEh;
     chkSrvWorker: TCheckBox;
+    chkFlatOwner: TCheckBox;
+    chkNewContract: TCheckBox;
+    lbl25: TLabel;
+    dlgColor1: TColorDialog;
+    edtColorDolg: TDBEditEh;
+    edtColorOFF: TDBEditEh;
+    edtColorOFFMONEY: TDBEditEh;
+    edtColorWOSRVFONT: TDBEditEh;
+    lbl251: TLabel;
+    edtColorHLERROR: TDBEditEh;
+    lbl252: TLabel;
+    lbl253: TLabel;
+    edtColorHLWARNING: TDBEditEh;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -210,6 +219,20 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnGoApiClick(Sender: TObject);
+    procedure edtColorEditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure edtColorWOSRVFONTEditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure edtColorOFFMONEYEditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure edtColorOFFEditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure edtColorWOSRVFONT1EditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure edtColorHLERROREditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure edtColorHLWARNINGEditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
   private
     { Private declarations }
     FLastAccount: integer;
@@ -463,9 +486,47 @@ begin
       SaveSettingsStr('REQUEST_NEXT_DAY_TIME', FormatDateTime('hh:nn:ss', edReqTime.DateTime));
       SaveSettingsBoolean('REQUEST_SKIP_WEEKEND', chkRWD);
 
-      SaveSettingsStr('COLOR_DOLG', ColorToString(clrbxDolg.Selected));
-      SaveSettingsStr('COLOR_OFF', ColorToString(clrbxOFF.Selected));
-      SaveSettingsStr('COLOR_OFFMONEY', ColorToString(clrbxOFFMONEY.Selected));
+      try
+        s := ColorToString(edtColorDolg.Font.Color);
+      except
+        s := 'clRed';
+      end;
+      SaveSettingsStr('COLOR_DOLG', s);
+
+      try
+        s := ColorToString(edtColorOFF.Font.Color);
+      except
+        s := 'clWindowText';
+      end;
+
+      SaveSettingsStr('COLOR_OFF', s);
+      try
+        s := ColorToString(edtColorOFFMONEY.Font.Color);
+      except
+        s := 'clSilver';
+      end;
+
+      SaveSettingsStr('COLOR_OFFMONEY', s);
+      try
+        s := ColorToString(edtColorWOSRVFONT.Font.Color);
+      except
+        s := 'clWindowText';
+      end;
+      SaveSettingsStr('ROW_HL_WITHOUTSRV', s);
+
+      try
+        s := ColorToString(edtColorHLERROR.Color);
+      except
+        s := '$006666FF';
+      end;
+      SaveSettingsStr('ROW_HL_ERROR', s);
+
+      try
+        s := ColorToString(edtColorHLWARNING.Color);
+      except
+        s := '$0066FFFF';
+      end;
+      SaveSettingsStr('ROW_HL_WARNING', s);
 
       SaveSettingsBoolean('EMAIL_REQ', chkEMAIL_REQ);
       SaveSettingsBoolean('PERSONEL_TARIF', cbPersonalTarrif);
@@ -486,6 +547,8 @@ begin
       SaveSettingsStr('ACCOUNT_FORMAT', edtORDER.Text);
       SaveSettingsBoolean('ACCOUNT_DOG', chkDOG);
       SaveSettingsBoolean('SAVE_SRV_WORKER', chkSrvWorker);
+      SaveSettingsBoolean('FLAT_OWNER', chkFlatOwner);
+      SaveSettingsBoolean('CAN_NEW_CONTRACT', chkNewContract);
 
       if FLastAccount <> AccNumber.value then
       begin
@@ -648,6 +711,83 @@ begin
   ed3M.Enabled := chkPayDiscount.Checked;
   ed6M.Enabled := chkPayDiscount.Checked;
   ed12M.Enabled := chkPayDiscount.Checked;
+end;
+
+procedure TSettingsForm.edtColorEditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorDolg.Font.Color;
+  if dlgColor1.Execute then begin
+    edtColorDolg.Font.Color := dlgColor1.Color;
+    edtColorDolg.Text := ColorToString(edtColorDolg.Font.Color);
+  end;
+  Handled := True;
+end;
+
+procedure TSettingsForm.edtColorHLERROREditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorHLERROR.Color;
+  if dlgColor1.Execute then begin
+    edtColorHLERROR.Color := dlgColor1.Color;
+    edtColorHLERROR.Text := ColorToString(edtColorHLERROR.Color);
+  end;
+  Handled := True;
+end;
+
+procedure TSettingsForm.edtColorHLWARNINGEditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorHLWARNING.Color;
+  if dlgColor1.Execute then begin
+    edtColorHLWARNING.Color := dlgColor1.Color;
+    edtColorHLWARNING.Text := ColorToString(edtColorHLWARNING.Color);
+  end;
+  Handled := True;
+end;
+
+procedure TSettingsForm.edtColorOFFEditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorOFF.Font.Color;
+  if dlgColor1.Execute then begin
+    edtColorOFF.Font.Color := dlgColor1.Color;
+    edtColorOFF.Text := ColorToString(edtColorOFF.Font.Color);
+  end;
+  Handled := True;
+end;
+
+procedure TSettingsForm.edtColorOFFMONEYEditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorOFFMONEY.Font.Color;
+  if dlgColor1.Execute then begin
+    edtColorOFFMONEY.Font.Color := dlgColor1.Color;
+    edtColorOFFMONEY.Text := ColorToString(edtColorOFFMONEY.Font.Color);
+  end;
+  Handled := True;
+end;
+
+procedure TSettingsForm.edtColorWOSRVFONT1EditButtons0Click(
+  Sender: TObject; var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorWOSRVFONT.Font.Color;
+  if dlgColor1.Execute then begin
+    edtColorWOSRVFONT.Font.Color := dlgColor1.Color;
+    edtColorWOSRVFONT.Text := ColorToString(edtColorWOSRVFONT.Font.Color);
+  end;
+  Handled := True;
+end;
+
+procedure TSettingsForm.edtColorWOSRVFONTEditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+begin
+  dlgColor1.Color := edtColorWOSRVFONT.Font.Color;
+  if dlgColor1.Execute then begin
+    edtColorWOSRVFONT.Font.Color := dlgColor1.Color;
+    edtColorWOSRVFONT.Text := ColorToString(edtColorWOSRVFONT.Font.Color);
+  end;
+  Handled := True;
 end;
 
 function TSettingsForm.CashRegSettings: boolean;
@@ -817,7 +957,10 @@ begin
         chkWHExecutor.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'SAVE_SRV_WORKER' then
         chkSrvWorker.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
-
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'FLAT_OWNER' then
+        chkFlatOwner.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'CAN_NEW_CONTRACT' then
+        chkNewContract.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       // пеня
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'SHOW_FINE' then
         cbFine.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
@@ -916,12 +1059,56 @@ begin
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'EMAIL_REQ' then
         chkEMAIL_REQ.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
 
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_DOLG' then
-        clrbxDolg.Selected := StringToColor(select.FN('VAR_VALUE').AsString);
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFF' then
-        clrbxOFF.Selected := StringToColor(select.FN('VAR_VALUE').AsString);
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFFMONEY' then
-        clrbxOFFMONEY.Selected := StringToColor(select.FN('VAR_VALUE').AsString);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_DOLG' then begin
+        try
+          edtColorDolg.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
+        Except
+          edtColorDolg.Font.Color := clRed;
+        end;
+        edtColorDolg.Text := ColorToString(edtColorDolg.Font.Color);
+      end;
+
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFF' then begin
+        try
+          edtColorOFF.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
+        Except
+          edtColorOFF.Font.Color := clWindowText;
+        end;
+        edtColorOFF.Text := ColorToString(edtColorOFF.Font.Color);
+      end;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFFMONEY' then begin
+        try
+          edtColorOFFMONEY.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
+        Except
+          edtColorOFFMONEY.Font.Color := clWindowText;
+        end;
+        edtColorOFFMONEY.Text := ColorToString(edtColorOFFMONEY.Font.Color);
+      end;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_WITHOUTSRV' then begin
+        try
+          edtColorWOSRVFONT.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
+        Except
+          edtColorWOSRVFONT.Font.Color := clWindowText;
+        end;
+        edtColorWOSRVFONT.Text := ColorToString(edtColorWOSRVFONT.Font.Color);
+      end;
+
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_ERROR' then begin
+        try
+          edtColorHLERROR.Color := StringToColor(select.FN('VAR_VALUE').AsString);
+        Except
+          edtColorHLERROR.Color := clWindow;
+        end;
+        edtColorHLERROR.Text := ColorToString(edtColorHLERROR.Color);
+      end;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_WARNING' then begin
+        try
+          edtColorHLWARNING.Color := StringToColor(select.FN('VAR_VALUE').AsString);
+        Except
+          edtColorHLWARNING.Color := clWindow;
+        end;
+        edtColorHLWARNING.Text := ColorToString(edtColorHLWARNING.Color);
+      end;
 
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'REQUEST_NEXT_DAY_TIME' then
         edReqTime.DateTime := StrToDateTime(select.FN('VAR_VALUE').AsString);

@@ -504,6 +504,7 @@ type
     procedure OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
     procedure OpnenNodeByID(const ID: Integer);
     procedure OpenEquipmentByName(const name: String);
+    function OpenEquipmentByID(const eid: Integer):Boolean;
     function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
   end;
 
@@ -1643,6 +1644,46 @@ begin
     Exit;
   actEquipmentExecute(self);
   EquipmentForm.dbGrid.DataSource.DataSet.Locate('NAME', name, [loCaseInsensitive]);
+end;
+
+function TA4MainForm.OpenEquipmentByID(const eid: Integer):Boolean;
+begin
+  if not actEquipment.Visible then
+    Exit;
+  actEquipmentExecute(self);
+
+  if (EquipmentForm.mtEQ.Active and EquipmentForm.mtEQ.TreeList.Active)
+  then begin
+   //
+    Result := EquipmentForm.mtEQ.TreeList.Locate('EID', eid, []);
+    if not Result
+    then begin
+      if EquipmentForm.mtEQ.Filtered
+      then begin
+        EquipmentForm.mtEQ.Filtered := False;
+        Result := EquipmentForm.mtEQ.TreeList.Locate('EID', eid, []);
+      end;
+      if not Result then begin
+        EquipmentForm.dbGrid.SearchPanel.CancelSearchFilter;
+        Result := EquipmentForm.mtEQ.TreeList.Locate('EID', eid, []);
+      end;
+    end;
+  end
+  else begin
+    Result := EquipmentForm.dbGrid.DataSource.DataSet.Locate('EID', eid, []);
+    if not Result
+    then begin
+      if EquipmentForm.dbGrid.DataSource.DataSet.Filtered
+      then begin
+        EquipmentForm.dbGrid.DataSource.DataSet.Filtered := False;
+        Result := EquipmentForm.dbGrid.DataSource.DataSet.Locate('EID', eid, []);
+      end;
+      if not Result then begin
+        EquipmentForm.dbGrid.SearchPanel.CancelSearchFilter;
+        Result := EquipmentForm.dbGrid.DataSource.DataSet.Locate('EID', eid, []);
+      end;
+    end;
+  end;
 end;
 
 procedure TA4MainForm.actHeadEndsExecute(Sender: TObject);

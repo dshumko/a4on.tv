@@ -207,6 +207,7 @@ type
     mmiTask: TMenuItem;
     actOrderTP: TAction;
     miOrderTP: TMenuItem;
+    tmrSearch: TTimer;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbgrdh1DblClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
@@ -280,6 +281,7 @@ type
     procedure actOrderTPExecute(Sender: TObject);
     procedure dbgCustomersColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgCustomersColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure tmrSearchTimer(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -301,6 +303,9 @@ type
     FPersonalData: Boolean;
     FHL_ROW: Boolean;
     FHL_COLOR: TColor;
+    FhasColConnected: Boolean;
+    FWithOutSrvHL: Boolean;
+    FWithOutSrvStyle: TColor;
     function GenerateFilter: String;
     function ReplaceFields(const str: string): string;
     procedure ShowPage(Page: TA4onPage);
@@ -571,6 +576,13 @@ begin
   begin
     AFont.Color := clHighlightText;
     Background := clHighlight;
+    // if FhasColConnected then
+    // begin
+    // if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value < 0) then
+    // begin
+    // AFont.Color := FWithOutSrvStyle;
+    // end;
+    // end;
   end
   else
   begin
@@ -581,21 +593,30 @@ begin
         Background := StringToColor(s);
     end;
 
-    if ((Sender as TDBGridEh).DataSource.DataSet.FieldDefs.IndexOf('CONNECTED') > -1) and
-      ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value > 0) // Подключен
-    then
+    if FhasColConnected then
     begin
-      if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > vRED_SUMM) then
-        AFont.Color := FgCustActiveDebt
+      if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value > 0) // Подключен
+      then
+      begin
+        if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > vRED_SUMM) then
+          AFont.Color := FgCustActiveDebt
+        else
+          AFont.Color := clWindowText;
+      end
       else
-        AFont.Color := clWindowText;
-    end
-    else
-    begin
-      if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > 0) then
-        AFont.Color := FgCustDisconted
-      else
-        AFont.Color := FgCustDiscontedWithMoney;
+      begin
+        if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value = 0) then
+        begin
+          if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value >= 0) then
+            AFont.Color := FgCustDisconted
+          else
+            AFont.Color := FgCustDiscontedWithMoney;
+        end
+        else
+        begin
+          AFont.Color := FWithOutSrvStyle;
+        end;
+      end;
     end;
 
     if FHL_ROW then
@@ -1883,6 +1904,7 @@ var
   select, from, where, order: string;
   filter: string;
   cid: Integer;
+  ConnectedSQL: string;
 begin
   cid := -1;
   fVisibleColumns := Mask;
@@ -1895,8 +1917,27 @@ begin
     dsCustomers.Close;
   end;
 
-  select := ' C.* ,s.street_short ,S.Street_Name ,H.House_No, h.POST_INDEX ,h.Street_ID ,-1*c.debt_sum as BALANCE ' +
-    rsEOL + ' , iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) ,1, 0) as connected ';
+  ConnectedSQL := dmMain.GetSettingsValue('SQL_CONNECTED');
+  if ConnectedSQL.IsEmpty then
+  begin
+    if FWithOutSrvHL then
+      ConnectedSQL :=
+        'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1), 1'
+        + ', iif((coalesce(c.CUST_STATE_DESCR, '''')<>''''), 0, -1))'
+    else
+      ConnectedSQL :=
+        'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1), 1, 0)'
+  end;
+
+  select := ' C.*, s.street_short, S.Street_Name, H.House_No, h.POST_INDEX, h.Street_ID , -1*c.debt_sum as BALANCE ' +
+    rsEOL + ' , ' + ConnectedSQL + ' as CONNECTED ';
+
+  if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
+  begin
+    select := select + rsEOL +
+      ', iif(((coalesce(c.Passport_Number, '''') <> coalesce(hf.Owner_Doc, ''''))), ''+'', '''') F_RENT '
+  end;
+
   from := ' FROM CUSTOMER C INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID) INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)';
   where := ' WHERE @filter ';
   // Ограничим видимость по участкам
@@ -1923,7 +1964,14 @@ begin
     from := from + rsEOL + ' left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id) ';
   end
   else
+  begin
+    if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
+    begin
+      from := from + rsEOL + ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ';
+    end;
+
     select := select + rsEOL + ', '''' as porch_n, '''' as floor_n ';
+  end;
 
   if (Mask and clc_Lan) <> 0 then
   begin
@@ -2560,6 +2608,17 @@ begin
     end;
   end;
 {$ENDIF}
+  if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
+  begin
+    with dbgCustomers.Columns.Add do
+    begin
+      Alignment := taCenter;
+      FieldName := 'F_RENT';
+      Title.Caption := rsRentColumn;
+      Title.TitleButton := True;
+      Title.Orientation := tohVertical;
+    end;
+  end;
 end;
 
 function TCustomersForm.GetOrderClause(grid: TCustomDBGridEh): string;
@@ -2656,11 +2715,13 @@ const
             if pos(',', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0 then
             begin
               tmpSQL := dsFilter.FieldByName('SFLTR_TEXT').AsString;
-              tmpSQL := '''' + ReplaceStr(tmpSQL, ',', ''',''') + '''';
-              tmpSQL := Format(' (C.CUST_CODE in ( %s )) ', [tmpSQL]);
+              tmpSQL := UpperCase('''' + ReplaceStr(tmpSQL, ',', ''',''') + '''');
+              tmpSQL := Format(' (upper(C.CUST_CODE) in ( %s )) ', [tmpSQL]);
             end
             else
-              tmpSQL := Format(' (C.CUST_CODE %s %s) ', [startSQL, s]);
+            begin
+              tmpSQL := Format(' (upper(C.CUST_CODE) %s upper(%s)) ', [startSQL, s]);
+            end;
           // Фамилия
           4:
             tmpSQL := Format(' (upper(C.SURNAME) %s upper(%s)) ', [startSQL, s]);
@@ -3851,7 +3912,7 @@ begin
     FLastPage.CloseData;
     FLastPage.OpenData;
   end;
-
+  FhasColConnected := (dbgCustomers.DataSource.DataSet.FieldDefs.IndexOf('CONNECTED') > -1);
   InitSecurity;
 end;
 
@@ -4662,6 +4723,16 @@ begin
   end;
 end;
 
+procedure TCustomersForm.tmrSearchTimer(Sender: TObject);
+begin
+  if (tmrSearch.Tag = 0) and (actAddressSearch.Checked) then
+  begin
+    tmrSearch.Enabled := False;
+    SetAdresFilter();
+  end;
+  tmrSearch.Tag := 0;
+end;
+
 procedure TCustomersForm.SetAdresFilter();
 var
   filter: string;
@@ -4687,12 +4758,15 @@ begin
     end
     else
     begin
+
       if VarIsNumeric(lcbStreets.KeyValue) then
       begin
         id := lcbStreets.KeyValue;
         filter := Format('STREET_ID = %d ', [id]);
         if not dsHomes.Active then
+        begin
           dsHomes.Open;
+        end;
       end
     end;
     lcbHOUSE.Enabled := VarIsNumeric(lcbStreets.KeyValue);
@@ -4723,22 +4797,25 @@ end;
 procedure TCustomersForm.lcbHOUSEChange(Sender: TObject);
 begin
   lcbFLAT.value := NULL;
-  if actAddressSearch.Checked then
-    SetAdresFilter();
+  tmrSearch.Tag := 1;
+  tmrSearch.Enabled := False;
+  tmrSearch.Enabled := True;
 end;
 
 procedure TCustomersForm.lcbFLATChange(Sender: TObject);
 begin
-  if actAddressSearch.Checked then
-    SetAdresFilter();
+  tmrSearch.Tag := 1;
+  tmrSearch.Enabled := False;
+  tmrSearch.Enabled := True;
 end;
 
 procedure TCustomersForm.lcbStreetsChange(Sender: TObject);
 begin
   lcbHOUSE.value := NULL;
   lcbFLAT.value := NULL;
-  if actAddressSearch.Checked then
-    SetAdresFilter();
+  tmrSearch.Tag := 1;
+  tmrSearch.Enabled := False;
+  tmrSearch.Enabled := True;
 end;
 
 procedure TCustomersForm.actAddBlackListExecute(Sender: TObject);
@@ -5115,6 +5192,18 @@ begin
       end;
     end;
   end;
+
+  // настройка подсветки абонентов без услуг
+  s := dmMain.GetSettingsValue('ROW_HL_WITHOUTSRV');
+  FWithOutSrvHL := (s <> '') and (s <> 'clWindowText') and (s <> 'clBlack');
+  if FWithOutSrvHL then
+    try
+      FWithOutSrvStyle := StringToColor(s);
+    except
+      FWithOutSrvStyle := clWindowText;
+    end
+  else
+    FWithOutSrvStyle := clWindowText;
 
   // проверим, нужно ли вклюсать подсветку по доп условию из настроек
   FHL_ROW := (dmMain.GetSettingsValue('ROW_HL_COLOR') <> '') and (dmMain.GetSettingsValue('ROW_HL_ID') <> '') and

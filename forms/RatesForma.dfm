@@ -1,17 +1,27 @@
 inherited RatesForm: TRatesForm
   Left = 381
   Top = 171
+  ActiveControl = dbGrid
   Caption = #1050#1091#1088#1089#1099' '#1074#1072#1083#1102#1090
   ClientHeight = 399
   ClientWidth = 652
+  ExplicitWidth = 668
+  ExplicitHeight = 438
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 652
+    ExplicitWidth = 652
+  end
+  object spl1: TSplitter [1]
+    Left = 344
+    Top = 84
+    Height = 315
   end
   inherited dbGrid: TDBGridEh
-    Width = 652
+    Width = 344
     Height = 315
+    Align = alLeft
     AllowedOperations = [alopUpdateEh, alopDeleteEh]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     Columns = <
@@ -56,11 +66,7 @@ inherited RatesForm: TRatesForm
   end
   inherited tlbMain: TToolBar
     Width = 652
-    object ToolButton19: TToolButton [0]
-      Left = 0
-      Top = 0
-      Visible = False
-    end
+    ExplicitWidth = 652
     inherited ToolButton4: TToolButton
       Visible = False
     end
@@ -94,8 +100,13 @@ inherited RatesForm: TRatesForm
     inherited ToolButton20: TToolButton
       Visible = False
     end
-    object btnGet: TToolButton
+    object ToolButton19: TToolButton
       Left = 178
+      Top = 0
+      Visible = False
+    end
+    object btnGet: TToolButton
+      Left = 201
       Top = 0
       Hint = #1055#1086#1083#1091#1095#1080#1090#1100' '#1082#1091#1088#1089#1099' '#1085#1072#1094'. '#1073#1072#1085#1082#1072
       Caption = 'btnGet'
@@ -105,19 +116,77 @@ inherited RatesForm: TRatesForm
   end
   inherited pnlEdit: TPanel
     Width = 652
+    ExplicitWidth = 652
     inherited btnSaveLink: TBitBtn
       Width = 466
+      ExplicitWidth = 466
     end
     inherited btnCancelLink: TBitBtn
       Left = 557
+      ExplicitLeft = 557
+    end
+  end
+  object chtRates: TChart [5]
+    Left = 347
+    Top = 84
+    Width = 305
+    Height = 315
+    Legend.Alignment = laLeft
+    Legend.CheckBoxes = True
+    Legend.CustomPosition = True
+    Legend.DrawBehind = True
+    Legend.Frame.Visible = False
+    Legend.Left = 0
+    Legend.Shadow.Visible = False
+    Legend.Top = 0
+    Legend.Transparent = True
+    Title.Text.Strings = (
+      #1050#1091#1088#1089' '#1074#1072#1083#1102#1090)
+    Title.Visible = False
+    BottomAxis.LabelsSeparation = 0
+    View3D = False
+    Align = alClient
+    TabOrder = 3
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
+    object lsUSD: TLineSeries
+      Marks.Transparent = True
+      SeriesColor = clGreen
+      Title = 'USD'
+      Brush.BackColor = clDefault
+      Pointer.HorizSize = 2
+      Pointer.InflateMargins = True
+      Pointer.Style = psDiamond
+      Pointer.VertSize = 2
+      Pointer.Visible = True
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object lsEURO: TLineSeries
+      SeriesColor = 16744576
+      Title = 'EURO'
+      Brush.BackColor = clDefault
+      Pointer.HorizSize = 2
+      Pointer.InflateMargins = True
+      Pointer.Style = psDiamond
+      Pointer.VertSize = 2
+      Pointer.Visible = True
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
     end
   end
   inherited srcDataSource: TDataSource
     DataSet = dsRates
-    Left = 120
-    Top = 208
+    Left = 40
+    Top = 168
   end
   inherited actions: TActionList
+    Left = 134
+    Top = 168
     inherited actNew: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100
@@ -135,8 +204,12 @@ inherited RatesForm: TRatesForm
     end
   end
   inherited pmPopUp: TPopupMenu
-    Left = 203
-    Top = 207
+    Left = 131
+    Top = 239
+  end
+  inherited CnErrors: TCnErrorProvider
+    Left = 40
+    Top = 304
   end
   object dsRates: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -185,12 +258,13 @@ inherited RatesForm: TRatesForm
     AutoUpdateOptions.KeyFields = 'O_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    AfterOpen = dsRatesAfterOpen
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    Left = 72
-    Top = 264
+    Left = 40
+    Top = 232
   end
   object qInsert: TpFIBQuery
     Transaction = dmMain.trWriteQ
@@ -199,7 +273,7 @@ inherited RatesForm: TRatesForm
       
         'update or insert into Rates (Rdate, Cur, Usd) values (:Rdate, :C' +
         'ur, :Usd) matching (Rdate, Cur)')
-    Left = 352
-    Top = 216
+    Left = 232
+    Top = 168
   end
 end

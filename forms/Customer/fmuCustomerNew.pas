@@ -9,8 +9,10 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.Menus,
-  AtrPages, FIBDatabase, pFIBDataSet, FIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, ToolCtrlsEh, GridsEh, DBGridEhToolCtrls,
-  DBAxisGridsEh, DBLookupEh, DBCtrlsEh, DBGridEh, MemTableDataEh, MemTableEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping,
+  AtrPages, FIBDatabase, pFIBDataSet, FIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, ToolCtrlsEh, GridsEh,
+  DBGridEhToolCtrls,
+  DBAxisGridsEh, DBLookupEh, DBCtrlsEh, DBGridEh, MemTableDataEh, MemTableEh, CnErrorProvider, EhLibVCL,
+  DBGridEhGrouping,
   DynVarsEh, PropFilerEh, PropStorageEh, EhlibFIB;
 
 type
@@ -173,6 +175,8 @@ type
     procedure eACCOUNT_NOChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lcbBANKExit(Sender: TObject);
+    procedure LupHOUSE_IDDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
     FFullAccess: Boolean;
@@ -194,6 +198,8 @@ type
     function ValidPassport: Boolean;
     function CheckAccount: Boolean;
     procedure CheckIOfromDB();
+    function CheckFlatOwner: Boolean;
+    procedure SaveFlatOwner;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -207,7 +213,8 @@ implementation
 
 uses
   System.TypInfo, System.RegularExpressions,
-  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit, ContactForma,
+  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit,
+  ContactForma,
   OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl;
 
 {$R *.dfm}
@@ -266,7 +273,7 @@ end;
 
 procedure TapgCustomerNew.InitForm;
 var
- s: string;
+  s: string;
 begin
   // i := (dmMain.AllowedAction(rght_Customer_edit));      // Изменение инфы о абоненте
   FFullAccess := (dmMain.AllowedAction(rght_Customer_full)); // полный доступ
@@ -603,6 +610,81 @@ begin
   CheckValidData;
 end;
 
+function TapgCustomerNew.CheckFlatOwner: Boolean;
+var
+  s, n: string;
+begin
+  Result := False;
+  Query.Transaction := trReadQ;
+  n := Trim(eSURNAME.Text + ' ' + eFIRSTNAME.Text + ' ' + eMIDLENAME.Text);
+
+  Query.SQL.Clear;
+  Query.SQL.Add('execute block (');
+  Query.SQL.Add('    House_Id   integer = :House_Id,');
+  Query.SQL.Add('    Flat_No    D_FLAT_NS = :Flat_No,');
+  Query.SQL.Add('    OWNER_NAME D_VARCHAR100 = :OWNER_NAME,');
+  Query.SQL.Add('    OWNER_DOC  D_VARCHAR255 = :OWNER_DOC)');
+  Query.SQL.Add('returns (itsOwner D_INTEGER)');
+  Query.SQL.Add('as');
+  Query.SQL.Add('begin');
+  Query.SQL.Add('  itsOwner = 0;');
+  Query.SQL.Add('  select');
+  Query.SQL.Add('      count(*)');
+  Query.SQL.Add('    from Houseflats');
+  Query.SQL.Add('    where House_Id = :House_Id');
+  Query.SQL.Add('          and Flat_No = :Flat_No');
+  Query.SQL.Add('          and Owner_Name = :Owner_Name');
+  Query.SQL.Add('          and Owner_Doc = :Owner_Doc');
+  Query.SQL.Add('  into :itsOwner;');
+  Query.SQL.Add('  suspend;');
+  Query.SQL.Add('end');
+
+  Query.ParamByName('House_Id').asInteger := LupHOUSE_ID.KeyValue;
+  Query.ParamByName('Flat_No').AsString := eFLAT_NO.Text;
+  Query.ParamByName('OWNER_NAME').AsString := n;
+  Query.ParamByName('OWNER_DOC').AsString := edtPASSPORT_NUMBER.Text;
+  Query.Transaction.StartTransaction;
+  Query.ExecQuery;
+  if not(Query.FN('itsOwner').IsNull) then
+    Result := (Query.FN('itsOwner').asInteger > 0);
+  Query.Transaction.Commit;
+  Query.Close;
+
+  Query.Transaction := trReadQ;
+end;
+
+procedure TapgCustomerNew.SaveFlatOwner;
+var
+  s, n: string;
+begin
+  Query.Transaction := trWriteQ;
+  n := Trim(eSURNAME.Text + ' ' + eFIRSTNAME.Text + ' ' + eMIDLENAME.Text);
+
+  Query.SQL.Clear;
+  Query.SQL.Add('execute block (');
+  Query.SQL.Add('    House_Id   integer = :House_Id,');
+  Query.SQL.Add('    Flat_No    D_FLAT_NS = :Flat_No,');
+  Query.SQL.Add('    OWNER_NAME D_VARCHAR100 = :OWNER_NAME,');
+  Query.SQL.Add('    OWNER_DOC  D_VARCHAR255 = :OWNER_DOC)');
+  Query.SQL.Add('as');
+  Query.SQL.Add('begin');
+  Query.SQL.Add('  update or insert into Houseflats (House_Id, Flat_No, Owner_Name, Owner_Doc)');
+  Query.SQL.Add('  values (:House_Id, :Flat_No, :Owner_Name, :Owner_Doc)');
+  Query.SQL.Add('  matching(House_Id, Flat_No);');
+  Query.SQL.Add('end');
+
+  Query.ParamByName('House_Id').asInteger := LupHOUSE_ID.KeyValue;
+  Query.ParamByName('Flat_No').AsString := eFLAT_NO.Text;
+  Query.ParamByName('OWNER_NAME').AsString := n;
+  Query.ParamByName('OWNER_DOC').AsString := edtPASSPORT_NUMBER.Text;
+  Query.Transaction.StartTransaction;
+  Query.ExecQuery;
+  Query.Transaction.Commit;
+  Query.Close;
+
+  Query.Transaction := trReadQ;
+end;
+
 procedure TapgCustomerNew.btnSAVEClick(Sender: TObject);
 var
   AllOk: Boolean;
@@ -624,6 +706,17 @@ begin
       else
         AllOk := True;
     end;
+  end;
+
+  // Владелец квартиры
+  if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
+  begin
+    // проверим, владелиц ли квартиры и пометим если да
+    if (not CheckFlatOwner) and (Application.MessageBox(PWideChar(rsQstFlatOwner), PWideChar(rsAplicationName),
+      MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES) then
+    begin
+      SaveFlatOwner;
+    end
   end;
 
   if AllOk then
@@ -921,6 +1014,7 @@ function TapgCustomerNew.CheckValidData: Boolean;
 var
   AllRight: Boolean;
 begin
+  Result := False;
   if not(FFullAccess or FCanAdd) then
     exit;
 
@@ -1004,6 +1098,16 @@ begin
       ds.DataSet['ORG_ID'] := dsHouses['ORG_ID'];
     end;
   end;
+end;
+
+procedure TapgCustomerNew.LupHOUSE_IDDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  // if inService then
+  if (dsHouses.Active) and (dsHouses['inService'] <> '') then
+    Background := clYellow
+  else
+    Background := clWindow;
 end;
 
 procedure TapgCustomerNew.LupStreetsChange(Sender: TObject);
@@ -1230,7 +1334,8 @@ var
 begin
   // NT 0 - Личный номер 1 - номер паспота
   CnErrors.Dispose(Sender);
-  if (Sender.Text = '') then begin
+  if (Sender.Text = '') then
+  begin
     btnSAVE.Enabled := True;
     exit;
   end;

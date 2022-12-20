@@ -103,7 +103,7 @@ begin
       if Srv <> '' then
       begin
         Protocol := TCP;
-        ServerName := Srv;
+        ServerName := AnsiString(Srv);
       end;
       LoginPrompt := False;
       Options := Optns;
@@ -129,7 +129,7 @@ end;
 function TFirebirdServer.CreateServiceWitAuth(ServiceClass: TFBServiceClass): TpFIBCustomService;
 begin
   Result := ServiceClass.Create(nil);
-  Result.ServerName := ServerName;
+  Result.ServerName := AnsiString(ServerName);
   Result.Protocol := Protocol;
   Result.LibraryName := ClientLib;
   Result.LoginPrompt := False;
@@ -264,7 +264,6 @@ end;
 
 var
   FBServerList: TStringList;
-  i: Integer;
 
 class function TFirebirdServer.Instance(const SrvName, UserName, password: string; Protocol: TProtocol;
   const ClientLib: string): TFirebirdServer;
@@ -415,17 +414,24 @@ begin
   Result := ValidateDatabase(DBName, [SweepDB]);
 end;
 
+procedure FreeServerList;
+var
+  i : Integer;
+begin
+  if Assigned(FBServerList) then
+  begin
+    for i := 0 to FBServerList.Count - 1 do
+      if Assigned(FBServerList.Objects[i]) then
+        FBServerList.Objects[i].Free;
+    FBServerList.Clear;
+    FBServerList.Free;
+  end;
+end;
+
 initialization
 
 finalization
 
-if Assigned(FBServerList) then
-begin
-  for i := 0 to FBServerList.Count - 1 do
-    if Assigned(FBServerList.Objects[i]) then
-      FBServerList.Objects[i].Free;
-  FBServerList.Clear;
-  FBServerList.Free;
-end;
+FreeServerList();
 
 end.

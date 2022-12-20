@@ -1,10 +1,10 @@
-{*******************************************************}
-{                                                       }
-{            Delphi Visual Component Library            }
-{                                                       }
+{ ******************************************************* }
+{ }
+{ Delphi Visual Component Library }
+{ }
 { Copyright(c) 1995-2014 Embarcadero Technologies, Inc. }
-{                                                       }
-{*******************************************************}
+{ }
+{ ******************************************************* }
 
 unit Vcl.Mask;
 
@@ -12,11 +12,12 @@ unit Vcl.Mask;
 
 interface
 
-uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, System.MaskUtils, Vcl.Controls,
-     Vcl.StdCtrls, Vcl.Forms, Vcl.Graphics, Vcl.Menus;
+uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
+  System.MaskUtils, Vcl.Controls,
+  Vcl.StdCtrls, Vcl.Forms, Vcl.Graphics, Vcl.Menus;
 
 type
-{ TCustomMaskEdit }
+  { TCustomMaskEdit }
 
   EDBEditError = class(Exception);
   TMaskedState = set of (msMasked, msReEnter, msDBSetText);
@@ -40,7 +41,7 @@ type
       Offset: Integer): Integer;
     function AddEditFormat(const Value: string; Active: Boolean): string;
     function RemoveEditFormat(const Value: string): string;
-    function FindLiteralChar (MaskOffset: Integer; InChar: Char): Integer;
+    function FindLiteralChar(MaskOffset: Integer; InChar: Char): Integer;
     function GetEditText: string;
     function GetMasked: Boolean;
     function GetText: TMaskedText;
@@ -55,15 +56,17 @@ type
     procedure CursorInc(CursorPos: Integer; Incr: Integer);
     procedure CursorDec(CursorPos: Integer);
     procedure ArrowKeys(CharCode: Word; Shift: TShiftState);
-    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMLButtonDown(var Message: TWMLButtonDown);
+      message WM_LBUTTONDOWN;
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
     procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
     procedure WMCut(var Message: TMessage); message WM_CUT;
     procedure WMPaste(var Message: TMessage); message WM_PASTE;
     procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
-    procedure CMExit(var Message: TCMExit);   message CM_EXIT;
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
-    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey);
+      message CM_WANTSPECIALKEY;
   protected
     procedure ReformatText(const NewMask: string);
     procedure GetSel(var SelStart: Integer; var SelStop: Integer);
@@ -95,7 +98,7 @@ type
     property Text: TMaskedText read GetText write SetText;
   end;
 
-{ TMaskEdit }
+  { TMaskEdit }
 
   TMaskEdit = class(TCustomMaskEdit)
   published
@@ -167,7 +170,7 @@ type
 
 implementation
 
-uses 
+uses
 {$IF DEFINED(CLR)}
   System.Runtime.InteropServices, System.Security.Permissions,
 {$ELSE}
@@ -186,29 +189,30 @@ end;
 
 procedure TCustomMaskEdit.KeyDown(var Key: Word; Shift: TShiftState);
 begin
-  if not FSettingCursor then inherited KeyDown(Key, Shift);
-  if IsMasked and (Key <> 0) and not (ssAlt in Shift) then
+  if not FSettingCursor then
+    inherited KeyDown(Key, Shift);
+  if IsMasked and (Key <> 0) and not(ssAlt in Shift) then
   begin
-    if (Key = VK_LEFT) or(Key = VK_RIGHT) then
+    if (Key = VK_LEFT) or (Key = VK_RIGHT) then
     begin
       ArrowKeys(Key, Shift);
-      if not ((ssShift in Shift) or (ssCtrl in Shift)) then
+      if not((ssShift in Shift) or (ssCtrl in Shift)) then
         Key := 0;
       Exit;
     end
-    else if (Key = VK_UP) or(Key = VK_DOWN) then
+    else if (Key = VK_UP) or (Key = VK_DOWN) then
     begin
       Key := 0;
       Exit;
     end
-    else if (Key = VK_HOME) or(Key = VK_END) then
+    else if (Key = VK_HOME) or (Key = VK_END) then
     begin
       HomeEndKeys(Key, Shift);
       Key := 0;
       Exit;
     end
-    else if ((Key = VK_DELETE) and not (ssShift in Shift)) or
-      (Key = VK_BACK) then
+    else if ((Key = VK_DELETE) and not(ssShift in Shift)) or (Key = VK_BACK)
+    then
     begin
       if EditCanModify then
         DeleteKeys(Key);
@@ -221,10 +225,11 @@ end;
 
 procedure TCustomMaskEdit.KeyUp(var Key: Word; Shift: TShiftState);
 begin
-  if not FSettingCursor then inherited KeyUp(Key, Shift);
+  if not FSettingCursor then
+    inherited KeyUp(Key, Shift);
   if IsMasked and (Key <> 0) then
   begin
-    if ((Key = VK_LEFT) or(Key = VK_RIGHT)) and (ssCtrl in Shift) then
+    if ((Key = VK_LEFT) or (Key = VK_RIGHT)) and (ssCtrl in Shift) then
       CheckCursor;
   end;
 end;
@@ -247,7 +252,7 @@ end;
 
 procedure TCustomMaskEdit.WMLButtonUp(var Message: TWMLButtonUp);
 var
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
 begin
   inherited;
   if (IsMasked) then
@@ -316,10 +321,8 @@ begin
       OldText := PadInputLiterals(EditMask, OldText, FMaskBlank)
     else
       OldText := AddEditFormat(OldText, True);
-    if not (msDBSetText in FMaskState) and
-      (csDesigning in ComponentState) and
-      not (csLoading in ComponentState) and
-      not Validate(OldText, Pos) then
+    if not(msDBSetText in FMaskState) and (csDesigning in ComponentState) and
+      not(csLoading in ComponentState) and not Validate(OldText, Pos) then
       raise EDBEditError.CreateRes({$IFNDEF CLR}@{$ENDIF}SMaskErr);
     EditText := OldText;
   end;
@@ -327,7 +330,7 @@ end;
 
 procedure TCustomMaskEdit.WMCut(var Message: TMessage);
 begin
-  if not (IsMasked) then
+  if not(IsMasked) then
     inherited
   else
   begin
@@ -339,18 +342,19 @@ begin
   end;
 end;
 
-[UIPermission(SecurityAction.LinkDemand, Clipboard=UIPermissionClipboard.AllClipboard)]
+[UIPermission(SecurityAction.LinkDemand,
+  Clipboard = UIPermissionClipboard.AllClipboard)]
 procedure TCustomMaskEdit.WMPaste(var Message: TMessage);
 var
   Value: string;
   Str: string;
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
 {$IF DEFINED(CLR)}
   Data: HGLOBAL;
   TextPtr: IntPtr;
 {$ENDIF}
 begin
-  if not (IsMasked) or ReadOnly then
+  if not(IsMasked) or ReadOnly then
     inherited
   else
   begin
@@ -369,7 +373,8 @@ begin
         finally
           GlobalUnlock(Data);
         end;
-      end else
+      end
+      else
         Value := '';
     finally
       CloseClipBoard;
@@ -411,8 +416,8 @@ var
 begin
   OldText := RemoveEditFormat(EditText);
   FEditMask := NewMask;
-  FMaxChars  := MaskOffsetToOffset(EditMask, Length(NewMask));
-  FMaskSave  := MaskGetMaskSave(NewMask);
+  FMaxChars := MaskOffsetToOffset(EditMask, Length(NewMask));
+  FMaskSave := MaskGetMaskSave(NewMask);
   FMaskBlank := MaskGetMaskBlank(NewMask);
   OldText := AddEditFormat(OldText, True);
   EditText := OldText;
@@ -425,17 +430,19 @@ begin
   if Value <> EditMask then
   begin
     if (csDesigning in ComponentState) and (Value <> '') and
-      not (csLoading in ComponentState) then
+      not(csLoading in ComponentState) then
       EditText := '';
-    if HandleAllocated then GetSel(SelStart, SelStop);
+    if HandleAllocated then
+      GetSel(SelStart, SelStop);
     ReformatText(Value);
     Exclude(FMaskState, msMasked);
-    if EditMask <> '' then Include(FMaskState, msMasked);
+    if EditMask <> '' then
+      Include(FMaskState, msMasked);
     inherited MaxLength := 0;
     if IsMasked and (FMaxChars > 0) then
       inherited MaxLength := FMaxChars;
     if HandleAllocated and (GetFocus = Handle) and
-       not (csDesigning in ComponentState) then
+      not(csDesigning in ComponentState) then
       SetCursor(SelStart);
   end;
 end;
@@ -469,7 +476,7 @@ end;
 
 procedure TCustomMaskEdit.SetCursor(Pos: Integer);
 const
-  ArrowKey: array[Boolean] of Word = (VK_LEFT, VK_RIGHT);
+  ArrowKey: array [Boolean] of Word = (VK_LEFT, VK_RIGHT);
 var
   SelStart, SelStop: Integer;
   KeyState: TKeyboardState;
@@ -477,7 +484,8 @@ var
   I: Integer;
 begin
 {$IF NOT DEFINED(CLR)}
-  if (Pos >= 1) and (ByteType(EditText, Pos) = mbLeadByte) then Dec(Pos);
+  if (Pos >= 1) and (ByteType(EditText, Pos) = mbLeadByte) then
+    Dec(Pos);
 {$ENDIF}
   SelStart := Pos;
   if (IsMasked) then
@@ -486,7 +494,7 @@ begin
       SelStart := 0;
     SelStart := GetNextEditChar(SelStart);
 
-    SelStop  := SelStart + 1;
+    SelStop := SelStart + 1;
 {$IF NOT DEFINED(CLR)}
     if (Length(EditText) > SelStop) and IsLeadChar(EditText[SelStop]) then
       Inc(SelStop);
@@ -494,7 +502,7 @@ begin
     if SelStart >= FMaxChars then
     begin
       SelStart := FMaxChars;
-      SelStop  := SelStart;
+      SelStop := SelStart;
     end;
 
     SetSel(SelStop, SelStop);
@@ -504,8 +512,8 @@ begin
       GetKeyboardState(KeyState);
       for I := Low(NewKeyState) to High(NewKeyState) do
         NewKeyState[I] := 0;
-      NewKeyState [VK_SHIFT] := $81;
-      NewKeyState [ArrowKey[UseRightToLeftAlignment]] := $81;
+      NewKeyState[VK_SHIFT] := $81;
+      NewKeyState[ArrowKey[UseRightToLeftAlignment]] := $81;
       SetKeyboardState(NewKeyState);
       FSettingCursor := True;
       try
@@ -532,7 +540,8 @@ procedure TCustomMaskEdit.CheckCursor;
 var
   SelStart, SelStop: Integer;
 begin
-  if not HandleAllocated then  Exit;
+  if not HandleAllocated then
+    Exit;
   if (IsMasked) then
   begin
     GetSel(SelStart, SelStop);
@@ -562,7 +571,7 @@ end;
 
 function TCustomMaskEdit.CharKeys(var CharCode: Char): Boolean;
 var
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
   Txt: string;
 {$IF NOT DEFINED(CLR)}
   CharMsg: TMsg;
@@ -574,8 +583,10 @@ begin
     Reset;
     Exit;
   end;
-  if not EditCanModify or ReadOnly then Exit;
-  if (Word(CharCode) = VK_BACK) then Exit;
+  if not EditCanModify or ReadOnly then
+    Exit;
+  if (Word(CharCode) = VK_BACK) then
+    Exit;
   if (Word(CharCode) = VK_RETURN) then
   begin
     ValidateEdit;
@@ -593,7 +604,7 @@ begin
   if IsLeadChar(CharCode) then
     if PeekMessage(CharMsg, Handle, WM_CHAR, WM_CHAR, PM_REMOVE) then
       if CharMsg.Message = WM_Quit then
-        PostQuitMessage(CharMsg.wparam);
+        PostQuitMessage(CharMsg.WPARAM);
 {$ENDIF}
   Result := InputChar(CharCode, SelStart);
   if Result then
@@ -601,7 +612,7 @@ begin
 {$IF NOT DEFINED(CLR)}
     if IsLeadChar(CharCode) then
     begin
-      Txt := CharCode + Char(CharMsg.wParam);
+      Txt := CharCode + Char(CharMsg.WPARAM);
       SetSel(SelStart, SelStart + 2);
     end
     else
@@ -615,9 +626,10 @@ end;
 
 procedure TCustomMaskEdit.ArrowKeys(CharCode: Word; Shift: TShiftState);
 var
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
 begin
-  if (ssCtrl in Shift) then Exit;
+  if (ssCtrl in Shift) then
+    Exit;
   GetSel(SelStart, SelStop);
   if (ssShift in Shift) then
   begin
@@ -626,21 +638,22 @@ begin
       Inc(FCaretPos);
       if (SelStop = SelStart + 1) then
       begin
-        SetSel(SelStart, SelStop);  {reset caret to end of string}
+        SetSel(SelStart, SelStop); { reset caret to end of string }
         Inc(FCaretPos);
       end;
-      if FCaretPos > FMaxChars then FCaretPos := FMaxChars;
+      if FCaretPos > FMaxChars then
+        FCaretPos := FMaxChars;
     end
-    else  {if (CharCode = VK_LEFT) then}
+    else { if (CharCode = VK_LEFT) then }
     begin
       Dec(FCaretPos);
-      if (SelStop = SelStart + 2) and
-        (FCaretPos > SelStart) then
+      if (SelStop = SelStart + 2) and (FCaretPos > SelStart) then
       begin
-        SetSel(SelStart + 1, SelStart + 1);  {reset caret to show up at start}
+        SetSel(SelStart + 1, SelStart + 1); { reset caret to show up at start }
         Dec(FCaretPos);
       end;
-      if FCaretPos < 0 then FCaretPos := 0;
+      if FCaretPos < 0 then
+        FCaretPos := 0;
     end;
   end
   else
@@ -648,7 +661,7 @@ begin
     if (SelStop - SelStart) > 1 then
     begin
 {$IF NOT DEFINED(CLR)}
-      if ((SelStop - SelStart) = 2) and IsLeadChar(EditText[SelStart+1]) then
+      if ((SelStop - SelStart) = 2) and IsLeadChar(EditText[SelStart + 1]) then
       begin
         if (CharCode = VK_LEFT) then
           CursorDec(SelStart)
@@ -663,13 +676,13 @@ begin
     end
     else if (CharCode = VK_LEFT) then
       CursorDec(SelStart)
-    else   { if (CharCode = VK_RIGHT) then  }
+    else { if (CharCode = VK_RIGHT) then }
     begin
       if SelStop = SelStart then
         SetCursor(SelStart)
       else
 {$IF NOT DEFINED(CLR)}
-        if IsLeadChar(EditText[SelStart+1]) then
+        if IsLeadChar(EditText[SelStart + 1]) then
           CursorInc(SelStart, 2)
         else
 {$ENDIF}
@@ -684,19 +697,18 @@ var
 begin
   NuPos := CursorPos + Incr;
   NuPos := GetNextEditChar(NuPos);
-  if IsLiteralChar(EditMask, nuPos) then
+  if IsLiteralChar(EditMask, NuPos) then
     NuPos := CursorPos;
   SetCursor(NuPos);
 end;
 
-
 procedure TCustomMaskEdit.CursorDec(CursorPos: Integer);
 var
-  nuPos: Integer;
+  NuPos: Integer;
 begin
-  nuPos := CursorPos;
-  Dec(nuPos);
-  nuPos := GetPriorEditChar(nuPos);
+  NuPos := CursorPos;
+  Dec(NuPos);
+  NuPos := GetPriorEditChar(NuPos);
   SetCursor(NuPos);
 end;
 
@@ -717,14 +729,14 @@ end;
 function TCustomMaskEdit.GetNextEditChar(Offset: Integer): Integer;
 begin
   Result := Offset;
-  while(Result < FMaxChars) and (IsLiteralChar(EditMask, Result)) do
+  while (Result < FMaxChars) and (IsLiteralChar(EditMask, Result)) do
     Inc(Result);
 end;
 
 function TCustomMaskEdit.GetPriorEditChar(Offset: Integer): Integer;
 begin
   Result := Offset;
-  while(Result >= 0) and (IsLiteralChar(EditMask, Result)) do
+  while (Result >= 0) and (IsLiteralChar(EditMask, Result)) do
     Dec(Result);
   if Result < 0 then
     Result := GetNextEditChar(Result);
@@ -732,7 +744,7 @@ end;
 
 procedure TCustomMaskEdit.HomeEndKeys(CharCode: Word; Shift: TShiftState);
 var
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
 begin
   GetSel(SelStart, SelStop);
   if (CharCode = VK_HOME) then
@@ -765,32 +777,36 @@ end;
 
 procedure TCustomMaskEdit.DeleteKeys(CharCode: Word);
 var
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
   NuSelStart: Integer;
   Str: string;
 begin
-  if ReadOnly then Exit;
+  if ReadOnly then
+    Exit;
   GetSel(SelStart, SelStop);
   if ((SelStop - SelStart) <= 1) and (CharCode = VK_BACK) then
   begin
     NuSelStart := SelStart;
     CursorDec(SelStart);
     GetSel(SelStart, SelStop);
-    if SelStart = NuSelStart then Exit;
+    if SelStart = NuSelStart then
+      Exit;
   end;
 
-  if (SelStop - SelStart) < 1 then Exit;
+  if (SelStop - SelStart) < 1 then
+    Exit;
 
   Str := EditText;
   DeleteSelection(Str, SelStart, SelStop - SelStart);
-  Str := Copy(Str, SelStart+1, SelStop - SelStart);
+  Str := Copy(Str, SelStart + 1, SelStop - SelStart);
   SendTextMessage(Handle, EM_REPLACESEL, 0, Str);
   if (SelStop - SelStart) <> 1 then
   begin
     SelStart := GetNextEditChar(SelStart);
     SetCursor(SelStart);
   end
-  else begin
+  else
+  begin
     GetSel(SelStart, SelStop);
     SetCursor(SelStart - 1);
   end;
@@ -798,9 +814,9 @@ end;
 
 procedure TCustomMaskEdit.CMEnter(var Message: TCMEnter);
 begin
-  if IsMasked and not (csDesigning in ComponentState) then
+  if IsMasked and not(csDesigning in ComponentState) then
   begin
-    if not (msReEnter in FMaskState) then
+    if not(msReEnter in FMaskState) then
     begin
       FOldValue := EditText;
       inherited;
@@ -814,7 +830,7 @@ end;
 
 procedure TCustomMaskEdit.CMTextChanged(var Message: TMessage);
 var
-  SelStart, SelStop : Integer;
+  SelStart, SelStop: Integer;
   Temp: Integer;
 begin
   inherited;
@@ -837,7 +853,7 @@ end;
 
 procedure TCustomMaskEdit.CMExit(var Message: TCMExit);
 begin
-  if IsMasked and not (csDesigning in ComponentState) then
+  if IsMasked and not(csDesigning in ComponentState) then
   begin
     ValidateEdit;
     CheckCursor;
@@ -855,7 +871,7 @@ begin
   begin
     if not Validate(Str, Pos) then
     begin
-      if not (csDesigning in ComponentState) then
+      if not(csDesigning in ComponentState) then
       begin
         Include(FMaskState, msReEnter);
         SetFocus;
@@ -869,10 +885,12 @@ end;
 procedure TCustomMaskEdit.ValidateError;
 begin
   MessageBeep(0);
-  raise EDBEditError.CreateResFmt({$IFNDEF CLR}@{$ENDIF}SMaskEditErr, [EditMask]);
+  raise EDBEditError.CreateResFmt({$IFNDEF CLR}@{$ENDIF}SMaskEditErr,
+    [EditMask]);
 end;
 
-function TCustomMaskEdit.AddEditFormat(const Value: string; Active: Boolean): string;
+function TCustomMaskEdit.AddEditFormat(const Value: string;
+  Active: Boolean): string;
 begin
   if not Active then
     Result := MaskDoFormatText(EditMask, Value, ' ')
@@ -895,9 +913,10 @@ begin
     CType := MaskGetCharType(EditMask, MaskOffset);
 
     if CType in [mcLiteral, mcIntlLiteral] then
-      Result := Copy(Result, 1, Offset - 1) +
-        Copy(Result, Offset + 1, Length(Result) - Offset);
-    if CType in [mcMask, mcMaskOpt] then Inc(Offset);
+      Result := Copy(Result, 1, Offset - 1) + Copy(Result, Offset + 1,
+        Length(Result) - Offset);
+    if CType in [mcMask, mcMaskOpt] then
+      Inc(Offset);
   end;
 
   Dir := MaskGetCurrentDirectives(EditMask, 1);
@@ -914,13 +933,15 @@ begin
     if Offset <> 1 then
       Result := Copy(Result, Offset, Length(Result) - Offset + 1);
   end
-  else begin
+  else
+  begin
     OldLen := Length(Result);
     for I := 1 to OldLen do
     begin
       if Result[OldLen - I + 1] = FMaskBlank then
         SetLength(Result, Length(Result) - 1)
-      else Break;
+      else
+        break;
     end;
   end;
   if FMaskBlank <> ' ' then
@@ -930,7 +951,8 @@ begin
     begin
       if Result[I] = FMaskBlank then
         Result[I] := ' ';
-      if I > OldLen then Break;
+      if I > OldLen then
+        break;
     end;
   end;
 end;
@@ -953,11 +975,11 @@ begin
       Result := DoInputChar(NewChar, MaskOffset);
       if not Result and (CType in [mcMask, mcMaskOpt]) then
       begin
-        MaskOffset := FindLiteralChar (MaskOffset, InChar);
+        MaskOffset := FindLiteralChar(MaskOffset, InChar);
         if MaskOffset > 0 then
         begin
           MaskOffset := MaskOffsetToOffset(EditMask, MaskOffset);
-          SetCursor (MaskOffset);
+          SetCursor(MaskOffset);
           Exit;
         end;
       end;
@@ -967,7 +989,8 @@ begin
     MessageBeep(0)
 end;
 
-function TCustomMaskEdit.DoInputChar(var NewChar: Char; MaskOffset: Integer): Boolean;
+function TCustomMaskEdit.DoInputChar(var NewChar: Char;
+  MaskOffset: Integer): Boolean;
 var
   Dir: TMaskDirectives;
   Str: string;
@@ -976,20 +999,19 @@ var
 {$IF NOT DEFINED(CLR)}
   function IsKatakana(const Chr: Byte): Boolean;
   begin
-    Result := (SysLocale.PriLangID = LANG_JAPANESE) and (Chr in [$A1..$DF]);
+    Result := (SysLocale.PriLangID = LANG_JAPANESE) and (Chr in [$A1 .. $DF]);
   end;
 {$ENDIF}
-
 {$IF NOT DEFINED(CLR)}
   function TestChar(NewChar: Char): Boolean;
-  {var
-    Offset: Integer;}
+  { var
+    Offset: Integer; }
   begin
-    {Offset := MaskOffsetToOffset(EditMask, MaskOffset);}
-    Result := not ((MaskOffset < Length(EditMask)) and
-               (UpCase(EditMask[MaskOffset]) = UpCase(EditMask[MaskOffset+1]))) {or
-               (ByteType(EditText, Offset) = mbTrailByte) or
-               (ByteType(EditText, Offset+1) = mbLeadByte)};
+    { Offset := MaskOffsetToOffset(EditMask, MaskOffset); }
+    Result := not((MaskOffset < Length(EditMask)) and
+      (UpCase(EditMask[MaskOffset]) = UpCase(EditMask[MaskOffset + 1]))) { or
+      (ByteType(EditText, Offset) = mbTrailByte) or
+      (ByteType(EditText, Offset+1) = mbLeadByte) };
   end;
 {$ENDIF}
 
@@ -1004,13 +1026,13 @@ begin
     case EditMask[MaskOffset] of
       mMskNumeric, mMskNumericOpt:
         begin
-          if not ((NewChar >= '0') and (NewChar <= '9')) then
+          if not((NewChar >= '0') and (NewChar <= '9')) then
             Result := False;
         end;
       mMskNumSymOpt:
         begin
-          if not (((NewChar >= '0') and (NewChar <= '9')) or
-                 (NewChar = ' ') or(NewChar = '+') or(NewChar = '-')) then
+          if not(((NewChar >= '0') and (NewChar <= '9')) or (NewChar = ' ') or
+            (NewChar = '+') or (NewChar = '-')) then
             Result := False;
         end;
       mMskAscii, mMskAsciiOpt:
@@ -1026,7 +1048,7 @@ begin
           begin
             Str := ' ';
             Str[1] := NewChar;
-            if (mdUpperCase in Dir)  then
+            if (mdUpperCase in Dir) then
               Str := AnsiUpperCase(Str)
             else if mdLowerCase in Dir then
               Str := AnsiLowerCase(Str);
@@ -1048,16 +1070,16 @@ begin
 {$IF NOT DEFINED(CLR)}
           if IsKatakana(Byte(NewChar)) then
           begin
-              NewChar := Str[1];
-              Exit;
+            NewChar := Str[1];
+            Exit;
           end;
 {$ENDIF}
           if not IsCharAlpha(NewChar) then
           begin
             Result := False;
             if ((EditMask[MaskOffset] = mMskAlphaNum) or
-                (EditMask[MaskOffset] = mMskAlphaNumOpt)) and
-                (IsCharAlphaNumeric(NewChar)) then
+              (EditMask[MaskOffset] = mMskAlphaNumOpt)) and
+              (IsCharAlphaNumeric(NewChar)) then
               Result := True;
           end
           else if mdUpperCase in Dir then
@@ -1070,7 +1092,8 @@ begin
   end;
 end;
 
-function TCustomMaskEdit.Validate(const Value: string; var Pos: Integer): Boolean;
+function TCustomMaskEdit.Validate(const Value: string;
+  var Pos: Integer): Boolean;
 var
   Offset, MaskOffset: Integer;
   CType: TMaskCharType;
@@ -1085,8 +1108,8 @@ begin
       Inc(Offset)
     else if (CType = mcMask) and (Value <> '') then
     begin
-      if (Value [Offset] = FMaskBlank) or
-        ((Value [Offset] = ' ') and (EditMask[MaskOffset] <> mMskAscii)) then
+      if (Value[Offset] = FMaskBlank) or
+        ((Value[Offset] = ' ') and (EditMask[MaskOffset] <> mMskAscii)) then
       begin
         Result := False;
         Pos := Offset - 1;
@@ -1105,12 +1128,14 @@ var
   CType: TMaskCharType;
 begin
   Result := True;
-  if Len = 0 then Exit;
+  if Len = 0 then
+    Exit;
 
   StrOffset := Offset + 1;
   EndDel := StrOffset + Len;
   Temp := OffsetToMaskOffset(EditMask, Offset);
-  if Temp < 0 then  Exit;
+  if Temp < 0 then
+    Exit;
   for MaskOffset := Temp to Length(EditMask) do
   begin
     CType := MaskGetCharType(EditMask, MaskOffset);
@@ -1121,7 +1146,8 @@ begin
       Value[StrOffset] := FMaskBlank;
       Inc(StrOffset);
     end;
-    if StrOffset >= EndDel then Break;
+    if StrOffset >= EndDel then
+      break;
   end;
 end;
 
@@ -1136,34 +1162,39 @@ var
   TmpVal: string; // SDG
 begin
   Result := Offset;
-  if NewValue = '' then Exit;
+  if NewValue = '' then
+    Exit;
 
   Temp := 0; // SDG start: count mask chars
-  MaskOffset := 1; // SDG
-  TmpVal := Value; // SDG
-  While MaskOffset <= Length(EditMask) do // SDG
-  begin // SDG
-    CType := MaskGetCharType(EditMask, MaskOffset); // SDG
-    if CType = mcMask then // SDG
-    begin // SDG
-      Inc(Temp); // SDG
-      TmpVal[MaskOffset] := NewValue[Temp]; // SDG
-    end; // SDG
-    Inc(MaskOffset); // SDG
+  MaskOffset := 1;
+  TmpVal := Value;
+  While MaskOffset <= Length(EditMask) do
+  begin
+    CType := MaskGetCharType(EditMask, MaskOffset);
+    if CType = mcMask then
+    begin
+      Inc(Temp);
+      NewChar := NewValue[Temp];
+      if not(DoInputChar(NewChar, MaskOffset)) then
+        NewChar := FMaskBlank;
+      TmpVal[MaskOffset] := NewChar;
+    end;
+    Inc(MaskOffset);
   end; // SDG finish: count mask chars
 
   { replace chars with new chars, except literals }
   if Temp = Length(NewValue) then // SDG
-  begin // SDG
-    Value := TmpVal; // SDG
-    Result := Length(Value); // SDG
-  end // SDG
-  else // SDG
+  begin
+    Value := TmpVal;
+    Result := Length(Value);
+  end
+  else
   begin // SDG
     NewOffset := 1;
     NewVal := NewValue;
     Temp := OffsetToMaskOffset(EditMask, Offset);
-    if Temp < 0 then  Exit;
+    if Temp < 0 then
+      Exit;
     MaskOffset := Temp;
     While MaskOffset <= Length(EditMask) do
     begin
@@ -1171,66 +1202,68 @@ begin
       if CType in [mcLiteral, mcIntlLiteral, mcMask, mcMaskOpt] then
       begin
         NewChar := NewVal[NewOffset];
-        if not (DoInputChar(NewChar, MaskOffset)) then
+        if not(DoInputChar(NewChar, MaskOffset)) then
         begin
-  {$IF NOT DEFINED(CLR)}
+{$IF NOT DEFINED(CLR)}
           if IsLeadChar(NewChar) then
             NewVal[NewOffset + 1] := FMaskBlank;
-  {$ENDIF}
+{$ENDIF}
           NewChar := FMaskBlank;
         end;
-          { if pasted text does not contain a literal in the right place,
-            insert one }
-        if not ((CType in [mcLiteral, mcIntlLiteral]) and
+        { if pasted text does not contain a literal in the right place,
+          insert one }
+        if not((CType in [mcLiteral, mcIntlLiteral]) and
           (NewChar <> NewVal[NewOffset])) then
         begin
           NewVal[NewOffset] := NewChar;
-  {$IF NOT DEFINED(CLR)}
+{$IF NOT DEFINED(CLR)}
           if IsLeadChar(NewChar) then
           begin
             Inc(NewOffset);
             Inc(MaskOffset);
           end;
-  {$ENDIF}
+{$ENDIF}
         end
         else
-          NewVal := Copy(NewVal, 1, NewOffset-1) + NewChar +
-            Copy(NewVal, NewOffset, Length (NewVal));
+          NewVal := Copy(NewVal, 1, NewOffset - 1) + NewChar +
+            Copy(NewVal, NewOffset, Length(NewVal));
         Inc(NewOffset);
       end;
-      if (NewOffset + Offset) > FMaxChars then Break;
-      if (NewOffset) > Length(NewVal) then Break;
+      if (NewOffset + Offset) > FMaxChars then
+        break;
+      if (NewOffset) > Length(NewVal) then
+        break;
       Inc(MaskOffset);
     end;
 
     if (Offset + Length(NewVal)) < FMaxChars then
     begin
-  {$IF NOT DEFINED(CLR)}
-      if ByteType(Value, OffSet + Length(NewVal) + 1) = mbTrailByte then
+{$IF NOT DEFINED(CLR)}
+      if ByteType(Value, Offset + Length(NewVal) + 1) = mbTrailByte then
       begin
         NewVal := NewVal + FMaskBlank;
         Inc(NewOffset);
       end;
-  {$ENDIF}
+{$ENDIF}
       Value := Copy(Value, 1, Offset) + NewVal +
-        Copy(Value, OffSet + Length(NewVal) + 1,
-          FMaxChars -(Offset + Length(NewVal)));
+        Copy(Value, Offset + Length(NewVal) + 1,
+        FMaxChars - (Offset + Length(NewVal)));
     end
     else
     begin
       Temp := Offset;
-  {$IF NOT DEFINED(CLR)}
+{$IF NOT DEFINED(CLR)}
       if (ByteType(NewVal, FMaxChars - Offset) = mbLeadByte) then
         Inc(Temp);
-  {$ENDIF}
-      Value := Copy(Value, 1, Offset) +
-               Copy(NewVal, 1, FMaxChars - Temp);
+{$ENDIF}
+      Value := Copy(Value, 1, Offset) + Copy(NewVal, 1, FMaxChars - Temp);
     end;
     Result := NewOffset + Offset - 1;
   end; // SDG
 end;
 
-function TCustomMaskEdit.FindLiteralChar(MaskOffset: Integer; InChar: Char): Integer;
+function TCustomMaskEdit.FindLiteralChar(MaskOffset: Integer;
+  InChar: Char): Integer;
 var
   CType: TMaskCharType;
   LitChar: Char;

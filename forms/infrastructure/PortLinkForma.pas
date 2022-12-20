@@ -339,7 +339,6 @@ begin
   errors := false;
   if not(FCanEdit) then
   begin
-    errors := true;
     Exit;
   end;
 

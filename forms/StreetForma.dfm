@@ -4,6 +4,8 @@ inherited StreetForm: TStreetForm
   Caption = #1059#1083#1080#1094#1099' '#1080' '#1076#1086#1084#1072
   ClientHeight = 565
   ClientWidth = 993
+  ExplicitWidth = 1009
+  ExplicitHeight = 604
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter [0]
@@ -17,6 +19,8 @@ inherited StreetForm: TStreetForm
   inherited splPG: TSplitter
     Top = 75
     Width = 993
+    ExplicitTop = 75
+    ExplicitWidth = 993
   end
   inherited dbGrid: TDBGridEh
     Top = 78
@@ -553,7 +557,7 @@ inherited StreetForm: TStreetForm
         Top = 0
         Width = 644
         Height = 286
-        ActivePage = tsAtributes
+        ActivePage = tsMap
         Align = alClient
         TabOrder = 0
         OnChange = pcHouseInfoChange
@@ -638,6 +642,7 @@ inherited StreetForm: TStreetForm
                 Height = 13
                 Align = alTop
                 Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                ExplicitWidth = 61
               end
               object memHouseNotice: TDBMemoEh
                 Left = 0
@@ -1297,6 +1302,30 @@ inherited StreetForm: TStreetForm
                   Footers = <>
                   Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1086#1075#1076#1072
                   Width = 53
+                end
+                item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'OWNER_NAME'
+                  Footers = <>
+                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1060#1048#1054
+                end
+                item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'OWNER_DOC'
+                  Footers = <>
+                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1044#1086#1082#1091#1084#1077#1085#1090
+                end
+                item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'MOBILE'
+                  Footers = <>
+                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1084#1086#1073#1080#1083#1072
                 end>
               object RowDetailData: TRowDetailPanelControlEh
               end
@@ -1826,45 +1855,58 @@ inherited StreetForm: TStreetForm
   end
   inherited tlbMain: TToolBar
     Width = 993
+    ExplicitWidth = 993
     inherited ToolButton4: TToolButton
       Width = 8
+      ExplicitWidth = 8
     end
     inherited btnNew: TToolButton
       Left = 8
+      ExplicitLeft = 8
     end
     inherited btnEdit: TToolButton
       Left = 31
+      ExplicitLeft = 31
     end
     inherited ToolButton5: TToolButton
       Left = 54
+      ExplicitLeft = 54
     end
     inherited ToolButton6: TToolButton
       Left = 58
+      ExplicitLeft = 58
     end
     inherited btnDelete: TToolButton
       Left = 62
+      ExplicitLeft = 62
     end
     inherited ToolButton9: TToolButton
       Left = 85
+      ExplicitLeft = 85
     end
     inherited tbOk: TToolButton
       Left = 100
       Visible = False
       OnClick = tbOkClick
+      ExplicitLeft = 100
     end
     inherited ToolButton10: TToolButton
       Left = 123
+      ExplicitLeft = 123
     end
     inherited tbCancel: TToolButton
       Left = 127
       Visible = False
       OnClick = tbCancelClick
+      ExplicitLeft = 127
     end
     inherited ToolButton20: TToolButton
       Left = 150
+      ExplicitLeft = 150
     end
     inherited btnQuickFilter: TToolButton
       Left = 158
+      ExplicitLeft = 158
     end
     object ToolButton12: TToolButton
       Left = 181
@@ -1929,13 +1971,19 @@ inherited StreetForm: TStreetForm
   inherited pnlEdit: TPanel
     Width = 993
     Height = 50
+    ExplicitWidth = 993
+    ExplicitHeight = 50
     inherited btnSaveLink: TBitBtn
       Top = 17
       Width = 407
+      ExplicitTop = 17
+      ExplicitWidth = 407
     end
     inherited btnCancelLink: TBitBtn
       Left = 498
       Top = 17
+      ExplicitLeft = 498
+      ExplicitTop = 17
     end
   end
   inherited srcDataSource: TDataSource
@@ -2715,7 +2763,9 @@ inherited StreetForm: TStreetForm
       '    FLAT_NO = :FLAT_NO,'
       '    PORCH_N = :PORCH_N,'
       '    FLOOR_N = :FLOOR_N,'
-      '    NOTICE = :NOTICE'
+      '    NOTICE = :NOTICE,'
+      '    OWNER_NAME = :OWNER_NAME,'
+      '    OWNER_DOC = :OWNER_DOC    '
       'WHERE'
       '    HOUSE_ID = :OLD_HOUSE_ID'
       '    and FLAT_NO = :OLD_FLAT_NO'
@@ -2733,21 +2783,28 @@ inherited StreetForm: TStreetForm
       '    FLAT_NO,'
       '    PORCH_N,'
       '    FLOOR_N,'
-      '    NOTICE'
+      '    NOTICE,'
+      '    OWNER_NAME,'
+      '    OWNER_DOC'
       ')'
       'VALUES('
       '    :HOUSE_ID,'
       '    :FLAT_NO,'
       '    :PORCH_N,'
       '    :FLOOR_N,'
-      '    :NOTICE'
+      '    :NOTICE,'
+      '    :OWNER_NAME,'
+      '    :OWNER_DOC    '
       ')')
     RefreshSQL.Strings = (
       'select'
       '    F.*'
       '  , n.NAME NODE'
       '  from houseflats F'
-      '       left outer join nodes n on (f.NODE_ID = n.NODE_ID)'
+      
+        '       left outer join Node_Flats nf on (nf.House_Id = f.House_I' +
+        'd and nf.Flat_No = f.Flat_No)'
+      '       left outer join nodes n on (n.NODE_ID = nf.NODE_ID)'
       'WHERE  F.house_id =  :HOUSE_ID'
       '     and  F.FLAT_NO = :OLD_FLAT_NO'
       ''

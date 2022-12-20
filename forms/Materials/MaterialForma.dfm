@@ -2,7 +2,7 @@ object MaterialForm: TMaterialForm
   Left = 0
   Top = 0
   Caption = #1052#1072#1090#1077#1088#1080#1072#1083
-  ClientHeight = 376
+  ClientHeight = 395
   ClientWidth = 481
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object MaterialForm: TMaterialForm
   OnShow = FormShow
   DesignSize = (
     481
-    376)
+    395)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -45,8 +45,8 @@ object MaterialForm: TMaterialForm
     Caption = #1043#1088#1091#1087#1087#1072
   end
   object Label4: TLabel
-    Left = 8
-    Top = 275
+    Left = 6
+    Top = 307
     Width = 61
     Height = 13
     Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -88,24 +88,31 @@ object MaterialForm: TMaterialForm
   end
   object lbl5: TLabel
     Left = 6
-    Top = 248
+    Top = 280
     Width = 80
     Height = 13
     Caption = #1060#1086#1090#1086'/'#1044#1086#1082#1091#1084#1077#1085#1090
   end
   object lbl41: TLabel
     Left = 6
-    Top = 194
+    Top = 226
     Width = 77
     Height = 13
     Caption = #1059#1089#1083#1091#1075#1072' '#1072#1088#1077#1085#1076#1099
   end
   object lbl42: TLabel
     Left = 6
-    Top = 221
+    Top = 253
     Width = 90
     Height = 13
     Caption = #1059#1089#1083#1091#1075#1072' '#1088#1072#1089#1089#1088#1086#1095#1082#1080
+  end
+  object lblSold: TLabel
+    Left = 6
+    Top = 199
+    Width = 83
+    Height = 13
+    Caption = #1059#1089#1083#1091#1075#1072' '#1087#1088#1086#1076#1072#1078#1080
   end
   object dblMatGroup: TDBLookupComboboxEh
     Left = 97
@@ -133,9 +140,9 @@ object MaterialForm: TMaterialForm
   end
   object DBMemo1: TDBMemoEh
     Left = 96
-    Top = 272
+    Top = 304
     Width = 376
-    Height = 66
+    Height = 53
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'DESCRIPTION'
@@ -144,7 +151,7 @@ object MaterialForm: TMaterialForm
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
-    TabOrder = 16
+    TabOrder = 17
     Visible = True
     WantReturns = True
   end
@@ -196,27 +203,27 @@ object MaterialForm: TMaterialForm
     OnExit = edtM_NUMBERExit
   end
   object btnOk: TBitBtn
-    Left = 16
-    Top = 343
-    Width = 375
+    Left = 6
+    Top = 362
+    Width = 384
     Height = 28
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     NumGlyphs = 2
-    TabOrder = 17
+    TabOrder = 18
     OnClick = OkCancelFrame1bbOkClick
   end
   object btnCancel: TBitBtn
     Left = 397
-    Top = 343
+    Top = 362
     Width = 75
     Height = 28
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 18
+    TabOrder = 19
   end
   object edtCost: TDBNumberEditEh
     Left = 96
@@ -347,7 +354,7 @@ object MaterialForm: TMaterialForm
   end
   object edtFILE: TDBEditEh
     Left = 96
-    Top = 245
+    Top = 277
     Width = 215
     Height = 21
     Anchors = [akLeft, akTop, akRight]
@@ -361,34 +368,34 @@ object MaterialForm: TMaterialForm
     EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1092#1072#1081#1083
     ReadOnly = True
     ShowHint = True
-    TabOrder = 13
+    TabOrder = 14
     Visible = True
   end
   object btnScaner: TButton
     Left = 317
-    Top = 245
+    Top = 277
     Width = 75
     Height = 21
     Hint = #1057#1082#1072#1085#1080#1088#1086#1074#1072#1090#1100' '#1074' '#1092#1072#1081#1083' '#1080' '#1089#1086#1093#1088#1072#1085#1080#1090#1100
     Anchors = [akTop, akRight]
     Caption = #1057#1082#1072#1085#1080#1088#1086#1074#1072#1090#1100
-    TabOrder = 14
+    TabOrder = 15
     OnClick = btnScanerClick
   end
   object btnOpenFile: TButton
     Left = 398
-    Top = 245
+    Top = 277
     Width = 75
     Height = 21
     Hint = #1055#1088#1086#1089#1084#1086#1090#1088#1077#1090#1100' '#1092#1072#1081#1083
     Anchors = [akTop, akRight]
     Caption = #1055#1088#1086#1089#1084#1086#1090#1088#1077#1090#1100
-    TabOrder = 15
+    TabOrder = 16
     OnClick = btnOpenFileClick
   end
   object lcbRENT: TDBLookupComboboxEh
     Left = 97
-    Top = 191
+    Top = 223
     Width = 376
     Height = 21
     Hint = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1072#1088#1077#1085#1076#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
@@ -409,12 +416,12 @@ object MaterialForm: TMaterialForm
     ListSource = srcServices
     ShowHint = True
     Style = csDropDownEh
-    TabOrder = 11
+    TabOrder = 12
     Visible = True
   end
   object lcbLAON: TDBLookupComboboxEh
     Left = 97
-    Top = 218
+    Top = 250
     Width = 376
     Height = 21
     Hint = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1088#1072#1089#1089#1088#1086#1095#1082#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
@@ -435,7 +442,33 @@ object MaterialForm: TMaterialForm
     ListSource = srcServices
     ShowHint = True
     Style = csDropDownEh
-    TabOrder = 12
+    TabOrder = 13
+    Visible = True
+  end
+  object lcbSOLD: TDBLookupComboboxEh
+    Left = 97
+    Top = 196
+    Width = 376
+    Height = 21
+    Hint = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1072#1088#1077#1085#1076#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
+    Anchors = [akLeft, akTop, akRight]
+    DynProps = <>
+    DataField = 'SOLD'
+    DataSource = MaterialsForm.srcDataSource
+    DropDownBox.ListSource = srcSoldSRV
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
+    DropDownBox.AutoDrop = True
+    DropDownBox.Sizable = True
+    EmptyDataInfo.Text = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1087#1088#1086#1076#1072#1078#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
+    EditButtons = <>
+    KeyField = 'SERVICE_ID'
+    ListField = 'NAME'
+    ListSource = srcSoldSRV
+    ShowHint = True
+    Style = csDropDownEh
+    TabOrder = 11
     Visible = True
   end
   object dsMGropups: TpFIBDataSet
@@ -608,5 +641,31 @@ object MaterialForm: TMaterialForm
     DataSet = dsServices
     Left = 389
     Top = 285
+  end
+  object dsSoldSRV: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    c.Service_Id'
+      
+        '  , c.Name || coalesce('#39' ('#39' || c.Shortname || '#39')'#39', '#39#39') || coales' +
+        'ce('#39' ='#39' || t.Tarif_Sum, '#39#39') NAME'
+      '  from SERVices C'
+      
+        '       left outer join tarif t on (t.Service_Id = c.Service_Id a' +
+        'nd'
+      '             current_date between t.Date_From and t.Date_To)'
+      '  where C.SRV_TYPE_ID <> 0'
+      '  order by c.NAME')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 181
+    Top = 309
+    oFetchAll = True
+  end
+  object srcSoldSRV: TDataSource
+    DataSet = dsSoldSRV
+    Left = 237
+    Top = 317
   end
 end

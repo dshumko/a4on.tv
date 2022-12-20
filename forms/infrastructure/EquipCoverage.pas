@@ -22,7 +22,6 @@ type
     srcHouse: TDataSource;
     LupHOUSE_ID: TDBLookupComboboxEh;
     Query: TpFIBQuery;
-    Label11: TLabel;
     eNotice: TDBMemoEh;
     OkCancelFrame: TOkCancelFrame;
     srcCoverage: TDataSource;

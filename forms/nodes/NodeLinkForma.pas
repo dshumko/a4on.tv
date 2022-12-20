@@ -236,7 +236,6 @@ var
 begin
   if not(FCanEdit) then
   begin
-    errors := true;
     Exit;
   end;
 

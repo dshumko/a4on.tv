@@ -14,28 +14,11 @@ object CustomerInfoFrm: TCustomerInfoFrm
     Align = alClient
     Caption = ' .:: '#1040#1073#1086#1085#1077#1085#1090' ::. '
     TabOrder = 0
-    object lblDebt: TLabel
-      Left = 2
-      Top = 36
-      Width = 256
-      Height = 13
-      Hint = #1044#1086#1083#1075' '#1072#1073#1086#1085#1077#1085#1090#1072
-      Align = alTop
-      Caption = #1044#1054#1051#1043
-      Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentColor = False
-      ParentFont = False
-    end
     object memAbonent: TMemo
       Left = 2
-      Top = 49
+      Top = 52
       Width = 256
-      Height = 120
+      Height = 117
       TabStop = False
       Align = alClient
       BevelInner = bvNone
@@ -49,12 +32,14 @@ object CustomerInfoFrm: TCustomerInfoFrm
       ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 0
+      ExplicitTop = 49
+      ExplicitHeight = 120
     end
     object lblFIO: TDBEditEh
       Left = 2
       Top = 15
       Width = 256
-      Height = 21
+      Height = 18
       Align = alTop
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -73,6 +58,32 @@ object CustomerInfoFrm: TCustomerInfoFrm
       ShowHint = True
       TabOrder = 1
       Text = #1060#1048#1054
+      Visible = True
+    end
+    object lblDebt: TDBEditEh
+      Left = 2
+      Top = 33
+      Width = 256
+      Height = 19
+      Align = alTop
+      AutoSelect = False
+      AutoSize = False
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clBtnFace
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1041#1040#1051#1040#1053#1057
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ReadOnly = True
+      TabOrder = 2
       Visible = True
     end
   end

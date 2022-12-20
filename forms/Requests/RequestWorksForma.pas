@@ -37,9 +37,10 @@ type
   private
     { Private declarations }
     fEditMode : Byte;
+    procedure SetEditMode(Value: Byte);
   public
     { Public declarations }
-    property EditMode : Byte read fEditMode write fEditMode;
+    property EditMode : Byte read fEditMode write SetEditMode;
   end;
 
 function ReqWorks(const aRequest:Integer; const aEditMode : Byte; const RQ_TYPE : Integer = -1): boolean;
@@ -50,7 +51,7 @@ var
 implementation
 
 uses
-  DM, MAIN;
+  DM, MAIN, PrjConst;
 
 {$R *.dfm}
 function ReqWorks(const aRequest:Integer; const aEditMode : Byte; const RQ_TYPE : Integer = -1): boolean;
@@ -133,6 +134,20 @@ procedure TRequestWorksForm.OkCancelFrame1bbOkClick(Sender: TObject);
 begin
   OkCancelFrame1.actExitExecute(Sender);
   ModalResult := mrOk;
+end;
+
+procedure TRequestWorksForm.SetEditMode(Value: Byte);
+var
+  i: Integer;
+begin
+  fEditMode := Value;
+  if (fEditMode = 0) then
+    Caption := Caption + rsRequestReadOnly;
+  for i := 0 to dbGrid.Columns.Count - 1 do
+  begin
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'W_QUANT') then
+      dbGrid.Columns[i].ReadOnly := (fEditMode = 0);
+  end;
 end;
 
 end.

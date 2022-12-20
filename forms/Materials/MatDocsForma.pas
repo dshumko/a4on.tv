@@ -91,7 +91,7 @@ type
     procedure SetMatDocDateFilter;
     procedure InitForm;
     procedure InitSecurity;
-    procedure SetDefaultFilter;
+    // procedure SetDefaultFilter;
     function GenerateFilter: string;
   public
     { Public declarations }
@@ -656,24 +656,24 @@ begin
   srcDataSource.DataSet.EnableControls;
 end;
 
-procedure TMatDocsForm.SetDefaultFilter;
-var
-  f: string;
-begin
-  dsFilter.Close;
-  dsFilter.Open;
-  dsFilter.EmptyTable;
-  f := A4MainForm.GetUserFilterFolder + 'matdoc_default.ftr';
-  if FileExists(f) then
-  begin
-    if dsFilter.State in [dsEdit, dsInsert] then
-      dsFilter.Post;
-    DatasetFromJson(dsFilter, f);
-  end;
-
-  if dsFilter.RecordCount > 0 then
-    actEnableFilter.Checked := True;
-end;
+//procedure TMatDocsForm.SetDefaultFilter;
+//var
+//  f: string;
+//begin
+//  dsFilter.Close;
+//  dsFilter.Open;
+//  dsFilter.EmptyTable;
+//  f := A4MainForm.GetUserFilterFolder + 'matdoc_default.ftr';
+//  if FileExists(f) then
+//  begin
+//    if dsFilter.State in [dsEdit, dsInsert] then
+//      dsFilter.Post;
+//    DatasetFromJson(dsFilter, f);
+//  end;
+//
+//  if dsFilter.RecordCount > 0 then
+//    actEnableFilter.Checked := True;
+//end;
 
 procedure TMatDocsForm.actEnableFilterExecute(Sender: TObject);
 begin

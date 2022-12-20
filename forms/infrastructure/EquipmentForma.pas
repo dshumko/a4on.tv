@@ -102,7 +102,7 @@ type
     procedure miN6Click(Sender: TObject);
   private
     FLastPage: TA4onPage;
-    FAutoGen: Boolean; // автогенерация название
+    // FAutoGen: Boolean; // автогенерация название
     FPageList: TA4onPages;
     FCanSave: Boolean;
     FInTreeView: Boolean;

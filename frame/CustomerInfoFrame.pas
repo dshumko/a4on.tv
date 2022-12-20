@@ -11,9 +11,9 @@ uses
 type
   TCustomerInfoFrm = class(TFrame)
     gbInfo: TGroupBox;
-    lblDebt: TLabel;
     memAbonent: TMemo;
     lblFIO: TDBEditEh;
+    lblDebt: TDBEditEh;
   private
     { Private declarations }
     ci: TCustomerInfo;
@@ -35,7 +35,7 @@ begin
   ci := Value;
   memAbonent.Lines.Clear;
   lblFIO.Text := '';
-  lblDebt.Caption := '';
+  lblDebt.Text := '';
 
   if Value.CUSTOMER_ID = -1 then
   begin
@@ -49,12 +49,18 @@ begin
   then
   begin
     if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
-      s := rsBALANCE + ' ' + floatToStr(Value.Debt_sum)
+      s := rsBALANCE + ': ' + floatToStr(Value.Debt_sum)
     else
-      s := rsSALDO + ' ' + floatToStr(Value.Debt_sum);
-    lblDebt.Caption := s;
+      s := rsSALDO + ': ' + floatToStr(Value.Debt_sum);
+    lblDebt.Text := s;
   end;
-  s := '' + Value.Street + ' ' + Value.HOUSE_NO + ' ' + Value.flat_No;
+
+  s := '' + Value.Street + ' д.' + Value.HOUSE_NO;
+  if not Value.flat_No.IsEmpty then
+    s := s + ' кв.' + Value.flat_No;
+  if not Value.City.IsEmpty then
+    s := s + ' (' + Value.City + ')';
+
   memAbonent.Lines.Add(s);
   memAbonent.Lines.Add(Value.CUST_STATE_DESCR);
   memAbonent.Lines.Add(Value.notice);

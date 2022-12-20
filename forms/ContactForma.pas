@@ -230,20 +230,22 @@ begin
       Transaction := dmMain.trReadQ;
       sql.Clear;
       sql.Add(' select c.Customer_Id, c.Account_No, c.Debt_Sum, c.Cust_Code, c.Surname, c.Firstname, c.Midlename ');
+      sql.Add(' , coalesce((select i.Cust_Code from customer i where i.Customer_Id = :CID), '''') OLD_CODE');
       sql.Add(' from Customer_Contacts cc inner join customer c on (cc.Customer_Id = c.Customer_Id) ');
       sql.Add(' where cc.Cc_Type < 2 ');
       sql.Add('   and ((cc.Cc_Value = :STR) ');
       sql.Add('         or (position(:STR in cc.Cc_Value) > 0) ');
       sql.Add('         or (cc_val_reverse = reverse(ONLY_DIGITS(:STR)))) ');
 
-      // ParamByName('CID').AsInteger := FContact.CustID;
+      ParamByName('CID').AsInteger := FContact.CustID;
       ParamByName('STR').AsString := fio;
 
       Transaction.StartTransaction;
       ExecQuery;
       while not EOF do
       begin
-        if FieldByName('Customer_Id').Value <> FContact.CustID then
+        if ((FieldByName('Customer_Id').Value <> FContact.CustID) and
+          (FieldByName('Cust_Code').Value <> FieldByName('OLD_CODE').Value)) then
         begin
           if not FieldByName('Surname').IsNull then
             fio := FieldByName('Surname').Value

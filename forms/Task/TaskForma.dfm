@@ -2,11 +2,15 @@ inherited TaskForm: TTaskForm
   Caption = #1047#1072#1076#1072#1095#1080' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1086#1074
   ClientHeight = 593
   ClientWidth = 1017
+  ExplicitWidth = 1033
+  ExplicitHeight = 632
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 1017
+    ExplicitTop = 193
+    ExplicitWidth = 1017
   end
   inherited dbGrid: TDBGridEh
     Top = 196
@@ -130,6 +134,10 @@ inherited TaskForm: TTaskForm
         Width = 65
       end>
     inherited RowDetailData: TRowDetailPanelControlEh
+      ExplicitLeft = 30
+      ExplicitTop = 76
+      ExplicitWidth = 984
+      ExplicitHeight = 184
       object pgcMSG: TPageControl
         Left = 0
         Top = 0
@@ -413,6 +421,10 @@ inherited TaskForm: TTaskForm
         object tsEdit: TTabSheet
           Caption = 'tsEdit'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           DesignSize = (
             974
             146)
@@ -503,6 +515,7 @@ inherited TaskForm: TTaskForm
   end
   inherited tlbMain: TToolBar
     Width = 1017
+    ExplicitWidth = 1017
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -564,6 +577,8 @@ inherited TaskForm: TTaskForm
     Width = 1017
     Height = 168
     ParentBackground = False
+    ExplicitWidth = 1017
+    ExplicitHeight = 168
     object lbl1: TLabel [0]
       Left = 12
       Top = 9
@@ -597,12 +612,17 @@ inherited TaskForm: TTaskForm
       Top = 135
       Width = 831
       TabOrder = 7
+      ExplicitTop = 135
+      ExplicitWidth = 831
     end
     inherited btnCancelLink: TBitBtn
       Left = 910
       Top = 135
       Width = 98
       TabOrder = 8
+      ExplicitLeft = 910
+      ExplicitTop = 135
+      ExplicitWidth = 98
     end
     object edtTITLE: TDBEditEh
       Left = 73

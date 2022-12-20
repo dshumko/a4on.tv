@@ -773,10 +773,8 @@ end;
 
 procedure TOrdersTPForm.actOTPNewExecute(Sender: TObject);
 var
-  bm: TBookmark;
-var
   ci: TCustomerInfo;
-  n, o: Integer;
+  o: Integer;
 begin
   if (srcOrdersTP.DataSet.FieldByName('Otp_Id').IsNull) then
     Exit;
@@ -786,10 +784,9 @@ begin
 
   if CreateOrderTP(-1) > -1 then
   begin
-    bm := srcOrdersTP.DataSet.GetBookmark;
     srcOrdersTP.DataSet.Close;
     srcOrdersTP.DataSet.Open;
-    srcOrdersTP.DataSet.GotoBookmark(bm);
+    srcOrdersTP.DataSet.Locate('Otp_Id', o, []);
   end;
 end;
 

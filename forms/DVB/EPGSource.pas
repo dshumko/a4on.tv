@@ -807,7 +807,7 @@ begin
     if ((edtLOGIN.Text <> '') and (edtPASSWORD.Text <> '')) then
     begin
       s := edtLOGIN.Text + ':' + edtPASSWORD.Text;
-      s := EncodeBase64(s);
+      s := string(EncodeBase64(AnsiString(s)));
       HTTPClient.Headers.Add('Authorization: Basic ' + s);
     end;
     if HTTPClient.HTTPMethod('HEAD', edtURL.Text) then
@@ -831,7 +831,7 @@ begin
     if ((edtLOGIN.Text <> '') and (edtPASSWORD.Text <> '')) then
     begin
       s := edtLOGIN.Text + ':' + edtPASSWORD.Text;
-      s := EncodeBase64(s);
+      s := string(EncodeBase64(AnsiString(s)));
       HTTPClient.Headers.Add('Authorization: Basic ' + s);
     end;
     if HTTPClient.HTTPMethod('GET', edtURL.Text) then

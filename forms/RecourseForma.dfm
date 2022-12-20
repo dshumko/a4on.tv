@@ -24,22 +24,31 @@ object RecourseForm: TRecourseForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  object spl1: TSplitter
+    Left = 0
+    Top = 71
+    Width = 467
+    Height = 4
+    Cursor = crVSplit
+    Align = alTop
+    ExplicitTop = 63
+  end
   object pnlNotice: TPanel
     Left = 0
-    Top = 170
+    Top = 174
     Width = 467
-    Height = 102
+    Height = 98
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 4
     DesignSize = (
       467
-      102)
+      98)
     object mmoNotice: TDBMemoEh
       Left = 5
       Top = 0
       Width = 457
-      Height = 102
+      Height = 98
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DynProps = <>
@@ -53,7 +62,7 @@ object RecourseForm: TRecourseForm
   end
   object pnlRecourse: TPanel
     Left = 0
-    Top = 114
+    Top = 118
     Width = 467
     Height = 25
     Align = alTop
@@ -113,7 +122,7 @@ object RecourseForm: TRecourseForm
       TabOrder = 0
       Visible = True
       OnChange = cbRecourseChange
-      OnClick = cbRecourseClick
+      OnClick = DBLookupComboboxClick
     end
   end
   object pnlInfo: TPanel
@@ -133,27 +142,36 @@ object RecourseForm: TRecourseForm
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      ExplicitWidth = 467
+      ExplicitHeight = 71
       inherited gbInfo: TGroupBox
         Width = 467
         Height = 71
-        inherited lblDebt: TLabel
-          Width = 463
-          Margins.Bottom = 0
-        end
+        ExplicitWidth = 467
+        ExplicitHeight = 71
         inherited memAbonent: TMemo
           Width = 463
-          Height = 20
+          Height = 17
+          ScrollBars = ssNone
+          ExplicitWidth = 463
+          ExplicitHeight = 17
         end
         inherited lblFIO: TDBEditEh
           Width = 463
           Margins.Bottom = 0
+          ExplicitWidth = 463
+        end
+        inherited lblDebt: TDBEditEh
+          Width = 463
+          Text = #1044#1054#1051#1043
+          ExplicitWidth = 463
         end
       end
     end
   end
   object pnlAdres: TPanel
     Left = 0
-    Top = 71
+    Top = 75
     Width = 467
     Height = 43
     Align = alTop
@@ -280,7 +298,7 @@ object RecourseForm: TRecourseForm
   end
   object pnlContact: TPanel
     Left = 0
-    Top = 139
+    Top = 143
     Width = 467
     Height = 31
     Align = alTop
@@ -303,11 +321,13 @@ object RecourseForm: TRecourseForm
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
+      DropDownBox.AutoDrop = True
       EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1090#1077#1083#1077#1092#1086#1085#1072' '#1080' '#1076#1088#1091#1075#1086#1081' '#1082#1086#1085#1090#1072#1082#1090
       EditButtons = <>
       ShowHint = True
       TabOrder = 0
       Visible = True
+      OnClick = edtContactClick
     end
   end
   object pnlBtm: TPanel
@@ -480,7 +500,8 @@ object RecourseForm: TRecourseForm
       '<P>.Left'
       '<P>.PixelsPerInch'
       '<P>.Top'
-      '<P>.Width')
+      '<P>.Width'
+      'pnlInfo.<P>.Height')
     Left = 338
     Top = 16
   end

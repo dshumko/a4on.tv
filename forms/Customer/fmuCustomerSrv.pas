@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.ExtCtrls,
   Vcl.ActnList, Vcl.Menus,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -82,6 +84,9 @@ type
   private
     FFullAccess: Boolean;
     FChangeHistory: Boolean;
+    FfcSrvDisconted: TColor;
+    FfcSrvDiscontedFuture: TColor;
+    FfcSrvInAutoblock: TColor;
     procedure RecalcCustomer;
     procedure EnableControls;
     procedure ShowSummaryReport;
@@ -117,6 +122,24 @@ var
   cChg: Boolean;
   i: Integer;
 begin
+
+  try
+    FfcSrvDisconted := StringToColor(dmMain.GetSettingsValue('COLOR_OFF'));
+  except
+    FfcSrvDisconted := clSilver;
+  end;
+
+  try
+    FfcSrvInAutoblock := StringToColor(dmMain.GetSettingsValue('COLOR_DOLG'));
+  except
+    FfcSrvInAutoblock := clRed;
+  end;
+
+  try
+    FfcSrvDiscontedFuture := StringToColor(dmMain.GetSettingsValue('COLOR_OFFMONEY'));
+  except
+    FfcSrvDiscontedFuture := clBlue;
+  end;
   { TODO: Не давать править SRV в прошлом периоде }
   {
     34 ДОБАВЛЕНИЕ УСЛУГИ  Добавление услуг абоненту
@@ -145,6 +168,17 @@ begin
 
   // actSubscrHistory.Visible := ChangeHistory;
   pnlButtons.Visible := cAdd or FChangeHistory;
+
+  cChg := (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
+  i := 0;
+  while (i < dbgCustSubscrServ.Columns.Count) do
+  begin
+    if (dbgCustSubscrServ.Columns.Items[i].FieldName = 'CONTRACT') //
+      or (dbgCustSubscrServ.Columns.Items[i].FieldName = 'CONTRACT_DATE') //
+    then
+      dbgCustSubscrServ.Columns[i].Visible := cChg;
+    i := i + 1;
+  end;
 
   dsServices.DataSource := FDataSource;
 end;
@@ -299,7 +333,7 @@ end;
 procedure TapgCustomerSrv.ActSrvOffExecute(Sender: TObject);
 var
   s: string;
-  id: integer;
+  id: Integer;
 begin
   if dsServices.RecordCount = 0 then
     exit;
@@ -321,7 +355,7 @@ end;
 procedure TapgCustomerSrv.ActSrvOnExecute(Sender: TObject);
 var
   s: string;
-  id: integer;
+  id: Integer;
   CanAdd: Boolean;
 begin
   if dsServices.RecordCount = 0 then
@@ -332,7 +366,8 @@ begin
     exit;
 
   // включаем только если услуга неактивна (нет галки услуга Активна )
-  if (dsServices['SRV_ACTIVE'] = 0) and ((dmMain.GetSettingsValue('ON_DISACT')) = '0') then begin
+  if (dsServices['SRV_ACTIVE'] = 0) and ((dmMain.GetSettingsValue('ON_DISACT')) = '0') then
+  begin
     ShowMessage(rsSrvNotActive);
     exit;
   end;
@@ -415,8 +450,8 @@ begin
 
   bm := dsServices.GetBookmark;
   if ShowCustSubscrHistory(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['Serv_ID'])
-    // and ((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_History)))
-    then
+  // and ((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_History)))
+  then
   begin
     dsServices.CloseOpen(true);
     dsServices.GotoBookmark(bm);
@@ -438,17 +473,25 @@ begin
   ds := (Sender as TDBGridEh).DataSource.DataSet;
   if not ds.Active then
     exit;
-  if ds.FieldValues['state_sgn'] = 1 then
-    AFont.Color := gCustActive
-  else
-  begin
-    AFont.Color := gCustInactiveDebt;
-  end;
 
-  if ((not ds.FieldByName('state_srv').IsNull) and (ds.FieldValues['state_srv'] = -3)) then
-    AFont.Style := AFont.Style + [fsBold]
-  else
-    AFont.Style := AFont.Style - [fsBold];
+  if ds.FieldValues['state_sgn'] = 0 then
+  begin
+    if (ds.FieldValues['STATE_DATE'] > Now()) then
+      AFont.Color := FfcSrvDiscontedFuture
+    else
+      AFont.Color := FfcSrvDisconted;
+  end;
+  // else AFont.Color := clWindowText;
+
+  if ((not ds.FieldByName('state_srv').IsNull) and (ds.FieldValues['state_srv'] = -3)) then begin
+    AFont.Style := AFont.Style + [fsBold];
+    AFont.Color := FfcSrvInAutoblock;
+  end;
+  // else AFont.Style := AFont.Style - [fsBold];
+
+  if ((not ds.FieldByName('STATE_DATE').IsNull) and (ds.FieldValues['STATE_DATE'] > Now())) then
+    AFont.Style := AFont.Style + [fsItalic];
+  // else AFont.Style := AFont.Style - [fsItalic];
 end;
 
 procedure TapgCustomerSrv.RecalcCustomer;
@@ -487,9 +530,9 @@ end;
 
 procedure TapgCustomerSrv.dbgCustSubscrServSumListAfterRecalcAll(Sender: TObject);
 
-  function FindByField(const FldName: String): integer;
+  function FindByField(const FldName: String): Integer;
   var
-    i: integer;
+    i: Integer;
   begin
     Result := -1;
     for i := 0 to dbgCustSubscrServ.Columns.Count - 1 do
@@ -500,7 +543,7 @@ procedure TapgCustomerSrv.dbgCustSubscrServSumListAfterRecalcAll(Sender: TObject
   end;
 
 var
-  di: integer;
+  di: Integer;
   dt: Double;
   Debt: Double;
   s: string;
@@ -530,50 +573,47 @@ begin
     dbgCustSubscrServ.Columns.Items[di].Footer.Value := s;
 end;
 
-
 procedure TapgCustomerSrv.ShowSummaryReport;
 var
-  ReportID, i, ci: Integer;
-  periodFrom: TDateTime;
+  ReportID, ci: Integer;
   FILENAME: String;
   Stream: TStream;
-  bm: TBookMark;
-  vQRY: TpFIBQuery;
 begin
   FILENAME := 'ServiceSummary';
-    // Загрузим отчет из БД
-    ReportID := dmMain.GET_ID_REPORT_BY_PATH(FILENAME);
-    if ReportID < 0 then
-      Exit;
-    try
-      dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := ReportID;
-      dmMain.fdsLoadReport.Open;
-      if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
-      begin
-        Stream := TMemoryStream.Create;
-        try
-          TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
-          Stream.Position := 0;
-          dmMain.frxModalReport.LoadFromStream(Stream);
-          dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-          // Caption := dmMain.frxModalReport.FILENAME;
-        finally
-          Stream.Free;
-        end;
+  // Загрузим отчет из БД
+  ReportID := dmMain.GET_ID_REPORT_BY_PATH(FILENAME);
+  if ReportID < 0 then
+    exit;
+  try
+    dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value := ReportID;
+    dmMain.fdsLoadReport.Open;
+    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').Value <> NULL then
+    begin
+      Stream := TMemoryStream.Create;
+      try
+        TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
+        Stream.Position := 0;
+        dmMain.frxModalReport.LoadFromStream(Stream);
+        dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        // Caption := dmMain.frxModalReport.FILENAME;
+      finally
+        Stream.free;
       end;
-    finally
-      dmMain.fdsLoadReport.Close;
     end;
+  finally
+    dmMain.fdsLoadReport.Close;
+  end;
 
-    ci := dmMain.frxModalReport.Variables.IndexOf('CUSTOMER_ID');
-    if ci > 0 then
-      dmMain.frxModalReport.Variables['CUSTOMER_ID'] := dsServices['CUSTOMER_ID'];
+  ci := dmMain.frxModalReport.Variables.IndexOf('CUSTOMER_ID');
+  if ci > 0 then
+    dmMain.frxModalReport.Variables['CUSTOMER_ID'] := dsServices['CUSTOMER_ID'];
 
-    ci := dmMain.frxModalReport.Variables.IndexOf('SERVICE_ID');
-    if ci > 0 then
-      dmMain.frxModalReport.Variables['SERVICE_ID'] := dsServices['SERV_ID'];
+  ci := dmMain.frxModalReport.Variables.IndexOf('SERVICE_ID');
+  if ci > 0 then
+    dmMain.frxModalReport.Variables['SERVICE_ID'] := dsServices['SERV_ID'];
 
-    dmMain.frxModalReport.ShowReport(True);
+  dmMain.frxModalReport.ShowReport(true);
 end;
 
 end.
+

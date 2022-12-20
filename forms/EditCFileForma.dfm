@@ -3,7 +3,7 @@ object EditCFileForm: TEditCFileForm
   Top = 390
   BorderIcons = [biSystemMenu]
   Caption = #1060#1072#1081#1083' '#1072#1073#1086#1085#1077#1085#1090#1072
-  ClientHeight = 302
+  ClientHeight = 310
   ClientWidth = 472
   Color = clBtnFace
   DoubleBuffered = True
@@ -110,12 +110,18 @@ object EditCFileForm: TEditCFileForm
       DynProps = <>
       DataField = 'CF_TYPE'
       DataSource = srcCustFile
+      DropDownBox.ListSource = srcFiles
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
       EmptyDataInfo.Text = #1058#1080#1087' '#1092#1072#1081#1083#1072
       EditButtons = <>
       KeyField = 'O_ID'
       ListField = 'O_NAME'
       ListSource = srcFiles
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 0
       Visible = True
       OnChange = dbluFileTypeChange
@@ -123,18 +129,18 @@ object EditCFileForm: TEditCFileForm
   end
   object pnlClient: TPanel
     Left = 0
-    Top = 152
+    Top = 171
     Width = 472
-    Height = 150
+    Height = 139
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 3
     DesignSize = (
       472
-      150)
+      139)
     object btnCancel: TBitBtn
       Left = 389
-      Top = 120
+      Top = 109
       Width = 75
       Height = 26
       Anchors = [akRight, akBottom]
@@ -145,7 +151,7 @@ object EditCFileForm: TEditCFileForm
     end
     object btnOk: TBitBtn
       Left = 8
-      Top = 120
+      Top = 109
       Width = 375
       Height = 26
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
@@ -159,7 +165,7 @@ object EditCFileForm: TEditCFileForm
       Left = 8
       Top = 2
       Width = 456
-      Height = 112
+      Height = 101
       ScrollBars = ssVertical
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -178,14 +184,13 @@ object EditCFileForm: TEditCFileForm
     Left = 0
     Top = 89
     Width = 472
-    Height = 63
+    Height = 55
     Align = alTop
-    BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      468
-      59)
+      472
+      55)
     object lblOnOff: TLabel
       Left = 6
       Top = 7
@@ -209,7 +214,7 @@ object EditCFileForm: TEditCFileForm
     object lcbService: TDBLookupComboboxEh
       Left = 85
       Top = 4
-      Width = 369
+      Width = 379
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -224,9 +229,9 @@ object EditCFileForm: TEditCFileForm
       OnChange = lcbServiceChange
     end
     object lcbOnOffSrv: TDBLookupComboboxEh
-      Left = 224
+      Left = 212
       Top = 31
-      Width = 230
+      Width = 252
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -239,6 +244,77 @@ object EditCFileForm: TEditCFileForm
       TabOrder = 2
       Visible = True
       OnChange = lcbOnOffSrvChange
+    end
+  end
+  object pnlContract: TPanel
+    Left = 0
+    Top = 144
+    Width = 472
+    Height = 27
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 2
+    Visible = False
+    DesignSize = (
+      472
+      27)
+    object lblContr: TLabel
+      Left = 332
+      Top = 8
+      Width = 12
+      Height = 13
+      Anchors = [akTop, akRight]
+      Caption = #1086#1090
+      Visible = False
+      ExplicitLeft = 285
+    end
+    object edtDogDate: TDBDateTimeEditEh
+      Left = 350
+      Top = 5
+      Width = 115
+      Height = 21
+      Anchors = [akTop, akRight]
+      DynProps = <>
+      EditButtons = <>
+      Kind = dtkDateEh
+      ShowHint = True
+      TabOrder = 3
+      Visible = False
+    end
+    object edtDogovor: TDBEditEh
+      Left = 212
+      Top = 5
+      Width = 114
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 2
+      Visible = False
+    end
+    object chkContract: TCheckBox
+      Left = 8
+      Top = 7
+      Width = 105
+      Height = 17
+      Alignment = taLeftJustify
+      Caption = #1053#1086#1074#1099#1081' '#1076#1086#1075#1086#1074#1086#1088
+      TabOrder = 0
+      OnClick = chkContractClick
+    end
+    object chkFOwner: TDBCheckBoxEh
+      Left = 125
+      Top = 7
+      Width = 75
+      Height = 17
+      Hint = #1057#1086#1073#1089#1090#1074#1077#1085#1085#1080#1082' '#1082#1074#1072#1088#1090#1080#1088#1099
+      Alignment = taLeftJustify
+      Caption = #1057#1086#1073#1089'-'#1082'. '#1082#1074'.'
+      DynProps = <>
+      TabOrder = 1
+      Visible = False
+      OnClick = chkFOwnerClick
     end
   end
   object srcFiles: TDataSource
@@ -378,8 +454,8 @@ object EditCFileForm: TEditCFileForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 174
-    Top = 163
+    Left = 142
+    Top = 187
   end
   object srcService: TDataSource
     DataSet = dsService

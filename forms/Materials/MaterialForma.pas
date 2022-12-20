@@ -6,8 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls,
+  Vcl.Mask, Vcl.Buttons,
+  DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider,
+  FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
 
 type
   TMaterialForm = class(TForm)
@@ -57,6 +59,10 @@ type
     srcServices: TDataSource;
     lcbRENT: TDBLookupComboboxEh;
     lcbLAON: TDBLookupComboboxEh;
+    lblSold: TLabel;
+    lcbSOLD: TDBLookupComboboxEh;
+    dsSoldSRV: TpFIBDataSet;
+    srcSoldSRV: TDataSource;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -71,7 +77,7 @@ type
   private
     { Private declarations }
     FNeedCheckNN: Boolean;
-    //FReadOnly: Boolean;
+    // FReadOnly: Boolean;
     FNeedDelete: Boolean;
     FFileForSave: String;
     function isValidNomNumber: Boolean;
@@ -112,6 +118,7 @@ begin
   dsShippers.Close;
   dsDevType.Close;
   dsDoc.Close;
+  dsSoldSRV.Close;
   dsServices.Close;
 end;
 
@@ -139,6 +146,7 @@ begin
     dsDoc.ParamByName('MAT_ID').AsInteger := -1;
   dsDoc.Open;
   dsServices.Open;
+  dsSoldSRV.Open;
 end;
 
 procedure TMaterialForm.OkCancelFrame1bbOkClick(Sender: TObject);
@@ -278,7 +286,8 @@ procedure TMaterialForm.SaveFileToDB();
 var
   fs: TFileStream;
 begin
-  if FFileForSave.IsEmpty then Exit;
+  if FFileForSave.isEmpty then
+    exit;
 
   if (not MaterialsForm.srcDataSource.DataSet.FieldByname('M_ID').IsNull) then
   begin

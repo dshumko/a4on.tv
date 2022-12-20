@@ -117,6 +117,9 @@ type
     procedure edtIP1Enter(Sender: TObject);
     procedure lcbNODEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure luHouseDropDownBoxGetCellParams(Sender: TObject;
+      Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     fCI: TCustomerInfo;
     function CheckData: Boolean;
@@ -646,6 +649,16 @@ procedure TEquipEditForm.luHouseChange(Sender: TObject);
 begin
   if (VarIsNumeric(cbTypeEQ.Value)) and (cbTypeEQ.Value = 1) then
     GetVlan;
+end;
+
+procedure TEquipEditForm.luHouseDropDownBoxGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if (dsHomes.Active) and (dsHomes['inService'] <> '') then
+    Background := clYellow
+  else
+    Background := clWindow;
 end;
 
 procedure TEquipEditForm.okcnclfrmbbOkClick(Sender: TObject);

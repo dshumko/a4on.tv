@@ -399,6 +399,7 @@ begin
       porch_n := dsFindCN.FN('PORCH_N').AsString;
       floor_n := dsFindCN.FN('FLOOR_N').AsString;
       mobile := dsFindCN.FN('MOBILE').AsString;
+      City := dsFindCN.FN('City').AsString;
       if dsFindCN.FN('O_TYPE').AsString = 'А' then
       begin
         isType := 0;
@@ -1820,7 +1821,7 @@ begin
   json := TJsonObject.Create;
   json.s['login'] := Str;
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := MD5(json.ToString);
+  Str := string(MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
 
@@ -1868,7 +1869,7 @@ begin
   json := TJsonObject.Create;
   json.s['login'] := dmMain.GetSettingsValue('A4LOGIN');
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := MD5(json.ToString);
+  Str := string(MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
 

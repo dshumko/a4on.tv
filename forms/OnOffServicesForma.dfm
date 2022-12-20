@@ -5,7 +5,7 @@ object OnOffServiceForm: TOnOffServiceForm
   BorderStyle = bsSizeToolWin
   Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077' / '#1074#1099#1082#1083#1102#1095#1077#1085#1080#1077' '#1091#1089#1083#1091#1075
   ClientHeight = 378
-  ClientWidth = 425
+  ClientWidth = 410
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,16 +18,20 @@ object OnOffServiceForm: TOnOffServiceForm
   ShowHint = True
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
     Top = 341
-    Width = 425
+    Width = 410
     Height = 37
     Align = alBottom
     TabOrder = 9
     TabStop = True
+    ExplicitTop = 341
+    ExplicitWidth = 410
+    ExplicitHeight = 37
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -35,31 +39,39 @@ object OnOffServiceForm: TOnOffServiceForm
       Margins.Bottom = 0
     end
     inherited bbOk: TBitBtn
-      Left = 136
+      Left = 121
       Top = 6
       Width = 183
       Height = 25
       ModalResult = 0
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 121
+      ExplicitTop = 6
+      ExplicitWidth = 183
+      ExplicitHeight = 25
     end
     inherited bbCancel: TBitBtn
-      Left = 338
+      Left = 323
       Top = 6
       Width = 80
       Height = 25
+      ExplicitLeft = 323
+      ExplicitTop = 6
+      ExplicitWidth = 80
+      ExplicitHeight = 25
     end
   end
   object servPanel: TPanel
     Left = 0
     Top = 0
-    Width = 425
+    Width = 410
     Height = 25
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     Visible = False
     DesignSize = (
-      425
+      410
       25)
     object Label3: TLabel
       Left = 8
@@ -71,7 +83,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object luService: TDBLookupComboboxEh
       Left = 136
       Top = 3
-      Width = 282
+      Width = 267
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -90,14 +102,14 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object pnlDate: TPanel
     Left = 0
-    Top = 86
-    Width = 425
+    Top = 55
+    Width = 410
     Height = 28
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 2
     DesignSize = (
-      425
+      410
       28)
     object Label2: TLabel
       Left = 8
@@ -107,10 +119,11 @@ object OnOffServiceForm: TOnOffServiceForm
       Caption = #1044#1072#1090#1072
     end
     object eDate: TDBDateTimeEditEh
-      Left = 137
+      Left = 136
       Top = 5
-      Width = 109
+      Width = 127
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       EditButtons = <>
       Kind = dtkDateEh
@@ -120,7 +133,7 @@ object OnOffServiceForm: TOnOffServiceForm
       OnExit = eDateExit
     end
     object eDateTo: TDBDateTimeEditEh
-      Left = 303
+      Left = 288
       Top = 5
       Width = 115
       Height = 21
@@ -136,14 +149,14 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object pnlONOFF: TPanel
     Left = 0
-    Top = 114
-    Width = 425
+    Top = 83
+    Width = 410
     Height = 25
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 3
     DesignSize = (
-      425
+      410
       25)
     object Label1: TLabel
       Left = 8
@@ -155,7 +168,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object luOnOffService: TDBLookupComboboxEh
       Left = 136
       Top = 4
-      Width = 282
+      Width = 267
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -173,12 +186,15 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object pnlQUANT: TPanel
     Left = 0
-    Top = 139
-    Width = 425
+    Top = 108
+    Width = 410
     Height = 29
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 5
+    TabOrder = 4
+    DesignSize = (
+      410
+      29)
     object Label5: TLabel
       Left = 8
       Top = 10
@@ -187,10 +203,11 @@ object OnOffServiceForm: TOnOffServiceForm
       Caption = #1050#1086#1083'-'#1074#1086' ('#1089#1091#1084#1084#1072')'
     end
     object lblDimension: TDBText
-      Left = 267
+      Left = 270
       Top = 10
       Width = 65
       Height = 17
+      Anchors = [akTop, akRight]
       DataField = 'DIMENSION'
       DataSource = srcService
       Font.Charset = DEFAULT_CHARSET
@@ -199,12 +216,14 @@ object OnOffServiceForm: TOnOffServiceForm
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+      ExplicitLeft = 285
     end
     object eUNITS: TDBNumberEditEh
       Left = 136
       Top = 7
-      Width = 110
+      Width = 127
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       EditButton.Visible = True
       EditButtons = <>
@@ -216,25 +235,26 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object Panel1: TPanel
     Left = 0
-    Top = 227
-    Width = 425
-    Height = 114
+    Top = 223
+    Width = 410
+    Height = 118
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 8
     object Label4: TLabel
       Left = 0
       Top = 0
-      Width = 425
+      Width = 410
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ExplicitWidth = 67
     end
     object memNotice: TDBMemoEh
       Left = 0
       Top = 13
-      Width = 425
-      Height = 101
+      Width = 410
+      Height = 105
       Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       Align = alClient
       Anchors = [akLeft, akTop, akRight]
@@ -249,14 +269,14 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object pnlSRV2: TPanel
     Left = 0
-    Top = 56
-    Width = 425
+    Top = 25
+    Width = 410
     Height = 30
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 1
     DesignSize = (
-      425
+      410
       30)
     object Label6: TLabel
       Left = 9
@@ -268,7 +288,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object dblSwitchTo: TDBLookupComboboxEh
       Left = 136
       Top = 5
-      Width = 282
+      Width = 267
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -284,20 +304,20 @@ object OnOffServiceForm: TOnOffServiceForm
       OnChange = dblSwitchToChange
     end
   end
-  object pnlDogovor: TPanel
+  object pnlContract: TPanel
     Left = 0
-    Top = 25
-    Width = 425
-    Height = 31
+    Top = 137
+    Width = 410
+    Height = 27
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 5
     Visible = False
     DesignSize = (
-      425
-      31)
+      410
+      27)
     object lblContr: TLabel
-      Left = 266
+      Left = 290
       Top = 8
       Width = 12
       Height = 13
@@ -306,51 +326,65 @@ object OnOffServiceForm: TOnOffServiceForm
       Visible = False
     end
     object edtDogDate: TDBDateTimeEditEh
-      Left = 303
+      Left = 308
       Top = 5
-      Width = 115
+      Width = 95
       Height = 21
       Anchors = [akTop, akRight]
       DynProps = <>
       EditButtons = <>
       Kind = dtkDateEh
       ShowHint = True
-      TabOrder = 1
-      Visible = False
-    end
-    object edtDogovor: TDBEditEh
-      Left = 136
-      Top = 5
-      Width = 110
-      Height = 21
-      DynProps = <>
-      EditButtons = <>
-      ShowHint = True
-      TabOrder = 0
+      TabOrder = 3
       Visible = False
     end
     object chkContract: TCheckBox
       Left = 8
       Top = 7
-      Width = 115
+      Width = 97
       Height = 17
       Alignment = taLeftJustify
       Caption = #1053#1086#1074#1099#1081' '#1076#1086#1075#1086#1074#1086#1088
-      TabOrder = 2
+      TabOrder = 0
       OnClick = chkContractClick
+    end
+    object chkFOwner: TDBCheckBoxEh
+      Left = 112
+      Top = 7
+      Width = 74
+      Height = 17
+      Hint = #1057#1086#1073#1089#1090#1074#1077#1085#1085#1080#1082' '#1082#1074#1072#1088#1090#1080#1088#1099
+      Alignment = taLeftJustify
+      Caption = #1057#1086#1073#1089'-'#1082'. '#1082#1074'.'
+      DynProps = <>
+      TabOrder = 1
+      Visible = False
+      OnClick = chkFOwnerClick
+    end
+    object edtDogovor: TDBEditEh
+      Left = 192
+      Top = 5
+      Width = 92
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 2
+      Visible = False
     end
   end
   object pnlVAT: TPanel
     Left = 0
-    Top = 168
-    Width = 425
+    Top = 164
+    Width = 410
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 6
     Visible = False
     DesignSize = (
-      425
+      410
       29)
     object lblVAT: TLabel
       Left = 8
@@ -362,7 +396,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object cbbVATG: TDBLookupComboboxEh
       Left = 136
       Top = 5
-      Width = 282
+      Width = 267
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -379,15 +413,15 @@ object OnOffServiceForm: TOnOffServiceForm
   end
   object pnlWorker: TPanel
     Left = 0
-    Top = 197
-    Width = 425
+    Top = 193
+    Width = 410
     Height = 30
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 7
     Visible = False
     DesignSize = (
-      425
+      410
       30)
     object lblWorker: TLabel
       Left = 9
@@ -399,7 +433,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object lcbWorker: TDBLookupComboboxEh
       Left = 136
       Top = 5
-      Width = 282
+      Width = 267
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -428,8 +462,8 @@ object OnOffServiceForm: TOnOffServiceForm
   object Query: TpFIBQuery
     Transaction = dmMain.trWrite
     Database = dmMain.dbTV
-    Left = 92
-    Top = 152
+    Left = 84
+    Top = 216
   end
   object dsVATG: TpFIBDataSet
     UpdateSQL.Strings = (

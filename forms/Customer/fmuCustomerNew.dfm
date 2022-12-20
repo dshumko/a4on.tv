@@ -271,9 +271,25 @@ object apgCustomerNew: TapgCustomerNew
         Top = 20
         Width = 89
         Height = 21
+        Hint = #1046#1077#1083#1090#1099#1084' '#1087#1086#1084#1077#1095#1077#1085#1099' '#1076#1086#1084#1072' '#1085#1077' '#1089#1076#1072#1085#1085#1099#1077' '#1074' '#1101#1082#1089#1087#1083#1091#1072#1090#1072#1094#1080#1102
         DynProps = <>
         DataField = 'HOUSE_ID'
         DataSource = ds
+        DropDownBox.Columns = <
+          item
+            FieldName = 'HOUSE_NO'
+            Width = 40
+          end
+          item
+            FieldName = 'SUBAREA_NAME'
+            Width = 30
+          end
+          item
+            FieldName = 'INSERVICE'
+            Width = 10
+          end>
+        DropDownBox.Sizable = True
+        DropDownBox.Width = 200
         EmptyDataInfo.Text = #1044#1086#1084
         EditButtons = <
           item
@@ -289,6 +305,7 @@ object apgCustomerNew: TapgCustomerNew
         TabOrder = 1
         Visible = True
         OnChange = LupHOUSE_IDChange
+        OnDropDownBoxGetCellParams = LupHOUSE_IDDropDownBoxGetCellParams
         OnEnter = eACCOUNT_NOEnter
       end
       object eFLAT_NO: TDBEditEh
@@ -1379,12 +1396,15 @@ object apgCustomerNew: TapgCustomerNew
       'select'
       '    H.HOUSE_ID'
       '  , H.STREET_ID'
-      
-        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
-        'rrent_date, H.HOUSE_NO, H.HOUSE_NO || '#39' ('#1085#1077' '#1089#1076#1072#1085')'#39') HOUSE_NO'
+      '  , H.HOUSE_NO'
       '  , H.Q_FLAT'
       '  , H.ORG_ID'
+      '  , sa.Subarea_Name'
+      
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') inService'
       'from HOUSE H'
+      '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'
       '  @@AREA_LOCK% @ -- '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1088#1072#1081#1086#1085#1072#1084
       'order by h.HOUSE_NO')

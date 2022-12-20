@@ -79,7 +79,7 @@ begin
   soData['login'] := fA4ON_USER;
   soData['password'] := fA4ON_KEY;
   s := soData.ToString;
-  soData['hash'] := MD5(s);
+  soData['hash'] := string(MD5(s));
 
   strmData := TStringStream.Create(soData.ToString, TEncoding.UTF8);
   try

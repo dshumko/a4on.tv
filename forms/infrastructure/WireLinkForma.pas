@@ -52,8 +52,8 @@ type
     procedure actEditPortExecute(Sender: TObject);
   private
     FCanEdit: Boolean;
-    FCanEditPort: Boolean;
-    FCustomerRecord: TCustomerInfo;
+    // FCanEditPort: Boolean;
+    // FCustomerRecord: TCustomerInfo;
     FNodeStart: Integer;
     FNodeEnd: Integer;
     FWID: Integer;
@@ -212,7 +212,6 @@ begin
   errors := false;
   if not(FCanEdit) then
   begin
-    errors := true;
     Exit;
   end;
 

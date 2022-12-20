@@ -1476,7 +1476,7 @@ inherited DistribForm: TDistribForm
     Top = 447
   end
   object frxReport: TfrxReport
-    Version = '6.6'
+    Version = '2021.2.8'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]

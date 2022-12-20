@@ -108,6 +108,8 @@ object apgCustomerInfo: TapgCustomerInfo
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
+          ExplicitWidth = 99
+          ExplicitHeight = 25
         end
         object pnlPrepay: TPanel
           Left = 2
@@ -142,6 +144,8 @@ object apgCustomerInfo: TapgCustomerInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             ParentFont = False
+            ExplicitWidth = 84
+            ExplicitHeight = 19
           end
         end
       end
@@ -246,6 +250,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Height = 18
             Align = alLeft
             Caption = '       '
+            ExplicitHeight = 13
           end
           object btnCAdd: TSpeedButton
             Left = 60
@@ -272,6 +277,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Height = 18
             Align = alRight
             Caption = '       '
+            ExplicitHeight = 13
           end
           object btnCEdit: TSpeedButton
             Left = 78
@@ -361,6 +367,7 @@ object apgCustomerInfo: TapgCustomerInfo
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 1
+      Visible = False
       DesignSize = (
         441
         37)
@@ -394,6 +401,7 @@ object apgCustomerInfo: TapgCustomerInfo
         ReadOnly = True
         TabOrder = 0
         Visible = True
+        OnDblClick = dbeACCOUNT_NODblClick
       end
     end
     object HtmlViewer: THtmlViewer
@@ -416,6 +424,7 @@ object apgCustomerInfo: TapgCustomerInfo
       PrintMarginRight = 2.000000000000000000
       PrintMarginTop = 2.000000000000000000
       PrintScale = 1.000000000000000000
+      OnSectionClick = HtmlViewerSectionClick
       Align = alClient
       PopupMenu = pmHV
       TabOrder = 0
@@ -550,8 +559,9 @@ object apgCustomerInfo: TapgCustomerInfo
     end
   end
   object pmHV: TPopupMenu
-    Left = 98
-    Top = 34
+    MenuAnimation = [maTopToBottom]
+    Left = 154
+    Top = 82
     object miCopy: TMenuItem
       Caption = #1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
       OnClick = miCopyClick

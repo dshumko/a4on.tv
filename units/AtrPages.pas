@@ -24,7 +24,7 @@ type
     procedure RemoveItem(AItem: TA4onPageItem);
   public
     destructor Destroy; override;
-    class function GeTA4onPageName: string; virtual; abstract;
+    class function GetA4onPageName: string; virtual;
     procedure Add(PageClass: TA4onPageClass);
     property Count: Integer read GetCount;
     property Items[Index: Integer]: TA4onPageItem read GetItem; default;
@@ -99,6 +99,11 @@ begin
     FreeAndNil(FList);
   end;
   inherited Destroy;
+end;
+
+class function TA4onPages.GetA4onPageName:String;
+begin
+  Result := '';
 end;
 
 function TA4onPages.GetCount: Integer;

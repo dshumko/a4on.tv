@@ -404,6 +404,7 @@ begin
     Add('  ,IS_DIGIT D_IBOOLEAN');
     Add('  ,M_TYPE  D_INTEGER');
     Add('  ,TYPE_NAME D_VARCHAR255');
+    Add('  ,SOLD D_UID_NULL');
     Add('  ,RENT D_UID_NULL');
     Add('  ,LOAN D_UID_NULL');
     Add('  ,BL_ID  D_INTEGER');
@@ -414,7 +415,7 @@ begin
     // Add('GR_ID = MG_ID;');
     Add('FOR');
     Add('  select M_ID, NAME, DIMENSION, M_NUMBER, DESCRIPTION, IS_UNIT, COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,');
-    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, b.Bl_Id, b.Bl_Name, m.RENT, m.LOAN  ');
+    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, b.Bl_Id, b.Bl_Name, m.SOLD, m.RENT, m.LOAN  ');
     Add('  from MATERIALS m');
     Add('    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and o.O_TYPE = 29) ');
     Add('    left outer join OBJECTS t on (t.O_ID = m.M_Type and t.O_TYPE = 48) ');
@@ -423,7 +424,7 @@ begin
     Add('    and ((:MG_ID = -1) or (((m.MG_ID = :MG_ID) and (not :MG_ID is null)) or ((coalesce(m.MG_ID, -1) = -1) and (:MG_ID is null))))');
     Add('  order by NAME');
     Add('  into :M_ID, :NAME, :DIMENSION, :M_NUMBER, :DESCRIPTION, :IS_UNIT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,');
-    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :BL_ID, :BL_NAME, :RENT, :LOAN ');
+    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :BL_ID, :BL_NAME, :SOLD, :RENT, :LOAN ');
     Add('DO BEGIN');
     Add('      ' + lk_body_s);
     Add('    SUSPEND;');

@@ -568,6 +568,18 @@ object EquipEditForm: TEquipEditForm
       DynProps = <>
       DataField = 'STREET_ID'
       DataSource = srcDataSource
+      DropDownBox.Columns = <
+        item
+          FieldName = 'STREET_NAME'
+          Width = 85
+        end
+        item
+          FieldName = 'AREA_NAME'
+          Width = 55
+        end>
+      DropDownBox.ListSource = srcStreet
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1059#1083#1080#1094#1072
       EditButtons = <>
@@ -575,6 +587,7 @@ object EquipEditForm: TEquipEditForm
       ListField = 'STREET_NAME'
       ListSource = srcStreet
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 2
       Visible = True
     end
@@ -586,7 +599,16 @@ object EquipEditForm: TEquipEditForm
       DynProps = <>
       DataField = 'HOUSE_ID'
       DataSource = srcDataSource
+      DropDownBox.Columns = <
+        item
+          FieldName = 'HOUSE_NO'
+        end
+        item
+          FieldName = 'Subarea_Name'
+          Width = 45
+        end>
       DropDownBox.Sizable = True
+      DropDownBox.Width = 200
       EmptyDataInfo.Text = #1044#1086#1084
       EditButtons = <>
       KeyField = 'HOUSE_ID'
@@ -596,6 +618,7 @@ object EquipEditForm: TEquipEditForm
       TabOrder = 3
       Visible = True
       OnChange = luHouseChange
+      OnDropDownBoxGetCellParams = luHouseDropDownBoxGetCellParams
     end
     object edtNAME: TDBEditEh
       Left = 76
@@ -1024,11 +1047,15 @@ object EquipEditForm: TEquipEditForm
   end
   object dsStreets: TpFIBDataSet
     SelectSQL.Strings = (
-      
-        'select s.street_name||'#39' '#39'||s.street_short as STREET_NAME, s.stre' +
-        'et_code, s.street_id'
-      'from STREET s'
-      'order by STREET_NAME')
+      'select'
+      '    s.street_id'
+      '  , s.street_name || '#39' '#39' || s.street_short as street_name'
+      '  , a.area_name'
+      '  , s.STREET_CODE'
+      '  , a.Area_Id'
+      '  from STREET s'
+      '       left outer join area a on (a.area_id = s.area_id)'
+      '  order by STREET_NAME, a.area_name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -1042,16 +1069,21 @@ object EquipEditForm: TEquipEditForm
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT'
-      '    H.HOUSE_ID,'
-      '    H.STREET_ID,'
-      '    H.HOUSE_NO,'
-      '    H.Q_FLAT'
-      'FROM'
-      '    HOUSE H'
-      'where h.street_id = :street_id'
-      'order by h.HOUSE_NO'
-      '')
+      'select'
+      '    h.HOUSE_ID'
+      '  , h.STREET_ID'
+      '  , h.HOUSE_NO'
+      '  , h.Q_FLAT'
+      '  , sa.Subarea_Name'
+      
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') inService  '
+      '  from HOUSE h'
+      
+        '       left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_' +
+        'Id)'
+      '  where h.street_id = :street_id'
+      '  order by h.HOUSE_NO')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

@@ -571,14 +571,14 @@ begin
   pgcMSG.ActivePageIndex := 0;
 
   try
-    FclOverdue := StringToColor(dmMain.GetSettingsValue('COLOR_DOLG'));
+    FclOverdue := StringToColor(dmMain.GetSettingsValue('ROW_HL_ERROR'));
   except
-    FclOverdue := clRed;
+    FclOverdue := $006666FF;
   end;
   try
-    FclSoon := StringToColor(dmMain.GetSettingsValue('COLOR_OFFMONEY'));
+    FclSoon := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
   except
-    FclSoon := clBlue;
+    FclSoon := $0066FFFF;
   end;
 
   FCanClose := dmMain.AllowedAction(rght_Task_Close);

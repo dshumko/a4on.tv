@@ -322,6 +322,22 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'REQ_OFF'
           Footers = <>
           Title.Caption = #1047#1072#1103#1074#1082#1072' '#1086#1090#1082#1083'.'
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CONTRACT'
+          Footers = <>
+          Title.Caption = #1044#1086#1075#1086#1074#1086#1088
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CONTRACT_DATE'
+          Footers = <>
+          Title.Caption = #1044#1072#1090#1072' '#1076#1086#1075#1086#1074#1086#1088#1072
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

@@ -409,6 +409,7 @@ resourcestring
   rsKoef = 'Коэффициенты';
   rsSettingsBarCode = 'Настройка штрих-кода';
   rsSettingsAccount = 'Настройка формата ЛС';
+  rsRentColumn = 'Аренда';
 
   rsSaldoWT = 'Сальдо  : %s';
 
@@ -916,11 +917,12 @@ resourcestring
   rsWireUnLinkQuest = 'Кабель будет отключен от портов?';
   rsWireUnLink = 'Отключить кабель';
   rsWarningQuestStop = 'Исправить ошибки?';
+  rsWarningQuestFilter = 'Ошибка поиска. Возможно установлен фильтр.';
   rsIpnotSetOrNotFound = 'Для услуги не заданы IP или нет свободных адресов';
   rsDeleteCaption = 'Удаление';
-
+  rsQstFlatOwner = 'Абонент владелец квартиры?';
   rsChangeSerial = 'Сменить С/Н на';
-
+  rsRequestReadOnly = '(Заявка закрыта. Только просмотр)';
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';
   ms_DELETE_ACT = 'Удалить отметку выполнения № %s от %s';

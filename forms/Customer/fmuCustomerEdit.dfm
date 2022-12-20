@@ -134,6 +134,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Height = 18
           Align = alLeft
           Caption = '       '
+          ExplicitHeight = 13
         end
         object btnCAdd: TSpeedButton
           Left = 66
@@ -214,6 +215,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Height = 18
           Align = alRight
           Caption = '       '
+          ExplicitHeight = 13
         end
         object btnCEdit: TSpeedButton
           Left = 84
@@ -555,6 +557,16 @@ object apgCustomerEdit: TapgCustomerEdit
         DynProps = <>
         DataField = 'HOUSE_ID'
         DataSource = ds
+        DropDownBox.Columns = <
+          item
+            FieldName = 'HOUSE_NO'
+          end
+          item
+            FieldName = 'Subarea_Name'
+            Width = 40
+          end>
+        DropDownBox.Sizable = True
+        DropDownBox.Width = 200
         EmptyDataInfo.Text = #1044#1086#1084
         EditButtons = <
           item
@@ -1396,13 +1408,16 @@ object apgCustomerEdit: TapgCustomerEdit
   object dsHouses: TpFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
-      '    H.HOUSE_ID,'
-      '    H.STREET_ID,'
-      '    H.HOUSE_NO,'
-      '    H.Q_FLAT,'
-      '    H.ORG_ID'
-      'FROM'
-      '    HOUSE H'
+      '    H.HOUSE_ID'
+      '  , H.STREET_ID'
+      '  , H.HOUSE_NO'
+      '  , H.Q_FLAT'
+      '  , H.ORG_ID'
+      '  , sa.Subarea_Name '
+      'FROM HOUSE H'
+      
+        '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)  ' +
+        '  '
       'where h.street_id = :street_id'
       'order by h.HOUSE_NO')
     Transaction = trRead

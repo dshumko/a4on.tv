@@ -53,7 +53,7 @@ object apgCustomerSrv: TapgCustomerSrv
         FooterParams.HorzLines = False
         FooterParams.VertLines = False
         GridLineParams.VertEmptySpaceStyle = dessNonEh
-        OddRowColor = clInfoBk
+        OddRowColor = clWindow
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
         PopupMenu = pmGrid
@@ -226,6 +226,7 @@ object apgCustomerSrv: TapgCustomerSrv
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
+          ExplicitWidth = 139
         end
         object dbgPersTarif: TDBGridEh
           Left = 27

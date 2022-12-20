@@ -25,6 +25,10 @@ type
     srcServices: TDataSource;
     lcbRENT: TDBLookupComboboxEh;
     lcbLAON: TDBLookupComboboxEh;
+    lblSold: TLabel;
+    lcbSOLD: TDBLookupComboboxEh;
+    dsSoldSRV: TpFIBDataSet;
+    srcSoldSRV: TDataSource;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -46,6 +50,7 @@ uses
 
 procedure TMatGroupForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  dsSoldSRV.Close;
   dsServices.Close;
 end;
 
@@ -60,6 +65,7 @@ end;
 procedure TMatGroupForm.FormShow(Sender: TObject);
 begin
   dsServices.Open;
+  dsSoldSRV.Open;
 end;
 
 procedure TMatGroupForm.OkCancelFrame1bbOkClick(Sender: TObject);

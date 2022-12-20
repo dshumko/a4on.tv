@@ -4,14 +4,18 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.RegularExpressions,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.UITypes, System.RegularExpressions,
   Data.DB,
-  Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
+  Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
   Vcl.Mask,
   Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, frxClass, frxDBSet, EhLibFIB, DBCtrlsEh, GridsEh, PropFilerEh,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, frxClass, frxDBSet, EhLibFIB,
+  DBCtrlsEh, GridsEh, PropFilerEh,
   PropStorageEh,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh,
   FIBDatabase,
   pFIBDatabase, DBLookupEh;
 
@@ -264,8 +268,11 @@ var
 implementation
 
 uses
-  DM, AtrCommon, AtrStrUtils, StreetEditForma, MAIN, HouseForma, HouseWorkForma, FIBQuery, pFIBQuery, ReportPreview,
-  HouseMapForma, EquipEditForma, FlatsAddForma, CF, CircuitMain, StreetHousesViewForma;
+  DM, fs_iinterpreter, AtrCommon, AtrStrUtils, StreetEditForma, MAIN,
+  HouseForma, HouseWorkForma,
+  FIBQuery, pFIBQuery, ReportPreview,
+  HouseMapForma, EquipEditForma, FlatsAddForma, CF, CircuitMain,
+  StreetHousesViewForma;
 
 {$R *.dfm}
 
@@ -276,7 +283,7 @@ var
 begin
   ci := -1;
   i := 0;
-  while (i < Grid.Columns.Count - 1) and (ci = -1) do
+  while (i < Grid.Columns.Count) and (ci = -1) do
   begin
     if Grid.Columns.Items[i].FieldName = Column then
       ci := i;
@@ -286,8 +293,18 @@ begin
 end;
 
 procedure TStreetForm.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  v: TfsCustomVariable;
 begin
   inherited;
+
+  if fsGlobalUnit <> nil then
+  begin
+    v := fsGlobalUnit.Find(Self.Name);
+    if v <> nil then
+      fsGlobalUnit.RemoveItems(Self);
+  end;
+
   DbGridHouse.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + DbGridHouse.Name, false);
   dmMain.SetIniValue('StreetGrid', IntToStr(dbGrid.Height));
   dmMain.SetIniValue('StreetActivePage', IntToStr(pcHouseInfo.ActivePageIndex));
@@ -323,36 +340,46 @@ begin
   end;
   DbGridHouse.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + DbGridHouse.Name,
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+
+  with fsGlobalUnit do
+  begin
+    AddedBy := Self;
+    AddForm(Self);
+    AddedBy := nil;
+  end;
 end;
 
 procedure TStreetForm.FormShow(Sender: TObject);
 var
   vFINE: Boolean;
-  vHideItog: Boolean;
+  vHideColumn: Boolean;
   i: Integer;
   s: string;
 begin
   inherited;
-  vHideItog := (dmMain.SuperMode = 0);
+  vHideColumn := (dmMain.SuperMode = 0);
   // or (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Programm_ViewMoney))) ;
 
-  if vHideItog then
+  if vHideColumn then
   begin
     dbGrid.FooterRowCount := 0;
     dbGrid.SumList.Active := false;
     DbGridHouse.FooterRowCount := 0;
     DbGridHouse.SumList.Active := false;
     dbgServices.Visible := false;
-    i := GetColumnIndex(DbGridHouse, 'CONNECTED');
-    DbGridHouse.Columns[i].Visible := false;
-    i := GetColumnIndex(DbGridHouse, 'DISCONNECTED');
-    DbGridHouse.Columns[i].Visible := false;
-    i := GetColumnIndex(DbGridHouse, 'PERCENT');
-    DbGridHouse.Columns[i].Visible := false;
-    i := GetColumnIndex(DbGridHouse, 'PERCENT');
-    DbGridHouse.Columns[i].Visible := false;
+    i := 0;
+    while (i < DbGridHouse.Columns.Count) do
+    begin
+      if (DbGridHouse.Columns.Items[i].FieldName = 'CONNECTED') //
+        or (DbGridHouse.Columns.Items[i].FieldName = 'DISCONNECTED') //
+        or (DbGridHouse.Columns.Items[i].FieldName = 'PERCENT') //
+      then
+        DbGridHouse.Columns[i].Visible := false;
+      i := i + 1;
+    end;
     i := GetColumnIndex(dbGrid, 'FLATS');
-    dbGrid.Columns[i].Visible := false;
+    if i > 0 then
+      dbGrid.Columns[i].Visible := false;
     tsAbonents.TabVisible := false;
   end;
 
@@ -363,14 +390,25 @@ begin
   vFINE := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
   if vFINE then
   begin
-    for i := 0 to dbgCustomer.Columns.Count - 1 do
+    i := GetColumnIndex(dbgCustomer, 'DEBT_SUM');
+    if i > 0 then
     begin
-      if (AnsiUpperCase(dbgCustomer.Columns[i].FieldName) = 'DEBT_SUM') then
-      begin
-        dbgCustomer.Columns[i].Title.Caption := rsBALANCE;
-        dbgCustomer.Columns[i].FieldName := 'BALANCE';
-      end;
-    end;
+      dbgCustomer.Columns[i].Title.Caption := rsBALANCE;
+      dbgCustomer.Columns[i].FieldName := 'BALANCE';
+    end
+  end;
+
+  // Владелец квартиры
+  vHideColumn := (dmMain.GetSettingsValue('FLAT_OWNER') = '1');
+  i := 0;
+  while (i < dbgFLATS.Columns.Count) do
+  begin
+    if (dbgFLATS.Columns.Items[i].FieldName = 'OWNER_NAME') //
+      or (dbgFLATS.Columns.Items[i].FieldName = 'OWNER_DOC') //
+      or (dbgFLATS.Columns.Items[i].FieldName = 'MOBILE') //
+    then
+      dbgFLATS.Columns[i].Visible := vHideColumn;
+    i := i + 1;
   end;
 
   s := dmMain.GetIniValue('StreetActivePage');
@@ -562,7 +600,6 @@ begin
 
   if HouseWorkEdit(dsHouses['HOUSE_ID'], -1) then
     dsWorks.CloseOpen(True);
-
 end;
 
 procedure TStreetForm.actHouseWorkDeleteExecute(Sender: TObject);

@@ -12,7 +12,8 @@ uses
   Vcl.Mask, Vcl.Menus, Vcl.Buttons,
   ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh,
   EhLibFIB,
-  FIBQuery, pFIBQuery, MemTableDataEh, MemTableEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh;
+  FIBQuery, pFIBQuery, MemTableDataEh, MemTableEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh,
+  PropFilerEh, PropStorageEh;
 
 type
   TEPGViewForm = class(TForm)
@@ -107,6 +108,7 @@ type
     actGetEmptyEPG: TAction;
     btn1: TToolButton;
     btnGetEmptyEPG: TToolButton;
+    PropStorageEh: TPropStorageEh;
     procedure FormShow(Sender: TObject);
     procedure dbgEPGGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
@@ -371,6 +373,7 @@ end;
 procedure TEPGViewForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   dbgEPG.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'EPGGrid', False);
+  dbgChannels.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'EPGChGrid', False);
   dsEPG.Close;
   dsChennals.Close;
   Action := caFree;
@@ -379,6 +382,8 @@ end;
 
 procedure TEPGViewForm.FormCreate(Sender: TObject);
 begin
+  dbgChannels.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'EPGChGrid', [crpColIndexEh, crpColWidthsEh, crpColVisibleEh,
+    crpSortMarkerEh]);
   dbgEPG.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'EPGGrid', [crpColIndexEh, crpColWidthsEh, crpColVisibleEh,
     crpSortMarkerEh]);
 

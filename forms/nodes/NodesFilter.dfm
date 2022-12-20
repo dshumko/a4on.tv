@@ -220,6 +220,14 @@ object NodesFilterForm: TNodesFilterForm
             DynProps = <>
             DataField = 'HOUSE_ID'
             DataSource = srcFilter
+            DropDownBox.Columns = <
+              item
+                FieldName = 'HOUSE_NO'
+              end
+              item
+                FieldName = 'SUBAREA_NAME'
+                Width = 40
+              end>
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1044#1086#1084
@@ -469,10 +477,18 @@ object NodesFilterForm: TNodesFilterForm
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT HOUSE_ID, STREET_ID, HOUSE_NO, Q_FLAT'
-      'FROM HOUSE H'
-      'where h.street_id = :street_id'
-      'order by h.HOUSE_NO')
+      'select'
+      '    h.HOUSE_ID'
+      '  , h.STREET_ID'
+      '  , h.HOUSE_NO'
+      '  , h.Q_FLAT'
+      '  , sa.Subarea_Name'
+      '  from HOUSE h'
+      
+        '       left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_' +
+        'Id)'
+      '  where h.street_id = :street_id'
+      '  order by h.HOUSE_NO')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

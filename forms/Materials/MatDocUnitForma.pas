@@ -507,8 +507,8 @@ end;
 function TMatDocUnitForm.GenUNITS: Boolean;
 var
   Count: Integer;
-  t, m, i: Integer;
-  mac, serial, S, e: String;
+  i: Integer;
+  mac, serial, S: String;
   biStartMac: TCnBigNumber;
   biStartSerial: TCnBigNumber;
   itsBigInt: Boolean;
@@ -582,6 +582,7 @@ var
   end;
 
 begin
+  Result := False;
   if (not mtUnits.Active) then
     OpenDataset;
 
@@ -591,6 +592,7 @@ begin
   Count := 1;
   Result := False;
   itsBigInt := False;
+  digits := 0;
 
   biStartSerial := TCnBigNumber.Create;
   BigNumberClear(biStartSerial);
@@ -604,7 +606,7 @@ begin
   // проверим может это цифровой серийник
   if (Count > 1) and (not serial.IsEmpty) then
   begin
-    biStartSerial.SetDec(serial);
+    biStartSerial.SetDec(AnsiString(serial));
     S := UpperCase(biStartSerial.DecString);
     itsBigInt := (S = UpperCase(serial));
     if (itsBigInt) and (not BigNumberSubWord(biStartSerial, 1)) then
@@ -638,7 +640,7 @@ begin
     mac := StringReplace(mac, ':', '', [rfReplaceAll]);
     if (not mac.IsEmpty) then
     begin
-      biStartMac.SetHex(mac);
+      biStartMac.SetHex(AnsiString(mac));
       if not BigNumberSubWord(biStartMac, 1) then
         mac := '';
     end;

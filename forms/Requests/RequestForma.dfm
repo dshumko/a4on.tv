@@ -35,6 +35,15 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 525
+    ExplicitWidth = 784
+    ExplicitHeight = 37
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 359
       Top = 6
@@ -43,6 +52,10 @@ object RequestForm: TRequestForm
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 359
+      ExplicitTop = 6
+      ExplicitWidth = 207
+      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 582
@@ -50,6 +63,10 @@ object RequestForm: TRequestForm
       Width = 200
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
+      ExplicitLeft = 582
+      ExplicitTop = 6
+      ExplicitWidth = 200
+      ExplicitHeight = 27
     end
   end
   object pnlHead: TPanel
@@ -261,6 +278,16 @@ object RequestForm: TRequestForm
           DynProps = <>
           DataField = 'HOUSE_ID'
           DataSource = srcRequest
+          DropDownBox.Columns = <
+            item
+              FieldName = 'HOUSE_NO'
+            end
+            item
+              FieldName = 'SUBAREA_NAME'
+              Width = 40
+            end>
+          DropDownBox.Sizable = True
+          DropDownBox.Width = 200
           EditButtons = <>
           KeyField = 'HOUSE_ID'
           ListField = 'HOUSE_NO'
@@ -414,21 +441,31 @@ object RequestForm: TRequestForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
+        ExplicitWidth = 374
+        ExplicitHeight = 137
         inherited gbInfo: TGroupBox
           Width = 374
           Height = 137
-          inherited lblDebt: TLabel
-            Width = 370
-            OnDblClick = CustomerInfoFrmlblFIODblClick
-          end
+          ExplicitWidth = 374
+          ExplicitHeight = 137
           inherited memAbonent: TMemo
             Width = 370
-            Height = 86
+            Height = 83
             OnDblClick = CustomerInfoFrmlblFIODblClick
+            ExplicitTop = 52
+            ExplicitWidth = 370
+            ExplicitHeight = 83
           end
           inherited lblFIO: TDBEditEh
             Width = 370
             OnDblClick = CustomerInfoFrmlblFIODblClick
+            ExplicitWidth = 370
+          end
+          inherited lblDebt: TDBEditEh
+            Width = 370
+            ShowHint = True
+            Text = #1044#1054#1051#1043
+            ExplicitWidth = 370
           end
         end
       end
@@ -469,6 +506,7 @@ object RequestForm: TRequestForm
           Height = 13
           Align = alTop
           Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          ExplicitWidth = 67
         end
         object mmoNotice: TDBMemoEh
           Left = 0
@@ -910,7 +948,6 @@ object RequestForm: TRequestForm
             TabOrder = 0
             Visible = True
             OnEnter = deEndExecDateTimeEnter
-            OnExit = deEndExecDateTimeExit
             OnUpdateData = deEndExecDateTimeUpdateData
             EditFormat = 'DD/MM/YY HH:NN'
           end
@@ -1241,10 +1278,11 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 115
+          Width = 776
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
+          ExplicitWidth = 115
         end
         object splFlats: TSplitter
           Left = 373
@@ -1994,22 +2032,26 @@ object RequestForm: TRequestForm
   object dsHouses: TpFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
-      '    H.HOUSE_ID,'
-      '    H.STREET_ID,'
-      '    H.HOUSE_NO,'
-      '    H.Q_FLAT,'
-      '    wa.name||'#39' '#39'||wg.name||'#39' '#39'||'
+      '  H.HOUSE_ID'
+      '  , H.STREET_ID'
+      '  , H.HOUSE_NO'
+      '  , H.Q_FLAT'
+      '  , wa.name||'#39' '#39'||wg.name||'#39' '#39'||'
       '    cast('
       
         '    coalesce('#39'('#39'||(select list(w.surname) from worker w where (w' +
         '.team = wg.name and w.working = 1))||'#39')'#39','#39#39')'
       '    ||coalesce('#39' '#39'||he.he_name,'#39#39')'
       '    as varchar(500)) as warea'
+      '  , sa.Subarea_Name    '
       'FROM'
       '    HOUSE H'
       '    left outer join workgroups wg on (wg.wg_id = h.wg_id)'
       '    left outer join workarea wa on (wa.wa_id = wg.wa_id)'
       '    left outer join headend he on ( h.headend_id = he.he_id )'
+      
+        '    left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)' +
+        '    '
       'where h.street_id = :street_id'
       'order by h.HOUSE_NO')
     Transaction = dmMain.trRead

@@ -311,8 +311,6 @@ begin
 end;
 
 procedure TOrderTPForm.FormShow(Sender: TObject);
-var
-  s: string;
 begin
   btnOk.Enabled := dmMain.AllowedAction(rght_OrdersTP_full);
   if (dsOrderTP.State = dsInsert) then
@@ -1160,12 +1158,8 @@ end;
 
 procedure TOrderTPForm.PreviewOrder;
 var
-  ReportID, i, ci: Integer;
-  periodFrom: TDateTime;
+  ReportID, i: Integer;
   FILENAME: String;
-  Stream: TStream;
-  bm: TBookmark;
-  vQRY: TpFIBQuery;
 begin
   FILENAME := 'PreviewOrder';
   // Загрузим отчет из БД

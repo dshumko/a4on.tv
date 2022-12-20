@@ -546,10 +546,18 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'HOUSE_ID'
             DataSource = srcFilter
+            DropDownBox.Columns = <
+              item
+                FieldName = 'HOUSE_NO'
+              end
+              item
+                FieldName = 'Subarea_Name'
+              end>
             DropDownBox.ListSource = srcHomes
             DropDownBox.ListSourceAutoFilter = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
+            DropDownBox.Width = 200
             EmptyDataInfo.Text = #1044#1086#1084
             EditButtons = <>
             KeyField = 'HOUSE_ID'
@@ -1620,6 +1628,7 @@ object CustomersFilterForm: TCustomersFilterForm
         Height = 13
         Align = alTop
         Caption = #1055#1086#1079#1074#1086#1083#1103#1077#1090' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1079#1072#1087#1088#1086#1089' SQL '#1076#1083#1103' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' '#1089#1083#1086#1078#1085#1099#1093' '#1092#1080#1083#1100#1090#1088#1086#1074
+        ExplicitWidth = 365
       end
       object memSQL: TDBSynEdit
         Left = 0
@@ -1771,8 +1780,14 @@ object CustomersFilterForm: TCustomersFilterForm
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT HOUSE_ID, STREET_ID, HOUSE_NO, Q_FLAT'
+      'SELECT '
+      '  HOUSE_ID'
+      '  , STREET_ID'
+      '  , H.HOUSE_NO'
+      '  , Q_FLAT'
+      '  , sa.Subarea_Name'
       'FROM HOUSE H'
+      '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'
       'order by h.HOUSE_NO')
     Transaction = dmMain.trRead

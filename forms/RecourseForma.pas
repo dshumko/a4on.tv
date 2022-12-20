@@ -52,6 +52,7 @@ type
     btnOkandRequest: TBitBtn;
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
+    spl1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure LupHOUSEChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -67,7 +68,8 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure pnlRecourseEnter(Sender: TObject);
-    procedure cbRecourseClick(Sender: TObject);
+    procedure DBLookupComboboxClick(Sender: TObject);
+    procedure edtContactClick(Sender: TObject);
   private
     { Private declarations }
     vCustomerInfo: TCustomerInfo;
@@ -244,6 +246,20 @@ end;
 procedure TRecourseForm.actSaveExecute(Sender: TObject);
 begin
   SaveRecourse();
+end;
+
+procedure TRecourseForm.edtContactClick(Sender: TObject);
+begin
+  if not(Sender is TDBComboboxEh) then
+    Exit;
+
+  if (Sender as TDBComboboxEh).Items.Count = 0 then
+    Exit;
+
+  if not(Sender as TDBComboboxEh).ListVisible then
+    (Sender as TDBComboboxEh).DropDown
+  else
+    (Sender as TDBComboboxEh).CloseUp(False);
 end;
 
 procedure TRecourseForm.eFLAT_NOExit(Sender: TObject);
@@ -490,12 +506,14 @@ begin
   btnOkandRequest.Enabled := showBtn;
 end;
 
-procedure TRecourseForm.cbRecourseClick(Sender: TObject);
+procedure TRecourseForm.DBLookupComboboxClick(Sender: TObject);
 begin
-  if not cbRecourse.ListVisible then
-    cbRecourse.DropDown
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
   else
-    cbRecourse.CloseUp(False);
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
 end;
 
 end.

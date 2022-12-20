@@ -676,7 +676,9 @@ begin
       finally
         Stream.Free;
       end;
-    end;
+    end
+    else
+      Result := False;
   finally
     if dmMain.fdsLoadReport.Active then
       dmMain.fdsLoadReport.Close;

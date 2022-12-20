@@ -406,6 +406,38 @@ object MaterialsForm: TMaterialsForm
             Title.Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'  '#1082' '#1084#1072#1090#1077#1088#1080#1072#1083#1091', '#1095#1077#1088#1077#1079' / '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 173
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_BY'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_ON'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_BY'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_ON'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -506,6 +538,38 @@ object MaterialsForm: TMaterialsForm
             Title.Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'  '#1082' '#1084#1072#1090#1077#1088#1080#1072#1083#1091', '#1095#1077#1088#1077#1079' / '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 108
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_BY'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_ON'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_BY'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_ON'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -627,6 +691,38 @@ object MaterialsForm: TMaterialsForm
             Title.Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'  '#1082' '#1084#1072#1090#1077#1088#1080#1072#1083#1091', '#1095#1077#1088#1077#1079' / '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 108
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_BY'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_ON'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_BY'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_ON'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -731,6 +827,38 @@ object MaterialsForm: TMaterialsForm
             Title.Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'  '#1082' '#1084#1072#1090#1077#1088#1080#1072#1083#1091', '#1095#1077#1088#1077#1079' / '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             Title.TitleButton = True
             Width = 108
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_BY'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_ON'
+            Footers = <>
+            Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_BY'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_ON'
+            Footers = <>
+            Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1234,6 +1362,8 @@ object MaterialsForm: TMaterialsForm
               item
               end
               item
+              end
+              item
               end>
             Visible = True
           end>
@@ -1291,6 +1421,8 @@ object MaterialsForm: TMaterialsForm
             DynProps = <>
             EditButtons = <>
             FieldName = 'ACCOUNT_NO'
+            Footer.FieldName = 'ACCOUNT_NO'
+            Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1051'/'#1057' '#1072#1073#1086#1085
           end
@@ -1369,6 +1501,14 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             ReadOnly = True
             Title.Caption = #1042#1099#1076#1072#1085#1086' / '#1079#1072#1103#1074#1082#1072' '#1042#1099#1087#1086#1083#1085#1077#1085#1072
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'NOTICE'
+            Footers = <>
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
           end
           item
             CellButtons = <>
@@ -1542,6 +1682,7 @@ object MaterialsForm: TMaterialsForm
       '    MG_NAME = :MG_NAME,'
       '    PARENT_ID = :PARENT_ID,'
       '    MG_NOTICE = :MG_NOTICE,'
+      '    SOLD = :SOLD,'
       '    RENT = :RENT,'
       '    LOAN = :LOAN'
       'WHERE'
@@ -1559,6 +1700,7 @@ object MaterialsForm: TMaterialsForm
       '    MG_NAME,'
       '    PARENT_ID,'
       '    MG_NOTICE,'
+      '    SOLD,'
       '    RENT,'
       '    LOAN'
       ')'
@@ -1567,22 +1709,23 @@ object MaterialsForm: TMaterialsForm
       '    :MG_NAME,'
       '    :PARENT_ID,'
       '    :MG_NOTICE,'
+      '    :SOLD,'
       '    :RENT,'
       '    :LOAN'
       ')')
     RefreshSQL.Strings = (
-      'Select * from materials_group'
-      ''
-      ' WHERE '
-      '        MATERIALS_GROUP.MG_ID = :OLD_MG_ID'
+      'select * from materials_group'
+      'WHERE '
+      '  MG_ID = :OLD_MG_ID'
       '    ')
     SelectSQL.Strings = (
-      'select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE, RENT, LOAN'
+      'select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE, SOLD, RENT, LOAN'
       'from MATERIALS_GROUP'
       'union'
       
         'select null as MG_ID, '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME, null as PARENT_ID, ' +
-        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE, null RENT, null LOAN'
+        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE, null SOLD, null RENT, null ' +
+        'LOAN'
       'from RDB$DATABASE'
       
         'where (exists(select m.M_Id from materials m where m.Mg_Id is nu' +
@@ -1590,7 +1733,7 @@ object MaterialsForm: TMaterialsForm
       'union'
       
         'select -1 as MG_ID, '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME, null as PARENT_ID' +
-        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE, null RENT, null LOAN'
+        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE, null SOLD, null RENT, null LOAN'
       'from RDB$DATABASE'
       'order by 2, 1')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'
@@ -1626,6 +1769,7 @@ object MaterialsForm: TMaterialsForm
       '    IS_DIGIT = :IS_DIGIT, '
       '    IS_NET = :IS_NET,'
       '    M_TYPE = :M_TYPE,'
+      '    SOLD = :SOLD,'
       '    RENT = :RENT, '
       '    LOAN = :LOAN '
       'where (M_ID = :M_ID)')
@@ -1635,11 +1779,11 @@ object MaterialsForm: TMaterialsForm
       
         'insert into MATERIALS (M_ID, NAME, DIMENSION, IS_UNIT, DESCRIPTI' +
         'ON, MG_ID, DELETED, M_NUMBER, COST, BEST_COST, BEST_SHIPPER_ID, ' +
-        'IS_DIGIT, IS_NET, M_TYPE, RENT, LOAN)'
+        'IS_DIGIT, IS_NET, M_TYPE, SOLD, RENT, LOAN)'
       
         'values (:M_ID, :NAME, :DIMENSION, :IS_UNIT, :DESCRIPTION, :GR_ID' +
         ', 0, :M_NUMBER, :COST, :BEST_COST, :BEST_SHIPPER_ID, :IS_DIGIT, ' +
-        ':IS_NET, :M_TYPE, :RENT, :LOAN)'
+        ':IS_NET, :M_TYPE, :SOLD, :RENT, :LOAN)'
       '-- '#1042#1072#1078#1085#1086' MG_ID - GR_ID!!!')
     SelectSQL.Strings = (
       '-- Select SQL'
@@ -1662,6 +1806,7 @@ object MaterialsForm: TMaterialsForm
       '  ,IS_NET D_IBOOLEAN'
       '  ,IS_DIGIT D_IBOOLEAN'
       '  ,M_TYPE  INTEGER'
+      '  ,SOLD D_UID_NULL  '
       '  ,RENT D_UID_NULL'
       '  ,LOAN D_UID_NULL  '
       '  ,TYPE_NAME VARCHAR(255)  '
@@ -1879,6 +2024,11 @@ object MaterialsForm: TMaterialsForm
       '    im.Shipper_Cost,'
       '    d.Dt_Id,'
       '    d.Doc_Id'
+      '  , D.Added_On'
+      '  , D.Edit_On'
+      '  , coalesce(a.Surname, d.Added_By) as Added_By'
+      '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
+      '    '
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       
@@ -1887,6 +2037,9 @@ object MaterialsForm: TMaterialsForm
       
         '       left outer join objects w on ( w.O_Id = d.Wh_Id and w.O_T' +
         'ype = 10)'
+      '       left outer join worker a on (a.Ibname = d.Added_By)'
+      '       left outer join worker e on (e.Ibname = d.Edit_By)'
+      '       '
       '  where d.Doc_Closed = 1'
       '        and d.Dt_Id = 1'
       '        and im.M_Id = :M_ID   '
@@ -1986,6 +2139,10 @@ object MaterialsForm: TMaterialsForm
       '  , wo.O_Name FROM_WH'
       '  , d.Dt_Id'
       '  , d.Doc_Id'
+      '  , D.Added_On'
+      '  , D.Edit_On'
+      '  , coalesce(a.Surname, d.Added_By) as Added_By'
+      '  , coalesce(e.Surname, d.Edit_By) as Edit_By  '
       '  from Material_Docs d'
       '       inner join(select'
       '                      im.Doc_Id'
@@ -2003,6 +2160,10 @@ object MaterialsForm: TMaterialsForm
       '             w.O_Type = 10)'
       '       left outer join objects wo on (wo.O_Id = d.From_Wh and'
       '             wo.O_Type = 10)'
+      '       left outer join worker a on (a.Ibname = d.Added_By)'
+      
+        '       left outer join worker e on (e.Ibname = d.Edit_By)       ' +
+        '      '
       '  where d.Doc_Closed = 1'
       '        and d.Dt_Id = 2'
       '  order by d.Doc_Date desc, d.Doc_N')
@@ -2042,6 +2203,10 @@ object MaterialsForm: TMaterialsForm
       '    (im.M_Quant - im.B_Quant) * m.Cost ITOGO,'
       '    d.Dt_Id,'
       '    d.Doc_Id'
+      '  , D.Added_On'
+      '  , D.Edit_On'
+      '  , coalesce(a.Surname, d.Added_By) as Added_By'
+      '  , coalesce(e.Surname, d.Edit_By) as Edit_By    '
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       '       inner join materials m on (m.M_Id = im.M_Id)'
@@ -2051,6 +2216,8 @@ object MaterialsForm: TMaterialsForm
       
         '       left outer join objects w on ( w.O_Id = d.Wh_Id and w.O_T' +
         'ype = 10)'
+      '       left outer join worker a on (a.Ibname = d.Added_By)'
+      '       left outer join worker e on (e.Ibname = d.Edit_By)       '
       '  where d.Doc_Closed = 1'
       '        and d.Dt_Id = 5'
       '        and im.M_Id = :M_ID   '
@@ -2095,12 +2262,19 @@ object MaterialsForm: TMaterialsForm
       '    -1*im.M_Quant * m.Cost ITOGO,'
       '    d.Dt_Id,'
       '    d.Doc_Id'
+      '  , D.Added_On'
+      '  , D.Edit_On'
+      '  , coalesce(a.Surname, d.Added_By) as Added_By'
+      '  , coalesce(e.Surname, d.Edit_By) as Edit_By    '
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       '       inner join materials m on (m.M_Id = im.M_Id)'
       
         '       left outer join objects w on ( w.O_Id = d.Wh_Id and w.O_T' +
         'ype = 10)'
+      '       left outer join worker a on (a.Ibname = d.Added_By)'
+      '       left outer join worker e on (e.Ibname = d.Edit_By)'
+      '       '
       '  where d.Doc_Closed = 1'
       '        and d.Dt_Id = 3'
       '        and im.M_Id = :M_ID   '
@@ -2271,6 +2445,7 @@ object MaterialsForm: TMaterialsForm
         DataType = ftUnknown
         Name = 'M_ID'
         ParamType = ptUnknown
+        Value = Null
       end
       item
         DataType = ftUnknown
@@ -2296,6 +2471,7 @@ object MaterialsForm: TMaterialsForm
       '      , cast(r.Rq_Exec_Time as DATE) Rq_Exec_Time, r.Rq_Defect'
       '      , t.Cost, t.Serial, t.Doc_N, t.Doc_Date, t.Sold'
       '      , c.Customer_Id, c.Account_No'
+      '      , t.Notice'
       '      from (select'
       '                rm.RQ_ID, rm.M_Id, 1 In_Out, rm.Rm_Id Tbl_Id'
       '              from request_materials rm'
@@ -2314,14 +2490,17 @@ object MaterialsForm: TMaterialsForm
         'ustomer)'
       '    union'
       '    select'
-      '        null Rq_Id, t.M_Id, 0 In_Out, null Tbl_Id'
+      '        null Rq_Id, t.M_Id, In_Out, null Tbl_Id'
       '      , cast(t.RQ_DATE as DATE) Rq_Exec_Time, null Rq_Defect'
       '      , t.Cost, t.Serial, t.Doc_N, t.Doc_Date, t.Sold'
-      '      , null Customer_Id, null Account_No'
+      '      , null Customer_Id, t.Account Account_No'
+      '      , t.Notice'
       '    from UNIT_TMP t'
       '    where t.Rq_Id is null and t.m_id = :M_ID'
       ')'
-      'order by Rq_Exec_Time')
+      'order by Rq_Exec_Time'
+      ''
+      '')
     UpdateCommand.Params = <
       item
         DataType = ftUnknown
@@ -2370,6 +2549,16 @@ object MaterialsForm: TMaterialsForm
       end
       item
         DataType = ftUnknown
+        Name = 'NOTICE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Account_No'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
         Name = 'Cost'
         ParamType = ptUnknown
       end
@@ -2391,6 +2580,16 @@ object MaterialsForm: TMaterialsForm
       item
         DataType = ftUnknown
         Name = 'Sold'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'NOTICE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'ACCOUNT'
         ParamType = ptUnknown
       end
       item
@@ -2458,7 +2657,9 @@ object MaterialsForm: TMaterialsForm
       '    Doc_Date  date = :Doc_Date,'
       '    Sold      varchar(20) = :Sold,'
       '    TBL_ID    INT_NULL = :TBL_ID,'
-      '    RQ_DEFECT D_NOTICE = :RQ_DEFECT)'
+      '    RQ_DEFECT D_NOTICE = :RQ_DEFECT,'
+      '    NOTICE D_NOTICE = :NOTICE,'
+      '    ACCOUNT   D_ACCOUNT_NS = :Account_No)'
       'as'
       'declare variable txt D_NOTICE;'
       'begin'
@@ -2467,7 +2668,9 @@ object MaterialsForm: TMaterialsForm
       '      Serial = :Serial,'
       '      Doc_N = :Doc_N,'
       '      Doc_Date = :Doc_Date,'
-      '      Sold = :Sold'
+      '      Sold = :Sold,'
+      '      NOTICE = :NOTICE,'
+      '     ACCOUNT = :ACCOUNT     '
       '  where M_Id = :M_Id'
       '        and (((:Rq_Id is null)'
       '        and Serial = :Serial)'
@@ -2533,14 +2736,24 @@ object MaterialsForm: TMaterialsForm
         DataType = ftUnknown
         Name = 'Sold'
         ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'notice'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Account_No'
+        ParamType = ptUnknown
       end>
     InsertCommand.CommandText.Strings = (
       
         'insert into Unit_Tmp (M_Id, Rq_Id, In_Out, Tbl_Id, Cost, Serial,' +
-        ' Doc_N, Doc_Date, Sold)'
+        ' Doc_N, Doc_Date, Sold, notice, account)'
       
         'values (:M_Id, :Rq_Id, :In_Out, :Tbl_Id, :Cost, :Serial, :Doc_N,' +
-        ' :Doc_Date, :Sold)')
+        ' :Doc_Date, :Sold, :notice, :Account_No')
     DeleteCommand.Params = <
       item
         DataType = ftUnknown

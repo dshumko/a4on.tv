@@ -37,9 +37,8 @@ type
     Label6: TLabel;
     dblSwitchTo: TDBLookupComboboxEh;
     eDateTo: TDBDateTimeEditEh;
-    pnlDogovor: TPanel;
+    pnlContract: TPanel;
     edtDogDate: TDBDateTimeEditEh;
-    edtDogovor: TDBEditEh;
     lblContr: TLabel;
     chkContract: TCheckBox;
     pnlVAT: TPanel;
@@ -58,6 +57,8 @@ type
     lcbWorker: TDBLookupComboboxEh;
     dsWorker: TpFIBDataSet;
     srcWorker: TDataSource;
+    chkFOwner: TDBCheckBoxEh;
+    edtDogovor: TDBEditEh;
     procedure dsServiceAfterOpen(DataSet: TDataSet);
     procedure dsOnOffServiceAfterOpen(DataSet: TDataSet);
     procedure luServiceChange(Sender: TObject);
@@ -70,6 +71,9 @@ type
     procedure dblSwitchToChange(Sender: TObject);
     procedure eDateToEnter(Sender: TObject);
     procedure eDateExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure SetContract;
+    procedure chkFOwnerClick(Sender: TObject);
   private
     { Private declarations }
     fFullAccess: Boolean;
@@ -78,12 +82,19 @@ type
     fCanAdd: Boolean;
     fService_TYPE: Integer;
     fService_ID: Integer;
+    fCustomer_ID: Integer;
+    FShowFlatOwner: Boolean;
+    FNewContract: Boolean;
+    FOwnerS: string;
+    FRentS: string;
+    FContract: string;
     procedure setSRVType(value: Integer);
     function CheckDataAndOk: Boolean;
     procedure CheckAndGenContract;
   public
     { Public declarations }
     property Service_TYPE: Integer write setSRVType;
+    property Customer_ID: Integer read fCustomer_ID write fCustomer_ID;
   end;
 
   // Добавление новой услуги абоненту
@@ -133,6 +144,7 @@ begin
       Caption := rsPauseSrv;
       servPanel.Visible := False;
       pnlSRV2.Visible := False;
+      Customer_ID := aCustomer_ID;
       Height := Height - servPanel.Height;
       dsOnOffService.ParamByName('ACUSTOMER_ID').value := aCustomer_ID;
       dsOnOffService.ParamByName('ASERVICE_ID').value := aService_ID;
@@ -143,7 +155,7 @@ begin
       eDateTo.Visible := True;
       pnlQUANT.Visible := (dsOnOffService['SERVICE_TYPE'] = 2);
 
-      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') = '1');
       dsWorker.Active := pnlWorker.Visible;
 
       // OkCancelFrame.bbOk.Enabled := dsOnOffService.RecordCount>0;
@@ -240,7 +252,7 @@ begin
       pnlSRV2.Visible := True;
       Height := Height - servPanel.Height;
       fService_ID := aService_ID;
-
+      Customer_ID := aCustomer_ID;
       dsSwitchTo.ParamByName('SERVICE_ID').value := fService_ID;
       if dsOnOffService.Active then
         dsOnOffService.Close;
@@ -249,7 +261,7 @@ begin
       if dsSwitchTo.RecordCount = 0 then
         exit;
 
-      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') = '1');
       dsWorker.Active := pnlWorker.Visible;
 
       // dsOnOffService.ParamByName('From_Srv').Value := aSERVICE_ID;
@@ -357,18 +369,21 @@ begin
       servPanel.Visible := False;
       pnlSRV2.Visible := False;
       Height := Height - servPanel.Height;
+      Customer_ID := aCustomer_ID;
       dsOnOffService.ParamByName('ACUSTOMER_ID').value := aCustomer_ID;
       dsOnOffService.ParamByName('ASERVICE_ID').value := aService_ID;
       dsOnOffService.ParamByName('asubscr_serv_id').value := aSubscr_Serv_ID;
       if Off then
         dsOnOffService.ParamByName('AOFF').value := 1
       else
+      begin
         dsOnOffService.ParamByName('AOFF').value := 0;
+        pnlContract.Visible := (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
+      end;
       memNotice.Lines.Text := Notice;
       dsOnOffService.Open;
       pnlQUANT.Visible := (dsOnOffService['SERVICE_TYPE'] = 2);
-
-      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+      pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') = '1');
       dsWorker.Active := pnlWorker.Visible;
 
       OkCancelFrame.bbOk.Enabled := dsOnOffService.RecordCount > 0;
@@ -379,7 +394,7 @@ begin
           exit;
 
         Query.SQL.Text := 'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID,:SERV_ID,' +
-          ':ACTSERVICE,:DATE,:OFF,:NOTICE,:AUNITS,1,:WORKER);';
+          ':ACTSERVICE,:DATE,:OFF,:NOTICE,:AUNITS,1,:WORKER,:CONTR_N,:CONTR_DATE);';
         Query.ParamByName('ACTSERVICE').AsInteger := luOnOffService.value;
         Query.ParamByName('SERV_ID').AsInteger := aService_ID;
         Query.ParamByName('DATE').AsDate := eDate.value;
@@ -401,6 +416,18 @@ begin
           Query.ParamByName('WORKER').AsString := lcbWorker.Text
         else
           Query.ParamByName('WORKER').Clear;
+
+        if (pnlContract.Visible) and (chkContract.Checked) then
+        begin
+          Query.ParamByName('CONTR_N').AsString := edtDogovor.value;
+          if not VarIsNull(edtDogDate.value) then
+            Query.ParamByName('CONTR_DATE').AsDate := edtDogDate.value;
+        end
+        else
+        begin
+          Query.ParamByName('CONTR_N').Clear;
+          Query.ParamByName('CONTR_DATE').Clear;
+        end;
 
         Query.Transaction := dmMain.trWriteQ;
 
@@ -455,6 +482,7 @@ begin
     try
       Service_TYPE := aService_TYPE;
       Caption := ms_ADD_NEW_SERVICE;
+      Customer_ID := aCustomer_ID;
       dsCustomer.ParamByName('customer_id').value := aCustomer_ID;
       dsCustomer.Open;
       if dsCustomer.FieldByName('JURIDICAL').AsInteger = 1 then
@@ -471,7 +499,7 @@ begin
       OkCancelFrame.bbOk.Enabled := dsService.RecordCount > 0;
       if aService_TYPE = 0 then
       begin
-        pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') <> '0');
+        pnlWorker.Visible := (dmMain.GetSettingsValue('SAVE_SRV_WORKER') = '1');
         dsWorker.Active := pnlWorker.Visible;
         luOnOffServiceChange(nil);
       end;
@@ -578,13 +606,11 @@ end;
 procedure TOnOffServiceForm.setSRVType(value: Integer);
 begin
   fService_TYPE := value;
-
   servPanel.Visible := True;
-  pnlDogovor.Visible := (fService_TYPE = 0);
+  pnlContract.Visible := (fService_TYPE = 0) and (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
   pnlSRV2.Visible := False;
   pnlONOFF.Visible := (fService_TYPE = 0);
   pnlQUANT.Visible := (fService_TYPE = 1);
-
 end;
 
 procedure TOnOffServiceForm.FormCreate(Sender: TObject);
@@ -604,6 +630,42 @@ begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (OkCancelFrame.bbOk.Enabled) then
     if CheckDataAndOk then
       ModalResult := mrOk;
+end;
+
+procedure TOnOffServiceForm.FormShow(Sender: TObject);
+begin
+  FShowFlatOwner := (dmMain.GetSettingsValue('FLAT_OWNER') = '1');
+  FNewContract := (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
+  FContract := '';
+
+  if FNewContract then
+  begin
+    if FShowFlatOwner then
+    begin
+      FOwnerS := dmMain.GetSettingsValue('FLAT_OWNER_C_STR');
+      FRentS := dmMain.GetSettingsValue('FLAT_RENT_C_STR');
+      if FOwnerS.IsEmpty then
+        FOwnerS := '%s' // Для функции формат
+      else begin
+        if not FOwnerS.Contains('%s') then
+          FOwnerS := FOwnerS+'%s';
+      end;
+
+      if FRentS.IsEmpty then
+        FRentS := '%s' // Для функции формат
+      else begin
+        if not FRentS.Contains('%s') then
+          FRentS := FRentS+'%s';
+      end;
+      edtDogovor.Left := chkFOwner.Left + chkFOwner.Width + 12;
+      edtDogovor.Width := lblContr.Left - edtDogovor.Left - 10;
+    end
+    else
+    begin
+      edtDogovor.Left := chkContract.Left + chkContract.Width + 12;
+      edtDogovor.Width := lblContr.Left - edtDogovor.Left - 10;
+    end;
+  end;
 end;
 
 procedure TOnOffServiceForm.luServiceChange(Sender: TObject);
@@ -628,10 +690,17 @@ end;
 
 procedure TOnOffServiceForm.chkContractClick(Sender: TObject);
 begin
-  CheckAndGenContract;
-  edtDogDate.Visible := chkContract.Checked;
+  chkFOwner.Visible := FShowFlatOwner and chkContract.Checked;
   edtDogovor.Visible := chkContract.Checked;
+  edtDogDate.Visible := chkContract.Checked;
   lblContr.Visible := chkContract.Checked;
+
+  CheckAndGenContract;
+end;
+
+procedure TOnOffServiceForm.chkFOwnerClick(Sender: TObject);
+begin
+  SetContract;
 end;
 
 procedure TOnOffServiceForm.dblSwitchToChange(Sender: TObject);
@@ -670,19 +739,49 @@ begin
     dblSwitchTo.KeyValue := dsSwitchTo['SERVICE_ID'];
 end;
 
+procedure TOnOffServiceForm.SetContract;
+var
+  s: string;
+begin
+  s := FContract;
+  if FShowFlatOwner then
+  begin
+    if chkFOwner.Checked then
+    begin
+      s := Format(FOwnerS, [s]);
+    end
+    else
+    begin
+      s := Format(FRentS, [s]);
+    end;
+  end;
+  edtDogovor.Text := s;
+end;
+
 procedure TOnOffServiceForm.eDateExit(Sender: TObject);
 begin
   CheckAndGenContract;
 end;
 
 procedure TOnOffServiceForm.CheckAndGenContract;
+var
+  s: string;
 begin
   if chkContract.Checked then
   begin
-    if CheckDataAndOk then
-      edtDogovor.Text := dmMain.GenerateDogNumberForCustomer(dsService.ParamByName('customer_id').value,
-        luService.KeyValue);
-    edtDogDate.value := NOW();
+    if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') and (VarIsNull(edtDogDate.value))  then
+      edtDogDate.value := NOW();
+
+    if (servPanel.Visible) and (not VarIsNull(luService.KeyValue)) then begin
+      if FContract.IsEmpty then
+        FContract := dmMain.GenerateDogNumberForCustomer(fCustomer_ID, luService.KeyValue);
+      SetContract;
+    end
+    else begin
+      if FContract.IsEmpty then
+        FContract := dmMain.GenerateDogNumberForCustomer(fCustomer_ID, dsOnOffService['ID']);
+      SetContract;
+    end;
   end;
 end;
 
@@ -713,7 +812,7 @@ begin
     begin
       allOk := False;
       CnErrors.SetError(luService, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-      luService.SetFocus;
+      //luService.SetFocus;
     end
     else
       CnErrors.Dispose(luService);
@@ -723,7 +822,7 @@ begin
   begin
     allOk := False;
     CnErrors.SetError(luOnOffService, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-    luOnOffService.SetFocus;
+    //luOnOffService.SetFocus;
   end
   else
     CnErrors.Dispose(luOnOffService);
@@ -732,7 +831,7 @@ begin
   begin
     allOk := False;
     CnErrors.SetError(edtDogDate, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-    edtDogDate.SetFocus;
+    //edtDogDate.SetFocus;
   end
   else
     CnErrors.Dispose(edtDogDate);
@@ -741,7 +840,7 @@ begin
   begin
     allOk := False;
     CnErrors.SetError(eUNITS, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-    eUNITS.SetFocus;
+    //eUNITS.SetFocus;
   end
   else
     CnErrors.Dispose(eUNITS);
@@ -752,7 +851,7 @@ begin
     begin
       allOk := False;
       CnErrors.SetError(eDate, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-      eDate.SetFocus;
+      //eDate.SetFocus;
     end
     else
     begin
@@ -761,7 +860,7 @@ begin
       begin
         allOk := False;
         CnErrors.SetError(eDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
-        eDate.SetFocus;
+        //eDate.SetFocus;
       end
       else
         CnErrors.Dispose(eDate);
@@ -773,7 +872,7 @@ begin
       begin
         allOk := False;
         CnErrors.SetError(eDateTo, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-        eDateTo.SetFocus;
+        //eDateTo.SetFocus;
       end
       else
       begin
@@ -782,7 +881,7 @@ begin
         begin
           allOk := False;
           CnErrors.SetError(eDateTo, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
-          eDateTo.SetFocus;
+          //eDateTo.SetFocus;
         end
         else
           CnErrors.Dispose(eDateTo);

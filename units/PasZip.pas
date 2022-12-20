@@ -1110,7 +1110,7 @@ begin
             // copy all or what's left
             Extra := C; // optimize generated code
             MoveWithOverlap(R, Q, Extra);
-            inc(R, Extra);
+            // inc(R, Extra); // not used
             inc(Q, Extra);
             break;
           end

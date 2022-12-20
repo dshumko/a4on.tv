@@ -130,6 +130,10 @@ type
     procedure lupTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure edPhoneChange(Sender: TObject);
+    procedure LupHOUSEDropDownBoxGetCellParams(Sender: TObject;
+      Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure DBLookupComboboxClick(Sender: TObject);
   private
     { Private declarations }
     fRQ_ID: Integer;
@@ -1021,6 +1025,16 @@ begin
   FindCustomer('', '', -1);
 end;
 
+procedure TRequestNewForm.LupHOUSEDropDownBoxGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if (dsHouse.Active) and (dsHouse['inService'] <> '') then
+    Background := clYellow
+  else
+    Background := clWindow;
+end;
+
 procedure TRequestNewForm.LupHOUSEEditButtons0Click(Sender: TObject; var Handled: Boolean);
 var
   i: int64;
@@ -1075,6 +1089,17 @@ begin
     lblCAUSE.Font.Style := lblCAUSE.Font.Style + [fsBold]
   else
     lblCAUSE.Font.Style := lblCAUSE.Font.Style - [fsBold];
+end;
+
+
+procedure TRequestNewForm.DBLookupComboboxClick(Sender: TObject);
+begin
+  if not (Sender is TDBLookupComboboxEh)
+  then Exit;
+  if not (Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
 end;
 
 procedure TRequestNewForm.lupTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;

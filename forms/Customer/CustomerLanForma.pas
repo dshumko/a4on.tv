@@ -102,6 +102,7 @@ type
     procedure ePortExit(Sender: TObject);
     procedure actEditPortExecute(Sender: TObject);
     procedure lcbPortChange(Sender: TObject);
+    procedure DBLookupComboboxClick(Sender: TObject);
   private
     { Private declarations }
     FCI: TCustomerInfo;
@@ -119,6 +120,7 @@ type
     procedure miLanClickClick(Sender: TObject);
     procedure GenerateLANPopUp;
     function GetNodeID: Integer;
+
   public
     { Public declarations }
     property CI: TCustomerInfo write FCI;
@@ -360,12 +362,14 @@ begin
   FPortDictDisable := (dmMain.GetSettingsValue('LAN_PORTDICTDISABLE') = '1');
   lcbPort.Visible := not FPortDictDisable;
   edtPort.Visible := FPortDictDisable;
-  if FPortDictDisable then begin
+  if FPortDictDisable then
+  begin
     edtPort.Left := dbleEquipment.Left;
     edtPort.Width := dbleEquipment.Width;
     edtPort.TabOrder := 1;
   end
-  else begin
+  else
+  begin
     lcbPort.Left := dbleEquipment.Left;
     lcbPort.Width := dbleEquipment.Width;
     lcbPort.TabOrder := 1;
@@ -1247,6 +1251,16 @@ begin
     finally
       free;
     end;
+end;
+
+procedure TCustomerLanForm.DBLookupComboboxClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
 end;
 
 end.

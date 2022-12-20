@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, FIBDatabase, pFIBDatabase,
+  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, FIBDatabase,
+  pFIBDatabase,
   A4onTypeUnit, PropFilerEh, PropStorageEh;
 
 type
@@ -41,6 +42,12 @@ type
     srcService: TDataSource;
     dsOnOffService: TpFIBDataSet;
     srcOnOffService: TDataSource;
+    pnlContract: TPanel;
+    lblContr: TLabel;
+    edtDogDate: TDBDateTimeEditEh;
+    edtDogovor: TDBEditEh;
+    chkContract: TCheckBox;
+    chkFOwner: TDBCheckBoxEh;
     procedure btnOkClick(Sender: TObject);
     procedure edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -54,6 +61,8 @@ type
     procedure lcbServiceChange(Sender: TObject);
     procedure edDateChange(Sender: TObject);
     procedure lcbOnOffSrvChange(Sender: TObject);
+    procedure chkContractClick(Sender: TObject);
+    procedure chkFOwnerClick(Sender: TObject);
   private
     FNeedDelete: Boolean;
     FFileForSave: String;
@@ -63,12 +72,19 @@ type
     FOpenInet: Boolean;
     FReqType: Integer;
     FReqTempl: Integer;
+    FShowFlatOwner: Boolean;
+    FNewContract: Boolean;
+    FOwnerS: string;
+    FRentS: string;
+    FContract: string;
     function FieldsToStr(const str: string): string;
     procedure ShowAddons;
     procedure ParseJson(const json: String);
     function CheckAddons(const errors: Boolean): Boolean;
     procedure ExecuteAddons;
     procedure UpdateNotice;
+    procedure CheckAndGenContract;
+    procedure SetContract;
   public
     property CustomerInfo: TCustomerInfo read FCustomerInfo write FCustomerInfo;
     property FileForSave: String read GetFile write SetFile;
@@ -279,6 +295,40 @@ end;
 
 procedure TEditCFileForm.FormShow(Sender: TObject);
 begin
+  FShowFlatOwner := (dmMain.GetSettingsValue('FLAT_OWNER') = '1');
+  FNewContract := (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
+  FContract := '';
+
+  if FNewContract then
+  begin
+    if FShowFlatOwner then
+    begin
+      FOwnerS := dmMain.GetSettingsValue('FLAT_OWNER_C_STR');
+      FRentS := dmMain.GetSettingsValue('FLAT_RENT_C_STR');
+      if FOwnerS.IsEmpty then
+        FOwnerS := '%s' // Для функции формат
+      else
+      begin
+        if not FOwnerS.Contains('%s') then
+          FOwnerS := FOwnerS + '%s';
+      end;
+
+      if FRentS.IsEmpty then
+        FRentS := '%s' // Для функции формат
+      else
+      begin
+        if not FRentS.Contains('%s') then
+          FRentS := FRentS + '%s';
+      end;
+      edtDogovor.Left := chkFOwner.Left + chkFOwner.Width + 12;
+      edtDogovor.Width := lblContr.Left - edtDogovor.Left - 12;
+    end
+    else
+    begin
+      edtDogovor.Left := chkContract.Left + chkContract.Width + 12;
+      edtDogovor.Width := lblContr.Left - edtDogovor.Left - 12;
+    end;
+  end;
   pnlAddons.Visible := False;
 end;
 
@@ -324,6 +374,8 @@ var
 begin
   v := (CustomerInfo.CUSTOMER_ID > 0);
   v := v and (not dsFiles.FieldByName('O_CHARFIELD').IsNull);
+  pnlContract.Visible := v and FNewContract;
+
   pnlAddons.Visible := v;
 
   if v then
@@ -453,6 +505,57 @@ begin
   end;
 end;
 
+procedure TEditCFileForm.CheckAndGenContract;
+begin
+  if chkContract.Checked then
+  begin
+    if not VarIsNull(lcbService.KeyValue) then
+      FContract := dmMain.GenerateDogNumberForCustomer(FCustomerInfo.CUSTOMER_ID, lcbService.KeyValue);
+
+    SetContract;
+
+    if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
+      edtDogDate.value := NOW();
+  end;
+end;
+
+procedure TEditCFileForm.chkContractClick(Sender: TObject);
+begin
+  chkFOwner.Visible := FShowFlatOwner and chkContract.Checked;
+  edtDogovor.Visible := chkContract.Checked;
+  edtDogDate.Visible := chkContract.Checked;
+  lblContr.Visible := chkContract.Checked;
+
+  CheckAndGenContract;
+end;
+
+procedure TEditCFileForm.chkFOwnerClick(Sender: TObject);
+begin
+  if FContract.IsEmpty then
+    CheckAndGenContract
+  else
+    SetContract;
+end;
+
+procedure TEditCFileForm.SetContract;
+var
+  s: string;
+begin
+  s := FContract;
+  if FShowFlatOwner then
+  begin
+    if chkFOwner.Checked then
+    begin
+      s := Format(FOwnerS, [s]);
+    end
+    else
+    begin
+      s := Format(FRentS, [s]);
+    end;
+  end;
+  edtDogovor.Text := s;
+end;
+
 procedure TEditCFileForm.ExecuteAddons;
 var
   Save_Cursor: TCursor;
@@ -472,7 +575,7 @@ begin
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
           SQL.Text := 'execute procedure Api_Set_Customer_Service' +
-            '(:Customer_Id, :Service_Id, :Set_On, :Set_Date, :Srv_On_Off)';
+            '(:Customer_Id, :Service_Id, :Set_On, :Set_Date, :Srv_On_Off, :CONTR_N, :CONTR_DATE)';
           ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
           ParamByName('Service_Id').AsInteger := lcbService.value;
           if FIsOff = 1 then
@@ -481,6 +584,19 @@ begin
             ParamByName('Set_On').AsInteger := 1;
           ParamByName('Set_Date').AsDate := edDate.value;
           ParamByName('Srv_On_Off').AsInteger := lcbOnOffSrv.value;
+
+          if (pnlContract.Visible) and (chkContract.Checked) then
+          begin
+            ParamByName('CONTR_N').AsString := edtDogovor.value;
+            if not VarIsNull(edtDogDate.value) then
+              ParamByName('CONTR_DATE').AsDate := edtDogDate.value;
+          end
+          else
+          begin
+            ParamByName('CONTR_N').Clear;
+            ParamByName('CONTR_DATE').Clear;
+          end;
+
           Transaction.StartTransaction;
           ExecQuery;
           Transaction.Commit;

@@ -99,7 +99,7 @@ function TNodeMaterialForm.SaveInDb(const NODE_ID: Integer): Boolean;
 var
   fq: TpFIBQuery;
 begin
-  result := false;
+  // result := false;
   fq := TpFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;

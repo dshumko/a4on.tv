@@ -42,7 +42,7 @@ type
     procedure CustomDropDownFormEhShow(Sender: TObject);
     procedure CustomDropDownFormEhClose(Sender: TObject; var Action: TCloseAction);
   private
-    fSaveINI: Boolean;
+    // FSaveINI: Boolean;
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
     class function GetGlobalRef: TCustomDropDownFormEh; override;

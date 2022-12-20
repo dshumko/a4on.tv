@@ -287,6 +287,8 @@ object ReqWorkForm: TReqWorkForm
       DynProps = <>
       TabOrder = 3
       OnClick = chkW_ONOFFClick
+      ValueChecked = '1'
+      ValueUnchecked = '0'
     end
   end
   object dbckDefault: TDBCheckBoxEh

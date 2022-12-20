@@ -5,14 +5,18 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.Actions,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls,
+  Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.Menus,
   Vcl.ActnList, Vcl.StdActns,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet,
+  DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, dnSplitter, PropFilerEh, PropStorageEh, HtmlView,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, dnSplitter,
+  PropFilerEh, PropStorageEh, HtmlView, HTMLSubs,
   HTMLUn2,
   FramView, FramBrwz;
 
@@ -94,6 +98,9 @@ type
     procedure actRecalcExecute(Sender: TObject);
     procedure sbRecalcClick(Sender: TObject);
     procedure sbRecalcMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure dbeACCOUNT_NODblClick(Sender: TObject);
+    procedure HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase;
+      Button: TMouseButton; Shift: TShiftState; X, Y, IX, IY: Integer);
   private
     { Private declarations }
     fVisibleColumns: Integer;
@@ -101,7 +108,7 @@ type
     FHtmlParams: TStringList;
     FVisibleSum: Boolean;
     FAsBalance: Boolean;
-    FVisiblePassport: Boolean;
+    // FVisiblePassport: Boolean;
     FPersonalData: Boolean;
     FDec: Integer;
     FHtml: string;
@@ -134,7 +141,7 @@ type
 implementation
 
 uses
-  System.RegularExpressions, System.TypInfo,
+  System.RegularExpressions, System.TypInfo, Vcl.Clipbrd,
   A4onTypeUnit, AtrCommon, AtrStrUtils, DM, pFIBQuery, MAIN, ContactForma;
 
 {$R *.dfm}
@@ -554,6 +561,11 @@ begin
       Abort;
 end;
 
+procedure TapgCustomerInfo.dbeACCOUNT_NODblClick(Sender: TObject);
+begin
+//  Clipboard.AsText := dbeACCOUNT_NO.Text;
+end;
+
 procedure TapgCustomerInfo.dbgrdhContactsDblClick(Sender: TObject);
 begin
   actMakeCallExecute(Sender);
@@ -631,7 +643,8 @@ var
   i: Integer;
   s: string;
 begin
-  M := TRegEx.Matches(FHtml, '<!--(.*?)-->', [roMultiLine]); // получаем коллекцию совпадений
+  M := TRegEx.Matches(FHtml, '<!--(.*?)-->', [roMultiLine]);
+  // получаем коллекцию совпадений
   for i := 0 to M.Count - 1 do
   begin
     s := M.Item[i].Groups[1].Value;
@@ -721,18 +734,28 @@ begin
   end;
 
   if FHtml.IsEmpty then
-    FHtml := '<html><head><style>body{font-family:Tahoma;line-height:170%}.pass1{color:blue;}.pass2{color:red;}</style>'
-      + '</head><body>' + // для соохранения форматирования
+    FHtml := '<html><head>'+
+        '<style>body{font-family:Tahoma;line-height:170%}.acc{font-size:20px;}.pass1{color:blue;}.pass2{color:red;}</style>'
+      + '</head><body>' +
+    // для соохранения форматирования
+      'Лицевой счет <font class="acc"><strong><!--ACCOUNT_NO--></strong></font><br>' +
+    // для соохранения форматирования
       'Договор <strong><!--DOGOVOR_NO--></strong> от <strong><!--CONTRACT_DATE--></strong> Перв. подкл. <strong>' +
-      '<!--ACTIVIZ_DATE--></strong><br>' + // для соохранения форматирования
-      'ФИО <strong><!--SURNAME--> <!--FIRSTNAME--> <!--MIDLENAME--></strong><br>' + // для соохранения форматирования
+      '<!--ACTIVIZ_DATE--></strong><br>' +
+    // для соохранения форматирования
+      'ФИО <strong><!--SURNAME--> <!--FIRSTNAME--> <!--MIDLENAME--></strong><br>' +
+    // для соохранения форматирования
       'Адрес <strong><!--STREET_SHORT--> <!--STREET_NAME--> д. <!--HOUSE_NO--> кв. <!--FLAT_NO--></strong><br>' +
     // для соохранения форматирования
       '<font class="pass<!--PASS_STATE-->">Паспорт <strong><!--PASSPORT_NUMBER--></strong> выдан <strong>' +
-      '<!--PASSPORT_REGISTRATION--></strong><!--PASS_ERROR--><br></font>' + // для соохранения форматирования
-      'Прописка <strong><!--ADRES_REGISTR--></strong><br>' + // для соохранения форматирования
-      'ДР <strong><!--BIRTHDAY--></strong><br>' + // для соохранения форматирования
-      'Статус <strong><!--CUST_STATE_DESCR--></strong>' + // для соохранения форматирования
+      '<!--PASSPORT_REGISTRATION--></strong><!--PASS_ERROR--><br></font>' +
+    // для соохранения форматирования
+      'Прописка <strong><!--ADRES_REGISTR--></strong><br>' +
+    // для соохранения форматирования
+      'ДР <strong><!--BIRTHDAY--></strong><br>' +
+    // для соохранения форматирования
+      'Статус <strong><!--CUST_STATE_DESCR--></strong>' +
+    // для соохранения форматирования
       '</body></html>';
 
   groupSQL := '';
@@ -757,10 +780,10 @@ begin
   else
     allSQL := groupSQL;
 
-  if not allSQL.IsEmpty then
-    dsCustomer.SQLs.SelectSQL.Text := allSQL
-  else
-    dsCustomer.SQLs.SelectSQL.Text := 'SELECT CUSTOMER_ID from customer where CUSTOMER_ID = :CUSTOMER_ID';
+  if allSQL.IsEmpty then
+    allSQL := 'SELECT CUSTOMER_ID from customer where CUSTOMER_ID = :CUSTOMER_ID';
+
+  dsCustomer.SQLs.SelectSQL.Text := allSQL;
 end;
 
 procedure TapgCustomerInfo.HtmlViewConfig;
@@ -809,6 +832,18 @@ begin
       65:
         HtmlViewer.SelectAll; // Ctrl+A
     end;
+  end;
+end;
+
+procedure TapgCustomerInfo.HtmlViewerSectionClick(Sender: TObject;
+  Obj: TSectionBase; Button: TMouseButton; Shift: TShiftState; X, Y, IX,
+  IY: Integer);
+var
+  pt : TPoint;
+begin
+  if HtmlViewer.SelLength <> 0 then begin
+    pt := Mouse.CursorPos;
+    pmHV.Popup(pt.x, pt.y);
   end;
 end;
 

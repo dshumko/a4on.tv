@@ -103,6 +103,15 @@ object apgEqpmntRegion: TapgEqpmntRegion
         Footers = <>
         Title.Caption = #1053'.'#1055'.'
         Width = 231
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SUBAREA_NAME'
+        Footers = <>
+        Title.Caption = #1056#1072#1081#1086#1085
+        Width = 85
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -134,10 +143,14 @@ object apgEqpmntRegion: TapgEqpmntRegion
       '  , s.street_short'
       '  , s.street_name'
       '  , a.Area_Name'
+      '  , sa.Subarea_Name'
       '  from equipment_coverage ec'
       '       inner join house h on (ec.house_id = h.house_id)'
       '       inner join street s on (h.street_id = s.street_id)'
       '       left outer join area a on (a.area_id = s.area_id)'
+      
+        '       left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_' +
+        'Id)       '
       '  where ec.eid = :eid'
       '  order by a.Area_Name, s.street_name, h.HOUSE_NO')
     AutoCalcFields = False

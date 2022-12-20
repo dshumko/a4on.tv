@@ -211,7 +211,7 @@ begin
     if isMAC then
     begin
       s := StringReplace(s, ':', '', [rfReplaceAll]);
-      StartNum.SetHex(s);
+      StartNum.SetHex(AnsiString(s));
       BigNumberSubWord(StartNum, 1);
     end;
 
@@ -344,7 +344,7 @@ begin
       count := 1;
 
     mac := StringReplace(edtNumber.Text.Trim, ':', '', [rfReplaceAll]);
-    StartNum.SetHex(mac);
+    StartNum.SetHex(AnsiString(mac));
     // для начала уменьшим на единицу. потом будем накидывать
     // избавляет от лишней логики
     if BigNumberSubWord(StartNum, 1) and (MessageDlg(Format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtNumber.Text]),

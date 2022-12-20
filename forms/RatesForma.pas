@@ -6,23 +6,33 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery;
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
+  VclTee.TeeGDIPlus, VclTee.TeEngine, VclTee.Series, VclTee.TeeProcs,
+  VclTee.Chart;
 
 type
   TRatesForm = class(TGridForm)
     dsRates: TpFIBDataSet;
     btnGet: TToolButton;
     qInsert: TpFIBQuery;
+    chtRates: TChart;
+    lsUSD: TLineSeries;
+    lsEURO: TLineSeries;
+    spl1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnGetClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure dsRatesAfterOpen(DataSet: TDataSet);
   private
     function DownloadFile(const url: String): String;
     procedure LoadFromNBRB;
     procedure LoadFromCBR;
+    procedure DrawChart;
   public
     { Public declarations }
   end;
@@ -92,7 +102,7 @@ end;
 
 procedure TRatesForm.LoadFromNBRB;
 const
-  CURR : String = 'BYN';
+  CURR: String = 'BYN';
 
 var
   s: string;
@@ -111,17 +121,19 @@ var
     Result := EncodeDate(StrToInt(a[0]), StrToInt(a[1]), StrToInt(a[2]));
   end;
 
-  procedure GetRate(const v:string; const c : Integer; const b, e : string);
+  procedure GetRate(const v: string; const c: Integer; const b, e: string);
   var
     i: Integer;
   begin
-    s := Format('https://www.nbrb.by/API/ExRates/Rates/Dynamics/%d?startDate=%s&endDate=%s', [c,b,e]);
+    s := Format('https://www.nbrb.by/API/ExRates/Rates/Dynamics/%d?startDate=%s&endDate=%s', [c, b, e]);
     // ShowMessage(s);
-    qInsert.SQL.Text := 'update or insert into Rates (Rdate, Cur, '+v+') values (:Rdate, :Cur, :val) matching (Rdate, Cur)';
+    qInsert.SQL.Text := 'update or insert into Rates (Rdate, Cur, ' + v +
+      ') values (:Rdate, :Cur, :val) matching (Rdate, Cur)';
     s := DownloadFile(s);
     // если вернуло ответ в вида [{..}..{..}], то считаем верным
-    if s.EndsWith(']') then begin
-      s := '{"'+v+'":' + s + '}';
+    if s.EndsWith(']') then
+    begin
+      s := '{"' + v + '":' + s + '}';
       Obj := TJsonObject.Parse(s) as TJsonObject;
       try
         for i := 0 to Obj[v].Count - 1 do
@@ -137,7 +149,7 @@ var
         Obj.Free;
       end;
 
-      qInsert.SQL.Text := 'delete from Rates where '+v+' is null';
+      qInsert.SQL.Text := 'delete from Rates where ' + v + ' is null';
       qInsert.Transaction.StartTransaction;
       qInsert.ExecQuery;
       qInsert.Transaction.Commit;
@@ -165,8 +177,8 @@ begin
     dsRates.EnableControls;
   end;
 
-  GetRate('USD', 145, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
-  GetRate('EUR', 292, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
+  GetRate('USD', 431, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
+  GetRate('EUR', 451, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
 
   bm := dsRates.GetBookmark;
   dsRates.CloseOpen(True);
@@ -254,6 +266,31 @@ begin
   end;
 
   dsRates.CloseOpen(True);
+end;
+
+procedure TRatesForm.DrawChart;
+begin
+  chtRates.Series[0].XValues.DateTime := True;
+  chtRates.Series[1].XValues.DateTime := True;
+
+  dsRates.DisableControls;
+  dsRates.Last;
+  while not dsRates.Bof do
+  begin
+    chtRates.Series[0].AddXY(dsRates['Rdate'], dsRates['Usd']);
+    chtRates.Series[1].AddXY(dsRates['Rdate'], dsRates['Eur']);
+    dsRates.Prior;
+  end;
+  dsRates.EnableControls;
+
+  chtRates.Axes.Bottom.Increment := DateTimeStep[dtOneMonth];
+  chtRates.Axes.Bottom.DateTimeFormat := 'dd.mm.yy';
+end;
+
+procedure TRatesForm.dsRatesAfterOpen(DataSet: TDataSet);
+begin
+  inherited;
+  DrawChart;
 end;
 
 end.

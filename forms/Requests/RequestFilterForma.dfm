@@ -470,8 +470,17 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         DataField = 'HOUSE_ID'
         DataSource = srcFilter
+        DropDownBox.Columns = <
+          item
+            FieldName = 'HOUSE_NO'
+          end
+          item
+            FieldName = 'Subarea_Name'
+            Width = 40
+          end>
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        DropDownBox.Width = 200
         EditButtons = <>
         KeyField = 'HOUSE_ID'
         ListField = 'HOUSE_NO'
@@ -919,6 +928,10 @@ object RequestFilterForm: TRequestFilterForm
     object tsList: TTabSheet
       Caption = #1055#1086' '#1089#1087#1080#1089#1082#1091
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object mmoListBids: TDBMemoEh
         Left = 0
         Top = 0
@@ -966,10 +979,18 @@ object RequestFilterForm: TRequestFilterForm
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT HOUSE_ID, STREET_ID, HOUSE_NO, Q_FLAT'
-      'FROM HOUSE H'
-      'where h.street_id = :street_id'
-      'order by h.HOUSE_NO')
+      'select'
+      '    h.HOUSE_ID'
+      '  , h.STREET_ID'
+      '  , h.HOUSE_NO'
+      '  , h.Q_FLAT'
+      '  , sa.Subarea_Name'
+      '  from HOUSE h'
+      
+        '       left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_' +
+        'Id)'
+      '  where h.street_id = :street_id'
+      '  order by h.HOUSE_NO')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

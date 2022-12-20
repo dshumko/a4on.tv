@@ -34,6 +34,8 @@ object CustomersForm: TCustomersForm
     ButtonVisible = False
     ButtonAlign = baRightBottom
     ButtonWidth = 40
+    ExplicitTop = 275
+    ExplicitWidth = 0
   end
   object pnlForms: TPanel
     Left = 0
@@ -170,6 +172,7 @@ object CustomersForm: TCustomersForm
         Width = 46
       end
       item
+        Alignment = taLeftJustify
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
@@ -393,6 +396,7 @@ object CustomersForm: TCustomersForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
+        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46
@@ -611,6 +615,15 @@ object CustomersForm: TCustomersForm
       Hint = #1044#1086#1084
       DynProps = <>
       DataField = ''
+      DropDownBox.Columns = <
+        item
+          FieldName = 'HOUSE_NO'
+          Width = 60
+        end
+        item
+          FieldName = 'SUBAREA_NAME'
+          Width = 40
+        end>
       DropDownBox.AutoDrop = True
       EmptyDataInfo.Text = #1044#1086#1084
       EditButtons = <>
@@ -1403,6 +1416,7 @@ object CustomersForm: TCustomersForm
       '-BALANCE=BALANCE'
       '-CONNECTED=CONNECTED'
       'SECRET=SECRET'
+      'CONTRACT_BASIS=PLACE_FACE'
       'PERSONAL_N=PERSONAL_N'
       'CONTRACT_BASIS=PLACE_FACE')
     DataSet = dsCustomers
@@ -2099,16 +2113,15 @@ object CustomersForm: TCustomersForm
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT'
-      '    H.HOUSE_ID,'
-      '    H.STREET_ID,'
-      '    H.HOUSE_NO,'
-      '    H.Q_FLAT'
-      'FROM'
-      '    HOUSE H'
+      'select'
+      '    H.HOUSE_ID'
+      '  , H.STREET_ID'
+      '  , H.HOUSE_NO'
+      '  , sa.Subarea_Name'
+      'from HOUSE H'
+      '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'
-      'order by h.HOUSE_NO'
-      '')
+      'order by h.HOUSE_NO')
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcStreet
@@ -2210,5 +2223,12 @@ object CustomersForm: TCustomersForm
     object miRecAddWAdres: TMenuItem
       Action = actRecAddWAdres
     end
+  end
+  object tmrSearch: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = tmrSearchTimer
+    Left = 712
+    Top = 336
   end
 end

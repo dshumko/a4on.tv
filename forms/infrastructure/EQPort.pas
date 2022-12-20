@@ -80,6 +80,7 @@ uses
 
 function CreatePort(const ER: TEquipmentRecord): Boolean;
 begin
+  Result := False;
   if ER.ID = -1 then
     Exit;
   with TEQPortForm.Create(Application) do
@@ -96,6 +97,7 @@ end;
 
 function EditPort(const ER: TEquipmentRecord; const vPort: string): Boolean;
 begin
+  Result := False;
   if ER.ID = -1 then
     Exit;
   with TEQPortForm.Create(Application) do

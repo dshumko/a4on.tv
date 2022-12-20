@@ -563,10 +563,12 @@ end;
 
 procedure TapgCustomerLan.actOpenEqpmntExecute(Sender: TObject);
 begin
-  if ((dsLAN.RecordCount = 0) or (dsLAN.FieldByName('E_NAME').IsNull)) then
+  if ((dsLAN.RecordCount = 0) or (dsLAN.FieldByName('EQ_ID').IsNull)) then
     Exit;
 
-  A4MainForm.OpenEquipmentByName(dsLAN['E_NAME']);
+  // A4MainForm.OpenEquipmentByName(dsLAN['E_NAME']);
+  if not A4MainForm.OpenEquipmentByID(dsLAN['EQ_ID'])
+  then ShowMessage(rsWarningQuestFilter);
 end;
 
 procedure TapgCustomerLan.actOpenObjectExecute(Sender: TObject);

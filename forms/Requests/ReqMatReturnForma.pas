@@ -214,7 +214,8 @@ var
   i: Integer;
 begin
   fEditMode := Value;
-
+  if not fEditMode then
+    Caption := Caption + rsRequestReadOnly;
   for i := 0 to dbGrid.Columns.Count - 1 do
   begin
     if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'QUANT') then

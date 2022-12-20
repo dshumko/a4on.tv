@@ -2,8 +2,8 @@ object EquipCoverageForm: TEquipCoverageForm
   Left = 512
   Top = 356
   Caption = #1047#1086#1085#1072' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103
-  ClientHeight = 192
-  ClientWidth = 333
+  ClientHeight = 212
+  ClientWidth = 350
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,13 +19,13 @@ object EquipCoverageForm: TEquipCoverageForm
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   DesignSize = (
-    333
-    192)
+    350
+    212)
   PixelsPerInch = 96
   TextHeight = 13
   object Label6: TLabel
     Left = 8
-    Top = 8
+    Top = 11
     Width = 36
     Height = 13
     Caption = #1059#1083#1080#1094#1072
@@ -49,17 +49,10 @@ object EquipCoverageForm: TEquipCoverageForm
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object Label11: TLabel
-    Left = 8
-    Top = 70
-    Width = 61
-    Height = 13
-    Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-  end
   object LupStreets: TDBLookupComboboxEh
     Left = 50
     Top = 8
-    Width = 275
+    Width = 292
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -80,9 +73,14 @@ object EquipCoverageForm: TEquipCoverageForm
         FieldName = 'AREA_NAME'
         Title.Caption = #1056#1072#1081#1086#1085
       end>
+    DropDownBox.ListSource = srcStreet
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.AutoDrop = True
     DropDownBox.ShowTitles = True
     DropDownBox.Sizable = True
+    EmptyDataInfo.Text = #1059#1083#1080#1094#1072
     EditButtons = <
       item
         Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1085#1086#1074#1091#1102' '#1091#1083#1080#1094#1091
@@ -94,19 +92,36 @@ object EquipCoverageForm: TEquipCoverageForm
     ListField = 'STREET_NAME'
     ListSource = srcStreet
     ShowHint = True
+    Style = csDropDownEh
     TabOrder = 0
     Visible = True
     OnNotInList = LupStreetsNotInList
+    ExplicitWidth = 275
   end
   object LupHOUSE_ID: TDBLookupComboboxEh
     Left = 50
     Top = 35
-    Width = 275
+    Width = 292
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = 'HOUSE_ID'
     DataSource = srcCoverage
+    DropDownBox.Columns = <
+      item
+        FieldName = 'HOUSE_NO'
+        Width = 60
+      end
+      item
+        FieldName = 'SUBAREA_NAME'
+        Width = 40
+      end>
+    DropDownBox.ListSource = srcHouse
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
+    DropDownBox.AutoDrop = True
+    EmptyDataInfo.Text = #1044#1086#1084
     EditButtons = <
       item
         Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1076#1086#1084
@@ -118,22 +133,25 @@ object EquipCoverageForm: TEquipCoverageForm
     ListField = 'HOUSE_NO'
     ListSource = srcHouse
     ShowHint = True
+    Style = csDropDownEh
     TabOrder = 1
     Visible = True
     OnChange = LupHOUSE_IDChange
+    ExplicitWidth = 275
   end
   object eNotice: TDBMemoEh
     Tag = 9
     Left = 8
-    Top = 86
-    Width = 317
-    Height = 63
+    Top = 62
+    Width = 334
+    Height = 111
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'NOTICE'
     DataSource = srcCoverage
     DynProps = <>
     EditButtons = <>
+    EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
     TabOrder = 2
     Visible = True
@@ -141,19 +159,34 @@ object EquipCoverageForm: TEquipCoverageForm
   end
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 157
-    Width = 333
+    Top = 177
+    Width = 350
     Height = 35
     Align = alBottom
     TabOrder = 3
     TabStop = True
+    ExplicitTop = 157
+    ExplicitWidth = 333
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
-      Left = 120
-      Width = 124
+      Left = 104
+      Top = 6
+      Width = 157
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 104
+      ExplicitTop = 6
+      ExplicitWidth = 157
     end
     inherited bbCancel: TBitBtn
-      Left = 250
+      Left = 267
+      Top = 6
+      ExplicitLeft = 267
+      ExplicitTop = 6
     end
   end
   object dsStreets: TpFIBDataSet
@@ -174,15 +207,18 @@ object EquipCoverageForm: TEquipCoverageForm
   end
   object dsHouses: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT'
-      '    H.HOUSE_ID,'
-      '    H.STREET_ID,'
-      '    H.HOUSE_NO,'
-      '    H.Q_FLAT'
-      'FROM'
-      '    HOUSE H'
+      'select'
+      '    H.HOUSE_ID'
+      '  , H.STREET_ID'
+      '  , H.HOUSE_NO'
+      '  , H.Q_FLAT'
+      '  , H.ORG_ID'
+      '  , sa.Subarea_Name'
+      'from HOUSE H'
+      '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'
       'order by h.HOUSE_NO'
+      ''
       '')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

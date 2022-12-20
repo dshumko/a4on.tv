@@ -33,6 +33,14 @@ object CustomerLanForm: TCustomerLanForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 302
+    ExplicitWidth = 534
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 74
       Width = 363
@@ -41,12 +49,18 @@ object CustomerLanForm: TCustomerLanForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 74
+      ExplicitWidth = 363
+      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 444
       Width = 85
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
+      ExplicitLeft = 444
+      ExplicitWidth = 85
+      ExplicitHeight = 27
     end
   end
   object GroupBox2: TPanel
@@ -332,6 +346,7 @@ object CustomerLanForm: TCustomerLanForm
       Style = csDropDownEh
       TabOrder = 0
       Visible = True
+      OnClick = DBLookupComboboxClick
       OnDropDownBoxGetCellParams = dbleEquipmentDropDownBoxGetCellParams
       OnExit = dbleEquipmentExit
     end
@@ -467,6 +482,7 @@ object CustomerLanForm: TCustomerLanForm
       TabOrder = 1
       Visible = True
       OnChange = lcbPortChange
+      OnClick = DBLookupComboboxClick
       OnDropDownBoxGetCellParams = lcbPortDropDownBoxGetCellParams
       OnExit = lcbPortExit
     end

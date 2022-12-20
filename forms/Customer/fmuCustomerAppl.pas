@@ -4,11 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Menus, Vcl.Buttons,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin,
+  Vcl.ActnList, Vcl.Menus, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.StdCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DM, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DM,
+  DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
 
@@ -190,7 +193,6 @@ var
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
   S: String;
-  i: Integer;
 begin
   ScrPt := Mouse.CursorPos;
   GrdPt := (Sender as TDBGridEh).ScreenToClient(ScrPt);
@@ -287,3 +289,4 @@ begin
 end;
 
 end.
+

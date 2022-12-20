@@ -156,8 +156,17 @@ object RequestNewForm: TRequestNewForm
         Height = 21
         DynProps = <>
         DataField = ''
+        DropDownBox.Columns = <
+          item
+            FieldName = 'HOUSE_NO'
+          end
+          item
+            FieldName = 'SUBAREA_NAME'
+            Width = 40
+          end>
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        DropDownBox.Width = 200
         EditButtons = <
           item
             Hint = #1053#1086#1074#1099#1081' '#1076#1086#1084
@@ -171,6 +180,7 @@ object RequestNewForm: TRequestNewForm
         ShowHint = True
         TabOrder = 1
         Visible = True
+        OnDropDownBoxGetCellParams = LupHOUSEDropDownBoxGetCellParams
         OnExit = LupHOUSEExit
       end
       object edFLAT_NO: TDBEditEh
@@ -279,18 +289,26 @@ object RequestNewForm: TRequestNewForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
+        ExplicitWidth = 390
+        ExplicitHeight = 129
         inherited gbInfo: TGroupBox
           Width = 390
           Height = 129
+          ExplicitWidth = 390
+          ExplicitHeight = 129
           inherited lblDebt: TLabel
             Width = 386
+            Margins.Bottom = 0
           end
           inherited memAbonent: TMemo
             Width = 386
             Height = 78
+            ExplicitWidth = 386
+            ExplicitHeight = 78
           end
           inherited lblFIO: TDBEditEh
             Width = 386
+            ExplicitWidth = 386
           end
         end
       end
@@ -304,6 +322,14 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 495
+    ExplicitWidth = 753
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6
@@ -311,11 +337,16 @@ object RequestNewForm: TRequestNewForm
       Caption = '&'#1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = bbOkClick
+      ExplicitLeft = 279
+      ExplicitTop = 6
+      ExplicitWidth = 390
     end
     inherited bbCancel: TBitBtn
       Left = 675
       Top = 6
       OnClick = frmOkCancelbbCancelClick
+      ExplicitLeft = 675
+      ExplicitTop = 6
     end
   end
   object pnl1: TPanel
@@ -540,6 +571,7 @@ object RequestNewForm: TRequestNewForm
             TabOrder = 0
             Visible = True
             OnChange = lupTypeChange
+            OnClick = DBLookupComboboxClick
             OnDropDownBoxGetCellParams = lupTypeDropDownBoxGetCellParams
           end
           object luTemplate: TDBLookupComboboxEh
@@ -570,6 +602,7 @@ object RequestNewForm: TRequestNewForm
             TabOrder = 1
             Visible = True
             OnChange = luTemplateChange
+            OnClick = DBLookupComboboxClick
           end
           object mmoContent: TDBMemoEh
             Left = 100
@@ -1017,24 +1050,39 @@ object RequestNewForm: TRequestNewForm
   end
   object dsHouse: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT'
-      '    H.HOUSE_ID,'
-      '    H.STREET_ID,'
-      '    H.HOUSE_NO,'
-      '    H.Q_FLAT,'
-      '    wa.name||'#39' '#39'||wg.name||'#39' '#39'||'
-      '    cast('
+      'select'
+      '    H.HOUSE_ID'
+      '  , H.STREET_ID'
+      '  , h.HOUSE_NO'
+      '  , sa.Subarea_Name'
+      '  , H.Q_FLAT'
       
-        '    coalesce('#39'('#39'||(select list(w.surname) from worker w where (w' +
-        '.team = wg.name and w.working = 1))||'#39')'#39','#39#39')'
-      '    ||coalesce('#39' '#39'||he.he_name,'#39#39')'
-      '    as varchar(500)) as warea'
-      'FROM'
-      '    HOUSE H'
-      '    left outer join workgroups wg on (wg.wg_id = h.wg_id)'
-      '    left outer join workarea wa on (wa.wa_id = wg.wa_id)'
-      '    left outer join headend he on ( h.headend_id = he.he_id )'
-      'where h.street_id = :street_id'
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') inService  '
+      
+        '  , wa.name || '#39' '#39' || wg.name || '#39' '#39' || cast(coalesce('#39'('#39' ||(sel' +
+        'ect'
+      
+        '                                                                ' +
+        ' list(w.surname)'
+      
+        '                                                               f' +
+        'rom worker w'
+      
+        '                                                               w' +
+        'here (w.team = wg.name'
+      
+        '                                                                ' +
+        '     and w.working = 1)) || '#39')'#39', '#39#39') || coalesce('#39' '#39' || he.he_na' +
+        'me, '#39#39') as varchar(500)) as warea'
+      '  from HOUSE H'
+      '       left outer join workgroups wg on (wg.wg_id = h.wg_id)'
+      '       left outer join workarea wa on (wa.wa_id = wg.wa_id)'
+      '       left outer join headend he on (h.headend_id = he.he_id)'
+      
+        '       left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_' +
+        'Id)'
+      '  where h.street_id = :street_id'
       '@@AREA_LOCK% @ -- '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1088#1072#1081#1086#1085#1072#1084
       'order by h.HOUSE_NO')
     Transaction = dmMain.trRead

@@ -133,7 +133,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         Checkboxes = True
         DynProps = <>
         EditButtons = <>
-        FieldName = 'NOT_CALC'
+        FieldName = 'CALC'
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089'.'

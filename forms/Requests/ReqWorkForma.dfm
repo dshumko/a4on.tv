@@ -57,6 +57,8 @@ object ReqWorkForm: TReqWorkForm
     Align = alBottom
     TabOrder = 6
     TabStop = True
+    ExplicitTop = 347
+    ExplicitWidth = 455
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -67,9 +69,12 @@ object ReqWorkForm: TReqWorkForm
       Left = 222
       Width = 143
       OnClick = okcnclfrm1bbOkClick
+      ExplicitLeft = 222
+      ExplicitWidth = 143
     end
     inherited bbCancel: TBitBtn
       Left = 371
+      ExplicitLeft = 371
     end
   end
   object dbmmoSolution: TDBMemoEh
@@ -192,6 +197,7 @@ object ReqWorkForm: TReqWorkForm
       DynProps = <>
       DataField = 'W_ATR_ID'
       DataSource = srcWork
+      EmptyDataInfo.Text = #1044#1086#1073#1072#1074#1083#1103#1090#1100' '#1072#1090#1088#1080#1073#1091#1090
       EditButtons = <>
       KeyField = 'O_ID'
       ListField = 'O_NAME'
@@ -209,6 +215,7 @@ object ReqWorkForm: TReqWorkForm
       DynProps = <>
       DataField = 'AS_SERVICE'
       DataSource = srcWork
+      EmptyDataInfo.Text = #1044#1086#1073#1072#1074#1083#1103#1090#1100' '#1088#1072#1079#1086#1074#1091#1102' '#1091#1089#1083#1091#1075#1091
       EditButtons = <>
       KeyField = 'SERVICE_ID'
       ListField = 'NAME'
@@ -444,10 +451,12 @@ object ReqWorkForm: TReqWorkForm
       '  , O_DIMENSION'
       '  from OBJECTS o'
       '  where O_TYPE = 4'
-      '        and O_DELETED = 0'
-      
-        '--        and not exists(select ca.o_id from customer_attributes' +
-        ' ca where ca.o_id = o.O_ID and ca.customer_id = :CID)'
+      '        and (O_DELETED = 0'
+      '          or exists(select'
+      '                        w.W_ATR_ID'
+      '                      from works w'
+      '                      where w.w_id = :W_ID'
+      '                            and w.W_ATR_ID = o.O_ID))'
       '  order by O_NAME')
     AutoCalcFields = False
     Transaction = dmMain.trRead
@@ -464,14 +473,25 @@ object ReqWorkForm: TReqWorkForm
   end
   object dsService: TpFIBDataSet
     SelectSQL.Strings = (
-      
-        'SELECT s.SERVICE_ID, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMEN' +
-        'SION'
-      'FROM SERVICES S, SERVICES_LINKS sl'
-      
-        'WHERE sl.LINK_TYPE = 1 and S.SERVICE_ID = sl.CHILD and s.srv_typ' +
-        'e_id = 1'
-      'order by s.NAME')
+      'select'
+      '    s.SERVICE_ID'
+      '  , s.NAME'
+      '  , s.SHORTNAME'
+      '  , s.DESCRIPTION'
+      '  , s.DIMENSION'
+      '  from SERVICES S'
+      '  where s.srv_type_id = 1'
+      '        and (exists(select'
+      '                        sl.Link_Id'
+      '                      from SERVICES_LINKS sl'
+      '                      where S.SERVICE_ID = sl.CHILD'
+      '                            and sl.LINK_TYPE = 1)'
+      '          or exists(select'
+      '                        w.AS_SERVICE'
+      '                      from works w'
+      '                      where w.w_id = :W_ID'
+      '                            and w.AS_SERVICE = s.Service_Id))'
+      '  order by s.NAME')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -541,8 +561,16 @@ object ReqWorkForm: TReqWorkForm
       ''
       '    end, '#39#39') Name'
       '  from SERVICES S'
-      '       inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)'
-      '  where sl.LINK_TYPE = 0'
+      '  where exists(select'
+      '                   sl.Link_Id'
+      '                 from SERVICES_LINKS sl'
+      '                 where S.SERVICE_ID = sl.CHILD'
+      '                       and sl.LINK_TYPE = 0)'
+      '          or exists(select'
+      '                        w.W_SRV'
+      '                      from works w'
+      '                      where w.w_id = :W_ID'
+      '                            and w.W_SRV = s.Service_Id)'
       '  order by s.NAME')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

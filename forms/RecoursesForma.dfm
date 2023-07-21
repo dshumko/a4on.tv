@@ -3,10 +3,13 @@ inherited RecoursesForm: TRecoursesForm
   ClientHeight = 306
   ClientWidth = 739
   OnActivate = FormActivate
+  ExplicitWidth = 755
+  ExplicitHeight = 345
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 739
+    ExplicitWidth = 739
   end
   inherited dbGrid: TDBGridEh
     Width = 739
@@ -190,6 +193,7 @@ inherited RecoursesForm: TRecoursesForm
   end
   inherited tlbMain: TToolBar
     Width = 739
+    ExplicitWidth = 739
     object btnDateFilter: TToolButton
       Left = 178
       Top = 0
@@ -231,6 +235,7 @@ inherited RecoursesForm: TRecoursesForm
   end
   inherited pnlEdit: TPanel
     Width = 739
+    ExplicitWidth = 739
   end
   inherited srcDataSource: TDataSource
     DataSet = dsRecourses

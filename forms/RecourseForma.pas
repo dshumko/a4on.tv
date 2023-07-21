@@ -9,9 +9,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.DBCtrls,
   Vcl.Mask,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, FIBQuery, pFIBQuery, CnErrorProvider,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBQuery, pFIBQuery, CnErrorProvider,
   PropFilerEh,
-  PropStorageEh, DM, PrjConst, CustomerInfoFrame, A4onTypeUnit;
+  PropStorageEh, DM, PrjConst, CustomerInfoFrame, A4onTypeUnit, DBGridEh;
 
 type
   TRecourseForm = class(TForm)
@@ -50,9 +50,9 @@ type
     PropStorageEh: TPropStorageEh;
     pnlBtm: TPanel;
     btnOkandRequest: TBitBtn;
-    btnOk: TBitBtn;
     btnCancel: TBitBtn;
     spl1: TSplitter;
+    btnOk: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure LupHOUSEChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -74,6 +74,7 @@ type
     { Private declarations }
     vCustomerInfo: TCustomerInfo;
     fCallBack: TCallBack;
+    FEnterSecondPress: Boolean;
     function FindCustomer(const lic, code: string; const id: integer): integer;
     procedure SaveRecourse(const CreateRequest: Boolean = False);
   public
@@ -250,16 +251,16 @@ end;
 
 procedure TRecourseForm.edtContactClick(Sender: TObject);
 begin
-  if not(Sender is TDBComboboxEh) then
-    Exit;
+  if not(Sender is TDBComboBoxEh) then
+    exit;
 
-  if (Sender as TDBComboboxEh).Items.Count = 0 then
-    Exit;
+  if (Sender as TDBComboBoxEh).Items.Count = 0 then
+    exit;
 
-  if not(Sender as TDBComboboxEh).ListVisible then
-    (Sender as TDBComboboxEh).DropDown
+  if not(Sender as TDBComboBoxEh).ListVisible then
+    (Sender as TDBComboBoxEh).DropDown
   else
-    (Sender as TDBComboboxEh).CloseUp(False);
+    (Sender as TDBComboBoxEh).CloseUp(False);
 end;
 
 procedure TRecourseForm.eFLAT_NOExit(Sender: TObject);
@@ -325,20 +326,36 @@ procedure TRecourseForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBGridEh) then
-      go := False;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and
+        (not((trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := True;
+      end;
+    end;
+
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -380,6 +397,8 @@ var
   s, h, cid: integer;
   f: String;
 begin
+  s := -1;
+  h := -1;
   NeedRequest := False;
   cid := -1;
   if VarIsNull(cbRecourse.Value) or (cbRecourse.Text = '') then
@@ -410,6 +429,7 @@ begin
       Transaction := dmMain.trWriteQ;
       SQL.Text := 'insert into RECOURSE (RC_TYPE, CUSTOMER_ID, HOUSE_ID, FLAT_NO, NOTICE, CONTACT) ' +
         ' values (:RC_TYPE, :CUSTOMER_ID, :HOUSE_ID, :FLAT_NO, :NOTICE, :CONTACT)';
+
       if vCustomerInfo.Customer_ID <> -1 then
       begin
         ParamByName('CUSTOMER_ID').AsInteger := vCustomerInfo.Customer_ID;
@@ -422,6 +442,7 @@ begin
         ParamByName('HOUSE_ID').AsInteger := LupHOUSE.Value;
         ParamByName('FLAT_NO').AsString := eFLAT_NO.Text;
       end;
+
       ParamByName('RC_TYPE').AsInteger := cbRecourse.Value;
       ParamByName('NOTICE').AsString := mmoNotice.Lines.Text;
       ParamByName('CONTACT').AsString := edtContact.Text;
@@ -455,7 +476,7 @@ begin
         then ReguestExecute (aRequest, vCustomerInfo.CUSTOMER_ID, aMode)
         else ReguestExecute (aRequest, -1, aMode);
       }
-      if Assigned(fCallBack) then
+      if (not NeedRequest) and Assigned(fCallBack) then
       begin
         try // ловим момент если вдруг вызывающая форма закрыта
           fCallBack;
@@ -475,9 +496,12 @@ begin
   if NeedRequest then
   begin
     if cid <> -1 then
-      NewRequest(cid)
+      NewRequest(cid, fCallBack, False, Trim(edtContact.Text), Trim(mmoNotice.Lines.Text))
     else
-      NewRequestByAdres(s, h, f);
+    begin
+      if ((s > -1) and (h > -1)) then
+        NewRequestByAdres(s, h, f, Trim(edtContact.Text), Trim(mmoNotice.Lines.Text));
+    end;
   end;
 end;
 
@@ -509,7 +533,8 @@ end;
 procedure TRecourseForm.DBLookupComboboxClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
-    Exit;
+    exit;
+
   if not(Sender as TDBLookupComboboxEh).ListVisible then
     (Sender as TDBLookupComboboxEh).DropDown
   else

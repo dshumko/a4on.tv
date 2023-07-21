@@ -45,6 +45,7 @@ type
     procedure chkGroupClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure dbGridColumns4GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridDblClick(Sender: TObject);
   private
     { Private declarations }
     FFirstOpen: Boolean;
@@ -64,7 +65,7 @@ var
 implementation
 
 uses
-  DM, RecourseForma, MAIN, PeriodForma, AtrStrUtils, CF, pFIBProps;
+  DM, RecourseForma, MAIN, PeriodForma, AtrStrUtils, CF, pFIBProps, atrCmdUtils;
 
 {$R *.dfm}
 
@@ -142,6 +143,34 @@ begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
 
+end;
+
+procedure TRecoursesForm.dbGridDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
+  i: Integer;
+begin
+  inherited;
+
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbGrid.ScreenToClient(ScrPt);
+  Cell := dbGrid.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbGrid.Fields[Cell.X - 1].FieldName);
+  if (s = 'NOTICE') then
+  begin
+    if not dbGrid.DataSource.DataSet.FieldByName('NOTICE').IsNull then
+    begin
+      s := dbGrid.DataSource.DataSet.FieldByName('NOTICE').AsString;
+      if s.ToUpper.Contains('HTTP') then
+      begin
+        i := Pos('HTTP', s.ToUpper);
+        s := Copy(s, i, 1000);
+        atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
+      end
+    end;
+  end;
 end;
 
 procedure TRecoursesForm.FormActivate(Sender: TObject);

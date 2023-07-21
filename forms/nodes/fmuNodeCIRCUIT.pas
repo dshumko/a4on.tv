@@ -72,7 +72,7 @@ procedure TapgNodeCIRCUIT.InitForm;
 var
   FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
+  FullAccess := (dmMain.AllowedAction(rght_Comm_Nodes)) or (dmMain.AllowedAction(rght_Comm_Nodes));
 
   tbAttributes.Visible := FullAccess;
   // actAdd.Visible := tbAttributes.Visible;
@@ -90,7 +90,7 @@ begin
   if FDataSource.DataSet.RecordCount = 0 then
     Exit;
 
-  if (not dmMain.AllowedAction(rght_Dictionary_Nodes)) then
+  if (not dmMain.AllowedAction(rght_Comm_Nodes)) then
     Exit;
 
   dlgOpen.Filter := 'Изображения|*.png; *.jpg; *.jpeg|jpg|*.jpg; *.jpeg|png|*.png';
@@ -149,7 +149,7 @@ begin
   if dsCircuit.RecordCount = 0 then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_Nodes))) then
+  if (not(dmMain.AllowedAction(rght_Comm_Nodes))) then
     Exit;
 
   if (MessageDlg(Format(rsDeleteWithName, [dsCircuit['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
@@ -166,7 +166,7 @@ begin
   if FDataSource.DataSet.RecordCount = 0 then
     Exit;
 
-  if (not dmMain.AllowedAction(rght_Dictionary_Nodes)) then
+  if (not dmMain.AllowedAction(rght_Comm_Nodes)) then
     Exit;
 
   CircuitData := TMemoryStream.Create;

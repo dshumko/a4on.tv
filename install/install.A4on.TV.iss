@@ -1,15 +1,15 @@
 ﻿#define MyAppName "A4on.TV"
-#define Client "Free" 
-;#define Client "ООО «ТЕЛЕМАКС»" 
-#define City   "" 
+;#define Client "Free" 
+#define Client "ОАО «Спутник-ТВ»" 
+#define City   "Осиповичи" 
+#define SetupName "SputnikTV"
 ;#define City   "Каменка" 
 
-#define MyAppVerName "21.4"
+#define MyAppVerName "23.5"
 #define MyAppURL "http://A4on.TV"
 #define MyAppExeName "A4ON.exe"
 
 #define a4files "D:\PROJECTS\A4ON.TV\Sources\Install" 
-
 
 #define EPG
 ;#define FBEMBDED
@@ -22,9 +22,9 @@
 #undef FBEMBDED
 #endif
 
-#define SMARTID
+;#define SMARTID
 
-#define fbfiles "D:\SUBD\Firebird\30x"
+#define fbfiles "D:\RDBMS\Firebird\30x"
 
 #if "Free" == Client
   #define ReadMeFile "readme_free.txt"
@@ -42,7 +42,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={code:GetNoSystemDrive}\A4ON.TV
 DefaultGroupName={#MyAppName}
-AppCopyright=Copyright (C) 2005-2021 Шумко Дмитрий
+AppCopyright=Copyright (C) 2005-2023 Шумко Дмитрий
 AppContact=post@a4on.tv
 AppComments=Дистрибутив системы A4on.TV ( {#Client} {#City})
 OutputDir=setup
@@ -53,8 +53,8 @@ VersionInfoVersion={#MyAppVerName}
 OutputBaseFilename=a4on_demo
 LicenseFile={#a4files}\license_free.txt
 #else
-OutputBaseFilename=a4on_{#City}
-LicenseFile={#a4files}\license.txt
+OutputBaseFilename=A4on_{#SetupName}
+LicenseFile={#a4files}\license.rtf
 #endif
 
 Compression=lzma
@@ -84,10 +84,12 @@ Name: SingleComponent; Description: "Однопользовательская у
 
 [Files]
 Source: "compiler:IStool\isxdl.dll";                                                                                                          Flags: dontcopy
-Source: "DB\*";                              DestDir: "{app}\DB";                Components: ServerComponent SingleComponent;                 Flags: ignoreversion recursesubdirs uninsneveruninstall
+Source: "DB\*.FDB";                          DestDir: "{app}\DB";                Components: ServerComponent SingleComponent;                 Flags: ignoreversion recursesubdirs uninsneveruninstall
 Source: "A4ON.exe";                          DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
-Source: "{#a4files}\libcrypto-1_1.dll";      DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
-Source: "{#a4files}\libssl-1_1.dll";         DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
+Source: "{#a4files}\libcrypto-3.dll";        DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
+Source: "{#a4files}\libssl-3.dll";           DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
+Source: "{#a4files}\legacy.dll";             DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
+Source: "{#a4files}\frx_pdfium.dll";         DestDir: "{app}";                   Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion
 Source: "{#a4files}\local\*";                DestDir: "{localappdata}";          Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion recursesubdirs
 Source: "{#a4files}\{#ReadMeFile}";          DestDir: "{app}";DestName:"readme.txt";Components: ServerComponent ClientComponent SingleComponent; Flags: ignoreversion isreadme
 ;Source: "WWW\*";                     DestDir: "{app}\WWW";                       Components: ServerComponent;                                 Flags: ignoreversion
@@ -112,7 +114,7 @@ Source: "{#fbfiles}\icuuc52.dll";            DestDir: "{app}";                  
 Source: "{#fbfiles}\msvcp100.dll";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 Source: "{#fbfiles}\msvcr100.dll";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 #else
-Source: "{#fbfiles}\system32\vccrt10_Win32.msi";DestDir:"{tmp}";MinVersion: 0,5.0;Components: ClientComponent;
+;Source: "{#fbfiles}\system32\vccrt10_Win32.msi";DestDir:"{tmp}";MinVersion: 0,5.0;Components: ClientComponent;
 #endif
 
 #ifdef CONAX
@@ -142,8 +144,8 @@ Name: "{userdesktop}\OpenEPG.cmd";  Filename: "{app}\EPG\OpenEPG.cmd"; Tasks: de
 #endif
 
 [Run]
-Filename: msiexec.exe; Parameters: "/qn /norestart /i ""{tmp}\vccrt10_Win32.msi"" /L*v ""{tmp}\vccrt10_Win32.log"" "; Components: ClientComponent;
-Filename: "{app}\{#MyAppExeName}";    Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent; Parameters: /p:masterkey
+;Filename: msiexec.exe; Parameters: "/qn /norestart /i ""{tmp}\vccrt10_Win32.msi"" /L*v ""{tmp}\vccrt10_Win32.log"" "; Components: ClientComponent;
+;Filename: "{app}\{#MyAppExeName}";    Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent; Parameters: /p:masterkey
 #ifdef EPG
 ;Filename: "{app}\Service_Install.bat";  Parameters: "install"; Description: "Установить OpenEPG как сервис"; Flags: nowait postinstall
 #endif
@@ -436,7 +438,7 @@ procedure CreateOpenEpgINI(strFilename, strAddLine: String);
 var
   text : TArrayOfString;
 begin
-  SetArrayLength(text, 19);
+  SetArrayLength(text, 20);
   text[0] := '[EPG]                         ; Настройки. текст после ; комментарий. строки которые закоментированы, это значения по умолчанию ';
   text[1] := 'DB_NAME = ' + strAddLine + ' ; база данных с epg';
   text[2] := ';DB_USER = SYSDBA             ; пользователь Firebird для чтения базы данных A4on.TV';
@@ -630,7 +632,7 @@ var
 begin
   { Fill the 'Ready Memo' with the normal settings and the custom settings }
   S := MemoUserInfoInfo + NewLine + MemoDirInfo + NewLine + MemoTypeInfo + NewLine +  MemoGroupInfo + NewLine + MemoTasksInfo + NewLine;
-
+  // S := GetFirebirdDir+'databases.conf' + NewLine + S;
   Result := S;
 end;
 
@@ -684,7 +686,7 @@ var
 begin
   if FinishedInstall then begin
 
-    Contora := '{#Client}';
+    Contora := '{#SetupName}';
 
     #if "Free" == Client
     DB    := 'DB\A4ON_FREE.FDB';
@@ -696,17 +698,15 @@ begin
 
     if IsComponentSelected('ServerComponent')
     then begin
-      ININame := GetFirebirdDir+'\databases.conf';
-      AddTextToFile(ININame, ALIAS+'='+ExpandConstant('{app}')+'\'+DB ); // если на сервере то пропишем в файл aliases.conf путь к БД
-      #if "Free" == Client
-      AddTextToFile(ININame, 'A4ON_DB='+ExpandConstant('{app}')+'\'+DB ); // если на сервере то пропишем в файл aliases.conf путь к БД
-      #endif
+      ININame := GetFirebirdDir+'databases.conf';
+      AddTextToFile(ININame, ALIAS+'='+ExpandConstant('{app}')+'\'+DB ); // если на сервере то пропишем в файл databases.conf путь к БД
       DB      := '127.0.0.1:'+ALIAS;
     end
-    else
+    else begin
       if IsComponentSelected('ClientComponent')
       then DB := IPadres+':'+ALIAS
       else DB := ExpandConstant('{app}')+'\'+DB;
+    end;
 
     #ifdef EPG
     ININame   := ExpandConstant('{app}')+'\EPG\OpenEPG.INI';

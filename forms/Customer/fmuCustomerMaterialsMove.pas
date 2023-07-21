@@ -123,12 +123,12 @@ begin
 
   if Grouping then begin
     dsMat.SelectSQL.Add('  , ''Итого'' OPER, NULL RQ_ID, NULL RQ_EXEC_TIME');
-    dsMat.SelectSQL.Add('  , m.DESCRIPTION NOTICE, null NOT_CALC');
+    dsMat.SelectSQL.Add('  , m.DESCRIPTION NOTICE, null CALC');
     dsMat.SelectSQL.Add('  , SUM(NM.MT * NM.QUANT) QNT');
   end
   else begin
     dsMat.SelectSQL.Add('  , iif(NM.MT = 1, ''Установка'', ''Возврат'') OPER, NM.RQ_ID, NM.RQ_EXEC_TIME');
-    dsMat.SelectSQL.Add('  , NM.NOTICE, NM.NOT_CALC');
+    dsMat.SelectSQL.Add('  , NM.NOTICE, NM.CALC');
     dsMat.SelectSQL.Add('  , NM.MT * NM.QUANT QNT');
   end;
 
@@ -141,7 +141,7 @@ begin
   dsMat.SelectSQL.Add('        , R.RQ_ID');
   dsMat.SelectSQL.Add('        , R.RQ_EXEC_TIME');
   dsMat.SelectSQL.Add('        , RM.WH_ID');
-  dsMat.SelectSQL.Add('        , RM.NOT_CALC');
+  dsMat.SelectSQL.Add('        , RM.CALC');
   dsMat.SelectSQL.Add('      from REQUEST R');
   dsMat.SelectSQL.Add('          inner join REQUEST_MATERIALS RM on (R.RQ_ID = RM.RQ_ID)');
   dsMat.SelectSQL.Add('      where R.Rq_Customer = :CUSTOMER_ID');
@@ -155,7 +155,7 @@ begin
   dsMat.SelectSQL.Add('        , R.RQ_ID');
   dsMat.SelectSQL.Add('        , R.RQ_EXEC_TIME');
   dsMat.SelectSQL.Add('        , RM.WH_ID');
-  dsMat.SelectSQL.Add('        , 0 NOT_CALC');
+  dsMat.SelectSQL.Add('        , 0 CALC');
   dsMat.SelectSQL.Add('      from REQUEST R');
   dsMat.SelectSQL.Add('          inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = RM.RQ_ID)');
   dsMat.SelectSQL.Add('      where R.Rq_Customer = :CUSTOMER_ID) NM');

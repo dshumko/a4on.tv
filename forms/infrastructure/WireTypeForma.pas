@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  PrjConst,
   CnErrorProvider, DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -109,10 +111,12 @@ procedure TWireTypeForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; 
 begin
   inherited;
   if not dsType.FieldByName('O_DIMENSION').IsNull then
+  begin
     try
       Background := StringToColor(dsType.FieldByName('O_DIMENSION').Value);
     except
     end;
+  end;
 end;
 
 procedure TWireTypeForm.actDeleteExecute(Sender: TObject);
@@ -138,7 +142,7 @@ var
   vFull: Boolean;
 begin
   inherited;
-  vFull := dmMain.AllowedAction(rght_Dictionary_Nodes);
+  vFull := dmMain.AllowedAction(rght_Comm_Nodes);
   fCanEdit := vFull;
   fCanCreate := fCanEdit;
   actNew.Visible := fCanEdit;

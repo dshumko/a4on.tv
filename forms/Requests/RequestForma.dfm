@@ -38,34 +38,28 @@ object RequestForm: TRequestForm
     ExplicitTop = 525
     ExplicitWidth = 784
     ExplicitHeight = 37
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
-      Left = 359
+      Left = 360
       Top = 6
-      Width = 207
+      Width = 250
       Height = 27
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 359
+      ExplicitLeft = 360
       ExplicitTop = 6
-      ExplicitWidth = 207
+      ExplicitWidth = 250
       ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
-      Left = 582
+      Left = 616
       Top = 6
-      Width = 200
+      Width = 166
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
-      ExplicitLeft = 582
+      ExplicitLeft = 616
       ExplicitTop = 6
-      ExplicitWidth = 200
+      ExplicitWidth = 166
       ExplicitHeight = 27
     end
   end
@@ -452,7 +446,6 @@ object RequestForm: TRequestForm
             Width = 370
             Height = 83
             OnDblClick = CustomerInfoFrmlblFIODblClick
-            ExplicitTop = 52
             ExplicitWidth = 370
             ExplicitHeight = 83
           end
@@ -463,7 +456,6 @@ object RequestForm: TRequestForm
           end
           inherited lblDebt: TDBEditEh
             Width = 370
-            ShowHint = True
             Text = #1044#1054#1051#1043
             ExplicitWidth = 370
           end
@@ -476,13 +468,17 @@ object RequestForm: TRequestForm
     Top = 188
     Width = 784
     Height = 337
-    ActivePage = tabRequest
+    ActivePage = tabExecute
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
     OnChanging = PageControlChanging
     object tabRequest: TTabSheet
       Caption = #1055#1088#1080#1077#1084
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter: TSplitter
         Left = 0
         Top = 112
@@ -502,11 +498,10 @@ object RequestForm: TRequestForm
         object Label5: TLabel
           Left = 0
           Top = 29
-          Width = 776
+          Width = 67
           Height = 13
           Align = alTop
           Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          ExplicitWidth = 67
         end
         object mmoNotice: TDBMemoEh
           Left = 0
@@ -727,6 +722,10 @@ object RequestForm: TRequestForm
     object tabGiveReq: TTabSheet
       Caption = #1042#1099#1076#1072#1095#1072
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel12: TPanel
         Left = 0
         Top = 33
@@ -879,6 +878,10 @@ object RequestForm: TRequestForm
     object tabExecute: TTabSheet
       Caption = ' '#1042#1099#1087#1086#1083#1085#1077#1085#1080#1077' '
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object spl2: TSplitter
         Left = 0
         Top = 238
@@ -1029,7 +1032,7 @@ object RequestForm: TRequestForm
               183)
             object lbl1: TLabel
               Left = 4
-              Top = 37
+              Top = 30
               Width = 58
               Height = 13
               Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099
@@ -1045,7 +1048,7 @@ object RequestForm: TRequestForm
             end
             object btnMaterials: TButton
               Left = 4
-              Top = 58
+              Top = 45
               Width = 90
               Height = 21
               Action = actMaterials
@@ -1054,12 +1057,21 @@ object RequestForm: TRequestForm
             end
             object btnMatIn: TButton
               Left = 4
-              Top = 88
+              Top = 69
               Width = 90
               Height = 21
               Action = actMatIn
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
+            end
+            object btnBuyback: TButton
+              Left = 4
+              Top = 93
+              Width = 90
+              Height = 21
+              Action = actBuyback
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 3
             end
           end
           object pnlGrids: TPanel
@@ -1108,7 +1120,7 @@ object RequestForm: TRequestForm
                 item
                   AutoFitColWidth = False
                   CellButtons = <>
-                  DisplayFormat = '#,##0.#####'
+                  DisplayFormat = ',0.#####'
                   DynProps = <>
                   EditButtons = <>
                   FieldName = 'QNT'
@@ -1118,7 +1130,7 @@ object RequestForm: TRequestForm
                 item
                   AutoFitColWidth = False
                   CellButtons = <>
-                  DisplayFormat = '#.##'
+                  DisplayFormat = ',0.##'
                   DynProps = <>
                   EditButtons = <>
                   FieldName = 'TIME_TOTAL'
@@ -1129,11 +1141,11 @@ object RequestForm: TRequestForm
                 item
                   AutoFitColWidth = False
                   CellButtons = <>
-                  DisplayFormat = '#,##'
+                  DisplayFormat = ',0.##'
                   DynProps = <>
                   EditButtons = <>
                   FieldName = 'COST'
-                  Footer.DisplayFormat = '#,##'
+                  Footer.DisplayFormat = ',0.##'
                   Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
@@ -1198,7 +1210,7 @@ object RequestForm: TRequestForm
                 item
                   AutoFitColWidth = False
                   CellButtons = <>
-                  DisplayFormat = '#,##0.#####'
+                  DisplayFormat = ',0.#####'
                   DynProps = <>
                   EditButtons = <>
                   FieldName = 'QNT'
@@ -1222,22 +1234,22 @@ object RequestForm: TRequestForm
                     '3')
                   NotInKeyListIndex = 0
                   PickList.Strings = (
-                    #1053#1072#1095#1080#1089#1083#1103#1090#1100
-                    #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
-                    #1040#1088#1077#1085#1076#1072
-                    #1056#1072#1089#1089#1088#1086#1095#1082#1072)
+                    #1055#1088#1086#1076#1072#1078#1072
+                    #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1072#1088#1077#1085#1076#1072' '#1073#1077#1079' '#1086#1087#1083#1072#1090#1099')'
+                    #1056#1072#1089#1089#1088#1086#1095#1082#1072
+                    #1040#1088#1077#1085#1076#1072)
                   Title.Alignment = taCenter
                   Title.Caption = #1053#1072#1095#1080#1089#1083'.'
-                  Width = 38
+                  Width = 48
                 end
                 item
                   AutoFitColWidth = False
                   CellButtons = <>
-                  DisplayFormat = '#,##0.#####'
+                  DisplayFormat = ',0.#####'
                   DynProps = <>
                   EditButtons = <>
                   FieldName = 'COST'
-                  Footer.DisplayFormat = '#,##'
+                  Footer.DisplayFormat = ',0.##'
                   Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
@@ -1278,11 +1290,10 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 115
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
-          ExplicitWidth = 115
         end
         object splFlats: TSplitter
           Left = 373
@@ -1397,6 +1408,10 @@ object RequestForm: TRequestForm
     object tabFiles: TTabSheet
       Caption = #1060#1086#1090#1086
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object spl1: TSplitter
         Left = 369
         Top = 0
@@ -1483,6 +1498,10 @@ object RequestForm: TRequestForm
     object tabComments: TTabSheet
       Caption = #1050#1086#1084#1084#1077#1085#1090#1072#1088#1080#1080
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnlButtons: TPanel
         Left = 0
         Top = 0
@@ -1651,7 +1670,7 @@ object RequestForm: TRequestForm
   object btnPrint: TButton
     Left = 218
     Top = 531
-    Width = 124
+    Width = 136
     Height = 27
     Action = actPrint
     Anchors = [akLeft, akBottom]
@@ -1982,6 +2001,11 @@ object RequestForm: TRequestForm
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       OnExecute = actOpenHouseExecute
     end
+    object actBuyback: TAction
+      Caption = #1042#1099#1082#1091#1087' (F9)'
+      ShortCut = 120
+      OnExecute = actBuybackExecute
+    end
   end
   object srcErrors: TDataSource
     DataSet = dsErrors
@@ -2142,6 +2166,7 @@ object RequestForm: TRequestForm
     OpenDataSource = False
     DataSet = dsRequests
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 444
     Top = 98
   end
@@ -2178,7 +2203,7 @@ object RequestForm: TRequestForm
     Top = 21
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]

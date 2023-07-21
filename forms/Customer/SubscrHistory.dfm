@@ -2,7 +2,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
   Left = 518
   Top = 190
   Caption = #1048#1089#1090#1086#1088#1080#1103' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1081
-  ClientHeight = 327
+  ClientHeight = 383
   ClientWidth = 894
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,6 +15,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
   Position = poOwnerFormCenter
   ShowHint = True
   OnClose = FormClose
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -93,6 +94,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'STATE_DATE'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1089#1090#1072#1090#1091#1089#1072
           Width = 78
         end
@@ -102,6 +104,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'STATE_SRV_NAME'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1059#1089#1083#1091#1075#1072' '#1080#1079#1084'. '#1089#1090#1072#1090#1091#1089#1072
           Width = 134
         end
@@ -121,7 +124,6 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'CONTRACT'
           Footers = <>
-          ReadOnly = True
           Title.Caption = #1044#1086#1075#1086#1074#1086#1088
           Width = 76
         end
@@ -131,7 +133,6 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'CONTRACT_DATE'
           Footers = <>
-          ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1076#1086#1075'.'
           Width = 87
         end>
@@ -184,7 +185,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     Left = 0
     Top = 153
     Width = 894
-    Height = 174
+    Height = 230
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -192,10 +193,10 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     object dbgCustSubscrServHist: TDBGridEh
       Left = 0
       Top = 0
-      Width = 894
-      Height = 174
+      Width = 868
+      Height = 230
       Align = alClient
-      AllowedOperations = []
+      AllowedOperations = [alopUpdateEh]
       DataSource = srcServicesHistory
       DynProps = <>
       Flat = True
@@ -207,6 +208,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       SearchPanel.Enabled = True
       SearchPanel.FilterOnTyping = True
       TabOrder = 0
+      TitleParams.MultiTitle = True
+      OnExit = dbgCustSubscrServHistExit
       Columns = <
         item
           AutoFitColWidth = False
@@ -215,7 +218,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'DATE_FROM'
           Footers = <>
-          Title.Alignment = taCenter
+          ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1087#1086#1076#1082#1083
           Width = 80
         end
@@ -226,9 +229,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'ON_NAME'
           Footers = <>
           ReadOnly = True
-          Title.Alignment = taCenter
           Title.Caption = #1059#1089#1083'. '#1087#1086#1076#1082#1083'.'
-          Width = 167
+          Width = 130
         end
         item
           AutoFitColWidth = False
@@ -237,9 +239,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'DATE_TO'
           Footers = <>
-          Title.Alignment = taCenter
+          ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1086#1090#1082#1083
-          Width = 80
+          Width = 78
         end
         item
           CellButtons = <>
@@ -248,9 +250,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'OFF_NAME'
           Footers = <>
           ReadOnly = True
-          Title.Alignment = taCenter
           Title.Caption = #1059#1089#1083'. '#1086#1090#1082#1083'.'
-          Width = 189
+          Width = 126
         end
         item
           CellButtons = <>
@@ -258,6 +259,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'WHO_ADD'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1083
           Width = 81
         end
@@ -267,6 +269,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'ADDED_ON'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1050#1086#1075#1076#1072' '#1087#1086#1076#1082#1083'.'
           Width = 84
         end
@@ -276,6 +279,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'WHO_CHANGE'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1054#1090#1082#1083#1102#1095#1080#1083
           Width = 74
         end
@@ -285,6 +289,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'CLOSED_ON'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1050#1086#1075#1076#1072' '#1086#1090#1082#1083'.'
           Visible = False
           Width = 101
@@ -295,8 +300,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'WORKER_ON'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1057#1086#1090#1088'-'#1082' '#1087#1086#1076#1082#1083'.'
-          Width = 92
+          Width = 87
         end
         item
           CellButtons = <>
@@ -304,7 +310,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'WORKER_OFF'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1057#1086#1090#1088'-'#1082' '#1086#1090#1082#1083'.'
+          Width = 55
         end
         item
           CellButtons = <>
@@ -312,6 +320,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'REQ_ON'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1047#1072#1103#1074#1082#1072' '#1087#1086#1076#1082#1083'.'
           Width = 66
         end
@@ -321,6 +330,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           EditButtons = <>
           FieldName = 'REQ_OFF'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #1047#1072#1103#1074#1082#1072' '#1086#1090#1082#1083'.'
         end
         item
@@ -338,8 +348,45 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'CONTRACT_DATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1076#1086#1075#1086#1074#1086#1088#1072
+          Width = 58
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'DAYS_ON'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #1055#1086#1076#1082#1083'. '#1076#1085#1077#1081
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
+      end
+    end
+    object pnlBtnsHst: TPanel
+      Left = 868
+      Top = 0
+      Width = 26
+      Height = 230
+      Align = alRight
+      BevelOuter = bvNone
+      TabOrder = 1
+      Visible = False
+      object btnOkHst: TSpeedButton
+        Left = 2
+        Top = 2
+        Width = 23
+        Height = 22
+        Action = actOkHst
+        Flat = True
+      end
+      object btnCancelHst: TSpeedButton
+        Left = 2
+        Top = 42
+        Width = 23
+        Height = 22
+        Action = actCancelHst
+        Flat = True
       end
     end
   end
@@ -390,6 +437,16 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       ShortCut = 16430
       OnExecute = actDelExecute
     end
+    object actOkHst: TAction
+      Hint = #1055#1086#1076#1074#1077#1088#1076#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1077
+      ImageIndex = 25
+      OnExecute = actOkHstExecute
+    end
+    object actCancelHst: TAction
+      Hint = #1054#1084#1077#1085#1080#1090#1100' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1077
+      ImageIndex = 26
+      OnExecute = actCancelHstExecute
+    end
   end
   object srcServices: TDataSource
     DataSet = dsServices
@@ -399,13 +456,20 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     Top = 58
   end
   object srcServicesHistory: TDataSource
-    AutoEdit = False
     DataSet = dsServicesHistory
     OnStateChange = srcServicesHistoryStateChange
     Left = 178
     Top = 237
   end
   object dsServicesHistory: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE SUBSCR_HIST'
+      'SET '
+      '    CONTRACT = :CONTRACT,'
+      '    CONTRACT_DATE = :CONTRACT_DATE'
+      'WHERE'
+      '    SUBSCR_HIST_ID = :OLD_SUBSCR_HIST_ID'
+      '    ')
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    SUBSCR_HIST'
@@ -436,6 +500,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     SelectSQL.Strings = (
       'select '
       ' h.*, s_on.NAME as ON_NAME, s_off.NAME as OFF_NAME,'
+      
+        ' datediff(day, iif(h.Date_From = '#39'2100-1-1'#39', current_date,  h.Da' +
+        'te_From), h.Date_To) DAYS_ON,'
       
         ' coalesce((select first 1 w.Surname FROM worker w where w.Ibname' +
         ' = h.Added_By), h.Added_By)  as WHO_ADD,'
@@ -469,7 +536,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     UpdateSQL.Strings = (
       'UPDATE SUBSCR_SERV'
       'SET '
-      '    STATE_SGN = :STATE_SGN'
+      '    STATE_SGN = :STATE_SGN,'
+      '    CONTRACT = :CONTRACT,'
+      '    CONTRACT_DATE = :CONTRACT_DATE'
       'WHERE'
       '    SUBSCR_SERV_ID = :OLD_SUBSCR_SERV_ID'
       '    ')
@@ -478,25 +547,22 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       '    ')
     RefreshSQL.Strings = (
       'select'
-      ' SS.CUSTOMER_ID,'
-      ' SS.SERV_ID,'
-      ' SS.SUBSCR_SERV_ID,'
-      ' SS.STATE_SGN,'
-      ' ss.Contract,'
-      ' ss.Contract_date,'
-      ' s.NAME,'
+      '    SS.*'
+      '  , s.NAME'
+      '  , st.Service_Id STATE_ID'
+      '  , st.Name STATE_SRV_NAME'
+      '  , coalesce((select first 1'
+      '                  w.Surname'
+      '                from worker w'
       
-        ' (select first 1 w.Surname FROM worker w where w.Ibname = ss.Sta' +
-        'te_Change_By) as WHO_LAST '
-      'from'
-      ' SUBSCR_SERV SS,'
-      ' SERVICES s'
-      ''
-      'where(  SS.CUSTOMER_ID=:CUSTOMER_ID'
-      'and s.SERVICE_ID = ss.SERV_ID'
-      '     ) and (     SS.SUBSCR_SERV_ID = :OLD_SUBSCR_SERV_ID'
-      '     )'
-      '    ')
+        '                where w.Ibname = ss.State_Change_By), ss.State_C' +
+        'hange_By) as WHO_LAST'
+      '  from SUBSCR_SERV SS'
+      '       inner join SERVICES s on (s.SERVICE_ID = ss.SERV_ID)'
+      
+        '       left outer join SERVICES st on (st.SERVICE_ID = ss.State_' +
+        'Srv)'
+      '  where SS.SUBSCR_SERV_ID = :OLD_SUBSCR_SERV_ID')
     SelectSQL.Strings = (
       'select'
       '    SS.*'
@@ -517,6 +583,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       '  where SS.CUSTOMER_ID = :CUSTOMER_ID'
       '  order by ss.state_sgn desc, s.name ')
     AutoCalcFields = False
+    BeforePost = dsServicesBeforePost
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

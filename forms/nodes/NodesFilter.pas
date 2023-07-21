@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit, pFIBQuery,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery,
   PrjConst;
 
 type
@@ -121,13 +121,7 @@ begin
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    else if (ActiveControl is TDBGridEh) then
-      go := False
-    else if (ActiveControl is TDBMemoEh) then
-      go := False
-    else if (ActiveControl is TDBSynEdit) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
 
     if go then
     begin

@@ -1,7 +1,7 @@
 object apgNodeMaterials: TapgNodeMaterials
   Left = 0
   Top = 0
-  Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1091#1079#1083#1072' '#1074' '#1089#1077#1090#1080
+  Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1074' '#1089#1077#1090#1080' '#1085#1072' '#1091#1079#1083#1077
   ClientHeight = 211
   ClientWidth = 779
   Color = clBtnFace
@@ -13,115 +13,6 @@ object apgNodeMaterials: TapgNodeMaterials
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object dbgMat: TDBGridEh
-    Left = 26
-    Top = 0
-    Width = 753
-    Height = 211
-    Align = alClient
-    AllowedOperations = []
-    AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
-    ColumnDefValues.AlwaysShowEditButton = True
-    ColumnDefValues.Title.TitleButton = True
-    ColumnDefValues.Title.ToolTips = True
-    ColumnDefValues.ToolTips = True
-    Ctl3D = True
-    DataGrouping.Color = clGradientInactiveCaption
-    DataGrouping.GroupRowDefValues.FooterInGroupRow = True
-    DataGrouping.GroupRowDefValues.RowHeight = 4
-    DataGrouping.GroupRowDefValues.RowLines = 1
-    DataGrouping.ParentColor = False
-    DataSource = srcMat
-    DynProps = <>
-    EditActions = [geaCopyEh, geaSelectAllEh]
-    EvenRowColor = clWindow
-    Flat = True
-    FooterRowCount = 1
-    FooterParams.Color = clWindow
-    GridLineParams.GridBoundaries = True
-    IndicatorTitle.ShowDropDownSign = True
-    IndicatorTitle.TitleButton = True
-    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
-    ParentCtl3D = False
-    ParentShowHint = False
-    RowDetailPanel.Height = 200
-    RowSizingAllowed = True
-    SearchPanel.Enabled = True
-    ShowHint = True
-    SortLocal = True
-    STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
-    STFilter.InstantApply = True
-    STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
-    SumList.Active = True
-    TabOrder = 0
-    TitleParams.MultiTitle = True
-    TitleParams.VTitleMargin = 8
-    VertScrollBar.SmoothStep = True
-    Columns = <
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'O_NAME'
-        Footers = <>
-        Title.Caption = #1058#1080#1087' '#1086'/'#1084
-        Title.Hint = #1058#1080#1087' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103'/'#1084#1072#1090#1077#1088#1080#1072#1083#1072
-        Width = 99
-      end
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'NAME'
-        Footer.ValueType = fvtCount
-        Footers = <>
-        Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
-        Width = 203
-      end
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'SERIAL'
-        Footers = <>
-        Title.Caption = #1057'/'#1053
-      end
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'DIMENSION'
-        Footers = <>
-        Title.Caption = #1045#1076'.'#1080#1079#1084'.'
-        Width = 56
-      end
-      item
-        CellButtons = <>
-        DisplayFormat = ',#.##'
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'QUANT'
-        Footer.Alignment = taRightJustify
-        Footer.DisplayFormat = ',#.##'
-        Footer.ValueType = fvtSum
-        Footers = <>
-        Title.Caption = #1050#1086#1083'-'#1074#1086
-        Width = 65
-      end
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'NOTICE'
-        Footers = <>
-        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-        Width = 216
-      end>
-    object RowDetailData: TRowDetailPanelControlEh
-    end
-  end
   object pnlButtons: TPanel
     Left = 0
     Top = 0
@@ -129,7 +20,7 @@ object apgNodeMaterials: TapgNodeMaterials
     Height = 211
     Align = alLeft
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 0
     DesignSize = (
       26
       211)
@@ -161,6 +52,41 @@ object apgNodeMaterials: TapgNodeMaterials
       Action = actFind
       Flat = True
     end
+  end
+  object dbgrd1: TDBGrid
+    Left = 26
+    Top = 0
+    Width = 753
+    Height = 211
+    Align = alClient
+    DataSource = srcMat
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'NAME'
+        Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+        Width = 130
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'SERIAL'
+        Title.Caption = #1057'/'#1053
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOTICE'
+        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Width = 334
+        Visible = True
+      end>
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -234,21 +160,20 @@ object apgNodeMaterials: TapgNodeMaterials
       '  ')
     SelectSQL.Strings = (
       'select'
-      '  o.o_name'
-      '  ,  E.Name'
+      '  e.EID'
+      '  , o.o_name'
+      '  , E.Name'
       '  , e.Mac Serial'
-      '  , '#39#39' Dimension'
       '  , e.Eid M_Id'
-      '  ,  1 Quant'
       '  , e.Notice'
       '  , '#39'e'#39' ROW_TYPE'
       '  from EQUIPMENT E'
       
         '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
         '_TYPE = 7)'
-      '  where e.Node_Id = :node_id'
+      '  where e.Node_Id = :Node_Id'
       ''
-      'order by 1,2,3')
+      'order by e.Name, e.Mac')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV

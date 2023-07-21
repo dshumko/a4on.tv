@@ -2,10 +2,9 @@ object StreetViewForm: TStreetViewForm
   Left = 378
   Top = 361
   ActiveControl = dbEditStreetName
-  BorderStyle = bsDialog
   Caption = #1059#1083#1080#1094#1072
-  ClientHeight = 207
-  ClientWidth = 382
+  ClientHeight = 240
+  ClientWidth = 394
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,11 +18,14 @@ object StreetViewForm: TStreetViewForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
+  DesignSize = (
+    394
+    240)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
-    Left = 8
-    Top = 55
+    Left = 4
+    Top = 50
     Width = 55
     Height = 13
     Caption = #1050#1086#1076' '#1091#1083#1080#1094#1099
@@ -48,7 +50,7 @@ object StreetViewForm: TStreetViewForm
     ParentFont = False
   end
   object Label9: TLabel
-    Left = 8
+    Left = 4
     Top = 7
     Width = 64
     Height = 13
@@ -61,28 +63,22 @@ object StreetViewForm: TStreetViewForm
     ParentFont = False
   end
   object Label1: TLabel
-    Left = 112
-    Top = 55
+    Left = 114
+    Top = 50
     Width = 95
     Height = 13
     Caption = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
   end
-  object Label4: TLabel
-    Left = 8
-    Top = 98
-    Width = 61
-    Height = 13
-    Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-  end
   object dblShort: TDBLookupComboboxEh
-    Left = 8
+    Left = 4
     Top = 23
-    Width = 81
+    Width = 102
     Height = 21
     DynProps = <>
     DataField = 'STREET_SHORT'
     DataSource = srcStreet
     DropDownBox.AutoDrop = True
+    EmptyDataInfo.Text = #1089#1086#1082#1088'.'
     EditButtons = <>
     KeyField = 'STRTYPE_SHORT'
     ListField = 'STRTYPE_NAME'
@@ -93,33 +89,47 @@ object StreetViewForm: TStreetViewForm
   end
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 170
-    Width = 382
+    Top = 203
+    Width = 394
     Height = 37
     Align = alBottom
-    TabOrder = 5
+    TabOrder = 7
     TabStop = True
+    ExplicitTop = 170
+    ExplicitHeight = 37
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
-      Left = 176
+      Left = 166
       Top = 8
-      Width = 106
+      Width = 142
       Enabled = False
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 176
+      ExplicitTop = 8
+      ExplicitWidth = 142
     end
     inherited bbCancel: TBitBtn
-      Left = 294
+      Left = 314
       Top = 8
+      ExplicitLeft = 324
+      ExplicitTop = 8
     end
   end
   object dbEditCode: TDBEditEh
-    Left = 8
-    Top = 71
-    Width = 81
+    Left = 4
+    Top = 69
+    Width = 102
     Height = 21
     DataField = 'STREET_CODE'
     DataSource = srcStreet
     DynProps = <>
     EditButtons = <>
+    EmptyDataInfo.Text = #1050#1086#1076' '#1091#1083#1080#1094#1099
     ShowHint = True
     TabOrder = 2
     Visible = True
@@ -127,12 +137,14 @@ object StreetViewForm: TStreetViewForm
   object dbEditStreetName: TDBEditEh
     Left = 112
     Top = 23
-    Width = 257
+    Width = 277
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DataField = 'STREET_NAME'
     DataSource = srcStreet
     DynProps = <>
     EditButtons = <>
+    EmptyDataInfo.Text = #1053#1072#1080#1084#1077#1085#1086#1074#1085#1080#1077
     ShowHint = True
     TabOrder = 1
     Visible = True
@@ -140,13 +152,15 @@ object StreetViewForm: TStreetViewForm
   end
   object dblArea: TDBLookupComboboxEh
     Left = 112
-    Top = 74
-    Width = 257
+    Top = 69
+    Width = 277
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = 'AREA_ID'
     DataSource = srcStreet
     DropDownBox.AutoDrop = True
+    EmptyDataInfo.Text = #1053#1072#1089'. '#1087#1091#1085#1082#1090
     EditButtons = <
       item
         ShortCut = 45
@@ -161,19 +175,51 @@ object StreetViewForm: TStreetViewForm
     Visible = True
   end
   object DBMemo1: TDBMemoEh
-    Left = 8
-    Top = 114
-    Width = 363
-    Height = 50
+    Left = 4
+    Top = 128
+    Width = 385
+    Height = 73
+    Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'NOTICE'
     DataSource = srcStreet
     DynProps = <>
     EditButtons = <>
+    EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+    ShowHint = True
+    TabOrder = 6
+    Visible = True
+    WantReturns = True
+  end
+  object ednTAG: TDBNumberEditEh
+    Left = 4
+    Top = 98
+    Width = 102
+    Height = 21
+    Hint = #1062#1080#1092#1088#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1076#1083#1103' '#1080#1089#1087#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1077' '#1086#1087#1077#1088#1072#1090#1086#1088#1086#1084' (TAG)'
+    DataField = 'TAG'
+    DecimalPlaces = 8
+    DynProps = <>
+    EmptyDataInfo.Text = #1062#1080#1092#1088#1086#1074#1086#1077' '#1087#1086#1083#1077
+    EditButtons = <>
     ShowHint = True
     TabOrder = 4
     Visible = True
-    WantReturns = True
+  end
+  object edtTAGSTR: TDBEditEh
+    Left = 114
+    Top = 98
+    Width = 275
+    Height = 21
+    Hint = #1058#1077#1082#1089#1090#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1076#1083#1103' '#1080#1089#1087#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1077' '#1086#1087#1077#1088#1072#1090#1086#1088#1086#1084' (TAG_STR)'
+    Anchors = [akLeft, akTop, akRight]
+    DataField = 'TAG_STR'
+    DynProps = <>
+    EditButtons = <>
+    EmptyDataInfo.Text = #1058#1077#1082#1089#1090#1086#1074#1086#1077' '#1087#1086#1083#1077
+    ShowHint = True
+    TabOrder = 5
+    Visible = True
   end
   object srcAreas: TDataSource
     AutoEdit = False
@@ -267,7 +313,9 @@ object StreetViewForm: TStreetViewForm
       '    STREET_SHORT = :STREET_SHORT,'
       '    STREET_NAME = :STREET_NAME,'
       '    AREA_ID = :AREA_ID,'
-      '    NOTICE = :NOTICE'
+      '    NOTICE = :NOTICE,'
+      '    TAG = :TAG,'
+      '    TAG_STR = :TAG_STR'
       'WHERE'
       '    STREET_ID = :OLD_STREET_ID'
       '    ')
@@ -284,7 +332,9 @@ object StreetViewForm: TStreetViewForm
       '    STREET_SHORT,'
       '    STREET_NAME,'
       '    AREA_ID,'
-      '    NOTICE'
+      '    NOTICE,'
+      '    TAG,'
+      '    TAG_STR'
       ')'
       'VALUES('
       '    :STREET_ID,'
@@ -292,7 +342,9 @@ object StreetViewForm: TStreetViewForm
       '    :STREET_SHORT,'
       '    :STREET_NAME,'
       '    :AREA_ID,'
-      '    :NOTICE'
+      '    :NOTICE,'
+      '    :TAG,'
+      '    :TAG_STR'
       ')')
     RefreshSQL.Strings = (
       '')
@@ -303,7 +355,7 @@ object StreetViewForm: TStreetViewForm
     Transaction = trSRead
     Database = dmMain.dbTV
     UpdateTransaction = trSWrite
-    Left = 176
+    Left = 128
     Top = 39
   end
   object trSRead: TpFIBTransaction

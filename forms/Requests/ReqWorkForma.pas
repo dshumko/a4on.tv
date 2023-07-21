@@ -72,8 +72,11 @@ begin
     try
       dsWork.ParamByName('W_ID').AsInteger := aW_ID;
       dsWork.Open;
+      dsService.ParamByName('W_ID').AsInteger := aW_ID;
       dsService.Open;
+      dsAttributes.ParamByName('W_ID').AsInteger := aW_ID;
       dsAttributes.Open;
+      dsServiceON.ParamByName('W_ID').AsInteger := aW_ID;
       dsServiceON.Open;
 
       if aW_ID = -1 then

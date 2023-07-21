@@ -43,7 +43,7 @@ var
 implementation
 
 uses
-  DM, httpsend, ssl_openssl, JsonDataObjects, OXmlReadWrite, OXmlUtils, OXmlPDOM;
+  DM, httpsend, ssl_openssl3, JsonDataObjects, OXmlReadWrite, OXmlUtils, OXmlPDOM;
 
 {$R *.dfm}
 

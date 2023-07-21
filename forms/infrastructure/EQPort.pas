@@ -57,6 +57,7 @@ type
     FPort: String;
     FNode_ID: Integer;
     FCanEditPort: Boolean;
+    FEnterSecondPress: Boolean;
     function CheckData: Boolean;
     procedure SaveAndClose;
     procedure SetEquipment(const value: TEquipmentRecord);
@@ -131,18 +132,33 @@ procedure TEQPortForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -176,8 +192,8 @@ begin
   end;
 
   FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full);
-  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Nodes);
-  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Node_Links);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Comm_Nodes);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Comm_Node_Links);
 
   lcbWIRE.EditButtons.Items[0].Visible := FCanEditPort;
 end;
@@ -371,7 +387,7 @@ begin
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trReadQ;
     fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id, p.WLABEL';
-    fq.sql.Add('from Port p inner join Equipment e on (p.Eid = e.Eid)');
+    fq.sql.Add('from Port p left outer join Equipment e on (p.Eid = e.Eid)');
     fq.sql.Add('where p.Eid = :Eid and p.Port = :Port');
     fq.ParamByName('Eid').AsInteger := FEqRecord.ID;
     fq.ParamByName('Port').AsString := FPort;

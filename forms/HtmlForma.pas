@@ -5,8 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus, Vcl.ComCtrls,
-  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView, IdBaseComponent, IdComponent,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus,
+  Vcl.ComCtrls,
+  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView, IdBaseComponent,
+  IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, UrlConn,
   PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser;
 
@@ -72,6 +74,8 @@ type
 function GetHtml(const Url: string = 'localhost'; const User: string = ''; const Pswd: string = '';
   const Data: string = ''; const ExExit: Boolean = False; const Title: string = ''): string;
 
+procedure ShowHtml(const Url: string = 'localhost'; const html: string = ''; const Title: string = '');
+
 implementation
 
 uses
@@ -89,6 +93,7 @@ begin
 
   HtmlForm := THtmlForm.Create(Application);
   with HtmlForm do
+  begin
     try
       ExitOnExucute := ExExit;
       HttpUrl := Url;
@@ -102,6 +107,28 @@ begin
     finally
       Free;
     end;
+  end;
+end;
+
+procedure ShowHtml(const Url: string = 'localhost'; const html: string = ''; const Title: string = '');
+var
+  HtmlForm: THtmlForm;
+begin
+  HtmlForm := THtmlForm.Create(Application);
+  with HtmlForm do
+  begin
+    try
+      ExitOnExucute := False;
+      pnlControl.Visible := False;
+      HttpUrl := Url;
+
+      if not Title.IsEmpty then
+        Caption := Title;
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
 end;
 
 procedure THtmlForm.actShowControlExecute(Sender: TObject);
@@ -171,7 +198,14 @@ begin
     GetFromUrl;
   end
   else
+  begin
+    if (fUser = '') and (fPswd = '') and FileExists(ExtractFilePath(Application.ExeName) + 'miniblink.dll') then
+      pgcHB.ActivePage := tsBrowser
+    else
+      pgcHB.ActivePage := tsViewer;
+
     GetFromUrl;
+  end;
 end;
 
 procedure THtmlForm.SendButtonClick(Sender: TObject);
@@ -257,7 +291,11 @@ begin
     end;
 
     if sResponse <> '' then
+    begin
+      if pgcHB.ActivePage <> tsViewer then
+        pgcHB.ActivePage := tsViewer;
       htmlviewer.LoadFromString(sResponse);
+    end;
   end;
 end;
 

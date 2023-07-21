@@ -124,6 +124,7 @@ object OrderTPForm: TOrderTPForm
         DataSource = srcOrderTP
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1058#1077#1082#1089#1090' '#1079#1072#1082#1072#1079#1072'/'#1086#1073#1098#1103#1074#1083#1077#1085#1080#1103
         PopupMenu = pmSpell
         TabOrder = 2
         Visible = True
@@ -139,6 +140,7 @@ object OrderTPForm: TOrderTPForm
         Anchors = [akLeft, akTop, akRight]
         currency = True
         DynProps = <>
+        EmptyDataInfo.Text = #1057#1091#1084#1084#1072' '#1079#1072#1082#1072#1079#1072
         EditButton.Visible = True
         EditButtons = <>
         TabOrder = 0
@@ -214,6 +216,7 @@ object OrderTPForm: TOrderTPForm
         DataSource = srcOrderTP
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1040#1076#1088#1077#1089
         MaxLength = 500
         TabOrder = 1
         Visible = True
@@ -243,6 +246,7 @@ object OrderTPForm: TOrderTPForm
         DataSource = srcOrderTP
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1054#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103' '#1080#1083#1080' '#1060#1048#1054
         MaxLength = 255
         TabOrder = 0
         Visible = True
@@ -257,9 +261,11 @@ object OrderTPForm: TOrderTPForm
         DataSource = srcOrderTP
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1058#1077#1083#1077#1092#1086#1085' '
         MaxLength = 50
         TabOrder = 3
         Visible = True
+        OnExit = edtPhoneExit
       end
     end
     object pnlNumber: TPanel

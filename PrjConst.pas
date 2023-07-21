@@ -24,6 +24,8 @@ const
   rsAttrName_etv = 'Атрибуты ТВ оборудования';
   rsAttrID_eall = 65;
   rsAttrName_eall = 'Атрибуты любого оборудования';
+  rsAttrID_eqg = 69;
+  rsAttrName_eqg = 'Атрибуты групп оборудования';
   rsAttrID_cust = 4;
   rsAttrName_cust = 'Атрибуты абонента';
   rsAttrID_etype = 50;
@@ -90,6 +92,7 @@ const
   rght_Customer_PSWD = 48; // сброс пароля
   rght_Customer_Attribute = 189;
   rght_Customer_PersonalData = 220;
+  rght_Customer_Contact_Edit = 223;
 
   rght_Dictionary_full = 40;
 
@@ -127,14 +130,6 @@ const
 
   rght_Modules_edit = 100;
   rght_Modules_Exec = 101;
-
-  rght_DVB_edit = 110; // НАСТРОЙКА СХЕМЫ DVB
-  rght_DVB_view = 111; // ПРОСМОТР СХЕМЫ DVB
-
-  rght_EPG_EditEvent = 114; // РЕДАКТ-Е ПРОГРАММЫ
-
-  rght_IPTV_edit = 115; // НАСТРОЙКА IPTV
-  rght_IPTV_view = 116; // ПРОСМОТР IPTV
 
   rght_OrdersTP_full = 120;
   rght_OrdersTP_add = 121;
@@ -185,15 +180,27 @@ const
 
   rght_Dictionary_Company = 160;
   rght_Dictionary_HeadEndEQP = 161;
-  rght_Dictionary_Equipment = 162;
-  rght_Dictionary_Equipment_Ports = 210;
   rght_Dictionary_Reports = 163;
   rght_Dictionary_Warehouses = 164;
   rght_Dictionary_MANUFACTURERS = 166;
   rght_Dictionary_Banks = 167;
   rght_Dictionary_OrdersTPType = 168;
-  rght_Dictionary_Nodes = 178;
-  rght_Dictionary_Node_Links = 211;
+  rght_Dictionary_Doclist = 212;
+
+  rght_TV_View = 221; // Просмотр всех пунктов меню ТВ
+  rght_DVB_edit = 110; // НАСТРОЙКА СХЕМЫ DVB
+  rght_DVB_view = 111; // ПРОСМОТР СХЕМЫ DVB
+  rght_EPG_EditEvent = 114; // РЕДАКТ-Е ПРОГРАММЫ
+  rght_IPTV_edit = 115; // НАСТРОЙКА IPTV
+  rght_IPTV_view = 116; // ПРОСМОТР IPTV
+
+  rght_Comm_View = 222; // Просмотр всех пунктов меню ОБЪЕКТЫ
+  rght_Comm_Nodes = 178; // rght_Dictionary_Nodes = 178;
+  rght_Comm_Node_Links = 211; // rght_Dictionary_Node_Links = 211;
+  rght_Comm_Equipment = 162; // rght_Dictionary_Equipment
+  rght_Comm_Equipment_Ports = 210; // rght_Dictionary_Equipment_Ports
+
+
 
   rght_Messages_add = 172;
 
@@ -238,7 +245,7 @@ resourcestring
   filter_1_1 = ' 1=1 ';
 
   rsERROR_CONNECT = 'Невозможно подключиться к базе данных.';
-  rsERROR_CONNECT_LOST = 'Соединение с БД прервано .';
+  rsERROR_CONNECT_LOST = 'Соединение с БД прервано.';
   rsERROR_RESONE = 'Причина ошибки:';
   rsERROR_DB_NOT_FOUND = 'Не найден файл базы данных!';
   rsERROR_DB_COONECT = 'Невозможно подключиться к базе данных.';
@@ -278,8 +285,8 @@ resourcestring
   srCalcFinished = 'Перерасчет окончен!';
   srmiDesigner = 'Дизайнер';
   s_ReturnMonth = 'Вы желаете перевести остатки на предыдущий месяц (';
-  rsCloseMonth = 'Вы желаете перевести остатки на следующий месяц (%s) ?';
-  rsCloseDay = 'Вы желаете начислить абонплату на сегодня (%s) ?';
+  rsCloseMonth = 'Вы желаете перевести остатки на следующий месяц (%s)?';
+  rsCloseDay = 'Вы желаете начислить абонплату на сегодня (%s)?';
   rsSuspiciousDateQuest = 'Подозрительная дата (%s). Продолжить?';
   rsSuspiciousDate = 'Подозрительная дата';
   rsNeedRestart = 'Необходим перезапуск приложения';
@@ -323,7 +330,7 @@ resourcestring
   rsErrorSrvOnOff = 'Для услуги "%s" неверно настроены услуги включения/отключения.';
   rsAdd = 'Добавить';
   rsAddEdit = 'Добавить/редактировать';
-  rsAddPhone = 'Добавить телефон %s\nабоненту %s %s %s ?';
+  rsAddPhone = 'Добавить телефон %s\nабоненту %s %s %s?';
 
   rsContractWT = 'Договор : %s';
   rsFromClosedRequest = 'Внесите номер закрытой заявки';
@@ -343,10 +350,11 @@ resourcestring
   rsAttrName = 'Атрибут|Название';
   rsAttrNotice = 'Атрибут|Примечание';
 
-  rsDeleteExportProfile = 'Вы действительно желаете удалить настройки профиля %s ?';
+  rsDeleteExportProfile = 'Вы действительно желаете удалить настройки профиля %s?';
   rsSelectFolder = 'Выберите стартовую директорию';
   rsTookSelectedBid = 'Выдать все выделенные заявки';
   rsLoadPaysWithError = 'Вы желаете загрузить платежи, игнорируя эти ошибки?';
+  rsPayCheck = 'Проверка платежа';
 
   rsCustomerDecoderDelete = 'Вы желаете удалить декодер %s?';
   rsUserGroupDelete = 'Вы желаете удалить группу %s?';
@@ -380,7 +388,7 @@ resourcestring
   rsFlatShort = ' кв.';
   rsPrintCheckAdr = '%s д. %s кв. %s';
   rsPrintCheckAdrWOF = '%s д. %s';
-  rsPayCardCreate = 'Вы желаете создать %d карт оплаты номиналом %d ?';
+  rsPayCardCreate = 'Вы желаете создать %d карт оплаты номиналом %d?';
   rsPayCardNotFound = ' Карта оплаты не найдена! ';
   rsPayCardActivated = ' Карта оплаты уже активирована! ';
   rsPayCardReport = 'Карты_Оплаты';
@@ -422,8 +430,8 @@ resourcestring
   rsCity = 'Адрес|Город';
   rsDistrict = 'Адрес|Район';
 
-  rsDelDigitPacket = 'Отвязать услугу %s от декодера %s ?';
-  rsDelIpPacket = 'Отвязать услугу %s от IP %s ?';
+  rsDelDigitPacket = 'Отвязать услугу %s от декодера %s?';
+  rsDelIpPacket = 'Отвязать услугу %s от IP %s?';
   rsFunctionNumberToWord = 'Число прописью. формат вывода:';
   rsPaySource = ' Источник: %s';
   rsType = ' Тип: %s';
@@ -488,6 +496,7 @@ resourcestring
   rsPassAdres = 'Паспорт|Адрес регистрации';
   rsPassPrivatNumber = 'Паспорт|Личный номер';
   rsBirthPlace = 'Паспорт|Место рождения';
+  rsInBlackList = 'Паспорт|ч/с';
   rsMatPlace = 'Места хранения|';
   rsProfileExportSettings = 'Настройка шаблонов экспорта';
   rsErrorMoveToArchive = 'Не удалось перенести файл '#13#10'%s в архив %s'#13#10'Сделайте это самостоятельно';
@@ -592,17 +601,17 @@ resourcestring
   rsNotNegativePayment = 'Сумма должна быть больше нуля';
 
   rsTable = 'Таблица';
-  rsDeleteRequestWT = 'Удалить выбранную заявку №%d ?';
+  rsDeleteRequestWT = 'Удалить выбранную заявку №%d?';
   rsDeleteRequestWMW = 'Заявка с работами или материалами. Удалить?';
   rsDeleteService = 'Удалить выбранную услугу?';
 
-  rsDeleteWithName = 'Удалить %s ?';
-  rsDelIP = 'Удалить данные o ip %s ?';
+  rsDeleteWithName = 'Удалить %s?';
+  rsDelIP = 'Удалить данные o ip %s?';
   rsDeleteHouseZone = 'Удалить дом из зоны обслуживания?';
   rsHouseInService = 'В этом доме есть подключенные абоненты. Продолжить?';
   rsDeleteSelectedRecords = 'Удалить выбранные записи?';
-  rsDeleteSubArea = 'Удалить район %s ?';
-  rsDeleteOrder = 'Удалить заказ №%s ?';
+  rsDeleteSubArea = 'Удалить район %s?';
+  rsDeleteOrder = 'Удалить заказ №%s?';
   rsDemo_Restrict = 'Ограничение Демо версии';
 
   rsDeleteViaRequest = 'Удалить можно через заявку, вернуть на склад';
@@ -612,10 +621,10 @@ resourcestring
   rsDeleteChannel = 'Удалить запись о канале %s?'#13#10'Канал не будет удален если он используется в услугах или DVB';
   rsDelChanError = 'Канал не удален. Используется:'#13#10'%s';
   rsDeleteChannels = 'Удалить записи о %d канале(ах)?';
-  rsDeleteWorkerInfo = 'Удалить запись о работнике %s ?';
+  rsDeleteWorkerInfo = 'Удалить запись о работнике %s?';
   rsDeleteInfoAbout = 'Удалить информацию о ';
   rsDeleteWork = 'Удалить работу';
-  rsUserDelete = 'Удалить пользователя %s ?';
+  rsUserDelete = 'Удалить пользователя %s?';
   rsDeleteSrvHistory = 'Удалить запись по истории подключения услуги?';
   rsDeleteMaterial = 'Удалить запись о материале?';
   rsDeletePayType = 'Удалить запись о улице?';
@@ -623,20 +632,20 @@ resourcestring
   rsDeleteLetter = 'Удалить информацию о письме?';
   rsDeleteParam = 'Удалить параметр?';
   rsDeleteQuote = 'Удалить ограничение?';
-  rsDeleteCustomerRec = 'Удалить обращение абонента ?';
+  rsDeleteCustomerRec = 'Удалить обращение абонента?';
   rsDeleteProfile = 'Удалить профиль';
   rsDeletePayCardSerial = 'Удалить серию карт оплаты?';
   rsDelLinkWT = 'Удалить связку с %s';
   rsDeleteDiscount = 'Удалить скидку?';
-  rsDeleteBonus = 'Удалить бонус %f ?';
-  rsDeleteTarif = 'Удалить тариф ?';
-  rsDeleteCity = 'Удалить нас. пункт %s ?';
-  rsDeleteWorkTeam = 'Удалить участок %s ?';
-  rsDeleteRequest = 'Удалить услугу %s ?"';
+  rsDeleteBonus = 'Удалить бонус %f?';
+  rsDeleteTarif = 'Удалить тариф?';
+  rsDeleteCity = 'Удалить нас. пункт %s?';
+  rsDeleteWorkTeam = 'Удалить участок %s?';
+  rsDeleteRequest = 'Удалить услугу %s?';
   rsRequestPorchFloor =
-    'У абонента подъезд и этаж отличен от введенного в заявке.'#13#10'Сохранить абоненту подъезд и этаж: %s %s ?';
+    'У абонента подъезд и этаж отличен от введенного в заявке.'#13#10'Сохранить абоненту подъезд и этаж: %s %s?';
   rsRequestPhone =
-    'У абонента телефон отличен от введенного в заявке.'#13#10'Сохранить абоненту новый номер телефона: %s ?';
+    'У абонента телефон отличен от введенного в заявке.'#13#10'Сохранить абоненту новый номер телефона: %s?';
 
   rsFileNotFoundWT = 'Файл "%s" не найден';
   rsCreateA4onADBSuccess = 'Файл A4ON.ADB успешно создан';
@@ -666,6 +675,7 @@ resourcestring
   rsDigitSTBCAM = 'Цифра|STB/CAM';
   rsDigitTV = 'Цифра|ТВ модель';
   rsEqpmntPorts = 'Порты оборудования';
+  rsEqpmntPortsTemplate = 'Шаблон портов';
   rsFunctionBarCode = 'Формируем штрих-код';
   rsFunctionsA4onTV = 'функции A4ON.TV';
   rsPeriodicheskieUslugi = 'Периодические услуги';
@@ -673,15 +683,15 @@ resourcestring
   rsPrepay = 'Обещанный платеж';
   rsProfNotFound = 'Профиль (%s) не найден';
   rsRecourses = 'Обращения и задачи';
-  rsRepordCategoryDelete = 'Удалить категорию %s ?'#13#10'Важно! Будут удалены все дочерние отчеты!';
-  rsRepordDelete = 'Удалить отчет %s ?';
+  rsRepordCategoryDelete = 'Удалить категорию %s?'#13#10'Важно! Будут удалены все дочерние отчеты!';
+  rsRepordDelete = 'Удалить отчет %s?';
   rsRequests = 'Заявки';
   rsRecordNotFound = 'Запись не найдена';
 
   rsSTB_NOT_FOUND = 'Такой STB не существует';
   rsSTB_USED = 'Этот STB у абонента ';
   rsTextEditor = 'Редактор текста';
-  rsUdalitTariph = 'Удалить тариф ?';
+  rsUdalitTariph = 'Удалить тариф?';
   rsUpdateApplication = 'Обновить версию ПО?';
   rsVnimanieBalansAbonentaMozhet = 'Внимание! Баланс абонента может измениться!';
 
@@ -766,6 +776,7 @@ resourcestring
   rsFldACCOUNT = '[ЛИЦЕВОЙ]';
   rsFldSURNAME = '[ФАМИЛИЯ]';
   rsFldContract = '[ДОГОВОР]';
+  rsFldContractDate = '[ДАТА ДОГОВОРА]';
   rsFldSTREET = '[УЛИЦА]';
   rsFldFULLNAME = '[ФИО]';
   rsFldRecCOUNT = '[КОЛВО_ЗАПИСЕЙ]';
@@ -789,15 +800,26 @@ resourcestring
   rsFldFileSrv = '[УСЛУГА]';
   rsFldFileOnOffSrv = '[УСЛУГА_П/О]';
   rsFldFileDate = '[ДАТА_УСЛУГИ]';
+  rsFldOwner = '[СОБСТВЕННИК]';
+  rsFldFile = '[ФАЙЛ]';
+  rsFldFileName = '[НАИМЕНОВАНИЕ]';
+  rsFldApplicantName = '[ФИО_ЗАЯВИТ]';
+  rsFldText = '[ТЕКСТ]';
+  rsBidN = '[ЗАЯВКА]';
+  rsAddress = '[АДРЕС]';
+  rsNewAddress = '[НОВЫЙ АДРЕС]';
+
 
   rsLanUserEquipment = 'Пользователь оборудования';
   rsLanPasswordEquipment = 'Пароль оборудования';
   rsLanIPEquipment = 'IP оборудования';
+  rsLanIPv6Equipment = 'IPv6 оборудования';
   rsLanMACEquipment = 'MAC оборудования(:)';
   rsLanMACEquipmentH = 'MAC оборудования(-)';
   rsLanMACEquipmentD = 'MAC оборудования(.)';
   rsLanMACEquipmentJun = 'MAC оборудования(xxxx.)';
   rsLanIPCustomer = 'IP абонента';
+  rsLanIPv6Customer = 'IPv6 абонента';
   rsLanMACCustomer = 'MAC абонента(:)';
   rsLanMACCustomerH = 'MAC абонента(-)';
   rsLanMACCustomerD = 'MAC абонента(.)';
@@ -845,8 +867,8 @@ resourcestring
 
   rsBlackListLine = 'Лицевой %s долг %s '#13#10'%s д. %s кв. %s '#13#10'телефон %s мобильный %s '#13#10'Статус %s';
   rsBlackListTitle = 'Причина блокировки';
-  rsBlackListHint =
-    ' Переменные:'#13#10'Лицевой %s долг %s '#13#10'Улица %s дом %s кв. %s '#13#10'телефон %s мобильный %s '#13#10'Статус %s';
+  rsBlackListHint = ' Переменные:'#13#10'Лицевой %s долг %s '#13#10'Улица %s дом %s кв. %s ' +
+    #13#10'телефон %s мобильный %s '#13#10'Статус %s';
 
   rsReportMaterialHistory = 'История материала';
 
@@ -886,7 +908,7 @@ resourcestring
   rsNodeBid = 'Заявка на узел';
   rsNeedBidExecutor = 'Необходимо указать исполнителя заявки';
   rsNeedContact = 'Необходимо указать контакт абонента';
-  rsNeedPassportCheck = 'Необходимо проверить паспорт абонента';
+  rsNeedPassportCheck = 'Паспорт ранее не регистрировался. Проверьте правильность номера.';
   rsPassportNotValid = 'Паспорт абонента недействителен или не выдавался';
   rsContact = 'Контакт абонента';
   rsTask = 'Задача';
@@ -894,7 +916,7 @@ resourcestring
   rsNeedChannel = 'Необходимо выбрать канал';
   rsCloseTask = 'Закрыть задачу';
   // rsAdCharCount = 'Символов %d (до %d = %m, более %m)';
-  rsAdCharCount = 'Символов %d на %d дня(ей)';
+  rsAdCharCount = 'Символов %d (%d слайдов) на %d дня(ей)';
   rsCloseSelectedTask = 'Закрыть все выделенные задачи?';
   rsEmptyOrIncorrect = 'Пустое поле или русский вместо латиницы';
   rsRequiredField = 'Обязательно к заполнению';
@@ -923,6 +945,9 @@ resourcestring
   rsQstFlatOwner = 'Абонент владелец квартиры?';
   rsChangeSerial = 'Сменить С/Н на';
   rsRequestReadOnly = '(Заявка закрыта. Только просмотр)';
+  rsTaskCommentInEdit = 'Перед редактированием, необходимо сохранить или отменить комментарий к задаче.';
+  rsPromoWarning = 'Внимане. Абонент подключен по АКЦИИ!';
+
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';
   ms_DELETE_ACT = 'Удалить отметку выполнения № %s от %s';

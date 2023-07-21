@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, GridsEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame;
 
 type
   TReqAddWork = class(TForm)
@@ -21,14 +21,11 @@ type
     lbl2: TLabel;
     lbl4: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
-    { Private declarations }
-
+    FEnterSecondPress: Boolean;
   public
     { Public declarations }
-
   end;
 
 function SelectRequestWork(const reqType : Integer;
@@ -102,29 +99,38 @@ end;
 
 procedure TReqAddWork.FormKeyPress(Sender: TObject; var Key: Char);
 var
-  go:boolean;
+  go: Boolean;
 begin
-   if (Key=#13)
-   then begin
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
+  begin
     go := true;
-
-    if (ActiveControl is TDBLookupComboboxEh)
-    then go := not (ActiveControl as TDBLookupComboboxEh).ListVisible
-    else begin
-       if (ActiveControl is TDBGridEh)
-       then begin
-         if (ActiveControl as TDBGridEh).DataSource.State in [dsEdit, dsInsert]
-         then go := False
-         else go := True;
-       end;
+    if (ActiveControl is TDBLookupComboboxEh) then
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
     end;
 
-    if (go)
-    then begin
-      Key := #0;                     // eat enter key
-      PostMessage( Self.Handle, WM_NEXTDLGCTL, 0, 0);
+    if go then
+    begin
+      FEnterSecondPress := False;
+      Key := #0; // eat enter key
+      PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
-   end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
+  end;
 end;
 
 end.

@@ -26,16 +26,20 @@ type
     btnEdit1: TSpeedButton;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    btnCheck: TSpeedButton;
+    actCheckUrl: TAction;
     procedure ActAddPaymentExecute(Sender: TObject);
     procedure actPrepayExecute(Sender: TObject);
     procedure dbgCustPaymentDblClick(Sender: TObject);
     procedure dbgCustPaymentGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure actCheckUrlExecute(Sender: TObject);
   private
     FFine: boolean;
     // FTodayOnly: boolean;
     // FOnlyTheir: boolean;
     FSavedID: Integer;
+    FCheckUrl: string;
     procedure EnableControls;
   public
     procedure InitForm; override;
@@ -49,7 +53,7 @@ type
 implementation
 
 uses
-  DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN;
+  System.StrUtils, DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN, HtmlForma;
 
 {$R *.dfm}
 
@@ -117,6 +121,8 @@ begin
     if (AnsiUpperCase(dbgCustPayment.Columns[i].FieldName) = 'NAME') then
       dbgCustPayment.Columns[i].Visible := vShowPaySRV;
   end;
+  FCheckUrl := dmMain.GetSettingsValue('PAY_CHECK_URL');
+  actCheckUrl.Visible := (FCheckUrl <> '');
 end;
 
 procedure TapgCustomerPayments.OpenData;
@@ -146,6 +152,27 @@ begin
     EnableControls;
     UpdatePage;
   end;
+end;
+
+procedure TapgCustomerPayments.actCheckUrlExecute(Sender: TObject);
+var
+  URL, body: string;
+begin
+  // параметры <customer_id> <unp>
+  // GetHtml(const Url: string = 'localhost'; const User: string = ''; const Pswd: string = '';
+  //  const Data: string = ''; const ExExit: Boolean = False; const Title: string = '')
+  if FDataSource.DataSet.FieldByName('customer_id').IsNull
+  then
+    Exit;
+
+  URL := FCheckUrl;
+  URL := ReplaceStr(URL, '<customer_id>', FDataSource.DataSet.FieldByName('customer_id').AsInteger.ToString);
+  if not FDataSource.DataSet.FieldByName('JUR_INN').IsNull
+  then
+    URL := ReplaceStr(URL, '<unp>', FDataSource.DataSet.FieldByName('JUR_INN').AsString)
+  else
+    URL := ReplaceStr(URL, '<unp>', '');
+  ShowHtml(URL, '', rsPayCheck);
 end;
 
 procedure TapgCustomerPayments.actPrepayExecute(Sender: TObject);

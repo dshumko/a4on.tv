@@ -48,7 +48,7 @@ begin
 
   if srcDataSource.DataSet.FieldByName('NAME').IsNull then Exit;
 
-  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then exit;
+  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then exit;
 
   if (MessageDlg(Format( rsDeleteWithName, [srcDataSource.DataSet['NAME']] ), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
   then srcDataSource.DataSet.Delete;
@@ -61,7 +61,7 @@ begin
   inherited;
   if srcDataSource.DataSet.FieldByName('EC_ID').IsNull then Exit;
 
-  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then exit;
+  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then exit;
 
   if EditGroupCommand(dsCGR['EC_ID'])
   then begin
@@ -76,7 +76,7 @@ var
   bm : TBookmark;
 begin
   inherited;
-  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then exit;
+  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then exit;
 
   if EditGroupCommand(-1)
   then begin
@@ -98,7 +98,7 @@ begin
   inherited;
   dsCGR.Open;
   // права пользователей
-  actNew.Visible       := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
+  actNew.Visible       := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment));
   actDelete.Visible    := actNew.Visible;
   actEdit.Visible      := actNew.Visible;
   tbOk.Visible         := actNew.Visible;

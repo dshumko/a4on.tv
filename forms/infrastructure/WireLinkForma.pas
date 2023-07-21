@@ -188,8 +188,8 @@ end;
 
 procedure TWireLinkForm.FormShow(Sender: TObject);
 begin
-  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment);
-  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Dictionary_Equipment_Ports);
+  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment);
+  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Comm_Equipment_Ports);
 
   OkCancelFrame.bbOk.Visible := FCanEdit;
 

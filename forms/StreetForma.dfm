@@ -114,6 +114,16 @@ inherited StreetForm: TStreetForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
+        FieldName = 'CONNECTED'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1050#1074'-'#1088' '#1087#1086#1076#1082#1083'.'
+        Width = 71
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'Q_PORCH'
         Footer.ValueType = fvtSum
         Footers = <>
@@ -180,6 +190,8 @@ inherited StreetForm: TStreetForm
       GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       STFilter.Local = True
       SumList.Active = True
       TabOrder = 1
@@ -467,54 +479,33 @@ inherited StreetForm: TStreetForm
       object ToolButton13: TToolButton
         Left = 55
         Top = 0
-        Width = 4
+        Width = 10
         Caption = 'ToolButton6'
         ImageIndex = 4
         Style = tbsSeparator
       end
       object tbHDelete: TToolButton
-        Left = 59
+        Left = 65
         Top = 0
         Action = actHouseDel
       end
       object ToolButton15: TToolButton
-        Left = 82
+        Left = 88
         Top = 0
         Width = 15
         Caption = 'ToolButton9'
         ImageIndex = 27
         Style = tbsSeparator
       end
-      object ToolButton17: TToolButton
-        Left = 97
-        Top = 0
-        Width = 4
-        Caption = 'ToolButton10'
-        ImageIndex = 28
-        Style = tbsSeparator
-      end
-      object ToolButton14: TToolButton
-        Left = 101
-        Top = 0
-        Action = actQuickFilterHouse
-      end
-      object ToolButton18: TToolButton
-        Left = 124
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton18'
-        ImageIndex = 42
-        Style = tbsSeparator
-      end
       object ToolButton16: TToolButton
-        Left = 132
+        Left = 103
         Top = 0
         Caption = 'ToolButton16'
         ImageIndex = 5
         OnClick = ToolButton16Click
       end
       object btn4: TToolButton
-        Left = 155
+        Left = 126
         Top = 0
         Width = 8
         Caption = 'btn4'
@@ -522,12 +513,12 @@ inherited StreetForm: TStreetForm
         Style = tbsSeparator
       end
       object btnFindHousCustomers: TToolButton
-        Left = 163
+        Left = 134
         Top = 0
         Action = actFindHousCustomers
       end
       object Label2: TLabel
-        Left = 186
+        Left = 157
         Top = 0
         Width = 222
         Height = 22
@@ -563,6 +554,10 @@ inherited StreetForm: TStreetForm
         OnChange = pcHouseInfoChange
         object InfoSheet: TTabSheet
           Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object dbgServices: TDBGridEh
             Left = 0
             Top = 201
@@ -638,11 +633,10 @@ inherited StreetForm: TStreetForm
               object Label6: TLabel
                 Left = 0
                 Top = 0
-                Width = 297
+                Width = 61
                 Height = 13
                 Align = alTop
                 Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-                ExplicitWidth = 61
               end
               object memHouseNotice: TDBMemoEh
                 Left = 0
@@ -866,6 +860,10 @@ inherited StreetForm: TStreetForm
         object tsEquipment: TTabSheet
           Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object DBGridEh2: TDBGridEh
             Left = 0
             Top = 29
@@ -978,6 +976,10 @@ inherited StreetForm: TStreetForm
         object tsMap: TTabSheet
           Caption = #1050#1072#1088#1090#1072' '#1076#1086#1084#1072
           ImageIndex = 4
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object spl2: TSplitter
             Left = 251
             Top = 0
@@ -1200,8 +1202,9 @@ inherited StreetForm: TStreetForm
               FooterRowCount = 1
               FooterParams.Color = clWindow
               Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+              SearchPanel.Enabled = True
+              SearchPanel.FilterOnTyping = True
               STFilter.Local = True
-              STFilter.Visible = True
               SumList.Active = True
               TabOrder = 1
               TitleParams.MultiTitle = True
@@ -1611,6 +1614,10 @@ inherited StreetForm: TStreetForm
         object tsHouseWorks: TTabSheet
           Caption = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1077
           ImageIndex = 3
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object dbgWorks: TDBGridEh
             Left = 0
             Top = 25
@@ -1681,6 +1688,10 @@ inherited StreetForm: TStreetForm
         object tsAbonents: TTabSheet
           Caption = #1040#1073#1086#1085#1077#1085#1090#1099
           ImageIndex = 4
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object dbgCustomer: TDBGridEh
             Left = 0
             Top = 0
@@ -1701,9 +1712,10 @@ inherited StreetForm: TStreetForm
             OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
             PopupMenu = pmCustomers
             ReadOnly = True
+            SearchPanel.Enabled = True
+            SearchPanel.FilterOnTyping = True
             SortLocal = True
             STFilter.Local = True
-            STFilter.Visible = True
             SumList.Active = True
             TabOrder = 0
             TitleParams.MultiTitle = True
@@ -1793,11 +1805,11 @@ inherited StreetForm: TStreetForm
               end
               item
                 CellButtons = <>
-                DisplayFormat = '#,##0.##'
+                DisplayFormat = ',0.00'
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'DEBT_SUM'
-                Footer.DisplayFormat = '#,###'
+                Footer.DisplayFormat = ',0.00'
                 Footer.FieldName = 'DEBT_SUM'
                 Footer.ValueType = fvtSum
                 Footers = <>
@@ -1832,6 +1844,10 @@ inherited StreetForm: TStreetForm
         object tsCircuit: TTabSheet
           Caption = #1057#1093#1077#1084#1072
           ImageIndex = 5
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object imgPNG: TDBImageEh
             Left = 0
             Top = 0
@@ -1870,46 +1886,51 @@ inherited StreetForm: TStreetForm
     end
     inherited ToolButton5: TToolButton
       Left = 54
+      Width = 10
       ExplicitLeft = 54
+      ExplicitWidth = 10
     end
     inherited ToolButton6: TToolButton
-      Left = 58
-      ExplicitLeft = 58
+      Left = 64
+      Visible = False
+      ExplicitLeft = 64
     end
     inherited btnDelete: TToolButton
-      Left = 62
-      ExplicitLeft = 62
+      Left = 68
+      ExplicitLeft = 68
     end
     inherited ToolButton9: TToolButton
-      Left = 85
-      ExplicitLeft = 85
+      Left = 91
+      ExplicitLeft = 91
     end
     inherited tbOk: TToolButton
-      Left = 100
+      Left = 106
       Visible = False
       OnClick = tbOkClick
-      ExplicitLeft = 100
+      ExplicitLeft = 106
     end
     inherited ToolButton10: TToolButton
-      Left = 123
-      ExplicitLeft = 123
+      Left = 129
+      Visible = False
+      ExplicitLeft = 129
     end
     inherited tbCancel: TToolButton
-      Left = 127
+      Left = 133
       Visible = False
       OnClick = tbCancelClick
-      ExplicitLeft = 127
+      ExplicitLeft = 133
     end
     inherited ToolButton20: TToolButton
-      Left = 150
-      ExplicitLeft = 150
+      Left = 156
+      Visible = False
+      ExplicitLeft = 156
     end
     inherited btnQuickFilter: TToolButton
-      Left = 158
-      ExplicitLeft = 158
+      Left = 164
+      ExplicitLeft = 164
     end
     object ToolButton12: TToolButton
-      Left = 181
+      Left = 187
       Top = 0
       Width = 8
       Caption = 'ToolButton12'
@@ -1918,14 +1939,14 @@ inherited StreetForm: TStreetForm
       Visible = False
     end
     object ToolButton8: TToolButton
-      Left = 189
+      Left = 195
       Top = 0
       Caption = 'ToolButton8'
       ImageIndex = 5
       OnClick = ToolButton8Click
     end
     object btn6: TToolButton
-      Left = 212
+      Left = 218
       Top = 0
       Width = 8
       Caption = 'btn6'
@@ -1933,12 +1954,12 @@ inherited StreetForm: TStreetForm
       Style = tbsSeparator
     end
     object btnFindStreetCustomers: TToolButton
-      Left = 220
+      Left = 226
       Top = 0
       Action = actFindStreetCustomers
     end
     object btn7: TToolButton
-      Left = 243
+      Left = 249
       Top = 0
       Width = 8
       Caption = 'btn7'
@@ -1946,12 +1967,12 @@ inherited StreetForm: TStreetForm
       Style = tbsSeparator
     end
     object btnViewCube: TToolButton
-      Left = 251
+      Left = 257
       Top = 0
       Action = actViewCube
     end
     object Label1: TLabel
-      Left = 274
+      Left = 280
       Top = 0
       Width = 222
       Height = 22
@@ -2008,6 +2029,10 @@ inherited StreetForm: TStreetForm
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1091#1083#1080#1094#1091
       OnExecute = actEditExecute
     end
+    inherited actQuickFilter: TAction
+      AutoCheck = True
+      Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088' '#1085#1072' '#1074#1089#1077' '#1090#1072#1073#1083#1080#1094#1099' '#1092#1086#1088#1084#1099' (Ctrl+Q)'
+    end
     object actHouseNew: TAction
       Caption = #1053#1086#1074#1099#1081' '#1076#1086#1084
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1076#1086#1084
@@ -2032,7 +2057,6 @@ inherited StreetForm: TStreetForm
       Caption = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
       Hint = #1042#1082#1083'/'#1042#1099#1082#1083' '#1073#1099#1089#1090#1088#1086#1075#1086' '#1092#1080#1083#1100#1090#1088#1072
       ImageIndex = 40
-      OnExecute = actQuickFilterHouseExecute
     end
     object actHouseInfo: TAction
       Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1072#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103
@@ -2278,6 +2302,21 @@ inherited StreetForm: TStreetForm
       ''
       ''
       '  , p.q_porch'
+      '  , (select'
+      '         sum(CNT)'
+      '       from (select ('
+      '                 select'
+      '                     count(distinct a.Flat_No) CNT'
+      '                   from CUSTOMER A'
+      
+        '                        inner join Subscr_Hist ash on (a.Custome' +
+        'r_Id = ash.Customer_Id)'
+      '                   where a.HOUSE_ID = h.HOUSE_ID'
+      
+        '                         and current_date between ash.Date_From ' +
+        'and ash.Date_To) as CNT'
+      '               from HOUSE H'
+      '               where h.street_id = s.Street_Id)) as CONNECTED'
       '  from STREET s'
       '       left outer join area a on (a.area_id = s.area_id)'
       '       left outer join(select'
@@ -2319,6 +2358,7 @@ inherited StreetForm: TStreetForm
       'NOTICE='#1055#1056#1048#1052#1045#1063#1040#1053#1048#1045)
     DataSet = dsStreets
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 41
     Top = 179
   end
@@ -2343,6 +2383,7 @@ inherited StreetForm: TStreetForm
       'SUBAREA_NAME='#1059#1063#1040#1057#1058#1054#1050)
     DataSet = dsHouses
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 514
     Top = 178
   end
@@ -2765,7 +2806,8 @@ inherited StreetForm: TStreetForm
       '    FLOOR_N = :FLOOR_N,'
       '    NOTICE = :NOTICE,'
       '    OWNER_NAME = :OWNER_NAME,'
-      '    OWNER_DOC = :OWNER_DOC    '
+      '    OWNER_DOC = :OWNER_DOC,'
+      '    MOBILE = :MOBILE    '
       'WHERE'
       '    HOUSE_ID = :OLD_HOUSE_ID'
       '    and FLAT_NO = :OLD_FLAT_NO'

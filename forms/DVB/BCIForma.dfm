@@ -274,7 +274,7 @@ object BCIForm: TBCIForm
         object lbl1: TLabel
           Left = 0
           Top = 0
-          Width = 448
+          Width = 117
           Height = 13
           Align = alTop
           Caption = '           '#1042#1089#1077' '#1082#1072#1085#1072#1083#1099' '#1089#1077#1090#1080
@@ -587,7 +587,7 @@ object BCIForm: TBCIForm
         object lbl2: TLabel
           Left = 0
           Top = 0
-          Width = 433
+          Width = 107
           Height = 13
           Align = alTop
           Caption = ' '#1050#1072#1085#1072#1083#1099' '#1089' '#1087#1088#1086#1073#1083#1077#1084#1086#1081
@@ -1192,8 +1192,8 @@ object BCIForm: TBCIForm
           DefaultExpression = '0'
           DisplayLabel = 'CH_FREQ'
           DisplayWidth = 10
-          DisplayFormat = '#,##0.000'
-          EditFormat = '0.000'
+          DisplayFormat = ',0.000'
+          EditFormat = ',0.000'
           currency = False
           Precision = 0
           Scale = 3
@@ -4024,8 +4024,8 @@ object BCIForm: TBCIForm
           DefaultExpression = '0'
           DisplayLabel = 'CH_FREQ'
           DisplayWidth = 10
-          DisplayFormat = '#,##0.000'
-          EditFormat = '0.000'
+          DisplayFormat = ',0.000'
+          EditFormat = ',0.000'
           currency = False
           Precision = 0
           Scale = 3

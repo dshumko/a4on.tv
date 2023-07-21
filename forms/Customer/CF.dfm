@@ -275,12 +275,13 @@ object CustomersForm: TCustomersForm
         Width = 18
       end
       item
+        Alignment = taRightJustify
         CellButtons = <>
-        DisplayFormat = '#,##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButtons = <>
         FieldName = 'DEBT_SUM'
-        Footer.DisplayFormat = '#,###'
+        Footer.DisplayFormat = ',0.00'
         Footer.FieldName = 'DEBT_SUM'
         Footer.ValueType = fvtSum
         Footers = <>
@@ -1335,11 +1336,12 @@ object CustomersForm: TCustomersForm
     OpenDataSource = False
     DataSet = dsCustomers
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 275
     Top = 320
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]
@@ -1421,6 +1423,7 @@ object CustomersForm: TCustomersForm
       'CONTRACT_BASIS=PLACE_FACE')
     DataSet = dsCustomers
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 363
     Top = 320
   end
@@ -1429,6 +1432,7 @@ object CustomersForm: TCustomersForm
     CloseDataSource = True
     DataSet = mdsBalance
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 390
     Top = 193
   end

@@ -267,12 +267,12 @@ end;
 
 procedure TPortLinkForm.FormShow(Sender: TObject);
 begin
-  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment);
-  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Dictionary_Equipment_Ports);
+  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment);
+  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Comm_Equipment_Ports);
 
   FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full);
-  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Nodes);
-  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Node_Links);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Comm_Nodes);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Comm_Node_Links);
 
   OkCancelFrame.bbOk.Visible := FCanEdit;
 

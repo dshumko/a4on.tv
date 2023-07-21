@@ -190,6 +190,8 @@ type
     dsFlats: TpFIBDataSet;
     srcFlats: TDataSource;
     splFlats: TSplitter;
+    btnBuyback: TButton;
+    actBuyback: TAction;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -258,6 +260,7 @@ type
     procedure dbgFlatsColExit(Sender: TObject);
     procedure dbgFlatsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure actBuybackExecute(Sender: TObject);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -279,6 +282,7 @@ type
     FDisableAddressEdit: Boolean;
     FHL_ROW: Boolean;
     FHL_COLOR: TColor;
+    FEnterSecondPress: Boolean;
     procedure CheckData;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure FindNearFreeDay;
@@ -309,10 +313,10 @@ function ReguestNodeExecute(aRequest: Integer; const aNodeId: Integer = -1; cons
 implementation
 
 uses
-  Winapi.ShellAPI,
-  System.DateUtils, System.StrUtils,
-  ReqMaterialsForma, AtrCommon, MAIN, ReqExecutersForma, ReqForAdresForma, SelectDateForma, RequestWorksForma,
-  CustomerForma,
+  Winapi.ShellAPI, System.DateUtils, System.StrUtils, AtrCommon, MAIN,
+  ReqMaterialsForma, ReqExecutersForma, ReqForAdresForma,
+  SelectDateForma, RequestWorksForma,
+  CustomerForma, ReqMatBaybackForma,
   ReqMatReturnForma, EditRFileForma, ContactForma;
 
 {$R *.dfm}
@@ -721,23 +725,37 @@ procedure TRequestForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    else if (ActiveControl is TDBMemoEh) then
-      go := False
-    else if (ActiveControl is TDBAxisGridInplaceEdit) then
-      go := False
-    else if (ActiveControl is TDBGridEh) then
-      go := False;
-
-    if (go) then
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
+    //  go := False
+    else
     begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
+    if go then
+    begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -1574,7 +1592,7 @@ begin
           Stream.Position := 0;
           frxReport.LoadFromStream(Stream);
           frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-          Caption := frxReport.FileName;
+          frxReport.ReportOptions.Name := frxReport.FILENAME;
         finally
           Stream.Free;
         end;
@@ -1680,6 +1698,13 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TRequestForm.actBuybackExecute(Sender: TObject);
+begin
+  if (ReqBayBack(dsRequest['RQ_ID'])) then begin
+    dsMaterials.CloseOpen(true);
+  end;
 end;
 
 procedure TRequestForm.actExAddressEditExecute(Sender: TObject);

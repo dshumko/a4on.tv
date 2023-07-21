@@ -90,7 +90,7 @@ begin
   Caption := GetPageName;
 
   FullAccess := (dmMain.AllowedAction(rght_Dictionary_full));
-  actAdd.Visible := (dmMain.AllowedAction(rght_Dictionary_Equipment)) or FullAccess;
+  actAdd.Visible := (dmMain.AllowedAction(rght_Comm_Equipment)) or FullAccess;
   actDel.Visible := actAdd.Visible;
   actEdit.Visible := actAdd.Visible;
 
@@ -131,7 +131,7 @@ end;
 
 procedure TapgEqpmntRegion.actAddExecute(Sender: TObject);
 begin
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   if EditEQCoverage(FDataSource.DataSet['EID'], -1) then
   begin
@@ -145,7 +145,7 @@ var
   cnt: Integer;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
   if dsData.RecordCount = 0 then
@@ -194,7 +194,7 @@ end;
 
 procedure TapgEqpmntRegion.actEditExecute(Sender: TObject);
 begin
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   if EditEQCoverage(FDataSource.DataSet['EID'], dsData['HOUSE_ID']) then
   begin

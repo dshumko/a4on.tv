@@ -42,10 +42,10 @@ object MatIncomeDocForm: TMatIncomeDocForm
     object Label1: TLabel
       Left = 612
       Top = 18
-      Width = 84
+      Width = 64
       Height = 13
       Anchors = [akTop, akRight]
-      Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+      Caption = #1044#1072#1090#1072' '#1076#1086#1082'-'#1090#1072
     end
     object lbl2: TLabel
       Left = 8
@@ -62,7 +62,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
       Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     end
     object lbl5: TLabel
-      Left = 498
+      Left = 612
       Top = 45
       Width = 57
       Height = 13
@@ -84,9 +84,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
       Visible = True
     end
     object deD_DATE: TDBDateTimeEditEh
-      Left = 702
+      Left = 680
       Top = 15
-      Width = 118
+      Width = 140
       Height = 21
       Anchors = [akTop, akRight]
       DataField = 'DOC_DATE'
@@ -119,7 +119,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     object lcbWH: TDBLookupComboboxEh
       Left = 100
       Top = 42
-      Width = 395
+      Width = 506
       Height = 21
       DynProps = <>
       DataField = 'WH_ID'
@@ -154,9 +154,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
       OnClick = btnCloseClick
     end
     object lcbShipper: TDBLookupComboboxEh
-      Left = 559
+      Left = 680
       Top = 42
-      Width = 261
+      Width = 140
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -515,11 +515,11 @@ object MatIncomeDocForm: TMatIncomeDocForm
           item
             AutoFitColWidth = False
             CellButtons = <>
-            DisplayFormat = '###,##0.#####'
+            DisplayFormat = ',0.#####'
             DynProps = <>
             EditButtons = <>
             FieldName = 'M_QUANT'
-            Footer.DisplayFormat = ',#0.###'
+            Footer.DisplayFormat = ',0.#####'
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086
@@ -529,22 +529,22 @@ object MatIncomeDocForm: TMatIncomeDocForm
           end
           item
             CellButtons = <>
-            DisplayFormat = ',#0.###'
+            DisplayFormat = ',0.###'
             DynProps = <>
             EditButtons = <>
             FieldName = 'SHIPPER_COST'
-            Footer.DisplayFormat = ',#0.###'
+            Footer.DisplayFormat = ',0.###'
             Footers = <>
             Title.Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
             Width = 74
           end
           item
             CellButtons = <>
-            DisplayFormat = ',#0.###'
+            DisplayFormat = ',0.###'
             DynProps = <>
             EditButtons = <>
             FieldName = 'COST'
-            Footer.DisplayFormat = ',#0.###'
+            Footer.DisplayFormat = ',0.###'
             Footer.ValueType = fvtSum
             Footers = <>
             ReadOnly = True
@@ -905,7 +905,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     AutoEdit = False
     DataSet = dsWH
     Left = 336
-    Top = 289
+    Top = 345
   end
   object qCloseDoc: TpFIBQuery
     Transaction = dmMain.trWriteQ

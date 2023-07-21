@@ -101,8 +101,8 @@ begin
     lblHint.Visible := (notice <> '');
     lblHint.Caption := notice;
     Text.Lines.Clear;
-    Text.Lines.Text := txt;
-    btnOk.Enabled := False;
+    Text.Lines.Text := txt.Trim;
+    btnOk.Enabled := not Text.Lines.Text.IsEmpty;
     ActiveControl := Text;
     if showmodal = mrOk
     then begin
@@ -127,7 +127,7 @@ end;
 
 procedure TTextEditForm.TextChange(Sender: TObject);
 begin
-  btnOk.Enabled := True;
+  btnOk.Enabled := not Text.Lines.Text.IsEmpty;
 end;
 
 end.

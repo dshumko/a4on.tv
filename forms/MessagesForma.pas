@@ -90,6 +90,14 @@ type
     edtHEAD: TDBEditEh;
     cbbTYPE: TDBLookupComboboxEh;
     lblSMScount: TLabel;
+    mtTM: TMemTableEh;
+    drvTM: TDataSetDriverEh;
+    chkTree: TCheckBox;
+    btn1: TToolButton;
+    miMyOnly: TMenuItem;
+    miN17: TMenuItem;
+    actAnswer: TAction;
+    miAnswer: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -127,8 +135,15 @@ type
     procedure dbgMessagesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure dbgMessagesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgMessagesGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure chkTreeClick(Sender: TObject);
+    procedure miMyOnlyClick(Sender: TObject);
+    procedure actAnswerExecute(Sender: TObject);
   private
     FFirstOpen: Boolean; // Первое открытие Формы
+    FParentMessage : Integer;
+    FForCustomer : Integer;
     CanEdit: Boolean;
     CanCreate: Boolean;
     FPersonalData: Boolean;
@@ -136,11 +151,16 @@ type
     fStartDate: TDateTime;
     fEndDate: TDateTime;
     fShowNotSended: Boolean;
+    fShowMy: Boolean;
     fCanSave: Boolean;
+    FInTreeView: Boolean;
     fSelectedRow: Integer; // выделенная строка в таблице платежей
+    FclIncome: TColor;
     procedure SetMessagesFilter;
     procedure StartEdit(const New: Boolean = False);
     procedure StopEdit(const Cancel: Boolean);
+    procedure SetGridTreeMode(const inTree: Boolean);
+    procedure InitSecurity;
   public
     { Public declarations }
   end;
@@ -151,12 +171,16 @@ var
 implementation
 
 uses
-  DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, ReportPreview, apiSMS, CF, pFIBQuery;
+  System.StrUtils, DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, atrCmdUtils, ReportPreview, apiSMS, CF, pFIBQuery;
 
 {$R *.dfm}
 
 procedure TMessagesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+
+  dmMain.SetIniValue('MSG_SENDED_ONLY', ifThen(fShowNotSended, '1', '0'));
+  dmMain.SetIniValue('MSG_MY_ONLY', ifThen(fShowMy, '1', '0'));
+
   if fCanSave then
     dbgMessages.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgMessages', False);
   if srcMessages.DataSet.Active then
@@ -275,6 +299,12 @@ begin
   else
     dsMessages.ParamByName('ShowNotSended').AsInteger := 0;
   Caption := Format(rsMessagesPeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
+  if fShowMy then
+    dsMessages.ParamByName('WHERE_ADDONS').AsString := 'and ((m.Added_By = CURRENT_USER) or '+
+           '((not m.Parent_Id is null) and '+
+           'exists(select p.Mes_Id from messages p where p.Mes_Id = m.Parent_Id and p.Added_By = CURRENT_USER)))'
+  else
+    dsMessages.ParamByName('WHERE_ADDONS').AsString := '';
   dsMessages.Open;
 end;
 
@@ -285,8 +315,20 @@ begin
 
   fEndDate := now;
   fStartDate := MonthFirstDay(dmMain.CurrentMonth);
+  fShowNotSended := (dmMain.GetIniValue('MSG_SENDED_ONLY') = '1');
+  N16.Checked := fShowNotSended;
+  fShowMy := (dmMain.GetIniValue('MSG_MY_ONLY') = '1');
+  miMyOnly.Checked := fShowMy;
   SetMessagesFilter;
 
+  InitSecurity;
+
+  dsMessages.Open;
+  inEditMode := False;
+end;
+
+procedure TMessagesForm.InitSecurity;
+begin
   CanEdit := (dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full));
   CanCreate := (dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full));
   FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
@@ -295,9 +337,7 @@ begin
   actNew.Visible := CanEdit;
   actDel.Visible := CanEdit;
   actEdit.Visible := CanEdit;
-
-  dsMessages.Open;
-  inEditMode := False;
+  actAnswer.Visible := CanEdit;
 end;
 
 procedure TMessagesForm.N1Click(Sender: TObject);
@@ -393,6 +433,29 @@ begin
   end
 end;
 
+procedure TMessagesForm.actAnswerExecute(Sender: TObject);
+var
+  i : Integer;
+begin
+  if (dsMessages.RecordCount = 0) //
+    or dsMessages.FieldByName('RECIVER').IsNull //
+  then
+    exit;
+
+  FParentMessage := -1;
+  FForCustomer := -1;
+  if not dsMessages.FieldByName('Mes_Id').IsNull then begin
+    FParentMessage := dsMessages.FieldByName('Mes_Id').AsInteger;
+    if not dsMessages.FieldByName('CUSTOMER_ID').IsNull then
+      FForCustomer := dsMessages.FieldByName('CUSTOMER_ID').AsInteger;
+  end;
+
+  StartEdit(true);
+  edtReciver.Text := dsMessages['RECIVER'];
+  if not dsMessages.FieldByName('MES_TEXT').IsNull then
+    mmoMessage.Lines.Text := '>'+ dsMessages['MES_TEXT'];
+end;
+
 procedure TMessagesForm.actDelExecute(Sender: TObject);
 var
   i: Integer;
@@ -455,7 +518,8 @@ end;
 
 procedure TMessagesForm.actNewExecute(Sender: TObject);
 begin
-  { TODO:добавление сообщения }
+  FParentMessage := -1;
+  FForCustomer := -1;
   StartEdit(true);
 end;
 
@@ -571,6 +635,12 @@ begin
   FFirstOpen := true;
   fShowNotSended := true;
   fCanSave := true;
+
+  try
+    FclIncome := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+  except
+    FclIncome := $0066FFFF;
+  end;
 end;
 
 procedure TMessagesForm.actFilterCustomerExecute(Sender: TObject);
@@ -631,6 +701,11 @@ begin
   pnlHead.Visible := show;
 end;
 
+procedure TMessagesForm.chkTreeClick(Sender: TObject);
+begin
+  SetGridTreeMode(chkTree.Checked);
+end;
+
 procedure TMessagesForm.btnCancelLinkClick(Sender: TObject);
 begin
   StopEdit(true);
@@ -652,7 +727,10 @@ begin
   mmoMessage.Lines.Text := '';
   if New then
   begin
-    cbbTYPE.KEyValue := 'SMS';
+    if dsMessType.RecordCount = 1 then
+      cbbTYPE.KeyValue := dsMessType['O_NAME']
+    else
+      cbbTYPE.KeyValue := 'SMS';
     edtReciver.Tag := -1;
   end
   else
@@ -699,28 +777,86 @@ begin
     dsMessages['MES_HEAD'] := edtHEAD.Text;
     dsMessages['MES_TEXT'] := mmoMessage.Lines.Text;
     dsMessages['MES_RESULT'] := 0;
+    if FParentMessage > 0 then begin
+      dsMessages['PARENT_ID'] := FParentMessage;
+    end
+    else begin
+      dsMessages.FieldByName('PARENT_ID').Clear;
+    end;
+    if FForCustomer > 0 then begin
+      dsMessages['CUSTOMER_ID'] := FForCustomer;
+    end
+    else begin
+      dsMessages.FieldByName('CUSTOMER_ID').Clear;
+    end;
+
     dsMessages.Post;
   end;
 
   dbgMessages.SetFocus;
   dsMessType.Close;
 
+  FParentMessage := -1;
+  FForCustomer := -1;
   inEditMode := False;
 end;
 
 procedure TMessagesForm.dbgMessagesDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
+  vContinue: Boolean;
+  i: Integer;
 begin
-  if dsMessages.RecordCount > 0 then
+  inherited;
+  vContinue := true;
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgMessages.ScreenToClient(ScrPt);
+  Cell := dbgMessages.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgMessages.Fields[Cell.X - 1].FieldName);
+  if (s = 'MES_TEXT') then
   begin
-    if not(actEdit.Enabled and actEdit.Visible) then
-      exit;
-    actEdit.Execute;
-  end
-  else
+    if not dbgMessages.DataSource.DataSet.FieldByName('MES_TEXT').IsNull then
+    begin
+      s := dbgMessages.DataSource.DataSet.FieldByName('MES_TEXT').AsString;
+      if s.ToUpper.Contains('HTTP') then
+      begin
+        i := Pos('HTTP', s.ToUpper);
+        s := Copy(s, i, 1000);
+        atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
+        vContinue := False;
+      end
+    end;
+  end;
+
+  if vContinue then
   begin
-    if not(actNew.Enabled and actNew.Visible) then
-      exit;
-    actNew.Execute;
+    if dsMessages.RecordCount > 0 then
+    begin
+      if not(actEdit.Enabled and actEdit.Visible) then
+        exit;
+      actEdit.Execute;
+    end
+    else
+    begin
+      if not(actNew.Enabled and actNew.Visible) then
+        exit;
+      actNew.Execute;
+    end;
+  end;
+end;
+
+procedure TMessagesForm.dbgMessagesGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+    exit;
+
+  if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('DIRECT').IsNull then
+  begin
+    if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DIRECT').AsInteger = 1) then
+      Background := FclIncome;
   end;
 end;
 
@@ -747,6 +883,13 @@ begin
   pnlHead.Visible := show;
 end;
 
+procedure TMessagesForm.miMyOnlyClick(Sender: TObject);
+begin
+  fShowMy := not fShowMy;
+  miMyOnly.Checked := fShowMy;
+  SetMessagesFilter;
+end;
+
 procedure TMessagesForm.mmoMessageChange(Sender: TObject);
 var
   i, s: Integer;
@@ -765,6 +908,67 @@ begin
     s := 5;
 
   lblSMScount.Caption := Format(rsSMScount, [i, s]);
+end;
+
+procedure TMessagesForm.SetGridTreeMode(const inTree: Boolean);
+  function findInex(const FLD_NAME: string; Grid: TDBGridEh): Integer;
+  var
+    i: Integer;
+  begin
+    Result := 0;
+    for i := 0 to Grid.Columns.Count - 1 do
+    begin
+      if UpperCase(Grid.Columns[i].FieldName) = FLD_NAME then
+        Result := Grid.Columns[i].Index;
+    end;
+  end;
+
+var
+  id: Integer;
+begin
+  inherited;
+  if (srcMessages.DataSet.RecordCount >= 0) and (not srcMessages.DataSet.FieldByName('MES_ID').IsNull) then
+    id := srcMessages.DataSet['MES_ID']
+  else
+    id := -666;
+
+  FInTreeView := inTree;
+  if inTree then
+  begin
+    srcMessages.DataSet := mtTM;
+    mtTM.Open;
+    mtTM.TreeList.Active := true;
+    mtTM.TreeList.DefaultNodeExpanded := true;
+    fCanSave := False;
+  end
+  else
+  begin
+    srcMessages.DataSet := dsMessages;
+    mtTM.Close;
+    dsMessages.Open;
+  end;
+  chkGroup.Enabled := not inTree;
+  {
+    miTreeBreak.Visible := inTree;
+    miTreeCollapse.Visible := inTree;
+    miTreeExpand.Visible := inTree;
+    miTreeExpandCurrent.Visible := inTree;
+    if inTree then
+    mtEQ.TreeList.FullCollapse;
+  }
+
+  if id <> -666 then
+  begin
+    if not inTree then
+      srcMessages.DataSet.Locate('MES_ID', id, [])
+    else
+    begin
+      mtTM.TreeList.Locate('MES_ID', id, []);
+      // mtEQ.TreeList.E
+    end;
+  end;
+
+  dbgMessages.SetFocus;
 end;
 
 end.

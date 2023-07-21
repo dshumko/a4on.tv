@@ -69,6 +69,7 @@ type
     actAddPort: TAction;
     actEditPort: TAction;
     edtPort: TDBEditEh;
+    actGetIpv6: TAction;
     procedure eMACEnter(Sender: TObject);
     procedure eMACExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -103,6 +104,8 @@ type
     procedure actEditPortExecute(Sender: TObject);
     procedure lcbPortChange(Sender: TObject);
     procedure DBLookupComboboxClick(Sender: TObject);
+    procedure actGetIpv6Execute(Sender: TObject);
+    procedure IPv6Get;
   private
     { Private declarations }
     FCI: TCustomerInfo;
@@ -110,6 +113,7 @@ type
     FVlanDisabled: Boolean;
     FPortDictDisable: Boolean;
     FWarnings: string;
+    FEnterSecondPress: Boolean;
     function CheckData(): Integer;
     function CheckWarnings(): Boolean;
     function CheckIP(const ip: String; const VLAN_ID: Integer = -1): string;
@@ -120,7 +124,7 @@ type
     procedure miLanClickClick(Sender: TObject);
     procedure GenerateLANPopUp;
     function GetNodeID: Integer;
-
+    function ReplaceCmdParams(const InputCMD: String): String;
   public
     { Public declarations }
     property CI: TCustomerInfo write FCI;
@@ -134,8 +138,9 @@ var
 implementation
 
 uses
-  System.StrUtils,
-  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery, TelnetForma, atrCmdUtils, EQPort, HtmlForma;
+  System.StrUtils, httpsend, synacode, JsonDataObjects,
+  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery,
+  TelnetForma, atrCmdUtils, EQPort, HtmlForma;
 
 {$R *.dfm}
 
@@ -328,25 +333,38 @@ procedure TCustomerLanForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := True;
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
 procedure TCustomerLanForm.FormShow(Sender: TObject);
 begin
-  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment);
-  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Dictionary_Equipment_Ports);
+  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment);
+  FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Comm_Equipment_Ports);
 
   dbleEquipment.EditButtons.Items[0].Visible := FCanEditPort;
   lcbPort.EditButtons.Items[0].Visible := FCanEditPort;
@@ -374,6 +392,8 @@ begin
     lcbPort.Width := dbleEquipment.Width;
     lcbPort.TabOrder := 1;
   end;
+
+  actGetIpv6.Visible := (dmMain.GetSettingsValue('IPV6GETURL') <> '');
 end;
 
 procedure TCustomerLanForm.eIPExit(Sender: TObject);
@@ -600,6 +620,11 @@ begin
   end;
 end;
 
+procedure TCustomerLanForm.actGetIpv6Execute(Sender: TObject);
+begin
+  IPv6Get;
+end;
+
 procedure TCustomerLanForm.actLanHttpExecute(Sender: TObject);
 var
   s: string;
@@ -823,7 +848,7 @@ var
   eid: Integer;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
   eid := -1;
@@ -845,7 +870,7 @@ var
   eid: Integer;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
   if not VarIsNull(dbleEquipment.Value) then
@@ -1261,6 +1286,212 @@ begin
     (Sender as TDBLookupComboboxEh).DropDown
   else
     (Sender as TDBLookupComboboxEh).CloseUp(False);
+end;
+
+procedure TCustomerLanForm.IPv6Get;
+var
+  s, URL, body: string;
+  i: Integer;
+  JO: TJsonObject;
+  Params: TStringList;
+
+  function DownloadFile(const URL: string; const Post: string): String;
+  var
+    HTTPClient: THTTPSend;
+    strStream: TStringStream;
+    res: Boolean;
+    UTF8: UTF8String;
+  begin
+    Result := '';
+    HTTPClient := THTTPSend.Create;
+    HTTPClient.Timeout := 1000000;
+    strStream := TStringStream.Create;
+    try
+      if (Post <> '') then
+      begin
+        UTF8 := UTF8String(Post);
+        if UTF8 <> '' then
+          HTTPClient.Document.WriteBuffer(UTF8[1], Length(UTF8));
+        HTTPClient.MimeType := 'application/json';
+        res := HTTPClient.HTTPMethod('POST', URL);
+      end
+      else
+      begin
+        res := HTTPClient.HTTPMethod('GET', URL);
+      end;
+
+      if res then
+      begin
+        if Pos('200 OK', HTTPClient.Headers.Text) <> 0 then
+        begin
+          HTTPClient.Document.SaveToStream(strStream);
+          Result := strStream.DataString;
+        end;
+      end
+      else
+        ShowMessage(rsDownloadError);
+    finally
+      strStream.free;
+      HTTPClient.free;
+    end;
+  end;
+
+begin
+
+  //
+  // параметры <customer_id> <lan_id>
+  // <e_admin> <e_pass> <e_mac> <e_mac_h> <e_mac_d> <e_mac_j> <e_ip>
+  // <c_ip> <c_mac> <c_mac_h> <c_mac_d> <c_mac_j> <c_port> <c_vlan> <c_tag> <c_tagstr>
+  // возврат <ipv6> <tag_str>
+
+  s := dmMain.GetSettingsValue('IPV6GETURL');
+  if (Pos('^', s) > 0) then
+  begin
+    URL := Copy(s, 1, Pos('^', s) - 1);
+    URL := ReplaceCmdParams(URL);
+    body := Copy(s, Pos('^', s) + 1, 1000);
+    body := ReplaceCmdParams(body);
+  end
+  else
+  begin
+    URL := ReplaceCmdParams(s);
+    body := '';
+  end;
+
+  s := DownloadFile(URL, body);
+  s := s.Trim;
+  if (s.StartsWith('{') and s.EndsWith('}')) then
+  begin
+    // json вида {'ipv6':'eeeee', 'tag_str':'dddddd'}
+    JO := TJsonObject.Parse(s) as TJsonObject;
+    try
+      if JO.Contains('ipv6') then
+      begin
+        if not JO['ipv6'].IsNUll then
+          eIPv6.Text := JO.s['ipv6'];
+      end;
+      if JO.Contains('tag_str') then
+      begin
+        if not JO['tag_str'].IsNUll then
+          edtTAGSTR.Text := JO.s['tag_str'];
+      end;
+    finally
+      JO.free;
+    end;
+  end
+  else
+  begin
+    // текст парам=значение&парам1=значение1..
+    Params := TStringList.Create;
+    try
+      Params.Delimiter := '&';
+      Params.StrictDelimiter := True;
+      Params.DelimitedText := s;
+
+      for i := 0 to Params.Count - 1 do
+      begin
+        // Params.Strings[i] := StringReplace(Params.Strings[i], '+', ' ', [rfReplaceAll]);
+        Params.Strings[i] := string(DecodeURL(Params.Strings[i]));
+      end;
+
+      eIPv6.Text := Params.Values['ipv6'];
+      edtTAGSTR.Text := Params.Values['tag_str'];
+    finally
+      Params.free;
+    end;
+  end;
+end;
+
+function TCustomerLanForm.ReplaceCmdParams(const InputCMD: String): String;
+var
+  InStr: string;
+  H_IP, H_IPv6: string;
+  user: string;
+  pswd: string;
+  H_MAC, C_IP, C_MAC, C_PORT, C_VLAN: string;
+  C_TAG, C_TAGSTR: string;
+  // cmd: string;
+  id: Integer;
+  // URL, AUT_USER, AUT_PSWD: String;
+
+begin
+   InStr := InputCMD;
+
+  C_IP := eIP.Text;
+
+  if (not eMAC.Text.IsEmpty) then
+    C_MAC := eMAC.Text;
+
+  C_TAG := edtTAG.Text;
+  C_TAGSTR := edtTAGSTR.Text;
+  if not lcbPort.Text.IsEmpty then
+    C_PORT := lcbPort.Value
+  else
+    C_PORT := '';
+  C_VLAN := '';
+
+  if (InStr.Contains('<e_') and (not dbleEquipment.Text.IsEmpty)) then
+  begin
+    with dmMain.qRead do
+    begin
+      sql.Text := 'select e.ip, e.mac, e.e_admin, e.e_pass, IPV6 from equipment e where e.eid = :eq_id';
+
+      id := dbleEquipment.Value;
+      ParamByName('eq_id').AsInteger := id;
+
+      Transaction.StartTransaction;
+      ExecQuery;
+      H_IP := IfThen(FieldByName('ip').IsNUll, '', FieldByName('ip').asString);
+      H_IPv6 := IfThen(FieldByName('IPV6').IsNUll, '', FieldByName('IPV6').asString);
+      user := IfThen(FieldByName('e_admin').IsNUll, '', FieldByName('e_admin').asString);
+      pswd := IfThen(FieldByName('e_pass').IsNUll, '', FieldByName('e_pass').asString);
+      H_MAC := IfThen(FieldByName('mac').IsNUll, '', FieldByName('mac').asString);
+
+      Close;
+      Transaction.Rollback;
+    end;
+
+    InStr := ReplaceStr(InStr, '<e_id>', id.ToString);
+    InStr := ReplaceStr(InStr, '<e_admin>', user);
+    InStr := ReplaceStr(InStr, '<e_pass>', pswd);
+    InStr := ReplaceStr(InStr, '<e_mac>', H_MAC);
+    InStr := ReplaceStr(InStr, '<e_mac_h>', H_MAC.Replace(':', '-'));
+    InStr := ReplaceStr(InStr, '<e_mac_d>', H_MAC.Replace(':', '.'));
+    InStr := ReplaceStr(InStr, '<e_mac_j>', FormatMACas4CD(H_MAC));
+    InStr := ReplaceStr(InStr, '<e_ip>', H_IP);
+    InStr := ReplaceStr(InStr, '<e_ipv6>', H_IPv6);
+
+  end;
+
+  H_MAC := eMAC.Text;
+  H_IP := eIP.Text;
+  H_IPv6 := eIPv6.Text;
+
+  InStr := ReplaceStr(InStr, '<customer_id>', FCI.CUSTOMER_ID.ToString);
+  InStr := ReplaceStr(InStr, '<c_ip>', H_IP);
+  InStr := ReplaceStr(InStr, '<c_ipv6>', H_IPv6);
+  InStr := ReplaceStr(InStr, '<c_mac>', H_MAC);
+  InStr := ReplaceStr(InStr, '<c_mac_h>', H_MAC.Replace(':', '-'));
+  InStr := ReplaceStr(InStr, '<c_mac_d>', H_MAC.Replace(':', '.'));
+  InStr := ReplaceStr(InStr, '<c_mac_j>', FormatMACas4CD(H_MAC));
+  InStr := ReplaceStr(InStr, '<c_port>', edtPort.Text);
+  InStr := ReplaceStr(InStr, '<c_tag>', edtTAG.Text);
+  InStr := ReplaceStr(InStr, '<c_tagstr>', edtTAGSTR.Text);
+  if (dsLAN.RecordCount > 0) then
+  begin
+    InStr := ReplaceStr(InStr, '<lan_id>', IfThen(dsLAN.FieldByName('LAN_ID').IsNUll, '', dsLAN['LAN_ID']));
+  end
+  else
+  begin
+    InStr := ReplaceStr(InStr, '<lan_id>', '');
+  end;
+  If (dbleVLAN.Text.IsEmpty) then
+    H_IP := ''
+  else
+    H_IP := dbleVLAN.Value;
+  InStr := ReplaceStr(InStr, '<c_vlan>', H_IP);
+
+  Result := InStr;
 end;
 
 end.

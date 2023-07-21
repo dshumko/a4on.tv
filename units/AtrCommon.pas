@@ -56,6 +56,7 @@ function IsSmallFonts: Boolean; { Значение функции TRUE если 
 procedure UpdateFonts(Control: TWinControl);
 
 procedure DatasetToJson(DS: TDataset; const FileName: string);
+function DatasetToJsonStr(DS: TDataset): string;
 procedure DatasetFromJson(DS: TDataset; const FileName: string);
 procedure DatasetFromJsonStr(DS: TDataset; const AJson: string);
 
@@ -120,6 +121,8 @@ function GetFileNameFromURL(const S: string): string;
 function WaitForFileWrite(const FileName: String): Boolean;
 // Удаляем каталог со всеми файлами и подкаталогами
 procedure DeleteDir(const DirName: string);
+// Получить временную папку
+function FileGetTempFolder: string;
 // Получить временное имя файла
 function FileGetTempName(const Prefix: string): string;
 // Procedure PostKeyEx
@@ -697,6 +700,9 @@ var
   I: Integer;
   Obj, ChildObj: TJsonObject;
 begin
+  if DS.RecordCount = 0 then
+    Exit;
+
   Obj := TJsonObject.Create;
   try
     DS.DisableControls;
@@ -729,6 +735,52 @@ begin
     DS.EnableControls;
 
     Obj.SaveToFile(FileName);
+  finally
+    Obj.Free;
+  end;
+end;
+
+function DatasetToJsonStr(DS: TDataset): string;
+var
+  bkmark: TBookmark;
+  I: Integer;
+  Obj, ChildObj: TJsonObject;
+begin
+  if DS.RecordCount = 0 then
+    Exit;
+
+  Obj := TJsonObject.Create;
+  try
+    DS.DisableControls;
+    bkmark := DS.GetBookmark;
+    DS.First;
+    while (not DS.EOF) do
+    begin
+      ChildObj := Obj.A['records'].AddObject;
+      for I := 0 to DS.FieldCount - 1 do
+      begin
+        if (not DS.Fields[I].IsNull) then
+        begin
+          case DS.Fields[I].DataType of
+            ftInteger, ftSmallint:
+              ChildObj.I[DS.Fields[I].FieldName] := DS.Fields[I].AsInteger;
+            ftDate, ftDateTime:
+              ChildObj.d[DS.Fields[I].FieldName] := DS.Fields[I].AsDateTime;
+            ftString:
+              ChildObj.S[DS.Fields[I].FieldName] := DS.Fields[I].AsString;
+            ftFloat:
+              ChildObj.F[DS.Fields[I].FieldName] := DS.Fields[I].AsFloat;
+            ftBoolean:
+              ChildObj.B[DS.Fields[I].FieldName] := DS.Fields[I].AsBoolean;
+          end;
+        end;
+      end;
+      DS.Next;
+    end;
+    DS.GotoBookmark(bkmark);
+    DS.EnableControls;
+    if ChildObj.Count > 0 then
+      Result := Obj.ToString;
   finally
     Obj.Free;
   end;
@@ -1220,9 +1272,9 @@ var
   CanWrite: Boolean;
 begin
   // Если файл есть. проверим не залочен ли он
-  CanWrite := False;
   if FileExists(FileName) then
   begin
+    CanWrite := False;
     I := 0;
     Repeat
       hFile := CreateFile(PChar(FileName), GENERIC_WRITE, 0, nil, OPEN_EXISTING, 0, 0);
@@ -1235,7 +1287,10 @@ begin
         Sleep(500);
       Inc(I);
     until ((I > 3) or CanWrite);
-  end;
+  end
+  else
+    CanWrite := True;
+
   Result := CanWrite;
 end;
 
@@ -1379,6 +1434,22 @@ begin
     Result := ExtractFilePath(Application.ExeName) + Prefix + '.update';
     // .TrimRight(['\', '/']);
   end
+end;
+
+function FileGetTempFolder: string;
+var
+  TempPath, TempFile: string;
+  r: Cardinal;
+begin
+  Result := '';
+  r := GetTempPath(0, nil);
+  SetLength(TempPath, r);
+  r := GetTempPath(r, PChar(TempPath));
+  if r <> 0 then
+  begin
+    SetLength(TempPath, StrLen(PChar(TempPath)));
+    Result := TempPath;
+  end;
 end;
 
 function GetUserCacheFolder(): string;

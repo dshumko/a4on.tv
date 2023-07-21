@@ -104,7 +104,7 @@ var
   vFull: Boolean;
 begin
   inherited;
-  vFull := dmMain.AllowedAction(rght_Dictionary_Nodes);
+  vFull := dmMain.AllowedAction(rght_Comm_Nodes);
   fCanEdit := vFull;
   fCanCreate := fCanEdit;
   actNew.Visible := fCanEdit;

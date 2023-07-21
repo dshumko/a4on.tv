@@ -2,8 +2,8 @@ object MatOutDocForm: TMatOutDocForm
   Left = 0
   Top = 0
   Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099'. '#1044#1086#1082#1091#1084#1077#1085#1090' '#1089#1087#1080#1089#1072#1085#1080#1103
-  ClientHeight = 397
-  ClientWidth = 683
+  ClientHeight = 460
+  ClientWidth = 694
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,13 +23,14 @@ object MatOutDocForm: TMatOutDocForm
   object pnlHead: TPanel
     Left = 0
     Top = 0
-    Width = 683
+    Width = 694
     Height = 156
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 683
     DesignSize = (
-      683
+      694
       156)
     object lbl1: TLabel
       Left = 8
@@ -39,12 +40,13 @@ object MatOutDocForm: TMatOutDocForm
       Caption = #1044#1086#1082#1091#1084#1077#1085#1090' '#8470
     end
     object Label1: TLabel
-      Left = 470
+      Left = 481
       Top = 18
       Width = 84
       Height = 13
       Anchors = [akTop, akRight]
       Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+      ExplicitLeft = 470
     end
     object lbl2: TLabel
       Left = 8
@@ -63,7 +65,7 @@ object MatOutDocForm: TMatOutDocForm
     object edtD_N: TDBEditEh
       Left = 112
       Top = 15
-      Width = 352
+      Width = 363
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'DOC_N'
@@ -74,9 +76,10 @@ object MatOutDocForm: TMatOutDocForm
       ShowHint = True
       TabOrder = 0
       Visible = True
+      ExplicitWidth = 352
     end
     object deD_DATE: TDBDateTimeEditEh
-      Left = 560
+      Left = 571
       Top = 15
       Width = 118
       Height = 21
@@ -90,11 +93,12 @@ object MatOutDocForm: TMatOutDocForm
       ShowHint = True
       TabOrder = 1
       Visible = True
+      ExplicitLeft = 560
     end
     object lcbWH: TDBLookupComboboxEh
       Left = 112
       Top = 42
-      Width = 566
+      Width = 577
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -108,9 +112,10 @@ object MatOutDocForm: TMatOutDocForm
       ShowHint = True
       TabOrder = 2
       Visible = True
+      ExplicitWidth = 566
     end
     object btnSave: TButton
-      Left = 462
+      Left = 473
       Top = 124
       Width = 216
       Height = 25
@@ -118,6 +123,7 @@ object MatOutDocForm: TMatOutDocForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       TabOrder = 6
       OnClick = btnSaveClick
+      ExplicitLeft = 462
     end
     object btnClose: TButton
       Left = 5
@@ -132,7 +138,7 @@ object MatOutDocForm: TMatOutDocForm
     object dbmhD_NOTICE: TDBMemoEh
       Left = 112
       Top = 69
-      Width = 566
+      Width = 577
       Height = 49
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -145,6 +151,7 @@ object MatOutDocForm: TMatOutDocForm
       TabOrder = 3
       Visible = True
       WantReturns = True
+      ExplicitWidth = 566
     end
     object btnOpen: TButton
       Left = 5
@@ -161,16 +168,18 @@ object MatOutDocForm: TMatOutDocForm
   object pnlMat: TPanel
     Left = 0
     Top = 156
-    Width = 683
-    Height = 241
+    Width = 694
+    Height = 304
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 683
+    ExplicitHeight = 241
     object dbgDocMat: TDBGridEh
       Left = 0
       Top = 140
-      Width = 683
-      Height = 101
+      Width = 694
+      Height = 164
       Align = alClient
       AllowedOperations = [alopUpdateEh, alopDeleteEh]
       DataSource = srcDocMat
@@ -178,6 +187,8 @@ object MatOutDocForm: TMatOutDocForm
       Flat = True
       FooterRowCount = 1
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SumList.Active = True
       TabOrder = 1
       TitleParams.MultiTitle = True
@@ -210,7 +221,6 @@ object MatOutDocForm: TMatOutDocForm
         item
           AutoFitColWidth = False
           CellButtons = <>
-          DisplayFormat = ',#.##'
           DynProps = <>
           EditButtons = <>
           FieldName = 'M_COST'
@@ -223,17 +233,34 @@ object MatOutDocForm: TMatOutDocForm
         item
           AutoFitColWidth = False
           CellButtons = <>
-          DisplayFormat = ',#0.###'
           DynProps = <>
           EditButtons = <>
           FieldName = 'ITOGO'
-          Footer.DisplayFormat = ',#0.###'
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
           Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
           Title.TitleButton = True
           Width = 88
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'SHIPPER_COST'
+          Footers = <>
+          Title.Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+          Width = 71
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'COST'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+          Width = 68
         end
         item
           CellButtons = <>
@@ -272,13 +299,14 @@ object MatOutDocForm: TMatOutDocForm
     object pnlMatAdd: TPanel
       Left = 0
       Top = 0
-      Width = 683
+      Width = 694
       Height = 140
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitWidth = 683
       DesignSize = (
-        683
+        694
         140)
       object lbl3: TLabel
         Left = 8
@@ -308,10 +336,17 @@ object MatOutDocForm: TMatOutDocForm
         Height = 13
         Caption = #1062#1077#1085#1072
       end
+      object lbl41: TLabel
+        Left = 334
+        Top = 36
+        Width = 91
+        Height = 13
+        Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+      end
       object edtMaterial: TDBEditEh
         Left = 100
         Top = 6
-        Width = 578
+        Width = 589
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <
@@ -334,6 +369,7 @@ object MatOutDocForm: TMatOutDocForm
         OnCloseDropDownForm = edtMaterialCloseDropDownForm
         OnEnter = edtMaterialEnter
         OnOpenDropDownForm = edtMaterialOpenDropDownForm
+        ExplicitWidth = 578
       end
       object edtQuant: TDBNumberEditEh
         Left = 100
@@ -350,7 +386,7 @@ object MatOutDocForm: TMatOutDocForm
       object memNotice: TDBMemoEh
         Left = 100
         Top = 60
-        Width = 578
+        Width = 589
         Height = 45
         Anchors = [akLeft, akTop, akRight, akBottom]
         AutoSize = False
@@ -358,19 +394,21 @@ object MatOutDocForm: TMatOutDocForm
         EditButtons = <>
         EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         ShowHint = True
-        TabOrder = 3
+        TabOrder = 4
         Visible = True
         WantReturns = True
+        ExplicitWidth = 578
       end
       object btnAdd: TButton
         Left = 100
         Top = 110
-        Width = 578
+        Width = 589
         Height = 25
         Anchors = [akLeft, akRight, akBottom]
         Caption = #1044#1086#1073#1072#1074#1080#1090#1100
-        TabOrder = 4
+        TabOrder = 5
         OnClick = btnAddClick
+        ExplicitWidth = 578
       end
       object edtCost: TDBNumberEditEh
         Left = 240
@@ -427,9 +465,22 @@ object MatOutDocForm: TMatOutDocForm
           00000000000000000000A6AED9FF000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000}
-        TabOrder = 5
+        TabOrder = 6
         TabStop = False
         OnClick = btnDelClick
+      end
+      object ednShipCost: TDBNumberEditEh
+        Left = 431
+        Top = 33
+        Width = 85
+        Height = 21
+        DynProps = <>
+        EmptyDataInfo.Text = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+        Enabled = False
+        EditButtons = <>
+        ShowHint = True
+        TabOrder = 3
+        Visible = True
       end
     end
   end
@@ -503,7 +554,8 @@ object MatOutDocForm: TMatOutDocForm
       'SET '
       '    M_QUANT = :M_QUANT,'
       '    M_COST = :M_COST,'
-      '    M_NOTICE = :M_NOTICE'
+      '    M_NOTICE = :M_NOTICE,'
+      '    SHIPPER_COST = :SHIPPER_COST'
       'WHERE'
       '        ID = :OLD_ID'
       '    and M_ID = :OLD_M_ID'
@@ -551,7 +603,7 @@ object MatOutDocForm: TMatOutDocForm
       '            and u.Serial = :OLD_SERIAL'
       '            and u.Owner = :Wh_Id'
       '            and u.Owner_Type = 0'
-      '            and u.State = :OLD_Doc_Id;'
+      '            and u.State = (-1*:OLD_Doc_Id);'
       '    end'
       '  end'
       'end')
@@ -560,6 +612,7 @@ object MatOutDocForm: TMatOutDocForm
       '    Id       D_Uid_Null = :Id,'
       '    M_Id     UID = :M_Id,'
       '    M_Cost   D_N15_2 = :M_Cost,'
+      '    SHIPPER_COST D_N15_2 = :SHIPPER_COST,'
       '    M_Quant  D_N15_5 = :M_Quant,'
       '    M_Notice D_NOTICE = :M_Notice,'
       '    Doc_Id   UID = :Doc_Id,'
@@ -572,8 +625,10 @@ object MatOutDocForm: TMatOutDocForm
       ''
       
         '  insert into MATERIALS_IN_DOC (ID, M_ID, M_COST, M_QUANT, M_NOT' +
-        'ICE, DOC_ID)'
-      '  values (:ID, :M_ID, :M_COST, :M_QUANT, :M_NOTICE, :DOC_ID);'
+        'ICE, DOC_ID, SHIPPER_COST)'
+      
+        '  values (:ID, :M_ID, :M_COST, :M_QUANT, :M_NOTICE, :DOC_ID, :SH' +
+        'IPPER_COST);'
       ''
       '  if (Serial <> '#39#39') then begin'
       '    select'
@@ -646,6 +701,8 @@ object MatOutDocForm: TMatOutDocForm
       '  , md.M_Quant'
       '  , md.M_Cost'
       '  , md.M_Notice'
+      '  , md.SHIPPER_COST '
+      '  , md.M_Quant * md.SHIPPER_COST as COST   '
       '  , g.Mg_Name'
       '  , md.Doc_Id'
       '  , (coalesce(md.M_Quant, 0) * md.M_Cost) as Itogo'
@@ -700,6 +757,20 @@ object MatOutDocForm: TMatOutDocForm
       '  , m.Dimension'
       '  , iif(m.Is_Unit = 1, 1, r.Mr_Quant) Mr_Quant'
       '  , r.Mr_Cost'
+      '  , iif(m.Is_Unit is distinct from 1, r.Mr_Cost,'
+      '       (select first 1'
+      '        coalesce(imd.Shipper_Cost, r.Mr_Cost)'
+      '      from Materials_In_Doc_Unit imu'
+      '           inner join Materials_In_Doc imd on (imd.Id = imu.Id)'
+      
+        '           inner join Material_Docs id on (id.Doc_Id = imd.Doc_I' +
+        'd)'
+      '      where imu.Serial = u.Serial'
+      '            and imu.M_Id = m.M_Id'
+      '            and id.Doc_Closed = 1'
+      '            and id.Dt_Id = 1'
+      '      order by id.Doc_Date)'
+      '  ) Ship_Cost'
       '  , g.Mg_Name'
       '  , m.DESCRIPTION'
       '  , u.Serial'

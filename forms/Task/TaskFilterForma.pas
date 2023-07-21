@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.DBCtrls, Vcl.ComCtrls,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh;
 
 type
   TTaskFilterForm = class(TForm)
@@ -146,8 +146,6 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh)
     then go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBGridEh)
-    then go := False;
 
     if go
     then begin

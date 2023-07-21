@@ -131,6 +131,17 @@ type
     miChSerial: TMenuItem;
     actChangeSerial: TAction;
     miN2: TMenuItem;
+    Panel1: TPanel;
+    btnShowSN: TBitBtn;
+    Panel2: TPanel;
+    btnShowSN1: TBitBtn;
+    Panel3: TPanel;
+    btnShowSN2: TBitBtn;
+    Panel4: TPanel;
+    btnShowSN3: TBitBtn;
+    actShowSN: TAction;
+    pnl2: TPanel;
+    btnactCnPrefixWizard: TBitBtn;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -179,6 +190,7 @@ type
     procedure dbgSNDblClick(Sender: TObject);
     procedure actChangeSerialExecute(Sender: TObject);
     procedure DBGridGroupsDblClick(Sender: TObject);
+    procedure actShowSNExecute(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -186,7 +198,19 @@ type
     FAccessMat: Boolean;
     FPictHintWindow: THintWindow;
     FSortSN: string;
+    FShowSN_Rem: Boolean;
+    FShowSN_Inc: Boolean;
+    FShowSN_Inv: Boolean;
+    FShowSN_Out: Boolean;
+    FShowSN_Mov: Boolean;
     procedure InitDataSet;
+    procedure ShowSNforGrid();
+    procedure ShowSNforRem;
+    procedure ShowSNforIncome;
+    procedure ShowSNforMove;
+    procedure ShowSNforInvent;
+    procedure ShowSNforOut;
+    procedure SetColumnVisibility(grid: TDBGridEh; fld: string; vsbl: Boolean);
     procedure dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
     { Public declarations }
@@ -939,7 +963,7 @@ begin
   FAccessFull := dmMain.AllowedAction(rght_Dictionary_full);
   fVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
 
-  tsPivotSN.TabVisible := (dmMain.CompanyName.Contains('ЛТВ') or dmMain.CompanyName.Contains('Призма'));
+  tsPivotSN.TabVisible := false; // (dmMain.CompanyName.Contains('ЛТВ') or dmMain.CompanyName.Contains('Призма'));
 
   b := FAccessFull or FAccessMat;
   InitDataSet;
@@ -1024,11 +1048,11 @@ end;
 
 procedure TMaterialsForm.srcMatGropupsStateChange(Sender: TObject);
 begin
-  //ActPostGroup.Enabled := not((Sender as TDataSource).DataSet.State = dsBrowse);
-  //actCancelGroup.Enabled := ActPostGroup.Enabled;
-  //actAddGroup.Enabled := not ActPostGroup.Enabled;
-  //ActEditGroup.Enabled := not ActPostGroup.Enabled;
-  //ActDelGroup.Enabled := not ActPostGroup.Enabled;
+  // ActPostGroup.Enabled := not((Sender as TDataSource).DataSet.State = dsBrowse);
+  // actCancelGroup.Enabled := ActPostGroup.Enabled;
+  // actAddGroup.Enabled := not ActPostGroup.Enabled;
+  // ActEditGroup.Enabled := not ActPostGroup.Enabled;
+  // ActDelGroup.Enabled := not ActPostGroup.Enabled;
 end;
 
 procedure TMaterialsForm.actRecalcAllExecute(Sender: TObject);
@@ -1093,6 +1117,11 @@ begin
   dsMaterials.Close;
   dsMaterials.Open;
   dsMaterials.Locate('M_ID', mid, []);
+end;
+
+procedure TMaterialsForm.actShowSNExecute(Sender: TObject);
+begin
+  ShowSNforGrid();
 end;
 
 procedure TMaterialsForm.actOpenMatDocExecute(Sender: TObject);
@@ -1167,7 +1196,7 @@ begin
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
         frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        Caption := frxReport.FileName;
+        frxReport.PreviewForm.Caption := frxReport.FILENAME;
       finally
         Stream.Free;
       end;
@@ -1299,7 +1328,8 @@ begin
   S := UpperCase(dbgJournal.Fields[Cell.X - 1].FieldName);
   if (S = 'M_WHERE') then
   begin
-    if not dsJournal.FieldByName('Customer_Id').IsNull then begin
+    if not dsJournal.FieldByName('Customer_Id').IsNull then
+    begin
       // ShowCustomer(dsJournal['Customer_Id'], false);
       A4MainForm.ShowCustomers(104, dsJournal['Customer_Id']); // customer_id
     end;
@@ -1316,6 +1346,122 @@ end;
 function TMaterialsForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
 begin
   Result := dmMain.frxReportUserFunction(MethodName, Params);
+end;
+
+procedure TMaterialsForm.ShowSNforGrid();
+begin
+  if (pgcInOut.ActivePage = tsIn) then
+    ShowSNforRem
+  else
+  if (pgcInOut.ActivePage = tsIncome) then
+    ShowSNforIncome
+  else if (pgcInOut.ActivePage = tsMove) then
+    ShowSNforMove
+  else if (pgcInOut.ActivePage = tsOUT) then
+    ShowSNforOut
+  else if (pgcInOut.ActivePage = tsInventory) then
+    ShowSNforInvent
+end;
+
+procedure TMaterialsForm.ShowSNforRem;
+begin
+  FShowSN_Rem := not FShowSN_Rem;
+  dsRemain.Close;
+  if FShowSN_Rem then
+  begin
+    dsRemain.ParamByName('qnt_clause').Value := 'iif(u.Serial is null, m.Mr_Quant, 1)';
+    dsRemain.ParamByName('sn_clause').Value := 'u.Serial';
+    dsRemain.ParamByName('join_clause').Value := 'inner join materials t on (t.M_Id = m.M_Id) '
+      +' left outer join Material_Unit u on (u.M_Id = t.M_Id and u.Owner_Type = 0 and u.Owner = m.WH_ID)';
+  end
+  else
+  begin
+    dsRemain.Params.ByName['qnt_clause'].SetDefMacroValue;
+    dsRemain.Params.ByName['sn_clause'].SetDefMacroValue;
+    dsRemain.Params.ByName['join_clause'].SetDefMacroValue;
+  end;
+  dsRemain.Open;
+  SetColumnVisibility(DBGridIncome, 'SERIAL', FShowSN_Rem);
+end;
+
+procedure TMaterialsForm.ShowSNforIncome;
+begin
+  FShowSN_Inc := not FShowSN_Inc;
+  dsIncome.Close;
+  if FShowSN_Inc then
+  begin
+    dsIncome.ParamByName('qnt_clause').Value := 'iif(u.Serial is null, im.M_Quant, 1)';
+    dsIncome.ParamByName('sn_clause').Value := 'u.Serial';
+    dsIncome.ParamByName('join_clause').Value :=
+      'left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = im.M_Id and u.Id = im.Id)';
+  end
+  else
+  begin
+    dsIncome.Params.ByName['qnt_clause'].SetDefMacroValue;
+    dsIncome.Params.ByName['sn_clause'].SetDefMacroValue;
+    dsIncome.Params.ByName['join_clause'].SetDefMacroValue;
+  end;
+  dsIncome.Open;
+  SetColumnVisibility(dbgIncome, 'SERIAL', FShowSN_Inc);
+end;
+
+procedure TMaterialsForm.ShowSNforMove;
+begin
+  FShowSN_Mov := not FShowSN_Mov;
+  dsMove.Close;
+  if FShowSN_Mov then
+  begin
+    dsMove.ParamByName('qnt_clause').Value := 'iif(u.Serial is null, im.M_Quant, 1)';
+    dsMove.ParamByName('sn_clause').Value := 'u.Serial';
+    dsMove.ParamByName('join_clause').Value :=
+      'left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = :M_Id)';
+  end
+  else
+  begin
+    dsMove.Params.ByName['qnt_clause'].SetDefMacroValue;
+    dsMove.Params.ByName['sn_clause'].SetDefMacroValue;
+    dsMove.Params.ByName['join_clause'].SetDefMacroValue;
+  end;
+  dsMove.Open;
+  SetColumnVisibility(dbgMove, 'SERIAL', FShowSN_Mov);
+end;
+
+procedure TMaterialsForm.ShowSNforInvent;
+begin
+  FShowSN_Inv := not FShowSN_Inv;
+end;
+
+procedure TMaterialsForm.ShowSNforOut;
+begin
+  FShowSN_Out := not FShowSN_Out;
+  dsOut.Close;
+  if FShowSN_Out then
+  begin
+    dsOut.ParamByName('qnt_clause').Value := 'iif(u.Serial is null, -1*im.M_Quant, -1)';
+    dsOut.ParamByName('sn_clause').Value := 'u.Serial';
+    dsOut.ParamByName('itg_clause').Value := 'iif(u.Serial is null, -1*im.M_Quant, -1)*m.Cost';
+    dsOut.ParamByName('join_clause').Value :=
+      'left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = im.M_Id and u.Id = im.Id)';
+  end
+  else
+  begin
+    dsOut.Params.ByName['qnt_clause'].SetDefMacroValue;
+    dsOut.Params.ByName['sn_clause'].SetDefMacroValue;
+    dsOut.Params.ByName['itg_clause'].SetDefMacroValue;
+    dsOut.Params.ByName['join_clause'].SetDefMacroValue;
+  end;
+  dsOut.Open;
+  SetColumnVisibility(dbgOUT, 'SERIAL', FShowSN_Out);
+end;
+
+procedure TMaterialsForm.SetColumnVisibility(grid: TDBGridEh; fld: string; vsbl: Boolean);
+var
+  i: Integer;
+begin
+  for i := 0 to grid.Columns.Count - 1 do
+    if grid.Columns[i].FieldName = fld then
+      grid.Columns[i].Visible := vsbl;
+
 end;
 
 end.

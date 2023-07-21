@@ -97,7 +97,7 @@ var
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full);
-  fCanEdit   := dmMain.AllowedAction(rght_Dictionary_Nodes) or vFull;
+  fCanEdit   := dmMain.AllowedAction(rght_Comm_Nodes) or vFull;
   fCanCreate := fCanEdit;
   actNew.Visible    := fCanEdit;
   actDelete.Visible := fCanEdit;

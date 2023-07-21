@@ -41,10 +41,10 @@ object MatMoveDocForm: TMatMoveDocForm
     object Label1: TLabel
       Left = 500
       Top = 18
-      Width = 84
+      Width = 64
       Height = 13
       Anchors = [akTop, akRight]
-      Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+      Caption = #1044#1072#1090#1072' '#1076#1086#1082'-'#1090#1072
     end
     object lbl2: TLabel
       Left = 8
@@ -61,8 +61,8 @@ object MatMoveDocForm: TMatMoveDocForm
       Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     end
     object Label4: TLabel
-      Left = 470
-      Top = 45
+      Left = 514
+      Top = 46
       Width = 50
       Height = 13
       Caption = #1089#1086' '#1089#1082#1083#1072#1076#1072
@@ -83,9 +83,9 @@ object MatMoveDocForm: TMatMoveDocForm
       Visible = True
     end
     object deD_DATE: TDBDateTimeEditEh
-      Left = 590
+      Left = 570
       Top = 15
-      Width = 118
+      Width = 138
       Height = 21
       Anchors = [akTop, akRight]
       DataField = 'DOC_DATE'
@@ -118,7 +118,7 @@ object MatMoveDocForm: TMatMoveDocForm
     object lcbWH: TDBLookupComboboxEh
       Left = 100
       Top = 42
-      Width = 364
+      Width = 394
       Height = 21
       DynProps = <>
       DataField = 'WH_ID'
@@ -153,9 +153,9 @@ object MatMoveDocForm: TMatMoveDocForm
       OnClick = btnCloseClick
     end
     object lcbFROM_WH: TDBLookupComboboxEh
-      Left = 560
+      Left = 570
       Top = 42
-      Width = 147
+      Width = 137
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -203,6 +203,8 @@ object MatMoveDocForm: TMatMoveDocForm
       FooterRowCount = 1
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       PopupMenu = pmGrid
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SumList.Active = True
       TabOrder = 1
       TitleParams.MultiTitle = True
@@ -577,7 +579,7 @@ object MatMoveDocForm: TMatMoveDocForm
       '            and u.Serial = :OLD_SERIAL'
       '            and u.Owner = :FROM_WH'
       '            and u.Owner_Type = 0'
-      '            and u.State = :OLD_Doc_Id;'
+      '            and u.State = (-1*:OLD_Doc_Id);'
       '    end'
       '  end'
       'end')

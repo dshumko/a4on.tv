@@ -4,6 +4,8 @@ inherited DistribForm: TDistribForm
   Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088#1099' '#1082#1072#1085#1072#1083#1086#1074
   ClientHeight = 580
   ClientWidth = 919
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter: TSplitter [0]
@@ -18,6 +20,9 @@ inherited DistribForm: TDistribForm
     Top = 217
     Width = 919
     Height = 437
+    ExplicitTop = 217
+    ExplicitWidth = 919
+    ExplicitHeight = 437
   end
   inherited dbGrid: TDBGridEh
     Top = 654
@@ -117,6 +122,7 @@ inherited DistribForm: TDistribForm
   end
   inherited tlbMain: TToolBar
     Width = 919
+    ExplicitWidth = 919
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -165,6 +171,8 @@ inherited DistribForm: TDistribForm
     Width = 919
     Height = 192
     ParentCtl3D = False
+    ExplicitWidth = 919
+    ExplicitHeight = 192
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -184,6 +192,9 @@ inherited DistribForm: TDistribForm
       Top = 159
       Width = 734
       TabOrder = 5
+      ExplicitLeft = 72
+      ExplicitTop = 159
+      ExplicitWidth = 734
     end
     inherited btnCancelLink: TBitBtn
       Left = 812
@@ -191,6 +202,9 @@ inherited DistribForm: TDistribForm
       Width = 98
       Cancel = True
       TabOrder = 6
+      ExplicitLeft = 812
+      ExplicitTop = 159
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -302,6 +316,10 @@ inherited DistribForm: TDistribForm
     OnChange = pgcDistrChange
     object tsContract: TTabSheet
       Caption = #1044#1086#1075#1086#1074#1086#1088#1072
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnlBottom: TPanel
         Left = 0
         Top = 0
@@ -328,6 +346,10 @@ inherited DistribForm: TDistribForm
           OnChange = pgcAddonsChange
           object tsChan: TTabSheet
             Caption = #1050#1072#1085#1072#1083#1099
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object dbgReports: TDBGridEh
               Left = 0
               Top = 25
@@ -481,6 +503,10 @@ inherited DistribForm: TDistribForm
           end
           object tsReports: TTabSheet
             Caption = #1054#1090#1095#1077#1090#1099
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object Splitter1: TSplitter
               Left = 0
               Top = 96
@@ -900,6 +926,10 @@ inherited DistribForm: TDistribForm
     object tsCards: TTabSheet
       Caption = #1050#1072#1088#1090#1086#1095#1082#1080
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnl1: TPanel
         Left = 0
         Top = 0
@@ -1472,11 +1502,12 @@ inherited DistribForm: TDistribForm
       'REPORT_NAME=REPORT_NAME')
     DataSource = srcContract
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 31
     Top = 447
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]

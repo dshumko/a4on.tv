@@ -50,6 +50,7 @@ type
     { Private declarations }
     fCI: TCustomerInfo;
     fApplID: Integer;
+    FEnterSecondPress: Boolean;
     procedure ReadData();
     procedure SaveData();
     function CheckData: Boolean;
@@ -109,18 +110,33 @@ procedure TEditApplianceForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := True;
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

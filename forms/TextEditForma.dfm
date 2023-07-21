@@ -24,6 +24,7 @@ object TextEditForm: TTextEditForm
     Width = 562
     Height = 13
     Align = alTop
+    ExplicitWidth = 3
   end
   object Text: TSynEdit
     Left = 0

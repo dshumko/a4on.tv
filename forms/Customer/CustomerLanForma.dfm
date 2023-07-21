@@ -35,12 +35,6 @@ object CustomerLanForm: TCustomerLanForm
     TabStop = True
     ExplicitTop = 302
     ExplicitWidth = 534
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 74
       Width = 363
@@ -360,7 +354,11 @@ object CustomerLanForm: TCustomerLanForm
       DataField = 'IPV6'
       DataSource = srcLan
       DynProps = <>
-      EditButtons = <>
+      EditButtons = <
+        item
+          Action = actGetIpv6
+          Style = ebsEllipsisEh
+        end>
       EmptyDataInfo.Text = 'IPv6 '#1072#1076#1088#1077#1089
       ShowHint = True
       TabOrder = 5
@@ -946,6 +944,12 @@ object CustomerLanForm: TCustomerLanForm
     object actLanHttp: TAction
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' IP'
       OnExecute = actLanHttpExecute
+    end
+    object actGetIpv6: TAction
+      Caption = #1047#1072#1087#1088#1086#1089#1080#1090#1100' '#1076#1072#1085#1085#1099#1077' IPv6'
+      Hint = #1047#1072#1087#1088#1086#1089#1080#1090#1100' '#1076#1072#1085#1085#1099#1077' IPv6'
+      Visible = False
+      OnExecute = actGetIpv6Execute
     end
   end
   object srcStreet: TDataSource

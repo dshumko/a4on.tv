@@ -8,23 +8,24 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, Vcl.Buttons,
+  Vcl.ExtCtrls;
 
 type
   TapgCustomerAttributes = class(TA4onPage)
     dsCustAttributes: TpFIBDataSet;
     srcCustAttributes: TDataSource;
     dbgCustAttr: TDBGridEh;
-    tbAttributes: TToolBar;
-    btnAdd: TToolButton;
-    btnEdit: TToolButton;
-    btnDel: TToolButton;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    pnlButtons: TPanel;
+    btnDel1: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnEdit1: TSpeedButton;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -58,11 +59,11 @@ begin
 
   FullAccess := (dmMain.AllowedAction(rght_Customer_full)); // Полный доступ
   // атрибуты
-  tbAttributes.Visible := (dmMain.AllowedAction(rght_Customer_Attribute)) or (dmMain.AllowedAction(rght_Customer_edit))
+  pnlButtons.Visible := (dmMain.AllowedAction(rght_Customer_Attribute)) or (dmMain.AllowedAction(rght_Customer_edit))
     or FullAccess;
-  actAdd.Visible := tbAttributes.Visible;
-  actDel.Visible := tbAttributes.Visible;
-  actEdit.Visible := tbAttributes.Visible;
+  actAdd.Visible := pnlButtons.Visible;
+  actDel.Visible := pnlButtons.Visible;
+  actEdit.Visible := pnlButtons.Visible;
 
   dsCustAttributes.DataSource := FDataSource;
 end;

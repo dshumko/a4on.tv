@@ -11,6 +11,16 @@ CREATE INDEX MONTHLY_FEE_OLD_IDX ON MONTHLY_OLD (CUSTOMER_ID, MONTH_ID, SERVICE_
 
 UPDATE SETTINGS SET VAR_VALUE = '0' WHERE (VAR_NAME = 'STRICT_MODE');commit;
 
+
+/*
+<?php
+for($y=2000;$y<2024; $y++) {
+    for($m=1;$m<13; $m++) {
+        echo "execute procedure Close_Month_Proc('$y-$m-1', null); commit;".PHP_EOL;
+    }
+}
+*/
+
 select 'execute procedure Full_Recalc_Customer('||c.Customer_Id||'); commit;' from customer c order by c.Customer_Id
 
 -- по абонентам

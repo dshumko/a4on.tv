@@ -19,14 +19,14 @@ type
   TapgCustomerNew = class(TA4onPage)
     srcContacts: TDataSource;
     pnlInfo: TPanel;
-    pnl1: TPanel;
+    pnlClient: TPanel;
     pnlContacts: TPanel;
     lbl5: TLabel;
     btnCAdd: TSpeedButton;
     btnCdel: TSpeedButton;
     dbgrdhContacts: TDBGridEh;
     ds: TDataSource;
-    pnl2: TPanel;
+    pnlNotice: TPanel;
     GroupBox2: TGroupBox;
     dsOrg: TpFIBDataSet;
     srcOrg: TDataSource;
@@ -137,6 +137,9 @@ type
     Label15: TLabel;
     srcBanks: TDataSource;
     dsBANKS: TpFIBDataSet;
+    pnlWarningInfo: TPanel;
+    btnCloseWarningInfo: TButton;
+    mmoWarning: TDBMemoEh;
     procedure dbgrdhContactsExit(Sender: TObject);
     procedure chkJURIDICALClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -177,6 +180,7 @@ type
     procedure lcbBANKExit(Sender: TObject);
     procedure LupHOUSE_IDDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
       var Background: TColor; State: TGridDrawState);
+    procedure btnCloseWarningInfoClick(Sender: TObject);
   private
     { Private declarations }
     FFullAccess: Boolean;
@@ -186,6 +190,7 @@ type
     FFileScan: String;
     FKeyMVD: string;
     FNeedCheckAccount: Boolean;
+    FEnterSecondPress: Boolean;
     procedure GenerateAccountN;
     procedure SetJurVisible;
     function SaveInDB: Integer;
@@ -200,6 +205,9 @@ type
     procedure CheckIOfromDB();
     function CheckFlatOwner: Boolean;
     procedure SaveFlatOwner;
+    procedure ShowWarningMessage(const s: String);
+    procedure HideWarningMessage;
+    procedure FindSamePassport;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -405,7 +413,16 @@ begin
 end;
 
 procedure TapgCustomerNew.eACCOUNT_NOExit(Sender: TObject);
+var
+  s: string;
 begin
+  s := DelBlankChars(eACCOUNT_NO.Text);
+  if (s <> eACCOUNT_NO.Text) then
+  begin
+    eACCOUNT_NO.Text := s;
+    FNeedCheckAccount := True;
+  end;
+
   CheckValidData;
 end;
 
@@ -434,9 +451,11 @@ begin
     if not(Query.FN('FLOOR_N').IsNull) then
       edFLOOR.Text := Query.FN('FLOOR_N').AsString;
     if not(Query.FN('ACCOUNT_NO').IsNull) then
-      ShowMessage(rsSAME_ADRES + rsEOL + Format(rsCustomerInfo, [Query.FN('ACCOUNT_NO').AsString,
+    begin
+      ShowWarningMessage(rsSAME_ADRES + rsEOL + Format(rsCustomerInfo, [Query.FN('ACCOUNT_NO').AsString,
         Query.FN('DOGOVOR_NO').AsString, Query.FN('FIO').AsString, Query.FN('DEBT_SUM').AsString,
         Query.FN('CUST_STATE_DESCR').AsString]));
+    end;
 
     Query.Transaction.Commit;
     Query.Close;
@@ -456,24 +475,38 @@ begin
 end;
 
 procedure TapgCustomerNew.FormKeyPress(Sender: TObject; var Key: Char);
+
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False
-    else if (ActiveControl is TDBMemoEh) then
-      go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := True;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -604,6 +637,11 @@ begin
   end
 end;
 
+procedure TapgCustomerNew.btnCloseWarningInfoClick(Sender: TObject);
+begin
+  HideWarningMessage;
+end;
+
 procedure TapgCustomerNew.btnGetDogNumberClick(Sender: TObject);
 begin
   GenerateAccountN;
@@ -612,7 +650,7 @@ end;
 
 function TapgCustomerNew.CheckFlatOwner: Boolean;
 var
-  s, n: string;
+  n: string;
 begin
   Result := False;
   Query.Transaction := trReadQ;
@@ -655,7 +693,7 @@ end;
 
 procedure TapgCustomerNew.SaveFlatOwner;
 var
-  s, n: string;
+  n: string;
 begin
   Query.Transaction := trWriteQ;
   n := Trim(eSURNAME.Text + ' ' + eFIRSTNAME.Text + ' ' + eMIDLENAME.Text);
@@ -1013,12 +1051,37 @@ end;
 function TapgCustomerNew.CheckValidData: Boolean;
 var
   AllRight: Boolean;
+  reg: string;
 begin
   Result := False;
   if not(FFullAccess or FCanAdd) then
     exit;
 
   AllRight := True;
+
+  if (eACCOUNT_NO.Text.Trim = '') then
+  begin
+    AllRight := False;
+    CnErrors.SetError(eACCOUNT_NO, rsSelectAccount, iaTopCenter, bsNeverBlink);
+  end
+  else
+  begin
+    reg := dmMain.GetSettingsValue('ACCOUNT_CHK');
+    if reg <> '' then
+    begin
+      reg := reg.Trim(['^', '$']);
+      AllRight := TRegEx.IsMatch(eACCOUNT_NO.Text, '^' + reg + '$');
+      if not AllRight then
+      begin
+        CnErrors.SetError(lblAccount, Format(rsINPUT_VALUE_FORMAT, [reg]), iaMiddleRight, bsNeverBlink);
+      end
+      else
+        CnErrors.Dispose(lblAccount);
+    end;
+
+    if AllRight then
+      AllRight := CheckAccount;
+  end;
 
   if (LupStreets.Text = '') then
   begin
@@ -1035,16 +1098,6 @@ begin
   end
   else
     CnErrors.Dispose(LupHOUSE_ID);
-
-  if (eACCOUNT_NO.Text.Trim = '') then
-  begin
-    AllRight := False;
-    CnErrors.SetError(eACCOUNT_NO, rsSelectAccount, iaTopCenter, bsNeverBlink);
-  end
-  else if CheckAccount then
-    CnErrors.Dispose(eACCOUNT_NO)
-  else
-    AllRight := False;
 
   if (not FFullAccess) and (not(VarIsEmpty(eCONTRACT_DATE.Value) or VarIsNull(eCONTRACT_DATE.Value))) and
     (eCONTRACT_DATE.Value < dmMain.CurrentMonth) and (FNotIgnoreContract) then
@@ -1159,6 +1212,8 @@ begin
     else
       dmMain.RestoreKL;
   end;
+
+  FindSamePassport;
 
   if CheckControlText((Sender as TDBEditEh), dmMain.GetSettingsValue('REG_PASSN')) then
     CheckInBlackList((Sender as TDBEditEh), 1);
@@ -1366,7 +1421,7 @@ begin
   if s <> '' then
   begin
     CnErrors.SetError(Sender, rsCustomerInBlackList + #13#10 + s, iaTopCenter, bsNeverBlink);
-    ShowMessage(rsCustomerInBlackList + #13#10 + s);
+    ShowWarningMessage(rsCustomerInBlackList + #13#10 + s);
   end;
 end;
 
@@ -1515,6 +1570,8 @@ begin
   FHttpCli.url := rsCheckPassportURL + url;
   FHttpCli.Get; // sync
 
+  // HideWarningMessage;
+
   if FHttpCli.StatusCode = 200 then
   begin
     // {"rs":"Машиночитаемый документ - 0A0007083 - не выдавался"}
@@ -1522,10 +1579,12 @@ begin
     // {"rs":"Машиночитаемый документ - MC1828933 - недействителен, дата постановки на учет 10.12.2019"}
     answer := Datax.DataString;
     if answer.ToLower.Contains('выдан, действителен') then
-      pValid := 1
+    begin
+      pValid := 1;
+    end
     else
     begin
-      ShowMessage(answer);
+      ShowWarningMessage(answer);
       CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
       pValid := 0;
     end
@@ -1533,7 +1592,7 @@ begin
   else
   begin
     answer := rsError + ' ' + FHttpCli.StatusCode.ToString;
-    ShowMessage(answer);
+    ShowWarningMessage(answer);
     CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
     pValid := -1;
     {
@@ -1618,18 +1677,21 @@ begin
         s := Format(s, [ac, Query.Fields[4].AsString, Query.Fields[1].AsString + ' ' + Query.Fields[2].AsString + ' ' +
           Query.Fields[3].AsString, Query.Fields[5].AsString]);
 
-      ShowMessage(s);
+      ShowWarningMessage(s);
       CnErrors.SetError(eACCOUNT_NO, s, iaTopCenter, bsNeverBlink);
       Result := False;
       eACCOUNT_NO.SetFocus;
     end
     else
+    begin
       FNeedCheckAccount := False;
+    end;
     Query.Transaction.Commit;
     Query.Close;
   end
   else
     FNeedCheckAccount := False;
+
   if Result then
     CnErrors.Dispose(eACCOUNT_NO);
 end;
@@ -1671,6 +1733,108 @@ begin
     CnErrors.SetError(eMIDLENAME, rsCheckWrite, iaTopCenter, bsNeverBlink)
   else
     CnErrors.Dispose(eMIDLENAME);
+end;
+
+procedure TapgCustomerNew.ShowWarningMessage(const s: String);
+begin
+  mmoWarning.Lines.Text := s;
+  pnlWarningInfo.Visible := True;
+end;
+
+procedure TapgCustomerNew.HideWarningMessage;
+begin
+  pnlWarningInfo.Visible := False;
+end;
+
+procedure TapgCustomerNew.FindSamePassport;
+var
+  s, n: string;
+begin
+  n := Trim(edtPASSPORT_NUMBER.Text);
+  if n.IsEmpty then
+    exit;
+
+  Query.SQL.Clear;
+
+  if (dmMain.GetSettingsValue('SHOW_DOC_LIST') = '1') then
+  begin
+    Query.SQL.Add('select first 1 d.Surname, d.Firstname, d.Midlename, d.PERSONAL_N');
+    Query.SQL.Add(', d.Doc_Reg, d.Birthday, d.Addr_Registr, d.Addr_Birth, d.Doc_Date');
+    Query.SQL.Add('from DOC_LIST d');
+    Query.SQL.Add('where d.Doc_Number = :PN and d.Doc_Type = 1');
+    Query.SQL.Add('UNION ALL');
+  end;
+  Query.SQL.Add('select first 1 c.Surname, c.Firstname, c.Midlename, c.PERSONAL_N');
+  Query.SQL.Add(', c.Passport_Registration Doc_Reg, c.Birthday, c.ADRES_REGISTR Addr_Registr');
+  Query.SQL.Add(', c.CONTRACT_BASIS Addr_Birth, null Doc_Date');
+  Query.SQL.Add('from customer c where c.Passport_Number = :PN');
+
+  Query.ParamByName('PN').AsString := n;
+  Query.Transaction.StartTransaction;
+  Query.ExecQuery;
+
+  if (Query.RecordCount > 0) then
+  begin
+    s := '';
+    if not(Query.FN('Surname').IsNull) then
+      s := s + Query.FN('Surname').AsString;
+    if not(Query.FN('Firstname').IsNull) then
+      s := s + ' ' + Query.FN('Firstname').AsString;
+    if not(Query.FN('Midlename').IsNull) then
+      s := s + ' ' + Query.FN('Midlename').AsString;
+    s := s.Trim + #13#10;
+    if not(Query.FN('Birthday').IsNull) then
+      s := s + ' д.р. ' + Query.FN('Birthday').AsString;
+    if not(Query.FN('Doc_Reg').IsNull) then
+      s := s + ' ' + Query.FN('Doc_Reg').AsString;
+    s := s.Trim + #13#10;
+    if not(Query.FN('Addr_Registr').IsNull) then
+      s := s + ' ' + Query.FN('Addr_Registr').AsString;
+    s := s.Trim;
+
+    if Application.MessageBox(PWideChar('Найдены паспортные данные. '#13#10 + s + #13#10'Прописать их в карточку?'),
+      'Найдены паспортные данные', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
+    begin
+      if not(Query.FN('Surname').IsNull) then
+        eSURNAME.Text := Query.FN('Surname').AsString
+      else
+        eSURNAME.Text := '';
+      if not(Query.FN('Firstname').IsNull) then
+        eFIRSTNAME.Text := Query.FN('Firstname').AsString
+      else
+        eFIRSTNAME.Text := Text;
+      if not(Query.FN('Midlename').IsNull) then
+        eMIDLENAME.Text := Query.FN('Midlename').AsString
+      else
+        eMIDLENAME.Text := '';
+      if not(Query.FN('Doc_Reg').IsNull) then
+        edRegistration.Text := Query.FN('Doc_Reg').AsString
+      else
+        edRegistration.Text := '';
+      if not(Query.FN('Addr_Registr').IsNull) then
+        edtADRES_REGISTR.Text := Query.FN('Addr_Registr').AsString
+      else
+        edtADRES_REGISTR.Text := '';
+      if not(Query.FN('Birthday').IsNull) then
+        edtBIRTHDAY.Value := Query.FN('Birthday').AsDate
+      else
+        edtBIRTHDAY.Clear;
+      if not(Query.FN('Addr_Birth').IsNull) then
+        edtPlaceBirth.Text := Query.FN('Addr_Birth').AsString
+      else
+        edtPlaceBirth.Text := '';
+
+      if (dmMain.GetSettingsValue('SHOW_DOC_LIST') <> '1') then
+      begin
+        if not(Query.FN('PERSONAL_N').IsNull) then
+          edtPERSONAL_N.Text := Query.FN('PERSONAL_N').AsString
+        else
+          edtPERSONAL_N.Text := '';
+      end;
+    end;
+  end;
+  Query.Transaction.Commit;
+  Query.Close;
 end;
 
 end.

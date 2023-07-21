@@ -74,6 +74,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure SetContract;
     procedure chkFOwnerClick(Sender: TObject);
+    procedure luServiceClick(Sender: TObject);
+    procedure luServiceEnter(Sender: TObject);
   private
     { Private declarations }
     fFullAccess: Boolean;
@@ -682,6 +684,26 @@ begin
 
 end;
 
+procedure TOnOffServiceForm.luServiceClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
+end;
+
+procedure TOnOffServiceForm.luServiceEnter(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown;
+end;
+
 procedure TOnOffServiceForm.OkCancelFramebbOkClick(Sender: TObject);
 begin
   if CheckDataAndOk then
@@ -764,8 +786,6 @@ begin
 end;
 
 procedure TOnOffServiceForm.CheckAndGenContract;
-var
-  s: string;
 begin
   if chkContract.Checked then
   begin

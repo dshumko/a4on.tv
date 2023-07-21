@@ -103,6 +103,7 @@ type
     FPageList: TA4onPages;
     FInEditState: Boolean;
     FCheckPassport: Boolean;
+    FEnterSecondPress: Boolean;
     procedure StartEdit();
     procedure StopEdit(const Cancel: Boolean);
     procedure CreateCustomerPage(const Edit: Boolean = False);
@@ -684,21 +685,33 @@ procedure TCustomerForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Ord(Key) = VK_RETURN) then
+  if (Key = #13) then
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False
-    else if (ActiveControl is TDBMemoEh) then
-      go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

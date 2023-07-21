@@ -1,11 +1,10 @@
 object fmCardSerial: TfmCardSerial
-  ShowHint = True
   Left = 545
   Top = 395
-  BorderStyle = bsDialog
+  BorderIcons = [biSystemMenu]
   Caption = #1057#1077#1088#1080#1103' '#1082#1072#1088#1090#1086#1095#1082#1080
-  ClientHeight = 264
-  ClientWidth = 298
+  ClientHeight = 254
+  ClientWidth = 288
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,11 +14,15 @@ object fmCardSerial: TfmCardSerial
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyUp = FormKeyUp
+  DesignSize = (
+    288
+    254)
   PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
-    Left = 24
+    Left = 8
     Top = 44
     Width = 111
     Height = 13
@@ -32,8 +35,8 @@ object fmCardSerial: TfmCardSerial
     ParentFont = False
   end
   object lbl2: TLabel
-    Left = 24
-    Top = 3
+    Left = 8
+    Top = 1
     Width = 34
     Height = 13
     Caption = #1057#1077#1088#1080#1103
@@ -45,7 +48,7 @@ object fmCardSerial: TfmCardSerial
     ParentFont = False
   end
   object lblNotice: TLabel
-    Left = 24
+    Left = 8
     Top = 88
     Width = 61
     Height = 13
@@ -53,12 +56,14 @@ object fmCardSerial: TfmCardSerial
   end
   inline okcnclfrm1: TOkCancelFrame
     Left = 0
-    Top = 229
-    Width = 298
+    Top = 219
+    Width = 288
     Height = 35
     Align = alBottom
     TabOrder = 3
     TabStop = True
+    ExplicitTop = 229
+    ExplicitWidth = 298
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -66,20 +71,26 @@ object fmCardSerial: TfmCardSerial
       Margins.Bottom = 0
     end
     inherited bbOk: TBitBtn
-      Left = 111
+      Left = 97
       Top = 9
       Width = 103
+      ExplicitLeft = 107
+      ExplicitTop = 9
+      ExplicitWidth = 103
     end
     inherited bbCancel: TBitBtn
-      Left = 220
+      Left = 205
       Top = 9
+      ExplicitLeft = 215
+      ExplicitTop = 9
     end
   end
   object LupPaySrc: TDBLookupComboboxEh
-    Left = 32
+    Left = 8
     Top = 58
-    Width = 233
+    Width = 272
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = 'CS_SOURCE_ID'
     DataSource = srcCardSerial
@@ -90,30 +101,44 @@ object fmCardSerial: TfmCardSerial
     KeyField = 'PAYSOURCE_ID'
     ListField = 'PAYSOURCE_DESCR'
     ListSource = srcPaySource
+    ShowHint = True
     TabOrder = 1
     Visible = True
+    ExplicitWidth = 282
   end
   object edtSerial: TDBEditEh
-    Left = 32
+    Left = 8
     Top = 17
-    Width = 233
+    Width = 272
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DataField = 'CS_SERIAL'
     DataSource = srcCardSerial
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 0
     Visible = True
+    ExplicitWidth = 282
   end
   object dbmmoNotice: TDBMemoEh
-    Left = 32
+    Left = 8
     Top = 104
-    Width = 233
-    Height = 113
+    Width = 272
+    Height = 103
+    ScrollBars = ssVertical
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    AutoSize = False
     DataField = 'CS_NOTICE'
     DataSource = srcCardSerial
-    ScrollBars = ssVertical
+    DynProps = <>
+    EditButtons = <>
+    ShowHint = True
     TabOrder = 2
+    Visible = True
+    WantReturns = True
+    ExplicitWidth = 282
+    ExplicitHeight = 113
   end
   object dsCardSerial: TpFIBDataSet
     UpdateSQL.Strings = (

@@ -58,7 +58,6 @@ type
     pnlAUTO: TPanel;
     lbl5: TLabel;
     edtPRIORITY: TDBNumberEditEh;
-    chkPOSITIVE: TDBCheckBoxEh;
     trSWrite: TpFIBTransaction;
     trSRead: TpFIBTransaction;
     cnError: TCnErrorProvider;
@@ -79,6 +78,7 @@ type
     edtTAGINT: TDBNumberEditEh;
     chkONLY_ONE: TDBCheckBoxEh;
     cbUnblMeth: TDBComboBoxEh;
+    chkPOSITIVE: TDBCheckBoxEh;
     procedure cbItsInetClick(Sender: TObject);
     procedure eIPEndEnter(Sender: TObject);
     procedure eIPEndExit(Sender: TObject);
@@ -91,6 +91,7 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure edtDigExtIDKeyPress(Sender: TObject; var Key: Char);
     procedure dsServiceAfterOpen(DataSet: TDataSet);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     FCanEdit: Boolean;
@@ -106,7 +107,7 @@ function ViewService(const aServ_ID, aType_ID: int64): int64;
 implementation
 
 uses
-  System.StrUtils,
+  System.StrUtils, System.Math,
   DM, AtrCommon, AtrStrUtils, pFIBQuery;
 
 {$R *.dfm}
@@ -248,8 +249,10 @@ end;
 
 procedure TServiceForm.chkAUTOOFFClick(Sender: TObject);
 begin
-  pnlAUTO.Visible := chkAUTOOFF.Checked;
+  // pnlAUTO.Visible := chkAUTOOFF.Checked;
+  chkPOSITIVE.Visible := chkAUTOOFF.Checked;
   cbUnblMeth.Visible := chkAUTOOFF.Checked;
+  pnlAllDays.Height := IfThen(chkAUTOOFF.Checked, 50, 30);
 end;
 
 procedure TServiceForm.dsServiceAfterOpen(DataSet: TDataSet);
@@ -301,6 +304,11 @@ procedure TServiceForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShift
 begin
   if ((Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (btnOk.Enabled)) then
     Save;
+end;
+
+procedure TServiceForm.FormShow(Sender: TObject);
+begin
+  pnlAllDays.Height := 30;
 end;
 
 procedure TServiceForm.btnOkClick(Sender: TObject);

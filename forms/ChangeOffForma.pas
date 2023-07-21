@@ -16,19 +16,22 @@ type
     bbCancel: TBitBtn;
     srcServiceOff: TDataSource;
     dsServiceOff: TpFIBDataSet;
-    ServiceOff: TDBLookupComboboxEh;
-    Label2: TLabel;
     pnlQUANT: TPanel;
     Label5: TLabel;
     lblDimension: TDBText;
     eUNITS: TDBNumberEditEh;
+    pnlTop: TPanel;
+    Label1: TLabel;
+    ServiceOff: TDBLookupComboboxEh;
+    pnlMmo: TPanel;
+    mmoNotice: TDBMemoEh;
     procedure bbOkClick(Sender: TObject);
     procedure ServiceOffChange(Sender: TObject);
   private
   public
   end;
 
-function SelectOffService(const ForService: Integer; var OFF_SERVICE: Integer; var Units: Double): Boolean;
+function SelectOffService(const ForService: Integer; var OFF_SERVICE: Integer; var Units: Double; var Notice: String): Boolean;
 
 implementation
 
@@ -37,7 +40,7 @@ uses
 
 {$R *.dfm}
 
-function SelectOffService(const ForService: Integer; var OFF_SERVICE: Integer; var Units: Double): Boolean;
+function SelectOffService(const ForService: Integer; var OFF_SERVICE: Integer; var Units: Double; var Notice: String): Boolean;
 begin
   Result := False;
   with TChangeOffForm.Create(Application) do
@@ -58,6 +61,7 @@ begin
           end
           else
             Units := 1;
+          Notice := mmoNotice.Lines.Text;
           Result := True;
         end;
       end;

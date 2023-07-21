@@ -2,8 +2,8 @@ object A4MainForm: TA4MainForm
   Left = 320
   Top = 200
   Caption = 'A4ON.TV'
-  ClientHeight = 421
-  ClientWidth = 1013
+  ClientHeight = 470
+  ClientWidth = 979
   Color = clAppWorkSpace
   Constraints.MinHeight = 400
   Constraints.MinWidth = 600
@@ -27,8 +27,8 @@ object A4MainForm: TA4MainForm
   TextHeight = 13
   object mdchldbr1: TMDIChildBar
     Left = 0
-    Top = 376
-    Width = 1013
+    Top = 425
+    Width = 979
     Height = 26
     ParentColor = False
     ParentBackground = False
@@ -57,7 +57,7 @@ object A4MainForm: TA4MainForm
   object pnl1: TPanel
     Left = 0
     Top = 0
-    Width = 1013
+    Width = 979
     Height = 25
     Align = alTop
     BevelOuter = bvNone
@@ -160,7 +160,7 @@ object A4MainForm: TA4MainForm
       end
     end
     object pnlDate: TPanel
-      Left = 872
+      Left = 838
       Top = 0
       Width = 141
       Height = 25
@@ -181,7 +181,7 @@ object A4MainForm: TA4MainForm
     object pnlSearch: TPanel
       Left = 737
       Top = 0
-      Width = 135
+      Width = 101
       Height = 25
       Align = alClient
       BevelOuter = bvNone
@@ -189,13 +189,13 @@ object A4MainForm: TA4MainForm
       TabOrder = 1
       OnResize = pnlSearchResize
       DesignSize = (
-        135
+        101
         25)
       object btnSearchCustomer: TSpeedButton
-        Left = 106
+        Left = 74
         Top = 2
         Width = 23
-        Height = 23
+        Height = 21
         Action = actSearchCustomer
         Anchors = [akTop, akRight]
         Flat = True
@@ -234,10 +234,11 @@ object A4MainForm: TA4MainForm
           2500AA662500AA662500AA662500C28A5600FF00FF00FF00FF00FF00FF00FF00
           FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00C6A58500B47D4900AD6D
           3000AF723700BB8D6000FF00FF00FF00FF00FF00FF00FF00FF00}
+        ExplicitLeft = 108
       end
       object cbSearchType: TDBComboBoxEh
         Left = 5
-        Top = 3
+        Top = 2
         Width = 44
         Height = 19
         Hint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1087#1086' '#1095#1077#1084' '#1080#1089#1082#1072#1090#1100' ('#1050#1054#1044') '#1082#1086#1076' '#1089#1090#1088#1086#1080#1082#1080' '#1087#1086#1080#1089#1082#1072' '#1087#1086' '#1101#1090#1086#1084#1091' '#1087#1086#1083#1102
@@ -284,8 +285,8 @@ object A4MainForm: TA4MainForm
       end
       object edtSearch: TDBEditEh
         Left = 53
-        Top = 3
-        Width = 51
+        Top = 2
+        Width = 18
         Height = 19
         Hint = 
           '(F11) '#1042#1074#1077#1076#1080#1090#1077' '#1090#1077#1082#1089#1090' '#1076#1083#1103' '#1087#1086#1080#1089#1082#1072'. '#1089#1090#1088#1086#1082#1072' '#1083' 1234  '#1073#1091#1076#1077#1090' '#1085#1072#1081#1076#1077#1085' '#1072#1073#1086#1085 +
@@ -311,8 +312,8 @@ object A4MainForm: TA4MainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 402
-    Width = 1013
+    Top = 451
+    Width = 979
     Height = 19
     AutoHint = True
     Panels = <
@@ -503,6 +504,9 @@ object A4MainForm: TA4MainForm
       end
       object N53: TMenuItem
         Action = actBanks
+      end
+      object miDocList: TMenuItem
+        Action = actDocList
       end
       object N16: TMenuItem
         Caption = '-'
@@ -1311,6 +1315,11 @@ object A4MainForm: TA4MainForm
       Caption = #1058#1080#1087' '#1087#1086#1088#1090#1072
       Hint = #1058#1080#1087' '#1087#1086#1088#1090#1072
       OnExecute = actPortTypeExecute
+    end
+    object actDocList: TAction
+      Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
+      Caption = #1056#1077#1077#1089#1090#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1086#1074
+      OnExecute = actDocListExecute
     end
   end
   object ICONS_ACTIVE: TImageList

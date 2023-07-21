@@ -2,10 +2,9 @@ object HouseForm: THouseForm
   Left = 540
   Top = 300
   ActiveControl = edHome
-  BorderStyle = bsDialog
   Caption = #1044#1086#1084
-  ClientHeight = 423
-  ClientWidth = 457
+  ClientHeight = 462
+  ClientWidth = 456
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,14 +22,14 @@ object HouseForm: THouseForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 457
-    Height = 389
+    Width = 456
+    Height = 428
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      457
-      389)
+      456
+      428)
     object Label7: TLabel
       Left = 254
       Top = 8
@@ -45,23 +44,23 @@ object HouseForm: THouseForm
       ParentFont = False
     end
     object Label9: TLabel
-      Left = 11
+      Left = 8
       Top = 50
-      Width = 30
+      Width = 33
       Height = 13
       Caption = #1056#1072#1081#1086#1085
     end
     object Label8: TLabel
-      Left = 334
+      Left = 355
       Top = 8
       Width = 43
       Height = 13
       Caption = #1050#1074#1072#1088#1090#1080#1088
     end
     object Label4: TLabel
-      Left = 11
+      Left = 8
       Top = 90
-      Width = 74
+      Width = 77
       Height = 13
       Caption = #1055#1088#1077#1076#1089#1077#1076#1072#1090#1077#1083#1100
     end
@@ -72,17 +71,10 @@ object HouseForm: THouseForm
       Height = 13
       Caption = #1090#1077#1083'. '#1087#1088#1077#1076#1089#1077#1076#1072#1090#1077#1083#1103
     end
-    object Label6: TLabel
-      Left = 11
-      Top = 304
-      Width = 61
-      Height = 13
-      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    end
     object Label1: TLabel
-      Left = 11
+      Left = 8
       Top = 8
-      Width = 36
+      Width = 39
       Height = 13
       Caption = #1059#1083#1080#1094#1072
       Font.Charset = DEFAULT_CHARSET
@@ -93,7 +85,7 @@ object HouseForm: THouseForm
       ParentFont = False
     end
     object lbl1: TLabel
-      Left = 11
+      Left = 8
       Top = 130
       Width = 157
       Height = 13
@@ -107,7 +99,7 @@ object HouseForm: THouseForm
       Caption = #1055#1086#1095#1090#1086#1074#1099#1081' '#1080#1085#1076#1077#1082#1089
     end
     object lbl3: TLabel
-      Left = 11
+      Left = 8
       Top = 169
       Width = 92
       Height = 13
@@ -128,35 +120,35 @@ object HouseForm: THouseForm
       Caption = #1047#1074#1077#1085#1086
     end
     object lbl5: TLabel
-      Left = 11
+      Left = 8
       Top = 261
-      Width = 104
+      Width = 101
       Height = 13
-      Caption = #1044#1072#1090#1072' '#1074#1074#1086#1076#1072' '#1074' '#1101#1082#1089#1087#1083'.'
+      Caption = #1044#1072#1090#1072' '#1074#1074#1086#1076#1072' '#1074' '#1101#1082#1089'-'#1102
     end
     object lbl6: TLabel
-      Left = 127
+      Left = 117
       Top = 261
       Width = 96
       Height = 13
       Caption = #1044#1072#1090#1072' '#1082#1072#1087'. '#1088#1077#1084#1086#1085#1090#1072
     end
     object lbl7: TLabel
-      Left = 238
+      Left = 223
       Top = 261
       Width = 40
       Height = 13
       Caption = #1064#1080#1088#1086#1090#1072
     end
     object Label2: TLabel
-      Left = 334
+      Left = 327
       Top = 261
       Width = 46
       Height = 13
       Caption = #1044#1086#1083#1075#1086#1090#1072' '
     end
     object btnMap: TSpeedButton
-      Left = 425
+      Left = 427
       Top = 276
       Width = 23
       Height = 22
@@ -193,8 +185,9 @@ object HouseForm: THouseForm
     object edHome: TDBEditEh
       Left = 254
       Top = 24
-      Width = 74
+      Width = 93
       Height = 21
+      Hint = #1053#1086#1084#1077#1088' '#1076#1086#1084#1072
       DataField = 'HOUSE_NO'
       DataSource = srcHouse
       DynProps = <>
@@ -205,10 +198,11 @@ object HouseForm: THouseForm
       OnChange = edHomeChange
     end
     object DBNumberEditEh2: TDBNumberEditEh
-      Left = 334
+      Left = 353
       Top = 24
-      Width = 114
+      Width = 97
       Height = 21
+      Hint = #1050#1086#1083'-'#1074#1086
       Anchors = [akLeft, akTop, akRight]
       DataField = 'Q_FLAT'
       DataSource = srcHouse
@@ -221,10 +215,11 @@ object HouseForm: THouseForm
       Visible = True
     end
     object DBEditEh1: TDBEditEh
-      Left = 11
+      Left = 8
       Top = 106
-      Width = 237
+      Width = 239
       Height = 21
+      Hint = #1060#1048#1054' '#1087#1088#1077#1076#1089#1077#1076#1072#1090#1077#1083#1103
       Anchors = [akLeft, akTop, akRight]
       DataField = 'CHAIRMAN'
       DataSource = srcHouse
@@ -235,10 +230,11 @@ object HouseForm: THouseForm
       Visible = True
     end
     object DBEditEh2: TDBEditEh
-      Left = 254
+      Left = 253
       Top = 106
-      Width = 194
+      Width = 197
       Height = 21
+      Hint = #1058#1077#1083#1077#1092#1086#1085' '#1087#1088#1077#1076#1089#1077#1076#1072#1090#1077#1083#1103
       Anchors = [akTop, akRight]
       DataField = 'CHAIRMAN_PHONE'
       DataSource = srcHouse
@@ -249,26 +245,29 @@ object HouseForm: THouseForm
       Visible = True
     end
     object memHouseNotice: TDBMemoEh
-      Left = 11
-      Top = 320
-      Width = 437
-      Height = 53
+      Left = 8
+      Top = 330
+      Width = 442
+      Height = 92
+      Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       ScrollBars = ssVertical
-      Anchors = [akLeft, akTop, akRight]
+      Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DataField = 'NOTICE'
       DataSource = srcHouse
       DynProps = <>
       EditButtons = <>
-      TabOrder = 16
+      EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      TabOrder = 18
       Visible = True
       WantReturns = True
     end
     object LupStreets: TDBLookupComboboxEh
-      Left = 11
+      Left = 8
       Top = 24
-      Width = 237
+      Width = 240
       Height = 21
+      Hint = #1053#1072' '#1082#1072#1082#1086#1081' '#1091#1083#1080#1094#1077
       DynProps = <>
       DataField = 'STREET_ID'
       DataSource = srcHouse
@@ -300,14 +299,16 @@ object HouseForm: THouseForm
       OnChange = LupStreetsChange
     end
     object cbb1: TDBLookupComboboxEh
-      Left = 11
+      Left = 8
       Top = 145
-      Width = 437
+      Width = 442
       Height = 21
+      Hint = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1102#1097#1080#1077' '#1087#1088#1077#1076#1087#1088#1080#1103#1090#1080#1077
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = 'ORG_ID'
       DataSource = srcHouse
+      EmptyDataInfo.Text = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1102#1097#1080#1077' '#1087#1088#1077#1076#1087#1088#1080#1103#1090#1080#1077
       EditButtons = <>
       KeyField = 'ORG_ID'
       ListField = 'ORG_NAME'
@@ -316,10 +317,11 @@ object HouseForm: THouseForm
       Visible = True
     end
     object cbb2: TDBLookupComboboxEh
-      Left = 11
+      Left = 8
       Top = 185
-      Width = 191
+      Width = 194
       Height = 21
+      Hint = #1043#1086#1083#1086#1074#1085#1072#1103' '#1089#1090#1072#1085#1094#1080#1103
       DynProps = <>
       DataField = 'HEADEND_ID'
       DataSource = srcHouse
@@ -344,8 +346,9 @@ object HouseForm: THouseForm
     object cbb3: TDBLookupComboboxEh
       Left = 208
       Top = 185
-      Width = 240
+      Width = 242
       Height = 21
+      Hint = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1102#1097#1077#1077' '#1079#1074#1077#1085#1086
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = 'WG_ID'
@@ -358,6 +361,7 @@ object HouseForm: THouseForm
           FieldName = 'A_NAME'
         end>
       DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1047#1074#1077#1085#1086
       EditButtons = <>
       KeyField = 'WG_ID'
       ListField = 'NAME'
@@ -366,9 +370,9 @@ object HouseForm: THouseForm
       Visible = True
     end
     object grpSRV: TGroupBox
-      Left = 11
+      Left = 8
       Top = 212
-      Width = 437
+      Width = 442
       Height = 43
       Anchors = [akLeft, akTop, akRight]
       Caption = ' '#1044#1086#1089#1090#1091#1087#1085#1086#1089#1090#1100' '#1091#1089#1083#1091#1075' '
@@ -408,10 +412,11 @@ object HouseForm: THouseForm
       end
     end
     object edtinput: TDBDateTimeEditEh
-      Left = 11
+      Left = 8
       Top = 277
-      Width = 105
+      Width = 103
       Height = 21
+      Hint = #1044#1072#1090#1072' '#1074#1074#1086#1076#1072' '#1074' '#1101#1082#1089#1087#1083#1091#1072#1090#1072#1094#1080#1102' '
       DataField = 'IN_DATE'
       DataSource = srcHouse
       DynProps = <>
@@ -422,10 +427,11 @@ object HouseForm: THouseForm
       EditFormat = 'DD/MM/YYYY'
     end
     object edtRepair: TDBDateTimeEditEh
-      Left = 127
+      Left = 117
       Top = 277
-      Width = 105
+      Width = 100
       Height = 21
+      Hint = #1044#1072#1090#1072' '#1088#1077#1084#1086#1085#1090#1072
       DataField = 'REPAIR_DATE'
       DataSource = srcHouse
       DynProps = <>
@@ -436,10 +442,11 @@ object HouseForm: THouseForm
       EditFormat = 'DD/MM/YYYY'
     end
     object cbbSUBAREA: TDBLookupComboboxEh
-      Left = 11
+      Left = 8
       Top = 65
-      Width = 143
+      Width = 146
       Height = 21
+      Hint = #1042' '#1082#1072#1086#1084' '#1088#1072#1081#1086#1085#1077
       DynProps = <>
       DataField = 'SUBAREA_ID'
       DataSource = srcHouse
@@ -479,8 +486,9 @@ object HouseForm: THouseForm
     object DBEditEh3: TDBEditEh
       Left = 254
       Top = 65
-      Width = 194
+      Width = 196
       Height = 21
+      Hint = #1055#1086#1095#1090#1086#1074#1099#1081' '#1080#1085#1076#1077#1082#1089
       Anchors = [akLeft, akTop, akRight]
       DataField = 'POST_INDEX'
       DataSource = srcHouse
@@ -491,29 +499,33 @@ object HouseForm: THouseForm
       Visible = True
     end
     object edtLon: TDBNumberEditEh
-      Left = 334
+      Left = 327
       Top = 277
-      Width = 88
+      Width = 98
       Height = 21
+      Hint = #1044#1086#1083#1075#1086#1090#1072'/Longitude'
       DataField = 'LONGITUDE'
       DataSource = srcHouse
-      DecimalPlaces = 8
+      DecimalPlaces = 12
+      DisplayFormat = '0.############'
       DynProps = <>
-      EmptyDataInfo.Text = 'Longitude'
+      EmptyDataInfo.Text = #1044#1086#1083#1075#1086#1090#1072'/Longitude'
       EditButtons = <>
       TabOrder = 15
       Visible = True
     end
     object edtLat: TDBNumberEditEh
-      Left = 238
+      Left = 223
       Top = 277
-      Width = 90
+      Width = 98
       Height = 21
+      Hint = #1064#1080#1088#1086#1090#1072'/Latitude'
       DataField = 'LATITUDE'
       DataSource = srcHouse
-      DecimalPlaces = 8
+      DecimalPlaces = 12
+      DisplayFormat = '0.############'
       DynProps = <>
-      EmptyDataInfo.Text = 'Latitude'
+      EmptyDataInfo.Text = #1064#1080#1088#1086#1090#1072'/Latitude'
       EditButtons = <>
       TabOrder = 14
       Visible = True
@@ -523,6 +535,7 @@ object HouseForm: THouseForm
       Top = 65
       Width = 90
       Height = 21
+      Hint = #1050#1086#1076' '#1076#1086#1084#1072
       DataField = 'HOUSE_CODE'
       DataSource = srcHouse
       DynProps = <>
@@ -531,27 +544,68 @@ object HouseForm: THouseForm
       TabOrder = 4
       Visible = True
     end
+    object ednTAG: TDBNumberEditEh
+      Left = 8
+      Top = 303
+      Width = 103
+      Height = 21
+      Hint = #1062#1080#1092#1088#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1076#1083#1103' '#1080#1089#1087#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1077' '#1086#1087#1077#1088#1072#1090#1086#1088#1086#1084' (TAG)'
+      DataField = 'TAG'
+      DataSource = srcHouse
+      DecimalPlaces = 8
+      DynProps = <>
+      EmptyDataInfo.Text = #1062#1080#1092#1088#1086#1074#1086#1077' '#1087#1086#1083#1077
+      EditButtons = <>
+      TabOrder = 16
+      Visible = True
+    end
+    object edtTAGSTR: TDBEditEh
+      Left = 117
+      Top = 303
+      Width = 333
+      Height = 21
+      Hint = #1058#1077#1082#1089#1090#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1076#1083#1103' '#1080#1089#1087#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1077' '#1086#1087#1077#1088#1072#1090#1086#1088#1086#1084' (TAG_STR)'
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'TAG_STR'
+      DataSource = srcHouse
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1058#1077#1082#1089#1090#1086#1074#1086#1077' '#1087#1086#1083#1077
+      TabOrder = 17
+      Visible = True
+    end
   end
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 389
-    Width = 457
+    Top = 428
+    Width = 456
     Height = 34
     Align = alBottom
     TabOrder = 1
     TabStop = True
+    ExplicitTop = 428
+    ExplicitWidth = 456
+    ExplicitHeight = 34
     inherited bbOk: TBitBtn
-      Left = 160
+      Left = 159
       Top = 3
       Width = 208
       Height = 28
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 159
+      ExplicitTop = 3
+      ExplicitWidth = 208
+      ExplicitHeight = 28
     end
     inherited bbCancel: TBitBtn
-      Left = 374
+      Left = 373
       Top = 3
-      Width = 74
+      Width = 77
       Height = 28
+      ExplicitLeft = 373
+      ExplicitTop = 3
+      ExplicitWidth = 77
+      ExplicitHeight = 28
     end
   end
   object dsSubAreas: TpFIBDataSet
@@ -653,7 +707,9 @@ object HouseForm: THouseForm
       '    IN_DATE = :IN_DATE,'
       '    REPAIR_DATE = :REPAIR_DATE,'
       '    LATITUDE = :LATITUDE,'
-      '    LONGITUDE = :LONGITUDE'
+      '    LONGITUDE = :LONGITUDE,'
+      '    TAG = :TAG,'
+      '    TAG_STR = :TAG_STR    '
       'WHERE'
       '    HOUSE_ID = :OLD_HOUSE_ID'
       '    ')
@@ -688,7 +744,9 @@ object HouseForm: THouseForm
       '    IN_DATE,'
       '    REPAIR_DATE,'
       '    LATITUDE,'
-      '    LONGITUDE'
+      '    LONGITUDE,'
+      '    TAG,'
+      '    TAG_STR'
       ')'
       'VALUES('
       '    :HOUSE_ID,'
@@ -714,18 +772,16 @@ object HouseForm: THouseForm
       '    :IN_DATE,'
       '    :REPAIR_DATE,'
       '    :LATITUDE,'
-      '    :LONGITUDE'
+      '    :LONGITUDE,'
+      '    :TAG,'
+      '    :TAG_STR    '
       ')')
     RefreshSQL.Strings = (
       'select'
       ' H.*'
       'from'
       ' HOUSE H'
-      'where(  h.house_id = :HOUSE_ID'
-      '     ) and (     H.HOUSE_ID = :OLD_HOUSE_ID'
-      '     )'
-      '    '
-      '')
+      'where H.HOUSE_ID = :OLD_HOUSE_ID')
     SelectSQL.Strings = (
       'select'
       ' H.*'

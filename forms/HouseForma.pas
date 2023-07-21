@@ -24,7 +24,6 @@ type
     DBEditEh1: TDBEditEh;
     Label5: TLabel;
     DBEditEh2: TDBEditEh;
-    Label6: TLabel;
     memHouseNotice: TDBMemoEh;
     OkCancelFrame: TOkCancelFrame;
     Label1: TLabel;
@@ -65,6 +64,8 @@ type
     Label2: TLabel;
     btnMap: TSpeedButton;
     edtHOUSE_CODE: TDBEditEh;
+    ednTAG: TDBNumberEditEh;
+    edtTAGSTR: TDBEditEh;
     procedure LupStreetsChange(Sender: TObject);
     procedure edHomeChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -76,6 +77,7 @@ type
     procedure btnMapClick(Sender: TObject);
   private
     { Private declarations }
+    FEnterSecondPress: Boolean;
     procedure CheckData;
   public
     { Public declarations }
@@ -148,14 +150,30 @@ end;
 
 procedure THouseForm.btnMapClick(Sender: TObject);
 var
-  s, la, lo: string;
+  s, la, lo, t, ts: string;
+  mapUrl : string;
 begin
-  if (edtLat.Text = '') or (edtLon.Text = '') then
-    Exit;
+  mapUrl := dmMain.GetSettingsValue('MAP_HOUSE_URL');
+
   la := edtLat.Text.Replace(',', '.');
   lo := edtLon.Text.Replace(',', '.');
-  s := Format('http://openstreetmap.ru/#mmap=19/%s/%s&map=19/%s/%s', [la, lo, la, lo]);
-  ShellExecute(Handle, 'open', s);
+  t := ednTAG.Text.Replace(',', '.');
+  ts := edtTAGSTR.Text;
+
+  mapUrl := StringReplace(mapUrl, '%lat%', la, [rfReplaceAll]);
+  mapUrl := StringReplace(mapUrl, '%lon%', lo, [rfReplaceAll]);
+  mapUrl := StringReplace(mapUrl, '%tag%', t, [rfReplaceAll]);
+  mapUrl := StringReplace(mapUrl, '%tag_str%', ts, [rfReplaceAll]);
+
+  s := LupStreets.Text;
+  t:= edHome.Text;
+  ts:= cbbSUBAREA.Text;
+  mapUrl := StringReplace(mapUrl, '%strt%', s, [rfReplaceAll]);
+  mapUrl := StringReplace(mapUrl, '%n%', t, [rfReplaceAll]);
+  mapUrl := StringReplace(mapUrl, '%city%', ts, [rfReplaceAll]);
+
+  // s := Format('http://openstreetmap.ru/#mmap=19/%s/%s&map=19/%s/%s', [la, lo, la, lo]);
+  ShellExecute(Handle, 'open', mapUrl);
 end;
 
 procedure THouseForm.cbbSUBAREAEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -231,17 +249,33 @@ procedure THouseForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  go := true;
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

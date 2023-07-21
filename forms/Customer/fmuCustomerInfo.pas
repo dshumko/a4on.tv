@@ -15,7 +15,7 @@ uses
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet,
   DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, dnSplitter,
+  EhLibVCL, EhLibFIB, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, dnSplitter,
   PropFilerEh, PropStorageEh, HtmlView, HTMLSubs,
   HTMLUn2,
   FramView, FramBrwz;
@@ -70,6 +70,18 @@ type
     pmMemo: TPopupMenu;
     miN1: TMenuItem;
     actRecalc: TAction;
+    pmContacts: TPopupMenu;
+    actMakeDefContact: TAction;
+    miMakeDefContact: TMenuItem;
+    miN2: TMenuItem;
+    miAdd: TMenuItem;
+    miCEdit: TMenuItem;
+    actNotSendContatct: TAction;
+    miNotSendContatct: TMenuItem;
+    miN3: TMenuItem;
+    miN4: TMenuItem;
+    actSendMessage: TAction;
+    miSendMessage: TMenuItem;
     procedure memCustNoticeExit(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure dsContactsNewRecord(DataSet: TDataSet);
@@ -99,8 +111,11 @@ type
     procedure sbRecalcClick(Sender: TObject);
     procedure sbRecalcMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure dbeACCOUNT_NODblClick(Sender: TObject);
-    procedure HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase;
-      Button: TMouseButton; Shift: TShiftState; X, Y, IX, IY: Integer);
+    procedure HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase; Button: TMouseButton; Shift: TShiftState;
+      X, Y, IX, IY: Integer);
+    procedure actMakeDefContactExecute(Sender: TObject);
+    procedure actNotSendContatctExecute(Sender: TObject);
+    procedure actSendMessageExecute(Sender: TObject);
   private
     { Private declarations }
     fVisibleColumns: Integer;
@@ -130,6 +145,7 @@ type
     procedure UpdateInfoPanel;
     function GetParamValue(const param: String): String;
     procedure MemoAlign;
+    procedure CopyHtmlAsText;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -142,7 +158,8 @@ implementation
 
 uses
   System.RegularExpressions, System.TypInfo, Vcl.Clipbrd,
-  A4onTypeUnit, AtrCommon, AtrStrUtils, DM, pFIBQuery, MAIN, ContactForma;
+  A4onTypeUnit, AtrCommon, AtrStrUtils, DM, pFIBQuery, MAIN,
+  ContactForma, SendMessagesForma;
 
 {$R *.dfm}
 
@@ -200,9 +217,9 @@ begin
   FAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
   FDec := dmMain.GetSettingsValue('FEE_ROUND');
   if FDec > 0 then
-    DispNum := '#,##0.00'
+    DispNum := ',0.00'
   else
-    DispNum := '#,##0';
+    DispNum := ',0.##';
 
   gbSaldo.Visible := FVisibleSum;
   if FVisibleSum then
@@ -230,9 +247,21 @@ begin
   actRecalc.Visible := (dmMain.AllowedAction(rght_Customer_AddSrv)) or (dmMain.AllowedAction(rght_Customer_full));
   sbRecalc.Visible := actRecalc.Visible;
   dbgrdhContacts.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full));
-  memCustNotice.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full));
+  // если что-то может делать с абонентом, то можно оставлять примечание
+  memCustNotice.ReadOnly := not(dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_full) //
+    or dmMain.AllowedAction(rght_Customer_add) //
+    or dmMain.AllowedAction(rght_Customer_AddSrv) //
+    or dmMain.AllowedAction(rght_Customer_Files_Add) //
+    or dmMain.AllowedAction(rght_Customer_EditLan) //
+    or dmMain.AllowedAction(rght_Customer_EditDigit) //
+    or dmMain.AllowedAction(rght_Customer_Attribute) //
+    );
+
   if actRecalc.Visible then
     sbRecalc.PopupMenu := pmRecalc;
+
+  actSendMessage.Visible := (dmMain.AllowedAction(rght_Messages_add)) or dmMain.AllowedAction(rght_Customer_full);
 end;
 
 procedure TapgCustomerInfo.memCustNoticeExit(Sender: TObject);
@@ -256,9 +285,44 @@ begin
   SetSaveBtnVisible;
 end;
 
+procedure TapgCustomerInfo.CopyHtmlAsText;
+begin
+  {
+
+    в THtmlViewer нужно добавить код после procedure THtmlViewer.CopyToClipboard;
+    procedure THtmlViewer.CopySelectedAsTextToClipboard;
+    var
+    Len: Integer;
+    begin
+    Len := FSectionList.GetSelLength;
+    if Len = 0 then
+    Exit;
+
+    Clipboard.Open;
+    try
+    Clipboard.Clear;
+    CopyToClipboardAsText(SelText);
+    finally
+    Clipboard.Close;
+    end;
+    end;
+
+    тогада не нужно дважды буфер гонять
+
+    var Str: WideString;
+    HtmlViewer.CopyToClipboard; // Ctrl+C
+    // далее чистим буфер от лишних данных
+    // так как HtmlViewer помещает в буфер и текст и html
+    Str := GetStringFromClipboard;
+    PutStringIntoClipBoard(Str);
+  }
+
+  HtmlViewer.CopySelectedAsTextToClipboard;
+end;
+
 procedure TapgCustomerInfo.miCopyClick(Sender: TObject);
 begin
-  HtmlViewer.CopyToClipboard;
+  CopyHtmlAsText;
 end;
 
 procedure TapgCustomerInfo.miN1Click(Sender: TObject);
@@ -414,7 +478,10 @@ procedure TapgCustomerInfo.actCAddExecute(Sender: TObject);
 var
   Contact: TContact;
 begin
-  if not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full)) then
+  if not(dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_Files_Add) //
+    or dmMain.AllowedAction(rght_Customer_full)) //
+  then
     exit;
 
   if not dsContacts.Active then
@@ -432,6 +499,8 @@ begin
     dsContacts['Cc_Notify'] := Contact.Notify;
     dsContacts['O_Name'] := Contact.cType;
     dsContacts.Post;
+    dsContacts.CloseOpen(True);
+    dsContacts.Locate('CC_VALUE', Contact.Contact, []);
     dbgrdhContacts.SetFocus;
   end
 end;
@@ -458,8 +527,11 @@ procedure TapgCustomerInfo.actCEditExecute(Sender: TObject);
 var
   Contact: TContact;
 begin
-  if not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full)) then
+  if not(dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_full) //
+    or dmMain.AllowedAction(rght_Customer_Contact_Edit)) then
     exit;
+
   if (not dsContacts.Active) then
     dsContacts.Open;
   if dsContacts.RecordCount > 0 then
@@ -512,6 +584,94 @@ begin
   A4MainForm.MakeCall(dsContacts['CC_TYPE'], dsContacts['CC_VALUE']);
 end;
 
+procedure TapgCustomerInfo.actMakeDefContactExecute(Sender: TObject);
+var
+  t: Integer;
+  v: String;
+begin
+  if not(dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_full) //
+    or dmMain.AllowedAction(rght_Customer_Contact_Edit)) then
+    exit;
+
+  if (dsContacts.RecordCount = 0) //
+    or dsContacts.FieldByName('Customer_id').IsNull //
+    or dsContacts.FieldByName('Cc_Type').IsNull //
+    or dsContacts.FieldByName('Cc_Value').IsNull //
+  then
+    exit;
+  dsContacts.DisableControls;
+
+  t := dsContacts['Cc_Type'];
+  v := dsContacts['Cc_Value'];
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      SQL.Text := 'update Customer_Contacts set Cc_Notify = iif(Cc_Value = :Cc_Value, 1, 0) ' +
+        ' where (Customer_Id = :Customer_Id) and (Cc_Type = :Cc_Type)';
+      ParamByName('Customer_Id').AsInt64 := dsContacts['Customer_id'];
+      ParamByName('Cc_Type').AsInteger := t;
+      ParamByName('Cc_Value').AsString := v;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+      UpdatePage;
+    finally
+      Free;
+    end;
+  end;
+  dsContacts.CloseOpen(True);
+  dsContacts.Locate('Cc_Type;Cc_Value', VarArrayOf([t, v]), []);
+  dsContacts.EnableControls;
+end;
+
+procedure TapgCustomerInfo.actNotSendContatctExecute(Sender: TObject);
+var
+  t: Integer;
+  v: String;
+begin
+  if not(dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_full) //
+    or dmMain.AllowedAction(rght_Customer_Contact_Edit)) then
+    exit;
+
+  if (dsContacts.RecordCount = 0) //
+    or dsContacts.FieldByName('Customer_id').IsNull //
+    or dsContacts.FieldByName('Cc_Type').IsNull //
+    or dsContacts.FieldByName('Cc_Value').IsNull //
+  then
+    exit;
+  dsContacts.DisableControls;
+
+  t := dsContacts['Cc_Type'];
+  v := dsContacts['Cc_Value'];
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      SQL.Text := 'update Customer_Contacts set Cc_Notify = 0 ' +
+        ' where (Customer_Id = :Customer_Id) and (Cc_Type = :Cc_Type) and (Cc_Value = :Cc_Value)';
+      ParamByName('Customer_Id').AsInt64 := dsContacts['Customer_id'];
+      ParamByName('Cc_Type').AsInteger := t;
+      ParamByName('Cc_Value').AsString := v;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+      UpdatePage;
+    finally
+      Free;
+    end;
+  end;
+  dsContacts.CloseOpen(True);
+  dsContacts.Locate('Cc_Type;Cc_Value', VarArrayOf([t, v]), []);
+  dsContacts.EnableControls;
+end;
+
 procedure TapgCustomerInfo.actRecalcExecute(Sender: TObject);
 var
   b: TDateTime;
@@ -533,6 +693,20 @@ begin
   ShowMessage(Format(rsCalculateComplite, [TimeToStr(b)]));
 
   FSkipRecalc := FRunUnderWine;
+end;
+
+procedure TapgCustomerInfo.actSendMessageExecute(Sender: TObject);
+begin
+  if not(dmMain.AllowedAction(rght_Customer_full) //
+    or dmMain.AllowedAction(rght_Messages_add)) then
+    exit;
+
+  if (dsContacts.RecordCount = 0) //
+    or dsContacts.FieldByName('Cc_Value').IsNull //
+  then
+    exit;
+
+  SendMessages(dsContacts.FieldByName('Cc_Value').AsString);
 end;
 
 procedure TapgCustomerInfo.btnAlignClick(Sender: TObject);
@@ -563,7 +737,7 @@ end;
 
 procedure TapgCustomerInfo.dbeACCOUNT_NODblClick(Sender: TObject);
 begin
-//  Clipboard.AsText := dbeACCOUNT_NO.Text;
+  // Clipboard.AsText := dbeACCOUNT_NO.Text;
 end;
 
 procedure TapgCustomerInfo.dbgrdhContactsDblClick(Sender: TObject);
@@ -655,7 +829,7 @@ end;
 procedure TapgCustomerInfo.MakeHtmlWithParams;
 var
   i: Integer;
-  P, V, s: string;
+  P, v, s: string;
   resMemo: string;
   PASS_STATE: Integer;
 begin
@@ -664,44 +838,44 @@ begin
   if i >= 0 then
   begin
     PASS_STATE := 0;
-    V := '';
+    v := '';
     if FCheckPassport and (not FDataSource.DataSet.FieldByName('JURIDICAL').IsNull) and
       (FDataSource.DataSet['JURIDICAL'] = 0) then
     begin
       if FDataSource.DataSet['PASSPORT_VALID'] = 0 then
       begin
         PASS_STATE := 1;
-        V := '<hr>' + rsPassportNotValid + '<hr>';
+        v := '<hr>' + rsPassportNotValid + '<hr>';
       end
       else if FDataSource.DataSet['PASSPORT_VALID'] = -1 then
       begin
         PASS_STATE := 2;
-        V := '<hr>' + rsError + '. ' + rsNeedPassportCheck + '<hr>';
+        v := '<hr>' + rsError + '. ' + rsNeedPassportCheck + '<hr>';
       end
 
     end;
     resMemo := StringReplace(resMemo, '<!--PASS_STATE-->', PASS_STATE.ToString, [rfReplaceAll, rfIgnoreCase]);
-    resMemo := StringReplace(resMemo, '<!--PASS_ERROR-->', V, [rfReplaceAll, rfIgnoreCase]);
+    resMemo := StringReplace(resMemo, '<!--PASS_ERROR-->', v, [rfReplaceAll, rfIgnoreCase]);
 
   end;
 
   for i := 0 to FHtmlParams.Count - 1 do
   begin
     P := FHtmlParams[i];
-    V := GetParamValue(P);
+    v := GetParamValue(P);
 
-    if (not FPersonalData) and (not V.IsEmpty) then
+    if (not FPersonalData) and (not v.IsEmpty) then
     begin
       s := P.ToUpper;
       if ((s = 'PASSPORT_NUMBER') or (s = 'PASSPORT_REGISTRATION') or (s = 'BIRTHDAY')) then
-        V := ''
+        v := ''
       else if (s = 'SURNAME') then
       begin
-        V := HideSurname(V);
+        v := HideSurname(v);
       end;
     end;
 
-    resMemo := StringReplace(resMemo, '<!--' + P + '-->', V, [rfReplaceAll, rfIgnoreCase]);
+    resMemo := StringReplace(resMemo, '<!--' + P + '-->', v, [rfReplaceAll, rfIgnoreCase]);
   end;
 
   // if FWkeHtml then
@@ -734,8 +908,8 @@ begin
   end;
 
   if FHtml.IsEmpty then
-    FHtml := '<html><head>'+
-        '<style>body{font-family:Tahoma;line-height:170%}.acc{font-size:20px;}.pass1{color:blue;}.pass2{color:red;}</style>'
+    FHtml := '<html><head>' +
+      '<style>body{font-family:Tahoma;line-height:170%}.acc{font-size:20px;}.pass1{color:blue;}.pass2{color:red;}</style>'
       + '</head><body>' +
     // для соохранения форматирования
       'Лицевой счет <font class="acc"><strong><!--ACCOUNT_NO--></strong></font><br>' +
@@ -815,45 +989,37 @@ begin
 end;
 
 procedure TapgCustomerInfo.HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-var
-  Str: WideString;
 begin
   if (Shift = [ssCtrl]) then
   begin
     case Key of
       67:
-        begin
-          HtmlViewer.CopyToClipboard; // Ctrl+C
-          // далее чистим буфер от лишних данных
-          // так как HtmlViewer помещает в буфер и текст и html
-          Str := GetStringFromClipboard;
-          PutStringIntoClipBoard(Str);
-        end;
+        CopyHtmlAsText;
       65:
         HtmlViewer.SelectAll; // Ctrl+A
     end;
   end;
 end;
 
-procedure TapgCustomerInfo.HtmlViewerSectionClick(Sender: TObject;
-  Obj: TSectionBase; Button: TMouseButton; Shift: TShiftState; X, Y, IX,
-  IY: Integer);
+procedure TapgCustomerInfo.HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase; Button: TMouseButton;
+  Shift: TShiftState; X, Y, IX, IY: Integer);
 var
-  pt : TPoint;
+  pt: TPoint;
 begin
-  if HtmlViewer.SelLength <> 0 then begin
+  if HtmlViewer.SelLength <> 0 then
+  begin
     pt := Mouse.CursorPos;
-    pmHV.Popup(pt.x, pt.y);
+    pmHV.Popup(pt.X, pt.Y);
   end;
 end;
 
 function TapgCustomerInfo.GetParamValue(const param: String): String;
 var
-  V: string;
+  v: string;
   fld: TField;
   NeedCHK: Boolean;
 begin
-  V := '';
+  v := '';
   NeedCHK := True;
   if dsCustomer.Active then
   begin
@@ -862,21 +1028,21 @@ begin
     begin
       NeedCHK := False;
       if not fld.IsNull then
-        V := fld.AsString;
+        v := fld.AsString;
     end;
   end;
 
-  if NeedCHK and V.IsEmpty then
+  if NeedCHK and v.IsEmpty then
   begin
     fld := FDataSource.DataSet.FindField(param);
     if (not(fld = nil)) then
     begin
       if not fld.IsNull then
-        V := fld.AsString;
+        v := fld.AsString;
     end;
   end;
 
-  Result := V;
+  Result := v;
 end;
 
 procedure TapgCustomerInfo.UpdateInfoPanel;

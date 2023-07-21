@@ -33,6 +33,7 @@ type
     procedure dbeNameEnter(Sender: TObject);
   private
     { Private declarations }
+    FEnterSecondPress: Boolean;
     procedure CheckData;
   public
     { Public declarations }
@@ -103,7 +104,6 @@ begin
   OkCancelFrame.bbOk.Enabled := en;
 end;
 
-
 procedure TAreaViewForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -113,19 +113,33 @@ end;
 
 procedure TAreaViewForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
-  go:Boolean;
+  go: Boolean;
 begin
-  go:=True;
-   if (Key=#13) then
-   begin
-      if (ActiveControl is TDBLookupComboboxEh)
-      then go := not (ActiveControl as TDBLookupComboboxEh).ListVisible;
-
-      if go
-      then begin
-        Key := #0;                     // eat enter key
-        PostMessage( Self.Handle, WM_NEXTDLGCTL, 0, 0);
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
+  begin
+    go := true;
+    if (ActiveControl is TDBLookupComboboxEh) then
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
       end;
+    end;
+
+    if go then
+    begin
+      FEnterSecondPress := False;
+      Key := #0; // eat enter key
+      PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+    end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

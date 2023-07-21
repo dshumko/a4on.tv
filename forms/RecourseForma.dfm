@@ -354,19 +354,6 @@ object RecourseForm: TRecourseForm
       TabOrder = 0
       OnClick = btnOkandRequestClick
     end
-    object btnOk: TBitBtn
-      Left = 159
-      Top = 4
-      Width = 171
-      Height = 27
-      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
-      Anchors = [akLeft, akRight, akBottom]
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      ModalResult = 1
-      NumGlyphs = 2
-      TabOrder = 1
-      OnClick = btnOkClick
-    end
     object btnCancel: TBitBtn
       Left = 339
       Top = 4
@@ -378,6 +365,18 @@ object RecourseForm: TRecourseForm
       ModalResult = 2
       TabOrder = 2
       OnClick = btnCancelClick
+    end
+    object btnOk: TButton
+      Left = 152
+      Top = 4
+      Width = 180
+      Height = 27
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
+      Anchors = [akLeft, akTop, akRight]
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      ModalResult = 1
+      TabOrder = 1
+      OnClick = btnOkClick
     end
   end
   object srcRecourse: TDataSource

@@ -31,7 +31,7 @@ type
     constructor Create;
     destructor Destroy; override;
     class function Instance(const SrvName, UserName, password: string; Protocol: TProtocol = TCP;
-      const ClientLib: string = 'gds32.dll'): TFirebirdServer;
+      const ClientLib: string = 'fbclient.dll'): TFirebirdServer;
 
     function BackupDB(const DBName, BkName: string; Optns: TBackupOptions = [NoGarbageCollection]): Boolean;
 

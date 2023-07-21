@@ -120,10 +120,10 @@ var
 begin
   Caption := GetPageName;
 
-  FRightFull := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
+  FRightFull := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment));
   FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
   // полный доступ
-  FRightEdit := (dmMain.AllowedAction(rght_Dictionary_Equipment_Ports)); // полный доступ
+  FRightEdit := (dmMain.AllowedAction(rght_Comm_Equipment_Ports)); // полный доступ
 
   vFINE := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
   if vFINE then

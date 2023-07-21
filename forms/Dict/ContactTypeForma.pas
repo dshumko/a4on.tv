@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -31,6 +33,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure btnSaveLinkClick(Sender: TObject);
     procedure cbRegularNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
+    procedure cbRegularKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     procedure StartEdt(const New: Boolean = False);
   public
@@ -55,13 +59,28 @@ begin
 end;
 
 procedure TContactTypeForm.StartEdt(const New: Boolean = False);
+var
+  i: Integer;
 begin
+  if (not New) and (dsContactType.RecordCount > 0) and (not dsContactType.FieldByName('O_CHECK').IsNull) then
+  begin
+    i := cbRegular.KeyItems.IndexOf(dsContactType['O_CHECK']);
+    if i < 0 then
+    begin
+      cbRegular.KeyItems.Add(dsContactType['O_CHECK']);
+      cbRegular.Items.Add(dsContactType['O_CHECK']);
+      // cbRegular.Value := dsContactType['O_CHECK'];
+    end;
+  end;
+
   StartEdit(New);
+
   // запретим редактировать определенные контакты
   if ((not New) and (dsContactType.FieldByName('O_ID').AsInteger in [0, 1, 2, 5, 6, 7, 10])) then
     edtName.Enabled := False
   else
     edtName.Enabled := True;
+
 end;
 
 procedure TContactTypeForm.actNewExecute(Sender: TObject);
@@ -138,12 +157,23 @@ begin
   // actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
 end;
 
+procedure TContactTypeForm.cbRegularKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if (Ord(Key) = VK_DELETE) and (cbRegular.SelLength = Length(cbRegular.Text))
+  then begin
+    cbRegular.Value := '';
+  end;
+end;
+
 procedure TContactTypeForm.cbRegularNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
 begin
   inherited;
   cbRegular.KeyItems.Add(NewText);
   cbRegular.Items.Add(NewText);
   cbRegular.Value := NewText;
+  cbRegular.Text := NewText;
   RecheckInList := False;
 end;
 

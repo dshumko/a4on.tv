@@ -329,6 +329,8 @@ type
     miConnectType: TMenuItem;
     actPortType: TAction;
     miPortType: TMenuItem;
+    actDocList: TAction;
+    miDocList: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -449,6 +451,7 @@ type
     procedure actLabelTypeExecute(Sender: TObject);
     procedure actConnectTypeExecute(Sender: TObject);
     procedure actPortTypeExecute(Sender: TObject);
+    procedure actDocListExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -504,7 +507,7 @@ type
     procedure OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
     procedure OpnenNodeByID(const ID: Integer);
     procedure OpenEquipmentByName(const name: String);
-    function OpenEquipmentByID(const eid: Integer):Boolean;
+    function OpenEquipmentByID(const eid: Integer): Boolean;
     function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
   end;
 
@@ -630,7 +633,7 @@ uses
   ContactTypeForma,
   LabelTypeForma,
   ConnectTypeForma,
-  PortTypeForma;
+  PortTypeForma, DocListForma;
 
 type
 
@@ -998,6 +1001,9 @@ begin
       AppIni.WriteString('EQPMNT', 'EQUIPMENT_LSIZE', dmMain.GetIniValue('EQUIPMENT_LSIZE'));
       AppIni.WriteString('EQPMNT', 'EQUIPMENT_ISIZE', dmMain.GetIniValue('EQUIPMENT_ISIZE'));
       AppIni.WriteString('EQPMNT', 'EQUIPMENT_PSIZE', dmMain.GetIniValue('EQUIPMENT_PSIZE'));
+
+      AppIni.WriteString('MSGSFRM', 'MSG_SENDED_ONLY', dmMain.GetIniValue('MSG_SENDED_ONLY'));
+      AppIni.WriteString('MSGSFRM', 'MSG_MY_ONLY', dmMain.GetIniValue('MSG_MY_ONLY'));
     finally
       FreeAndNil(AppIni);
     end;
@@ -1058,6 +1064,9 @@ begin
     SetFromIniSettings('EQPMNT', 'EQUIPMENT_LSIZE', '120');
     SetFromIniSettings('EQPMNT', 'EQUIPMENT_ISIZE', '330');
     SetFromIniSettings('EQPMNT', 'EQUIPMENT_PSIZE', '350');
+
+    SetFromIniSettings('MSGSFRM', 'MSG_SENDED_ONLY', '1');
+    SetFromIniSettings('MSGSFRM', 'MSG_MY_ONLY', '0');
 
     s := AppIni.ReadString('MAIN', 'FONT_SIZE', '0');
     if s <> '0' then
@@ -1544,6 +1553,13 @@ begin
   DistribForm.Show;
 end;
 
+procedure TA4MainForm.actDocListExecute(Sender: TObject);
+begin
+  if Not Assigned(DocListForm) then
+    DocListForm := TDocListForm.Create(Application);
+  DocListForm.Show;
+end;
+
 procedure TA4MainForm.actReturnToPreviosMonthExecute(Sender: TObject);
 var
   s: TDate;
@@ -1642,43 +1658,50 @@ procedure TA4MainForm.OpenEquipmentByName(const name: String);
 begin
   if not actEquipment.Visible then
     Exit;
+
   actEquipmentExecute(self);
   EquipmentForm.dbGrid.DataSource.DataSet.Locate('NAME', name, [loCaseInsensitive]);
 end;
 
-function TA4MainForm.OpenEquipmentByID(const eid: Integer):Boolean;
+function TA4MainForm.OpenEquipmentByID(const eid: Integer): Boolean;
 begin
+  Result := False;
+
   if not actEquipment.Visible then
     Exit;
+
   actEquipmentExecute(self);
 
-  if (EquipmentForm.mtEQ.Active and EquipmentForm.mtEQ.TreeList.Active)
-  then begin
-   //
+  if (EquipmentForm.mtEQ.Active and EquipmentForm.mtEQ.TreeList.Active) then
+  begin
+    //
     Result := EquipmentForm.mtEQ.TreeList.Locate('EID', eid, []);
-    if not Result
-    then begin
-      if EquipmentForm.mtEQ.Filtered
-      then begin
+    if not Result then
+    begin
+      if EquipmentForm.mtEQ.Filtered then
+      begin
         EquipmentForm.mtEQ.Filtered := False;
         Result := EquipmentForm.mtEQ.TreeList.Locate('EID', eid, []);
       end;
-      if not Result then begin
+      if not Result then
+      begin
         EquipmentForm.dbGrid.SearchPanel.CancelSearchFilter;
         Result := EquipmentForm.mtEQ.TreeList.Locate('EID', eid, []);
       end;
     end;
   end
-  else begin
+  else
+  begin
     Result := EquipmentForm.dbGrid.DataSource.DataSet.Locate('EID', eid, []);
-    if not Result
-    then begin
-      if EquipmentForm.dbGrid.DataSource.DataSet.Filtered
-      then begin
+    if not Result then
+    begin
+      if EquipmentForm.dbGrid.DataSource.DataSet.Filtered then
+      begin
         EquipmentForm.dbGrid.DataSource.DataSet.Filtered := False;
         Result := EquipmentForm.dbGrid.DataSource.DataSet.Locate('EID', eid, []);
       end;
-      if not Result then begin
+      if not Result then
+      begin
         EquipmentForm.dbGrid.SearchPanel.CancelSearchFilter;
         Result := EquipmentForm.dbGrid.DataSource.DataSet.Locate('EID', eid, []);
       end;
@@ -2968,8 +2991,16 @@ begin
   actBCItypes.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
   actBCISolution.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
 
-  actLinks.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or DictFull;
-  actPortView.Visible := dmMain.AllowedAction(rght_Dictionary_Equipment) or DictFull;
+  actLinks.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
+  actNodes.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
+  miNodesType.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
+  actPortView.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Equipment) or dmMain.AllowedAction(rght_Comm_View);
+  actDeviceType.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Equipment) or
+    dmMain.AllowedAction(rght_Comm_View);
+  actNFileTypes.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
+
+  actFiles.Visible := dmMain.AllowedAction(rght_Customer_Files_Add) or dmMain.AllowedAction(rght_Customer_Files_Edit) or
+    dmMain.AllowedAction(rght_Customer_full);
 
   InitSecurityDictionary;
   InitSecurityMobile;
@@ -2994,9 +3025,10 @@ begin
   actBuildings.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Street);
   actChannel.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Channels);
   actDecoders.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_DigitEQP);
-  actEQGroups.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Equipment);
-  actEquipment.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Equipment);
-  actEquipmentCommands.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Equipment);
+  actEQGroups.Visible := rFull or dmMain.AllowedAction(rght_Comm_Equipment) or dmMain.AllowedAction(rght_Comm_View);
+  actEquipment.Visible := rFull or dmMain.AllowedAction(rght_Comm_Equipment) or dmMain.AllowedAction(rght_Comm_View);
+  actEquipmentCommands.Visible := rFull or dmMain.AllowedAction(rght_Comm_Equipment) or
+    dmMain.AllowedAction(rght_Comm_View);
   actHeadEnds.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_HeadEnd);
   actLetters.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Reports);
   actMan.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_MANUFACTURERS);
@@ -3064,6 +3096,11 @@ begin
     dmMain.AllowedAction(rght_Request_Unclose);
 
   actReqPhotos.Visible := ActRequest.Visible;
+
+  if (dmMain.GetSettingsValue('SHOW_DOC_LIST') = '1') then
+    actDocList.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Doclist)
+  else
+    actDocList.Visible := False;
 end;
 
 procedure TA4MainForm.InitSecurityMobile;

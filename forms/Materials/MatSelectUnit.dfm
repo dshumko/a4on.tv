@@ -74,7 +74,7 @@ object MaterialsSelect: TMaterialsSelect
         end
         item
           CellButtons = <>
-          DisplayFormat = '###,##0.#####'
+          DisplayFormat = ',0.#####'
           DynProps = <>
           EditButtons = <>
           FieldName = 'DIMENSION'
@@ -84,7 +84,7 @@ object MaterialsSelect: TMaterialsSelect
         end
         item
           CellButtons = <>
-          DisplayFormat = '###,##0.#####'
+          DisplayFormat = ',0.#####'
           DynProps = <>
           EditButtons = <>
           FieldName = 'COST'

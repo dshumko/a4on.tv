@@ -148,6 +148,10 @@ inherited TaskForm: TTaskForm
         TabOrder = 0
         object tsGrid: TTabSheet
           Caption = 'tsGrid'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object dbgMsg: TDBGridEh
             Left = 26
             Top = 0
@@ -516,56 +520,89 @@ inherited TaskForm: TTaskForm
   inherited tlbMain: TToolBar
     Width = 1017
     ExplicitWidth = 1017
-    inherited tbOk: TToolButton
+    inherited ToolButton5: TToolButton
+      Width = 10
+      ExplicitWidth = 10
+    end
+    inherited ToolButton6: TToolButton
+      Left = 61
       Visible = False
+      ExplicitLeft = 61
+    end
+    inherited btnDelete: TToolButton
+      Left = 65
+      ExplicitLeft = 65
+    end
+    inherited ToolButton9: TToolButton
+      Left = 88
+      Width = 10
+      ExplicitLeft = 88
+      ExplicitWidth = 10
+    end
+    inherited tbOk: TToolButton
+      Left = 98
+      Visible = False
+      ExplicitLeft = 98
     end
     inherited ToolButton10: TToolButton
+      Left = 121
       Visible = False
+      ExplicitLeft = 121
     end
     inherited tbCancel: TToolButton
+      Left = 125
       Visible = False
+      ExplicitLeft = 125
     end
     inherited ToolButton20: TToolButton
+      Left = 148
+      Width = 10
       Visible = False
+      ExplicitLeft = 148
+      ExplicitWidth = 10
+    end
+    inherited btnQuickFilter: TToolButton
+      Left = 158
+      ExplicitLeft = 158
     end
     object ToolButton19: TToolButton
-      Left = 178
+      Left = 181
       Top = 0
       Visible = False
     end
+    object btnFilter: TToolButton
+      Left = 204
+      Top = 0
+      Action = actFilter
+    end
     object btnClose: TToolButton
-      Left = 201
+      Left = 227
       Top = 0
       Action = actClose
     end
     object btnSPclose: TToolButton
-      Left = 224
+      Left = 250
       Top = 0
-      Width = 8
+      Width = 10
       Caption = 'btnSPclose'
       ImageIndex = 54
       Style = tbsSeparator
     end
-    object btnFilter: TToolButton
-      Left = 232
-      Top = 0
-      Action = actFilter
-    end
     object btnRefresh: TToolButton
-      Left = 255
+      Left = 260
       Top = 0
       Action = actRefresh
     end
     object btn2: TToolButton
-      Left = 278
+      Left = 283
       Top = 0
-      Width = 8
+      Width = 10
       Caption = 'btn2'
       ImageIndex = 29
       Style = tbsSeparator
     end
     object btn1: TToolButton
-      Left = 286
+      Left = 293
       Top = 0
       Hint = #1047#1072#1082#1088#1099#1090#1100' '#1074#1089#1077' '#1091#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103
       Caption = 'btn1'
@@ -580,14 +617,14 @@ inherited TaskForm: TTaskForm
     ExplicitWidth = 1017
     ExplicitHeight = 168
     object lbl1: TLabel [0]
-      Left = 12
+      Left = 5
       Top = 9
       Width = 53
       Height = 13
       Caption = #1047#1072#1075#1086#1083#1086#1074#1086#1082
     end
     object lbl2: TLabel [1]
-      Left = 12
+      Left = 5
       Top = 36
       Width = 49
       Height = 13
@@ -607,27 +644,36 @@ inherited TaskForm: TTaskForm
       Height = 13
       Caption = #1044#1072#1090#1072' '#1074#1099#1087#1086#1083#1085'.'
     end
+    object lbl4: TLabel [4]
+      Left = 562
+      Top = 68
+      Width = 63
+      Height = 13
+      Caption = #1050#1090#1086' '#1079#1072#1082#1088#1086#1077#1090
+    end
     inherited btnSaveLink: TBitBtn
       Tag = 7
-      Top = 135
-      Width = 831
-      TabOrder = 7
-      ExplicitTop = 135
-      ExplicitWidth = 831
+      Left = 62
+      Top = 140
+      Width = 842
+      TabOrder = 8
+      ExplicitLeft = 62
+      ExplicitTop = 140
+      ExplicitWidth = 842
     end
     inherited btnCancelLink: TBitBtn
-      Left = 910
-      Top = 135
+      Left = 912
+      Top = 140
       Width = 98
-      TabOrder = 8
-      ExplicitLeft = 910
-      ExplicitTop = 135
+      TabOrder = 9
+      ExplicitLeft = 912
+      ExplicitTop = 140
       ExplicitWidth = 98
     end
     object edtTITLE: TDBEditEh
-      Left = 73
+      Left = 62
       Top = 6
-      Width = 480
+      Width = 491
       Height = 21
       DataField = 'TITLE'
       DataSource = srcDataSource
@@ -639,10 +685,10 @@ inherited TaskForm: TTaskForm
       Visible = True
     end
     object mmoNOTICE: TDBMemoEh
-      Left = 73
+      Left = 62
       Top = 33
-      Width = 480
-      Height = 96
+      Width = 491
+      Height = 103
       Anchors = [akLeft, akTop, akBottom]
       AutoSize = False
       DataField = 'NOTICE'
@@ -684,29 +730,29 @@ inherited TaskForm: TTaskForm
       Visible = True
     end
     object btnColor: TButton
-      Left = 562
-      Top = 67
-      Width = 215
+      Left = 559
+      Top = 111
+      Width = 123
       Height = 25
       Caption = #1042#1099#1073#1088#1072#1090#1100' '#1094#1074#1077#1090
-      TabOrder = 4
+      TabOrder = 5
       OnClick = btnColorClick
     end
     object btnClearColor: TButton
-      Left = 562
-      Top = 104
-      Width = 215
+      Left = 688
+      Top = 111
+      Width = 89
       Height = 25
       Hint = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085' '#1076#1083#1103' '#1074#1099#1076#1077#1083#1077#1085#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
       Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1094#1074#1077#1090
-      TabOrder = 5
+      TabOrder = 6
       OnClick = btnClearColorClick
     end
     object dbgUsers: TDBGridEh
       Left = 783
       Top = 6
-      Width = 225
-      Height = 123
+      Width = 227
+      Height = 130
       Hint = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1080' '#1079#1072#1076#1072#1095#1080
       AllowedOperations = [alopUpdateEh]
       Anchors = [akLeft, akTop, akRight, akBottom]
@@ -719,7 +765,7 @@ inherited TaskForm: TTaskForm
       STFilter.Local = True
       STFilter.Location = stflInTitleFilterEh
       STFilter.Visible = True
-      TabOrder = 6
+      TabOrder = 7
       OnKeyPress = dbgUsersKeyPress
       Columns = <
         item
@@ -746,6 +792,31 @@ inherited TaskForm: TTaskForm
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
+    end
+    object cbClose: TDBComboBoxEh
+      Left = 645
+      Top = 65
+      Width = 132
+      Height = 21
+      Hint = 
+        #1050#1086#1084#1091' '#1084#1086#1078#1085#1086' '#1079#1072#1082#1088#1099#1074#1072#1090#1100' '#1079#1072#1076#1072#1095#1091'. '#1045#1089#1083#1080' '#1086#1089#1090#1072#1074#1080#1090#1100' '#1087#1091#1089#1090#1099#1084', '#1090#1086' '#1079#1072#1082#1088#1099#1090#1100' '#1084#1086 +
+        #1078#1077#1090' '#1090#1086#1090' '#1082#1090#1086' '#1087#1086#1089#1090#1072#1074#1080#1083
+      DataField = 'WHO_CAN'
+      DataSource = srcDataSource
+      DynProps = <>
+      EmptyDataInfo.Text = #1050#1090#1086' '#1084#1086#1078#1077#1090' '#1079#1072#1082#1088#1099#1090#1100
+      EditButtons = <>
+      Items.Strings = (
+        #1082#1090#1086' '#1087#1086#1089#1090#1072#1074#1080#1083
+        #1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
+        #1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100', '#1073#1077#1079' '#1076#1086#1083#1078#1085#1080#1082#1086#1074' '#1074' '#1079#1072#1076#1072#1095#1077)
+      KeyItems.Strings = (
+        '0'
+        '1'
+        '2')
+      ShowHint = True
+      TabOrder = 4
+      Visible = True
     end
   end
   inherited srcDataSource: TDataSource
@@ -819,7 +890,8 @@ inherited TaskForm: TTaskForm
       '    NOTICE = :NOTICE,'
       '    PLAN_DATE = :PLAN_DATE,'
       '    EXEC_DATE = :EXEC_DATE,'
-      '    COLOR = :COLOR'
+      '    COLOR = :COLOR,'
+      '    WHO_CAN = :WHO_CAN'
       'WHERE'
       '    ID = :OLD_ID'
       '    ')
@@ -836,6 +908,7 @@ inherited TaskForm: TTaskForm
       '    PLAN_DATE,'
       '    EXEC_DATE,'
       '    COLOR,'
+      '    WHO_CAN,'
       '    DELETED'
       ')'
       'VALUES('
@@ -844,30 +917,95 @@ inherited TaskForm: TTaskForm
       '    :PLAN_DATE,'
       '    :EXEC_DATE,'
       '    :COLOR,'
+      '    :WHO_CAN,'
       '    0'
       ')'
       'RETURNING ID')
     RefreshSQL.Strings = (
       'select'
       '    t.Id'
-      '    , t.Title'
-      '    , t.Notice'
-      '    , t.Plan_Date'
-      '    , t.Exec_Date'
-      '    , t.Color '
-      '    , coalesce(w.Surname, t.Added_By) OWNER'
-      '    , t.Added_By'
-      '    , t.Added_On'
-      '    , t.Deleted'
+      '  , t.Title'
+      '  , t.Notice'
+      '  , t.Plan_Date'
+      '  , t.Exec_Date'
+      '  , t.Color'
       
-        '    , (select first 1 m.Text from Taskmsg m where m.Task_Id = t.' +
-        'ID order by m.Added_On desc) LAST_MSG'
+        '  , coalesce(w.Surname || coalesce('#39' '#39' || w.Firstname, '#39#39'), t.Ad' +
+        'ded_By) OWNER'
+      '  , t.Added_By'
+      '  , t.Added_On'
+      '  , t.Deleted'
+      '  , t.WHO_CAN'
+      '  ,'
+      '    (select first 1'
+      '         m.Text'
+      '       from Taskmsg m'
+      '       where m.Task_Id = t.ID'
+      '       order by m.Added_On desc) LAST_MSG'
+      '  ,'
+      '    (select'
+      '         list(coalesce(wu.Surname, tu.Foruser))'
+      '       from Taskuser tu'
       
-        '    , (select list(coalesce(wu.Surname, tu.Foruser)) from Taskus' +
-        'er tu left outer join Worker wu on (tu.Foruser = wu.Ibname)  whe' +
-        're tu.Task_Id = t.Id) as USERS    '
+        '            left outer join Worker wu on (tu.Foruser = wu.Ibname' +
+        ')'
+      '       where tu.Task_Id = t.Id) as USERS'
+      '  , iif((t.Added_By = current_user), 1,'
+      '    ('
+      '    case coalesce(t.WHO_CAN, 0)'
+      '      when 1 then -- '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
+      '      iif(exists(select'
+      '                     current_user'
+      '                   from Taskuser tu'
+      '                   where tu.Task_Id = t.Id'
+      '                         and tu.Foruser = current_user), 1, 0)'
+      '      when 2 then -- '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1085#1086' '#1085#1077#1090' '#1076#1086#1083#1078#1085#1080#1082#1086#1074
+      '      iif(exists(select'
+      '                     current_user'
+      '                   from Taskuser tu'
+      '                   where tu.Task_Id = t.Id'
+      
+        '                         and tu.Foruser = current_user), iif(exi' +
+        'sts(select'
+      
+        '                                                                ' +
+        '        Id'
+      
+        '                                                                ' +
+        '      from Taskmsg m'
+      
+        '                                                                ' +
+        '           inner join Customer c on (c.Account_No = m.Obj_Id and'
+      
+        '                                                                ' +
+        '                 c.Debt_Sum > 0)'
+      
+        '                                                                ' +
+        '      where m.Obj_Type = '#39'A'#39' and m.task_id = t.id), 0, 1),'
+      ''
+      '      0)'
+      '      else -- '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1080' '#1077#1089#1090#1100' '#1087#1088#1072#1074#1086' '#1079#1072#1082#1088#1099#1090#1100
+      '    iif(exists(select'
+      '                   tu.Task_Id'
+      '                 from Taskuser tu'
+      
+        '                      inner join Sys$User u on (u.Ibname = tu.Fo' +
+        'ruser)'
+      
+        '                      inner join Sys$User_Groups ug on (ug.User_' +
+        'Id = u.Id)'
+      
+        '                      inner join Sys$Group_Rights gr on (gr.Grou' +
+        'p_Id = ug.Group_Id)'
+      '                 where tu.Task_Id = t.Id'
+      '                       and tu.Foruser = current_user'
+      '                       and gr.Right_Id = 187 -- '#1079#1072#1082#1088#1099#1090#1080#1077' '#1079#1072#1076#1072#1095#1080
+      '    ), 1, 0)'
+      '    end)'
+      ''
+      '    ) as CANCLOSE'
       '  from Tasklist t'
-      '    left outer join Worker w on (t.Added_By = w.Ibname)'
+      '       left outer join Worker w on (t.Added_By = w.Ibname)'
       '  where (     T.ID = :OLD_ID'
       '     )'
       '    '
@@ -875,29 +1013,88 @@ inherited TaskForm: TTaskForm
     SelectSQL.Strings = (
       'select'
       '    t.Id'
-      '    , t.Title'
-      '    , t.Notice'
-      '    , t.Plan_Date'
-      '    , t.Exec_Date'
-      '    , t.Color '
+      '  , t.Title'
+      '  , t.Notice'
+      '  , t.Plan_Date'
+      '  , t.Exec_Date'
+      '  , t.Color'
       
-        '    , coalesce(w.Surname || coalesce('#39' '#39'||w.Firstname, '#39#39'), t.Ad' +
+        '  , coalesce(w.Surname || coalesce('#39' '#39' || w.Firstname, '#39#39'), t.Ad' +
         'ded_By) OWNER'
-      '    , t.Added_By'
-      '    , t.Added_On'
-      '    , t.Deleted'
+      '  , t.Added_By'
+      '  , t.Added_On'
+      '  , t.Deleted'
+      '  , t.WHO_CAN'
+      '  ,'
+      '    (select first 1'
+      '         m.Text'
+      '       from Taskmsg m'
+      '       where m.Task_Id = t.ID'
+      '       order by m.Added_On desc) LAST_MSG'
+      '  ,'
+      '    (select'
+      '         list(coalesce(wu.Surname, tu.Foruser))'
+      '       from Taskuser tu'
       
-        '    , (select first 1 m.Text from Taskmsg m where m.Task_Id = t.' +
-        'ID order by m.Added_On desc) LAST_MSG'
+        '            left outer join Worker wu on (tu.Foruser = wu.Ibname' +
+        ')'
+      '       where tu.Task_Id = t.Id) as USERS'
+      '  , iif((t.Added_By = current_user), 1,'
+      '    ('
+      '    case coalesce(t.WHO_CAN, 0)'
+      '      when 1 then -- '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
+      '      iif(exists(select'
+      '                     current_user'
+      '                   from Taskuser tu'
+      '                   where tu.Task_Id = t.Id'
+      '                         and tu.Foruser = current_user), 1, 0)'
+      '      when 2 then -- '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1085#1086' '#1085#1077#1090' '#1076#1086#1083#1078#1085#1080#1082#1086#1074
+      '      iif(exists(select'
+      '                     current_user'
+      '                   from Taskuser tu'
+      '                   where tu.Task_Id = t.Id'
       
-        '    , (select list(coalesce(wu.Surname, tu.Foruser)) from Taskus' +
-        'er tu left outer join Worker wu on (tu.Foruser = wu.Ibname)  whe' +
-        're tu.Task_Id = t.Id) as USERS'
+        '                         and tu.Foruser = current_user), iif(exi' +
+        'sts(select'
       
-        '    , (select CURRENT_USER from Taskuser tu where tu.Task_Id = t' +
-        '.Id and tu.Foruser = CURRENT_USER) as CANCLOSE        '
+        '                                                                ' +
+        '        Id'
+      
+        '                                                                ' +
+        '      from Taskmsg m'
+      
+        '                                                                ' +
+        '           inner join Customer c on (c.Account_No = m.Obj_Id and'
+      
+        '                                                                ' +
+        '                 c.Debt_Sum > 0)'
+      
+        '                                                                ' +
+        '      where m.Obj_Type = '#39'A'#39' and m.task_id = t.id), 0, 1),'
+      ''
+      '      0)'
+      '      else -- '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1080' '#1077#1089#1090#1100' '#1087#1088#1072#1074#1086' '#1079#1072#1082#1088#1099#1090#1100
+      '    iif(exists(select'
+      '                   tu.Task_Id'
+      '                 from Taskuser tu'
+      
+        '                      inner join Sys$User u on (u.Ibname = tu.Fo' +
+        'ruser)'
+      
+        '                      inner join Sys$User_Groups ug on (ug.User_' +
+        'Id = u.Id)'
+      
+        '                      inner join Sys$Group_Rights gr on (gr.Grou' +
+        'p_Id = ug.Group_Id)'
+      '                 where tu.Task_Id = t.Id'
+      '                       and tu.Foruser = current_user'
+      '                       and gr.Right_Id = 187 -- '#1079#1072#1082#1088#1099#1090#1080#1077' '#1079#1072#1076#1072#1095#1080
+      '    ), 1, 0)'
+      '    end)'
+      ''
+      '    ) as CANCLOSE'
       '  from Tasklist t'
-      '    left outer join Worker w on (t.Added_By = w.Ibname)'
+      '       left outer join Worker w on (t.Added_By = w.Ibname)'
       '  where t.deleted = 0 '
       '  @@FILTER@'
       '            '
@@ -1134,7 +1331,8 @@ inherited TaskForm: TTaskForm
       
         '    left join Taskuser t on (t.Foruser = w.Ibname and t.Task_Id ' +
         '= :id )'
-      'where not w.Ibname is null     '
+      'where not w.Ibname is null'
+      '  and (coalesce(w.Surname, '#39#39') <> '#39#39')    '
       'order by 1')
     Transaction = trRead
     Database = dmMain.dbTV

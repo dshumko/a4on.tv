@@ -72,7 +72,7 @@ type
     procedure dsWorkersNewRecord(DataSet: TDataSet);
     procedure actSendSMSExecute(Sender: TObject);
   private
-    { Private declarations }
+    FEnterSecondPress: Boolean;
     procedure PrepareEdit;
   public
     { Public declarations }
@@ -174,15 +174,37 @@ procedure TWorkersForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  inherited;
-  go := True;
-  if (Key = #13)
-  then begin
-    if go
-    then begin
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
+  begin
+    go := true;
+    if (ActiveControl is TDBLookupComboboxEh) then
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
+    //  go := False
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
+    if go then
+    begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

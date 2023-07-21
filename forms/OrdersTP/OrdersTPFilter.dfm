@@ -2,7 +2,7 @@ object OrdersTPFilterForm: TOrdersTPFilterForm
   Left = 394
   Top = 207
   BorderStyle = bsSizeToolWin
-  Caption = #1060#1080#1083#1100#1090#1088
+  Caption = #1060#1080#1083#1100#1090#1088' '#1089#1090#1086#1088#1086#1085#1085#1080#1093' '#1079#1072#1082#1072#1079#1086#1074
   ClientHeight = 437
   ClientWidth = 575
   Color = clBtnFace

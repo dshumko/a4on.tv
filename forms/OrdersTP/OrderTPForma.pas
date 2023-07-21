@@ -88,6 +88,7 @@ type
     function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
     procedure actPrintExecute(Sender: TObject);
     procedure dsOrderTPAfterOpen(DataSet: TDataSet);
+    procedure edtPhoneExit(Sender: TObject);
   private
     FCustomerInfo: TCustomerInfo;
     FReport: Integer;
@@ -108,9 +109,11 @@ type
     function CheckDataAndSave: Boolean;
     procedure RecalAmount;
     procedure SaveOrderAddons;
+    procedure SaveContact;
     procedure SetInUpdateMode(const value: Boolean);
     procedure PreviewOrder;
-    function GetCostOrder:Double;
+    function GetCostOrder: Double;
+    function FormatPhone(const phone: String; const SaveInError: Boolean = False): String;
   public
     property CustomerInfo: TCustomerInfo read FCustomerInfo write SetCustomerInfo;
     property InUpdateMode: Boolean write SetInUpdateMode;
@@ -127,23 +130,89 @@ function CreateOrderTPForCustomer(const aOTPID: Integer; const ACustomerInfo: TC
 implementation
 
 uses
-  System.StrUtils, System.Math,
+  System.StrUtils, System.Math, System.MaskUtils,
   DM, PrjConst, JsonDataObjects, pFIBQuery, DBSumLst, MAIN, ReportPreview;
 
 {$R *.dfm}
+
+function StripNonConforming(const S: string; const ValidChars: TSysCharSet): string;
+var
+  DestI: Integer;
+  SourceI: Integer;
+begin
+  SetLength(Result, Length(S));
+  DestI := 0;
+  for SourceI := 1 to Length(S) do
+    if CharInSet(S[SourceI], ValidChars) then
+    begin
+      Inc(DestI);
+      Result[DestI] := S[SourceI]
+    end;
+  SetLength(Result, DestI)
+end;
+
+function CountPhoneDigitPlace(const fmt: String): Integer;
+var
+  i: Integer;
+begin
+  Result := 0;
+  for i := 1 to fmt.Length do
+  begin
+    if fmt[i] = '0' then
+      Inc(Result);
+  end
+end;
+
+function PlacePhoneDigit(const fmt: String; const digits: String): String;
+var
+  i, j: Integer;
+begin
+  Result := '';
+  j := 1;
+  for i := 1 to fmt.Length do
+  begin
+    if ((fmt[i] = '0') or (fmt[i] = digits[j])) then
+    begin
+      Result := Result + digits[j];
+      Inc(j);
+    end
+    else
+      Result := Result + fmt[i];
+  end;
+  if (j <= digits.Length) then
+    Result := digits;
+end;
+
+function CheckFormat(const fmt: String; const str: String): Boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+  if (fmt.Length <> str.Length) then
+    Exit;
+
+  Result := True;
+  i := 1;
+  while (i <= fmt.Length) and Result do
+  begin
+    if (fmt[i] <> str[i]) and ((fmt[i] = '0') and (not CharInSet(str[i], ['0' .. '9']))) then
+      Result := False;
+    Inc(i);
+  end
+end;
 
 function CreateOrderTP(const aOTPID: Integer): Integer;
 var
   ACustomerInfo: TCustomerInfo;
 begin
   ACustomerInfo.CUSTOMER_ID := -1;
-  result := CreateOrderTPForCustomer(aOTPID, ACustomerInfo);
+  Result := CreateOrderTPForCustomer(aOTPID, ACustomerInfo);
 end;
 
 function CreateOrderTPForCustomer(const aOTPID: Integer; const ACustomerInfo: TCustomerInfo;
   const FromOrder: Integer = -1): Integer;
 begin
-  result := -1;
+  Result := -1;
   with TOrderTPForm.Create(Application) do
     try
       dsOTPTypes.Open;
@@ -185,9 +254,9 @@ begin
             if (not lcbOTTP_TYPE.Text.ToUpper.Contains(rsFree.ToUpper)) then
               PrintReport();
           end;
-          result := dsOrderTP['OTP_ID'];
+          Result := dsOrderTP['OTP_ID'];
         except
-          result := -1;
+          Result := -1;
         end;
       end
       else
@@ -235,6 +304,23 @@ end;
 procedure TOrderTPForm.edTOChange(Sender: TObject);
 begin
   RecalAmount;
+end;
+
+procedure TOrderTPForm.edtPhoneExit(Sender: TObject);
+var
+  S: string;
+begin
+  S := FormatPhone(edtPhone.Text);
+  if not S.IsEmpty then
+  begin
+    edtPhone.Text := S;
+    CnErrors.Dispose(edtPhone);
+  end
+  else
+  begin
+    S := #13#10 + Trim(dmMain.GetSettingsValue('MOBILE_FMT') + #13#10 + dmMain.GetSettingsValue('PHONE_FMT'));
+    CnErrors.SetError(edtPhone, Format(rsINPUT_VALUE_FORMAT, [S]), iaMiddleLeft, bsNeverBlink);
+  end
 end;
 
 procedure TOrderTPForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -302,6 +388,16 @@ begin
       end;
     end;
   end;
+  Font_name := '';
+  Font_name := dmMain.GetSettingsValue('MOBILE_FMT');
+  if Font_name.IsEmpty then begin
+    edtPhone.EmptyDataInfo.Text := rsClmnMobilePhone;
+  end
+  else begin
+    edtPhone.EditMask := Font_name + ';1;_';
+    edtPhone.EmptyDataInfo.Text := '';
+  end
+
 end;
 
 procedure TOrderTPForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -339,7 +435,7 @@ end;
 
 function TOrderTPForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
 begin
-  result := dmMain.frxReportUserFunction(MethodName, Params);
+  Result := dmMain.frxReportUserFunction(MethodName, Params);
 end;
 
 procedure TOrderTPForm.lcbOTTP_TYPEChange(Sender: TObject);
@@ -406,7 +502,7 @@ function TOrderTPForm.CheckDataAndSave: Boolean;
 var
   allright: Boolean;
 begin
-  result := False;
+  Result := False;
   if not(dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
     dmMain.AllowedAction(rght_OrdersTP_edit)) then
     Exit;
@@ -428,8 +524,9 @@ begin
   if allright and FSpellCheck then
   begin
     // Post;
+    SaveContact;
     SaveOrderAddons;
-    result := True;
+    Result := True;
   end;
 end;
 
@@ -437,6 +534,8 @@ function TOrderTPForm.CheckData: Boolean;
 var
   errors: Boolean;
   NotFullRight: Boolean;
+  PhoneCorrect: Boolean;
+  S: string;
 begin
   errors := False;
 
@@ -472,6 +571,31 @@ begin
   else
     CnErrors.Dispose(edOTP_DATE);
 
+  if (edtPhone.Text.IsEmpty) then
+  begin
+    errors := True;
+    CnErrors.SetError(edtPhone, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+  begin
+    PhoneCorrect := False;
+    S := dmMain.GetSettingsValue('MOBILE_FMT');
+    PhoneCorrect := (not S.IsEmpty) and (CheckFormat(s, edtPhone.Text));
+
+    if not PhoneCorrect then begin
+      S := dmMain.GetSettingsValue('PHONE_FMT');
+      PhoneCorrect := (not S.IsEmpty) and (CheckFormat(s, edtPhone.Text));
+    end;
+
+    if not PhoneCorrect then begin
+      errors := True;
+      S := #13#10 + Trim(dmMain.GetSettingsValue('MOBILE_FMT') + #13#10 + dmMain.GetSettingsValue('PHONE_FMT'));
+      CnErrors.SetError(edtPhone, Format(rsINPUT_VALUE_FORMAT, [S]), iaMiddleLeft, bsNeverBlink);
+    end
+    else
+      CnErrors.Dispose(edtPhone);
+  end;
+
   CnErrors.Dispose(edTO);
   CnErrors.Dispose(edFROM);
   if (pnlPeriod.Visible) then
@@ -500,7 +624,7 @@ begin
     end;
   end;
 
-  result := not errors;
+  Result := not errors;
 end;
 
 procedure TOrderTPForm.SetCustomerInfo(ci: TCustomerInfo);
@@ -513,8 +637,8 @@ begin
       edtFIO.Text := Copy(ci.FIO, 1, 255);
     if edtAdress.Text.IsEmpty then
       edtAdress.Text := Copy(Trim(ci.STREET + ' ' + ci.HOUSE_no + ' ' + ci.FLAT_NO), 1, 500);
-    if edtPhone.Text.IsEmpty then
-      edtPhone.Text := Copy(Trim(ci.phone_no + ' ' + ci.mobile), 1, 50);
+    // if edtPhone.Text.IsEmpty then
+    // edtPhone.Text := Copy(Trim(ci.phone_no + ' ' + ci.mobile), 1, 50);
     if mmoText.Lines.Text.IsEmpty then
       mmoText.Lines.Text := ci.notice;
     ShowAddons;
@@ -598,7 +722,7 @@ begin
       for i := 0 to JO.A['Params'].Count - 1 do
       begin
         mtAddons.Append;
-        mtAddons['name'] := JO.A['Params'].O[i].s['name'];
+        mtAddons['name'] := JO.A['Params'].O[i].S['name'];
         mtAddons['cost'] := JO.A['Params'].O[i].F['cost'];
         if JO.A['Params'].O[i].Contains('dc') then
         begin
@@ -625,7 +749,7 @@ begin
   finally
     JO.free;
   end;
-  result := ShowPanel;
+  Result := ShowPanel;
 end;
 
 procedure TOrderTPForm.pnlAddonsResize(Sender: TObject);
@@ -753,60 +877,11 @@ begin
       Close;
     end;
   end;
-  {
-    или так
-    try
-    dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := fReport_ID;
-    dmMain.fdsLoadReport.Open;
-    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
-    begin
-    vFN := GetTempDir;
-    vFN := vFN + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-    Stream := TFileStream.Create(vFN, fmCreate);
-    try
-    TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
-    finally
-    Stream.free;
-    end;
-    if FileExists(vFN) then
-    begin
-    frxReport.LoadFromFile(vFN);
-    // frxReport.FileName:=dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-    // Caption := frxReport.FileName;
-    end;
-    end;
-    finally
-    if dmMain.fdsLoadReport.Active then
-    dmMain.fdsLoadReport.Close;
-    end;
-    vi := frxReport.Variables.IndexOf('ORDER_ID');
-
-    if vi > 0 then
-    frxReport.Variables['ORDER_ID'] := dsOrderTP['OTP_ID'];
-
-    frxReport.PrepareReport;
-    frxReport.Print;
-  }
 end;
 
 procedure TOrderTPForm.actPrintExecute(Sender: TObject);
 begin
-  //if dsOrderTP.State in [dsInsert] then
-    PreviewOrder
-//  else begin
-//    // если отчета нет, то напечатаем согласно типа
-//    if CheckDataAndSave then
-//    begin
-//      if dsOrderTP.State in [dsEdit, dsInsert] then
-//      begin
-//        dsOrderTP.Post;
-//        AfterSave(True);
-//      end
-//      else
-//        PrintReport(False);
-//      dsOrderTP.Edit;
-//    end;
-//  end;
+  PreviewOrder
 end;
 
 procedure TOrderTPForm.AddictSpellShowEndMessage(Sender: TObject);
@@ -829,14 +904,14 @@ begin
   if CheckDataAndSave then
     ModalResult := mrOk
   else
-    ModalResult := mrCancel;
+    ModalResult := mrNone;
 end;
 
 procedure TOrderTPForm.ExecuteAddons;
 var
   Save_Cursor: TCursor;
   Order_id: Integer;
-  s: String;
+  S: String;
   qnt: Double;
 begin
   if dsOrderTP.FieldByName('OTP_ID').IsNull then
@@ -887,10 +962,10 @@ begin
         ParamByName('date').AsDate := dsOrderTP['OTP_DATE'];
         ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
         ParamByName('Units').AsDouble := qnt;
-        s := IfThen(edtNumber.Text.IsEmpty, dsOrderTP.FieldByName('OTP_ID').AsString, edtNumber.Text);
-        s := rsOrderN + s + ' '#13#10 + lcbOTTP_TYPE.Text + ' '#13#10 + edtFIO.Text + ' '#13#10 + edtAdress.Text +
+        S := IfThen(edtNumber.Text.IsEmpty, dsOrderTP.FieldByName('OTP_ID').AsString, edtNumber.Text);
+        S := rsOrderN + S + ' '#13#10 + lcbOTTP_TYPE.Text + ' '#13#10 + edtFIO.Text + ' '#13#10 + edtAdress.Text +
           ' '#13#10 + qnt.ToString;
-        ParamByName('Notice').AsString := s;
+        ParamByName('Notice').AsString := S;
 
         Transaction.StartTransaction;
         ExecQuery;
@@ -907,7 +982,7 @@ end;
 procedure TOrderTPForm.RecalAmount;
 var
   cost, gc: Double;
-  c, d: Integer;
+  c, d, sl: Integer;
   charcost: Double;
   bm: TBookmark;
   k: Double;
@@ -971,7 +1046,11 @@ begin
   end;
 
   c := mmoText.Lines.Text.Trim.Length;
-  lblCharCNT.Caption := format(rsAdCharCount, [c, d]);
+  sl := Trunc(c / 300);
+  if (c - sl*300) > 0  then
+    sl := sl + 1;
+
+  lblCharCNT.Caption := Format(rsAdCharCount, [c, sl, d]);
   // FCharCnt,FBasicCnt, FMoreCnt]);
 
   ednAMOUNT.value := cost;
@@ -1010,7 +1089,7 @@ begin
       mtAddons.DisableControls;
       for i := 0 to JO.A['add'].Count - 1 do
       begin
-        if mtAddons.Locate('name', JO.A['add'].O[i].s['n'], []) then
+        if mtAddons.Locate('name', JO.A['add'].O[i].S['n'], []) then
         begin
           mtAddons.Edit;
           mtAddons['qnt'] := JO.A['add'].O[i].F['q'];
@@ -1021,7 +1100,7 @@ begin
         else
         begin
           mtAddons.Append;
-          mtAddons['name'] := JO.A['add'].O[i].s['n'];
+          mtAddons['name'] := JO.A['add'].O[i].S['n'];
           mtAddons['cost'] := JO.A['add'].O[i].F['c'];
           mtAddons['qnt'] := JO.A['add'].O[i].F['q'];
           if JO.A['add'].O[i].Contains('d') then
@@ -1039,6 +1118,49 @@ begin
   end;
 
   pnlAddons.Visible := ShowPanel;
+end;
+
+procedure TOrderTPForm.SaveContact;
+var
+  phone: TContact;
+  S: string;
+begin
+  if (FCustomerInfo.CUSTOMER_ID < 0) or (edtPhone.Text.IsEmpty) then
+    Exit;
+
+  phone.Contact := edtPhone.Text;
+  phone.CustID := FCustomerInfo.CUSTOMER_ID;
+  phone.cID := 0;
+  phone.Notify := 0;
+
+  if ((pos(phone.Contact, FCustomerInfo.phone_no) > 0) or (pos(phone.Contact, FCustomerInfo.mobile) > 0)) then
+    Exit;
+
+  phone.notice := edtFIO.Text;
+
+  S := dmMain.GetSettingsValue('MOBILE_FMT');
+  if (S.Length = phone.Contact.Length) then
+    phone.cID := 1;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      sql.Text := 'execute procedure Customer_Contacts_Iu(:CID, :CV, :CT, :Notice, :Notify)';
+      ParamByName('CId').AsInteger := phone.CustID;
+      ParamByName('CV').AsString := phone.Contact;
+      ParamByName('CT').AsInteger := phone.cID;
+      ParamByName('Notify').AsInteger := phone.Notify;
+      ParamByName('Notice').AsString := phone.notice;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
+  end;
 end;
 
 procedure TOrderTPForm.SaveOrderAddons;
@@ -1068,7 +1190,7 @@ begin
           if (not mtAddons.FieldByName('qnt').IsNull) and (mtAddons['qnt'] <> 0) then
           begin
             O := TJsonObject.Create;
-            O.s['n'] := mtAddons['name'];
+            O.S['n'] := mtAddons['name'];
             O.F['c'] := mtAddons['cost'];
             O.F['q'] := mtAddons['qnt'];
             if (not mtAddons.FieldByName('dc').IsNull) and (mtAddons['dc'] <> 0) then
@@ -1177,11 +1299,11 @@ begin
 
     i := GetVariableID('CUSTOMER_ID');
     if i > 0 then
-      SetVariable('CUSTOMER_ID', CustomerInfo.CUSTOMER_ID );
+      SetVariable('CUSTOMER_ID', CustomerInfo.CUSTOMER_ID);
 
     i := GetVariableID('TEXT');
     if i > 0 then
-      SetVariable('TEXT', ''''+ mmoText.Lines.Text + '''');
+      SetVariable('TEXT', '''' + mmoText.Lines.Text + '''');
 
     i := GetVariableID('COST');
     if i > 0 then
@@ -1193,10 +1315,63 @@ begin
   end;
 end;
 
-function TOrderTPForm.GetCostOrder:Double;
+function TOrderTPForm.GetCostOrder: Double;
 begin
   RecalAmount;
   Result := IfThen((not VarIsNull(ednAMOUNT.value)), ednAMOUNT.value, 0);
+end;
+
+function TOrderTPForm.FormatPhone(const phone: String; const SaveInError: Boolean = False): String;
+var
+  strDigit, fmtPhone: string;
+  fmt: string;
+  dp: Integer;
+  digitSet: TSysCharSet;
+  findFormat: Boolean;
+begin
+  digitSet := ['0' .. '9'];
+  if SaveInError then
+    Result := phone
+  else
+    Result := '';
+
+  findFormat := False;
+  fmt := dmMain.GetSettingsValue('MOBILE_FMT');
+  if (CheckFormat(fmt, phone)) then
+  begin
+    Result := phone;
+    findFormat := True;
+  end
+  else
+  begin
+    strDigit := StripNonConforming(phone, digitSet);
+    dp := CountPhoneDigitPlace(fmt);
+    if (strDigit.Length = dp) or (strDigit.Length = StripNonConforming(fmt, digitSet).Length) then
+    begin
+      fmtPhone := PlacePhoneDigit(fmt, strDigit);
+      Result := fmtPhone;
+      findFormat := True;
+    end
+  end;
+
+  if not findFormat then
+  begin
+    fmt := dmMain.GetSettingsValue('PHONE_FMT');
+    if (CheckFormat(fmt, phone)) then
+    begin
+      Result := phone;
+    end
+    else
+    begin
+      strDigit := StripNonConforming(phone, digitSet);
+      dp := CountPhoneDigitPlace(fmt);
+      if (strDigit.Length = dp) or (strDigit.Length = StripNonConforming(fmt, digitSet).Length) then
+      begin
+        fmtPhone := PlacePhoneDigit(fmt, strDigit);
+        Result := fmtPhone;
+      end
+    end;
+  end
 end;
 
 end.

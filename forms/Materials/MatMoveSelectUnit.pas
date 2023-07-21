@@ -44,6 +44,7 @@ type
       var Action: TCloseAction);
   private
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    function ShipperCostExists:Boolean;
   public
     class function GetGlobalRef: TCustomDropDownFormEh; override;
   end;
@@ -187,6 +188,11 @@ begin
     MainGrid.SearchPanel.SearchingText := vMaterial;
 end;
 
+function TMaterialsMoveSelect.ShipperCostExists:Boolean;
+begin
+  Result := (srcMaterials.DataSet.FindField('Ship_Cost') <> nil);
+end;
+
 procedure TMaterialsMoveSelect.CustomDropDownFormEhReturnParams(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
 begin
   if DynParams = nil then
@@ -203,6 +209,9 @@ begin
     DynParams['dimension'].AsString := srcMaterials.DataSet.FieldByName('dimension').AsString
   else
     DynParams['dimension'].AsString := '';
+
+  if (ShipperCostExists) and (not srcMaterials.DataSet.FieldByName('Ship_Cost').IsNull) then
+    DynParams['Ship_Cost'].AsFloat := srcMaterials.DataSet.FieldByName('Ship_Cost').AsFloat
 end;
 
 class function TMaterialsMoveSelect.GetGlobalRef: TCustomDropDownFormEh;

@@ -88,7 +88,7 @@ var
   FullAccess: Boolean;
 begin
   FullAccess := (dmMain.AllowedAction(rght_Dictionary_full));
-  actAdd.Visible := (dmMain.AllowedAction(rght_Dictionary_Equipment)) or FullAccess;
+  actAdd.Visible := (dmMain.AllowedAction(rght_Comm_Equipment)) or FullAccess;
   actDel.Visible := actAdd.Visible;
   actEdit.Visible := actAdd.Visible;
 
@@ -130,7 +130,7 @@ end;
 
 procedure TapgEqpmntAttributes.actAddExecute(Sender: TObject);
 begin
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     exit;
 
   if (FDataSource.DataSet.FieldByName('EQ_TYPE').IsNull) or
@@ -153,7 +153,7 @@ begin
   if (dsAttributes.RecordCount = 0) then
     exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     exit;
 
   if not(dsAttributes.FieldByName('O_NAME').IsNull) then
@@ -174,7 +174,7 @@ begin
   if ((not dsAttributes.Active) or (dsAttributes.RecordCount = 0)) then
     exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     exit;
 
   if (dsAttributes.FieldByName('O_ID').IsNull) or (FDataSource.DataSet.FieldByName('EQ_TYPE').IsNull) or

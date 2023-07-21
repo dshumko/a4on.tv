@@ -132,8 +132,8 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmGrid
     ReadOnly = True
+    SearchPanel.Enabled = True
     SearchPanel.FilterOnTyping = True
-    SearchPanel.Location = splHorzScrollBarExtraPanelEh
     STFilter.Local = True
     STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
@@ -245,6 +245,16 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
         Footers = <>
         Title.Caption = #1042#1080#1076' '#1091#1089#1083#1091#1075#1080
         Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SUBSCR_SRV'
+        Footers = <>
+        Title.Caption = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1074#1082#1083'/'#1074#1099#1082#1083
+        Title.TitleButton = True
+        Width = 100
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -315,6 +325,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
         '        , (select count(sl.LINK_ID) from SERVICES_LINKS sl where' +
         ' sl.CHILD = s.service_id and sl.LINK_TYPE = 1 and sl.PARENT is n' +
         'ull) can_delete'
+      '        , sh.Name SUBSCR_SRV'
       '      from SINGLE_SERV ss'
       
         '           inner join services s on (s.service_id = ss.service_i' +
@@ -323,6 +334,12 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       
         '           left outer join objects o on (o.o_id = ss.vatg_id and' +
         ' o.o_type = 13)'
+      
+        '           left outer join Subscr_Hist sv on (sv.Subscr_Hist_Id ' +
+        '= ss.History_Id)'
+      
+        '           left outer join services sh on (sh.Service_Id = sv.Se' +
+        'rv_Id)'
       '      where SS.CUSTOMER_ID = :CUSTOMER_ID'
       '    ) srv'
       

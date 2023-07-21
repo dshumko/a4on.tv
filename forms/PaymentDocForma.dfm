@@ -647,7 +647,7 @@ object PaymentDocForm: TPaymentDocForm
           Color = 16776176
           DataField = 'SUM_DIFFERENCE'
           DataSource = srcPayDoc
-          DisplayFormat = '### ### ### ##0.##'
+          DisplayFormat = ',0.00'
           DynProps = <>
           EditButtons = <>
           ParentShowHint = False
@@ -789,6 +789,7 @@ object PaymentDocForm: TPaymentDocForm
         Height = 13
         Align = alTop
         Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077':'
+        ExplicitWidth = 71
       end
       object mmoNotice: TDBMemoEh
         Left = 0
@@ -825,6 +826,7 @@ object PaymentDocForm: TPaymentDocForm
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
+      ExplicitWidth = 141
     end
     object dbgErrors: TDBGridEh
       Left = 0
@@ -924,7 +926,7 @@ object PaymentDocForm: TPaymentDocForm
       '  , R.NAME as SRV_NAME'
       '  , p.PAY_TYPE_STR'
       '  , coalesce(w.Surname, p.ADDED_BY) as WHO_ADD'
-      '  , cast(cc.phone as varchar(1000)) PHONE'
+      '  , cast(left(cc.phone,1000) as varchar(1000)) PHONE'
       '  , cs.Email'
       '  from PAYMENT P'
       '       inner join pay_doc D on (p.Pay_Doc_Id = d.Pay_Doc_Id)'
@@ -977,7 +979,7 @@ object PaymentDocForm: TPaymentDocForm
       '  , R.NAME as SRV_NAME'
       '  , p.PAY_TYPE_STR'
       '  , coalesce(w.Surname, p.ADDED_BY) as WHO_ADD'
-      '  , cast(cc.phone as varchar(1000)) PHONE'
+      '  , cast( left(cc.phone, 1000) as varchar(1000)) PHONE'
       '  , cs.Email'
       '  from PAYMENT P'
       '       inner join pay_doc D on (p.Pay_Doc_Id = d.Pay_Doc_Id)'

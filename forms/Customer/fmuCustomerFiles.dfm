@@ -342,7 +342,7 @@ object apgCustomerFiles: TapgCustomerFiles
     object actView: TAction
       Caption = #1055#1088#1086#1089#1084#1086#1090#1088
       Hint = #1055#1088#1086#1089#1084#1086#1090#1088' '#1092#1072#1081#1083#1072
-      ImageIndex = 38
+      ImageIndex = 41
       OnExecute = actViewExecute
     end
   end

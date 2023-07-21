@@ -58,10 +58,12 @@ object ReqMatReturnForm: TReqMatReturnForm
       end
       inherited bbCancel: TBitBtn
         Left = 647
+        Top = 3
         Width = 234
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
         ExplicitLeft = 647
+        ExplicitTop = 3
         ExplicitWidth = 234
         ExplicitHeight = 30
       end

@@ -6,11 +6,13 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.StrUtils,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
+  Vcl.ExtCtrls,
   Vcl.Menus, Vcl.Buttons,
-  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibJPegImage,
+  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB,
+  EhLibJPegImage,
   PrjConst, CnErrorProvider, EhLibVCL, EhLibGIFImage, EhLibPNGImage, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
   DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh;
 
@@ -76,6 +78,12 @@ type
     dsIssues: TpFIBDataSet;
     trRA: TpFIBTransaction;
     srcIssues: TDataSource;
+    btn3: TToolButton;
+    chkATV: TCheckBox;
+    btn4: TToolButton;
+    chkDVB: TCheckBox;
+    btn5: TToolButton;
+    chkFREE: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure dsChannelsAfterOpen(DataSet: TDataSet);
     procedure actNewExecute(Sender: TObject);
@@ -86,11 +94,13 @@ type
     procedure dbGridDblClick(Sender: TObject);
     procedure actChangeToExecute(Sender: TObject);
     procedure actShowIssueExecute(Sender: TObject);
+    procedure chkATVClick(Sender: TObject);
   private
     { Private declarations }
     FCanEdit: Boolean;
     FCanEditAll: Boolean;
-    FAddonVisible : Boolean;
+    FAddonVisible: Boolean;
+    procedure FilterByUse();
   public
     { Public declarations }
   end;
@@ -103,7 +113,8 @@ procedure ShowChannel(const CH_ID: Integer);
 implementation
 
 uses
-  DM, ChannelEditForma, MAIN, ChannImport, DVBSettings, ChanSourcesForma, SatCardsForma, ChangeChannelForma, DistribForma;
+  DM, ChannelEditForma, MAIN, ChannImport, DVBSettings, ChanSourcesForma, SatCardsForma, ChangeChannelForma,
+  DistribForma;
 
 {$R *.dfm}
 
@@ -226,6 +237,12 @@ begin
   dsIssues.Active := FAddonVisible;
 end;
 
+procedure TChannelsForm.chkATVClick(Sender: TObject);
+begin
+  inherited;
+  FilterByUse();
+end;
+
 procedure TChannelsForm.actEditExecute(Sender: TObject);
 var
   c: Integer;
@@ -339,6 +356,39 @@ begin
       else
         ShowMessage(Format(rsDelChanError, [answer]));
     end;
+  end;
+end;
+
+procedure TChannelsForm.FilterByUse();
+var
+  fltr: string;
+begin
+  if (chkATV.Checked and chkDVB.Checked and chkFREE.Checked) then
+  begin //
+    dsChannels.ParamByName('filter').AsString := '';
+    dsChannels.CloseOpen(true);
+    Exit;
+  end;
+
+  if (chkATV.Checked) then
+  begin
+    fltr := ' (not c.CH_NUMBER is null) '
+  end;
+  if (chkDVB.Checked) then
+  begin
+    fltr := IfThen(fltr.IsEmpty, '', fltr + ' or ') + ' ((not c.CH_TRUNK_NUMBER is null) '+
+         ' or (exists(select s.Ch_Id from Dvb_Stream_Channels s where s.Ch_Id = c.Ch_Id))) ';
+  end;
+  if (chkFREE.Checked) then
+  begin
+    fltr := IfThen(fltr.IsEmpty, '', fltr + ' or ') + ' ((c.CH_NUMBER is null) and (c.CH_TRUNK_NUMBER is null) '+
+    ' and (not exists(select s.Ch_Id from Dvb_Stream_Channels s where s.Ch_Id = c.Ch_Id)) ) ';
+  end;
+
+  if (not fltr.IsEmpty) then
+  begin
+    dsChannels.ParamByName('filter').AsString := ' where ' + fltr;
+    dsChannels.CloseOpen(true);
   end;
 end;
 

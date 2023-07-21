@@ -204,7 +204,7 @@ begin
     ActSrvOff.Enabled := (ActSrvOff.Visible) and (dsServices.FieldValues['state_sgn'] = 1);
     actSrvSwitch.Enabled := (actSrvSwitch.Visible) and (dsServices.FieldValues['state_sgn'] = 1);
     actSrvPause.Enabled := (actSrvPause.Visible) and (dsServices.FieldValues['state_sgn'] = 1);
-    actSubscrHistory.Enabled := (actSubscrHistory.Visible) and (not dsServices.FieldByName('NAME').IsNull);
+    actSubscrHistory.Enabled := (actSubscrHistory.Visible) and (not dsServices.FieldByName('SERV_ID').IsNull);
   end
   else
   begin
@@ -595,7 +595,7 @@ begin
         Stream.Position := 0;
         dmMain.frxModalReport.LoadFromStream(Stream);
         dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        // Caption := dmMain.frxModalReport.FILENAME;
+        dmMain.frxModalReport.ReportOptions.Name := dmMain.frxModalReport.FILENAME;
       finally
         Stream.free;
       end;

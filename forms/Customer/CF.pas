@@ -300,7 +300,7 @@ type
     FFilterField: Integer;
     FFilterValue: string;
     FCheckPassport: Boolean;
-    FPersonalData: Boolean;
+    FCanViewPersonalData: Boolean;
     FHL_ROW: Boolean;
     FHL_COLOR: TColor;
     FhasColConnected: Boolean;
@@ -382,7 +382,7 @@ const
   const_default_filter: string = ' ((C.Valid_To > CURRENT_DATE) or (C.Valid_To is null)) ';
   clc_FullIO = 1; // Полное И.О.
   clc_DatDog = 1024; // Дата договора
-  clc_Pasport = 128; // Паспорт
+  clc_Passport = 128; // Паспорт
   clc_Lan = 131072; // IP - MAC
   clc_KOD = 16; // Код
   clc_Status = 16384; // Статус
@@ -545,7 +545,7 @@ end;
 procedure TCustomersForm.dbgCustomersColumns2GetCellParams(Sender: TObject; EditMode: Boolean;
   Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+  if (not FCanViewPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
 end;
 
@@ -1372,6 +1372,13 @@ begin
   i := SelectLetterType(0, FILENAME, RecordInDB, SavePDF);
   if i = -1 then
     Exit;
+
+  if i = -2 then
+  begin
+    ActBalance.Execute;
+    Exit;
+  end;
+
   if FILENAME = '' then
     Exit;
 
@@ -1901,7 +1908,7 @@ end;
 procedure TCustomersForm.SetVisibleColumns(Mask: Integer);
 var
   Opened: Boolean;
-  select, from, where, order: string;
+  select, from, where, order, s: string;
   filter: string;
   cid: Integer;
   ConnectedSQL: string;
@@ -1934,8 +1941,14 @@ begin
 
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
-    select := select + rsEOL +
-      ', iif(((coalesce(c.Passport_Number, '''') <> coalesce(hf.Owner_Doc, ''''))), ''+'', '''') F_RENT '
+    s := dmMain.GetCompanyValue('NAME');
+    if (not s.Contains('ЛТВ')) then
+      select := select + rsEOL +
+        ', iif(((coalesce(c.Passport_Number, '''') <> coalesce(hf.Owner_Doc, ''''))), ''+'', '''') F_RENT '
+    else
+      select := select + rsEOL + '  , iif(exists(select Subscr_Serv_Id from Subscr_Serv j ' +
+        ' where j.Customer_Id = c.Customer_Id and j.State_Sgn = 1 and j.Serv_Id <> 819519 ' +
+        ' and (coalesce(j.Contract, '''') like ''%Ар. %'')), ''+'', '''') F_RENT ';
   end;
 
   from := ' FROM CUSTOMER C INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID) INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)';
@@ -1967,7 +1980,10 @@ begin
   begin
     if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
     begin
-      from := from + rsEOL + ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ';
+      s := dmMain.GetCompanyValue('NAME');
+      if (not s.Contains('ЛТВ')) then
+        from := from + rsEOL +
+          ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ';
     end;
 
     select := select + rsEOL + ', '''' as porch_n, '''' as floor_n ';
@@ -2029,9 +2045,14 @@ begin
     from := from + rsEOL + ' left outer join Organization og on (og.Org_Id = h.Org_Id) ';
   end;
 
-  if (Mask and clc_Pasport) <> 0 then
+  if (Mask and clc_Passport) <> 0 then
   begin
     select := select + rsEOL + ', datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) as YEARS';
+    if FVisiblePassport then
+    begin
+      select := select + rsEOL + ', (select first 1 ''+'' from objects bl where ' +
+        ' bl.O_Type = 31 and bl.O_Name = c.Passport_Number)  as IN_BLACK';
+    end;
   end;
 
   if (FHL_ROW) then
@@ -2089,9 +2110,9 @@ begin
   // пеня
   vDec := dmMain.GetSettingsValue('FEE_ROUND');
   if vDec > 0 then
-    DispNum := '#,##0.00'
+    DispNum := ',0.00'
   else
-    DispNum := '#,##0';
+    DispNum := ',0.##';
 
   actItogo.Visible := vVisibleSum and dmMain.AllowedAction(rght_Export);
 
@@ -2125,7 +2146,7 @@ begin
     Title.Caption := rsClientSN;
     Title.TitleButton := True;
     Width := 99;
-    if (not FPersonalData) then
+    if (not FCanViewPersonalData) then
       onGetCellParams := dbgCustomersColumns2GetCellParams;
   end;
   if (Mask and clc_IO) <> 0 then
@@ -2427,7 +2448,7 @@ begin
       Width := 70;
     end;
 
-  if ((Mask and clc_Pasport) <> 0) and FVisiblePassport then
+  if ((Mask and clc_Passport) <> 0) and FVisiblePassport then
   begin
     with dbgCustomers.Columns.Add do
     begin
@@ -2478,9 +2499,16 @@ begin
       Title.TitleButton := True;
       Width := 97;
     end;
+    with dbgCustomers.Columns.Add do
+    begin
+      FieldName := 'IN_BLACK';
+      Alignment := taCenter;
+      Title.Caption := rsInBlackList;
+      Title.TitleButton := True;
+      Width := 97;
+    end;
   end;
 
-{$IFDEF DIGIT}
   if (Mask and clc_Decoder) <> 0 then
   begin
     with dbgCustomers.Columns.Add do
@@ -2513,7 +2541,7 @@ begin
     end;
 
   end;
-{$ENDIF}
+
   if (Mask and clc_Atrib) <> 0 then
   begin
     with dbgCustomers.Columns.Add do
@@ -2560,8 +2588,6 @@ begin
       Title.TitleButton := True;
     end;
   end;
-
-{$IFDEF LAN}
   if (Mask and clc_Lan) <> 0 then
   begin
     with dbgCustomers.Columns.Add do
@@ -2607,7 +2633,6 @@ begin
       Title.TitleButton := True;
     end;
   end;
-{$ENDIF}
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
     with dbgCustomers.Columns.Add do
@@ -2689,6 +2714,7 @@ const
     AFormatSettings.DecimalSeparator := '.';
     Result := ' ((C.Valid_To > current_date) or (C.Valid_To is null)) ';
     dsCustomers.ParamByName('from_add').value := '';
+    tmpSQL := '';
 
     if (dsFilter['SFLTR_TYPE'] > 0) and (not dsFilter.FieldByName('SFLTR_TEXT').IsNull) then
     begin
@@ -2700,7 +2726,7 @@ const
         else
           startSQL := '=';
         s := '''' + s + '''';
-        tmpSQL := '';
+
         case dsFilter['SFLTR_TYPE'] of
           // Договор
           1:
@@ -2786,22 +2812,27 @@ const
         if tmpSQL <> '' then
         begin
           Result := tmpSQL;
-          Exit;
+
+          // Exit;
         end;
       end;
     end;
 
-    tmpSQL := '';
+    // tmpSQL := '';
+    startSQL := fltr_1_1;
+    if tmpSQL <> '' then
+      startSQL := ' ( ' + tmpSQL + ' ) ';
+
     // Признак разрыва договора
+    tmpSQL := '';
     if (dsFilter['VALID_TO_SGN'] = 1) then
+    begin
+      tmpSQL := ' ((C.Valid_To > current_date) or (C.Valid_To is null)) ';
       if (dsFilter['VALID_TO_ON'] = 1) and (dsFilter['VALID_TO_OFF'] = 1) then
-        startSQL := fltr_1_1
+        tmpSQL := fltr_1_1
       else if (dsFilter['VALID_TO_OFF'] = 1) then
-        startSQL := ' (C.Valid_To <= current_date) '
-      else
-        startSQL := ' ((C.Valid_To > current_date) or (C.Valid_To is null)) '
-    else
-      startSQL := fltr_1_1;
+        tmpSQL := ' (C.Valid_To <= current_date) ';
+    end;
 
     // Фильтр по сумме долга
     if (dsFilter['CHECK_DEBT'] = 1) then
@@ -3527,7 +3558,11 @@ const
         Quote := '''';
       6: // 6 Телефон
         Quote := '''';
+      7: // 7 ИНН/УНП Юр. лица
+        Quote := '''';
       8: // 8 Список квартир
+        Quote := '''';
+      9: // 9 Договор
         Quote := '''';
     else
       // если непонятно по чем, то по лицевому
@@ -3582,13 +3617,14 @@ const
           startSQL := ' ( exists(select t.customer_id from tv_lan t where t.customer_id = c.customer_id and t.Mac in ('
             + s + '))) ';
         6: // 6 Телефон
-          startSQL :=
-            ' ( exists(select t.Customer_Id from Customer_Contacts t where t.Customer_Id = c.customer_id and t.Cc_Type < 2 and t.Cc_Value in('
-            + s + '))) ';
+          startSQL := ' ( exists(select t.Customer_Id from Customer_Contacts t where ' +
+            ' t.Customer_Id = c.customer_id and t.Cc_Type < 2 and t.Cc_Value in(' + s + '))) ';
         7: // 7 ИНН / УНН
           startSQL := ' (C.Jur_Inn in (' + s + ')) ';
         8: // 8 Список квартир
           startSQL := ' (C.FLAT_NO in (' + s + ')) ';
+        9: // 9 Договор
+          startSQL := ' (C.Dogovor_No in (' + s + ')) ';
       end;
     end
     else
@@ -3607,8 +3643,13 @@ const
     Result := ' ((C.Valid_To > CURRENT_DATE) or (C.Valid_To is null)) ';
     tmpSQL := '';
     // startSQL := ' c.customer_id in ( ' + dsFilter['SQL_FLTR'] + ' ) ';
-    startSQL := ' (exists (select ff.customer_id from ( ' + dsFilter['SQL_FLTR'] +
-      ') ff where ff.customer_id = c.customer_id) ) ';
+    startSQL := Trim(UpperCase(dsFilter['SQL_FLTR']));
+    if (not startSQL.StartsWith('EXISTS')) then
+      startSQL := ' (exists (select ff.customer_id from ( ' + dsFilter['SQL_FLTR'] +
+        ') ff where ff.customer_id = c.customer_id) ) '
+    else
+      startSQL := ' ( ' + dsFilter['SQL_FLTR'] + ' ) ';
+
     // если скрываем абонентов, то скроем
     tmpSQL := AddInvisible;
 
@@ -3677,7 +3718,9 @@ begin
           end;
         end;
       end;
+
       dsFilter.next;
+
       if not dsFilter.Eof then
         if dsFilter['next_condition'] = 0 then
           whereStr := whereStr + ' OR '
@@ -3699,7 +3742,6 @@ begin
   // LogEvent('Customer', 'ФИЛЬТР', whereStr);
   Result := whereStr;
   srcCustomer.DataSet.EnableControls;
-
 end;
 
 procedure TCustomersForm.SetDefaultFilter;
@@ -3790,9 +3832,18 @@ begin
 
   FullAccess := (dmMain.AllowedAction(rght_Customer_full));
   ChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
-  FVisiblePassport := (dmMain.AllowedAction(rght_Customer_add)) or (dmMain.AllowedAction(rght_Customer_edit)) or
-    FullAccess;
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FCanViewPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+
+  FVisiblePassport := (FCanViewPersonalData and //
+    (dmMain.AllowedAction(rght_Customer_add) //
+    or dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_Files_Add) //
+    or dmMain.AllowedAction(rght_Customer_EditLan) //
+    or dmMain.AllowedAction(rght_Customer_EditDigit) //
+    or dmMain.AllowedAction(rght_Customer_Attribute)) //
+    ) // FCanViewPersonalData
+    or FullAccess;
+
   // Экспорт информации
   actSaveAs.Visible := notEmptyDS and ((dmMain.AllowedAction(rght_Export)));
   miExport.Visible := notEmptyDS and ((dmMain.AllowedAction(rght_Export)));
@@ -3858,8 +3909,32 @@ end;
 procedure TCustomersForm.InitPrintPopUpMenus;
 var
   i: Integer;
-  s: string;
-  mi: TMenuItem;
+  s, si: string;
+  mi, sm: TMenuItem;
+
+  function FindSubMenu(const ACaption: String): TMenuItem;
+  var
+    i: Integer;
+    Find: Boolean;
+  begin
+    Find := False;
+    for i := 0 to pmSelectPrintDoc.Items.Count - 1 do
+    begin
+      if pmSelectPrintDoc.Items[i].Caption = ACaption then
+      begin
+        Result := pmSelectPrintDoc.Items[i];
+        Find := True;
+      end;
+    end;
+    if not Find then
+    begin
+      Result := TMenuItem.Create(nil);
+      Result.Caption := ACaption;
+      Result.Name := 'puSI' + pmSelectPrintDoc.Items.Count.ToString;
+      pmSelectPrintDoc.Items.Add(Result);
+    end;
+  end;
+
 begin
   with TpFIBQuery.Create(Nil) do
   begin
@@ -3874,22 +3949,36 @@ begin
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
       sql.Clear;
-      sql.Add(' select LETTERTYPEID, Lettertypedescr, Filename, coalesce(Recordindb, 0) Recordindb ');
+      sql.Add(' select LETTERTYPEID ID, Lettertypedescr NAME, Filename, coalesce(Recordindb, 0) Recordindb ');
       sql.Add(' from LETTERTYPE l inner join(select REPLACE(upper(FULL_PATH),''.FR3'','''') FULL_PATH from Get_All_Reports) r ');
       sql.Add(' on (r.FULL_PATH = REPLACE(upper(l.Filename),''.FR3'','''')) ');
-      sql.Add(' where coalesce(FOR_FORM, 0) = 0 order by Lettertypedescr ');
+      sql.Add(' where coalesce(FOR_FORM, 0) = 0 and LETTERTYPEID >= 0 order by Lettertypedescr ');
       Transaction.StartTransaction;
       ExecQuery;
       i := 1;
       while not Eof do
       begin
-        s := FieldByName('LETTERTYPEDESCR').value;
-        mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
-        mi.Tag := FieldByName('LETTERTYPEID').value;
-        mi.ImageIndex := FieldByName('RECORDINDB').value;
-        mi.Hint := FieldByName('FILENAME').value;
-        pmSelectPrintDoc.Items.Add(mi);
-        // miPrint.Add(mi);
+        s := FieldByName('NAME').value;
+        if not s.Contains('\') then
+        begin
+          mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
+          mi.Tag := FieldByName('ID').value;
+          mi.ImageIndex := FieldByName('RECORDINDB').value;
+          mi.Hint := FieldByName('FILENAME').value;
+          pmSelectPrintDoc.Items.Add(mi);
+          // miPrint.Add(mi);
+        end
+        else
+        begin
+          si := Copy(s, 1, pos('\', s) - 1);
+          s := Copy(s, pos('\', s) + 1, 500);
+          sm := FindSubMenu(si);
+          mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
+          mi.Tag := FieldByName('ID').value;
+          mi.ImageIndex := FieldByName('RECORDINDB').value;
+          mi.Hint := FieldByName('FILENAME').value;
+          sm.Add(mi);
+        end;
         next;
         i := i + 1;
       end;
@@ -3957,6 +4046,7 @@ begin
   DataSet['EXTENDED_FLTR'] := 0;
   DataSet.FieldByName('Accounts').Clear;
   DataSet.FieldByName('SQL_FLTR').Clear;
+  DataSet.FieldByName('BIRTHDAY').Clear;
   DataSet['SFLTR_TYPE'] := 0;
   DataSet['SRVTYPES'] := 0;
   DataSet['MSG_NOT'] := 0;
@@ -4455,7 +4545,7 @@ begin
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
         frxReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        Caption := frxReport.FILENAME;
+        frxReport.ReportOptions.Name := frxReport.FILENAME;
       finally
         Stream.Free;
       end;
@@ -4617,7 +4707,7 @@ begin
           Stream.Position := 0;
           dmMain.frxModalReport.LoadFromStream(Stream);
           dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-          // Caption := dmMain.frxModalReport.FILENAME;
+          dmMain.frxModalReport.ReportOptions.Name := dmMain.frxModalReport.FILENAME;
         finally
           Stream.Free;
         end;
@@ -4869,8 +4959,8 @@ begin
   try
     Q.Database := dmMain.dbTV;
     Q.Transaction := dmMain.trWriteQ;
-    Q.sql.Add('INSERT INTO OBJECTS(O_NAME, O_DESCRIPTION, O_CHARFIELD, O_TYPE ) ');
-    Q.sql.Add('VALUES( upper(:O_NAME), :O_DESCRIPTION, :O_CHARFIELD, 31 )');
+    Q.sql.Add('update or insert into Objects (O_NAME, O_DESCRIPTION, O_CHARFIELD, O_TYPE ) ');
+    Q.sql.Add('VALUES( upper(:O_NAME), :O_DESCRIPTION, :O_CHARFIELD, 31 )  matching (O_NAME, O_Type)');
 
     if dbgCustomers.SelectedRows.Count > 0 then
     begin
@@ -4962,7 +5052,9 @@ begin
   if (Key = #13) then
   begin
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBMemoEh) and not(Trim((ActiveControl as TDBMemoEh).lines.Text) = '') then
+      go := False;
 
     if go then
     begin
@@ -5168,6 +5260,8 @@ var
   Row_height: Integer;
   Font_name: string;
 begin
+  InitSecurity;
+
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
@@ -5263,7 +5357,6 @@ begin
   end;
 
   // права
-  InitSecurity;
   CreatePages;
   InitExportPopUpMenus;
   InitPrintPopUpMenus;

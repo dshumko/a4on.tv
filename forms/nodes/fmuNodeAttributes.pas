@@ -54,8 +54,8 @@ procedure TapgNodeAttributes.InitForm;
 var
   FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes));
-  tbAttributes.Visible := (dmMain.AllowedAction(rght_Dictionary_Nodes)) or FullAccess;
+  FullAccess := (dmMain.AllowedAction(rght_Comm_Nodes));
+  tbAttributes.Visible := (dmMain.AllowedAction(rght_Comm_Nodes)) or FullAccess;
   actAdd.Visible := tbAttributes.Visible;
   actDel.Visible := tbAttributes.Visible;
   actEdit.Visible := tbAttributes.Visible;

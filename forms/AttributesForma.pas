@@ -144,6 +144,8 @@ begin
     cbAtrType.Items.Add(rsAttrName_etv);
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_eall));
     cbAtrType.Items.Add(rsAttrName_eall);
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_eqg));
+    cbAtrType.Items.Add(rsAttrName_eqg);
     fCanEdit := True;
   end;
 
@@ -168,7 +170,7 @@ begin
     fCanEdit := True;
   end;
 
-  if (vFull or dmMain.AllowedAction(rght_Dictionary_Nodes)) then
+  if (vFull or dmMain.AllowedAction(rght_Comm_Nodes)) then
   begin
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_node));
     cbAtrType.Items.Add(rsAttrName_node);

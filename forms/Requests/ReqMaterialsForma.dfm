@@ -39,6 +39,12 @@ object ReqMaterialsForm: TReqMaterialsForm
       TabStop = True
       ExplicitWidth = 928
       ExplicitHeight = 37
+      inherited Label2: TLabel
+        Margins.Bottom = 0
+      end
+      inherited Label1: TLabel
+        Margins.Bottom = 0
+      end
       inherited bbOk: TBitBtn
         Left = 185
         Width = 497
@@ -175,10 +181,10 @@ object ReqMaterialsForm: TReqMaterialsForm
             '3')
           NotInKeyListIndex = 0
           PickList.Strings = (
-            #1053#1072#1095#1080#1089#1083#1103#1090#1100
-            #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1085#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100')'
-            #1040#1088#1077#1085#1076#1072
-            #1056#1072#1089#1089#1088#1086#1095#1082#1072)
+            #1055#1088#1086#1076#1072#1078#1072
+            #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1072#1088#1077#1085#1076#1072' '#1073#1077#1079' '#1086#1087#1083#1072#1090#1099')'
+            #1056#1072#1089#1089#1088#1086#1095#1082#1072
+            #1040#1088#1077#1085#1076#1072)
           Title.Caption = #1053#1072#1095#1080#1089#1083'.'
           Title.Font.Charset = DEFAULT_CHARSET
           Title.Font.Color = clWindowText
@@ -405,6 +411,11 @@ object ReqMaterialsForm: TReqMaterialsForm
       
         'select -1 as MG_ID, '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME, null as PARENT_ID' +
         ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
+      'from RDB$DATABASE'
+      'union'
+      
+        'select -3 as MG_ID, '#39'  '#1053#1040' '#1042#1067#1050#1059#1055' '#39' MG_NAME, null as PARENT_ID, '#39#1054 +
+        #1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1091' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1074' '#1072#1088#1077#1085#1076#1077' '#1076#1083#1103' '#1074#1099#1082#1091#1087#39' as MG_NOTICE'
       'from RDB$DATABASE'
       'order by 2')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'

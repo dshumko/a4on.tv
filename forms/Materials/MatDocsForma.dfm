@@ -2,7 +2,10 @@ inherited MatDocsForm: TMatDocsForm
   Caption = #1044#1086#1082#1091#1084#1077#1085#1090#1099
   ClientHeight = 524
   ClientWidth = 814
+  Menu = mmMaterialDoc
   OnActivate = FormActivate
+  ExplicitWidth = 830
+  ExplicitHeight = 583
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
@@ -16,6 +19,8 @@ inherited MatDocsForm: TMatDocsForm
   inherited splPG: TSplitter
     Top = 305
     Width = 814
+    ExplicitTop = 305
+    ExplicitWidth = 814
   end
   inherited dbGrid: TDBGridEh
     Top = 57
@@ -169,6 +174,7 @@ inherited MatDocsForm: TMatDocsForm
   end
   inherited tlbMain: TToolBar
     Width = 814
+    ExplicitWidth = 814
     inherited btnNew: TToolButton
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090
       Action = nil
@@ -177,40 +183,51 @@ inherited MatDocsForm: TMatDocsForm
       PopupMenu = pmBTN
       Style = tbsDropDown
       OnClick = ToolButton1Click
+      ExplicitWidth = 38
     end
     inherited btnEdit: TToolButton
       Left = 43
+      ExplicitLeft = 43
     end
     inherited ToolButton5: TToolButton
       Left = 66
+      ExplicitLeft = 66
     end
     inherited ToolButton6: TToolButton
       Left = 70
+      ExplicitLeft = 70
     end
     inherited btnDelete: TToolButton
       Left = 74
+      ExplicitLeft = 74
     end
     inherited ToolButton9: TToolButton
       Left = 97
+      ExplicitLeft = 97
     end
     inherited tbOk: TToolButton
       Left = 112
       Visible = False
+      ExplicitLeft = 112
     end
     inherited ToolButton10: TToolButton
       Left = 135
       Visible = False
+      ExplicitLeft = 135
     end
     inherited tbCancel: TToolButton
       Left = 139
       Visible = False
+      ExplicitLeft = 139
     end
     inherited ToolButton20: TToolButton
       Left = 162
       Visible = False
+      ExplicitLeft = 162
     end
     inherited btnQuickFilter: TToolButton
       Left = 170
+      ExplicitLeft = 170
     end
     object ToolButton19: TToolButton
       Left = 193
@@ -407,13 +424,19 @@ inherited MatDocsForm: TMatDocsForm
   inherited pnlEdit: TPanel
     Width = 814
     Height = 32
+    ExplicitWidth = 814
+    ExplicitHeight = 32
     inherited btnSaveLink: TBitBtn
       Top = -1
       Width = 628
+      ExplicitTop = -1
+      ExplicitWidth = 628
     end
     inherited btnCancelLink: TBitBtn
       Left = 719
       Top = -1
+      ExplicitLeft = 719
+      ExplicitTop = -1
     end
   end
   inherited srcDataSource: TDataSource
@@ -425,6 +448,8 @@ inherited MatDocsForm: TMatDocsForm
     Images = A4MainForm.ICONS_ACTIVE
     inherited actNew: TAction
       Caption = #1055#1088#1080#1093#1086#1076' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
+      SecondaryShortCuts.Strings = (
+        'F4')
       OnExecute = actNewExecute
     end
     object actDocMove: TAction [1]
@@ -444,14 +469,17 @@ inherited MatDocsForm: TMatDocsForm
       OnExecute = actDocInventoryExecute
     end
     inherited actDelete: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090
       OnExecute = actDeleteExecute
     end
     inherited actEdit: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090
       OnExecute = actEditExecute
     end
     object actPrint: TAction [6]
-      Caption = 'actPrint'
+      Caption = #1055#1077#1095#1072#1090#1100
       ImageIndex = 5
+      ShortCut = 16464
       OnExecute = actPrintExecute
     end
     object actDocInvent: TAction [7]
@@ -480,7 +508,7 @@ inherited MatDocsForm: TMatDocsForm
     object actFilterDate: TAction
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1076#1072#1090#1077
       ImageIndex = 1
-      ShortCut = 114
+      ShortCut = 16452
       OnExecute = actFilterDateExecute
     end
     object actEnableFilter: TAction
@@ -652,7 +680,7 @@ inherited MatDocsForm: TMatDocsForm
     end
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]
@@ -806,6 +834,63 @@ inherited MatDocsForm: TMatDocsForm
     end
     object N36: TMenuItem
       Action = actQuickFilter
+    end
+  end
+  object mmMaterialDoc: TMainMenu
+    Left = 504
+    Top = 160
+    object L1: TMenuItem
+      Caption = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      GroupIndex = 2
+      object miNew: TMenuItem
+        Action = actNew
+      end
+      object miDocMove: TMenuItem
+        Action = actDocMove
+      end
+      object N7: TMenuItem
+        Action = actDocOUT
+      end
+      object miDocInvent: TMenuItem
+        Action = actDocInvent
+      end
+      object miDocInventory: TMenuItem
+        Action = actDocInventory
+      end
+      object miN8: TMenuItem
+        Caption = '-'
+      end
+      object miEdit: TMenuItem
+        Action = actEdit
+      end
+      object N8: TMenuItem
+        Caption = '-'
+      end
+      object actPaymentDelete1: TMenuItem
+        Action = actDelete
+      end
+      object miN10: TMenuItem
+        Caption = '-'
+      end
+      object miPrint: TMenuItem
+        Action = actPrint
+      end
+    end
+    object N9: TMenuItem
+      Caption = #1060#1080#1083#1100#1090#1088
+      GroupIndex = 2
+      object miFilterSet: TMenuItem
+        Action = actFilterSet
+        GroupIndex = 2
+      end
+      object miFilterDate: TMenuItem
+        Action = actFilterDate
+        GroupIndex = 2
+      end
+      object miQuickFilter: TMenuItem
+        Action = actQuickFilter
+        GroupIndex = 2
+      end
     end
   end
 end

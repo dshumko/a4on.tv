@@ -20,6 +20,8 @@ type
     deTarifJur: TDBNumberEditEh;
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
+    lblVAT: TLabel;
+    ednVAT: TDBNumberEditEh;
     procedure deTarifChange(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -46,6 +48,11 @@ begin
   result := false;
   with TTarifForm.Create(Application) do
   try
+    lbl1.Visible := False;
+    deTarifJur.Visible := False;
+    lblVAT.Visible := False;
+    ednVAT.Visible := False;
+    Height := deTarif.Top + 100;
     Caption := format(rsTarChan, [aChannel]);
     qryChannel.ParamByName('CHT_ID').AsInteger := aTarif_ID;
     qryChannel.ParamByName('CHANNEL_ID').AsInteger := aChannae_ID;
@@ -81,7 +88,10 @@ begin
 
     lbl1.Visible := not itsVAT;
     deTarifJur.Visible := not itsVAT;
-
+    lblVAT.Visible := not itsVAT;
+    ednVAT.Visible := not itsVAT;
+    if not deTarifJur.Visible then
+      Height := deTarif.Top + 100;
     Query.ParamByName('TARIF_ID').AsInteger := aTarif_ID;
     Query.ParamByName('SERVICE_ID').AsInteger := aService_ID;
     if aTarif_ID = -1
@@ -94,10 +104,14 @@ begin
     then begin
       Query.ParamByName('DATE_FROM').AsDate := deDate_from.Value;
       Query.ParamByName('TARIF_SUM').AsFloat := deTarif.Value;
-      if itsVAT then
-        Query.ParamByName('tarif_sum_jur').AsFloat := deTarif.Value
-      else
+      if itsVAT then begin
+        Query.ParamByName('tarif_sum_jur').AsFloat := deTarif.Value;
+        Query.ParamByName('VAT').AsFloat := 0;
+      end
+      else begin
         Query.ParamByName('tarif_sum_jur').AsFloat := deTarifJur.Value;
+        Query.ParamByName('VAT').AsFloat := ednVAT.Value;
+      end;
       Query.Transaction.StartTransaction;
       Query.ExecProc;
       Query.Transaction.Commit;
@@ -139,7 +153,6 @@ procedure TTarifForm.ModalResultOk;
 begin
   if btnOk.Enabled then
     ModalResult := mrOk;
-
 end;
 
 end.

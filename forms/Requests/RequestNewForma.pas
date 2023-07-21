@@ -22,7 +22,6 @@ type
     lbl1: TLabel;
     lbl3: TLabel;
     lbl4: TLabel;
-    lbl5: TLabel;
     lbl6: TLabel;
     lbl7: TLabel;
     lbl2: TLabel;
@@ -30,7 +29,6 @@ type
     LupHOUSE: TDBLookupComboboxEh;
     edFLAT_NO: TDBEditEh;
     btnFind: TButton;
-    edPhone: TDBEditEh;
     EdPorch: TDBEditEh;
     EdFloor: TDBEditEh;
     edDOOR: TDBEditEh;
@@ -96,6 +94,8 @@ type
     chkOpenBid: TDBCheckBoxEh;
     chkRecreate: TDBCheckBoxEh;
     cnError: TCnErrorProvider;
+    lbl5: TLabel;
+    edPhone: TDBEditEh;
     procedure FormCreate(Sender: TObject);
     procedure edPhoneExit(Sender: TObject);
     procedure EdFloorExit(Sender: TObject);
@@ -130,8 +130,7 @@ type
     procedure lupTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure edPhoneChange(Sender: TObject);
-    procedure LupHOUSEDropDownBoxGetCellParams(Sender: TObject;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
+    procedure LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure DBLookupComboboxClick(Sender: TObject);
   private
@@ -145,6 +144,7 @@ type
     FCanCreate: Boolean; // может добавить заявку
     FCanGive: Boolean; // может выдать заявку
     FPhoneChanged: Boolean;
+    FEnterSecondPress: Boolean;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure ChangeWorks;
     procedure CheckData;
@@ -170,15 +170,15 @@ type
     property FromRequest: Integer write SetFromRequest;
   end;
 
-function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False)
-  : Integer;
-function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1;
-  const Flat: String = ''): Integer;
+function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
+  const phone:string = ''; const notice:string = '') : Integer;
+function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
+  const phone:string = ''; const notice:string = '') : Integer;
 function NewRequestFromRequest(const aRequest: Integer = -1): Integer;
 function NewRequestFromPlaner(const plan_date: TDateTime; const TYPE_ID: Integer = -1): Integer;
 function NewNodeRequest(const aNode: Integer = -1; CallBack: TCallBack = nil): Integer;
 function NewFileRequest(const aCustomer: Integer = -1; const ReqType: Integer = -1; const ReqTempl: Integer = -1;
-  const rd: TDate = 0; const Notice: String = ''): Integer;
+  const rd: TDate = 0; const Notice: String = ''; const CanClose: Boolean = True): Integer;
 
 implementation
 
@@ -189,8 +189,8 @@ uses
   SelectDateForma, pFIBQuery, ReqAddWorkForma, MAIN, FIBQuery, pFIBProps, AtrCommon, HouseForma, StreetEditForma, CF,
   RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma;
 
-function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False)
-  : Integer;
+function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
+  const phone:string = ''; const notice:string = '') : Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
@@ -204,35 +204,52 @@ begin
       Customer_id := aCustomer;
     end;
     FindNode := FindNodes;
+
+    if not phone.IsEmpty then
+      edPhone.Text := phone;
+
+    if not notice.IsEmpty then
+      mmoNotice.Lines.Text := notice;
+
     if showModal = mrOk then
     begin
       Result := Request_id;
       if Assigned(CallBack) then
         CallBack;
     end;
-    Free;
+    try
+      Free;
+    finally
+      //
+    end;
   end;
 end;
 
-function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1;
-  const Flat: String = ''): Integer;
+function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
+  const phone:string = ''; const notice:string = '') : Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
   begin
-    LupStreets.Value := Street_ID;
-    LupHOUSE.Value := HOUSE_ID;
-    edFLAT_NO.Value := Flat;
-    Customer_id := -1;
-    if showModal = mrOk then
-      Result := Request_id;
-    Free;
+  LupStreets.Value := Street_ID;
+  LupHOUSE.Value := HOUSE_ID;
+  edFLAT_NO.Value := Flat;
+  Customer_id := -1;
+    if not phone.IsEmpty then
+      edPhone.Text := phone;
+
+    if not notice.IsEmpty then
+      mmoNotice.Lines.Text := notice;
+
+  if showModal = mrOk then
+  Result := Request_id;
+  Free;
   end;
 end;
 
 function NewNodeRequest(const aNode: Integer = -1; CallBack: TCallBack = nil): Integer;
 begin
-  Result := NewRequest(aNode, CallBack, true);
+  Result := NewRequest(aNode, CallBack, True);
 end;
 
 function NewRequestFromPlaner(const plan_date: TDateTime; const TYPE_ID: Integer = -1): Integer;
@@ -264,18 +281,27 @@ begin
 end;
 
 function NewFileRequest(const aCustomer: Integer = -1; const ReqType: Integer = -1; const ReqTempl: Integer = -1;
-  const rd: TDate = 0; const Notice: String = ''): Integer;
+  const rd: TDate = 0; const Notice: String = ''; const CanClose: Boolean = True): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
   begin
     Customer_id := aCustomer;
     if ReqType <> -1 then
+    begin
       lupType.Value := ReqType;
+      lupType.Enabled := False;
+    end;
     if ReqTempl <> -1 then
       luTemplate.Value := ReqTempl;
     edtPLANDATE.Value := rd;
     mmoNotice.Lines.Text := Notice;
+    if not CanClose then
+    begin
+      frmOkCancel.bbCancel.Visible := False;
+      frmOkCancel.bbCancel.Tag := 1;
+    end;
+
     if showModal = mrOk then
       Result := Request_id;
     Free;
@@ -667,7 +693,7 @@ begin
           end;
           dsWorks.Next;
         end;
-        allFine := true;
+        allFine := True;
       end;
 
       // если автоматом создавать заявку на узел, то создадим ее
@@ -696,7 +722,7 @@ begin
         ExecQuery;
         Transaction.Commit;
       end;
-      allFine := true;
+      allFine := True;
 
       if not(TryStrToInt(dmMain.GetIniValue('PRINTREQ'), p)) then
         p := 0;
@@ -736,7 +762,7 @@ begin
                 Stream.Position := 0;
                 dmMain.frxModalReport.LoadFromStream(Stream);
                 dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-                Caption := dmMain.frxModalReport.FILENAME;
+                dmMain.frxModalReport.ReportOptions.Name := dmMain.frxModalReport.FILENAME;
               finally
                 Stream.Free;
               end;
@@ -750,7 +776,7 @@ begin
           if vi > 0 then
           begin
             dmMain.frxModalReport.Variables['REQUEST'] := fRQ_ID;
-            dmMain.frxModalReport.PrepareReport(true);
+            dmMain.frxModalReport.PrepareReport(True);
             dmMain.frxModalReport.Print;
           end;
         end;
@@ -843,7 +869,7 @@ begin
         MB_YESNO + MB_ICONQUESTION) = IDYES);
     end
     else
-      NeedSave := true;
+      NeedSave := True;
   end;
 
   if NeedSave then
@@ -872,7 +898,7 @@ end;
 
 procedure TRequestNewForm.edPhoneChange(Sender: TObject);
 begin
-  FPhoneChanged := true;
+  FPhoneChanged := True;
 end;
 
 procedure TRequestNewForm.edPhoneExit(Sender: TObject);
@@ -919,14 +945,22 @@ end;
 
 procedure TRequestNewForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+
   if A4MainForm.AddictSpell.Tag = 1 then
   begin
     A4MainForm.AddictSpell.RemoveControl(mmoNotice);
     A4MainForm.AddictSpell.RemoveControl(mmoContent);
   end;
 
-  dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', False);
-  Action := caFree;
+  if (not frmOkCancel.bbCancel.Visible) and (frmOkCancel.bbCancel.Tag = 1) then
+  begin
+    Action := caNone;
+  end
+  else
+  begin
+    dbgSame.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgSame', False);
+    Action := caFree;
+  end;
   // Free;
 end;
 
@@ -952,14 +986,20 @@ begin
   FPhoneChanged := False;
   FCustomerInfo.Customer_id := -1;
   InitSecurity;
-  AplySortSameReq(true);
+  AplySortSameReq(True);
   chkOpenBid.Checked := (dmMain.GetIniValue('REQOPENNEW') = '1');
 end;
 
 procedure TRequestNewForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
+  if (ssCtrl in Shift) and (Ord(Key) = VK_RETURN) then
+  begin
+    if ssShift in Shift then
+    begin
+      chkOpenBid.Checked := True;
+    end;
     bbOkClick(Sender);
+  end;
 end;
 
 procedure TRequestNewForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -968,7 +1008,7 @@ var
 begin
   if (Key = #13) then
   begin
-    go := true;
+    go := True;
 
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
@@ -979,7 +1019,16 @@ begin
         if (ActiveControl as TDBGridEh).DataSource.State in [dsEdit, dsInsert] then
           go := False
         else
-          go := true;
+          go := True;
+      end
+      else
+      begin
+        if (ActiveControl is TDBMemoEh) and
+          (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+        begin
+          go := False;
+          FEnterSecondPress := True;
+        end;
       end;
     end;
 
@@ -988,6 +1037,11 @@ begin
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -1017,6 +1071,11 @@ end;
 
 procedure TRequestNewForm.bbOkClick(Sender: TObject);
 begin
+  if (not frmOkCancel.bbCancel.Visible) and (frmOkCancel.bbCancel.Tag = 1) then
+  begin
+    // проверка на запрет закрытия окна
+    frmOkCancel.bbCancel.Tag := 0;
+  end;
   actSave.Execute;
 end;
 
@@ -1025,9 +1084,8 @@ begin
   FindCustomer('', '', -1);
 end;
 
-procedure TRequestNewForm.LupHOUSEDropDownBoxGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TRequestNewForm.LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
   if (dsHouse.Active) and (dsHouse['inService'] <> '') then
     Background := clYellow
@@ -1049,10 +1107,10 @@ begin
   i := EditHouse(-1, sid);
   if i > -1 then
   begin
-    dsHouse.CloseOpen(true);
+    dsHouse.CloseOpen(True);
     LupHOUSE.Value := i;
   end;
-  Handled := true;
+  Handled := True;
 end;
 
 procedure TRequestNewForm.LupHOUSEExit(Sender: TObject);
@@ -1070,10 +1128,10 @@ begin
   i := EditStreet(-1);
   if i > -1 then
   begin
-    dsStreets.CloseOpen(true);
+    dsStreets.CloseOpen(True);
     LupStreets.Value := i;
   end;
-  Handled := true;
+  Handled := True;
 end;
 
 procedure TRequestNewForm.lupTypeChange(Sender: TObject);
@@ -1091,12 +1149,11 @@ begin
     lblCAUSE.Font.Style := lblCAUSE.Font.Style - [fsBold];
 end;
 
-
 procedure TRequestNewForm.DBLookupComboboxClick(Sender: TObject);
 begin
-  if not (Sender is TDBLookupComboboxEh)
-  then Exit;
-  if not (Sender as TDBLookupComboboxEh).ListVisible then
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
     (Sender as TDBLookupComboboxEh).DropDown
   else
     (Sender as TDBLookupComboboxEh).CloseUp(False);
@@ -1113,9 +1170,9 @@ end;
 
 procedure TRequestNewForm.lupTypeEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
-  Handled := true;
+  Handled := True;
   if ReguestTypeModify(-1) > -1 then
-    dsRequestType.CloseOpen(true);
+    dsRequestType.CloseOpen(True);
 end;
 
 procedure TRequestNewForm.luTemplateChange(Sender: TObject);
@@ -1150,12 +1207,12 @@ end;
 
 procedure TRequestNewForm.luTemplateEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
-  Handled := true;
+  Handled := True;
   if lupType.Text = '' then
     Exit;
 
   if ReguestTemplateModify(-1, dsRequestType['RT_ID']) > -1 then
-    dsErrors.CloseOpen(true);
+    dsErrors.CloseOpen(True);
 end;
 
 procedure TRequestNewForm.pnlRClientResize(Sender: TObject);
@@ -1165,7 +1222,7 @@ end;
 
 procedure TRequestNewForm.rbADRSClick(Sender: TObject);
 begin
-  AplySortSameReq(true);
+  AplySortSameReq(True);
 end;
 
 procedure TRequestNewForm.rbZVClick(Sender: TObject);
@@ -1280,7 +1337,7 @@ begin
         if varIsNull(edtPLANDATE.Value) then
         begin
           edtPLANDATE.Value := FindedDate;
-          isSet := true;
+          isSet := True;
         end
         else
         begin
@@ -1288,7 +1345,7 @@ begin
           if (FindedDate > Tomorrow) then
           begin
             edtPLANDATE.Value := FindedDate;
-            isSet := true;
+            isSet := True;
           end;
         end;
       end;
@@ -1343,7 +1400,7 @@ function TRequestNewForm.SavePhone(Const Phone: String): String;
 var
   Contact: TContact;
 begin
-  Contact.cID := 999;
+  Contact.cID := -1;
   Contact.Contact := Phone;
   Contact.Notify := 1;
   Contact.Notice := '';

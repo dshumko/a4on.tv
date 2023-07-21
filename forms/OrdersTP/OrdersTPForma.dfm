@@ -591,6 +591,7 @@ object OrdersTPForm: TOrdersTPForm
       'O_NAME='#1058#1048#1055)
     DataSet = dsOrdersTP
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 315
     Top = 211
   end

@@ -4,11 +4,15 @@ inherited RequestTypeForm: TRequestTypeForm
   Caption = #1058#1080#1087#1099' '#1079#1072#1103#1074#1086#1082
   ClientHeight = 543
   ClientWidth = 975
+  ExplicitWidth = 991
+  ExplicitHeight = 582
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 975
     Height = 4
+    ExplicitWidth = 975
+    ExplicitHeight = 4
   end
   inherited dbGrid: TDBGridEh
     Top = 85
@@ -187,6 +191,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = pmPopUp
+        SearchPanel.Enabled = True
         SortLocal = True
         STFilter.Local = True
         TabOrder = 1
@@ -271,6 +276,10 @@ inherited RequestTypeForm: TRequestTypeForm
     end
     object tsWorks: TTabSheet
       Caption = #1056#1072#1073#1086#1090#1099
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object dbgWorks: TDBGridEh
         Left = 0
         Top = 25
@@ -287,6 +296,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = pmPopUp
+        SearchPanel.Enabled = True
         SortLocal = True
         STFilter.Local = True
         TabOrder = 1
@@ -434,6 +444,10 @@ inherited RequestTypeForm: TRequestTypeForm
     object tsResult: TTabSheet
       Caption = #1056#1072#1089#1096#1080#1088#1077#1085#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object tlb1: TToolBar
         Left = 0
         Top = 0
@@ -504,6 +518,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = pmPopUp
+        SearchPanel.Enabled = True
         SortLocal = True
         STFilter.Local = True
         TabOrder = 1
@@ -549,6 +564,7 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 975
+    ExplicitWidth = 975
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -564,11 +580,14 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   inherited pnlEdit: TPanel
     Width = 975
+    ExplicitWidth = 975
     inherited btnSaveLink: TBitBtn
       Width = 522
+      ExplicitWidth = 522
     end
     inherited btnCancelLink: TBitBtn
       Left = 613
+      ExplicitLeft = 613
     end
   end
   object dnspltr1: TdnSplitter [5]

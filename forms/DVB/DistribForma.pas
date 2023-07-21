@@ -216,7 +216,7 @@ begin
         Stream.Position := 0;
         dmMain.frxModalReport.LoadFromStream(Stream);
         dmMain.frxModalReport.fileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        Caption := dmMain.frxModalReport.fileName;
+        dmMain.frxModalReport.PreviewForm.Caption := dmMain.frxModalReport.FileName;
       finally
         Stream.Free;
       end;
@@ -672,6 +672,7 @@ begin
           frxReport.fileName := GetTempDir() + fileName
         else
           frxReport.fileName := DirName + fileName;
+        frxReport.PreviewForm.Caption := frxReport.fileName;
         Result := True;
       finally
         Stream.Free;

@@ -1,24 +1,3 @@
-execute block as
-declare variable v varchar(1000);
-begin
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'STRICT_MODE'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('STRICT_MODE', '0', 'BOOLEAN', 'Строгий режим', 'Запрет изменений начислений и платежей в прошлых периодах')
-    matching (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'AREA_LOCK'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('AREA_LOCK', '', 'STRING', NULL, 'список ид (1,2) райнов для которых можно принимать заявки и обращения')
-    matching (VAR_NAME);
-  end
-end;
-commit;
 
 UPDATE OR INSERT INTO SERVICES (SERVICE_ID, SRV_TYPE_ID, SHIFT_MONTHS, NAME, DESCRIPTION, INET_SRV) VALUES (-1, -1, 0, NULL, 'служебная услуга, нужна для абонентской платы', 0) MATCHING (SERVICE_ID);
 UPDATE OR INSERT INTO SERVICES (SERVICE_ID, SRV_TYPE_ID, SHIFT_MONTHS, NAME, DESCRIPTION, INET_SRV) VALUES (-2, -1, 0, 'Снятие блокировки', NULL, 0) MATCHING (SERVICE_ID);
@@ -90,6 +69,10 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (62, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (63, 'Атрибуты сетей', 'Атрибуты сетей') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (64, 'Тип проч. начислений', 'Тип прочих начислений (OTHER_FEE)') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (65, 'Атрибуты любого оборудования', 'Атрибуты любого  оборудования') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (66, 'Тип документа абонента', 'Тип документа абонента для картотеки') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (67, 'Фильтр абонентов', 'Сохраненный фильтр абонентов') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (68, 'Фильтр заявок', 'Сохраненный фильтр заявок') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (69, 'Атрибуты групп оборудования') MATCHING (OT_ID);
 commit;
 
 -- Владелец оборудования/материала 51
@@ -196,7 +179,11 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (2, 6
 -- Тип прочих начислений (64)
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (1, 64, 'Списание с заявки', '') MATCHING (O_ID, O_TYPE);      
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (2, 64, 'Возврат с заявки', '') MATCHING (O_ID, O_TYPE);
+-- Тип прочих начислений (66)
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (1, 66, 'Паспорт', '') MATCHING (O_ID, O_TYPE);
 
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (5, 55, 'Фильтр абонентов', 'json фильтра абонентов', 0) MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (6, 55, 'Фильтр заявок', 'json фильтра заявок', 0) MATCHING (O_ID, O_TYPE);
 commit;
 
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK');
@@ -240,11 +227,69 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (200, 'П
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (201, 'НОВОСТИ', 'МОБИЛЬНОЕ ПРИЛОЖЕНИЕ', 'Публиковать новости') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (210, 'ПОРТЫ', 'ОБОРУДОВАНИЕ', 'Создание/редактирование портов оборудования') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (211, 'ЛИНИИ СВЯЗИ', 'УЗЛЫ', 'Создание/редактирование линий связи узлов ') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным');
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (212, 'РЕЕСТР ДОКУМЕНТОВ', 'СПРАВОЧНИКИ', 'Справочник документов абонентов (паспорта/свдиетельства и т.д.)') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (221, 'ПРОСМОТР ТВ', 'ТВ', 'Просмотр всех пунктов меню ТВ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (222, 'ПРОСМОТР ОБЪЕКТЫ', 'ОБЪЕКТЫ', 'Просмотр всех пунктов меню ОБЪЕКТЫ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (223, 'РЕДАКТИРОВАНИЕ КОНТАКТОВ', 'АБОНЕНТЫ', 'Возможность редактировать контакты абонента') MATCHING (ID);
 commit;
 
-UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('ROW_HL_COLOR', '', 'STRING', 'Цвет выделения строки') MATCHING (VAR_NAME);
-UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('ROW_HL_ID', '', 'INTEGER', 'ID объекта выделения') MATCHING (VAR_NAME);
-UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('ROW_HL_TYPE', '', 'INTEGER', 'Тип подцветки. 0-есть разовая услуга') MATCHING (VAR_NAME);
-UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) VALUES ('SQL_CONNECTED', 'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) ,1, 0)', 'STRING', 'Возможность настроить запрос определения подключени ли абонент') MATCHING (VAR_NAME);
+execute block as
+declare variable v varchar(1000);
+begin
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'ROW_HL_COLOR'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
+    VALUES ('ROW_HL_COLOR', '', 'STRING', 'Цвет выделения строки') 
+    MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'ROW_HL_ID'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
+    VALUES ('ROW_HL_ID', '', 'INTEGER', 'ID объекта выделения') MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'ROW_HL_TYPE'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
+    VALUES ('ROW_HL_TYPE', '', 'INTEGER', 'Тип подцветки. 0-есть разовая услуга') MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'SQL_CONNECTED'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
+    VALUES ('SQL_CONNECTED', 'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) ,1, 0)', 'STRING', 'Возможность настроить запрос определения подключени ли абонент') MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'STRICT_MODE'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('STRICT_MODE', '0', 'BOOLEAN', 'Строгий режим', 'Запрет изменений начислений и платежей в прошлых периодах')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'AREA_LOCK'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('AREA_LOCK', '', 'STRING', NULL, 'список ид (1,2) райнов для которых можно принимать заявки и обращения')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'SHOW_DOC_LIST'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('SHOW_DOC_LIST', '0', 'BOOLEAN', NULL, 'Отображать реестр документов абонентов')
+    matching (VAR_NAME);
+  end
+end;
+
 COMMIT;

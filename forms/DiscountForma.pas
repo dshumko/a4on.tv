@@ -94,7 +94,8 @@ end;
 
 procedure TDiscountForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  dmMain.SetIniValue('DISCOUNT', ednDiscountValue.Value);
+  if not ednDiscountValue.Text.IsEmpty then
+    dmMain.SetIniValue('DISCOUNT', ednDiscountValue.Value);
   Action := caFree;
 end;
 

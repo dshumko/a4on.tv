@@ -8,11 +8,13 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ComCtrls,
+  Vcl.Mask,
   Vcl.Buttons,
-  SynEditHighlighter, FIBQuery, pFIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, ToolCtrlsEh,
+  SynEditHighlighter, FIBQuery, pFIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst,
+  ToolCtrlsEh,
   DBGridEhToolCtrls, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase, frxClass, SendEmail, DBGridEhGrouping,
-  DynVarsEh;
+  DynVarsEh, frxExportBaseDialog, frxExportPDF;
 
 type
   TSendMessagesForm = class(TForm)
@@ -62,6 +64,10 @@ type
     lbl5: TLabel;
     DlgFileOpen: TOpenDialog;
     frxReport: TfrxReport;
+    frxPDFExport: TfrxPDFExport;
+    pnlContact: TPanel;
+    Label1: TLabel;
+    edtReciver: TDBEditEh;
     procedure FormShow(Sender: TObject);
     procedure miClick(Sender: TObject);
     procedure actSendExecute(Sender: TObject);
@@ -79,19 +85,24 @@ type
     procedure lvFilesDblClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
+    procedure FormCreate(Sender: TObject);
+    procedure SetToContact(const value: String);
   private
     FReportLoaded: Boolean;
-    function GetMessage(const msg: String): string;
+    FToContact: string;
+    FParentMessage:Integer;
+    function GetMessage(const Msg: String): string;
     procedure SendEmailMessage;
     procedure SendMessage(const mes_type: string);
-    procedure SendMessageWR(const mes_type, head, Text: String; const Res: Integer);
+    procedure SaveMessageDB(const mes_type, head, Text: String; const Res: Integer; const Contact:string = '');
     procedure LoadReportBody(FR: TfrxReport);
     procedure InitEmailClient(emailClient: TEmailClient);
   public
-    { Public declarations }
+    property ToContact: string write SetToContact;
+    property ParentMessage: integer write FParentMessage;
   end;
 
-function SendMessages(): Boolean;
+function SendMessages(const aToContact: string = ''; const parent_id :Integer = -1): Boolean;
 
 implementation
 
@@ -100,25 +111,28 @@ uses
 
 {$R *.dfm}
 
-function SendMessages(): Boolean;
+function SendMessages(const aToContact: string = ''; const parent_id :Integer = -1): Boolean;
 begin
   Result := False;
-  with TSendMessagesForm.Create(Application) do
+  with TSendMessagesForm.Create(Application) do begin
+    ToContact := aToContact;
+    ParentMessage := parent_id;
     try
-      if showmodal = mrOk then
+      if ShowModal = mrOk then
       begin
         Result := True;
       end;
     finally
       Free;
     end;
+  end;
 end;
 
-function TSendMessagesForm.GetMessage(const msg: String): string;
+function TSendMessagesForm.GetMessage(const Msg: String): string;
 var
   s: string;
 begin
-  s := CustomersForm.FieldsToStr(msg, '.');
+  s := CustomersForm.FieldsToStr(Msg, '.');
   Result := Trim(s);
 end;
 
@@ -127,34 +141,37 @@ var
   s: string;
 begin
   progress.StepIt;
-  s := GetMessage(mmoMessage.Lines.Text);
-  if (s = '') then
-    exit;
-  with qrySaveMessages do
+  if mes_type.ToUpper.Contains('EMAIL') then
+    SendEmailMessage()
+  else
   begin
-    sql.Text := 'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null)';
-    ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
-    ParamByName('MES_TEXT').AsString := s;
-    ParamByName('MES_HEAD').AsString := edtHEAD.Text;
-    ParamByName('MES_TYPE').AsString := mes_type;
-    Transaction.StartTransaction;
-    ExecQuery;
-    Transaction.Commit;
-    Close;
+    s := GetMessage(mmoMessage.Lines.Text);
+    if (s = '') then
+      exit;
+    SaveMessageDB(mes_type, GetMessage(edtHEAD.Text), s, 0, FToContact);
   end;
 end;
 
-procedure TSendMessagesForm.SendMessageWR(const mes_type, head, Text: String; const Res: Integer);
+procedure TSendMessagesForm.SaveMessageDB(const mes_type, head, Text: String; const Res: Integer; const Contact:string = '');
 begin
   with qrySaveMessages do
   begin
     sql.Text :=
-      'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null, :MES_RESULT)';
+      'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null, :MES_RESULT, :CONTACT, :PARENT_ID)';
     ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
     ParamByName('MES_TEXT').AsString := Text;
     ParamByName('MES_HEAD').AsString := head;
     ParamByName('MES_TYPE').AsString := mes_type;
     ParamByName('MES_RESULT').AsInteger := Res;
+    if FParentMessage > -1 then
+      ParamByName('PARENT_ID').AsInteger := FParentMessage
+    else
+      ParamByName('PARENT_ID').Clear;
+    if not Contact.IsEmpty then
+      ParamByName('CONTACT').AsString := Contact
+    else
+      ParamByName('CONTACT').Clear;
+
     Transaction.StartTransaction;
     ExecQuery;
     Transaction.Commit;
@@ -170,20 +187,21 @@ var
   ci: Integer;
   I: Integer;
 begin
-  progress.StepIt;
-  qryRead.sql.Text := ' select cast(list(Cc_Value) as varchar(1000)) Cc_Value from customer_contacts ' +
-    ' where Cc_Type=2 and CC_NOTIFY = 1 and Customer_Id=:c_id ';
-  qryRead.ParamByName('C_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
-  qryRead.Transaction.StartTransaction;
-  qryRead.ExecQuery;
+  ToEmail := '';
+  if FToContact.IsEmpty then begin
+    qryRead.sql.Text := ' select cast(list(Cc_Value) as varchar(1000)) Cc_Value from customer_contacts ' +
+      ' where Cc_Type=2 and CC_NOTIFY = 1 and Customer_Id=:c_id ';
+    qryRead.ParamByName('C_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
+    qryRead.Transaction.StartTransaction;
+    qryRead.ExecQuery;
 
-  if not qryRead.FN('Cc_Value').IsNull then
-    ToEmail := qryRead.FN('Cc_Value').AsString
+    if not qryRead.FN('Cc_Value').IsNull then
+      ToEmail := qryRead.FN('Cc_Value').AsString;
+    qryRead.Transaction.Commit;
+    qryRead.Close;
+  end
   else
-    ToEmail := '';
-
-  qryRead.Transaction.Commit;
-  qryRead.Close;
+    ToEmail := FToContact;
 
   if ToEmail = '' then
     exit;
@@ -202,16 +220,17 @@ begin
       if ci > 0 then
         frxReport.Variables['CUSTOMER_ID'] := CustomersForm.dsCustomers['CUSTOMER_ID'];
 
+      // dmMain.frxPDFExport.Transparency := True;
+      frxPDFExport.FileName := frxReport.FileName;
+      frxPDFExport.Subject := GetMessage(edtHEAD.Text);
       if frxReport.PrepareReport(True) then
       begin
-        dmMain.frxPDFExport.ShowDialog := False;
-        dmMain.frxPDFExport.Author := dmMain.mdsCompany['NAME'];
-        dmMain.frxPDFExport.EmbeddedFonts := True;
-        dmMain.frxPDFExport.PrintOptimized := True;
-        // dmMain.frxPDFExport.Transparency := True;
-        dmMain.frxPDFExport.FileName := frxReport.FileName;
-        frxReport.Export(dmMain.frxPDFExport);
-        emailClient.AddAttachment(frxReport.FileName);
+        try
+          frxReport.Export(frxPDFExport);
+          emailClient.AddAttachment(frxReport.FileName);
+        finally
+          //
+        end;
       end;
     end;
 
@@ -220,7 +239,7 @@ begin
       emailClient.AddAttachment(lvFiles.Items[I].Caption);
     end;
 
-    emailClient.Subject := edtHEAD.Text;
+    emailClient.Subject := GetMessage(edtHEAD.Text);
     emailClient.Body := GetMessage(mmoMessage.Lines.Text);
     emailClient.ToEmail := ToEmail;
     Res := emailClient.SendEmail;
@@ -232,7 +251,7 @@ begin
     else
       ci := 2;
     // сохраним в базе
-    SendMessageWR('EMAIL', emailClient.Subject, emailClient.Body, ci);
+    SaveMessageDB('EMAIL', emailClient.Subject, emailClient.Body, ci, ToEmail);
     Application.ProcessMessages;
   finally
     FreeAndNil(emailClient);
@@ -245,7 +264,6 @@ procedure TSendMessagesForm.actSendExecute(Sender: TObject);
 var
   j: Integer;
   mes_t: String;
-  itsEmail: Boolean;
   crsr: TCursor;
 begin
   crsr := Screen.Cursor;
@@ -260,33 +278,22 @@ begin
     cbMessType.Value := 'SMS';
   mes_t := cbMessType.Value;
 
-  itsEmail := mes_t.ToUpper.Contains('EMAIL');
-  // FReportLoaded := False;
-  // if itsEmail and VarIsNumeric(lcbReportAsPDF.KeyValue)
-  // then LoadReportBody;
-
   try
     with CustomersForm do
     begin
-      if dbgCustomers.SelectedRows.Count > 0 then
+      if (dbgCustomers.SelectedRows.Count > 0) and (FToContact.IsEmpty) then
       begin
         progress.Max := dbgCustomers.SelectedRows.Count;
         for j := 0 to dbgCustomers.SelectedRows.Count - 1 do
         begin
           dbgCustomers.DataSource.DataSet.Bookmark := dbgCustomers.SelectedRows[j];
-          if not itsEmail then
-            SendMessage(mes_t)
-          else
-            SendEmailMessage;
+          SendMessage(mes_t)
         end
       end
       else
       begin
         progress.Max := 1;
-        if not itsEmail then
-          SendMessage(mes_t)
-        else
-          SendEmailMessage;
+        SendMessage(mes_t);
       end;
     end;
 
@@ -357,10 +364,11 @@ begin
     pmMemo.Items.Add(NewItem(val[I], 0, False, True, miClick, 0, 'mi' + IntToStr(I)));
   end;
 
-  if CustomersForm.dbgCustomers.SelectedRows.Count > 0 then
+  if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) and FToContact.IsEmpty then
     s := IntToStr(CustomersForm.dbgCustomers.SelectedRows.Count)
   else
     s := '1';
+
   btnOk.Caption := btnOk.Caption + ' ( ' + s + ' ' + rsPiece + ')';
 end;
 
@@ -424,6 +432,17 @@ begin
     dsMessType.Close;
 end;
 
+procedure TSendMessagesForm.FormCreate(Sender: TObject);
+begin
+  frxPDFExport.ShowDialog := False;
+  frxPDFExport.Creator:= 'A4on.TV';
+  frxPDFExport.Author := dmMain.mdsCompany['NAME'];
+  frxPDFExport.EmbeddedFonts := True;
+  frxPDFExport.PrintOptimized := True;
+  FParentMessage := -1;
+  SetToContact('');
+end;
+
 procedure TSendMessagesForm.actDeleteTemplateExecute(Sender: TObject);
 begin
   if not dsTemplate.Active then
@@ -456,6 +475,7 @@ end;
 procedure TSendMessagesForm.LoadReportBody(FR: TfrxReport);
 var
   Stream: TStream;
+  fn: string;
 begin
   try
     dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value := lcbReportAsPDF.KeyValue;
@@ -467,8 +487,10 @@ begin
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
         FR.LoadFromStream(Stream);
-        FR.FileName := GetTempDir() + CustomersForm.dsCustomers['ACCOUNT_NO'] + '.' +
-          dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString + '.PDF';
+        fn := CustomersForm.dsCustomers['ACCOUNT_NO'] + '.' + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        fn := Translit(fn).Replace(' ', '_', [rfReplaceAll]).Replace('\', '_', [rfReplaceAll]).Replace('/', '_', [rfReplaceAll]);
+        FR.FileName := GetTempDir() + fn + '.PDF';
+        FR.ReportOptions.Name := FR.FileName;
         FReportLoaded := True;
       finally
         Stream.Free;
@@ -501,6 +523,18 @@ begin
     emailClient.CcEmail := dmMain.GetSettingsValue('EMAIL');
 
   emailClient.Confirm := dmMain.GetSettingsValue('SMTP_CONF');
+end;
+
+procedure TSendMessagesForm.SetToContact(const value: String);
+begin
+  FToContact := Value;
+  pnlContact.Visible := (not FToContact.IsEmpty);
+  if (not FToContact.IsEmpty) then begin
+    ActiveControl := edtReciver;
+    edtReciver.Text := FToContact;
+  end
+  else
+    ActiveControl := cbMessType;
 end;
 
 end.

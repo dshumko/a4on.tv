@@ -128,7 +128,7 @@ begin
 
   dsData.DataSource := FDataSource;
   mmoNotice.ReadOnly := not(dmMain.AllowedAction(rght_Dictionary_full) or
-    dmMain.AllowedAction(rght_Dictionary_Equipment));
+    dmMain.AllowedAction(rght_Comm_Equipment));
 end;
 
 procedure TapgEqpmntInfo.OpenData;

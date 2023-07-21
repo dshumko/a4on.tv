@@ -58,7 +58,7 @@ end;
 
 procedure TapgNodeAppl.InitForm;
 begin
-  FRightFull := dmMain.AllowedAction(rght_Dictionary_Nodes); // Полный доступ
+  FRightFull := dmMain.AllowedAction(rght_Comm_Nodes); // Полный доступ
 
   actAdd.Visible := FRightEdit or FRightFull;
   actEdit.Visible := FRightEdit or FRightFull;

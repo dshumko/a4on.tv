@@ -67,6 +67,7 @@ function IncMAC(const MAC: string; const step: Integer = 1): String;
 
 // оставляет в строке только цифры
 function DigitsOnly(const S: string): string;
+function DelBlankChars(const S: string): string;
 
 function GenPassword(const PWDlen: Integer = 8): String;
 
@@ -97,11 +98,18 @@ function MonthAsString(const D: TDateTime; const beforeDay: string = '«'; const
 // Форматируем Фамилию как Ф***я
 function HideSurname(const S: String): string;
 
+// есть ли в телефоне ошибка согласно маски
+function ValueHasMaskError(const inMask, inValue: string): Boolean;
+// замена в маске значениями
+function ReplaceInMask(const inMask, inValue: string): String;
+
+function ExtractUrl(const s: String) : string;
+
 implementation
 
 uses
   Winapi.Windows,
-  System.DateUtils, System.RegularExpressions,
+  System.DateUtils, System.RegularExpressions, System.MaskUtils,
   Vcl.Clipbrd,
   RxStrUtils;
 
@@ -594,11 +602,21 @@ begin
   Result := '';
   l := Length(S);
   for i := 1 to l do
-  begin
     if CharInSet(S[i], ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) then
       Result := Result + S[i];
-  end;
 end;
+
+function DelBlankChars(const S: string): string;
+var
+  i, l: Integer;
+begin
+  Result := '';
+  l := Length(S);
+  for i := 1 to l do
+    if not (CharInSet(S[i], [' ', #10, #13, #9])) then
+      Result := Result + S[i];
+end;
+
 
 function GenPassword(const PWDlen: Integer = 8): String;
 const
@@ -686,7 +704,7 @@ var
   i: Integer;
 begin
   // Result := trim(s);
-  sa := Explode('-', S);
+  sa := Explode('-', Trim(S));
   fio := AnsiUpperCase(Copy(sa[0], 1, 1)) + AnsiLowerCase(Copy(sa[0], 2, Length(sa[0]) - 1));
   for i := 1 to Length(sa) - 1 do
   begin
@@ -699,7 +717,7 @@ function TrimAnd(const S: string): String;
 var
   tmp: String;
 begin
-  tmp := trim(S);
+  tmp := Trim(S);
   if (AnsiUpperCase(Copy(tmp, 1, 3)) = 'AND') then
     Result := Copy(tmp, 4, Length(tmp) - 3)
   else
@@ -823,6 +841,96 @@ end;
 function HideSurname(const S: String): string;
 begin
   Result := Copy(S, 1, 1) + '***' + Copy(S, Length(S), 1);
+end;
+
+function ValueHasMaskError(const inMask, inValue: string): Boolean;
+var
+  i: Integer;
+  msk: string;
+  C: Char;
+begin
+  Result := False;
+  msk := inMask;
+  i := Pos(';', msk);
+  if i > 0 then
+    msk := Copy(msk, 1, i - 1);
+
+  msk := msk.Replace('\', '');
+  if Length(msk) <> Length(inValue) then
+  begin
+    Result := True;
+    Exit;
+  end;
+  C := MaskGetMaskBlank(inMask);
+  for i := 1 to Length(msk) do
+  begin
+    if msk[i] <> inValue[i] then
+    begin
+      if ((msk[i] = '0') and (not CharInSet(inValue[i], ['0' .. '9']))) then
+        Result := True
+      else if ((msk[i] = C) and (inValue[i] = ' ')) then
+        Result := True;
+    end;
+  end;
+end;
+
+function ExtractUrl(const s: String) : string;
+var
+  url: string;
+  i : Integer;
+begin
+{
+//var
+//  foundcollection: TMatchCollection;
+//  found: TMatch;
+//  myregex: string;
+
+//  myregex := '(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+';
+//  foundcollection := TRegEx.Matches(MyString, myregex,[roIgnoreCase]);
+//  for found in foundcollection do
+//  begin
+//    ListBox1.Items.Add(found.Value);
+//  end;
+}
+
+  url := '';
+
+  if s.ToUpper.Contains('HTTP') then
+  begin
+    i := Pos('HTTP', s.ToUpper);
+    url := Copy(s, i, 1000);
+    url := Trim(url);
+    i := Pos(' ', url);
+    if i>0 then begin
+      url := Copy(url, 1, i);
+    end
+  end;
+  result := url;
+end;
+
+function ReplaceInMask(const inMask, inValue: string): String;
+var
+  i, j: Integer;
+  msk: string;
+  C: Char;
+begin
+  msk := inMask;
+  i := Pos(';', msk);
+  if i > 0 then
+    msk := Copy(msk, 1, i - 1);
+  msk := msk.Replace('\', '');
+  j := 1;
+  for i := 1 to Length(msk) do
+  begin
+    if msk[i] <> inValue[i] then
+    begin
+      if ((msk[i] = '0') and (CharInSet(inValue[j], ['0' .. '9']))) then begin
+        msk[i] := inValue[j];
+        Inc(j);
+      end;
+    end;
+  end;
+  Result := msk;
 end;
 
 initialization

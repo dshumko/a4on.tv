@@ -33,18 +33,18 @@ object RequestFilterForm: TRequestFilterForm
       564
       37)
     object SpeedButton3: TSpeedButton
-      Left = 174
+      Left = 192
       Top = 2
-      Width = 94
+      Width = 70
       Height = 30
       Caption = #1054#1095#1080#1089#1090#1080#1090#1100
       Flat = True
       OnClick = SpeedButton3Click
     end
     object btnLoad: TSpeedButton
-      Left = 90
+      Left = 99
       Top = 2
-      Width = 80
+      Width = 70
       Height = 30
       Hint = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
@@ -54,12 +54,28 @@ object RequestFilterForm: TRequestFilterForm
     object btnSave: TSpeedButton
       Left = 6
       Top = 2
-      Width = 80
+      Width = 70
       Height = 30
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       Flat = True
       OnClick = btnSaveClick
+    end
+    object btnDBSave: TSpeedButton
+      Left = 74
+      Top = 2
+      Width = 18
+      Height = 30
+      Action = actSaveToDb
+      Flat = True
+    end
+    object btnDBLoad: TSpeedButton
+      Left = 167
+      Top = 2
+      Width = 19
+      Height = 30
+      Action = actLoadFromDb
+      Flat = True
     end
     object chkDefaultFilter: TCheckBox
       Left = 267
@@ -73,7 +89,7 @@ object RequestFilterForm: TRequestFilterForm
     end
     object bbOk: TBitBtn
       Left = 383
-      Top = 3
+      Top = 2
       Width = 93
       Height = 30
       Anchors = [akRight, akBottom]
@@ -85,7 +101,7 @@ object RequestFilterForm: TRequestFilterForm
     end
     object bbCancel: TBitBtn
       Left = 485
-      Top = 3
+      Top = 2
       Width = 74
       Height = 30
       Anchors = [akRight, akBottom]
@@ -928,10 +944,6 @@ object RequestFilterForm: TRequestFilterForm
     object tsList: TTabSheet
       Caption = #1055#1086' '#1089#1087#1080#1089#1082#1091
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object mmoListBids: TDBMemoEh
         Left = 0
         Top = 0
@@ -1446,6 +1458,18 @@ object RequestFilterForm: TRequestFilterForm
       Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
       ShortCut = 16397
       OnExecute = actOkExecute
+    end
+    object actSaveToDb: TAction
+      Caption = 'S'
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1074' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
+      ShortCut = 16467
+      OnExecute = actSaveToDbExecute
+    end
+    object actLoadFromDb: TAction
+      Caption = 'L'
+      Hint = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1080#1079' '#1073#1072#1079#1099' '#1076#1072#1085#1085#1099#1093
+      ShortCut = 16460
+      OnExecute = actLoadFromDbExecute
     end
   end
   object PropStorageEh1: TPropStorageEh

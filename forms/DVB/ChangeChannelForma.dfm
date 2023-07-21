@@ -3,7 +3,7 @@ object frmChangeChannelForm: TfrmChangeChannelForm
   Top = 226
   ActiveControl = lcbSlave
   Caption = #1047#1072#1084#1077#1085#1072' '#1082#1072#1085#1072#1083#1072' '#1085#1072' '#1082#1072#1085#1072#1083' '#1074' '#1089#1077#1090#1080
-  ClientHeight = 137
+  ClientHeight = 166
   ClientWidth = 392
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,23 +23,24 @@ object frmChangeChannelForm: TfrmChangeChannelForm
     Left = 0
     Top = 0
     Width = 392
-    Height = 137
+    Height = 166
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 137
     DesignSize = (
       392
-      137)
+      166)
     object Label1: TLabel
-      Left = 3
+      Left = 6
       Top = 39
       Width = 46
       Height = 13
       Caption = #1053#1072' '#1082#1072#1085#1072#1083
     end
     object lbl1: TLabel
-      Left = 3
-      Top = 8
+      Left = 6
+      Top = 9
       Width = 75
       Height = 13
       Caption = #1047#1072#1084#1077#1085#1080#1084' '#1082#1072#1085#1072#1083
@@ -58,7 +59,7 @@ object frmChangeChannelForm: TfrmChangeChannelForm
       ParentFont = False
     end
     object lbl2: TLabel
-      Left = 3
+      Left = 6
       Top = 73
       Width = 57
       Height = 13
@@ -66,12 +67,13 @@ object frmChangeChannelForm: TfrmChangeChannelForm
     end
     object Panel2: TPanel
       Left = 0
-      Top = 100
+      Top = 129
       Width = 392
       Height = 37
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 3
+      ExplicitTop = 100
       DesignSize = (
         392
         37)
@@ -106,14 +108,22 @@ object frmChangeChannelForm: TfrmChangeChannelForm
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.ListFieldNames = 'NAME'
+      DropDownBox.ListSource = srcChannels
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EditButtons = <>
       KeyField = 'CH_ID'
       ListField = 'NAME'
       ListSource = srcChannels
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 0
       Visible = True
+      OnClick = lcbSlaveClick
+      OnEnter = lcbSlaveClick
     end
     object chkAnalog: TDBCheckBoxEh
       Left = 88
@@ -132,6 +142,17 @@ object frmChangeChannelForm: TfrmChangeChannelForm
       Caption = 'DVB'
       DynProps = <>
       TabOrder = 2
+    end
+    object chkReplace: TDBCheckBoxEh
+      Left = 88
+      Top = 105
+      Width = 295
+      Height = 17
+      Caption = #1055#1086#1084#1077#1085#1103#1090#1100' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1102' '#1084#1077#1078#1076#1091' '#1082#1072#1085#1072#1083#1072#1084#1080
+      Checked = True
+      DynProps = <>
+      State = cbChecked
+      TabOrder = 4
     end
   end
   object dsChannels: TpFIBDataSet
@@ -176,7 +197,7 @@ object frmChangeChannelForm: TfrmChangeChannelForm
     SQL.Strings = (
       
         'execute procedure Change_Ch_To_Ch(:From_Ch, :To_Ch, :Analog, :Dv' +
-        'b)')
+        'b, null, :REPL)')
     Left = 304
     Top = 16
     qoAutoCommit = True

@@ -7,9 +7,9 @@ uses
   System.Classes, System.Types,
   Vcl.Graphics, Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.ActnList,
   frxClass, frxPreview,
-  {$IFDEF USE_ZEOS}
+{$IFDEF USE_ZEOS}
   frxZeosComponents,
-  {$ENDIF}
+{$ENDIF}
   System.Actions,
   Vcl.Menus, Vcl.Buttons, Vcl.ExtCtrls,
   frxGradient, frxChBox, frxDCtrl, frxExportPDF, frxCross, frxCtrls, frxDock, frxRes, PrjConst;
@@ -191,51 +191,50 @@ begin
 end;
 
 procedure TReportChild.LoadReportBody;
-{
-  var
-  Stream: TStream;
-  begin
-  try
-  dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value:=fReport_ID;
-  dmMain.fdsLoadReport.Open;
-  if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').Value<>NULL then begin
-  Stream:=TMemoryStream.Create;
-  try
-  TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
-  Stream.Position:=0;
-  frxReport.LoadFromStream(Stream);
-  frxReport.FileName:=dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-  Caption := frxReport.FileName;
-  finally
-  Stream.Free;
-  end;
-  end;
-  finally
-  dmMain.fdsLoadReport.Close;
-  end;
-}
 var
-  Stream: TFileStream;
-  vFN: string;
+  // Stream: TFileStream;
+  Stream: TStream;
+  vFN, ext: string;
 begin
   try
     dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := fReport_ID;
     dmMain.fdsLoadReport.Open;
     if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
     begin
-      vFN := GetTempDir;
-      vFN := vFN + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-      Stream := TFileStream.Create(vFN, fmCreate);
+      { переделал с файлов в стрим
+        vFN := GetTempDir;
+        vFN := vFN + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        Stream := TFileStream.Create(vFN, fmCreate);
+        try
+        TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
+        finally
+        Stream.Free;
+        end;
+        if FileExists(vFN) then
+        begin
+        frxReport.LoadFromFile(vFN);
+        DeleteFile(vFN);
+        ext := ExtractFileExt(vFN);
+        vFN := ExtractFileName(vFN);
+        frxReport.ReportOptions.Name := StringReplace(vFN,ext,'', [rfReplaceAll, rfIgnoreCase]);
+        Caption := frxReport.ReportOptions.Name;
+        end;
+      }
+      Stream := TMemoryStream.Create;
       try
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
+        if Stream.Size > 0 then
+        begin
+          Stream.Position := 0;
+          frxReport.LoadFromStream(Stream);
+          vFN := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+          ext := ExtractFileExt(vFN);
+          vFN := ExtractFileName(vFN);
+          frxReport.ReportOptions.Name := StringReplace(vFN, ext, '', [rfReplaceAll, rfIgnoreCase]);
+          Caption := frxReport.ReportOptions.Name;
+        end;
       finally
         Stream.Free;
-      end;
-      if FileExists(vFN) then
-      begin
-        frxReport.LoadFromFile(vFN);
-        // frxReport.FileName:=dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        // Caption := frxReport.FileName;
       end;
     end;
   finally
@@ -458,8 +457,8 @@ begin
   if Key = #13 then
   begin
     if ActiveControl = ZoomCB then
-      ZoomCBClick(nil);
-    if ActiveControl = PageE then
+      ZoomCBClick(nil)
+    else if ActiveControl = PageE then
       PageEClick(nil);
   end;
 end;
@@ -471,6 +470,9 @@ end;
 
 procedure TReportChild.PageEClick(Sender: TObject);
 begin
+  if (PageE.Text = '') then
+    Exit;
+
   frxPreview.PageNo := StrToInt(PageE.Text);
   frxPreview.SetFocus;
 end;

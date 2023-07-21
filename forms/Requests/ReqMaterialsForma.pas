@@ -235,7 +235,7 @@ begin
   begin
     if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_QUANT') then
       dbGrid.Columns[i].ReadOnly := not fEditMode;
-    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'NOT_CALC') then
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'CALC') then
       dbGrid.Columns[i].ReadOnly := not fEditMode;
     if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_COST') then
       dbGrid.Columns[i].ReadOnly := not fEditMode;

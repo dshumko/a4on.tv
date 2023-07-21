@@ -50,7 +50,7 @@ type
 implementation
 
 uses
-  DM, RecourseForma, MAIN, TextEditForma, TaskForma;
+  DM, RecourseForma, MAIN, TextEditForma, TaskForma, AtrStrUtils, atrCmdUtils;
 
 {$R *.dfm}
 
@@ -149,17 +149,41 @@ end;
 
 procedure TapgCustomerRecourse.dbgRecoursesDblClick(Sender: TObject);
 var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
   s: String;
+  vContinue: Boolean;
+  i: Integer;
 begin
-  if (not dsRecourses.Active) or (dsRecourses.RecordCount = 0) then
-    exit;
-
-  if (dsRecourses['REC_TYPE'] = 1) then
-    FindTask(dsRecourses['RC_ID'])
-  else if (not dsRecourses.FieldByName('Notice').IsNull) then
+  vContinue := true;
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgRecourses.ScreenToClient(ScrPt);
+  Cell := dbgRecourses.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgRecourses.Fields[Cell.X - 1].FieldName);
+  if (s = 'NOTICE') then
   begin
-    s := dsRecourses['Notice'];
-    ShowText(s, dsRecourses['O_NAME'] + '.' + dsRecourses['NAME']);
+    if not dbgRecourses.DataSource.DataSet.FieldByName(s).IsNull then
+    begin
+      s := ExtractUrl(dbgRecourses.DataSource.DataSet.FieldByName(s).AsString);
+      if not s.IsEmpty then
+      begin
+        atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
+        vContinue := False;
+      end;
+    end;
+  end;
+
+  if vContinue then begin
+    if (not dsRecourses.Active) or (dsRecourses.RecordCount = 0) then
+      exit;
+
+    if (dsRecourses['REC_TYPE'] = 1) then
+      FindTask(dsRecourses['RC_ID'])
+    else if (not dsRecourses.FieldByName('Notice').IsNull) then
+    begin
+      s := dsRecourses['Notice'];
+      ShowText(s, dsRecourses['O_NAME'] + '.' + dsRecourses['NAME']);
+    end;
   end;
 end;
 

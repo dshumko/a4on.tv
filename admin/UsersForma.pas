@@ -494,6 +494,10 @@ begin
       ServerName := AnsiString(dmMain.Server);
     end;
   end;
+
+  if (dmMain.GetSettingsValue('SHOW_DOC_LIST') <> '1') then
+    dsRights.ParamByName('right_fltr').Value := Format('r.Id <> %d', [rght_Dictionary_Doclist]);
+
 end;
 
 procedure TUsersForm.btnAddAreaClick(Sender: TObject);

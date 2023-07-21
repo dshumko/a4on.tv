@@ -3,7 +3,7 @@ object MessagesForm: TMessagesForm
   Top = 314
   Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1103' '#1079#1072' '#1087#1077#1088#1080#1086#1076
   ClientHeight = 450
-  ClientWidth = 917
+  ClientWidth = 827
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -26,14 +26,14 @@ object MessagesForm: TMessagesForm
   object pnlAll: TPanel
     Left = 0
     Top = 0
-    Width = 917
+    Width = 827
     Height = 450
     Align = alClient
     TabOrder = 0
     object dbgMessages: TDBGridEh
       Left = 1
       Top = 257
-      Width = 915
+      Width = 825
       Height = 192
       Align = alClient
       AllowedOperations = []
@@ -57,6 +57,7 @@ object MessagesForm: TMessagesForm
       TitleParams.MultiTitle = True
       OnDblClick = dbgMessagesDblClick
       OnDataGroupGetRowText = dbgMessagesDataGroupGetRowText
+      OnGetCellParams = dbgMessagesGetCellParams
       OnGetFooterParams = dbgMessagesGetFooterParams
       Columns = <
         item
@@ -255,7 +256,7 @@ object MessagesForm: TMessagesForm
     object tlbMain: TToolBar
       Left = 1
       Top = 1
-      Width = 915
+      Width = 825
       Height = 29
       Caption = 'ToolBar2'
       EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
@@ -335,23 +336,44 @@ object MessagesForm: TMessagesForm
       object chkGroup: TCheckBox
         Left = 208
         Top = 0
-        Width = 144
+        Width = 169
         Height = 22
+        TabStop = False
         Action = actGroup
         Alignment = taLeftJustify
         Caption = '   '#1042#1082#1083#1102#1095#1080#1090#1100' '#1075#1088#1091#1087#1087#1080#1088#1086#1074#1082#1091
         TabOrder = 0
       end
-      object btn2: TToolButton
-        Left = 352
+      object btn1: TToolButton
+        Left = 377
         Top = 0
         Width = 8
+        Caption = 'btn1'
+        ImageIndex = 75
+        Style = tbsSeparator
+      end
+      object chkTree: TCheckBox
+        Left = 385
+        Top = 0
+        Width = 128
+        Height = 22
+        Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1086#1090#1086#1073#1088#1086#1078#1077#1085#1080#1077' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072
+        TabStop = False
+        Alignment = taLeftJustify
+        Caption = '  '#1044#1077#1088#1077#1074#1086' '#1086#1090#1074#1077#1090#1086#1074
+        TabOrder = 1
+        OnClick = chkTreeClick
+      end
+      object btn2: TToolButton
+        Left = 513
+        Top = 0
+        Width = 16
         Caption = 'btn2'
         ImageIndex = 42
         Style = tbsSeparator
       end
       object btnSendSMS: TToolButton
-        Left = 360
+        Left = 529
         Top = 0
         Action = actSendSMS
       end
@@ -359,7 +381,7 @@ object MessagesForm: TMessagesForm
     object pnlEdit: TPanel
       Left = 1
       Top = 30
-      Width = 915
+      Width = 825
       Height = 227
       Align = alTop
       BevelOuter = bvNone
@@ -368,13 +390,13 @@ object MessagesForm: TMessagesForm
       object pnl1: TPanel
         Left = 0
         Top = 0
-        Width = 915
+        Width = 825
         Height = 32
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          915
+          825
           32)
         object lbl3: TLabel
           Left = 7
@@ -393,7 +415,7 @@ object MessagesForm: TMessagesForm
         object edtReciver: TDBEditEh
           Left = 384
           Top = 5
-          Width = 521
+          Width = 431
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DynProps = <>
@@ -424,16 +446,16 @@ object MessagesForm: TMessagesForm
       object pnlOkCancel: TPanel
         Left = 0
         Top = 191
-        Width = 915
+        Width = 825
         Height = 36
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 2
         DesignSize = (
-          915
+          825
           36)
         object btnCancelLink: TBitBtn
-          Left = 819
+          Left = 729
           Top = 6
           Width = 86
           Height = 25
@@ -445,7 +467,7 @@ object MessagesForm: TMessagesForm
         object btnSaveLink: TBitBtn
           Left = 30
           Top = 6
-          Width = 771
+          Width = 681
           Height = 25
           Anchors = [akLeft, akRight, akBottom]
           Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -456,7 +478,7 @@ object MessagesForm: TMessagesForm
       object pnl2: TPanel
         Left = 0
         Top = 32
-        Width = 915
+        Width = 825
         Height = 159
         Align = alClient
         BevelOuter = bvNone
@@ -464,33 +486,34 @@ object MessagesForm: TMessagesForm
         object lblSMScount: TLabel
           Left = 0
           Top = 25
-          Width = 915
+          Width = 825
           Height = 13
           Align = alTop
+          ExplicitWidth = 3
         end
         object pnlHead: TPanel
           Left = 0
           Top = 0
-          Width = 915
+          Width = 825
           Height = 25
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
           Visible = False
           DesignSize = (
-            915
+            825
             25)
           object lbl2: TLabel
             Left = 7
             Top = 4
-            Width = 62
+            Width = 83
             Height = 13
-            Caption = #1058#1077#1084#1072' '#1087#1080#1089#1100#1084#1072
+            Caption = #1058#1077#1084#1072' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
           end
           object edtHEAD: TDBEditEh
             Left = 90
             Top = 1
-            Width = 815
+            Width = 725
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
@@ -504,7 +527,7 @@ object MessagesForm: TMessagesForm
         object mmoMessage: TDBMemoEh
           Left = 0
           Top = 38
-          Width = 915
+          Width = 825
           Height = 121
           Align = alClient
           AutoSize = False
@@ -586,6 +609,10 @@ object MessagesForm: TMessagesForm
       ImageIndex = 9
       OnExecute = actFilterCustomerExecute
     end
+    object actAnswer: TAction
+      Caption = #1054#1090#1074#1077#1090' '#1085#1072' '#1089#1086#1086#1073#1097#1077#1085#1080#1077
+      OnExecute = actAnswerExecute
+    end
   end
   object gridPopUp: TPopupMenu
     Left = 132
@@ -604,6 +631,12 @@ object MessagesForm: TMessagesForm
     object ppmSaveSelection: TMenuItem
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
       OnClick = ppmSaveSelectionClick
+    end
+    object miN17: TMenuItem
+      Caption = '-'
+    end
+    object miAnswer: TMenuItem
+      Action = actAnswer
     end
   end
   object dsMessages: TpFIBDataSet
@@ -628,7 +661,9 @@ object MessagesForm: TMessagesForm
       '    RECIVER,'
       '    MES_HEAD,'
       '    MES_TEXT,'
-      '    MES_RESULT'
+      '    MES_RESULT,'
+      '    CUSTOMER_ID,'
+      '    PARENT_ID'
       ')'
       'VALUES('
       '    :MES_ID,'
@@ -636,14 +671,21 @@ object MessagesForm: TMessagesForm
       '    :RECIVER,'
       '    :MES_HEAD,'
       '    :MES_TEXT,'
-      '    :MES_RESULT'
+      '    :MES_RESULT,'
+      '    :CUSTOMER_ID,'
+      '    :PARENT_ID    '
       ')')
     RefreshSQL.Strings = (
       'select'
+      '    M.*'
+      '    , cast(m.SEND_DATE as DATE) SODATE '
+      '    , C.ACCOUNT_NO'
+      '    , C.SURNAME'
+      '    , C.INITIALS'
+      '    , C.DEBT_SUM'
       
-        '    M.*, C.ACCOUNT_NO, C.SURNAME, C.INITIALS, C.DEBT_SUM, C.CUST' +
-        '_STATE_DESCR, S.STREET_SHORT, S.STREET_NAME, H.HOUSE_NO, C.FLAT_' +
-        'NO, coalesce(o.O_Name, m.Mes_Result) as Res_TEXT'
+        '    , C.CUST_STATE_DESCR, S.STREET_SHORT, S.STREET_NAME, H.HOUSE' +
+        '_NO, C.FLAT_NO, coalesce(o.O_Name, m.Mes_Result) as Res_TEXT'
       '  from MESSAGES M'
       
         '       left outer join CUSTOMER C on (M.CUSTOMER_ID = C.CUSTOMER' +
@@ -653,9 +695,7 @@ object MessagesForm: TMessagesForm
       
         '       left outer join OBJECTS o on (o.O_Type = 24 and o.O_Id = ' +
         'm.Mes_Result)'
-      '  where   M.MES_ID = :OLD_MES_ID'
-      '    '
-      '  ')
+      '  where   M.MES_ID = :OLD_MES_ID')
     SelectSQL.Strings = (
       'select'
       '    M.*'
@@ -686,6 +726,7 @@ object MessagesForm: TMessagesForm
         'ndDate))'
       '         )'
       '    and (not m.MES_RESULT in (1,2) or 0 = :ShowNotSended)'
+      '    @@WHERE_ADDONS@'
       '  order by M.MES_ID')
     AutoUpdateOptions.UpdateTableName = 'MESSAGES'
     AutoUpdateOptions.KeyFields = 'MES_ID'
@@ -697,7 +738,7 @@ object MessagesForm: TMessagesForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DefaultFormats.NumericDisplayFormat = '#'
-    Left = 124
+    Left = 140
     Top = 353
     poImportDefaultValues = False
     oRefreshAfterPost = False
@@ -717,6 +758,7 @@ object MessagesForm: TMessagesForm
     CloseDataSource = False
     DataSet = dsMessages
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 315
     Top = 211
   end
@@ -747,6 +789,10 @@ object MessagesForm: TMessagesForm
       Checked = True
       Hint = #1055#1086#1082#1072#1079#1099#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1085#1077#1086#1090#1087#1088#1072#1074#1083#1077#1085#1085#1099#1077' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
       OnClick = N16Click
+    end
+    object miMyOnly: TMenuItem
+      Caption = #1058#1086#1083#1100#1082#1086' '#1084#1086#1080' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
+      OnClick = miMyOnlyClick
     end
   end
   object MainMenu1: TMainMenu
@@ -905,5 +951,32 @@ object MessagesForm: TMessagesForm
     DataSet = dsMessType
     Left = 724
     Top = 100
+  end
+  object mtTM: TMemTableEh
+    FieldDefs = <>
+    FetchAllOnOpen = True
+    IndexDefs = <
+      item
+        Name = 'mtEQIndexMID'
+        Fields = 'MES_ID'
+      end
+      item
+        Name = 'mtEQIndexPARENT'
+        Fields = 'PARENT_ID'
+      end>
+    Params = <>
+    DataDriver = drvTM
+    StoreDefs = True
+    TreeList.KeyFieldName = 'MES_ID'
+    TreeList.RefParentFieldName = 'PARENT_ID'
+    TreeList.DefaultNodeExpanded = True
+    Left = 335
+    Top = 356
+  end
+  object drvTM: TDataSetDriverEh
+    KeyFields = 'MES_ID'
+    ProviderDataSet = dsMessages
+    Left = 280
+    Top = 352
   end
 end

@@ -16,6 +16,7 @@ object ServiceForm: TServiceForm
   OldCreateOrder = False
   Position = poMainFormCenter
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object pnlSrv: TPanel
@@ -135,9 +136,9 @@ object ServiceForm: TServiceForm
   end
   object pnlNotice: TPanel
     Left = 0
-    Top = 374
+    Top = 384
     Width = 405
-    Height = 46
+    Height = 36
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 10
@@ -145,7 +146,7 @@ object ServiceForm: TServiceForm
       Left = 0
       Top = 0
       Width = 405
-      Height = 46
+      Height = 36
       ActivePage = tsNotice
       Align = alClient
       TabOrder = 0
@@ -155,7 +156,7 @@ object ServiceForm: TServiceForm
           Left = 0
           Top = 0
           Width = 397
-          Height = 18
+          Height = 8
           ScrollBars = ssVertical
           Align = alClient
           AutoSize = False
@@ -277,7 +278,7 @@ object ServiceForm: TServiceForm
   end
   object gbInet: TGroupBox
     Left = 0
-    Top = 229
+    Top = 239
     Width = 405
     Height = 75
     Align = alTop
@@ -381,7 +382,7 @@ object ServiceForm: TServiceForm
   end
   object pnlPayType: TGroupBox
     Left = 0
-    Top = 359
+    Top = 369
     Width = 405
     Height = 15
     Align = alTop
@@ -430,7 +431,7 @@ object ServiceForm: TServiceForm
           #1103')'
         #1045#1078#1077#1076#1085#1077#1074#1085#1099#1077' '#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103
         #1044#1086#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103' '#1076#1086' '#1090#1072#1088#1080#1092#1072
-        '1-'#1099#1081' '#1084#1077#1089#1103#1094' '#1092#1080#1082#1089#1072', '#1076#1072#1083#1077#1077' '#1087#1088#1086#1087#1086#1088#1094#1080#1086#1085#1072#1083#1100#1085#1086' '#1076#1085#1103#1084)
+        '1-'#1099#1081' '#1084#1077#1089#1103#1094' '#1087#1088#1086#1087#1086#1088#1094#1080#1086#1085#1072#1083#1100#1085#1086' '#1076#1085#1103#1084', '#1076#1072#1083#1077#1077' '#1055#1054#1051#1053#1067#1049' '#1090#1072#1088#1080#1092' ')
       KeyItems.Strings = (
         '0'
         '1'
@@ -445,7 +446,7 @@ object ServiceForm: TServiceForm
   end
   object gbDIGIT: TGroupBox
     Left = 0
-    Top = 304
+    Top = 314
     Width = 405
     Height = 45
     Align = alTop
@@ -542,14 +543,14 @@ object ServiceForm: TServiceForm
     Left = 0
     Top = 153
     Width = 405
-    Height = 28
+    Height = 52
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 4
     Visible = False
     DesignSize = (
       405
-      28)
+      52)
     object chkAUTOOFF: TDBCheckBoxEh
       Left = 8
       Top = 5
@@ -587,10 +588,28 @@ object ServiceForm: TServiceForm
       TabOrder = 1
       Visible = False
     end
+    object chkPOSITIVE: TDBCheckBoxEh
+      Left = 269
+      Top = 30
+      Width = 128
+      Height = 17
+      Hint = #1054#1090#1082#1083#1102#1095#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1077#1089#1083#1080' '#1085#1077' '#1093#1074#1072#1090#1072#1077#1090' '#1076#1077#1085#1077#1075' '#1085#1072' '#1088#1072#1089#1095#1077#1090#1085#1099#1081' '#1087#1077#1088#1080#1086#1076
+      Alignment = taLeftJustify
+      Anchors = [akTop, akRight]
+      Caption = #1053#1077' '#1076#1086#1087#1091#1089#1082#1072#1090#1100' '#1084#1080#1085#1091#1089
+      DataField = 'POSITIVE_ONLY'
+      DataSource = srcService
+      DynProps = <>
+      Flat = True
+      TabOrder = 2
+      Visible = False
+      ValueChecked = '1;True'
+      ValueUnchecked = '0;False'
+    end
   end
   object pnlAddToMin: TPanel
     Left = 0
-    Top = 349
+    Top = 359
     Width = 405
     Height = 10
     Align = alTop
@@ -645,23 +664,22 @@ object ServiceForm: TServiceForm
   end
   object pnlAUTO: TPanel
     Left = 0
-    Top = 181
+    Top = 205
     Width = 405
-    Height = 48
+    Height = 34
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 5
-    Visible = False
     object lbl5: TLabel
       Left = 8
-      Top = 26
+      Top = 9
       Width = 202
       Height = 13
       Caption = #1055#1088#1080#1086#1088#1080#1090#1077#1090' '#1091#1089#1083#1091#1075#1080' (0 - '#1074#1099#1096#1077', 99 - '#1085#1080#1078#1077')'
     end
     object edtPRIORITY: TDBNumberEditEh
       Left = 216
-      Top = 21
+      Top = 6
       Width = 48
       Height = 21
       Hint = #1055#1088#1080#1086#1088#1080#1090#1077#1090' '#1091#1089#1083#1091#1075#1080' (0 - '#1074#1099#1096#1077', 99 - '#1085#1080#1078#1077')'
@@ -672,24 +690,8 @@ object ServiceForm: TServiceForm
       EditButton.Visible = True
       EditButtons = <>
       MaxValue = 31.000000000000000000
-      TabOrder = 1
-      Visible = True
-    end
-    object chkPOSITIVE: TDBCheckBoxEh
-      Left = 8
-      Top = 0
-      Width = 255
-      Height = 17
-      Hint = #1054#1090#1082#1083#1102#1095#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1077#1089#1083#1080' '#1085#1077' '#1093#1074#1072#1090#1072#1077#1090' '#1076#1077#1085#1077#1075' '#1085#1072' '#1088#1072#1089#1095#1077#1090#1085#1099#1081' '#1087#1077#1088#1080#1086#1076
-      Alignment = taLeftJustify
-      Caption = #1053#1077' '#1076#1086#1087#1091#1089#1082#1072#1090#1100' '#1084#1080#1085#1091#1089
-      DataField = 'POSITIVE_ONLY'
-      DataSource = srcService
-      DynProps = <>
-      Flat = True
       TabOrder = 0
-      ValueChecked = '1;True'
-      ValueUnchecked = '0;False'
+      Visible = True
     end
   end
   object pnlBottom: TPanel
@@ -843,7 +845,7 @@ object ServiceForm: TServiceForm
       'read_committed')
     TPBMode = tpbDefault
     Left = 318
-    Top = 185
+    Top = 249
   end
   object trSRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -853,8 +855,8 @@ object ServiceForm: TServiceForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 365
-    Top = 183
+    Left = 349
+    Top = 247
   end
   object cnError: TCnErrorProvider
     DoubleBuffer = False

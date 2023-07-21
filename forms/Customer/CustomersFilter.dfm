@@ -4,7 +4,7 @@ object CustomersFilterForm: TCustomersFilterForm
   BorderIcons = [biSystemMenu]
   Caption = #1060#1080#1083#1100#1090#1088' '#1089#1087#1080#1089#1082#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
   ClientHeight = 504
-  ClientWidth = 632
+  ClientWidth = 617
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,41 +25,53 @@ object CustomersFilterForm: TCustomersFilterForm
   object Panel1: TPanel
     Left = 0
     Top = 468
-    Width = 632
+    Width = 617
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      632
+      617
       36)
     object SpeedButton1: TSpeedButton
-      Left = 6
+      Left = 2
       Top = 2
-      Width = 80
+      Width = 68
       Height = 30
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      Flat = True
       OnClick = SpeedButton1Click
     end
     object SpeedButton2: TSpeedButton
-      Left = 89
+      Left = 90
       Top = 2
-      Width = 80
+      Width = 65
       Height = 30
-      Hint = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
+      Hint = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1080#1079' '#1092#1072#1081#1083#1072
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
-      Flat = True
       OnClick = SpeedButton2Click
     end
     object btnClear: TSpeedButton
-      Left = 172
+      Left = 182
       Top = 2
-      Width = 80
+      Width = 66
       Height = 30
+      Hint = #1054#1095#1080#1089#1090#1080#1090#1100' '#1086#1082#1085#1086' '#1092#1080#1083#1100#1090#1088#1072
       Action = actClear
-      Flat = True
+    end
+    object btnDBLoad: TSpeedButton
+      Left = 153
+      Top = 2
+      Width = 20
+      Height = 30
+      Action = actLoadFromDb
+    end
+    object btnDBSave: TSpeedButton
+      Left = 68
+      Top = 2
+      Width = 20
+      Height = 30
+      Action = actSaveToDb
     end
     object chkDefaultFilter: TCheckBox
       Left = 255
@@ -71,7 +83,7 @@ object CustomersFilterForm: TCustomersFilterForm
       TabOrder = 2
     end
     object bbCancel: TBitBtn
-      Left = 548
+      Left = 533
       Top = 2
       Width = 75
       Height = 30
@@ -82,7 +94,7 @@ object CustomersFilterForm: TCustomersFilterForm
       TabOrder = 1
     end
     object bbOk: TBitBtn
-      Left = 411
+      Left = 396
       Top = 2
       Width = 131
       Height = 30
@@ -97,24 +109,24 @@ object CustomersFilterForm: TCustomersFilterForm
   object pgcFilter: TPageControl
     Left = 0
     Top = 0
-    Width = 632
+    Width = 617
     Height = 428
     ActivePage = tsFilter
     Align = alClient
     TabOrder = 0
     OnChange = pgcFilterChange
     object tsFilter: TTabSheet
-      Caption = #1054#1089#1085#1086#1074#1085#1086#1081' '#1092#1080#1083#1100#1090#1088
+      Caption = '1. '#1054#1089#1085#1086#1074#1085#1086#1081' '#1092#1080#1083#1100#1090#1088
       object pnl1: TPanel
         Left = 0
         Top = 0
-        Width = 624
+        Width = 609
         Height = 400
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          624
+          609
           400)
         object Label19: TLabel
           Left = 8
@@ -133,13 +145,13 @@ object CustomersFilterForm: TCustomersFilterForm
         object grpSrvState: TGroupBox
           Left = 2
           Top = 283
-          Width = 617
+          Width = 602
           Height = 111
           Anchors = [akLeft, akTop, akRight]
           Caption = #1057#1086#1089#1090#1086#1103#1085#1080#1077' '#1091#1089#1083#1091#1075' '#1080#1083#1080' '#1075#1088#1091#1087#1087' '#1091#1089#1083#1091#1075
           TabOrder = 6
           DesignSize = (
-            617
+            602
             111)
           object Label8: TLabel
             Left = 425
@@ -190,7 +202,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object lcbSERVICE: TDBLookupComboboxEh
             Left = 75
             Top = 49
-            Width = 532
+            Width = 517
             Height = 21
             Hint = '- '#1077#1089#1083#1080' '#1085#1077' '#1091#1082#1072#1079#1072#1090#1100', '#1090#1086' '#1091#1095#1080#1090#1099#1074#1072#1102#1090#1089#1103' '#1074#1089#1077' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
             Anchors = [akLeft, akTop, akRight]
@@ -216,7 +228,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object DBComboBoxEh1: TDBComboBoxEh
             Left = 75
             Top = 19
-            Width = 532
+            Width = 517
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DataField = 'STATE_1'
@@ -258,7 +270,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object cbbSrvTypes: TDBLookupComboboxEh
             Left = 75
             Top = 80
-            Width = 532
+            Width = 517
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
@@ -278,7 +290,7 @@ object CustomersFilterForm: TCustomersFilterForm
         object grpDolg: TGroupBox
           Left = 2
           Top = 191
-          Width = 617
+          Width = 602
           Height = 86
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 5
@@ -425,12 +437,12 @@ object CustomersFilterForm: TCustomersFilterForm
         object grpAddress: TGroupBox
           Left = 2
           Top = 47
-          Width = 617
+          Width = 602
           Height = 133
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
           DesignSize = (
-            617
+            602
             133)
           object Label1: TLabel
             Left = 6
@@ -598,7 +610,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object DBLookupComboBox2: TDBLookupComboboxEh
             Left = 338
             Top = 49
-            Width = 269
+            Width = 254
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
@@ -633,7 +645,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object DBEditEh1: TDBEditEh
             Left = 499
             Top = 22
-            Width = 108
+            Width = 93
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DataField = 'FLAT_NO'
@@ -703,7 +715,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object cbb2: TDBLookupComboboxEh
             Left = 338
             Top = 103
-            Width = 269
+            Width = 254
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
@@ -735,7 +747,7 @@ object CustomersFilterForm: TCustomersFilterForm
           object cbbMH: TDBLookupComboboxEh
             Left = 338
             Top = 76
-            Width = 269
+            Width = 254
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
@@ -771,7 +783,7 @@ object CustomersFilterForm: TCustomersFilterForm
         object dbACCOUNT: TDBEditEh
           Left = 288
           Top = 12
-          Width = 331
+          Width = 316
           Height = 21
           Hint = 
             #1074#1086#1079#1084#1086#1078#1085#1086' '#1079#1072#1076#1072#1074#1072#1090#1100' '#1096#1072#1073#1083#1086#1085' '#1087#1086#1080#1089#1082#1072' '#1095#1077#1088#1077#1079' '#1089#1080#1084#1074#1086#1083' %'#13#10#1085#1072#1087#1088#1080#1084#1077#1088' 2% - '#1074#1099 +
@@ -858,10 +870,10 @@ object CustomersFilterForm: TCustomersFilterForm
       end
     end
     object tsExtend: TTabSheet
-      Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1092#1080#1083#1100#1090#1088
+      Caption = '2. '#1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1092#1080#1083#1100#1090#1088
       ImageIndex = 3
       DesignSize = (
-        624
+        609
         400)
       object Label11: TLabel
         Left = 12
@@ -908,7 +920,7 @@ object CustomersFilterForm: TCustomersFilterForm
       object EDTAttrValue: TDBEditEh
         Left = 12
         Top = 180
-        Width = 387
+        Width = 372
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'ATTRIB_VALUE'
@@ -923,7 +935,7 @@ object CustomersFilterForm: TCustomersFilterForm
       object cbAttribute: TDBLookupComboboxEh
         Left = 126
         Top = 153
-        Width = 273
+        Width = 258
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -1013,7 +1025,7 @@ object CustomersFilterForm: TCustomersFilterForm
         ValueUnchecked = '0'
       end
       object grpDogovor: TGroupBox
-        Left = 415
+        Left = 400
         Top = 144
         Width = 204
         Height = 67
@@ -1049,12 +1061,12 @@ object CustomersFilterForm: TCustomersFilterForm
       object grpAddon: TGroupBox
         Left = 2
         Top = 253
-        Width = 617
+        Width = 602
         Height = 147
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 19
         DesignSize = (
-          617
+          602
           147)
         object Label4: TLabel
           Left = 10
@@ -1092,7 +1104,7 @@ object CustomersFilterForm: TCustomersFilterForm
           Caption = #1056#1072#1079#1086#1074#1072#1103' '#1091#1089#1083#1091#1075#1072
         end
         object DBCheckBox19: TDBCheckBoxEh
-          Left = 413
+          Left = 398
           Top = 19
           Width = 33
           Height = 21
@@ -1106,7 +1118,7 @@ object CustomersFilterForm: TCustomersFilterForm
           ValueUnchecked = '0'
         end
         object DBCheckBox25: TDBCheckBoxEh
-          Left = 447
+          Left = 432
           Top = 19
           Width = 153
           Height = 21
@@ -1120,7 +1132,7 @@ object CustomersFilterForm: TCustomersFilterForm
           ValueUnchecked = '0'
         end
         object DBLookupComboboxEh2: TDBLookupComboboxEh
-          Left = 413
+          Left = 398
           Top = 43
           Width = 195
           Height = 21
@@ -1140,7 +1152,7 @@ object CustomersFilterForm: TCustomersFilterForm
           Visible = True
         end
         object DBCheckBox6: TDBCheckBoxEh
-          Left = 413
+          Left = 398
           Top = 68
           Width = 129
           Height = 20
@@ -1170,7 +1182,7 @@ object CustomersFilterForm: TCustomersFilterForm
         object DBDateTimeEditEh2: TDBDateTimeEditEh
           Left = 235
           Top = 19
-          Width = 162
+          Width = 147
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DataField = 'DATE_TO'
@@ -1185,7 +1197,7 @@ object CustomersFilterForm: TCustomersFilterForm
         object DBComboBoxEh2: TDBComboBoxEh
           Left = 93
           Top = 43
-          Width = 304
+          Width = 289
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DataField = 'ACT_SGN'
@@ -1214,7 +1226,7 @@ object CustomersFilterForm: TCustomersFilterForm
         object DBComboBoxEh4: TDBComboBoxEh
           Left = 93
           Top = 94
-          Width = 304
+          Width = 289
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DataField = 'PAY_SGN'
@@ -1237,13 +1249,15 @@ object CustomersFilterForm: TCustomersFilterForm
         object cbb3: TDBLookupComboboxEh
           Left = 93
           Top = 67
-          Width = 304
+          Width = 289
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DynProps = <>
           DataField = 'single_id'
           DataSource = srcFilter
           DropDownBox.ListSource = srcSingleServ
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1050#1072#1082#1072#1103' '#1088#1072#1079#1086#1074#1072#1103' '#1091#1089#1083#1091#1075#1072' '#1073#1099#1083#1072' '#1079#1072' '#1087#1077#1088#1080#1086#1076
@@ -1255,10 +1269,11 @@ object CustomersFilterForm: TCustomersFilterForm
           Style = csDropDownEh
           TabOrder = 6
           Visible = True
+          OnClick = DBLookupComboboxClick
           OnEnter = cbb3Enter
         end
         object chkMESSGS_NOT_SEND: TDBCheckBoxEh
-          Left = 413
+          Left = 398
           Top = 92
           Width = 33
           Height = 21
@@ -1272,7 +1287,7 @@ object CustomersFilterForm: TCustomersFilterForm
           ValueUnchecked = '0'
         end
         object chkMESSGS_SEND: TDBCheckBoxEh
-          Left = 447
+          Left = 432
           Top = 92
           Width = 153
           Height = 21
@@ -1313,7 +1328,7 @@ object CustomersFilterForm: TCustomersFilterForm
           ValueUnchecked = '0'
         end
         object cbFEE: TDBComboBoxEh
-          Left = 413
+          Left = 398
           Top = 120
           Width = 195
           Height = 21
@@ -1335,7 +1350,7 @@ object CustomersFilterForm: TCustomersFilterForm
         end
       end
       object chkbDogovor: TDBCheckBoxEh
-        Left = 415
+        Left = 400
         Top = 136
         Width = 186
         Height = 17
@@ -1364,7 +1379,7 @@ object CustomersFilterForm: TCustomersFilterForm
       object edtDiscDate: TDBDateTimeEditEh
         Left = 300
         Top = 12
-        Width = 310
+        Width = 295
         Height = 21
         Hint = #1045#1089#1083#1080' '#1091#1082#1072#1079#1072#1090#1100' '#1076#1072#1090#1091', '#1090#1086' '#1074#1099#1073#1086#1088#1082#1072' '#1090#1086#1083#1100#1082#1086' '#1076#1083#1103' '#1101#1090#1086#1081' '#1076#1072#1090#1099', '#1080#1085#1072#1095#1077' '#1074#1089#1077
         Anchors = [akLeft, akTop, akRight]
@@ -1380,7 +1395,7 @@ object CustomersFilterForm: TCustomersFilterForm
       object edtPersDate: TDBDateTimeEditEh
         Left = 300
         Top = 34
-        Width = 310
+        Width = 295
         Height = 21
         Hint = #1045#1089#1083#1080' '#1091#1082#1072#1079#1072#1090#1100' '#1076#1072#1090#1091', '#1090#1086' '#1074#1099#1073#1086#1088#1082#1072' '#1090#1086#1083#1100#1082#1086' '#1076#1083#1103' '#1101#1090#1086#1081' '#1076#1072#1090#1099', '#1080#1085#1072#1095#1077' '#1074#1089#1077
         Anchors = [akLeft, akTop, akRight]
@@ -1450,7 +1465,7 @@ object CustomersFilterForm: TCustomersFilterForm
       object cbbFileType: TDBLookupComboboxEh
         Left = 12
         Top = 222
-        Width = 387
+        Width = 372
         Height = 21
         Hint = #1045#1089#1083#1080' '#1076#1072#1085#1085#1099#1081' '#1090#1080#1087' '#1092#1072#1081#1083#1086#1074' '#1077#1089#1090#1100' '#1091' '#1072#1073#1086#1085#1077#1085#1090#1072
         Anchors = [akLeft, akTop, akRight]
@@ -1526,7 +1541,7 @@ object CustomersFilterForm: TCustomersFilterForm
         ValueUnchecked = '0'
       end
       object chkDebtLow: TDBCheckBoxEh
-        Left = 415
+        Left = 400
         Top = 224
         Width = 204
         Height = 18
@@ -1541,12 +1556,12 @@ object CustomersFilterForm: TCustomersFilterForm
       end
     end
     object tsList: TTabSheet
-      Caption = ' '#1060#1080#1083#1100#1090#1088' '#1087#1086' '#1089#1087#1080#1089#1082#1091' '#1079#1085#1072#1095#1077#1085#1080#1081
+      Caption = '3. '#1060#1080#1083#1100#1090#1088' '#1087#1086' '#1089#1087#1080#1089#1082#1091' '#1079#1085#1072#1095#1077#1085#1080#1081
       ImageIndex = 1
       object dbmAcounts: TDBMemoEh
         Left = 0
         Top = 34
-        Width = 624
+        Width = 609
         Height = 366
         ScrollBars = ssVertical
         Align = alClient
@@ -1566,13 +1581,13 @@ object CustomersFilterForm: TCustomersFilterForm
       object pnlTopList: TPanel
         Left = 0
         Top = 0
-        Width = 624
+        Width = 609
         Height = 34
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
-          624
+          609
           34)
         object lbl13: TLabel
           Left = 7
@@ -1584,7 +1599,7 @@ object CustomersFilterForm: TCustomersFilterForm
         object cbbListType: TDBComboBoxEh
           Left = 85
           Top = 7
-          Width = 531
+          Width = 516
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DataField = 'ListType'
@@ -1601,6 +1616,7 @@ object CustomersFilterForm: TCustomersFilterForm
             'MAC '#1072#1076#1088#1077#1089
             #1048#1053#1053'/'#1059#1053#1055' '#1070#1088'. '#1083#1080#1094#1072
             #1057#1087#1080#1089#1086#1082' '#1082#1074#1072#1088#1090#1080#1088
+            #1044#1086#1075#1086#1074#1086#1088
             'Customer_id')
           KeyItems.Strings = (
             '0'
@@ -1611,6 +1627,7 @@ object CustomersFilterForm: TCustomersFilterForm
             '5'
             '7'
             '8'
+            '9'
             '4')
           ShowHint = True
           TabOrder = 0
@@ -1619,12 +1636,12 @@ object CustomersFilterForm: TCustomersFilterForm
       end
     end
     object tsSQL: TTabSheet
-      Caption = 'SQL '#1092#1080#1083#1100#1090#1088
+      Caption = '4. SQL '#1092#1080#1083#1100#1090#1088
       ImageIndex = 2
       object lbl2: TLabel
         Left = 0
         Top = 0
-        Width = 624
+        Width = 609
         Height = 13
         Align = alTop
         Caption = #1055#1086#1079#1074#1086#1083#1103#1077#1090' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1079#1072#1087#1088#1086#1089' SQL '#1076#1083#1103' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' '#1089#1083#1086#1078#1085#1099#1093' '#1092#1080#1083#1100#1090#1088#1086#1074
@@ -1633,8 +1650,11 @@ object CustomersFilterForm: TCustomersFilterForm
       object memSQL: TDBSynEdit
         Left = 0
         Top = 13
-        Width = 624
+        Width = 609
         Height = 387
+        Hint = 
+          #1044#1086#1083#1078#1085#1086' '#1074#1099#1076#1074#1072#1074#1090#1100' '#1089#1087#1080#1089#1086#1082' CUSTOMER_ID, '#1082#1086#1090#1086#1088#1099#1081' '#1074' '#1076#1072#1083#1100#1085#1077#1081#1096#1077#1084' '#1087#1077#1088#1077#1076#1072#1077 +
+          #1090#1089#1103' '#1074' exists '
         DataField = 'SQL_FLTR'
         DataSource = srcFilter
         Align = alClient
@@ -1661,14 +1681,14 @@ object CustomersFilterForm: TCustomersFilterForm
   object pnlFilter: TPanel
     Left = 0
     Top = 428
-    Width = 632
+    Width = 617
     Height = 40
     Align = alBottom
     BevelInner = bvRaised
     BevelOuter = bvLowered
     TabOrder = 1
     DesignSize = (
-      632
+      617
       40)
     object lblFnew: TLabel
       Left = 237
@@ -1698,10 +1718,11 @@ object CustomersFilterForm: TCustomersFilterForm
       ParentFont = False
     end
     object dbnvgr: TDBNavigator
-      Left = 468
+      Left = 453
       Top = 8
       Width = 155
       Height = 25
+      Hint = #1055#1077#1088#1077#1093#1086#1076' '#1087#1086' '#1091#1089#1083#1086#1074#1080#1103'. '#1090#1072#1082#1078#1077' '#1088#1072#1073#1086#1090#1072#1077#1090' Ctrl + < > Home End'
       DataSource = srcFilter
       VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbDelete]
       Anchors = [akTop, akRight]
@@ -1727,7 +1748,7 @@ object CustomersFilterForm: TCustomersFilterForm
       Top = 8
       Width = 38
       Height = 25
-      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1091#1089#1083#1086#1074#1080#1077' '#1048' ( '#1076#1086#1087#1086#1083#1085#1103#1102#1097#1077#1077' '#1090#1077#1082#1091#1097#1077#1077' )'
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1091#1089#1083#1086#1074#1080#1077' '#1048' ( '#1076#1086#1087#1086#1083#1085#1103#1102#1097#1077#1077' '#1090#1077#1082#1091#1097#1077#1077' ) Ctrl+'#1048
       Caption = #1048
       TabOrder = 2
       OnClick = btnANDClick
@@ -1737,7 +1758,7 @@ object CustomersFilterForm: TCustomersFilterForm
       Top = 8
       Width = 39
       Height = 25
-      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1091#1089#1083#1086#1074#1080#1077' '#1048#1051#1048' ('#1090#1077#1082#1091#1097#1077#1077' '#1048#1051#1048' '#1085#1086#1074#1086#1077' '#1091#1089#1083#1086#1074#1080#1077')'
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1091#1089#1083#1086#1074#1080#1077' '#1048#1051#1048' ('#1090#1077#1082#1091#1097#1077#1077' '#1048#1051#1048' '#1085#1086#1074#1086#1077' '#1091#1089#1083#1086#1074#1080#1077') Ctrl+'#1051
       Caption = #1048#1051#1048
       TabOrder = 0
       OnClick = btnORClick
@@ -2104,6 +2125,18 @@ object CustomersFilterForm: TCustomersFilterForm
         'Ctrl+'#1065)
       ShortCut = 16458
       OnExecute = actClearExecute
+    end
+    object actSaveToDb: TAction
+      Caption = 'S'
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1074' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
+      ShortCut = 16467
+      OnExecute = actSaveToDbExecute
+    end
+    object actLoadFromDb: TAction
+      Caption = 'L'
+      Hint = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1080#1079' '#1073#1072#1079#1099' '#1076#1072#1085#1085#1099#1093
+      ShortCut = 16460
+      OnExecute = actLoadFromDbExecute
     end
   end
   object dsFileType: TpFIBDataSet

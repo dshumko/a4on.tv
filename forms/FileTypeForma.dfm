@@ -2,19 +2,22 @@ inherited FileTypeForm: TFileTypeForm
   Left = 381
   Top = 171
   Caption = #1058#1080#1087#1099' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1080#1093' '#1092#1072#1081#1083#1086#1074
-  ClientHeight = 394
-  ClientWidth = 585
-  OnCreate = FormCreate
+  ClientHeight = 481
+  ClientWidth = 764
+  ExplicitWidth = 780
+  ExplicitHeight = 520
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Top = 225
-    Width = 585
+    Top = 305
+    Width = 764
+    ExplicitTop = 225
+    ExplicitWidth = 585
   end
   inherited dbGrid: TDBGridEh
-    Top = 228
-    Width = 585
-    Height = 166
+    Top = 308
+    Width = 764
+    Height = 173
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item
@@ -48,7 +51,8 @@ inherited FileTypeForm: TFileTypeForm
       end>
   end
   inherited tlbMain: TToolBar
-    Width = 585
+    Width = 764
+    ExplicitWidth = 786
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -63,58 +67,243 @@ inherited FileTypeForm: TFileTypeForm
     end
   end
   inherited pnlEdit: TPanel
-    Width = 585
-    Height = 200
+    Width = 764
+    Height = 280
     ParentCtl3D = False
-    object lbl2: TLabel [0]
-      Left = 5
-      Top = 10
-      Width = 18
-      Height = 13
-      Caption = #1058#1080#1087
-    end
-    object lbl1: TLabel [1]
-      Left = 5
-      Top = 43
-      Width = 64
-      Height = 52
-      Caption = #1044#1077#1081#1089#1090#1074#1080#1103#13#10#1087#1086#1089#1083#1077' '#13#10#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103' '#13#10#1092#1072#1081#1083#1072
-      ShowAccelChar = False
-      WordWrap = True
-    end
+    ExplicitWidth = 786
+    ExplicitHeight = 280
+    DesignSize = (
+      764
+      280)
     inherited btnSaveLink: TBitBtn
-      Left = 72
-      Top = 168
-      Width = 400
-      TabOrder = 2
+      Left = 28
+      Top = 253
+      Width = 623
+      TabOrder = 12
+      ExplicitLeft = 28
+      ExplicitTop = 253
+      ExplicitWidth = 645
     end
     inherited btnCancelLink: TBitBtn
-      Left = 480
-      Top = 168
+      Left = 659
+      Top = 253
       Width = 98
       Cancel = True
-      TabOrder = 3
+      TabOrder = 13
+      ExplicitLeft = 681
+      ExplicitTop = 253
+      ExplicitWidth = 98
     end
-    object edtName: TDBEditEh
-      Left = 72
-      Top = 7
-      Width = 506
+    object gb1: TGroupBox
+      Left = 0
+      Top = 29
+      Width = 764
+      Height = 96
+      Align = alTop
+      Caption = #1044#1077#1081#1089#1090#1074#1080#1103' '#1087#1086#1089#1083#1077' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103' '#1092#1072#1081#1083#1072
+      TabOrder = 1
+      ExplicitWidth = 786
+      DesignSize = (
+        764
+        96)
+      object lbl1: TLabel
+        Left = 8
+        Top = 72
+        Width = 134
+        Height = 13
+        Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1088#1072#1079#1086#1074#1091#1102' '#1091#1089#1083#1091#1075#1091
+      end
+      object lcbRequest: TDBLookupComboboxEh
+        Left = 5
+        Top = 43
+        Width = 273
+        Height = 21
+        Hint = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
+        DynProps = <>
+        DataField = ''
+        EmptyDataInfo.Text = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
+        EditButtons = <>
+        KeyField = 'RT_ID'
+        ListField = 'RT_NAME'
+        ListSource = srcReqType
+        ShowHint = True
+        TabOrder = 3
+        Visible = True
+      end
+      object lcbTempl: TDBLookupComboboxEh
+        Left = 284
+        Top = 43
+        Width = 328
+        Height = 21
+        Hint = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = ''
+        EmptyDataInfo.Text = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+        EditButtons = <>
+        KeyField = 'RQTL_ID'
+        ListField = 'NAME'
+        ListSource = srcReqTempl
+        ShowHint = True
+        TabOrder = 4
+        Visible = True
+        ExplicitWidth = 350
+      end
+      object chkOpenInet: TDBCheckBoxEh
+        Left = 616
+        Top = 45
+        Width = 146
+        Height = 17
+        Hint = #1054#1090#1082#1088#1099#1090#1100' '#1087#1072#1088#1072#1084#1077#1090#1088#1099' '#1080#1085#1090#1077#1088#1085#1077#1090' '#1087#1086#1089#1083#1077' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103' '#1092#1072#1081#1083#1072
+        Anchors = [akTop, akRight]
+        Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1082#1085#1086' '#1048#1085#1090#1077#1088#1085#1077#1090
+        DynProps = <>
+        TabOrder = 5
+        ExplicitLeft = 638
+      end
+      object lcbOnOffSrv: TDBLookupComboboxEh
+        Left = 336
+        Top = 18
+        Width = 421
+        Height = 21
+        Hint = #1063#1077#1084' '#1074#1082#1083'/'#1086#1090#1082#1083#1102#1095#1072#1077#1084' '#1091#1089#1083#1091#1075#1091
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = ''
+        EmptyDataInfo.Text = #1063#1077#1084' '#1074#1082#1083'/'#1086#1090#1082#1083#1102#1095#1072#1077#1084' '#1091#1089#1083#1091#1075#1091
+        EditButtons = <>
+        KeyField = 'SERVICE_ID'
+        ListField = 'NAME'
+        ListSource = srcOnOffSrv
+        ShowHint = True
+        TabOrder = 2
+        Visible = True
+        ExplicitWidth = 443
+      end
+      object lcbSrvType: TDBLookupComboboxEh
+        Left = 196
+        Top = 18
+        Width = 135
+        Height = 21
+        Hint = #1058#1080#1087' '#1091#1089#1083#1091#1075
+        DynProps = <>
+        DataField = ''
+        EmptyDataInfo.Text = #1058#1080#1087' '#1091#1089#1083#1091#1075
+        EditButtons = <>
+        KeyField = 'O_ID'
+        ListField = 'O_NAME'
+        ListSource = srcSrvType
+        ShowHint = True
+        TabOrder = 1
+        Visible = True
+      end
+      object cbOnOff: TDBComboBoxEh
+        Left = 5
+        Top = 18
+        Width = 185
+        Height = 21
+        Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1080#1083#1080' '#1086#1090#1082#1083#1102#1095#1080#1090#1100' '#1091#1089#1083#1091#1075#1091
+        DynProps = <>
+        EmptyDataInfo.Text = #1042#1082#1083'/'#1086#1090#1082#1083'. '#1091#1089#1083#1091#1075#1091
+        EditButtons = <>
+        Items.Strings = (
+          ''
+          #1042#1082#1083#1102#1095#1080#1090#1100
+          #1054#1090#1082#1083#1102#1095#1080#1090#1100)
+        KeyItems.Strings = (
+          '-1'
+          '1'
+          '0')
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+      end
+      object lcbSingleSrv: TDBLookupComboboxEh
+        Left = 155
+        Top = 69
+        Width = 602
+        Height = 21
+        Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1088#1072#1079#1086#1074#1091#1102' '#1091#1089#1083#1091#1075#1091
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = ''
+        DropDownBox.Columns = <
+          item
+            FieldName = 'NAME'
+            Width = 60
+          end
+          item
+            FieldName = 'DESCRIPTION'
+            Width = 40
+          end>
+        DropDownBox.ListSource = srcSingleSrv
+        DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1044#1086#1073#1072#1074#1080#1090#1100' '#1088#1072#1079#1086#1074#1091#1102' '#1091#1089#1083#1091#1075#1091
+        EditButtons = <>
+        KeyField = 'SERVICE_ID'
+        ListField = 'NAME'
+        ListSource = srcSingleSrv
+        ShowHint = True
+        TabOrder = 6
+        Visible = True
+        ExplicitWidth = 624
+      end
+    end
+    object pnlTop: TPanel
+      Left = 0
+      Top = 0
+      Width = 764
+      Height = 29
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 0
+      ExplicitWidth = 786
+      DesignSize = (
+        764
+        29)
+      object lbl2: TLabel
+        Left = 5
+        Top = 8
+        Width = 18
+        Height = 13
+        Caption = #1058#1080#1087
+      end
+      object edtName: TDBEditEh
+        Left = 28
+        Top = 5
+        Width = 729
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DataField = 'O_NAME'
+        DataSource = srcDataSource
+        DynProps = <>
+        EditButtons = <>
+        EmptyDataInfo.Text = #1058#1080#1087' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+        ExplicitWidth = 751
+      end
+    end
+    object edtNameFmt: TDBEditEh
+      Left = 5
+      Top = 226
+      Width = 374
       Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'O_NAME'
-      DataSource = srcDataSource
+      Anchors = [akLeft, akRight, akBottom]
       DynProps = <>
       EditButtons = <>
-      EmptyDataInfo.Text = #1058#1080#1087' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
+      EmptyDataInfo.Text = #1064#1072#1073#1083#1086#1085' '#1085#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1103' '#1092#1072#1081#1083#1072'. '#1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1082#1072#1082' '#1074' '#1086#1087#1080#1089#1072#1085#1080#1080' '#1090#1080#1087#1072
       ShowHint = True
-      TabOrder = 0
+      TabOrder = 11
       Visible = True
+      ExplicitWidth = 396
     end
-    object dbmmoO_DESCRIPTION: TDBMemoEh
+    object mmoNOTICE: TDBMemoEh
       Left = 5
-      Top = 113
-      Width = 573
-      Height = 51
+      Top = 128
+      Width = 374
+      Height = 92
       ScrollBars = ssVertical
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -125,106 +314,120 @@ inherited FileTypeForm: TFileTypeForm
       EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077' '#1090#1080#1087#1072
       PopupMenu = pmMemo
       ShowHint = True
-      TabOrder = 1
+      TabOrder = 2
       Visible = True
       WantReturns = True
+      ExplicitWidth = 396
     end
-    object lcbSrvType: TDBLookupComboboxEh
-      Left = 208
-      Top = 35
-      Width = 121
-      Height = 21
-      Hint = #1058#1080#1087' '#1091#1089#1083#1091#1075
-      DynProps = <>
-      DataField = ''
-      EmptyDataInfo.Text = #1058#1080#1087' '#1091#1089#1083#1091#1075
-      EditButtons = <>
-      KeyField = 'O_ID'
-      ListField = 'O_NAME'
-      ListSource = srcSrvType
-      ShowHint = True
-      TabOrder = 4
-      Visible = True
-    end
-    object lcbOnOffSrv: TDBLookupComboboxEh
-      Left = 344
-      Top = 35
-      Width = 234
-      Height = 21
-      Hint = #1063#1077#1084' '#1074#1082#1083'/'#1086#1090#1082#1083#1102#1095#1072#1077#1084' '#1091#1089#1083#1091#1075#1091
-      Anchors = [akLeft, akTop, akRight]
-      DynProps = <>
-      DataField = ''
-      EmptyDataInfo.Text = #1063#1077#1084' '#1074#1082#1083'/'#1086#1090#1082#1083#1102#1095#1072#1077#1084' '#1091#1089#1083#1091#1075#1091
-      EditButtons = <>
-      KeyField = 'SERVICE_ID'
-      ListField = 'NAME'
-      ListSource = srcOnOffSrv
-      ShowHint = True
-      TabOrder = 5
-      Visible = True
-    end
-    object cbOnOff: TDBComboBoxEh
-      Left = 72
-      Top = 35
-      Width = 121
-      Height = 21
-      Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1080#1083#1080' '#1086#1090#1082#1083#1102#1095#1080#1090#1100' '#1091#1089#1083#1091#1075#1091
-      DynProps = <>
-      EmptyDataInfo.Text = #1042#1082#1083'/'#1086#1090#1082#1083'. '#1091#1089#1083#1091#1075#1091
-      EditButtons = <>
-      Items.Strings = (
-        ''
-        #1042#1082#1083#1102#1095#1080#1090#1100
-        #1054#1090#1082#1083#1102#1095#1080#1090#1100)
-      KeyItems.Strings = (
-        '-1'
-        '1'
-        '0')
-      ShowHint = True
-      TabOrder = 6
-      Visible = True
-    end
-    object lcbRequest: TDBLookupComboboxEh
-      Left = 72
-      Top = 64
-      Width = 257
-      Height = 21
-      DynProps = <>
-      DataField = ''
-      EmptyDataInfo.Text = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
-      EditButtons = <>
-      KeyField = 'RT_ID'
-      ListField = 'RT_NAME'
-      ListSource = srcReqType
-      ShowHint = True
-      TabOrder = 7
-      Visible = True
-    end
-    object chkOpenInet: TDBCheckBoxEh
-      Left = 72
-      Top = 91
-      Width = 153
+    object chkMemoRO: TDBCheckBoxEh
+      Left = 385
+      Top = 203
+      Width = 204
       Height = 17
-      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1082#1085#1086' '#1048#1085#1090#1077#1088#1085#1077#1090
+      Hint = #1047#1072#1087#1088#1077#1090' '#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      Anchors = [akTop, akRight]
+      Caption = #1047#1072#1087#1088#1077#1090' '#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1103
+      DynProps = <>
+      TabOrder = 10
+      ExplicitLeft = 407
+    end
+    object chkText: TDBCheckBoxEh
+      Left = 385
+      Top = 179
+      Width = 204
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = #1042#1074#1086#1076' '#1089#1090#1088#1086#1082#1080' '#1076#1086#1087'. '#1090#1077#1082#1089#1090#1072
+      DynProps = <>
+      TabOrder = 9
+      OnClick = chkPassportClick
+      ExplicitLeft = 407
+    end
+    object chkMobilePhone: TDBCheckBoxEh
+      Left = 385
+      Top = 162
+      Width = 204
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = #1042#1074#1086#1076' '#1084#1086#1073#1080#1083#1100#1085#1086#1075#1086
+      DynProps = <>
+      TabOrder = 7
+      ExplicitLeft = 407
+    end
+    object chkCustomerCard: TDBCheckBoxEh
+      Left = 385
+      Top = 145
+      Width = 204
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = #1042#1074#1086#1076' '#1076#1072#1085#1085#1099#1093' '#1087#1072#1089#1087#1086#1088#1090#1072
+      DynProps = <>
+      TabOrder = 5
+      OnClick = chkCustomerCardClick
+      ExplicitLeft = 407
+    end
+    object chkPassport: TDBCheckBoxEh
+      Left = 385
+      Top = 129
+      Width = 204
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = #1042#1074#1086#1076' '#8470' '#1087#1072#1089#1087#1086#1088#1090#1072
+      DynProps = <>
+      TabOrder = 3
+      OnClick = chkPassportClick
+      ExplicitLeft = 407
+    end
+    object chkAddress: TDBCheckBoxEh
+      Left = 604
+      Top = 162
+      Width = 160
+      Height = 17
+      Hint = #1042#1099#1073#1086#1088' '#1072#1076#1088#1077#1089#1072
+      Anchors = [akTop, akRight]
+      Caption = #1042#1099#1073#1086#1088' '#1072#1076#1088#1077#1089#1072
       DynProps = <>
       TabOrder = 8
+      OnClick = chkCustomerCardClick
+      ExplicitLeft = 626
     end
-    object lcbTempl: TDBLookupComboboxEh
-      Left = 344
-      Top = 64
-      Width = 234
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
+    object chkPaySum: TDBCheckBoxEh
+      Left = 604
+      Top = 145
+      Width = 160
+      Height = 17
+      Hint = #1042#1074#1086#1076' '#1089#1091#1084#1084' '#1087#1086' '#1079#1072#1103#1074#1082#1077' '#1080#1083#1080' '#1091#1089#1083#1091#1075#1077
+      Anchors = [akTop, akRight]
+      Caption = #1042#1074#1086#1076' '#1089#1091#1084#1084
       DynProps = <>
-      DataField = ''
-      EmptyDataInfo.Text = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+      TabOrder = 6
+      OnClick = chkCustomerCardClick
+      ExplicitLeft = 626
+    end
+    object chkBid: TDBCheckBoxEh
+      Left = 604
+      Top = 129
+      Width = 160
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = #1042#1074#1086#1076' '#8470' '#1079#1072#1074#1082#1080
+      DynProps = <>
+      TabOrder = 4
+      OnClick = chkPassportClick
+      ExplicitLeft = 626
+    end
+    object edtHint: TDBEditEh
+      Left = 385
+      Top = 226
+      Width = 372
+      Height = 21
+      Hint = #1055#1086#1076#1089#1082#1072#1079#1082#1072' '#1074' '#1089#1090#1088#1086#1082#1077' '#1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1077#1082#1089#1090
+      Anchors = [akTop, akRight]
+      DynProps = <>
       EditButtons = <>
-      KeyField = 'RQTL_ID'
-      ListField = 'NAME'
-      ListSource = srcReqTempl
+      EmptyDataInfo.Text = #1055#1086#1076#1089#1082#1072#1079#1082#1072' '#1074' '#1089#1090#1088#1086#1082#1077' '#1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1077#1082#1089#1090
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 14
       Visible = True
     end
   end
@@ -399,7 +602,30 @@ inherited FileTypeForm: TFileTypeForm
   object srcReqTempl: TDataSource
     AutoEdit = False
     DataSet = dsReqTempl
-    Left = 328
+    Left = 320
     Top = 352
+  end
+  object srcSingleSrv: TDataSource
+    AutoEdit = False
+    DataSet = dsSingleSrv
+    OnDataChange = srcDataSourceDataChange
+    Left = 568
+    Top = 352
+  end
+  object dsSingleSrv: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    s.Service_Id'
+      '  , s.Name'
+      '  , s.Description'
+      '  from services s'
+      '  where s.Srv_Type_Id in (1,2)'
+      'order by s.Name')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    DataSource = srcSrvType
+    Left = 568
+    Top = 336
   end
 end

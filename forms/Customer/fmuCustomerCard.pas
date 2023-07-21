@@ -62,7 +62,7 @@ begin
           Stream.Position := 0;
           frxReport.LoadFromStream(Stream);
           frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-          Caption := frxReport.FileName;
+          frxReport.ReportOptions.Name := frxReport.FILENAME;
         finally
           Stream.Free;
         end;

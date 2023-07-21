@@ -180,7 +180,7 @@ object PaymentForm: TPaymentForm
         Anchors = [akLeft, akTop, akRight]
         DataField = 'PAY_SUM'
         DataSource = srcMemPayment
-        DisplayFormat = '### ### ### ##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButton.Visible = True
         EditButtons = <>
@@ -339,12 +339,12 @@ object PaymentForm: TPaymentForm
       object Label9: TLabel
         Left = 1
         Top = 1
-        Width = 367
+        Width = 64
         Height = 13
         Align = alTop
         Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       end
-      object DBMemo1: TDBMemoEh
+      object mmoNOTICE: TDBMemoEh
         Left = 1
         Top = 14
         Width = 367
@@ -474,7 +474,7 @@ object PaymentForm: TPaymentForm
         Color = clBtnFace
         DataField = 'dsItogo'
         DataSource = srcMemPayment
-        DisplayFormat = '### ### ### ##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButton.Visible = True
         EditButtons = <>
@@ -500,7 +500,7 @@ object PaymentForm: TPaymentForm
         Anchors = [akLeft, akTop, akRight]
         DataField = 'FINE_SUM'
         DataSource = srcMemPayment
-        DisplayFormat = '### ### ### ##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButton.Visible = True
         EditButtons = <>
@@ -583,7 +583,7 @@ object PaymentForm: TPaymentForm
         object Label1: TLabel
           Left = 0
           Top = 0
-          Width = 167
+          Width = 106
           Height = 13
           Align = alTop
           Caption = '  '#1055#1086#1080#1089#1082' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1087#1086':'
@@ -642,24 +642,39 @@ object PaymentForm: TPaymentForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
+        ExplicitLeft = 168
+        ExplicitTop = 1
+        ExplicitWidth = 200
+        ExplicitHeight = 92
         inherited gbInfo: TGroupBox
           Width = 200
           Height = 92
-          inherited lblDebt: TLabel
-            Top = 29
-            Width = 196
-            Height = 14
-            Margins.Bottom = 0
-            Font.Height = -12
-          end
+          ExplicitWidth = 200
+          ExplicitHeight = 92
           inherited memAbonent: TMemo
             Top = 43
             Width = 196
             Height = 47
+            ExplicitTop = 43
+            ExplicitWidth = 196
+            ExplicitHeight = 47
           end
           inherited lblFIO: TDBEditEh
             Width = 196
             Height = 14
+            ExplicitWidth = 196
+            ExplicitHeight = 14
+          end
+          inherited lblDebt: TDBEditEh
+            Top = 29
+            Width = 196
+            Height = 14
+            Margins.Bottom = 0
+            ControlLabel.ExplicitTop = 13
+            Font.Height = -12
+            ExplicitTop = 29
+            ExplicitWidth = 196
+            ExplicitHeight = 14
           end
         end
       end

@@ -170,6 +170,10 @@ type
     PropStorageEh1: TPropStorageEh;
     cbFEE: TDBComboBoxEh;
     chkDebtLow: TDBCheckBoxEh;
+    btnDBLoad: TSpeedButton;
+    btnDBSave: TSpeedButton;
+    actSaveToDb: TAction;
+    actLoadFromDb: TAction;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -195,8 +199,12 @@ type
     procedure cbb2Enter(Sender: TObject);
     procedure lcbSERVICEEnter(Sender: TObject);
     procedure cbb3Enter(Sender: TObject);
+    procedure DBLookupComboboxClick(Sender: TObject);
+    procedure actSaveToDbExecute(Sender: TObject);
+    procedure actLoadFromDbExecute(Sender: TObject);
   private
     { Private declarations }
+    FEnterSecondPress: Boolean;
     procedure SaveFilter(const filename: string);
     procedure SetTab;
   public
@@ -209,7 +217,7 @@ var
 implementation
 
 uses
-  DM, CF, MAIN, AtrCommon, MemTableEh;
+  DM, CF, MAIN, AtrCommon, MemTableEh, SelectFilterForma;
 
 {$R *.dfm}
 
@@ -247,31 +255,60 @@ end;
 
 procedure TCustomersFilterForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
-    bbOkClick(Sender);
+  if (Shift = [ssCtrl]) then begin
+    case Ord(Key) of
+      VK_RETURN: bbOkClick(Sender);
+      Ord('1'): pgcFilter.ActivePageIndex := 0;
+      Ord('2'): pgcFilter.ActivePageIndex := 1;
+      Ord('3'): pgcFilter.ActivePageIndex := 2;
+      Ord('4'): pgcFilter.ActivePageIndex := 3;
+      // 66: btnANDClick(btnAND);
+      // 75: btnORClick(btnOR);
+      VK_LEFT: if (not srcFilter.DataSet.Bof) then srcFilter.DataSet.Prior;
+      VK_RIGHT: if (not srcFilter.DataSet.EOF) then srcFilter.DataSet.Next;
+      VK_HOME: if (not srcFilter.DataSet.BOF) then srcFilter.DataSet.First;
+      VK_END: if (not srcFilter.DataSet.EOF) then srcFilter.DataSet.Last;
+      // ELSE memSQL.Lines.Add( Key.ToString + ' ' + Chr(Key));
+    end;
+
+    if Ord(Key) in [Ord('1'),Ord('2'),Ord('3'),Ord('4')] then
+      pgcFilterChange(Sender);
+
+  end;
 end;
 
 procedure TCustomersFilterForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
-  go: boolean;
+  go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    else if (ActiveControl is TDBGridEh) then
+    else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
       go := False
-    else if (ActiveControl is TDBMemoEh) then
-      go := False
-    else if (ActiveControl is TDBSynEdit) then
-      go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -406,9 +443,73 @@ begin
   srcFilter.DataSet.EnableControls;
 end;
 
+procedure TCustomersFilterForm.actLoadFromDbExecute(Sender: TObject);
+var
+  JsonStr: string;
+begin
+  JsonStr := SelectFilter(67);
+  if JsonStr.IsEmpty then
+    exit;
+
+  srcFilter.DataSet.DisableControls;
+  if not srcFilter.DataSet.Active then
+    srcFilter.DataSet.Open;
+  (srcFilter.DataSet as TMemTableEh).EmptyTable;
+  DatasetFromJsonStr(srcFilter.DataSet, JsonStr);
+  SetTab;
+  srcFilter.DataSet.EnableControls;
+end;
+
+procedure TCustomersFilterForm.actSaveToDbExecute(Sender: TObject);
+var
+  n: string;
+  s: string;
+  fq: TpFIBQuery;
+begin
+  if InputQuery('Введите название фильтра', 'Название', n) and (not n.IsEmpty) then
+  begin
+    if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+      srcFilter.DataSet.post;
+    s := DatasetToJsonStr(srcFilter.DataSet);
+
+    // ShowMessage(s);
+
+    if s.IsEmpty then Exit;
+
+    fq := TpFIBQuery.Create(self);
+    try
+      fq.Database := dmMain.dbTV;
+      fq.Transaction := dmMain.trWriteQ;
+      fq.sql.Text := 'execute block (';
+      fq.sql.Add('    NAME D_VARCHAR100 = :NAME,');
+      fq.sql.Add('    JSON D_Blob1k = :JSON)');
+      fq.sql.Add('as');
+      fq.sql.Add('declare variable OID integer;');
+      fq.sql.Add('begin');
+      fq.sql.Add('  update or insert into Objects (O_Type, O_Name)');
+      fq.sql.Add('  values (67, :Name)');
+      fq.sql.Add('  matching (O_Name, O_Type)');
+      fq.sql.Add('  returning O_ID');
+      fq.sql.Add('  into :OID;');
+      fq.sql.Add('  update or insert into Blob_Tbl (Bl_Type, Owner_Id, Bl_Name, Bl_Body)');
+      fq.sql.Add('  values (5, :OID, :Name, :JSON)');
+      fq.sql.Add('  matching (Bl_Type, Owner_Id);');
+      fq.sql.Add('end');
+      fq.ParamByName('Name').AsString := n;
+      fq.ParamByName('json').AsString := s;
+      fq.Transaction.StartTransaction;
+      fq.ExecQuery;
+      fq.Transaction.Commit;
+      fq.Close;
+    finally
+      fq.Free;
+    end;
+  end;
+end;
+
 procedure TCustomersFilterForm.bbOkClick(Sender: TObject);
 var
-  v: boolean;
+  v: Boolean;
   q: TpFIBQuery;
 begin
   // проверим на какой закладке открыто окно.
@@ -431,9 +532,9 @@ begin
         q := TpFIBQuery.Create(Nil);
         try
           try
-            q.DataBase := dmMain.dbTV;
+            q.Database := dmMain.dbTV;
             q.Transaction := dmMain.trReadQ;
-            q.SQL.Text := memSQL.Lines.Text;
+            q.sql.Text := memSQL.Lines.Text;
             q.Transaction.StartTransaction;
             q.ExecQuery;
             q.Close;
@@ -456,15 +557,23 @@ begin
 end;
 
 procedure TCustomersFilterForm.btnANDClick(Sender: TObject);
+var
+  ti : Integer;
 begin
+  ti := pgcFilter.ActivePageIndex;
   srcFilter.DataSet.Append;
   srcFilter.DataSet['next_condition'] := 1;
+  pgcFilter.ActivePageIndex := ti;
 end;
 
 procedure TCustomersFilterForm.btnORClick(Sender: TObject);
+var
+  ti : Integer;
 begin
+  ti := pgcFilter.ActivePageIndex;
   srcFilter.DataSet.Append;
   srcFilter.DataSet['next_condition'] := 0;
+  pgcFilter.ActivePageIndex := ti;
 end;
 
 procedure TCustomersFilterForm.srcFilterDataChange(Sender: TObject; Field: TField);
@@ -478,15 +587,15 @@ end;
 
 procedure TCustomersFilterForm.cbAttributeChange(Sender: TObject);
 begin
-  EDTAttrValue.Enabled := not VarIsNull(cbAttribute.Value);
+  EDTAttrValue.Enabled := not VarIsNull(cbAttribute.value);
 end;
 
 procedure TCustomersFilterForm.cbDolgTypeChange(Sender: TObject);
 var
-  interval: boolean;
+  interval: Boolean;
 begin
   try
-    interval := cbDolgType.Value = 6;
+    interval := cbDolgType.value = 6;
   except
     interval := False
   end;
@@ -497,7 +606,7 @@ end;
 procedure TCustomersFilterForm.checkAdressSign(Sender: TObject);
 begin
   if (Sender is TDBLookupComboboxEh) then
-    if not VarIsClear((Sender as TDBLookupComboboxEh).Value) then
+    if not VarIsClear((Sender as TDBLookupComboboxEh).value) then
       if not cbAdress.Checked then
         cbAdress.Checked := true;
 end;
@@ -514,8 +623,8 @@ end;
 
 procedure TCustomersFilterForm.cbbAREAChange(Sender: TObject);
 begin
-  if (VarIsNumeric(cbbAREA.Value)) then
-    dsStreets.ParamByName('area_id').AsInteger := cbbAREA.Value
+  if (VarIsNumeric(cbbAREA.value)) then
+    dsStreets.ParamByName('area_id').AsInteger := cbbAREA.value
   else
     dsStreets.ParamByName('area_id').Clear;
   dsStreets.CloseOpen(true);
@@ -524,13 +633,13 @@ end;
 
 procedure TCustomersFilterForm.cbbATTRTYPEChange(Sender: TObject);
 var
-  a: boolean;
+  a: Boolean;
   t: Integer;
 begin
   a := dsAttributes.Active;
   if a then
     dsAttributes.Close;
-  if (VarIsNull(cbbATTRTYPE.Value)) or (not TryStrToInt(cbbATTRTYPE.Value, t)) then
+  if (VarIsNull(cbbATTRTYPE.value)) or (not TryStrToInt(cbbATTRTYPE.value, t)) then
     t := 4;
   dsAttributes.ParamByName('ATTRTYPE').AsInteger := t;
   if a then
@@ -539,11 +648,11 @@ end;
 
 procedure TCustomersFilterForm.cbbSTREETEnter(Sender: TObject);
 begin
-  if VarIsNumeric(cbbAREA.Value) then
+  if VarIsNumeric(cbbAREA.value) then
   begin
-    dsStreets.Filter := 'AREA_ID = ' + VarAsType(cbbAREA.Value, varString);
+    dsStreets.Filter := 'AREA_ID = ' + VarAsType(cbbAREA.value, varString);
   end;
-  dsStreets.Filtered := (VarIsNumeric(cbbAREA.Value));
+  dsStreets.Filtered := (VarIsNumeric(cbbAREA.value));
   cbbSTREET.SelectAll;
 end;
 
@@ -554,7 +663,7 @@ end;
 
 procedure TCustomersFilterForm.DBNumberEditEh1Exit(Sender: TObject);
 begin
-  if not VarIsClear((Sender as TDBNumberEditEh).Value) then
+  if not VarIsClear((Sender as TDBNumberEditEh).value) then
     if not cbDolg.Checked then
       cbDolg.Checked := true;
 end;
@@ -564,4 +673,16 @@ begin
   SetTab;
 end;
 
+procedure TCustomersFilterForm.DBLookupComboboxClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    exit;
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
+end;
+
 end.
+
+

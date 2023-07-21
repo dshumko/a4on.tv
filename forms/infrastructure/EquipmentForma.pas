@@ -314,7 +314,7 @@ begin
   if (dsEquipments.RecordCount = 0) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   ci.CUSTOMER_ID := -1;
 
@@ -330,7 +330,7 @@ end;
 procedure TEquipmentForm.actDeleteExecute(Sender: TObject);
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   if (MessageDlg(rsDeleteSelectedRecords, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     dbGrid.DataSource.DataSet.Delete;
@@ -342,7 +342,7 @@ var
   id: Integer;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   ci.CUSTOMER_ID := -1;
 
@@ -645,7 +645,7 @@ var
   // expanded : Boolean;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   ci.CUSTOMER_ID := -1;
   if (dsEquipments.RecordCount = 0) then
@@ -770,7 +770,7 @@ end;
 procedure TEquipmentForm.InitSecurity;
 begin
   // права пользователей
-  actNew.Enabled := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment));
+  actNew.Enabled := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment));
   actDelete.Enabled := actNew.Enabled;
   actEdit.Enabled := actNew.Enabled;
 
@@ -873,7 +873,7 @@ var
   prnt: Integer;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
   ci.CUSTOMER_ID := -1;
   prnt := -1;

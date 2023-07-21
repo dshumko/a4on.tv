@@ -57,8 +57,8 @@ procedure TapgNodeLayout.InitForm;
 var
   FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes));
-  pnlBottLeft.Visible := (dmMain.AllowedAction(rght_Dictionary_Nodes)) or FullAccess;
+  FullAccess := (dmMain.AllowedAction(rght_Comm_Nodes));
+  pnlBottLeft.Visible := (dmMain.AllowedAction(rght_Comm_Nodes)) or FullAccess;
   actAdd.Visible := pnlBottLeft.Visible;
   actDel.Visible := pnlBottLeft.Visible;
   actEdit.Visible := pnlBottLeft.Visible;

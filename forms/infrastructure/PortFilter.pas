@@ -8,8 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
-  pFIBQuery,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery,
   PrjConst;
 
 type
@@ -77,7 +76,6 @@ type
     procedure btnANDClick(Sender: TObject);
     procedure srcFilterDataChange(Sender: TObject; Field: TField);
   private
-    { Private declarations }
     procedure SaveFilter(const filename: string);
   public
     { Public declarations }
@@ -115,26 +113,20 @@ end;
 
 procedure TPortFilterForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
-  go: boolean;
+  go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    else if (ActiveControl is TDBGridEh) then
-      go := False
-    else if (ActiveControl is TDBMemoEh) then
-      go := False
-    else if (ActiveControl is TDBSynEdit) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
 
     if go then
     begin
       Key := #0; // eat enter key
-      PostMessage(self.Handle, WM_NEXTDLGCTL, 0, 0);
+      PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
-  end;
+  end
 end;
 
 procedure TPortFilterForm.FormShow(Sender: TObject);

@@ -230,6 +230,7 @@ type
     FullAccess: Boolean;
     FinEditMode: Boolean;
     FCanSave: Boolean;
+    FEnterSecondPress: Boolean;
     function GenerateFilter: string;
     procedure ShowPage(Page: TA4onPage);
     procedure UpdateCommands;
@@ -477,12 +478,12 @@ begin
   FPageList.Add(TapgNodeFlats);
   FPageList.Add(TapgNodeRequests);
   FPageList.Add(TapgNodeAttributes);
-  // FPageList.Add(TapgNodeMaterials); ошибка отрисовки. не решил еще
   FPageList.Add(TapgNodeLayout);
   FPageList.Add(TapgNodeFiles);
   FPageList.Add(TapgNodeLink);
   FPageList.Add(TapgNodeCIRCUIT);
   FPageList.Add(TapgNodeMaterialsMove);
+  FPageList.Add(TapgNodeMaterials); // ошибка отрисовки. не решил еще
   FPageList.Add(TapgNodeAppl);
 
   FCanSave := True;
@@ -1284,15 +1285,15 @@ end;
 
 procedure TNodesForm.InitSecurity;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes));
+  FullAccess := (dmMain.AllowedAction(rght_Comm_Nodes));
   // Экспорт информации
   actSaveAs.Visible := (dmMain.AllowedAction(rght_Export));
   miExport.Visible := (dmMain.AllowedAction(rght_Export));
 
-  actNodeDelete.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
-  actNodeEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
-  actNodeAdd.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
-  actLinkNodes.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FullAccess;
+  actNodeDelete.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FullAccess;
+  actNodeEdit.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FullAccess;
+  actNodeAdd.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FullAccess;
+  actLinkNodes.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FullAccess;
 
   actRequest.Enabled := dmMain.AllowedAction(rght_Request_add) or dmMain.AllowedAction(rght_Request_full);
 end;
@@ -1567,18 +1568,36 @@ begin
   if not actAdresSearch.Checked then
     Exit;
 
-  go := False;
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
   end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
+  end;
 end;
 
 function TNodesForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;

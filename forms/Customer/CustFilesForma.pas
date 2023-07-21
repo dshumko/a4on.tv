@@ -103,6 +103,9 @@ type
     procedure dbgFilesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure FormCreate(Sender: TObject);
+    procedure dbgFilesColumns7GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure luPaymentClick(Sender: TObject);
   private
     FFirstOpen : Boolean;
     fStartDate: TDateTime;
@@ -328,6 +331,13 @@ procedure TCustFilesForm.dbgFilesKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
     actEdit.Execute;
+end;
+
+procedure TCustFilesForm.dbgFilesColumns7GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
 end;
 
 procedure TCustFilesForm.dbgFilesDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
@@ -587,6 +597,16 @@ begin
       s := s + ', ';
   end;
   Result := s;
+end;
+
+procedure TCustFilesForm.luPaymentClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
 end;
 
 end.

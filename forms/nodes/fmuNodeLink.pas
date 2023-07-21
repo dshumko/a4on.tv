@@ -90,16 +90,16 @@ end;
 
 procedure TapgNodeLink.InitForm;
 begin
-  FRightFull := (dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Dictionary_Nodes));
-  FRightEdit := (dmMain.AllowedAction(rght_Dictionary_Node_Links));
+  FRightFull := (dmMain.AllowedAction(rght_Dictionary_full)) or (dmMain.AllowedAction(rght_Comm_Nodes));
+  FRightEdit := (dmMain.AllowedAction(rght_Comm_Node_Links));
 
   pnlButtons.Visible := FRightFull or FRightEdit;
   actAdd.Visible := pnlButtons.Visible;
   actDel.Visible := pnlButtons.Visible;
   actEdit.Visible := pnlButtons.Visible;
 
-  actPEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment) or
-    dmMain.AllowedAction(rght_Dictionary_Equipment_Ports);
+  actPEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment) or
+    dmMain.AllowedAction(rght_Comm_Equipment_Ports);
 
   dsLink.DataSource := FDataSource;
 end;

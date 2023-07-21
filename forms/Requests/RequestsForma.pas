@@ -453,6 +453,7 @@ var
       addToFilter
         (format('( datediff(hour, r.RQ_COMPLETED, coalesce(r.RQ_EXEC_TIME, cast(''2100-1-1'' as TIMESTAMP))) > %d)',
         [dsFilter.FieldByName('EXPIRED').AsInteger]));
+
     // Условие отбора по адресу
     if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
       addToFilter(format(' (r.House_Id = %d) ', [dsFilter.FieldByName('HOUSE_ID').AsInteger]))
@@ -1435,7 +1436,7 @@ begin
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
         frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        Caption := frxReport.FileName;
+        frxReport.ReportOptions.Name := frxReport.FILENAME;
       finally
         Stream.Free;
       end;
@@ -2112,3 +2113,4 @@ begin
 end;
 
 end.
+

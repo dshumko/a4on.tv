@@ -46,7 +46,7 @@ type
     lPaymentType: TLabel;
     luPaymentType: TDBLookupComboboxEh;
     srcMemPayment: TDataSource;
-    DBMemo1: TDBMemoEh;
+    mmoNOTICE: TDBMemoEh;
     qInsertPayment: TpFIBQuery;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
@@ -121,6 +121,7 @@ type
     FProcessPay: Boolean;
     FCurrentDate: TDate;
     FForForm: string;
+    FEnterSecondPress: Boolean;
     procedure FindCustomer(const lic: string; const code: string; id: Integer);
     function InsertPayment(const NeedPrintCheck: Boolean): Boolean;
     function SelectPayDoc: int64;
@@ -1101,7 +1102,7 @@ begin
         Stream.Position := 0;
         dmMain.frxModalReport.LoadFromStream(Stream);
         dmMain.frxModalReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        Caption := dmMain.frxModalReport.FILENAME;
+        dmMain.frxModalReport.ReportOptions.Name := dmMain.frxModalReport.FILENAME;
       finally
         Stream.Free;
       end;
@@ -1182,31 +1183,43 @@ begin
 end;
 
 procedure TPaymentForm.FormKeyPress(Sender: TObject; var Key: Char);
-
 var
   go: Boolean;
 begin
-  go := true;
-
   if (Key = #13) then
   begin
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-
-    if go then
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else
     begin
-      if (ActiveControl = dePaySum) and cbManyPayments.Checked then
+      if (ActiveControl = dePaySum) and cbManyPayments.Checked and bbOk.Enabled then
       begin
-        if bbOk.Enabled then
-          bbOk.SetFocus
+        bbOk.SetFocus;
+        go := False;
       end
       else
       begin
-        Key := #0; // eat enter key
-        PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+        if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+        begin
+          go := False;
+          FEnterSecondPress := true;
+        end;
       end;
     end;
+
+    if go then
+    begin
+      FEnterSecondPress := False;
+      Key := #0; // eat enter key
+      PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+    end;
   end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
+  end;
 end;
 
 procedure TPaymentForm.WriteClientHeight(Writer: TWriter);

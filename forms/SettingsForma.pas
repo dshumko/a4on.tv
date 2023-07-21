@@ -203,6 +203,14 @@ type
     lbl252: TLabel;
     lbl253: TLabel;
     edtColorHLWARNING: TDBEditEh;
+    lbl241: TLabel;
+    edtMapHouseUrl: TDBEditEh;
+    lbl242: TLabel;
+    edtIPv6Url: TDBEditEh;
+    edtCheckAccount: TDBEditEh;
+    lblCheckAC: TLabel;
+    lbl2421: TLabel;
+    edtPayCheckUrl: TDBEditEh;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -450,12 +458,16 @@ begin
       SaveSettingsStr('FORMATN', cbFormat.Text);
       SaveSettingsStr('REG_PASSN', edtCheckPassportN.Text);
       SaveSettingsStr('REG_PERSN', edtCheckPersN.Text);
+
       SaveSettingsStr('KEY_MVD', edtKeyMVD.Text);
       SaveSettingsStr('MAP_URL', edtMapUrl.Text);
+      SaveSettingsStr('MAP_HOUSE_URL', edtMapHouseUrl.Text);
       SaveSettingsInt('FEE_ROUND', FEE.value);
       SaveSettingsInt('DOLG', DOLG.value);
       SaveSettingsInt('PSWD_EXPIRE', edtPswdExpire.value);
       SaveSettingsInt('IDLEHOURS', edtIdleHoure.value);
+      SaveSettingsStr('IPV6GETURL', edtIPv6Url.Text);
+      SaveSettingsStr('PAY_CHECK_URL', edtPayCheckUrl.Text);
 
       SaveSettingsStr('BARCODE', edtBC.Text);
       SaveSettingsBoolean('BARNODELZERRO', chkBARDELZERRO);
@@ -546,6 +558,7 @@ begin
       SaveSettingsBoolean('NEGATIVE_PAY', cbNegativePay);
       SaveSettingsStr('ACCOUNT_FORMAT', edtORDER.Text);
       SaveSettingsBoolean('ACCOUNT_DOG', chkDOG);
+      SaveSettingsStr('ACCOUNT_CHK', edtCheckAccount.Text);
       SaveSettingsBoolean('SAVE_SRV_WORKER', chkSrvWorker);
       SaveSettingsBoolean('FLAT_OWNER', chkFlatOwner);
       SaveSettingsBoolean('CAN_NEW_CONTRACT', chkNewContract);
@@ -880,6 +893,7 @@ begin
   btnInetSettings.Visible := CheckInternetSetting;
 
   cbBilling.value := 0;
+  edtMapHouseUrl.Text := 'http://openstreetmap.ru/#mmap=19/%lat%/%lon%&map=19/%lat%/%lon%';
 
   if Global then
   begin
@@ -909,6 +923,12 @@ begin
         edtKeyMVD.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'MAP_URL' then
         edtMapUrl.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'IPV6GETURL' then
+        edtIPv6Url.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PAY_CHECK_URL' then
+        edtPayCheckUrl.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'MAP_HOUSE_URL' then
+        edtMapHouseUrl.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'FEE_ROUND' then
         FEE.value := select.FN('VAR_VALUE').AsInteger;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'DOLG' then
@@ -939,6 +959,8 @@ begin
         cbPaymentSrv.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_FORMAT' then
         edtORDER.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_CHK' then
+        edtCheckAccount.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_DOG' then
         chkDOG.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PERS_CHANNEL' then

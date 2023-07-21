@@ -80,17 +80,35 @@ object frmSelectLetterType: TfrmSelectLetterType
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.ListFieldNames = 'LETTERTYPEDESCR'
+      DropDownBox.ListSource = srcLetterTypes
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1092#1086#1088#1084#1091' '#1087#1077#1095#1072#1090#1080
       EditButtons = <>
       KeyField = 'LETTERTYPEID'
       ListField = 'LETTERTYPEDESCR'
       ListSource = srcLetterTypes
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 0
       Visible = True
+      OnClick = cbLetterTypeClick
     end
   end
   object dsLetterTypes: TpFIBDataSet
     SelectSQL.Strings = (
+      'select'
+      '    -2 LETTERTYPEID'
+      '  , '#39#1041#1072#1083#1072#1085#1089' '#1072#1073#1086#1085#1077#1085#1090#1072#39' Lettertypedescr'
+      '  , '#39#39' Filename'
+      '  , 0 Recordindb'
+      '  , 0 Save_PDF'
+      'from rdb$database  '
+      'union all  '
       'select'
       '    LETTERTYPEID'
       '  , Lettertypedescr'
@@ -105,7 +123,7 @@ object frmSelectLetterType: TfrmSelectLetterType
       
         '                    from Get_All_Reports) r on (r.FULL_PATH = re' +
         'place(upper(l.Filename), '#39'.FR3'#39', '#39#39'))'
-      '  where coalesce(FOR_FORM, 0) = 0'
+      '  where coalesce(FOR_FORM, 0) = 0 and l.LETTERTYPEID >= 0'
       '  order by 2')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

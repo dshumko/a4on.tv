@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.DBCtrls, Vcl.ComCtrls,
-  GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh, PropFilerEh, PropStorageEh;
+  DBGridEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh, PropFilerEh, PropStorageEh;
 
 type
   TRequestFilterForm = class(TForm)
@@ -108,6 +108,10 @@ type
     lucbb2: TDBLookupComboboxEh;
     lbl2: TLabel;
     PropStorageEh1: TPropStorageEh;
+    actSaveToDb: TAction;
+    actLoadFromDb: TAction;
+    btnDBSave: TSpeedButton;
+    btnDBLoad: TSpeedButton;
     procedure SpeedButton3Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure actOkExecute(Sender: TObject);
@@ -123,6 +127,8 @@ type
     procedure luTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure luTypeClick(Sender: TObject);
+    procedure actSaveToDbExecute(Sender: TObject);
+    procedure actLoadFromDbExecute(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFilter(const filename: string);
@@ -137,7 +143,7 @@ var
 implementation
 
 uses
-  DM, RequestsForma, MAIN, AtrCommon;
+  DM, RequestsForma, MAIN, AtrCommon, SelectFilterForma, pFIBQuery;
 
 {$R *.dfm}
 
@@ -151,6 +157,51 @@ begin
   if srcFilter.DataSet.State in [dsEdit, dsInsert] then
     srcFilter.DataSet.post;
   DatasetToJson(srcFilter.DataSet, s);
+end;
+
+procedure TRequestFilterForm.actSaveToDbExecute(Sender: TObject);
+var
+  n: string;
+  s: string;
+  fq: TpFIBQuery;
+begin
+  if InputQuery('Введите название фильтра', 'Название', n) and (not n.IsEmpty) then
+  begin
+    if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+      srcFilter.DataSet.post;
+    s := DatasetToJsonStr(srcFilter.DataSet);
+    if s.IsEmpty then Exit;
+
+    fq := TpFIBQuery.Create(self);
+    try
+      fq.Database := dmMain.dbTV;
+      fq.Transaction := dmMain.trWriteQ;
+      fq.sql.Text := 'execute block (';
+      fq.sql.Add('    NAME D_VARCHAR100 = :NAME,');
+      fq.sql.Add('    JSON D_Blob1k = :JSON)');
+      fq.sql.Add('as');
+      fq.sql.Add('declare variable OID integer;');
+      fq.sql.Add('begin');
+      fq.sql.Add('  update or insert into Objects (O_Type, O_Name)');
+      fq.sql.Add('  values (68, :Name)');
+      fq.sql.Add('  matching (O_Name, O_Type)');
+      fq.sql.Add('  returning O_ID');
+      fq.sql.Add('  into :OID;');
+      fq.sql.Add('  update or insert into Blob_Tbl (Bl_Type, Owner_Id, Bl_Name, Bl_Body)');
+      fq.sql.Add('  values (6, :OID, :Name, :JSON)');
+      fq.sql.Add('  matching (Bl_Type, Owner_Id);');
+      fq.sql.Add('end');
+      fq.ParamByName('Name').AsString := n;
+      fq.ParamByName('json').AsString := s;
+      fq.Transaction.StartTransaction;
+      fq.ExecQuery;
+      fq.Transaction.Commit;
+      fq.Close;
+    finally
+      fq.Free;
+    end;
+  end;
+
 end;
 
 procedure TRequestFilterForm.btnAndClick(Sender: TObject);
@@ -238,8 +289,6 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBGridEh) then
-      go := False;
 
     if go then
     begin
@@ -340,6 +389,22 @@ begin
       srcFilter.DataSet.post;
     end;
   end;
+end;
+
+procedure TRequestFilterForm.actLoadFromDbExecute(Sender: TObject);
+var
+  JsonStr: string;
+begin
+  JsonStr := SelectFilter(68);
+  if JsonStr.IsEmpty then
+    exit;
+
+  srcFilter.DataSet.DisableControls;
+  if not srcFilter.DataSet.Active then
+    srcFilter.DataSet.Open;
+  (srcFilter.DataSet as TMemTableEh).EmptyTable;
+  DatasetFromJsonStr(srcFilter.DataSet, JsonStr);
+  srcFilter.DataSet.EnableControls;
 end;
 
 procedure TRequestFilterForm.actOkExecute(Sender: TObject);

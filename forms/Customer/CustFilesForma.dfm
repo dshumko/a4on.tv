@@ -48,6 +48,8 @@ object CustFilesForm: TCustFilesForm
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
       PopupMenu = gridPopUp
       ReadOnly = True
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True
@@ -139,6 +141,7 @@ object CustFilesForm: TCustFilesForm
           Title.Caption = #1060#1072#1081#1083'|'#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
           Title.TitleButton = True
           Width = 80
+          OnGetCellParams = dbgFilesColumns7GetCellParams
         end
         item
           CellButtons = <>
@@ -333,6 +336,7 @@ object CustFilesForm: TCustFilesForm
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.UseMultiTitle = True
+        DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 150
@@ -343,8 +347,10 @@ object CustFilesForm: TCustFilesForm
         ListSource = srcFileType
         ParentShowHint = False
         ShowHint = True
+        Style = csDropDownEh
         TabOrder = 1
         Visible = True
+        OnClick = luPaymentClick
       end
       object ToolButton20: TToolButton
         Left = 432

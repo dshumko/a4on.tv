@@ -105,7 +105,7 @@ var
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full);
-  fCanEdit   := dmMain.AllowedAction(rght_Dictionary_Equipment) or vFull;
+  fCanEdit   := dmMain.AllowedAction(rght_Comm_Equipment) or vFull;
   fCanCreate := fCanEdit;
   actNew.Visible    := fCanEdit;
   actDelete.Visible := fCanEdit;

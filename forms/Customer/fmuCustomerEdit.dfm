@@ -3,7 +3,7 @@ object apgCustomerEdit: TapgCustomerEdit
   Top = 0
   ActiveControl = LupStreets
   Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072
-  ClientHeight = 713
+  ClientHeight = 521
   ClientWidth = 928
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,22 +22,23 @@ object apgCustomerEdit: TapgCustomerEdit
   object spl1: TSplitter
     Left = 505
     Top = 0
-    Height = 713
+    Height = 521
+    ExplicitHeight = 713
   end
-  object pnl1: TPanel
+  object pnlRight: TPanel
     Left = 508
     Top = 0
     Width = 420
-    Height = 713
+    Height = 521
     Align = alClient
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
     object pnlContacts: TPanel
       Left = 0
-      Top = 186
+      Top = 286
       Width = 420
-      Height = 527
+      Height = 235
       Align = alClient
       BevelOuter = bvNone
       ParentColor = True
@@ -46,7 +47,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Left = 0
         Top = 18
         Width = 420
-        Height = 509
+        Height = 217
         Align = alClient
         DataSource = srcContacts
         DynProps = <>
@@ -239,7 +240,7 @@ object apgCustomerEdit: TapgCustomerEdit
     end
     object pnl2: TPanel
       Left = 0
-      Top = 0
+      Top = 100
       Width = 420
       Height = 145
       Align = alTop
@@ -276,7 +277,7 @@ object apgCustomerEdit: TapgCustomerEdit
     end
     object pnlScan: TPanel
       Left = 0
-      Top = 145
+      Top = 245
       Width = 420
       Height = 41
       Align = alTop
@@ -295,25 +296,80 @@ object apgCustomerEdit: TapgCustomerEdit
         TabOrder = 0
       end
     end
+    object pnlWarningInfo: TPanel
+      Left = 0
+      Top = 0
+      Width = 420
+      Height = 100
+      Align = alTop
+      Color = 13619199
+      ParentBackground = False
+      TabOrder = 3
+      Visible = False
+      DesignSize = (
+        420
+        100)
+      object mmoWarning: TDBMemoEh
+        Left = 1
+        Top = 1
+        Width = 418
+        Height = 98
+        Lines.Strings = (
+          'mmoWarning')
+        Align = alClient
+        Alignment = taCenter
+        AutoSize = False
+        BevelEdges = []
+        BevelInner = bvNone
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        Ctl3D = True
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentColor = True
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        ShowHint = True
+        TabOrder = 1
+        Visible = True
+        WantReturns = True
+      end
+      object btnCloseWarningInfo: TButton
+        Left = 394
+        Top = 5
+        Width = 19
+        Height = 13
+        Anchors = [akTop, akRight]
+        Caption = 'X'
+        TabOrder = 0
+        OnClick = btnCloseWarningInfoClick
+      end
+    end
   end
   object scrlbx1: TScrollBox
     Left = 0
     Top = 0
     Width = 505
-    Height = 713
+    Height = 521
     Align = alLeft
     TabOrder = 0
     object pnlAddress: TPanel
       Left = 0
       Top = 0
-      Width = 501
+      Width = 484
       Height = 129
       Align = alTop
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
       DesignSize = (
-        501
+        484
         129)
       object Label19: TLabel
         Left = 236
@@ -363,7 +419,7 @@ object apgCustomerEdit: TapgCustomerEdit
         ParentFont = False
       end
       object Label1: TLabel
-        Left = 236
+        Left = 219
         Top = 3
         Width = 25
         Height = 13
@@ -375,30 +431,34 @@ object apgCustomerEdit: TapgCustomerEdit
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 236
       end
       object Label8: TLabel
-        Left = 331
+        Left = 314
         Top = 3
         Width = 29
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1050#1074'-'#1088#1072
+        ExplicitLeft = 331
       end
       object Label21: TLabel
-        Left = 386
+        Left = 369
         Top = 3
         Width = 45
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1055#1086#1076#1098#1077#1079#1076
+        ExplicitLeft = 386
       end
       object Label23: TLabel
-        Left = 437
+        Left = 420
         Top = 3
         Width = 27
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1069#1090#1072#1078
+        ExplicitLeft = 437
       end
       object lblContract: TLabel
         Left = 236
@@ -408,7 +468,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Caption = #1044#1086#1075#1086#1074#1086#1088
       end
       object chkJURIDICAL: TDBCheckBoxEh
-        Left = 386
+        Left = 369
         Top = 103
         Width = 98
         Height = 17
@@ -427,7 +487,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object luCreator: TDBLookupComboboxEh
         Left = 236
         Top = 101
-        Width = 144
+        Width = 127
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -445,7 +505,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 4
         Left = 236
         Top = 61
-        Width = 144
+        Width = 127
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'DOGOVOR_NO'
@@ -515,7 +575,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object LupStreets: TDBLookupComboboxEh
         Left = 8
         Top = 18
-        Width = 222
+        Width = 205
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -549,7 +609,7 @@ object apgCustomerEdit: TapgCustomerEdit
         OnExit = LupStreetsExit
       end
       object LupHOUSE_ID: TDBLookupComboboxEh
-        Left = 236
+        Left = 219
         Top = 20
         Width = 89
         Height = 21
@@ -584,7 +644,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object eFLAT_NO: TDBEditEh
         Tag = 7
-        Left = 329
+        Left = 312
         Top = 20
         Width = 51
         Height = 21
@@ -602,7 +662,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object edPORCH: TDBEditEh
         Tag = 7
-        Left = 386
+        Left = 369
         Top = 20
         Width = 47
         Height = 21
@@ -619,7 +679,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object edFLOOR: TDBEditEh
         Tag = 7
-        Left = 437
+        Left = 420
         Top = 20
         Width = 47
         Height = 21
@@ -635,7 +695,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Visible = True
       end
       object chkHAND: TDBCheckBoxEh
-        Left = 386
+        Left = 369
         Top = 63
         Width = 98
         Height = 17
@@ -656,14 +716,14 @@ object apgCustomerEdit: TapgCustomerEdit
     object pnlFIZ: TPanel
       Left = 0
       Top = 129
-      Width = 501
+      Width = 484
       Height = 191
       Align = alTop
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 1
       DesignSize = (
-        501
+        484
         191)
       object Label3: TLabel
         Tag = 1
@@ -707,21 +767,23 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object Label4: TLabel
         Tag = 1
-        Left = 169
+        Left = 152
         Top = 3
         Width = 19
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1048#1084#1103
+        ExplicitLeft = 169
       end
       object Label9: TLabel
         Tag = 1
-        Left = 329
+        Left = 312
         Top = 3
         Width = 49
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1054#1090#1095#1077#1089#1090#1074#1086
+        ExplicitLeft = 329
       end
       object Label5: TLabel
         Tag = 1
@@ -742,7 +804,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object eSURNAME: TDBEditEh
         Left = 8
         Top = 17
-        Width = 155
+        Width = 138
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'SURNAME'
@@ -795,7 +857,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 1
         Left = 8
         Top = 129
-        Width = 476
+        Width = 459
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'ADRES_REGISTR'
@@ -811,7 +873,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 1
         Left = 138
         Top = 54
-        Width = 346
+        Width = 329
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'PASSPORT_REGISTRATION'
@@ -825,7 +887,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object eFIRSTNAME: TDBEditEh
         Tag = 1
-        Left = 169
+        Left = 152
         Top = 17
         Width = 155
         Height = 21
@@ -843,7 +905,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object eMIDLENAME: TDBEditEh
         Tag = 1
-        Left = 329
+        Left = 312
         Top = 17
         Width = 155
         Height = 21
@@ -862,7 +924,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 1
         Left = 138
         Top = 91
-        Width = 346
+        Width = 329
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         CharCase = ecUpperCase
@@ -881,7 +943,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 1
         Left = 8
         Top = 166
-        Width = 476
+        Width = 459
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'CONTRACT_BASIS'
@@ -897,7 +959,7 @@ object apgCustomerEdit: TapgCustomerEdit
     object pnlJUR: TPanel
       Left = 0
       Top = 320
-      Width = 501
+      Width = 484
       Height = 211
       Align = alTop
       BevelOuter = bvNone
@@ -905,7 +967,7 @@ object apgCustomerEdit: TapgCustomerEdit
       TabOrder = 2
       Visible = False
       DesignSize = (
-        501
+        484
         211)
       object Label18: TLabel
         Tag = 2
@@ -917,21 +979,23 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object lblINN: TLabel
         Tag = 2
-        Left = 276
+        Left = 259
         Top = 3
         Width = 21
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1059#1053#1055
+        ExplicitLeft = 276
       end
       object Label17: TLabel
         Tag = 2
-        Left = 236
+        Left = 219
         Top = 39
         Width = 53
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1041#1091#1093#1075#1072#1083#1090#1077#1088
+        ExplicitLeft = 236
       end
       object lbl4: TLabel
         Tag = 1
@@ -942,12 +1006,13 @@ object apgCustomerEdit: TapgCustomerEdit
         Caption = #1070#1088'. '#1072#1076#1088#1077#1089
       end
       object lblVAT: TLabel
-        Left = 386
+        Left = 369
         Top = 3
         Width = 61
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1043#1088#1091#1087#1087#1072' '#1053#1044#1057
+        ExplicitLeft = 386
       end
       object Label16: TLabel
         Tag = 2
@@ -971,16 +1036,17 @@ object apgCustomerEdit: TapgCustomerEdit
         Top = 171
         Width = 159
         Height = 13
-        Caption = #1044#1086#1075#1086#1074#1086#1088' '#1074' '#1083#1080#1094#1077' '#1080' '#1085#1072' '#1086#1089#1085#1086#1074#1072#1085#1080#1077
+        Caption = #1044#1086#1075#1086#1074#1086#1088' '#1074' '#1083#1080#1094#1077' '#1080' '#1085#1072' '#1086#1089#1085#1086#1074#1072#1085#1080#1080
       end
       object lbl5: TLabel
         Tag = 2
-        Left = 216
+        Left = 199
         Top = 2
         Width = 32
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1060#1086#1088#1084#1072
+        ExplicitLeft = 216
       end
       object Label15: TLabel
         Tag = 2
@@ -993,7 +1059,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object edSURNAME: TDBEditEh
         Left = 8
         Top = 17
-        Width = 202
+        Width = 185
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'SURNAME'
@@ -1007,7 +1073,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object eJURINN: TDBEditEh
         Tag = 2
-        Left = 276
+        Left = 259
         Top = 17
         Width = 106
         Height = 21
@@ -1023,7 +1089,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object eBUH: TDBEditEh
         Tag = 2
-        Left = 236
+        Left = 219
         Top = 54
         Width = 248
         Height = 21
@@ -1041,7 +1107,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 1
         Left = 8
         Top = 92
-        Width = 476
+        Width = 459
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'ADRES_REGISTR'
@@ -1054,7 +1120,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Visible = True
       end
       object cbbVATG: TDBLookupComboboxEh
-        Left = 386
+        Left = 369
         Top = 17
         Width = 98
         Height = 21
@@ -1075,7 +1141,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 2
         Left = 8
         Top = 54
-        Width = 222
+        Width = 205
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'JUR_DIRECTOR'
@@ -1091,7 +1157,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 2
         Left = 47
         Top = 146
-        Width = 437
+        Width = 420
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'BANK_ACCOUNT'
@@ -1109,7 +1175,7 @@ object apgCustomerEdit: TapgCustomerEdit
         Tag = 2
         Left = 8
         Top = 185
-        Width = 476
+        Width = 459
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'CONTRACT_BASIS'
@@ -1123,7 +1189,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object edtTO: TDBEditEh
         Tag = 1
-        Left = 216
+        Left = 199
         Top = 17
         Width = 53
         Height = 21
@@ -1140,7 +1206,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object lcbBANK: TDBLookupComboboxEh
         Left = 47
         Top = 119
-        Width = 437
+        Width = 420
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -1167,14 +1233,14 @@ object apgCustomerEdit: TapgCustomerEdit
     object Panel2: TPanel
       Left = 0
       Top = 531
-      Width = 501
+      Width = 484
       Height = 109
       Align = alTop
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 3
       DesignSize = (
-        501
+        484
         109)
       object lblOrg: TLabel
         Left = 8
@@ -1221,7 +1287,7 @@ object apgCustomerEdit: TapgCustomerEdit
         ValueUnchecked = '0'
       end
       object btnSelectColor: TButton
-        Left = 236
+        Left = 219
         Top = 78
         Width = 120
         Height = 25
@@ -1233,7 +1299,7 @@ object apgCustomerEdit: TapgCustomerEdit
         OnClick = btnSelectColorClick
       end
       object btnClearColor: TButton
-        Left = 364
+        Left = 347
         Top = 78
         Width = 120
         Height = 25
@@ -1247,7 +1313,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object cbbORG_ID: TDBLookupComboboxEh
         Left = 107
         Top = 4
-        Width = 377
+        Width = 360
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -1266,7 +1332,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object edtSECRET: TDBEditEh
         Left = 107
         Top = 29
-        Width = 377
+        Width = 360
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'SECRET'
@@ -1281,7 +1347,7 @@ object apgCustomerEdit: TapgCustomerEdit
       object edtExtID: TDBEditEh
         Left = 107
         Top = 53
-        Width = 377
+        Width = 360
         Height = 21
         TabStop = False
         Anchors = [akLeft, akTop, akRight]

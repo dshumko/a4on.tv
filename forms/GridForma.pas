@@ -70,6 +70,7 @@ type
     FCanEdit: Boolean;
     FCanCreate: Boolean;
     FinEditMode: Boolean;
+    FEnterSecondPress: Boolean;
     procedure StartEdit(const New: Boolean = False);
     procedure StopEdit(const Cancel: Boolean);
     procedure ResizeButtonImagesforHighDPI(const container: TWinControl);
@@ -240,21 +241,33 @@ begin
   if not pnlEdit.Visible then
     Exit;
 
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := True;
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBGridEh) then
-      go := False;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBGridEh) then
+      go := False	  
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

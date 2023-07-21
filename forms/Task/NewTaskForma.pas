@@ -26,6 +26,7 @@ type
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
     PropStorageEh: TPropStorageEh;
+    cbClose: TDBComboBoxEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actSaveExecute(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -39,6 +40,7 @@ type
     FType: String;
     FTaskId: Integer;
     FCallBackNew: TTaskCreateCallBack;
+    FEnterSecondPress: Boolean;
     procedure SaveTask();
     procedure SetID(const Value: String);
     procedure SetType(const Value: String);
@@ -120,22 +122,39 @@ end;
 
 procedure TNewTaskForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
-  go: boolean;
+  go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := True;
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBGridEh) then
-      go := False;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBGridEh) then
+      go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
+    //  go := False
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -222,38 +241,42 @@ begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
-      SQL.Add('execute block (                                                                       ');
-      SQL.Add('    TITLE     D_VARCHAR100 = :TITLE,                                                  ');
-      SQL.Add('    NOTICE    D_VARCHAR500 = :NOTICE,                                                 ');
-      SQL.Add('    PLAN_DATE D_DATETIME = :PLAN_DATE,                                                ');
-      SQL.Add('    USERS     D_VARCHAR500 = :USERS,                                                  ');
-      SQL.Add('    OBJ_TYPE  D_VARCHAR5 = :OBJ_TYPE,                                                 ');
-      SQL.Add('    OBJ_ID    D_VARCHAR100 = :OBJ_ID)                                                 ');
-      SQL.Add('RETURNS( TASK_ID d_integer )                                                          ');
-      SQL.Add('as                                                                                    ');
-      SQL.Add('declare variable Ibname  d_varchar20;                                                 ');
-      SQL.Add('begin                                                                                 ');
-      SQL.Add('  insert into TASKLIST (TITLE, NOTICE, PLAN_DATE, DELETED)                            ');
-      SQL.Add('  values (:TITLE, :NOTICE, :PLAN_DATE, 0)                                             ');
-      SQL.Add('  returning ID into :TASK_ID;                                                         ');
-      SQL.Add('  if ((OBJ_TYPE <> '''') and (OBJ_ID <> '''')) then begin                             ');
-      SQL.Add('    insert into TASKMSG (TASK_ID, TEXT, OBJ_TYPE, OBJ_ID)                             ');
-      SQL.Add('    values (:TASK_ID, :NOTICE, :OBJ_TYPE, :OBJ_ID);                                   ');
-      SQL.Add('  end                                                                                 ');
-      SQL.Add('  for select substring(Str from 1 for 100) from Explode('','', :USERS) into :Ibname   ');
-      SQL.Add('  do begin                                                                            ');
-      SQL.Add('    insert into Taskuser (Task_Id, Foruser)                                           ');
-      SQL.Add('    values (:Task_Id, :Ibname);                                                       ');
-      SQL.Add('  end                                                                                 ');
-      SQL.Add('  suspend;                                                                            ');
-      SQL.Add('end                                                                                   ');
+      SQL.Add('execute block (                                                                     ');
+      SQL.Add('    TITLE     D_VARCHAR100 = :TITLE,                                                ');
+      SQL.Add('    NOTICE    D_VARCHAR500 = :NOTICE,                                               ');
+      SQL.Add('    PLAN_DATE D_DATETIME = :PLAN_DATE,                                              ');
+      SQL.Add('    USERS     D_VARCHAR500 = :USERS,                                                ');
+      SQL.Add('    OBJ_TYPE  D_VARCHAR5 = :OBJ_TYPE,                                               ');
+      SQL.Add('    OBJ_ID    D_VARCHAR100 = :OBJ_ID,                                               ');
+      SQL.Add('    WHO_CLOSE D_INTEGER = :WHO_CLOSE)                                               ');
+      SQL.Add('RETURNS( TASK_ID d_integer )                                                        ');
+      SQL.Add('as                                                                                  ');
+      SQL.Add('declare variable Ibname  d_varchar20;                                               ');
+      SQL.Add('begin                                                                               ');
+      SQL.Add('  WHO_CLOSE = coalesce(WHO_CLOSE, 0);                                               ');
+      SQL.Add('  insert into TASKLIST (TITLE, NOTICE, PLAN_DATE, DELETED, WHO_CAN)                 ');
+      SQL.Add('  values (:TITLE, :NOTICE, :PLAN_DATE, 0, :WHO_CLOSE)                               ');
+      SQL.Add('  returning ID into :TASK_ID;                                                       ');
+      SQL.Add('  if ((OBJ_TYPE <> '''') and (OBJ_ID <> '''')) then begin                           ');
+      SQL.Add('    insert into TASKMSG (TASK_ID, TEXT, OBJ_TYPE, OBJ_ID)                           ');
+      SQL.Add('    values (:TASK_ID, :NOTICE, :OBJ_TYPE, :OBJ_ID);                                 ');
+      SQL.Add('  end                                                                               ');
+      SQL.Add('  for select substring(Str from 1 for 100) from Explode('','', :USERS) into :Ibname ');
+      SQL.Add('  do begin                                                                          ');
+      SQL.Add('    insert into Taskuser (Task_Id, Foruser)                                         ');
+      SQL.Add('    values (:Task_Id, :Ibname);                                                     ');
+      SQL.Add('  end                                                                               ');
+      SQL.Add('  suspend;                                                                          ');
+      SQL.Add('end                                                                                 ');
       ParamByName('TITLE').AsString := edtTitle.Text;
       ParamByName('NOTICE').AsString := mmoNotice.Lines.Text;
       ParamByName('PLAN_DATE').AsDateTime := edtDate.Value;
       ParamByName('USERS').AsString := GetUsers;
       ParamByName('OBJ_TYPE').AsString := FType;
       ParamByName('OBJ_ID').AsString := FID;
-
+      if (not cbClose.Text.IsEmpty) then begin
+        ParamByName('WHO_CLOSE').AsInteger := cbClose.Value;
+      end;
       Transaction.StartTransaction;
       ExecQuery;
       FTaskId := FN('TASK_ID').AsInteger;

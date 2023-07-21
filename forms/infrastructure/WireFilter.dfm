@@ -105,6 +105,10 @@ object WireFilterForm: TWireFilterForm
     TabOrder = 0
     object tsFilter: TTabSheet
       Caption = #1054#1089#1085#1086#1074#1085#1086#1081' '#1092#1080#1083#1100#1090#1088
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnl1: TPanel
         Left = 0
         Top = 0

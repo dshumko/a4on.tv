@@ -156,6 +156,10 @@ object RequestsForm: TRequestsForm
     OnChange = pgcGridsChange
     object tsPlan: TTabSheet
       Caption = #1047#1072#1087#1083#1072#1085#1080#1088#1086#1074#1072#1085#1099
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object dbgPlan: TDBGridEh
         Left = 0
         Top = 23
@@ -552,6 +556,10 @@ object RequestsForm: TRequestsForm
     object tsGive: TTabSheet
       Caption = #1042#1099#1076#1072#1085#1099' '#1074' '#1088#1072#1073#1086#1090#1091
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object dbgGive: TDBGridEh
         Left = 0
         Top = 25
@@ -1390,6 +1398,7 @@ object RequestsForm: TRequestsForm
             Height = 13
             Align = alTop
             Caption = #1042#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100' '
+            ExplicitWidth = 136
           end
           object splWork: TSplitter
             Left = 164
@@ -1446,6 +1455,8 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
+                ExplicitWidth = 350
+                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 350
                   Height = 176
@@ -1523,8 +1534,8 @@ object RequestsForm: TRequestsForm
                       '    m.M_ID ID, m.NAME, rM.RM_NOTICE notice, m.DIMENSION, rM.RM_Q' +
                       'UANT QNT'
                     
-                      '    , rM.RM_QUANT * rm.rm_cost as COST, coalesce(rm.NOT_CALC, 0)' +
-                      ' NOT_CALC'
+                      '    , rM.RM_QUANT * rm.rm_cost as COST, coalesce(rm.CALC, 0) CAL' +
+                      'C'
                     '    , o.O_Name WH_NAME'
                     '    from MATERIALS m'
                     '        inner join REQUEST_MATERIALS rM on (M.M_ID = rM.M_ID)'
@@ -1537,7 +1548,7 @@ object RequestsForm: TRequestsForm
                     
                       '    m.M_ID ID, m.NAME||'#39' ( '#1042#1086#1079#1074#1088#1072#1090' )'#39', rM.Notice notice, m.DEMEN' +
                       'SION, rM.Quant*(-1) QNT'
-                    '    , rM.Quant*(-1) * m.Cost as COST, 0 as NOT_CALC '
+                    '    , rM.Quant*(-1) * m.Cost as COST, 0 as CALC '
                     '    , o.O_Name WH_NAME'
                     '    from MATERIALS m'
                     
@@ -1575,6 +1586,8 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
+                ExplicitWidth = 271
+                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 271
                   Height = 176
@@ -1667,6 +1680,10 @@ object RequestsForm: TRequestsForm
     object tsAll: TTabSheet
       Caption = #1042#1089#1077' '#1079#1072#1103#1074#1082#1080
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object dbgGrid: TDBGridEh
         Left = 0
         Top = 25
@@ -2435,7 +2452,7 @@ object RequestsForm: TRequestsForm
     Top = 364
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]
@@ -2587,6 +2604,7 @@ object RequestsForm: TRequestsForm
       'WORKERS=WORKERS')
     DataSource = srcPlan
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 191
     Top = 223
   end
@@ -2599,6 +2617,7 @@ object RequestsForm: TRequestsForm
       'RM_QUANT='#1050#1054#1051#1042#1054
       'O_DIMENSION='#1045#1044'_'#1048#1047#1052)
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 283
     Top = 225
   end
@@ -3943,6 +3962,7 @@ object RequestsForm: TRequestsForm
     CloseDataSource = False
     DataSource = srcPlan
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 191
     Top = 271
   end

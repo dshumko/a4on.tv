@@ -2,18 +2,31 @@ inherited EQGroupsForm: TEQGroupsForm
   Left = 381
   Top = 171
   Caption = #1043#1088#1091#1087#1087#1099' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
-  ClientHeight = 311
+  ClientHeight = 503
   ClientWidth = 614
+  ExplicitWidth = 630
+  ExplicitHeight = 542
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 169
     Width = 614
+    ExplicitTop = 169
+    ExplicitWidth = 614
+  end
+  object splMain: TSplitter [1]
+    Left = 0
+    Top = 292
+    Width = 614
+    Height = 4
+    Cursor = crVSplit
+    Align = alBottom
+    ExplicitTop = 293
   end
   inherited dbGrid: TDBGridEh
     Top = 172
     Width = 614
-    Height = 139
+    Height = 120
     AllowedOperations = [alopUpdateEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -89,6 +102,7 @@ inherited EQGroupsForm: TEQGroupsForm
   end
   inherited tlbMain: TToolBar
     Width = 614
+    ExplicitWidth = 614
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -106,6 +120,8 @@ inherited EQGroupsForm: TEQGroupsForm
   inherited pnlEdit: TPanel
     Width = 614
     Height = 144
+    ExplicitWidth = 614
+    ExplicitHeight = 144
     object lbl1: TLabel [0]
       Left = 5
       Top = 9
@@ -124,11 +140,15 @@ inherited EQGroupsForm: TEQGroupsForm
       Top = 111
       Width = 428
       TabOrder = 4
+      ExplicitTop = 111
+      ExplicitWidth = 428
     end
     inherited btnCancelLink: TBitBtn
       Left = 519
       Top = 111
       TabOrder = 5
+      ExplicitLeft = 519
+      ExplicitTop = 111
     end
     object edtName: TDBEditEh
       Left = 73
@@ -184,7 +204,50 @@ inherited EQGroupsForm: TEQGroupsForm
       OnClick = btnColorSetClick
     end
   end
-  object dsEQGroups: TpFIBDataSet [4]
+  object pnlForms: TPanel [5]
+    Left = 0
+    Top = 296
+    Width = 614
+    Height = 207
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 3
+    object splLst: TSplitter
+      Left = 118
+      Top = 0
+      Height = 207
+    end
+    object pnlDATA: TPanel
+      Left = 121
+      Top = 0
+      Width = 493
+      Height = 207
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 0
+    end
+    object lstForms: TListBox
+      Left = 0
+      Top = 0
+      Width = 118
+      Height = 207
+      Align = alLeft
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      Color = clBtnHighlight
+      Ctl3D = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentCtl3D = False
+      ParentFont = False
+      TabOrder = 1
+      OnClick = lstFormsClick
+    end
+  end
+  object dsEQGroups: TpFIBDataSet [6]
     UpdateSQL.Strings = (
       
         'execute procedure Attributes_Iud(:O_Id, :O_Name, :O_Description,' +
@@ -218,6 +281,7 @@ inherited EQGroupsForm: TEQGroupsForm
       '  , O_DELETED'
       '  , O_DIMENSION as COLOR'
       '  , O_TYPE'
+      '  , -1*O_ID EID'
       '  from OBJECTS'
       '  where O_TYPE = 7'
       '        and O_DELETED = 0'

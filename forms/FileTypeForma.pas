@@ -6,33 +6,50 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh;
 
 type
   TFileTypeForm = class(TGridForm)
     dsFileType: TpFIBDataSet;
-    lbl2: TLabel;
-    edtName: TDBEditEh;
-    dbmmoO_DESCRIPTION: TDBMemoEh;
     pmMemo: TPopupMenu;
-    lcbSrvType: TDBLookupComboboxEh;
-    lcbOnOffSrv: TDBLookupComboboxEh;
-    cbOnOff: TDBComboBoxEh;
-    lcbRequest: TDBLookupComboboxEh;
     dsSrvType: TpFIBDataSet;
     srcSrvType: TDataSource;
     dsReqType: TpFIBDataSet;
     srcReqType: TDataSource;
     dsOnOffSrv: TpFIBDataSet;
     srcOnOffSrv: TDataSource;
-    chkOpenInet: TDBCheckBoxEh;
     dsReqTempl: TpFIBDataSet;
     srcReqTempl: TDataSource;
+    gb1: TGroupBox;
+    lcbRequest: TDBLookupComboboxEh;
     lcbTempl: TDBLookupComboboxEh;
+    chkOpenInet: TDBCheckBoxEh;
+    lcbOnOffSrv: TDBLookupComboboxEh;
+    lcbSrvType: TDBLookupComboboxEh;
+    cbOnOff: TDBComboBoxEh;
+    pnlTop: TPanel;
+    lbl2: TLabel;
+    edtName: TDBEditEh;
     lbl1: TLabel;
+    lcbSingleSrv: TDBLookupComboboxEh;
+    srcSingleSrv: TDataSource;
+    dsSingleSrv: TpFIBDataSet;
+    edtNameFmt: TDBEditEh;
+    mmoNOTICE: TDBMemoEh;
+    chkMemoRO: TDBCheckBoxEh;
+    chkText: TDBCheckBoxEh;
+    chkMobilePhone: TDBCheckBoxEh;
+    chkCustomerCard: TDBCheckBoxEh;
+    chkPassport: TDBCheckBoxEh;
+    chkAddress: TDBCheckBoxEh;
+    chkPaySum: TDBCheckBoxEh;
+    chkBid: TDBCheckBoxEh;
+    edtHint: TDBEditEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -42,6 +59,8 @@ type
     procedure btnSaveLinkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelLinkClick(Sender: TObject);
+    procedure chkCustomerCardClick(Sender: TObject);
+    procedure chkPassportClick(Sender: TObject);
   private
     { Private declarations }
     procedure memoMiClick(Sender: TObject);
@@ -60,7 +79,7 @@ var
 implementation
 
 uses
-  DM, JsonDataObjects;
+  System.StrUtils, DM, JsonDataObjects;
 
 {$R *.dfm}
 
@@ -139,6 +158,73 @@ begin
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportN;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldContract;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldContractDate;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldFile;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldFileName;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldMobile;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldApplicantName;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldText;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsBidN;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPAYMENT;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsAddress;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsNewAddress;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
+  begin
+    NewItem := TMenuItem.Create(pmMemo);
+    NewItem.Caption := rsFldOwner;
+    NewItem.OnClick := memoMiClick;
+    pmMemo.Items.Add(NewItem);
+  end;
 end;
 
 procedure TFileTypeForm.actNewExecute(Sender: TObject);
@@ -169,6 +255,20 @@ begin
 
   if not errors then
     StopEdt(False);
+end;
+
+procedure TFileTypeForm.chkCustomerCardClick(Sender: TObject);
+begin
+  inherited;
+  if chkCustomerCard.Checked then
+    chkPassport.Checked := True;
+end;
+
+procedure TFileTypeForm.chkPassportClick(Sender: TObject);
+begin
+  inherited;
+  if not chkPassport.Checked then
+    chkCustomerCard.Checked := False;
 end;
 
 procedure TFileTypeForm.actDeleteExecute(Sender: TObject);
@@ -216,7 +316,7 @@ end;
 procedure TFileTypeForm.memoMiClick(Sender: TObject);
 begin
   if (Sender is TMenuItem) and (ActiveControl is TDBMemoEh) then
-    (ActiveControl as TDBMemoEh).SelText := (Sender as TMenuItem).Caption;
+    (ActiveControl as TDBMemoEh).SelText := ReplaceStr((Sender as TMenuItem).Caption, '_&', '_');
 end;
 
 procedure TFileTypeForm.StartEdt(const New: Boolean = False);
@@ -227,6 +327,7 @@ begin
   dsOnOffSrv.Open;
   dsReqType.Open;
   dsReqTempl.Open;
+  dsSingleSrv.Open;
 
   if not dsFileType.FieldByName('O_CHARFIELD').IsNull then
     ParseJson(dsFileType['O_CHARFIELD']);
@@ -250,12 +351,25 @@ begin
   dsReqType.Close;
   dsOnOffSrv.Close;
   dsSrvType.Close;
+  dsSingleSrv.Close;
 end;
 
 procedure TFileTypeForm.ParseJson(const json: String);
 var
   JO: TJsonObject;
+
+  procedure SetChk(const fld:string; chk: TDBCheckBoxEh);
+  begin
+    chk.Checked := False;
+    if JO.Contains(fld) then
+    begin
+      if not JO[fld].IsNull then
+        chk.Checked := JO.B[fld];
+    end;
+  end;
+
 begin
+  InitControls;
   JO := TJsonObject.Parse(json) as TJsonObject;
   try
     if JO.Contains('OnOff') then
@@ -273,6 +387,11 @@ begin
       if not JO['SrvOnOff'].IsNull then
         lcbOnOffSrv.Value := JO['SrvOnOff'];
     end;
+    if JO.Contains('SSrv') then
+    begin
+      if not JO['SSrv'].IsNull then
+        lcbSingleSrv.Value := JO['SSrv'];
+    end;
     if JO.Contains('ReqType') then
     begin
       if not JO['ReqType'].IsNull then
@@ -284,11 +403,29 @@ begin
         lcbTempl.Value := JO['ReqTempl'];
     end;
 
-    if JO.Contains('OpenInet') then
+    SetChk('OpenInet', chkOpenInet);
+    SetChk('Psprt', chkPassport);
+    SetChk('Card', chkCustomerCard);
+    SetChk('Mobile', chkMobilePhone);
+    SetChk('mRO', chkMemoRO);
+    SetChk('Txt', chkText);
+    SetChk('Bid', chkBid);
+    SetChk('Pay', chkPaySum);
+    SetChk('Adr', chkAddress);
+    // SetChk('SSum', chkSSum);
+
+    if JO.Contains('Nfmt') then
     begin
-      if not JO['OpenInet'].IsNull then
-        chkOpenInet.Checked := JO.B['OpenInet'];
+      if not JO['Nfmt'].IsNull then
+        edtNameFmt.Text := JO.s['Nfmt'];
     end;
+
+    if JO.Contains('Hint') then
+    begin
+      if not JO['Hint'].IsNull then
+        edtHint.Text := JO.s['Hint'];
+    end;
+
   finally
     JO.Free;
   end;
@@ -308,14 +445,36 @@ begin
 
     if not lcbOnOffSrv.Text.IsEmpty then
       JO['SrvOnOff'] := lcbOnOffSrv.Value;
-
+    if not lcbSingleSrv.Text.IsEmpty then
+      JO['SSrv'] := lcbSingleSrv.Value;
     if not lcbRequest.Text.IsEmpty then
       JO['ReqType'] := lcbRequest.Value;
-
     if not lcbTempl.Text.IsEmpty then
       JO['ReqTempl'] := lcbTempl.Value;
+    if chkOpenInet.Checked then
+      JO.B['OpenInet'] := chkOpenInet.Checked;
+    if chkPassport.Checked then
+      JO.B['Psprt'] := chkPassport.Checked;
+    if chkCustomerCard.Checked then
+      JO.B['Card'] := chkCustomerCard.Checked;
+    if chkMobilePhone.Checked then
+      JO.B['Mobile'] := chkMobilePhone.Checked;
+    if chkMemoRO.Checked then
+      JO.B['mRO'] := chkMemoRO.Checked;
+    if chkText.Checked then
+      JO.B['Txt'] := chkText.Checked;
+    if chkBid.Checked then
+      JO.B['Bid'] := chkBid.Checked;
+    if chkPaySum.Checked then
+      JO.B['Pay'] := chkPaySum.Checked;
+    if chkAddress.Checked then
+      JO.B['Adr'] := chkAddress.Checked;
+    if not edtNameFmt.Text.IsEmpty then
+      JO.s['Nfmt'] := edtNameFmt.Text;
+    if not edtHint.Text.IsEmpty then
+      JO.s['Hint'] := edtHint.Text;
+    // if chkSSum.Checked then JO.B['SSum'] := chkSSum.Checked;
 
-    JO.B['OpenInet'] := chkOpenInet.Checked;
     Result := JO.ToString
   finally
     JO.Free;
@@ -323,13 +482,21 @@ begin
 end;
 
 procedure TFileTypeForm.InitControls;
+var
+  i: Integer;
 begin
   cbOnOff.Value := null;
   lcbSrvType.Value := null;
   lcbOnOffSrv.Value := null;
   lcbRequest.Value := null;
   lcbTempl.Value := null;
-  chkOpenInet.Checked := False;
+  lcbSingleSrv.Value := null;
+  edtNameFmt.Text := '';
+  edtHint.Text := '';
+  for i:=0 to pnlEdit.ComponentCount-1 do begin
+    if pnlEdit.Components[i] is TDBCheckBoxEh then
+      (pnlEdit.Components[i] as TDBCheckBoxEh).Checked := False;
+  end;
 end;
 
 end.

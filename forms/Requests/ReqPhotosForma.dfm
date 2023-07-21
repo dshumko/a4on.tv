@@ -1,7 +1,7 @@
 object ReqPhotosForm: TReqPhotosForm
   Left = 256
   Top = 314
-  Caption = #1060#1072#1081#1083#1099' '#1079#1072' '#1087#1077#1088#1080#1086#1076
+  Caption = #1060#1086#1090#1086' '#1089' '#1079#1072#1103#1074#1086#1082' '#1079#1072' '#1087#1077#1088#1080#1086#1076
   ClientHeight = 491
   ClientWidth = 1033
   Color = clBtnFace
@@ -212,6 +212,8 @@ object ReqPhotosForm: TReqPhotosForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         PopupMenu = gridPopUp
         ReadOnly = True
+        SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True

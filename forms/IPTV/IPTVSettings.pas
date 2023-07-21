@@ -345,7 +345,7 @@ begin
   if (dsAttributes.RecordCount = 0) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
   if not(dsAttributes.FieldByName('O_NAME').IsNull) then

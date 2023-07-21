@@ -192,22 +192,26 @@ object GridForm: TGridForm
     Left = 78
     Top = 208
     object actNew: TAction
-      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1083#1072#1090#1077#1078
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1087#1080#1089#1100
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1087#1080#1089#1100' (Ins)'
       ImageIndex = 2
       ShortCut = 45
     end
     object actDelete: TAction
-      Caption = 'actPaymentDelete'
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1079#1072#1087#1080#1089#1100
+      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1079#1072#1087#1080#1089#1100' (Ctrl+Del)'
       ImageIndex = 3
       ShortCut = 16430
     end
     object actEdit: TAction
-      Caption = 'actPaymentEdit'
+      Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' (F2)'
       ImageIndex = 4
       ShortCut = 113
     end
     object actQuickFilter: TAction
       Caption = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
+      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088' (Ctrl+Q)'
       ImageIndex = 40
       ShortCut = 16465
       OnExecute = actQuickFilterExecute

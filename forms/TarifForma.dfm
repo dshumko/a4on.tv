@@ -3,8 +3,8 @@ object TarifForm: TTarifForm
   Top = 214
   BorderStyle = bsDialog
   Caption = #1058#1072#1088#1080#1092' '#1076#1083#1103' '#1091#1089#1083#1091#1075#1080
-  ClientHeight = 153
-  ClientWidth = 261
+  ClientHeight = 181
+  ClientWidth = 257
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,23 +17,23 @@ object TarifForm: TTarifForm
   ShowHint = True
   OnKeyDown = FormKeyDown
   DesignSize = (
-    261
-    153)
+    257
+    181)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 16
     Top = 19
-    Width = 41
+    Width = 69
     Height = 13
-    Caption = #1057' '#1076#1072#1090#1099':'
+    Caption = #1044#1072#1090#1072' '#1085#1072#1095#1072#1083#1072':'
   end
   object Label2: TLabel
     Left = 16
     Top = 56
-    Width = 32
+    Width = 70
     Height = 13
-    Caption = #1058#1072#1088#1080#1092
+    Caption = #1058#1072#1088#1080#1092' '#1089' '#1076#1072#1090#1099
   end
   object lbl1: TLabel
     Left = 16
@@ -41,6 +41,13 @@ object TarifForm: TTarifForm
     Width = 97
     Height = 13
     Caption = #1058#1072#1088#1080#1092' '#1076#1083#1103' '#1102#1088'. '#1083#1080#1094
+  end
+  object lblVAT: TLabel
+    Left = 91
+    Top = 119
+    Width = 22
+    Height = 13
+    Caption = #1053#1044#1057
   end
   object deTarif: TDBNumberEditEh
     Left = 124
@@ -83,28 +90,45 @@ object TarifForm: TTarifForm
     OnChange = deTarifChange
   end
   object btnCancel: TBitBtn
-    Left = 170
-    Top = 122
-    Width = 75
+    Left = 166
+    Top = 150
+    Width = 79
     Height = 23
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 4
+    TabOrder = 5
+    ExplicitTop = 155
   end
   object btnOk: TBitBtn
-    Left = 16
-    Top = 122
-    Width = 148
+    Left = 8
+    Top = 150
+    Width = 152
     Height = 23
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     ModalResult = 1
     NumGlyphs = 2
-    TabOrder = 3
+    TabOrder = 4
     OnClick = btnOkClick
+    ExplicitLeft = 16
+    ExplicitTop = 155
+  end
+  object ednVAT: TDBNumberEditEh
+    Left = 124
+    Top = 116
+    Width = 121
+    Height = 21
+    DynProps = <>
+    EditButton.Visible = True
+    EditButtons = <>
+    ShowHint = True
+    TabOrder = 3
+    Value = 0.000000000000000000
+    Visible = True
+    OnChange = deTarifChange
   end
   object Query: TpFIBQuery
     Transaction = dmMain.trWriteQ
@@ -112,7 +136,7 @@ object TarifForm: TTarifForm
     SQL.Strings = (
       
         'execute procedure tarif_iud (:tarif_id, :service_id, :date_from,' +
-        ' :date_to, :tarif_sum, :tarif_sum_jur, :action)')
+        ' :date_to, :tarif_sum, :tarif_sum_jur, :action, :VAT)')
     Left = 69
     Top = 70
   end

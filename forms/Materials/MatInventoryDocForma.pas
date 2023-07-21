@@ -82,6 +82,7 @@ type
     fMatDocID: Integer;
     fAddedMatID: Integer;
     FReadOnly: Boolean;
+    FEnterSecondPress: Boolean;
     procedure SetMatDocID(value: Integer);
     function CheckRowData: Boolean;
     procedure AddRow;
@@ -241,21 +242,35 @@ procedure TMatInventoryDocForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := false
-    else if (ActiveControl is TDBMemoEh) then
-      go := not((ActiveControl as TDBMemoEh).Lines.Text.Length > 20);
+      go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

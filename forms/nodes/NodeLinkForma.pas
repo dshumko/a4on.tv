@@ -147,8 +147,8 @@ end;
 procedure TNodeLinkForm.FormShow(Sender: TObject);
 begin
   // FLineCnt := 0;
-  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
-  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Dictionary_Node_Links);
+  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Nodes);
+  FCanEdit := FCanEdit or dmMain.AllowedAction(rght_Comm_Node_Links);
 
   OkCancelFrame.bbOk.Visible := FCanEdit;
 

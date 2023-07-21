@@ -14,9 +14,9 @@ object apgCustomerAttributes: TapgCustomerAttributes
   PixelsPerInch = 96
   TextHeight = 13
   object dbgCustAttr: TDBGridEh
-    Left = 27
+    Left = 26
     Top = 0
-    Width = 420
+    Width = 421
     Height = 138
     Align = alClient
     AllowedOperations = []
@@ -31,7 +31,7 @@ object apgCustomerAttributes: TapgCustomerAttributes
     STFilter.Local = True
     STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
-    TabOrder = 1
+    TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgCustAttrDblClick
     Columns = <
@@ -66,37 +66,45 @@ object apgCustomerAttributes: TapgCustomerAttributes
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object tbAttributes: TToolBar
+  object pnlButtons: TPanel
     Left = 0
     Top = 0
-    Width = 27
+    Width = 26
     Height = 138
     Align = alLeft
-    EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-    Images = A4MainForm.ICONS_ACTIVE
-    TabOrder = 0
-    object btnAdd: TToolButton
-      Left = 0
-      Top = 0
-      Action = actAdd
-      ParentShowHint = False
-      Wrap = True
-      ShowHint = True
-    end
-    object btnEdit: TToolButton
-      Left = 0
-      Top = 22
-      Action = actEdit
-      ParentShowHint = False
-      Wrap = True
-      ShowHint = True
-    end
-    object btnDel: TToolButton
-      Left = 0
-      Top = 44
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitTop = -34
+    ExplicitHeight = 172
+    DesignSize = (
+      26
+      138)
+    object btnDel1: TSpeedButton
+      Left = 2
+      Top = 115
+      Width = 22
+      Height = 22
       Action = actDel
-      ParentShowHint = False
-      ShowHint = True
+      Anchors = [akLeft, akBottom]
+      Flat = True
+      Layout = blGlyphTop
+      ExplicitTop = 149
+    end
+    object btnAdd1: TSpeedButton
+      Left = 2
+      Top = 3
+      Width = 22
+      Height = 22
+      Action = actAdd
+      Flat = True
+    end
+    object btnEdit1: TSpeedButton
+      Left = 2
+      Top = 31
+      Width = 22
+      Height = 22
+      Action = actEdit
+      Flat = True
     end
   end
   object dsCustAttributes: TpFIBDataSet
@@ -163,17 +171,14 @@ object apgCustomerAttributes: TapgCustomerAttributes
     Left = 206
     Top = 37
     object actAdd: TAction
-      Caption = 'actAdd'
       ImageIndex = 2
       OnExecute = actAddExecute
     end
     object actEdit: TAction
-      Caption = 'actEdit'
       ImageIndex = 4
       OnExecute = actEditExecute
     end
     object actDel: TAction
-      Caption = 'actDel'
       ImageIndex = 3
       OnExecute = actDelExecute
     end

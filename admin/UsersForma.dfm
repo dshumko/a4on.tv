@@ -27,7 +27,7 @@ object UsersForm: TUsersForm
     Top = 0
     Width = 717
     Height = 487
-    ActivePage = tabUsers
+    ActivePage = tabGroup
     Align = alClient
     TabOrder = 0
     OnChange = pcChange
@@ -803,6 +803,7 @@ object UsersForm: TUsersForm
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
+                ExplicitWidth = 89
               end
               object dbgUG: TDBGridEh
                 Left = 0
@@ -925,6 +926,7 @@ object UsersForm: TUsersForm
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '
+                ExplicitWidth = 104
               end
               object dbgUGA: TDBGridEh
                 Left = 0
@@ -2300,6 +2302,7 @@ object UsersForm: TUsersForm
       
         '  left outer join Sys$Group_Rights gr on (r.Id = gr.Right_Id and' +
         ' gr.Rights_Type = 0 and gr.Group_Id = :ID)'
+      'where @@right_fltr%1=1@  '
       'order by r.Category, r.Rights')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

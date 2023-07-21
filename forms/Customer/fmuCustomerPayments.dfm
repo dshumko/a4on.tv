@@ -329,6 +329,14 @@ object apgCustomerPayments: TapgCustomerPayments
         FF00FF00FF00FF00FF00FF00FF00AAD7F30077BEE90059B1E80059B1E80059B1
         E80059B1E80075BDEA00A8D6F200FF00FF00FF00FF00FF00FF00}
     end
+    object btnCheck: TSpeedButton
+      Left = 2
+      Top = 70
+      Width = 22
+      Height = 22
+      Action = actCheckUrl
+      Flat = True
+    end
   end
   object dsPayment: TpFIBDataSet
     SelectSQL.Strings = (
@@ -415,6 +423,11 @@ object apgCustomerPayments: TapgCustomerPayments
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1086#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
       ImageIndex = 55
       OnExecute = actPrepayExecute
+    end
+    object actCheckUrl: TAction
+      Hint = #1055#1088#1086#1074#1077#1088#1080#1090#1100' '#1087#1083#1072#1090#1077#1078
+      ImageIndex = 17
+      OnExecute = actCheckUrlExecute
     end
   end
   object trRead: TpFIBTransaction

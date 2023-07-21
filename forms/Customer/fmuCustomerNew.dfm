@@ -666,7 +666,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 173
         Width = 159
         Height = 13
-        Caption = #1044#1086#1075#1086#1074#1086#1088' '#1074' '#1083#1080#1094#1077' '#1080' '#1085#1072' '#1086#1089#1085#1086#1074#1072#1085#1080#1077
+        Caption = #1044#1086#1075#1086#1074#1086#1088' '#1074' '#1083#1080#1094#1077' '#1080' '#1085#1072' '#1086#1089#1085#1086#1074#1072#1085#1080#1080
       end
       object Label14: TLabel
         Tag = 2
@@ -988,7 +988,7 @@ object apgCustomerNew: TapgCustomerNew
       end
     end
   end
-  object pnl1: TPanel
+  object pnlClient: TPanel
     Left = 497
     Top = 0
     Width = 382
@@ -998,9 +998,9 @@ object apgCustomerNew: TapgCustomerNew
     TabOrder = 1
     object pnlContacts: TPanel
       Left = 0
-      Top = 186
+      Top = 331
       Width = 382
-      Height = 479
+      Height = 334
       Align = alClient
       BevelOuter = bvNone
       Color = clWhite
@@ -1107,7 +1107,7 @@ object apgCustomerNew: TapgCustomerNew
         Left = 0
         Top = 18
         Width = 382
-        Height = 461
+        Height = 316
         Align = alClient
         DataSource = srcContacts
         DynProps = <>
@@ -1160,9 +1160,9 @@ object apgCustomerNew: TapgCustomerNew
         end
       end
     end
-    object pnl2: TPanel
+    object pnlNotice: TPanel
       Left = 0
-      Top = 0
+      Top = 145
       Width = 382
       Height = 145
       Align = alTop
@@ -1199,7 +1199,7 @@ object apgCustomerNew: TapgCustomerNew
     end
     object pnlPassport: TPanel
       Left = 0
-      Top = 145
+      Top = 290
       Width = 382
       Height = 41
       Align = alTop
@@ -1217,6 +1217,61 @@ object apgCustomerNew: TapgCustomerNew
         Caption = #1050#1085#1086#1087#1082#1072' '#1076#1083#1103' '#1088#1072#1073#1086#1090#1099' '#1089' '#1087#1072#1089#1087#1086#1088#1090#1086#1084
         TabOrder = 0
         OnClick = actScanExecute
+      end
+    end
+    object pnlWarningInfo: TPanel
+      Left = 0
+      Top = 0
+      Width = 382
+      Height = 145
+      Align = alTop
+      Color = 13619199
+      ParentBackground = False
+      TabOrder = 3
+      Visible = False
+      DesignSize = (
+        382
+        145)
+      object mmoWarning: TDBMemoEh
+        Left = 1
+        Top = 1
+        Width = 380
+        Height = 143
+        Lines.Strings = (
+          'mmoWarning')
+        Align = alClient
+        Alignment = taCenter
+        AutoSize = False
+        BevelEdges = []
+        BevelInner = bvNone
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        Ctl3D = True
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentColor = True
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        ShowHint = True
+        TabOrder = 1
+        Visible = True
+        WantReturns = True
+      end
+      object btnCloseWarningInfo: TButton
+        Left = 360
+        Top = 5
+        Width = 19
+        Height = 13
+        Anchors = [akTop, akRight]
+        Caption = 'X'
+        TabOrder = 0
+        OnClick = btnCloseWarningInfoClick
       end
     end
   end
@@ -2071,7 +2126,7 @@ object apgCustomerNew: TapgCustomerNew
       'read_committed')
     TPBMode = tpbDefault
     Left = 680
-    Top = 108
+    Top = 116
   end
   object PropStorageEh: TPropStorageEh
     Section = 'CUSTOMER'

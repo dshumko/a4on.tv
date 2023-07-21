@@ -9,7 +9,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Buttons,
   Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase,
+  DBCtrlsEh,
   DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
 
 type
@@ -19,19 +20,6 @@ type
     tsSingle: TTabSheet;
     tsFact: TTabSheet;
     ASGrid: TDBGridEh;
-    Splitter1: TSplitter;
-    AddonPage: TPageControl;
-    TarifPage: TTabSheet;
-    trfGrid: TDBGridEh;
-    ToolBar1: TToolBar;
-    tbtarAdd: TToolButton;
-    tbtarDel: TToolButton;
-    tsLink: TTabSheet;
-    tbLink: TToolBar;
-    tbaddlink: TToolButton;
-    tbeditlink: TToolButton;
-    tbdellink: TToolButton;
-    Splitter2: TSplitter;
     srcTarif: TDataSource;
     srcLinks: TDataSource;
     srcServices: TDataSource;
@@ -50,56 +38,39 @@ type
     tbSrvCancel: TToolButton;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    TabChannels: TTabSheet;
-    TabChannelState: TTabControl;
-    Panel5: TPanel;
-    Splitter3: TSplitter;
-    Panel6: TPanel;
-    GridSC: TDBGridEh;
-    pnlProgrBtn: TPanel;
-    sbChanAdd: TSpeedButton;
-    sbChanRemove: TSpeedButton;
-    Panel7: TPanel;
-    GridC: TDBGridEh;
     dsSC: TpFIBDataSet;
     srcSC: TDataSource;
     dsC: TpFIBDataSet;
     srcC: TDataSource;
     ActionList1: TActionList;
     Action1: TAction;
-    Label1: TLabel;
-    Label2: TLabel;
     actAddSrv: TAction;
     actEditSrv: TAction;
     actDelSrv: TAction;
-    tsAllowSrv: TTabSheet;
-    dbgAllow: TDBGridEh;
-    ToolBar4: TToolBar;
-    tbAllowOk: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton7: TToolButton;
-    tsSwitch: TTabSheet;
-    tbSwitch: TToolBar;
-    tbSwitchAdd: TToolButton;
-    tbSwitchEdit: TToolButton;
-    tbSwitchDel: TToolButton;
     srcSwitch: TDataSource;
     dsSwitch: TpFIBDataSet;
     srcSwitchToSrv: TDataSource;
     dsSwitchToSrv: TpFIBDataSet;
-    Panel1: TPanel;
-    dbgSwitch: TDBGridEh;
-    pnlSwitch: TPanel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    dblSwitchTo: TDBLookupComboboxEh;
-    dblSwitchSrv: TDBLookupComboboxEh;
-    bbSwitchSave: TBitBtn;
-    bbSwitchCancel: TBitBtn;
-    memSwitch: TDBMemoEh;
+    trRead: TpFIBTransaction;
+    trWrite: TpFIBTransaction;
+    dsSrvAttr: TpFIBDataSet;
+    srcSrvAttr: TDataSource;
+    dsAttributes: TpFIBDataSet;
+    srcAttributes: TDataSource;
+    CnErrors: TCnErrorProvider;
+    dsCMPLX: TpFIBDataSet;
+    srcCMPLX: TDataSource;
+    btnQF: TToolButton;
+    btn1: TToolButton;
+    actCmxAdd: TAction;
+    actCmxDel: TAction;
+    AddonPage: TPageControl;
+    tsTarif: TTabSheet;
+    trfGrid: TDBGridEh;
+    pnlPST: TPanel;
+    btnPSTDel: TSpeedButton;
+    btnPSTAdd: TSpeedButton;
+    tsLink: TTabSheet;
     Panel2: TPanel;
     dbgLink: TDBGridEh;
     pnlLink: TPanel;
@@ -111,13 +82,42 @@ type
     btnCancelLink: TBitBtn;
     dbmmoDESCRIPTION: TDBMemoEh;
     cbLINK_TYPE: TDBComboBoxEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    tsChannels: TTabSheet;
+    TabChannelState: TTabControl;
+    Panel3: TPanel;
+    Splitter2: TSplitter;
+    Panel4: TPanel;
+    Label1: TLabel;
+    GridSC: TDBGridEh;
+    pnlProgrBtn: TPanel;
+    sbChanAdd: TSpeedButton;
+    sbChanRemove: TSpeedButton;
+    Panel5: TPanel;
+    Label2: TLabel;
+    GridC: TDBGridEh;
+    tsAllowSrv: TTabSheet;
+    dbgAllow: TDBGridEh;
+    ToolBar1: TToolBar;
+    tbAllowOk: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    tsSwitch: TTabSheet;
+    Panel1: TPanel;
+    dbgSwitch: TDBGridEh;
+    pnlSwitch: TPanel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    lbl5: TLabel;
+    dblSwitchTo: TDBLookupComboboxEh;
+    dblSwitchSrv: TDBLookupComboboxEh;
+    bbSwitchSave: TBitBtn;
+    bbSwitchCancel: TBitBtn;
+    memSwitch: TDBMemoEh;
+    cbTime: TDBComboBoxEh;
     tsAtributes: TTabSheet;
-    tbAttr: TToolBar;
-    btnAttrAdd: TToolButton;
-    btnAttrEdit: TToolButton;
-    btnAttrDel: TToolButton;
     pnlAtr: TPanel;
     dbgAttr: TDBGridEh;
     pnlAttr: TPanel;
@@ -128,68 +128,13 @@ type
     btnSaveAttr: TBitBtn;
     btnCancelAttr: TBitBtn;
     dbmmoNOTICE: TDBMemoEh;
-    dsSrvAttr: TpFIBDataSet;
-    srcSrvAttr: TDataSource;
     edtAtrValue: TDBEditEh;
-    dsAttributes: TpFIBDataSet;
-    srcAttributes: TDataSource;
-    lbl5: TLabel;
-    cbTime: TDBComboBoxEh;
-    CnErrors: TCnErrorProvider;
-    pgcSingle: TPageControl;
-    tsTarifSql: TTabSheet;
-    tsAttrSgl: TTabSheet;
-    pnlAdditionalSingle: TPanel;
-    DBGridEh4: TDBGridEh;
-    ToolBar5: TToolBar;
-    tbSinglAdd: TToolButton;
-    tbSinglEdit: TToolButton;
-    tbSinglDel: TToolButton;
-    pnl1: TPanel;
-    dbgAttrSgl: TDBGridEh;
-    pnlAttrSgl: TPanel;
-    lbl1: TLabel;
-    lbl6: TLabel;
-    lbl7: TLabel;
-    dbluAttributeSgl: TDBLookupComboboxEh;
-    btnAttrSglSave: TBitBtn;
-    btnAttrSglCancel: TBitBtn;
-    mmoNOTICE: TDBMemoEh;
-    edtAtrValueSgl: TDBEditEh;
-    tbAttrSgl: TToolBar;
-    btnAttrSglAdd: TToolButton;
-    btnAttrSglEdit: TToolButton;
-    btnAttrSglDel: TToolButton;
-    pgcFix: TPageControl;
-    tsAttrFix: TTabSheet;
-    Panel4: TPanel;
-    dbgAttrFix: TDBGridEh;
-    pnlAttrFix: TPanel;
-    Label9: TLabel;
-    Label10: TLabel;
-    Label11: TLabel;
-    dbluAttributeFix: TDBLookupComboboxEh;
-    BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
-    DBMemoEh1: TDBMemoEh;
-    edtAtrValueFix: TDBEditEh;
-    tbAttrFix: TToolBar;
-    btnAttrFixAdd: TToolButton;
-    btnAttrFixEdit: TToolButton;
-    btnAttrFixDel: TToolButton;
-    Splitter4: TSplitter;
     cbbList: TDBComboBoxEh;
     tsCOMPLEX: TTabSheet;
     dbgCMPLX: TDBGridEh;
-    dsCMPLX: TpFIBDataSet;
-    srcCMPLX: TDataSource;
-    btnQF: TToolButton;
-    btn1: TToolButton;
     pnlCmxButtons: TPanel;
     btnCmxDel: TSpeedButton;
     btnCmxAdd: TSpeedButton;
-    actCmxAdd: TAction;
-    actCmxDel: TAction;
     pnlCmxAdd: TPanel;
     edCmxFrom: TDBDateTimeEditEh;
     edCmxTo: TDBDateTimeEditEh;
@@ -198,20 +143,27 @@ type
     btn2: TButton;
     btn3: TButton;
     dbmCmxNotice: TDBMemoEh;
+    Splitter1: TSplitter;
+    tbAttr: TPanel;
+    sbAttrDel: TSpeedButton;
+    sbAttrAdd: TSpeedButton;
+    sbAttrEdit: TSpeedButton;
+    tbLink: TPanel;
+    btnLinkDel: TSpeedButton;
+    btnLinkAdd: TSpeedButton;
+    btnLinkEdit: TSpeedButton;
+    tbSwitch: TPanel;
+    btnSWDel: TSpeedButton;
+    btnSWAdd: TSpeedButton;
+    btnSWEdit: TSpeedButton;
     procedure tbSrvCancelClick(Sender: TObject);
     procedure tbSrvOkClick(Sender: TObject);
     procedure srcServicesStateChange(Sender: TObject);
     procedure dsLinksNewRecord(DataSet: TDataSet);
     procedure tbcancellinkClick(Sender: TObject);
     procedure tbpostlinkClick(Sender: TObject);
-    procedure tbdellinkClick(Sender: TObject);
-    procedure tbeditlinkClick(Sender: TObject);
-    procedure tbaddlinkClick(Sender: TObject);
     procedure AddonPageChange(Sender: TObject);
     procedure pcServicesChange(Sender: TObject);
-    procedure tbtarAddClick(Sender: TObject);
-    procedure tbtarEditClick(Sender: TObject);
-    procedure tbtarDelClick(Sender: TObject);
     procedure tbtarCancelClick(Sender: TObject);
     procedure tbtarOkClick(Sender: TObject);
     procedure dsTarifNewRecord(DataSet: TDataSet);
@@ -229,42 +181,40 @@ type
     procedure actAddSrvExecute(Sender: TObject);
     procedure actEditSrvExecute(Sender: TObject);
     procedure actDelSrvExecute(Sender: TObject);
-    procedure tbSwitchAddClick(Sender: TObject);
     procedure dsSwitchNewRecord(DataSet: TDataSet);
     procedure bbSwitchSaveClick(Sender: TObject);
     procedure bbSwitchCancelClick(Sender: TObject);
-    procedure tbSwitchEditClick(Sender: TObject);
-    procedure tbSwitchDelClick(Sender: TObject);
     procedure btnSaveLinkClick(Sender: TObject);
     procedure btnCancelLinkClick(Sender: TObject);
     procedure srcCStateChange(Sender: TObject);
     procedure srcSCStateChange(Sender: TObject);
-    procedure btnAttrAddClick(Sender: TObject);
-    procedure btnAttrEditClick(Sender: TObject);
-    procedure btnAttrDelClick(Sender: TObject);
     procedure dsSrvAttrNewRecord(DataSet: TDataSet);
     procedure btnSaveAttrClick(Sender: TObject);
     procedure btnCancelAttrClick(Sender: TObject);
     procedure dbgAttrDblClick(Sender: TObject);
     procedure dbgSwitchDblClick(Sender: TObject);
     procedure dbgLinkDblClick(Sender: TObject);
-    procedure btnAttrSglAddClick(Sender: TObject);
-    procedure btnAttrSglEditClick(Sender: TObject);
-    procedure btnAttrSglDelClick(Sender: TObject);
-    procedure pgcSingleChange(Sender: TObject);
-    procedure btnAttrSglCancelClick(Sender: TObject);
-    procedure btnAttrSglSaveClick(Sender: TObject);
-    procedure btnAttrFixAddClick(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
-    procedure BitBtn2Click(Sender: TObject);
-    procedure btnAttrFixEditClick(Sender: TObject);
-    procedure btnAttrFixDelClick(Sender: TObject);
     procedure dbluAttributeChange(Sender: TObject);
     procedure btnQFClick(Sender: TObject);
     procedure actCmxAddExecute(Sender: TObject);
     procedure actCmxDelExecute(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
+    procedure btnPSTDelClick(Sender: TObject);
+    procedure btnPSTAddClick(Sender: TObject);
+    procedure sbAttrEditClick(Sender: TObject);
+    procedure sbAttrAddClick(Sender: TObject);
+    procedure sbAttrDelClick(Sender: TObject);
+    procedure btnLinkDelClick(Sender: TObject);
+    procedure btnLinkAddClick(Sender: TObject);
+    procedure btnLinkEditClick(Sender: TObject);
+    procedure btnSWDelClick(Sender: TObject);
+    procedure btnSWEditClick(Sender: TObject);
+    procedure btnSWAddClick(Sender: TObject);
+    procedure srcLinksDataChange(Sender: TObject; Field: TField);
+    procedure srcCMPLXDataChange(Sender: TObject; Field: TField);
+    procedure srcSwitchDataChange(Sender: TObject; Field: TField);
+    procedure srcSrvAttrDataChange(Sender: TObject; Field: TField);
   private
     { Private declarations }
     FCanEdit: Boolean;
@@ -275,10 +225,6 @@ type
     procedure StopLink(const Cancel: Boolean);
     procedure StartAttr(const New: Boolean = True);
     procedure StopAttr(const Cancel: Boolean);
-    procedure StartAttrSing(const New: Boolean = True);
-    procedure StopAttrSing(const Cancel: Boolean);
-    procedure StartAttrFix(const New: Boolean = True);
-    procedure StopAttrFix(const Cancel: Boolean);
     function checkCmplx: Boolean;
   public
     { Public declarations }
@@ -328,11 +274,13 @@ begin
     dsTarif.Cancel;
     exit;
   end;
+
   if FCanEditAll then
   begin
     dsTarif.Post;
     exit;
   end;
+
   if (VarToDateTime(dsTarif.FieldByName('DATE_FROM').NewValue) > dmMain.CurrentMonth) or
     (VarToDateTime(dsTarif.FieldByName('DATE_TO').NewValue) < dmMain.CurrentMonth) then
     dsTarif.Post
@@ -340,89 +288,47 @@ begin
     dsTarif.Cancel;
 end;
 
-procedure TServicesForm.tbSwitchAddClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartSwitch;
-end;
-
-procedure TServicesForm.tbSwitchDelClick(Sender: TObject);
-begin
-  if FCanEdit and (not dsSwitch.FieldByName('SWITCHTO').IsNull) then
-    if (MessageDlg(format(rsDelLinkWT, [dsSwitch['SWITCHTO']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-      dsSwitch.Delete;
-end;
-
-procedure TServicesForm.tbSwitchEditClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartSwitch(False);
-
-end;
-
 procedure TServicesForm.tbtarCancelClick(Sender: TObject);
 begin
   dsTarif.Cancel;
-end;
-
-procedure TServicesForm.tbtarDelClick(Sender: TObject);
-begin
-  if dsTarif.RecordCount = 0 then
-    exit;
-
-  if (MessageDlg(rsDeleteSelectedRecords, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-    dsTarif.Delete;
-end;
-
-procedure TServicesForm.tbtarEditClick(Sender: TObject);
-begin
-  if dsTarif.RecordCount = 0 then
-    exit;
-
-  if FCanEdit then
-  begin
-    if EditTarif(dsServices['NAME'], dsServices['SERVICE_ID'], dsTarif['tarif_id']) then
-      dsTarif.CloseOpen(True);
-  end;
-end;
-
-procedure TServicesForm.tbtarAddClick(Sender: TObject);
-begin
-  if dsServices.RecordCount = 0 then
-    exit;
-
-  if FCanEdit then
-  begin
-    if EditTarif(dsServices['NAME'], dsServices['SERVICE_ID'], -1) then
-      dsTarif.CloseOpen(True);
-  end;
 end;
 
 procedure TServicesForm.pcServicesChange(Sender: TObject);
 begin
   if (dsTarif.State in [dsEdit, dsInsert]) then
     dsTarif.Cancel;
+
   if (dsServices.State in [dsEdit, dsInsert]) then
     dsServices.Cancel;
+
   dsServices.Close;
 
   dsServices.ParamByName('SERV_TYPE').AsInteger := pcServices.ActivePage.Tag;
   dsServices.Open;
+
+  tsTarif.TabVisible := pcServices.ActivePage.Tag <> 2;
+  tsLink.TabVisible := pcServices.ActivePage.Tag = 0;
+  tsChannels.TabVisible := pcServices.ActivePage.Tag = 0;
+  tsSwitch.TabVisible := pcServices.ActivePage.Tag = 0;
+  tsCOMPLEX.TabVisible := pcServices.ActivePage.Tag = 0;
+
   if pcServices.ActivePage.Tag <> 2 then
   begin
-    if pcServices.ActivePage.Tag = 0 then
-      AddonPage.ActivePage := TarifPage
-    else
-      pgcSingle.ActivePage := tsTarifSql;
+    AddonPage.ActivePage := tsTarif;
     dsTarif.Open;
-    dsONOFFServices.Close;
-    dsLinks.Close;
+    if dsONOFFServices.Active then
+      dsONOFFServices.Close;
+    if dsLinks.Active then
+      dsLinks.Close;
+    if dsSrvAttr.Active then
+      dsSrvAttr.Close;
+  end
+  else
+  begin
+    AddonPage.ActivePage := tsAtributes;
+    if not dsSrvAttr.Active then
+      dsSrvAttr.Active;
   end;
-
-  if dsSrvAttr.Active then
-    dsSrvAttr.Close;
-  dsSrvAttr.Active := (pcServices.ActivePage.Tag = 2);
-
 end;
 
 procedure TServicesForm.actAddSrvExecute(Sender: TObject);
@@ -513,36 +419,20 @@ end;
 
 procedure TServicesForm.AddonPageChange(Sender: TObject);
 begin
-  dsTarif.Active := (AddonPage.ActivePage = TarifPage);
+  dsTarif.Active := (AddonPage.ActivePage = tsTarif);
   dsONOFFServices.Active := (AddonPage.ActivePage = tsLink) or (AddonPage.ActivePage = tsSwitch);
   dsLinks.Active := (AddonPage.ActivePage = tsLink);
-  if (AddonPage.ActivePage = TabChannels) then
+
+  if (AddonPage.ActivePage = tsChannels) then
   begin
     TabChannelState.TabIndex := 0;
     TabChannelStateChange(Sender);
   end;
+
   dsSwitch.Active := (AddonPage.ActivePage = tsSwitch);
   dsSwitchToSrv.Active := (AddonPage.ActivePage = tsSwitch);
   dsSrvAttr.Active := (AddonPage.ActivePage = tsAtributes);
   dsCMPLX.Active := (AddonPage.ActivePage = tsCOMPLEX);
-end;
-
-procedure TServicesForm.tbaddlinkClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartLink();
-end;
-
-procedure TServicesForm.tbeditlinkClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartLink(False);
-end;
-
-procedure TServicesForm.tbdellinkClick(Sender: TObject);
-begin
-  if (MessageDlg(rsDeleteSelectedRecords, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-    dsLinks.Delete;
 end;
 
 procedure TServicesForm.tbpostlinkClick(Sender: TObject);
@@ -608,6 +498,20 @@ begin
   tbSrvAdd.Enabled := not tbSrvOk.Enabled;
 end;
 
+procedure TServicesForm.srcSrvAttrDataChange(Sender: TObject;
+  Field: TField);
+begin
+  sbAttrEdit.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+  sbAttrDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+end;
+
+procedure TServicesForm.srcSwitchDataChange(Sender: TObject;
+  Field: TField);
+begin
+  btnSWEdit.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+  btnSWDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+end;
+
 procedure TServicesForm.tbSrvOkClick(Sender: TObject);
 begin
   if FCanEdit then
@@ -645,18 +549,17 @@ begin
   pcServices.ActivePage := tsAbonent;
   dsServices.ParamByName('SERV_TYPE').AsInteger := 0;
   dsServices.Open;
-  AddonPage.ActivePage := TarifPage;
+  AddonPage.ActivePage := tsTarif;
   dsTarif.Open;
 
   FCanEdit := (dmMain.AllowedAction(rght_Dictionary_full));
   FCanEditAll := (dmMain.AllowedAction(rght_Dictionary_Services));
   FCanEdit := FCanEdit or FCanEditAll; // может редактировать если разрешено редактировать все
 
-  ToolBar1.Visible := FCanEdit;
-  ToolBar2.Visible := FCanEdit;
+  pnlPST.Visible := FCanEdit;
   tbLink.Visible := FCanEdit;
   tbSwitch.Visible := FCanEdit;
-  ToolBar5.Visible := FCanEdit;
+  // pnlSST.Visible := FCanEdit;
   pnlProgrBtn.Visible := FCanEdit;
   tbAttr.Visible := FCanEdit;
 
@@ -692,26 +595,39 @@ begin
     ' :SRV_TYPE_ID, :SHIFT_MONTHS, :NAME, :SHORTNAME, :DESCRIPTION, ' + ' :DIMENSION, :SHOW_SERVICE, :EXPENSE_TYPE)';
 
 {$IFNDEF DIGIT}
-  TabChannels.TabVisible := False;
+  TabChannels.TabVisible := false;
 {$ENDIF}
+end;
+
+procedure TServicesForm.srcCMPLXDataChange(Sender: TObject; Field: TField);
+begin
+  actCmxDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
 end;
 
 procedure TServicesForm.srcCStateChange(Sender: TObject);
 begin
-  sbChanAdd.Enabled := dsC.RecordCount > 0;
+  sbChanAdd.Enabled := (dsC.RecordCount > 0) and FCanEdit;
+  sbChanRemove.Enabled := (dsSC.RecordCount > 0) and FCanEdit;
+end;
+
+procedure TServicesForm.srcLinksDataChange(Sender: TObject; Field: TField);
+begin
+  btnLinkEdit.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+  btnLinkDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
 end;
 
 procedure TServicesForm.srcSCStateChange(Sender: TObject);
 begin
-  sbChanRemove.Enabled := dsSC.RecordCount > 0;
+  sbChanAdd.Enabled := (dsC.RecordCount > 0) and FCanEdit;
+  sbChanRemove.Enabled := (dsSC.RecordCount > 0) and FCanEdit;
 end;
 
 procedure TServicesForm.srcServicesDataChange(Sender: TObject; Field: TField);
 begin
-  actEditSrv.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and tbSrvAdd.Enabled;
-  actDelSrv.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and tbSrvAdd.Enabled;
+  actEditSrv.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+  actDelSrv.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
 
-  if (pcServices.ActivePage.Tag = 0) and (AddonPage.ActivePage = TabChannels) then
+  if (pcServices.ActivePage.Tag = 0) and (AddonPage.ActivePage = tsChannels) then
   begin
     TabChannelStateChange(Sender);
   end;
@@ -719,17 +635,20 @@ end;
 
 procedure TServicesForm.srcTarifDataChange(Sender: TObject; Field: TField);
 begin
-  if pcServices.ActivePage.Tag = 0 then
-  begin
-    tbtarAdd.Enabled := dsServices.RecordCount > 0;
-    tbtarDel.Enabled := (Sender as TDataSource).DataSet.RecordCount > 0;
-  end;
-  if pcServices.ActivePage.Tag = 1 then
-  begin
-    tbSinglAdd.Enabled := dsServices.RecordCount > 0;
-    tbSinglEdit.Enabled := (Sender as TDataSource).DataSet.RecordCount > 0;
-    tbSinglDel.Enabled := (Sender as TDataSource).DataSet.RecordCount > 0;
-  end;
+  btnPSTDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+end;
+
+procedure TServicesForm.sbAttrAddClick(Sender: TObject);
+begin
+  if FCanEdit then
+    StartAttr;
+end;
+
+procedure TServicesForm.sbAttrDelClick(Sender: TObject);
+begin
+  if FCanEdit and (not dsSrvAttr.FieldByName('O_NAME').IsNull) then
+    if (MessageDlg(format(rsDeleteWithName, [dsSrvAttr['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+      dsSrvAttr.Delete;
 end;
 
 procedure TServicesForm.sbChanAddClick(Sender: TObject);
@@ -747,6 +666,7 @@ begin
     Channel_ON := 0;
 
   with TpFIBQuery.Create(Nil) do
+  begin
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -764,6 +684,7 @@ begin
     finally
       Free;
     end;
+  end;
 end;
 
 procedure TServicesForm.sbChanRemoveClick(Sender: TObject);
@@ -849,7 +770,7 @@ begin
   if dblSwitchTo.Text = '' then
   begin
     CnErrors.SetError(dblSwitchTo, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
-    No_Errors := False;
+    No_Errors := false;
   end
   else
     CnErrors.Dispose(dblSwitchTo);
@@ -857,7 +778,7 @@ begin
   if dblSwitchSrv.Text = '' then
   begin
     CnErrors.SetError(dblSwitchSrv, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
-    No_Errors := False;
+    No_Errors := false;
   end
   else
     CnErrors.Dispose(dblSwitchSrv);
@@ -865,13 +786,13 @@ begin
   if cbTime.Text = '' then
   begin
     CnErrors.SetError(cbTime, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
-    No_Errors := False;
+    No_Errors := false;
   end
   else
     CnErrors.Dispose(cbTime);
 
   if No_Errors then
-    StopSwitch(False);
+    StopSwitch(false);
 end;
 
 procedure TServicesForm.btnCancelAttrClick(Sender: TObject);
@@ -884,6 +805,49 @@ begin
   StopLink(True);
 end;
 
+procedure TServicesForm.btnLinkDelClick(Sender: TObject);
+begin
+  if (MessageDlg(rsDeleteSelectedRecords, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    dsLinks.Delete;
+end;
+
+procedure TServicesForm.btnLinkEditClick(Sender: TObject);
+begin
+  if FCanEdit then
+    StartLink(false);
+end;
+
+procedure TServicesForm.btnLinkAddClick(Sender: TObject);
+begin
+  if FCanEdit then
+    StartLink();
+end;
+
+procedure TServicesForm.btnPSTAddClick(Sender: TObject);
+begin
+  if dsServices.RecordCount = 0 then
+    exit;
+
+  if FCanEdit then
+  begin
+    if EditTarif(dsServices['NAME'], dsServices['SERVICE_ID'], -1) then
+      dsTarif.CloseOpen(True);
+  end;
+end;
+
+procedure TServicesForm.btnPSTDelClick(Sender: TObject);
+begin
+  if dsTarif.RecordCount = 0 then
+    exit;
+
+  if FCanEdit then
+  begin
+    if (MessageDlg(format(rsDeleteWithName, [dsTarif.FieldByName('DATE_FROM').AsString + ' - ' +
+      dsTarif.FieldByName('DATE_TO').AsString]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+      dsTarif.Delete;
+  end;
+end;
+
 procedure TServicesForm.btnQFClick(Sender: TObject);
 var
   o_n: Boolean;
@@ -892,16 +856,37 @@ var
 begin
   o_n := not ASGrid.STFilter.Visible;
   for i := 0 to ComponentCount - 1 do
+  begin
     if Components[i] is TDBGridEh then
     begin
       (Components[i] as TDBGridEh).STFilter.Visible := o_n;
       (Components[i] as TDBGridEh).STFilter.Local := o_n;
     end;
+  end;
 end;
 
 procedure TServicesForm.btnSaveLinkClick(Sender: TObject);
 begin
-  StopLink(False);
+  StopLink(false);
+end;
+
+procedure TServicesForm.btnSWDelClick(Sender: TObject);
+begin
+  if FCanEdit and (not dsSwitch.FieldByName('SWITCHTO').IsNull) then
+    if (MessageDlg(format(rsDelLinkWT, [dsSwitch['SWITCHTO']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+      dsSwitch.Delete;
+end;
+
+procedure TServicesForm.btnSWEditClick(Sender: TObject);
+begin
+  if FCanEdit then
+    StartSwitch(false);
+end;
+
+procedure TServicesForm.btnSWAddClick(Sender: TObject);
+begin
+  if FCanEdit then
+    StartSwitch;
 end;
 
 procedure TServicesForm.bbSwitchCancelClick(Sender: TObject);
@@ -915,8 +900,9 @@ begin
     exit;
 
   pnlSwitch.Visible := True;
-  dbgSwitch.Enabled := False;
-  tbSwitch.Enabled := False;
+  dbgSwitch.Enabled := false;
+  tbSwitch.Enabled := false;
+
   if New then
     dsSwitch.Append
   else
@@ -927,7 +913,7 @@ end;
 
 procedure TServicesForm.StopSwitch(const Cancel: Boolean);
 begin
-  pnlSwitch.Visible := False;
+  pnlSwitch.Visible := false;
   dbgSwitch.Enabled := True;
   tbSwitch.Enabled := True;
 
@@ -950,8 +936,8 @@ begin
     exit;
 
   pnlLink.Visible := True;
-  dbgLink.Enabled := False;
-  tbLink.Enabled := False;
+  dbgLink.Enabled := false;
+  tbLink.Enabled := false;
 
   if New then
     dsLinks.Append
@@ -963,11 +949,13 @@ end;
 
 procedure TServicesForm.StopLink(const Cancel: Boolean);
 begin
-  pnlLink.Visible := False;
+  pnlLink.Visible := false;
   dbgLink.Enabled := True;
   tbLink.Enabled := True;
+
   if not(dsLinks.State in [dsEdit, dsInsert]) then
     exit;
+
   if (Cancel) or (not FCanEdit) then
     dsLinks.Cancel
   else if FCanEdit then
@@ -994,8 +982,9 @@ begin
   dsAttributes.Open;
 
   pnlAttr.Visible := True;
-  dbgAttr.Enabled := False;
-  tbAttr.Enabled := False;
+  dbgAttr.Enabled := false;
+  tbAttr.Enabled := false;
+
   if New then
   begin
     dsSrvAttr.Append;
@@ -1005,7 +994,7 @@ begin
   else
   begin
     dsSrvAttr.Edit;
-    dbluAttribute.Enabled := False;
+    dbluAttribute.Enabled := false;
     if edtAtrValue.Visible then
       edtAtrValue.SetFocus
     else if cbbList.Visible then
@@ -1018,7 +1007,8 @@ var
   errors: Boolean;
   s, reg: string;
 begin
-  errors := False;
+  errors := false;
+
   if not Cancel then
   begin
     if dbluAttribute.Text = '' then
@@ -1046,9 +1036,10 @@ begin
 
   if not errors then
   begin
-    pnlAttr.Visible := False;
+    pnlAttr.Visible := false;
     dbgAttr.Enabled := True;
     tbAttr.Enabled := True;
+
     if not(dsSrvAttr.State in [dsEdit, dsInsert]) then
       exit;
 
@@ -1066,7 +1057,7 @@ end;
 
 procedure TServicesForm.btnSaveAttrClick(Sender: TObject);
 begin
-  StopAttr(False);
+  StopAttr(false);
 end;
 
 function TServicesForm.checkCmplx: Boolean;
@@ -1074,7 +1065,7 @@ var
   errors: Boolean;
   dt: TDateTime;
 begin
-  errors := False;
+  errors := false;
   if dbcCmxGroup.Text = '' then
   begin
     CnErrors.SetError(dbcCmxGroup, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
@@ -1122,263 +1113,19 @@ begin
     dsCMPLX['DATE_TO'] := edCmxTo.Value;
     dsCMPLX['NOTICE'] := dbmCmxNotice.Lines.Text;
     dsCMPLX.Post;
-    pnlCmxAdd.Visible := False;
+    pnlCmxAdd.Visible := false;
   end;
 end;
 
 procedure TServicesForm.btn3Click(Sender: TObject);
 begin
-  pnlCmxAdd.Visible := False;
+  pnlCmxAdd.Visible := false;
 end;
 
-procedure TServicesForm.btnAttrAddClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartAttr;
-end;
-
-procedure TServicesForm.btnAttrEditClick(Sender: TObject);
+procedure TServicesForm.sbAttrEditClick(Sender: TObject);
 begin
   if FCanEdit and (not dsSrvAttr.FieldByName('O_NAME').IsNull) then
-    StartAttr(False);
-end;
-
-procedure TServicesForm.btnAttrDelClick(Sender: TObject);
-begin
-  if FCanEdit and (not dsSrvAttr.FieldByName('O_NAME').IsNull) then
-    if (MessageDlg(format(rsDeleteWithName, [dsSrvAttr['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-      dsSrvAttr.Delete;
-end;
-
-procedure TServicesForm.StartAttrSing(const New: Boolean = True);
-begin
-  if not FCanEdit then
-    exit;
-
-  if not dsSrvAttr.Active then
-    dsSrvAttr.Open;
-
-  if New then
-    dsAttributes.ParamByName('O_ID').Clear
-  else
-    dsAttributes.ParamByName('O_ID').Value := dsSrvAttr['O_ID'];
-
-  dsAttributes.Open;
-
-  pnlAttrSgl.Visible := True;
-  dbgAttrSgl.Enabled := False;
-  tbAttrSgl.Enabled := False;
-  if New then
-  begin
-    dsSrvAttr.Append;
-    dbluAttributeSgl.Enabled := True;
-    dbluAttributeSgl.SetFocus;
-  end
-  else
-  begin
-    dsSrvAttr.Edit;
-    dbluAttributeSgl.Enabled := False;
-    edtAtrValueSgl.SetFocus;
-  end;
-end;
-
-procedure TServicesForm.StopAttrSing(const Cancel: Boolean);
-var
-  errors: Boolean;
-  s, reg: string;
-begin
-  errors := False;
-  if not Cancel then
-  begin
-    if dbluAttributeSgl.Text = '' then
-    begin
-      CnErrors.SetError(dbluAttributeSgl, rsSelectAttribute, iaTopCenter, bsNeverBlink);
-      errors := True;
-    end
-    else
-      CnErrors.Dispose(dbluAttributeSgl);
-
-    if ((dbluAttributeSgl.Text <> '')) then
-    begin
-      if dsAttributes['REGEXP'] <> '' then
-      begin
-        s := edtAtrValueSgl.Text;
-        reg := '^' + dsAttributes['REGEXP'] + '$';
-        errors := not TRegEx.IsMatch(s, reg);
-        if errors then
-          CnErrors.SetError(edtAtrValueSgl, rsInputIncorrect, iaMiddleLeft, bsNeverBlink)
-        else
-          CnErrors.Dispose(edtAtrValueSgl);
-      end
-    end;
-  end;
-
-  if not errors then
-  begin
-    pnlAttrSgl.Visible := False;
-    dbgAttrSgl.Enabled := True;
-    tbAttrSgl.Enabled := True;
-
-    if not(dsSrvAttr.State in [dsEdit, dsInsert]) then
-      exit;
-
-    if (Cancel) or (not FCanEdit) then
-      dsSrvAttr.Cancel
-    else if FCanEdit then
-      dsSrvAttr.Post
-    else
-      dsSrvAttr.Cancel;
-
-    dsAttributes.Close;
-    dbgAttrSgl.SetFocus;
-  end;
-end;
-
-procedure TServicesForm.btnAttrSglAddClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartAttrSing;
-end;
-
-procedure TServicesForm.btnAttrSglEditClick(Sender: TObject);
-begin
-  if FCanEdit and (not dsSrvAttr.FieldByName('O_NAME').IsNull) then
-    StartAttrSing(False);
-end;
-
-procedure TServicesForm.btnAttrSglDelClick(Sender: TObject);
-begin
-  if FCanEdit and (not dsSrvAttr.FieldByName('O_NAME').IsNull) then
-    if (MessageDlg(format(rsDeleteWithName, [dsSrvAttr['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-      dsSrvAttr.Delete;
-end;
-
-procedure TServicesForm.pgcSingleChange(Sender: TObject);
-begin
-  dsTarif.Active := (pgcSingle.ActivePage = tsTarifSql);
-  dsSrvAttr.Active := (pgcSingle.ActivePage = tsAttrSgl);
-end;
-
-procedure TServicesForm.StartAttrFix(const New: Boolean = True);
-begin
-  if not FCanEdit then
-    exit;
-
-  if not dsSrvAttr.Active then
-    dsSrvAttr.Open;
-
-  if New then
-    dsAttributes.ParamByName('O_ID').Clear
-  else
-    dsAttributes.ParamByName('O_ID').Value := dsSrvAttr['O_ID'];
-
-  dsAttributes.Open;
-
-  pnlAttrFix.Visible := True;
-  dbgAttrFix.Enabled := False;
-  tbAttrFix.Enabled := False;
-  if New then
-  begin
-    dsSrvAttr.Append;
-    dbluAttributeFix.Enabled := True;
-    dbluAttributeFix.SetFocus;
-  end
-  else
-  begin
-    dsSrvAttr.Edit;
-    dbluAttributeFix.Enabled := False;
-    edtAtrValueFix.SetFocus;
-  end;
-end;
-
-procedure TServicesForm.StopAttrFix(const Cancel: Boolean);
-var
-  errors: Boolean;
-  s, reg: string;
-begin
-  errors := False;
-
-  if not Cancel then
-  begin
-    if dbluAttributeFix.Text = '' then
-    begin
-      CnErrors.SetError(dbluAttributeFix, rsSelectAttribute, iaTopCenter, bsNeverBlink);
-      errors := True;
-    end
-    else
-      CnErrors.Dispose(dbluAttributeFix);
-
-    if ((dbluAttributeFix.Text <> '')) then
-    begin
-      if dsAttributes['REGEXP'] <> '' then
-      begin
-        s := edtAtrValueFix.Text;
-        reg := '^' + dsAttributes['REGEXP'] + '$';
-        errors := not TRegEx.IsMatch(s, reg);
-        if errors then
-          CnErrors.SetError(edtAtrValueFix, rsInputIncorrect, iaMiddleLeft, bsNeverBlink)
-        else
-          CnErrors.Dispose(edtAtrValueFix);
-      end
-    end;
-  end;
-
-  if not errors then
-  begin
-    pnlAttrFix.Visible := False;
-    dbgAttrFix.Enabled := True;
-    tbAttrFix.Enabled := True;
-    if not(dsSrvAttr.State in [dsEdit, dsInsert]) then
-      exit;
-    if (Cancel) or (not FCanEdit) then
-      dsSrvAttr.Cancel
-    else if FCanEdit then
-      dsSrvAttr.Post
-    else
-      dsSrvAttr.Cancel;
-
-    dsAttributes.Close;
-    dbgAttrFix.SetFocus;
-  end;
-end;
-
-procedure TServicesForm.btnAttrSglCancelClick(Sender: TObject);
-begin
-  StopAttrSing(True);
-end;
-
-procedure TServicesForm.btnAttrSglSaveClick(Sender: TObject);
-begin
-  StopAttrSing(False);
-end;
-
-procedure TServicesForm.btnAttrFixAddClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartAttrFix;
-end;
-
-procedure TServicesForm.BitBtn1Click(Sender: TObject);
-begin
-  StopAttrFix(False);
-end;
-
-procedure TServicesForm.BitBtn2Click(Sender: TObject);
-begin
-  StopAttrFix(True);
-end;
-
-procedure TServicesForm.btnAttrFixEditClick(Sender: TObject);
-begin
-  if FCanEdit then
-    StartAttrFix(False);
-end;
-
-procedure TServicesForm.btnAttrFixDelClick(Sender: TObject);
-begin
-  if FCanEdit and (not dsSrvAttr.FieldByName('O_NAME').IsNull) then
-    if (MessageDlg(format(rsDeleteWithName, [dsSrvAttr['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-      dsSrvAttr.Delete;
+    StartAttr(false);
 end;
 
 end.

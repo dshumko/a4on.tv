@@ -25,8 +25,10 @@ type
     lbl2: TLabel;
     chkDVB: TDBCheckBoxEh;
     qryChange: TpFIBQuery;
+    chkReplace: TDBCheckBoxEh;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure lcbSlaveClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -69,6 +71,10 @@ begin
             frmChange.qryChange.ParamByName('Dvb').AsInteger := 1
           else
             frmChange.qryChange.ParamByName('Dvb').AsInteger := 0;
+          if frmChange.chkReplace.Checked then
+            frmChange.qryChange.ParamByName('REPL').AsInteger := 1
+          else
+            frmChange.qryChange.ParamByName('REPL').AsInteger := 0;
           frmChange.qryChange.ExecProc;
         except
           Result := -1;
@@ -90,6 +96,17 @@ procedure TfrmChangeChannelForm.FormKeyDown(Sender: TObject; var Key: Word; Shif
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
     ModalResult := mrOk;
+end;
+
+procedure TfrmChangeChannelForm.lcbSlaveClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
 end;
 
 end.

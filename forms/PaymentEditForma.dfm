@@ -88,7 +88,7 @@ object PaymentEditFrm: TPaymentEditFrm
         Top = 96
         Width = 79
         Height = 21
-        DisplayFormat = '### ### ### ##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButtons = <>
         ParentShowHint = False
@@ -232,7 +232,7 @@ object PaymentEditFrm: TPaymentEditFrm
       Top = 2
       Width = 109
       Height = 21
-      DisplayFormat = '### ### ### ##0.##'
+      DisplayFormat = ',0.00'
       DynProps = <>
       EditButtons = <>
       ParentShowHint = False
@@ -251,7 +251,7 @@ object PaymentEditFrm: TPaymentEditFrm
       TabStop = False
       Anchors = [akLeft, akTop, akRight]
       Color = clBtnFace
-      DisplayFormat = '### ### ### ##0.##'
+      DisplayFormat = ',0.00'
       DynProps = <>
       EditButtons = <>
       Font.Charset = DEFAULT_CHARSET

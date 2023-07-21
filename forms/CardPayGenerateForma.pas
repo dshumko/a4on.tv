@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, DBGridEh;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, DBGridEh,
+  CnErrorProvider;
 
 type
   TfmCardPayGenerate = class(TForm)
@@ -22,6 +23,7 @@ type
     edCount: TDBNumberEditEh;
     dedExp: TDBDateTimeEditEh;
     okcnclfrm: TOkCancelFrame;
+    CnErrors: TCnErrorProvider;
     procedure LupStreetsEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure okcnclfrm1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -104,13 +106,45 @@ begin
 end;
 
 procedure TfmCardPayGenerate.okcnclfrm1bbOkClick(Sender: TObject);
+var
+  errors: Boolean;
 begin
   ModalResult := mrNone;
-  if (VarIsNumeric(lupSerials.Value) and VarIsNumeric(edNominal.Value) and VarIsNumeric(edCount.Value) and
-    not VarIsNull(dedExp.Value)) then
-    ModalResult := mrOk
+  errors := False;
+  if (not VarIsNumeric(lupSerials.Value)) then
+  begin
+    errors := true;
+    CnErrors.SetError(lupSerials, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
   else
-    ShowMessage(rsERROR_NOT_FILL_ALL);
+    CnErrors.Dispose(lupSerials);
+
+  if (not VarIsNumeric(edNominal.Value)) then
+  begin
+    errors := true;
+    CnErrors.SetError(edNominal, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(edNominal);
+
+  if (not VarIsNumeric(edCount.Value)) then
+  begin
+    errors := true;
+    CnErrors.SetError(edCount, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(edCount);
+
+  if VarIsNull(dedExp.Value) then
+  begin
+    errors := true;
+    CnErrors.SetError(dedExp, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(dedExp);
+
+  if (not errors) then
+    ModalResult := mrOk;
 end;
 
 procedure TfmCardPayGenerate.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

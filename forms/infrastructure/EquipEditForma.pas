@@ -117,11 +117,11 @@ type
     procedure edtIP1Enter(Sender: TObject);
     procedure lcbNODEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
-    procedure luHouseDropDownBoxGetCellParams(Sender: TObject;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
+    procedure luHouseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
   private
     fCI: TCustomerInfo;
+    FEnterSecondPress: Boolean;
     function CheckData: Boolean;
     procedure ShowTabs;
     procedure GetVlan;
@@ -132,6 +132,7 @@ type
   public
     { Public declarations }
     property CI: TCustomerInfo write fCI;
+    procedure CheckPortTemplate(const eid: Integer);
   end;
 
 function EditEquipment(const aEQ_ID: Int64; const aCI: TCustomerInfo; const aEqType: Integer = 1;
@@ -202,7 +203,10 @@ begin
             i := aEQ_ID;
 
           dsEquipment.Post;
+          dsEquipment.UpdateTransaction.Commit;
           result := i;
+          CheckPortTemplate(result);
+
         except
           result := -1;
         end;
@@ -568,18 +572,34 @@ procedure TEquipEditForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-    if (ActiveControl is TDBMemoEh) then
-      go := False;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
+
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 
@@ -651,9 +671,8 @@ begin
     GetVlan;
 end;
 
-procedure TEquipEditForm.luHouseDropDownBoxGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TEquipEditForm.luHouseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
   if (dsHomes.Active) and (dsHomes['inService'] <> '') then
     Background := clYellow
@@ -887,6 +906,61 @@ begin
       free;
     end;
   end;
+end;
+
+procedure TEquipEditForm.CheckPortTemplate(const eid: Integer);
+var
+  gid, gcnt: Integer;
+begin
+  gcnt := 0;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      sql.Text := 'select (select count(*) cnt from port where EID = -1*e.Eq_Group) gcnt, ' +
+     '(select count(*) cnt from port where EID = e.Eid) ecnt, -1*e.Eq_Group gid from Equipment e where e.Eid = :eid';
+      ParamByName('Eid').AsInteger := eid;
+
+      Transaction.StartTransaction;
+      ExecQuery;
+      if (FieldByName('gcnt').Value > 0) and (FieldByName('ecnt').Value = 0) then
+        gcnt := FieldByName('gcnt').Value;
+      gid := FieldByName('gid').Value;
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
+  end;
+
+  if gcnt = 0 then
+    Exit;
+
+  if Application.MessageBox(PWideChar(format('Добавить %d порта(ов) из шаблона группы?', [gcnt])), 'Создание портов',
+    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
+    Exit;
+
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      sql.Text := 'insert into Port (Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, Wlabel) ' +
+        ' select :Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, Wlabel from Port where eid = :gid';
+      ParamByName('Eid').AsInteger := eid;
+      ParamByName('gid').AsInteger := gid;
+
+      Transaction.StartTransaction;
+      ExecQuery;
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
+  end;
+
 end;
 
 end.

@@ -4,13 +4,24 @@ inherited BlackListForm: TBlackListForm
   Caption = '"'#1063#1077#1088#1085#1099#1081'" '#1089#1087#1080#1089#1086#1082' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
   ClientHeight = 308
   ClientWidth = 585
+  ExplicitWidth = 601
+  ExplicitHeight = 347
   PixelsPerInch = 96
   TextHeight = 13
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 173
     Width = 585
-    Height = 135
+    ExplicitTop = 173
+    ExplicitWidth = 585
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 176
+    Width = 585
+    Height = 132
     AllowedOperations = [alopUpdateEh]
+    FooterRowCount = 1
+    FrozenCols = 1
+    SumList.Active = True
     Columns = <
       item
         CellButtons = <>
@@ -33,10 +44,22 @@ inherited BlackListForm: TBlackListForm
         DynProps = <>
         EditButtons = <>
         FieldName = 'O_NAME'
+        Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1051#1080#1095#1085#1099#1081' / '#1055#1072#1089#1087#1086#1088#1090
         Title.TitleButton = True
-        Width = 88
+        Width = 136
+      end
+      item
+        CellButtons = <>
+        Checkboxes = True
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'IN_DOC_LIST'
+        Footers = <>
+        Title.Caption = #1042' '#1089#1087#1089#1080#1082#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1086#1074
+        Title.TitleButton = True
+        Visible = False
       end
       item
         CellButtons = <>
@@ -65,10 +88,28 @@ inherited BlackListForm: TBlackListForm
         FieldName = 'O_DELETED'
         Footers = <>
         Visible = False
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADDED_ON'
+        Footers = <>
+        Title.Caption = #1050#1086#1075#1076#1072' '#1074#1085#1077#1089#1077#1085
+        Width = 56
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADDED_BY'
+        Footers = <>
+        Title.Caption = #1050#1077#1084' '#1074#1085#1077#1089#1077#1085
       end>
   end
   inherited tlbMain: TToolBar
     Width = 585
+    ExplicitWidth = 585
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -85,6 +126,8 @@ inherited BlackListForm: TBlackListForm
   inherited pnlEdit: TPanel
     Width = 585
     Height = 148
+    ExplicitWidth = 585
+    ExplicitHeight = 148
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -111,6 +154,9 @@ inherited BlackListForm: TBlackListForm
       Top = 115
       Width = 368
       TabOrder = 3
+      ExplicitLeft = 104
+      ExplicitTop = 115
+      ExplicitWidth = 368
     end
     inherited btnCancelLink: TBitBtn
       Left = 478
@@ -118,6 +164,9 @@ inherited BlackListForm: TBlackListForm
       Width = 98
       Cancel = True
       TabOrder = 4
+      ExplicitLeft = 478
+      ExplicitTop = 115
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 104
@@ -175,6 +224,7 @@ inherited BlackListForm: TBlackListForm
     Top = 240
   end
   inherited actions: TActionList
+    Left = 310
     inherited actNew: TAction
       OnExecute = actNewExecute
     end
@@ -221,17 +271,30 @@ inherited BlackListForm: TBlackListForm
       '    31'
       ')')
     RefreshSQL.Strings = (
-      'SELECT O_ID, O_NAME, O_DESCRIPTION, O_CHARFIELD'
-      'FROM OBJECTS'
-      'WHERE(  O_TYPE = 31'
-      '     ) and (     OBJECTS.O_ID = :OLD_O_ID'
-      '     )'
+      'select'
+      '    O_ID'
+      '  , O_NAME'
+      '  , O_DESCRIPTION'
+      '  , O_CHARFIELD'
+      '  , Added_By'
+      '  , Added_On'
+      '  , (@@fld_doc_list%null@) in_DOC_LIST  '
+      '  from OBJECTS'
+      'WHERE O_TYPE = 31'
+      'and ( OBJECTS.O_ID = :OLD_O_ID )'
       '    ')
     SelectSQL.Strings = (
-      'SELECT O_ID, O_NAME, O_DESCRIPTION, O_CHARFIELD'
-      'FROM OBJECTS'
-      'WHERE O_TYPE = 31'
-      'order BY O_NAME')
+      'select'
+      '    O_ID'
+      '  , O_NAME'
+      '  , O_DESCRIPTION'
+      '  , O_CHARFIELD'
+      '  , Added_By'
+      '  , Added_On'
+      '  , (@@fld_doc_list%null@) in_DOC_LIST'
+      '  from OBJECTS'
+      '  where O_TYPE = 31'
+      '  order by O_NAME  ')
     AutoUpdateOptions.UpdateTableName = 'OBJECTS'
     AutoUpdateOptions.KeyFields = 'O_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

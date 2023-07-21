@@ -526,7 +526,6 @@ procedure TEPGViewForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-
   if pnlEditEvent.Visible then
   begin
     if (Key = #13) then

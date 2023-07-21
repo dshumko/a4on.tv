@@ -726,6 +726,10 @@ begin
     Result := true and (not(aRightsID in [rght_Customer_View, rght_Customer_Only_ONE, rght_Customer_PersonalData,
       rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner, rght_OrdersTP_Today]));
   end;
+
+  // справочник документов скроем, если не включен в настройках
+  if ((GetSettingsValue('SHOW_DOC_LIST') <> '1') and (aRightsID = rght_Dictionary_Doclist)) then
+    Result := False;
 end;
 
 // Функция подсчета количества записей из таблицы aTableName
@@ -780,6 +784,9 @@ var
   v: Variant;
   s: string;
 begin
+  if not dbTV.Connected then
+    exit;
+
   if (FA4onList.Count = 0) or (aSettingName = 'ReloadSettingsFromDB') then
   begin
     FInStrictMode := true;
@@ -1065,6 +1072,10 @@ begin
     Result := SuperMode
   else if MethodName = 'MONTHASSTRING' then
     Result := MonthAsString(Params[0], Params[1], Params[2])
+  else if MethodName = 'OPENCUSTOMERBYACCOUNT' then
+    Result := A4MainForm.ShowCustomers(100, Params[0]) // 100 - лицевой
+  else if MethodName = 'OPENCUSTOMERBYID' then
+    Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
   else
     Result := null;
 end;
@@ -1095,11 +1106,14 @@ begin
   Report.AddFunction('function GEN_BARCODE(const ACCOUNT : string; const DEBT : Currency;' +
     ' const ID : INTEGER; const UL, HOUSE, FLAT, FIO : string):string', rsFunctionsA4onTV, rsFunctionBarCode);
   Report.AddFunction('function INMODE:Integer', rsFunctionsA4onTV, rsSOFTMODE);
-  Report.AddFunction('function StrReplace(const S, OldS, NewS: string): string', 'Функции определенные пользователем',
+  Report.AddFunction('function StrReplace(const S, OldS, NewS: string): string', rsFunctionsA4onTV,
     'Заменяет в строке S подстроку OldS на подстроку NewS');
   Report.AddFunction('function MonthAsString(D: TDateTime; const beforeDay : string; const AfterDay :string): string',
-    'Функции определенные пользователем', 'Вывод месяца как строка, например 01.01.2013 - «1» января 2013');
-
+    rsFunctionsA4onTV, 'Вывод месяца как строка, например 01.01.2013 - «1» января 2013');
+  Report.AddFunction('function OpenCustomerByAccount(const ACCOUNT: String): Integer', rsFunctionsA4onTV,
+    'Открыть абонента в списке абонентов по лицевому');
+  Report.AddFunction('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', rsFunctionsA4onTV,
+    'Открыть абонента в списке абонентов по его ID');
 end;
 
 function TdmMain.GetNextIP(InetIP: Boolean; const mask: string = ''): string;
@@ -1178,7 +1192,7 @@ end;
 
 function TdmMain.GetUser: String;
 begin
-  Result := dbTV.ConnectParams.UserName;
+  Result := UpperCase(dbTV.ConnectParams.UserName);
 end;
 
 function TdmMain.GetUserGroups: String;

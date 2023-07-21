@@ -144,8 +144,8 @@ object apgCustomerInfo: TapgCustomerInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             ParentFont = False
-            ExplicitWidth = 84
-            ExplicitHeight = 19
+            ExplicitLeft = 1
+            ExplicitTop = -4
           end
         end
       end
@@ -168,8 +168,10 @@ object apgCustomerInfo: TapgCustomerInfo
           DynProps = <>
           Flat = True
           FooterParams.Color = clWindow
+          FrozenCols = 2
           Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghExtendVertLines]
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghExtendVertLines]
+          PopupMenu = pmContacts
           TabOrder = 1
           OnDblClick = dbgrdhContactsDblClick
           OnExit = dbgrdhContactsExit
@@ -183,6 +185,7 @@ object apgCustomerInfo: TapgCustomerInfo
               FieldName = 'O_NAME'
               Footers = <>
               Title.Caption = #1058#1080#1087
+              Title.TitleButton = True
               Width = 30
             end
             item
@@ -192,6 +195,7 @@ object apgCustomerInfo: TapgCustomerInfo
               FieldName = 'CC_VALUE'
               Footers = <>
               Title.Caption = #1050#1086#1085#1090#1072#1082#1090
+              Title.TitleButton = True
               Width = 106
             end
             item
@@ -203,6 +207,7 @@ object apgCustomerInfo: TapgCustomerInfo
               Footers = <>
               Title.Caption = #1059#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103
               Title.Hint = #1056#1072#1089#1089#1099#1083#1072#1090#1100' '#1091#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103' '#1085#1072' '#1101#1090#1086#1090' '#1082#1086#1085#1090#1072#1082#1090
+              Title.TitleButton = True
               Width = 20
             end
             item
@@ -212,7 +217,26 @@ object apgCustomerInfo: TapgCustomerInfo
               FieldName = 'CC_NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-              Width = 72
+              Title.TitleButton = True
+              Width = 75
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'EDIT_BY'
+              Footers = <>
+              Title.Caption = #1050#1090#1086
+              Title.TitleButton = True
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'EDIT_ON'
+              Footers = <>
+              Title.Caption = #1050#1086#1075#1076#1072
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -457,6 +481,8 @@ object apgCustomerInfo: TapgCustomerInfo
       '  , coalesce(cc.Cc_Notify, 0) Cc_Notify'
       '  , cc.CC_NOTICE'
       '  , o.O_Name'
+      '  , coalesce(cc.Edit_By, cc.Added_By) Edit_By'
+      '  , coalesce(cc.Edit_On, cc.Added_On) Edit_On'
       '  from customer_contacts cc'
       '       inner join OBJECTS o on (o.O_Id = cc.Cc_Type and'
       '             o.O_TYPE = 45 and'
@@ -473,12 +499,16 @@ object apgCustomerInfo: TapgCustomerInfo
       '  , coalesce(cc.Cc_Notify, 0) Cc_Notify'
       '  , cc.CC_NOTICE'
       '  , o.O_Name'
+      '  , coalesce(cc.Edit_By, cc.Added_By) Edit_By'
+      '  , coalesce(cc.Edit_On, cc.Added_On) Edit_On'
       '  from customer_contacts cc'
       '       inner join OBJECTS o on (o.O_Id = cc.Cc_Type and'
       '             o.O_TYPE = 45 and'
       '             o.O_DELETED = 0)'
       '  where customer_id = :CUSTOMER_ID'
-      '  order by CC_TYPE, CC_VALUE')
+      
+        '  order by coalesce(cc.Edit_By, cc.Added_By), cc.CC_TYPE, cc.CC_' +
+        'VALUE')
     AutoCalcFields = False
     BeforePost = dsContactsBeforePost
     OnNewRecord = dsContactsNewRecord
@@ -486,16 +516,16 @@ object apgCustomerInfo: TapgCustomerInfo
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     AutoCommit = True
-    Left = 590
-    Top = 147
+    Left = 614
+    Top = 131
     WaitEndMasterScroll = True
   end
   object srcContacts: TDataSource
     AutoEdit = False
     DataSet = dsContacts
     OnUpdateData = srcContactsUpdateData
-    Left = 519
-    Top = 143
+    Left = 487
+    Top = 135
   end
   object pmRecalc: TPopupMenu
     Left = 352
@@ -557,6 +587,18 @@ object apgCustomerInfo: TapgCustomerInfo
       Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100
       OnExecute = actRecalcExecute
     end
+    object actMakeDefContact: TAction
+      Caption = #1057#1076#1077#1083#1072#1090#1100' '#1086#1089#1085#1086#1074#1085#1099#1084' '#1076#1083#1103' '#1091#1074#1077#1076#1086#1084#1083#1077#1085#1080#1081
+      OnExecute = actMakeDefContactExecute
+    end
+    object actNotSendContatct: TAction
+      Caption = #1053#1077' '#1089#1083#1072#1090#1100' '#1091#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103' '#1085#1072' '#1101#1090#1086#1090' '#1082#1086#1085#1090#1072#1082#1090
+      OnExecute = actNotSendContatctExecute
+    end
+    object actSendMessage: TAction
+      Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1077' '#1082#1086#1085#1090#1072#1082#1090#1091
+      OnExecute = actSendMessageExecute
+    end
   end
   object pmHV: TPopupMenu
     MenuAnimation = [maTopToBottom]
@@ -598,6 +640,36 @@ object apgCustomerInfo: TapgCustomerInfo
     object miN1: TMenuItem
       Caption = #1056#1072#1089#1087#1086#1083#1086#1078#1077#1085#1080#1077' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1103
       OnClick = miN1Click
+    end
+  end
+  object pmContacts: TPopupMenu
+    Left = 550
+    Top = 151
+    object miAdd: TMenuItem
+      Action = actCAdd
+      Caption = #1044#1073#1072#1074#1080#1090#1100
+    end
+    object miCEdit: TMenuItem
+      Action = actCEdit
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+    end
+    object miN2: TMenuItem
+      Caption = '-'
+    end
+    object miMakeDefContact: TMenuItem
+      Action = actMakeDefContact
+    end
+    object miN3: TMenuItem
+      Caption = '-'
+    end
+    object miNotSendContatct: TMenuItem
+      Action = actNotSendContatct
+    end
+    object miN4: TMenuItem
+      Caption = '-'
+    end
+    object miSendMessage: TMenuItem
+      Action = actSendMessage
     end
   end
 end

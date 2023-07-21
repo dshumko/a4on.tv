@@ -199,14 +199,14 @@ procedure TEPGAdForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-
   if pnlEditEvent.Visible
   then begin
     if (Key = #13)
     then begin
       go := True;
       if (ActiveControl is TDBGridEh)
-      then go := False;
+        then go := False;
+
       if go
       then begin
         Key := #0; // eat enter key

@@ -67,6 +67,8 @@ type
     pmOpenObjects: TPopupMenu;
     actOpenCustAddr: TAction;
     miOpenCustAddr: TMenuItem;
+    cbClose: TDBComboBoxEh;
+    lbl4: TLabel;
     procedure dbGridRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
     procedure dbGridRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
     procedure FormShow(Sender: TObject);
@@ -101,7 +103,7 @@ type
   private
     FclOverdue: TColor;
     FclSoon: TColor;
-    FCanClose: Boolean;
+    // FCanClose: Boolean;
     procedure EditMSG();
     procedure DeleteMSG();
     procedure EditTask();
@@ -131,7 +133,7 @@ implementation
 {$R *.dfm}
 
 uses
-  PrjConst, DM, pFIBQuery, MAIN, TaskFilterForma, AtrCommon, SelDateForma;
+  PrjConst, DM, pFIBQuery, MAIN, TaskFilterForma, AtrCommon, AtrStrUtils, atrCmdUtils, SelDateForma;
 
 procedure FindTask(const Value: integer);
 begin
@@ -183,7 +185,7 @@ begin
   if srcDataSource.DataSet.RecordCount = 0 then
     Exit;
 
-  if srcDataSource.DataSet['ADDED_BY'] = dmMain.User then
+  if UpperCase(srcDataSource.DataSet['ADDED_BY']) = dmMain.User then
     if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['TITLE']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
     then
       srcDataSource.DataSet.Delete;
@@ -198,8 +200,12 @@ end;
 procedure TTaskForm.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if ((ActiveControl.Name = 'dbgMsg') or (dsMSG.DataSource.State in [dsEdit, dsInsert])) then
-    EditMSG()
+  if ( // (ActiveControl.Name = 'dbgMsg') or
+    (dsMSG.DataSource.State in [dsEdit, dsInsert])) then
+  begin
+    ShowMessage(rsTaskCommentInEdit);
+    EditMSG();
+  end
   else
     EditTask();
 end;
@@ -418,12 +424,38 @@ begin
 end;
 
 procedure TTaskForm.dbgMsgDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
+  vContinue: Boolean;
+  i: Integer;
 begin
   inherited;
-  if (dsMSG.FieldByNAme('ID').IsNull) then
-    NewMSG
-  else
-    EditMSG;
+  vContinue := true;
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgMsg.ScreenToClient(ScrPt);
+  Cell := dbgMsg.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgMsg.Fields[Cell.X - 1].FieldName);
+  if (s = 'TEXT') then
+  begin
+    if not dbgMsg.DataSource.DataSet.FieldByName(s).IsNull then
+    begin
+      s := ExtractUrl(dbgMsg.DataSource.DataSet.FieldByName(s).AsString); // atrStrUtils
+      if not s.IsEmpty then
+      begin
+        atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
+        vContinue := False;
+      end
+    end;
+  end;
+
+  if vContinue then begin
+    if (dsMSG.FieldByNAme('ID').IsNull) then
+      NewMSG
+    else
+      EditMSG;
+  end;
 end;
 
 procedure TTaskForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -450,10 +482,17 @@ begin
     AFont.Style := AFont.Style - [fsStrikeOut];
     if ((not dsTask.FieldByNAme('PLAN_DATE').IsNull) and (dsTask.FieldByNAme('EXEC_DATE').IsNull)) then
     begin
-      if (dsTask.FieldByNAme('PLAN_DATE').AsDateTime < Now()) then
-        Background := FclOverdue
-      else if (dsTask.FieldByNAme('PLAN_DATE').AsDateTime > Date()) then
-        Background := FclSoon
+      if (s <> '') and (Column.FieldName = 'TITLE') then
+      begin
+        Background := bgColor;
+      end
+      else
+      begin
+        if (dsTask.FieldByNAme('PLAN_DATE').AsDateTime < Now()) then
+          Background := FclOverdue
+        else if (dsTask.FieldByNAme('PLAN_DATE').AsDateTime > Date()) then
+          Background := FclSoon;
+      end;
     end;
   end;
 
@@ -575,15 +614,16 @@ begin
   except
     FclOverdue := $006666FF;
   end;
+
   try
     FclSoon := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
   except
     FclSoon := $0066FFFF;
   end;
 
-  FCanClose := dmMain.AllowedAction(rght_Task_Close);
-  btnSPclose.Visible := FCanClose;
-  actClose.Visible := FCanClose;
+  // FCanClose := dmMain.AllowedAction(rght_Task_Close);
+  // btnSPclose.Visible := FCanClose;
+  // actClose.Visible := FCanClose;
 
   GetUsers;
 end;
@@ -594,7 +634,7 @@ begin
     Exit;
   if (dsTask.FieldByNAme('ID').IsNull) or (dsMSG.FieldByNAme('ID').IsNull) then
     Exit;
-  if dmMain.User <> dsMSG['Added_By'] then
+  if ((dmMain.User <> dsMSG['Added_By']) and (dmMain.User <> 'SYSDBA')) then
     Exit;
 
   pgcMSG.ActivePage := tsEdit;
@@ -628,13 +668,11 @@ begin
   if dsTask.FieldByNAme('ID').IsNull then
     Exit;
 
-  if dsTask.FieldByNAme('ADDED_BY').IsNull then
-    Exit;
-
-  if (dsTask['ADDED_BY'] = dmMain.User) then
+  if ((dsTask.FieldByNAme('ADDED_BY').IsNull) or (UpperCase(dsTask['ADDED_BY']) = dmMain.User) or
+    (dmMain.User = 'SYSDBA')) then
   begin
     FCanEdit := True;
-    dsUsers.Open;
+
     if not dsTask.FieldByNAme('COLOR').IsNull then
       pnlEdit.COLOR := StringToColor(dsTask['COLOR'])
     else
@@ -688,7 +726,6 @@ begin
     end;
   end;
   mtbUsers.EnableControls;
-  // dsUsers.Close;
 end;
 
 procedure TTaskForm.GetUsers;
@@ -701,7 +738,7 @@ begin
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
       sql.Text := 'select w.Surname || coalesce('' ''||w.Firstname, '''') FIO , w.Ibname ' +
-        'from worker w where not (w.Ibname is null) and (w.Working = 1) order by 1';
+        'from worker w where not (w.Ibname is null) and (w.Working = 1) and (coalesce(w.Surname, '''') <> '''') order by 1';
       Transaction.StartTransaction;
       ExecQuery;
       while not Eof do
@@ -725,6 +762,8 @@ end;
 
 procedure TTaskForm.SetUsers(const new: Boolean = False);
 begin
+  // if not dsUsers.Active then dsUsers.Open;
+
   mtbUsers.DisableControls;
   mtbUsers.First;
   while not mtbUsers.Eof do
@@ -763,18 +802,24 @@ begin
     end;
   mtbUsers.First;
   mtbUsers.EnableControls;
+
+  // dsUsers.Close;
 end;
 
 procedure TTaskForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
+var
+  vCanClose: Boolean;
 begin
   inherited;
-  if FCanClose then
+  vCanClose := False;
+  if (dsTask.RecordCount > 0) then
   begin
-    if (dsTask.RecordCount > 0) then
-      actClose.Enabled := (not dsTask.FieldByNAme('CANCLOSE').IsNull)
-    else
-      actClose.Enabled := False;
+    if (not dsTask.FieldByNAme('CANCLOSE').IsNull) then
+      vCanClose := (dsTask.FieldByNAme('CANCLOSE').AsInteger > 0)
   end;
+  btnSPclose.Visible := vCanClose;
+  actClose.Visible := vCanClose;
+  actClose.Enabled := vCanClose;
 end;
 
 procedure TTaskForm.GoObject;
@@ -845,7 +890,7 @@ begin
     Exit;
   if not dsTask.FieldByNAme('EXEC_DATE').IsNull then
     Exit;
-  if (dmMain.User <> dsMSG['Added_By']) or (dmMain.User <> dsTask['Added_By']) then
+  if (dmMain.User <> UpperCase(dsMSG['Added_By'])) or (dmMain.User <> UpperCase(dsTask['Added_By'])) then
     Exit;
   if dsMSG.FieldByNAme('TEXT').IsNull then
     dsMSG.Delete

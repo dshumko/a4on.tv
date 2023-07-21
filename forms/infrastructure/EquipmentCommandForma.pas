@@ -132,6 +132,12 @@ begin
   pmMemo.Items.Add(NewItem);
 
   NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanIPv6Equipment;
+  NewItem.Hint := '<e_ipv6>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsLanMACEquipment;
   NewItem.Hint := '<e_mac>';
   NewItem.OnClick := IP1Click;
@@ -158,6 +164,12 @@ begin
   NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsLanIPCustomer;
   NewItem.Hint := '<c_ip>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanIPv6Customer;
+  NewItem.Hint := '<c_ipv6>';
   NewItem.OnClick := IP1Click;
   pmMemo.Items.Add(NewItem);
 

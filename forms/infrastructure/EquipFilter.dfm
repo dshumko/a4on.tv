@@ -3,7 +3,7 @@ object EquipFilterForm: TEquipFilterForm
   Top = 207
   ActiveControl = dblStreet
   BorderStyle = bsSizeToolWin
-  Caption = #1060#1080#1083#1100#1090#1088
+  Caption = #1060#1080#1083#1100#1090#1088' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
   ClientHeight = 437
   ClientWidth = 575
   Color = clBtnFace

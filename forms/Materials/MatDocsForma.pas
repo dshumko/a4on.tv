@@ -52,6 +52,23 @@ type
     btnFilterNew: TToolButton;
     actEnableFilter: TAction;
     actFilterSet: TAction;
+    mmMaterialDoc: TMainMenu;
+    L1: TMenuItem;
+    miDocInvent: TMenuItem;
+    miDocMove: TMenuItem;
+    miNew: TMenuItem;
+    N7: TMenuItem;
+    miDocInventory: TMenuItem;
+    miFilterSet: TMenuItem;
+    miFilterDate: TMenuItem;
+    miPrint: TMenuItem;
+    miN8: TMenuItem;
+    N8: TMenuItem;
+    miEdit: TMenuItem;
+    N9: TMenuItem;
+    actPaymentDelete1: TMenuItem;
+    miN10: TMenuItem;
+    miQuickFilter: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -370,7 +387,7 @@ begin
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
         frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        Caption := frxReport.FileName;
+        frxReport.PreviewForm.Caption := frxReport.FILENAME;
       finally
         Stream.Free;
       end;
@@ -442,8 +459,11 @@ begin
       dbGrid.DataSource.DataSet.EnableControls;
     end;
   end;
-  if not FirstReport then
+
+  if not FirstReport then begin
+    frxReport.ReportOptions.Name := frxReport.FILENAME;
     frxReport.ShowPreparedReport;
+  end;
 end;
 
 procedure TMatDocsForm.FormCreate(Sender: TObject);

@@ -4,6 +4,8 @@ inherited ChannelsForm: TChannelsForm
   Caption = #1058#1042' '#1082#1072#1085#1072#1083#1099
   ClientHeight = 515
   ClientWidth = 929
+  ExplicitWidth = 945
+  ExplicitHeight = 554
   PixelsPerInch = 96
   TextHeight = 13
   object splAddons: TSplitter [0]
@@ -17,6 +19,7 @@ inherited ChannelsForm: TChannelsForm
   end
   inherited splPG: TSplitter
     Width = 929
+    ExplicitWidth = 929
   end
   inherited dbGrid: TDBGridEh
     Width = 929
@@ -298,6 +301,10 @@ inherited ChannelsForm: TChannelsForm
   end
   inherited tlbMain: TToolBar
     Width = 929
+    ExplicitWidth = 929
+    inherited ToolButton6: TToolButton
+      Visible = False
+    end
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -305,6 +312,9 @@ inherited ChannelsForm: TChannelsForm
       Visible = False
     end
     inherited tbCancel: TToolButton
+      Visible = False
+    end
+    inherited ToolButton20: TToolButton
       Visible = False
     end
     object ToolButton7: TToolButton
@@ -345,6 +355,66 @@ inherited ChannelsForm: TChannelsForm
       Left = 265
       Top = 0
       Action = actShowIssue
+    end
+    object btn3: TToolButton
+      Left = 288
+      Top = 0
+      Width = 8
+      Caption = 'btn3'
+      ImageIndex = 93
+      Style = tbsSeparator
+    end
+    object chkATV: TCheckBox
+      Left = 296
+      Top = 0
+      Width = 70
+      Height = 22
+      Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1085#1072#1083#1099' '#1082#1086#1090#1086#1088#1099#1077' '#1080#1089#1087#1086#1083#1100#1079#1091#1102#1090#1100#1089#1103' '#1074' '#1072#1085#1072#1083#1086#1075#1077
+      Caption = #1042' '#1072#1085#1072#1083#1086#1075#1077
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+      OnClick = chkATVClick
+    end
+    object btn4: TToolButton
+      Left = 366
+      Top = 0
+      Width = 8
+      Caption = 'btn4'
+      ImageIndex = 94
+      Style = tbsSeparator
+    end
+    object chkDVB: TCheckBox
+      Left = 374
+      Top = 0
+      Width = 70
+      Height = 22
+      Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1085#1072#1083#1099' '#1082#1086#1090#1086#1088#1099#1077' '#1080#1089#1087#1086#1083#1100#1079#1091#1102#1090#1100#1089#1103' '#1074' '#1094#1080#1092#1088#1077
+      Caption = #1042' '#1062#1080#1092#1088#1077
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+      OnClick = chkATVClick
+    end
+    object btn5: TToolButton
+      Left = 444
+      Top = 0
+      Width = 8
+      Caption = 'btn5'
+      ImageIndex = 95
+      Style = tbsSeparator
+    end
+    object chkFREE: TCheckBox
+      Left = 452
+      Top = 0
+      Width = 70
+      Height = 22
+      Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1085#1072#1083#1099' '#1082#1086#1090#1086#1088#1099#1077' '#1085#1077' '#1080#1089#1087#1086#1083#1100#1079#1091#1102#1090#1100#1089#1103
+      Caption = #1053#1077' '#1080#1089#1087'-'#1089#1103
+      Checked = True
+      State = cbChecked
+      TabOrder = 2
+      OnClick = chkATVClick
     end
   end
   object pnlAddons: TPanel [4]
@@ -493,11 +563,14 @@ inherited ChannelsForm: TChannelsForm
   end
   inherited pnlEdit: TPanel
     Width = 929
+    ExplicitWidth = 929
     inherited btnSaveLink: TBitBtn
       Width = 497
+      ExplicitWidth = 497
     end
     inherited btnCancelLink: TBitBtn
       Left = 588
+      ExplicitLeft = 588
     end
   end
   inherited srcDataSource: TDataSource
@@ -711,6 +784,7 @@ inherited ChannelsForm: TChannelsForm
       
         '    left outer join DISTRIBUTOR DIS on (DIS.ID = DIC.DISTRIBUTOR' +
         '_ID)'
+      '@@filter@    '
       'order by C.CH_NAME')
     AfterOpen = dsChannelsAfterOpen
     Transaction = trRead
@@ -743,8 +817,8 @@ inherited ChannelsForm: TChannelsForm
     object dsChannelsCH_FREQ: TFIBBCDField
       DefaultExpression = '0'
       FieldName = 'CH_FREQ'
-      DisplayFormat = '#,##0.000'
-      EditFormat = '0.000'
+      DisplayFormat = ',0.000'
+      EditFormat = ',0.000'
       Size = 3
     end
     object dsChannelsCH_CODED: TFIBBooleanField

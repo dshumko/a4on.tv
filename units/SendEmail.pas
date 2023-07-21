@@ -8,6 +8,7 @@ uses
 
 type
   TEmailClient = class(TComponent)
+    procedure SmtpClientHeaderLine(Sender: TObject; Msg: Pointer; Size: Integer);
   private
     fSslContext: TSslContext;
     fSslSmtpClient: TSslSmtpCli;
@@ -55,6 +56,9 @@ type
 
 implementation
 
+uses
+  System.AnsiStrings;
+
 constructor TEmailClient.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -63,7 +67,8 @@ begin
   fSslSmtpClient := TSslSmtpCli.Create(self);
   FAttachments := TStringList.Create;
 
-  with fSslContext do begin
+  with fSslContext do
+  begin
     Name := 'SslContext';
     SslVerifyPeer := False;
     SslVerifyDepth := 9;
@@ -78,7 +83,8 @@ begin
     SslSessionCacheSize := 20480;
   end;
 
-  with fSslSmtpClient do begin
+  with fSslSmtpClient do
+  begin
     Name := 'SslSmtpClient';
     XMailer := 'A4ON.TV SMTP Client';
     AuthType := smtpAuthPlain;
@@ -89,6 +95,7 @@ begin
     OnRequestDone := SslSmtpClientRequestDone;
     OnBeforeFileOpen := SslSmtpClientBeforeFileOpen;
     SslContext := fSslContext;
+    OnHeaderLine := SmtpClientHeaderLine;
   end;
 
   FAllInOneFlag := True;
@@ -106,6 +113,12 @@ begin
   inherited;
 end;
 
+procedure TEmailClient.SmtpClientHeaderLine(Sender: TObject; Msg: Pointer; Size: Integer);
+begin
+  if (System.AnsiStrings.StrLen(PAnsiChar(Msg)) > 0) and (System.AnsiStrings.StrLIComp(PAnsiChar(Msg), PAnsiChar('X-Mailer:'), 9) = 0) then
+    System.AnsiStrings.StrCat(PAnsiChar(Msg), PAnsiChar(#13#10'X-Postmaster-Msgtype: A4onTV'));
+end;
+
 procedure TEmailClient.SslSmtpClientBeforeFileOpen(Sender: TObject; Idx: Integer; FileName: String;
   var Action: TSmtpBeforeOpenFileAction);
 begin
@@ -114,45 +127,47 @@ end;
 
 procedure TEmailClient.SetAuthType(const Value: string);
 begin
-  if Value = 'Plain'
-  then FSmtpAuthType := smtpAuthPlain
-  else if Value = 'Login'
-  then FSmtpAuthType := smtpAuthLogin
-  else if Value = 'CramMD5'
-  then FSmtpAuthType := smtpAuthCramMD5
-  else if Value = 'CramSHA1'
-  then FSmtpAuthType := smtpAuthCramSha1
-  else if Value = 'NTLM'
-  then FSmtpAuthType := smtpAuthNtlm
-  else if Value = 'AutoSelect'
-  then FSmtpAuthType := smtpAuthAutoSelect
-  else FSmtpAuthType := smtpAuthNone;
+  if Value = 'Plain' then
+    FSmtpAuthType := smtpAuthPlain
+  else if Value = 'Login' then
+    FSmtpAuthType := smtpAuthLogin
+  else if Value = 'CramMD5' then
+    FSmtpAuthType := smtpAuthCramMD5
+  else if Value = 'CramSHA1' then
+    FSmtpAuthType := smtpAuthCramSha1
+  else if Value = 'NTLM' then
+    FSmtpAuthType := smtpAuthNtlm
+  else if Value = 'AutoSelect' then
+    FSmtpAuthType := smtpAuthAutoSelect
+  else
+    FSmtpAuthType := smtpAuthNone;
 end;
 
 procedure TEmailClient.SetSslType(const Value: string);
 begin
-  if Value = 'TLS'
-  then FSslType := smtpTlsImplicit
-  else if Value = 'STARTTLS'
-  then FSslType := smtpTlsExplicit
-  else FSslType := smtpTlsNone;
+  if Value = 'TLS' then
+    FSslType := smtpTlsImplicit
+  else if Value = 'STARTTLS' then
+    FSslType := smtpTlsExplicit
+  else
+    FSslType := smtpTlsNone;
 end;
 
 procedure TEmailClient.SslSmtpClientRequestDone(Sender: TObject; RqType: TSmtpRequest; Error: Word);
 begin
   { For every operation, we display the status }
-  if (Error > 0) and (Error < 10000)
-  then SetAnswer('RequestDone Rq=' + IntToStr(Ord(RqType)) + ' Error=' + fSslSmtpClient.ErrorMessage);
+  if (Error > 0) and (Error < 10000) then
+    SetAnswer('RequestDone Rq=' + IntToStr(Ord(RqType)) + ' Error=' + fSslSmtpClient.ErrorMessage);
 
   { Check if the user has asked for "All-In-One" demo }
-  if not FAllInOneFlag
-  then begin
+  if not FAllInOneFlag then
+  begin
     fSslSmtpClient.PostQuitMessage;
     Exit;
   end;
 
-  if Error <> 0
-  then begin
+  if Error <> 0 then
+  begin
     FAllInOneFlag := False; { Terminate All-In-One demo }
     FFinish := True;
     fSslSmtpClient.PostQuitMessage;
@@ -160,33 +175,45 @@ begin
   end;
 
   case RqType of
-    smtpConnect: begin
-        if fSslSmtpClient.AuthType = smtpAuthNone
-        then fSslSmtpClient.Helo
-        else fSslSmtpClient.Ehlo;
+    smtpConnect:
+      begin
+        if fSslSmtpClient.AuthType = smtpAuthNone then
+          fSslSmtpClient.Helo
+        else
+          fSslSmtpClient.Ehlo;
       end;
-    smtpHelo: fSslSmtpClient.MailFrom;
-    smtpEhlo: if fSslSmtpClient.SslType = smtpTlsExplicit then begin
+    smtpHelo:
+      fSslSmtpClient.MailFrom;
+    smtpEhlo:
+      if fSslSmtpClient.SslType = smtpTlsExplicit then
+      begin
         Inc(FEhloCount);
-        if FEhloCount = 1
-        then fSslSmtpClient.StartTls
-        else if FEhloCount > 1
-        then fSslSmtpClient.Auth;
+        if FEhloCount = 1 then
+          fSslSmtpClient.StartTls
+        else if FEhloCount > 1 then
+          fSslSmtpClient.Auth;
       end
-      else fSslSmtpClient.Auth;
-    smtpStartTls: fSslSmtpClient.Ehlo; // We need to re-issue the Ehlo command
-    smtpAuth: fSslSmtpClient.MailFrom;
-    smtpMailFrom: fSslSmtpClient.RcptTo;
-    smtpRcptTo: fSslSmtpClient.Data;
-    smtpData: fSslSmtpClient.Quit;
-    smtpQuit: begin
+      else
+        fSslSmtpClient.Auth;
+    smtpStartTls:
+      fSslSmtpClient.Ehlo; // We need to re-issue the Ehlo command
+    smtpAuth:
+      fSslSmtpClient.MailFrom;
+    smtpMailFrom:
+      fSslSmtpClient.RcptTo;
+    smtpRcptTo:
+      fSslSmtpClient.Data;
+    smtpData:
+      fSslSmtpClient.Quit;
+    smtpQuit:
+      begin
         FFinish := True;
         SetAnswer('OK');
       end;
   end;
 
-  if FFinish
-  then fSslSmtpClient.PostQuitMessage;
+  if FFinish then
+    fSslSmtpClient.PostQuitMessage;
 
 end;
 
@@ -197,14 +224,14 @@ end;
 
 procedure TEmailClient.AddAttachment(const FileName: String);
 begin
-  if FileName <> ''
-  then FAttachments.Add(FileName);
+  if FileName <> '' then
+    FAttachments.Add(FileName);
 end;
 
 function TEmailClient.SendEmail: String;
 begin
-  if fSslSmtpClient.Connected
-  then begin
+  if fSslSmtpClient.Connected then
+  begin
     Result := 'Connected';
     Exit;
   end;
@@ -218,7 +245,7 @@ begin
   fSslSmtpClient.FromName := FFromEmail;
 
   fSslSmtpClient.HdrFrom := FFromEmail;
-  //fSslSmtpClient.HdrTo := ToEmail;
+  // fSslSmtpClient.HdrTo := ToEmail;
   if FCcEmail <> '' then
     fSslSmtpClient.HdrCc := FCcEmail;
 
@@ -232,8 +259,8 @@ begin
   fSslSmtpClient.MailMessage.Add(FBody);
 
   fSslSmtpClient.SslType := FSslType;
-  if fSslSmtpClient.SslType <> smtpTlsNone
-  then begin
+  if fSslSmtpClient.SslType <> smtpTlsNone then
+  begin
     fSslContext.SslVerifyPeer := False;
     fSslSmtpClient.OnSslVerifyPeer := nil;
     fSslSmtpClient.OnSslHandshakeDone := nil;
@@ -246,7 +273,7 @@ begin
   fSslSmtpClient.RcptName.Clear;
   fSslSmtpClient.RcptName.Delimiter := ',';
   if FCcEmail <> '' then
-    fSslSmtpClient.RcptName.CommaText := FCcEmail+','+ToEmail.Trim
+    fSslSmtpClient.RcptName.CommaText := FCcEmail + ',' + ToEmail.Trim
   else
     fSslSmtpClient.RcptName.CommaText := ToEmail.Trim;
   fSslSmtpClient.HdrTo := ToEmail.Trim;

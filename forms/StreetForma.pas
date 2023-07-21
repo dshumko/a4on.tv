@@ -31,7 +31,6 @@ type
     ToolButton13: TToolButton;
     tbHDelete: TToolButton;
     ToolButton15: TToolButton;
-    ToolButton17: TToolButton;
     Splitter1: TSplitter;
     dsHouses: TpFIBDataSet;
     dsStreets: TpFIBDataSet;
@@ -74,7 +73,6 @@ type
     actHouseWorkAdd: TAction;
     actHouseWorkEdit: TAction;
     actHouseWorkDelete: TAction;
-    ToolButton14: TToolButton;
     tsAbonents: TTabSheet;
     dbgCustomer: TDBGridEh;
     dsCustomers: TpFIBDataSet;
@@ -91,7 +89,6 @@ type
     dsFlats: TpFIBDataSet;
     srcFlats: TDataSource;
     ToolButton16: TToolButton;
-    ToolButton18: TToolButton;
     tlb1: TToolBar;
     btn3: TToolButton;
     btnHouseMap: TToolButton;
@@ -195,7 +192,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ToolButton8Click(Sender: TObject);
-    procedure actQuickFilterHouseExecute(Sender: TObject);
     procedure dsHousesBeforePost(DataSet: TDataSet);
     procedure dsStreetsBeforePost(DataSet: TDataSet);
     procedure dbGridExit(Sender: TObject);
@@ -250,6 +246,7 @@ type
     procedure actViewCubeExecute(Sender: TObject);
     procedure miPNG1Click(Sender: TObject);
     procedure dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure actQuickFilterExecute(Sender: TObject);
   private
     { Private declarations }
     FCanEdit: Boolean;
@@ -693,13 +690,26 @@ begin
   ShowReport(rsRepHouses);
 end;
 
-procedure TStreetForm.actQuickFilterHouseExecute(Sender: TObject);
+procedure TStreetForm.actQuickFilterExecute(Sender: TObject);
+var
+  i: Integer;
 begin
   inherited;
-  actQuickFilterHouse.Checked := not actQuickFilterHouse.Checked;
-  DbGridHouse.STFilter.Visible := actQuickFilterHouse.Checked;
-  if not actQuickFilter.Checked then
-    DbGridHouse.DataSource.DataSet.Filtered := false;
+
+  actQuickFilter.Checked := not actQuickFilter.Checked;
+
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).STFilter.Visible := actQuickFilter.Checked;
+      if not actQuickFilter.Checked then
+      begin
+        if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
+          (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := false;
+      end;
+    end;
+  end;
 end;
 
 procedure TStreetForm.actViewCubeExecute(Sender: TObject);
@@ -761,7 +771,7 @@ begin
   if (dsHouses.FieldByName('street_id').IsNull or dsHouses.FieldByName('house_id').IsNull) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
   if EditHouseEquipment(-1, dsHouses['street_id'], dsHouses['house_id'], 2) <> -1 then
@@ -894,7 +904,7 @@ begin
   if (dsHouseEquipment.FieldByName('EID').IsNull or dsHouses.FieldByName('house_id').IsNull) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Equipment))) then
+  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
   if EditHouseEquipment(dsHouseEquipment['EID'], dsHouses['street_id'], dsHouses['house_id'], 2) <> -1 then

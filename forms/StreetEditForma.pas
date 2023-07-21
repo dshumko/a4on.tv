@@ -24,13 +24,14 @@ type
     dsStreeType: TpFIBDataSet;
     dblArea: TDBLookupComboboxEh;
     Label1: TLabel;
-    Label4: TLabel;
     DBMemo1: TDBMemoEh;
     srcStreet: TDataSource;
     dsEditStreet: TpFIBDataSet;
     trSRead: TpFIBTransaction;
     trSWrite: TpFIBTransaction;
     CnErrors: TCnErrorProvider;
+    ednTAG: TDBNumberEditEh;
+    edtTAGSTR: TDBEditEh;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure dbEditStreetNameChange(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -38,7 +39,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure dblAreaEditButtons0Click(Sender: TObject; var Handled: Boolean);
   private
-    { Private declarations }
+    FEnterSecondPress: Boolean;
     procedure CheckData;
   public
     { Public declarations }
@@ -129,17 +130,37 @@ procedure TStreetViewForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  go := true;
-  if (Key = #13) then
+  if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    //else if (ActiveControl is TDBGridEh) then
+    //  go := False	  
+	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+    //  go := False;
+    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
+    //  go := False
+    else
+    begin
+      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      begin
+        go := False;
+        FEnterSecondPress := true;
+      end;
+    end;
 
     if go then
     begin
+      FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
+  end
+  else
+  begin
+    if (ActiveControl is TDBMemoEh) then
+      FEnterSecondPress := False;
   end;
 end;
 

@@ -4,11 +4,15 @@ inherited LettersForm: TLettersForm
   Caption = #1055#1077#1095#1072#1090#1085#1099#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1099
   ClientHeight = 449
   ClientWidth = 787
+  ExplicitWidth = 803
+  ExplicitHeight = 488
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 137
     Width = 787
+    ExplicitTop = 137
+    ExplicitWidth = 787
   end
   inherited dbGrid: TDBGridEh
     Top = 140
@@ -85,6 +89,7 @@ inherited LettersForm: TLettersForm
   end
   inherited tlbMain: TToolBar
     Width = 787
+    ExplicitWidth = 787
     inherited btnEdit: TToolButton
       Caption = #1059#1076#1072#1083#1080#1090#1100
     end
@@ -103,40 +108,47 @@ inherited LettersForm: TLettersForm
   inherited pnlEdit: TPanel
     Width = 787
     Height = 112
+    ExplicitWidth = 787
+    ExplicitHeight = 112
     object Label1: TLabel [0]
-      Left = 15
+      Left = 8
       Top = 11
       Width = 57
       Height = 13
       Caption = #1044#1083#1103' '#1092#1086#1088#1084#1099
     end
     object Label2: TLabel [1]
-      Left = 268
+      Left = 264
       Top = 11
       Width = 73
       Height = 13
       Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
     end
     object Label4: TLabel [2]
-      Left = 15
+      Left = 8
       Top = 38
       Width = 58
       Height = 13
       Caption = #1048#1084#1103' '#1086#1090#1095#1077#1090#1072
     end
     inherited btnSaveLink: TBitBtn
-      Left = 89
+      Left = 72
       Top = 85
-      Width = 587
+      Width = 616
       TabOrder = 5
+      ExplicitLeft = 72
+      ExplicitTop = 85
+      ExplicitWidth = 616
     end
     inherited btnCancelLink: TBitBtn
       Left = 694
       Top = 85
       TabOrder = 6
+      ExplicitLeft = 694
+      ExplicitTop = 85
     end
     object DBCheckBoxEh1: TDBCheckBoxEh
-      Left = 89
+      Left = 72
       Top = 62
       Width = 163
       Height = 17
@@ -153,19 +165,25 @@ inherited LettersForm: TLettersForm
       Top = 8
       Width = 429
       Height = 21
+      Hint = 
+        #1053#1072#1079#1074#1072#1085#1080#1077' '#1092#1086#1088#1084#1099'. '#1045#1089#1083#1080' '#1088#1072#1079#1076#1077#1083#1080#1090#1100' '#1089#1080#1084#1074#1086#1083#1086#1084' \ '#1090#1086' '#1087#1091#1085#1082#1090#1099' '#1073#1091#1076#1091#1090' '#1086#1073#1098#1077#1076#1077 +
+        #1085#1099' '#1074' '#1075#1088#1091#1087#1087#1099
       Anchors = [akLeft, akTop, akRight]
       DataField = 'LETTERTYPEDESCR'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
+      EmptyDataInfo.Text = 
+        #1053#1072#1079#1074#1072#1085#1080#1077' '#1092#1086#1088#1084#1099'. '#1045#1089#1083#1080' '#1088#1072#1079#1076#1077#1083#1080#1090#1100' '#1089#1080#1084#1074#1086#1083#1086#1084' \ '#1090#1086' '#1087#1091#1085#1082#1090#1099' '#1073#1091#1076#1091#1090' '#1086#1073#1098#1077#1076#1077 +
+        #1085#1099' '#1074' '#1075#1088#1091#1087#1087#1099
       ShowHint = True
       TabOrder = 1
       Visible = True
     end
     object cbFOR_FORM: TDBComboBoxEh
-      Left = 89
+      Left = 71
       Top = 8
-      Width = 163
+      Width = 181
       Height = 21
       DataField = 'FOR_FORM'
       DataSource = srcDataSource
@@ -182,9 +200,9 @@ inherited LettersForm: TLettersForm
       Visible = True
     end
     object cbReport: TDBComboBoxEh
-      Left = 89
+      Left = 72
       Top = 35
-      Width = 691
+      Width = 708
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'FILENAME'
@@ -196,7 +214,7 @@ inherited LettersForm: TLettersForm
       Visible = True
     end
     object chkSaveAsPDF: TDBCheckBoxEh
-      Left = 268
+      Left = 264
       Top = 62
       Width = 163
       Height = 17
@@ -283,6 +301,7 @@ inherited LettersForm: TLettersForm
     SelectSQL.Strings = (
       'select *'
       'from lettertype'
+      'where LETTERTYPEID >=0 '
       'order by for_form, lettertypedescr')
     OnNewRecord = dsLettersNewRecord
     Transaction = dmMain.trRead

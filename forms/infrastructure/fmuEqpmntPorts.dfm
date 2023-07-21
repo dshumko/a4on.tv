@@ -488,7 +488,7 @@ object apgEqpmntPort: TapgEqpmntPort
       end
       item
         CellButtons = <>
-        DisplayFormat = '#,##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButtons = <>
         FieldName = 'DEBT_SUM'
@@ -768,7 +768,7 @@ object apgEqpmntPort: TapgEqpmntPort
         CategoryName = 'address'
       end
       item
-        DisplayFormat = '#,##0.##'
+        DisplayFormat = ',0.00'
         DynProps = <>
         EditButtons = <>
         FieldName = 'DEBT_SUM'
@@ -952,342 +952,360 @@ object apgEqpmntPort: TapgEqpmntPort
       '  and PORT = :OLD_PORT')
     RefreshSQL.Strings = (
       'select'
-      '*'
-      'from('
-      'select'
-      '    a.port'
-      '  , a.EID'
-      '  , c.CUSTOMER_ID'
-      '  , c.CUST_CODE'
+      '    *'
+      '  from (select'
+      '            a.port'
+      '          , a.EID'
+      '          , c.CUSTOMER_ID'
+      '          , c.CUST_CODE'
       
-        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, '#39#1086#1073#1086#1088#39', null)) ACCOUN' +
-        'T_NO'
-      '  , coalesce(c.SURNAME, e.Name) surname'
-      '  , c.MIDLENAME'
-      '  , c.INITIALS'
-      '  , c.PHONE_NO'
-      '  , c.NOTICE'
-      '  , c.CUST_STATE_DESCR'
-      '  , c.FLAT_NO'
-      '  , c.DEBT_SUM'
-      '  , c.HIS_COLOR'
-      '  , s.street_short'
-      '  , S.Street_Name'
-      '  , H.House_No'
-      '  , h.Street_ID'
-      '  , c.HOUSE_ID'
-      '  , -1 * c.debt_sum as BALANCE'
-      '  , (select'
-      '         count(*)'
-      '       from SUBSCR_SERV ss'
-      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
-      '             and ss.STATE_SGN = 1) as connected'
-      '  , f.FLOOR_N'
-      '  , f.PORCH_N'
-      '  , t.LAN_ID'
-      '  , t.ip'
-      '  , t.mac'
-      '  , pt.O_Name PT_NAME'
-      '  , ps.O_Name PS_NAME'
-      '  , v.Name V_NAME'
-      '  , p.Notice PORT_NOTICE '
-      '  , p.SPEED '
-      '  , case p.Con'
-      '      when 0 then '#39#1054#39
-      '      when 1 then '#39#1040#39
-      '      else '#39#39
-      '    end whose'
-      '  , p.Con'
-      '  , p.Con_Id'
-      '  , p.P_State'
-      '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
-      '  , w.Name W_NAME'
-      '  , wt.O_Name WT_NAME'
-      '  , sn.Name WS_NODE'
-      '  , en.Name WE_NODE'
-      '  , w.Wid'
-      '  , w.Point_S'
-      '  , w.Point_E'
+        '          , coalesce(c.ACCOUNT_NO, iif(p.Con = 0, '#39#1086#1073#1086#1088#39', null))' +
+        ' ACCOUNT_NO'
+      '          , coalesce(c.SURNAME, e.Name) surname'
+      '          , c.MIDLENAME'
+      '          , c.INITIALS'
+      '          , c.PHONE_NO'
+      '          , c.NOTICE'
+      '          , c.CUST_STATE_DESCR'
+      '          , c.FLAT_NO'
+      '          , c.DEBT_SUM'
+      '          , c.HIS_COLOR'
+      '          , s.street_short'
+      '          , S.Street_Name'
+      '          , H.House_No'
+      '          , h.Street_ID'
+      '          , c.HOUSE_ID'
+      '          , -1 * c.debt_sum as BALANCE'
       
-        '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
-        '_USE'
-      '  , p.WLABEL '
-      '  from (select distinct Eid, port'
-      '          from (select Eid, port from port where Eid = :EID'
-      '                union'
+        '          , (select count(*) from SUBSCR_SERV ss where ss.CUSTOM' +
+        'ER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) as connected'
+      '          , f.FLOOR_N'
+      '          , f.PORCH_N'
+      '          , t.LAN_ID'
+      '          , t.ip'
+      '          , t.mac'
+      '          , pt.O_Name PT_NAME'
+      '          , ps.O_Name PS_NAME'
+      '          , v.Name V_NAME'
+      '          , p.Notice PORT_NOTICE'
+      '          , p.SPEED'
+      '          , case p.Con'
+      '              when 0 then '#39#1054#39
+      '              when 1 then '#39#1040#39
+      '              else '#39#39
+      '            end whose,'
+      '            p.Con'
+      '          , p.Con_Id'
+      '          , p.P_State'
+      '          , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
+      '          , w.Name W_NAME'
+      '          , wt.O_Name WT_NAME'
+      '          , sn.Name WS_NODE'
+      '          , en.Name WE_NODE'
+      '          , w.Wid'
+      '          , w.Point_S'
+      '          , w.Point_E'
       
-        '                select EQ_ID EID , Port from tv_lan where EQ_ID ' +
-        '= :EID and coalesce(Port,'#39#39')<> '#39#39')) a'
+        '          , iif((not c.ACCOUNT_NO is null), 1, iif(p.Con = 0, 1,' +
+        ' 0)) IN_USE'
+      '          , p.WLABEL'
+      '          from (select distinct Eid, port'
       
-        '       left outer join port p on (p.Eid = a.EID and p.Port = a.p' +
-        'ort)'
+        '                  from (select Eid, port from port where Eid = :' +
+        'EID'
+      '                        union'
       
-        '       left outer join tv_lan t on (t.Eq_Id = a.Eid and t.Port =' +
-        ' a.Port)'
+        '                        select EQ_ID EID, Port from tv_lan where' +
+        ' EQ_ID = :EID and coalesce(Port, '#39#39') <> '#39#39')'
+      '               ) a'
       
-        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
-        '_id)'
+        '               left outer join port p on (p.Eid = a.EID and p.Po' +
+        'rt = a.port)'
       
-        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
-        'n = 0)'
+        '               left outer join tv_lan t on (t.Eq_Id = a.Eid and ' +
+        't.Port = a.Port)'
       
-        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
-        '_TYPE = 7)'
+        '               left outer join CUSTOMER C on (t.customer_id = c.' +
+        'customer_id)'
       
-        '       left outer join HOUSE H on (((not C.HOUSE_ID is null) and' +
-        ' C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) and e.HOUS' +
-        'E_ID = H.HOUSE_ID))'
-      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+        '               left outer join equipment e on (e.Eid = p.Con_Id ' +
+        'and p.Con = 0)'
       
-        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
-        'and f.Flat_No = c.Flat_No)'
+        '               left outer join objects o on (e.eq_group = o.o_id' +
+        ' and o.O_TYPE = 7)'
       
-        '       left outer join objects pt on (p.P_Type = pt.O_Id and pt.' +
-        'O_Type = 57)'
+        '               left outer join HOUSE H on (((not C.HOUSE_ID is n' +
+        'ull) and C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) an' +
+        'd e.HOUSE_ID = H.HOUSE_ID))'
       
-        '       left outer join objects ps on (p.P_State = ps.O_Id and ps' +
-        '.O_Type = 60)'
-      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
-      '       left outer join Wire w on (w.Wid = p.Wid)'
+        '               left outer join STREET S on (H.STREET_ID = S.STRE' +
+        'ET_ID)'
       
-        '       left outer join OBJECTS wt on (w.WTYPE = wt.O_ID and wt.O' +
-        '_TYPE = 56)'
-      '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
-      '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
-      '  where a.EID = :EID'
-      'union'
-      'select'
-      '    null'
-      '  , t.Eq_Id EID'
-      '  , c.CUSTOMER_ID'
-      '  , c.CUST_CODE'
-      '  , c.ACCOUNT_NO'
-      '  , null'
-      '  , c.MIDLENAME'
-      '  , c.INITIALS'
-      '  , c.PHONE_NO'
-      '  , c.NOTICE'
-      '  , c.CUST_STATE_DESCR'
-      '  , c.FLAT_NO'
-      '  , c.DEBT_SUM'
-      '  , c.HIS_COLOR'
-      '  , s.street_short'
-      '  , S.Street_Name'
-      '  , H.House_No'
-      '  , h.Street_ID'
-      '  , c.HOUSE_ID'
-      '  , -1 * c.debt_sum as BALANCE'
-      '  , (select'
-      '         count(*)'
-      '       from SUBSCR_SERV ss'
-      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
-      '             and ss.STATE_SGN = 1) as connected'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null  '
-      '  from tv_lan t'
+        '               left outer join Houseflats f on (f.House_Id = c.H' +
+        'ouse_Id and f.Flat_No = c.Flat_No)'
       
-        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
-        '_id)'
-      '       left outer join HOUSE H on (C.HOUSE_ID = H.HOUSE_ID)'
-      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+        '               left outer join objects pt on (p.P_Type = pt.O_Id' +
+        ' and pt.O_Type = 57)'
       
-        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
-        'and f.Flat_No = c.Flat_No)'
-      '  where t.Eq_Id = :EID and t.Port is null'
-      ')'
+        '               left outer join objects ps on (p.P_State = ps.O_I' +
+        'd and ps.O_Type = 60)'
+      '               left outer join vlans v on (v.V_Id = p.Vlan_Id)'
+      '               left outer join Wire w on (w.Wid = p.Wid)'
+      
+        '               left outer join OBJECTS wt on (w.WTYPE = wt.O_ID ' +
+        'and wt.O_TYPE = 56)'
+      
+        '               left outer join NODEs sn on (sn.Node_Id = w.Point' +
+        '_S)'
+      
+        '               left outer join NODEs en on (en.Node_Id = w.Point' +
+        '_E)'
+      '          where a.EID = :EID'
+      '        union'
+      '        select'
+      '            null port'
+      '          , t.Eq_Id EID'
+      '          , c.CUSTOMER_ID CUSTOMER_ID'
+      '          , c.CUST_CODE CUST_CODE'
+      '          , c.ACCOUNT_NO ACCOUNT_NO'
+      '          , c.Surname surname'
+      '          , c.MIDLENAME MIDLENAME'
+      '          , c.INITIALS INITIALS'
+      '          , c.PHONE_NO PHONE_NO'
+      '          , c.NOTICE NOTICE'
+      '          , c.CUST_STATE_DESCR CUST_STATE_DESCR'
+      '          , c.FLAT_NO FLAT_NO'
+      '          , c.DEBT_SUM DEBT_SUM'
+      '          , c.HIS_COLOR HIS_COLOR'
+      '          , s.street_short street_short'
+      '          , S.Street_Name Street_Name'
+      '          , H.House_No House_No'
+      '          , h.Street_ID Street_ID'
+      '          , c.HOUSE_ID HOUSE_ID'
+      '          , -1 * c.debt_sum as BALANCE'
+      
+        '          , (select count(*) from SUBSCR_SERV ss where ss.CUSTOM' +
+        'ER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) as connected'
+      '          , f.Floor_N FLOOR_N'
+      '          , f.Porch_N PORCH_N'
+      '          , t.Lan_Id LAN_ID'
+      '          , t.Ip ip'
+      '          , t.Mac mac'
+      '          , null PT_NAME'
+      '          , null PS_NAME'
+      '          , v.Name V_NAME'
+      '          , null PORT_NOTICE'
+      '          , null SPEED'
+      '          , null whose'
+      '          , null Con'
+      '          , null Con_Id'
+      '          , null P_State'
+      '          , c.His_Color COLOR'
+      '          , null W_NAME'
+      '          , null WT_NAME'
+      '          , null WS_NODE'
+      '          , null WE_NODE'
+      '          , null Wid'
+      '          , null Point_S'
+      '          , null Point_E'
+      '          , null IN_USE'
+      '          , null WLABEL'
+      '          from tv_lan t'
+      
+        '               left outer join CUSTOMER C on (t.customer_id = c.' +
+        'customer_id)'
+      
+        '               left outer join HOUSE H on (C.HOUSE_ID = H.HOUSE_' +
+        'ID)'
+      
+        '               left outer join STREET S on (H.STREET_ID = S.STRE' +
+        'ET_ID)'
+      '               left outer join vlans v on (v.V_Id = t.Vlan_Id)'
+      
+        '               left outer join Houseflats f on (f.House_Id = c.H' +
+        'ouse_Id and f.Flat_No = c.Flat_No)'
+      ''
+      '          where t.Eq_Id = :EID and t.Port is null)'
       'where EID = :OLD_EID'
       '  and PORT = :OLD_PORT'
       '')
     SelectSQL.Strings = (
       'select'
-      '*'
-      'from('
-      'select'
-      '    a.port'
-      '  , a.EID'
-      '  , c.CUSTOMER_ID'
-      '  , c.CUST_CODE'
+      '    *'
+      '  from (select'
+      '            a.port'
+      '          , a.EID'
+      '          , c.CUSTOMER_ID'
+      '          , c.CUST_CODE'
       
-        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, '#39#1086#1073#1086#1088#39', null)) ACCOUN' +
-        'T_NO'
-      '  , coalesce(c.SURNAME, e.Name) surname'
-      '  , c.MIDLENAME'
-      '  , c.INITIALS'
-      '  , c.PHONE_NO'
-      '  , c.NOTICE'
-      '  , c.CUST_STATE_DESCR'
-      '  , c.FLAT_NO'
-      '  , c.DEBT_SUM'
-      '  , c.HIS_COLOR'
-      '  , s.street_short'
-      '  , S.Street_Name'
-      '  , H.House_No'
-      '  , h.Street_ID'
-      '  , c.HOUSE_ID'
-      '  , -1 * c.debt_sum as BALANCE'
-      '  , (select'
-      '         count(*)'
-      '       from SUBSCR_SERV ss'
-      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
-      '             and ss.STATE_SGN = 1) as connected'
-      '  , f.FLOOR_N'
-      '  , f.PORCH_N'
-      '  , t.LAN_ID'
-      '  , t.ip'
-      '  , t.mac'
-      '  , pt.O_Name PT_NAME'
-      '  , ps.O_Name PS_NAME'
-      '  , v.Name V_NAME'
-      '  , p.Notice PORT_NOTICE '
-      '  , p.SPEED '
-      '  , case p.Con'
-      '      when 0 then '#39#1054#39
-      '      when 1 then '#39#1040#39
-      '      else '#39#39
-      '    end whose'
-      '  , p.Con'
-      '  , p.Con_Id'
-      '  , p.P_State'
-      '  , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
-      '  , w.Name W_NAME'
-      '  , wt.O_Name WT_NAME'
-      '  , sn.Name WS_NODE'
-      '  , en.Name WE_NODE'
-      '  , w.Wid'
-      '  , w.Point_S'
-      '  , w.Point_E'
+        '          , coalesce(c.ACCOUNT_NO, iif(p.Con = 0, '#39#1086#1073#1086#1088#39', null))' +
+        ' ACCOUNT_NO'
+      '          , coalesce(c.SURNAME, e.Name) surname'
+      '          , c.MIDLENAME'
+      '          , c.INITIALS'
+      '          , c.PHONE_NO'
+      '          , c.NOTICE'
+      '          , c.CUST_STATE_DESCR'
+      '          , c.FLAT_NO'
+      '          , c.DEBT_SUM'
+      '          , c.HIS_COLOR'
+      '          , s.street_short'
+      '          , S.Street_Name'
+      '          , H.House_No'
+      '          , h.Street_ID'
+      '          , c.HOUSE_ID'
+      '          , -1 * c.debt_sum as BALANCE'
       
-        '  , iif((not c.ACCOUNT_NO is null), 1, iif( p.Con = 0, 1, 0)) IN' +
-        '_USE'
-      '  , p.WLABEL '
-      '  from (select distinct Eid, port'
-      '          from (select Eid, port from port where Eid = :EID'
-      '                union'
+        '          , (select count(*) from SUBSCR_SERV ss where ss.CUSTOM' +
+        'ER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) as connected'
+      '          , f.FLOOR_N'
+      '          , f.PORCH_N'
+      '          , t.LAN_ID'
+      '          , t.ip'
+      '          , t.mac'
+      '          , pt.O_Name PT_NAME'
+      '          , ps.O_Name PS_NAME'
+      '          , v.Name V_NAME'
+      '          , p.Notice PORT_NOTICE'
+      '          , p.SPEED'
+      '          , case p.Con'
+      '              when 0 then '#39#1054#39
+      '              when 1 then '#39#1040#39
+      '              else '#39#39
+      '            end whose,'
+      '            p.Con'
+      '          , p.Con_Id'
+      '          , p.P_State'
+      '          , coalesce(c.HIS_COLOR, o.O_DIMENSION) as COLOR'
+      '          , w.Name W_NAME'
+      '          , wt.O_Name WT_NAME'
+      '          , sn.Name WS_NODE'
+      '          , en.Name WE_NODE'
+      '          , w.Wid'
+      '          , w.Point_S'
+      '          , w.Point_E'
       
-        '                select EQ_ID EID , Port from tv_lan where EQ_ID ' +
-        '= :EID and coalesce(Port,'#39#39')<> '#39#39')) a'
+        '          , iif((not c.ACCOUNT_NO is null), 1, iif(p.Con = 0, 1,' +
+        ' 0)) IN_USE'
+      '          , p.WLABEL'
+      '          from (select distinct Eid, port'
       
-        '       left outer join port p on (p.Eid = a.EID and p.Port = a.p' +
-        'ort)'
+        '                  from (select Eid, port from port where Eid = :' +
+        'EID'
+      '                        union'
       
-        '       left outer join tv_lan t on (t.Eq_Id = a.Eid and t.Port =' +
-        ' a.Port)'
+        '                        select EQ_ID EID, Port from tv_lan where' +
+        ' EQ_ID = :EID and coalesce(Port, '#39#39') <> '#39#39')'
+      '               ) a'
       
-        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
-        '_id)'
+        '               left outer join port p on (p.Eid = a.EID and p.Po' +
+        'rt = a.port)'
       
-        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
-        'n = 0)'
+        '               left outer join tv_lan t on (t.Eq_Id = a.Eid and ' +
+        't.Port = a.Port)'
       
-        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
-        '_TYPE = 7)'
+        '               left outer join CUSTOMER C on (t.customer_id = c.' +
+        'customer_id)'
       
-        '       left outer join HOUSE H on (((not C.HOUSE_ID is null) and' +
-        ' C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) and e.HOUS' +
-        'E_ID = H.HOUSE_ID))'
-      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+        '               left outer join equipment e on (e.Eid = p.Con_Id ' +
+        'and p.Con = 0)'
       
-        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
-        'and f.Flat_No = c.Flat_No)'
+        '               left outer join objects o on (e.eq_group = o.o_id' +
+        ' and o.O_TYPE = 7)'
       
-        '       left outer join objects pt on (p.P_Type = pt.O_Id and pt.' +
-        'O_Type = 57)'
+        '               left outer join HOUSE H on (((not C.HOUSE_ID is n' +
+        'ull) and C.HOUSE_ID = H.HOUSE_ID) or (not(e.House_Id is null) an' +
+        'd e.HOUSE_ID = H.HOUSE_ID))'
       
-        '       left outer join objects ps on (p.P_State = ps.O_Id and ps' +
-        '.O_Type = 60)'
-      '       left outer join vlans v on (v.V_Id = p.Vlan_Id)'
-      '       left outer join Wire w on (w.Wid = p.Wid)'
+        '               left outer join STREET S on (H.STREET_ID = S.STRE' +
+        'ET_ID)'
       
-        '       left outer join OBJECTS wt on (w.WTYPE = wt.O_ID and wt.O' +
-        '_TYPE = 56)'
-      '       left outer join NODEs sn on (sn.Node_Id = w.Point_S)'
-      '       left outer join NODEs en on (en.Node_Id = w.Point_E)'
-      '  where a.EID = :EID'
-      'union'
-      'select'
-      '    null'
-      '  , t.Eq_Id EID'
-      '  , c.CUSTOMER_ID'
-      '  , c.CUST_CODE'
-      '  , c.ACCOUNT_NO'
-      '  , null'
-      '  , c.MIDLENAME'
-      '  , c.INITIALS'
-      '  , c.PHONE_NO'
-      '  , c.NOTICE'
-      '  , c.CUST_STATE_DESCR'
-      '  , c.FLAT_NO'
-      '  , c.DEBT_SUM'
-      '  , c.HIS_COLOR'
-      '  , s.street_short'
-      '  , S.Street_Name'
-      '  , H.House_No'
-      '  , h.Street_ID'
-      '  , c.HOUSE_ID'
-      '  , -1 * c.debt_sum as BALANCE'
-      '  , (select'
-      '         count(*)'
-      '       from SUBSCR_SERV ss'
-      '       where ss.CUSTOMER_ID = c.CUSTOMER_ID'
-      '             and ss.STATE_SGN = 1) as connected'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null'
-      '  , null  '
-      '  from tv_lan t'
+        '               left outer join Houseflats f on (f.House_Id = c.H' +
+        'ouse_Id and f.Flat_No = c.Flat_No)'
       
-        '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
-        '_id)'
-      '       left outer join HOUSE H on (C.HOUSE_ID = H.HOUSE_ID)'
-      '       left outer join STREET S on (H.STREET_ID = S.STREET_ID)'
+        '               left outer join objects pt on (p.P_Type = pt.O_Id' +
+        ' and pt.O_Type = 57)'
       
-        '       left outer join Houseflats f on (f.House_Id = c.House_Id ' +
-        'and f.Flat_No = c.Flat_No)'
-      '  where t.Eq_Id = :EID and t.Port is null'
-      ')'
-      'order by 1')
+        '               left outer join objects ps on (p.P_State = ps.O_I' +
+        'd and ps.O_Type = 60)'
+      '               left outer join vlans v on (v.V_Id = p.Vlan_Id)'
+      '               left outer join Wire w on (w.Wid = p.Wid)'
+      
+        '               left outer join OBJECTS wt on (w.WTYPE = wt.O_ID ' +
+        'and wt.O_TYPE = 56)'
+      
+        '               left outer join NODEs sn on (sn.Node_Id = w.Point' +
+        '_S)'
+      
+        '               left outer join NODEs en on (en.Node_Id = w.Point' +
+        '_E)'
+      '          where a.EID = :EID'
+      '        union'
+      '        select'
+      '            null port'
+      '          , t.Eq_Id EID'
+      '          , c.CUSTOMER_ID CUSTOMER_ID'
+      '          , c.CUST_CODE CUST_CODE'
+      '          , c.ACCOUNT_NO ACCOUNT_NO'
+      '          , c.Surname surname'
+      '          , c.MIDLENAME MIDLENAME'
+      '          , c.INITIALS INITIALS'
+      '          , c.PHONE_NO PHONE_NO'
+      '          , c.NOTICE NOTICE'
+      '          , c.CUST_STATE_DESCR CUST_STATE_DESCR'
+      '          , c.FLAT_NO FLAT_NO'
+      '          , c.DEBT_SUM DEBT_SUM'
+      '          , c.HIS_COLOR HIS_COLOR'
+      '          , s.street_short street_short'
+      '          , S.Street_Name Street_Name'
+      '          , H.House_No House_No'
+      '          , h.Street_ID Street_ID'
+      '          , c.HOUSE_ID HOUSE_ID'
+      '          , -1 * c.debt_sum as BALANCE'
+      
+        '          , (select count(*) from SUBSCR_SERV ss where ss.CUSTOM' +
+        'ER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) as connected'
+      '          , f.Floor_N FLOOR_N'
+      '          , f.Porch_N PORCH_N'
+      '          , t.Lan_Id LAN_ID'
+      '          , t.Ip ip'
+      '          , t.Mac mac'
+      '          , null PT_NAME'
+      '          , null PS_NAME'
+      '          , v.Name V_NAME'
+      '          , null PORT_NOTICE'
+      '          , null SPEED'
+      '          , null whose'
+      '          , null Con'
+      '          , null Con_Id'
+      '          , null P_State'
+      '          , c.His_Color COLOR'
+      '          , null W_NAME'
+      '          , null WT_NAME'
+      '          , null WS_NODE'
+      '          , null WE_NODE'
+      '          , null Wid'
+      '          , null Point_S'
+      '          , null Point_E'
+      '          , null IN_USE'
+      '          , null WLABEL'
+      '          from tv_lan t'
+      
+        '               left outer join CUSTOMER C on (t.customer_id = c.' +
+        'customer_id)'
+      
+        '               left outer join HOUSE H on (C.HOUSE_ID = H.HOUSE_' +
+        'ID)'
+      
+        '               left outer join STREET S on (H.STREET_ID = S.STRE' +
+        'ET_ID)'
+      '               left outer join vlans v on (v.V_Id = t.Vlan_Id)'
+      
+        '               left outer join Houseflats f on (f.House_Id = c.H' +
+        'ouse_Id and f.Flat_No = c.Flat_No)'
+      ''
+      '          where t.Eq_Id = :EID and t.Port is null)'
+      '  order by 1')
     AutoUpdateOptions.UpdateTableName = 'CUSTOMER'
     AutoUpdateOptions.KeyFields = 'CUSTOMER_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_CUSTOMER_UID'

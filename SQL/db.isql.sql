@@ -34,6 +34,8 @@ CREATE GENERATOR GEN_TASK;
 CREATE GENERATOR GEN_UID;
 CREATE GENERATOR GEN_VPN_SESSIONS_ID;
 CREATE GENERATOR G_LOG_ID;
+CREATE GENERATOR IBE$TODO_ITEM_ID_GEN;
+CREATE GENERATOR IBE$VERSION_HISTORY_ID_GEN;
 CREATE GENERATOR MAP_LOG_ID;
 
 /* Domain definitions */
@@ -65,7 +67,7 @@ CREATE DOMAIN D_INITIALS AS VARCHAR(4);
 CREATE DOMAIN D_INTEGER AS INTEGER;
 CREATE DOMAIN D_INT_IP AS NUMERIC(10, 0);
 CREATE DOMAIN D_IP AS VARCHAR(15);
-CREATE DOMAIN D_IPV6 AS VARCHAR(40);
+CREATE DOMAIN D_IPV6 AS VARCHAR(255);
 CREATE DOMAIN D_MAC AS VARCHAR(18);
 CREATE DOMAIN D_MESSAGE AS VARCHAR(1000);
 CREATE DOMAIN D_N10 AS NUMERIC(10, 0);
@@ -149,7 +151,7 @@ CREATE TABLE ATTRIBUTE (TYPE_ID UID NOT NULL,
         AID UID NOT NULL,
         AVALUE D_VARCHAR100,
         NOTICE D_NOTICE,
-        ADELETED D_IBOOLEAN,
+        ADELETED D_IBOOLEAN DEFAULT 0,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -361,6 +363,8 @@ CREATE TABLE CUSTLETTER (CUSTLETTERID UID NOT NULL,
         CUSTOMER_ID UID,
         LETTERTYPEID UID,
         CUSTLETTERDATE D_DATE_NOW,
+        NAME D_VARCHAR255,
+        CONTENT D_VARCHAR2000,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -474,8 +478,8 @@ CONSTRAINT PK_CUSTOMER_CHANNELS PRIMARY KEY (DECODER_ID, CH_ID));
 
 /* Table: CUSTOMER_CONTACTS, Owner: SYSDBA */
 CREATE TABLE CUSTOMER_CONTACTS (CUSTOMER_ID UID NOT NULL,
+        CC_TYPE D_INTEGER DEFAULT 0 NOT NULL,
         CC_VALUE D_VARCHAR255 NOT NULL,
-        CC_TYPE D_INTEGER DEFAULT 0,
         CC_NOTIFY D_IBOOLEAN DEFAULT 0,
         CC_NOTICE D_NOTICE,
         CC_VAL_REVERSE D_VARCHAR255,
@@ -483,15 +487,15 @@ CREATE TABLE CUSTOMER_CONTACTS (CUSTOMER_ID UID NOT NULL,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
-CONSTRAINT PK_CUSTOMER_CONTACTS PRIMARY KEY (CUSTOMER_ID, CC_VALUE));
+CONSTRAINT PK_CUSTOMER_CONTACTS PRIMARY KEY (CUSTOMER_ID, CC_TYPE, CC_VALUE));
 
 /* Table: CUSTOMER_DECODERS, Owner: SYSDBA */
 CREATE TABLE CUSTOMER_DECODERS (DEC_ID UID NOT NULL,
         CUSTOMER_ID UID,
         DECODER_N D_DECODER NOT NULL,
         STB_N D_VARCHAR50,
-        TV_MODEL D_VARCHAR50,
-        TV_SOFT D_VARCHAR50,
+        TV_MODEL D_VARCHAR100,
+        TV_SOFT D_VARCHAR100,
         PAIRING D_IBOOLEAN,
         NOTICE D_NOTICE,
         LAST_UPDATE D_DATETIME,
@@ -501,6 +505,26 @@ CREATE TABLE CUSTOMER_DECODERS (DEC_ID UID NOT NULL,
         EDIT_ON D_DATETIME,
 CONSTRAINT PK_CUSTOMER_DECODERS PRIMARY KEY (DEC_ID),
 CONSTRAINT UNQ1_CUSTOMER_DECODERS UNIQUE (DECODER_N));
+
+/* Table: CUSTOMER_DOC, Owner: SYSDBA */
+CREATE TABLE CUSTOMER_DOC (DOC_TYPE UID,
+        DOC_NUMBER D_VARCHAR50 NOT NULL,
+        SURNAME D_VARCHAR100,
+        "FIRSTNAME" D_VARCHAR50,
+        MIDLENAME D_VARCHAR50,
+        DOC_REG D_VARCHAR255,
+        DOC_DATE D_DATE,
+        PERSONAL_N D_VARCHAR50,
+        BIRTHDAY D_DATE,
+        ADDR_REGISTR D_VARCHAR255,
+        ADDR_BIRTH D_VARCHAR255,
+        NOTICE D_NOTICE,
+        CF_ID D_UID_NULL,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+CONSTRAINT PK_CUSTOMER_DOC PRIMARY KEY (DOC_TYPE, DOC_NUMBER));
 
 /* Table: CUSTOMER_EQUIPMENT, Owner: SYSDBA */
 CREATE TABLE CUSTOMER_EQUIPMENT (CE_ID UID NOT NULL,
@@ -530,7 +554,8 @@ CREATE TABLE CUSTOMER_FILES (CF_ID UID,
         EDIT_ON D_DATETIME,
         ACT D_IBOOLEAN DEFAULT 0,
         ANOTICE D_NOTICE,
-        CONTENT D_BLOB1K);
+        CONTENT D_BLOB1K,
+        ADDONS D_VARCHAR2000);
 
 /* Table: DAYS_TARIF, Owner: SYSDBA */
 CREATE GLOBAL TEMPORARY TABLE DAYS_TARIF (SERV_ID UID,
@@ -679,6 +704,26 @@ CREATE TABLE DISTRIB_CONTRACT_REPORTS_CH (CONTRACT_ID UID,
         END_SUM D_N15_2,
         NOTICE D_VARCHAR50,
 CONSTRAINT PK_DISTRIB_CONTRACT_REPORTS_CH PRIMARY KEY (CONTRACT_ID, PERIOD, CH_ID));
+
+/* Table: DOC_LIST, Owner: SYSDBA */
+CREATE TABLE DOC_LIST (DOC_TYPE UID,
+        DOC_NUMBER D_VARCHAR50 NOT NULL,
+        SURNAME D_VARCHAR100,
+        "FIRSTNAME" D_VARCHAR50,
+        MIDLENAME D_VARCHAR50,
+        DOC_REG D_VARCHAR255,
+        DOC_DATE D_DATE,
+        PERSONAL_N D_VARCHAR50,
+        BIRTHDAY D_DATE,
+        ADDR_REGISTR D_VARCHAR255,
+        ADDR_BIRTH D_VARCHAR255,
+        NOTICE D_NOTICE,
+        CF_ID D_UID_NULL,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+CONSTRAINT PK_DOC_LIST PRIMARY KEY (DOC_TYPE, DOC_NUMBER));
 
 /* Table: DVB_NETWORK, Owner: SYSDBA */
 CREATE TABLE DVB_NETWORK (DVBN_ID UID,
@@ -1001,6 +1046,7 @@ CREATE TABLE HOUSE (HOUSE_ID UID NOT NULL,
         LATITUDE D_GEOPOINT,
         LONGITUDE D_GEOPOINT,
         TAG D_INTEGER,
+        TAG_STR D_VARCHAR100,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -1022,7 +1068,7 @@ CREATE TABLE HOUSEFLATS (HOUSE_ID UID NOT NULL,
         PHONE D_VARCHAR30,
         STATE D_VARCHAR1000,
         MOBILE D_VARCHAR30,
-        OWNER_NAME D_VARCHAR100,
+        OWNER_NAME D_VARCHAR255,
         OWNER_DOC D_VARCHAR255,
 CONSTRAINT UNQ_HOUSEFLATS UNIQUE (HOUSE_ID, FLAT_NO));
 
@@ -1080,6 +1126,33 @@ CREATE TABLE HOUSE_CIRCUIT (HC_ID UID NOT NULL,
         PNG D_BLOB1K,
         CIRCUIT D_BLOB1K);
 
+/* Table: IBE$TODO, Owner: SYSDBA */
+CREATE TABLE IBE$TODO (ITEM_ID INTEGER NOT NULL,
+        OBJECT_NAME VARCHAR(64) CHARACTER SET UNICODE_FSS,
+        OBJECT_TYPE INTEGER,
+        ITEM_PRIORITY SMALLINT DEFAULT 0 NOT NULL,
+        ITEM_STATE SMALLINT DEFAULT 0 NOT NULL,
+        ITEM_CAPTION VARCHAR(255) NOT NULL,
+        ITEM_DESCRIPTION BLOB SUB_TYPE TEXT SEGMENT SIZE 80,
+        RESPONSIBLE_PERSON VARCHAR(64),
+        ITEM_TIMESTAMP TIMESTAMP NOT NULL,
+        ITEM_DEADLINE DATE,
+        ITEM_CATEGORY VARCHAR(64),
+        ITEM_OWNER VARCHAR(64) CHARACTER SET UNICODE_FSS NOT NULL,
+PRIMARY KEY (ITEM_ID));
+
+/* Table: IBE$VERSION_HISTORY, Owner: SYSDBA */
+CREATE TABLE IBE$VERSION_HISTORY (IBE$VH_ID INTEGER NOT NULL,
+        IBE$VH_MODIFY_DATE TIMESTAMP NOT NULL,
+        IBE$VH_USER_NAME VARCHAR(67),
+        IBE$VH_OBJECT_TYPE SMALLINT NOT NULL,
+        IBE$VH_OBJECT_NAME VARCHAR(67) NOT NULL,
+        IBE$VH_HEADER BLOB SUB_TYPE 0 SEGMENT SIZE 80,
+        IBE$VH_BODY BLOB SUB_TYPE 0 SEGMENT SIZE 80,
+        IBE$VH_CLIENT_ADDRESS VARCHAR(32) CHARACTER SET NONE,
+        IBE$VH_DESCRIPTION BLOB SUB_TYPE TEXT SEGMENT SIZE 80,
+PRIMARY KEY (IBE$VH_ID));
+
 /* Table: IPTV_GROUP, Owner: SYSDBA */
 CREATE TABLE IPTV_GROUP (IG_ID UID,
         NAME D_VARCHAR20,
@@ -1124,7 +1197,7 @@ CREATE TABLE JOURNAL (J_ID UID,
 
 /* Table: LETTERTYPE, Owner: SYSDBA */
 CREATE TABLE LETTERTYPE (LETTERTYPEID UID,
-        LETTERTYPEDESCR D_VARCHAR30,
+        LETTERTYPEDESCR D_VARCHAR100,
         FILENAME D_VARCHAR500,
         RECORDINDB D_IBOOLEAN,
         FOR_FORM D_SMALLINT DEFAULT 0,
@@ -1285,11 +1358,13 @@ CREATE TABLE MESSAGES (MES_ID UID,
         ADDED_ON D_DATETIME,
         ADDED_BY D_VARCHAR50,
         MES_PRIOR D_INTEGER DEFAULT 0,
-        EXT_ID D_VARCHAR50,
+        EXT_ID D_VARCHAR255,
         TPL_ID D_UID_NULL,
         INFO_PERIOD D_INTEGER,
         INFO_INTERVAL D_INTEGER,
-        TAG D_VARCHAR255);
+        TAG D_VARCHAR255,
+        DIRECT D_SMALLINT,
+        PARENT_ID D_UID_NULL);
 
 /* Table: MESSAGE_TPL, Owner: SYSDBA */
 CREATE TABLE MESSAGE_TPL (MT_ID UID,
@@ -1582,6 +1657,7 @@ CREATE TABLE PAY_DOC (PAY_DOC_ID UID NOT NULL,
         PAY_DOC_DATE D_DATE_NOW NOT NULL,
         PAY_DOC_SUM D_N15_2 NOT NULL,
         NOTICE D_NOTICE,
+        AMOUNT D_N15_2,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -1709,6 +1785,7 @@ CREATE TABLE QUEUE_SWITCH_SRV (CUSTOMER_ID UID,
         SRV_TO UID,
         SRV_ACT D_UID_NULL,
         COMPLETED D_INTEGER DEFAULT 0,
+        NOTICE D_NOTICE,
 CONSTRAINT PK_QUEUE_SWITCH_SRV PRIMARY KEY (CUSTOMER_ID, SRV_FROM));
 
 /* Table: RATES, Owner: SYSDBA */
@@ -1827,7 +1904,9 @@ CREATE TABLE REQUEST_MATERIALS (RM_ID UID NOT NULL,
         ADDED_ON D_TIMESTAMP,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_TIMESTAMP,
+        CALC D_INTEGER,
         NOT_CALC D_INTEGER,
+        BAYBACK D_IBOOLEAN,
 CONSTRAINT PK_REQUEST_MATERIALS PRIMARY KEY (RM_ID));
 
 /* Table: REQUEST_MATERIALS_RETURN, Owner: SYSDBA */
@@ -1844,6 +1923,7 @@ CREATE TABLE REQUEST_MATERIALS_RETURN (ID UID NOT NULL,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_TIMESTAMP,
         CALC D_INTEGER DEFAULT 0,
+        BAYBACK D_IBOOLEAN,
 CONSTRAINT PK_REQUEST_MATERIALS_RETURN PRIMARY KEY (ID));
 
 /* Table: REQUEST_MSG, Owner: SYSDBA */
@@ -2056,6 +2136,8 @@ CREATE TABLE STREET (STREET_ID UID NOT NULL,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        TAG D_INTEGER,
+        TAG_STR D_VARCHAR100,
 CONSTRAINT PK_STREET PRIMARY KEY (STREET_ID));
 
 /* Table: STREET_TYPE, Owner: SYSDBA */
@@ -2183,6 +2265,7 @@ CREATE TABLE TARIF (TARIF_ID UID NOT NULL,
         DATE_TO D_DATE DEFAULT '2100-01-01' NOT NULL,
         TARIF_SUM D_N15_2 NOT NULL,
         TARIF_SUM_JUR D_N15_2,
+        VAT D_N15_2 DEFAULT 0,
         EDIT_BY D_VARCHAR100,
         EDIT_ON D_DATETIME,
 CONSTRAINT PK_TARIF PRIMARY KEY (TARIF_ID));
@@ -2194,6 +2277,7 @@ CREATE TABLE TASKLIST (ID UID,
         PLAN_DATE D_DATETIME,
         EXEC_DATE D_DATETIME,
         COLOR D_VARCHAR10,
+        WHO_CAN D_INTEGER,
         DELETED D_IBOOLEAN,
         ADDED_BY D_VARCHAR20,
         ADDED_ON D_DATETIME,
@@ -2512,6 +2596,12 @@ RETURNS D_DATE
 DETERMINISTIC 
 AS 
 BEGIN END ^
+CREATE OR ALTER FUNCTION NUMBER_AS_STR (VAL D_N15_2,
+LANG D_VARCHAR5 = 'RU',
+SHOWCURRENCY INTEGER = 0)
+RETURNS D_VARCHAR1000
+AS 
+BEGIN END ^
 CREATE OR ALTER FUNCTION ONLY_DIGITS (A_VALUE D_VARCHAR255)
 RETURNS D_VARCHAR255
 DETERMINISTIC 
@@ -2757,7 +2847,7 @@ P_CONTRACT D_VARCHAR20,
 P_CONTRACT_DATE D_DATE,
 P_VATG_ID TYPE OF UID,
 RECALC D_IBOOLEAN = 1,
-P_WORKER D_VARCHAR255 = null,
+P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */,
 RQ_ID D_UID_NULL = null)
 AS 
 BEGIN EXIT; END ^
@@ -2914,7 +3004,7 @@ P_SERV_ID TYPE OF UID,
 P_DATE D_DATE,
 P_ACTSERVICE D_INTEGER,
 P_NOTICE D_NOTICE,
-P_WORKER D_VARCHAR255 = null)
+P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS (RESULT D_INTEGER)
 AS 
 BEGIN EXIT; END ^
@@ -3028,6 +3118,12 @@ P_MONTH D_DATE,
 FEE_ROUND D_INTEGER)
 AS 
 BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE CALC_SURCHARGE_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
+P_MONTH D_DATE,
+FEE_ROUND D_INTEGER = null,
+P_CALC_TYPE D_INTEGER = null)
+AS 
+BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CANCEL_CONTRACT (PCUSTOMER_ID TYPE OF UID,
 PCANCEL_DATE D_DATE,
 POFF_SRV_ID TYPE OF UID)
@@ -3058,14 +3154,16 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CHANGE_AUTOBLOCK_OFF (CUSTOMER_ID TYPE OF UID,
 SERVICE_ID TYPE OF UID,
 OFF_SERVICE TYPE OF UID,
-UNITS D_N15_2)
+UNITS D_N15_2,
+NOTICE D_NOTICE = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CHANGE_CH_TO_CH (FROM_CH D_UID_NULL,
 TO_CH D_UID_NULL,
 ANALOG D_IBOOLEAN = null,
 DVB D_IBOOLEAN = null,
-IPTV D_IBOOLEAN = null)
+IPTV D_IBOOLEAN = null,
+REPL D_IBOOLEAN = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CHANGE_TO_NEGATIVE (CUSTOMER_ID UID,
@@ -3183,12 +3281,12 @@ PSUMMA D_N15_2,
 SUM_TYPE D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE CUSTOMER_CONTACTS_IU (CUSTOMER_ID INTEGER,
-CC_VALUE VARCHAR(255) CHARACTER SET UTF8,
-CC_TYPE SMALLINT = 0,
-CC_NOTICE VARCHAR(1000) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */,
-CC_NOTIFY SMALLINT = 1,
-CC_OLD VARCHAR(255) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */)
+CREATE OR ALTER PROCEDURE CUSTOMER_CONTACTS_IU (CUSTOMER_ID D_INTEGER,
+CC_VALUE D_VARCHAR255,
+CC_TYPE D_INTEGER = 0,
+CC_NOTICE D_NOTICE = null,
+CC_NOTIFY D_SMALLINT = 1,
+CC_OLD D_VARCHAR255 = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CUSTOMER_DEBT_ADD (P_CUSTOMER_ID UID,
@@ -3552,7 +3650,7 @@ COST D_N15_2,
 WH_NAME D_VARCHAR100,
 WH_ID UID,
 RM_QUANT D_N15_5,
-NOT_CALC D_IBOOLEAN,
+CALC D_IBOOLEAN,
 MR_QUANT D_N15_5,
 M_NUMBER D_N15_5,
 RQ_ID D_UID_NULL)
@@ -3806,7 +3904,9 @@ MES_HEAD D_VARCHAR255,
 MES_TEXT D_MESSAGE,
 MES_PRIOR D_INTEGER,
 EXT_ID D_VARCHAR50,
-MES_RESULT D_INTEGER = 0)
+MES_RESULT D_INTEGER = 0,
+CONTACT D_VARCHAR255 = null,
+PARENT D_INTEGER = null)
 RETURNS (MES_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
@@ -3857,9 +3957,9 @@ P_NOTICE D_NOTICE,
 P_UNITS D_N15_2,
 RECALC D_IBOOLEAN = 1,
 ADD_SGL D_IBOOLEAN = 1,
-P_WORKER D_VARCHAR255 = null,
+P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */,
 RQ_ID D_UID_NULL = null,
-P_CONTRACT D_VARCHAR20 = null,
+P_CONTRACT D_VARCHAR20 = null /* COLLATE UTF8 - default */,
 P_CONTRACT_DATE D_DATE = null)
 RETURNS (RESULT D_INTEGER)
 AS 
@@ -3908,7 +4008,7 @@ PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
 EXT_SYSTEMS_ID TYPE OF D_VARCHAR50,
 NOTICE D_NOTICE,
-PAY_TYPE_STR D_VARCHAR30 = 'CASH',
+PAY_TYPE_STR D_VARCHAR30 = 'CASH' /* COLLATE UTF8 - default */,
 CMSN D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
@@ -4037,7 +4137,8 @@ RM_COST D_N15_2,
 RM_NOTICE D_NOTICE,
 PROP D_UID_NULL,
 P_ACTION D_INTEGER,
-SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */)
+SERIAL D_SERIAL_NS = null,
+BAYBACK D_IBOOLEAN = 0)
 RETURNS (RET_RM_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
@@ -4052,6 +4153,16 @@ SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */,
 COST D_N15_2 = null)
 AS 
 BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE REQUEST_MATERIAL_BAYBACK (RQ_ID TYPE OF UID,
+M_ID TYPE OF UID,
+QUANT D_N15_5,
+COST D_N15_2,
+NOTICE D_NOTICE,
+SERIAL D_SERIAL_NS = null,
+P_ACTION D_INTEGER = 0)
+RETURNS (RET_RM_ID D_INTEGER)
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE REQUEST_RECREATE (FROM_REQUEST D_INTEGER)
 AS 
 BEGIN EXIT; END ^
@@ -4179,7 +4290,8 @@ P_DATE_FROM D_DATE,
 P_DATE_TO D_DATE,
 P_TARIF_SUM D_N15_2,
 P_TARIF_JUR D_N15_2,
-P_ACTION D_INTEGER)
+P_ACTION D_INTEGER,
+P_VAT D_N15_2 = 0)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE UPDATECUSTOMERDEBT4PAY (P_CUSTOMER_ID UID,
@@ -4288,6 +4400,7 @@ CREATE INDEX IDX_HOUSE_SA ON HOUSE (SUBAREA_ID);
 CREATE INDEX HOUSEFLOOR_IDX1 ON HOUSEFLOOR (PORCH_ID, FLAT_FROM, FLAT_TO);
 CREATE INDEX HOUSEPORCH_IDX1 ON HOUSEPORCH (PORCH_N, FLAT_FROM, FLAT_TO);
 CREATE INDEX HOUSES_ATTRIBUTES_OID ON HOUSES_ATTRIBUTES (O_ID);
+CREATE INDEX IBE$TODO_BY_OBJECTNAME ON IBE$TODO (OBJECT_NAME);
 CREATE INDEX MAP_IDX_ADDRESS ON MAP (ADDRESS);
 CREATE INDEX MAP_IDX_MODIFIED ON MAP (MODIFIED);
 CREATE INDEX MAP_IDX_NAME ON MAP (NAME);
@@ -4296,6 +4409,7 @@ CREATE INDEX MAP_XY_IDX_MODIFIED ON MAP_XY (MODIFIED);
 CREATE INDEX MAP_XY_IDX_OBJECT ON MAP_XY (OBJECT);
 CREATE INDEX MATERIALS_IN_DOC_IDX1 ON MATERIALS_IN_DOC (DOC_ID, M_ID);
 CREATE INDEX MATERIALS_IN_DOC_IDX2 ON MATERIALS_IN_DOC (M_ID);
+CREATE INDEX MATERIALS_IN_DOC_UNIT_IDX_SM ON MATERIALS_IN_DOC_UNIT (SERIAL, M_ID);
 CREATE INDEX MATERIALS_REMAIN_IDX1 ON MATERIALS_REMAIN (M_ID, WH_ID, MR_COST);
 CREATE INDEX MATERIALS_REMAIN_IDX2 ON MATERIALS_REMAIN (WH_ID, M_ID);
 CREATE INDEX MESSAGES_IDX1 ON MESSAGES (MES_TYPE, ADDED_ON);
@@ -4317,6 +4431,7 @@ CREATE INDEX NODE_FLATS_IDX_NODES ON NODE_FLATS (NODE_ID);
 CREATE INDEX NPS_IDX_CID ON NPS (CUSTOMER_ID);
 CREATE INDEX NPS_IDX_DATE ON NPS (NPS_DATE);
 CREATE INDEX OBJECTS_IDX1 ON OBJECTS (O_TYPE, O_ID);
+CREATE INDEX OBJECTS_TYPE_NAME ON OBJECTS (O_TYPE, O_NAME);
 CREATE INDEX OBJECTS_COVERAGE_IDX1 ON OBJECTS_COVERAGE (OC_TYPE, O_ID);
 CREATE INDEX ORDERS_TP_IDX_DATE ON ORDERS_TP (OTP_DATE);
 CREATE INDEX ORDERS_TP_IDX_TYPE ON ORDERS_TP (OTTP_TYPE);
@@ -4824,6 +4939,228 @@ begin
   return dateadd(-1 day to(dateadd(1 month to (MON_DAY - extract(day from MON_DAY) + 1))));
 end ^
 
+ALTER FUNCTION NUMBER_AS_STR (VAL D_N15_2,
+LANG D_VARCHAR5 = 'RU',
+SHOWCURRENCY INTEGER = 0)
+RETURNS D_VARCHAR1000
+AS 
+declare variable RAZRYAD      varchar(50);
+declare variable RAZRYAD_IDX  varchar(28);
+declare variable HUNDREDS     varchar(64);
+declare variable HUNDREDS_IDX varchar(30);
+declare variable TENS         varchar(69);
+declare variable TENS_IDX     varchar(40);
+declare variable ONES         varchar(139);
+declare variable ONES_IDX     varchar(100);
+declare variable SIGN_OF_VAL  varchar(6);
+declare variable RAZ          integer;
+declare variable CENTS        D_Varchar5;
+declare variable VAL_STR      varchar(20);
+declare variable NUM          varchar(20);
+declare variable I            integer;
+declare variable BUF          varchar(200);
+declare variable BUF1         varchar(200);
+declare variable CURR_ABR     D_Varchar5;
+declare variable MINUS_STR    varchar(10);
+declare variable CURR_STR     D_Varchar1000;
+begin
+  lang = coalesce(upper(lang), 'RU');
+  showcurrency = coalesce(showcurrency, 0);
+
+  if ((:lang = 'RU')) then begin
+    curr_abr = 'руб.';
+    minus_str = 'минус';
+    razryad_idx = /* 2.2 */ '0100010506071308210829114011';
+    razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
+    hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
+    hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
+    tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
+    tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
+    ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
+    ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
+  end
+  else
+  if (:lang = 'UA') then begin
+    curr_abr = 'грн.';
+    minus_str = 'мінус';
+    razryad_idx = /* 2.2 */ '0100010506071307200828113911';
+    razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
+    hundreds_idx = /* 2.1 */ '010013046106169257318396458539';
+    hundreds = 'стодвістітристачотиристап''ятсотшістсотсімсотвісімсотдев''ятсот';
+    tens_idx = /* 2.2 */ '0100010001080908170522093109400848105810';
+    tens = 'двадцятьтридцятьсорокп''ятдесятшістдесятсімдесятвісімдесятдев''яносто';
+    ones_idx = /* 3.2 */ '0010000100001000010300406010050150502003023050280703506041100511006110071120831109411105101151212713';
+    ones = 'тричотирип''ятьшістьсімвісімдев''ятьдесятьодинадцятьдванадцятьтринадцятьчотирнадцятьп''ятнадцятьшістнадцятьсімнадцятьвісімнадцятьдев''ятнадцять';
+  end
+
+  curr_str = '';
+
+  /* Смотрим знак */
+  if (val < 0) then begin
+    sign_of_val = minus_str || ' ';
+    val = -val;
+  end
+  else
+    sign_of_val = '';
+
+  /* Выбираем и запоминаем копейки, убираем их из числа */
+  val_str = cast(val as varchar(20));
+  i = position('.' in val_str);
+  cents = lpad(substring(val_str from i + 1 for 2), 2, '0');
+  --  val_str = lpad(substring(val_str FROM 1 FOR i-1), ((i+1)/3*3), '0');
+  val_str = lpad(substring(val_str from 1 for i - 1), (trunc((i + 1) / 3) * 3), '0');
+
+  /* Разбираем число */
+  raz = 0;
+  curr_str = '';
+  while (val_str != '') do begin
+    /* Берём триаду символов */
+    num = right(val_str, 3);
+    /* Если не нулевое число */
+    if (num != '000') then begin
+      /* Берём сотни */
+      i = cast(substring(num from 1 for 1) as int);
+      buf = substring(hundreds from cast(substring(hundreds_idx from i * 3 + 1 for 2) as int) for cast(substring(hundreds_idx from i * 3 + 3 for 1) as int));
+
+      /* Далее десятки */
+      /* Для "десятнадцатых" упрощённая обработка */
+      if (substring(num from 2 for 1) = '1') then begin
+        /* Вставляем нужную "десятнадцать" */
+        i = cast(substring(num from 2 for 2) as int);
+        buf1 = substring(ones from cast(substring(ones_idx from i * 5 + 1 for 3) as int) for cast(substring(ones_idx from i * 5 + 4 for 2) as int));
+        if (buf != '') then
+          buf = buf || ' ';
+        buf = buf || buf1;
+      end
+      else /* Для "нормальных" чисел своя обработка */
+      begin
+        /* Десятки */
+        i = cast(substring(num from 2 for 1) as int);
+        buf1 = substring(tens from cast(substring(tens_idx from i * 4 + 1 for 2) as int) for cast(substring(tens_idx from i * 4 + 3 for 2) as int));
+        if (buf != '' and buf1 != '') then
+          buf = buf || ' ';
+        buf = buf || buf1;
+
+        /* Единицы */
+        i = cast(substring(num from 3 for 1) as int);
+        /* Смотрим количество для нужного окончания */
+        if (i = 1) then begin
+          if (:lang = 'UA') then begin
+            if (raz in (
+                        0, 1
+                       )) then
+              buf1 = 'одна';
+            else
+              buf1 = 'один';
+          end
+          else
+          if (:lang = 'RU') then begin
+            if (raz = 1) then
+              buf1 = 'одна';
+            else
+              buf1 = 'один';
+          end
+        end
+        else
+        if (i = 2) then begin
+          if (:lang = 'UA') then begin
+            if (raz in (
+                        0, 1
+                       )) then
+              buf1 = 'дві';
+            else
+              buf1 = 'два';
+          end
+          else
+          if (:lang = 'RU') then begin
+            if (raz = 1) then
+              buf1 = 'две';
+            else
+              buf1 = 'два';
+          end
+        end
+        else
+          buf1 = substring(ones from cast(substring(ones_idx from i * 5 + 1 for 3) as int) for cast(substring(ones_idx from i * 5 + 4 for 2) as int));
+        if (buf != '' and buf1 != '') then
+          buf = buf || ' ';
+        buf = buf || buf1;
+      end
+
+      /* Разряд числа */
+      buf1 = substring(razryad from cast(substring(razryad_idx from raz * 4 + 1 for 2) as int) for cast(substring(razryad_idx from raz * 4 + 3 for 2) as int));
+      if (buf1 != '') then begin
+        /* Подбор окончания для разряда */
+        if (:lang = 'UA') then begin
+          if (i = 1) then begin
+            if (raz = 1) then
+              buf1 = buf1 || 'а';
+          end
+          else
+          if (i in (
+                    2, 3, 4
+                   )) then begin
+            if (raz = 1) then
+              buf1 = buf1 || 'и';
+            else
+            if (raz > 1) then
+              buf1 = buf1 || 'а';
+          end
+          else
+          if (raz > 1) then
+            buf1 = buf1 || 'ів';
+        end
+        else
+        if (:lang = 'RU') then begin
+          if (i = 1) then begin
+            if (raz = 1) then
+              buf1 = buf1 || 'а';
+          end
+          else
+          if (i in (
+                    2, 3, 4
+                   )) then begin
+            if (raz = 1) then
+              buf1 = buf1 || 'и';
+            else
+            if (raz > 1) then
+              buf1 = buf1 || 'а';
+          end
+          else
+          if (raz > 1) then
+            buf1 = buf1 || 'ов';
+        end
+        buf = buf || ' ' || buf1;
+      end
+    end
+    else
+      buf = '';
+
+    /* Присоединяем обработанную триаду к результату */
+    if (curr_str != '' and buf != '') then
+      buf = buf || ' ';
+    curr_str = buf || curr_str;
+    /* Переходим к следующей триаде */
+    val_str = left(val_str, char_length(val_str) - 3);
+    /* Увеличиваем счётчик разряда */
+    raz = raz + 1;
+  end
+
+  /* Припысываем знак */
+  curr_str = sign_of_val || curr_str;
+  /* Делаем первую букву прописной */
+  curr_str = upper(substring(curr_str from 1 for 1)) || substring(curr_str from 2);
+
+  /* Флаг "показать название валюты" */
+  if (showcurrency != 0) then begin
+    if (curr_str != '') then
+      curr_str = curr_str || ' ' || curr_abr || ' ';
+
+    curr_str = curr_str || cents || ' коп.';
+  end
+
+  return :CURR_STR;
+end ^
+
 ALTER FUNCTION ONLY_DIGITS (A_VALUE D_VARCHAR255)
 RETURNS D_VARCHAR255
 DETERMINISTIC 
@@ -4993,9 +5330,10 @@ begin
         into :PAYMENT_ID;
 
         update PAYMENT P
-        set P.PAY_DOC_ID = :PAYDOC,
-            CMSN = :CMSN
-        where P.PAYMENT_ID = :PAYMENT_ID;
+        set PAY_DOC_ID = :PAYDOC,
+            CMSN = :CMSN,
+            Tag = :TAG
+        where PAYMENT_ID = :PAYMENT_ID;
       end
       else begin
         delete from PAYMENT P where P.CUSTOMER_ID = :CUSTOMER_ID
@@ -5273,11 +5611,12 @@ begin
   if (PAYMENT_ID = 0) then begin
     PAYMENT_ID = null;
     if (coalesce(EXT_PAY_ID, '') <> '') then begin
-      select
+      select first 1
           P.PAYMENT_ID
         from PAYMENT P
              inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)
-        where D.PAYSOURCE_ID = :PAYSRC_CODE
+             inner join Paysource s on (s.Paysource_Id = d.Paysource_Id)
+        where s.Code = :PAYSRC_CODE
               and P.CUSTOMER_ID = :CUSTOMER_ID
               and P.EXT_PAY_ID = :EXT_PAY_ID
               and P.PAY_SUM = :PAY_SUM
@@ -5584,7 +5923,7 @@ P_CONTRACT D_VARCHAR20,
 P_CONTRACT_DATE D_DATE,
 P_VATG_ID TYPE OF UID,
 RECALC D_IBOOLEAN = 1,
-P_WORKER D_VARCHAR255 = null,
+P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */,
 RQ_ID D_UID_NULL = null)
 AS 
 declare variable ID            D_INTEGER;
@@ -5634,7 +5973,7 @@ begin
   else begin
     -- есть услуга у абонена - включем ее если она отключена
     if (vResult = 0) then
-      execute procedure onoff_service(:p_customer_id, :id, :p_actservice, :p_date, 0, :p_notice, :p_units, :RECALC, 1, :P_WORKER, :P_CONTRACT, :p_contract_date)
+      execute procedure onoff_service(:p_customer_id, :id, :p_actservice, :p_date, 0, :p_notice, :p_units, :RECALC, 1, :P_WORKER, :RQ_ID, :P_CONTRACT, :p_contract_date)
           returning_values :vResult;
   end
 
@@ -5645,6 +5984,7 @@ begin
   into :ID;
 
   if (id >= 2) then begin
+    -- цифровые услуги
     if (P_DATE = current_date) then
       act_timestamp = localtimestamp;
     else
@@ -6589,6 +6929,7 @@ begin
   where SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
 
   if (BUSINESS_TYPE >= 2) then begin
+    -- цифровые услуги
     D_ACT = 2;
     if (P_DATE = current_date) then
       ACT_TIMESTAMP = localtimestamp;
@@ -6597,13 +6938,14 @@ begin
     execute procedure DIGITAL_EVENT(:D_ACT, :P_CUSTOMER_ID, null, :P_SERV_ID, :ACT_TIMESTAMP, null);
   end
   -- проверим, если есть услуга вклюячаемая при автоблокировке. то выключим ее
-  select
+  select first 1
       l.Child
     , l.Add_Srv
     from SERVICES_LINKS l
     where l.Link_Type = 6
           and l.Switch_Time = -1
           and l.Parent = :P_SERV_ID
+          and not l.Add_Srv is null
   into :SWITCH_TO_SRV, :srv_on_off;
 
   if (not SWITCH_TO_SRV is null) then begin
@@ -6616,7 +6958,7 @@ P_SERV_ID TYPE OF UID,
 P_DATE D_DATE,
 P_ACTSERVICE D_INTEGER,
 P_NOTICE D_NOTICE,
-P_WORKER D_VARCHAR255 = null)
+P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS (RESULT D_INTEGER)
 AS 
 declare P_SUBSCR_SERV_ID type of UID;
@@ -6659,13 +7001,14 @@ begin
 
   if (FROMD < P_DATE) then begin
     -- проверим, если есть услуга вклюячаемая при автоблокировке. то выключим ее
-    select
+    select first 1
         l.Child
       , l.Add_Srv
       from SERVICES_LINKS l
       where l.Link_Type = 6
             and l.Switch_Time = -1
             and l.Parent = :P_SERV_ID
+            and not l.Add_Srv is null
     into :SWITCH_TO_SRV, :srv_on_off;
 
     if (not SWITCH_TO_SRV is null) then begin
@@ -6689,6 +7032,7 @@ begin
     values (:H_ID, :P_CUSTOMER_ID, :P_SERV_ID, :P_SUBSCR_SERV_ID, :P_DATE, :maxDateOff, :P_ACTSERVICE, -1, :P_WORKER);
 
     if (BUSINESS_TYPE >= 2) then begin
+      -- цифровые услуги
       D_ACT = 1;
       if (P_DATE = current_date) then
         ACT_TIMESTAMP = localtimestamp;
@@ -8647,13 +8991,222 @@ begin
   end
 end ^
 
+ALTER PROCEDURE CALC_SURCHARGE_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
+P_MONTH D_DATE,
+FEE_ROUND D_INTEGER = null,
+P_CALC_TYPE D_INTEGER = null)
+AS 
+/*
+declare variable V_SERVICE_ID  type of UID;
+declare variable V_S_MONTH     D_DATE;
+declare variable V_E_MONTH     D_DATE;
+declare variable V_MONTH_SHIFT D_INTEGER;
+declare variable V_UNITS       D_N15_2;
+declare variable V_FEE         D_N15_2;
+declare variable V_DISCOUNT    D_N15_4;
+declare variable V_EXTRA       D_INTEGER;
+declare variable V_TARIF       D_N15_2;
+declare variable V_TARIF_JUR   D_N15_2;
+declare variable VAT           D_N15_2;
+declare variable V_IS_JUR      D_SMALLINT;
+declare variable V_CUR_MONTH   D_DATE;
+declare variable AUTOOFF       D_SMALLINT;
+declare variable Debt_Sum      D_N15_2;
+declare variable hand_control  D_INTEGER;
+declare variable POSITIVE_ONLY D_Iboolean;
+declare variable V_FEE_BEFORE  D_N15_2;
+declare variable SrvType       D_Integer;
+*/
+begin
+  if (P_CALC_TYPE is null) then
+    P_CALC_TYPE = 4;
+
+  if (FEE_ROUND is null) then begin
+    select
+        cast(VAR_VALUE as integer)
+      from SETTINGS
+      where VAR_NAME = 'FEE_ROUND'
+    into :FEE_ROUND;
+  end
+
+  /*
+  V_CUR_MONTH = current_date - extract(day from current_date) + 1;
+  for select
+          S.SERVICE_ID
+        , S.SHIFT_MONTHS
+        , S.EXTRA
+        , coalesce(s.Autooff, 0) Autooff
+        , s.BUSINESS_TYPE
+        , coalesce(s.POSITIVE_ONLY, 0) POSITIVE_ONLY
+        ,
+          (-1 * c.Debt_Sum + coalesce(c.Prepay, 0))
+        , coalesce(C.JURIDICAL, 0)
+        , coalesce(c.Hand_Control, 0)
+        from SERVICES S
+             inner join Subscr_Serv ss on (s.Service_Id = ss.Serv_Id)
+             inner join customer c on (c.Customer_Id = ss.Customer_Id)
+        where S.SRV_TYPE_ID = 0
+              and S.EXTRA > 0
+              and S.CALC_TYPE = :P_CALC_TYPE
+              and c.Customer_Id = :P_CUSTOMER_ID
+        order by coalesce(s.Priority, 99), s.Autooff
+      into :V_SERVICE_ID, :V_MONTH_SHIFT, :V_EXTRA, :AUTOOFF, :SrvType, :POSITIVE_ONLY, :Debt_Sum, :V_IS_JUR, :hand_control
+  do begin
+
+    if (P_MONTH <> V_CUR_MONTH) then
+      AUTOOFF = 0; -- автоотключение только текущим числом
+
+    V_TARIF = null;
+    V_UNITS = null;
+    V_DISCOUNT = null;
+    -- начало месяца и конец месяца
+    V_S_MONTH = dateadd(V_MONTH_SHIFT month to P_MONTH);
+    V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
+
+    select
+        count(SH.CUSTOMER_ID)
+      from SUBSCR_HIST SH
+      where SH.SERV_ID = :V_SERVICE_ID
+            and SH.CUSTOMER_ID = :P_CUSTOMER_ID
+            and ((SH.DATE_FROM <= :V_E_MONTH)
+            and (SH.DATE_TO >= :V_S_MONTH))
+    into :V_UNITS;
+    -- так как либо полная абонплата либо 0, то
+    -- нет смысла проверять персональный тариф по дням или коэф по дням
+    -- берем только на первое число.
+    if (V_UNITS > 0) then begin
+      -- проверим есть ли персональный тариф
+      select first 1
+          P.TARIF_SUM
+        from PERSONAL_TARIF P
+        where P.SERVICE_ID = :V_SERVICE_ID
+              and P.CUSTOMER_ID = :P_CUSTOMER_ID
+              and ((:V_S_MONTH between P.DATE_FROM and P.DATE_TO)
+                or (:V_E_MONTH between P.DATE_FROM and P.DATE_TO))
+      into :V_TARIF;
+
+      if (V_TARIF is null) then begin
+        select first 1
+            T.TARIF_SUM
+          , T.TARIF_SUM_JUR
+          from TARIF T
+          where T.SERVICE_ID = :V_SERVICE_ID
+                and :V_S_MONTH between T.DATE_FROM and T.DATE_TO
+        into :V_TARIF, :V_TARIF_JUR;
+
+        -- юр. по другому тарифу
+        if (V_IS_JUR = 1) then
+          V_TARIF = coalesce(V_TARIF_JUR, 0);
+      end
+
+      select
+          avg(D.FACTOR_VALUE)
+        from DISCOUNT_FACTOR D
+        where D.CUSTOMER_ID = :P_CUSTOMER_ID
+              and :V_S_MONTH between D.DATE_FROM and D.DATE_TO
+              and ((D.SERV_ID = :V_SERVICE_ID)
+                or ((D.SERV_ID = -1)
+              and ((D.Srv_Type = -1)
+                or (d.Srv_Type = :SrvType))))
+      into :V_DISCOUNT;
+
+      V_DISCOUNT = coalesce(V_DISCOUNT, 1);
+      V_TARIF = coalesce(V_TARIF, 0);
+
+      for select
+              sum((datediff(day from iif(SH.DATE_FROM < :V_E_MONTH, iif(SH.DATE_FROM > :V_E_MONTH, :V_E_MONTH, iif(:V_S_MONTH > SH.DATE_FROM, :V_S_MONTH, SH.DATE_FROM)), :V_E_MONTH) to iif(SH.DATE_TO > :V_S_MONTH, iif(SH.DATE_TO < :V_E_MONTH, SH.DATE_TO, :V_E_MONTH), :V_S_MONTH)) + 1)) as DAYS
+            from SUBSCR_HIST SH
+            where (SH.DATE_FROM <= :V_E_MONTH)
+                  and (SH.DATE_TO >= :V_S_MONTH)
+                  and SH.SERV_ID = :V_SERVICE_ID
+                  and SH.CUSTOMER_ID = :P_CUSTOMER_ID
+          into :V_UNITS
+      do begin
+        if (V_UNITS >= V_EXTRA) then begin
+          V_FEE = V_TARIF * V_DISCOUNT;
+          -- если ессть начисления, проверим юрик это или нет и если юрик посчитаем НДС
+          if ((V_FEE >= 0) and (V_IS_JUR <> 0)) then begin
+            VAT = 0;
+            select first 1
+                T.TARIF_SUM
+              from OBJECTS O
+                   inner join TARIF T on (O.O_ID = T.SERVICE_ID)
+              where T.SERVICE_ID = :V_SERVICE_ID
+                    and O.O_TYPE = 13
+                    and :P_MONTH between T.DATE_FROM and T.DATE_TO
+            into :VAT;
+            VAT = coalesce(VAT, 0);
+            V_FEE = V_FEE + V_FEE * VAT / 100;
+          end
+          V_FEE = round(V_FEE, FEE_ROUND);
+
+          --  проверим автоблкировка услуги включена и разрешена ли автоблокировка пользователя
+          if ((AUTOOFF = 0)
+              or
+              (hand_control = 1)) then
+            Debt_Sum = V_FEE + 1; -- если не отключать, то баланс должен быть больше начислений
+          else begin
+            -- Если нужно блокировать то посмотрим сколько за услугу уже начисленно в этом месяце и учтем это при блокировке
+            if (POSITIVE_ONLY = 1) then begin
+              select
+                  sum(FEE)
+                from MONTHLY_FEE
+                where MONTH_ID = :V_S_MONTH
+                      and CUSTOMER_ID = :P_CUSTOMER_ID
+                      and SERVICE_ID = :V_SERVICE_ID
+              into :V_FEE_BEFORE;
+              if (V_FEE_BEFORE is not null) then
+                Debt_Sum = Debt_Sum + V_FEE_BEFORE;
+            end
+          end
+
+          if (((Debt_Sum >= V_FEE) and (POSITIVE_ONLY = 1)) -- не допускаем минус у абонента
+              or
+              ((Debt_Sum >= 0) and (POSITIVE_ONLY = 0))) -- Если баланс >= 0 не отключаем
+          then
+            update or insert into MONTHLY_FEE (MONTH_ID, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+            values (:P_MONTH, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE)
+            matching (MONTH_ID, CUSTOMER_ID, SERVICE_ID);
+          else begin
+            -- отключим если нет денег
+            select
+                count(*)
+              from subscr_hist sh
+              where sh.Customer_Id = :P_Customer_Id
+                    and sh.Serv_Id = :V_SERVICE_ID
+                    and :P_MONTH between sh.Date_From and sh.Date_To
+            into :AUTOOFF;
+            if (AUTOOFF > 0) then
+              execute procedure Auto_Off_Service(:P_Customer_Id, :V_SERVICE_ID, :P_MONTH, null, null);
+          end
+        end
+      end
+    end
+  end
+  */
+end ^
+
 ALTER PROCEDURE CANCEL_CONTRACT (PCUSTOMER_ID TYPE OF UID,
 PCANCEL_DATE D_DATE,
 POFF_SRV_ID TYPE OF UID)
 AS 
-declare variable Srv_Id D_Integer;
+declare variable Srv_Id        D_Integer;
+declare variable BUSINESS_TYPE D_Integer;
 begin
+  BUSINESS_TYPE = 0;
+
   if (not(POFF_SRV_Id is null)) then begin
+
+    -- проверим есть ли цифровые услуги
+    if (exists(select
+                   ss.Serv_Id
+                 from SUBSCR_SERV ss
+                      inner join services s on (ss.Serv_Id = s.Service_Id)
+                 where ss.Customer_Id = :PCUSTOMER_ID
+                       and ss.State_Sgn = 1
+                       and s.Business_Type >= 2)) then
+      BUSINESS_TYPE = 2;
+
     update CUSTOMER
     set VALID_TO = :PCANCEL_DATE
     where (CUSTOMER_ID = :pCUSTOMER_ID);
@@ -8680,10 +9233,14 @@ begin
     where (CUSTOMER_ID = :pCUSTOMER_ID
           and STATE_SGN = 1);
 
-    if (PCANCEL_DATE < localtimestamp) then
-      execute procedure DIGITAL_EVENT(2, :pCUSTOMER_ID, null, null, localtimestamp, null);
-    else
-      execute procedure DIGITAL_EVENT(2, :pCUSTOMER_ID, null, null, :PCANCEL_DATE, null);
+    if (BUSINESS_TYPE = 2) then begin
+      -- событие на цифровые услуги
+      if (PCANCEL_DATE < localtimestamp) then
+        execute procedure DIGITAL_EVENT(2, :pCUSTOMER_ID, null, null, localtimestamp, null);
+      else
+        execute procedure DIGITAL_EVENT(2, :pCUSTOMER_ID, null, null, :PCANCEL_DATE, null);
+    end
+
     execute procedure FULL_RECALC_CUSTOMER(:PCUSTOMER_ID);
   end
 end ^
@@ -8694,8 +9251,11 @@ AS
 declare variable Customer_Id type of Uid;
 declare variable Serv_Id     type of Uid;
 declare variable State_Sgn   type of D_Integer;
-declare variable State_Date  type of D_Date;
-declare variable State_Srv   type of D_Uid_Null;
+declare variable H_ID        type of D_Uid_Null;
+declare variable OLD_State_Date  type of D_Date;
+declare variable OLD_State_Srv   type of D_Uid_Null;
+declare variable NEW_State_Date  type of D_Date;
+declare variable NEW_State_Srv   type of D_Uid_Null;
 begin
   result = 1;
   select
@@ -8706,77 +9266,99 @@ begin
     , State_Srv
     from Subscr_Serv s
     where s.Subscr_Serv_Id = :SUBSCR_SERV_ID
-  into :Customer_Id, :Serv_Id, :State_Sgn, :State_Date, :State_Srv;
-
-  -- нужно разобраться с переключением
-  delete from Single_Serv s
-      where s.Serv_Date = :State_Date
-            and s.Customer_Id = :Customer_Id
-            and s.Service_Id = :State_Srv
-            and s.History_Id = :SUBSCR_SERV_ID;
+  into :Customer_Id, :Serv_Id, :State_Sgn, :OLD_State_Date, :OLD_State_Srv;
 
   if (State_Sgn = 0) then begin
     -- если отменяем отключение
-    State_Date = dateadd(day, -1, State_Date);
+    select first 1
+        h.Act_Serv_Id
+      , h.Date_From
+      , h.Subscr_Hist_Id
+      from Subscr_hist h
+      where h.Subscr_Serv_Id = :SUBSCR_SERV_ID
+          and h.Disact_Serv_Id = :OLD_State_Srv
+          and h.Date_To = dateadd(day, -1, :OLD_State_Date)
+      order by h.Date_From desc
+    into :NEW_State_Srv, :NEW_STATE_Date, :H_ID;
 
     update Subscr_Hist h
     set h.Date_To = '2100-1-1',
         h.Disact_Serv_Id = -1
     where h.Subscr_Serv_Id = :SUBSCR_SERV_ID
-          and h.Disact_Serv_Id = :State_Srv
-          and h.Date_To = :State_Date;
-
-    select first 1
-        h.Act_Serv_Id
-      , h.Date_From
-      from Subscr_hist h
-      where h.Subscr_Serv_Id = :SUBSCR_SERV_ID
-      order by h.Date_From desc
-    into :State_Srv, :State_Date;
+          and h.Subscr_Hist_Id = :H_ID;
 
     update Subscr_Serv s
     set s.State_Sgn = 1,
-        s.State_Date = :State_Date,
-        s.State_Srv = :State_Srv
+        s.State_Date = :NEW_STATE_Date,
+        s.State_Srv = :NEW_State_Srv
     where s.Subscr_Serv_Id = :SUBSCR_SERV_ID;
 
+    select first 1
+      s.Single_Service_Id
+    from Single_Serv s
+        where s.Serv_Date = :OLD_State_Date
+              and s.Customer_Id = :Customer_Id
+              and s.Service_Id = :OLD_State_Srv
+              and s.History_Id = :H_ID
+    into :OLD_State_Srv;
+
+    delete from Single_Serv s
+        where s.Single_Service_Id = :OLD_State_Srv;
   end
   else begin
     -- если отменяем подключение
+
+    select first 1
+        h.Subscr_Hist_Id
+      from Subscr_hist h
+      where h.Subscr_Serv_Id = :SUBSCR_SERV_ID
+            and h.Act_Serv_Id = :OLD_State_Srv
+            and h.Date_from = :OLD_State_Date
+      order by h.Subscr_Hist_Id desc
+    into :H_ID;
+
     delete from Subscr_Hist h
         where h.Subscr_Serv_Id = :SUBSCR_SERV_ID
-              and h.Act_Serv_Id = :State_Srv
-              and h.Date_from = :State_Date;
+              and h.Subscr_Hist_Id = :H_ID;
 
-    State_Srv = null;
+    delete from Single_Serv s
+        where s.Serv_Date = :OLD_State_Date
+              and s.Customer_Id = :Customer_Id
+              and s.Service_Id = :OLD_State_Srv
+              and s.History_Id = :H_ID;
+
+    NEW_State_Srv = null;
     select first 1
         h.Disact_Serv_Id
       , h.Date_to
       from Subscr_hist h
       where h.Subscr_Serv_Id = :SUBSCR_SERV_ID
       order by h.Date_From desc
-    into :State_Srv, :State_Date;
+    into :NEW_State_Srv, :NEW_State_Date;
 
-    if (State_Srv is not null) then
+    if (NEW_State_Srv is not null) then begin
       update Subscr_Serv s
       set s.State_Sgn = 0,
-          s.State_Date = dateadd(day, 1, :State_Date),
-          s.State_Srv = :State_Srv
+          s.State_Date = dateadd(day, 1, :NEW_State_Date),
+          s.State_Srv = :NEW_State_Srv
       where s.Subscr_Serv_Id = :SUBSCR_SERV_ID;
-    else
+    end
+    else begin
       delete from Subscr_Serv s
           where s.Subscr_Serv_Id = :SUBSCR_SERV_ID;
-
+    end
   end
 
-  -- тут еще проверку на цифровую услуг
+  -- проверка на цифровую услуг
+  NEW_State_Srv = null;
   select
       s.business_type
     from services s
     where s.service_id = :Serv_Id
-  into :State_Srv;
+  into :NEW_State_Srv;
 
-  if (State_Srv >= 2) then begin -- digital service
+  if (NEW_State_Srv >= 2) then begin
+    -- цифровые услуги
     if (State_Sgn = 0) then
       State_Sgn = 2;
     execute procedure DIGITAL_EVENT(:State_Sgn, :CUSTOMER_ID, null, :SERV_ID, localtimestamp, null);
@@ -8937,43 +9519,101 @@ end ^
 ALTER PROCEDURE CHANGE_AUTOBLOCK_OFF (CUSTOMER_ID TYPE OF UID,
 SERVICE_ID TYPE OF UID,
 OFF_SERVICE TYPE OF UID,
-UNITS D_N15_2)
+UNITS D_N15_2,
+NOTICE D_NOTICE = null)
 AS 
-declare variable Id     D_Integer;
+declare variable SS_ID  D_Integer;
 declare variable P_DATE D_DATE;
+declare variable H_ID   D_Integer;
+declare variable vCT    D_Integer;
 begin
   if (UNITS is null) then
     UNITS = 0;
+
   select
-      SS.SUBSCR_SERV_ID, ss.State_Date
+      SS.SUBSCR_SERV_ID
+    , ss.State_Date
+    , s.Calc_Type
     from SUBSCR_SERV SS
          inner join SERVICES S on (S.SERVICE_ID = SS.SERV_ID)
     where SS.CUSTOMER_ID = :CUSTOMER_ID
           and SS.SERV_ID = :Service_Id
-  into :ID, :P_DATE;
-  update SUBSCR_HIST SH
-  set SH.DISACT_SERV_ID = :OFF_SERVICE
-  where SH.SUBSCR_SERV_ID = :ID
-        and SH.DISACT_SERV_ID = -3 -- srv AutoBlock;
-        and sh.Date_To = dateadd(day, -1, :P_DATE);
-  update SUBSCR_SERV
-  set STATE_SRV = :OFF_SERVICE
-  where SUBSCR_SERV_ID = :ID;
-  execute procedure ADD_SINGLE_SERVICE(:CUSTOMER_ID, :OFF_SERVICE, :UNITS, :P_DATE, null, :ID);
+  into :SS_ID, :P_DATE, :vCT;
+
+  vCT = coalesce(vCT, 0);
+  select
+      sh.Subscr_Hist_Id
+    from SUBSCR_HIST SH
+    where SH.SUBSCR_SERV_ID = :SS_ID
+          and SH.DISACT_SERV_ID = -3 -- srv AutoBlock;
+          and sh.Date_To = dateadd(day, -1, :P_DATE)
+  into :H_ID;
+
+  if (vCT <> 5) then begin
+    update SUBSCR_HIST SH
+    set SH.DISACT_SERV_ID = :OFF_SERVICE
+    where sh.Subscr_Hist_Id = :H_ID;
+
+    update SUBSCR_SERV s
+    set STATE_SRV = :OFF_SERVICE,
+        s.Notice = trim(coalesce(:NOTICE || ' ', '')) || coalesce(s.Notice, '')
+    where SUBSCR_SERV_ID = :SS_ID;
+  end
+  else begin
+    -- для услуг у которых считаем день отключения отключим на день ранее
+    update SUBSCR_HIST SH
+    set SH.DISACT_SERV_ID = :OFF_SERVICE,
+        SH.Date_To = dateadd(day, -1, SH.Date_To)
+    where sh.Subscr_Hist_Id = :H_ID;
+
+    update SUBSCR_SERV s
+    set s.STATE_SRV = :OFF_SERVICE,
+        s.State_Date = dateadd(day, -1, s.State_Date),
+        s.Notice = trim(coalesce(:NOTICE || ' ', '')) || coalesce(s.Notice, '')
+    where SUBSCR_SERV_ID = :SS_ID;
+  end
+
+  execute procedure ADD_SINGLE_SERVICE(:CUSTOMER_ID, :OFF_SERVICE, :UNITS, :P_DATE, :NOTICE, :H_ID);
 end ^
 
 ALTER PROCEDURE CHANGE_CH_TO_CH (FROM_CH D_UID_NULL,
 TO_CH D_UID_NULL,
 ANALOG D_IBOOLEAN = null,
 DVB D_IBOOLEAN = null,
-IPTV D_IBOOLEAN = null)
+IPTV D_IBOOLEAN = null,
+REPL D_IBOOLEAN = null)
 AS 
-declare variable Ch_Number       D_Integer;
-declare variable Ch_Freq         D_N15_3;
-declare variable Ch_Coded        D_Iboolean;
-declare variable Ch_Trunk        D_Integer;
-declare variable Ch_Trunk_Number D_Integer;
+declare variable Ch_Number     D_Integer;
+declare variable Ch_Freq       D_N15_3;
+declare variable Ch_Coded      D_Iboolean;
+declare variable Ch_Trunk      D_Integer;
+declare variable Ch_Trunk_Num  D_Integer;
+declare variable vID           D_Integer;
+declare variable Old_Number    D_Integer;
+declare variable Old_Freq      D_N15_3;
+declare variable Old_Coded     D_Iboolean;
+declare variable Old_Trunk     D_Integer;
+declare variable Old_Trunk_Num D_Integer;
 begin
+  if (REPL = 1) then begin
+    select
+        Ch_Number
+      , Ch_Freq
+      , Ch_Coded
+      , Ch_Trunk
+      , Ch_Trunk_Number
+      from Channels o
+      where o.Ch_Id = :TO_CH
+    into :Old_Number, :Old_Freq, :Old_Coded, :Old_Trunk, :Old_Trunk_Num;
+  end
+  else begin
+    Old_Number = null;
+    Old_Freq = null;
+    Old_Coded = null;
+    Old_Trunk = null;
+    Old_Trunk_Num = null;
+  end
+
   select
       Ch_Number
     , Ch_Freq
@@ -8982,7 +9622,7 @@ begin
     , Ch_Trunk_Number
     from Channels o
     where o.Ch_Id = :From_Ch
-  into :Ch_Number, :Ch_Freq, :Ch_Coded, :Ch_Trunk, :Ch_Trunk_Number;
+  into :Ch_Number, :Ch_Freq, :Ch_Coded, :Ch_Trunk, :Ch_Trunk_Num;
 
   if (Analog = 1) then begin
     update Channels n
@@ -8991,29 +9631,92 @@ begin
     where n.Ch_Id = :To_Ch;
 
     update Channels o
-    set o.Ch_Number = null,
-        o.Ch_Freq = null
+    set o.Ch_Number = :Old_Number,
+        o.Ch_Freq = :Old_Freq
     where o.Ch_Id = :From_Ch;
   end
+
   if (Dvb = 1) then begin
+    if (REPL = 1) then begin
+      delete from Dvb_Stream_Channels n
+          where n.Ch_Id = -999;
+
+      delete from Channels_In_Servce n
+          where n.Ch_Id = -999;
+
+      update Dvb_Stream_Channels n
+      set n.Ch_Id = -999
+      where n.Ch_Id = :To_Ch;
+
+      update Channels_In_Servce n
+      set n.Ch_Id = -999
+      where n.Ch_Id = :To_Ch;
+
+    end
+
     -- DVB
-    update Dvb_Stream_Channels n
-    set n.Ch_Id = :To_Ch
-    where n.Ch_Id = :From_Ch;
+    for select
+            d.Dvbs_Id
+          from Dvb_Stream_Channels d
+          where d.Ch_Id = :From_Ch
+        into :vID
+    do begin
+      if (not exists(select
+                         Dvbs_Id
+                       from Dvb_Stream_Channels
+                       where Ch_Id = :To_Ch
+                             and Dvbs_Id = :vID)) then
+        update Dvb_Stream_Channels n
+        set n.Ch_Id = :To_Ch
+        where n.Ch_Id = :From_Ch;
+      else
+        delete from Dvb_Stream_Channels n
+            where n.Dvbs_Id = :vID
+                  and n.Ch_Id = :From_Ch;
+    end
+
     -- каналы услуги
-    update Channels_In_Servce n
-    set n.Ch_Id = :To_Ch
-    where n.Ch_Id = :From_Ch;
+    for select
+            u.Srv_Id
+          from Channels_In_Servce u
+          where u.Ch_Id = :From_Ch
+        into :vID
+    do begin
+      if (not exists(select
+                         Srv_Id
+                       from Channels_In_Servce
+                       where Ch_Id = :To_Ch
+                             and Srv_Id = :vID)) then
+        update Channels_In_Servce n
+        set n.Ch_Id = :To_Ch
+        where n.Ch_Id = :From_Ch;
+      else
+        delete from Channels_In_Servce n
+            where n.Srv_Id = :vID
+                  and n.Ch_Id = :From_Ch;
+    end
+
+    if (REPL = 1) then begin
+      update Dvb_Stream_Channels n
+      set n.Ch_Id = :From_Ch
+      where n.Ch_Id = -999;
+
+      update Channels_In_Servce n
+      set n.Ch_Id = :From_Ch
+      where n.Ch_Id = -999;
+    end
+
     -- кодировка STV
     update Channels n
     set n.Ch_Trunk = :Ch_Trunk,
-        n.Ch_Trunk_Number = :Ch_Trunk_Number,
+        n.Ch_Trunk_Number = :Ch_Trunk_Num,
         n.Ch_Coded = :Ch_Coded
     where n.Ch_Id = :To_Ch;
 
     update Channels o
-    set o.Ch_Trunk = null,
-        o.Ch_Trunk_Number = null
+    set o.Ch_Trunk = :Old_Trunk,
+        o.Ch_Trunk_Number = :Old_Trunk_Num,
+        o.Ch_Coded = :Old_Coded
     where o.Ch_Id = :From_Ch;
   end
 end ^
@@ -9605,6 +10308,7 @@ begin
               and S.CALC_TYPE = :V_CALC_TYPE
               and ((:P_CUSTOMER_ID is null)
                 or (sh.Customer_Id = :P_CUSTOMER_ID))
+        order by s.Priority nulls last
       into :CUSTOMER_ID
   do
     execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
@@ -9634,6 +10338,7 @@ begin
               and S.CALC_TYPE = :V_CALC_TYPE
               and ((:P_CUSTOMER_ID is null)
                 or (sh.Customer_Id = :P_CUSTOMER_ID))
+        order by s.Priority nulls last
       into :CUSTOMER_ID
   do
     execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
@@ -9900,11 +10605,12 @@ declare variable CUSTOMER_ID D_INTEGER;
 declare variable V_FEE_ROUND D_INTEGER;
 declare variable V_CALC_TYPE D_INTEGER; -- метод расчета услуги
 declare variable V_FLAG      D_INTEGER; -- оптимизация
-declare variable need_0      D_INTEGER; -- оптимизация
-declare variable need_1      D_INTEGER; -- оптимизация
-declare variable need_2      D_INTEGER; -- оптимизация
-declare variable need_3      D_INTEGER; -- оптимизация
-declare variable need_5      D_INTEGER; -- оптимизация
+declare variable need_0      D_INTEGER; -- оптимизация. если есть такие услуги то считаем иначе пропускаем
+declare variable need_1      D_INTEGER;
+declare variable need_2      D_INTEGER;
+declare variable need_3      D_INTEGER;
+declare variable need_4      D_INTEGER;
+declare variable need_5      D_INTEGER;
 begin
   -- установим на первое число месяца
   P_MONTH = P_MONTH - extract(day from P_MONTH) + 1;
@@ -9915,6 +10621,7 @@ begin
   need_1 = 0;
   need_2 = 0;
   need_3 = 0;
+  need_4 = 0;
   need_5 = 0;
   for select distinct
           CALC_TYPE
@@ -9939,6 +10646,9 @@ begin
     else
     if (V_CALC_TYPE = 3) then
       need_3 = 1;
+    else
+    if (V_CALC_TYPE = 4) then
+      need_4 = 1;
     else
     if (V_CALC_TYPE = 5) then
       need_5 = 1;
@@ -9971,7 +10681,7 @@ begin
                                and s.Service_Id = f.Service_Id)));
 
   /*---------------------------------------------------------------------------------*/
-  /*          расчитываем периодические услуги, пропорционально дням                 */
+  /*        0 - рассчитываем периодические услуги, пропорционально дням              */
   /*---------------------------------------------------------------------------------*/
   if (need_0 = 1) then begin
     V_CALC_TYPE = 0;
@@ -9987,6 +10697,7 @@ begin
                 and S.CALC_TYPE = :V_CALC_TYPE
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
+          order by s.Priority nulls last
         into :CUSTOMER_ID
     do begin
       if (V_FLAG = 0) then begin
@@ -9996,8 +10707,9 @@ begin
       execute procedure CALC_MONTH_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
     end
   end
+
   /*---------------------------------------------------------------------------------*/
-  /*                     расчет услуг исходя из целого месяца                        */
+  /*        1 -          расчет услуг исходя из целого месяца                        */
   /* т.е. например подключен 15 дней и мение - не берем абонплату                    */
   /*               подключен 16 дней и более - берем абонплату                       */
   /*---------------------------------------------------------------------------------*/
@@ -10011,12 +10723,14 @@ begin
                 and S.CALC_TYPE = :V_CALC_TYPE
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
+          order by s.Priority nulls last
         into :CUSTOMER_ID
     do
       execute procedure CALC_MONTH_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
   end
+
   /*---------------------------------------------------------------------------------*/
-  /*                     расчет услуг с ежеденевным начислением                      */
+  /*        2 -          расчет услуг с ежедневным начислением                       */
   /*---------------------------------------------------------------------------------*/
   if (need_2 = 1) then begin
     V_CALC_TYPE = 2;
@@ -10029,6 +10743,7 @@ begin
                 and S.CALC_TYPE = :V_CALC_TYPE
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
+          order by s.Priority nulls last
         into :CUSTOMER_ID
     do begin
       if (V_FLAG = 0) then begin
@@ -10038,8 +10753,9 @@ begin
       execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
     end
   end
+
   /*---------------------------------------------------------------------------------*/
-  /*                   расчет услуг с фиксированным начислением                      */
+  /*        3 -     1-ый месяц фикса, далее пропорционально дням                     */
   /*---------------------------------------------------------------------------------*/
   if (need_3 = 1) then begin
     V_CALC_TYPE = 3;
@@ -10052,6 +10768,7 @@ begin
                 and S.CALC_TYPE = :V_CALC_TYPE
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
+          order by s.Priority nulls last
         into :CUSTOMER_ID
     do begin
       if (V_FLAG = 0) then begin
@@ -10061,8 +10778,9 @@ begin
       execute procedure CALC_MONTH_FIX_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
     end
   end
+
   /*---------------------------------------------------------------------------------*/
-  /*         расчет услуг с ежеденевным начислением с учетом дня подключения         */
+  /*        5 - расчет услуг с ежедневным начислением с учетом дня подключения       */
   /*---------------------------------------------------------------------------------*/
   if (need_5 = 1) then begin
     V_CALC_TYPE = 5;
@@ -10075,6 +10793,7 @@ begin
                 and S.CALC_TYPE = :V_CALC_TYPE
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
+          order by s.Priority nulls last
         into :CUSTOMER_ID
     do begin
       if (V_FLAG = 0) then begin
@@ -10084,8 +10803,9 @@ begin
       execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
     end
   end
+
   /*---------------------------------------------------------------------------------*/
-  /*                     расчитываем разовые услуги                                  */
+  /*                     рассчитываем разовые услуги                                 */
   /*---------------------------------------------------------------------------------*/
   for select distinct
           Sh.CUSTOMER_ID
@@ -10095,6 +10815,7 @@ begin
               and Sh.SERV_DATE between :V_S_MONTH and :V_E_MONTH
               and ((sh.customer_id = :p_customer_id)
                 or (:p_customer_id is null))
+        order by s.Priority nulls last
       into :CUSTOMER_ID
   do
     execute procedure CALC_SINGLE_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND);
@@ -10121,9 +10842,31 @@ begin
               and Sh.SERV_DATE between :V_S_MONTH and :V_E_MONTH
               and ((sh.customer_id = :p_customer_id)
                 or (:p_customer_id is null))
+        order by s.Priority nulls last
       into :CUSTOMER_ID
   do
     execute procedure CALC_FIXED_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND);
+
+  /*---------------------------------------------------------------------------------*/
+  /*        4 - Доначисления до тарифа (в месяц абонент тратит фиксированную сумму)  */
+  /*---------------------------------------------------------------------------------*/
+  if (need_4 = 1) then begin
+    V_CALC_TYPE = 4;
+    V_FLAG = 0;
+    for select distinct
+            SH.CUSTOMER_ID
+          from Subscr_Serv SH
+               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+          where S.SRV_TYPE_ID = 0
+                and S.CALC_TYPE = :V_CALC_TYPE
+                and ((sh.customer_id = :p_customer_id)
+                  or (:p_customer_id is null))
+          order by s.Priority nulls last
+        into :CUSTOMER_ID
+    do begin
+      execute procedure CALC_SURCHARGE_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE);
+    end
+  end
 
   if (P_CUSTOMER_ID is null) then begin
     execute procedure CALC_DISCOUNT(:P_MONTH);
@@ -10496,24 +11239,25 @@ begin
   end
 end ^
 
-ALTER PROCEDURE CUSTOMER_CONTACTS_IU (CUSTOMER_ID INTEGER,
-CC_VALUE VARCHAR(255) CHARACTER SET UTF8,
-CC_TYPE SMALLINT = 0,
-CC_NOTICE VARCHAR(1000) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */,
-CC_NOTIFY SMALLINT = 1,
-CC_OLD VARCHAR(255) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */)
+ALTER PROCEDURE CUSTOMER_CONTACTS_IU (CUSTOMER_ID D_INTEGER,
+CC_VALUE D_VARCHAR255,
+CC_TYPE D_INTEGER = 0,
+CC_NOTICE D_NOTICE = null,
+CC_NOTIFY D_SMALLINT = 1,
+CC_OLD D_VARCHAR255 = null)
 AS 
 -- declare variable contDigit D_Varchar50;
 begin
+  Cc_Type = coalesce(Cc_Type, 0);
   if (not CC_OLD is null) then
     delete from Customer_Contacts
         where (Customer_Id = :Customer_Id)
-              and (Cc_Value = :CC_OLD);
+              and (Cc_Value = :CC_OLD)
+              and (Cc_Type = :Cc_Type);
 
   CC_NOTIFY = coalesce(CC_NOTIFY, 0);
 
-  if ((CC_TYPE < 2) and (position('@' in CC_VALUE) > 2)) then
-    CC_TYPE = 2;
+  -- if ((CC_TYPE < 2) and (position('@' in CC_VALUE) > 2)) then CC_TYPE = 2;
 
   /*
   if (CC_TYPE < 2) then begin
@@ -10532,7 +11276,7 @@ begin
   */
   update or insert into Customer_Contacts (Customer_Id, Cc_Value, Cc_Type, Cc_Notify, Cc_Notice)
   values (:Customer_Id, :Cc_Value, :Cc_Type, :Cc_Notify, :Cc_Notice)
-  matching (Customer_Id, Cc_Value);
+  matching (Customer_Id, Cc_Value, Cc_Type);
 end ^
 
 ALTER PROCEDURE CUSTOMER_DEBT_ADD (P_CUSTOMER_ID UID,
@@ -10552,16 +11296,29 @@ declare variable FLD_ORDER     d_integer;
 declare variable SRV           d_varchar1000;
 declare variable STATE_SRV     d_varchar1000;
 declare variable SRV_ENABLED   d_integer;
-declare variable v_state       d_varchar1000; --
+declare variable v_state       d_varchar1000;
+declare variable OLD_DESCR     D_VARCHAR500;
+declare variable OLD_STATE     D_INTEGER;
+declare variable OLD_PROP      D_VARCHAR10;
+
 /* было
 declare variable v_service      d_integer;
 declare variable disact_serv_id d_integer;
 declare variable disact_date    D_Date;
 declare variable act_name       d_varchar1000;
 declare variable disact_name    d_varchar1000;
-declare variable srv_state  d_integer;
+declare variable srv_state      d_integer; --
 */
 begin
+  -- стало
+  select
+      c.CUST_STATE_DESCR
+    , c.CUST_STATE
+    , c.CUST_PROP_DESCR
+    from customer c
+    where c.CUSTOMER_ID = :P_CUSTOMER_ID
+  into :OLD_DESCR, :OLD_STATE, :OLD_PROP;
+
   FULL_STATE = '';
   V_ON_SERVICES = 0;
   for select
@@ -10577,7 +11334,7 @@ begin
              inner join SERVICES s on (s.SERVICE_ID = ss.SERV_ID)
              left outer join SERVICES act on (ss.State_Srv = act.SERVICE_ID)
         where ss.CUSTOMER_ID = :P_CUSTOMER_ID
-        order by 1 desc, coalesce(s.SHORTNAME, 'яяяя'), ss.State_Date
+        order by 1 desc, ss.State_Date desc, coalesce(s.SHORTNAME, 'яяяя')
       into :FLD_ORDER, :SRV, :STATE_SRV, :SRV_ENABLED
   do begin
     V_STATE = '';
@@ -10597,11 +11354,17 @@ begin
   else
     STATE_SRV = '';
 
-  update customer c
-  set c.CUST_STATE_DESCR = :FULL_STATE,
-      c.CUST_STATE = :V_ON_SERVICES,
-      c.CUST_PROP_DESCR = :STATE_SRV
-  where c.CUSTOMER_ID = :P_CUSTOMER_ID;
+  if ((OLD_DESCR is distinct from FULL_STATE)
+      or
+      (OLD_STATE is distinct from :V_ON_SERVICES)
+      or
+      (OLD_PROP is distinct from :STATE_SRV)) then begin
+    update customer c
+    set c.CUST_STATE_DESCR = :FULL_STATE,
+        c.CUST_STATE = :V_ON_SERVICES,
+        c.CUST_PROP_DESCR = :STATE_SRV
+    where c.CUSTOMER_ID = :P_CUSTOMER_ID;
+  end
 
   /* было
   for select
@@ -11099,8 +11862,8 @@ begin
   end
 
   if (not OLD_SRV_ID is null) then begin
-    if (i<>0) then
-        execute procedure Digital_Event(2, :Customer_Id, :Hardware_Id, :OLD_SRV_ID, null, null);
+    if (i <> 0) then
+      execute procedure Digital_Event(2, :Customer_Id, :Hardware_Id, :OLD_SRV_ID, null, null);
 
     select
         count(*)
@@ -11111,7 +11874,6 @@ begin
 
     if (i = 0) then
       execute procedure Digital_Event(1, :Customer_Id, :Hardware_Id, null, null, null);
-
   end
 end ^
 
@@ -13276,7 +14038,7 @@ COST D_N15_2,
 WH_NAME D_VARCHAR100,
 WH_ID UID,
 RM_QUANT D_N15_5,
-NOT_CALC D_IBOOLEAN,
+CALC D_IBOOLEAN,
 MR_QUANT D_N15_5,
 M_NUMBER D_N15_5,
 RQ_ID D_UID_NULL)
@@ -13321,7 +14083,7 @@ begin
       do begin
         RQ_ID = null;
         RM_ID = null;
-        NOT_CALC = null;
+        CALC = null;
         RM_QUANT = null;
         for select
                 RM_ID
@@ -13333,7 +14095,7 @@ begin
                     and RM.M_ID = :M_ID
                     and RM.RQ_ID = :IRQ_ID
                     and coalesce(RM.RM_COST, 0) = coalesce(:COST, 0)
-            into :RM_ID, :RM_QUANT, :RQ_ID, :NOT_CALC
+            into :RM_ID, :RM_QUANT, :RQ_ID, :CALC
         do begin
           suspend;
         end
@@ -13359,7 +14121,7 @@ begin
                                     where MR.WH_ID = RM.WH_ID
                                           and MR.M_ID = RM.M_ID
                                           and coalesce(MR.MR_COST, 0) = coalesce(RM.RM_COST, 0)))
-          into :RM_ID, :RM_QUANT, :RQ_ID, :COST, :NOT_CALC
+          into :RM_ID, :RM_QUANT, :RQ_ID, :COST, :CALC
       do begin
         suspend;
       end
@@ -13451,7 +14213,7 @@ begin
           , w.O_Name
           , mr.Wh_Id
           , null
-          , 0 NOT_CALC
+          , 0 CALC
           , mr.Mr_Quant
           , m.Cost
           , m.M_Number
@@ -14907,13 +15669,14 @@ AS
 declare variable customer_id d_uid_null;
 declare variable node_id     d_uid_null;
 declare variable COST        D_N15_2;
-declare variable PROP    D_INTEGER;
+declare variable PROP        D_INTEGER;
 declare variable MAC         D_Mac;
 declare variable NAME        D_VARCHAR100;
 declare variable Own_Id      d_uid_null;
 declare variable Own_Type    d_uid_null;
 declare variable A_TYPE      D_UID_NULL;
 declare variable PROPERTY    D_INTEGER;
+declare variable state       d_uid_null;
 begin
   -- добавили = 1, иначе удаляем
   TO_FROM = coalesce(TO_FROM, 1);
@@ -14929,6 +15692,9 @@ begin
           , u.Mac
           , m.Name
           , m.M_Type
+          , u.Owner
+          , u.Owner_Type
+          , u.State
           from request r
                inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
                inner join MATERIALS M on (m.M_Id = rm.M_Id)
@@ -14937,31 +15703,51 @@ begin
           where RM.RQ_ID = :RQ_ID
                 and u.Serial = :SERIAL
                 and u.M_Id = :M_ID
-                and u.Owner = :WH_ID
-                and u.Owner_Type = 0
-        into :customer_id, :node_id, :PROP, :COST, :MAC, :NAME, :A_TYPE
+                and (
+                     (u.Owner_Type = 0 and u.Owner = :WH_ID)
+                  or (u.Owner_Type = 1 and u.Owner = r.Rq_Customer)
+                  or (u.Owner_Type = 2 and u.Owner = r.Node_Id)
+                  )
+        into :customer_id, :node_id, :PROP, :COST, :MAC, :NAME, :A_TYPE, :Own_Id, :Own_Type, :state
 
              -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
              -- нужно вынести в процедуру
 
     do begin
-      Own_Id = coalesce(customer_id, node_id);
-      Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
-      PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
-      if ((Own_Type = 1) and ((PROP = 0) or (PROP = 3) )) then
-        PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+      -- проверим владелец сменился или нет
+      if ((Own_Id is distinct from coalesce(customer_id, node_id)) -- ид владельца
+          or
+          (Own_Type is distinct from iif((not customer_id is null), 1, iif((not node_id is null), 2, 3))) -- тип владельца
+          or
+          (Own_Type > 0 and coalesce(state, 0) <> 1) -- статус
+          ) then begin
+        Own_Id = coalesce(customer_id, node_id);
+        Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
+        state = 1;
 
-      -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+        update Material_Unit u
+        set u.State = :state,
+            u.Owner = :Own_Id,
+            u.Owner_Type = :Own_Type
+        where u.M_Id = :M_Id
+              and u.Serial = :SERIAL
+              and u.Owner = :WH_ID;
+      end
 
-      update Material_Unit u
-      set u.State = 1,
-          u.Owner = :Own_Id,
-          u.Owner_Type = :Own_Type
-      where u.M_Id = :M_Id
-            and u.Serial = :SERIAL
-            and u.Owner = :WH_ID
-            and u.Owner_Type = 0;
+      -- Own_Type = 0-на складе. 1-выдан. 2-в ремонте. 3-продан. 4-списан.
+      -- PROP     = 0-Начислять. 1-Не начислять (в пользовании). 2-Аренда. 3-Рассрочка.
+      -- PROPERTY = 0-Собственность абонента. 1-компании. 2-рассрочка. 3-аренда.
 
+      PROPERTY = 1;
+      if ((Own_Type = 1) -- выдан
+          and --
+          ((PROP = 0)
+          or
+          (PROP = 3))) then
+        PROPERTY = 0; -- Собственность абонента
+
+      -- Own_Type 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+      -- PROP 0 - Начислять за этот материал. 1 - Не начислять (в пользовании) 2 - Аренда маетриала 3 - Рассрочка материала
       -- if (PROP = 1) then Cost = 0;
 
       update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id, FROM_WH, calc)
@@ -15424,13 +16210,18 @@ MES_HEAD D_VARCHAR255,
 MES_TEXT D_MESSAGE,
 MES_PRIOR D_INTEGER,
 EXT_ID D_VARCHAR50,
-MES_RESULT D_INTEGER = 0)
+MES_RESULT D_INTEGER = 0,
+CONTACT D_VARCHAR255 = null,
+PARENT D_INTEGER = null)
 RETURNS (MES_ID D_INTEGER)
 AS 
 declare variable RECIVER d_varchar255;
 begin
   MES_ID = null;
+  if (PARENT = -1) then
+    PARENT = null;
   MES_TYPE = upper(MES_TYPE);
+
   if ((MES_TYPE = 'SMS')
       or
       (MES_TYPE = 'EMAIL')) then begin
@@ -15442,11 +16233,13 @@ begin
                 and :MES_TYPE = 'SMS')
                   or (CC.CC_TYPE = 2
                 and :MES_TYPE = 'EMAIL'))
+                and ((:CONTACT is null)
+                  or (cc.Cc_Value = :CONTACT))
                 and CC.CUSTOMER_ID = :CUSTOMER_ID
         into :RECIVER
     do begin
-      insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT)
-      values (:CUSTOMER_ID, :MES_TYPE, :RECIVER, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT)
+      insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT, PARENT_ID)
+      values (:CUSTOMER_ID, :MES_TYPE, :RECIVER, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT, :PARENT)
       returning MES_ID
       into :MES_ID;
     end
@@ -15461,8 +16254,8 @@ begin
             where CC.CUSTOMER_ID = :CUSTOMER_ID
           into :RECIVER
       do begin
-        insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT)
-        values (:CUSTOMER_ID, :MES_TYPE, :RECIVER, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT)
+        insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT, PARENT_ID)
+        values (:CUSTOMER_ID, :MES_TYPE, :RECIVER, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT, :PARENT)
         returning MES_ID
         into :MES_ID;
       end
@@ -15473,21 +16266,24 @@ begin
                 CC_VALUE
               from CUSTOMER_CONTACTS CC
               where CC.CC_NOTIFY = 1
-                    and CC.CC_TYPE in (5, 6)
+                    and CC.CC_TYPE in (
+                                       5, 6
+                                      )
                     and CC.CUSTOMER_ID = :CUSTOMER_ID
             into :RECIVER
         do begin
-          insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT)
-          values (:CUSTOMER_ID, :MES_TYPE, :RECIVER, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT)
+          insert into MESSAGES (CUSTOMER_ID, MES_TYPE, RECIVER, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT, PARENT_ID)
+          values (:CUSTOMER_ID, :MES_TYPE, :RECIVER, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT, :PARENT)
           returning MES_ID
           into :MES_ID;
         end
       end
-      else
-        insert into MESSAGES (CUSTOMER_ID, MES_TYPE, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT)
-        values (:CUSTOMER_ID, :MES_TYPE, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT)
+      else begin
+        insert into MESSAGES (CUSTOMER_ID, MES_TYPE, MES_HEAD, MES_TEXT, MES_PRIOR, EXT_ID, MES_RESULT, RECIVER, PARENT_ID)
+        values (:CUSTOMER_ID, :MES_TYPE, :MES_HEAD, :MES_TEXT, :MES_PRIOR, :EXT_ID, :MES_RESULT, :CONTACT, :PARENT)
         returning MES_ID
         into :MES_ID;
+      end
     end
   end
   suspend;
@@ -15629,20 +16425,20 @@ P_NOTICE D_NOTICE,
 P_UNITS D_N15_2,
 RECALC D_IBOOLEAN = 1,
 ADD_SGL D_IBOOLEAN = 1,
-P_WORKER D_VARCHAR255 = null,
+P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */,
 RQ_ID D_UID_NULL = null,
-P_CONTRACT D_VARCHAR20 = null,
+P_CONTRACT D_VARCHAR20 = null /* COLLATE UTF8 - default */,
 P_CONTRACT_DATE D_DATE = null)
 RETURNS (RESULT D_INTEGER)
 AS 
-declare variable Fromd         D_Date;
-declare variable Id            D_Integer;
-declare variable Business_Type D_Integer;
-declare variable H_Id          D_Integer;
-declare variable D_Act         D_Integer;
-declare variable Act_Timestamp type of D_Timestamp;
-declare variable vCONTRACT          D_VARCHAR20;
-declare variable vCONTRACT_DATE     D_DATE;
+declare variable Fromd          D_Date;
+declare variable Id             D_Integer;
+declare variable Business_Type  D_Integer;
+declare variable H_Id           D_Integer;
+declare variable D_Act          D_Integer;
+declare variable Act_Timestamp  type of D_Timestamp;
+declare variable vCONTRACT      D_VARCHAR20;
+declare variable vCONTRACT_DATE D_DATE;
 begin
   Result = 0;
   RECALC = coalesce(RECALC, 1);
@@ -15661,15 +16457,15 @@ begin
   if (P_OFF = 1) then begin
     select first 1
         SH.DATE_FROM
+      , SH.Subscr_Hist_Id
       from SUBSCR_HIST SH
       where SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
             and SH.DISACT_SERV_ID = -1
-    into :FROMD;
+    into :FROMD, :H_ID;
 
     if (not FROMD is null) then begin
 
       if (FROMD <= P_DATE) then begin
-
         update SUBSCR_HIST SH
         set SH.DATE_TO = (:P_DATE - 1),
             SH.DISACT_SERV_ID = :P_ACTSERVICE,
@@ -15691,6 +16487,7 @@ begin
     end
     else begin
       /* проверим, может услуга в блокировке */
+      H_ID = null;
       select
           SH.Subscr_Hist_Id
         , sh.Date_To
@@ -15710,6 +16507,7 @@ begin
             sh.Worker_Off = :P_WORKER,
             sh.Req_Off = :RQ_ID
         where SH.Subscr_Hist_Id = :H_ID;
+
         update SUBSCR_SERV
         set STATE_SGN = 0,
             NOTICE = :P_NOTICE,
@@ -15736,6 +16534,7 @@ begin
               where SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
                     and SH.Date_To = :FROMD
             into :H_ID, :D_Act;
+
             if (not H_ID is null) then begin
               delete from Single_Serv ss
                   where ss.Customer_Id = :P_CUSTOMER_ID
@@ -15765,9 +16564,17 @@ begin
       end
     end
 
-    H_ID = P_SUBSCR_SERV_ID;
+    if (Result >= 0) then begin
+      select first 1
+          sh.Subscr_Hist_Id
+        from SUBSCR_HIST SH
+        where SH.DATE_TO = (:P_DATE - 1)
+              and SH.DISACT_SERV_ID = :P_ACTSERVICE
+              and SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
+      order by 1 desc
+      into :H_ID;
+    end
   end
-
   else begin -- включим услугу
     select
         max(SH.DATE_TO)
@@ -15809,6 +16616,7 @@ begin
     end
 
     if (BUSINESS_TYPE >= 2) then begin
+      -- цифровые услуги
       if (P_OFF = 1) then
         D_ACT = 2;
       else
@@ -16069,8 +16877,8 @@ begin
       update Material_Unit mu
       set mu.Owner = :from_Wh_Id,
           mu.State = -1 * :DOC_ID
-      where (mu.Owner = :WH_ID)
-            and (mu.Owner_Type = 0)
+      where mu.Owner = :WH_ID
+            and mu.Owner_Type = 0
             and exists(select
                            du.Doc_Id
                          from Materials_In_Doc_Unit du
@@ -16078,10 +16886,24 @@ begin
                                and du.Serial = mu.Serial
                                and du.Doc_Id = :DOC_ID);
     end
+    else begin
+      if (type_Id = 3) -- списание
+      then begin
+        update Material_Unit mu
+        set mu.State = -1 * :DOC_ID
+        where mu.Owner = :WH_ID
+              and mu.Owner_Type = 0
+              and exists(select
+                             du.Doc_Id
+                           from Materials_In_Doc_Unit du
+                           where du.M_Id = mu.M_Id
+                                 and du.Serial = mu.Serial
+                                 and du.Doc_Id = :DOC_ID);
+      end
+    end
     -- else begin
-    --   (type_Id = 3) -- списание материалов
-    --   (type_Id = 4) -- инвинтаризация (коррекция)
-    --   (type_Id = 5) -- инвинтаризация
+    --   if (type_Id = 4) -- инвинтаризация (коррекция)
+    --   if (type_Id = 5) -- инвинтаризация
     -- end
   end
 
@@ -16131,7 +16953,7 @@ PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
 EXT_SYSTEMS_ID TYPE OF D_VARCHAR50,
 NOTICE D_NOTICE,
-PAY_TYPE_STR D_VARCHAR30 = 'CASH',
+PAY_TYPE_STR D_VARCHAR30 = 'CASH' /* COLLATE UTF8 - default */,
 CMSN D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
@@ -16432,7 +17254,9 @@ begin
     Switch_Date = current_date;
 
   select first 1
-      sl.Add_Srv, coalesce(sl.Switch_Time, 0),
+      sl.Add_Srv
+    , coalesce(sl.Switch_Time, 0)
+    ,
       (select
            s.Autooff
          from services s
@@ -16445,32 +17269,41 @@ begin
             or (:SWITCH_SRV is null))
   into :Add_Srv, :Switch_Time, :vAutoOff;
 
-  if (Switch_Time = 1) then begin
-    /* 1 - Начало суток */
-    vDate = dateadd(day, 1, current_date);
-    if (Switch_Date < vDate) then
-      Switch_Date = vDate;
-  end
-  else begin
-    if (Switch_Time = 2) then begin
-      /* 2 - Начало месяца */
-      vDate = dateadd(month, 1, (current_date - extract(day from current_date) + 1));
+  SWITCH_SRV = coalesce(SWITCH_SRV, Add_Srv);
+
+  if (not SWITCH_SRV is null) then begin
+    -- услуга переключения должна быть
+    if (Switch_Time = 1) then begin
+      /* 1 - Начало суток */
+      vDate = dateadd(day, 1, current_date);
       if (Switch_Date < vDate) then
         Switch_Date = vDate;
-
     end
+    else begin
+      if (Switch_Time = 2) then begin
+        /* 2 - Начало месяца */
+        vDate = dateadd(month, 1, (current_date - extract(day from current_date) + 1));
+        if (Switch_Date < vDate) then
+          Switch_Date = vDate;
+
+      end
+    end
+    delete from QUEUE_SWITCH_SRV
+        where Customer_Id = :Customer_Id
+              and Srv_From = :FROM_SRV;
+
+    update or insert into QUEUE_SWITCH_SRV (Customer_Id, Srv_From, Switch_Date, Srv_To, Srv_Act, COMPLETED, NOTICE)
+    values (:Customer_Id, :FROM_SRV, :Switch_Date, :TO_SRV, :SWITCH_SRV, 0, :NOTICE)
+    matching (Customer_Id, Srv_From);
+    Result = 0;
+    -- если переключать в любой время, то сразу переключим
+    if (Switch_Time = 0) then
+      execute procedure Queue_Switch_Handle(:Customer_Id);
   end
-  delete from QUEUE_SWITCH_SRV where Customer_Id = :Customer_Id and Srv_From = :FROM_SRV;
-
-  update or insert into QUEUE_SWITCH_SRV (Customer_Id, Srv_From, Switch_Date, Srv_To, Srv_Act, COMPLETED)
-  values (:Customer_Id, :FROM_SRV, :Switch_Date, :TO_SRV, :SWITCH_SRV, 0)
-  matching (Customer_Id, Srv_From);
-  Result = 0;
-  -- если переключать в любой время, то сразу переключим
-  if (Switch_Time = 0)
-  then
-    execute procedure Queue_Switch_Handle(:Customer_Id);
-
+  else begin
+    -- не нашли услугу переключения
+    Result = -1;
+  end
   suspend;
 end ^
 
@@ -16509,12 +17342,13 @@ begin
         , Switch_Date
         , Srv_To
         , Srv_Act
-        from Queue_Switch_Srv
+        , Notice
+        from Queue_Switch_Srv q
         where Switch_Date = current_date
               and coalesce(COMPLETED, 0) = 0
               and ((:FOR_CUSTOMER_ID is null)
                 or (Customer_Id = :FOR_CUSTOMER_ID))
-      into :Customer_Id, :FROM_SRV, :SWITCH_DATE, :TO_SRV, :SWITCH_SRV
+      into :Customer_Id, :FROM_SRV, :SWITCH_DATE, :TO_SRV, :SWITCH_SRV, :Notice
   do begin
     if (SWITCH_SRV is null) then begin
       select first 1
@@ -16858,41 +17692,61 @@ begin
                where rm.rq_id = :AS_RQ_ID)) then begin
 
     -- перенесем материалы
-    delete from REQUEST_MATERIALS rm where rm.rq_id = :RQ_ID;
+    delete from REQUEST_MATERIALS rm
+        where rm.rq_id = :RQ_ID;
     insert into REQUEST_MATERIALS (RQ_ID, M_ID, WH_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP)
     select
-        :RQ_ID, M_ID, WH_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP
+        :RQ_ID
+      , M_ID
+      , WH_ID
+      , RM_QUANT
+      , RM_COST
+      , RM_NOTICE
+      , PROP
       from REQUEST_MATERIALS rm
       where rm.rq_id = :AS_RQ_ID;
 
     -- перенесем возврат материалов
-    delete from Request_Materials_Return rr where rr.rq_id = :RQ_ID;
+    delete from Request_Materials_Return rr
+        where rr.rq_id = :RQ_ID;
     insert into Request_Materials_Return (RQ_ID, M_ID, WH_ID, QUANT, NOTICE)
     select
-        :RQ_ID, M_ID, WH_ID, QUANT, NOTICE
+        :RQ_ID
+      , M_ID
+      , WH_ID
+      , QUANT
+      , NOTICE
       from Request_Materials_Return rr
       where rr.rq_id = :AS_RQ_ID;
 
     -- Перенесем работы
-    delete from REQUEST_WORKS where RQ_ID = :RQ_ID;
+    delete from REQUEST_WORKS
+        where RQ_ID = :RQ_ID;
     insert into REQUEST_WORKS (RQ_ID, W_ID, W_TIME, W_QUANT, W_COST, NOTICE)
     select
-        :RQ_ID, W_ID, W_TIME, W_QUANT, W_COST, NOTICE
+        :RQ_ID
+      , W_ID
+      , W_TIME
+      , W_QUANT
+      , W_COST
+      , NOTICE
       from REQUEST_WORKS rm
       where rm.rq_id = :AS_RQ_ID;
 
     -- Перенесем результат заявки
     select
-        RQ_TYPE, RQ_DEFECT, REQ_RESULT, RQ_EXEC_TIME, RESULT_ID
+        RQ_TYPE
+      , RQ_DEFECT
+      , REQ_RESULT
+      , RQ_EXEC_TIME
+      , RESULT_ID
       from REQUEST rm
       where rm.rq_id = :AS_RQ_ID
     into :RQ_TYPE, :RQ_DEFECT, :REQ_RESULT, :RQ_EXEC_TIME, :RESULT_ID;
 
     if (not((RQ_TYPE is null)
         or
-        (REQ_RESULT is null)
-        or
-        (RESULT_ID is null))) then
+        (REQ_RESULT is null))) then
       update REQUEST
       set RQ_TYPE = :RQ_TYPE,
           RQ_DEFECT = :RQ_DEFECT,
@@ -16911,7 +17765,7 @@ declare variable SERIAL      D_Serial_NS;
 declare variable customer_id d_uid_null;
 declare variable node_id     d_uid_null;
 declare variable COST        D_N15_2;
-declare variable NOT_CALC    D_IBOOLEAN;
+declare variable CALC    D_IBOOLEAN;
 declare variable MAC         D_Mac;
 declare variable NAME        D_VARCHAR100;
 declare variable Own_Id      d_uid_null;
@@ -16926,7 +17780,7 @@ begin /*$$IBE$$
         , RM.Serial
         , r.Rq_Customer
         , r.Node_Id
-        , rm.Not_Calc
+        , rm.Calc
         , rm.Rm_Cost
         , u.Mac
         , m.Name
@@ -16939,7 +17793,7 @@ begin /*$$IBE$$
         where RM.RQ_ID = :RQ_ID
               and (coalesce(rm.Serial, '') <> '')
               and u.State = -1 * :RQ_ID
-      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id, :NOT_CALC, :COST, :MAC, :NAME, :A_TYPE
+      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id, :CALC, :COST, :MAC, :NAME, :A_TYPE
 
            -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
            -- нужно вынести в процедуру
@@ -16948,7 +17802,7 @@ begin /*$$IBE$$
     Own_Id = coalesce(customer_id, node_id);
     Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
     PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
-    if ((Own_Type = 1) and (NOT_CALC = 0)) then
+    if ((Own_Type = 1) and (CALC = 0)) then
       PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
 
     -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
@@ -17239,6 +18093,7 @@ begin
   end
 
   -- вернем стоимость за материалы возврата
+  -- rm.Calc 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.
   Fee_Type = 2;
   for select
           M.NAME || coalesce(' (' || rm.SERIAL || ')', '')
@@ -17250,9 +18105,9 @@ begin
         from Request_Materials_Return RM
              inner join MATERIALS M on (M.M_ID = RM.M_ID)
         where RM.RQ_ID = :RQ_ID
-              and not rm.Serial is null
+              -- and not rm.Serial is null
               and coalesce(rm.Quant * RM.COST, 0) <> 0
-              and (coalesce(rm.Calc, 0) = 0)
+              and (coalesce(rm.Calc, 1) = 0)
       into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
   do begin
     FEE = coalesce(-1 * FEE, 0);
@@ -17381,13 +18236,15 @@ RM_COST D_N15_2,
 RM_NOTICE D_NOTICE,
 PROP D_UID_NULL,
 P_ACTION D_INTEGER,
-SERIAL D_SERIAL_NS = null /* COLLATE UTF8 - default */)
+SERIAL D_SERIAL_NS = null,
+BAYBACK D_IBOOLEAN = 0)
 RETURNS (RET_RM_ID D_INTEGER)
 AS 
 declare variable WQuant type of D_N15_5;
 declare variable RQuant type of D_N15_5;
 begin
   RM_QUANT = coalesce(RM_QUANT, 0);
+  BAYBACK = coalesce(BAYBACK, 0);
 
   -- если кол-во = 0 то удалим
   -- P_ACTION -0 insert 1-update 2-delete
@@ -17412,7 +18269,7 @@ begin
 
     end
     Serial = coalesce(SERIAL, '');
-    if (Serial <> '') then
+    if ((Serial <> '') and (BAYBACK = 0)) then
       execute procedure MATERIAL_UNIT_MOVE(:Rq_Id, :Wh_Id, :M_Id, :Serial, 0);
 
     delete from REQUEST_MATERIALS M
@@ -17435,7 +18292,7 @@ begin
       RM_QUANT = 1;
 
     -- проверим есть ли нужно кол-во материала на складе
-    if (RM_QUANT > 0) then begin
+    if ((Bayback = 0) and (RM_QUANT > 0)) then begin
       RQuant = null;
       WQuant = null;
       select
@@ -17458,8 +18315,8 @@ begin
     end
 
     if (RM_ID is null) then begin
-      update or insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP, SERIAL)
-      values (:RQ_ID, :WH_ID, :M_ID, :RM_QUANT, :RM_COST, :RM_NOTICE, :PROP, :SERIAL)
+      update or insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP, SERIAL, BAYBACK)
+      values (:RQ_ID, :WH_ID, :M_ID, :RM_QUANT, :RM_COST, :RM_NOTICE, :PROP, :SERIAL, :BAYBACK)
       matching (RQ_ID, WH_ID, M_ID)
       returning RM_ID
       into :RM_ID;
@@ -17473,7 +18330,8 @@ begin
           RM_COST = :RM_COST,
           RM_NOTICE = :RM_NOTICE,
           PROP = :PROP,
-          SERIAL = :SERIAL
+          SERIAL = :SERIAL,
+          BAYBACK = :BAYBACK
       where RM_ID = :RM_ID;
     end
 
@@ -17530,6 +18388,55 @@ begin
 
     -- серийник у абонента/узла удалим при закрытии заявки
   end
+end ^
+
+ALTER PROCEDURE REQUEST_MATERIAL_BAYBACK (RQ_ID TYPE OF UID,
+M_ID TYPE OF UID,
+QUANT D_N15_5,
+COST D_N15_2,
+NOTICE D_NOTICE,
+SERIAL D_SERIAL_NS = null,
+P_ACTION D_INTEGER = 0)
+RETURNS (RET_RM_ID D_INTEGER)
+AS 
+declare variable RM_ID D_INTEGER;
+declare variable WH_ID D_INTEGER;
+begin
+  QUANT = coalesce(QUANT, 0);
+
+  if (P_ACTION = 0) then begin
+    insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP, SERIAL, BAYBACK)
+    values (:RQ_ID, :WH_ID, :M_ID, :QUANT, :COST, :NOTICE, 0, :SERIAL, 1)
+    returning RM_ID
+    into :RM_ID;
+
+    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, Serial, Cost, Calc, Bayback)
+    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :Serial, :Cost, 0, 1);
+
+    -- обработать в REQUEST_CLOSE_PROCESS
+
+    -- update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id, FROM_WH, calc)
+    -- values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id, :WH_ID, :PROP)
+    -- matching (M_Id, Serial);
+  end
+  else
+  if (P_ACTION = 2) then begin -- удалим
+    delete from REQUEST_MATERIALS
+        where RQ_ID = :RQ_ID
+              and M_ID = :M_ID
+              and RM_QUANT = :QUANT
+              and SERIAL = :SERIAL
+              and BAYBACK = 1;
+
+    delete from Request_Materials_Return
+        where RQ_ID = :RQ_ID
+              and M_ID = :M_ID
+              and Quant = :QUANT
+              and SERIAL = :SERIAL
+              and BAYBACK = 1;
+  end
+  RET_RM_ID = RM_ID;
+  suspend;
 end ^
 
 ALTER PROCEDURE REQUEST_RECREATE (FROM_REQUEST D_INTEGER)
@@ -18282,12 +19189,14 @@ P_DATE_FROM D_DATE,
 P_DATE_TO D_DATE,
 P_TARIF_SUM D_N15_2,
 P_TARIF_JUR D_N15_2,
-P_ACTION D_INTEGER)
+P_ACTION D_INTEGER,
+P_VAT D_N15_2 = 0)
 AS 
 declare variable v_tarif_id  type of UID;
 declare variable v_date_to   d_date;
 declare variable v_date_from d_date;
 begin
+  P_VAT = coalesce(P_VAT, 0);
   -- P_ACTION -0 insert 1-update 2-delete
   if (p_action = 0) then begin
     select
@@ -18309,8 +19218,8 @@ begin
         set date_to = (:p_date_from - 1)
         where (tarif_id = :v_tarif_id);
       p_date_to = '2100-01-01';
-      insert into tarif (service_id, date_from, date_to, tarif_sum, tarif_sum_jur)
-      values (:p_service_id, :p_date_from, :p_date_to, :p_tarif_sum, :P_TARIF_JUR);
+      insert into tarif (service_id, date_from, date_to, tarif_sum, tarif_sum_jur, vat)
+      values (:p_service_id, :p_date_from, :p_date_to, :p_tarif_sum, :P_TARIF_JUR, :P_VAT);
     end
     else
       exception E_TARIF_EXISTS;
@@ -18318,7 +19227,9 @@ begin
 
   if (p_action = 1) then begin
     update tarif
-    set tarif_sum = :p_tarif_sum
+    set tarif_sum = :p_tarif_sum,
+        tarif_sum_jur = :P_TARIF_JUR,
+        vat = :P_VAT
     where (tarif_id = :p_tarif_id);
   end
 
@@ -18326,7 +19237,8 @@ begin
     -- найдем предидущий тариф и заменим дату окончания, датой окончания удаляемого тарифа
 
     select
-        t.date_from, t.date_to
+        t.date_from
+      , t.date_to
       from tarif t
       where tarif_id = :p_tarif_id
     into :v_date_from, :v_date_to;
@@ -18343,7 +19255,8 @@ begin
       set date_to = :v_date_to
       where (tarif_id = :v_tarif_id);
 
-    delete from tarif where (tarif_id = :p_tarif_id);
+    delete from tarif
+        where (tarif_id = :p_tarif_id);
   end
 end ^
 
@@ -18485,6 +19398,14 @@ ALTER DOMAIN D_ICHECK ADD CONSTRAINT
          CHECK ((value is null) or (value in (-1, 0,1)));
 ALTER DOMAIN T_YESNO ADD CONSTRAINT
          check((value is null) or (value in ('n','y')));
+
+/* Table constraints */
+
+ALTER TABLE IBE$TODO ADD 
+        CHECK ((ITEM_PRIORITY >=0) AND (ITEM_PRIORITY <=5));
+
+ALTER TABLE IBE$TODO ADD 
+        CHECK (ITEM_STATE IN (0, 1));
 SET TERM ^ ;
 
 /* Triggers only will work for SQL triggers */
@@ -18529,9 +19450,9 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
   new.Id = coalesce(new.Id, gen_id(Gen_Appliance_Uid, 1));
-  new.OWN_TYPE = coalesce(new.OWN_TYPE, 0);
-  new.Property = coalesce(new.Property, 1);
-  new.Calc = coalesce(new.Calc, 0);
+  new.OWN_TYPE = coalesce(new.OWN_TYPE, 0); -- склад
+  new.Property = coalesce(new.Property, 1); -- 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
+  new.Calc = coalesce(new.Calc, 1); -- 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.
 
   if ((new.Name is null) and (not new.M_Id is null)) then
     select
@@ -19554,7 +20475,7 @@ begin
   -- обновим контакты в таблице абонентов
   if (new.cc_type <= 2) then begin
     select
-        list(cc.cc_value, ',')
+        left(list(cc.cc_value, ','), 255)
       from customer_contacts cc
       where cc.customer_id = new.customer_id
             and cc.cc_type = new.cc_type
@@ -19567,7 +20488,7 @@ begin
         (old.Customer_Id is distinct from new.Customer_Id)) then begin
       u = 1;
       select
-          list(cc.cc_value, ',')
+          left(list(cc.cc_value, ','), 255)
         from customer_contacts cc
         where cc.customer_id = old.customer_id
               and cc.cc_type = old.cc_type
@@ -19736,6 +20657,8 @@ CREATE TRIGGER CUSTOMER_DECODERS_BIU2 FOR CUSTOMER_DECODERS
 ACTIVE BEFORE INSERT OR UPDATE POSITION 1 
 as
 begin
+  if (new.Stb_N = '') then
+    new.Stb_N = null;
 
   if (new.Decoder_N is distinct from old.Decoder_N) then begin
     if (not exists(select
@@ -19746,7 +20669,7 @@ begin
     new.Pairing = 0;
   end
 
-  if ((new.Stb_N is distinct from old.Stb_N) and (not new.Stb_N is null)) then begin
+  if ((new.Stb_N is distinct from old.Stb_N) and (not new.Stb_N is null) and (new.Stb_N <> '')) then begin
     if (not exists(select
                        *
                      from EQUIPMENT_DVB
@@ -19785,6 +20708,22 @@ begin
       set EQ_STATE = 1
       where EQ_N = old.STB_N;
   end
+end ^
+
+CREATE TRIGGER CUSTOMER_DOC_BI FOR CUSTOMER_DOC 
+ACTIVE BEFORE INSERT POSITION 0 
+as
+begin
+  new.added_by = current_user;
+  new.added_on = localtimestamp;
+end ^
+
+CREATE TRIGGER CUSTOMER_DOC_BU FOR CUSTOMER_DOC 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  new.Edit_By = current_user;
+  new.Edit_On = localtimestamp;
 end ^
 
 CREATE TRIGGER CUSTOMER_EQUIPMENT_BI FOR CUSTOMER_EQUIPMENT 
@@ -20024,6 +20963,19 @@ CREATE TRIGGER DISCOUNT_FACTOR_AD FOR DISCOUNT_FACTOR
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'CUSTOMER_ID', old.Customer_Id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'DATE_FROM', cast(old.Date_From as varchar(10)), null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'DATE_TO', cast(old.Date_To as varchar(10)), null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'FACTOR_VALUE', old.Factor_Value, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'SERV_ID', old.Serv_Id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'SRV_TYPE', old.Srv_Type, null);
+
   if (old.Date_From < current_date) then
     execute procedure FULL_RECALC_CUSTOMER(OLD.CUSTOMER_ID, old.Date_From);
 end ^
@@ -20090,6 +21042,22 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
   NEW.Period = NEW.Period - extract(day from NEW.Period) + 1;
+end ^
+
+CREATE TRIGGER DOC_LIST_BI FOR DOC_LIST 
+ACTIVE BEFORE INSERT POSITION 0 
+as
+begin
+  new.added_by = current_user;
+  new.added_on = localtimestamp;
+end ^
+
+CREATE TRIGGER DOC_LIST_BU FOR DOC_LIST 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  new.Edit_By = current_user;
+  new.Edit_On = localtimestamp;
 end ^
 
 CREATE TRIGGER DVB_NETWORK_AD FOR DVB_NETWORK 
@@ -20753,6 +21721,29 @@ begin
     new.EDIT_on = localtimestamp;
   end
 end ^
+
+CREATE TRIGGER IBE$TODO_BI FOR IBE$TODO 
+ACTIVE BEFORE INSERT POSITION 0 
+AS
+BEGIN
+  IF (NEW.item_id IS NULL) THEN
+    NEW.item_id = GEN_ID(ibe$todo_item_id_gen,1);
+  NEW.item_timestamp = 'now';
+  NEW.item_state = 0;
+  NEW.item_owner = USER;
+  IF (NEW.item_priority IS NULL) THEN
+    NEW.item_priority = 0;
+END ^
+
+CREATE TRIGGER IBE$VERSION_HISTORY_BI FOR IBE$VERSION_HISTORY 
+ACTIVE BEFORE INSERT POSITION 0 
+AS
+BEGIN
+  IF (NEW.IBE$VH_ID IS NULL) THEN
+    NEW.IBE$VH_ID = GEN_ID(IBE$VERSION_HISTORY_ID_GEN,1);
+  NEW.IBE$VH_USER_NAME = USER;
+  NEW.IBE$VH_MODIFY_DATE = 'NOW';
+  NEW.IBE$VH_CLIENT_ADDRESS = RDB$GET_CONTEXT('SYSTEM', 'CLIENT_ADDRESS');END ^
 
 CREATE TRIGGER IPTV_GROUP_BI FOR IPTV_GROUP 
 ACTIVE BEFORE INSERT POSITION 0 
@@ -21631,6 +22622,22 @@ begin
   if (new.pe_id is null) then new.pe_id = gen_id(gen_operations_uid, 1);
 end ^
 
+CREATE TRIGGER PERSONAL_TARIF_AD FOR PERSONAL_TARIF 
+ACTIVE AFTER DELETE POSITION 0 
+as
+begin
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('PERSONAL_TARIF', 0, old.customer_id, 'CUSTOMER_ID', old.Customer_Id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('PERSONAL_TARIF', 0, old.customer_id, 'SERVICE_ID', old.Service_Id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('PERSONAL_TARIF', 0, old.customer_id, 'DATE_FROM', cast(old.Date_From as varchar(10)), null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('PERSONAL_TARIF', 0, old.customer_id, 'DATE_TO', cast(old.Date_To as varchar(10)), null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('PERSONAL_TARIF', 0, old.customer_id, 'TARIF_SUM', old.Tarif_Sum, null);
+end ^
+
 CREATE TRIGGER PERSONAL_TARIF_BI0 FOR PERSONAL_TARIF 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
@@ -22007,8 +23014,10 @@ begin
   else
     new.Rm_Quant = coalesce(new.Rm_Quant, 0);
   new.Rm_Cost = coalesce(new.Rm_Cost, 0);
-  new.prop = coalesce(new.Prop, 0);
-  new.Not_Calc = new.prop;
+  new.prop = coalesce(new.Prop, 1);
+  new.Calc = coalesce(new.Calc, 1);
+  new.Bayback = coalesce(new.Bayback, 0);
+  new.Not_Calc = iif(new.Calc = 2, 3, iif(new.Calc = 3, 2, new.Calc));
 
   new.added_by = current_user;
   new.added_on = localtimestamp;
@@ -22018,7 +23027,7 @@ CREATE TRIGGER REQUEST_MATERIALS_AI FOR REQUEST_MATERIALS
 ACTIVE AFTER INSERT POSITION 0 
 as
 begin
-  if (new.Rm_Quant <> 0) then begin
+  if ((new.Bayback = 0) and (new.Rm_Quant <> 0)) then begin
     update Materials_Remain mr
     set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) - new.Rm_Quant
     where mr.M_Id = new.m_id
@@ -22035,8 +23044,10 @@ ACTIVE BEFORE UPDATE POSITION 0
 as
 begin
   new.Rm_Quant = coalesce(new.Rm_Quant, 0);
-  new.prop = coalesce(new.Prop, 0);
-  new.Not_Calc = new.prop;
+  new.prop = coalesce(new.Prop, 1);
+  new.Calc = coalesce(new.Calc, 1);
+  new.Not_Calc = iif(new.Calc = 2, 3, iif(new.Calc = 3, 2, new.Calc));
+  new.Bayback = coalesce(new.Bayback, 0);
 
   new.edit_by = current_user;
   new.edit_on = localtimestamp;
@@ -22047,11 +23058,11 @@ ACTIVE AFTER UPDATE POSITION 0
 as
 begin
 
-  if ((old.M_Id is distinct from new.M_Id)
+  if ((new.Bayback = 0) and ((old.M_Id is distinct from new.M_Id)
       or
       (old.Wh_Id is distinct from new.Wh_Id)
       or
-      (old.Rm_Quant is distinct from new.Rm_Quant)) then begin
+      (old.Rm_Quant is distinct from new.Rm_Quant))) then begin
 
     if (old.Rm_Quant <> 0) then begin
       update Materials_Remain mr
@@ -22077,11 +23088,11 @@ begin
   end
 
   -- пометим статус материала временной меткой
-  if ((old.M_Id is distinct from new.M_Id)
+  if ((new.Bayback = 0) and ((old.M_Id is distinct from new.M_Id)
       or
       (old.Serial is distinct from new.Serial)
       or
-      (old.RQ_ID is distinct from new.RQ_ID)) then begin
+      (old.RQ_ID is distinct from new.RQ_ID))) then begin
     if ((not old.Serial is null) and (old.Serial <> '')) then begin
       update Material_Unit u
       set u.State = 0
@@ -22107,17 +23118,16 @@ CREATE TRIGGER REQUEST_MATERIALS_AD FOR REQUEST_MATERIALS
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-    if (old.Rm_Quant <> 0)
-    then begin
-      update Materials_Remain mr
-      set mr.Mr_Quant = coalesce(mr.Mr_Quant,0) + old.Rm_Quant
-      where mr.M_Id = old.m_id
-            and mr.Wh_Id = old.Wh_Id;
+  if ((old.Bayback = 0) and (old.Rm_Quant <> 0)) then begin
+    update Materials_Remain mr
+    set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) + old.Rm_Quant
+    where mr.M_Id = old.m_id
+          and mr.Wh_Id = old.Wh_Id;
 
-      if (row_count = 0) then -- если не нашли, вставим запись
-        insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
-        values (old.m_id, old.Wh_Id, old.Rm_Quant);
-    end
+    if (row_count = 0) then -- если не нашли, вставим запись
+      insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
+      values (old.m_id, old.Wh_Id, old.Rm_Quant);
+  end
 end ^
 
 CREATE TRIGGER REQUEST_MATERIALS_RETURN_BI FOR REQUEST_MATERIALS_RETURN 
@@ -22127,6 +23137,7 @@ begin
   new.id = coalesce(new.id, gen_id(gen_operations_uid, 1));
   new.Quant = coalesce(new.Quant, 0);
   new.Calc = coalesce(new.Calc, 0);
+  new.Bayback = coalesce(new.Bayback, 0);
 
   new.added_by = current_user;
   new.added_on = localtimestamp;
@@ -22136,7 +23147,7 @@ CREATE TRIGGER REQUEST_MATERIALS_RETURN_AI FOR REQUEST_MATERIALS_RETURN
 ACTIVE AFTER INSERT POSITION 0 
 as
 begin
-  if (new.Quant > 0) then begin
+  if ((new.Bayback = 0) and (new.Quant > 0)) then begin
     update Materials_Remain mr
     set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) + new.Quant
     where mr.M_Id = new.m_id
@@ -22154,6 +23165,7 @@ as
 begin
   new.Quant = coalesce(new.Quant, 0);
   new.Calc = coalesce(new.Calc, 0);
+  new.Bayback = coalesce(new.Bayback, 0);
 
   new.edit_by = current_user;
   new.edit_on = localtimestamp;
@@ -22163,9 +23175,9 @@ CREATE TRIGGER REQUEST_MATERIALS_RETURN_AU FOR REQUEST_MATERIALS_RETURN
 ACTIVE AFTER UPDATE POSITION 0 
 as
 begin
-  if ((old.M_Id is distinct from new.M_Id)
+  if ((new.Bayback = 0) and ((old.M_Id is distinct from new.M_Id)
       or
-      (old.Wh_Id is distinct from new.Wh_Id)) -- пересчитаем остатки
+      (old.Wh_Id is distinct from new.Wh_Id))) -- пересчитаем остатки
   then begin
 
     if (old.Quant <> 0) then begin
@@ -22206,17 +23218,16 @@ CREATE TRIGGER REQUEST_MATERIALS_RETURN_AD FOR REQUEST_MATERIALS_RETURN
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-    if (old.Quant <> 0)
-    then begin
-      update Materials_Remain mr
-      set mr.Mr_Quant = coalesce(mr.Mr_Quant,0) - old.Quant
-      where mr.M_Id = old.m_id
-            and mr.Wh_Id = old.Wh_Id;
+  if ((old.Bayback = 0) and (old.Quant <> 0)) then begin
+    update Materials_Remain mr
+    set mr.Mr_Quant = coalesce(mr.Mr_Quant, 0) - old.Quant
+    where mr.M_Id = old.m_id
+          and mr.Wh_Id = old.Wh_Id;
 
-      if (row_count = 0) then -- если не нашли, вставим запись
-        insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
-        values (old.m_id, old.Wh_Id, old.Quant*(-1));
-    end
+    if (row_count = 0) then -- если не нашли, вставим запись
+      insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
+      values (old.m_id, old.Wh_Id, old.Quant * (-1));
+  end
 end ^
 
 CREATE TRIGGER REQUEST_MSG_BI FOR REQUEST_MSG 
@@ -22659,8 +23670,10 @@ begin
     new.date_to = '2100-01-01';
   end
   else begin
-    new.Closed_By = current_user;
-    new.Closed_ON = localtimestamp;
+    if (not(new.Contract is distinct from old.Contract)) then begin
+      new.Closed_By = current_user;
+      new.Closed_ON = localtimestamp;
+    end
   end
 end ^
 
@@ -22668,38 +23681,41 @@ CREATE TRIGGER SUBSCR_HIST_AD0 FOR SUBSCR_HIST
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, OLD.customer_id, 'SUBSCR_SERV_ID',  old.subscr_serv_id, null);
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, OLD.customer_id, 'SERVICE',  old.serv_id, null);
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, OLD.customer_id, 'FROM',  old.act_serv_id, null);
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, OLD.customer_id, 'TO',  old.disact_serv_id, null);
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, OLD.customer_id, 'DATE_FROM',  cast(old.date_from as VARCHAR(10)), null);
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, OLD.customer_id, 'DATE_TO',  cast(old.date_to as VARCHAR(10)), null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('SUBSCR_HIST', 0, old.customer_id, 'SUBSCR_SERV_ID', old.subscr_serv_id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('SUBSCR_HIST', 0, old.customer_id, 'SERVICE', old.serv_id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('SUBSCR_HIST', 0, old.customer_id, 'FROM', old.act_serv_id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('SUBSCR_HIST', 0, old.customer_id, 'TO', old.disact_serv_id, null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('SUBSCR_HIST', 0, old.customer_id, 'DATE_FROM', cast(old.date_from as varchar(10)), null);
+  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('SUBSCR_HIST', 0, old.customer_id, 'DATE_TO', cast(old.date_to as varchar(10)), null);
 
+  delete from SINGLE_SERV ss
+      where ss.CUSTOMER_ID = old.CUSTOMER_ID
+            and ss.SERVICE_ID = old.ACT_SERV_ID
+            and ss.SERV_DATE = old.DATE_FROM;
 
-  delete from SINGLE_SERV ss where ss.CUSTOMER_ID = old.CUSTOMER_ID
-        and ss.SERVICE_ID = old.ACT_SERV_ID
-        and ss.SERV_DATE = old.DATE_FROM;
+  delete from SINGLE_SERV ss
+      where ss.CUSTOMER_ID = old.CUSTOMER_ID
+            and ss.SERVICE_ID = old.DISACT_SERV_ID
+            and ss.SERV_DATE = (old.DATE_TO + 1); -- дата отключения на день меньше дня услуги отключения
 
-  delete from SINGLE_SERV ss where ss.CUSTOMER_ID = old.CUSTOMER_ID
-        and ss.SERVICE_ID = old.DISACT_SERV_ID
-        and ss.SERV_DATE = (old.DATE_TO + 1); --дата отключения на день меньше дня отключения
-
-  execute procedure CUSTOMER_SERVICES_STATE(old.CUSTOMER_ID);
+  -- execute procedure CUSTOMER_SERVICES_STATE(old.CUSTOMER_ID);
   execute procedure UPDATE_SERVICES_TREE(old.customer_id, old.serv_id);
 end ^
 
 CREATE TRIGGER SUBSCR_HIST_AIU0 FOR SUBSCR_HIST 
 ACTIVE AFTER INSERT OR UPDATE POSITION 0 
-AS
+as
 begin
-  EXECUTE PROCEDURE CUSTOMER_SERVICES_STATE(NEW.CUSTOMER_ID);
-  EXECUTE PROCEDURE UPDATE_SERVICES_TREE(NEW.customer_id,  new.serv_id);
+  -- execute procedure CUSTOMER_SERVICES_STATE(new.CUSTOMER_ID);
+  if (not( new.Contract is distinct from old.Contract )) then begin
+    execute procedure UPDATE_SERVICES_TREE(new.customer_id, new.serv_id);
+  end
 end ^
 
 CREATE TRIGGER SUBSCR_SERV_BI0 FOR SUBSCR_SERV 
@@ -22724,9 +23740,20 @@ begin
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
   values ('SUBSCR_SERV', 0, old.customer_id, 'STATE_SRV', old.State_Srv, null);
 
+  -- удалим начисления по этой услуге
+  delete from Monthly_Fee f
+      where f.Customer_Id = old.Customer_Id
+            and f.Service_Id = old.Serv_Id;
+  -- удалим историю подключений
   delete from SUBSCR_HIST SH
       where SH.SUBSCR_SERV_ID = old.SUBSCR_SERV_ID;
-
+  -- удалим персональный тариф
+  delete from Personal_Tarif SH
+      where SH.Service_Id = old.Serv_Id and sh.Customer_Id = old.Customer_Id;
+  -- удалим скидку
+  delete from Discount_Factor SH
+      where SH.Serv_Id = old.Serv_Id and sh.Customer_Id = old.Customer_Id;
+  -- удалим пакеты услуги
   delete from DECODER_PACKETS p
       where SERVICE_ID = old.SERV_ID
             and exists(select
@@ -22755,14 +23782,36 @@ begin
     where c.customer_id = old.Customer_Id
           and not c.ACTIVIZ_DATE is null;
   end
+
+  execute procedure CUSTOMER_SERVICES_STATE(old.CUSTOMER_ID);
 end ^
 
 CREATE TRIGGER SUBSCR_SERV_BIU FOR SUBSCR_SERV 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 1 
 as
 begin
-  new.State_Change_By = current_user;
-  new.State_Change_ON = localtimestamp;
+  if (not(new.Contract is distinct from old.Contract)) then begin
+    new.State_Change_By = current_user;
+    new.State_Change_ON = localtimestamp;
+  end
+end ^
+
+CREATE TRIGGER SUBSCR_SERV_AIU0 FOR SUBSCR_SERV 
+ACTIVE AFTER INSERT OR UPDATE POSITION 0 
+as
+begin
+  if (not(new.Contract is distinct from old.Contract)) then begin
+    execute procedure CUSTOMER_SERVICES_STATE(new.CUSTOMER_ID);
+  end
+  else begin
+    update Subscr_Hist h
+    set Contract = new.Contract,
+        Contract_Date = new.Contract_Date
+    where h.Subscr_Serv_Id = new.Subscr_Serv_Id
+          and h.Contract is null
+          and h.Contract_Date is null
+          and h.date_from >= coalesce(new.Contract_Date, current_date);
+  end
 end ^
 
 CREATE TRIGGER SYS$GROUP_AD FOR SYS$GROUP 
@@ -23337,6 +24386,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO ROLE RD
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DOC TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON CUSTOMER_EQUIPMENT TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_EQUIPMENT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_FILES TO ROLE RDB$ADMIN;
@@ -23359,6 +24409,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_CH TO ROLE 
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS_CH TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DOC_LIST TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAMS TO ROLE RDB$ADMIN;
@@ -23418,6 +24469,10 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO ROLE RDB$ADMIN
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IBE$TODO TO PUBLIC;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IBE$TODO TO ROLE ROLE_A4USER;
+GRANT INSERT ON IBE$VERSION_HISTORY TO TRIGGER IBE$VERSION_HISTORY_BI;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IBE$VERSION_HISTORY TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_ATTRIBUTES TO ROLE RDB$ADMIN;
@@ -23440,10 +24495,12 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE ROL
 GRANT SELECT, UPDATE ON MATERIALS_IN_DOC_UNIT TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC_UNIT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE RDB$ADMIN;
+GRANT SELECT ON MATERIALS_REMAIN TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON MATERIAL_UNIT TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON MATERIAL_UNIT TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_UNIT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO ROLE ROLE_A4USER;
@@ -23524,6 +24581,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_EXECUTORS TO ROLE RO
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_FLATS TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON REQUEST_MATERIALS TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE RDB$ADMIN;
+GRANT DELETE, INSERT, SELECT, UPDATE ON REQUEST_MATERIALS TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON REQUEST_MATERIALS_RETURN TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE RDB$ADMIN;
@@ -23621,6 +24679,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE RDB$ADMIN
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE ROLE_A4USER;
+GRANT ROLE_A4USER TO NA;
 GRANT ROLE_A4USER TO S1;
 GRANT ROLE_A4USER TO S2;
 GRANT ROLE_A4USER TO S3;
@@ -23731,6 +24790,7 @@ GRANT EXECUTE ON PROCEDURE CALC_MONTH_SRV_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CALC_PERS_TARIF TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE CALC_SURCHARGE_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CANCEL_CONTRACT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CANCEL_CONTRACT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CANCEL_LAST_SUBSCRIBE_ACTION TO ROLE RDB$ADMIN;
@@ -23909,6 +24969,7 @@ GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE MATERIAL_UNIT_MOVE TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT EXECUTE ON PROCEDURE MATERIAL_UNIT_MOVE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MAT_MOVE_DETAILS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MD5 TO ROLE ROLE_A4USER;
@@ -23974,6 +25035,7 @@ GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_IUD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE REQUEST_MATERIAL_BAYBACK TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE REQUEST_RECREATE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO ROLE ROLE_A4USER;
@@ -24065,6 +25127,8 @@ GRANT USAGE ON SEQUENCE GEN_VPN_SESSIONS_ID TO PUBLIC;
 GRANT USAGE ON SEQUENCE GEN_VPN_SESSIONS_ID TO ROLE ROLE_A4USER;
 GRANT USAGE ON SEQUENCE G_LOG_ID TO PUBLIC;
 GRANT USAGE ON SEQUENCE G_LOG_ID TO ROLE ROLE_A4USER;
+GRANT USAGE ON SEQUENCE IBE$TODO_ITEM_ID_GEN TO ROLE ROLE_A4USER;
+GRANT USAGE ON SEQUENCE IBE$VERSION_HISTORY_ID_GEN TO ROLE ROLE_A4USER;
 GRANT USAGE ON SEQUENCE MAP_LOG_ID TO ROLE ROLE_A4USER;
 GRANT USAGE ON EXCEPTION E_CANNOT_DELETE TO PUBLIC;
 GRANT USAGE ON EXCEPTION E_CANNOT_DELETE TO ROLE ROLE_A4USER;
@@ -24074,6 +25138,7 @@ GRANT USAGE ON EXCEPTION E_INVALID_IP TO PUBLIC;
 GRANT USAGE ON EXCEPTION E_INVALID_IP TO ROLE ROLE_A4USER;
 GRANT USAGE ON EXCEPTION E_INVALID_MAC TO PUBLIC;
 GRANT USAGE ON EXCEPTION E_INVALID_MAC TO ROLE ROLE_A4USER;
+GRANT USAGE ON EXCEPTION E_MAT_QUANT_LESS TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT USAGE ON EXCEPTION E_MAT_QUANT_LESS TO ROLE ROLE_A4USER;
 GRANT USAGE ON EXCEPTION E_NOT_EMPTY TO PUBLIC;
 GRANT USAGE ON EXCEPTION E_NOT_EMPTY TO ROLE ROLE_A4USER;
@@ -24300,6 +25365,7 @@ COMMENT ON    COLUMN    CUSTOMER_DECODERS.STB_N IS 'Номер приставк�
 COMMENT ON    COLUMN    CUSTOMER_DECODERS.TV_MODEL IS 'Модель телевизора';
 COMMENT ON    COLUMN    CUSTOMER_DECODERS.TV_SOFT IS 'версия софта телевизора';
 COMMENT ON    COLUMN    CUSTOMER_DECODERS.PAIRING IS 'Связан ли декодер с устройством';
+COMMENT ON TABLE        CUSTOMER_DOC IS 'Картотека документов абонентов';
 COMMENT ON TABLE        CUSTOMER_EQUIPMENT IS 'Связка абонент-оборудование';
 COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.CUSTOMER_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    CUSTOMER_EQUIPMENT.M_ID IS 'ссылка на материал';
@@ -24320,6 +25386,7 @@ COMMENT ON    COLUMN    CUSTOMER_FILES.EDIT_BY IS 'Кто изменил';
 COMMENT ON    COLUMN    CUSTOMER_FILES.EDIT_ON IS 'Когда изменил';
 COMMENT ON    COLUMN    CUSTOMER_FILES.ACT IS 'Рассмотрен / Обработан';
 COMMENT ON    COLUMN    CUSTOMER_FILES.ANOTICE IS 'Комментарий к обработке';
+COMMENT ON    COLUMN    CUSTOMER_FILES.ADDONS IS 'Сохраняем доп поля в json';
 COMMENT ON TABLE        DAYS_TARIF IS 'Временная таблица для расчетов';
 COMMENT ON TABLE        DECODER_PACKETS IS 'Таблица пакетов для декодера (цифрового оборудования)';
 COMMENT ON TABLE        DEVICES IS 'будет удалена. Таблица для карты.';
@@ -24328,7 +25395,13 @@ COMMENT ON    COLUMN    DEVPORTS.ID IS 'будет удалена. Таблиц�
 COMMENT ON    COLUMN    DEVPORTS.LINK IS 'будет удалена. Таблица для карты.';
 COMMENT ON TABLE        DEVPROFILES IS 'будет удалена. Таблица для карты.';
 COMMENT ON TABLE        DISCOUNT_FACTOR IS 'Таблица скидок для абонентов';
-COMMENT ON    COLUMN    DISCOUNT_FACTOR.SRV_TYPE IS 'Если';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.CUSTOMER_ID IS 'Абонент';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.DATE_FROM IS 'Дата с';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.DATE_TO IS 'Дата по';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.FACTOR_VALUE IS 'Скидка';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.SERV_ID IS 'ID услуги или -1 если на все услуги';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.SRV_TYPE IS 'ид типа услуг или -1 для всех услуг';
+COMMENT ON    COLUMN    DISCOUNT_FACTOR.NOTICE IS 'Примечание';
 COMMENT ON TABLE        DISTRIBUTOR IS 'ДИСТРИБЬЮТОР каналов';
 COMMENT ON    COLUMN    DISTRIBUTOR.ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    DISTRIBUTOR.NAME IS 'ДИСТРИБЬЮТОР';
@@ -24367,6 +25440,7 @@ COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.END_SUM IS 'Сумма на к�
 COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.V_NUM IS 'для личных нужд оператора';
 COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.V_DATE IS 'для личных нужд оператора';
 COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.V_TEXT IS 'для личных нужд оператора';
+COMMENT ON TABLE        DOC_LIST IS 'Картотека документов абонентов';
 COMMENT ON TABLE        DVB_NETWORK IS 'Сети DVB';
 COMMENT ON    COLUMN    DVB_NETWORK.DVBN_ID IS 'Уникальный ID сети';
 COMMENT ON    COLUMN    DVB_NETWORK.NAME IS 'Название сети (Передается в NIT)';
@@ -24577,6 +25651,8 @@ COMMENT ON    COLUMN    HOUSE.IN_DATE IS 'Дата вводв в экспл.';
 COMMENT ON    COLUMN    HOUSE.REPAIR_DATE IS 'Дата последнего кап ремонта';
 COMMENT ON    COLUMN    HOUSE.LATITUDE IS 'Широта (вертикаль)';
 COMMENT ON    COLUMN    HOUSE.LONGITUDE IS 'Долгота (горизонталь)';
+COMMENT ON    COLUMN    HOUSE.TAG IS 'цифровое поле для использование оператором';
+COMMENT ON    COLUMN    HOUSE.TAG_STR IS 'Текстовое поле для использование оператором';
 COMMENT ON TABLE        HOUSEFLATS IS 'Карта дома квартира этаж подъезд';
 COMMENT ON    COLUMN    HOUSEFLATS.OWNER_NAME IS 'Фио владельца';
 COMMENT ON    COLUMN    HOUSEFLATS.OWNER_DOC IS 'документ владельца (паспорт)';
@@ -24611,6 +25687,7 @@ COMMENT ON    COLUMN    IPTV_GROUP_CHANNELS.URL IS 'url';
 COMMENT ON TABLE        JOURNAL IS 'Журнал (сообщения ошибки)';
 COMMENT ON    COLUMN    JOURNAL.J_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON TABLE        LETTERTYPE IS 'Вид печатных документов';
+COMMENT ON    COLUMN    LETTERTYPE.LETTERTYPEID IS 'если отрицательное значение, значит служебное. такое скрываем от добавления и не даем удалить';
 COMMENT ON    COLUMN    LETTERTYPE.FILENAME IS 'имя файла письма';
 COMMENT ON    COLUMN    LETTERTYPE.FOR_FORM IS 'Для какой формы документ
 0 - Абоненты
@@ -24702,6 +25779,10 @@ COMMENT ON    COLUMN    MESSAGES.TPL_ID IS 'Тип сообщения';
 COMMENT ON    COLUMN    MESSAGES.INFO_PERIOD IS 'Период, в течение которого, соблюдая интервал, отправляется сообщение Инфокас';
 COMMENT ON    COLUMN    MESSAGES.INFO_INTERVAL IS 'Интервал отправки сообщения Инфокас';
 COMMENT ON    COLUMN    MESSAGES.TAG IS 'пометка для аналитики. типа #ДОЛГ #ДР';
+COMMENT ON    COLUMN    MESSAGES.DIRECT IS 'Направление
+0 от оператора
+1 к оператору';
+COMMENT ON    COLUMN    MESSAGES.PARENT_ID IS 'ID сообщения на которое ответили';
 COMMENT ON TABLE        MESSAGE_TPL IS 'Шаблоны сообщений';
 COMMENT ON    COLUMN    MESSAGE_TPL.MT_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    MESSAGE_TPL.MT_NAME IS 'название шаблона';
@@ -24848,6 +25929,7 @@ COMMENT ON    COLUMN    PAY_DOC.PAY_DOC_NO IS 'номер документа';
 COMMENT ON    COLUMN    PAY_DOC.PAY_DOC_DATE IS 'Дата докумнта';
 COMMENT ON    COLUMN    PAY_DOC.PAY_DOC_SUM IS 'Сумма документа';
 COMMENT ON    COLUMN    PAY_DOC.NOTICE IS 'Примечание';
+COMMENT ON    COLUMN    PAY_DOC.AMOUNT IS 'Зачисленная сумма';
 COMMENT ON TABLE        PAY_ERRORS IS 'Ошибки загрузчика платежей';
 COMMENT ON TABLE        PERSONAL_TARIF IS 'Таблица персональных тарифов';
 COMMENT ON    COLUMN    PERSONAL_TARIF.ADD_METHOD IS 'Как добавлен
@@ -25006,16 +26088,20 @@ COMMENT ON    COLUMN    REQUEST_MATERIALS.PROP IS 'Собственность
 2 - Аренда маетриала
 3 - Рассрочка материала';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.RM_NOTICE IS 'Примечание';
-COMMENT ON    COLUMN    REQUEST_MATERIALS.NOT_CALC IS 'Начислять ли за этот материал абоненту.
+COMMENT ON    COLUMN    REQUEST_MATERIALS.CALC IS 'Метод расчет за материал. 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.';
+COMMENT ON    COLUMN    REQUEST_MATERIALS.NOT_CALC IS 'устаревшее. будет удалено
+Начислять ли за этот материал абоненту.
 0 - Начислять
 1 - Не начислять (в пользовании)
 2 - Аренда
 3 - Рассрочка';
+COMMENT ON    COLUMN    REQUEST_MATERIALS.BAYBACK IS 'Признак выкупа';
 COMMENT ON TABLE        REQUEST_MATERIALS_RETURN IS 'возврат материалов с заявки';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.M_ID IS 'Код материала';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.QUANT IS 'Количество';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.NOTICE IS 'Примечание';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.CALC IS 'Метод расчет за материал. 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.';
+COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.BAYBACK IS 'Признак выкупа';
 COMMENT ON TABLE        REQUEST_MSG IS 'Переписка по заявкам';
 COMMENT ON TABLE        REQUEST_PHOTOS IS 'Фотографии заявки';
 COMMENT ON    COLUMN    REQUEST_PHOTOS.ID IS 'ID фото';
@@ -25129,8 +26215,8 @@ COMMENT ON    COLUMN    SERVICES_LINKS.LINK_TYPE IS '0 абонентская
 6 Переключение на тариф
 7 Включение через WEB
 8 Выключение через WEB';
-COMMENT ON    COLUMN    SERVICES_LINKS.PARENT IS 'если тип 6 то с какой услуги переключать';
-COMMENT ON    COLUMN    SERVICES_LINKS.CHILD IS 'если тип 6 то на какую услугу переключать';
+COMMENT ON    COLUMN    SERVICES_LINKS.PARENT IS 'для какой период услуги';
+COMMENT ON    COLUMN    SERVICES_LINKS.CHILD IS 'какой услугой или на какую услугу';
 COMMENT ON    COLUMN    SERVICES_LINKS.ADD_SRV IS 'если тип 6 то какой услугой переключать';
 COMMENT ON    COLUMN    SERVICES_LINKS.SWITCH_TIME IS 'Когда переключать
 -1- при Автоблокировке/разблокировке
@@ -25216,12 +26302,14 @@ COMMENT ON    COLUMN    SYS$USER_WH.USER_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    SYS$USER_WH.WH_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON TABLE        TARIF IS 'Тарифы на услуги и на НДС Object_TYPE = 13';
 COMMENT ON    COLUMN    TARIF.TARIF_SUM_JUR IS 'Тариф юр. лицам';
+COMMENT ON    COLUMN    TARIF.VAT IS 'НДС на услугу';
 COMMENT ON TABLE        TASKLIST IS 'Таблица задач сотрудников';
 COMMENT ON    COLUMN    TASKLIST.ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    TASKLIST.TITLE IS 'Задача';
 COMMENT ON    COLUMN    TASKLIST.NOTICE IS 'Описание';
 COMMENT ON    COLUMN    TASKLIST.PLAN_DATE IS 'Плановая дата';
 COMMENT ON    COLUMN    TASKLIST.EXEC_DATE IS 'Фактическая дата выполнения';
+COMMENT ON    COLUMN    TASKLIST.WHO_CAN IS 'Кто может закрывать. 1 - исполнитель, 2 - исполнитель, но нет должников в задаче';
 COMMENT ON    COLUMN    TASKLIST.ADDED_BY IS 'Владелец';
 COMMENT ON    COLUMN    TASKLIST.ADDED_ON IS 'Когда создал';
 COMMENT ON TABLE        TASKMSG IS 'Переписка по задачам';
@@ -25517,6 +26605,8 @@ COMMENT ON PROCEDURE    CALC_MONTH_DAY_SRV_CUSTOMER IS 'начисления р�
 COMMENT ON PROCEDURE    CALC_MONTH_FIX_SRV_CUSTOMER IS 'если подключен хоть день, то снимаем полную абонплату';
 COMMENT ON PROCEDURE    CALC_MONTH_SRV_CUSTOMER IS 'начисления за полный/0 месяц';
 COMMENT ON PROCEDURE    CALC_PERS_TARIF IS 'Процедура заполнения таблицы персонального тарифа абонента по дням';
+COMMENT ON PROCEDURE    CALC_SURCHARGE_CUSTOMER IS 'Расчет услуг по алгоритму тариф за месяц.
+Абонент платит фиксированную сумму, вне зависимости от услуг периодических и разовых';
 COMMENT ON PROCEDURE    CANCEL_CONTRACT IS 'Процедура разрыва договора с абонентом';
 COMMENT ON    PROCEDURE PARAMETER CANCEL_CONTRACT.PCUSTOMER_ID IS 'ID абонента';
 COMMENT ON    PROCEDURE PARAMETER CANCEL_CONTRACT.PCANCEL_DATE IS 'Дата отключения';
@@ -25722,6 +26812,7 @@ COMMENT ON PROCEDURE    REQUEST_CLOSE_PROCESS IS 'Добавление/удал�
 COMMENT ON PROCEDURE    REQUEST_CLOSE_ROLLBACK IS 'Удалим начисления за заявку';
 COMMENT ON PROCEDURE    REQUEST_MATERIALS_IUD IS 'добавление.изменение.удаление материалов в заявке';
 COMMENT ON PROCEDURE    REQUEST_MATERIALS_RETURN_IUD IS 'добавление.изменение.удаление материалов в заявке';
+COMMENT ON PROCEDURE    REQUEST_MATERIAL_BAYBACK IS 'Выкуп материала абонентом через заявку';
 COMMENT ON PROCEDURE    REQUEST_RECREATE IS 'Пересоздать новую заявку черезХ дней согласно настроек типа заявки';
 COMMENT ON PROCEDURE    REQUEST_SEND_SMS IS 'Выслать sms исполнителям заявок';
 COMMENT ON PROCEDURE    SELECTONOFFSERVICE IS 'Процедура выборки разовых услуг включения / выключения
@@ -25751,4 +26842,5 @@ COMMENT ON FUNCTION     INET_NTOA IS 'переводит двоичное пре
 COMMENT ON FUNCTION     MAC_FORMAT IS 'Форматирование MAC разделитель :';
 COMMENT ON FUNCTION     MONTH_FIRST_DAY IS 'первое число месяца';
 COMMENT ON FUNCTION     MONTH_LAST_DAY IS 'Последнее число месяц';
+COMMENT ON FUNCTION     NUMBER_AS_STR IS 'число в строку';
 COMMENT ON FUNCTION     ONLY_DIGITS IS 'Возвращает только цифры из переданной строки, если цифр нет возвращает пустую строку';

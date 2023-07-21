@@ -516,11 +516,12 @@ object dmMain: TdmMain
     CloseDataSource = False
     OpenDataSource = False
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 694
     Top = 135
   end
   object frxModalReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]
@@ -696,7 +697,7 @@ object dmMain: TdmMain
   end
   object frxReportCellularTextObject1: TfrxReportCellularTextObject
     Left = 560
-    Top = 472
+    Top = 480
   end
   object frxZipCodeObject1: TfrxZipCodeObject
     Left = 560

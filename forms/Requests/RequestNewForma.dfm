@@ -2,7 +2,7 @@ object RequestNewForm: TRequestNewForm
   Left = 0
   Top = 0
   Caption = #1053#1086#1074#1072#1103' '#1079#1072#1103#1074#1082#1072
-  ClientHeight = 530
+  ClientHeight = 522
   ClientWidth = 753
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,6 +19,9 @@ object RequestNewForm: TRequestNewForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
+  DesignSize = (
+    753
+    522)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlAdresInfo: TPanel
@@ -69,13 +72,6 @@ object RequestNewForm: TRequestNewForm
         Width = 13
         Height = 13
         Caption = #1050#1074
-      end
-      object lbl5: TLabel
-        Left = 4
-        Top = 74
-        Width = 44
-        Height = 13
-        Caption = #1058#1077#1083#1077#1092#1086#1085
       end
       object lbl6: TLabel
         Left = 4
@@ -197,27 +193,13 @@ object RequestNewForm: TRequestNewForm
         OnExit = edFLAT_NOExit
       end
       object btnFind: TButton
-        Left = 216
+        Left = 4
         Top = 71
-        Width = 88
+        Width = 269
         Height = 21
         Action = actFindCustomer
-        Caption = 'F7 &'#1053#1072#1081#1090#1080' '#1072#1073'-'#1090#1072
-        TabOrder = 7
-        TabStop = False
-      end
-      object edPhone: TDBEditEh
-        Left = 59
-        Top = 71
-        Width = 154
-        Height = 21
-        DynProps = <>
-        EditButtons = <>
-        ShowHint = True
         TabOrder = 6
-        Visible = True
-        OnChange = edPhoneChange
-        OnExit = edPhoneExit
+        TabStop = False
       end
       object EdPorch: TDBEditEh
         Tag = 7
@@ -260,13 +242,13 @@ object RequestNewForm: TRequestNewForm
         Visible = True
       end
       object btnClear: TButton
-        Left = 306
+        Left = 299
         Top = 71
         Width = 56
         Height = 21
         Hint = #1054#1090#1074#1103#1079#1072#1090#1100' '#1079#1072#1103#1074#1082#1091' '#1086#1090' '#1072#1073#1086#1085#1077#1085#1090#1072' ('#1079#1072#1103#1074#1082#1072' '#1073#1077#1079' '#1072#1073#1086#1085#1077#1085#1090#1072')'
         Caption = #1054#1095#1080#1089#1090#1080#1090#1100
-        TabOrder = 8
+        TabOrder = 7
         TabStop = False
         OnClick = btnClearClick
       end
@@ -296,18 +278,19 @@ object RequestNewForm: TRequestNewForm
           Height = 129
           ExplicitWidth = 390
           ExplicitHeight = 129
-          inherited lblDebt: TLabel
-            Width = 386
-            Margins.Bottom = 0
-          end
           inherited memAbonent: TMemo
             Width = 386
-            Height = 78
+            Height = 75
             ExplicitWidth = 386
-            ExplicitHeight = 78
+            ExplicitHeight = 75
           end
           inherited lblFIO: TDBEditEh
             Width = 386
+            ExplicitWidth = 386
+          end
+          inherited lblDebt: TDBEditEh
+            Width = 386
+            Margins.Bottom = 0
             ExplicitWidth = 386
           end
         end
@@ -316,7 +299,7 @@ object RequestNewForm: TRequestNewForm
   end
   inline frmOkCancel: TOkCancelFrame
     Left = 0
-    Top = 495
+    Top = 487
     Width = 753
     Height = 35
     Align = alBottom
@@ -324,16 +307,13 @@ object RequestNewForm: TRequestNewForm
     TabStop = True
     ExplicitTop = 495
     ExplicitWidth = 753
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6
       Width = 390
+      Hint = 
+        #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' (Ctrl+Enter) '#1080#1083#1080' '#1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1086#1090#1082#1088#1099#1090#1100' (Ctrl+S' +
+        'hift+Enter)'
       Caption = '&'#1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = bbOkClick
@@ -353,15 +333,16 @@ object RequestNewForm: TRequestNewForm
     Left = 0
     Top = 129
     Width = 753
-    Height = 366
+    Height = 358
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitHeight = 366
     object pnlRType: TPanel
       Left = 0
       Top = 0
       Width = 753
-      Height = 201
+      Height = 257
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
@@ -369,16 +350,17 @@ object RequestNewForm: TRequestNewForm
         Left = 481
         Top = 0
         Width = 272
-        Height = 201
+        Height = 257
         Align = alClient
         BevelOuter = bvNone
         Caption = 'pnlRWorks'
         TabOrder = 1
+        ExplicitHeight = 201
         object dbgWorks: TDBGridEh
           Left = 0
           Top = 30
           Width = 272
-          Height = 171
+          Height = 227
           TabStop = False
           Align = alClient
           DataSource = srcWorks
@@ -478,24 +460,31 @@ object RequestNewForm: TRequestNewForm
         Left = 0
         Top = 0
         Width = 481
-        Height = 201
+        Height = 257
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 0
+        ExplicitHeight = 201
+        DesignSize = (
+          481
+          257)
         object rgShowAs: TRadioGroup
           Left = 0
-          Top = 177
+          Top = 239
           Width = 481
-          Height = 24
+          Height = 18
           Align = alBottom
           Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1087#1086#1093#1086#1078#1080#1077' '#1079#1072#1103#1074#1082#1080' '#1087#1086
           TabOrder = 3
+          ExplicitLeft = -6
+          ExplicitTop = 243
         end
         object rbZV: TRadioButton
           Left = 205
-          Top = 177
+          Top = 239
           Width = 67
           Height = 17
+          Anchors = [akTop, akBottom]
           Caption = #1047#1074#1077#1085#1091
           TabOrder = 4
           TabStop = True
@@ -503,9 +492,10 @@ object RequestNewForm: TRequestNewForm
         end
         object rbADRS: TRadioButton
           Left = 279
-          Top = 177
+          Top = 239
           Width = 68
           Height = 17
+          Anchors = [akTop, akBottom]
           Caption = #1040#1076#1088#1077#1089#1091
           Checked = True
           TabOrder = 5
@@ -516,13 +506,13 @@ object RequestNewForm: TRequestNewForm
           Left = 0
           Top = 0
           Width = 481
-          Height = 85
+          Height = 137
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
           DesignSize = (
             481
-            85)
+            137)
           object lbl8: TLabel
             Left = 4
             Top = 8
@@ -542,6 +532,13 @@ object RequestNewForm: TRequestNewForm
             Width = 83
             Height = 13
             Caption = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+          end
+          object lbl5: TLabel
+            Left = 4
+            Top = 57
+            Width = 44
+            Height = 13
+            Caption = #1058#1077#1083#1077#1092#1086#1085
           end
           object lupType: TDBLookupComboboxEh
             Left = 100
@@ -605,29 +602,47 @@ object RequestNewForm: TRequestNewForm
             OnClick = DBLookupComboboxClick
           end
           object mmoContent: TDBMemoEh
-            Left = 100
-            Top = 55
-            Width = 376
-            Height = 32
+            Left = 4
+            Top = 79
+            Width = 472
+            Height = 57
+            Hint = #1047#1072#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
             ScrollBars = ssVertical
+            Anchors = [akLeft, akTop, akRight, akBottom]
             AutoSize = False
+            DynProps = <>
+            EditButtons = <>
+            EmptyDataInfo.Text = #1047#1072#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
+            ShowHint = True
+            TabOrder = 3
+            Visible = True
+            WantReturns = True
+            ExplicitHeight = 47
+          end
+          object edPhone: TDBEditEh
+            Left = 100
+            Top = 54
+            Width = 376
+            Height = 21
             DynProps = <>
             EditButtons = <>
             ShowHint = True
             TabOrder = 2
             Visible = True
-            WantReturns = True
+            OnChange = edPhoneChange
+            OnExit = edPhoneExit
           end
         end
         object pnlAddInfo: TPanel
           Left = 0
-          Top = 85
+          Top = 137
           Width = 481
           Height = 26
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
           Visible = False
+          ExplicitTop = 85
           object lbl14: TLabel
             Left = 4
             Top = 8
@@ -657,16 +672,18 @@ object RequestNewForm: TRequestNewForm
         end
         object pnlRClient: TPanel
           Left = 0
-          Top = 111
+          Top = 163
           Width = 481
-          Height = 66
+          Height = 76
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
           OnResize = pnlRClientResize
+          ExplicitTop = 111
+          ExplicitHeight = 66
           DesignSize = (
             481
-            66)
+            76)
           object lbl9: TLabel
             Left = 4
             Top = 7
@@ -697,9 +714,8 @@ object RequestNewForm: TRequestNewForm
           object lbl13: TLabel
             Left = 4
             Top = 31
-            Width = 61
+            Width = 3
             Height = 13
-            Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
           end
           object btnSelectDate: TBitBtn
             Left = 211
@@ -740,19 +756,22 @@ object RequestNewForm: TRequestNewForm
             EditFormat = 'HH:NN'
           end
           object mmoNotice: TDBMemoEh
-            Left = 100
+            Left = 4
             Top = 28
-            Width = 376
-            Height = 36
+            Width = 472
+            Height = 46
+            Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
             ScrollBars = ssVertical
             Anchors = [akLeft, akTop, akRight, akBottom]
             AutoSize = False
             DynProps = <>
             EditButtons = <>
+            EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
             ShowHint = True
             TabOrder = 4
             Visible = True
             WantReturns = True
+            ExplicitHeight = 56
           end
           object edtPLANDATE: TDBDateTimeEditEh
             Left = 100
@@ -773,18 +792,20 @@ object RequestNewForm: TRequestNewForm
     end
     object pnlTime: TPanel
       Left = 0
-      Top = 201
+      Top = 257
       Width = 753
-      Height = 165
+      Height = 101
       Align = alClient
       BevelOuter = bvNone
       Caption = 'pnlTime'
       TabOrder = 1
+      ExplicitTop = 201
+      ExplicitHeight = 165
       object dbgSame: TDBGridEh
         Left = 0
         Top = 0
         Width = 753
-        Height = 165
+        Height = 101
         TabStop = False
         Align = alClient
         DataSource = srcSame
@@ -914,27 +935,31 @@ object RequestNewForm: TRequestNewForm
     end
   end
   object chkOpenBid: TDBCheckBoxEh
-    Left = 4
-    Top = 504
+    Left = 5
+    Top = 496
     Width = 85
     Height = 17
     Hint = #1054#1090#1082#1088#1099#1090#1100' '#1079#1072#1103#1074#1082#1091' '#1087#1086#1089#1083#1077' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103
+    Anchors = [akLeft, akBottom]
     Caption = #1054#1090#1082#1088#1099#1090#1100' '
     DynProps = <>
     TabOrder = 3
+    ExplicitTop = 540
   end
   object chkRecreate: TDBCheckBoxEh
     Left = 97
-    Top = 504
+    Top = 496
     Width = 176
     Height = 17
     Hint = #1055#1077#1088#1077#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1103#1074#1082#1091' '#1095#1077#1088#1077#1079
+    Anchors = [akLeft, akBottom]
     Caption = #1055#1077#1088#1077#1089#1086#1079#1076#1072#1090#1100' '#1095#1077#1088#1077#1079' '
     Checked = True
     DynProps = <>
     State = cbChecked
     TabOrder = 4
     Visible = False
+    ExplicitTop = 540
   end
   object dsWorks: TMemTableEh
     Active = True

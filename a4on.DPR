@@ -160,6 +160,7 @@ uses
   fmuCustomerCard in 'forms\Customer\fmuCustomerCard.pas' {apgCustomerCard},
   CustomersFilter in 'forms\Customer\CustomersFilter.pas' {CustomersFilterForm},
   SubscrHistory in 'forms\Customer\SubscrHistory.pas' {CustSubscrHistoryForma},
+  EditCFileForma in 'forms\Customer\EditCFileForma.pas' {EditCFileForm},
   PayDocSelectForma in 'forms\PayDocSelectForma.pas' {PayDocSelectForm},
   MessagesForma in 'forms\MessagesForma.pas' {MessagesForm},
   DecoderPacketForma in 'forms\DecoderPacketForma.pas' {DecoderPacketForm},
@@ -231,7 +232,6 @@ uses
   IPTVGroupForma in 'forms\IPTV\IPTVGroupForma.pas' {IPTVGroupForm},
   IPTVSettings in 'forms\IPTV\IPTVSettings.pas' {IPTVSettinsForm},
   FileTypeForma in 'forms\FileTypeForma.pas' {FileTypeForm},
-  EditCFileForma in 'forms\EditCFileForma.pas' {EditCFileForm},
   NPSAddForma in 'forms\NPSAddForma.pas' {NPSAddForm},
   MapForma in 'forms\MapForma.pas' {MapForm},
   ReqPlanerForma in 'forms\Requests\ReqPlanerForma.pas' {ReqPlanerForm},
@@ -320,7 +320,13 @@ uses
   ConnectTypeForma in 'forms\infrastructure\ConnectTypeForma.pas' {ConnectTypeForm},
   PortTypeForma in 'forms\infrastructure\PortTypeForma.pas' {PortTypeForm},
   MatDocUnitForma in 'forms\Materials\MatDocUnitForma.pas' {MatDocUnitForm},
-  MatGroupForma in 'forms\Materials\MatGroupForma.pas' {MatGroupForm};
+  MatGroupForma in 'forms\Materials\MatGroupForma.pas' {MatGroupForm},
+  DocListForma in 'forms\Dict\DocListForma.pas' {DocListForm},
+  ReqMatBaybackForma in 'forms\Requests\ReqMatBaybackForma.pas' {ReqMatBaybackForm},
+  SelectFilterForma in 'forms\Customer\SelectFilterForma.pas' {frmSelectFilter},
+  EQGAttributesFmu in 'forms\infrastructure\EQGAttributesFmu.pas' {apgEQGAttributes},
+  EQGPortsFmu in 'forms\infrastructure\EQGPortsFmu.pas' {apgEQGPort},
+  AttrGeneralForma in 'forms\AttrGeneralForma.pas' {AttrGeneralForm};
 
 {$R *.RES}
 // var

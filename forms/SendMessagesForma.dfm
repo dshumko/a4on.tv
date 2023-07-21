@@ -15,6 +15,7 @@ object SendMessagesForm: TSendMessagesForm
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   OnShow = FormShow
@@ -22,18 +23,20 @@ object SendMessagesForm: TSendMessagesForm
   TextHeight = 13
   object Splitter: TSplitter
     Left = 397
-    Top = 118
-    Height = 178
+    Top = 150
+    Height = 146
     Align = alRight
+    ExplicitTop = 118
+    ExplicitHeight = 178
   end
   object pnl2: TPanel
     Left = 0
-    Top = 118
+    Top = 150
     Width = 397
-    Height = 178
+    Height = 146
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 3
     object pnlHead: TPanel
       Left = 0
       Top = 0
@@ -71,7 +74,7 @@ object SendMessagesForm: TSendMessagesForm
       Left = 0
       Top = 26
       Width = 397
-      Height = 152
+      Height = 120
       ScrollBars = ssBoth
       Align = alClient
       AutoSize = False
@@ -96,16 +99,16 @@ object SendMessagesForm: TSendMessagesForm
     Height = 16
     Align = alBottom
     Step = 1
-    TabOrder = 5
+    TabOrder = 6
   end
   object pnl1: TPanel
     Left = 0
-    Top = 0
+    Top = 32
     Width = 717
     Height = 39
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 0
+    TabOrder = 1
     DesignSize = (
       717
       39)
@@ -142,17 +145,17 @@ object SendMessagesForm: TSendMessagesForm
   end
   object pnl3: TPanel
     Left = 400
-    Top = 118
+    Top = 150
     Width = 317
-    Height = 178
+    Height = 146
     Align = alRight
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 4
     object dbgTemplate: TDBGridEh
       Left = 0
       Top = 26
       Width = 317
-      Height = 152
+      Height = 120
       Align = alClient
       DataSource = srcTemplate
       DrawMemoText = True
@@ -226,18 +229,18 @@ object SendMessagesForm: TSendMessagesForm
     DynProps = <>
     EditButtons = <>
     ShowHint = True
-    TabOrder = 4
+    TabOrder = 5
     Visible = False
     WantReturns = True
   end
   object pnlReport: TPanel
     Left = 0
-    Top = 39
+    Top = 71
     Width = 717
     Height = 79
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 2
     DesignSize = (
       717
       79)
@@ -384,7 +387,7 @@ object SendMessagesForm: TSendMessagesForm
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 6
+    TabOrder = 7
     DesignSize = (
       717
       41)
@@ -410,6 +413,39 @@ object SendMessagesForm: TSendMessagesForm
       NumGlyphs = 2
       TabOrder = 0
       OnClick = actSendExecute
+    end
+  end
+  object pnlContact: TPanel
+    Left = 0
+    Top = 0
+    Width = 717
+    Height = 32
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    Visible = False
+    DesignSize = (
+      717
+      32)
+    object Label1: TLabel
+      Left = 3
+      Top = 10
+      Width = 25
+      Height = 13
+      Caption = #1050#1086#1084#1091
+    end
+    object edtReciver: TDBEditEh
+      Left = 90
+      Top = 7
+      Width = 615
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1050#1086#1084#1091' '#1096#1083#1077#1084'. '#1058#1077#1083#1077#1092#1086#1085' '#1080#1083#1080' '#1082#1072#1088#1090#1072
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
     end
   end
   object pmMemo: TPopupMenu
@@ -575,7 +611,7 @@ object SendMessagesForm: TSendMessagesForm
     Top = 95
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]
@@ -591,7 +627,37 @@ object SendMessagesForm: TSendMessagesForm
     ScriptLanguage = 'PascalScript'
     StoreInDFM = False
     OnUserFunction = frxReportUserFunction
-    Left = 128
-    Top = 304
+    Left = 144
+    Top = 312
+  end
+  object frxPDFExport: TfrxPDFExport
+    ShowDialog = False
+    UseFileCache = True
+    ShowProgress = False
+    OverwritePrompt = False
+    DataOnly = False
+    EmbedFontsIfProtected = False
+    InteractiveFormsFontSubset = 'A-Z,a-z,0-9,#43-#47 '
+    OpenAfterExport = False
+    PrintOptimized = True
+    Outline = False
+    Background = False
+    HTMLTags = True
+    Quality = 95
+    Author = 'FastReport'
+    Subject = 'FastReport PDF export'
+    Creator = 'FastReport'
+    ProtectionFlags = [ePrint, eModify, eCopy, eAnnot]
+    HideToolbar = False
+    HideMenubar = False
+    HideWindowUI = False
+    FitWindow = False
+    CenterWindow = False
+    PrintScaling = False
+    PdfA = False
+    PDFStandard = psNone
+    PDFVersion = pv17
+    Left = 56
+    Top = 320
   end
 end

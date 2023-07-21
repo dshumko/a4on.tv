@@ -124,21 +124,21 @@ end;
 procedure TWireForm.InitSecurity;
 begin
   inherited;
-  FFullAccess := (dmMain.AllowedAction(rght_Dictionary_Nodes));
+  FFullAccess := (dmMain.AllowedAction(rght_Comm_Nodes));
   // Экспорт информации
   pmgSaveSelection.Visible := (dmMain.AllowedAction(rght_Export));
 
-  actDelete.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
-  actEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
-  actNew.Enabled := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
+  actDelete.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
+  actEdit.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
+  actNew.Enabled := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
 
-  actPortLinkAdd.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
-  actPortLinkEdit.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
-  btnDel.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
+  actPortLinkAdd.Visible := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
+  actPortLinkEdit.Visible := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
+  btnDel.Visible := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
 
-  actPointAdd.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
-  actPointEdit.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
-  actPointDel.Visible := dmMain.AllowedAction(rght_Dictionary_Nodes) or FFullAccess;
+  actPointAdd.Visible := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
+  actPointEdit.Visible := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
+  actPointDel.Visible := dmMain.AllowedAction(rght_Comm_Nodes) or FFullAccess;
 end;
 
 procedure TWireForm.miOpenEqClick(Sender: TObject);

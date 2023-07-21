@@ -3,7 +3,7 @@ object apgCustomerLetters: TapgCustomerLetters
   Top = 0
   Caption = #1055#1080#1089#1100#1084#1072' '#1080' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
   ClientHeight = 180
-  ClientWidth = 761
+  ClientWidth = 799
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object apgCustomerLetters: TapgCustomerLetters
   object dbgLetters: TDBGridEh
     Left = 26
     Top = 0
-    Width = 735
+    Width = 773
     Height = 180
     Align = alClient
     AllowedOperations = []
@@ -29,6 +29,7 @@ object apgCustomerLetters: TapgCustomerLetters
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    PopupMenu = pmGrid
     ReadOnly = True
     SearchPanel.Enabled = True
     STFilter.Local = True
@@ -36,6 +37,8 @@ object apgCustomerLetters: TapgCustomerLetters
     STFilter.Visible = True
     TabOrder = 1
     TitleParams.MultiTitle = True
+    OnDblClick = dbgLettersDblClick
+    OnGetCellParams = dbgLettersGetCellParams
     Columns = <
       item
         AutoFitColWidth = False
@@ -67,7 +70,7 @@ object apgCustomerLetters: TapgCustomerLetters
         Footers = <>
         Title.Caption = #1058#1077#1082#1089#1090
         Title.TitleButton = True
-        Width = 325
+        Width = 269
       end
       item
         CellButtons = <>
@@ -77,7 +80,17 @@ object apgCustomerLetters: TapgCustomerLetters
         Footers = <>
         Title.Caption = #1047#1072#1075#1086#1083#1086#1074#1086#1082
         Title.TitleButton = True
-        Width = 162
+        Width = 182
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RECIVER'
+        Footers = <>
+        Title.Caption = #1050#1086#1085#1090#1072#1082#1090
+        Title.TitleButton = True
+        Width = 81
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -150,14 +163,20 @@ object apgCustomerLetters: TapgCustomerLetters
       '    , Mes_Type'
       '    , Mes_Text'
       '    , Mes_Head'
+      '    , TYPE_ID'
+      '    , Reciver'
+      '    , DIRECT'
       'from ('
       'select'
       '    C.CUSTLETTERID Mes_Id,'
       '    1 ITS_LETTER,'
       '    cast(C.CUSTLETTERDATE as DATE) as Send_Date,'
       '    LT.lettertypedescr Mes_Type,'
-      '    '#39#39' Mes_Text,'
-      '    '#39#39' Mes_Head'
+      '    c.CONTENT Mes_Text,'
+      '    c.NAME Mes_Head,'
+      '    c.lettertypeid TYPE_ID,'
+      '    null Reciver,'
+      '    0 DIRECT'
       '  from CustLetter C'
       
         '       left outer join LETTERTYPE LT on (lt.lettertypeid = c.let' +
@@ -174,7 +193,10 @@ object apgCustomerLetters: TapgCustomerLetters
         'On, null)) as DATE) Send_Date,'
       '    m.Mes_Type,'
       '    m.Mes_Text,'
-      '    m.Mes_Head'
+      '    m.Mes_Head,'
+      '    m.TPL_ID TYPE_ID,'
+      '    m.Reciver,'
+      '    coalesce(m.Direct, 0) DIRECT'
       '  from messages m'
       '  where m.Customer_Id = :CUSTOMER_ID'
       ')'
@@ -204,6 +226,17 @@ object apgCustomerLetters: TapgCustomerLetters
       Hint = #1059#1076#1072#1083#1080#1090#1100'  '#1087#1080#1089#1100#1084#1086
       ImageIndex = 3
       OnExecute = actLetterDelExecute
+    end
+    object actSendMessage: TAction
+      Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1077' '#1082#1086#1085#1090#1072#1082#1090#1091
+      OnExecute = actSendMessageExecute
+    end
+  end
+  object pmGrid: TPopupMenu
+    Left = 416
+    Top = 112
+    object miSendMessage: TMenuItem
+      Action = actSendMessage
     end
   end
 end

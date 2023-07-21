@@ -4,11 +4,15 @@ inherited ContactTypeForm: TContactTypeForm
   Caption = #1058#1080#1087' '#1082#1086#1085#1090#1072#1082#1090#1086#1074' '#1072#1073#1086#1085#1077#1085#1090#1072
   ClientHeight = 550
   ClientWidth = 939
+  ExplicitWidth = 955
+  ExplicitHeight = 589
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 939
+    ExplicitTop = 193
+    ExplicitWidth = 939
   end
   inherited dbGrid: TDBGridEh
     Top = 196
@@ -71,6 +75,7 @@ inherited ContactTypeForm: TContactTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 939
+    ExplicitWidth = 939
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -97,6 +102,8 @@ inherited ContactTypeForm: TContactTypeForm
     Width = 939
     Height = 168
     ParentCtl3D = False
+    ExplicitWidth = 939
+    ExplicitHeight = 168
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -123,6 +130,9 @@ inherited ContactTypeForm: TContactTypeForm
       Top = 135
       Width = 754
       TabOrder = 4
+      ExplicitLeft = 72
+      ExplicitTop = 135
+      ExplicitWidth = 754
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
@@ -130,6 +140,9 @@ inherited ContactTypeForm: TContactTypeForm
       Width = 98
       Cancel = True
       TabOrder = 5
+      ExplicitLeft = 832
+      ExplicitTop = 135
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -177,12 +190,14 @@ inherited ContactTypeForm: TContactTypeForm
       EmptyDataInfo.Text = #1056#1077#1075#1091#1083#1103#1088#1085#1086#1077' '#1074#1099#1088#1072#1078#1077#1085#1080#1077' '#1076#1083#1103' '#1087#1088#1086#1074#1077#1088#1082#1080' '#1079#1085#1072#1095#1077#1085#1080#1103
       EditButtons = <>
       Items.Strings = (
+        ''
         #1062#1080#1092#1088#1099
         #1058#1077#1083#1077#1092#1086#1085
         #1045'. '#1087#1086#1095#1090#1072' (email)'
         #1044#1086#1084#1077#1085' ('#1085#1072#1087#1088#1080#1084#1077#1088' a4on.tv)'
         #1053#1072#1073#1086#1088' '#1080#1079' '#1073#1091#1082#1074' '#1080' '#1094#1080#1092#1088)
       KeyItems.Strings = (
+        ''
         '\d+'
         '(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)'
         
@@ -192,13 +207,12 @@ inherited ContactTypeForm: TContactTypeForm
         
           '((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?' +
           ')'
-        '['#1072'-'#1103#1040'-'#1071#1105#1025'a-zA-Z0-9]+'
-        '([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}'
-        '')
+        '['#1072'-'#1103#1040'-'#1071#1105#1025'a-zA-Z0-9]+')
       LimitTextToListValues = False
       ShowHint = True
       TabOrder = 1
       Visible = True
+      OnKeyDown = cbRegularKeyDown
       OnNotInList = cbRegularNotInList
     end
     object chkUniq: TDBCheckBoxEh

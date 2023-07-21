@@ -82,7 +82,7 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
         end
         item
           CellButtons = <>
-          DisplayFormat = '###,##0.#####'
+          DisplayFormat = ',0.#####'
           DynProps = <>
           EditButtons = <>
           FieldName = 'Mr_Quant'
@@ -92,7 +92,7 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
         end
         item
           CellButtons = <>
-          DisplayFormat = '###,##0.#####'
+          DisplayFormat = ',0.#####'
           DynProps = <>
           EditButtons = <>
           FieldName = 'Mr_Cost'

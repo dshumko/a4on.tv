@@ -1,12 +1,12 @@
 object fmCardPayGenerate: TfmCardPayGenerate
-  ShowHint = True
   Left = 526
   Top = 248
   BorderStyle = bsDialog
   Caption = #1043#1077#1085#1077#1088#1072#1094#1080#1103' '#1082#1072#1088#1090' '#1086#1087#1083#1072#1090#1099
-  ClientHeight = 239
+  ClientHeight = 158
   ClientWidth = 339
   Color = clBtnFace
+  DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -15,13 +15,14 @@ object fmCardPayGenerate: TfmCardPayGenerate
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 8
-    Top = 22
+    Top = 11
     Width = 31
     Height = 13
     Caption = #1057#1077#1088#1080#1103
@@ -34,35 +35,36 @@ object fmCardPayGenerate: TfmCardPayGenerate
   end
   object lbl2: TLabel
     Left = 8
-    Top = 60
+    Top = 38
     Width = 43
     Height = 13
     Caption = #1053#1086#1084#1080#1085#1072#1083
   end
   object lbl3: TLabel
     Left = 8
-    Top = 98
+    Top = 65
     Width = 95
     Height = 13
     Caption = #1044#1077#1081#1089#1090#1074#1080#1090#1077#1083#1100#1085#1072' '#1076#1086
   end
   object lbl4: TLabel
     Left = 8
-    Top = 136
+    Top = 92
     Width = 62
     Height = 13
     Caption = #1050#1086#1083'-'#1074#1086' '#1082#1072#1088#1090
   end
   object lupSerials: TDBLookupComboboxEh
     Left = 107
-    Top = 20
-    Width = 209
+    Top = 8
+    Width = 224
     Height = 21
     DynProps = <>
     DataField = ''
     DropDownBox.Columns = <
       item
         FieldName = 'CS_SERIAL'
+        Width = 60
       end
       item
         FieldName = 'Paysource_Descr'
@@ -70,6 +72,7 @@ object fmCardPayGenerate: TfmCardPayGenerate
       end
       item
         FieldName = 'CS_NOTICE'
+        Width = 60
       end>
     DropDownBox.ListSource = srcCardSerial
     DropDownBox.AutoDrop = True
@@ -84,26 +87,28 @@ object fmCardPayGenerate: TfmCardPayGenerate
     KeyField = 'CS_ID'
     ListField = 'CS_SERIAL'
     ListSource = srcCardSerial
+    ShowHint = True
     TabOrder = 0
     Visible = True
   end
   object edNominal: TDBNumberEditEh
     Left = 107
-    Top = 58
-    Width = 121
+    Top = 35
+    Width = 144
     Height = 21
     DecimalPlaces = 0
     DynProps = <>
     EditButtons = <>
     MaxValue = 1000000000.000000000000000000
     MinValue = 1.000000000000000000
+    ShowHint = True
     TabOrder = 1
     Visible = True
   end
   object edCount: TDBNumberEditEh
     Left = 107
-    Top = 130
-    Width = 121
+    Top = 89
+    Width = 144
     Height = 21
     DecimalPlaces = 0
     DynProps = <>
@@ -111,29 +116,33 @@ object fmCardPayGenerate: TfmCardPayGenerate
     EditButtons = <>
     MaxValue = 10000000.000000000000000000
     MinValue = 1.000000000000000000
+    ShowHint = True
     TabOrder = 3
     Value = 1.000000000000000000
     Visible = True
   end
   object dedExp: TDBDateTimeEditEh
     Left = 107
-    Top = 94
-    Width = 121
+    Top = 62
+    Width = 144
     Height = 21
     DynProps = <>
     EditButtons = <>
     Kind = dtkDateEh
+    ShowHint = True
     TabOrder = 2
     Visible = True
   end
   inline okcnclfrm: TOkCancelFrame
     Left = 0
-    Top = 204
+    Top = 123
     Width = 339
     Height = 35
     Align = alBottom
     TabOrder = 4
     TabStop = True
+    ExplicitTop = 204
+    ExplicitWidth = 339
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -141,22 +150,27 @@ object fmCardPayGenerate: TfmCardPayGenerate
       Margins.Bottom = 0
     end
     inherited bbOk: TBitBtn
-      Left = 110
+      Left = 107
       Top = 6
       Width = 144
       Caption = #1043#1077#1085#1077#1088#1072#1094#1080#1103' '#1085#1086#1074#1099#1093' '#1082#1072#1088#1090
       OnClick = okcnclfrm1bbOkClick
+      ExplicitLeft = 107
+      ExplicitTop = 6
+      ExplicitWidth = 144
     end
     inherited bbCancel: TBitBtn
-      Left = 260
+      Left = 256
       Top = 6
+      ExplicitLeft = 256
+      ExplicitTop = 6
     end
   end
   object srcCardSerial: TDataSource
     AutoEdit = False
     DataSet = dsCardSerial
     Left = 304
-    Top = 48
+    Top = 36
   end
   object dsCardSerial: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -185,6 +199,11 @@ object fmCardPayGenerate: TfmCardPayGenerate
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     Left = 264
-    Top = 48
+    Top = 36
+  end
+  object CnErrors: TCnErrorProvider
+    DoubleBuffer = True
+    Left = 27
+    Top = 58
   end
 end

@@ -93,6 +93,8 @@ begin
 end;
 
 procedure TBlackListForm.FormShow(Sender: TObject);
+var
+ i : Integer;
 begin
   inherited;
   fCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_BlacList);
@@ -103,6 +105,15 @@ begin
   actNew.Visible := fCanEdit;
   actDelete.Visible := fCanEdit;
   actEdit.Visible := fCanEdit;
+
+  if (dmMain.GetSettingsValue('SHOW_DOC_LIST') = '1') then begin
+    dsBlackList.ParamByName('fld_doc_list').value := 'iif(exists( select d.Doc_Number from doc_list d where d.Doc_Number = O_NAME), 1, 0)';
+    for i := 0 to dbGrid.Columns.Count - 1 do
+    begin
+      if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'IN_DOC_LIST') then
+        dbGrid.Columns[i].Visible := True;
+    end;
+  end;
 
   dsBlackList.Open;
 end;

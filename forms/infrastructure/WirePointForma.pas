@@ -99,7 +99,7 @@ end;
 
 procedure TWirePointForm.FormShow(Sender: TObject);
 begin
-  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Nodes);
+  FCanEdit := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Nodes);
 
   OkCancelFrame.bbOk.Visible := FCanEdit;
 

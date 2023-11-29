@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, Vcl.Controls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls,
-  PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, GridsEh, DBGridEh, MemTableDataEh,
+  PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, GridsEh, DBGridEh,
+  MemTableDataEh,
   MemTableEh, EhLibVCL, DBAxisGridsEh, fmuCustomerBalance, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   PropFilerEh, DBCtrlsEh, DBLookupEh, AtrPages;
 
@@ -126,10 +127,12 @@ implementation
 {$R *.dfm}
 
 uses
-  AtrCommon, AtrStrUtils, MAIN, DM, CF, PrjConst, OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl,
+  AtrCommon, AtrStrUtils, MAIN, DM, CF, PrjConst,
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase,
   fmuCustomerInfo, fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv, fmuCustomerKoef, fmuCustomerLetters,
   fmuCustomerRecourse, fmuCustomerRequests, fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerCard,
-  fmuCustomerDigit, fmuCustomerEdit, fmuCustomerBonus, fmuCustomerFiles, fmuCustomerMaterialsMove, fmuCustomerAppl, PaymentForma,
+  fmuCustomerDigit, fmuCustomerEdit, fmuCustomerBonus, fmuCustomerFiles, fmuCustomerMaterialsMove, fmuCustomerAppl,
+  PaymentForma,
   RequestNewForma, RecourseForma, NPSAddForma, OrderTPForma, A4onTypeUnit, TextEditForma;
 
 procedure ShowCustomer(aCustomer: Integer; const Edit: Boolean = False);
@@ -694,7 +697,8 @@ begin
       go := False
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;
@@ -953,3 +957,4 @@ begin
 end;
 
 end.
+

@@ -744,12 +744,14 @@ function DatasetToJsonStr(DS: TDataset): string;
 var
   bkmark: TBookmark;
   I: Integer;
+  NeedSave : Boolean;
   Obj, ChildObj: TJsonObject;
 begin
   if DS.RecordCount = 0 then
     Exit;
 
   Obj := TJsonObject.Create;
+  NeedSave := (DS.RecordCount > 0) and (DS.FieldCount > 0);
   try
     DS.DisableControls;
     bkmark := DS.GetBookmark;
@@ -779,7 +781,7 @@ begin
     end;
     DS.GotoBookmark(bkmark);
     DS.EnableControls;
-    if ChildObj.Count > 0 then
+    if NeedSave then
       Result := Obj.ToString;
   finally
     Obj.Free;
@@ -1274,7 +1276,6 @@ begin
   // Если файл есть. проверим не залочен ли он
   if FileExists(FileName) then
   begin
-    CanWrite := False;
     I := 0;
     Repeat
       hFile := CreateFile(PChar(FileName), GENERIC_WRITE, 0, nil, OPEN_EXISTING, 0, 0);
@@ -1438,7 +1439,7 @@ end;
 
 function FileGetTempFolder: string;
 var
-  TempPath, TempFile: string;
+  TempPath: string;
   r: Cardinal;
 begin
   Result := '';

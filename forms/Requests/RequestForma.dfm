@@ -38,6 +38,12 @@ object RequestForm: TRequestForm
     ExplicitTop = 525
     ExplicitWidth = 784
     ExplicitHeight = 37
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 360
       Top = 6
@@ -290,6 +296,7 @@ object RequestForm: TRequestForm
           TabOrder = 1
           Visible = True
           OnChange = LupHOUSEChange
+          OnDropDownBoxGetCellParams = LupHOUSEDropDownBoxGetCellParams
         end
         object edFLAT_NO: TDBEditEh
           Tag = 7
@@ -878,10 +885,6 @@ object RequestForm: TRequestForm
     object tabExecute: TTabSheet
       Caption = ' '#1042#1099#1087#1086#1083#1085#1077#1085#1080#1077' '
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object spl2: TSplitter
         Left = 0
         Top = 238
@@ -1125,18 +1128,8 @@ object RequestForm: TRequestForm
                   EditButtons = <>
                   FieldName = 'QNT'
                   Footers = <>
+                  Title.Alignment = taRightJustify
                   Title.Caption = #1050#1086#1083'-'#1074#1086
-                end
-                item
-                  AutoFitColWidth = False
-                  CellButtons = <>
-                  DisplayFormat = ',0.##'
-                  DynProps = <>
-                  EditButtons = <>
-                  FieldName = 'TIME_TOTAL'
-                  Footers = <>
-                  Title.Caption = #1042#1088#1077#1084#1077#1085#1080
-                  Width = 60
                 end
                 item
                   AutoFitColWidth = False
@@ -1148,6 +1141,7 @@ object RequestForm: TRequestForm
                   Footer.DisplayFormat = ',0.##'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  Title.Alignment = taRightJustify
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
                   Width = 80
                 end
@@ -1196,7 +1190,7 @@ object RequestForm: TRequestForm
                   FieldName = 'SERIAL'
                   Footers = <>
                   Title.Caption = #1057'/'#1053
-                  Width = 103
+                  Width = 78
                 end
                 item
                   AutoFitColWidth = False
@@ -1215,6 +1209,7 @@ object RequestForm: TRequestForm
                   EditButtons = <>
                   FieldName = 'QNT'
                   Footers = <>
+                  Title.Alignment = taRightJustify
                   Title.Caption = #1050#1086#1083'-'#1074#1086
                   Width = 80
                 end
@@ -1240,7 +1235,7 @@ object RequestForm: TRequestForm
                     #1040#1088#1077#1085#1076#1072)
                   Title.Alignment = taCenter
                   Title.Caption = #1053#1072#1095#1080#1089#1083'.'
-                  Width = 48
+                  Width = 81
                 end
                 item
                   AutoFitColWidth = False
@@ -1252,6 +1247,7 @@ object RequestForm: TRequestForm
                   Footer.DisplayFormat = ',0.##'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  Title.Alignment = taRightJustify
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
                   Width = 88
                 end
@@ -1290,10 +1286,11 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 115
+          Width = 776
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
+          ExplicitWidth = 115
         end
         object splFlats: TSplitter
           Left = 373
@@ -2067,7 +2064,10 @@ object RequestForm: TRequestForm
         '.team = wg.name and w.working = 1))||'#39')'#39','#39#39')'
       '    ||coalesce('#39' '#39'||he.he_name,'#39#39')'
       '    as varchar(500)) as warea'
-      '  , sa.Subarea_Name    '
+      '  , sa.Subarea_Name   '
+      
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') InService     '
       'FROM'
       '    HOUSE H'
       '    left outer join workgroups wg on (wg.wg_id = h.wg_id)'
@@ -2236,10 +2236,21 @@ object RequestForm: TRequestForm
       '  , w.notice'
       '  , m.w_quant QNT'
       '  , round(m.w_time * m.w_quant, 2) time_total'
-      '  , coalesce(coalesce(m.w_cost, w.w_cost) * m.w_quant, 0) COST'
+      '  , coalesce(m.w_cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, 0,'
+      '    (select'
+      '         t.tarif_sum'
+      '       from tarif t'
+      '       where t.service_id = s.service_id'
+      
+        '             and coalesce(rq.rq_exec_time, localtimestamp) betwe' +
+        'en t.date_from and t.date_to)), 0) * m.w_quant COST'
       '  , m.rq_id'
       '  from WORKS w'
       '       inner join request_works m on (w.w_id = m.w_id)'
+      '       inner join request rq on (rq.Rq_Id = m.Rq_Id)'
+      
+        '       left outer join services s on (w.as_service = s.service_i' +
+        'd)'
       '  where m.rq_id = :RQ_ID'
       '  order by w.name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'

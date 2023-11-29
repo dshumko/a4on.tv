@@ -6,6 +6,8 @@
 {$ENDIF}
 {$I defines.inc}
 
+
+
 uses
   {$IFDEF EurekaLog}
   EMemLeaks,
@@ -326,7 +328,9 @@ uses
   SelectFilterForma in 'forms\Customer\SelectFilterForma.pas' {frmSelectFilter},
   EQGAttributesFmu in 'forms\infrastructure\EQGAttributesFmu.pas' {apgEQGAttributes},
   EQGPortsFmu in 'forms\infrastructure\EQGPortsFmu.pas' {apgEQGPort},
-  AttrGeneralForma in 'forms\AttrGeneralForma.pas' {AttrGeneralForm};
+  AttrGeneralForma in 'forms\AttrGeneralForma.pas' {AttrGeneralForm},
+  PromoForma in 'forms\PromoForma.pas' {PromoForm},
+  SelectPromoForma in 'forms\SelectPromoForma.pas' {fmSelectPromo};
 
 {$R *.RES}
 // var

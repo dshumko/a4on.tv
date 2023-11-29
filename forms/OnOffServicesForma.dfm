@@ -29,18 +29,24 @@ object OnOffServiceForm: TOnOffServiceForm
     TabOrder = 9
     TabStop = True
     ExplicitTop = 341
-    ExplicitWidth = 410
+    ExplicitWidth = 424
     ExplicitHeight = 37
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
-      Left = 135
+      Left = 5
       Top = 6
-      Width = 181
+      Width = 311
       Height = 25
       ModalResult = 0
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 121
+      ExplicitLeft = 5
       ExplicitTop = 6
-      ExplicitWidth = 181
+      ExplicitWidth = 311
       ExplicitHeight = 25
     end
     inherited bbCancel: TBitBtn
@@ -109,8 +115,6 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 55
-    ExplicitWidth = 410
     DesignSize = (
       424
       28)
@@ -158,8 +162,6 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitTop = 83
-    ExplicitWidth = 410
     DesignSize = (
       424
       25)
@@ -205,8 +207,6 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitTop = 108
-    ExplicitWidth = 410
     DesignSize = (
       424
       29)
@@ -246,7 +246,6 @@ object OnOffServiceForm: TOnOffServiceForm
       TabOrder = 0
       Value = 0.000000000000000000
       Visible = True
-      ExplicitWidth = 127
     end
   end
   object Panel1: TPanel
@@ -257,16 +256,14 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 8
-    ExplicitTop = 223
-    ExplicitWidth = 410
-    ExplicitHeight = 118
     object Label4: TLabel
       Left = 0
       Top = 0
-      Width = 67
+      Width = 424
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ExplicitWidth = 67
     end
     object memNotice: TDBMemoEh
       AlignWithMargins = True
@@ -283,10 +280,6 @@ object OnOffServiceForm: TOnOffServiceForm
       TabOrder = 0
       Visible = True
       WantReturns = True
-      ExplicitLeft = 5
-      ExplicitTop = 13
-      ExplicitWidth = 415
-      ExplicitHeight = 105
     end
   end
   object pnlSRV2: TPanel
@@ -297,8 +290,6 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 25
-    ExplicitWidth = 410
     DesignSize = (
       424
       30)
@@ -337,8 +328,6 @@ object OnOffServiceForm: TOnOffServiceForm
     BevelOuter = bvNone
     TabOrder = 5
     Visible = False
-    ExplicitTop = 137
-    ExplicitWidth = 410
     DesignSize = (
       424
       27)
@@ -399,7 +388,6 @@ object OnOffServiceForm: TOnOffServiceForm
       ShowHint = True
       TabOrder = 2
       Visible = False
-      ExplicitWidth = 92
     end
   end
   object pnlVAT: TPanel
@@ -411,8 +399,6 @@ object OnOffServiceForm: TOnOffServiceForm
     BevelOuter = bvNone
     TabOrder = 6
     Visible = False
-    ExplicitTop = 164
-    ExplicitWidth = 410
     DesignSize = (
       424
       29)
@@ -450,13 +436,11 @@ object OnOffServiceForm: TOnOffServiceForm
     BevelOuter = bvNone
     TabOrder = 7
     Visible = False
-    ExplicitTop = 193
-    ExplicitWidth = 410
     DesignSize = (
       424
       30)
     object lblWorker: TLabel
-      Left = 8
+      Left = 5
       Top = 7
       Width = 56
       Height = 13
@@ -492,7 +476,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Top = 213
   end
   object Query: TpFIBQuery
-    Transaction = dmMain.trWrite
+    Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     Left = 84
     Top = 216

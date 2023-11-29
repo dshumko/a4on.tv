@@ -651,9 +651,7 @@ object MessagesForm: TMessagesForm
       '    and MES_RESULT = 0'
       '    ')
     DeleteSQL.Strings = (
-      
-        'delete from MESSAGES where MES_ID = :OLD_MES_ID and MES_RESULT <' +
-        '= 0')
+      'delete from MESSAGES where MES_ID=:OLD_MES_ID and MES_RESULT=0')
     InsertSQL.Strings = (
       'INSERT INTO MESSAGES('
       '    MES_ID,'
@@ -784,15 +782,19 @@ object MessagesForm: TMessagesForm
     object N14: TMenuItem
       Caption = '-'
     end
-    object N16: TMenuItem
+    object miNotSend: TMenuItem
       Caption = #1053#1077#1086#1090#1087#1088#1072#1074#1083#1077#1085#1085#1099#1077
       Checked = True
       Hint = #1055#1086#1082#1072#1079#1099#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1085#1077#1086#1090#1087#1088#1072#1074#1083#1077#1085#1085#1099#1077' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
-      OnClick = N16Click
+      OnClick = miNotSendClick
     end
     object miMyOnly: TMenuItem
       Caption = #1058#1086#1083#1100#1082#1086' '#1084#1086#1080' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
       OnClick = miMyOnlyClick
+    end
+    object miInOnly: TMenuItem
+      Caption = #1058#1086#1083#1100#1082#1086' '#1074#1093#1086#1076#1103#1097#1080#1077
+      OnClick = miInOnlyClick
     end
   end
   object MainMenu1: TMainMenu

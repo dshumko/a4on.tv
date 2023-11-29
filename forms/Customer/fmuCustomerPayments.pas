@@ -80,8 +80,10 @@ var
   bFull: boolean;
   bAdd: boolean;
   vShowPaySRV: boolean;
+  vAsBalance: boolean;
   i: Integer;
 begin
+  vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
   bFull := dmMain.AllowedAction(rght_Pays_full); // Полный доступ к платежам
   bAdd := dmMain.AllowedAction(rght_Pays_add); // Добавление платежей
 
@@ -120,6 +122,11 @@ begin
       dbgCustPayment.Columns[i].Visible := FFine;
     if (AnsiUpperCase(dbgCustPayment.Columns[i].FieldName) = 'NAME') then
       dbgCustPayment.Columns[i].Visible := vShowPaySRV;
+
+    if (AnsiUpperCase(dbgCustPayment.Columns[i].FieldName) = 'BAL_SAVE') then
+      dbgCustPayment.Columns[i].Visible := vAsBalance;
+    if (AnsiUpperCase(dbgCustPayment.Columns[i].FieldName) = 'DEBT_SAVE') then
+      dbgCustPayment.Columns[i].Visible := not vAsBalance;
   end;
   FCheckUrl := dmMain.GetSettingsValue('PAY_CHECK_URL');
   actCheckUrl.Visible := (FCheckUrl <> '');
@@ -156,7 +163,7 @@ end;
 
 procedure TapgCustomerPayments.actCheckUrlExecute(Sender: TObject);
 var
-  URL, body: string;
+  URL: string;
 begin
   // параметры <customer_id> <unp>
   // GetHtml(const Url: string = 'localhost'; const User: string = ''; const Pswd: string = '';

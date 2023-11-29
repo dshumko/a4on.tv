@@ -91,6 +91,14 @@ object apgCustomerLetters: TapgCustomerLetters
         Title.Caption = #1050#1086#1085#1090#1072#1082#1090
         Title.TitleButton = True
         Width = 81
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'WHO_ADD'
+        Footers = <>
+        Title.Caption = #1050#1090#1086' '#1076#1086#1073#1072#1074#1080#1083
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -157,15 +165,16 @@ object apgCustomerLetters: TapgCustomerLetters
       'delete from Custletter where Custletterid = :OLD_Mes_Id;')
     SelectSQL.Strings = (
       'select'
-      '    Mes_Id'
-      '    , ITS_LETTER'
-      '    , Send_Date'
-      '    , Mes_Type'
-      '    , Mes_Text'
-      '    , Mes_Head'
-      '    , TYPE_ID'
-      '    , Reciver'
-      '    , DIRECT'
+      '    r.Mes_Id'
+      '    , r.ITS_LETTER'
+      '    , r.Send_Date'
+      '    , r.Mes_Type'
+      '    , r.Mes_Text'
+      '    , r.Mes_Head'
+      '    , r.TYPE_ID'
+      '    , r.Reciver'
+      '    , r.DIRECT'
+      '    , coalesce(w.Surname, r.Added_By) as WHO_ADD'
       'from ('
       'select'
       '    C.CUSTLETTERID Mes_Id,'
@@ -176,7 +185,8 @@ object apgCustomerLetters: TapgCustomerLetters
       '    c.NAME Mes_Head,'
       '    c.lettertypeid TYPE_ID,'
       '    null Reciver,'
-      '    0 DIRECT'
+      '    0 DIRECT,'
+      '    c.Added_By '
       '  from CustLetter C'
       
         '       left outer join LETTERTYPE LT on (lt.lettertypeid = c.let' +
@@ -196,11 +206,14 @@ object apgCustomerLetters: TapgCustomerLetters
       '    m.Mes_Head,'
       '    m.TPL_ID TYPE_ID,'
       '    m.Reciver,'
-      '    coalesce(m.Direct, 0) DIRECT'
+      '    coalesce(m.Direct, 0) DIRECT,'
+      '    m.Added_By'
       '  from messages m'
       '  where m.Customer_Id = :CUSTOMER_ID'
-      ')'
-      'order by Send_Date desc, Mes_Id')
+      ') r'
+      'left outer join worker w on (w.Ibname = r.added_by)'
+      'order by Send_Date desc, Mes_Id'
+      '')
     AutoCalcFields = False
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

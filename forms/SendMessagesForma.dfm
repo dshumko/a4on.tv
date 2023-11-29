@@ -3,7 +3,7 @@ object SendMessagesForm: TSendMessagesForm
   Top = 0
   Caption = #1056#1072#1089#1089#1099#1083#1082#1072' '#1089#1086#1086#1073#1097#1077#1085#1080#1081
   ClientHeight = 442
-  ClientWidth = 717
+  ClientWidth = 711
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,32 +22,35 @@ object SendMessagesForm: TSendMessagesForm
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter: TSplitter
-    Left = 397
+    Left = 391
     Top = 150
     Height = 146
     Align = alRight
+    ExplicitLeft = 397
     ExplicitTop = 118
     ExplicitHeight = 178
   end
   object pnl2: TPanel
     Left = 0
     Top = 150
-    Width = 397
+    Width = 391
     Height = 146
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
+    ExplicitWidth = 397
     object pnlHead: TPanel
       Left = 0
       Top = 0
-      Width = 397
+      Width = 391
       Height = 26
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
       Visible = False
+      ExplicitWidth = 397
       DesignSize = (
-        397
+        391
         26)
       object lbl2: TLabel
         Left = 3
@@ -59,7 +62,7 @@ object SendMessagesForm: TSendMessagesForm
       object edtHEAD: TDBEditEh
         Left = 90
         Top = 2
-        Width = 304
+        Width = 298
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -68,12 +71,13 @@ object SendMessagesForm: TSendMessagesForm
         ShowHint = True
         TabOrder = 0
         Visible = True
+        ExplicitWidth = 304
       end
     end
     object mmoMessage: TDBMemoEh
       Left = 0
       Top = 26
-      Width = 397
+      Width = 391
       Height = 120
       ScrollBars = ssBoth
       Align = alClient
@@ -90,27 +94,30 @@ object SendMessagesForm: TSendMessagesForm
       Visible = True
       WantReturns = True
       OnChange = mmoMessageChange
+      ExplicitWidth = 397
     end
   end
   object progress: TProgressBar
     Left = 0
     Top = 385
-    Width = 717
+    Width = 711
     Height = 16
     Align = alBottom
     Step = 1
     TabOrder = 6
+    ExplicitWidth = 717
   end
   object pnl1: TPanel
     Left = 0
     Top = 32
-    Width = 717
+    Width = 711
     Height = 39
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 717
     DesignSize = (
-      717
+      711
       39)
     object lbl1: TLabel
       Left = 320
@@ -128,7 +135,7 @@ object SendMessagesForm: TSendMessagesForm
     object cbMessType: TDBLookupComboboxEh
       Left = 90
       Top = 12
-      Width = 615
+      Width = 609
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -141,16 +148,18 @@ object SendMessagesForm: TSendMessagesForm
       TabOrder = 0
       Visible = True
       OnChange = cbMessTypeChange
+      ExplicitWidth = 615
     end
   end
-  object pnl3: TPanel
-    Left = 400
+  object pnlTmplts: TPanel
+    Left = 394
     Top = 150
     Width = 317
     Height = 146
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 4
+    ExplicitLeft = 400
     object dbgTemplate: TDBGridEh
       Left = 0
       Top = 26
@@ -164,6 +173,8 @@ object SendMessagesForm: TSendMessagesForm
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghFitRowHeightToText, dghDialogFind, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
       RowHeight = 2
       RowLines = 1
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       TabOrder = 1
       OnDblClick = dbgTemplateDblClick
       Columns = <
@@ -171,9 +182,19 @@ object SendMessagesForm: TSendMessagesForm
           CellButtons = <>
           DynProps = <>
           EditButtons = <>
-          FieldName = 'O_CHARFIELD'
+          FieldName = 'O_DESCRIPTION'
           Footers = <>
           Title.Caption = #1064#1072#1073#1083#1086#1085
+          Width = 115
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'O_CHARFIELD'
+          Footers = <>
+          Title.Caption = #1058#1077#1082#1089#1090
+          Width = 161
           WordWrap = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
@@ -219,7 +240,7 @@ object SendMessagesForm: TSendMessagesForm
   object mmoLog: TDBMemoEh
     Left = 0
     Top = 296
-    Width = 717
+    Width = 711
     Height = 89
     Lines.Strings = (
       'mmoLog')
@@ -232,17 +253,19 @@ object SendMessagesForm: TSendMessagesForm
     TabOrder = 5
     Visible = False
     WantReturns = True
+    ExplicitWidth = 717
   end
   object pnlReport: TPanel
     Left = 0
     Top = 71
-    Width = 717
+    Width = 711
     Height = 79
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 717
     DesignSize = (
-      717
+      711
       79)
     object lbl4: TLabel
       Left = 3
@@ -349,7 +372,7 @@ object SendMessagesForm: TSendMessagesForm
     object lcbReportAsPDF: TDBLookupComboboxEh
       Left = 90
       Top = 0
-      Width = 615
+      Width = 609
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -362,11 +385,12 @@ object SendMessagesForm: TSendMessagesForm
       ShowHint = True
       TabOrder = 0
       Visible = True
+      ExplicitWidth = 615
     end
     object lvFiles: TListView
       Left = 90
       Top = 24
-      Width = 615
+      Width = 609
       Height = 49
       Anchors = [akLeft, akTop, akRight]
       Columns = <
@@ -378,21 +402,23 @@ object SendMessagesForm: TSendMessagesForm
       TabOrder = 1
       ViewStyle = vsReport
       OnDblClick = lvFilesDblClick
+      ExplicitWidth = 615
     end
   end
   object pnlOkCancel: TPanel
     Left = 0
     Top = 401
-    Width = 717
+    Width = 711
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 7
+    ExplicitWidth = 717
     DesignSize = (
-      717
+      711
       41)
     object btnCancel: TBitBtn
-      Left = 638
+      Left = 632
       Top = 6
       Width = 75
       Height = 27
@@ -401,11 +427,12 @@ object SendMessagesForm: TSendMessagesForm
       Caption = #1047#1072#1082#1088#1099#1090#1100
       ModalResult = 2
       TabOrder = 1
+      ExplicitLeft = 638
     end
     object btnOk: TBitBtn
       Left = 11
       Top = 6
-      Width = 621
+      Width = 615
       Height = 28
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akRight, akBottom]
@@ -413,19 +440,21 @@ object SendMessagesForm: TSendMessagesForm
       NumGlyphs = 2
       TabOrder = 0
       OnClick = actSendExecute
+      ExplicitWidth = 621
     end
   end
   object pnlContact: TPanel
     Left = 0
     Top = 0
-    Width = 717
+    Width = 711
     Height = 32
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     Visible = False
+    ExplicitWidth = 717
     DesignSize = (
-      717
+      711
       32)
     object Label1: TLabel
       Left = 3
@@ -437,7 +466,7 @@ object SendMessagesForm: TSendMessagesForm
     object edtReciver: TDBEditEh
       Left = 90
       Top = 7
-      Width = 615
+      Width = 609
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -446,6 +475,7 @@ object SendMessagesForm: TSendMessagesForm
       ShowHint = True
       TabOrder = 0
       Visible = True
+      ExplicitWidth = 615
     end
   end
   object pmMemo: TPopupMenu
@@ -521,19 +551,26 @@ object SendMessagesForm: TSendMessagesForm
       '    O_TYPE,'
       '    O_DELETED,'
       '    O_NAME,'
-      '    O_CHARFIELD'
+      '    O_CHARFIELD,'
+      '    O_DESCRIPTION'
       ')'
       'VALUES('
       '    27,'
       '    0,'
       '    :O_NAME,'
-      '    :O_CHARFIELD'
+      '    :O_CHARFIELD,'
+      '    :O_DESCRIPTION'
       ')')
+    RefreshSQL.Strings = (
+      'SELECT O_ID, O_NAME, O_CHARFIELD, O_DESCRIPTION'
+      'FROM OBJECTS'
+      'WHERE O_TYPE = 27 '
+      '      and OBJECTS.O_ID = :OLD_O_ID')
     SelectSQL.Strings = (
-      'SELECT O_ID, O_NAME, O_CHARFIELD'
+      'SELECT O_ID, O_NAME, O_CHARFIELD, O_DESCRIPTION'
       'FROM OBJECTS'
       'WHERE O_TYPE = 27 AND O_DELETED = 0'
-      'order BY O_CHARFIELD')
+      'order BY O_DESCRIPTION, O_CHARFIELD')
     AutoCalcFields = False
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
@@ -659,5 +696,18 @@ object SendMessagesForm: TSendMessagesForm
     PDFVersion = pv17
     Left = 56
     Top = 320
+  end
+  object PropStorageEh: TPropStorageEh
+    Section = 'SENDMSG'
+    StorageManager = dmMain.iniPropStorage
+    StoredProps.Strings = (
+      '<P>.Height'
+      '<P>.Left'
+      '<P>.PixelsPerInch'
+      '<P>.Top'
+      '<P>.Width'
+      'pnlTmplts.<P>.Width')
+    Left = 426
+    Top = 304
   end
 end

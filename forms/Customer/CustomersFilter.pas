@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
   Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.Mask,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
+  DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh,
+  FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
   pFIBQuery,
   PrjConst, PropFilerEh, PropStorageEh;
 
@@ -202,6 +203,9 @@ type
     procedure DBLookupComboboxClick(Sender: TObject);
     procedure actSaveToDbExecute(Sender: TObject);
     procedure actLoadFromDbExecute(Sender: TObject);
+    procedure cbxHouseNoChange(Sender: TObject);
+    procedure cbxHouseNoDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
     FEnterSecondPress: Boolean;
@@ -255,23 +259,37 @@ end;
 
 procedure TCustomersFilterForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) then begin
+  if (Shift = [ssCtrl]) then
+  begin
     case Ord(Key) of
-      VK_RETURN: bbOkClick(Sender);
-      Ord('1'): pgcFilter.ActivePageIndex := 0;
-      Ord('2'): pgcFilter.ActivePageIndex := 1;
-      Ord('3'): pgcFilter.ActivePageIndex := 2;
-      Ord('4'): pgcFilter.ActivePageIndex := 3;
+      VK_RETURN:
+        bbOkClick(Sender);
+      Ord('1'):
+        pgcFilter.ActivePageIndex := 0;
+      Ord('2'):
+        pgcFilter.ActivePageIndex := 1;
+      Ord('3'):
+        pgcFilter.ActivePageIndex := 2;
+      Ord('4'):
+        pgcFilter.ActivePageIndex := 3;
       // 66: btnANDClick(btnAND);
       // 75: btnORClick(btnOR);
-      VK_LEFT: if (not srcFilter.DataSet.Bof) then srcFilter.DataSet.Prior;
-      VK_RIGHT: if (not srcFilter.DataSet.EOF) then srcFilter.DataSet.Next;
-      VK_HOME: if (not srcFilter.DataSet.BOF) then srcFilter.DataSet.First;
-      VK_END: if (not srcFilter.DataSet.EOF) then srcFilter.DataSet.Last;
+      VK_LEFT:
+        if (not srcFilter.DataSet.Bof) then
+          srcFilter.DataSet.Prior;
+      VK_RIGHT:
+        if (not srcFilter.DataSet.EOF) then
+          srcFilter.DataSet.Next;
+      VK_HOME:
+        if (not srcFilter.DataSet.Bof) then
+          srcFilter.DataSet.First;
+      VK_END:
+        if (not srcFilter.DataSet.EOF) then
+          srcFilter.DataSet.Last;
       // ELSE memSQL.Lines.Add( Key.ToString + ' ' + Chr(Key));
     end;
 
-    if Ord(Key) in [Ord('1'),Ord('2'),Ord('3'),Ord('4')] then
+    if Ord(Key) in [Ord('1'), Ord('2'), Ord('3'), Ord('4')] then
       pgcFilterChange(Sender);
 
   end;
@@ -474,7 +492,8 @@ begin
 
     // ShowMessage(s);
 
-    if s.IsEmpty then Exit;
+    if s.IsEmpty then
+      exit;
 
     fq := TpFIBQuery.Create(self);
     try
@@ -558,7 +577,7 @@ end;
 
 procedure TCustomersFilterForm.btnANDClick(Sender: TObject);
 var
-  ti : Integer;
+  ti: Integer;
 begin
   ti := pgcFilter.ActivePageIndex;
   srcFilter.DataSet.Append;
@@ -568,7 +587,7 @@ end;
 
 procedure TCustomersFilterForm.btnORClick(Sender: TObject);
 var
-  ti : Integer;
+  ti: Integer;
 begin
   ti := pgcFilter.ActivePageIndex;
   srcFilter.DataSet.Append;
@@ -601,6 +620,23 @@ begin
   end;
   lblto.Visible := interval;
   edtSumTo.Visible := interval;
+end;
+
+procedure TCustomersFilterForm.cbxHouseNoChange(Sender: TObject);
+begin
+  if (dsHomes['inService'] <> '') then
+    cbxHouseNo.Color := clYellow
+  else
+    cbxHouseNo.Color := clWindow;
+end;
+
+procedure TCustomersFilterForm.cbxHouseNoDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if (dsHomes.Active) and (dsHomes['inService'] <> '') then
+    Background := clYellow
+  else
+    Background := clWindow;
 end;
 
 procedure TCustomersFilterForm.checkAdressSign(Sender: TObject);
@@ -684,5 +720,4 @@ begin
 end;
 
 end.
-
 

@@ -779,9 +779,10 @@ begin
     Close;
     Transaction.Rollback;
   end;
+
   if cmd <> '' then
     replaceParams(cmd);
-  if cmd <> '' then
+  if URL <> '' then
     replaceParams(URL);
 
   case CMD_TYPE of

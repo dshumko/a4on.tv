@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  OverbyteIcsWSocket, OverbyteIcsSmtpProt;
+  OverbyteIcsWSocket, OverbyteIcsSmtpProt, OverbyteIcsSslBase;
 
 type
   TEmailClient = class(TComponent)
@@ -115,7 +115,8 @@ end;
 
 procedure TEmailClient.SmtpClientHeaderLine(Sender: TObject; Msg: Pointer; Size: Integer);
 begin
-  if (System.AnsiStrings.StrLen(PAnsiChar(Msg)) > 0) and (System.AnsiStrings.StrLIComp(PAnsiChar(Msg), PAnsiChar('X-Mailer:'), 9) = 0) then
+  if (System.AnsiStrings.StrLen(PAnsiChar(Msg)) > 0) and
+    (System.AnsiStrings.StrLIComp(PAnsiChar(Msg), PAnsiChar('X-Mailer:'), 9) = 0) then
     System.AnsiStrings.StrCat(PAnsiChar(Msg), PAnsiChar(#13#10'X-Postmaster-Msgtype: A4onTV'));
 end;
 

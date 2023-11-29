@@ -9,13 +9,15 @@ inherited RequestTypeForm: TRequestTypeForm
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
+    Top = 77
     Width = 975
     Height = 4
+    ExplicitTop = 77
     ExplicitWidth = 975
     ExplicitHeight = 4
   end
   inherited dbGrid: TDBGridEh
-    Top = 85
+    Top = 81
     Width = 975
     Height = 201
     Align = alTop
@@ -111,9 +113,9 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   object pgcAddons: TPageControl [2]
     Left = 0
-    Top = 294
+    Top = 290
     Width = 975
-    Height = 249
+    Height = 253
     ActivePage = tsTemplates
     Align = alClient
     TabOrder = 3
@@ -179,7 +181,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 196
+        Height = 200
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcReqTemplates
@@ -205,6 +207,7 @@ inherited RequestTypeForm: TRequestTypeForm
             EditButtons = <>
             FieldName = 'RT_ID'
             Footers = <>
+            Title.TitleButton = True
             Visible = False
           end
           item
@@ -213,6 +216,7 @@ inherited RequestTypeForm: TRequestTypeForm
             EditButtons = <>
             FieldName = 'RQ_TYPE'
             Footers = <>
+            Title.TitleButton = True
             Visible = False
           end
           item
@@ -222,6 +226,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'RQ_CONTENT'
             Footers = <>
             Title.Caption = #1053#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
+            Title.TitleButton = True
             Width = 376
           end
           item
@@ -231,6 +236,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'RQ_SOLUTION'
             Footers = <>
             Title.Caption = #1042#1072#1088#1080#1072#1085#1090' '#1088#1077#1096#1077#1085#1080#1103
+            Title.TitleButton = True
             Visible = False
             Width = 104
           end
@@ -241,6 +247,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'O_NAME'
             Footers = <>
             Title.Caption = #1040#1085#1072#1083#1080#1090#1080#1082#1072
+            Title.TitleButton = True
             Width = 100
           end
           item
@@ -250,6 +257,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'w_name'
             Footers = <>
             Title.Caption = #1056#1072#1073#1086#1090#1072
+            Title.TitleButton = True
             Width = 93
           end
           item
@@ -259,6 +267,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'RECREATE_DAYS'
             Footers = <>
             Title.Caption = #1055#1077#1088#1077#1089#1086#1079#1076#1072#1090#1100' '#1095#1077#1088#1077#1079', '#1076#1085'.'
+            Title.TitleButton = True
             Width = 83
           end
           item
@@ -268,6 +277,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'Add_Field'
             Footers = <>
             Title.Caption = #1044#1086#1087'. '#1076#1083#1103' '#1079#1072#1087#1086#1083#1085#1077#1085#1080#1103
+            Title.TitleButton = True
             Width = 283
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -279,12 +289,12 @@ inherited RequestTypeForm: TRequestTypeForm
       ExplicitLeft = 0
       ExplicitTop = 0
       ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 221
       object dbgWorks: TDBGridEh
         Left = 0
         Top = 25
         Width = 967
-        Height = 196
+        Height = 200
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcWorks
@@ -309,6 +319,7 @@ inherited RequestTypeForm: TRequestTypeForm
             EditButtons = <>
             FieldName = 'W_ID'
             Footers = <>
+            Title.TitleButton = True
             Visible = False
           end
           item
@@ -317,6 +328,7 @@ inherited RequestTypeForm: TRequestTypeForm
             EditButtons = <>
             FieldName = 'RQ_TYPE'
             Footers = <>
+            Title.TitleButton = True
             Visible = False
           end
           item
@@ -326,6 +338,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'NAME'
             Footers = <>
             Title.Caption = #1042#1080#1076' '#1088#1072#1073#1086#1090
+            Title.TitleButton = True
             Width = 269
           end
           item
@@ -336,6 +349,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'W_TIME'
             Footers = <>
             Title.Caption = #1053#1086#1088#1084#1072' '#1074#1088#1077#1084#1077#1085#1080', '#1095
+            Title.TitleButton = True
             Width = 109
           end
           item
@@ -345,6 +359,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'W_COST'
             Footers = <>
             Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
+            Title.TitleButton = True
             Width = 103
           end
           item
@@ -356,6 +371,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'ON_DEFAULT'
             Footers = <>
             Title.Caption = #1042' '#1079#1072#1103#1074#1082#1091
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -364,6 +380,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'SRV_NAME'
             Footers = <>
             Title.Caption = #1059#1089#1083#1091#1075#1072
+            Title.TitleButton = True
             Width = 67
           end
           item
@@ -373,6 +390,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'ATR_NAME'
             Footers = <>
             Title.Caption = #1040#1090#1088#1080#1073#1091#1090' (+/-)'
+            Title.TitleButton = True
             Width = 82
           end
           item
@@ -382,6 +400,7 @@ inherited RequestTypeForm: TRequestTypeForm
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 170
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -447,7 +466,7 @@ inherited RequestTypeForm: TRequestTypeForm
       ExplicitLeft = 0
       ExplicitTop = 0
       ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 221
       object tlb1: TToolBar
         Left = 0
         Top = 0
@@ -506,7 +525,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 196
+        Height = 200
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcResult
@@ -580,19 +599,25 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   inherited pnlEdit: TPanel
     Width = 975
+    Height = 52
     ExplicitWidth = 975
+    ExplicitHeight = 52
     inherited btnSaveLink: TBitBtn
+      Top = 19
       Width = 522
+      ExplicitTop = 19
       ExplicitWidth = 522
     end
     inherited btnCancelLink: TBitBtn
       Left = 613
+      Top = 19
       ExplicitLeft = 613
+      ExplicitTop = 19
     end
   end
   object dnspltr1: TdnSplitter [5]
     Left = 0
-    Top = 286
+    Top = 282
     AlignControl = dbGrid
     MinSize = 100
     ResizeStyle = rsPattern
@@ -796,14 +821,16 @@ inherited RequestTypeForm: TRequestTypeForm
       '  , W.On_Default'
       '  , s.Name srv_name'
       '  , iif(w.W_Atr_Ad = 1, '#39'+'#39', '#39'-'#39') || '#39' '#39' || o.O_Name atr_name'
-      '  , coalesce(w.W_Cost,'
+      
+        '  , coalesce(iif(coalesce(s.Srv_Type_Id, 2) = 2, coalesce(w.W_Co' +
+        'st, 0),'
       '    (select'
       '         t.tarif_sum'
       '       from tarif t'
-      '       where t.service_id = w.W_Srv'
+      '       where t.service_id = s.service_id'
       
-        '             and current_date between t.date_from and t.date_to)' +
-        ') W_COST'
+        '             and localtimestamp between t.date_from and t.date_t' +
+        'o)), 0) W_COST'
       '  from works w'
       
         '       left outer join services s on (w.As_Service = s.Service_I' +
@@ -833,14 +860,16 @@ inherited RequestTypeForm: TRequestTypeForm
       '  , W.On_Default'
       '  , s.Name srv_name'
       '  , iif(w.W_Atr_Ad = 1, '#39'+'#39', '#39'-'#39') || '#39' '#39' || o.O_Name atr_name'
-      '  , coalesce(w.W_Cost,'
+      
+        '  , coalesce(iif(coalesce(s.Srv_Type_Id, 2) = 2, coalesce(w.W_Co' +
+        'st, 0),'
       '    (select'
       '         t.tarif_sum'
       '       from tarif t'
-      '       where t.service_id = w.W_Srv'
+      '       where t.service_id = s.service_id'
       
-        '             and current_date between t.date_from and t.date_to)' +
-        ') W_COST'
+        '             and localtimestamp between t.date_from and t.date_t' +
+        'o)), 0) W_COST'
       '  from works w'
       
         '       left outer join services s on (w.As_Service = s.Service_I' +

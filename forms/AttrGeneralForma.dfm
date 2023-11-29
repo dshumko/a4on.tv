@@ -3,8 +3,8 @@ object AttrGeneralForm: TAttrGeneralForm
   Top = 390
   BorderIcons = [biSystemMenu]
   Caption = #1040#1090#1088#1080#1073#1091#1090
-  ClientHeight = 195
-  ClientWidth = 439
+  ClientHeight = 201
+  ClientWidth = 500
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,11 +18,11 @@ object AttrGeneralForm: TAttrGeneralForm
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   DesignSize = (
-    439
-    195)
+    500
+    201)
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
+  object lblNotice: TLabel
     Left = 8
     Top = 64
     Width = 61
@@ -44,9 +44,9 @@ object AttrGeneralForm: TAttrGeneralForm
     Caption = #1047#1085#1072#1095#1077#1085#1080#1077
   end
   object dbluAttribute: TDBLookupComboboxEh
-    Left = 72
+    Left = 71
     Top = 8
-    Width = 360
+    Width = 422
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -61,13 +61,12 @@ object AttrGeneralForm: TAttrGeneralForm
     Visible = True
     OnChange = dbluAttributeChange
     OnEnter = dbluAttributeEnter
-    ExplicitWidth = 355
   end
-  object DBMemo1: TDBMemoEh
+  object mmoNOTICE: TDBMemoEh
     Left = 8
     Top = 80
-    Width = 424
-    Height = 74
+    Width = 485
+    Height = 80
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'NOTICE'
@@ -75,16 +74,14 @@ object AttrGeneralForm: TAttrGeneralForm
     DynProps = <>
     EditButtons = <>
     ShowHint = True
-    TabOrder = 3
+    TabOrder = 4
     Visible = True
     WantReturns = True
-    ExplicitWidth = 419
-    ExplicitHeight = 49
   end
   object dbValue: TDBEditEh
     Left = 71
     Top = 37
-    Width = 360
+    Width = 422
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'AVALUE'
@@ -94,12 +91,11 @@ object AttrGeneralForm: TAttrGeneralForm
     ShowHint = True
     TabOrder = 1
     Visible = True
-    ExplicitWidth = 355
   end
   object cbbList: TDBComboBoxEh
     Left = 72
     Top = 37
-    Width = 359
+    Width = 420
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'AVALUE'
@@ -109,33 +105,42 @@ object AttrGeneralForm: TAttrGeneralForm
     ShowHint = True
     TabOrder = 2
     Visible = False
-    ExplicitWidth = 354
   end
   object btnOk: TBitBtn
     Left = 8
-    Top = 161
-    Width = 343
+    Top = 167
+    Width = 404
     Height = 28
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     ModalResult = 1
     NumGlyphs = 2
-    TabOrder = 4
+    TabOrder = 5
     OnClick = btnOkClick
   end
   object btnCancel: TBitBtn
-    Left = 357
-    Top = 161
+    Left = 418
+    Top = 167
     Width = 75
     Height = 28
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 5
-    ExplicitLeft = 352
-    ExplicitTop = 136
+    TabOrder = 6
+  end
+  object mmoValue: TDBMemo
+    Left = 71
+    Top = 35
+    Width = 422
+    Height = 24
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    DataField = 'AVALUE'
+    DataSource = srcAttr
+    ScrollBars = ssBoth
+    TabOrder = 3
+    Visible = False
   end
   object srcAttributesList: TDataSource
     AutoEdit = False
@@ -154,8 +159,12 @@ object AttrGeneralForm: TAttrGeneralForm
       '  , coalesce(O_CHECK, '#39#39') REGEXP'
       '  , coalesce(O_CHARFIELD, '#39#39') VLIST'
       
-        '  , cast(coalesce(O_Numericfield, 0) as integer) O_UNIQ -- '#1091#1085#1080#1082#1072 +
-        #1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
+        '  , cast(coalesce(BIN_AND(Cast(o.O_Numericfield as Integer), 1),' +
+        ' 0) as INTEGER) O_UNIQ  -- '#1091#1085#1080#1082#1072#1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
+      
+        '  , cast(coalesce(iif(BIN_AND(Cast(o.O_Numericfield as Integer),' +
+        ' 2) = 2, 1, 0), 0) as INTEGER) O_MEMO  -- '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1082' '#1084#1077#1084#1086
+      ''
       '  from OBJECTS o'
       '  where O_TYPE = :Type_Id'
       '        and O_DELETED = 0'
@@ -163,9 +172,10 @@ object AttrGeneralForm: TAttrGeneralForm
       '          or (not exists(select'
       '                             ca.Aid'
       '                           from ATTRIBUTE ca'
-      '                           where Type_Id = :Type_Id'
-      '                                 and Object_Id = :Object_Id'
-      '                                 and Aid = o.O_ID)))'
+      '                           where ca.Type_Id = :Type_Id'
+      '                                 and ca.Object_Id = :Object_Id'
+      '                                 and ca.Aid = o.O_ID'
+      '                                 and ca.Adeleted = 0 )))'
       '  order by O_NAME')
     AutoCalcFields = False
     Transaction = trRead
@@ -188,8 +198,11 @@ object AttrGeneralForm: TAttrGeneralForm
       '      and (Object_Id = :Object_Id)'
       '      and (Aid = :Aid)')
     InsertSQL.Strings = (
-      'insert into Attribute (Type_Id, Object_Id, Aid, Avalue, Notice)'
-      'values (:Type_Id, :Object_Id, :Aid, :Avalue, :Notice)')
+      
+        'update or insert into Attribute (Type_Id, Object_Id, Aid, Avalue' +
+        ', Notice, Adeleted)'
+      'values (:Type_Id, :Object_Id, :Aid, :Avalue, :Notice, 0)'
+      'matching (Type_Id, Object_Id, Aid)')
     SelectSQL.Strings = (
       'select'
       '    o.O_NAME'

@@ -635,6 +635,7 @@ object CustomersForm: TCustomersForm
       TabOrder = 2
       Visible = True
       OnChange = lcbHOUSEChange
+      OnDropDownBoxGetCellParams = lcbHOUSEDropDownBoxGetCellParams
     end
     object lcbFLAT: TDBLookupComboboxEh
       Left = 588
@@ -960,6 +961,11 @@ object CustomersForm: TCustomersForm
     object actOrderTP: TAction
       Caption = #1057#1090#1086#1088#1086#1085#1085#1080#1081' '#1079#1072#1082#1072#1079
       OnExecute = actOrderTPExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   object mmMenu: TMainMenu
@@ -2122,6 +2128,9 @@ object CustomersForm: TCustomersForm
       '  , H.STREET_ID'
       '  , H.HOUSE_NO'
       '  , sa.Subarea_Name'
+      
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') InService '
       'from HOUSE H'
       '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'

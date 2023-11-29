@@ -6,7 +6,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.StrUtils,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ComCtrls,
   Vcl.Mask,
@@ -14,7 +14,7 @@ uses
   SynEditHighlighter, FIBQuery, pFIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst,
   ToolCtrlsEh,
   DBGridEhToolCtrls, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase, frxClass, SendEmail, DBGridEhGrouping,
-  DynVarsEh, frxExportBaseDialog, frxExportPDF;
+  DynVarsEh, frxExportBaseDialog, frxExportPDF, PropFilerEh, PropStorageEh;
 
 type
   TSendMessagesForm = class(TForm)
@@ -32,7 +32,7 @@ type
     lbl1: TLabel;
     lbl3: TLabel;
     cbMessType: TDBLookupComboboxEh;
-    pnl3: TPanel;
+    pnlTmplts: TPanel;
     dbgTemplate: TDBGridEh;
     Panel10: TPanel;
     btnSaveTemplate: TSpeedButton;
@@ -68,6 +68,7 @@ type
     pnlContact: TPanel;
     Label1: TLabel;
     edtReciver: TDBEditEh;
+    PropStorageEh: TPropStorageEh;
     procedure FormShow(Sender: TObject);
     procedure miClick(Sender: TObject);
     procedure actSendExecute(Sender: TObject);
@@ -86,23 +87,27 @@ type
     procedure FormResize(Sender: TObject);
     function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
     procedure FormCreate(Sender: TObject);
-    procedure SetToContact(const value: String);
+
   private
     FReportLoaded: Boolean;
     FToContact: string;
-    FParentMessage:Integer;
+    FToCustomer: Integer;
+    FParentMessage: Integer;
     function GetMessage(const Msg: String): string;
     procedure SendEmailMessage;
     procedure SendMessage(const mes_type: string);
     procedure SaveMessageDB(const mes_type, head, Text: String; const Res: Integer; const Contact:string = '');
     procedure LoadReportBody(FR: TfrxReport);
     procedure InitEmailClient(emailClient: TEmailClient);
+    procedure SetToCustomer(const value: Integer);
+    procedure SetToContact(const value: String);
   public
+    property ToCustomer: Integer write SetToCustomer;
     property ToContact: string write SetToContact;
     property ParentMessage: integer write FParentMessage;
   end;
 
-function SendMessages(const aToContact: string = ''; const parent_id :Integer = -1): Boolean;
+function SendMessages(const aCustomer_ID: Integer = -1; const aTo_Contact: string = ''; const parent_id :Integer = -1): Boolean;
 
 implementation
 
@@ -111,12 +116,13 @@ uses
 
 {$R *.dfm}
 
-function SendMessages(const aToContact: string = ''; const parent_id :Integer = -1): Boolean;
+function SendMessages(const aCustomer_ID: Integer = -1; const aTo_Contact: string = ''; const parent_id :Integer = -1): Boolean;
 begin
   Result := False;
   with TSendMessagesForm.Create(Application) do begin
-    ToContact := aToContact;
+    ToContact := aTo_Contact;
     ParentMessage := parent_id;
+    ToCustomer:= aCustomer_id;
     try
       if ShowModal = mrOk then
       begin
@@ -158,7 +164,10 @@ begin
   begin
     sql.Text :=
       'select mes_id from Message_For_Customer(:Customer_Id, :Mes_Type, :Mes_Head, :Mes_Text, 0, null, :MES_RESULT, :CONTACT, :PARENT_ID)';
-    ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
+    if FToCustomer > -1 then
+      ParamByName('CUSTOMER_ID').AsInteger := FToCustomer
+    else
+      ParamByName('CUSTOMER_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
     ParamByName('MES_TEXT').AsString := Text;
     ParamByName('MES_HEAD').AsString := head;
     ParamByName('MES_TYPE').AsString := mes_type;
@@ -176,6 +185,7 @@ begin
     ExecQuery;
     Transaction.Commit;
     Close;
+    FToCustomer := -1;
   end;
 end;
 
@@ -325,7 +335,7 @@ begin
   show := False;
   if not dsMessType.FieldByName('O_NUMERICFIELD').IsNull then
     show := (dsMessType['O_NUMERICFIELD'] = 1);
-  pnlHead.Visible := show;
+  pnlHead.Visible := show or cbMessType.Text.toUpper.Contains('EMAIL');
 
   pnlReport.Visible := cbMessType.Text.Contains('EMAIL');
 end;
@@ -343,10 +353,43 @@ end;
 
 procedure TSendMessagesForm.FormShow(Sender: TObject);
 var
-  I: Integer;
   val: TStringArray;
-  s: string;
+  i, c: Integer;
+  Font_size: Integer;
+  Font_name, s: string;
+  Row_height: Integer;
 begin
+  Font_size := 0;
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
+    Font_size := i;
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+  end;
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+      if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
+      then
+        (Components[i] as TDBGridEh).DefaultApplySorting;
+      if Font_size <> 0 then
+      begin
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end;
+  end;
+
   dsMessType.Open;
   dsLetterTypes.Open;
   dsTemplate.Open;
@@ -404,18 +447,22 @@ begin
 end;
 
 procedure TSendMessagesForm.actSaveTemplateExecute(Sender: TObject);
+var
+  TempName : string;
 begin
-  if Length(mmoMessage.Lines.Text) > 10 then
+  if Length(mmoMessage.Lines.Text) < 10 then
+  Exit;
+
+  if Vcl.Dialogs.InputQuery('Ведите название шаблона', 'Название', TempName) then
   begin
     if not dsTemplate.Active then
       dsTemplate.Open;
 
     dsTemplate.Insert;
     dsTemplate['O_CHARFIELD'] := mmoMessage.Lines.Text;
-    if edtHEAD.Text <> '' then
-      dsTemplate['O_NAME'] := edtHEAD.Text
-    else
-      dsTemplate['O_NAME'] := Copy(mmoMessage.Lines.Text, 1, 10);
+    dsTemplate['O_DESCRIPTION'] := TempName;
+    dsTemplate['O_NAME'] := IfThen(not edtHEAD.Text.IsEmpty, edtHEAD.Text, TempName);
+
     dsTemplate.Post;
     dsTemplate.CloseOpen(True);
   end;
@@ -423,7 +470,15 @@ begin
 end;
 
 procedure TSendMessagesForm.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  i: Integer;
 begin
+
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TDBGridEh then
+      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, False);
+
   if dsLetterTypes.Active then
     dsLetterTypes.Close;
   if dsTemplate.Active then
@@ -440,6 +495,7 @@ begin
   frxPDFExport.EmbeddedFonts := True;
   frxPDFExport.PrintOptimized := True;
   FParentMessage := -1;
+  FToCustomer := -1;
   SetToContact('');
 end;
 
@@ -536,5 +592,11 @@ begin
   else
     ActiveControl := cbMessType;
 end;
+
+procedure TSendMessagesForm.SetToCustomer(const value: Integer);
+begin
+  FToCustomer := Value;
+end;
+
 
 end.

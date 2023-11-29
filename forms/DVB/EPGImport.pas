@@ -964,7 +964,7 @@ procedure TEPGImportForm.UpdateEPGLoadTime;
   begin
     ids := Trim(Copy(ids, 1, Length(ids) - 1));
     Query.SQL.Clear;
-    Query.SQL.Add(' update Dvb_Streams set Epg_Updated = CURRENT_TIMESTAMP where Dvbs_Id in ( ');
+    Query.SQL.Add(' update Dvb_Streams set Epg_Updated = LOCALTIMESTAMP where Dvbs_Id in ( ');
     Query.SQL.Add(' select distinct Dvbs_Id from Dvb_Stream_Channels where Ch_Id in (');
     Query.SQL.Add(ids);
     Query.SQL.Add('))');

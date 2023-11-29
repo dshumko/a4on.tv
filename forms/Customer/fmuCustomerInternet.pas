@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
   Vcl.ActnList,
   AtrPages, ToolCtrlsEh, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ibase, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  Vcl.Buttons;
 
 type
   TDllForm = procedure(AppHandle: THandle; DBHandle: TISC_DB_HANDLE; ID: Integer; UserName: PWChar;
@@ -21,11 +22,6 @@ type
     srcInternet: TDataSource;
     dsInternet: TpFIBDataSet;
     dbgrdBill: TDBGridEh;
-    tlbButtons: TToolBar;
-    btnInfo: TToolButton;
-    btnBillEdit: TToolButton;
-    btnUnblock: TToolButton;
-    btnBillDelete: TToolButton;
     ActListCustomers: TActionList;
     actEdit: TAction;
     actAdd: TAction;
@@ -33,6 +29,11 @@ type
     actUnblock: TAction;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    pnlButtons: TPanel;
+    btnDel1: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnEdit1: TSpeedButton;
+    btnOpen: TSpeedButton;
     procedure actUnblockExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actAddExecute(Sender: TObject);
@@ -76,11 +77,9 @@ end;
 procedure TapgCustomerInternet.EnableControls;
 begin
   actAdd.Enabled := (bEdit or bFull);
-  btnInfo.Visible := False; // просмотр биллинг
   actUnblock.Visible := False; // правка биллинга
   actEdit.Enabled := (bEdit or bFull); // правка биллинга
   actDelete.Enabled := (bEdit or bFull); // правка биллинга
-  tlbButtons.Visible := actAdd.Enabled or actEdit.Enabled or actDelete.Enabled;
 end;
 
 procedure TapgCustomerInternet.OpenData;

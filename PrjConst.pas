@@ -458,6 +458,7 @@ resourcestring
   rsIPIncorrect = 'Неверный IP';
   rsInputIncorrect = 'Неверное значение';
   rsPastDateIncorrect = 'Запрещено изменять услуги в прошлом';
+  rsEnoughMoneyDateIncorrect = 'Не хватает средств до даты отключения';
   rsFileLocked = 'Файл заблокирован (открыт в другом приложении)';
   rsMACIncorrect = 'Неверный MAC';
   rsLANIncorrect = 'Необходимо IP или MAC или IPv6 или Порт';
@@ -801,6 +802,7 @@ resourcestring
   rsFldFileOnOffSrv = '[УСЛУГА_П/О]';
   rsFldFileDate = '[ДАТА_УСЛУГИ]';
   rsFldOwner = '[СОБСТВЕННИК]';
+  rsFldOwnerText = '[СОБСТВЕННИК_ТЕКСТ]';
   rsFldFile = '[ФАЙЛ]';
   rsFldFileName = '[НАИМЕНОВАНИЕ]';
   rsFldApplicantName = '[ФИО_ЗАЯВИТ]';
@@ -892,7 +894,8 @@ resourcestring
   rsClmnLink = 'Линии связи';
   rsClmnFlats = 'Квартиры';
   rsClmnValidTo = 'Договор до';
-  rsClmnJur = 'Юр. лицо';
+  rsClmnJur = 'Юр.лицо';
+  rsClmnJurShrt = 'Юр/л';
   rsClmnEmail = 'Email';
   rsClmnPrepay = 'Об. платеж';
   rsMapLimit = 'Лимит запросов, повторите позже';
@@ -947,6 +950,7 @@ resourcestring
   rsRequestReadOnly = '(Заявка закрыта. Только просмотр)';
   rsTaskCommentInEdit = 'Перед редактированием, необходимо сохранить или отменить комментарий к задаче.';
   rsPromoWarning = 'Внимане. Абонент подключен по АКЦИИ!';
+  rsNotAllowedService = 'Этой услугой запрещено отключать. Укажите другую.';
 
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';

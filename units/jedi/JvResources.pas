@@ -56,7 +56,7 @@ resourcestring
   RsSelectAllItem = 'Select &All';
   {
   SWEDISH:
-  RsUndoItem = '&Ã…ngra';
+  RsUndoItem = '&Ångra';
   RsCutItem = '&Klipp ut';
   RsCopyItem = 'K&opiera';
   RsPasteItem = 'Kl&istra in';
@@ -64,17 +64,17 @@ resourcestring
   RsSelectAllItem = '&Markera allt';
 
   GERMAN:
-  RsUndoItem = '&RÃ¼ckgÃ¤ngig';
+  RsUndoItem = '&Rückgängig';
   RsCutItem = '&Ausschneiden';
   RsCopyItem = '&Kopieren';
-  RsPasteItem = 'E&infÃ¼gen';
-  RsDeleteItem = '&LÃ¶schen';
+  RsPasteItem = 'E&infügen';
+  RsDeleteItem = '&Löschen';
   RsSelectAllItem = 'Alles &markieren';
 
   DUTCH:
   RsUndoItem = '&Ongedaan maken';
   RsCutItem = 'K&nippen';
-  RsCopyItem = '&KopiÃ«ren';
+  RsCopyItem = '&Kopiëren';
   RsPasteItem = '&Plakken';
   RsDeleteItem = '&Wissen';
   RsSelectAllItem = '&Alles selecteren';
@@ -587,6 +587,9 @@ resourcestring
   RsDBPosBackward = 'Backward';
   RsDBPosForward = 'Forward';
   RsDBPosPercental = 'Percental';
+  RsDBPosPositionNormal = ' %3d / %3d ';
+  RsDBPosPositionSelected = ' %3d / %3d (%d) ';
+  RsDBPosPositionInactive = ' - / - ';
   RsSRWPostButtonCaption = '&Post';
   RsSRWCancelButtonCaption = '&Cancel';
   RsSRWCloseButtonCaption = 'C&lose';
@@ -1073,8 +1076,8 @@ resourcestring
 //=== JvgXMLSerializer.pas ===================================================
 resourcestring
   { RUSSIAN
-  RsOpenXMLTagNotFound = 'ÃŽÃ²ÃªÃ°Ã»Ã¢Ã Ã¾Ã¹Ã¨Ã© Ã²Ã¥Ã£ Ã­Ã¥ Ã­Ã Ã©Ã¤Ã¥Ã­: <%s>';
-  RsCloseXMLTagNotFound = 'Ã‡Ã ÃªÃ°Ã»Ã¢Ã Ã¾Ã¹Ã¨Ã© Ã²Ã¥Ã£ Ã­Ã¥ Ã­Ã Ã©Ã¤Ã¥Ã­: </%s>';
+  RsOpenXMLTagNotFound = 'Îòêðûâàþùèé òåã íå íàéäåí: <%s>';
+  RsCloseXMLTagNotFound = 'Çàêðûâàþùèé òåã íå íàéäåí: </%s>';
   RsUncknownProperty = 'Uncknown property: %s'
   }
   RsOpenXMLTagNotFound = 'Open tag not found: <%s>';
@@ -1476,6 +1479,7 @@ resourcestring
   RsEUpdateError = 'Unable to modify the record.';
   // 'No se pudo eliminar el registro.';
   RsEDeleteError = 'Unable to erase the record.';
+  RsEFieldOffsetOverflow = 'Field offset overflow. Index: %0:d';
 
 //=== JvMouseGesture.pas =====================================================
 resourcestring

@@ -11,7 +11,7 @@ inherited DocListForm: TDocListForm
   TextHeight = 13
   object splitter: TSplitter [0]
     Left = 0
-    Top = 432
+    Top = 397
     Width = 698
     Height = 3
     Cursor = crVSplit
@@ -29,7 +29,7 @@ inherited DocListForm: TDocListForm
   inherited dbGrid: TDBGridEh
     Top = 300
     Width = 698
-    Height = 132
+    Height = 97
     AllowedOperations = []
     FooterRowCount = 1
     SumList.Active = True
@@ -284,9 +284,9 @@ inherited DocListForm: TDocListForm
   end
   object pnlHistory: TPanel [4]
     Left = 0
-    Top = 435
+    Top = 400
     Width = 698
-    Height = 129
+    Height = 164
     Align = alBottom
     Caption = 'pnlHistory'
     TabOrder = 3
@@ -295,12 +295,15 @@ inherited DocListForm: TDocListForm
       Left = 28
       Top = 1
       Width = 669
-      Height = 127
+      Height = 162
       Align = alClient
       AllowedOperations = []
       DataSource = srcHistory
       DynProps = <>
       Flat = True
+      OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       TabOrder = 1
       OnDblClick = dbgHistoryDblClick
       Columns = <
@@ -311,6 +314,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'O_NAME'
           Footers = <>
           Title.Caption = #1058#1080#1087' '#1092#1072#1081#1083#1072
+          Title.TitleButton = True
           Width = 78
         end
         item
@@ -319,6 +323,7 @@ inherited DocListForm: TDocListForm
           EditButtons = <>
           FieldName = 'CF_ID'
           Footers = <>
+          Title.TitleButton = True
           Visible = False
         end
         item
@@ -328,6 +333,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 134
         end
         item
@@ -336,6 +342,7 @@ inherited DocListForm: TDocListForm
           EditButtons = <>
           FieldName = 'CF_TYPE'
           Footers = <>
+          Title.TitleButton = True
           Visible = False
         end
         item
@@ -345,6 +352,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 244
         end
         item
@@ -353,6 +361,7 @@ inherited DocListForm: TDocListForm
           EditButtons = <>
           FieldName = 'CUSTOMER_ID'
           Footers = <>
+          Title.TitleButton = True
           Visible = False
         end
         item
@@ -361,6 +370,7 @@ inherited DocListForm: TDocListForm
           EditButtons = <>
           FieldName = 'FILENAME'
           Footers = <>
+          Title.TitleButton = True
           Visible = False
         end
         item
@@ -370,6 +380,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'ACCOUNT_NO'
           Footers = <>
           Title.Caption = #1051'/'#1057
+          Title.TitleButton = True
           Width = 72
         end
         item
@@ -379,6 +390,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'CUST_CODE'
           Footers = <>
           Title.Caption = #1050#1086#1076
+          Title.TitleButton = True
           Width = 73
         end
         item
@@ -388,6 +400,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'FIO'
           Footers = <>
           Title.Caption = #1060#1048#1054
+          Title.TitleButton = True
           Width = 225
         end
         item
@@ -397,6 +410,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'DEBT_SUM'
           Footers = <>
           Title.Caption = #1057#1072#1083#1100#1076#1086
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -405,6 +419,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'STREET_NAME'
           Footers = <>
           Title.Caption = #1059#1083#1080#1094#1072
+          Title.TitleButton = True
           Width = 158
         end
         item
@@ -414,6 +429,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'HOUSE_NO'
           Footers = <>
           Title.Caption = #1044#1086#1084
+          Title.TitleButton = True
           Width = 51
         end
         item
@@ -423,6 +439,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'FLAT_NO'
           Footers = <>
           Title.Caption = #1050#1074'-'#1088#1072
+          Title.TitleButton = True
           Width = 58
         end
         item
@@ -432,6 +449,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'ACT'
           Footers = <>
           Title.Caption = #1054#1073#1088'.'
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -440,6 +458,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'ANOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1086#1073#1088'.'
+          Title.TitleButton = True
           Width = 288
         end
         item
@@ -449,6 +468,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'ADDED_ON'
           Footers = <>
           Title.Caption = #1050#1086#1075#1076#1072' '#1074#1085#1077#1089
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -457,6 +477,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'ADDED_BY'
           Footers = <>
           Title.Caption = #1050#1090#1086' '#1074#1085#1077#1089
+          Title.TitleButton = True
           Width = 88
         end
         item
@@ -466,6 +487,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'EDIT_ON'
           Footers = <>
           Title.Caption = #1050#1086#1075#1076#1072' '#1080#1079#1084#1077#1085#1080#1083
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -474,6 +496,7 @@ inherited DocListForm: TDocListForm
           FieldName = 'EDIT_BY'
           Footers = <>
           Title.Caption = #1050#1090#1086' '#1080#1079#1084#1077#1085#1080#1083
+          Title.TitleButton = True
           Width = 96
         end>
       object RowDetailData: TRowDetailPanelControlEh
@@ -483,10 +506,11 @@ inherited DocListForm: TDocListForm
       Left = 1
       Top = 1
       Width = 27
-      Height = 127
+      Height = 162
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitHeight = 127
       object btnCustHist: TSpeedButton
         Left = 2
         Top = 2

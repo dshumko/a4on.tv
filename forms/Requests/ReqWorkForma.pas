@@ -35,7 +35,7 @@ type
     srcService: TDataSource;
     dbckDefault: TDBCheckBoxEh;
     lbl5: TLabel;
-    ed1: TDBNumberEditEh;
+    ednW_COST: TDBNumberEditEh;
     Label1: TLabel;
     lbl2: TLabel;
     lcbW_SRV: TDBLookupComboboxEh;
@@ -50,6 +50,8 @@ type
     procedure lcbW_SRVChange(Sender: TObject);
     procedure dsWorkNewRecord(DataSet: TDataSet);
     procedure chkW_ONOFFClick(Sender: TObject);
+    procedure cbServiceChange(Sender: TObject);
+    procedure cbServiceEnter(Sender: TObject);
   private
     procedure ReloadOnOfSrev;
   public
@@ -112,9 +114,34 @@ begin
     end;
 end;
 
+procedure TReqWorkForm.cbServiceChange(Sender: TObject);
+var
+  v: Variant;
+begin
+  ednW_COST.Enabled := true;
+  if dsService.Active then begin
+    if (cbService.Text <> '') and (not VarIsNull(cbService.Value)) then begin
+      v := dsService.Lookup('SERVICE_ID', cbService.Value, 'srv_type_id');
+      if not (VarType(V) in [varNull]) then
+        ednW_COST.Enabled := (v <> 1);
+    end;
+  end;
+end;
+
+procedure TReqWorkForm.cbServiceEnter(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+    (Sender as TDBLookupComboboxEh).DropDown
+  else
+    (Sender as TDBLookupComboboxEh).CloseUp(False);
+end;
+
 procedure TReqWorkForm.chkW_ONOFFClick(Sender: TObject);
 begin
-   ReloadOnOfSrev;
+  ReloadOnOfSrev;
 end;
 
 procedure TReqWorkForm.dsWorkNewRecord(DataSet: TDataSet);
@@ -131,7 +158,7 @@ end;
 
 procedure TReqWorkForm.lcbW_SRVChange(Sender: TObject);
 begin
-   ReloadOnOfSrev;
+  ReloadOnOfSrev;
 end;
 
 procedure TReqWorkForm.okcnclfrm1bbOkClick(Sender: TObject);

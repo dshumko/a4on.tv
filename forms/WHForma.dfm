@@ -2,20 +2,27 @@ inherited WHform: TWHform
   Caption = #1057#1082#1083#1072#1076#1099
   ClientHeight = 516
   ClientWidth = 692
+  ExplicitWidth = 708
+  ExplicitHeight = 555
   PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel [0]
     Left = 0
-    Top = 364
+    Top = 367
     Width = 692
     Height = 13
     Align = alTop
     Caption = #1055#1088#1072#1074#1072' '#1076#1086#1089#1090#1091#1087#1082#1072' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1077#1081' '#1082' '#1089#1082#1083#1072#1076#1091
+    ExplicitWidth = 210
+  end
+  inherited splPG: TSplitter
+    Top = 161
+    Width = 692
   end
   inherited dbGrid: TDBGridEh
     AlignWithMargins = True
     Left = 3
-    Top = 164
+    Top = 167
     Width = 686
     Height = 197
     Align = alTop
@@ -53,6 +60,7 @@ inherited WHform: TWHform
   end
   inherited tlbMain: TToolBar
     Width = 692
+    ExplicitWidth = 692
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -66,100 +74,14 @@ inherited WHform: TWHform
       Visible = False
     end
   end
-  inherited pnlEdit: TPanel
-    Width = 692
-    Height = 136
-    object lbl2: TLabel [0]
-      Left = 5
-      Top = 9
-      Width = 32
-      Height = 13
-      Caption = #1057#1082#1083#1072#1076
-    end
-    object lbl3: TLabel [1]
-      Left = 5
-      Top = 62
-      Width = 49
-      Height = 13
-      Caption = #1054#1087#1080#1089#1072#1085#1080#1077
-    end
-    object lbl4: TLabel [2]
-      Left = 5
-      Top = 36
-      Width = 81
-      Height = 13
-      Caption = #1054#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081
-    end
-    inherited btnSaveLink: TBitBtn
-      Left = 97
-      Top = 108
-      Width = 482
-      TabOrder = 2
-    end
-    inherited btnCancelLink: TBitBtn
-      Left = 597
-      Top = 108
-      TabOrder = 3
-    end
-    object edtName: TDBEditEh
-      Left = 97
-      Top = 6
-      Width = 586
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DataField = 'O_NAME'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077' '#1089#1082#1083#1072#1076#1072
-      ShowHint = True
-      TabOrder = 0
-      Visible = True
-    end
-    object dbmmoO_DESCRIPTION: TDBMemoEh
-      Left = 97
-      Top = 59
-      Width = 586
-      Height = 41
-      Anchors = [akLeft, akTop, akRight, akBottom]
-      AutoSize = False
-      DataField = 'O_DESCRIPTION'
-      DataSource = srcDataSource
-      DynProps = <>
-      EditButtons = <>
-      ShowHint = True
-      TabOrder = 1
-      Visible = True
-      WantReturns = True
-    end
-    object cbbOwner: TDBLookupComboboxEh
-      Left = 97
-      Top = 33
-      Width = 586
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DynProps = <>
-      DataField = 'OWNER_ID'
-      DataSource = srcDataSource
-      EmptyDataInfo.Text = #1054#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081
-      EditButtons = <>
-      KeyField = 'WORKER_ID'
-      ListField = 'W_OWNER'
-      ListSource = srcOwner
-      ShowHint = True
-      TabOrder = 4
-      Visible = True
-    end
-  end
   object dbgRights: TDBGridEh [4]
     AlignWithMargins = True
     Left = 3
-    Top = 380
+    Top = 383
     Width = 686
-    Height = 133
+    Height = 130
     Align = alClient
     AllowedOperations = [alopUpdateEh]
-    AutoFitColWidths = False
     DataSource = srcRights
     DynProps = <>
     EditActions = [geaCopyEh, geaSelectAllEh]
@@ -168,6 +90,8 @@ inherited WHform: TWHform
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
     SortLocal = True
     STFilter.Local = True
     TabOrder = 3
@@ -230,6 +154,98 @@ inherited WHform: TWHform
         Width = 264
       end>
     object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  inherited pnlEdit: TPanel
+    Width = 692
+    Height = 136
+    ExplicitWidth = 692
+    ExplicitHeight = 136
+    object lbl2: TLabel [0]
+      Left = 5
+      Top = 9
+      Width = 32
+      Height = 13
+      Caption = #1057#1082#1083#1072#1076
+    end
+    object lbl3: TLabel [1]
+      Left = 5
+      Top = 62
+      Width = 49
+      Height = 13
+      Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+    end
+    object lbl4: TLabel [2]
+      Left = 5
+      Top = 36
+      Width = 81
+      Height = 13
+      Caption = #1054#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081
+    end
+    inherited btnSaveLink: TBitBtn
+      Left = 97
+      Top = 108
+      Width = 482
+      TabOrder = 2
+      ExplicitLeft = 97
+      ExplicitTop = 108
+      ExplicitWidth = 482
+    end
+    inherited btnCancelLink: TBitBtn
+      Left = 597
+      Top = 108
+      TabOrder = 3
+      ExplicitLeft = 597
+      ExplicitTop = 108
+    end
+    object edtName: TDBEditEh
+      Left = 97
+      Top = 6
+      Width = 586
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'O_NAME'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077' '#1089#1082#1083#1072#1076#1072
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
+    end
+    object dbmmoO_DESCRIPTION: TDBMemoEh
+      Left = 97
+      Top = 59
+      Width = 586
+      Height = 41
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      AutoSize = False
+      DataField = 'O_DESCRIPTION'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 1
+      Visible = True
+      WantReturns = True
+    end
+    object cbbOwner: TDBLookupComboboxEh
+      Left = 97
+      Top = 33
+      Width = 586
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = 'OWNER_ID'
+      DataSource = srcDataSource
+      EmptyDataInfo.Text = #1054#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081
+      EditButtons = <>
+      KeyField = 'WORKER_ID'
+      ListField = 'W_OWNER'
+      ListSource = srcOwner
+      ShowHint = True
+      TabOrder = 4
+      Visible = True
     end
   end
   inherited srcDataSource: TDataSource

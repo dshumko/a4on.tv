@@ -476,6 +476,22 @@ object PaymentDocForm: TPaymentDocForm
           EditButtons = <>
           FieldName = 'EMAIL'
           Footers = <>
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'DEBT_SAVE'
+          Footers = <>
+          Title.Caption = #1057#1072#1083#1100#1076#1086' '#1076#1086
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'BAL_SAVE'
+          Footers = <>
+          Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -981,6 +997,8 @@ object PaymentDocForm: TPaymentDocForm
       '  , coalesce(w.Surname, p.ADDED_BY) as WHO_ADD'
       '  , cast( left(cc.phone, 1000) as varchar(1000)) PHONE'
       '  , cs.Email'
+      '  , p.DEBT_SAVE'
+      '  , p.DEBT_SAVE*-1 BAL_SAVE     '
       '  from PAYMENT P'
       '       inner join pay_doc D on (p.Pay_Doc_Id = d.Pay_Doc_Id)'
       

@@ -1076,6 +1076,8 @@ begin
     Result := A4MainForm.ShowCustomers(100, Params[0]) // 100 - лицевой
   else if MethodName = 'OPENCUSTOMERBYID' then
     Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
+  else if MethodName = 'INCMAC' then
+    Result := AtrStrUtils.IncMAC(Params[0], Params[1])
   else
     Result := null;
 end;
@@ -1114,6 +1116,8 @@ begin
     'Открыть абонента в списке абонентов по лицевому');
   Report.AddFunction('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', rsFunctionsA4onTV,
     'Открыть абонента в списке абонентов по его ID');
+  Report.AddFunction('function IncMAC(const MAC: string; const step: Integer): String;', rsFunctionsA4onTV,
+    'Увеличить/уменьшить MAC адресс на STEP');
 end;
 
 function TdmMain.GetNextIP(InetIP: Boolean; const mask: string = ''): string;

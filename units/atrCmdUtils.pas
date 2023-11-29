@@ -57,11 +57,9 @@ begin
     binherithandle := true;
     lpsecuritydescriptor := nil;
   end;
-  // Creazione della pipe
   if Createpipe(hReadPipe, hWritePipe, @SecAttr, 0) then
   begin
     Buffer := AllocMem(BUFSIZE + 1);
-    // Allochiamo un buffer di dimensioni BUFSIZE+1
     FillChar(StartupInfo, SizeOf(StartupInfo), #0);
     StartupInfo.cb := SizeOf(StartupInfo);
     StartupInfo.hStdOutput := hWritePipe;
@@ -71,20 +69,14 @@ begin
     if CreateProcess(nil, Pchar(CmdLine), @SecAttr, @SecAttr, true, NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo,
       ProcessInfo) then
     begin
-      // Attendiamo la fine dell'esecuzione del processo
       repeat
         WaitReason := WaitForSingleObject(ProcessInfo.hProcess, 100);
       until (WaitReason <> WAIT_TIMEOUT);
-      // Leggiamo la pipe
       Repeat
         BytesRead := 0;
-        // Leggiamo "BUFSIZE" bytes dalla pipe
         ReadFile(hReadPipe, Buffer[0], BUFSIZE, BytesRead, nil);
-        // Convertiamo in una stringa "\0 terminated"
         Buffer[BytesRead] := #0;
-        // Convertiamo i caratteri da DOS ad ANSI
         OemToAnsi(Buffer, Buffer);
-        // Scriviamo nell' "OutMemo" l'output ricevuto tramite pipe
         ResLines.Text := ResLines.Text + String(Buffer);
       until (BytesRead < BUFSIZE);
     end;
@@ -94,7 +86,6 @@ begin
     CloseHandle(hReadPipe);
     CloseHandle(hWritePipe);
   end;
-
 end;
 
 function Ping(const host: string): string;

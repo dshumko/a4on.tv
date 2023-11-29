@@ -208,6 +208,7 @@ type
     actOrderTP: TAction;
     miOrderTP: TMenuItem;
     tmrSearch: TTimer;
+    actCopyID: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbgrdh1DblClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
@@ -282,6 +283,9 @@ type
     procedure dbgCustomersColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgCustomersColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure tmrSearchTimer(Sender: TObject);
+    procedure lcbHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -363,7 +367,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.DateUtils, System.StrUtils,
+  System.DateUtils, System.StrUtils, Vcl.Clipbrd,
   AtrCommon, DM, MAIN, CustomerForma, DBGridEhFindDlgs, SelectColumnsForma, ExportSettingsForma, TextEditForma,
   SendMessagesForma,
   fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, AtrStrUtils, RxStrUtils, EhLibFIB, pFIBProps,
@@ -373,9 +377,8 @@ uses
   fmuCustomerDigit,
   fmuCustomerAppl, fmuCustomerCard, PaymentForma, CancelContractForma, SelectLetterTypeForma, CustomersFilter,
   ReportPreview,
-  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma, OverbyteIcsWndControl,
-  OverbyteIcsHttpProt,
-  OverbyteIcsWSocket, OverbyteIcsUrl;
+  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma,
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase;
 
 const
   cst_OneRecord: string = ' first 1 ';
@@ -1195,6 +1198,21 @@ begin
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
+end;
+
+procedure TCustomersForm.actCopyIDExecute(Sender: TObject);
+begin
+  if (dsCustomers.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  Clipboard.Open;
+  try
+    Clipboard.Clear;
+    Clipboard.AsText := dsCustomers.FieldByName('CUSTOMER_ID').AsString;
+  finally
+    Clipboard.Close;
+  end;
+
 end;
 
 procedure TCustomersForm.actCustNodeExecute(Sender: TObject);
@@ -2425,9 +2443,10 @@ begin
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'JURIDICAL';
-      Title.Caption := rsClmnJur;
+      Checkboxes := True;
+      Title.Caption := rsClmnJurShrt;
       Title.TitleButton := True;
-      Width := 15;
+      Width := 10;
     end;
 
   if (Mask and clc_Email) <> 0 then
@@ -2689,6 +2708,8 @@ const
   function Del_1_1(const where_sql: String): String;
   begin
     Result := ReplaceStr(where_sql, fltr_1_1 + ' and ', '');
+    if Result <> ' (  (1=1)  ) ' then
+      Result := ReplaceStr(Result, fltr_1_1, '');
   end;
 
 // если скрываем абонентов, то скроем
@@ -2730,9 +2751,8 @@ const
         case dsFilter['SFLTR_TYPE'] of
           // Договор
           1:
-            tmpSQL := Format
-              (' ((c.dogovor_no %s %s) or (exists(select ss.customer_id from subscr_serv ss where ss.contract %s %s and ss.customer_id = c.customer_id)))',
-              [startSQL, s, startSQL, s]);
+            tmpSQL := Format(' ((c.dogovor_no %s %s) or (exists(select ss.customer_id from subscr_serv ss ' +
+              ' where ss.contract %s %s and ss.customer_id = c.customer_id)))', [startSQL, s, startSQL, s]);
           // Лицевой
           2:
             tmpSQL := Format(' (C.ACCOUNT_NO %s %s) ', [startSQL, s]);
@@ -2851,12 +2871,16 @@ const
         // + rsEOL + '  left outer join Discount_Factor k on (((k.Serv_Id = sh.Serv_Id) or (k.Serv_Id = -1)) and k.Customer_Id = sh.Customer_Id and current_date between k.Date_From and k.Date_To) '
         // + rsEOL + ' where sh.customer_id = c.customer_id))) ' + rsEOL;
 
-        tmpSQL := tmpSQL +
-          ' > coalesce((select sum(f.Fee) from Monthly_Fee f where f.Customer_Id = c.Customer_Id and f.Month_Id >=' +
-          ' DateAdd(month, ' + IntToStr(-1 * (dsFilter['MONTH'] - 1)) +
-          ', (current_date - extract(day from current_date) + 1))), ' + IntToStr(dsFilter['MONTH']) +
+        tmpSQL := tmpSQL + ' > coalesce((select sum(f.Fee) from Monthly_Fee f ' +
+          ' inner join services sr on (sr.Service_Id = f.Service_Id and sr.Srv_Type_Id = 0) ' +
+          ' where f.Customer_Id = c.Customer_Id and f.Month_Id >=' + ' DateAdd(month, ' +
+          IntToStr(-1 * (dsFilter['MONTH'] - 1)) +
+          ', (current_date - extract(day from current_date) + 1)) having sum(f.Fee) > 0 ), ' +
+          IntToStr(dsFilter['MONTH']) +
           '*(select min(t.Tarif_Sum) from services sr inner join Tarif t on (sr.Service_Id = t.Service_Id) ' +
-          ' where sr.Srv_Type_Id = 0 and current_date between t.Date_From and t.Date_To)) ' + ' and c.Debt_Sum > 0 )'
+          ' inner join subscr_serv ss on (ss.serv_id = sr.service_id and ss.state_sgn = 1 and c.customer_id = ss.customer_id) '
+          + ' where sr.Srv_Type_Id = 0 and t.Tarif_Sum <> 0 and current_date between t.Date_From and t.Date_To)) ' + //
+          ' and c.Debt_Sum > 0 )'
       end
       else
       begin
@@ -3727,7 +3751,7 @@ begin
         else
           whereStr := whereStr + ' AND '
     end;
-
+    whereStr := ReplaceStr(whereStr, '(  (  )  )', '').Trim;
     if (not ListSql.IsEmpty) and (not whereStr.IsEmpty) then
       whereStr := whereStr + ' and ' + ListSql;
 
@@ -3911,13 +3935,14 @@ var
   i: Integer;
   s, si: string;
   mi, sm: TMenuItem;
+  miFind: Boolean;
 
-  function FindSubMenu(const ACaption: String): TMenuItem;
+  function FindSubMenu(const ACaption: String; var Find: Boolean): TMenuItem;
   var
     i: Integer;
-    Find: Boolean;
   begin
     Find := False;
+    Result := nil;
     for i := 0 to pmSelectPrintDoc.Items.Count - 1 do
     begin
       if pmSelectPrintDoc.Items[i].Caption = ACaption then
@@ -3972,12 +3997,15 @@ begin
         begin
           si := Copy(s, 1, pos('\', s) - 1);
           s := Copy(s, pos('\', s) + 1, 500);
-          sm := FindSubMenu(si);
-          mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
-          mi.Tag := FieldByName('ID').value;
-          mi.ImageIndex := FieldByName('RECORDINDB').value;
-          mi.Hint := FieldByName('FILENAME').value;
-          sm.Add(mi);
+          sm := FindSubMenu(si, miFind);
+          if miFind then
+          begin
+            mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
+            mi.Tag := FieldByName('ID').value;
+            mi.ImageIndex := FieldByName('RECORDINDB').value;
+            mi.Hint := FieldByName('FILENAME').value;
+            sm.Add(mi);
+          end;
         end;
         next;
         i := i + 1;
@@ -4828,68 +4856,89 @@ var
   filter: string;
   id: Integer;
   s: string;
+  scr_cr: TCursor;
 begin
-  filter := '';
-  if (actAddressSearch.Checked) then
-  begin
-    if VarIsNumeric(lcbHOUSE.KeyValue) then
+  scr_cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  try
+    filter := '';
+    if (actAddressSearch.Checked) then
     begin
-      id := lcbHOUSE.KeyValue;
-      filter := Format('HOUSE_ID = %d ', [id]);
-      if not dsFLAT.Active then
-        dsFLAT.Open;
-      if lcbFLAT.Text <> '' then
+      if VarIsNumeric(lcbHOUSE.KeyValue) then
       begin
-        s := lcbFLAT.Text;
-        if s = '-' then
-          s := ''' or  FLAT_NO = ''-'; // некоторые операторы вместо пустого номера ставят -
-        filter := Format('%s and (FLAT_NO = ''%s'')', [filter, s]);
+        id := lcbHOUSE.KeyValue;
+        filter := Format('HOUSE_ID = %d ', [id]);
+        if not dsFLAT.Active then
+          dsFLAT.Open;
+        if lcbFLAT.Text <> '' then
+        begin
+          s := lcbFLAT.Text;
+          if s = '-' then
+            s := ''' or  FLAT_NO = ''-'; // некоторые операторы вместо пустого номера ставят -
+          filter := Format('%s and (FLAT_NO = ''%s'')', [filter, s]);
+        end;
+      end
+      else
+      begin
+
+        if VarIsNumeric(lcbStreets.KeyValue) then
+        begin
+          id := lcbStreets.KeyValue;
+          filter := Format('STREET_ID = %d ', [id]);
+          if not dsHomes.Active then
+          begin
+            dsHomes.Open;
+          end;
+        end
       end;
+      lcbHOUSE.Enabled := VarIsNumeric(lcbStreets.KeyValue);
+      lcbFLAT.Enabled := lcbHOUSE.Enabled and VarIsNumeric(lcbHOUSE.KeyValue);
+      if (not lcbFLAT.Enabled) and dsFLAT.Active then
+        dsFLAT.Close;
+      if (not lcbHOUSE.Enabled) and dsHomes.Active then
+        dsHomes.Close;
     end
     else
     begin
+      if dsFLAT.Active then
+        dsFLAT.Close;
 
-      if VarIsNumeric(lcbStreets.KeyValue) then
-      begin
-        id := lcbStreets.KeyValue;
-        filter := Format('STREET_ID = %d ', [id]);
-        if not dsHomes.Active then
-        begin
-          dsHomes.Open;
-        end;
-      end
+      if dsHomes.Active then
+        dsHomes.Close;
+
+      if dsStreets.Active then
+        dsStreets.Close;
     end;
-    lcbHOUSE.Enabled := VarIsNumeric(lcbStreets.KeyValue);
-    lcbFLAT.Enabled := lcbHOUSE.Enabled and VarIsNumeric(lcbHOUSE.KeyValue);
-    if (not lcbFLAT.Enabled) and dsFLAT.Active then
-      dsFLAT.Close;
-    if (not lcbHOUSE.Enabled) and dsHomes.Active then
-      dsHomes.Close;
-  end
-  else
-  begin
-    if dsFLAT.Active then
-      dsFLAT.Close;
 
-    if dsHomes.Active then
-      dsHomes.Close;
-
-    if dsStreets.Active then
-      dsStreets.Close;
+    dbgCustomers.DataSource.DataSet.DisableControls;
+    dbgCustomers.DataSource.DataSet.filter := filter;
+    dbgCustomers.DataSource.DataSet.Filtered := (filter <> '');
+    dbgCustomers.DataSource.DataSet.EnableControls;
+  finally
+    Screen.Cursor := scr_cr;
   end;
-
-  dbgCustomers.DataSource.DataSet.DisableControls;
-  dbgCustomers.DataSource.DataSet.filter := filter;
-  dbgCustomers.DataSource.DataSet.Filtered := (filter <> '');
-  dbgCustomers.DataSource.DataSet.EnableControls;
 end;
 
 procedure TCustomersForm.lcbHOUSEChange(Sender: TObject);
 begin
+  if (dsHomes['inService'] <> '') then
+    lcbHOUSE.Color := clYellow
+  else
+    lcbHOUSE.Color := clWindow;
+
   lcbFLAT.value := NULL;
   tmrSearch.Tag := 1;
   tmrSearch.Enabled := False;
   tmrSearch.Enabled := True;
+end;
+
+procedure TCustomersForm.lcbHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if (dsHomes.Active) and (dsHomes['inService'] <> '') then
+    Background := clYellow
+  else
+    Background := clWindow;
 end;
 
 procedure TCustomersForm.lcbFLATChange(Sender: TObject);

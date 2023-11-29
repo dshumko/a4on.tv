@@ -153,7 +153,6 @@ var
   Cell: TGridCoord;
   s: String;
   vContinue: Boolean;
-  i: Integer;
 begin
   vContinue := true;
   ScrPt := Mouse.CursorPos;

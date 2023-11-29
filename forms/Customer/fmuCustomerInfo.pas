@@ -82,6 +82,16 @@ type
     miN4: TMenuItem;
     actSendMessage: TAction;
     miSendMessage: TMenuItem;
+    Cut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    PasteSpecial1: TMenuItem;
+    miN5: TMenuItem;
+    EditCut1: TEditCut;
+    edtcpy: TEditCopy;
+    edtpst: TEditPaste;
+    EditSelectAll1: TEditSelectAll;
+    miN6: TMenuItem;
     procedure memCustNoticeExit(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure dsContactsNewRecord(DataSet: TDataSet);
@@ -420,7 +430,8 @@ begin
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
       Transaction.StartTransaction;
-      SQL.Text := 'EXECUTE PROCEDURE FULL_RECALC_CUSTOMER(:CUST)';
+      // передаем два нула, чтоб пересчитать все периоды абонента
+      SQL.Text := 'EXECUTE PROCEDURE FULL_RECALC_CUSTOMER(:CUST, null, null)';
       ParamByName('CUST').AsInt64 := CUSTOMER_ID;
       ExecQuery;
       Transaction.Commit;
@@ -487,8 +498,9 @@ begin
   if not dsContacts.Active then
     dsContacts.Open;
 
-  Contact.cID := -1;
+  Contact.cID := 1; // мобила
   Contact.CustID := FDataSource.DataSet['CUSTOMER_ID'];
+  Contact.Notify := 1; // уведомлять
   if EditContact(Contact) then
   begin
     dsContacts.Insert;
@@ -706,7 +718,7 @@ begin
   then
     exit;
 
-  SendMessages(dsContacts.FieldByName('Cc_Value').AsString);
+  SendMessages(dsContacts.FieldByName('CUSTOMER_ID').AsInteger, dsContacts.FieldByName('Cc_Value').AsString);
 end;
 
 procedure TapgCustomerInfo.btnAlignClick(Sender: TObject);

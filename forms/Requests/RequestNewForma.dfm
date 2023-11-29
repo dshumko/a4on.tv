@@ -176,6 +176,7 @@ object RequestNewForm: TRequestNewForm
         ShowHint = True
         TabOrder = 1
         Visible = True
+        OnChange = LupHOUSEChange
         OnDropDownBoxGetCellParams = LupHOUSEDropDownBoxGetCellParams
         OnExit = LupHOUSEExit
       end
@@ -305,8 +306,14 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 495
+    ExplicitTop = 487
     ExplicitWidth = 753
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6
@@ -337,7 +344,6 @@ object RequestNewForm: TRequestNewForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 366
     object pnlRType: TPanel
       Left = 0
       Top = 0
@@ -355,7 +361,6 @@ object RequestNewForm: TRequestNewForm
         BevelOuter = bvNone
         Caption = 'pnlRWorks'
         TabOrder = 1
-        ExplicitHeight = 201
         object dbgWorks: TDBGridEh
           Left = 0
           Top = 30
@@ -464,7 +469,6 @@ object RequestNewForm: TRequestNewForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitHeight = 201
         DesignSize = (
           481
           257)
@@ -476,8 +480,6 @@ object RequestNewForm: TRequestNewForm
           Align = alBottom
           Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1087#1086#1093#1086#1078#1080#1077' '#1079#1072#1103#1074#1082#1080' '#1087#1086
           TabOrder = 3
-          ExplicitLeft = -6
-          ExplicitTop = 243
         end
         object rbZV: TRadioButton
           Left = 205
@@ -617,7 +619,6 @@ object RequestNewForm: TRequestNewForm
             TabOrder = 3
             Visible = True
             WantReturns = True
-            ExplicitHeight = 47
           end
           object edPhone: TDBEditEh
             Left = 100
@@ -642,7 +643,6 @@ object RequestNewForm: TRequestNewForm
           BevelOuter = bvNone
           TabOrder = 1
           Visible = False
-          ExplicitTop = 85
           object lbl14: TLabel
             Left = 4
             Top = 8
@@ -679,8 +679,6 @@ object RequestNewForm: TRequestNewForm
           BevelOuter = bvNone
           TabOrder = 2
           OnResize = pnlRClientResize
-          ExplicitTop = 111
-          ExplicitHeight = 66
           DesignSize = (
             481
             76)
@@ -771,7 +769,6 @@ object RequestNewForm: TRequestNewForm
             TabOrder = 4
             Visible = True
             WantReturns = True
-            ExplicitHeight = 56
           end
           object edtPLANDATE: TDBDateTimeEditEh
             Left = 100
@@ -799,8 +796,6 @@ object RequestNewForm: TRequestNewForm
       BevelOuter = bvNone
       Caption = 'pnlTime'
       TabOrder = 1
-      ExplicitTop = 201
-      ExplicitHeight = 165
       object dbgSame: TDBGridEh
         Left = 0
         Top = 0
@@ -944,7 +939,6 @@ object RequestNewForm: TRequestNewForm
     Caption = #1054#1090#1082#1088#1099#1090#1100' '
     DynProps = <>
     TabOrder = 3
-    ExplicitTop = 540
   end
   object chkRecreate: TDBCheckBoxEh
     Left = 97
@@ -959,7 +953,6 @@ object RequestNewForm: TRequestNewForm
     State = cbChecked
     TabOrder = 4
     Visible = False
-    ExplicitTop = 540
   end
   object dsWorks: TMemTableEh
     Active = True
@@ -1100,6 +1093,9 @@ object RequestNewForm: TRequestNewForm
         '                                                                ' +
         '     and w.working = 1)) || '#39')'#39', '#39#39') || coalesce('#39' '#39' || he.he_na' +
         'me, '#39#39') as varchar(500)) as warea'
+      
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') InService  '
       '  from HOUSE H'
       '       left outer join workgroups wg on (wg.wg_id = h.wg_id)'
       '       left outer join workarea wa on (wa.wa_id = wg.wa_id)'

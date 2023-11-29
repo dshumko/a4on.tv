@@ -69,7 +69,7 @@ function IncMAC(const MAC: string; const step: Integer = 1): String;
 function DigitsOnly(const S: string): string;
 function DelBlankChars(const S: string): string;
 
-function GenPassword(const PWDlen: Integer = 8): String;
+function GenPassword(const PWDlen: Integer = 8; const validchar: string = '0123456789abcdef'): String;
 
 // перевод трех символьного кода iso в двухсимвольный
 function LangISO6391toISO6392TCode(const LANG: String): String;
@@ -103,7 +103,7 @@ function ValueHasMaskError(const inMask, inValue: string): Boolean;
 // замена в маске значениями
 function ReplaceInMask(const inMask, inValue: string): String;
 
-function ExtractUrl(const s: String) : string;
+function ExtractUrl(const S: String): string;
 
 implementation
 
@@ -111,6 +111,7 @@ uses
   Winapi.Windows,
   System.DateUtils, System.RegularExpressions, System.MaskUtils,
   Vcl.Clipbrd,
+  CnBigNumber,
   RxStrUtils;
 
 const
@@ -556,43 +557,35 @@ end;
 
 function IncMAC(const MAC: string; const step: Integer = 1): String;
 var
-  newMac: string;
-  IntMac: array [0 .. 5] of Byte;
-  J, o: Integer;
-  i: Integer;
+  bnMac: TCnBigNumber;
+  bnStep: TCnBigNumber;
+  bnRes: TCnBigNumber;
 begin
   // 00:18:9b:47:29:4f
-
-  for i := 0 to 5 do
-  begin
-    newMac := ExtractWord(i + 1, MAC, [':']);
-    IntMac[i] := HEX2DEC(newMac);
-  end;
-  J := step;
-  for i := 5 downto 0 do
-  begin
-    if (IntMac[i] + J) > 255 then
+  Result := StringReplace(MAC, ':', '', [rfReplaceAll]);
+  bnMac := BigNumberNew;
+  bnStep := BigNumberNew;
+  bnRes := BigNumberNew;
+  try
+    bnMac.SetHex(Result);
+    if step >= 0 then
     begin
-      o := (IntMac[i] + J);
-      o := o mod 256;
-      IntMac[i] := o;
-      J := J - o;
+      bnStep.SetInteger(step);
+      BigNumberUnsignedAdd(bnRes, bnMac, bnStep)
     end
     else
     begin
-      IntMac[i] := IntMac[i] + J;
-      J := 0;
+      bnStep.SetInteger(-1*step);
+      BigNumberUnsignedSub(bnRes, bnMac, bnStep);
     end;
+    Result := BigNumberToHex(bnRes);
+  finally
+    BigNumberFree(bnMac);
+    BigNumberFree(bnStep);
+    BigNumberFree(bnRes);
   end;
 
-  newMac := Dec2Hex(IntMac[0], 2);
-  newMac := newMac + ':' + Dec2Hex(IntMac[1], 2);
-  newMac := newMac + ':' + Dec2Hex(IntMac[2], 2);
-  newMac := newMac + ':' + Dec2Hex(IntMac[3], 2);
-  newMac := newMac + ':' + Dec2Hex(IntMac[4], 2);
-  newMac := newMac + ':' + Dec2Hex(IntMac[5], 2);
-
-  Result := newMac;
+  Result := ValidateMAC(Result);
 end;
 
 function DigitsOnly(const S: string): string;
@@ -613,14 +606,11 @@ begin
   Result := '';
   l := Length(S);
   for i := 1 to l do
-    if not (CharInSet(S[i], [' ', #10, #13, #9])) then
+    if not(CharInSet(S[i], [' ', #10, #13, #9])) then
       Result := Result + S[i];
 end;
 
-
-function GenPassword(const PWDlen: Integer = 8): String;
-const
-  validchar: string = '0123456789abcdef';
+function GenPassword(const PWDlen: Integer = 8; const validchar: string = '0123456789abcdef'): String;
 var
   S: string;
   i: Integer;
@@ -874,59 +864,60 @@ begin
   end;
 end;
 
-function ExtractUrl(const s: String) : string;
+function ExtractUrl(const S: String): string;
 var
   url: string;
-  i : Integer;
+  i: Integer;
 begin
-{
-//var
-//  foundcollection: TMatchCollection;
-//  found: TMatch;
-//  myregex: string;
+  {
+    //var
+    //  foundcollection: TMatchCollection;
+    //  found: TMatch;
+    //  myregex: string;
 
-//  myregex := '(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+';
-//  foundcollection := TRegEx.Matches(MyString, myregex,[roIgnoreCase]);
-//  for found in foundcollection do
-//  begin
-//    ListBox1.Items.Add(found.Value);
-//  end;
-}
+    //  myregex := '(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+';
+    //  foundcollection := TRegEx.Matches(MyString, myregex,[roIgnoreCase]);
+    //  for found in foundcollection do
+    //  begin
+    //    ListBox1.Items.Add(found.Value);
+    //  end;
+  }
 
   url := '';
 
-  if s.ToUpper.Contains('HTTP') then
+  if S.ToUpper.Contains('HTTP') then
   begin
-    i := Pos('HTTP', s.ToUpper);
-    url := Copy(s, i, 1000);
+    i := Pos('HTTP', S.ToUpper);
+    url := Copy(S, i, 1000);
     url := Trim(url);
     i := Pos(' ', url);
-    if i>0 then begin
+    if i > 0 then
+    begin
       url := Copy(url, 1, i);
     end
   end;
-  result := url;
+  Result := url;
 end;
 
 function ReplaceInMask(const inMask, inValue: string): String;
 var
-  i, j: Integer;
+  i, J: Integer;
   msk: string;
-  C: Char;
 begin
   msk := inMask;
   i := Pos(';', msk);
   if i > 0 then
     msk := Copy(msk, 1, i - 1);
   msk := msk.Replace('\', '');
-  j := 1;
+  J := 1;
   for i := 1 to Length(msk) do
   begin
     if msk[i] <> inValue[i] then
     begin
-      if ((msk[i] = '0') and (CharInSet(inValue[j], ['0' .. '9']))) then begin
-        msk[i] := inValue[j];
-        Inc(j);
+      if ((msk[i] = '0') and (CharInSet(inValue[J], ['0' .. '9']))) then
+      begin
+        msk[i] := inValue[J];
+        Inc(J);
       end;
     end;
   end;

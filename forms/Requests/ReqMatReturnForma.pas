@@ -34,18 +34,18 @@ type
     procedure srcDataSourceUpdateData(Sender: TObject);
   private
     { Private declarations }
-    fEditMode: Boolean;
+    FReadOnly: Boolean;
     fRequest: Integer;
-    procedure SetRequest(Value: Integer);
-    procedure SetEditMode(Value: Boolean);
+    procedure SetRequest(const Value: Integer);
+    procedure SetEditMode(const Value: Boolean);
     function GetGridSortOrder(Grid: TDBGridEh): String;
   public
     { Public declarations }
-    property EditMode: Boolean read fEditMode write SetEditMode;
+    property ReadOnlyMode: Boolean read FReadOnly write SetEditMode;
     property pRequest: Integer read fRequest write SetRequest;
   end;
 
-function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly:Boolean = True ): boolean;
+function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
 
 var
   ReqMatReturnForm: TReqMatReturnForm;
@@ -57,14 +57,14 @@ uses
 
 {$R *.dfm}
 
-function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly:Boolean = True ): boolean;
+function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
 var
-  FWHOwner: boolean;
+  FWHOwner: Boolean;
 begin
   result := false;
   with TReqMatReturnForm.Create(Application) do
     try
-      EditMode := not aReadOnly;
+      ReadOnlyMode := aReadOnly;
       dsMatGropups.Open;
       pRequest := aRequest;
 
@@ -81,13 +81,13 @@ begin
       dsMatGropups.Open;
 
       if ShowModal = mrOk then
-        result := true;
+        result := True;
     finally
       free
     end;
 end;
 
-procedure TReqMatReturnForm.SetRequest(Value: Integer);
+procedure TReqMatReturnForm.SetRequest(const Value: Integer);
 begin
   fRequest := Value;
 end;
@@ -209,17 +209,23 @@ begin
   result := result.TrimRight([',']);
 end;
 
-procedure TReqMatReturnForm.SetEditMode(Value: Boolean);
+procedure TReqMatReturnForm.SetEditMode(const Value: Boolean);
 var
   i: Integer;
 begin
-  fEditMode := Value;
-  if not fEditMode then
+  FReadOnly := Value;
+
+  if FReadOnly then
     Caption := Caption + rsRequestReadOnly;
+
   for i := 0 to dbGrid.Columns.Count - 1 do
   begin
-    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'QUANT') then
-      dbGrid.Columns[i].ReadOnly := not fEditMode;
+    if (AnsiUpperCase(dbGrid.Columns[i].fieldname) = 'QUANT') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly
+    else if (AnsiUpperCase(dbGrid.Columns[i].fieldname) = 'COST') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly
+    else if (AnsiUpperCase(dbGrid.Columns[i].fieldname) = 'DESCRIPTION') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly;
   end;
 end;
 

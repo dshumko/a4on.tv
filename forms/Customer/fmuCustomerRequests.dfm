@@ -407,7 +407,7 @@ object apgCustomerRequests: TapgCustomerRequests
     UpdateSQL.Strings = (
       'UPDATE REQUEST'
       'SET '
-      '    RQ_EXEC_TIME = CURRENT_TIMESTAMP,'
+      '    RQ_EXEC_TIME = LOCALTIMESTAMP,'
       '    REQ_RESULT = :REQ_RESULT'
       'WHERE'
       '    RQ_ID = :OLD_RQ_ID'

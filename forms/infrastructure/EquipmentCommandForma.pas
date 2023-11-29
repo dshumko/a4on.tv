@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Menus, Vcl.ExtCtrls,
-  SynEditHighlighter, OkCancel_frame, DBCtrlsEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst,
+  SynEditHighlighter, OkCancel_frame, DBCtrlsEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBLookupEh,
+  PrjConst,
   DBGridEh;
 
 type
@@ -45,8 +46,13 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure okcnclfrm1bbOkClick(Sender: TObject);
     procedure cbTypeChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure lcbGroupChange(Sender: TObject);
+    procedure dsGCNewRecord(DataSet: TDataSet);
   private
-    { Private declarations }
+    FPreviousMenu: Integer;
+    procedure BuildLANmenu;
+    procedure BuildTVmenu;
   public
     { Public declarations }
   end;
@@ -73,7 +79,8 @@ begin
         dsGC.Edit;
 
       // eACCOUNT_NO.Enabled := (EditMode = 0);
-      if ShowModal = mrOk then begin
+      if ShowModal = mrOk then
+      begin
         result := true;
         if (dsGC.State in [dsEdit, dsInsert]) then
           dsGC.Post;
@@ -96,9 +103,19 @@ begin
   end;
 end;
 
+procedure TEquipmentCommandForm.dsGCNewRecord(DataSet: TDataSet);
+begin
+  dsGC['IN_GUI'] := 1;
+end;
+
 procedure TEquipmentCommandForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   dsGroup.Close;
+end;
+
+procedure TEquipmentCommandForm.FormCreate(Sender: TObject);
+begin
+  FPreviousMenu := 0;
 end;
 
 procedure TEquipmentCommandForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -108,9 +125,36 @@ begin
 end;
 
 procedure TEquipmentCommandForm.FormShow(Sender: TObject);
+begin
+  dsGroup.Open;
+end;
+
+procedure TEquipmentCommandForm.IP1Click(Sender: TObject);
+begin
+  if (Sender is TMenuItem) and (ActiveControl is TDBMemoEh) then
+    (ActiveControl as TDBMemoEh).SelText := (Sender as TMenuItem).Hint;
+end;
+
+procedure TEquipmentCommandForm.lcbGroupChange(Sender: TObject);
+begin
+  if lcbGroup.Value <> -2 then
+    BuildLANmenu
+  else
+    BuildTVmenu;
+end;
+
+procedure TEquipmentCommandForm.okcnclfrm1bbOkClick(Sender: TObject);
+begin
+  okcnclfrm1.actExitExecute(Sender);
+end;
+
+procedure TEquipmentCommandForm.BuildLANmenu;
 var
   NewItem: TMenuItem;
 begin
+  if (FPreviousMenu = 1) then
+    Exit;
+
   pmMemo.Items.Clear;
 
   NewItem := TMenuItem.Create(pmMemo);
@@ -251,18 +295,73 @@ begin
   NewItem.OnClick := IP1Click;
   pmMemo.Items.Add(NewItem);
 
-  dsGroup.Open;
+  FPreviousMenu := 1;
 end;
 
-procedure TEquipmentCommandForm.IP1Click(Sender: TObject);
+procedure TEquipmentCommandForm.BuildTVmenu;
+var
+  NewItem: TMenuItem;
 begin
-  if (Sender is TMenuItem) and (ActiveControl is TDBMemoEh) then
-    (ActiveControl as TDBMemoEh).SelText := (Sender as TMenuItem).Hint;
-end;
+  if (FPreviousMenu = 2) then
+    Exit;
 
-procedure TEquipmentCommandForm.okcnclfrm1bbOkClick(Sender: TObject);
-begin
-  okcnclfrm1.actExitExecute(Sender);
+  pmMemo.Items.Clear;
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'Имя канала';
+  NewItem.Hint := '<c_name>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'ID канала';
+  NewItem.Hint := '<c_id>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'Аналог номер';
+  NewItem.Hint := '<a_num>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'Ствол';
+  NewItem.Hint := '<trunk>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'Номер в стволе';
+  NewItem.Hint := '<trunk_n>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'NID';
+  NewItem.Hint := '<nid>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'TSID';
+  NewItem.Hint := '<tsid>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'SID';
+  NewItem.Hint := '<sid>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := 'Дата в формате Y-m-d h:n ' + FormatDateTime('Y-m-d h:n', Now());
+  NewItem.Hint := '<date>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  FPreviousMenu := 2;
 end;
 
 end.

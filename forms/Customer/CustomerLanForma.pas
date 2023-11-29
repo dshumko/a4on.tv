@@ -20,7 +20,7 @@ type
     OkCancelFrame: TOkCancelFrame;
     srcLan: TDataSource;
     dsLAN: TpFIBDataSet;
-    GroupBox2: TPanel;
+    pnlMain: TPanel;
     Label4: TLabel;
     Label2: TLabel;
     eMAC: TDBEditEh;
@@ -30,8 +30,6 @@ type
     dsVlans: TpFIBDataSet;
     lbl3: TLabel;
     dbleVLAN: TDBLookupComboboxEh;
-    Label6: TLabel;
-    dbleEquipment: TDBLookupComboboxEh;
     srcEQ: TDataSource;
     dsEQ: TpFIBDataSet;
     actlst1: TActionList;
@@ -70,6 +68,19 @@ type
     actEditPort: TAction;
     edtPort: TDBEditEh;
     actGetIpv6: TAction;
+    pnlEthernet: TPanel;
+    pnlDocSYS: TPanel;
+    Label5: TLabel;
+    dbleEquipment: TDBLookupComboboxEh;
+    Label6: TLabel;
+    edtModem: TDBEditEh;
+    lbl6: TLabel;
+    edtSerialModem: TDBEditEh;
+    lbl7: TLabel;
+    edtMACmodem: TDBEditEh;
+    lbl8: TLabel;
+    edtIPmodem: TDBEditEh;
+    cbbTagList: TDBComboBoxEh;
     procedure eMACEnter(Sender: TObject);
     procedure eMACExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -83,7 +94,6 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure eIPEditButtons0Click(Sender: TObject; var Handled: Boolean);
-    procedure dbleEquipmentEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure eIPEnter(Sender: TObject);
     procedure eIPv6Exit(Sender: TObject);
     procedure eIPv6Enter(Sender: TObject);
@@ -92,9 +102,7 @@ type
     procedure actLanHttpExecute(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure dbleEquipmentExit(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure lcbHOUSE_IDChange(Sender: TObject);
-    procedure dbleEquipmentEditButtons1Click(Sender: TObject; var Handled: Boolean);
     procedure actAddPortExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure lcbPortDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -106,14 +114,24 @@ type
     procedure DBLookupComboboxClick(Sender: TObject);
     procedure actGetIpv6Execute(Sender: TObject);
     procedure IPv6Get;
+    procedure edtMACmodemExit(Sender: TObject);
+    procedure edtMACmodemEnter(Sender: TObject);
+    procedure edtIPmodemEnter(Sender: TObject);
+    procedure edtIPmodemEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure dbleEquipmentChange(Sender: TObject);
+    procedure dbleEquipmentEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure dbleEquipmentEditButtons1Click(Sender: TObject; var Handled: Boolean);
   private
     { Private declarations }
     FCI: TCustomerInfo;
     FCanEditPort: Boolean;
+    FCanEditEqpmnt: Boolean;
     FVlanDisabled: Boolean;
     FPortDictDisable: Boolean;
     FWarnings: string;
     FEnterSecondPress: Boolean;
+    FDocSYS: Boolean;
+    FModemID: Integer;
     function CheckData(): Integer;
     function CheckWarnings(): Boolean;
     function CheckIP(const ip: String; const VLAN_ID: Integer = -1): string;
@@ -125,9 +143,13 @@ type
     procedure GenerateLANPopUp;
     function GetNodeID: Integer;
     function ReplaceCmdParams(const InputCMD: String): String;
+    procedure CheckModemMac();
+    procedure CheckTagList;
   public
     { Public declarations }
     property CI: TCustomerInfo write FCI;
+    property IsDocSYS: Boolean read FDocSYS;
+    function CreateOrMoveEquipment(): Integer;
   end;
 
 function EditCustomerLAN(const aCI: TCustomerInfo; aLan_ID: Int64): Boolean;
@@ -239,6 +261,10 @@ begin
 
       if ShowModal = mrOk then
       begin
+        if IsDocSYS then
+        begin
+          dsLAN['EQ_ID'] := CreateOrMoveEquipment();
+        end;
         dsLAN['CUSTOMER_ID'] := aCI.CUSTOMER_ID;
         dsLAN.Post;
         Result := True;
@@ -246,6 +272,12 @@ begin
     finally
       free;
     end;
+end;
+
+procedure TCustomerLanForm.dbleEquipmentChange(Sender: TObject);
+begin
+  dbleEquipment.EditButtons[0].Visible := (dbleEquipment.Text.IsEmpty) and FCanEditEqpmnt;
+  dbleEquipment.EditButtons[1].Visible := (not dbleEquipment.Text.IsEmpty) and FCanEditEqpmnt;
 end;
 
 procedure TCustomerLanForm.dbleEquipmentDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -286,7 +318,6 @@ begin
     SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
   else
     dmMain.RestoreKL;
-
 end;
 
 procedure TCustomerLanForm.ePortExit(Sender: TObject);
@@ -308,21 +339,6 @@ begin
     dsStreets.Close;
 end;
 
-procedure TCustomerLanForm.FormCreate(Sender: TObject);
-begin
-  if (dmMain.GetSettingsValue('LAN_ADDRES') = '1') then
-  begin
-    pnlAddres.Visible := True;
-    mmoNOTICE.Top := pnlAddres.Top + pnlAddres.Height + 4;
-  end
-  else
-  begin
-    pnlAddres.Visible := False;
-    mmoNOTICE.Top := edtTAG.Top + edtTAG.Height + 4;
-  end;
-  mmoNOTICE.Height := OkCancelFrame.Top - 8;
-end;
-
 procedure TCustomerLanForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
@@ -335,15 +351,16 @@ var
 begin
   if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := true;
+    go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
-        FEnterSecondPress := true;
+        FEnterSecondPress := True;
       end;
     end;
 
@@ -363,12 +380,21 @@ end;
 
 procedure TCustomerLanForm.FormShow(Sender: TObject);
 begin
-  FCanEditPort := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment);
+  FModemID := -1;
+  FCanEditEqpmnt := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment);
+  FCanEditPort := FCanEditEqpmnt;
   FCanEditPort := FCanEditPort or dmMain.AllowedAction(rght_Comm_Equipment_Ports);
+  FDocSYS := (dmMain.GetSettingsValue('LAN_DOCSYS') = '1') and (dsLAN.State = dsInsert);
+  FVlanDisabled := (not FDocSYS) and (dmMain.GetSettingsValue('LAN_VALANDISABLE') = '1');
+  FPortDictDisable := (FDocSYS) or (dmMain.GetSettingsValue('LAN_PORTDICTDISABLE') = '1');
 
-  dbleEquipment.EditButtons.Items[0].Visible := FCanEditPort;
+  pnlEthernet.Visible := not FDocSYS;
+  pnlDocSYS.Visible := FDocSYS;
+
+  dbleEquipmentChange(Sender);
+
   lcbPort.EditButtons.Items[0].Visible := FCanEditPort;
-  FVlanDisabled := (dmMain.GetSettingsValue('LAN_VALANDISABLE') = '1');
+
   dbleVLAN.Enabled := (not FVlanDisabled);
 
   if (dsLAN.State = dsInsert) and (not VarIsNull(dbleVLAN.Value)) then
@@ -377,7 +403,6 @@ begin
     eMAC.SetFocus;
   end;
 
-  FPortDictDisable := (dmMain.GetSettingsValue('LAN_PORTDICTDISABLE') = '1');
   lcbPort.Visible := not FPortDictDisable;
   edtPort.Visible := FPortDictDisable;
   if FPortDictDisable then
@@ -394,6 +419,29 @@ begin
   end;
 
   actGetIpv6.Visible := (dmMain.GetSettingsValue('IPV6GETURL') <> '');
+
+  if (dmMain.GetSettingsValue('LAN_ADDRES') = '1') then
+  begin
+    pnlAddres.Visible := True;
+    mmoNOTICE.Top := pnlAddres.Top + pnlAddres.Height + 4;
+  end
+  else
+  begin
+    pnlAddres.Visible := False;
+    mmoNOTICE.Top := edtTAG.Top + edtTAG.Height + 4;
+  end;
+  mmoNOTICE.Height := OkCancelFrame.Top - 8;
+
+  if pnlAddres.Visible then
+    pnlAddres.Top := 1000;
+  if pnlEthernet.Visible then
+    pnlEthernet.Top := 1000;
+  if pnlDocSYS.Visible then
+    pnlDocSYS.Top := 1000;
+  if pnlMain.Visible then
+    pnlMain.Top := 1000;
+
+  CheckTagList;
 end;
 
 procedure TCustomerLanForm.eIPExit(Sender: TObject);
@@ -720,13 +768,23 @@ begin
       cnError.Dispose(eMAC);
   end;
 
-  // запрет пустого MAC если это DOCSYS
-  if ((dmMain.GetSettingsValue('LAN_DELEQPMNT') = '1') and (eMAC.Text.IsEmpty)) then
+  cnError.Dispose(cbbTagList);
+  if (cbbTagList.Visible) then
   begin
-    cnError.SetError(eMAC, rsMACIncorrect, iaMiddleLeft, bsNeverBlink);
-    eMAC.SetFocus;
-    vErrors := True;
+    if (VarIsNull(cbbTagList.Value)) or (cbbTagList.KeyItems.IndexOf(cbbTagList.Text) < 0) then
+    begin
+      cnError.SetError(cbbTagList, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+      vErrors := True;
+    end;
   end;
+
+  // запрет пустого MAC если это DocSYS
+  // if ((dmMain.GetSettingsValue('LAN_DELEQPMNT') = '1') and (eMAC.Text.IsEmpty)) then
+  // begin
+  // cnError.SetError(eMAC, rsMACIncorrect, iaMiddleLeft, bsNeverBlink);
+  // eMAC.SetFocus;
+  // vErrors := True;
+  // end;
 
   // проверим влан
   if ((dmMain.GetSettingsValue('VLAN_REQUIRED') = '1') and (not VarIsNumeric(dbleVLAN.Value))) then
@@ -748,6 +806,40 @@ begin
   end
   else
     cnError.Dispose(OkCancelFrame.bbOk);
+
+  if pnlDocSYS.Visible then
+  begin
+    if (edtModem.Text.IsEmpty) then
+    begin
+      cnError.SetError(edtModem, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+      vErrors := True;
+      edtModem.Text := 'Модем DOCSIS 2.0-' + edtMACmodem.Text;
+    end
+    else
+    begin
+      cnError.Dispose(edtModem);
+    end;
+
+    if (edtMACmodem.Text.IsEmpty) then
+    begin
+      cnError.SetError(edtMACmodem, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+      vErrors := True;
+    end
+    else
+    begin
+      cnError.Dispose(edtMACmodem);
+    end;
+
+    if (edtIPmodem.Text.IsEmpty) then
+    begin
+      cnError.SetError(edtIPmodem, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+      vErrors := True;
+    end
+    else
+    begin
+      cnError.Dispose(edtIPmodem);
+    end;
+  end;
 
   if (not vErrors) then
   begin
@@ -804,8 +896,11 @@ end;
 procedure TCustomerLanForm.OkCancelFrame1bbOkClick(Sender: TObject);
 begin
   case CheckData() of
-    1: // нет ошибок
-      ModalResult := mrOk;
+    1:
+      begin // нет ошибок
+        CheckModemMac();
+        ModalResult := mrOk;
+      end;
     2: // нет ошибок, но есть предупреждения
       begin
         FWarnings := FWarnings + rsEOL + rsWarningQuestStop;
@@ -814,6 +909,42 @@ begin
           ModalResult := mrOk;
       end;
   end;
+end;
+
+procedure TCustomerLanForm.edtIPmodemEditButtons0Click(Sender: TObject; var Handled: Boolean);
+var
+  s: string;
+begin
+  s := dmMain.GetNextIP(False, edtIPmodem.Text);
+
+  edtIPmodem.Text := s;
+
+  edtIPmodem.SetFocus;
+end;
+
+procedure TCustomerLanForm.edtIPmodemEnter(Sender: TObject);
+begin
+  if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+    SetKeyboardLayout('EN')
+  else
+    dmMain.SaveKLAndSelectEnglish;
+end;
+
+procedure TCustomerLanForm.edtMACmodemEnter(Sender: TObject);
+begin
+  if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+    SetKeyboardLayout('EN')
+  else
+    dmMain.SaveKLAndSelectEnglish;
+end;
+
+procedure TCustomerLanForm.edtMACmodemExit(Sender: TObject);
+begin
+  CheckModemMac();
+  if (dmMain.GetIniValue('KBDSWITCH') = '0') then
+    SetKeyboardLayout(dmMain.GetIniValue('KEYBOARD'))
+  else
+    dmMain.RestoreKL;
 end;
 
 procedure TCustomerLanForm.eIPEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -847,7 +978,6 @@ procedure TCustomerLanForm.dbleEquipmentEditButtons0Click(Sender: TObject; var H
 var
   eid: Integer;
 begin
-  inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
@@ -861,7 +991,6 @@ begin
       dbleEquipment.Value := eid;
     end;
   end;
-
   Handled := True;
 end;
 
@@ -869,7 +998,6 @@ procedure TCustomerLanForm.dbleEquipmentEditButtons1Click(Sender: TObject; var H
 var
   eid: Integer;
 begin
-  inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
     Exit;
 
@@ -878,7 +1006,6 @@ begin
     eid := dbleEquipment.Value;
     EditEquipment(eid, FCI, 1);
   end;
-
   Handled := True;
 end;
 
@@ -998,9 +1125,12 @@ begin
       // если не нашли сеть, то перечитаем из базы
       if ((dbleVLAN.Text = '') and (dmMain.GetSettingsValue('LAN_VALAN4HOME') = '1')) then
       begin
-        dsVlans.Close;
-        dsVlans.ParamByName('VID').AsInt64 := dsPort['VLAN_ID'];
-        dsVlans.Open;
+        if dsVlans.Active then
+        begin
+          dsVlans.Close;
+          dsVlans.ParamByName('VID').AsInt64 := dsPort['VLAN_ID'];
+          dsVlans.Open;
+        end;
       end;
     end
     else
@@ -1415,7 +1545,7 @@ var
   // URL, AUT_USER, AUT_PSWD: String;
 
 begin
-   InStr := InputCMD;
+  InStr := InputCMD;
 
   C_IP := eIP.Text;
 
@@ -1492,6 +1622,157 @@ begin
   InStr := ReplaceStr(InStr, '<c_vlan>', H_IP);
 
   Result := InStr;
+end;
+
+procedure TCustomerLanForm.CheckModemMac();
+var
+  MAC: string;
+  answer, ACCOUNTS: string;
+  eid: Integer;
+begin
+  MAC := ValidateMAC(edtMACmodem.Text);
+  if MAC <> '' then
+    edtMACmodem.Text := MAC;
+
+  eid := -1;
+  answer := '';
+  ACCOUNTS := '';
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      sql.Text := 'select e.Eid, s.Street_Name, h.House_No';
+      sql.Add(', (select list(c.Account_No) from tv_lan l inner join customer c on (c.Customer_Id = l.Customer_Id) where l.Eq_Id = e.Eid) ACCOUNTS');
+      sql.Add('from Equipment e');
+      sql.Add('  inner join house h on (h.House_Id = e.House_Id)');
+      sql.Add('  inner join street s on (s.Street_Id = h.Street_Id)');
+      sql.Add(' where e.Mac = :mac');
+      if dsLAN.State in [dsEdit] then
+      begin
+        sql.Add('and not exists(select l.Lan_Id from Tv_Lan l where l.Lan_Id = :lan_id and l.Eq_Id = e.Eid)');
+        ParamByName('Lan_id').AsInteger := dsLAN.ParamByName('Lan_ID').AsInt64;
+      end;
+
+      ParamByName('mac').asString := MAC;
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not FieldByName('Eid').IsNUll then
+        eid := FieldByName('eid').Value;
+      if not FieldByName('Street_Name').IsNUll then
+        answer := answer + FieldByName('Street_Name').Value + ' ';
+      if not FieldByName('House_No').IsNUll then
+        answer := answer + ' ' + FieldByName('House_No').Value + ' ';
+      if not FieldByName('ACCOUNTS').IsNUll then
+        ACCOUNTS := FieldByName('ACCOUNTS').Value;
+
+      Close;
+      Transaction.Commit;
+    finally
+      free;
+    end;
+  end;
+  if (eid <> -1) and (FModemID <> eid) then
+  begin
+    if answer <> '' then
+    begin
+      if application.MessageBox(PChar('Моджем установлен на адресе ' + answer), 'Перенести модем',
+        MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
+      begin
+        answer := '';
+      end;
+    end;
+
+    if answer = '' then
+      FModemID := eid;
+  end;
+end;
+
+function TCustomerLanForm.CreateOrMoveEquipment(): Integer;
+begin
+  if FModemID <> -1 then
+  begin
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trWriteQ;
+        sql.Text :=
+          'execute block(pEQ_ID D_Integer=:pEQ_ID, pHouse_id D_Integer=:pHouse_id, PLACE VARCHAR(50)=:PLACE) as';
+        sql.Add('begin');
+        sql.Add('update tv_lan l set l.Eq_Id = null where l.Eq_Id = :pEQ_ID;');
+        sql.Add('update Equipment e set e.House_Id = :pHouse_id, PLACE = :PLACE where e.Eid = :pEQ_ID;');
+        sql.Add('end;');
+
+        ParamByName('pEQ_ID').AsInteger := FModemID;
+        ParamByName('pHouse_id').AsInteger := FCI.HOUSE_ID;
+        ParamByName('PLACE').asString := FCI.FLAT_NO;
+        Transaction.StartTransaction;
+        ExecQuery;
+        Close;
+        Transaction.Commit;
+      finally
+        free;
+      end;
+    end;
+  end
+  else
+  begin
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trWriteQ;
+        sql.Text := 'execute block (HOUSE_ID INTEGER = :HOUSE_ID, NAME VARCHAR(50) = :NAME, IP VARCHAR(15) = :IP,';
+        sql.Add('MAC VARCHAR(18) = :MAC, PLACE VARCHAR(50) = :PLACE, SERIAL_N VARCHAR(100) = :SERIAL_N)');
+        sql.Add('returns (EID INTEGER) as');
+        sql.Add('declare variable EQ_GROUP INTEGER;');
+        sql.Add('begin');
+        sql.Add('EID = gen_id(gen_operations_uid, 1);');
+        sql.Add('select first 1 O_ID FROM OBJECTS WHERE O_TYPE = 7 AND O_DELETED = 0 into :EQ_GROUP;');
+        sql.Add('INSERT INTO EQUIPMENT(EID, HOUSE_ID, NAME, IP, MAC, EQ_TYPE, PLACE, SERIAL_N, EQ_GROUP)');
+        sql.Add('VALUES(:EID, :HOUSE_ID, :NAME, :IP, :MAC, 1, :PLACE, :SERIAL_N, :EQ_GROUP);');
+        sql.Add('suspend;');
+        sql.Add('end;');
+
+        ParamByName('HOUSE_ID').AsInteger := FCI.HOUSE_ID;
+        ParamByName('NAME').asString := edtModem.Text;
+        ParamByName('IP').asString := edtIPmodem.Text;
+        ParamByName('MAC').asString := edtMACmodem.Text;
+        ParamByName('PLACE').asString := FCI.FLAT_NO;
+        ParamByName('SERIAL_N').asString := edtSerialModem.Text;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not FieldByName('EID').IsNUll then
+          FModemID := FieldByName('EID').Value;
+        Close;
+        Transaction.Commit;
+      finally
+        free;
+      end;
+    end;
+  end;
+  Result := FModemID;
+end;
+
+procedure TCustomerLanForm.CheckTagList;
+var
+  l: string;
+begin
+  l := dmMain.GetSettingsValue('LAN_TAG_LIST');
+  if not l.IsEmpty then
+  begin
+    cbbTagList.Items.Clear;
+    cbbTagList.KeyItems.Clear;
+    cbbTagList.Items.DelimitedText := l;
+    cbbTagList.KeyItems.DelimitedText := l;
+    cbbTagList.Visible := True;
+    cbbTagList.Top := edtTAGSTR.Top;
+    cbbTagList.Left := edtTAGSTR.Left;
+    cbbTagList.Width := edtTAGSTR.Width;
+    edtTAGSTR.Visible := False;
+  end
+
 end;
 
 end.

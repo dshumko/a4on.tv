@@ -340,7 +340,6 @@ var
 begin
   // NT 0 - Личный номер 1 - номер паспота
   CnErrors.Dispose(Sender);
-  Result := True;
 
   s := '';
   n := trim(Sender.Text);

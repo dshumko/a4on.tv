@@ -156,6 +156,7 @@ type
     btnSWDel: TSpeedButton;
     btnSWAdd: TSpeedButton;
     btnSWEdit: TSpeedButton;
+    chkHideOld: TCheckBox;
     procedure tbSrvCancelClick(Sender: TObject);
     procedure tbSrvOkClick(Sender: TObject);
     procedure srcServicesStateChange(Sender: TObject);
@@ -215,10 +216,12 @@ type
     procedure srcCMPLXDataChange(Sender: TObject; Field: TField);
     procedure srcSwitchDataChange(Sender: TObject; Field: TField);
     procedure srcSrvAttrDataChange(Sender: TObject; Field: TField);
+    procedure chkHideOldClick(Sender: TObject);
   private
     { Private declarations }
     FCanEdit: Boolean;
     FCanEditAll: Boolean;
+    FHideNotActual : Boolean;
     procedure StartSwitch(const New: Boolean = True);
     procedure StopSwitch(const Cancel: Boolean);
     procedure StartLink(const New: Boolean = True);
@@ -236,7 +239,7 @@ var
 implementation
 
 uses
-  System.RegularExpressions,
+  System.RegularExpressions, System.StrUtils,
   DM, TarifForma, pFIBQuery, ServiceForma, MAIN;
 
 {$R *.dfm}
@@ -253,6 +256,7 @@ begin
   fsGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'fsGrid', false);
   trfGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'trfGrid', false);
   dmMain.SetIniValue('ServiceGrid', IntToStr(ASGrid.Height));
+  dmMain.SetIniValue('HIDE_NOT_ACTUAL_SRV', ifThen(FHideNotActual, '1', '0'));
   Action := caFree;
 end;
 
@@ -304,6 +308,9 @@ begin
   dsServices.Close;
 
   dsServices.ParamByName('SERV_TYPE').AsInteger := pcServices.ActivePage.Tag;
+  if FHideNotActual
+  then dsServices.ParamByName('WHERE_ACTUAL').AsString := 'SHOW_SERVICE = 1'
+  else dsServices.ParamByName('WHERE_ACTUAL').AsString := '1=1';
   dsServices.Open;
 
   tsTarif.TabVisible := pcServices.ActivePage.Tag <> 2;
@@ -597,6 +604,12 @@ begin
 {$IFNDEF DIGIT}
   TabChannels.TabVisible := false;
 {$ENDIF}
+
+  vSF := dmMain.GetIniValue('HIDE_NOT_ACTUAL_SRV');
+  if TryStrToInt(vSF, i)
+  then FHideNotActual := i = 1
+  else FHideNotActual := False;
+  chkHideOld.Checked := FHideNotActual;
 end;
 
 procedure TServicesForm.srcCMPLXDataChange(Sender: TObject; Field: TField);
@@ -1099,6 +1112,12 @@ begin
     CnErrors.Dispose(edCmxTo);
 
   Result := not errors;
+end;
+
+procedure TServicesForm.chkHideOldClick(Sender: TObject);
+begin
+  FHideNotActual := chkHideOld.Checked;
+  pcServicesChange(sender);
 end;
 
 procedure TServicesForm.btn2Click(Sender: TObject);

@@ -579,6 +579,8 @@ object CustomersFilterForm: TCustomersFilterForm
             Style = csDropDownEh
             TabOrder = 1
             Visible = True
+            OnChange = cbxHouseNoChange
+            OnDropDownBoxGetCellParams = cbxHouseNoDropDownBoxGetCellParams
             OnEnter = cbb2Enter
             OnExit = checkAdressSign
           end
@@ -1807,6 +1809,9 @@ object CustomersFilterForm: TCustomersFilterForm
       '  , H.HOUSE_NO'
       '  , Q_FLAT'
       '  , sa.Subarea_Name'
+      
+        '  , iif(coalesce(h.In_Date, dateadd(day, 1, current_date)) <= cu' +
+        'rrent_date, '#39#39', '#39#1085#1077' '#1089#1076#1072#1085#39') InService    '
       'FROM HOUSE H'
       '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'

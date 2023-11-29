@@ -3,8 +3,8 @@ object RequestWorksForm: TRequestWorksForm
   Top = 314
   ActiveControl = cbAllMaterials
   Caption = #1056#1072#1073#1086#1090#1099' '#1074' '#1079#1072#1103#1074#1082#1077
-  ClientHeight = 434
-  ClientWidth = 620
+  ClientHeight = 368
+  ClientWidth = 663
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,7 +23,7 @@ object RequestWorksForm: TRequestWorksForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 620
+    Width = 663
     Height = 25
     Align = alTop
     BevelOuter = bvNone
@@ -41,8 +41,8 @@ object RequestWorksForm: TRequestWorksForm
   end
   object Panel2: TPanel
     Left = 0
-    Top = 397
-    Width = 620
+    Top = 331
+    Width = 663
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
@@ -50,12 +50,12 @@ object RequestWorksForm: TRequestWorksForm
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
-      Width = 620
+      Width = 663
       Height = 37
       Align = alClient
       TabOrder = 0
       TabStop = True
-      ExplicitWidth = 620
+      ExplicitWidth = 663
       ExplicitHeight = 37
       inherited Label2: TLabel
         Margins.Bottom = 0
@@ -64,19 +64,19 @@ object RequestWorksForm: TRequestWorksForm
         Margins.Bottom = 0
       end
       inherited bbOk: TBitBtn
-        Left = 455
+        Left = 498
         Top = 6
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
-        ExplicitLeft = 455
+        ExplicitLeft = 498
         ExplicitTop = 6
       end
       inherited bbCancel: TBitBtn
-        Left = 536
+        Left = 579
         Top = 6
         Caption = #1047#1072#1082#1088#1099#1090#1100
-        ExplicitLeft = 536
+        ExplicitLeft = 579
         ExplicitTop = 6
       end
     end
@@ -84,21 +84,22 @@ object RequestWorksForm: TRequestWorksForm
   object Panel3: TPanel
     Left = 0
     Top = 25
-    Width = 620
-    Height = 372
+    Width = 663
+    Height = 306
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 185
       Top = 0
-      Height = 372
+      Height = 306
+      ExplicitHeight = 372
     end
     object dbGrid: TDBGridEh
       Left = 188
       Top = 0
-      Width = 432
-      Height = 372
+      Width = 475
+      Height = 306
       Align = alClient
       DataSource = srcDataSource
       DynProps = <>
@@ -107,6 +108,8 @@ object RequestWorksForm: TRequestWorksForm
       GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       STFilter.Visible = True
@@ -142,18 +145,16 @@ object RequestWorksForm: TRequestWorksForm
           EditButtons = <>
           FieldName = 'W_QUANT'
           Footers = <>
-          Title.Caption = #1050'-'#1074#1086
+          Title.Caption = #1050'-'#1074#1086' '#1096#1090'./'#1095
           Width = 44
         end
         item
-          AutoFitColWidth = False
           CellButtons = <>
           DynProps = <>
           EditButtons = <>
-          FieldName = 'W_TIME'
+          FieldName = 'W_COST'
           Footers = <>
-          Title.Caption = #1042#1088#1077#1084#1103'| '#1092#1072#1082#1090'.'
-          Width = 47
+          Title.Caption = #1062#1077#1085#1072' '#1096#1090'./'#1095#1072#1089#1072
         end
         item
           AutoFitColWidth = False
@@ -170,18 +171,10 @@ object RequestWorksForm: TRequestWorksForm
           CellButtons = <>
           DynProps = <>
           EditButtons = <>
-          FieldName = 'W_COST'
-          Footers = <>
-          Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          Width = 71
+          Width = 131
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -190,7 +183,7 @@ object RequestWorksForm: TRequestWorksForm
       Left = 0
       Top = 0
       Width = 185
-      Height = 372
+      Height = 306
       Align = alLeft
       AllowedOperations = []
       DataSource = srcWorkGrps
@@ -249,25 +242,26 @@ object RequestWorksForm: TRequestWorksForm
       '  , R.W_TIME'
       '  , W.W_TIME as R_TIME'
       '  , R.NOTICE'
-      '  , coalesce(r.w_cost, w.W_Cost,'
+      
+        '  , coalesce(r.w_cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, w.W_C' +
+        'ost,'
       '    (select'
       '         t.tarif_sum'
       '       from tarif t'
       '       where t.service_id = s.service_id'
       
-        '             and coalesce(rq.rq_exec_time, current_timestamp) be' +
-        'tween t.date_from and t.date_to)) W_COST'
+        '             and coalesce(rq.rq_exec_time, localtimestamp) betwe' +
+        'en t.date_from and t.date_to)), 0) W_COST'
       '  from WORKS W'
-      
-        '       left outer join REQUEST_WORKS R on (R.W_ID = W.W_ID and R' +
-        '.RQ_ID = :RQ_ID)'
+      '       left outer join REQUEST_WORKS R on (R.W_ID = W.W_ID and'
+      '             R.RQ_ID = :RQ_ID)'
       
         '       left outer join services s on (w.as_service = s.service_i' +
         'd)'
       '       left outer join request rq on (r.rq_id = rq.rq_id)'
       '  where W.DELETED = 0'
       '        and W.RQ_TYPE = :RT_ID'
-      '  order by 2')
+      '  order by W.NAME')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

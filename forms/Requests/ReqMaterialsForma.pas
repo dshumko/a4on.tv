@@ -38,14 +38,14 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
-    fEditMode: Boolean;
+    FReadOnly: Boolean;
     fRequest: Integer;
     fVisibleCost: Boolean;
-    procedure SetRequest(Value: Integer);
-    procedure SetEditMode(Value: Boolean);
+    procedure SetRequest(const Value: Integer);
+    procedure SetEditMode(const Value: Boolean);
   public
     { Public declarations }
-    property EditMode: Boolean read fEditMode write SetEditMode;
+    property ReadOnlyMode: Boolean read FReadOnly write SetEditMode;
     property pRequest: Integer read fRequest write SetRequest;
   end;
 
@@ -68,14 +68,13 @@ begin
   result := false;
   with TReqMaterialsForm.Create(Application) do
     try
-      EditMode := not aReadOnly;
+      ReadOnlyMode := aReadOnly;
 
       FWHOwner := (dmMain.GetSettingsValue('WH_REQ_OWNER') = '1');
 
       pRequest := aRequest;
       // if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full))))
-      if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full))))
-      then
+      if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full)))) then
         dsReqMaterials.ParamByName('Rq_Owner').AsInteger := 1
       else
         dsReqMaterials.ParamByName('Rq_Owner').AsInteger := 0;
@@ -83,13 +82,13 @@ begin
       dsReqMaterials.ParamByName('RQ_ID').AsInteger := aRequest;
 
       if ShowModal = mrOk then
-        result := true;
+        result := True;
     finally
       free
     end;
 end;
 
-procedure TReqMaterialsForm.SetRequest(Value: Integer);
+procedure TReqMaterialsForm.SetRequest(const Value: Integer);
 begin
   fRequest := Value;
 end;
@@ -224,21 +223,27 @@ begin
   dsReqMaterials.EnableControls;
 end;
 
-procedure TReqMaterialsForm.SetEditMode(Value: Boolean);
+procedure TReqMaterialsForm.SetEditMode(const Value: Boolean);
 var
   i: Integer;
 begin
-  fEditMode := Value;
-  if not fEditMode then
+  FReadOnly := Value;
+
+  if FReadOnly then
     Caption := Caption + rsRequestReadOnly;
+
   for i := 0 to dbGrid.Columns.Count - 1 do
   begin
     if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_QUANT') then
-      dbGrid.Columns[i].ReadOnly := not fEditMode;
-    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'CALC') then
-      dbGrid.Columns[i].ReadOnly := not fEditMode;
-    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_COST') then
-      dbGrid.Columns[i].ReadOnly := not fEditMode;
+      dbGrid.Columns[i].ReadOnly := FReadOnly
+    else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'CALC') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly
+    else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_COST') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly
+    else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'PROP') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly
+    else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_NOTICE') then
+      dbGrid.Columns[i].ReadOnly := FReadOnly;
   end;
 end;
 

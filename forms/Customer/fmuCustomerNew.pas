@@ -223,7 +223,7 @@ uses
   System.TypInfo, System.RegularExpressions,
   DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit,
   ContactForma,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl;
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase;
 
 {$R *.dfm}
 
@@ -561,8 +561,9 @@ begin
   if not dsContacts.Active then
     dsContacts.Open;
 
-  Contact.cID := -1;
   Contact.CustID := -1;
+  Contact.cID := 1; // мобила
+  Contact.Notify := 1; // уведомлять
   if EditContact(Contact) then
   begin
     dsContacts.Insert;
@@ -1139,6 +1140,11 @@ end;
 
 procedure TapgCustomerNew.LupHOUSE_IDChange(Sender: TObject);
 begin
+  if (dsHouses['inService'] <> '') then
+    LupHOUSE_ID.Color := clYellow
+  else
+    LupHOUSE_ID.Color := clWindow;
+
   dsOrg.CloseOpen(True);
   if dsHouses.FieldByName('ORG_ID').IsNull then
     cbbORG_ID.Value := null

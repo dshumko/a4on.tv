@@ -14,9 +14,9 @@ object apgCustomerInternet: TapgCustomerInternet
   PixelsPerInch = 96
   TextHeight = 13
   object dbgrdBill: TDBGridEh
-    Left = 25
+    Left = 26
     Top = 0
-    Width = 726
+    Width = 725
     Height = 261
     Align = alClient
     AllowedOperations = []
@@ -26,7 +26,7 @@ object apgCustomerInternet: TapgCustomerInternet
     FooterParams.Color = clWindow
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
-    TabOrder = 1
+    TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgrdBillDblClick
     Columns = <
@@ -92,49 +92,54 @@ object apgCustomerInternet: TapgCustomerInternet
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object tlbButtons: TToolBar
+  object pnlButtons: TPanel
     Left = 0
     Top = 0
-    Width = 25
+    Width = 26
     Height = 261
     Align = alLeft
-    Caption = 'ToolBar1'
-    Images = A4MainForm.ICONS_ACTIVE
-    TabOrder = 0
-    object btnBilling: TToolButton
-      Left = 0
-      Top = 0
-      Action = actAdd
-      ParentShowHint = False
-      Wrap = True
-      ShowHint = True
-    end
-    object btnInfo: TToolButton
-      Left = 0
-      Top = 22
-      Hint = #1057#1090#1072#1090#1091#1089' UTM'
-      Caption = #1057#1090#1072#1090#1091#1089' UTM'
-      ImageIndex = 23
-      Wrap = True
-      Visible = False
-    end
-    object btnBillEdit: TToolButton
-      Left = 0
-      Top = 44
-      Action = actEdit
-      Wrap = True
-    end
-    object btnBillDelete: TToolButton
-      Left = 0
-      Top = 66
-      Action = actUnblock
-      Wrap = True
-      Visible = False
-    end
-    object btnUnblock: TToolButton
-      Left = 0
-      Top = 88
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitLeft = 8
+    ExplicitTop = 8
+    ExplicitHeight = 253
+    DesignSize = (
+      26
+      261)
+    object btnDel1: TSpeedButton
+      Left = 2
+      Top = 238
+      Width = 22
+      Height = 22
       Action = actDelete
+      Anchors = [akLeft, akBottom]
+      Flat = True
+      Layout = blGlyphTop
+      ExplicitTop = 230
+    end
+    object btnAdd1: TSpeedButton
+      Left = 2
+      Top = 3
+      Width = 22
+      Height = 22
+      Action = actAdd
+      Flat = True
+    end
+    object btnEdit1: TSpeedButton
+      Left = 2
+      Top = 31
+      Width = 22
+      Height = 22
+      Action = actEdit
+      Flat = True
+    end
+    object btnOpen: TSpeedButton
+      Left = 2
+      Top = 67
+      Width = 22
+      Height = 22
+      Action = actUnblock
+      Flat = True
     end
   end
   object srcInternet: TDataSource
@@ -192,27 +197,23 @@ object apgCustomerInternet: TapgCustomerInternet
     Top = 81
     object actAdd: TAction
       Category = 'Billing'
-      Caption = #1044#1086#1073#1072#1074#1080#1090#1100
       Hint = #1047#1072#1088#1077#1075#1080#1089#1090#1088#1080#1088#1086#1074#1072#1090#1100' '#1074' '#1073#1080#1083#1083#1080#1085#1075#1077
       ImageIndex = 17
       OnExecute = actAddExecute
     end
     object actEdit: TAction
       Category = 'Billing'
-      Caption = #1048#1079#1084#1077#1085#1080#1090#1100'/'#1076#1086#1073#1072#1074#1080#1090#1100
       Hint = #1048#1079#1084#1077#1085#1080#1090#1100'/'#1076#1086#1073#1072#1074#1080#1090#1100' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1102' '#1076#1083#1103' '#1048#1085#1090#1077#1088#1085#1077#1090' '#1074#1088#1091#1095#1085#1091#1102' '
       ImageIndex = 4
       OnExecute = actEditExecute
     end
     object actDelete: TAction
       Category = 'Billing'
-      Caption = #1059#1076#1072#1083#1080#1090#1100
       ImageIndex = 3
       OnExecute = actDeleteExecute
     end
     object actUnblock: TAction
       Category = 'Billing'
-      Caption = #1056#1072#1079#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100
       ImageIndex = 16
       OnExecute = actUnblockExecute
     end

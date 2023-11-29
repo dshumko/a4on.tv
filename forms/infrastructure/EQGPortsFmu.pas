@@ -40,7 +40,6 @@ type
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
-    FPersonalData: Boolean;
     FIsVertical: Boolean;
     procedure EnableControls;
     function GetEquipmentRecord: TEquipmentRecord;
@@ -65,9 +64,6 @@ begin
 end;
 
 procedure TapgEQGPort.InitForm;
-var
-  i: Integer;
-  vFINE: Boolean;
 begin
   Caption := GetPageName;
 

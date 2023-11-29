@@ -52,12 +52,13 @@ object UsersForm: TUsersForm
           Width = 305
           Height = 434
           Align = alClient
+          AllowedOperations = []
           DataSource = srcGroups
           DrawMemoText = True
           DynProps = <>
           Flat = True
           FooterParams.Color = clWindow
-          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
           SearchPanel.Enabled = True
           SearchPanel.FilterOnTyping = True

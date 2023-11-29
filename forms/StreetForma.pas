@@ -53,7 +53,7 @@ type
     srcHouseEquipment: TDataSource;
     Splitter2: TSplitter;
     tsEquipment: TTabSheet;
-    DBGridEh2: TDBGridEh;
+    dbgEquip: TDBGridEh;
     dsHouseService: TpFIBDataSet;
     srcHouseService: TDataSource;
     tsHouseWorks: TTabSheet;
@@ -90,7 +90,7 @@ type
     srcFlats: TDataSource;
     ToolButton16: TToolButton;
     tlb1: TToolBar;
-    btn3: TToolButton;
+    btnAddFP: TToolButton;
     btnHouseMap: TToolButton;
     btnMap: TToolButton;
     btn1: TToolButton;
@@ -217,7 +217,7 @@ type
     procedure btnAddEqpmntClick(Sender: TObject);
     procedure btnEditEqpmntClick(Sender: TObject);
     procedure dsFlatsNewRecord(DataSet: TDataSet);
-    procedure btn3Click(Sender: TObject);
+    procedure btnAddFPClick(Sender: TObject);
     procedure ToolButton16Click(Sender: TObject);
     procedure btnFlatDelClick(Sender: TObject);
     procedure btnFlatAddClick(Sender: TObject);
@@ -247,6 +247,9 @@ type
     procedure miPNG1Click(Sender: TObject);
     procedure dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure actQuickFilterExecute(Sender: TObject);
+    procedure dsFlatsAfterPost(DataSet: TDataSet);
+    procedure DbGridHouseGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
     FCanEdit: Boolean;
@@ -255,6 +258,7 @@ type
     procedure StartAttr(const New: Boolean = True);
     procedure StopAttr(const Cancel: Boolean);
     procedure actViewFile;
+    procedure RefreshFloor;
   public
     { Public declarations }
   end;
@@ -441,15 +445,33 @@ begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
     Exit;
-  i := EditStreet(-1);
-  if i > -1 then
+
+  if ActiveControl.Name = 'dbgFLATS' then
+    dbgFLATS.DataSource.DataSet.Insert
+  else if ActiveControl.Name = 'dbgMap' then
+    btnAddFPClick(Sender)
+  else if ActiveControl.Name = 'dbgrFloors' then
+    dbgrFloors.DataSource.DataSet.Insert
+  else if ActiveControl.Name = 'DbGridHouse' then
+    actHouseNewExecute(Sender)
+  else if ActiveControl.Name = 'dbgAttr' then
+    btnAttrAddClick(Sender)
+  else if ActiveControl.Name = 'dbgEquip' then
+    btnAddEqpmntClick(Sender)
+  else if ActiveControl.Name = 'dbgWorks' then
+    actHouseWorkAddExecute(Sender)
+  else
   begin
-    dsStreets.CloseOpen(True);
-    dsStreets.Locate('STREET_ID', VarArrayOf([i]), []);
-    actNew.Enabled := dsStreets.RecordCount > 0;
-    actEdit.Enabled := actNew.Enabled;
-    actDelete.Enabled := actNew.Enabled;
-    actHouseNew.Enabled := dsStreets.RecordCount > 0;
+    i := EditStreet(-1);
+    if i > -1 then
+    begin
+      dsStreets.CloseOpen(True);
+      dsStreets.Locate('STREET_ID', VarArrayOf([i]), []);
+      actNew.Enabled := dsStreets.RecordCount > 0;
+      actEdit.Enabled := actNew.Enabled;
+      actDelete.Enabled := actNew.Enabled;
+      actHouseNew.Enabled := dsStreets.RecordCount > 0;
+    end;
   end;
 end;
 
@@ -460,14 +482,28 @@ begin
     Exit;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
     Exit;
-  if EditStreet(dsStreets['STREET_ID']) > -1 then
+
+  if ActiveControl.Name = 'dbgFLATS' then
+    dbgFLATS.DataSource.DataSet.Edit
+  else if ActiveControl.Name = 'dbgMap' then
+    dbgMap.DataSource.DataSet.Edit
+  else if ActiveControl.Name = 'dbgrFloors' then
+    dbgrFloors.DataSource.DataSet.Edit
+  else if ActiveControl.Name = 'DbGridHouse' then
+    actHouseEditExecute(Sender)
+  else if ActiveControl.Name = 'dbgAttr' then
+    btnAttrEditClick(Sender)
+  else if ActiveControl.Name = 'dbgEquip' then
+    btnEditEqpmntClick(Sender)
+  else if ActiveControl.Name = 'dbgWorks' then
+    actHouseWorkEditExecute(Sender)
+  else if EditStreet(dsStreets['STREET_ID']) > -1 then
   begin
     dsStreets.refresh;
     actNew.Enabled := dsStreets.RecordCount > 0;
     actEdit.Enabled := actNew.Enabled;
     actDelete.Enabled := actNew.Enabled;
     actHouseNew.Enabled := dsStreets.RecordCount > 0;
-
   end;
 end;
 
@@ -746,7 +782,7 @@ begin
   end;
 end;
 
-procedure TStreetForm.btn3Click(Sender: TObject);
+procedure TStreetForm.btnAddFPClick(Sender: TObject);
 begin
   inherited;
   if dsHouses.FieldByName('house_id').IsNull then
@@ -940,6 +976,12 @@ procedure TStreetForm.dsCirciutNewRecord(DataSet: TDataSet);
 begin
   inherited;
   dsCirciut['HOUSE_ID'] := dsHouses['HOUSE_ID'];
+end;
+
+procedure TStreetForm.dsFlatsAfterPost(DataSet: TDataSet);
+begin
+  inherited;
+  RefreshFloor;
 end;
 
 procedure TStreetForm.dsFlatsNewRecord(DataSet: TDataSet);
@@ -1142,6 +1184,17 @@ procedure TStreetForm.DbGridHouseDblClick(Sender: TObject);
 begin
   inherited;
   actHouseEdit.Execute;
+end;
+
+procedure TStreetForm.DbGridHouseGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (dsHouses.Active) and (dsHouses['inService'] <> '') then
+    Background := clYellow
+  else
+    Background := clWindow;
 end;
 
 procedure TStreetForm.btnFlatDelClick(Sender: TObject);
@@ -1454,6 +1507,22 @@ begin
 
   if (MessageDlg(Format(rsDeleteWithName, [dsCirciut['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     dsCirciut.Delete;
+end;
+
+procedure TStreetForm.RefreshFloor;
+var
+  FN: String;
+begin
+  if dsFloor.RecordCount = 0 then
+    Exit;
+  if dsFloor.FieldByName('Floor_N').IsNull then
+    Exit;
+
+  FN := dsFloor['Floor_N'];
+  dsFloor.DisableControls;
+  dsFloor.CloseOpen(True);
+  dsFloor.Locate('Floor_N', FN, []);
+  dsFloor.EnableControls;
 end;
 
 end.

@@ -133,6 +133,7 @@ type
     procedure LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure DBLookupComboboxClick(Sender: TObject);
+    procedure LupHOUSEChange(Sender: TObject);
   private
     { Private declarations }
     fRQ_ID: Integer;
@@ -295,6 +296,8 @@ begin
     if ReqTempl <> -1 then
       luTemplate.Value := ReqTempl;
     edtPLANDATE.Value := rd;
+    edtPLANDATE.Enabled := False;
+    actDateSelect.Enabled := False;
     mmoNotice.Lines.Text := Notice;
     if not CanClose then
     begin
@@ -1082,6 +1085,14 @@ end;
 procedure TRequestNewForm.btnClearClick(Sender: TObject);
 begin
   FindCustomer('', '', -1);
+end;
+
+procedure TRequestNewForm.LupHOUSEChange(Sender: TObject);
+begin
+  if (dsHouse.Active) and (dsHouse['inService'] <> '') then
+    LupHOUSE.Color := clYellow
+  else
+    LupHOUSE.Color := clWindow;
 end;
 
 procedure TRequestNewForm.LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;

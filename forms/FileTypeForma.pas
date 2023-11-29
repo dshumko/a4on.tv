@@ -11,7 +11,8 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh;
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh,
+  VCLTee.TeCanvas;
 
 type
   TFileTypeForm = class(TGridForm)
@@ -50,6 +51,10 @@ type
     chkPaySum: TDBCheckBoxEh;
     chkBid: TDBCheckBoxEh;
     edtHint: TDBEditEh;
+    chkTask: TDBCheckBoxEh;
+    btnColorSet: TButtonColor;
+    btnColorClear: TButton;
+    chkPeriod: TDBCheckBoxEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -61,6 +66,10 @@ type
     procedure btnCancelLinkClick(Sender: TObject);
     procedure chkCustomerCardClick(Sender: TObject);
     procedure chkPassportClick(Sender: TObject);
+    procedure btnColorSetClick(Sender: TObject);
+    procedure btnColorClearClick(Sender: TObject);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     procedure memoMiClick(Sender: TObject);
@@ -100,11 +109,6 @@ begin
 
   NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsFldACCOUNT;
-  NewItem.OnClick := memoMiClick;
-  pmMemo.Items.Add(NewItem);
-
-  NewItem := TMenuItem.Create(pmMemo);
-  NewItem.Caption := rsFldBalance;
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
@@ -218,10 +222,25 @@ begin
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldSaldo;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldBalance;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
     NewItem := TMenuItem.Create(pmMemo);
     NewItem.Caption := rsFldOwner;
+    NewItem.OnClick := memoMiClick;
+    pmMemo.Items.Add(NewItem);
+
+    NewItem := TMenuItem.Create(pmMemo);
+    NewItem.Caption := rsFldOwnerText;
     NewItem.OnClick := memoMiClick;
     pmMemo.Items.Add(NewItem);
   end;
@@ -237,6 +256,23 @@ end;
 procedure TFileTypeForm.btnCancelLinkClick(Sender: TObject);
 begin
   StopEdt(True);
+end;
+
+procedure TFileTypeForm.btnColorClearClick(Sender: TObject);
+begin
+  inherited;
+  btnColorSet.SymbolColor := clBtnFace;
+  if not(srcDataSource.DataSet.State in [dsInsert, dsEdit]) then
+    srcDataSource.DataSet.Edit;
+  srcDataSource.DataSet.FieldByName('O_DIMENSION').Clear;
+end;
+
+procedure TFileTypeForm.btnColorSetClick(Sender: TObject);
+begin
+  inherited;
+  if not(srcDataSource.State in [dsInsert, dsEdit]) then
+    srcDataSource.DataSet.Edit;
+  srcDataSource.DataSet['O_DIMENSION'] := ColorToString(btnColorSet.SymbolColor);
 end;
 
 procedure TFileTypeForm.btnSaveLinkClick(Sender: TObject);
@@ -269,6 +305,17 @@ begin
   inherited;
   if not chkPassport.Checked then
     chkCustomerCard.Checked := False;
+end;
+
+procedure TFileTypeForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if not dsFileType.FieldByName('O_DIMENSION').IsNull then
+    try
+      Background := StringToColor(dsFileType.FieldByName('O_DIMENSION').Value);
+    except
+    end;
 end;
 
 procedure TFileTypeForm.actDeleteExecute(Sender: TObject);
@@ -320,8 +367,18 @@ begin
 end;
 
 procedure TFileTypeForm.StartEdt(const New: Boolean = False);
+var
+  Background: TColor;
 begin
   InitControls;
+
+  btnColorSet.SymbolColor := clBtnFace;
+  if not(New or dsFileType.FieldByName('O_DIMENSION').IsNull) then
+    try
+      Background := StringToColor(dsFileType.FieldByName('O_DIMENSION').Value);
+      btnColorSet.SymbolColor := Background;
+    except
+    end;
 
   dsSrvType.Open;
   dsOnOffSrv.Open;
@@ -358,7 +415,7 @@ procedure TFileTypeForm.ParseJson(const json: String);
 var
   JO: TJsonObject;
 
-  procedure SetChk(const fld:string; chk: TDBCheckBoxEh);
+  procedure SetChk(const fld: string; chk: TDBCheckBoxEh);
   begin
     chk.Checked := False;
     if JO.Contains(fld) then
@@ -412,6 +469,8 @@ begin
     SetChk('Bid', chkBid);
     SetChk('Pay', chkPaySum);
     SetChk('Adr', chkAddress);
+    SetChk('Tsk', chkTask);
+    SetChk('Prd', chkPeriod);
     // SetChk('SSum', chkSSum);
 
     if JO.Contains('Nfmt') then
@@ -473,6 +532,11 @@ begin
       JO.s['Nfmt'] := edtNameFmt.Text;
     if not edtHint.Text.IsEmpty then
       JO.s['Hint'] := edtHint.Text;
+    if chkTask.Checked then
+      JO.B['Tsk'] := chkTask.Checked;
+    if chkPeriod.Checked then
+      JO.B['Prd'] := chkPeriod.Checked;
+
     // if chkSSum.Checked then JO.B['SSum'] := chkSSum.Checked;
 
     Result := JO.ToString
@@ -493,7 +557,8 @@ begin
   lcbSingleSrv.Value := null;
   edtNameFmt.Text := '';
   edtHint.Text := '';
-  for i:=0 to pnlEdit.ComponentCount-1 do begin
+  for i := 0 to pnlEdit.ComponentCount - 1 do
+  begin
     if pnlEdit.Components[i] is TDBCheckBoxEh then
       (pnlEdit.Components[i] as TDBCheckBoxEh).Checked := False;
   end;

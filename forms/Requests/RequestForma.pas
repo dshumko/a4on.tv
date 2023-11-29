@@ -261,6 +261,8 @@ type
     procedure dbgFlatsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure actBuybackExecute(Sender: TObject);
+    procedure LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -583,15 +585,8 @@ begin
 end;
 
 procedure TRequestForm.actWorksExecute(Sender: TObject);
-var
-  b: Byte;
 begin
-  if (FRequestClosed) then
-    b := 0
-  else
-    b := 1;
-
-  ReqWorks(dsRequest['RQ_ID'], b, dsRequest['RQ_TYPE']);
+  ReqWorks(dsRequest['RQ_ID'], FRequestClosed, dsRequest['RQ_TYPE']);
   if (not FRequestClosed) then
     dsWorks.CloseOpen(true);
 end;
@@ -730,15 +725,16 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
-    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
-    //  go := False
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
+      // else if (ActiveControl is TDBAxisGridInplaceEdit) then
+      // go := False
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;
@@ -1486,12 +1482,26 @@ end;
 
 procedure TRequestForm.LupHOUSEChange(Sender: TObject);
 begin
+  if (dsHouses.Active) and (dsHouses['inService'] <> '') then
+    LupHOUSE.Color := clYellow
+  else
+    LupHOUSE.Color := clWindow;
+
   CheckData;
   dsRequestType.Close;
   dsRequestType.ParamByName('RT_ID').AsInteger := dsRequest['RQ_TYPE'];
   dsRequestType.ParamByName('house_ID').AsInteger := dsRequest['house_ID'];
   dsRequestType.Open;
   dsErrors.Active := (PageControl.ActivePage = tabRequest);
+end;
+
+procedure TRequestForm.LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if (dsHouses.Active) and (dsHouses['inService'] <> '') then
+    LupHOUSE.Color := clYellow
+  else
+    LupHOUSE.Color := clWindow;
 end;
 
 procedure TRequestForm.ShowAddInfo;
@@ -1592,7 +1602,7 @@ begin
           Stream.Position := 0;
           frxReport.LoadFromStream(Stream);
           frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-          frxReport.ReportOptions.Name := frxReport.FILENAME;
+          frxReport.ReportOptions.Name := frxReport.FileName;
         finally
           Stream.Free;
         end;
@@ -1702,7 +1712,11 @@ end;
 
 procedure TRequestForm.actBuybackExecute(Sender: TObject);
 begin
-  if (ReqBayBack(dsRequest['RQ_ID'])) then begin
+  if FRequestClosed then
+    Exit;
+
+  if (ReqBayBack(dsRequest['RQ_ID'])) then
+  begin
     dsMaterials.CloseOpen(true);
   end;
 end;
@@ -1889,8 +1903,18 @@ begin
 end;
 
 procedure TRequestForm.SetIsClosed(const Closed: Boolean);
+var
+  vIgnore: Boolean;
 begin
   FRequestClosed := Closed;
+
+  if FRequestClosed then
+  begin
+    vIgnore := (dmMain.GetSettingsValue('REQ_IGNORE_CLOSED') = '1');
+    if vIgnore then
+      FRequestClosed := False;
+  end;
+
   if FRequestClosed then
   begin
     dbgMaterials.PopupMenu := nil;

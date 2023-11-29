@@ -3,7 +3,7 @@ object MaterialsForm: TMaterialsForm
   Top = 0
   Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1080' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
   ClientHeight = 412
-  ClientWidth = 829
+  ClientWidth = 935
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,15 +23,16 @@ object MaterialsForm: TMaterialsForm
   object spl1: TSplitter
     Left = 0
     Top = 216
-    Width = 829
+    Width = 935
     Height = 3
     Cursor = crVSplit
     Align = alBottom
+    ExplicitWidth = 829
   end
   object pnlHead: TPanel
     Left = 0
     Top = 0
-    Width = 829
+    Width = 935
     Height = 216
     Align = alClient
     BevelOuter = bvNone
@@ -44,7 +45,7 @@ object MaterialsForm: TMaterialsForm
     object pnlMat: TPanel
       Left = 284
       Top = 0
-      Width = 545
+      Width = 651
       Height = 216
       Align = alClient
       BevelOuter = bvNone
@@ -52,7 +53,7 @@ object MaterialsForm: TMaterialsForm
       object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 545
+        Width = 651
         Height = 23
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
@@ -99,7 +100,7 @@ object MaterialsForm: TMaterialsForm
       object DBGridEh: TDBGridEh
         Left = 0
         Top = 23
-        Width = 545
+        Width = 651
         Height = 193
         Align = alClient
         AllowedOperations = [alopDeleteEh]
@@ -246,22 +247,18 @@ object MaterialsForm: TMaterialsForm
   object pgcInOut: TPageControl
     Left = 0
     Top = 219
-    Width = 829
+    Width = 935
     Height = 193
-    ActivePage = tsIn
+    ActivePage = tsSerials
     Align = alBottom
     TabOrder = 1
     OnChange = pgcInOutChange
     object tsIn: TTabSheet
       Caption = #1054#1089#1090#1072#1090#1082#1080
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DBGridIncome: TDBGridEh
         Left = 26
         Top = 0
-        Width = 795
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = []
@@ -355,14 +352,10 @@ object MaterialsForm: TMaterialsForm
     object tsIncome: TTabSheet
       Caption = #1055#1088#1080#1093#1086#1076
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgIncome: TDBGridEh
         Left = 26
         Top = 0
-        Width = 795
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = []
@@ -519,14 +512,10 @@ object MaterialsForm: TMaterialsForm
     object tsMove: TTabSheet
       Caption = #1055#1077#1088#1077#1084#1077#1097#1077#1085#1080#1077
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgMove: TDBGridEh
         Left = 26
         Top = 0
-        Width = 795
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = []
@@ -683,14 +672,10 @@ object MaterialsForm: TMaterialsForm
     object tsInventory: TTabSheet
       Caption = #1048#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1103
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgInvent: TDBGridEh
         Left = 26
         Top = 0
-        Width = 795
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = []
@@ -858,14 +843,10 @@ object MaterialsForm: TMaterialsForm
     object tsOUT: TTabSheet
       Caption = #1057#1087#1080#1089#1072#1085#1080#1077
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object dbgOUT: TDBGridEh
+      object dbgOut: TDBGridEh
         Left = 26
         Top = 0
-        Width = 795
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = []
@@ -1026,14 +1007,10 @@ object MaterialsForm: TMaterialsForm
     object tsJournal: TTabSheet
       Caption = #1042' '#1079#1072#1103#1074#1082#1072#1093
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgJournal: TDBGridEh
         Left = 26
         Top = 0
-        Width = 795
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = []
@@ -1213,14 +1190,10 @@ object MaterialsForm: TMaterialsForm
     object tsItog: TTabSheet
       Caption = #1057#1074#1086#1076
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgGridPivot: TDBGridEh
-        Left = 0
+        Left = 26
         Top = 0
-        Width = 821
+        Width = 901
         Height = 165
         Align = alClient
         AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -1234,6 +1207,8 @@ object MaterialsForm: TMaterialsForm
         DataGrouping.Footers = <
           item
             ColumnItems = <
+              item
+              end
               item
               end
               item
@@ -1315,29 +1290,51 @@ object MaterialsForm: TMaterialsForm
           end
           item
             CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'SERIAL'
+            Footers = <>
+            Title.Caption = #1057'/'#1053
+            Visible = False
+          end
+          item
+            CellButtons = <>
             DisplayFormat = ',#0.#####'
             DynProps = <>
             EditButtons = <>
             FieldName = 'QUANT'
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086
-            Width = 100
+            Width = 125
           end>
         object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 0
+        Width = 26
+        Height = 165
+        Align = alLeft
+        BevelOuter = bvNone
+        TabOrder = 1
+        object btnItog: TBitBtn
+          Left = 1
+          Top = 4
+          Width = 23
+          Height = 23
+          Action = actShowSN
+          TabOrder = 0
         end
       end
     end
     object tsSerials: TTabSheet
       Caption = #1057#1077#1088'. '#1085#1086#1084#1077#1088#1072
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgSN: TDBGridEh
         Left = 0
         Top = 0
-        Width = 821
+        Width = 927
         Height = 165
         Align = alClient
         AllowedOperations = [alopUpdateEh]
@@ -1516,14 +1513,10 @@ object MaterialsForm: TMaterialsForm
     object tsPivotSN: TTabSheet
       Caption = #1057#1074#1077#1088#1082#1072' '#1057'/'#1053
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgGridPivotSN: TDBGridEh
         Left = 0
         Top = 0
-        Width = 821
+        Width = 927
         Height = 165
         Align = alClient
         AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -2304,8 +2297,8 @@ object MaterialsForm: TMaterialsForm
     Params = <>
     DataDriver = drvFIB
     ReadOnly = True
-    Left = 516
-    Top = 299
+    Left = 500
+    Top = 307
   end
   object drvFIB: TpFIBDataDriverEh
     Database = dmMain.dbTV
@@ -2316,7 +2309,7 @@ object MaterialsForm: TMaterialsForm
         ParamType = ptUnknown
       end>
     SelectCommand.CommandText.Strings = (
-      'select * from MATERIALS_SUMMARY(:M_ID)')
+      'select * from MATERIALS_SUMMARY(:M_ID, 0)')
     UpdateCommand.Params = <>
     InsertCommand.Params = <>
     DeleteCommand.Params = <>
@@ -2557,11 +2550,19 @@ object MaterialsForm: TMaterialsForm
         'ner = n.Node_Id)'
       '      else u.Owner_Type || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
       '    end OWNER_STR'
+      '  , case u.Owner_Type'
+      
+        '      when 1 then (select first 1 a.Property from Appliance a wh' +
+        'ere a.Own_Id = u.Owner and a.M_Id = u.M_Id and a.Serial = u.Seri' +
+        'al)'
+      '      else null'
+      '    end PROPERTY'
       '  from Material_Unit u'
       
         '  left outer join Objects o on (u.Owner_Type = o.O_Id and o.O_Ty' +
         'pe = 51)'
-      '  where U.M_ID = :OLD_M_ID'
+      '  where'
+      '    U.M_ID = :OLD_M_ID'
       '    and U.SERIAL = :OLD_SERIAL'
       ''
       '    '
@@ -3062,6 +3063,37 @@ object MaterialsForm: TMaterialsForm
     object mi2: TMenuItem
       Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
       OnClick = ppmSelectAllClick
+    end
+    object miSep1: TMenuItem
+      Caption = '-'
+    end
+    object miStateChange: TMenuItem
+      AutoHotkeys = maManual
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1089#1090#1072#1090#1091#1089
+      object miN01: TMenuItem
+        Caption = '0 - '#1085#1072' '#1089#1082#1083#1072#1076#1077' '
+        OnClick = miN41Click
+      end
+      object miN11: TMenuItem
+        Tag = 1
+        Caption = '1 - '#1074#1099#1076#1072#1085
+        OnClick = miN41Click
+      end
+      object miN21: TMenuItem
+        Tag = 2
+        Caption = '2 - '#1074' '#1088#1077#1084#1086#1085#1090#1077
+        OnClick = miN41Click
+      end
+      object miN31: TMenuItem
+        Tag = 3
+        Caption = '3 - '#1087#1088#1086#1076#1072#1085
+        OnClick = miN41Click
+      end
+      object miN41: TMenuItem
+        Tag = 4
+        Caption = '4 - '#1089#1087#1080#1089#1072#1085
+        OnClick = miN41Click
+      end
     end
     object mi3: TMenuItem
       Caption = '-'

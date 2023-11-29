@@ -197,6 +197,7 @@ inherited StreetForm: TStreetForm
       TabOrder = 1
       TitleParams.MultiTitle = True
       OnDblClick = DbGridHouseDblClick
+      OnGetCellParams = DbGridHouseGetCellParams
       Columns = <
         item
           AutoFitColWidth = False
@@ -548,16 +549,12 @@ inherited StreetForm: TStreetForm
         Top = 0
         Width = 644
         Height = 286
-        ActivePage = tsMap
+        ActivePage = InfoSheet
         Align = alClient
         TabOrder = 0
         OnChange = pcHouseInfoChange
         object InfoSheet: TTabSheet
           Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object dbgServices: TDBGridEh
             Left = 0
             Top = 201
@@ -633,10 +630,11 @@ inherited StreetForm: TStreetForm
               object Label6: TLabel
                 Left = 0
                 Top = 0
-                Width = 61
+                Width = 297
                 Height = 13
                 Align = alTop
                 Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                ExplicitWidth = 61
               end
               object memHouseNotice: TDBMemoEh
                 Left = 0
@@ -860,11 +858,7 @@ inherited StreetForm: TStreetForm
         object tsEquipment: TTabSheet
           Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
-          object DBGridEh2: TDBGridEh
+          object dbgEquip: TDBGridEh
             Left = 0
             Top = 29
             Width = 636
@@ -976,10 +970,6 @@ inherited StreetForm: TStreetForm
         object tsMap: TTabSheet
           Caption = #1050#1072#1088#1090#1072' '#1076#1086#1084#1072
           ImageIndex = 4
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object spl2: TSplitter
             Left = 251
             Top = 0
@@ -1035,6 +1025,7 @@ inherited StreetForm: TStreetForm
                   EditButtons = <>
                   FieldName = 'FLATS'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099
                   Title.Hint = #1050#1074#1072#1088#1090#1080#1088#1099' '#1076#1086#1084#1072', '#1084#1086#1078#1085#1086' '#1074#1085#1086#1089#1080#1090' '#1082#1072#1082' 1-5 '#1080#1083#1080' 1-3,4,5'
                   Width = 118
@@ -1149,12 +1140,12 @@ inherited StreetForm: TStreetForm
               Caption = 'tlb1'
               Images = A4MainForm.ICONS_ACTIVE
               TabOrder = 0
-              object btn3: TToolButton
+              object btnAddFP: TToolButton
                 Left = 0
                 Top = 0
                 Caption = #1057#1086#1079#1076#1072#1090#1100' '#1082#1074#1072#1088#1090#1080#1088#1099
                 ImageIndex = 2
-                OnClick = btn3Click
+                OnClick = btnAddFPClick
               end
               object btn1: TToolButton
                 Left = 23
@@ -1202,6 +1193,7 @@ inherited StreetForm: TStreetForm
               FooterRowCount = 1
               FooterParams.Color = clWindow
               Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+              OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
               SearchPanel.Enabled = True
               SearchPanel.FilterOnTyping = True
               STFilter.Local = True
@@ -1614,10 +1606,6 @@ inherited StreetForm: TStreetForm
         object tsHouseWorks: TTabSheet
           Caption = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1077
           ImageIndex = 3
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object dbgWorks: TDBGridEh
             Left = 0
             Top = 25
@@ -1688,10 +1676,6 @@ inherited StreetForm: TStreetForm
         object tsAbonents: TTabSheet
           Caption = #1040#1073#1086#1085#1077#1085#1090#1099
           ImageIndex = 4
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object dbgCustomer: TDBGridEh
             Left = 0
             Top = 0
@@ -1844,10 +1828,6 @@ inherited StreetForm: TStreetForm
         object tsCircuit: TTabSheet
           Caption = #1057#1093#1077#1084#1072
           ImageIndex = 5
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object imgPNG: TDBImageEh
             Left = 0
             Top = 0
@@ -2129,6 +2109,9 @@ inherited StreetForm: TStreetForm
       
         '    iif((coalesce(ah.Q_Flat,0) <> 0), round(ah.CONNECTED *100 / ' +
         'ah.Q_Flat,1), 0.0) PERCENT'
+      
+        '  , iif(coalesce(ah.In_Date, dateadd(day, 1, current_date)) <= c' +
+        'urrent_date, '#39#39', '#39'-'#39') InService     '
       '  from (select'
       '            H.*,'
       '            (select'
@@ -2179,6 +2162,9 @@ inherited StreetForm: TStreetForm
       
         '    iif((coalesce(ah.Q_Flat,0) <> 0), round(ah.CONNECTED *100 / ' +
         'ah.Q_Flat,1), 0.0) PERCENT'
+      
+        '  , iif(coalesce(ah.In_Date, dateadd(day, 1, current_date)) <= c' +
+        'urrent_date, '#39#39', '#39'-'#39') InService      '
       '  from (select'
       '            H.*,'
       '            (select'
@@ -2573,8 +2559,8 @@ inherited StreetForm: TStreetForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcHouses
-    Left = 468
-    Top = 340
+    Left = 460
+    Top = 380
   end
   object dsWorks: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -2625,7 +2611,7 @@ inherited StreetForm: TStreetForm
   object srcPorch: TDataSource
     DataSet = dsPorch
     Left = 402
-    Top = 346
+    Top = 370
   end
   object dsCustomers: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -2866,6 +2852,7 @@ inherited StreetForm: TStreetForm
     AutoUpdateOptions.KeyFields = 'HF_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    AfterPost = dsFlatsAfterPost
     OnNewRecord = dsFlatsNewRecord
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

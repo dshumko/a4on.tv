@@ -142,6 +142,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     TitleParams.MultiTitle = True
     TitleParams.VTitleMargin = 4
     OnDblClick = dbgSingleServDblClick
+    OnGetCellParams = dbgSingleServGetCellParams
     Columns = <
       item
         AutoFitColWidth = False
@@ -270,89 +271,153 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       '    ')
     RefreshSQL.Strings = (
       'select'
-      '  srv.* '
-      '  , round((coalesce(cf.fee,0)/coalesce(cf.cnt, 1)), 2) fee_cnt'
+      ''
+      ' srv.ORDER_N'
+      ',   iif(coalesce(srv.Units, 0) = 0'
+      '       , srv.Units'
+      '       , iif((not srv.ORDER_N is null)'
+      '           , coalesce((select sum(p.Pay_Sum) from payment p'
+      '              where p.Customer_Id = srv.customer_id'
+      
+        '                and p.Notice like '#39'%:%'#39' || srv.ORDER_N || '#39'%'#39'), ' +
+        '0)'
+      '           , srv.Units'
+      '       )'
+      '     ) ORDER_PAY'
+      ''
+      '  , srv.*'
+      
+        '  , round((coalesce(cf.fee, 0) / coalesce(cf.cnt, 1)), 2) fee_cn' +
+        't'
       '  , b.O_NAME BUSINESS'
-      'from ( select'
-      '        Ss.*'
-      '        , s.NAME'
-      '        , s.BUSINESS_TYPE'
-      '        , s.Dimension        '
-      '        , coalesce(w.Surname, ss.Added_By) as WHO_LAST'
-      '        , o.o_name as VAT_GROUP'
+      '  from (select'
+      '            Ss.*'
+      '          , s.NAME'
+      '          , s.BUSINESS_TYPE'
+      '          , s.Dimension'
+      '          , coalesce(w.Surname, ss.Added_By) as WHO_LAST'
+      '          , o.o_name as VAT_GROUP'
+      '          ,'
+      '            (select'
+      '                 count(sl.LINK_ID)'
+      '               from SERVICES_LINKS sl'
+      '               where sl.CHILD = s.service_id'
+      '                     and sl.LINK_TYPE = 1'
+      '                     and sl.PARENT is null) can_delete'
+      '          , sh.Name SUBSCR_SRV'
       
-        '        , (select count(sl.LINK_ID) from SERVICES_LINKS sl where' +
-        ' sl.CHILD = s.service_id and sl.LINK_TYPE = 1 and sl.PARENT is n' +
-        'ull) can_delete'
-      '      from SINGLE_SERV ss'
+        '          , substring(ss.Notice similar '#39'%C'#1047'%:#"[^[:DIGIT:]]*([0' +
+        '-9])+#"%'#39' escape '#39'#'#39') ORDER_N'
+      '          from SINGLE_SERV ss'
       
-        '           inner join services s on (s.service_id = ss.service_i' +
-        'd)'
-      '           left outer join worker w on (w.Ibname = ss.added_by)'
+        '               inner join services s on (s.service_id = ss.servi' +
+        'ce_id)'
       
-        '           left outer join objects o on (o.o_id = ss.vatg_id and' +
-        ' o.o_type = 13)'
-      '      where SS.CUSTOMER_ID = :CUSTOMER_ID'
-      '    ) srv'
+        '               left outer join worker w on (w.Ibname = ss.added_' +
+        'by)'
       
-        '    left outer join (select f.Customer_Id, f.Service_Id, f.Month' +
-        '_Id, count(*) cnt, sum(f.Fee) fee '
-      '                       from Monthly_Fee f'
-      '                      group by 1,2,3) cf'
-      '                     on (cf.Customer_Id = srv.Customer_Id '
-      '                         and cf.Service_Id = srv.Service_Id  '
-      '                         and cf.Month_Id = srv.Serv_Date)'
+        '               left outer join objects o on (o.o_id = ss.vatg_id' +
+        ' and'
+      '                     o.o_type = 13)'
       
-        '     left outer join objects b on (b.O_Id = srv.BUSINESS_TYPE an' +
-        'd b.O_TYPE = 15)                         '
+        '               left outer join Subscr_Hist sv on (sv.Subscr_Hist' +
+        '_Id = ss.History_Id)'
+      
+        '               left outer join services sh on (sh.Service_Id = s' +
+        'v.Serv_Id)'
+      '          where SS.CUSTOMER_ID = :CUSTOMER_ID) srv'
+      '       left outer join(select'
+      '                           f.Customer_Id'
+      '                         , f.Service_Id'
+      '                         , f.Month_Id'
+      '                         , count(*) cnt'
+      '                         , sum(f.Fee) fee'
+      '                         from Monthly_Fee f'
+      
+        '                         group by 1, 2, 3) cf on (cf.Customer_Id' +
+        ' = srv.Customer_Id and'
+      '             cf.Service_Id = srv.Service_Id and'
+      '             cf.Month_Id = srv.Serv_Date)'
+      
+        '       left outer join objects b on (b.O_Id = srv.BUSINESS_TYPE ' +
+        'and'
+      '             b.O_TYPE = 15)'
+      '                        '
       'where srv.SINGLE_SERVICE_ID = :OLD_SINGLE_SERVICE_ID'
       ''
       '    '
       '  ')
     SelectSQL.Strings = (
       'select'
-      '  srv.* '
-      '  , round((coalesce(cf.fee,0)/coalesce(cf.cnt, 1)), 2) fee_cnt'
+      '    srv.*'
+      
+        '  , round((coalesce(cf.fee, 0) / coalesce(cf.cnt, 1)), 2) fee_cn' +
+        't'
       '  , b.O_NAME BUSINESS'
-      'from ( select'
-      '        Ss.*'
-      '        , s.NAME'
-      '        , s.BUSINESS_TYPE'
-      '        , s.Dimension        '
-      '        , coalesce(w.Surname, ss.Added_By) as WHO_LAST'
-      '        , o.o_name as VAT_GROUP'
+      '  , iif(coalesce(srv.Units, 0) = 0'
+      '       , srv.Units'
+      '       , iif((not srv.ORDER_N is null)'
+      '           , coalesce((select sum(p.Pay_Sum) from payment p'
+      '              where p.Customer_Id = srv.customer_id'
       
-        '        , (select count(sl.LINK_ID) from SERVICES_LINKS sl where' +
-        ' sl.CHILD = s.service_id and sl.LINK_TYPE = 1 and sl.PARENT is n' +
-        'ull) can_delete'
-      '        , sh.Name SUBSCR_SRV'
-      '      from SINGLE_SERV ss'
+        '                and p.Notice like '#39'%:%'#39' || srv.ORDER_N || '#39'%'#39'), ' +
+        '0)'
+      '           , srv.Units'
+      '       )'
+      '    ) ORDER_PAY'
+      ''
+      '  from (select'
+      '            Ss.*'
+      '          , s.NAME'
+      '          , s.BUSINESS_TYPE'
+      '          , s.Dimension'
+      '          , coalesce(w.Surname, ss.Added_By) as WHO_LAST'
+      '          , o.o_name as VAT_GROUP'
+      '          ,'
+      '            (select'
+      '                 count(sl.LINK_ID)'
+      '               from SERVICES_LINKS sl'
+      '               where sl.CHILD = s.service_id'
+      '                     and sl.LINK_TYPE = 1'
+      '                     and sl.PARENT is null) can_delete'
+      '          , sh.Name SUBSCR_SRV'
       
-        '           inner join services s on (s.service_id = ss.service_i' +
-        'd)'
-      '           left outer join worker w on (w.Ibname = ss.added_by)'
+        '          , substring(ss.Notice similar '#39'%C'#1047'%:#"[^[:DIGIT:]]*([0' +
+        '-9])+#"%'#39' escape '#39'#'#39') ORDER_N'
+      '          from SINGLE_SERV ss'
       
-        '           left outer join objects o on (o.o_id = ss.vatg_id and' +
-        ' o.o_type = 13)'
+        '               inner join services s on (s.service_id = ss.servi' +
+        'ce_id)'
       
-        '           left outer join Subscr_Hist sv on (sv.Subscr_Hist_Id ' +
-        '= ss.History_Id)'
+        '               left outer join worker w on (w.Ibname = ss.added_' +
+        'by)'
       
-        '           left outer join services sh on (sh.Service_Id = sv.Se' +
-        'rv_Id)'
-      '      where SS.CUSTOMER_ID = :CUSTOMER_ID'
-      '    ) srv'
+        '               left outer join objects o on (o.o_id = ss.vatg_id' +
+        ' and'
+      '                     o.o_type = 13)'
       
-        '    left outer join (select f.Customer_Id, f.Service_Id, f.Month' +
-        '_Id, count(*) cnt, sum(f.Fee) fee '
-      '                       from Monthly_Fee f'
-      '                      group by 1,2,3) cf'
-      '                     on (cf.Customer_Id = srv.Customer_Id '
-      '                         and cf.Service_Id = srv.Service_Id  '
-      '                         and cf.Month_Id = srv.Serv_Date)'
+        '               left outer join Subscr_Hist sv on (sv.Subscr_Hist' +
+        '_Id = ss.History_Id)'
       
-        '     left outer join objects b on (b.O_Id = srv.BUSINESS_TYPE an' +
-        'd b.O_TYPE = 15)                         '
+        '               left outer join services sh on (sh.Service_Id = s' +
+        'v.Serv_Id)'
+      '          where SS.CUSTOMER_ID = :CUSTOMER_ID) srv'
+      '       left outer join(select'
+      '                           f.Customer_Id'
+      '                         , f.Service_Id'
+      '                         , f.Month_Id'
+      '                         , count(*) cnt'
+      '                         , sum(f.Fee) fee'
+      '                         from Monthly_Fee f'
+      
+        '                         group by 1, 2, 3) cf on (cf.Customer_Id' +
+        ' = srv.Customer_Id and'
+      '             cf.Service_Id = srv.Service_Id and'
+      '             cf.Month_Id = srv.Serv_Date)'
+      
+        '       left outer join objects b on (b.O_Id = srv.BUSINESS_TYPE ' +
+        'and'
+      '             b.O_TYPE = 15)'
       ''
       '  order by srv.SERV_DATE desc')
     AutoUpdateOptions.UpdateTableName = 'SUBSCR_SERV'
@@ -362,7 +427,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     UpdateTransaction = trWrite
     AutoCommit = True
     Left = 78
-    Top = 66
+    Top = 74
     WaitEndMasterScroll = True
     dcForceMasterRefresh = True
   end
@@ -370,13 +435,13 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     AutoEdit = False
     DataSet = dsSingleService
     OnDataChange = srcSingleSerivceDataChange
-    Left = 173
-    Top = 69
+    Left = 181
+    Top = 77
   end
   object ActListCustomers: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 285
-    Top = 48
+    Left = 301
+    Top = 72
     object actAdd: TAction
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1072#1073#1086#1085#1077#1085#1090#1091
       ImageIndex = 2
@@ -392,8 +457,8 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     end
   end
   object pmGrid: TPopupMenu
-    Left = 392
-    Top = 56
+    Left = 400
+    Top = 72
     object N1: TMenuItem
       Action = actEditNotice
     end
@@ -407,8 +472,8 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 560
-    Top = 58
+    Left = 552
+    Top = 74
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -419,7 +484,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 620
-    Top = 58
+    Left = 628
+    Top = 74
   end
 end

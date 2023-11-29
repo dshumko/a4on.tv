@@ -646,7 +646,7 @@ begin
             Query.SQL.Add('where Ch_Id = ' + ch_id.ToString);
           Query.SQL.Add(';');
           if chkUpdateDVB.Checked then
-            Query.SQL.Add('update Dvb_Streams set EPG_UPDATED = CURRENT_TIMESTAMP;');
+            Query.SQL.Add('update Dvb_Streams set EPG_UPDATED = LOCALTIMESTAMP;');
           Query.SQL.Add('end');
           Query.ParamByName('mins').AsInteger := ednMinutes.Value;
           Query.Transaction.StartTransaction;
@@ -675,7 +675,7 @@ begin
   Screen.Cursor := crSQLWait;
   try
     Query.Transaction := trWriteQ;
-    Query.SQL.Text := 'update Dvb_Streams set EPG_UPDATED = CURRENT_TIMESTAMP';
+    Query.SQL.Text := 'update Dvb_Streams set EPG_UPDATED = LOCALTIMESTAMP';
     Query.Transaction.StartTransaction;
     Query.ExecQuery;
     Query.Transaction.Commit;
@@ -696,7 +696,7 @@ begin
     Query.SQL.Clear;
     Query.SQL.Add('Select c.Ch_Name from Channels c ');
     Query.SQL.Add
-      ('where not exists(select * from epg e where e.Ch_Id = c.Ch_Id and CURRENT_TIMESTAMP between e.Date_Start and e.Date_Stop)');
+      ('where not exists(select * from epg e where e.Ch_Id = c.Ch_Id and LOCALTIMESTAMP between e.Date_Start and e.Date_Stop)');
     Query.SQL.Add('order by 1');
     Query.Transaction.StartTransaction;
     Query.ExecQuery;

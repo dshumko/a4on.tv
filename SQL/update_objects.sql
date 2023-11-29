@@ -72,7 +72,8 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (65, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (66, 'Тип документа абонента', 'Тип документа абонента для картотеки') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (67, 'Фильтр абонентов', 'Сохраненный фильтр абонентов') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (68, 'Фильтр заявок', 'Сохраненный фильтр заявок') MATCHING (OT_ID);
-UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (69, 'Атрибуты групп оборудования') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (69, 'Атрибуты групп оборудования', '') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (70, 'Акции', 'Акции на услуги') MATCHING (OT_ID);
 commit;
 
 -- Владелец оборудования/материала 51
@@ -186,7 +187,7 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) V
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (6, 55, 'Фильтр заявок', 'json фильтра заявок', 0) MATCHING (O_ID, O_TYPE);
 commit;
 
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK');
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (26, 'ДОБАВЛЕНИЕ ТОЛЬКО ТЕКУЩИМ ДНЕМ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Добавление и просмотр платежей только текущим днем!') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (27, 'ТОЛЬКО СВОИ ПЛАТЕЖИ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Оператор видит только свои платежи и пл.документы со своими платежами') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (28, 'ПРАВКА ПЕНИ', 'ПЛАТЕЖИ', 'Разрешать изменять сумма платежа и пени при работе в режиме ПЕНИ');
@@ -290,6 +291,120 @@ begin
     values ('SHOW_DOC_LIST', '0', 'BOOLEAN', NULL, 'Отображать реестр документов абонентов')
     matching (VAR_NAME);
   end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'REQ_CLOSE_CLEAN_LAN'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('REQ_CLOSE_CLEAN_LAN', '', 'STRING', NULL, 'Список типов Rqtl_Id заявок после закрытия которых удалять настройки спд абонента')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'REQ_CLOSE_CLEAN_DVB'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('REQ_CLOSE_CLEAN_DVB', '', 'STRING', NULL, 'Список типов Rqtl_Id заявок после закрытия которых удалять настройки DVB абонента')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'PREPAY_CLEAR'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('PREPAY_CLEAR', '1', 'BOOLEAN', NULL, 'Удалять обещанный при внесение любой суммы, иначе уменьшим на сумму платежа')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'DAILY_FEE'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('DAILY_FEE', '0', 'BOOLEAN', NULL, 'Записывать начисления в ежедневную таблицу')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'FLAT_OWNER'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('FLAT_OWNER', '0', 'BOOLEAN', NULL, 'Информация о владельце квартиры (Собственник/аренда)')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_DOCSYS'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('LAN_DOCSYS', '0', 'BOOLEAN', NULL, 'Сеть построена на DocSYS')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_ADDRES'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('LAN_ADDRES', '0', 'BOOLEAN', NULL, 'Адрес подключения сети у абонента может отличаться от фактического')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_VALANDISABLE'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('LAN_VALANDISABLE', '0', 'BOOLEAN', NULL, 'Отключить влан для сети абонента')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_PORTDICTDISABLE'
+  into :v;
+  if (v is null) then begin
+    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+    values ('LAN_PORTDICTDISABLE', '0', 'BOOLEAN', NULL, 'Отключить выбор порта из списка для сети абонента')
+    matching (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'INFO_PANEL'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES ('INFO_PANEL', '', NULL, NULL, 'HTML для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL + INFO_PANEL_1 + INFO_PANEL_2. Для группы пользователей можно задать переменные INFO_PANEL_GRXXX INFO_PANEL_GRXXX_1 INFO_PANEL_GRXXX_2') 
+    MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'INFO_PANEL_GR'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES ('INFO_PANEL_GR', '', NULL, NULL, 'HTML для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL + INFO_PANEL_1 + INFO_PANEL_2. Для группы пользователей можно задать переменные INFO_PANEL_GRXXX INFO_PANEL_GRXXX_1 INFO_PANEL_GRXXX_2') 
+    MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'INFO_PANEL_SQL'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES ('INFO_PANEL_SQL', '', NULL, NULL, 'SQL для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL_SQL + INFO_PANEL_SQL_1 + INFO_PANEL_SQL_2. Для группы пользователей можно задать переменные INFO_PANEL_SQL_GRXXX INFO_PANEL_SQL_GRXXX_1 INFO_PANEL_SQL_GRXXX_2') 
+    MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_TAG_LIST'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES ('LAN_TAG_LIST', '', NULL, NULL, 'Список значений для строково тага в параметрах СПД абонента. разделитель запятая') 
+    MATCHING (VAR_NAME);
+  end
+  v = null;
+  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'REQ_IGNORE_CLOSED'
+  into :v;
+  if (v is null) then begin
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES ('REQ_IGNORE_CLOSED', '', NULL, NULL, 'Отключить запрет редактирования работ и материалов в закрытых заявках') 
+    MATCHING (VAR_NAME);
+  end
+  
+
 end;
 
 COMMIT;

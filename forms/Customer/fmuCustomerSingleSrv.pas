@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Menus,
-  AtrPages, ToolCtrlsEh, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -31,6 +32,8 @@ type
     procedure srcSingleSerivceDataChange(Sender: TObject; Field: TField);
     procedure actEditNoticeExecute(Sender: TObject);
     procedure dbgSingleServDblClick(Sender: TObject);
+    procedure dbgSingleServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     FullAccess: Boolean;
     ChangeHistory: Boolean;
@@ -212,6 +215,15 @@ begin
       dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_View)) then
       ShowOrders(dsSingleService['HISTORY_ID']);
   end;
+end;
+
+procedure TapgCustomerSingleSrv.dbgSingleServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not dsSingleService.FieldByName('ORDER_PAY').IsNull then
+    if not dsSingleService.FieldByName('Units').IsNull then
+      if dsSingleService['ORDER_PAY'] <> dsSingleService['Units'] then
+        Background := clYellow;
 end;
 
 end.

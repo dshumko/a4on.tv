@@ -97,7 +97,7 @@ type
     tsMove: TTabSheet;
     tsOUT: TTabSheet;
     tsInventory: TTabSheet;
-    dbgOUT: TDBGridEh;
+    dbgOut: TDBGridEh;
     dbgInvent: TDBGridEh;
     dbgMove: TDBGridEh;
     dsMove: TpFIBDataSet;
@@ -142,6 +142,15 @@ type
     actShowSN: TAction;
     pnl2: TPanel;
     btnactCnPrefixWizard: TBitBtn;
+    Panel5: TPanel;
+    btnItog: TBitBtn;
+    miSep1: TMenuItem;
+    miStateChange: TMenuItem;
+    miN01: TMenuItem;
+    miN11: TMenuItem;
+    miN21: TMenuItem;
+    miN31: TMenuItem;
+    miN41: TMenuItem;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -191,6 +200,7 @@ type
     procedure actChangeSerialExecute(Sender: TObject);
     procedure DBGridGroupsDblClick(Sender: TObject);
     procedure actShowSNExecute(Sender: TObject);
+    procedure miN41Click(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -203,11 +213,13 @@ type
     FShowSN_Inv: Boolean;
     FShowSN_Out: Boolean;
     FShowSN_Mov: Boolean;
+    FShowSN_Itog: Boolean;
     procedure InitDataSet;
     procedure ShowSNforGrid();
     procedure ShowSNforRem;
     procedure ShowSNforIncome;
     procedure ShowSNforMove;
+    procedure ShowSNforItog;
     procedure ShowSNforInvent;
     procedure ShowSNforOut;
     procedure SetColumnVisibility(grid: TDBGridEh; fld: string; vsbl: Boolean);
@@ -472,6 +484,52 @@ begin
   Screen.Cursor := crsr;
 end;
 
+procedure TMaterialsForm.miN41Click(Sender: TObject);
+var
+  state: Integer;
+  mid: Integer;
+  SERIAL : string;
+begin
+//
+// Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+// или временный статус = -1*ID объекта (заявки, склада)
+
+  if dsSerials.FieldByName('M_ID').IsNull then
+    exit;
+
+  if dsSerials.FieldByName('SERIAL').IsNull then
+    Exit;
+
+  if TrTemp.InTransaction then
+    TrTemp.Rollback;
+
+  mid := dsSerials.FieldByName('M_ID').AsInteger;
+  SERIAL := dsSerials.FieldByName('SERIAL').AsString;
+  state := (Sender as TMenuItem).Tag;
+
+  if Application.MessageBox(PWideChar(Format('Сменить статус С/Н %s на "%s"?',[SERIAL, (Sender as TMenuItem).Caption])), 'Сменить статус',
+    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
+  begin
+    Exit;
+  end;
+
+  QrTemp.Transaction := trWrite;
+  QrTemp.SQL.Text := 'update MATERIAL_UNIT set STATE = :state where M_ID = :M_Id and SERIAL = :SERIAL';
+  QrTemp.ParamByName('M_ID').AsInteger := mid;
+  QrTemp.ParamByName('SERIAL').AsString := SERIAL;
+  QrTemp.ParamByName('STATE').AsInteger := state;
+  try
+    QrTemp.Transaction.StartTransaction;
+    QrTemp.ExecQuery;
+    QrTemp.Transaction.Commit;
+  finally
+    if QrTemp.Transaction.InTransaction then
+      QrTemp.Transaction.Rollback;
+  end;
+  QrTemp.Transaction := TrTemp;
+  dsSerials.Refresh;
+end;
+
 procedure TMaterialsForm.miRowHightClick(Sender: TObject);
 begin
   miRowHight.Checked := not miRowHight.Checked;
@@ -489,6 +547,7 @@ begin
   dsMove.Active := (pgcInOut.ActivePage = tsMove);
   dsOut.Active := (pgcInOut.ActivePage = tsOUT);
   dsInvent.Active := (pgcInOut.ActivePage = tsInventory);
+
   dsItogo.Active := (pgcInOut.ActivePage = tsItog);
   dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
   dsPivotSN.Active := (pgcInOut.ActivePage = tsPivotSN);
@@ -956,7 +1015,6 @@ end;
 procedure TMaterialsForm.FormCreate(Sender: TObject);
 var
   b: Boolean;
-  i: Integer;
 begin
   // права пользователей
   FAccessMat := dmMain.AllowedAction(rght_Dictionary_Materials);
@@ -982,30 +1040,6 @@ begin
   actChangeSerial.Visible := FAccessFull or FAccessMat;
   actRemainRecalc.Visible := FAccessFull or FAccessMat;
   pgcInOut.ActivePage := tsIn;
-
-  for i := 0 to dbgIncome.Columns.Count - 1 do
-  begin
-    if dbgIncome.Columns[i].FieldName = 'SHIPPER_COST' then
-      dbgIncome.Columns[i].Visible := fVisibleCost;
-  end;
-
-  for i := 0 to dbgJournal.Columns.Count - 1 do
-  begin
-    if dbgJournal.Columns[i].FieldName = 'RM_COST' then
-      dbgJournal.Columns[i].Visible := fVisibleCost
-    else if dbgJournal.Columns[i].FieldName = 'ITOGO' then
-      dbgJournal.Columns[i].Visible := fVisibleCost;
-  end;
-
-  if FAccessFull then
-    dbgSN.AllowedOperations := [alopUpdateEh]
-  else
-    dbgSN.AllowedOperations := [];
-  for i := 0 to dbgSN.Columns.Count - 1 do
-  begin
-    if dbgSN.Columns[i].FieldName = 'COST' then
-      dbgSN.Columns[i].Visible := fVisibleCost;
-  end;
 end;
 
 procedure TMaterialsForm.FormShow(Sender: TObject);
@@ -1020,6 +1054,7 @@ begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
   end;
+
   for i := 0 to ComponentCount - 1 do
   begin
     if Components[i] is TDBGridEh then
@@ -1035,6 +1070,28 @@ begin
       end;
     end;
   end;
+
+  SetColumnVisibility(dbgIncome, 'SHIPPER_COST', fVisibleCost);
+  SetColumnVisibility(dbgJournal, 'RM_COST', fVisibleCost);
+  SetColumnVisibility(dbgJournal, 'ITOGO', fVisibleCost);
+  SetColumnVisibility(dbgSN, 'COST', fVisibleCost);
+  if FAccessFull then
+    dbgSN.AllowedOperations := [alopUpdateEh]
+  else
+    dbgSN.AllowedOperations := [];
+
+
+
+  SetColumnVisibility(DBGridIncome, 'SERIAL', False);
+  SetColumnVisibility(dbgIncome, 'SERIAL', False);
+  SetColumnVisibility(dbgMove, 'SERIAL', False);
+  SetColumnVisibility(dbgInvent, 'SERIAL', False);
+  SetColumnVisibility(dbgOut, 'SERIAL', False);
+  SetColumnVisibility(dbgGridPivot, 'SERIAL', False);
+
+
+  miStateChange.Visible := FAccessFull;
+  miSep1.Visible := miStateChange.Visible;
 end;
 
 procedure TMaterialsForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
@@ -1361,6 +1418,8 @@ begin
     ShowSNforOut
   else if (pgcInOut.ActivePage = tsInventory) then
     ShowSNforInvent
+  else if (pgcInOut.ActivePage = tsItog) then
+    ShowSNforItog
 end;
 
 procedure TMaterialsForm.ShowSNforRem;
@@ -1426,6 +1485,22 @@ begin
   SetColumnVisibility(dbgMove, 'SERIAL', FShowSN_Mov);
 end;
 
+procedure TMaterialsForm.ShowSNforItog;
+begin
+  FShowSN_Itog := not FShowSN_Itog;
+  dsItogo.Close;
+  if FShowSN_Itog then
+  begin
+    drvFIB.SelectSQL.Text := 'select * from MATERIALS_SUMMARY(:M_ID, 1)';
+  end
+  else
+  begin
+    drvFIB.SelectSQL.Text := 'select * from MATERIALS_SUMMARY(:M_ID, 0)';
+  end;
+  dsItogo.Open;
+  SetColumnVisibility(dbgGridPivot, 'SERIAL', FShowSN_Itog);
+end;
+
 procedure TMaterialsForm.ShowSNforInvent;
 begin
   FShowSN_Inv := not FShowSN_Inv;
@@ -1461,7 +1536,6 @@ begin
   for i := 0 to grid.Columns.Count - 1 do
     if grid.Columns[i].FieldName = fld then
       grid.Columns[i].Visible := vsbl;
-
 end;
 
 end.

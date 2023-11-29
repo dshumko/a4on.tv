@@ -15,8 +15,8 @@ type
     srcAttributesList: TDataSource;
     dsAttributesList: TpFIBDataSet;
     dbluAttribute: TDBLookupComboboxEh;
-    DBMemo1: TDBMemoEh;
-    Label1: TLabel;
+    mmoNOTICE: TDBMemoEh;
+    lblNotice: TLabel;
     lblAttribute: TLabel;
     Label2: TLabel;
     dbValue: TDBEditEh;
@@ -28,6 +28,7 @@ type
     btnCancel: TBitBtn;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    mmoValue: TDBMemo;
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbluAttributeEnter(Sender: TObject);
     procedure dbluAttributeChange(Sender: TObject);
@@ -78,24 +79,48 @@ end;
 procedure TAttrGeneralForm.btnOkClick(Sender: TObject);
 begin
   //
-  if CheckAllRight then begin
-    if dsAttr.State in [dsInsert, dsEdit]
-    then dsAttr.Post;
+  if CheckAllRight then
+  begin
+    if dsAttr.State in [dsInsert, dsEdit] then
+      dsAttr.Post;
     ModalResult := mrOk;
   end
   else
     ModalResult := mrNone
-
 end;
 
 procedure TAttrGeneralForm.dbluAttributeChange(Sender: TObject);
 begin
-  cbbList.Items.Clear;
-  cbbList.KeyItems.Clear;
-  cbbList.Items.Text := dsAttributesList['VLIST'];
-  cbbList.KeyItems.Text := dsAttributesList['VLIST'];
-  cbbList.Visible := (dsAttributesList['VLIST'] <> '');
-  dbValue.Visible := not cbbList.Visible;
+  cbbList.Visible := (dsAttributesList['O_MEMO'] = 0) and (dsAttributesList['VLIST'] <> '');
+  if cbbList.Visible then
+  begin
+    cbbList.Items.Clear;
+    cbbList.KeyItems.Clear;
+    cbbList.Items.Text := dsAttributesList['VLIST'];
+    cbbList.KeyItems.Text := dsAttributesList['VLIST'];
+  end;
+
+  dbValue.Visible := (dsAttributesList['O_MEMO'] = 0) and not cbbList.Visible;
+  mmoValue.Visible := (dsAttributesList['O_MEMO'] = 1);
+
+  if mmoValue.Visible then
+  begin
+    Height := 480;
+    mmoNOTICE.Anchors := mmoNOTICE.Anchors - [akTop];
+    lblNotice.Anchors := mmoNOTICE.Anchors - [akTop] + [akBottom];
+    lblNotice.Top := 305;
+    mmoNOTICE.Top := 321;
+    mmoNOTICE.Height := 80;
+  end
+  else
+  begin
+    Height := 240;
+    mmoNOTICE.Anchors := mmoNOTICE.Anchors + [akTop];
+    lblNotice.Anchors := mmoNOTICE.Anchors + [akTop] - [akBottom];
+    lblNotice.Top := 64;
+    mmoNOTICE.Top := 80;
+    mmoNOTICE.Height := 80;
+  end;
 end;
 
 procedure TAttrGeneralForm.dbluAttributeEnter(Sender: TObject);
@@ -105,8 +130,16 @@ end;
 
 procedure TAttrGeneralForm.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
-    ModalResult := mrOk;
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then begin
+    if CheckAllRight then
+    begin
+      if dsAttr.State in [dsInsert, dsEdit] then
+        dsAttr.Post;
+      ModalResult := mrOk;
+    end
+    else
+      ModalResult := mrNone
+  end;
 end;
 
 procedure TAttrGeneralForm.FormShow(Sender: TObject);
@@ -132,7 +165,6 @@ begin
     dsAttr.Edit;
     dbluAttribute.Enabled := false;
   end;
-
 end;
 
 function TAttrGeneralForm.CheckAllRight: Boolean;
@@ -142,7 +174,7 @@ var
   fq: TpFIBQuery;
 begin
   errors := false;
-  if dbluAttribute.Text = '' then
+  if dbluAttribute.Text.Trim = '' then
   begin
     CnErrors.SetError(dbluAttribute, rsSelectAttribute, iaMiddleLeft, bsNeverBlink);
     errors := true;
@@ -150,7 +182,7 @@ begin
   else
     CnErrors.Dispose(dbluAttribute);
 
-  if ((dbluAttribute.Text <> '')) then
+  if ((dbluAttribute.Text.Trim <> '')) then
   begin
     if dbValue.Visible then
     begin
@@ -167,13 +199,22 @@ begin
     end
     else
     begin
-      if cbbList.Text = '' then
+      if (cbbList.Visible) and (cbbList.Text.Trim = '') then
       begin
         CnErrors.SetError(cbbList, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
         errors := true;
       end
+      else if mmoValue.Visible and (mmoValue.Lines.Text.Trim = '') then
+      begin
+        CnErrors.SetError(mmoValue, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
+        errors := true;
+      end
       else
+      begin
+        CnErrors.Dispose(dbValue);
+        CnErrors.Dispose(mmoValue);
         CnErrors.Dispose(cbbList);
+      end;
     end;
   end;
 
@@ -186,7 +227,7 @@ begin
       with fq.sql do
       begin
         Clear;
-        Add('execute block (OBJECT_ID D_INTEGER = :OBJECT_ID, AID D_INTEGER = :AID, AVALUE D_VARCHAR100 = :AVALUE )');
+        Add('execute block (OBJECT_ID D_INTEGER = :OBJECT_ID, AID D_INTEGER = :AID, AVALUE D_VARCHAR4000 = :AVALUE )');
         Add('returns (who D_Varchar255) as');
         Add('declare variable W_ID D_Integer;');
         Add('begin');
@@ -207,9 +248,11 @@ begin
       fq.ParamByName('OBJECT_ID').AsInteger := FObj_ID;
       fq.ParamByName('AID').AsInteger := dbluAttribute.VALUE;
       if cbbList.Visible then
-        fq.ParamByName('AVALUE').AsString := cbbList.Text
-      else
-        fq.ParamByName('AVALUE').AsString := dbValue.Text;
+        fq.ParamByName('AVALUE').AsString := cbbList.Text.Trim
+      else if dbValue.Visible then
+        fq.ParamByName('AVALUE').AsString := dbValue.Text.Trim
+      else if mmoValue.Visible then
+        fq.ParamByName('AVALUE').AsString := mmoValue.Lines.Text.Trim;
       fq.Transaction.StartTransaction;
       fq.ExecQuery;
       s := '';

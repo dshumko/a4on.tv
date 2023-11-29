@@ -8,17 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, A4onTypeUnit;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, A4onTypeUnit,
+  Vcl.Buttons, Vcl.ExtCtrls;
 
 type
   TapgCustomerFiles = class(TA4onPage)
     dsCustFiles: TpFIBDataSet;
     srcCustFiles: TDataSource;
     dbgCustFiles: TDBGridEh;
-    tbAttributes: TToolBar;
-    btnAdd: TToolButton;
-    btnEdit: TToolButton;
-    btnDel: TToolButton;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
@@ -26,18 +23,29 @@ type
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
     qRead: TpFIBQuery;
-    btnView: TToolButton;
-    btn1: TToolButton;
     actView: TAction;
     qReqFile: TpFIBQuery;
+    pnlButtons: TPanel;
+    btnDel1: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnEdit1: TSpeedButton;
+    btnOpen: TSpeedButton;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dbgCustFilesDblClick(Sender: TObject);
     procedure actViewExecute(Sender: TObject);
     procedure dbgCustFilesCellClick(Column: TColumnEh);
+    procedure dbgCustFilesGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure srcCustFilesStateChange(Sender: TObject);
+    procedure dsCustFilesAfterRefresh(DataSet: TDataSet);
+    procedure dsCustFilesAfterOpen(DataSet: TDataSet);
   private
     FClickOnAct: Boolean;
+    FFullAccess: Boolean;
+    FCanAdd : Boolean;
+    FCanEdit : Boolean;
     procedure EnableControls;
     procedure SetCustomerInfo(var ci: TCustomerInfo);
     procedure ViewRequest;
@@ -62,17 +70,14 @@ begin
 end;
 
 procedure TapgCustomerFiles.InitForm;
-var
-  FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Customer_full)) or
-    ((dmMain.AllowedAction(rght_Customer_Files_Add)) and (dmMain.AllowedAction(rght_Customer_Files_Edit)));
+  FFullAccess := (dmMain.AllowedAction(rght_Customer_full));
+  FCanAdd := (dmMain.AllowedAction(rght_Customer_Files_Add));
+  FCanEdit := (dmMain.AllowedAction(rght_Customer_Files_Edit));
 
-  actAdd.Visible := FullAccess or (dmMain.AllowedAction(rght_Customer_Files_Add));
-  actDel.Visible := FullAccess or (dmMain.AllowedAction(rght_Customer_Files_Edit));
-  actEdit.Visible := FullAccess or (dmMain.AllowedAction(rght_Customer_Files_Edit));
-
-  tbAttributes.Visible := actAdd.Visible or actDel.Visible or actEdit.Visible;
+  actAdd.Visible := FFullAccess or (FCanAdd);
+  actDel.Visible := FFullAccess or (FCanEdit);
+  actEdit.Visible := FFullAccess or (FCanEdit);
 
   dsCustFiles.DataSource := FDataSource;
 end;
@@ -89,14 +94,13 @@ begin
     dsCustFiles.Close;
   dsCustFiles.OrderClause := GetOrderClause(dbgCustFiles);
   dsCustFiles.Open;
-  EnableControls;
 end;
 
 procedure TapgCustomerFiles.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
 begin
-  if not((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_Files_Add))) then
+  if not(FFullAccess or FCanAdd) then
     exit;
 
   SetCustomerInfo(ci);
@@ -105,14 +109,13 @@ begin
   begin
     // dsCustFiles.Post;
     dsCustFiles.CloseOpen(true);
-    EnableControls;
     UpdatePage;
   end
 end;
 
 procedure TapgCustomerFiles.actDelExecute(Sender: TObject);
 begin
-  if not((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_Files_Edit))) then
+  if not(FFullAccess or FCanEdit) then
     exit;
 
   if ((not dsCustFiles.Active) or (dsCustFiles.RecordCount = 0)) then
@@ -154,7 +157,6 @@ begin
     begin
       // dsCustFiles.Post;
       dsCustFiles.Refresh;
-      EnableControls;
       UpdatePage;
     end
   end
@@ -202,6 +204,27 @@ begin
   end
   else
     actViewExecute(Sender);
+end;
+
+procedure TapgCustomerFiles.dbgCustFilesGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if not dsCustFiles.FieldByName('O_DIMENSION').IsNull then
+    try
+      Background := StringToColor(dsCustFiles.FieldByName('O_DIMENSION').Value);
+    except
+    end;
+end;
+
+procedure TapgCustomerFiles.dsCustFilesAfterOpen(DataSet: TDataSet);
+begin
+  EnableControls;
+end;
+
+procedure TapgCustomerFiles.dsCustFilesAfterRefresh(DataSet: TDataSet);
+begin
+  EnableControls;
 end;
 
 procedure TapgCustomerFiles.actViewExecute(Sender: TObject);
@@ -283,6 +306,11 @@ begin
       notice := FDataSource.DataSet['notice'];
     isType := 0
   end;
+end;
+
+procedure TapgCustomerFiles.srcCustFilesStateChange(Sender: TObject);
+begin
+  EnableControls;
 end;
 
 procedure TapgCustomerFiles.ViewRequest;

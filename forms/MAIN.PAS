@@ -331,6 +331,8 @@ type
     miPortType: TMenuItem;
     actDocList: TAction;
     miDocList: TMenuItem;
+    actPromo: TAction;
+    miPromo: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -452,6 +454,7 @@ type
     procedure actConnectTypeExecute(Sender: TObject);
     procedure actPortTypeExecute(Sender: TObject);
     procedure actDocListExecute(Sender: TObject);
+    procedure actPromoExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -633,7 +636,7 @@ uses
   ContactTypeForma,
   LabelTypeForma,
   ConnectTypeForma,
-  PortTypeForma, DocListForma;
+  PortTypeForma, DocListForma, PromoForma;
 
 type
 
@@ -994,6 +997,7 @@ begin
 
       AppIni.WriteString('GRIDS', 'ServiceGrid', dmMain.GetIniValue('ServiceGrid'));
       AppIni.WriteString('GRIDS', 'StreetGrid', dmMain.GetIniValue('StreetGrid'));
+      AppIni.WriteString('GRIDS', 'HIDE_NOT_ACTUAL_SRV', dmMain.GetIniValue('HIDE_NOT_ACTUAL_SRV'));
 
       AppIni.WriteString('EQPMNT', 'EQUIPMENTASTREE', dmMain.GetIniValue('EQUIPMENTASTREE'));
       AppIni.WriteString('EQPMNT', 'EQUIPMENT_INFOLAYOUT', dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT'));
@@ -1052,6 +1056,7 @@ begin
     SetFromIniSettings('MAIN', 'KBDSWITCH', '0');
     SetFromIniSettings('GRIDS', 'ServiceGrid', '');
     SetFromIniSettings('GRIDS', 'StreetGrid', '');
+    SetFromIniSettings('GRIDS', 'HIDE_NOT_ACTUAL_SRV', '0');
     SetFromIniSettings('MAIN', 'PRINT_CHECK_AND_REPORT', '0');
     SetFromIniSettings('MAIN', 'CASHBOXPSWD', '');
     SetFromIniSettings('MAIN', 'DISCOUNT', '0');
@@ -2167,6 +2172,13 @@ begin
   PortListForm.Show;
 end;
 
+procedure TA4MainForm.actPromoExecute(Sender: TObject);
+begin
+  if Not Assigned(PromoForm) then
+    PromoForm := TPromoForm.Create(Application);
+  PromoForm.Show;
+end;
+
 procedure TA4MainForm.actAdminQueryExecute(Sender: TObject);
 begin
   if (dmMain.User <> 'SYSDBA') then
@@ -2502,9 +2514,8 @@ begin
           ExecQuery;
           Close;
           Transaction.Commit;
-
-          SQL.text :=
-            'insert into BLB_GZIP (BLB_ID, BL_NAME, BLB_BODY, NOTICE) VALUES(-111, :BL_NAME, :BLB_BODY, :NOTICE)';
+          SQL.text := 'insert into BLB_GZIP (BLB_ID, BL_NAME, BLB_BODY, NOTICE) ' +
+            ' VALUES(-111, :BL_NAME, :BLB_BODY, :NOTICE)';
           Transaction.StartTransaction;
           ParamByName('BL_NAME').AsString := ExtractFileName(Application.ExeName);
           ParamByName('NOTICE').AsString := dstr;
@@ -2517,6 +2528,35 @@ begin
           Free;
         end;
     end;
+
+    filename := 'fbclient.dll';
+    if FileExists(filename) then
+    begin
+      with TpFIBQuery.Create(Nil) do
+        try
+          DataBase := dmMain.dbTV;
+          Transaction := dmMain.trWriteQ;
+          SQL.text := 'DELETE FROM BLB_GZIP WHERE BLB_ID=-112';
+          Transaction.StartTransaction;
+          ExecQuery;
+          Close;
+          Transaction.Commit;
+
+          SQL.text := 'insert into BLB_GZIP (BLB_ID, BL_NAME, BLB_BODY, NOTICE) ' +
+            ' VALUES(-112, :BL_NAME, :BLB_BODY, :NOTICE)';
+          Transaction.StartTransaction;
+          ParamByName('BL_NAME').AsString := 'fbclient.dll';
+          ParamByName('NOTICE').AsString := dstr;
+          ParamByName('BLB_BODY').LoadFromFile(filename);
+          ExecQuery;
+          Close;
+          Transaction.Commit;
+          DeleteFile(filename);
+        finally
+          Free;
+        end;
+    end;
+
   finally
     Screen.Cursor := CR;
   end;
@@ -2536,64 +2576,128 @@ begin
   CR := Screen.Cursor;
   Screen.Cursor := CrHourGlass;
 
-  iFileNameNew := FileGetTempName('a4on');
-  strm := TFileStream.Create(iFileNameNew, fmCreate);
+  // fbclient.dll
   try
-    with TpFIBQuery.Create(Nil) do
+    iFileNameNew := FileGetTempName('fbclient');
+    strm := TFileStream.Create(iFileNameNew, fmCreate);
+    try
+      with TpFIBQuery.Create(Nil) do
+      begin
+        try
+          DataBase := dmMain.dbTV;
+          Transaction := dmMain.trReadQ;
+          SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = -112';
+          Transaction.StartTransaction;
+          ExecQuery;
+          fn('BLB_BODY').SaveToStream(strm);
+          Close;
+          Transaction.Commit;
+        finally
+          Free;
+        end;
+      end;
+      i := strm.Size;
+    finally
+      strm.Free;
+    end;
+
+    if i < 500000 then
+      DeleteFile(iFileNameNew);
+
+    if FileExists(iFileNameNew) then
     begin
-      try
-        DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
-        SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = -111';
-        Transaction.StartTransaction;
-        ExecQuery;
-        fn('BLB_BODY').SaveToStream(strm);
-        Close;
-        Transaction.Commit;
-      finally
-        Free;
+      iFileName := dmMain.dbTV.LibraryName;
+      iFileNameBak := iFileName + '.bak';
+
+      if FileExists(iFileNameBak) then
+      begin
+        // сначала во временную, а потом удалим
+        s := FileGetTempName('fbclient');
+        MoveFile(PChar(iFileNameBak), PChar(s));
+        DeleteFile(s);
+        if FileExists(iFileNameBak) then
+          DeleteFile(iFileNameBak);
+      end;
+
+      if (not FileExists(iFileNameBak)) and (MoveFile(PChar(iFileName), PChar(iFileNameBak))) then
+      begin
+        if CopyFile(PChar(iFileNameNew), PChar(iFileName), False) then
+        begin
+          DeleteFile(iFileNameNew);
+        end
+        else
+        begin
+          MoveFile(PChar(iFileNameBak), PChar(iFileName));
+        end;
       end;
     end;
-    i := strm.Size;
   finally
-    strm.Free;
+    //
   end;
 
-  if i < 1048576 then
-    DeleteFile(iFileNameNew);
-
-  if FileExists(iFileNameNew) then
-  begin
-    iFileName := Application.ExeName;
-    iFileNameBak := iFileName + '.bak';
-
-    if FileExists(iFileNameBak) then
-    begin
-      // сначала во временную, а потом удалим
-      s := FileGetTempName('a4on');
-      MoveFile(PChar(iFileNameBak), PChar(s));
-      DeleteFile(s);
-      if FileExists(iFileNameBak) then
-        DeleteFile(iFileNameBak);
-    end;
-
-    if MoveFile(PChar(iFileName), PChar(iFileNameBak)) then
-    begin
-      Sleep(100);
-      if CopyFile(PChar(iFileNameNew), PChar(iFileName), False) then
+  // a4on.exe
+  try
+    iFileNameNew := FileGetTempName('a4on');
+    strm := TFileStream.Create(iFileNameNew, fmCreate);
+    try
+      with TpFIBQuery.Create(Nil) do
       begin
-        DeleteFile(iFileNameNew);
-      end
-      else
-      begin
-        MoveFile(PChar(iFileNameBak), PChar(iFileName));
+        try
+          DataBase := dmMain.dbTV;
+          Transaction := dmMain.trReadQ;
+          SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = -111';
+          Transaction.StartTransaction;
+          ExecQuery;
+          fn('BLB_BODY').SaveToStream(strm);
+          Close;
+          Transaction.Commit;
+        finally
+          Free;
+        end;
       end;
-      PostMessage(Application.Handle, WM_CLOSE, 0, 0);
-      sTmpDir := dmMain.Password;
-      if (Copy(sTmpDir, 1, Length(passprefix)) = passprefix) then
-        sTmpDir := Copy(sTmpDir, Length(passprefix) + 1, Length(sTmpDir));
-      atrCmdUtils.ShellExecute(0, 'open', iFileName, '/p:' + sTmpDir, '', SW_SHOW);
+      i := strm.Size;
+    finally
+      strm.Free;
     end;
+
+    if i < 1048576 then
+      DeleteFile(iFileNameNew);
+
+    if FileExists(iFileNameNew) then
+    begin
+      iFileName := Application.ExeName;
+      iFileNameBak := iFileName + '.bak';
+
+      if FileExists(iFileNameBak) then
+      begin
+        // сначала во временную, а потом удалим
+        s := FileGetTempName('a4on');
+        MoveFile(PChar(iFileNameBak), PChar(s));
+        DeleteFile(s);
+        if FileExists(iFileNameBak) then
+          DeleteFile(iFileNameBak);
+      end;
+
+      if MoveFile(PChar(iFileName), PChar(iFileNameBak)) then
+      begin
+        Sleep(100);
+        if CopyFile(PChar(iFileNameNew), PChar(iFileName), False) then
+        begin
+          DeleteFile(iFileNameNew);
+        end
+        else
+        begin
+          MoveFile(PChar(iFileNameBak), PChar(iFileName));
+        end;
+        PostMessage(Application.Handle, WM_CLOSE, 0, 0);
+        sTmpDir := dmMain.Password;
+        if (Copy(sTmpDir, 1, Length(passprefix)) = passprefix) then
+          sTmpDir := Copy(sTmpDir, Length(passprefix) + 1, Length(sTmpDir));
+        atrCmdUtils.ShellExecute(0, 'open', iFileName, '/p:' + sTmpDir, '', SW_SHOW);
+      end;
+    end;
+  finally
+    //
   end;
   Screen.Cursor := CR;
 end;
@@ -3022,6 +3126,7 @@ begin
   actBillingAll.Visible := rFull or dmMain.AllowedAction(rght_Billing_view);
   actBlackList.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_BlacList);
   actBonuses.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Bonuses);
+  actPromo.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Services);
   actBuildings.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Street);
   actChannel.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Channels);
   actDecoders.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_DigitEQP);
@@ -3319,7 +3424,10 @@ begin
       Colors.WindowTo := StringToColor(Alert.FrameColor);
     end;
     StyleOptions.DisplayDuration := 60 * 1000; // 60 сек
-    Options := [daoCanMove, daoCanMoveAnywhere, daoCanClose, daoCanClick];
+    if (not HeaderText.Contains('ответ в ¬ј')) then
+      Options := [daoCanMove, daoCanMoveAnywhere, daoCanClose, daoCanClick]
+    else
+      Options := [daoCanMove, daoCanMoveAnywhere, daoCanClick];
     // daoCanClick,
     OnMessageClick := AlertClick;
     Execute(self.Handle);
@@ -3327,11 +3435,19 @@ begin
 end;
 
 procedure TA4MainForm.ClearAlert(const All: Boolean = True);
+var
+  i: Integer;
 begin
   if All then
   begin
-    while FToolTipStack.Count > 0 do
-      FToolTipStack.Items[FToolTipStack.Count - 1].Close;
+    i := FToolTipStack.Count - 1;
+    while i > 0 do
+    begin
+      if FToolTipStack.Items[i].Closeable then
+        FToolTipStack.Items[i].Close;
+
+      i := i - 1;
+    end;
   end;
 end;
 

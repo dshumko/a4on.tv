@@ -333,7 +333,13 @@ procedure EnableControls(Control: TWinControl; const Enable: Boolean);
 procedure EnableMenuItems(MenuItem: TMenuItem; const Tag: Integer; const Enable: Boolean);
 procedure ExpandWidth(Parent: TControl; MinWidth: Integer; Controls: array of TControl);
 function PanelBorder(Panel: TCustomPanel): Integer;
-function Pixels(Control: TControl; APixels: Integer): Integer;
+
+//=== { Support functions for DPI Aware apps } ================================
+const cDefaultPixelsPerInch : Integer = 96;
+function Pixels(Control: TControl; APixels: Integer): Integer; deprecated; // Use PPIScale instead of Pixels
+function ControlScreenPixelsPerInch(Control: TControl): Integer;
+function PPIScale(Value: Integer): Integer; overload;
+function PPIScale(Control: TControl; Value: Integer): Integer; overload;
 
 type
   TMenuAnimation = (maNone, maRandom, maUnfold, maSlide);
@@ -862,8 +868,13 @@ function IsChildWindow(const AChild, AParent: THandle): Boolean;
 // The name is generated in the login <OwnerName>_<AComponentName><Nr> or
 // <OwnerName>_<ACOmponent.ClassName><Nr> when the AComponentName parameter
 // is not defined. The number will be increased until the name is unique.
-function GenerateUniqueComponentName(AOwner, AComponent: TComponent; const
-    AComponentName: string = ''): string;
+function GenerateUniqueComponentName(AOwner, AComponent: TComponent; const AComponentName: string = ''): string; overload;
+// This function generates a unique name for a component inside the list of all
+// components of its owner.
+// The name is generated in the login <OwnerName>_<AComponentName><Nr> or
+// <OwnerName>_<ACOmponent.ClassName><Nr> when the AComponentName parameter
+// is not defined. The number will be increased until the name is unique.
+procedure GenerateUniqueComponentName(AComponent: TComponent; const AComponentName: string = ''); overload;
 
 function ReplaceImageListReference(This: TComponent; NewReference: TCustomImageList;
   var VarReference: TCustomImageList; ChangeLink: TChangeLink): Boolean;
@@ -2291,10 +2302,13 @@ end;
 
 function ScreenWorkArea: TRect;
 begin
+  if Assigned(Screen.ActiveCustomForm) then
+    Result := Screen.MonitorFromWindow(Screen.ActiveCustomForm.Handle).WorkareaRect
+  else  
   {$IFDEF MSWINDOWS}
   if not SystemParametersInfo(SPI_GETWORKAREA, 0, @Result, 0) then
   {$ENDIF MSWINDOWS}
-  Result := Bounds(0, 0, Screen.Width, Screen.Height);
+    Result := Bounds(0, 0, Screen.Width, Screen.Height);
 end;
 
 { Standard Windows MessageBox function }
@@ -3307,17 +3321,66 @@ begin
 end;
 
 function Pixels(Control: TControl; APixels: Integer): Integer;
+begin
+  Result := PPIScale (Control, APixels);
+end;
+
+function ControlScreenPixelsPerInch(Control: TControl): Integer;
+{$IFDEF RTL300_UP}
 var
   Form: TForm;
+{$ENDIF}
 begin
-  Result := APixels;
+  {$IFDEF RTL300_UP}
   if Control is TForm then
     Form := TForm(Control)
   else
     Form := TForm(GetParentForm(Control));
-  if Form.Scaled then
-    Result := Result * Form.PixelsPerInch div 96;
+  if Assigned(Form) then
+    Result := Screen.MonitorFromWindow(Form.Handle).PixelsPerInch
+  else
+    Result := Screen.PixelsPerInch;
+  {$ELSE}
+  Result := Screen.PixelsPerInch;
+  {$ENDIF}
 end;
+
+function PPIScale(Value: Integer): Integer; overload;
+begin
+  Result := PPIScale(nil, Value);
+end;
+
+function PPIScale(Control: TControl; Value: Integer): Integer;
+var
+  Form: TForm;
+  MonitorPPI: Integer;
+begin
+  Result := Value;
+  if Not Assigned(Control) then
+    Form := nil
+  else
+    if Control is TForm then
+      Form := TForm(Control)
+    else
+      Form := TForm(GetParentForm(Control));
+  if Assigned(Form) then
+    if Form.Scaled then
+    begin
+      {$ifdef RTL300_UP}
+      MonitorPPI := Screen.MonitorFromWindow(Form.Handle).PixelsPerInch;
+      {$else}
+      MonitorPPI := Screen.PixelsPerInch;
+      {$endif}
+      Result := MulDiv(Result, MonitorPPI, cDefaultPixelsPerInch);
+    end
+    else
+  else
+  begin
+    MonitorPPI := Screen.PixelsPerInch;
+    Result := MulDiv(Result, MonitorPPI, cDefaultPixelsPerInch);
+  end;
+end;
+
 
 procedure ShowMenu(Form: TForm; MenuAni: TMenuAnimation);
 var
@@ -7262,6 +7325,7 @@ begin
     RegisterGraphicSignature([1, 0], 0, TMetafile); // EMF
     RegisterGraphicSignature('JFIF', 6, TJPEGImage);
     RegisterGraphicSignature('Exif', 6 , TJPEGImage);
+    RegisterGraphicSignature([$FF, $D8], 0 , TJPEGImage);
     // NB! Registering these will add a requirement on having the JvMM package installed
     // Let users register these manually
     // RegisterGraphicSignature([$0A], 0, TJvPcx);
@@ -7677,10 +7741,19 @@ function GenerateUniqueComponentName(AOwner, AComponent: TComponent; const
   end;
 
   function GenerateName(const AName: string; ANumber: Integer): string;
+  var vName : String;
   begin
-    Result := ValidateName (AName);
-    if Assigned(AOwner) and (AOwner.Name <> '') then
-      Result := AOwner.Name + '_' + Result;
+    vName := ValidateName (AName);
+    if Assigned(AOwner) then
+      if (AOwner.Name <> '') then
+        Result := AOwner.Name
+      else
+        Result := AOwner.ClassName
+    else
+      Result := '';
+    if (vName <> '') and (Result <> '') then
+      Result := Result + '_';
+    Result := Result + vName;
     if ANumber > 0 then
       Result := Result + IntToStr(ANumber);
   end;
@@ -7690,7 +7763,7 @@ function GenerateUniqueComponentName(AOwner, AComponent: TComponent; const
     I: Integer;
   begin
     Result := True;
-    if AName <> '' then
+    if (AName <> '') and Assigned(AOwner) then
       for I := 0 to AOwner.ComponentCount - 1 do
         if (AOwner.Components[I] <> AComponent) and
           (CompareText(AOwner.Components[I].Name, AName) = 0) then
@@ -7703,22 +7776,27 @@ function GenerateUniqueComponentName(AOwner, AComponent: TComponent; const
 var
   I: Integer;
 begin
-  if not Assigned(AOwner) then
-    Result := ''
-  else
-    for I := 0 to MaxInt do
-    begin
-      if (AComponentName <> '') then
-        Result := GenerateName(AComponentName, I)
+  for I := 0 to MaxInt do
+  begin
+    if (AComponentName <> '') then
+      Result := GenerateName(AComponentName, I)
+    else
+      if Assigned(AComponent) then
+        Result := GenerateName(AComponent.ClassName, I)
       else
-        if Assigned(AComponent) then
-          Result := GenerateName(AComponent.ClassName, I)
-        else
-          Result := GenerateName('', I);
-      if IsUnique(Result) then
-        Break;
-    end;
+        Result := GenerateName('', I);
+    if IsUnique(Result) then
+      Break;
+  end;
 end;
+
+procedure GenerateUniqueComponentName(AComponent: TComponent; const AComponentName: string = '');
+begin
+  if not Assigned(AComponent) then
+    Exit;
+  AComponent.Name := GenerateUniqueComponentName(AComponent.Owner, AComponent, AComponentName);
+end;
+
 
 function ReplaceComponentReference(This, NewReference: TComponent; var VarReference: TComponent): Boolean;
 begin

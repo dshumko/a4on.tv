@@ -164,13 +164,13 @@ begin /*$$IBE$$
     if (new.Eq_State = 2) then
       insert into equipment_HISTORY (EQ_N, CUSTOMER_ID, EQ_STATE, OLD_STATE, EDIT_BY, EDIT_ON)
       select
-          new.EQ_N, CUSTOMER_ID, new.EQ_STATE, OLD.Eq_State, current_user, CURRENT_TIMESTAMP
+          new.EQ_N, CUSTOMER_ID, new.EQ_STATE, OLD.Eq_State, current_user, LOCALTIMESTAMP
         from CUSTOMER_DECODERS CD
         where (CD.DECODER_N = new.EQ_N)
                 or (CD.Stb_N = new.Eq_N);
     else
       insert into equipment_HISTORY (EQ_N, CUSTOMER_ID, EQ_STATE, OLD_STATE, EDIT_BY, EDIT_ON)
-      values (new.EQ_N, null, new.EQ_STATE, OLD.Eq_State, current_user, CURRENT_TIMESTAMP);
+      values (new.EQ_N, null, new.EQ_STATE, OLD.Eq_State, current_user, LOCALTIMESTAMP);
   end
  $$IBE$$*/ POST_EVENT '$$IBE$$';
 end~
@@ -347,13 +347,13 @@ begin
     if (new.Eq_State = 2) then
       insert into equipment_HISTORY (EQ_N, CUSTOMER_ID, EQ_STATE, OLD_STATE, EDIT_BY, EDIT_ON)
       select
-          new.EQ_N, CUSTOMER_ID, new.EQ_STATE, OLD.Eq_State, current_user, CURRENT_TIMESTAMP
+          new.EQ_N, CUSTOMER_ID, new.EQ_STATE, OLD.Eq_State, current_user, LOCALTIMESTAMP
         from CUSTOMER_DECODERS CD
         where (CD.DECODER_N = new.EQ_N)
                 or (CD.Stb_N = new.Eq_N);
     else
       insert into equipment_HISTORY (EQ_N, CUSTOMER_ID, EQ_STATE, OLD_STATE, EDIT_BY, EDIT_ON)
-      values (new.EQ_N, null, new.EQ_STATE, OLD.Eq_State, current_user, CURRENT_TIMESTAMP);
+      values (new.EQ_N, null, new.EQ_STATE, OLD.Eq_State, current_user, LOCALTIMESTAMP);
   end
 end~
 set term ;~

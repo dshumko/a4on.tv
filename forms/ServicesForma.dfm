@@ -39,10 +39,12 @@ object ServicesForm: TServicesForm
     Align = alClient
     TabOrder = 1
     OnChange = pcServicesChange
-    ExplicitHeight = 511
     object tsAbonent: TTabSheet
       Caption = #1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
-      ExplicitHeight = 483
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ASGrid: TDBGridEh
         Left = 0
         Top = 0
@@ -240,7 +242,10 @@ object ServicesForm: TServicesForm
       Tag = 1
       Caption = #1056#1072#1079#1086#1074#1099#1077' '#1091#1089#1083#1091#1075#1080
       ImageIndex = 1
-      ExplicitHeight = 483
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ssGrid: TDBGridEh
         Left = 0
         Top = 0
@@ -354,7 +359,10 @@ object ServicesForm: TServicesForm
       Tag = 2
       Caption = #1059#1089#1083#1091#1075#1080' '#1087#1086' '#1092#1072#1082#1090#1091
       ImageIndex = 2
-      ExplicitHeight = 483
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object fsGrid: TDBGridEh
         Left = 0
         Top = 0
@@ -531,6 +539,17 @@ object ServicesForm: TServicesForm
       ImageIndex = 33
       OnClick = btnQFClick
     end
+    object chkHideOld: TCheckBox
+      Left = 162
+      Top = 0
+      Width = 183
+      Height = 22
+      TabStop = False
+      Alignment = taLeftJustify
+      Caption = '   '#1057#1082#1088#1099#1090#1100' '#1085#1077#1072#1082#1090#1080#1074#1085#1099#1077' '#1091#1089#1083#1091#1075#1080
+      TabOrder = 0
+      OnClick = chkHideOldClick
+    end
   end
   object AddonPage: TPageControl
     Left = 0
@@ -541,11 +560,12 @@ object ServicesForm: TServicesForm
     Align = alBottom
     TabOrder = 2
     OnChange = AddonPageChange
-    ExplicitTop = 240
-    ExplicitWidth = 828
     object tsTarif: TTabSheet
       Caption = #1058#1072#1088#1080#1092#1099
-      ExplicitWidth = 820
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object trfGrid: TDBGridEh
         Left = 28
         Top = 0
@@ -736,6 +756,10 @@ object ServicesForm: TServicesForm
     object tsLink: TTabSheet
       Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077' / '#1054#1090#1082#1083#1102#1095#1077#1085#1080#1077
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 28
         Top = 0
@@ -745,8 +769,6 @@ object ServicesForm: TServicesForm
         BevelOuter = bvNone
         Caption = 'Panel2'
         TabOrder = 0
-        ExplicitLeft = 0
-        ExplicitWidth = 803
         object dbgLink: TDBGridEh
           Left = 0
           Top = 100
@@ -818,7 +840,6 @@ object ServicesForm: TServicesForm
           BevelOuter = bvNone
           TabOrder = 0
           Visible = False
-          ExplicitWidth = 803
           DesignSize = (
             800
             100)
@@ -832,7 +853,7 @@ object ServicesForm: TServicesForm
           object Label7: TLabel
             Left = 376
             Top = 8
-            Width = 79
+            Width = 74
             Height = 13
             Anchors = [akLeft, akTop, akRight]
             Caption = #1050#1072#1082#1086#1081' '#1091#1089#1083#1091#1075#1086#1081
@@ -869,7 +890,6 @@ object ServicesForm: TServicesForm
             Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
             TabOrder = 3
             OnClick = btnSaveLinkClick
-            ExplicitWidth = 589
           end
           object btnCancelLink: TBitBtn
             Left = 690
@@ -933,7 +953,6 @@ object ServicesForm: TServicesForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = 8
         DesignSize = (
           28
           215)
@@ -1065,7 +1084,6 @@ object ServicesForm: TServicesForm
           #1055#1072#1082#1077#1090' '#1086#1090#1082#1083#1102#1095#1077#1085)
         TabIndex = 0
         OnChange = TabChannelStateChange
-        ExplicitWidth = 820
         object Panel3: TPanel
           Left = 24
           Top = 4
@@ -1090,11 +1108,10 @@ object ServicesForm: TServicesForm
             object Label1: TLabel
               Left = 0
               Top = 0
-              Width = 321
+              Width = 125
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
-              ExplicitWidth = 125
             end
             object GridSC: TDBGridEh
               Left = 0
@@ -1220,11 +1237,10 @@ object ServicesForm: TServicesForm
             object Label2: TLabel
               Left = 0
               Top = 0
-              Width = 476
+              Width = 106
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
-              ExplicitWidth = 106
             end
             object GridC: TDBGridEh
               Left = 0
@@ -1282,6 +1298,10 @@ object ServicesForm: TServicesForm
       Caption = #1055#1077#1088#1077#1082#1083#1102#1095#1072#1090#1100' '#1085#1072' '#1091#1089#1083#1091#1075#1080
       ImageIndex = 3
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object dbgAllow: TDBGridEh
         Left = 28
         Top = 0
@@ -1369,6 +1389,10 @@ object ServicesForm: TServicesForm
     object tsSwitch: TTabSheet
       Caption = #1055#1077#1088#1077#1082#1083#1102#1095#1077#1085#1080#1077
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 28
         Top = 0
@@ -1594,7 +1618,6 @@ object ServicesForm: TServicesForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = 8
         DesignSize = (
           28
           215)
@@ -1708,6 +1731,10 @@ object ServicesForm: TServicesForm
     object tsAtributes: TTabSheet
       Caption = #1040#1090#1088#1080#1073#1091#1090#1099
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnlAtr: TPanel
         Left = 28
         Top = 0
@@ -1717,8 +1744,6 @@ object ServicesForm: TServicesForm
         BevelOuter = bvNone
         Caption = 'Panel1'
         TabOrder = 0
-        ExplicitLeft = 27
-        ExplicitWidth = 801
         object dbgAttr: TDBGridEh
           Left = 0
           Top = 100
@@ -1798,7 +1823,6 @@ object ServicesForm: TServicesForm
           BevelOuter = bvNone
           TabOrder = 0
           Visible = False
-          ExplicitWidth = 801
           DesignSize = (
             800
             100)
@@ -1849,7 +1873,6 @@ object ServicesForm: TServicesForm
             Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
             TabOrder = 4
             OnClick = btnSaveAttrClick
-            ExplicitWidth = 589
           end
           object btnCancelAttr: TBitBtn
             Left = 701
@@ -1860,7 +1883,6 @@ object ServicesForm: TServicesForm
             Caption = #1054#1090#1084#1077#1085#1072
             TabOrder = 5
             OnClick = btnCancelAttrClick
-            ExplicitLeft = 702
           end
           object dbmmoNOTICE: TDBMemoEh
             Left = 98
@@ -1877,7 +1899,6 @@ object ServicesForm: TServicesForm
             TabOrder = 3
             Visible = True
             WantReturns = True
-            ExplicitWidth = 690
           end
           object edtAtrValue: TDBEditEh
             Left = 475
@@ -1892,7 +1913,6 @@ object ServicesForm: TServicesForm
             EmptyDataInfo.Text = #1047#1085#1072#1095#1077#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072
             TabOrder = 1
             Visible = True
-            ExplicitWidth = 313
           end
           object cbbList: TDBComboBoxEh
             Left = 475
@@ -1907,7 +1927,6 @@ object ServicesForm: TServicesForm
             EditButtons = <>
             TabOrder = 2
             Visible = False
-            ExplicitWidth = 313
           end
         end
       end
@@ -1919,7 +1938,6 @@ object ServicesForm: TServicesForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = 8
         DesignSize = (
           28
           215)
@@ -2033,6 +2051,10 @@ object ServicesForm: TServicesForm
     object tsCOMPLEX: TTabSheet
       Caption = #1050#1086#1084#1087#1083#1077#1082#1089
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object dbgCMPLX: TDBGridEh
         Left = 329
         Top = 0
@@ -2314,44 +2336,60 @@ object ServicesForm: TServicesForm
       '    ')
     SelectSQL.Strings = (
       'select'
+      '    *'
+      '  from (select'
+      '            Service_Id'
+      '          , Srv_Type_Id'
+      '          , Shift_Months'
+      '          , Name'
+      '          , Shortname'
+      '          , Description'
+      '          , Dimension'
+      '          , Extra'
+      '          , Priority'
+      '          , CALC_TYPE'
+      '          , Note'
+      '          , AUTOOFF'
+      '          ,'
+      '            case(select'
+      '                     1'
+      '                   from SERVICES_LINKS sl'
+      '                   where sl.PARENT is null'
+      '                         and sl.CHILD = s.SERVICE_ID)'
+      '              when 1 then 1'
+      '              else 0'
+      '            end as SHOW_SERVICE,'
+      '            (select'
+      '                 o.O_Name'
+      '               from Objects o'
+      '               where o.O_Id = s.Expense_Type'
+      '                     and o.O_TYPE = 2) as O_Name'
+      '          ,'
+      '            (select'
+      '                 o.O_NAME'
+      '               from objects o'
+      '               where o.O_Id = s.BUSINESS_TYPE'
+      '                     and o.O_TYPE = 15) BUSINESS'
+      '          ,'
+      '            (select'
+      '                 t.Tarif_Sum'
+      '               from Tarif t'
+      '               where t.Service_Id = s.Service_Id'
       
-        '    Service_Id, Srv_Type_Id, Shift_Months, Name, Shortname, Desc' +
-        'ription, Dimension, Extra, Priority, CALC_TYPE, Note, AUTOOFF,'
-      '    case(select'
-      '             1'
-      '           from SERVICES_LINKS sl'
-      '           where sl.PARENT is null'
-      '                 and sl.CHILD = s.SERVICE_ID)'
-      '      when 1 then 1'
-      '      else 0'
-      '    end as SHOW_SERVICE,'
-      '    (select'
-      '         o.O_Name'
-      '       from Objects o'
-      '       where o.O_Id = s.Expense_Type'
-      '             and o.O_TYPE = 2) as O_Name,'
-      '    (select'
-      '         o.O_NAME'
-      '       from objects o'
-      '       where o.O_Id = s.BUSINESS_TYPE'
-      '             and o.O_TYPE = 15) BUSINESS,'
-      '    (select'
-      '         t.Tarif_Sum'
-      '       from Tarif t'
-      '       where t.Service_Id = s.Service_Id'
+        '                     and current_date between t.Date_From and t.' +
+        'Date_To) FIZ_TAR'
+      '          ,'
+      '            (select'
+      '                 count(*)'
+      '               from subscr_hist h'
+      '               where h.Serv_Id = s.Service_Id'
       
-        '             and current_date between t.Date_From and t.Date_To)' +
-        ' FIZ_TAR,'
-      '    (select'
-      '         count(*)'
-      '       from subscr_hist h'
-      '       where h.Serv_Id = s.Service_Id'
-      
-        '             and current_date between h.Date_From and h.Date_To)' +
-        ' ACT_CUST'
-      '  from SERVICES s'
-      '  where s.SRV_TYPE_ID = :SERV_TYPE'
-      '  order by s.NAME')
+        '                     and current_date between h.Date_From and h.' +
+        'Date_To) ACT_CUST'
+      '          from SERVICES s'
+      '          where s.SRV_TYPE_ID = :SERV_TYPE)'
+      '  where @@where_actual%1=1@'
+      '  order by NAME  ')
     AutoUpdateOptions.UpdateTableName = 'SERVICES'
     AutoUpdateOptions.KeyFields = 'SERVICE_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

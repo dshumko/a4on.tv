@@ -1418,7 +1418,7 @@ object apgCustomerNew: TapgCustomerNew
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     Left = 654
-    Top = 324
+    Top = 364
   end
   object dsAttributes: TpFIBDataSet
     SelectSQL.Strings = (

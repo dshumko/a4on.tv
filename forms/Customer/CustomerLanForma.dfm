@@ -1,9 +1,9 @@
 object CustomerLanForm: TCustomerLanForm
   Left = 593
   Top = 259
-  ActiveControl = lcbPort
+  ActiveControl = dbleEquipment
   Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1057#1055#1044
-  ClientHeight = 337
+  ClientHeight = 389
   ClientWidth = 534
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,25 +16,30 @@ object CustomerLanForm: TCustomerLanForm
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
-  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   DesignSize = (
     534
-    337)
+    389)
   PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 302
+    Top = 354
     Width = 534
     Height = 35
     Align = alBottom
-    TabOrder = 2
+    TabOrder = 4
     TabStop = True
-    ExplicitTop = 302
+    ExplicitTop = 354
     ExplicitWidth = 534
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 74
       Width = 363
@@ -57,41 +62,41 @@ object CustomerLanForm: TCustomerLanForm
       ExplicitHeight = 27
     end
   end
-  object GroupBox2: TPanel
+  object pnlMain: TPanel
     Left = 0
-    Top = 29
+    Top = 156
     Width = 534
-    Height = 181
+    Height = 153
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 3
     DesignSize = (
       534
-      181)
+      153)
     object Label4: TLabel
-      Left = 8
-      Top = 34
+      Left = 3
+      Top = 7
       Width = 25
       Height = 13
       Caption = #1055#1086#1088#1090
     end
     object Label2: TLabel
-      Left = 8
-      Top = 108
+      Left = 3
+      Top = 81
       Width = 22
       Height = 13
       Caption = 'MAC'
     end
     object Label1: TLabel
-      Left = 8
-      Top = 83
+      Left = 3
+      Top = 56
       Width = 10
       Height = 13
       Caption = 'IP'
     end
     object lbl3: TLabel
-      Left = 8
-      Top = 58
+      Left = 3
+      Top = 31
       Width = 25
       Height = 13
       Caption = #1057#1077#1090#1100
@@ -102,30 +107,16 @@ object CustomerLanForm: TCustomerLanForm
       Font.Style = []
       ParentFont = False
     end
-    object Label6: TLabel
-      Left = 8
-      Top = 9
-      Width = 45
-      Height = 13
-      Hint = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1102
-      Caption = #1055#1086#1076#1082#1083'. '#1082
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
     object lbl1: TLabel
-      Left = 8
-      Top = 132
+      Left = 3
+      Top = 105
       Width = 22
       Height = 13
       Caption = 'IPv6'
     end
     object lbl2: TLabel
-      Left = 8
-      Top = 157
+      Left = 3
+      Top = 130
       Width = 20
       Height = 13
       Hint = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1076#1083#1103' '#1074#1085#1091#1090#1088#1077#1085#1085#1086#1075#1086' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1103
@@ -133,7 +124,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object eMAC: TDBEditEh
       Left = 74
-      Top = 105
+      Top = 78
       Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -152,7 +143,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object eIP: TDBEditEh
       Left = 74
-      Top = 80
+      Top = 53
       Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -174,7 +165,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object dbleVLAN: TDBLookupComboboxEh
       Left = 74
-      Top = 55
+      Top = 28
       Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -230,123 +221,9 @@ object CustomerLanForm: TCustomerLanForm
       Visible = True
       OnDropDownBoxGetCellParams = dbleVLANDropDownBoxGetCellParams
     end
-    object dbleEquipment: TDBLookupComboboxEh
-      Left = 74
-      Top = 6
-      Width = 455
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      DynProps = <>
-      DataField = 'EQ_ID'
-      DataSource = srcLan
-      DropDownBox.Columns = <
-        item
-          FieldName = 'NAME'
-          Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
-          Width = 90
-        end
-        item
-          FieldName = 'STREET_NAME'
-          Title.Caption = #1059#1083#1080#1094#1072
-          Width = 60
-        end
-        item
-          AutoFitColWidth = False
-          FieldName = 'HOUSE_NO'
-          Title.Caption = #1044#1086#1084
-          Width = 35
-        end
-        item
-          AutoFitColWidth = False
-          FieldName = 'PORCH_N'
-          Title.Caption = #1055'-'#1076
-          Width = 20
-        end
-        item
-          AutoFitColWidth = False
-          FieldName = 'FLOOR_N'
-          Title.Caption = #1069#1058'.'
-          Width = 20
-        end
-        item
-          AutoFitColWidth = False
-          FieldName = 'PLACE'
-          Title.Caption = #1052#1077#1089#1090#1086
-          Width = 20
-        end
-        item
-          AutoFitColWidth = False
-          FieldName = 'IP'
-          Width = 80
-        end
-        item
-          AutoFitColWidth = False
-          FieldName = 'MAC'
-          Width = 100
-        end>
-      DropDownBox.ListSource = srcEQ
-      DropDownBox.ListSourceAutoFilter = True
-      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
-      DropDownBox.ListSourceAutoFilterAllColumns = True
-      DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
-      DropDownBox.SortLocal = True
-      DropDownBox.AutoDrop = True
-      DropDownBox.ShowTitles = True
-      DropDownBox.Sizable = True
-      EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1091
-      EditButtons = <
-        item
-          ShortCut = 45
-          Style = ebsPlusEh
-          OnClick = dbleEquipmentEditButtons0Click
-        end
-        item
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000232E0000232E00000000000000000001ECECECFAFAFA
-            FFFFFFFFFFFFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFDBDBDB5D5D5DA2A2A2F4F4F4FEFEFEFEFEFEFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA8A8A8
-            3636364C4C4CE7E7E7FFFFFFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFEFEFEF8F8F85151519898988A8A8AACACACFFFFFFFD
-            FDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            EDEDED8B8B8B3E3E3E343434B1B1B1FFFFFFFDFDFDFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFEFFFFFFB9B9B9393939404040343434B0
-            B0B0FFFFFFFDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FEFEFEFFFFFFBFBFBF373737404040343434B2B2B2FFFFFFFDFDFDFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDFFFFFFBEBEBE36363640
-            4040343434B1B1B1FFFFFFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFDFDFDFFFFFFC1C1C1373737404040343434AFAFAFFFFFFFFDFD
-            FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDFFFFFFC1
-            C1C1363636404040343434AFAFAFFFFFFFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFDFDFDFFFFFFBEBEBE353535404040353535B1B1
-            B1FFFFFFFDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
-            FEFEFFFFFFBFBFBF363636424242343434B2B2B2FFFFFFFDFDFDFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDFFFFFFC1C1C13333334A4A
-            4AA7A7A7C6C6C6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFDFDFDFFFFFFBFBFBFA9A9A9797979323232EEEEEEFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDFFFFFFD7D7
-            D73A3A3A848484FAFAFAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFCFCFCFFFFFFC9C9C9FAFAFAFFFFFF}
-          ShortCut = 113
-          Style = ebsGlyphEh
-          Visible = False
-          OnClick = dbleEquipmentEditButtons1Click
-        end>
-      KeyField = 'EID'
-      ListField = 'NAME_IP'
-      ListSource = srcEQ
-      ShowHint = True
-      Style = csDropDownEh
-      TabOrder = 0
-      Visible = True
-      OnClick = DBLookupComboboxClick
-      OnDropDownBoxGetCellParams = dbleEquipmentDropDownBoxGetCellParams
-      OnExit = dbleEquipmentExit
-    end
     object eIPv6: TDBEditEh
       Left = 74
-      Top = 129
+      Top = 102
       Width = 455
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -369,7 +246,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object edtTAGSTR: TDBEditEh
       Left = 200
-      Top = 154
+      Top = 127
       Width = 329
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -386,8 +263,8 @@ object CustomerLanForm: TCustomerLanForm
     end
     object edtTAG: TDBNumberEditEh
       Left = 74
-      Top = 154
-      Width = 120
+      Top = 127
+      Width = 111
       Height = 21
       Alignment = taLeftJustify
       DataField = 'TAG'
@@ -402,7 +279,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object lcbPort: TDBLookupComboboxEh
       Left = 201
-      Top = 31
+      Top = 4
       Width = 328
       Height = 21
       Hint = 
@@ -486,8 +363,8 @@ object CustomerLanForm: TCustomerLanForm
     end
     object edtPort: TDBEditEh
       Left = 74
-      Top = 31
-      Width = 121
+      Top = 4
+      Width = 111
       Height = 21
       DataField = 'PORT'
       DataSource = srcLan
@@ -495,19 +372,34 @@ object CustomerLanForm: TCustomerLanForm
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091
       ShowHint = True
+      TabOrder = 0
+      Visible = False
+    end
+    object cbbTagList: TDBComboBoxEh
+      Left = 248
+      Top = 118
+      Width = 233
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DataField = 'TAG_STR'
+      DataSource = srcLan
+      DynProps = <>
+      EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1079#1085#1072#1095#1077#1085#1080#1077' '#1080#1079' '#1089#1087#1080#1089#1082#1072
+      EditButtons = <>
+      ShowHint = True
       TabOrder = 8
       Visible = False
     end
   end
   object btn1: TButton
-    Left = 8
-    Top = 306
-    Width = 55
+    Left = 3
+    Top = 358
+    Width = 63
     Height = 27
     Anchors = [akLeft, akBottom]
     Caption = 'CMD'
     DropDownMenu = pmLanPopUp
-    TabOrder = 3
+    TabOrder = 5
     OnClick = btn1Click
   end
   object pnlAddres: TPanel
@@ -522,7 +414,7 @@ object CustomerLanForm: TCustomerLanForm
       534
       29)
     object Label3: TLabel
-      Left = 7
+      Left = 3
       Top = 10
       Width = 31
       Height = 13
@@ -623,17 +515,17 @@ object CustomerLanForm: TCustomerLanForm
   end
   object pnlMemo: TPanel
     Left = 0
-    Top = 210
+    Top = 309
     Width = 534
-    Height = 92
+    Height = 45
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 6
     object mmoNOTICE: TDBMemoEh
       Left = 0
       Top = 0
       Width = 534
-      Height = 92
+      Height = 45
       Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       Align = alClient
       AutoSize = False
@@ -646,6 +538,244 @@ object CustomerLanForm: TCustomerLanForm
       TabOrder = 0
       Visible = True
       WantReturns = True
+    end
+  end
+  object pnlEthernet: TPanel
+    Left = 0
+    Top = 29
+    Width = 534
+    Height = 30
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 1
+    DesignSize = (
+      534
+      30)
+    object Label5: TLabel
+      Left = 3
+      Top = 7
+      Width = 45
+      Height = 13
+      Hint = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1102
+      Caption = #1055#1086#1076#1082#1083'. '#1082
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object dbleEquipment: TDBLookupComboboxEh
+      Left = 74
+      Top = 4
+      Width = 455
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = 'EQ_ID'
+      DataSource = srcLan
+      DropDownBox.Columns = <
+        item
+          FieldName = 'NAME'
+          Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+          Width = 90
+        end
+        item
+          FieldName = 'STREET_NAME'
+          Title.Caption = #1059#1083#1080#1094#1072
+          Width = 60
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'HOUSE_NO'
+          Title.Caption = #1044#1086#1084
+          Width = 35
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'PORCH_N'
+          Title.Caption = #1055'-'#1076
+          Width = 20
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'FLOOR_N'
+          Title.Caption = #1069#1058'.'
+          Width = 20
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'PLACE'
+          Title.Caption = #1052#1077#1089#1090#1086
+          Width = 20
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'IP'
+          Width = 80
+        end
+        item
+          AutoFitColWidth = False
+          FieldName = 'MAC'
+          Width = 100
+        end>
+      DropDownBox.ListSource = srcEQ
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+      DropDownBox.SortLocal = True
+      DropDownBox.AutoDrop = True
+      DropDownBox.ShowTitles = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1091
+      EditButtons = <
+        item
+          DefaultAction = False
+          ShortCut = 45
+          Style = ebsPlusEh
+          OnClick = dbleEquipmentEditButtons0Click
+        end
+        item
+          DefaultAction = False
+          Glyph.Data = {
+            DA000000424DDA000000000000005A0000002800000010000000100000000100
+            04000000000080000000C40E0000C40E0000090000000900000000000000A969
+            2A00D3C2B200915A2400AD703300AB6A2A00AC6E30009F8F7F00CDB59E000000
+            0000000000000000000000000000000180000000000000075100000000000000
+            1001000000000000005610000000000003456100000000000034561000000000
+            0003456100000000000034560000000000000340010000000000000011000000
+            000000011200000000000000000000000000000000000000000000000000}
+          ShortCut = 113
+          Style = ebsGlyphEh
+          OnClick = dbleEquipmentEditButtons1Click
+        end>
+      KeyField = 'EID'
+      ListField = 'NAME_IP'
+      ListSource = srcEQ
+      ShowHint = True
+      Style = csDropDownEh
+      TabOrder = 0
+      Visible = True
+      OnChange = dbleEquipmentChange
+      OnClick = DBLookupComboboxClick
+      OnDropDownBoxGetCellParams = dbleEquipmentDropDownBoxGetCellParams
+      OnExit = dbleEquipmentExit
+    end
+  end
+  object pnlDOCSYS: TPanel
+    Left = 0
+    Top = 59
+    Width = 534
+    Height = 97
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 2
+    Visible = False
+    DesignSize = (
+      534
+      97)
+    object Label6: TLabel
+      Left = 3
+      Top = 3
+      Width = 33
+      Height = 13
+      Caption = #1052#1086#1076#1077#1084
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lbl6: TLabel
+      Left = 3
+      Top = 28
+      Width = 54
+      Height = 13
+      Caption = #1057#1077#1088#1080#1081#1085#1099#1081' '
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lbl7: TLabel
+      Left = 3
+      Top = 52
+      Width = 62
+      Height = 13
+      Caption = #1052#1040#1057' '#1084#1086#1076#1077#1084#1072
+    end
+    object lbl8: TLabel
+      Left = 3
+      Top = 77
+      Width = 50
+      Height = 13
+      Caption = 'IP '#1084#1086#1076#1077#1084#1072
+    end
+    object edtModem: TDBEditEh
+      Left = 74
+      Top = 0
+      Width = 455
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
+    end
+    object edtSerialModem: TDBEditEh
+      Left = 74
+      Top = 25
+      Width = 455
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 1
+      Visible = True
+    end
+    object edtMACmodem: TDBEditEh
+      Left = 74
+      Top = 49
+      Width = 238
+      Height = 21
+      Hint = #1052#1040#1057' '#1072#1076#1088#1077#1089
+      CharCase = ecUpperCase
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = 'MAC '#1072#1076#1088#1077#1089' '#1084#1086#1076#1077#1084#1072
+      ShowHint = True
+      TabOrder = 2
+      Visible = True
+      OnEnter = edtMACmodemEnter
+      OnExit = edtMACmodemExit
+      EditMask = ''
+    end
+    object edtIPmodem: TDBEditEh
+      Left = 74
+      Top = 74
+      Width = 238
+      Height = 21
+      Hint = 'IP '#1072#1076#1088#1077#1089' '#1084#1086#1076#1077#1084#1072
+      DynProps = <>
+      EditButtons = <
+        item
+          Style = ebsEllipsisEh
+          DrawBackTime = edbtAlwaysEh
+          OnClick = edtIPmodemEditButtons0Click
+        end>
+      EmptyDataInfo.Text = 'IP '#1072#1076#1088#1077#1089' '#1084#1086#1076#1077#1084#1072
+      MaxLength = 19
+      ShowHint = True
+      TabOrder = 3
+      Visible = True
+      OnEnter = edtIPmodemEnter
+      EditMask = ''
     end
   end
   object srcLan: TDataSource
@@ -1102,7 +1232,7 @@ object CustomerLanForm: TCustomerLanForm
     UpdateTransaction = trWrite
     DataSource = srcEQ
     Left = 232
-    Top = 248
+    Top = 232
     oFetchAll = True
   end
 end

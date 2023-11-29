@@ -68,7 +68,7 @@ type
     btnEdit: TToolButton;
     actEdit: TAction;
     N14: TMenuItem;
-    N16: TMenuItem;
+    miNotSend: TMenuItem;
     actFilterCustomer: TAction;
     btnFilterCustomer: TToolButton;
     ToolButton2: TToolButton;
@@ -98,6 +98,7 @@ type
     miN17: TMenuItem;
     actAnswer: TAction;
     miAnswer: TMenuItem;
+    miInOnly: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -123,7 +124,7 @@ type
     procedure actDelExecute(Sender: TObject);
     procedure actSendSMSExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
-    procedure N16Click(Sender: TObject);
+    procedure miNotSendClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFilterCustomerExecute(Sender: TObject);
     procedure btnSaveLinkClick(Sender: TObject);
@@ -140,10 +141,11 @@ type
     procedure chkTreeClick(Sender: TObject);
     procedure miMyOnlyClick(Sender: TObject);
     procedure actAnswerExecute(Sender: TObject);
+    procedure miInOnlyClick(Sender: TObject);
   private
-    FFirstOpen: Boolean; // Первое открытие Формы
-    FParentMessage : Integer;
-    FForCustomer : Integer;
+    fFirstOpen: Boolean; // Первое открытие Формы
+    fParentMessage: Integer;
+    fForCustomer: Integer;
     CanEdit: Boolean;
     CanCreate: Boolean;
     FPersonalData: Boolean;
@@ -153,6 +155,7 @@ type
     fShowNotSended: Boolean;
     fShowMy: Boolean;
     fCanSave: Boolean;
+    fShowInOnly: Boolean;
     FInTreeView: Boolean;
     fSelectedRow: Integer; // выделенная строка в таблице платежей
     FclIncome: TColor;
@@ -171,7 +174,8 @@ var
 implementation
 
 uses
-  System.StrUtils, DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, atrCmdUtils, ReportPreview, apiSMS, CF, pFIBQuery;
+  System.StrUtils, DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, atrCmdUtils, ReportPreview, apiSMS,
+  CF, pFIBQuery;
 
 {$R *.dfm}
 
@@ -294,17 +298,25 @@ begin
   dsMessages.Close;
   dsMessages.ParamByName('StartDate').AsDate := fStartDate;
   dsMessages.ParamByName('EndDate').AsDate := fEndDate;
-  if fShowNotSended then
-    dsMessages.ParamByName('ShowNotSended').AsInteger := 1
-  else
-    dsMessages.ParamByName('ShowNotSended').AsInteger := 0;
   Caption := Format(rsMessagesPeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
-  if fShowMy then
-    dsMessages.ParamByName('WHERE_ADDONS').AsString := 'and ((m.Added_By = CURRENT_USER) or '+
-           '((not m.Parent_Id is null) and '+
-           'exists(select p.Mes_Id from messages p where p.Mes_Id = m.Parent_Id and p.Added_By = CURRENT_USER)))'
+
+  if fShowInOnly then
+    dsMessages.ParamByName('WHERE_ADDONS').AsString := 'and (m.DIRECT = 1) '
   else
-    dsMessages.ParamByName('WHERE_ADDONS').AsString := '';
+  begin
+    if fShowNotSended then
+      dsMessages.ParamByName('ShowNotSended').AsInteger := 1
+    else
+      dsMessages.ParamByName('ShowNotSended').AsInteger := 0;
+
+    if fShowMy then
+      dsMessages.ParamByName('WHERE_ADDONS').AsString := 'and ((m.Added_By = CURRENT_USER) or ' +
+        '((not m.Parent_Id is null) and ' +
+        'exists(select p.Mes_Id from messages p where p.Mes_Id = m.Parent_Id and p.Added_By = CURRENT_USER)))'
+    else
+      dsMessages.ParamByName('WHERE_ADDONS').AsString := '';
+  end;
+
   dsMessages.Open;
 end;
 
@@ -316,7 +328,7 @@ begin
   fEndDate := now;
   fStartDate := MonthFirstDay(dmMain.CurrentMonth);
   fShowNotSended := (dmMain.GetIniValue('MSG_SENDED_ONLY') = '1');
-  N16.Checked := fShowNotSended;
+  miNotSend.Checked := fShowNotSended;
   fShowMy := (dmMain.GetIniValue('MSG_MY_ONLY') = '1');
   miMyOnly.Checked := fShowMy;
   SetMessagesFilter;
@@ -434,8 +446,6 @@ begin
 end;
 
 procedure TMessagesForm.actAnswerExecute(Sender: TObject);
-var
-  i : Integer;
 begin
   if (dsMessages.RecordCount = 0) //
     or dsMessages.FieldByName('RECIVER').IsNull //
@@ -444,7 +454,8 @@ begin
 
   FParentMessage := -1;
   FForCustomer := -1;
-  if not dsMessages.FieldByName('Mes_Id').IsNull then begin
+  if not dsMessages.FieldByName('Mes_Id').IsNull then
+  begin
     FParentMessage := dsMessages.FieldByName('Mes_Id').AsInteger;
     if not dsMessages.FieldByName('CUSTOMER_ID').IsNull then
       FForCustomer := dsMessages.FieldByName('CUSTOMER_ID').AsInteger;
@@ -453,7 +464,7 @@ begin
   StartEdit(true);
   edtReciver.Text := dsMessages['RECIVER'];
   if not dsMessages.FieldByName('MES_TEXT').IsNull then
-    mmoMessage.Lines.Text := '>'+ dsMessages['MES_TEXT'];
+    mmoMessage.Lines.Text := '>' + dsMessages['MES_TEXT'];
 end;
 
 procedure TMessagesForm.actDelExecute(Sender: TObject);
@@ -623,16 +634,16 @@ begin
   StartEdit(False);
 end;
 
-procedure TMessagesForm.N16Click(Sender: TObject);
+procedure TMessagesForm.miNotSendClick(Sender: TObject);
 begin
   fShowNotSended := not fShowNotSended;
-  N16.Checked := fShowNotSended;
+  miNotSend.Checked := fShowNotSended;
   SetMessagesFilter;
 end;
 
 procedure TMessagesForm.FormCreate(Sender: TObject);
 begin
-  FFirstOpen := true;
+  fFirstOpen := true;
   fShowNotSended := true;
   fCanSave := true;
 
@@ -735,7 +746,7 @@ begin
   end
   else
   begin
-    cbbTYPE.KEyValue := dsMessages['MES_TYPE'];
+    cbbTYPE.KeyValue := dsMessages['MES_TYPE'];
     if (not dsMessages.FieldByName('RECIVER').IsNull) then
       edtReciver.Text := dsMessages['RECIVER'];
     edtReciver.Tag := 0;
@@ -772,21 +783,25 @@ begin
   else
   begin
     dsMessages.Insert;
-    dsMessages['MES_TYPE'] := cbbTYPE.KEyValue;
+    dsMessages['MES_TYPE'] := cbbTYPE.KeyValue;
     dsMessages['RECIVER'] := edtReciver.Text;
     dsMessages['MES_HEAD'] := edtHEAD.Text;
     dsMessages['MES_TEXT'] := mmoMessage.Lines.Text;
     dsMessages['MES_RESULT'] := 0;
-    if FParentMessage > 0 then begin
+    if FParentMessage > 0 then
+    begin
       dsMessages['PARENT_ID'] := FParentMessage;
     end
-    else begin
+    else
+    begin
       dsMessages.FieldByName('PARENT_ID').Clear;
     end;
-    if FForCustomer > 0 then begin
+    if FForCustomer > 0 then
+    begin
       dsMessages['CUSTOMER_ID'] := FForCustomer;
     end
-    else begin
+    else
+    begin
       dsMessages.FieldByName('CUSTOMER_ID').Clear;
     end;
 
@@ -881,6 +896,15 @@ begin
   if not dsMessType.FieldByName('O_NUMERICFIELD').IsNull then
     show := (dsMessType['O_NUMERICFIELD'] = 1);
   pnlHead.Visible := show;
+end;
+
+procedure TMessagesForm.miInOnlyClick(Sender: TObject);
+begin
+  fShowInOnly := not fShowInOnly;
+  miInOnly.Checked := fShowInOnly;
+  miMyOnly.Enabled := not fShowInOnly;
+  miNotSend.Enabled := not fShowInOnly;
+  SetMessagesFilter;
 end;
 
 procedure TMessagesForm.miMyOnlyClick(Sender: TObject);

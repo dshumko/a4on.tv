@@ -144,8 +144,8 @@ object apgCustomerInfo: TapgCustomerInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             ParentFont = False
-            ExplicitLeft = 1
-            ExplicitTop = -4
+            ExplicitWidth = 84
+            ExplicitHeight = 19
           end
         end
       end
@@ -599,6 +599,33 @@ object apgCustomerInfo: TapgCustomerInfo
       Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1077' '#1082#1086#1085#1090#1072#1082#1090#1091
       OnExecute = actSendMessageExecute
     end
+    object EditCut1: TEditCut
+      Category = 'Edit'
+      Caption = #1042#1099#1088#1077#1079#1072#1090#1100
+      Hint = 'Cut|Cuts the selection and puts it on the Clipboard'
+      ImageIndex = 102
+      ShortCut = 16472
+    end
+    object edtcpy: TEditCopy
+      Category = 'Edit'
+      Caption = #1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      Hint = 'Copy|Copies the selection and puts it on the Clipboard'
+      ImageIndex = 103
+      ShortCut = 16451
+    end
+    object edtpst: TEditPaste
+      Category = 'Edit'
+      Caption = #1042#1089#1090#1072#1074#1080#1090#1100
+      Hint = 'Paste|Inserts Clipboard contents'
+      ImageIndex = 104
+      ShortCut = 16470
+    end
+    object EditSelectAll1: TEditSelectAll
+      Category = 'Edit'
+      Caption = #1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
+      Hint = 'Select All|Selects the entire document'
+      ShortCut = 16449
+    end
   end
   object pmHV: TPopupMenu
     MenuAnimation = [maTopToBottom]
@@ -637,6 +664,24 @@ object apgCustomerInfo: TapgCustomerInfo
   object pmMemo: TPopupMenu
     Left = 780
     Top = 144
+    object Copy1: TMenuItem
+      Action = edtcpy
+    end
+    object Cut1: TMenuItem
+      Action = edtpst
+    end
+    object Paste1: TMenuItem
+      Action = EditCut1
+    end
+    object miN6: TMenuItem
+      Caption = '-'
+    end
+    object PasteSpecial1: TMenuItem
+      Action = EditSelectAll1
+    end
+    object miN5: TMenuItem
+      Caption = '-'
+    end
     object miN1: TMenuItem
       Caption = #1056#1072#1089#1087#1086#1083#1086#1078#1077#1085#1080#1077' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1103
       OnClick = miN1Click

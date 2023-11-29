@@ -429,19 +429,18 @@ var
   Cell: TGridCoord;
   s: String;
   vContinue: Boolean;
-  i: Integer;
 begin
   inherited;
-  vContinue := true;
+  vContinue := True;
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgMsg.ScreenToClient(ScrPt);
   Cell := dbgMsg.MouseCoord(GrdPt.X, GrdPt.Y);
   s := UpperCase(dbgMsg.Fields[Cell.X - 1].FieldName);
   if (s = 'TEXT') then
   begin
-    if not dbgMsg.DataSource.DataSet.FieldByName(s).IsNull then
+    if not dbgMsg.DataSource.DataSet.FieldByNAme(s).IsNull then
     begin
-      s := ExtractUrl(dbgMsg.DataSource.DataSet.FieldByName(s).AsString); // atrStrUtils
+      s := ExtractUrl(dbgMsg.DataSource.DataSet.FieldByNAme(s).AsString); // atrStrUtils
       if not s.IsEmpty then
       begin
         atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
@@ -450,7 +449,8 @@ begin
     end;
   end;
 
-  if vContinue then begin
+  if vContinue then
+  begin
     if (dsMSG.FieldByNAme('ID').IsNull) then
       NewMSG
     else
@@ -465,6 +465,7 @@ var
   s: string;
 begin
   inherited;
+  bgColor := clWindow;
   if not dsTask.FieldByNAme('COLOR').IsNull then
   begin
     s := dsTask.FieldByNAme('COLOR').Value;
@@ -609,21 +610,25 @@ begin
 
   pgcMSG.ActivePageIndex := 0;
 
-  try
-    FclOverdue := StringToColor(dmMain.GetSettingsValue('ROW_HL_ERROR'));
-  except
+  s := dmMain.GetSettingsValue('ROW_HL_ERROR');
+  if not s.IsEmpty then
+    try
+      FclOverdue := StringToColor(dmMain.GetSettingsValue('ROW_HL_ERROR'));
+    except
+      FclOverdue := $006666FF;
+    end
+  else
     FclOverdue := $006666FF;
-  end;
 
-  try
-    FclSoon := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
-  except
-    FclSoon := $0066FFFF;
-  end;
-
-  // FCanClose := dmMain.AllowedAction(rght_Task_Close);
-  // btnSPclose.Visible := FCanClose;
-  // actClose.Visible := FCanClose;
+  s := dmMain.GetSettingsValue('ROW_HL_WARNING');
+  if not s.IsEmpty then
+    try
+      FclSoon := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+    except
+      FclSoon := $0066FFFF;
+    end
+  else
+    FclOverdue := $0066FFFF;
 
   GetUsers;
 end;
@@ -1015,7 +1020,7 @@ begin
       inc(cr);
       dsFilter.Next;
     end;
-    RecordFtr := filter.Text.Trim;
+    RecordFtr := filter.Text.trim;
     if RecordFtr <> '(  )' then
       Result := Format(' and ( %s ) ', [filter.Text]);
   finally

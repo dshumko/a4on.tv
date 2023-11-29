@@ -77,6 +77,7 @@ type
     FStateChanged: Boolean;
     FChangeHistory: Boolean;
     FFullAccess: Boolean;
+    FCanAddEdit: Boolean;
     FfcSrvDisconted: TColor;
     FfcSrvDiscontedFuture: TColor;
     FfcSrvInAutoblock: TColor;
@@ -102,7 +103,8 @@ begin
       // dsServices.ParamByName('CUST_ID').AsInteger := ID;
       dsServices.ParamByName('CUSTOMER_ID').AsInteger := aCustomer_ID;
       dsServices.Open;
-      dsServices.Locate('SERV_ID', aService_ID, []);
+      if aService_ID > -1 then
+        dsServices.Locate('SERV_ID', aService_ID, []);
       dsServicesHistory.Open;
       ShowModal;
       Result := NeedRecalc;
@@ -219,9 +221,9 @@ begin
 
   s := '';
   If (not dsServices.FieldByName('NAME').IsNull) then
-    s:= dsServices['NAME'];
+    s := dsServices['NAME'];
 
-  if (MessageDlg(Format(rsDeleteRequest,[s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if (MessageDlg(Format(rsDeleteRequest, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     dsServices.Delete;
     FNeedRecalc := True;
@@ -271,6 +273,8 @@ begin
 
   FFullAccess := (dmMain.AllowedAction(rght_Customer_full));
   FChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
+  FCanAddEdit := FFullAccess or dmMain.AllowedAction(rght_Customer_AddSrv) or
+    dmMain.AllowedAction(rght_Customer_EditSrv);
   actDeleteService.Visible := FChangeHistory or FFullAccess;
   actDeleteSubscrHist.Visible := actDeleteService.Visible;
 
@@ -325,7 +329,7 @@ begin
   if FFullAccess or FChangeHistory then
   begin
     dsServices.Post;
-    dsServicesHistory.CloseOpen(true);
+    dsServicesHistory.CloseOpen(True);
   end
   else
     dsServices.cancel;
@@ -374,7 +378,7 @@ begin
     srv_name := 'ON_NAME';
   end;
 
-  if FFullAccess or FChangeHistory or (dsServicesHistory[srv_date] >= dmMain.CurrentMonth) then
+  if FFullAccess or FChangeHistory or ((dsServicesHistory[srv_date] >= dmMain.CurrentMonth) and FCanAddEdit) then
   begin
     if MessageDlg(PChar(Format(rsHistoryQuestion, [dsServicesHistory[srv_name], dsServices['NAME']])), mtConfirmation,
       [mbYes, mbNo], 0) = mrYes then

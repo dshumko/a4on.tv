@@ -368,7 +368,7 @@ object DVBNetworkForm: TDVBNetworkForm
       '    :Timeoffset,'
       '    :LANG,'
       '    :COUNTRY,'
-      '    CURRENT_TIMESTAMP'
+      '    LOCALTIMESTAMP'
       ')')
     RefreshSQL.Strings = (
       'select'

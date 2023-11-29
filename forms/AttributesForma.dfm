@@ -9,15 +9,15 @@ inherited AttributesForm: TAttributesForm
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Top = 273
+    Top = 305
     Width = 939
     ExplicitTop = 273
     ExplicitWidth = 939
   end
   inherited dbGrid: TDBGridEh
-    Top = 276
+    Top = 308
     Width = 939
-    Height = 274
+    Height = 242
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item
@@ -135,74 +135,74 @@ inherited AttributesForm: TAttributesForm
   end
   inherited pnlEdit: TPanel
     Width = 939
-    Height = 248
+    Height = 280
     ParentCtl3D = False
     ExplicitWidth = 939
-    ExplicitHeight = 248
+    ExplicitHeight = 280
     object lbl2: TLabel [0]
       Left = 5
-      Top = 43
+      Top = 36
       Width = 43
       Height = 13
       Caption = #1040#1090#1088#1080#1073#1091#1090
     end
     object lbl1: TLabel [1]
       Left = 5
-      Top = 71
+      Top = 62
       Width = 20
       Height = 13
       Caption = #1050#1086#1076
     end
     object lbl3: TLabel [2]
       Left = 5
-      Top = 161
+      Top = 187
       Width = 49
       Height = 13
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
     end
     object lbl4: TLabel [3]
-      Left = 395
-      Top = 71
+      Left = 217
+      Top = 62
       Width = 99
       Height = 13
       Caption = #1055#1088#1086#1074#1077#1088#1082#1072' '#1079#1085#1072#1095#1077#1085#1080#1103
     end
     object lbl5: TLabel [4]
       Left = 5
-      Top = 15
+      Top = 9
       Width = 18
       Height = 13
       Caption = #1058#1080#1087
     end
     object lbl6: TLabel [5]
       Left = 5
-      Top = 98
+      Top = 112
       Width = 36
       Height = 13
       Caption = #1057#1087#1080#1089#1086#1082
     end
     inherited btnSaveLink: TBitBtn
       Left = 72
-      Top = 215
+      Top = 247
       Width = 754
-      TabOrder = 7
+      TabOrder = 8
       ExplicitLeft = 72
-      ExplicitTop = 215
+      ExplicitTop = 247
       ExplicitWidth = 754
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
-      Top = 215
+      Top = 247
       Width = 98
       Cancel = True
-      TabOrder = 8
+      TabOrder = 9
       ExplicitLeft = 832
-      ExplicitTop = 215
+      ExplicitTop = 247
       ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
-      Top = 40
+      Top = 33
       Width = 858
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -217,7 +217,7 @@ inherited AttributesForm: TAttributesForm
     end
     object edtO_DIMENSION: TDBEditEh
       Left = 72
-      Top = 68
+      Top = 59
       Width = 129
       Height = 21
       DataField = 'O_DIMENSION'
@@ -231,9 +231,9 @@ inherited AttributesForm: TAttributesForm
     end
     object dbmmoO_DESCRIPTION: TDBMemoEh
       Left = 72
-      Top = 160
+      Top = 184
       Width = 858
-      Height = 49
+      Height = 59
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DataField = 'O_DESCRIPTION'
@@ -242,14 +242,14 @@ inherited AttributesForm: TAttributesForm
       EditButtons = <>
       EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072
       ShowHint = True
-      TabOrder = 6
+      TabOrder = 7
       Visible = True
       WantReturns = True
     end
     object cbRegular: TDBComboBoxEh
-      Left = 500
-      Top = 68
-      Width = 430
+      Left = 336
+      Top = 59
+      Width = 594
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'O_CHECK'
@@ -293,13 +293,13 @@ inherited AttributesForm: TAttributesForm
         '[0-9]{13,16}')
       LimitTextToListValues = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 3
       Visible = True
       OnNotInList = cbRegularNotInList
     end
     object cbAtrType: TDBComboBoxEh
       Left = 72
-      Top = 13
+      Top = 6
       Width = 858
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -314,9 +314,9 @@ inherited AttributesForm: TAttributesForm
     end
     object mmoList: TDBMemoEh
       Left = 72
-      Top = 95
+      Top = 109
       Width = 858
-      Height = 59
+      Height = 70
       ScrollBars = ssVertical
       Anchors = [akLeft, akTop, akRight]
       AutoSize = False
@@ -326,22 +326,37 @@ inherited AttributesForm: TAttributesForm
       EditButtons = <>
       EmptyDataInfo.Text = #1057#1087#1080#1089#1086#1082' '#1079#1085#1072#1095#1077#1085#1080#1081'. '#1045#1089#1083#1080' '#1085#1091#1078#1085#1086' '#1089#1076#1077#1083#1072#1090#1100' '#1074#1099#1073#1086#1088'  '#1080#1079' '#1089#1087#1080#1089#1082#1072
       ShowHint = True
-      TabOrder = 5
+      TabOrder = 6
       Visible = True
       WantReturns = True
     end
     object chkUniq: TDBCheckBoxEh
-      Left = 215
-      Top = 70
-      Width = 150
+      Left = 72
+      Top = 86
+      Width = 129
       Height = 17
       Hint = #1055#1088#1080' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1080' '#1086#1073#1098#1077#1082#1090#1091' '#1079#1085#1072#1095#1077#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072' '#1076#1086#1083#1078#1085#1086' '#1073#1099#1090#1100' '#1091#1085#1080#1082#1072#1083#1100#1085#1099#1084
       Alignment = taLeftJustify
       Caption = #1059#1085#1080#1082#1072#1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
-      DataField = 'O_Numericfield'
+      DataField = 'O_UNIQ'
       DataSource = srcDataSource
       DynProps = <>
-      TabOrder = 3
+      TabOrder = 4
+      ValueChecked = '1'
+      ValueUnchecked = '0'
+    end
+    object chkMEMO: TDBCheckBoxEh
+      Left = 217
+      Top = 86
+      Width = 132
+      Height = 17
+      Hint = #1054#1090#1086#1073#1088#1072#1078#1077#1085#1080#1077' '#1084#1085#1086#1075#1086#1089#1090#1088#1086#1095#1085#1086#1075#1086' '#1088#1077#1076#1072#1082#1090#1086#1088#1072' '#1076#1083#1103' '#1079#1085#1072#1095#1077#1085#1080#1103
+      Alignment = taLeftJustify
+      Caption = #1052#1085#1086#1075#1086#1089#1090#1088#1086#1095#1085#1086#1077' '#1087#1086#1083#1077
+      DataField = 'O_MEMO'
+      DataSource = srcDataSource
+      DynProps = <>
+      TabOrder = 5
       ValueChecked = '1'
       ValueUnchecked = '0'
     end
@@ -378,30 +393,35 @@ inherited AttributesForm: TAttributesForm
       
         'EXECUTE PROCEDURE ATTRIBUTES_IUD(:O_ID, :O_NAME, :O_DESCRIPTION,' +
         ' :O_DIMENSION, :O_DELETED, :O_CHARFIELD, :O_CHECK, 1, :O_TYPE, :' +
-        'O_Numericfield)')
+        'O_UNIQ, :O_MEMO)')
     DeleteSQL.Strings = (
       
         'EXECUTE PROCEDURE ATTRIBUTES_IUD(:O_ID, null, null, null, :O_DEL' +
-        'ETED, null, null, 2, :O_TYPE, null)')
+        'ETED, null, null, 2, :O_TYPE)')
     InsertSQL.Strings = (
       
         'EXECUTE PROCEDURE ATTRIBUTES_IUD(:O_ID, :O_NAME, :O_DESCRIPTION,' +
         ' :O_DIMENSION, :O_DELETED, :O_CHARFIELD, :O_CHECK, 0, :O_TYPE, :' +
-        'O_Numericfield)')
+        'O_UNIQ, :O_MEMO)')
     RefreshSQL.Strings = (
       'select'
       '    o.O_ID'
       '  , t.OT_NAME'
+      '  , o.O_TYPE'
       '  , o.O_NAME'
       '  , o.O_DESCRIPTION'
       '  , o.O_DELETED'
       '  , o.O_DIMENSION'
       '  , o.O_CHARFIELD'
       '  , o.O_CHECK'
-      '  , cast(o.O_Numericfield as INTEGER) O_Numericfield'
-      '  , o.O_TYPE'
-      '  from OBJECTS o'
-      '       left outer join OBJECTS_TYPE T on (o.O_TYPE = t.OT_ID)'
+      
+        '  , cast(coalesce(BIN_AND(Cast(o.O_Numericfield as Integer), 1),' +
+        ' 0) as INTEGER) O_UNIQ  -- '#1091#1085#1080#1082#1072#1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
+      
+        '  , cast(coalesce(iif(BIN_AND(Cast(o.O_Numericfield as Integer),' +
+        ' 2) = 2, 1, 0), 0) as INTEGER) O_MEMO  -- '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1082' '#1084#1077#1084#1086
+      'from OBJECTS o'
+      '     left outer join OBJECTS_TYPE T on (o.O_TYPE = t.OT_ID)'
       '  where (O.O_TYPE = :OLD_O_TYPE)'
       '        and (O.O_ID = :OLD_O_ID)')
     SelectSQL.Strings = (
@@ -416,9 +436,11 @@ inherited AttributesForm: TAttributesForm
       '  , o.O_CHARFIELD'
       '  , o.O_CHECK'
       
-        '  , cast(coalesce(o.O_Numericfield,0) as INTEGER) O_Numericfield' +
-        '  -- '#1091#1085#1080#1082#1072#1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
-      '  , o.O_TYPE'
+        '  , cast(coalesce(BIN_AND(Cast(o.O_Numericfield as Integer), 1),' +
+        ' 0) as INTEGER) O_UNIQ  -- '#1091#1085#1080#1082#1072#1083#1100#1085#1086#1077' '#1079#1085#1072#1095#1077#1085#1080#1077
+      
+        '  , cast(coalesce(iif(BIN_AND(Cast(o.O_Numericfield as Integer),' +
+        ' 2) = 2, 1, 0), 0) as INTEGER) O_MEMO  -- '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1082' '#1084#1077#1084#1086
       'from OBJECTS o'
       '     left outer join OBJECTS_TYPE T on (o.O_TYPE = t.OT_ID)'
       'where O_TYPE in ('
@@ -429,7 +451,9 @@ inherited AttributesForm: TAttributesForm
       '               ,32 -- '#1040#1090#1088#1080#1073#1091#1090#1099' IPTV '#1075#1088#1091#1087#1087
       '               ,37 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1076#1086#1084#1086#1074
       '               ,39 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1091#1079#1083#1086#1074
-      '               ,50 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1076#1083#1103' '#1090#1080#1087#1072' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103#9#9#9'   '
+      
+        '               ,50 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1076#1083#1103' '#1090#1080#1087#1072' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103'            ' +
+        '   '
       '               ,63 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1089#1077#1090#1077#1081
       '               ,69 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1075#1088#1091#1087#1087' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103'  '
       '               )'

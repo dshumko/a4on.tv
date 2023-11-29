@@ -9,16 +9,17 @@ inherited FileTypeForm: TFileTypeForm
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Top = 305
+    Top = 315
     Width = 764
     ExplicitTop = 225
     ExplicitWidth = 585
   end
   inherited dbGrid: TDBGridEh
-    Top = 308
+    Top = 318
     Width = 764
-    Height = 173
+    Height = 163
     AllowedOperations = [alopUpdateEh]
+    OnGetCellParams = dbGridGetCellParams
     Columns = <
       item
         CellButtons = <>
@@ -52,7 +53,7 @@ inherited FileTypeForm: TFileTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 764
-    ExplicitWidth = 786
+    ExplicitWidth = 764
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -68,30 +69,30 @@ inherited FileTypeForm: TFileTypeForm
   end
   inherited pnlEdit: TPanel
     Width = 764
-    Height = 280
+    Height = 290
     ParentCtl3D = False
-    ExplicitWidth = 786
-    ExplicitHeight = 280
+    ExplicitWidth = 764
+    ExplicitHeight = 290
     DesignSize = (
       764
-      280)
+      290)
     inherited btnSaveLink: TBitBtn
-      Left = 28
-      Top = 253
-      Width = 623
-      TabOrder = 12
-      ExplicitLeft = 28
-      ExplicitTop = 253
-      ExplicitWidth = 645
+      Left = 232
+      Top = 263
+      Width = 419
+      TabOrder = 14
+      ExplicitLeft = 232
+      ExplicitTop = 263
+      ExplicitWidth = 419
     end
     inherited btnCancelLink: TBitBtn
       Left = 659
-      Top = 253
+      Top = 263
       Width = 98
       Cancel = True
-      TabOrder = 13
-      ExplicitLeft = 681
-      ExplicitTop = 253
+      TabOrder = 15
+      ExplicitLeft = 659
+      ExplicitTop = 263
       ExplicitWidth = 98
     end
     object gb1: TGroupBox
@@ -102,12 +103,11 @@ inherited FileTypeForm: TFileTypeForm
       Align = alTop
       Caption = #1044#1077#1081#1089#1090#1074#1080#1103' '#1087#1086#1089#1083#1077' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103' '#1092#1072#1081#1083#1072
       TabOrder = 1
-      ExplicitWidth = 786
       DesignSize = (
         764
         96)
       object lbl1: TLabel
-        Left = 8
+        Left = 5
         Top = 72
         Width = 134
         Height = 13
@@ -147,7 +147,6 @@ inherited FileTypeForm: TFileTypeForm
         ShowHint = True
         TabOrder = 4
         Visible = True
-        ExplicitWidth = 350
       end
       object chkOpenInet: TDBCheckBoxEh
         Left = 616
@@ -159,7 +158,6 @@ inherited FileTypeForm: TFileTypeForm
         Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1082#1085#1086' '#1048#1085#1090#1077#1088#1085#1077#1090
         DynProps = <>
         TabOrder = 5
-        ExplicitLeft = 638
       end
       object lcbOnOffSrv: TDBLookupComboboxEh
         Left = 336
@@ -178,7 +176,6 @@ inherited FileTypeForm: TFileTypeForm
         ShowHint = True
         TabOrder = 2
         Visible = True
-        ExplicitWidth = 443
       end
       object lcbSrvType: TDBLookupComboboxEh
         Left = 196
@@ -246,7 +243,6 @@ inherited FileTypeForm: TFileTypeForm
         ShowHint = True
         TabOrder = 6
         Visible = True
-        ExplicitWidth = 624
       end
     end
     object pnlTop: TPanel
@@ -257,7 +253,6 @@ inherited FileTypeForm: TFileTypeForm
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 786
       DesignSize = (
         764
         29)
@@ -282,12 +277,11 @@ inherited FileTypeForm: TFileTypeForm
         ShowHint = True
         TabOrder = 0
         Visible = True
-        ExplicitWidth = 751
       end
     end
     object edtNameFmt: TDBEditEh
       Left = 5
-      Top = 226
+      Top = 236
       Width = 374
       Height = 21
       Anchors = [akLeft, akRight, akBottom]
@@ -295,15 +289,14 @@ inherited FileTypeForm: TFileTypeForm
       EditButtons = <>
       EmptyDataInfo.Text = #1064#1072#1073#1083#1086#1085' '#1085#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1103' '#1092#1072#1081#1083#1072'. '#1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1082#1072#1082' '#1074' '#1086#1087#1080#1089#1072#1085#1080#1080' '#1090#1080#1087#1072
       ShowHint = True
-      TabOrder = 11
+      TabOrder = 13
       Visible = True
-      ExplicitWidth = 396
     end
     object mmoNOTICE: TDBMemoEh
       Left = 5
       Top = 128
       Width = 374
-      Height = 92
+      Height = 102
       ScrollBars = ssVertical
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -317,19 +310,17 @@ inherited FileTypeForm: TFileTypeForm
       TabOrder = 2
       Visible = True
       WantReturns = True
-      ExplicitWidth = 396
     end
     object chkMemoRO: TDBCheckBoxEh
       Left = 385
-      Top = 203
+      Top = 213
       Width = 204
       Height = 17
       Hint = #1047#1072#1087#1088#1077#1090' '#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1077
       Anchors = [akTop, akRight]
       Caption = #1047#1072#1087#1088#1077#1090' '#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1103
       DynProps = <>
-      TabOrder = 10
-      ExplicitLeft = 407
+      TabOrder = 12
     end
     object chkText: TDBCheckBoxEh
       Left = 385
@@ -341,7 +332,6 @@ inherited FileTypeForm: TFileTypeForm
       DynProps = <>
       TabOrder = 9
       OnClick = chkPassportClick
-      ExplicitLeft = 407
     end
     object chkMobilePhone: TDBCheckBoxEh
       Left = 385
@@ -352,7 +342,6 @@ inherited FileTypeForm: TFileTypeForm
       Caption = #1042#1074#1086#1076' '#1084#1086#1073#1080#1083#1100#1085#1086#1075#1086
       DynProps = <>
       TabOrder = 7
-      ExplicitLeft = 407
     end
     object chkCustomerCard: TDBCheckBoxEh
       Left = 385
@@ -364,7 +353,6 @@ inherited FileTypeForm: TFileTypeForm
       DynProps = <>
       TabOrder = 5
       OnClick = chkCustomerCardClick
-      ExplicitLeft = 407
     end
     object chkPassport: TDBCheckBoxEh
       Left = 385
@@ -376,7 +364,6 @@ inherited FileTypeForm: TFileTypeForm
       DynProps = <>
       TabOrder = 3
       OnClick = chkPassportClick
-      ExplicitLeft = 407
     end
     object chkAddress: TDBCheckBoxEh
       Left = 604
@@ -389,7 +376,6 @@ inherited FileTypeForm: TFileTypeForm
       DynProps = <>
       TabOrder = 8
       OnClick = chkCustomerCardClick
-      ExplicitLeft = 626
     end
     object chkPaySum: TDBCheckBoxEh
       Left = 604
@@ -402,7 +388,6 @@ inherited FileTypeForm: TFileTypeForm
       DynProps = <>
       TabOrder = 6
       OnClick = chkCustomerCardClick
-      ExplicitLeft = 626
     end
     object chkBid: TDBCheckBoxEh
       Left = 604
@@ -414,21 +399,65 @@ inherited FileTypeForm: TFileTypeForm
       DynProps = <>
       TabOrder = 4
       OnClick = chkPassportClick
-      ExplicitLeft = 626
     end
     object edtHint: TDBEditEh
       Left = 385
-      Top = 226
+      Top = 236
       Width = 372
       Height = 21
-      Hint = #1055#1086#1076#1089#1082#1072#1079#1082#1072' '#1074' '#1089#1090#1088#1086#1082#1077' '#1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1077#1082#1089#1090
-      Anchors = [akTop, akRight]
+      Hint = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1077#1082#1089#1090'. '#1063#1077#1088#1077#1079' | '#1091#1082#1072#1079#1099#1074#1077#1090#1089#1103' '#1055#1086#1076#1089#1082#1072#1079#1082#1072' '#1074' '#1089#1090#1088#1086#1082#1077
+      Anchors = [akRight, akBottom]
       DynProps = <>
       EditButtons = <>
-      EmptyDataInfo.Text = #1055#1086#1076#1089#1082#1072#1079#1082#1072' '#1074' '#1089#1090#1088#1086#1082#1077' '#1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1077#1082#1089#1090
+      EmptyDataInfo.Text = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1077#1082#1089#1090'. '#1063#1077#1088#1077#1079' | '#1091#1082#1072#1079#1099#1074#1077#1090#1089#1103' '#1055#1086#1076#1089#1082#1072#1079#1082#1072' '#1074' '#1089#1090#1088#1086#1082#1077
       ShowHint = True
-      TabOrder = 14
+      TabOrder = 16
       Visible = True
+    end
+    object chkTask: TDBCheckBoxEh
+      Left = 604
+      Top = 179
+      Width = 160
+      Height = 17
+      Hint = #1057#1086#1079#1076#1072#1090#1100' '#1085#1072#1087#1086#1084#1080#1085#1072#1085#1080#1077' '#1085#1072' '#1076#1072#1090#1091
+      Anchors = [akTop, akRight]
+      Caption = #1057#1086#1079#1076#1072#1090#1100' '#1085#1072#1087#1086#1084#1080#1085#1072#1085#1080#1077
+      DynProps = <>
+      TabOrder = 10
+      OnClick = chkCustomerCardClick
+    end
+    object btnColorSet: TButtonColor
+      Left = 5
+      Top = 262
+      Width = 92
+      Anchors = [akLeft, akBottom]
+      Caption = #1060#1086#1085' '#1090#1080#1087#1072
+      TabOrder = 17
+      OnClick = btnColorSetClick
+    end
+    object btnColorClear: TButton
+      Left = 103
+      Top = 262
+      Width = 82
+      Height = 25
+      Hint = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085' '#1076#1083#1103' '#1074#1099#1076#1077#1083#1077#1085#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
+      Anchors = [akLeft, akBottom]
+      Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085
+      TabOrder = 18
+      TabStop = False
+      OnClick = btnColorClearClick
+    end
+    object chkPeriod: TDBCheckBoxEh
+      Left = 385
+      Top = 196
+      Width = 160
+      Height = 17
+      Hint = #1059#1082#1072#1079#1099#1074#1072#1090#1100' '#1087#1077#1088#1080#1086#1076' '#1076#1072#1090' ['#1044#1040#1058#1040'_'#1053'] ['#1044#1040#1058#1040'_'#1054']'
+      Anchors = [akTop, akRight]
+      Caption = #1055#1077#1088#1080#1086#1076' '#1076#1072#1090
+      DynProps = <>
+      TabOrder = 11
+      OnClick = chkCustomerCardClick
     end
   end
   inherited srcDataSource: TDataSource
@@ -438,8 +467,8 @@ inherited FileTypeForm: TFileTypeForm
     Top = 328
   end
   inherited actions: TActionList
-    Left = 126
-    Top = 272
+    Left = 150
+    Top = 384
     inherited actNew: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
       OnExecute = actNewExecute
@@ -458,23 +487,23 @@ inherited FileTypeForm: TFileTypeForm
     Top = 335
   end
   inherited CnErrors: TCnErrorProvider
-    Left = 184
-    Top = 280
+    Left = 192
+    Top = 400
   end
   object dsFileType: TpFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 33, :O_ID, :O_Name, :O_Descript' +
-        'ion, null, 0, :O_CHARFIELD)')
+        'ion, :O_DIMENSION, 0, :O_CHARFIELD)')
     DeleteSQL.Strings = (
       'execute procedure Objects_Iud(2, 33, :OLD_O_ID)')
     InsertSQL.Strings = (
       
         'execute procedure Objects_Iud(0, 33, :O_ID, :O_Name, :O_Descript' +
-        'ion, null, 0, :O_CHARFIELD)')
+        'ion, :O_DIMENSION, 0, :O_CHARFIELD)')
     RefreshSQL.Strings = (
       'select'
-      '    o.O_ID, o.O_NAME, o.O_DESCRIPTION, O_CHARFIELD'
+      '    o.O_ID, o.O_NAME, o.O_DESCRIPTION, O_CHARFIELD, O_DIMENSION'
       '  from OBJECTS o'
       '  where  O_TYPE = 33'
       '     and O_DELETED = 0'
@@ -483,7 +512,7 @@ inherited FileTypeForm: TFileTypeForm
       '  ')
     SelectSQL.Strings = (
       'select'
-      '    o.O_ID, o.O_NAME, o.O_DESCRIPTION, O_CHARFIELD'
+      '    o.O_ID, o.O_NAME, o.O_DESCRIPTION, O_CHARFIELD, O_DIMENSION'
       '  from OBJECTS o'
       '  where O_TYPE = 33'
       '        and O_DELETED = 0'
@@ -496,8 +525,8 @@ inherited FileTypeForm: TFileTypeForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    Left = 40
-    Top = 272
+    Left = 72
+    Top = 376
   end
   object pmMemo: TPopupMenu
     Left = 189
@@ -514,15 +543,15 @@ inherited FileTypeForm: TFileTypeForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 280
-    Top = 280
+    Left = 304
+    Top = 408
   end
   object srcSrvType: TDataSource
     AutoEdit = False
     DataSet = dsSrvType
     OnDataChange = srcDataSourceDataChange
-    Left = 280
-    Top = 296
+    Left = 248
+    Top = 392
   end
   object dsReqType: TpFIBDataSet
     SelectSQL.Strings = (
@@ -536,15 +565,15 @@ inherited FileTypeForm: TFileTypeForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
-    Left = 368
-    Top = 280
+    Left = 376
+    Top = 352
   end
   object srcReqType: TDataSource
     AutoEdit = False
     DataSet = dsReqType
     OnDataChange = srcDataSourceDataChange
-    Left = 368
-    Top = 296
+    Left = 392
+    Top = 376
   end
   object dsOnOffSrv: TpFIBDataSet
     SelectSQL.Strings = (

@@ -42,7 +42,11 @@ object apgCustomerBalance: TapgCustomerBalance
           item
           end
           item
+          end
+          item
             ValueType = gfvSumEh
+          end
+          item
           end>
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -51,7 +55,6 @@ object apgCustomerBalance: TapgCustomerBalance
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
-        ShowFunctionName = False
         Visible = True
       end>
     DataGrouping.GroupLevels = <
@@ -139,6 +142,16 @@ object apgCustomerBalance: TapgCustomerBalance
         Width = 158
       end
       item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'DEBT'
+        Footers = <>
+        Title.Alignment = taRightJustify
+        Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
+        Width = 82
+      end
+      item
         Alignment = taRightJustify
         AutoFitColWidth = False
         CellButtons = <>
@@ -148,7 +161,18 @@ object apgCustomerBalance: TapgCustomerBalance
         Footers = <>
         Title.Alignment = taRightJustify
         Title.Caption = #1057#1091#1084#1084#1072
-        Width = 78
+        Title.Hint = #1057#1091#1084#1084#1072' '#1089#1087#1080#1089#1072#1085#1080#1103' / '#1086#1087#1083#1072#1090#1099
+        Width = 87
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'DEBT_A'
+        Footers = <>
+        Title.Alignment = taRightJustify
+        Title.Caption = #1041#1072#1083#1072#1085#1089' '#1087#1086#1089#1083#1077
+        Width = 89
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -162,8 +186,10 @@ object apgCustomerBalance: TapgCustomerBalance
       '  , B_Description'
       '  , B_Sum'
       '  , Sum_Type'
+      '  , DEBT'
+      '  , DEBT + B_Sum DEBT_A'
       '  from API_GET_CUSTOMER_BALANCE(:CUSTOMER_ID)'
-      '  order by B_MONTH desc  ')
+      '  order by B_MONTH desc, Sum_Type  ')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -192,36 +218,7 @@ object apgCustomerBalance: TapgCustomerBalance
   end
   object mtBalance: TMemTableEh
     AutoCalcFields = False
-    FieldDefs = <
-      item
-        Name = 'RYAER'
-        DataType = ftSmallint
-        Precision = 15
-      end
-      item
-        Name = 'RMONTH'
-        DataType = ftSmallint
-        Precision = 15
-      end
-      item
-        Name = 'B_MONTH'
-        DataType = ftDate
-      end
-      item
-        Name = 'B_DESCRIPTION'
-        DataType = ftWideString
-        Size = 500
-      end
-      item
-        Name = 'B_SUM'
-        DataType = ftBCD
-        Size = 2
-      end
-      item
-        Name = 'SUM_TYPE'
-        DataType = ftInteger
-        Precision = 15
-      end>
+    FieldDefs = <>
     IndexDefs = <>
     Params = <>
     StoreDefs = True

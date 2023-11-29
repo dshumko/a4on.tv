@@ -84,6 +84,8 @@ type
     chkDVB: TCheckBox;
     btn5: TToolButton;
     chkFREE: TCheckBox;
+    miComSep: TMenuItem;
+    miCommands: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure dsChannelsAfterOpen(DataSet: TDataSet);
     procedure actNewExecute(Sender: TObject);
@@ -101,6 +103,8 @@ type
     FCanEditAll: Boolean;
     FAddonVisible: Boolean;
     procedure FilterByUse();
+    procedure CreateCommandsMenu;
+    procedure miCmdClickClick(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -114,7 +118,7 @@ implementation
 
 uses
   DM, ChannelEditForma, MAIN, ChannImport, DVBSettings, ChanSourcesForma, SatCardsForma, ChangeChannelForma,
-  DistribForma;
+  DistribForma, HtmlForma, TelnetForma;
 
 {$R *.dfm}
 
@@ -154,10 +158,11 @@ begin
 
   FAddonVisible := False;
 
+  CreateCommandsMenu;
+
   dsChannels.Open;
   dbGrid.DefaultApplySorting;
   dsChannels.First;
-
 end;
 
 procedure TChannelsForm.dbGridDblClick(Sender: TObject);
@@ -376,13 +381,13 @@ begin
   end;
   if (chkDVB.Checked) then
   begin
-    fltr := IfThen(fltr.IsEmpty, '', fltr + ' or ') + ' ((not c.CH_TRUNK_NUMBER is null) '+
-         ' or (exists(select s.Ch_Id from Dvb_Stream_Channels s where s.Ch_Id = c.Ch_Id))) ';
+    fltr := IfThen(fltr.IsEmpty, '', fltr + ' or ') + ' ((not c.CH_TRUNK_NUMBER is null) ' +
+      ' or (exists(select s.Ch_Id from Dvb_Stream_Channels s where s.Ch_Id = c.Ch_Id))) ';
   end;
   if (chkFREE.Checked) then
   begin
-    fltr := IfThen(fltr.IsEmpty, '', fltr + ' or ') + ' ((c.CH_NUMBER is null) and (c.CH_TRUNK_NUMBER is null) '+
-    ' and (not exists(select s.Ch_Id from Dvb_Stream_Channels s where s.Ch_Id = c.Ch_Id)) ) ';
+    fltr := IfThen(fltr.IsEmpty, '', fltr + ' or ') + ' ((c.CH_NUMBER is null) and (c.CH_TRUNK_NUMBER is null) ' +
+      ' and (not exists(select s.Ch_Id from Dvb_Stream_Channels s where s.Ch_Id = c.Ch_Id)) ) ';
   end;
 
   if (not fltr.IsEmpty) then
@@ -390,6 +395,161 @@ begin
     dsChannels.ParamByName('filter').AsString := ' where ' + fltr;
     dsChannels.CloseOpen(true);
   end;
+end;
+
+procedure TChannelsForm.CreateCommandsMenu;
+var
+  NewItem: TMenuItem;
+begin
+  miCommands.Clear;
+
+  with dmMain.qRead do
+  begin
+    sql.Clear;
+    sql.Add('select ec.ec_id, ec.name, ec.command');
+    sql.Add(' from equipment_cmd_grp ec');
+    sql.Add('where ec.in_gui = 1 and ec.Eg_Id = -2');
+    sql.Add('order by name');
+    // ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
+    Transaction.StartTransaction;
+    ExecQuery;
+    while not Eof do
+    begin
+      NewItem := TMenuItem.Create(miCommands);
+      NewItem.Caption := FieldByName('name').AsString;
+      NewItem.Tag := FieldByName('ec_id').AsInteger;
+      NewItem.OnClick := miCmdClickClick;
+      miCommands.Add(NewItem);
+      Next;
+    end;
+    Close;
+    Transaction.Rollback;
+  end;
+
+  miCommands.Visible := (miCommands.Count > 0);
+  miComSep.Visible := miCommands.Visible;
+end;
+
+procedure TChannelsForm.miCmdClickClick(Sender: TObject);
+var
+  cmd: string;
+  eol_chars: Integer;
+  CMD_TYPE: Integer;
+  URL, AUT_USER, AUT_PSWD: String;
+
+  procedure replaceParams(var InStr: String);
+  var
+    s: string;
+  begin
+    if (not dsChannels.FieldByName('CH_NAME').IsNull)
+    then s := dsChannels['CH_NAME']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<c_name>', s);
+
+    if (not dsChannels.FieldByName('CH_ID').IsNull)
+    then s := dsChannels['CH_ID']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<c_id>', s);
+
+    if (not dsChannels.FieldByName('CH_NUMBER').IsNull)
+    then s := dsChannels['CH_NUMBER']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<a_num>', s);
+
+    if (not dsChannels.FieldByName('CH_TRUNK').IsNull)
+    then s := dsChannels['CH_TRUNK']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<trunk>', s);
+
+    if (not dsChannels.FieldByName('CH_TRUNK_NUMBER').IsNull)
+    then s := dsChannels['CH_TRUNK_NUMBER']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<trunk_n>', s);
+
+    if (not dsChannels.FieldByName('NID').IsNull)
+    then s := dsChannels['NID']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<nid>', s);
+
+    if (not dsChannels.FieldByName('TSID').IsNull)
+    then s := dsChannels['TSID']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<tsid>', s);
+
+    if (not dsChannels.FieldByName('SID').IsNull)
+    then s := dsChannels['SID']
+    else s := '';
+    InStr := ReplaceStr(InStr, '<sid>', s);
+
+    InStr := ReplaceStr(InStr, '<date>', FormatDateTime('Y-m-d h:n', Now()));
+  end;
+
+begin
+  if not(Sender is TMenuItem) then
+    Exit;
+
+  if (not dsChannels.Active) or (dsChannels.RecordCount = 0) then
+    Exit;
+
+  with dmMain.qRead do
+  begin
+    sql.Clear;
+    sql.Add('select ec.ec_id, ec.name, ec.command, ec.eol_chrs, ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
+    sql.Add('from equipment_cmd_grp ec');
+    sql.Add('where ec.ec_id = :ec_id');
+    ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
+
+    Transaction.StartTransaction;
+    ExecQuery;
+
+    if not FieldByName('command').IsNull then
+      cmd := FieldByName('command').AsString;
+
+    if FieldByName('eol_chrs').IsNull then
+      eol_chars := 0
+    else
+    begin
+      if FieldByName('eol_chrs').AsString = '\r\n' then
+        eol_chars := 0
+      else if FieldByName('eol_chrs').AsString = '\n\r' then
+        eol_chars := 1
+      else if FieldByName('eol_chrs').AsString = '\n' then
+        eol_chars := 2
+      else if FieldByName('eol_chrs').AsString = '\r' then
+        eol_chars := 3
+      else
+        eol_chars := 0
+    end;
+
+    if FieldByName('CMD_TYPE').IsNull then
+      CMD_TYPE := 0
+    else
+      CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
+    if not FieldByName('URL').IsNull then
+      URL := FieldByName('URL').AsString;
+    if not FieldByName('AUT_USER').IsNull then
+      AUT_USER := FieldByName('AUT_USER').AsString;
+    if not FieldByName('AUT_PSWD').IsNull then
+      AUT_PSWD := FieldByName('AUT_PSWD').AsString;
+
+    Close;
+    Transaction.Rollback;
+  end;
+
+  if cmd <> '' then
+    replaceParams(cmd);
+
+  if URL <> '' then
+    replaceParams(URL);
+
+  case CMD_TYPE of
+    2:
+      cmd := GetHtml(URL, AUT_USER, AUT_PSWD, cmd, true, (Sender as TMenuItem).Caption);
+  else
+    if cmd <> '' then
+      cmd := telnet(URL, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, true);
+  end;
+
 end;
 
 end.

@@ -1,4 +1,4 @@
-﻿unit NewsForma;
+﻿unit PromoForma;
 
 interface
 
@@ -12,7 +12,7 @@ uses
   DBCtrlsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
-  TNewsForm = class(TGridForm)
+  TPromoForm = class(TGridForm)
     dsNews: TpFIBDataSet;
     Label1: TLabel;
     Label2: TLabel;
@@ -43,7 +43,7 @@ type
   end;
 
 var
-  NewsForm: TNewsForm;
+  PromoForm: TPromoForm;
 
 implementation
 
@@ -52,22 +52,22 @@ uses
 
 {$R *.dfm}
 
-procedure TNewsForm.FormClose(Sender: TObject;
+procedure TPromoForm.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   inherited;
   dsNews.Close;
-  NewsForm := nil;
+  PromoForm := nil;
 end;
 
-procedure TNewsForm.actNewExecute(Sender: TObject);
+procedure TPromoForm.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Mobile_news))) then exit;
+  if (not (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_MANUFACTURERS))) then exit;
   StartEdit(True);
 end;
 
-procedure TNewsForm.btnSaveLinkClick(Sender: TObject);
+procedure TPromoForm.btnSaveLinkClick(Sender: TObject);
 var
   errors : Boolean;
 begin
@@ -91,13 +91,13 @@ begin
 
 end;
 
-procedure TNewsForm.dbeNameEnter(Sender: TObject);
+procedure TPromoForm.dbeNameEnter(Sender: TObject);
 begin
   inherited;
   CnErrors.Dispose(dbeName);
 end;
 
-procedure TNewsForm.actDeleteExecute(Sender: TObject);
+procedure TPromoForm.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if (not (dmMain.AllowedAction(rght_Mobile_full) or dmMain.AllowedAction(rght_Mobile_news))) then exit;
@@ -105,14 +105,14 @@ begin
   then srcDataSource.DataSet.Delete;
 end;
 
-procedure TNewsForm.actEditExecute(Sender: TObject);
+procedure TPromoForm.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not (dmMain.AllowedAction(rght_Mobile_full) or dmMain.AllowedAction(rght_Mobile_news))) then exit;
     StartEdit();
 end;
 
-procedure TNewsForm.tbOkClick(Sender: TObject);
+procedure TPromoForm.tbOkClick(Sender: TObject);
 begin
   inherited;
   if (dmMain.AllowedAction(rght_Mobile_full) or dmMain.AllowedAction(rght_Mobile_news))
@@ -120,13 +120,13 @@ begin
   else srcDataSource.DataSet.Cancel;
 end;
 
-procedure TNewsForm.tbCancelClick(Sender: TObject);
+procedure TPromoForm.tbCancelClick(Sender: TObject);
 begin
   inherited;
   srcDataSource.DataSet.Cancel;
 end;
 
-procedure TNewsForm.srcDataSourceStateChange(Sender: TObject);
+procedure TPromoForm.srcDataSourceStateChange(Sender: TObject);
 begin
   inherited;
 
@@ -137,7 +137,7 @@ begin
   btnDelete.Enabled := not tbOk.Enabled;
 end;
 
-procedure TNewsForm.FormCreate(Sender: TObject);
+procedure TPromoForm.FormCreate(Sender: TObject);
 begin
   fCanEdit   := dmMain.AllowedAction(rght_Mobile_full) or dmMain.AllowedAction(rght_Mobile_news);
   fCanCreate := dmMain.AllowedAction(rght_Mobile_full) or dmMain.AllowedAction(rght_Mobile_news);
@@ -148,13 +148,13 @@ begin
   actEdit.Visible   := fCanEdit;
 end;
 
-procedure TNewsForm.FormShow(Sender: TObject);
+procedure TPromoForm.FormShow(Sender: TObject);
 begin
   inherited;
   dsNews.Open;
 end;
 
-procedure TNewsForm.srcDataSourceDataChange(Sender: TObject;
+procedure TPromoForm.srcDataSourceDataChange(Sender: TObject;
   Field: TField);
 begin
   inherited;

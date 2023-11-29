@@ -667,6 +667,11 @@ end;
 
 procedure TEquipEditForm.luHouseChange(Sender: TObject);
 begin
+  if (dsHomes['inService'] <> '') then
+    luHouse.Color := clYellow
+  else
+    luHouse.Color := clWindow;
+
   if (VarIsNumeric(cbTypeEQ.Value)) and (cbTypeEQ.Value = 1) then
     GetVlan;
 end;

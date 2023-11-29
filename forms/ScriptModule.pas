@@ -32,6 +32,7 @@ type
     procedure DataModuleDestroy(Sender: TObject);
   private
     function CallMethod(Instance: TObject; ClassType: TClass; const MethodName: String; var Params: Variant): Variant;
+    function CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String; var Params: Variant): Variant;
     function GridCallMethod(Instance: TObject; ClassType: TClass; const MethodName: String;
       var Params: Variant): Variant;
     function FromWinToUtf8(const FileName: String): Boolean;
@@ -50,7 +51,7 @@ implementation
 uses
   Data.DB,
   Vcl.Grids,
-  DM, FIBQuery, pFIBQuery, RxStrUtils, synacode;
+  DM, FIBQuery, pFIBQuery, atrCmdUtils, RxStrUtils, synacode;
 
 {$R *.dfm}
 
@@ -73,6 +74,7 @@ begin
   fsGlobalUnit.AddMethod('procedure FromWinToDos(const FileName: String)', CallMethod, 'A4on.TV');
   fsGlobalUnit.AddMethod('procedure FromUtf8toDos(const FileName: String)', CallMethod, 'A4on.TV');
   fsGlobalUnit.AddMethod('procedure FromUtf8toWin(const FileName: String)', CallMethod, 'A4on.TV');
+  fsGlobalUnit.AddMethod('function RunCmd(const CmdLine: String; const params: String): String', CallMethodforCMD, 'A4on.TV');
 
   with fsGlobalUnit do
   begin
@@ -117,6 +119,15 @@ begin
     Result := StrToOem(Params[0])
   else if MethodName = 'FROMWINTODOS' then
     Result := FromWinToDos(Params[0]);
+end;
+
+function TSM.CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String; var Params: Variant): Variant;
+var
+  ResLines: TStringList;
+begin
+  if MethodName = 'RUNCMD' then begin
+    ShellExecute(0, 'open', Params[0], Params[1]);
+  end;
 end;
 
 function TSM.GridCallMethod(Instance: TObject; ClassType: TClass; const MethodName: String;

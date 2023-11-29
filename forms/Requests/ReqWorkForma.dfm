@@ -215,14 +215,24 @@ object ReqWorkForm: TReqWorkForm
       DynProps = <>
       DataField = 'AS_SERVICE'
       DataSource = srcWork
+      DropDownBox.ListFieldNames = 'NAME'
+      DropDownBox.ListSource = srcService
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1044#1086#1073#1072#1074#1083#1103#1090#1100' '#1088#1072#1079#1086#1074#1091#1102' '#1091#1089#1083#1091#1075#1091
       EditButtons = <>
       KeyField = 'SERVICE_ID'
       ListField = 'NAME'
       ListSource = srcService
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 2
       Visible = True
+      OnChange = cbServiceChange
+      OnEnter = cbServiceEnter
     end
     object lcbW_SRV: TDBLookupComboboxEh
       Left = 165
@@ -312,7 +322,7 @@ object ReqWorkForm: TReqWorkForm
     DynProps = <>
     TabOrder = 3
   end
-  object ed1: TDBNumberEditEh
+  object ednW_COST: TDBNumberEditEh
     Left = 87
     Top = 69
     Width = 360
@@ -475,10 +485,17 @@ object ReqWorkForm: TReqWorkForm
     SelectSQL.Strings = (
       'select'
       '    s.SERVICE_ID'
-      '  , s.NAME'
+      '  , s.NAME||coalesce('#39' / '#39'||(select'
+      '         t.tarif_sum'
+      '       from tarif t'
+      '       where t.service_id = s.service_id'
+      
+        '             and localtimestamp between t.date_from and t.date_t' +
+        'o), '#39#39') as NAME'
       '  , s.SHORTNAME'
       '  , s.DESCRIPTION'
       '  , s.DIMENSION'
+      '  , s.srv_type_id'
       '  from SERVICES S'
       '  where s.srv_type_id = 1'
       '        and (exists(select'

@@ -14,9 +14,9 @@ object apgCustomerFiles: TapgCustomerFiles
   PixelsPerInch = 96
   TextHeight = 13
   object dbgCustFiles: TDBGridEh
-    Left = 28
+    Left = 26
     Top = 0
-    Width = 751
+    Width = 753
     Height = 211
     Align = alClient
     AllowedOperations = []
@@ -27,14 +27,17 @@ object apgCustomerFiles: TapgCustomerFiles
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
     STFilter.InstantApply = True
     STFilter.Local = True
     STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
-    TabOrder = 1
+    TabOrder = 0
     TitleParams.MultiTitle = True
     OnCellClick = dbgCustFilesCellClick
     OnDblClick = dbgCustFilesDblClick
+    OnGetCellParams = dbgCustFilesGetCellParams
     Columns = <
       item
         CellButtons = <>
@@ -133,56 +136,57 @@ object apgCustomerFiles: TapgCustomerFiles
         FieldName = 'Anotice'
         Footers = <>
         Title.Caption = #1054#1073#1088#1072#1073#1086#1090#1072#1085'|'#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object tbAttributes: TToolBar
+  object pnlButtons: TPanel
     Left = 0
     Top = 0
-    Width = 28
+    Width = 26
     Height = 211
     Align = alLeft
-    ButtonHeight = 23
-    EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-    Images = A4MainForm.ICONS_ACTIVE
-    TabOrder = 0
-    object btnAdd: TToolButton
-      Left = 0
-      Top = 0
-      Action = actAdd
-      ParentShowHint = False
-      Wrap = True
-      ShowHint = True
-    end
-    object btnEdit: TToolButton
-      Left = 0
-      Top = 23
-      Action = actEdit
-      ParentShowHint = False
-      Wrap = True
-      ShowHint = True
-    end
-    object btnDel: TToolButton
-      Left = 0
-      Top = 46
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitTop = -42
+    ExplicitHeight = 253
+    DesignSize = (
+      26
+      211)
+    object btnDel1: TSpeedButton
+      Left = 2
+      Top = 187
+      Width = 22
+      Height = 22
       Action = actDel
-      ParentShowHint = False
-      ShowHint = True
+      Anchors = [akLeft, akBottom]
+      Flat = True
+      Layout = blGlyphTop
     end
-    object btn1: TToolButton
-      Left = 0
-      Top = 46
-      Width = 31
-      Caption = 'btn1'
-      ImageIndex = 5
-      Wrap = True
-      Style = tbsSeparator
+    object btnAdd1: TSpeedButton
+      Left = 2
+      Top = 3
+      Width = 22
+      Height = 22
+      Action = actAdd
+      Flat = True
     end
-    object btnView: TToolButton
-      Left = 0
-      Top = 100
+    object btnEdit1: TSpeedButton
+      Left = 2
+      Top = 32
+      Width = 22
+      Height = 22
+      Action = actEdit
+      Flat = True
+    end
+    object btnOpen: TSpeedButton
+      Left = 2
+      Top = 101
+      Width = 22
+      Height = 22
       Action = actView
+      Flat = True
     end
   end
   object dsCustFiles: TpFIBDataSet
@@ -264,6 +268,7 @@ object apgCustomerFiles: TapgCustomerFiles
       
         '                where W.IBNAME = cf.Edit_By), cf.Edit_By) as Edi' +
         't_By'
+      '  , T.O_DIMENSION              '
       '  from CUSTOMER_FILES CF'
       '       inner join OBJECTS T on (CF.Cf_Type = T.O_ID and'
       '             T.O_TYPE = 33)'
@@ -299,6 +304,7 @@ object apgCustomerFiles: TapgCustomerFiles
       
         '                where W.IBNAME = r.Edit_By), r.Edit_By) as Edit_' +
         'By'
+      '  , null O_DIMENSION              '
       ''
       '  from Request_Photos p'
       '       inner join request r on (p.Rq_Id = r.RQ_ID)'
@@ -308,6 +314,8 @@ object apgCustomerFiles: TapgCustomerFiles
       ''
       '  ')
     AutoCalcFields = False
+    AfterOpen = dsCustFilesAfterOpen
+    AfterRefresh = dsCustFilesAfterRefresh
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -317,6 +325,7 @@ object apgCustomerFiles: TapgCustomerFiles
   end
   object srcCustFiles: TDataSource
     DataSet = dsCustFiles
+    OnStateChange = srcCustFilesStateChange
     Left = 63
     Top = 35
   end
@@ -325,22 +334,18 @@ object apgCustomerFiles: TapgCustomerFiles
     Left = 206
     Top = 37
     object actAdd: TAction
-      Caption = 'actAdd'
       ImageIndex = 2
       OnExecute = actAddExecute
     end
     object actEdit: TAction
-      Caption = 'actEdit'
       ImageIndex = 4
       OnExecute = actEditExecute
     end
     object actDel: TAction
-      Caption = 'actDel'
       ImageIndex = 3
       OnExecute = actDelExecute
     end
     object actView: TAction
-      Caption = #1055#1088#1086#1089#1084#1086#1090#1088
       Hint = #1055#1088#1086#1089#1084#1086#1090#1088' '#1092#1072#1081#1083#1072
       ImageIndex = 41
       OnExecute = actViewExecute

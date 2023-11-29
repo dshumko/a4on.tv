@@ -15,6 +15,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   PixelsPerInch = 96
@@ -25,8 +26,8 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Width = 561
     Height = 13
     Align = alBottom
-    Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    ExplicitWidth = 61
+    Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+    ExplicitWidth = 64
   end
   inline okcnclfrm1: TOkCancelFrame
     Left = 0
@@ -88,13 +89,13 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Left = 0
     Top = 0
     Width = 561
-    Height = 51
+    Height = 52
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
       561
-      51)
+      52)
     object lbl4: TLabel
       Left = 8
       Top = 8
@@ -155,6 +156,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
       ShowHint = True
       TabOrder = 1
       Visible = True
+      OnChange = lcbGroupChange
     end
     object cbType: TDBComboBoxEh
       Left = 286
@@ -221,7 +223,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
   end
   object pnlURL: TPanel
     Left = 0
-    Top = 51
+    Top = 52
     Width = 561
     Height = 52
     Align = alTop
@@ -285,25 +287,26 @@ object EquipmentCommandForm: TEquipmentCommandForm
   end
   object pnlCMD: TPanel
     Left = 0
-    Top = 103
+    Top = 104
     Width = 561
-    Height = 191
+    Height = 190
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 44
+      Width = 561
       Height = 13
       Align = alTop
-      Caption = #1050#1086#1084#1072#1085#1076#1072
+      Caption = ' '#1050#1086#1084#1072#1085#1076#1072
+      ExplicitWidth = 47
     end
     object dbmNotice: TDBMemoEh
       Left = 0
       Top = 13
       Width = 561
-      Height = 178
+      Height = 177
       Hint = 
         #1085#1077#1086#1073#1093#1086#1076#1080#1084#1086' '#1076#1086#1073#1072#1074#1083#1103#1090#1100' '#1074' '#1082#1086#1085#1094#1077' '#1089#1090#1088#1086#1082#1080' '#1089#1080#1084#1074#1086#1083#1099' '#1087#1077#1088#1077#1074#1086#1076#1072' '#1082#1086#1088#1077#1090#1082#1080#13#10'\n' +
         ' - ASCII -10'#13#10'\r - ASCII - 13'#13#10'\t - ASCII - 09'#13#10'\p - '#1082#1083#1072#1074#1080#1096#1072' '#1087#1088#1086 +
@@ -336,6 +339,10 @@ object EquipmentCommandForm: TEquipmentCommandForm
     SelectSQL.Strings = (
       'select'
       ' -1 O_ID, '#39#1042#1089#1077#39' as name, '#39' _'#39' SORT_NAME'
+      'from Rdb$Database'
+      'union all'
+      'select'
+      ' -2 O_ID, '#39#1058#1042#39' as name, '#39' __'#39' SORT_NAME'
       'from Rdb$Database'
       'union all'
       'select'
@@ -383,6 +390,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
       'select *'
       'from EQUIPMENT_CMD_GRP'
       'where EC_ID = :CID')
+    OnNewRecord = dsGCNewRecord
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite

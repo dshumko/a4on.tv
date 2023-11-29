@@ -627,6 +627,12 @@ inherited ChannelsForm: TChannelsForm
     object miN1: TMenuItem [3]
       Caption = '-'
     end
+    object miComSep: TMenuItem [5]
+      Caption = '-'
+    end
+    object miCommands: TMenuItem [6]
+      Caption = #1050#1086#1084#1072#1085#1076#1099
+    end
   end
   object dsChannels: TpFIBDataSet
     DeleteSQL.Strings = (
@@ -738,7 +744,7 @@ inherited ChannelsForm: TChannelsForm
       '    left outer join DVB_NETWORK DN on (DN.DVBN_ID = DS.DVBN_ID)'
       
         '    left outer join(select -- '#1087#1086#1087#1099#1090#1082#1072' '#1074#1099#1073#1088#1072#1090#1100' '#1074' '#1090#1072#1082#1086#1084' '#1087#1086#1088#1103#1076#1082#1077' '#1080#1089 +
-        #1090#1086#1095#1085#1080#1082#1080'. '#1076#1083#1103' '#1072#1053#1083#1086#1075#1072'. '#1076#1083#1103' '#1094#1080#1092#1088#1099'. '#1087#1088#1086#1095#1080#1077
+        #1090#1086#1095#1085#1080#1082#1080'. '#1076#1083#1103' '#1072#1085#1072#1083#1086#1075#1072'. '#1076#1083#1103' '#1094#1080#1092#1088#1099'. '#1087#1088#1086#1095#1080#1077
       '                        IC.CH_ID'
       '                      , coalesce((select first 1'
       '                                      S.CS_ID'

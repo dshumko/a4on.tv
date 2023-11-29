@@ -47,6 +47,8 @@ object PaymentsForm: TPaymentsForm
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
       PopupMenu = gridPopUp
       ReadOnly = True
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True
@@ -475,6 +477,7 @@ object PaymentsForm: TPaymentsForm
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
+      ExplicitWidth = 141
     end
     object dbgrdErrors: TDBGridEh
       Left = 0
@@ -785,6 +788,7 @@ object PaymentsForm: TPaymentsForm
       'LEAK_PRC=LEAK_PRC')
     DataSet = dsPayments
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 315
     Top = 211
   end

@@ -120,6 +120,7 @@ type
     procedure RefreshGridRecords;
     procedure SwitchLayout(const InVertical: Boolean);
     procedure SetLayout(Value: Boolean);
+    function GetOrderColumns: String;
   public
     { Public declarations }
     property IsVertical: Boolean read FIsVertical write SetLayout;
@@ -641,8 +642,6 @@ var
   ci: TCustomerInfo;
   id: Integer;
   s: string;
-  // R : TMemRecViewEh;
-  // expanded : Boolean;
 begin
   inherited;
   if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment))) then
@@ -663,10 +662,14 @@ begin
     begin
       { TODO: Переделать обновление записи }
       s := mtEQ.SortOrder;
+      if s.IsEmpty then
+        s := GetOrderColumns;
+      mtEQ.DisableControls;
       mtEQ.Close;
       mtEQ.Open;
       mtEQ.SortOrder := s;
       mtEQ.TreeList.Locate('EID', id, []);
+      mtEQ.EnableControls;
       // R:= mtEQ.RecView;
       // mtEQ.RecordsView.MemoryTreeList.Collapse(r.NodeParent, True);
       // mtEQ.RecordsView.MemoryTreeList.Expand(r, expanded);
@@ -1094,6 +1097,62 @@ begin
 
   if dsFilter.RecordCount > 0 then
     actEnableFilter.Checked := True;
+end;
+
+function TEquipmentForm.GetOrderColumns: String;
+var
+  s: string;
+  i, J: Integer;
+  Grid: TCustomDBGridEh;
+  FIBDS: TpFIBDataSet;
+  beOpened: Boolean;
+  fn: string;
+  id: Integer;
+begin
+  if not chkTREE.Checked then
+  begin
+    J := dbGrid.SortMarkedColumns.Count;
+    s := ' ';
+    for i := 0 to pred(J) do
+    begin
+      fn := AnsiUpperCase(dbGrid.SortMarkedColumns[i].FieldName);
+      if (fn = 'ACCOUNT_NO') then
+        s := s + 'C.account_no'
+      else if (fn = 'STREET_NAME') then
+        s := s + 'S.Street_Name||s.street_short'
+      else if (fn = 'FLAT_NO') then
+        s := s + 'C.Flat_No'
+      else if (fn = 'HOUSE_NO') then
+        s := s + 'H.HOUSE_NO '
+      else if (fn = 'CUST_CODE') then
+        s := s + 'C.CUST_CODE'
+      else if (fn = 'IP') then
+        s := s + 'E.IP_BIN'
+      else
+        s := s + dbGrid.SortMarkedColumns[i].FieldName;
+      // s := s + ' COLLATE UNICODE_CI_AI ';
+      if dbGrid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
+        s := s + ' desc';
+      if i <> pred(J) then
+        s := s + ', ';
+    end;
+  end
+  else
+  begin
+    // Работаем с MemTable
+    J := dbGrid.SortMarkedColumns.Count;
+    s := ' ';
+    for i := 0 to pred(J) do
+    begin
+      s := s + dbGrid.SortMarkedColumns[i].FieldName;
+      if dbGrid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
+        s := s + ' desc';
+      if i <> pred(J) then
+        s := s + ', ';
+    end;
+  end;
+
+  Result := s;
 end;
 
 end.

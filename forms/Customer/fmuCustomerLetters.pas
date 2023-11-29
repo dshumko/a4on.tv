@@ -91,7 +91,7 @@ begin
   if (dsLetters.FieldByName('ITS_LETTER').IsNull or (dsLetters['ITS_LETTER'] = 1)) then
     dsLetters.SQLs.DeleteSQL.Text := 'delete from Custletter where LETTERTYPEID >=0 and Custletterid = :OLD_Mes_Id'
   else
-    dsLetters.SQLs.DeleteSQL.Text := 'delete from MESSAGES where MES_ID = :OLD_Mes_Id and MES_RESULT <= 0';
+    dsLetters.SQLs.DeleteSQL.Text := 'delete from MESSAGES where MES_ID = :OLD_Mes_Id and MES_RESULT=0';
 
   dsLetters.Delete;
   EnableControls;
@@ -114,7 +114,7 @@ begin
   if not dsLetters.FieldByName('Mes_Id').IsNull then
     i := dsLetters.FieldByName('Mes_Id').AsInteger;
 
-  SendMessages(dsLetters.FieldByName('RECIVER').AsString, i);
+  SendMessages(FDataSource.DataSet['CUSTOMER_ID'], dsLetters.FieldByName('RECIVER').AsString, i);
   dsLetters.CloseOpen(true);
   if i>0 then
     dsLetters.Locate('Mes_Id', i, []);
@@ -130,7 +130,6 @@ var
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
   s: String;
-  i: Integer;
 begin
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgLetters.ScreenToClient(ScrPt);

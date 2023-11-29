@@ -7,10 +7,18 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus,
   Vcl.ComCtrls,
-  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView, IdBaseComponent,
+  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView,
+{$IFDEF INDY}
+  IdBaseComponent,
   IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, UrlConn,
-  PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser;
+  IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
+{$ELSE}
+  httpsend, ssl_openssl3, synautil,
+{$ENDIF}
+  UrlConn,
+  PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser, IdIOHandler,
+  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 type
   THtmlForm = class(TForm)
@@ -25,8 +33,6 @@ type
     actShowControl: TAction;
     edtPSWD: TDBEditEh;
     edtUSR: TDBEditEh;
-    HTTP: TIdHTTP;
-    IOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     pmHTML: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -47,7 +53,12 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
-
+{$IFDEF INDY}
+    HTTP: TIdHTTP;
+    IOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
+{$ELSE}
+    HTTP: THTTPSend;
+{$ENDIF}
     fExitOnExucute: Boolean;
     fUrl: String;
     fUser: String;
@@ -81,6 +92,12 @@ implementation
 uses
   System.StrUtils,
   AtrCommon, PrjConst, MAIN, URLSubs;
+
+{$IFNDEF INDY}
+const
+  HTTPVer  = '1.1'; // '1.0'
+  DefUserAgent = 'Mozilla/5.0 (Windows NT 6.1; rv:17.0; A4on.TV) Gecko/17.0 Firefox/17.0';
+{$ENDIF}
 
 {$R *.dfm}
 
@@ -138,6 +155,22 @@ end;
 
 procedure THtmlForm.FormCreate(Sender: TObject);
 begin
+{$IFDEF INDY}
+  IOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create(Self);
+  HTTP := TIdHTTP.Create(Self);
+  IOHandlerSSL.Name := 'IOHandlerSSL';
+  IOHandlerSSL.MaxLineAction := maException;
+  IOHandlerSSL.Port := 0;
+  IOHandlerSSL.DefaultPort := 0;
+  HTTP.Name := 'HTTP';
+  HTTP.AllowCookies := True;
+  HTTP.HTTPOptions := [hoForceEncodeParams];
+{$ELSE}
+  HTTP := THTTPSend.Create;
+  HTTP.Protocol := HTTPVer;
+  HTTP.UserAgent := DefUserAgent;
+  HTTP.Timeout := 10000;
+{$ENDIF}
   fExitOnExucute := False;
   FImageStreams := TList.Create;
 end;
@@ -155,8 +188,14 @@ end;
 
 procedure THtmlForm.FormDestroy(Sender: TObject);
 begin
+{$IFDEF INDY}
+  FreeAndNil(IOHandlerSSL);
+{$ENDIF}
+  FreeAndNil(HTTP);
+
   if assigned(fWkeWebbrowser) then
     fWkeWebbrowser.Free;
+
   FreeStreamList();
   FImageStreams.Free;
 end;
@@ -175,7 +214,7 @@ begin
   begin
     if (fUser = '') and (fPswd = '') and FileExists(ExtractFilePath(Application.ExeName) + 'miniblink.dll') then
     begin
-      fWkeWebbrowser := TWkeWebbrowser.Create(self);
+      fWkeWebbrowser := TWkeWebbrowser.Create(Self);
 
       fWkeWebbrowser.Name := 'WkeWebBrowser';
       fWkeWebbrowser.Parent := tsBrowser;
@@ -245,6 +284,9 @@ procedure THtmlForm.GetFromUrl;
 var
   sResponse: string;
   JsonToSend: TStringStream;
+{$IFNDEF INDY}
+  meth: string;
+{$ENDIF}
 begin
   FreeStreamList();
 
@@ -257,13 +299,14 @@ begin
   end
   else
   begin
+
     if not fData.IsEmpty then
       JsonToSend := TStringStream.Create(fData, TEncoding.UTF8)
     else
       JsonToSend := TStringStream.Create('', TEncoding.UTF8);
 
     try
-      // HTTP1.Request.ContentType := 'application/json';
+{$IFDEF INDY}
       HTTP.Request.CharSet := 'utf-8';
       if fUser <> '' then
       begin
@@ -274,7 +317,6 @@ begin
       if fUrl.StartsWith('https', True) then
         HTTP.IOHandler := IOHandlerSSL;
       try
-        // sResponse := HTTP1.Post('http://api.a4on.net/echo/json', JsonToSend);
         if fData.IsEmpty then
         begin
           sResponse := HTTP.Get(fUrl);
@@ -285,6 +327,37 @@ begin
         on E: Exception do
           ShowMessage('Error on request: '#13#10 + E.Message);
       end;
+{$ELSE}
+      try
+        if fUser <> '' then
+        begin
+          HTTP.Username := fUser;
+          HTTP.Password := fPswd;
+        end;
+        if fData.IsEmpty then
+          meth := 'GET'
+        else
+        begin
+          meth := 'POST';
+          HTTP.MimeType := 'application/x-www-form-urlencoded';
+          HTTP.Document.LoadFromStream(JsonToSend);
+        end;
+        if HTTP.HTTPMethod(meth, fUrl) then
+        begin
+          if Pos('200 OK', HTTP.Headers.Text) <> 0 then
+          begin
+            JsonToSend.Clear;
+            JsonToSend.CopyFrom(HTTP.Document, 0);
+            sResponse := JsonToSend.DataString;
+          end;
+        end
+        else
+          ShowMessage(rsDownloadError);
+      except
+        on E: Exception do
+          ShowMessage('Error on request: '#13#10 + E.Message);
+      end;
+{$ENDIF}
     finally
       if not fData.IsEmpty then
         JsonToSend.Free;
@@ -300,21 +373,50 @@ begin
 end;
 
 procedure THtmlForm.htmlviewerImageRequest(Sender: TObject; const SRC: string; var Stream: TStream);
+
 var
   AStream: TMemoryStream;
+{$IFNDEF INDY}
+  vHTTP: THTTPSend;
+  vRes: Boolean;
+{$ENDIF}
 begin
+{$IFDEF INDY}
   if (GetProtocol(SRC) = GetProtocol(fUrl)) then
   begin
+
     AStream := TMemoryStream.Create;
     try
       HTTP.Get(SRC, AStream);
       Stream := AStream;
       FImageStreams.Add(AStream);
-    except
+    finally
       AStream.Free;
       Stream := Nil;
     end;
   end;
+{$ELSE}
+  vHTTP := THTTPSend.Create;
+  vHTTP.Protocol := HTTPVer;
+  vHTTP.UserAgent := DefUserAgent;
+  AStream := TMemoryStream.Create;
+  try
+    try
+      vRes := vHTTP.HTTPMethod('GET', SRC);
+      if vRes then
+      begin
+        AStream.LoadFromStream(vHTTP.Document);
+        Stream := AStream;
+        FImageStreams.Add(AStream);
+      end;
+    except
+      AStream.Free;
+      Stream := Nil;
+    end;
+  finally
+    FreeAndNil(vHTTP);
+  end;
+{$ENDIF}
 end;
 
 procedure THtmlForm.htmlviewerKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

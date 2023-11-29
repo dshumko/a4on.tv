@@ -2,12 +2,18 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   Caption = #1050#1086#1084#1072#1085#1076#1099' '#1076#1083#1103' '#1075#1088#1091#1087#1087
   ClientHeight = 389
   ClientWidth = 605
+  ExplicitWidth = 621
+  ExplicitHeight = 428
   PixelsPerInch = 96
   TextHeight = 13
+  inherited splPG: TSplitter
+    Width = 605
+  end
   inherited dbGrid: TDBGridEh
     Width = 605
-    Height = 178
+    Height = 175
     AllowedOperations = [alopInsertEh, alopDeleteEh, alopAppendEh]
+    OnGetCellParams = dbGridGetCellParams
     Columns = <
       item
         CellButtons = <>
@@ -80,23 +86,6 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
         Width = 90
       end>
   end
-  inherited tlbMain: TToolBar
-    Width = 605
-    inherited tbOk: TToolButton
-      Visible = False
-      OnClick = tbOkClick
-    end
-    inherited ToolButton10: TToolButton
-      Visible = False
-    end
-    inherited tbCancel: TToolButton
-      Visible = False
-      OnClick = tbCancelClick
-    end
-    inherited ToolButton20: TToolButton
-      Visible = False
-    end
-  end
   object dbmCMD: TDBMemoEh [2]
     Left = 0
     Top = 259
@@ -115,14 +104,27 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
     Visible = True
     WantReturns = True
   end
+  inherited tlbMain: TToolBar
+    Width = 605
+    ExplicitWidth = 605
+    inherited tbOk: TToolButton
+      Visible = False
+      OnClick = tbOkClick
+    end
+    inherited ToolButton10: TToolButton
+      Visible = False
+    end
+    inherited tbCancel: TToolButton
+      Visible = False
+      OnClick = tbCancelClick
+    end
+    inherited ToolButton20: TToolButton
+      Visible = False
+    end
+  end
   inherited pnlEdit: TPanel
     Width = 605
-  end
-  inherited srcDataSource: TDataSource
-    DataSet = dsCGR
-    OnStateChange = srcDataSourceStateChange
-    OnDataChange = srcDataSourceDataChange
-    Top = 152
+    ExplicitWidth = 605
   end
   object trWrite: TpFIBTransaction [5]
     DefaultDatabase = dmMain.dbTV
@@ -175,7 +177,9 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
       '    ecg.notice,'
       '    ecg.cmd_type,'
       '    ecg.in_gui,'
-      '    iif(ecg.eg_id = -1, '#39#1042#1057#1045#39', g.o_name) o_name,'
+      
+        '    iif(ecg.eg_id = -1, '#39#1042#1057#1045#39', iif(ecg.eg_id = -2, '#39#1058#1042#39', g.o_nam' +
+        'e)) o_name,'
       '    ecg.Url'
       'from equipment_cmd_grp ecg '
       
@@ -190,6 +194,12 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
     Left = 69
     Top = 105
     oFetchAll = True
+  end
+  inherited srcDataSource: TDataSource
+    DataSet = dsCGR
+    OnStateChange = srcDataSourceStateChange
+    OnDataChange = srcDataSourceDataChange
+    Top = 152
   end
   inherited actions: TActionList
     inherited actNew: TAction

@@ -183,6 +183,24 @@ object apgCustomerPayments: TapgCustomerPayments
         Title.Caption = #1055#1083#1072#1090#1077#1078' '#1087#1088#1080#1085#1103#1083
         Title.TitleButton = True
         Width = 82
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'DEBT_SAVE'
+        Footers = <>
+        Title.Caption = #1057#1072#1083#1100#1076#1086' '#1076#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'BAL_SAVE'
+        Footers = <>
+        Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -360,6 +378,8 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , coalesce(W.SURNAME, p.ADDED_BY) as WHO_ADD'
       '  , R.NAME'
       '  , 1 PT'
+      '  , p.DEBT_SAVE'
+      '  , p.DEBT_SAVE*-1 BAL_SAVE    '
       '  from PAYMENT P'
       '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
       
@@ -390,6 +410,8 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , coalesce(W.SURNAME, o.Who_Add) WHO_ADD'
       '  , '#39#39' NAME'
       '  , 0 PT'
+      '  , o.DEBT_SAVE'
+      '  , o.DEBT_SAVE*-1 BAL_SAVE   '
       '  from Prepay_Detail o'
       '       left outer join worker w on (w.Ibname = o.Who_Add)'
       '  where o.CUSTOMER_ID = :CUSTOMER_ID'

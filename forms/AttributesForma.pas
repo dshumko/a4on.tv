@@ -29,6 +29,7 @@ type
     chkUniq: TDBCheckBoxEh;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    chkMEMO: TDBCheckBoxEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

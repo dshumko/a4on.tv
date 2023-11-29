@@ -53,8 +53,6 @@ uses
 {$R *.dfm}
 
 function ReqBayBack(const aRequest: Integer): boolean;
-var
-  FWHOwner: boolean;
 begin
   result := false;
   with TReqMatBaybackForm.Create(Application) do

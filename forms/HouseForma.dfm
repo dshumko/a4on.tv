@@ -46,7 +46,7 @@ object HouseForm: THouseForm
     object Label9: TLabel
       Left = 8
       Top = 50
-      Width = 33
+      Width = 30
       Height = 13
       Caption = #1056#1072#1081#1086#1085
     end
@@ -60,7 +60,7 @@ object HouseForm: THouseForm
     object Label4: TLabel
       Left = 8
       Top = 90
-      Width = 77
+      Width = 74
       Height = 13
       Caption = #1055#1088#1077#1076#1089#1077#1076#1072#1090#1077#1083#1100
     end
@@ -74,7 +74,7 @@ object HouseForm: THouseForm
     object Label1: TLabel
       Left = 8
       Top = 8
-      Width = 39
+      Width = 36
       Height = 13
       Caption = #1059#1083#1080#1094#1072
       Font.Charset = DEFAULT_CHARSET
@@ -417,6 +417,7 @@ object HouseForm: THouseForm
       Width = 103
       Height = 21
       Hint = #1044#1072#1090#1072' '#1074#1074#1086#1076#1072' '#1074' '#1101#1082#1089#1087#1083#1091#1072#1090#1072#1094#1080#1102' '
+      Color = clYellow
       DataField = 'IN_DATE'
       DataSource = srcHouse
       DynProps = <>
@@ -424,6 +425,7 @@ object HouseForm: THouseForm
       EmptyDataInfo.Text = #1044#1072#1090#1072' '#1074#1074#1086#1076#1072
       TabOrder = 12
       Visible = True
+      OnChange = edtinputChange
       EditFormat = 'DD/MM/YYYY'
     end
     object edtRepair: TDBDateTimeEditEh
@@ -586,6 +588,12 @@ object HouseForm: THouseForm
     ExplicitTop = 428
     ExplicitWidth = 456
     ExplicitHeight = 34
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 159
       Top = 3

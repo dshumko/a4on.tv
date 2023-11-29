@@ -93,6 +93,7 @@ type
     procedure setSRVType(value: Integer);
     function CheckDataAndOk: Boolean;
     procedure CheckAndGenContract;
+    procedure CheckAndAddPromo;
   public
     { Public declarations }
     property Service_TYPE: Integer write setSRVType;
@@ -132,7 +133,7 @@ function PauseService(const aCustomer_ID, aService_ID, aSubscr_Serv_ID: Integer;
 implementation
 
 uses
-  DM, AtrCommon, CF;
+  DM, AtrCommon, CF, SelectPromoForma;
 
 function PauseService(const aCustomer_ID, aService_ID, aSubscr_Serv_ID: Integer; const Notice: String): Boolean;
 var
@@ -439,10 +440,10 @@ begin
           if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) then
             all := (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes);
 
+        Save_Cursor := Screen.Cursor;
+        Screen.Cursor := crHourGlass;
         if all then
         begin
-          Save_Cursor := Screen.Cursor;
-          Screen.Cursor := crHourGlass;
           for i := 0 to CustomersForm.dbgCustomers.SelectedRows.Count - 1 do
           begin
             CustomersForm.dbgCustomers.DataSource.DataSet.Bookmark := CustomersForm.dbgCustomers.SelectedRows[i];
@@ -456,7 +457,6 @@ begin
             end;
             application.ProcessMessages;
           end;
-          Screen.Cursor := Save_Cursor;
         end
         else
         begin
@@ -465,7 +465,7 @@ begin
           Query.ExecQuery;
           Query.Transaction.Commit;
         end;
-
+        Screen.Cursor := Save_Cursor;
         Result := True;
       end;
     finally
@@ -573,7 +573,7 @@ begin
         if all then
         begin
           Save_Cursor := Screen.Cursor;
-          Screen.Cursor := crHourGlass; { Show hourglass cursor }
+          Screen.Cursor := crHourGlass;
           for i := 0 to CustomersForm.dbgCustomers.SelectedRows.Count - 1 do
           begin
             CustomersForm.dbgCustomers.DataSource.DataSet.Bookmark := CustomersForm.dbgCustomers.SelectedRows[i];
@@ -587,7 +587,7 @@ begin
               //
             end;
           end;
-          Screen.Cursor := Save_Cursor; { Always restore to normal }
+          Screen.Cursor := Save_Cursor;
         end
         else
         begin
@@ -595,6 +595,10 @@ begin
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
           Query.Transaction.Commit;
+
+          if aService_TYPE = 0 then
+            CheckAndAddPromo();
+
         end;
         Result := True;
       end;
@@ -648,16 +652,18 @@ begin
       FRentS := dmMain.GetSettingsValue('FLAT_RENT_C_STR');
       if FOwnerS.IsEmpty then
         FOwnerS := '%s' // Для функции формат
-      else begin
+      else
+      begin
         if not FOwnerS.Contains('%s') then
-          FOwnerS := FOwnerS+'%s';
+          FOwnerS := FOwnerS + '%s';
       end;
 
       if FRentS.IsEmpty then
         FRentS := '%s' // Для функции формат
-      else begin
+      else
+      begin
         if not FRentS.Contains('%s') then
-          FRentS := FRentS+'%s';
+          FRentS := FRentS + '%s';
       end;
       edtDogovor.Left := chkFOwner.Left + chkFOwner.Width + 12;
       edtDogovor.Width := lblContr.Left - edtDogovor.Left - 10;
@@ -687,7 +693,7 @@ end;
 procedure TOnOffServiceForm.luServiceClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
-    Exit;
+    exit;
 
   if not(Sender as TDBLookupComboboxEh).ListVisible then
     (Sender as TDBLookupComboboxEh).DropDown
@@ -698,7 +704,7 @@ end;
 procedure TOnOffServiceForm.luServiceEnter(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
-    Exit;
+    exit;
 
   if not(Sender as TDBLookupComboboxEh).ListVisible then
     (Sender as TDBLookupComboboxEh).DropDown;
@@ -770,11 +776,11 @@ begin
   begin
     if chkFOwner.Checked then
     begin
-      s := Format(FOwnerS, [s]);
+      s := format(FOwnerS, [s]);
     end
     else
     begin
-      s := Format(FRentS, [s]);
+      s := format(FRentS, [s]);
     end;
   end;
   edtDogovor.Text := s;
@@ -789,15 +795,17 @@ procedure TOnOffServiceForm.CheckAndGenContract;
 begin
   if chkContract.Checked then
   begin
-    if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') and (VarIsNull(edtDogDate.value))  then
+    if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') and (VarIsNull(edtDogDate.value)) then
       edtDogDate.value := NOW();
 
-    if (servPanel.Visible) and (not VarIsNull(luService.KeyValue)) then begin
+    if (servPanel.Visible) and (not VarIsNull(luService.KeyValue)) then
+    begin
       if FContract.IsEmpty then
         FContract := dmMain.GenerateDogNumberForCustomer(fCustomer_ID, luService.KeyValue);
       SetContract;
     end
-    else begin
+    else
+    begin
       if FContract.IsEmpty then
         FContract := dmMain.GenerateDogNumberForCustomer(fCustomer_ID, dsOnOffService['ID']);
       SetContract;
@@ -832,7 +840,7 @@ begin
     begin
       allOk := False;
       CnErrors.SetError(luService, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-      //luService.SetFocus;
+      // luService.SetFocus;
     end
     else
       CnErrors.Dispose(luService);
@@ -842,7 +850,7 @@ begin
   begin
     allOk := False;
     CnErrors.SetError(luOnOffService, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-    //luOnOffService.SetFocus;
+    // luOnOffService.SetFocus;
   end
   else
     CnErrors.Dispose(luOnOffService);
@@ -851,7 +859,7 @@ begin
   begin
     allOk := False;
     CnErrors.SetError(edtDogDate, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-    //edtDogDate.SetFocus;
+    // edtDogDate.SetFocus;
   end
   else
     CnErrors.Dispose(edtDogDate);
@@ -860,7 +868,7 @@ begin
   begin
     allOk := False;
     CnErrors.SetError(eUNITS, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-    //eUNITS.SetFocus;
+    // eUNITS.SetFocus;
   end
   else
     CnErrors.Dispose(eUNITS);
@@ -871,7 +879,7 @@ begin
     begin
       allOk := False;
       CnErrors.SetError(eDate, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-      //eDate.SetFocus;
+      // eDate.SetFocus;
     end
     else
     begin
@@ -880,7 +888,7 @@ begin
       begin
         allOk := False;
         CnErrors.SetError(eDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
-        //eDate.SetFocus;
+        // eDate.SetFocus;
       end
       else
         CnErrors.Dispose(eDate);
@@ -892,7 +900,7 @@ begin
       begin
         allOk := False;
         CnErrors.SetError(eDateTo, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
-        //eDateTo.SetFocus;
+        // eDateTo.SetFocus;
       end
       else
       begin
@@ -901,7 +909,7 @@ begin
         begin
           allOk := False;
           CnErrors.SetError(eDateTo, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
-          //eDateTo.SetFocus;
+          // eDateTo.SetFocus;
         end
         else
           CnErrors.Dispose(eDateTo);
@@ -910,6 +918,76 @@ begin
   end;
 
   Result := allOk;
+end;
+
+procedure TOnOffServiceForm.CheckAndAddPromo;
+var
+  i, pid: Integer;
+  s: string;
+begin
+  i := 0;
+  pid := -1;
+  with TpFIBQuery.Create(Self) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      SQL.Text := 'SELECT PROMO_ID, PROMO_NAME FROM PROMO_CHECK(:DS, :SID)';
+
+      ParamByName('DS').AsDate := eDate.value;
+      ParamByName('SID').AsInteger := luService.value;
+
+      Transaction := dmMain.trReadQ;
+      Transaction.StartTransaction;
+      ExecQuery;
+      while not eof do
+      begin
+        i := i + 1;
+        pid := FN('PROMO_ID').AsInteger;
+        s := FN('PROMO_NAME').AsString;
+        Next;
+      end;
+      Transaction.Commit;
+    finally
+      free;
+    end
+  end;
+
+  if i = 0 then
+    exit;
+
+  if i > 1 then
+    pid := SelectPromo(luService.value, eDate.value, s)
+  else if application.MessageBox(PWideChar('Услуга попадает под акцию:' + #13#10 + s + #13#10 + 'Добавить коэффициент'),
+    PWideChar('Акция'), MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) <> IDYES then
+    pid := -1;
+
+  if pid <= 0 then
+    exit;
+
+  i := 0;
+  with TpFIBQuery.Create(Self) do
+  begin
+    try
+      Database := dmMain.dbTV;
+      SQL.Text := 'SELECT * FROM PROMO_ADD(:CID, :DS, :SID, :PID)';
+
+      ParamByName('CID').AsInteger := fCustomer_ID;
+      ParamByName('DS').AsDate := eDate.value;
+      ParamByName('SID').AsInteger := luService.value;
+      ParamByName('PID').AsInteger := pid;
+
+      Transaction := dmMain.trWriteQ;
+      Transaction.StartTransaction;
+      ExecQuery;
+      i := FN('Result').AsInteger;
+      Transaction.Commit;
+    finally
+      free;
+    end
+  end;
+
+  if i < 0 then
+    ShowMessage('Ошибка установки акции. Добавьте самостоятельно.')
 end;
 
 end.

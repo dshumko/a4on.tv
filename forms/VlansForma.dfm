@@ -4,6 +4,8 @@ inherited VlansForm: TVlansForm
   Caption = #1051#1086#1082#1072#1083#1100#1085#1099#1077' '#1089#1077#1090#1080
   ClientHeight = 538
   ClientWidth = 740
+  ExplicitWidth = 756
+  ExplicitHeight = 577
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
@@ -17,6 +19,8 @@ inherited VlansForm: TVlansForm
   inherited splPG: TSplitter
     Top = 193
     Width = 740
+    ExplicitTop = 193
+    ExplicitWidth = 740
   end
   inherited dbGrid: TDBGridEh
     Top = 196
@@ -277,6 +281,7 @@ inherited VlansForm: TVlansForm
             Height = 13
             Align = alTop
             Caption = #1044#1086#1084#1072' '#1074#1085#1077' '#1079#1086#1085#1099' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103' '
+            ExplicitWidth = 154
           end
           object dbgExists: TDBGridEh
             Left = 37
@@ -636,6 +641,7 @@ inherited VlansForm: TVlansForm
   end
   inherited tlbMain: TToolBar
     Width = 740
+    ExplicitWidth = 740
     inherited ToolButton6: TToolButton
       Visible = False
     end
@@ -677,6 +683,8 @@ inherited VlansForm: TVlansForm
   inherited pnlEdit: TPanel
     Width = 740
     Height = 168
+    ExplicitWidth = 740
+    ExplicitHeight = 168
     object Label1: TLabel [0]
       Left = 564
       Top = 36
@@ -753,12 +761,17 @@ inherited VlansForm: TVlansForm
       Top = 137
       Width = 576
       TabOrder = 10
+      ExplicitLeft = 68
+      ExplicitTop = 137
+      ExplicitWidth = 576
     end
     inherited btnCancelLink: TBitBtn
       Left = 650
       Top = 137
       Action = actCancel
       TabOrder = 11
+      ExplicitLeft = 650
+      ExplicitTop = 137
     end
     object dbmmoNotice: TDBMemoEh
       Left = 68
@@ -1116,6 +1129,7 @@ inherited VlansForm: TVlansForm
     DataSource = srcDataSource
     Left = 213
     Top = 299
+    WaitEndMasterScroll = True
     oFetchAll = True
   end
   object dsExists: TpFIBDataSet
@@ -1162,6 +1176,7 @@ inherited VlansForm: TVlansForm
     poUseBooleanField = False
     poGetOrderInfo = False
     poEmptyStrToNull = False
+    WaitEndMasterScroll = True
     oFetchAll = True
   end
   object srcExists: TDataSource
@@ -1204,6 +1219,7 @@ inherited VlansForm: TVlansForm
     DataSource = srcDataSource
     Left = 407
     Top = 291
+    WaitEndMasterScroll = True
   end
   object srcAttributes: TDataSource
     DataSet = dsAttributes

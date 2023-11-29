@@ -75,6 +75,7 @@ type
     procedure cbbSUBAREAEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure FormShow(Sender: TObject);
     procedure btnMapClick(Sender: TObject);
+    procedure edtinputChange(Sender: TObject);
   private
     { Private declarations }
     FEnterSecondPress: Boolean;
@@ -234,6 +235,14 @@ end;
 procedure THouseForm.edHomeChange(Sender: TObject);
 begin
   CheckData;
+end;
+
+procedure THouseForm.edtinputChange(Sender: TObject);
+begin
+  if VarIsNull(edtinput.Value) then
+    edtinput.Color := clYellow
+  else
+    edtinput.Color := clWindow;
 end;
 
 procedure THouseForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

@@ -26,6 +26,8 @@ type
     procedure tbCancelClick(Sender: TObject);
     procedure tbOkClick(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
   public
@@ -83,6 +85,32 @@ begin
     bm := dsCGR.GetBookmark;
     dsCGR.CloseOpen(true);
     dsCGR.GotoBookmark(bm);
+  end;
+end;
+
+procedure TEquipmentCommandsForm.dbGridGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+    Exit;
+
+  if (gdSelected in State) then
+  begin
+    AFont.Color := clHighlightText;
+    Background := clHighlight;
+  end
+  else
+  begin
+    if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('eg_id').IsNull then
+    begin
+      if (Sender as TDBGridEh).DataSource.DataSet.FieldByName('eg_id').AsInteger <> -2
+      then
+        Background := clWindow
+      else
+        Background := clSkyBlue;
+    end;
   end;
 end;
 

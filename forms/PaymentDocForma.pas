@@ -636,6 +636,10 @@ begin
       dbgPayDocPayment.Columns[i].Visible := bal;
     if (AnsiUpperCase(dbgPayDocPayment.Columns[i].FieldName) = 'DEBT_SUM') then
       dbgPayDocPayment.Columns[i].Visible := not bal;
+    if (AnsiUpperCase(dbgPayDocPayment.Columns[i].FieldName) = 'BAL_SAVE') then
+      dbgPayDocPayment.Columns[i].Visible := bal;
+    if (AnsiUpperCase(dbgPayDocPayment.Columns[i].FieldName) = 'DEBT_SAVE') then
+      dbgPayDocPayment.Columns[i].Visible := not bal;
   end;
 
   dbgPayDocPayment.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgPayDocPayment',

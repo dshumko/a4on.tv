@@ -14,7 +14,7 @@ uses
   SynEditHighlighter, FIBQuery, pFIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst,
   ToolCtrlsEh,
   DBGridEhToolCtrls, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase, frxClass, SendEmail, DBGridEhGrouping,
-  DynVarsEh, frxExportBaseDialog, frxExportPDF, PropFilerEh, PropStorageEh;
+  DynVarsEh, frxExportBaseDialog, frxExportPDF, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TSendMessagesForm = class(TForm)
@@ -93,10 +93,11 @@ type
     FToContact: string;
     FToCustomer: Integer;
     FParentMessage: Integer;
+    FTmpltName: string;
     function GetMessage(const Msg: String): string;
     procedure SendEmailMessage;
     procedure SendMessage(const mes_type: string);
-    procedure SaveMessageDB(const mes_type, head, Text: String; const Res: Integer; const Contact:string = '');
+    procedure SaveMessageDB(const mes_type, head, Text: String; const Res: Integer; const Contact: string = '');
     procedure LoadReportBody(FR: TfrxReport);
     procedure InitEmailClient(emailClient: TEmailClient);
     procedure SetToCustomer(const value: Integer);
@@ -104,10 +105,11 @@ type
   public
     property ToCustomer: Integer write SetToCustomer;
     property ToContact: string write SetToContact;
-    property ParentMessage: integer write FParentMessage;
+    property ParentMessage: Integer write FParentMessage;
   end;
 
-function SendMessages(const aCustomer_ID: Integer = -1; const aTo_Contact: string = ''; const parent_id :Integer = -1): Boolean;
+function SendMessages(const aCustomer_ID: Integer = -1; const aTo_Contact: string = '';
+  const parent_id: Integer = -1): Boolean;
 
 implementation
 
@@ -116,13 +118,15 @@ uses
 
 {$R *.dfm}
 
-function SendMessages(const aCustomer_ID: Integer = -1; const aTo_Contact: string = ''; const parent_id :Integer = -1): Boolean;
+function SendMessages(const aCustomer_ID: Integer = -1; const aTo_Contact: string = '';
+  const parent_id: Integer = -1): Boolean;
 begin
   Result := False;
-  with TSendMessagesForm.Create(Application) do begin
+  with TSendMessagesForm.Create(Application) do
+  begin
     ToContact := aTo_Contact;
     ParentMessage := parent_id;
-    ToCustomer:= aCustomer_id;
+    ToCustomer := aCustomer_ID;
     try
       if ShowModal = mrOk then
       begin
@@ -158,7 +162,8 @@ begin
   end;
 end;
 
-procedure TSendMessagesForm.SaveMessageDB(const mes_type, head, Text: String; const Res: Integer; const Contact:string = '');
+procedure TSendMessagesForm.SaveMessageDB(const mes_type, head, Text: String; const Res: Integer;
+  const Contact: string = '');
 begin
   with qrySaveMessages do
   begin
@@ -198,7 +203,8 @@ var
   I: Integer;
 begin
   ToEmail := '';
-  if FToContact.IsEmpty then begin
+  if FToContact.IsEmpty then
+  begin
     qryRead.sql.Text := ' select cast(list(Cc_Value) as varchar(1000)) Cc_Value from customer_contacts ' +
       ' where Cc_Type=2 and CC_NOTIFY = 1 and Customer_Id=:c_id ';
     qryRead.ParamByName('C_ID').AsInteger := CustomersForm.dsCustomers['CUSTOMER_ID'];
@@ -255,6 +261,7 @@ begin
     Res := emailClient.SendEmail;
     if Res <> 'OK' then
     begin
+      mmoLog.Lines.Add('email: ' + ToEmail + ' Абонент: ' + CustomersForm.dsCustomers['ACCOUNT_NO']);
       mmoLog.Lines.Add(Res);
       ci := -1;
     end
@@ -285,8 +292,8 @@ begin
   mmoLog.Visible := True;
   mmoLog.Clear;
   if cbMessType.Text = '' then
-    cbMessType.Value := 'SMS';
-  mes_t := cbMessType.Value;
+    cbMessType.value := 'SMS';
+  mes_t := cbMessType.value;
 
   try
     with CustomersForm do
@@ -335,7 +342,7 @@ begin
   show := False;
   if not dsMessType.FieldByName('O_NUMERICFIELD').IsNull then
     show := (dsMessType['O_NUMERICFIELD'] = 1);
-  pnlHead.Visible := show or cbMessType.Text.toUpper.Contains('EMAIL');
+  pnlHead.Visible := show or cbMessType.Text.ToUpper.Contains('EMAIL');
 
   pnlReport.Visible := cbMessType.Text.Contains('EMAIL');
 end;
@@ -354,38 +361,38 @@ end;
 procedure TSendMessagesForm.FormShow(Sender: TObject);
 var
   val: TStringArray;
-  i, c: Integer;
+  I, c: Integer;
   Font_size: Integer;
   Font_name, s: string;
   Row_height: Integer;
 begin
   Font_size := 0;
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), I) then
   begin
-    Font_size := i;
+    Font_size := I;
     Font_name := dmMain.GetIniValue('FONT_NAME');
   end;
-  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
-    i := 0;
-  Row_height := i;
-  for i := 0 to ComponentCount - 1 do
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), I) then
+    I := 0;
+  Row_height := I;
+  for I := 0 to ComponentCount - 1 do
   begin
-    if Components[i] is TDBGridEh then
+    if Components[I] is TDBGridEh then
     begin
-      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
+      (Components[I] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[I].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+      if ((Components[I] as TDBGridEh).DataSource <> nil) and ((Components[I] as TDBGridEh).DataSource.DataSet.Active)
       then
-        (Components[i] as TDBGridEh).DefaultApplySorting;
+        (Components[I] as TDBGridEh).DefaultApplySorting;
       if Font_size <> 0 then
       begin
-        (Components[i] as TDBGridEh).Font.Name := Font_name;
-        (Components[i] as TDBGridEh).Font.Size := Font_size;
+        (Components[I] as TDBGridEh).Font.Name := Font_name;
+        (Components[I] as TDBGridEh).Font.Size := Font_size;
       end;
       if Row_height <> 0 then
       begin
-        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
-        (Components[i] as TDBGridEh).RowHeight := Row_height;
+        (Components[I] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[I] as TDBGridEh).RowHeight := Row_height;
       end;
     end;
   end;
@@ -405,6 +412,13 @@ begin
   for I := 0 to Length(val) - 1 do
   begin
     pmMemo.Items.Add(NewItem(val[I], 0, False, True, miClick, 0, 'mi' + IntToStr(I)));
+  end;
+
+  if (dmMain.GetSettingsValue('SHOW_FINE') = '1') then
+  begin
+    I := Length(val) + 1;
+    pmMemo.Items.Add(NewItem(rsFldDEBT_FINE, 0, False, True, miClick, 0, 'mi' + IntToStr(I)));
+    pmMemo.Items.Add(NewItem(rsFldFINE, 0, False, True, miClick, 0, 'mi' + IntToStr(I + 1)))
   end;
 
   if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) and FToContact.IsEmpty then
@@ -438,46 +452,73 @@ begin
     dsTemplate.Open;
     exit;
   end;
+  if (not dsTemplate.FieldByName('O_DESCRIPTION').IsNull) then
+    FTmpltName := dsTemplate['O_DESCRIPTION']
+  else
+    FTmpltName := '';
 
   if not dsTemplate.FieldByName('O_CHARFIELD').IsNull then
-    mmoMessage.Lines.Add(dsTemplate['O_CHARFIELD']);
+    mmoMessage.Lines.Text := dsTemplate['O_CHARFIELD']
+  else
+    mmoMessage.Lines.Clear;
 
   if not dsTemplate.FieldByName('O_NAME').IsNull then
-    edtHEAD.Text := dsTemplate['O_NAME'];
+    edtHEAD.Text := dsTemplate['O_NAME']
+  else
+    edtHEAD.Text := '';
 end;
 
 procedure TSendMessagesForm.actSaveTemplateExecute(Sender: TObject);
 var
-  TempName : string;
+  TempName: string;
 begin
   if Length(mmoMessage.Lines.Text) < 10 then
-  Exit;
+    exit;
 
-  if Vcl.Dialogs.InputQuery('Ведите название шаблона', 'Название', TempName) then
+  TempName := FTmpltName;
+
+  if not Vcl.Dialogs.InputQuery('Ведите название шаблона', 'Название', TempName) then
+    exit;
+
+  if not dsTemplate.Active then
+    dsTemplate.Open;
+
+  if (not TempName.IsEmpty) and (FTmpltName = TempName) then
   begin
-    if not dsTemplate.Active then
-      dsTemplate.Open;
-
+    if (not dsTemplate.FieldByName('O_DESCRIPTION').IsNull) and (FTmpltName = dsTemplate['O_DESCRIPTION']) then
+      dsTemplate.Edit
+    else begin
+      if dsTemplate.Locate('O_DESCRIPTION', TempName, [])
+      then
+        dsTemplate.Edit
+      else
+        dsTemplate.Insert;
+    end;
+  end
+  else
     dsTemplate.Insert;
-    dsTemplate['O_CHARFIELD'] := mmoMessage.Lines.Text;
-    dsTemplate['O_DESCRIPTION'] := TempName;
-    dsTemplate['O_NAME'] := IfThen(not edtHEAD.Text.IsEmpty, edtHEAD.Text, TempName);
 
-    dsTemplate.Post;
-    dsTemplate.CloseOpen(True);
-  end;
-  //
+  dsTemplate['O_CHARFIELD'] := Trim(mmoMessage.Lines.Text);
+  dsTemplate['O_DESCRIPTION'] := TempName.Trim;
+  dsTemplate['O_NAME'] := IfThen(not edtHEAD.Text.IsEmpty, Trim(edtHEAD.Text), TempName);
+  dsTemplate.Post;
+  dsTemplate.CloseOpen(True);
+
+  if not TempName.IsEmpty then
+    dsTemplate.Locate('O_DESCRIPTION', TempName.Trim, []);
+
+  FTmpltName := '';
 end;
 
 procedure TSendMessagesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
-  i: Integer;
+  I: Integer;
 begin
 
-  for i := 0 to ComponentCount - 1 do
-    if Components[i] is TDBGridEh then
-      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, False);
+  for I := 0 to ComponentCount - 1 do
+    if Components[I] is TDBGridEh then
+      (Components[I] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[I].Name, False);
 
   if dsLetterTypes.Active then
     dsLetterTypes.Close;
@@ -490,7 +531,7 @@ end;
 procedure TSendMessagesForm.FormCreate(Sender: TObject);
 begin
   frxPDFExport.ShowDialog := False;
-  frxPDFExport.Creator:= 'A4on.TV';
+  frxPDFExport.Creator := 'A4on.TV';
   frxPDFExport.Author := dmMain.mdsCompany['NAME'];
   frxPDFExport.EmbeddedFonts := True;
   frxPDFExport.PrintOptimized := True;
@@ -525,27 +566,28 @@ end;
 procedure TSendMessagesForm.dsMessTypeAfterOpen(DataSet: TDataSet);
 begin
   if not dsMessType.FieldByName('O_NAME').IsNull then
-    cbMessType.Value := dsMessType['O_NAME']
+    cbMessType.value := dsMessType['O_NAME']
 end;
 
 procedure TSendMessagesForm.LoadReportBody(FR: TfrxReport);
 var
   Stream: TStream;
-  fn: string;
+  FN: string;
 begin
   try
-    dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value := lcbReportAsPDF.KeyValue;
+    dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := lcbReportAsPDF.KeyValue;
     dmMain.fdsLoadReport.Open;
-    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').Value <> NULL then
+    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
     begin
       Stream := TMemoryStream.Create;
       try
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
         FR.LoadFromStream(Stream);
-        fn := CustomersForm.dsCustomers['ACCOUNT_NO'] + '.' + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        fn := Translit(fn).Replace(' ', '_', [rfReplaceAll]).Replace('\', '_', [rfReplaceAll]).Replace('/', '_', [rfReplaceAll]);
-        FR.FileName := GetTempDir() + fn + '.PDF';
+        FN := CustomersForm.dsCustomers['ACCOUNT_NO'] + '.' + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        FN := Translit(FN).Replace(' ', '_', [rfReplaceAll]).Replace('\', '_', [rfReplaceAll])
+          .Replace('/', '_', [rfReplaceAll]);
+        FR.FileName := GetTempDir() + FN + '.PDF';
         FR.ReportOptions.Name := FR.FileName;
         FReportLoaded := True;
       finally
@@ -583,9 +625,10 @@ end;
 
 procedure TSendMessagesForm.SetToContact(const value: String);
 begin
-  FToContact := Value;
+  FToContact := value;
   pnlContact.Visible := (not FToContact.IsEmpty);
-  if (not FToContact.IsEmpty) then begin
+  if (not FToContact.IsEmpty) then
+  begin
     ActiveControl := edtReciver;
     edtReciver.Text := FToContact;
   end
@@ -595,8 +638,7 @@ end;
 
 procedure TSendMessagesForm.SetToCustomer(const value: Integer);
 begin
-  FToCustomer := Value;
+  FToCustomer := value;
 end;
-
 
 end.

@@ -10,7 +10,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls, Vcl.Mask, Vcl.Menus,
   Vcl.DBCtrls,
   Vcl.DBGrids, Vcl.ComCtrls,
-  RxToolEdit, DBCtrlsEh, DBLookupEh, AtrStrUtils, MemTableDataEh, MemTableEh, PrjConst, DBGridEh, VKDBFDataSet;
+  RxToolEdit, DBCtrlsEh, DBLookupEh, AtrStrUtils, MemTableDataEh, MemTableEh, PrjConst, DBGridEh, VKDBFDataSet, amSplitter;
 
 type
 

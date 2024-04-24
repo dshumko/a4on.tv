@@ -2,7 +2,7 @@ object ServicesForm: TServicesForm
   Left = 848
   Top = 62
   Caption = #1059#1089#1083#1091#1075#1080
-  ClientHeight = 537
+  ClientHeight = 533
   ClientWidth = 836
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object ServicesForm: TServicesForm
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 289
+    Top = 285
     Width = 836
     Height = 5
     Cursor = crVSplit
@@ -34,25 +34,25 @@ object ServicesForm: TServicesForm
     Left = 0
     Top = 26
     Width = 836
-    Height = 263
+    Height = 259
     ActivePage = tsAbonent
     Align = alClient
     TabOrder = 1
     OnChange = pcServicesChange
+    OnChanging = pcServicesChanging
+    ExplicitHeight = 263
     object tsAbonent: TTabSheet
       Caption = #1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 235
       object ASGrid: TDBGridEh
         Left = 0
         Top = 0
         Width = 828
-        Height = 235
+        Height = 231
         Align = alClient
         AllowedOperations = []
         DataSource = srcServices
+        DrawMemoText = True
         DynProps = <>
         Flat = True
         FooterParams.Color = clWindow
@@ -233,6 +233,16 @@ object ServicesForm: TServicesForm
             Title.Caption = #1040'-'#1073#1083'.'
             Title.Hint = #1040#1074#1090#1086#1073#1083#1086#1082#1080#1088#1086#1074#1082#1072
             Width = 34
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ATR_LIST'
+            Footers = <>
+            Title.Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+            Title.TitleButton = True
+            Width = 80
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -254,6 +264,7 @@ object ServicesForm: TServicesForm
         Align = alClient
         AllowedOperations = []
         DataSource = srcServices
+        DrawMemoText = True
         DynProps = <>
         Flat = True
         FooterParams.Color = clWindow
@@ -350,6 +361,16 @@ object ServicesForm: TServicesForm
             Footers = <>
             Title.Caption = #1042#1080#1076' '#1091#1089#1083#1091#1075#1080
             Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ATR_LIST'
+            Footers = <>
+            Title.Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+            Title.TitleButton = True
+            Width = 74
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -371,6 +392,7 @@ object ServicesForm: TServicesForm
         Align = alClient
         AllowedOperations = []
         DataSource = srcServices
+        DrawMemoText = True
         DynProps = <>
         Flat = True
         FooterParams.Color = clWindow
@@ -458,6 +480,15 @@ object ServicesForm: TServicesForm
             FieldName = 'BUSINESS'
             Footers = <>
             Title.Caption = #1042#1080#1076' '#1091#1089#1083#1091#1075#1080
+            Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ATR_LIST'
+            Footers = <>
+            Title.Caption = #1040#1090#1088#1080#1073#1091#1090#1099
             Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -553,19 +584,16 @@ object ServicesForm: TServicesForm
   end
   object AddonPage: TPageControl
     Left = 0
-    Top = 294
+    Top = 290
     Width = 836
     Height = 243
     ActivePage = tsTarif
     Align = alBottom
     TabOrder = 2
     OnChange = AddonPageChange
+    ExplicitTop = 294
     object tsTarif: TTabSheet
       Caption = #1058#1072#1088#1080#1092#1099
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object trfGrid: TDBGridEh
         Left = 28
         Top = 0
@@ -1298,10 +1326,6 @@ object ServicesForm: TServicesForm
       Caption = #1055#1077#1088#1077#1082#1083#1102#1095#1072#1090#1100' '#1085#1072' '#1091#1089#1083#1091#1075#1080
       ImageIndex = 3
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgAllow: TDBGridEh
         Left = 28
         Top = 0
@@ -2294,44 +2318,69 @@ object ServicesForm: TServicesForm
       '')
     RefreshSQL.Strings = (
       'select'
+      '    *'
+      '  from (select'
+      '            Service_Id'
+      '          , Srv_Type_Id'
+      '          , Shift_Months'
+      '          , Name'
+      '          , Shortname'
+      '          , Description'
+      '          , Dimension'
+      '          , Extra'
+      '          , Priority'
+      '          , CALC_TYPE'
+      '          , Note'
+      '          , AUTOOFF'
+      '          ,'
+      '            case(select'
+      '                     1'
+      '                   from SERVICES_LINKS sl'
+      '                   where sl.PARENT is null'
+      '                         and sl.CHILD = s.SERVICE_ID)'
+      '              when 1 then 1'
+      '              else 0'
+      '            end as SHOW_SERVICE,'
+      '            (select'
+      '                 o.O_Name'
+      '               from Objects o'
+      '               where o.O_Id = s.Expense_Type'
+      '                     and o.O_TYPE = 2) as O_Name'
+      '          ,'
+      '            (select'
+      '                 o.O_NAME'
+      '               from objects o'
+      '               where o.O_Id = s.BUSINESS_TYPE'
+      '                     and o.O_TYPE = 15) BUSINESS'
+      '          ,'
+      '            (select'
+      '                 t.Tarif_Sum'
+      '               from Tarif t'
+      '               where t.Service_Id = s.Service_Id'
       
-        '    Service_Id, Srv_Type_Id, Shift_Months, Name, Shortname, Desc' +
-        'ription, Dimension, Extra, Priority, CALC_TYPE, Note, AUTOOFF,'
-      '    case(select'
-      '             1'
-      '           from SERVICES_LINKS sl'
-      '           where sl.PARENT is null'
-      '                 and sl.CHILD = s.SERVICE_ID)'
-      '      when 1 then 1'
-      '      else 0'
-      '    end as SHOW_SERVICE,'
-      '    (select'
-      '         o.O_Name'
-      '       from Objects o'
-      '       where o.O_Id = s.Expense_Type'
-      '             and o.O_TYPE = 2) as O_Name,'
-      '    (select'
-      '         o.O_NAME'
-      '       from objects o'
-      '       where o.O_Id = s.BUSINESS_TYPE'
-      '             and o.O_TYPE = 15) BUSINESS,'
-      '    (select'
-      '         t.Tarif_Sum'
-      '       from Tarif t'
-      '       where t.Service_Id = s.Service_Id'
+        '                     and current_date between t.Date_From and t.' +
+        'Date_To) FIZ_TAR'
+      '          ,'
+      '            (select'
+      '                 count(*)'
+      '               from subscr_hist h'
+      '               where h.Serv_Id = s.Service_Id'
       
-        '             and current_date between t.Date_From and t.Date_To)' +
-        ' FIZ_TAR,'
-      '    (select'
-      '         count(*)'
-      '       from subscr_hist h'
-      '       where h.Serv_Id = s.Service_Id'
+        '                     and current_date between h.Date_From and h.' +
+        'Date_To) ACT_CUST'
+      '          ,'
+      '            (select'
+      '                 list(o.O_Dimension)'
+      '               from Services_Attributes a'
       
-        '             and current_date between h.Date_From and h.Date_To)' +
-        ' ACT_CUST'
-      '  from SERVICES s'
-      '  where (s.SRV_TYPE_ID = :SERV_TYPE)'
-      '        and (S.SERVICE_ID = :OLD_SERVICE_ID)'
+        '                 inner join objects o on (o.O_Id = a.O_Id and o.' +
+        'O_Type = 25)'
+      '               where a.Service_Id = s.Service_Id) ATR_LIST'
+      '          from SERVICES s'
+      
+        '          where (s.SRV_TYPE_ID = :SERV_TYPE) and (S.SERVICE_ID =' +
+        ' :OLD_SERVICE_ID)'
+      '        )'
       ''
       '    ')
     SelectSQL.Strings = (
@@ -2386,6 +2435,14 @@ object ServicesForm: TServicesForm
       
         '                     and current_date between h.Date_From and h.' +
         'Date_To) ACT_CUST'
+      '          ,'
+      '            (select'
+      '                 list(o.O_Dimension)'
+      '               from Services_Attributes a'
+      
+        '                 inner join objects o on (o.O_Id = a.O_Id and o.' +
+        'O_Type = 25)'
+      '               where a.Service_Id = s.Service_Id) ATR_LIST'
       '          from SERVICES s'
       '          where s.SRV_TYPE_ID = :SERV_TYPE)'
       '  where @@where_actual%1=1@'

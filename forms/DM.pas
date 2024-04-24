@@ -55,7 +55,6 @@ type
     frxGradientObject1: TfrxGradientObject;
     frxDotMatrixExport1: TfrxDotMatrixExport;
     frxBarCodeObject1: TfrxBarCodeObject;
-    frxFIBComponents1: TfrxFIBComponents;
     frxADOComponents1: TfrxADOComponents;
     frxmdsCompany: TfrxDBDataset;
     frxModalReport: TfrxReport;
@@ -71,6 +70,7 @@ type
     frxReportTableObject1: TfrxReportTableObject;
     frxGZipCompressor1: TfrxGZipCompressor;
     frxPDFObject1: TfrxPDFObject;
+    frxFIBComponents1: TfrxFIBComponents;
     procedure DataModuleDestroy(Sender: TObject);
     procedure dbTVAfterDisconnect(Sender: TObject);
     procedure FormStorage1SavePlacement(Sender: TObject);
@@ -124,6 +124,7 @@ type
     function GetCompanyName: String;
     procedure GetCompany;
     procedure CheckFirebirdVersion;
+    function CheckAdminUser: Boolean;
   public
     { Public declarations }
     frxChartObject1: TfrxChartObject;
@@ -159,6 +160,7 @@ type
     property DBAlias: string read FDBAlias write FDBAlias;
     property Database: string read GetDatabase;
     property User: string read GetUser;
+    property UserIsAdmin: boolean read CheckAdminUser;
     property UserGroups: string read GetUserGroups;
     property UserFio: string read FUserFIO;
     property Password: string read GetPassword;
@@ -206,7 +208,7 @@ type
     function CanViewCustomers: Boolean;
     function GetServerDateTime: TDateTime;
     procedure ProceedTask(const EventName: String);
-    function IpInfo(const ip: String): String;
+    function IpInfo(const ip: String; const vlan_id : Integer = -1): String;
     procedure RefreshCompanyData;
   end;
 
@@ -217,7 +219,7 @@ implementation
 
 uses
   System.StrUtils, System.Rtti,
-  pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, synacode, httpsend, SynCrypto, synautil, ZLibExGZ,
+  pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, synacode, httpsend, synautil, ZLibExGZ,
   JsonDataObjects,
   SelectOneForma, MAIN;
 
@@ -356,6 +358,11 @@ begin
 
   dsFindCN.ParamByName('FILTER').Value := SQL;
   dsFindCN.ParamByName('filter_node').Value := NODE_SQL;
+  if (dmMain.GetSettingsValue('RQ_PHONE_ONLY_NOTYFY') = '1') then
+    dsFindCN.ParamByName('ONLY_NOTYFY').Value := ' and cc.CC_NOTIFY = 1 '
+  else
+    dsFindCN.ParamByName('ONLY_NOTYFY').Value := ' ';
+
   dsFindCN.Open;
   selected := False;
   if dsFindCN.RecordCount > 0 then
@@ -393,13 +400,15 @@ begin
       HOUSE_ID := dsFindCN.FN('HOUSE_ID').AsInteger;
       HOUSE_no := dsFindCN.FN('House_No').AsString;
       FLAT_NO := dsFindCN.FN('FLAT_No').AsString;
-      phone_no := dsFindCN.FN('phone_no').AsString;
+      phone_no := dsFindCN.FN('phone_no').AsString.Trim([',', ' ']);
       notice := dsFindCN.FN('notice').AsString;
       color := dsFindCN.FN('HIS_COLOR').AsString;
       porch_n := dsFindCN.FN('PORCH_N').AsString;
       floor_n := dsFindCN.FN('FLOOR_N').AsString;
-      mobile := dsFindCN.FN('MOBILE').AsString;
+      mobile := dsFindCN.FN('MOBILE').AsString.Trim([',', ' ']);
+      mobile_wn := dsFindCN.FN('MOBILE_WN').AsString;
       City := dsFindCN.FN('City').AsString;
+      email := dsFindCN.FN('email').AsString;
       if dsFindCN.FN('O_TYPE').AsString = 'А' then
       begin
         isType := 0;
@@ -1076,6 +1085,8 @@ begin
     Result := A4MainForm.ShowCustomers(100, Params[0]) // 100 - лицевой
   else if MethodName = 'OPENCUSTOMERBYID' then
     Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
+  else if MethodName = 'OPENREQUEST' then
+    Result := A4MainForm.OpenRequest(Params[0])
   else if MethodName = 'INCMAC' then
     Result := AtrStrUtils.IncMAC(Params[0], Params[1])
   else
@@ -1116,6 +1127,8 @@ begin
     'Открыть абонента в списке абонентов по лицевому');
   Report.AddFunction('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', rsFunctionsA4onTV,
     'Открыть абонента в списке абонентов по его ID');
+  Report.AddFunction('function OpenRequest(const RQ_ID: String): Integer', rsFunctionsA4onTV,
+    'Открыть заявку');
   Report.AddFunction('function IncMAC(const MAC: string; const step: Integer): String;', rsFunctionsA4onTV,
     'Увеличить/уменьшить MAC адресс на STEP');
 end;
@@ -1201,7 +1214,7 @@ end;
 
 function TdmMain.GetUserGroups: String;
 begin
-  Result := FUserGroups.text;
+  Result := FUserGroups.DelimitedText;
 end;
 
 function TdmMain.GetPassword: String;
@@ -2099,7 +2112,7 @@ begin
   FTaskLastTimeCheck := now();
 end;
 
-function TdmMain.IpInfo(const ip: String): String;
+function TdmMain.IpInfo(const ip: String; const vlan_id : Integer = -1): String;
 begin
   Result := '';
   if ip = '' then
@@ -2116,13 +2129,19 @@ begin
       SQL.Add('       inner join customer c on (t.Customer_Id = c.Customer_Id)');
       SQL.Add('       left outer join Vlans v on (t.Vlan_Id = v.V_Id)');
       SQL.Add('  where t.Ip = :ip');
+      if vlan_id <> -1 then
+        SQL.Add('   and t.Vlan_Id = :Vlan_Id');
       SQL.Add('union all');
       SQL.Add('select');
       SQL.Add('  ''Оборудование ''||e.Name||coalesce('' MAC ''||e.Mac, '''')||coalesce('' VLAN ''||v.Name, '''') IP_INFO');
       SQL.Add('  from EQUIPMENT E');
       SQL.Add('       left outer join Vlans v on (e.Vlan_Id = v.V_Id)');
       SQL.Add('  where e.Ip = :ip');
+      if vlan_id <> -1 then
+        SQL.Add('   and e.Vlan_Id = :Vlan_Id');
       ParamByName('ip').AsString := ip;
+      if vlan_id <> -1 then
+        ParamByName('Vlan_Id').AsInteger := vlan_id;
       Transaction.StartTransaction;
       ExecQuery;
       while not Eof do
@@ -2165,9 +2184,21 @@ end;
 
 procedure TdmMain.CheckFirebirdVersion;
 begin
-  if (not dbTV.Version.Contains(' 4.')) then
+  if (not dbTV.Version.Contains('Firebird 4.')) then
     exit;
+{
+SELECT RDB$GET_CONTEXT('SYSTEM', 'ENGINE_VERSION') AS ENGINE_VERSION FROM RDB$DATABASE
 
+DataTypeCompatibility = 3.0 in databases.conf
+
+There is also just issuing:
+SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;
+SET BIND OF TIME WITH TIME ZONE TO LEGACY;
+SET BIND OF DECFLOAT TO LEGACY;
+SET BIND OF NUMERIC(38) TO LEGACY;
+
+after connecting to Firebird 4 database.
+}
   dbTV.Execute('SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;');
   dbTV.Execute('SET BIND OF TIME WITH TIME ZONE TO LEGACY;');
   dbTV.Execute('SET BIND OF DECFLOAT TO LEGACY;');
@@ -2188,6 +2219,11 @@ begin
   if i <> -1 then
     dsCompany.Locate('C_ORDER', i, []);
   dsCompany.EnableControls;
+end;
+
+function TdmMain.CheckAdminUser: Boolean;
+begin
+  Result := (GetUser = 'SYSDBA');
 end;
 
 end.

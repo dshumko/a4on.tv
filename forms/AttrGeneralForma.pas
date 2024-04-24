@@ -28,7 +28,7 @@ type
     btnCancel: TBitBtn;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
-    mmoValue: TDBMemo;
+    mmoValue: TDBMemoEh;
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbluAttributeEnter(Sender: TObject);
     procedure dbluAttributeChange(Sender: TObject);
@@ -111,6 +111,8 @@ begin
     lblNotice.Top := 305;
     mmoNOTICE.Top := 321;
     mmoNOTICE.Height := 80;
+    mmoValue.ScrollBars := ssBoth;
+    mmoValue.Height := lblNotice.Top - mmoValue.Top - 6;
   end
   else
   begin

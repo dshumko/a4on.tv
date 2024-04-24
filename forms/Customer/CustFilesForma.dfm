@@ -602,6 +602,7 @@ object CustFilesForm: TCustFilesForm
       'LEAK_PRC=LEAK_PRC')
     DataSet = dsFiles
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 315
     Top = 211
   end

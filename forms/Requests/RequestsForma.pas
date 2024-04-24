@@ -8,10 +8,10 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Menus,
-  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, frxClass, frxDBSet, EhLibFIB, DBGridEhImpExp, GridsEh, DBGridEhGrouping,
+  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, frxClass, frxDBSet, EhLibFIB, GridsEh, DBGridEhGrouping,
   ReqWorksFrame, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ReqMaterialsFrame, PropFilerEh,
   PropStorageEh,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh;
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh, amSplitter;
 
 type
   TRequestsForm = class(TForm)
@@ -1686,62 +1686,18 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
 end;
 
 procedure TRequestsForm.pmgSaveSelectionClick(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
   inherited;
 
-  A4MainForm.SaveDialog.FileName := rsTable;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TRequestsForm.pmgSelectAllClick(Sender: TObject);
@@ -1762,7 +1718,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -1784,56 +1740,9 @@ begin
 end;
 
 procedure TRequestsForm.ppmSaveSelectionClick(Sender: TObject);
-
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
-
-  A4MainForm.SaveDialog.FileName := rsRequests;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
-      end;
-    end;
-
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TRequestsForm.srcDataSourceDataChange(Sender: TObject; Field: TField);

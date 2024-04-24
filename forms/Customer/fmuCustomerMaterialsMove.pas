@@ -115,7 +115,12 @@ begin
   dsMat.SelectSQL.Clear;
   dsMat.SelectSQL.Add('select');
   dsMat.SelectSQL.Add('    NM.M_ID');
-  dsMat.SelectSQL.Add('  , M.NAME');
+  if Grouping then begin
+    dsMat.SelectSQL.Add('  , M.NAME');
+  end
+  else begin
+    dsMat.SelectSQL.Add('  , M.NAME||coalesce(''/''||nm.Serial, '''') NAME');
+  end;
   dsMat.SelectSQL.Add('  , M.COST');
   dsMat.SelectSQL.Add('  , M.DIMENSION');
   dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
@@ -142,6 +147,7 @@ begin
   dsMat.SelectSQL.Add('        , R.RQ_EXEC_TIME');
   dsMat.SelectSQL.Add('        , RM.WH_ID');
   dsMat.SelectSQL.Add('        , RM.CALC');
+  dsMat.SelectSQL.Add('        , RM.Serial');
   dsMat.SelectSQL.Add('      from REQUEST R');
   dsMat.SelectSQL.Add('          inner join REQUEST_MATERIALS RM on (R.RQ_ID = RM.RQ_ID)');
   dsMat.SelectSQL.Add('      where R.Rq_Customer = :CUSTOMER_ID');
@@ -156,7 +162,8 @@ begin
   dsMat.SelectSQL.Add('        , R.RQ_EXEC_TIME');
   dsMat.SelectSQL.Add('        , RM.WH_ID');
   dsMat.SelectSQL.Add('        , 0 CALC');
-  dsMat.SelectSQL.Add('      from REQUEST R');
+  dsMat.SelectSQL.Add('        , RM.Serial');
+    dsMat.SelectSQL.Add('      from REQUEST R');
   dsMat.SelectSQL.Add('          inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = RM.RQ_ID)');
   dsMat.SelectSQL.Add('      where R.Rq_Customer = :CUSTOMER_ID) NM');
   dsMat.SelectSQL.Add('    inner join MATERIALS M on (M.M_ID = NM.M_ID)');

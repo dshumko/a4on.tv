@@ -6,8 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -31,8 +33,7 @@ type
     procedure dbGridCustReqDblClick(Sender: TObject);
     procedure dbGridCustReqGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
-    procedure dbGridCustReqColumns17GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridCustReqColumns17GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     CE: Boolean;
     CC: Boolean;
@@ -41,6 +42,7 @@ type
     FullAccess: Boolean;
     FSavedID: Integer;
     FPersonalData: Boolean;
+    FColorize: Boolean;
     // FLastID: Integer;
     procedure EnableControls;
   public
@@ -91,7 +93,9 @@ end;
 procedure TapgCustomerRequests.InitForm;
 var
   i: Integer;
+  s: string;
 begin
+
   // права пользователей
   FullAccess := dmMain.AllowedAction(rght_Request_full);
   CA := dmMain.AllowedAction(rght_Request_add);
@@ -104,6 +108,7 @@ begin
   actEdit.Visible := FullAccess or CE;
   actDel.Visible := FullAccess or CE;
   pnlButtons.Visible := FullAccess or CE or CA or CG;
+
   // Привяжем заявки к адресу или абоненту, в зависимости от настроек системы
   dsRequests.SQLs.SelectSQL.Add(' where ');
   if (not TryStrToInt(dmMain.GetIniValue('REQTOADRES'), i)) then
@@ -113,6 +118,19 @@ begin
   else
     dsRequests.SQLs.SelectSQL.Add('r.HOUSE_ID = :HOUSE_ID and coalesce(r.FLAT_NO, '''') = :FLAT_NO');
   dsRequests.SQLs.SelectSQL.Add('order by R.added_on desc ');
+
+  // ЛТВ подсветка желтым зявок без оплаты
+  s := dmMain.GetCompanyValue('NAME');
+  FColorize := s.Contains('ЛТВ');
+  if (FColorize) then
+  begin
+    dsRequests.ParamByName('Colorize').AsString :=
+      ', iif((r.Rq_Customer is null), 0, coalesce(Get_Request_Money(r.Rq_Id),0) ) RQ_FEE' +
+      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(p.Pay_Sum) from payment p ' +
+      '  where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0)) RQ_PAY ' +
+      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0)) PAY_SRV '
+  end;
+
   dsRequests.DataSource := FDataSource;
 end;
 
@@ -219,8 +237,8 @@ begin
   dsRequests.Close;
 end;
 
-procedure TapgCustomerRequests.dbGridCustReqColumns17GetCellParams(
-  Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+procedure TapgCustomerRequests.dbGridCustReqColumns17GetCellParams(Sender: TObject; EditMode: Boolean;
+  Params: TColCellParamsEh);
 begin
   if (not FPersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
@@ -250,11 +268,23 @@ end;
 procedure TapgCustomerRequests.dbGridCustReqGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
-  if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('RT_COLOR').IsNull then
+  if not dsRequests.FieldByName('RT_COLOR').IsNull then
+  begin
     try
-      Background := StringToColor((Sender as TDBGridEh).DataSource.DataSet.FieldByName('RT_COLOR').Value);
+      Background := StringToColor(dsRequests.FieldByName('RT_COLOR').Value);
     except
-    end;
+    end
+  end;
+
+  if FColorize //
+    and (not dsRequests.FieldByName('RQ_FEE').IsNull) //
+    and (not dsRequests.FieldByName('RQ_PAY').IsNull) //
+    and (not dsRequests.FieldByName('PAY_SRV').IsNull) then
+  begin
+    if ((dsRequests['RQ_FEE'] + dsRequests['PAY_SRV']) <> dsRequests['RQ_PAY']) then
+      Background := clYellow;
+  end
 end;
 
 end.
+

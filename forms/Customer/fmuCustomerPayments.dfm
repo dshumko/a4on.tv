@@ -3,7 +3,7 @@ object apgCustomerPayments: TapgCustomerPayments
   Top = 0
   Caption = #1055#1083#1072#1090#1077#1078#1080
   ClientHeight = 168
-  ClientWidth = 761
+  ClientWidth = 795
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object apgCustomerPayments: TapgCustomerPayments
   object dbgCustPayment: TDBGridEh
     Left = 26
     Top = 0
-    Width = 735
+    Width = 769
     Height = 168
     Align = alClient
     AllowedOperations = []
@@ -29,6 +29,7 @@ object apgCustomerPayments: TapgCustomerPayments
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    PopupMenu = pmPayment
     ReadOnly = True
     SearchPanel.Enabled = True
     STFilter.Local = True
@@ -52,7 +53,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Title.Alignment = taCenter
         Title.Caption = #1044#1072#1090#1072' '#1087#1083#1072#1090#1077#1078#1072
         Title.TitleButton = True
-        Width = 105
+        Width = 96
       end
       item
         AutoFitColWidth = False
@@ -66,7 +67,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Title.Alignment = taCenter
         Title.Caption = #1057#1091#1084#1084#1072' '#1085#1072' '#1089#1095#1077#1090
         Title.TitleButton = True
-        Width = 101
+        Width = 90
       end
       item
         Alignment = taRightJustify
@@ -80,7 +81,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Title.Alignment = taCenter
         Title.Caption = #1055#1077#1085#1103
         Title.TitleButton = True
-        Width = 90
+        Width = 80
       end
       item
         CellButtons = <>
@@ -93,7 +94,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Footers = <>
         Title.Caption = #1042#1085#1077#1089#1077#1085#1086
         Title.TitleButton = True
-        Width = 67
+        Width = 71
       end
       item
         Alignment = taRightJustify
@@ -200,6 +201,16 @@ object apgCustomerPayments: TapgCustomerPayments
         FieldName = 'BAL_SAVE'
         Footers = <>
         Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RQ_ID'
+        Footers = <>
+        ReadOnly = False
+        Title.Caption = #1047#1072#1103#1074#1082#1072
         Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
@@ -357,6 +368,8 @@ object apgCustomerPayments: TapgCustomerPayments
     end
   end
   object dsPayment: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'update payment set Rq_Id = :Rq_Id where Payment_Id = :PAYMENT_ID')
     SelectSQL.Strings = (
       'select'
       '*'
@@ -379,7 +392,8 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , R.NAME'
       '  , 1 PT'
       '  , p.DEBT_SAVE'
-      '  , p.DEBT_SAVE*-1 BAL_SAVE    '
+      '  , p.DEBT_SAVE*-1 BAL_SAVE'
+      '  , p.RQ_ID    '
       '  from PAYMENT P'
       '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
       
@@ -411,7 +425,8 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , '#39#39' NAME'
       '  , 0 PT'
       '  , o.DEBT_SAVE'
-      '  , o.DEBT_SAVE*-1 BAL_SAVE   '
+      '  , o.DEBT_SAVE*-1 BAL_SAVE'
+      '  , null RQ_ID   '
       '  from Prepay_Detail o'
       '       left outer join worker w on (w.Ibname = o.Who_Add)'
       '  where o.CUSTOMER_ID = :CUSTOMER_ID'
@@ -420,6 +435,7 @@ object apgCustomerPayments: TapgCustomerPayments
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
+    AutoCommit = True
     Left = 184
     Top = 59
     WaitEndMasterScroll = True
@@ -428,6 +444,7 @@ object apgCustomerPayments: TapgCustomerPayments
   object srcPayment: TDataSource
     AutoEdit = False
     DataSet = dsPayment
+    OnDataChange = srcPaymentDataChange
     Left = 258
     Top = 42
   end
@@ -450,6 +467,11 @@ object apgCustomerPayments: TapgCustomerPayments
       Hint = #1055#1088#1086#1074#1077#1088#1080#1090#1100' '#1087#1083#1072#1090#1077#1078
       ImageIndex = 17
       OnExecute = actCheckUrlExecute
+    end
+    object actMarkReq: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1087#1086#1083#1077' '#1079#1072#1103#1074#1082#1072
+      Hint = #1055#1086#1084#1077#1090#1080#1090#1100' '#1101#1090#1086#1090' '#1087#1083#1072#1090#1077#1078' '#1082#1072#1082' '#1086#1087#1083#1072#1090#1091' '#1079#1072#1103#1074#1082#1080
+      OnExecute = actMarkReqExecute
     end
   end
   object trRead: TpFIBTransaction
@@ -475,5 +497,24 @@ object apgCustomerPayments: TapgCustomerPayments
     TPBMode = tpbDefault
     Left = 536
     Top = 42
+  end
+  object pmDblClick: TPopupMenu
+    Left = 392
+    Top = 88
+    object miPayDoc: TMenuItem
+      Caption = #1086#1090#1082#1088#1099#1090#1100' '#1055#1083'. '#1076#1086#1082#1091#1084#1077#1085#1090
+      OnClick = miPayDocClick
+    end
+    object miRequest: TMenuItem
+      Caption = #1086#1090#1082#1088#1099#1090#1100' '#1047#1072#1103#1074#1082#1091
+      OnClick = miRequestClick
+    end
+  end
+  object pmPayment: TPopupMenu
+    Left = 312
+    Top = 88
+    object miMarkReq: TMenuItem
+      Action = actMarkReq
+    end
   end
 end

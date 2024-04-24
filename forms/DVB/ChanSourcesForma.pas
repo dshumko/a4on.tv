@@ -9,10 +9,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
   Vcl.Grids,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls,
   DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
-  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh;
+  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TChanSourcesForm = class(TForm)
@@ -357,9 +357,7 @@ begin
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
       begin
-        // Экспорт информации
-        if (dmMain.AllowedAction(rght_Export)) then
-          DBGridEh_DoCopyAction(dbg, False);
+        A4MainForm.CopyDBGrid(dbg);
       end
       else
         StrToClipbrd(dbg.SelectedField.AsString);
@@ -385,57 +383,9 @@ begin
 end;
 
 procedure TChanSourcesForm.actSaveExecute(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
-  // Экспорт информации
-  if (not dmMain.AllowedAction(rght_Export)) then
-    Exit;
-
-  A4MainForm.SaveDialog.FileName := rsTable;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TChanSourcesForm.actPrintExecute(Sender: TObject);

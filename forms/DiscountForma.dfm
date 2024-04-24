@@ -408,8 +408,8 @@ object DiscountForm: TDiscountForm
       '  from OBJECTS'
       '  where O_TYPE = 70'
       '    and O_DELETED = 0  '
-      '    and :pdate between O_DATEFILED and O_DATEEND'
-      'order by O_DATEFILED')
+      '    and :pdate between O_DATEFIELD and O_DATEEND'
+      'order by O_DATEFIELD')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite

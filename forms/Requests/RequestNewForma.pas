@@ -96,6 +96,7 @@ type
     cnError: TCnErrorProvider;
     lbl5: TLabel;
     edPhone: TDBEditEh;
+    cbContact: TDBComboBoxEh;
     procedure FormCreate(Sender: TObject);
     procedure edPhoneExit(Sender: TObject);
     procedure EdFloorExit(Sender: TObject);
@@ -134,6 +135,7 @@ type
       State: TGridDrawState);
     procedure DBLookupComboboxClick(Sender: TObject);
     procedure LupHOUSEChange(Sender: TObject);
+    procedure cbContactNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
   private
     { Private declarations }
     fRQ_ID: Integer;
@@ -172,14 +174,14 @@ type
   end;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
-  const phone:string = ''; const notice:string = '') : Integer;
+  const Phone: string = ''; const notice: string = ''): Integer;
 function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
-  const phone:string = ''; const notice:string = '') : Integer;
+  const Phone: string = ''; const notice: string = ''): Integer;
 function NewRequestFromRequest(const aRequest: Integer = -1): Integer;
 function NewRequestFromPlaner(const plan_date: TDateTime; const TYPE_ID: Integer = -1): Integer;
 function NewNodeRequest(const aNode: Integer = -1; CallBack: TCallBack = nil): Integer;
 function NewFileRequest(const aCustomer: Integer = -1; const ReqType: Integer = -1; const ReqTempl: Integer = -1;
-  const rd: TDate = 0; const Notice: String = ''; const CanClose: Boolean = True): Integer;
+  const rd: TDate = 0; const notice: String = ''; const CanClose: Boolean = True): Integer;
 
 implementation
 
@@ -191,7 +193,7 @@ uses
   RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
-  const phone:string = ''; const notice:string = '') : Integer;
+  const Phone: string = ''; const notice: string = ''): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
@@ -206,8 +208,12 @@ begin
     end;
     FindNode := FindNodes;
 
-    if not phone.IsEmpty then
-      edPhone.Text := phone;
+    if not Phone.IsEmpty then
+    begin
+      edPhone.OnChange := nil;
+      edPhone.Text := Phone;
+      edPhone.OnChange := edPhoneChange;
+    end;
 
     if not notice.IsEmpty then
       mmoNotice.Lines.Text := notice;
@@ -227,24 +233,28 @@ begin
 end;
 
 function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
-  const phone:string = ''; const notice:string = '') : Integer;
+  const Phone: string = ''; const notice: string = ''): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
   begin
-  LupStreets.Value := Street_ID;
-  LupHOUSE.Value := HOUSE_ID;
-  edFLAT_NO.Value := Flat;
-  Customer_id := -1;
-    if not phone.IsEmpty then
-      edPhone.Text := phone;
+    LupStreets.Value := Street_ID;
+    LupHOUSE.Value := HOUSE_ID;
+    edFLAT_NO.Value := Flat;
+    Customer_id := -1;
+    if not Phone.IsEmpty then
+    begin
+      edPhone.OnChange := nil;
+      edPhone.Text := Phone;
+      edPhone.OnChange := edPhoneChange;
+    end;
 
     if not notice.IsEmpty then
       mmoNotice.Lines.Text := notice;
 
-  if showModal = mrOk then
-  Result := Request_id;
-  Free;
+    if showModal = mrOk then
+      Result := Request_id;
+    Free;
   end;
 end;
 
@@ -282,7 +292,7 @@ begin
 end;
 
 function NewFileRequest(const aCustomer: Integer = -1; const ReqType: Integer = -1; const ReqTempl: Integer = -1;
-  const rd: TDate = 0; const Notice: String = ''; const CanClose: Boolean = True): Integer;
+  const rd: TDate = 0; const notice: String = ''; const CanClose: Boolean = True): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
@@ -298,7 +308,7 @@ begin
     edtPLANDATE.Value := rd;
     edtPLANDATE.Enabled := False;
     actDateSelect.Enabled := False;
-    mmoNotice.Lines.Text := Notice;
+    mmoNotice.Lines.Text := notice;
     if not CanClose then
     begin
       frmOkCancel.bbCancel.Visible := False;
@@ -378,7 +388,11 @@ begin
           cbbAdd.Text := FldByName['ADD_INFO'].AsString;
 
         if (not FldByName['PHONE'].IsNull) then
+        begin
+          edPhone.OnChange := nil;
           edPhone.Text := FldByName['PHONE'].AsString;
+          edPhone.OnChange := edPhoneChange;
+        end;
 
         mmoContent.Lines.Text := FldByName['RQ_CONTENT'].AsString;
         mmoNotice.Lines.Text := FldByName['RQ_NOTICE'].AsString;
@@ -425,17 +439,50 @@ end;
 // 1 только узел
 function TRequestNewForm.FindCustomer(const lic: string; const code: string; id: Integer;
   const FindNode: Integer = 0): Integer;
+var
+  p, f: String;
+  s: string;
+  sa: TStringArray;
+  i: Integer;
 begin
   FCustomerInfo := dmMain.FindCustomer(lic, code, id, FindNode);
   Result := FCustomerInfo.Customer_id;
   CustomerInfoFrm.Customer := FCustomerInfo;
   if FCustomerInfo.Customer_id > -1 then
   begin
+    s := dmMain.GetCompanyValue('NAME');
     LupStreets.Value := FCustomerInfo.Street_ID;
     LupHOUSE.Value := FCustomerInfo.HOUSE_ID;
     edFLAT_NO.Text := FCustomerInfo.FLAT_NO;
-    edPhone.Text := Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO);
-    edPhone.Hint := FCustomerInfo.mobile + #13#10 + FCustomerInfo.PHONE_NO;
+
+    edPhone.OnChange := nil;
+    if not s.Contains('ЛТВ') then
+    begin
+      edPhone.Text := Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO).Trim([',', ' ']);
+      edPhone.Hint := FCustomerInfo.mobile + #13#10 + FCustomerInfo.PHONE_NO.Trim([#13, #10, ',', ' ']);
+    end
+    else
+    begin
+      edPhone.Text := FCustomerInfo.mobile_wn;
+      edPhone.Hint := FCustomerInfo.mobile_wn;
+    end;
+    edPhone.OnChange := edPhoneChange;
+
+    if not s.Contains('ЛТВ') then
+      s := Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO).Trim([',', ' '])
+    else
+      s := Trim(FCustomerInfo.mobile_wn).Trim([',', ' ']);
+
+    sa := Explode(',', s);
+    cbContact.Items.Clear;
+    for i := 0 to Length(sa) - 1 do
+    begin
+      s := Trim(sa[i]);
+      if not s.IsEmpty then
+        cbContact.Items.Add(s);
+    end;
+    cbContact.Items.Add('Без номера');
+
     if FCustomerInfo.porch_n <> '' then
       EdPorch.Text := FCustomerInfo.porch_n;
     if FCustomerInfo.floor_n <> '' then
@@ -462,11 +509,11 @@ var
   quant: Integer;
   w_time: single;
   w_cost: single;
-  Notice: string;
+  notice: string;
 begin
   if varIsNull(lupType.Value) then
     Exit;
-  if SelectRequestWork(lupType.Value, work_id, wname, quant, w_time, w_cost, Notice) then
+  if SelectRequestWork(lupType.Value, work_id, wname, quant, w_time, w_cost, notice) then
   begin
     if not dsWorks.Active then
     begin
@@ -480,7 +527,7 @@ begin
     dsWorks['quant'] := quant;
     dsWorks['w_time'] := w_time;
     dsWorks['w_cost'] := w_cost;
-    dsWorks['notice'] := Notice;
+    dsWorks['notice'] := notice;
     dsWorks.Post;
   end;
 end;
@@ -547,8 +594,11 @@ begin
     // LupStreets.Value := FCustomerInfo.STREET_ID;
     // LupHouse.Value   := FCustomerInfo.HOUSE_ID;
     // edFLAT_NO.Text   := FCustomerInfo.FLAT_NO;
-    edPhone.Text := Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO);
-    edPhone.Hint := FCustomerInfo.mobile + #13#10 + FCustomerInfo.PHONE_NO;
+    edPhone.OnChange := nil;
+    edPhone.Text := Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO).Trim([',', ' ']);
+    edPhone.Hint := FCustomerInfo.mobile + #13#10 + FCustomerInfo.PHONE_NO.Trim([#13, #10, ',', ' ']);
+    edPhone.OnChange := edPhoneChange;
+
     if FCustomerInfo.porch_n <> '' then
       EdPorch.Text := FCustomerInfo.porch_n;
     if FCustomerInfo.floor_n <> '' then
@@ -577,34 +627,67 @@ var
   Stream: TStream;
   innerQuery: TpFIBQuery;
   vOpen: Boolean;
+  ExistsError: Boolean;
 begin
+  ExistsError := False;
+
   if varIsNull(lupType.Value) then
   begin
     lupType.SetFocus;
-    Exit;
-  end;
+    ExistsError := True;
+    cnError.SetError(lupType, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    cnError.Dispose(lupType);
+
   if varIsNull(LupHOUSE.Value) then
   begin
     LupHOUSE.SetFocus;
-    Exit;
-  end;
+    ExistsError := True;
+    cnError.SetError(LupHOUSE, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    cnError.Dispose(LupHOUSE);
+
   if varIsNull(edtPLANDATE.Value) then
   begin
     edtPLANDATE.SetFocus;
-    Exit;
-  end;
+    ExistsError := True;
+    cnError.SetError(edtPLANDATE, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    cnError.Dispose(edtPLANDATE);
+
   if ((pnlAddInfo.Visible) and (cbbAdd.Text = '')) then
   begin
     cbbAdd.SetFocus;
-    Exit;
-  end;
+    ExistsError := True;
+    cnError.SetError(cbbAdd, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    cnError.Dispose(cbbAdd);
 
   if ((not dsRequestType.FieldByName('CAUSE_NEED').IsNull) and (dsRequestType['CAUSE_NEED']) and
     (varIsNull(luTemplate.Value))) then
   begin
     luTemplate.SetFocus;
+    ExistsError := True;
+    cnError.SetError(luTemplate, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    cnError.Dispose(luTemplate);
+
+  if ((GetCustomer_ID <> -1) and (cbContact.Text = '')) then
+  begin
+    cbContact.SetFocus;
+    ExistsError := True;
+    cnError.SetError(cbContact, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+  end
+  else
+    cnError.Dispose(cbContact);
+
+  if ExistsError then
     Exit;
-  end;
 
   with TpFIBQuery.Create(Nil) do
     try
@@ -628,14 +711,22 @@ begin
         ParamByName('FLOOR_N').AsString := Trim(EdFloor.Text);
 
       // сохраним в заявке телефон, если введен руками
-      s := Trim(edPhone.Text);
-      if ((FCustomerInfo.Customer_id = -1) or (s <> Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO))) then
-      begin
+      {
+        s := Trim(edPhone.Text);
+        if ((FCustomerInfo.Customer_id = -1) or (s <> Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO))) then
+        begin
         if NOT s.IsEmpty then
-          ParamByName('PHONE').AsString := LeftStr(s, 50)
+        ParamByName('PHONE').AsString := LeftStr(s, 50)
         else
-          ParamByName('PHONE').Clear;
-      end;
+        ParamByName('PHONE').Clear;
+        end;
+      }
+
+      s := Trim(cbContact.Text);
+      if (FCustomerInfo.Customer_id <> -1) and (NOT s.IsEmpty) then
+        ParamByName('PHONE').AsString := LeftStr(s, 50)
+      else
+        ParamByName('PHONE').Clear;
 
       if Trim(edDOOR.Text) <> '' then
         ParamByName('DOOR_CODE').AsString := Trim(edDOOR.Text);
@@ -931,8 +1022,10 @@ begin
     Exit;
   end;
 
+  edPhone.OnChange := nil;
   edPhone.Text := SavePhone(edPhone.Text);
   FPhoneChanged := False;
+  edPhone.OnChange := edPhoneChange;
 end;
 
 procedure TRequestNewForm.edtPLANDATEChange(Sender: TObject);
@@ -1087,6 +1180,14 @@ begin
   FindCustomer('', '', -1);
 end;
 
+procedure TRequestNewForm.cbContactNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
+begin
+  if not NewText.Trim.IsEmpty then
+    SavePhone(NewText);
+  RecheckInList := False;
+  // FPhoneChanged := False;
+end;
+
 procedure TRequestNewForm.LupHOUSEChange(Sender: TObject);
 begin
   if (dsHouse.Active) and (dsHouse['inService'] <> '') then
@@ -1190,12 +1291,12 @@ procedure TRequestNewForm.luTemplateChange(Sender: TObject);
 begin
   if not varIsNull(luTemplate.Value) then
   begin
-    dsWorks.First;
-    while not dsWorks.Eof do
-      dsWorks.Delete;
-
     if not dsErrors.FieldByName('w_id').IsNull then
     begin
+      if not dsWorks.Active then
+        dsWorks.Open;
+      dsWorks.First;
+      dsWorks.EmptyTable;
       dsWorks.Append;
       dsWorks['W_ID'] := dsErrors['W_ID'];
       dsWorks['W_TIME'] := dsErrors['W_TIME'];
@@ -1263,8 +1364,7 @@ procedure TRequestNewForm.ChangeWorks;
 begin
   dsWorks.Close;
   dsWorks.Open;
-  while not dsWorks.Eof do
-    dsWorks.Delete;
+  dsWorks.EmptyTable;
   if not dsDefaultWorks.Active then
     dsDefaultWorks.Open;
   dsDefaultWorks.First;
@@ -1414,7 +1514,7 @@ begin
   Contact.cID := -1;
   Contact.Contact := Phone;
   Contact.Notify := 1;
-  Contact.Notice := '';
+  Contact.notice := '';
   Contact.CustID := FCustomerInfo.Customer_id;
   if EditContact(Contact) then
   begin
@@ -1429,7 +1529,7 @@ begin
         ParamByName('Cc_Value').AsString := Contact.Contact;
         ParamByName('CC_TYPE').AsInteger := Contact.cID;
         ParamByName('Cc_Notify').AsInteger := Contact.Notify;
-        ParamByName('Cc_Notice').AsString := Contact.Notice;
+        ParamByName('Cc_Notice').AsString := Contact.notice;
         Transaction.StartTransaction;
         ExecQuery;
         Close;
@@ -1439,7 +1539,7 @@ begin
       end;
     end;
   end;
-  Result := Trim(Contact.Contact + ' ' + Contact.Notice);
+  Result := Trim(Contact.Contact + ' ' + Contact.notice);
 end;
 
 end.

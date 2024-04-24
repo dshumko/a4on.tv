@@ -330,7 +330,8 @@ uses
   EQGPortsFmu in 'forms\infrastructure\EQGPortsFmu.pas' {apgEQGPort},
   AttrGeneralForma in 'forms\AttrGeneralForma.pas' {AttrGeneralForm},
   PromoForma in 'forms\PromoForma.pas' {PromoForm},
-  SelectPromoForma in 'forms\SelectPromoForma.pas' {fmSelectPromo};
+  SelectPromoForma in 'forms\SelectPromoForma.pas' {fmSelectPromo},
+  SmsQuestForma in 'forms\SmsQuestForma.pas' {SmsQuestForm};
 
 {$R *.RES}
 // var

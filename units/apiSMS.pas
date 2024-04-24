@@ -12,8 +12,8 @@ uses
   httpsend, SynaUtil, FIBQuery, pFIBQuery, JsonDataObjects, A4onTypeUnit;
 
 const
-  // Константы для отправки SMS по SMTP
-  API_URL: String = 'http://a4on.tv/sms/sms/';
+  // Константы для отправки SMS
+  API_URL: String = 'https://a4on.tv/sms/sms/';
 
 type
 
@@ -35,20 +35,24 @@ type
     // Отправить список смс и вернуть кол-во отправленных смс
     function SMSCount(const Text: string): Integer;
     function SendList(list: TSMSList): Integer;
+    function SendBatch(var ErrorText: String; const batchCnt: Integer = 0): Integer;
     function SendAll(var ErrorText: String): Integer;
     function CheckAll: Integer;
     function StatusList(list: TSMSList): Integer;
-    constructor Create(const user: string; const key: string; const country: string = 'RU');
+    constructor Create(const user: string; const key: string; const country: string = 'BY');
     destructor Destroy; override;
   end;
 
 implementation
 
 uses
-  System.RegularExpressions,
-  SynCrypto, ZLibExGZ, DM, AtrStrUtils;
+  System.RegularExpressions, System.Character, mormot.crypt.core, ZLibExGZ, DM, AtrStrUtils;
 
-constructor TSMSapi.Create(const user: string; const key: string; const country: string = 'RU');
+const
+  ENG_SET = ['_', '!', '"', '#', '%', '&', '''', '(', ')', '*', ':', '+', ';', ',', '<', '-', '=', '.', '>', '/', '?',
+    'A' .. 'Z', 'a' .. 'z', '0' .. '9'];
+
+constructor TSMSapi.Create(const user: string; const key: string; const country: string = 'BY');
 begin
   fA4ON_USER := user;
   fA4ON_KEY := key;
@@ -91,7 +95,7 @@ begin
     // fHTTP.Headers.Add('Accept-Encoding: gzip,deflate');
     fHTTP.Document.LoadFromStream(strmData);
 {$IFDEF TEST_SMS}
-    fHTTP.Document.SaveToFile('b:\' + action + '.request.JDO.js'); // for debug
+    fHTTP.Document.SaveToFile(action + '.request.js'); // for debug
 {$ENDIF}
     fHTTP.HTTPMethod('post', API_URL + action + '/');
     strmData.Clear;
@@ -105,14 +109,13 @@ begin
     begin
       strmData.LoadFromStream(fHTTP.Document);
 {$IFDEF TEST_SMS}
-      fHTTP.Document.SaveToFile('b:\' + action + '.Answer.js'); // for debug
+      fHTTP.Document.SaveToFile(action + '.Answer.js'); // for debug
 {$ENDIF}
       Result := strmData.DataString;
     end;
   finally
     strmData.Free;
   end
-
 end;
 
 function TSMSapi.BalanceFromA4on: Integer;
@@ -171,37 +174,65 @@ begin
 end;
 
 function TSMSapi.SMSCount(const Text: string): Integer;
+var
+  isCYR: Boolean;
+  i: Integer;
+  c: Char;
 begin
   Result := 1;
-  // public function abtSMScount($text) {
-  // /* Считаем Приблизительное количество SMS в сообщении
-  // SMS	CYR 	ENG
-  // 1 	70  	160
-  // 2 	134 	306
-  // 3 	201 	459
-  // 4 	268 	612
-  // */
-  // $len = mb_strlen($text, 'UTF-8');
-  // $cnt = 0;
-  // if (preg_match('/[А-Я\^\{\}\[\]\|\\\~]/i',$text)) {
-  // if ($len<=70) 						  $cnt = 1;
-  // elseif (($len>70)   and ($len < 134)) $cnt = 2;
-  // elseif (($len>=134) and ($len < 201)) $cnt = 3;
-  // elseif (($len>=201) and ($len < 268)) $cnt = 4;
-  // elseif (($len>=268) and ($len < 335)) $cnt = 5;
-  // else 								  $cnt = 6;
-  // }
-  // else {
-  // if ($len <= 160)					  $cnt = 1;
-  // elseif (($len>=160) and ($len < 306)) $cnt = 2;
-  // elseif (($len>=134) and ($len < 459)) $cnt = 3;
-  // elseif (($len>=201) and ($len < 612)) $cnt = 4;
-  // elseif (($len>=268) and ($len < 765)) $cnt = 5;
-  // else 								  $cnt = 6;
-  // }
-  // return $cnt;
-  // }
+  isCYR := False;
+  i := 1;
+  while (not isCYR) and (i < Length(Text)) do
+  begin
+    c := Text[i];
+    if not CharInSet(c, ENG_SET) then
+      isCYR := True;
+    i := i + 1;
+  end;
 
+  i := Length(Text);
+  if isCYR then
+  begin
+    if i <= 70 then
+      Result := 1
+    else if i <= 134 then
+      Result := 2
+    else if i <= 201 then
+      Result := 3
+    else if i <= 268 then
+      Result := 4
+    else if i <= 335 then
+      Result := 5
+    else if i <= 402 then
+      Result := 6
+    else if i <= 469 then
+      Result := 7
+    else if i <= 536 then
+      Result := 8
+    else
+      Result := 9;
+  end
+  else
+  begin
+    if i <= 160 then
+      Result := 1
+    else if i <= 306 then
+      Result := 2
+    else if i <= 459 then
+      Result := 3
+    else if i <= 612 then
+      Result := 4
+    else if i <= 765 then
+      Result := 5
+    else if i <= 918 then
+      Result := 6
+    else if i <= 1071 then
+      Result := 7
+    else if i <= 1224 then
+      Result := 8
+    else
+      Result := 9;
+  end;
 end;
 
 function TSMSapi.SendList(list: TSMSList): Integer;
@@ -237,7 +268,7 @@ begin
     else
     begin
       sms := list[i];
-      sms.status := -6; // не верный номер
+      sms.status := -6; // неверный номер
       list[i] := sms;
     end;
   end;
@@ -283,64 +314,98 @@ begin
 
 end;
 
-function TSMSapi.SendAll(var ErrorText: String): Integer;
+function TSMSapi.SendBatch(var ErrorText: String; const batchCnt: Integer = 0): Integer;
 var
   i: Integer;
-  rSMS: TpFIBQuery;
-  uSMS: TpFIBQuery;
+  ReadfromDB: TpFIBQuery;
+  UpdateInDB: TpFIBQuery;
   SMSList: TSMSList;
   sms: TSMS;
+  sqlPart: string;
+  sendedSmsCount: Integer;
+  CountSMS: Integer;
+  CountReciver: Integer;
   // trR  : TpFIBTransaction;
   // trW  : TpFIBTransaction;
 begin
   Result := 0;
   ErrorText := '';
 
-  rSMS := TpFIBQuery.Create(nil);
-  uSMS := TpFIBQuery.Create(nil);
+  ReadfromDB := TpFIBQuery.Create(nil);
+  UpdateInDB := TpFIBQuery.Create(nil);
   SMSList := TSMSList.Create;
+
+  if batchCnt > 0 then
+    sqlPart := ' first ' + batchCnt.ToString
+  else
+    sqlPart := '';
+
   try
-    rSMS.DataBase := dmMain.dbTV;
-    rSMS.Transaction := dmMain.trReadQ;
-    rSMS.SQL.Add('select m.reciver as PHONE, M.Mes_Text, m.Mes_Id  ');
-    rSMS.SQL.Add(' from messages m                                 ');
-    rSMS.SQL.Add(' where m.mes_result = 0 and m.Mes_Type = ''SMS'' ');
-    rSMS.SQL.Add(' order by m.mes_prior desc                       ');
+    ReadfromDB.DataBase := dmMain.dbTV;
+    ReadfromDB.Transaction := dmMain.trReadQ;
+    ReadfromDB.SQL.Add('select ' + sqlPart + ' m.reciver as PHONE, M.Mes_Text, m.Mes_Id  ');
+    ReadfromDB.SQL.Add(' from messages m where m.mes_result = 0 and m.Mes_Type = ''SMS'' ');
+    ReadfromDB.SQL.Add(' order by m.mes_prior, m.Mes_Id desc ');
 
-    rSMS.Transaction.StartTransaction;
-    rSMS.ExecQuery;
-    while not rSMS.EOF do
-    begin
-      sms.a4ID := rSMS.fn('Mes_Id').AsInteger;
-      sms.phone := rSMS.fn('PHONE').AsString;
-      sms.Text := rSMS.fn('Mes_Text').AsString;
-      SMSList.Add(sms);
-      rSMS.NEXT;
-    end;
-    rSMS.Transaction.Commit;
+    UpdateInDB.DataBase := dmMain.dbTV;
+    UpdateInDB.Transaction := dmMain.trWriteQ;
+    UpdateInDB.SQL.Text := ' update Messages set Mes_Result = :Mes_Result, ext_id = :ext_id where Mes_Id = :Mes_Id ';
 
-    if SMSList.Count > 0 then
+    sendedSmsCount := 0;
+    CountReciver := 0;
+    repeat
     begin
-      // если есть что отправлять
-      SendList(SMSList);
-      uSMS.DataBase := dmMain.dbTV;
-      uSMS.Transaction := dmMain.trWriteQ;
-      uSMS.SQL.Text := ' update Messages set Mes_Result = :Mes_Result, ext_id = :ext_id where Mes_Id = :Mes_Id ';
-      for i := 0 to SMSList.Count - 1 do
+      SMSList.Clear;
+
+      ReadfromDB.Transaction.StartTransaction;
+      ReadfromDB.ExecQuery;
+      while not ReadfromDB.EOF do
       begin
-        uSMS.Transaction.StartTransaction;
-        uSMS.ParamByName('Mes_Id').AsInteger := SMSList[i].a4ID;
-        uSMS.ParamByName('Mes_Result').AsInteger := SMSList[i].status;
-        uSMS.ParamByName('ext_id').AsInteger := SMSList[i].smsID;
-        uSMS.ExecQuery;
-        uSMS.Transaction.Commit;
+        sms.a4ID := ReadfromDB.fn('Mes_Id').AsInteger;
+        sms.phone := ReadfromDB.fn('PHONE').AsString;
+        sms.Text := ReadfromDB.fn('Mes_Text').AsString;
+        CountSMS := SMSCount(sms.Text);
+        if (sendedSmsCount + CountSMS) < fBalance then
+        begin
+          sendedSmsCount := sendedSmsCount + CountSMS;
+          SMSList.Add(sms);
+        end;
+        Inc(CountReciver);
+        ReadfromDB.NEXT;
       end;
-    end;
+      ReadfromDB.Close;
+      ReadfromDB.Transaction.Commit;
+
+      if SMSList.Count > 0 then
+      begin
+        // если есть что отправлять
+        SendList(SMSList);
+        for i := 0 to SMSList.Count - 1 do
+        begin
+          if (SMSList[i].status <> 0) or (SMSList[i].smsID <> 0) then begin
+            UpdateInDB.Transaction.StartTransaction;
+            UpdateInDB.ParamByName('Mes_Id').AsInteger := SMSList[i].a4ID;
+            UpdateInDB.ParamByName('Mes_Result').AsInteger := SMSList[i].status;
+            UpdateInDB.ParamByName('ext_id').AsInteger := SMSList[i].smsID;
+            UpdateInDB.ExecQuery;
+            UpdateInDB.Transaction.Commit;
+          end;
+        end;
+      end
+    end
+    until (SMSList.Count = 0);
   finally
     SMSList.Free;
-    rSMS.Free;
-    uSMS.Free;
+    ReadfromDB.Free;
+    UpdateInDB.Free;
   end;
+
+  Result := sendedSmsCount;
+end;
+
+function TSMSapi.SendAll(var ErrorText: String): Integer;
+begin
+  Result := SendBatch(ErrorText);
 end;
 
 function TSMSapi.StatusList(list: TSMSList): Integer;

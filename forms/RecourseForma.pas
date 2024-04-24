@@ -11,7 +11,7 @@ uses
   Vcl.Mask,
   DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBQuery, pFIBQuery, CnErrorProvider,
   PropFilerEh,
-  PropStorageEh, DM, PrjConst, CustomerInfoFrame, A4onTypeUnit, DBGridEh;
+  PropStorageEh, DM, PrjConst, CustomerInfoFrame, A4onTypeUnit, DBGridEh, amSplitter;
 
 type
   TRecourseForm = class(TForm)

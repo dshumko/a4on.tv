@@ -41,7 +41,7 @@ object SettingsForm: TSettingsForm
     TabOrder = 2
     TabStop = True
     ExplicitTop = 548
-    ExplicitWidth = 520
+    ExplicitWidth = 550
     ExplicitHeight = 37
     inherited bbOk: TBitBtn
       Left = 4
@@ -51,7 +51,7 @@ object SettingsForm: TSettingsForm
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = -26
+      ExplicitLeft = 4
       ExplicitTop = 5
       ExplicitWidth = 455
       ExplicitHeight = 27
@@ -61,7 +61,7 @@ object SettingsForm: TSettingsForm
       Top = 5
       Width = 82
       Height = 27
-      ExplicitLeft = 435
+      ExplicitLeft = 465
       ExplicitTop = 5
       ExplicitWidth = 82
       ExplicitHeight = 27
@@ -76,12 +76,10 @@ object SettingsForm: TSettingsForm
     Align = alClient
     MultiLine = True
     TabOrder = 1
-    ExplicitWidth = 368
     object tsGlobal: TTabSheet
       Tag = 1
       Caption = #1043#1083#1086#1073#1072#1083#1100#1085#1099#1077
       ImageIndex = 3
-      ExplicitWidth = 360
       object Label1: TLabel
         Left = 9
         Top = 73
@@ -423,7 +421,6 @@ object SettingsForm: TSettingsForm
       Tag = 1
       Caption = #1055#1083#1072#1090#1077#1078#1077#1081
       ImageIndex = 1
-      ExplicitWidth = 360
       DesignSize = (
         390
         484)
@@ -435,7 +432,7 @@ object SettingsForm: TSettingsForm
         Caption = #1064#1090#1088#1080#1093'-'#1082#1086#1076
       end
       object lblRates: TLabel
-        Left = 8
+        Left = 7
         Top = 280
         Width = 112
         Height = 13
@@ -444,7 +441,7 @@ object SettingsForm: TSettingsForm
         ShowHint = True
       end
       object lbl18: TLabel
-        Left = 8
+        Left = 7
         Top = 332
         Width = 119
         Height = 13
@@ -456,7 +453,7 @@ object SettingsForm: TSettingsForm
         ShowHint = True
       end
       object lbl19: TLabel
-        Left = 8
+        Left = 7
         Top = 359
         Width = 125
         Height = 13
@@ -466,7 +463,7 @@ object SettingsForm: TSettingsForm
         ShowHint = True
       end
       object lbl181: TLabel
-        Left = 8
+        Left = 7
         Top = 386
         Width = 95
         Height = 13
@@ -476,7 +473,7 @@ object SettingsForm: TSettingsForm
         ShowHint = True
       end
       object lbl2421: TLabel
-        Left = 6
+        Left = 7
         Top = 421
         Width = 67
         Height = 13
@@ -484,13 +481,13 @@ object SettingsForm: TSettingsForm
       end
       object grpFine: TGroupBox
         Left = 3
-        Top = 133
-        Width = 299
-        Height = 52
-        TabOrder = 6
+        Top = 150
+        Width = 374
+        Height = 45
+        TabOrder = 7
         object Label6: TLabel
-          Left = 5
-          Top = 26
+          Left = 4
+          Top = 22
           Width = 70
           Height = 13
           Hint = #1055#1088#1086#1094#1077#1085#1090' '#1087#1077#1085#1080' '#1079#1072' '#1076#1077#1085#1100' '#1087#1088#1086#1089#1088#1086#1095#1082#1080
@@ -499,8 +496,8 @@ object SettingsForm: TSettingsForm
           ShowHint = True
         end
         object Label7: TLabel
-          Left = 125
-          Top = 26
+          Left = 142
+          Top = 22
           Width = 31
           Height = 13
           Hint = #1057' '#1082#1072#1075#1086' '#1084#1077#1089#1103#1094#1072' '#1089#1095#1080#1090#1072#1090#1100' '#1087#1077#1085#1102'.'#13#10'0- '#1090#1077#1082#1091#1097#1080#1081', 1- '#1089#1083#1077#1076#1091#1102#1097#1080#1081' '#1080' '#1090'.'#1076'.'
@@ -509,8 +506,8 @@ object SettingsForm: TSettingsForm
           ShowHint = True
         end
         object Label5: TLabel
-          Left = 214
-          Top = 26
+          Left = 240
+          Top = 22
           Width = 26
           Height = 13
           Hint = 
@@ -522,7 +519,7 @@ object SettingsForm: TSettingsForm
         end
         object FinePercent: TDBNumberEditEh
           Left = 79
-          Top = 23
+          Top = 19
           Width = 42
           Height = 21
           Hint = #1055#1088#1086#1094#1077#1085#1090' '#1087#1077#1085#1080' '#1079#1072' '#1076#1077#1085#1100' '#1087#1088#1086#1089#1088#1086#1095#1082#1080
@@ -535,8 +532,8 @@ object SettingsForm: TSettingsForm
           Visible = True
         end
         object FineMonth: TDBNumberEditEh
-          Left = 163
-          Top = 23
+          Left = 180
+          Top = 19
           Width = 43
           Height = 21
           Hint = #1057' '#1082#1072#1075#1086' '#1084#1077#1089#1103#1094#1072' '#1089#1095#1080#1090#1072#1090#1100' '#1087#1077#1085#1102'.'#13#10'0- '#1090#1077#1082#1091#1097#1080#1081', 1- '#1089#1083#1077#1076#1091#1102#1097#1080#1081' '#1080' '#1090'.'#1076'.'
@@ -550,8 +547,8 @@ object SettingsForm: TSettingsForm
           Visible = True
         end
         object FineDay: TDBNumberEditEh
-          Left = 249
-          Top = 23
+          Left = 275
+          Top = 19
           Width = 42
           Height = 21
           Hint = 
@@ -568,9 +565,9 @@ object SettingsForm: TSettingsForm
       end
       object cbPaymentSrv: TCheckBox
         Left = 7
-        Top = 56
+        Top = 53
         Width = 227
-        Height = 17
+        Height = 14
         Hint = #1044#1086#1073#1072#1074#1083#1103#1077#1090' '#1074#1086#1079#1084#1086#1078#1085#1086#1089#1090#1100' '#1091#1082#1072#1079#1099#1074#1072#1090#1100' '#1074' '#1087#1083#1072#1090#1077#1078#1077' '#1086#1087#1083#1072#1095#1080#1074#1072#1077#1084#1091#1102' '#1091#1089#1083#1091#1075#1091' '
         Alignment = taLeftJustify
         Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1074' '#1087#1083#1072#1090#1077#1078#1077
@@ -578,7 +575,7 @@ object SettingsForm: TSettingsForm
       end
       object cbNegativePay: TCheckBox
         Left = 7
-        Top = 33
+        Top = 31
         Width = 227
         Height = 17
         Hint = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1085#1086#1089#1080#1090#1100' '#1086#1090#1088#1080#1094#1072#1090#1077#1083#1100#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
@@ -603,7 +600,7 @@ object SettingsForm: TSettingsForm
         Height = 21
         TabStop = False
         ReadOnly = True
-        TabOrder = 8
+        TabOrder = 9
       end
       object btnBarSettings: TButton
         Left = 239
@@ -611,18 +608,18 @@ object SettingsForm: TSettingsForm
         Width = 63
         Height = 25
         Caption = #1053#1072#1089#1090#1088#1086#1080#1090#1100
-        TabOrder = 7
+        TabOrder = 8
         OnClick = btnBarSettingsClick
       end
       object cbFine: TCheckBox
-        Left = 21
-        Top = 125
-        Width = 129
+        Left = 7
+        Top = 143
+        Width = 95
         Height = 18
         Hint = #1057#1095#1080#1090#1072#1090#1100' '#1087#1077#1085#1102' '#1072#1073#1086#1085#1077#1085#1090#1072#1084
         Alignment = taLeftJustify
         Caption = #1057#1095#1080#1090#1072#1090#1100' '#1087#1077#1085#1102
-        TabOrder = 5
+        TabOrder = 6
         OnClick = cbFineClick
       end
       object btnCashReg: TButton
@@ -631,7 +628,7 @@ object SettingsForm: TSettingsForm
         Width = 126
         Height = 23
         Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1060#1056
-        TabOrder = 11
+        TabOrder = 12
         OnClick = btnCashRegClick
       end
       object chkBARDELZERRO: TCheckBox
@@ -642,7 +639,7 @@ object SettingsForm: TSettingsForm
         Hint = #1053#1077' '#1091#1076#1072#1083#1103#1090#1100' '#1083#1080#1076#1080#1088#1091#1102#1097#1080#1077' 0 '#1074' '#1083#1080#1094#1077#1074#1086#1084' '#1089#1095#1077#1090#1077' '#1096#1090#1088#1080#1093#1082#1086#1076#1072
         Alignment = taLeftJustify
         Caption = #1053#1077' '#1091#1076#1072#1083#1103#1090#1100' '#1083#1080#1076#1080#1088#1091#1097#1080#1077' 0 '
-        TabOrder = 9
+        TabOrder = 10
       end
       object chkBARADDPAY: TCheckBox
         Left = 7
@@ -652,7 +649,7 @@ object SettingsForm: TSettingsForm
         Hint = #1040#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1080' '#1074#1085#1086#1089#1080#1090#1100' '#1087#1083#1072#1090#1077#1078' '#1087#1086#1089#1083#1077' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1103
         Alignment = taLeftJustify
         Caption = #1042#1085#1086#1089#1080#1090#1100' '#1087#1083#1072#1090#1077#1078' '#1087#1086#1089#1083#1077' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1103
-        TabOrder = 10
+        TabOrder = 11
       end
       object cbbRates: TDBComboBoxEh
         Left = 135
@@ -669,7 +666,7 @@ object SettingsForm: TSettingsForm
           'CBR'
           'NBRB')
         ShowHint = True
-        TabOrder = 12
+        TabOrder = 13
         Visible = True
       end
       object chkShowAllInCustomer: TCheckBox
@@ -682,13 +679,13 @@ object SettingsForm: TSettingsForm
           #1077#1075#1086' '#1072#1073#1086#1085#1077#1085#1090#1072
         Alignment = taLeftJustify
         Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1074#1089#1077' '#1087#1083#1072#1090#1077#1078#1080' '#1072#1073#1086#1085#1077#1085#1090#1072
-        TabOrder = 13
+        TabOrder = 14
       end
       object chkHidePayAdd: TCheckBox
         Left = 7
-        Top = 79
+        Top = 71
         Width = 227
-        Height = 17
+        Height = 14
         Hint = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1088#1080' '#1087#1088#1080#1077#1084#1077' '#1087#1083#1072#1090#1077#1078#1072
         Alignment = taLeftJustify
         Caption = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '
@@ -696,9 +693,9 @@ object SettingsForm: TSettingsForm
       end
       object chkHidePayPrint: TCheckBox
         Left = 7
-        Top = 102
+        Top = 90
         Width = 227
-        Height = 17
+        Height = 14
         Hint = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '#1080' '#1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100' '#1087#1088#1080' '#1087#1088#1080#1077#1084#1077' '#1087#1083#1072#1090#1077#1078#1072
         Alignment = taLeftJustify
         Caption = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '#1080' '#1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100
@@ -721,9 +718,8 @@ object SettingsForm: TSettingsForm
         ListField = 'RT_NAME'
         ListSource = srcRQtype
         ShowHint = True
-        TabOrder = 14
+        TabOrder = 15
         Visible = True
-        ExplicitWidth = 138
       end
       object edtSUM_POSITIVE: TDBNumberEditEh
         Left = 135
@@ -737,7 +733,7 @@ object SettingsForm: TSettingsForm
         EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
-        TabOrder = 15
+        TabOrder = 16
         Visible = True
       end
       object cbbRQ_TO_NEGATIVE: TDBLookupComboboxEh
@@ -757,9 +753,8 @@ object SettingsForm: TSettingsForm
         ListField = 'RT_NAME'
         ListSource = srcRQtype
         ShowHint = True
-        TabOrder = 16
+        TabOrder = 17
         Visible = True
-        ExplicitWidth = 138
       end
       object edtPayCheckUrl: TDBEditEh
         Left = 79
@@ -776,16 +771,24 @@ object SettingsForm: TSettingsForm
         EditButtons = <>
         EmptyDataInfo.Text = #1040#1076#1088#1077#1089' '#1079#1072#1087#1088#1086#1089#1072' '#1076#1072#1085#1085#1099#1093' '#1087#1083#1072#1090#1077#1078#1072' (get '#1080#1083#1080' '#1090#1077#1083#1086' post '#1087#1086#1089#1083#1077' ^ )'
         ShowHint = True
-        TabOrder = 17
+        TabOrder = 18
         Visible = True
-        ExplicitWidth = 271
+      end
+      object chkEmailCheck: TCheckBox
+        Left = 7
+        Top = 108
+        Width = 227
+        Height = 22
+        Hint = #1055#1077#1088#1077#1076#1072#1074#1072#1090#1100' '#1074' '#1082#1082#1084' '#1077#1084#1072#1080#1083' '#1072' '#1085#1077' '#1090#1077#1083#1077#1092#1086#1085' '#1076#1083#1103' '#1086#1090#1087#1088#1072#1074#1091#1080' '#1074' '#1054#1060#1044
+        Alignment = taLeftJustify
+        Caption = #1063#1077#1082#1080' '#1085#1072' '#1087#1086#1095#1090#1091' '#1087#1088#1080' '#1088#1072#1073#1086#1090#1077' '#1089' '#1050#1050#1052
+        TabOrder = 5
       end
     end
     object tsLAN: TTabSheet
       Tag = 1
       Caption = 'C'#1077#1090#1080' '#1087#1077#1088#1077#1076#1072#1095#1080' '#1076#1072#1085#1085#1099#1093
       ImageIndex = 2
-      ExplicitWidth = 360
       DesignSize = (
         390
         484)
@@ -828,7 +831,6 @@ object SettingsForm: TSettingsForm
         TabOrder = 9
         Visible = False
         OnChange = cbBillingChange
-        ExplicitWidth = 222
       end
       object pnlBilling: TPanel
         Left = 8
@@ -840,7 +842,6 @@ object SettingsForm: TSettingsForm
         BevelOuter = bvLowered
         TabOrder = 10
         Visible = False
-        ExplicitWidth = 349
         object Label12: TLabel
           Left = 4
           Top = 9
@@ -977,7 +978,6 @@ object SettingsForm: TSettingsForm
         Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1048#1085#1090#1077#1088#1085#1077#1090
         TabOrder = 0
         OnClick = btnInetSettingsClick
-        ExplicitWidth = 349
       end
       object chkIPTVPacket: TCheckBox
         Left = 8
@@ -1075,14 +1075,12 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 8
         Visible = True
-        ExplicitWidth = 284
       end
     end
     object tsVisual: TTabSheet
       Tag = 1
       Caption = #1042#1080#1079#1091#1072#1083#1100#1085#1099#1077
       ImageIndex = 4
-      ExplicitWidth = 360
       object Label2: TLabel
         Left = 38
         Top = 44
@@ -1596,7 +1594,6 @@ object SettingsForm: TSettingsForm
       Tag = 1
       Caption = #1050#1086#1084#1084#1091#1085#1080#1082#1072#1094#1080#1081
       ImageIndex = 5
-      ExplicitWidth = 360
       DesignSize = (
         390
         484)
@@ -1608,7 +1605,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight, akBottom]
         Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1087#1086#1095#1090#1099' '
         TabOrder = 1
-        ExplicitWidth = 356
         object lbl2: TLabel
           Left = 10
           Top = 25
@@ -1786,7 +1782,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akRight, akBottom]
         Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1072' SMS '
         TabOrder = 2
-        ExplicitWidth = 356
         object pnlSMSUtils: TPanel
           Left = 2
           Top = 71
@@ -1796,7 +1791,6 @@ object SettingsForm: TSettingsForm
           BevelOuter = bvNone
           TabOrder = 2
           Visible = False
-          ExplicitWidth = 352
           object lbl6: TLabel
             Left = 8
             Top = 8
@@ -1825,7 +1819,6 @@ object SettingsForm: TSettingsForm
           BevelOuter = bvNone
           TabOrder = 1
           Visible = False
-          ExplicitWidth = 352
           object lbl4: TLabel
             Left = 8
             Top = 6
@@ -1856,7 +1849,6 @@ object SettingsForm: TSettingsForm
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 352
           object lbl3: TLabel
             Left = 8
             Top = 8
@@ -1893,7 +1885,6 @@ object SettingsForm: TSettingsForm
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 3
-          ExplicitWidth = 352
           object lbl8: TLabel
             Left = 8
             Top = 9
@@ -1939,13 +1930,11 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = #1056#1072#1089#1089#1099#1083#1082#1072' EMAIL '#1080#1083#1080' SMS  '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1103#1084' '#1079#1072#1103#1074#1086#1082
         TabOrder = 0
-        ExplicitWidth = 338
       end
     end
     object tsA4ON: TTabSheet
       Caption = #1044#1086#1089#1090#1091#1087' '#1082' A4ON.TV'
       ImageIndex = 5
-      ExplicitWidth = 360
       DesignSize = (
         390
         484)
@@ -1983,7 +1972,6 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 0
         Visible = True
-        ExplicitWidth = 239
       end
       object edtA4APIkey: TDBEditEh
         Left = 112
@@ -1998,7 +1986,6 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 1
         Visible = True
-        ExplicitWidth = 239
       end
       object cbFormat: TDBComboBoxEh
         Left = 112
@@ -2019,13 +2006,11 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 2
         Visible = True
-        ExplicitWidth = 239
       end
     end
     object tsMobile: TTabSheet
       Caption = #1052#1086#1073#1080#1083#1100#1085#1086#1077' '#1087#1088#1080#1083#1086#1078#1077#1085#1080#1077
       ImageIndex = 6
-      ExplicitWidth = 360
       object lbl16: TLabel
         Left = 9
         Top = 18
@@ -2062,7 +2047,6 @@ object SettingsForm: TSettingsForm
     object tsEquipment: TTabSheet
       Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
       ImageIndex = 7
-      ExplicitWidth = 360
       DesignSize = (
         390
         484)
@@ -2074,7 +2058,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = ' '#1059#1089#1083#1091#1075#1080' '#1087#1088#1080' '#1088#1072#1073#1086#1090#1077' '#1089' '#1082#1072#1088#1090#1072#1084#1080' '
         TabOrder = 0
-        ExplicitWidth = 344
         DesignSize = (
           374
           105)
@@ -2095,7 +2078,6 @@ object SettingsForm: TSettingsForm
           ShowHint = True
           TabOrder = 1
           Visible = True
-          ExplicitWidth = 321
         end
         object cbbCardAdd: TDBLookupComboboxEh
           Left = 10
@@ -2114,7 +2096,6 @@ object SettingsForm: TSettingsForm
           ShowHint = True
           TabOrder = 0
           Visible = True
-          ExplicitWidth = 321
         end
       end
       object chkPersChennals: TCheckBox
@@ -2141,7 +2122,6 @@ object SettingsForm: TSettingsForm
     object tsOther: TTabSheet
       Caption = #1055#1088#1086#1095#1080#1077
       ImageIndex = 8
-      ExplicitWidth = 360
       DesignSize = (
         390
         484)
@@ -2203,7 +2183,6 @@ object SettingsForm: TSettingsForm
         TabOrder = 0
         Value = 0.000000000000000000
         Visible = True
-        ExplicitLeft = 267
       end
       object chkWHOwner: TCheckBox
         Left = 11
@@ -2217,7 +2196,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = #1042' '#1079#1072#1103#1074#1082#1077' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1089#1082#1083#1072#1076' '#1084#1086#1085#1090#1072#1078#1085#1080#1082#1072
         TabOrder = 1
-        ExplicitWidth = 321
       end
       object chkWHExecutor: TCheckBox
         Left = 11
@@ -2229,7 +2207,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1074' '#1079#1072#1103#1074#1082#1077' '#1086#1073#1103#1079#1072#1090#1077#1083#1077#1085
         TabOrder = 2
-        ExplicitWidth = 321
       end
       object edtIdleHoure: TDBNumberEditEh
         Left = 297
@@ -2249,7 +2226,6 @@ object SettingsForm: TSettingsForm
         TabOrder = 3
         Value = 0.000000000000000000
         Visible = True
-        ExplicitLeft = 267
       end
       object edtKeyMVD: TDBEditEh
         Left = 70
@@ -2264,7 +2240,6 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 4
         Visible = True
-        ExplicitWidth = 262
       end
       object edtMapUrl: TDBEditEh
         Left = 70
@@ -2279,7 +2254,6 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 5
         Visible = True
-        ExplicitWidth = 262
       end
       object chkSrvWorker: TCheckBox
         Left = 11
@@ -2291,7 +2265,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = #1059#1082#1072#1079#1099#1074#1072#1090#1100' '#1060#1048#1054' '#1084#1086#1085#1090#1072#1078#1085#1080#1082#1072' '#1087#1088#1080' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1080' '#1091#1089#1083#1091#1075#1080
         TabOrder = 7
-        ExplicitWidth = 321
       end
       object chkFlatOwner: TCheckBox
         Left = 11
@@ -2303,7 +2276,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = #1061#1088#1072#1085#1080#1090#1100' '#1080' '#1087#1088#1086#1074#1077#1088#1103#1090#1100' '#1074#1083#1072#1076#1077#1083#1100#1094#1072' '#1082#1074#1072#1088#1090#1080#1088#1099' ('#1060#1048#1054', '#1087#1072#1089#1087#1086#1088#1090')'
         TabOrder = 8
-        ExplicitWidth = 321
       end
       object chkNewContract: TCheckBox
         Left = 11
@@ -2317,7 +2289,6 @@ object SettingsForm: TSettingsForm
         Anchors = [akLeft, akTop, akRight]
         Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1076#1086#1075#1086#1074#1086#1088' '#1087#1088#1080' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1080#1077'/'#1074#1082#1083#1102#1095#1077#1085#1080#1080' '#1091#1089#1083#1091#1075#1080
         TabOrder = 9
-        ExplicitWidth = 321
       end
       object edtMapHouseUrl: TDBEditEh
         Left = 70
@@ -2334,7 +2305,6 @@ object SettingsForm: TSettingsForm
         ShowHint = True
         TabOrder = 6
         Visible = True
-        ExplicitWidth = 262
       end
     end
   end

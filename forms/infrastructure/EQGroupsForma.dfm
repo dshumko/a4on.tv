@@ -24,9 +24,9 @@ inherited EQGroupsForm: TEQGroupsForm
     ExplicitTop = 293
   end
   inherited dbGrid: TDBGridEh
-    Top = 172
+    Top = 173
     Width = 614
-    Height = 120
+    Height = 119
     AllowedOperations = [alopUpdateEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -68,7 +68,7 @@ inherited EQGroupsForm: TEQGroupsForm
         Footers = <>
         Title.Caption = #1043#1088#1091#1087#1087#1072' ('#1084#1072#1088#1082#1072')'
         Title.TitleButton = True
-        Width = 109
+        Width = 157
       end
       item
         AutoFitColWidth = False
@@ -297,6 +297,7 @@ inherited EQGroupsForm: TEQGroupsForm
     DataSet = dsEQGroups
   end
   inherited actions: TActionList
+    Left = 382
     inherited actNew: TAction
       OnExecute = actNewExecute
     end

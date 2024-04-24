@@ -317,7 +317,7 @@ object RequestNewForm: TRequestNewForm
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6
-      Width = 390
+      Width = 334
       Hint = 
         #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' (Ctrl+Enter) '#1080#1083#1080' '#1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1086#1090#1082#1088#1099#1090#1100' (Ctrl+S' +
         'hift+Enter)'
@@ -326,14 +326,16 @@ object RequestNewForm: TRequestNewForm
       OnClick = bbOkClick
       ExplicitLeft = 279
       ExplicitTop = 6
-      ExplicitWidth = 390
+      ExplicitWidth = 334
     end
     inherited bbCancel: TBitBtn
-      Left = 675
+      Left = 625
       Top = 6
+      Width = 123
       OnClick = frmOkCancelbbCancelClick
-      ExplicitLeft = 675
+      ExplicitLeft = 625
       ExplicitTop = 6
+      ExplicitWidth = 123
     end
   end
   object pnl1: TPanel
@@ -616,22 +618,40 @@ object RequestNewForm: TRequestNewForm
             EditButtons = <>
             EmptyDataInfo.Text = #1047#1072#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
             ShowHint = True
-            TabOrder = 3
+            TabOrder = 4
             Visible = True
             WantReturns = True
           end
           object edPhone: TDBEditEh
-            Left = 100
+            Left = 54
             Top = 54
-            Width = 376
+            Width = 40
             Height = 21
             DynProps = <>
             EditButtons = <>
             ShowHint = True
-            TabOrder = 2
-            Visible = True
+            TabOrder = 3
+            Visible = False
             OnChange = edPhoneChange
             OnExit = edPhoneExit
+          end
+          object cbContact: TDBComboBoxEh
+            Left = 100
+            Top = 54
+            Width = 375
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            DynProps = <>
+            DropDownBox.AutoDrop = True
+            DropDownBox.AutoFilter = True
+            DropDownBox.AutoFilterType = lsftContainsEh
+            DropDownBox.Sizable = True
+            EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1090#1077#1083#1077#1092#1086#1085#1072' '#1080' '#1076#1088#1091#1075#1086#1081' '#1082#1086#1085#1090#1072#1082#1090
+            EditButtons = <>
+            ShowHint = True
+            TabOrder = 2
+            Visible = True
+            OnNotInList = cbContactNotInList
           end
         end
         object pnlAddInfo: TPanel
@@ -930,7 +950,7 @@ object RequestNewForm: TRequestNewForm
     end
   end
   object chkOpenBid: TDBCheckBoxEh
-    Left = 5
+    Left = 4
     Top = 496
     Width = 85
     Height = 17
@@ -941,9 +961,9 @@ object RequestNewForm: TRequestNewForm
     TabOrder = 3
   end
   object chkRecreate: TDBCheckBoxEh
-    Left = 97
+    Left = 91
     Top = 496
-    Width = 176
+    Width = 169
     Height = 17
     Hint = #1055#1077#1088#1077#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1103#1074#1082#1091' '#1095#1077#1088#1077#1079
     Anchors = [akLeft, akBottom]
@@ -1270,7 +1290,9 @@ object RequestNewForm: TRequestNewForm
       'select w.* '
       'from works w '
       'where '
-      '  w.rq_type = :rt_id and w.Deleted = 0 and w.on_default = 1'
+      '  w.rq_type = :rt_id '
+      '  and w.Deleted = 0 '
+      '  and w.on_default = 1'
       'order by w.name'
       '')
     AutoUpdateOptions.UpdateTableName = 'REQUEST_TEMPLATES'

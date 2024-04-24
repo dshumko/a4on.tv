@@ -26,6 +26,8 @@ type
     porch_n: string;
     floor_n: string;
     mobile: string;
+    mobile_wn: String;
+    email: String;
     itBalance: Boolean;
     isType: Integer; // 0 - абонент, 1 - узел
     isJur : Integer; // 0 - физик 1 - юрик

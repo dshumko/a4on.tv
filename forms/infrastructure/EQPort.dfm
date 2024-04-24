@@ -3,7 +3,7 @@ object EQPortForm: TEQPortForm
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077' '#1087#1086#1088#1090#1072'/'#1086#1074
-  ClientHeight = 337
+  ClientHeight = 397
   ClientWidth = 534
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object EQPortForm: TEQPortForm
   OnShow = FormShow
   DesignSize = (
     534
-    337)
+    397)
   PixelsPerInch = 96
   TextHeight = 13
   object lblCNT: TLabel
@@ -93,14 +93,22 @@ object EQPortForm: TEQPortForm
     Height = 13
     Caption = #1052#1077#1090#1082#1072' '#1082#1072#1073#1077#1083#1103
   end
+  object lblLabel1: TLabel
+    Left = 8
+    Top = 227
+    Width = 64
+    Height = 13
+    Caption = #1050#1086#1085#1092'. '#1087#1086#1088#1090#1072
+  end
   object pnlBottom: TPanel
     Left = 0
-    Top = 294
+    Top = 354
     Width = 534
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 8
+    TabOrder = 10
+    ExplicitTop = 294
     DesignSize = (
       534
       43)
@@ -178,15 +186,15 @@ object EQPortForm: TEQPortForm
   end
   object mmoNotice: TDBMemoEh
     Left = 8
-    Top = 224
+    Top = 288
     Width = 518
-    Height = 72
+    Height = 70
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    TabOrder = 7
+    TabOrder = 9
     Visible = True
     WantReturns = True
   end
@@ -353,8 +361,22 @@ object EQPortForm: TEQPortForm
     DynProps = <>
     EmptyDataInfo.Text = #1052#1077#1090#1082#1072' '#1085#1072' '#1082#1072#1073#1077#1083#1077' ('#1094#1074#1077#1090' '#1087#1091#1095#1082#1072'/'#1078#1080#1083#1099')'
     EditButtons = <>
-    TabOrder = 9
+    TabOrder = 7
     Visible = True
+  end
+  object mmoCONFIG: TDBMemoEh
+    Left = 88
+    Top = 224
+    Width = 438
+    Height = 58
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
+    DynProps = <>
+    EditButtons = <>
+    EmptyDataInfo.Text = #1050#1086#1085#1092#1080#1075#1091#1088#1072#1094#1080#1103
+    TabOrder = 8
+    Visible = True
+    WantReturns = True
   end
   object cnError: TCnErrorProvider
     DoubleBuffer = False
@@ -476,8 +498,6 @@ object EQPortForm: TEQPortForm
       '                         , count(*) E_CNT'
       '                         from Equipment'
       '                         group by 1) e on (e.Vlan_Id = v.V_Id)'
-      '  where (coalesce(v.for_objects, 0) = 0'
-      '          or (coalesce(v.for_objects, 0) = 1))'
       '  order by 1, 2')
     AutoCalcFields = False
     Transaction = dmMain.trRead

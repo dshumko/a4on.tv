@@ -85,8 +85,8 @@ var
 implementation
 
 uses
-  MAIN, DBGridEhImpExp, AtrCommon, CardPayGenerateForma, CardPayActivateForma, CardsPaySettingsForma, DBGridEhFindDlgs,
-  DM,
+  DBGridEhFindDlgs,
+  DM, MAIN, AtrCommon, CardPayGenerateForma, CardPayActivateForma, CardsPaySettingsForma,
   AtrStrUtils, ReportPreview;
 
 {$R *.dfm}
@@ -108,7 +108,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, false)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -123,52 +123,9 @@ begin
 end;
 
 procedure TfmCardsPay.N7Click(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
 begin
-  A4MainForm.SaveDialog.FileName := rsCustomers;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TfmCardsPay.SpeedButton2Click(Sender: TObject);

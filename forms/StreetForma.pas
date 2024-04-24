@@ -17,7 +17,7 @@ uses
   ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh,
   FIBDatabase,
-  pFIBDatabase, DBLookupEh;
+  pFIBDatabase, DBLookupEh, amSplitter, PrnDbgeh;
 
 type
   TStreetForm = class(TGridForm)

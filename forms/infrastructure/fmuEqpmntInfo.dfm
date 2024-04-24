@@ -675,6 +675,11 @@ object apgEqpmntInfo: TapgEqpmntInfo
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' '#1089#1089#1099#1083#1082#1091' '#1048#1052#1071' '#1086#1073#1088#1091#1076#1086#1074#1072#1085#1080#1103
       OnExecute = actLanHttpNameExecute
     end
+    object actLanHttpUserLoginIP: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' Login:Password@IP'
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1073#1088#1072#1091#1079#1077#1088#1077' IP '#1089' '#1087#1077#1088#1077#1076#1072#1095#1077#1081' Login:Password'
+      OnExecute = actLanHttpUserLoginIPExecute
+    end
   end
   object dsData: TpFIBDataSet
     UpdateSQL.Strings = (

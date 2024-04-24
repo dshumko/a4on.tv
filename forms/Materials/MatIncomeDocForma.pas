@@ -1,5 +1,6 @@
 ﻿unit MatIncomeDocForma;
 {$I defines.inc}
+
 interface
 
 uses
@@ -10,8 +11,7 @@ uses
   Vcl.ActnList,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
   FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping,
-  RxSplit;
+  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, amSplitter;
 
 type
   TMatIncomeDocForm = class(TForm)
@@ -77,11 +77,11 @@ type
     qSaveFile: TpFIBQuery;
     pnlGrids: TPanel;
     dbgDocMat: TDBGridEh;
-    Splitter: TRxSplitter;
     btnUNIT: TButton;
     actUNITS: TAction;
     trReadDS: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    Splitter: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh; var DropDownForm: TCustomForm;
       DynParams: TDynVarsEh);
@@ -282,11 +282,10 @@ begin
   if DynParams.FindDynVar('dimension') <> nil then
     lblDem.Caption := rsQuant + ', ' + DynParams['dimension'].AsString;
 
-  {$IFDEF IS_UNIT}
+{$IFDEF IS_UNIT}
   actUNITS.Visible := (DynParams.FindDynVar('IS_UNIT') <> nil);
   edtQuant.Enabled := not actUNITS.Visible;
-  {$ENDIF}
-
+{$ENDIF}
   if DynParams.FindDynVar('ID') <> nil then
   begin
     fAddedMatID := DynParams['ID'].AsInteger;
@@ -312,12 +311,13 @@ begin
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
+      go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;
@@ -404,11 +404,13 @@ end;
 
 procedure TMatIncomeDocForm.btnSaveClick(Sender: TObject);
 begin
-  if dsDoc.FieldByName('DOC_DATE').IsNull then begin
+  if dsDoc.FieldByName('DOC_DATE').IsNull then
+  begin
     CnErrors.SetError(deD_DATE, rsSelectDate, iaTopCenter, bsNeverBlink);
     deD_DATE.SetFocus;
   end
-  else begin
+  else
+  begin
     CnErrors.Dispose(deD_DATE);
     dsDoc.Post;
   end;

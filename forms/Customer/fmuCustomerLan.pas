@@ -10,7 +10,7 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin,
   FIBDataSet, pFIBDataSet, DM, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit, amSplitter;
 
 type
   TapgCustomerLan = class(TA4onPage)
@@ -71,6 +71,7 @@ type
     procedure miLanClickClick(Sender: TObject);
     procedure GenerateLANPopUp;
     procedure EnableControls;
+    function LanServicesExists(): Boolean;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -153,10 +154,20 @@ end;
 procedure TapgCustomerLan.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
+
 begin
   ci := GetCustomerInfo;
   if ci.CUSTOMER_ID = -1 then
     Exit;
+
+  if (dmMain.GetSettingsValue('LAN_SRV_EXISTS') = '1') then
+  begin
+    if (not LanServicesExists()) then begin
+      ShowMessage(rsErrorLANsrvNotExists);
+      Exit;
+    end;
+  end;
+
   if EditCustomerLAN(ci, -1) then
     dsLAN.CloseOpen(true);
 end;
@@ -567,8 +578,8 @@ begin
     Exit;
 
   // A4MainForm.OpenEquipmentByName(dsLAN['E_NAME']);
-  if not A4MainForm.OpenEquipmentByID(dsLAN['EQ_ID'])
-  then ShowMessage(rsWarningQuestFilter);
+  if not A4MainForm.OpenEquipmentByID(dsLAN['EQ_ID']) then
+    ShowMessage(rsWarningQuestFilter);
 end;
 
 procedure TapgCustomerLan.actOpenObjectExecute(Sender: TObject);
@@ -609,6 +620,30 @@ begin
   begin
     if actAdd.Enabled then
       actAdd.Execute;
+  end;
+end;
+
+function TapgCustomerLan.LanServicesExists(): Boolean;
+begin
+  try
+    with dmMain.qRead do
+    begin
+      SQL.Clear;
+      SQL.Add('select  count(*) CNT');
+      SQL.Add('  from Subscr_serv h');
+      SQL.Add('       inner join services s on (s.Service_Id = h.Serv_Id)');
+      SQL.Add('  where s.Business_Type = 1');
+      SQL.Add('        and h.State_Sgn = 1');
+      SQL.Add('        and h.Customer_Id = :customer_id  ');
+      ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
+      Transaction.StartTransaction;
+      ExecQuery;
+      Result := (FieldByName('CNT').AsInteger > 0);
+      Close;
+      Transaction.Rollback;
+    end;
+  except
+    Result := False;
   end;
 end;
 

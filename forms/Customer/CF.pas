@@ -14,7 +14,7 @@ uses
   FIBQuery,
   pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
   MemTableDataEh,
-  MemTableEh, PrjConst, EhLibVCL, dnSplitter, DBGridEhGrouping, DynVarsEh, A4onTypeUnit;
+  MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, A4onTypeUnit, amSplitter;
 
 type
   TCustomersForm = class(TForm)
@@ -117,8 +117,8 @@ type
     frxFIBCustomers: TfrxDBDataset;
     frxReport: TfrxReport;
     actRecAdd: TAction;
-    splMain: TdnSplitter;
-    spl1: TdnSplitter;
+    splMain: TSplitter;
+    spl1: TSplitter;
     N2: TMenuItem;
     N16: TMenuItem;
     N17: TMenuItem;
@@ -293,7 +293,8 @@ type
     FNeedRefresh: Boolean;
     SaldoSign: Integer;
     fVisibleColumns: Cardinal;
-    vRED_SUMM: single;
+    fRED_SUMM: single;
+    fZERRO_SUMM: single;
     fSelectedRow: Integer;
     FullAccess: Boolean;
     FVisiblePassport: Boolean;
@@ -355,6 +356,7 @@ type
     procedure SetFilter(const FilterFIELD: Integer; const FilterVALUE: string; var FindResult: Boolean);
     procedure RefreshRequestsList(aRequest: Integer = -1; aCustomer: Integer = -1);
     procedure NewTaskCallBack(const TaskID: Integer);
+    procedure FindDataOnTab(const TabType: Integer; const DataValue: string);
   end;
 
 var
@@ -370,7 +372,7 @@ uses
   System.DateUtils, System.StrUtils, Vcl.Clipbrd,
   AtrCommon, DM, MAIN, CustomerForma, DBGridEhFindDlgs, SelectColumnsForma, ExportSettingsForma, TextEditForma,
   SendMessagesForma,
-  fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, AtrStrUtils, RxStrUtils, EhLibFIB, pFIBProps,
+  fs_iinterpreter, RecourseForma, RequestNewForma, AtrStrUtils, RxStrUtils, EhLibFIB, pFIBProps,
   fmuCustomerInfo,
   fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv, fmuCustomerKoef, fmuCustomerLetters, fmuCustomerRecourse,
   fmuCustomerRequests, fmuCustomerMaterialsMove, fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet,
@@ -601,7 +603,7 @@ begin
       if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value > 0) // Подключен
       then
       begin
-        if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > vRED_SUMM) then
+        if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > fRED_SUMM) then
           AFont.Color := FgCustActiveDebt
         else
           AFont.Color := clWindowText;
@@ -610,7 +612,7 @@ begin
       begin
         if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value = 0) then
         begin
-          if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value >= 0) then
+          if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value >= fZERRO_SUMM) then
             AFont.Color := FgCustDisconted
           else
             AFont.Color := FgCustDiscontedWithMoney;
@@ -1184,16 +1186,13 @@ procedure TCustomersForm.actCopyExecute(Sender: TObject);
 var
   dbg: TDBGridEh;
 begin
-
   if (ActiveControl is TDBGridEh) then
   begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
       begin
-        // Экспорт информации
-        if (dmMain.AllowedAction(rght_Export)) then
-          DBGridEh_DoCopyAction(dbg, False);
+        A4MainForm.CopyDBGrid(dbg);
       end
       else
         StrToClipbrd(dbg.SelectedField.AsString);
@@ -1581,58 +1580,9 @@ begin
 end;
 
 procedure TCustomersForm.actSaveAsExecute(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
-  // Экспорт информации
-  if (not dmMain.AllowedAction(rght_Export)) then
-    Exit;
-
-  A4MainForm.SaveDialog.FILENAME := rsCustomers;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FILENAME, Length(A4MainForm.SaveDialog.FILENAME) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FILENAME := A4MainForm.SaveDialog.FILENAME + '.' + Ext;
-
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FILENAME, False);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TCustomersForm.actSearchNextExecute(Sender: TObject);
@@ -2009,7 +1959,8 @@ begin
 
   if (Mask and clc_Lan) <> 0 then
   begin
-    select := select + rsEOL + ', l.ip, l.mac, l.port, le.name as LE_NAME, le.IP as LE_IP, l.TAG, l.TAG_STR';
+    select := select + rsEOL +
+      ', l.ip, l.mac, l.port, le.name as LE_NAME, le.IP as LE_IP, le.MAC as LE_MAC, l.TAG, l.TAG_STR';
     from := from + rsEOL +
       ' left outer join tv_lan l on (l.customer_id = c.customer_id) left outer join equipment le on (l.eq_id = le.eid) ';
   end;
@@ -2635,6 +2586,12 @@ begin
     end;
     with dbgCustomers.Columns.Add do
     begin
+      FieldName := 'LE_MAC';
+      Title.Caption := rsColumnConnectToMAC;
+      Title.TitleButton := True;
+    end;
+    with dbgCustomers.Columns.Add do
+    begin
       FieldName := 'PORT';
       Title.Caption := rsColumnConnectToPort;
       Title.TitleButton := True;
@@ -2733,7 +2690,7 @@ const
   begin
     AFormatSettings := TFormatSettings.Create;
     AFormatSettings.DecimalSeparator := '.';
-    Result := ' ((C.Valid_To > current_date) or (C.Valid_To is null)) ';
+    Result := const_default_filter;
     dsCustomers.ParamByName('from_add').value := '';
     tmpSQL := '';
 
@@ -2847,7 +2804,7 @@ const
     tmpSQL := '';
     if (dsFilter['VALID_TO_SGN'] = 1) then
     begin
-      tmpSQL := ' ((C.Valid_To > current_date) or (C.Valid_To is null)) ';
+      tmpSQL := const_default_filter;
       if (dsFilter['VALID_TO_ON'] = 1) and (dsFilter['VALID_TO_OFF'] = 1) then
         tmpSQL := fltr_1_1
       else if (dsFilter['VALID_TO_OFF'] = 1) then
@@ -3763,7 +3720,11 @@ begin
   // Восстановим сортировку
   // dbgCustomerSortMarkingChanged(dbgCustomers);
 
+  if whereStr.IsEmpty then
+    whereStr := fltr_1_1;
+
   // LogEvent('Customer', 'ФИЛЬТР', whereStr);
+
   Result := whereStr;
   srcCustomer.DataSet.EnableControls;
 end;
@@ -3863,7 +3824,8 @@ begin
     or dmMain.AllowedAction(rght_Customer_edit) //
     or dmMain.AllowedAction(rght_Customer_Files_Add) //
     or dmMain.AllowedAction(rght_Customer_EditLan) //
-    or dmMain.AllowedAction(rght_Customer_EditDigit) //
+    or dmMain.AllowedAction(rght_Customer_DigitAdd) //
+    or dmMain.AllowedAction(rght_Customer_DigitEdit) //
     or dmMain.AllowedAction(rght_Customer_Attribute)) //
     ) // FCanViewPersonalData
     or FullAccess;
@@ -4497,6 +4459,43 @@ begin
     need := need + dsCustomers.FieldByName('DEBT_SUM').AsFloat;
     s := ReplaceStr(s, rsFldNextNeed, FloatToStrF(need, ffFixed, 8, 2, fs));
   end;
+
+  // rsDEBT_FINE = '[ДОЛГ+ПЕНЯ]';
+  if (pos(rsFldDEBT_FINE, s) > 0) or (pos(rsFldFINE, s) > 0) then
+  begin
+    need := 0;
+    if (dmMain.GetSettingsValue('SHOW_FINE') = '1') or (dsCustomers.FieldByName('DEBT_SUM').AsFloat > 0) then
+    begin
+      with TpFIBQuery.Create(Nil) do
+      begin
+        try
+          Database := dmMain.dbTV;
+          Transaction := dmMain.trReadQ;
+          sql.Text := 'select sum(Fine_Sum) ST from Calculate_Fine(:Customer_Id)';
+          ParamByName('Customer_Id').value := dsCustomers.FieldByName('Customer_Id').AsInteger;
+          Transaction.StartTransaction;
+          ExecQuery;
+          if (not Eof) then
+          begin
+            if not FieldByName('ST').IsNull then
+              need := FieldByName('ST').AsExtended;
+          end;
+          Close;
+          Transaction.Commit;
+        finally
+          Free;
+        end;
+      end;
+    end
+    else
+      need := 0;
+
+    s := ReplaceStr(s, rsFldFINE, FloatToStrF(need, ffFixed, 8, 2, fs));
+    if (dsCustomers.FieldByName('DEBT_SUM').AsFloat > 0) then
+      need := need + dsCustomers.FieldByName('DEBT_SUM').AsFloat;
+    s := ReplaceStr(s, rsFldDEBT_FINE, FloatToStrF(need, ffFixed, 8, 2, fs));
+  end;
+
   Result := s;
 end;
 
@@ -5392,7 +5391,11 @@ begin
       dsCustomers.Options := dsCustomers.Options - [poFetchAll];
   end;
 
-  vRED_SUMM := dmMain.GetSettingsValue('DOLG');
+  fRED_SUMM := dmMain.GetSettingsValue('DOLG');
+  fZERRO_SUMM := 0;
+  s := dmMain.GetSettingsValue('ZERO4LIST');
+  if s <> '' then
+    fZERRO_SUMM := StrToFloat(s);
 
   SetDefaultFilter;
   if dsFilter.RecordCount > 0 then
@@ -5632,6 +5635,11 @@ begin
     qry.Free;
   end;
   RefreshCurrentRecord(Self);
+end;
+
+procedure TCustomersForm.FindDataOnTab(const TabType: Integer; const DataValue: string);
+begin
+  //
 end;
 
 end.

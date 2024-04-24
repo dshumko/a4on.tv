@@ -11,7 +11,7 @@ uses
   Vcl.ActnList, Vcl.Menus,
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, amSplitter;
 
 type
   TapgCustomerSrv = class(TA4onPage)
@@ -107,7 +107,7 @@ implementation
 
 uses
   System.DateUtils,
-  DM, OnOffServicesForma, SubscrHistory, pFIBQuery, AtrCommon, MAIN, DBGridEhImpExp, TextEditForma, PersonalTarifForma;
+  DM, OnOffServicesForma, SubscrHistory, pFIBQuery, AtrCommon, MAIN, TextEditForma, PersonalTarifForma;
 
 {$R *.dfm}
 

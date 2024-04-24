@@ -10,9 +10,8 @@ uses
   Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
   DBGridEh, FIBDataSet, frxClass, pFIBDataSet, GridsEh, DBLookupEh, DBCtrlsEh, FIBDatabase, pFIBDatabase,
-  DBGridEhImpExp,
   ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBVertGridsEh,
-  CnErrorProvider;
+  CnErrorProvider, amSplitter;
 
 type
   TPaymentDocForm = class(TForm)
@@ -43,26 +42,6 @@ type
     ToolButton3: TToolButton;
     pnlTop: TPanel;
     pnlPayDocHeader: TPanel;
-    Label1: TLabel;
-    Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    dbedtPAY_DOC_NO: TDBEditEh;
-    DocDate: TDBDateTimeEditEh;
-    Panel3: TPanel;
-    Label10: TLabel;
-    Label11: TLabel;
-    Label12: TLabel;
-    LabelSUM_DIFFERENCE: TLabel;
-    DBEditL_LEAK_PRC: TDBNumberEditEh;
-    DBEditC_SUM_LEAK: TDBNumberEditEh;
-    DBEditSUM_DIFFERENCE: TDBNumberEditEh;
-    tbButtons: TToolBar;
-    tbEditDoc: TToolButton;
-    ToolButton22: TToolButton;
-    ToolButton25: TToolButton;
-    ToolButton21: TToolButton;
-    DocType: TDBLookupComboboxEh;
     pnlNotice: TPanel;
     Label14: TLabel;
     mmoNotice: TDBMemoEh;
@@ -72,8 +51,6 @@ type
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
     actQuickFilter: TAction;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
     ActPayDocPost: TAction;
     ActPayDocCancel: TAction;
     ActPayDocPrint: TAction;
@@ -104,13 +81,39 @@ type
     actErrorProceed: TAction;
     actErrorsDel: TAction;
     N3: TMenuItem;
-    dbePAY_DOC_SUM: TDBNumberEditEh;
     btnTask: TToolButton;
     actTask: TAction;
     btn3: TToolButton;
     btnQuickFilter: TToolButton;
-    ednC_SUM_LEAK_TAX: TDBNumberEditEh;
     CnErrors: TCnErrorProvider;
+    pnl1: TPanel;
+    Panel1: TPanel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    LabelSUM_DIFFERENCE: TLabel;
+    DBEditL_LEAK_PRC: TDBNumberEditEh;
+    DBEditC_SUM_LEAK: TDBNumberEditEh;
+    DBEditSUM_DIFFERENCE: TDBNumberEditEh;
+    ednC_SUM_LEAK_TAX: TDBNumberEditEh;
+    dbePAY_DOC_SUM: TDBNumberEditEh;
+    pnl2: TPanel;
+    pnlTL: TPanel;
+    pnlTR: TPanel;
+    tbButtons: TToolBar;
+    tbEditDoc: TToolButton;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton8: TToolButton;
+    DocType: TDBLookupComboboxEh;
+    Label6: TLabel;
+    DocDate: TDBDateTimeEditEh;
+    Label7: TLabel;
+    dbedtPAY_DOC_NO: TDBEditEh;
+    Label1: TLabel;
+    Label5: TLabel;
     procedure ActPayDocCancelExecute(Sender: TObject);
     procedure ActPayDocPostExecute(Sender: TObject);
     procedure ActPayDocPrintExecute(Sender: TObject);
@@ -165,6 +168,7 @@ type
     FCalcFine: Boolean;
     vPaymentSRV: Boolean;
     procedure SetPayDocId(Value: Integer);
+    procedure OpenRequest;
   public
     { Public declarations }
     property PayDocId: Integer read fPayDocId write SetPayDocId;
@@ -178,7 +182,7 @@ implementation
 uses
   DM, MAIN, AtrCommon, AtrStrUtils, PaymentForma, DBGridEhFindDlgs, PaymentEditForma, pFIBQuery, PayDocSelectForma,
   ReportPreview,
-  CF, CustomerForma;
+  CF, CustomerForma, RequestForma;
 
 {$R *.dfm}
 
@@ -801,12 +805,74 @@ begin
 end;
 
 procedure TPaymentDocForm.dbgPayDocPaymentDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
 begin
   if dsPayDocDetail.RecordCount = 0 then
     Exit;
-  if dsPayDocDetail.FieldByName('Customer_ID').IsNull then
+
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgPayDocPayment.ScreenToClient(ScrPt);
+  Cell := dbgPayDocPayment.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgPayDocPayment.Fields[Cell.X - 1].FieldName);
+  if (s = 'NOTICE') then
+    OpenRequest
+  else
+  begin
+    if dsPayDocDetail.FieldByName('Customer_ID').IsNull then
+      Exit;
+    ShowCustomer(dsPayDocDetail.FieldValues['Customer_ID']);
+  end;
+end;
+
+procedure TPaymentDocForm.OpenRequest;
+var
+  aRequest: Integer;
+  aCustomer: Integer;
+  aMode: Byte;
+Begin
+  if dsPayDocDetail.FieldByName('PAYMENT_ID').IsNull then
     Exit;
-  ShowCustomer(dsPayDocDetail.FieldValues['Customer_ID']);
+
+  // ищем заявку по номеру если есть, если нет то будем искать по номеру квитанции = номеру платежа
+
+  aRequest := -1;
+  if not dsPayDocDetail.FieldByName('RQ_ID').IsNull then
+  begin
+    aRequest := dsPayDocDetail.FieldByName('RQ_ID').AsInteger;
+  end
+  else
+  begin
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        SQL.Text := 'select r.RQ_ID from request r where r.RECEIPT = :RECEIPT';
+        ParamByName('RECEIPT').Value := dsPayDocDetail.FieldByName('PAYMENT_ID').AsString;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not Eof then
+        begin
+          if not FieldByName('RQ_ID').IsNull then
+            aRequest := FieldByName('RQ_ID').AsInteger;
+        end;
+        Close;
+        Transaction.Commit;
+      finally
+        free;
+      end;
+    end;
+  end;
+
+  if aRequest > 0 then
+  begin
+    aCustomer := dsPayDocDetail.FieldByName('CUSTOMER_ID').AsInteger;
+    aMode := 1;
+    ReguestExecute(aRequest, aCustomer, aMode);
+  end;
 end;
 
 procedure TPaymentDocForm.dbgPayDocPaymentGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -878,62 +944,18 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, false)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
 end;
 
 procedure TPaymentDocForm.ppmSaveSelectionClick(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
   inherited;
 
-  A4MainForm.SaveDialog.FileName := rsPayments;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TPaymentDocForm.ppmSelectAllClick(Sender: TObject);

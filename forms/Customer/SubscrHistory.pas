@@ -10,7 +10,7 @@ uses
   Vcl.ComCtrls, Vcl.Menus, Vcl.Buttons,
   pFIBDataSet, GridsEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEh, PrjConst, EhLibVCL,
   DBGridEhGrouping,
-  DynVarsEh;
+  DynVarsEh, amSplitter;
 
 type
   TCustSubscrHistoryForma = class(TForm)

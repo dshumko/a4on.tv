@@ -971,7 +971,7 @@ object CustomerLanForm: TCustomerLanForm
       '  , E.FLOOR_N'
       '  , E.NAME || coalesce('#39' / '#39' || E.IP, '#39#39') NAME_IP'
       '  , e.Node_Id'
-      '  , coalesce((select'
+      '  , iif((:LID <> -1), 999, coalesce((select'
       '                  min(LVL)'
       '                from GET_NODE_FLAT_LVL(e.Node_Id)'
       '                where (position(:CUSTOMER_ID in CST_LIST) > 0)'
@@ -982,23 +982,28 @@ object CustomerLanForm: TCustomerLanForm
         'ST_LIST)'
       
         '                                    where STR = :CUSTOMER_ID))),' +
-        ' 999) LVL'
+        ' 999)) LVL'
       '  from EQUIPMENT E'
       '       inner join HOUSE H on (H.HOUSE_ID = E.HOUSE_ID)'
       '       inner join STREET S on (S.STREET_ID = H.STREET_ID)'
       '  where E.EQ_TYPE = 1'
-      '        and ((exists(select'
-      '                         EC.HOUSE_ID'
-      '                       from EQUIPMENT_COVERAGE ec'
-      '                       where EC.EID = E.EID'
-      '                             and ec.House_Id = :House_Id))'
-      ''
-      '          or (exists(select'
+      '        and ('
+      '           ('
+      '             exists(select'
+      '                        EC.HOUSE_ID'
+      '                      from EQUIPMENT_COVERAGE ec'
+      '                      where EC.EID = E.EID'
+      '                            and (ec.House_Id = :House_Id))'
+      '           )'
+      '           or ('
+      '            exists(select'
       '                         L.EQ_ID'
       '                       from TV_LAN L'
       '                       where L.CUSTOMER_ID = :CUSTOMER_ID'
-      '                             and L.EQ_ID = E.EID)))'
-      'order by 1 desc, 3')
+      '                             and L.EQ_ID = E.EID)'
+      '           )'
+      '        )'
+      '  order by 1 desc, 3')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -1198,11 +1203,11 @@ object CustomerLanForm: TCustomerLanForm
       '  , case p.Con'
       '      when 0 then '#39#1054#39
       '      when 1 then '#39#1040#39
-      '      else '#39#39
-      '    end whose'
       
-        '  , coalesce(c.ACCOUNT_NO, iif( p.Con = 0, e.Name, null)) WHOSE_' +
-        'NAME'
+        '      else iif(not ((c.ACCOUNT_NO is null) and (e.Name is null))' +
+        ', '#39#1056#1077#1082#1086#1084#1077#1085#1076#1091#1077#1090#1089#1103' '#1087#1086#1088#1090' '#1086#1095#1080#1089#1090#1080#1090#1100' '#1080' '#1087#1088#1086#1087#1080#1089#1072#1090#1100' '#1079#1072#1085#1086#1074#1086#39', '#39#39')'
+      '    end whose'
+      '  , coalesce(c.ACCOUNT_NO, e.Name, null) WHOSE_NAME'
       '  , coalesce(c.HIS_COLOR, et.O_DIMENSION) as COLOR'
       '  , p.Con_Id  '
       '  , p.Wid'
@@ -1214,13 +1219,13 @@ object CustomerLanForm: TCustomerLanForm
       '       left outer join VLANS v on (v.V_ID = p.Vlan_Id)'
       
         '       left outer join tv_lan t on (t.Eq_Id = p.Eid and t.Port =' +
-        ' p.Port and p.Con = 1)'
+        ' p.Port)  -- and p.Con = 1'
       
         '       left outer join CUSTOMER C on (t.customer_id = c.customer' +
         '_id)'
       
-        '       left outer join equipment e on (e.Eid = p.Con_Id and p.Co' +
-        'n = 0)'
+        '       left outer join equipment e on (e.Eid = p.Con_Id)  -- and' +
+        ' p.Con = 0'
       
         '       left outer join objects et on (e.eq_group = et.o_id and o' +
         '.O_TYPE = 7)'

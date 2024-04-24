@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.Menus,
   DBGridEh, GridsEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, SynEditHighlighter, SynHighlighterSQL, SynEdit,
-  SynDBEdit, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  SynDBEdit, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TMonDBForm = class(TForm)

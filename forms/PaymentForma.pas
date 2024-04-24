@@ -12,7 +12,7 @@ uses
   DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
   CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, MemTableDataEh, MemTableEh, PrjConst, EhLibVCL,
   PropFilerEh,
-  PropStorageEh, BaseForms, A4onTypeUnit, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
+  PropStorageEh, BaseForms, A4onTypeUnit, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter;
 
 type
 
@@ -86,6 +86,11 @@ type
     CnErrors: TCnErrorProvider;
     lbl2: TLabel;
     dbtxtOnDebt: TDBText;
+    pnlPayInput: TPanel;
+    Label2: TLabel;
+    cbbPayTypeStr: TDBLookupComboboxEh;
+    dsPT: TpFIBDataSet;
+    srcPT: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCalcFineClick(Sender: TObject);
@@ -108,6 +113,7 @@ type
     procedure N1Click(Sender: TObject);
     procedure dbgFineDblClick(Sender: TObject);
     procedure dsMemPaymentCalcFields(DataSet: TDataSet);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     FCustomerRecord: TCustomerInfo;
@@ -122,6 +128,9 @@ type
     FCurrentDate: TDate;
     FForForm: string;
     FEnterSecondPress: Boolean;
+    FIsLTV: Boolean;
+    FRQ_ID: Integer;
+    FPayInputShow: Boolean;
     procedure FindCustomer(const lic: string; const code: string; id: Integer);
     function InsertPayment(const NeedPrintCheck: Boolean): Boolean;
     function SelectPayDoc: int64;
@@ -137,6 +146,8 @@ type
     procedure WriteScaleFix(Writer: TWriter);
     procedure ReadScaleFix(Reader: TReader);
     procedure PrintReportIfNeed(const NeedPrint: Boolean);
+    procedure CheckAndSetContract(const CID: Integer);
+    procedure CheckRequestPay(const CID: Integer);
   protected
     procedure DefineProperties(Filer: TFiler); override;
     procedure Loaded; override;
@@ -145,6 +156,7 @@ type
     property CurrentDate: TDate read FCurrentDate write FCurrentDate;
     property ForForm: String write SetForForm;
     property PayDoc_id: int64 write SetPayDoc_Id;
+    property RQ_ID: Integer write FRQ_ID;
   end;
 
 var
@@ -152,7 +164,7 @@ var
 
 function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; const aPayment_id: int64;
   var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1;
-  const aFromForm: string = ''): int64;
+  const aFromForm: string = ''; const aRQ_ID: Integer = -1): int64;
 
 implementation
 
@@ -201,7 +213,7 @@ end;
 
 function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; const aPayment_id: int64;
   var aPayDate: TDate; var aPaySum: Currency; const aNotice: string = ''; const aSrv: Integer = -1;
-  const aFromForm: string = ''): int64;
+  const aFromForm: string = ''; const aRQ_ID: Integer = -1): int64;
 var
   pf: TPaymentForm;
   OpenedPayDocs: string;
@@ -211,15 +223,18 @@ begin
   pf := TPaymentForm.Create(application);
   try
     pf.PayDoc_id := aPayDoc_id;
-
+    pf.RQ_ID := aRQ_ID;
     pf.dsMemPayment.Open;
     pf.dsMemPayment.EmptyTable;
     pf.dsMemPayment.Insert;
     if aPayment_id <> -1 then
-      pf.dsMemPayment['Payment_id'] := aPayment_id;
+      pf.dsMemPayment['Payment_id'] := aPayment_id
+    else
+      pf.dsMemPayment['PAY_TYPE_STR'] := 'CASH';
     pf.dsMemPayment['Customer_Id'] := aCustomer_id;
     pf.dsMemPayment['Pay_sum'] := aPaySum;
     pf.dsMemPayment['NOTICE'] := aNotice;
+
     if (aSrv > -1) and (pf.pnlSRV.Visible) then
       pf.dsMemPayment['PAYMENT_SRV'] := aSrv;
     pf.pnlSearchAbonent.Visible := (aCustomer_id = -1);
@@ -337,10 +352,27 @@ begin
   FPayDoc_id := Value;
 end;
 
+procedure TPaymentForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if dsPT.Active then
+    dsPT.Close;
+  if dsFine.Active then
+    dsFine.Close;
+  if dsPaymentType.Active then
+    dsPaymentType.Close;
+  if dsPaymentSRV.Active then
+    dsPaymentSRV.Close;
+  if dsPaymentDocs.Active then
+    dsPaymentDocs.Close;
+end;
+
 procedure TPaymentForm.FormCreate(Sender: TObject);
+var
+  s: string;
 begin
   // расчитываем ли пеню
   FCalculateFine := (dmMain.GetSettingsValue('SHOW_FINE') = '1');
+
   FPayDoc_id := -1;
   FDatePay := Now;
   FSumPay := 0;
@@ -355,10 +387,12 @@ begin
   actShowPD.Checked := False;
   actShtrih.Checked := False;
   actManyPayment.Checked := False;
+
+  s := dmMain.GetCompanyValue('NAME');
+  FIsLTV := s.Contains('ЛТВ');
 end;
 
 procedure TPaymentForm.CalculateFine;
-
 var
   vFine: Currency;
 begin
@@ -383,7 +417,7 @@ begin
 
       while not dsFine.eof do
       begin
-        vFine := vFine + dsFine.FieldByName('fine_sum').AsCurrency;
+        vFine := vFine + dsFine.FieldByName('FINE_SUM').AsCurrency;
         dsFine.Next;
       end;
       dsMemPayment['FINE_SUM'] := vFine;
@@ -427,10 +461,11 @@ begin
   if FCalculateFine then
     CalculateFine;
 
+  if (FIsLTV) and (dsMemPayment['Customer_Id'] > -1) then
+    CheckRequestPay(dsMemPayment['Customer_Id']);
 end;
 
 procedure TPaymentForm.FormShow(Sender: TObject);
-
 var
   vSF: string;
   vShowPaymentType: Boolean;
@@ -451,6 +486,14 @@ begin
   vPaymentSRV := (vSF = '1');
 
   pnlSRV.Visible := vPaymentSRV;
+
+  if vPaymentSRV then
+  begin
+    // проверим нужно ли фильтровать услуги
+    vSF := dmMain.GetSettingsValue('PAY_SRV_FILTER');
+    if (not vSF.IsEmpty) then
+      dsPaymentSRV.ParamByName('FilterSRV').AsString := ' ( ' + vSF + ' ) and ';
+  end;
   dsPaymentSRV.Active := vPaymentSRV;
 
   pnlFine.Visible := FCalculateFine;
@@ -492,6 +535,14 @@ begin
     actAdd.Visible := (dmMain.GetSettingsValue('HIDEPAYADD') <> '1');
   if actPrint.Visible then
     actPrint.Visible := (dmMain.GetSettingsValue('HIDEPAYPRINT') <> '1');
+
+  FPayInputShow := (dmMain.GetSettingsValue('PAY_INPUT_SHOW') = '1');
+  pnlPayInput.Visible := FPayInputShow;
+  dsPT.Active := FPayInputShow;
+
+  // ЛТВ
+  // if (FIsLTV) and (dsMemPayment['Customer_Id'] > -1) then
+  // CheckRequestPay(dsMemPayment['Customer_Id']);
 end;
 
 procedure TPaymentForm.btnCalcFineClick(Sender: TObject);
@@ -582,6 +633,7 @@ procedure TPaymentForm.actAddExecute(Sender: TObject);
 begin
   if FProcessPay then
     Exit;
+
   if VarIsNull(dePaySum.Value) or VarIsEmpty(dePaySum.Value) or
   // проверим можно ли вносить 0 как платеж
     ((dePaySum.Value = 0) and (dmMain.GetSettingsValue('PAY_ZERRO') <> '1')) or
@@ -747,7 +799,11 @@ begin
         else
           ChequeInfo.ADRES := PWCHAR(Format(rsPrintCheckAdrWOF, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO]));
 
-        ChequeInfo.Notify := PWCHAR(AtrStrUtils.CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry));
+        if (dmMain.GetSettingsValue('EMAIL_CHECK') = '1') then
+          ChequeInfo.Notify := PWCHAR(FCustomerRecord.Email)
+        else
+          ChequeInfo.Notify := PWCHAR(AtrStrUtils.CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry));
+
         ChequeInfo.Summa := Summa;
         if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
           ChequeInfo.Balance := -1 * FCustomerRecord.Debt_sum
@@ -945,7 +1001,6 @@ begin
       ParamByName('notice').Clear;
 
     ParamByName('customer_id').AsInt64 := dsMemPayment['customer_id'];
-
     // проверим номер платежного документа
     // и если его нет, то попробуем создать новый
     AR := (not dsMemPayment.FieldByName('pay_doc_id').IsNull) and (dsMemPayment['pay_doc_id'] > -1);
@@ -1000,9 +1055,10 @@ begin
     else
       ParamByName('EXT_PAY_ID').Clear;
 
-    ParamByName('PAY_TYPE_STR').AsString := 'CASH';
-    ParamByName('FISCAL').AsInteger := 0;
-    // Признак без пробития чека
+    ParamByName('FISCAL').AsInteger := 0; // Признак без пробития чека
+
+    if FRQ_ID > 0 then
+      ParamByName('RQ_ID').AsInteger := FRQ_ID;
 
     if NeedPrintCheck then
     begin
@@ -1020,10 +1076,17 @@ begin
           ParamByName('fine_sum').AsCurrency := ci.Peni / 100;
 
         // ShowMessage(string(ci.PayType));
-        if (ci.PayType = 1) then
-          s := 'CARD'
+        s := 'CASH';
+        if ci.CheckN <> '0' then
+        begin
+          if (ci.PayType = 1) then
+            s := 'CARD';
+        end
         else
-          s := 'CASH';
+        begin
+          if not dsMemPayment.FieldByName('PAY_TYPE_STR').IsNull then
+            s := dsMemPayment['PAY_TYPE_STR'];
+        end;
         ParamByName('PAY_TYPE_STR').AsString := s;
 
         Transaction.StartTransaction;
@@ -1046,6 +1109,13 @@ begin
         dsMemPayment.Edit;
       dsMemPayment['PAYMENT_ID'] := FieldByName('PAYMENT_ID').AsInteger;
       dsMemPayment.Post;
+
+      if FIsLTV then
+      begin
+        // Для ЛТВ проверим наличие договоров и пометим если нет
+        CheckAndSetContract(dsMemPayment['customer_id']);
+      end;
+
     end;
 
     PrintReportIfNeed(PrintReport);
@@ -1200,7 +1270,8 @@ begin
       end
       else
       begin
-        if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+        if (ActiveControl is TDBMemoEh) and
+          (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
         begin
           go := False;
           FEnterSecondPress := true;
@@ -1281,6 +1352,84 @@ end;
 procedure TPaymentForm.SetForForm(Value: String);
 begin
   FForForm := Value;
+end;
+
+procedure TPaymentForm.CheckAndSetContract(const CID: Integer);
+var
+  q: TpFIBQuery;
+  NeedUpdate: Boolean;
+begin
+  q := TpFIBQuery.Create(Nil);
+  try
+    q.DataBase := dmMain.dbTV;
+    q.Transaction := dmMain.trReadQ;
+    q.SQL.Text := 'select count(*) CNT from Subscr_Serv ss ' +
+      ' where ss.Customer_Id = :CID and ((ss.State_Sgn = 1) or (ss.State_Sgn = 0 and ss.State_Srv = -3)) ' +
+      ' and ss.Serv_Id <> 819519 ' +
+      ' and (not (coalesce(ss.Contract, '''') similar to ''(_){3,4} \- [[:DIGIT:]]{4} [[:DIGIT:]]{6}'' escape ''\'')) '
+      + ' and exists( select c.Juridical from customer c where c.Customer_Id = :CID and coalesce(c.Juridical, 0) <> 1)';
+    q.ParamByName('CID').AsInteger := CID;
+    q.Transaction.StartTransaction;
+    q.ExecQuery;
+    NeedUpdate := q.FieldByName('CNT').Value > 0;
+    q.Close;
+    q.Transaction.Commit;
+  finally
+    q.Free;
+  end;
+  if not NeedUpdate then
+    Exit;
+
+  application.MessageBox('Необходимо перезаключить договор', 'Внимание!', MB_OK + MB_ICONWARNING);
+
+  q := TpFIBQuery.Create(Nil);
+  try
+    q.DataBase := dmMain.dbTV;
+    q.Transaction := dmMain.trWriteQ;
+    q.SQL.Text := 'update Subscr_Serv ss set ss.Contract = :PREF ' +
+      ' where ss.Customer_Id = :CID and ((ss.State_Sgn = 1) or (ss.State_Sgn = 0 and ss.State_Srv = -3)) ' +
+      ' and ss.Serv_Id <> 819519' + ' and coalesce(ss.Contract, '''') <> :PREF' +
+      ' and (not (coalesce(ss.Contract, '''') similar to ''(_){3,4} \- [[:DIGIT:]]{4} [[:DIGIT:]]{6}'' escape ''\'')) '
+      + ' and exists( select c.Juridical from customer c where c.Customer_Id = :CID and coalesce(c.Juridical, 0) <> 1) ';
+    q.ParamByName('CID').AsInteger := CID;
+    q.ParamByName('PREF').AsString := 'Ар. -';
+    q.Transaction.StartTransaction;
+    q.ExecQuery;
+    q.Transaction.Commit;
+  finally
+    q.Free;
+  end;
+end;
+
+procedure TPaymentForm.CheckRequestPay(const CID: Integer);
+var
+  q: TpFIBQuery;
+  s: string;
+begin
+  s := '';
+  q := TpFIBQuery.Create(Nil);
+  try
+    q.DataBase := dmMain.dbTV;
+    q.Transaction := dmMain.trReadQ;
+    q.SQL.Text := 'select list(RQ_ID) RQ_LIST from ( select r.RQ_ID , coalesce(Get_Request_Money(r.Rq_Id), 0) RQ_FEE '//
+      + ' , coalesce((select sum(p.Pay_Sum) from payment p where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0) RQ_PAY '
+      + ' , coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0) PAY_SRV '
+      + ' from REQUEST R where r.Rq_Customer = :CID) where RQ_FEE + PAY_SRV <> RQ_PAY';
+    q.ParamByName('CID').AsInteger := CID;
+    q.Transaction.StartTransaction;
+    q.ExecQuery;
+    if not q.FieldByName('RQ_LIST').IsNull then
+      s := q.FieldByName('RQ_LIST').AsString;
+    q.Close;
+    q.Transaction.Commit;
+  finally
+    q.Free;
+  end;
+  if s.IsEmpty then
+    Exit;
+  s := 'Необходимо внести оплату по заявкам: ' + #13#10 + s;
+  Panel6.Caption := s;
+  application.MessageBox(PWideChar(s), 'Внимание!', MB_OK + MB_ICONWARNING);
 end;
 
 end.

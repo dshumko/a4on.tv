@@ -39,11 +39,10 @@ object EPGViewForm: TEPGViewForm
     object Label2: TLabel
       Left = 0
       Top = 0
-      Width = 185
+      Width = 84
       Height = 13
       Align = alTop
       Caption = ' '#1057#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074
-      ExplicitWidth = 84
     end
     object dbgChannels: TDBGridEh
       Left = 0
@@ -112,11 +111,10 @@ object EPGViewForm: TEPGViewForm
     object Label1: TLabel
       Left = 0
       Top = 0
-      Width = 713
+      Width = 108
       Height = 13
       Align = alTop
       Caption = #1056#1072#1089#1087#1080#1089#1072#1085#1080#1077' '#1087#1088#1086#1075#1088#1072#1084#1084
-      ExplicitWidth = 108
     end
     object dbgEPG: TDBGridEh
       Left = 0

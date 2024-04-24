@@ -29,6 +29,8 @@ object DVBStreamForm: TDVBStreamForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 452
+    ExplicitWidth = 860
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -41,10 +43,15 @@ object DVBStreamForm: TDVBStreamForm
       Width = 672
       Anchors = [akLeft, akRight, akBottom]
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 100
+      ExplicitTop = 6
+      ExplicitWidth = 672
     end
     inherited bbCancel: TBitBtn
       Left = 778
       Top = 6
+      ExplicitLeft = 778
+      ExplicitTop = 6
     end
   end
   object pnlChannels: TPanel

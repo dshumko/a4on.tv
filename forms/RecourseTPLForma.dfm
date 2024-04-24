@@ -2,27 +2,33 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   Caption = #1058#1080#1087#1099' '#1086#1073#1088#1072#1097#1077#1085#1080#1081
   ClientHeight = 508
   ClientWidth = 758
+  ExplicitWidth = 774
+  ExplicitHeight = 547
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 0
-    Top = 327
+    Top = 328
     Width = 758
     Height = 3
     Cursor = crVSplit
     Align = alTop
+    ExplicitTop = 327
   end
   inherited splPG: TSplitter
     Top = 145
     Width = 758
+    ExplicitTop = 145
+    ExplicitWidth = 758
   end
   inherited dbGrid: TDBGridEh
-    Top = 148
+    Top = 149
     Width = 758
     Height = 179
     Align = alTop
     AllowedOperations = []
     TitleParams.MultiTitle = False
+    OnGetCellParams = dbGridGetCellParams
     Columns = <
       item
         CellButtons = <>
@@ -41,10 +47,22 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Width = 572
+      end
+      item
+        CellButtons = <>
+        Checkboxes = True
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'O_DELETED'
+        Footers = <>
+        Title.Caption = #1059#1076#1072#1083#1077#1085#1086
+        Title.TitleButton = True
+        Width = 49
       end>
   end
   inherited tlbMain: TToolBar
     Width = 758
+    ExplicitWidth = 758
     inherited tbOk: TToolButton
       Visible = False
       OnClick = tbOkClick
@@ -62,9 +80,9 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   end
   object pnlGrid: TPanel [4]
     Left = 0
-    Top = 330
+    Top = 331
     Width = 758
-    Height = 178
+    Height = 177
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
@@ -72,7 +90,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       Left = 0
       Top = 25
       Width = 758
-      Height = 153
+      Height = 152
       Align = alClient
       DataSource = srcTPL
       DynProps = <>
@@ -197,6 +215,8 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   inherited pnlEdit: TPanel
     Width = 758
     Height = 120
+    ExplicitWidth = 758
+    ExplicitHeight = 120
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -216,11 +236,16 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       Top = 89
       Width = 562
       TabOrder = 2
+      ExplicitLeft = 92
+      ExplicitTop = 89
+      ExplicitWidth = 562
     end
     inherited btnCancelLink: TBitBtn
       Left = 665
       Top = 89
-      TabOrder = 3
+      TabOrder = 4
+      ExplicitLeft = 665
+      ExplicitTop = 89
     end
     object edtName: TDBEditEh
       Left = 92
@@ -253,6 +278,19 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       TabOrder = 1
       Visible = True
       WantReturns = True
+    end
+    object chkDel: TDBCheckBoxEh
+      Left = 5
+      Top = 93
+      Width = 80
+      Height = 17
+      Caption = #1059#1076#1072#1083#1077#1085#1086
+      DataField = 'O_DELETED'
+      DataSource = srcDataSource
+      DynProps = <>
+      TabOrder = 3
+      ValueChecked = '1'
+      ValueUnchecked = '0'
     end
   end
   inherited srcDataSource: TDataSource
@@ -303,14 +341,15 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       'UPDATE OBJECTS'
       'SET '
       '    O_NAME = :O_NAME,'
-      '    O_DESCRIPTION = :O_DESCRIPTION'
+      '    O_DESCRIPTION = :O_DESCRIPTION,'
+      '    O_DELETED = coalesce(:O_DELETED, 0)'
       'WHERE'
       '    O_ID = :OLD_O_ID and O_TYPE = 8'
       '    ')
     DeleteSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
-      '    O_DELETED = 1'
+      '    O_DELETED = iif(O_DELETED = 0, 1, 0)'
       'WHERE'
       '    O_ID = :OLD_O_ID and O_TYPE = 8'
       '    ')

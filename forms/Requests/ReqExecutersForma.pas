@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, GridsEh, EhLibFIB, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, RxPlacemnt,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TReqExecutorsForm = class(TForm)

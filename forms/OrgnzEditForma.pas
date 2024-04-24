@@ -111,6 +111,8 @@ end;
 procedure TOrgnzEditForm.FormShow(Sender: TObject);
 begin
   dsBANKS.Open;
+  if dsOrgan.Active and (not dsOrgan.FieldByName('VATG_ID').IsNull) then
+    dsVATG.ParamByName('VATG_ID').AsInteger := dsOrgan.FieldByName('VATG_ID').AsInteger;
   dsVATG.Open;
 end;
 

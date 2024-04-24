@@ -14,7 +14,7 @@ uses
   GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB,
   EhLibJPegImage,
   PrjConst, CnErrorProvider, EhLibVCL, EhLibGIFImage, EhLibPNGImage, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
-  DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh;
+  DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TChannelsForm = class(TGridForm)

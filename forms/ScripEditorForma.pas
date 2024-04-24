@@ -8,7 +8,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ImgList, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.Mask, Vcl.ActnList, Vcl.Buttons, Vcl.Menus,
-  fs_tree, fs_synmemo, fs_iinterpreter, DBCtrlsEh, SynEditHighlighter, PrjConst, CnErrorProvider;
+  fs_tree, fs_synmemo, fs_iinterpreter, DBCtrlsEh, SynEditHighlighter, PrjConst, CnErrorProvider, amSplitter;
 
 type
   TScripEditorForm = class(TForm)

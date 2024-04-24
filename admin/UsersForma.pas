@@ -17,7 +17,7 @@ uses
   System.ImageList,
 {$ENDIF}
   System.Actions,
-  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh;
+  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TUsersForm = class(TForm)
@@ -979,7 +979,7 @@ begin
 
   if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('Right_Id').AsInteger in [ // rght_Customer_View,
     rght_Customer_Only_ONE, rght_Customer_PersonalData, rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner,
-    rght_OrdersTP_Today]) then
+    rght_OrdersTP_Today, rght_Recourses_TodayOnly]) then
     Background := clRed
   else
     Background := clWindow;

@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.ComCtrls,
   FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, OkCancel_frame, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh;
+  DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TIPTVGroupForm = class(TForm)

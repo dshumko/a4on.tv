@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, dnSplitter;
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TRequestTypeForm = class(TGridForm)
@@ -64,7 +64,7 @@ type
     actQuickRes: TAction;
     dsResult: TpFIBDataSet;
     srcResult: TDataSource;
-    dnspltr1: TdnSplitter;
+    dnspltr1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);

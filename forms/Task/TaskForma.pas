@@ -639,7 +639,7 @@ begin
     Exit;
   if (dsTask.FieldByNAme('ID').IsNull) or (dsMSG.FieldByNAme('ID').IsNull) then
     Exit;
-  if ((dmMain.User <> dsMSG['Added_By']) and (dmMain.User <> 'SYSDBA')) then
+  if ((dmMain.User <> dsMSG['Added_By']) and (not dmMain.UserIsAdmin)) then
     Exit;
 
   pgcMSG.ActivePage := tsEdit;
@@ -674,7 +674,7 @@ begin
     Exit;
 
   if ((dsTask.FieldByNAme('ADDED_BY').IsNull) or (UpperCase(dsTask['ADDED_BY']) = dmMain.User) or
-    (dmMain.User = 'SYSDBA')) then
+    (dmMain.UserIsAdmin)) then
   begin
     FCanEdit := True;
 

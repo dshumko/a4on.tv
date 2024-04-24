@@ -4,7 +4,7 @@ object RequestWorksForm: TRequestWorksForm
   ActiveControl = cbAllMaterials
   Caption = #1056#1072#1073#1086#1090#1099' '#1074' '#1079#1072#1103#1074#1082#1077
   ClientHeight = 368
-  ClientWidth = 663
+  ClientWidth = 749
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,11 +23,12 @@ object RequestWorksForm: TRequestWorksForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 663
+    Width = 749
     Height = 25
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 663
     object cbAllMaterials: TCheckBox
       Left = 5
       Top = 0
@@ -42,15 +43,16 @@ object RequestWorksForm: TRequestWorksForm
   object Panel2: TPanel
     Left = 0
     Top = 331
-    Width = 663
+    Width = 749
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 663
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
-      Width = 663
+      Width = 749
       Height = 37
       Align = alClient
       TabOrder = 0
@@ -64,7 +66,7 @@ object RequestWorksForm: TRequestWorksForm
         Margins.Bottom = 0
       end
       inherited bbOk: TBitBtn
-        Left = 498
+        Left = 584
         Top = 6
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
@@ -73,7 +75,7 @@ object RequestWorksForm: TRequestWorksForm
         ExplicitTop = 6
       end
       inherited bbCancel: TBitBtn
-        Left = 579
+        Left = 665
         Top = 6
         Caption = #1047#1072#1082#1088#1099#1090#1100
         ExplicitLeft = 579
@@ -84,11 +86,12 @@ object RequestWorksForm: TRequestWorksForm
   object Panel3: TPanel
     Left = 0
     Top = 25
-    Width = 663
+    Width = 749
     Height = 306
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 663
     object Splitter1: TSplitter
       Left = 185
       Top = 0
@@ -98,7 +101,7 @@ object RequestWorksForm: TRequestWorksForm
     object dbGrid: TDBGridEh
       Left = 188
       Top = 0
-      Width = 475
+      Width = 561
       Height = 306
       Align = alClient
       DataSource = srcDataSource
@@ -157,6 +160,18 @@ object RequestWorksForm: TRequestWorksForm
           Title.Caption = #1062#1077#1085#1072' '#1096#1090'./'#1095#1072#1089#1072
         end
         item
+          CellButtons = <>
+          Checkboxes = True
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'NOT_CALC'
+          Footers = <>
+          Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089#1083'.'
+          Title.TitleButton = True
+          Visible = False
+          Width = 49
+        end
+        item
           AutoFitColWidth = False
           CellButtons = <>
           DynProps = <>
@@ -174,7 +189,7 @@ object RequestWorksForm: TRequestWorksForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          Width = 131
+          Width = 146
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -225,7 +240,7 @@ object RequestWorksForm: TRequestWorksForm
     UpdateSQL.Strings = (
       
         'execute procedure REQUEST_WORKS_IUD(:RQ_ID, :W_ID, :W_QUANT, :W_' +
-        'TIME, :W_COST, :NOTICE, 1)')
+        'TIME, :W_COST, :NOTICE, 1, :NOT_CALC)')
     DeleteSQL.Strings = (
       
         'execute procedure REQUEST_WORKS_IUD(:RQ_ID, :W_ID, :W_QUANT, :W_' +
@@ -233,7 +248,7 @@ object RequestWorksForm: TRequestWorksForm
     InsertSQL.Strings = (
       
         'execute procedure REQUEST_WORKS_IUD(:RQ_ID, :W_ID, :W_QUANT, :W_' +
-        'TIME, :W_COST, :NOTICE, 0)')
+        'TIME, :W_COST, :NOTICE, 0, :NOT_CALC)')
     SelectSQL.Strings = (
       'select'
       '    W.W_ID'
@@ -242,6 +257,7 @@ object RequestWorksForm: TRequestWorksForm
       '  , R.W_TIME'
       '  , W.W_TIME as R_TIME'
       '  , R.NOTICE'
+      '  , coalesce(r.NOT_CALC, 0) NOT_CALC'
       
         '  , coalesce(r.w_cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, w.W_C' +
         'ost,'

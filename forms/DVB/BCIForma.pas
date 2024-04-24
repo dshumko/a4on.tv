@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
   PropFilerEh, CnErrorProvider, PropStorageEh, DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh,
-  FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery;
+  FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, amSplitter;
 
 type
   TBCIForm = class(TForm)

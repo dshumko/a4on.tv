@@ -502,11 +502,6 @@ object dmMain: TdmMain
     Left = 563
     Top = 368
   end
-  object frxFIBComponents1: TfrxFIBComponents
-    DefaultDatabase = dbTV
-    Left = 694
-    Top = 38
-  end
   object frxADOComponents1: TfrxADOComponents
     Left = 691
     Top = 84
@@ -616,12 +611,28 @@ object dmMain: TdmMain
       '                    list(cc.Cc_Value)'
       '                  from Customer_Contacts cc'
       '                  where cc.Customer_Id = c.Customer_Id'
-      
-        '                        and cc.Cc_Type = 1), c.MOBILE_PHONE, '#39#39')' +
-        ' as MOBILE'
+      '                        and cc.Cc_Type = 1'
+      '                        @@ONLY_NOTYFY% @'
+      '               ), c.MOBILE_PHONE, '#39#39') as MOBILE'
       
         '    , coalesce(a.Area_Name||coalesce('#39'. '#39'||sa.Subarea_Name, '#39#39'),' +
         ' '#39#39') as City'
+      '    , coalesce((select'
+      
+        '                    list(cc.Cc_Value||iif(coalesce(cc.Cc_Notice,' +
+        #39#39') <> '#39#39', '#39' ('#39'||cc.Cc_Notice||'#39')'#39', '#39#39'))'
+      '                  from Customer_Contacts cc'
+      '                  where cc.Customer_Id = c.Customer_Id'
+      '                        and cc.Cc_Type = 1 @@ONLY_NOTYFY% @'
+      '               ), '#39#39') as MOBILE_WN'
+      '    , coalesce((select first 1'
+      '                    cc.Cc_Value'
+      '                  from Customer_Contacts cc'
+      '                  where cc.Customer_Id = c.Customer_Id'
+      '                        and cc.Cc_Type = 2'
+      
+        '                  order by cc.Cc_Notify desc), c.EMAIL, '#39#39') as E' +
+        'MAIL                   '
       'FROM CUSTOMER C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
@@ -657,6 +668,8 @@ object dmMain: TdmMain
       
         '    , coalesce(a.Area_Name||coalesce('#39'. '#39'||sa.Subarea_Name, '#39#39'),' +
         ' '#39#39') as City'
+      '    , '#39#39' as MOBILE_WN'
+      '    , '#39#39' as EMAIL    '
       'FROM NODES C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
@@ -714,5 +727,10 @@ object dmMain: TdmMain
   object frxPDFObject1: TfrxPDFObject
     Left = 704
     Top = 480
+  end
+  object frxFIBComponents1: TfrxFIBComponents
+    DefaultDatabase = dbTV
+    Left = 696
+    Top = 32
   end
 end

@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrjConst,
-  FIBDatabase, pFIBDatabase;
+  FIBDatabase, pFIBDatabase, amSplitter;
 
 type
   TReqMaterialsForm = class(TForm)
@@ -36,6 +36,7 @@ type
     procedure dsReqMaterialsBeforePost(DataSet: TDataSet);
     procedure srcDataSourceUpdateData(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure OkCancelFrame1bbCancelClick(Sender: TObject);
   private
     { Private declarations }
     FReadOnly: Boolean;
@@ -43,6 +44,7 @@ type
     fVisibleCost: Boolean;
     procedure SetRequest(const Value: Integer);
     procedure SetEditMode(const Value: Boolean);
+    procedure SaveAndExit;
   public
     { Public declarations }
     property ReadOnlyMode: Boolean read FReadOnly write SetEditMode;
@@ -152,7 +154,7 @@ end;
 procedure TReqMaterialsForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
-    OkCancelFrame1bbOkClick(Sender);
+    SaveAndExit;
 end;
 
 procedure TReqMaterialsForm.FormShow(Sender: TObject);
@@ -187,10 +189,14 @@ begin
   dsReqMaterials.Open;
 end;
 
+procedure TReqMaterialsForm.OkCancelFrame1bbCancelClick(Sender: TObject);
+begin
+  SaveAndExit;
+end;
+
 procedure TReqMaterialsForm.OkCancelFrame1bbOkClick(Sender: TObject);
 begin
-  OkCancelFrame1.actExitExecute(Sender);
-  ModalResult := mrOk;
+  SaveAndExit;
 end;
 
 procedure TReqMaterialsForm.srcDataSourceUpdateData(Sender: TObject);
@@ -245,6 +251,17 @@ begin
     else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'RM_NOTICE') then
       dbGrid.Columns[i].ReadOnly := FReadOnly;
   end;
+end;
+
+procedure TReqMaterialsForm.SaveAndExit;
+begin
+  if (srcDataSource.DataSet.State in [dsInsert, dsEdit]) then
+  begin
+    srcDataSource.DataSet.Post;
+  end;
+
+  OkCancelFrame1.actExitExecute(nil);
+  ModalResult := mrOk;
 end;
 
 end.

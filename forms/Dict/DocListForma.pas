@@ -12,7 +12,7 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  Vcl.Mask, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
+  Vcl.Mask, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, amSplitter;
 
 type
   TDocListForm = class(TGridForm)
@@ -64,6 +64,13 @@ type
     miNew: TMenuItem;
     miEdit: TMenuItem;
     miN2: TMenuItem;
+    mmDoc: TMainMenu;
+    miDL: TMenuItem;
+    miCustHist: TMenuItem;
+    miFindCustomer: TMenuItem;
+    miViewDoc: TMenuItem;
+    miDelete: TMenuItem;
+    miN3: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);

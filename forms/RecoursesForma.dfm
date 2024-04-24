@@ -13,7 +13,7 @@ inherited RecoursesForm: TRecoursesForm
   end
   inherited dbGrid: TDBGridEh
     Width = 739
-    Height = 222
+    Height = 221
     AllowedOperations = [alopInsertEh, alopUpdateEh, alopAppendEh]
     FooterRowCount = 1
     STFilter.InstantApply = False
@@ -260,20 +260,20 @@ inherited RecoursesForm: TRecoursesForm
       Hint = #1048#1079#1084#1077#1085#1080#1090#1100' '#1086#1073#1088#1072#1097#1077#1085#1080#1077
       OnExecute = actEditExecute
     end
-    object actDateFilter: TAction
+    object actDateFilter: TAction [5]
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1076#1072#1090#1077
       ImageIndex = 1
       ShortCut = 16452
       OnExecute = actDateFilterExecute
     end
-    object actFilterCustomer: TAction
+    object actFilterCustomer: TAction [6]
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1089#1087#1080#1089#1082#1077
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       ImageIndex = 9
       OnExecute = actFilterCustomerExecute
     end
   end
-  object dsRecourses: TpFIBDataSet
+  object dsRecourses: TpFIBDataSet [8]
     DeleteSQL.Strings = (
       'DELETE FROM RECOURSE WHERE (RC_ID = :OLD_RC_ID)')
     SelectSQL.Strings = (
@@ -295,7 +295,7 @@ inherited RecoursesForm: TRecoursesForm
       
         'where r.Added_on between :start_date and dateadd(1 day to :end_d' +
         'ate)'
-      'and (@@owned%1=1@)'
+      '@@owned%@'
       'order by r.Added_on desc')
     AutoCalcFields = False
     Transaction = dmMain.trRead
@@ -308,7 +308,7 @@ inherited RecoursesForm: TRecoursesForm
     dcForceMasterRefresh = True
     oFetchAll = True
   end
-  object pmPeriod: TPopupMenu
+  object pmPeriod: TPopupMenu [9]
     Left = 225
     Top = 201
     object N1: TMenuItem
@@ -328,13 +328,13 @@ inherited RecoursesForm: TRecoursesForm
       OnClick = N3Click
     end
   end
-  object mtRecourses: TMemTableEh
+  object mtRecourses: TMemTableEh [10]
     Params = <>
     DataDriver = drvRecourses
     Left = 395
     Top = 205
   end
-  object drvRecourses: TpFIBDataDriverEh
+  object drvRecourses: TpFIBDataDriverEh [11]
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>

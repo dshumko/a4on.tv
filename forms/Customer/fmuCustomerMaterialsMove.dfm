@@ -219,7 +219,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
     SelectSQL.Strings = (
       'select'
       '    NM.M_ID'
-      '  , M.NAME'
+      '  , M.NAME||coalesce('#39'/'#39'||nm.Serial, '#39#39') NAME'
       '  , M.COST'
       '  , M.DIMENSION'
       '  , O.O_NAME WH_NAME'
@@ -237,6 +237,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
       '        , R.RQ_ID'
       '        , R.RQ_EXEC_TIME'
       '        , RM.WH_ID'
+      '        , rm.Serial'
       '      from REQUEST R'
       
         '          inner join REQUEST_MATERIALS RM on (R.RQ_ID = RM.RQ_ID' +
@@ -252,6 +253,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
       '        , R.RQ_ID'
       '        , R.RQ_EXEC_TIME'
       '        , RM.WH_ID'
+      '        , rm.Serial'
       '      from REQUEST R'
       
         '          inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = R' +

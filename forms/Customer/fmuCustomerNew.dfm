@@ -186,7 +186,6 @@ object apgCustomerNew: TapgCustomerNew
         TabOrder = 6
         Visible = True
         OnChange = eACCOUNT_NOChange
-        OnEnter = eACCOUNT_NOEnter
         OnExit = eACCOUNT_NOExit
       end
       object eValid_to: TDBDateTimeEditEh
@@ -264,7 +263,6 @@ object apgCustomerNew: TapgCustomerNew
         TabOrder = 0
         Visible = True
         OnChange = LupStreetsChange
-        OnEnter = eACCOUNT_NOEnter
       end
       object LupHOUSE_ID: TDBLookupComboboxEh
         Left = 236
@@ -306,7 +304,6 @@ object apgCustomerNew: TapgCustomerNew
         Visible = True
         OnChange = LupHOUSE_IDChange
         OnDropDownBoxGetCellParams = LupHOUSE_IDDropDownBoxGetCellParams
-        OnEnter = eACCOUNT_NOEnter
       end
       object eFLAT_NO: TDBEditEh
         Tag = 7
@@ -1314,8 +1311,8 @@ object apgCustomerNew: TapgCustomerNew
     AutoEdit = False
     DataSet = dsContacts
     OnUpdateData = srcContactsUpdateData
-    Left = 607
-    Top = 271
+    Left = 583
+    Top = 255
   end
   object ds: TDataSource
     AutoEdit = False
@@ -1438,13 +1435,13 @@ object apgCustomerNew: TapgCustomerNew
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
-    Left = 661
-    Top = 281
+    Left = 677
+    Top = 249
   end
   object srcAttributes: TDataSource
     DataSet = dsAttributes
-    Left = 717
-    Top = 281
+    Left = 725
+    Top = 241
   end
   object dsHouses: TpFIBDataSet
     SelectSQL.Strings = (
@@ -1498,8 +1495,8 @@ object apgCustomerNew: TapgCustomerNew
   object srcExecutor: TDataSource
     AutoEdit = False
     DataSet = dsExecutor
-    Left = 768
-    Top = 277
+    Left = 776
+    Top = 237
   end
   object dsExecutor: TpFIBDataSet
     SelectSQL.Strings = (

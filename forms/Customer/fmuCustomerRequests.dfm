@@ -3,7 +3,7 @@ object apgCustomerRequests: TapgCustomerRequests
   Top = 0
   Caption = #1047#1072#1103#1074#1082#1080
   ClientHeight = 239
-  ClientWidth = 1068
+  ClientWidth = 895
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object apgCustomerRequests: TapgCustomerRequests
   object dbGridCustReq: TDBGridEh
     Left = 26
     Top = 0
-    Width = 1042
+    Width = 869
     Height = 239
     Align = alClient
     AllowedOperations = []
@@ -33,9 +33,10 @@ object apgCustomerRequests: TapgCustomerRequests
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     ReadOnly = True
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
     SortLocal = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
@@ -413,93 +414,6 @@ object apgCustomerRequests: TapgCustomerRequests
       '    RQ_ID = :OLD_RQ_ID'
       '    ')
     RefreshSQL.Strings = (
-      'SELECT r.RQ_ID, '
-      'r.RQ_TYPE, '
-      'R.added_on RQ_DATE, '
-      'r.RQ_CUSTOMER, '
-      'r.RQ_COMPLETED,'
-      'r.RQ_PLAN_DATE,'
-      'coalesce(tpl.rq_content,'#39#39')||Coalesce('#39'.'#39'||r.add_info,'#39#39')||'
-      
-        '  iif(coalesce(r.Rq_Content,'#39#39') <> '#39#39', coalesce('#39' ('#39'||r.Rq_Conte' +
-        'nt||'#39')'#39','#39#39'),'#39#39') '
-      '  as contetnt,'
-      
-        'coalesce(rr.name,'#39#39')||'#39' '#39'||coalesce(r.Rq_Defect, '#39#39')  as trouble' +
-        ','
-      'r.Rq_Content,'
-      'r.Rq_Defect,'
-      'r.RQ_NOTICE,'
-      'r.EDIT_BY,'
-      'r.EDIT_ON, '
-      'r.HOUSE_ID, '
-      'r.PHONE, '
-      'r.ADDED_BY, '
-      'r.ADDED_ON, '
-      'r.RQ_TIME_FROM,'
-      'r.RQ_TIME_TO,'
-      
-        'coalesce(cast(r.RQ_EXEC_TIME as date), cast(r.RQ_COMPLETED as da' +
-        'te)) as GIV_EXEC_DATE,'
-      
-        'iif(cast(r.RQ_COMPLETED as date) is null,r.RQ_TIME_FROM, lpad(ex' +
-        'tract(HOUR from r.RQ_COMPLETED),2,'#39'0'#39')||'#39':'#39'||extract(minute from' +
-        ' r.RQ_COMPLETED)) as G_E_FROM,'
-      
-        'iif(cast(r.RQ_EXEC_TIME as date) is null,r.RQ_TIME_TO, extract(H' +
-        'OUR from r.RQ_EXEC_TIME)||'#39':'#39'||extract(minute from r.RQ_EXEC_TIM' +
-        'E)) as G_E_TO,'
-      'r.RQ_EXEC_TIME,'
-      'r.GIVE_BY, '
-      'r.GIVE_METHOD, '
-      'r.REQ_RESULT,'
-      'c.ACCOUNT_NO, c.CUST_CODE, c.SURNAME ||'#39' '#39' ||c.INITIALS as FIO, '
-      
-        'coalesce(RT.RT_PRINTFORM,'#39#39') as REPORT, coalesce(rt.RT_Name,'#39#39') ' +
-        'as Rt_Name,'
-      's.STREET_NAME||'#39' '#39'||s.street_short as STREET_NAME,'
-      'h.HOUSE_NO,'
-      'coalesce(r.flat_no,'#39#39') as FLAT_NO,'
-      'CASE R.Req_Result'
-      ' when 1 then '#39#1042#1099#1076#1072#1085#1072#39
-      ' when 2 then '#39#1042#1099#1087#1086#1083#1085#1077#1085#1072#39
-      ' when 3 then '#39#1054#1090#1084#1077#1085#1077#1085#1072#39
-      ' when 4 then '#39#1053#1077#1074#1086#1079#1084#1086#1078#1085#1086#39
-      'end as Res_text,'
-      '--rt.O_Numericfield as DAYS,'
-      '1 as DAYS,'
-      
-        'coalesce(cast((select list(DISTINCT w.team) from Request_Executo' +
-        'rs re inner join Worker w on (re.Exec_Id = w.Worker_Id) where re' +
-        '.Rq_Id = r.Rq_Id) as VARCHAR(200)),'
-      'wg.name) as TEAM,'
-      
-        'cast((select list(DISTINCT w.surname) from Request_Executors re ' +
-        'inner join Worker w on (re.Exec_Id = w.Worker_Id) where re.Rq_Id' +
-        ' = r.Rq_Id) as VARCHAR(200)) as workmans,'
-      'coalesce(tpl.RQ_COLOR, RT.RT_COLOR) RT_COLOR,'
-      'hf.PORCH_N,'
-      'hf.FLOOR_N'
-      ''
-      'FROM REQUEST R'
-      '   inner join house h on (r.house_id = h.house_id)'
-      '   inner join street s on (s.street_id = h.street_id)'
-      '   left outer join workgroups wg on (wg.wg_id = h.wg_id)'
-      '   LEFT OUTER JOIN REQUEST_TYPES RT ON (R.RQ_TYPE = RT.RT_Id)'
-      '   LEFT OUTER JOIN CUSTOMER C ON (R.RQ_CUSTOMER = C.CUSTOMER_ID)'
-      
-        '   left outer join request_templates tpl on (tpl.rqtl_id = r.rqt' +
-        'l_id)'
-      
-        '   left outer join request_results rr on (rr.rr_id = r.result_id' +
-        ')'
-      
-        '   left outer join HOUSEFLATS hf on (hf.house_id = r.house_id an' +
-        'd hf.flat_no = r.flat_no)'
-      ' WHERE '
-      '        R.RQ_ID = :OLD_RQ_ID'
-      '    ')
-    SelectSQL.Strings = (
       'select'
       '    r.RQ_ID'
       '  , r.RQ_TYPE'
@@ -571,6 +485,7 @@ object apgCustomerRequests: TapgCustomerRequests
       '  , hf.PORCH_N'
       '  , hf.FLOOR_N'
       '  , r.Node_Id'
+      '  @@Colorize% , null RQ_FEE, null RQ_PAY@'
       '  from REQUEST R'
       '       inner join house h on (r.house_id = h.house_id)'
       '       inner join street s on (s.street_id = h.street_id)'
@@ -590,8 +505,112 @@ object apgCustomerRequests: TapgCustomerRequests
       
         '       left outer join HOUSEFLATS hf on (hf.house_id = r.house_i' +
         'd and hf.flat_no = r.flat_no)'
+      ' WHERE '
+      '        R.RQ_ID = :OLD_RQ_ID'
+      '    ')
+    SelectSQL.Strings = (
+      'select'
+      '    r.RQ_ID'
+      '  , r.RQ_TYPE'
+      '  , R.added_on RQ_DATE'
+      '  , r.RQ_CUSTOMER'
+      '  , r.RQ_COMPLETED'
+      '  , r.RQ_PLAN_DATE'
+      
+        '  , coalesce(tpl.rq_content, '#39#39') || coalesce('#39'.'#39' || r.add_info, ' +
+        #39#39') || iif(coalesce(r.Rq_Content, '#39#39') <> '#39#39', coalesce('#39' ('#39' || r.' +
+        'Rq_Content || '#39')'#39', '#39#39'), '#39#39') as contetnt'
+      
+        '  , coalesce(rr.name, '#39#39') || '#39' '#39' || coalesce(r.Rq_Defect, '#39#39') as' +
+        ' trouble'
+      '  , r.Rq_Content'
+      '  , r.Rq_Defect'
+      '  , r.RQ_NOTICE'
+      '  , r.HOUSE_ID'
+      '  , r.PHONE'
+      '  , r.Added_ON  '
+      '  , coalesce((select first 1'
+      '                  W.SURNAME'
+      '                from WORKER W'
+      
+        '                where W.IBNAME = r.Added_By), r.Added_By) as Add' +
+        'ed_By'
       ''
-      '         ')
+      '  , r.Edit_On'
+      '  , coalesce((select first 1'
+      '                  W.SURNAME'
+      '                from WORKER W'
+      
+        '                where W.IBNAME = r.Edit_By), r.Edit_By) as Edit_' +
+        'By'
+      '  , r.RQ_TIME_FROM'
+      '  , r.RQ_TIME_TO'
+      
+        '  , coalesce(cast(r.RQ_EXEC_TIME as date), cast(r.RQ_COMPLETED a' +
+        's date)) as GIV_EXEC_DATE'
+      '  , r.RQ_EXEC_TIME'
+      '  , r.GIVE_BY'
+      '  , r.GIVE_METHOD'
+      '  , r.REQ_RESULT'
+      '  , c.ACCOUNT_NO'
+      '  , c.CUST_CODE'
+      '  , c.SURNAME || '#39' '#39' || c.INITIALS as FIO'
+      '  , coalesce(RT.RT_PRINTFORM, '#39#39') as REPORT'
+      '  , coalesce(rt.RT_Name, '#39#39') as Rt_Name'
+      '  , s.STREET_NAME || '#39' '#39' || s.street_short as STREET_NAME'
+      '  , h.HOUSE_NO'
+      '  , coalesce(r.flat_no, '#39#39') as FLAT_NO'
+      '  ,'
+      '    case R.Req_Result'
+      '      when 1 then '#39#1042#1099#1076#1072#1085#1072#39
+      '      when 2 then '#39#1042#1099#1087#1086#1083#1085#1077#1085#1072#39
+      '      when 3 then '#39#1054#1090#1084#1077#1085#1077#1085#1072#39
+      '      when 4 then '#39#1053#1077#1074#1086#1079#1084#1086#1078#1085#1086#39
+      '    end as Res_text,'
+      '    --rt.O_Numericfield as DAYS,'
+      '    1 as DAYS'
+      '  , coalesce(cast((select'
+      '                       list(distinct w.team)'
+      '                     from Request_Executors re'
+      
+        '                          inner join Worker w on (re.Exec_Id = w' +
+        '.Worker_Id)'
+      
+        '                     where re.Rq_Id = r.Rq_Id) as varchar(200)),' +
+        ' wg.name) as TEAM'
+      '  , cast((select'
+      '              list(distinct w.surname)'
+      '            from Request_Executors re'
+      
+        '                 inner join Worker w on (re.Exec_Id = w.Worker_I' +
+        'd)'
+      
+        '            where re.Rq_Id = r.Rq_Id) as varchar(200)) as workma' +
+        'ns'
+      '  , coalesce(tpl.RQ_COLOR, RT.RT_COLOR) RT_COLOR'
+      '  , hf.PORCH_N'
+      '  , hf.FLOOR_N'
+      '  , r.Node_Id'
+      '  @@Colorize% , 0 RQ_FEE, 0 RQ_PAY, 0 PAY_SRV @'
+      '  from REQUEST R'
+      '       inner join house h on (r.house_id = h.house_id)'
+      '       inner join street s on (s.street_id = h.street_id)'
+      '       left outer join workgroups wg on (wg.wg_id = h.wg_id)'
+      
+        '       left outer join REQUEST_TYPES RT on (R.RQ_TYPE = RT.RT_Id' +
+        ')'
+      
+        '       left outer join CUSTOMER C on (R.RQ_CUSTOMER = C.CUSTOMER' +
+        '_ID)'
+      
+        '       left outer join request_templates tpl on (tpl.rqtl_id = r' +
+        '.rqtl_id)'
+      
+        '       left outer join request_results rr on (rr.rr_id = r.resul' +
+        't_id)'
+      
+        '       left outer join HOUSEFLATS hf on (hf.house_id = r.house_i' +
+        'd and hf.flat_no = r.flat_no)')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite

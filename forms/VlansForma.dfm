@@ -17,15 +17,15 @@ inherited VlansForm: TVlansForm
     Align = alBottom
   end
   inherited splPG: TSplitter
-    Top = 193
+    Top = 257
     Width = 740
     ExplicitTop = 193
     ExplicitWidth = 740
   end
   inherited dbGrid: TDBGridEh
-    Top = 196
+    Top = 261
     Width = 740
-    Height = 153
+    Height = 88
     AllowedOperations = []
     FooterRowCount = 1
     Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -143,6 +143,15 @@ inherited VlansForm: TVlansForm
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1086'|'#1054#1073#1086#1088#1091#1076'.'
         Title.TitleButton = True
         Width = 58
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PARAMS'
+        Footers = <>
+        Title.Caption = #1044#1086#1087'. '#1087#1072#1088#1072#1084'.'
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -682,9 +691,9 @@ inherited VlansForm: TVlansForm
   end
   inherited pnlEdit: TPanel
     Width = 740
-    Height = 168
+    Height = 232
     ExplicitWidth = 740
-    ExplicitHeight = 168
+    ExplicitHeight = 232
     object Label1: TLabel [0]
       Left = 564
       Top = 36
@@ -701,7 +710,7 @@ inherited VlansForm: TVlansForm
     end
     object lbl3: TLabel [2]
       Left = 5
-      Top = 90
+      Top = 154
       Width = 49
       Height = 13
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
@@ -756,36 +765,44 @@ inherited VlansForm: TVlansForm
       Height = 13
       Caption = #1060#1072#1081#1083' '#1082#1086#1085#1092'.'
     end
+    object lblCFG: TLabel [10]
+      Left = 5
+      Top = 90
+      Width = 56
+      Height = 26
+      Caption = #1044#1086#1087'. '#13#10#1087#1072#1088#1072#1084#1077#1090#1088#1099
+    end
     inherited btnSaveLink: TBitBtn
       Left = 68
-      Top = 137
+      Top = 201
       Width = 576
-      TabOrder = 10
+      TabOrder = 11
       ExplicitLeft = 68
       ExplicitTop = 137
       ExplicitWidth = 576
     end
     inherited btnCancelLink: TBitBtn
       Left = 650
-      Top = 137
+      Top = 201
       Action = actCancel
-      TabOrder = 11
+      TabOrder = 12
       ExplicitLeft = 650
       ExplicitTop = 137
     end
     object dbmmoNotice: TDBMemoEh
       Left = 68
-      Top = 87
+      Top = 154
       Width = 668
-      Height = 44
+      Height = 41
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DataField = 'NOTICE'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
+      EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 10
       Visible = True
       WantReturns = True
     end
@@ -943,6 +960,23 @@ inherited VlansForm: TVlansForm
       TabOrder = 8
       Visible = True
     end
+    object mmoCONFIG: TDBMemoEh
+      Left = 68
+      Top = 87
+      Width = 668
+      Height = 61
+      Anchors = [akLeft, akTop, akRight]
+      AutoSize = False
+      DataField = 'PARAMS'
+      DataSource = srcDataSource
+      DynProps = <>
+      EditButtons = <>
+      EmptyDataInfo.Text = #1048#1085#1076#1080#1074#1080#1076#1091#1072#1083#1100#1085#1099#1077' '#1087#1072#1088#1072#1084#1077#1090#1088#1099' '#1089#1077#1090#1080
+      ShowHint = True
+      TabOrder = 9
+      Visible = True
+      WantReturns = True
+    end
   end
   inherited srcDataSource: TDataSource
     DataSet = dsVlans
@@ -1007,7 +1041,8 @@ inherited VlansForm: TVlansForm
       '    CONFIG_FILE = :CONFIG_FILE,'
       '    FOR_OBJECTS = :FOR_OBJECTS,'
       '    VLAN_NUM = :VLAN_NUM,'
-      '    DNS = :DNS'
+      '    DNS = :DNS,'
+      '    PARAMS = :PARAMS'
       'WHERE'
       '    V_ID = :OLD_V_ID'
       '    ')
@@ -1029,7 +1064,8 @@ inherited VlansForm: TVlansForm
       '    CONFIG_FILE,'
       '    FOR_OBJECTS, '
       '    VLAN_NUM, '
-      '    DNS'
+      '    DNS,'
+      '    PARAMS'
       ')'
       'VALUES('
       '    :V_ID,'
@@ -1042,14 +1078,27 @@ inherited VlansForm: TVlansForm
       '    :CONFIG_FILE,'
       '    :FOR_OBJECTS, '
       '    :VLAN_NUM,'
-      '    :DNS'
+      '    :DNS,'
+      '    :PARAMS'
       ')')
     RefreshSQL.Strings = (
-      'select *'
-      'from vlans'
-      ''
-      ' WHERE '
-      '        VLANS.V_ID = :OLD_V_ID'
+      'select'
+      '    v.*'
+      '  , l.C_CNT'
+      '  , e.E_CNT'
+      '  from vlans v'
+      '       left outer join(select'
+      '                           Vlan_Id'
+      '                         , count(*) C_CNT'
+      '                         from Tv_Lan'
+      '                         group by 1) l on (l.Vlan_Id = v.V_Id)'
+      '       left outer join(select'
+      '                           Vlan_Id'
+      '                         , count(*) E_CNT'
+      '                         from Equipment'
+      '                         group by 1) e on (e.Vlan_Id = v.V_Id)'
+      'where  '
+      '        v.V_ID = :OLD_V_ID'
       '    ')
     SelectSQL.Strings = (
       'select'

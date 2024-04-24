@@ -30,11 +30,20 @@ object MessagesForm: TMessagesForm
     Height = 450
     Align = alClient
     TabOrder = 0
-    object dbgMessages: TDBGridEh
+    object Splitter1: TSplitter
       Left = 1
       Top = 257
       Width = 825
-      Height = 192
+      Height = 3
+      Cursor = crVSplit
+      Align = alTop
+      ExplicitWidth = 192
+    end
+    object dbgMessages: TDBGridEh
+      Left = 1
+      Top = 260
+      Width = 825
+      Height = 189
       Align = alClient
       AllowedOperations = []
       AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -376,6 +385,7 @@ object MessagesForm: TMessagesForm
         Left = 529
         Top = 0
         Action = actSendSMS
+        PopupMenu = pmSMS
       end
     end
     object pnlEdit: TPanel
@@ -613,6 +623,10 @@ object MessagesForm: TMessagesForm
       Caption = #1054#1090#1074#1077#1090' '#1085#1072' '#1089#1086#1086#1073#1097#1077#1085#1080#1077
       OnExecute = actAnswerExecute
     end
+    object actSMSbalance: TAction
+      Caption = #1041#1072#1083#1072#1085#1089' SMS'
+      OnExecute = actSMSbalanceExecute
+    end
   end
   object gridPopUp: TPopupMenu
     Left = 132
@@ -812,12 +826,21 @@ object MessagesForm: TMessagesForm
       object N13: TMenuItem
         Action = actGroup
       end
-      object N9: TMenuItem
+      object miN16: TMenuItem
         Caption = '-'
       end
       object N6: TMenuItem
         Action = actNew
         Caption = #1053#1086#1074#1086#1074#1077' '#1089#1086#1086#1073#1097#1077#1085#1080#1077
+      end
+      object N9: TMenuItem
+        Caption = '-'
+      end
+      object miSendSMS: TMenuItem
+        Action = actSendSMS
+      end
+      object miSMSbalance1: TMenuItem
+        Action = actSMSbalance
       end
       object N8: TMenuItem
         Caption = '-'
@@ -980,5 +1003,12 @@ object MessagesForm: TMessagesForm
     ProviderDataSet = dsMessages
     Left = 280
     Top = 352
+  end
+  object pmSMS: TPopupMenu
+    Left = 649
+    Top = 174
+    object miSMSbalance: TMenuItem
+      Action = actSMSbalance
+    end
   end
 end

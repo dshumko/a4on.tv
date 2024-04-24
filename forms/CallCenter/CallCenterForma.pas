@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.DBCtrls, Vcl.Buttons,
   DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBCtrlsEh, DBLookupEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh;
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TCallCenterForm = class(TForm)

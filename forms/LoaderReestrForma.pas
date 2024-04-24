@@ -14,7 +14,7 @@ uses
   pFIBDataSet,
   FIBDatabase, pFIBDatabase, ToolCtrlsEh, DBGridEhToolCtrls, EhLibMTE, DBAxisGridsEh, MemTableDataEh, MemTableEh,
   EhLibVCL,
-  RxPlacemnt, CnErrorProvider, VKDBFDataSet, DBGridEhGrouping, DynVarsEh;
+  RxPlacemnt, CnErrorProvider, VKDBFDataSet, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TLoaderReestrForm = class(TForm)

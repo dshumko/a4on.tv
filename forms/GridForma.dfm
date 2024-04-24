@@ -29,16 +29,16 @@ object GridForm: TGridForm
     Left = 0
     Top = 81
     Width = 437
-    Height = 3
+    Height = 4
     Cursor = crVSplit
     Align = alTop
     Visible = False
   end
   object dbGrid: TDBGridEh
     Left = 0
-    Top = 84
+    Top = 85
     Width = 437
-    Height = 214
+    Height = 213
     Align = alClient
     DataSource = srcDataSource
     DynProps = <>
@@ -220,6 +220,10 @@ object GridForm: TGridForm
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1079#1085#1072#1095#1077#1085#1080#1102
       OnExecute = actFilterFLDExecute
     end
+    object actPrintGrid: TAction
+      Caption = #1055#1077#1095#1072#1090#1100' '#1090#1072#1073#1083#1080#1094#1099
+      OnExecute = actPrintGridExecute
+    end
   end
   object pmPopUp: TPopupMenu
     Left = 195
@@ -241,21 +245,40 @@ object GridForm: TGridForm
     object pmgSep2: TMenuItem
       Caption = '-'
     end
-    object miRefresh: TMenuItem
-      Caption = '&'#1055#1077#1088#1077#1095#1080#1090#1072#1090#1100' '#1076#1072#1085#1085#1099#1077
-      OnClick = miRefreshClick
+    object pmgSaveSelection: TMenuItem
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
+      OnClick = pmgSaveSelectionClick
+    end
+    object miPrintGrid: TMenuItem
+      Action = actPrintGrid
     end
     object pmgSep1: TMenuItem
       Caption = '-'
     end
-    object pmgSaveSelection: TMenuItem
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
-      OnClick = pmgSaveSelectionClick
+    object miRefresh: TMenuItem
+      Caption = '&'#1055#1077#1088#1077#1095#1080#1090#1072#1090#1100' '#1076#1072#1085#1085#1099#1077
+      OnClick = miRefreshClick
     end
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
     Left = 288
     Top = 200
+  end
+  object printGridEh: TPrintDBGridEh
+    Options = []
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'Tahoma'
+    PageFooter.Font.Style = []
+    PageHeader.Font.Charset = DEFAULT_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -11
+    PageHeader.Font.Name = 'Tahoma'
+    PageHeader.Font.Style = []
+    Units = MM
+    Left = 232
+    Top = 216
   end
 end

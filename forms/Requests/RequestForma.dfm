@@ -756,7 +756,7 @@ object RequestForm: TRequestForm
         object bbExecutors: TButton
           Left = 78
           Top = 2
-          Width = 537
+          Width = 503
           Height = 19
           Action = actExecutors
           Anchors = [akLeft, akTop, akRight]
@@ -816,13 +816,22 @@ object RequestForm: TRequestForm
           end
         end
         object btnSMS: TButton
-          Left = 636
-          Top = 0
-          Width = 137
+          Left = 597
+          Top = 2
+          Width = 85
           Height = 19
           Action = actSMS
           Anchors = [akTop, akRight]
           TabOrder = 0
+        end
+        object btnEMAIL: TButton
+          Left = 688
+          Top = 2
+          Width = 85
+          Height = 19
+          Action = actEMAIL
+          Anchors = [akTop, akRight]
+          TabOrder = 3
         end
       end
       object pnlGiveTime: TPanel
@@ -885,6 +894,10 @@ object RequestForm: TRequestForm
     object tabExecute: TTabSheet
       Caption = ' '#1042#1099#1087#1086#1083#1085#1077#1085#1080#1077' '
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object spl2: TSplitter
         Left = 0
         Top = 238
@@ -1012,6 +1025,7 @@ object RequestForm: TRequestForm
             EmptyDataInfo.Text = #1045#1089#1083#1080' '#1073#1099#1083#1072' '#1074#1099#1076#1072#1085#1072' '#1082#1074#1080#1090#1072#1085#1094#1080#1103', '#1090#1086' '#1077#1077' '#1085#1086#1084#1077#1088', '#1080#1083#1080' '#1083#1102#1073#1086#1081' '#1090#1077#1082#1089#1090
             TabOrder = 3
             Visible = True
+            OnDblClick = edReceiptDblClick
           end
         end
         object pnlWM: TPanel
@@ -1075,6 +1089,7 @@ object RequestForm: TRequestForm
               Action = actBuyback
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 3
+              Visible = False
             end
           end
           object pnlGrids: TPanel
@@ -1139,11 +1154,26 @@ object RequestForm: TRequestForm
                   EditButtons = <>
                   FieldName = 'COST'
                   Footer.DisplayFormat = ',0.##'
+                  Footer.FieldName = 'CALC_COST'
                   Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Alignment = taRightJustify
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
                   Width = 80
+                end
+                item
+                  CellButtons = <>
+                  Checkboxes = True
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'NOT_CALC'
+                  Footer.DisplayFormat = ',0.##'
+                  Footer.FieldName = 'NOT_CALC_COST'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089#1083'.'
+                  Visible = False
+                  Width = 58
                 end
                 item
                   CellButtons = <>
@@ -1286,11 +1316,10 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 115
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
-          ExplicitWidth = 115
         end
         object splFlats: TSplitter
           Left = 373
@@ -1681,16 +1710,20 @@ object RequestForm: TRequestForm
   end
   object dsExecutor: TpFIBDataSet
     SelectSQL.Strings = (
-      'select re.rq_id,'
+      'select'
+      '    re.rq_id'
       
-        'w.surname ||'#39' '#39'|| coalesce(w.firstname,'#39#39')||'#39' '#39'||coalesce(w.midl' +
-        'ename,'#39#39') as FIO'
-      ', w.Phone_NO'
-      ', coalesce(re.notice, '#39#39')||coalesce('#39'/'#39'||w.notice, '#39#39') notice'
-      'from request_executors re '
-      '  inner join worker w on (re.exec_id = w.worker_id)'
-      'where re.rq_id = :RQ_ID'
-      'order by 2')
+        '  , w.surname || '#39' '#39' || coalesce(w.firstname, '#39#39') || '#39' '#39' || coal' +
+        'esce(w.midlename, '#39#39') as FIO'
+      '  , w.Phone_NO'
+      
+        '  , coalesce(re.notice, '#39#39') || coalesce('#39'/'#39' || w.notice, '#39#39') not' +
+        'ice'
+      '  , coalesce(w.Email, '#39#39') Email'
+      '  from request_executors re'
+      '       inner join worker w on (re.exec_id = w.worker_id)'
+      '  where re.rq_id = :RQ_ID'
+      '  order by 2')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -1994,7 +2027,7 @@ object RequestForm: TRequestForm
       OnExecute = actReqDelExecute
     end
     object actOpenHouse: TAction
-      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       OnExecute = actOpenHouseExecute
     end
@@ -2002,6 +2035,20 @@ object RequestForm: TRequestForm
       Caption = #1042#1099#1082#1091#1087' (F9)'
       ShortCut = 120
       OnExecute = actBuybackExecute
+    end
+    object actOpenCustomer: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1074' '#1089#1087#1080#1089#1082#1077
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+      OnExecute = actOpenCustomerExecute
+    end
+    object actAddPayment: TAction
+      Caption = #1055#1088#1080#1085#1103#1090#1100' '#1087#1083#1072#1090#1077#1078' '#1079#1072' '#1079#1072#1103#1074#1082#1091
+      OnExecute = actAddPaymentExecute
+    end
+    object actEMAIL: TAction
+      Caption = #1042#1099#1089#1083#1072#1090#1100' email'
+      Hint = #1042#1099#1089#1083#1072#1090#1100' email '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1103#1084
+      OnExecute = actEMAILExecute
     end
   end
   object srcErrors: TDataSource
@@ -2231,6 +2278,18 @@ object RequestForm: TRequestForm
         'ull, null, null, 2)')
     SelectSQL.Strings = (
       'select'
+      '    ID'
+      '  , name'
+      '  , notice'
+      '  , QNT'
+      '  , time_total'
+      '  , COST'
+      '  , rq_id'
+      '  , NOT_CALC'
+      '  , (NOT_CALC * COST) NOT_CALC_COST'
+      '  , iif(NOT_CALC = 1, 0, COST) CALC_COST '
+      'from ('
+      'select'
       '    m.W_ID ID'
       '  , w.name'
       '  , w.notice'
@@ -2245,6 +2304,7 @@ object RequestForm: TRequestForm
         '             and coalesce(rq.rq_exec_time, localtimestamp) betwe' +
         'en t.date_from and t.date_to)), 0) * m.w_quant COST'
       '  , m.rq_id'
+      '  , coalesce(m.NOT_CALC, 0) NOT_CALC'
       '  from WORKS w'
       '       inner join request_works m on (w.w_id = m.w_id)'
       '       inner join request rq on (rq.Rq_Id = m.Rq_Id)'
@@ -2252,7 +2312,8 @@ object RequestForm: TRequestForm
         '       left outer join services s on (w.as_service = s.service_i' +
         'd)'
       '  where m.rq_id = :RQ_ID'
-      '  order by w.name')
+      ')  '
+      'order by name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'
@@ -2330,7 +2391,9 @@ object RequestForm: TRequestForm
       '  , rM.Notice notice'
       '  , m.DEMENSION'
       '  , rM.Quant * (-1) QNT'
-      '  , rM.Quant * (-1) * coalesce(rm.Cost, m.Cost) as COST'
+      
+        '  , iif((coalesce(rm.CALC,1) in (0,2)), rM.Quant * (-1) * coales' +
+        'ce(rm.Cost, m.Cost), 0) as COST'
       '  , rm.CALC as PROP'
       '  , o.O_Name WH_NAME'
       '  , 1 as MT'
@@ -2377,7 +2440,16 @@ object RequestForm: TRequestForm
       object miOpenHouse: TMenuItem
         Action = actOpenHouse
       end
+      object miOpenCustomer: TMenuItem
+        Action = actOpenCustomer
+      end
       object mi4: TMenuItem
+        Caption = '-'
+      end
+      object miAddPayment: TMenuItem
+        Action = actAddPayment
+      end
+      object miPS: TMenuItem
         Caption = '-'
       end
       object miReqDel: TMenuItem

@@ -8,11 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.Controls, Vcl.ExtCtrls,
-  pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhImpExp, frxClass,
+  pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, frxClass,
   PropStorageEh,
   FIBQuery, pFIBQuery, FIBDatabase, PropFilerEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping,
   ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh, EhLibMTE, frxDBSet;
+  DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh, EhLibMTE, frxDBSet, amSplitter,
+  PrnDbgeh;
 
 type
   TMaterialsForm = class(TForm)
@@ -60,11 +61,6 @@ type
     srcDataSource: TDataSource;
     pgcInOut: TPageControl;
     tsIn: TTabSheet;
-    pmPopUp: TPopupMenu;
-    ppmCopy: TMenuItem;
-    ppmSelectAll: TMenuItem;
-    MenuItem1: TMenuItem;
-    ppmSaveSelection: TMenuItem;
     DBGridIncome: TDBGridEh;
     PropStorage: TPropStorageEh;
     spl1: TSplitter;
@@ -115,11 +111,6 @@ type
     trReadDS: TpFIBTransaction;
     btn1: TToolButton;
     btnQuickFilter: TToolButton;
-    tsPivotSN: TTabSheet;
-    dbgGridPivotSN: TDBGridEh;
-    srcPivotSN: TDataSource;
-    dsPivotSN: TMemTableEh;
-    drvPivotSN: TpFIBDataDriverEh;
     pmPivot: TPopupMenu;
     miRowHight: TMenuItem;
     frxMaterials: TfrxDBDataset;
@@ -151,6 +142,25 @@ type
     miN21: TMenuItem;
     miN31: TMenuItem;
     miN41: TMenuItem;
+    pmPopUp: TPopupMenu;
+    mniFilterFLD: TMenuItem;
+    mniN1: TMenuItem;
+    pmgCopy: TMenuItem;
+    pmgSelectAll: TMenuItem;
+    pmgSep2: TMenuItem;
+    pmgSaveSelection: TMenuItem;
+    pmgSep1: TMenuItem;
+    miRefresh: TMenuItem;
+    btnPrintIncome: TBitBtn;
+    btnPrintMove: TBitBtn;
+    btnPrintInvent: TBitBtn;
+    btnPrintOut: TBitBtn;
+    miPrint: TMenuItem;
+    Panel6: TPanel;
+    BitBtn2: TBitBtn;
+    printGridEh: TPrintDBGridEh;
+    actPrintGrid: TAction;
+    miPrintGrid: TMenuItem;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -168,15 +178,11 @@ type
     procedure actQuickFilterExecute(Sender: TObject);
     procedure DbGridMatDblClick(Sender: TObject);
     procedure srcRemainDataChange(Sender: TObject; Field: TField);
-    procedure srcMatGropupsStateChange(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure DBGridEhGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure DBGridEhDblClick(Sender: TObject);
     procedure pgcInOutChange(Sender: TObject);
-    procedure ppmCopyClick(Sender: TObject);
-    procedure ppmSaveSelectionClick(Sender: TObject);
-    procedure ppmSelectAllClick(Sender: TObject);
     procedure actRemainRecalcExecute(Sender: TObject);
     procedure actOpenMatDocExecute(Sender: TObject);
     procedure dbgIncomeDblClick(Sender: TObject);
@@ -189,18 +195,23 @@ type
       InCellCursorPos: TPoint; Column: TColumnEh; var Params: TDBGridEhDataHintParams; var Processed: Boolean);
     procedure DBGridEhMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure dbgColumnsZerroCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
-    procedure dbgGridPivotSNDblClick(Sender: TObject);
-    procedure miRowHightClick(Sender: TObject);
-    procedure dsPivotSNNewRecord(DataSet: TDataSet);
-    procedure dsMaterialsAfterScroll(DataSet: TDataSet);
-    procedure dsPivotSNAfterOpen(DataSet: TDataSet);
-    procedure dbgGridPivotSNSortMarkingChanged(Sender: TObject);
-    procedure dbgGridPivotSNColumns3GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgSNDblClick(Sender: TObject);
     procedure actChangeSerialExecute(Sender: TObject);
     procedure DBGridGroupsDblClick(Sender: TObject);
     procedure actShowSNExecute(Sender: TObject);
     procedure miN41Click(Sender: TObject);
+    procedure dbgGridPivotDblClick(Sender: TObject);
+    procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
+    procedure mniFilterFLDClick(Sender: TObject);
+    procedure pmgCopyClick(Sender: TObject);
+    procedure pmgSelectAllClick(Sender: TObject);
+    procedure pmgSaveSelectionClick(Sender: TObject);
+    procedure miRefreshClick(Sender: TObject);
+    procedure btnPrintIncomeClick(Sender: TObject);
+    procedure mi1Click(Sender: TObject);
+    procedure mi2Click(Sender: TObject);
+    procedure mi4Click(Sender: TObject);
+    procedure actPrintGridExecute(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -214,6 +225,11 @@ type
     FShowSN_Out: Boolean;
     FShowSN_Mov: Boolean;
     FShowSN_Itog: Boolean;
+    FMatDocFullAccess: Boolean;
+    FMatDocAccessNew: Boolean;
+    FMatDocAccessMove: Boolean;
+    FMatDocAccessOut: Boolean;
+    FMatDocAccessInv: Boolean;
     procedure InitDataSet;
     procedure ShowSNforGrid();
     procedure ShowSNforRem;
@@ -222,8 +238,9 @@ type
     procedure ShowSNforItog;
     procedure ShowSNforInvent;
     procedure ShowSNforOut;
-    procedure SetColumnVisibility(grid: TDBGridEh; fld: string; vsbl: Boolean);
+    procedure SetColumnVisibility(grid: TDBGridEh; const fld: string; vsbl: Boolean);
     procedure dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure LoadReportBody(const fReport_ID: Integer);
   public
     { Public declarations }
   end;
@@ -234,10 +251,11 @@ var
 implementation
 
 uses
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
-  DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview, RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
-  MatOutDocForma, TextEditForma,
-  MatMoveDocForma, MatInventoryDocForma, CustomerForma, MatGroupForma;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Math,
+  DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview,
+  RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
+  MatOutDocForma, TextEditForma, MatMoveDocForma,
+  MatInventoryDocForma, CustomerForma, MatGroupForma;
 
 const
   // макс. размеры сторон хинта
@@ -484,40 +502,69 @@ begin
   Screen.Cursor := crsr;
 end;
 
+procedure TMaterialsForm.mi1Click(Sender: TObject);
+var
+  dbg: TDBGridEh;
+begin
+  if (ActiveControl is TDBGridEh) then
+  begin
+    dbg := (ActiveControl as TDBGridEh);
+    if (geaCopyEh in dbg.EditActions) then
+      if dbg.CheckCopyAction then
+        A4MainForm.CopyDBGrid(dbg)
+      else
+        StrToClipbrd(dbg.SelectedField.AsString);
+  end;
+end;
+
+procedure TMaterialsForm.mi2Click(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    with TDBGridEh(ActiveControl) do
+      if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
+        Selection.SelectAll;
+end;
+
+procedure TMaterialsForm.mi4Click(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
+end;
+
 procedure TMaterialsForm.miN41Click(Sender: TObject);
 var
-  state: Integer;
+  State: Integer;
   mid: Integer;
-  SERIAL : string;
+  SERIAL: string;
 begin
-//
-// Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
-// или временный статус = -1*ID объекта (заявки, склада)
+  //
+  // Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+  // или временный статус = -1*ID объекта (заявки, склада)
 
   if dsSerials.FieldByName('M_ID').IsNull then
     exit;
 
   if dsSerials.FieldByName('SERIAL').IsNull then
-    Exit;
+    exit;
 
   if TrTemp.InTransaction then
     TrTemp.Rollback;
 
   mid := dsSerials.FieldByName('M_ID').AsInteger;
   SERIAL := dsSerials.FieldByName('SERIAL').AsString;
-  state := (Sender as TMenuItem).Tag;
+  State := (Sender as TMenuItem).Tag;
 
-  if Application.MessageBox(PWideChar(Format('Сменить статус С/Н %s на "%s"?',[SERIAL, (Sender as TMenuItem).Caption])), 'Сменить статус',
-    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
+  if Application.MessageBox(PWideChar(Format('Сменить статус С/Н %s на "%s"?', [SERIAL, (Sender as TMenuItem).Caption])
+    ), 'Сменить статус', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
   begin
-    Exit;
+    exit;
   end;
 
   QrTemp.Transaction := trWrite;
   QrTemp.SQL.Text := 'update MATERIAL_UNIT set STATE = :state where M_ID = :M_Id and SERIAL = :SERIAL';
   QrTemp.ParamByName('M_ID').AsInteger := mid;
   QrTemp.ParamByName('SERIAL').AsString := SERIAL;
-  QrTemp.ParamByName('STATE').AsInteger := state;
+  QrTemp.ParamByName('STATE').AsInteger := State;
   try
     QrTemp.Transaction.StartTransaction;
     QrTemp.ExecQuery;
@@ -530,13 +577,54 @@ begin
   dsSerials.Refresh;
 end;
 
-procedure TMaterialsForm.miRowHightClick(Sender: TObject);
+procedure TMaterialsForm.miRefreshClick(Sender: TObject);
+var
+  bm: TbookMark;
+  cr: TCursor;
+  dbGrid: TDBGridEh;
 begin
-  miRowHight.Checked := not miRowHight.Checked;
-  if miRowHight.Checked then
-    dbgGridPivotSN.OptionsEh := dbgGridPivotSN.OptionsEh + [dghAutoFitRowHeight]
-  else
-    dbgGridPivotSN.OptionsEh := dbgGridPivotSN.OptionsEh - [dghAutoFitRowHeight];
+  if not(Sender is TMenuItem) then
+    exit;
+
+  if not(((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent is TDBGridEh) then
+    exit;
+
+  dbGrid := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as TDBGridEh);
+  cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  try
+    bm := dbGrid.DataSource.DataSet.GetBookMark;
+    dbGrid.DataSource.DataSet.Close;
+    dbGrid.DataSource.DataSet.Open;
+    dbGrid.DataSource.DataSet.GotoBookmark(bm);
+  finally
+    Screen.Cursor := cr;
+  end;
+end;
+
+procedure TMaterialsForm.mniFilterFLDClick(Sender: TObject);
+var
+  dbGrid: TDBGridEh;
+  vis: Boolean;
+begin
+  if not(Sender is TMenuItem) then
+    exit;
+
+  if not(((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent is TDBGridEh) then
+    exit;
+
+  dbGrid := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as TDBGridEh);
+
+  vis := dbGrid.SearchPanel.Visible;
+  try
+    dbGrid.SearchPanel.Visible := True;
+    dbGrid.SearchPanel.SearchingText := dbGrid.SelectedField.AsString;
+    dbGrid.SearchPanel.ApplySearchFilter;
+    dbGrid.SearchPanel.Active := True;
+  except
+    dbGrid.SearchPanel.CancelSearchFilter;
+    dbGrid.SearchPanel.Visible := vis;
+  end;
 end;
 
 procedure TMaterialsForm.pgcInOutChange(Sender: TObject);
@@ -550,90 +638,35 @@ begin
 
   dsItogo.Active := (pgcInOut.ActivePage = tsItog);
   dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
-  dsPivotSN.Active := (pgcInOut.ActivePage = tsPivotSN);
 end;
 
-procedure TMaterialsForm.ppmCopyClick(Sender: TObject);
+procedure TMaterialsForm.pmgCopyClick(Sender: TObject);
 var
   dbg: TDBGridEh;
 begin
-
   if (ActiveControl is TDBGridEh) then
   begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-      begin
-        // Экспорт информации
-        if (dmMain.AllowedAction(rght_Export)) then
-          DBGridEh_DoCopyAction(dbg, false);
-      end
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
 end;
 
-procedure TMaterialsForm.ppmSaveSelectionClick(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
+procedure TMaterialsForm.pmgSaveSelectionClick(Sender: TObject);
 begin
-  // Экспорт информации
-  if (not dmMain.AllowedAction(rght_Export)) then
-    exit;
-
-  A4MainForm.SaveDialog.FileName := rsMaterials;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, false);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
-procedure TMaterialsForm.ppmSelectAllClick(Sender: TObject);
+procedure TMaterialsForm.pmgSelectAllClick(Sender: TObject);
 begin
   if (ActiveControl is TDBGridEh) then
     with TDBGridEh(ActiveControl) do
       if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
         Selection.SelectAll;
-
 end;
 
 procedure TMaterialsForm.actAddGroupExecute(Sender: TObject);
@@ -683,14 +716,14 @@ end;
 
 procedure TMaterialsForm.actChangeSerialExecute(Sender: TObject);
 var
-  Serial: String;
+  SERIAL: String;
 begin
   if (dsSerials.FieldByName('M_ID').IsNull) or (dsSerials.FieldByName('SERIAL').IsNull) then
     exit;
 
-  Serial := InputBox(rsChangeSerial, dsSerials['SERIAL'] + ' ->', dsSerials['SERIAL']);
+  SERIAL := InputBox(rsChangeSerial, dsSerials['SERIAL'] + ' ->', dsSerials['SERIAL']);
 
-  if Serial.IsEmpty or (Serial = dsSerials['SERIAL']) then
+  if SERIAL.IsEmpty or (SERIAL = dsSerials['SERIAL']) then
     exit;
 
   if TrTemp.InTransaction then
@@ -700,7 +733,7 @@ begin
   QrTemp.SQL.Text := 'execute procedure MATERIAL_CHANGE_SN(:M_Id, :Old_Serial, :New_Serial)';
   QrTemp.ParamByName('M_Id').AsInteger := dsSerials['M_ID'];
   QrTemp.ParamByName('Old_Serial').AsString := dsSerials['SERIAL'];
-  QrTemp.ParamByName('New_Serial').AsString := Serial;
+  QrTemp.ParamByName('New_Serial').AsString := SERIAL;
 
   try
     QrTemp.Transaction.StartTransaction;
@@ -713,8 +746,8 @@ begin
   QrTemp.Transaction := TrTemp;
   dsSerials.Close;
   dsSerials.Open;
-  if not Serial.IsEmpty then
-    dsSerials.Locate('SERIAL', Serial, []);
+  if not SERIAL.IsEmpty then
+    dsSerials.Locate('SERIAL', SERIAL, []);
 end;
 
 procedure TMaterialsForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -852,6 +885,72 @@ begin
   InitDataSet;
 end;
 
+procedure TMaterialsForm.btnPrintIncomeClick(Sender: TObject);
+var
+  i, ri: Integer;
+  dbGrid: TDBGridEh;
+  printDoc: Boolean;
+begin
+  printDoc := True;
+  if pgcInOut.ActivePage = tsIncome then
+    dbGrid := dbgIncome
+  else if pgcInOut.ActivePage = tsMove then
+    dbGrid := dbgMove
+  else if pgcInOut.ActivePage = tsInventory then
+    dbGrid := dbgInvent
+  else if pgcInOut.ActivePage = tsOUT then
+    dbGrid := dbgOut
+  else if pgcInOut.ActivePage = tsSerials then
+  begin
+    printDoc := false;
+    dbGrid := dbgSN;
+  end
+  else
+    exit;
+
+  if printDoc and (not dbGrid.DataSource.DataSet.FieldByName('DT_REPORT').IsNull) then
+  begin
+    ri := dmMain.GET_ID_REPORT_BY_PATH(dbGrid.DataSource.DataSet['DT_REPORT']);
+    if ri >= 0 then
+    begin
+      LoadReportBody(ri);
+      ri := frxReport.Variables.IndexOf('DOC_ID');
+      if (ri >= 0) and dbGrid.DataSource.DataSet.Active and (not dbGrid.DataSource.DataSet.FieldByName('DOC_ID').IsNull)
+      then
+        frxReport.Variables['DOC_ID'] := dbGrid.DataSource.DataSet['DOC_ID'];
+
+      frxReport.PrepareReport(True);
+      printDoc := True;
+    end;
+  end
+  else
+  begin
+    printDoc := false;
+    if pgcInOut.ActivePage = tsSerials then
+    begin
+      ri := dmMain.GET_ID_REPORT_BY_PATH('Материал_СН');
+      if (ri >= 0) then
+      begin
+        LoadReportBody(ri);
+        ri := frxReport.Variables.IndexOf('MAT_ID');
+        if (ri >= 0) and dbGrid.DataSource.DataSet.Active and (not dbGrid.DataSource.DataSet.FieldByName('M_Id').IsNull)
+        then
+          frxReport.Variables['MAT_ID'] := dbGrid.DataSource.DataSet['M_Id'];
+
+        printDoc := True;
+        frxReport.PrepareReport(True);
+      end;
+    end;
+
+  end;
+
+  if printDoc then
+  begin
+    frxReport.ReportOptions.Name := frxReport.FILENAME;
+    frxReport.ShowPreparedReport;
+  end;
+end;
+
 procedure TMaterialsForm.DBGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos: TPoint; Cell: TGridCoord;
   InCellCursorPos: TPoint; Column: TColumnEh; var Params: TDBGridEhDataHintParams; var Processed: Boolean);
 {
@@ -976,22 +1075,6 @@ begin
   end
 end;
 
-procedure TMaterialsForm.dsMaterialsAfterScroll(DataSet: TDataSet);
-begin
-  if dsPivotSN.Active then
-    dsPivotSN.SortOrder := FSortSN;
-end;
-
-procedure TMaterialsForm.dsPivotSNAfterOpen(DataSet: TDataSet);
-begin
-  dbgGridPivotSNSortMarkingChanged(dbgGridPivotSN);
-end;
-
-procedure TMaterialsForm.dsPivotSNNewRecord(DataSet: TDataSet);
-begin
-  dsPivotSN['M_ID'] := dsMaterials['M_ID'];
-end;
-
 procedure TMaterialsForm.tbCancelClick(Sender: TObject);
 begin
   srcDataSource.DataSet.Cancel;
@@ -1021,7 +1104,13 @@ begin
   FAccessFull := dmMain.AllowedAction(rght_Dictionary_full);
   fVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
 
-  tsPivotSN.TabVisible := false; // (dmMain.CompanyName.Contains('ЛТВ') or dmMain.CompanyName.Contains('Призма'));
+  FMatDocFullAccess := dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full);
+  FMatDocAccessNew := FMatDocFullAccess or dmMain.AllowedAction(rght_Dictionary_MatDocNew);
+  FMatDocAccessMove := FMatDocFullAccess or dmMain.AllowedAction(rght_Dictionary_MatDocMove);
+  FMatDocAccessOut := FMatDocFullAccess or dmMain.AllowedAction(rght_Dictionary_MatDocOUT);
+  FMatDocAccessInv := FMatDocFullAccess or dmMain.AllowedAction(rght_Dictionary_MatDocInvent);
+
+  actPrintGrid.Visible := dmMain.AllowedAction(rght_Reports_view);
 
   b := FAccessFull or FAccessMat;
   InitDataSet;
@@ -1080,18 +1169,16 @@ begin
   else
     dbgSN.AllowedOperations := [];
 
-
-
-  SetColumnVisibility(DBGridIncome, 'SERIAL', False);
-  SetColumnVisibility(dbgIncome, 'SERIAL', False);
-  SetColumnVisibility(dbgMove, 'SERIAL', False);
-  SetColumnVisibility(dbgInvent, 'SERIAL', False);
-  SetColumnVisibility(dbgOut, 'SERIAL', False);
-  SetColumnVisibility(dbgGridPivot, 'SERIAL', False);
-
+  SetColumnVisibility(DBGridIncome, 'SERIAL', false);
+  SetColumnVisibility(dbgIncome, 'SERIAL', false);
+  SetColumnVisibility(dbgMove, 'SERIAL', false);
+  SetColumnVisibility(dbgInvent, 'SERIAL', false);
+  SetColumnVisibility(dbgOut, 'SERIAL', false);
+  SetColumnVisibility(dbgGridPivot, 'SERIAL', false);
 
   miStateChange.Visible := FAccessFull;
   miSep1.Visible := miStateChange.Visible;
+  SetGridsPopUpMenu(pmPopUp);
 end;
 
 procedure TMaterialsForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
@@ -1101,15 +1188,6 @@ begin
   actInNew.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and (FAccessFull or FAccessMat);
 
   tsSerials.TabVisible := (not dsMaterials.FieldByName('IS_UNIT').IsNull) and (dsMaterials['IS_UNIT'] = 1);
-end;
-
-procedure TMaterialsForm.srcMatGropupsStateChange(Sender: TObject);
-begin
-  // ActPostGroup.Enabled := not((Sender as TDataSource).DataSet.State = dsBrowse);
-  // actCancelGroup.Enabled := ActPostGroup.Enabled;
-  // actAddGroup.Enabled := not ActPostGroup.Enabled;
-  // ActEditGroup.Enabled := not ActPostGroup.Enabled;
-  // ActDelGroup.Enabled := not ActPostGroup.Enabled;
 end;
 
 procedure TMaterialsForm.actRecalcAllExecute(Sender: TObject);
@@ -1190,13 +1268,13 @@ begin
   d_id := -1;
   dt_id := -1;
 
-  if (dsOut.Active) then
-    ds := dsOut
-  else if (dsIncome.Active) then
+  if pgcInOut.ActivePage = tsIncome then
     ds := dsIncome
-  else if (dsMove.Active) then
+  else if pgcInOut.ActivePage = tsMove then
     ds := dsMove
-  else if (dsInvent.Active) then
+  else if pgcInOut.ActivePage = tsOUT then
+    ds := dsOut
+  else if pgcInOut.ActivePage = tsInventory then
     ds := dsInvent
   else
     exit;
@@ -1212,21 +1290,37 @@ begin
 
   case dt_id of
     1:
-      MaterialIncomeDocument(d_id); // Приход материалов
+      if (FMatDocAccessNew) then
+        MaterialIncomeDocument(d_id); // Приход материалов
     2:
-      MaterialMoveDocument(d_id); // Перемещение по складам
+      if (FMatDocAccessMove) then
+        MaterialMoveDocument(d_id); // Перемещение по складам
     3:
-      MaterialOutDocument(d_id); // Списание материалов
+      if (FMatDocAccessOut) then
+        MaterialOutDocument(d_id); // Списание материалов
     4:
-      MaterialCorrectionDocument(d_id); // Коррекция
+      if (FMatDocAccessInv) then
+        MaterialCorrectionDocument(d_id); // Инвентаризация
     5:
-      MaterialInventoryDocument(d_id); // Инвентаризация
+      if (FMatDocAccessInv) then
+        MaterialInventoryDocument(d_id); // Инвентаризация
   end;
 end;
 
 procedure TMaterialsForm.dbgIncomeDblClick(Sender: TObject);
 begin
   actOpenMatDoc.Execute;
+end;
+
+procedure TMaterialsForm.actPrintGridExecute(Sender: TObject);
+var
+  dbg: TDBGridEh;
+begin
+  if (ActiveControl is TDBGridEh) then
+  begin
+    printGridEh.DBGridEh := (ActiveControl as TDBGridEh);
+    printGridEh.Preview;
+  end;
 end;
 
 procedure TMaterialsForm.actPrintHistoryExecute(Sender: TObject);
@@ -1252,7 +1346,7 @@ begin
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
-        frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        frxReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
         frxReport.PreviewForm.Caption := frxReport.FILENAME;
       finally
         Stream.Free;
@@ -1276,100 +1370,52 @@ begin
     Params.Text := '';
 end;
 
-procedure TMaterialsForm.dbgGridPivotSNColumns3GetCellParams(Sender: TObject; EditMode: Boolean;
-  Params: TColCellParamsEh);
-
-  function HasCyrChar(S: String): Boolean;
-  const
-    rus: string = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
-  var
-    p, i: Integer;
-  begin
-    Result := false;
-    if (Copy(S, 1, 6) = 'ПРОДАН') then
-      exit;
-
-    for i := 1 to Length(S) do
-    begin
-      p := Pos(S[i], rus);
-      if p > 1 then
-      begin
-        Result := True;
-        Break;
-      end;
-    end;
-  end;
-
-begin
-  if EditMode then
-    exit;
-
-  if HasCyrChar(Params.Text) then
-    Params.Background := clLime;
-end;
-
-procedure TMaterialsForm.dbgGridPivotSNDblClick(Sender: TObject);
+procedure TMaterialsForm.dbgGridPivotDblClick(Sender: TObject);
 var
+  i: Integer;
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
-  S: String;
-  i: Integer;
+  f: String;
 begin
+  if dsItogo.FieldByName('DOC_ID').IsNull or dsItogo.FieldByName('M_TYPE_ID').IsNull then
+    exit;
   ScrPt := Mouse.CursorPos;
-  GrdPt := dbgGridPivotSN.ScreenToClient(ScrPt);
-  Cell := dbgGridPivotSN.MouseCoord(GrdPt.X, GrdPt.Y);
-  S := UpperCase(dbgGridPivotSN.Fields[Cell.X - 1].FieldName);
-  if (S = 'ACCOUNT_NO') then
+  GrdPt := dbgGridPivot.ScreenToClient(ScrPt);
+  Cell := dbgGridPivot.MouseCoord(GrdPt.X, GrdPt.Y);
+  f := UpperCase(dbgGridPivot.Fields[Cell.X - 1].FieldName);
+  if (f = 'M_DOC') or (f = 'M_TYPE') then
   begin
-    if not dsPivotSN.FieldByName('ACCOUNT_NO').IsNull then
-      A4MainForm.ShowCustomers(2, dsPivotSN['ACCOUNT_NO']);
-  end
-  else
-  begin
-    if not dsPivotSN.FieldByName('RQ_ID').IsNull then
-    begin
-      if (S = 'RQ_DEFECT') and (dmMain.AllowedAction(rght_Request_full)) then
-      begin
-        if dsPivotSN.FieldByName('RQ_DEFECT').IsNull then
-          S := ''
-        else
-          S := dsPivotSN.FieldByName('RQ_DEFECT').AsString;
-
-        if EditText(S, 'Примечание', 'Примечание заявки') then
-        begin
-          if (dsPivotSN.State <> dsEdit) then
-            dsPivotSN.Edit;
-          dsPivotSN.FieldByName('RQ_DEFECT').AsString := S;
-          dsPivotSN.Post;
-        end;
-      end
-      else
-      begin
-        i := dsPivotSN['RQ_ID'];
-        ReguestExecute(i, -2, 1);
+    {
+      7 'возврат С заявки'
+      8 'списание НА заявку'
+    }
+    i := dsItogo['M_TYPE_ID'];
+    if (i in [7, 8]) then begin
+      ReguestExecute(dsItogo['DOC_ID'], -2, 1);
+    end
+    else begin
+      case i of
+        1:
+          if (FMatDocAccessNew) then
+            MaterialIncomeDocument(dsItogo['DOC_ID']); // Приход материалов
+        2:
+          if (FMatDocAccessMove) then
+            MaterialMoveDocument(dsItogo['DOC_ID']); // Перемещение по складам
+        3:
+          if (FMatDocAccessMove) then
+            MaterialMoveDocument(dsItogo['DOC_ID']); // Перемещение по складам
+        4:
+          if (FMatDocAccessOut) then
+            MaterialOutDocument(dsItogo['DOC_ID']); // Списание материалов
+        5:
+          if (FMatDocAccessInv) then
+            MaterialCorrectionDocument(dsItogo['DOC_ID']); // Инвентаризация
+        6:
+          if (FMatDocAccessInv) then
+            MaterialInventoryDocument(dsItogo['DOC_ID']); // Инвентаризация
       end;
     end;
   end;
-end;
-
-procedure TMaterialsForm.dbgGridPivotSNSortMarkingChanged(Sender: TObject);
-var
-  S: string;
-  i, J: Integer;
-begin
-  J := dbgGridPivotSN.SortMarkedColumns.Count;
-  S := ' ';
-  for i := 0 to pred(J) do
-  begin
-    S := S + ' ' + dbgGridPivotSN.SortMarkedColumns[i].FieldName;
-    if dbgGridPivotSN.SortMarkedColumns[i].Title.SortMarker = smDownEh then
-      S := S + ' desc';
-    if i <> pred(J) then
-      S := S + ',';
-  end;
-  FSortSN := S.Trim([',']);
-
-  dsPivotSN.SortOrder := FSortSN;
 end;
 
 procedure TMaterialsForm.dbgJournalDblClick(Sender: TObject);
@@ -1409,8 +1455,7 @@ procedure TMaterialsForm.ShowSNforGrid();
 begin
   if (pgcInOut.ActivePage = tsIn) then
     ShowSNforRem
-  else
-  if (pgcInOut.ActivePage = tsIncome) then
+  else if (pgcInOut.ActivePage = tsIncome) then
     ShowSNforIncome
   else if (pgcInOut.ActivePage = tsMove) then
     ShowSNforMove
@@ -1430,8 +1475,8 @@ begin
   begin
     dsRemain.ParamByName('qnt_clause').Value := 'iif(u.Serial is null, m.Mr_Quant, 1)';
     dsRemain.ParamByName('sn_clause').Value := 'u.Serial';
-    dsRemain.ParamByName('join_clause').Value := 'inner join materials t on (t.M_Id = m.M_Id) '
-      +' left outer join Material_Unit u on (u.M_Id = t.M_Id and u.Owner_Type = 0 and u.Owner = m.WH_ID)';
+    dsRemain.ParamByName('join_clause').Value := ' left outer join Material_Unit u on ' +
+      '(u.M_Id = t.M_Id and u.Owner_Type = 0 and u.Owner = m.WH_ID)';
   end
   else
   begin
@@ -1489,14 +1534,7 @@ procedure TMaterialsForm.ShowSNforItog;
 begin
   FShowSN_Itog := not FShowSN_Itog;
   dsItogo.Close;
-  if FShowSN_Itog then
-  begin
-    drvFIB.SelectSQL.Text := 'select * from MATERIALS_SUMMARY(:M_ID, 1)';
-  end
-  else
-  begin
-    drvFIB.SelectSQL.Text := 'select * from MATERIALS_SUMMARY(:M_ID, 0)';
-  end;
+  drvFIB.SelectSQL.Text := Format('select * from MATERIALS_SUMMARY(:M_ID, %d)', [IfThen(FShowSN_Itog, 1, 0)]);
   dsItogo.Open;
   SetColumnVisibility(dbgGridPivot, 'SERIAL', FShowSN_Itog);
 end;
@@ -1526,16 +1564,73 @@ begin
     dsOut.Params.ByName['join_clause'].SetDefMacroValue;
   end;
   dsOut.Open;
-  SetColumnVisibility(dbgOUT, 'SERIAL', FShowSN_Out);
+  SetColumnVisibility(dbgOut, 'SERIAL', FShowSN_Out);
 end;
 
-procedure TMaterialsForm.SetColumnVisibility(grid: TDBGridEh; fld: string; vsbl: Boolean);
+procedure TMaterialsForm.SetColumnVisibility(grid: TDBGridEh; const fld: string; vsbl: Boolean);
 var
   i: Integer;
 begin
   for i := 0 to grid.Columns.Count - 1 do
     if grid.Columns[i].FieldName = fld then
       grid.Columns[i].Visible := vsbl;
+end;
+
+procedure TMaterialsForm.SetGridsPopUpMenu(pmGrid: TPopupMenu);
+var
+  rghtExport: Boolean;
+var
+  i: Integer;
+begin
+  rghtExport := dmMain.AllowedAction(rght_Export);
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).EditActions := (Components[i] as TDBGridEh).EditActions + [geaCopyEh];
+      (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
+      (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
+      if rghtExport then
+      begin
+        (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks, gstRectangle, gstColumns, gstAll];
+        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
+      end
+      else
+      begin
+        (Components[i] as TDBGridEh).AllowedSelections := [];
+        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
+      end;
+
+      if ((Components[i] as TDBGridEh).PopUpMenu = nil) then
+        (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
+    end;
+  end;
+end;
+
+procedure TMaterialsForm.LoadReportBody(const fReport_ID: Integer);
+var
+  Stream: TStream;
+begin
+  try
+    dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value := fReport_ID;
+    dmMain.fdsLoadReport.Open;
+    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').Value <> NULL then
+    begin
+      Stream := TMemoryStream.Create;
+      try
+        TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
+        Stream.Position := 0;
+        frxReport.LoadFromStream(Stream);
+        frxReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        frxReport.PreviewForm.Caption := frxReport.FILENAME;
+      finally
+        Stream.Free;
+      end;
+    end;
+  finally
+    if dmMain.fdsLoadReport.Active then
+      dmMain.fdsLoadReport.Close;
+  end;
 end;
 
 end.

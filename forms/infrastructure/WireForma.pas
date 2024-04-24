@@ -10,7 +10,7 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin,
   GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
   pFIBDataSet,
-  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh;
+  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, amSplitter;
 
 type
   TWireForm = class(TGridForm)

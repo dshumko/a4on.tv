@@ -450,12 +450,12 @@ object NodesForm: TNodesForm
         object ToolButton8: TToolButton
           Left = 61
           Top = 0
-          Action = actAdresSearch
+          Action = actAddressSearch
         end
       end
     end
   end
-  object pnlSearchAdres: TPanel
+  object pnlSearchAddress: TPanel
     Left = 0
     Top = 24
     Width = 894
@@ -776,7 +776,6 @@ object NodesForm: TNodesForm
       ShowHint = True
       TabOrder = 1
       Visible = True
-      OnChange = OnAdressChange
     end
     object edtPlace: TDBEditEh
       Left = 821
@@ -792,7 +791,7 @@ object NodesForm: TNodesForm
       EmptyDataInfo.Text = #1052#1077#1089#1090#1086
       TabOrder = 4
       Visible = True
-      OnChange = OnAdressChange
+      OnChange = OnAddressChange
     end
     object edtPORCH_N: TDBEditEh
       Left = 654
@@ -806,7 +805,7 @@ object NodesForm: TNodesForm
       EmptyDataInfo.Text = #1055#1086#1076#1098#1077#1079#1076
       TabOrder = 2
       Visible = True
-      OnChange = OnAdressChange
+      OnChange = OnAddressChange
     end
     object edtFLOOR_N: TDBEditEh
       Left = 734
@@ -820,7 +819,7 @@ object NodesForm: TNodesForm
       EmptyDataInfo.Text = #1069#1090#1072#1078
       TabOrder = 3
       Visible = True
-      OnChange = OnAdressChange
+      OnChange = OnAddressChange
     end
     object edtLon: TDBNumberEditEh
       Left = 226
@@ -920,7 +919,6 @@ object NodesForm: TNodesForm
       ShowHint = True
       TabOrder = 9
       Visible = True
-      OnChange = OnAdressChange
     end
   end
   object trRead: TpFIBTransaction
@@ -1095,12 +1093,12 @@ object NodesForm: TNodesForm
       ShortCut = 16465
       OnExecute = actQuickFilterExecute
     end
-    object actAdresSearch: TAction
+    object actAddressSearch: TAction
       Caption = #1055#1086#1080#1089#1082' '#1087#1086' '#1072#1076#1088#1077#1089#1091
       Hint = #1055#1086#1080#1089#1082' '#1087#1086' '#1072#1076#1088#1077#1089#1091
       ImageIndex = 18
       ShortCut = 16454
-      OnExecute = actAdresSearchExecute
+      OnExecute = actAddressSearchExecute
     end
     object ActionRefresh: TAction
       Caption = #1054#1073#1085#1086#1074#1080#1090#1100
@@ -1159,7 +1157,7 @@ object NodesForm: TNodesForm
         Action = actQuickFilter
       end
       object N32: TMenuItem
-        Action = actAdresSearch
+        Action = actAddressSearch
       end
       object N33: TMenuItem
         Caption = #1055#1086#1080#1089#1082

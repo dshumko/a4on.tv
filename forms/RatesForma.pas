@@ -13,7 +13,7 @@ uses
   PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
   VclTee.TeeGDIPlus, VclTee.TeEngine, VclTee.Series, VclTee.TeeProcs,
-  VclTee.Chart;
+  VclTee.Chart, amSplitter;
 
 type
   TRatesForm = class(TGridForm)
@@ -106,10 +106,8 @@ const
 
 var
   s: string;
-  Obj: TJsonObject;
   y, m, d: Word;
-  sd, ed: TDate;
-  bm: TBookmark;
+  dsd, sd, ed: TDate;
 
   function StrToDT(const d: string): TDate;
   var
@@ -123,10 +121,13 @@ var
 
   procedure GetRate(const v: string; const c: Integer; const b, e: string);
   var
-    i: Integer;
+    i, cnt: Integer;
+    Obj: TJsonObject;
+    O: TJsonObject;
   begin
-    s := Format('https://www.nbrb.by/API/ExRates/Rates/Dynamics/%d?startDate=%s&endDate=%s', [c, b, e]);
-    // ShowMessage(s);
+    // ://www.nbrb.by/apihelp/exrates
+    s := Format('https://api.nbrb.by/ExRates/Rates/Dynamics/%d?startDate=%s&endDate=%s', [c, b, e]);
+
     qInsert.SQL.Text := 'update or insert into Rates (Rdate, Cur, ' + v +
       ') values (:Rdate, :Cur, :val) matching (Rdate, Cur)';
     s := DownloadFile(s);
@@ -136,20 +137,25 @@ var
       s := '{"' + v + '":' + s + '}';
       Obj := TJsonObject.Parse(s) as TJsonObject;
       try
-        for i := 0 to Obj[v].Count - 1 do
+        cnt := Obj[v].Count - 1;
+
+        for i := 0 to cnt do
         begin
-          qInsert.ParamByName('val').AsFloat := Obj[v].Items[i].ObjectValue.F['Cur_OfficialRate'];
-          qInsert.ParamByName('Rdate').AsDate := StrToDT(Obj[v].Items[i].ObjectValue.s['Date']);
-          qInsert.ParamByName('Cur').AsString := CURR;
-          qInsert.Transaction.StartTransaction;
-          qInsert.ExecQuery;
-          qInsert.Transaction.Commit;
+          o := Obj[v].Items[i].ObjectValue;
+          if (not o.IsNull('Cur_OfficialRate')) and (not o.IsNull('Date')) then begin
+            qInsert.ParamByName('val').AsFloat := O.F['Cur_OfficialRate'];
+            qInsert.ParamByName('Rdate').AsDate := StrToDT(O.s['Date']);
+            qInsert.ParamByName('Cur').AsString := CURR;
+            qInsert.Transaction.StartTransaction;
+            qInsert.ExecQuery;
+            qInsert.Transaction.Commit;
+          end;
         end;
       finally
         Obj.Free;
       end;
 
-      qInsert.SQL.Text := 'delete from Rates where ' + v + ' is null';
+      qInsert.SQL.Text := 'delete from Rates where '+v+' is null';
       qInsert.Transaction.StartTransaction;
       qInsert.ExecQuery;
       qInsert.Transaction.Commit;
@@ -159,9 +165,24 @@ var
 
 begin
   inherited;
-  DecodeDate(Date(), y, m, d);
   sd := Date() - 360;
   ed := Date() + 1;
+
+  qInsert.Transaction := dmMain.trReadQ;
+  qInsert.sql.Text := 'select max(Rdate) md from rates';
+  qInsert.Transaction.StartTransaction;
+  qInsert.ExecQuery;
+  if (not qInsert.Eof) then begin
+    if not qInsert.FieldByName('md').IsNull then
+      dsd := qInsert.FieldByName('md').AsDate;
+  end;
+  qInsert.Close;
+  qInsert.Transaction.Commit;
+  qInsert.Transaction := dmMain.trWriteQ;
+
+  DecodeDate(Date(), y, m, d);
+
+  {
   if dsRates.Active then
   begin
     dsRates.DisableControls;
@@ -176,13 +197,19 @@ begin
     dsRates.GotoBookmark(bm);
     dsRates.EnableControls;
   end;
+  }
 
-  GetRate('USD', 431, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
-  GetRate('EUR', 451, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
+  while dsd < Date() do begin
+    sd := dsd;
+    ed := dsd+360;
+    if ed > Date() then
+      ed := Date();
+    GetRate('USD', 431, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
+    GetRate('EUR', 451, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
+    dsd := ed+1;
+  end;
 
-  bm := dsRates.GetBookmark;
   dsRates.CloseOpen(True);
-  dsRates.GotoBookmark(bm);
 end;
 
 procedure TRatesForm.LoadFromCBR;

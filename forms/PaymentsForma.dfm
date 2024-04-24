@@ -473,11 +473,10 @@ object PaymentsForm: TPaymentsForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 917
+      Width = 141
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
-      ExplicitWidth = 141
     end
     object dbgrdErrors: TDBGridEh
       Left = 0

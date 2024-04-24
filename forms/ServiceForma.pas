@@ -232,7 +232,7 @@ begin
     ((cbCalcType.Value = 0) or (cbCalcType.Value = 1) or (cbCalcType.Value = 2) or (cbCalcType.Value = 3) or
     (cbCalcType.Value = 5));
 
-  pnlAddToMin.Visible := (cbCalcType.Value = 3) and (dsService['SRV_TYPE_ID'] = 0);
+  // pnlAddToMin.Visible := (cbCalcType.Value = 3) and (dsService['SRV_TYPE_ID'] = 0);
 end;
 
 procedure TServiceForm.cbItsInetClick(Sender: TObject);
@@ -309,6 +309,7 @@ end;
 procedure TServiceForm.FormShow(Sender: TObject);
 begin
   pnlAllDays.Height := 30;
+  chkAUTOOFFClick(Sender);
 end;
 
 procedure TServiceForm.btnOkClick(Sender: TObject);

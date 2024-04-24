@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ComCtrls,
   ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase,
   pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OXmlPDOM, OTextReadWrite, EhLibVCL, httpsend, synacode, blcksock,
-  ftpsend, synsock, DBGridEhGrouping, DynVarsEh;
+  ftpsend, synsock, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TEPGImportForm = class(TForm)

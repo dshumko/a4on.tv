@@ -302,6 +302,7 @@ object A4MainForm: TA4MainForm
           end>
         EmptyDataInfo.Text = #1057#1090#1088#1086#1082#1072' '#1073#1099#1089#1090#1088#1086#1075#1086' '#1087#1086#1080#1089#1082#1072' (F11)'
         Flat = True
+        MRUList.Active = True
         ShowHint = True
         TabOrder = 1
         Visible = True
@@ -4912,7 +4913,7 @@ object A4MainForm: TA4MainForm
     Filter = 
       #1058#1077#1082#1089#1090'(*.txt)|*.TXT|CSV '#1092#1072#1081#1083'(*.csv)|*.CSV|HTML '#1092#1072#1081#1083' (*.htm)|*.HTM' +
       '|Rich Text Format (*.rtf)|*.RTF|Microsoft Excel Workbook (*.xls)' +
-      '|*.XLS'
+      '|*.XLS|Microsoft Excel 2006+ (*.xlsx)|*.XLSX'
     Left = 77
     Top = 304
   end

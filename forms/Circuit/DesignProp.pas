@@ -37,7 +37,7 @@ type
     procedure btnApplyClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    S: TSimpleGraph;
+    Fsg: TSimpleGraph;
     procedure ApplyChanges;
   public
     class function Execute(SimpleGraph: TSimpleGraph): Boolean;
@@ -54,7 +54,7 @@ begin
   Result := False;
   with Create(Application) do
     try
-      S := SimpleGraph;
+      Fsg := SimpleGraph;
       GridSize.Min := Low(TGridSize);
       GridSize.Max := High(TGridSize);
       SnapToGrid.Checked := SimpleGraph.SnapToGrid;
@@ -75,16 +75,16 @@ end;
 
 procedure TDesignerProperties.ApplyChanges;
 begin
-  S.BeginUpdate;
+  Fsg.BeginUpdate;
   try
-    S.SnapToGrid := SnapToGrid.Checked;
-    S.ShowGrid := ShowGrid.Checked;
-    S.GridSize := GridSize.Position;
-    S.Color := BackgroundColor.Brush.Color;
-    S.MarkerColor := MarkerColor.Brush.Color;
-    S.GridColor := GridColor.Brush.Color;
+    Fsg.SnapToGrid := SnapToGrid.Checked;
+    Fsg.ShowGrid := ShowGrid.Checked;
+    Fsg.GridSize := GridSize.Position;
+    Fsg.Color := BackgroundColor.Brush.Color;
+    Fsg.MarkerColor := MarkerColor.Brush.Color;
+    Fsg.GridColor := GridColor.Brush.Color;
   finally
-    S.EndUpdate;
+    Fsg.EndUpdate;
   end;
 end;
 

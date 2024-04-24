@@ -11,7 +11,7 @@ uses
   Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
   AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh, DBCtrlsEh, DBLookupEh;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh, DBCtrlsEh, DBLookupEh, amSplitter;
 
 type
 
@@ -77,6 +77,7 @@ type
     edSOUT: TDBNumberEditEh;
     tsOther: TTabSheet;
     actLanHttpName: TAction;
+    actLanHttpUserLoginIP: TAction;
     procedure btnCMDClick(Sender: TObject);
     procedure ActLanPingExecute(Sender: TObject);
     procedure actLanTelnetExecute(Sender: TObject);
@@ -90,6 +91,7 @@ type
     procedure FormResize(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actLanHttpNameExecute(Sender: TObject);
+    procedure actLanHttpUserLoginIPExecute(Sender: TObject);
   private
     FUpdatetNotice: Boolean;
     FIsVertical: Boolean;
@@ -127,8 +129,7 @@ begin
     pgcTypeInfo.Pages[i].TabVisible := False;
 
   dsData.DataSource := FDataSource;
-  mmoNotice.ReadOnly := not(dmMain.AllowedAction(rght_Dictionary_full) or
-    dmMain.AllowedAction(rght_Comm_Equipment));
+  mmoNotice.ReadOnly := not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment));
 end;
 
 procedure TapgEqpmntInfo.OpenData;
@@ -158,6 +159,9 @@ begin
   pmLanPopUp.Items.Add(NewItem);
   NewItem := TMenuItem.Create(pmLanPopUp);
   NewItem.Action := actLanHttp;
+  pmLanPopUp.Items.Add(NewItem);
+  NewItem := TMenuItem.Create(pmLanPopUp);
+  NewItem.Action := actLanHttpUserLoginIP;
   pmLanPopUp.Items.Add(NewItem);
   NewItem := TMenuItem.Create(pmLanPopUp);
   NewItem.Action := actLanHttpName;
@@ -427,6 +431,30 @@ begin
     exit;
 
   s := 'http://' + TNetEncoding.URL.Encode(dsData.FieldByName('NAME').asString);
+  atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'Open', s, '', '', SW_SHOW);
+end;
+
+procedure TapgEqpmntInfo.actLanHttpUserLoginIPExecute(Sender: TObject);
+var
+  s: string;
+  lp: string;
+begin
+  if (dsData.FieldByName('IP').IsNull) then
+    exit;
+
+  lp := '';
+  if not dsData.FieldByName('E_ADMIN').IsNull then
+  begin
+    lp := dsData.FieldByName('E_ADMIN').asString;
+    if not dsData.FieldByName('E_PASS').IsNull then
+      lp := lp + ':' + dsData.FieldByName('E_PASS').asString;
+    lp := lp.Trim + '@';
+    if lp = ':@' then
+      lp := '';
+  end;
+
+  s := 'http://' + lp + dsData.FieldByName('IP').asString;
+
   atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'Open', s, '', '', SW_SHOW);
 end;
 

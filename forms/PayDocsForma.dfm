@@ -658,6 +658,7 @@ object PayDocsForm: TPayDocsForm
       'LEAK_PRC=LEAK_PRC')
     DataSet = dsPayDocs
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 124
     Top = 399
   end

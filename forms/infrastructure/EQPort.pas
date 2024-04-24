@@ -43,6 +43,8 @@ type
     cbLABELS: TDBComboBoxEh;
     actlst: TActionList;
     actEditLink: TAction;
+    mmoCONFIG: TDBMemoEh;
+    lblLabel1: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);
@@ -227,13 +229,15 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
-    fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, WID, WLABEL) ' +
-      ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id, :WID, :WLABEL) matching (Eid, Port) ';
+    fq.sql.Text := ' update or insert into Port(Eid, Port, Notice, P_Type, P_State, Speed, Vlan_Id, WID, WLABEL, CONFIG) ' +
+      ' values (:Eid, :Port, :Notice, :P_Type, :P_State, :Speed, :Vlan_Id, :WID, :WLABEL, :CONFIG) matching (Eid, Port) ';
 
     fq.ParamByName('Eid').AsInteger := FEqRecord.ID;
     fq.ParamByName('P_Type').AsInteger := lcbType.value;
     fq.ParamByName('P_State').AsInteger := lcbState.value;
     fq.ParamByName('Notice').AsString := mmoNotice.Lines.Text;
+    fq.ParamByName('CONFIG').AsString := mmoCONFIG.Lines.Text;
+
     if not ednSpeed.Text.IsEmpty then
       fq.ParamByName('Speed').AsInteger := ednSpeed.value;
     if not lcbVLAN.Text.IsEmpty then
@@ -386,7 +390,7 @@ begin
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trReadQ;
-    fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id, p.WLABEL';
+    fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id, p.WLABEL, p.CONFIG';
     fq.sql.Add('from Port p left outer join Equipment e on (p.Eid = e.Eid)');
     fq.sql.Add('where p.Eid = :Eid and p.Port = :Port');
     fq.ParamByName('Eid').AsInteger := FEqRecord.ID;
@@ -404,6 +408,8 @@ begin
         lcbVLAN.value := fq.FN('Vlan_Id').AsInteger;
       if not fq.FN('Speed').IsNull then
         ednSpeed.value := fq.FN('Speed').AsInteger;
+      if not fq.FN('CONFIG').IsNull then
+        mmoCONFIG.Lines.Text := fq.FN('CONFIG').AsString;
       if not fq.FN('Notice').IsNull then
         mmoNotice.Lines.Text := fq.FN('Notice').AsString;
       if not fq.FN('Node_Id').IsNull then

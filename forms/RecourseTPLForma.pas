@@ -10,7 +10,7 @@ uses
   Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
   GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh;
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh, amSplitter;
 
 type
   TRecoursesTPLForm = class(TGridForm)
@@ -39,6 +39,7 @@ type
     lbl2: TLabel;
     mmoNotice: TDBMemoEh;
     lbl3: TLabel;
+    chkDel: TDBCheckBoxEh;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -57,6 +58,8 @@ type
     procedure actCONTDELExecute(Sender: TObject);
     procedure srcTPLDataChange(Sender: TObject; Field: TField);
     procedure actQuickFilterExecute(Sender: TObject);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
   public
@@ -151,6 +154,15 @@ begin
     srcTPL.DataSet.Cancel;
 end;
 
+procedure TRecoursesTPLForm.dbGridGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (not dsType.FieldByName('O_DELETED').IsNull ) and (dsType['O_DELETED'] = 1 ) then
+    Background := $005555FF;
+end;
+
 procedure TRecoursesTPLForm.dsTPLBeforePost(DataSet: TDataSet);
 begin
   inherited;
@@ -164,6 +176,8 @@ begin
 end;
 
 procedure TRecoursesTPLForm.FormShow(Sender: TObject);
+var
+ i: Integer;
 begin
   inherited;
   dsType.Open;
@@ -176,6 +190,13 @@ begin
   ActCONTAdd.Visible := fCanEdit;
   actCONTEDIT.Visible := fCanEdit;
   actCONTDEL.Visible := fCanEdit;
+
+  chkDel.Visible := dmMain.UserIsAdmin;
+  for i := 0 to dbGrid.Columns.Count - 1 do
+  begin
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'O_DELETED') then
+      dbGrid.Columns[i].Visible := chkDel.Visible;
+  end;
 end;
 
 procedure TRecoursesTPLForm.srcDataSourceDataChange(Sender: TObject; Field: TField);

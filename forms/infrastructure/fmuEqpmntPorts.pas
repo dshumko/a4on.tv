@@ -10,7 +10,7 @@ uses
   Vcl.ToolWin, Vcl.Dialogs,
   FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls,
-  DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh, PropStorageEh;
+  DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TapgEqpmntPort = class(TA4onPage)
@@ -454,7 +454,10 @@ begin
   if not(dsData.FieldByName('P_State').IsNull) then
   begin
     if (dsData['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'PS_NAME')) then
-      AFont.Style := [fsStrikeOut];
+      AFont.Style := [fsStrikeOut]
+    else
+    if (dsData['P_State'] = 3) then
+      AFont.Style := [fsBold];
   end;
 end;
 

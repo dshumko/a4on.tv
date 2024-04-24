@@ -1,5 +1,4 @@
 object ScripEditorForm: TScripEditorForm
-  ShowHint = True
   Left = 251
   Top = 239
   ActiveControl = Memo
@@ -15,6 +14,7 @@ object ScripEditorForm: TScripEditorForm
   FormStyle = fsMDIChild
   OldCreateOrder = False
   Position = poDefault
+  ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
@@ -105,6 +105,7 @@ object ScripEditorForm: TScripEditorForm
           '1'
           '2'
           '3')
+        ShowHint = True
         TabOrder = 0
         Visible = True
         OnChange = cbLanguageChange
@@ -161,6 +162,7 @@ object ScripEditorForm: TScripEditorForm
     AutoSize = False
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 5
     Visible = True
     WantReturns = True
@@ -276,6 +278,7 @@ object ScripEditorForm: TScripEditorForm
       AutoSize = False
       DynProps = <>
       EditButtons = <>
+      ShowHint = True
       TabOrder = 1
       Visible = True
       WantReturns = True
@@ -322,6 +325,7 @@ object ScripEditorForm: TScripEditorForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -334,6 +338,7 @@ object ScripEditorForm: TScripEditorForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ShowHint = True
       TabOrder = 2
       Visible = True
     end

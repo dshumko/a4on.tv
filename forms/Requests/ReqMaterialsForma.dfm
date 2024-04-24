@@ -62,6 +62,7 @@ object ReqMaterialsForm: TReqMaterialsForm
         Width = 234
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
+        OnClick = OkCancelFrame1bbCancelClick
         ExplicitLeft = 688
         ExplicitWidth = 234
         ExplicitHeight = 30
@@ -182,7 +183,7 @@ object ReqMaterialsForm: TReqMaterialsForm
           NotInKeyListIndex = 0
           PickList.Strings = (
             #1055#1088#1086#1076#1072#1078#1072
-            #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1072#1088#1077#1085#1076#1072' '#1073#1077#1079' '#1086#1087#1083#1072#1090#1099')'
+            #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
             #1056#1072#1089#1089#1088#1086#1095#1082#1072
             #1040#1088#1077#1085#1076#1072)
           Title.Caption = #1053#1072#1095#1080#1089#1083'.'

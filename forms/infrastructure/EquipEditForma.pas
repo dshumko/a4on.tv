@@ -91,6 +91,12 @@ type
     lcbNODE: TDBLookupComboboxEh;
     srcNODE: TDataSource;
     dsNODE: TpFIBDataSet;
+    DBEditEh1: TDBEditEh;
+    Label10: TLabel;
+    Label11: TLabel;
+    DBLookupComboboxEh1: TDBLookupComboboxEh;
+    Label12: TLabel;
+    DBLookupComboboxEh2: TDBLookupComboboxEh;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTypeEQChange(Sender: TObject);
@@ -915,10 +921,10 @@ end;
 
 procedure TEquipEditForm.CheckPortTemplate(const eid: Integer);
 var
-  gid, gcnt: Integer;
+  gid, gcnt, ecnt: Integer;
 begin
   gcnt := 0;
-
+  gid := 1;
   with TpFIBQuery.Create(Nil) do
   begin
     try
@@ -932,7 +938,8 @@ begin
       ExecQuery;
       if (FieldByName('gcnt').Value > 0) and (FieldByName('ecnt').Value = 0) then
         gcnt := FieldByName('gcnt').Value;
-      gid := FieldByName('gid').Value;
+      if not FieldByName('gid').IsNull then
+        gid := FieldByName('gid').Value;
       Close;
       Transaction.Commit;
     finally
@@ -940,7 +947,7 @@ begin
     end;
   end;
 
-  if gcnt = 0 then
+  if (gcnt = 0) or (gid > 0) then
     Exit;
 
   if Application.MessageBox(PWideChar(format('Добавить %d порта(ов) из шаблона группы?', [gcnt])), 'Создание портов',

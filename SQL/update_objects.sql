@@ -233,64 +233,50 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'С
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (221, 'ПРОСМОТР ТВ', 'ТВ', 'Просмотр всех пунктов меню ТВ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (222, 'ПРОСМОТР ОБЪЕКТЫ', 'ОБЪЕКТЫ', 'Просмотр всех пунктов меню ОБЪЕКТЫ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (223, 'РЕДАКТИРОВАНИЕ КОНТАКТОВ', 'АБОНЕНТЫ', 'Возможность редактировать контакты абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (224, 'ПИСЬМА', 'АБОНЕНТЫ', 'Удаление писем абонентов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (225, 'РЕДАКТИРОВАНИЕ ЦИФРЫ', 'АБОНЕНТЫ', 'Редактировани закладки цифры у абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (226, 'ПРОСМОТР ТОЛЬКО ТЕКУЩЕГО ДНЯ', 'ОБРАЩЕНИЯ', 'Внимание, ограничение! Добавление и просмотр обращений только текущим днем!') MATCHING (ID);
 commit;
 
 execute block as
 declare variable v varchar(1000);
+declare variable s varchar(50);
 begin
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'ROW_HL_COLOR'
-  into :v;
-  if (v is null) then begin
-    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
-    VALUES ('ROW_HL_COLOR', '', 'STRING', 'Цвет выделения строки') 
+  s = 'ROW_HL_COLOR';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '', 'STRING', NULL, 'Цвет выделения строки') 
     MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'ROW_HL_ID'
-  into :v;
-  if (v is null) then begin
-    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
-    VALUES ('ROW_HL_ID', '', 'INTEGER', 'ID объекта выделения') MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'ROW_HL_TYPE'
-  into :v;
-  if (v is null) then begin
-    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
-    VALUES ('ROW_HL_TYPE', '', 'INTEGER', 'Тип подцветки. 0-есть разовая услуга') MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'SQL_CONNECTED'
-  into :v;
-  if (v is null) then begin
-    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE) 
-    VALUES ('SQL_CONNECTED', 'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) ,1, 0)', 'STRING', 'Возможность настроить запрос определения подключени ли абонент') MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'STRICT_MODE'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('STRICT_MODE', '0', 'BOOLEAN', 'Строгий режим', 'Запрет изменений начислений и платежей в прошлых периодах')
-    matching (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'AREA_LOCK'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('AREA_LOCK', '', 'STRING', NULL, 'список ид (1,2) райнов для которых можно принимать заявки и обращения')
-    matching (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'SHOW_DOC_LIST'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('SHOW_DOC_LIST', '0', 'BOOLEAN', NULL, 'Отображать реестр документов абонентов')
-    matching (VAR_NAME);
-  end
+  s = 'ROW_HL_ID';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '', 'INTEGER', NULL, 'ID объекта выделения')  
+    MATCHING (VAR_NAME);
+  s = 'ROW_HL_TYPE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '', 'INTEGER', NULL, 'Тип подсветки. 0-есть разовая услуга') 
+    MATCHING (VAR_NAME);
+  s = 'SQL_CONNECTED';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), 'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1) ,1, 0)', 'STRING', NULL, 'Возможность настроить запрос определения подключени ли абонент') 
+    MATCHING (VAR_NAME);  
+  s = 'STRICT_MODE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '0', 'BOOLEAN', 'Строгий режим', 'Запрет изменений начислений и платежей в прошлых периодах')  
+    MATCHING (VAR_NAME);  
+  s = 'AREA_LOCK';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '', 'STRING', NULL,  'список ид (1,2) райнов для которых можно принимать заявки и обращения')
+    MATCHING (VAR_NAME);
+  s = 'SHOW_DOC_LIST';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '0', 'BOOLEAN', NULL,  'Отображать реестр документов абонентов')
+    MATCHING (VAR_NAME);
   v = null;
   select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'REQ_CLOSE_CLEAN_LAN'
   into :v;
@@ -347,64 +333,81 @@ begin
     values ('LAN_ADDRES', '0', 'BOOLEAN', NULL, 'Адрес подключения сети у абонента может отличаться от фактического')
     matching (VAR_NAME);
   end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_VALANDISABLE'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('LAN_VALANDISABLE', '0', 'BOOLEAN', NULL, 'Отключить влан для сети абонента')
-    matching (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_PORTDICTDISABLE'
-  into :v;
-  if (v is null) then begin
-    update or insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
-    values ('LAN_PORTDICTDISABLE', '0', 'BOOLEAN', NULL, 'Отключить выбор порта из списка для сети абонента')
-    matching (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'INFO_PANEL'
-  into :v;
-  if (v is null) then begin
+  s = 'LAN_VALANDISABLE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES ('INFO_PANEL', '', NULL, NULL, 'HTML для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL + INFO_PANEL_1 + INFO_PANEL_2. Для группы пользователей можно задать переменные INFO_PANEL_GRXXX INFO_PANEL_GRXXX_1 INFO_PANEL_GRXXX_2') 
+    VALUES (upper(:s), '0', 'BOOLEAN', NULL, 'Отключить влан для сети абонента')
     MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'INFO_PANEL_GR'
-  into :v;
-  if (v is null) then begin
+  s = 'LAN_PORTDICTDISABLE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES ('INFO_PANEL_GR', '', NULL, NULL, 'HTML для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL + INFO_PANEL_1 + INFO_PANEL_2. Для группы пользователей можно задать переменные INFO_PANEL_GRXXX INFO_PANEL_GRXXX_1 INFO_PANEL_GRXXX_2') 
+    VALUES (upper(:s), '0', 'BOOLEAN', NULL, 'Отключить выбор порта из списка для сети абонента')
     MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'INFO_PANEL_SQL'
-  into :v;
-  if (v is null) then begin
+  s = 'INFO_PANEL';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES ('INFO_PANEL_SQL', '', NULL, NULL, 'SQL для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL_SQL + INFO_PANEL_SQL_1 + INFO_PANEL_SQL_2. Для группы пользователей можно задать переменные INFO_PANEL_SQL_GRXXX INFO_PANEL_SQL_GRXXX_1 INFO_PANEL_SQL_GRXXX_2') 
+    VALUES (upper(:s), '', 'STRING', NULL, 'HTML для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL + INFO_PANEL_1 + INFO_PANEL_2. Для группы пользователей можно задать переменные INFO_PANEL INFO_PANEL_1 INFO_PANEL_2')
     MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'LAN_TAG_LIST'
-  into :v;
-  if (v is null) then begin
+  s = 'INFO_PANEL_GR';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES ('LAN_TAG_LIST', '', NULL, NULL, 'Список значений для строково тага в параметрах СПД абонента. разделитель запятая') 
+    VALUES (upper(:s), '', 'STRING', NULL, 'HTML для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL + INFO_PANEL_1 + INFO_PANEL_2. Для группы пользователей можно задать переменные INFO_PANEL_GRXXX INFO_PANEL_GRXXX_1 INFO_PANEL_GRXXX_2')
     MATCHING (VAR_NAME);
-  end
-  v = null;
-  select VAR_VALUE from SETTINGS where upper(VAR_NAME) = 'REQ_IGNORE_CLOSED'
-  into :v;
-  if (v is null) then begin
+  s = 'INFO_PANEL_SQL';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES ('REQ_IGNORE_CLOSED', '', NULL, NULL, 'Отключить запрет редактирования работ и материалов в закрытых заявках') 
+    VALUES (upper(:s), '', 'STRING', NULL, 'SQL для инфо панели абонента. Если не влазит текст, то можно разить по настройкм INFO_PANEL_SQL + INFO_PANEL_SQL_1 + INFO_PANEL_SQL_2. Для группы пользователей можно задать переменные INFO_PANEL_SQL_GRXXX INFO_PANEL_SQL_GRXXX_1 INFO_PANEL_SQL_GRXXX_2')
     MATCHING (VAR_NAME);
-  end
-  
-
+  s = 'LAN_TAG_LIST';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '', 'STRING', NULL, 'Список значений для строково тага в параметрах СПД абонента. разделитель запятая')
+    MATCHING (VAR_NAME);
+  s = 'REQ_IGNORE_CLOSED';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (upper(:s), '', 'BOOLEAN', NULL, 'Отключить запрет редактирования работ и материалов в закрытых заявках')
+    MATCHING (VAR_NAME);
+  s = 'LAN_SRV_EXISTS';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'BOOLEAN', NULL, 'Добавлять порт только если есть услуга СПД') 
+    MATCHING (VAR_NAME);
+  s = 'PAY_SRV_FILTER';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'sql для фильтрации услуг в окне приема платежа') 
+    MATCHING (VAR_NAME);
+  s = 'IP_UNIQ_GLOBAL';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'IP уникален для всех, а не только для влана') 
+    MATCHING (VAR_NAME);
+  s = 'ZERO4LIST';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'FLOAT', NULL, 'что считать 0 для отключенных абонентов ') 
+    MATCHING (VAR_NAME);
+  s = 'REQ_WORKS_NOT_CALC';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Отображать НЕ НАЧИСЛЯТЬ в работах заявки') 
+    MATCHING (VAR_NAME);
+  s = 'PAY_INPUT_SHOW';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Отображение поля выбора способа оплаты при вводе платежа') 
+    MATCHING (VAR_NAME);
+  s = 'RQ_PHONE_ONLY_NOTYFY';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'При поиске абонентов выводить только телефоны с уведомлением') 
+    MATCHING (VAR_NAME);
+  s = 'EMAIL_CHECK';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Отсылаем чеки на почту, а не смс') 
+    MATCHING (VAR_NAME);
 end;
 
 COMMIT;

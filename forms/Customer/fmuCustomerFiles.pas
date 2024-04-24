@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, A4onTypeUnit,
   Vcl.Buttons, Vcl.ExtCtrls;
 
@@ -36,19 +37,20 @@ type
     procedure dbgCustFilesDblClick(Sender: TObject);
     procedure actViewExecute(Sender: TObject);
     procedure dbgCustFilesCellClick(Column: TColumnEh);
-    procedure dbgCustFilesGetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure dbgCustFilesGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
     procedure srcCustFilesStateChange(Sender: TObject);
     procedure dsCustFilesAfterRefresh(DataSet: TDataSet);
     procedure dsCustFilesAfterOpen(DataSet: TDataSet);
   private
     FClickOnAct: Boolean;
     FFullAccess: Boolean;
-    FCanAdd : Boolean;
-    FCanEdit : Boolean;
+    FCanAdd: Boolean;
+    FCanEdit: Boolean;
     procedure EnableControls;
     procedure SetCustomerInfo(var ci: TCustomerInfo);
-    procedure ViewRequest;
+    procedure ViewRequest(const aRequest: Integer);
+    function FindRequestAndOpen(const txt: String): Boolean;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -61,8 +63,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Winapi.ShellAPI,
-  MAIN, AtrCommon, DM, EditAttributeForma, EditCFileForma, TextEditForma, RequestForma;
+  Winapi.ShellAPI, AtrStrUtils, AtrCommon,
+  MAIN, DM, EditAttributeForma, EditCFileForma, TextEditForma, RequestForma;
 
 class function TapgCustomerFiles.GetPageName: string;
 begin
@@ -161,7 +163,10 @@ begin
     end
   end
   else
-    ViewRequest;
+  begin
+    if not dsCustFiles.FieldByName('RQ_ID').IsNull then
+      ViewRequest(dsCustFiles.FieldByName('RQ_ID').AsInteger);
+  end;
 end;
 
 procedure TapgCustomerFiles.CloseData;
@@ -176,9 +181,36 @@ end;
 
 procedure TapgCustomerFiles.dbgCustFilesDblClick(Sender: TObject);
 var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
   txt: String;
+  Processed: Boolean;
 begin
   if ((not dsCustFiles.Active) or (dsCustFiles.RecordCount = 0)) then
+    exit;
+
+  Processed := False;
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgCustFiles.ScreenToClient(ScrPt);
+  Cell := dbgCustFiles.MouseCoord(GrdPt.X, GrdPt.Y);
+  txt := UpperCase(dbgCustFiles.Fields[Cell.X - 1].FieldName);
+
+  if (txt = 'O_NAME') and (not dsCustFiles.FieldByName('O_NAME').IsNull) then
+  begin
+    txt := dsCustFiles['O_NAME'];
+    txt := txt.ToUpper;
+    if txt.Contains('ЗАЯВКА') then
+      Processed := FindRequestAndOpen(txt)
+    else if (not dsCustFiles.FieldByName('NOTICE').IsNull) then
+    begin
+      txt := dsCustFiles['NOTICE'];
+      txt := txt.ToUpper;
+      if txt.Contains('ЗАЯВКА') then
+        Processed := FindRequestAndOpen(txt);
+    end;
+  end;
+
+  if Processed then
     exit;
 
   // если отметка обработан стоит, то откроем на просмотр
@@ -204,11 +236,11 @@ begin
   end
   else
     actViewExecute(Sender);
+
 end;
 
-procedure TapgCustomerFiles.dbgCustFilesGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TapgCustomerFiles.dbgCustFilesGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
   if not dsCustFiles.FieldByName('O_DIMENSION').IsNull then
     try
@@ -229,39 +261,44 @@ end;
 
 procedure TapgCustomerFiles.actViewExecute(Sender: TObject);
 var
-  fileName: string;
+  fileName, ext: string;
 begin
   if dbgCustFiles.DataSource.DataSet.RecordCount = 0 then
     exit;
 
+  ext := ExtractFileExt(dsCustFiles['FILENAME']);
+  fileName := GetTempA4onFile(ext);
+  if not DirectoryExists(fileName) then
+    CreateDir(fileName);
+  fileName := fileName + dsCustFiles['FILENAME'];
+
+  if fileName.IsEmpty then Exit;
+
+  if FileExists(fileName) then
+    DeleteFile(fileName);
+
   if (dsCustFiles['isReq'] = 0) then
   begin
-    //
-    fileName := GetTempDir + 'A4on\';
-    if not DirectoryExists(fileName) then
-      CreateDir(fileName);
-    fileName := fileName + dsCustFiles['FILENAME'];
     qRead.ParamByName('CF_ID').AsInteger := dsCustFiles['CF_ID'];
     qRead.Transaction.StartTransaction;
     qRead.ExecQuery;
     qRead.FieldByName('content').SaveToFile(fileName);
     qRead.Close;
     qRead.Transaction.Rollback;
-    ShellExecute(Handle, 'open', PWideChar(fileName), nil, nil, SW_SHOWNORMAL);
   end
   else
   begin
-    fileName := GetTempDir + 'A4on\';
-    if not DirectoryExists(fileName) then
-      CreateDir(fileName);
-    fileName := fileName + dsCustFiles['FILENAME'];
     qReqFile.ParamByName('CF_ID').AsInteger := dsCustFiles['CF_ID'];
     qReqFile.Transaction.StartTransaction;
     qReqFile.ExecQuery;
     qReqFile.FieldByName('jpg').SaveToFile(fileName);
     qReqFile.Close;
     qReqFile.Transaction.Rollback;
+  end;
+
+  if FileExists(fileName) then begin
     ShellExecute(Handle, 'open', PWideChar(fileName), nil, nil, SW_SHOWNORMAL);
+    // DeleteFile(fileName);
   end;
 end;
 
@@ -313,41 +350,30 @@ begin
   EnableControls;
 end;
 
-procedure TapgCustomerFiles.ViewRequest;
+procedure TapgCustomerFiles.ViewRequest(const aRequest: Integer);
 var
-  aRequest: Integer;
   aCustomer: Integer;
   aMode: Byte;
   aNodeId: Integer;
   CE: Boolean;
   CC: Boolean;
   CG: Boolean;
-  CA: Boolean;
+  // CA: Boolean;
   FullAccess: Boolean;
 Begin
+  if aRequest = -1 then
+    exit;
+
   FullAccess := dmMain.AllowedAction(rght_Request_full); // (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ');
-  CA := dmMain.AllowedAction(rght_Request_add); // (51, 'ДОБАВЛЕНИЕ', 'ЗАЯВКИ', 'Добавление заявок');
+  // CA := dmMain.AllowedAction(rght_Request_add); // (51, 'ДОБАВЛЕНИЕ', 'ЗАЯВКИ', 'Добавление заявок');
   CE := dmMain.AllowedAction(rght_Request_edit); // (52, 'РЕДАКТИРОВАНИЕ', 'ЗАЯВКИ', 'Редактирование заявки');
   CC := dmMain.AllowedAction(rght_Request_Close); // (54, 'ЗАКРЫТИЕ', 'ЗАЯВКИ', 'Закрытие заявки');
   CG := dmMain.AllowedAction(rght_Request_Give); // (53, 'ВЫДАЧА', 'ЗАЯВКИ', 'Выдача заявок в работу');
 
-  if not(FullAccess or CE or CC or CG or CA) then
+  if not(FullAccess or CE or CC or CG) then
     exit;
 
-  if not dsCustFiles.FieldByName('RQ_ID').IsNull then
-  begin
-    if not(FullAccess or CE or CC or CG) then
-      exit;
-    aMode := 1;
-    aRequest := dsCustFiles.FieldByName('RQ_ID').AsInteger;
-  end
-  else
-  begin
-    if not(FullAccess or CA) then
-      exit;
-    aMode := 0;
-    aRequest := -1;
-  end;
+  aMode := 1;
 
   aNodeId := -1;
   aCustomer := -1;
@@ -370,6 +396,28 @@ Begin
     ReguestExecute(aRequest, aCustomer, aMode)
   else
     ReguestNodeExecute(aRequest, aNodeId, aMode);
+end;
+
+function TapgCustomerFiles.FindRequestAndOpen(const txt: String): Boolean;
+var
+  i: Integer;
+  s: string;
+begin
+  s := txt.ToUpper;
+  Result := (s.Contains('ЗАЯВКА'));
+  if Result then
+  begin
+    i := Pos('ЗАЯВКА', s);
+    s := Copy(s, i + 6, 11);
+    i := Pos('.', UpperCase(s));
+    if i > 0 then
+      s := Copy(s, 1, i);
+    s := DigitsOnly(s);
+    if TryStrToInt(s, i) then
+      ViewRequest(i)
+    else
+      Result := False;
+  end;
 end;
 
 end.

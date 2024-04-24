@@ -11,7 +11,7 @@ uses
   Vcl.Buttons, Vcl.Menus,
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, PropFilerEh, PropStorageEh;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TapgCustomerDigit = class(TA4onPage)
@@ -76,8 +76,9 @@ type
     procedure actChanDelExecute(Sender: TObject);
   private
     { Private declarations }
-    rghtDigitEdit: Boolean;
-    rghtFullAccess: Boolean;
+    FRghtAdd: Boolean;
+    FRghtEdit: Boolean;
+    FRghtFullAccess: Boolean;
     procedure AddSrvAfterEvent(const Srv: String; const DECODER: String);
   public
     procedure InitForm; override;
@@ -100,23 +101,24 @@ end;
 
 procedure TapgCustomerDigit.InitForm;
 begin
-  rghtFullAccess := dmMain.AllowedAction(rght_Customer_full);
-  rghtDigitEdit := dmMain.AllowedAction(rght_Customer_EditDigit);
+  FRghtFullAccess := dmMain.AllowedAction(rght_Customer_full);
+  FRghtAdd := dmMain.AllowedAction(rght_Customer_DigitAdd);
+  FRghtEdit := dmMain.AllowedAction(rght_Customer_DigitEdit);
 
-  actDigitPacketAdd.Visible := rghtDigitEdit or rghtFullAccess;
-  actDigitPacketDel.Visible := rghtDigitEdit or rghtFullAccess;
+  actDigitPacketAdd.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
+  actDigitPacketDel.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
 
-  actDigitDecoderAdd.Visible := rghtDigitEdit or rghtFullAccess;
-  actDigitDecoderEdit.Visible := rghtDigitEdit or rghtFullAccess;
-  actDigitDecoderDel.Visible := rghtDigitEdit or rghtFullAccess;
+  actDigitDecoderAdd.Visible := FRghtAdd or FRghtFullAccess;
+  actDigitDecoderEdit.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
+  actDigitDecoderDel.Visible := FRghtAdd or FRghtFullAccess;
 
-  actChanAdd.Visible := rghtDigitEdit or rghtFullAccess;
-  actChanEdit.Visible := rghtDigitEdit or rghtFullAccess;
-  actChanDel.Visible := rghtDigitEdit or rghtFullAccess;
+  actChanAdd.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
+  actChanEdit.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
+  actChanDel.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
 
-  actPairing.Visible := rghtDigitEdit or rghtFullAccess;
-  actResetPIN1.Visible := rghtDigitEdit or rghtFullAccess;
-  actMenu.Visible := rghtDigitEdit or rghtFullAccess;
+  actPairing.Visible := FRghtAdd or FRghtEdit or  FRghtFullAccess;
+  actResetPIN1.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
+  actMenu.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
 
   pnlDecPackets.Visible := (dmMain.GetSettingsValue('PERS_PACKETS') = '1');
   pnlPersChannels.Visible := (dmMain.GetSettingsValue('PERS_CHANNEL') = '1');
@@ -154,7 +156,7 @@ begin
     Exit;
   if dsDecoderPacket.FieldByName('NAME').IsNull then
     Exit;
-  if not(rghtFullAccess or rghtDigitEdit) then
+  if not(FRghtFullAccess or FRghtAdd or FRghtEdit) then
     Exit;
 
   if (MessageDlg(format(rsDelDigitPacket, [dsDecoderPacket['NAME'], dsDecoders['DECODER_N']]), mtConfirmation,
@@ -190,7 +192,7 @@ procedure TapgCustomerDigit.actDigitDecoderAddExecute(Sender: TObject);
 var
   DECODER: String;
 begin
-  if not(rghtFullAccess or rghtDigitEdit) then
+  if not(FRghtFullAccess or FRghtAdd) then
     Exit;
   if FDataSource.DataSet.RecordCount = 0 then
     Exit;
@@ -217,7 +219,7 @@ begin
     Exit;
   if dsDecoders.FieldByName('DECODER_N').IsNull then
     Exit;
-  if not(rghtFullAccess or rghtDigitEdit) then
+  if not(FRghtFullAccess or FRghtAdd) then
     Exit;
 
   if not dsDecoders.FieldByName('STB_N').IsNull then
@@ -239,7 +241,7 @@ var
   bm: TBookmark;
   oldDECODER, newDECODER: String;
 begin
-  if not(rghtFullAccess or rghtDigitEdit) then
+  if not(FRghtFullAccess or FRghtAdd or FRghtEdit) then
     Exit;
   if dsDecoders.RecordCount = 0 then
     Exit;
@@ -315,7 +317,7 @@ end;
 
 procedure TapgCustomerDigit.actPairingExecute(Sender: TObject);
 begin
-  if not(rghtFullAccess or rghtDigitEdit) then
+  if not(FRghtFullAccess or FRghtAdd or FRghtEdit) then
     Exit;
 
   if (dsDecoders.FieldByName('DECODER_N').IsNull) then
@@ -344,7 +346,7 @@ end;
 
 procedure TapgCustomerDigit.actResetPINExecute(Sender: TObject);
 begin
-  if not(rghtFullAccess or rghtDigitEdit) then
+  if not(FRghtFullAccess or FRghtAdd or FRghtEdit) then
     Exit;
 
   if (dsDecoders.FieldByName('DECODER_N').IsNull) then

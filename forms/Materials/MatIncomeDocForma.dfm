@@ -244,6 +244,14 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    object Splitter: TSplitter
+      Left = 0
+      Top = 140
+      Width = 825
+      Height = 4
+      Cursor = crVSplit
+      Align = alTop
+    end
     object pnlMatAdd: TPanel
       Left = 0
       Top = 0
@@ -465,17 +473,19 @@ object MatIncomeDocForm: TMatIncomeDocForm
     end
     object pnlGrids: TPanel
       Left = 0
-      Top = 140
+      Top = 144
       Width = 825
-      Height = 221
+      Height = 217
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitTop = 140
+      ExplicitHeight = 221
       object dbgDocMat: TDBGridEh
         Left = 0
         Top = 0
-        Width = 822
-        Height = 221
+        Width = 825
+        Height = 217
         Align = alClient
         AllowedOperations = [alopUpdateEh, alopDeleteEh]
         DataSource = srcDocMat
@@ -608,13 +618,6 @@ object MatIncomeDocForm: TMatIncomeDocForm
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
-      end
-      object Splitter: TRxSplitter
-        Left = 822
-        Top = 0
-        Width = 3
-        Height = 221
-        Align = alRight
       end
     end
   end

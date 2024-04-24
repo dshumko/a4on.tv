@@ -149,8 +149,6 @@ object apgCustomerFiles: TapgCustomerFiles
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = -42
-    ExplicitHeight = 253
     DesignSize = (
       26
       211)
@@ -322,12 +320,13 @@ object apgCustomerFiles: TapgCustomerFiles
     AutoCommit = True
     Left = 131
     Top = 69
+    WaitEndMasterScroll = True
   end
   object srcCustFiles: TDataSource
     DataSet = dsCustFiles
     OnStateChange = srcCustFilesStateChange
     Left = 63
-    Top = 35
+    Top = 99
   end
   object ActListCustomers: TActionList
     Images = A4MainForm.ICONS_ACTIVE

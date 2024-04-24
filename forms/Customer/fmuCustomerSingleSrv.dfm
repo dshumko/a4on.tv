@@ -271,27 +271,53 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       '    ')
     RefreshSQL.Strings = (
       'select'
-      ''
-      ' srv.ORDER_N'
-      ',   iif(coalesce(srv.Units, 0) = 0'
-      '       , srv.Units'
-      '       , iif((not srv.ORDER_N is null)'
-      '           , coalesce((select sum(p.Pay_Sum) from payment p'
-      '              where p.Customer_Id = srv.customer_id'
+      '    srv.SINGLE_SERVICE_ID'
+      '  , srv.CUSTOMER_ID'
+      '  , srv.SERVICE_ID'
+      '  , srv.SERV_DATE'
+      '  , srv.UNITS'
+      '  , srv.NOTICE'
+      '  , srv.HISTORY_ID'
+      '  , srv.PAID'
+      '  , srv.ADDED_BY'
+      '  , srv.ADDED_ON'
+      '  , srv.VATG_ID'
+      '  , srv.RQ_ID'
+      '  , srv.TAG'
+      '  , srv.M_ID'
+      '  , srv.NAME'
+      '  , srv.BUSINESS_TYPE'
+      '  , srv.DIMENSION'
+      '  , srv.WHO_LAST'
+      '  , srv.VAT_GROUP'
+      '  , srv.CAN_DELETE'
+      '  , srv.SUBSCR_SRV'
+      '  , srv.ORDER_N'
+      '  , srv.Srv_Type_Id'
       
-        '                and p.Notice like '#39'%:%'#39' || srv.ORDER_N || '#39'%'#39'), ' +
-        '0)'
-      '           , srv.Units'
-      '       )'
-      '     ) ORDER_PAY'
-      ''
-      '  , srv.*'
-      
-        '  , round((coalesce(cf.fee, 0) / coalesce(cf.cnt, 1)), 2) fee_cn' +
-        't'
+        '  , iif(srv.Srv_Type_Id = 2, srv.UNITS, round((coalesce(cf.fee, ' +
+        '0) / coalesce(cf.cnt, 1)), 2)) fee_cnt'
       '  , b.O_NAME BUSINESS'
+      
+        '  , iif(coalesce(srv.Units, 0) = 0, srv.Units, iif((not srv.ORDE' +
+        'R_N is null), coalesce((select'
+      
+        '                                                                ' +
+        '                            sum(p.Pay_Sum)'
+      
+        '                                                                ' +
+        '                          from payment p'
+      
+        '                                                                ' +
+        '                          where p.Customer_Id = srv.customer_id'
+      
+        '                                                                ' +
+        '                                and p.Notice like '#39'%:%'#39' || srv.O' +
+        'RDER_N || '#39'%'#39'), 0), srv.Units)) ORDER_PAY'
+      ''
       '  from (select'
       '            Ss.*'
+      '          , s.Srv_Type_Id'
       '          , s.NAME'
       '          , s.BUSINESS_TYPE'
       '          , s.Dimension'
@@ -305,9 +331,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       '                     and sl.LINK_TYPE = 1'
       '                     and sl.PARENT is null) can_delete'
       '          , sh.Name SUBSCR_SRV'
-      
-        '          , substring(ss.Notice similar '#39'%C'#1047'%:#"[^[:DIGIT:]]*([0' +
-        '-9])+#"%'#39' escape '#39'#'#39') ORDER_N'
+      '          , @@Colorize% null @ ORDER_N'
       '          from SINGLE_SERV ss'
       
         '               inner join services s on (s.service_id = ss.servi' +
@@ -342,32 +366,74 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
         '       left outer join objects b on (b.O_Id = srv.BUSINESS_TYPE ' +
         'and'
       '             b.O_TYPE = 15)'
-      '                        '
+      '                       '
       'where srv.SINGLE_SERVICE_ID = :OLD_SINGLE_SERVICE_ID'
       ''
       '    '
       '  ')
     SelectSQL.Strings = (
       'select'
-      '    srv.*'
+      '    srv.SINGLE_SERVICE_ID'
+      '  , srv.CUSTOMER_ID'
+      '  , srv.SERVICE_ID'
+      '  , srv.SERV_DATE'
+      '  , srv.UNITS'
+      '  , srv.NOTICE'
+      '  , srv.HISTORY_ID'
+      '  , srv.PAID'
+      '  , srv.ADDED_BY'
+      '  , srv.ADDED_ON'
+      '  , srv.VATG_ID'
+      '  , srv.RQ_ID'
+      '  , srv.TAG'
+      '  , srv.M_ID'
+      '  , srv.NAME'
+      '  , srv.BUSINESS_TYPE'
+      '  , srv.DIMENSION'
+      '  , srv.WHO_LAST'
+      '  , srv.VAT_GROUP'
+      '  , srv.CAN_DELETE'
+      '  , srv.SUBSCR_SRV'
+      '  , srv.ORDER_N'
+      '  , srv.Srv_Type_Id'
       
-        '  , round((coalesce(cf.fee, 0) / coalesce(cf.cnt, 1)), 2) fee_cn' +
-        't'
+        '  , iif(srv.Srv_Type_Id = 2, srv.UNITS, round((coalesce(cf.fee, ' +
+        '0) / coalesce(cf.cnt, 1)), 2)) fee_cnt'
       '  , b.O_NAME BUSINESS'
-      '  , iif(coalesce(srv.Units, 0) = 0'
-      '       , srv.Units'
-      '       , iif((not srv.ORDER_N is null)'
-      '           , coalesce((select sum(p.Pay_Sum) from payment p'
-      '              where p.Customer_Id = srv.customer_id'
       
-        '                and p.Notice like '#39'%:%'#39' || srv.ORDER_N || '#39'%'#39'), ' +
-        '0)'
-      '           , srv.Units'
-      '       )'
-      '    ) ORDER_PAY'
+        '  , iif(coalesce(srv.Units, 0) = 0, srv.Units, iif((not srv.ORDE' +
+        'R_N is null), coalesce((select'
+      
+        '                                                                ' +
+        '                            sum(p.Pay_Sum)'
+      
+        '                                                                ' +
+        '                          from payment p'
+      
+        '                                                                ' +
+        '                          where p.Customer_Id = srv.customer_id'
+      
+        '                                                                ' +
+        '                                and p.Notice like '#39'%'#39' || srv.ORD' +
+        'ER_N || '#39'%'#39
+      
+        '                                                                ' +
+        '                                and ((p.Notice like '#39'%'#1057#1047'_'#39' || sr' +
+        'v.ORDER_N || '#39'%'#39')'
+      
+        '                                                                ' +
+        '                                       or (p.Notice like '#39'%'#1057#1047'__'#39 +
+        ' || srv.ORDER_N || '#39'%'#39')'
+      
+        '                                                                ' +
+        '                                    )'
+      
+        '                                                                ' +
+        '                                ), 0), srv.Units)) ORDER_PAY'
       ''
       '  from (select'
       '            Ss.*'
+      '          , s.Srv_Type_Id'
       '          , s.NAME'
       '          , s.BUSINESS_TYPE'
       '          , s.Dimension'
@@ -381,9 +447,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       '                     and sl.LINK_TYPE = 1'
       '                     and sl.PARENT is null) can_delete'
       '          , sh.Name SUBSCR_SRV'
-      
-        '          , substring(ss.Notice similar '#39'%C'#1047'%:#"[^[:DIGIT:]]*([0' +
-        '-9])+#"%'#39' escape '#39'#'#39') ORDER_N'
+      '          , @@Colorize% null @ ORDER_N '
       '          from SINGLE_SERV ss'
       
         '               inner join services s on (s.service_id = ss.servi' +

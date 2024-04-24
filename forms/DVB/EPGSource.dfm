@@ -206,6 +206,7 @@ object EPGSourceForm: TEPGSourceForm
       Height = 13
       Align = alTop
       Caption = '  '#1058#1072#1073#1083#1080#1094#1072' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1080#1081' '#1082#1072#1085#1072#1083#1086#1074
+      ExplicitWidth = 166
     end
     object DBGridEh1: TDBGridEh
       Left = 0
@@ -219,6 +220,8 @@ object EPGSourceForm: TEPGSourceForm
       Flat = True
       FooterRowCount = 1
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       STFilter.Visible = True
@@ -252,6 +255,16 @@ object EPGSourceForm: TEPGSourceForm
           Title.Caption = #1055#1054' '#1040'4on.TV'
           Title.TitleButton = True
           Width = 150
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'SM'
+          Footers = <>
+          Title.Hint = 
+            #1045#1089#1083#1080' '#1085#1077#1086#1073#1093#1086#1076#1080#1084#1086', '#1090#1086' '#1091#1082#1072#1078#1080#1090#1077' '#1085#1072' '#1089#1082#1086#1083#1082#1086' '#1085#1091#1078#1085#1086' '#1080#1079#1084#1077#1085#1103#1090#1100' '#1074#1088#1077#1084#1103' '#1082#1072#1085#1072#1083 +
+            #1072' ('#1074' '#1084#1080#1085#1091#1090#1072#1093')'
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -272,6 +285,7 @@ object EPGSourceForm: TEPGSourceForm
       Height = 13
       Align = alTop
       Caption = '  '#1058#1072#1073#1083#1080#1094#1072' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1080#1081' '#1078#1072#1085#1088#1086#1074
+      ExplicitWidth = 162
     end
     object DBGridEh2: TDBGridEh
       Left = 0
@@ -285,6 +299,8 @@ object EPGSourceForm: TEPGSourceForm
       DynProps = <>
       Flat = True
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       STFilter.Visible = True
@@ -526,6 +542,10 @@ object EPGSourceForm: TEPGSourceForm
       Size = 255
       Lookup = True
     end
+    object smlntfldMAPChennalsSM: TSmallintField
+      DisplayLabel = #1057#1076#1074#1080#1075', '#1084#1080#1085
+      FieldName = 'SM'
+    end
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
         object ID: TMTStringDataFieldEh
@@ -551,6 +571,14 @@ object EPGSourceForm: TEPGSourceForm
           DisplayWidth = 255
           Size = 255
           Transliterate = True
+        end
+        object SM: TMTNumericDataFieldEh
+          FieldName = 'SM'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
         end
         object ATR_ID: TMTNumericDataFieldEh
           FieldName = 'ATR_ID'
@@ -744,7 +772,7 @@ object EPGSourceForm: TEPGSourceForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 305
+    Left = 249
     Top = 200
   end
   object dsChFromSRC: TMemTableEh

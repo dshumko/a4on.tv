@@ -511,7 +511,12 @@ type
     procedure OpnenNodeByID(const ID: Integer);
     procedure OpenEquipmentByName(const name: String);
     function OpenEquipmentByID(const eid: Integer): Boolean;
+    function OpenRequest(const rq_id: Integer): Boolean;
     function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
+    procedure ExportDBGrid(const aDBGrid: TDBGridEh; const aFileName: string);
+    procedure CopyDBGrid(const aDBGrid: TDBGridEh; const ForWholeGrid: Boolean = False);
+    procedure OpenCustomerWithData(const aCustomer: Integer; const TabType: Integer; const DataValue: string);
+    function ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
   end;
 
 var
@@ -533,6 +538,7 @@ uses
 {$ENDIF}
   System.StrUtils,
   System.IniFiles,
+  DBGridEhImpExp,
   RxStrUtils,
   AtrCommon,
   PrjConst,
@@ -725,7 +731,6 @@ begin
     CloseHandle(WritePipe);
   end;
   Screen.Cursor := CrDefault;
-
 end;
 
 procedure TA4MainForm.ResizeImageListImagesforHighDPI(const ImgList: TImageList);
@@ -1735,7 +1740,7 @@ procedure TA4MainForm.FormShow(Sender: TObject);
 var
   DB, User, pass, alias, s: String;
   hiden_pass, setting_pass, strError: string;
-  VERSION_DB, i: Integer;
+  i: Integer;
   Handle: THandle;
 begin
   DB := dmMain.GetIniValue('LASTDATABASE');
@@ -1881,30 +1886,32 @@ begin
   Caption := Format('%s %s %s', [alias, dmMain.dbTV.ConnectParams.UserName, rsAplicationName]);
   Application.title := Format('%s %s %s', [alias, dmMain.dbTV.ConnectParams.UserName, rsAplicationName]);
 
-  with TpFIBQuery.Create(self) do
+  {
+    with TpFIBQuery.Create(self) do
     try
-      DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
-      SQL.text := 'SELECT var_value from settings where var_name = ''DB_VER''';
+    DataBase := dmMain.dbTV;
+    Transaction := dmMain.trReadQ;
+    SQL.text := 'SELECT var_value from settings where var_name = ''DB_VER''';
 
-      Transaction.StartTransaction;
-      ExecQuery;
-      if not FieldByName('var_value').IsNull then
-      begin
-        VERSION_DB := FieldByName('var_value').value;
-      end
-      else
-        VERSION_DB := -1;
-      Close;
-      Transaction.Commit;
+    Transaction.StartTransaction;
+    ExecQuery;
+    if not FieldByName('var_value').IsNull then
+    begin
+    VERSION_DB := FieldByName('var_value').value;
+    end
+    else
+    VERSION_DB := -1;
+    Close;
+    Transaction.Commit;
     finally
-      Free;
+    Free;
     end;
 
-  if VERSION_DB < DB_VERSION then
-  begin
+    if VERSION_DB < DB_VERSION then
+    begin
     MessageDlg(rsDBVersionWrong, mtWarning, [mbOK], 0);
-  end;
+    end;
+  }
 
   UpdateFromDB;
 
@@ -3082,7 +3089,7 @@ begin
   OpenCustomers.Visible := dmMain.CanViewCustomers;
   actNewCustomer.Visible := (not dmMain.CanViewCustomers) and (dmMain.AllowedAction(rght_Customer_add));
 {$IFDEF LAN}
-  actBillingAll.Visible := (dmMain.GetSettingsValue('USED_BILLING') = 1) and dmMain.AllowedAction(rght_Billing_view);
+  actBillingAll.Visible := (dmMain.GetSettingsValue('USED_BILLING') = '1') and dmMain.AllowedAction(rght_Billing_view);
   actVLANS.Visible := True;
   actEquipmentCommands.Visible := True;
 {$ELSE}
@@ -3781,6 +3788,166 @@ end;
 function TA4MainForm.ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
 begin
   Result := CF.ShowCustomers(FilterFIELD, FilterVALUE);
+end;
+
+procedure TA4MainForm.ExportDBGrid(const aDBGrid: TDBGridEh; const aFileName: string);
+var
+  ExpClass: TDBGridEhExportClass;
+  Ext: String;
+begin
+  // Экспорт информации
+  if (not dmMain.AllowedAction(rght_Export)) then
+    Exit;
+
+  A4MainForm.SaveDialog.filename := aFileName;
+  if (aDBGrid is TDBGridEh) then
+    if A4MainForm.SaveDialog.Execute then
+    begin
+      case A4MainForm.SaveDialog.FilterIndex of
+        1:
+          begin
+            ExpClass := TDBGridEhExportAsUnicodeText;
+            Ext := 'txt';
+          end;
+        2:
+          begin
+            ExpClass := TDBGridEhExportAsCSV;
+            Ext := 'csv';
+          end;
+        3:
+          begin
+            ExpClass := TDBGridEhExportAsHTML;
+            Ext := 'htm';
+          end;
+        4:
+          begin
+            ExpClass := TDBGridEhExportAsRTF;
+            Ext := 'rtf';
+          end;
+        5:
+          begin
+            ExpClass := TDBGridEhExportAsOLEXLS;
+            Ext := 'xls';
+          end;
+        6:
+          begin
+            ExpClass := TDBGridEhExportAsXlsx;
+            Ext := 'xlsx';
+          end;
+      else
+        ExpClass := nil;
+        Ext := '';
+      end;
+      if ExpClass <> nil then
+      begin
+        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.filename, Length(A4MainForm.SaveDialog.filename) - 2, 3)) <>
+          AnsiUpperCase(Ext) then
+          A4MainForm.SaveDialog.filename := A4MainForm.SaveDialog.filename + '.' + Ext;
+        SaveDBGridEhToExportFile(ExpClass, aDBGrid, A4MainForm.SaveDialog.filename, False);
+      end;
+    end;
+end;
+
+procedure TA4MainForm.CopyDBGrid(const aDBGrid: TDBGridEh; const ForWholeGrid: Boolean = False);
+begin
+  if (not dmMain.AllowedAction(rght_Export)) then
+    Exit;
+
+  DBGridEh_DoCopyAction(aDBGrid, ForWholeGrid);
+end;
+
+procedure TA4MainForm.OpenCustomerWithData(const aCustomer: Integer; const TabType: Integer; const DataValue: string);
+var
+  finded: Integer;
+  i: Integer;
+begin
+  ShowCustomer(aCustomer);
+  finded := -1;
+  for i := MDIChildCount - 1 DownTo 0 Do
+  begin
+    if Assigned(MDIChildren[i]) then
+      if (MDIChildren[i] is TCustomerForm) then
+      begin
+        if (MDIChildren[i].Tag = aCustomer) then
+          finded := i;
+      end;
+  end;
+  if finded >= 0 then
+  begin
+    (MDIChildren[finded] as TCustomerForm).FindDataOnTab(TabType, DataValue);
+  end;
+end;
+
+function TA4MainForm.OpenRequest(const rq_id: Integer): Boolean;
+begin
+  Result := (ReguestExecute(rq_id, -2, 1) >= 0);
+end;
+
+function TA4MainForm.ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
+var
+  Start: TStartUpInfo;
+  procInfo: TProcessInformation;
+  tmp: THandle;
+  tmpSec: TSecurityAttributes;
+  res: TStringList;
+  return: Cardinal;
+  TmpFile, vdirName, _exeName, _cmdLine: string;
+begin
+  vdirName := ExtractFilePath(Application.ExeName);
+  _exeName := 'smartid\smartid.exe';
+  _cmdLine := 'smartid\passport_rf.zip';
+  if (not FileExists(vdirName + _exeName)) or (not FileExists(vdirName + _cmdLine)) then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  _cmdLine := '"' + _scanName + '" ' + _cmdLine;
+  TmpFile := _scanName + '.tmp';
+  Result := False;
+  try
+    FillChar(tmpSec, SizeOf(tmpSec), #0);
+    tmpSec.nlength := SizeOf(tmpSec);
+    tmpSec.binherithandle := True;
+    tmp := CreateFile(PChar(TmpFile), Generic_Write, File_Share_Write, @tmpSec, Create_Always,
+      File_Attribute_Normal, 0);
+    try
+      FillChar(Start, SizeOf(Start), #0);
+      Start.cb := SizeOf(Start);
+      Start.hStdOutput := tmp;
+      Start.dwFlags := STARTF_USESTDHANDLES or STARTF_USESHOWWINDOW;
+      Start.wShowWindow := SW_Minimize;
+      { Start the program }
+      if CreateProcess(nil, PChar(_exeName + ' ' + _cmdLine), nil, nil, True, 0, nil, PChar(vdirName), Start, procInfo)
+      then
+      begin
+        SetPriorityClass(procInfo.hProcess, Idle_Priority_Class);
+        WaitForSingleObject(procInfo.hProcess, Infinite);
+        GetExitCodeProcess(procInfo.hProcess, return);
+        Result := (return = 0);
+        CloseHandle(procInfo.hThread);
+        CloseHandle(procInfo.hProcess);
+        CloseHandle(tmp);
+        res := TStringList.Create;
+        try
+          res.LoadFromFile(TmpFile, TEncoding.UTF8);
+          scResult.AddStrings(res);
+        finally
+          res.Free;
+        end;
+        DeleteFile(PChar(TmpFile));
+      end
+      else
+      begin
+        Application.MessageBox(PChar(SysErrorMessage(GetLastError())), 'RunCaptured Error', MB_OK);
+      end;
+    except
+      CloseHandle(tmp);
+      DeleteFile(PChar(TmpFile));
+      raise;
+    end;
+  finally
+  end;
 end;
 
 end.

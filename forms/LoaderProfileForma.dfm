@@ -307,6 +307,10 @@ object LoaderProfileForm: TLoaderProfileForm
     TabOrder = 2
     object ts1: TTabSheet
       Caption = 'TXT'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object spl1: TSplitter
         Left = 0
         Top = 137
@@ -1170,6 +1174,10 @@ object LoaderProfileForm: TLoaderProfileForm
     object ts2: TTabSheet
       Caption = 'DBF'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter1: TSplitter
         Left = 0
         Top = 137
@@ -1568,6 +1576,10 @@ object LoaderProfileForm: TLoaderProfileForm
     object tsXLS: TTabSheet
       Caption = 'XLS'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object feExample: TFilenameEdit

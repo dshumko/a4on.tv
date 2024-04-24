@@ -304,8 +304,6 @@ object ReqWorkForm: TReqWorkForm
       DynProps = <>
       TabOrder = 3
       OnClick = chkW_ONOFFClick
-      ValueChecked = '1'
-      ValueUnchecked = '0'
     end
   end
   object dbckDefault: TDBCheckBoxEh
@@ -527,7 +525,7 @@ object ReqWorkForm: TReqWorkForm
   end
   object dsOnOffService: TpFIBDataSet
     SelectSQL.Strings = (
-      'select'
+      'select distinct'
       '    s.SERVICE_ID'
       '  , s.Name || coalesce('#39' / '#39' ||'
       '    case s.Srv_Type_Id'

@@ -14,7 +14,7 @@ uses
   DBLookupEh,
   FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   pFIBDatabase,
-  PropFilerEh, PropStorageEh;
+  PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TapgCustomerEdit = class(TA4onPage)
@@ -144,7 +144,6 @@ type
     procedure chkJURIDICALClick(Sender: TObject);
     procedure btnSelectColorClick(Sender: TObject);
     procedure btnGetDogNumberClick(Sender: TObject);
-    procedure eFLAT_NOExit(Sender: TObject);
     procedure btnCAddClick(Sender: TObject);
     procedure btnCdelClick(Sender: TObject);
     procedure LupHOUSE_IDEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -182,6 +181,7 @@ type
     procedure eFIRSTNAMEEnter(Sender: TObject);
     procedure LupHOUSE_IDChange(Sender: TObject);
     procedure btnCloseWarningInfoClick(Sender: TObject);
+    procedure eFLAT_NOExit(Sender: TObject);
   private
     { Private declarations }
     FullAccess: Boolean;
@@ -194,6 +194,8 @@ type
     FSavedHouseID: Integer;
     FOldNumber: string;
     FEnterSecondPress: Boolean;
+    FGenAccountFlat: string;
+    FGenAccountHouse: Integer;
     procedure FindSamePassport;
     procedure GenerateAccountN;
     procedure SetJurVisible;
@@ -280,6 +282,8 @@ begin
   // dsContacts.DataSource := FDataSource;
   // ds.DataSet := FDataSource.DataSet;
   // UpdatetNotice := False;
+  FGenAccountFlat := '';
+  FGenAccountHouse := -1;
 end;
 
 procedure TapgCustomerEdit.lcbBANKExit(Sender: TObject);
@@ -289,10 +293,7 @@ end;
 
 procedure TapgCustomerEdit.LupHOUSE_IDChange(Sender: TObject);
 begin
-  if (ds.DataSet.FieldByName('HOUSE_ID').OldValue <> LupHOUSE_ID.Value) then
-  begin
-    CheckPorchandFloor;
-  end;
+  CheckPorchandFloor;
 end;
 
 procedure TapgCustomerEdit.LupHOUSE_IDEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -416,15 +417,16 @@ end;
 
 procedure TapgCustomerEdit.eFLAT_NOExit(Sender: TObject);
 begin
-  if (ds.DataSet.FieldByName('FLAT_NO').OldValue <> eFLAT_NO.Text) then
-  begin
-    CheckPorchandFloor;
-  end;
+  if ds.DataSet.State = dsInsert then
+    GenerateAccountN;
 end;
 
 procedure TapgCustomerEdit.CheckPorchandFloor;
 begin
   if VarIsNull(LupHOUSE_ID.KeyValue) then
+    Exit;
+
+  if (FSavedHouseID = LupHOUSE_ID.Value) and (FSavedFlat = eFLAT_NO.Text) then
     Exit;
 
   if ds.DataSet.State in [dsInsert, dsEdit] then
@@ -446,38 +448,16 @@ begin
     Query.ExecQuery;
     Query.ExecQuery;
     if not(Query.FN('PORCH_N').IsNull) then
-    begin
-      if (FSavedPorch <> Query.FN('PORCH_N').AsString) then
-      begin
-        CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + FSavedPorch, iaTopCenter, bsNeverBlink);
-        edPORCH.Text := Query.FN('PORCH_N').AsString;
-      end;
-    end
-    else
-    begin
-      if (not edPORCH.Text.IsEmpty) then
-      begin
-        CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + edPORCH.Text, iaTopCenter, bsNeverBlink);
-        edPORCH.Text := '';
-      end;
-    end;
+      edPORCH.Text := Query.FN('PORCH_N').AsString;
+
+    if (edPORCH.Text <> FSavedPorch) then
+      CnErrors.SetError(edPORCH, 'Проверьте подъезд, был: ' + FSavedPorch, iaTopCenter, bsNeverBlink);
 
     if not(Query.FN('FLOOR_N').IsNull) then
-    begin
-      if (FSavedFloor <> Query.FN('FLOOR_N').AsString) then
-      begin
-        CnErrors.SetError(edFLOOR, 'Проверьте этаж. был ' + FSavedFloor, iaTopCenter, bsNeverBlink);
-        edFLOOR.Text := Query.FN('FLOOR_N').AsString;
-      end;
-    end
-    else
-    begin
-      if (not edFLOOR.Text.IsEmpty) then
-      begin
-        CnErrors.SetError(edPORCH, 'Проверьте этаж. был ' + edFLOOR.Text, iaTopCenter, bsNeverBlink);
-        edFLOOR.Text := '';
-      end;
-    end;
+      edFLOOR.Text := Query.FN('FLOOR_N').AsString;
+
+    if (edFLOOR.Text <> FSavedFloor) then
+      CnErrors.SetError(edFLOOR, 'Проверьте этаж, был: ' + FSavedFloor, iaTopCenter, bsNeverBlink);
 
     if not(Query.FN('ACCOUNT_NO').IsNull) then
       ShowWarningMessage(rsSAME_ADRES + rsEOL + Format(rsCustomerInfo, [Query.FN('ACCOUNT_NO').AsString,
@@ -485,9 +465,6 @@ begin
         Query.FN('CUST_STATE_DESCR').AsString]));
     Query.Transaction.Commit;
     Query.Close;
-
-    if ds.DataSet.State = dsInsert then
-      GenerateAccountN;
   end;
 end;
 
@@ -557,6 +534,7 @@ begin
     FSavedHouseID := -1;
 
   LupHOUSE_ID.OnChange := LupHOUSE_IDChange;
+  eFLAT_NO.OnChange := LupHOUSE_IDChange;
 end;
 
 procedure TapgCustomerEdit.actExAddressEditExecute(Sender: TObject);
@@ -750,6 +728,8 @@ end;
 
 procedure TapgCustomerEdit.btnGetDogNumberClick(Sender: TObject);
 begin
+  FGenAccountHouse := -1;
+  FGenAccountFlat := '';
   GenerateAccountN;
 end;
 
@@ -832,9 +812,15 @@ begin
     CnErrors.Dispose(LupHOUSE_ID);
 
   flat := eFLAT_NO.Text;
-  eACCOUNT_NO.Text := dmMain.GenerateDogNumber(LupHOUSE_ID.Value, flat, -1);
-  if (dmMain.GetSettingsValue('ACCOUNT_DOG') = 1) then
-    deDogovor.Text := eACCOUNT_NO.Text;
+
+  if (FGenAccountHouse <> LupHOUSE_ID.Value) or (FGenAccountFlat <> flat) then
+  begin
+    FGenAccountHouse := LupHOUSE_ID.Value;
+    FGenAccountFlat := flat;
+    eACCOUNT_NO.Text := dmMain.GenerateDogNumber(LupHOUSE_ID.Value, flat, -1);
+    if (dmMain.GetSettingsValue('ACCOUNT_DOG') = 1) then
+      deDogovor.Text := eACCOUNT_NO.Text;
+  end;
 end;
 
 procedure TapgCustomerEdit.SetJurVisible;
@@ -994,10 +980,7 @@ end;
 procedure TapgCustomerEdit.LupHOUSE_IDExit(Sender: TObject);
 begin
   ValidateData;
-  if (ds.DataSet.FieldByName('HOUSE_ID').OldValue <> LupHOUSE_ID.Value) then
-  begin
-    CheckPorchandFloor;
-  end;
+  CheckPorchandFloor;
 end;
 
 procedure TapgCustomerEdit.LupStreetsExit(Sender: TObject);
@@ -1204,30 +1187,34 @@ procedure TapgCustomerEdit.UpdateFloorPorch();
 var
   qry: TpFIBQuery;
 begin
-  if ((edFLOOR.Text <> '') or (edPORCH.Text <> '')) and (eFLAT_NO.Text <> '') and (LupHOUSE_ID.Text <> '') then
+  if (eFLAT_NO.Text <> '') and (LupHOUSE_ID.Text <> '') then
   begin
     if (edFLOOR.Text <> FSavedFloor) or (edPORCH.Text <> FSavedPorch) or (eFLAT_NO.Text <> FSavedFlat) or
       (LupHOUSE_ID.Value <> FSavedHouseID) then
     begin
       qry := TpFIBQuery.Create(Nil);
       with qry do
+      begin
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
           SQL.Text := 'execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N, :Floor_N)';
-          if (edPORCH.Text <> '') then
-            ParamByName('PORCH_N').Value := edPORCH.Text;
-          if (edFLOOR.Text <> '') then
-            ParamByName('FLOOR_N').Value := edFLOOR.Text;
+          ParamByName('PORCH_N').Value := edPORCH.Text;
+          ParamByName('FLOOR_N').Value := edFLOOR.Text;
           ParamByName('FLAT_NO').Value := eFLAT_NO.Text;
           ParamByName('HOUSE_ID').Value := LupHOUSE_ID.KeyValue;
 
           Transaction.StartTransaction;
           ExecQuery;
           Transaction.Commit;
+          FSavedFloor := edFLOOR.Text;
+          FSavedPorch := edPORCH.Text;
+          FSavedFlat := eFLAT_NO.Text;
+          FSavedHouseID := LupHOUSE_ID.Value;
         finally
           Free;
         end;
+      end;
     end;
   end;
 end;
@@ -1404,75 +1391,8 @@ begin
 end;
 
 function TapgCustomerEdit.ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
-var
-  start: TStartupInfo;
-  procInfo: TProcessInformation;
-  tmp: THandle;
-  tmpSec: TSecurityAttributes;
-  res: TStringList;
-  return: Cardinal;
-  TmpFile, vdirName, _exeName, _cmdLine: string;
 begin
-  vdirName := ExtractFilePath(Application.ExeName);
-  _exeName := 'smartid\smartid.exe';
-  _cmdLine := 'smartid\passport_rf.zip';
-
-  if (not FileExists(vdirName + _exeName)) or (not FileExists(vdirName + _cmdLine)) then
-  begin
-    Result := False;
-    Exit;
-  end;
-  _cmdLine := _scanName + ' ' + _cmdLine;
-
-  TmpFile := _scanName + '.tmp';
-
-  Result := False;
-  try
-    { Set a temporary file }
-
-    FillChar(tmpSec, SizeOf(tmpSec), #0);
-    tmpSec.nLength := SizeOf(tmpSec);
-    tmpSec.bInheritHandle := True;
-    tmp := CreateFile(PChar(TmpFile), Generic_Write, File_Share_Write, @tmpSec, Create_Always,
-      File_Attribute_Normal, 0);
-    try
-      FillChar(start, SizeOf(start), #0);
-      start.cb := SizeOf(start);
-      start.hStdOutput := tmp;
-      start.dwFlags := StartF_UseStdHandles or StartF_UseShowWindow;
-      start.wShowWindow := SW_Minimize;
-      { Start the program }
-      if CreateProcess(nil, PChar(_exeName + ' ' + _cmdLine), nil, nil, True, 0, nil, PChar(vdirName), start, procInfo)
-      then
-      begin
-        SetPriorityClass(procInfo.hProcess, Idle_Priority_Class);
-        WaitForSingleObject(procInfo.hProcess, Infinite);
-        GetExitCodeProcess(procInfo.hProcess, return);
-        Result := (return = 0);
-        CloseHandle(procInfo.hThread);
-        CloseHandle(procInfo.hProcess);
-        CloseHandle(tmp);
-        { Add the output }
-        res := TStringList.Create;
-        try
-          res.LoadFromFile(TmpFile, TEncoding.UTF8);
-          scResult.AddStrings(res);
-        finally
-          res.Free;
-        end;
-        DeleteFile(PChar(TmpFile));
-      end
-      else
-      begin
-        Application.MessageBox(PChar(SysErrorMessage(GetLastError())), 'RunCaptured Error', MB_OK);
-      end;
-    except
-      CloseHandle(tmp);
-      DeleteFile(PChar(TmpFile));
-      raise;
-    end;
-  finally
-  end;
+  Result := A4MainForm.ParseCaptured(_scanName, scResult);
 end;
 
 procedure TapgCustomerEdit.CreateMainMenuItem;

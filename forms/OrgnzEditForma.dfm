@@ -157,6 +157,8 @@ object OrgnzEditForm: TOrgnzEditForm
     Align = alBottom
     TabOrder = 17
     TabStop = True
+    ExplicitTop = 391
+    ExplicitWidth = 581
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -169,11 +171,16 @@ object OrgnzEditForm: TOrgnzEditForm
       Width = 394
       Anchors = [akLeft, akRight]
       Enabled = False
+      ExplicitLeft = 94
+      ExplicitTop = 6
+      ExplicitWidth = 394
     end
     inherited bbCancel: TBitBtn
       Left = 496
       Top = 6
       Anchors = [akRight]
+      ExplicitLeft = 496
+      ExplicitTop = 6
     end
   end
   object cbbVATG: TDBLookupComboboxEh
@@ -564,7 +571,9 @@ object OrgnzEditForm: TOrgnzEditForm
     SelectSQL.Strings = (
       'select o.o_name, o.O_id'
       'from objects o'
-      'where o.O_TYPE = 13'
+      
+        'where o.O_TYPE = 13 and ((o.O_Deleted = 0) or (o.O_Id = :VATG_ID' +
+        '))'
       'order by o.o_name')
     AutoUpdateOptions.UpdateTableName = 'SUBAREA'
     AutoUpdateOptions.KeyFields = 'SUBAREA_ID'

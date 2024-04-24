@@ -447,6 +447,7 @@ object fmCardsPay: TfmCardsPay
     OpenDataSource = False
     DataSet = dsCardPay
     BCDToCurrency = False
+    DataSetOptions = []
     Left = 144
     Top = 264
   end

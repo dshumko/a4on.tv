@@ -14,7 +14,7 @@ uses
   FIBQuery,
   pFIBQuery, DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh, CnErrorProvider, FIBDatabase, pFIBDatabase, GridsEh,
   DBCtrlsEh,
-  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, OkCancel_frame;
+  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, OkCancel_frame, amSplitter;
 
 type
   TRequestForm = class(TForm)
@@ -192,6 +192,13 @@ type
     splFlats: TSplitter;
     btnBuyback: TButton;
     actBuyback: TAction;
+    actOpenCustomer: TAction;
+    miOpenCustomer: TMenuItem;
+    miPS: TMenuItem;
+    actAddPayment: TAction;
+    miAddPayment: TMenuItem;
+    btnEMAIL: TButton;
+    actEMAIL: TAction;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -263,6 +270,10 @@ type
     procedure actBuybackExecute(Sender: TObject);
     procedure LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure edReceiptDblClick(Sender: TObject);
+    procedure actOpenCustomerExecute(Sender: TObject);
+    procedure actAddPaymentExecute(Sender: TObject);
+    procedure actEMAILExecute(Sender: TObject);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -303,6 +314,8 @@ type
     procedure OpenLinkedReq();
     function HasLinkedReq(const OnlyClosed: Boolean = False): Boolean;
     procedure SetIsClosed(const Closed: Boolean);
+    procedure OpenPayment(const receipt: string);
+    procedure SendEmailMessage;
   public
     { Public declarations }
     constructor CreateA(aOwner: TComponent; aRequest: Integer; const aCustomer: Integer; const aEditMode: Byte;
@@ -318,8 +331,8 @@ uses
   Winapi.ShellAPI, System.DateUtils, System.StrUtils, AtrCommon, MAIN,
   ReqMaterialsForma, ReqExecutersForma, ReqForAdresForma,
   SelectDateForma, RequestWorksForma,
-  CustomerForma, ReqMatBaybackForma,
-  ReqMatReturnForma, EditRFileForma, ContactForma;
+  CustomerForma, ReqMatBaybackForma, PaymentDocForma, PaymentForma,
+  ReqMatReturnForma, EditRFileForma, ContactForma, SendEmail;
 
 {$R *.dfm}
 
@@ -866,12 +879,25 @@ begin
     actReqDel.Visible := (dmMain.AllowedAction(rght_Request_full) or dmMain.AllowedAction(rght_Request_del));
   end;
 
+  actAddPayment.Visible := (dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_add));
+  miPS.Visible := actAddPayment.Visible;
+
   if A4MainForm.AddictSpell.tag = 1 then
   begin
     A4MainForm.AddictSpell.AddControl(mmoNotice);
     A4MainForm.AddictSpell.AddControl(mmoContent);
     A4MainForm.AddictSpell.AddControl(dbMemDefect);
     A4MainForm.AddictSpell.AddControl(mmoComment);
+  end;
+
+  Font_name := dmMain.GetSettingsValue('REQ_WORKS_NOT_CALC');
+  if (Font_name = '1') then
+  begin
+    for i := 0 to dbgWorks.Columns.Count - 1 do
+    begin
+      if (AnsiUpperCase(dbgWorks.Columns[i].FieldName) = 'NOT_CALC') then
+        dbgWorks.Columns[i].Visible := true
+    end;
   end;
 end;
 
@@ -881,17 +907,19 @@ begin
   begin
     if (not VarIsNull(luResult.Value)) then
     begin
-      if (not dsResult.FieldByName('FINISHED').IsNull) then
+      if (not dsResult.FieldByName('FINISHED').IsNull) //
+        and (VarIsNull(cbResultExec.Value) or (cbResultExec.Value = 0)) then
       begin
         if dsResult.FieldByName('FINISHED').AsInteger = 1 then
-          dsRequest['REQ_RESULT'] := 2 // выполнена
+          cbResultExec.Value := 2 // выполнена
         else
-          dsRequest['REQ_RESULT'] := 4 // невозможно выполнить
+          cbResultExec.Value := 4; // невозможно выполнить
       end
-      else
-        dsRequest['REQ_RESULT'] := 4; // невозможно выполнить
-      if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
-        dsRequest['RQ_EXEC_TIME'] := NOW();
+      // else
+      // cbResultExec.Value := 4; // невозможно выполнить
+
+      // if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
+      // dsRequest['RQ_EXEC_TIME'] := NOW();
     end;
   end;
 end;
@@ -1151,6 +1179,11 @@ begin
   FPhoneSaved := true;
 end;
 
+procedure TRequestForm.edReceiptDblClick(Sender: TObject);
+begin
+  OpenPayment(edReceipt.Text);
+end;
+
 function TRequestForm.SavePhone(Const Phone: String): String;
 var
   Contact: TContact;
@@ -1329,30 +1362,28 @@ end;
 
 procedure TRequestForm.deEndExecDateTimeUpdateData(Sender: TObject; var Handled: Boolean);
 begin
-
   if dsRequest.FieldByName('REQ_RESULT').IsNull then
     dsRequest['REQ_RESULT'] := 2;
-
 end;
 
 procedure TRequestForm.deEndExecDateTimeEnter(Sender: TObject);
 begin
-  if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
-  begin
-    deEndExecDateTime.Value := NOW;
-    // deEndExecTime.Value := time;
-  end;
+  // if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
+  // begin
+  // deEndExecDateTime.Value := NOW;
+  // // deEndExecTime.Value := time;
+  // end;
 end;
 
 procedure TRequestForm.dbMemDefectChange(Sender: TObject);
 begin
   if FCanClose or FFullAccess then
   begin
-    if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
-    begin
-      deEndExecDateTime.Value := NOW;
-      // deEndExecTime.Value := time;
-    end;
+    // if dsRequest.FieldByName('RQ_EXEC_TIME').IsNull then
+    // begin
+    // deEndExecDateTime.Value := NOW;
+    // // deEndExecTime.Value := time;
+    // end;
   end;
 end;
 
@@ -1421,7 +1452,13 @@ begin
   varBool := ((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or FFullAccess;
   // вместо tabExecute.Enabled := CanEditClosed;
   // заблокируем по частям
-  pnlExecTime.Enabled := varBool;
+
+  // pnlExecTime.Enabled := varBool;
+  cbResultExec.ReadOnly := not varBool;
+  deEndExecDateTime.ReadOnly := not varBool;
+  edReceipt.ReadOnly := not varBool;
+  luResult.ReadOnly := not varBool;
+
   pnlWMbuttons.Enabled := varBool;
   dbgWorks.ReadOnly := not varBool;
   dbgMaterials.ReadOnly := not varBool;
@@ -1430,6 +1467,7 @@ begin
   pnlGiveTime.Enabled := varBool;
   actExecutors.Enabled := varBool;
   actSMS.Enabled := (FCanGive and NotClosed) or varBool;
+  actEMAIL.Enabled := (FCanGive and NotClosed) or varBool;
   dbgWorkers.ReadOnly := not varBool;
 
   actMaterials.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
@@ -1459,8 +1497,13 @@ begin
     OkCancelFrame.bbOk.Enabled := dbMemDefect.Enabled;
   end;
 
-  pnlExecTime.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or
-    FFullAccess;
+  // pnlExecTime.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or FFullAccess;
+
+  cbResultExec.ReadOnly := not(((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or
+    FFullAccess);
+  deEndExecDateTime.ReadOnly := cbResultExec.ReadOnly;
+  edReceipt.ReadOnly := cbResultExec.ReadOnly;
+  luResult.ReadOnly := cbResultExec.ReadOnly;
 
   deEndExecDateTime.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or
     FFullAccess;
@@ -1488,10 +1531,14 @@ begin
     LupHOUSE.Color := clWindow;
 
   CheckData;
-  dsRequestType.Close;
-  dsRequestType.ParamByName('RT_ID').AsInteger := dsRequest['RQ_TYPE'];
-  dsRequestType.ParamByName('house_ID').AsInteger := dsRequest['house_ID'];
-  dsRequestType.Open;
+  if not dsRequest.FieldByName('RQ_TYPE').IsNull then
+  begin
+    dsRequestType.Close;
+    dsRequestType.ParamByName('RT_ID').AsInteger := dsRequest['RQ_TYPE'];
+    dsRequestType.ParamByName('house_ID').AsInteger := dsRequest['house_ID'];
+  end;
+  if not dsRequestType.Active then
+    dsRequestType.Open;
   dsErrors.Active := (PageControl.ActivePage = tabRequest);
 end;
 
@@ -1644,6 +1691,17 @@ begin
   end;
 end;
 
+procedure TRequestForm.actOpenCustomerExecute(Sender: TObject);
+var
+  s: string;
+begin
+  if dsRequest.FieldByName('Rq_Customer').IsNull then
+    Exit;
+
+  s := dsRequest.FieldByName('Rq_Customer').AsString;
+  A4MainForm.ShowCustomers(7, s);
+end;
+
 procedure TRequestForm.actOpenHouseExecute(Sender: TObject);
 var
   s: String;
@@ -1676,19 +1734,26 @@ end;
 
 procedure TRequestForm.SetGridsHeight;
 begin
+  dbgWorks.Align := alTop;
   dbgWorks.Visible := (dsWorks.RecordCount > 0);
   dbgMaterials.Visible := (dsMaterials.RecordCount > 0);
   splGrids.Visible := ((dsMaterials.RecordCount > 0) and (dsWorks.RecordCount > 0));
-
+  splGrids.Top := dbgWorks.Top + 10;
   if (dsMaterials.RecordCount > 0) or (dsWorks.RecordCount > 0) then
   begin
     pnlWMbuttons.Width := 100;
-    dbgWorks.Height := Round(pnlGrids.Height * dsWorks.RecordCount / (dsMaterials.RecordCount + dsWorks.RecordCount));
+    if dbgMaterials.Visible then
+    begin
+      dbgWorks.Height := Round(pnlGrids.Height * (dsWorks.RecordCount + 2) /
+        (dsMaterials.RecordCount + dsWorks.RecordCount + 4));
+    end
+    else
+      dbgWorks.Align := alClient;
   end
   else
   begin
     pnlWMbuttons.Width := pnlWM.Width;
-    pnlNotice.Height := tabExecute.Height - (pnlWM.Top + btnMatIn.Top + btnMatIn.Height + 10);
+    pnlNotice.Height := tabExecute.Height - (pnlWM.Top + btnMatIn.Top + btnMatIn.Height + btnBuyback.Height + 10);
   end;
 end;
 
@@ -1710,6 +1775,33 @@ begin
     end;
 end;
 
+procedure TRequestForm.actAddPaymentExecute(Sender: TObject);
+var
+  pay_id: Integer;
+  dt: TDate;
+  sm: Currency;
+begin
+  if (not(dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_add))) then
+    Exit;
+
+  if dsRequest.FieldByName('RQ_ID').IsNull or dsRequest.FieldByName('Rq_Customer').IsNull then
+    Exit;
+  pay_id := ReceivePayment(dsRequest['Rq_Customer'], -1, -1, dt, sm, 'Заявка ' + dsRequest.FieldByName('RQ_ID')
+    .AsString, -1, '', dsRequest['RQ_ID']);
+  if pay_id <> -1 then
+  begin
+    if (dsRequest.State = dsEdit) then
+    begin
+      if edReceipt.Text.IsEmpty then
+        edReceipt.Text := pay_id.ToString;
+    end
+    else
+    begin
+      // А тут апдате через базу
+    end;
+  end;
+end;
+
 procedure TRequestForm.actBuybackExecute(Sender: TObject);
 begin
   if FRequestClosed then
@@ -1719,6 +1811,11 @@ begin
   begin
     dsMaterials.CloseOpen(true);
   end;
+end;
+
+procedure TRequestForm.actEMAILExecute(Sender: TObject);
+begin
+  SendEmailMessage;
 end;
 
 procedure TRequestForm.actExAddressEditExecute(Sender: TObject);
@@ -1808,6 +1905,14 @@ end;
 procedure TRequestForm.cbResultExecChange(Sender: TObject);
 begin
   CheckExecutor;
+  if dsRequest.State in [dsEdit, dsInsert] then
+  begin
+    if (not VarIsNull(cbResultExec.Value)) //
+      and (VarIsNull(deEndExecDateTime.Value)) //
+      and (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') //
+    then
+      deEndExecDateTime.Value := NOW(); // dsRequest['RQ_EXEC_TIME'] := NOW();
+  end;
 end;
 
 function TRequestForm.CheckExecutor: Boolean;
@@ -1927,6 +2032,137 @@ begin
   dbgFlats.ReadOnly := FRequestClosed;
   dbgWorks.ReadOnly := FRequestClosed;
   actExecutors.Enabled := not FRequestClosed;
+end;
+
+procedure TRequestForm.OpenPayment(const receipt: string);
+var
+  vPayDocID, vPaymentID: Integer;
+begin
+  if edReceipt.Text.IsEmpty then
+    Exit;
+
+  if (dsRequest.FieldByName('RQ_ID').IsNull) then
+    Exit;
+
+  vPayDocID := -1;
+  vPaymentID := -1;
+
+  if TryStrToInt(receipt, vPaymentID) then
+  begin
+    // еслі не нашлі по номеру заявкі, поіўем по номеру платежа
+    vPayDocID := -1;
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        SQL.Text := 'select PAY_DOC_ID from payment where PAYMENT_ID = :PID';
+        ParamByName('PID').AsInteger := vPaymentID;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not EOF then
+        begin
+          if not FieldByName('PAY_DOC_ID').IsNull then
+            vPayDocID := FieldByName('PAY_DOC_ID').AsInteger;
+        end;
+        Close;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  if ((vPayDocID <> -1) or (vPaymentID <> -1)) then
+  begin
+    vPayDocID := -1;
+    vPaymentID := -1;
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        SQL.Text := 'select first 1 PAY_DOC_ID, PAYMENT_ID from payment where RQ_ID = :PID';
+        ParamByName('PID').AsInteger := dsRequest.FieldByName('RQ_ID').AsInteger;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not EOF then
+        begin
+          if not FieldByName('PAY_DOC_ID').IsNull then
+            vPayDocID := FieldByName('PAY_DOC_ID').AsInteger;
+          if not FieldByName('PAYMENT_ID').IsNull then
+            vPaymentID := FieldByName('PAYMENT_ID').AsInteger;
+        end;
+        Close;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  if (FCustomerInfo.CUSTOMER_ID <> -1) and (fNodeId = -1) then
+  begin
+    A4MainForm.OpenCustomerWithData(FCustomerInfo.CUSTOMER_ID, 3, 'PAYMENT_ID=' + vPaymentID.ToString)
+  end
+  else
+    CreatePayDoc(vPayDocID, vPaymentID);
+end;
+
+procedure TRequestForm.SendEmailMessage;
+var
+  ToEmail: string;
+  emailClient: TEmailClient;
+  Res: string;
+  ci: Integer;
+  i: Integer;
+begin
+  if dsExecutor.RecordCount = 0 then
+    Exit;
+  dsExecutor.DisableControls;
+  dsExecutor.First;
+
+  while not dsExecutor.EOF do
+  begin
+    if dsExecutor['EMAIL'] <> '' then
+    begin
+      emailClient := TEmailClient.Create(Self);
+      emailClient.SmtpHost := dmMain.GetSettingsValue('SMTP');
+      emailClient.SmtpPort := dmMain.GetSettingsValue('SMTP_PORT');
+      emailClient.SmtpLogin := dmMain.GetSettingsValue('SMTP_LOGIN');
+      emailClient.SmtpPassword := dmMain.GetSettingsValue('SMTP_PASS');
+      emailClient.FromEmail := dmMain.GetSettingsValue('EMAIL');
+      emailClient.AuthType := dmMain.GetSettingsValue('SMTP_AUTH');
+      emailClient.SslType := dmMain.GetSettingsValue('SMTP_SSL');
+      emailClient.CcEmail := '';
+      emailClient.Confirm := dmMain.GetSettingsValue('SMTP_CONF');
+      try
+        Res := 'Плановая дата:' + PLANDATE.Text + ' ' + deTimeFrom.Text + '-' + deTimeTo.Text + #13#10;
+        Res := Res + LupStreets.Text + ' д. ' + LupHOUSE.Text + ' кв.' + edFLAT_NO.Text + #13#10;
+        Res := Res + FCustomerInfo.Account_No + ' ' + FCustomerInfo.FIO + #13#10;
+        Res := Res + FloatToStr(FCustomerInfo.Debt_sum) + #13#10;
+        Res := Res + ' тел.' + edPhone.Text + #13#10;
+        Res := Res + luTemplate.Text + #13#10 + mmoContent.Lines.Text + #13#10;
+        if pnlAddInfo.Visible then
+          Res := Res + cbbAdd.Text;
+        Res := mmoNotice.Lines.Text;
+        emailClient.Subject := Self.Caption + '. ' + luType.Text;
+        emailClient.Body := Res;
+        emailClient.ToEmail := dsExecutor['EMAIL'];
+        Res := emailClient.SendEmail;
+        if Res <> 'OK' then
+        begin
+          ShowMessage('Ошибка отправки' + #13#10 + Res);
+        end;
+
+      finally
+        FreeAndNil(emailClient);
+      end;
+    end;
+    dsExecutor.Next;
+  end;
+  dsExecutor.First;
+  dsExecutor.EnableControls;
 end;
 
 end.

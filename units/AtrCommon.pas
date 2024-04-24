@@ -115,6 +115,8 @@ function RemoveChars(const S: string; Chrs: string): string;
 function GetSpecialFolderPath(folder: Integer = 2): string;
 // Возвращает путь ко времменой папке
 function GetTempDir: String;
+// Возвращает имя временного файла
+function GetTempA4onFile(const ext: string = ''): String;
 // Возвращает имя файла из урл
 function GetFileNameFromURL(const S: string): string;
 // ждем пока файл освободится для записи
@@ -151,6 +153,20 @@ uses
 function GetTempDir: String;
 begin
   Result := System.IOUtils.TPath.GetTempPath;
+  Result := Result + 'A4on\';
+  if not DirectoryExists(Result) then
+    CreateDir(Result);
+end;
+
+function GetTempA4onFile(const ext: string = ''): String;
+var
+  TempPath, TmpFile, Prefix: string;
+begin
+  TmpFile := 'a4_' + FormatDateTime('yymmddhhnnssz', now());
+  TempPath := GetTempDir;
+  Result := TempPath + TmpFile + ext;
+  if FileExists(Result) then
+    DeleteFile(Result);
 end;
 
 procedure DeleteDir(const DirName: string);
@@ -744,7 +760,7 @@ function DatasetToJsonStr(DS: TDataset): string;
 var
   bkmark: TBookmark;
   I: Integer;
-  NeedSave : Boolean;
+  NeedSave: Boolean;
   Obj, ChildObj: TJsonObject;
 begin
   if DS.RecordCount = 0 then
@@ -1290,7 +1306,7 @@ begin
     until ((I > 3) or CanWrite);
   end
   else
-    CanWrite := True;
+    CanWrite := true;
 
   Result := CanWrite;
 end;

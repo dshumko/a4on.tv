@@ -7,8 +7,10 @@ uses
   Winapi.Windows,
   System.SysUtils, System.Classes,
   fs_idialogsrtti, fs_iextctrlsrtti, fs_iclassesrtti, fs_igraphicsrtti, fs_iformsrtti, fs_icpp, fs_ipascal,
-  fs_iinterpreter,
-  fs_iinirtti, fs_ibasic, fs_ijs, fs_ichartrtti, fs_iadortti, fs_idbctrlsrtti, fs_idbrtti, fs_iibxrtti;
+  fs_iinterpreter, fs_iinirtti, fs_ibasic, fs_ijs, fs_ichartrtti, fs_iadortti, fs_idbctrlsrtti,
+  fs_idbrtti, fs_iibxrtti
+  // , fs_ifibrtti
+    ;
 
 type
   TSM = class(TDataModule)
@@ -31,8 +33,10 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
+    // fsFIBRTTI: TfsFIBRTTI;
     function CallMethod(Instance: TObject; ClassType: TClass; const MethodName: String; var Params: Variant): Variant;
-    function CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String; var Params: Variant): Variant;
+    function CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String;
+      var Params: Variant): Variant;
     function GridCallMethod(Instance: TObject; ClassType: TClass; const MethodName: String;
       var Params: Variant): Variant;
     function FromWinToUtf8(const FileName: String): Boolean;
@@ -49,35 +53,44 @@ var
 implementation
 
 uses
-  Data.DB,
-  Vcl.Grids,
-  DM, FIBQuery, pFIBQuery, atrCmdUtils, RxStrUtils, synacode;
+  Data.DB, pFIBQuery, FIBQuery,
+  Vcl.Grids, Vcl.Forms,
+  RxStrUtils, synacode,
+  AtrStrUtils, atrCmdUtils,
+  DM, MAIN;
 
 {$R *.dfm}
 
 procedure TSM.DataModuleCreate(Sender: TObject);
+var
+  grp: String;
 begin
+  // fsFIBRTTI := TfsFIBRTTI.Create(Self);
+  // fsFIBRTTI.Name := 'fsFIBRTTI';
   script := TStringList.Create();
-  fsGlobalUnit.AddMethod('function FileExists(const FileName: string): Boolean', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function DeleteFile(const FileName: string): Boolean', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function ExtractFileName(const FileName: string): string', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function ExtractFilePath(const FileName: string): string', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function ExtractFileDir(const FileName: string): string', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function ExtractFileExt(const FileName: string): string', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function RenameFile(const OldName: string; const NewName: string): Boolean', CallMethod,
-    'A4on.TV');
-  fsGlobalUnit.AddMethod('function OemToAnsiStr(const OemStr: string): string', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function AnsiToOemStr(const OemStr: string): string', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function BASE64_Decode(const S: String): String', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function BASE64_Encode(const S: String): String', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('procedure FromWinToUtf8(const FileName: String)', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('procedure FromWinToDos(const FileName: String)', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('procedure FromUtf8toDos(const FileName: String)', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('procedure FromUtf8toWin(const FileName: String)', CallMethod, 'A4on.TV');
-  fsGlobalUnit.AddMethod('function RunCmd(const CmdLine: String; const params: String): String', CallMethodforCMD, 'A4on.TV');
-
+  grp := 'A4on.TV';
   with fsGlobalUnit do
   begin
+    AddMethod('function FileExists(const FileName: string): Boolean', CallMethod, grp);
+    AddMethod('function DeleteFile(const FileName: string): Boolean', CallMethod, grp);
+    AddMethod('function ExtractFileName(const FileName: string): string', CallMethod, grp);
+    AddMethod('function ExtractFilePath(const FileName: string): string', CallMethod, grp);
+    AddMethod('function ExtractFileDir(const FileName: string): string', CallMethod, grp);
+    AddMethod('function ExtractFileExt(const FileName: string): string', CallMethod, grp);
+    AddMethod('function RenameFile(const OldName: string; const NewName: string): Boolean', CallMethod, grp);
+    AddMethod('function OemToAnsiStr(const OemStr: string): string', CallMethod, grp);
+    AddMethod('function AnsiToOemStr(const OemStr: string): string', CallMethod, grp);
+    AddMethod('function BASE64_Decode(const S: String): String', CallMethod, grp);
+    AddMethod('function BASE64_Encode(const S: String): String', CallMethod, grp);
+    AddMethod('procedure FromWinToUtf8(const FileName: String)', CallMethod, grp);
+    AddMethod('procedure FromWinToDos(const FileName: String)', CallMethod, grp);
+    AddMethod('procedure FromUtf8toDos(const FileName: String)', CallMethod, grp);
+    AddMethod('procedure FromUtf8toWin(const FileName: String)', CallMethod, grp);
+    AddMethod('function RunCmd(const CmdLine: String; const params: String): String', CallMethodforCMD, grp);
+    AddMethod('function OpenCustomerByAccount(const ACCOUNT: String): Integer', CallMethod, grp);
+    AddMethod('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', CallMethod, grp);
+    AddMethod('function IncMAC(const MAC: string; const step: Integer): String', CallMethod, grp);
+
     AddClass(TCustomGrid, 'TCustomControl');
     AddClass(TDrawGrid, 'TCustomGrid');
     with AddClass(TStringGrid, 'TDrawGrid') do
@@ -118,14 +131,22 @@ begin
   else if MethodName = 'ANSITOOEMSTR' then
     Result := StrToOem(Params[0])
   else if MethodName = 'FROMWINTODOS' then
-    Result := FromWinToDos(Params[0]);
+    Result := FromWinToDos(Params[0])
+  else if MethodName = 'OPENCUSTOMERBYACCOUNT' then
+    Result := A4MainForm.ShowCustomers(100, Params[0]) // 100 - лицевой
+  else if MethodName = 'OPENCUSTOMERBYID' then
+    Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
+  else if MethodName = 'INCMAC' then
+    Result := AtrStrUtils.IncMAC(Params[0], Params[1]);
 end;
 
-function TSM.CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String; var Params: Variant): Variant;
+function TSM.CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String;
+  var Params: Variant): Variant;
 var
   ResLines: TStringList;
 begin
-  if MethodName = 'RUNCMD' then begin
+  if MethodName = 'RUNCMD' then
+  begin
     ShellExecute(0, 'open', Params[0], Params[1]);
   end;
 end;
@@ -142,6 +163,7 @@ end;
 procedure TSM.DataModuleDestroy(Sender: TObject);
 begin
   FreeAndNil(script);
+  // FreeAndNil(fsFIBRTTI);
 end;
 
 function TSM.FromWinToUtf8(const FileName: String): Boolean;

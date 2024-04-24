@@ -11,7 +11,7 @@ uses
   PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, GridsEh, DBGridEh,
   MemTableDataEh,
   MemTableEh, EhLibVCL, DBAxisGridsEh, fmuCustomerBalance, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
-  PropFilerEh, DBCtrlsEh, DBLookupEh, AtrPages;
+  PropFilerEh, DBCtrlsEh, DBLookupEh, AtrPages, amSplitter;
 
 type
   TCustomerForm = class(TForm)
@@ -108,7 +108,7 @@ type
     procedure StartEdit();
     procedure StopEdit(const Cancel: Boolean);
     procedure CreateCustomerPage(const Edit: Boolean = False);
-    procedure ShowPage(const index: Integer);
+    procedure SetPageIndex(const index: Integer);
     procedure UpdateCommands;
     procedure StartCommand(Sender: TObject);
     procedure UpdatePage(Sender: TObject);
@@ -118,6 +118,7 @@ type
   public
     constructor CreateA(AOwner: TComponent; aCustomer: Integer; const Edit: Boolean = False);
     destructor Destroy; override;
+    procedure FindDataOnTab(const TabType: Integer; const DataValue: string);
   end;
 
 procedure ShowCustomer(aCustomer: Integer; const Edit: Boolean = False);
@@ -478,7 +479,7 @@ begin
     end;
     if FPageList.Count > 0 then
     begin
-      ShowPage(0);
+      SetPageIndex(0);
     end;
   end;
 end;
@@ -500,7 +501,7 @@ begin
   end;
 end;
 
-procedure TCustomerForm.ShowPage(const index: Integer);
+procedure TCustomerForm.SetPageIndex(const index: Integer);
 var
   Item: TA4onPageItem;
   Page: TA4onPage;
@@ -542,7 +543,7 @@ end;
 procedure TCustomerForm.srcPagesDataChange(Sender: TObject; Field: TField);
 begin
   if not mtbPages.FieldByName('ID').IsNull then
-    ShowPage(mtbPages['ID']);
+    SetPageIndex(mtbPages['ID']);
 end;
 
 procedure TCustomerForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -954,6 +955,36 @@ begin
   // actPrepay.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
   // actTask.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
   // actCheckPassport.Visible := (FullAccess or  dmMain.AllowedAction(rght_Customer_NPS));
+end;
+
+procedure TCustomerForm.FindDataOnTab(const TabType: Integer; const DataValue: string);
+begin
+//    FPageList.Add(TapgCustomerPayments);
+  // mtbPages.Locate('ID', TabType);
+  // 4 - платежи
+{
+    FPageList.Add(TapgCustomerSrv);
+    FPageList.Add(TapgCustomerSingleSrv);
+    FPageList.Add(TapgCustomerKoef);
+    FPageList.Add(TapgCustomerPayments);
+    FPageList.Add(TapgCustomerRequests);
+    FPageList.Add(TapgCustomerAttributes);
+    FPageList.Add(TapgCustomerDigit);
+    FPageList.Add(TapgCustomerLan);
+    FPageList.Add(TapgCustomerInternet);
+    FPageList.Add(TapgCustomerLetters);
+    FPageList.Add(TapgCustomerRecourse);
+    FPageList.Add(TapgCustomerBonus);
+    FPageList.Add(TapgCustomerFiles);
+    FPageList.Add(TapgCustomerMaterialsMove);
+    FPageList.Add(TapgCustomerAppl);
+    FPageList.Add(TapgCustomerCard);
+    FPageList.Add(TapgCustomerBalance);
+}
+  if mtbPages.Locate('ID', TabType, []) then begin
+    SetPageIndex(TabType);
+    FLastPage.FindData(DataValue);
+  end;
 end;
 
 end.

@@ -3,12 +3,11 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
-  Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Menus,
-  AtrPages, ToolCtrlsEh, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  EhLibVCL,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, System.Actions, System.UITypes, Data.DB, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ActnList, Vcl.Menus, AtrPages, ToolCtrlsEh, FIBDataSet, pFIBDataSet,
+  GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -38,6 +37,7 @@ type
     FullAccess: Boolean;
     ChangeHistory: Boolean;
     FSavedID: Integer;
+    FColorize: Boolean;
     procedure EnableControls;
   public
     procedure SavePosition; override;
@@ -76,7 +76,9 @@ end;
 procedure TapgCustomerSingleSrv.InitForm;
 var
   vB: Boolean;
+  s: string;
 begin
+
   { TODO: Не давать править SINGLE SRV в прошлом периоде }
   FullAccess := (dmMain.AllowedAction(rght_Customer_full)); // Полный доступ
   ChangeHistory := (dmMain.AllowedAction(rght_Customer_History)); // Изменение истории
@@ -85,6 +87,15 @@ begin
   actDel.Visible := vB or FullAccess;
 
   pnlButtons.Visible := actAdd.Visible or actDel.Visible;
+
+  // ЛТВ подсветка желтым зявок без оплаты
+  s := dmMain.GetCompanyValue('NAME');
+  FColorize := s.Contains('ЛТВ');
+  if (FColorize) then
+  begin
+    dsSingleService.ParamByName('Colorize').AsString :=
+      ' substring(ss.Notice similar ''%СЗ%:#"[^[:DIGIT:]]*([0-9])+#"%'' escape ''#'') ';
+  end;
 
   dsSingleService.DataSource := FDataSource;
 end;
@@ -220,10 +231,12 @@ end;
 procedure TapgCustomerSingleSrv.dbgSingleServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
-  if not dsSingleService.FieldByName('ORDER_PAY').IsNull then
-    if not dsSingleService.FieldByName('Units').IsNull then
-      if dsSingleService['ORDER_PAY'] <> dsSingleService['Units'] then
-        Background := clYellow;
+  if FColorize then
+    if not dsSingleService.FieldByName('ORDER_PAY').IsNull then
+      if not dsSingleService.FieldByName('Units').IsNull then
+        if dsSingleService['ORDER_PAY'] <> dsSingleService['Units'] then
+          Background := clYellow;
 end;
 
 end.
+

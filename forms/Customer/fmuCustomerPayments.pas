@@ -10,7 +10,7 @@ uses
   Vcl.ExtCtrls,
   ToolCtrlsEh, GridsEh, DBGridEh, AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
   DynVarsEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet;
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, Vcl.Menus;
 
 type
   TapgCustomerPayments = class(TA4onPage)
@@ -28,12 +28,22 @@ type
     trWrite: TpFIBTransaction;
     btnCheck: TSpeedButton;
     actCheckUrl: TAction;
+    pmDblClick: TPopupMenu;
+    miPayDoc: TMenuItem;
+    miRequest: TMenuItem;
+    pmPayment: TPopupMenu;
+    actMarkReq: TAction;
+    miMarkReq: TMenuItem;
     procedure ActAddPaymentExecute(Sender: TObject);
     procedure actPrepayExecute(Sender: TObject);
     procedure dbgCustPaymentDblClick(Sender: TObject);
     procedure dbgCustPaymentGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure actCheckUrlExecute(Sender: TObject);
+    procedure miRequestClick(Sender: TObject);
+    procedure miPayDocClick(Sender: TObject);
+    procedure actMarkReqExecute(Sender: TObject);
+    procedure srcPaymentDataChange(Sender: TObject; Field: TField);
   private
     FFine: boolean;
     // FTodayOnly: boolean;
@@ -41,9 +51,11 @@ type
     FSavedID: Integer;
     FCheckUrl: string;
     procedure EnableControls;
+    procedure OpenRequest;
   public
     procedure InitForm; override;
     procedure OpenData; override;
+    procedure FindData(const Data: string); override;
     procedure CloseData; override;
     procedure SavePosition; override;
     procedure GotoSavedPosition; override;
@@ -53,7 +65,7 @@ type
 implementation
 
 uses
-  System.StrUtils, DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN, HtmlForma;
+  System.StrUtils, DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN, HtmlForma, RequestForma;
 
 {$R *.dfm}
 
@@ -69,6 +81,18 @@ begin
     FSavedID := dsPayment['PAYMENT_ID'];
 end;
 
+procedure TapgCustomerPayments.srcPaymentDataChange(Sender: TObject; Field: TField);
+begin
+  if Assigned(Field) and not(Field.Name = 'RQ_ID') then
+  begin
+   if (dsPayment.State = dsEdit) then begin
+     dsPayment.Post;
+     dbgCustPayment.AllowedOperations := [];
+     dbgCustPayment.ReadOnly := True;
+   end;
+  end
+end;
+
 procedure TapgCustomerPayments.GotoSavedPosition;
 begin
   if FSavedID > -1 then
@@ -82,6 +106,7 @@ var
   vShowPaySRV: boolean;
   vAsBalance: boolean;
   i: Integer;
+  s: String;
 begin
   vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
   bFull := dmMain.AllowedAction(rght_Pays_full); // Полный доступ к платежам
@@ -90,6 +115,11 @@ begin
   ActAddPayment.Enabled := bFull or bAdd or dmMain.AllowedAction(rght_Pays_AddToday);
   actPrepay.Enabled := bFull or dmMain.AllowedAction(rght_Pays_AddPromis);
   pnlButtons.Visible := ActAddPayment.Enabled or actPrepay.Enabled;
+
+  s := dmMain.GetCompanyValue('NAME');
+  actMarkReq.Visible := s.Contains('ЛТВ');
+  actMarkReq.Enabled := bFull or bAdd or dmMain.AllowedAction(rght_Request_Full) or
+    dmMain.AllowedAction(rght_Request_Close);
 
   if (dmMain.GetSettingsValue('SHOWALLCUSTPAYS') <> '1') then
   begin
@@ -132,6 +162,18 @@ begin
   actCheckUrl.Visible := (FCheckUrl <> '');
 end;
 
+procedure TapgCustomerPayments.miPayDocClick(Sender: TObject);
+begin
+  if dsPayment.FieldByName('pay_doc_id').IsNull then
+    exit;
+  CreatePayDoc(dsPayment['pay_doc_id'], dsPayment['PAYMENT_ID']);
+end;
+
+procedure TapgCustomerPayments.miRequestClick(Sender: TObject);
+begin
+  OpenRequest;
+end;
+
 procedure TapgCustomerPayments.OpenData;
 begin
   if dsPayment.Active then
@@ -167,19 +209,34 @@ var
 begin
   // параметры <customer_id> <unp>
   // GetHtml(const Url: string = 'localhost'; const User: string = ''; const Pswd: string = '';
-  //  const Data: string = ''; const ExExit: Boolean = False; const Title: string = '')
-  if FDataSource.DataSet.FieldByName('customer_id').IsNull
-  then
-    Exit;
+  // const Data: string = ''; const ExExit: Boolean = False; const Title: string = '')
+  if FDataSource.DataSet.FieldByName('customer_id').IsNull then
+    exit;
 
   URL := FCheckUrl;
   URL := ReplaceStr(URL, '<customer_id>', FDataSource.DataSet.FieldByName('customer_id').AsInteger.ToString);
-  if not FDataSource.DataSet.FieldByName('JUR_INN').IsNull
-  then
+  if not FDataSource.DataSet.FieldByName('JUR_INN').IsNull then
     URL := ReplaceStr(URL, '<unp>', FDataSource.DataSet.FieldByName('JUR_INN').AsString)
   else
     URL := ReplaceStr(URL, '<unp>', '');
   ShowHtml(URL, '', rsPayCheck);
+end;
+
+procedure TapgCustomerPayments.actMarkReqExecute(Sender: TObject);
+var
+  rs: string;
+  rid: Integer;
+begin
+  if dsPayment.RecordCount = 0 then
+    exit;
+  {
+  rs := InputBox('Укажите номер заявки', 'Заявка', '');
+  if (rs = '') or (not TryStrToInt(rs, rid)) then
+    exit;
+  }
+  dbgCustPayment.AllowedOperations := [alopUpdateEh];
+  dbgCustPayment.ReadOnly := False;
+  dsPayment.Edit;
 end;
 
 procedure TapgCustomerPayments.actPrepayExecute(Sender: TObject);
@@ -218,10 +275,28 @@ begin
 end;
 
 procedure TapgCustomerPayments.dbgCustPaymentDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
 begin
-  if dsPayment.FieldByName('pay_doc_id').IsNull then
-    exit;
-  CreatePayDoc(dsPayment['pay_doc_id'], dsPayment['PAYMENT_ID']);
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgCustPayment.ScreenToClient(ScrPt);
+  Cell := dbgCustPayment.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgCustPayment.Fields[Cell.X - 1].FieldName);
+  if (s = 'NOTICE') then
+    pmDblClick.Popup(ScrPt.X, ScrPt.Y)
+  else
+  if (s = 'RQ_ID') then begin
+    if (dsPayment.State = dsBrowse) then
+      OpenRequest;
+  end
+  else
+  begin
+    if dsPayment.FieldByName('pay_doc_id').IsNull then
+      exit;
+    CreatePayDoc(dsPayment['pay_doc_id'], dsPayment['PAYMENT_ID']);
+  end;
 end;
 
 procedure TapgCustomerPayments.dbgCustPaymentGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -243,6 +318,66 @@ begin
     if (gdFocused in State) or (gdSelected in State) then
       AFont.Color := clBlack;
   end;
+end;
+
+procedure TapgCustomerPayments.OpenRequest;
+var
+  aRequest: Integer;
+  aCustomer: Integer;
+  aMode: Byte;
+Begin
+  if dsPayment.FieldByName('PAYMENT_ID').IsNull then
+    exit;
+
+  // ищем заявку по номеру если есть, если нет то будем искать по номеру квитанции = номеру платежа
+
+  aRequest := -1;
+  if not dsPayment.FieldByName('RQ_ID').IsNull then
+  begin
+    aRequest := dsPayment.FieldByName('RQ_ID').AsInteger;
+  end
+  else
+  begin
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        sql.text := 'select r.RQ_ID from request r where r.RECEIPT = :RECEIPT';
+        ParamByName('RECEIPT').Value := dsPayment.FieldByName('PAYMENT_ID').AsString;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not EOF then
+        begin
+          if not FieldByName('RQ_ID').IsNull then
+            aRequest := FieldByName('RQ_ID').AsInteger;
+        end;
+        Close;
+        Transaction.Commit;
+      finally
+        free;
+      end;
+    end;
+  end;
+
+  if aRequest > 0 then
+  begin
+    aCustomer := dsPayment.FieldByName('CUSTOMER_ID').AsInteger;
+    aMode := 1;
+    ReguestExecute(aRequest, aCustomer, aMode);
+  end;
+end;
+
+procedure TapgCustomerPayments.FindData(const Data: string);
+var
+  f,v : string;
+  i : Integer;
+begin
+//
+  i := Pos('=', Data);
+  f := Copy(Data, 1, i-1);
+  v := Copy(Data, i+1, length(Data));
+  dsPayment.Locate(f,v,[]);
 end;
 
 end.

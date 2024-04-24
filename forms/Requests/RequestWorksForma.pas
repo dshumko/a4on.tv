@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls,
-  DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, EhLibVCL;
+  DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, EhLibVCL, amSplitter;
 
 type
   TRequestWorksForm = class(TForm)
@@ -127,9 +127,28 @@ begin
 end;
 
 procedure TRequestWorksForm.FormShow(Sender: TObject);
+var
+  i: Integer;
+  s: String;
+  h: Boolean;
 begin
   dbGrid.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'RecWorkGrid',
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
+
+  s := dmMain.GetSettingsValue('REQ_WORKS_NOT_CALC');
+  if (s = '1') then begin
+    h := dmMain.AllowedAction(rght_Dictionary_ReqWorks) //
+      or dmMain.AllowedAction(rght_Request_Full) //
+      or dmMain.AllowedAction(rght_Dictionary_full);
+
+    for i := 0 to dbGrid.Columns.Count - 1 do
+    begin
+      if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'NOT_CALC') then
+        dbGrid.Columns[i].Visible := True
+      else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'W_COST') then
+        dbGrid.Columns[i].ReadOnly := not h;
+    end;
+  end;
 end;
 
 procedure TRequestWorksForm.OkCancelFrame1bbOkClick(Sender: TObject);

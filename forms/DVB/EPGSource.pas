@@ -7,9 +7,11 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ComCtrls,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh, GridsEh,
-  DBAxisGridsEh, DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, pFIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, OTextReadWrite, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, httpsend, synacode, blcksock, ftpsend, synsock;
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
+  GridsEh,
+  DBAxisGridsEh, DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, pFIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, OTextReadWrite,
+  PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, httpsend, synacode, blcksock, ftpsend, synsock, amSplitter;
 
 type
   TEPGSourceForm = class(TForm)
@@ -73,6 +75,7 @@ type
     dsMAPGenreCAT_ID: TIntegerField;
     dsChFromSRC: TMemTableEh;
     srcChFromSrc: TDataSource;
+    smlntfldMAPChennalsSM: TSmallintField;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnLoadClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -99,7 +102,7 @@ type
     procedure DataSetFinish;
     procedure TrySetMap;
   private
-    Download: Integer;
+    FDownload: Integer;
     fTmpFilename: String;
     procedure Status(Sender: TObject; Reason: THookSocketReason; const Value: String);
     function DownloadFile: Boolean;
@@ -120,9 +123,9 @@ var
 implementation
 
 uses
-  {$IFNDEF VER300}
+{$IFNDEF VER300}
   EConsts, ETypes, EClasses, EHash, ESysInfo, ESend, ESendAPIMantis,
-  {$ENDIF}
+{$ENDIF}
   DM, AtrCommon, JsonDataObjects, sevenzip;
 
 {$R *.dfm}
@@ -184,7 +187,7 @@ procedure TEPGSourceForm.LoadChennalsMap;
 begin
   dsMAPChennals.DisableControls;
   dsMAPChennals.First;
-  Query.SQL.Text := 'Select m.ch_id, m.epg_code from EPG_MAPPING m where m.epg_id = :sid';
+  Query.SQL.Text := 'Select m.ch_id, m.epg_code, m.SHIFT_M from EPG_MAPPING m where m.epg_id = :sid';
   Query.ParamByName('SID').AsInteger := fSourceId;
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
@@ -195,6 +198,8 @@ begin
     begin
       dsMAPChennals.Edit;
       dsMAPChennals['ATR_ID'] := Query.FN('ch_id').AsInteger;
+      if not Query.FN('SHIFT_M').IsNull then
+        dsMAPChennals['SM'] := Query.FN('SHIFT_M').AsInteger;
       dsMAPChennals.Post;
     end;
     Query.Next;
@@ -305,8 +310,8 @@ begin
   end;
 
   Query.SQL.Clear;
-  Query.SQL.Add('UPDATE OR INSERT into EPG_MAPPING (EPG_ID, CH_ID, EPG_CODE) ');
-  Query.SQL.Add('values (:EPG_ID, :CH_ID, :EPG_CODE) MATCHING (EPG_ID, CH_ID) ');
+  Query.SQL.Add('UPDATE OR INSERT into EPG_MAPPING (EPG_ID, CH_ID, EPG_CODE, SHIFT_M) ');
+  Query.SQL.Add('values (:EPG_ID, :CH_ID, :EPG_CODE, :SHIFT_M) MATCHING (EPG_ID, CH_ID) ');
   Query.Transaction.StartTransaction;
   dsMAPChennals.First;
   while not dsMAPChennals.Eof do
@@ -316,6 +321,11 @@ begin
       Query.ParamByName('EPG_ID').AsInteger := fSourceId;
       Query.ParamByName('CH_ID').AsInteger := dsMAPChennals['ATR_ID'];
       Query.ParamByName('EPG_CODE').AsString := dsMAPChennals['ID'];
+      if not dsMAPChennals.FieldByName('SM').IsNull then
+        Query.ParamByName('SHIFT_M').AsInteger := dsMAPChennals['SM']
+      else
+        Query.ParamByName('SHIFT_M').Clear;
+
       Query.ExecQuery;
     end;
     dsMAPChennals.Next;
@@ -543,38 +553,40 @@ begin
 
   DataSetStart;
 
-  B := TJsonBaseObject.ParseFromFile(jsonName);
   try
-    if B <> nil then
-    begin
-      O := B as TJsonObject;
-      if O.Contains('schedule') then
+    B := TJsonBaseObject.ParseFromFile(jsonName);
+    try
+      if B <> nil then
       begin
-        for i := 0 to O.A['schedule'].Count - 1 do
+        O := B as TJsonObject;
+        if O.Contains('schedule') then
         begin
-          c := O.A['schedule'][i];
-          s := c.s['channel'];
-          dsChFromSRC.Append;
-          dsChFromSRC['ID'] := c.s['channel'];
-          dsChFromSRC['NAME'] := c.s['channel'];
-          dsChFromSRC.Post;
-          // если новый источник то уже загружена ассоцация
-          if (fSourceId = -1) or (not dsMAPChennals.Locate('ID', s, [loCaseInsensitive])) then
+          for i := 0 to O.A['schedule'].Count - 1 do
           begin
-            dsMAPChennals.Append;
-            dsMAPChennals['ID'] := s;
-            dsMAPChennals['NAME'] := s;
-            dsMAPChennals.Post;
+            c := O.A['schedule'][i];
+            s := c.s['channel'];
+            dsChFromSRC.Append;
+            dsChFromSRC['ID'] := c.s['channel'];
+            dsChFromSRC['NAME'] := c.s['channel'];
+            dsChFromSRC.Post;
+            // если новый источник то уже загружена ассоцация
+            if (fSourceId = -1) or (not dsMAPChennals.Locate('ID', s, [loCaseInsensitive])) then
+            begin
+              dsMAPChennals.Append;
+              dsMAPChennals['ID'] := s;
+              dsMAPChennals['NAME'] := s;
+              dsMAPChennals.Post;
+            end;
           end;
         end;
       end;
+    finally
+      B.Free;
     end;
   finally
-    B.Free;
+    if System.SysUtils.FileExists(jsonName) then
+      System.SysUtils.DeleteFile(jsonName);
   end;
-
-  if System.SysUtils.FileExists(jsonName) then
-    System.SysUtils.DeleteFile(jsonName);
 
   DataSetFinish;
 
@@ -952,9 +964,9 @@ procedure TEPGSourceForm.Status(Sender: TObject; Reason: THookSocketReason; cons
 begin
   if Reason = HR_ReadCount then
   begin
-    Download := Download + StrToInt(Value);
+    FDownload := FDownload + StrToInt(Value);
     if pb.Max > 0 then
-      pb.Position := Download;
+      pb.Position := FDownload;
   end
 end;
 
@@ -967,7 +979,8 @@ end;
 
 procedure TEPGSourceForm.cbTypeChange(Sender: TObject);
 begin
-  if cbType.Value = '' then Exit;
+  if cbType.Value = '' then
+    Exit;
   pnlSettings.Visible := (cbType.Value <> 1);
   pnlGenre.Visible := (cbType.Value <> 1);
 end;
@@ -977,7 +990,7 @@ begin
   dsMAPChennals.DisableControls;
   dsMAPChennals.Open;
   // dsMAPChennals.First;
-  Query.SQL.Text := 'select m.Epg_Id, m.Ch_Id, m.Epg_Code, c.Ch_Name';
+  Query.SQL.Text := 'select m.Epg_Id, m.Ch_Id, m.Epg_Code, c.Ch_Name, m.SHIFT_M';
   Query.SQL.Add('from Epg_Mapping m left outer join Channels c on (m.Ch_Id = c.Ch_Id)');
   Query.SQL.Add('where m.Epg_Id = :id');
   Query.SQL.Add('order by c.Ch_Name');
@@ -991,6 +1004,8 @@ begin
     dsMAPChennals['NAME'] := Query.FN('Epg_Code').AsString;
     dsMAPChennals['ATR_ID'] := Query.FN('Ch_Id').AsInteger;
     dsMAPChennals['ATR_NAME'] := Query.FN('Ch_Name').AsString;
+    if not Query.FN('SHIFT_M').IsNull then
+      dsMAPChennals['SM'] := Query.FN('SHIFT_M').AsInteger;
     dsMAPChennals.Post;
 
     Query.Next;

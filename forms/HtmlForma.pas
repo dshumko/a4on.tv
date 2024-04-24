@@ -1,5 +1,5 @@
 ﻿unit HtmlForma;
-
+{ DEFINE INDY}
 interface
 
 uses
@@ -10,15 +10,13 @@ uses
   SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView,
 {$IFDEF INDY}
   IdBaseComponent,
-  IdComponent,
+  IdComponent, IdGlobal,
   IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
 {$ELSE}
   httpsend, ssl_openssl3, synautil,
 {$ENDIF}
   UrlConn,
-  PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser, IdIOHandler,
-  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
+  PropFilerEh, PropStorageEh, Langji.Wke.Webbrowser;
 
 type
   THtmlForm = class(TForm)

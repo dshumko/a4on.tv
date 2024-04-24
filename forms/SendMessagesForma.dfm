@@ -38,7 +38,6 @@ object SendMessagesForm: TSendMessagesForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitWidth = 397
     object pnlHead: TPanel
       Left = 0
       Top = 0
@@ -48,7 +47,6 @@ object SendMessagesForm: TSendMessagesForm
       BevelOuter = bvNone
       TabOrder = 0
       Visible = False
-      ExplicitWidth = 397
       DesignSize = (
         391
         26)
@@ -71,7 +69,6 @@ object SendMessagesForm: TSendMessagesForm
         ShowHint = True
         TabOrder = 0
         Visible = True
-        ExplicitWidth = 304
       end
     end
     object mmoMessage: TDBMemoEh
@@ -94,7 +91,6 @@ object SendMessagesForm: TSendMessagesForm
       Visible = True
       WantReturns = True
       OnChange = mmoMessageChange
-      ExplicitWidth = 397
     end
   end
   object progress: TProgressBar
@@ -105,7 +101,6 @@ object SendMessagesForm: TSendMessagesForm
     Align = alBottom
     Step = 1
     TabOrder = 6
-    ExplicitWidth = 717
   end
   object pnl1: TPanel
     Left = 0
@@ -115,7 +110,6 @@ object SendMessagesForm: TSendMessagesForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 717
     DesignSize = (
       711
       39)
@@ -148,7 +142,6 @@ object SendMessagesForm: TSendMessagesForm
       TabOrder = 0
       Visible = True
       OnChange = cbMessTypeChange
-      ExplicitWidth = 615
     end
   end
   object pnlTmplts: TPanel
@@ -159,7 +152,6 @@ object SendMessagesForm: TSendMessagesForm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitLeft = 400
     object dbgTemplate: TDBGridEh
       Left = 0
       Top = 26
@@ -253,7 +245,6 @@ object SendMessagesForm: TSendMessagesForm
     TabOrder = 5
     Visible = False
     WantReturns = True
-    ExplicitWidth = 717
   end
   object pnlReport: TPanel
     Left = 0
@@ -263,7 +254,6 @@ object SendMessagesForm: TSendMessagesForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 717
     DesignSize = (
       711
       79)
@@ -385,7 +375,6 @@ object SendMessagesForm: TSendMessagesForm
       ShowHint = True
       TabOrder = 0
       Visible = True
-      ExplicitWidth = 615
     end
     object lvFiles: TListView
       Left = 90
@@ -402,7 +391,6 @@ object SendMessagesForm: TSendMessagesForm
       TabOrder = 1
       ViewStyle = vsReport
       OnDblClick = lvFilesDblClick
-      ExplicitWidth = 615
     end
   end
   object pnlOkCancel: TPanel
@@ -413,7 +401,6 @@ object SendMessagesForm: TSendMessagesForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 7
-    ExplicitWidth = 717
     DesignSize = (
       711
       41)
@@ -427,7 +414,6 @@ object SendMessagesForm: TSendMessagesForm
       Caption = #1047#1072#1082#1088#1099#1090#1100
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 638
     end
     object btnOk: TBitBtn
       Left = 11
@@ -440,7 +426,6 @@ object SendMessagesForm: TSendMessagesForm
       NumGlyphs = 2
       TabOrder = 0
       OnClick = actSendExecute
-      ExplicitWidth = 621
     end
   end
   object pnlContact: TPanel
@@ -452,7 +437,6 @@ object SendMessagesForm: TSendMessagesForm
     BevelOuter = bvNone
     TabOrder = 0
     Visible = False
-    ExplicitWidth = 717
     DesignSize = (
       711
       32)
@@ -475,10 +459,11 @@ object SendMessagesForm: TSendMessagesForm
       ShowHint = True
       TabOrder = 0
       Visible = True
-      ExplicitWidth = 615
     end
   end
   object pmMemo: TPopupMenu
+    AutoHotkeys = maManual
+    AutoLineReduction = maManual
     Left = 117
     Top = 152
   end
@@ -538,7 +523,13 @@ object SendMessagesForm: TSendMessagesForm
   end
   object dsTemplate: TpFIBDataSet
     UpdateSQL.Strings = (
-      ''
+      'UPDATE OBJECTS'
+      'SET '
+      '    O_NAME = :O_NAME,'
+      '    O_CHARFIELD = :O_CHARFIELD,'
+      '    O_DESCRIPTION = :O_DESCRIPTION'
+      'WHERE'
+      '    O_ID = :OLD_O_ID'
       '    ')
     DeleteSQL.Strings = (
       'DELETE FROM'
@@ -576,14 +567,14 @@ object SendMessagesForm: TSendMessagesForm
     Database = dmMain.dbTV
     UpdateTransaction = trWriteQ
     AutoCommit = True
-    Left = 482
-    Top = 186
+    Left = 434
+    Top = 242
   end
   object srcTemplate: TDataSource
     AutoEdit = False
     DataSet = dsTemplate
-    Left = 540
-    Top = 180
+    Left = 524
+    Top = 244
   end
   object trWriteQ: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV

@@ -13,7 +13,8 @@ uses
   FIBQuery,
   pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
   MemTableDataEh,
-  MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh, pFIBDataDriverEh;
+  MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh, pFIBDataDriverEh,
+  amSplitter;
 
 type
   TNodesForm = class(TForm)
@@ -34,7 +35,7 @@ type
     actEnableFilter: TAction;
     actRequest: TAction;
     actQuickFilter: TAction;
-    actAdresSearch: TAction;
+    actAddressSearch: TAction;
     ActionRefresh: TAction;
     actSelectAll: TAction;
     actCopy: TAction;
@@ -113,7 +114,7 @@ type
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     ToolButton8: TToolButton;
-    pnlSearchAdres: TPanel;
+    pnlSearchAddress: TPanel;
     Label1: TLabel;
     lcbStreets: TDBLookupComboboxEh;
     lcbHOUSE: TDBLookupComboboxEh;
@@ -180,7 +181,7 @@ type
     procedure actQuickFilterExecute(Sender: TObject);
     procedure actSetFilterNewExecute(Sender: TObject);
     procedure ActionRefreshExecute(Sender: TObject);
-    procedure actAdresSearchExecute(Sender: TObject);
+    procedure actAddressSearchExecute(Sender: TObject);
     procedure actRequestExecute(Sender: TObject);
     procedure actEnableFilterExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -203,7 +204,7 @@ type
     procedure dsNodesAfterOpen(DataSet: TDataSet);
     procedure btnCancelLinkClick(Sender: TObject);
     procedure btnSaveLinkClick(Sender: TObject);
-    procedure OnAdressChange(Sender: TObject);
+    procedure OnAddressChange(Sender: TObject);
     procedure edtNAMEKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtNAMEKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure actTaskExecute(Sender: TObject);
@@ -231,6 +232,9 @@ type
     FinEditMode: Boolean;
     FCanSave: Boolean;
     FEnterSecondPress: Boolean;
+    FAddressFilter: Boolean;
+    FStreetID: Integer;
+    FHouseID: Integer;
     function GenerateFilter: string;
     procedure ShowPage(Page: TA4onPage);
     procedure UpdateCommands;
@@ -242,9 +246,9 @@ type
     procedure InitSecurity;
     procedure UpdateInfoPanel;
     procedure SwitchIfoTab(const next: Boolean);
-    procedure StartSearchAdres;
-    procedure StopSearchAdres;
-    procedure SetAdresFilter();
+    procedure StartSearchAddress;
+    procedure StopSearchAddress;
+    procedure SetAddressFilter();
     procedure RefreshGridRecords;
     procedure StartEdit(const New: Boolean = False);
     procedure StopEdit(const Cancel: Boolean);
@@ -252,6 +256,7 @@ type
     procedure GenNodeName();
     function CheckNodeExists(const nid: Integer; const hid: Integer; const tid: Integer; const pn: string;
       const fn: string; const pl: string): Integer;
+    procedure SetEditMode(const isEdit: Boolean; const isNew: Boolean = False);
   public
     procedure SetDefaultFilter;
     procedure SetFilter(const FilterFIELD: Integer; const FilterVALUE: string);
@@ -266,7 +271,7 @@ uses
   System.DateUtils, System.StrUtils,
   A4onTypeUnit, AtrCommon, MAIN, DM, CustomerForma, DBGridEhFindDlgs, SelectColumnsForma, ExportSettingsForma,
   TextEditForma,
-  SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma, DBGridEhImpExp, NodesFilter, AtrStrUtils,
+  SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma, NodesFilter, AtrStrUtils,
   RxStrUtils,
   EhLibFIB, pFIBProps, fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT, fmuNodeFlats,
   fmuNodeMaterialsMove,
@@ -690,38 +695,40 @@ begin
   Result := FPageList[Index].Page;
 end;
 
-procedure TNodesForm.actAdresSearchExecute(Sender: TObject);
+procedure TNodesForm.actAddressSearchExecute(Sender: TObject);
 begin
-  if not actAdresSearch.Checked then
-    StartSearchAdres
+  if not actAddressSearch.Checked then
+    StartSearchAddress
   else
-    StopSearchAdres;
+    StopSearchAddress;
 end;
 
-procedure TNodesForm.StartSearchAdres;
+procedure TNodesForm.StartSearchAddress;
 begin
-  if (actAdresSearch.Tag <> 1) and (dmMain.GetIniValue('FETCHALL') = '0') then
+  if (actAddressSearch.Tag <> 1) and (dmMain.GetIniValue('FETCHALL') = '0') then
   begin
     if srcNodes.DataSet is TpFIBDataSet then
     begin
       dsNodes.Options := dsNodes.Options + [poFetchAll];
       dsNodes.CloseOpen(True);
-      actAdresSearch.Tag := 1;
+      actAddressSearch.Tag := 1;
     end;
   end;
 
-  actAdresSearch.Checked := True;
-  pnlSearchAdres.Visible := True;
+  actAddressSearch.Checked := True;
+  pnlSearchAddress.Visible := True;
+  FAddressFilter := True;
   lcbStreets.SetFocus;
   dsStreets.Open;
 end;
 
-procedure TNodesForm.StopSearchAdres;
+procedure TNodesForm.StopSearchAddress;
 var
   bm: TBookMark;
 begin
-  pnlSearchAdres.Visible := False;
-  actAdresSearch.Checked := False;
+  FAddressFilter := False;
+  pnlSearchAddress.Visible := False;
+  actAddressSearch.Checked := False;
 
   if dsHomes.Active then
     dsHomes.Close;
@@ -747,9 +754,7 @@ begin
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
       begin
-        // Экспорт информации
-        if (dmMain.AllowedAction(rght_Export)) then
-          DBGridEh_DoCopyAction(dbg, False);
+        A4MainForm.CopyDBGrid(dbg);
       end
       else
         StrToClipbrd(dbg.SelectedField.AsString);
@@ -929,58 +934,9 @@ begin
 end;
 
 procedure TNodesForm.actSaveAsExecute(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: string;
-
 begin
-  // Экспорт информации
-  if (not dmMain.AllowedAction(rght_Export)) then
-    Exit;
-
-  A4MainForm.SaveDialog.FILENAME := rsCustomers;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FILENAME, Length(A4MainForm.SaveDialog.FILENAME) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FILENAME := A4MainForm.SaveDialog.FILENAME + '.' + Ext;
-
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FILENAME, False);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TNodesForm.actSearchNextExecute(Sender: TObject);
@@ -1499,12 +1455,12 @@ begin
   ShowPage(IndexToPage(lstForms.ItemIndex));
 end;
 
-procedure TNodesForm.SetAdresFilter();
+procedure TNodesForm.SetAddressFilter();
 var
   filter: string;
 begin
   filter := '';
-  if (actAdresSearch.Checked) then
+  if (actAddressSearch.Checked) then
   begin
     if VarIsNumeric(lcbHOUSE.KeyValue) then
     begin
@@ -1544,45 +1500,46 @@ end;
 
 procedure TNodesForm.lcbHOUSEChange(Sender: TObject);
 begin
-  if actAdresSearch.Checked then
-    SetAdresFilter();
+  if actAddressSearch.Checked then
+    SetAddressFilter();
 end;
 
 procedure TNodesForm.lcbFLATChange(Sender: TObject);
 begin
-  if actAdresSearch.Checked then
-    SetAdresFilter();
+  if actAddressSearch.Checked then
+    SetAddressFilter();
 end;
 
 procedure TNodesForm.lcbStreetsChange(Sender: TObject);
 begin
   lcbHOUSE.Value := NULL;
-  if actAdresSearch.Checked then
-    SetAdresFilter();
+  if actAddressSearch.Checked then
+    SetAddressFilter();
 end;
 
 procedure TNodesForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if not actAdresSearch.Checked then
+  if not actAddressSearch.Checked then
     Exit;
 
   if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := true;
+    go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
-        FEnterSecondPress := true;
+        FEnterSecondPress := True;
       end;
     end;
 
@@ -1613,6 +1570,16 @@ begin
   if (not New) and (srcNodes.DataSet.RecordCount = 0) then
     Exit;
 
+  FStreetID := -1;
+  FHouseID := -1;
+
+  if FAddressFilter then
+  begin
+    FStreetID := lcbStreets.Value;
+    if (lcbHOUSE.Text <> '') then
+      FHouseID := lcbHOUSE.Value
+  end;
+
   if Assigned(FLastPage) then
   begin
     FLastPage.CloseData;
@@ -1623,22 +1590,20 @@ begin
   dsStreets.Open;
   dsParentNode.Open;
 
-  pnlEdit.Visible := True;
-  dbgNodes.Enabled := False;
-  pnlBtns.Enabled := False;
-  pnlForms.Enabled := False;
-  pnlEdit.SetFocus;
-  PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+  SetEditMode(True, New);
 
-  FAutoGen := False;
-
-  if New then
-    srcNodes.DataSet.Insert
+  if New then begin
+    srcNodes.DataSet.Insert;
+    if FAddressFilter then
+    begin
+      if (FHouseID <> -1) then
+        cbbSTREET_ID.Value := FStreetID;
+      if (FHouseID <> -1) then
+        cbbHOUSE_ID.Value := FHouseID;
+    end;
+  end
   else
     srcNodes.DataSet.Edit;
-
-  FinEditMode := True;
-  FAutoGen := New;
 end;
 
 procedure TNodesForm.SaveNode;
@@ -1655,31 +1620,36 @@ begin
   end
   else
   begin
-    if srcNodes.DataSet.State = dsInsert then
-    begin
-      // srcNodes.DataSet['O_Name'] := cbbTYPE_ID.Text;
-      // srcNodes.DataSet['STREET_NAME'] := cbbSTREET_ID.Text;
-      // srcNodes.DataSet['HOUSE_NO'] := cbbHOUSE_ID.Text;
-      srcNodes.DataSet.Post;
-    end
-    else
+    if (srcNodes.DataSet.State in [dsEdit, dsInsert]) then
       srcNodes.DataSet.Post;
   end;
 
-  dsHomes.Close;
+  if not FAddressFilter then
+  begin
+    dsHomes.Close;
+    dsStreets.Close;
+  end;
+
   dsNodeType.Close;
-  dsStreets.Close;
   dsParentNode.Close;
-  FinEditMode := False;
 
-  pnlEdit.Visible := False;
-  dbgNodes.Enabled := True;
-  pnlBtns.Enabled := True;
-  pnlForms.Enabled := True;
-
-  UpdateInfoPanel;
-
+  SetEditMode(False, false);
   dbgNodes.SetFocus;
+
+  if FAddressFilter then
+  begin
+    if not dsStreets.Active then
+      dsStreets.Open;
+    if (FHouseID <> -1) then
+      lcbStreets.Value := FStreetID;
+    if (FHouseID <> -1) then
+    begin
+      if not dsHomes.Active then
+        dsHomes.Open;
+      lcbHOUSE.Value := FHouseID;
+    end;
+  end;
+
 end;
 
 procedure TNodesForm.GenNodeName();
@@ -1693,7 +1663,8 @@ begin
   if cbbSTREET_ID.Text = '' then
     Exit;
 
-  if (not dsNodeType.FieldByName('O_DIMENSION').IsNull) and (dsNodeType['O_DIMENSION'] <> '') then
+  if (dsNodeType.Active) and (not dsNodeType.FieldByName('O_DIMENSION').IsNull) and (dsNodeType['O_DIMENSION'] <> '')
+  then
     s := dsNodeType['O_DIMENSION'] + '-';
 
   if (not dsStreets.FieldByName('STREET_CODE').IsNull) and (dsStreets['STREET_CODE'] <> '') then
@@ -1704,7 +1675,7 @@ begin
   edtNAME.Text := s.Trim(['-']);
 end;
 
-procedure TNodesForm.OnAdressChange(Sender: TObject);
+procedure TNodesForm.OnAddressChange(Sender: TObject);
 begin
   // если запрещено изменять имя, то выйдем
   if not FAutoGen then
@@ -1730,6 +1701,29 @@ begin
     Writer.WriteInteger(lstForms.ItemIndex)
   else
     Writer.WriteInteger(-1);
+end;
+
+procedure TNodesForm.SetEditMode(const isEdit: Boolean; const isNew: Boolean = False);
+begin
+  FinEditMode := isEdit;
+  FAutoGen := isEdit and isNew;
+
+  pnlEdit.Visible := FinEditMode;
+  dbgNodes.Enabled := not FinEditMode;
+  pnlBtns.Enabled := not FinEditMode;
+  pnlForms.Enabled := not FinEditMode;
+  pnlSearchAddress.Visible := not FinEditMode;
+
+  if FinEditMode then
+  begin
+    cbbHOUSE_ID.OnChange := OnAddressChange;
+    pnlEdit.SetFocus;
+    PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+  end
+  else begin
+    cbbHOUSE_ID.OnChange := nil;
+    UpdateInfoPanel;
+  end;
 end;
 
 end.

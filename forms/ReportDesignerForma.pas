@@ -13,8 +13,8 @@ uses
 {$ENDIF}
   System.Actions,
   Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ImgList,
-  ToolCtrlsEh, DBGridEhToolCtrls, ReportPreview, frxClass, DBAxisGridsEh, PrjConst, RxSplit, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh;
+  ToolCtrlsEh, DBGridEhToolCtrls, ReportPreview, frxClass, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
+  DynVarsEh, amSplitter;
 
 type
   TReportDesignerForm = class(TForm)
@@ -35,7 +35,6 @@ type
     N6: TMenuItem;
     aNewReport: TAction;
     aShowAllReports: TAction;
-    RxSplitter1: TRxSplitter;
     GroupBox1: TGroupBox;
     aDelete: TAction;
     aNoVisibleReport: TAction;

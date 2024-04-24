@@ -831,6 +831,13 @@ object apgEqpmntPort: TapgEqpmntPort
         RowLabel.Caption = #1084#1077#1090#1082#1072
         WordWrap = True
         CategoryName = 'lines'
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CONFIG'
+        RowLabel.Caption = #1050#1086#1085#1092'-'#1094#1080#1103
+        CategoryName = 'Eth'
       end>
   end
   object ActListFrame: TActionList
@@ -1138,8 +1145,8 @@ object apgEqpmntPort: TapgEqpmntPort
       '          , c.CUSTOMER_ID'
       '          , c.CUST_CODE'
       
-        '          , coalesce(c.ACCOUNT_NO, iif(p.Con = 0, '#39#1086#1073#1086#1088#39', null))' +
-        ' ACCOUNT_NO'
+        '          , coalesce(c.ACCOUNT_NO, iif(p.Con = 0, '#39#1086#1073#1086#1088'-'#1077#39', null' +
+        ')) ACCOUNT_NO'
       '          , coalesce(c.SURNAME, e.Name) surname'
       '          , c.MIDLENAME'
       '          , c.INITIALS'

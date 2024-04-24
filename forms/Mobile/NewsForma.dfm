@@ -71,7 +71,7 @@ inherited NewsForm: TNewsForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'O_DATEFILED'
+        FieldName = 'O_DATEFIELD'
         Footers = <>
         Title.Caption = #1055#1091#1073#1083#1080#1082#1086#1074#1072#1089#1090#1100'|'#1089
       end
@@ -224,7 +224,7 @@ inherited NewsForm: TNewsForm
       Width = 143
       Height = 21
       Anchors = [akLeft, akBottom]
-      DataField = 'O_DATEFILED'
+      DataField = 'O_DATEFIELD'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
@@ -290,7 +290,7 @@ inherited NewsForm: TNewsForm
       '  O_NAME         =:O_NAME,'
       '  O_CHARFIELD    =:O_CHARFIELD,'
       '  O_DESCRIPTION  =:O_DESCRIPTION,'
-      '  O_DATEFILED    =:O_DATEFILED,'
+      '  O_DATEFIELD    =:O_DATEFIELD,'
       '  O_DATEEND      =:O_DATEEND,'
       '  O_DELETED      =:O_DELETED'
       'WHERE'
@@ -311,7 +311,7 @@ inherited NewsForm: TNewsForm
       '  , O_NAME'
       '  , O_CHARFIELD'
       '  , O_DESCRIPTION'
-      '  , O_DATEFILED'
+      '  , O_DATEFIELD'
       '  , O_DATEEND'
       '  , O_DELETED'
       '  , O_TYPE'
@@ -321,7 +321,7 @@ inherited NewsForm: TNewsForm
       '  , :O_NAME'
       '  , :O_CHARFIELD'
       '  , :O_DESCRIPTION'
-      '  , :O_DATEFILED'
+      '  , :O_DATEFIELD'
       '  , :O_DATEEND'
       '  , 0'
       '  , 34'
@@ -332,7 +332,7 @@ inherited NewsForm: TNewsForm
       '  , O_NAME -- N_TITLE'
       '  , O_CHARFIELD -- N_TEXT'
       '  , O_DESCRIPTION -- N_URL'
-      '  , O_DATEFILED -- N_SART'
+      '  , O_DATEFIELD -- N_SART'
       '  , O_DATEEND  -- N_END'
       '  , O_DELETED'
       '  from OBJECTS'
@@ -345,7 +345,7 @@ inherited NewsForm: TNewsForm
       '  , O_NAME -- N_TITLE'
       '  , O_CHARFIELD -- N_TEXT'
       '  , O_DESCRIPTION -- N_URL'
-      '  , O_DATEFILED -- N_SART'
+      '  , O_DATEFIELD -- N_SART'
       '  , O_DATEEND  -- N_END'
       '  , O_DELETED'
       '  from OBJECTS'

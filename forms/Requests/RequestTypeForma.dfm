@@ -11,10 +11,17 @@ inherited RequestTypeForm: TRequestTypeForm
   inherited splPG: TSplitter
     Top = 77
     Width = 975
-    Height = 4
     ExplicitTop = 77
     ExplicitWidth = 975
-    ExplicitHeight = 4
+  end
+  object dnspltr1: TSplitter [1]
+    Left = 0
+    Top = 282
+    Width = 975
+    Height = 4
+    Cursor = crVSplit
+    Align = alTop
+    MinSize = 100
   end
   inherited dbGrid: TDBGridEh
     Top = 81
@@ -111,18 +118,24 @@ inherited RequestTypeForm: TRequestTypeForm
         Width = 160
       end>
   end
-  object pgcAddons: TPageControl [2]
+  object pgcAddons: TPageControl [3]
     Left = 0
-    Top = 290
+    Top = 286
     Width = 975
-    Height = 253
+    Height = 257
     ActivePage = tsTemplates
     Align = alClient
     TabOrder = 3
     OnChange = pgcAddonsChange
+    ExplicitLeft = 3
+    ExplicitTop = 282
+    ExplicitWidth = 972
+    ExplicitHeight = 261
     object tsTemplates: TTabSheet
       Caption = #1055#1088#1080#1095#1080#1085#1099' '#1074#1099#1079#1086#1074#1072
       ImageIndex = 1
+      ExplicitWidth = 964
+      ExplicitHeight = 233
       object tlbTplt: TToolBar
         Left = 0
         Top = 0
@@ -131,6 +144,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
         TabOrder = 0
+        ExplicitWidth = 964
         object btnTplt: TToolButton
           Left = 0
           Top = 0
@@ -181,7 +195,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 200
+        Height = 204
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcReqTemplates
@@ -286,15 +300,13 @@ inherited RequestTypeForm: TRequestTypeForm
     end
     object tsWorks: TTabSheet
       Caption = #1056#1072#1073#1086#1090#1099
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 221
+      ExplicitWidth = 964
+      ExplicitHeight = 233
       object dbgWorks: TDBGridEh
         Left = 0
         Top = 25
         Width = 967
-        Height = 200
+        Height = 204
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcWorks
@@ -414,6 +426,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
         TabOrder = 0
+        ExplicitWidth = 964
         object btnAddW: TToolButton
           Left = 0
           Top = 0
@@ -463,10 +476,8 @@ inherited RequestTypeForm: TRequestTypeForm
     object tsResult: TTabSheet
       Caption = #1056#1072#1089#1096#1080#1088#1077#1085#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 221
+      ExplicitWidth = 964
+      ExplicitHeight = 233
       object tlb1: TToolBar
         Left = 0
         Top = 0
@@ -475,6 +486,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
         TabOrder = 0
+        ExplicitWidth = 964
         object btnAddRes: TToolButton
           Left = 0
           Top = 0
@@ -525,7 +537,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Left = 0
         Top = 25
         Width = 967
-        Height = 200
+        Height = 204
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcResult
@@ -614,13 +626,6 @@ inherited RequestTypeForm: TRequestTypeForm
       ExplicitLeft = 613
       ExplicitTop = 19
     end
-  end
-  object dnspltr1: TdnSplitter [5]
-    Left = 0
-    Top = 282
-    AlignControl = dbGrid
-    MinSize = 100
-    ResizeStyle = rsPattern
   end
   inherited srcDataSource: TDataSource
     DataSet = dsRequestType

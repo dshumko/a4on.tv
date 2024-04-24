@@ -15,12 +15,14 @@ inherited RatesForm: TRatesForm
   end
   object spl1: TSplitter [1]
     Left = 344
-    Top = 84
-    Height = 315
+    Top = 85
+    Height = 314
+    ExplicitTop = 84
+    ExplicitHeight = 315
   end
   inherited dbGrid: TDBGridEh
     Width = 344
-    Height = 315
+    Height = 314
     Align = alLeft
     AllowedOperations = [alopUpdateEh, alopDeleteEh]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
@@ -128,9 +130,9 @@ inherited RatesForm: TRatesForm
   end
   object chtRates: TChart [5]
     Left = 347
-    Top = 84
+    Top = 85
     Width = 305
-    Height = 315
+    Height = 314
     Legend.Alignment = laLeft
     Legend.CheckBoxes = True
     Legend.CustomPosition = True

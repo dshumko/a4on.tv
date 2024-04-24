@@ -4,30 +4,29 @@ inherited DistribForm: TDistribForm
   Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088#1099' '#1082#1072#1085#1072#1083#1086#1074
   ClientHeight = 580
   ClientWidth = 919
-  ExplicitWidth = 320
-  ExplicitHeight = 240
+  ExplicitWidth = 935
+  ExplicitHeight = 619
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter: TSplitter [0]
     Left = 0
-    Top = 347
+    Top = 348
     Width = 919
-    Height = 5
+    Height = 4
     Cursor = crVSplit
     Align = alBottom
+    ExplicitTop = 347
   end
   inherited splPG: TSplitter
     Top = 217
     Width = 919
-    Height = 437
     ExplicitTop = 217
     ExplicitWidth = 919
-    ExplicitHeight = 437
   end
   inherited dbGrid: TDBGridEh
-    Top = 654
+    Top = 221
     Width = 919
-    Height = 130
+    Height = 127
     AllowedOperations = [alopUpdateEh]
     DrawMemoText = True
     FooterRowCount = 1
@@ -316,10 +315,6 @@ inherited DistribForm: TDistribForm
     OnChange = pgcDistrChange
     object tsContract: TTabSheet
       Caption = #1044#1086#1075#1086#1074#1086#1088#1072
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlBottom: TPanel
         Left = 0
         Top = 0
@@ -329,27 +324,24 @@ inherited DistribForm: TDistribForm
         BevelOuter = bvNone
         TabOrder = 0
         object splRight: TSplitter
-          Left = 446
+          Left = 447
           Top = 0
-          Width = 5
+          Width = 4
           Height = 200
           Align = alRight
+          ExplicitLeft = 446
         end
         object pgcAddons: TPageControl
           Left = 451
           Top = 0
           Width = 460
           Height = 200
-          ActivePage = tsReports
+          ActivePage = tsChan
           Align = alRight
           TabOrder = 0
           OnChange = pgcAddonsChange
           object tsChan: TTabSheet
             Caption = #1050#1072#1085#1072#1083#1099
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object dbgReports: TDBGridEh
               Left = 0
               Top = 25
@@ -503,10 +495,6 @@ inherited DistribForm: TDistribForm
           end
           object tsReports: TTabSheet
             Caption = #1054#1090#1095#1077#1090#1099
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object Splitter1: TSplitter
               Left = 0
               Top = 96
@@ -739,15 +727,16 @@ inherited DistribForm: TDistribForm
         object pnlButtom: TPanel
           Left = 0
           Top = 0
-          Width = 446
+          Width = 447
           Height = 200
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 446
           object dbgContract: TDBGridEh
             Left = 0
             Top = 25
-            Width = 446
+            Width = 447
             Height = 175
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -862,11 +851,12 @@ inherited DistribForm: TDistribForm
           object tlb1: TToolBar
             Left = 0
             Top = 0
-            Width = 446
+            Width = 447
             Height = 25
             Caption = 'tlb1'
             Images = A4MainForm.ICONS_ACTIVE
             TabOrder = 1
+            ExplicitWidth = 446
             object btn7: TToolButton
               Left = 0
               Top = 0
@@ -926,10 +916,6 @@ inherited DistribForm: TDistribForm
     object tsCards: TTabSheet
       Caption = #1050#1072#1088#1090#1086#1095#1082#1080
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnl1: TPanel
         Left = 0
         Top = 0

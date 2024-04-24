@@ -187,9 +187,14 @@ var
   i: Integer;
 begin
   Result := '';
-  if Length(MAC) < 12 then
-    Exit;
-  S := AnsiUpperCase(MAC);
+  // если мак
+  i := Length(MAC.Replace('0', ''));
+  if (i = 0) then
+    Exit
+  else if (i < 12) then
+    S := AnsiUpperCase(MAC.PadLeft(12, '0'))
+  else
+    S := AnsiUpperCase(MAC);
   for i := 1 to Length(S) do
   begin
     if CharInSet(S[i], ['0' .. '9']) then
@@ -575,7 +580,7 @@ begin
     end
     else
     begin
-      bnStep.SetInteger(-1*step);
+      bnStep.SetInteger(-1 * step);
       BigNumberUnsignedSub(bnRes, bnMac, bnStep);
     end;
     Result := BigNumberToHex(bnRes);
@@ -693,21 +698,25 @@ var
   fio: String;
   i: Integer;
 begin
-  // Result := trim(s);
-  sa := Explode('-', Trim(S));
-  fio := AnsiUpperCase(Copy(sa[0], 1, 1)) + AnsiLowerCase(Copy(sa[0], 2, Length(sa[0]) - 1));
-  for i := 1 to Length(sa) - 1 do
+  if S.IsEmpty then
+    Result := trim(S)
+  else
   begin
-    fio := fio + '-' + AnsiUpperCase(Copy(sa[i], 1, 1)) + AnsiLowerCase(Copy(sa[i], 2, Length(sa[i]) - 1));
+    sa := Explode('-', trim(S));
+    fio := AnsiUpperCase(Copy(sa[0], 1, 1)) + AnsiLowerCase(Copy(sa[0], 2, Length(sa[0]) - 1));
+    for i := 1 to Length(sa) - 1 do
+    begin
+      fio := fio + '-' + AnsiUpperCase(Copy(sa[i], 1, 1)) + AnsiLowerCase(Copy(sa[i], 2, Length(sa[i]) - 1));
+    end;
+    Result := fio;
   end;
-  Result := fio;
 end;
 
 function TrimAnd(const S: string): String;
 var
   tmp: String;
 begin
-  tmp := Trim(S);
+  tmp := trim(S);
   if (AnsiUpperCase(Copy(tmp, 1, 3)) = 'AND') then
     Result := Copy(tmp, 4, Length(tmp) - 3)
   else
@@ -889,7 +898,7 @@ begin
   begin
     i := Pos('HTTP', S.ToUpper);
     url := Copy(S, i, 1000);
-    url := Trim(url);
+    url := trim(url);
     i := Pos(' ', url);
     if i > 0 then
     begin
@@ -901,25 +910,29 @@ end;
 
 function ReplaceInMask(const inMask, inValue: string): String;
 var
-  i, J: Integer;
+  i, v: Integer;
   msk: string;
 begin
-  msk := inMask;
+  msk := FormatMaskText(inMask, inValue);
+
+  msk := inMask + ';' + msk;
   i := Pos(';', msk);
   if i > 0 then
     msk := Copy(msk, 1, i - 1);
   msk := msk.Replace('\', '');
-  J := 1;
+  v := 1;
   for i := 1 to Length(msk) do
   begin
-    if msk[i] <> inValue[i] then
+    if msk[i] <> inValue[v] then
     begin
-      if ((msk[i] = '0') and (CharInSet(inValue[J], ['0' .. '9']))) then
+      if ((msk[i] = '0') and (CharInSet(inValue[v], ['0' .. '9']))) then
       begin
-        msk[i] := inValue[J];
-        Inc(J);
+        msk[i] := inValue[v];
+        Inc(v);
       end;
-    end;
+    end
+    else
+      Inc(v);
   end;
   Result := msk;
 end;

@@ -5,8 +5,8 @@ interface
 uses
   System.Classes, System.SysUtils, System.Types,
   Data.DB,
-  Vcl.Forms,
-  DBGridEh;
+  Vcl.Controls, Vcl.Forms, Vcl.Menus,
+  DBGridEh, DBAxisGridsEh;
 
 type
   TA4onPage = class;
@@ -51,11 +51,31 @@ type
   { TA4onPage }
 
   TA4onPage = class(TForm)
+    //pmPopUpA4onPage: TPopupMenu;
   private
+    {
+    miFilterFLD: TMenuItem;
+    miCopy: TMenuItem;
+    miSelectAll: TMenuItem;
+    miSaveSelection: TMenuItem;
+    miSep1: TMenuItem;
+    miSep2: TMenuItem;
+    miSep3: TMenuItem;
+    miRefresh: TMenuItem;
+    }
     FOnStart: TNotifyEvent;
     FOnUpdate: TNotifyEvent;
     function GetDataSource: TDataSource;
     procedure InitControls;
+    {
+    procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
+    procedure miFilterFLDClick(Sender: TObject);
+    procedure miRefreshClick(Sender: TObject);
+    procedure miSelectAllClick(Sender: TObject);
+    procedure miSaveSelectionClick(Sender: TObject);
+    procedure miCopyClick(Sender: TObject);
+    procedure CreateMenu;
+    }
   protected
     FDataSource: TDataSource;
     FGrid: TDBGridEh;
@@ -72,11 +92,13 @@ type
     procedure SaveState; virtual;
     procedure SavePosition; virtual;
     procedure GotoSavedPosition; virtual;
+    procedure FindData(const Data: string); virtual;
     function ValidateData: Boolean; virtual;
     function LoadDefaults: Boolean; virtual;
     function GetOrderClause(grid: TDBGridEh): string; virtual;
     constructor CreatePage(AOwner: TComponent; ADataSource: TDataSource); virtual;
     constructor CreatePageGrid(AOwner: TComponent; AGrid: TDBGridEh); virtual;
+    // destructor Destroy; virtual;
     procedure InitForm; virtual;
     property OnStart: TNotifyEvent read FOnStart write FOnStart;
     property OnUpdate: TNotifyEvent read FOnUpdate write FOnUpdate;
@@ -85,8 +107,8 @@ type
 implementation
 
 uses
-  Vcl.StdCtrls,
-  MAIN, DM, ToolCtrlsEh;
+  Vcl.StdCtrls, ToolCtrlsEh,
+  MAIN, DM, AtrStrUtils, PrjConst;
 
 { TA4onPages }
 
@@ -246,6 +268,8 @@ begin
       end;
     end;
   end;
+  //CreateMenu;
+  //SetGridsPopUpMenu(pmPopUpA4onPage);
 end;
 
 procedure TA4onPage.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
@@ -324,6 +348,11 @@ begin
 
 end;
 
+procedure TA4onPage.FindData(const Data: string);
+begin
+
+end;
+
 function TA4onPage.ValidateData: Boolean;
 begin
   Result := true;
@@ -351,5 +380,160 @@ begin
   end;
   Result := S;
 end;
+{
+procedure TA4onPage.CreateMenu;
+begin
+  pmPopUpA4onPage := TPopupMenu.Create(Self);
+  miFilterFLD := TMenuItem.Create(pmPopUpA4onPage);
+  miSep1 := TMenuItem.Create(pmPopUpA4onPage);
+  miCopy := TMenuItem.Create(pmPopUpA4onPage);
+  miSelectAll := TMenuItem.Create(pmPopUpA4onPage);
+  miSep2 := TMenuItem.Create(pmPopUpA4onPage);
+  miSaveSelection := TMenuItem.Create(pmPopUpA4onPage);
+  miSep3 := TMenuItem.Create(pmPopUpA4onPage);
+  miRefresh := TMenuItem.Create(pmPopUpA4onPage);
 
+  pmPopUpA4onPage.Name := 'pmPopUp';
+  miFilterFLD.Name := 'mniFilterFLD';
+  miFilterFLD.Caption := 'Фильтр по значению';
+  miFilterFLD.OnClick := miFilterFLDClick;
+
+  miSep1.Name := 'miSep1';
+  miSep1.Caption := '-';
+  miCopy.Name := 'miCopy';
+  miCopy.Caption := '&Скопировать';
+  miCopy.OnClick := miCopyClick;
+  miSelectAll.Name := 'pmgSelectAll';
+  miSelectAll.Caption := '&Выделить все';
+  miSelectAll.OnClick := miSelectAllClick;
+  miSep2.Name := 'miSep2';
+  miSep2.Caption := '-';
+  miSaveSelection.Name := 'pmgSaveSelection';
+  miSaveSelection.Caption := 'Сохранить &как ...';
+  miSaveSelection.OnClick := miSaveSelectionClick;
+  miRefresh.OnClick := miRefreshClick;
+  miSep3.Name := 'miSep3';
+  miSep3.Caption := '-';
+  miRefresh.Name := 'miRefresh';
+  miRefresh.Caption := '&Перечитать данные';
+  miRefresh.OnClick := miRefreshClick;
+end;
+
+procedure TA4onPage.SetGridsPopUpMenu(pmGrid: TPopupMenu);
+var
+  rghtExport: Boolean;
+var
+  i: Integer;
+begin
+  rghtExport := dmMain.AllowedAction(rght_Export);
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
+      (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
+
+      if rghtExport then begin
+        (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks,gstRectangle,gstColumns,gstAll];
+        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
+      end
+      else begin
+        (Components[i] as TDBGridEh).AllowedSelections := [];
+        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
+      end;
+
+      if ((Components[i] as TDBGridEh).PopUpMenu = nil) then
+        (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
+    end;
+  end;
+end;
+
+procedure TA4onPage.miRefreshClick(Sender: TObject);
+var
+  bm: TbookMark;
+  cr: TCursor;
+  dbGrid: TDBGridEh;
+begin
+  if not(Sender is TMenuItem) then
+    exit;
+
+  if not(((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent is TDBGridEh) then
+    exit;
+
+  dbGrid := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as TDBGridEh);
+  cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  try
+    bm := dbGrid.DataSource.DataSet.GetBookMark;
+    dbGrid.DataSource.DataSet.Close;
+    dbGrid.DataSource.DataSet.Open;
+    dbGrid.DataSource.DataSet.GotoBookmark(bm);
+  finally
+    Screen.Cursor := cr;
+  end;
+end;
+
+procedure TA4onPage.miFilterFLDClick(Sender: TObject);
+var
+  dbGrid: TDBGridEh;
+  vis: Boolean;
+begin
+  if not(Sender is TMenuItem) then
+    exit;
+
+  if not(((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent is TDBGridEh) then
+    exit;
+
+  dbGrid := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as TDBGridEh);
+
+  vis := dbGrid.SearchPanel.Visible;
+  try
+    dbGrid.SearchPanel.Visible := True;
+    dbGrid.SearchPanel.SearchingText := dbGrid.SelectedField.AsString;
+    dbGrid.SearchPanel.ApplySearchFilter;
+    dbGrid.SearchPanel.Active := True;
+  except
+    dbGrid.SearchPanel.CancelSearchFilter;
+    dbGrid.SearchPanel.Visible := vis;
+  end;
+end;
+
+procedure TA4onPage.miCopyClick(Sender: TObject);
+var
+  dbg: TDBGridEh;
+begin
+  if (ActiveControl is TDBGridEh) then
+  begin
+    dbg := (ActiveControl as TDBGridEh);
+    if (geaCopyEh in dbg.EditActions) then
+      if dbg.CheckCopyAction then
+      begin
+        A4MainForm.CopyDBGrid(dbg);
+      end
+      else
+        StrToClipbrd(dbg.SelectedField.AsString);
+  end;
+end;
+
+procedure TA4onPage.miSaveSelectionClick(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
+end;
+
+procedure TA4onPage.miSelectAllClick(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    with TDBGridEh(ActiveControl) do
+      if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
+        Selection.SelectAll;
+end;
+
+destructor TA4onPage.Destroy;
+begin
+  if Assigned(pmPopUpA4onPage) then
+    FreeAndNil(pmPopUpA4onPage);
+  inherited Destroy;
+end;
+}
 end.

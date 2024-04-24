@@ -9,10 +9,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
   Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery, DBGridEhGrouping,
+  DBGridEh, DBCtrlsEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery, DBGridEhGrouping,
   MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DynVarsEh, CnErrorProvider, DBLookupEh;
+  DynVarsEh, CnErrorProvider, DBLookupEh, amSplitter;
 
 type
   TMessagesForm = class(TForm)
@@ -99,6 +99,13 @@ type
     actAnswer: TAction;
     miAnswer: TMenuItem;
     miInOnly: TMenuItem;
+    Splitter1: TSplitter;
+    pmSMS: TPopupMenu;
+    miSMSbalance: TMenuItem;
+    miN16: TMenuItem;
+    miSendSMS: TMenuItem;
+    actSMSbalance: TAction;
+    miSMSbalance1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -142,6 +149,8 @@ type
     procedure miMyOnlyClick(Sender: TObject);
     procedure actAnswerExecute(Sender: TObject);
     procedure miInOnlyClick(Sender: TObject);
+    procedure actSMSbalanceExecute(Sender: TObject);
+    procedure GetSMSCountForSend(var ReciverCount: Integer; var ForSendCount: Integer);
   private
     fFirstOpen: Boolean; // Первое открытие Формы
     fParentMessage: Integer;
@@ -174,8 +183,9 @@ var
 implementation
 
 uses
-  System.StrUtils, DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, atrCmdUtils, ReportPreview, apiSMS,
-  CF, pFIBQuery;
+  System.StrUtils,
+  DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, atrCmdUtils, ReportPreview,
+  apiSMS, CF, SmsQuestForma, pFIBQuery;
 
 {$R *.dfm}
 
@@ -195,55 +205,9 @@ begin
 end;
 
 procedure TMessagesForm.ppmSaveSelectionClick(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
-
-  A4MainForm.SaveDialog.FileName := rsPayments;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
-      end;
-    end;
-
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TMessagesForm.ppmSelectAllClick(Sender: TObject);
@@ -266,7 +230,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -570,24 +534,12 @@ var
   g: TSMSapi;
   balance: Integer;
   ForSendCount: Integer;
+  ReciverCount: Integer;
   ErrorText: String;
   rSMS: TpFIBQuery;
-
-  // trR  : TpFIBTransaction;
-  // trW  : TpFIBTransaction;
+  BatcSize : Integer;
 begin
-  rSMS := TpFIBQuery.Create(nil);
-  try
-    rSMS.DataBase := dmMain.dbTV;
-    rSMS.Transaction := dmMain.trReadQ;
-    rSMS.SQL.Add('select count(m.reciver) as CNT from messages m where m.mes_result = 0 and m.Mes_Type = ''SMS'' ');
-    rSMS.Transaction.StartTransaction;
-    rSMS.ExecQuery;
-    ForSendCount := rSMS.fn('CNT').AsInteger;
-    rSMS.Transaction.Commit;
-  finally
-    rSMS.Free;
-  end;
+  GetSMSCountForSend(ReciverCount, ForSendCount);
 
   g := TSMSapi.Create(dmMain.GetSettingsValue('A4LOGIN'), dmMain.GetSettingsValue('A4APIKEY'),
     dmMain.GetSettingsValue('FORMATN'));
@@ -601,13 +553,12 @@ begin
     end
     else
     begin
-      if (MessageBox(0, PWideChar(Format(rsSMSSend, [ForSendCount, balance])), '', MB_ICONQUESTION or MB_OKCANCEL or
-        MB_APPLMODAL or MB_DEFBUTTON2) = idOk) then
+      if SmsQuest(ForSendCount, ReciverCount, balance, BatcSize) then
       begin
         ErrorText := g.ErrorText;
         if balance > 0 then
         begin
-          g.SendAll(ErrorText);
+          g.SendBatch(ErrorText, BatcSize);
           balance := g.balance;
           ErrorText := g.ErrorText;
           // TODO: Сделать проверку статуса СМС
@@ -626,6 +577,27 @@ begin
 
   dsMessages.Close;
   dsMessages.Open;
+end;
+
+procedure TMessagesForm.actSMSbalanceExecute(Sender: TObject);
+var
+  g: TSMSapi;
+  balance: Integer;
+  ForSendCount: Integer;
+  ReciverCount: Integer;
+begin
+  GetSMSCountForSend(ReciverCount, ForSendCount);
+
+  g := TSMSapi.Create(dmMain.GetSettingsValue('A4LOGIN'), dmMain.GetSettingsValue('A4APIKEY'),
+    dmMain.GetSettingsValue('FORMATN'));
+  try
+    balance := g.balance;
+  except
+    balance := 0
+  end;
+
+  ShowMessage(format(rsSMSInfo, [balance, ForSendCount, ReciverCount]));
+
 end;
 
 procedure TMessagesForm.actEditExecute(Sender: TObject);
@@ -993,6 +965,28 @@ begin
   end;
 
   dbgMessages.SetFocus;
+end;
+
+procedure TMessagesForm.GetSMSCountForSend(var ReciverCount: Integer; var ForSendCount: Integer);
+var
+  rSMS: TpFIBQuery;
+begin
+  rSMS := TpFIBQuery.Create(nil);
+  try
+    rSMS.DataBase := dmMain.dbTV;
+    rSMS.Transaction := dmMain.trReadQ;
+    rSMS.SQL.Add('select count(m.reciver) as CNT');
+    rSMS.SQL.Add(' , sum(iif(char_length(m.Mes_Text) <= 70, 1, iif(char_length(m.Mes_Text) <= 134, 2, ');
+    rSMS.SQL.Add('       iif(char_length(m.Mes_Text) <= 201, 3, iif(char_length(m.Mes_Text) <= 268, 4, 5))))) SMS_CNT ');
+    rSMS.SQL.Add(' from messages m where m.mes_result = 0 and m.Mes_Type = ''SMS'' ');
+    rSMS.Transaction.StartTransaction;
+    rSMS.ExecQuery;
+    ReciverCount := rSMS.fn('CNT').AsInteger;
+    ForSendCount := rSMS.fn('SMS_CNT').AsInteger;
+    rSMS.Transaction.Commit;
+  finally
+    rSMS.Free;
+  end;
 end;
 
 end.

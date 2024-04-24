@@ -135,6 +135,15 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1076#1086#1075'.'
           Width = 87
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'NOTICE'
+          Footers = <>
+          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

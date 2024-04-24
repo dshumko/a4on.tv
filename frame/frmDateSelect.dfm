@@ -1,9 +1,10 @@
 object frmRequestDate: TfrmRequestDate
-  ShowHint = True
   Left = 0
   Top = 0
   Width = 320
   Height = 240
+  ParentShowHint = False
+  ShowHint = True
   TabOrder = 0
   OnResize = FrameResize
   object pnlGrid: TPanel

@@ -10,7 +10,7 @@ uses
   Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtDlgs, Vcl.ActnList,
   DBGridEh, DBCtrlsEh, DBLookupEh, RxPlacemnt, FIBDataSet, pFIBDataSet, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, GridsEh, DBAxisGridsEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, pFIBScripter,
-  VKDBFDataSet, RxToolEdit, EhLibVCL;
+  VKDBFDataSet, RxToolEdit, EhLibVCL, amSplitter;
 
 type
   TLoaderForm = class(TForm)

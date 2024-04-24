@@ -514,279 +514,323 @@ object PaymentDocForm: TPaymentDocForm
       BevelInner = bvLowered
       BevelOuter = bvNone
       TabOrder = 0
-      DesignSize = (
-        553
-        89)
-      object Label1: TLabel
-        Left = 8
-        Top = 3
-        Width = 51
-        Height = 13
-        Caption = #8470' '#1076#1086#1082#1091#1084'.'
-        FocusControl = dbedtPAY_DOC_NO
-      end
-      object Label7: TLabel
-        Left = 103
-        Top = 3
-        Width = 26
-        Height = 13
-        Caption = #1044#1072#1090#1072
-      end
-      object Label8: TLabel
-        Left = 209
-        Top = 3
-        Width = 95
-        Height = 13
-        Caption = #1048#1089#1090#1086#1095#1085#1080#1082' '#1087#1083#1072#1090#1077#1078#1072
-      end
-      object Label9: TLabel
-        Left = 8
-        Top = 45
-        Width = 31
-        Height = 13
-        Caption = #1057#1091#1084#1084#1072
-      end
-      object dbedtPAY_DOC_NO: TDBEditEh
-        Tag = 1
-        Left = 8
-        Top = 19
-        Width = 91
-        Height = 21
-        DataField = 'PAY_DOC_NO'
-        DataSource = srcPayDoc
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1055#1044
-        ShowHint = True
+      object pnl1: TPanel
+        Left = 1
+        Top = 42
+        Width = 551
+        Height = 46
+        Align = alClient
+        BevelOuter = bvNone
         TabOrder = 1
-        Visible = True
-      end
-      object DocDate: TDBDateTimeEditEh
-        Tag = 2
-        Left = 103
-        Top = 19
-        Width = 103
-        Height = 21
-        DataField = 'PAY_DOC_DATE'
-        DataSource = srcPayDoc
-        DynProps = <>
-        EditButtons = <>
-        EmptyDataInfo.Text = #1044#1072#1090#1072' '#1055#1044
-        Kind = dtkDateEh
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 2
-        Visible = True
-      end
-      object Panel3: TPanel
-        Left = 128
-        Top = 43
-        Width = 420
-        Height = 43
-        BevelInner = bvLowered
-        Enabled = False
-        TabOrder = 4
-        object Label10: TLabel
-          Left = 5
-          Top = 2
-          Width = 71
+        ExplicitTop = 44
+        ExplicitHeight = 45
+        object Label5: TLabel
+          Left = 8
+          Top = 5
+          Width = 31
           Height = 13
-          Caption = #1057#1091#1084#1084#1072' '#1082#1086#1084'.'#1089#1073'.'
+          Caption = #1057#1091#1084#1084#1072
         end
-        object Label11: TLabel
-          Left = 183
+        object Panel1: TPanel
+          Left = 143
           Top = 2
-          Width = 102
-          Height = 13
-          Caption = #1041#1077#1079' '#1082#1086#1084'. '#1089#1073#1086#1088' '#1080' '#1053#1044#1057
-        end
-        object Label12: TLabel
-          Left = 81
-          Top = 2
-          Width = 56
-          Height = 13
-          Caption = #1057#1091#1084#1084#1072' '#1053#1044#1057
-          FocusControl = DBEditC_SUM_LEAK
-        end
-        object LabelSUM_DIFFERENCE: TLabel
-          Left = 291
-          Top = 2
-          Width = 67
-          Height = 13
-          Caption = #1056#1072#1079#1085#1080#1094#1072' '#1089#1091#1084#1084
-        end
-        object DBEditL_LEAK_PRC: TDBNumberEditEh
-          Left = 5
-          Top = 18
-          Width = 73
-          Height = 21
-          TabStop = False
-          Color = 16776176
-          DataField = 'C_SUM_LEAK'
-          DataSource = srcPayDoc
-          DynProps = <>
-          EditButtons = <>
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          ReadOnly = True
-          ShowHint = True
+          Width = 406
+          Height = 43
+          BevelInner = bvLowered
+          Enabled = False
           TabOrder = 0
-          Visible = True
+          object Label2: TLabel
+            Left = 5
+            Top = 2
+            Width = 71
+            Height = 13
+            Caption = #1057#1091#1084#1084#1072' '#1082#1086#1084'.'#1089#1073'.'
+          end
+          object Label3: TLabel
+            Left = 183
+            Top = 2
+            Width = 102
+            Height = 13
+            Caption = #1041#1077#1079' '#1082#1086#1084'. '#1089#1073#1086#1088' '#1080' '#1053#1044#1057
+          end
+          object Label4: TLabel
+            Left = 81
+            Top = 2
+            Width = 56
+            Height = 13
+            Caption = #1057#1091#1084#1084#1072' '#1053#1044#1057
+            FocusControl = DBEditC_SUM_LEAK
+          end
+          object LabelSUM_DIFFERENCE: TLabel
+            Left = 291
+            Top = 2
+            Width = 67
+            Height = 13
+            Caption = #1056#1072#1079#1085#1080#1094#1072' '#1089#1091#1084#1084
+          end
+          object DBEditL_LEAK_PRC: TDBNumberEditEh
+            Left = 5
+            Top = 18
+            Width = 73
+            Height = 21
+            TabStop = False
+            Color = 16776176
+            DataField = 'C_SUM_LEAK'
+            DataSource = srcPayDoc
+            DynProps = <>
+            EditButtons = <>
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            ReadOnly = True
+            ShowHint = True
+            TabOrder = 0
+            Visible = True
+          end
+          object DBEditC_SUM_LEAK: TDBNumberEditEh
+            Left = 81
+            Top = 18
+            Width = 99
+            Height = 21
+            TabStop = False
+            Color = 16776176
+            DataField = 'C_SUM_TAX'
+            DataSource = srcPayDoc
+            DynProps = <>
+            EditButtons = <>
+            ReadOnly = True
+            ShowHint = True
+            TabOrder = 1
+            Visible = True
+          end
+          object DBEditSUM_DIFFERENCE: TDBNumberEditEh
+            Tag = 13
+            Left = 291
+            Top = 18
+            Width = 111
+            Height = 21
+            TabStop = False
+            Color = 16776176
+            DataField = 'SUM_DIFFERENCE'
+            DataSource = srcPayDoc
+            DisplayFormat = ',0.00'
+            DynProps = <>
+            EditButtons = <>
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 3
+            Visible = True
+          end
+          object ednC_SUM_LEAK_TAX: TDBNumberEditEh
+            Left = 183
+            Top = 18
+            Width = 105
+            Height = 21
+            DataField = 'C_SUM_LEAK_TAX'
+            DataSource = srcPayDoc
+            DynProps = <>
+            EditButtons = <>
+            ShowHint = True
+            TabOrder = 2
+            Visible = True
+          end
         end
-        object DBEditC_SUM_LEAK: TDBNumberEditEh
-          Left = 81
-          Top = 18
-          Width = 99
+        object dbePAY_DOC_SUM: TDBNumberEditEh
+          Left = 8
+          Top = 20
+          Width = 128
           Height = 21
-          TabStop = False
-          Color = 16776176
-          DataField = 'C_SUM_TAX'
+          DataField = 'PAY_DOC_SUM'
           DataSource = srcPayDoc
+          DisplayFormat = '#.00'
           DynProps = <>
+          EmptyDataInfo.Text = #1057#1091#1084#1084#1072
           EditButtons = <>
-          ReadOnly = True
           ShowHint = True
           TabOrder = 1
           Visible = True
         end
-        object DBEditSUM_DIFFERENCE: TDBNumberEditEh
-          Tag = 13
-          Left = 291
-          Top = 18
-          Width = 111
-          Height = 21
-          TabStop = False
-          Color = 16776176
-          DataField = 'SUM_DIFFERENCE'
-          DataSource = srcPayDoc
-          DisplayFormat = ',0.00'
-          DynProps = <>
-          EditButtons = <>
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 3
-          Visible = True
-        end
-        object ednC_SUM_LEAK_TAX: TDBNumberEditEh
-          Left = 183
-          Top = 18
-          Width = 105
-          Height = 21
-          DataField = 'C_SUM_LEAK_TAX'
-          DataSource = srcPayDoc
-          DynProps = <>
-          EditButtons = <>
-          ShowHint = True
-          TabOrder = 2
-          Visible = True
-        end
       end
-      object tbButtons: TToolBar
-        Left = 430
-        Top = 11
-        Width = 120
-        Height = 29
-        Align = alNone
-        Anchors = [akTop, akRight]
-        ButtonHeight = 25
-        ButtonWidth = 25
-        Caption = 'tbButtons'
-        EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-        Images = A4MainForm.ICONS_ACTIVE
+      object pnl2: TPanel
+        Left = 1
+        Top = 1
+        Width = 551
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
         TabOrder = 0
-        object tbEditDoc: TToolButton
+        ExplicitLeft = 168
+        ExplicitTop = 16
+        ExplicitWidth = 185
+        object pnlTL: TPanel
           Left = 0
           Top = 0
-          Action = actPayDocEdit
-        end
-        object ToolButton22: TToolButton
-          Left = 25
-          Top = 0
-          Width = 8
-          Caption = 'ToolButton22'
-          ImageIndex = 11
-          Style = tbsSeparator
-        end
-        object ToolButton4: TToolButton
-          Left = 33
-          Top = 0
-          Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' (Ctrl+Enter)'
-          Action = ActPayDocPost
-        end
-        object ToolButton5: TToolButton
-          Left = 58
-          Top = 0
-          Hint = #1054#1090#1084#1077#1085#1080#1090#1100' '#1079#1084#1077#1085#1077#1085#1080#1103' (Esc)'
-          Action = ActPayDocCancel
-        end
-        object ToolButton25: TToolButton
-          Left = 83
-          Top = 0
-          Width = 8
-          Caption = 'ToolButton25'
-          ImageIndex = 4
-          Style = tbsSeparator
-        end
-        object ToolButton21: TToolButton
-          Left = 91
-          Top = 0
-          Action = ActPayDocPrint
-        end
-      end
-      object DocType: TDBLookupComboboxEh
-        Left = 209
-        Top = 19
-        Width = 215
-        Height = 21
-        DynProps = <>
-        DataField = 'PAYSOURCE_ID'
-        DataSource = srcPayDoc
-        DropDownBox.Columns = <
-          item
-            FieldName = 'PAYSOURCE_DESCR'
-            Width = 110
+          Width = 424
+          Height = 41
+          Align = alClient
+          BevelOuter = bvNone
+          TabOrder = 0
+          ExplicitLeft = 136
+          ExplicitTop = 16
+          ExplicitWidth = 185
+          DesignSize = (
+            424
+            41)
+          object Label6: TLabel
+            Left = 209
+            Top = 3
+            Width = 95
+            Height = 13
+            Caption = #1048#1089#1090#1086#1095#1085#1080#1082' '#1087#1083#1072#1090#1077#1078#1072
           end
-          item
-            FieldName = 'LEAK_PRC'
-            Width = 35
+          object Label7: TLabel
+            Left = 103
+            Top = 3
+            Width = 26
+            Height = 13
+            Caption = #1044#1072#1090#1072
           end
-          item
-            FieldName = 'TAX_PRC'
-            Width = 35
-          end>
-        DropDownBox.ListSource = srcPaymentSource
-        DropDownBox.ListSourceAutoFilter = True
-        DropDownBox.ListSourceAutoFilterAllColumns = True
-        DropDownBox.Sizable = True
-        EmptyDataInfo.Text = #1043#1076#1077' '#1073#1099#1083#1072' '#1086#1087#1083#1072#1090#1072
-        EditButtons = <>
-        KeyField = 'PAYSOURCE_ID'
-        ListField = 'PAYSOURCE_DESCR'
-        ListSource = srcPaymentSource
-        ParentShowHint = False
-        ShowHint = True
-        Style = csDropDownEh
-        TabOrder = 3
-        Visible = True
-      end
-      object dbePAY_DOC_SUM: TDBNumberEditEh
-        Left = 8
-        Top = 61
-        Width = 114
-        Height = 21
-        DataField = 'PAY_DOC_SUM'
-        DataSource = srcPayDoc
-        DisplayFormat = '#.00'
-        DynProps = <>
-        EmptyDataInfo.Text = #1057#1091#1084#1084#1072
-        EditButtons = <>
-        ShowHint = True
-        TabOrder = 5
-        Visible = True
+          object Label1: TLabel
+            Left = 8
+            Top = 3
+            Width = 51
+            Height = 13
+            Caption = #8470' '#1076#1086#1082#1091#1084'.'
+            FocusControl = dbedtPAY_DOC_NO
+          end
+          object DocType: TDBLookupComboboxEh
+            Left = 209
+            Top = 19
+            Width = 212
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            DynProps = <>
+            DataField = 'PAYSOURCE_ID'
+            DataSource = srcPayDoc
+            DropDownBox.Columns = <
+              item
+                FieldName = 'PAYSOURCE_DESCR'
+                Width = 110
+              end
+              item
+                FieldName = 'LEAK_PRC'
+                Width = 35
+              end
+              item
+                FieldName = 'TAX_PRC'
+                Width = 35
+              end>
+            DropDownBox.ListSource = srcPaymentSource
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterAllColumns = True
+            DropDownBox.Sizable = True
+            EmptyDataInfo.Text = #1043#1076#1077' '#1073#1099#1083#1072' '#1086#1087#1083#1072#1090#1072
+            EditButtons = <>
+            KeyField = 'PAYSOURCE_ID'
+            ListField = 'PAYSOURCE_DESCR'
+            ListSource = srcPaymentSource
+            ParentShowHint = False
+            ShowHint = True
+            Style = csDropDownEh
+            TabOrder = 2
+            Visible = True
+            ExplicitWidth = 207
+          end
+          object DocDate: TDBDateTimeEditEh
+            Tag = 2
+            Left = 103
+            Top = 19
+            Width = 103
+            Height = 21
+            DataField = 'PAY_DOC_DATE'
+            DataSource = srcPayDoc
+            DynProps = <>
+            EditButtons = <>
+            EmptyDataInfo.Text = #1044#1072#1090#1072' '#1055#1044
+            Kind = dtkDateEh
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
+            Visible = True
+          end
+          object dbedtPAY_DOC_NO: TDBEditEh
+            Tag = 1
+            Left = 8
+            Top = 19
+            Width = 91
+            Height = 21
+            DataField = 'PAY_DOC_NO'
+            DataSource = srcPayDoc
+            DynProps = <>
+            EditButtons = <>
+            EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1055#1044
+            ShowHint = True
+            TabOrder = 0
+            Visible = True
+          end
+        end
+        object pnlTR: TPanel
+          Left = 424
+          Top = 0
+          Width = 127
+          Height = 41
+          Align = alRight
+          Anchors = [akTop, akBottom]
+          BevelOuter = bvNone
+          TabOrder = 1
+          ExplicitLeft = 423
+          object tbButtons: TToolBar
+            Left = 4
+            Top = 11
+            Width = 120
+            Height = 29
+            Align = alNone
+            ButtonHeight = 25
+            ButtonWidth = 25
+            Caption = 'tbButtons'
+            Images = A4MainForm.ICONS_ACTIVE
+            TabOrder = 0
+            object tbEditDoc: TToolButton
+              Left = 0
+              Top = 0
+              Action = actPayDocEdit
+            end
+            object ToolButton1: TToolButton
+              Left = 25
+              Top = 0
+              Width = 8
+              Caption = 'ToolButton1'
+              ImageIndex = 11
+              Style = tbsSeparator
+            end
+            object ToolButton2: TToolButton
+              Left = 33
+              Top = 0
+              Action = ActPayDocPost
+            end
+            object ToolButton4: TToolButton
+              Left = 58
+              Top = 0
+              Action = ActPayDocCancel
+            end
+            object ToolButton5: TToolButton
+              Left = 83
+              Top = 0
+              Width = 8
+              Caption = 'ToolButton5'
+              ImageIndex = 4
+              Style = tbsSeparator
+            end
+            object ToolButton8: TToolButton
+              Left = 91
+              Top = 0
+              Action = ActPayDocPrint
+            end
+          end
+        end
       end
     end
     object pnlNotice: TPanel

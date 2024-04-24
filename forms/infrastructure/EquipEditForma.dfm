@@ -3,7 +3,7 @@ object EquipEditForm: TEquipEditForm
   Top = 0
   BorderStyle = bsSizeToolWin
   Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
-  ClientHeight = 481
+  ClientHeight = 486
   ClientWidth = 419
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -25,16 +25,18 @@ object EquipEditForm: TEquipEditForm
     Left = 0
     Top = 244
     Width = 419
-    Height = 194
+    Height = 199
     ActivePage = tsLan
     Align = alClient
     Style = tsButtons
     TabOrder = 1
+    ExplicitHeight = 194
     object tsLan: TTabSheet
       Caption = #1057#1077#1090#1100
+      ExplicitHeight = 163
       DesignSize = (
         411
-        163)
+        168)
       object Label4: TLabel
         Left = 0
         Top = 27
@@ -354,26 +356,50 @@ object EquipEditForm: TEquipEditForm
     object tsTV: TTabSheet
       Caption = #1058#1042
       ImageIndex = 1
+      ExplicitHeight = 163
+      DesignSize = (
+        411
+        168)
       object lbl7: TLabel
-        Left = 3
+        Left = 0
         Top = 29
         Width = 25
         Height = 13
         Caption = #1057#1077#1090#1100
       end
       object lbl8: TLabel
-        Left = 3
+        Left = 0
         Top = 54
         Width = 89
         Height = 13
         Caption = #1059#1088#1086#1074#1077#1085#1100' '#1074#1093#1086#1076#1085#1086#1081
       end
       object lbl9: TLabel
-        Left = 3
+        Left = 0
         Top = 79
         Width = 97
         Height = 13
         Caption = #1059#1088#1086#1074#1077#1085#1100' '#1074#1099#1093#1086#1076#1085#1086#1081
+      end
+      object Label10: TLabel
+        Left = 0
+        Top = 104
+        Width = 10
+        Height = 13
+        Caption = 'IP'
+      end
+      object Label11: TLabel
+        Left = 0
+        Top = 129
+        Width = 36
+        Height = 13
+        Caption = #1043#1088#1091#1087#1087#1072
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
       end
       object cbbLine: TDBComboBoxEh
         Left = 106
@@ -432,10 +458,105 @@ object EquipEditForm: TEquipEditForm
         DynProps = <>
         TabOrder = 0
       end
+      object DBEditEh1: TDBEditEh
+        Left = 106
+        Top = 101
+        Width = 121
+        Height = 21
+        Hint = 'IP '#1072#1076#1088#1077#1089
+        Anchors = [akLeft, akTop, akRight]
+        DataField = 'IP'
+        DataSource = srcDataSource
+        DynProps = <>
+        EditButtons = <>
+        EmptyDataInfo.Text = 'IP '#1072#1076#1088#1077#1089
+        MaxLength = 19
+        ShowHint = True
+        TabOrder = 4
+        Visible = True
+        OnEnter = edtMACEnter
+        OnExit = edtIPExit
+        EditMask = ''
+      end
+      object DBLookupComboboxEh1: TDBLookupComboboxEh
+        Left = 37
+        Top = 126
+        Width = 370
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = 'EQ_GROUP'
+        DataSource = srcDataSource
+        DropDownBox.Columns = <
+          item
+            AutoFitColWidth = False
+            FieldName = 'O_NAME'
+            Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+            Width = 90
+          end
+          item
+            FieldName = 'O_DESCRIPTION'
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          end>
+        DropDownBox.Sizable = True
+        EditButtons = <>
+        KeyField = 'O_ID'
+        ListField = 'O_NAME'
+        ListSource = srcEQGroups
+        ShowHint = True
+        TabOrder = 5
+        Visible = True
+      end
     end
     object tsOther: TTabSheet
       Caption = #1055#1088#1086#1095#1077#1077
       ImageIndex = 2
+      ExplicitHeight = 163
+      DesignSize = (
+        411
+        168)
+      object Label12: TLabel
+        Left = 4
+        Top = 11
+        Width = 36
+        Height = 13
+        Caption = #1043#1088#1091#1087#1087#1072
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object DBLookupComboboxEh2: TDBLookupComboboxEh
+        Left = 46
+        Top = 8
+        Width = 361
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = 'EQ_GROUP'
+        DataSource = srcDataSource
+        DropDownBox.Columns = <
+          item
+            AutoFitColWidth = False
+            FieldName = 'O_NAME'
+            Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+            Width = 90
+          end
+          item
+            FieldName = 'O_DESCRIPTION'
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          end>
+        DropDownBox.Sizable = True
+        EditButtons = <>
+        KeyField = 'O_ID'
+        ListField = 'O_NAME'
+        ListSource = srcEQGroups
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+      end
     end
   end
   object Panel2: TPanel
@@ -811,12 +932,13 @@ object EquipEditForm: TEquipEditForm
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 438
+    Top = 443
     Width = 419
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitTop = 438
     DesignSize = (
       419
       43)
@@ -861,34 +983,33 @@ object EquipEditForm: TEquipEditForm
       ''
       '    ')
     SelectSQL.Strings = (
-      'select '
-      '  1 as FINDED, '
-      '  v.v_id, '
-      '  v.name, '
-      '  v.ip_begin, '
-      '  v.ip_end'
-      'from vlans v'
-      '  inner join objects_coverage oc on (v.v_id = oc.o_id)'
-      'where oc.oc_type = 2'
-      '  and oc.house_id = :HOUSE_ID'
-      
-        '  and (coalesce(v.for_objects,0) = 0 or (coalesce(v.for_objects,' +
-        '0) = 2))'
-      ''
+      'select'
+      '    1 as FINDED'
+      '  , v.v_id'
+      '  , v.name'
+      '  , v.ip_begin'
+      '  , v.ip_end'
+      '  from vlans v'
+      '       inner join objects_coverage oc on (v.v_id = oc.o_id)'
+      '  where oc.oc_type = 2'
+      '        and oc.house_id = :HOUSE_ID'
+      '        and coalesce(v.for_objects, 0) in (0, 2)'
       'union'
-      ''
-      'select '
-      '  2 as FINDED, '
-      '  v.v_id, '
-      '  v.name, '
-      '  v.ip_begin, '
-      '  v.ip_end'
-      'from vlans v '
-      
-        'where not exists(select oc.o_id from objects_coverage oc where o' +
-        'c.o_id = v.v_id and oc.oc_type = 2 and oc.house_id = :HOUSE_ID)'
-      '  and coalesce(v.for_objects,0) in (0,2)'
-      'order by 1,2')
+      'select'
+      '    2 as FINDED'
+      '  , v.v_id'
+      '  , v.name'
+      '  , v.ip_begin'
+      '  , v.ip_end'
+      '  from vlans v'
+      '  where not exists(select'
+      '                       oc.o_id'
+      '                     from objects_coverage oc'
+      '                     where oc.o_id = v.v_id'
+      '                           and oc.oc_type = 2'
+      '                           and oc.house_id = :HOUSE_ID)'
+      '        and coalesce(v.for_objects, 0) in (0, 2)'
+      '  order by 1, 2')
     AutoCalcFields = False
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
@@ -1036,8 +1157,8 @@ object EquipEditForm: TEquipEditForm
     Transaction = trSRead
     Database = dmMain.dbTV
     UpdateTransaction = trSWrite
-    Left = 62
-    Top = 383
+    Left = 206
+    Top = 263
   end
   object srcDataSource: TDataSource
     AutoEdit = False
@@ -1149,13 +1270,13 @@ object EquipEditForm: TEquipEditForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     DataSource = srcDataSource
-    Left = 256
-    Top = 298
+    Left = 280
+    Top = 266
   end
   object srcParent: TDataSource
     DataSet = dsParent
-    Left = 302
-    Top = 296
+    Left = 310
+    Top = 280
   end
   object cnError: TCnErrorProvider
     DoubleBuffer = False

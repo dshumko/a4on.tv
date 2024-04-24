@@ -670,6 +670,7 @@ object ServiceForm: TServiceForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 5
+    Visible = False
     object lbl5: TLabel
       Left = 8
       Top = 9

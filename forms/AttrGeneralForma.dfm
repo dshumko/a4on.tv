@@ -3,8 +3,8 @@ object AttrGeneralForm: TAttrGeneralForm
   Top = 390
   BorderIcons = [biSystemMenu]
   Caption = #1040#1090#1088#1080#1073#1091#1090
-  ClientHeight = 201
-  ClientWidth = 500
+  ClientHeight = 311
+  ClientWidth = 565
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,8 +18,8 @@ object AttrGeneralForm: TAttrGeneralForm
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   DesignSize = (
-    500
-    201)
+    565
+    311)
   PixelsPerInch = 96
   TextHeight = 13
   object lblNotice: TLabel
@@ -46,7 +46,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object dbluAttribute: TDBLookupComboboxEh
     Left = 71
     Top = 8
-    Width = 422
+    Width = 487
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -61,12 +61,13 @@ object AttrGeneralForm: TAttrGeneralForm
     Visible = True
     OnChange = dbluAttributeChange
     OnEnter = dbluAttributeEnter
+    ExplicitWidth = 422
   end
   object mmoNOTICE: TDBMemoEh
     Left = 8
     Top = 80
-    Width = 485
-    Height = 80
+    Width = 550
+    Height = 190
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'NOTICE'
@@ -74,33 +75,38 @@ object AttrGeneralForm: TAttrGeneralForm
     DynProps = <>
     EditButtons = <>
     ShowHint = True
-    TabOrder = 4
+    TabOrder = 3
     Visible = True
     WantReturns = True
+    ExplicitWidth = 485
+    ExplicitHeight = 80
   end
   object dbValue: TDBEditEh
     Left = 71
     Top = 37
-    Width = 422
+    Width = 487
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'AVALUE'
     DataSource = srcAttr
     DynProps = <>
     EditButtons = <>
+    EmptyDataInfo.Text = #1047#1085#1072#1095#1077#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072
     ShowHint = True
     TabOrder = 1
     Visible = True
+    ExplicitWidth = 422
   end
   object cbbList: TDBComboBoxEh
-    Left = 72
+    Left = 71
     Top = 37
-    Width = 420
+    Width = 487
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'AVALUE'
     DataSource = srcAttr
     DynProps = <>
+    EmptyDataInfo.Text = #1047#1085#1072#1095#1077#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072
     EditButtons = <>
     ShowHint = True
     TabOrder = 2
@@ -108,39 +114,48 @@ object AttrGeneralForm: TAttrGeneralForm
   end
   object btnOk: TBitBtn
     Left = 8
-    Top = 167
-    Width = 404
+    Top = 277
+    Width = 469
     Height = 28
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     ModalResult = 1
     NumGlyphs = 2
-    TabOrder = 5
+    TabOrder = 4
     OnClick = btnOkClick
+    ExplicitTop = 167
+    ExplicitWidth = 404
   end
   object btnCancel: TBitBtn
-    Left = 418
-    Top = 167
+    Left = 483
+    Top = 277
     Width = 75
     Height = 28
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 6
+    TabOrder = 5
+    ExplicitLeft = 418
+    ExplicitTop = 167
   end
-  object mmoValue: TDBMemo
+  object mmoValue: TDBMemoEh
     Left = 71
-    Top = 35
-    Width = 422
-    Height = 24
+    Top = 37
+    Width = 487
+    Height = 21
     Anchors = [akLeft, akTop, akRight, akBottom]
+    AutoSize = False
     DataField = 'AVALUE'
     DataSource = srcAttr
-    ScrollBars = ssBoth
-    TabOrder = 3
+    DynProps = <>
+    EditButtons = <>
+    EmptyDataInfo.Text = #1047#1085#1072#1095#1077#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072
+    ShowHint = True
+    TabOrder = 6
     Visible = False
+    WantReturns = True
   end
   object srcAttributesList: TDataSource
     AutoEdit = False

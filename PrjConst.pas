@@ -80,7 +80,8 @@ const
   rght_Customer_History = 37;
   rght_Customer_EditLan = 38;
   rght_Customer_Appliance = 64;
-  rght_Customer_EditDigit = 39;
+  rght_Customer_DigitAdd = 39;
+  rght_Customer_DigitEdit = 225;
   rght_Customer_Discount = 41;
   rght_Customer_Bonus = 42;
   rght_Customer_View = 43;
@@ -93,6 +94,7 @@ const
   rght_Customer_Attribute = 189;
   rght_Customer_PersonalData = 220;
   rght_Customer_Contact_Edit = 223;
+  rght_Customer_Letters = 224;
 
   rght_Dictionary_full = 40;
 
@@ -118,6 +120,7 @@ const
   rght_Recourses_del = 82;
   rght_Recourses_edit = 83;
   rght_Recourses_owner = 84;
+  rght_Recourses_TodayOnly = 226;
 
   rght_BCIssues_add = 190;
   rght_BCIssues_del = 191;
@@ -544,7 +547,7 @@ resourcestring
 
   rsConfirm = 'Подтверждение';
   rsRequestNew = 'Новая заявка';
-  rsSMSSend = 'К отправке %d СМС, на балансе %d'#13#10'Продолжить?';
+  rsSMSSend = 'К отправке %d СМС (получателей %d), на балансе %d'#13#10'Продолжить?';
   rsSMScountLess = 'Количество СМС %d больше чем остаток на балансе %d';
   rsNewCustomerForm = 'Новый абонент';
   rsNewResult = 'Новый результат для ';
@@ -568,6 +571,7 @@ resourcestring
   rsColumnMAC = 'Сеть|MAC';
   rsColumnConnectTo = 'Сеть|Коммутатор';
   rsColumnConnectToIP = 'Сеть|Ком-р IP';
+  rsColumnConnectToMAC = 'Сеть|Ком-р MAC';
   rsColumnConnectToPort = 'Сеть|Ком-р Порт';
   rsColumnLanTag = 'Сеть|ЦифИнфо';
   rsColumnLanTagStr = 'Сеть|СтрИнфо';
@@ -588,6 +592,7 @@ resourcestring
   rsErrorNeedHouseClear = 'Удаление невозможно. На дом ссылаются %s : %d';
   rsErrorNeedLinkClear = 'Удаление невозможно. Ссылаются %s : %d';
   rsErrorNeedDeleteHistory = 'Сначала нужно удалить всю историю подключений/отключений!';
+  rsErrorLANsrvNotExists = 'Нет активных услуг СПД';
 
   rsMessagesPeriod = 'Сообщения за период с %s по %s';
   rsReportListAccounts = 'Список абонентов';
@@ -807,10 +812,14 @@ resourcestring
   rsFldFileName = '[НАИМЕНОВАНИЕ]';
   rsFldApplicantName = '[ФИО_ЗАЯВИТ]';
   rsFldText = '[ТЕКСТ]';
+  rsFldText1 = '[ТЕКСТ1]';
   rsBidN = '[ЗАЯВКА]';
   rsAddress = '[АДРЕС]';
-  rsNewAddress = '[НОВЫЙ АДРЕС]';
-
+  rsOldAddress = '[СТАРЫЙ АДРЕС]';
+  rsOldAccount = '[СТАРЫЙ ЛС]';
+  rsOldCode = '[СТАРЫЙ КОД]';
+  rsFldDEBT_FINE = '[ДОЛГ+ПЕНЯ]';
+  rsFldFINE = '[ПЕНЯ]';
 
   rsLanUserEquipment = 'Пользователь оборудования';
   rsLanPasswordEquipment = 'Пароль оборудования';
@@ -858,6 +867,7 @@ resourcestring
   rsMadDocMov = 'Перемещение по складам';
   rsMadDocsPrint = 'Печать выделенных документов';
   rsSMSBalance = 'Остаток СМС : %d';
+  rsSMSInfo = 'На балансе SMS: %d. '#13#10'Готово к отправке сообщений: %d (получателей %d)';
 
   rsMon = 'Пн';
   rsTue = 'Вт';
@@ -915,7 +925,7 @@ resourcestring
   rsPassportNotValid = 'Паспорт абонента недействителен или не выдавался';
   rsContact = 'Контакт абонента';
   rsTask = 'Задача';
-  rsOrderN = 'CЗ:';
+  rsOrderN = 'СЗ:';
   rsNeedChannel = 'Необходимо выбрать канал';
   rsCloseTask = 'Закрыть задачу';
   // rsAdCharCount = 'Символов %d (до %d = %m, более %m)';

@@ -2,14 +2,17 @@ inherited PortListForm: TPortListForm
   Caption = #1057#1087#1080#1089#1086#1082' '#1087#1086#1088#1090#1086#1074' '#1074' '#1089#1077#1090#1080
   ClientHeight = 424
   ClientWidth = 782
+  ExplicitWidth = 798
+  ExplicitHeight = 463
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 782
+    ExplicitWidth = 782
   end
   inherited dbGrid: TDBGridEh
     Width = 782
-    Height = 340
+    Height = 339
     FooterRowCount = 1
     SortLocal = False
     SumList.Active = True
@@ -201,10 +204,20 @@ inherited PortListForm: TPortListForm
         Footers = <>
         Title.Caption = 'VLAN|IP '#1087#1086
         Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CONFIG'
+        Footers = <>
+        Title.Caption = #1050#1086#1085#1092'-'#1094#1080#1103
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
     Width = 782
+    ExplicitWidth = 782
     inherited btnNew: TToolButton
       Visible = False
     end
@@ -290,11 +303,14 @@ inherited PortListForm: TPortListForm
   end
   inherited pnlEdit: TPanel
     Width = 782
+    ExplicitWidth = 782
     inherited btnSaveLink: TBitBtn
       Width = 596
+      ExplicitWidth = 596
     end
     inherited btnCancelLink: TBitBtn
       Left = 687
+      ExplicitLeft = 687
     end
   end
   inherited srcDataSource: TDataSource
@@ -414,6 +430,7 @@ inherited PortListForm: TPortListForm
       '  , p.Speed'
       '  , p.CON'
       '  , p.P_STATE'
+      '  , p.CONFIG  '
       '  , e.Ip'
       '  , e.Mac'
       '  , s.street_name || '#39' '#39' || s.street_short as street'

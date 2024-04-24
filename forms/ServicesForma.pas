@@ -11,7 +11,7 @@ uses
   Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask,
   DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase,
   DBCtrlsEh,
-  DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider;
+  DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter;
 
 type
   TServicesForm = class(TForm)
@@ -217,11 +217,12 @@ type
     procedure srcSwitchDataChange(Sender: TObject; Field: TField);
     procedure srcSrvAttrDataChange(Sender: TObject; Field: TField);
     procedure chkHideOldClick(Sender: TObject);
+    procedure pcServicesChanging(Sender: TObject; var AllowChange: Boolean);
   private
     { Private declarations }
     FCanEdit: Boolean;
     FCanEditAll: Boolean;
-    FHideNotActual : Boolean;
+    FHideNotActual: Boolean;
     procedure StartSwitch(const New: Boolean = True);
     procedure StopSwitch(const Cancel: Boolean);
     procedure StartLink(const New: Boolean = True);
@@ -298,6 +299,8 @@ begin
 end;
 
 procedure TServicesForm.pcServicesChange(Sender: TObject);
+var
+  ehGrid: TDBGridEh;
 begin
   if (dsTarif.State in [dsEdit, dsInsert]) then
     dsTarif.Cancel;
@@ -308,9 +311,10 @@ begin
   dsServices.Close;
 
   dsServices.ParamByName('SERV_TYPE').AsInteger := pcServices.ActivePage.Tag;
-  if FHideNotActual
-  then dsServices.ParamByName('WHERE_ACTUAL').AsString := 'SHOW_SERVICE = 1'
-  else dsServices.ParamByName('WHERE_ACTUAL').AsString := '1=1';
+  if FHideNotActual then
+    dsServices.ParamByName('WHERE_ACTUAL').AsString := 'SHOW_SERVICE = 1'
+  else
+    dsServices.ParamByName('WHERE_ACTUAL').AsString := '1=1';
   dsServices.Open;
 
   tsTarif.TabVisible := pcServices.ActivePage.Tag <> 2;
@@ -335,6 +339,41 @@ begin
     AddonPage.ActivePage := tsAtributes;
     if not dsSrvAttr.Active then
       dsSrvAttr.Active;
+  end;
+
+  case pcServices.ActivePageIndex of
+    0:
+      ehGrid := ASGrid;
+    1:
+      ehGrid := ssGrid;
+  else
+    ehGrid := fsGrid;
+  end;
+  if ehGrid.SearchPanel.SearchingText <> '' then
+  begin
+    // ehGrid.SearchPanel.CancelSearchFilter;
+    // ehGrid.SearchPanel.SearchingText := '';
+    ehGrid.SearchPanel.ApplySearchFilter;
+  end;
+end;
+
+procedure TServicesForm.pcServicesChanging(Sender: TObject; var AllowChange: Boolean);
+var
+  ehGrid: TDBGridEh;
+begin
+  case pcServices.ActivePageIndex of
+    0:
+      ehGrid := ASGrid;
+    1:
+      ehGrid := ssGrid;
+  else
+    ehGrid := fsGrid;
+  end;
+  if ehGrid.SearchPanel.SearchingText <> '' then
+  begin
+    ehGrid.SearchPanel.CancelSearchFilter;
+    // ehGrid.SearchPanel.SearchingText := '';
+    // ehGrid.SearchPanel.ApplySearchFilter;
   end;
 end;
 
@@ -505,15 +544,13 @@ begin
   tbSrvAdd.Enabled := not tbSrvOk.Enabled;
 end;
 
-procedure TServicesForm.srcSrvAttrDataChange(Sender: TObject;
-  Field: TField);
+procedure TServicesForm.srcSrvAttrDataChange(Sender: TObject; Field: TField);
 begin
   sbAttrEdit.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
   sbAttrDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
 end;
 
-procedure TServicesForm.srcSwitchDataChange(Sender: TObject;
-  Field: TField);
+procedure TServicesForm.srcSwitchDataChange(Sender: TObject; Field: TField);
 begin
   btnSWEdit.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
   btnSWDel.Visible := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
@@ -604,11 +641,11 @@ begin
 {$IFNDEF DIGIT}
   TabChannels.TabVisible := false;
 {$ENDIF}
-
   vSF := dmMain.GetIniValue('HIDE_NOT_ACTUAL_SRV');
-  if TryStrToInt(vSF, i)
-  then FHideNotActual := i = 1
-  else FHideNotActual := False;
+  if TryStrToInt(vSF, i) then
+    FHideNotActual := i = 1
+  else
+    FHideNotActual := false;
   chkHideOld.Checked := FHideNotActual;
 end;
 
@@ -1117,7 +1154,7 @@ end;
 procedure TServicesForm.chkHideOldClick(Sender: TObject);
 begin
   FHideNotActual := chkHideOld.Checked;
-  pcServicesChange(sender);
+  pcServicesChange(Sender);
 end;
 
 procedure TServicesForm.btn2Click(Sender: TObject);

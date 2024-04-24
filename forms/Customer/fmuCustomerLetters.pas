@@ -56,7 +56,7 @@ procedure TapgCustomerLetters.InitForm;
 var
   FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Customer_full)); // Полный доступ
+  FullAccess := (dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_Letters));
   actLetterDel.Visible := FullAccess;
   pnlButtons.Visible := FullAccess;
 

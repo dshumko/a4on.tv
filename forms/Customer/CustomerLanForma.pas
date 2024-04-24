@@ -183,9 +183,9 @@ begin
 
       dsEQ.ParamByName('CUSTOMER_ID').AsInt64 := aCI.CUSTOMER_ID;
       dsEQ.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
+      dsEQ.ParamByName('LID').AsInt64 := aLan_ID;
       dsEQ.Open;
       dsPort.Open;
-
       dsLAN.ParamByName('Lan_ID').AsInt64 := aLan_ID;
       dsLAN.Open;
       if aLan_ID = -1 then
@@ -200,6 +200,7 @@ begin
             f2 := -1;
             lvl := 999;
             dsEQ.DisableControls;
+            dsEQ.First;
             while not dsEQ.EOF do
             begin
               if (f1 = -1) and (dsEQ['finded'] = 1) then
@@ -548,6 +549,16 @@ begin
   Result := '';
   EQ_ID := dbleEquipment.Value;
   PORT := lcbPort.Value;
+
+  if (dsPort.Lookup('PORT', PORT, 'P_STATE') = 3) then
+    Result := PORT + ' - служебный порт';
+  if Result <> '' then
+  begin
+    Result := rsWarningPort + #13#10 + Result;
+    cnError.SetError(lcbPort, Result, iaMiddleLeft, bsNeverBlink);
+    Exit;
+  end;
+
   with TpFIBQuery.Create(Nil) do
   begin
     try
@@ -1160,16 +1171,27 @@ begin
   if (not dsPort.FieldByName('P_STATE').IsNUll) then
   begin
     if (dsPort['P_STATE'] = 0) then
-      if (dsPort['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'SPEED')) then
+    begin
+      if ((Column.FieldName = 'PORT') or (Column.FieldName = 'SPEED')) then
       begin
         AFont.Style := [fsStrikeOut];
         Background := clBtnShadow;
       end
-      else if (dsPort['P_STATE'] > 1) then
-      begin
-        AFont.Style := [fsItalic];
-        Background := clBtnShadow;
-      end;
+    end
+    else if (dsPort['P_STATE'] = 3) then
+    begin
+      AFont.Style := [fsBold];
+      Background := clBtnShadow;
+    end
+    else if (dsPort['P_STATE'] > 1) then
+    begin
+      AFont.Style := [fsItalic];
+      Background := clBtnShadow;
+    end
+    else if ((dsPort.FieldByName('CON').IsNUll) and (dsPort['whose'] <> '')) then
+    begin
+      Background := clRed;
+    end;
   end;
   if not(dsPort.FieldByName('COLOR').IsNUll) then
   begin

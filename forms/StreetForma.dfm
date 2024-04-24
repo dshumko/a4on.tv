@@ -10,11 +10,12 @@ inherited StreetForm: TStreetForm
   TextHeight = 13
   object Splitter1: TSplitter [0]
     Left = 0
-    Top = 246
+    Top = 247
     Width = 993
     Height = 8
     Cursor = crVSplit
     Align = alTop
+    ExplicitTop = 246
   end
   inherited splPG: TSplitter
     Top = 75
@@ -23,7 +24,7 @@ inherited StreetForm: TStreetForm
     ExplicitWidth = 993
   end
   inherited dbGrid: TDBGridEh
-    Top = 78
+    Top = 79
     Width = 993
     Height = 168
     Align = alTop
@@ -164,22 +165,23 @@ inherited StreetForm: TStreetForm
   end
   object Panel1: TPanel [3]
     Left = 0
-    Top = 254
+    Top = 255
     Width = 993
-    Height = 311
+    Height = 310
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object Splitter2: TSplitter
       Left = 346
       Top = 25
-      Height = 286
+      Height = 285
+      ExplicitHeight = 286
     end
     object DbGridHouse: TDBGridEh
       Left = 0
       Top = 25
       Width = 346
-      Height = 286
+      Height = 285
       Align = alLeft
       AllowedOperations = []
       DataSource = srcHouses
@@ -540,7 +542,7 @@ inherited StreetForm: TStreetForm
       Left = 349
       Top = 25
       Width = 644
-      Height = 286
+      Height = 285
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
@@ -548,7 +550,7 @@ inherited StreetForm: TStreetForm
         Left = 0
         Top = 0
         Width = 644
-        Height = 286
+        Height = 285
         ActivePage = InfoSheet
         Align = alClient
         TabOrder = 0
@@ -559,7 +561,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 201
             Width = 636
-            Height = 57
+            Height = 56
             Align = alClient
             DataSource = srcHouseService
             DynProps = <>
@@ -862,7 +864,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 29
             Width = 636
-            Height = 229
+            Height = 228
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = srcHouseEquipment
@@ -973,13 +975,14 @@ inherited StreetForm: TStreetForm
           object spl2: TSplitter
             Left = 251
             Top = 0
-            Height = 258
+            Height = 257
+            ExplicitHeight = 258
           end
           object pnl1: TPanel
             Left = 0
             Top = 0
             Width = 251
-            Height = 258
+            Height = 257
             Align = alLeft
             BevelOuter = bvNone
             Caption = 'pnlPF'
@@ -996,7 +999,7 @@ inherited StreetForm: TStreetForm
               Left = 0
               Top = 152
               Width = 251
-              Height = 106
+              Height = 105
               Align = alClient
               DataSource = srcFloor
               DynProps = <>
@@ -1176,7 +1179,7 @@ inherited StreetForm: TStreetForm
             Left = 254
             Top = 0
             Width = 382
-            Height = 258
+            Height = 257
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
@@ -1184,7 +1187,7 @@ inherited StreetForm: TStreetForm
               Left = 0
               Top = 25
               Width = 382
-              Height = 233
+              Height = 232
               Align = alClient
               AllowedSelections = [gstRecordBookmarks, gstAll]
               DataSource = srcFlats
@@ -1192,6 +1195,7 @@ inherited StreetForm: TStreetForm
               Flat = True
               FooterRowCount = 1
               FooterParams.Color = clWindow
+              FrozenCols = 1
               Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
               SearchPanel.Enabled = True
@@ -1260,6 +1264,33 @@ inherited StreetForm: TStreetForm
                   Width = 99
                 end
                 item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'OWNER_NAME'
+                  Footers = <>
+                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1060#1048#1054
+                  Title.TitleButton = True
+                end
+                item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'OWNER_DOC'
+                  Footers = <>
+                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1044#1086#1082#1091#1084#1077#1085#1090
+                  Title.TitleButton = True
+                end
+                item
+                  CellButtons = <>
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'MOBILE'
+                  Footers = <>
+                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1084#1086#1073#1080#1083#1072
+                  Title.TitleButton = True
+                end
+                item
                   AutoFitColWidth = False
                   CellButtons = <>
                   DynProps = <>
@@ -1297,30 +1328,6 @@ inherited StreetForm: TStreetForm
                   Footers = <>
                   Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1086#1075#1076#1072
                   Width = 53
-                end
-                item
-                  CellButtons = <>
-                  DynProps = <>
-                  EditButtons = <>
-                  FieldName = 'OWNER_NAME'
-                  Footers = <>
-                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1060#1048#1054
-                end
-                item
-                  CellButtons = <>
-                  DynProps = <>
-                  EditButtons = <>
-                  FieldName = 'OWNER_DOC'
-                  Footers = <>
-                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1044#1086#1082#1091#1084#1077#1085#1090
-                end
-                item
-                  CellButtons = <>
-                  DynProps = <>
-                  EditButtons = <>
-                  FieldName = 'MOBILE'
-                  Footers = <>
-                  Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1084#1086#1073#1080#1083#1072
                 end>
               object RowDetailData: TRowDetailPanelControlEh
               end
@@ -1380,7 +1387,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 26
             Width = 636
-            Height = 232
+            Height = 231
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel1'
@@ -1389,7 +1396,7 @@ inherited StreetForm: TStreetForm
               Left = 0
               Top = 100
               Width = 636
-              Height = 132
+              Height = 131
               Align = alClient
               AllowedOperations = []
               DataSource = srcHousesAttr
@@ -1610,7 +1617,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 25
             Width = 636
-            Height = 233
+            Height = 232
             Align = alClient
             DataSource = srcWork
             DynProps = <>
@@ -1680,7 +1687,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 0
             Width = 636
-            Height = 258
+            Height = 257
             Align = alClient
             AllowedOperations = []
             DataSource = srcCustomers
@@ -1832,7 +1839,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 0
             Width = 636
-            Height = 258
+            Height = 257
             Align = alClient
             DataField = 'PNG'
             DataSource = srcCirciut

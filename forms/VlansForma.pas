@@ -10,7 +10,7 @@ uses
   Vcl.Menus,
   Vcl.ActnList, Vcl.ExtCtrls, Vcl.ToolWin, Vcl.Controls,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, DBCtrlsEh,
-  CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst;
+  CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst, amSplitter;
 
 type
   TVlansForm = class(TGridForm)
@@ -78,6 +78,8 @@ type
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnAdd: TSpeedButton;
+    mmoCONFIG: TDBMemoEh;
+    lblCFG: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

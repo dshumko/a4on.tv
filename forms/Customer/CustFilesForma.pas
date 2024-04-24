@@ -6,10 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus, Vcl.ActnList,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
+  Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, DBGridEhImpExp, FIBQuery, pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery, pFIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  PrjConst,
   EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh;
 
 type
@@ -103,11 +105,10 @@ type
     procedure dbgFilesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure FormCreate(Sender: TObject);
-    procedure dbgFilesColumns7GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgFilesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure luPaymentClick(Sender: TObject);
   private
-    FFirstOpen : Boolean;
+    FFirstOpen: Boolean;
     fStartDate: TDateTime;
     fEndDate: TDateTime;
     fSelectedRow: Integer; // выделенная строка в таблице платежей
@@ -127,7 +128,8 @@ implementation
 
 uses
   Winapi.ShellAPI,
-  DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils, CF, CustomerForma, ReportPreview, TextEditForma, EditCFileForma;
+  DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils,
+  CF, CustomerForma, ReportPreview, TextEditForma, EditCFileForma;
 
 {$R *.dfm}
 
@@ -148,46 +150,9 @@ begin
 end;
 
 procedure TCustFilesForm.ppmSaveSelectionClick(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
 begin
-  A4MainForm.SaveDialog.FileName := rsPayments;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1: begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2: begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3: begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4: begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5: begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
-      end;
-    end;
-
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TCustFilesForm.ppmSelectAllClick(Sender: TObject);
@@ -205,11 +170,12 @@ var
 
 begin
 
-  if (ActiveControl is TDBGridEh) then begin
+  if (ActiveControl is TDBGridEh) then
+  begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-        DBGridEh_DoCopyAction(dbg, False)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -220,11 +186,13 @@ procedure TCustFilesForm.actTypeFilterExecute(Sender: TObject);
 begin
   actTypeFilter.Checked := not actTypeFilter.Checked;
   actTypeFilter.Checked := actTypeFilter.Checked and not VarIsNull(luPayment.KeyValue);
-  if actTypeFilter.Checked then begin
+  if actTypeFilter.Checked then
+  begin
     actTypeFilter.Caption := rsFilterOff;
     actTypeFilter.Hint := rsFilterOffCondition;
   end
-  else begin
+  else
+  begin
     actTypeFilter.Caption := rsFilterOn;
     actTypeFilter.Hint := rsFilterOnCondition;
   end;
@@ -237,7 +205,8 @@ var
 begin
   bDate := fStartDate;
   eDate := fEndDate;
-  if ChangePeriod(bDate, eDate) then begin
+  if ChangePeriod(bDate, eDate) then
+  begin
     fStartDate := bDate;
     fEndDate := eDate;
     SetFilter;
@@ -256,7 +225,8 @@ begin
   dsFiles.ParamByName('StartDate').AsDate := fStartDate;
   dsFiles.ParamByName('EndDate').AsDate := fEndDate;
   Caption := Format(rsFilesPeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
-  if actTypeFilter.Checked then begin
+  if actTypeFilter.Checked then
+  begin
     dsFiles.ParamByName('source').AsString := ' AND CF.Cf_Type = ' + VarToStr(luPayment.KeyValue);
     Caption := Caption + Format(rsType, [luPayment.DisplayTextForPaintCopy]);
   end
@@ -273,11 +243,14 @@ var
   Font_size: Integer;
   Font_name: string;
 begin
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then begin
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do begin
-      if Components[i] is TDBGridEh then begin
+    for i := 0 to ComponentCount - 1 do
+    begin
+      if Components[i] is TDBGridEh then
+      begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
@@ -302,7 +275,8 @@ begin
 
   vBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
 
-  for i := 0 to dbgFiles.Columns.Count - 1 do begin
+  for i := 0 to dbgFiles.Columns.Count - 1 do
+  begin
     if (AnsiUpperCase(dbgFiles.Columns[i].FieldName) = 'DEBT_SUM') then
       dbgFiles.Columns[i].Visible := not vBalance;
     if (AnsiUpperCase(dbgFiles.Columns[i].FieldName) = 'BALANCE') then
@@ -333,8 +307,7 @@ begin
     actEdit.Execute;
 end;
 
-procedure TCustFilesForm.dbgFilesColumns7GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TCustFilesForm.dbgFilesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if not Params.Text.IsEmpty then
     Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
@@ -355,7 +328,8 @@ procedure TCustFilesForm.dbgFilesDblClick(Sender: TObject);
 var
   FileName: string;
 begin
-  if dbgFiles.DataSource.DataSet.RecordCount > 0 then begin
+  if dbgFiles.DataSource.DataSet.RecordCount > 0 then
+  begin
     //
     FileName := GetTempDir + 'A4on\';
     if not DirectoryExists(FileName) then
@@ -379,7 +353,8 @@ begin
   if (dsFiles.RecordCount = 0) or (dsFiles.FieldByName('Cf_Id').IsNull) then
     Exit;
   txt := '';
-  if EditText(txt, Format(rsFileAct, [dsFiles['Name']]), rsFileActNotice) then begin
+  if EditText(txt, Format(rsFileAct, [dsFiles['Name']]), rsFileActNotice) then
+  begin
     dsFiles.Edit;
     dsFiles['ANotice'] := txt;
     dsFiles['Act'] := 1;
@@ -426,7 +401,8 @@ end;
 
 procedure TCustFilesForm.frxDBPaymentsFirst(Sender: TObject);
 begin
-  if dbgFiles.SelectedRows.Count > 0 then begin
+  if dbgFiles.SelectedRows.Count > 0 then
+  begin
     fSelectedRow := 1;
     dbgFiles.DataSource.DataSet.Bookmark := dbgFiles.SelectedRows[0];
   end
@@ -434,7 +410,8 @@ end;
 
 procedure TCustFilesForm.frxDBPaymentsNext(Sender: TObject);
 begin
-  if (dbgFiles.SelectedRows.Count > 0) then begin
+  if (dbgFiles.SelectedRows.Count > 0) then
+  begin
     if fSelectedRow < dbgFiles.SelectedRows.Count then
       dbgFiles.DataSource.DataSet.Bookmark := dbgFiles.SelectedRows[fSelectedRow];
     inc(fSelectedRow);
@@ -462,15 +439,18 @@ begin
   customers.Sorted := True;
   customers.Duplicates := dupIgnore;
 
-  if (grid.SelectedRows.Count = 0) then begin
+  if (grid.SelectedRows.Count = 0) then
+  begin
     if not grid.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
       customers.Add(IntToStr(grid.DataSource.DataSet['CUSTOMER_ID']));
   end
-  else begin
+  else
+  begin
     b := grid.DataSource.DataSet.GetBookmark;
     grid.DataSource.DataSet.DisableControls;
     grid.DataSource.DataSet.First;
-    for i := 0 to grid.SelectedRows.Count - 1 do begin
+    for i := 0 to grid.SelectedRows.Count - 1 do
+    begin
       grid.DataSource.DataSet.Bookmark := grid.SelectedRows[i];
       if not grid.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
         customers.Add(IntToStr(grid.DataSource.DataSet['CUSTOMER_ID']));
@@ -499,7 +479,8 @@ begin
     Exit;
 
   if MessageDlg(Format(ms_DELETE_ACT, [dsFiles.FieldByName('NAME').AsString, dsFiles.FieldByName('ADDED_ON').AsString]),
-    mtConfirmation, [mbNo, mbYes], 0) = mrYes then begin
+    mtConfirmation, [mbNo, mbYes], 0) = mrYes then
+  begin
     dsFiles.Edit;
     dsFiles['ANotice'] := '';
     dsFiles['Act'] := 0;
@@ -512,7 +493,7 @@ end;
 
 procedure TCustFilesForm.actEditExecute(Sender: TObject);
 var
-  ci : TCustomerInfo;
+  ci: TCustomerInfo;
 begin
   if not((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_Files_Edit))) then
     Exit;
@@ -524,34 +505,37 @@ begin
     (dsFiles.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
 
-  with ci do begin
+  with ci do
+  begin
     CUSTOMER_ID := dsFiles['CUSTOMER_ID'];
   end;
 
-  if EditFile(ci, dsFiles['NAME'], dsFiles['CF_ID']) then begin
+  if EditFile(ci, dsFiles['NAME'], dsFiles['CF_ID']) then
+  begin
     dsFiles.Refresh;
   end
 end;
 
 procedure TCustFilesForm.FormActivate(Sender: TObject);
 var
-  i: integer;
+  i: Integer;
   filter: string;
   inFilter: Boolean;
 begin
-  if FFirstOpen then begin
-    FFirstOpen := False;
+  if FFirstOpen then
+  begin
+    FFirstOpen := false;
     Exit;
   end;
 
-  if not((dsFiles.Active) and (dsFiles.RecordCount > 0) and
-    (not dsFiles.FieldByName('Cf_Id').IsNull)) then
+  if not((dsFiles.Active) and (dsFiles.RecordCount > 0) and (not dsFiles.FieldByName('Cf_Id').IsNull)) then
     dsFiles.CloseOpen(True)
-  else begin
+  else
+  begin
     inFilter := dsFiles.Filtered;
     filter := dsFiles.filter;
     i := dsFiles['Cf_Id'];
-    dsFiles.CloseOpen(true);
+    dsFiles.CloseOpen(True);
     if inFilter then
     begin
       dsFiles.filter := filter;
@@ -575,7 +559,8 @@ procedure TCustFilesForm.dbgFilesGetFooterParams(Sender: TObject; DataCol, Row: 
 var
   i: Integer;
 begin
-  if (DataCol = 1) and (Row = 0) then begin
+  if (DataCol = 1) and (Row = 0) then
+  begin
     i := (Sender as TDBGridEh).SelectedRows.Count;
     if i > 1 then
       Text := IntToStr(i);
@@ -589,7 +574,8 @@ var
 begin
   J := grid.SortMarkedColumns.Count;
   s := '';
-  for i := 0 to pred(J) do begin
+  for i := 0 to pred(J) do
+  begin
     s := s + grid.SortMarkedColumns[i].FieldName;
     if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
       s := s + ' desc';
@@ -606,7 +592,7 @@ begin
   if not(Sender as TDBLookupComboboxEh).ListVisible then
     (Sender as TDBLookupComboboxEh).DropDown
   else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+    (Sender as TDBLookupComboboxEh).CloseUp(false);
 end;
 
 end.

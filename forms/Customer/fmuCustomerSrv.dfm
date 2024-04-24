@@ -2,8 +2,8 @@ object apgCustomerSrv: TapgCustomerSrv
   Left = 0
   Top = 0
   Caption = #1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
-  ClientHeight = 254
-  ClientWidth = 730
+  ClientHeight = 303
+  ClientWidth = 682
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,32 +16,38 @@ object apgCustomerSrv: TapgCustomerSrv
   object Panel7: TPanel
     Left = 31
     Top = 0
-    Width = 699
-    Height = 254
+    Width = 651
+    Height = 303
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 699
+    ExplicitHeight = 254
     object pnlSubscrServ: TPanel
       Left = 0
       Top = 0
-      Width = 699
-      Height = 254
+      Width = 651
+      Height = 303
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitWidth = 699
+      ExplicitHeight = 254
       object Splitter3: TSplitter
         Left = 0
-        Top = 168
-        Width = 699
+        Top = 217
+        Width = 651
         Height = 3
         Cursor = crVSplit
         Align = alBottom
+        ExplicitTop = 168
+        ExplicitWidth = 699
       end
       object dbgCustSubscrServ: TDBGridEh
         Left = 0
         Top = 0
-        Width = 699
-        Height = 168
+        Width = 651
+        Height = 217
         Align = alClient
         AllowedOperations = []
         DataSource = srcServices
@@ -135,7 +141,7 @@ object apgCustomerSrv: TapgCustomerSrv
             Title.Caption = #1059#1089#1083#1091#1075#1072' '#1087#1086#1076#1082#1083'./'#1086#1090#1082#1083'.'
             Title.Hint = #1059#1089#1083#1091#1075#1072' '#1089#1090#1072#1090#1091#1089#1072
             Title.TitleButton = True
-            Width = 202
+            Width = 174
           end
           item
             CellButtons = <>
@@ -213,16 +219,18 @@ object apgCustomerSrv: TapgCustomerSrv
       end
       object pnlPersonelTarif: TPanel
         Left = 0
-        Top = 171
-        Width = 699
+        Top = 220
+        Width = 651
         Height = 83
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitTop = 171
+        ExplicitWidth = 699
         object Label14: TLabel
           Left = 0
           Top = 0
-          Width = 699
+          Width = 651
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
@@ -231,7 +239,7 @@ object apgCustomerSrv: TapgCustomerSrv
         object dbgPersTarif: TDBGridEh
           Left = 27
           Top = 13
-          Width = 672
+          Width = 624
           Height = 70
           Align = alClient
           DataSource = srcPersonelTarif
@@ -294,7 +302,7 @@ object apgCustomerSrv: TapgCustomerSrv
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
               Title.TitleButton = True
-              Width = 118
+              Width = 226
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -339,10 +347,11 @@ object apgCustomerSrv: TapgCustomerSrv
     Left = 0
     Top = 0
     Width = 31
-    Height = 254
+    Height = 303
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 254
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
@@ -388,7 +397,7 @@ object apgCustomerSrv: TapgCustomerSrv
     end
     object ToolBar2: TToolBar
       Left = 0
-      Top = 223
+      Top = 272
       Width = 31
       Height = 31
       Align = alBottom
@@ -397,6 +406,7 @@ object apgCustomerSrv: TapgCustomerSrv
       Caption = 'ToolBar2'
       Images = A4MainForm.ICONS_ACTIVE
       TabOrder = 1
+      ExplicitTop = 223
       object ToolButton6: TToolButton
         Left = 0
         Top = 0

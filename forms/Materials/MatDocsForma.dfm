@@ -10,11 +10,12 @@ inherited MatDocsForm: TMatDocsForm
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 0
-    Top = 308
+    Top = 309
     Width = 814
     Height = 3
     Cursor = crVSplit
     Align = alTop
+    ExplicitTop = 308
   end
   inherited splPG: TSplitter
     Top = 305
@@ -263,13 +264,15 @@ inherited MatDocsForm: TMatDocsForm
   end
   object pnlDetail: TPanel [4]
     Left = 0
-    Top = 311
+    Top = 312
     Width = 814
-    Height = 213
+    Height = 212
     Align = alClient
     BevelOuter = bvNone
     Caption = 'pnlDetail'
     TabOrder = 3
+    ExplicitTop = 311
+    ExplicitHeight = 213
     object dbgDetail: TDBGridEh
       Left = 0
       Top = 0
@@ -505,13 +508,13 @@ inherited MatDocsForm: TMatDocsForm
     end
     inherited actQuickFilter: TAction [11]
     end
-    object actFilterDate: TAction
+    object actFilterDate: TAction [12]
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1076#1072#1090#1077
       ImageIndex = 1
       ShortCut = 16452
       OnExecute = actFilterDateExecute
     end
-    object actEnableFilter: TAction
+    object actEnableFilter: TAction [13]
       Caption = #1042#1082#1083'/'#1042#1099#1082#1083'. '#1092#1080#1083#1100#1090#1088
       Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
       ShortCut = 16498
@@ -525,7 +528,7 @@ inherited MatDocsForm: TMatDocsForm
   inherited CnErrors: TCnErrorProvider
     Top = 24
   end
-  object dsDocs: TpFIBDataSet
+  object dsDocs: TpFIBDataSet [10]
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -615,7 +618,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 192
     Top = 208
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TpFIBDataSet [11]
     SelectSQL.Strings = (
       '  select'
       '    md.M_Id'
@@ -654,12 +657,12 @@ inherited MatDocsForm: TMatDocsForm
     dcForceMasterRefresh = True
     dcIgnoreMasterClose = True
   end
-  object srcMaterials: TDataSource
+  object srcMaterials: TDataSource [12]
     DataSet = dsMaterials
     Left = 353
     Top = 417
   end
-  object pmBTN: TPopupMenu
+  object pmBTN: TPopupMenu [13]
     Left = 312
     Top = 144
     object N1: TMenuItem
@@ -679,7 +682,7 @@ inherited MatDocsForm: TMatDocsForm
       Caption = #1050#1086#1088#1088#1077#1082#1090#1080#1088#1086#1074#1082#1072
     end
   end
-  object frxReport: TfrxReport
+  object frxReport: TfrxReport [14]
     Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
@@ -697,7 +700,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 312
     Top = 208
   end
-  object trRead: TpFIBTransaction
+  object trRead: TpFIBTransaction [15]
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -709,7 +712,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 136
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TpFIBTransaction [16]
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -721,7 +724,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 136
     Top = 236
   end
-  object pmPeriod: TPopupMenu
+  object pmPeriod: TPopupMenu [17]
     Left = 393
     Top = 144
     object MenuItem1: TMenuItem
@@ -741,7 +744,7 @@ inherited MatDocsForm: TMatDocsForm
       OnClick = miMonthClick
     end
   end
-  object dsFilter: TMemTableEh
+  object dsFilter: TMemTableEh [18]
     Params = <>
     Left = 27
     Top = 355
@@ -817,7 +820,7 @@ inherited MatDocsForm: TMatDocsForm
       end
     end
   end
-  object pmFilter: TPopupMenu
+  object pmFilter: TPopupMenu [19]
     Left = 655
     Top = 186
     object N31: TMenuItem
@@ -836,7 +839,7 @@ inherited MatDocsForm: TMatDocsForm
       Action = actQuickFilter
     end
   end
-  object mmMaterialDoc: TMainMenu
+  object mmMaterialDoc: TMainMenu [20]
     Left = 504
     Top = 160
     object L1: TMenuItem

@@ -112,10 +112,9 @@ object MaterialsForm: TMaterialsForm
         FooterRowCount = 1
         FooterParams.Color = clWindow
         FrozenCols = 1
-        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
         ParentShowHint = False
-        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
         SearchPanel.FilterOnTyping = True
         ShowHint = True
@@ -249,7 +248,7 @@ object MaterialsForm: TMaterialsForm
     Top = 219
     Width = 935
     Height = 193
-    ActivePage = tsSerials
+    ActivePage = tsIn
     Align = alBottom
     TabOrder = 1
     OnChange = pgcInOutChange
@@ -297,16 +296,21 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             ReadOnly = True
             Title.Caption = #1057#1082#1083#1072#1076
-            Width = 235
+            Width = 146
           end
           item
             CellButtons = <>
+            DisplayFormat = ',#0.###'
             DynProps = <>
             EditButtons = <>
             FieldName = 'MR_COST'
+            Footer.DisplayFormat = ',#0.###'
+            Footer.FieldName = 'TOTAL'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1062#1077#1085#1072' '#1077#1076#1080#1085#1080#1094#1099
             Title.TitleButton = True
+            Width = 73
           end
           item
             CellButtons = <>
@@ -507,6 +511,49 @@ object MaterialsForm: TMaterialsForm
           Action = actShowSN
           TabOrder = 0
         end
+        object btnPrintIncome: TBitBtn
+          Left = 1
+          Top = 33
+          Width = 23
+          Height = 23
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00959595FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF939393FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFD9BB9EFFD9BB9EFFD9BB9EFFD9BB
+            9EFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00868686FF7777
+            77FF777777FF777777FF777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FF777777FF777777FF777777FF8C8C8CFF777777FFFF00
+            FF00FF00FF00777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FFD7D7D7FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFEFEFEFFD9D9D9FF777777FF777777FF777777FF7777
+            77FFFCFCFCFFBC8955FFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFBD8956FFFEFEFEFF777777FF777777FF777777FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF777777FF848484FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF898989FFFF00FF00FF00
+            FF00FF00FF00B3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
+          TabOrder = 1
+          OnClick = btnPrintIncomeClick
+        end
       end
     end
     object tsMove: TTabSheet
@@ -666,6 +713,49 @@ object MaterialsForm: TMaterialsForm
           Height = 23
           Action = actShowSN
           TabOrder = 0
+        end
+        object btnPrintMove: TBitBtn
+          Left = 1
+          Top = 33
+          Width = 23
+          Height = 23
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00959595FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF939393FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFD9BB9EFFD9BB9EFFD9BB9EFFD9BB
+            9EFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00868686FF7777
+            77FF777777FF777777FF777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FF777777FF777777FF777777FF8C8C8CFF777777FFFF00
+            FF00FF00FF00777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FFD7D7D7FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFEFEFEFFD9D9D9FF777777FF777777FF777777FF7777
+            77FFFCFCFCFFBC8955FFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFBD8956FFFEFEFEFF777777FF777777FF777777FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF777777FF848484FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF898989FFFF00FF00FF00
+            FF00FF00FF00B3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
+          TabOrder = 1
+          OnClick = btnPrintIncomeClick
         end
       end
     end
@@ -838,6 +928,49 @@ object MaterialsForm: TMaterialsForm
           Action = actShowSN
           TabOrder = 0
         end
+        object btnPrintInvent: TBitBtn
+          Left = 1
+          Top = 33
+          Width = 23
+          Height = 23
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00959595FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF939393FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFD9BB9EFFD9BB9EFFD9BB9EFFD9BB
+            9EFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00868686FF7777
+            77FF777777FF777777FF777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FF777777FF777777FF777777FF8C8C8CFF777777FFFF00
+            FF00FF00FF00777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FFD7D7D7FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFEFEFEFFD9D9D9FF777777FF777777FF777777FF7777
+            77FFFCFCFCFFBC8955FFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFBD8956FFFEFEFEFF777777FF777777FF777777FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF777777FF848484FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF898989FFFF00FF00FF00
+            FF00FF00FF00B3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
+          TabOrder = 1
+          OnClick = btnPrintIncomeClick
+        end
       end
     end
     object tsOUT: TTabSheet
@@ -1002,6 +1135,49 @@ object MaterialsForm: TMaterialsForm
           Action = actShowSN
           TabOrder = 0
         end
+        object btnPrintOut: TBitBtn
+          Left = 1
+          Top = 33
+          Width = 23
+          Height = 23
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00959595FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF939393FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFD9BB9EFFD9BB9EFFD9BB9EFFD9BB
+            9EFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00868686FF7777
+            77FF777777FF777777FF777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FF777777FF777777FF777777FF8C8C8CFF777777FFFF00
+            FF00FF00FF00777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FFD7D7D7FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFEFEFEFFD9D9D9FF777777FF777777FF777777FF7777
+            77FFFCFCFCFFBC8955FFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFBD8956FFFEFEFEFF777777FF777777FF777777FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF777777FF848484FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF898989FFFF00FF00FF00
+            FF00FF00FF00B3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
+          TabOrder = 1
+          OnClick = btnPrintIncomeClick
+        end
       end
     end
     object tsJournal: TTabSheet
@@ -1023,9 +1199,9 @@ object MaterialsForm: TMaterialsForm
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         SearchPanel.Enabled = True
+        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
-        STFilter.Visible = True
         SumList.Active = True
         TabOrder = 1
         TitleParams.MultiTitle = True
@@ -1247,10 +1423,10 @@ object MaterialsForm: TMaterialsForm
         STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
         STFilter.InstantApply = True
         STFilter.Local = True
-        STFilter.Visible = True
         TabOrder = 0
         TitleParams.VTitleMargin = 5
         VertScrollBar.SmoothStep = True
+        OnDblClick = dbgGridPivotDblClick
         Columns = <
           item
             CellButtons = <>
@@ -1277,6 +1453,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'M_TYPE'
             Footers = <>
             Title.Caption = #1054#1087#1077#1088#1072#1094#1080#1103
+            Title.Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1087#1086' '#1087#1086#1083#1102' - '#1086#1090#1082#1088#1099#1090#1080#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1072' '
             Width = 152
           end
           item
@@ -1286,6 +1463,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'M_DOC'
             Footers = <>
             Title.Caption = #1044#1086#1082#1091#1084#1077#1085#1090
+            Title.Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1087#1086' '#1087#1086#1083#1102' - '#1086#1090#1082#1088#1099#1090#1080#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1072' '
             Width = 97
           end
           item
@@ -1332,9 +1510,9 @@ object MaterialsForm: TMaterialsForm
       Caption = #1057#1077#1088'. '#1085#1086#1084#1077#1088#1072
       ImageIndex = 7
       object dbgSN: TDBGridEh
-        Left = 0
+        Left = 26
         Top = 0
-        Width = 927
+        Width = 901
         Height = 165
         Align = alClient
         AllowedOperations = [alopUpdateEh]
@@ -1509,207 +1687,56 @@ object MaterialsForm: TMaterialsForm
         object RowDetailData: TRowDetailPanelControlEh
         end
       end
-    end
-    object tsPivotSN: TTabSheet
-      Caption = #1057#1074#1077#1088#1082#1072' '#1057'/'#1053
-      ImageIndex = 8
-      object dbgGridPivotSN: TDBGridEh
+      object Panel6: TPanel
         Left = 0
         Top = 0
-        Width = 927
+        Width = 26
         Height = 165
-        Align = alClient
-        AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
-        ColumnDefValues.AlwaysShowEditButton = True
-        ColumnDefValues.Title.TitleButton = True
-        ColumnDefValues.Title.ToolTips = True
-        ColumnDefValues.ToolTips = True
-        Ctl3D = True
-        DataGrouping.Active = True
-        DataGrouping.Color = clGradientInactiveCaption
-        DataGrouping.Footers = <
-          item
-            ColumnItems = <
-              item
-                ValueType = gfvCountEh
-              end
-              item
-              end
-              item
-                ValueType = gfvSumEh
-              end
-              item
-              end
-              item
-              end
-              item
-              end
-              item
-              end
-              item
-              end
-              item
-              end
-              item
-              end
-              item
-              end>
-            Visible = True
-          end>
-        DataGrouping.GroupPanelVisible = True
-        DataGrouping.GroupRowDefValues.RowHeight = 4
-        DataGrouping.GroupRowDefValues.RowLines = 1
-        DataGrouping.ParentColor = False
-        DataSource = srcPivotSN
-        DynProps = <>
-        EditActions = [geaCopyEh, geaSelectAllEh]
-        EvenRowColor = clWindow
-        Flat = True
-        FooterParams.Color = clBtnFace
-        GridLineParams.GridBoundaries = True
-        HorzScrollBar.ExtraPanel.Visible = True
-        IndicatorTitle.DropdownMenu = pmPivot
-        IndicatorTitle.ShowDropDownSign = True
-        IndicatorTitle.TitleButton = True
-        IndicatorTitle.UseGlobalMenu = False
-        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
-        ParentCtl3D = False
-        ParentShowHint = False
-        RowDetailPanel.Height = 200
-        RowSizingAllowed = True
-        SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
-        SearchPanel.Location = splHorzScrollBarExtraPanelEh
-        ShowHint = True
-        SortLocal = True
-        STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
-        STFilter.InstantApply = True
-        STFilter.Local = True
-        STFilter.Location = stflInTitleFilterEh
-        TabOrder = 0
-        TitleParams.PopupMenu = pmPivot
-        TitleParams.VTitleMargin = 5
-        VertScrollBar.SmoothStep = True
-        OnDblClick = dbgGridPivotSNDblClick
-        OnSortMarkingChanged = dbgGridPivotSNSortMarkingChanged
-        Columns = <
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'RQ_ID'
-            Footer.ValueType = fvtCount
-            Footers = <>
-            ReadOnly = True
-            Title.Caption = #1047#1072#1103#1074#1082#1072
-            Width = 72
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'ACCOUNT_NO'
-            Footer.FieldName = 'ACCOUNT_NO'
-            Footer.ValueType = fvtCount
-            Footers = <>
-            Title.Caption = #1051'/'#1057' '#1072#1073#1086#1085
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'IN_OUT'
-            Footer.FieldName = 'IN_OUT'
-            Footer.ValueType = fvtSum
-            Footers = <>
-            ReadOnly = True
-            Title.Caption = #1042#1099#1076'/'#1042#1086#1079#1074#1088
-            Width = 76
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'SERIAL'
-            Footers = <>
-            Title.Caption = #1057'/'#1053
-            Width = 107
-            OnGetCellParams = dbgGridPivotSNColumns3GetCellParams
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'COST'
-            Footers = <>
-            Title.Caption = #1062#1077#1085#1072
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'SOLD'
-            Footers = <>
-            KeyList.Strings = (
-              #1055#1056#1054#1044#1040#1053
-              #1040#1056#1045#1053#1044#1040
-              #1056#1040#1057#1057#1056#1054#1063#1050#1040
-              #1058#1045#1057#1058)
-            PickList.Strings = (
-              #1055#1056#1054#1044#1040#1053
-              #1040#1056#1045#1053#1044#1040
-              #1056#1040#1057#1057#1056#1054#1063#1050#1040
-              #1058#1045#1057#1058)
-            Title.Caption = #1055#1056'/'#1040#1056
-            Width = 55
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'DOC_N'
-            Footers = <>
-            Title.Caption = #1044#1086#1082#1091#1084#1077#1085#1090
-            Width = 114
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'DOC_DATE'
-            Footers = <>
-            Title.Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
-            Width = 72
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'RQ_EXEC_TIME'
-            Footers = <>
-            ReadOnly = True
-            Title.Caption = #1042#1099#1076#1072#1085#1086' / '#1079#1072#1103#1074#1082#1072' '#1042#1099#1087#1086#1083#1085#1077#1085#1072
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'NOTICE'
-            Footers = <>
-            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          end
-          item
-            CellButtons = <>
-            DynProps = <>
-            EditButtons = <>
-            FieldName = 'RQ_DEFECT'
-            Footers = <>
-            ReadOnly = True
-            Title.Caption = #1058#1077#1082#1089#1090' '#1080#1079' '#1079#1072#1103#1074#1082#1080
-            Width = 200
-          end>
-        object RowDetailData: TRowDetailPanelControlEh
+        Align = alLeft
+        BevelOuter = bvNone
+        TabOrder = 1
+        object BitBtn2: TBitBtn
+          Left = 1
+          Top = 4
+          Width = 23
+          Height = 24
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00959595FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF939393FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFD9BB9EFFD9BB9EFFD9BB9EFFD9BB
+            9EFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FFFF00FF00FF00FF00FF00FF00FF00FF00868686FF7777
+            77FF777777FF777777FF777777FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF787878FF777777FF777777FF777777FF8C8C8CFF777777FFFF00
+            FF00FF00FF00777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF777777FF777777FF777777FF777777FF777777FF777777FF7777
+            77FFD7D7D7FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFEFEFEFFD9D9D9FF777777FF777777FF777777FF7777
+            77FFFCFCFCFFBC8955FFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFBD8956FFFEFEFEFF777777FF777777FF777777FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF777777FF848484FF7777
+            77FFFBFBFAFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFDFDFCFF777777FF898989FFFF00FF00FF00
+            FF00FF00FF00B3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB3773DFFB377
+            3DFFB3773DFFB3773DFFB3773DFFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00797979FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
+            77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
+          TabOrder = 0
+          OnClick = btnPrintIncomeClick
         end
       end
     end
@@ -1825,21 +1852,26 @@ object MaterialsForm: TMaterialsForm
       ImageIndex = 47
       OnExecute = actShowSNExecute
     end
+    object actPrintGrid: TAction
+      Caption = #1055#1077#1095#1072#1090#1100' '#1090#1072#1073#1083#1080#1094#1099
+      OnExecute = actPrintGridExecute
+    end
   end
   object dsRemain: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.INVENTORY'
       '  , o.o_name as WH'
-      '  , m.MR_COST'
+      '  , t.COST MR_COST'
       '  , @@qnt_clause%m.Mr_Quant@ Mr_Quant'
       '  , @@sn_clause%null@ SERIAL'
-      '  '
+      '  , t.COST*(@@qnt_clause%m.Mr_Quant@) TOTAL'
+      '  , o.O_DESCRIPTION WH_NOTICE'
       '  from Materials_Remain m'
       
         '       inner join objects o on (o.o_id = m.WH_ID and o.o_type = ' +
         '10)'
-      ''
+      '       inner join materials t on (t.M_Id = m.M_Id)'
       '       @@join_clause%@'
       ''
       '  where m.M_Id = :M_ID'
@@ -1951,7 +1983,6 @@ object MaterialsForm: TMaterialsForm
   object srcMatGropups: TDataSource
     AutoEdit = False
     DataSet = dsMatGropups
-    OnStateChange = srcMatGropupsStateChange
     Left = 49
     Top = 156
   end
@@ -2076,7 +2107,6 @@ object MaterialsForm: TMaterialsForm
       '    SUSPEND;'
       'END'
       'END')
-    AfterScroll = dsMaterialsAfterScroll
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -2111,25 +2141,6 @@ object MaterialsForm: TMaterialsForm
     OnDataChange = srcDataSourceDataChange
     Left = 367
     Top = 125
-  end
-  object pmPopUp: TPopupMenu
-    Left = 220
-    Top = 70
-    object ppmCopy: TMenuItem
-      Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
-      OnClick = ppmCopyClick
-    end
-    object ppmSelectAll: TMenuItem
-      Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
-      OnClick = ppmSelectAllClick
-    end
-    object MenuItem1: TMenuItem
-      Caption = '-'
-    end
-    object ppmSaveSelection: TMenuItem
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
-      OnClick = ppmSaveSelectionClick
-    end
   end
   object PropStorage: TPropStorageEh
     StorageManager = dmMain.iniPropStorage
@@ -2228,7 +2239,7 @@ object MaterialsForm: TMaterialsForm
       '  , D.Edit_On'
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
       '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
-      ''
+      '  , t.O_CHARFIELD DT_REPORT'
       '  , @@qnt_clause%im.M_Quant@ M_Quant  '
       '  , @@sn_clause%null@ SERIAL'
       '   '
@@ -2346,7 +2357,7 @@ object MaterialsForm: TMaterialsForm
       '  , D.Edit_On'
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
       '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
-      '  '
+      '  , t.O_CHARFIELD DT_REPORT  '
       '  , @@qnt_clause%im.M_Quant@ M_Quant  '
       '  , @@sn_clause%null@ SERIAL'
       '      '
@@ -2413,6 +2424,7 @@ object MaterialsForm: TMaterialsForm
       '    d.Doc_Id'
       '  , D.Added_On'
       '  , D.Edit_On'
+      '  , t.O_CHARFIELD DT_REPORT  '
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
       '  , coalesce(e.Surname, d.Edit_By) as Edit_By    '
       '  from Material_Docs d'
@@ -2441,7 +2453,7 @@ object MaterialsForm: TMaterialsForm
     AutoCommit = True
     DataSource = srcDataSource
     Left = 251
-    Top = 279
+    Top = 295
     WaitEndMasterScroll = True
     dcForceOpen = True
   end
@@ -2472,7 +2484,7 @@ object MaterialsForm: TMaterialsForm
       '  , D.Edit_On'
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
       '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
-      ''
+      '  , t.O_CHARFIELD DT_REPORT'
       '  , @@qnt_clause%-1*im.M_Quant@ M_Quant'
       '  , @@itg_clause%-1*im.M_Quant*m.Cost@ ITOGO  '
       '  , @@sn_clause%null@ SERIAL'
@@ -2483,6 +2495,9 @@ object MaterialsForm: TMaterialsForm
       
         '       left outer join objects w on ( w.O_Id = d.Wh_Id and w.O_T' +
         'ype = 10)'
+      
+        '       left outer join objects t on (t.O_Id = d.Dt_Id and t.O_TY' +
+        'PE = 28)'
       '       left outer join worker a on (a.Ibname = d.Added_By)'
       '       left outer join worker e on (e.Ibname = d.Edit_By)'
       '       '
@@ -2576,7 +2591,7 @@ object MaterialsForm: TMaterialsForm
       '      when 2 then '#39#1074' '#1088#1077#1084#1086#1085#1090#1077#39
       '      when 3 then '#39#1087#1088#1086#1076#1072#1085#39
       '      when 4 then '#39#1089#1087#1080#1089#1072#1085#39
-      '      else u.State || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
+      '      else u.State || '#39' '#1085#1077' '#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
       '    end STATE_STR'
       '  , o.O_Name OT_NAME'
       '  , case u.Owner_Type'
@@ -2589,7 +2604,7 @@ object MaterialsForm: TMaterialsForm
       
         '      when 2 then (select first 1 n.Name from Nodes n where u.Ow' +
         'ner = n.Node_Id)'
-      '      else u.Owner_Type || '#39' '#1085#1077#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
+      '      else u.Owner_Type || '#39' '#1085#1077' '#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
       '    end OWNER_STR'
       '  , case u.Owner_Type'
       
@@ -2647,393 +2662,11 @@ object MaterialsForm: TMaterialsForm
     Left = 720
     Top = 248
   end
-  object srcPivotSN: TDataSource
-    DataSet = dsPivotSN
-    Left = 564
-    Top = 347
-  end
-  object dsPivotSN: TMemTableEh
-    AggregatesActive = True
-    DetailFields = 'M_ID'
-    FetchAllOnOpen = True
-    MasterDetailSide = mdsOnProviderEh
-    MasterFields = 'M_ID'
-    MasterSource = srcDataSource
-    Params = <>
-    DataDriver = drvPivotSN
-    AfterOpen = dsPivotSNAfterOpen
-    OnNewRecord = dsPivotSNNewRecord
-    Left = 564
-    Top = 299
-  end
-  object drvPivotSN: TpFIBDataDriverEh
-    Database = dmMain.dbTV
-    SelectCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-        Value = Null
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_ID'
-        ParamType = ptUnknown
-      end>
-    SelectCommand.CommandText.Strings = (
-      'select'
-      '*'
-      'from ('
-      '    select'
-      '        a.Rq_Id, a.M_Id, a.In_Out, a.Tbl_Id'
-      '      , cast(r.Rq_Exec_Time as DATE) Rq_Exec_Time, r.Rq_Defect'
-      '      , t.Cost, t.Serial, t.Doc_N, t.Doc_Date, t.Sold'
-      '      , c.Customer_Id, c.Account_No'
-      '      , t.Notice'
-      '      from (select'
-      '                rm.RQ_ID, rm.M_Id, 1 In_Out, rm.Rm_Id Tbl_Id'
-      '              from request_materials rm'
-      '              where rm.m_id = :M_ID'
-      '            union'
-      '            select'
-      '                rm.RQ_ID, rm.M_Id, -1 In_Out, rm.Id Tbl_Id'
-      '              from Request_Materials_Return rm'
-      '              where rm.m_id = :M_ID) a'
-      '           inner join request r on (r.Rq_Id = a.Rq_Id)'
-      
-        '           left outer join UNIT_TMP t on (r.Rq_Id = t.Rq_Id and ' +
-        't.Tbl_Id = a.Tbl_Id and t.M_Id = :M_ID)'
-      
-        '           left outer join customer c on (c.Customer_Id = r.Rq_C' +
-        'ustomer)'
-      '    union'
-      '    select'
-      '        null Rq_Id, t.M_Id, In_Out, null Tbl_Id'
-      '      , cast(t.RQ_DATE as DATE) Rq_Exec_Time, null Rq_Defect'
-      '      , t.Cost, t.Serial, t.Doc_N, t.Doc_Date, t.Sold'
-      '      , null Customer_Id, t.Account Account_No'
-      '      , t.Notice'
-      '    from UNIT_TMP t'
-      '    where t.Rq_Id is null and t.m_id = :M_ID'
-      ')'
-      'order by Rq_Exec_Time'
-      ''
-      '')
-    UpdateCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'M_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Cost'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Serial'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Doc_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Doc_Date'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'SOLD'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Tbl_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'RQ_DEFECT'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'NOTICE'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Account_No'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Cost'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Serial'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Doc_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Doc_Date'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Sold'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'NOTICE'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'ACCOUNT'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'M_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Serial'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Tbl_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'txt'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'RQ_DEFECT'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'RQ_DEFECT'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end>
-    UpdateCommand.CommandText.Strings = (
-      'execute block ('
-      '    M_Id      integer = :M_Id,'
-      '    Rq_Id     integer = :Rq_Id,'
-      '    Cost      numeric(15,2) = :Cost,'
-      '    Serial    varchar(50) = :Serial,'
-      '    Doc_N     varchar(50) = :Doc_N,'
-      '    Doc_Date  date = :Doc_Date,'
-      '    Sold      varchar(20) = :Sold,'
-      '    TBL_ID    INT_NULL = :TBL_ID,'
-      '    RQ_DEFECT D_NOTICE = :RQ_DEFECT,'
-      '    NOTICE D_NOTICE = :NOTICE,'
-      '    ACCOUNT   D_ACCOUNT_NS = :Account_No)'
-      'as'
-      'declare variable txt D_NOTICE;'
-      'begin'
-      '  update Unit_Tmp'
-      '  set Cost = :Cost,'
-      '      Serial = :Serial,'
-      '      Doc_N = :Doc_N,'
-      '      Doc_Date = :Doc_Date,'
-      '      Sold = :Sold,'
-      '      NOTICE = :NOTICE,'
-      '     ACCOUNT = :ACCOUNT     '
-      '  where M_Id = :M_Id'
-      '        and (((:Rq_Id is null)'
-      '        and Serial = :Serial)'
-      '          or ((not :Rq_Id is null)'
-      '        and Rq_Id = :Rq_Id'
-      '        and Tbl_Id = :Tbl_Id));'
-      ''
-      '  if (not Rq_Id is null) then begin'
-      '    select'
-      '        RQ_DEFECT'
-      '      from Request'
-      '      where Rq_Id = :Rq_Id'
-      '    into :txt;'
-      '    if (txt is distinct from :RQ_DEFECT) then begin'
-      '      update Request'
-      '      set RQ_DEFECT = :RQ_DEFECT'
-      '      where Rq_Id = :Rq_Id;'
-      '    end'
-      '  end'
-      'end')
-    InsertCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'M_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'In_Out'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Tbl_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Cost'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Serial'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Doc_N'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Doc_Date'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Sold'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'notice'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Account_No'
-        ParamType = ptUnknown
-      end>
-    InsertCommand.CommandText.Strings = (
-      
-        'insert into Unit_Tmp (M_Id, Rq_Id, In_Out, Tbl_Id, Cost, Serial,' +
-        ' Doc_N, Doc_Date, Sold, notice, account)'
-      
-        'values (:M_Id, :Rq_Id, :In_Out, :Tbl_Id, :Cost, :Serial, :Doc_N,' +
-        ' :Doc_Date, :Sold, :notice, :Account_No')
-    DeleteCommand.Params = <
-      item
-        DataType = ftUnknown
-        Name = 'M_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Serial'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Rq_Id'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Tbl_Id'
-        ParamType = ptUnknown
-      end>
-    DeleteCommand.CommandText.Strings = (
-      'delete from Unit_Tmp'
-      'where '
-      '     M_Id = :M_Id'
-      '      and ('
-      '        ((:Rq_Id is null) and Serial = :Serial)'
-      '        or'
-      
-        '        ((not :Rq_Id is null)and Rq_Id = :Rq_Id and Tbl_Id = :Tb' +
-        'l_Id)'
-      '      )')
-    GetrecCommand.Params = <>
-    Left = 564
-    Top = 251
-  end
   object pmPivot: TPopupMenu
     Left = 668
     Top = 152
     object miRowHight: TMenuItem
       Caption = #1040#1074#1090#1086#1074#1099#1089#1086#1090#1072' '#1089#1090#1088#1086#1082
-      OnClick = miRowHightClick
     end
   end
   object frxMaterials: TfrxDBDataset
@@ -3054,17 +2687,6 @@ object MaterialsForm: TMaterialsForm
       Action = actChangeSerial
     end
     object miN2: TMenuItem
-      Caption = '-'
-    end
-    object mi1: TMenuItem
-      Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
-      OnClick = ppmCopyClick
-    end
-    object mi2: TMenuItem
-      Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
-      OnClick = ppmSelectAllClick
-    end
-    object miSep1: TMenuItem
       Caption = '-'
     end
     object miStateChange: TMenuItem
@@ -3095,12 +2717,78 @@ object MaterialsForm: TMaterialsForm
         OnClick = miN41Click
       end
     end
+    object miSep1: TMenuItem
+      Caption = '-'
+    end
+    object mi1: TMenuItem
+      Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      OnClick = mi1Click
+    end
+    object mi2: TMenuItem
+      Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
+      OnClick = mi2Click
+    end
     object mi3: TMenuItem
       Caption = '-'
     end
     object mi4: TMenuItem
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
-      OnClick = ppmSaveSelectionClick
+      OnClick = mi4Click
     end
+    object miPrint: TMenuItem
+      Action = actPrintGrid
+    end
+  end
+  object pmPopUp: TPopupMenu
+    Left = 203
+    Top = 87
+    object mniFilterFLD: TMenuItem
+      Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1079#1085#1072#1095#1077#1085#1080#1102
+      OnClick = mniFilterFLDClick
+    end
+    object mniN1: TMenuItem
+      Caption = '-'
+    end
+    object pmgCopy: TMenuItem
+      Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      OnClick = pmgCopyClick
+    end
+    object pmgSelectAll: TMenuItem
+      Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
+      OnClick = pmgSelectAllClick
+    end
+    object pmgSep2: TMenuItem
+      Caption = '-'
+    end
+    object pmgSaveSelection: TMenuItem
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
+      OnClick = pmgSaveSelectionClick
+    end
+    object miPrintGrid: TMenuItem
+      Action = actPrintGrid
+    end
+    object pmgSep1: TMenuItem
+      Caption = '-'
+    end
+    object miRefresh: TMenuItem
+      Caption = '&'#1055#1077#1088#1077#1095#1080#1090#1072#1090#1100' '#1076#1072#1085#1085#1099#1077
+      OnClick = miRefreshClick
+    end
+  end
+  object printGridEh: TPrintDBGridEh
+    Options = []
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'Tahoma'
+    PageFooter.Font.Style = []
+    PageHeader.Font.Charset = DEFAULT_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -11
+    PageHeader.Font.Name = 'Tahoma'
+    PageHeader.Font.Style = []
+    Units = MM
+    Left = 744
+    Top = 160
   end
 end

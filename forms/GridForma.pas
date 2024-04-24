@@ -8,8 +8,9 @@ uses
   Data.DB,
   Vcl.Menus, Vcl.ActnList, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls,
-  DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhImpExp, DBGridEhFindDlgs, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst;
+  DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst, amSplitter,
+  PrnDbgeh;
 
 type
   TGridForm = class(TForm)
@@ -48,6 +49,9 @@ type
     pmgSep2: TMenuItem;
     miRefresh: TMenuItem;
     splPG: TSplitter;
+    printGridEh: TPrintDBGridEh;
+    actPrintGrid: TAction;
+    miPrintGrid: TMenuItem;
     procedure actQuickFilterExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pmgCopyClick(Sender: TObject);
@@ -65,6 +69,8 @@ type
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure FormCreate(Sender: TObject);
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
+    procedure actPrintGridExecute(Sender: TObject);
   protected
     { Private declarations }
     FCanEdit: Boolean;
@@ -153,6 +159,17 @@ begin
   except
     dbGrid.SearchPanel.CancelSearchFilter;
     dbGrid.SearchPanel.Visible := False;
+  end;
+end;
+
+procedure TGridForm.actPrintGridExecute(Sender: TObject);
+var
+  dbg: TDBGridEh;
+begin
+  if (ActiveControl is TDBGridEh) then
+  begin
+    printGridEh.DBGridEh := (ActiveControl as TDBGridEh);
+    printGridEh.Preview;
   end;
 end;
 
@@ -316,6 +333,7 @@ begin
     end;
   end;
   FinEditMode := False;
+  SetGridsPopUpMenu(pmPopUp);
 end;
 
 procedure TGridForm.pmgCopyClick(Sender: TObject);
@@ -327,69 +345,17 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-      begin
-        // Экспорт информации
-        if (dmMain.AllowedAction(rght_Export)) then
-          DBGridEh_DoCopyAction(dbg, False);
-      end
+         A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
 end;
 
 procedure TGridForm.pmgSaveSelectionClick(Sender: TObject);
-var
-  ExpClass: TDBGridEhExportClass;
-  Ext: String;
-
 begin
   inherited;
-  // Экспорт информации
-  if (not dmMain.AllowedAction(rght_Export)) then
-    Exit;
-
-  A4MainForm.SaveDialog.FileName := rsTable;
   if (ActiveControl is TDBGridEh) then
-    if A4MainForm.SaveDialog.Execute then
-    begin
-      case A4MainForm.SaveDialog.FilterIndex of
-        1:
-          begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
-          end;
-        2:
-          begin
-            ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
-          end;
-        3:
-          begin
-            ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
-          end;
-        4:
-          begin
-            ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
-          end;
-        5:
-          begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
-          end;
-      else
-        ExpClass := nil;
-        Ext := '';
-      end;
-      if ExpClass <> nil then
-      begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.FileName, Length(A4MainForm.SaveDialog.FileName) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.FileName := A4MainForm.SaveDialog.FileName + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, TDBGridEh(ActiveControl), A4MainForm.SaveDialog.FileName, False);
-      end;
-    end;
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
 procedure TGridForm.pmgSelectAllClick(Sender: TObject);
@@ -517,6 +483,37 @@ begin
     Result := Result + ','
   end;
   Result := Result.TrimRight([',']);
+end;
+
+procedure TGridForm.SetGridsPopUpMenu(pmGrid: TPopupMenu);
+var
+  rghtExport: Boolean;
+var
+  i: Integer;
+begin
+  actPrintGrid.Visible := dmMain.AllowedAction(rght_Reports_view);
+  rghtExport := dmMain.AllowedAction(rght_Export);
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).EditActions := (Components[i] as TDBGridEh).EditActions + [geaCopyEh];
+      (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
+      (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
+
+      if rghtExport then begin
+        (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks,gstRectangle,gstColumns,gstAll];
+        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
+      end
+      else begin
+        (Components[i] as TDBGridEh).AllowedSelections := [];
+        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
+      end;
+
+      if ((Components[i] as TDBGridEh).PopUpMenu = nil) then
+        (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
+    end;
+  end;
 end;
 
 end.

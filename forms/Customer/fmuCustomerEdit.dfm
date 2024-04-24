@@ -1371,8 +1371,8 @@ object apgCustomerEdit: TapgCustomerEdit
     Top = 327
   end
   object ds: TDataSource
-    Left = 507
-    Top = 188
+    Left = 515
+    Top = 164
   end
   object dsOrg: TpFIBDataSet
     UpdateSQL.Strings = (

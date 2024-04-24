@@ -25,17 +25,15 @@ object CustomersForm: TCustomersForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object splMain: TdnSplitter
+  object splMain: TSplitter
     Left = 0
-    Top = 270
-    AlignControl = pnlForms
+    Top = 271
+    Width = 970
+    Height = 4
+    Cursor = crVSplit
+    Align = alBottom
     ResizeStyle = rsLine
-    Size = 5
-    ButtonVisible = False
-    ButtonAlign = baRightBottom
-    ButtonWidth = 40
-    ExplicitTop = 275
-    ExplicitWidth = 0
+    ExplicitTop = 272
   end
   object pnlForms: TPanel
     Left = 0
@@ -45,20 +43,17 @@ object CustomersForm: TCustomersForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 3
-    object spl1: TdnSplitter
+    object spl1: TSplitter
       Left = 201
       Top = 0
-      AlignControl = pnlGrdForms
+      Width = 4
+      Height = 251
       ResizeStyle = rsLine
-      Size = 5
-      ButtonVisible = False
-      ButtonAlign = baRightBottom
-      ButtonWidth = 40
     end
     object pnlDATA: TPanel
-      Left = 206
+      Left = 205
       Top = 0
-      Width = 764
+      Width = 765
       Height = 251
       Align = alClient
       BevelOuter = bvNone
@@ -117,7 +112,7 @@ object CustomersForm: TCustomersForm
     Left = 0
     Top = 57
     Width = 970
-    Height = 213
+    Height = 214
     Align = alClient
     AllowedOperations = []
     ColumnDefValues.ToolTips = True

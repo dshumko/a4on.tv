@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.DateUtils,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, 
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
   Vcl.DBCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus,
-  DBGridEhGrouping, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, pFIBProps, pFIBQuery, FIBQuery, DBGridEhImpExp;
+  DBGridEhGrouping, DBCtrlsEh, GridsEh, DBGridEh, 
+  FIBDataSet, pFIBDataSet, pFIBProps, pFIBQuery, FIBQuery, DBGridEhImpExp, amSplitter;
 
 type
   TCustomerAddons = class(TFrame)

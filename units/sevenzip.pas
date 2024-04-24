@@ -1590,8 +1590,6 @@ begin
         TPropVariant(value).filetime := item.CreationTime;
       end;
     kpidIsAnti: value := item.IsAnti;
-  else
-   // beep(0,0);
   end;
   Result := S_OK;
 end;

@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PlannersEh, SpreadGridsEh, PlannerCalendarPickerEh, EhLibVCL,
   GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, PlannerDataEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet, DataDriverEh,
-  pFIBDataDriverEh, FIBDatabase, pFIBDatabase;
+  pFIBDataDriverEh, FIBDatabase, pFIBDatabase, amSplitter;
 
 type
   TReqPlanerForm = class(TForm)

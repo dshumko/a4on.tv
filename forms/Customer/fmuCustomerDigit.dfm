@@ -357,6 +357,7 @@ object apgCustomerDigit: TapgCustomerDigit
           #1077' '#1087#1086#1076#1087#1080#1089#1072#1085' '#1072#1073#1086#1085#1077#1085#1090
         Align = alTop
         Caption = '.: '#1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080' '#1076#1083#1103' '#1076#1077#1082#1086#1076#1077#1088#1072' :.'
+        ExplicitWidth = 213
       end
       object dbgrdhDecoderPacket: TDBGridEh
         Left = 26
@@ -448,6 +449,7 @@ object apgCustomerDigit: TapgCustomerDigit
         Height = 13
         Align = alTop
         Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1077' '#1082#1072#1085#1072#1083#1099' '#1072#1073#1086#1085#1077#1085#1090#1072' ::.'
+        ExplicitWidth = 196
       end
       object dbgCustChan: TDBGridEh
         Left = 26
@@ -838,7 +840,7 @@ object apgCustomerDigit: TapgCustomerDigit
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 445
+    Left = 453
     Top = 74
   end
   object srcChannels: TDataSource

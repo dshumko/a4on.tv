@@ -13,7 +13,7 @@ uses
   ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh,
   EhLibFIB,
   FIBQuery, pFIBQuery, MemTableDataEh, MemTableEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh,
-  PropFilerEh, PropStorageEh;
+  PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TEPGViewForm = class(TForm)

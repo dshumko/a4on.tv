@@ -16,23 +16,28 @@ object apgCustomerInfo: TapgCustomerInfo
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object pnlAddInfo: TPanel
-    Left = 446
+  object dnSplitterHTML: TSplitter
+    Left = 441
     Top = 0
-    Width = 500
+    Width = 4
+    Height = 229
+    ResizeStyle = rsLine
+  end
+  object pnlAddInfo: TPanel
+    Left = 445
+    Top = 0
+    Width = 501
     Height = 229
     Align = alClient
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 0
-    object spltMemo: TdnSplitter
+    object spltMemo: TSplitter
       Left = 257
       Top = 0
-      AlignControl = pnlDP
-      ParentBackground = False
+      Width = 4
+      Height = 229
       ResizeStyle = rsLine
-      Size = 5
-      ButtonVisible = False
     end
     object pnlDP: TPanel
       Left = 0
@@ -96,8 +101,8 @@ object apgCustomerInfo: TapgCustomerInfo
         object dbtxtDEBT: TDBText
           Left = 2
           Top = 15
-          Width = 253
-          Height = 22
+          Width = 99
+          Height = 25
           Align = alClient
           Alignment = taCenter
           AutoSize = True
@@ -108,8 +113,6 @@ object apgCustomerInfo: TapgCustomerInfo
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitWidth = 99
-          ExplicitHeight = 25
         end
         object pnlPrepay: TPanel
           Left = 2
@@ -131,8 +134,8 @@ object apgCustomerInfo: TapgCustomerInfo
           object dbtxtPrepay: TDBText
             Left = 0
             Top = 0
-            Width = 253
-            Height = 21
+            Width = 84
+            Height = 19
             Hint = #1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
             Align = alClient
             Alignment = taCenter
@@ -144,8 +147,6 @@ object apgCustomerInfo: TapgCustomerInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             ParentFont = False
-            ExplicitWidth = 84
-            ExplicitHeight = 19
           end
         end
       end
@@ -271,10 +272,9 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 96
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alLeft
             Caption = '       '
-            ExplicitHeight = 13
           end
           object btnCAdd: TSpeedButton
             Left = 60
@@ -298,10 +298,9 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 218
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alRight
             Caption = '       '
-            ExplicitHeight = 13
           end
           object btnCEdit: TSpeedButton
             Left = 78
@@ -316,20 +315,20 @@ object apgCustomerInfo: TapgCustomerInfo
       end
     end
     object gbMemo: TGroupBox
-      Left = 262
+      Left = 261
       Top = 0
-      Width = 238
+      Width = 240
       Height = 229
       Align = alClient
       Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '
       TabOrder = 1
       DesignSize = (
-        238
+        240
         229)
       object memCustNotice: TDBMemoEh
         Left = 2
         Top = 15
-        Width = 234
+        Width = 236
         Height = 212
         Align = alClient
         AutoSize = False
@@ -347,7 +346,7 @@ object apgCustomerInfo: TapgCustomerInfo
         OnKeyPress = memCustNoticeKeyPress
       end
       object btnSaveNotice: TButton
-        Left = 160
+        Left = 162
         Top = 200
         Width = 75
         Height = 25
@@ -359,21 +358,6 @@ object apgCustomerInfo: TapgCustomerInfo
       end
     end
   end
-  object dnSplitterHTML: TdnSplitter
-    Left = 441
-    Top = 0
-    AlignControl = pnlHTML
-    ResizeStyle = rsLine
-    Size = 5
-    ButtonVisible = False
-  end
-  object dnSplitterPhone: TdnSplitter
-    Left = 153
-    Top = 8
-    ResizeStyle = rsLine
-    Size = 5
-    ButtonVisible = False
-  end
   object pnlHTML: TPanel
     Left = 0
     Top = 0
@@ -381,7 +365,7 @@ object apgCustomerInfo: TapgCustomerInfo
     Height = 229
     Align = alLeft
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 1
     object pnlACC: TPanel
       Left = 0
       Top = 0

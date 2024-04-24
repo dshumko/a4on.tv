@@ -16,6 +16,7 @@ object PaymentForm: TPaymentForm
   OldCreateOrder = True
   Position = poDefault
   Scaled = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -116,6 +117,12 @@ object PaymentForm: TPaymentForm
       Height = 28
       Align = alTop
       BevelOuter = bvNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
     end
   end
@@ -330,12 +337,11 @@ object PaymentForm: TPaymentForm
     end
     object Panel5: TPanel
       Left = 0
-      Top = 391
+      Top = 417
       Width = 369
-      Height = 58
+      Height = 32
       Align = alClient
-      Caption = 'Panel5'
-      TabOrder = 7
+      TabOrder = 8
       object Label9: TLabel
         Left = 1
         Top = 1
@@ -349,7 +355,7 @@ object PaymentForm: TPaymentForm
         Left = 1
         Top = 14
         Width = 367
-        Height = 43
+        Height = 17
         Align = alClient
         AutoSize = False
         DataField = 'NOTICE'
@@ -681,6 +687,43 @@ object PaymentForm: TPaymentForm
         end
       end
     end
+    object pnlPayInput: TPanel
+      Left = 0
+      Top = 391
+      Width = 369
+      Height = 26
+      Align = alTop
+      TabOrder = 7
+      DesignSize = (
+        369
+        26)
+      object Label2: TLabel
+        Left = 7
+        Top = 5
+        Width = 77
+        Height = 13
+        Caption = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
+      end
+      object cbbPayTypeStr: TDBLookupComboboxEh
+        Left = 89
+        Top = 2
+        Width = 274
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = 'PAY_TYPE_STR'
+        DataSource = srcMemPayment
+        EmptyDataInfo.Text = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
+        EditButtons = <>
+        KeyField = 'O_NAME'
+        ListField = 'O_NAME'
+        ListSource = srcPT
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+      end
+    end
   end
   object pnlBottom: TPanel
     Left = 0
@@ -746,7 +789,9 @@ object PaymentForm: TPaymentForm
       '  , s.name'
       '  , s.description'
       '  from services s'
-      '  where exists(select'
+      '  where'
+      '   @@FilterSRV% @'
+      '   (exists(select'
       '                   sl.Child'
       '                 from Services_Links sl'
       '                 where sl.Child = s.Service_Id'
@@ -763,7 +808,8 @@ object PaymentForm: TPaymentForm
       
         '                            and Get_Json_Value(o.O_Charfield, '#39'S' +
         'nglSrv'#39') = s.Service_Id)'
-      '  order by name')
+      '  )                          '
+      'order by name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -900,11 +946,11 @@ object PaymentForm: TPaymentForm
       
         'insert into payment (payment_id, pay_doc_id, customer_id, pay_da' +
         'te, pay_sum, fine_sum, payment_type, notice, payment_srv, ext_pa' +
-        'y_id, PAY_TYPE_STR, FISCAL)'
+        'y_id, PAY_TYPE_STR, FISCAL, RQ_ID)'
       
         'values (:payment_id, :pay_doc_id, :customer_id, :pay_date, :pay_' +
         'sum, :fine_sum, :payment_type, :notice, :payment_srv, :EXT_PAY_I' +
-        'D, :PAY_TYPE_STR, :FISCAL)'
+        'D, :PAY_TYPE_STR, :FISCAL, :RQ_ID)'
       'returning payment_id')
     Left = 481
     Top = 300
@@ -1156,5 +1202,24 @@ object PaymentForm: TPaymentForm
     DoubleBuffer = False
     Left = 400
     Top = 104
+  end
+  object dsPT: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select o.O_Name'
+      'from objects o'
+      'where o.O_Type = 61'
+      'order by 1')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    Left = 410
+    Top = 248
+    oStartTransaction = False
+    oFetchAll = True
+  end
+  object srcPT: TDataSource
+    AutoEdit = False
+    DataSet = dsPT
+    Left = 410
+    Top = 296
   end
 end

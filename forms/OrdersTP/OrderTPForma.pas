@@ -11,7 +11,7 @@ uses
   FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh, DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
   MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
   MemTableEh,
-  PropFilerEh, PropStorageEh, System.Actions, Vcl.ActnList;
+  PropFilerEh, PropStorageEh, System.Actions, Vcl.ActnList, amSplitter;
 
 type
   TOrderTPForm = class(TForm)
@@ -784,7 +784,7 @@ begin
   begin
     if FCustomerInfo.CUSTOMER_ID > 0 then
     begin
-      edPAY_DATE.Enabled := (dmMain.User = 'SYSDBA');
+      edPAY_DATE.Enabled := dmMain.UserIsAdmin;
       edPAY_DATE.EmptyDataInfo.Text := rsSetPayDate;
     end
     else

@@ -211,6 +211,7 @@ type
     lblCheckAC: TLabel;
     lbl2421: TLabel;
     edtPayCheckUrl: TDBEditEh;
+    chkEmailCheck: TCheckBox;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -475,6 +476,7 @@ begin
       SaveSettingsBoolean('SHOWALLCUSTPAYS', chkShowAllInCustomer);
       SaveSettingsBoolean('HIDEPAYADD', chkHidePayAdd);
       SaveSettingsBoolean('HIDEPAYPRINT', chkHidePayPrint);
+      SaveSettingsBoolean('EMAIL_CHECK', chkEmailCheck);
       SaveSettingsBoolean('BIDEDITNOTICE', chkBidNotice);
 
       SaveSettingsStr('SMTP', edSMTP.Text);
@@ -1010,6 +1012,8 @@ begin
         chkHidePayAdd.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'HIDEPAYPRINT' then
         chkHidePayPrint.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'EMAIL_CHECK' then
+        chkEmailCheck.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
 
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'BIDEDITNOTICE' then
         chkBidNotice.Checked := (select.FN('VAR_VALUE').AsInteger = 1);

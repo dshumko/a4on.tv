@@ -155,7 +155,6 @@ type
     procedure eACCOUNT_NOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Button2Click(Sender: TObject);
-    procedure eACCOUNT_NOEnter(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure eCONTRACT_DATEExit(Sender: TObject);
     procedure srcContactsUpdateData(Sender: TObject);
@@ -223,7 +222,8 @@ uses
   System.TypInfo, System.RegularExpressions,
   DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit,
   ContactForma,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase;
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase,
+  MAIN;
 
 {$R *.dfm}
 
@@ -405,11 +405,6 @@ end;
 procedure TapgCustomerNew.eACCOUNT_NOChange(Sender: TObject);
 begin
   FNeedCheckAccount := True;
-end;
-
-procedure TapgCustomerNew.eACCOUNT_NOEnter(Sender: TObject);
-begin
-  // CnErrors.Dispose((Sender as TControl));
 end;
 
 procedure TapgCustomerNew.eACCOUNT_NOExit(Sender: TObject);
@@ -1259,7 +1254,7 @@ var
   ps: String;
   p_RO: String;
   P_RD: String;
-  d: TDate;
+  d: TDateTime;
 begin
   fs.DateSeparator := '.';
   fs.ShortDateFormat := 'dd.mm.yyyy';
@@ -1284,12 +1279,10 @@ begin
       else if s = 'birthdate' then
       begin
         s := Trim(r[1]);
-        try
-          d := StrToDate(s, fs);
-          edtBIRTHDAY.Value := d;
-        except
-          //
-        end;
+        if (not s.IsEmpty) and TryStrToDate(s, d, fs) then
+          edtBIRTHDAY.Value := d
+        else
+          edtBIRTHDAY.Clear;
       end
       else if s = 'birthplace' then
         edtPlaceBirth.Text := Trim(r[1])
@@ -1306,87 +1299,26 @@ begin
       else if s = 'issue_date' then
       begin
         s := Trim(r[1]);
-        try
-          d := StrToDate(s, fs);
-          P_RD := dateToStr(d, fs);
-        except
-          //
+        if (not s.IsEmpty) and TryStrToDate(s, d, fs) then
+        begin
+          P_RD := DateToStr(d, fs);
         end;
       end
-
     end;
   end;
   if not(ps.IsEmpty and pn.IsEmpty) then
   begin
     edtPASSPORT_NUMBER.Text := Trim(ps + ' ' + pn);
     CheckInBlackList(edtPASSPORT_NUMBER, 1);
-  end;
+  end
+  else
+    edtPASSPORT_NUMBER.Text := '';
   edRegistration.Text := Trim(P_RD + ' ' + p_RO);
 end;
 
 function TapgCustomerNew.ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
-var
-  start: TStartupInfo;
-  procInfo: TProcessInformation;
-  tmp: THandle;
-  tmpSec: TSecurityAttributes;
-  res: TStringList;
-  return: Cardinal;
-  TmpFile, vdirName, _exeName, _cmdLine: string;
 begin
-  vdirName := ExtractFilePath(Application.ExeName);
-  _exeName := 'smartid\smartid.exe';
-  _cmdLine := _scanName + ' smartid\passport_rf.zip';
-
-  TmpFile := _scanName + '.tmp';
-
-  Result := False;
-  try
-    { Set a temporary file }
-
-    FillChar(tmpSec, SizeOf(tmpSec), #0);
-    tmpSec.nLength := SizeOf(tmpSec);
-    tmpSec.bInheritHandle := True;
-    tmp := CreateFile(PChar(TmpFile), Generic_Write, File_Share_Write, @tmpSec, Create_Always,
-      File_Attribute_Normal, 0);
-    try
-      FillChar(start, SizeOf(start), #0);
-      start.cb := SizeOf(start);
-      start.hStdOutput := tmp;
-      start.dwFlags := StartF_UseStdHandles or StartF_UseShowWindow;
-      start.wShowWindow := SW_Minimize;
-      { Start the program }
-      if CreateProcess(nil, PChar(_exeName + ' ' + _cmdLine), nil, nil, True, 0, nil, PChar(vdirName), start, procInfo)
-      then
-      begin
-        SetPriorityClass(procInfo.hProcess, Idle_Priority_Class);
-        WaitForSingleObject(procInfo.hProcess, Infinite);
-        GetExitCodeProcess(procInfo.hProcess, return);
-        Result := (return = 0);
-        CloseHandle(procInfo.hThread);
-        CloseHandle(procInfo.hProcess);
-        CloseHandle(tmp);
-        { Add the output }
-        res := TStringList.Create;
-        try
-          res.LoadFromFile(TmpFile, TEncoding.UTF8);
-          scResult.AddStrings(res);
-        finally
-          res.Free;
-        end;
-        DeleteFile(PChar(TmpFile));
-      end
-      else
-      begin
-        Application.MessageBox(PChar(SysErrorMessage(GetLastError())), 'RunCaptured Error', MB_OK);
-      end;
-    except
-      CloseHandle(tmp);
-      DeleteFile(PChar(TmpFile));
-      raise;
-    end;
-  finally
-  end;
+  Result := A4MainForm.ParseCaptured(_scanName, scResult);
 end;
 
 procedure TapgCustomerNew.CheckInBlackList(const Sender: TDBEditEh; const NT: Integer = 0);

@@ -106,6 +106,9 @@ begin
   with TDigitCardForm.Create(application) do
     try
       edtNumber.ReadOnly := True;
+      if not(dmMain.AllowedAction(rght_Customer_DigitAdd) or dmMain.AllowedAction(rght_Customer_full)) then
+        edtNumber.ReadOnly := True;
+
       ActiveControl := edtSTB;
       with TpFIBQuery.Create(dmMain) do
         try

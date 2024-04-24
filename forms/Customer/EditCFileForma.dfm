@@ -50,21 +50,21 @@ object EditCFileForm: TEditCFileForm
       DynProps = <>
       DataField = 'CF_TYPE'
       DataSource = srcCustFile
-      DropDownBox.ListSource = srcFiles
+      DropDownBox.ListSource = srcFileTypes
       DropDownBox.ListSourceAutoFilter = True
       DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1058#1080#1087' '#1092#1072#1081#1083#1072
       EditButtons = <>
       KeyField = 'O_ID'
       ListField = 'O_NAME'
-      ListSource = srcFiles
+      ListSource = srcFileTypes
       ShowHint = True
       Style = csDropDownEh
       TabOrder = 0
       Visible = True
-      OnChange = dbluFileTypeChange
       OnDropDownBoxGetCellParams = dbluFileTypeDropDownBoxGetCellParams
       OnExit = dbluFileTypeExit
     end
@@ -114,9 +114,9 @@ object EditCFileForm: TEditCFileForm
     TabOrder = 2
     object pnlNotice: TPanel
       Left = 0
-      Top = 444
+      Top = 473
       Width = 526
-      Height = 56
+      Height = 27
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 11
@@ -125,7 +125,7 @@ object EditCFileForm: TEditCFileForm
         Left = 5
         Top = 0
         Width = 516
-        Height = 56
+        Height = 27
         Margins.Left = 5
         Margins.Top = 0
         Margins.Right = 5
@@ -148,18 +148,26 @@ object EditCFileForm: TEditCFileForm
       Left = 0
       Top = 418
       Width = 526
-      Height = 26
+      Height = 55
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 10
       Visible = False
       DesignSize = (
         526
-        26)
+        55)
       object lblText: TLabel
         Tag = 1
         Left = 5
         Top = 4
+        Width = 56
+        Height = 13
+        Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090
+      end
+      object lblText1: TLabel
+        Tag = 1
+        Left = 5
+        Top = 31
         Width = 56
         Height = 13
         Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090
@@ -175,6 +183,20 @@ object EditCFileForm: TEditCFileForm
         EditButtons = <>
         ShowHint = True
         TabOrder = 0
+        Visible = True
+        OnExit = edtMobileExit
+      end
+      object edtText1: TDBEditEh
+        Tag = 1
+        Left = 85
+        Top = 28
+        Width = 436
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        EditButtons = <>
+        ShowHint = True
+        TabOrder = 1
         Visible = True
         OnExit = edtMobileExit
       end
@@ -226,7 +248,7 @@ object EditCFileForm: TEditCFileForm
         EditButtons = <>
         EmptyDataInfo.Text = 'email'
         ShowHint = True
-        TabOrder = 2
+        TabOrder = 1
         Visible = True
         OnExit = edtMobileExit
       end
@@ -238,18 +260,18 @@ object EditCFileForm: TEditCFileForm
         Hint = #1077#1089#1083#1080' '#1085#1072' '#1090#1077#1083#1077#1092#1086#1085#1077' '#1077#1089#1090#1100' WA'
         Anchors = [akTop, akRight]
         Caption = 'WA'
-        TabOrder = 1
+        TabOrder = 2
       end
     end
     object pnlDoc: TPanel
       Left = 0
-      Top = 203
+      Top = 95
       Width = 526
       Height = 114
       Align = alTop
       BevelOuter = bvNone
       ParentColor = True
-      TabOrder = 5
+      TabOrder = 2
       Visible = False
       DesignSize = (
         526
@@ -482,17 +504,18 @@ object EditCFileForm: TEditCFileForm
         Caption = #1056#1072#1089#1087#1086#1079#1085#1072#1090#1100
         TabOrder = 1
         TabStop = False
+        Visible = False
         OnClick = btnOcrClick
       end
     end
     object pnlSrv: TPanel
       Left = 0
-      Top = 148
+      Top = 262
       Width = 526
       Height = 55
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 4
+      TabOrder = 5
       DesignSize = (
         526
         55)
@@ -553,12 +576,12 @@ object EditCFileForm: TEditCFileForm
     end
     object pnlContract: TPanel
       Left = 0
-      Top = 95
+      Top = 209
       Width = 526
       Height = 27
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 2
+      TabOrder = 3
       Visible = False
       DesignSize = (
         526
@@ -626,12 +649,12 @@ object EditCFileForm: TEditCFileForm
     end
     object pnlAdr: TPanel
       Left = 0
-      Top = 122
+      Top = 236
       Width = 526
       Height = 26
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 3
+      TabOrder = 4
       Visible = False
       DesignSize = (
         526
@@ -893,7 +916,6 @@ object EditCFileForm: TEditCFileForm
         ShowHint = True
         TabOrder = 1
         Visible = True
-        OnChange = edtNAMEChange
       end
     end
     object pnlPeriod: TPanel
@@ -905,7 +927,7 @@ object EditCFileForm: TEditCFileForm
       BevelOuter = bvNone
       TabOrder = 7
       Visible = False
-      object lblBP11: TLabel
+      object lblPeriod: TLabel
         Tag = 1
         Left = 6
         Top = 4
@@ -998,10 +1020,12 @@ object EditCFileForm: TEditCFileForm
           OnClick = edtFILEEditButtons1Click
         end>
       EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1092#1072#1081#1083
+      PopupMenu = pmFile
       ReadOnly = True
       ShowHint = True
       TabOrder = 0
       Visible = True
+      OnExit = edtFILEExit
     end
     object btnScaner: TButton
       Left = 443
@@ -1015,24 +1039,23 @@ object EditCFileForm: TEditCFileForm
       OnClick = btnScanerClick
     end
   end
-  object srcFiles: TDataSource
+  object srcFileTypes: TDataSource
     AutoEdit = False
-    DataSet = dsFiles
+    DataSet = dsFileTypes
     Left = 108
     Top = 133
   end
-  object dsFiles: TpFIBDataSet
+  object dsFileTypes: TpFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_CHARFIELD, O_DI' +
         'MENSION'
       'FROM OBJECTS'
-      'WHERE O_TYPE = 33 AND O_DELETED = 0'
+      'WHERE O_TYPE = 33 AND (:IsEdit = 1 or O_DELETED = 0)'
       'order BY O_NAME')
     AutoCalcFields = False
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     Left = 42
     Top = 133
   end
@@ -1096,9 +1119,9 @@ object EditCFileForm: TEditCFileForm
       '  order by T.O_NAME, cf.Name')
     AutoUpdateOptions.GeneratorName = 'GEN__ID'
     AutoCalcFields = False
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
+    UpdateTransaction = trWrite
     AutoCommit = True
     Left = 252
     Top = 257
@@ -1120,8 +1143,8 @@ object EditCFileForm: TEditCFileForm
     TRParams.Strings = (
       'write')
     TPBMode = tpbDefault
-    Left = 97
-    Top = 184
+    Left = 473
+    Top = 192
   end
   object PropStorageEh: TPropStorageEh
     StorageManager = dmMain.iniPropStorage
@@ -1145,6 +1168,7 @@ object EditCFileForm: TEditCFileForm
         '_Id and ss.Customer_Id = :customer_id)'
       '  where s.Srv_Type_Id = 0'
       '        and s.Business_Type = :srv_type'
+      '        and ((s.Service_Id = :Srv) or (:Srv = -999) )'
       '        and ('
       '          ('
       '            (:STATE = 0)'
@@ -1154,17 +1178,20 @@ object EditCFileForm: TEditCFileForm
       '          ('
       '            (:STATE = 1)'
       '            and (coalesce(ss.State_Sgn, 0) = 0)'
-      '            and exists(select'
+      '            and ('
+      '              (:Srv <> -999)'
+      '              or exists(select'
       '                       sl.Link_Id'
       '                     from SERVICES_LINKS sl'
       '                     where sl.LINK_TYPE = 0'
       '                           and S.SERVICE_ID = sl.CHILD)'
+      '                 '
+      '            )          '
       '          )'
       '        )'
       '  order by s.NAME')
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     Left = 46
     Top = 19
   end
@@ -1195,9 +1222,8 @@ object EditCFileForm: TEditCFileForm
         '  from selectonoffservice(:customer_id, :service_id, :subscr_ser' +
         'v_id, :off) s'
       'where @@debt%1=1@  ')
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     DataSource = srcService
     Left = 41
     Top = 81
@@ -1208,7 +1234,7 @@ object EditCFileForm: TEditCFileForm
     Top = 81
   end
   object Query: TpFIBQuery
-    Transaction = dmMain.trReadQ
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select'
@@ -1239,9 +1265,8 @@ object EditCFileForm: TEditCFileForm
       '       left outer join area a on (a.area_id = s.area_id)'
       'where ((s.area_id = :area_id) or (:area_id is null))           '
       'order by STREET_NAME, a.area_name')
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     Left = 258
     Top = 18
   end
@@ -1261,9 +1286,8 @@ object EditCFileForm: TEditCFileForm
       '  left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id)'
       'where h.street_id = :street_id'
       'order by h.HOUSE_NO')
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     DataSource = srcStreet
     Left = 258
     Top = 61
@@ -1281,9 +1305,8 @@ object EditCFileForm: TEditCFileForm
       'from CUSTOMER C'
       'where c.HOUSE_ID = :HOUSE_id'
       'order by 1 ')
-    Transaction = dmMain.trRead
+    Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     DataSource = srcHouse
     Left = 258
     Top = 124
@@ -1292,5 +1315,47 @@ object EditCFileForm: TEditCFileForm
     DataSet = dsFLAT
     Left = 306
     Top = 124
+  end
+  object pmFile: TPopupMenu
+    Left = 392
+    Top = 304
+    object miFileClear: TMenuItem
+      Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1087#1086#1083#1077' '#1092#1072#1081#1083
+      OnClick = miFileClearClick
+    end
+  end
+  object trWriteQ: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'write'
+      '')
+    TPBMode = tpbDefault
+    Left = 401
+    Top = 128
+  end
+  object trReadQ: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 400
+    Top = 184
+  end
+  object trRead: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 472
+    Top = 134
   end
 end

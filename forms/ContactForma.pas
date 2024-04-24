@@ -424,7 +424,7 @@ end;
 
 procedure TContactForm.SetContact(const Value: TContact);
 var
-  s, fd, pd : string;
+  s, fd, pd, nd : string;
   i, ctype : integer;
 begin
   FContact := Value;
@@ -444,8 +444,8 @@ begin
     fd := DigitsOnly(s);
     pd := DigitsOnly(FContact.Contact);
     if Length(fd) = Length(pd) then begin
-      i := Pos('0', fd);
-      pd := Copy(pd, i, 255);
+      //i := Pos('0', fd);
+      //pd := Copy(pd, i, 255);
       pd := ReplaceInMask(s, pd);
       ctype := 1;
     end
@@ -461,6 +461,20 @@ begin
       end
     end;
 
+    // если плохо отформатировали, то уберем тип и формат
+    if DigitsOnly(pd) <> DigitsOnly(FContact.Contact) then begin
+      ctype := -1;
+      memNotice.Lines.Text := FContact.Contact;
+    end
+    else begin
+      // остаток текста перенесем в примечание
+      nd := Copy(pd, length(pd), 1)+' ';
+      i := Pos(nd, FContact.Contact);
+      if i > 1  then begin
+        memNotice.Lines.Text := Copy(FContact.Contact, i+2, 255);
+      end;
+    end;
+
     if ctype = -1 then begin
       cbbContactType.Value := 999;
       chkNotify.Checked := false;
@@ -473,7 +487,7 @@ begin
     end;
   end;
 
-  memNotice.Lines.Text := FContact.Notice;
+  // memNotice.Lines.Text := FContact.Notice;
 end;
 
 end.

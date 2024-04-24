@@ -4,9 +4,10 @@ inherited DocListForm: TDocListForm
   Caption = #1056#1077#1077#1089#1090#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1086#1074
   ClientHeight = 564
   ClientWidth = 698
+  Menu = mmDoc
   Position = poDesigned
   ExplicitWidth = 714
-  ExplicitHeight = 603
+  ExplicitHeight = 623
   PixelsPerInch = 96
   TextHeight = 13
   object splitter: TSplitter [0]
@@ -27,9 +28,9 @@ inherited DocListForm: TDocListForm
     ExplicitWidth = 778
   end
   inherited dbGrid: TDBGridEh
-    Top = 300
+    Top = 301
     Width = 698
-    Height = 97
+    Height = 96
     AllowedOperations = []
     FooterRowCount = 1
     SumList.Active = True
@@ -213,6 +214,7 @@ inherited DocListForm: TDocListForm
     ExplicitWidth = 698
     inherited ToolButton5: TToolButton
       Width = 8
+      Visible = False
       ExplicitWidth = 8
     end
     inherited ToolButton6: TToolButton
@@ -222,6 +224,12 @@ inherited DocListForm: TDocListForm
     end
     inherited btnDelete: TToolButton
       Left = 63
+      Hint = #1059#1076#1072#1083#1080#1090#1100
+      Action = nil
+      Caption = ''
+      Enabled = False
+      Visible = False
+      OnClick = actDeleteExecute
       ExplicitLeft = 63
     end
     inherited ToolButton9: TToolButton
@@ -510,7 +518,6 @@ inherited DocListForm: TDocListForm
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitHeight = 127
       object btnCustHist: TSpeedButton
         Left = 2
         Top = 2
@@ -1090,5 +1097,31 @@ inherited DocListForm: TDocListForm
       'select Content from Customer_Files where Cf_Id = :Cf_Id')
     Left = 456
     Top = 480
+  end
+  object mmDoc: TMainMenu
+    Left = 160
+    Top = 81
+    object miDL: TMenuItem
+      Caption = #1056#1077#1077#1089#1090#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1086#1074
+      GroupIndex = 2
+      object miFindCustomer: TMenuItem
+        Action = actFindCustomer
+        Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072'/'#1086#1074' '#1074#1099#1076#1077#1083#1077#1085#1085#1099#1093' '#1076#1086#1082#1091#1084#1077#1085#1090#1086#1074
+      end
+      object miCustHist: TMenuItem
+        Action = actCustHist
+        Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072'/'#1086#1074' '#1080#1079' '#1080#1089#1090#1086#1088#1080#1080' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+      end
+      object miViewDoc: TMenuItem
+        Action = actViewDoc
+        Caption = #1055#1088#1086#1089#1084#1086#1090#1088' '#1092#1072#1081#1083#1072
+      end
+      object miN3: TMenuItem
+        Caption = '-'
+      end
+      object miDelete: TMenuItem
+        Action = actDelete
+      end
+    end
   end
 end

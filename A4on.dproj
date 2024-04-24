@@ -63,10 +63,10 @@
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_Build>780</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=23.11.0.780;LegalCopyright=Copyright (C) 2005-2023, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=23.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.4.0.780;LegalCopyright=Copyright (C) 2005-2024, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
-        <VerInfo_MajorVer>23</VerInfo_MajorVer>
-        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_MajorVer>24</VerInfo_MajorVer>
+        <VerInfo_MinorVer>4</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -79,8 +79,8 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Build>840</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=23.11.0.840;LegalCopyright=Copyright (C) 2005-2023, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=23.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>890</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.4.0.890;LegalCopyright=Copyright (C) 2005-2023, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
         <DCC_MapFile>3</DCC_MapFile>
@@ -94,8 +94,8 @@
         <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=23.11.0.798;LegalCopyright=Copyright (C) 2005-2023, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=23.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>798</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.4.0.802;LegalCopyright=Copyright (C) 2005-2024, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>802</VerInfo_Build>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
@@ -1021,6 +1021,10 @@
             <Form>fmSelectPromo</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="forms\SmsQuestForma.pas">
+            <Form>SmsQuestForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -1312,12 +1316,6 @@
                 <Platform value="Win32">True</Platform>
             </Platforms>
             <Deployment>
-                <DeployFile LocalName="..\EXE\a4on.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>A4on.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="FORMS\MAIN.PAS" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1327,6 +1325,12 @@
                 <DeployFile LocalName="FORMS\MAIN.PAS" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\EXE\A4on.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>A4on.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

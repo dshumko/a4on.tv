@@ -4,7 +4,7 @@ object ReqMatReturnForm: TReqMatReturnForm
   ActiveControl = dbGrid
   Caption = #1042#1086#1079#1074#1088#1072#1090' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074' '#1089' '#1079#1072#1103#1074#1082#1080
   ClientHeight = 391
-  ClientWidth = 887
+  ClientWidth = 1044
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,7 +23,7 @@ object ReqMatReturnForm: TReqMatReturnForm
   object Panel2: TPanel
     Left = 0
     Top = 354
-    Width = 887
+    Width = 1044
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
@@ -31,38 +31,32 @@ object ReqMatReturnForm: TReqMatReturnForm
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
-      Width = 887
+      Width = 1044
       Height = 37
       Align = alClient
       TabOrder = 0
       TabStop = True
-      ExplicitWidth = 887
+      ExplicitWidth = 1044
       ExplicitHeight = 37
-      inherited Label2: TLabel
-        Margins.Bottom = 0
-      end
-      inherited Label1: TLabel
-        Margins.Bottom = 0
-      end
       inherited bbOk: TBitBtn
         Left = 185
-        Width = 456
+        Width = 613
         Height = 30
         Anchors = [akLeft, akRight, akBottom]
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
         ExplicitLeft = 185
-        ExplicitWidth = 456
+        ExplicitWidth = 613
         ExplicitHeight = 30
       end
       inherited bbCancel: TBitBtn
-        Left = 647
+        Left = 804
         Top = 3
         Width = 234
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
-        ExplicitLeft = 647
+        ExplicitLeft = 804
         ExplicitTop = 3
         ExplicitWidth = 234
         ExplicitHeight = 30
@@ -72,7 +66,7 @@ object ReqMatReturnForm: TReqMatReturnForm
   object Panel3: TPanel
     Left = 0
     Top = 0
-    Width = 887
+    Width = 1044
     Height = 354
     Align = alClient
     BevelOuter = bvNone
@@ -85,7 +79,7 @@ object ReqMatReturnForm: TReqMatReturnForm
     object dbGrid: TDBGridEh
       Left = 188
       Top = 0
-      Width = 699
+      Width = 856
       Height = 354
       Align = alClient
       AllowedOperations = [alopUpdateEh]
@@ -169,6 +163,7 @@ object ReqMatReturnForm: TReqMatReturnForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1062#1077#1085#1072
+          Title.Hint = #1045#1089#1083#1080' '#1091#1082#1072#1079#1072#1090#1100' '#1094#1077#1085#1091', '#1090#1086' '#1073#1091#1076#1077#1090' '#1074#1086#1079#1074#1088#1072#1090' '#1101#1090#1086#1081' '#1089#1091#1084#1084#1099' '#1072#1073#1086#1085#1077#1085#1090#1091
           Width = 63
         end
         item

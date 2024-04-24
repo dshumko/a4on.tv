@@ -10,7 +10,8 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB;
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB,
+  PrnDbgeh;
 
 type
   TRecoursesForm = class(TGridForm)
@@ -53,6 +54,8 @@ type
     fEndDate: TDateTime;
     FCanSaveColumns: Boolean;
     FPersonalData: Boolean;
+    FTodayOnly: Boolean;
+    FOnlyTheir: Boolean;
     procedure SetFilter;
     procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
   public
@@ -90,13 +93,20 @@ var
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crHourGlass;
+  if (FTodayOnly) then begin
+    fStartDate := Now;
+    fEndDate := fStartDate;
+  end;
+
   dsRecourses.Close;
-  if dmMain.AllowedAction(rght_Recourses_owner) then
-    dsRecourses.ParamByName('owned').AsString := 'r.ADDED_BY = CURRENT_USER'
+  if FOnlyTheir  then
+    dsRecourses.ParamByName('owned').AsString := 'and r.ADDED_BY = CURRENT_USER'
   else
-    dsRecourses.ParamByName('owned').AsString := '1=1';
+    dsRecourses.ParamByName('owned').AsString := '';
+
   dsRecourses.ParamByName('Start_Date').AsDate := fStartDate;
   dsRecourses.ParamByName('End_Date').AsDate := fEndDate;
+
   Caption := Format(rsRecoursePeriod, [DateToStr(fStartDate), DateToStr(fEndDate)]);
   dsRecourses.Open;
   Screen.Cursor := cr;
@@ -232,6 +242,9 @@ begin
   actEdit.Visible := (dmMain.AllowedAction(rght_Recourses_edit)) and False;
   actDelete.Visible := (dmMain.AllowedAction(rght_Recourses_del));
   FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+
+  FTodayOnly := dmMain.AllowedAction(rght_Recourses_TodayOnly);
+  FOnlyTheir := dmMain.AllowedAction(rght_Recourses_owner);
 
   fStartDate := now - 7;
   fEndDate := now;

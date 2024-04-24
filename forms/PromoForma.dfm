@@ -43,7 +43,7 @@ inherited PromoForm: TPromoForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'O_DATEFILED'
+        FieldName = 'O_DATEFIELD'
         Footers = <>
         Title.Caption = #1044#1077#1081#1089#1090#1074#1091#1077#1090'|'#1089
         Title.SortIndex = 1
@@ -188,7 +188,7 @@ inherited PromoForm: TPromoForm
       Width = 121
       Height = 21
       Anchors = [akLeft, akBottom]
-      DataField = 'O_DATEFILED'
+      DataField = 'O_DATEFIELD'
       DataSource = srcDataSource
       DynProps = <>
       EditButtons = <>
@@ -438,7 +438,7 @@ inherited PromoForm: TPromoForm
       '  O_NAME         =:O_NAME,'
       '  O_CHARFIELD    =:O_CHARFIELD,'
       '  O_DESCRIPTION  =:O_DESCRIPTION,'
-      '  O_DATEFILED    =:O_DATEFILED,'
+      '  O_DATEFIELD    =:O_DATEFIELD,'
       '  O_DATEEND      =:O_DATEEND,'
       '  O_DELETED      =:O_DELETED'
       'WHERE'
@@ -459,7 +459,7 @@ inherited PromoForm: TPromoForm
       '  , O_NAME'
       '  , O_CHARFIELD'
       '  , O_DESCRIPTION'
-      '  , O_DATEFILED'
+      '  , O_DATEFIELD'
       '  , O_DATEEND'
       '  , O_DELETED'
       '  , O_TYPE'
@@ -469,7 +469,7 @@ inherited PromoForm: TPromoForm
       '  , :O_NAME'
       '  , :O_CHARFIELD'
       '  , :O_DESCRIPTION'
-      '  , :O_DATEFILED'
+      '  , :O_DATEFIELD'
       '  , :O_DATEEND'
       '  , 0'
       '  , 70'
@@ -480,7 +480,7 @@ inherited PromoForm: TPromoForm
       '  , O_NAME'
       '  , O_CHARFIELD'
       '  , O_DESCRIPTION'
-      '  , O_DATEFILED'
+      '  , O_DATEFIELD'
       '  , O_DATEEND'
       '  , O_DELETED'
       '  from OBJECTS'
@@ -494,14 +494,14 @@ inherited PromoForm: TPromoForm
       '  , O_NAME'
       '  , O_CHARFIELD'
       '  , O_DESCRIPTION'
-      '  , O_DATEFILED'
+      '  , O_DATEFIELD'
       '  , O_DATEEND'
       '  , O_DELETED'
       '  from OBJECTS'
       '  where O_TYPE = 70'
       '    and O_DELETED = 0  '
       ''
-      'order by O_DATEFILED')
+      'order by O_DATEFIELD')
     AutoUpdateOptions.UpdateTableName = 'OBJECTS'
     AutoUpdateOptions.KeyFields = 'O_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

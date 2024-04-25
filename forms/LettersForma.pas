@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
   GridForma, FIBDataSet, pFIBDataSet, DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
-  CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
+  PrnDbgeh;
 
 type
   TLettersForm = class(TGridForm)

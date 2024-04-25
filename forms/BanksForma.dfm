@@ -11,9 +11,9 @@ inherited BanksForm: TBanksForm
     Width = 952
   end
   inherited dbGrid: TDBGridEh
-    Top = 188
+    Top = 189
     Width = 952
-    Height = 336
+    Height = 335
     AllowedOperations = [alopUpdateEh]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     Columns = <
@@ -173,7 +173,6 @@ inherited BanksForm: TBanksForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsBanks
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Left = 152
     Top = 304

@@ -17,13 +17,11 @@ inherited WireTypeForm: TWireTypeForm
   inherited splPG: TSplitter
     Top = 169
     Width = 713
-    ExplicitTop = 169
-    ExplicitWidth = 713
   end
   inherited dbGrid: TDBGridEh
-    Top = 172
+    Top = 173
     Width = 713
-    Height = 311
+    Height = 310
     AllowedOperations = [alopUpdateEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -69,7 +67,6 @@ inherited WireTypeForm: TWireTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 713
-    ExplicitWidth = 713
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -87,8 +84,6 @@ inherited WireTypeForm: TWireTypeForm
     Width = 713
     Height = 144
     ParentCtl3D = False
-    ExplicitWidth = 713
-    ExplicitHeight = 144
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -108,9 +103,6 @@ inherited WireTypeForm: TWireTypeForm
       Top = 116
       Width = 528
       TabOrder = 3
-      ExplicitLeft = 72
-      ExplicitTop = 116
-      ExplicitWidth = 528
     end
     inherited btnCancelLink: TBitBtn
       Left = 606
@@ -118,9 +110,6 @@ inherited WireTypeForm: TWireTypeForm
       Width = 98
       Cancel = True
       TabOrder = 4
-      ExplicitLeft = 606
-      ExplicitTop = 116
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72

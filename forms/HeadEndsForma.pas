@@ -10,7 +10,7 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, DataDriverEh,
   pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh;
+  DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   THeadEndsForm = class(TGridForm)

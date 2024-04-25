@@ -185,6 +185,7 @@ object GridForm: TGridForm
   end
   object srcDataSource: TDataSource
     AutoEdit = False
+    OnStateChange = srcDataSourceStateChange
     Left = 72
     Top = 128
   end

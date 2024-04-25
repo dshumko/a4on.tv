@@ -2,8 +2,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   Caption = #1058#1080#1087#1099' '#1086#1073#1088#1072#1097#1077#1085#1080#1081
   ClientHeight = 508
   ClientWidth = 758
-  ExplicitWidth = 774
-  ExplicitHeight = 547
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
@@ -13,13 +11,10 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitTop = 327
   end
   inherited splPG: TSplitter
     Top = 145
     Width = 758
-    ExplicitTop = 145
-    ExplicitWidth = 758
   end
   inherited dbGrid: TDBGridEh
     Top = 149
@@ -62,7 +57,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   end
   inherited tlbMain: TToolBar
     Width = 758
-    ExplicitWidth = 758
     inherited tbOk: TToolButton
       Visible = False
       OnClick = tbOkClick
@@ -215,8 +209,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   inherited pnlEdit: TPanel
     Width = 758
     Height = 120
-    ExplicitWidth = 758
-    ExplicitHeight = 120
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -236,16 +228,11 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       Top = 89
       Width = 562
       TabOrder = 2
-      ExplicitLeft = 92
-      ExplicitTop = 89
-      ExplicitWidth = 562
     end
     inherited btnCancelLink: TBitBtn
       Left = 665
       Top = 89
       TabOrder = 4
-      ExplicitLeft = 665
-      ExplicitTop = 89
     end
     object edtName: TDBEditEh
       Left = 92
@@ -295,7 +282,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsType
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Left = 509
     Top = 203

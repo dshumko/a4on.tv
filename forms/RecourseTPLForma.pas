@@ -10,7 +10,7 @@ uses
   Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
   GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh, amSplitter;
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh, amSplitter, PrnDbgeh;
 
 type
   TRecoursesTPLForm = class(TGridForm)

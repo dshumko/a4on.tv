@@ -71,6 +71,7 @@ type
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
     procedure actPrintGridExecute(Sender: TObject);
+    procedure srcDataSourceStateChange(Sender: TObject);
   protected
     { Private declarations }
     FCanEdit: Boolean;
@@ -388,10 +389,12 @@ begin
   PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
 
   if New then
-    srcDataSource.DataSet.Append
-  else
-    srcDataSource.DataSet.Edit;
+    srcDataSource.DataSet.Append;
+//  else
+//    srcDataSource.DataSet.Edit;
 
+  btnSaveLink.Enabled := False;
+  srcDataSource.AutoEdit := True;
   FinEditMode := True;
 end;
 
@@ -415,6 +418,7 @@ begin
   end;
   dbGrid.SetFocus;
 
+  srcDataSource.AutoEdit := False;
   FinEditMode := False;
 end;
 
@@ -514,6 +518,11 @@ begin
         (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
     end;
   end;
+end;
+
+procedure TGridForm.srcDataSourceStateChange(Sender: TObject);
+begin
+  btnSaveLink.Enabled := (srcDataSource.State in [dsEdit, dsInsert]);
 end;
 
 end.

@@ -6,10 +6,14 @@ inherited ShippersForm: TShippersForm
   ClientWidth = 627
   PixelsPerInch = 96
   TextHeight = 13
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 265
     Width = 627
-    Height = 222
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 269
+    Width = 627
+    Height = 218
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item
@@ -146,6 +150,7 @@ inherited ShippersForm: TShippersForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080' ('#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077')'
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -162,6 +167,7 @@ inherited ShippersForm: TShippersForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1040#1076#1088#1077#1089' '#1080' '#1090#1077#1083#1077#1092#1086#1085#1099
+      ShowHint = True
       TabOrder = 2
       Visible = True
       WantReturns = True
@@ -179,6 +185,7 @@ inherited ShippersForm: TShippersForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1072#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103
+      ShowHint = True
       TabOrder = 3
       Visible = True
       WantReturns = True
@@ -194,6 +201,7 @@ inherited ShippersForm: TShippersForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1059#1053#1055' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080
+      ShowHint = True
       TabOrder = 1
       Visible = True
     end

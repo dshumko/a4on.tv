@@ -3,15 +3,12 @@ inherited BCIssuesForm: TBCIssuesForm
   ClientHeight = 306
   ClientWidth = 739
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 739
-    Height = 4
   end
   inherited dbGrid: TDBGridEh
-    Top = 85
     Width = 739
     Height = 221
     DrawMemoText = True

@@ -28,7 +28,6 @@ object MatOutDocForm: TMatOutDocForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 683
     DesignSize = (
       694
       156)
@@ -46,7 +45,6 @@ object MatOutDocForm: TMatOutDocForm
       Height = 13
       Anchors = [akTop, akRight]
       Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
-      ExplicitLeft = 470
     end
     object lbl2: TLabel
       Left = 8
@@ -76,7 +74,6 @@ object MatOutDocForm: TMatOutDocForm
       ShowHint = True
       TabOrder = 0
       Visible = True
-      ExplicitWidth = 352
     end
     object deD_DATE: TDBDateTimeEditEh
       Left = 571
@@ -93,7 +90,6 @@ object MatOutDocForm: TMatOutDocForm
       ShowHint = True
       TabOrder = 1
       Visible = True
-      ExplicitLeft = 560
     end
     object lcbWH: TDBLookupComboboxEh
       Left = 112
@@ -112,7 +108,6 @@ object MatOutDocForm: TMatOutDocForm
       ShowHint = True
       TabOrder = 2
       Visible = True
-      ExplicitWidth = 566
     end
     object btnSave: TButton
       Left = 473
@@ -123,7 +118,6 @@ object MatOutDocForm: TMatOutDocForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       TabOrder = 6
       OnClick = btnSaveClick
-      ExplicitLeft = 462
     end
     object btnClose: TButton
       Left = 5
@@ -151,7 +145,6 @@ object MatOutDocForm: TMatOutDocForm
       TabOrder = 3
       Visible = True
       WantReturns = True
-      ExplicitWidth = 566
     end
     object btnOpen: TButton
       Left = 5
@@ -173,8 +166,6 @@ object MatOutDocForm: TMatOutDocForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 683
-    ExplicitHeight = 241
     object dbgDocMat: TDBGridEh
       Left = 0
       Top = 140
@@ -304,7 +295,6 @@ object MatOutDocForm: TMatOutDocForm
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 683
       DesignSize = (
         694
         140)
@@ -369,7 +359,6 @@ object MatOutDocForm: TMatOutDocForm
         OnCloseDropDownForm = edtMaterialCloseDropDownForm
         OnEnter = edtMaterialEnter
         OnOpenDropDownForm = edtMaterialOpenDropDownForm
-        ExplicitWidth = 578
       end
       object edtQuant: TDBNumberEditEh
         Left = 100
@@ -397,7 +386,6 @@ object MatOutDocForm: TMatOutDocForm
         TabOrder = 4
         Visible = True
         WantReturns = True
-        ExplicitWidth = 578
       end
       object btnAdd: TButton
         Left = 100
@@ -408,7 +396,6 @@ object MatOutDocForm: TMatOutDocForm
         Caption = #1044#1086#1073#1072#1074#1080#1090#1100
         TabOrder = 5
         OnClick = btnAddClick
-        ExplicitWidth = 578
       end
       object edtCost: TDBNumberEditEh
         Left = 240

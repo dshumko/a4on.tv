@@ -10,7 +10,7 @@ inherited WorkTeamForm: TWorkTeamForm
   TextHeight = 13
   object Splitter1: TSplitter [0]
     Left = 0
-    Top = 273
+    Top = 274
     Width = 697
     Height = 5
     Cursor = crVSplit
@@ -113,9 +113,9 @@ inherited WorkTeamForm: TWorkTeamForm
   end
   object pgcADD: TPageControl [3]
     Left = 0
-    Top = 278
+    Top = 279
     Width = 697
-    Height = 181
+    Height = 180
     ActivePage = tsTeams
     Align = alClient
     TabOrder = 3
@@ -575,7 +575,6 @@ inherited WorkTeamForm: TWorkTeamForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsAreas
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Top = 56
   end

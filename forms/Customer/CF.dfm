@@ -33,7 +33,6 @@ object CustomersForm: TCustomersForm
     Cursor = crVSplit
     Align = alBottom
     ResizeStyle = rsLine
-    ExplicitTop = 272
   end
   object pnlForms: TPanel
     Left = 0
@@ -392,7 +391,6 @@ object CustomersForm: TCustomersForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
-        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46

@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   DBCtrlsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh,
   FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh,
-  JsonDataObjects;
+  JsonDataObjects, PrnDbgeh;
 
 type
   TPromoForm = class(TGridForm)

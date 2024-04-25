@@ -11,9 +11,9 @@ inherited LabelTypeForm: TLabelTypeForm
     Width = 939
   end
   inherited dbGrid: TDBGridEh
-    Top = 196
+    Top = 197
     Width = 939
-    Height = 354
+    Height = 353
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item

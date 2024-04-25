@@ -9,9 +9,9 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
     Width = 655
   end
   inherited dbGrid: TDBGridEh
-    Top = 132
+    Top = 133
     Width = 655
-    Height = 261
+    Height = 260
     Columns = <
       item
         CellButtons = <>

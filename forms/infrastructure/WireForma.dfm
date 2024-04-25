@@ -17,9 +17,9 @@ inherited WireForm: TWireForm
     Align = alBottom
   end
   inherited dbGrid: TDBGridEh
-    Top = 60
+    Top = 61
     Width = 914
-    Height = 234
+    Height = 233
     AllowedOperations = [alopDeleteEh]
     FooterRowCount = 1
     SumList.Active = True
@@ -809,7 +809,7 @@ inherited WireForm: TWireForm
     Top = 192
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator]

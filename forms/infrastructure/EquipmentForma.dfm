@@ -4,15 +4,11 @@ inherited EquipmentForm: TEquipmentForm
   Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1074' '#1089#1077#1090#1080
   ClientHeight = 623
   ClientWidth = 979
-  ExplicitWidth = 995
-  ExplicitHeight = 662
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 57
     Width = 979
-    ExplicitTop = 57
-    ExplicitWidth = 979
   end
   object splMain: TSplitter [1]
     Left = 0
@@ -23,9 +19,9 @@ inherited EquipmentForm: TEquipmentForm
     Align = alBottom
   end
   inherited dbGrid: TDBGridEh
-    Top = 60
+    Top = 61
     Width = 979
-    Height = 353
+    Height = 352
     AllowedOperations = []
     FooterRowCount = 1
     IndicatorTitle.ShowDropDownSign = True
@@ -264,7 +260,6 @@ inherited EquipmentForm: TEquipmentForm
   end
   inherited tlbMain: TToolBar
     Width = 979
-    ExplicitWidth = 979
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -384,23 +379,16 @@ inherited EquipmentForm: TEquipmentForm
   inherited pnlEdit: TPanel
     Width = 979
     Height = 32
-    ExplicitWidth = 979
-    ExplicitHeight = 32
     inherited btnSaveLink: TBitBtn
       Left = 108
       Top = 103
       Width = 300
       TabOrder = 1
-      ExplicitLeft = 108
-      ExplicitTop = 103
-      ExplicitWidth = 300
     end
     inherited btnCancelLink: TBitBtn
       Left = 391
       Top = -1
       TabOrder = 0
-      ExplicitLeft = 391
-      ExplicitTop = -1
     end
   end
   object pnlForms: TPanel [5]

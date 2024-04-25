@@ -4,8 +4,6 @@ inherited ChannelsForm: TChannelsForm
   Caption = #1058#1042' '#1082#1072#1085#1072#1083#1099
   ClientHeight = 515
   ClientWidth = 929
-  ExplicitWidth = 945
-  ExplicitHeight = 554
   PixelsPerInch = 96
   TextHeight = 13
   object splAddons: TSplitter [0]
@@ -19,11 +17,10 @@ inherited ChannelsForm: TChannelsForm
   end
   inherited splPG: TSplitter
     Width = 929
-    ExplicitWidth = 929
   end
   inherited dbGrid: TDBGridEh
     Width = 929
-    Height = 273
+    Height = 272
     IncludeImageModules = [iimJpegImageModuleEh, iimGIFImageModuleEh, iimPNGImageModuleEh]
     DrawGraphicData = True
     FooterRowCount = 1
@@ -301,7 +298,6 @@ inherited ChannelsForm: TChannelsForm
   end
   inherited tlbMain: TToolBar
     Width = 929
-    ExplicitWidth = 929
     inherited ToolButton6: TToolButton
       Visible = False
     end
@@ -563,14 +559,11 @@ inherited ChannelsForm: TChannelsForm
   end
   inherited pnlEdit: TPanel
     Width = 929
-    ExplicitWidth = 929
     inherited btnSaveLink: TBitBtn
       Width = 497
-      ExplicitWidth = 497
     end
     inherited btnCancelLink: TBitBtn
       Left = 588
-      ExplicitLeft = 588
     end
   end
   inherited srcDataSource: TDataSource

@@ -96,7 +96,6 @@ object EquipCoverageForm: TEquipCoverageForm
     TabOrder = 0
     Visible = True
     OnNotInList = LupStreetsNotInList
-    ExplicitWidth = 275
   end
   object LupHOUSE_ID: TDBLookupComboboxEh
     Left = 50
@@ -137,7 +136,6 @@ object EquipCoverageForm: TEquipCoverageForm
     TabOrder = 1
     Visible = True
     OnChange = LupHOUSE_IDChange
-    ExplicitWidth = 275
   end
   object eNotice: TDBMemoEh
     Tag = 9
@@ -165,8 +163,6 @@ object EquipCoverageForm: TEquipCoverageForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
-    ExplicitTop = 157
-    ExplicitWidth = 333
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -178,15 +174,10 @@ object EquipCoverageForm: TEquipCoverageForm
       Top = 6
       Width = 157
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 104
-      ExplicitTop = 6
-      ExplicitWidth = 157
     end
     inherited bbCancel: TBitBtn
       Left = 267
       Top = 6
-      ExplicitLeft = 267
-      ExplicitTop = 6
     end
   end
   object dsStreets: TpFIBDataSet

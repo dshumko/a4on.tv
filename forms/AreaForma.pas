@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls, Vcl.Menus,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.DBCtrls,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  CnErrorProvider, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, amSplitter;
+  CnErrorProvider, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, amSplitter,
+  PrnDbgeh;
 
 type
   TAreaForm = class(TGridForm)

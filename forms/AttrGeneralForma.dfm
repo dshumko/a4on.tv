@@ -61,7 +61,6 @@ object AttrGeneralForm: TAttrGeneralForm
     Visible = True
     OnChange = dbluAttributeChange
     OnEnter = dbluAttributeEnter
-    ExplicitWidth = 422
   end
   object mmoNOTICE: TDBMemoEh
     Left = 8
@@ -78,8 +77,6 @@ object AttrGeneralForm: TAttrGeneralForm
     TabOrder = 3
     Visible = True
     WantReturns = True
-    ExplicitWidth = 485
-    ExplicitHeight = 80
   end
   object dbValue: TDBEditEh
     Left = 71
@@ -95,7 +92,6 @@ object AttrGeneralForm: TAttrGeneralForm
     ShowHint = True
     TabOrder = 1
     Visible = True
-    ExplicitWidth = 422
   end
   object cbbList: TDBComboBoxEh
     Left = 71
@@ -124,8 +120,6 @@ object AttrGeneralForm: TAttrGeneralForm
     NumGlyphs = 2
     TabOrder = 4
     OnClick = btnOkClick
-    ExplicitTop = 167
-    ExplicitWidth = 404
   end
   object btnCancel: TBitBtn
     Left = 483
@@ -137,8 +131,6 @@ object AttrGeneralForm: TAttrGeneralForm
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
     TabOrder = 5
-    ExplicitLeft = 418
-    ExplicitTop = 167
   end
   object mmoValue: TDBMemoEh
     Left = 71

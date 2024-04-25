@@ -37,8 +37,6 @@ object ReqMaterialsForm: TReqMaterialsForm
       Align = alClient
       TabOrder = 0
       TabStop = True
-      ExplicitWidth = 928
-      ExplicitHeight = 37
       inherited Label2: TLabel
         Margins.Bottom = 0
       end
@@ -53,9 +51,6 @@ object ReqMaterialsForm: TReqMaterialsForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
-        ExplicitLeft = 185
-        ExplicitWidth = 497
-        ExplicitHeight = 30
       end
       inherited bbCancel: TBitBtn
         Left = 688
@@ -63,9 +58,6 @@ object ReqMaterialsForm: TReqMaterialsForm
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
         OnClick = OkCancelFrame1bbCancelClick
-        ExplicitLeft = 688
-        ExplicitWidth = 234
-        ExplicitHeight = 30
       end
     end
   end

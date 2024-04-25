@@ -3,13 +3,16 @@ inherited BCIssuesTypeForm: TBCIssuesTypeForm
   ClientHeight = 306
   ClientWidth = 739
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 145
     Width = 739
-    Height = 161
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 149
+    Width = 739
+    Height = 157
     FooterRowCount = 1
     STFilter.InstantApply = False
     SumList.Active = True

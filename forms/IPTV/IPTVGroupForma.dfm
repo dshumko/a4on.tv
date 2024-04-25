@@ -29,9 +29,6 @@ object IPTVGroupForm: TIPTVGroupForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 446
-    ExplicitWidth = 811
-    ExplicitHeight = 41
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -45,18 +42,11 @@ object IPTVGroupForm: TIPTVGroupForm
       Height = 29
       Anchors = [akLeft, akRight, akBottom]
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 100
-      ExplicitTop = 5
-      ExplicitWidth = 623
-      ExplicitHeight = 29
     end
     inherited bbCancel: TBitBtn
       Left = 729
       Top = 5
       Height = 29
-      ExplicitLeft = 729
-      ExplicitTop = 5
-      ExplicitHeight = 29
     end
   end
   object pnlChannels: TPanel

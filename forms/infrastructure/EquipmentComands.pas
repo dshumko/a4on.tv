@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus, Vcl.StdCtrls,
   Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
   GridForma, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  PrjConst, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh;
+  PrjConst, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh,
+  PrnDbgeh;
 
 type
   TEquipmentCommandsForm = class(TGridForm)

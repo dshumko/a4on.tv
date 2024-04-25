@@ -27,8 +27,6 @@ object ServicesForm: TServicesForm
     Height = 5
     Cursor = crVSplit
     Align = alBottom
-    ExplicitTop = 235
-    ExplicitWidth = 828
   end
   object pcServices: TPageControl
     Left = 0
@@ -40,10 +38,8 @@ object ServicesForm: TServicesForm
     TabOrder = 1
     OnChange = pcServicesChange
     OnChanging = pcServicesChanging
-    ExplicitHeight = 263
     object tsAbonent: TTabSheet
       Caption = #1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
-      ExplicitHeight = 235
       object ASGrid: TDBGridEh
         Left = 0
         Top = 0
@@ -252,10 +248,6 @@ object ServicesForm: TServicesForm
       Tag = 1
       Caption = #1056#1072#1079#1086#1074#1099#1077' '#1091#1089#1083#1091#1075#1080
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ssGrid: TDBGridEh
         Left = 0
         Top = 0
@@ -380,10 +372,6 @@ object ServicesForm: TServicesForm
       Tag = 2
       Caption = #1059#1089#1083#1091#1075#1080' '#1087#1086' '#1092#1072#1082#1090#1091
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object fsGrid: TDBGridEh
         Left = 0
         Top = 0
@@ -591,7 +579,6 @@ object ServicesForm: TServicesForm
     Align = alBottom
     TabOrder = 2
     OnChange = AddonPageChange
-    ExplicitTop = 294
     object tsTarif: TTabSheet
       Caption = #1058#1072#1088#1080#1092#1099
       object trfGrid: TDBGridEh
@@ -784,10 +771,6 @@ object ServicesForm: TServicesForm
     object tsLink: TTabSheet
       Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077' / '#1054#1090#1082#1083#1102#1095#1077#1085#1080#1077
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 28
         Top = 0
@@ -1094,10 +1077,6 @@ object ServicesForm: TServicesForm
     object tsChannels: TTabSheet
       Caption = #1058#1042' '#1082#1072#1085#1072#1083#1099
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object TabChannelState: TTabControl
         Left = 0
         Top = 0
@@ -1413,10 +1392,6 @@ object ServicesForm: TServicesForm
     object tsSwitch: TTabSheet
       Caption = #1055#1077#1088#1077#1082#1083#1102#1095#1077#1085#1080#1077
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 28
         Top = 0
@@ -1519,7 +1494,6 @@ object ServicesForm: TServicesForm
             Height = 13
             Anchors = [akTop, akRight]
             Caption = #1050#1072#1082#1086#1081' '#1091#1089#1083#1091#1075#1086#1081
-            ExplicitLeft = 339
           end
           object Label5: TLabel
             Left = 6
@@ -1535,7 +1509,6 @@ object ServicesForm: TServicesForm
             Height = 13
             Anchors = [akTop, akRight]
             Caption = #1050#1086#1075#1076#1072
-            ExplicitLeft = 627
           end
           object dblSwitchTo: TDBLookupComboboxEh
             Left = 98
@@ -1755,10 +1728,6 @@ object ServicesForm: TServicesForm
     object tsAtributes: TTabSheet
       Caption = #1040#1090#1088#1080#1073#1091#1090#1099
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlAtr: TPanel
         Left = 28
         Top = 0
@@ -2075,10 +2044,6 @@ object ServicesForm: TServicesForm
     object tsCOMPLEX: TTabSheet
       Caption = #1050#1086#1084#1087#1083#1077#1082#1089
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgCMPLX: TDBGridEh
         Left = 329
         Top = 0

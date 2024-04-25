@@ -176,7 +176,6 @@ object TelnetForm: TTelnetForm
     WantReturns = True
     OnKeyDown = DisplayMemoKeyDown
     OnKeyPress = DisplayMemoKeyPress
-    ExplicitTop = 59
   end
   object actlst1: TActionList
     Left = 73

@@ -28,7 +28,6 @@ object RequestWorksForm: TRequestWorksForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 663
     object cbAllMaterials: TCheckBox
       Left = 5
       Top = 0
@@ -48,7 +47,6 @@ object RequestWorksForm: TRequestWorksForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 663
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
@@ -57,8 +55,6 @@ object RequestWorksForm: TRequestWorksForm
       Align = alClient
       TabOrder = 0
       TabStop = True
-      ExplicitWidth = 663
-      ExplicitHeight = 37
       inherited Label2: TLabel
         Margins.Bottom = 0
       end
@@ -71,15 +67,11 @@ object RequestWorksForm: TRequestWorksForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
-        ExplicitLeft = 498
-        ExplicitTop = 6
       end
       inherited bbCancel: TBitBtn
         Left = 665
         Top = 6
         Caption = #1047#1072#1082#1088#1099#1090#1100
-        ExplicitLeft = 579
-        ExplicitTop = 6
       end
     end
   end
@@ -91,12 +83,10 @@ object RequestWorksForm: TRequestWorksForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 663
     object Splitter1: TSplitter
       Left = 185
       Top = 0
       Height = 306
-      ExplicitHeight = 372
     end
     object dbGrid: TDBGridEh
       Left = 188

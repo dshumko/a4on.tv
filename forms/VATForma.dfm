@@ -9,7 +9,7 @@ inherited VATForm: TVATForm
     Width = 629
   end
   inherited dbGrid: TDBGridEh
-    Top = 148
+    Top = 149
     Width = 629
     Height = 112
     Align = alTop
@@ -51,16 +51,16 @@ inherited VATForm: TVATForm
   end
   object pnlTarif: TPanel [2]
     Left = 0
-    Top = 260
+    Top = 261
     Width = 629
-    Height = 230
+    Height = 229
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 629
+      Width = 35
       Height = 13
       Align = alTop
       Caption = ' '#1058#1072#1088#1080#1092

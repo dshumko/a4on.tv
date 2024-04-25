@@ -37,7 +37,6 @@ object SmsQuestForm: TSmsQuestForm
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     Caption = #1050' '#1086#1090#1087#1088#1072#1074#1082#1077' '#1061' '#1087#1086#1083#1091#1095#1072#1090#1077#1083#1077#1081' Y'
-    ExplicitWidth = 360
   end
   object ednSmsCount: TDBNumberEditEh
     Left = 268
@@ -53,7 +52,6 @@ object SmsQuestForm: TSmsQuestForm
     Value = 0.000000000000000000
     Visible = True
     OnChange = ednSmsCountChange
-    ExplicitLeft = 285
   end
   object btnCancel: TBitBtn
     Left = 268
@@ -65,8 +63,6 @@ object SmsQuestForm: TSmsQuestForm
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
     TabOrder = 2
-    ExplicitLeft = 321
-    ExplicitTop = 155
   end
   object btnOk: TBitBtn
     Left = 8

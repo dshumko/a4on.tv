@@ -19,9 +19,9 @@ inherited DeviceTypesForm: TDeviceTypesForm
     Width = 684
   end
   inherited dbGrid: TDBGridEh
-    Top = 156
+    Top = 157
     Width = 684
-    Height = 88
+    Height = 87
     AllowedOperations = [alopUpdateEh]
     FooterRowCount = 1
     SumList.Active = True

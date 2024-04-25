@@ -4,9 +4,12 @@ inherited SubDivForm: TSubDivForm
   ClientWidth = 581
   PixelsPerInch = 96
   TextHeight = 13
+  inherited splPG: TSplitter
+    Width = 581
+  end
   inherited dbGrid: TDBGridEh
     Width = 581
-    Height = 220
+    Height = 216
     Columns = <
       item
         CellButtons = <>

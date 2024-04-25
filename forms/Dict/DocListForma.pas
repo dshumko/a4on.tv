@@ -12,7 +12,8 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  Vcl.Mask, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, amSplitter;
+  Vcl.Mask, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, amSplitter,
+  PrnDbgeh;
 
 type
   TDocListForm = class(TGridForm)
@@ -282,7 +283,11 @@ begin
   s := dmMain.GetSettingsValue('MOBILE_FMT');
   if s <> '' then
     edtMOBILE.EditMask := s + ';1;_';
+
   dsDOCS.Open;
+
+  actHistory.Checked := False;
+  dsHistory.Active := actHistory.Checked;
 end;
 
 procedure TDocListForm.GetGridCustomer(Grid: TDBGridEh);
@@ -322,6 +327,7 @@ end;
 
 procedure TDocListForm.StartEdit(const New: Boolean = False);
 begin
+
   if New then
     cbType.Value := 1;
 

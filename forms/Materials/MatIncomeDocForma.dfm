@@ -479,8 +479,6 @@ object MatIncomeDocForm: TMatIncomeDocForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = 140
-      ExplicitHeight = 221
       object dbgDocMat: TDBGridEh
         Left = 0
         Top = 0

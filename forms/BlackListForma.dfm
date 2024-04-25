@@ -4,20 +4,16 @@ inherited BlackListForm: TBlackListForm
   Caption = '"'#1063#1077#1088#1085#1099#1081'" '#1089#1087#1080#1089#1086#1082' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
   ClientHeight = 308
   ClientWidth = 585
-  ExplicitWidth = 601
-  ExplicitHeight = 347
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 173
     Width = 585
-    ExplicitTop = 173
-    ExplicitWidth = 585
   end
   inherited dbGrid: TDBGridEh
-    Top = 176
+    Top = 177
     Width = 585
-    Height = 132
+    Height = 131
     AllowedOperations = [alopUpdateEh]
     FooterRowCount = 1
     FrozenCols = 1
@@ -109,7 +105,6 @@ inherited BlackListForm: TBlackListForm
   end
   inherited tlbMain: TToolBar
     Width = 585
-    ExplicitWidth = 585
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -126,8 +121,6 @@ inherited BlackListForm: TBlackListForm
   inherited pnlEdit: TPanel
     Width = 585
     Height = 148
-    ExplicitWidth = 585
-    ExplicitHeight = 148
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -154,9 +147,6 @@ inherited BlackListForm: TBlackListForm
       Top = 115
       Width = 368
       TabOrder = 3
-      ExplicitLeft = 104
-      ExplicitTop = 115
-      ExplicitWidth = 368
     end
     inherited btnCancelLink: TBitBtn
       Left = 478
@@ -164,9 +154,6 @@ inherited BlackListForm: TBlackListForm
       Width = 98
       Cancel = True
       TabOrder = 4
-      ExplicitLeft = 478
-      ExplicitTop = 115
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 104

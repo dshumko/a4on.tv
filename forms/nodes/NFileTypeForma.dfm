@@ -11,9 +11,9 @@ inherited NFileTypeForm: TNFileTypeForm
     Width = 585
   end
   inherited dbGrid: TDBGridEh
-    Top = 156
+    Top = 157
     Width = 585
-    Height = 238
+    Height = 237
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item

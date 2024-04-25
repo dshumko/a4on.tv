@@ -4,8 +4,6 @@ inherited VlansForm: TVlansForm
   Caption = #1051#1086#1082#1072#1083#1100#1085#1099#1077' '#1089#1077#1090#1080
   ClientHeight = 538
   ClientWidth = 740
-  ExplicitWidth = 756
-  ExplicitHeight = 577
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
@@ -19,8 +17,6 @@ inherited VlansForm: TVlansForm
   inherited splPG: TSplitter
     Top = 257
     Width = 740
-    ExplicitTop = 193
-    ExplicitWidth = 740
   end
   inherited dbGrid: TDBGridEh
     Top = 261
@@ -286,11 +282,10 @@ inherited VlansForm: TVlansForm
           object lbl2: TLabel
             Left = 0
             Top = 0
-            Width = 396
+            Width = 154
             Height = 13
             Align = alTop
             Caption = #1044#1086#1084#1072' '#1074#1085#1077' '#1079#1086#1085#1099' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103' '
-            ExplicitWidth = 154
           end
           object dbgExists: TDBGridEh
             Left = 37
@@ -650,7 +645,6 @@ inherited VlansForm: TVlansForm
   end
   inherited tlbMain: TToolBar
     Width = 740
-    ExplicitWidth = 740
     inherited ToolButton6: TToolButton
       Visible = False
     end
@@ -692,8 +686,6 @@ inherited VlansForm: TVlansForm
   inherited pnlEdit: TPanel
     Width = 740
     Height = 232
-    ExplicitWidth = 740
-    ExplicitHeight = 232
     object Label1: TLabel [0]
       Left = 564
       Top = 36
@@ -777,17 +769,12 @@ inherited VlansForm: TVlansForm
       Top = 201
       Width = 576
       TabOrder = 11
-      ExplicitLeft = 68
-      ExplicitTop = 137
-      ExplicitWidth = 576
     end
     inherited btnCancelLink: TBitBtn
       Left = 650
       Top = 201
       Action = actCancel
       TabOrder = 12
-      ExplicitLeft = 650
-      ExplicitTop = 137
     end
     object dbmmoNotice: TDBMemoEh
       Left = 68

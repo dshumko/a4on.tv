@@ -141,8 +141,6 @@ object fmCardPayGenerate: TfmCardPayGenerate
     Align = alBottom
     TabOrder = 4
     TabStop = True
-    ExplicitTop = 204
-    ExplicitWidth = 339
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -155,15 +153,10 @@ object fmCardPayGenerate: TfmCardPayGenerate
       Width = 144
       Caption = #1043#1077#1085#1077#1088#1072#1094#1080#1103' '#1085#1086#1074#1099#1093' '#1082#1072#1088#1090
       OnClick = okcnclfrm1bbOkClick
-      ExplicitLeft = 107
-      ExplicitTop = 6
-      ExplicitWidth = 144
     end
     inherited bbCancel: TBitBtn
       Left = 256
       Top = 6
-      ExplicitLeft = 256
-      ExplicitTop = 6
     end
   end
   object srcCardSerial: TDataSource

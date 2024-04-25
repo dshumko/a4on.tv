@@ -10,7 +10,8 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin,
   GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
   DBAxisGridsEh,
-  DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB, MemTableDataEh, MemTableEh;
+  DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB, MemTableDataEh, MemTableEh,
+  PrnDbgeh;
 
 type
   TPortListForm = class(TGridForm)

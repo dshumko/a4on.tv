@@ -4,20 +4,16 @@ inherited AttributesForm: TAttributesForm
   Caption = #1040#1090#1088#1080#1073#1091#1090#1099
   ClientHeight = 550
   ClientWidth = 939
-  ExplicitWidth = 955
-  ExplicitHeight = 589
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 305
     Width = 939
-    ExplicitTop = 273
-    ExplicitWidth = 939
   end
   inherited dbGrid: TDBGridEh
-    Top = 308
+    Top = 309
     Width = 939
-    Height = 242
+    Height = 241
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item
@@ -119,7 +115,6 @@ inherited AttributesForm: TAttributesForm
   end
   inherited tlbMain: TToolBar
     Width = 939
-    ExplicitWidth = 939
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -137,8 +132,6 @@ inherited AttributesForm: TAttributesForm
     Width = 939
     Height = 280
     ParentCtl3D = False
-    ExplicitWidth = 939
-    ExplicitHeight = 280
     object lbl2: TLabel [0]
       Left = 5
       Top = 36
@@ -186,9 +179,6 @@ inherited AttributesForm: TAttributesForm
       Top = 247
       Width = 754
       TabOrder = 8
-      ExplicitLeft = 72
-      ExplicitTop = 247
-      ExplicitWidth = 754
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
@@ -196,9 +186,6 @@ inherited AttributesForm: TAttributesForm
       Width = 98
       Cancel = True
       TabOrder = 9
-      ExplicitLeft = 832
-      ExplicitTop = 247
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72

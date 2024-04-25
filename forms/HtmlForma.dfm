@@ -123,10 +123,6 @@ object HtmlForm: THtmlForm
     TabOrder = 1
     object tsViewer: TTabSheet
       Caption = 'tsViewer'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object htmlviewer: THtmlViewer
         Left = 0
         Top = 0
@@ -152,10 +148,6 @@ object HtmlForm: THtmlForm
     object tsBrowser: TTabSheet
       Caption = 'tsBrowser'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
   end
   object actlst1: TActionList

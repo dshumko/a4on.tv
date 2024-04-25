@@ -32,8 +32,6 @@ object CustomerInfoFrm: TCustomerInfoFrm
       ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 0
-      ExplicitTop = 49
-      ExplicitHeight = 120
     end
     object lblFIO: TDBEditEh
       Left = 2

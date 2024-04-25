@@ -23,7 +23,6 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 505
     Top = 0
     Height = 521
-    ExplicitHeight = 713
   end
   object pnlRight: TPanel
     Left = 508
@@ -135,7 +134,6 @@ object apgCustomerEdit: TapgCustomerEdit
           Height = 18
           Align = alLeft
           Caption = '       '
-          ExplicitHeight = 13
         end
         object btnCAdd: TSpeedButton
           Left = 66
@@ -216,7 +214,6 @@ object apgCustomerEdit: TapgCustomerEdit
           Height = 18
           Align = alRight
           Caption = '       '
-          ExplicitHeight = 13
         end
         object btnCEdit: TSpeedButton
           Left = 84
@@ -431,7 +428,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 236
       end
       object Label8: TLabel
         Left = 314
@@ -440,7 +436,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1050#1074'-'#1088#1072
-        ExplicitLeft = 331
       end
       object Label21: TLabel
         Left = 369
@@ -449,7 +444,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1055#1086#1076#1098#1077#1079#1076
-        ExplicitLeft = 386
       end
       object Label23: TLabel
         Left = 420
@@ -458,7 +452,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1069#1090#1072#1078
-        ExplicitLeft = 437
       end
       object lblContract: TLabel
         Left = 236
@@ -773,7 +766,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1048#1084#1103
-        ExplicitLeft = 169
       end
       object Label9: TLabel
         Tag = 1
@@ -783,7 +775,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1054#1090#1095#1077#1089#1090#1074#1086
-        ExplicitLeft = 329
       end
       object Label5: TLabel
         Tag = 1
@@ -985,7 +976,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1059#1053#1055
-        ExplicitLeft = 276
       end
       object Label17: TLabel
         Tag = 2
@@ -995,7 +985,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1041#1091#1093#1075#1072#1083#1090#1077#1088
-        ExplicitLeft = 236
       end
       object lbl4: TLabel
         Tag = 1
@@ -1012,7 +1001,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1043#1088#1091#1087#1087#1072' '#1053#1044#1057
-        ExplicitLeft = 386
       end
       object Label16: TLabel
         Tag = 2
@@ -1046,7 +1034,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1060#1086#1088#1084#1072
-        ExplicitLeft = 216
       end
       object Label15: TLabel
         Tag = 2

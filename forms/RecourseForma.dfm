@@ -31,7 +31,6 @@ object RecourseForm: TRecourseForm
     Height = 4
     Cursor = crVSplit
     Align = alTop
-    ExplicitTop = 63
   end
   object pnlNotice: TPanel
     Left = 0
@@ -142,29 +141,21 @@ object RecourseForm: TRecourseForm
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      ExplicitWidth = 467
-      ExplicitHeight = 71
       inherited gbInfo: TGroupBox
         Width = 467
         Height = 71
-        ExplicitWidth = 467
-        ExplicitHeight = 71
         inherited memAbonent: TMemo
           Width = 463
           Height = 17
           ScrollBars = ssNone
-          ExplicitWidth = 463
-          ExplicitHeight = 17
         end
         inherited lblFIO: TDBEditEh
           Width = 463
           Margins.Bottom = 0
-          ExplicitWidth = 463
         end
         inherited lblDebt: TDBEditEh
           Width = 463
           Text = #1044#1054#1051#1043
-          ExplicitWidth = 463
         end
       end
     end

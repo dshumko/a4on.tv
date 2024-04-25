@@ -178,6 +178,36 @@ begin
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
+  //rsFldPassportReg = '[ПАСПОРТ_РЕГИСТР]';
+  //rsFldPassportPerm = '[ПАСПОРТ_ПРОПИСКА]';
+  //rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН]';
+  //rsFldPassportDIssue = '[ПАСПОРТ_ДАТА_ВЫДАН]';
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportResidence;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportIssue;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportDate;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportBirthPlace;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportBirthDate;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
   NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsFldContract;
   NewItem.OnClick := memoMiClick;
@@ -423,6 +453,8 @@ begin
     ParseJson(dsFileType['O_CHARFIELD']);
 
   StartEdit(New);
+
+  btnSaveLink.Enabled := True;
 end;
 
 procedure TFileTypeForm.StopEdt(const Cancel: Boolean);

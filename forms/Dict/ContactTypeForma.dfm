@@ -4,20 +4,16 @@ inherited ContactTypeForm: TContactTypeForm
   Caption = #1058#1080#1087' '#1082#1086#1085#1090#1072#1082#1090#1086#1074' '#1072#1073#1086#1085#1077#1085#1090#1072
   ClientHeight = 550
   ClientWidth = 939
-  ExplicitWidth = 955
-  ExplicitHeight = 589
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 939
-    ExplicitTop = 193
-    ExplicitWidth = 939
   end
   inherited dbGrid: TDBGridEh
-    Top = 196
+    Top = 197
     Width = 939
-    Height = 354
+    Height = 353
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item
@@ -75,7 +71,6 @@ inherited ContactTypeForm: TContactTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 939
-    ExplicitWidth = 939
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -102,8 +97,6 @@ inherited ContactTypeForm: TContactTypeForm
     Width = 939
     Height = 168
     ParentCtl3D = False
-    ExplicitWidth = 939
-    ExplicitHeight = 168
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -130,9 +123,6 @@ inherited ContactTypeForm: TContactTypeForm
       Top = 135
       Width = 754
       TabOrder = 4
-      ExplicitLeft = 72
-      ExplicitTop = 135
-      ExplicitWidth = 754
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
@@ -140,9 +130,6 @@ inherited ContactTypeForm: TContactTypeForm
       Width = 98
       Cancel = True
       TabOrder = 5
-      ExplicitLeft = 832
-      ExplicitTop = 135
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72

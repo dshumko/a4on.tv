@@ -11,9 +11,9 @@ inherited FreqPlanForm: TFreqPlanForm
     Width = 987
   end
   inherited dbGrid: TDBGridEh
-    Top = 196
+    Top = 197
     Width = 987
-    Height = 307
+    Height = 306
     AllowedOperations = [alopUpdateEh]
     DrawMemoText = True
     FooterRowCount = 1

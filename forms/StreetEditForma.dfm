@@ -95,8 +95,6 @@ object StreetViewForm: TStreetViewForm
     Align = alBottom
     TabOrder = 7
     TabStop = True
-    ExplicitTop = 170
-    ExplicitHeight = 37
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -109,15 +107,10 @@ object StreetViewForm: TStreetViewForm
       Width = 142
       Enabled = False
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 176
-      ExplicitTop = 8
-      ExplicitWidth = 142
     end
     inherited bbCancel: TBitBtn
       Left = 314
       Top = 8
-      ExplicitLeft = 324
-      ExplicitTop = 8
     end
   end
   object dbEditCode: TDBEditEh

@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, GridsEh, DBGridEh, MemTableDataEh, FIBDataSet, MemTableEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, CnErrorProvider, EhLibVCL;
+  DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, CnErrorProvider, EhLibVCL,
+  PrnDbgeh;
 
 type
   TSubDivForm = class(TGridForm)

@@ -62,8 +62,6 @@ object fmCardSerial: TfmCardSerial
     Align = alBottom
     TabOrder = 3
     TabStop = True
-    ExplicitTop = 229
-    ExplicitWidth = 298
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -74,15 +72,10 @@ object fmCardSerial: TfmCardSerial
       Left = 97
       Top = 9
       Width = 103
-      ExplicitLeft = 107
-      ExplicitTop = 9
-      ExplicitWidth = 103
     end
     inherited bbCancel: TBitBtn
       Left = 205
       Top = 9
-      ExplicitLeft = 215
-      ExplicitTop = 9
     end
   end
   object LupPaySrc: TDBLookupComboboxEh
@@ -104,7 +97,6 @@ object fmCardSerial: TfmCardSerial
     ShowHint = True
     TabOrder = 1
     Visible = True
-    ExplicitWidth = 282
   end
   object edtSerial: TDBEditEh
     Left = 8
@@ -119,7 +111,6 @@ object fmCardSerial: TfmCardSerial
     ShowHint = True
     TabOrder = 0
     Visible = True
-    ExplicitWidth = 282
   end
   object dbmmoNotice: TDBMemoEh
     Left = 8
@@ -137,8 +128,6 @@ object fmCardSerial: TfmCardSerial
     TabOrder = 2
     Visible = True
     WantReturns = True
-    ExplicitWidth = 282
-    ExplicitHeight = 113
   end
   object dsCardSerial: TpFIBDataSet
     UpdateSQL.Strings = (

@@ -54,3 +54,4 @@ _git_.txt
 SQL/extract.bat
 SQL/extract.ibeblock
 units/jedi/back/
+*.cbk

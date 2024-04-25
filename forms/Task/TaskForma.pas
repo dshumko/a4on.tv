@@ -12,7 +12,8 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
   GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
   DBAxisGridsEh,
-  DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh;
+  DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh,
+  PrnDbgeh;
 
 type
   TTaskForm = class(TGridForm)

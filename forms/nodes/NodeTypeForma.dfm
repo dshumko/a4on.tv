@@ -4,8 +4,6 @@ inherited NodeTypeForm: TNodeTypeForm
   Caption = #1058#1080#1087#1099' '#1091#1079#1083#1086#1074
   ClientHeight = 486
   ClientWidth = 713
-  ExplicitWidth = 729
-  ExplicitHeight = 525
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
@@ -19,13 +17,11 @@ inherited NodeTypeForm: TNodeTypeForm
   inherited splPG: TSplitter
     Top = 169
     Width = 713
-    ExplicitTop = 169
-    ExplicitWidth = 713
   end
   inherited dbGrid: TDBGridEh
-    Top = 172
+    Top = 173
     Width = 713
-    Height = 89
+    Height = 88
     AllowedOperations = [alopUpdateEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -70,7 +66,6 @@ inherited NodeTypeForm: TNodeTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 713
-    ExplicitWidth = 713
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -95,11 +90,10 @@ inherited NodeTypeForm: TNodeTypeForm
     object lbl4: TLabel
       Left = 0
       Top = 0
-      Width = 713
+      Width = 168
       Height = 13
       Align = alTop
       Caption = ' '#1050#1086#1084#1087#1086#1085#1086#1074#1082#1072' '#1091#1079#1083#1086#1074' '#1076#1072#1085#1085#1086#1075#1086' '#1090#1080#1087#1072
-      ExplicitWidth = 168
     end
     object dbgLayout: TDBGridEh
       Left = 28
@@ -193,8 +187,6 @@ inherited NodeTypeForm: TNodeTypeForm
     Width = 713
     Height = 144
     ParentCtl3D = False
-    ExplicitWidth = 713
-    ExplicitHeight = 144
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -222,9 +214,6 @@ inherited NodeTypeForm: TNodeTypeForm
       Top = 116
       Width = 528
       TabOrder = 4
-      ExplicitLeft = 72
-      ExplicitTop = 116
-      ExplicitWidth = 528
     end
     inherited btnCancelLink: TBitBtn
       Left = 606
@@ -232,9 +221,6 @@ inherited NodeTypeForm: TNodeTypeForm
       Width = 98
       Cancel = True
       TabOrder = 5
-      ExplicitLeft = 606
-      ExplicitTop = 116
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72

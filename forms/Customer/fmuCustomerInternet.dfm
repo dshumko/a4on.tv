@@ -100,9 +100,6 @@ object apgCustomerInternet: TapgCustomerInternet
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 8
-    ExplicitTop = 8
-    ExplicitHeight = 253
     DesignSize = (
       26
       261)
@@ -115,7 +112,6 @@ object apgCustomerInternet: TapgCustomerInternet
       Anchors = [akLeft, akBottom]
       Flat = True
       Layout = blGlyphTop
-      ExplicitTop = 230
     end
     object btnAdd1: TSpeedButton
       Left = 2

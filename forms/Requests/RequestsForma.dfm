@@ -156,10 +156,6 @@ object RequestsForm: TRequestsForm
     OnChange = pgcGridsChange
     object tsPlan: TTabSheet
       Caption = #1047#1072#1087#1083#1072#1085#1080#1088#1086#1074#1072#1085#1099
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgPlan: TDBGridEh
         Left = 0
         Top = 23
@@ -556,10 +552,6 @@ object RequestsForm: TRequestsForm
     object tsGive: TTabSheet
       Caption = #1042#1099#1076#1072#1085#1099' '#1074' '#1088#1072#1073#1086#1090#1091
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgGive: TDBGridEh
         Left = 0
         Top = 25
@@ -1398,7 +1390,6 @@ object RequestsForm: TRequestsForm
             Height = 13
             Align = alTop
             Caption = #1042#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100' '
-            ExplicitWidth = 136
           end
           object splWork: TSplitter
             Left = 164
@@ -1455,8 +1446,6 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
-                ExplicitWidth = 350
-                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 350
                   Height = 176
@@ -1586,8 +1575,6 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
-                ExplicitWidth = 271
-                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 271
                   Height = 176
@@ -1680,10 +1667,6 @@ object RequestsForm: TRequestsForm
     object tsAll: TTabSheet
       Caption = #1042#1089#1077' '#1079#1072#1103#1074#1082#1080
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgGrid: TDBGridEh
         Left = 0
         Top = 25

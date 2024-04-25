@@ -5,20 +5,15 @@ inherited RatesForm: TRatesForm
   Caption = #1050#1091#1088#1089#1099' '#1074#1072#1083#1102#1090
   ClientHeight = 399
   ClientWidth = 652
-  ExplicitWidth = 668
-  ExplicitHeight = 438
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 652
-    ExplicitWidth = 652
   end
   object spl1: TSplitter [1]
     Left = 344
     Top = 85
     Height = 314
-    ExplicitTop = 84
-    ExplicitHeight = 315
   end
   inherited dbGrid: TDBGridEh
     Width = 344
@@ -68,7 +63,6 @@ inherited RatesForm: TRatesForm
   end
   inherited tlbMain: TToolBar
     Width = 652
-    ExplicitWidth = 652
     inherited ToolButton4: TToolButton
       Visible = False
     end
@@ -118,14 +112,11 @@ inherited RatesForm: TRatesForm
   end
   inherited pnlEdit: TPanel
     Width = 652
-    ExplicitWidth = 652
     inherited btnSaveLink: TBitBtn
       Width = 466
-      ExplicitWidth = 466
     end
     inherited btnCancelLink: TBitBtn
       Left = 557
-      ExplicitLeft = 557
     end
   end
   object chtRates: TChart [5]

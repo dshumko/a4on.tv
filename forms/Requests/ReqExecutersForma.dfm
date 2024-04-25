@@ -43,8 +43,6 @@ object ReqExecutorsForm: TReqExecutorsForm
       Align = alClient
       TabOrder = 0
       TabStop = True
-      ExplicitWidth = 716
-      ExplicitHeight = 37
       inherited Label2: TLabel
         Margins.Bottom = 0
       end
@@ -59,19 +57,12 @@ object ReqExecutorsForm: TReqExecutorsForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
-        ExplicitLeft = 436
-        ExplicitTop = 6
-        ExplicitWidth = 196
-        ExplicitHeight = 25
       end
       inherited bbCancel: TBitBtn
         Left = 638
         Top = 6
         Height = 25
         Caption = #1047#1072#1082#1088#1099#1090#1100
-        ExplicitLeft = 638
-        ExplicitTop = 6
-        ExplicitHeight = 25
       end
     end
   end

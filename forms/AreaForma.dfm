@@ -6,17 +6,20 @@ inherited AreaForm: TAreaForm
   ClientWidth = 746
   Constraints.MinHeight = 244
   Menu = MainMenu1
-  OnCreate = FormCreate
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter: TSplitter [0]
     Left = 0
-    Top = 233
+    Top = 237
     Width = 746
     Height = 8
     Cursor = crVSplit
     Align = alTop
+  end
+  inherited splPG: TSplitter
+    Top = 233
+    Width = 746
   end
   inherited dbGrid: TDBGridEh
     Top = 57
@@ -92,28 +95,11 @@ inherited AreaForm: TAreaForm
         Width = 152
       end>
   end
-  inherited tlbMain: TToolBar
-    Width = 746
-    inherited tbOk: TToolButton
-      Visible = False
-      OnClick = tbOkClick
-    end
-    inherited ToolButton10: TToolButton
-      Visible = False
-    end
-    inherited tbCancel: TToolButton
-      Visible = False
-      OnClick = tbCancelClick
-    end
-    inherited ToolButton20: TToolButton
-      Visible = False
-    end
-  end
   object pnlBottom: TPanel [3]
     Left = 0
-    Top = 241
+    Top = 245
     Width = 746
-    Height = 179
+    Height = 175
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
@@ -124,7 +110,6 @@ inherited AreaForm: TAreaForm
       Height = 154
       Align = alClient
       AllowedOperations = [alopUpdateEh]
-      AutoFitColWidths = False
       DataSource = srcSubAreas
       DynProps = <>
       Flat = True
@@ -272,6 +257,23 @@ inherited AreaForm: TAreaForm
       end
     end
   end
+  inherited tlbMain: TToolBar
+    Width = 746
+    inherited tbOk: TToolButton
+      Visible = False
+      OnClick = tbOkClick
+    end
+    inherited ToolButton10: TToolButton
+      Visible = False
+    end
+    inherited tbCancel: TToolButton
+      Visible = False
+      OnClick = tbCancelClick
+    end
+    inherited ToolButton20: TToolButton
+      Visible = False
+    end
+  end
   inherited pnlEdit: TPanel
     Width = 746
     Height = 32
@@ -287,7 +289,6 @@ inherited AreaForm: TAreaForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsAreas
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Left = 104
     Top = 104

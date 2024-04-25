@@ -2,18 +2,15 @@ inherited WHform: TWHform
   Caption = #1057#1082#1083#1072#1076#1099
   ClientHeight = 516
   ClientWidth = 692
-  ExplicitWidth = 708
-  ExplicitHeight = 555
   PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel [0]
     Left = 0
-    Top = 367
+    Top = 368
     Width = 692
     Height = 13
     Align = alTop
     Caption = #1055#1088#1072#1074#1072' '#1076#1086#1089#1090#1091#1087#1082#1072' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1077#1081' '#1082' '#1089#1082#1083#1072#1076#1091
-    ExplicitWidth = 210
   end
   inherited splPG: TSplitter
     Top = 161
@@ -22,7 +19,7 @@ inherited WHform: TWHform
   inherited dbGrid: TDBGridEh
     AlignWithMargins = True
     Left = 3
-    Top = 167
+    Top = 168
     Width = 686
     Height = 197
     Align = alTop
@@ -60,7 +57,6 @@ inherited WHform: TWHform
   end
   inherited tlbMain: TToolBar
     Width = 692
-    ExplicitWidth = 692
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -77,9 +73,9 @@ inherited WHform: TWHform
   object dbgRights: TDBGridEh [4]
     AlignWithMargins = True
     Left = 3
-    Top = 383
+    Top = 384
     Width = 686
-    Height = 130
+    Height = 129
     Align = alClient
     AllowedOperations = [alopUpdateEh]
     DataSource = srcRights
@@ -159,8 +155,6 @@ inherited WHform: TWHform
   inherited pnlEdit: TPanel
     Width = 692
     Height = 136
-    ExplicitWidth = 692
-    ExplicitHeight = 136
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -187,16 +181,11 @@ inherited WHform: TWHform
       Top = 108
       Width = 482
       TabOrder = 2
-      ExplicitLeft = 97
-      ExplicitTop = 108
-      ExplicitWidth = 482
     end
     inherited btnCancelLink: TBitBtn
       Left = 597
       Top = 108
       TabOrder = 3
-      ExplicitLeft = 597
-      ExplicitTop = 108
     end
     object edtName: TDBEditEh
       Left = 97
@@ -250,7 +239,6 @@ inherited WHform: TWHform
   end
   inherited srcDataSource: TDataSource
     DataSet = dsWH
-    OnStateChange = srcDataSourceStateChange
     Left = 256
     Top = 240
   end

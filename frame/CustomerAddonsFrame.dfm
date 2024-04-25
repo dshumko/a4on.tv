@@ -187,9 +187,6 @@
             Font.Name = 'Tahoma'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitLeft = 22
-            ExplicitWidth = 99
-            ExplicitHeight = 20
           end
           object pnlPrepay: TPanel
             Left = 2
@@ -225,9 +222,6 @@
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentFont = False
-              ExplicitLeft = 35
-              ExplicitWidth = 84
-              ExplicitHeight = 20
             end
           end
         end
@@ -472,8 +466,6 @@
             Height = 3
             Cursor = crVSplit
             Align = alBottom
-            ExplicitTop = 110
-            ExplicitWidth = 760
           end
           object dbgCustSubscrServ: TDBGridEh
             Left = 0
@@ -577,7 +569,6 @@
               Height = 13
               Align = alTop
               Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
-              ExplicitWidth = 139
             end
             object dbgPersTarif: TDBGridEh
               Left = 27
@@ -1690,8 +1681,6 @@
         Top = 0
         Height = 280
         Align = alRight
-        ExplicitLeft = 289
-        ExplicitHeight = 198
       end
       object Panel1: TPanel
         Left = 0
@@ -1708,7 +1697,6 @@
           Height = 13
           Align = alTop
           Caption = '.:: '#1044#1077#1082#1086#1076#1077#1088#1099' '#1072#1073#1086#1085#1077#1085#1090#1072' ::.'
-          ExplicitWidth = 134
         end
         object ToolBar3: TToolBar
           Left = 0
@@ -1848,7 +1836,6 @@
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1077' '#1082#1072#1085#1072#1083#1099' '#1072#1073#1086#1085#1077#1085#1090#1072' ::.'
-          ExplicitWidth = 196
         end
         object ToolBar2: TToolBar
           Left = 0

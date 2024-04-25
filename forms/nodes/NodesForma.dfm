@@ -340,7 +340,6 @@ object NodesForm: TNodesForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
-        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46

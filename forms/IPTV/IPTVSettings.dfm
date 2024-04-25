@@ -33,10 +33,6 @@ object IPTVSettinsForm: TIPTVSettinsForm
     OnChange = pgcModeChange
     object tsEdit: TTabSheet
       Caption = ' '#1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' '
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object spl2: TSplitter
         Left = 0
         Top = 249
@@ -430,10 +426,6 @@ object IPTVSettinsForm: TIPTVSettinsForm
     object tsView: TTabSheet
       Caption = ' '#1055#1088#1086#1089#1084#1086#1090#1088' '
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgView: TDBGridEh
         Left = 0
         Top = 0

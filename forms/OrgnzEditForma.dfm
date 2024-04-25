@@ -157,8 +157,6 @@ object OrgnzEditForm: TOrgnzEditForm
     Align = alBottom
     TabOrder = 17
     TabStop = True
-    ExplicitTop = 391
-    ExplicitWidth = 581
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -171,16 +169,11 @@ object OrgnzEditForm: TOrgnzEditForm
       Width = 394
       Anchors = [akLeft, akRight]
       Enabled = False
-      ExplicitLeft = 94
-      ExplicitTop = 6
-      ExplicitWidth = 394
     end
     inherited bbCancel: TBitBtn
       Left = 496
       Top = 6
       Anchors = [akRight]
-      ExplicitLeft = 496
-      ExplicitTop = 6
     end
   end
   object cbbVATG: TDBLookupComboboxEh

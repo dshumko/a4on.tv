@@ -29,8 +29,6 @@ object WirePointForm: TWirePointForm
     Align = alBottom
     TabOrder = 1
     TabStop = True
-    ExplicitTop = 219
-    ExplicitWidth = 538
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -43,12 +41,9 @@ object WirePointForm: TWirePointForm
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 64
-      ExplicitWidth = 385
     end
     inherited bbCancel: TBitBtn
       Left = 455
-      ExplicitLeft = 455
     end
   end
   object pnlSecond: TPanel

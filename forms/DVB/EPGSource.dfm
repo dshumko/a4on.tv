@@ -206,7 +206,6 @@ object EPGSourceForm: TEPGSourceForm
       Height = 13
       Align = alTop
       Caption = '  '#1058#1072#1073#1083#1080#1094#1072' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1080#1081' '#1082#1072#1085#1072#1083#1086#1074
-      ExplicitWidth = 166
     end
     object DBGridEh1: TDBGridEh
       Left = 0
@@ -285,7 +284,6 @@ object EPGSourceForm: TEPGSourceForm
       Height = 13
       Align = alTop
       Caption = '  '#1058#1072#1073#1083#1080#1094#1072' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1080#1081' '#1078#1072#1085#1088#1086#1074
-      ExplicitWidth = 162
     end
     object DBGridEh2: TDBGridEh
       Left = 0

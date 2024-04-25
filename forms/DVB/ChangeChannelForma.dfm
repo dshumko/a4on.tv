@@ -27,7 +27,6 @@ object frmChangeChannelForm: TfrmChangeChannelForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 137
     DesignSize = (
       392
       166)
@@ -73,7 +72,6 @@ object frmChangeChannelForm: TfrmChangeChannelForm
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 3
-      ExplicitTop = 100
       DesignSize = (
         392
         37)

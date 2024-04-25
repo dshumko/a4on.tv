@@ -6,8 +6,12 @@ inherited BonusesForm: TBonusesForm
   ClientWidth = 765
   PixelsPerInch = 96
   TextHeight = 13
-  inherited dbGrid: TDBGridEh
+  inherited splPG: TSplitter
     Top = 201
+    Width = 765
+  end
+  inherited dbGrid: TDBGridEh
+    Top = 205
     Width = 765
     AllowedOperations = [alopUpdateEh]
     Columns = <
@@ -188,6 +192,7 @@ inherited BonusesForm: TBonusesForm
       EditButtons = <>
       EmptyDataInfo.Text = #1053#1072#1095#1072#1083#1086
       Kind = dtkDateEh
+      ShowHint = True
       TabOrder = 1
       Visible = True
     end
@@ -202,6 +207,7 @@ inherited BonusesForm: TBonusesForm
       EditButtons = <>
       EmptyDataInfo.Text = #1054#1082#1086#1085#1095#1072#1085#1080#1077
       Kind = dtkDateEh
+      ShowHint = True
       TabOrder = 2
       Visible = True
     end
@@ -217,6 +223,7 @@ inherited BonusesForm: TBonusesForm
       EmptyDataInfo.Text = #1045#1076#1080#1085#1080#1094' '#1086#1090
       EditButton.Visible = True
       EditButtons = <>
+      ShowHint = True
       TabOrder = 3
       Visible = True
     end
@@ -232,6 +239,7 @@ inherited BonusesForm: TBonusesForm
       EmptyDataInfo.Text = #1045#1076#1080#1085#1080#1094' '#1076#1086
       EditButton.Visible = True
       EditButtons = <>
+      ShowHint = True
       TabOrder = 4
       Visible = True
     end
@@ -247,6 +255,7 @@ inherited BonusesForm: TBonusesForm
       EmptyDataInfo.Text = #1055#1088#1086#1094#1077#1085#1090' '#1080#1083#1080' '#1082#1086#1083'-'#1074#1086' '
       EditButton.Visible = True
       EditButtons = <>
+      ShowHint = True
       TabOrder = 5
       Visible = True
     end
@@ -264,6 +273,7 @@ inherited BonusesForm: TBonusesForm
       KeyField = 'O_ID'
       ListField = 'O_NAME'
       ListSource = srcBT
+      ShowHint = True
       TabOrder = 0
       Visible = True
     end
@@ -279,6 +289,7 @@ inherited BonusesForm: TBonusesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ShowHint = True
       TabOrder = 6
       Visible = True
       WantReturns = True

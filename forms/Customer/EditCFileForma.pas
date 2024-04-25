@@ -5,13 +5,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Data.DB,
   FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, FIBDatabase,
   GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, PropFilerEh, PropStorageEh,
   CnErrorProvider,
-  PrjConst, A4onTypeUnit, Vcl.Menus;
+  PrjConst, A4onTypeUnit;
 
 type
   TEditCFileForm = class(TForm)
@@ -260,8 +260,7 @@ begin
   with TEditCFileForm.Create(Application) do
     try
       CustomerInfo := ci;
-      if CF_ID >= 0
-      then
+      if CF_ID >= 0 then
         dsFileTypes.ParamByName('IsEdit').AsInteger := 1
       else
         dsFileTypes.ParamByName('IsEdit').AsInteger := 0;
@@ -362,7 +361,24 @@ begin
   if (pnlPassport.Visible) then
   begin
     if (Trim(edtSURNAME.Text + ' ' + edtFIRSTNAME.Text + ' ' + edtMIDLENAME.Text) <> '') then
-      s := ReplaceStr(s, rsFldApplicantName, Trim(edtSURNAME.Text + ' ' + edtFIRSTNAME.Text + ' ' + edtMIDLENAME.Text))
+      s := ReplaceStr(s, rsFldApplicantName, Trim(edtSURNAME.Text + ' ' + edtFIRSTNAME.Text + ' ' + edtMIDLENAME.Text));
+
+  // rsFldPassportResidence = '[ПАСПОРТ_ПРОПИСКА]';
+  // rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН_МЕСТО]';
+  //  rsFldPassportDate = '[ПАСПОРТ_ВЫДАН]';
+  //  rsFldPassportBirthPlace = '[ПАСПОРТ_РОЖД_МЕСТО]';
+  //  rsFldPassportBirthDate = '[ПАСПОРТ_РОЖД_ДАТА]';
+
+    if (edtRegistration.Text <> '') then
+      s := ReplaceStr(s, rsFldPassportIssue, edtRegistration.Text);
+    if (not VarIsNull(edtDOCDATE.value)) then
+      s := ReplaceStr(s, rsFldPassportDate, FormatDateTime('dd.mm.yyyy', edtDOCDATE.value));
+    if (edtPlaceBirth.Text <> '') then
+      s := ReplaceStr(s, rsFldPassportBirthPlace, edtPlaceBirth.Text);
+    if (not VarIsNull(edtBIRTHDAY.value)) then
+      s := ReplaceStr(s, rsFldPassportBirthDate, FormatDateTime('dd.mm.yyyy', edtBIRTHDAY.value));
+    if (edtADRES_REGISTR.Text <> '') then
+      s := ReplaceStr(s, rsFldPassportResidence, edtADRES_REGISTR.Text);
   end
   else
   begin
@@ -1515,11 +1531,13 @@ begin
           end;
         end;
       end;
+
       if not CheckEnoughMoney then
       begin
         result := true;
         CnErrors.SetError(edDate, rsEnoughMoneyDateIncorrect, iaMiddleLeft, bsNeverBlink);
       end;
+
       s := CheckDatesOnOff();
       if not s.IsEmpty then
       begin
@@ -2100,40 +2118,32 @@ begin
 
   QueryClear;
   Query.Transaction := trWrite;
-  Query.SQL.Add('update or insert into Doc_LIST (Doc_Type, Doc_Number, Doc_Reg, Doc_Date, ' +
-    'Birthday, Addr_Registr, Addr_Birth, PERSONAL_N, Surname, Firstname, Midlename' + IfThen(nf, ', Cf_Id', '') + ')');
-  Query.SQL.Add('values (:Doc_Type, :Doc_Number, :Doc_Reg, :Doc_Date, ' +
-    ':Birthday, :Addr_Registr, :Addr_Birth, :PERSONAL_N, :Surname, :Firstname, :Midlename' + IfThen(nf, ', :Cf_Id',
-    '') + ')');
+  Query.SQL.Add('update or insert into Doc_LIST (Doc_Type, Doc_Number, Doc_Reg, Doc_Date, ');
+  Query.SQL.Add('  Birthday, Addr_Registr, Addr_Birth, PERSONAL_N, Surname, Firstname, Midlename');
+  Query.SQL.Add(IfThen(nf, ', Cf_Id', '') + ')');
+  Query.SQL.Add('values (:Doc_Type, :Doc_Number, :Doc_Reg, :Doc_Date, ');
+  Query.SQL.Add('  :Birthday, :Addr_Registr, :Addr_Birth, :PERSONAL_N, :Surname, :Firstname, :Midlename');
+  Query.SQL.Add( IfThen(nf, ', :Cf_Id', '') + ')');
   Query.SQL.Add('matching (Doc_Type, Doc_Number)');
+
+  if nf then
+    Query.ParamByName('Cf_Id').AsInteger := FileID;
 
   Query.ParamByName('Doc_Type').AsInteger := 1;
   Query.ParamByName('Doc_Number').AsString := PN;
-  if nf then
-  begin
-    Query.ParamByName('Cf_Id').AsInteger := FileID;
-  end;
-
   Query.ParamByName('Surname').AsString := Trim(edtSURNAME.Text);
   Query.ParamByName('Firstname').AsString := Trim(edtFIRSTNAME.Text);
   Query.ParamByName('Midlename').AsString := Trim(edtMIDLENAME.Text);
-
-  if not edtRegistration.IsEmpty then
-    Query.ParamByName('Doc_Reg').AsString := Trim(edtRegistration.Text);
-
-  if not edtADRES_REGISTR.IsEmpty then
-    Query.ParamByName('Addr_Registr').AsString := Trim(edtADRES_REGISTR.Text);
+  Query.ParamByName('Doc_Reg').AsString := Trim(edtRegistration.Text);
+  Query.ParamByName('Addr_Registr').AsString := Trim(edtADRES_REGISTR.Text);
   if not VarIsNull(edtDOCDATE.value) then
     Query.ParamByName('Doc_Date').AsDate := edtDOCDATE.value;
   if not VarIsNull(edtBIRTHDAY.value) then
     Query.ParamByName('Birthday').AsDate := edtBIRTHDAY.value;
-  if not edtPlaceBirth.IsEmpty then
-    Query.ParamByName('Addr_Birth').AsString := Trim(edtPlaceBirth.Text);
+  Query.ParamByName('Addr_Birth').AsString := Trim(edtPlaceBirth.Text);
 
-  if (pnlMobile.Visible) and (not edtMobile.IsEmpty) then
-  begin
+  if (pnlMobile.Visible) then
     Query.ParamByName('PERSONAL_N').AsString := edtMobile.Text;
-  end;
 
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
@@ -2609,7 +2619,7 @@ begin
           end;
           SQL.Add('end');
 
-          //ShowMessage(SQL.Text);
+          // ShowMessage(SQL.Text);
 
           ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
           ParamByName('Service_Id').AsInteger := lcbService.value;
@@ -2803,7 +2813,7 @@ begin
 
             SQL.Add('end');
 
-            //ShowMessage(SQL.Text);
+            // ShowMessage(SQL.Text);
 
             ParamByName('CUSTOMER_ID').AsInteger := FCustomerInfo.CUSTOMER_ID;
             ParamByName('OLD_CUSTOMER_ID').AsInteger := result;

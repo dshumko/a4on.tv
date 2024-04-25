@@ -74,8 +74,6 @@ object apgCustomerAttributes: TapgCustomerAttributes
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = -34
-    ExplicitHeight = 172
     DesignSize = (
       26
       138)
@@ -88,7 +86,6 @@ object apgCustomerAttributes: TapgCustomerAttributes
       Anchors = [akLeft, akBottom]
       Flat = True
       Layout = blGlyphTop
-      ExplicitTop = 149
     end
     object btnAdd1: TSpeedButton
       Left = 2

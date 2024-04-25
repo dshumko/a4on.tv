@@ -10,7 +10,7 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
   CnErrorProvider, VclTee.TeCanvas, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  PrjConst, A4onTypeUnit, AtrPages, amSplitter;
+  PrjConst, A4onTypeUnit, AtrPages, amSplitter, PrnDbgeh;
 
 type
   TEQGroupsForm = class(TGridForm)

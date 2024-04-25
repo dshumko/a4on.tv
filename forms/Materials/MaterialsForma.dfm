@@ -27,7 +27,6 @@ object MaterialsForm: TMaterialsForm
     Height = 3
     Cursor = crVSplit
     Align = alBottom
-    ExplicitWidth = 829
   end
   object pnlHead: TPanel
     Left = 0

@@ -1414,7 +1414,7 @@ begin
     q.SQL.Text := 'select list(RQ_ID) RQ_LIST from ( select r.RQ_ID , coalesce(Get_Request_Money(r.Rq_Id), 0) RQ_FEE '//
       + ' , coalesce((select sum(p.Pay_Sum) from payment p where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0) RQ_PAY '
       + ' , coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0) PAY_SRV '
-      + ' from REQUEST R where r.Rq_Customer = :CID) where RQ_FEE + PAY_SRV <> RQ_PAY';
+      + ' from REQUEST R where r.Rq_Customer = :CID and r.Rq_Exec_Time >= ''2024-01-01'') where RQ_FEE + PAY_SRV <> RQ_PAY';
     q.ParamByName('CID').AsInteger := CID;
     q.Transaction.StartTransaction;
     q.ExecQuery;

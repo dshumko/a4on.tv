@@ -4,17 +4,11 @@ inherited NewsForm: TNewsForm
   Caption = #1053#1086#1074#1086#1089#1090#1080' '#1076#1083#1103' '#1083#1080#1095#1085#1086#1075#1086' '#1082#1072#1073#1080#1085#1077#1090#1072
   ClientHeight = 435
   ClientWidth = 926
-  ExplicitWidth = 942
-  ExplicitHeight = 474
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 926
-    Height = 4
-    ExplicitTop = 193
-    ExplicitWidth = 926
-    ExplicitHeight = 4
   end
   inherited dbGrid: TDBGridEh
     Top = 197
@@ -86,14 +80,11 @@ inherited NewsForm: TNewsForm
   end
   inherited tlbMain: TToolBar
     Width = 926
-    ExplicitWidth = 926
-    inherited ToolButton5: TToolButton [2]
-      Left = 28
-      ExplicitLeft = 28
-    end
-    inherited btnEdit: TToolButton [3]
+    inherited btnEdit: TToolButton
       Left = 32
-      ExplicitLeft = 32
+    end
+    inherited ToolButton5: TToolButton
+      Left = 28
     end
     inherited ToolButton9: TToolButton
       Visible = False
@@ -113,8 +104,6 @@ inherited NewsForm: TNewsForm
   inherited pnlEdit: TPanel
     Width = 926
     Height = 168
-    ExplicitWidth = 926
-    ExplicitHeight = 168
     object Label1: TLabel [0]
       Left = 5
       Top = 7
@@ -157,17 +146,12 @@ inherited NewsForm: TNewsForm
       Top = 139
       Width = 723
       TabOrder = 5
-      ExplicitLeft = 90
-      ExplicitTop = 139
-      ExplicitWidth = 723
     end
     inherited btnCancelLink: TBitBtn
       Left = 831
       Top = 139
       Cancel = True
       TabOrder = 6
-      ExplicitLeft = 831
-      ExplicitTop = 139
     end
     object dbeName: TDBEditEh
       Left = 90
@@ -253,7 +237,6 @@ inherited NewsForm: TNewsForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsNews
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Left = 64
     Top = 296

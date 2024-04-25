@@ -11,7 +11,8 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
-  DBCtrlsEh, EhLibVCL, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, DBGridEhGrouping, DynVarsEh;
+  DBCtrlsEh, EhLibVCL, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, DBGridEhGrouping, DynVarsEh,
+  PrnDbgeh;
 
 type
   TFreqPlanForm = class(TGridForm)

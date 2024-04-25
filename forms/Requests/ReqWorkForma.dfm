@@ -57,8 +57,6 @@ object ReqWorkForm: TReqWorkForm
     Align = alBottom
     TabOrder = 6
     TabStop = True
-    ExplicitTop = 347
-    ExplicitWidth = 455
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -69,12 +67,9 @@ object ReqWorkForm: TReqWorkForm
       Left = 222
       Width = 143
       OnClick = okcnclfrm1bbOkClick
-      ExplicitLeft = 222
-      ExplicitWidth = 143
     end
     inherited bbCancel: TBitBtn
       Left = 371
-      ExplicitLeft = 371
     end
   end
   object dbmmoSolution: TDBMemoEh

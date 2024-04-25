@@ -30,10 +30,8 @@ object EquipEditForm: TEquipEditForm
     Align = alClient
     Style = tsButtons
     TabOrder = 1
-    ExplicitHeight = 194
     object tsLan: TTabSheet
       Caption = #1057#1077#1090#1100
-      ExplicitHeight = 163
       DesignSize = (
         411
         168)
@@ -356,7 +354,6 @@ object EquipEditForm: TEquipEditForm
     object tsTV: TTabSheet
       Caption = #1058#1042
       ImageIndex = 1
-      ExplicitHeight = 163
       DesignSize = (
         411
         168)
@@ -511,7 +508,6 @@ object EquipEditForm: TEquipEditForm
     object tsOther: TTabSheet
       Caption = #1055#1088#1086#1095#1077#1077
       ImageIndex = 2
-      ExplicitHeight = 163
       DesignSize = (
         411
         168)
@@ -938,7 +934,6 @@ object EquipEditForm: TEquipEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 438
     DesignSize = (
       419
       43)

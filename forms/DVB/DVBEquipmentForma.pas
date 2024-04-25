@@ -10,7 +10,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
-  CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
+  CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter,
+  PrnDbgeh;
 
 type
   TDVBEquipmentForm = class(TGridForm)

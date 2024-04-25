@@ -36,8 +36,6 @@ object ReqMatReturnForm: TReqMatReturnForm
       Align = alClient
       TabOrder = 0
       TabStop = True
-      ExplicitWidth = 1044
-      ExplicitHeight = 37
       inherited bbOk: TBitBtn
         Left = 185
         Width = 613
@@ -46,9 +44,6 @@ object ReqMatReturnForm: TReqMatReturnForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
-        ExplicitLeft = 185
-        ExplicitWidth = 613
-        ExplicitHeight = 30
       end
       inherited bbCancel: TBitBtn
         Left = 804
@@ -56,10 +51,6 @@ object ReqMatReturnForm: TReqMatReturnForm
         Width = 234
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
-        ExplicitLeft = 804
-        ExplicitTop = 3
-        ExplicitWidth = 234
-        ExplicitHeight = 30
       end
     end
   end

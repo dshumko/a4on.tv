@@ -50,8 +50,6 @@ object EquipAttributesForm: TEquipAttributesForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
-    ExplicitTop = 135
-    ExplicitWidth = 434
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -65,18 +63,11 @@ object EquipAttributesForm: TEquipAttributesForm
       Height = 28
       Anchors = [akLeft, akTop, akRight]
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 72
-      ExplicitTop = 1
-      ExplicitWidth = 271
-      ExplicitHeight = 28
     end
     inherited bbCancel: TBitBtn
       Left = 352
       Top = 1
       Height = 28
-      ExplicitLeft = 352
-      ExplicitTop = 1
-      ExplicitHeight = 28
     end
   end
   object dbluAttribute: TDBLookupComboboxEh

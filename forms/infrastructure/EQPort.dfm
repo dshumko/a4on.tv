@@ -108,7 +108,6 @@ object EQPortForm: TEQPortForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 10
-    ExplicitTop = 294
     DesignSize = (
       534
       43)

@@ -99,7 +99,6 @@ object TarifForm: TTarifForm
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
     TabOrder = 5
-    ExplicitTop = 155
   end
   object btnOk: TBitBtn
     Left = 8
@@ -113,8 +112,6 @@ object TarifForm: TTarifForm
     NumGlyphs = 2
     TabOrder = 4
     OnClick = btnOkClick
-    ExplicitLeft = 16
-    ExplicitTop = 155
   end
   object ednVAT: TDBNumberEditEh
     Left = 124

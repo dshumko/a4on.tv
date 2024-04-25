@@ -27,7 +27,6 @@ object ReportDesignerForm: TReportDesignerForm
     Left = 266
     Top = 0
     Height = 457
-    ExplicitLeft = 269
   end
   object GroupBox1: TGroupBox
     Left = 269
@@ -37,8 +36,6 @@ object ReportDesignerForm: TReportDesignerForm
     Align = alClient
     Caption = #1055#1088#1077#1076#1074#1072#1088#1080#1090#1077#1083#1100#1085#1099#1081' '#1087#1088#1086#1089#1084#1086#1090#1088
     TabOrder = 1
-    ExplicitLeft = 272
-    ExplicitWidth = 589
   end
   object StatusBar1: TStatusBar
     Left = 0
@@ -62,7 +59,6 @@ object ReportDesignerForm: TReportDesignerForm
     BevelOuter = bvNone
     Caption = 'pnl1'
     TabOrder = 0
-    ExplicitLeft = 3
     object ToolBar1: TToolBar
       Left = 0
       Top = 0

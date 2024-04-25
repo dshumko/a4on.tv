@@ -4,7 +4,6 @@ inherited ManForm: TManForm
   Caption = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082' '#1087#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1077#1081' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
   ClientHeight = 282
   ClientWidth = 707
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -12,9 +11,9 @@ inherited ManForm: TManForm
     Width = 707
   end
   inherited dbGrid: TDBGridEh
-    Top = 148
+    Top = 149
     Width = 707
-    Height = 134
+    Height = 133
     AllowedOperations = [alopUpdateEh]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     Columns = <
@@ -153,7 +152,6 @@ inherited ManForm: TManForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsMan
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
   end
   inherited actions: TActionList

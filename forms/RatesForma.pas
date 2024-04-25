@@ -13,7 +13,7 @@ uses
   PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
   VclTee.TeeGDIPlus, VclTee.TeEngine, VclTee.Series, VclTee.TeeProcs,
-  VclTee.Chart, amSplitter;
+  VclTee.Chart, amSplitter, PrnDbgeh;
 
 type
   TRatesForm = class(TGridForm)

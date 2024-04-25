@@ -10,7 +10,8 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, DBCtrlsEh,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, frxClass, frxDBSet, FIBDatabase, pFIBDatabase, FIBQuery,
-  pFIBQuery, GridForma, SendEmail, distrValuePeriodForma, amSplitter;
+  pFIBQuery, GridForma, SendEmail, distrValuePeriodForma, amSplitter,
+  PrnDbgeh;
 
 type
   TDistribForm = class(TGridForm)

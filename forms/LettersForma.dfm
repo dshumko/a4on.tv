@@ -4,20 +4,16 @@ inherited LettersForm: TLettersForm
   Caption = #1055#1077#1095#1072#1090#1085#1099#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1099
   ClientHeight = 449
   ClientWidth = 787
-  ExplicitWidth = 803
-  ExplicitHeight = 488
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 137
     Width = 787
-    ExplicitTop = 137
-    ExplicitWidth = 787
   end
   inherited dbGrid: TDBGridEh
-    Top = 140
+    Top = 141
     Width = 787
-    Height = 309
+    Height = 308
     Columns = <
       item
         CellButtons = <>
@@ -89,7 +85,6 @@ inherited LettersForm: TLettersForm
   end
   inherited tlbMain: TToolBar
     Width = 787
-    ExplicitWidth = 787
     inherited btnEdit: TToolButton
       Caption = #1059#1076#1072#1083#1080#1090#1100
     end
@@ -108,8 +103,6 @@ inherited LettersForm: TLettersForm
   inherited pnlEdit: TPanel
     Width = 787
     Height = 112
-    ExplicitWidth = 787
-    ExplicitHeight = 112
     object Label1: TLabel [0]
       Left = 8
       Top = 11
@@ -136,16 +129,11 @@ inherited LettersForm: TLettersForm
       Top = 85
       Width = 616
       TabOrder = 5
-      ExplicitLeft = 72
-      ExplicitTop = 85
-      ExplicitWidth = 616
     end
     inherited btnCancelLink: TBitBtn
       Left = 694
       Top = 85
       TabOrder = 6
-      ExplicitLeft = 694
-      ExplicitTop = 85
     end
     object DBCheckBoxEh1: TDBCheckBoxEh
       Left = 72
@@ -229,7 +217,6 @@ inherited LettersForm: TLettersForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsLetters
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Left = 280
     Top = 240

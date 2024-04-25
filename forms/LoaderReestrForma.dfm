@@ -218,10 +218,6 @@ object LoaderReestrForm: TLoaderReestrForm
     object tsTXT: TTabSheet
       Caption = 'TXT FILE'
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object strngrdFile: TStringGrid
         Left = 0
         Top = 0
@@ -241,10 +237,6 @@ object LoaderReestrForm: TLoaderReestrForm
       Caption = 'DBF FILE'
       ImageIndex = 2
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
@@ -264,10 +256,6 @@ object LoaderReestrForm: TLoaderReestrForm
       Caption = 'OTHER'
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
   end
   object pnlReestr: TPanel

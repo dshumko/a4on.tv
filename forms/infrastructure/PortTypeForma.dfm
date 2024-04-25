@@ -19,9 +19,9 @@ inherited PortTypeForm: TPortTypeForm
     Width = 713
   end
   inherited dbGrid: TDBGridEh
-    Top = 172
+    Top = 173
     Width = 713
-    Height = 311
+    Height = 310
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item

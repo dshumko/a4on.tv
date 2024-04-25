@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.Buttons, Vcl.DBCtrls, Vcl.Mask,
   GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   TVATForm = class(TGridForm)

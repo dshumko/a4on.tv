@@ -4,7 +4,6 @@ inherited HETypesForm: THETypesForm
   Caption = #1058#1080#1087#1099' '#1043#1057' ('#1059#1079#1083#1086#1074')'
   ClientHeight = 320
   ClientWidth = 576
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -12,7 +11,7 @@ inherited HETypesForm: THETypesForm
   end
   inherited dbGrid: TDBGridEh
     Width = 576
-    Height = 236
+    Height = 235
     AllowedOperations = [alopUpdateEh]
     Columns = <
       item
@@ -88,7 +87,6 @@ inherited HETypesForm: THETypesForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsHETypes
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
   end
   inherited actions: TActionList

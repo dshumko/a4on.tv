@@ -522,8 +522,6 @@ object PaymentDocForm: TPaymentDocForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 44
-        ExplicitHeight = 45
         object Label5: TLabel
           Left = 8
           Top = 5
@@ -662,9 +660,6 @@ object PaymentDocForm: TPaymentDocForm
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitLeft = 168
-        ExplicitTop = 16
-        ExplicitWidth = 185
         object pnlTL: TPanel
           Left = 0
           Top = 0
@@ -673,9 +668,6 @@ object PaymentDocForm: TPaymentDocForm
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 136
-          ExplicitTop = 16
-          ExplicitWidth = 185
           DesignSize = (
             424
             41)
@@ -737,7 +729,6 @@ object PaymentDocForm: TPaymentDocForm
             Style = csDropDownEh
             TabOrder = 2
             Visible = True
-            ExplicitWidth = 207
           end
           object DocDate: TDBDateTimeEditEh
             Tag = 2
@@ -781,7 +772,6 @@ object PaymentDocForm: TPaymentDocForm
           Anchors = [akTop, akBottom]
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitLeft = 423
           object tbButtons: TToolBar
             Left = 4
             Top = 11
@@ -849,7 +839,6 @@ object PaymentDocForm: TPaymentDocForm
         Height = 13
         Align = alTop
         Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077':'
-        ExplicitWidth = 71
       end
       object mmoNotice: TDBMemoEh
         Left = 0
@@ -886,7 +875,6 @@ object PaymentDocForm: TPaymentDocForm
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
-      ExplicitWidth = 141
     end
     object dbgErrors: TDBGridEh
       Left = 0

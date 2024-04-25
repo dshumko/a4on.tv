@@ -4,15 +4,11 @@
   Caption = #1058#1080#1087#1099' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1080#1093' '#1092#1072#1081#1083#1086#1074
   ClientHeight = 481
   ClientWidth = 744
-  ExplicitWidth = 760
-  ExplicitHeight = 520
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 315
     Width = 744
-    ExplicitTop = 225
-    ExplicitWidth = 585
   end
   inherited dbGrid: TDBGridEh
     Top = 319
@@ -62,7 +58,6 @@
   end
   inherited tlbMain: TToolBar
     Width = 744
-    ExplicitWidth = 744
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -80,8 +75,6 @@
     Width = 744
     Height = 290
     ParentCtl3D = False
-    ExplicitWidth = 744
-    ExplicitHeight = 290
     DesignSize = (
       744
       290)
@@ -92,16 +85,12 @@
       Height = 13
       Anchors = [akTop, akRight]
       Caption = #1042#1074#1074#1086#1076' '#1076#1072#1090#1099
-      ExplicitLeft = 392
     end
     inherited btnSaveLink: TBitBtn
       Left = 232
       Top = 263
       Width = 399
       TabOrder = 16
-      ExplicitLeft = 232
-      ExplicitTop = 263
-      ExplicitWidth = 399
     end
     inherited btnCancelLink: TBitBtn
       Left = 639
@@ -109,9 +98,6 @@
       Width = 98
       Cancel = True
       TabOrder = 17
-      ExplicitLeft = 639
-      ExplicitTop = 263
-      ExplicitWidth = 98
     end
     object gb1: TGroupBox
       Left = 0
@@ -542,7 +528,7 @@
     object chkOwner: TDBCheckBoxEh
       Left = 575
       Top = 196
-      Width = 153
+      Width = 160
       Height = 17
       Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1075#1072#1083#1086#1095#1082#1091' '#1089#1086#1073#1089#1090#1074#1077#1085#1085#1080#1082
       Anchors = [akTop, akRight]

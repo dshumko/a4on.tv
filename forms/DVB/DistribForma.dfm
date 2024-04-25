@@ -4,8 +4,6 @@ inherited DistribForm: TDistribForm
   Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088#1099' '#1082#1072#1085#1072#1083#1086#1074
   ClientHeight = 580
   ClientWidth = 919
-  ExplicitWidth = 935
-  ExplicitHeight = 619
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter: TSplitter [0]
@@ -15,13 +13,10 @@ inherited DistribForm: TDistribForm
     Height = 4
     Cursor = crVSplit
     Align = alBottom
-    ExplicitTop = 347
   end
   inherited splPG: TSplitter
     Top = 217
     Width = 919
-    ExplicitTop = 217
-    ExplicitWidth = 919
   end
   inherited dbGrid: TDBGridEh
     Top = 221
@@ -121,7 +116,6 @@ inherited DistribForm: TDistribForm
   end
   inherited tlbMain: TToolBar
     Width = 919
-    ExplicitWidth = 919
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -170,8 +164,6 @@ inherited DistribForm: TDistribForm
     Width = 919
     Height = 192
     ParentCtl3D = False
-    ExplicitWidth = 919
-    ExplicitHeight = 192
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -191,9 +183,6 @@ inherited DistribForm: TDistribForm
       Top = 159
       Width = 734
       TabOrder = 5
-      ExplicitLeft = 72
-      ExplicitTop = 159
-      ExplicitWidth = 734
     end
     inherited btnCancelLink: TBitBtn
       Left = 812
@@ -201,9 +190,6 @@ inherited DistribForm: TDistribForm
       Width = 98
       Cancel = True
       TabOrder = 6
-      ExplicitLeft = 812
-      ExplicitTop = 159
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -329,7 +315,6 @@ inherited DistribForm: TDistribForm
           Width = 4
           Height = 200
           Align = alRight
-          ExplicitLeft = 446
         end
         object pgcAddons: TPageControl
           Left = 451
@@ -732,7 +717,6 @@ inherited DistribForm: TDistribForm
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 446
           object dbgContract: TDBGridEh
             Left = 0
             Top = 25
@@ -856,7 +840,6 @@ inherited DistribForm: TDistribForm
             Caption = 'tlb1'
             Images = A4MainForm.ICONS_ACTIVE
             TabOrder = 1
-            ExplicitWidth = 446
             object btn7: TToolButton
               Left = 0
               Top = 0

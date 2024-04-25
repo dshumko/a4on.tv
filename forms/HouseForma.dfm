@@ -585,9 +585,6 @@ object HouseForm: THouseForm
     Align = alBottom
     TabOrder = 1
     TabStop = True
-    ExplicitTop = 428
-    ExplicitWidth = 456
-    ExplicitHeight = 34
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -600,20 +597,12 @@ object HouseForm: THouseForm
       Width = 208
       Height = 28
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 159
-      ExplicitTop = 3
-      ExplicitWidth = 208
-      ExplicitHeight = 28
     end
     inherited bbCancel: TBitBtn
       Left = 373
       Top = 3
       Width = 77
       Height = 28
-      ExplicitLeft = 373
-      ExplicitTop = 3
-      ExplicitWidth = 77
-      ExplicitHeight = 28
     end
   end
   object dsSubAreas: TpFIBDataSet

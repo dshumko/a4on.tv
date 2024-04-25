@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
   GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   TPaymentSourcesForm = class(TGridForm)

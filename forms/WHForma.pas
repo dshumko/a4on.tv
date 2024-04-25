@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, DBLookupEh;
+  EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, DBLookupEh, PrnDbgeh;
 
 type
   TWHform = class(TGridForm)

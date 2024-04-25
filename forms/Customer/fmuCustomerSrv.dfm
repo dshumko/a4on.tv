@@ -21,8 +21,6 @@ object apgCustomerSrv: TapgCustomerSrv
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 699
-    ExplicitHeight = 254
     object pnlSubscrServ: TPanel
       Left = 0
       Top = 0
@@ -31,8 +29,6 @@ object apgCustomerSrv: TapgCustomerSrv
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 699
-      ExplicitHeight = 254
       object Splitter3: TSplitter
         Left = 0
         Top = 217
@@ -40,8 +36,6 @@ object apgCustomerSrv: TapgCustomerSrv
         Height = 3
         Cursor = crVSplit
         Align = alBottom
-        ExplicitTop = 168
-        ExplicitWidth = 699
       end
       object dbgCustSubscrServ: TDBGridEh
         Left = 0
@@ -225,8 +219,6 @@ object apgCustomerSrv: TapgCustomerSrv
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 171
-        ExplicitWidth = 699
         object Label14: TLabel
           Left = 0
           Top = 0
@@ -234,7 +226,6 @@ object apgCustomerSrv: TapgCustomerSrv
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
-          ExplicitWidth = 139
         end
         object dbgPersTarif: TDBGridEh
           Left = 27
@@ -351,7 +342,6 @@ object apgCustomerSrv: TapgCustomerSrv
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 254
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
@@ -406,7 +396,6 @@ object apgCustomerSrv: TapgCustomerSrv
       Caption = 'ToolBar2'
       Images = A4MainForm.ICONS_ACTIVE
       TabOrder = 1
-      ExplicitTop = 223
       object ToolButton6: TToolButton
         Left = 0
         Top = 0

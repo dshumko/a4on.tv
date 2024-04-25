@@ -36,8 +36,6 @@
     Align = alBottom
     TabOrder = 0
     TabStop = True
-    ExplicitLeft = -33
-    ExplicitTop = 160
     inherited Label2: TLabel
       Margins.Bottom = 0
     end

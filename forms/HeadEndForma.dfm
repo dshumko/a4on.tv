@@ -261,8 +261,6 @@ object HeadEndForm: THeadEndForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 489
-    ExplicitWidth = 618
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -276,18 +274,11 @@ object HeadEndForm: THeadEndForm
       Height = 30
       ModalResult = 0
       OnClick = bbOkClick
-      ExplicitLeft = 327
-      ExplicitTop = 2
-      ExplicitWidth = 203
-      ExplicitHeight = 30
     end
     inherited bbCancel: TBitBtn
       Left = 536
       Top = 2
       Height = 30
-      ExplicitLeft = 536
-      ExplicitTop = 2
-      ExplicitHeight = 30
     end
   end
   object pgcInfo: TPageControl
@@ -301,10 +292,6 @@ object HeadEndForm: THeadEndForm
     OnChange = pgcInfoChange
     object tsChanals: TTabSheet
       Caption = #1050#1072#1085#1072#1083#1099
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlChannels: TPanel
         Left = 0
         Top = 0
@@ -529,10 +516,6 @@ object HeadEndForm: THeadEndForm
     object tsHouses: TTabSheet
       Caption = #1047#1086#1085#1072' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object dbgrdHouses: TDBGridEh
         Left = 0
         Top = 0

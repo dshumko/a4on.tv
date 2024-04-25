@@ -272,27 +272,19 @@ object RequestNewForm: TRequestNewForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
-        ExplicitWidth = 390
-        ExplicitHeight = 129
         inherited gbInfo: TGroupBox
           Width = 390
           Height = 129
-          ExplicitWidth = 390
-          ExplicitHeight = 129
           inherited memAbonent: TMemo
             Width = 386
             Height = 75
-            ExplicitWidth = 386
-            ExplicitHeight = 75
           end
           inherited lblFIO: TDBEditEh
             Width = 386
-            ExplicitWidth = 386
           end
           inherited lblDebt: TDBEditEh
             Width = 386
             Margins.Bottom = 0
-            ExplicitWidth = 386
           end
         end
       end
@@ -306,8 +298,6 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 487
-    ExplicitWidth = 753
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -324,18 +314,12 @@ object RequestNewForm: TRequestNewForm
       Caption = '&'#1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = bbOkClick
-      ExplicitLeft = 279
-      ExplicitTop = 6
-      ExplicitWidth = 334
     end
     inherited bbCancel: TBitBtn
       Left = 625
       Top = 6
       Width = 123
       OnClick = frmOkCancelbbCancelClick
-      ExplicitLeft = 625
-      ExplicitTop = 6
-      ExplicitWidth = 123
     end
   end
   object pnl1: TPanel

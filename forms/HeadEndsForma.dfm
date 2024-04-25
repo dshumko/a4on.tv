@@ -4,9 +4,12 @@ inherited HeadEndsForm: THeadEndsForm
   ClientWidth = 656
   PixelsPerInch = 96
   TextHeight = 13
+  inherited splPG: TSplitter
+    Width = 656
+  end
   inherited dbGrid: TDBGridEh
     Width = 656
-    Height = 409
+    Height = 405
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     Columns = <
@@ -140,7 +143,6 @@ inherited HeadEndsForm: THeadEndsForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsHE
-    OnStateChange = srcDataSourceStateChange
   end
   inherited actions: TActionList
     inherited actNew: TAction

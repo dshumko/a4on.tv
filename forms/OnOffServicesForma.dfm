@@ -28,9 +28,6 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
-    ExplicitTop = 341
-    ExplicitWidth = 424
-    ExplicitHeight = 37
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -44,20 +41,12 @@ object OnOffServiceForm: TOnOffServiceForm
       Height = 25
       ModalResult = 0
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 5
-      ExplicitTop = 6
-      ExplicitWidth = 311
-      ExplicitHeight = 25
     end
     inherited bbCancel: TBitBtn
       Left = 325
       Top = 6
       Width = 95
       Height = 25
-      ExplicitLeft = 325
-      ExplicitTop = 6
-      ExplicitWidth = 95
-      ExplicitHeight = 25
     end
   end
   object servPanel: TPanel
@@ -231,7 +220,6 @@ object OnOffServiceForm: TOnOffServiceForm
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitLeft = 285
     end
     object eUNITS: TDBNumberEditEh
       Left = 136
@@ -263,7 +251,6 @@ object OnOffServiceForm: TOnOffServiceForm
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-      ExplicitWidth = 67
     end
     object memNotice: TDBMemoEh
       AlignWithMargins = True
@@ -339,7 +326,6 @@ object OnOffServiceForm: TOnOffServiceForm
       Anchors = [akTop, akRight]
       Caption = #1086#1090
       Visible = False
-      ExplicitLeft = 290
     end
     object edtDogDate: TDBDateTimeEditEh
       Left = 322

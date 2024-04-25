@@ -11,9 +11,9 @@ inherited OTPTypesForm: TOTPTypesForm
     Width = 698
   end
   inherited dbGrid: TDBGridEh
-    Top = 356
+    Top = 357
     Width = 698
-    Height = 107
+    Height = 106
     AllowedOperations = []
     Columns = <
       item

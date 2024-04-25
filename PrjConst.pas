@@ -788,8 +788,13 @@ resourcestring
   rsFldRecCOUNT = '[КОЛВО_ЗАПИСЕЙ]';
   rsFldTOTAL = '[ИТОГО_ДОЛГ]';
   rsFldTOTAL100 = '[ИТОГО_САЛЬДО]';
-  rsFldPASSPORTDATE = '[ПАСПОРТ_ВЫДАН]';
   rsFldPassportN = '[ПАСПОРТ_N]';
+  rsFldPassportResidence = '[ПАСПОРТ_ПРОПИСКА]';
+  //rsFldPassportDomicile = '[ПАСПОРТ_РЕГИСТР_АДРЕС]';
+  rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН_МЕСТО]';
+  rsFldPassportDate = '[ПАСПОРТ_ВЫДАН]';
+  rsFldPassportBirthPlace = '[ПАСПОРТ_РОЖД_МЕСТО]';
+  rsFldPassportBirthDate = '[ПАСПОРТ_РОЖД_ДАТА]';
   rsFldMonthFee = '[ОПЛАТА_В_МЕСЯЦ]';
   rsFldMonthNeed = '[ДОПЛАТА]';
   rsFldNextFee = '[ОПЛАТА_СЛ_МЕСЯЦ]';

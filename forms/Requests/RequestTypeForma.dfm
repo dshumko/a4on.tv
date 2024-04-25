@@ -4,15 +4,11 @@ inherited RequestTypeForm: TRequestTypeForm
   Caption = #1058#1080#1087#1099' '#1079#1072#1103#1074#1086#1082
   ClientHeight = 543
   ClientWidth = 975
-  ExplicitWidth = 991
-  ExplicitHeight = 582
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 77
     Width = 975
-    ExplicitTop = 77
-    ExplicitWidth = 975
   end
   object dnspltr1: TSplitter [1]
     Left = 0
@@ -127,15 +123,9 @@ inherited RequestTypeForm: TRequestTypeForm
     Align = alClient
     TabOrder = 3
     OnChange = pgcAddonsChange
-    ExplicitLeft = 3
-    ExplicitTop = 282
-    ExplicitWidth = 972
-    ExplicitHeight = 261
     object tsTemplates: TTabSheet
       Caption = #1055#1088#1080#1095#1080#1085#1099' '#1074#1099#1079#1086#1074#1072
       ImageIndex = 1
-      ExplicitWidth = 964
-      ExplicitHeight = 233
       object tlbTplt: TToolBar
         Left = 0
         Top = 0
@@ -144,7 +134,6 @@ inherited RequestTypeForm: TRequestTypeForm
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
         TabOrder = 0
-        ExplicitWidth = 964
         object btnTplt: TToolButton
           Left = 0
           Top = 0
@@ -300,8 +289,6 @@ inherited RequestTypeForm: TRequestTypeForm
     end
     object tsWorks: TTabSheet
       Caption = #1056#1072#1073#1086#1090#1099
-      ExplicitWidth = 964
-      ExplicitHeight = 233
       object dbgWorks: TDBGridEh
         Left = 0
         Top = 25
@@ -426,7 +413,6 @@ inherited RequestTypeForm: TRequestTypeForm
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
         TabOrder = 0
-        ExplicitWidth = 964
         object btnAddW: TToolButton
           Left = 0
           Top = 0
@@ -476,8 +462,6 @@ inherited RequestTypeForm: TRequestTypeForm
     object tsResult: TTabSheet
       Caption = #1056#1072#1089#1096#1080#1088#1077#1085#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
       ImageIndex = 2
-      ExplicitWidth = 964
-      ExplicitHeight = 233
       object tlb1: TToolBar
         Left = 0
         Top = 0
@@ -486,7 +470,6 @@ inherited RequestTypeForm: TRequestTypeForm
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
         TabOrder = 0
-        ExplicitWidth = 964
         object btnAddRes: TToolButton
           Left = 0
           Top = 0
@@ -595,7 +578,6 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 975
-    ExplicitWidth = 975
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -612,19 +594,13 @@ inherited RequestTypeForm: TRequestTypeForm
   inherited pnlEdit: TPanel
     Width = 975
     Height = 52
-    ExplicitWidth = 975
-    ExplicitHeight = 52
     inherited btnSaveLink: TBitBtn
       Top = 19
       Width = 522
-      ExplicitTop = 19
-      ExplicitWidth = 522
     end
     inherited btnCancelLink: TBitBtn
       Left = 613
       Top = 19
-      ExplicitLeft = 613
-      ExplicitTop = 19
     end
   end
   inherited srcDataSource: TDataSource

@@ -188,7 +188,6 @@ object ServiceForm: TServiceForm
             Height = 13
             Align = alTop
             Caption = ' '#1054#1087#1080#1089#1072#1085#1080#1077' '#1076#1083#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
-            ExplicitWidth = 125
           end
           object Notice: TDBMemoEh
             Left = 0

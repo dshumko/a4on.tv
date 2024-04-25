@@ -2,8 +2,6 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   Caption = #1050#1086#1084#1072#1085#1076#1099' '#1076#1083#1103' '#1075#1088#1091#1087#1087
   ClientHeight = 389
   ClientWidth = 605
-  ExplicitWidth = 621
-  ExplicitHeight = 428
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -11,7 +9,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   end
   inherited dbGrid: TDBGridEh
     Width = 605
-    Height = 175
+    Height = 174
     AllowedOperations = [alopInsertEh, alopDeleteEh, alopAppendEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -106,7 +104,6 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   end
   inherited tlbMain: TToolBar
     Width = 605
-    ExplicitWidth = 605
     inherited tbOk: TToolButton
       Visible = False
       OnClick = tbOkClick
@@ -124,7 +121,6 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   end
   inherited pnlEdit: TPanel
     Width = 605
-    ExplicitWidth = 605
   end
   object trWrite: TpFIBTransaction [5]
     DefaultDatabase = dmMain.dbTV
@@ -197,7 +193,6 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsCGR
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
     Top = 152
   end

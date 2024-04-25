@@ -78,7 +78,6 @@ object EPGImportForm: TEPGImportForm
       Height = 12
       Align = alBottom
       Caption = ' '#1050#1072#1085#1072#1083#1099' '#1080#1079' '#1080#1089#1090#1086#1095#1085#1080#1082#1072
-      ExplicitWidth = 106
     end
     object cbSource: TDBLookupComboboxEh
       Left = 80

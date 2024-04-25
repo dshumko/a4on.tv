@@ -157,10 +157,6 @@ object QueryForm: TQueryForm
     object tsResultScript: TTabSheet
       Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object memResult: TMemo
         Left = 0
         Top = 0
@@ -175,10 +171,6 @@ object QueryForm: TQueryForm
       Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0

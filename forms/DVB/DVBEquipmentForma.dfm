@@ -21,7 +21,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   end
   inherited dbGrid: TDBGridEh
     Width = 778
-    Height = 206
+    Height = 205
     AllowedOperations = []
     FooterRowCount = 1
     SumList.Active = True

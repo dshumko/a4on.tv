@@ -10,7 +10,8 @@ uses
   Vcl.Menus,
   Vcl.ActnList, Vcl.ExtCtrls, Vcl.ToolWin, Vcl.Controls,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, DBCtrlsEh,
-  CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst, amSplitter;
+  CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst, amSplitter,
+  PrnDbgeh;
 
 type
   TVlansForm = class(TGridForm)

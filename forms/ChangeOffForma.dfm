@@ -24,8 +24,6 @@ object ChangeOffForm: TChangeOffForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 88
-    ExplicitWidth = 344
     DesignSize = (
       336
       37)
@@ -41,7 +39,6 @@ object ChangeOffForm: TChangeOffForm
       NumGlyphs = 2
       TabOrder = 0
       OnClick = bbOkClick
-      ExplicitWidth = 145
     end
     object bbCancel: TBitBtn
       Left = 255
@@ -64,7 +61,6 @@ object ChangeOffForm: TChangeOffForm
     BevelOuter = bvNone
     TabOrder = 1
     Visible = False
-    ExplicitWidth = 356
     DesignSize = (
       336
       36)
@@ -89,7 +85,6 @@ object ChangeOffForm: TChangeOffForm
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitLeft = 263
     end
     object eUNITS: TDBNumberEditEh
       Left = 112
@@ -104,7 +99,6 @@ object ChangeOffForm: TChangeOffForm
       TabOrder = 0
       Value = 0.000000000000000000
       Visible = True
-      ExplicitWidth = 145
     end
   end
   object pnlTop: TPanel
@@ -115,8 +109,6 @@ object ChangeOffForm: TChangeOffForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 6
     DesignSize = (
       336
       41)
@@ -153,10 +145,6 @@ object ChangeOffForm: TChangeOffForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitLeft = 40
-    ExplicitTop = 88
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     DesignSize = (
       336
       60)

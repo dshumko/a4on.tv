@@ -196,7 +196,6 @@ object ExportSettingsForm: TExportSettingsForm
         Height = 13
         Align = alBottom
         Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-        ExplicitWidth = 67
       end
       object lbl6: TLabel
         Left = 4
@@ -332,7 +331,6 @@ object ExportSettingsForm: TExportSettingsForm
           Height = 13
           Align = alTop
           Caption = #1054#1089#1085#1086#1074#1085#1072#1103' '#1095#1072#1089#1090#1100
-          ExplicitWidth = 81
         end
         object lbl3: TLabel
           Left = 0
@@ -341,7 +339,6 @@ object ExportSettingsForm: TExportSettingsForm
           Height = 13
           Align = alBottom
           Caption = #1055#1086#1076#1074#1072#1083' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
-          ExplicitWidth = 96
         end
         object dbmmoBody: TDBMemoEh
           Left = 0
@@ -563,8 +560,6 @@ object ExportSettingsForm: TExportSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 499
-    ExplicitWidth = 735
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -576,15 +571,10 @@ object ExportSettingsForm: TExportSettingsForm
       Top = 6
       Width = 121
       OnClick = okcnclfrm1bbOkClick
-      ExplicitLeft = 530
-      ExplicitTop = 6
-      ExplicitWidth = 121
     end
     inherited bbCancel: TBitBtn
       Left = 657
       Top = 6
-      ExplicitLeft = 657
-      ExplicitTop = 6
     end
   end
   object srcTypes: TDataSource

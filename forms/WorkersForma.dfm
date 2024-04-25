@@ -11,9 +11,9 @@ inherited WorkersForm: TWorkersForm
     Width = 823
   end
   inherited dbGrid: TDBGridEh
-    Top = 276
+    Top = 277
     Width = 823
-    Height = 261
+    Height = 260
     AllowedOperations = []
     OddRowColor = clInfoBk
     Columns = <
@@ -734,7 +734,6 @@ inherited WorkersForm: TWorkersForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsWorkers
-    OnStateChange = srcDataSourceStateChange
     Left = 47
     Top = 449
   end

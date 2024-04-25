@@ -19,9 +19,9 @@ inherited SatCardsForm: TSatCardsForm
     Width = 790
   end
   inherited dbGrid: TDBGridEh
-    Top = 196
+    Top = 197
     Width = 790
-    Height = 124
+    Height = 123
     AllowedOperations = [alopUpdateEh]
     FooterRowCount = 1
     SumList.Active = True

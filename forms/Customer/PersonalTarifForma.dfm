@@ -80,7 +80,6 @@ object PersonalTarifForm: TPersonalTarifForm
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
     TabOrder = 5
-    ExplicitLeft = 269
   end
   object btnOk: TBitBtn
     Left = 8
@@ -93,7 +92,6 @@ object PersonalTarifForm: TPersonalTarifForm
     NumGlyphs = 2
     TabOrder = 4
     OnClick = btnOkClick
-    ExplicitWidth = 247
   end
   object deDate_to: TDBDateTimeEditEh
     Left = 227

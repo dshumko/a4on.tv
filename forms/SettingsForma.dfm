@@ -40,9 +40,6 @@ object SettingsForm: TSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 548
-    ExplicitWidth = 550
-    ExplicitHeight = 37
     inherited bbOk: TBitBtn
       Left = 4
       Top = 5
@@ -51,20 +48,12 @@ object SettingsForm: TSettingsForm
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 4
-      ExplicitTop = 5
-      ExplicitWidth = 455
-      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 465
       Top = 5
       Width = 82
       Height = 27
-      ExplicitLeft = 465
-      ExplicitTop = 5
-      ExplicitWidth = 82
-      ExplicitHeight = 27
     end
   end
   object pgSettings: TPageControl
@@ -2323,7 +2312,6 @@ object SettingsForm: TSettingsForm
       Height = 13
       Align = alTop
       Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1080
-      ExplicitWidth = 57
     end
     object lstSettings: TListBox
       Left = 1

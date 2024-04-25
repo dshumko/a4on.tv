@@ -37,7 +37,6 @@ object MessagesForm: TMessagesForm
       Height = 3
       Cursor = crVSplit
       Align = alTop
-      ExplicitWidth = 192
     end
     object dbgMessages: TDBGridEh
       Left = 1
@@ -499,7 +498,6 @@ object MessagesForm: TMessagesForm
           Width = 825
           Height = 13
           Align = alTop
-          ExplicitWidth = 3
         end
         object pnlHead: TPanel
           Left = 0

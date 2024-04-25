@@ -27,7 +27,6 @@ object fmSelectPromo: TfmSelectPromo
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 109
     DesignSize = (
       392
       86)
@@ -39,7 +38,6 @@ object fmSelectPromo: TfmSelectPromo
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = 72
       DesignSize = (
         392
         37)

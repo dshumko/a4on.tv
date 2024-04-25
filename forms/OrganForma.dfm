@@ -4,7 +4,6 @@ inherited OrganForm: TOrganForm
   Caption = #1054#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080
   ClientHeight = 282
   ClientWidth = 646
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -12,7 +11,7 @@ inherited OrganForm: TOrganForm
   end
   inherited dbGrid: TDBGridEh
     Width = 646
-    Height = 198
+    Height = 197
     AllowedOperations = []
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
@@ -152,7 +151,6 @@ inherited OrganForm: TOrganForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsOrgan
-    OnStateChange = srcDataSourceStateChange
     OnDataChange = srcDataSourceDataChange
   end
   inherited actions: TActionList

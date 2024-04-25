@@ -26,9 +26,6 @@ object SendMessagesForm: TSendMessagesForm
     Top = 150
     Height = 146
     Align = alRight
-    ExplicitLeft = 397
-    ExplicitTop = 118
-    ExplicitHeight = 178
   end
   object pnl2: TPanel
     Left = 0

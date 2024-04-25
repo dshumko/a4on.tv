@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls, Vcl.Menus,
   Vcl.StdCtrls, Vcl.Buttons,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
-  PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
+  PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter, PrnDbgeh;
 
 type
   TWorkTeamForm = class(TGridForm)

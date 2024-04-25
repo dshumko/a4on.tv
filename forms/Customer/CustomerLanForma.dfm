@@ -32,8 +32,6 @@ object CustomerLanForm: TCustomerLanForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
-    ExplicitTop = 354
-    ExplicitWidth = 534
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -48,18 +46,12 @@ object CustomerLanForm: TCustomerLanForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 74
-      ExplicitWidth = 363
-      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 444
       Width = 85
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
-      ExplicitLeft = 444
-      ExplicitWidth = 85
-      ExplicitHeight = 27
     end
   end
   object pnlMain: TPanel

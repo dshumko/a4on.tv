@@ -27,7 +27,6 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Height = 13
     Align = alBottom
     Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-    ExplicitWidth = 64
   end
   inline okcnclfrm1: TOkCancelFrame
     Left = 0
@@ -37,8 +36,6 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
-    ExplicitTop = 371
-    ExplicitWidth = 561
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -52,20 +49,12 @@ object EquipmentCommandForm: TEquipmentCommandForm
       Height = 27
       Anchors = [akLeft, akRight, akBottom]
       OnClick = okcnclfrm1bbOkClick
-      ExplicitLeft = 62
-      ExplicitTop = 2
-      ExplicitWidth = 373
-      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 453
       Top = 2
       Width = 95
       Height = 27
-      ExplicitLeft = 453
-      ExplicitTop = 2
-      ExplicitWidth = 95
-      ExplicitHeight = 27
     end
   end
   object dbm1: TDBMemoEh
@@ -300,7 +289,6 @@ object EquipmentCommandForm: TEquipmentCommandForm
       Height = 13
       Align = alTop
       Caption = ' '#1050#1086#1084#1072#1085#1076#1072
-      ExplicitWidth = 47
     end
     object dbmNotice: TDBMemoEh
       Left = 0

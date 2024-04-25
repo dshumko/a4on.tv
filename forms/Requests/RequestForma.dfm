@@ -35,9 +35,6 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 525
-    ExplicitWidth = 784
-    ExplicitHeight = 37
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -52,10 +49,6 @@ object RequestForm: TRequestForm
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 360
-      ExplicitTop = 6
-      ExplicitWidth = 250
-      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 616
@@ -63,10 +56,6 @@ object RequestForm: TRequestForm
       Width = 166
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
-      ExplicitLeft = 616
-      ExplicitTop = 6
-      ExplicitWidth = 166
-      ExplicitHeight = 27
     end
   end
   object pnlHead: TPanel
@@ -442,29 +431,21 @@ object RequestForm: TRequestForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
-        ExplicitWidth = 374
-        ExplicitHeight = 137
         inherited gbInfo: TGroupBox
           Width = 374
           Height = 137
-          ExplicitWidth = 374
-          ExplicitHeight = 137
           inherited memAbonent: TMemo
             Width = 370
             Height = 83
             OnDblClick = CustomerInfoFrmlblFIODblClick
-            ExplicitWidth = 370
-            ExplicitHeight = 83
           end
           inherited lblFIO: TDBEditEh
             Width = 370
             OnDblClick = CustomerInfoFrmlblFIODblClick
-            ExplicitWidth = 370
           end
           inherited lblDebt: TDBEditEh
             Width = 370
             Text = #1044#1054#1051#1043
-            ExplicitWidth = 370
           end
         end
       end
@@ -482,10 +463,6 @@ object RequestForm: TRequestForm
     OnChanging = PageControlChanging
     object tabRequest: TTabSheet
       Caption = #1055#1088#1080#1077#1084
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Splitter: TSplitter
         Left = 0
         Top = 112
@@ -729,10 +706,6 @@ object RequestForm: TRequestForm
     object tabGiveReq: TTabSheet
       Caption = #1042#1099#1076#1072#1095#1072
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel12: TPanel
         Left = 0
         Top = 33
@@ -894,10 +867,6 @@ object RequestForm: TRequestForm
     object tabExecute: TTabSheet
       Caption = ' '#1042#1099#1087#1086#1083#1085#1077#1085#1080#1077' '
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object spl2: TSplitter
         Left = 0
         Top = 238
@@ -1434,10 +1403,6 @@ object RequestForm: TRequestForm
     object tabFiles: TTabSheet
       Caption = #1060#1086#1090#1086
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object spl1: TSplitter
         Left = 369
         Top = 0
@@ -1524,10 +1489,6 @@ object RequestForm: TRequestForm
     object tabComments: TTabSheet
       Caption = #1050#1086#1084#1084#1077#1085#1090#1072#1088#1080#1080
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlButtons: TPanel
         Left = 0
         Top = 0

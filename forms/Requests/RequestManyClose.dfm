@@ -24,8 +24,6 @@
     Align = alBottom
     TabOrder = 3
     TabStop = True
-    ExplicitTop = 311
-    ExplicitWidth = 683
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -45,7 +43,6 @@
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 683
     object lbl1: TLabel
       Left = 8
       Top = 34
@@ -158,8 +155,6 @@
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 243
-    ExplicitWidth = 683
     object lbl3: TLabel
       Left = 0
       Top = 0
@@ -167,7 +162,6 @@
       Height = 13
       Align = alTop
       Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
-      ExplicitWidth = 115
     end
     object mmoMemDefect: TDBMemoEh
       Left = 0
@@ -177,7 +171,6 @@
       Align = alClient
       ScrollBars = ssVertical
       TabOrder = 0
-      ExplicitWidth = 683
     end
   end
   object pnl2: TPanel
@@ -188,9 +181,6 @@
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 55
-    ExplicitWidth = 683
-    ExplicitHeight = 188
     object pnlRWorks: TPanel
       Left = 0
       Top = 0
@@ -273,7 +263,6 @@
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 601
         object btnAddWork: TButton
           Left = 1
           Top = 6

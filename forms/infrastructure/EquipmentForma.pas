@@ -13,7 +13,8 @@ uses
   PropStorageEh,
   DataDriverEh, pFIBDataDriverEh, MemTableEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL,
   GridsEh,
-  DBAxisGridsEh, EhLibFIB, EhLibMTE, FIBQuery, PrjConst, A4onTypeUnit, AtrPages, amSplitter;
+  DBAxisGridsEh, EhLibFIB, EhLibMTE, FIBQuery, PrjConst, A4onTypeUnit, AtrPages, amSplitter,
+  PrnDbgeh;
 
 type
   TEquipmentForm = class(TGridForm)

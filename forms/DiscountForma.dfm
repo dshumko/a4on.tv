@@ -55,7 +55,6 @@ object DiscountForm: TDiscountForm
     Caption = 'pnlSrvType'
     TabOrder = 4
     Visible = False
-    ExplicitWidth = 367
     DesignSize = (
       356
       25)
@@ -83,7 +82,6 @@ object DiscountForm: TDiscountForm
       ShowHint = True
       TabOrder = 0
       Visible = True
-      ExplicitWidth = 309
     end
   end
   object mmoNotice: TDBMemoEh
@@ -151,7 +149,6 @@ object DiscountForm: TDiscountForm
     ShowHint = True
     TabOrder = 6
     Visible = True
-    ExplicitWidth = 309
   end
   object btnOk: TBitBtn
     Left = 6
@@ -235,7 +232,6 @@ object DiscountForm: TDiscountForm
     Anchors = [akLeft, akTop, akRight]
     BevelOuter = bvNone
     TabOrder = 5
-    ExplicitWidth = 356
     DesignSize = (
       345
       25)
@@ -270,7 +266,6 @@ object DiscountForm: TDiscountForm
       TabOrder = 0
       Visible = True
       OnDropDownBoxGetCellParams = luOnOffServiceDropDownBoxGetCellParams
-      ExplicitWidth = 309
     end
   end
   object srcService: TDataSource

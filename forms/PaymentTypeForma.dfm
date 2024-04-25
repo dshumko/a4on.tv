@@ -4,7 +4,6 @@ inherited PaymentTypeForm: TPaymentTypeForm
   Caption = #1042#1080#1076' '#1087#1083#1072#1090#1077#1078#1072
   ClientHeight = 281
   ClientWidth = 562
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -12,7 +11,7 @@ inherited PaymentTypeForm: TPaymentTypeForm
   end
   inherited dbGrid: TDBGridEh
     Width = 562
-    Height = 197
+    Height = 196
     TitleParams.MultiTitle = False
     Columns = <
       item
@@ -64,7 +63,6 @@ inherited PaymentTypeForm: TPaymentTypeForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsPaymentType
-    OnStateChange = srcDataSourceStateChange
   end
   inherited actions: TActionList
     inherited actNew: TAction

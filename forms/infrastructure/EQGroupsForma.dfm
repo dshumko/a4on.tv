@@ -4,15 +4,11 @@ inherited EQGroupsForm: TEQGroupsForm
   Caption = #1043#1088#1091#1087#1087#1099' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
   ClientHeight = 503
   ClientWidth = 614
-  ExplicitWidth = 630
-  ExplicitHeight = 542
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 169
     Width = 614
-    ExplicitTop = 169
-    ExplicitWidth = 614
   end
   object splMain: TSplitter [1]
     Left = 0
@@ -21,7 +17,6 @@ inherited EQGroupsForm: TEQGroupsForm
     Height = 4
     Cursor = crVSplit
     Align = alBottom
-    ExplicitTop = 293
   end
   inherited dbGrid: TDBGridEh
     Top = 173
@@ -102,7 +97,6 @@ inherited EQGroupsForm: TEQGroupsForm
   end
   inherited tlbMain: TToolBar
     Width = 614
-    ExplicitWidth = 614
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -120,8 +114,6 @@ inherited EQGroupsForm: TEQGroupsForm
   inherited pnlEdit: TPanel
     Width = 614
     Height = 144
-    ExplicitWidth = 614
-    ExplicitHeight = 144
     object lbl1: TLabel [0]
       Left = 5
       Top = 9
@@ -140,15 +132,11 @@ inherited EQGroupsForm: TEQGroupsForm
       Top = 111
       Width = 428
       TabOrder = 4
-      ExplicitTop = 111
-      ExplicitWidth = 428
     end
     inherited btnCancelLink: TBitBtn
       Left = 519
       Top = 111
       TabOrder = 5
-      ExplicitLeft = 519
-      ExplicitTop = 111
     end
     object edtName: TDBEditEh
       Left = 73

@@ -282,7 +282,7 @@ inherited VlansForm: TVlansForm
           object lbl2: TLabel
             Left = 0
             Top = 0
-            Width = 154
+            Width = 396
             Height = 13
             Align = alTop
             Caption = #1044#1086#1084#1072' '#1074#1085#1077' '#1079#1086#1085#1099' '#1086#1073#1089#1083#1091#1078#1080#1074#1072#1085#1080#1103' '
@@ -565,7 +565,7 @@ inherited VlansForm: TVlansForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
         STFilter.InstantApply = True
         STFilter.Local = True
-        STFilter.Location = stflInTitleFilterEh
+        STFilter.Location = stflUnderTitleFilterEh
         STFilter.Visible = True
         TabOrder = 0
         TitleParams.MultiTitle = True
@@ -1149,7 +1149,6 @@ inherited VlansForm: TVlansForm
       '  , a.Area_Name'
       '  from HOUSE h'
       '       inner join street s on (s.street_id = h.street_id)'
-      
         '       inner join objects_coverage c on (c.house_id = h.house_id' +
         ')'
       '       left outer join area a on (a.area_id = s.area_id)'
@@ -1182,6 +1181,7 @@ inherited VlansForm: TVlansForm
       '     ) and (     H.HOUSE_ID = :OLD_HOUSE_ID'
       '     )'
       '    ')
+      
     SelectSQL.Strings = (
       'select'
       '    h.HOUSE_ID'

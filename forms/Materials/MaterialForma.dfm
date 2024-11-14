@@ -89,9 +89,9 @@ object MaterialForm: TMaterialForm
   object lbl5: TLabel
     Left = 6
     Top = 280
-    Width = 80
+    Width = 63
     Height = 13
-    Caption = #1060#1086#1090#1086'/'#1044#1086#1082#1091#1084#1077#1085#1090
+    Caption = #1060#1072#1081#1083' ('#1092#1086#1090#1086')'
   end
   object lbl41: TLabel
     Left = 6
@@ -583,17 +583,15 @@ object MaterialForm: TMaterialForm
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
-      
-        'UPDATE OR INSERT INTO Blob_Tbl (Bl_Type, Owner_Id, Bl_Name, Bl_B' +
-        'ody)'
+      'INSERT INTO Blob_Tbl (Bl_Type, Owner_Id, Bl_Name, Bl_Body)'
       'VALUES (:Bl_Type, :Owner_Id, :Bl_Name, :Bl_Body)'
-      'matching (Bl_Type, Owner_Id)')
+      '')
     Left = 269
     Top = 256
   end
   object dsDoc: TpFIBDataSet
     SelectSQL.Strings = (
-      'select'
+      'select first 1'
       '    b.Bl_Id'
       '  , b.Bl_Name'
       '  , b.OWNER_ID'

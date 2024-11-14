@@ -460,15 +460,43 @@ object apgCustomerSrv: TapgCustomerSrv
       ''
       '    ')
     SelectSQL.Strings = (
+      'select *'
+      'from ('
       'select'
-      '    sl.*'
+      '    sl.SUBSCR_SERV_ID'
+      '  , sl.STATE_SGN'
+      '  , sl.NAME'
+      '  , sl.CUSTOMER_ID'
+      '  , sl.SERV_ID'
+      '  , sl.STATE_DATE'
+      '  , sl.STATE_SRV'
+      '  , sl.NOTICE'
+      '  , sl.STATE_CHANGE_BY'
+      '  , sl.STATE_CHANGE_ON'
+      '  , sl.CONTRACT'
+      '  , sl.CONTRACT_DATE'
+      '  , sl.VATG_ID'
+      '  , sl.STATE'
+      '  , sl.WHO_LAST'
+      '  , sl.STATE_SRV_NAME'
+      '  , sl.VAT_GROUP'
+      '  , sl.BUSINESS'
       
-        '  , coalesce(sl.tarif_sum / extract(day from dateadd(-1 day to(d' +
-        'ateadd(1 month to current_date - extract(day from current_date) ' +
-        '+ 1)))), 0) as tarif_day'
+        '  , iif(sl.Calc_Type <> 6, sl.TARIF_SUM, round(sl.TARIF_SUM / Ex' +
+        'tra * extract(day from Month_Last_Day(current_date)), 2)) TARIF_' +
+        'SUM'
       
-        '  , iif(exists(select l.Link_Id from SERVICES_LINKS l where l.PA' +
-        'RENT is null and l.CHILD = sl.SERV_ID), 1, 0) as SRV_ACTIVE'
+        '  , coalesce(round(sl.tarif_sum / iif(sl.Calc_Type <> 6, extract' +
+        '(day from Month_Last_Day(current_date)), Extra), 2), 0) as tarif' +
+        '_day'
+      '  , iif(exists(select'
+      '                   l.Link_Id'
+      '                 from SERVICES_LINKS l'
+      '                 where l.PARENT is null'
+      
+        '                       and l.CHILD = sl.SERV_ID), 1, 0) as SRV_A' +
+        'CTIVE'
+      '  -- , extract(day from Month_Last_Day(current_date))'
       '  from (select'
       '            SS.*'
       '          , s.name'
@@ -480,14 +508,15 @@ object apgCustomerSrv: TapgCustomerSrv
       '            coalesce(w.Surname, ss.State_Change_By) as WHO_LAST'
       '          , sd.Name as STATE_SRV_NAME'
       '          , o.o_name as VAT_GROUP'
-      '          , (select'
+      '          , coalesce( (select'
       '                 M_TARIF'
       
         '               from Get_Tarif_Sum_Customer_Srv(ss.Customer_Id, s' +
         's.Serv_Id, current_date)'
-      ''
-      '            ) tarif_sum'
+      '            ), 0) tarif_sum'
       '          , b.O_NAME BUSINESS'
+      '          , s.Calc_Type'
+      '          , coalesce(s.Extra, 1) Extra'
       '          from SUBSCR_SERV SS'
       
         '               inner join services s on (s.service_id = ss.Serv_' +
@@ -505,7 +534,35 @@ object apgCustomerSrv: TapgCustomerSrv
         '               left outer join objects o on (o.o_id = ss.vatg_id' +
         ' and o.o_type = 13)'
       '          where ss.CUSTOMER_ID = :CUSTOMER_ID) sl'
-      '  order by state_sgn desc, name')
+      'union all'
+      'select'
+      '    q.Srv_From SUBSCR_SERV_ID'
+      '  , -999 STATE_SGN'
+      '  , s.Name'
+      '  , q.CUSTOMER_ID'
+      '  , q.Srv_To SERV_ID'
+      '  , q.Switch_Date STATE_DATE'
+      '  , -999 STATE_SRV'
+      '  , null NOTICE'
+      '  , null STATE_CHANGE_BY'
+      '  , null STATE_CHANGE_ON'
+      '  , null CONTRACT'
+      '  , null CONTRACT_DATE'
+      '  , null VATG_ID'
+      '  , '#39#1042' '#1086#1095#1077#1088#1077#1076#1080#39' STATE'
+      '  , null WHO_LAST'
+      '  , null STATE_SRV_NAME'
+      '  , null VAT_GROUP'
+      '  , null BUSINESS'
+      '  , 0 TARIF_SUM'
+      '  , 0 tarif_day'
+      '  , 0 SRV_ACTIVE'
+      '  -- , null'
+      'from Queue_Switch_Srv q'
+      '  inner join services s on (s.Service_Id = q.Srv_To)'
+      'where q.Completed = 0 and q.Customer_Id = :CUSTOMER_ID'
+      ')'
+      'order by STATE_SGN desc, name')
     AutoUpdateOptions.UpdateTableName = 'SUBSCR_SERV'
     AutoCalcFields = False
     Transaction = trRead

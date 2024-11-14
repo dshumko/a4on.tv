@@ -17,6 +17,7 @@ type
   end;
 
   TStringArray = array of string;
+  TStatusWindowHandle = type HWND;
 
 var
   DebugMode: Boolean = true;
@@ -141,6 +142,10 @@ procedure Png2Jpeg(aPicStream: TMemoryStream);
 function myQuestion(const Caption, Text: String): Boolean;
 // Работаем под wine
 function GetWineAvail: Boolean;
+
+procedure RemoveStatusWindow(StatusWindow: TStatusWindowHandle);
+function CreateStatusWindow(const Text: string): TStatusWindowHandle;
+
 
 implementation
 
@@ -1609,6 +1614,52 @@ begin
     FreeLibrary(H);
   end;
 end;
+
+function CreateStatusWindow(const Text: string): TStatusWindowHandle;
+var
+  FormWidth,
+  FormHeight: integer;
+begin
+  FormWidth := 400;
+  FormHeight := 164;
+  result := CreateWindow('STATIC',
+                         PChar(Text),
+                         WS_OVERLAPPED or WS_POPUPWINDOW or WS_THICKFRAME or SS_CENTER or SS_CENTERIMAGE,
+                         (Screen.Width - FormWidth) div 2,
+                         (Screen.Height - FormHeight) div 2,
+                         FormWidth,
+                         FormHeight,
+                         Application.MainForm.Handle,
+                         0,
+                         HInstance,
+                         nil);
+  ShowWindow(result, SW_SHOWNORMAL);
+  UpdateWindow(result);
+end;
+
+procedure RemoveStatusWindow(StatusWindow: TStatusWindowHandle);
+begin
+  DestroyWindow(StatusWindow);
+end;
+
+{
+procedure TForm1.btn1Click(Sender: TObject);
+var
+  status: TStatusWindowHandle;
+  i:Integer;
+begin
+  status := CreateStatusWindow('Please Wait...');
+  try
+    for i:= 1 to 100 do begin
+      btn1.Caption := i.ToString;
+      Sleep(200);
+    end
+  finally
+    RemoveStatusWindow(status);
+  end;
+end;
+
+}
 
 initialization
 

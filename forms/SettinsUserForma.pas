@@ -53,6 +53,7 @@ type
     ednRH: TDBNumberEditEh;
     lbl2: TLabel;
     chkAlwaysShow: TCheckBox;
+    chkShowWorks: TCheckBox;
     procedure frmOkCancelbbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbAutoClick(Sender: TObject);
@@ -139,6 +140,7 @@ begin
   ReadCheckSettings('RECTOCUSTOMER', chkRecToCustomer);
   ReadCheckSettings('ALWAYSSHOW', chkAlwaysShow);
   ReadCheckSettings('DBSETTINGS', chkDBsettings);
+  ReadCheckSettings('SHOW_WORKS_IN_SINGLE', chkShowWorks);
 
   if not TryStrToInt(dmMain.GetIniValue('KBDSWITCH'), i) then
     i := 0;
@@ -215,6 +217,7 @@ begin
   SetCheckSettings(chkToday.Checked, 'SET_AS_CURRENT_DATE');
   SetCheckSettings(chkDBsettings.Checked, 'DBSETTINGS');
   SetCheckSettings(chkHint.Checked, 'HIDEHINT');
+  SetCheckSettings(chkShowWorks.Checked, 'SHOW_WORKS_IN_SINGLE');
 
   dmMain.SetIniValue('AUTOOPEN', cbAutoOpen.Value);
   if cbAuto.Checked then

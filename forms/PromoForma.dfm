@@ -202,7 +202,7 @@ inherited PromoForm: TPromoForm
     end
     object chkAll: TCheckBox
       Left = 82
-      Top = 63
+      Top = 62
       Width = 73
       Height = 17
       Anchors = [akLeft, akBottom]

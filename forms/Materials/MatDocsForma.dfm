@@ -258,7 +258,7 @@ inherited MatDocsForm: TMatDocsForm
       Left = 0
       Top = 0
       Width = 814
-      Height = 213
+      Height = 212
       Align = alClient
       AllowedOperations = []
       DataSource = srcMaterials

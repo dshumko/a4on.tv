@@ -1,6 +1,7 @@
 object CustFilesForm: TCustFilesForm
   Left = 256
   Top = 314
+  ActiveControl = dbgFiles
   Caption = #1060#1072#1081#1083#1099' '#1079#1072' '#1087#1077#1088#1080#1086#1076
   ClientHeight = 491
   ClientWidth = 1033
@@ -44,7 +45,7 @@ object CustFilesForm: TCustFilesForm
       FooterRowCount = 1
       FooterParams.Color = clWindow
       GridLineParams.VertEmptySpaceStyle = dessNonEh
-      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgMultiSelect]
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgCancelOnExit, dgMultiSelect]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
       PopupMenu = gridPopUp
       ReadOnly = True
@@ -351,6 +352,7 @@ object CustFilesForm: TCustFilesForm
         TabOrder = 1
         Visible = True
         OnClick = luPaymentClick
+        OnEnter = luPaymentEnter
       end
       object ToolButton20: TToolButton
         Left = 432

@@ -61,6 +61,12 @@ object AreaViewForm: TAreaViewForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 136
       Top = 7

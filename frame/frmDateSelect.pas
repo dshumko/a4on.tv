@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, Vcl.ExtCtrls, Vcl.ActnList,
   FIBDatabase, FIBQuery, pFIBQuery, PrjConst;
 
@@ -79,7 +79,8 @@ begin
   inherited Create(AOwner);
   FHouse := -1;
   FDisabledDays := TStringList.Create();
-  with sgCalendar do begin
+  with sgCalendar do
+  begin
     GridLines := 6 * GridLineWidth;
     DefaultColWidth := (Width - GridLines - 1) div 7;
     DefaultRowHeight := (Height - GridLines - 1) div 7;
@@ -109,23 +110,25 @@ begin
   IncAMonth(FYear, FMonth, FDay, Value);
   sd := EncodeDate(FYear, FMonth, 1);
   FDisabledDays.Clear;
-  if FHouse >= 0
-  then
-    with qBusyDays do begin
+  if FHouse >= 0 then
+    with qBusyDays do
+    begin
       // qBusyDays.ParamByName('FROM_DATE').AsDate := Today();
       // qBusyDays.ParamByName('TO_DATE').Clear;
       // qBusyDays.ParamByName('HOUSE_ID').AsDate  := FHouse;
-      if FType = -1
-      then st := 'null'
-      else st := IntToStr(FType);
+      if FType = -1 then
+        st := 'null'
+      else
+        st := IntToStr(FType);
       s := 'select BUSY_DAY from GET_REQUEST_BUSY_DAYS(' + IntToStr(FHouse) + ', ' + DateTOFBdate(sd) + ', null, '
         + st + ')';
       qBusyDays.Sql.Text := s;
       Transaction.StartTransaction;
       ExecQuery;
-      while not Eof do begin
-        if not FieldByName('BUSY_DAY').IsNull
-        then begin
+      while not Eof do
+      begin
+        if not FieldByName('BUSY_DAY').IsNull then
+        begin
           DecodeDate(FieldByName('BUSY_DAY').AsDate, y, m, d);
           FDisabledDays.Add(IntToStr(d));
         end;
@@ -146,42 +149,44 @@ var
   MonthOffset: Integer;
   SRect: TGridRect;
 begin
-  with sgCalendar do begin
-    for i := 1 to RowCount - 1 do begin
+  with sgCalendar do
+  begin
+    for i := 1 to RowCount - 1 do
+    begin
       Rows[i].Clear;
-      for j := 0 to ColCount - 1 do Cells[j, i] := '';
+      for j := 0 to ColCount - 1 do
+        Cells[j, i] := '';
     end;
 
     FirstDate := EncodeDate(FYear, FMonth, 1);
     i := DayOfWeek(FirstDate); { day of week for 1st of month }
-    if 2 < i
-    then MonthOffset := i - 3
-    else MonthOffset := 4 + i;
+    if 2 < i then
+      MonthOffset := i - 3
+    else
+      MonthOffset := 4 + i;
     vR := 1;
-    for i := 1 to DaysInMonth(FirstDate) do begin
+    for i := 1 to DaysInMonth(FirstDate) do
+    begin
       vC := (i + MonthOffset) mod 7;
-      if (vC = 0)
-      then inc(vR);
+      if (vC = 0) then
+        inc(vR);
       Cells[vC, vR] := IntToStr(i);
     end;
     i := -1;
     j := -1;
     for vR := 1 to 6 do
       for vC := 0 to 7 do
-        if (i = -1)
-        then
-          if (Cells[vC, vR] <> '')
-          then
-            if (FDisabledDays.IndexOf(Cells[vC, vR]) = -1)
-            then
-              if (EncodeDate(FYear, FMonth, StrToInt(Cells[vC, vR])) >= Today())
-              then begin
+        if (i = -1) then
+          if (Cells[vC, vR] <> '') then
+            if (FDisabledDays.IndexOf(Cells[vC, vR]) = -1) then
+              if (EncodeDate(FYear, FMonth, StrToInt(Cells[vC, vR])) >= Today()) then
+              begin
                 i := vC;
                 j := vR;
               end;
   end;
-  if i > -1
-  then begin
+  if i > -1 then
+  begin
     sgCalendar.Row := j; { Устанавливаем Row/Col }
     sgCalendar.Col := i;
     SRect.Top := j; { Определяем выбранную область }
@@ -197,30 +202,60 @@ procedure TfrmRequestDate.sgCalendarDrawCell(Sender: TObject; ACol, ARow: Intege
 var
   TheText: string;
   OldColor: TColor;
+  d: Integer;
 begin
-  with sgCalendar do begin
-    OldColor := Canvas.Font.Color;
-    TheText := Cells[ACol, ARow];
-    if not(gdSelected in State)
-    then
-      if FDisabledDays.IndexOf(TheText) > -1
-      then Canvas.Font.Color := clGrayText
-      else begin
-        Canvas.Font.Style := [fsBold];
-        if ACol >= 5
-        then Canvas.Font.Color := clRed;
+  if (ARow > 0) then
+  begin
+    OldColor := sgCalendar.Canvas.Font.Color;
+    TheText := sgCalendar.Cells[ACol, ARow];
+    with sgCalendar do
+    begin
+      if not(gdSelected in State) then
+      begin
+        if FDisabledDays.IndexOf(TheText) > -1 then
+          Canvas.Font.Color := clGrayText
+        else
+        begin
+          Canvas.Font.Style := [fsBold];
+          if ACol >= 5 then
+            Canvas.Font.Color := clRed;
+        end
       end
-    else begin
-      Canvas.Brush.Color := clHighlight;
-      Canvas.Font.Color := clHighlightText;
+      else
+      begin
+        Canvas.Brush.Color := clHighlight;
+        Canvas.Font.Color := clHighlightText;
+      end;
 
+      if (TheText <> '') and TryStrToInt(TheText, d) and (EncodeDate(FYear, FMonth, d) < Today()) then
+      begin
+        Canvas.Font.Color := clGrayText;
+        Canvas.Font.Style := Canvas.Font.Style - [fsBold];
+      end;
+
+      with Rect, Canvas do
+      begin
+        TextRect(Rect, Left + (Right - Left - TextWidth(TheText)) div 2, Top + (Bottom - Top - TextHeight(TheText))
+          div 2, TheText);
+      end;
     end;
-    with Rect, Canvas do begin
-      TextRect(Rect, Left + (Right - Left - TextWidth(TheText)) div 2, Top + (Bottom - Top - TextHeight(TheText))
+    sgCalendar.Canvas.Font.Color := OldColor;
+  end;
+  {
+  else
+  begin
+    if ACol < 5 then
+      sgCalendar.Canvas.Font.Color := clWindowText
+    else
+      sgCalendar.Canvas.Font.Color := clRed;
+
+    with Rect, sgCalendar.Canvas do
+    begin
+      TextRect(Rect, Left, Top + (Bottom - Top - TextHeight(TheText))
         div 2, TheText);
     end;
-    Canvas.Font.Color := OldColor;
   end;
+  }
 
 end;
 
@@ -230,8 +265,10 @@ var
 begin
   TheText := (Sender as TStringGrid).Cells[ACol, ARow];
   if (TheText = '') or (FDisabledDays.IndexOf(TheText) > -1) or (EncodeDate(FYear, FMonth, StrToInt(TheText)) < Today())
-  then CanSelect := False
-  else begin
+  then
+    CanSelect := False
+  else
+  begin
     FDay := StrToInt(TheText);
     CanSelect := True;
   end;

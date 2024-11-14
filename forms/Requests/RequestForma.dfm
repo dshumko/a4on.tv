@@ -19,6 +19,7 @@ object RequestForm: TRequestForm
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   OnShow = FormShow
@@ -1285,7 +1286,7 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 115
+          Width = 776
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
@@ -1421,6 +1422,7 @@ object RequestForm: TRequestForm
         Flat = True
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
         TabOrder = 0
+        OnDblClick = dbgPhotosDblClick
         Columns = <
           item
             CellButtons = <>
@@ -1443,18 +1445,6 @@ object RequestForm: TRequestForm
         object RowDetailData: TRowDetailPanelControlEh
         end
       end
-      object imgJPG: TDBImageEh
-        Left = 372
-        Top = 0
-        Width = 404
-        Height = 309
-        Align = alClient
-        DataField = 'JPG'
-        DataSource = srcPhotos
-        DynProps = <>
-        TabOrder = 1
-        OnDblClick = imgJPGDblClick
-      end
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -1462,7 +1452,7 @@ object RequestForm: TRequestForm
         Height = 309
         Align = alLeft
         BevelOuter = bvNone
-        TabOrder = 2
+        TabOrder = 1
         DesignSize = (
           24
           309)
@@ -1483,6 +1473,65 @@ object RequestForm: TRequestForm
           Height = 22
           Action = actFileAdd
           Flat = True
+        end
+        object btnSavePhoto1: TSpeedButton
+          Left = 1
+          Top = 38
+          Width = 22
+          Height = 22
+          Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1072#1081#1083
+          Flat = True
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000C30E0000C30E00000000000000000000B17AA29F528A
+            9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F52
+            8A9F528A9F528AAB6E9B9F538B9F528AF4EDF2FCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF5EFF39F528A9F538A9F528A9F528A
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFC9F528A9F528A9F528A9F528AFCFCFCFCFCFCE1E1E1B3B2B2B3B2B2B3
+            B2B2B3B2B2B3B2B2B3B2B2E1E1E1FCFCFCFCFCFC9F528A9F528A9F528A9F528A
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFC9F528A9F528A9F528A9F528AFCFCFCFCFCFCE1E1E1B3B2B2B3B2B2B3
+            B2B2B3B2B2B3B2B2B3B2B2E1E1E1FCFCFCFCFCFC9F528A9F528A9F528A9F528A
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFC9F528A9F528A9F528A9F528AF5F0F4FCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF5EFF39F528A9F528A9F528A9F528A
+            9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F52
+            8A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F
+            528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A
+            9F528AF0E7EEFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCEEE3
+            EB9F528A9F528A9F528A9F528A9F528A9F528AFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFC73706F73706FFCFCFCFCFCFC9F528A9F528A9F528A9F528A9F528A
+            9F528AFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC706D6C706D6CFCFCFCFCFC
+            FC9F528A9F528A9F528A9F528A9F528A9F528AFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFC73706F73706FFCFCFCFCFCFC9F528A9F528AA0538BA0548B9F528A
+            9F528AFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FC9F528A9E528BC4A3BAAF77A09F528A9F528A9F528A9F528A9F528A9F528A9F
+            528A9F528A9F528A9F528A9F528A9F528AA0568CC8ADC1FF00FF}
+          OnClick = btnSavePhoto1Click
+        end
+      end
+      object pnlPhotoFile: TPanel
+        Left = 372
+        Top = 0
+        Width = 404
+        Height = 309
+        Align = alClient
+        BevelOuter = bvNone
+        Caption = #1044#1074#1086#1081#1085#1086#1081' '#1097#1077#1083#1095#1086#1082' '#1084#1099#1096#1080' '#1076#1083#1103' '#1087#1088#1086#1089#1084#1086#1090#1088#1072' '#1092#1072#1081#1083#1072
+        TabOrder = 2
+        OnDblClick = pnlPhotoFileDblClick
+        object imgJPG: TDBImageEh
+          Left = 0
+          Top = 0
+          Width = 404
+          Height = 309
+          Align = alClient
+          DataField = 'JPG'
+          DataSource = srcPhotos
+          DynProps = <>
+          TabOrder = 0
+          OnDblClick = imgJPGDblClick
         end
       end
     end
@@ -2248,33 +2297,33 @@ object RequestForm: TRequestForm
       '  , rq_id'
       '  , NOT_CALC'
       '  , (NOT_CALC * COST) NOT_CALC_COST'
-      '  , iif(NOT_CALC = 1, 0, COST) CALC_COST '
-      'from ('
-      'select'
-      '    m.W_ID ID'
-      '  , w.name'
-      '  , w.notice'
-      '  , m.w_quant QNT'
-      '  , round(m.w_time * m.w_quant, 2) time_total'
-      '  , coalesce(m.w_cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, 0,'
-      '    (select'
-      '         t.tarif_sum'
-      '       from tarif t'
-      '       where t.service_id = s.service_id'
+      '  , iif(NOT_CALC = 1, 0, COST) CALC_COST'
+      '  from (select'
+      '            m.W_ID ID'
+      '          , w.name'
+      '          , w.notice'
+      '          , m.w_quant QNT'
+      '          , round(m.w_time * m.w_quant, 2) time_total'
       
-        '             and coalesce(rq.rq_exec_time, localtimestamp) betwe' +
-        'en t.date_from and t.date_to)), 0) * m.w_quant COST'
-      '  , m.rq_id'
-      '  , coalesce(m.NOT_CALC, 0) NOT_CALC'
-      '  from WORKS w'
-      '       inner join request_works m on (w.w_id = m.w_id)'
-      '       inner join request rq on (rq.Rq_Id = m.Rq_Id)'
+        '          , coalesce(iif(w.As_Service is null, w.W_Cost, iif(coa' +
+        'lesce(s.Srv_Type_Id, 2) = 2, 0,'
+      '            (select'
+      '                 t.tarif_sum'
+      '               from tarif t'
+      '               where t.service_id = s.service_id'
       
-        '       left outer join services s on (w.as_service = s.service_i' +
-        'd)'
-      '  where m.rq_id = :RQ_ID'
-      ')  '
-      'order by name')
+        '                     and coalesce(rq.rq_exec_time, localtimestam' +
+        'p) between t.date_from and t.date_to))), 0) * m.w_quant COST'
+      '          , m.rq_id'
+      '          , coalesce(m.NOT_CALC, 0) NOT_CALC'
+      '          from WORKS w'
+      '               inner join request_works m on (w.w_id = m.w_id)'
+      '               inner join request rq on (rq.Rq_Id = m.Rq_Id)'
+      
+        '               left outer join services s on (w.as_service = s.s' +
+        'ervice_id)'
+      '          where m.rq_id = :RQ_ID)'
+      '  order by name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'
@@ -2447,6 +2496,7 @@ object RequestForm: TRequestForm
   end
   object srcPhotos: TDataSource
     DataSet = dsPhotos
+    OnDataChange = srcPhotosDataChange
     Left = 550
     Top = 160
   end
@@ -2565,8 +2615,8 @@ object RequestForm: TRequestForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcRequest
-    Left = 328
-    Top = 472
+    Left = 344
+    Top = 424
     oFetchAll = True
   end
   object srcMSG: TDataSource
@@ -2657,5 +2707,9 @@ object RequestForm: TRequestForm
     DataSet = dsFlats
     Left = 638
     Top = 480
+  end
+  object SaveDialog: TSaveDialog
+    Left = 592
+    Top = 348
   end
 end

@@ -287,7 +287,13 @@ begin
     AFormatSettings.ShortTimeFormat := 'yyyy-mm-dd hh:nn:ss';
     TimeZoneShiftMinutes := -1 * (TTimeZone.Local.UtcOffset.Hours * 60 + TTimeZone.Local.UtcOffset.Minutes);
 
-    B := TJsonBaseObject.ParseFromFile(jsonName);
+    try
+      B := TJsonBaseObject.ParseFromFile(jsonName);
+    except
+      ShowMessage('Некорректный ответ a4on.tv.'#13#10'Ответ сохранен в файл:' + jsonName);
+      B := nil;
+    end;
+
     try
       if B <> nil then begin
         O := B as TJsonObject;

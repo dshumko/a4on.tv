@@ -1,5 +1,4 @@
 object SelectDateForm: TSelectDateForm
-  ShowHint = True
   Left = 0
   Top = 0
   BorderStyle = bsSizeToolWin
@@ -15,6 +14,7 @@ object SelectDateForm: TSelectDateForm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
@@ -24,6 +24,8 @@ object SelectDateForm: TSelectDateForm
     Width = 426
     Height = 183
     Align = alClient
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 0
     inherited pnlGrid: TPanel
       Width = 426
@@ -44,10 +46,6 @@ object SelectDateForm: TSelectDateForm
         TabOrder = 0
         inherited btnNextMon: TBitBtn
           Left = 331
-          TabOrder = 1
-        end
-        inherited btnPrevMon: TBitBtn
-          TabOrder = 0
         end
       end
     end

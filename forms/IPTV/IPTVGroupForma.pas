@@ -9,7 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.ComCtrls,
   FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, OkCancel_frame, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, amSplitter;
+  DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh,
+  amSplitter;
 
 type
   TIPTVGroupForm = class(TForm)
@@ -73,35 +74,37 @@ begin
     try
       dsIPTVGroup.ParamByName('IG_ID').AsInteger := aIG_ID;
       dsIPTVGroup.Open;
-      if aIG_ID = -1
-      then begin
+      if aIG_ID = -1 then
+      begin
         dsIPTVGroup.Insert;
         dsIPTVGroup['IG_ID'] := dmMain.dbTV.Gen_Id('GEN_OPERATIONS_UID', 1);
       end;
-      if ShowModal = mrOk
-      then begin
-        if dsIPTVGroup.State in [dsEdit, dsInsert]
-        then dsIPTVGroup.Post;
-        if dsIPTVGroup.State in [dsEdit, dsInsert]
-        then dsIGC.Post;
+      if ShowModal = mrOk then
+      begin
+        if dsIPTVGroup.State in [dsEdit, dsInsert] then
+          dsIPTVGroup.Post;
+        if dsIPTVGroup.State in [dsEdit, dsInsert] then
+          dsIGC.Post;
         result := dsIPTVGroup['IG_ID'];
       end
-      else begin
-        if dsIPTVGroup.State in [dsEdit, dsInsert]
-        then dsIPTVGroup.Cancel;
+      else
+      begin
+        if dsIPTVGroup.State in [dsEdit, dsInsert] then
+          dsIPTVGroup.Cancel;
         result := -1;
       end;
       dsIPTVGroup.Close;
-    finally free
+    finally
+      free
     end;
 end;
 
 procedure TIPTVGroupForm.btnChanAddClick(Sender: TObject);
 var
-  ch_id : Integer;
+  ch_id: Integer;
 begin
-  if dsC.EOF
-  then Exit;
+  if dsC.EOF then
+    Exit;
 
   dsIGC.Append;
   dsIGC['IG_Id'] := dsIPTVGroup['IG_Id'];
@@ -116,30 +119,33 @@ begin
 
   dsC.DisableControls;
   ch_id := -1;
-  if not dsC.Eof then begin
+  if not dsC.EOF then
+  begin
     dsC.Next;
     ch_id := dsC['Ch_Id'];
   end;
   dsC.CloseOpen(true);
-  if ch_id <> -1 then dsC.Locate('Ch_Id', VarArrayOf([ch_id]), []);
+  if ch_id <> -1 then
+    dsC.Locate('Ch_Id', VarArrayOf([ch_id]), []);
   dsC.EnableControls;
 end;
 
 procedure TIPTVGroupForm.btnChanRemoveClick(Sender: TObject);
 var
-  ch_id : Integer;
+  ch_id: Integer;
 begin
-  if dsIGC.EOF
-  then Exit;
+  if dsIGC.EOF then
+    Exit;
 
   dsIGC.Delete;
 
   dsC.DisableControls;
   ch_id := -1;
-  if not dsC.Eof then
+  if not dsC.EOF then
     ch_id := dsC['Ch_Id'];
   dsC.CloseOpen(true);
-  if ch_id <> -1 then dsC.Locate('Ch_Id', VarArrayOf([ch_id]), []);
+  if ch_id <> -1 then
+    dsC.Locate('Ch_Id', VarArrayOf([ch_id]), []);
   dsC.EnableControls;
 end;
 
@@ -148,8 +154,7 @@ begin
   btnChanAddClick(Sender);
 end;
 
-procedure TIPTVGroupForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TIPTVGroupForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 begin
@@ -161,14 +166,14 @@ end;
 
 procedure TIPTVGroupForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl])
-  then begin
-    if (Ord(Key) = VK_RETURN)
-    then OkCancelFrame1.actExitExecute(Sender)
-    else if (Ord(Key) = VK_LEFT)
-    then btnChanAddClick(Sender)
-    else if (Ord(Key) = VK_RIGHT)
-    then btnChanRemoveClick(Sender);
+  if (Shift = [ssCtrl]) then
+  begin
+    if (Ord(Key) = VK_RETURN) then
+      OkCancelFrame1.actExitExecute(Sender)
+    else if (Ord(Key) = VK_LEFT) then
+      btnChanAddClick(Sender)
+    else if (Ord(Key) = VK_RIGHT) then
+      btnChanRemoveClick(Sender);
   end;
 end;
 
@@ -205,6 +210,24 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
     end;
   end;

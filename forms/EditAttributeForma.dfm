@@ -51,6 +51,12 @@ object EditAttributForm: TEditAttributForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 67
       Width = 245
@@ -182,7 +188,7 @@ object EditAttributForm: TEditAttributForm
       'WHERE'
       '        CA_ID = :OLD_CA_ID')
     InsertSQL.Strings = (
-      'INSERT INTO CUSTOMER_ATTRIBUTES('
+      'update or insert into CUSTOMER_ATTRIBUTES('
       '    CUSTOMER_ID,'
       '    O_ID,'
       '    CA_VALUE,'
@@ -193,7 +199,8 @@ object EditAttributForm: TEditAttributForm
       '    :O_ID,'
       '    :CA_VALUE,'
       '    :NOTICE'
-      ')')
+      ')'
+      'matching (Customer_Id, O_Id)')
     RefreshSQL.Strings = (
       'SELECT A.O_NAME, CA.*'
       'FROM CUSTOMER_ATTRIBUTES CA'

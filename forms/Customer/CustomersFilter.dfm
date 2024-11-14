@@ -1728,7 +1728,6 @@ object CustomersFilterForm: TCustomersFilterForm
       VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbDelete]
       Anchors = [akTop, akRight]
       TabOrder = 1
-      OnClick = dbnvgrClick
     end
     object chkinversion: TDBCheckBoxEh
       Left = 69

@@ -70,6 +70,15 @@ type
     actSetFilterN: TAction;
     drvEQ: TDataSetDriverEh;
     miN6: TMenuItem;
+    actFrize: TAction;
+    mmMain: TMainMenu;
+    miMi: TMenuItem;
+    miMiFrozen: TMenuItem;
+    miLayout: TMenuItem;
+    miTree: TMenuItem;
+    actTree: TAction;
+    miN7: TMenuItem;
+    miN8: TMenuItem;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -82,7 +91,6 @@ type
     procedure pmgSelectAllClick(Sender: TObject);
     procedure pmgSaveSelectionClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure chkTREEClick(Sender: TObject);
     procedure dbGridSortMarkingChanged(Sender: TObject);
     procedure telnet1Click(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -101,6 +109,9 @@ type
     procedure actEnableFilterExecute(Sender: TObject);
     procedure actSetFilterNExecute(Sender: TObject);
     procedure miN6Click(Sender: TObject);
+    procedure actFrizeExecute(Sender: TObject);
+    procedure actTreeExecute(Sender: TObject);
+    procedure miN8Click(Sender: TObject);
   private
     FLastPage: TA4onPage;
     // FAutoGen: Boolean; // автогенерация название
@@ -108,6 +119,7 @@ type
     FCanSave: Boolean;
     FInTreeView: Boolean;
     FIsVertical: Boolean;
+    FFrozencols: Integer;
     function GenerateFilter: string;
     procedure SetGridTreeMode(const inTree: Boolean);
     procedure ShowPage(Page: TA4onPage);
@@ -122,6 +134,7 @@ type
     procedure SwitchLayout(const InVertical: Boolean);
     procedure SetLayout(Value: Boolean);
     function GetOrderColumns: String;
+    procedure SetFrozen(const v: Integer);
   public
     { Public declarations }
     property IsVertical: Boolean read FIsVertical write SetLayout;
@@ -266,15 +279,9 @@ begin
   if FCanSave then
     dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', False);
 
-  if chkTREE.Checked then
-    dmMain.SetIniValue('EQUIPMENTASTREE', '1')
-  else
-    dmMain.SetIniValue('EQUIPMENTASTREE', '0');
-
-  if FIsVertical then
-    dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', '1')
-  else
-    dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', '0');
+  dmMain.SetIniValue('EQUIPMENTASTREE', IfThen(FInTreeView,'1', '0'));
+  dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', IfThen(FIsVertical, '1', '0'));
+  dmMain.SetIniValue('EQPMNTGRIDFROZEN', FFrozencols.ToString);
 
   if FIsVertical then
   begin
@@ -364,7 +371,8 @@ begin
   inherited;
   if not(srcDataSource.DataSet is TpFIBDataSet) then
     Exit;
-  if chkTREE.Checked then
+
+  if FInTreeView then
   begin
     ShowMessage(rsTreeMode);
     Exit;
@@ -452,6 +460,12 @@ begin
   end;
 end;
 
+procedure TEquipmentForm.actTreeExecute(Sender: TObject);
+begin
+  inherited;
+  SetGridTreeMode(not FInTreeView);
+end;
+
 procedure TEquipmentForm.SetGridTreeMode(const inTree: Boolean);
   function findInex(const FLD_NAME: string; Grid: TDBGridEh): Integer;
   var
@@ -469,12 +483,14 @@ var
   id: Integer;
 begin
   inherited;
+
   if (srcDataSource.DataSet.RecordCount >= 0) and (not srcDataSource.DataSet.FieldByName('EID').IsNull) then
     id := srcDataSource.DataSet['EID']
   else
     id := -666;
 
   FInTreeView := inTree;
+  actTree.Checked := FInTreeView;
   if inTree then
   begin
     srcDataSource.DataSet := mtEQ;
@@ -513,11 +529,6 @@ begin
     FLastPage.OpenData;
   end;
   dbGrid.SetFocus;
-end;
-
-procedure TEquipmentForm.chkTREEClick(Sender: TObject);
-begin
-  SetGridTreeMode(chkTREE.Checked);
 end;
 
 procedure TEquipmentForm.dbgCustomerGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -577,7 +588,7 @@ begin
 
   try
     Grid := TCustomDBGridEh(Sender);
-    if not chkTREE.Checked then
+    if not FInTreeView then
     begin
       // Работаем с Firebird
       FIBDS := TpFIBDataSet(Grid.DataSource.DataSet);
@@ -696,6 +707,21 @@ begin
   end;
 end;
 
+procedure TEquipmentForm.actFrizeExecute(Sender: TObject);
+var
+  q: string;
+  i: Integer;
+begin
+  inherited;
+  q := FFrozencols.ToString;
+  if InputQuery('Закрепить столбцы', 'Количество', q)
+  then begin
+    if not TryStrToInt(q, i) then
+      i := 0;
+    SetFrozen(i);
+  end;
+end;
+
 procedure TEquipmentForm.actLayoutExecute(Sender: TObject);
 begin
   inherited;
@@ -732,6 +758,11 @@ begin
   dbGridSortMarkingChanged(dbGrid);
   if not dsEquipments.Active then
     dsEquipments.Open;
+
+  if (TryStrToInt(dmMain.GetIniValue('EQPMNTGRIDFROZEN'), FFrozencols)) then
+    SetFrozen(FFrozencols)
+  else
+    SetFrozen(0);
 
   FIsVertical := False;
   b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
@@ -780,7 +811,7 @@ begin
 
   actEditCustLan.Visible := dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_EditLan);
 
-  chkTREE.Checked := (dmMain.GetIniValue('EQUIPMENTASTREE') = '1');
+  SetGridTreeMode((dmMain.GetIniValue('EQUIPMENTASTREE') = '1'));
 end;
 
 procedure TEquipmentForm.lstFormsClick(Sender: TObject);
@@ -856,6 +887,14 @@ begin
 
   CurrNode := mtEQ.RecView;
   mtEQ.RecordsView.MemoryTreeList.Collapse(CurrNode, True);
+end;
+
+procedure TEquipmentForm.miN8Click(Sender: TObject);
+begin
+  inherited;
+  if not dsEquipments.FieldByName('HOUSE_ID').IsNull
+  then
+    A4MainForm.OpnenHouseByID(dsEquipments['HOUSE_ID']);
 end;
 
 procedure TEquipmentForm.miTreeCollapseClick(Sender: TObject);
@@ -1104,13 +1143,9 @@ function TEquipmentForm.GetOrderColumns: String;
 var
   s: string;
   i, J: Integer;
-  Grid: TCustomDBGridEh;
-  FIBDS: TpFIBDataSet;
-  beOpened: Boolean;
   fn: string;
-  id: Integer;
 begin
-  if not chkTREE.Checked then
+  if not FInTreeView then
   begin
     J := dbGrid.SortMarkedColumns.Count;
     s := ' ';
@@ -1154,6 +1189,14 @@ begin
   end;
 
   Result := s;
+end;
+
+procedure TEquipmentForm.SetFrozen(const v: Integer);
+begin
+  FFrozencols := v;
+
+  if (dbGrid.Columns.Count >= FFrozencols) then
+    dbGrid.FrozenCols := FFrozencols;
 end;
 
 end.

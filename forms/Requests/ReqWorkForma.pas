@@ -133,10 +133,14 @@ begin
   if not(Sender is TDBLookupComboboxEh) then
     exit;
 
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 procedure TReqWorkForm.chkW_ONOFFClick(Sender: TObject);

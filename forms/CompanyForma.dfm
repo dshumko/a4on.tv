@@ -104,7 +104,9 @@ object CompanyForm: TCompanyForm
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    SearchPanel.Enabled = True
     TabOrder = 2
+    TitleParams.MultiTitle = True
     OnDblClick = dbGridDblClick
     Columns = <
       item

@@ -573,17 +573,49 @@ var
 
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
+  Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do
+  end;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
     begin
-      if Components[i] is TDBGridEh then
+      if Font_size <> 0 then
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
     end;
   end;
@@ -602,7 +634,11 @@ begin
   actMovePayment.Visible := (FCanAdd or FullAccess) and (not FTodayOnly);
   actErrorProceed.Enabled := (FCanAdd or FullAccess) and (not FTodayOnly);
   actErrorsDel.Enabled := (FCanAdd or FullAccess) and (not FTodayOnly);
-  actPayDocEdit.Enabled := (FCanAdd or FullAccess) and (not FTodayOnly);
+  Font_name := dmMain.GetCompanyValue('NAME');
+  if (not Font_name.Contains('ЛТВ')) then
+    actPayDocEdit.Visible := (FCanAdd or FullAccess) and (not FTodayOnly)
+  else
+    actPayDocEdit.Visible := FullAccess;
 
   // если скрываем абонентов, то скроем
   b := dsPayDocDetail.Active;
@@ -967,12 +1003,22 @@ begin
 end;
 
 procedure TPaymentDocForm.srcPayDocStateChange(Sender: TObject);
+var
+  b: Boolean;
+  i: Boolean;
 begin
-  actPayDocEdit.Enabled := ((Sender as TDataSource).DataSet.State = dsBrowse);
-  ActPayDocPost.Enabled := not actPayDocEdit.Enabled;
-  ActPayDocCancel.Enabled := not actPayDocEdit.Enabled;
-  ActPayDocPrint.Enabled := actPayDocEdit.Enabled;
+  b := actPayDocEdit.Visible;
+  i := ((Sender as TDataSource).DataSet.State = dsInsert);
 
+  actPayDocEdit.Enabled := b and ((Sender as TDataSource).DataSet.State = dsBrowse);
+
+  ActPayDocPost.Enabled := i or (b and (not actPayDocEdit.Enabled));
+  ActPayDocCancel.Enabled := i or (b and (not actPayDocEdit.Enabled));
+
+  ActPayDocPost.Visible := i or b;
+  ActPayDocCancel.Visible := i or b;
+
+  ActPayDocPrint.Enabled := ((Sender as TDataSource).DataSet.State = dsBrowse);
 end;
 
 procedure TPaymentDocForm.srcsPayDocDetailDataChange(Sender: TObject; Field: TField);

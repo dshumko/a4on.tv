@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ActnList,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
+  FIBDataSet,
   pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
 
 type
@@ -240,22 +241,25 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
+      go := false
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
-        go := False;
+        go := false;
         FEnterSecondPress := true;
       end;
     end;
 
     if go then
     begin
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -263,7 +267,7 @@ begin
   else
   begin
     if (ActiveControl is TDBMemoEh) then
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
   end;
 end;
 
@@ -291,7 +295,11 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -310,6 +318,24 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
       end;
     end;
   end;

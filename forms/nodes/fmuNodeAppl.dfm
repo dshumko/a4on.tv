@@ -1,7 +1,7 @@
 object apgNodeAppl: TapgNodeAppl
   Left = 0
   Top = 0
-  Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1091#1079#1083#1072
+  Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1091#1079#1083#1072' '#1080' '#1076#1072#1083#1077#1077
   ClientHeight = 253
   ClientWidth = 868
   Color = clBtnFace
@@ -35,7 +35,7 @@ object apgNodeAppl: TapgNodeAppl
     ParentFont = False
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
+    STFilter.Location = stflUnderTitleFilterEh
     STFilter.Visible = True
     TabOrder = 1
     TitleParams.MultiTitle = True

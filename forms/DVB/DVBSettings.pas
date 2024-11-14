@@ -491,23 +491,46 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
-  FTimeZone := -1 * (TTimeZone.Local.UtcOffset.Hours * 60 + TTimeZone.Local.UtcOffset.Minutes);
-
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do
+  end;
+  FTimeZone := -1 * (TTimeZone.Local.UtcOffset.Hours * 60 + TTimeZone.Local.UtcOffset.Minutes);
+
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
     begin
-      if Components[i] is TDBGridEh then
+      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+      if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
+        (Components[i] as TDBGridEh).DefaultApplySorting;
+      (Components[i] as TDBGridEh).Font.Name := Font_name;
+      (Components[i] as TDBGridEh).Font.Size := Font_size;
+      if Row_height <> 0 then
       begin
-        (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
-          Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-        if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
-          (Components[i] as TDBGridEh).DefaultApplySorting;
-        (Components[i] as TDBGridEh).Font.Name := Font_name;
-        (Components[i] as TDBGridEh).Font.Size := Font_size;
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
       end;
     end;
   end;

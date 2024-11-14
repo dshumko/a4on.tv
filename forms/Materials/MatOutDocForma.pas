@@ -250,22 +250,25 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
+      go := false
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
-        go := False;
+        go := false;
         FEnterSecondPress := true;
       end;
     end;
 
     if go then
     begin
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -273,7 +276,7 @@ begin
   else
   begin
     if (ActiveControl is TDBMemoEh) then
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
   end;
 end;
 
@@ -311,7 +314,11 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
   dsDocMat.Open;
   dsWH.Open;
   fAddedMatID := -1;
@@ -344,17 +351,37 @@ begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end;
     end;
   end;
 end;
 
 procedure TMatOutDocForm.btnSaveClick(Sender: TObject);
 begin
-  if dsDoc.FieldByName('DOC_DATE').IsNull then begin
+  if dsDoc.FieldByName('DOC_DATE').IsNull then
+  begin
     CnErrors.SetError(deD_DATE, rsSelectDate, iaTopCenter, bsNeverBlink);
     deD_DATE.SetFocus;
   end
-  else begin
+  else
+  begin
     CnErrors.Dispose(deD_DATE);
     dsDoc.Post;
   end;
@@ -396,12 +423,18 @@ begin
 end;
 
 procedure TMatOutDocForm.dsDocNewRecord(DataSet: TDataSet);
+var
+  i: Integer;
 begin
   dsDoc['DT_ID'] := DocumentType; // приходный документ
   if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
     dsDoc['DOC_DATE'] := Now;
   if dsWH.RecordCount = 1 then
     dsDoc['Wh_Id'] := dsWH['O_ID'];
+
+  i := dmMain.dbTV.QueryValue('select count(*) cnt from MATERIAL_DOCS d' +
+    ' where d.Doc_Date = current_date and d.Dt_Id = ' + DocumentType.ToString, 0, dmMain.trReadQ, false);
+  dsDoc['DOC_N'] := (i+1).ToString.PadLeft(3, '0');
 end;
 
 procedure TMatOutDocForm.btnCloseClick(Sender: TObject);

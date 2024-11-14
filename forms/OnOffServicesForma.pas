@@ -142,6 +142,7 @@ var
   Save_Cursor: TCursor;
 begin
   Result := False;
+  Save_Cursor := Screen.Cursor;
   with TOnOffServiceForm.Create(application) do
     try
       Caption := rsPauseSrv;
@@ -192,11 +193,9 @@ begin
         if Assigned(CustomersForm) then
           if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) then
             all := (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes);
-
+        Screen.Cursor := crHourGlass;
         if all then
         begin
-          Save_Cursor := Screen.Cursor;
-          Screen.Cursor := crHourGlass; { Show hourglass cursor }
           for i := 0 to CustomersForm.dbgCustomers.SelectedRows.Count - 1 do
           begin
             CustomersForm.dbgCustomers.DataSource.DataSet.Bookmark := CustomersForm.dbgCustomers.SelectedRows[i];
@@ -217,7 +216,6 @@ begin
             except
             end;
           end;
-          Screen.Cursor := Save_Cursor; { Always restore to normal }
         end
         else
         begin
@@ -237,6 +235,7 @@ begin
         Result := True;
       end;
     finally
+      Screen.Cursor := Save_Cursor;
       free;
     end;
 end;
@@ -249,6 +248,7 @@ var
   ExecRESULT: Integer;
 begin
   Result := False;
+  Save_Cursor := Screen.Cursor;
   with TOnOffServiceForm.Create(application) do
     try
       servPanel.Visible := False;
@@ -316,10 +316,9 @@ begin
           if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) then
             all := (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes);
 
+        Screen.Cursor := crHourGlass;
         if all then
         begin
-          Save_Cursor := Screen.Cursor;
-          Screen.Cursor := crHourGlass; { Show hourglass cursor }
           for i := 0 to CustomersForm.dbgCustomers.SelectedRows.Count - 1 do
           begin
             CustomersForm.dbgCustomers.DataSource.DataSet.Bookmark := CustomersForm.dbgCustomers.SelectedRows[i];
@@ -332,7 +331,6 @@ begin
             except
             end;
           end;
-          Screen.Cursor := Save_Cursor; { Always restore to normal }
         end
         else
         begin
@@ -355,6 +353,7 @@ begin
         Result := True;
       end;
     finally
+      Screen.Cursor := Save_Cursor; { Always restore to normal }
       free;
     end;
 end;
@@ -367,6 +366,7 @@ var
   Save_Cursor: TCursor;
 begin
   Result := False;
+  Save_Cursor := Screen.Cursor;
   with TOnOffServiceForm.Create(application) do
     try
       servPanel.Visible := False;
@@ -440,7 +440,6 @@ begin
           if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) then
             all := (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes);
 
-        Save_Cursor := Screen.Cursor;
         Screen.Cursor := crHourGlass;
         if all then
         begin
@@ -465,10 +464,10 @@ begin
           Query.ExecQuery;
           Query.Transaction.Commit;
         end;
-        Screen.Cursor := Save_Cursor;
         Result := True;
       end;
     finally
+      Screen.Cursor := Save_Cursor;
       free;
     end;
 end;
@@ -480,6 +479,7 @@ var
   Save_Cursor: TCursor;
 begin
   Result := False;
+  Save_Cursor := Screen.Cursor;
   with TOnOffServiceForm.Create(application) do
     try
       Service_TYPE := aService_TYPE;
@@ -570,10 +570,10 @@ begin
           if (CustomersForm.dbgCustomers.SelectedRows.Count > 0) then
             all := (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes);
 
+        Screen.Cursor := crHourGlass;
+
         if all then
         begin
-          Save_Cursor := Screen.Cursor;
-          Screen.Cursor := crHourGlass;
           for i := 0 to CustomersForm.dbgCustomers.SelectedRows.Count - 1 do
           begin
             CustomersForm.dbgCustomers.DataSource.DataSet.Bookmark := CustomersForm.dbgCustomers.SelectedRows[i];
@@ -587,7 +587,6 @@ begin
               //
             end;
           end;
-          Screen.Cursor := Save_Cursor;
         end
         else
         begin
@@ -603,6 +602,7 @@ begin
         Result := True;
       end;
     finally
+      Screen.Cursor := Save_Cursor;
       free;
     end;
 end;
@@ -689,16 +689,19 @@ begin
   end
 
 end;
-
 procedure TOnOffServiceForm.luServiceClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
     exit;
 
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 procedure TOnOffServiceForm.luServiceEnter(Sender: TObject);
@@ -706,8 +709,10 @@ begin
   if not(Sender is TDBLookupComboboxEh) then
     exit;
 
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
+  if not(Sender as TDBLookupComboboxEh).ListVisible then begin
     (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+  end;
 end;
 
 procedure TOnOffServiceForm.OkCancelFramebbOkClick(Sender: TObject);
@@ -964,7 +969,6 @@ begin
   if pid <= 0 then
     exit;
 
-  i := 0;
   with TpFIBQuery.Create(Self) do
   begin
     try

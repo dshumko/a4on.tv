@@ -269,7 +269,7 @@ begin
   if dsDoc.FieldByname('Bl_Name').IsNull then
     exit;
 
-  FileName := GetTempDir + 'A4on\';
+  FileName := GetTempDir;
   if not DirectoryExists(FileName) then
     CreateDir(FileName);
   FileName := FileName + dsDoc['Bl_Name'];

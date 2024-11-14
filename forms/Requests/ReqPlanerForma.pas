@@ -7,8 +7,10 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
-  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PlannersEh, SpreadGridsEh, PlannerCalendarPickerEh, EhLibVCL,
-  GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, PlannerDataEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet, DataDriverEh,
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PlannersEh, SpreadGridsEh, PlannerCalendarPickerEh,
+  EhLibVCL,
+  GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, PlannerDataEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet,
+  DataDriverEh,
   pFIBDataDriverEh, FIBDatabase, pFIBDatabase, amSplitter;
 
 type
@@ -109,7 +111,7 @@ var
 begin
   s := '[' + IntToStr(dsRequest['RQ_ID']) + '] ' + dsRequest['RT_NAME'] + sLineBreak;
   if (not dsRequest.FieldByName('Subarea_Name').IsNull) and (dsRequest['Subarea_Name'] <> '') then
-    s := s + '[' + dsRequest['Subarea_Name']+']';
+    s := s + '[' + dsRequest['Subarea_Name'] + ']';
   s := s + dsRequest['STREET_NAME'] + ' д.' + dsRequest['HOUSE_NO'] + ' ' + dsRequest['FLAT_NO'];
 
   result := s;
@@ -187,7 +189,8 @@ end;
 
 procedure TReqPlanerForm.PlannerViewEhSelectionChanged(Sender: TObject);
 begin
-  if PlannerControl.ActivePlannerView.SelectedPlanItem <> nil then begin
+  if PlannerControl.ActivePlannerView.SelectedPlanItem <> nil then
+  begin
     mmoItem.Lines.Text := PlannerControl.ActivePlannerView.SelectedPlanItem.Title;
     mmoItem.Lines.Add(PlannerControl.ActivePlannerView.SelectedPlanItem.Body);
   end
@@ -200,7 +203,8 @@ var
   c: TColor;
 begin
   // c := clDefault;
-  if (dsRequest['REQ_RESULT'] < 1) and (PlanItem.EndTime < now()) then begin
+  if (dsRequest['REQ_RESULT'] < 1) and (PlanItem.EndTime < now()) then
+  begin
     c := clRed;
   end
   else
@@ -222,7 +226,7 @@ var
   PlanItem: TPlannerDataItemEh;
   ResList: TList<Integer>;
   TypeID: Integer;
-  STime, ETime : TDateTime;
+  STime, ETime: TDateTime;
 begin
   ResList := TList<Integer>.Create;
   pldsPlanner.BeginUpdate;
@@ -272,11 +276,13 @@ begin
 
       PlanItem := pldsPlanner.NewItem();
       PlanItem.ItemID := dsRequest['RQ_ID'];
-      if STime < ETime then begin
+      if STime < ETime then
+      begin
         PlanItem.StartTime := STime;
         PlanItem.EndTime := ETime;
       end
-      else begin
+      else
+      begin
         PlanItem.StartTime := ETime;
         PlanItem.EndTime := STime;
       end;
@@ -411,19 +417,58 @@ end;
 procedure TReqPlanerForm.FormShow(Sender: TObject);
 var
   i: Integer;
-  Font_size : Integer;
-  Font_name : string;
+  Font_size: Integer;
+  Font_name: string;
+  Row_height: Integer;
 begin
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i)
-  then begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
+  Font_size := 0;
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do begin
-      if Components[i] is TDBGridEh then begin
+  end;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      if Font_size <> 0 then
+      begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
+
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
+      end;
     end;
+  end;
+
+  if Font_size <> 0 then
+  begin
     PlannerControl.Font.Name := Font_name;
     PlannerControl.Font.Size := Font_size;
   end;

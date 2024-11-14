@@ -107,6 +107,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure dbgFilesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure luPaymentClick(Sender: TObject);
+    procedure luPaymentEnter(Sender: TObject);
   private
     FFirstOpen: Boolean;
     fStartDate: TDateTime;
@@ -242,17 +243,45 @@ var
   vBalance: Boolean;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
+  Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do
+  end;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
     begin
-      if Components[i] is TDBGridEh then
+      if Font_size <> 0 then
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
       end;
     end;
   end;
@@ -263,8 +292,8 @@ begin
   FFilesAdd := dmMain.AllowedAction(rght_Customer_Files_Add);
   FFilesEdit := dmMain.AllowedAction(rght_Customer_Files_Edit);
 
-  fEndDate := Now;
-  fStartDate := MonthFirstDay(dmMain.CurrentMonth);
+  fStartDate := Now;
+  fEndDate := Now + 1;
   SetFilter;
   dsFileType.Open;
 
@@ -589,10 +618,30 @@ procedure TCustFilesForm.luPaymentClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
     Exit;
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(false);
+
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(false);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
+end;
+
+procedure TCustFilesForm.luPaymentEnter(Sender: TObject);
+begin
+  {
+    if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+    if not(Sender as TDBLookupComboboxEh).ListVisible then begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+    end;
+  }
 end;
 
 end.
+

@@ -129,6 +129,8 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False	  
 	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then

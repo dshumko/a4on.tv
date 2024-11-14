@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, DBGridEh,
+  FIBDataSet, pFIBDataSet, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  DBGridEh,
   PrjConst;
 
 type
@@ -152,7 +153,7 @@ end;
 procedure THouseForm.btnMapClick(Sender: TObject);
 var
   s, la, lo, t, ts: string;
-  mapUrl : string;
+  mapUrl: string;
 begin
   mapUrl := dmMain.GetSettingsValue('MAP_HOUSE_URL');
 
@@ -167,8 +168,8 @@ begin
   mapUrl := StringReplace(mapUrl, '%tag_str%', ts, [rfReplaceAll]);
 
   s := LupStreets.Text;
-  t:= edHome.Text;
-  ts:= cbbSUBAREA.Text;
+  t := edHome.Text;
+  ts := cbbSUBAREA.Text;
   mapUrl := StringReplace(mapUrl, '%strt%', s, [rfReplaceAll]);
   mapUrl := StringReplace(mapUrl, '%n%', t, [rfReplaceAll]);
   mapUrl := StringReplace(mapUrl, '%city%', ts, [rfReplaceAll]);
@@ -263,11 +264,14 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;

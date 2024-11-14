@@ -112,7 +112,7 @@ object ScanImageForm: TScanImageForm
     end
     object edtFile: TDBEditEh
       Left = 53
-      Top = 39
+      Top = 36
       Width = 427
       Height = 21
       Anchors = [akLeft, akTop, akRight]

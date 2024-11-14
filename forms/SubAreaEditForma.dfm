@@ -1,5 +1,4 @@
 object SubAreaViewForm: TSubAreaViewForm
-  ShowHint = True
   Left = 378
   Top = 361
   ActiveControl = dbeName
@@ -16,6 +15,7 @@ object SubAreaViewForm: TSubAreaViewForm
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
@@ -82,6 +82,7 @@ object SubAreaViewForm: TSubAreaViewForm
     DataSource = srcSubArea
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 0
     Visible = True
     OnChange = dbeNameChange
@@ -96,6 +97,7 @@ object SubAreaViewForm: TSubAreaViewForm
     DataSource = srcSubArea
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 2
     Visible = True
     WantReturns = True
@@ -118,6 +120,7 @@ object SubAreaViewForm: TSubAreaViewForm
     KeyField = 'AREA_ID'
     ListField = 'AREA_NAME'
     ListSource = srcAreas
+    ShowHint = True
     TabOrder = 1
     Visible = True
     OnChange = dblAreaChange

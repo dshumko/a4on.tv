@@ -161,6 +161,22 @@ type
     printGridEh: TPrintDBGridEh;
     actPrintGrid: TAction;
     miPrintGrid: TMenuItem;
+    mmMaterials: TMainMenu;
+    miMi: TMenuItem;
+    miMiFrozen: TMenuItem;
+    tsFiles: TTabSheet;
+    pnlFiles: TPanel;
+    btnFileDel: TSpeedButton;
+    btnFileAdd: TSpeedButton;
+    btnSavePhoto1: TSpeedButton;
+    btnViewPhoto: TSpeedButton;
+    dbgPhotos: TDBGridEh;
+    dsFiles: TpFIBDataSet;
+    srcFiles: TDataSource;
+    qryBlobFile: TpFIBQuery;
+    dlgOpen: TOpenDialog;
+    qSaveFile: TpFIBQuery;
+    dlgSave: TSaveDialog;
     procedure actAddGroupExecute(Sender: TObject);
     procedure ActAllMaterialsExecute(Sender: TObject);
     procedure actCancelGroupExecute(Sender: TObject);
@@ -212,13 +228,18 @@ type
     procedure mi2Click(Sender: TObject);
     procedure mi4Click(Sender: TObject);
     procedure actPrintGridExecute(Sender: TObject);
+    procedure miMiFrozenClick(Sender: TObject);
+    procedure btnViewPhotoClick(Sender: TObject);
+    procedure dbgPhotosDblClick(Sender: TObject);
+    procedure btnFileAddClick(Sender: TObject);
+    procedure btnFileDelClick(Sender: TObject);
+    procedure btnSavePhoto1Click(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
     FAccessFull: Boolean;
     FAccessMat: Boolean;
     FPictHintWindow: THintWindow;
-    FSortSN: string;
     FShowSN_Rem: Boolean;
     FShowSN_Inc: Boolean;
     FShowSN_Inv: Boolean;
@@ -230,6 +251,7 @@ type
     FMatDocAccessMove: Boolean;
     FMatDocAccessOut: Boolean;
     FMatDocAccessInv: Boolean;
+    FFrozencols: Integer;
     procedure InitDataSet;
     procedure ShowSNforGrid();
     procedure ShowSNforRem;
@@ -241,6 +263,7 @@ type
     procedure SetColumnVisibility(grid: TDBGridEh; const fld: string; vsbl: Boolean);
     procedure dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure LoadReportBody(const fReport_ID: Integer);
+    procedure SetFrozen(const v: Integer);
   public
     { Public declarations }
   end;
@@ -251,8 +274,9 @@ var
 implementation
 
 uses
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Math,
-  DM, MAIN, AtrStrUtils, MaterialForma, ReportPreview,
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Math, Winapi.ShellAPI,
+  AtrCommon, AtrStrUtils,
+  DM, MAIN, MaterialForma, ReportPreview,
   RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
   MatOutDocForma, TextEditForma, MatMoveDocForma,
   MatInventoryDocForma, CustomerForma, MatGroupForma;
@@ -300,6 +324,26 @@ begin
   lk_Col.Footer.Alignment := taLeftJustify;
   lk_Col.Footer.Value := rsItogo;
 
+  lk_FldName := FldPrfx + 'TOTAL';
+  lk_Col := DBGridEh.Columns.Add;
+  lk_Col.Color := DBGridEh.FixedColor;
+  lk_Col.DisplayFormat := ',#0.###';
+  lk_Col.FieldName := lk_FldName;
+  lk_Col.Title.Caption := rsItogQuant;
+  lk_Col.Title.TitleButton := True;
+  lk_Col.Width := 62;
+  lk_Col.Footer.ValueType := fvtSum;
+  lk_Col.Footer.FieldName := lk_FldName;
+  lk_Col.Footer.DisplayFormat := ',#0.###';
+  lk_Col.Footer.Alignment := taRightJustify;
+  lk_Col.OnGetCellParams := dbGridGetCellParams;
+
+  lk_Col := DBGridEh.Columns.Add;
+  lk_Col.FieldName := 'M_NUMBER';
+  lk_Col.Title.Caption := rsNumber;
+  lk_Col.Title.TitleButton := True;
+  lk_Col.Width := 50;
+
   lk_Col := DBGridEh.Columns.Add;
   lk_Col.FieldName := 'DIMENSION';
   lk_Col.Title.Caption := rsMeasure;
@@ -316,12 +360,6 @@ begin
     lk_Col.DisplayFormat := '#,###.##';
     lk_Col.Width := 50;
   end;
-
-  lk_Col := DBGridEh.Columns.Add;
-  lk_Col.FieldName := 'M_NUMBER';
-  lk_Col.Title.Caption := rsNumber;
-  lk_Col.Title.TitleButton := True;
-  lk_Col.Width := 50;
 
   lk_Col := DBGridEh.Columns.Add;
   lk_Col.FieldName := 'TYPE_NAME';
@@ -354,7 +392,7 @@ begin
     lk_FldNameCst := FldPrfxCst + FormatFloat('00000000', QrTemp.FN('ID').AsInteger);
     lk_vars_s := lk_vars_s + '  ,' + lk_FldName + ' NUMERIC(15,3) ' + rsEOL;
     lk_vars_s := lk_vars_s + '  ,' + lk_FldNameCst + ' NUMERIC(15,3) ' + rsEOL;
-    lk_body_s := lk_body_s + 'select SUM(MR_QUANT), sum(MR_QUANT*:COST) from MATERIALS_REMAIN';
+    lk_body_s := lk_body_s + '    select SUM(MR_QUANT), sum(MR_QUANT*:COST) from MATERIALS_REMAIN';
     lk_body_s := lk_body_s + ' where (M_ID = :M_ID) and (WH_ID = ' + QrTemp.FN('ID').AsString + ') INTO :' + lk_FldName
       + ',' + lk_FldNameCst + '; ' + rsEOL;
     lk_total_s := lk_total_s + ' + coalesce(:' + lk_FldName + ',0)';
@@ -396,24 +434,11 @@ begin
 
   lk_FldName := FldPrfx + 'TOTAL';
   lk_FldNameCst := FldPrfxCst + 'TOTAL';
-  lk_vars_s := lk_vars_s + '  ,' + lk_FldName + ' NUMERIC(15,3) ' + rsEOL;
-  lk_vars_s := lk_vars_s + '  ,' + lk_FldNameCst + ' NUMERIC(15,3) ' + rsEOL;
+  // lk_vars_s := lk_vars_s + '  ,' + lk_FldName + ' NUMERIC(15,3) ' + rsEOL;
+  // lk_vars_s := lk_vars_s + '  ,' + lk_FldNameCst + ' NUMERIC(15,3) ' + rsEOL;
   lk_body_s := '    ' + lk_FldName + ' = 0;' + rsEOL + '    ' + lk_FldNameCst + ' = 0;' + rsEOL + lk_body_s + '    ' +
     lk_FldName + ' = :' + lk_FldName + lk_total_s + ';' + rsEOL + '    ' + lk_FldNameCst + ' = :' + lk_FldNameCst +
     lk_total_s_cst + ';' + rsEOL;
-
-  lk_Col := DBGridEh.Columns.Add;
-  lk_Col.Color := DBGridEh.FixedColor;
-  lk_Col.DisplayFormat := ',#0.###';
-  lk_Col.FieldName := lk_FldName;
-  lk_Col.Title.Caption := rsItogQuant;
-  lk_Col.Title.TitleButton := True;
-  lk_Col.Width := 62;
-  lk_Col.Footer.ValueType := fvtSum;
-  lk_Col.Footer.FieldName := lk_FldName;
-  lk_Col.Footer.DisplayFormat := ',#0.###';
-  lk_Col.Footer.Alignment := taRightJustify;
-  lk_Col.OnGetCellParams := dbGridGetCellParams;
 
   if fVisibleCost then
   begin
@@ -446,9 +471,9 @@ begin
     Add('   M_ID   D_INTEGER ');
     Add('  ,GR_ID   D_INTEGER ');
     Add('  ,NAME D_VARCHAR100');
+    Add('  ,M_NUMBER  D_VARCHAR20');
     Add('  ,DIMENSION D_VARCHAR10');
     Add('  ,COST D_N15_3');
-    Add('  ,M_NUMBER  D_VARCHAR20');
     Add('  ,DESCRIPTION D_NOTICE');
     Add('  ,BEST_SHIPPER_ID D_INTEGER ');
     Add('  ,BEST_SHIPPER D_VARCHAR255');
@@ -463,26 +488,29 @@ begin
     Add('  ,LOAN D_UID_NULL');
     Add('  ,BL_ID  D_INTEGER');
     Add('  ,BL_NAME  D_VARCHAR255');
+    Add('  ,QNTTOTAL NUMERIC(15,3)');
+    Add('  ,CSTTOTAL NUMERIC(15,3)');
     Add(lk_vars_s);
     Add(')AS ');
     Add('BEGIN ');
     // Add('GR_ID = MG_ID;');
     Add('FOR');
     Add('  select M_ID, NAME, DIMENSION, M_NUMBER, DESCRIPTION, IS_UNIT, COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,');
-    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, b.Bl_Id, b.Bl_Name, m.SOLD, m.RENT, m.LOAN  ');
+    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, m.SOLD, m.RENT, m.LOAN  ');
     Add('  from MATERIALS m');
     Add('    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and o.O_TYPE = 29) ');
     Add('    left outer join OBJECTS t on (t.O_ID = m.M_Type and t.O_TYPE = 48) ');
-    Add('    left outer join Blob_Tbl b on (b.Owner_Id = m.M_ID and b.Bl_Type = 4) ');
     Add('  where ((m.deleted =0 and :SHOW_DELETED = 0) or (:show_deleted = 1))');
     Add('    and ((:MG_ID = -1) or (((m.MG_ID = :MG_ID) and (not :MG_ID is null)) or ((coalesce(m.MG_ID, -1) = -1) and (:MG_ID is null))))');
     Add('  order by NAME');
     Add('  into :M_ID, :NAME, :DIMENSION, :M_NUMBER, :DESCRIPTION, :IS_UNIT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,');
-    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :BL_ID, :BL_NAME, :SOLD, :RENT, :LOAN ');
-    Add('DO BEGIN');
-    Add('      ' + lk_body_s);
-    Add('    SUSPEND;');
-    Add('END');
+    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :SOLD, :RENT, :LOAN ');
+    Add('  DO BEGIN');
+    Add('    BL_ID = null; BL_NAME = null;');
+    Add('    select first 1 b.Bl_Id, b.Bl_Name from Blob_Tbl b where b.Owner_Id = :M_ID and b.Bl_Type = 4 into :BL_ID, :BL_NAME;');
+    Add('    ' + lk_body_s);
+    Add('  SUSPEND;');
+    Add('  END');
     Add('END');
   end;
 
@@ -495,8 +523,7 @@ begin
     dsMaterials.Open;
   except
   end;
-  if DBGridEh.Columns.Count > 0 then
-    DBGridEh.FrozenCols := 1;
+  SetFrozen(FFrozencols);
   DBGridEh.Visible := True;
 
   Screen.Cursor := crsr;
@@ -529,6 +556,20 @@ procedure TMaterialsForm.mi4Click(Sender: TObject);
 begin
   if (ActiveControl is TDBGridEh) then
     A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
+end;
+
+procedure TMaterialsForm.miMiFrozenClick(Sender: TObject);
+var
+  q: string;
+  i: Integer;
+begin
+  q := FFrozencols.ToString;
+  if InputQuery('Закрепить столбцы', 'Количество', q) then
+  begin
+    if not TryStrToInt(q, i) then
+      i := 0;
+    SetFrozen(i);
+  end;
 end;
 
 procedure TMaterialsForm.miN41Click(Sender: TObject);
@@ -638,6 +679,7 @@ begin
 
   dsItogo.Active := (pgcInOut.ActivePage = tsItog);
   dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
+  dsFiles.Active := (pgcInOut.ActivePage = tsFiles);
 end;
 
 procedure TMaterialsForm.pmgCopyClick(Sender: TObject);
@@ -754,6 +796,7 @@ procedure TMaterialsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 begin
+  dmMain.SetIniValue('MATGRIDFROZEN', FFrozencols.ToString);
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
     begin
@@ -885,9 +928,62 @@ begin
   InitDataSet;
 end;
 
+procedure TMaterialsForm.btnFileAddClick(Sender: TObject);
+var
+  FileName, docName: String;
+  FileForSave: String;
+  fs: TFileStream;
+begin
+  // if (not(FAccessFull or FAccessMat)) then
+  // exit;
+
+  if not dlgOpen.Execute then
+    exit;
+
+  FileForSave := dlgOpen.FileName;
+  docName := ExtractFileName(FileForSave);
+  if (not MaterialsForm.srcDataSource.DataSet.FieldByName('M_ID').IsNull) then
+  begin
+    qSaveFile.ParamByName('Bl_Type').AsInteger := 4;
+    qSaveFile.ParamByName('OWNER_ID').AsInteger := MaterialsForm.srcDataSource.DataSet.FieldByName('M_ID').AsInteger;
+    qSaveFile.ParamByName('Bl_Name').AsString := docName;
+    fs := TFileStream.Create(FileForSave, fmShareDenyNone);
+    try
+      qSaveFile.ParamByName('Bl_Body').LoadFromStream(fs);
+      qSaveFile.Transaction.StartTransaction;
+      qSaveFile.ExecQuery;
+      qSaveFile.Transaction.Commit;
+    finally
+      fs.Free;
+    end;
+  end;
+
+  dsFiles.CloseOpen(True);
+end;
+
+procedure TMaterialsForm.btnFileDelClick(Sender: TObject);
+var
+  s: string;
+begin
+  if (not(FAccessFull or FAccessMat)) then
+    exit;
+
+  if ((not dsFiles.Active) or (dsFiles.RecordCount = 0)) then
+    exit;
+
+  if (not dsFiles.FieldByName('Bl_Name').IsNull) then
+    s := dsFiles['Bl_Name'];
+
+  if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  begin
+    dsFiles.Delete;
+    dsFiles.CloseOpen(True);
+  end;
+end;
+
 procedure TMaterialsForm.btnPrintIncomeClick(Sender: TObject);
 var
-  i, ri: Integer;
+  ri: Integer;
   dbGrid: TDBGridEh;
   printDoc: Boolean;
 begin
@@ -946,9 +1042,51 @@ begin
 
   if printDoc then
   begin
-    frxReport.ReportOptions.Name := frxReport.FILENAME;
+    frxReport.ReportOptions.Name := frxReport.FileName;
     frxReport.ShowPreparedReport;
   end;
+end;
+
+procedure TMaterialsForm.btnSavePhoto1Click(Sender: TObject);
+begin
+  if (not dsFiles.Active) or (dsFiles.RecordCount = 0) or dsFiles.FieldByName('Bl_Name').IsNull then
+    exit;
+
+  dlgSave.FileName := dsFiles.FieldByName('Bl_Name').AsString;
+
+  if not dlgSave.Execute then
+    exit;
+
+  qryBlobFile.ParamByName('BL_ID').AsInteger := dsFiles['BL_ID'];
+  qryBlobFile.Transaction.StartTransaction;
+  qryBlobFile.ExecQuery;
+  qryBlobFile.FieldByName('Bl_Body').SaveToFile(dlgSave.FileName);
+  qryBlobFile.Close;
+  qryBlobFile.Transaction.Rollback;
+end;
+
+procedure TMaterialsForm.btnViewPhotoClick(Sender: TObject);
+var
+  FileName: string;
+begin
+  if (not dsFiles.Active) or (dsFiles.RecordCount = 0) or dsFiles.FieldByName('Bl_Name').IsNull then
+    exit;
+
+  FileName := GetTempDir;
+  if not DirectoryExists(FileName) then
+    CreateDir(FileName);
+
+  FileName := FileName + dsFiles.FieldByName('Bl_Name').AsString;
+  if FileExists(FileName) then
+    DeleteFile(FileName);
+
+  qryBlobFile.ParamByName('BL_ID').AsInteger := dsFiles['BL_ID'];
+  qryBlobFile.Transaction.StartTransaction;
+  qryBlobFile.ExecQuery;
+  qryBlobFile.FieldByName('Bl_Body').SaveToFile(FileName);
+  qryBlobFile.Close;
+  qryBlobFile.Transaction.Rollback;
+  ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TMaterialsForm.DBGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos: TPoint; Cell: TGridCoord;
@@ -1062,13 +1200,13 @@ procedure TMaterialsForm.dbgSNDblClick(Sender: TObject);
 var
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
-  S: String;
+  s: String;
 begin
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgSN.ScreenToClient(ScrPt);
   Cell := dbgSN.MouseCoord(GrdPt.X, GrdPt.Y);
-  S := UpperCase(dbgSN.Fields[Cell.X - 1].FieldName);
-  if (S = 'OWNER_STR') and (not dsSerials.FieldByName('Owner_Type').IsNull) then
+  s := UpperCase(dbgSN.Fields[Cell.X - 1].FieldName);
+  if (s = 'OWNER_STR') and (not dsSerials.FieldByName('Owner_Type').IsNull) then
   begin
     if (dsSerials['Owner_Type'] = 1) and (not dsSerials.FieldByName('Owner').IsNull) then
       A4MainForm.ShowCustomers(104, dsSerials['Owner']); // customer_id
@@ -1129,6 +1267,11 @@ begin
   actChangeSerial.Visible := FAccessFull or FAccessMat;
   actRemainRecalc.Visible := FAccessFull or FAccessMat;
   pgcInOut.ActivePage := tsIn;
+
+  if (TryStrToInt(dmMain.GetIniValue('MATGRIDFROZEN'), FFrozencols)) then
+    SetFrozen(FFrozencols)
+  else
+    SetFrozen(1);
 end;
 
 procedure TMaterialsForm.FormShow(Sender: TObject);
@@ -1136,7 +1279,11 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -1156,6 +1303,19 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
       end;
     end;
   end;
@@ -1313,8 +1473,6 @@ begin
 end;
 
 procedure TMaterialsForm.actPrintGridExecute(Sender: TObject);
-var
-  dbg: TDBGridEh;
 begin
   if (ActiveControl is TDBGridEh) then
   begin
@@ -1346,8 +1504,8 @@ begin
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
-        frxReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        frxReport.PreviewForm.Caption := frxReport.FILENAME;
+        frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        frxReport.PreviewForm.Caption := frxReport.FileName;
       finally
         Stream.Free;
       end;
@@ -1390,10 +1548,12 @@ begin
       8 'списание НА заявку'
     }
     i := dsItogo['M_TYPE_ID'];
-    if (i in [7, 8]) then begin
+    if (i in [7, 8]) then
+    begin
       ReguestExecute(dsItogo['DOC_ID'], -2, 1);
     end
-    else begin
+    else
+    begin
       case i of
         1:
           if (FMatDocAccessNew) then
@@ -1423,13 +1583,13 @@ var
   i: Integer;
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
-  S: String;
+  s: String;
 begin
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgJournal.ScreenToClient(ScrPt);
   Cell := dbgJournal.MouseCoord(GrdPt.X, GrdPt.Y);
-  S := UpperCase(dbgJournal.Fields[Cell.X - 1].FieldName);
-  if (S = 'M_WHERE') then
+  s := UpperCase(dbgJournal.Fields[Cell.X - 1].FieldName);
+  if (s = 'M_WHERE') then
   begin
     if not dsJournal.FieldByName('Customer_Id').IsNull then
     begin
@@ -1444,6 +1604,11 @@ begin
     i := dsJournal['RQ_ID'];
     ReguestExecute(i, -2, 1);
   end;
+end;
+
+procedure TMaterialsForm.dbgPhotosDblClick(Sender: TObject);
+begin
+  btnViewPhotoClick(Sender);
 end;
 
 function TMaterialsForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
@@ -1621,8 +1786,8 @@ begin
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
-        frxReport.FILENAME := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        frxReport.PreviewForm.Caption := frxReport.FILENAME;
+        frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
+        frxReport.PreviewForm.Caption := frxReport.FileName;
       finally
         Stream.Free;
       end;
@@ -1631,6 +1796,14 @@ begin
     if dmMain.fdsLoadReport.Active then
       dmMain.fdsLoadReport.Close;
   end;
+end;
+
+procedure TMaterialsForm.SetFrozen(const v: Integer);
+begin
+  FFrozencols := v;
+
+  if (DBGridEh.Columns.Count >= FFrozencols) then
+    DBGridEh.FrozenCols := FFrozencols;
 end;
 
 end.

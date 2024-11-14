@@ -24,10 +24,17 @@ type
     lsUSD: TLineSeries;
     lsEURO: TLineSeries;
     spl1: TSplitter;
+    RUR: TLineSeries;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnGetClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure dsRatesAfterOpen(DataSet: TDataSet);
+    procedure srcDataSourceStateChange(Sender: TObject);
+    procedure tbOkClick(Sender: TObject);
+    procedure tbCancelClick(Sender: TObject);
+    procedure actNewExecute(Sender: TObject);
+    procedure actEditExecute(Sender: TObject);
+    procedure actDeleteExecute(Sender: TObject);
   private
     function DownloadFile(const url: String): String;
     procedure LoadFromNBRB;
@@ -86,6 +93,26 @@ begin
   end;
 end;
 
+procedure TRatesForm.actDeleteExecute(Sender: TObject);
+begin
+  inherited;
+  if MessageBoxW(Handle, 'Удалить запись', 'Удалить запись', MB_YESNO + MB_ICONQUESTION +
+    MB_DEFBUTTON2) = IDYES then
+      dsRates.Delete;
+end;
+
+procedure TRatesForm.actEditExecute(Sender: TObject);
+begin
+  inherited;
+  dsRates.Edit;
+end;
+
+procedure TRatesForm.actNewExecute(Sender: TObject);
+begin
+  inherited;
+  dsRates.Insert;
+end;
+
 procedure TRatesForm.btnGetClick(Sender: TObject);
 var
   bank: string;
@@ -98,6 +125,12 @@ begin
     LoadFromCBR
   else
     ShowMessage(rsNotSetRatesBank);
+
+  qInsert.SQL.Text := 'update Rates ' + 'set RUR = coalesce(RUR, 0), eur = coalesce(EUR, 0), USD = coalesce(USD, 0) ' +
+    'where RUR is null or EUR is null or USD is null ';
+  qInsert.Transaction.StartTransaction;
+  qInsert.ExecQuery;
+  qInsert.Transaction.Commit;
 end;
 
 procedure TRatesForm.LoadFromNBRB;
@@ -141,8 +174,9 @@ var
 
         for i := 0 to cnt do
         begin
-          o := Obj[v].Items[i].ObjectValue;
-          if (not o.IsNull('Cur_OfficialRate')) and (not o.IsNull('Date')) then begin
+          O := Obj[v].Items[i].ObjectValue;
+          if (not O.IsNull('Cur_OfficialRate')) and (not O.IsNull('Date')) then
+          begin
             qInsert.ParamByName('val').AsFloat := O.F['Cur_OfficialRate'];
             qInsert.ParamByName('Rdate').AsDate := StrToDT(O.s['Date']);
             qInsert.ParamByName('Cur').AsString := CURR;
@@ -155,7 +189,7 @@ var
         Obj.Free;
       end;
 
-      qInsert.SQL.Text := 'delete from Rates where '+v+' is null';
+      qInsert.SQL.Text := 'delete from Rates where ' + v + ' is null';
       qInsert.Transaction.StartTransaction;
       qInsert.ExecQuery;
       qInsert.Transaction.Commit;
@@ -165,14 +199,13 @@ var
 
 begin
   inherited;
-  sd := Date() - 360;
-  ed := Date() + 1;
-
+  dsd := Date() - 365;
   qInsert.Transaction := dmMain.trReadQ;
-  qInsert.sql.Text := 'select max(Rdate) md from rates';
+  qInsert.SQL.Text := 'select max(Rdate) md from rates';
   qInsert.Transaction.StartTransaction;
   qInsert.ExecQuery;
-  if (not qInsert.Eof) then begin
+  if (not qInsert.Eof) then
+  begin
     if not qInsert.FieldByName('md').IsNull then
       dsd := qInsert.FieldByName('md').AsDate;
   end;
@@ -183,33 +216,59 @@ begin
   DecodeDate(Date(), y, m, d);
 
   {
-  if dsRates.Active then
-  begin
+    if dsRates.Active then
+    begin
     dsRates.DisableControls;
     bm := dsRates.GetBookmark;
     dsRates.First;
     while not dsRates.Eof do
     begin
-      if (dsRates['CUR'] = CURR) and (dsRates['Rdate'] > sd) then
-        sd := dsRates['Rdate'];
-      dsRates.Next;
+    if (dsRates['CUR'] = CURR) and (dsRates['Rdate'] > sd) then
+    sd := dsRates['Rdate'];
+    dsRates.Next;
     end;
     dsRates.GotoBookmark(bm);
     dsRates.EnableControls;
-  end;
+    end;
   }
 
-  while dsd < Date() do begin
+  while dsd < Date() do
+  begin
     sd := dsd;
-    ed := dsd+360;
+    ed := dsd + 360;
     if ed > Date() then
       ed := Date();
     GetRate('USD', 431, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
     GetRate('EUR', 451, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
-    dsd := ed+1;
+    GetRate('RUR', 456, FormatDateTime('yyyy-m-d', sd), FormatDateTime('yyyy-m-d', ed));
+    dsd := ed + 1;
   end;
 
   dsRates.CloseOpen(True);
+end;
+
+procedure TRatesForm.srcDataSourceStateChange(Sender: TObject);
+begin
+  inherited;
+  actNew.Enabled := (srcDataSource.DataSet.State = dsBrowse);
+  actEdit.Enabled := (srcDataSource.DataSet.State = dsBrowse) and (dsRates.RecordCount > 0);
+  actDelete.Enabled := (srcDataSource.DataSet.State = dsBrowse) and (dsRates.RecordCount > 0);
+
+  tbOk.Visible := (srcDataSource.DataSet.State <> dsBrowse);
+  ToolButton10.Visible := (srcDataSource.DataSet.State <> dsBrowse);
+  tbCancel.Visible := (srcDataSource.DataSet.State <> dsBrowse);
+end;
+
+procedure TRatesForm.tbCancelClick(Sender: TObject);
+begin
+  inherited;
+  dsRates.Cancel;
+end;
+
+procedure TRatesForm.tbOkClick(Sender: TObject);
+begin
+  inherited;
+  dsRates.Post;
 end;
 
 procedure TRatesForm.LoadFromCBR;
@@ -292,6 +351,11 @@ begin
     end;
   end;
 
+  qInsert.SQL.Text := 'update Rates set RUR = 1';
+  qInsert.Transaction.StartTransaction;
+  qInsert.ExecQuery;
+  qInsert.Transaction.Commit;
+
   dsRates.CloseOpen(True);
 end;
 
@@ -299,13 +363,14 @@ procedure TRatesForm.DrawChart;
 begin
   chtRates.Series[0].XValues.DateTime := True;
   chtRates.Series[1].XValues.DateTime := True;
-
+  chtRates.Series[2].XValues.DateTime := True;
   dsRates.DisableControls;
   dsRates.Last;
   while not dsRates.Bof do
   begin
     chtRates.Series[0].AddXY(dsRates['Rdate'], dsRates['Usd']);
     chtRates.Series[1].AddXY(dsRates['Rdate'], dsRates['Eur']);
+    chtRates.Series[2].AddXY(dsRates['Rdate'], dsRates['Rur']);
     dsRates.Prior;
   end;
   dsRates.EnableControls;
@@ -317,7 +382,15 @@ end;
 procedure TRatesForm.dsRatesAfterOpen(DataSet: TDataSet);
 begin
   inherited;
-  DrawChart;
+  try
+    actNew.Enabled := True;
+    actDelete.Enabled := dsRates.RecordCount > 0;
+    actEdit.Enabled := dsRates.RecordCount > 0;
+
+    DrawChart;
+  except
+  //
+  end;
 end;
 
 end.

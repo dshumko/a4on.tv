@@ -297,7 +297,7 @@ object ReqMatReturnForm: TReqMatReturnForm
       '  , Serial'
       '  , Cost'
       '  , (Quant * Cost) Itog'
-      '  from Get_Mat_Take_In(:Rq_Id, :Mg_Id, :Wh_Fltr)'
+      '  from Get_Mat_Take_In(:Rq_Id, :Mg_Id, :WH_OWNER)'
       'order by Name, wh_name   ')
     BeforePost = dsReqMaterialsBeforePost
     Transaction = dmMain.trRead

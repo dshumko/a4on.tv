@@ -76,6 +76,7 @@ type
     function GetCount: Integer;
     procedure OpenDataset();
     function SaveUnits(): Boolean;
+    function CheckUnitsInDB(): String;
     function GenUNITS: Boolean;
   public
     property MatDocID: Integer read fMatDocID write fMatDocID;
@@ -90,7 +91,7 @@ function InputUnits(const aDocID: Integer; const aMatID: Integer; const aRowID: 
 implementation
 
 uses
-  DM, MAIN, AtrStrUtils, CnBigNumber,
+  DM, MAIN, AtrStrUtils, CnBigNumber, FIBQuery, pFIBQuery,
   System.StrUtils, System.Math, Vcl.Clipbrd, Vcl.Dialogs;
 
 {$R *.dfm}
@@ -254,7 +255,17 @@ begin
 end;
 
 function TMatDocUnitForm.SaveUnits(): Boolean;
+var
+  S: string;
 begin
+  S := CheckUnitsInDB();
+  if not S.IsEmpty then
+  begin
+    ShowMessage('Уже оприходовано:' + #13#10 + S);
+    Result := False;
+    exit;
+  end;
+
   dsDMUnits.ParamByName('doc_id').AsInteger := fMatDocID;
   dsDMUnits.ParamByName('mat_id').AsInteger := fMaterialID;
   dsDMUnits.ParamByName('id').AsInteger := fRowID;
@@ -286,6 +297,49 @@ begin
 
   dsDMUnits.Close;
   Result := True;
+end;
+
+function TMatDocUnitForm.CheckUnitsInDB(): String;
+var
+  answer: string;
+  q: TpFIBQuery;
+begin
+  if mtUnits.Active then
+  begin
+    mtUnits.DisableControls;
+    mtUnits.First;
+    q := TpFIBQuery.Create(Nil);
+    try
+      q.Database := dmMain.dbTV;
+      q.Transaction := dmMain.trReadQ;
+      q.sql.Text := 'select Notice from Get_Doc_Unit_Income(:M_Id, :Serial)';
+      q.Transaction.StartTransaction;
+
+      while not mtUnits.EOF do
+      begin
+        q.ParamByName('M_ID').AsInteger := fMaterialID;
+        q.ParamByName('Serial').AsString := mtUnits['Serial'];
+        q.ExecQuery;
+        if not q.FN('NOTICE').IsNull then
+        begin
+          answer := mtUnits['Serial'] + ': ' + q.FN('NOTICE').AsString;
+          Result := Result + #13#10 + answer;
+          mtUnits.Edit;
+          mtUnits['ERROR'] := q.FN('NOTICE').AsString;
+          mtUnits.Post;
+        end;
+        q.Close;
+        mtUnits.Next;
+      end;
+      q.Transaction.Commit;
+    finally
+      q.free;
+      mtUnits.EnableControls;
+    end;
+
+  end;
+
+  Result := Result.Trim;
 end;
 
 procedure TMatDocUnitForm.srcDataSourceStateChange(Sender: TObject);
@@ -356,6 +410,19 @@ begin
         if (S.Contains('NOTICE') or S.Contains('DESCRIPTION')) and
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
       end;
     end;
   end;
@@ -550,7 +617,7 @@ begin
   biStartMac := TCnBigNumber.Create;
   BigNumberClear(biStartMac);
 
-  if (edCount.Text.IsEmpty) or (not TryStrToInt(edCount.Value, Count)) then
+  if (edCount.Text.IsEmpty) or (not TryStrToInt(edCount.value, Count)) then
     Count := 1;
 
   serial := edtSERIAL.Text.Trim;
@@ -599,7 +666,7 @@ begin
   // для начала уменьшим на единицу. потом будем накидывать
   // избавляет от лишней логики
   if (Count = 1) or // если много то спрсим
-    (MessageDlg(format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtSERIAL.Text]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
+    (MessageDlg(format(rsCREATE_DIGIT_CARDS, [edCount.value, edtSERIAL.Text]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
   then
   begin
     mtUnits.DisableControls;

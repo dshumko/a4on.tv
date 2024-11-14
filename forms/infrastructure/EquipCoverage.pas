@@ -94,11 +94,14 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;

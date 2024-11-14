@@ -292,7 +292,7 @@ object SettingsUserForm: TSettingsUserForm
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     ModalResult = 1
     NumGlyphs = 2
-    TabOrder = 23
+    TabOrder = 24
     OnClick = frmOkCancelbbOkClick
   end
   object btnCancel: TBitBtn
@@ -304,7 +304,7 @@ object SettingsUserForm: TSettingsUserForm
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 24
+    TabOrder = 25
   end
   object cbKBDSWITCH: TDBComboBoxEh
     Left = 271
@@ -343,7 +343,7 @@ object SettingsUserForm: TSettingsUserForm
     Width = 506
     Height = 61
     Caption = #1054#1090#1086#1073#1088#1072#1078#1077#1085#1080#1077' '#1082#1085#1086#1087#1086#1082' '#1085#1072' '#1075#1083#1072#1074#1085#1086#1081' '#1087#1072#1085#1077#1083#1080' '
-    TabOrder = 22
+    TabOrder = 23
     object chkBtnA: TCheckBox
       Tag = 1
       Left = 9
@@ -457,7 +457,7 @@ object SettingsUserForm: TSettingsUserForm
       #1087#1083#1077#1085#1080#1103#13#10
     Alignment = taLeftJustify
     Caption = #1055#1088#1080#1074#1103#1079#1072#1090#1100' '#1086#1073#1088#1072#1097#1077#1085#1080#1103' '#1082' '#1072#1073#1086#1085#1077#1085#1090#1091
-    TabOrder = 20
+    TabOrder = 19
   end
   object chkDBsettings: TCheckBox
     Left = 271
@@ -467,7 +467,7 @@ object SettingsUserForm: TSettingsUserForm
     Hint = #1061#1088#1072#1085#1080#1090#1100' '#1085#1072#1089#1090#1088#1086#1081#1082#1080' '#1055#1054' '#1086#1090#1076#1077#1083#1100#1085#1086' '#1076#1083#1103' '#1082#1072#1078#1076#1086#1081' '#1073#1072#1079#1099' '#1076#1072#1085#1085#1099#1093
     Alignment = taLeftJustify
     Caption = #1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1077' '#1085#1072#1089#1090#1088#1086#1081#1082#1080' '#1076#1083#1103' '#1082#1072#1078#1076#1086#1081' '#1041#1044
-    TabOrder = 21
+    TabOrder = 20
   end
   object ednRH: TDBNumberEditEh
     Left = 480
@@ -491,7 +491,17 @@ object SettingsUserForm: TSettingsUserForm
     Hint = #1042' '#1086#1082#1085#1077' '#1040#1073#1086#1085#1077#1085#1090#1099' '#1074#1089#1077#1075#1076#1072' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1090#1077#1082#1091#1097#1091#1102' '#1089#1090#1088#1086#1082#1091
     Alignment = taLeftJustify
     Caption = #1057#1086#1093#1088#1072#1085#1103#1090#1100' '#1087#1086#1076#1089#1074#1077#1090#1082#1091' '#1089#1090#1088#1086#1082#1080' '#1040#1073#1086#1085#1077#1085#1090#1072
-    TabOrder = 19
+    TabOrder = 21
+  end
+  object chkShowWorks: TCheckBox
+    Left = 271
+    Top = 265
+    Width = 243
+    Height = 17
+    Hint = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1088#1072#1073#1086#1090#1099' '#1080#1079' '#1079#1072#1103#1074#1086#1082' '#1074' '#1086#1082#1085#1077' '#1088#1072#1079#1086#1074#1099#1093' '#1091#1089#1083#1091#1075' '#1072#1073#1086#1085#1077#1085#1090#1072
+    Alignment = taLeftJustify
+    Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1088#1072#1073#1086#1090#1099' '#1080#1079' '#1079#1072#1103#1074#1086#1082' '#1074' '#1088#1072#1079#1086#1074#1099#1093
+    TabOrder = 22
   end
   object dlgFont: TFontDialog
     Font.Charset = DEFAULT_CHARSET

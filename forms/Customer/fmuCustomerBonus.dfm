@@ -29,6 +29,8 @@ object apgCustomerBonus: TapgCustomerBonus
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    STFilter.Local = True
+    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True

@@ -512,28 +512,48 @@ var
   Font_name: string;
   Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
 
+  Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
-      i := 0;
-    Row_height := i;
-    for i := 0 to ComponentCount - 1 do
+  end;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
     begin
-      if Components[i] is TDBGridEh then
+      if Font_size <> 0 then
       begin
-        if Font_size <> 0 then
-        begin
-          (Components[i] as TDBGridEh).Font.Name := Font_name;
-          (Components[i] as TDBGridEh).Font.Size := Font_size;
-        end;
-        if Row_height <> 0 then
-        begin
-          (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
-          (Components[i] as TDBGridEh).RowHeight := Row_height;
-        end;
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
     end;
   end;
@@ -1529,6 +1549,8 @@ begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
       // else if (ActiveControl is TDBGridEh) then
       // go := False
       // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
@@ -1592,7 +1614,8 @@ begin
 
   SetEditMode(True, New);
 
-  if New then begin
+  if New then
+  begin
     srcNodes.DataSet.Insert;
     if FAddressFilter then
     begin
@@ -1633,7 +1656,7 @@ begin
   dsNodeType.Close;
   dsParentNode.Close;
 
-  SetEditMode(False, false);
+  SetEditMode(False, False);
   dbgNodes.SetFocus;
 
   if FAddressFilter then
@@ -1720,7 +1743,8 @@ begin
     pnlEdit.SetFocus;
     PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
   end
-  else begin
+  else
+  begin
     cbbHOUSE_ID.OnChange := nil;
     UpdateInfoPanel;
   end;

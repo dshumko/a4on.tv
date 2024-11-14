@@ -48,6 +48,8 @@ object PayDocsForm: TPayDocsForm
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgCancelOnExit, dgMultiSelect]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
       ReadOnly = True
+      SearchPanel.Enabled = True
+      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True

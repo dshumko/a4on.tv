@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst, DBGridEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst,
+  DBGridEh;
 
 type
   TStreetViewForm = class(TForm)
@@ -135,15 +136,18 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
-    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
-    //  go := False
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
+      // else if (ActiveControl is TDBAxisGridInplaceEdit) then
+      // go := False
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;

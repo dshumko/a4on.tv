@@ -81,7 +81,7 @@ end;
 procedure TapgCustomerLetters.actLetterDelExecute(Sender: TObject);
 begin
   // служебные письма не удалять
-  if (dsLetters['Custletterid'] < 0) or ((not dsLetters.FieldByName('TYPE_ID').IsNull) and (dsLetters['TYPE_ID'] < 0))
+  if (dsLetters['Mes_Id'] < 0) or ((not dsLetters.FieldByName('TYPE_ID').IsNull) and (dsLetters['TYPE_ID'] < 0))
   then
     Exit;
 

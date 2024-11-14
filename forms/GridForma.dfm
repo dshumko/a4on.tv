@@ -1,6 +1,7 @@
 object GridForm: TGridForm
   Left = 496
   Top = 494
+  ActiveControl = dbGrid
   ClientHeight = 298
   ClientWidth = 437
   Color = clBtnFace
@@ -185,7 +186,6 @@ object GridForm: TGridForm
   end
   object srcDataSource: TDataSource
     AutoEdit = False
-    OnStateChange = srcDataSourceStateChange
     Left = 72
     Top = 128
   end

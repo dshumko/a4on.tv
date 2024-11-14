@@ -24,13 +24,12 @@ type
     Label4: TLabel;
     lbl4: TLabel;
     Label5: TLabel;
-    dbtxtNAME: TDBText;
-    dbtxtdbedt1: TDBText;
-    dbtxtDBEdit1: TDBText;
-    dbtxtDBEdit2: TDBText;
-    dbtxtHOUSE: TDBText;
-    dbtxtSTREET: TDBText;
-    cbTypeEQ: TDBComboBoxEh;
+    dbtxtNAME: TDBEditEh;
+    dbtxtdbedt1: TDBEditEh;
+    dbtxtDBEdit1: TDBEditEh;
+    dbtxtDBEdit2: TDBEditEh;
+    dbtxtHOUSE: TDBEditEh;
+    dbtxtSTREET: TDBEditEh;
     pnlMemo: TPanel;
     lbl2: TLabel;
     mmoNotice: TDBMemoEh;
@@ -47,8 +46,8 @@ type
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
     lbl5: TLabel;
-    dbtxtSTREET1: TDBText;
-    dbtxtparent_name: TDBText;
+    dbtxtSTREET1: TDBEditEh;
+    dbtxtparent_name: TDBEditEh;
     splMemo: TSplitter;
     splR: TSplitter;
     pnlPages: TPanel;
@@ -78,6 +77,14 @@ type
     tsOther: TTabSheet;
     actLanHttpName: TAction;
     actLanHttpUserLoginIP: TAction;
+    lbl51: TLabel;
+    dbtxtparent_name1: TDBEditEh;
+    lbl52: TLabel;
+    dbtxtparent_name2: TDBEditEh;
+    lbl6: TLabel;
+    dbtxtPLACE: TDBEditEh;
+    edtEQ_TYPE: TDBEditEh;
+    lbl10: TLabel;
     procedure btnCMDClick(Sender: TObject);
     procedure ActLanPingExecute(Sender: TObject);
     procedure actLanTelnetExecute(Sender: TObject);
@@ -92,6 +99,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure actLanHttpNameExecute(Sender: TObject);
     procedure actLanHttpUserLoginIPExecute(Sender: TObject);
+    procedure dbtxtHOUSEDblClick(Sender: TObject);
+    procedure dbtxtSTREETDblClick(Sender: TObject);
   private
     FUpdatetNotice: Boolean;
     FIsVertical: Boolean;
@@ -141,6 +150,20 @@ procedure TapgEqpmntInfo.CloseData;
 begin
   if dsData.Active then
     dsData.Close;
+end;
+
+procedure TapgEqpmntInfo.dbtxtHOUSEDblClick(Sender: TObject);
+begin
+  if not dsData.FieldByName('HOUSE_ID').IsNull
+  then
+    A4MainForm.OpnenHouseByID(dsData['HOUSE_ID']);
+end;
+
+procedure TapgEqpmntInfo.dbtxtSTREETDblClick(Sender: TObject);
+begin
+  if not dsData.FieldByName('STREET_ID').IsNull
+  then
+    A4MainForm.OpnenStreetByID(dsData['STREET_ID']);
 end;
 
 procedure TapgEqpmntInfo.GenerateLANPopUp;
@@ -229,11 +252,11 @@ var
   Host: string;
   user: string;
   pswd: string;
-  H_MAC, C_IP, C_MAC, C_PORT, C_VLAN: string;
+  H_MAC, C_IP, C_MAC, C_PORT, C_VLAN, SYSNAME: string;
   cmd: string;
   eol_chars: Integer;
   CMD_TYPE: Integer;
-  URL, AUT_USER, AUT_PSWD: String;
+  URL, AUT_USER, AUT_PSWD, eid, pid: String;
 begin
   if not(Sender is TMenuItem) then
     exit;
@@ -241,8 +264,8 @@ begin
   with dmMain.qRead do
   begin
     sql.Clear;
-    sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
-    sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
+    sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs, e.SYSNAME');
+    sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
     sql.Add('from equipment e');
     sql.Add('   inner join equipment_cmd_grp ec on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id)');
     sql.Add('where e.eid = :eq_id');
@@ -250,48 +273,24 @@ begin
     ParamByName('eq_id').AsInteger := FDataSource.DataSet.FieldByName('Eid').AsInteger;
     Transaction.StartTransaction;
     ExecQuery;
-    if FieldByName('ip').IsNull then
-      Host := ''
-    else
-      Host := FieldByName('ip').asString;
 
-    if FieldByName('e_admin').IsNull then
-      user := ''
-    else
-      user := FieldByName('e_admin').asString;
-
-    if FieldByName('e_pass').IsNull then
-      pswd := ''
-    else
-      pswd := FieldByName('e_pass').asString;
+    Host := ifThen(not FieldByName('ip').IsNull, FieldByName('ip').asString, '');
+    user := ifThen(not FieldByName('e_admin').IsNull, FieldByName('e_admin').asString, '');
+    pswd := ifThen(not FieldByName('e_pass').IsNull, FieldByName('e_pass').asString, '');
+    URL := ifThen(not FieldByName('URL').IsNull, FieldByName('URL').asString, '');
+    AUT_USER := ifThen(not FieldByName('AUT_USER').IsNull, FieldByName('AUT_USER').asString, '');
+    AUT_PSWD := ifThen(not FieldByName('AUT_PSWD').IsNull, FieldByName('AUT_PSWD').asString, '');
+    H_MAC := ifThen(not FieldByName('mac').IsNull, FieldByName('mac').asString, '');
+    SYSNAME := ifThen(not FieldByName('SYSNAME').IsNull, FieldByName('SYSNAME').asString, '');
+    cmd := ifThen(not FieldByName('command').IsNull, FieldByName('command').asString, '');
+    eid := ifThen(not FieldByName('eid').IsNull, FieldByName('eid').asString, '');
+    pid := ifThen(not FieldByName('PARENT_ID').IsNull, FieldByName('PARENT_ID').asString, '');
 
     if FieldByName('CMD_TYPE').IsNull then
       CMD_TYPE := 0
     else
       CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
-    if FieldByName('URL').IsNull then
-      URL := ''
-    else
-      URL := FieldByName('URL').asString;
-    if FieldByName('AUT_USER').IsNull then
-      AUT_USER := ''
-    else
-      AUT_USER := FieldByName('AUT_USER').asString;
-    if FieldByName('AUT_PSWD').IsNull then
-      AUT_PSWD := ''
-    else
-      AUT_PSWD := FieldByName('AUT_PSWD').asString;
 
-    H_MAC := '';
-    if (not FieldByName('mac').IsNull) then
-    begin
-      H_MAC := FieldByName('mac').asString;
-    end;
-
-    if FieldByName('command').IsNull then
-      cmd := ''
-    else
-      cmd := FieldByName('command').asString;
     if FieldByName('eol_chrs').IsNull then
       eol_chars := 0
     else
@@ -311,9 +310,11 @@ begin
     Close;
     Transaction.Rollback;
   end;
+
   if cmd <> '' then
   begin
     cmd := ReplaceStr(cmd, '<e_admin>', user);
+    cmd := ReplaceStr(cmd, '<sysname>', sysname);
     cmd := ReplaceStr(cmd, '<e_pass>', pswd);
     cmd := ReplaceStr(cmd, '<e_mac>', H_MAC);
     cmd := ReplaceStr(cmd, '<e_mac_h>', H_MAC.Replace(':', '-'));
@@ -327,6 +328,8 @@ begin
     cmd := ReplaceStr(cmd, '<c_mac_j>', FormatMACas4CD(C_MAC));
     cmd := ReplaceStr(cmd, '<c_port>', C_PORT);
     cmd := ReplaceStr(cmd, '<c_vlan>', C_VLAN);
+    cmd := ReplaceStr(cmd, '<e_id>', eid);
+    cmd := ReplaceStr(cmd, '<prnt_id>', pid);
   end;
 
   URL := ReplaceStr(URL, '<e_ip>', Host);

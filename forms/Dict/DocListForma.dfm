@@ -624,6 +624,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 10
       Visible = True
+      OnChange = mmoNoticeChange
     end
     object edtADRES_REGISTR: TDBEditEh
       Tag = 1
@@ -640,6 +641,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 8
       Visible = True
+      OnChange = mmoNoticeChange
     end
     object edtDOCDATE: TDBDateTimeEditEh
       Tag = 1
@@ -656,6 +658,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 5
       Visible = True
+      OnChange = mmoNoticeChange
     end
     object edtRegistration: TDBEditEh
       Tag = 1
@@ -672,6 +675,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 6
       Visible = True
+      OnChange = mmoNoticeChange
     end
     object edtNUMBER: TDBEditEh
       Tag = 1
@@ -689,6 +693,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 1
       Visible = True
+      OnChange = mmoNoticeChange
       OnExit = edtNUMBERExit
     end
     object edtSURNAME: TDBEditEh
@@ -705,6 +710,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 2
       Visible = True
+      OnChange = mmoNoticeChange
       OnExit = edtSURNAMEExit
     end
     object edtFIRSTNAME: TDBEditEh
@@ -722,6 +728,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 3
       Visible = True
+      OnChange = mmoNoticeChange
       OnExit = edtSURNAMEExit
     end
     object edtMIDLENAME: TDBEditEh
@@ -739,6 +746,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 4
       Visible = True
+      OnChange = mmoNoticeChange
       OnExit = edtSURNAMEExit
     end
     object mmoNotice: TDBMemoEh
@@ -757,6 +765,7 @@ inherited DocListForm: TDocListForm
       TabOrder = 11
       Visible = True
       WantReturns = True
+      OnChange = mmoNoticeChange
     end
     object cbType: TDBComboBoxEh
       Left = 4
@@ -775,6 +784,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 0
       Visible = True
+      OnChange = mmoNoticeChange
     end
     object edtBIRTHDAY: TDBDateTimeEditEh
       Tag = 1
@@ -791,6 +801,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 9
       Visible = True
+      OnChange = mmoNoticeChange
     end
     object edtMOBILE: TDBEditEh
       Tag = 1
@@ -806,6 +817,7 @@ inherited DocListForm: TDocListForm
       ShowHint = True
       TabOrder = 7
       Visible = True
+      OnChange = mmoNoticeChange
     end
   end
   inherited srcDataSource: TDataSource

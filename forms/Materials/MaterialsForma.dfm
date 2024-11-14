@@ -2,8 +2,8 @@ object MaterialsForm: TMaterialsForm
   Left = 0
   Top = 0
   Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1080' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
-  ClientHeight = 412
-  ClientWidth = 935
+  ClientHeight = 452
+  ClientWidth = 922
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +11,7 @@ object MaterialsForm: TMaterialsForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
+  Menu = mmMaterials
   OldCreateOrder = False
   ShowHint = True
   Visible = True
@@ -22,8 +23,8 @@ object MaterialsForm: TMaterialsForm
   TextHeight = 13
   object spl1: TSplitter
     Left = 0
-    Top = 216
-    Width = 935
+    Top = 219
+    Width = 922
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -31,28 +32,28 @@ object MaterialsForm: TMaterialsForm
   object pnlHead: TPanel
     Left = 0
     Top = 0
-    Width = 935
-    Height = 216
+    Width = 922
+    Height = 219
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object Splitter2: TSplitter
       Left = 281
       Top = 0
-      Height = 216
+      Height = 219
     end
     object pnlMat: TPanel
       Left = 284
       Top = 0
-      Width = 651
-      Height = 216
+      Width = 638
+      Height = 219
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 651
+        Width = 638
         Height = 23
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
@@ -99,8 +100,8 @@ object MaterialsForm: TMaterialsForm
       object DBGridEh: TDBGridEh
         Left = 0
         Top = 23
-        Width = 651
-        Height = 193
+        Width = 638
+        Height = 196
         Align = alClient
         AllowedOperations = [alopDeleteEh]
         AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -110,7 +111,7 @@ object MaterialsForm: TMaterialsForm
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
-        FrozenCols = 1
+        FrozenCols = 3
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
         ParentShowHint = False
@@ -134,7 +135,7 @@ object MaterialsForm: TMaterialsForm
       Left = 0
       Top = 0
       Width = 281
-      Height = 216
+      Height = 219
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -142,7 +143,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 23
         Width = 281
-        Height = 193
+        Height = 196
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcMatGropups
@@ -244,10 +245,10 @@ object MaterialsForm: TMaterialsForm
   end
   object pgcInOut: TPageControl
     Left = 0
-    Top = 219
-    Width = 935
-    Height = 193
-    ActivePage = tsIn
+    Top = 222
+    Width = 922
+    Height = 230
+    ActivePage = tsJournal
     Align = alBottom
     TabOrder = 1
     OnChange = pgcInOutChange
@@ -256,8 +257,8 @@ object MaterialsForm: TMaterialsForm
       object DBGridIncome: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = []
         DataSource = srcRemain
@@ -338,7 +339,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -358,8 +359,8 @@ object MaterialsForm: TMaterialsForm
       object dbgIncome: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = []
         DataSource = srcIncome
@@ -498,7 +499,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -561,8 +562,8 @@ object MaterialsForm: TMaterialsForm
       object dbgMove: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = []
         DataSource = srcMove
@@ -701,7 +702,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -764,8 +765,8 @@ object MaterialsForm: TMaterialsForm
       object dbgInvent: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = []
         DataSource = srcInvent
@@ -914,7 +915,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -978,8 +979,8 @@ object MaterialsForm: TMaterialsForm
       object dbgOut: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = []
         DataSource = srcOut
@@ -1122,7 +1123,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -1185,8 +1186,8 @@ object MaterialsForm: TMaterialsForm
       object dbgJournal: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = []
         DataSource = srcJournal
@@ -1340,6 +1341,42 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1057'/'#1053
             Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADR_CODE'
+            Footers = <>
+            Title.Caption = #1040#1076#1088#1077#1089'|'#1050#1086#1076
+            Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'STREET'
+            Footers = <>
+            Title.Caption = #1040#1076#1088#1077#1089'|'#1059#1083#1080#1094#1072
+            Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'HOUSE_NO'
+            Footers = <>
+            Title.Caption = #1040#1076#1088#1077#1089'|'#1044#1086#1084
+            Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'PLACE'
+            Footers = <>
+            Title.Caption = #1040#1076#1088#1077#1089'|'#1082#1074'./'#1084'-'#1090#1086
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1348,7 +1385,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 0
@@ -1368,8 +1405,8 @@ object MaterialsForm: TMaterialsForm
       object dbgGridPivot: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
         ColumnDefValues.AlwaysShowEditButton = True
@@ -1491,7 +1528,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -1511,8 +1548,8 @@ object MaterialsForm: TMaterialsForm
       object dbgSN: TDBGridEh
         Left = 26
         Top = 0
-        Width = 901
-        Height = 165
+        Width = 888
+        Height = 202
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -1690,7 +1727,7 @@ object MaterialsForm: TMaterialsForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 165
+        Height = 202
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -1736,6 +1773,184 @@ object MaterialsForm: TMaterialsForm
             77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
           TabOrder = 0
           OnClick = btnPrintIncomeClick
+        end
+      end
+    end
+    object tsFiles: TTabSheet
+      Caption = #1060#1072#1081#1083' ('#1092#1086#1090#1086')'
+      ImageIndex = 8
+      object pnlFiles: TPanel
+        Left = 0
+        Top = 0
+        Width = 24
+        Height = 202
+        Align = alLeft
+        BevelOuter = bvNone
+        TabOrder = 0
+        DesignSize = (
+          24
+          202)
+        object btnFileDel: TSpeedButton
+          Left = 1
+          Top = 175
+          Width = 22
+          Height = 22
+          Anchors = [akLeft, akBottom]
+          Flat = True
+          Glyph.Data = {
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000000000000000000000000
+            8000008000000080800080000000800080008080000080808000C0C0C0000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDDD
+            DDDDDDD8DDDDDDDD8DDDDD893DDDDDD797DDD89993DDDD79998DDD79993DD799
+            93DDDDD7999379993DDDDDDD79999993DDDDDDDDD799993DDDDDDDDDD799993D
+            DDDDDDDD79999993DDDDDDD7999379993DDDDD79993DD79993DDD83993DDDD79
+            998DDD833DDDDDD798DDDDD8DDDDDDDD8DDDDDDDDDDDDDDDDDDD}
+          Layout = blGlyphTop
+          OnClick = btnFileDelClick
+        end
+        object btnFileAdd: TSpeedButton
+          Left = 1
+          Top = 3
+          Width = 22
+          Height = 22
+          Flat = True
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF008BAE
+            59FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD
+            55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FFFF00FF00FF00FF008BAE
+            59FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD
+            55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FFFF00FF00FF00FF008BAE
+            59FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD
+            55FF89AD55FF89AD55FF89AD55FF89AD55FF89AD55FFFF00FF00FF00FF008DAF
+            5CFF8BAE58FF8BAE58FF8BAE58FF8BAE58FF89AD55FF89AD55FF89AD55FF89AD
+            55FF8BAE58FF8BAE58FF8BAE58FF8BAE58FF8BAE58FFFF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF0089AD55FF89AD55FF89AD55FF89AD
+            55FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF008FB15FFF8FB15FFF8FB15FFF8FB1
+            5FFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+          OnClick = btnFileAddClick
+        end
+        object btnSavePhoto1: TSpeedButton
+          Left = 1
+          Top = 38
+          Width = 22
+          Height = 22
+          Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1072#1081#1083
+          Flat = True
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000C30E0000C30E00000000000000000000B17AA29F528A
+            9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F52
+            8A9F528A9F528AAB6E9B9F538B9F528AF4EDF2FCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF5EFF39F528A9F538A9F528A9F528A
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFC9F528A9F528A9F528A9F528AFCFCFCFCFCFCE1E1E1B3B2B2B3B2B2B3
+            B2B2B3B2B2B3B2B2B3B2B2E1E1E1FCFCFCFCFCFC9F528A9F528A9F528A9F528A
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFC9F528A9F528A9F528A9F528AFCFCFCFCFCFCE1E1E1B3B2B2B3B2B2B3
+            B2B2B3B2B2B3B2B2B3B2B2E1E1E1FCFCFCFCFCFC9F528A9F528A9F528A9F528A
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFC9F528A9F528A9F528A9F528AF5F0F4FCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF5EFF39F528A9F528A9F528A9F528A
+            9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F52
+            8A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F
+            528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A9F528A
+            9F528AF0E7EEFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCEEE3
+            EB9F528A9F528A9F528A9F528A9F528A9F528AFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFC73706F73706FFCFCFCFCFCFC9F528A9F528A9F528A9F528A9F528A
+            9F528AFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC706D6C706D6CFCFCFCFCFC
+            FC9F528A9F528A9F528A9F528A9F528A9F528AFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FCFCFCFCFC73706F73706FFCFCFCFCFCFC9F528A9F528AA0538BA0548B9F528A
+            9F528AFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+            FC9F528A9E528BC4A3BAAF77A09F528A9F528A9F528A9F528A9F528A9F528A9F
+            528A9F528A9F528A9F528A9F528A9F528AA0568CC8ADC1FF00FF}
+          OnClick = btnSavePhoto1Click
+        end
+        object btnViewPhoto: TSpeedButton
+          Left = 1
+          Top = 78
+          Width = 22
+          Height = 22
+          Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1072#1081#1083
+          Flat = True
+          Glyph.Data = {
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000000000000000000000000
+            8000008000000080800080000000800080008080000080808000C0C0C0000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DD878DDDDDDD
+            DDDDD66667DD8DDDDDDD76DD867868DDDDDD67DDD867868DDDDD67DDDD867868
+            DDDD868D7DD867868DDDD86876DD867868DDDD86876DD867868DDDD86876DD86
+            D868DDDD86876876DD76DDDDD868766DDDD6DDDDDD868DDDDD76DDDDDDD868DD
+            DD68DDDDDDDD868D767DDDDDDDDDD86668DDDDDDDDDDDDDDDDDD}
+          OnClick = btnViewPhotoClick
+        end
+      end
+      object dbgPhotos: TDBGridEh
+        Left = 24
+        Top = 0
+        Width = 890
+        Height = 202
+        Align = alClient
+        AllowedOperations = [alopUpdateEh]
+        DataSource = srcFiles
+        DrawGraphicData = True
+        DynProps = <>
+        Flat = True
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
+        TabOrder = 1
+        OnDblClick = dbgPhotosDblClick
+        Columns = <
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'BL_ID'
+            Footers = <>
+            ReadOnly = True
+            Visible = False
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'BL_NAME'
+            Footers = <>
+            Title.Caption = #1060#1072#1081#1083
+            Title.TitleButton = True
+            Width = 249
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'NOTICE'
+            Footers = <>
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Width = 352
+          end>
+        object RowDetailData: TRowDetailPanelControlEh
         end
       end
     end
@@ -2151,6 +2366,14 @@ object MaterialsForm: TMaterialsForm
   end
   object dsJournal: TpFIBDataSet
     SelectSQL.Strings = (
+      'select r.*'
+      ', h.house_no'
+      ', s.street_name||'#39' '#39'||s.street_short STREET'
+      
+        ', s.Street_Code||'#39'-'#39'||h.House_No||'#39'-'#39'||coalesce(r.PLACE, '#39#39') ADR' +
+        '_CODE'
+      'from'
+      '('
       'select'
       '    r.rq_id'
       '  , cast(r.RQ_EXEC_TIME as date) as m_date'
@@ -2165,6 +2388,8 @@ object MaterialsForm: TMaterialsForm
       '  , r.Node_Id'
       '  , coalesce(rm.PROP, 0) PROP'
       '  , rm.Serial'
+      '  , r.House_Id'
+      '  , coalesce(c.flat_no, n.place) place'
       '  from request_materials rm'
       '       inner join request r on (rm.rq_id = r.rq_id)'
       
@@ -2190,6 +2415,8 @@ object MaterialsForm: TMaterialsForm
       '  , r.Node_Id  '
       '  , 0 PROP'
       '  , rm.Serial'
+      '  , r.House_Id'
+      '  , coalesce(c.flat_no, n.place) place'
       '  from Request_Materials_Return rm'
       '       inner join request r on (rm.rq_id = r.rq_id)'
       
@@ -2200,7 +2427,10 @@ object MaterialsForm: TMaterialsForm
         'mer)'
       '       left outer join nodes n on (n.Node_Id = r.Node_Id)'
       '  where rm.m_id = :M_ID'
-      '  order by 2 desc')
+      ')  r'
+      '       inner join house h on (h.House_Id = r.House_Id)'
+      '       inner join street s on (s.Street_Id = h.Street_Id)'
+      'order by r.m_date desc, r.rq_id')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_INCOME'
     AutoUpdateOptions.KeyFields = 'MI_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -2308,7 +2538,7 @@ object MaterialsForm: TMaterialsForm
     DataDriver = drvFIB
     ReadOnly = True
     Left = 500
-    Top = 307
+    Top = 283
   end
   object drvFIB: TpFIBDataDriverEh
     Database = dmMain.dbTV
@@ -2324,13 +2554,13 @@ object MaterialsForm: TMaterialsForm
     InsertCommand.Params = <>
     DeleteCommand.Params = <>
     GetrecCommand.Params = <>
-    Left = 500
-    Top = 251
+    Left = 580
+    Top = 283
   end
   object srcItog: TDataSource
     DataSet = dsItogo
     Left = 500
-    Top = 347
+    Top = 331
   end
   object pmRecalcAll: TPopupMenu
     Left = 580
@@ -2452,7 +2682,7 @@ object MaterialsForm: TMaterialsForm
     AutoCommit = True
     DataSource = srcDataSource
     Left = 251
-    Top = 295
+    Top = 279
     WaitEndMasterScroll = True
     dcForceOpen = True
   end
@@ -2646,8 +2876,8 @@ object MaterialsForm: TMaterialsForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 720
-    Top = 312
+    Left = 688
+    Top = 320
   end
   object trReadDS: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -2658,8 +2888,8 @@ object MaterialsForm: TMaterialsForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 720
-    Top = 248
+    Left = 680
+    Top = 272
   end
   object pmPivot: TPopupMenu
     Left = 668
@@ -2789,5 +3019,97 @@ object MaterialsForm: TMaterialsForm
     Units = MM
     Left = 744
     Top = 160
+  end
+  object mmMaterials: TMainMenu
+    Left = 144
+    Top = 144
+    object miMi: TMenuItem
+      Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099
+      GroupIndex = 2
+      object miMiFrozen: TMenuItem
+        Caption = #1047#1072#1082#1088#1077#1087#1080#1090#1100' '#1089#1090#1086#1083#1073#1094#1099' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
+        OnClick = miMiFrozenClick
+      end
+    end
+  end
+  object dsFiles: TpFIBDataSet
+    UpdateSQL.Strings = (
+      ''
+      '    ')
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    BLOB_TBL'
+      'WHERE'
+      '        BL_ID = :OLD_BL_ID'
+      '    ')
+    RefreshSQL.Strings = (
+      'select'
+      '    b.Bl_Id'
+      '  , b.Bl_Name'
+      '  , b.OWNER_ID'
+      '  , b.NOTICE'
+      '  from Blob_Tbl b '
+      ' where'
+      '  BL_ID = :OLD_BL_ID'
+      'order by b.Bl_Name'
+      ''
+      ''
+      '    '
+      '  ')
+    SelectSQL.Strings = (
+      'select'
+      '    b.Bl_Id'
+      '  , b.Bl_Name'
+      '  , b.OWNER_ID'
+      '  , b.NOTICE'
+      '  from Blob_Tbl b '
+      ' where'
+      '  b.Owner_Id = :M_ID and b.Bl_Type = 4'
+      'order by b.Bl_Name')
+    AutoUpdateOptions.UpdateTableName = 'MATERIALS_INCOME'
+    AutoUpdateOptions.KeyFields = 'MI_ID'
+    AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
+    AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    AutoCommit = True
+    DataSource = srcDataSource
+    Left = 762
+    Top = 286
+    WaitEndMasterScroll = True
+    dcForceOpen = True
+  end
+  object srcFiles: TDataSource
+    DataSet = dsFiles
+    Left = 764
+    Top = 334
+  end
+  object qryBlobFile: TpFIBQuery
+    Transaction = dmMain.trReadQ
+    Database = dmMain.dbTV
+    SQL.Strings = (
+      'select b.Bl_Body from Blob_Tbl b where b.Bl_Id = :Bl_Id')
+    Left = 813
+    Top = 288
+  end
+  object dlgOpen: TOpenDialog
+    DefaultExt = '*.*'
+    Left = 864
+    Top = 288
+  end
+  object qSaveFile: TpFIBQuery
+    Transaction = dmMain.trWriteQ
+    Database = dmMain.dbTV
+    SQL.Strings = (
+      'INSERT INTO Blob_Tbl (Bl_Type, Owner_Id, Bl_Name, Bl_Body)'
+      'VALUES (:Bl_Type, :Owner_Id, :Bl_Name, :Bl_Body)'
+      '')
+    Left = 813
+    Top = 336
+  end
+  object dlgSave: TSaveDialog
+    Left = 860
+    Top = 336
   end
 end

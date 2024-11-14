@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs,
   Vcl.ComCtrls, Vcl.ToolWin,
-  FIBDataSet, pFIBDataSet, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, AtrPages, EhLibVCL,
+  FIBDataSet, pFIBDataSet, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, AtrPages,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh;
 
 type
@@ -152,18 +153,23 @@ var
   ScrPt, GrdPt: TPoint;
   Cell: TGridCoord;
   s: String;
-  vContinue: Boolean;
+  vContinue: boolean;
 begin
+  if (not dsRecourses.Active) or (dsRecourses.RecordCount = 0) then
+    exit;
+
   vContinue := true;
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgRecourses.ScreenToClient(ScrPt);
   Cell := dbgRecourses.MouseCoord(GrdPt.X, GrdPt.Y);
+  if Cell.X <= 0 then
+    exit;
   s := UpperCase(dbgRecourses.Fields[Cell.X - 1].FieldName);
   if (s = 'NOTICE') then
   begin
     if not dbgRecourses.DataSource.DataSet.FieldByName(s).IsNull then
     begin
-      s := ExtractUrl(dbgRecourses.DataSource.DataSet.FieldByName(s).AsString);
+      s := ExtractUrl(dbgRecourses.DataSource.DataSet.FieldByName(s).Asstring);
       if not s.IsEmpty then
       begin
         atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
@@ -172,10 +178,8 @@ begin
     end;
   end;
 
-  if vContinue then begin
-    if (not dsRecourses.Active) or (dsRecourses.RecordCount = 0) then
-      exit;
-
+  if vContinue then
+  begin
     if (dsRecourses['REC_TYPE'] = 1) then
       FindTask(dsRecourses['RC_ID'])
     else if (not dsRecourses.FieldByName('Notice').IsNull) then

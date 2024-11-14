@@ -88,6 +88,7 @@ type
     procedure dbgHistoryDblClick(Sender: TObject);
     procedure actViewDocExecute(Sender: TObject);
     procedure btnCancelLinkClick(Sender: TObject);
+    procedure mmoNoticeChange(Sender: TObject);
   private
     FPersonalData: Boolean;
     // FCanEdit: Boolean;
@@ -187,6 +188,7 @@ begin
   if FCanEdit then
   begin
     StartEdit();
+    btnSaveLink.Enabled := False;
   end;
 end;
 
@@ -323,6 +325,13 @@ begin
 
   if (customers <> '') then
     A4MainForm.ShowCustomers(7, customers);
+end;
+
+procedure TDocListForm.mmoNoticeChange(Sender: TObject);
+begin
+  inherited;
+  if not btnSaveLink.Enabled  then
+    btnSaveLink.Enabled := True;
 end;
 
 procedure TDocListForm.StartEdit(const New: Boolean = False);

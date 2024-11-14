@@ -467,7 +467,7 @@ object MatDocFilterForm: TMatDocFilterForm
       'select'
       '    o.O_Id, o.O_Name'
       '  from objects o'
-      '  where o.O_Type = 10'
+      '  where o.O_Type = 10 and o.O_DELETED = 0'
       '  order by o.O_Deleted desc, o.O_Name  ')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

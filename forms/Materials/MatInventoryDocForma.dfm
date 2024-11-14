@@ -654,6 +654,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       '  , m.DESCRIPTION'
       '  , m.Cost'
       '  , coalesce(r.Mr_Quant, 0) B_QUANT'
+      '  , m.M_NUMBER'
       '  from materials m'
       
         '       left outer join Materials_Remain r on (r.M_Id = m.M_Id an' +
@@ -694,7 +695,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
       '  from OBJECTS o'
-      '  where O_TYPE = 10'
+      '  where O_TYPE = 10 '
       '        and (exists(select'
       '                          w.wh_id'
       '                        from SYS$USER u'
@@ -706,7 +707,8 @@ object MatInventoryDocForm: TMatInventoryDocForm
         'rrent_user'
       '                              and w.can_edit = 1)'
       '          or (current_user = '#39'SYSDBA'#39'))'
-      ''
+      'and coalesce(o.O_DELETED, 0) = 0'
+      'order by o_NAME'
       '    ')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

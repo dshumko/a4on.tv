@@ -74,6 +74,12 @@ object DVBNetworkForm: TDVBNetworkForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 190
       Top = 7
@@ -245,7 +251,9 @@ object DVBNetworkForm: TDVBNetworkForm
       'Serbian - '#1089#1088#1087#1089#1082#1080
       'Bulgarian - '#1073#1098#1083#1075#1072#1088#1089#1082#1080' '#1077#1079#1080#1082
       #1040#1088#1084#1103#769#1085#1089#1082#1080#1081' '#1103#1079#1099#769#1082' - '#1392#1377#1397#1381#1408#1383#1398', '#1392#1377#1397#1381#1408#1381#1398
-      #1050#1072#1079#1072#769#1093#1089#1082#1080#1081' '#1103#1079#1099#769#1082' - '#1179#1072#1079#1072#1179' '#1090#1110#1083#1110)
+      #1050#1072#1079#1072#769#1093#1089#1082#1080#1081' '#1103#1079#1099#769#1082' - '#1179#1072#1079#1072#1179' '#1090#1110#1083#1110
+      'Turkish - T'#252'rk'#231'e'
+      'Greek - '#917#955#955#951#957#953#954#940)
     KeyItems.Strings = (
       'RUS'
       'BEL'
@@ -260,7 +268,9 @@ object DVBNetworkForm: TDVBNetworkForm
       'SRP'
       'BUL'
       'ARM'
-      'KAZ')
+      'KAZ'
+      'TUR'
+      'GRE')
     ShowHint = True
     TabOrder = 7
     Visible = True

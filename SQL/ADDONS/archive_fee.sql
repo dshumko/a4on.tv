@@ -1,11 +1,5 @@
-CREATE TABLE CO ( CUSTOMER_ID UID NOT NULL, DEBT_SUM  D_N15_2 DEFAULT 0 NOT NULL );
-insert into CO (Customer_Id, Debt_Sum) select Customer_Id, Debt_Sum from Customer;
-commit;
-
--- рекалк
-
-CREATE TABLE CC ( CUSTOMER_ID UID NOT NULL, DEBT_SUM  D_N15_2 DEFAULT 0 NOT NULL );
-insert into Cc (Customer_Id, Debt_Sum) select Customer_Id, Debt_Sum from Customer; 
+CREATE TABLE ArchDebt ( CUSTOMER_ID UID NOT NULL, DEBT_SUM  D_N15_2 DEFAULT 0 NOT NULL );
+insert into ArchDebt (Customer_Id, Debt_Sum) select Customer_Id, Debt_Sum from Customer;
 commit;
 
 ALTER TRIGGER PAYMENT_AD0 INACTIVE;
@@ -13,6 +7,8 @@ ALTER TRIGGER PAYMENT_AI_0 INACTIVE;
 ALTER TRIGGER MONTHLY_FEE_AI_0 INACTIVE;
 ALTER TRIGGER MONTHLY_FEE_AD_0 INACTIVE;
 ALTER TRIGGER SINGLE_SERV_BD0 INACTIVE;
+ALTER TRIGGER OTHER_FEE_STRICTCHECK INACTIVE;
+ALTER TRIGGER OTHER_FEE_AD INACTIVE;
 
 execute block
 as
@@ -30,9 +26,8 @@ declare variable Tarif_Sum     numeric(15,2);
 declare variable m_Tarif       integer;
 declare variable Shift_Months  integer;
 begin
-  vDate = cast('2017-01-01' as date);
+  vDate = cast('2024-01-01' as date);
 
-  delete from Tarif t where coalesce(t.Tarif_Sum, 0) = 0;
   -- Удалим тарифы до даты архивации
   for select
           Tarif_Id, t.Service_Id, Date_From, Date_To, coalesce(Tarif_Sum, 0), coalesce(s.Shift_Months, 0)
@@ -89,18 +84,26 @@ begin
   for select c.Customer_Id from customer c 
       into :vCustomer_id
   do begin
-
+    pay_Sum = 0;
+    fee_Sum = 0;
     select sum(f.Fee) from Monthly_Fee f where f.Customer_Id = :vCustomer_id and f.Month_Id < :vDate
     into :fee_Sum;
 
+    select sum(f. Fee) from OTHER_FEE f where f.Customer_Id = :vCustomer_id and f.Fee_Date < :vDate
+    into :pay_Sum;
+    fee_Sum = coalesce(fee_Sum, 0) + coalesce(pay_Sum, 0);
+
     delete from Monthly_Fee f where f.Customer_Id = :vCustomer_id and f.Month_Id < :vDate;
+    delete from OTHER_FEE f where f.Customer_Id = :vCustomer_id and f.Fee_Date < :vDate;
 
     delete from Single_Serv f where f.Customer_Id = :vCustomer_id and f.Serv_Date < :vDate
           and exists(select s.Service_Id from services s where s.Srv_Type_Id = 2 and s.Service_Id = f.Service_Id);
+    delete from Monthly_Fee f where f.Customer_Id = :vCustomer_id and f.Month_Id < :vDate;
 
+    pay_Sum = 0;
     select sum(p.Pay_Sum) from payment p where p.Customer_Id = :vCustomer_id and p.Pay_Date < :vDate
     into :pay_Sum;
-
+    pay_Sum = coalesce(pay_Sum, 0);
     delete from payment p where p.Customer_Id = :vCustomer_id and p.Pay_Date < :vDate;
     
     if (coalesce(pay_Sum, 0) <> 0) then begin
@@ -108,7 +111,7 @@ begin
       values (:pay_doc_id, :vCustomer_id, :vDate, :Pay_Sum, 'Архивация платежей до даты ' || :vDate);
     end
     
-    if (coalesce(fee_Sum, 0) <> 0) then begin
+    if (fee_Sum <> 0) then begin
       insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE) 
       values (:vCustomer_id, :arch_srv_id, :vDate, :fee_Sum, 'Архивация начислений до даты ' || :vDate);
       
@@ -130,6 +133,8 @@ ALTER TRIGGER PAYMENT_AI_0 ACTIVE;
 ALTER TRIGGER MONTHLY_FEE_AI_0 ACTIVE;
 ALTER TRIGGER MONTHLY_FEE_AD_0 ACTIVE;
 ALTER TRIGGER SINGLE_SERV_BD0 ACTIVE;
+ALTER TRIGGER OTHER_FEE_STRICTCHECK ACTIVE;
+ALTER TRIGGER OTHER_FEE_AD ACTIVE;
 
 -- рекалк
 
@@ -141,6 +146,6 @@ select 'execute procedure Full_Recalc_Customer('||Customer_Id||');commit;' from 
 -- проверка
 select
 c.Customer_Id, c.Account_No, c.Debt_Sum, co.Debt_Sum
-from customer c inner join CO on (c.Customer_Id = co.Customer_Id)
+from customer c inner join ArchDebt co on (c.Customer_Id = co.Customer_Id)
 where c.Debt_Sum <> co.Debt_Sum
 */

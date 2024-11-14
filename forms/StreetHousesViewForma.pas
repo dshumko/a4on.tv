@@ -74,6 +74,7 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  cr: TCursor;
 begin
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
@@ -102,10 +103,23 @@ begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end;
     end;
   end;
-
-  mtView.Active := True;
+  cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  try
+    mtView.Active := True;
+  finally
+    Screen.Cursor := cr;
+  end;
 end;
 
 procedure TStreetHouseViewForm.miN2Click(Sender: TObject);

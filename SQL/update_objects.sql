@@ -74,6 +74,9 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (67, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (68, 'Фильтр заявок', 'Сохраненный фильтр заявок') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (69, 'Атрибуты групп оборудования', '') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (70, 'Акции', 'Акции на услуги') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (71, 'EPG lang codes', 'Список языков в EPG') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (72, 'Тип связей объектов', 'Связи между объектам базы') MATCHING (OT_ID);
+
 commit;
 
 -- Владелец оборудования/материала 51
@@ -185,6 +188,10 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION) VALUES (1, 6
 
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (5, 55, 'Фильтр абонентов', 'json фильтра абонентов', 0) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (6, 55, 'Фильтр заявок', 'json фильтра заявок', 0) MATCHING (O_ID, O_TYPE);
+
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (1, 72, 'Зона обслуживания для модемов', 'Зона обслуживания для объектов (модемы зоны и прочее)', 0) MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (2, 72, 'Зона обслуживания для IP зоны', 'Зона обслуживания для объектов (модемы зоны и прочее)', 0) MATCHING (O_ID, O_TYPE);
+
 commit;
 
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK') MATCHING (ID);
@@ -408,6 +415,27 @@ begin
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
     VALUES (:s, '0', 'BOOLEAN', NULL, 'Отсылаем чеки на почту, а не смс') 
     MATCHING (VAR_NAME);
+  s = 'REQUEST_TYPE_RESTRICT';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Ограничить типы заявок группе пользователей') 
+    MATCHING (VAR_NAME);
+  s = 'RECALC_CURRENT_WHEN_CLOSE_MONTH';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Пересчитываем текущий месяц, когда переходим на следующий') 
+    MATCHING (VAR_NAME);
+  s = 'SRV_PREPAY_IGNORE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'Список ИД услуг (разедлитель , 1,2,3) для которых GET_RECOMMENDED_PREPAY выдает 0') 
+    MATCHING (VAR_NAME);
+  s = 'PORT_LINE_LIMIT';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'BOOLEAN', NULL, 'Предлагать абоненту подключать только порт с линией связи') 
+    MATCHING (VAR_NAME);
+
 end;
 
 COMMIT;

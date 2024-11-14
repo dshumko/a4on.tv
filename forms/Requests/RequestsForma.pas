@@ -155,6 +155,7 @@ type
     actTask: TAction;
     actOpenHouse: TAction;
     miOpenHouse: TMenuItem;
+    miN19: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -210,6 +211,7 @@ type
     procedure dbgExecColumns15GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgGridColumns14GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure actOpenHouseExecute(Sender: TObject);
+    procedure miN19Click(Sender: TObject);
   private
     { Private declarations }
     fSelectedRow: Integer; // число помеченных строк
@@ -224,6 +226,7 @@ type
     fVisibleCost: Boolean;
     FVisibleSum: Boolean;
     fAsBalance: Boolean;
+    FFrozencols: Integer;
     function GenerateFilter: string;
     procedure GiveRequest(const req_id: Integer; const date: TDateTime; const WorkGroup: Integer = -1;
       const Workers: String = '');
@@ -233,6 +236,7 @@ type
       const AsNew: Boolean = False);
     procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
     function GetActiveGrid(): TDBGridEh;
+    procedure SetFrozen(const v: Integer);
   public
     { Public declarations }
     procedure SetDefaultFilter;
@@ -738,6 +742,7 @@ begin
   // dbgPlan.DataGrouping.Active := False;
   if FCanSaveColumns then
   begin
+    dmMain.SetIniValue('REQGRIDFROZEN', FFrozencols.ToString);
     dbgPlan.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqPlan', False);
     dbgGive.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGive', False);
     dbgGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqGrid', False);
@@ -1436,13 +1441,27 @@ begin
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
         frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        frxReport.ReportOptions.Name := frxReport.FILENAME;
+        frxReport.ReportOptions.Name := frxReport.FileName;
       finally
         Stream.Free;
       end;
     end;
   finally
     dmMain.fdsLoadReport.Close;
+  end;
+end;
+
+procedure TRequestsForm.miN19Click(Sender: TObject);
+var
+  q: string;
+  i: Integer;
+begin
+  q := FFrozencols.ToString;
+  if InputQuery('Закрепить столбцы', 'Количество', q) then
+  begin
+    if not TryStrToInt(q, i) then
+      i := 0;
+    SetFrozen(i);
   end;
 end;
 
@@ -1758,17 +1777,48 @@ var
   i, Font_size: Integer;
   Font_name: string;
   j: Integer;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
-    Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do
+    if Font_size <> 0 then
     begin
-      if Components[i] is TDBGridEh then
+      Font_name := dmMain.GetIniValue('FONT_NAME');
+      for i := 0 to ComponentCount - 1 do
       begin
-        (Components[i] as TDBGridEh).Font.Name := Font_name;
-        (Components[i] as TDBGridEh).Font.Size := Font_size;
+        if Components[i] is TDBGridEh then
+        begin
+          (Components[i] as TDBGridEh).Font.Name := Font_name;
+          (Components[i] as TDBGridEh).Font.Size := Font_size;
+          if Row_height <> 0 then
+          begin
+            (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+            (Components[i] as TDBGridEh).RowHeight := Row_height;
+          end;
+        end
+        else if Font_size <> 0 then
+        begin
+          if (Components[i] is TMemo) then
+          begin
+            (Components[i] as TMemo).Font.Name := Font_name;
+            (Components[i] as TMemo).Font.Size := Font_size;
+          end
+          else if (Components[i] is TDBMemoEh) then
+          begin
+            (Components[i] as TDBMemoEh).Font.Name := Font_name;
+            (Components[i] as TDBMemoEh).Font.Size := Font_size;
+          end
+          else if (Components[i] is TDBMemo) then
+          begin
+            (Components[i] as TDBMemo).Font.Name := Font_name;
+            (Components[i] as TDBMemo).Font.Size := Font_size;
+          end;
+        end;
       end;
     end;
   end;
@@ -1781,6 +1831,11 @@ begin
     crpSortMarkerEh]);
   dbgExec.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'ReqExec', [crpColIndexEh, crpColWidthsEh, crpColVisibleEh,
     crpSortMarkerEh]);
+
+  if (TryStrToInt(dmMain.GetIniValue('REQGRIDFROZEN'), FFrozencols)) then
+    SetFrozen(FFrozencols)
+  else
+    SetFrozen(0);
 
   // права пользователей
 
@@ -2021,5 +2076,18 @@ begin
   end;
 end;
 
-end.
+procedure TRequestsForm.SetFrozen(const v: Integer);
+begin
+  FFrozencols := v;
 
+  if (dbgPlan.Columns.Count >= FFrozencols) then
+    dbgPlan.FrozenCols := FFrozencols;
+  if (dbgGive.Columns.Count >= FFrozencols) then
+    dbgGive.FrozenCols := FFrozencols;
+  if (dbgGrid.Columns.Count >= FFrozencols) then
+    dbgGrid.FrozenCols := FFrozencols;
+  if (dbgExec.Columns.Count >= FFrozencols) then
+    dbgExec.FrozenCols := FFrozencols;
+end;
+
+end.

@@ -6,9 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, MemTableDataEh, DataDriverEh,
+  pFIBDataDriverEh,
   MemTableEh;
 
 type
@@ -74,6 +77,10 @@ begin
   actDetail.Checked := not actDetail.Checked;
   dsMat.Close;
   SetSQL(actDetail.Checked);
+  if actDetail.Checked then
+    actDetail.ImageIndex := 24 // детально
+  else
+    actDetail.ImageIndex := 101; // суммарно
   dsMat.Open;
 end;
 
@@ -91,12 +98,14 @@ begin
   if dsMat.FieldDefs.IndexOf('RQ_ID') = -1 then
     Exit;
 
-  if (not dsMat.FieldByName('RQ_ID').IsNull) then begin
+  if (not dsMat.FieldByName('RQ_ID').IsNull) then
+  begin
 
     if not(FullAccess or CE or CC or CG or CA) then
       Exit;
 
-    if not dsMat.FieldByName('RQ_ID').IsNull then begin
+    if not dsMat.FieldByName('RQ_ID').IsNull then
+    begin
       if not(FullAccess or CE or CC or CG) then
         Exit;
       aMode := 1;
@@ -115,10 +124,12 @@ begin
   dsMat.SelectSQL.Clear;
   dsMat.SelectSQL.Add('select');
   dsMat.SelectSQL.Add('    NM.M_ID');
-  if Grouping then begin
+  if Grouping then
+  begin
     dsMat.SelectSQL.Add('  , M.NAME');
   end
-  else begin
+  else
+  begin
     dsMat.SelectSQL.Add('  , M.NAME||coalesce(''/''||nm.Serial, '''') NAME');
   end;
   dsMat.SelectSQL.Add('  , M.COST');
@@ -126,12 +137,14 @@ begin
   dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
   dsMat.SelectSQL.Add('  , NM.WH_ID');
 
-  if Grouping then begin
+  if Grouping then
+  begin
     dsMat.SelectSQL.Add('  , ''Итого'' OPER, NULL RQ_ID, NULL RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , m.DESCRIPTION NOTICE, null CALC');
     dsMat.SelectSQL.Add('  , SUM(NM.MT * NM.QUANT) QNT');
   end
-  else begin
+  else
+  begin
     dsMat.SelectSQL.Add('  , iif(NM.MT = 1, ''Установка'', ''Возврат'') OPER, NM.RQ_ID, NM.RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , NM.NOTICE, NM.CALC');
     dsMat.SelectSQL.Add('  , NM.MT * NM.QUANT QNT');
@@ -163,7 +176,7 @@ begin
   dsMat.SelectSQL.Add('        , RM.WH_ID');
   dsMat.SelectSQL.Add('        , 0 CALC');
   dsMat.SelectSQL.Add('        , RM.Serial');
-    dsMat.SelectSQL.Add('      from REQUEST R');
+  dsMat.SelectSQL.Add('      from REQUEST R');
   dsMat.SelectSQL.Add('          inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = RM.RQ_ID)');
   dsMat.SelectSQL.Add('      where R.Rq_Customer = :CUSTOMER_ID) NM');
   dsMat.SelectSQL.Add('    inner join MATERIALS M on (M.M_ID = NM.M_ID)');

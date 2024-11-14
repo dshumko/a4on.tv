@@ -23,6 +23,9 @@ type
     miN2: TMenuItem;
     procedure miN1Click(Sender: TObject);
     procedure miN2Click(Sender: TObject);
+    procedure dbgCustBalanceCellMouseClick(Grid: TCustomGridEh;
+      Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X,
+      Y: Integer; var Processed: Boolean);
   private
     // FFine: boolean;
     // FTodayOnly: boolean;
@@ -102,6 +105,20 @@ end;
 procedure TapgCustomerBalance.CloseData;
 begin
   dsBalance.Close;
+end;
+
+procedure TapgCustomerBalance.dbgCustBalanceCellMouseClick(
+  Grid: TCustomGridEh; Cell: TGridCoord; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer; var Processed: Boolean);
+var
+  CurDataNode: TGroupDataTreeNodeEh;
+begin
+  if (ssDouble in Shift) and ((Grid as TDBGridEh).DataGrouping.Active) then
+  begin
+    CurDataNode := (Grid as TDBGridEh).DataGrouping.CurDataNode;
+    if CurDataNode.NodeType = dntDataGroupEh then
+      CurDataNode.Expanded := not CurDataNode.Expanded;
+  end;
 end;
 
 end.

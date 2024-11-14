@@ -351,7 +351,20 @@ begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
-    end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end;
+    end
   end;
 
   // права пользователей
@@ -721,7 +734,8 @@ begin
     Exit;
 
   if (srcOrdersTP.DataSet.FieldByName('OTP_NUMBER').IsNull) or
-    (MessageDlg(Format(rsDeleteOrder, [srcOrdersTP.DataSet['OTP_NUMBER']]), mtConfirmation, [mbNo, mbYes], 0) = mrYes) then
+    (MessageDlg(Format(rsDeleteOrder, [srcOrdersTP.DataSet['OTP_NUMBER']]), mtConfirmation, [mbNo, mbYes], 0) = mrYes)
+  then
     srcOrdersTP.DataSet.Delete;
 end;
 
@@ -1071,7 +1085,3 @@ end;
   end;
 }
 end.
-
-
-
-

@@ -152,11 +152,12 @@ object PaymentEditFrm: TPaymentEditFrm
     end
   end
   object mmoNotice: TDBMemoEh
-    Left = 0
+    Left = 5
     Top = 210
-    Width = 400
+    Width = 389
     Height = 80
-    Align = alClient
+    Align = alCustom
+    Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>

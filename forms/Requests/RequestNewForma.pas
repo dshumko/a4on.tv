@@ -136,6 +136,12 @@ type
     procedure DBLookupComboboxClick(Sender: TObject);
     procedure LupHOUSEChange(Sender: TObject);
     procedure cbContactNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
+    procedure DBLookupComboboxEnter(Sender: TObject);
+    procedure LupStreetsChange(Sender: TObject);
+    procedure cbContactEnter(Sender: TObject);
+    procedure cbContactClick(Sender: TObject);
+    procedure lupTypeButtonClick(Sender: TObject; var Handled: Boolean);
+    procedure cbContactButtonClick(Sender: TObject; var Handled: Boolean);
   private
     { Private declarations }
     fRQ_ID: Integer;
@@ -148,6 +154,10 @@ type
     FCanGive: Boolean; // может выдать заявку
     FPhoneChanged: Boolean;
     FEnterSecondPress: Boolean;
+    FReqType: Integer;
+    FReqTempl: Integer;
+    FLastFlat: string;
+    FDenyCancel: Boolean;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure ChangeWorks;
     procedure CheckData;
@@ -160,17 +170,25 @@ type
     procedure SetFindNode(Value: Boolean);
     function GetFindNode: Boolean;
     procedure SetFromRequest(Value: Integer);
+    procedure SetCanCancel(Value: Boolean);
+    procedure SetReqType(Value: Integer);
+    procedure SetReqTempl(Value: Integer);
     procedure ShowReqForAdres(HOUSE_ID: Integer; plan_date: Variant);
     procedure ShowAddInfo;
     procedure AplySortSameReq(const AdresSort: Boolean = False);
     function SavePhone(Const Phone: String): String;
+    procedure SetPhonesCB(const list: String);
+    procedure InitDataSetFilters;
   public
     { Public declarations }
     property Request_id: Integer read fRQ_ID;
+    property ReqType: Integer read FReqType write SetReqType;
+    property ReqTempl: Integer read FReqTempl write SetReqTempl;
     property Customer_id: Integer read GetCustomer_ID write SetCustomer_ID;
     property Node_id: Integer read GetNode_ID write SetNode_ID;
     property FindNode: Boolean read GetFindNode write SetFindNode; // поиск узлов
     property FromRequest: Integer write SetFromRequest;
+    property CanCancel: Boolean write SetCanCancel;
   end;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
@@ -180,7 +198,7 @@ function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Intege
 function NewRequestFromRequest(const aRequest: Integer = -1): Integer;
 function NewRequestFromPlaner(const plan_date: TDateTime; const TYPE_ID: Integer = -1): Integer;
 function NewNodeRequest(const aNode: Integer = -1; CallBack: TCallBack = nil): Integer;
-function NewFileRequest(const aCustomer: Integer = -1; const ReqType: Integer = -1; const ReqTempl: Integer = -1;
+function NewFileRequest(const aCustomer: Integer = -1; const aReqType: Integer = -1; const aReqTempl: Integer = -1;
   const rd: TDate = 0; const notice: String = ''; const CanClose: Boolean = True): Integer;
 
 implementation
@@ -291,29 +309,33 @@ begin
   end;
 end;
 
-function NewFileRequest(const aCustomer: Integer = -1; const ReqType: Integer = -1; const ReqTempl: Integer = -1;
+function NewFileRequest(const aCustomer: Integer = -1; const aReqType: Integer = -1; const aReqTempl: Integer = -1;
   const rd: TDate = 0; const notice: String = ''; const CanClose: Boolean = True): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
   begin
     Customer_id := aCustomer;
-    if ReqType <> -1 then
-    begin
-      lupType.Value := ReqType;
-      lupType.Enabled := False;
-    end;
-    if ReqTempl <> -1 then
-      luTemplate.Value := ReqTempl;
+    if aReqTempl <> -1 then
+      ReqTempl := aReqTempl;
+
+    if aReqType <> -1 then
+      ReqType := aReqType;
+
     edtPLANDATE.Value := rd;
     edtPLANDATE.Enabled := False;
     actDateSelect.Enabled := False;
     mmoNotice.Lines.Text := notice;
-    if not CanClose then
-    begin
-      frmOkCancel.bbCancel.Visible := False;
-      frmOkCancel.bbCancel.Tag := 1;
-    end;
+
+    CanCancel := CanClose;
+
+    ActiveControl := mmoContent;
+    if aReqTempl = -1 then
+      ActiveControl := luTemplate;
+    if aReqType = -1 then
+      ActiveControl := luTemplate;
+    if aCustomer = -1 then
+      ActiveControl := LupStreets;
 
     if showModal = mrOk then
       Result := Request_id;
@@ -335,6 +357,91 @@ begin
   if FCustomerInfo.Customer_id <> -1 then
     if FCustomerInfo.isType = 1 then
       Result := FCustomerInfo.Customer_id;
+end;
+
+procedure TRequestNewForm.InitDataSetFilters;
+var
+  o: Boolean;
+  s: string;
+begin
+  o := dsRequestType.Active;
+
+  if o then
+  begin
+    // dsRequestType.AfterOpen := nil;
+    dsErrors.Close;
+    dsRequestType.Close;
+  end;
+
+  if (dmMain.GetSettingsValue('REQUEST_TYPE_RESTRICT') = '1') then
+  begin
+    if (FReqType > -1) then
+    begin
+      dsRequestType.ParamByName('RT_RESTRICT').AsString := ' and w.RT_ID = ' + FReqType.ToString;
+      if (FReqTempl > -1) then
+        dsErrors.ParamByName('RT_RESTRICT').AsString := ' and rt.RQTL_ID = ' + FReqTempl.ToString;
+    end
+    else
+    begin
+      // для ЛТВ исключим все причины которые есть в типах файлов
+      if (dmMain.User <> 'SYSDBA') then
+      begin
+        s := dmMain.GetCompanyValue('NAME');
+        if ((not s.Contains('ЛТВ'))) then
+          dsRequestType.ParamByName('RT_RESTRICT').AsString := ' and exists(select gr.Right_Id ' + #13#10 +
+            ' from sys$user u inner join sys$user_groups ug on (u.id = ug.user_id) ' + #13#10 +
+            ' inner join sys$group g on (ug.group_id = g.id) ' + #13#10 +
+            ' inner join sys$group_rights gr on (ug.group_id = gr.group_id) ' + #13#10 +
+            ' where u.ibname = current_user and u.Lockedout = 0 and g.lockedout = 0 and gr.rights_type = 3 ' +
+            ' and gr.Right_Id = w.Rt_Id) '
+        else
+          dsErrors.ParamByName('RT_RESTRICT').AsString := ' and not exists(select O_ID from Objects ' +
+            ' where O_Type = 33 and O_Charfield like ''%"ReqTempl":''||rt.RQTL_ID||'',%'')';
+      end;
+    end;
+  end;
+
+  if o then
+  begin
+    dsRequestType.Open;
+    dsErrors.Open;
+    // dsRequestType.AfterOpen := dsRequestTypeAfterOpen;
+  end;
+
+  if (FReqType > -1) then
+  begin
+    lupType.Value := FReqType;
+    lupType.Enabled := False;
+  end;
+
+  if (FReqTempl > -1) then
+  begin
+    luTemplate.Value := FReqTempl;
+  end
+end;
+
+procedure TRequestNewForm.SetReqTempl(Value: Integer);
+begin
+  FReqTempl := Value;
+  InitDataSetFilters;
+end;
+
+procedure TRequestNewForm.SetReqType(Value: Integer);
+
+begin
+  FReqType := Value;
+  InitDataSetFilters;
+end;
+
+procedure TRequestNewForm.SetCanCancel(Value: Boolean);
+begin
+  FDenyCancel := not Value;
+  if FDenyCancel then
+  begin
+    frmOkCancel.bbOk.Enabled := True;
+    frmOkCancel.bbCancel.Visible := False;
+    frmOkCancel.bbCancel.Tag := 1;
+  end;
 end;
 
 procedure TRequestNewForm.SetFromRequest(Value: Integer);
@@ -440,10 +547,7 @@ end;
 function TRequestNewForm.FindCustomer(const lic: string; const code: string; id: Integer;
   const FindNode: Integer = 0): Integer;
 var
-  p, f: String;
   s: string;
-  sa: TStringArray;
-  i: Integer;
 begin
   FCustomerInfo := dmMain.FindCustomer(lic, code, id, FindNode);
   Result := FCustomerInfo.Customer_id;
@@ -473,15 +577,7 @@ begin
     else
       s := Trim(FCustomerInfo.mobile_wn).Trim([',', ' ']);
 
-    sa := Explode(',', s);
-    cbContact.Items.Clear;
-    for i := 0 to Length(sa) - 1 do
-    begin
-      s := Trim(sa[i]);
-      if not s.IsEmpty then
-        cbContact.Items.Add(s);
-    end;
-    cbContact.Items.Add('Без номера');
+    SetPhonesCB(s);
 
     if FCustomerInfo.porch_n <> '' then
       EdPorch.Text := FCustomerInfo.porch_n;
@@ -541,9 +637,9 @@ begin
     W_id := luTemplate.Value
   else
     W_id := -1;
+
   if SelectRequestDate(LupHOUSE.Value, W_id, d) then
     edtPLANDATE.Value := d;
-
 end;
 
 procedure TRequestNewForm.actDelWorkExecute(Sender: TObject);
@@ -612,8 +708,20 @@ begin
       if EdPorch.Text = '' then
         ActiveControl := EdPorch
       else
-        ActiveControl := lupType;
+      begin
+        if lupType.Enabled then
+          ActiveControl := lupType
+        else
+          ActiveControl := mmoContent;
+      end;
     end;
+
+    p := dmMain.GetCompanyValue('NAME');
+    if not p.Contains('ЛТВ') then
+      p := Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO).Trim([',', ' '])
+    else
+      p := Trim(FCustomerInfo.mobile_wn).Trim([',', ' ']);
+    SetPhonesCB(p);
   end;
 end;
 
@@ -794,6 +902,7 @@ begin
       if (dsErrors.Active) and (dsErrors.RecordCount > 0) and (not dsErrors.FieldByName('NEED_NODE_RQ').IsNull) and
         (dsErrors['NEED_NODE_RQ'] = 1) and (FCustomerInfo.Customer_id <> -1) and (FCustomerInfo.isType = 0) then
       begin
+
         // if Application.MessageBox(PWideChar(rsNeedNodeBid), PWideChar(rsNodeBid), MB_YESNO + MB_ICONQUESTION) = IDYES
         // then
         begin
@@ -884,6 +993,7 @@ begin
   begin
     if Assigned(CustomersForm) then
       CustomersForm.RefreshRequestsList(fRQ_ID, FCustomerInfo.Customer_id);
+
     if (vOpen) then
     begin
       // права пользователей
@@ -894,36 +1004,43 @@ begin
       if (FA or CE or CC or CG) then
         ReguestExecute(fRQ_ID, FCustomerInfo.Customer_id, 1);
     end;
+
     ModalResult := mrOk;
   end;
-
 end;
 
 procedure TRequestNewForm.dbgTmpltsDblClick(Sender: TObject);
 begin
   if not dsErrors.FieldByName('RQTL_ID').IsNull then
     luTemplate.Value := dsErrors['RQTL_ID'];
-
 end;
 
 procedure TRequestNewForm.dbgWorksExit(Sender: TObject);
 begin
   if (not dsWorks.FieldByName('W_ID').IsNull) and (dsWorks.State in [dsInsert, dsEdit]) then
     dsWorks.Post;
-
 end;
 
 procedure TRequestNewForm.dsRequestTypeAfterOpen(DataSet: TDataSet);
 begin
-  if not dsRequestType.FieldByName('RT_ID').IsNull then
-    lupType.Value := dsRequestType['RT_ID'];
+  if (not dsRequestType.FieldByName('RT_ID').IsNull) then
+  begin
+    if FReqType = -1 then
+      lupType.Value := dsRequestType['RT_ID']
+    else
+    begin
+      lupType.Value := FReqType;
+      if FReqTempl <> -1 then
+        luTemplate.Value := FReqTempl;
+    end;
+  end;
 end;
 
 procedure TRequestNewForm.edFLAT_NOExit(Sender: TObject);
 begin
   actFindCustomer.Execute;
 
-  if ((EdPorch.Text = '') or (EdFloor.Text = '')) and VarIsNumeric(LupHOUSE.Value) then
+  if ((FLastFlat <> edFLAT_NO.Text) or (EdPorch.Text = '') or (EdFloor.Text = '')) and VarIsNumeric(LupHOUSE.Value) then
   begin
     with TpFIBQuery.Create(Nil) do
       try
@@ -944,6 +1061,7 @@ begin
         Free;
       end;
   end;
+  FLastFlat := edFLAT_NO.Text;
 end;
 
 procedure TRequestNewForm.EdFloorExit(Sender: TObject);
@@ -966,7 +1084,7 @@ begin
       NeedSave := True;
   end;
 
-  if NeedSave then
+  if NeedSave and (FCustomerInfo.HOUSE_ID > 0) then
   begin
     with TpFIBQuery.Create(Nil) do
     begin
@@ -1048,7 +1166,7 @@ begin
     A4MainForm.AddictSpell.RemoveControl(mmoContent);
   end;
 
-  if (not frmOkCancel.bbCancel.Visible) and (frmOkCancel.bbCancel.Tag = 1) then
+  if (not frmOkCancel.bbCancel.Visible) and (FDenyCancel) then
   begin
     Action := caNone;
   end
@@ -1072,8 +1190,14 @@ begin
   begin
     dsHouse.ParamByName('AREA_LOCK').Value := format(' and ((h.Subarea_Id) is null or (h.Subarea_Id in (%s))) ', [s]);
   end;
+
   dsHouse.Open;
+
+  SetReqType(-1);
+  dsRequestType.AfterOpen := nil;
   dsRequestType.Open;
+  dsRequestType.AfterOpen := dsRequestTypeAfterOpen;
+
   dsWorks.Open;
   dsDefaultWorks.Open;
   dsErrors.Open;
@@ -1084,6 +1208,8 @@ begin
   InitSecurity;
   AplySortSameReq(True);
   chkOpenBid.Checked := (dmMain.GetIniValue('REQOPENNEW') = '1');
+  FReqTempl := -1;
+  FDenyCancel := False;
 end;
 
 procedure TRequestNewForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1091,9 +1217,8 @@ begin
   if (ssCtrl in Shift) and (Ord(Key) = VK_RETURN) then
   begin
     if ssShift in Shift then
-    begin
       chkOpenBid.Checked := True;
-    end;
+
     bbOkClick(Sender);
   end;
 end;
@@ -1108,6 +1233,8 @@ begin
 
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
       if (ActiveControl is TDBGridEh) then
@@ -1167,10 +1294,11 @@ end;
 
 procedure TRequestNewForm.bbOkClick(Sender: TObject);
 begin
-  if (not frmOkCancel.bbCancel.Visible) and (frmOkCancel.bbCancel.Tag = 1) then
+  if (not frmOkCancel.bbCancel.Visible) and (FDenyCancel) then
   begin
     // проверка на запрет закрытия окна
     frmOkCancel.bbCancel.Tag := 0;
+    FDenyCancel := False;
   end;
   actSave.Execute;
 end;
@@ -1178,6 +1306,61 @@ end;
 procedure TRequestNewForm.btnClearClick(Sender: TObject);
 begin
   FindCustomer('', '', -1);
+end;
+
+procedure TRequestNewForm.cbContactButtonClick(Sender: TObject; var Handled: Boolean);
+var
+  cb: TComponent;
+begin
+  cb := (Sender as TComponent).Owner;
+  if not(cb is TDBComboBoxEh) then
+    Exit;
+
+  if (cb as TDBComboBoxEh).Tag = 2 then
+  begin
+    if not(cb as TDBComboBoxEh).ListVisible then
+      (cb as TDBComboBoxEh).DropDown
+    else
+      (cb as TDBComboBoxEh).CloseUp(False);
+    (cb as TDBComboBoxEh).Tag := 0;
+  end
+  else
+  begin
+    (cb as TDBComboBoxEh).Tag := 2;
+  end;
+
+  Handled := ((cb as TDBComboBoxEh).Tag = 2);
+end;
+
+procedure TRequestNewForm.cbContactClick(Sender: TObject);
+begin
+  if not(Sender is TDBComboBoxEh) then
+    Exit;
+
+  if (Sender as TDBComboBoxEh).Items.Count = 0 then
+    Exit;
+
+  if (Sender as TDBComboBoxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBComboBoxEh).ListVisible then
+      (Sender as TDBComboBoxEh).DropDown
+    else
+      (Sender as TDBComboBoxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBComboBoxEh).Tag := 0;
+end;
+
+procedure TRequestNewForm.cbContactEnter(Sender: TObject);
+begin
+  if not(Sender is TDBComboBoxEh) then
+    Exit;
+
+  if not(Sender as TDBComboBoxEh).ListVisible then
+  begin
+    (Sender as TDBComboBoxEh).DropDown;
+    (Sender as TDBComboBoxEh).Tag := 1;
+  end;
 end;
 
 procedure TRequestNewForm.cbContactNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
@@ -1194,6 +1377,8 @@ begin
     LupHOUSE.Color := clYellow
   else
     LupHOUSE.Color := clWindow;
+
+  FLastFlat := '';
 end;
 
 procedure TRequestNewForm.LupHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -1233,6 +1418,11 @@ begin
     CheckData;
 end;
 
+procedure TRequestNewForm.LupStreetsChange(Sender: TObject);
+begin
+  FLastFlat := '';
+end;
+
 procedure TRequestNewForm.LupStreetsEditButtons0Click(Sender: TObject; var Handled: Boolean);
 var
   i: int64;
@@ -1244,6 +1434,32 @@ begin
     LupStreets.Value := i;
   end;
   Handled := True;
+end;
+
+procedure TRequestNewForm.lupTypeButtonClick(Sender: TObject; var Handled: Boolean);
+var
+  cb: TComponent;
+  i: Integer;
+  v: Boolean;
+begin
+  cb := (Sender as TComponent).Owner;
+  if not(cb is TDBLookupComboboxEh) then
+    Exit;
+
+  i := (cb as TDBLookupComboboxEh).Tag;
+  v := (cb as TDBLookupComboboxEh).ListVisible;
+  if i = 2 then
+  begin
+    if not v then
+      (cb as TDBLookupComboboxEh).DropDown
+    else
+      (cb as TDBLookupComboboxEh).CloseUp(False);
+    (cb as TDBLookupComboboxEh).Tag := 0;
+  end
+  else
+    (cb as TDBLookupComboboxEh).Tag := 2;
+
+  Handled := ((cb as TDBLookupComboboxEh).Tag = 2);
 end;
 
 procedure TRequestNewForm.lupTypeChange(Sender: TObject);
@@ -1265,10 +1481,16 @@ procedure TRequestNewForm.DBLookupComboboxClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
     Exit;
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 procedure TRequestNewForm.lupTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -1285,6 +1507,18 @@ begin
   Handled := True;
   if ReguestTypeModify(-1) > -1 then
     dsRequestType.CloseOpen(True);
+end;
+
+procedure TRequestNewForm.DBLookupComboboxEnter(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+  begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+  end;
 end;
 
 procedure TRequestNewForm.luTemplateChange(Sender: TObject);
@@ -1540,6 +1774,23 @@ begin
     end;
   end;
   Result := Trim(Contact.Contact + ' ' + Contact.notice);
+end;
+
+procedure TRequestNewForm.SetPhonesCB(const list: String);
+var
+  i: Integer;
+  s: string;
+  phones: TStringArray;
+begin
+  phones := Explode(',', list);
+  cbContact.Items.Clear;
+  for i := 0 to Length(phones) - 1 do
+  begin
+    s := Trim(phones[i]);
+    if not s.IsEmpty then
+      cbContact.Items.Add(s);
+  end;
+  cbContact.Items.Add('Без номера');
 end;
 
 end.

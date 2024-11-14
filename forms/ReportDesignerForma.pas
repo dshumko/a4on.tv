@@ -317,44 +317,54 @@ var
   ReportName: string;
 begin
   ReportName := rsNewReportName;
-  if InputQuery(rsReportName, rsReportNameHint, ReportName) then
-  begin
-    rStream := TMemoryStream.Create;
-    try
-      if dmMain.mtReportsTree.State = dsBrowse then
+  if not InputQuery(rsReportName, rsReportNameHint, ReportName) then
+    Exit;
+  if not(dmMain.mtReportsTree.State = dsBrowse) then
+    Exit;
+
+  rStream := TMemoryStream.Create;
+  try
+    id_parent := 0;
+    if dmMain.mtReportsTree.RecordCount > 0 then
+    begin
+      if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
       begin
-        if dmMain.mtReportsTree.FieldByName('REPORT_BODY').IsNull then
-          id_parent := dmMain.mtReportsTree.FieldValues['ID_REPORT']
-        else
+        if not dmMain.mtReportsTree.FieldByName('ID_REPORT').IsNull then
+          id_parent := dmMain.mtReportsTree.FieldValues['ID_REPORT'];
+      end
+      else
+      begin
+        if not dmMain.mtReportsTree.FieldByName('ID_PARENT').IsNull then
           id_parent := dmMain.mtReportsTree.FieldValues['ID_PARENT'];
-        dmMain.mtReportsTree.Append;
-        dmMain.mtReportsTree.FieldValues['REPORT_NAME'] := ReportName;
-        dmMain.mtReportsTree.FieldValues['NO_VISIBLE'] := 0;
-        dmMain.mtReportsTree.FieldValues['ID_PARENT'] := id_parent;
-        // создаем новый отчет и сохраняем в поток
-        // NewEmptyReport(Sender);
-        NewReport(Sender);
-        FormPreview.frxReport.SaveToStream(rStream);
-        rStream.Position := 0;
-        // грузим в поле таблицы БД из потока
-        TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).LoadFromStream(rStream);
-        try
-          dmMain.mtReportsTree.Post;
-        except
-          dmMain.mtReportsTree.Cancel;
-          raise;
-        end;
-        dmMain.mtReportsTree.DisableControls;
-        dmMain.mtReportsTree.Close;
-        dmMain.mtReportsTree.Open;
-        dmMain.mtReportsTree.Last;
-        dmMain.mtReportsTree.First;
-        dmMain.mtReportsTree.Locate('ID_PARENT;REPORT_NAME', VarArrayOf([id_parent, ReportName]), []);
-        dmMain.mtReportsTree.EnableControls;
       end;
-    finally
-      rStream.Free;
     end;
+
+    dmMain.mtReportsTree.Append;
+    dmMain.mtReportsTree.FieldValues['REPORT_NAME'] := ReportName;
+    dmMain.mtReportsTree.FieldValues['NO_VISIBLE'] := 0;
+    dmMain.mtReportsTree.FieldValues['ID_PARENT'] := id_parent;
+    // создаем новый отчет и сохраняем в поток
+    // NewEmptyReport(Sender);
+    NewReport(Sender);
+    FormPreview.frxReport.SaveToStream(rStream);
+    rStream.Position := 0;
+    // грузим в поле таблицы БД из потока
+    TBlobField(dmMain.mtReportsTree.FieldByName('REPORT_BODY')).LoadFromStream(rStream);
+    try
+      dmMain.mtReportsTree.Post;
+    except
+      dmMain.mtReportsTree.Cancel;
+      raise;
+    end;
+    dmMain.mtReportsTree.DisableControls;
+    dmMain.mtReportsTree.Close;
+    dmMain.mtReportsTree.Open;
+    dmMain.mtReportsTree.Last;
+    dmMain.mtReportsTree.First;
+    dmMain.mtReportsTree.Locate('ID_PARENT;REPORT_NAME', VarArrayOf([id_parent, ReportName]), []);
+    dmMain.mtReportsTree.EnableControls;
+  finally
+    rStream.Free;
   end;
 end;
 

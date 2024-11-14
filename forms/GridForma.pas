@@ -71,7 +71,6 @@ type
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
     procedure actPrintGridExecute(Sender: TObject);
-    procedure srcDataSourceStateChange(Sender: TObject);
   protected
     { Private declarations }
     FCanEdit: Boolean;
@@ -164,8 +163,6 @@ begin
 end;
 
 procedure TGridForm.actPrintGridExecute(Sender: TObject);
-var
-  dbg: TDBGridEh;
 begin
   if (ActiveControl is TDBGridEh) then
   begin
@@ -261,17 +258,20 @@ begin
 
   if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := true;
+    go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False	  
+      go := False
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
-        FEnterSecondPress := true;
+        FEnterSecondPress := True;
       end;
     end;
 
@@ -296,40 +296,55 @@ var
   Font_name, s: string;
   Row_height: Integer;
 begin
-  Font_size := 0;
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
-  begin
-    Font_size := i;
-    Font_name := dmMain.GetIniValue('FONT_NAME');
-  end;
+  if not TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+    i := 0;
+  Font_size := i;
+
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
-  for i := 0 to ComponentCount - 1 do
+  if (Font_size <> 0) or (Row_height <> 0) then
   begin
-    if Components[i] is TDBGridEh then
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+    for i := 0 to ComponentCount - 1 do
     begin
-      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
-      then
-        (Components[i] as TDBGridEh).DefaultApplySorting;
-      if Font_size <> 0 then
+      if Components[i] is TDBGridEh then
       begin
-        (Components[i] as TDBGridEh).Font.Name := Font_name;
-        (Components[i] as TDBGridEh).Font.Size := Font_size;
-      end;
-      if Row_height <> 0 then
+        (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+          Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+        if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
+        then
+          (Components[i] as TDBGridEh).DefaultApplySorting;
+        if Font_size <> 0 then
+        begin
+          (Components[i] as TDBGridEh).Font.Name := Font_name;
+          (Components[i] as TDBGridEh).Font.Size := Font_size;
+        end;
+        if Row_height <> 0 then
+        begin
+          (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+          (Components[i] as TDBGridEh).RowHeight := Row_height;
+        end;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+        begin
+          s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+          if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
+            (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
+            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+        end;
+      end
+      else if Font_size <> 0 then
       begin
-        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
-        (Components[i] as TDBGridEh).RowHeight := Row_height;
-      end;
-      for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
-      begin
-        s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
-        if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
-          (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
-          (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+        if (Components[i] is TMemo) then
+        begin
+          (Components[i] as TMemo).Font.Name := Font_name;
+          (Components[i] as TMemo).Font.Size := Font_size;
+        end
+        else if (Components[i] is TDBMemoEh) then
+        begin
+          (Components[i] as TDBMemoEh).Font.Name := Font_name;
+          (Components[i] as TDBMemoEh).Font.Size := Font_size;
+        end;
       end;
     end;
   end;
@@ -346,7 +361,7 @@ begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
-         A4MainForm.CopyDBGrid(dbg)
+        A4MainForm.CopyDBGrid(dbg)
       else
         StrToClipbrd(dbg.SelectedField.AsString);
   end;
@@ -389,12 +404,10 @@ begin
   PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
 
   if New then
-    srcDataSource.DataSet.Append;
-//  else
-//    srcDataSource.DataSet.Edit;
+    srcDataSource.DataSet.Append
+  else
+    srcDataSource.DataSet.Edit;
 
-  btnSaveLink.Enabled := False;
-  srcDataSource.AutoEdit := True;
   FinEditMode := True;
 end;
 
@@ -411,14 +424,17 @@ begin
   end
   else
   begin
-    if FCanEdit then
-      srcDataSource.DataSet.Post
-    else
-      srcDataSource.DataSet.Cancel;
+    if (srcDataSource.DataSet.State in [dsEdit, dsInsert]) then
+    begin
+      if FCanEdit then
+        srcDataSource.DataSet.Post
+      else
+        srcDataSource.DataSet.Cancel;
+    end;
   end;
+
   dbGrid.SetFocus;
 
-  srcDataSource.AutoEdit := False;
   FinEditMode := False;
 end;
 
@@ -505,11 +521,13 @@ begin
       (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
       (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
 
-      if rghtExport then begin
-        (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks,gstRectangle,gstColumns,gstAll];
+      if rghtExport then
+      begin
+        (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks, gstRectangle, gstColumns, gstAll];
         (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
       end
-      else begin
+      else
+      begin
         (Components[i] as TDBGridEh).AllowedSelections := [];
         (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
       end;
@@ -518,11 +536,6 @@ begin
         (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
     end;
   end;
-end;
-
-procedure TGridForm.srcDataSourceStateChange(Sender: TObject);
-begin
-  btnSaveLink.Enabled := (srcDataSource.State in [dsEdit, dsInsert]);
 end;
 
 end.

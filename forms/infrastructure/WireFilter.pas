@@ -132,8 +132,9 @@ begin
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
-
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible;
     if go then
     begin
       Key := #0; // eat enter key

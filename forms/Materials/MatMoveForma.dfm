@@ -253,7 +253,7 @@ object MatMoveForm: TMatMoveForm
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
       '  from OBJECTS o'
-      '  where O_TYPE = 10'
+      '  where O_TYPE = 10 and o.O_DELETED = 0'
       '        and (exists(select'
       '                          w.wh_id'
       '                        from SYS$USER u'

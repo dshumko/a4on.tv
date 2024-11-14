@@ -90,6 +90,7 @@ object fmSelectPromo: TfmSelectPromo
       TabOrder = 0
       Visible = True
       OnClick = cbPromoClick
+      OnEnter = cbPromoEnter
     end
   end
   object dsPromo: TpFIBDataSet

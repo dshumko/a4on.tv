@@ -9,7 +9,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Buttons,
   Vcl.ComCtrls,
-  DBCtrlsEh, OkCancel_frame, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, FIBDatabase, pFIBDatabase, DBGridEh, CnErrorProvider;
+  DBCtrlsEh, OkCancel_frame, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, FIBDatabase, pFIBDatabase, DBGridEh,
+  CnErrorProvider;
 
 type
   TServiceForm = class(TForm)
@@ -165,10 +166,17 @@ begin
           dsService['SHOW_SERVICE'] := 0;
         if aType_ID = 0 then
         begin
-          if VarIsNull(dsService.FieldByName('CALC_TYPE').NewValue) then
-            dsService['CALC_TYPE'] := 0
-          else if dsService.FieldByName('CALC_TYPE').NewValue <> 1 then
-            dsService['EXTRA'] := 0;
+          if VarIsNull(dsService.FieldByName('CALC_TYPE').NewValue) then begin
+            if (dsService.FieldByName('CALC_TYPE').NewValue <> 6)
+            then dsService['CALC_TYPE'] := 30
+            else dsService['CALC_TYPE'] := 0;
+          end
+          else
+          begin
+            if (dsService.FieldByName('CALC_TYPE').NewValue <> 1) and (dsService.FieldByName('CALC_TYPE').NewValue <> 6)
+            then
+              dsService['EXTRA'] := 0;
+          end;
         end;
         dsService.Post;
         result := dsService['SERVICE_ID'];
@@ -221,16 +229,27 @@ end;
 
 procedure TServiceForm.cbCalcTypeChange(Sender: TObject);
 begin
-
   if VarIsNull(cbCalcType.Value) then
     Exit;
 
   pnlShift.Visible := (cbCalcType.Value = 0) and (dsService['SRV_TYPE_ID'] = 0);
-  pnlFull.Visible := (cbCalcType.Value = 1) and (dsService['SRV_TYPE_ID'] = 0);
+  pnlFull.Visible := ((cbCalcType.Value = 1) or (cbCalcType.Value = 6)) and (dsService['SRV_TYPE_ID'] = 0);
 
-  pnlAllDays.Visible := (dsService['SRV_TYPE_ID'] = 0) and
-    ((cbCalcType.Value = 0) or (cbCalcType.Value = 1) or (cbCalcType.Value = 2) or (cbCalcType.Value = 3) or
-    (cbCalcType.Value = 5));
+  if (pnlFull.Visible) then
+  begin
+    if (cbCalcType.Value = 6) then
+    begin
+      lblFullMonthDays1.Caption := 'Сколько дней действует тариф';
+      lblFullMonthDays1.Hint := '';
+    end
+    else
+    begin
+      lblFullMonthDays1.Caption := 'Полный тариф, если подключен >=';
+      lblFullMonthDays1.Hint := 'Полный тариф, если подключен Х или более дней';
+    end;
+  end;
+
+  pnlAllDays.Visible := (dsService['SRV_TYPE_ID'] = 0) and (cbCalcType.Value <> 4);
 
   // pnlAddToMin.Visible := (cbCalcType.Value = 3) and (dsService['SRV_TYPE_ID'] = 0);
 end;
@@ -323,8 +342,8 @@ var
 begin
   errors := false;
 
-  if ((pnlFull.Visible) // какой-то бред. не работает без сравнения с true
-    and (edtFullMonthDays.Value = 0)) then
+  if ((pnlFull.Visible)
+    and (edtFullMonthDays.Value <= 0)) then
   begin
     cnError.SetError(edtFullMonthDays, rsDayNotZerro, iaMiddleLeft, bsNeverBlink);
     errors := true;
@@ -354,7 +373,7 @@ begin
       ParamByName('SID').AsInteger := dsService['SERVICE_ID'];
       Transaction.StartTransaction;
       ExecQuery;
-      if RecordCount>0 then
+      if RecordCount > 0 then
         cbCalcType.ReadOnly := (FieldByName('cnt').Value > 0);
       Close;
       Transaction.Commit;

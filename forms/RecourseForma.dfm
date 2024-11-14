@@ -67,7 +67,6 @@ object RecourseForm: TRecourseForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    OnEnter = pnlRecourseEnter
     DesignSize = (
       467
       25)
@@ -122,6 +121,7 @@ object RecourseForm: TRecourseForm
       Visible = True
       OnChange = cbRecourseChange
       OnClick = DBLookupComboboxClick
+      OnEnter = cbRecourseEnter
     end
   end
   object pnlInfo: TPanel
@@ -319,6 +319,7 @@ object RecourseForm: TRecourseForm
       TabOrder = 0
       Visible = True
       OnClick = edtContactClick
+      OnEnter = edtContactEnter
     end
   end
   object pnlBtm: TPanel

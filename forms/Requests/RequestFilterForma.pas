@@ -170,7 +170,8 @@ begin
     if srcFilter.DataSet.State in [dsEdit, dsInsert] then
       srcFilter.DataSet.post;
     s := DatasetToJsonStr(srcFilter.DataSet);
-    if s.IsEmpty then Exit;
+    if s.IsEmpty then
+      exit;
 
     fq := TpFIBQuery.Create(self);
     try
@@ -288,12 +289,14 @@ begin
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible;
 
     if go then
     begin
       Key := #0; // eat enter key
-      PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
+      PostMessage(self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
   end;
 end;
@@ -325,11 +328,12 @@ end;
 
 procedure TRequestFilterForm.luTypeClick(Sender: TObject);
 begin
-  if (Sender is TDBLookupComboboxEh) then begin
-  if not (Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  if (Sender is TDBLookupComboboxEh) then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
   end;
 end;
 

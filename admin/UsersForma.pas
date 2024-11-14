@@ -17,7 +17,8 @@ uses
   System.ImageList,
 {$ENDIF}
   System.Actions,
-  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh, amSplitter;
+  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh,
+  amSplitter;
 
 type
   TUsersForm = class(TForm)
@@ -114,6 +115,10 @@ type
     dsRights: TpFIBDataSet;
     chkALL_AREAS: TDBCheckBoxEh;
     trWriteQ: TpFIBTransaction;
+    tsRequest: TTabSheet;
+    dbgRequest: TDBGridEh;
+    srcRequest: TDataSource;
+    dsRequest: TpFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actAddGroupExecute(Sender: TObject);
     procedure actEditGroupExecute(Sender: TObject);
@@ -148,6 +153,8 @@ type
     procedure dbgUGADblClick(Sender: TObject);
     procedure dbgUGDblClick(Sender: TObject);
     procedure chkALL_AREASExit(Sender: TObject);
+    procedure dbgReportsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     isVersion3plus: Boolean;
@@ -327,6 +334,11 @@ begin
           end;
           Close;
 
+          // Transaction.StartTransaction;
+          // SQL.Text := ' GRANT ALTER ANY SEQUENCE TO ' + aUserName;
+          // ExecQuery;
+          // Transaction.Commit;
+          // Close;
         end
         else
         begin
@@ -618,7 +630,11 @@ var
   I: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), I) then
+    I := 0;
+  Row_height := I;
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), I) then
   begin
@@ -638,6 +654,24 @@ begin
         (Components[I] as TDBGridEh).Font.Name := Font_name;
         (Components[I] as TDBGridEh).Font.Size := Font_size;
       end;
+      if Row_height <> 0 then
+      begin
+        (Components[I] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[I] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[I] is TMemo) then
+      begin
+        (Components[I] as TMemo).Font.Name := Font_name;
+        (Components[I] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[I] is TDBMemoEh) then
+      begin
+        (Components[I] as TDBMemoEh).Font.Name := Font_name;
+        (Components[I] as TDBMemoEh).Font.Size := Font_size;
+      end;
     end;
   end;
 
@@ -645,6 +679,8 @@ begin
     dmMain.dbTV.Open;
 
   CheckAndCreateRole();
+
+  tsRequest.Visible := (dmMain.GetSettingsValue('REQUEST_TYPE_RESTRICT') = '1');
 
   pc.ActivePageIndex := 0;
   pcChange(Sender);
@@ -956,6 +992,19 @@ begin
   dsRights.Active := (pgcRights.ActivePageIndex = 0);
   dsReports.Active := (pgcRights.ActivePageIndex = 1);
   dsModules.Active := (pgcRights.ActivePageIndex = 2);
+  dsRequest.Active := (pgcRights.ActivePageIndex = 3);
+end;
+
+procedure TUsersForm.dbgReportsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('rAllowed').IsNull then
+  begin
+    if (Sender as TDBGridEh).DataSource.DataSet.FieldByName('rAllowed').AsInteger = 1 then
+      AFont.Style := AFont.Style + [fsBold]
+    else
+      AFont.Style := AFont.Style - [fsBold];
+  end
 end;
 
 procedure TUsersForm.dbgRightsExit(Sender: TObject);

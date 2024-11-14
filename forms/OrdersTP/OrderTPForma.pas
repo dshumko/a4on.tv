@@ -385,15 +385,35 @@ begin
           (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
           (Components[i] as TDBGridEh).RowHeight := Row_height;
         end;
-      end;
+      end
+      else if Font_size <> 0 then
+      begin
+        if (Components[i] is TMemo) then
+        begin
+          (Components[i] as TMemo).Font.Name := Font_name;
+          (Components[i] as TMemo).Font.Size := Font_size;
+        end
+        else if (Components[i] is TDBMemoEh) then
+        begin
+          (Components[i] as TDBMemoEh).Font.Name := Font_name;
+          (Components[i] as TDBMemoEh).Font.Size := Font_size;
+        end
+        else if (Components[i] is TDBMemo) then
+        begin
+          (Components[i] as TDBMemo).Font.Name := Font_name;
+          (Components[i] as TDBMemo).Font.Size := Font_size;
+        end;
+      end
     end;
   end;
   Font_name := '';
   Font_name := dmMain.GetSettingsValue('MOBILE_FMT');
-  if Font_name.IsEmpty then begin
+  if Font_name.IsEmpty then
+  begin
     edtPhone.EmptyDataInfo.Text := rsClmnMobilePhone;
   end
-  else begin
+  else
+  begin
     edtPhone.EditMask := Font_name + ';1;_';
     edtPhone.EmptyDataInfo.Text := '';
   end
@@ -578,16 +598,17 @@ begin
   end
   else
   begin
-    PhoneCorrect := False;
     S := dmMain.GetSettingsValue('MOBILE_FMT');
-    PhoneCorrect := (not S.IsEmpty) and (CheckFormat(s, edtPhone.Text));
+    PhoneCorrect := (not S.IsEmpty) and (CheckFormat(S, edtPhone.Text));
 
-    if not PhoneCorrect then begin
+    if not PhoneCorrect then
+    begin
       S := dmMain.GetSettingsValue('PHONE_FMT');
-      PhoneCorrect := (not S.IsEmpty) and (CheckFormat(s, edtPhone.Text));
+      PhoneCorrect := (not S.IsEmpty) and (CheckFormat(S, edtPhone.Text));
     end;
 
-    if not PhoneCorrect then begin
+    if not PhoneCorrect then
+    begin
       errors := True;
       S := #13#10 + Trim(dmMain.GetSettingsValue('MOBILE_FMT') + #13#10 + dmMain.GetSettingsValue('PHONE_FMT'));
       CnErrors.SetError(edtPhone, Format(rsINPUT_VALUE_FORMAT, [S]), iaMiddleLeft, bsNeverBlink);
@@ -1047,7 +1068,7 @@ begin
 
   c := mmoText.Lines.Text.Trim.Length;
   sl := Trunc(c / 300);
-  if (c - sl*300) > 0  then
+  if (c - sl * 300) > 0 then
     sl := sl + 1;
 
   lblCharCNT.Caption := Format(rsAdCharCount, [c, sl, d]);

@@ -67,7 +67,6 @@ object LoaderForm: TLoaderForm
         DynProps = <>
         Flat = True
         FooterParams.Color = clWindow
-        IndicatorOptions = [gioShowRowIndicatorEh]
         TabOrder = 0
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -94,17 +93,16 @@ object LoaderForm: TLoaderForm
       Height = 79
       Hint = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1076#1072#1085#1085#1099#1093
       Align = alClient
-      AutoFitColWidths = False
       DataSource = srcErrors
       DynProps = <>
       Flat = True
       FooterParams.Color = clWindow
-      IndicatorOptions = [gioShowRowIndicatorEh]
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
       Columns = <
         item
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'eText'
@@ -119,12 +117,16 @@ object LoaderForm: TLoaderForm
       Top = 1
       Width = 276
       Height = 79
-      Align = alRight
       Lines.Strings = (
         #1057#1102#1076#1072' '#1087#1080#1096#1077#1084' '#1089#1082#1088#1080#1087#1090' '#1080' '#1087#1086#1090#1086#1084' '#1077#1075#1086' '#1074#1099#1087#1086#1083#1085#1103#1077#1084'. '#1085#1077' '#1091#1076#1072#1083#1103#1090#1100'!')
       ScrollBars = ssBoth
+      Align = alRight
+      AutoSize = False
+      DynProps = <>
+      EditButtons = <>
       TabOrder = 2
       Visible = False
+      WantReturns = True
     end
     object btnErrors: TButton
       Left = 440
@@ -160,14 +162,12 @@ object LoaderForm: TLoaderForm
         Height = 179
         Hint = #1054#1073#1088#1072#1073#1086#1090#1072#1085#1085#1099#1077' '#1076#1072#1085#1085#1099#1077
         Align = alClient
-        AutoFitColWidths = False
         DataSource = srcReestr
         DynProps = <>
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         FrozenCols = 1
-        IndicatorOptions = [gioShowRowIndicatorEh]
         OddRowColor = clInfoBk
         Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghExtendVertLines]
@@ -180,13 +180,14 @@ object LoaderForm: TLoaderForm
         TitleParams.Font.Height = -11
         TitleParams.Font.Name = 'Tahoma'
         TitleParams.Font.Style = [fsBold]
-        TitleParams.ParentFont = False
         TitleParams.MultiTitle = True
+        TitleParams.ParentFont = False
         Columns = <
           item
             AutoFitColWidth = False
-            DynProps = <>
+            CellButtons = <>
             DropDownBox.AutoFitColWidths = False
+            DynProps = <>
             EditButtons = <>
             FieldName = 'pLine'
             Footers = <>
@@ -195,6 +196,7 @@ object LoaderForm: TLoaderForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pAccount'
@@ -204,6 +206,7 @@ object LoaderForm: TLoaderForm
             Width = 89
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pFIO'
@@ -212,6 +215,7 @@ object LoaderForm: TLoaderForm
             Width = 78
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'dbFio'
@@ -221,6 +225,7 @@ object LoaderForm: TLoaderForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pSum'
@@ -230,6 +235,7 @@ object LoaderForm: TLoaderForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pDate'
@@ -237,6 +243,7 @@ object LoaderForm: TLoaderForm
             Title.Caption = #1044#1072#1090#1072
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pAdress'
@@ -245,6 +252,7 @@ object LoaderForm: TLoaderForm
             Width = 80
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'dbAdress'
@@ -253,6 +261,7 @@ object LoaderForm: TLoaderForm
             Width = 80
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pNotice'
@@ -262,6 +271,7 @@ object LoaderForm: TLoaderForm
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'pPayment_No'
@@ -299,7 +309,7 @@ object LoaderForm: TLoaderForm
         object lbl5: TLabel
           Left = 0
           Top = 0
-          Width = 61
+          Width = 558
           Height = 13
           Align = alTop
           Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -316,7 +326,11 @@ object LoaderForm: TLoaderForm
           Width = 558
           Height = 105
           Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          ScrollBars = ssVertical
           Align = alClient
+          AutoSize = False
+          DynProps = <>
+          EditButtons = <>
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -324,9 +338,10 @@ object LoaderForm: TLoaderForm
           Font.Style = []
           ParentFont = False
           ParentShowHint = False
-          ScrollBars = ssVertical
           ShowHint = True
           TabOrder = 0
+          Visible = True
+          WantReturns = True
         end
       end
       object pnl4: TPanel
@@ -600,7 +615,6 @@ object LoaderForm: TLoaderForm
       EditButtons = <
         item
           Action = actSelectFile
-          Images.NormalImages = MainForm.il12x12
           Style = ebsGlyphEh
           Width = 21
         end>
@@ -866,18 +880,20 @@ object LoaderForm: TLoaderForm
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
-      'SELECT '
-      '    C.Customer_Id,'
-      '    C.Account_No,'
-      '    C.Cust_Code,'
-      '    C.Debt_Sum,'
-      '    C.Surname||'#39' '#39'||coalesce(C.Initials,'#39#39') as FIO,'
+      'select'
+      '    C.Customer_Id'
+      '  , C.Account_No'
+      '  , C.Cust_Code'
+      '  , C.Debt_Sum'
+      '  , C.Surname || '#39' '#39' || coalesce(C.Initials, '#39#39') as FIO'
       
-        '    A.Street_Name ||'#39' '#1076'.'#39'||A.House_No||Coalesce('#39' '#1082#1074'.'#39'||C.Flat_N' +
-        'o,'#39#39') as ADRES'
-      'FROM Customer C'
-      '   INNER JOIN V_Adress A ON (C.House_Id = A.House_Id)'
-      'where c.Account_no = :account')
+        '  , s.Street_Short || '#39' '#39' || s.STREET_NAME || '#39' '#1076'.'#39' || h.House_N' +
+        'o || coalesce('#39' '#1082#1074'.'#39' || C.Flat_No, '#39#39') as ADRES'
+      '  from Customer C'
+      '       inner join HOUSE h on (h.House_Id = i.House_Id)'
+      '       inner join STREET s on (S.STREET_ID = h.STREET_ID)'
+      '  where c.Account_no = :account'
+      '')
     Left = 445
     Top = 255
   end

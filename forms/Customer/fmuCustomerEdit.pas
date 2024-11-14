@@ -13,7 +13,7 @@ uses
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh,
   DBLookupEh,
   FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
-  pFIBDatabase,
+  pFIBDatabase, EhLibFIB,
   PropFilerEh, PropStorageEh, amSplitter;
 
 type
@@ -182,6 +182,9 @@ type
     procedure LupHOUSE_IDChange(Sender: TObject);
     procedure btnCloseWarningInfoClick(Sender: TObject);
     procedure eFLAT_NOExit(Sender: TObject);
+    procedure dbgrdhContactsGetCellParams(Sender: TObject;
+      Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     FullAccess: Boolean;
@@ -217,6 +220,7 @@ type
     procedure CheckIOfromDB();
     procedure ShowWarningMessage(const s: String);
     procedure HideWarningMessage;
+    function GetOrderClause(grid: TCustomDBGridEh): string;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -334,6 +338,15 @@ end;
 procedure TapgCustomerEdit.dbgrdhContactsExit(Sender: TObject);
 begin
   SaveContact;
+end;
+
+procedure TapgCustomerEdit.dbgrdhContactsGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if (not (Sender as TDBGridEh).DataSource.DataSet.FieldByName('Cc_Notify').IsNull) //
+    and ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('Cc_Notify').AsInteger = 1) then
+      Background := $00D7FFD7;
 end;
 
 procedure TapgCustomerEdit.dbgrdhContactsKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -477,6 +490,8 @@ begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False
     else
@@ -511,9 +526,30 @@ begin
     lblINN.Caption := 'УНП';
 end;
 
-procedure TapgCustomerEdit.OpenData;
+function TapgCustomerEdit.GetOrderClause(grid: TCustomDBGridEh): string;
+var
+  s: string;
+  i, J: Integer;
 begin
-  dsContacts.Open;
+  J := grid.SortMarkedColumns.Count;
+  s := ' ';
+  for i := 0 to pred(J) do
+  begin
+      s := s + grid.SortMarkedColumns[i].FieldName;
+
+    if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
+      s := s + ' desc';
+    if i <> pred(J) then
+      s := s + ', ';
+  end;
+  Result := s;
+end;
+
+procedure TapgCustomerEdit.OpenData;
+var
+  s : string;
+begin
+
   dsOrg.Open;
   dsVATG.Open;
   dsStreets.Open;
@@ -535,6 +571,15 @@ begin
 
   LupHOUSE_ID.OnChange := LupHOUSE_IDChange;
   eFLAT_NO.OnChange := LupHOUSE_IDChange;
+
+  if (not dsContacts.Active) then begin
+    s := A4MainForm.GetIniFileName;
+    dbgrdhContacts.RestoreColumnsLayoutIni(s, 'apgCustomerEdit.dbgrdhContacts',
+        [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+    s := GetOrderClause(dbgrdhContacts);
+    dsContacts.OrderClause := s;
+    dsContacts.Open;
+  end;
 end;
 
 procedure TapgCustomerEdit.actExAddressEditExecute(Sender: TObject);
@@ -786,7 +831,12 @@ begin
 end;
 
 procedure TapgCustomerEdit.CloseData;
+var
+  ini: string;
 begin
+  ini := A4MainForm.GetIniFileName;
+  dbgrdhContacts.SaveColumnsLayoutIni(ini, 'apgCustomerEdit.dbgrdhContacts' , false);
+
   SaveContact;
   dsContacts.Close;
   // dsCustomerMEM.Close;

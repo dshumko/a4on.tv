@@ -26,7 +26,7 @@ type
     srcOnOffSrv: TDataSource;
     dsReqTempl: TpFIBDataSet;
     srcReqTempl: TDataSource;
-    gb1: TGroupBox;
+    gbJSON: TGroupBox;
     lcbRequest: TDBLookupComboboxEh;
     lcbTempl: TDBLookupComboboxEh;
     chkOpenInet: TDBCheckBoxEh;
@@ -64,6 +64,17 @@ type
     dsService: TpFIBDataSet;
     srcService: TDataSource;
     lcbService: TDBLookupComboboxEh;
+    lcbServiceFrom: TDBLookupComboboxEh;
+    lbl5: TLabel;
+    lbl6: TLabel;
+    lbl51: TLabel;
+    edtText2: TDBEditEh;
+    lbl52: TLabel;
+    edtText3: TDBEditEh;
+    lbl11: TLabel;
+    lcbAllowFT: TDBLookupComboboxEh;
+    srcAllowFT: TDataSource;
+    dsAllowFT: TpFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -79,6 +90,7 @@ type
     procedure btnColorClearClick(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure cbOnOffChange(Sender: TObject);
   private
     { Private declarations }
     FOwner: Boolean;
@@ -89,6 +101,7 @@ type
     function GetJson: String;
     procedure InitControls;
     procedure SetCheckOwner;
+    procedure ShowHideControls;
   public
     { Public declarations }
   end;
@@ -178,10 +191,10 @@ begin
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
-  //rsFldPassportReg = '[ПАСПОРТ_РЕГИСТР]';
-  //rsFldPassportPerm = '[ПАСПОРТ_ПРОПИСКА]';
-  //rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН]';
-  //rsFldPassportDIssue = '[ПАСПОРТ_ДАТА_ВЫДАН]';
+  // rsFldPassportReg = '[ПАСПОРТ_РЕГИСТР]';
+  // rsFldPassportPerm = '[ПАСПОРТ_ПРОПИСКА]';
+  // rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН]';
+  // rsFldPassportDIssue = '[ПАСПОРТ_ДАТА_ВЫДАН]';
 
   NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsFldPassportResidence;
@@ -287,6 +300,12 @@ begin
   NewItem.Caption := rsOldAddress;
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldNOTICE;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
     NewItem := TMenuItem.Create(pmMemo);
@@ -346,6 +365,53 @@ begin
 
   if not errors then
     StopEdt(False);
+end;
+
+procedure TFileTypeForm.ShowHideControls;
+var
+  WindowLocked: Boolean;
+  t: Integer;
+begin
+  inherited;
+
+  WindowLocked := LockWindowUpdate(Self.Handle);
+  try
+    if VarIsNull(cbOnOff.Value) or (cbOnOff.Value = '')  then
+      t := 0
+    else
+      t := cbOnOff.Value;
+
+    if ( t = 2 ) then
+    begin
+      t := Round((gbJSON.Width - lcbSrvType.Left - lcbSrvType.Width - 7)/3);
+
+      lcbService.Left := lcbServiceFrom.Left + t;
+      lcbOnOffSrv.Left := gbJSON.Width - t;
+      lcbOnOffSrv.Width := t - 7;
+      lcbServiceFrom.Width := t - 7; // lcbOnOffSrv.Left - lcbService.Left - 7;
+      lcbService.Width := t - 7;
+      lcbServiceFrom.Visible := True;
+    end
+    else
+    begin
+      t := Round((gbJSON.Width - lcbSrvType.Left - lcbSrvType.Width - 7)/2);
+
+      lcbServiceFrom.Visible := False;
+      lcbService.Left := lcbServiceFrom.Left;
+      lcbService.Width := t - 7;
+      lcbOnOffSrv.Left := gbJSON.Width - t;
+      lcbOnOffSrv.Width := t - 7;
+    end;
+  finally
+    if WindowLocked then
+      LockWindowUpdate(0);
+  end;
+end;
+
+procedure TFileTypeForm.cbOnOffChange(Sender: TObject);
+begin
+  inherited;
+  ShowHideControls;
 end;
 
 procedure TFileTypeForm.chkCustomerCardClick(Sender: TObject);
@@ -413,6 +479,7 @@ begin
 
   FOwner := (dmMain.GetSettingsValue('FLAT_OWNER') = '1');
   chkOwner.Visible := FOwner;
+  ShowHideControls;
 end;
 
 procedure TFileTypeForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
@@ -448,13 +515,17 @@ begin
   dsReqType.Open;
   dsReqTempl.Open;
   dsSingleSrv.Open;
+  if (not dsFileType.FieldByName('O_ID').IsNull) then
+    dsAllowFT.ParamByName('O_ID').AsInteger := dsFileType['O_ID']
+  else
+    dsAllowFT.ParamByName('O_ID').AsInteger := -1;
+  dsAllowFT.Open;
 
-  if not dsFileType.FieldByName('O_CHARFIELD').IsNull then
+  if (not new) and (not dsFileType.FieldByName('O_CHARFIELD').IsNull) then
     ParseJson(dsFileType['O_CHARFIELD']);
 
   StartEdit(New);
-
-  btnSaveLink.Enabled := True;
+  ShowHideControls;
 end;
 
 procedure TFileTypeForm.StopEdt(const Cancel: Boolean);
@@ -464,11 +535,16 @@ begin
   if (not Cancel) then
   begin
     s := GetJson;
+    if not(dsFileType.State in [dsInsert, dsEdit]) then
+    begin
+      dsFileType.Edit;
+    end;
     dsFileType['O_CHARFIELD'] := s;
   end;
 
   StopEdit(Cancel);
 
+  dsAllowFT.Open;
   dsReqTempl.Close;
   dsReqType.Close;
   dsOnOffSrv.Close;
@@ -510,6 +586,11 @@ begin
       if not JO['Srv'].IsNull then
         lcbService.Value := JO['Srv'];
     end;
+    if JO.Contains('SrvFrm') then
+    begin
+      if not JO['SrvFrm'].IsNull then
+        lcbServiceFrom.Value := JO['SrvFrm'];
+    end;
     if JO.Contains('SrvOnOff') then
     begin
       if not JO['SrvOnOff'].IsNull then
@@ -545,17 +626,26 @@ begin
     cbPeriod.Value := 0;
     if JO.Contains('Prd') then
     begin
-      if not JO['Prd'].IsNull then begin
-        if JO['Prd'].Typ = jdtBool then begin
-          if JO.B['Prd'] then cbPeriod.Value := 1;
+      if not JO['Prd'].IsNull then
+      begin
+        if JO['Prd'].Typ = jdtBool then
+        begin
+          if JO.B['Prd'] then
+            cbPeriod.Value := 1;
         end
         else
           cbPeriod.Value := JO.I['Prd'];
       end;
     end;
+
     if FOwner then
       SetChk('Own', chkOwner);
-    // SetChk('SSum', chkSSum);
+
+    if JO.Contains('AFT') then
+    begin
+      if not JO['AFT'].IsNull then
+        lcbAllowFT.Value := JO.I['AFT'];
+    end;
 
     if JO.Contains('Nfmt') then
     begin
@@ -575,6 +665,17 @@ begin
         edtText1.Text := JO.s['Txt1'];
     end;
 
+    if JO.Contains('Txt2') then
+    begin
+      if not JO['Txt2'].IsNull then
+        edtText2.Text := JO.s['Txt2'];
+    end;
+
+    if JO.Contains('Txt3') then
+    begin
+      if not JO['Txt3'].IsNull then
+        edtText3.Text := JO.s['Txt3'];
+    end;
   finally
     JO.Free;
   end;
@@ -592,6 +693,8 @@ begin
       JO['SrvType'] := lcbSrvType.Value;
     if not lcbService.Text.IsEmpty then
       JO['Srv'] := lcbService.Value;
+    if not lcbServiceFrom.Text.IsEmpty then
+      JO['SrvFrm'] := lcbServiceFrom.Value;
     if not lcbOnOffSrv.Text.IsEmpty then
       JO['SrvOnOff'] := lcbOnOffSrv.Value;
     if not lcbSingleSrv.Text.IsEmpty then
@@ -626,12 +729,18 @@ begin
       JO.s['Hint'] := trim(edtHint.Text);
     if not edtText1.Text.IsEmpty then
       JO.s['Txt1'] := trim(edtText1.Text);
+    if not edtText2.Text.IsEmpty then
+      JO.s['Txt2'] := trim(edtText2.Text);
+    if not edtText3.Text.IsEmpty then
+      JO.s['Txt3'] := trim(edtText3.Text);
     if chkTask.Checked then
       JO.B['Tsk'] := chkTask.Checked;
     if not cbPeriod.Text.IsEmpty then
       JO.I['Prd'] := cbPeriod.Value;
     if FOwner and chkOwner.Checked then
       JO.B['Own'] := chkOwner.Checked;
+    if not lcbAllowFT.IsEmpty then
+      JO.I['AFT'] := lcbAllowFT.Value;
     // if chkSSum.Checked then JO.B['SSum'] := chkSSum.Checked;
 
     Result := JO.ToString
@@ -642,7 +751,7 @@ end;
 
 procedure TFileTypeForm.InitControls;
 var
-  i: Integer;
+  I: Integer;
 begin
   cbOnOff.Value := null;
   lcbSrvType.Value := null;
@@ -650,25 +759,28 @@ begin
   lcbRequest.Value := null;
   lcbTempl.Value := null;
   lcbSingleSrv.Value := null;
+  lcbAllowFT.Value := null;
   edtNameFmt.Text := '';
   edtHint.Text := '';
   edtText1.Text := '';
-  for i := 0 to pnlEdit.ComponentCount - 1 do
+  edtText2.Text := '';
+  edtText3.Text := '';
+  for I := 0 to pnlEdit.ComponentCount - 1 do
   begin
-    if pnlEdit.Components[i] is TDBCheckBoxEh then
-      (pnlEdit.Components[i] as TDBCheckBoxEh).Checked := False;
+    if pnlEdit.Components[I] is TDBCheckBoxEh then
+      (pnlEdit.Components[I] as TDBCheckBoxEh).Checked := False;
   end;
 end;
 
 procedure TFileTypeForm.SetCheckOwner;
 begin
-{
-  if FOwner then begin
+  {
+    if FOwner then begin
     if (not chkOwner.Checked) and (not chkPassport.Checked) then
-      chkOwner.Checked := true;
+    chkOwner.Checked := true;
     chkOwner.Enabled := chkPassport.Checked;
-  end;
-}
+    end;
+  }
 end;
 
 end.

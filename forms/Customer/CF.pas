@@ -209,6 +209,10 @@ type
     miOrderTP: TMenuItem;
     tmrSearch: TTimer;
     actCopyID: TAction;
+    actFrozenCols: TAction;
+    miFrozenCols: TMenuItem;
+    miFrozenCols1: TMenuItem;
+    miN58: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbgrdh1DblClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
@@ -286,6 +290,8 @@ type
     procedure lcbHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure actCopyIDExecute(Sender: TObject);
+    procedure actFrozenColsExecute(Sender: TObject);
+    procedure miN58Click(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -311,6 +317,7 @@ type
     FhasColConnected: Boolean;
     FWithOutSrvHL: Boolean;
     FWithOutSrvStyle: TColor;
+    FFrozencols: Integer;
     function GenerateFilter: String;
     function ReplaceFields(const str: string): string;
     procedure ShowPage(Page: TA4onPage);
@@ -347,6 +354,7 @@ type
     procedure ValidatePassport;
     procedure CopyOrderTP(const FromOrder: Integer; const ci: TCustomerInfo);
     procedure CloseDatasets;
+    procedure SetFrozen(const v: Integer);
   public
     constructor CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
     procedure SetDefaultFilter;
@@ -370,6 +378,7 @@ implementation
 
 uses
   System.DateUtils, System.StrUtils, Vcl.Clipbrd,
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase, OverbyteIcsTypes,
   AtrCommon, DM, MAIN, CustomerForma, DBGridEhFindDlgs, SelectColumnsForma, ExportSettingsForma, TextEditForma,
   SendMessagesForma,
   fs_iinterpreter, RecourseForma, RequestNewForma, AtrStrUtils, RxStrUtils, EhLibFIB, pFIBProps,
@@ -379,8 +388,7 @@ uses
   fmuCustomerDigit,
   fmuCustomerAppl, fmuCustomerCard, PaymentForma, CancelContractForma, SelectLetterTypeForma, CustomersFilter,
   ReportPreview,
-  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase;
+  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma;
 
 const
   cst_OneRecord: string = ' first 1 ';
@@ -581,13 +589,6 @@ begin
   begin
     AFont.Color := clHighlightText;
     Background := clHighlight;
-    // if FhasColConnected then
-    // begin
-    // if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value < 0) then
-    // begin
-    // AFont.Color := FWithOutSrvStyle;
-    // end;
-    // end;
   end
   else
   begin
@@ -618,17 +619,12 @@ begin
             AFont.Color := FgCustDiscontedWithMoney;
         end
         else
-        begin
           AFont.Color := FWithOutSrvStyle;
-        end;
       end;
     end;
 
-    if FHL_ROW then
-    begin
-      if (not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('ROW_HL_COLOR').IsNull) then
+    if FHL_ROW and (not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('ROW_HL_COLOR').IsNull) then
         Background := FHL_COLOR; // TColor($00FF7B9E);// Purple
-    end;
   end;
 end;
 
@@ -750,10 +746,8 @@ begin
   if UpdateTimer.Enabled then
     UpdateTimer.Enabled := False;
 
-  if actAddressSearch.Checked then
-    dmMain.SetIniValue('SHOWADDRESSFILTER', '1')
-  else
-    dmMain.SetIniValue('SHOWADDRESSFILTER', '0');
+  dmMain.SetIniValue('SHOWADDRESSFILTER', IfThen(actAddressSearch.Checked, '1', '0'));
+  dmMain.SetIniValue('CUSTGRIDFROZEN', FFrozencols.ToString);
 
   if (mtbPages.Active) and (mtbPages.RecordCount > 0) and (not mtbPages.FieldByName('ID').IsNull) then
     dmMain.SetIniValue('LASTPAGE', IntToStr(mtbPages['ID']));
@@ -1333,6 +1327,20 @@ begin
       ShowMessage(acts.Text);
   finally
     acts.Free;
+  end;
+end;
+
+procedure TCustomersForm.actFrozenColsExecute(Sender: TObject);
+var
+  q: string;
+  i: Integer;
+begin
+  q := FFrozencols.ToString;
+  if InputQuery('Закрепить столбцы', 'Количество', q) then
+  begin
+    if not TryStrToInt(q, i) then
+      i := 0;
+    SetFrozen(i);
   end;
 end;
 
@@ -1960,16 +1968,18 @@ begin
   if (Mask and clc_Lan) <> 0 then
   begin
     select := select + rsEOL +
-      ', l.ip, l.mac, l.port, le.name as LE_NAME, le.IP as LE_IP, le.MAC as LE_MAC, l.TAG, l.TAG_STR';
+      ', l.ip, l.mac, l.port, le.name as LE_NAME, le.IP as LE_IP, le.MAC as LE_MAC, l.TAG, l.TAG_STR, lb.Login, lb.Ip_Inet';
     from := from + rsEOL +
-      ' left outer join tv_lan l on (l.customer_id = c.customer_id) left outer join equipment le on (l.eq_id = le.eid) ';
+      ' left outer join tv_lan l on (l.customer_id = c.customer_id) '
+      + ' left outer join equipment le on (l.eq_id = le.eid) '
+      + ' left outer join Billing lb on (lb.Customer_Id = c.customer_id) ' ;
   end;
   if (Mask and clc_Atrib) <> 0 then
   begin
     select := select + rsEOL + ', ca.o_name as ca_name, ca.ca_value, ca.notice as ca_notice ';
     from := from + rsEOL +
       ' left outer join (select CA.CUSTOMER_ID, o.o_name, ca.ca_value, ca.notice from CUSTOMER_ATTRIBUTES CA ' +
-      '                  inner join OBJECTS o on (o.O_ID = CA.O_ID and o.O_TYPE = 4)) ca on (C.CUSTOMER_ID = CA.CUSTOMER_ID) ';
+      '   inner join OBJECTS o on (o.O_ID = CA.O_ID and o.O_TYPE = 4)) ca on (C.CUSTOMER_ID = CA.CUSTOMER_ID) ';
   end;
 
   if (Mask and clc_Nps) <> 0 then
@@ -2608,6 +2618,18 @@ begin
       Title.Caption := rsColumnLanTagStr;
       Title.TitleButton := True;
     end;
+    with dbgCustomers.Columns.Add do
+    begin
+      FieldName := 'Login';
+      Title.Caption := rsColumnVpnLogin;
+      Title.TitleButton := True;
+    end;
+    with dbgCustomers.Columns.Add do
+    begin
+      FieldName := 'Ip_Inet';
+      Title.Caption := rsColumnVpnIP;
+      Title.TitleButton := True;
+    end;
   end;
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
@@ -2664,7 +2686,7 @@ const
   fltr_1_1 = ' (1=1) ';
   function Del_1_1(const where_sql: String): String;
   begin
-    Result := ReplaceStr(where_sql, fltr_1_1 + ' and ', '');
+    Result := ReplaceStr(where_sql, fltr_1_1 + ' AND ', '');
     if Result <> ' (  (1=1)  ) ' then
       Result := ReplaceStr(Result, fltr_1_1, '');
   end;
@@ -2676,9 +2698,9 @@ const
     if dmMain.SuperMode >= 0 then
     begin
       if (dsFilter['SUPERMODE']) then
-        Result := ' and ( c.INVISIBLE = 1 ) '
+        Result := ' AND ( c.INVISIBLE = 1 ) '
       else if dmMain.SuperMode = 0 then
-        Result := ' and ( c.INVISIBLE = 0 ) ';
+        Result := ' AND ( c.INVISIBLE = 0 ) ';
     end;
   end;
 
@@ -2694,12 +2716,12 @@ const
     dsCustomers.ParamByName('from_add').value := '';
     tmpSQL := '';
 
-    if (dsFilter['SFLTR_TYPE'] > 0) and (not dsFilter.FieldByName('SFLTR_TEXT').IsNull) then
+    if (dsFilter['SFLTR_TYPE'] > 0) AND (not dsFilter.FieldByName('SFLTR_TEXT').IsNull) then
     begin
       s := dsFilter.FieldByName('SFLTR_TEXT').AsString;
       if s <> '' then
       begin
-        if (pos('%', s) > 0) or (pos('_', s) > 0) then
+        if (pos('%', s) > 0) OR (pos('_', s) > 0) then
           startSQL := 'like'
         else
           startSQL := '=';
@@ -2708,8 +2730,8 @@ const
         case dsFilter['SFLTR_TYPE'] of
           // Договор
           1:
-            tmpSQL := Format(' ((c.dogovor_no %s %s) or (exists(select ss.customer_id from subscr_serv ss ' +
-              ' where ss.contract %s %s and ss.customer_id = c.customer_id)))', [startSQL, s, startSQL, s]);
+            tmpSQL := Format(' ((c.dogovor_no %s %s) OR (exists(select ss.customer_id from subscr_serv ss ' +
+              ' where ss.contract %s %s AND ss.customer_id = c.customer_id)))', [startSQL, s, startSQL, s]);
           // Лицевой
           2:
             tmpSQL := Format(' (C.ACCOUNT_NO %s %s) ', [startSQL, s]);
@@ -2736,7 +2758,7 @@ const
               s := ReverseString(DigitsOnly(s));
               s := Copy(s, 0, 7);
               dsCustomers.ParamByName('from_add').value :=
-                ' inner join CUSTOMER_CONTACTS cc on ((c.customer_id = cc.customer_id) and (cc.cc_val_reverse starting with '''
+                ' inner join CUSTOMER_CONTACTS cc on ((c.customer_id = cc.customer_id) AND (cc.cc_val_reverse starting with '''
                 + s + ''')) ';
               tmpSQL := '';
               Exit;
@@ -2757,21 +2779,22 @@ const
           // десодер
           9:
             tmpSQL := Format
-              (' (exists(select 1 from Customer_Decoders cd where cd.Customer_Id = c.customer_id and cd.Decoder_N %s %s)) ',
+              (' (exists(select 1 from Customer_Decoders cd where cd.Customer_Id = c.customer_id AND cd.Decoder_N %s %s)) ',
               [startSQL, s]);
           // IP
           10:
-            tmpSQL := Format(' (exists(select 1 from Tv_Lan cd where cd.Customer_Id = c.customer_id and cd.Ip %s %s)) ',
-              [startSQL, s]);
+            tmpSQL := Format(' (exists(select 1 from Tv_Lan cd where cd.Customer_Id = c.customer_id AND cd.Ip %s %s) ' +
+              ' or exists(select 1 from billing b where b.Customer_Id = c.customer_id AND b.Ip_Inet %s %s)) ',
+              [startSQL, s, startSQL, s]);
           // MAC
           11:
             tmpSQL := Format
-              (' (exists(select 1 from Tv_Lan cd where cd.Customer_Id = c.customer_id and cd.MAC %s %s)) ',
+              (' (exists(select 1 from Tv_Lan cd where cd.Customer_Id = c.customer_id AND cd.MAC %s %s)) ',
               [startSQL, s]);
           // тюнер
           12:
             tmpSQL := Format
-              (' (exists(select 1 from Customer_Decoders cd where cd.Customer_Id = c.customer_id and cd.Stb_N %s %s)) ',
+              (' (exists(select 1 from Customer_Decoders cd where cd.Customer_Id = c.customer_id AND cd.Stb_N %s %s)) ',
               [startSQL, s]);
           // 13: Street_id
           // 14: house_id
@@ -2785,30 +2808,29 @@ const
             else
               tmpSQL := ' (C.Jur_Inn = ''' + dsFilter.FieldByName('SFLTR_TEXT').AsString + ''') ';
         end;
-
-        if tmpSQL <> '' then
-        begin
-          Result := tmpSQL;
-
-          // Exit;
-        end;
       end;
     end;
 
-    // tmpSQL := '';
     startSQL := fltr_1_1;
+
     if tmpSQL <> '' then
-      startSQL := ' ( ' + tmpSQL + ' ) ';
+      tmpSQL := ' ( ' + tmpSQL + ' ) '
+    else
+      tmpSQL := fltr_1_1;
 
     // Признак разрыва договора
-    tmpSQL := '';
     if (dsFilter['VALID_TO_SGN'] = 1) then
     begin
-      tmpSQL := const_default_filter;
-      if (dsFilter['VALID_TO_ON'] = 1) and (dsFilter['VALID_TO_OFF'] = 1) then
-        tmpSQL := fltr_1_1
+      s := const_default_filter;
+      if (dsFilter['VALID_TO_ON'] = 1) AND (dsFilter['VALID_TO_OFF'] = 1) then
+        s := fltr_1_1
       else if (dsFilter['VALID_TO_OFF'] = 1) then
-        tmpSQL := ' (C.Valid_To <= current_date) ';
+        s := ' (C.Valid_To <= current_date) ';
+
+      if tmpSQL <> '' then
+        tmpSQL := tmpSQL + ' AND ' + s
+      else
+        tmpSQL := s;
     end;
 
     // Фильтр по сумме долга
@@ -2817,35 +2839,35 @@ const
       if (not dsFilter.FieldByName('MONTH').IsNull) then
       begin
         if dsFilter['PREPAY'] then
-          tmpSQL := tmpSQL + ' and ((c.Debt_Sum - coalesce(c.PREPAY,0)) '
+          tmpSQL := tmpSQL + ' AND ((c.Debt_Sum - coalesce(c.PREPAY,0)) '
         else
-          tmpSQL := tmpSQL + ' and (c.Debt_Sum ';
+          tmpSQL := tmpSQL + ' AND (c.Debt_Sum ';
         // Ошибка в том что учитывало и отключенные услуги
         // tmpSQL := tmpSQL + ' > (' + IntToStr(dsFilter['MONTH']) +
         // ' * (select sum(iif(pt.Tarif_Sum is null, t.Tarif_Sum * coalesce(k.Factor_Value, 1), pt.Tarif_Sum)) ' + rsEOL
-        // + ' from Subscr_hist sh left outer join Tarif t on (t.Service_Id = sh.Serv_Id and current_date between t.Date_From and t.Date_To) '
-        // + rsEOL + '  left outer join Personal_Tarif pt on (pt.Service_Id = sh.Serv_Id and pt.Customer_Id = sh.Customer_Id and current_date between pt.Date_From and pt.Date_To) '
-        // + rsEOL + '  left outer join Discount_Factor k on (((k.Serv_Id = sh.Serv_Id) or (k.Serv_Id = -1)) and k.Customer_Id = sh.Customer_Id and current_date between k.Date_From and k.Date_To) '
+        // + ' from Subscr_hist sh left outer join Tarif t on (t.Service_Id = sh.Serv_Id AND current_date between t.Date_From AND t.Date_To) '
+        // + rsEOL + '  left outer join Personal_Tarif pt on (pt.Service_Id = sh.Serv_Id AND pt.Customer_Id = sh.Customer_Id AND current_date between pt.Date_From AND pt.Date_To) '
+        // + rsEOL + '  left outer join Discount_Factor k on (((k.Serv_Id = sh.Serv_Id) OR (k.Serv_Id = -1)) AND k.Customer_Id = sh.Customer_Id AND current_date between k.Date_From AND k.Date_To) '
         // + rsEOL + ' where sh.customer_id = c.customer_id))) ' + rsEOL;
 
         tmpSQL := tmpSQL + ' > coalesce((select sum(f.Fee) from Monthly_Fee f ' +
-          ' inner join services sr on (sr.Service_Id = f.Service_Id and sr.Srv_Type_Id = 0) ' +
-          ' where f.Customer_Id = c.Customer_Id and f.Month_Id >=' + ' DateAdd(month, ' +
+          ' inner join services sr on (sr.Service_Id = f.Service_Id AND sr.Srv_Type_Id = 0) ' +
+          ' where f.Customer_Id = c.Customer_Id AND f.Month_Id >=' + ' DateAdd(month, ' +
           IntToStr(-1 * (dsFilter['MONTH'] - 1)) +
           ', (current_date - extract(day from current_date) + 1)) having sum(f.Fee) > 0 ), ' +
           IntToStr(dsFilter['MONTH']) +
           '*(select min(t.Tarif_Sum) from services sr inner join Tarif t on (sr.Service_Id = t.Service_Id) ' +
-          ' inner join subscr_serv ss on (ss.serv_id = sr.service_id and ss.state_sgn = 1 and c.customer_id = ss.customer_id) '
-          + ' where sr.Srv_Type_Id = 0 and t.Tarif_Sum <> 0 and current_date between t.Date_From and t.Date_To)) ' + //
-          ' and c.Debt_Sum > 0 )'
+          ' inner join subscr_serv ss on (ss.serv_id = sr.service_id AND ss.state_sgn = 1 AND c.customer_id = ss.customer_id) '
+          + ' where sr.Srv_Type_Id = 0 AND t.Tarif_Sum <> 0 AND current_date between t.Date_From AND t.Date_To)) ' + //
+          ' AND c.Debt_Sum > 0 )'
       end
       else
       begin
-        if (dsFilter['DEBT_SIGN'] < 6) and (not dsFilter.FieldByName('DEBT_SUM').IsNull) then
+        if (dsFilter['DEBT_SIGN'] < 6) AND (not dsFilter.FieldByName('DEBT_SUM').IsNull) then
         begin
-          tmpSQL := tmpSQL + ' and ((C.Debt_Sum ';
+          tmpSQL := tmpSQL + ' AND ((C.Debt_Sum ';
           if (dsFilter.FieldByName('DebtMode').AsInteger = 1) then
-            tmpSQL := tmpSQL + ' - (select sum(f.fee) from monthly_fee f where f.customer_id = c.customer_id and ' +
+            tmpSQL := tmpSQL + ' - (select sum(f.fee) from monthly_fee f where f.customer_id = c.customer_id AND ' +
               rsEOL + ' f.month_id >= (select s.var_value from settings s where s.var_name = ''CURRENT_DATE'') )' +
               rsEOL;
           tmpSQL := tmpSQL + ')';
@@ -2882,12 +2904,12 @@ const
         end
         else
         begin
-          if (Not dsFilter.FieldByName('DEBT_SUM').IsNull) and (Not dsFilter.FieldByName('DebtTo').IsNull) then
+          if (Not dsFilter.FieldByName('DEBT_SUM').IsNull) AND (Not dsFilter.FieldByName('DebtTo').IsNull) then
           begin
-            tmpSQL := tmpSQL + ' and ((C.Debt_Sum';
+            tmpSQL := tmpSQL + ' AND ((C.Debt_Sum';
 
             if (dsFilter.FieldByName('DebtMode').AsInteger = 1) then
-              tmpSQL := tmpSQL + ' - (select sum(f.fee) from monthly_fee f where f.customer_id = c.customer_id and ' +
+              tmpSQL := tmpSQL + ' - (select sum(f.fee) from monthly_fee f where f.customer_id = c.customer_id AND ' +
                 rsEOL + ' f.month_id >= (select s.var_value from settings s where s.var_name = ''CURRENT_DATE'') )' +
                 rsEOL;
 
@@ -2895,10 +2917,10 @@ const
 
             if (SaldoSign = 1) then
               tmpSQL := tmpSQL + FloatToStr((SaldoSign * dsFilter.FieldByName('DEBT_SUM').AsFloat), AFormatSettings) +
-                ' and ' + FloatToStr((SaldoSign * dsFilter.FieldByName('DebtTo').AsFloat), AFormatSettings) + ')'
+                ' AND ' + FloatToStr((SaldoSign * dsFilter.FieldByName('DebtTo').AsFloat), AFormatSettings) + ')'
             else
               tmpSQL := tmpSQL + FloatToStr((SaldoSign * dsFilter.FieldByName('DebtTo').AsFloat), AFormatSettings) +
-                ' and ' + FloatToStr((SaldoSign * dsFilter.FieldByName('DEBT_SUM').AsFloat), AFormatSettings) + ')';
+                ' AND ' + FloatToStr((SaldoSign * dsFilter.FieldByName('DEBT_SUM').AsFloat), AFormatSettings) + ')';
           end;
         end;
       end;
@@ -2908,54 +2930,54 @@ const
     if (dsFilter['CHECK_ADRESS'] = 1) then
     begin
       if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
-        tmpSQL := tmpSQL + Format(' and (C.House_Id = %d) ', [dsFilter.FieldByName('HOUSE_ID').AsInteger])
+        tmpSQL := tmpSQL + Format(' AND (C.House_Id = %d) ', [dsFilter.FieldByName('HOUSE_ID').AsInteger])
       else if (Not dsFilter.FieldByName('Street_Id').IsNull) then
-        tmpSQL := tmpSQL + Format(' and (S.STREET_ID = %d) ', [dsFilter.FieldByName('Street_Id').AsInteger]);
+        tmpSQL := tmpSQL + Format(' AND (S.STREET_ID = %d) ', [dsFilter.FieldByName('Street_Id').AsInteger]);
 
       if (Not dsFilter.FieldByName('SUBAREA_ID').IsNull) then
-        tmpSQL := tmpSQL + Format(' and (h.SUBAREA_ID  = %d) ', [dsFilter.FieldByName('SUBAREA_ID').AsInteger]);
+        tmpSQL := tmpSQL + Format(' AND (h.SUBAREA_ID  = %d) ', [dsFilter.FieldByName('SUBAREA_ID').AsInteger]);
 
       if (Not dsFilter.FieldByName('AREA_ID').IsNull) then
-        tmpSQL := tmpSQL + Format(' and ( S.AREA_ID = %s) ', [dsFilter.FieldByName('AREA_ID').AsString]);
+        tmpSQL := tmpSQL + Format(' AND ( S.AREA_ID = %s) ', [dsFilter.FieldByName('AREA_ID').AsString]);
 
-      if (not dsFilter.FieldByName('FLAT_NO').IsNull) and (dsFilter['FLAT_NO'] <> '') then
+      if (not dsFilter.FieldByName('FLAT_NO').IsNull) AND (dsFilter['FLAT_NO'] <> '') then
       begin
-        tmpSQL := tmpSQL + Format(' and (C.FLAT_NO = ''%s'') ', [dsFilter.FieldByName('FLAT_NO').AsString]);
+        tmpSQL := tmpSQL + Format(' AND (C.FLAT_NO = ''%s'') ', [dsFilter.FieldByName('FLAT_NO').AsString]);
       end;
 
       if (Not dsFilter.FieldByName('ORGZ_ID').IsNull) then
       begin
-        tmpSQL := tmpSQL + Format(' and ( coalesce(c.ORG_Id, h.ORG_ID) = %d ) ',
+        tmpSQL := tmpSQL + Format(' AND ( coalesce(c.ORG_Id, h.ORG_ID) = %d ) ',
           [dsFilter.FieldByName('ORGZ_ID').AsInteger]);
       end;
 
       if (not dsFilter.FieldByName('WORKGROUP').IsNull) then
-        tmpSQL := tmpSQL + Format(' and (h.wg_id = %d) ', [dsFilter.FieldByName('WORKGROUP').AsInteger]);
+        tmpSQL := tmpSQL + Format(' AND (h.wg_id = %d) ', [dsFilter.FieldByName('WORKGROUP').AsInteger]);
 
       if (not dsFilter.FieldByName('WORKAREA').IsNull) then
         tmpSQL := tmpSQL +
-          Format(' and (exists(select w.wg_id from workgroups w where h.wg_id = w.wg_id and w.wa_id = %d))',
+          Format(' AND (exists(select w.wg_id from workgroups w where h.wg_id = w.wg_id AND w.wa_id = %d))',
           [dsFilter.FieldByName('WORKAREA').AsInteger]);
 
       if (not dsFilter.FieldByName('MAINHEAD').IsNull) then
-        tmpSQL := tmpSQL + Format(' and (h.HEADEND_ID = %d) ', [dsFilter.FieldByName('MAINHEAD').AsInteger]);
+        tmpSQL := tmpSQL + Format(' AND (h.HEADEND_ID = %d) ', [dsFilter.FieldByName('MAINHEAD').AsInteger]);
     end;
 
     // еще не подключились
     // if (dsFilter['SUBSCR_HIST_SGN'] = 1)
-    // then  tmpSQL:=tmpSQL+' and (not exists (select sh.Customer_Id from Subscr_serv sh where sh.Customer_Id = C.Customer_Id))';
+    // then  tmpSQL:=tmpSQL+' AND (not exists (select sh.Customer_Id from Subscr_serv sh where sh.Customer_Id = C.Customer_Id))';
 
     // с непустым примечанием
     // if (dsFilter['NOTICE_SGN'] = 1)
-    // then tmpSQL:=tmpSQL+' and (trim(coalesce(c.notice,'''')) <> '''')';
+    // then tmpSQL:=tmpSQL+' AND (trim(coalesce(c.notice,'''')) <> '''')';
 
     // юр. лица
     if (dsFilter.FieldByName('JURIDICAL').AsInteger in [0, 1]) then
-      tmpSQL := tmpSQL + Format(' and (c.juridical = %d) ', [dsFilter.FieldByName('JURIDICAL').AsInteger]);
+      tmpSQL := tmpSQL + Format(' AND (c.juridical = %d) ', [dsFilter.FieldByName('JURIDICAL').AsInteger]);
 
     // ручное управление
     if ((not dsFilter.FieldByName('HANDCONTROL').IsNull)) then
-      tmpSQL := tmpSQL + Format(' and (c.HAND_CONTROL = %d) ', [dsFilter.FieldByName('HANDCONTROL').AsInteger]);
+      tmpSQL := tmpSQL + Format(' AND (c.HAND_CONTROL = %d) ', [dsFilter.FieldByName('HANDCONTROL').AsInteger]);
 
     // установлен атрибут
     if (not dsFilter.FieldByName('CUST_ATTRIBUTE').IsNull) then
@@ -2973,7 +2995,7 @@ const
           s := ' = ''' + s + '''';
       end;
 
-      tmpSQL := tmpSQL + ' and (';
+      tmpSQL := tmpSQL + ' AND (';
 
       if (dsFilter.FieldByName('CUST_NOT_ATTRIBUTE').AsInteger = 1) then
         tmpSQL := tmpSQL + ' not ';
@@ -2985,7 +3007,7 @@ const
               'exists (select House_Id from Houses_Attributes CA WHERE CA.House_Id = C.House_Id AND CA.O_ID =' +
               dsFilter.FieldByName('CUST_ATTRIBUTE').AsString;
             if s <> '' then
-              tmpSQL := tmpSQL + ' and CA.Ha_Value ' + s;
+              tmpSQL := tmpSQL + ' AND CA.Ha_Value ' + s;
           end;
         5:
           begin // Сетевого оборудования атрибуты
@@ -2993,7 +3015,7 @@ const
               'exists ( select O_Id from Equipment_Attributes CA inner join Tv_Lan t on (ca.Eid = t.Eq_Id) ' +
               ' WHERE t.Customer_Id = C.Customer_Id AND CA.O_ID =' + dsFilter.FieldByName('CUST_ATTRIBUTE').AsString;
             if s <> '' then
-              tmpSQL := tmpSQL + ' and CA.CA_VALUE ' + s;
+              tmpSQL := tmpSQL + ' AND CA.CA_VALUE ' + s;
           end;
         6:
           begin // ТВ оборудования атрибуты
@@ -3003,19 +3025,19 @@ const
           begin // Узлов атрибуты
             tmpSQL := tmpSQL +
               'exists ( select O_Id from Nodes_Attributes CA inner join houseflats t on (ca.Node_Id = t.Node_Id) ' +
-              ' WHERE t.House_Id = C.House_Id and t.Flat_No = c.Flat_No AND CA.O_ID = ' +
+              ' WHERE t.House_Id = C.House_Id AND t.Flat_No = c.Flat_No AND CA.O_ID = ' +
               dsFilter.FieldByName('CUST_ATTRIBUTE').AsString;
             if s <> '' then
-              tmpSQL := tmpSQL + ' and CA.NA_VALUE ' + s;
+              tmpSQL := tmpSQL + ' AND CA.NA_VALUE ' + s;
           end;
         25:
           begin // Услуг атрибуты
             tmpSQL := tmpSQL +
               'exists ( select O_Id from Services_Attributes CA inner join subscr_hist t on (ca.Service_Id = t.Serv_Id) '
-              + ' WHERE t.Customer_Id = C.Customer_Id and current_date between t.Date_From and t.Date_To AND CA.O_ID =  '
+              + ' WHERE t.Customer_Id = C.Customer_Id AND current_date between t.Date_From AND t.Date_To AND CA.O_ID =  '
               + dsFilter.FieldByName('CUST_ATTRIBUTE').AsString;
             if s <> '' then
-              tmpSQL := tmpSQL + ' and CA.SA_Value ' + s;
+              tmpSQL := tmpSQL + ' AND CA.SA_Value ' + s;
           end;
       else
         // атрибут абонента
@@ -3023,7 +3045,7 @@ const
           'exists (SELECT CA.CUSTOMER_ID FROM CUSTOMER_ATTRIBUTES CA WHERE CA.Customer_Id = C.Customer_Id AND CA.O_ID = '
           + dsFilter.FieldByName('CUST_ATTRIBUTE').AsString;
         if s <> '' then
-          tmpSQL := tmpSQL + ' and CA.CA_VALUE ' + s;
+          tmpSQL := tmpSQL + ' AND CA.CA_VALUE ' + s;
       end;
 
       tmpSQL := tmpSQL + ' ))';
@@ -3032,13 +3054,13 @@ const
     // установлен тип файла
     if (not dsFilter.FieldByName('FILE_TYPE').IsNull) then
     begin
-      tmpSQL := tmpSQL + ' and (';
+      tmpSQL := tmpSQL + ' AND (';
 
       if (dsFilter.FieldByName('FILE_TYPE_EXCLUDE').AsInteger = 1) then
         tmpSQL := tmpSQL + ' not ';
 
       tmpSQL := tmpSQL +
-        'exists (select cf.Customer_Id from Customer_Files cf where cf.Customer_Id = c.Customer_Id and cf.Cf_Type = ' +
+        'exists (select cf.Customer_Id from Customer_Files cf where cf.Customer_Id = c.Customer_Id AND cf.Cf_Type = ' +
         dsFilter.FieldByName('FILE_TYPE').AsString;
 
       tmpSQL := tmpSQL + ' ))';
@@ -3047,11 +3069,11 @@ const
     // имеющие скидку
     if (dsFilter['DISCOUNT_FACTOR_SGN'] = 1) then
     begin
-      tmpSQL := tmpSQL + ' and (exists (select D.Customer_Id from  Discount_Factor D' +
-        ' where C.Customer_Id = D.Customer_Id and D.Factor_Value <> 1';
+      tmpSQL := tmpSQL + ' AND (exists (select D.Customer_Id from  Discount_Factor D' +
+        ' where C.Customer_Id = D.Customer_Id AND D.Factor_Value <> 1';
       if (not dsFilter.FieldByName('DISCOUNT_DATE').IsNull) then
-        tmpSQL := tmpSQL + ' and ''' + FormatDateTime('yyyy-mm-dd', dsFilter['DISCOUNT_DATE']) +
-          ''' between d.Date_From and d.Date_To ';
+        tmpSQL := tmpSQL + ' AND ''' + FormatDateTime('yyyy-mm-dd', dsFilter['DISCOUNT_DATE']) +
+          ''' between d.Date_From AND d.Date_To ';
 
       tmpSQL := tmpSQL + '))';
     end;
@@ -3059,11 +3081,11 @@ const
     // имеющие персональный тариф
     if (dsFilter['PERS_TARIF'] = 1) then
     begin
-      tmpSQL := tmpSQL + ' and (exists (select D.Customer_Id from PERSONAL_TARIF D' +
+      tmpSQL := tmpSQL + ' AND (exists (select D.Customer_Id from PERSONAL_TARIF D' +
         ' where C.Customer_Id = D.Customer_Id';
       if (not dsFilter.FieldByName('PERS_TARIF_DATE').IsNull) then
-        tmpSQL := tmpSQL + ' and ''' + FormatDateTime('yyyy-mm-dd', dsFilter['PERS_TARIF_DATE']) +
-          ''' between d.Date_From and d.Date_To ';
+        tmpSQL := tmpSQL + ' AND ''' + FormatDateTime('yyyy-mm-dd', dsFilter['PERS_TARIF_DATE']) +
+          ''' between d.Date_From AND d.Date_To ';
 
       tmpSQL := tmpSQL + '))';
 
@@ -3071,13 +3093,13 @@ const
 
     // дата активизации меньше даты договора
     if (dsFilter['INVALID_CONTRACT_DATE'] = 1) then
-      tmpSQL := tmpSQL + ' and (C.CONTRACT_DATE > C.ACTIVIZ_DATE)';
+      tmpSQL := tmpSQL + ' AND (C.CONTRACT_DATE > C.ACTIVIZ_DATE)';
 
     // повторяющиеся адреса
     if (dsFilter['DoubleAddress'] = 1) then
-      tmpSQL := tmpSQL + 'and exists( select r.HOUSE_ID from customer r' + rsEOL +
-        'where r.HOUSE_ID = c.HOUSE_ID and (r.VALID_TO > CURRENT_DATE) or (r.VALID_TO is null)' + rsEOL +
-        'group by r.HOUSE_ID, r.FLAT_NO' + rsEOL + 'HAVING Count(*)>1 and c.FLAT_NO = r.FLAT_NO)';
+      tmpSQL := tmpSQL + ' AND exists( select r.HOUSE_ID from customer r' + rsEOL +
+        'where r.HOUSE_ID = c.HOUSE_ID AND (r.VALID_TO > CURRENT_DATE) OR (r.VALID_TO is null)' + rsEOL +
+        'group by r.HOUSE_ID, r.FLAT_NO' + rsEOL + 'HAVING Count(*)>1 AND c.FLAT_NO = r.FLAT_NO)';
 
     // состояние подключения
     if (dsFilter['STATE_1'] > 0) then
@@ -3087,21 +3109,21 @@ const
       begin
         if (dsFilter['serv_id'] >= 0) then
         begin
-          tmpSQL := tmpSQL + ' and (exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
+          tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
             dsFilter.FieldByName('serv_id').AsString;
-          tmpSQL := tmpSQL + ' and c.customer_id = ss.customer_id )) ';
+          tmpSQL := tmpSQL + ' AND c.customer_id = ss.customer_id )) ';
         end
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
           tmpSQL := tmpSQL +
-            ' and (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+            ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
             + ' where st.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString +
-            ' and c.customer_id = ss.customer_id )) ';
+            ' AND c.customer_id = ss.customer_id )) ';
         end
         else if dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
           tmpSQL := tmpSQL +
-            ' and (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+            ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
             + ' where c.customer_id = ss.customer_id )) ';
         end;
       end;
@@ -3113,39 +3135,39 @@ const
         if (dsFilter['serv_id'] >= 0) then
         begin
 
-          // tmpSQL := tmpSQL + ' and (exists(select ss.customer_id from subscr_serv ss ' +
-          // ' where ss.state_sgn = 1 and ss.serv_id = ' + dsFilter.FieldByName('serv_id').AsString +
-          // ' and c.customer_id = ss.customer_id )) ';
+          // tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' +
+          // ' where ss.state_sgn = 1 AND ss.serv_id = ' + dsFilter.FieldByName('serv_id').AsString +
+          // ' AND c.customer_id = ss.customer_id )) ';
 
           // правильная фильтрация подключенных абонентов
-          // tmpSQL := tmpSQL + ' and (exists(select ss.customer_id from Subscr_Hist ss ' +
+          // tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from Subscr_Hist ss ' +
           // ' inner join services s on (s.Service_Id = ss.Serv_Id)' + #13#10 +
           // '  where ss.Customer_Id = c.customer_id' + #13#10 +
-          // '        and ss.serv_id = ' + dsFilter.FieldByName('serv_id').AsString +
-          // '        and ss.Date_From <= current_date' + #13#10 +
-          // '        and ((s.CALC_TYPE <> 5 and ss.date_to > dateadd(day, -1, current_date))' + #13#10 +
-          // '          or (s.CALC_TYPE = 5 and ss.date_to >= dateadd(day, -1, current_date)))))';
+          // '        AND ss.serv_id = ' + dsFilter.FieldByName('serv_id').AsString +
+          // '        AND ss.Date_From <= current_date' + #13#10 +
+          // '        AND ((s.CALC_TYPE <> 5 AND ss.date_to > dateadd(day, -1, current_date))' + #13#10 +
+          // '          OR (s.CALC_TYPE = 5 AND ss.date_to >= dateadd(day, -1, current_date)))))';
 
           // и короткий вариант
-          tmpSQL := tmpSQL + ' and (exists(select Srv_On from Check_Srv_Active(c.Customer_Id, ' +
+          tmpSQL := tmpSQL + ' AND (exists(select Srv_On from Check_Srv_Active(c.Customer_Id, ' +
             dsFilter.FieldByName('serv_id').AsString + ') where Srv_On = 1))';
         end
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
           tmpSQL := tmpSQL +
-            ' and (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
-            + ' where ss.state_sgn = 1 and coalesce(st.business_type,0) = ' + dsFilter.FieldByName('SRVTYPES').AsString
-            + ' and c.customer_id = ss.customer_id )) ';
+            ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+            + ' where ss.state_sgn = 1 AND coalesce(st.business_type,0) = ' + dsFilter.FieldByName('SRVTYPES').AsString
+            + ' AND c.customer_id = ss.customer_id )) ';
         end
         else
         begin
           tmpSQL := tmpSQL +
-            ' and (exists(select Srv_On from Check_Srv_Active(c.Customer_Id, null) where Srv_On = 1)) ';
+            ' AND (exists(select Srv_On from Check_Srv_Active(c.Customer_Id, null) where Srv_On = 1)) ';
         end;
       end;
 
       // 8. По заявлению и неуплату
-      if (dsFilter['STATE_1'] = 3) or (dsFilter['STATE_1'] = 4) or (dsFilter['STATE_1'] = 8) then
+      if (dsFilter['STATE_1'] = 3) OR (dsFilter['STATE_1'] = 4) OR (dsFilter['STATE_1'] = 8) then
       begin
         case dsFilter['STATE_1'] of
           3:
@@ -3156,31 +3178,31 @@ const
           st := ' in (5, 4) ';
         end;
 
-        tmpSQL := tmpSQL + ' and ( exists (SELECT sh.CUSTOMER_ID' + rsEOL + ' FROM SUBSCR_HIST sh where ' +
+        tmpSQL := tmpSQL + ' AND ( exists (SELECT sh.CUSTOMER_ID' + rsEOL + ' FROM SUBSCR_HIST sh where ' +
           ' sh.DATE_TO = (select max(h.DATE_TO) FROM SUBSCR_HIST h inner join SERVICES S on (h.serv_id = s.service_id) '
           + ' where sh.CUSTOMER_ID = h.CUSTOMER_ID ';
 
         if (dsFilter['SERV_ID'] >= 0) then
-          tmpSQL := tmpSQL + ' and h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString
+          tmpSQL := tmpSQL + ' AND h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString
         else
         begin
           if not dsFilter.FieldByName('SRVTYPES').IsNull then
-            tmpSQL := tmpSQL + ' and s.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString;
+            tmpSQL := tmpSQL + ' AND s.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString;
         end;
 
         tmpSQL := tmpSQL +
-          ') and exists(select SL.CHILD from SERVICES_LINKS SL inner join SERVICES S on (S.SERVICE_ID = SL.PARENT) ' +
+          ') AND exists(select SL.CHILD from SERVICES_LINKS SL inner join SERVICES S on (S.SERVICE_ID = SL.PARENT) ' +
           ' where SL.LINK_TYPE ' + st;
 
         if (dsFilter['SERV_ID'] >= 0) then
-          tmpSQL := tmpSQL + ' and Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString
+          tmpSQL := tmpSQL + ' AND Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString
         else
         begin
           if not dsFilter.FieldByName('SRVTYPES').IsNull then
-            tmpSQL := tmpSQL + ' and s.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString;
+            tmpSQL := tmpSQL + ' AND s.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString;
         end;
 
-        tmpSQL := tmpSQL + ' and SH.DISACT_SERV_ID = SL.CHILD) and sh.Customer_id = c.Customer_id)) ';
+        tmpSQL := tmpSQL + ' AND SH.DISACT_SERV_ID = SL.CHILD) AND sh.Customer_id = c.Customer_id)) ';
       end;
 
       // 5. Не предоставлялась
@@ -3188,47 +3210,47 @@ const
       begin
         if (dsFilter['serv_id'] >= 0) then
         begin
-          tmpSQL := tmpSQL + ' and (not Exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
-            dsFilter.FieldByName('serv_id').AsString + ' and ss.Customer_id = c.Customer_id )) ';
+          tmpSQL := tmpSQL + ' AND (not Exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
+            dsFilter.FieldByName('serv_id').AsString + ' AND ss.Customer_id = c.Customer_id )) ';
         end
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
           tmpSQL := tmpSQL +
-            ' and (not exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+            ' AND (not exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
             + ' where coalesce(st.business_type,0) = ' + dsFilter.FieldByName('SRVTYPES').AsString +
-            ' and ss.Customer_id = c.Customer_id)) ';
+            ' AND ss.Customer_id = c.Customer_id)) ';
         end
         else
           tmpSQL := tmpSQL +
-            ' and (not exists(select ss.customer_id from subscr_serv ss where ss.Customer_id = c.Customer_id )) ';
+            ' AND (not exists(select ss.customer_id from subscr_serv ss where ss.Customer_id = c.Customer_id )) ';
       end;
 
       // 6. Автоблокировка
       if (dsFilter['STATE_1'] = 6) then
       begin
-        tmpSQL := tmpSQL + ' and ( exists (select ss.Customer_Id from subscr_serv ss ' +
+        tmpSQL := tmpSQL + ' AND ( exists (select ss.Customer_Id from subscr_serv ss ' +
           '     where ss.Customer_Id = c.Customer_Id ' +
-          '       and ss.State_Srv = -3 and ss.State_Date <= current_date ';
+          '       AND ss.State_Srv = -3 AND ss.State_Date <= current_date ';
 
         if not dsFilter.FieldByName('serv_id').IsNull then
-          tmpSQL := tmpSQL + Format(' and ss.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
+          tmpSQL := tmpSQL + Format(' AND ss.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
           tmpSQL := tmpSQL +
-            Format(' and (exists(select si.Service_Id from services si where si.Service_Id = ss.Serv_Id and si.business_type = %s))',
+            Format(' AND (exists(select si.Service_Id from services si where si.Service_Id = ss.Serv_Id AND si.business_type = %s))',
             [dsFilter.FieldByName('SRVTYPES').AsString]);
 
-        tmpSQL := tmpSQL + ') or ' +
+        tmpSQL := tmpSQL + ') OR ' +
           ' exists ( select ab.Customer_Id from subscr_hist ab where ab.Customer_Id = c.customer_id ' +
-          '   and ab.Disact_Serv_Id = -3 and (ab.Date_To + 0) < current_date' +
-          '   and (not exists(select o.Customer_Id from Subscr_Hist o ' +
-          '      where o.Customer_Id = ab.Customer_Id and o.Serv_Id = ab.Serv_Id ' +
-          '        and o.Date_From > ab.Date_To)) ';
+          '   AND ab.Disact_Serv_Id = -3 AND (ab.Date_To + 0) < current_date' +
+          '   AND (not exists(select o.Customer_Id from Subscr_Hist o ' +
+          '      where o.Customer_Id = ab.Customer_Id AND o.Serv_Id = ab.Serv_Id ' +
+          '        AND o.Date_From > ab.Date_To)) ';
 
         if not dsFilter.FieldByName('serv_id').IsNull then
-          tmpSQL := tmpSQL + Format(' and ab.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
+          tmpSQL := tmpSQL + Format(' AND ab.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
           tmpSQL := tmpSQL +
-            Format(' and (exists(select si.Service_Id from services si where si.Service_Id = ab.Serv_Id and si.business_type = %s))',
+            Format(' AND (exists(select si.Service_Id from services si where si.Service_Id = ab.Serv_Id AND si.business_type = %s))',
             [dsFilter.FieldByName('SRVTYPES').AsString]);
         tmpSQL := tmpSQL + ')) ';
       end;
@@ -3236,13 +3258,13 @@ const
       // 7. Снятие блокировки
       if (dsFilter['STATE_1'] = 7) then
       begin
-        tmpSQL := tmpSQL + ' and (Exists(select ss.customer_id from subscr_serv ss ' +
-          ' where ss.State_Srv = -2 and ss.Customer_id = c.Customer_id ';
+        tmpSQL := tmpSQL + ' AND (Exists(select ss.customer_id from subscr_serv ss ' +
+          ' where ss.State_Srv = -2 AND ss.Customer_id = c.Customer_id ';
 
         if not dsFilter.FieldByName('serv_id').IsNull then
-          tmpSQL := tmpSQL + Format(' and ss.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
+          tmpSQL := tmpSQL + Format(' AND ss.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
-          tmpSQL := tmpSQL + Format(' and (exists(select si.Service_Id from services si where si.business_type = %s))',
+          tmpSQL := tmpSQL + Format(' AND (exists(select si.Service_Id from services si where si.business_type = %s))',
             [dsFilter.FieldByName('SRVTYPES').AsString]);
 
         tmpSQL := tmpSQL + ')) ';
@@ -3254,37 +3276,37 @@ const
         if not dsFilter.FieldByName('serv_id').IsNull then
         begin
           tmpSQL := tmpSQL +
-          // Format(' and (%d = (select list(ss.Serv_Id) from Subscr_Serv ss where ss.State_Sgn = 1 and ss.Customer_Id = c.customer_id)) ',
+          // Format(' AND (%d = (select list(ss.Serv_Id) from Subscr_Serv ss where ss.State_Sgn = 1 AND ss.Customer_Id = c.customer_id)) ',
           // [dsFilter.FieldByName('serv_id').AsInteger]);
-            Format(' and (exists(select ss.Serv_Id from Subscr_Serv ss ' +
-            ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id = %d) ' +
-            ' and (not (exists(select ss.Serv_Id from Subscr_Serv ss ' +
-            ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id <> %d)))) ',
+            Format(' AND (exists(select ss.Serv_Id from Subscr_Serv ss ' +
+            ' where ss.Customer_Id = c.Customer_Id AND ss.State_Sgn = 1 AND ss.Serv_Id = %d) ' +
+            ' AND (not (exists(select ss.Serv_Id from Subscr_Serv ss ' +
+            ' where ss.Customer_Id = c.Customer_Id AND ss.State_Sgn = 1 AND ss.Serv_Id <> %d)))) ',
             [dsFilter.FieldByName('serv_id').AsInteger, dsFilter.FieldByName('serv_id').AsInteger]);
         end
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
           tmpSQL := tmpSQL +
-            Format(' and (exists(select ss.Serv_Id from Subscr_Serv ss inner join services s on (ss.Serv_Id = s.Service_Id) '
-            + ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and s.Business_Type = %d) ' + //
-            ' and (not exists(select ss.Serv_Id from Subscr_Serv ss inner join services s on (ss.Serv_Id = s.Service_Id) '
-            + ' where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and s.Business_Type <> %d))) ' //
+            Format(' AND (exists(select ss.Serv_Id from Subscr_Serv ss inner join services s on (ss.Serv_Id = s.Service_Id) '
+            + ' where ss.Customer_Id = c.Customer_Id AND ss.State_Sgn = 1 AND s.Business_Type = %d) ' + //
+            ' AND (not exists(select ss.Serv_Id from Subscr_Serv ss inner join services s on (ss.Serv_Id = s.Service_Id) '
+            + ' where ss.Customer_Id = c.Customer_Id AND ss.State_Sgn = 1 AND s.Business_Type <> %d))) ' //
             , [dsFilter.FieldByName('SRVTYPES').AsInteger, dsFilter.FieldByName('SRVTYPES').AsInteger]);
         end
 
         {
           if (dsFilter['serv_id'] >= 0) then
           begin
-          tmpSQL := tmpSQL + ' and (exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
+          tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
           dsFilter.FieldByName('serv_id').AsString;
-          tmpSQL := tmpSQL + ' and c.customer_id = ss.customer_id )) ';
+          tmpSQL := tmpSQL + ' AND c.customer_id = ss.customer_id )) ';
           end
           else if not dsFilter.FieldByName('SRVTYPES').IsNull then
           begin
           tmpSQL := tmpSQL +
-          ' and (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+          ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
           + ' where st.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString +
-          ' and c.customer_id = ss.customer_id )) ';
+          ' AND c.customer_id = ss.customer_id )) ';
           end
         }
 
@@ -3295,158 +3317,158 @@ const
     begin
 
       // Заключили договор
-      if ((not dsFilter.FieldByName('CONTRACT_DATE_SGN').IsNull) and (dsFilter['CONTRACT_DATE_SGN'] = 1)) then
+      if ((not dsFilter.FieldByName('CONTRACT_DATE_SGN').IsNull) AND (dsFilter['CONTRACT_DATE_SGN'] = 1)) then
       begin
-        tmpSQL := tmpSQL + ' and (';
-        if (not dsFilter.FieldByName('DATE_FROM').IsNull) and (not dsFilter.FieldByName('DATE_TO').IsNull) then
+        tmpSQL := tmpSQL + ' AND (';
+        if (not dsFilter.FieldByName('DATE_FROM').IsNull) AND (not dsFilter.FieldByName('DATE_TO').IsNull) then
         begin
           tmpSQL := tmpSQL + GenerateBetweenDateSql('c.contract_date', dsFilter['DATE_FROM'], dsFilter['DATE_TO']) + ')'
         end;
       end;
 
       // Не/Отсылались письма
-      if ((not dsFilter.FieldByName('LETTERS_SEND').IsNull) and (dsFilter['LETTERS_SEND'] = 1)) then
+      if ((not dsFilter.FieldByName('LETTERS_SEND').IsNull) AND (dsFilter['LETTERS_SEND'] = 1)) then
       begin
-        tmpSQL := tmpSQL + ' and (';
+        tmpSQL := tmpSQL + ' AND (';
 
-        if ((not dsFilter.FieldByName('LETTERS_NOT_SEND').IsNull) and (dsFilter['LETTERS_NOT_SEND'] = 1)) then
+        if ((not dsFilter.FieldByName('LETTERS_NOT_SEND').IsNull) AND (dsFilter['LETTERS_NOT_SEND'] = 1)) then
           tmpSQL := tmpSQL + ' not ';
 
         tmpSQL := tmpSQL + ' EXISTS(select CL2.Customer_Id from CUSTLETTER CL2 where CL2.CUSTOMER_ID = C.Customer_Id ';
-        if (not dsFilter.FieldByName('DATE_FROM').IsNull) and (not dsFilter.FieldByName('DATE_TO').IsNull) then
+        if (not dsFilter.FieldByName('DATE_FROM').IsNull) AND (not dsFilter.FieldByName('DATE_TO').IsNull) then
         begin
-          tmpSQL := tmpSQL + ' and ' + GenerateBetweenDateSql('CL2.CustLetterDate', dsFilter['DATE_FROM'],
+          tmpSQL := tmpSQL + ' AND ' + GenerateBetweenDateSql('CL2.CustLetterDate', dsFilter['DATE_FROM'],
             dsFilter['DATE_TO'])
         end;
 
         if (not dsFilter.FieldByName('LETTERS_TYPE').IsNull) then
-          tmpSQL := tmpSQL + ' and CL2.LetterTypeId  = ' + dsFilter.FieldByName('LETTERS_TYPE').AsString;
+          tmpSQL := tmpSQL + ' AND CL2.LetterTypeId  = ' + dsFilter.FieldByName('LETTERS_TYPE').AsString;
         tmpSQL := tmpSQL + '))'
       end;
 
       // Не/Отсылались сообщения
-      if ((not dsFilter.FieldByName('MSG_SEND').IsNull) and (dsFilter['MSG_SEND'] = 1)) then
+      if ((not dsFilter.FieldByName('MSG_SEND').IsNull) AND (dsFilter['MSG_SEND'] = 1)) then
       begin
-        tmpSQL := tmpSQL + ' and (';
+        tmpSQL := tmpSQL + ' AND (';
 
-        if ((not dsFilter.FieldByName('MSG_NOT').IsNull) and (dsFilter['MSG_NOT'] = 1)) then
+        if ((not dsFilter.FieldByName('MSG_NOT').IsNull) AND (dsFilter['MSG_NOT'] = 1)) then
           tmpSQL := tmpSQL + ' not ';
 
         tmpSQL := tmpSQL + ' EXISTS(select m.Customer_Id from Messages m where m.Customer_Id = C.Customer_Id ';
-        if (not dsFilter.FieldByName('DATE_FROM').IsNull) and (not dsFilter.FieldByName('DATE_TO').IsNull) then
+        if (not dsFilter.FieldByName('DATE_FROM').IsNull) AND (not dsFilter.FieldByName('DATE_TO').IsNull) then
         begin
-          tmpSQL := tmpSQL + ' and ' + GenerateBetweenDateSql('m.Send_Date', dsFilter['DATE_FROM'], dsFilter['DATE_TO'])
+          tmpSQL := tmpSQL + ' AND ' + GenerateBetweenDateSql('m.Send_Date', dsFilter['DATE_FROM'], dsFilter['DATE_TO'])
         end;
         tmpSQL := tmpSQL + '))'
       end;
 
       // Были/не были начисления
-      if ((not dsFilter.FieldByName('beFee').IsNull) and (dsFilter['beFee'] > 0)) then
+      if ((not dsFilter.FieldByName('beFee').IsNull) AND (dsFilter['beFee'] > 0)) then
       begin
-        tmpSQL := tmpSQL + ' and (';
+        tmpSQL := tmpSQL + ' AND (';
 
         if (dsFilter['beFee'] = 2) then
           tmpSQL := tmpSQL + ' not ';
 
         tmpSQL := tmpSQL + ' EXISTS(select f.Customer_Id from monthly_fee f where f.Customer_Id = C.Customer_Id';
-        if (not dsFilter.FieldByName('DATE_FROM').IsNull) and (not dsFilter.FieldByName('DATE_TO').IsNull) then
+        if (not dsFilter.FieldByName('DATE_FROM').IsNull) AND (not dsFilter.FieldByName('DATE_TO').IsNull) then
         begin
-          tmpSQL := tmpSQL + ' and ' + GenerateBetweenDateSql('f.Month_Id', dsFilter['DATE_FROM'], dsFilter['DATE_TO'])
+          tmpSQL := tmpSQL + ' AND ' + GenerateBetweenDateSql('f.Month_Id', dsFilter['DATE_FROM'], dsFilter['DATE_TO'])
         end;
         tmpSQL := tmpSQL + '))'
       end;
 
       // День рождения. Юбилеи
-      if ((not dsFilter.FieldByName('BIRTHDAY').IsNull) and (not dsFilter.FieldByName('DATE_FROM').IsNull) and
+      if ((not dsFilter.FieldByName('BIRTHDAY').IsNull) AND (not dsFilter.FieldByName('DATE_FROM').IsNull) and
         (not dsFilter.FieldByName('DATE_TO').IsNull)) then
       begin
 
         if (dsFilter['BIRTHDAY'] > 0) then
         begin
-          tmpSQL := tmpSQL + ' and ( (not c.Birthday is null) and (' +
+          tmpSQL := tmpSQL + ' AND ( (not c.Birthday is null) AND (' +
             GenerateBetweenDateSql('DATEADD(YEAR, datediff(YEAR, c.Birthday, ' + GetFirebirdDate(dsFilter['DATE_FROM'])
             + '), c.Birthday)', dsFilter['DATE_FROM'], dsFilter['DATE_TO']) + '))';
 
           if (dsFilter['BIRTHDAY'] = 2) then
           begin
             tmpSQL := tmpSQL +
-              ' and ((datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) - (trunc(datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) / 10) * 10) = 0) '
-              + '      or (datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) - (trunc(datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) / 10) * 10) = 5))';
+              ' AND ((datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) - (trunc(datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) / 10) * 10) = 0) '
+              + '      OR (datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) - (trunc(datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) / 10) * 10) = 5))';
           end;
         end;
 
       end;
 
-      if (not dsFilter.FieldByName('DATE_FROM').IsNull) and (not dsFilter.FieldByName('DATE_TO').IsNull) then
+      if (not dsFilter.FieldByName('DATE_FROM').IsNull) AND (not dsFilter.FieldByName('DATE_TO').IsNull) then
       begin
         // подключились
         if (dsFilter['ACT_SGN'] = 1) then
         begin
-          tmpSQL := tmpSQL + ' and ( exists (SELECT sh.CUSTOMER_ID' + rsEOL + ' FROM SUBSCR_HIST sh where ' +
+          tmpSQL := tmpSQL + ' AND ( exists (SELECT sh.CUSTOMER_ID' + rsEOL + ' FROM SUBSCR_HIST sh where ' +
             ' sh.DATE_FROM = (select max(h.DATE_FROM) FROM SUBSCR_HIST h where sh.CUSTOMER_ID = h.CUSTOMER_ID';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
+            tmpSQL := tmpSQL + ' AND h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
           tmpSQL := tmpSQL +
-            ' ) and  exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.ACT_SERV_ID and sl.LINK_TYPE = 2';
+            ' ) AND  exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.ACT_SERV_ID AND sl.LINK_TYPE = 2';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
-          tmpSQL := tmpSQL + ') and  ' + GenerateBetweenDateSql('SH.Date_From', dsFilter['DATE_FROM'],
-            dsFilter['DATE_TO']) + ' and sh.Customer_id = c.Customer_id))';
+            tmpSQL := tmpSQL + ' AND Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
+          tmpSQL := tmpSQL + ') AND  ' + GenerateBetweenDateSql('SH.Date_From', dsFilter['DATE_FROM'],
+            dsFilter['DATE_TO']) + ' AND sh.Customer_id = c.Customer_id))';
 
         end;
 
         // подключились повторно
         if (dsFilter['ACT_SGN'] = 2) then
         begin
-          tmpSQL := tmpSQL + ' and ( exists (SELECT sh.CUSTOMER_ID' + rsEOL + ' FROM SUBSCR_HIST sh where ' +
+          tmpSQL := tmpSQL + ' AND ( exists (SELECT sh.CUSTOMER_ID' + rsEOL + ' FROM SUBSCR_HIST sh where ' +
             ' sh.DATE_FROM = (select max(h.DATE_FROM) FROM SUBSCR_HIST h where sh.CUSTOMER_ID = h.CUSTOMER_ID';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
+            tmpSQL := tmpSQL + ' AND h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
           tmpSQL := tmpSQL +
-            ' ) and exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.ACT_SERV_ID and sl.LINK_TYPE = 3';
+            ' ) AND exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.ACT_SERV_ID AND sl.LINK_TYPE = 3';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
-          tmpSQL := tmpSQL + ') and  ' + GenerateBetweenDateSql('SH.Date_From', dsFilter['DATE_FROM'],
-            dsFilter['DATE_TO']) + ' and sh.Customer_id = c.Customer_id))';
+            tmpSQL := tmpSQL + ' AND Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
+          tmpSQL := tmpSQL + ') AND  ' + GenerateBetweenDateSql('SH.Date_From', dsFilter['DATE_FROM'],
+            dsFilter['DATE_TO']) + ' AND sh.Customer_id = c.Customer_id))';
         end;
 
         // откл. по заявке
         if (dsFilter['ACT_SGN'] = 3) then
         begin
-          tmpSQL := tmpSQL + ' and ( exists (SELECT sh.CUSTOMER_ID FROM SUBSCR_HIST sh where ' +
+          tmpSQL := tmpSQL + ' AND ( exists (SELECT sh.CUSTOMER_ID FROM SUBSCR_HIST sh where ' +
             ' sh.DATE_TO = (select max(h.DATE_TO) FROM SUBSCR_HIST h where sh.CUSTOMER_ID = h.CUSTOMER_ID ';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
+            tmpSQL := tmpSQL + ' AND h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
           tmpSQL := tmpSQL +
-            ' ) and  exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.DISACT_SERV_ID and sl.LINK_TYPE = 4 ';
+            ' ) AND  exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.DISACT_SERV_ID AND sl.LINK_TYPE = 4 ';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
-          tmpSQL := tmpSQL + ' ) and  ' + GenerateBetweenDateSql('SH.Date_TO', dsFilter['DATE_FROM'],
-            dsFilter['DATE_TO']) + ' and sh.Customer_id = c.Customer_id))';
+            tmpSQL := tmpSQL + ' AND Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
+          tmpSQL := tmpSQL + ' ) AND  ' + GenerateBetweenDateSql('SH.Date_TO', dsFilter['DATE_FROM'],
+            dsFilter['DATE_TO']) + ' AND sh.Customer_id = c.Customer_id))';
         end;
 
         // откл. за неуплату
         if (dsFilter['ACT_SGN'] = 4) then
         begin
-          tmpSQL := tmpSQL + ' and ( exists (SELECT sh.CUSTOMER_ID FROM SUBSCR_HIST sh where ' +
+          tmpSQL := tmpSQL + ' AND ( exists (SELECT sh.CUSTOMER_ID FROM SUBSCR_HIST sh where ' +
             ' sh.DATE_TO = (select max(h.DATE_TO) FROM SUBSCR_HIST h where sh.CUSTOMER_ID = h.CUSTOMER_ID ';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
+            tmpSQL := tmpSQL + ' AND h.serv_id = ' + dsFilter.FieldByName('SERV_ID').AsString;
           tmpSQL := tmpSQL +
-            ' ) and exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.DISACT_SERV_ID and sl.LINK_TYPE = 5 ';
+            ' ) AND exists(SELECT sl.CHILD FROM SERVICES_LINKS sl where sl.CHILD = sh.DISACT_SERV_ID AND sl.LINK_TYPE = 5 ';
           if (not dsFilter.FieldByName('SERV_ID').IsNull) then
-            tmpSQL := tmpSQL + ' and Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
-          tmpSQL := tmpSQL + ' ) and  ' + GenerateBetweenDateSql('SH.Date_TO', dsFilter['DATE_FROM'],
-            dsFilter['DATE_TO']) + ' and sh.Customer_id = c.Customer_id))';
+            tmpSQL := tmpSQL + ' AND Sl.Parent = ' + dsFilter.FieldByName('SERV_ID').AsString;
+          tmpSQL := tmpSQL + ' ) AND  ' + GenerateBetweenDateSql('SH.Date_TO', dsFilter['DATE_FROM'],
+            dsFilter['DATE_TO']) + ' AND sh.Customer_id = c.Customer_id))';
         end;
 
         // Автоблокировка
         if (dsFilter['ACT_SGN'] = 5) then
         begin
-          tmpSQL := tmpSQL + ' and ( exists ( select ab.Customer_Id from subscr_hist ab ' +
-            ' where ab.Customer_Id = c.customer_id and ab.Disact_Serv_Id = -3 ' +
-            ' and ab.Date_To between dateadd(-1 day to cast(''' + FormatDateTime('yyyy-mm-dd', dsFilter['DATE_FROM']) +
-            ''' as DATE)) ' + ' and dateadd(-1 day to cast(''' + FormatDateTime('yyyy-mm-dd', dsFilter['DATE_TO']) +
+          tmpSQL := tmpSQL + ' AND ( exists ( select ab.Customer_Id from subscr_hist ab ' +
+            ' where ab.Customer_Id = c.customer_id AND ab.Disact_Serv_Id = -3 ' +
+            ' AND ab.Date_To between dateadd(-1 day to cast(''' + FormatDateTime('yyyy-mm-dd', dsFilter['DATE_FROM']) +
+            ''' as DATE)) ' + ' AND dateadd(-1 day to cast(''' + FormatDateTime('yyyy-mm-dd', dsFilter['DATE_TO']) +
             ''' as DATE) )))';
         end;
 
@@ -3455,21 +3477,21 @@ const
           // Клиенты у которых были платежи за период
           1:
             tmpSQL := tmpSQL + 'and (exists ( select P.Customer_Id from Payment P ' + rsEOL +
-              ' where P.Customer_Id = c.CUSTOMER_ID and ' + GenerateBetweenDateSql('P.Pay_Date', dsFilter['DATE_FROM'],
+              ' where P.Customer_Id = c.CUSTOMER_ID AND ' + GenerateBetweenDateSql('P.Pay_Date', dsFilter['DATE_FROM'],
               dsFilter['DATE_TO']) + '))';
           // Клиенты у которых не были платежи за период
           2:
             tmpSQL := tmpSQL + 'and (not exists ( select P.Customer_Id from Payment P ' + rsEOL +
-              ' where P.Customer_Id = c.CUSTOMER_ID and ' + GenerateBetweenDateSql('P.Pay_Date', dsFilter['DATE_FROM'],
+              ' where P.Customer_Id = c.CUSTOMER_ID AND ' + GenerateBetweenDateSql('P.Pay_Date', dsFilter['DATE_FROM'],
               dsFilter['DATE_TO']) + '))';
         end;
 
         // была разовая услуга
         if (not dsFilter.FieldByName('single_id').IsNull) then
         begin
-          tmpSQL := tmpSQL + ' and ( exists (SELECT ss.CUSTOMER_ID FROM SINGLE_SERV ss ' +
-            ' where ss.CUSTOMER_ID = c.CUSTOMER_ID and ' + GenerateBetweenDateSql('ss.SERV_DATE', dsFilter['DATE_FROM'],
-            dsFilter['DATE_TO']) + ' and ss.SERVICE_ID =' + dsFilter.FieldByName('single_id').AsString + ')) '
+          tmpSQL := tmpSQL + ' AND ( exists (SELECT ss.CUSTOMER_ID FROM SINGLE_SERV ss ' +
+            ' where ss.CUSTOMER_ID = c.CUSTOMER_ID AND ' + GenerateBetweenDateSql('ss.SERV_DATE', dsFilter['DATE_FROM'],
+            dsFilter['DATE_TO']) + ' AND ss.SERVICE_ID =' + dsFilter.FieldByName('single_id').AsString + ')) '
         end;
       end;
     end;
@@ -3478,7 +3500,7 @@ const
     if (not dsFilter.FieldByName('OFFDAYS').IsNull) then
     begin
       tmpSQL := tmpSQL +
-        Format(' and ( not exists (select ss.Customer_Id from subscr_hist ss where ss.Date_To >= dateadd(Day, -1 * %d, current_date) and ss.CUSTOMER_ID = c.CUSTOMER_ID))',
+        Format(' AND ( not exists (select ss.Customer_Id from subscr_hist ss where ss.Date_To >= dateadd(Day, -1 * %d, current_date) AND ss.CUSTOMER_ID = c.CUSTOMER_ID))',
         [dsFilter.FieldByName('OFFDAYS').AsInteger])
     end;
 
@@ -3486,15 +3508,15 @@ const
     if (not dsFilter.FieldByName('NOTPAYDAYS').IsNull) then
     begin
       tmpSQL := tmpSQL +
-        Format(' and ( not exists (select ss.Customer_Id from payment ss where ss.Pay_Date >= dateadd(Day, -1 * %d, current_date) and ss.CUSTOMER_ID = c.CUSTOMER_ID))',
+        Format(' AND ( not exists (select ss.Customer_Id from payment ss where ss.Pay_Date >= dateadd(Day, -1 * %d, current_date) AND ss.CUSTOMER_ID = c.CUSTOMER_ID))',
         [dsFilter.FieldByName('NOTPAYDAYS').AsInteger])
     end;
 
     // Отключен более Х дней
-    if ((not dsFilter.FieldByName('debtLow').IsNull) and (dsFilter['debtLow'])) then
+    if ((not dsFilter.FieldByName('debtLow').IsNull) AND (dsFilter['debtLow'])) then
     begin
       tmpSQL := tmpSQL +
-        ' and (-1*c.DEBT_SUM < (select M_Tarif from Get_Tarif_Sum_Customer_Srv(c.Customer_Id, null, MONTH_FIRST_DAY(dateadd(month, 1, current_date))))) '
+        ' AND (-1*c.DEBT_SUM < (select M_Tarif from Get_Tarif_Sum_Customer_Srv(c.Customer_Id, null, MONTH_FIRST_DAY(dateadd(month, 1, current_date))))) '
     end;
 
     // если скрываем абонентов, то скроем
@@ -3515,11 +3537,11 @@ const
     ListType: Integer;
     Quote: String;
   begin
-    Result := ' ((C.Valid_To > CURRENT_DATE) or (C.Valid_To is null)) ';
+    Result := ' ((C.Valid_To > CURRENT_DATE) OR (C.Valid_To is null)) ';
     tmpSQL := '';
     startSQL := '';
 
-    if (dsFilter.FieldByName('ListType').IsNull) and (dsFilter.FieldByName('ListValues').IsNull) then
+    if (dsFilter.FieldByName('ListType').IsNull) AND (dsFilter.FieldByName('ListValues').IsNull) then
       Exit;
 
     ListType := dsFilter['ListType'];
@@ -3586,20 +3608,20 @@ const
         1: // 1 Код абонента
           startSQL := ' (C.CUST_CODE in (' + s + ')) ';
         2: // 2 IP адрес
-          startSQL := ' ( exists(select t.customer_id from tv_lan t where t.customer_id = c.customer_id and t.Ip in (' +
+          startSQL := ' ( exists(select t.customer_id from tv_lan t where t.customer_id = c.customer_id AND t.Ip in (' +
             s + '))) ';
         3: // 3 Карта доступа
           startSQL :=
-            ' ( exists(select t.Customer_Id from Customer_Decoders t where t.customer_id = c.customer_id and t.Decoder_N in ('
+            ' ( exists(select t.Customer_Id from Customer_Decoders t where t.customer_id = c.customer_id AND t.Decoder_N in ('
             + s + '))) ';
         4: // 4 Customer_id
           startSQL := ' (C.Customer_id in (' + s + ')) ';
         5: // 5 MAC адрес
-          startSQL := ' ( exists(select t.customer_id from tv_lan t where t.customer_id = c.customer_id and t.Mac in ('
+          startSQL := ' ( exists(select t.customer_id from tv_lan t where t.customer_id = c.customer_id AND t.Mac in ('
             + s + '))) ';
         6: // 6 Телефон
           startSQL := ' ( exists(select t.Customer_Id from Customer_Contacts t where ' +
-            ' t.Customer_Id = c.customer_id and t.Cc_Type < 2 and t.Cc_Value in(' + s + '))) ';
+            ' t.Customer_Id = c.customer_id AND t.Cc_Type < 2 AND t.Cc_Value in(' + s + '))) ';
         7: // 7 ИНН / УНН
           startSQL := ' (C.Jur_Inn in (' + s + ')) ';
         8: // 8 Список квартир
@@ -3621,7 +3643,7 @@ const
   var
     startSQL, tmpSQL: string;
   begin
-    Result := ' ((C.Valid_To > CURRENT_DATE) or (C.Valid_To is null)) ';
+    Result := ' ((C.Valid_To > CURRENT_DATE) OR (C.Valid_To is null)) ';
     tmpSQL := '';
     // startSQL := ' c.customer_id in ( ' + dsFilter['SQL_FLTR'] + ' ) ';
     startSQL := Trim(UpperCase(dsFilter['SQL_FLTR']));
@@ -3646,36 +3668,37 @@ var
 begin
   default := const_default_filter;
   if dmMain.SuperMode = 0 then
-    default := default +' and ( c.INVISIBLE = 0 ) ';
+    default := default +' AND ( c.INVISIBLE = 0 ) ';
 
   Result := default;
   whereStr := '';
 
-  if (dsFilter.RecordCount = 0) or (not actEnableFilter.Checked) then
+  if (dsFilter.RecordCount = 0) OR (not actEnableFilter.Checked) then
     Exit;
   srcCustomer.DataSet.DisableControls;
 
   try
     dsFilter.First;
 
-    if (not dsFilter.FieldByName('ListValues').IsNull) then
-      ListSql := ' ( ' + ListToFilter + ' ) ';
-
-    if (not dsFilter.FieldByName('SQL_FLTR').IsNull) then
-    begin
-      if not ListSql.IsEmpty then
-        ListSql := ListSql + ' and ';
-      ListSql := ListSql + ' ( ' + SQLToFilter + ' ) ';
-    end;
-
     while not dsFilter.Eof do
     begin
+
+      if (not dsFilter.FieldByName('ListValues').IsNull) then
+        ListSql := ' ( ' + ListToFilter + ' ) ';
+
+      if (not dsFilter.FieldByName('SQL_FLTR').IsNull) then
+      begin
+        if not ListSql.IsEmpty then
+          ListSql := ListSql + ' AND ';
+        ListSql := ListSql + ' ( ' + SQLToFilter + ' ) ';
+      end;
+
       whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
       // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
 
       if (dmMain.AllowedAction(rght_Customer_Only_ONE)) then
       begin
-        if ((not dsFilter.FieldByName('FLAT_NO').IsNull) and (dsFilter['CHECK_ADRESS'] = 1)) then
+        if ((not dsFilter.FieldByName('FLAT_NO').IsNull) AND (dsFilter['CHECK_ADRESS'] = 1)) then
         begin
           fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
           if (fidx = 1) then
@@ -3702,16 +3725,26 @@ begin
 
       dsFilter.next;
 
+      whereStr := ReplaceStr(whereStr, '(  (  )  )', '').Trim;
+      if (not ListSql.IsEmpty) then
+      begin
+        if (not whereStr.IsEmpty) then
+          whereStr := whereStr + ' AND ' + ListSql
+        else
+          whereStr := ListSql;
+      end;
+
       if not dsFilter.Eof then
+      begin
         if dsFilter['next_condition'] = 0 then
           whereStr := whereStr + ' OR '
         else
           whereStr := whereStr + ' AND '
+      end;
     end;
-    whereStr := ReplaceStr(whereStr, '(  (  )  )', '').Trim;
-    if (not ListSql.IsEmpty) and (not whereStr.IsEmpty) then
-      whereStr := whereStr + ' and ' + ListSql;
-
+    // пофиксим баг. времмено, но постоянно
+    whereStr := ReplaceStr(whereStr, ' OR AND ', ' OR ');
+    whereStr := ReplaceStr(whereStr, ' AND AND ', ' AND ').Trim;
   except
     whereStr := default;
     ShowMessage(rsErrorSetFilter);
@@ -4155,6 +4188,13 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TCustomersForm.miN58Click(Sender: TObject);
+begin
+  if not dsCustomers.FieldByName('HOUSE_ID').IsNull
+  then
+    A4MainForm.OpnenHouseByID(dsCustomers['HOUSE_ID']);
 end;
 
 procedure TCustomersForm.ExportToDBF(const FILE_DIR, FILENAME, FILE_BODY: string; FILE_CODEPAGE: Integer);
@@ -4961,14 +5001,14 @@ var
   i: Integer;
   s, f: String;
   bm: TBookMark;
-  Q: TpFIBQuery;
+  q: TpFIBQuery;
 
   procedure SaveInBlackList(const n: String);
   begin
     if not n.IsEmpty then
     begin
-      Q.Transaction.StartTransaction;
-      Q.ParamByName('O_NAME').AsString := Trim(n);
+      q.Transaction.StartTransaction;
+      q.ParamByName('O_NAME').AsString := Trim(n);
       if not dsCustomers.FieldByName('SURNAME').IsNull then
         f := dbgCustomers.DataSource.DataSet['SURNAME']
       else
@@ -4977,10 +5017,10 @@ var
         f := f + ' ' + dbgCustomers.DataSource.DataSet['FIRSTNAME'];
       if not dsCustomers.FieldByName('MIDLENAME').IsNull then
         f := f + ' ' + dbgCustomers.DataSource.DataSet['MIDLENAME'];
-      Q.ParamByName('O_DESCRIPTION').AsString := f;
-      Q.ParamByName('O_CHARFIELD').AsString := ReplaceFields(s);
-      Q.ExecQuery;
-      Q.Transaction.Commit;
+      q.ParamByName('O_DESCRIPTION').AsString := f;
+      q.ParamByName('O_CHARFIELD').AsString := ReplaceFields(s);
+      q.ExecQuery;
+      q.Transaction.Commit;
     end;
   end;
 
@@ -5003,12 +5043,12 @@ begin
 
   bm := dbgCustomers.DataSource.DataSet.GetBookmark;
 
-  Q := TpFIBQuery.Create(Self);
+  q := TpFIBQuery.Create(Self);
   try
-    Q.Database := dmMain.dbTV;
-    Q.Transaction := dmMain.trWriteQ;
-    Q.sql.Add('update or insert into Objects (O_NAME, O_DESCRIPTION, O_CHARFIELD, O_TYPE ) ');
-    Q.sql.Add('VALUES( upper(:O_NAME), :O_DESCRIPTION, :O_CHARFIELD, 31 )  matching (O_NAME, O_Type)');
+    q.Database := dmMain.dbTV;
+    q.Transaction := dmMain.trWriteQ;
+    q.sql.Add('update or insert into Objects (O_NAME, O_DESCRIPTION, O_CHARFIELD, O_TYPE ) ');
+    q.sql.Add('VALUES( upper(:O_NAME), :O_DESCRIPTION, :O_CHARFIELD, 31 )  matching (O_NAME, O_Type)');
 
     if dbgCustomers.SelectedRows.Count > 0 then
     begin
@@ -5039,7 +5079,7 @@ begin
       end;
     end;
   finally
-    Q.Free;
+    q.Free;
   end;
   dbgCustomers.DataSource.DataSet.GotoBookmark(bm);
 end;
@@ -5101,6 +5141,8 @@ begin
   begin
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBMemoEh) and not(Trim((ActiveControl as TDBMemoEh).lines.Text) = '') then
       go := False;
 
@@ -5125,6 +5167,11 @@ begin
     if (i <> 0) then
       actAddressSearch.Execute();
   end;
+
+  if (TryStrToInt(dmMain.GetIniValue('CUSTGRIDFROZEN'), FFrozencols)) then
+    SetFrozen(FFrozencols)
+  else
+    SetFrozen(0);
 end;
 
 function TCustomersForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
@@ -5310,27 +5357,46 @@ var
 begin
   InitSecurity;
 
+  Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
-      i := 0;
-    Row_height := i;
-    for i := 0 to ComponentCount - 1 do
+  end;
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
     begin
-      if Components[i] is TDBGridEh then
+      if Font_size <> 0 then
       begin
-        if Font_size <> 0 then
-        begin
-          (Components[i] as TDBGridEh).Font.Name := Font_name;
-          (Components[i] as TDBGridEh).Font.Size := Font_size;
-        end;
-        if Row_height <> 0 then
-        begin
-          (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
-          (Components[i] as TDBGridEh).RowHeight := Row_height;
-        end;
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
     end;
   end;
@@ -5640,6 +5706,14 @@ end;
 procedure TCustomersForm.FindDataOnTab(const TabType: Integer; const DataValue: string);
 begin
   //
+end;
+
+procedure TCustomersForm.SetFrozen(const v: Integer);
+begin
+  FFrozencols := v;
+
+  if (dbgCustomers.Columns.Count >= FFrozencols) then
+    dbgCustomers.FrozenCols := FFrozencols;
 end;
 
 end.

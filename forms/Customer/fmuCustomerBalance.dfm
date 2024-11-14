@@ -84,11 +84,11 @@ object apgCustomerBalance: TapgCustomerBalance
     SearchPanel.Enabled = True
     SortLocal = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     SumList.Active = True
     TabOrder = 0
     TitleParams.VTitleMargin = 4
+    OnCellMouseClick = dbgCustBalanceCellMouseClick
     Columns = <
       item
         Alignment = taCenter

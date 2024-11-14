@@ -92,7 +92,7 @@ begin
   if pswdPrefix + edtOLD.Text = dmMain.Password then
   begin
     p := pswdPrefix + edtNEW.Text;
-    if (Length(edtNEW.Text) <> 0) and (dmMain.User <> 'SYSDBA') and (p = (pswdPrefix + edtCONFRM.Text)) and
+    if (Length(edtNEW.Text) <> 0) and (dmMain.User.ToUpper <> 'SYSDBA') and (p = (pswdPrefix + edtCONFRM.Text)) and
       (p <> dmMain.Password) then
     begin
       p := rsQUOTE + ReplaceStr(p, rsQUOTE, rsQUOTE + rsQUOTE) + rsQUOTE;

@@ -47,20 +47,35 @@ object StreetHouseViewForm: TStreetHouseViewForm
             ValueType = gfvSumEh
           end
           item
+            ValueType = gfvSumEh
           end
           item
+            ValueType = gfvSumEh
           end
           item
+            DisplayFormat = ',#.##'
             ValueType = gfvAvgEh
           end
           item
+            DisplayFormat = ',#.##'
             ValueType = gfvSumEh
           end
           item
+            DisplayFormat = ',#.##'
             ValueType = gfvSumEh
           end
           item
+            DisplayFormat = ',#.##'
             ValueType = gfvSumEh
+          end
+          item
+            ValueType = gfvCountEh
+          end
+          item
+            ValueType = gfvCountEh
+          end
+          item
+            ValueType = gfvCountEh
           end
           item
           end
@@ -102,10 +117,13 @@ object StreetHouseViewForm: TStreetHouseViewForm
     DynProps = <>
     Flat = True
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
     PopupMenu = pmPopUp
     SearchPanel.Enabled = True
     SearchPanel.FilterOnTyping = True
+    SortLocal = True
+    STFilter.Local = True
+    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 0
     TitleParams.MultiTitle = True
@@ -196,14 +214,56 @@ object StreetHouseViewForm: TStreetHouseViewForm
       end
       item
         CellButtons = <>
+        DisplayFormat = ',#.##'
         DynProps = <>
         EditButtons = <>
         FieldName = 'PERCENT'
+        Footer.DisplayFormat = ',#.##'
         Footer.ValueType = fvtAvg
         Footers = <>
         Title.Caption = #1040#1073#1086#1085#1077#1085#1090#1086#1074'|% '#1087#1086#1076#1082#1083'.'
         Title.TitleButton = True
         Width = 66
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = ',#.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'FEE_TOTAL'
+        Footer.DisplayFormat = ',#.##'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1048#1090#1086#1075#1086' '#1090#1077#1082'. '#1084#1077#1089#1103#1094'|'#1053#1072#1095#1080#1089#1083#1077#1085#1086
+        Title.TitleButton = True
+        Width = 66
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = ',#.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PAY_TOTAL'
+        Footer.DisplayFormat = ',#.##'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1048#1090#1086#1075#1086' '#1090#1077#1082'. '#1084#1077#1089#1103#1094'|'#1054#1087#1083#1072#1095#1077#1085#1086
+        Title.TitleButton = True
+        Width = 73
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = ',#.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'TARIF_TOTAL'
+        Footer.DisplayFormat = ',#.##'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1048#1090#1086#1075#1086' '#1090#1077#1082'. '#1084#1077#1089#1103#1094'|'#1057'. '#1090#1072#1088#1080#1092#1086#1074
+        Title.Hint = #1057#1091#1084#1084#1072' '#1090#1072#1088#1080#1092#1086#1074
+        Title.TitleButton = True
+        Width = 75
       end
       item
         CellButtons = <>
@@ -362,6 +422,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
         FieldName = 'H_ATTR'
         Footers = <>
         Title.Caption = #1040#1090#1088'-'#1090#1099' '#1076#1086#1084#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -438,16 +499,48 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '          , w.name'
       '          , he.he_name'
       '          , st.Street_Code'
-      '          , st.Street_Name||'#39' '#39'||st.Street_Short Street_Name'
-      '          , coalesce(a.AREA_NAME,'#39#39') CITY'
-      '          , cast((select list(o.O_DIMENSION) '
-      '                from Houses_Attributes sa'
+      '          , st.Street_Name || '#39' '#39' || st.Street_Short Street_Name'
+      '          , coalesce(a.AREA_NAME, '#39#39') CITY'
+      '          , cast((select'
       
-        '                     inner join objects o on (o.O_Id = sa.O_Id a' +
-        'nd o.O_Type = 37)'
+        '                      list(o.O_DIMENSION||coalesce('#39':'#39'||sa.HA_VA' +
+        'LUE, '#39#39'))'
+      '                    from Houses_Attributes sa'
       
-        '                where sa.HOUSE_Id = h.House_Id ) as VARCHAR(500)' +
-        ') H_ATTR'
+        '                         inner join objects o on (o.O_Id = sa.O_' +
+        'Id and'
+      '                               o.O_Type = 37)'
+      
+        '                    where sa.HOUSE_Id = h.House_Id) as varchar(5' +
+        '00)) H_ATTR'
+      ''
+      '          , (select'
+      '                 sum(f.Fee)'
+      
+        '               from CUSTOMER A inner join Monthly_Fee f on (f.Cu' +
+        'stomer_Id = A.Customer_Id)'
+      
+        '               where a.HOUSE_ID = h.HOUSE_ID and f.Month_Id >= M' +
+        'onth_First_Day(CURRENT_DATE) and f.Month_Id <= Month_Last_Day(CU' +
+        'RRENT_DATE)'
+      '                     ) as FEE_TOTAL'
+      '          , (select'
+      '                 sum(p.Pay_Sum)'
+      
+        '               from CUSTOMER A inner join payment p on (p.Custom' +
+        'er_Id = A.Customer_Id)'
+      
+        '               where a.HOUSE_ID = h.HOUSE_ID and p.Pay_Date >= M' +
+        'onth_First_Day(CURRENT_DATE) and p.Pay_Date <= Month_Last_Day(CU' +
+        'RRENT_DATE)'
+      '                     ) as PAY_TOTAL'
+      '          , (select'
+      
+        '                 sum(coalesce((select M_Tarif from Get_Tarif_Sum' +
+        '_Customer_Srv(a.Customer_Id, null, CURRENT_DATE)), 0))'
+      '               from CUSTOMER A'
+      '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     ) as TARIF_TOTAL'
       '          from HOUSE H'
       
         '               inner join STREET st on (st.STREET_ID = h.street_' +
@@ -468,7 +561,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
         '               left outer join headend he on (he.he_id = h.heade' +
         'nd_id)) ah'
       ''
-      'order by CITY,Street_Name, House_No')
+      'order by CITY, Street_Name, House_No')
     UpdateCommand.Params = <>
     InsertCommand.Params = <>
     DeleteCommand.Params = <>

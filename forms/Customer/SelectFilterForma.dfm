@@ -108,6 +108,7 @@ object frmSelectFilter: TfrmSelectFilter
       TabOrder = 0
       Visible = True
       OnClick = cbFilterClick
+      OnEnter = cbFilterEnter
     end
   end
   object dsFilter: TpFIBDataSet

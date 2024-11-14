@@ -8,9 +8,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons, Vcl.ActnList,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons,
+  Vcl.ActnList,
   Vcl.ExtCtrls,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider, FIBDatabase,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
+  FIBDatabase,
   pFIBDatabase, A4onTypeUnit, EhlibFIB;
 
 type
@@ -115,11 +117,14 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;
@@ -193,16 +198,19 @@ begin
   if not dsAppl.FieldByName('A_TYPE').IsNull then
     lcbApplType.KeyValue := dsAppl['A_TYPE'];
 
-  if fCI.isType = 0 then begin
+  if fCI.isType = 0 then
+  begin
     if not dsAppl.FieldByName('PROPERTY').IsNull then
       cbApplProperty.Value := dsAppl['PROPERTY'];
   end
-  else begin
+  else
+  begin
     cbApplProperty.Value := 1;
     cbApplProperty.Enabled := False;
   end;
 
-  if not dsAppl.FieldByName('RQ_ID').IsNull then begin
+  if not dsAppl.FieldByName('RQ_ID').IsNull then
+  begin
     lcbApplMID.Enabled := False;
     edtSN.Enabled := False;
     edtMAC.Enabled := edtMAC.Text.IsEmpty;
@@ -297,7 +305,7 @@ var
   ErrorNF: Boolean; // ErrorNotFound
   s: string;
 begin
-  ErrorNF := True;
+  ErrorNF := true;
 
   if lcbApplType.Text = '' then
   begin
@@ -379,8 +387,10 @@ begin
     dsAppl['ID'] := fApplID;
   end;
   if fCI.isType = 1 // узел
-  then dsAppl['OWN_TYPE'] := 2  // узел
-  else dsAppl['OWN_TYPE'] := 1; // абонент
+  then
+    dsAppl['OWN_TYPE'] := 2 // узел
+  else
+    dsAppl['OWN_TYPE'] := 1; // абонент
   dsAppl['OWN_ID'] := fCI.CUSTOMER_ID;
   dsAppl['NAME'] := edtName.Text;
   dsAppl['PROPERTY'] := cbApplProperty.Value;

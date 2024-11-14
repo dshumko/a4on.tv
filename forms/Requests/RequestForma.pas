@@ -145,7 +145,6 @@ type
     srcPhotos: TDataSource;
     dsPhotos: TpFIBDataSet;
     dbgPhotos: TDBGridEh;
-    imgJPG: TDBImageEh;
     spl1: TSplitter;
     actFileAdd: TAction;
     pmGridMat: TPopupMenu;
@@ -199,6 +198,10 @@ type
     miAddPayment: TMenuItem;
     btnEMAIL: TButton;
     actEMAIL: TAction;
+    pnlPhotoFile: TPanel;
+    imgJPG: TDBImageEh;
+    SaveDialog: TSaveDialog;
+    btnSavePhoto1: TSpeedButton;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -274,6 +277,11 @@ type
     procedure actOpenCustomerExecute(Sender: TObject);
     procedure actAddPaymentExecute(Sender: TObject);
     procedure actEMAILExecute(Sender: TObject);
+    procedure srcPhotosDataChange(Sender: TObject; Field: TField);
+    procedure pnlPhotoFileDblClick(Sender: TObject);
+    procedure dbgPhotosDblClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btnSavePhoto1Click(Sender: TObject);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -316,6 +324,7 @@ type
     procedure SetIsClosed(const Closed: Boolean);
     procedure OpenPayment(const receipt: string);
     procedure SendEmailMessage;
+    procedure OpenPhotoFile;
   public
     { Public declarations }
     constructor CreateA(aOwner: TComponent; aRequest: Integer; const aCustomer: Integer; const aEditMode: Byte;
@@ -623,6 +632,26 @@ begin
   SaveMSG;
 end;
 
+procedure TRequestForm.btnSavePhoto1Click(Sender: TObject);
+var
+  FileName: string;
+begin
+  if dsPhotos.FieldByName('RQ_ID').IsNull or dsPhotos.FieldByName('jpg').IsNull then
+    Exit;
+
+  if (not dsPhotos.FieldByName('NOTICE').IsNull) then
+  begin
+    FileName := dsPhotos['NOTICE'];
+    FileName := IntToStr(dsPhotos['RQ_ID']) + '_' + FileName.Trim(['(', ')']);
+  end
+  else
+    FileName := IntToStr(dsPhotos['RQ_ID']) + '_' + IntToStr(dsPhotos['ID']) + '.jpg';
+
+  SaveDialog.FileName := FileName;
+  if SaveDialog.Execute then
+    TBlobField(dsPhotos.FieldByName('jpg')).SaveToFile(SaveDialog.FileName);
+end;
+
 procedure TRequestForm.btnSelectDateClick(Sender: TObject);
 var
   d: TDate;
@@ -729,6 +758,12 @@ begin
   end;
 end;
 
+procedure TRequestForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
+    OkCancelFramebbOkClick(Sender);
+end;
+
 procedure TRequestForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
@@ -744,6 +779,8 @@ begin
       // go := False;
       // else if (ActiveControl is TDBAxisGridInplaceEdit) then
       // go := False
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
       if (ActiveControl is TDBMemoEh) and
@@ -773,13 +810,19 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
   end;
+
   for i := 0 to ComponentCount - 1 do
   begin
     if Components[i] is TDBGridEh then
@@ -792,6 +835,29 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
     end;
   end;
@@ -1128,6 +1194,11 @@ begin
   end;
 end;
 
+procedure TRequestForm.dbgPhotosDblClick(Sender: TObject);
+begin
+  OpenPhotoFile;
+end;
+
 procedure TRequestForm.dbgWorkersDblClick(Sender: TObject);
 begin
   if actExecutors.Enabled then
@@ -1345,6 +1416,11 @@ begin
   else
     AllowChange := true;
 
+end;
+
+procedure TRequestForm.pnlPhotoFileDblClick(Sender: TObject);
+begin
+  OpenPhotoFile;
 end;
 
 procedure TRequestForm.PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
@@ -1619,6 +1695,30 @@ begin
   end;
 end;
 
+procedure TRequestForm.srcPhotosDataChange(Sender: TObject; Field: TField);
+var
+  s: string;
+  i: Integer;
+  PicExt: array of string;
+begin
+  PicExt := ['jpg', 'png', 'bmp', 'gif'];
+  s := 'jpg';
+
+  if (not dsPhotos.FieldByName('NOTICE').IsNull) then
+  begin
+    s := dsPhotos['NOTICE'];
+    i := Pos('.', s);
+    s := Copy(s, i + 1, 255).Trim([')']);
+    if Length(s) <> 3 then
+      s := 'jpg';
+  end
+  else
+    s := 'jpg';
+
+  imgJPG.Visible := MatchStr(s.ToLower, PicExt);
+  // btnSavePhoto.Visible := not imgJPG.Visible;
+end;
+
 procedure TRequestForm.srcRequestDataChange(Sender: TObject; Field: TField);
 begin
   dbtParent.Visible := not(dsRequest.FieldByName('PARENT_INFO').IsNull);
@@ -1855,8 +1955,15 @@ begin
 end;
 
 procedure TRequestForm.imgJPGDblClick(Sender: TObject);
+begin
+  OpenPhotoFile;
+end;
+
+procedure TRequestForm.OpenPhotoFile;
 var
   FileName: string;
+  s: string;
+  i: Integer;
 begin
   if dsPhotos.FieldByName('ID').IsNull or dsPhotos.FieldByName('jpg').IsNull then
     Exit;
@@ -1864,13 +1971,31 @@ begin
   FileName := GetTempDir + 'A4on\';
   if not DirectoryExists(FileName) then
     CreateDir(FileName);
-  FileName := FileName + IntToStr(dsPhotos['RQ_ID']) + '_' + IntToStr(dsPhotos['ID']) + '.jpg';
+
+  if (not dsPhotos.FieldByName('NOTICE').IsNull) then
+  begin
+    s := dsPhotos['NOTICE'];
+    i := Pos('.', s);
+    s := Copy(s, i + 1, 255).Trim([')']);
+    if Length(s) = 3 then
+      s := '.' + s
+    else
+      s := '.jpg';
+  end
+  else
+    s := '.jpg';
+
+  FileName := FileName + IntToStr(dsPhotos['RQ_ID']) + '_' + IntToStr(dsPhotos['ID']) + s;
   TBlobField(dsPhotos.FieldByName('jpg')).SaveToFile(FileName);
+
   ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TRequestForm.NewMSG;
 begin
+  if dsRequest.FieldByName('RQ_ID').IsNull then
+    Exit;
+
   srcMSG.AutoEdit := true;
   mmoComment.DataField := '';
   mmoComment.DataSource := nil;
@@ -2111,11 +2236,8 @@ end;
 
 procedure TRequestForm.SendEmailMessage;
 var
-  ToEmail: string;
   emailClient: TEmailClient;
   Res: string;
-  ci: Integer;
-  i: Integer;
 begin
   if dsExecutor.RecordCount = 0 then
     Exit;

@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  OverbyteIcsWSocket, OverbyteIcsSmtpProt, OverbyteIcsSslBase;
+  OverbyteIcsWSocket, OverbyteIcsSmtpProt, OverbyteIcsSslBase, OverbyteIcsTypes;
 
 type
   TEmailClient = class(TComponent)

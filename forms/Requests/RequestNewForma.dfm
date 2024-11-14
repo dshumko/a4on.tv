@@ -125,8 +125,10 @@ object RequestNewForm: TRequestNewForm
             FieldName = 'AREA_NAME'
             Title.Caption = #1056#1072#1081#1086#1085
           end>
+        DropDownBox.ListFieldNames = 'STREET_NAME'
         DropDownBox.ListSource = srcStreet
         DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
@@ -144,6 +146,8 @@ object RequestNewForm: TRequestNewForm
         Style = csDropDownEh
         TabOrder = 0
         Visible = True
+        OnChange = LupStreetsChange
+        OnClick = DBLookupComboboxClick
       end
       object LupHOUSE: TDBLookupComboboxEh
         Left = 205
@@ -298,12 +302,6 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 279
       Top = 6
@@ -555,9 +553,11 @@ object RequestNewForm: TRequestNewForm
             Style = csDropDownEh
             TabOrder = 0
             Visible = True
+            OnButtonClick = lupTypeButtonClick
             OnChange = lupTypeChange
             OnClick = DBLookupComboboxClick
             OnDropDownBoxGetCellParams = lupTypeDropDownBoxGetCellParams
+            OnEnter = DBLookupComboboxEnter
           end
           object luTemplate: TDBLookupComboboxEh
             Left = 100
@@ -586,8 +586,10 @@ object RequestNewForm: TRequestNewForm
             Style = csDropDownEh
             TabOrder = 1
             Visible = True
+            OnButtonClick = lupTypeButtonClick
             OnChange = luTemplateChange
             OnClick = DBLookupComboboxClick
+            OnEnter = DBLookupComboboxEnter
           end
           object mmoContent: TDBMemoEh
             Left = 4
@@ -632,9 +634,13 @@ object RequestNewForm: TRequestNewForm
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1090#1077#1083#1077#1092#1086#1085#1072' '#1080' '#1076#1088#1091#1075#1086#1081' '#1082#1086#1085#1090#1072#1082#1090
             EditButtons = <>
+            MRUList.AutoAdd = False
             ShowHint = True
             TabOrder = 2
             Visible = True
+            OnButtonClick = cbContactButtonClick
+            OnClick = cbContactClick
+            OnEnter = cbContactEnter
             OnNotInList = cbContactNotInList
           end
         end
@@ -1114,19 +1120,19 @@ object RequestNewForm: TRequestNewForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     DataSource = srcStreet
-    Left = 256
-    Top = 183
+    Left = 264
+    Top = 223
   end
   object srcHouse: TDataSource
     DataSet = dsHouse
     Left = 231
-    Top = 174
+    Top = 222
   end
   object srcRequestType: TDataSource
     AutoEdit = False
     DataSet = dsRequestType
-    Left = 305
-    Top = 172
+    Left = 345
+    Top = 164
   end
   object dsRequestType: TpFIBDataSet
     SelectSQL.Strings = (
@@ -1136,12 +1142,14 @@ object RequestNewForm: TRequestNewForm
       '  from REQUEST_TYPES W'
       '  where coalesce(w.RT_DELETED, 0) = 0'
       '        and ((coalesce(w.Rt_Hc_Need, 0) = 0)'
-      '          or ((w.Rt_Hc_Need = 1)'
-      '        and exists(select'
-      '                       h.House_Id'
-      '                     from house h'
-      '                     where h.House_Id = :house_id'
-      '                           and h.In_Date <= current_date)))'
+      '           or ('
+      '             (w.Rt_Hc_Need = 1) '
+      '             and '
+      '             exists(select h.House_Id from house h '
+      '                    where h.House_Id = :house_id '
+      '                      and h.In_Date <= current_date))'
+      '           )'
+      '         @@RT_RESTRICT%@  '
       '  order by coalesce(w.rt_default, 0) desc, W.RT_NAME')
     AfterOpen = dsRequestTypeAfterOpen
     Transaction = dmMain.trRead
@@ -1150,7 +1158,7 @@ object RequestNewForm: TRequestNewForm
     AutoCommit = True
     DataSource = srcHouse
     Left = 370
-    Top = 175
+    Top = 191
   end
   object actlst: TActionList
     Left = 431
@@ -1179,7 +1187,6 @@ object RequestNewForm: TRequestNewForm
     end
     object actSave: TAction
       Caption = 'actSave'
-      ShortCut = 16397
       OnExecute = actSaveExecute
     end
     object actAddWork: TAction
@@ -1237,8 +1244,8 @@ object RequestNewForm: TRequestNewForm
       '  from REQUEST_TEMPLATES RT'
       '       left outer join WORKS W on (RT.ADD_WORK = W.W_ID)'
       '  where RT.RQ_TYPE = :RT_ID'
-      '        and (RT.DELETED = 0'
-      '          or RT.DELETED is null)'
+      '        and (RT.DELETED = 0 or RT.DELETED is null)'
+      '       @@RT_RESTRICT%@    '
       '  order by RT.RQ_CONTENT')
     AutoCalcFields = False
     Transaction = dmMain.trRead

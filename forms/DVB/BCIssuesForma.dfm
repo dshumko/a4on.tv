@@ -211,6 +211,19 @@ inherited BCIssuesForm: TBCIssuesForm
       Top = 0
       Action = actRefresh
     end
+    object btn2: TToolButton
+      Left = 247
+      Top = 0
+      Width = 8
+      Caption = 'btn2'
+      ImageIndex = 28
+      Style = tbsSeparator
+    end
+    object btnCheckIssue: TToolButton
+      Left = 255
+      Top = 0
+      Action = actCheckIssue
+    end
   end
   inherited pnlEdit: TPanel
     Width = 739
@@ -248,6 +261,19 @@ inherited BCIssuesForm: TBCIssuesForm
       Caption = 'actRefresh'
       ImageIndex = 27
       OnExecute = actRefreshExecute
+    end
+    object actCheckIssue: TAction
+      Caption = #1055#1088#1086#1074#1077#1088#1082#1072' '#1087#1088#1086#1073#1083#1077#1084#1099
+      ImageIndex = 36
+      OnExecute = actCheckIssueExecute
+    end
+  end
+  inherited pmPopUp: TPopupMenu
+    object miCheckIssue: TMenuItem [0]
+      Action = actCheckIssue
+    end
+    object miN6: TMenuItem [1]
+      Caption = '-'
     end
   end
   object dsIssues: TpFIBDataSet

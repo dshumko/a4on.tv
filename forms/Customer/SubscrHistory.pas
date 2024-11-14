@@ -50,6 +50,8 @@ type
     btnCancelHst: TSpeedButton;
     actOkHst: TAction;
     actCancelHst: TAction;
+    btnAutoblock: TSpeedButton;
+    actChangeToAutoBlock: TAction;
     procedure dbgCustSubscrServGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure dbgCustSubscrServExit(Sender: TObject);
@@ -71,6 +73,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure actOkHstExecute(Sender: TObject);
     procedure actCancelHstExecute(Sender: TObject);
+    procedure actChangeToAutoBlockExecute(Sender: TObject);
   private
     FNeedRecalc: Boolean;
     FDelRecord: Boolean;
@@ -92,13 +95,14 @@ function ShowCustSubscrHistory(const aCustomer_ID: Integer; const aService_ID: I
 implementation
 
 uses
-  MAIN, DM, AtrCommon, pFIBQuery, ChangeOffForma;
+  MAIN, DM, AtrCommon, pFIBQuery, ChangeOffForma, TextEditForma;
 
 {$R *.DFM}
 
 function ShowCustSubscrHistory(const aCustomer_ID: Integer; const aService_ID: Integer = -1): Boolean;
 begin
   with TCustSubscrHistoryForma.Create(Application) do
+  begin
     try
       // dsServices.ParamByName('CUST_ID').AsInteger := ID;
       dsServices.ParamByName('CUSTOMER_ID').AsInteger := aCustomer_ID;
@@ -111,6 +115,7 @@ begin
     finally
       Free;
     end;
+  end;
 end;
 
 procedure TCustSubscrHistoryForma.OkBtnFrame1bbtnOkClick(Sender: TObject);
@@ -268,6 +273,11 @@ begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
+    end
+    else if ((Font_size <> 0) and (Components[i] is TMemo)) then
+    begin
+      (Components[i] as TDBGridEh).Font.Name := Font_name;
+      (Components[i] as TDBGridEh).Font.Size := Font_size;
     end;
   end;
 
@@ -358,6 +368,53 @@ begin
   pnlBtnsHst.Visible := False;
 end;
 
+procedure TCustSubscrHistoryForma.actChangeToAutoBlockExecute(Sender: TObject);
+var
+  notice: string;
+begin
+  // TODO: Доделать
+  ShowMessage('В работе');
+  exit;
+
+  // Есть услгуа
+  if dsServices.FieldByName('SERV_ID').IsNull then
+    exit;
+
+  // Услуга не отключена выйдем
+  if ((dsServices.FieldByName('STATE_SGN').IsNull) and (dsServices['STATE_SGN'] = 1)) then
+    exit;
+
+  // Это точно автоблокировка
+  if (dsServices.FieldByName('State_Srv').AsInteger = srv_AutoBlock) then
+    exit;
+
+  // проверим дату статуса и права
+  if not(FFullAccess or FChangeHistory or (dsServices['STATE_DATE'] >= dmMain.CurrentMonth)) then
+  begin
+    ShowMessage(rsPastDateIncorrect);
+    exit;
+  end;
+
+  if (not EditText(notice, 'Причина', 'Причина смены на автоблокировку')) then
+    exit;
+
+  with dmMain.Query do
+  begin
+    SQL.Clear;
+    SQL.Add('execute procedure CHANGE_OFF_TO_AUTOBLOCK(:Customer_Id, :Service_Id, :Off_Service, :notice)');
+    ParamByName('Customer_Id').AsInteger := dsServices['CUSTOMER_ID'];
+    ParamByName('Service_Id').AsInteger := dsServices['SERV_ID'];
+    ParamByName('OFF_SERVICE').AsInteger := dsServices.FieldByName('State_Srv').AsInteger;
+    ParamByName('notice').AsString := notice;
+    Transaction.StartTransaction;
+    ExecQuery;
+    Transaction.Commit;
+    SQL.Clear;
+  end;
+  dsServicesHistory.CloseOpen(True);
+  FDelRecord := True;
+end;
+
 procedure TCustSubscrHistoryForma.actBackExecute(Sender: TObject);
 var
   srv_name: string;
@@ -431,6 +488,8 @@ begin
 
   FLastState := dsServices.FieldByName('State_Sgn').AsInteger;
   actDisconnect.Enabled := (dsServices.FieldByName('State_Srv').AsInteger = srv_AutoBlock); // автоблокировка
+  actChangeToAutoBlock.Enabled := (FLastState = 0) and (dsServices.FieldByName('State_Srv').AsInteger <> srv_AutoBlock);
+  // Нет автоблокировка
 end;
 
 procedure TCustSubscrHistoryForma.actDisconnectExecute(Sender: TObject);

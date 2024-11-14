@@ -361,20 +361,20 @@ end;
 procedure TSendMessagesForm.FormShow(Sender: TObject);
 var
   val: TStringArray;
-  I, c: Integer;
+  I: Integer;
   Font_size: Integer;
   Font_name, s: string;
   Row_height: Integer;
 begin
   Font_size := 0;
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), I) then
+    I := 0;
+  Row_height := I;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), I) then
   begin
     Font_size := I;
     Font_name := dmMain.GetIniValue('FONT_NAME');
   end;
-  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), I) then
-    I := 0;
-  Row_height := I;
   for I := 0 to ComponentCount - 1 do
   begin
     if Components[I] is TDBGridEh then
@@ -393,6 +393,19 @@ begin
       begin
         (Components[I] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[I] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[I] is TMemo) then
+      begin
+        (Components[I] as TMemo).Font.Name := Font_name;
+        (Components[I] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[I] is TDBMemoEh) then
+      begin
+        (Components[I] as TDBMemoEh).Font.Name := Font_name;
+        (Components[I] as TDBMemoEh).Font.Size := Font_size;
       end;
     end;
   end;
@@ -487,9 +500,9 @@ begin
   begin
     if (not dsTemplate.FieldByName('O_DESCRIPTION').IsNull) and (FTmpltName = dsTemplate['O_DESCRIPTION']) then
       dsTemplate.Edit
-    else begin
-      if dsTemplate.Locate('O_DESCRIPTION', TempName, [])
-      then
+    else
+    begin
+      if dsTemplate.Locate('O_DESCRIPTION', TempName, []) then
         dsTemplate.Edit
       else
         dsTemplate.Insert;

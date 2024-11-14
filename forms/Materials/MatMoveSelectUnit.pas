@@ -40,11 +40,10 @@ type
     procedure CustomDropDownFormEhInitForm(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
     procedure CustomDropDownFormEhReturnParams(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
     procedure CustomDropDownFormEhShow(Sender: TObject);
-    procedure CustomDropDownFormEhClose(Sender: TObject;
-      var Action: TCloseAction);
+    procedure CustomDropDownFormEhClose(Sender: TObject; var Action: TCloseAction);
   private
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
-    function ShipperCostExists:Boolean;
+    function ShipperCostExists: Boolean;
   public
     class function GetGlobalRef: TCustomDropDownFormEh; override;
   end;
@@ -102,7 +101,20 @@ begin
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
-    end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
+      end;
+    end
   end;
 
   Panel3.DoubleBuffered := True;
@@ -157,8 +169,7 @@ begin
   sbOk.Enabled := not srcMaterials.DataSet.IsEmpty;
 end;
 
-procedure TMaterialsMoveSelect.CustomDropDownFormEhClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TMaterialsMoveSelect.CustomDropDownFormEhClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 begin
@@ -188,7 +199,7 @@ begin
     MainGrid.SearchPanel.SearchingText := vMaterial;
 end;
 
-function TMaterialsMoveSelect.ShipperCostExists:Boolean;
+function TMaterialsMoveSelect.ShipperCostExists: Boolean;
 begin
   Result := (srcMaterials.DataSet.FindField('Ship_Cost') <> nil);
 end;

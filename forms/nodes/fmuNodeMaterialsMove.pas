@@ -74,6 +74,10 @@ begin
   actDetail.Checked := not actDetail.Checked;
   dsMat.Close;
   SetSQL(actDetail.Checked);
+  if actDetail.Checked then
+    actDetail.ImageIndex := 24 // детально
+  else
+    actDetail.ImageIndex := 101; // суммарно
   dsMat.Open;
 end;
 
@@ -118,13 +122,15 @@ begin
   dsMat.SelectSQL.Add('  , M.NAME');
   dsMat.SelectSQL.Add('  , M.COST');
   dsMat.SelectSQL.Add('  , M.DIMENSION');
-  dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
-  dsMat.SelectSQL.Add('  , NM.WH_ID');
   if Grouping then begin
+    dsMat.SelectSQL.Add('  , NULL WH_NAME');
+    dsMat.SelectSQL.Add('  , NULL WH_ID');
     dsMat.SelectSQL.Add('  , ''Итого'' OPER, NULL RQ_ID, NULL RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , SUM(NM.MT * NM.QUANT) QNT');
   end
   else begin
+    dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
+    dsMat.SelectSQL.Add('  , NM.WH_ID');
     dsMat.SelectSQL.Add('  , iif(NM.MT = 1, ''Установка'', ''Возврат'') OPER, NM.RQ_ID, NM.RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , NM.MT * NM.QUANT QNT');
   end;

@@ -1,7 +1,7 @@
 object apgNodeMaterialsMove: TapgNodeMaterialsMove
   Left = 0
   Top = 0
-  Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1091#1079#1083#1072
+  Caption = #1044#1074#1080#1078#1077#1085#1080#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074' '#1087#1086' '#1079#1072#1103#1074#1082#1072#1084
   ClientHeight = 211
   ClientWidth = 779
   Color = clBtnFace
@@ -47,12 +47,14 @@ object apgNodeMaterialsMove: TapgNodeMaterialsMove
     ParentShowHint = False
     RowDetailPanel.Height = 200
     RowSizingAllowed = True
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
     ShowHint = True
     SortLocal = True
     STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
+    STFilter.Location = stflUnderTitleFilterEh
     STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1

@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, FIBDatabase,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  FIBDatabase,
   pFIBDatabase, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
   PrnDbgeh;
 
@@ -32,7 +34,7 @@ type
     lbl11: TLabel;
     lbl7: TLabel;
     lbl8: TLabel;
-    cbIN_DOGOVOR1: TDBCheckBoxEh;
+    chkWORKING: TDBCheckBoxEh;
     edtPOST: TDBEditEh;
     lcbTEAM: TDBLookupComboboxEh;
     edDepart: TDBEditEh;
@@ -98,8 +100,8 @@ end;
 procedure TWorkersForm.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if fCanCreate
-  then begin
+  if fCanCreate then
+  begin
     StartEdit(True);
     PrepareEdit();
   end;
@@ -108,18 +110,17 @@ end;
 procedure TWorkersForm.actDeleteExecute(Sender: TObject);
 begin
   inherited;
-  if fCanEdit
-  then
-    if (MessageDlg(Format(rsDeleteWorkerInfo, [srcDataSource.DataSet['SURNAME']]), mtConfirmation, [mbYes, mbNo],
-      0) = mrYes)
-    then srcDataSource.DataSet.Delete;
+  if fCanEdit then
+    if (MessageDlg(Format(rsDeleteWorkerInfo, [srcDataSource.DataSet['SURNAME']]), mtConfirmation, [mbYes, mbNo], 0)
+      = mrYes) then
+      srcDataSource.DataSet.Delete;
 end;
 
 procedure TWorkersForm.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if fCanEdit
-  then begin
+  if fCanEdit then
+  begin
     StartEdit(False);
     PrepareEdit();
   end;
@@ -161,9 +162,10 @@ procedure TWorkersForm.PrepareEdit;
 begin
   dsDEPART.Open;
   edDepart.MRUList.Items.Clear;
-  while not dsDEPART.Eof do begin
-    if not dsDEPART.FieldByName('DEPARTMENT').IsNull
-    then edDepart.MRUList.Items.Add(dsDEPART['DEPARTMENT']);
+  while not dsDEPART.Eof do
+  begin
+    if not dsDEPART.FieldByName('DEPARTMENT').IsNull then
+      edDepart.MRUList.Items.Add(dsDEPART['DEPARTMENT']);
     dsDEPART.Next;
   end;
   dsDEPART.Close;
@@ -177,21 +179,24 @@ var
 begin
   if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := true;
+    go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-    //else if (ActiveControl is TDBGridEh) then
-    //  go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
-    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
-    //  go := False
+      // else if (ActiveControl is TDBGridEh) then
+      // go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
+      // else if (ActiveControl is TDBAxisGridInplaceEdit) then
+      // go := False
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
-        FEnterSecondPress := true;
+        FEnterSecondPress := True;
       end;
     end;
 
@@ -214,15 +219,16 @@ var
   errors: Boolean;
 begin
   errors := False;
-  if (edtSurname.Text = '')
-  then begin
+  if (edtSurname.Text = '') then
+  begin
     errors := True;
     CnErrors.SetError(edtSurname, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
-  else CnErrors.Dispose(edtSurname);
+  else
+    CnErrors.Dispose(edtSurname);
 
-  if not errors
-  then inherited;
+  if not errors then
+    inherited;
 end;
 
 procedure TWorkersForm.dsWorkersNewRecord(DataSet: TDataSet);
@@ -236,14 +242,15 @@ end;
 procedure TWorkersForm.actSendSMSExecute(Sender: TObject);
   procedure SendMessage(const mes_text: string);
   begin
-    if (mes_text = '')
-    then exit;
-    if ((dsWorkers.FieldByName('PHONE_NO').IsNull) or (Length(Trim(dsWorkers['PHONE_NO'])) < 7))
-    then exit;
-    if ((dsWorkers.FieldByName('WORKING').IsNull) or (dsWorkers['WORKING']))
-    then exit;
+    if (mes_text = '') then
+      exit;
+    if ((dsWorkers.FieldByName('PHONE_NO').IsNull) or (Length(Trim(dsWorkers['PHONE_NO'])) < 7)) then
+      exit;
+    if ((dsWorkers.FieldByName('WORKING').IsNull) or (dsWorkers['WORKING'])) then
+      exit;
 
-    with qrySaveMessages do begin
+    with qrySaveMessages do
+    begin
       ParamByName('MES_TEXT').AsString := mes_text;
       ParamByName('Reciver').AsString := dsWorkers['PHONE_NO'];
       Transaction.StartTransaction;
@@ -255,28 +262,30 @@ procedure TWorkersForm.actSendSMSExecute(Sender: TObject);
 var
   j: Integer;
   sms_text: String;
-  sList : TStringList;
+  sList: TStringList;
   b: Boolean;
 begin
-  if not(dmMain.AllowedAction(rght_Messages_add))
-  then exit;
+  if not(dmMain.AllowedAction(rght_Messages_add)) then
+    exit;
   sList := TStringList.Create;
   b := not EditText(sList, 'Текст SMS', '');
   sms_text := Trim(sList.Text);
   FreeAndNil(sList);
 
-  if (b and (sms_text = ''))
-  then exit;
+  if (b and (sms_text = '')) then
+    exit;
 
   try
-    if dbGrid.SelectedRows.Count > 0
-    then begin
-      for j := 0 to dbGrid.SelectedRows.Count - 1 do begin
+    if dbGrid.SelectedRows.Count > 0 then
+    begin
+      for j := 0 to dbGrid.SelectedRows.Count - 1 do
+      begin
         dbGrid.DataSource.DataSet.Bookmark := dbGrid.SelectedRows[j];
         SendMessage(sms_text);
       end
     end
-    else begin
+    else
+    begin
       SendMessage(sms_text);
     end;
   finally

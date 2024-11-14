@@ -53,10 +53,11 @@ object apgCustomerEdit: TapgCustomerEdit
         Flat = True
         FooterParams.Color = clWindow
         Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghExtendVertLines]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghColumnResize, dghExtendVertLines]
         TabOrder = 1
         OnDblClick = dbgrdhContactsDblClick
         OnExit = dbgrdhContactsExit
+        OnGetCellParams = dbgrdhContactsGetCellParams
         OnKeyUp = dbgrdhContactsKeyUp
         Columns = <
           item
@@ -67,6 +68,7 @@ object apgCustomerEdit: TapgCustomerEdit
             FieldName = 'O_NAME'
             Footers = <>
             Title.Caption = #1058#1080#1087
+            Title.TitleButton = True
             Width = 62
           end
           item
@@ -76,6 +78,7 @@ object apgCustomerEdit: TapgCustomerEdit
             FieldName = 'CC_VALUE'
             Footers = <>
             Title.Caption = #1050#1086#1085#1090#1072#1082#1090
+            Title.TitleButton = True
             Width = 132
           end
           item
@@ -87,6 +90,7 @@ object apgCustomerEdit: TapgCustomerEdit
             Footers = <>
             Title.Caption = #1059#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103
             Title.Hint = #1056#1072#1089#1089#1099#1083#1072#1090#1100' '#1091#1074#1077#1076#1086#1084#1083#1077#1085#1080#1103' '#1085#1072' '#1101#1090#1086#1090' '#1082#1086#1085#1090#1072#1082#1090
+            Title.TitleButton = True
             Width = 43
           end
           item
@@ -96,6 +100,7 @@ object apgCustomerEdit: TapgCustomerEdit
             FieldName = 'CC_NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 157
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -131,7 +136,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Left = 102
           Top = 0
           Width = 21
-          Height = 18
+          Height = 13
           Align = alLeft
           Caption = '       '
         end
@@ -211,7 +216,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Left = 381
           Top = 0
           Width = 21
-          Height = 18
+          Height = 13
           Align = alRight
           Caption = '       '
         end

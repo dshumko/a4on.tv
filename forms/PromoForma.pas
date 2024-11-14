@@ -265,19 +265,30 @@ end;
 procedure TPromoForm.lcbServiceClick(Sender: TObject);
 begin
   inherited;
+
   if not(Sender is TDBLookupComboboxEh) then
     exit;
 
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 procedure TPromoForm.lcbServiceEnter(Sender: TObject);
 begin
   inherited;
-  //
+  if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+  end;
 end;
 
 procedure TPromoForm.ParseJson(const json: String);

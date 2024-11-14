@@ -125,6 +125,7 @@ type
     procedure GetCompany;
     procedure CheckFirebirdVersion;
     function CheckAdminUser: Boolean;
+    function FrSHA256(const Str: String) : string;
   public
     { Public declarations }
     frxChartObject1: TfrxChartObject;
@@ -160,7 +161,7 @@ type
     property DBAlias: string read FDBAlias write FDBAlias;
     property Database: string read GetDatabase;
     property User: string read GetUser;
-    property UserIsAdmin: boolean read CheckAdminUser;
+    property UserIsAdmin: Boolean read CheckAdminUser;
     property UserGroups: string read GetUserGroups;
     property UserFio: string read FUserFIO;
     property Password: string read GetPassword;
@@ -208,7 +209,7 @@ type
     function CanViewCustomers: Boolean;
     function GetServerDateTime: TDateTime;
     procedure ProceedTask(const EventName: String);
-    function IpInfo(const ip: String; const vlan_id : Integer = -1): String;
+    function IpInfo(const ip: String; const vlan_id: Integer = -1): String;
     procedure RefreshCompanyData;
   end;
 
@@ -219,8 +220,8 @@ implementation
 
 uses
   System.StrUtils, System.Rtti,
-  pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, synacode, httpsend, synautil, ZLibExGZ,
-  JsonDataObjects,
+  pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, httpsend, synautil, ZLibExGZ,
+  JsonDataObjects, mormot.crypt.core, synacode,
   SelectOneForma, MAIN;
 
 {$R *.dfm}
@@ -593,7 +594,7 @@ var
 begin
 {$IFDEF WITHRIGHTS}
   // Если юзер блокирован. выйдем из системы
-  if GetUser <> 'SYSDBA' then
+  if GetUser.ToUpper <> 'SYSDBA' then
   begin
     with TpFIBQuery.Create(Nil) do
     begin
@@ -725,7 +726,7 @@ end;
 
 function TdmMain.AllowedAction(const aRightsID: Integer): Boolean;
 begin
-  if (dbTV.ConnectParams.UserName <> 'SYSDBA') then
+  if (dbTV.ConnectParams.UserName.ToUpper <> 'SYSDBA') then
   begin
     Result := (FRightsList.IndexOf(IntToStr(aRightsID)) >= 0);
   end
@@ -1089,8 +1090,15 @@ begin
     Result := A4MainForm.OpenRequest(Params[0])
   else if MethodName = 'INCMAC' then
     Result := AtrStrUtils.IncMAC(Params[0], Params[1])
+  else if MethodName = 'SHA256' then
+    Result := FrSHA256(Params[0])
   else
     Result := null;
+end;
+
+function TdmMain.FrSHA256(const Str: String) : string;
+begin
+  RESULT :=string(Sha256(RawByteString(Str)));
 end;
 
 procedure TdmMain.GlobalInitReport(Report: TfrxReport);
@@ -1127,10 +1135,11 @@ begin
     'Открыть абонента в списке абонентов по лицевому');
   Report.AddFunction('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', rsFunctionsA4onTV,
     'Открыть абонента в списке абонентов по его ID');
-  Report.AddFunction('function OpenRequest(const RQ_ID: String): Integer', rsFunctionsA4onTV,
-    'Открыть заявку');
+  Report.AddFunction('function OpenRequest(const RQ_ID: String): Integer', rsFunctionsA4onTV, 'Открыть заявку');
   Report.AddFunction('function IncMAC(const MAC: string; const step: Integer): String;', rsFunctionsA4onTV,
     'Увеличить/уменьшить MAC адресс на STEP');
+  Report.AddFunction('function Sha256(const text: string): String;', rsFunctionsA4onTV,
+    'Считаем Sha256 для строки');
 end;
 
 function TdmMain.GetNextIP(InetIP: Boolean; const mask: string = ''): string;
@@ -1160,15 +1169,17 @@ var
 begin
   Result := '';
   if itsVlan then
-    FLD := 'select IP from GET_FREE_VLAN_IP(' + IntToStr(id) + ')'
+    FLD := 'select IP from GET_FREE_VLAN_IP(:id)'
   else
-    FLD := 'select IP from GET_FREE_VLAN_IP((select e.vlan_id from equipment e where e.eid =' + IntToStr(id) + '))';
+    FLD := 'select IP from GET_FREE_VLAN_IP((select e.vlan_id from equipment e where e.eid = :id))';
 
   with TpFIBQuery.Create(self) do
+  begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
       SQL.text := FLD;
+      ParamByName('id').AsInteger := id;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('IP').IsNull then
@@ -1177,6 +1188,7 @@ begin
     finally
       Free;
     end;
+  end;
 end;
 
 function TdmMain.GetServer: String;
@@ -1307,190 +1319,29 @@ end;
 
 function TdmMain.GenerateDogNumberFromFormat(const FORMAT: string; const HOUSE_ID: Integer; const Flat: string;
   const SRV_ID: Integer): string;
-var
-  sa, sl: TStringArray;
-  cnt, i, j: Integer;
-  DOGNUMBER: string;
-  gen_id: string;
-  ms: string;
-  ys: string;
-  ds: string;
-  y, m, d: word;
-  tolen: word;
-  FLATS: Integer;
-  cs, ca, ch, cc, HOUSE, npp, ts: string;
-  s, c: string;
-  FLAT_NO: string;
-
-  function ReplaceDATA(s: string): string;
-  begin
-    s := ReplaceText(s, rsFldCOUNTER, gen_id);
-    s := ReplaceText(s, rsFldCodeCity, cc);
-    s := ReplaceText(s, rsFldCodeArea, ca);
-    s := ReplaceText(s, rsFldCodeStreet, cs);
-    s := ReplaceText(s, rsFldCodeHouse, ch);
-    s := ReplaceText(s, rsFldSRVTYPE, ts);
-    s := ReplaceText(s, rsFldLastNumber4Flat, npp);
-    s := ReplaceText(s, rsFldHouse, HOUSE);
-    s := ReplaceText(s, rsFldFlat, FLAT_NO);
-    s := ReplaceText(s, rsFldCurrentDay, ds);
-    s := ReplaceText(s, rsFldMonth, ms);
-    s := ReplaceText(s, rsFldCurrentYear, ys);
-
-    Result := s;
-  end;
-// выборка данных из базы данных
-  procedure GetFlatData;
-  begin
-    with TpFIBQuery.Create(Nil) do
-      try
-        Database := dbTV;
-        Transaction := trReadQ;
-        SQL.text :=
-          'select h.house_no, coalesce(h.house_code, '''') H_CODE, coalesce(s.street_code, '''') S_CODE, coalesce(a.area_code, '''') A_CODE,';
-        SQL.Add(' (select count(*) from customer c where c.house_id = h.house_id) FLATS,');
-        SQL.Add(' (select count(*) from subscr_serv ss inner join customer c on (c.customer_id = ss.customer_id) where ( not ss.Contract is null) and c.house_id = h.house_id  and c.flat_no = :FLAT_NO) as DOGS, ');
-        SQL.Add(' coalesce((select w.wa_code from workarea w where exists(select g.wa_id from workgroups g where g.wa_id = w.wa_id and g.wg_id = h.wg_id)),'''') WA_CODE ');
-        SQL.Add(' from house h inner join street s on (h.street_id = s.street_id) left outer join area a on (a.area_id = s.area_id)');
-        SQL.Add(' where h.house_id = :HOUSE_ID');
-        ParamByName('HOUSE_ID').AsInteger := HOUSE_ID;
-        ParamByName('FLAT_NO').AsString := Flat;
-        Transaction.StartTransaction;
-        ExecQuery;
-        if not Eof then
-        begin
-          cs := FieldByName('S_CODE').Value;
-          cc := FieldByName('A_CODE').Value;
-          ch := FieldByName('H_CODE').Value;
-          ca := FieldByName('WA_CODE').Value;
-          HOUSE := FieldByName('house_no').Value;
-          npp := IntToStr(FieldByName('DOGS').AsInteger + 1);
-          FLATS := FieldByName('FLATS').Value;
-        end
-        else
-        begin
-          cs := '';
-          ca := '';
-          ch := '';
-          HOUSE := '';
-          npp := '1';
-          FLATS := 0;
-        end;
-        Close;
-        Transaction.Commit;
-      finally
-        Free;
-      end;
-  end;
-// выборка данных из базы данных
-  procedure GetSRVData;
-  begin
-    with TpFIBQuery.Create(Nil) do
-      try
-        Database := dbTV;
-        Transaction := trReadQ;
-        SQL.text := 'select (coalesce(s.business_type,0)+1) business_type from services s where s.service_id = :SRV_ID';
-        ParamByName('SRV_ID').AsInteger := SRV_ID;
-        Transaction.StartTransaction;
-        ExecQuery;
-        if not Eof then
-          ts := FieldByName('business_type').Value
-        else
-          ts := '';
-        Close;
-        Transaction.Commit;
-      finally
-        Free;
-      end;
-  end;
-
 begin
-  if (FORMAT = '') or (Pos(rsFldCOUNTER, FORMAT) > 0) then
+  Result := '';
+  with TpFIBQuery.Create(Nil) do
   begin
-    with TpFIBQuery.Create(Nil) do
-      try
-        Database := dbTV;
-        Transaction := trReadQ;
-        SQL.text := 'select ACCOUNT_NO from API_GET_NEW_ACCOUNT';
-        Transaction.StartTransaction;
-        ExecQuery;
-        gen_id := FieldByName('ACCOUNT_NO').Value;
-        Close;
-        Transaction.Commit;
-      finally
-        Free;
-      end;
-  end;
-
-  if FORMAT = '' then
-    Result := gen_id
-  else
-  begin
-    DecodeDate(CurrentMonth, y, m, d);
-    ms := IntToStr(m);
-    ys := IntToStr(y);
-    ds := IntToStr(d);
-    GetFlatData;
-    // Если в квартире есть буквы заменим их
-    if not TryStrToInt(Flat, j) then
-    begin
-      FLAT_NO := '';
-      for j := 1 to Length(Flat) do
-      begin
-        if CharInSet(Flat[j], ['0' .. '9']) then
-          FLAT_NO := FLAT_NO + Flat[j]
-        else
-          FLAT_NO := FLAT_NO + '0'
-      end;
-      if TryStrToInt(FLAT_NO, j) then
-      begin
-        if FLATS >= StrToInt(FLAT_NO) then
-          FLAT_NO := IntToStr(FLATS + 1);
-      end
-    end
-    else
-      FLAT_NO := Flat;
-
-    if (Pos(rsFldSRVTYPE, FORMAT) > 0) and (SRV_ID <> -1) then
-      GetSRVData
-    else
-      ts := '';
-
-    DOGNUMBER := '';
-    sa := Explode('^', FORMAT);
-    cnt := Length(sa);
-    for i := 0 to cnt - 1 do
-    begin
-      s := '';
-      sl := Explode('~', sa[i]);
-      j := Length(sl);
-      // вставим данные
-      if j > 0 then
-        s := ReplaceDATA(sl[0])
-      else
-        s := '';
-      // обрежем до нужной длины
-      if j > 1 then
-        try
-          tolen := StrToInt(sl[1])
-        except
-          tolen := Length(s);
-        end
-      else
-        tolen := Length(s);
-      // дополним символом
-      s := Copy(s, 0, tolen);
-      if j > 2 then
-      begin
-        c := sl[2];
-        if Length(c) <> 0 then
-          s := AddChar(c[1], s, tolen);
-      end;
-
-      DOGNUMBER := DOGNUMBER + s;
+    try
+      Database := dbTV;
+      Transaction := trReadQ;
+      SQL.text := 'select Get_New_Account (:House_Id, :Flat, :Srv_Id) ACC from Rdb$Database';
+      if HOUSE_ID > -1 then
+        ParamByName('House_Id').AsInteger := HOUSE_ID;
+      if not Flat.IsEmpty then
+        ParamByName('Flat').AsString := Flat;
+      if SRV_ID > -1 then
+        ParamByName('Srv_Id').AsInteger := SRV_ID;
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not Eof then
+        Result := FieldByName('ACC').Value;
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
     end;
-
-    Result := AnsiUpperCase(DOGNUMBER);
   end;
 end;
 
@@ -1852,7 +1703,7 @@ begin
   json := TJsonObject.Create;
   json.s['login'] := Str;
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := string(MD5(json.ToString));
+  Str := string(mormot.crypt.core.MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
 
@@ -1900,7 +1751,7 @@ begin
   json := TJsonObject.Create;
   json.s['login'] := dmMain.GetSettingsValue('A4LOGIN');
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := string(MD5(json.ToString));
+  Str := string( mormot.crypt.core.MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
 
@@ -2112,7 +1963,7 @@ begin
   FTaskLastTimeCheck := now();
 end;
 
-function TdmMain.IpInfo(const ip: String; const vlan_id : Integer = -1): String;
+function TdmMain.IpInfo(const ip: String; const vlan_id: Integer = -1): String;
 begin
   Result := '';
   if ip = '' then
@@ -2186,19 +2037,19 @@ procedure TdmMain.CheckFirebirdVersion;
 begin
   if (not dbTV.Version.Contains('Firebird 4.')) then
     exit;
-{
-SELECT RDB$GET_CONTEXT('SYSTEM', 'ENGINE_VERSION') AS ENGINE_VERSION FROM RDB$DATABASE
+  {
+    SELECT RDB$GET_CONTEXT('SYSTEM', 'ENGINE_VERSION') AS ENGINE_VERSION FROM RDB$DATABASE
 
-DataTypeCompatibility = 3.0 in databases.conf
+    DataTypeCompatibility = 3.0 in databases.conf
 
-There is also just issuing:
-SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;
-SET BIND OF TIME WITH TIME ZONE TO LEGACY;
-SET BIND OF DECFLOAT TO LEGACY;
-SET BIND OF NUMERIC(38) TO LEGACY;
+    There is also just issuing:
+    SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;
+    SET BIND OF TIME WITH TIME ZONE TO LEGACY;
+    SET BIND OF DECFLOAT TO LEGACY;
+    SET BIND OF NUMERIC(38) TO LEGACY;
 
-after connecting to Firebird 4 database.
-}
+    after connecting to Firebird 4 database.
+  }
   dbTV.Execute('SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;');
   dbTV.Execute('SET BIND OF TIME WITH TIME ZONE TO LEGACY;');
   dbTV.Execute('SET BIND OF DECFLOAT TO LEGACY;');
@@ -2223,7 +2074,7 @@ end;
 
 function TdmMain.CheckAdminUser: Boolean;
 begin
-  Result := (GetUser = 'SYSDBA');
+  Result := (GetUser.ToUpper = 'SYSDBA');
 end;
 
 end.

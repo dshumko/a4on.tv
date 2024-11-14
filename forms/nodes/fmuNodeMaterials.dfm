@@ -53,40 +53,105 @@ object apgNodeMaterials: TapgNodeMaterials
       Flat = True
     end
   end
-  object dbgrd1: TDBGrid
+  object dbgEquip: TDBGridEh
     Left = 26
     Top = 0
     Width = 753
     Height = 211
     Align = alClient
-    DataSource = srcMat
+    AllowedOperations = [alopUpdateEh]
+    DataSource = srcEquipment
+    DynProps = <>
+    Flat = True
+    FooterRowCount = 1
+    FooterParams.Color = clWindow
+    GridLineParams.VertEmptySpaceStyle = dessNonEh
+    OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
+    SearchPanel.Enabled = True
+    SortLocal = True
+    SumList.Active = True
     TabOrder = 1
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
     Columns = <
       item
-        Expanded = False
+        Alignment = taLeftJustify
+        ButtonStyle = cbsNone
+        CellButtons = <>
+        DynProps = <>
+        EditButton.Visible = False
+        EditButtons = <>
+        FieldName = 'EQ_TYPE'
+        Footers = <>
+        KeyList.Strings = (
+          '1'
+          '2'
+          '3')
+        PickList.Strings = (
+          #1057#1077#1090#1077#1074#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+          #1050#1072#1073#1077#1083#1100#1085#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+          #1055#1088#1086#1095#1077#1077)
+        Title.Caption = #1058#1080#1087
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'eqgroup'
+        Footers = <>
+        Title.Caption = #1043#1088#1091#1087#1087#1072
+        Title.TitleButton = True
+        Width = 63
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'EID'
+        Footers = <>
+        Visible = False
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'NAME'
+        Footers = <>
         Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
-        Width = 130
-        Visible = True
+        Title.TitleButton = True
+        Width = 95
       end
       item
-        Expanded = False
-        FieldName = 'SERIAL'
-        Title.Caption = #1057'/'#1053
-        Visible = True
+        AutoFitColWidth = False
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'MAC'
+        Footers = <>
+        Title.TitleButton = True
+        Width = 89
       end
       item
-        Expanded = False
+        AutoFitColWidth = False
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'IP'
+        Footers = <>
+        Title.TitleButton = True
+        Width = 109
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'NOTICE'
-        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-        Width = 334
-        Visible = True
+        Footers = <>
+        Title.Caption = #1047#1072#1084#1077#1090#1082#1080
+        Title.TitleButton = True
+        Width = 129
       end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
   end
   object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -112,11 +177,6 @@ object apgNodeMaterials: TapgNodeMaterials
     Left = 411
     Top = 98
   end
-  object srcMat: TDataSource
-    DataSet = dsMat
-    Left = 119
-    Top = 83
-  end
   object ActList: TActionList
     Images = A4MainForm.ICONS_ACTIVE
     Left = 211
@@ -137,49 +197,37 @@ object apgNodeMaterials: TapgNodeMaterials
       OnExecute = actFindExecute
     end
   end
-  object dsMat: TpFIBDataSet
-    RefreshSQL.Strings = (
-      'select'
-      '  o.o_name'
-      '  ,  E.Name'
-      '  , e.Mac Serial'
-      '  , '#39#39' Dimension'
-      '  , e.Eid M_Id'
-      '  ,  1 Quant'
-      '  , e.Notice'
-      '  , '#39'e'#39' ROW_TYPE'
-      '  from EQUIPMENT E'
-      
-        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
-        '_TYPE = 7)'
-      '  where'
-      '    e.Node_Id = :OLD_node_id'
-      '    and e.EID= :OLD_M_ID'
+  object dsEquipment: TpFIBDataSet
+    UpdateSQL.Strings = (
       ''
-      '    '
-      '  ')
+      '    ')
     SelectSQL.Strings = (
       'select'
-      '  e.EID'
-      '  , o.o_name'
-      '  , E.Name'
-      '  , e.Mac Serial'
-      '  , e.Eid M_Id'
-      '  , e.Notice'
-      '  , '#39'e'#39' ROW_TYPE'
+      '    E.*'
+      '  , o.o_name as eqgroup'
+      '  , o.O_DIMENSION as COLOR'
       '  from EQUIPMENT E'
       
         '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
         '_TYPE = 7)'
       '  where e.Node_Id = :Node_Id'
       ''
-      'order by e.Name, e.Mac')
-    AutoCalcFields = False
+      'order by o.O_Name, e.Name')
+    AutoUpdateOptions.UpdateTableName = 'HOUSE'
+    AutoUpdateOptions.KeyFields = 'HOUSE_ID'
+    AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
+    AutoUpdateOptions.WhenGetGenID = wgBeforePost
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     AutoCommit = True
-    Left = 64
-    Top = 88
+    Left = 55
+    Top = 140
+  end
+  object srcEquipment: TDataSource
+    AutoEdit = False
+    DataSet = dsEquipment
+    Left = 56
+    Top = 80
   end
 end

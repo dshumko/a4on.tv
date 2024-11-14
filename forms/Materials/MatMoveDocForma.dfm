@@ -733,6 +733,7 @@ object MatMoveDocForm: TMatMoveDocForm
       '  , g.Mg_Name'
       '  , m.DESCRIPTION'
       '  , u.Serial'
+      '  , m.M_NUMBER'
       '  from materials m'
       '       inner join Materials_Remain r on (m.M_Id = r.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
@@ -745,6 +746,7 @@ object MatMoveDocForm: TMatMoveDocForm
       
         '        and ((coalesce(m.Is_Unit, 0) = 0) or (not u.Serial is nu' +
         'll))'
+      '        and r.Mr_Quant <> 0'
       '  order by m.Name, g.Mg_Name')
     Transaction = trRead
     Database = dmMain.dbTV
@@ -773,7 +775,7 @@ object MatMoveDocForm: TMatMoveDocForm
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
       '  from OBJECTS o'
-      '  where O_TYPE = 10'
+      '  where O_TYPE = 10 '
       '        and ((exists(select'
       '                         w.wh_id'
       '                       from SYS$USER u'
@@ -804,8 +806,8 @@ object MatMoveDocForm: TMatMoveDocForm
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Result from Close_Material_Doc(:Doc_Id) ')
-    Left = 504
-    Top = 316
+    Left = 520
+    Top = 268
   end
   object srcFromWH: TDataSource
     DataSet = dsWH

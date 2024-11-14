@@ -176,7 +176,7 @@ begin
   if Assigned(CustomersForm) then
   begin
     ci := frxReport.Variables.IndexOf('CUSTOMER_ID');
-    if ci > 0 then
+    if (ci > 0) and (not CustomersForm.dsCustomers.FieldByName('CUSTOMER_ID').IsNull)  then
       frxReport.Variables['CUSTOMER_ID'] := CustomersForm.dsCustomers['CUSTOMER_ID'];
   end;
 

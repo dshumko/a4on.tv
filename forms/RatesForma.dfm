@@ -1,22 +1,21 @@
 inherited RatesForm: TRatesForm
   Left = 381
   Top = 171
-  ActiveControl = dbGrid
   Caption = #1050#1091#1088#1089#1099' '#1074#1072#1083#1102#1090
   ClientHeight = 399
-  ClientWidth = 652
+  ClientWidth = 718
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Width = 652
+    Width = 718
   end
   object spl1: TSplitter [1]
-    Left = 344
+    Left = 369
     Top = 85
     Height = 314
   end
   inherited dbGrid: TDBGridEh
-    Width = 344
+    Width = 369
     Height = 314
     Align = alLeft
     AllowedOperations = [alopUpdateEh, alopDeleteEh]
@@ -49,7 +48,7 @@ inherited RatesForm: TRatesForm
         FieldName = 'USD'
         Footers = <>
         Title.TitleButton = True
-        Width = 80
+        Width = 60
       end
       item
         CellButtons = <>
@@ -58,40 +57,42 @@ inherited RatesForm: TRatesForm
         FieldName = 'EUR'
         Footers = <>
         Title.TitleButton = True
-        Width = 80
+        Width = 60
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RUR'
+        Footers = <>
+        Title.TitleButton = True
+        Width = 60
       end>
   end
   inherited tlbMain: TToolBar
-    Width = 652
+    Width = 718
     inherited ToolButton4: TToolButton
+      Left = 23
       Visible = False
     end
     inherited btnNew: TToolButton
-      Visible = False
-    end
-    inherited btnEdit: TToolButton
-      Visible = False
-    end
-    inherited ToolButton5: TToolButton
-      Visible = False
+      Left = 0
     end
     inherited ToolButton6: TToolButton
       Visible = False
     end
-    inherited btnDelete: TToolButton
-      Visible = False
-    end
-    inherited ToolButton9: TToolButton
-      Visible = False
-    end
     inherited tbOk: TToolButton
+      Enabled = True
       Visible = False
+      OnClick = tbOkClick
     end
     inherited ToolButton10: TToolButton
       Visible = False
     end
     inherited tbCancel: TToolButton
+      Enabled = True
       Visible = False
+      OnClick = tbCancelClick
     end
     inherited ToolButton20: TToolButton
       Visible = False
@@ -111,18 +112,18 @@ inherited RatesForm: TRatesForm
     end
   end
   inherited pnlEdit: TPanel
-    Width = 652
+    Width = 718
     inherited btnSaveLink: TBitBtn
-      Width = 466
+      Width = 532
     end
     inherited btnCancelLink: TBitBtn
-      Left = 557
+      Left = 623
     end
   end
   object chtRates: TChart [5]
-    Left = 347
+    Left = 372
     Top = 85
-    Width = 305
+    Width = 346
     Height = 314
     Legend.Alignment = laLeft
     Legend.CheckBoxes = True
@@ -161,9 +162,21 @@ inherited RatesForm: TRatesForm
       SeriesColor = 16744576
       Title = 'EURO'
       Brush.BackColor = clDefault
+      Pointer.HorizSize = 1
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.VertSize = 1
+      Pointer.Visible = True
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object RUR: TLineSeries
+      Brush.BackColor = clDefault
       Pointer.HorizSize = 2
       Pointer.InflateMargins = True
-      Pointer.Style = psDiamond
+      Pointer.Style = psTriangle
       Pointer.VertSize = 2
       Pointer.Visible = True
       XValues.Name = 'X'
@@ -174,6 +187,7 @@ inherited RatesForm: TRatesForm
   end
   inherited srcDataSource: TDataSource
     DataSet = dsRates
+    OnStateChange = srcDataSourceStateChange
     Left = 40
     Top = 168
   end
@@ -183,14 +197,17 @@ inherited RatesForm: TRatesForm
     inherited actNew: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100
+      OnExecute = actNewExecute
     end
     inherited actDelete: TAction
       Caption = #1059#1076#1072#1083#1080#1090#1100
       Hint = #1059#1076#1072#1083#1080#1090#1100
+      OnExecute = actDeleteExecute
     end
     inherited actEdit: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
+      OnExecute = actEditExecute
     end
     inherited actQuickFilter: TAction
       Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
@@ -206,13 +223,14 @@ inherited RatesForm: TRatesForm
   end
   object dsRates: TpFIBDataSet
     UpdateSQL.Strings = (
-      'UPDATE OBJECTS'
+      'UPDATE RATES'
       'SET '
-      '    O_NAME = :O_NAME,'
-      '    O_DESCRIPTION = :O_DESCRIPTION,'
-      '    O_DELETED = 0'
+      '    USD = :USD,'
+      '    EUR = :EUR,'
+      '    RUR = :RUR'
       'WHERE'
-      '    O_ID = :OLD_O_ID and O_TYPE = 11'
+      '    RDATE = :OLD_RDATE'
+      '    and CUR = :OLD_CUR'
       '    ')
     DeleteSQL.Strings = (
       'DELETE FROM'
@@ -221,30 +239,23 @@ inherited RatesForm: TRatesForm
       '        RDATE = :OLD_RDATE'
       '    ')
     InsertSQL.Strings = (
-      'INSERT INTO OBJECTS('
-      '    O_ID,'
-      '    O_NAME,'
-      '    O_DESCRIPTION,'
-      '    O_DELETED,'
-      '    O_TYPE'
+      'INSERT INTO RATES('
+      '    RDATE,'
+      '    CUR,'
+      '    USD,'
+      '    EUR,'
+      '    RUR'
       ')'
       'VALUES('
-      '    :O_ID,'
-      '    :O_NAME,'
-      '    :O_DESCRIPTION,'
-      '    :O_DELETED,'
-      '    11'
+      '    :RDATE,'
+      '    :CUR,'
+      '    :USD,'
+      '    :EUR,'
+      '    :RUR'
       ')')
-    RefreshSQL.Strings = (
-      'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED'
-      'FROM OBJECTS'
-      'WHERE(  O_TYPE = 11 AND O_DELETED = 0'
-      '     ) and (     OBJECTS.O_ID = :OLD_O_ID'
-      '     )'
-      '    ')
     SelectSQL.Strings = (
       'select'
-      '    Rdate, Cur, Usd, Eur'
+      '    Rdate, Cur, USD, Eur , RUR '
       '  from Rates'
       '  order by Cur, Rdate desc')
     AutoUpdateOptions.UpdateTableName = 'OBJECTS'

@@ -121,6 +121,7 @@ type
     procedure dbleEquipmentChange(Sender: TObject);
     procedure dbleEquipmentEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure dbleEquipmentEditButtons1Click(Sender: TObject; var Handled: Boolean);
+    procedure DBLookupComboboxEnter(Sender: TObject);
   private
     { Private declarations }
     FCI: TCustomerInfo;
@@ -175,6 +176,7 @@ begin
     Exit;
 
   with TCustomerLanForm.Create(application) do
+  begin
     try
       CI := aCI;
 
@@ -185,7 +187,16 @@ begin
       dsEQ.ParamByName('HOUSE_ID').AsInt64 := aCI.HOUSE_ID;
       dsEQ.ParamByName('LID').AsInt64 := aLan_ID;
       dsEQ.Open;
+
+      if dmMain.GetSettingsValue('PORT_LINE_LIMIT') = '1' then
+      begin
+        dsPort.ParamByName('where_port_line').AsString := ' and (not p.WID is null) ' +
+          ' and ((p.Con is null) or (p.Con = 1 and p.Con_Id = :Customer_Id)) and (p.P_State = 1) ' +
+          ' and exists (select Eid from Find_Free_Linked_Port(:Customer_Id) where Eid = p.Eid and Port = p.Port)';
+        dsPort.ParamByName('Customer_Id').AsInteger := aCI.CUSTOMER_ID;
+      end;
       dsPort.Open;
+
       dsLAN.ParamByName('Lan_ID').AsInt64 := aLan_ID;
       dsLAN.Open;
       if aLan_ID = -1 then
@@ -193,6 +204,7 @@ begin
         dsLAN.Insert;
         if (dmMain.GetSettingsValue('LAN_DELEQPMNT') <> '1') then
         begin
+          // обойдем дерево оборудования и найдем минимальный уровень подключения
           // если нашли оборудование - пропишем его
           if not dsEQ.EOF then
           begin
@@ -273,6 +285,7 @@ begin
     finally
       free;
     end;
+  end;
 end;
 
 procedure TCustomerLanForm.dbleEquipmentChange(Sender: TObject);
@@ -355,6 +368,8 @@ begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
       if (ActiveControl is TDBMemoEh) and
@@ -417,6 +432,8 @@ begin
     lcbPort.Left := dbleEquipment.Left;
     lcbPort.Width := dbleEquipment.Width;
     lcbPort.TabOrder := 1;
+
+    // else dsPort.ParamByName('where_port_line').AsString := '';
   end;
 
   actGetIpv6.Visible := (dmMain.GetSettingsValue('IPV6GETURL') <> '');
@@ -466,35 +483,27 @@ begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
-      sql.Text := 'select c.Account_No, Ip, Mac';
-      sql.Add(' from Tv_Lan t inner join customer c on (t.Customer_Id = c.Customer_Id)');
-      sql.Add(' where t.Ip = :ip');
-
+      sql.Clear;
+      sql.Add(' select Id, Info, Mac, Ip_Where from FIND_IP_INFO(:ip, :VLAN_id)');
       if VLAN_ID <> -1 then
-      begin
-        sql.Add('and t.VLAN_Id = :VLAN_id');
         ParamByName('VLAN_id').AsInteger := VLAN_ID;
-      end
-      else
-      begin
-        sql.Add('and t.VLAN_Id is null');
-      end;
 
-      if dsLAN.State in [dsEdit] then
-      begin
-        sql.Add('and t.Lan_Id <> :lan_id');
-        ParamByName('Lan_id').AsInteger := dsLAN.ParamByName('Lan_ID').AsInt64;
-      end;
-
-      ParamByName('ip').asString := ip;
+      ParamByName('ip').AsString := ip;
       Transaction.StartTransaction;
       ExecQuery;
-      if not FieldByName('Account_No').IsNUll then
-        Result := Result + rsACCOUNT + ' ' + FieldByName('Account_No').Value + ' ';
-      if not FieldByName('Ip').IsNUll then
-        Result := Result + ' IP ' + FieldByName('Ip').Value + ' ';
+
+      if not FieldByName('Info').IsNUll then
+        Result := Result + FieldByName('Info').Value;
       if not FieldByName('Mac').IsNUll then
-        Result := Result + ' MAC ' + FieldByName('Mac').Value + ' ';
+        Result := Result + ' MAC ' + FieldByName('Mac').Value;
+
+      // если нашли сами себя, то все ок
+      if not FieldByName('Id').IsNUll then
+      begin
+        if (dsLAN.State in [dsEdit]) and (FieldByName('Id').Value = dsLAN.ParamByName('Lan_ID').AsInteger) then
+          Result := '';
+      end;
+
       Close;
       Transaction.Commit;
     finally
@@ -521,7 +530,7 @@ begin
         sql.Add('and t.Lan_Id <> :lan_id');
         ParamByName('Lan_id').AsInteger := dsLAN.ParamByName('Lan_ID').AsInt64;
       end;
-      ParamByName('Mac').asString := MAC;
+      ParamByName('Mac').AsString := MAC;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('Account_No').IsNUll then
@@ -577,7 +586,7 @@ begin
       sql.Add('select 1 OT, e.Name as Account_No, e.Ip');
       sql.Add('from Equipment e where e.Parent_Id = :EQ and e.Parent_Port = :PT');
       ParamByName('EQ').AsInteger := EQ_ID;
-      ParamByName('PT').asString := PORT;
+      ParamByName('PT').AsString := PORT;
       Transaction.StartTransaction;
       ExecQuery;
       while not EOF do
@@ -638,11 +647,11 @@ begin
   begin
     EQ.id := dsEQ.FieldByName('Eid').AsInteger;
     if not dsEQ.FieldByName('Name').IsNUll then
-      EQ.Name := dsEQ.FieldByName('Name').asString;
+      EQ.Name := dsEQ.FieldByName('Name').AsString;
     if not dsEQ.FieldByName('Ip').IsNUll then
-      EQ.ip := dsEQ.FieldByName('Ip').asString;
+      EQ.ip := dsEQ.FieldByName('Ip').AsString;
     if not dsEQ.FieldByName('Mac').IsNUll then
-      EQ.MAC := dsEQ.FieldByName('Mac').asString;
+      EQ.MAC := dsEQ.FieldByName('Mac').AsString;
     EQ.Node_Id := GetNodeID;
 
     if CreatePort(EQ) then
@@ -665,11 +674,11 @@ begin
   PORT := lcbPort.Value;
   EQ.id := dsEQ.FieldByName('Eid').AsInteger;
   if not dsEQ.FieldByName('Name').IsNUll then
-    EQ.Name := dsEQ.FieldByName('Name').asString;
+    EQ.Name := dsEQ.FieldByName('Name').AsString;
   if not dsEQ.FieldByName('Ip').IsNUll then
-    EQ.ip := dsEQ.FieldByName('Ip').asString;
+    EQ.ip := dsEQ.FieldByName('Ip').AsString;
   if not dsEQ.FieldByName('Mac').IsNUll then
-    EQ.MAC := dsEQ.FieldByName('Mac').asString;
+    EQ.MAC := dsEQ.FieldByName('Mac').AsString;
   EQ.Node_Id := GetNodeID;
 
   if EditPort(EQ, PORT) then
@@ -848,7 +857,22 @@ begin
     end
     else
     begin
-      cnError.Dispose(edtIPmodem);
+      s := CheckIP(edtIPmodem.Text);
+      if s <> '' then
+      begin
+        // если такой ип есть сообщим где
+        cnError.SetError(edtIPmodem, s, iaMiddleLeft, bsNeverBlink);
+        eIP.SetFocus;
+        vErrors := True;
+      end
+      else
+        cnError.Dispose(edtIPmodem);
+    end;
+
+    if (not edtIPmodem.Text.IsEmpty) and (not eIP.Text.IsEmpty) and (edtIPmodem.Text = eIP.Text) then
+    begin
+      cnError.SetError(eIP, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+      vErrors := True;
     end;
   end;
 
@@ -1020,6 +1044,19 @@ begin
   Handled := True;
 end;
 
+procedure TCustomerLanForm.DBLookupComboboxEnter(Sender: TObject);
+begin
+  {
+    if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+    if not(Sender as TDBLookupComboboxEh).ListVisible then begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+    end;
+  }
+end;
+
 procedure TCustomerLanForm.dbleEquipmentExit(Sender: TObject);
 begin
   CheckPort();
@@ -1093,7 +1130,7 @@ begin
       while not EOF do
       begin
         NewItem := TMenuItem.Create(pmLanPopUp);
-        NewItem.Caption := FieldByName('name').asString;
+        NewItem.Caption := FieldByName('name').AsString;
         NewItem.Tag := FieldByName('ec_id').AsInteger;
         NewItem.OnClick := miLanClickClick;
         pmLanPopUp.Items.Add(NewItem);
@@ -1216,7 +1253,7 @@ var
   cmd: string;
   eol_chars: Integer;
   CMD_TYPE: Integer;
-  URL, AUT_USER, AUT_PSWD: String;
+  URL, AUT_USER, AUT_PSWD, eid, pid: String;
 
   procedure replaceParams(var InStr: String);
   begin
@@ -1236,6 +1273,8 @@ var
     InStr := ReplaceStr(InStr, '<c_vlan>', C_VLAN);
     InStr := ReplaceStr(InStr, '<c_tag>', C_TAG);
     InStr := ReplaceStr(InStr, '<c_tagstr>', C_TAGSTR);
+    InStr := ReplaceStr(InStr, '<e_id>', eid);
+    InStr := ReplaceStr(InStr, '<prnt_id>', pid);
   end;
 
 begin
@@ -1262,7 +1301,7 @@ begin
   begin
     sql.Clear;
     sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
-    sql.Add(' , ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
+    sql.Add(' , ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
     sql.Add('from equipment e');
     sql.Add('  inner join equipment_cmd_grp ec');
     sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
@@ -1277,39 +1316,37 @@ begin
     if FieldByName('ip').IsNUll then
       Host := ''
     else
-      Host := FieldByName('ip').asString;
+      Host := FieldByName('ip').AsString;
 
     if FieldByName('e_admin').IsNUll then
       user := ''
     else
-      user := FieldByName('e_admin').asString;
+      user := FieldByName('e_admin').AsString;
 
     if FieldByName('e_pass').IsNUll then
       pswd := ''
     else
-      pswd := FieldByName('e_pass').asString;
+      pswd := FieldByName('e_pass').AsString;
 
     H_MAC := '';
     if (not FieldByName('mac').IsNUll) then
-    begin
-      H_MAC := FieldByName('mac').asString;
-    end;
+      H_MAC := FieldByName('mac').AsString;
 
     if FieldByName('command').IsNUll then
       cmd := ''
     else
-      cmd := FieldByName('command').asString;
+      cmd := FieldByName('command').AsString;
     if FieldByName('eol_chrs').IsNUll then
       eol_chars := 0
     else
     begin
-      if FieldByName('eol_chrs').asString = '\r\n' then
+      if FieldByName('eol_chrs').AsString = '\r\n' then
         eol_chars := 0
-      else if FieldByName('eol_chrs').asString = '\n\r' then
+      else if FieldByName('eol_chrs').AsString = '\n\r' then
         eol_chars := 1
-      else if FieldByName('eol_chrs').asString = '\n' then
+      else if FieldByName('eol_chrs').AsString = '\n' then
         eol_chars := 2
-      else if FieldByName('eol_chrs').asString = '\r' then
+      else if FieldByName('eol_chrs').AsString = '\r' then
         eol_chars := 3
       else
         eol_chars := 0
@@ -1320,11 +1357,20 @@ begin
     else
       CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
     if not FieldByName('URL').IsNUll then
-      URL := FieldByName('URL').asString;
+      URL := FieldByName('URL').AsString;
     if not FieldByName('AUT_USER').IsNUll then
-      AUT_USER := FieldByName('AUT_USER').asString;
+      AUT_USER := FieldByName('AUT_USER').AsString;
     if not FieldByName('AUT_PSWD').IsNUll then
-      AUT_PSWD := FieldByName('AUT_PSWD').asString;
+      AUT_PSWD := FieldByName('AUT_PSWD').AsString;
+
+    if not FieldByName('eid').IsNUll then
+      eid := FieldByName('eid').AsString
+    else
+      eid := '';
+    if not FieldByName('PARENT_ID').IsNUll then
+      pid := FieldByName('PARENT_ID').AsString
+    else
+      pid := '';
 
     Close;
     Transaction.Rollback;
@@ -1359,7 +1405,7 @@ begin
       sql.Text := 'select count(V_Id) cnt from Vlans v';
       sql.Add('where V_Id = :VLAN_ID and Inet_Aton(:IP) between v.Ip_Begin_Bin and v.Ip_End_Bin');
       ParamByName('VLAN_id').AsInteger := VLAN_ID;
-      ParamByName('ip').asString := ip;
+      ParamByName('ip').AsString := ip;
       Transaction.StartTransaction;
       ExecQuery;
       Result := (FieldByName('cnt').AsInteger = 1);
@@ -1434,10 +1480,16 @@ procedure TCustomerLanForm.DBLookupComboboxClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
     Exit;
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 procedure TCustomerLanForm.IPv6Get;
@@ -1593,11 +1645,11 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
-      H_IP := IfThen(FieldByName('ip').IsNUll, '', FieldByName('ip').asString);
-      H_IPv6 := IfThen(FieldByName('IPV6').IsNUll, '', FieldByName('IPV6').asString);
-      user := IfThen(FieldByName('e_admin').IsNUll, '', FieldByName('e_admin').asString);
-      pswd := IfThen(FieldByName('e_pass').IsNUll, '', FieldByName('e_pass').asString);
-      H_MAC := IfThen(FieldByName('mac').IsNUll, '', FieldByName('mac').asString);
+      H_IP := IfThen(FieldByName('ip').IsNUll, '', FieldByName('ip').AsString);
+      H_IPv6 := IfThen(FieldByName('IPV6').IsNUll, '', FieldByName('IPV6').AsString);
+      user := IfThen(FieldByName('e_admin').IsNUll, '', FieldByName('e_admin').AsString);
+      pswd := IfThen(FieldByName('e_pass').IsNUll, '', FieldByName('e_pass').AsString);
+      H_MAC := IfThen(FieldByName('mac').IsNUll, '', FieldByName('mac').AsString);
 
       Close;
       Transaction.Rollback;
@@ -1676,7 +1728,7 @@ begin
         ParamByName('Lan_id').AsInteger := dsLAN.ParamByName('Lan_ID').AsInt64;
       end;
 
-      ParamByName('mac').asString := MAC;
+      ParamByName('mac').AsString := MAC;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('Eid').IsNUll then
@@ -1728,7 +1780,7 @@ begin
 
         ParamByName('pEQ_ID').AsInteger := FModemID;
         ParamByName('pHouse_id').AsInteger := FCI.HOUSE_ID;
-        ParamByName('PLACE').asString := FCI.FLAT_NO;
+        ParamByName('PLACE').AsString := FCI.FLAT_NO;
         Transaction.StartTransaction;
         ExecQuery;
         Close;
@@ -1758,11 +1810,11 @@ begin
         sql.Add('end;');
 
         ParamByName('HOUSE_ID').AsInteger := FCI.HOUSE_ID;
-        ParamByName('NAME').asString := edtModem.Text;
-        ParamByName('IP').asString := edtIPmodem.Text;
-        ParamByName('MAC').asString := edtMACmodem.Text;
-        ParamByName('PLACE').asString := FCI.FLAT_NO;
-        ParamByName('SERIAL_N').asString := edtSerialModem.Text;
+        ParamByName('NAME').AsString := edtModem.Text;
+        ParamByName('IP').AsString := edtIPmodem.Text;
+        ParamByName('MAC').AsString := edtMACmodem.Text;
+        ParamByName('PLACE').AsString := FCI.FLAT_NO;
+        ParamByName('SERIAL_N').AsString := edtSerialModem.Text;
         Transaction.StartTransaction;
         ExecQuery;
         if not FieldByName('EID').IsNUll then

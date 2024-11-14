@@ -27,8 +27,7 @@ type
     procedure dblu_AreasExit(Sender: TObject);
     procedure dbeNameChange(Sender: TObject);
     procedure dbEditCodeChange(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkCancelFramebbOkClick(Sender: TObject);
     procedure dbeNameEnter(Sender: TObject);
   private
@@ -39,76 +38,79 @@ type
     { Public declarations }
   end;
 
-function EditArea(const aArea_ID:Int64): Int64;
+function EditArea(const aArea_ID: Int64): Int64;
 
 implementation
 
 uses
   DM;
 
-
 {$R *.dfm}
 
-function EditArea(const aArea_ID:Int64): Int64;
+function EditArea(const aArea_ID: Int64): Int64;
 var
-  vArea_ID : Int64;
+  vArea_ID: Int64;
 begin
   result := -1;
   with TAreaViewForm.Create(Application) do
-  try
-    trSWrite.Active := true;
-    trSRead.Active  := true;
+    try
+      trSWrite.Active := true;
+      trSRead.Active := true;
 
-    dsArea.ParamByName('AREA_ID').AsInteger := aArea_ID;
-    dsArea.Open;
-    if aArea_ID = -1
-    then dsArea.Insert
-    else dsArea.Edit;
-    CheckData;
-    if ShowModal = mrOk
-    then begin
-      try
-        if aArea_ID = -1
-        then begin
-          vArea_ID := dmMain.dbTV.Gen_Id('GEN_OPERATIONS_UID',1, dmMain.trWriteQ);
-          dsArea['AREA_ID'] := vArea_ID;
-        end
-        else vArea_ID := aArea_ID;
-        dsArea.Post;
-        result := vArea_ID;
-      except
-        result := -1;
-      end;
-    end
-    else dsArea.Cancel;
-    dsArea.Close;
-  finally
-    free
-  end;
+      dsArea.ParamByName('AREA_ID').AsInteger := aArea_ID;
+      dsArea.Open;
+      if aArea_ID = -1 then
+        dsArea.Insert
+      else
+        dsArea.Edit;
+      CheckData;
+      if ShowModal = mrOk then
+      begin
+        try
+          if aArea_ID = -1 then
+          begin
+            vArea_ID := dmMain.dbTV.Gen_Id('GEN_OPERATIONS_UID', 1, dmMain.trWriteQ);
+            dsArea['AREA_ID'] := vArea_ID;
+          end
+          else
+            vArea_ID := aArea_ID;
+          dsArea.Post;
+          result := vArea_ID;
+        except
+          result := -1;
+        end;
+      end
+      else
+        dsArea.Cancel;
+      dsArea.Close;
+    finally
+      free
+    end;
 end;
 
 procedure TAreaViewForm.CheckData;
 var
-  En : Boolean;
+  En: Boolean;
 begin
-  en := ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Areas)));
-  if not en then
-      CnErrors.SetError(OkCancelFrame.bbOk, rsNoRights, iaTopCenter, bsNeverBlink);
+  En := ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Areas)));
+  if not En then
+    CnErrors.SetError(OkCancelFrame.bbOk, rsNoRights, iaTopCenter, bsNeverBlink);
 
-  if dbeName.Text = '' then begin
-      CnErrors.SetError(dbeName, rsSelectCity, iaTopCenter, bsNeverBlink);
-      en := False;
+  if dbeName.Text = '' then
+  begin
+    CnErrors.SetError(dbeName, rsSelectCity, iaTopCenter, bsNeverBlink);
+    En := False;
   end
-  else CnErrors.Dispose(dbeName);
+  else
+    CnErrors.Dispose(dbeName);
 
-  OkCancelFrame.bbOk.Enabled := en;
+  OkCancelFrame.bbOk.Enabled := En;
 end;
 
-procedure TAreaViewForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TAreaViewForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (OkCancelFrame.bbOk.Enabled)
-  then OkCancelFrame.actExitExecute(Sender);
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (OkCancelFrame.bbOk.Enabled) then
+    OkCancelFrame.actExitExecute(Sender);
 end;
 
 procedure TAreaViewForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -120,9 +122,12 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;

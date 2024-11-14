@@ -27,6 +27,11 @@ type
     btn1: TToolButton;
     btnRefresh: TToolButton;
     actRefresh: TAction;
+    actCheckIssue: TAction;
+    miCheckIssue: TMenuItem;
+    miN6: TMenuItem;
+    btn2: TToolButton;
+    btnCheckIssue: TToolButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -44,6 +49,7 @@ type
     procedure actRefreshExecute(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure actCheckIssueExecute(Sender: TObject);
   private
     { Private declarations }
     FFirstOpen: Boolean;
@@ -51,6 +57,7 @@ type
     fEndDate: TDateTime;
     FCanSaveColumns: Boolean;
     FNotClosed: Boolean;
+    FUrlChIssue: string;
     procedure SetFilter;
   public
     { Public declarations }
@@ -62,9 +69,22 @@ var
 implementation
 
 uses
-  DM, BCIForma, MAIN, AtrStrUtils, pFIBProps, PeriodForma;
+  System.StrUtils,
+  DM, BCIForma, MAIN, AtrStrUtils, pFIBProps, PeriodForma, HtmlForma;
 
 {$R *.dfm}
+
+procedure TBCIssuesForm.actCheckIssueExecute(Sender: TObject);
+var
+  Url: string;
+begin
+  inherited;
+  Url := FUrlChIssue;
+  if not dsIssues.FieldByName('BI_ID').IsNull then
+  Url :=  ReplaceStr(FUrlChIssue, '<id>', dsIssues.FieldByName('BI_ID').AsString);
+
+  ShowHtml(url, '', actCheckIssue.Caption);
+end;
 
 procedure TBCIssuesForm.actDateFilterExecute(Sender: TObject);
 var
@@ -234,6 +254,9 @@ begin
   actNew.Visible := (dmMain.AllowedAction(rght_BCIssues_add));
   actEdit.Visible := (dmMain.AllowedAction(rght_BCIssues_close)) and true;
   actDelete.Visible := (dmMain.AllowedAction(rght_BCIssues_del));
+
+  FUrlChIssue := dmMain.GetSettingsValue('CH_ISSUE_CHECK_URL');
+  actCheckIssue.Visible := (FUrlChIssue <> '');
 
   fStartDate := now - 7;
   fEndDate := now;

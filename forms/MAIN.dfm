@@ -2,7 +2,7 @@ object A4MainForm: TA4MainForm
   Left = 320
   Top = 200
   Caption = 'A4ON.TV'
-  ClientHeight = 470
+  ClientHeight = 529
   ClientWidth = 979
   Color = clAppWorkSpace
   Constraints.MinHeight = 400
@@ -27,7 +27,7 @@ object A4MainForm: TA4MainForm
   TextHeight = 13
   object mdchldbr1: TMDIChildBar
     Left = 0
-    Top = 425
+    Top = 484
     Width = 979
     Height = 26
     ParentColor = False
@@ -312,7 +312,7 @@ object A4MainForm: TA4MainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 451
+    Top = 510
     Width = 979
     Height = 19
     AutoHint = True
@@ -922,7 +922,7 @@ object A4MainForm: TA4MainForm
     end
     object actLetters: TAction
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
-      Caption = #1055#1077#1095#1072#1090#1085#1099#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1055#1077#1095#1072#1090#1085#1099#1077' '#1092#1086#1088#1084#1099
       ImageIndex = 30
       OnExecute = actLettersExecute
     end

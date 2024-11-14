@@ -411,24 +411,24 @@ end;
 
 procedure TMessagesForm.actAnswerExecute(Sender: TObject);
 begin
-  if (dsMessages.RecordCount = 0) //
-    or dsMessages.FieldByName('RECIVER').IsNull //
+  if (dbgMessages.DataSource.DataSet.RecordCount = 0) //
+    or dbgMessages.DataSource.DataSet.FieldByName('RECIVER').IsNull //
   then
     exit;
 
   FParentMessage := -1;
   FForCustomer := -1;
-  if not dsMessages.FieldByName('Mes_Id').IsNull then
+  if not dbgMessages.DataSource.DataSet.FieldByName('Mes_Id').IsNull then
   begin
-    FParentMessage := dsMessages.FieldByName('Mes_Id').AsInteger;
-    if not dsMessages.FieldByName('CUSTOMER_ID').IsNull then
-      FForCustomer := dsMessages.FieldByName('CUSTOMER_ID').AsInteger;
+    FParentMessage := dbgMessages.DataSource.DataSet.FieldByName('Mes_Id').AsInteger;
+    if not dbgMessages.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
+      FForCustomer := dbgMessages.DataSource.DataSet.FieldByName('CUSTOMER_ID').AsInteger;
   end;
 
   StartEdit(true);
-  edtReciver.Text := dsMessages['RECIVER'];
-  if not dsMessages.FieldByName('MES_TEXT').IsNull then
-    mmoMessage.Lines.Text := '>' + dsMessages['MES_TEXT'];
+  edtReciver.Text := dbgMessages.DataSource.DataSet['RECIVER'];
+  if not dbgMessages.DataSource.DataSet.FieldByName('MES_TEXT').IsNull then
+    mmoMessage.Lines.Text := '>' + dbgMessages.DataSource.DataSet['MES_TEXT'];
 end;
 
 procedure TMessagesForm.actDelExecute(Sender: TObject);
@@ -782,6 +782,12 @@ begin
 
   dbgMessages.SetFocus;
   dsMessType.Close;
+
+  if (not Cancel) and (FInTreeView) then begin
+    mtTM.Refresh;
+    if FParentMessage > -1
+    then mtTM.Locate('Mes_Id', FParentMessage, []);
+  end;
 
   FParentMessage := -1;
   FForCustomer := -1;

@@ -151,7 +151,7 @@ begin
   FFullAccess := (dmMain.AllowedAction(rght_Customer_full)); // Полный доступ
   FChangeHistory := (dmMain.AllowedAction(rght_Customer_History)) or FFullAccess; // Изменение истории
   cAdd := (dmMain.AllowedAction(rght_Customer_AddSrv)) or FFullAccess; // ДОБАВЛЕНИЕ УСЛУГИ
-  cChg := (dmMain.AllowedAction(rght_Customer_EditSrv)) or FFullAccess; // ДОБАВЛЕНИЕ УСЛУГИ
+  cChg := (dmMain.AllowedAction(rght_Customer_EditSrv)); // ДОБАВЛЕНИЕ УСЛУГИ
   actSrvAdd.Visible := cAdd;
   actSrvPause.Visible := cChg;
   ActSrvOn.Visible := cChg;
@@ -159,15 +159,14 @@ begin
   actSrvSwitch.Visible := (cChg and cAdd);
   actChangeNotice.Visible := (cChg or cAdd or FChangeHistory);
 
-  pnlPersonelTarif.Visible := ((dmMain.GetSettingsValue('PERSONEL_TARIF')) = '1');
+  pnlButtons.Visible := cAdd or cChg or FChangeHistory;
+
   // персональный тариф
+  pnlPersonelTarif.Visible := ((dmMain.GetSettingsValue('PERSONEL_TARIF')) = '1');
   tbPersTar.Visible := (dmMain.AllowedAction(rght_Customer_AddSrv)) or FFullAccess;
   actPersAdd.Visible := tbPersTar.Visible;
   actPersEdit.Visible := tbPersTar.Visible;
   actPersDel.Visible := tbPersTar.Visible;
-
-  // actSubscrHistory.Visible := ChangeHistory;
-  pnlButtons.Visible := cAdd or FChangeHistory;
 
   cChg := (dmMain.GetSettingsValue('CAN_NEW_CONTRACT') = '1');
   i := 0;
@@ -200,10 +199,10 @@ begin
 
   if (not dsServices.FieldByName('state_sgn').IsNull) then
   begin
-    ActSrvOn.Enabled := (ActSrvOn.Visible) and (dsServices.FieldValues['state_sgn'] = 0);
-    ActSrvOff.Enabled := (ActSrvOff.Visible) and (dsServices.FieldValues['state_sgn'] = 1);
-    actSrvSwitch.Enabled := (actSrvSwitch.Visible) and (dsServices.FieldValues['state_sgn'] = 1);
-    actSrvPause.Enabled := (actSrvPause.Visible) and (dsServices.FieldValues['state_sgn'] = 1);
+    ActSrvOn.Enabled := (ActSrvOn.Visible) and (dsServices['state_sgn'] = 0);
+    ActSrvOff.Enabled := (ActSrvOff.Visible) and ((dsServices['state_sgn'] = 1) or (dsServices['state_sgn'] = -999));
+    actSrvSwitch.Enabled := (actSrvSwitch.Visible) and (dsServices['state_sgn'] = 1);
+    actSrvPause.Enabled := (actSrvPause.Visible) and (dsServices['state_sgn'] = 1);
     actSubscrHistory.Enabled := (actSubscrHistory.Visible) and (not dsServices.FieldByName('SERV_ID').IsNull);
   end
   else
@@ -238,6 +237,9 @@ begin
   if (not dsServices.Active) or (dsServices.RecordCount = 0) or (dsServices.FieldByName('Subscr_Serv_Id').IsNull) then
     exit;
 
+  if (dsServices['state_sgn'] = -999) then
+    exit;
+
   if dsServices.FieldByName('NOTICE').IsNull then
     s := ''
   else
@@ -267,6 +269,9 @@ procedure TapgCustomerSrv.actPersAddExecute(Sender: TObject);
 begin
   if not srcPersonelTarif.DataSet.Active then
     exit;
+  if (dsServices['state_sgn'] = -999) then
+    exit;
+
   if EditTarif(dsServices['NAME'], dsServices['Serv_Id'], dsServices['CUSTOMER_ID'], -1) then
   begin
     srcPersonelTarif.DataSet.Close;
@@ -276,6 +281,9 @@ end;
 
 procedure TapgCustomerSrv.actPersDelExecute(Sender: TObject);
 begin
+  if (dsServices['state_sgn'] = -999) then
+    exit;
+
   // не даем править персональный тариф прошлым периодом, если нет прав
   if not(FFullAccess or FChangeHistory) then
   begin
@@ -289,6 +297,9 @@ end;
 
 procedure TapgCustomerSrv.actPersEditExecute(Sender: TObject);
 begin
+  if (dsServices['state_sgn'] = -999) then
+    exit;
+
   // не даем править персональный тариф прошлым периодом, если нет прав
   if not(FFullAccess or FChangeHistory) then
   begin
@@ -305,6 +316,9 @@ end;
 
 procedure TapgCustomerSrv.actServiceSummaryExecute(Sender: TObject);
 begin
+  if (dsServices['state_sgn'] = -999) then
+    exit;
+
   ShowSummaryReport;
 end;
 
@@ -337,19 +351,52 @@ var
 begin
   if dsServices.RecordCount = 0 then
     exit;
-  if dsServices.FieldByName('Notice').IsNull then
-    s := ''
-  else
-    s := dsServices['Notice'];
-  id := dsServices.FieldValues['SERV_ID'];
-  if OnOffService(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['SERV_ID'],
-    dsServices.FieldValues['SUBSCR_SERV_ID'], true, s) then
+
+  if (dsServices['state_sgn'] = 1) then
   begin
-    dsServices.CloseOpen(true);
-    dsServices.Locate('SERV_ID', id, []);
-    EnableControls;
-    UpdatePage;
-  end;
+    if dsServices.FieldByName('Notice').IsNull then
+      s := ''
+    else
+      s := dsServices['Notice'];
+    id := dsServices.FieldValues['SERV_ID'];
+    if OnOffService(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['SERV_ID'],
+      dsServices.FieldValues['SUBSCR_SERV_ID'], true, s) then
+    begin
+      dsServices.CloseOpen(true);
+      dsServices.Locate('SERV_ID', id, []);
+      EnableControls;
+      UpdatePage;
+    end;
+  end
+  else if (dsServices['state_sgn'] = -999) then
+  begin
+    // отмена очереди
+    if MessageBoxW(Handle, PWideChar(WideFormat('Удалить из очереди %s', [dsServices['NAME']])),
+      'Очередь переключения услуг', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
+    begin
+      with TpFIBQuery.Create(Self) do
+      begin
+        try
+          Database := dmMain.dbTV;
+          Transaction := dmMain.trWriteQ;
+          sql.text := 'execute procedure Queue_Switch_Cancel(:c, :f, :t)';
+          ParamByName('c').Value := dsServices.FieldByName('customer_id').AsInteger;
+          ParamByName('f').Value := dsServices.FieldByName('SUBSCR_SERV_ID').AsInteger;
+          ParamByName('t').Value := dsServices.FieldByName('SERV_ID').AsInteger;
+          Transaction.StartTransaction;
+          ExecQuery;
+          Transaction.Commit;
+          Close;
+          dsServices.Refresh;
+        finally
+          free;
+        end;
+      end;
+      dsServices.CloseOpen(true);
+      EnableControls;
+      UpdatePage;
+    end;
+  end
 end;
 
 procedure TapgCustomerSrv.ActSrvOnExecute(Sender: TObject);
@@ -362,7 +409,7 @@ begin
     exit;
 
   // включаем только если услуга отключена
-  if dsServices['state_sgn'] = 1 then
+  if ((dsServices['state_sgn'] = 1) or (dsServices['state_sgn'] = -999)) then
     exit;
 
   // включаем только если услуга неактивна (нет галки услуга Активна )
@@ -426,6 +473,10 @@ var
 begin
   if dsServices.RecordCount = 0 then
     exit;
+
+  if (dsServices['state_sgn'] = -999) then
+    exit;
+
   if dsServices.FieldByName('Notice').IsNull then
     s := ''
   else
@@ -481,9 +532,11 @@ begin
     else
       AFont.Color := FfcSrvDisconted;
   end;
-  // else AFont.Color := clWindowText;
+  if ds.FieldValues['state_sgn'] = -999 then
+    Background := clBtnFace;
 
-  if ((not ds.FieldByName('state_srv').IsNull) and (ds.FieldValues['state_srv'] = -3)) then begin
+  if ((not ds.FieldByName('state_srv').IsNull) and (ds.FieldValues['state_srv'] = -3)) then
+  begin
     AFont.Style := AFont.Style + [fsBold];
     AFont.Color := FfcSrvInAutoblock;
   end;
@@ -505,7 +558,7 @@ begin
       Database := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
       Transaction.StartTransaction;
-      sql.text := Format('EXECUTE PROCEDURE FULL_RECALC_CUSTOMER(%d)',
+      sql.text := format('EXECUTE PROCEDURE FULL_RECALC_CUSTOMER(%d)',
         [FDataSource.DataSet.FieldByName('customer_id').AsInteger]);
       ExecQuery;
       Transaction.Commit;
@@ -562,11 +615,11 @@ begin
     if di > -1 then
       if TryStrToFloat(dbgCustSubscrServ.Columns.Items[di].Footer.SumValue, dt) and (dt > 0) then
       begin
-        s := Format(rsDebtForDays, [Round(-1 * Debt / dt)]);
+        s := format(rsDebtForDays, [Round(-1 * Debt / dt)]);
       end;
   end
   else
-    s := Format(rsDebtSum, [Debt]);
+    s := format(rsDebtSum, [Debt]);
 
   di := FindByField('STATE_SRV_NAME');
   if di > -1 then
@@ -616,3 +669,4 @@ begin
 end;
 
 end.
+

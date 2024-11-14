@@ -1,13 +1,16 @@
 ﻿unit MatMoveDocForma;
 {$I defines.inc}
+
 interface
 
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.Menus, Vcl.ActnList,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.Menus,
+  Vcl.ActnList,
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
+  FIBDataSet,
   pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping;
 
 type
@@ -253,15 +256,16 @@ begin
   if DynParams.FindDynVar('ID') <> nil then
   begin
     fAddedMatID := DynParams['ID'].AsInteger;
-    {$IFDEF IS_UNIT}
+{$IFDEF IS_UNIT}
     if DynParams.FindDynVar('SERIAL') <> nil then
       fSerial := DynParams['SERIAL'].AsString;
     edtQuant.Enabled := fSerial.IsEmpty;
-    {$ENDIF}
+{$ENDIF}
     if edtQuant.Enabled then
-       edtQuant.SetFocus
-    else begin
-      edtQuant.Value := 1;
+      edtQuant.SetFocus
+    else
+    begin
+      edtQuant.value := 1;
     end;
   end;
 end;
@@ -275,22 +279,25 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
+      go := false
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
-        go := False;
+        go := false;
         FEnterSecondPress := true;
       end;
     end;
 
     if go then
     begin
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -298,7 +305,7 @@ begin
   else
   begin
     if (ActiveControl is TDBMemoEh) then
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
   end;
 end;
 
@@ -324,7 +331,7 @@ begin
   if dsMaterials.Filtered then
   begin
     dsMaterials.Filter := '';
-    dsMaterials.Filtered := False;
+    dsMaterials.Filtered := false;
   end;
 
   TDBEditEhCrack(edtMaterial).FButtonsBox.BtnCtlList[1].EditButtonControl.EditButtonDown(1, AutoRepeat);
@@ -336,7 +343,12 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
   FFullAccess := dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full);
   FAccessNew := dmMain.AllowedAction(rght_Dictionary_MatDocNew);
   FAccessMove := dmMain.AllowedAction(rght_Dictionary_MatDocMove);
@@ -376,17 +388,37 @@ begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end;
     end;
   end;
 end;
 
 procedure TMatMoveDocForm.btnSaveClick(Sender: TObject);
 begin
-  if dsDoc.FieldByName('DOC_DATE').IsNull then begin
+  if dsDoc.FieldByName('DOC_DATE').IsNull then
+  begin
     CnErrors.SetError(deD_DATE, rsSelectDate, iaTopCenter, bsNeverBlink);
     deD_DATE.SetFocus;
   end
-  else begin
+  else
+  begin
     CnErrors.Dispose(deD_DATE);
     dsDoc.Post;
   end;
@@ -394,9 +426,10 @@ end;
 
 procedure TMatMoveDocForm.btnAddClick(Sender: TObject);
 begin
-  if CheckRowData then begin
+  if CheckRowData then
+  begin
     AddRow;
-    dsMaterials.CloseOpen(True);
+    dsMaterials.CloseOpen(true);
   end;
 end;
 
@@ -476,10 +509,16 @@ begin
 end;
 
 procedure TMatMoveDocForm.dsDocNewRecord(DataSet: TDataSet);
+var
+  i: Integer;
 begin
   dsDoc['DT_ID'] := DocumentType; // приходный документ
   if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
     dsDoc['DOC_DATE'] := Now;
+
+  i := dmMain.dbTV.QueryValue('select count(*) cnt from MATERIAL_DOCS d' +
+    ' where d.Doc_Date = current_date and d.Dt_Id = ' + DocumentType.ToString, 0, dmMain.trReadQ, false);
+  dsDoc['DOC_N'] := (i+1).ToString.PadLeft(3, '0');
 end;
 
 procedure TMatMoveDocForm.btnCloseClick(Sender: TObject);
@@ -561,7 +600,7 @@ begin
     qOpenDoc.ExecQuery;
     qOpenDoc.Transaction.Commit;
     dsDoc.Refresh;
-    SetReadOnlyMode(False);
+    SetReadOnlyMode(false);
   end;
 end;
 
@@ -572,7 +611,7 @@ begin
   begin
     CnErrors.SetError(lcbWH, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     lcbWH.SetFocus;
-    Result := False;
+    Result := false;
   end
   else
     CnErrors.Dispose(lcbWH);
@@ -581,7 +620,7 @@ begin
   begin
     CnErrors.SetError(lcbFROM_WH, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     lcbFROM_WH.SetFocus;
-    Result := False;
+    Result := false;
   end
   else
     CnErrors.Dispose(lcbFROM_WH);
@@ -590,7 +629,7 @@ begin
   begin
     CnErrors.SetError(deD_DATE, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     deD_DATE.SetFocus;
-    Result := False;
+    Result := false;
   end
   else
     CnErrors.Dispose(deD_DATE);
@@ -599,7 +638,7 @@ begin
   begin
     CnErrors.SetError(edtD_N, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
     edtD_N.SetFocus;
-    Result := False;
+    Result := false;
   end
   else
     CnErrors.Dispose(edtD_N);

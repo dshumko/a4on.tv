@@ -28,12 +28,6 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 5
       Top = 6
@@ -247,7 +241,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object Label4: TLabel
       Left = 0
       Top = 0
-      Width = 424
+      Width = 67
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -295,6 +289,7 @@ object OnOffServiceForm: TOnOffServiceForm
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
       EditButtons = <>
       KeyField = 'SERVICE_ID'
@@ -403,6 +398,7 @@ object OnOffServiceForm: TOnOffServiceForm
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
       EditButtons = <>
       KeyField = 'O_ID'
@@ -440,6 +436,7 @@ object OnOffServiceForm: TOnOffServiceForm
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
       EditButtons = <>
       KeyField = 'FIO'

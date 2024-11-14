@@ -69,6 +69,8 @@
         <VerInfo_MinorVer>4</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.11.0.780;LegalCopyright=Copyright (C) 2005-2024, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Debugger_RunParams>/p:masterkey</Debugger_RunParams>
     </PropertyGroup>
@@ -79,8 +81,9 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Build>890</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.4.0.890;LegalCopyright=Copyright (C) 2005-2023, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Build>939</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.11.0.939;LegalCopyright=Copyright (C) 2005-2024, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
         <DCC_MapFile>3</DCC_MapFile>
@@ -94,8 +97,9 @@
         <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.4.0.804;LegalCopyright=Copyright (C) 2005-2024, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
-        <VerInfo_Build>804</VerInfo_Build>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=24.11.0.808;LegalCopyright=Copyright (C) 2005-2024, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=24.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>808</VerInfo_Build>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>

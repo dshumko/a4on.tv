@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
   PropFilerEh, CnErrorProvider, PropStorageEh, DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
-  EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh,
+  EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet, pFIBDataSet, DBCtrlsEh,
+  DBLookupEh,
   FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, amSplitter;
 
 type
@@ -224,7 +225,7 @@ end;
 
 procedure TBCIForm.dsChannelsBeforePost(DataSet: TDataSet);
 begin
-  //DataSet['Bi_Id'] := FIssueID;
+  // DataSet['Bi_Id'] := FIssueID;
 end;
 
 procedure TBCIForm.dsIssueNewRecord(DataSet: TDataSet);
@@ -244,7 +245,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
 
   dsIssue.Close;
   dsSolution.Close;
@@ -285,6 +286,19 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
       end;
     end;
   end;
@@ -350,7 +364,8 @@ begin
   mtChnlsSel.DisableControls;
   mtChnlsSel.First;
   qrySave.SQL.Text := 'execute procedure Bcissuech_Id(:Bi_Id, :Ch_Id, 0)';
-  while not mtChnlsSel.EOF do begin
+  while not mtChnlsSel.EOF do
+  begin
     qrySave.ParamByName('Bi_Id').AsInteger := FIssueID;
     qrySave.ParamByName('Ch_Id').AsInteger := mtChnlsSel['Ch_Id'];
     qrySave.ExecQuery;
@@ -362,18 +377,19 @@ end;
 
 function TBCIForm.SaveIssue: Boolean;
 var
- isNew : Boolean;
+  isNew: Boolean;
 begin
   isNew := (FIssueID = -1);
 
   if not isNew then
     dsIssue['Bi_Id'] := FIssueID;
-//    FIssueID := DM.dmMain.dbTV.Gen_Id('GEN_ISSUE', 1);
+  // FIssueID := DM.dmMain.dbTV.Gen_Id('GEN_ISSUE', 1);
 
-//  dsIssue.ParamByName('Bi_Id').AsInteger := FIssueID;
+  // dsIssue.ParamByName('Bi_Id').AsInteger := FIssueID;
   dsIssue.Post;
 
-  if isNew then begin
+  if isNew then
+  begin
     FIssueID := dsIssue['Bi_Id'];
     Result := SaveChannels;
   end
@@ -407,32 +423,36 @@ end;
 
 procedure TBCIForm.FilterChannels;
 var
-  filter : String;
+  filter: String;
 begin
-  if (not(chkATV.Checked or chkDTV.Checked or chkIPTV.Checked or chkOTT.Checked)) then begin
+  if (not(chkATV.Checked or chkDTV.Checked or chkIPTV.Checked or chkOTT.Checked)) then
+  begin
     mtChnlsAll.Filtered := False;
-    exit;
+    Exit;
   end;
 
   if (chkATV.Checked) then
     filter := ' (IS_ANALOG = 1) ';
 
-  if (chkDTV.Checked) then begin
+  if (chkDTV.Checked) then
+  begin
     if not filter.IsEmpty then
       filter := filter + ' or ';
 
     filter := filter + ' (IS_DIGIT = 1) ';
   end;
 
-  if (chkIPTV.Checked or chkOTT.Checked) then begin
+  if (chkIPTV.Checked or chkOTT.Checked) then
+  begin
     if not filter.IsEmpty then
       filter := filter + ' or ';
 
     filter := filter + ' (IS_IPTV = 1) ';
   end;
 
-  if not filter.IsEmpty then begin
-    mtChnlsAll.Filter := filter;
+  if not filter.IsEmpty then
+  begin
+    mtChnlsAll.filter := filter;
     mtChnlsAll.Filtered := True;
   end;
 end;

@@ -104,8 +104,10 @@ CREATE DOMAIN D_VARCHAR4000 AS VARCHAR(4000);
 CREATE DOMAIN D_VARCHAR5 AS VARCHAR(5);
 CREATE DOMAIN D_VARCHAR50 AS VARCHAR(50);
 CREATE DOMAIN D_VARCHAR500 AS VARCHAR(500);
+CREATE DOMAIN D_VARCHAR5000 AS VARCHAR(5000);
 CREATE DOMAIN D_VARCHAR6 AS VARCHAR(6);
 CREATE DOMAIN D_VARCHAR60 AS VARCHAR(60);
+CREATE DOMAIN D_VARCHAR8000 AS VARCHAR(8191);
 CREATE DOMAIN INT_NULL AS INTEGER;
 CREATE DOMAIN T_YESNO AS CHAR(1)
          DEFAULT 'n';
@@ -734,6 +736,7 @@ CREATE TABLE DOC_LIST (DOC_TYPE UID,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        DOC_ID D_UID_NULL,
 CONSTRAINT PK_DOC_LIST PRIMARY KEY (DOC_TYPE, DOC_NUMBER));
 
 /* Table: DVB_NETWORK, Owner: SYSDBA */
@@ -906,6 +909,7 @@ CREATE TABLE EQUIPMENT (EID UID NOT NULL,
         IPV6 D_IPV6,
         NODE_ID D_UID_NULL,
         M_ID D_UID_NULL,
+        SYSNAME D_VARCHAR50,
 CONSTRAINT PK_EQUIPMENT PRIMARY KEY (EID));
 
 /* Table: EQUIPMENT_ATTRIBUTES, Owner: SYSDBA */
@@ -1248,7 +1252,7 @@ CREATE TABLE MAP_XY (ID UID NOT NULL,
         NUM D_INTEGER DEFAULT 0,
         X D_GEOPOINT NOT NULL,
         Y D_GEOPOINT NOT NULL,
-        MODIFIED D_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        MODIFIED D_TIMESTAMP DEFAULT LOCALTIMESTAMP,
 CONSTRAINT PK_MAP_XY PRIMARY KEY (ID));
 
 /* Table: MATERIALS, Owner: SYSDBA */
@@ -1520,6 +1524,19 @@ CREATE TABLE OBJECTS_COVERAGE (OC_ID UID,
         O_ID UID,
         HOUSE_ID UID,
         NOTICE D_NOTICE);
+
+/* Table: OBJECTS_LINKS, Owner: SYSDBA */
+CREATE TABLE OBJECTS_LINKS (OL_ID UID,
+        OL_TYPE UID,
+        PID UID,
+        CID UID,
+        QNT D_N15_2,
+        NOTICE D_NOTICE,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+CONSTRAINT PK_OBJECTS_LINKS PRIMARY KEY (OL_ID));
 
 /* Table: OBJECTS_TYPE, Owner: SYSDBA */
 CREATE TABLE OBJECTS_TYPE (OT_ID UID NOT NULL,
@@ -1802,13 +1819,15 @@ CREATE TABLE QUEUE_SWITCH_SRV (CUSTOMER_ID UID,
         SRV_ACT D_UID_NULL,
         COMPLETED D_INTEGER DEFAULT 0,
         NOTICE D_NOTICE,
+        UNITS D_N15_2,
 CONSTRAINT PK_QUEUE_SWITCH_SRV PRIMARY KEY (CUSTOMER_ID, SRV_FROM));
 
 /* Table: RATES, Owner: SYSDBA */
 CREATE TABLE RATES (RDATE D_DATE,
         CUR D_VARCHAR5,
         USD D_N15_4,
-        EUR D_N15_4);
+        EUR D_N15_4,
+        RUR D_N15_4);
 
 /* Table: RECOURSE, Owner: SYSDBA */
 CREATE TABLE RECOURSE (RC_ID UID NOT NULL,
@@ -1904,6 +1923,8 @@ CREATE TABLE REQUEST_FLATS (RQ_ID UID NOT NULL,
         ADDED_ON D_TIMESTAMP,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_TIMESTAMP,
+        TAG D_INTEGER,
+        TAG_DATE D_DATETIME,
 CONSTRAINT PK_REQUEST_FLATS PRIMARY KEY (RQ_ID, HOUSE_ID, FLAT_NO));
 
 /* Table: REQUEST_MATERIALS, Owner: SYSDBA */
@@ -2099,11 +2120,6 @@ CREATE TABLE SERVICES_LINKS (LINK_ID D_UID_NULL,
         CHILD D_UID_NULL,
         ADD_SRV D_UID_NULL,
         SWITCH_TIME D_INTEGER,
-        DESCRIPTION D_VARCHAR100);
-
-/* Table: SERVICES_TYPE, Owner: SYSDBA */
-CREATE TABLE SERVICES_TYPE (SRV_TYPE_ID UID,
-        NAME D_VARCHAR20,
         DESCRIPTION D_VARCHAR100);
 
 /* Table: SETTINGS, Owner: SYSDBA */
@@ -2578,7 +2594,7 @@ SET TERM ^ ;
 CREATE OR ALTER FUNCTION CHECK_CUSTOMER_SERVICE (CUSTOMER_ID TYPE OF UID,
 FOR_SRV D_UID_NULL,
 FOR_DATE D_DATE = current_date)
-RETURNS INTEGER
+RETURNS D_INTEGER
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION DISTANCE (LNG1 D_GEOPOINT,
@@ -2589,8 +2605,25 @@ RETURNS D_INTEGER
 DETERMINISTIC 
 AS 
 BEGIN END ^
-CREATE OR ALTER FUNCTION ESCAPE_STRING (ASTRING VARCHAR(8191) CHARACTER SET UTF8)
-RETURNS VARCHAR(8191) CHARACTER SET UTF8
+CREATE OR ALTER FUNCTION ESCAPE_STRING (ASTRING D_VARCHAR8000)
+RETURNS D_VARCHAR8000
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION FORMAT_CURRENCY (CURR D_N15_2,
+TS D_CHAR1 = ' ',
+DS D_CHAR1 = ',')
+RETURNS D_VARCHAR50
+DETERMINISTIC 
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION GET_FREE_IP_BY_MASK (IP_MASK D_IP,
+SKIP_IPS D_VARCHAR1000 = '')
+RETURNS D_IP
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION GET_FREE_IP_BY_RANGE (IP_START D_IP,
+IP_END D_IP)
+RETURNS D_IP
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_JSON_VALUE (JSON D_PATH,
@@ -2599,8 +2632,26 @@ RETURNS D_VARCHAR255
 DETERMINISTIC 
 AS 
 BEGIN END ^
+CREATE OR ALTER FUNCTION GET_NEW_ACCOUNT (HOUSE_ID TYPE OF UID = null,
+FLAT D_FLAT = null,
+SRV_ID TYPE OF UID = null)
+RETURNS D_ACCOUNT_NS
+AS 
+BEGIN END ^
 CREATE OR ALTER FUNCTION GET_REQUEST_MONEY (RQ_ID D_UID_NULL)
 RETURNS D_N15_2
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
+DEF_VALUE D_INTEGER = 0)
+RETURNS INTEGER
+DETERMINISTIC 
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION GET_SETTING_VALUE (SETTING D_NAME,
+DEF_VALUE D_VARCHAR1000 = '')
+RETURNS D_VARCHAR1000
+DETERMINISTIC 
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_SRV_TARIF_FOR_CUSTOMER (CUSTOMER_ID UID,
@@ -2626,8 +2677,8 @@ RETURNS D_MAC
 DETERMINISTIC 
 AS 
 BEGIN END ^
-CREATE OR ALTER FUNCTION MONTH_FIRST_DAY (MON_DAY DATE)
-RETURNS DATE
+CREATE OR ALTER FUNCTION MONTH_FIRST_DAY (MON_DAY D_DATE)
+RETURNS D_DATE
 DETERMINISTIC 
 AS 
 BEGIN END ^
@@ -2638,13 +2689,17 @@ AS
 BEGIN END ^
 CREATE OR ALTER FUNCTION NUMBER_AS_STR (VAL D_N15_2,
 LANG D_VARCHAR5 = 'RU',
-SHOWCURRENCY INTEGER = 0)
+SHOWCURRENCY D_INTEGER = 0)
 RETURNS D_VARCHAR1000
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION ONLY_DIGITS (A_VALUE D_VARCHAR255)
 RETURNS D_VARCHAR255
 DETERMINISTIC 
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION WHERE_IS_IP (IP D_IP)
+RETURNS INTEGER
 AS 
 BEGIN END ^
 
@@ -2696,21 +2751,23 @@ CREATE OR ALTER PROCEDURE ADD_PAYMENT (CUSTOMER_ID TYPE OF UID,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV D_INTEGER,
-NOTICE D_NOTICE,
-CMSN D_N15_2 = null)
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_INTEGER = null,
+NOTICE D_NOTICE = null,
+CMSN D_N15_2 = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null)
 RETURNS (PAYMENT_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE ADD_PAYMENT_BY_ACCOUNT (ACCOUNT_NO D_ACCOUNT,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
-PAYSOURCE_ID TYPE OF UID,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV TYPE OF UID,
-NOTICE D_NOTICE,
-EXT_PAY_ID D_VARCHAR50,
+PAYSOURCE_ID D_UID_NULL,
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_UID_NULL = null,
+NOTICE D_NOTICE = null,
+EXT_PAY_ID D_VARCHAR50 = null,
 CMSN D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER)
 AS 
@@ -2745,14 +2802,16 @@ CREATE OR ALTER PROCEDURE ADD_PAYMENT_EXT (PAY_DOC_ID TYPE OF D_INTEGER,
 CUSTOMER_ID TYPE OF UID,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
-NOTICE D_NOTICE,
-FINE_SUM D_N15_2,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV D_INTEGER,
-EXT_PAY_ID D_VARCHAR50,
-TAG D_INTEGER,
-CMSN D_N15_2 = null)
-RETURNS (PAYMENT_ID D_INTEGER)
+NOTICE D_NOTICE = null,
+FINE_SUM D_N15_2 = null,
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_INTEGER = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null,
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
+RETURNS (PAYMENT_ID D_INTEGER,
+RESULT D_VARCHAR100)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE ADD_PAYMENT_FINE (CUSTOMER_ID D_INTEGER,
@@ -2763,7 +2822,9 @@ PAYMENT_TYPE D_INTEGER,
 PAYMENT_SRV D_INTEGER,
 NOTICE D_NOTICE,
 FINE D_N15_2,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null)
 RETURNS (PAYMENT_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
@@ -2771,26 +2832,30 @@ CREATE OR ALTER PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS (ACCOUNT_NO TYPE OF D_ACC
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
-EXT_SYSTEMS_ID TYPE OF D_VARCHAR50,
-NOTICE D_NOTICE,
+EXT_SYSTEMS_ID D_VARCHAR50 = null,
+NOTICE D_NOTICE = null,
 PAY_TYPE_STR D_VARCHAR30 = 'CASH',
-CMSN D_N15_2 = null)
-RETURNS (PAYMENT_ID D_INTEGER)
+CMSN D_N15_2 = null,
+TAG D_INTEGER = null)
+RETURNS (PAYMENT_ID D_INTEGER,
+IS_DELETED D_IBOOLEAN)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE ADD_PAYMENT_SRC_ACCOUNT (PAYSRC_CODE D_VARCHAR100,
 ACCOUNT_NO D_VARCHAR20,
 PAY_SUM D_N15_2,
-PAY_DATE D_DATETIME,
+PAY_TIME D_DATETIME,
 NOTICE D_NOTICE = null,
 FINE_SUM D_N15_2 = null,
 PAYMENT_TYPE D_INTEGER = null,
 PAYMENT_SRV D_INTEGER = null,
 EXT_PAY_ID D_VARCHAR50 = null,
 TAG D_INTEGER = null,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
 RETURNS (PAYMENT_ID D_INTEGER,
-PAY_DOC_ID TYPE OF UID)
+PAY_DOC_ID TYPE OF UID,
+RESULT D_VARCHAR100)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE ADD_PAYMENT_SRC_CUSTID (PAYSRC_CODE D_VARCHAR100,
@@ -2803,9 +2868,11 @@ PAYMENT_TYPE D_INTEGER,
 PAYMENT_SRV D_INTEGER,
 EXT_PAY_ID D_VARCHAR50,
 TAG D_INTEGER,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
 RETURNS (PAYMENT_ID D_INTEGER,
-PAY_DOC_ID TYPE OF UID)
+PAY_DOC_ID TYPE OF UID,
+RESULT D_VARCHAR100)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE ADD_PAYMENT_SRC_DOG_FIO (PAYSRC_CODE D_VARCHAR100,
@@ -2813,12 +2880,12 @@ CONTRACT D_VARCHAR20,
 FIO D_VARCHAR100,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
-NOTICE D_NOTICE,
-FINE_SUM D_N15_2,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV D_INTEGER,
-EXT_PAY_ID D_VARCHAR50,
-TAG D_INTEGER,
+NOTICE D_NOTICE = null,
+FINE_SUM D_N15_2 = null,
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_INTEGER = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null,
 CMSN D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 PAY_DOC_ID TYPE OF UID)
@@ -2922,7 +2989,7 @@ BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE API_GET_NEW_ACCOUNT (HOUSE_ID TYPE OF UID = null,
 FLAT D_FLAT = null,
 SRV_ID TYPE OF UID = null)
-RETURNS (ACCOUNT_NO D_ACCOUNT)
+RETURNS (ACCOUNT_NO D_ACCOUNT_NS)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE API_GET_SERVICES (P_CUSTOMER_ID TYPE OF UID,
@@ -2992,13 +3059,14 @@ SET_ON D_INTEGER = 1,
 SET_DATE D_DATE = current_date,
 SRV_ON_OFF TYPE OF UID = null,
 P_CONTRACT D_VARCHAR20 = null,
-P_CONTRACT_DATE D_DATE = null)
+P_CONTRACT_DATE D_DATE = null,
+IGNORE_DEBT D_INTEGER = 0)
 AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE API_SET_PREPAY (CUSTOMER_ID INTEGER,
-PREPAY_SUM NUMERIC(15, 2))
-RETURNS (MSG VARCHAR(255) CHARACTER SET UTF8,
-CODE SMALLINT)
+CREATE OR ALTER PROCEDURE API_SET_PREPAY (CUSTOMER_ID D_INTEGER,
+PREPAY_SUM D_N15_2)
+RETURNS (MSG D_VARCHAR255,
+CODE D_SMALLINT)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE API_SET_SWITCH_QUEUE (CUSTOMER_ID TYPE OF UID,
@@ -3036,16 +3104,16 @@ AS
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE AUTO_OFF_SERVICE (P_CUSTOMER_ID TYPE OF UID,
 P_SERV_ID TYPE OF UID,
-P_DATE D_DATE,
-P_ACTSERVICE D_INTEGER,
-P_NOTICE D_NOTICE)
+P_DATE D_DATE = current_date,
+P_ACTSERVICE D_INTEGER = -3,
+P_NOTICE D_NOTICE = null /* COLLATE UTF8 - default */)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE AUTO_ON_SERVICE (P_CUSTOMER_ID TYPE OF UID,
 P_SERV_ID TYPE OF UID,
-P_DATE D_DATE,
-P_ACTSERVICE D_INTEGER,
-P_NOTICE D_NOTICE,
+P_DATE D_DATE = current_date,
+P_ACTSERVICE D_INTEGER = -2,
+P_NOTICE D_NOTICE = null /* COLLATE UTF8 - default */,
 P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS (RESULT D_INTEGER)
 AS 
@@ -3061,23 +3129,23 @@ P_PAY_SUM D_N15_2)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE BONUS_RATE_INS (ID UID,
-BT_ID INTEGER,
-DATE_FROM DATE,
-DATE_TO DATE,
-UNITS_FROM NUMERIC(15, 2),
-UNITS_TO NUMERIC(15, 2),
-RATE NUMERIC(15, 2),
-NOTICE VARCHAR(1000) CHARACTER SET UTF8)
+BT_ID D_INTEGER,
+DATE_FROM D_DATE,
+DATE_TO D_DATE,
+UNITS_FROM D_N15_2,
+UNITS_TO D_N15_2,
+RATE D_N15_2,
+NOTICE D_VARCHAR1000)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE BONUS_RATE_UPD (ID UID,
-BT_ID INTEGER,
-DATE_FROM DATE,
-DATE_TO DATE,
-UNITS_FROM NUMERIC(15, 2),
-UNITS_TO NUMERIC(15, 2),
-RATE NUMERIC(15, 2),
-NOTICE VARCHAR(1000) CHARACTER SET UTF8)
+BT_ID D_INTEGER,
+DATE_FROM D_DATE,
+DATE_TO D_DATE,
+UNITS_FROM D_N15_2,
+UNITS_TO D_N15_2,
+RATE D_N15_2,
+NOTICE D_VARCHAR1000)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALCULATE_FINE (CUSTOMER_ID TYPE OF UID,
@@ -3131,7 +3199,8 @@ CREATE OR ALTER PROCEDURE CALC_KOEF_TARIF (P_CUSTOMER_ID UID,
 P_SERV_ID D_INTEGER,
 P_MONTH D_DATE,
 P_IS_J D_INTEGER = 0,
-P_SRVTYPE D_INTEGER = null)
+P_SRVTYPE D_INTEGER = null,
+P_CALC_TYPE D_INTEGER = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_MONTH_DAY_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
@@ -3158,7 +3227,8 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_PERS_TARIF (P_CUSTOMER_ID UID,
 P_SERV_ID D_INTEGER,
 P_MONTH D_DATE,
-P_IS_J D_INTEGER = 0)
+P_IS_J D_INTEGER = 0,
+P_CALC_TYPE D_INTEGER = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_SINGLE_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
@@ -3214,6 +3284,12 @@ ANALOG D_IBOOLEAN = null,
 DVB D_IBOOLEAN = null,
 IPTV D_IBOOLEAN = null,
 REPL D_IBOOLEAN = null)
+AS 
+BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE CHANGE_OFF_TO_AUTOBLOCK (CUSTOMER_ID TYPE OF UID,
+SERVICE_ID TYPE OF UID,
+OFF_SERVICE TYPE OF UID,
+NOTICE D_NOTICE = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CHANGE_TO_NEGATIVE (CUSTOMER_ID UID,
@@ -3306,7 +3382,8 @@ AS
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE CLOSE_MONTH_PROC (P_MONTH D_DATE,
 P_CUSTOMER_ID TYPE OF UID = null,
-P_DAILY D_INTEGER = null)
+P_DAILY D_INTEGER = null,
+RCWCM_IGONRE D_INTEGER = 0)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CLOSE_PERIOD_PROC (P_START_MONTH D_DATE,
@@ -3362,10 +3439,10 @@ CREATE OR ALTER PROCEDURE DAY_TARIF_FOR_SRV (BEGIN_MONTH D_DATE,
 FOR_SERVICE TYPE OF UID)
 AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE DECL_OF_NUM (NUM INTEGER,
-TITLE0 VARCHAR(100) CHARACTER SET UTF8 = null,
-TITLE1 VARCHAR(100) CHARACTER SET UTF8 = null,
-TITLE2 VARCHAR(100) CHARACTER SET UTF8 = null)
+CREATE OR ALTER PROCEDURE DECL_OF_NUM (NUM D_INTEGER,
+TITLE0 D_VARCHAR100 = null,
+TITLE1 D_VARCHAR100 = null,
+TITLE2 D_VARCHAR100 = null)
 RETURNS (RESULT VARCHAR(100) CHARACTER SET UTF8)
 AS 
 BEGIN SUSPEND; END ^
@@ -3495,15 +3572,28 @@ CREATE OR ALTER PROCEDURE EXTRACT_NUMBER (A_VALUE D_VARCHAR255)
 RETURNS (RESULT D_VARCHAR255)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE FIND_FREE_LINKED_PORT (CUSTOMER_ID D_INTEGER)
+RETURNS (EID D_INTEGER,
+PORT D_PORT_NS)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE FIND_IP_INFO (IP D_IP,
+VLAN_ID D_UID_NULL = null)
+RETURNS (ID D_UID_NULL,
+INFO D_VARCHAR255,
+MAC D_MAC,
+IP_WHERE D_INTEGER)
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE FIX_PORT_CONNECT AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE FORMAT_DATE (A_DATE DATE = current_date,
-FORMAT VARCHAR(1000) CHARACTER SET UTF8 = null,
-LONG_DAY_NAMES VARCHAR(100) CHARACTER SET UTF8 = null,
-SHORT_DAY_NAMES VARCHAR(50) CHARACTER SET UTF8 = null,
-LONG_MONTH_NAMES VARCHAR(200) CHARACTER SET UTF8 = null,
-SHORT_MONTH_NAMES VARCHAR(200) CHARACTER SET UTF8 = null)
-RETURNS (RESULT VARCHAR(1000) CHARACTER SET UTF8)
+CREATE OR ALTER PROCEDURE FORMAT_DATE (A_DATE D_DATE = current_date,
+FORMAT D_VARCHAR1000 = null,
+LONG_DAY_NAMES D_VARCHAR100 = null,
+SHORT_DAY_NAMES D_VARCHAR50 = null,
+LONG_MONTH_NAMES D_VARCHAR255 = null,
+SHORT_MONTH_NAMES D_VARCHAR255 = null)
+RETURNS (RESULT D_VARCHAR1000)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE FORMAT_MAC (AMAC D_MAC)
@@ -3519,9 +3609,9 @@ P_FROM_DATE D_DATE = null,
 P_DEPTH D_INTEGER = 3)
 AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE GEN_PASSWORD (MIN_LENGTH SMALLINT = 8,
-MAX_LENGTH SMALLINT = 10)
-RETURNS (PWD VARCHAR(100) CHARACTER SET UTF8)
+CREATE OR ALTER PROCEDURE GEN_PASSWORD (MIN_LENGTH D_SMALLINT = 8,
+MAX_LENGTH D_SMALLINT = 10)
+RETURNS (PWD D_VARCHAR100)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GETSERVICES (P_CUSTOMER_ID TYPE OF UID,
@@ -3583,9 +3673,10 @@ FLAT_NO TYPE OF D_FLAT)
 RETURNS (CUST_CODE TYPE OF D_VARCHAR20)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE GET_CUSTOMER_CURRENT_SRV (CUSTOMER_ID TYPE OF UID,
-BUSINESS_TP TYPE OF UID = null)
-RETURNS (SERVICE_ID TYPE OF UID,
+CREATE OR ALTER PROCEDURE GET_CUSTOMER_CURRENT_SRV (ACUSTOMER_ID TYPE OF UID,
+ABUSINESS_TYPE TYPE OF UID = null)
+RETURNS (CUSTOMER_ID TYPE OF UID,
+SERVICE_ID TYPE OF UID,
 NAME TYPE OF D_VARCHAR60,
 STATE_SGN D_INTEGER,
 STATE_SRV TYPE OF UID,
@@ -3616,6 +3707,12 @@ LOG1 DOUBLE PRECISION,
 LAT2 DOUBLE PRECISION,
 LOG2 DOUBLE PRECISION)
 RETURNS (DISTANCE_METER DOUBLE PRECISION)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_DOC_UNIT_INCOME (M_ID UID,
+SERIAL D_SERIAL_NS)
+RETURNS (DOC_ID D_UID_NULL,
+NOTICE D_NOTICE)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_EPG (STREAM_ID TYPE OF UID,
@@ -3679,16 +3776,16 @@ RETURNS (IP TYPE OF D_IP)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_FREE_IP (IP_MASK D_IP = null)
-RETURNS (IP TYPE OF D_IP)
+RETURNS (IP D_IP)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_FREE_VLAN_IP (VLAN_ID TYPE OF D_INT_IP)
 RETURNS (IP TYPE OF D_IP)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE GET_FULLNAME_ALLREPORTS (SEPARATOR VARCHAR(10) CHARACTER SET UTF8)
-RETURNS (ID_REPORT INTEGER,
-FULL_NAME VARCHAR(5000) CHARACTER SET UTF8)
+CREATE OR ALTER PROCEDURE GET_FULLNAME_ALLREPORTS (SEPARATOR D_VARCHAR10)
+RETURNS (ID_REPORT D_INTEGER,
+FULL_NAME D_VARCHAR5000)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_FULLNAME_REPORT (ID_REPORT INTEGER,
@@ -3745,7 +3842,7 @@ AS
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_MAT_TAKE_IN (FOR_RQ_ID UID,
 MG_ID D_UID_NULL = -1,
-WH_FLTR D_IBOOLEAN = 0)
+WH_OWNER D_IBOOLEAN = 0)
 RETURNS (M_ID UID,
 NAME D_VARCHAR255,
 DIMENSION D_VARCHAR10,
@@ -3770,16 +3867,16 @@ LANG D_INTEGER,
 NOTICE D_NOTICE)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE GET_NODE_FLAT_LVL (NODE_ID INTEGER)
-RETURNS (HOUSE_ID INTEGER,
-LVL INTEGER,
+CREATE OR ALTER PROCEDURE GET_NODE_FLAT_LVL (NODE_ID D_INTEGER)
+RETURNS (HOUSE_ID D_INTEGER,
+LVL D_INTEGER,
 FLAT_NO D_FLAT_NS,
 PORCH_N D_FLAT_NS,
 FLOOR_N D_FLAT_NS,
-SRV_LIST VARCHAR(400) CHARACTER SET UTF8,
-CST_LIST VARCHAR(400) CHARACTER SET UTF8,
-STREET_NAME VARCHAR(250) CHARACTER SET UTF8,
-HOUSE_NO VARCHAR(80) CHARACTER SET UTF8,
+SRV_LIST D_VARCHAR500,
+CST_LIST D_VARCHAR500,
+STREET_NAME D_VARCHAR255,
+HOUSE_NO D_VARCHAR100,
 NOTICE D_NOTICE)
 AS 
 BEGIN SUSPEND; END ^
@@ -3799,9 +3896,9 @@ DEBT D_N15_2 = null)
 RETURNS (PREPAY D_N15_2)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE GET_REPORT_ID (FULL_NAME VARCHAR(5000) CHARACTER SET UTF8,
-SEPARATOR CHAR(1) CHARACTER SET UTF8)
-RETURNS (ID_REPORT INTEGER)
+CREATE OR ALTER PROCEDURE GET_REPORT_ID (FULL_NAME D_VARCHAR5000,
+SEPARATOR D_CHAR1)
+RETURNS (ID_REPORT D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_REQUEST_BUSY_DAYS (HOUSE_ID TYPE OF UID,
@@ -3901,7 +3998,7 @@ CREATE OR ALTER PROCEDURE IP2INT (AIP D_IP)
 RETURNS (INT_IP D_N10)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (FOR_M_ID INTEGER,
+CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (FOR_M_ID D_INTEGER,
 SHOW_SN D_IBOOLEAN = 0)
 RETURNS (WH D_VARCHAR500,
 M_ID D_INTEGER,
@@ -3919,7 +4016,7 @@ OLD_SERIAL D_SERIAL_NS,
 NEW_SERIAL D_SERIAL_NS)
 AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID INTEGER)
+CREATE OR ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID D_INTEGER)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC (M_ID TYPE OF UID,
@@ -4043,8 +4140,8 @@ P_SERVICE_ID TYPE OF UID,
 P_ACTSERVICE TYPE OF UID,
 P_DATE D_DATE,
 P_OFF D_INTEGER,
-P_NOTICE D_NOTICE,
-P_UNITS D_N15_2,
+P_NOTICE D_NOTICE = '',
+P_UNITS D_N15_2 = 1,
 RECALC D_IBOOLEAN = 1,
 ADD_SGL D_IBOOLEAN = 1,
 WORKER D_VARCHAR255 = null,
@@ -4080,10 +4177,11 @@ CREATE OR ALTER PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS (ACCOUNT_NO TYPE OF D_ACC
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
-EXT_SYSTEMS_ID TYPE OF D_VARCHAR50,
-NOTICE D_NOTICE,
-PAY_TYPE_STR D_VARCHAR30 = 'CASH' /* COLLATE UTF8 - default */,
-CMSN D_N15_2 = null)
+EXT_SYSTEMS_ID D_VARCHAR50 = null,
+NOTICE D_NOTICE = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH',
+CMSN D_N15_2 = null,
+TAG D_INTEGER = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
 AS 
@@ -4123,7 +4221,8 @@ PAY_SUM TYPE OF D_N15_2,
 NOTICE TYPE OF D_NOTICE,
 EXT_PAY_ID TYPE OF D_VARCHAR50,
 FINE_SUM TYPE OF D_N15_2,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE PREPAYEXPIRE (DAYS D_INTEGER)
@@ -4151,7 +4250,7 @@ TO_SRV TYPE OF UID,
 SWITCH_SRV TYPE OF UID = null,
 UNITS D_N15_2 = 1,
 SWITCH_DATE D_DATE = current_date,
-NOTICE D_NOTICE = null)
+NOTICE D_NOTICE = null /* COLLATE UTF8 - default */)
 RETURNS (RESULT D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
@@ -4280,7 +4379,7 @@ DESCRIPTION D_VARCHAR1000,
 SERVICE_TYPE D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */)
+CREATE OR ALTER PROCEDURE SELECTPAYDOC (FORFORM D_VARCHAR10 = null /* COLLATE UTF8 - default */)
 RETURNS (PAY_DOC_ID D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
@@ -4477,6 +4576,7 @@ CREATE INDEX EPG_EPG_ID ON EPG (EPG_ID);
 CREATE INDEX EPG_IDX1 ON EPG (CH_ID, EPG_DATE);
 CREATE INDEX EPG_IDX_DATE_CH ON EPG (EPG_DATE, CH_ID);
 CREATE INDEX EQUIPMENT_IDX_HID ON EQUIPMENT (HOUSE_ID);
+CREATE INDEX EQUIPMENT_IDX_IP ON EQUIPMENT (IP);
 CREATE INDEX EQUIPMENT_IDX_PARENT ON EQUIPMENT (PARENT_ID, PARENT_PORT);
 CREATE INDEX EQUIPMENT_IDX_VLAN_ID ON EQUIPMENT (VLAN_ID);
 CREATE INDEX EQUIPMENT_ATTRIBUTES_IDX1 ON EQUIPMENT_ATTRIBUTES (EID);
@@ -4526,8 +4626,9 @@ CREATE INDEX NODES_ATTRIBUTES_OID ON NODES_ATTRIBUTES (O_ID);
 CREATE INDEX NODE_FLATS_IDX_NODES ON NODE_FLATS (NODE_ID);
 CREATE INDEX NPS_IDX_CID ON NPS (CUSTOMER_ID);
 CREATE INDEX NPS_IDX_DATE ON NPS (NPS_DATE);
-CREATE INDEX OBJECTS_NAME_TYPE ON OBJECTS (O_NAME, O_TYPE);
+CREATE INDEX OBJECTS_IDX_NAME_TYPE ON OBJECTS (O_NAME, O_TYPE);
 CREATE INDEX OBJECTS_COVERAGE_IDX1 ON OBJECTS_COVERAGE (OC_TYPE, O_ID);
+CREATE INDEX OBJECTS_LINKS_IDX_TCP ON OBJECTS_LINKS (OL_TYPE, PID, CID);
 CREATE INDEX ORDERS_TP_IDX_DATE ON ORDERS_TP (OTP_DATE);
 CREATE INDEX ORDERS_TP_IDX_TYPE ON ORDERS_TP (OTTP_TYPE);
 CREATE INDEX OTHER_FEE_IDX1 ON OTHER_FEE (CUSTOMER_ID, FEE_DATE);
@@ -4538,6 +4639,9 @@ CREATE INDEX PAYMENT_IDX1 ON PAYMENT (CUSTOMER_ID, TAG);
 CREATE INDEX PAY_EXT_SYS_IDX ON PAYMENT (EXT_PAY_ID);
 CREATE INDEX PAYMENT_DELETED_IDX1 ON PAYMENT_DELETED (PAY_DOC_ID);
 CREATE INDEX PAYMENT_DELETED_IDX2 ON PAYMENT_DELETED (EXT_PAY_ID);
+CREATE INDEX PAYMENT_HOLD_IDX_CUST_ID ON PAYMENT_HOLD (CUSTOMER_ID);
+CREATE INDEX PAYMENT_HOLD_IDX_EXT_ID ON PAYMENT_HOLD (EXT_ID);
+CREATE INDEX PAYMENT_HOLD_IDX_ID ON PAYMENT_HOLD (PAYMENT_ID);
 CREATE INDEX PAY_DOC_DATE ON PAY_DOC (PAY_DOC_DATE);
 CREATE INDEX PAY_ERRORS_PDOC ON PAY_ERRORS (PAY_DOC_ID);
 CREATE INDEX PTARIF_SERVID ON PERSONAL_TARIF (SERVICE_ID, DATE_FROM);
@@ -4762,6 +4866,15 @@ select IP_INET as IP, IP_INET_BIN as IP_BIN, CUSTOMER_ID, 3 from BILLING B
 union
 select O.O_NAME as IP, INET_ATON(O.O_NAME) as IP_BIN, -1, 4 from OBJECTS O where O.O_TYPE = 20;
 
+/* View: SERVICES_TYPE, Owner: SYSDBA */
+CREATE VIEW SERVICES_TYPE (SRV_TYPE_ID, NAME, DESCRIPTION) AS
+select
+    O_Id SRV_TYPE_ID
+  , O_Name NAME
+  , O_Description DESCRIPTION
+  from Objects
+  where O_Type = 15;
+
 /*  Exceptions */
 CREATE EXCEPTION E_CANNOT_DELETE '#1 Can not delete.';
 CREATE EXCEPTION E_DECODER_ERROR '#2 Decoder number incorrect.';
@@ -4781,13 +4894,13 @@ SET TERM ^ ;
 ALTER FUNCTION CHECK_CUSTOMER_SERVICE (CUSTOMER_ID TYPE OF UID,
 FOR_SRV D_UID_NULL,
 FOR_DATE D_DATE = current_date)
-RETURNS INTEGER
+RETURNS D_INTEGER
 AS 
-declare variable SERVICE_ID type of UID;
-declare variable STATE      D_INTEGER;
-declare variable STATE_DATE D_DATE;
-declare variable STATE_SRV  type of UID;
-declare variable result     d_integer;
+DECLARE SERVICE_ID TYPE OF UID;
+DECLARE STATE D_INTEGER;
+DECLARE STATE_DATE D_DATE;
+DECLARE STATE_SRV TYPE OF UID;
+DECLARE result D_INTEGER;
 begin
   FOR_DATE = coalesce(FOR_DATE, current_date);
   result = null;
@@ -4895,8 +5008,8 @@ BEGIN
     RETURN dist;
 END ^
 
-ALTER FUNCTION ESCAPE_STRING (ASTRING VARCHAR(8191) CHARACTER SET UTF8)
-RETURNS VARCHAR(8191) CHARACTER SET UTF8
+ALTER FUNCTION ESCAPE_STRING (ASTRING D_VARCHAR8000)
+RETURNS D_VARCHAR8000
 AS 
 begin
   AString = replace(AString, '\', '\\');
@@ -4908,6 +5021,174 @@ begin
   AString = replace(AString, '"', '\"');
   AString = replace(AString, '/', '\/');
   return AString;
+end ^
+
+ALTER FUNCTION FORMAT_CURRENCY (CURR D_N15_2,
+TS D_CHAR1 = ' ',
+DS D_CHAR1 = ',')
+RETURNS D_VARCHAR50
+DETERMINISTIC 
+AS 
+declare variable vTh  D_INTEGER;
+declare variable vP   D_INTEGER;
+declare variable vRes D_Varchar50;
+begin
+  TS = coalesce(TS, '');
+  DS = coalesce(DS, '');
+
+  vP = mod(round(Curr * 100, 0), 100);
+  vTh = round(Curr, 0);
+  vRes = DS || lpad(vP, 2, '0');
+  while (vTh <> 0) do begin
+    vP = mod(vTh, 1000);
+    vTh = round(vTh / 1000, 0);
+    vRes = ts || lpad(vP, 3, '0') || vRes;
+  end
+
+  return trim(leading '0' from trim(leading ts from vRes));
+end ^
+
+ALTER FUNCTION GET_FREE_IP_BY_MASK (IP_MASK D_IP,
+SKIP_IPS D_VARCHAR1000 = '')
+RETURNS D_IP
+AS 
+declare variable MIN_IP        D_INT_IP;
+declare variable CUR_IP        D_INT_IP;
+declare variable I             D_Integer;
+declare variable e             D_Integer;
+declare variable REPITS        D_Integer;
+declare variable IP            D_Ip;
+declare variable Ip1           D_Ip;
+declare variable Ip2           D_Ip;
+declare variable Ip3           D_Ip;
+declare variable FIRST_MASK_IP D_Ip;
+declare variable S_SKP         D_Integer;
+declare variable E_SKP         D_Integer;
+begin
+  IP_MASK = coalesce(trim(IP_MASK), '');
+  IP = '';
+  FIRST_MASK_IP = '100.0.0.0';
+  REPITS = 0;
+  SKIP_IPS = coalesce('|' || SKIP_IPS || '|', '');
+
+  select
+      Var_Value
+    from Settings
+    where var_Name = 'IP_RESERV_START'
+  into :S_SKP;
+  S_SKP = coalesce(S_SKP, 0);
+
+  select
+      Var_Value
+    from Settings
+    where var_Name = 'IP_RESERV_END'
+  into :E_SKP;
+  E_SKP = coalesce(E_SKP, 0);
+
+  if (IP_MASK <> '') then begin
+    -- удалим из маски 1.2.3.4 4 разряд
+    i = char_length(IP_MASK) - char_length(replace(IP_MASK, '.', ''));
+    if (i = 3) then begin
+      i = position('.' in IP_MASK);
+      ip1 = left(IP_MASK, i - 1);
+      IP_MASK = substring(IP_MASK from i + 1);
+      i = position('.' in IP_MASK);
+      ip2 = left(IP_MASK, i - 1);
+      IP_MASK = substring(IP_MASK from i + 1);
+      i = position('.' in IP_MASK);
+      ip3 = left(IP_MASK, i - 1);
+
+      FIRST_MASK_IP = ip1 || '.' || ip2 || '.' || ip3 || '.1';
+      REPITS = 255;
+    end
+    else
+    if (i = 1) then begin
+      i = position('.' in IP_MASK);
+      ip1 = left(IP_MASK, i - 1);
+      IP_MASK = substring(IP_MASK from i + 1);
+      ip2 = right(IP_MASK, i + 1);
+      if (ip2 = '') then
+        ip2 = '0';
+
+      FIRST_MASK_IP = ip1 || '.' || ip2 || '.0.1';
+      REPITS = 255 * 255 * 255;
+    end
+    else
+    if (i = 2) then begin
+      i = position('.' in IP_MASK);
+      ip1 = left(IP_MASK, i - 1);
+      IP_MASK = substring(IP_MASK from i + 1);
+      i = position('.' in IP_MASK);
+      ip2 = left(IP_MASK, i - 1);
+      IP_MASK = substring(IP_MASK from i + 1);
+      ip3 = right(IP_MASK, i + 1);
+      if (ip3 = '') then
+        ip3 = '0';
+
+      FIRST_MASK_IP = ip1 || '.' || ip2 || '.' || ip3 || '.1';
+      REPITS = 255 * 255;
+    end
+  end
+
+  i = 0;
+  MIN_IP = INET_ATON(FIRST_MASK_IP);
+  while (I < REPITS) do begin
+    e = null;
+    CUR_IP = MIN_IP + i;
+    IP = INET_NTOA(CUR_IP);
+    -- нужно ли пропускать адреса в начале и конце
+    CUR_IP = bin_and(CUR_IP, 255);
+    if ((CUR_IP <= S_SKP)
+        or
+        (CUR_IP >= (255 - E_SKP))) then
+      e = -2;
+
+    -- проверим, нужно ли пропускать ip
+    if ((not e is null)
+        or
+        ((skip_ips <> '') and (position('|' || IP || '|', skip_ips) > 0))) then
+      e = -1;
+    else
+      e = Where_is_IP(:IP);
+
+    if (not e is null) then
+      IP = '';
+    else
+      break;
+    i = i + 1;
+  end
+
+  return IP;
+end ^
+
+ALTER FUNCTION GET_FREE_IP_BY_RANGE (IP_START D_IP,
+IP_END D_IP)
+RETURNS D_IP
+AS 
+declare variable MIN_IP        D_INT_IP;
+declare variable MAX_IP        D_INT_IP;
+declare variable e             D_Integer;
+declare variable IP            D_Ip;
+begin
+  IP = '';
+
+  MIN_IP = INET_ATON(IP_START);
+  MAX_IP = INET_ATON(IP_END);
+  if (MAX_IP < MIN_IP) then begin
+    MAX_IP = MIN_IP;
+    MIN_IP = INET_ATON(IP_END);
+  end
+  while (MIN_IP < MAX_IP) do begin
+    IP = INET_NTOA(MIN_IP);
+    e = Where_is_IP(:IP);
+    if (not e is null) then
+      IP = '';
+    else
+      break;
+    MIN_IP = MIN_IP + 1;
+  end
+
+  return IP;
 end ^
 
 ALTER FUNCTION GET_JSON_VALUE (JSON D_PATH,
@@ -4945,6 +5226,184 @@ begin
   return res;
 end ^
 
+ALTER FUNCTION GET_NEW_ACCOUNT (HOUSE_ID TYPE OF UID = null,
+FLAT D_FLAT = null,
+SRV_ID TYPE OF UID = null)
+RETURNS D_ACCOUNT_NS
+AS 
+declare variable result     D_ACCOUNT_NS;
+declare variable af         D_VARCHAR1000;
+declare variable blck       D_VARCHAR1000;
+declare variable prt        D_VARCHAR1000;
+declare variable prt0       D_VARCHAR100;
+declare variable prt1       D_VARCHAR100;
+declare variable prt2       D_VARCHAR100;
+declare variable v          D_VARCHAR100;
+declare variable r          D_VARCHAR100;
+declare variable i          D_Integer;
+declare variable cid        D_Uid_Null;
+declare variable ACCOUNT_NO D_ACCOUNT_NS;
+declare variable attempt    D_Integer;
+begin
+  -- FLD~5~0~^
+  -- 5 - длина
+  -- 0 - чем дополнять слева
+  -- FLD = [СЧЕТЧИК];[КОД Н.ПУНКТ];[КОД УЧАСТКА];[КОД УЛИЦЫ];[КОД ДОМА];[ДОМ];[КВАРТИРА];[ТИП УСЛУГИ];[ПН ДОГОВОРА];[ДЕНЬ];[МЕСЯЦ];[ГОД] */
+  select
+      Var_Value
+    from settings
+    where Var_Name = 'ACCOUNT_FORMAT'
+  into :af;
+  ACCOUNT_NO = null;
+  attempt = 0;
+  while ((ACCOUNT_NO is null) and (attempt < 1000)) do begin -- цикл поиска
+    attempt = attempt + 1;
+    result = '';
+    for select
+            Str
+          from Explode_No_Empty('^', :af)
+        into :blck
+    do begin -- цикл разбора по полям
+      i = 0;
+      prt0 = null;
+      prt1 = '0';
+      prt2 = '0';
+      for select
+              Str
+            from Explode_No_Empty('~', :blck)
+          into :prt
+      do begin
+        if (i = 0) then
+          prt0 = :prt;
+        else
+        if (i = 1) then begin
+          prt1 = Only_Digits(:prt);
+          if (prt1 = '') then
+            prt1 = 0;
+        end
+        else
+          prt2 = :prt;
+        i = i + 1;
+      end
+
+      r = null;
+
+      if (prt0 = '[СЧЕТЧИК]') then
+        r = gen_id(GEN_ACCOUNT_NO, 1);
+      else
+      if (prt0 = '[КВАРТИРА]') then
+        r = coalesce(FLAT, '');
+      else
+      if (prt0 = '[ДЕНЬ]') then
+        r = extract(day from current_date);
+      else
+      if (prt0 = '[МЕСЯЦ]') then
+        r = extract(month from current_date);
+      else
+      if (prt0 = '[ГОД]') then
+        r = extract(year from current_date);
+      else begin
+        if ((prt0 = '[ТИП УСЛУГИ]') and (not SRV_ID is null)) then begin
+          select (coalesce(s.business_type, 0) + 1)
+              business_type
+            from services s
+            where s.service_id = :SRV_ID
+          into :r;
+        end
+        else begin
+          if (not HOUSE_ID is null) then begin -- house id
+            if (prt0 = '[КОД Н.ПУНКТ]') then begin
+              select
+                  a.area_code
+                from house h
+                     inner join street s on (s.Street_Id = h.Street_Id)
+                     inner join area a on (a.area_id = s.area_id)
+                where h.House_Id = :HOUSE_ID
+              into :r;
+            end
+            else begin
+              if (prt0 = '[КОД УЧАСТКА]') then begin
+                select (
+                    select first 1
+                        w.wa_code
+                      from workarea w
+                      where exists(select
+                                       g.wa_id
+                                     from workgroups g
+                                     where g.wa_id = w.wa_id
+                                           and g.wg_id = h.wg_id))
+                  from house h
+                  where h.House_Id = :HOUSE_ID
+                into :r;
+              end
+              else begin
+                if (prt0 = '[КОД УЛИЦЫ]') then begin
+                  select
+                      s.Street_Code
+                    from house h
+                         inner join street s on (s.Street_Id = h.Street_Id)
+                    where h.House_Id = :HOUSE_ID
+                  into :r;
+                end
+                else begin
+                  if (prt0 = '[КОД ДОМА]') then begin
+                    select
+                        h.House_Code
+                      from house h
+                      where h.House_Id = :HOUSE_ID
+                    into :r;
+                  end
+                  else begin
+                    if (prt0 = '[ДОМ]') then begin -- [ДОМ]
+                      select
+                          h.House_No
+                        from house h
+                        where h.House_Id = :HOUSE_ID
+                      into :r;
+                    end -- [ДОМ]
+                    else begin
+                      if (prt0 = '[ПН ДОГОВОРА]') then begin -- [ПН ДОГОВОРА]
+                        select (cnt + 1)
+                          from (select
+                                    count(*) cnt
+                                  from subscr_serv ss
+                                       inner join customer c on (c.customer_id = ss.customer_id)
+                                  where c.house_id = :HOUSE_ID
+                                        and c.flat_no = coalesce(:FLAT, ''))
+                        into :r;
+                      end -- [ПН ДОГОВОРА]
+                    end
+                  end
+                end
+              end
+            end
+          end -- house id is null
+        end
+      end
+      v = coalesce(r, '');
+
+      PRT2 = coalesce(PRT2, '0');
+      result = left(result || right(lpad(v, :prt1, :prt2), :prt1), 15);
+    end -- цикл разбора по полям
+
+    if (coalesce(result, '') = '') then
+      result = gen_id(GEN_ACCOUNT_NO, 1);
+
+    cid = null;
+    select first 1
+        Customer_Id
+      from customer
+      where Account_No = :result
+    into :cid;
+    if (not cid is null) then
+      ACCOUNT_NO = null;
+    else
+      ACCOUNT_NO = result;
+  end -- цикл поиска
+
+  return coalesce(ACCOUNT_NO, '');
+end ^
+
 ALTER FUNCTION GET_REQUEST_MONEY (RQ_ID D_UID_NULL)
 RETURNS D_N15_2
 AS 
@@ -4953,12 +5412,12 @@ begin
   select
       sum(COST) as COST
     from (select
-              coalesce(r.W_Quant * coalesce(r.w_cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, w.W_Cost,
+              coalesce(r.W_Quant * coalesce(iif(w.As_Service is null, w.W_Cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, 0,
               (select
                    t.tarif_sum
                  from tarif t
                  where t.service_id = s.service_id
-                       and coalesce(rq.rq_exec_time, localtimestamp) between t.date_from and t.date_to)), 0), 0) COST
+                       and coalesce(rq.rq_exec_time, localtimestamp) between t.date_from and t.date_to))), 0), 0) COST
             from Request_works r
                  inner join WORKS W on (R.W_ID = W.W_ID)
                  inner join request rq on (r.rq_id = rq.rq_id)
@@ -4977,6 +5436,36 @@ begin
   into :COST;
   COST = coalesce(round(COST, 2), 0);
   return COST;
+end ^
+
+ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
+DEF_VALUE D_INTEGER = 0)
+RETURNS INTEGER
+DETERMINISTIC 
+AS 
+declare variable INT_VALUE D_INTEGER;
+begin
+  select
+      cast(VAR_VALUE as integer)
+    from SETTINGS
+    where VAR_NAME = :SETTING
+  into :INT_VALUE;
+  return coalesce(:INT_VALUE, coalesce(DEF_VALUE, 0));
+end ^
+
+ALTER FUNCTION GET_SETTING_VALUE (SETTING D_NAME,
+DEF_VALUE D_VARCHAR1000 = '')
+RETURNS D_VARCHAR1000
+DETERMINISTIC 
+AS 
+declare variable vVALUE D_VARCHAR1000;
+begin
+  select
+      VAR_VALUE
+    from SETTINGS
+    where VAR_NAME = :SETTING
+  into :vVALUE;
+  return coalesce(:vVALUE, coalesce(DEF_VALUE, ''));
 end ^
 
 ALTER FUNCTION GET_SRV_TARIF_FOR_CUSTOMER (CUSTOMER_ID UID,
@@ -5142,8 +5631,8 @@ begin
   return MAC;
 end ^
 
-ALTER FUNCTION MONTH_FIRST_DAY (MON_DAY DATE)
-RETURNS DATE
+ALTER FUNCTION MONTH_FIRST_DAY (MON_DAY D_DATE)
+RETURNS D_DATE
 DETERMINISTIC 
 AS 
 begin
@@ -5160,7 +5649,7 @@ end ^
 
 ALTER FUNCTION NUMBER_AS_STR (VAL D_N15_2,
 LANG D_VARCHAR5 = 'RU',
-SHOWCURRENCY INTEGER = 0)
+SHOWCURRENCY D_INTEGER = 0)
 RETURNS D_VARCHAR1000
 AS 
 declare variable RAZRYAD      varchar(50);
@@ -5201,6 +5690,19 @@ begin
   else
   if (:lang = 'UA') then begin
     curr_abr = 'грн.';
+    minus_str = 'мінус';
+    razryad_idx = /* 2.2 */ '0100010506071307200828113911';
+    razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
+    hundreds_idx = /* 2.1 */ '010013046106169257318396458539';
+    hundreds = 'стодвістітристачотиристап''ятсотшістсотсімсотвісімсотдев''ятсот';
+    tens_idx = /* 2.2 */ '0100010001080908170522093109400848105810';
+    tens = 'двадцятьтридцятьсорокп''ятдесятшістдесятсімдесятвісімдесятдев''яносто';
+    ones_idx = /* 3.2 */ '0010000100001000010300406010050150502003023050280703506041100511006110071120831109411105101151212713';
+    ones = 'тричотирип''ятьшістьсімвісімдев''ятьдесятьодинадцятьдванадцятьтринадцятьчотирнадцятьп''ятнадцятьшістнадцятьсімнадцятьвісімнадцятьдев''ятнадцять';
+  end
+  else
+  if (:lang = 'BY') then begin
+    curr_abr = 'руб.';
     minus_str = 'мінус';
     razryad_idx = /* 2.2 */ '0100010506071307200828113911';
     razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
@@ -5350,6 +5852,26 @@ begin
         end
         buf = buf || ' ' || buf1;
       end
+      else 
+      if (:lang = 'BY') then begin
+          if (i = 1) then begin
+            if (raz = 1) then
+              buf1 = buf1 || 'а';
+          end
+          else
+          if (i in (
+                    2, 3, 4
+                   )) then begin
+            if (raz = 1) then
+              buf1 = buf1 || 'и';
+            else
+            if (raz > 1) then
+              buf1 = buf1 || 'а';
+          end
+          else
+          if (raz > 1) then
+            buf1 = buf1 || 'ів';
+        end
     end
     else
       buf = '';
@@ -5401,6 +5923,58 @@ begin
   end
 
   return DIGITS;
+end ^
+
+ALTER FUNCTION WHERE_IS_IP (IP D_IP)
+RETURNS INTEGER
+AS 
+declare variable IP_WHERE D_INTEGER;
+begin
+  IP_WHERE = null;
+  if (coalesce(IP, '') = '') then
+    IP_WHERE = -1;
+  else begin
+    select first 1
+        1
+      from TV_LAN T
+      where IP = :IP
+    into :IP_WHERE;
+
+    if (IP_WHERE is null) then begin
+      select first 1
+          0
+        from EQUIPMENT E
+        where IP = :IP
+      into :IP_WHERE;
+
+      if (IP_WHERE is null) then begin
+        select first 1
+            3
+          from BILLING B
+          where IP_INET = :IP
+        into :IP_WHERE;
+
+        if (IP_WHERE is null) then begin
+          select first 1
+              4
+            from OBJECTS O
+            where O.O_TYPE = 20
+                  and O.O_NAME = :IP
+          into :IP_WHERE;
+
+          if (IP_WHERE is null) then begin
+            select first 1
+                2
+              from ALL_USED_IP I
+              where IP = :IP
+            into :IP_WHERE;
+          end
+        end
+      end
+    end
+  end
+
+  return IP_WHERE;
 end ^
 
 SET TERM ; ^
@@ -5574,10 +6148,12 @@ ALTER PROCEDURE ADD_PAYMENT (CUSTOMER_ID TYPE OF UID,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV D_INTEGER,
-NOTICE D_NOTICE,
-CMSN D_N15_2 = null)
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_INTEGER = null,
+NOTICE D_NOTICE = null,
+CMSN D_N15_2 = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null)
 RETURNS (PAYMENT_ID D_INTEGER)
 AS 
 declare variable PAY_DOC_ID type of UID;
@@ -5597,10 +6173,10 @@ begin
       from Get_Pay_Doc(:Paysource_Id, :Pay_Date, null)
     into :Pay_Doc_Id;
 
-    PAYMENT_ID = gen_id(GEN_PAYMENT, 1);
-
-    insert into PAYMENT (PAYMENT_ID, PAY_DOC_ID, CUSTOMER_ID, PAY_DATE, PAY_SUM, NOTICE, PAYMENT_SRV, PAY_DATETIME, CMSN)
-    values (:PAYMENT_ID, :PAY_DOC_ID, :CUSTOMER_ID, :PAY_DATE, :PAY_SUM, :NOTICE, :PAYMENT_SRV, :PAY_TIME, :CMSN);
+    select
+        PAYMENT_ID
+      from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, null, :PAYMENT_TYPE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN)
+    into :PAYMENT_ID;
   end
   suspend;
 end ^
@@ -5608,18 +6184,16 @@ end ^
 ALTER PROCEDURE ADD_PAYMENT_BY_ACCOUNT (ACCOUNT_NO D_ACCOUNT,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
-PAYSOURCE_ID TYPE OF UID,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV TYPE OF UID,
-NOTICE D_NOTICE,
-EXT_PAY_ID D_VARCHAR50,
+PAYSOURCE_ID D_UID_NULL,
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_UID_NULL = null,
+NOTICE D_NOTICE = null,
+EXT_PAY_ID D_VARCHAR50 = null,
 CMSN D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER)
 AS 
-declare variable Customer_Id type of UID;
-declare variable PAY_DATE    D_DATE;
+declare variable Customer_Id type of D_UID_NULL;
 begin
-  PAY_DATE = cast(pay_time as date);
   PAYMENT_ID = 0;
   if (not Account_No is null) then begin
     select
@@ -5630,12 +6204,8 @@ begin
     if (not Customer_Id is null) then begin
       select
           Payment_Id
-        from Add_Payment(:Customer_Id, :Pay_Sum, :Pay_time, :Paysource_Id, null, :Payment_Srv, :Notice, :CMSN)
+        from Add_Payment(:Customer_Id, :Pay_Sum, :Pay_time, :Paysource_Id, :PAYMENT_TYPE, :Payment_Srv, :Notice, :CMSN, :EXT_PAY_ID)
       into :Payment_Id;
-      if (not(EXT_PAY_ID is null)) then
-        update payment p
-        set p.Ext_Pay_Id = :EXT_PAY_ID
-        where p.Payment_Id = :Payment_Id;
     end
   end
   suspend;
@@ -5665,12 +6235,8 @@ begin
     if (not Customer_Id is null) then begin
       select
           Payment_Id
-        from Add_Payment_fine(:Customer_Id, :Pay_Sum, :Pay_Date, :Paysource_Id, null, :Payment_Srv, :Notice, :FINE, :CMSN)
+        from Add_Payment_fine(:Customer_Id, :Pay_Sum, :Pay_Date, :Paysource_Id, null, :Payment_Srv, :Notice, :FINE, :CMSN, :EXT_PAY_ID)
       into :Payment_Id;
-      if (not(EXT_PAY_ID is null)) then
-        update payment p
-        set p.Ext_Pay_Id = :EXT_PAY_ID
-        where p.Payment_Id = :Payment_Id;
     end
   end
   suspend;
@@ -5701,12 +6267,8 @@ begin
     if (not Customer_Id is null) then begin
       select
           Payment_Id
-        from Add_Payment(:Customer_Id, :Pay_Sum, :Pay_TIME, :Paysource_Id, null, :Payment_Srv, :Notice, :CMSN)
+        from Add_Payment(:Customer_Id, :Pay_Sum, :Pay_TIME, :Paysource_Id, null, :Payment_Srv, :Notice, :CMSN, :EXT_PAY_ID)
       into :Payment_Id;
-      if (not(EXT_PAY_ID is null)) then
-        update payment p
-        set p.Ext_Pay_Id = :EXT_PAY_ID
-        where p.Payment_Id = :Payment_Id;
     end
   end
   suspend;
@@ -5716,29 +6278,39 @@ ALTER PROCEDURE ADD_PAYMENT_EXT (PAY_DOC_ID TYPE OF D_INTEGER,
 CUSTOMER_ID TYPE OF UID,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
-NOTICE D_NOTICE,
-FINE_SUM D_N15_2,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV D_INTEGER,
-EXT_PAY_ID D_VARCHAR50,
-TAG D_INTEGER,
-CMSN D_N15_2 = null)
-RETURNS (PAYMENT_ID D_INTEGER)
+NOTICE D_NOTICE = null,
+FINE_SUM D_N15_2 = null,
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_INTEGER = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null,
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
+RETURNS (PAYMENT_ID D_INTEGER,
+RESULT D_VARCHAR100)
 AS 
 declare variable PAY_DATE D_DATE;
 begin
   PAYMENT_ID = 0;
+  RESULT = '';
+  EXT_PAY_ID = trim(EXT_PAY_ID);
   PAY_DATE = cast(PAY_TIME as date);
-  if (CUSTOMER_ID is null) then
-    PAYMENT_ID = -1; -- Не указан абонент
-  if (PAY_SUM is null) then
-    PAYMENT_ID = -2; -- Не указана сумма
-  if (PAY_DOC_ID is null) then
-    PAYMENT_ID = -3; -- Не указан плат. докумет
+  if (CUSTOMER_ID is null) then begin
+    PAYMENT_ID = -1;
+    RESULT = 'Не указан абонент';
+  end
+  if (PAY_SUM is null) then begin
+    PAYMENT_ID = -2;
+    RESULT = 'Не указана сумма';
+  end
+  if (PAY_DOC_ID is null) then begin
+    PAYMENT_ID = -3;
+    RESULT = 'Не указан плат. докумет';
+  end
   if (PAYMENT_ID = 0) then begin
     PAYMENT_ID = gen_id(GEN_PAYMENT, 1);
-    insert into PAYMENT (PAYMENT_ID, PAY_DOC_ID, CUSTOMER_ID, PAY_DATE, PAY_SUM, FINE_SUM, NOTICE, PAYMENT_SRV, EXT_PAY_ID, TAG, PAY_DATETIME, CMSN)
-    values (:PAYMENT_ID, :PAY_DOC_ID, :CUSTOMER_ID, :PAY_DATE, :PAY_SUM, :FINE_SUM, :NOTICE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :PAY_TIME, :CMSN);
+    insert into PAYMENT (PAYMENT_ID, PAY_DOC_ID, CUSTOMER_ID, PAY_DATE, PAY_SUM, FINE_SUM, NOTICE, PAYMENT_SRV, EXT_PAY_ID, TAG, PAY_DATETIME, CMSN, PAY_TYPE_STR, PAYMENT_TYPE)
+    values (:PAYMENT_ID, :PAY_DOC_ID, :CUSTOMER_ID, :PAY_DATE, :PAY_SUM, :FINE_SUM, :NOTICE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :PAY_TIME, :CMSN, :PAY_TYPE_STR, :PAYMENT_TYPE);
   end
   suspend;
 end ^
@@ -5751,7 +6323,9 @@ PAYMENT_TYPE D_INTEGER,
 PAYMENT_SRV D_INTEGER,
 NOTICE D_NOTICE,
 FINE D_N15_2,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null)
 RETURNS (PAYMENT_ID D_INTEGER)
 AS 
 declare variable Pay_Doc_Id D_INTEGER;
@@ -5770,10 +6344,10 @@ begin
       from Get_Pay_Doc(:Paysource_Id, :Pay_Date, null)
     into :Pay_Doc_Id;
 
-    PAYMENT_ID = gen_id(Gen_Payment, 1);
-
-    insert into Payment (Payment_Id, Pay_Doc_Id, Customer_Id, Pay_Date, Pay_Sum, Notice, Payment_Srv, FINE_SUM, CMSN)
-    values (:Payment_Id, :Pay_Doc_Id, :Customer_Id, :Pay_Date, :Pay_Sum, :Notice, :Payment_Srv, :FINE, :CMSN);
+    select
+        PAYMENT_ID
+      from ADD_PAYMENT_EXT(:Pay_Doc_Id, :CUSTOMER_ID, :PAY_SUM, :Pay_Date, :NOTICE, :FINE, :PAYMENT_TYPE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN)
+    into :PAYMENT_ID;
   end
   suspend;
 end ^
@@ -5782,40 +6356,46 @@ ALTER PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS (ACCOUNT_NO TYPE OF D_ACCOUNT,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
-EXT_SYSTEMS_ID TYPE OF D_VARCHAR50,
-NOTICE D_NOTICE,
+EXT_SYSTEMS_ID D_VARCHAR50 = null,
+NOTICE D_NOTICE = null,
 PAY_TYPE_STR D_VARCHAR30 = 'CASH',
-CMSN D_N15_2 = null)
-RETURNS (PAYMENT_ID D_INTEGER)
+CMSN D_N15_2 = null,
+TAG D_INTEGER = null)
+RETURNS (PAYMENT_ID D_INTEGER,
+IS_DELETED D_IBOOLEAN)
 AS 
-declare variable i d_iboolean;
 begin
   /* процедура будет удалена в следующих версиях */
-  execute procedure Payment_Add_From_Ext_Systems(:Account_No, :Pay_Sum, :Pay_Time, :Paysource_Id, :Ext_Systems_Id, :Notice, :PAY_TYPE_STR, :CMSN)
-      returning_values :Payment_Id, :i;
+  execute procedure Payment_Add_From_Ext_Systems(:Account_No, :Pay_Sum, :Pay_Time, :Paysource_Id, :Ext_Systems_Id, :Notice, :PAY_TYPE_STR, :CMSN, :TAG)
+      returning_values :Payment_Id, :IS_DELETED;
   suspend;
 end ^
 
 ALTER PROCEDURE ADD_PAYMENT_SRC_ACCOUNT (PAYSRC_CODE D_VARCHAR100,
 ACCOUNT_NO D_VARCHAR20,
 PAY_SUM D_N15_2,
-PAY_DATE D_DATETIME,
+PAY_TIME D_DATETIME,
 NOTICE D_NOTICE = null,
 FINE_SUM D_N15_2 = null,
 PAYMENT_TYPE D_INTEGER = null,
 PAYMENT_SRV D_INTEGER = null,
 EXT_PAY_ID D_VARCHAR50 = null,
 TAG D_INTEGER = null,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
 RETURNS (PAYMENT_ID D_INTEGER,
-PAY_DOC_ID TYPE OF UID)
+PAY_DOC_ID TYPE OF UID,
+RESULT D_VARCHAR100)
 AS 
 declare variable CUSTOMER_ID type of UID;
 begin
   PAYMENT_ID = 0;
+  RESULT = '';
 
-  if (ACCOUNT_NO is null) then
-    PAYMENT_ID = -4; -- Не указан абонент
+  if (ACCOUNT_NO is null) then begin
+    PAYMENT_ID = -4;
+    RESULT = 'Не указан абонент';
+  end
   else begin
     select
         C.CUSTOMER_ID
@@ -5823,8 +6403,10 @@ begin
       where (C.ACCOUNT_NO = :ACCOUNT_NO)
     into :CUSTOMER_ID;
 
-    if (CUSTOMER_ID is null) then
-      PAYMENT_ID = -6; -- Не указан абонент
+    if (CUSTOMER_ID is null) then begin
+      PAYMENT_ID = -6;
+      RESULT = 'Не указан абонент';
+    end
   end
 
   if (PAYMENT_ID = 0) then begin
@@ -5839,7 +6421,7 @@ begin
               and P.CUSTOMER_ID = :CUSTOMER_ID
               and P.EXT_PAY_ID = :EXT_PAY_ID
               and P.PAY_SUM = :PAY_SUM
-              and P.PAY_DATETIME = :PAY_DATE
+              and P.PAY_DATETIME = :PAY_TIME
       into :PAYMENT_ID;
     end
 
@@ -5847,11 +6429,14 @@ begin
       select
           PAYMENT_ID
         , PAY_DOC_ID
-        from ADD_PAYMENT_SRC_CUSTID(:PAYSRC_CODE, :CUSTOMER_ID, :PAY_SUM, :PAY_DATE, :NOTICE, :FINE_SUM, null, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN)
-      into :PAYMENT_ID, :PAY_DOC_ID;
+        , RESULT
+        from ADD_PAYMENT_SRC_CUSTID(:PAYSRC_CODE, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, :FINE_SUM, :PAYMENT_TYPE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN, :PAY_TYPE_STR)
+      into :PAYMENT_ID, :PAY_DOC_ID, :RESULT;
     end
-    else
-      PAYMENT_ID = -7; -- Платеж уже существует
+    else begin
+      PAYMENT_ID = -7;
+      RESULT = 'Платеж уже существует';
+    end
   end
   suspend;
 end ^
@@ -5866,14 +6451,17 @@ PAYMENT_TYPE D_INTEGER,
 PAYMENT_SRV D_INTEGER,
 EXT_PAY_ID D_VARCHAR50,
 TAG D_INTEGER,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
 RETURNS (PAYMENT_ID D_INTEGER,
-PAY_DOC_ID TYPE OF UID)
+PAY_DOC_ID TYPE OF UID,
+RESULT D_VARCHAR100)
 AS 
 declare variable PAYSOURCE_ID D_INTEGER;
 declare variable PAY_DATE     D_DATE;
 begin
   PAYMENT_ID = 0;
+  RESULT = '';
   PAY_DATE = cast(PAY_TIME as date);
   -- Проверим источник платежа
   -- если не задан, берем 0 по умолчанию
@@ -5886,7 +6474,7 @@ begin
         s.paysource_id
       from paysource s
       where upper(s.code) = upper(:paysrc_code)
-        and coalesce(DELETED,0) = 0
+            and coalesce(DELETED, 0) = 0
     into :PAYSOURCE_ID;
 
     if (PAYSOURCE_ID is null) then begin
@@ -5905,8 +6493,9 @@ begin
 
     select
         PAYMENT_ID
-      from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, :FINE_SUM, null, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN)
-    into :PAYMENT_ID;
+      , RESULT
+      from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, :FINE_SUM, :PAYMENT_TYPE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN, :PAY_TYPE_STR)
+    into :PAYMENT_ID, :RESULT;
   end
   suspend;
 end ^
@@ -5916,18 +6505,18 @@ CONTRACT D_VARCHAR20,
 FIO D_VARCHAR100,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
-NOTICE D_NOTICE,
-FINE_SUM D_N15_2,
-PAYMENT_TYPE D_INTEGER,
-PAYMENT_SRV D_INTEGER,
-EXT_PAY_ID D_VARCHAR50,
-TAG D_INTEGER,
+NOTICE D_NOTICE = null,
+FINE_SUM D_N15_2 = null,
+PAYMENT_TYPE D_INTEGER = null,
+PAYMENT_SRV D_INTEGER = null,
+EXT_PAY_ID D_VARCHAR50 = null,
+TAG D_INTEGER = null,
 CMSN D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 PAY_DOC_ID TYPE OF UID)
 AS 
 declare variable SURNAME      D_VARCHAR50;
-declare variable CUSTOMER_ID  type of UID;
+declare variable CUSTOMER_ID  D_UID_NULL;
 declare variable PAYSOURCE_ID D_INTEGER;
 declare variable PAY_DATE     D_DATE;
 begin
@@ -5939,12 +6528,11 @@ begin
   if (PAYSRC_CODE is null) then
     PAYSOURCE_ID = 0;
   else begin
-
     select
         s.paysource_id
       from paysource s
       where upper(s.code) = upper(:paysrc_code)
-        and coalesce(DELETED,0) = 0
+            and coalesce(DELETED, 0) = 0
     into :PAYSOURCE_ID;
 
     if (PAYSOURCE_ID is null) then begin
@@ -5997,7 +6585,7 @@ begin
   if (PAYMENT_ID = 0) then begin
     select
         PAYMENT_ID
-      from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, :FINE_SUM, null, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN)
+      from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, :FINE_SUM, :PAYMENT_TYPE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :CMSN)
     into :PAYMENT_ID;
   end
   suspend;
@@ -6245,12 +6833,7 @@ declare variable Rmonth       D_date;
 declare variable P_DAILY      D_INTEGER;
 declare variable SAVE_DEBT    D_N15_2;
 begin
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'DAILY_FEE'
-  into :P_DAILY;
-  P_DAILY = coalesce(P_DAILY, 0);
+  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
   select
       -1 * c.Debt_Sum
     from Customer c
@@ -6428,22 +7011,10 @@ end ^
 ALTER PROCEDURE API_GET_NEW_ACCOUNT (HOUSE_ID TYPE OF UID = null,
 FLAT D_FLAT = null,
 SRV_ID TYPE OF UID = null)
-RETURNS (ACCOUNT_NO D_ACCOUNT)
+RETURNS (ACCOUNT_NO D_ACCOUNT_NS)
 AS 
-declare variable cid D_Uid_Null;
 begin
-  ACCOUNT_NO = null;
-  while (ACCOUNT_NO is null) do begin
-    cid = null;
-    ACCOUNT_NO = gen_id(GEN_ACCOUNT_NO, 1);
-    select first 1
-        Customer_Id
-      from customer
-      where Account_No = cast(:ACCOUNT_NO as varchar(15))
-    into :cid;
-    if (not cid is null) then
-      ACCOUNT_NO = null;
-  end
+  ACCOUNT_NO = Get_New_Account(:HOUSE_ID, :FLAT, :SRV_ID);
   suspend;
 end ^
 
@@ -6753,12 +7324,9 @@ begin
         into :ip;
       end
       else begin
-        select
-            Str_Ip
-          from Int2ip((select
-                           max(l.Ip_Bin)
-                         from V_ALL_IP l) + 1)
-        into :ip;
+        IP = INET_NTOA((select
+                            max(l.Ip_Bin)
+                          from V_ALL_IP l) + 1);
       end
     end
   end
@@ -6783,7 +7351,8 @@ SET_ON D_INTEGER = 1,
 SET_DATE D_DATE = current_date,
 SRV_ON_OFF TYPE OF UID = null,
 P_CONTRACT D_VARCHAR20 = null,
-P_CONTRACT_DATE D_DATE = null)
+P_CONTRACT_DATE D_DATE = null,
+IGNORE_DEBT D_INTEGER = 0)
 AS 
 declare variable Units     d_integer;
 declare variable AUTOBLOCK d_integer;
@@ -6791,6 +7360,7 @@ declare variable Debt      D_N15_2;
 
 begin
   Set_On = coalesce(Set_On, 1);
+  IGNORE_DEBT = coalesce(IGNORE_DEBT, 0);
   Set_Date = coalesce(Set_Date, current_date);
   Units = 1;
   if (SRV_ON_OFF is null) then begin
@@ -6810,26 +7380,36 @@ begin
   else begin
     -- если включаем услугу. то проверим баланс и тип услуги
     -- если баланс отрицательный и тип блокировать при недостатке, то такую услугу не включаем
-    select (c.Prepay - c.Debt_Sum)
+    if (IGNORE_DEBT = 0) then begin
+      select (c.Prepay - c.Debt_Sum)
         , coalesce((select
                         s.Autooff
                       from services s
                       where s.Service_Id = :SERVICE_ID), 0)
-      from customer c
-      where c.Customer_Id = :Customer_Id
-    into :DEBT, :AUTOBLOCK;
+        from customer c
+        where c.Customer_Id = :Customer_Id
+      into :DEBT, :AUTOBLOCK;
+      DEBT = coalesce(DEBT, 1);
+      AUTOBLOCK = coalesce(AUTOBLOCK, 0);
+    end
+    else begin
+      DEBT = 1;
+      AUTOBLOCK = 0;
+    end
 
-    if ((DEBT >= 0)
+    if ((IGNORE_DEBT = 1)
+        or
+        (DEBT >= 0)
         or
         (AUTOBLOCK = 0)) then
       execute procedure Add_Subscr_Service(:Customer_Id, :Service_Id, :srv_on_off, :Set_Date, null, :Units, :P_CONTRACT, :P_CONTRACT_DATE);
   end
 end ^
 
-ALTER PROCEDURE API_SET_PREPAY (CUSTOMER_ID INTEGER,
-PREPAY_SUM NUMERIC(15, 2))
-RETURNS (MSG VARCHAR(255) CHARACTER SET UTF8,
-CODE SMALLINT)
+ALTER PROCEDURE API_SET_PREPAY (CUSTOMER_ID D_INTEGER,
+PREPAY_SUM D_N15_2)
+RETURNS (MSG D_VARCHAR255,
+CODE D_SMALLINT)
 AS 
 declare variable remain      D_N15_2;
 declare variable prepay      D_N15_2;
@@ -7180,9 +7760,9 @@ end ^
 
 ALTER PROCEDURE AUTO_OFF_SERVICE (P_CUSTOMER_ID TYPE OF UID,
 P_SERV_ID TYPE OF UID,
-P_DATE D_DATE,
-P_ACTSERVICE D_INTEGER,
-P_NOTICE D_NOTICE)
+P_DATE D_DATE = current_date,
+P_ACTSERVICE D_INTEGER = -3,
+P_NOTICE D_NOTICE = null /* COLLATE UTF8 - default */)
 AS 
 declare P_SUBSCR_SERV_ID type of UID;
 declare variable BUSINESS_TYPE    D_INTEGER;
@@ -7191,9 +7771,9 @@ declare variable ACT_TIMESTAMP    type of D_TIMESTAMP;
 declare variable SWITCH_TO_SRV    D_INTEGER;
 declare variable srv_on_off       D_INTEGER;
 begin
-  if (P_ACTSERVICE is null) then
-    P_ACTSERVICE = -3;
-  -- Если отключаем услугу
+  P_ACTSERVICE = coalesce(P_ACTSERVICE, -3);
+  P_DATE = coalesce(P_DATE, current_date);
+
   select
       SUBSCR_SERV_ID
     from SUBSCR_SERV
@@ -7212,14 +7792,55 @@ begin
   set SH.DATE_TO = (:P_DATE - 1),
       SH.DISACT_SERV_ID = :P_ACTSERVICE
   where SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
-        and SH.DISACT_SERV_ID = -1;
+        and SH.DISACT_SERV_ID = -1
+        and sh.Date_From <= :P_DATE
+        and sh.Date_To = '2100-1-1';
 
+  if (row_count = 0) then begin
+    -- проверка может абонент уже отключен/переключен будущим числом.
+    -- тогда блокировки логика будет другой
+    select
+        sh.Subscr_Hist_Id
+      from Subscr_Hist sh
+      where sh.CUSTOMER_ID = :P_CUSTOMER_ID
+            and sh.Serv_Id = :P_SERV_ID
+            and :P_DATE between sh.Date_From and sh.Date_To
+    into :D_ACT;
+
+    insert into Subscr_Hist (Customer_Id, Serv_Id, Subscr_Serv_Id, Date_From, Date_To, Act_Serv_Id, Disact_Serv_Id, Act_Worker_Id, Disact_Worker_Id, Worker_On, Worker_Off, Req_On, Req_Off, Contract, Contract_Date)
+    select
+        Customer_Id
+      , Serv_Id
+      , Subscr_Serv_Id
+      , dateadd(day, 1, Date_To)
+      , Date_To
+      , -3 -- Disact_Serv_Id
+      , Disact_Serv_Id
+      , Act_Worker_Id
+      , Disact_Worker_Id
+      , Worker_On
+      , Worker_Off
+      , Req_On
+      , Req_Off
+      , Contract
+      , Contract_Date
+      from Subscr_Hist
+      where Subscr_Hist_Id = :D_ACT;
+
+    update SUBSCR_HIST SH
+    set SH.DATE_TO = (:P_DATE - 1),
+        SH.DISACT_SERV_ID = :P_ACTSERVICE
+    where SH.Subscr_Hist_Id = :D_ACT;
+    D_ACT = null;
+  end
+  -- else begin
   update SUBSCR_SERV
   set STATE_SGN = 0,
       NOTICE = :P_NOTICE,
       STATE_DATE = :P_DATE,
       STATE_SRV = :P_ACTSERVICE
   where SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
+  -- end
 
   if (BUSINESS_TYPE >= 2) then begin
     -- цифровые услуги
@@ -7230,6 +7851,7 @@ begin
       ACT_TIMESTAMP = P_DATE;
     execute procedure DIGITAL_EVENT(:D_ACT, :P_CUSTOMER_ID, null, :P_SERV_ID, :ACT_TIMESTAMP, null);
   end
+
   -- проверим, если есть услуга вклюячаемая при автоблокировке. то выключим ее
   select first 1
       l.Child
@@ -7248,23 +7870,25 @@ end ^
 
 ALTER PROCEDURE AUTO_ON_SERVICE (P_CUSTOMER_ID TYPE OF UID,
 P_SERV_ID TYPE OF UID,
-P_DATE D_DATE,
-P_ACTSERVICE D_INTEGER,
-P_NOTICE D_NOTICE,
+P_DATE D_DATE = current_date,
+P_ACTSERVICE D_INTEGER = -2,
+P_NOTICE D_NOTICE = null /* COLLATE UTF8 - default */,
 P_WORKER D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS (RESULT D_INTEGER)
 AS 
 declare P_SUBSCR_SERV_ID type of UID;
 declare variable BUSINESS_TYPE    D_INTEGER;
 declare variable D_ACT            D_INTEGER;
-declare variable ACT_TIMESTAMP    type of D_TIMESTAMP;
-declare variable fromd            d_date;
-declare variable maxDateOff       d_date;
-declare variable h_id             d_integer;
+declare variable ACT_TIMESTAMP    D_TIMESTAMP;
+declare variable fromd            D_DATE;
+declare variable maxDateOff       D_DATE;
+declare variable h_id             D_INTEGER;
 declare variable SWITCH_TO_SRV    D_INTEGER;
 declare variable srv_on_off       D_INTEGER;
 begin
-  -- Если отключаем услугу
+  P_ACTSERVICE = coalesce(P_ACTSERVICE, -2);
+  P_DATE = coalesce(P_DATE, current_date);
+
   result = 0;
   select
       SUBSCR_SERV_ID
@@ -7293,7 +7917,7 @@ begin
   into :FROMD;
 
   if (FROMD < P_DATE) then begin
-    -- проверим, если есть услуга вклюячаемая при автоблокировке. то выключим ее
+    -- проверим, если есть услуга включаемая при автоблокировке. то выключим ее
     select first 1
         l.Child
       , l.Add_Srv
@@ -7308,21 +7932,59 @@ begin
       execute procedure Onoff_Service_By_Id(:P_Customer_Id, :SWITCH_TO_SRV, :srv_on_off, :P_Date, 1, null, 1, 0, 1, :P_WORKER);
     end
 
-    update SUBSCR_SERV
-    set STATE_SGN = 1,
-        NOTICE = :P_NOTICE,
-        STATE_DATE = :P_DATE,
-        STATE_SRV = :P_ACTSERVICE
-    where CUSTOMER_ID = :P_CUSTOMER_ID
-          and SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
+    -- проверим, может услуга будущим включена/выключена
+    H_ID = null;
+    select
+        h.Subscr_Hist_Id
+      from Subscr_Hist h
+      where h.Subscr_Serv_Id = :P_SUBSCR_SERV_ID
+            and h.Act_Serv_Id = -3 -- h.Disact_Serv_Id
+            and h.Date_From = dateadd(day, 1, Date_To)
+            and h.Date_From >= :FROMD
+    into :H_ID;
+    if (H_ID is null) then begin
+      -- не нашли вкл/откл будущим числом, значит просто разблокируем
+      update SUBSCR_SERV
+      set STATE_SGN = 1,
+          NOTICE = :P_NOTICE,
+          STATE_DATE = :P_DATE,
+          STATE_SRV = :P_ACTSERVICE
+      where CUSTOMER_ID = :P_CUSTOMER_ID
+            and SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
 
-    H_ID = gen_id(GEN_OPERATIONS_UID, 1);
+      H_ID = gen_id(GEN_OPERATIONS_UID, 1);
 
-    if (maxDateOff = FROMD) then
-      maxDateOff = cast('2100-01-01' as date);
+      if (maxDateOff = FROMD) then
+        maxDateOff = cast('2100-01-01' as date);
 
-    insert into SUBSCR_HIST (SUBSCR_HIST_ID, CUSTOMER_ID, SERV_ID, SUBSCR_SERV_ID, DATE_FROM, DATE_TO, ACT_SERV_ID, DISACT_SERV_ID, WORKER_ON)
-    values (:H_ID, :P_CUSTOMER_ID, :P_SERV_ID, :P_SUBSCR_SERV_ID, :P_DATE, :maxDateOff, :P_ACTSERVICE, -1, :P_WORKER);
+      insert into SUBSCR_HIST (SUBSCR_HIST_ID, CUSTOMER_ID, SERV_ID, SUBSCR_SERV_ID, DATE_FROM, DATE_TO, ACT_SERV_ID, DISACT_SERV_ID, WORKER_ON)
+      values (:H_ID, :P_CUSTOMER_ID, :P_SERV_ID, :P_SUBSCR_SERV_ID, :P_DATE, :maxDateOff, :P_ACTSERVICE, -1, :P_WORKER);
+    end
+    else begin
+      -- нашли будущим вкл/откл числом, значит обновим эту строку
+      update SUBSCR_HIST SH
+      set SH.Date_From = :P_DATE,
+          SH.Act_Serv_Id = :P_ACTSERVICE
+      where SH.Subscr_Hist_Id = :H_ID;
+
+      select first 1
+          h.Date_From
+        , h.Date_To
+        , h.Act_Serv_Id
+        , h.Disact_Serv_Id
+        from Subscr_Hist h
+        where h.Subscr_Serv_Id = :P_SUBSCR_SERV_ID
+        order by h.Date_From desc, h.Date_To desc
+      into :FROMD, :maxDateOff, :H_ID, :srv_on_off;
+
+      update SUBSCR_SERV
+      set STATE_SGN = iif(:srv_on_off = -1, 1, 0),
+          NOTICE = :P_NOTICE,
+          STATE_DATE = iif(:maxDateOff <> '2100-1-1', :maxDateOff, :FROMD),
+          STATE_SRV = iif(:srv_on_off <> -1, :srv_on_off, :H_ID)
+      where CUSTOMER_ID = :P_CUSTOMER_ID
+            and SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID;
+    end
 
     if (BUSINESS_TYPE >= 2) then begin
       -- цифровые услуги
@@ -7436,13 +8098,13 @@ begin
 end ^
 
 ALTER PROCEDURE BONUS_RATE_INS (ID UID,
-BT_ID INTEGER,
-DATE_FROM DATE,
-DATE_TO DATE,
-UNITS_FROM NUMERIC(15, 2),
-UNITS_TO NUMERIC(15, 2),
-RATE NUMERIC(15, 2),
-NOTICE VARCHAR(1000) CHARACTER SET UTF8)
+BT_ID D_INTEGER,
+DATE_FROM D_DATE,
+DATE_TO D_DATE,
+UNITS_FROM D_N15_2,
+UNITS_TO D_N15_2,
+RATE D_N15_2,
+NOTICE D_VARCHAR1000)
 AS 
 begin
   insert into Bonus_Rate (
@@ -7466,13 +8128,13 @@ begin
 end ^
 
 ALTER PROCEDURE BONUS_RATE_UPD (ID UID,
-BT_ID INTEGER,
-DATE_FROM DATE,
-DATE_TO DATE,
-UNITS_FROM NUMERIC(15, 2),
-UNITS_TO NUMERIC(15, 2),
-RATE NUMERIC(15, 2),
-NOTICE VARCHAR(1000) CHARACTER SET UTF8)
+BT_ID D_INTEGER,
+DATE_FROM D_DATE,
+DATE_TO D_DATE,
+UNITS_FROM D_N15_2,
+UNITS_TO D_N15_2,
+RATE D_N15_2,
+NOTICE D_VARCHAR1000)
 AS 
 begin
   update Bonus_Rate
@@ -7518,11 +8180,7 @@ begin
   -- если переплата, то какая пеня?
   if (vSUM >= 0) then begin
     /* получим значение число знаков после запятой для округления*/
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :V_FEE_ROUND;
+    V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
 
     if (fine_day is null) then
       select
@@ -7727,14 +8385,7 @@ declare variable PERS_TABLE    D_Integer;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 5);
   P_DAILY = coalesce(P_DAILY, 0);
-
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   for select
           S.SERVICE_ID
@@ -7772,21 +8423,43 @@ begin
     else
       V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
 
-    select
-        count(T_DAY)
-      , sum(TARIF)
-      , sum(Tarif_Jur)
-      from (select distinct
-                DT.T_DAY
-              , DT.TARIF
-              , DT.Tarif_Jur
-              from SUBSCR_HIST S
-                   inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
-              where S.SERV_ID = :V_SERVICE_ID
-                    and ((DT.T_DAY between S.DATE_FROM and dateadd(day, 1, S.DATE_TO))) -- or (DT.T_DAY = S.DATE_FROM))
-                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH)
-    into :V_UNITS, :V_FEE, :V_FEE_JUR;
+    if (V_S_MONTH >= '2024-9-1') then
+      -- сменим алгоритм начислений в автоблокировке с сентября 2024 года
+      select
+          count(T_DAY)
+        , sum(TARIF)
+        , sum(Tarif_Jur)
+        from (select distinct
+                  DT.T_DAY
+                , DT.TARIF
+                , DT.Tarif_Jur
+                from SUBSCR_HIST S
+                     inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
+                where S.SERV_ID = :V_SERVICE_ID
+                      and ((s.Disact_Serv_Id = -3
+                      and DT.T_DAY between S.DATE_FROM and S.DATE_TO) -- если автоблок, то не считаем последний день
+                        or (s.Disact_Serv_Id <> -3
+                      and DT.T_DAY between S.DATE_FROM and dateadd(day, 1, S.DATE_TO))) -- иначе считаем последний день
+                      and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                      and DT.T_DAY between :V_S_MONTH and :V_E_MONTH)
+      into :V_UNITS, :V_FEE, :V_FEE_JUR;
+    else
+      select
+          count(T_DAY)
+        , sum(TARIF)
+        , sum(Tarif_Jur)
+        from (select distinct
+                  DT.T_DAY
+                , DT.TARIF
+                , DT.Tarif_Jur
+                from SUBSCR_HIST S
+                     inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
+                where S.SERV_ID = :V_SERVICE_ID
+                      and ((DT.T_DAY between S.DATE_FROM and dateadd(day, 1, S.DATE_TO)))
+                      and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                      and DT.T_DAY between :V_S_MONTH and :V_E_MONTH)
+      into :V_UNITS, :V_FEE, :V_FEE_JUR;
+
     PERS_TABLE = 0;
 
     -- проверим есть ли персональный тариф
@@ -7805,16 +8478,31 @@ begin
                                       or (P.DATE_FROM between :V_S_MONTH and :V_E_MONTH)
                                       or (P.DATE_TO between :V_S_MONTH and :V_E_MONTH))), 1, 0);
       if (PERS_TAR = 1) then begin
-        execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR);
-        select
-            sum(DT.TARIF)
-          from SUBSCR_HIST S
-               inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
-          where S.SERV_ID = :V_SERVICE_ID
-                and DT.T_DAY between S.DATE_FROM and S.DATE_TO
-                and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
-        into :V_FEE;
+        execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :P_CALC_TYPE);
+        if (V_S_MONTH >= '2024-9-1') then
+          -- сменим алгоритм начислений в автоблокировке с сентября 2024 года
+          select
+              sum(DT.TARIF)
+            from SUBSCR_HIST S
+                 inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
+            where S.SERV_ID = :V_SERVICE_ID
+                  and ((s.Disact_Serv_Id = -3
+                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO) -- если автоблок, то не считаем последний день
+                    or (s.Disact_Serv_Id <> -3
+                  and DT.T_DAY between S.DATE_FROM and dateadd(day, 1, S.DATE_TO))) -- иначе считаем последний день
+                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
+          into :V_FEE;
+        else
+          select
+              sum(DT.TARIF)
+            from SUBSCR_HIST S
+                 inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
+            where S.SERV_ID = :V_SERVICE_ID
+                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO
+                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
+          into :V_FEE;
         PERS_TABLE = 1;
       end
       else begin
@@ -7830,16 +8518,31 @@ begin
                              or ((D.SERV_ID = -1)
                            and ((D.Srv_Type = -1)
                              or (d.Srv_Type = :SrvType)))))) then begin
-          execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType);
-          select
-              sum(DT.TARIF)
-            from SUBSCR_HIST S
-                 inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
-            where S.SERV_ID = :V_SERVICE_ID
-                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO
-                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
-          into :V_FEE;
+          execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType, :P_CALC_TYPE);
+          if (V_S_MONTH >= '2024-9-1') then
+            -- сменим алгоритм начислений в автоблокировке с сентября 2024 года
+            select
+                sum(DT.TARIF)
+              from SUBSCR_HIST S
+                   inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
+              where S.SERV_ID = :V_SERVICE_ID
+                    and ((s.Disact_Serv_Id = -3
+                    and DT.T_DAY between S.DATE_FROM and S.DATE_TO) -- если автоблок, то не считаем последний день
+                      or (s.Disact_Serv_Id <> -3
+                    and DT.T_DAY between S.DATE_FROM and dateadd(day, 1, S.DATE_TO))) -- иначе считаем последний день
+                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
+            into :V_FEE;
+          else
+            select
+                sum(DT.TARIF)
+              from SUBSCR_HIST S
+                   inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
+              where S.SERV_ID = :V_SERVICE_ID
+                    and DT.T_DAY between S.DATE_FROM and S.DATE_TO
+                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
+            into :V_FEE;
           PERS_TABLE = 1;
         end
       end
@@ -7955,19 +8658,12 @@ declare variable V_VATG_ID     D_INTEGER;
 declare variable Debt_Sum      D_N15_2;
 declare variable hand_control  D_INTEGER;
 declare variable POSITIVE_ONLY D_Iboolean;
-declare variable SrvType       D_Integer;
-declare variable PERS_TABLE    D_Integer; 
+declare variable SrvType       D_INTEGER;
+declare variable PERS_TABLE    D_INTEGER;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 2);
   P_DAILY = coalesce(P_DAILY, 0);
-
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   for select
           S.SERVICE_ID
@@ -8034,7 +8730,7 @@ begin
                                       or (P.DATE_FROM between :V_S_MONTH and :V_E_MONTH)
                                       or (P.DATE_TO between :V_S_MONTH and :V_E_MONTH))), 1, 0);
       if (PERS_TAR = 1) then begin
-        execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR);
+        execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :P_CALC_TYPE);
         select
             sum(DT.TARIF)
           from SUBSCR_HIST S
@@ -8059,7 +8755,7 @@ begin
                              or ((D.SERV_ID = -1)
                            and ((D.Srv_Type = -1)
                              or (d.Srv_Type = :SrvType)))))) then begin
-          execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType);
+          execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType, :P_CALC_TYPE);
           select
               sum(DT.TARIF)
             from SUBSCR_HIST S
@@ -8165,56 +8861,72 @@ end ^
 ALTER PROCEDURE CALC_DAY_TARIF (P_MONTH D_DATE,
 P_CALC_TYPE D_INTEGER)
 AS 
-DECLARE VARIABLE VTARIF d_N15_5;
-DECLARE VARIABLE JTARIF d_N15_5;
-DECLARE VARIABLE LD D_INTEGER;
-DECLARE VARIABLE I d_INTEGER;
-DECLARE VARIABLE START_MONTH d_DATE;
-DECLARE VARIABLE T_DAY d_DATE;
-DECLARE VARIABLE p_serv_id d_INTEGER;
-declare variable max_shift d_integer;
-declare variable min_shift d_integer;
-declare variable j d_integer;
-BEGIN
-  if (p_calc_type is null) then p_calc_type = 0;
-  DELETE FROM days_tarif;
+declare variable VTARIF      d_N15_5;
+declare variable JTARIF      d_N15_5;
+declare variable LD          D_INTEGER;
+declare variable I           d_INTEGER;
+declare variable START_MONTH d_DATE;
+declare variable T_DAY       d_DATE;
+declare variable p_serv_id   d_INTEGER;
+declare variable max_shift   d_integer;
+declare variable min_shift   d_integer;
+declare variable j           d_integer;
+declare variable cd          d_integer;
+declare variable extra       d_integer;
+begin
+  if (p_calc_type is null) then
+    p_calc_type = 0;
 
-  select max(s.shift_months), min(s.shift_months) from services s
+  delete from days_tarif;
+
+  select
+      max(s.shift_months)
+    , min(s.shift_months)
+    from services s
   into :max_shift, :min_shift;
 
-  p_month = p_month - EXTRACT(DAY FROM p_month) + 1;
+  p_month = p_month - extract(day from p_month) + 1;
   START_MONTH = p_month;
   j = min_shift;
-  while (j<=max_shift) do begin
-    p_month = dateadd(j month to START_MONTH );
+  while (j <= max_shift) do begin
+    p_month = dateadd(j month to START_MONTH);
 
     -- кол-во дней в месяце
-    ld  = extract(day from dateadd( -1 day to (dateadd(1 month to p_month))));
+    ld = extract(day from dateadd(-1 day to(dateadd(1 month to p_month))));
 
     i = 0;
-    WHILE (i < ld) DO BEGIN
-          t_day = :p_month + i;
-          for
-            select s.service_id, t.tarif_sum, t.tarif_sum_jur
-              from tarif t inner join services s on (t.service_id = s.service_id)
-              where s.srv_type_id = 0 and s.calc_type = :p_calc_type
-                AND :t_day BETWEEN t.date_from AND t.date_to
-            INTO :p_serv_id, :vtarif, :jtarif
-          do begin
-            IF (vtarif IS NOT NULL)
-            THEN vtarif = round(vtarif/ld,5);
-            else vtarif = 0;
-            IF (jtarif IS NOT NULL)
-            THEN jtarif = round(jtarif/ld,5);
-            else jtarif = 0;
-            INSERT INTO days_tarif VALUES (:p_serv_id,:t_day,:vtarif, :jtarif);
-          end
-          i = i+1;
-    END
-    j = j +1;
+    while (i < ld) do begin
+      t_day = :p_month + i;
+      for select
+              s.service_id
+            , t.tarif_sum
+            , t.tarif_sum_jur
+            , s.Extra
+            from tarif t
+                 inner join services s on (t.service_id = s.service_id)
+            where s.srv_type_id = 0
+                  and s.calc_type = :p_calc_type
+                  and :t_day between t.date_from and t.date_to
+          into :p_serv_id, :vtarif, :jtarif, :extra
+      do begin
+        cd = iif((P_CALC_TYPE <> 6), ld, coalesce(extra, 30));
+        if (vtarif is not null) then
+          vtarif = round(vtarif / cd, 5);
+        else
+          vtarif = 0;
+        if (jtarif is not null) then
+          jtarif = round(jtarif / cd, 5);
+        else
+          jtarif = 0;
+        insert into days_tarif
+        values (:p_serv_id, :t_day, :vtarif, :jtarif);
+      end
+      i = i + 1;
+    end
+    j = j + 1;
   end
 
-END ^
+end ^
 
 ALTER PROCEDURE CALC_DISCOUNT (FOR_MONTH TYPE OF D_DATE)
 AS 
@@ -8500,7 +9212,8 @@ ALTER PROCEDURE CALC_KOEF_TARIF (P_CUSTOMER_ID UID,
 P_SERV_ID D_INTEGER,
 P_MONTH D_DATE,
 P_IS_J D_INTEGER = 0,
-P_SRVTYPE D_INTEGER = null)
+P_SRVTYPE D_INTEGER = null,
+P_CALC_TYPE D_INTEGER = null)
 AS 
 declare variable vKoef  D_DAY_TARIF;
 declare variable vTarif D_DAY_TARIF;
@@ -8508,11 +9221,32 @@ declare variable jTarif d_N15_5;
 declare variable LD     D_INTEGER;
 declare variable I      d_INTEGER;
 declare variable T_DAY  d_DATE;
+declare variable CD     D_INTEGER;
+declare variable extra  D_INTEGER;
 begin
   delete from PERS_TARIF_TMP;
   p_month = p_month - extract(day from p_month) + 1;
   ld = extract(day from dateadd(-1 day to(dateadd(1 month to p_month))));
   i = 0;
+
+  if (P_CALC_TYPE is null) then
+    select
+        s.Calc_Type
+      , s.Extra
+      from SERVICES S
+      where s.Service_Id = :P_SERV_ID
+    into :P_CALC_TYPE, :extra;
+  else begin
+    if (P_CALC_TYPE = 6) then
+      select
+          s.Extra
+        from SERVICES S
+        where s.Service_Id = :P_SERV_ID
+      into :extra;
+  end
+
+  cd = iif((P_CALC_TYPE <> 6), ld, coalesce(extra, 30));
+
   while (i < ld) do begin
     t_day = :p_month + i;
     select
@@ -8536,7 +9270,7 @@ begin
               or (d.Srv_Type = :P_SrvType))))
     into :vKoef;
     vKoef = coalesce(vKoef, 1);
-    vTarif = round(vTarif * vKoef / ld, 5);
+    vTarif = round(vTarif * vKoef / cd, 5);
     insert into PERS_TARIF_TMP
     values (:p_serv_id, :t_day, :vTarif);
     i = i + 1;
@@ -8568,14 +9302,7 @@ declare variable POSITIVE_ONLY D_Iboolean; --declare variable V_FEE_BEFORE  D_N1
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 0);
   P_DAILY = coalesce(P_DAILY, 0);
-
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   for select
           S.SERVICE_ID
@@ -8634,7 +9361,7 @@ begin
                                     and ((:V_S_MONTH between P.DATE_FROM and P.DATE_TO)
                                       or (:V_E_MONTH between P.DATE_FROM and P.DATE_TO))), 1, 0);
       if (PERS_TAR = 1) then begin
-        execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR);
+        execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :P_CALC_TYPE);
         select
             sum(DT.TARIF)
           from SUBSCR_HIST S
@@ -8658,7 +9385,7 @@ begin
                              or ((D.SERV_ID = -1)
                            and ((D.Srv_Type = -1)
                              or (d.Srv_Type = :SrvType)))))) then begin
-          execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType);
+          execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType, :P_CALC_TYPE);
           select
               sum(DT.TARIF)
             from SUBSCR_HIST S
@@ -8774,14 +9501,7 @@ begin
   */
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 3);
   P_DAILY = coalesce(P_DAILY, 0);
-
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   V_CUR_MONTH = current_date - extract(day from current_date) + 1;
 
@@ -8923,7 +9643,7 @@ begin
               if (V_DISCOUNT = 1) then
                 V_FEE = V_TARIF;
               else begin
-                execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType);
+                execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType, :P_CALC_TYPE);
                 select
                     sum(DT.TARIF)
                   from Pers_Tarif_Tmp DT
@@ -9144,14 +9864,7 @@ declare variable SrvType       D_Integer;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 1);
   P_DAILY = coalesce(P_DAILY, 0);
-
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   V_CUR_MONTH = current_date - extract(day from current_date) + 1;
 
@@ -9324,19 +10037,41 @@ end ^
 ALTER PROCEDURE CALC_PERS_TARIF (P_CUSTOMER_ID UID,
 P_SERV_ID D_INTEGER,
 P_MONTH D_DATE,
-P_IS_J D_INTEGER = 0)
+P_IS_J D_INTEGER = 0,
+P_CALC_TYPE D_INTEGER = null)
 AS 
 declare variable VTARIF d_N15_5;
 declare variable jtarif d_N15_5;
 declare variable LD     D_INTEGER;
 declare variable I      d_INTEGER;
 declare variable T_DAY  d_DATE;
+declare variable CD     D_INTEGER;
+declare variable extra  D_INTEGER;
 begin
   delete from PERS_TARIF_TMP;
 
   p_month = p_month - extract(day from p_month) + 1;
   ld = extract(day from dateadd(-1 day to(dateadd(1 month to p_month))));
   i = 0;
+
+  if (P_CALC_TYPE is null) then
+    select
+        s.Calc_Type
+      , s.Extra
+      from SERVICES S
+      where s.Service_Id = :P_SERV_ID
+    into :P_CALC_TYPE, :extra;
+  else begin
+    if (P_CALC_TYPE = 6) then
+      select
+          s.Extra
+        from SERVICES S
+        where s.Service_Id = :P_SERV_ID
+      into :extra;
+  end
+
+  cd = iif((P_CALC_TYPE <> 6), ld, coalesce(extra, 30));
+
   while (i < ld) do begin
     t_day = :p_month + i;
     vtarif = null;
@@ -9361,7 +10096,7 @@ begin
     end
 
     if (vtarif is not null) then
-      vtarif = round(vtarif / ld, 5);
+      vtarif = round(vtarif / cd, 5);
     else
       vtarif = 0;
 
@@ -9394,14 +10129,7 @@ begin
   /*                     расчитываем разовые услуги                                  */
   /*---------------------------------------------------------------------------------*/
   P_DAILY = coalesce(P_DAILY, 0);
-
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   -- начало месяца и конец месяца
   V_S_MONTH = :P_MONTH - extract(day from :P_MONTH) + 1;
@@ -9501,16 +10229,9 @@ declare variable SrvType       D_Integer;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 4);
   P_DAILY = coalesce(P_DAILY, 0);
+/*
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
-  if (FEE_ROUND is null) then begin
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :FEE_ROUND;
-  end
-
-  /*
   V_CUR_MONTH = current_date - extract(day from current_date) + 1;
   for select
           S.SERVICE_ID
@@ -9915,7 +10636,10 @@ declare variable PAYSOURCE_ID    D_integer;
 declare variable EXPIRATION_DATE D_date;
 begin
   select
-      Card_Nominal, Expiration_Date, 'Карта оплаты №' || coalesce(cs.Cs_Serial, '') || ' ' || cp.Card_Number, coalesce(Cs.Cs_Source_Id, 0)
+      Card_Nominal
+    , Expiration_Date
+    , 'Карта оплаты №' || coalesce(cs.Cs_Serial, '') || ' ' || cp.Card_Number
+    , coalesce(Cs.Cs_Source_Id, 0)
     from Cards_Prepay cp
          left outer join Cards_Serials cs on (cp.Card_Serial = cs.Cs_Id)
     where Card_ID = :Card_ID
@@ -9933,17 +10657,17 @@ begin
 
   if ((Pay_Sum > 0) -- если карта активирована или на ней 0, то не будем добавлять
       and (Expiration_Date >= PAY_DATE)) -- не просрочена ли карта
-      then begin
+  then begin
 
     select
         Pay_Doc_Id
       from Get_Pay_Doc(:Paysource_Id, :Pay_Date, null)
     into :Pay_Doc_Id;
 
-    PAYMENT_ID = gen_id(gen_payment, 1);
-
-    insert into Payment (Payment_Id, Pay_Doc_Id, Customer_Id, Pay_Date, Pay_Sum, Notice)
-    values (:Payment_Id, :Pay_Doc_Id, :Customer_Id, :Pay_Date, :Pay_Sum, :Notice);
+    select
+        PAYMENT_ID
+      from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :Pay_Date, :NOTICE)
+    into :PAYMENT_ID;
 
     update Cards_Prepay
     set Payment_Id = :Payment_Id
@@ -10204,6 +10928,66 @@ begin
         o.Ch_Coded = :Old_Coded
     where o.Ch_Id = :From_Ch;
   end
+end ^
+
+ALTER PROCEDURE CHANGE_OFF_TO_AUTOBLOCK (CUSTOMER_ID TYPE OF UID,
+SERVICE_ID TYPE OF UID,
+OFF_SERVICE TYPE OF UID,
+NOTICE D_NOTICE = null)
+AS 
+declare variable SS_ID  D_Integer;
+declare variable P_DATE D_DATE;
+declare variable H_ID   D_Integer;
+declare variable vCT    D_Integer;
+declare variable UNITS  D_N15_2;
+begin
+  if (UNITS is null) then
+    UNITS = 0;
+
+  select
+      SS.SUBSCR_SERV_ID
+    , ss.State_Date
+    , s.Calc_Type
+    from SUBSCR_SERV SS
+         inner join SERVICES S on (S.SERVICE_ID = SS.SERV_ID)
+    where SS.CUSTOMER_ID = :CUSTOMER_ID
+          and SS.SERV_ID = :Service_Id
+  into :SS_ID, :P_DATE, :vCT;
+
+  vCT = coalesce(vCT, 0);
+  select
+      sh.Subscr_Hist_Id
+    from SUBSCR_HIST SH
+    where SH.SUBSCR_SERV_ID = :SS_ID
+          and SH.DISACT_SERV_ID = -3 -- srv AutoBlock;
+          and sh.Date_To = dateadd(day, -1, :P_DATE)
+  into :H_ID;
+
+  if (vCT <> 5) then begin
+    update SUBSCR_HIST SH
+    set SH.DISACT_SERV_ID = :OFF_SERVICE
+    where sh.Subscr_Hist_Id = :H_ID;
+
+    update SUBSCR_SERV s
+    set STATE_SRV = :OFF_SERVICE,
+        s.Notice = trim(coalesce(:NOTICE || ' ', '')) || coalesce(s.Notice, '')
+    where SUBSCR_SERV_ID = :SS_ID;
+  end
+  else begin
+    -- для услуг у которых считаем день отключения отключим на день ранее
+    update SUBSCR_HIST SH
+    set SH.DISACT_SERV_ID = :OFF_SERVICE,
+        SH.Date_To = dateadd(day, -1, SH.Date_To)
+    where sh.Subscr_Hist_Id = :H_ID;
+
+    update SUBSCR_SERV s
+    set s.STATE_SRV = :OFF_SERVICE,
+        s.State_Date = dateadd(day, -1, s.State_Date),
+        s.Notice = trim(coalesce(:NOTICE || ' ', '')) || coalesce(s.Notice, '')
+    where SUBSCR_SERV_ID = :SS_ID;
+  end
+
+  execute procedure ADD_SINGLE_SERVICE(:CUSTOMER_ID, :OFF_SERVICE, :UNITS, :P_DATE, :NOTICE, :H_ID);
 end ^
 
 ALTER PROCEDURE CHANGE_TO_NEGATIVE (CUSTOMER_ID UID,
@@ -10543,41 +11327,36 @@ end ^
 
 ALTER PROCEDURE CHECK_FOR_UNBLOCK (CUSTOMER_ID UID)
 AS 
-declare variable SERVICE_ID    type of UID;
-declare variable VTARIF        D_N15_2;
-declare variable MTARIF        D_N15_2;
 declare variable DEBT          D_N15_2;
-declare variable FEE_ROUND     D_INTEGER;
-declare variable CALC_TYPE     D_INTEGER;
-declare variable V_DAYS        D_INTEGER;
-declare variable V_MONTH       D_DATE;
 declare variable JUR           D_IBOOLEAN;
-declare variable VDISCOUNT     D_N15_4;
-declare variable vResult       D_INTEGER;
+declare variable SERVICE_ID    type of UID;
+declare variable V_DAYS        D_INTEGER;
+declare variable V_Result      D_INTEGER;
 declare variable POSITIVE_ONLY D_IBOOLEAN;
-declare variable SrvType       D_Integer;
 declare variable UnblMeth      D_Integer;
+declare variable M_TARIF       D_N15_4;
+declare variable CALC_TYPE     D_INTEGER;
+declare variable EXTRA         D_INTEGER;
 begin
-  select -- баланс и юрик
-  (C.DEBT_SUM - coalesce(C.PREPAY, 0))
+  -- баланс и юрик
+  select
+      C.DEBT_SUM - coalesce(C.PREPAY, 0)
     , coalesce(C.JURIDICAL, 0)
     from CUSTOMER C
     where C.CUSTOMER_ID = :CUSTOMER_ID
   into :DEBT, :JUR;
   DEBT = -1.00 * DEBT;
 
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'FEE_ROUND'
-  into :FEE_ROUND;
+  -- если долг, то выходим разблокировка не нужна
+  if (DEBT < 0) then
+    exit;
 
   for select
           SERVICE_ID
         , S.CALC_TYPE
         , coalesce(POSITIVE_ONLY, 0)
-        , s.BUSINESS_TYPE
         , coalesce(s.Unbl_Meth, 0)
+        , coalesce(s.Extra, 1)
         from SERVICES S
              inner join SUBSCR_SERV SS on (SS.SERV_ID = S.SERVICE_ID)
         where S.SRV_TYPE_ID = 0
@@ -10585,75 +11364,63 @@ begin
               and SS.STATE_SRV < -1
               and S.AUTOOFF = 1
               and SS.CUSTOMER_ID = :CUSTOMER_ID
-      into :SERVICE_ID, :CALC_TYPE, :POSITIVE_ONLY, :SrvType, :UnblMeth
+      into :SERVICE_ID, :CALC_TYPE, :POSITIVE_ONLY, :UnblMeth, :EXTRA
   do begin
-    VTARIF = null;
-    VDISCOUNT = null;
-
-    select first 1
-        TARIF_SUM
-      from PERSONAL_TARIF
-      where current_date between DATE_FROM and DATE_TO
-            and SERVICE_ID = :SERVICE_ID
-            and CUSTOMER_ID = :CUSTOMER_ID
-    into :VTARIF;
-    /* если нет персонального тарифа берем общий тариф*/
-    if (VTARIF is null) then begin
-      select first 1
-          D.FACTOR_VALUE
-        from DISCOUNT_FACTOR D
-        where D.CUSTOMER_ID = :CUSTOMER_ID
-              and current_date between D.DATE_FROM and D.DATE_TO
-              and ((D.SERV_ID = :SERVICE_ID)
-                or ((D.SERV_ID = -1)
-              and ((D.Srv_Type = -1)
-                or (d.Srv_Type = :SrvType))))
-        order by D.SERV_ID desc
-      into :VDISCOUNT;
-      if (VDISCOUNT is null) then
-        VDISCOUNT = 1;
-      select first 1
-          coalesce(iif(:JUR = 1, T.TARIF_SUM_JUR, T.TARIF_SUM), 0)
-        from TARIF T
-        where current_date between T.DATE_FROM and T.DATE_TO
-              and T.SERVICE_ID = :SERVICE_ID
-      into :VTARIF;
-      VTARIF = VTARIF * VDISCOUNT;
-    end
-    MTARIF = VTARIF;
-
+    V_Result = 0;
+    -- CALC_TYPE
+    -- 0 - раз в месяц, пропорционально кол-ву дней в месяце
+    -- 1 - раз в месяц, полный/неполный месяц
     -- 2 - ежедневное начисление
-    if (CALC_TYPE = 2) then begin
-      V_MONTH = current_date - extract(day from current_date) + 1;
-      V_DAYS = extract(day from (dateadd(-1 day to(dateadd(1 month to V_MONTH)))));
-      VTARIF = round(VTARIF / V_DAYS, FEE_ROUND);
+    -- 3 - Фиксированная сумма
+    -- 4 - Доначисления. Проверяем разовую услуги и если она меньше тарифа, доначислим разницу.
+    -- 5 - ежедневное начисление. С учетом дня включения, т.е. если выключена в день включения - считаем.
+    -- 6 - ежедневное начисление. тариф действует екстра дней.
+
+    if ((POSITIVE_ONLY = 1)
+        or
+        (UnblMeth > 0)) then
+      M_TARIF = GET_SRV_TARIF_FOR_CUSTOMER(:CUSTOMER_ID, :SERVICE_ID, current_date, :Jur);
+    else
+      M_TARIF = 0;
+
+    if ((UnblMeth = 2)
+        or
+        ((POSITIVE_ONLY = 1) and ((CALC_TYPE = 0)
+        or
+        (CALC_TYPE = 0)
+        or
+        (CALC_TYPE = 3)))) then begin
+      -- только если денег больше чем тариф на месяц
+      if (DEBT >= M_TARIF) then
+        V_Result = 1;
+    end
+    else
+    if ((UnblMeth = 1)
+        or
+        ((POSITIVE_ONLY = 1) and ((CALC_TYPE = 2)
+        or
+        (CALC_TYPE = 5)
+        or
+        (CALC_TYPE = 6)))) then begin
+      -- только если денег больше чем тариф на день
+      if (CALC_TYPE <> 6) then
+        V_DAYS = extract(day from Month_Last_Day(current_date));
+      else
+        V_DAYS = iif(EXTRA > 0, EXTRA, 1);
+
+      M_TARIF = round(M_TARIF / V_DAYS, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+      if (DEBT >= M_TARIF) then
+        V_Result = 1;
+    end
+    else begin
+      -- прочие случаи
+      V_Result = 1;
     end
 
-    if ((DEBT >= VTARIF)
-        or
-        ((DEBT >= 0) and (POSITIVE_ONLY = 0))) then begin
-      -- при оплате на месяц
-      if (UnblMeth = 2) then begin
-        if (DEBT >= MTARIF) then
-          execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
-              returning_values :vResult;
-      end
-      else begin
-        -- при оплате на день
-        if (UnblMeth = 1) then begin
-          V_MONTH = current_date - extract(day from current_date) + 1;
-          V_DAYS = extract(day from (dateadd(-1 day to(dateadd(1 month to V_MONTH)))));
-          MTARIF = round(MTARIF / V_DAYS, FEE_ROUND);
-          if (DEBT >= MTARIF) then
-            execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
-                returning_values :vResult;
-        end
-        else
-          -- в других случаях
-          execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
-              returning_values :vResult;
-      end
-    end
+    if (V_Result = 1) then
+      execute procedure AUTO_ON_SERVICE(:CUSTOMER_ID, :SERVICE_ID, current_date, -2, '')
+          returning_values :V_Result;
+
   end
 end ^
 
@@ -10755,23 +11522,17 @@ declare variable CUSTOMER_ID D_INTEGER;
 declare variable V_FEE_ROUND D_INTEGER;
 declare variable V_CALC_TYPE D_INTEGER; -- метод расчета услуги
 declare variable P_DAILY     D_INTEGER;
+declare variable need_2      D_INTEGER; -- оптимизация. если есть такие услуги то считаем иначе пропускаем
+declare variable need_5      D_INTEGER;
+declare variable need_6      D_INTEGER;
 begin
   P_MONTH = coalesce(P_MONTH, current_date);
   V_S_MONTH = (P_MONTH - extract(day from P_MONTH) + 1); -- начало месяца
 
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'DAILY_FEE'
-  into :P_DAILY;
-  P_DAILY = coalesce(P_DAILY, 0);
+  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
 
   /* получим значение число знаков после запятой для округления*/
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'FEE_ROUND'
-  into :V_FEE_ROUND;
+  V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
 
   if (P_DAILY = 1) then begin
     delete from DAILY_FEE F
@@ -10784,43 +11545,96 @@ begin
                            where s.Service_Id = f.Service_Id
                                  and S.SRV_TYPE_ID = 0
                                  and S.CALC_TYPE in (
-                                                     2, 5
+                                                     2, 5, 6
                                                     ));
   end
 
-  /*  расчет услуг с ежеденевным начислением                      */
-  V_CALC_TYPE = 2;
-  execute procedure CALC_DAY_TARIF(:V_S_MONTH, :V_CALC_TYPE);
-
+  -- для скорости рассчета. исключим те типы услуг,
+  -- которые не используются организацией/абонентом
+  need_2 = 0;
+  need_5 = 0;
+  need_6 = 0;
   for select distinct
-          SH.CUSTOMER_ID
-        from Subscr_Serv SH
-             inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+          CALC_TYPE
+        from services s
         where S.SRV_TYPE_ID = 0
-              and S.CALC_TYPE = :V_CALC_TYPE
               and ((:P_CUSTOMER_ID is null)
-                or (sh.Customer_Id = :P_CUSTOMER_ID))
-        order by s.Priority nulls last
-      into :CUSTOMER_ID
-  do
-    execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+                or exists(select
+                              ss.Serv_Id
+                            from Subscr_Serv ss
+                            where ss.Customer_Id = :P_CUSTOMER_ID
+                                  and ss.Serv_Id = s.Service_Id))
+      into :V_CALC_TYPE
+  do begin
+    if (V_CALC_TYPE = 2) then
+      need_2 = 1;
+    else
+    if (V_CALC_TYPE = 5) then
+      need_5 = 1;
+    else
+    if (V_CALC_TYPE = 6) then
+      need_6 = 1;
+  end
 
-  /*  расчет услуг с ежеденевным начислением с учетом дня подключения       */
-  V_CALC_TYPE = 5;
-  execute procedure CALC_DAY_TARIF(:V_S_MONTH, :V_CALC_TYPE);
+  /*---------------------------------------------------------------------------------*/
+  /*                     расчет услуг с ежеденевным начислением                      */
+  /*---------------------------------------------------------------------------------*/
+  if (need_2 = 1) then begin
+    V_CALC_TYPE = 2;
+    execute procedure CALC_DAY_TARIF(:V_S_MONTH, :V_CALC_TYPE);
 
-  for select distinct
-          SH.CUSTOMER_ID
-        from Subscr_Serv SH
-             inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
-        where S.SRV_TYPE_ID = 0
-              and S.CALC_TYPE = :V_CALC_TYPE
-              and ((:P_CUSTOMER_ID is null)
-                or (sh.Customer_Id = :P_CUSTOMER_ID))
-        order by s.Priority nulls last
-      into :CUSTOMER_ID
-  do
-    execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+    for select distinct
+            SH.CUSTOMER_ID
+          from Subscr_Serv SH
+               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+          where S.SRV_TYPE_ID = 0
+                and S.CALC_TYPE = :V_CALC_TYPE
+                and ((:P_CUSTOMER_ID is null)
+                  or (sh.Customer_Id = :P_CUSTOMER_ID))
+          order by s.Priority nulls last
+        into :CUSTOMER_ID
+    do
+      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+  end
+  /*---------------------------------------------------------------------------------*/
+  /*        расчет услуг с ежеденевным начислением с учетом дня подключения          */
+  /*---------------------------------------------------------------------------------*/
+  if (need_5 = 1) then begin
+    V_CALC_TYPE = 5;
+    execute procedure CALC_DAY_TARIF(:V_S_MONTH, :V_CALC_TYPE);
+
+    for select distinct
+            SH.CUSTOMER_ID
+          from Subscr_Serv SH
+               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+          where S.SRV_TYPE_ID = 0
+                and S.CALC_TYPE = :V_CALC_TYPE
+                and ((:P_CUSTOMER_ID is null)
+                  or (sh.Customer_Id = :P_CUSTOMER_ID))
+          order by s.Priority nulls last
+        into :CUSTOMER_ID
+    do
+      execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+  end
+  /*---------------------------------------------------------------------------------*/
+  /*  6 - расчет услуг с ежедневным начислением (настраиваемое кол-во дней в тарифе) */
+  /*---------------------------------------------------------------------------------*/
+  if (need_6 = 1) then begin
+    V_CALC_TYPE = 6;
+    execute procedure CALC_DAY_TARIF(:V_S_MONTH, :V_CALC_TYPE);
+    for select distinct
+            SH.CUSTOMER_ID
+          from Subscr_Serv SH
+               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+          where S.SRV_TYPE_ID = 0
+                and S.CALC_TYPE = :V_CALC_TYPE
+                and ((sh.customer_id = :p_customer_id)
+                  or (:p_customer_id is null))
+          order by s.Priority nulls last
+        into :CUSTOMER_ID
+    do
+      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+  end
 end ^
 
 ALTER PROCEDURE CLOSE_MATERIAL_DOC (DOC_ID UID)
@@ -11016,6 +11830,17 @@ begin
 
   if (type_Id = 1) -- Приход материалов
   then begin
+    -- удалим юниты если они "зависли" с прошлых доков
+    delete from material_unit m
+        where exists(select
+                         mu.Doc_Id
+                       from Materials_In_Doc_Unit mu
+                       where mu.Doc_Id = :DOC_ID
+                             and mu.m_id = m.m_id
+                             and mu.serial = m.serial)
+              and m.Owner_Type = 0
+              and m.State = 0;
+
     insert into Material_Unit (Serial, M_Id, Owner, Owner_Type, State, Notice, Mac, Doc_Income, Cost, S_Version)
     select
         mu.Serial
@@ -11077,7 +11902,8 @@ end ^
 
 ALTER PROCEDURE CLOSE_MONTH_PROC (P_MONTH D_DATE,
 P_CUSTOMER_ID TYPE OF UID = null,
-P_DAILY D_INTEGER = null)
+P_DAILY D_INTEGER = null,
+RCWCM_IGONRE D_INTEGER = 0)
 AS 
 declare variable V_S_MONTH   D_DATE;
 declare variable V_E_MONTH   D_DATE;
@@ -11091,290 +11917,336 @@ declare variable need_2      D_INTEGER;
 declare variable need_3      D_INTEGER;
 declare variable need_4      D_INTEGER;
 declare variable need_5      D_INTEGER;
+declare variable need_6      D_INTEGER;
+declare variable vRC         D_INTEGER;
 begin
+  /*
+  в настройках добавлен флаг RECALC_CURRENT_WHEN_CLOSE_MONTH
+  пересчитывать текущий месяц при переходе на следующий
+  vRC = 1 признак того что нужно пересчитывать текущий месяц
+  */
+
+  if (coalesce(RCWCM_IGONRE, 0) = 0) then
+    -- Пересчитываем текущий месяц, когда переходим на следующий
+    vRC = GET_SETTING_INT_VALUE('RECALC_CURRENT_WHEN_CLOSE_MONTH', 0);
+  vRC = coalesce(vRC, 0);
+  -- признак имеет значения или 1 или 0
+  vRC = iif(((vRC <> 1) and (vRC <> 0)), 0, vRc);
+
   -- установим на первое число месяца
   P_MONTH = P_MONTH - extract(day from P_MONTH) + 1;
 
-  -- для скорости рассчета. исключим те типы услуг,
-  -- которые не используются организацией/абонентом
-  need_0 = 0;
-  need_1 = 0;
-  need_2 = 0;
-  need_3 = 0;
-  need_4 = 0;
-  need_5 = 0;
-  for select distinct
-          CALC_TYPE
-        from services s
-        where S.SRV_TYPE_ID = 0
-              and ((:P_CUSTOMER_ID is null)
-                or exists(select
-                              ss.Serv_Id
-                            from Subscr_Hist ss
-                            where ss.Customer_Id = :P_CUSTOMER_ID
-                                  -- and dateadd(month, s.Shift_Months, cast(:P_MONTH as DATE)) <= ss.Date_To
-                                  and ss.Serv_Id = s.Service_Id))
-      into :V_CALC_TYPE
-  do begin
-    if (V_CALC_TYPE = 0) then
-      need_0 = 1;
-    else
-    if (V_CALC_TYPE = 1) then
-      need_1 = 1;
-    else
-    if (V_CALC_TYPE = 2) then
-      need_2 = 1;
-    else
-    if (V_CALC_TYPE = 3) then
-      need_3 = 1;
-    else
-    if (V_CALC_TYPE = 4) then
-      need_4 = 1;
-    else
-    if (V_CALC_TYPE = 5) then
-      need_5 = 1;
+  if (vRC = 1) then begin
+    -- если строгий режим, то не пересчитываем прошлый период
+    need_0 = GET_SETTING_INT_VALUE('STRICT_MODE', 0);
+
+    if (need_0 = 0) then
+      P_MONTH = dateadd(month, -1, P_MONTH);
   end
 
-  /* получим значение число знаков после запятой для округления*/
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'FEE_ROUND'
-  into :V_FEE_ROUND;
-  V_FEE_ROUND = coalesce(V_FEE_ROUND, 2);
-  /* проверим нужно ли записывать в таблицу ежедневных начислений*/
-  if (P_DAILY is null) then
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'DAILY_FEE'
-    into :P_DAILY;
-  P_DAILY = coalesce(P_DAILY, 0);
-
-  -- начало месяца и конец месяца
-  V_S_MONTH = P_MONTH;
-  V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
-
-  -- Удалим все начисления за месяц
-  delete from MONTHLY_FEE F
-      where F.MONTH_ID between :V_S_MONTH and :V_E_MONTH
-            and ((f.customer_id = :p_customer_id)
-              or (:p_customer_id is null))
-            -- оставим разовые меньше 0  (чтоб не блокировало услуги)
-            and ((f.Fee >= 0)
-              or ((f.Fee < 0)
-            and exists(select
-                           s.Service_Id
-                         from services s
-                         where s.Srv_Type_Id <> 2
-                               and s.Service_Id = f.Service_Id)));
-  if (P_DAILY = 1) then begin
-    -- Удалим все начисления за день
-    delete from DAILY_FEE F
-        where F.DAY_FEE between :V_S_MONTH and :V_E_MONTH
-              and ((f.customer_id = :p_customer_id)
-                or (:p_customer_id is null));
-  end
-  /*---------------------------------------------------------------------------------*/
-  /*        0 - рассчитываем периодические услуги, пропорционально дням              */
-  /*---------------------------------------------------------------------------------*/
-  if (need_0 = 1) then begin
-    V_CALC_TYPE = 0;
-    -- оптимизация.
-    -- ставим флаг для первого рассчета тарифа.
-    -- если в цикл не заходим, то и не рассчитываем
-    V_FLAG = 0;
+  while (vRC >= 0) do begin
+    -- для скорости рассчета. исключим те типы услуг,
+    -- которые не используются организацией/абонентом
+    need_0 = 0;
+    need_1 = 0;
+    need_2 = 0;
+    need_3 = 0;
+    need_4 = 0;
+    need_5 = 0;
+    need_6 = 0;
     for select distinct
-            SH.CUSTOMER_ID
-          from Subscr_Serv SH
-               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            CALC_TYPE
+          from services s
           where S.SRV_TYPE_ID = 0
-                and S.CALC_TYPE = :V_CALC_TYPE
-                and ((sh.customer_id = :p_customer_id)
-                  or (:p_customer_id is null))
-          order by s.Priority nulls last
-        into :CUSTOMER_ID
+                and ((:P_CUSTOMER_ID is null)
+                  or exists(select
+                                ss.Serv_Id
+                              from Subscr_Serv ss
+                              where ss.Customer_Id = :P_CUSTOMER_ID
+                                    and ss.Serv_Id = s.Service_Id))
+        into :V_CALC_TYPE
     do begin
-      if (V_FLAG = 0) then begin
-        execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
-        V_FLAG = 1;
-      end
-      execute procedure CALC_MONTH_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      if (V_CALC_TYPE = 0) then
+        need_0 = 1;
+      else
+      if (V_CALC_TYPE = 1) then
+        need_1 = 1;
+      else
+      if (V_CALC_TYPE = 2) then
+        need_2 = 1;
+      else
+      if (V_CALC_TYPE = 3) then
+        need_3 = 1;
+      else
+      if (V_CALC_TYPE = 4) then
+        need_4 = 1;
+      else
+      if (V_CALC_TYPE = 5) then
+        need_5 = 1;
+      else
+      if (V_CALC_TYPE = 6) then
+        need_6 = 1;
     end
-  end
 
-  /*---------------------------------------------------------------------------------*/
-  /*        1 -          расчет услуг исходя из целого месяца                        */
-  /* т.е. например подключен 15 дней и мение - не берем абонплату                    */
-  /*               подключен 16 дней и более - берем абонплату                       */
-  /*---------------------------------------------------------------------------------*/
-  if (need_1 = 1) then begin
-    V_CALC_TYPE = 1;
+    /* получим значение число знаков после запятой для округления*/
+    V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
+    /* проверим нужно ли записывать в таблицу ежедневных начислений*/
+    P_DAILY = coalesce(P_DAILY, GET_SETTING_INT_VALUE('DAILY_FEE', 0));
+
+    -- начало месяца и конец месяца
+    V_S_MONTH = P_MONTH;
+    V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
+
+    -- Удалим все начисления за месяц
+    delete from MONTHLY_FEE F
+        where F.MONTH_ID between :V_S_MONTH and :V_E_MONTH
+              and ((f.customer_id = :p_customer_id)
+                or (:p_customer_id is null))
+              -- оставим разовые меньше 0  (чтоб не блокировало услуги)
+              and ((f.Fee >= 0)
+                or ((f.Fee < 0)
+              and exists(select
+                             s.Service_Id
+                           from services s
+                           where s.Srv_Type_Id <> 2
+                                 and s.Service_Id = f.Service_Id)));
+    if (P_DAILY = 1) then begin
+      -- Удалим все начисления за день
+      delete from DAILY_FEE F
+          where F.DAY_FEE between :V_S_MONTH and :V_E_MONTH
+                and ((f.customer_id = :p_customer_id)
+                  or (:p_customer_id is null));
+    end
+    /*---------------------------------------------------------------------------------*/
+    /*        0 - рассчитываем периодические услуги, пропорционально дням              */
+    /*---------------------------------------------------------------------------------*/
+    if (need_0 = 1) then begin
+      V_CALC_TYPE = 0;
+      -- оптимизация.
+      -- ставим флаг для первого рассчета тарифа.
+      -- если в цикл не заходим, то и не рассчитываем
+      V_FLAG = 0;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do begin
+        if (V_FLAG = 0) then begin
+          execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
+          V_FLAG = 1;
+        end
+        execute procedure CALC_MONTH_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      end
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*        1 -          расчет услуг исходя из целого месяца                        */
+    /* т.е. например подключен 15 дней и мение - не берем абонплату                    */
+    /*               подключен 16 дней и более - берем абонплату                       */
+    /*---------------------------------------------------------------------------------*/
+    if (need_1 = 1) then begin
+      V_CALC_TYPE = 1;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do
+        execute procedure CALC_MONTH_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*        2 -          расчет услуг с ежедневным начислением                       */
+    /*---------------------------------------------------------------------------------*/
+    if (need_2 = 1) then begin
+      V_CALC_TYPE = 2;
+      V_FLAG = 0;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do begin
+        if (V_FLAG = 0) then begin
+          execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
+          V_FLAG = 1;
+        end
+        execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      end
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*        3 -     1-ый месяц пропорционально дням, далее фикса                     */
+    /*---------------------------------------------------------------------------------*/
+    if (need_3 = 1) then begin
+      V_CALC_TYPE = 3;
+      V_FLAG = 0;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do begin
+        if (V_FLAG = 0) then begin
+          execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
+          V_FLAG = 1;
+        end
+        execute procedure CALC_MONTH_FIX_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      end
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*        5 - расчет услуг с ежедневным начислением с учетом дня подключения       */
+    /*---------------------------------------------------------------------------------*/
+    if (need_5 = 1) then begin
+      V_CALC_TYPE = 5;
+      V_FLAG = 0;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do begin
+        if (V_FLAG = 0) then begin
+          execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
+          V_FLAG = 1;
+        end
+        execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      end
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*  6 - расчет услуг с ежедневным начислением (настраиваемое кол-во дней в тарифе) */
+    /*---------------------------------------------------------------------------------*/
+    if (need_6 = 1) then begin
+      V_CALC_TYPE = 6;
+      V_FLAG = 0;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do begin
+        if (V_FLAG = 0) then begin
+          execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
+          V_FLAG = 1;
+        end
+        execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      end
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*                     рассчитываем разовые услуги                                 */
+    /*---------------------------------------------------------------------------------*/
     for select distinct
-            SH.CUSTOMER_ID
-          from Subscr_Serv SH
-               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
-          where S.SRV_TYPE_ID = 0
-                and S.CALC_TYPE = :V_CALC_TYPE
+            Sh.CUSTOMER_ID
+          from SINGLE_SERV Sh
+               inner join SERVICES S on (S.SERVICE_ID = Sh.SERVICE_ID)
+          where S.SRV_TYPE_ID = 1
+                and Sh.SERV_DATE between :V_S_MONTH and :V_E_MONTH
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
           order by s.Priority nulls last
         into :CUSTOMER_ID
     do
-      execute procedure CALC_MONTH_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
-  end
+      execute procedure CALC_SINGLE_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :P_DAILY);
 
-  /*---------------------------------------------------------------------------------*/
-  /*        2 -          расчет услуг с ежедневным начислением                       */
-  /*---------------------------------------------------------------------------------*/
-  if (need_2 = 1) then begin
-    V_CALC_TYPE = 2;
-    V_FLAG = 0;
-    for select distinct
-            SH.CUSTOMER_ID
-          from Subscr_Serv SH
-               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
-          where S.SRV_TYPE_ID = 0
-                and S.CALC_TYPE = :V_CALC_TYPE
-                and ((sh.customer_id = :p_customer_id)
-                  or (:p_customer_id is null))
-          order by s.Priority nulls last
-        into :CUSTOMER_ID
-    do begin
-      if (V_FLAG = 0) then begin
-        execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
-        V_FLAG = 1;
-      end
-      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
-    end
-  end
-
-  /*---------------------------------------------------------------------------------*/
-  /*        3 -     1-ый месяц пропорционально дням, далее фикса                     */
-  /*---------------------------------------------------------------------------------*/
-  if (need_3 = 1) then begin
-    V_CALC_TYPE = 3;
-    V_FLAG = 0;
-    for select distinct
-            SH.CUSTOMER_ID
-          from Subscr_Serv SH
-               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
-          where S.SRV_TYPE_ID = 0
-                and S.CALC_TYPE = :V_CALC_TYPE
-                and ((sh.customer_id = :p_customer_id)
-                  or (:p_customer_id is null))
-          order by s.Priority nulls last
-        into :CUSTOMER_ID
-    do begin
-      if (V_FLAG = 0) then begin
-        execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
-        V_FLAG = 1;
-      end
-      execute procedure CALC_MONTH_FIX_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
-    end
-  end
-
-  /*---------------------------------------------------------------------------------*/
-  /*        5 - расчет услуг с ежедневным начислением с учетом дня подключения       */
-  /*---------------------------------------------------------------------------------*/
-  if (need_5 = 1) then begin
-    V_CALC_TYPE = 5;
-    V_FLAG = 0;
-    for select distinct
-            SH.CUSTOMER_ID
-          from Subscr_Serv SH
-               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
-          where S.SRV_TYPE_ID = 0
-                and S.CALC_TYPE = :V_CALC_TYPE
-                and ((sh.customer_id = :p_customer_id)
-                  or (:p_customer_id is null))
-          order by s.Priority nulls last
-        into :CUSTOMER_ID
-    do begin
-      if (V_FLAG = 0) then begin
-        execute procedure CALC_DAY_TARIF(:P_MONTH, :V_CALC_TYPE);
-        V_FLAG = 1;
-      end
-      execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
-    end
-  end
-
-  /*---------------------------------------------------------------------------------*/
-  /*                     рассчитываем разовые услуги                                 */
-  /*---------------------------------------------------------------------------------*/
-  for select distinct
-          Sh.CUSTOMER_ID
-        from SINGLE_SERV Sh
-             inner join SERVICES S on (S.SERVICE_ID = Sh.SERVICE_ID)
-        where S.SRV_TYPE_ID = 1
-              and Sh.SERV_DATE between :V_S_MONTH and :V_E_MONTH
-              and ((sh.customer_id = :p_customer_id)
+    /*---------------------------------------------------------------------------------*/
+    /*                     расчитываем фиксированные услуги                            */
+    /*---------------------------------------------------------------------------------*/
+    -- Удалим разовые меньше 0
+    delete from MONTHLY_FEE F
+        where F.MONTH_ID between :V_S_MONTH and :V_E_MONTH
+              and ((f.customer_id = :p_customer_id)
                 or (:p_customer_id is null))
-        order by s.Priority nulls last
-      into :CUSTOMER_ID
-  do
-    execute procedure CALC_SINGLE_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :P_DAILY);
-
-  /*---------------------------------------------------------------------------------*/
-  /*                     расчитываем фиксированные услуги                            */
-  /*---------------------------------------------------------------------------------*/
-  -- Удалим разовые меньше 0
-  delete from MONTHLY_FEE F
-      where F.MONTH_ID between :V_S_MONTH and :V_E_MONTH
-            and ((f.customer_id = :p_customer_id)
-              or (:p_customer_id is null))
-            and (f.Fee < 0)
-            and exists(select
-                           s.Service_Id
-                         from services s
-                         where s.Srv_Type_Id = 2
-                               and s.Service_Id = f.Service_Id);
-  for select distinct
-          Sh.CUSTOMER_ID
-        from SINGLE_SERV Sh
-             inner join SERVICES S on (S.SERVICE_ID = Sh.SERVICE_ID)
-        where S.SRV_TYPE_ID = 2
-              and Sh.SERV_DATE between :V_S_MONTH and :V_E_MONTH
-              and ((sh.customer_id = :p_customer_id)
-                or (:p_customer_id is null))
-        order by s.Priority nulls last
-      into :CUSTOMER_ID
-  do
-    execute procedure CALC_FIXED_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :P_DAILY);
-
-  /*---------------------------------------------------------------------------------*/
-  /*        4 - Доначисления до тарифа (в месяц абонент тратит фиксированную сумму)  */
-  /*---------------------------------------------------------------------------------*/
-  if (need_4 = 1) then begin
-    V_CALC_TYPE = 4;
-    V_FLAG = 0;
+              and (f.Fee < 0)
+              and exists(select
+                             s.Service_Id
+                           from services s
+                           where s.Srv_Type_Id = 2
+                                 and s.Service_Id = f.Service_Id);
     for select distinct
-            SH.CUSTOMER_ID
-          from Subscr_Serv SH
-               inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
-          where S.SRV_TYPE_ID = 0
-                and S.CALC_TYPE = :V_CALC_TYPE
+            Sh.CUSTOMER_ID
+          from SINGLE_SERV Sh
+               inner join SERVICES S on (S.SERVICE_ID = Sh.SERVICE_ID)
+          where S.SRV_TYPE_ID = 2
+                and Sh.SERV_DATE between :V_S_MONTH and :V_E_MONTH
                 and ((sh.customer_id = :p_customer_id)
                   or (:p_customer_id is null))
           order by s.Priority nulls last
         into :CUSTOMER_ID
-    do begin
-      execute procedure CALC_SURCHARGE_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
-    end
-  end
+    do
+      execute procedure CALC_FIXED_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :P_DAILY);
 
-  /* если работаем с таблицей ежедневных начислений, то перенесем туда и начисления с заявок */
-  if (P_DAILY = 1) then begin
-    insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, TITLE, UNITS, FEE)
-    select
-        m.Fee_Date
-      , :CUSTOMER_ID
-      , m.Fee_Name -- || coalesce(' (' || m.Serial || ')', '')
-      , m.Units
-      , m.FEE
-      from other_fee m
-      where m.CUSTOMER_ID = :CUSTOMER_ID
-            and m.Fee_Date between :V_S_MONTH and :V_E_MONTH;
+    /*---------------------------------------------------------------------------------*/
+    /*        4 - Доначисления до тарифа (в месяц абонент тратит фиксированную сумму)  */
+    /*---------------------------------------------------------------------------------*/
+    if (need_4 = 1) then begin
+      V_CALC_TYPE = 4;
+      V_FLAG = 0;
+      for select distinct
+              SH.CUSTOMER_ID
+            from Subscr_Serv SH
+                 inner join SERVICES S on (SH.SERV_ID = S.SERVICE_ID)
+            where S.SRV_TYPE_ID = 0
+                  and S.CALC_TYPE = :V_CALC_TYPE
+                  and ((sh.customer_id = :p_customer_id)
+                    or (:p_customer_id is null))
+            order by s.Priority nulls last
+          into :CUSTOMER_ID
+      do begin
+        execute procedure CALC_SURCHARGE_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      end
+    end
+
+    /* если работаем с таблицей ежедневных начислений, то перенесем туда и начисления с заявок */
+    if (P_DAILY = 1) then begin
+      insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, TITLE, UNITS, FEE)
+      select
+          m.Fee_Date
+        , :CUSTOMER_ID
+        , m.Fee_Name -- || coalesce(' (' || m.Serial || ')', '')
+        , m.Units
+        , m.FEE
+        from other_fee m
+        where m.CUSTOMER_ID = :CUSTOMER_ID
+              and m.Fee_Date between :V_S_MONTH and :V_E_MONTH;
+    end
+    if (vRC > 0) then begin
+      P_MONTH = dateadd(month, 1, P_MONTH);
+    end
+    vRC = vRC - 1;
   end
 
   if (P_CUSTOMER_ID is null) then begin
@@ -11384,8 +12256,8 @@ begin
     set VAR_VALUE = extract(year from :P_MONTH) || '-' || extract(month from :P_MONTH) || '-1'
     where VAR_NAME = 'CURRENT_DATE';
 
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SYSTEM', -1, -1, 'CLOSE_MONTH_PROC '||:P_MONTH, current_timestamp, CURRENT_USER);
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('SYSTEM', -1, -1, 'CLOSE_MONTH_PROC ' || :P_MONTH, localtimestamp, current_user);
   end
 end ^
 
@@ -11565,6 +12437,7 @@ declare variable V_Dem       D_Varchar5;
 declare variable V_S         D_Varchar100;
 declare variable V_RQID      D_Integer;
 declare variable v_SRVID     D_Integer;
+declare variable SRV_NAME    D_Varchar100;
 begin
   RCUSTOMER_ID = P_CUSTOMER_ID;
 
@@ -11682,14 +12555,18 @@ begin
           p.PAY_DATE
         , p.PAY_SUM + coalesce(p.Fine_Sum, 0)
         , p.rq_id
+        , s.name
         from payment p
+          left outer join services s on (p.payment_srv = s.service_id)
         where p.CUSTOMER_ID = :P_CUSTOMER_ID
               and p.PAY_DATE >= :FROM_DATE
         order by p.PAY_DATE
-      into :RMONTH, :PSUMMA, :V_RQID
+      into :RMONTH, :PSUMMA, :V_RQID, :SRV_NAME
   do begin
     PDESCRIPTION = lpad(extract(day from RMONTH),2,'0') || '.' || lpad(extract(month from RMONTH),2,'0') || '.' || extract(year from RMONTH);
     PDESCRIPTION = PDESCRIPTION || coalesce(' / ' || V_RQID, '');
+    PDESCRIPTION = PDESCRIPTION || coalesce(' / ' || SRV_NAME, '');
+
     RMONTH = (RMONTH - extract(day from RMONTH) + 1);
     suspend;
   end
@@ -12142,10 +13019,10 @@ BEGIN
 
 END ^
 
-ALTER PROCEDURE DECL_OF_NUM (NUM INTEGER,
-TITLE0 VARCHAR(100) CHARACTER SET UTF8 = null,
-TITLE1 VARCHAR(100) CHARACTER SET UTF8 = null,
-TITLE2 VARCHAR(100) CHARACTER SET UTF8 = null)
+ALTER PROCEDURE DECL_OF_NUM (NUM D_INTEGER,
+TITLE0 D_VARCHAR100 = null,
+TITLE1 D_VARCHAR100 = null,
+TITLE2 D_VARCHAR100 = null)
 RETURNS (RESULT VARCHAR(100) CHARACTER SET UTF8)
 AS 
 begin
@@ -12242,12 +13119,7 @@ begin
   delete from MONTHLY_FEE M
       where M.MONTH_ID >= :P_MONTH;
 
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'DAILY_FEE'
-  into :P_DAILY;
-  P_DAILY = coalesce(P_DAILY, 0);
+  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
   if (P_DAILY = 1) then begin
     -- Удалим все начисления за день
     delete from DAILY_FEE F
@@ -12260,7 +13132,7 @@ begin
   where VAR_NAME = 'CURRENT_DATE';
 
   insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SYSTEM', -1, -1, 'DELETE_MONTH_PROC '||:P_MONTH, current_timestamp, CURRENT_USER);
+  values ('SYSTEM', -1, -1, 'DELETE_MONTH_PROC '||:P_MONTH, LOCALTIMESTAMP, CURRENT_USER);
 end ^
 
 ALTER PROCEDURE DELETE_NODE (ID TYPE OF UID)
@@ -12888,20 +13760,8 @@ end ^
 ALTER PROCEDURE EXTRACT_ALL_DIGITS (A_VALUE D_VARCHAR255)
 RETURNS (DIGITS D_VARCHAR255)
 AS 
-declare variable i d_integer;
-declare variable j d_integer;
-declare variable d d_char1;
 begin
-
-  j = CHAR_LENGTH(a_value);
-  i = 1;
-  DIGITS = '';
-  while (i <= j) do begin
-    d = substring(a_value FROM i FOR 1);
-    IF (d BETWEEN '0' AND '9')
-    then DIGITS = DIGITS ||d;
-    i = i + 1;
-  end
+  DIGITS = ONLY_DIGITS(A_VALUE);
 
   suspend;
 end ^
@@ -12960,6 +13820,151 @@ begin
   suspend;
 end ^
 
+ALTER PROCEDURE FIND_FREE_LINKED_PORT (CUSTOMER_ID D_INTEGER)
+RETURNS (EID D_INTEGER,
+PORT D_PORT_NS)
+AS 
+declare variable WID     D_INTEGER;
+declare variable NODE_ID integer;
+begin
+  for select
+          f.Node_Id
+        from customer c
+             inner join Node_Flats f on (f.Flat_No = c.Flat_No and f.House_Id = c.House_Id)
+        where c.Customer_Id = :CUSTOMER_ID
+      into :NODE_ID
+  do begin
+    for select
+            l.WID
+          from (select
+                    c.Wid
+                  from Wire C
+                  where (C.Point_S = :NODE_ID)
+                union
+                select
+                    c.Wid
+                  from Wire C
+                  where (C.Point_E = :NODE_ID)) l
+        into :WID
+    do begin
+
+      for select
+              e.Eid
+            , p.Port
+            from (select
+                      cast(:WID as integer) WID
+                    , STR as LABEL
+                    from Explode_No_Empty(',', coalesce((select
+                                                             w.Labels
+                                                           from WIRE w
+                                                           where w.Wid = :WID), ''))) w
+                 inner join port p on (w.wid = p.Wid and w.LABEL = p.Wlabel)
+                 inner join Equipment e on (e.Eid = p.Eid)
+                 left outer join tv_lan l on (l.Eq_Id = e.Eid and l.Port = p.Port)
+            where w.Wid = :WID
+                  and ((l.Customer_Id is null)
+                    or (l.Customer_Id = :CUSTOMER_ID))
+          union
+          select
+              e.Eid
+            , p.Port
+            from port p
+                 inner join Equipment e on (e.Eid = p.Eid)
+                 left outer join tv_lan l on (l.Eq_Id = e.Eid and l.Port = p.Port)
+            where p.Wid = :WID
+                  and ((l.Customer_Id is null)
+                    or (l.Customer_Id = :CUSTOMER_ID))
+                  and (p.Wlabel is null
+                    or not exists(select
+                                      STR
+                                    from Explode_No_Empty(',', (select
+                                                                    w.Labels
+                                                                  from WIRE w
+                                                                  where w.Wid = :WID))
+                                    where STR = p.Wlabel))
+          into :EID, :PORT
+      do begin
+        suspend;
+      end
+    end
+  end
+end ^
+
+ALTER PROCEDURE FIND_IP_INFO (IP D_IP,
+VLAN_ID D_UID_NULL = null)
+RETURNS (ID D_UID_NULL,
+INFO D_VARCHAR255,
+MAC D_MAC,
+IP_WHERE D_INTEGER)
+AS 
+declare variable global_ip D_Varchar10;
+begin
+  IP_WHERE = Where_Is_Ip(:IP);
+
+  if (IP_WHERE < 2) then begin
+    select
+        Var_Value
+      from Settings
+      where var_Name = 'IP_UNIQ_GLOBAL'
+    into :global_ip;
+  end
+  global_ip = coalesce(global_ip, '0');
+
+  if (IP_WHERE = 0) then
+    select first 1
+        'Обоорудование ' || E.Name
+      , e.Mac
+      , e.Eid
+      from EQUIPMENT E
+      where IP = :IP
+            and ((:global_ip = '1')
+              or (e.Vlan_Id is not distinct from :VLAN_ID))
+    into :INFO, :MAC, :ID;
+  else
+  if (IP_WHERE = 1) then
+    select first 1
+        'Абонент ' || C.Account_No
+      , t.Mac
+      , t.Lan_Id
+      from Tv_Lan t
+           inner join customer c on (t.Customer_Id = c.Customer_Id)
+      where t.Ip = :IP
+            and ((:global_ip = '1')
+              or (t.Vlan_Id is not distinct from :VLAN_ID))
+    into :INFO, :MAC, :ID;
+  else
+  if (IP_WHERE = 2) then
+    select first 1
+        'Резерв ' || coalesce(i.Notice, '')
+      , null
+      , i.Ip_Bin
+      from ALL_USED_IP I
+      where Ip = :IP
+    into :INFO, :MAC, :ID;
+  else
+  if (IP_WHERE = 3) then
+    select first 1
+        'Абонент (инет)' || C.Account_No
+      , null
+      , b.Customer_Id
+      from BILLING b
+           inner join customer c on (b.Customer_Id = c.Customer_Id)
+      where b.Ip_Inet = :IP
+    into :INFO, :MAC, :ID;
+  else
+  if (IP_WHERE = 4) then
+    select first 1
+        'Абонент (инет)' || o.O_Name
+      , null
+      , o.O_Id
+      from OBJECTS O
+      where O.O_TYPE = 20
+            and O.O_NAME = :IP
+    into :INFO, :MAC, :ID;
+
+  suspend;
+end ^
+
 ALTER PROCEDURE FIX_PORT_CONNECT AS 
 declare variable CId  integer;
 declare variable Port varchar(12);
@@ -12980,13 +13985,13 @@ begin
   end
 end ^
 
-ALTER PROCEDURE FORMAT_DATE (A_DATE DATE = current_date,
-FORMAT VARCHAR(1000) CHARACTER SET UTF8 = null,
-LONG_DAY_NAMES VARCHAR(100) CHARACTER SET UTF8 = null,
-SHORT_DAY_NAMES VARCHAR(50) CHARACTER SET UTF8 = null,
-LONG_MONTH_NAMES VARCHAR(200) CHARACTER SET UTF8 = null,
-SHORT_MONTH_NAMES VARCHAR(200) CHARACTER SET UTF8 = null)
-RETURNS (RESULT VARCHAR(1000) CHARACTER SET UTF8)
+ALTER PROCEDURE FORMAT_DATE (A_DATE D_DATE = current_date,
+FORMAT D_VARCHAR1000 = null,
+LONG_DAY_NAMES D_VARCHAR100 = null,
+SHORT_DAY_NAMES D_VARCHAR50 = null,
+LONG_MONTH_NAMES D_VARCHAR255 = null,
+SHORT_MONTH_NAMES D_VARCHAR255 = null)
+RETURNS (RESULT D_VARCHAR1000)
 AS 
 declare variable D_Year  smallint;
 declare variable D_Month smallint;
@@ -13140,25 +14145,14 @@ declare variable F_MONTH     D_DATE;
 declare variable P_END_MONTH D_DATE;
 declare variable MIN_S       D_INTEGER;
 declare variable MAX_S       D_INTEGER;
-declare variable IGNOR       D_VARCHAR10;
+declare variable IGNOR       D_INTEGER;
 declare variable I           D_INTEGER;
 declare variable inStrict    D_IBOOLEAN;
 declare variable V_DATE      D_DATE;
 declare variable P_DAILY     D_INTEGER;
 begin
-  select
-      cast(s.Var_Value as integer)
-    from settings s
-    where s.Var_Name = 'STRICT_MODE'
-  into :inStrict;
-  inStrict = coalesce(inStrict, 1);
-
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = 'DAILY_FEE'
-  into :P_DAILY;
-  P_DAILY = coalesce(P_DAILY, 0);
+  inStrict = GET_SETTING_INT_VALUE('STRICT_MODE', 1);
+  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
 
   -- проверим в строгом режиме или нет
   if (inStrict = 0) then begin
@@ -13168,20 +14162,11 @@ begin
       F_MONTH = Month_First_Day(:P_FROM_DATE);
     end
     else begin
-      -- определим дату начала расчетов (дату договора)
-      IGNOR = null;
       F_MONTH = null;
 
-      select
-          VAR_VALUE
-        from SETTINGS S
-        where S.VAR_NAME = 'IGNORE_CONTRACT'
-      into :IGNOR;
-
-      if (IGNOR is null) then
-        IGNOR = '0';
-
-      if (IGNOR <> '1') then
+      -- определим дату начала расчетов (дату договора)
+      IGNOR = GET_SETTING_INT_VALUE('IGNORE_CONTRACT', 0);
+      if (IGNOR <> 1) then
         select
             CONTRACT_DATE
           from CUSTOMER C
@@ -13279,7 +14264,7 @@ begin
             and m.Month_Id >= :F_MONTH;
 
   while (F_MONTH <= P_END_MONTH) do begin
-    execute procedure CLOSE_MONTH_PROC(:F_MONTH, :P_CUSTOMER_ID, :P_DAILY);
+    execute procedure CLOSE_MONTH_PROC(:F_MONTH, :P_CUSTOMER_ID, :P_DAILY, 1);
     F_MONTH = dateadd(1 month to F_MONTH);
   end
 
@@ -13287,9 +14272,9 @@ begin
   execute procedure CHECK_FOR_UNBLOCK(:P_CUSTOMER_ID);
 end ^
 
-ALTER PROCEDURE GEN_PASSWORD (MIN_LENGTH SMALLINT = 8,
-MAX_LENGTH SMALLINT = 10)
-RETURNS (PWD VARCHAR(100) CHARACTER SET UTF8)
+ALTER PROCEDURE GEN_PASSWORD (MIN_LENGTH D_SMALLINT = 8,
+MAX_LENGTH D_SMALLINT = 10)
+RETURNS (PWD D_VARCHAR100)
 AS 
 declare variable P_LENGTH           smallint; -- длина пароля
 declare variable DICE               smallint; -- "игральная кость" — случайное число
@@ -13702,9 +14687,10 @@ begin
   suspend;
 end ^
 
-ALTER PROCEDURE GET_CUSTOMER_CURRENT_SRV (CUSTOMER_ID TYPE OF UID,
-BUSINESS_TP TYPE OF UID = null)
-RETURNS (SERVICE_ID TYPE OF UID,
+ALTER PROCEDURE GET_CUSTOMER_CURRENT_SRV (ACUSTOMER_ID TYPE OF UID,
+ABUSINESS_TYPE TYPE OF UID = null)
+RETURNS (CUSTOMER_ID TYPE OF UID,
+SERVICE_ID TYPE OF UID,
 NAME TYPE OF D_VARCHAR60,
 STATE_SGN D_INTEGER,
 STATE_SRV TYPE OF UID,
@@ -13712,18 +14698,24 @@ STATE_DATE D_DATE,
 BUSINESS_TYPE D_INTEGER)
 AS 
 begin
-  for select S.SERVICE_ID, S.NAME, SS.STATE_SGN, SS.STATE_SRV, SS.STATE_DATE, S.BUSINESS_TYPE
-      from SUBSCR_SERV SS
-      inner join SERVICES S on (S.SERVICE_ID = SS.SERV_ID)
-      where (S.BUSINESS_TYPE = coalesce(:BUSINESS_TP, S.BUSINESS_TYPE))
-        and SS.CUSTOMER_ID = :CUSTOMER_ID
-        and (
-              (SS.STATE_SGN = 1 and SS.STATE_DATE <= current_date)
-            or
-              (SS.STATE_SGN = 0 and (SS.STATE_SRV = -3 or SS.STATE_DATE > current_date))
-            )
-
-      into :SERVICE_ID, :NAME, :STATE_SGN, :STATE_SRV, :STATE_DATE, :BUSINESS_TYPE
+  for select
+          S.SERVICE_ID
+        , S.NAME
+        , SS.STATE_SGN
+        , SS.STATE_SRV
+        , SS.STATE_DATE
+        , S.BUSINESS_TYPE
+        , ss.Customer_Id
+        from SUBSCR_SERV SS
+             inner join SERVICES S on (S.SERVICE_ID = SS.SERV_ID)
+        where (S.BUSINESS_TYPE = coalesce(:aBUSINESS_TYPE, S.BUSINESS_TYPE))
+              and SS.CUSTOMER_ID = :aCUSTOMER_ID
+              and ((SS.STATE_SGN = 1
+              and SS.STATE_DATE <= current_date)
+                or (SS.STATE_SGN = 0
+              and (SS.STATE_SRV = -3
+                or SS.STATE_DATE > current_date)))
+      into :SERVICE_ID, :NAME, :STATE_SGN, :STATE_SRV, :STATE_DATE, :BUSINESS_TYPE, :CUSTOMER_ID
   do
     suspend;
 end ^
@@ -13920,6 +14912,32 @@ begin
   distance_km = radius * (2 * atan2(sqrt(a), sqrt(1 - a)));
 
   distance_meter = distance_km * 1000;
+
+  suspend;
+end ^
+
+ALTER PROCEDURE GET_DOC_UNIT_INCOME (M_ID UID,
+SERIAL D_SERIAL_NS)
+RETURNS (DOC_ID D_UID_NULL,
+NOTICE D_NOTICE)
+AS 
+begin
+  select
+      mu.Doc_Income
+    from Material_Unit mu
+    where mu.M_Id = :M_ID
+          and mu.Serial = :SERIAL
+  into DOC_ID;
+  if (not DOC_ID is null) then
+    select
+        'Документ ' || D.Doc_N || ' (' || dt.O_NAME || ') от ' || D.Doc_Date || ' склад ' || w.O_Name
+      from material_docs d
+           left outer join objects dt on (dt.O_Id = d.Dt_Id and
+                 dt.O_TYPE = 28)
+           left outer join objects w on (w.O_Id = d.Wh_Id and
+                 w.O_TYPE = 10)
+      where d.Doc_Id = :DOC_ID
+    into :NOTICE;
 
   suspend;
 end ^
@@ -14312,7 +15330,9 @@ declare variable MASK_0_255 type of D_INT_IP;
 begin
   IP = '';
 
-  select v.ip_begin_bin , v.ip_end_bin - 1
+  select
+      v.ip_begin_bin
+    , v.ip_end_bin - 1
     from services v
     where v.Service_Id = :Srv_Id
   into :START_IP, :END_IP;
@@ -14324,31 +15344,30 @@ begin
     /* исключим 255 и 0 из диапазона IP */
     MASK_0_255 = bin_and(CURRENT_IP, 255);
     if ((MASK_0_255 > 0) and (MASK_0_255 < 255)) then begin
-      if (not exists(select Ip_Inet from BILLING T where t.Ip_Inet_Bin = :CURRENT_IP))
-      then begin
-        if (not exists(select IP_BIN from V_ALL_IP B where B.IP_BIN = :CURRENT_IP))
-        then
+      if (not exists(select
+                         Ip_Inet
+                       from BILLING T
+                       where t.Ip_Inet_Bin = :CURRENT_IP)) then begin
+        if (not exists(select
+                           IP_BIN
+                         from V_ALL_IP B
+                         where B.IP_BIN = :CURRENT_IP)) then
           FINDED_IP = CURRENT_IP;
       end
     end
     CURRENT_IP = CURRENT_IP + 1;
   end
 
-  if ((FINDED_IP = 0) and (CURRENT_IP < END_IP))
-  then begin
+  if ((FINDED_IP = 0) and (CURRENT_IP < END_IP)) then begin
     CURRENT_IP = CURRENT_IP + 1;
     /* исключим 255 и 0 из диапазона IP */
     MASK_0_255 = bin_and(CURRENT_IP, 255);
-    if ((MASK_0_255 > 0) and (MASK_0_255 < 255))
-    then
-        select STR_IP from INT2IP(:CURRENT_IP)
-        into :IP;
+    if ((MASK_0_255 > 0) and (MASK_0_255 < 255)) then
+      IP = INET_NTOA(:CURRENT_IP);
   end
   else begin
-    if ((FINDED_IP <= END_IP) and (FINDED_IP > 0))
-    then
-        select STR_IP from INT2IP(:FINDED_IP)
-        into :IP;
+    if ((FINDED_IP <= END_IP) and (FINDED_IP > 0)) then
+      IP = INET_NTOA(:FINDED_IP);
   end
 
   suspend;
@@ -14377,88 +15396,10 @@ begin
 end ^
 
 ALTER PROCEDURE GET_FREE_IP (IP_MASK D_IP = null)
-RETURNS (IP TYPE OF D_IP)
+RETURNS (IP D_IP)
 AS 
-declare variable vBinIP    type of D_INT_IP;
-declare variable FINDED_IP type of D_INT_IP;
-declare variable I         type of D_Integer;
-declare variable Ip1       D_Ip;
-declare variable Ip2       D_Ip;
-declare variable Ip3       D_Ip;
 begin
-  IP = '';
-  FINDED_IP = null;
-  IP_MASK = coalesce(trim(IP_MASK), '');
-
-  if (IP_MASK <> '') then begin
-    -- удалим из маски 1.2.3.4 4 разряд
-    if ((char_length(IP_MASK) - char_length(replace(IP_MASK, '.', ''))) = 3) then begin
-      i = position('.' in IP_MASK);
-      ip1 = left(IP_MASK, i - 1);
-
-      IP_MASK = substring(IP_MASK from i + 1);
-      i = position('.' in IP_MASK);
-      ip2 = left(IP_MASK, i - 1);
-
-      IP_MASK = substring(IP_MASK from i + 1);
-      i = position('.' in IP_MASK);
-      ip3 = left(IP_MASK, i - 1);
-
-      IP_MASK = ip1 || '.' || ip2 || '.' || ip3 || '.';
-    end
-  end
-
-  select
-      max(l.Ip_Bin)
-    from V_ALL_IP l
-    where (:IP_MASK = '')
-            or (l.Ip starting with :IP_MASK)
-  into :FINDED_IP;
-
-  if (not FINDED_IP is null) then begin
-    FINDED_IP = FINDED_IP + 1;
-    IP = INET_NTOA(FINDED_IP);
-    -- проверим, может это Ip уже выдан
-    select
-        count(*)
-      from (select
-                t.Ip
-              from Tv_Lan t
-              where t.Ip = :ip
-            union all
-            select
-                e.Ip
-              from EQUIPMENT E
-              where e.Ip = :ip)
-    into :i;
-    if (i <> 0) then begin
-      IP = '';
-    end
-  end
-
-  if (IP = '') then begin
-    -- быстро не нашли, будем перебирать все записи
-    -- это медленно
-    vBinIP = null;
-    i = 0;
-    for select
-            l.Ip_Bin
-          from V_ALL_IP l
-          where l.Ip starting with :IP_MASK
-          order by l.Ip_Bin desc
-        into :FINDED_IP
-    do begin
-      if (not vBinIP is null) then begin
-        if (FINDED_IP + 1 <> vBinIP) then begin
-          i = 1;
-          break;
-        end
-      end
-      vBinIP = FINDED_IP;
-    end
-    if (i = 1) then
-      IP = INET_NTOA(FINDED_IP);
-  end
+  IP =  Get_Free_Ip_By_Mask(IP_MASK);
 
   suspend;
 end ^
@@ -14509,55 +15450,50 @@ begin
   into :global_ip;
   global_ip = coalesce(global_ip, '0');
 
-  CURRENT_IP = START_IP;
-  FINDED_IP = 0;
-
-  while ((CURRENT_IP <= END_IP) and (FINDED_IP = 0)) do begin
-    /* исключим 255 и 0 из диапазона IP */
-    MASK_0_255 = bin_and(CURRENT_IP, 255);
-    if ((MASK_0_255 > 0) and (MASK_0_255 < 255)) then begin
-      if (not exists(select
-                         IP
-                       from TV_LAN T
-                       where t.Ip_Bin = :CURRENT_IP
-                             and (:global_ip = '1'
-                               or t.Vlan_Id = :VLAN_ID))) then begin
-        if (not exists(select
-                           IP_BIN
-                         from EQUIPMENT T
-                         where T.IP_BIN = :CURRENT_IP
-                               and (:global_ip = '1'
-                                 or t.Vlan_Id = :VLAN_ID))) then
-          FINDED_IP = CURRENT_IP;
-      end
-    end
-    CURRENT_IP = CURRENT_IP + 1;
-  end
-
-  if ((FINDED_IP = 0) and (CURRENT_IP < END_IP)) then begin
-    CURRENT_IP = CURRENT_IP + 1;
-    /* исключим 255 и 0 из диапазона IP */
-    MASK_0_255 = bin_and(CURRENT_IP, 255);
-    if ((MASK_0_255 > 0) and (MASK_0_255 < 255)) then
-      select
-          STR_IP
-        from INT2IP(:CURRENT_IP)
-      into :IP;
+  if (global_ip = '1') then begin
+    IP = GET_FREE_IP_BY_RANGE(Inet_Ntoa(:START_IP), Inet_Ntoa(:END_IP));
   end
   else begin
-    if ((FINDED_IP <= END_IP) and (FINDED_IP > 0)) then
-      select
-          STR_IP
-        from INT2IP(:FINDED_IP)
-      into :IP;
-  end
+    CURRENT_IP = START_IP;
+    FINDED_IP = 0;
+    while ((CURRENT_IP <= END_IP) and (FINDED_IP = 0)) do begin
+      /* исключим 255 и 0 из диапазона IP */
+      MASK_0_255 = bin_and(CURRENT_IP, 255);
+      if ((MASK_0_255 > 0) and (MASK_0_255 < 255)) then begin
+        if (not exists(select
+                           IP
+                         from TV_LAN T
+                         where t.Ip_Bin = :CURRENT_IP
+                               and t.Vlan_Id = :VLAN_ID)) then begin
+          if (not exists(select
+                             IP_BIN
+                           from EQUIPMENT T
+                           where T.IP_BIN = :CURRENT_IP
+                                 and t.Vlan_Id = :VLAN_ID)) then
+            FINDED_IP = CURRENT_IP;
+        end
+      end
+      CURRENT_IP = CURRENT_IP + 1;
+    end
 
+    if ((FINDED_IP = 0) and (CURRENT_IP < END_IP)) then begin
+      CURRENT_IP = CURRENT_IP + 1;
+      /* исключим 255 и 0 из диапазона IP */
+      MASK_0_255 = bin_and(CURRENT_IP, 255);
+      if ((MASK_0_255 > 0) and (MASK_0_255 < 255)) then
+        IP = INET_NTOA(:CURRENT_IP);
+    end
+    else begin
+      if ((FINDED_IP <= END_IP) and (FINDED_IP > 0)) then
+        IP = INET_NTOA(:FINDED_IP);
+    end
+  end
   suspend;
 end ^
 
-ALTER PROCEDURE GET_FULLNAME_ALLREPORTS (SEPARATOR VARCHAR(10) CHARACTER SET UTF8)
-RETURNS (ID_REPORT INTEGER,
-FULL_NAME VARCHAR(5000) CHARACTER SET UTF8)
+ALTER PROCEDURE GET_FULLNAME_ALLREPORTS (SEPARATOR D_VARCHAR10)
+RETURNS (ID_REPORT D_INTEGER,
+FULL_NAME D_VARCHAR5000)
 AS 
 declare variable id_parent integer;
 declare variable name_level varchar(100);
@@ -14940,7 +15876,7 @@ end ^
 
 ALTER PROCEDURE GET_MAT_TAKE_IN (FOR_RQ_ID UID,
 MG_ID D_UID_NULL = -1,
-WH_FLTR D_IBOOLEAN = 0)
+WH_OWNER D_IBOOLEAN = 0)
 RETURNS (M_ID UID,
 NAME D_VARCHAR255,
 DIMENSION D_VARCHAR10,
@@ -14961,18 +15897,10 @@ declare variable tQUANT  D_N15_5;
 declare variable tSerial varchar(50);
 declare variable Notice  D_NOTICE;
 declare variable tCOST   D_N15_2;
--- declare variable Owner      integer;
--- declare variable Owner_Type integer;
 begin
-  -- на кого выдана заявка. абонента или узел
-  /*
-  select
-      coalesce(r.Rq_Customer, r.Node_Id)
-    , iif(r.Rq_Customer is null, 2, 1)
-    from request r
-    where r.Rq_Id = :FOR_RQ_ID
-  into :Owner, :Owner_Type;
-*/
+  -- Включіть ограніченіе на кого выдана заявка. абонента или узел
+  WH_OWNER = coalesce(WH_OWNER, 0);
+
   COST = null;
   for select
           m.M_ID
@@ -14988,25 +15916,23 @@ begin
         , m.Is_Unit
         , rm.Cost
         from MATERIALS M
-             left outer join OBJECTS W on (W.O_TYPE = 10 and
-                   ((:WH_FLTR = 0) or exists(select
-                                                 e.Rq_Id
-                                               from Request_Executors e
-                                               where e.Exec_Id = w.O_Numericfield
-                                                     and e.Rq_Id = :FOR_RQ_ID)) and
-                   (exists(select
-                               wh.wh_id
-                             from SYS$USER u
-                                  inner join sys$user_wh wh on (wh.user_id = u.id)
-                             where u.ibname = current_user
-                                   and wh.can_view = 1
-                                   and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
-             left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and
-                   rm.Rq_Id = :FOR_RQ_ID and
-                   rm.WH_ID = w.O_Id)
+             left outer join OBJECTS W on (W.O_TYPE = 10 and w.O_Deleted = 0 and -- длф форматірованія
+                   ((:WH_OWNER = 0) or exists(select
+                                                  e.Rq_Id
+                                                from Request_Executors e
+                                                where e.Exec_Id = w.O_Numericfield
+                                                      and e.Rq_Id = :FOR_RQ_ID)) and (exists(select
+                                                                                                 wh.wh_id
+                                                                                               from SYS$USER u
+                                                                                                    inner join sys$user_wh wh on (wh.user_id = u.id)
+                                                                                               where u.ibname = current_user
+                                                                                                     and wh.can_view = 1
+                                                                                                     and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
+             left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and rm.Rq_Id = :FOR_RQ_ID and rm.WH_ID = w.O_Id)
         where ((M.MG_ID = :MG_ID
               and not :MG_ID is null)
-                or (((M.MG_ID is null) or (M.MG_ID = -1))
+                or (((M.MG_ID is null)
+                or (M.MG_ID = -1))
               and :MG_ID is null)
                 or (:MG_ID = -1))
               and ((m.Deleted = 0)
@@ -15030,10 +15956,9 @@ begin
                     , u.Notice
                       -- , u.Owner, u.Owner_Type
                     from Request_Materials_Return u
-                         inner join Material_Unit m on (m.M_Id = u.M_Id and
-                               m.Serial = u.Serial)
+                         inner join Material_Unit m on (m.M_Id = u.M_Id and m.Serial = u.Serial)
                     where u.M_Id = :M_ID
-                      and u.Rq_Id = :FOR_RQ_ID
+                          and u.Rq_Id = :FOR_RQ_ID
                   union all
                   select
                       a.Serial
@@ -15042,7 +15967,7 @@ begin
                     , a.Notice
                       -- , u.Owner, u.Owner_Type
                     from Appliance a
-                      inner join request r on (r.Rq_Id = :FOR_RQ_ID and ((r.Rq_Customer = a.Own_Id and a.Own_Type = 1) or (r.Node_Id = a.Own_Id and a.Own_Type = 2)))
+                         inner join request r on (r.Rq_Id = :FOR_RQ_ID and ((r.Rq_Customer = a.Own_Id and a.Own_Type = 1) or (r.Node_Id = a.Own_Id and a.Own_Type = 2)))
                     where a.M_Id = :M_ID
                           and a.Property <> 0
                           and not exists(select
@@ -15074,14 +15999,16 @@ ALTER PROCEDURE GET_MAX_INET_IP (SRV_ID UID)
 RETURNS (IP TYPE OF D_IP)
 AS 
 declare variable Start_Ip   type of D_Int_Ip;
-  declare variable End_Ip     type of D_Int_Ip;
-  declare variable Current_Ip type of D_Int_Ip;
-  declare variable Finded_Ip  type of D_Int_Ip;
-  declare variable Prev_Ip    type of D_Int_Ip;
+declare variable End_Ip     type of D_Int_Ip;
+declare variable Current_Ip type of D_Int_Ip;
+declare variable Finded_Ip  type of D_Int_Ip;
+declare variable Prev_Ip    type of D_Int_Ip;
 begin
   ip = '';
 
-  select v.ip_begin_bin , v.ip_end_bin - 1
+  select
+      v.ip_begin_bin
+    , v.ip_end_bin - 1
     from services v
     where v.Service_Id = :Srv_Id
   into :START_IP, :END_IP;
@@ -15094,28 +16021,23 @@ begin
   PREV_IP = START_IP - 1;
   FINDED_IP = 0;
 
-    -- возьмем макссимальный IP
-    select max(b.Ip_Inet_Bin)
-        from BILLING b
-        where b.Ip_Inet_Bin between :START_IP and :END_IP
-    into :CURRENT_IP;
+  -- возьмем макссимальный IP
+  select
+      max(b.Ip_Inet_Bin)
+    from BILLING b
+    where b.Ip_Inet_Bin between :START_IP and :END_IP
+  into :CURRENT_IP;
 
-    FINDED_IP = CURRENT_IP + 1;
+  FINDED_IP = CURRENT_IP + 1;
 
-  if (FINDED_IP = 0) then
-  begin
+  if (FINDED_IP = 0) then begin
     PREV_IP = PREV_IP + 1;
     if (PREV_IP <= END_IP) then
-      select str_ip
-        from int2ip(:PREV_IP)
-      into :IP;
+      IP = INET_NTOA(:PREV_IP);
   end
-  else
-  begin
+  else begin
     if (FINDED_IP <= END_IP) then
-      select str_ip
-        from int2ip(:FINDED_IP)
-      into :IP;
+      IP = INET_NTOA(:FINDED_IP);
   end
 
   suspend;
@@ -15155,16 +16077,16 @@ begin
   end
 end ^
 
-ALTER PROCEDURE GET_NODE_FLAT_LVL (NODE_ID INTEGER)
-RETURNS (HOUSE_ID INTEGER,
-LVL INTEGER,
+ALTER PROCEDURE GET_NODE_FLAT_LVL (NODE_ID D_INTEGER)
+RETURNS (HOUSE_ID D_INTEGER,
+LVL D_INTEGER,
 FLAT_NO D_FLAT_NS,
 PORCH_N D_FLAT_NS,
 FLOOR_N D_FLAT_NS,
-SRV_LIST VARCHAR(400) CHARACTER SET UTF8,
-CST_LIST VARCHAR(400) CHARACTER SET UTF8,
-STREET_NAME VARCHAR(250) CHARACTER SET UTF8,
-HOUSE_NO VARCHAR(80) CHARACTER SET UTF8,
+SRV_LIST D_VARCHAR500,
+CST_LIST D_VARCHAR500,
+STREET_NAME D_VARCHAR255,
+HOUSE_NO D_VARCHAR100,
 NOTICE D_NOTICE)
 AS 
 declare variable T_NODE integer;
@@ -15310,22 +16232,21 @@ ALTER PROCEDURE GET_RECOMMENDED_PREPAY (CUSTOMER_ID D_INTEGER,
 DEBT D_N15_2 = null)
 RETURNS (PREPAY D_N15_2)
 AS 
-declare variable m_first D_DATE;
-declare variable m_last  D_DATE;
-declare variable vCDay   D_INTEGER;
-declare variable vDays   D_INTEGER;
-declare variable vDate   D_DATE;
-declare variable vSrv    D_INTEGER;
-declare variable vStt    D_INTEGER;
-declare variable vClc    D_INTEGER;
-declare variable vTrf    D_N15_2;
-declare variable vUblck  D_INTEGER;
-declare variable vAuto   D_INTEGER;
-declare variable vName   D_Service_Name;
+declare variable m_first     D_DATE;
+declare variable m_last      D_DATE;
+declare variable vCDay       D_INTEGER;
+declare variable vDays       D_INTEGER;
+declare variable vDate       D_DATE;
+declare variable vSrv        D_INTEGER;
+declare variable vStt        D_INTEGER;
+declare variable vClc        D_INTEGER;
+declare variable vTrf        D_N15_2;
+declare variable vUblck      D_INTEGER;
+declare variable Extra       D_INTEGER;
+declare variable vIgnoreList D_Varchar1000;
 begin
 
-  -- CUSTOMER_ID = 32910; -- отладка
-
+  vIgnoreList = ',' || Get_Setting_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
   PREPAY = 0;
 
   -- текущий месяц
@@ -15338,9 +16259,8 @@ begin
           s.Service_Id
         , s.Calc_Type
         , 1
-        , s.Autooff
-        , s.Name
         , s.UNBL_METH
+        , coalesce(s.Extra, 30)
         from Subscr_hist sh
              inner join services s on (s.Service_Id = sh.Serv_Id)
         where sh.Customer_Id = :CUSTOMER_ID
@@ -15350,53 +16270,66 @@ begin
           s.Service_Id
         , s.Calc_Type
         , ss.State_Sgn
-        , s.Autooff
-        , s.Name
         , s.UNBL_METH
+        , coalesce(s.Extra, 30)
         from subscr_serv ss
              inner join services s on (s.Service_Id = ss.Serv_Id)
         where ss.Customer_Id = :CUSTOMER_ID
               and ss.State_Srv = -3
-      into :vSrv, :vClc, :vStt, :vAuto, :vName, :vUblck
+      into :vSrv, :vClc, :vStt, :vUblck, :Extra
   do begin
-    select
-        M_TARIF
-      from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :vDate)
-    into :vTrf;
+    if (position(',' || vSrv || ',', vIgnoreList) = 0) then begin
+      select
+          M_TARIF
+        from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :vDate)
+      into :vTrf;
 
-    if (vClc = 3) then begin
-      -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
-      if (vStt = 1) then
-        -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
-        vTrf = 0;
-    end
-    else
-    if (vClc = 0) then begin
-      -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
-      if (vStt = 1) then
-        -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
-        vTrf = 0;
-    end
-    else
-    if (vClc = 1) then begin
-      -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
-      if (vStt = 1) then
-        -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
-        vTrf = 0;
-    end
-    else
-    if ((vClc = 2)
-        or
-        (vClc = 5)) then begin
-      -- 2 Ежедневные начисления
-      -- 5 Ежедневные начисления (считаем если отключение в день подключения)
-      if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-        vTrf = 0;
+      if (vClc = 3) then begin
+        -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
+        if (vStt = 1) then
+          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
+          vTrf = 0;
+      end
       else
-        vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / vDays);
-    end
+      if (vClc = 0) then begin
+        -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
+        if (vStt = 1) then
+          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
+          vTrf = 0;
+      end
+      else
+      if (vClc = 1) then begin
+        -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
+        if (vStt = 1) then
+          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
+          vTrf = 0;
+      end
+      else
+      if ((vClc = 2)
+          or
+          (vClc = 5)) then begin
+        -- 2 Ежедневные начисления
+        -- 5 Ежедневные начисления (считаем если отключение в день подключения)
+        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+          vTrf = 0;
+        else
+          vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / vDays);
+      end
+      else
+      if (vClc = 6) then begin
+        -- 6 Ежедневные начисления 30 дней в месяце
+        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+          vTrf = 0;
+        else begin
+          if (Extra > 0) then
+            vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / coalesce(Extra, 30));
+          else
+            vTrf = 0;
+        end
+      end
 
-    PREPAY = PREPAY + coalesce(vTrf, 0);
+      PREPAY = PREPAY + coalesce(vTrf, 0);
+    end
   end
 
   -- следующий месяц
@@ -15405,13 +16338,13 @@ begin
   m_last = Month_Last_Day(vDate);
   vDays = extract(day from m_last);
   vCDay = extract(day from vDate);
+  Extra = null;
 
   for select
           s.Service_Id
         , s.Calc_Type
         , s.Unbl_Meth
-          -- отладка , s.Autooff
-          -- отладка , s.Name
+        , coalesce(s.Extra, 0)
         from Subscr_hist sh
              inner join services s on (s.Service_Id = sh.Serv_Id)
         where sh.Customer_Id = :CUSTOMER_ID
@@ -15427,8 +16360,7 @@ begin
           s.Service_Id
         , s.Calc_Type
         , s.Unbl_Meth
-          -- отладка , s.Autooff
-          -- отладка , s.Name
+        , coalesce(s.Extra, 0)
         from subscr_serv ss
              inner join services s on (s.Service_Id = ss.Serv_Id)
         where ss.Customer_Id = :CUSTOMER_ID
@@ -15438,54 +16370,67 @@ begin
           s.Service_Id
         , s.Calc_Type
         , s.Unbl_Meth
-          -- отладка , s.Autooff
-          -- отладка , s.Name
+        , coalesce(s.Extra, 0)
         from QUEUE_SWITCH_SRV q
              inner join services s on (s.Service_Id = q.Srv_To)
         where q.Customer_Id = :CUSTOMER_ID
               and q.Switch_Date between :m_first and :m_last
-      into :vSrv, :vClc, :vUblck -- отладка , :vAuto, :vName
+      into :vSrv, :vClc, :vUblck, :Extra
   do begin
-    vTrf = null;
-    select
-        M_TARIF
-      from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :vDate)
-    into :vTrf;
-    if (vTrf is null) then begin
+    if (position(',' || vSrv || ',', vIgnoreList) = 0) then begin
+      vTrf = null;
       select
-          t.Tarif_Sum
-        from tarif t
-        where t.Service_Id = :vSrv
-              and :vDate between t.Date_From and t.Date_To
+          M_TARIF
+        from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :vDate)
       into :vTrf;
-    end
-    -- выставим сл. полный месяц
-    -- PREPAY = PREPAY + coalesce(vTrf, 0);
+      if (vTrf is null) then begin
+        select
+            t.Tarif_Sum
+          from tarif t
+          where t.Service_Id = :vSrv
+                and :vDate between t.Date_From and t.Date_To
+        into :vTrf;
+      end
+      -- выставим сл. полный месяц
+      -- PREPAY = PREPAY + coalesce(vTrf, 0);
 
-    if (vClc = 3) then begin
-      -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
-      PREPAY = PREPAY + coalesce(vTrf, 0);
-    end
-    else
-    if (vClc = 0) then begin
-      -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
-      PREPAy = prepay + coalesce(vTrf, 0);
-    end
-    else
-    if ((vClc = 2)
-        or
-        (vClc = 5)) then begin
-      -- 2 Ежедневные начисления
-      -- 5 Ежедневные начисления (считаем если отключение в день подключения)
-      if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-        PREPAy = prepay + coalesce(vTrf, 0);
+      if (vClc = 3) then begin
+        -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
+        PREPAY = PREPAY + coalesce(vTrf, 0);
+      end
       else
-        PREPAy = prepay + (vCDay * coalesce(vTrf, 0) / vDays);
-    end
-    else
-    if (vClc = 1) then begin
-      -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
-      PREPAY = PREPAY + coalesce(vTrf, 0);
+      if (vClc = 0) then begin
+        -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
+        PREPAy = prepay + coalesce(vTrf, 0);
+      end
+      else
+      if ((vClc = 2)
+          or
+          (vClc = 5)) then begin
+        -- 2 Ежедневные начисления
+        -- 5 Ежедневные начисления (считаем если отключение в день подключения)
+        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+          PREPAy = prepay + coalesce(vTrf, 0);
+        else
+          PREPAy = prepay + (vCDay * coalesce(vTrf, 0) / vDays);
+      end
+      else
+      if (vClc = 1) then begin
+        -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
+        PREPAY = PREPAY + coalesce(vTrf, 0);
+      end
+      else
+      if (vClc = 6) then begin
+        -- 6 Ежедневные начисления 30 дней в месяце
+        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+          PREPAy = prepay + coalesce(vTrf, 0);
+        else begin
+          if (Extra > 0) then
+            PREPAy = prepay + (vCDay * coalesce(vTrf, 0) / coalesce(Extra, 30));
+          else
+            PREPAy = prepay + 0;
+        end
+      end
     end
   end
 
@@ -15512,9 +16457,9 @@ begin
   suspend;
 end ^
 
-ALTER PROCEDURE GET_REPORT_ID (FULL_NAME VARCHAR(5000) CHARACTER SET UTF8,
-SEPARATOR CHAR(1) CHARACTER SET UTF8)
-RETURNS (ID_REPORT INTEGER)
+ALTER PROCEDURE GET_REPORT_ID (FULL_NAME D_VARCHAR5000,
+SEPARATOR D_CHAR1)
+RETURNS (ID_REPORT D_INTEGER)
 AS 
 begin
   if (separator is null) then
@@ -15675,10 +16620,13 @@ begin
     where S.VAR_NAME = 'REQUEST_NEXT_DAY_TIME'
   into :REQ_TIME;
   ON_NEXT_DAY = 1;/* пропустим сегодняшний день */
-  if (not REQ_TIME is null) then
+  if (not REQ_TIME is null) then begin
     /* Если не наступило время брать заявки на завтра, то берем на сегодня */
-    if (current_time < REQ_TIME) then
+    wd = datediff(second, localtime, REQ_TIME);
+    if (wd >= 0) then
       ON_NEXT_DAY = 0;
+    wd = null;
+  end
 
   select first 1
       A.WA_ID
@@ -16317,7 +17265,7 @@ begin
   suspend;
 end ^
 
-ALTER PROCEDURE MATERIALS_SUMMARY (FOR_M_ID INTEGER,
+ALTER PROCEDURE MATERIALS_SUMMARY (FOR_M_ID D_INTEGER,
 SHOW_SN D_IBOOLEAN = 0)
 RETURNS (WH D_VARCHAR500,
 M_ID D_INTEGER,
@@ -16682,7 +17630,7 @@ begin
         and Serial = :Old_Serial;
 end ^
 
-ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID INTEGER)
+ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID D_INTEGER)
 AS 
 declare variable DOC_CLOSED d_integer;
 begin
@@ -17554,6 +18502,7 @@ declare variable Id             D_Integer;
 declare variable Business_Type  D_Integer;
 declare variable H_Id           D_Integer;
 declare variable D_Act          D_Integer;
+declare variable vShift         D_Integer;
 declare variable Act_Timestamp  type of D_Timestamp;
 declare variable vCONTRACT      D_VARCHAR20;
 declare variable vCONTRACT_DATE D_DATE;
@@ -17565,11 +18514,12 @@ begin
     , S.BUSINESS_TYPE
     , ss.Contract
     , ss.Contract_Date
+    , s.Shift_Months
     from SUBSCR_SERV SS
          inner join SERVICES S on (S.SERVICE_ID = SS.SERV_ID)
     where SS.CUSTOMER_ID = :P_CUSTOMER_ID
           and SS.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
-  into :ID, :BUSINESS_TYPE, :vCONTRACT, :vCONTRACT_DATE;
+  into :ID, :BUSINESS_TYPE, :vCONTRACT, :vCONTRACT_DATE, :vShift;
 
   -- отключаем услугу
   if (P_OFF = 1) then begin
@@ -17689,7 +18639,7 @@ begin
         where SH.DATE_TO = (:P_DATE - 1)
               and SH.DISACT_SERV_ID = :P_ACTSERVICE
               and SH.SUBSCR_SERV_ID = :P_SUBSCR_SERV_ID
-      order by 1 desc
+        order by 1 desc
       into :H_ID;
     end
   end
@@ -17728,9 +18678,22 @@ begin
     if (ADD_SGL = 1) then begin
       execute procedure ADD_SINGLE_SERVICE(:P_CUSTOMER_ID, :P_ACTSERVICE, :P_UNITS, :P_DATE, :P_NOTICE, :H_ID, :RECALC);
     end
-    else
+
     if (RECALC = 1) then begin
       execute procedure FULL_RECALC_CUSTOMER(:P_CUSTOMER_ID, :P_DATE);
+    end
+    else begin
+      -- если смещеие услуги 1 и месяц не закрыт, а подключение в текущем, то нужно пересчитать
+      -- т.е. в программе июль, сейчас август и подключаем августом, то нужно пересчитать июль
+      if ((vShift = 1) and (Month_First_Day(current_date) = Month_First_Day(P_DATE))) then begin
+        select
+            cast(VAR_VALUE as date)
+          from SETTINGS
+          where VAR_NAME = 'CURRENT_DATE'
+        into :vCONTRACT_DATE;
+        if (vCONTRACT_DATE < Month_First_Day(current_date)) then
+          execute procedure Close_Month_Proc(:vCONTRACT_DATE, :P_CUSTOMER_ID);
+      end
     end
 
     if (BUSINESS_TYPE >= 2) then begin
@@ -17753,8 +18716,8 @@ P_SERVICE_ID TYPE OF UID,
 P_ACTSERVICE TYPE OF UID,
 P_DATE D_DATE,
 P_OFF D_INTEGER,
-P_NOTICE D_NOTICE,
-P_UNITS D_N15_2,
+P_NOTICE D_NOTICE = '',
+P_UNITS D_N15_2 = 1,
 RECALC D_IBOOLEAN = 1,
 ADD_SGL D_IBOOLEAN = 1,
 WORKER D_VARCHAR255 = null,
@@ -18069,10 +19032,11 @@ ALTER PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS (ACCOUNT_NO TYPE OF D_ACCOUNT,
 PAY_SUM D_N15_2,
 PAY_TIME D_DATETIME,
 PAYSOURCE_ID D_INTEGER,
-EXT_SYSTEMS_ID TYPE OF D_VARCHAR50,
-NOTICE D_NOTICE,
-PAY_TYPE_STR D_VARCHAR30 = 'CASH' /* COLLATE UTF8 - default */,
-CMSN D_N15_2 = null)
+EXT_SYSTEMS_ID D_VARCHAR50 = null,
+NOTICE D_NOTICE = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH',
+CMSN D_N15_2 = null,
+TAG D_INTEGER = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
 AS 
@@ -18082,6 +19046,7 @@ declare variable PAY_DATE    D_DATE;
 begin
   PAY_DATE = cast(PAY_TIME as date);
   PAYMENT_ID = null;
+
   select
       Customer_Id
     from customer c
@@ -18106,10 +19071,11 @@ begin
           from Get_Pay_Doc(:Paysource_Id, :Pay_Date, null)
         into :Pay_Doc_Id;
 
-        PAYMENT_ID = gen_id(Gen_Payment, 1);
+        select
+            PAYMENT_ID
+          from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, 0, null, null, :EXT_SYSTEMS_ID, :TAG, :CMSN, :PAY_TYPE_STR)
+        into :PAYMENT_ID;
 
-        insert into Payment (Payment_Id, Pay_Doc_Id, Customer_Id, Pay_Date, Pay_Sum, Notice, EXT_PAY_ID, PAY_DATETIME, PAY_TYPE_STR, CMSN)
-        values (:Payment_Id, :Pay_Doc_Id, :Customer_Id, :Pay_Date, :Pay_Sum, :Notice, :Ext_Systems_Id, :PAY_TIME, :PAY_TYPE_STR, :CMSN);
         IS_DELETED = 0;
       end
     end
@@ -18167,8 +19133,11 @@ IS_DELETED D_IBOOLEAN)
 AS 
 begin
   PAYMENT_ID = null;
-  select
-      PAYMENT_ID, PAY_DATETIME, 0
+  EXT_SYSTEMS_ID = trim(EXT_SYSTEMS_ID);
+  select first 1
+      PAYMENT_ID
+    , PAY_DATETIME
+    , 0
     from payment p
          inner join pay_doc pd on (p.pay_doc_id = pd.pay_doc_id)
     where pd.paysource_id = :PAYSOURCE_ID
@@ -18176,8 +19145,10 @@ begin
   into :PAYMENT_ID, :PAY_DATETIME, :IS_DELETED;
 
   if (PAYMENT_ID is null) then
-    select
-        PAYMENT_ID, PAY_DATETIME, 1
+    select first 1
+        PAYMENT_ID
+      , PAY_DATETIME
+      , 1
       from Payment_Deleted p
            inner join pay_doc pd on (p.pay_doc_id = pd.pay_doc_id)
       where pd.paysource_id = :PAYSOURCE_ID
@@ -18205,6 +19176,7 @@ AS
 declare variable need_split d_integer;
 begin
   need_split = 0;
+
   if (PAYMENT_TYPE is null) then begin
     select
         s.Var_Value
@@ -18228,13 +19200,15 @@ PAY_SUM TYPE OF D_N15_2,
 NOTICE TYPE OF D_NOTICE,
 EXT_PAY_ID TYPE OF D_VARCHAR50,
 FINE_SUM TYPE OF D_N15_2,
-CMSN D_N15_2 = null)
+CMSN D_N15_2 = null,
+PAY_TYPE_STR D_VARCHAR30 = 'CASH')
 AS 
-declare variable EXP   D_N15_2;
-declare variable PAY_1 D_N15_2;
-declare variable PAY_2 D_N15_2;
-declare variable TAR_1 D_N15_2;
-declare variable TAR_2 D_N15_2;
+declare variable EXP    D_N15_2;
+declare variable PAY_1  D_N15_2;
+declare variable PAY_2  D_N15_2;
+declare variable TAR_1  D_N15_2;
+declare variable TAR_2  D_N15_2;
+declare variable RESULT D_VARCHAR100;
 begin
   if (PAY_SUM > 0) then begin
     -- выберем услуги которые гасятся в первую очередь (приоритет задаеться полем O_Numericfield)
@@ -18262,13 +19236,13 @@ begin
       EXP = coalesce(EXP, 0) - coalesce(PAY_1, 0);
       if ((EXP > 0) and (PAY_SUM > 0)) then begin
         if (PAY_SUM > EXP) then begin
-          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :EXP, :PAY_DATE, :Notice, :Fine_Sum, :TAR_1, null, :Ext_Pay_Id, null, :CMSN)
-              returning_values :TAR_1;
+          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :EXP, :PAY_DATE, :Notice, :Fine_Sum, :TAR_1, null, :Ext_Pay_Id, null, :CMSN, :PAY_TYPE_STR)
+              returning_values :TAR_1, :RESULT;
           PAY_SUM = PAY_SUM - EXP;
         end
         else begin
-          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_SUM, :PAY_DATE, :Notice, :Fine_Sum, :TAR_1, null, :Ext_Pay_Id, null, :CMSN)
-              returning_values :TAR_1;
+          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_SUM, :PAY_DATE, :Notice, :Fine_Sum, :TAR_1, null, :Ext_Pay_Id, null, :CMSN, :PAY_TYPE_STR)
+              returning_values :TAR_1, :RESULT;
           PAY_SUM = 0;
         end
       end
@@ -18307,15 +19281,15 @@ begin
         PAY_1 = round((PAY_SUM * TAR_1 / EXP), 2);
         PAY_2 = PAY_SUM - PAY_1;
         if (PAY_1 > 0) then
-          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_1, :PAY_DATE, :Notice, :Fine_Sum, 0, null, :Ext_Pay_Id, null, :CMSN)
-              returning_values :EXP;
+          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_1, :PAY_DATE, :Notice, :Fine_Sum, 0, null, :Ext_Pay_Id, null, :CMSN, :PAY_TYPE_STR)
+              returning_values :EXP, :RESULT;
         if (PAY_2 > 0) then
-          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_2, :PAY_DATE, :Notice, :Fine_Sum, 1, null, :Ext_Pay_Id, null, :CMSN)
-              returning_values :EXP;
+          execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_2, :PAY_DATE, :Notice, :Fine_Sum, 1, null, :Ext_Pay_Id, null, :CMSN, :PAY_TYPE_STR)
+              returning_values :EXP, :RESULT;
       end
       else
-        execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_SUM, :PAY_DATE, :Notice, :Fine_Sum, 0, null, :Ext_Pay_Id, null, :CMSN)
-            returning_values :EXP;
+        execute procedure Add_Payment_Ext(:Pay_Doc_Id, :Customer_Id, :PAY_SUM, :PAY_DATE, :Notice, :Fine_Sum, 0, null, :Ext_Pay_Id, null, :CMSN, :PAY_TYPE_STR)
+            returning_values :EXP, :RESULT;
     end
   end
 end ^
@@ -18509,32 +19483,28 @@ TO_SRV TYPE OF UID,
 SWITCH_SRV TYPE OF UID = null,
 UNITS D_N15_2 = 1,
 SWITCH_DATE D_DATE = current_date,
-NOTICE D_NOTICE = null)
+NOTICE D_NOTICE = null /* COLLATE UTF8 - default */)
 RETURNS (RESULT D_INTEGER)
 AS 
 declare variable Add_Srv     type of Uid;
 declare variable Switch_Time type of Uid;
-declare variable Vautooff    D_Integer;
 declare variable Vdate       type of D_Date;
 begin
   if (Switch_Date is null) then
     Switch_Date = current_date;
 
+  UNITS = coalesce(UNITS, 0);
+
   select first 1
       sl.Add_Srv
     , coalesce(sl.Switch_Time, 0)
-    ,
-      (select
-           s.Autooff
-         from services s
-         where s.Service_Id = :FROM_SRV)
     from Services_Links sl
     where sl.Parent = :FROM_SRV
           and sl.Child = :TO_SRV
           and sl.Link_Type = 6
           and ((sl.Add_Srv = :SWITCH_SRV)
             or (:SWITCH_SRV is null))
-  into :Add_Srv, :Switch_Time, :vAutoOff;
+  into :Add_Srv, :Switch_Time;
 
   SWITCH_SRV = coalesce(SWITCH_SRV, Add_Srv);
 
@@ -18559,8 +19529,8 @@ begin
         where Customer_Id = :Customer_Id
               and Srv_From = :FROM_SRV;
 
-    update or insert into QUEUE_SWITCH_SRV (Customer_Id, Srv_From, Switch_Date, Srv_To, Srv_Act, COMPLETED, NOTICE)
-    values (:Customer_Id, :FROM_SRV, :Switch_Date, :TO_SRV, :SWITCH_SRV, 0, :NOTICE)
+    update or insert into QUEUE_SWITCH_SRV (Customer_Id, Srv_From, Switch_Date, Srv_To, Srv_Act, COMPLETED, NOTICE, UNITS)
+    values (:Customer_Id, :FROM_SRV, :Switch_Date, :TO_SRV, :SWITCH_SRV, 0, :NOTICE, :UNITS)
     matching (Customer_Id, Srv_From);
     Result = 0;
     -- если переключать в любой время, то сразу переключим
@@ -18610,12 +19580,13 @@ begin
         , Srv_To
         , Srv_Act
         , Notice
+        , coalesce(UNITS, 0)
         from Queue_Switch_Srv q
         where Switch_Date = current_date
               and coalesce(COMPLETED, 0) = 0
               and ((:FOR_CUSTOMER_ID is null)
                 or (Customer_Id = :FOR_CUSTOMER_ID))
-      into :Customer_Id, :FROM_SRV, :SWITCH_DATE, :TO_SRV, :SWITCH_SRV, :Notice
+      into :Customer_Id, :FROM_SRV, :SWITCH_DATE, :TO_SRV, :SWITCH_SRV, :Notice, :UNITS
   do begin
     if (SWITCH_SRV is null) then begin
       select first 1
@@ -19935,7 +20906,7 @@ begin
   end
 end ^
 
-ALTER PROCEDURE SELECTPAYDOC (FORFORM VARCHAR(10) CHARACTER SET UTF8 = null /* COLLATE UTF8 - default */)
+ALTER PROCEDURE SELECTPAYDOC (FORFORM D_VARCHAR10 = null /* COLLATE UTF8 - default */)
 RETURNS (PAY_DOC_ID D_INTEGER)
 AS 
 declare variable vPSID D_INTEGER;
@@ -22214,6 +23185,33 @@ begin
   new.added_on = localtimestamp;
 end ^
 
+CREATE TRIGGER CUSTOMER_FILES_AU FOR CUSTOMER_FILES 
+ACTIVE AFTER UPDATE POSITION 0 
+as
+begin
+  if (new.Cf_Id is distinct from old.customer_id) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'Cf_Id', old.Cf_Id, new.Cf_Id);
+  if (new.Customer_Id is distinct from old.Customer_Id) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'CUSTOMER_ID', old.Customer_Id, new.Customer_Id);
+  if (new.Cf_Type is distinct from old.Cf_Type) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'CF_TYPE', old.Cf_Type, new.Cf_Type);
+  if (new.Name is distinct from old.Name) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'NAME', old.Name, new.Name);
+  if (new.Filename is distinct from old.Filename) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'FILENAME', old.Filename, new.Filename);
+  if (new.Notice is distinct from old.Notice) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'NOTICE', old.Notice, new.Notice);
+  if (new.Addons is distinct from old.Addons) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CUSTOMER_FILES', 0, new.customer_id, 'ADDONS', old.Addons, new.Addons);
+end ^
+
 CREATE TRIGGER CUSTOMER_FILES_AD FOR CUSTOMER_FILES 
 ACTIVE AFTER DELETE POSITION 0 
 as
@@ -22541,6 +23539,8 @@ CREATE TRIGGER DOC_LIST_BI FOR DOC_LIST
 ACTIVE BEFORE INSERT POSITION 0 
 as
 begin
+  new.Doc_Id = gen_id(Gen_Journal, 1);
+
   new.added_by = current_user;
   new.added_on = localtimestamp;
 end ^
@@ -22551,6 +23551,51 @@ as
 begin
   new.Edit_By = current_user;
   new.Edit_On = localtimestamp;
+end ^
+
+CREATE TRIGGER DOC_LIST_AU FOR DOC_LIST 
+ACTIVE AFTER UPDATE POSITION 0 
+as
+begin
+  IF (new.Doc_Id is distinct from old.Doc_Id) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_ID', OLD.Doc_Id, NEW.Doc_Id);
+  IF (new.Doc_Type is distinct from old.Doc_Type) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'O_TYPE', OLD.Doc_Type, NEW.Doc_Type);
+  IF (new.Doc_Number is distinct from old.Doc_Number) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_NUMBER', OLD.Doc_Number, NEW.Doc_Number);
+  IF (new.Surname is distinct from old.Surname) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'SURNAME', OLD.Surname, NEW.Surname);
+  IF (new.Firstname is distinct from old.Firstname) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'FIRSTNAME', OLD.Firstname, NEW.Firstname);
+  IF (new.Midlename is distinct from old.Midlename) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'MIDLENAME', OLD.Midlename, NEW.Midlename);
+  IF (new.Doc_Reg is distinct from old.Doc_Reg) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_REG', OLD.Doc_Reg, NEW.Doc_Reg);
+  IF (new.Doc_Date is distinct from old.Doc_Date) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_DATE', OLD.Doc_Date, NEW.Doc_Date);
+  IF (new.Personal_N is distinct from old.Personal_N) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'PERSONAL_N', OLD.Personal_N, NEW.Personal_N);
+  IF (new.Birthday is distinct from old.Birthday) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'BIRTHDAY', OLD.Birthday, NEW.Birthday);
+  IF (new.Addr_Registr is distinct from old.Addr_Registr) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'ADDR_REGISTR', OLD.Addr_Registr, NEW.Addr_Registr);
+  IF (new.Addr_Birth is distinct from old.Addr_Birth) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'ADDR_BIRTH', OLD.Addr_Birth, NEW.Addr_Birth);
+  IF (new.Notice is distinct from old.Notice) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('DOC_LIST', 0, NEW.Doc_Id, 'NOTICE', OLD.Notice, NEW.Notice);
 end ^
 
 CREATE TRIGGER DVB_NETWORK_AD FOR DVB_NETWORK 
@@ -23514,7 +24559,8 @@ begin
     new.Mes_Result = 0;
   if (new.Mes_Prior is null) then
     new.Mes_Prior = 0;
-  new.added_by = current_user;
+  if (new.added_by is null) then
+    new.added_by = current_user;
   new.added_on = localtimestamp;
 end ^
 
@@ -23773,6 +24819,39 @@ begin
   new.EDIT_ON = localtimestamp;
 end ^
 
+CREATE TRIGGER OBJECTS_AU FOR OBJECTS 
+ACTIVE AFTER UPDATE POSITION 0 
+as
+begin
+  IF (new.O_Id is distinct from old.O_Id) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_ID', OLD.O_Id, NEW.O_Id);
+  IF (new.O_Type is distinct from old.O_Type) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_TYPE', OLD.O_Type, NEW.O_Type);
+  IF (new.O_Name is distinct from old.O_Name) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_NAME', OLD.O_Name, NEW.O_Name);
+  IF (new.O_Description is distinct from old.O_Description) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_DESCRIPTION', OLD.O_Description, NEW.O_Description);
+  IF (new.O_Dimension is distinct from old.O_Dimension) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_DIMENSION', OLD.O_Dimension, NEW.O_Dimension);
+  IF (new.O_Deleted is distinct from old.O_Deleted) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_DELETED', OLD.O_Deleted, NEW.O_Deleted);
+  IF (new.O_Charfield is distinct from old.O_Charfield) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_CHARFIELD', OLD.O_Charfield, NEW.O_Charfield);
+  IF (new.O_Numericfield is distinct from old.O_Numericfield) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_NUMERICFIELD', OLD.O_Numericfield, NEW.O_Numericfield);
+  IF (new.O_Check is distinct from old.O_Check) THEN
+    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('OBJECTS', 0, NEW.O_Id, 'O_CHECK', OLD.O_Check, NEW.O_Check);
+end ^
+
 CREATE TRIGGER OBJECTS_BIU1 FOR OBJECTS 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 1 
 as
@@ -23815,6 +24894,25 @@ as
 begin
   if (new.oc_id is null)
   then new.oc_id = gen_id(gen_operations_uid,1);
+end ^
+
+CREATE TRIGGER OBJECTS_LINKS_BI FOR OBJECTS_LINKS 
+ACTIVE BEFORE INSERT POSITION 0 
+as
+begin
+  if (new.Ol_Id is null) then
+    new.Ol_Id = gen_id(GEN_UID, 1);
+
+  new.ADDED_BY = current_user;
+  new.ADDED_ON = localtimestamp;
+end ^
+
+CREATE TRIGGER OBJECTS_LINKS_BU FOR OBJECTS_LINKS 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  new.Edit_By = current_user;
+  new.Edit_On = localtimestamp;
 end ^
 
 CREATE TRIGGER OBJECTS_TYPE_BI0 FOR OBJECTS_TYPE 
@@ -23955,10 +25053,13 @@ begin
     new.Pay_Type_Str = 'CASH';
   if (new.Fiscal is null) then
     new.Fiscal = 0;
+  if (new.PAY_DATETIME is null) then
+    new.PAY_DATETIME = new.Pay_Date;
   if (new.DEBT_SAVE is null) then begin
     select DEBT_SUM from customer c where c.Customer_Id = NEW.Customer_Id
     into new.DEBT_SAVE;
   end
+  NEW.Ext_Pay_Id = trim(new.Ext_Pay_Id);
 
   new.ADDED_BY = current_user;
   new.ADDED_ON = localtimestamp;
@@ -23978,9 +25079,11 @@ as
 begin
   if (coalesce(new.Pay_Type_Str, '') = '') then
     new.Pay_Type_Str = 'CASH';
-
+  if (new.PAY_DATETIME is null) then
+    new.PAY_DATETIME = new.Pay_Date;
   if (new.Fiscal is null) then
     new.Fiscal = 0;
+  NEW.Ext_Pay_Id = trim(new.Ext_Pay_Id);
 
   new.EDIT_BY = current_user;
   new.EDIT_ON = localtimestamp;
@@ -24006,10 +25109,47 @@ begin
       set C.DEBT_SUM = coalesce(C.DEBT_SUM, 0) - new.PAY_SUM
       where C.CUSTOMER_ID = new.CUSTOMER_ID;
     end
-
-    insert into OPERATION_LOG (OPERATION, OPER_WHAT, OPER_NOTE)
-    values (2, 'ПЛАТЕЖ', old.CUSTOMER_ID || ' ' || old.PAY_DATE || ' ' || old.PAY_SUM || ' -> ' || new.CUSTOMER_ID || ' ' || new.PAY_DATE || ' ' || new.PAY_SUM);
   end
+
+  if (old.CUSTOMER_ID is distinct from new.CUSTOMER_ID) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+  if (old.Pay_Date is distinct from new.Pay_Date) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAY_DATE', old.Pay_Date, new.Pay_Date);
+  if (old.Pay_Sum is distinct from new.Pay_Sum) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAY_SUM', old.Pay_Sum, new.Pay_Sum);
+  if (old.Fine_Sum is distinct from new.Fine_Sum) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'FINE_SUM', old.Fine_Sum, new.Fine_Sum);
+  if (old.Payment_Srv is distinct from new.Payment_Srv) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAYMENT_SRV', old.Payment_Srv, new.Payment_Srv);
+  if (old.Payment_Type is distinct from new.Payment_Type) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAYMENT_TYPE', old.Payment_Type, new.Payment_Type);
+  if (old.Ext_Pay_Id is distinct from new.Ext_Pay_Id) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'EXT_PAY_ID', old.Ext_Pay_Id, new.Ext_Pay_Id);
+  if (old.Tag is distinct from new.Tag) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'TAG', old.Tag, new.Tag);
+  if (old.Tag_Str is distinct from new.Tag_Str) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'TAG_STR', old.Tag_Str, new.Tag_Str);
+  if (old.Need_Check is distinct from new.Need_Check) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'NEED_CHECK', old.Need_Check, new.Need_Check);
+  if (old.Fiscal is distinct from new.Fiscal) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'FISCAL', old.Fiscal, new.Fiscal);
+  if (old.Pay_Type_Str is distinct from new.Pay_Type_Str) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAY_TYPE_STR', old.Pay_Type_Str, new.Pay_Type_Str);
+  if (old.Rq_Id is distinct from new.Rq_Id) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('PAYMENT', 0, old.PAYMENT_ID, 'RQ_ID', old.Rq_Id, new.Rq_Id);
 end ^
 
 CREATE TRIGGER PAYMENT_AD0 FOR PAYMENT 
@@ -24548,8 +25688,12 @@ CREATE TRIGGER REQUEST_FLATS_BU FOR REQUEST_FLATS
 ACTIVE BEFORE UPDATE POSITION 0 
 as
 begin
-  new.edit_by = current_user;
-  new.edit_on = localtimestamp;
+  if (new.tag is null) then begin
+    new.edit_by = current_user;
+    new.edit_on = localtimestamp;
+  end
+  else
+    new.tag_date = localtimestamp;
 end ^
 
 CREATE TRIGGER REQUEST_MATERIALS_BI FOR REQUEST_MATERIALS 
@@ -24950,6 +26094,10 @@ begin
     new.Ip_Begin = null;
     new.Ip_End = null;
   end
+  if (new.Extra is null) then
+    new.Extra = 0;
+  if ((new.Extra = 0) and (new.Calc_Type = 6)) then
+    new.Extra = 1;
   if (new.Unbl_Meth is null) then
     new.Unbl_Meth = 0;
   if (new.EXTERNAL_ID is not null) then begin
@@ -25060,12 +26208,13 @@ begin
     new.LINK_ID = gen_id(gen_operations_uid, 1);
 end ^
 
-CREATE TRIGGER SERVICES_TYPE_BI0 FOR SERVICES_TYPE 
-ACTIVE BEFORE INSERT POSITION 0 
-AS
+CREATE TRIGGER SETTINGS_AU FOR SETTINGS 
+ACTIVE AFTER UPDATE POSITION 0 
+as
 begin
- if (NEW.SRV_TYPE_ID is null) then
- new.SRV_TYPE_ID = GEN_ID(gen_operations_uid,1);
+  if (new.Var_Value is distinct from old.Var_Value) then
+    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('SETTINGS', 0, 0, new.Var_Name, old.Var_Value, new.Var_Value);
 end ^
 
 CREATE TRIGGER SETTINGS_BIU0 FOR SETTINGS 
@@ -25243,11 +26392,11 @@ begin
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
   values ('SUBSCR_HIST', 0, old.customer_id, 'SUBSCR_SERV_ID', 'DELETE', old.subscr_serv_id);
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'SERVICE', 'DELETE', old.serv_id);
+  values ('SUBSCR_HIST', 0, old.customer_id, 'SERV_ID', 'DELETE', old.serv_id);
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'FROM', 'DELETE', old.act_serv_id);
+  values ('SUBSCR_HIST', 0, old.customer_id, 'ACT_SERV_ID', 'DELETE', old.act_serv_id);
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'TO', 'DELETE', old.disact_serv_id);
+  values ('SUBSCR_HIST', 0, old.customer_id, 'DISACT_SERV_ID', 'DELETE', old.disact_serv_id);
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
   values ('SUBSCR_HIST', 0, old.customer_id, 'DATE_FROM', 'DELETE', cast(old.date_from as varchar(10)));
   insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
@@ -25921,373 +27070,576 @@ COMMIT WORK;
 
 /* Grant roles for this database */
 
-/* Role: ROLE_A4USER, Owner: SYSDBA */
+/* Role: ROLE_A4READER, Owner: SYSDBA */
+CREATE ROLE ROLE_A4READER;
 CREATE ROLE ROLE_A4USER;
 
 /* Grant permissions for this database */
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ALL_USED_IP TO ROLE RDB$ADMIN;
+GRANT SELECT ON ALL_USED_IP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ALL_USED_IP TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON APPLIANCE TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON APPLIANCE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON APPLIANCE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON AREA TO ROLE RDB$ADMIN;
+GRANT SELECT ON AREA TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON AREA TO ROLE ROLE_A4USER;
+GRANT SELECT ON ATTRIBUTE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ATTRIBUTE TO ROLE ROLE_A4USER;
+GRANT SELECT ON BCISSUE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BCISSUE TO ROLE ROLE_A4USER;
+GRANT SELECT ON BCI_CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BCI_CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BILLING TO ROLE RDB$ADMIN;
+GRANT SELECT ON BILLING TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BILLING TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLB_GZIP TO ROLE RDB$ADMIN;
+GRANT SELECT ON BLB_GZIP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLB_GZIP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLOB_TBL TO ROLE RDB$ADMIN;
+GRANT SELECT ON BLOB_TBL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BLOB_TBL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BONUS_RATE TO ROLE RDB$ADMIN;
+GRANT SELECT ON BONUS_RATE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON BONUS_RATE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_PREPAY TO ROLE RDB$ADMIN;
+GRANT SELECT ON CARDS_PREPAY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_PREPAY TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_SERIALS TO ROLE RDB$ADMIN;
+GRANT SELECT ON CARDS_SERIALS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CARDS_SERIALS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANGELOG TO ROLE RDB$ADMIN;
+GRANT SELECT ON CHANGELOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANGELOG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS TO ROLE RDB$ADMIN;
+GRANT SELECT ON CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS_IN_SERVCE TO ROLE RDB$ADMIN;
+GRANT SELECT ON CHANNELS_IN_SERVCE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNELS_IN_SERVCE TO ROLE ROLE_A4USER;
+GRANT SELECT ON CHANNEL_SRC TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNEL_SRC TO ROLE ROLE_A4USER;
 GRANT INSERT, SELECT, UPDATE ON CHANNEL_SRC_PARAM TO PROCEDURE CHANNEL_SRC_PARAM_IU;
+GRANT SELECT ON CHANNEL_SRC_PARAM TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CHANNEL_SRC_PARAM TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CLIENT_FILES TO ROLE RDB$ADMIN;
+GRANT SELECT ON CLIENT_FILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CLIENT_FILES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON COMPANY TO ROLE RDB$ADMIN;
+GRANT SELECT ON COMPANY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON COMPANY TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CONNECT_LOG TO ROLE RDB$ADMIN;
+GRANT SELECT ON CONNECT_LOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CONNECT_LOG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTLETTER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO ROLE ROLE_A4USER;
+GRANT SELECT ON CUSTOMER TO PROCEDURE FIND_FREE_LINKED_PORT;
 GRANT SELECT ON CUSTOMER TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ACCOUNTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_ACCOUNTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ACCOUNTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ATTRIBUTES TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_ATTRIBUTES TO ROLE ROLE_A4USER;
 GRANT SELECT ON CUSTOMER_BONUSES TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON CUSTOMER_BONUSES TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_BONUSES TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_BONUSES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_BONUSES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CHANNELS TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_CONTACTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_CONTACTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_DECODERS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DECODERS TO ROLE ROLE_A4USER;
+GRANT SELECT ON CUSTOMER_DOC TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_DOC TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON CUSTOMER_EQUIPMENT TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON CUSTOMER_EQUIPMENT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_EQUIPMENT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_FILES TO ROLE RDB$ADMIN;
+GRANT SELECT ON CUSTOMER_FILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER_FILES TO ROLE ROLE_A4USER;
 GRANT SELECT ON DAILY_FEE TO PROCEDURE CUSTOMER_BALANCE_DAILY;
+GRANT SELECT ON DAILY_FEE TO ROLE ROLE_A4READER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DAILY_FEE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DAYS_TARIF TO ROLE RDB$ADMIN;
+GRANT SELECT ON DAYS_TARIF TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DAYS_TARIF TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DECODER_PACKETS TO ROLE RDB$ADMIN;
+GRANT SELECT ON DECODER_PACKETS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DECODER_PACKETS TO ROLE ROLE_A4USER;
+GRANT SELECT ON DEVICES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DEVICES TO ROLE ROLE_A4USER;
+GRANT SELECT ON DEVPORTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DEVPORTS TO ROLE ROLE_A4USER;
+GRANT SELECT ON DEVPROFILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DEVPROFILES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISCOUNT_FACTOR TO ROLE RDB$ADMIN;
+GRANT SELECT ON DISCOUNT_FACTOR TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISCOUNT_FACTOR TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIBUTOR TO ROLE RDB$ADMIN;
+GRANT SELECT ON DISTRIBUTOR TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIBUTOR TO ROLE ROLE_A4USER;
+GRANT SELECT ON DISTRIB_CARDS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CARDS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON DISTRIB_CONTRACTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACTS TO ROLE ROLE_A4USER;
+GRANT SELECT ON DISTRIB_CONTRACT_CH TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_CH TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON DISTRIB_CONTRACT_REPORTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS TO ROLE ROLE_A4USER;
+GRANT SELECT ON DISTRIB_CONTRACT_REPORTS_CH TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DISTRIB_CONTRACT_REPORTS_CH TO ROLE ROLE_A4USER;
+GRANT SELECT ON DOC_LIST TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DOC_LIST TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO ROLE RDB$ADMIN;
+GRANT SELECT ON DVB_NETWORK TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_NETWORK TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAMS TO ROLE RDB$ADMIN;
+GRANT SELECT ON DVB_STREAMS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAMS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAM_CHANNELS TO ROLE RDB$ADMIN;
+GRANT SELECT ON DVB_STREAM_CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON DVB_STREAM_CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_AD TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD_CHANNELS TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_AD_CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_AD_CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_GENRE TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_GENRE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_GENRE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_LOCAL TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_LOCAL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_LOCAL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_MAPPING TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING_GENRE TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_MAPPING_GENRE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_MAPPING_GENRE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE RDB$ADMIN;
+GRANT SELECT ON EPG_SOURCES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE ROLE_A4USER;
+GRANT SELECT ON EQUIPMENT TO PROCEDURE FIND_FREE_LINKED_PORT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_ATTRIBUTES TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_ATTRIBUTES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_CMD_GRP TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT_CMD_GRP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_CMD_GRP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_COVERAGE TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT_COVERAGE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_COVERAGE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_DVB TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT_DVB TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_DVB TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_HISTORY TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT_HISTORY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_HISTORY TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_LOG TO ROLE RDB$ADMIN;
+GRANT SELECT ON EQUIPMENT_LOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT_LOG TO ROLE ROLE_A4USER;
+GRANT SELECT ON EVENT_DETAIL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EVENT_DETAIL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EXPORTTYPES TO ROLE RDB$ADMIN;
+GRANT SELECT ON EXPORTTYPES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EXPORTTYPES TO ROLE ROLE_A4USER;
+GRANT SELECT ON FREQPLAN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON FREQPLAN TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON GPS_LOG TO ROLE RDB$ADMIN;
+GRANT SELECT ON GPS_LOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON GPS_LOG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND TO ROLE RDB$ADMIN;
+GRANT SELECT ON HEADEND TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND_CHANNELS TO ROLE RDB$ADMIN;
+GRANT SELECT ON HEADEND_CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HEADEND_CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE TO ROLE RDB$ADMIN;
+GRANT SELECT ON HOUSE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLATS TO ROLE RDB$ADMIN;
+GRANT SELECT ON HOUSEFLATS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLATS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLOOR TO ROLE RDB$ADMIN;
+GRANT SELECT ON HOUSEFLOOR TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEFLOOR TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEPORCH TO ROLE RDB$ADMIN;
+GRANT SELECT ON HOUSEPORCH TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEPORCH TO ROLE ROLE_A4USER;
+GRANT SELECT ON HOUSES_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSES_ATTRIBUTES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO ROLE RDB$ADMIN;
+GRANT SELECT ON HOUSEWORKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSEWORKS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO ROLE RDB$ADMIN;
+GRANT SELECT ON HOUSE_CIRCUIT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON HOUSE_CIRCUIT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IBE$TODO TO PUBLIC;
+GRANT SELECT ON IBE$TODO TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IBE$TODO TO ROLE ROLE_A4USER;
 GRANT INSERT ON IBE$VERSION_HISTORY TO TRIGGER IBE$VERSION_HISTORY_BI;
+GRANT SELECT ON IBE$VERSION_HISTORY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IBE$VERSION_HISTORY TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO ROLE RDB$ADMIN;
+GRANT SELECT ON IPTV_GROUP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_ATTRIBUTES TO ROLE RDB$ADMIN;
+GRANT SELECT ON IPTV_GROUP_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_ATTRIBUTES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_CHANNELS TO ROLE RDB$ADMIN;
+GRANT SELECT ON IPTV_GROUP_CHANNELS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON IPTV_GROUP_CHANNELS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON JOURNAL TO ROLE RDB$ADMIN;
+GRANT SELECT ON JOURNAL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON JOURNAL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON LETTERTYPE TO ROLE RDB$ADMIN;
+GRANT SELECT ON LETTERTYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON LETTERTYPE TO ROLE ROLE_A4USER;
+GRANT SELECT ON MAP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP TO ROLE ROLE_A4USER;
+GRANT SELECT ON MAP_LOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP_LOG TO ROLE ROLE_A4USER;
+GRANT SELECT ON MAP_XY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP_XY TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO ROLE RDB$ADMIN;
+GRANT SELECT ON MATERIALS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO ROLE RDB$ADMIN;
+GRANT SELECT ON MATERIALS_GROUP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE RDB$ADMIN;
+GRANT SELECT ON MATERIALS_IN_DOC TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON MATERIALS_IN_DOC_UNIT TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON MATERIALS_IN_DOC_UNIT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC_UNIT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE RDB$ADMIN;
 GRANT SELECT ON MATERIALS_REMAIN TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
+GRANT SELECT ON MATERIALS_REMAIN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE ROLE_A4USER;
+GRANT SELECT ON MATERIAL_DOCS TO PROCEDURE GET_DOC_UNIT_INCOME;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE RDB$ADMIN;
+GRANT SELECT ON MATERIAL_DOCS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE ROLE_A4USER;
+GRANT SELECT ON MATERIAL_UNIT TO PROCEDURE GET_DOC_UNIT_INCOME;
 GRANT SELECT, UPDATE ON MATERIAL_UNIT TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT SELECT ON MATERIAL_UNIT TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
+GRANT SELECT ON MATERIAL_UNIT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_UNIT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO ROLE RDB$ADMIN;
+GRANT SELECT ON MESSAGES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGE_TPL TO ROLE RDB$ADMIN;
+GRANT SELECT ON MESSAGE_TPL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MESSAGE_TPL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MODULES TO ROLE RDB$ADMIN;
+GRANT SELECT ON MODULES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MODULES TO ROLE ROLE_A4USER;
 GRANT SELECT ON MONTHLY_FEE TO PROCEDURE CUSTOMER_BALANCE;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FEE TO ROLE RDB$ADMIN;
+GRANT SELECT ON MONTHLY_FEE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FEE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FREEZE TO ROLE RDB$ADMIN;
+GRANT SELECT ON MONTHLY_FREEZE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTHLY_FREEZE TO ROLE ROLE_A4USER;
 GRANT SELECT ON MONTH_NAME TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON MONTH_NAME TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO ROLE RDB$ADMIN;
+GRANT SELECT ON MONTH_NAME TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO ROLE ROLE_A4USER;
+GRANT SELECT ON NODES TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON NODES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES TO ROLE ROLE_A4USER;
+GRANT SELECT ON NODES_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES_ATTRIBUTES TO ROLE ROLE_A4USER;
+GRANT SELECT ON NODE_FILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FILES TO ROLE ROLE_A4USER;
+GRANT SELECT ON NODE_FLATS TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON NODE_FLATS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FLATS TO ROLE ROLE_A4USER;
+GRANT SELECT ON NODE_LAYOUT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_LAYOUT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO ROLE RDB$ADMIN;
+GRANT SELECT ON NPS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO ROLE ROLE_A4USER;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE_DAILY;
+GRANT SELECT ON OBJECTS TO PROCEDURE GET_DOC_UNIT_INCOME;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON OBJECTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE RDB$ADMIN;
+GRANT SELECT ON OBJECTS_COVERAGE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO ROLE RDB$ADMIN;
+GRANT SELECT ON OBJECTS_TYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OPERATION_LOG TO ROLE RDB$ADMIN;
+GRANT SELECT ON OPERATION_LOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OPERATION_LOG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORDERS_TP TO ROLE RDB$ADMIN;
+GRANT SELECT ON ORDERS_TP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORDERS_TP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORGANIZATION TO ROLE RDB$ADMIN;
+GRANT SELECT ON ORGANIZATION TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON ORGANIZATION TO ROLE ROLE_A4USER;
 GRANT SELECT ON OTHER_FEE TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON OTHER_FEE TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT SELECT, UPDATE ON OTHER_FEE TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OTHER_FEE TO ROLE RDB$ADMIN;
+GRANT SELECT ON OTHER_FEE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OTHER_FEE TO ROLE ROLE_A4USER;
 GRANT SELECT ON PAYMENT TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON PAYMENT TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT TO ROLE RDB$ADMIN;
+GRANT SELECT ON PAYMENT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_DELETED TO ROLE RDB$ADMIN;
+GRANT SELECT ON PAYMENT_DELETED TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_DELETED TO ROLE ROLE_A4USER;
+GRANT SELECT ON PAYMENT_HOLD TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYMENT_HOLD TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYSOURCE TO ROLE RDB$ADMIN;
+GRANT SELECT ON PAYSOURCE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAYSOURCE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_DOC TO ROLE RDB$ADMIN;
+GRANT SELECT ON PAY_DOC TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_DOC TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_ERRORS TO ROLE RDB$ADMIN;
+GRANT SELECT ON PAY_ERRORS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PAY_ERRORS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERSONAL_TARIF TO ROLE RDB$ADMIN;
+GRANT SELECT ON PERSONAL_TARIF TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERSONAL_TARIF TO ROLE ROLE_A4USER;
+GRANT SELECT ON PERS_TARIF_TMP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERS_TARIF_TMP TO ROLE ROLE_A4USER;
+GRANT SELECT ON PORT TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON PORT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PORT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PREPAY_DETAIL TO ROLE RDB$ADMIN;
+GRANT SELECT ON PREPAY_DETAIL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PREPAY_DETAIL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PROFILES TO ROLE RDB$ADMIN;
+GRANT SELECT ON PROFILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PROFILES TO ROLE ROLE_A4USER;
+GRANT SELECT ON QRATING TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QRATING TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO ROLE RDB$ADMIN;
+GRANT SELECT ON QUEUE_SWITCH_SRV TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RATES TO ROLE RDB$ADMIN;
+GRANT SELECT ON RATES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RATES TO ROLE ROLE_A4USER;
+GRANT SELECT ON RAYON TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RAYON TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE TO ROLE RDB$ADMIN;
+GRANT SELECT ON RECOURSE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE_TEMPLATES TO ROLE RDB$ADMIN;
+GRANT SELECT ON RECOURSE_TEMPLATES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON RECOURSE_TEMPLATES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REMINDER TO ROLE RDB$ADMIN;
+GRANT SELECT ON REMINDER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REMINDER TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON REPORTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_EXECUTORS TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_EXECUTORS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_EXECUTORS TO ROLE ROLE_A4USER;
+GRANT SELECT ON REQUEST_FLATS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_FLATS TO ROLE ROLE_A4USER;
 GRANT SELECT ON REQUEST_MATERIALS TO FUNCTION GET_REQUEST_MONEY;
 GRANT SELECT, UPDATE ON REQUEST_MATERIALS TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE ON REQUEST_MATERIALS TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
+GRANT SELECT ON REQUEST_MATERIALS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON REQUEST_MATERIALS_RETURN TO PROCEDURE MATERIAL_CHANGE_SN;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_MATERIALS_RETURN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE ROLE_A4USER;
+GRANT SELECT ON REQUEST_MSG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MSG TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_PHOTOS TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_PHOTOS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_PHOTOS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_RESULTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_RESULTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_RESULTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TEMPLATES TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_TEMPLATES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TEMPLATES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TYPES TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_TYPES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_TYPES TO ROLE ROLE_A4USER;
 GRANT SELECT ON REQUEST_WORKS TO FUNCTION GET_REQUEST_MONEY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO ROLE RDB$ADMIN;
+GRANT SELECT ON REQUEST_WORKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO ROLE ROLE_A4USER;
 GRANT SELECT ON SERVICES TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON SERVICES TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT SELECT ON SERVICES TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO ROLE RDB$ADMIN;
+GRANT SELECT ON SERVICES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_ATTRIBUTES TO ROLE RDB$ADMIN;
+GRANT SELECT ON SERVICES_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_ATTRIBUTES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO ROLE RDB$ADMIN;
+GRANT SELECT ON SERVICES_CMPLX TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SERVICES_LINKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE ROLE_A4USER;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_TYPE TO ROLE RDB$ADMIN;
+GRANT SELECT ON SERVICES_TYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_TYPE TO ROLE ROLE_A4USER;
 GRANT SELECT ON SETTINGS TO PROCEDURE API_GET_CUSTOMER_BALANCE;
+GRANT SELECT ON SETTINGS TO FUNCTION GET_SETTING_VALUE;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SETTINGS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SETTINGS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SETTINGS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SINGLE_SERV TO ROLE RDB$ADMIN;
+GRANT SELECT ON SINGLE_SERV TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SINGLE_SERV TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STAT_IP TO ROLE RDB$ADMIN;
+GRANT SELECT ON STAT_IP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STAT_IP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET TO ROLE RDB$ADMIN;
+GRANT SELECT ON STREET TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET_TYPE TO ROLE RDB$ADMIN;
+GRANT SELECT ON STREET_TYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON STREET_TYPE TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBAREA TO ROLE RDB$ADMIN;
+GRANT SELECT ON SUBAREA TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBAREA TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SUBDIVISIONS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO ROLE ROLE_A4USER;
 GRANT SELECT ON SUBSCR_HIST TO FUNCTION CHECK_CUSTOMER_SERVICE;
 GRANT SELECT ON SUBSCR_HIST TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO ROLE RDB$ADMIN;
+GRANT SELECT ON SUBSCR_HIST TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO ROLE ROLE_A4USER;
 GRANT SELECT ON SUBSCR_SERV TO FUNCTION CHECK_CUSTOMER_SERVICE;
 GRANT SELECT ON SUBSCR_SERV TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO ROLE RDB$ADMIN;
+GRANT SELECT ON SUBSCR_SERV TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$GROUP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP_RIGHTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$GROUP_RIGHTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$GROUP_RIGHTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$RIGHTS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$RIGHTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$RIGHTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$USER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_AREAS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$USER_AREAS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_AREAS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_GROUPS TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$USER_GROUPS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_GROUPS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO ROLE RDB$ADMIN;
+GRANT SELECT ON SYS$USER_WH TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO ROLE RDB$ADMIN;
+GRANT SELECT ON TARIF TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO ROLE ROLE_A4USER;
+GRANT SELECT ON TASKLIST TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKLIST TO ROLE ROLE_A4USER;
+GRANT SELECT ON TASKMSG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKMSG TO ROLE ROLE_A4USER;
+GRANT SELECT ON TASKUSER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TASKUSER TO ROLE ROLE_A4USER;
+GRANT SELECT ON TMP_COL TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMP_COL TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO ROLE RDB$ADMIN;
+GRANT SELECT ON TQUEUE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO ROLE ROLE_A4USER;
+GRANT SELECT ON TV_LAN TO PROCEDURE FIND_FREE_LINKED_PORT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO ROLE RDB$ADMIN;
+GRANT SELECT ON TV_LAN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN_PACKETS TO ROLE RDB$ADMIN;
+GRANT SELECT ON TV_LAN_PACKETS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN_PACKETS TO ROLE ROLE_A4USER;
+GRANT SELECT ON UNIT_PORT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON UNIT_PORT TO ROLE ROLE_A4USER;
+GRANT SELECT ON UNIT_TMP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON UNIT_TMP TO ROLE ROLE_A4USER;
+GRANT SELECT ON UNIT_TMP_SRV TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON UNIT_TMP_SRV TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VLANS TO ROLE RDB$ADMIN;
+GRANT SELECT ON VLANS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VLANS TO ROLE ROLE_A4USER;
+GRANT SELECT ON VPN_SESSIONS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON VPN_SESSIONS TO ROLE ROLE_A4USER;
+GRANT SELECT ON V_ADRESS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ADRESS TO ROLE ROLE_A4USER;
+GRANT SELECT ON V_ALL_IP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_IP TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_MAC TO ROLE RDB$ADMIN;
+GRANT SELECT ON V_ALL_MAC TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ALL_MAC TO ROLE ROLE_A4USER;
+GRANT SELECT ON V_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ATTRIBUTES TO ROLE ROLE_A4USER;
+GRANT SELECT ON V_CUSTOMER_ATTRIBUTES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_CUSTOMER_ATTRIBUTES TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ORDER_CREATOR TO ROLE RDB$ADMIN;
+GRANT SELECT ON V_ORDER_CREATOR TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ORDER_CREATOR TO ROLE ROLE_A4USER;
+GRANT SELECT ON V_PAYMENTTYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_PAYMENTTYPE TO ROLE ROLE_A4USER;
+GRANT SELECT ON WIRE TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON WIRE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WIRE TO ROLE ROLE_A4USER;
+GRANT SELECT ON WIRE_POINT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WIRE_POINT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREA TO ROLE RDB$ADMIN;
+GRANT SELECT ON WORKAREA TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREA TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREALIMIT TO ROLE RDB$ADMIN;
+GRANT SELECT ON WORKAREALIMIT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKAREALIMIT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKER TO ROLE RDB$ADMIN;
+GRANT SELECT ON WORKER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKER TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE RDB$ADMIN;
+GRANT SELECT ON WORKGROUPS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE RDB$ADMIN;
+GRANT SELECT ON WORKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE ROLE_A4USER;
 GRANT ROLE_A4USER TO APOG;
+GRANT ROLE_A4USER TO MIRONOVA;
 GRANT ROLE_A4USER TO NA;
 GRANT ROLE_A4USER TO S1;
 GRANT ROLE_A4USER TO S2;
@@ -26332,13 +27684,18 @@ GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE_VAT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE_VAT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_BALANCE TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_BALANCE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_BALANCE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE API_GET_NEW_ACCOUNT TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE API_GET_NEW_ACCOUNT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_GET_SERVICES TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE API_GET_SERVICES TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE API_GET_SERVICES TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_REMAIN_DAYS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_REQUEST_CLOSE TO ROLE RDB$ADMIN;
@@ -26412,6 +27769,7 @@ GRANT EXECUTE ON PROCEDURE CARDS_PREPAY_GENERATE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CHANGE_AUTOBLOCK_OFF TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CHANGE_AUTOBLOCK_OFF TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CHANGE_CH_TO_CH TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE CHANGE_OFF_TO_AUTOBLOCK TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CHANGE_TO_NEGATIVE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CHANGE_TO_POSITIVE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CHANNELS_DEL TO ROLE RDB$ADMIN;
@@ -26484,12 +27842,15 @@ GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EXPLODE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXPLODE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO PROCEDURE FIND_FREE_LINKED_PORT;
 GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EXTRACT_ALL_DIGITS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXTRACT_ALL_DIGITS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EXTRACT_NUMBER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXTRACT_NUMBER TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE FIND_FREE_LINKED_PORT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE FIND_IP_INFO TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE FIX_PORT_CONNECT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE FORMAT_DATE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE FORMAT_MAC TO ROLE ROLE_A4USER;
@@ -26499,68 +27860,108 @@ GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GEN_PASSWORD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GETSERVICESTOSWITCH TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GETSERVICESTOSWITCH TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GETSERVICESTOSWITCH TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_ACTIVE_DAYS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_ACTIVE_DAYS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_ALL_REPORTS TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_ALL_REPORTS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_ALL_REPORTS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_CONNECTED_DAYS TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_CONNECTED_DAYS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_CONNECTED_DAYS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CHANNELS TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CHANNELS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CHANNELS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CODE TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CODE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CODE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CURRENT_SRV TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CURRENT_SRV TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_CUSTOMER_CURRENT_SRV TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_DAYS_TOTAL TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_DAYS_TOTAL TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE_CID TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE_CID TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_DEBT_START_DATE_CID TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_DISTANCE TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_DISTANCE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_DISTANCE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_DOC_UNIT_INCOME TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON PROCEDURE GET_DOC_UNIT_INCOME TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_EPG TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_EPG TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_EPG TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_EPG_APART TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_EPG_APART TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_FLOOR TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_FLOOR TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FLOOR TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP_CUSTOMER TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP_CUSTOMER TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_INET_IP_CUSTOMER TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_FREE_IP TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_IP TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_VLAN_IP TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_FREE_VLAN_IP TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FREE_VLAN_IP TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_FULLNAME_ALLREPORTS TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_FULLNAME_ALLREPORTS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FULLNAME_ALLREPORTS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_FULLNAME_REPORT TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_FULLNAME_REPORT TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_FULLNAME_REPORT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_NODE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_NODE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_REQUEST TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MAT_FOR_REQUEST TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_MAT_GIVE_OUT TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MAT_GIVE_OUT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_MAT_TAKE_IN TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MAT_TAKE_IN TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_MAX_INET_IP TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_MAX_INET_IP TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MAX_INET_IP TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_NODE_FLAT_LVL TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_NODE_FLAT_LVL TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_PORCH TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_PORCH TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_PORCH TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_RECOMMENDED_PREPAY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_RECOMMENDED_PREPAY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_REPORT_ID TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_REPORT_ID TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_REPORT_ID TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_REQUEST_BUSY_DAYS TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_REQUEST_BUSY_DAYS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_REQUEST_BUSY_DAYS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_REQUEST_FREEDAY TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_REQUEST_FREEDAY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_REQUEST_FREEDAY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_SERVICES_FOR_IP TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_SERVICES_FOR_IP TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO ROLE RDB$ADMIN;
+GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_STATISTICS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_STATISTICS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO ROLE ROLE_A4USER;
@@ -26622,6 +28023,9 @@ GRANT EXECUTE ON PROCEDURE PAYMENT_SPLIT_INSERT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PAYMENT_SPLIT_INSERT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE PREPAYEXPIRE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE PREPAYEXPIRE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE PREPAY_EXPIRE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE PROMO_ADD TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE PROMO_CHECK TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE QUEUE_SWITCH_CANCEL TO ROLE RDB$ADMIN;
@@ -26688,8 +28092,25 @@ GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION CHECK_CUSTOMER_SERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION DISTANCE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION ESCAPE_STRING TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION FORMAT_CURRENCY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_MASK TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_MASK TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_RANGE TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_RANGE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_NEW_ACCOUNT TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_NEW_ACCOUNT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SETTING_VALUE TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_SETTING_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION INET_ATON TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION INET_NTOA TO ROLE ROLE_A4USER;
@@ -26698,7 +28119,9 @@ GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION NUMBER_AS_STR TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION ONLY_DIGITS TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION WHERE_IS_IP TO ROLE ROLE_A4USER;
 GRANT USAGE ON SEQUENCE GEN_ACCOUNT_NO TO PUBLIC;
 GRANT USAGE ON SEQUENCE GEN_ACCOUNT_NO TO ROLE ROLE_A4USER;
 GRANT USAGE ON SEQUENCE GEN_APPLIANCE_UID TO ROLE ROLE_A4USER;
@@ -26838,7 +28261,9 @@ COMMENT ON    COLUMN    CARDS_SERIALS.CS_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    CARDS_SERIALS.CS_SOURCE_ID IS 'Для полей ссылок которые могут содержать Null';
 COMMENT ON TABLE        CHANGELOG IS 'Журнал изменений';
 COMMENT ON    COLUMN    CHANGELOG.LOG_ID IS 'FOR PRIMARY KEYS';
-COMMENT ON    COLUMN    CHANGELOG.OBJECT_ID IS 'FOR PRIMARY KEYS';
+COMMENT ON    COLUMN    CHANGELOG.LOG_GROUP IS 'таблица изменений';
+COMMENT ON    COLUMN    CHANGELOG.OBJECT_TYPE IS '0 - абонент, 1 - оборудование';
+COMMENT ON    COLUMN    CHANGELOG.OBJECT_ID IS 'id абонента или оборудования';
 COMMENT ON TABLE        CHANNELS IS 'ТВ каналы';
 COMMENT ON    COLUMN    CHANNELS.CH_NUMBER IS 'номер в аналаге';
 COMMENT ON    COLUMN    CHANNELS.CH_NAME IS 'название канала';
@@ -27193,6 +28618,7 @@ COMMENT ON    COLUMN    EQUIPMENT.EQ_DELIVERY_COST IS 'Стоимость на �
 COMMENT ON    COLUMN    EQUIPMENT.EQ_REGNUBER IS 'Инвентарный номер';
 COMMENT ON    COLUMN    EQUIPMENT.NODE_ID IS 'ID узла';
 COMMENT ON    COLUMN    EQUIPMENT.M_ID IS 'ID материала';
+COMMENT ON    COLUMN    EQUIPMENT.SYSNAME IS 'Служебное имя, используется в скриптах';
 COMMENT ON TABLE        EQUIPMENT_ATTRIBUTES IS 'Атрибуты аоборудования';
 COMMENT ON TABLE        EQUIPMENT_CMD_GRP IS 'Связка КОММАНДА - ТИП ОБОРУДОВАНИЯ';
 COMMENT ON    COLUMN    EQUIPMENT_CMD_GRP.EC_ID IS 'Код комманды';
@@ -27633,6 +29059,7 @@ COMMENT ON    COLUMN    RATES.RDATE IS 'Дата курса';
 COMMENT ON    COLUMN    RATES.CUR IS 'Валюта';
 COMMENT ON    COLUMN    RATES.USD IS 'Доллар';
 COMMENT ON    COLUMN    RATES.EUR IS 'Евро';
+COMMENT ON    COLUMN    RATES.RUR IS 'Рос.руб.';
 COMMENT ON TABLE        RECOURSE IS 'Обращения абонентов (звонки)';
 COMMENT ON    COLUMN    RECOURSE.RC_ID IS 'ID обращения';
 COMMENT ON    COLUMN    RECOURSE.RC_TYPE IS 'Тип обращения';
@@ -27700,6 +29127,7 @@ COMMENT ON    COLUMN    REQUEST.NODE_ID IS 'ID узла';
 COMMENT ON    COLUMN    REQUEST.PARENT_RQ IS 'Заявка - родитель';
 COMMENT ON TABLE        REQUEST_EXECUTORS IS 'Исполнители заявок';
 COMMENT ON TABLE        REQUEST_FLATS IS 'Поквартирный результат заявки для узла';
+COMMENT ON    COLUMN    REQUEST_FLATS.TAG IS 'Цифровое поле для нужд оператора';
 COMMENT ON TABLE        REQUEST_MATERIALS IS 'Материалы для заявки';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.M_ID IS 'Код материала';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.WH_ID IS 'Склад';
@@ -27805,7 +29233,8 @@ COMMENT ON    COLUMN    SERVICES.CALC_TYPE IS 'Поле способа расч�
 2 - ежедневное начисление
 3 - Фиксированная сумма
 4 - Доначисления. Проверяем разовую услуги и если она меньше тарифа, доначислим разницу.
-5 - ежедневное начисление. С учетом дня включения, т.е. если выключена в день включения - считаем.';
+5 - ежедневное начисление. С учетом дня включения, т.е. если выключена в день включения - считаем.
+6 - ежедневное (считаем 30 дней в месяце)';
 COMMENT ON    COLUMN    SERVICES.USAGE IS 'Частота использования услуги';
 COMMENT ON    COLUMN    SERVICES.AUTOOFF IS 'Отключать ли услугу при недостатке средств';
 COMMENT ON    COLUMN    SERVICES.EXPENSE_TYPE IS 'Начисления абонплата - 0, подключение - 1';
@@ -27847,7 +29276,6 @@ COMMENT ON    COLUMN    SERVICES_LINKS.SWITCH_TIME IS 'Когда переклю
 0 - В любое время
 1 - Начало суток
 2 - Начало месяца';
-COMMENT ON TABLE        SERVICES_TYPE IS 'Вид услуг';
 COMMENT ON TABLE        SETTINGS IS 'Настройки';
 COMMENT ON    COLUMN    SETTINGS.VAR_TYPE IS 'ftString, ftFixedChar, ftWideString,
 ftSmallint, ftInteger, ftLargeint, ftWord, ftFloat, ftCurrency,
@@ -27910,7 +29338,7 @@ COMMENT ON TABLE        SYS$GROUP IS 'Группы пользователей';
 COMMENT ON    COLUMN    SYS$GROUP.ALL_REPORTS IS 'Доступ ко всем отчетам';
 COMMENT ON    COLUMN    SYS$GROUP.ALL_MODULES IS 'Доступ ко всем модулям';
 COMMENT ON TABLE        SYS$GROUP_RIGHTS IS 'Права для груп пользователей';
-COMMENT ON    COLUMN    SYS$GROUP_RIGHTS.RIGHTS_TYPE IS '0-разрешение 1-отчет 2-модуль';
+COMMENT ON    COLUMN    SYS$GROUP_RIGHTS.RIGHTS_TYPE IS '0-разрешение 1-отчет 2-модуль 3-тип заявки';
 COMMENT ON    COLUMN    SYS$GROUP_RIGHTS.RIGHT_ID IS 'ИД разрешения или отчета или модуля';
 COMMENT ON TABLE        SYS$RIGHTS IS 'Права доступа сиситемы';
 COMMENT ON TABLE        SYS$USER IS 'Пользователи системы';
@@ -28087,6 +29515,7 @@ COMMENT ON    COLUMN    WORKER.TEAM IS 'Звено';
 COMMENT ON    COLUMN    WORKER.WA_ID IS 'Участок пользователя';
 COMMENT ON    COLUMN    WORKER.PRINT_FIO IS 'Фио в родительном падеже';
 COMMENT ON    COLUMN    WORKER.PRINT_TEXT IS 'Доп поле для печать в документах';
+COMMENT ON    COLUMN    WORKER.PLATFORM IS '5 - Android 6 -iOS';
 COMMENT ON    COLUMN    WORKER.H_RATE IS 'часовая ставка';
 COMMENT ON    COLUMN    WORKER.MESSENGER IS 'Telega/Viber/WhatsApp/Skype и т.д.';
 COMMENT ON TABLE        WORKGROUPS IS 'Звенья обслуживания';
@@ -28111,6 +29540,8 @@ COMMENT ON    COLUMN    WORKS.AS_SERVICE IS 'Работа равна услуг�
 COMMENT ON    COLUMN    WORKS.ON_DEFAULT IS 'при выбое типа заявок, добавлять работу в заявку';
 COMMENT ON    COLUMN    WORKS.W_ONOFF IS 'Периодическую услугу вкл или отключать';
 COMMENT ON VIEW         RAYON IS 'УДАЛИТЬ. непонтяно что это и кто создал. позже удалю';
+COMMENT ON VIEW         SERVICES_TYPE IS 'замена таблицы SERVICES_TYPE';
+COMMENT ON VIEW         V_ADRESS IS 'устаревшее. может быть удалено в любой момент';
 COMMENT ON VIEW         V_ALL_IP IS 'Все IP адреса системы';
 COMMENT ON VIEW         V_ALL_MAC IS 'Все MAC адреса системы';
 COMMENT ON PROCEDURE    ADD_CUSTOMER IS 'Добавление абонента с минимальным набором данных.';
@@ -28140,6 +29571,11 @@ COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAY_TIME IS 'Да
 COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAYSOURCE_ID IS 'Источник платежа';
 COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.EXT_SYSTEMS_ID IS 'ИД платежа во внешней системе';
 COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.NOTICE IS 'Примечание';
+COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAY_TYPE_STR IS 'Способ оплаты CASH, CARD: XXX, WEB, и т.д.';
+COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.CMSN IS 'Сумма комиссии';
+COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.TAG IS 'Текстовое поле, для целей оператора';
+COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAYMENT_ID IS 'Вернет ИД платежа или ошибку, если < 0';
+COMMENT ON    PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.IS_DELETED IS 'Платеж в удаленных или нет (1,0)';
 COMMENT ON PROCEDURE    ADD_PAYMENT_SRC_ACCOUNT IS 'Добавляет платеж абоненту.
 платеж заносится в платежный документ с источником src и датой платежа';
 COMMENT ON PROCEDURE    ADD_PAYMENT_SRC_CUSTID IS 'Добавление платежа абоненту.
@@ -28246,6 +29682,7 @@ COMMENT ON PROCEDURE    CARDS_PREPAY_ACTIVATE IS 'Активация карты 
 COMMENT ON PROCEDURE    CARDS_PREPAY_GENERATE IS 'Генерация карт оплат';
 COMMENT ON PROCEDURE    CHANGE_AUTOBLOCK_OFF IS 'Замена услуги автоблокировка на другую услугу отключения';
 COMMENT ON PROCEDURE    CHANGE_CH_TO_CH IS 'Замена параметров одного канала на другой в указанных сетях';
+COMMENT ON PROCEDURE    CHANGE_OFF_TO_AUTOBLOCK IS 'Замена услуги отключения на автоблокировку';
 COMMENT ON PROCEDURE    CHANGE_TO_NEGATIVE IS 'Выполняем когда у абонента баланс отрицательный и он больше долга визуализации';
 COMMENT ON PROCEDURE    CHANGE_TO_POSITIVE IS 'Выполняем когда у абонента сменился баланс на положительный';
 COMMENT ON PROCEDURE    CHANNELS_DEL IS 'Процедура удаления каналов. Не удаляет если канал где-то задйствован';
@@ -28300,8 +29737,12 @@ COMMENT ON PROCEDURE    EPG_ADD IS 'Добавление программы пе
 COMMENT ON PROCEDURE    EPG_ADD_BY_SC IS 'Добавим EPG по ID источника и коду канала из источника. так как одному коду может соответствовать несколько каналов';
 COMMENT ON PROCEDURE    EXPLODE IS 'Аналог функции EXPLODE PHP (разбивает строку 1,2,3 на записи три записи 1 2 3)';
 COMMENT ON PROCEDURE    EXPLODE_NO_EMPTY IS 'Аналог функции EXPLODE PHP но не возвращает пустые строки';
+COMMENT ON PROCEDURE    EXTRACT_ALL_DIGITS IS 'устарело, используйте ONLY_DIGITS(A_VALUE)
+Удаляет все кроме чисел в строке';
 COMMENT ON PROCEDURE    EXTRACT_NUMBER IS 'Извлекает из строки цифры до первого не цифрового символа.
 например 17/2 - 17';
+COMMENT ON PROCEDURE    FIND_FREE_LINKED_PORT IS 'Находим свободные порты оборудования с линией связи для абонента';
+COMMENT ON PROCEDURE    FIND_IP_INFO IS 'Ищет информацию по IP адресу.';
 COMMENT ON PROCEDURE    FIX_PORT_CONNECT IS 'исправляем иноформацию порта по подключению к абоненту/устройству';
 COMMENT ON PROCEDURE    FORMAT_DATE IS 'Вывод даты согласно формату:
 D — день без лидирующего пробела
@@ -28349,6 +29790,7 @@ COMMENT ON    PROCEDURE PARAMETER GET_DEBT_START_DATE_CID.DEBT_DATE IS 'Дата
 COMMENT ON    PROCEDURE PARAMETER GET_DEBT_START_DATE_CID.DEBT IS 'Долг на дату начала дога';
 COMMENT ON PROCEDURE    GET_DISTANCE IS 'Позволяет вычислить расстояние в метрах между двумя геоточками WGS84';
 COMMENT ON    PROCEDURE PARAMETER GET_DISTANCE.DISTANCE_METER IS 'Дистанция в метрах';
+COMMENT ON PROCEDURE    GET_DOC_UNIT_INCOME IS 'Поиск документа прихода для серийника';
 COMMENT ON PROCEDURE    GET_EPG IS 'Выборка EPG ult описание включает все поля';
 COMMENT ON PROCEDURE    GET_EPG_APART IS 'Выборка EPG раздельно по всем полям';
 COMMENT ON PROCEDURE    GET_FREE_INET_IP IS 'Выдает первый свободный IP для определенного тарифного плана';
@@ -28413,6 +29855,19 @@ COMMENT ON PROCEDURE    ONOFF_SERVICE IS 'Процедура подключен�
 COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE.RECALC IS 'Пересчитывать ли абонента после добавления';
 COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE.ADD_SGL IS 'Добавлять ли разовую услугу абоненту';
 COMMENT ON PROCEDURE    ONOFF_SERVICE_BY_ID IS 'включение/отключение абоненту услуги по ее ID';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_CUSTOMER_ID IS 'ID абонента';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_SERVICE_ID IS 'ID периодич. услуги подключаемой/отключаемой';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_ACTSERVICE IS 'ID разоваой услуги подключения/отключения';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_DATE IS 'Дата операции';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_OFF IS '1 - отключаем, 0 - подключаем';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_NOTICE IS 'Примечание';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_UNITS IS 'количестово шт./денег для услуги подключения';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.RECALC IS 'Нужно ли пересчитывать абонента 1-да, 0 - нет';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.ADD_SGL IS 'Добавлять ли разовую услуга подкл/откл. абоненту';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.WORKER IS 'Кто подключил';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.RQ_ID IS 'номер заявки подключения';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_CONTRACT IS 'номер договора';
+COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE_BY_ID.P_CONTRACT_DATE IS 'дата договора';
 COMMENT ON PROCEDURE    ONOFF_SERVICE_FOR_GROUP IS 'Процедура включения/отключения услуг. создана специально для групповых операций';
 COMMENT ON PROCEDURE    OPEN_MATERIAL_DOC IS 'Процедура отмены закрытия документа движения материалов.';
 COMMENT ON PROCEDURE    PAYMENT_ADD_FROM_EXT_SYSTEMS IS 'Добавить платеж из внешних источников с проверкой на существование этого номера';
@@ -28477,8 +29932,15 @@ COMMENT ON TRIGGER      CUSTOMER_BU1 IS 'Триггер срабатывает �
 COMMENT ON TRIGGER      TR_ON_CONNECT IS 'Выполняем при входе в систему пользователя';
 COMMENT ON FUNCTION     CHECK_CUSTOMER_SERVICE IS 'Функция проверки была ли услуга подключена абоненту';
 COMMENT ON FUNCTION     ESCAPE_STRING IS 'экранирование строк для json';
+COMMENT ON FUNCTION     FORMAT_CURRENCY IS 'Форматирование числа с разделителями тысяч и дробиной части
+TS ThousandSeparator;
+DS DecimalSeparator;';
+COMMENT ON FUNCTION     GET_FREE_IP_BY_MASK IS 'находит первый свободный IP по маске';
 COMMENT ON FUNCTION     GET_JSON_VALUE IS 'Извлечь значение парматра из json строки';
+COMMENT ON FUNCTION     GET_NEW_ACCOUNT IS 'Возвращает новый номер лицевого. делаеет 1000 попыток найти свободный номер, если не найдет, то выдает null';
 COMMENT ON FUNCTION     GET_REQUEST_MONEY IS 'Возврат начислений по заявке';
+COMMENT ON FUNCTION     GET_SETTING_INT_VALUE IS 'Возвращает числовой параметр настройки';
+COMMENT ON FUNCTION     GET_SETTING_VALUE IS 'Возвращает строковый параметр настройки';
 COMMENT ON FUNCTION     INET_ATON IS 'переводит строковое представление IPv4 в двоичное';
 COMMENT ON FUNCTION     INET_NTOA IS 'переводит двоичное представление IPv4 в строковое';
 COMMENT ON FUNCTION     MAC_FORMAT IS 'Форматирование MAC разделитель :';
@@ -28486,3 +29948,9 @@ COMMENT ON FUNCTION     MONTH_FIRST_DAY IS 'первое число месяца
 COMMENT ON FUNCTION     MONTH_LAST_DAY IS 'Последнее число месяц';
 COMMENT ON FUNCTION     NUMBER_AS_STR IS 'число в строку';
 COMMENT ON FUNCTION     ONLY_DIGITS IS 'Возвращает только цифры из переданной строки, если цифр нет возвращает пустую строку';
+COMMENT ON FUNCTION     WHERE_IS_IP IS 'Проверяем где используеться IP
+0 - оборудование
+1 - абонент
+2 - где-то
+3 - Интеренет биллинг
+4 - Черный список';

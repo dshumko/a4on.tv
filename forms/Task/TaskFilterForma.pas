@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.DBCtrls, Vcl.ComCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh,
+  DBGridEh;
 
 type
   TTaskFilterForm = class(TForm)
@@ -84,26 +85,26 @@ procedure TTaskFilterForm.SaveFilter(const filename: string);
 var
   s: string;
 begin
-  if Length(filename) = 0
-  then exit;
+  if Length(filename) = 0 then
+    exit;
   s := A4MainForm.GetUserFilterFolder + filename + '.rf';
-  if srcFilter.DataSet.State in [dsEdit, dsInsert]
-  then srcFilter.DataSet.post;
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
   DatasetToINI(srcFilter.DataSet, s);
 end;
 
 procedure TTaskFilterForm.btnAndClick(Sender: TObject);
 begin
-  if srcFilter.DataSet.State in [dsEdit, dsInsert]
-  then srcFilter.DataSet.post;
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
   srcFilter.DataSet.Append;
   srcFilter.DataSet['next_condition'] := 1;
 end;
 
 procedure TTaskFilterForm.btnORClick(Sender: TObject);
 begin
-  if srcFilter.DataSet.State in [dsEdit, dsInsert]
-  then srcFilter.DataSet.post;
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
   srcFilter.DataSet.Append;
   srcFilter.DataSet['next_condition'] := 0;
 end;
@@ -111,8 +112,8 @@ end;
 procedure TTaskFilterForm.btnLoadClick(Sender: TObject);
 begin
   dlgOpen.InitialDir := A4MainForm.GetUserFilterFolder;
-  if dlgOpen.Execute
-  then DatasetFromINI(srcFilter.DataSet, dlgOpen.filename);
+  if dlgOpen.Execute then
+    DatasetFromINI(srcFilter.DataSet, dlgOpen.filename);
 end;
 
 procedure TTaskFilterForm.btnSaveClick(Sender: TObject);
@@ -120,35 +121,37 @@ var
   filename: string;
 begin
   filename := InputBox(rsInputFilterName, rsTitle, rsFilter);
-  if Length(filename) = 0
-  then exit;
+  if Length(filename) = 0 then
+    exit;
   SaveFilter(rsTaskFilter + filename);
 end;
 
 procedure TTaskFilterForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if dsExecutor.Active
-  then dsExecutor.Close;
+  if dsExecutor.Active then
+    dsExecutor.Close;
 end;
 
 procedure TTaskFilterForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN)
-  then actOkExecute(Sender);
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
+    actOkExecute(Sender);
 end;
 
 procedure TTaskFilterForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: boolean;
 begin
-  if (Key = #13)
-  then begin
+  if (Key = #13) then
+  begin
     go := true;
-    if (ActiveControl is TDBLookupComboboxEh)
-    then go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+    if (ActiveControl is TDBLookupComboboxEh) then
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible;
 
-    if go
-    then begin
+    if go then
+    begin
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -160,16 +163,15 @@ begin
   chkAllUsers.Visible := dmMain.AllowedAction(rght_Tasks_All);
 
   dsExecutor.Open;
-  if srcFilter.DataSet.RecordCount > 1
-  then srcFilter.DataSet.First;
+  if srcFilter.DataSet.RecordCount > 1 then
+    srcFilter.DataSet.First;
 end;
 
 procedure TTaskFilterForm.luWorkEnter(Sender: TObject);
 begin
-  if (Sender is TDBLookupComboboxEh)
-  then begin
-    if not(Sender as TDBLookupComboboxEh).ListSource.DataSet.Active
-    then
+  if (Sender is TDBLookupComboboxEh) then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListSource.DataSet.Active then
       (Sender as TDBLookupComboboxEh).ListSource.DataSet.Open;
 
   end;
@@ -178,24 +180,27 @@ end;
 
 procedure TTaskFilterForm.SpeedButton3Click(Sender: TObject);
 begin
-  with srcFilter.DataSet do begin
-    if Active
-    then begin
+  with srcFilter.DataSet do
+  begin
+    if Active then
+    begin
       DisableControls;
       Close;
       Open;
       (srcFilter.DataSet as TmemTableEh).EmptyTable;
       EnableControls;
     end
-    else Open;
+    else
+      Open;
   end;
 end;
 
 procedure TTaskFilterForm.srcFilterDataChange(Sender: TObject; Field: TField);
 begin
-  if srcFilter.DataSet['next_condition'] = 0
-  then lblOrAND.Caption := rsOR
-  else lblOrAND.Caption := rsAND;
+  if srcFilter.DataSet['next_condition'] = 0 then
+    lblOrAND.Caption := rsOR
+  else
+    lblOrAND.Caption := rsAND;
   lblOrAND.Visible := srcFilter.DataSet.RecNo > 1;
 end;
 
@@ -204,9 +209,10 @@ var
   d1, d2: TDate;
 begin
   if (not srcFilter.DataSet.FieldByName('PLAN_FROM').IsNull and not srcFilter.DataSet.FieldByName('PLAN_TO').IsNull)
-  then begin
-    if (srcFilter.DataSet['PLAN_FROM'] > srcFilter.DataSet['PLAN_TO'])
-    then begin
+  then
+  begin
+    if (srcFilter.DataSet['PLAN_FROM'] > srcFilter.DataSet['PLAN_TO']) then
+    begin
       d1 := srcFilter.DataSet['PLAN_FROM'];
       d2 := srcFilter.DataSet['PLAN_TO'];
       srcFilter.DataSet.Edit;
@@ -217,9 +223,10 @@ begin
   end;
 
   if (not srcFilter.DataSet.FieldByName('EXEC_FROM').IsNull and not srcFilter.DataSet.FieldByName('EXEC_TO').IsNull)
-  then begin
-    if (srcFilter.DataSet['EXEC_FROM'] > srcFilter.DataSet['EXEC_TO'])
-    then begin
+  then
+  begin
+    if (srcFilter.DataSet['EXEC_FROM'] > srcFilter.DataSet['EXEC_TO']) then
+    begin
       d1 := srcFilter.DataSet['EXEC_FROM'];
       d2 := srcFilter.DataSet['EXEC_TO'];
       srcFilter.DataSet.Edit;
@@ -232,13 +239,13 @@ end;
 
 procedure TTaskFilterForm.actOkExecute(Sender: TObject);
 begin
-  if srcFilter.DataSet.State in [dsEdit, dsInsert]
-  then srcFilter.DataSet.post;
+  if srcFilter.DataSet.State in [dsEdit, dsInsert] then
+    srcFilter.DataSet.post;
 
   CheckDateAndCorrect();
 
-  if chkDefaultFilter.Checked
-  then SaveFilter('TaskDefault');
+  if chkDefaultFilter.Checked then
+    SaveFilter('TaskDefault');
   ModalResult := mrOk;
 end;
 

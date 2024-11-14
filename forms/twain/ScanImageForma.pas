@@ -38,11 +38,14 @@ type
   protected
     procedure DoCreate; override;
     procedure DoDestroy; override;
+    function GetBitmap: TBitmap;
   public
+    property ScanedImage: TBitmap Read GetBitmap;
     property TempFile: String Read FTempFile;
   end;
 
-function ScanDocument(const itsPassport : Boolean; var SaveFile : Boolean): String;
+function ScanDocument(const itsPassport: Boolean; var SaveFile: Boolean): String;
+function ScanDocumentToStream(SaveStream: TStream): Boolean;
 
 implementation
 
@@ -55,22 +58,61 @@ uses
 
 { TScanImageForm }
 
-function ScanDocument(const itsPassport : Boolean; var SaveFile : Boolean): String;
+function ScanDocument(const itsPassport: Boolean; var SaveFile: Boolean): String;
 begin
   with TScanImageForm.Create(application) do
+  begin
     try
       chkSave.Visible := itsPassport;
-      if itsPassport then begin
+      if itsPassport then
+      begin
         btnSave.Caption := rsRecognize;
       end
-      else btnSave.Caption := rsSave;
-      if showmodal = mrOk then begin
+      else
+        btnSave.Caption := rsSave;
+      if showmodal = mrOk then
+      begin
         Result := TempFile;
-        SaveFile := chkSave.Checked and ItsPassport;
+        SaveFile := chkSave.Checked and itsPassport;
       end;
     finally
       Free;
     end;
+  end;
+end;
+
+function ScanDocumentToStream(SaveStream: TStream): Boolean;
+var
+  jpg_img: TJPEGImage;
+  bmp: TBitmap;
+begin
+  with TScanImageForm.Create(application) do
+  begin
+    try
+      chkSave.Visible := False;
+      btnSave.Caption := rsSave;
+      if showmodal = mrOk then
+      begin
+        jpg_img := TJPEGImage.Create;
+        bmp := TBitmap.Create;
+        try
+          bmp.Assign(ImgHolder.Picture.Graphic);
+          jpg_img.Assign(bmp);
+          jpg_img.DIBNeeded;
+          jpg_img.Performance := jpBestQuality;
+          jpg_img.CompressionQuality := 82; // от 0 до 100, где 100 -самое лучшее качество
+          jpg_img.Compress;
+          jpg_img.SaveToStream(SaveStream);
+        finally
+          jpg_img.Free;
+          bmp.Free;
+        end;
+        Result := True;
+      end;
+    finally
+      Free;
+    end;
+  end;
 end;
 
 procedure TScanImageForm.btnSaveClick(Sender: TObject);
@@ -79,19 +121,23 @@ var
   TempPath, TmpFile, Prefix: string;
   R: Cardinal;
 begin
-  if FFileLoaded then begin
+  if FFileLoaded then
+  begin
     FTempFile := edtFile.Text;
   end
-  else begin
+  else
+  begin
     Prefix := 'Scan_';
     R := GetTempPath(0, nil);
     SetLength(TempPath, R);
     R := GetTempPath(R, PChar(TempPath));
-    if R <> 0 then begin
+    if R <> 0 then
+    begin
       SetLength(TempPath, StrLen(PChar(TempPath)));
       SetLength(TmpFile, MAX_PATH);
       R := GetTempFileName(PChar(TempPath), PChar(Prefix), 0, PChar(TmpFile));
-      if R <> 0 then begin
+      if R <> 0 then
+      begin
         SetLength(TmpFile, StrLen(PChar(TmpFile)));
         // TmpFile := ChangeFileExt(TmpFile, '.jpg');
       end;
@@ -118,7 +164,8 @@ procedure TScanImageForm.BtnScanWithDialogClick(Sender: TObject);
 begin
   Twain.SelectedSourceIndex := cbbDevice.ItemIndex;
 
-  if Assigned(Twain.SelectedSource) then begin
+  if Assigned(Twain.SelectedSource) then
+  begin
     // Load source, select transference method and enable (display interface)}
     Twain.SelectedSource.Loaded := True;
     Twain.SelectedSource.ShowUI := True; // display interface
@@ -130,7 +177,8 @@ procedure TScanImageForm.BtnScanWithoutDialogClick(Sender: TObject);
 begin
   Twain.SelectedSourceIndex := cbbDevice.ItemIndex;
 
-  if Assigned(Twain.SelectedSource) then begin
+  if Assigned(Twain.SelectedSource) then
+  begin
     // Load source, select transference method and enable (display interface)}
     Twain.SelectedSource.Loaded := True;
     Twain.SelectedSource.ShowUI := False;
@@ -142,7 +190,6 @@ procedure TScanImageForm.cbbDeviceChange(Sender: TObject);
 begin
   BtnScanWithDialog.Enabled := not cbbDevice.Text.IsEmpty;
   BtnScanWithoutDialog.Enabled := not cbbDevice.Text.IsEmpty;
-
 end;
 
 procedure TScanImageForm.cbbDeviceEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -159,13 +206,15 @@ begin
   Twain := TDelphiTwain.Create;
   Twain.OnTwainAcquire := TwainTwainAcquire;
 
-  if Twain.LoadLibrary then begin
+  if Twain.LoadLibrary then
+  begin
     // Load source manager
     Twain.SourceManagerLoaded := True;
 
     ReloadSources;
   end
-  else begin
+  else
+  begin
     ShowMessage('Twain is not installed.');
   end;
 end;
@@ -179,7 +228,8 @@ end;
 
 procedure TScanImageForm.edtFileEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
-  if dlgOpenPic.Execute then begin
+  if dlgOpenPic.Execute then
+  begin
     edtFile.Text := dlgOpenPic.FileName;
     ImgHolder.Picture.LoadFromFile(dlgOpenPic.FileName);
     FFileLoaded := True;
@@ -193,7 +243,8 @@ var
 begin
   cbbDevice.Items.Clear;
   cbbDevice.KeyItems.Clear;
-  for I := 0 to Twain.SourceCount - 1 do begin
+  for I := 0 to Twain.SourceCount - 1 do
+  begin
     cbbDevice.Items.Add(Twain.Source[I].ProductName);
     cbbDevice.KeyItems.Add(I.ToString);
   end;
@@ -209,6 +260,11 @@ begin
   FFileLoaded := False;
   edtFile.Text := '';
   btnSave.Enabled := True;
+end;
+
+function TScanImageForm.GetBitmap: TBitmap;
+begin
+  Result := ImgHolder.Picture.Bitmap;
 end;
 
 end.

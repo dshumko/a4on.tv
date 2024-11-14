@@ -3,7 +3,7 @@ object apgCustomerRequests: TapgCustomerRequests
   Top = 0
   Caption = #1047#1072#1103#1074#1082#1080
   ClientHeight = 239
-  ClientWidth = 895
+  ClientWidth = 852
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object apgCustomerRequests: TapgCustomerRequests
   object dbGridCustReq: TDBGridEh
     Left = 26
     Top = 0
-    Width = 869
+    Width = 826
     Height = 239
     Align = alClient
     AllowedOperations = []

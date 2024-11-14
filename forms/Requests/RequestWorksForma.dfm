@@ -249,15 +249,15 @@ object RequestWorksForm: TRequestWorksForm
       '  , R.NOTICE'
       '  , coalesce(r.NOT_CALC, 0) NOT_CALC'
       
-        '  , coalesce(r.w_cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, w.W_C' +
-        'ost,'
+        '  , coalesce(iif(w.As_Service is null, w.W_Cost, iif(coalesce(s.' +
+        'Srv_Type_Id, 2) = 2, 0,'
       '    (select'
       '         t.tarif_sum'
       '       from tarif t'
       '       where t.service_id = s.service_id'
       
         '             and coalesce(rq.rq_exec_time, localtimestamp) betwe' +
-        'en t.date_from and t.date_to)), 0) W_COST'
+        'en t.date_from and t.date_to))), 0) W_COST'
       '  from WORKS W'
       '       left outer join REQUEST_WORKS R on (R.W_ID = W.W_ID and'
       '             R.RQ_ID = :RQ_ID)'

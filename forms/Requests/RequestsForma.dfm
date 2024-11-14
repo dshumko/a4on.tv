@@ -2507,6 +2507,10 @@ object RequestsForm: TRequestsForm
       object N10: TMenuItem
         Caption = '-'
       end
+      object miN19: TMenuItem
+        Caption = #1047#1072#1082#1088#1077#1087#1080#1090#1100' '#1089#1090#1086#1083#1073#1094#1099' '#1090#1072#1073#1083#1080#1094
+        OnClick = miN19Click
+      end
       object N2: TMenuItem
         Action = actFilter
       end

@@ -95,12 +95,6 @@ object StreetViewForm: TStreetViewForm
     Align = alBottom
     TabOrder = 7
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 166
       Top = 8

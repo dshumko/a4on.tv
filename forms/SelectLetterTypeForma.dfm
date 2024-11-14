@@ -97,6 +97,7 @@ object frmSelectLetterType: TfrmSelectLetterType
       TabOrder = 0
       Visible = True
       OnClick = cbLetterTypeClick
+      OnEnter = cbLetterTypeEnter
     end
   end
   object dsLetterTypes: TpFIBDataSet

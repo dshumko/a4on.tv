@@ -49,12 +49,6 @@ object ReqAddWork: TReqAddWork
     Align = alBottom
     TabOrder = 0
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 189
       Width = 125

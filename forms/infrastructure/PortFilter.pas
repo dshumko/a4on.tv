@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
   DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery,
-  PrjConst;
+  PrjConst, DBGridEh;
 
 type
   TPortFilterForm = class(TForm)
@@ -119,7 +119,9 @@ begin
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
-      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible;
+      go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible;
 
     if go then
     begin

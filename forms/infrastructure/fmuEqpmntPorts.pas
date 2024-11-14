@@ -10,7 +10,8 @@ uses
   Vcl.ToolWin, Vcl.Dialogs,
   FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls,
-  DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh, PropStorageEh, amSplitter;
+  DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh, PropStorageEh,
+  amSplitter;
 
 type
   TapgEqpmntPort = class(TA4onPage)
@@ -455,8 +456,7 @@ begin
   begin
     if (dsData['P_State'] = 0) and ((Column.FieldName = 'PORT') or (Column.FieldName = 'PS_NAME')) then
       AFont.Style := [fsStrikeOut]
-    else
-    if (dsData['P_State'] = 3) then
+    else if (dsData['P_State'] = 3) then
       AFont.Style := [fsBold];
   end;
 end;
@@ -669,7 +669,7 @@ var
   eol_chars: Integer;
   CMD_TYPE: Integer;
   URL, AUT_USER, AUT_PSWD: String;
-  C_FIO, C_ACCNT, C_ADDR: string;
+  C_FIO, C_ACCNT, C_ADDR, eid, pid: string;
 
   procedure replaceParams(var InStr: String);
   begin
@@ -691,6 +691,8 @@ var
     InStr := ReplaceStr(InStr, '<c_fio>', C_FIO);
     InStr := ReplaceStr(InStr, '<c_addr>', C_ADDR);
     InStr := ReplaceStr(InStr, '<date>', FormatDateTime('Y-m-d h:n', Now()));
+    InStr := ReplaceStr(InStr, '<e_id>', eid);
+    InStr := ReplaceStr(InStr, '<prnt_id>', pid);
   end;
 
 begin
@@ -712,22 +714,22 @@ begin
 
   if (not dsData.FieldByName('ACCOUNT_NO').IsNull) then
     C_ACCNT := dsData.FieldByName('ACCOUNT_NO').asString;
+
   if (not dsData.FieldByName('SURNAME').IsNull) then
   begin
     C_FIO := dsData.FieldByName('SURNAME').asString;
     if (not dsData.FieldByName('INITIALS').IsNull) then
       C_FIO := C_FIO + dsData.FieldByName('INITIALS').asString;
   end;
+
   if (not dsData.FieldByName('CUST_CODE').IsNull) then
-  begin
     C_ADDR := dsData.FieldByName('CUST_CODE').asString;
-  end;
 
   with dmMain.qRead do
   begin
     sql.Clear;
     sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
-    sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
+    sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
     sql.Add('from equipment e');
     sql.Add('  inner join equipment_cmd_grp ec');
     sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
@@ -778,6 +780,14 @@ begin
       AUT_USER := FieldByName('AUT_USER').asString;
     if not FieldByName('AUT_PSWD').IsNull then
       AUT_PSWD := FieldByName('AUT_PSWD').asString;
+    if not FieldByName('eid').IsNull then
+      eid := FieldByName('eid').asString
+    else
+      eid := '';
+    if not FieldByName('PARENT_ID').IsNull then
+      pid := FieldByName('PARENT_ID').asString
+    else
+      pid := '';
 
     Close;
     Transaction.Rollback;

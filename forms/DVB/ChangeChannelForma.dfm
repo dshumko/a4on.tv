@@ -121,7 +121,7 @@ object frmChangeChannelForm: TfrmChangeChannelForm
       TabOrder = 0
       Visible = True
       OnClick = lcbSlaveClick
-      OnEnter = lcbSlaveClick
+      OnEnter = lcbSlaveEnter
     end
     object chkAnalog: TDBCheckBoxEh
       Left = 88

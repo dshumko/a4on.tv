@@ -109,6 +109,7 @@ type
     { Private declarations }
     procedure AddToCoverage;
     procedure DeleteFromCoverage;
+    function CheckIPExists(const ip: String): string;
   public
     { Public declarations }
   end;
@@ -145,6 +146,7 @@ begin
     actCancel.Enabled := True;
     pgcInfo.Enabled := False;
     StartEdit(True);
+    //btnSaveLink.Enabled := True;
   end;
 end;
 
@@ -497,12 +499,15 @@ begin
     Exit;
 
   ip := (Sender as TDBEditEh).Text;
+  if ip.IsEmpty then
+    Exit;
+
   sa := Explode('/', ip);
   if length(sa) = 1 then
   begin
     CorrectIP((Sender as TDBEditEh));
   end
-  else
+  else if length(sa) > 0 then
   begin
     ip := sa[0];
     (Sender as TDBEditEh).Text := ip;
@@ -515,6 +520,42 @@ begin
         edtMASK.Text := Mask;
     end;
   end;
+
+  Mask := CheckIPExists(ip);
+  if not Mask.IsEmpty then
+    CnErrors.SetError((Sender as TControl), Mask, iaMiddleLeft, bsNeverBlink)
+  else
+    CnErrors.Dispose((Sender as TControl));
+end;
+
+function TVlansForm.CheckIPExists(const ip: String): string;
+begin
+  Result := '';
+  if ip = '' then
+    Exit;
+
+  with TpFIBQuery.Create(Nil) do
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      SQL.Text := 'select Name from Vlans v where v.Ip_Begin = :IP';
+
+      if dsVlans.State in [dsEdit] then
+      begin
+        SQL.Add('and v.V_Id <> :V_Id');
+        ParamByName('V_Id').AsInteger := dsVlans.FieldByName('V_Id').AsInteger;
+      end;
+
+      ParamByName('ip').AsString := ip;
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not FieldByName('Name').IsNull then
+        Result := rsIPinuse + ' ' + FieldByName('Name').Value;
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
 end;
 
 procedure TVlansForm.edtDNSEnter(Sender: TObject);

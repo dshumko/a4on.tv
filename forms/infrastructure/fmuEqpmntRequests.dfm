@@ -224,23 +224,77 @@ object apgEqpmntRequests: TapgEqpmntRequests
         Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
-      object pnlPhoto: TPanel
+      object Splitter1: TSplitter
+        Left = 537
+        Top = 0
+        Height = 112
+      end
+      object pnlText: TPanel
         Left = 0
         Top = 0
-        Width = 863
+        Width = 537
+        Height = 112
+        Align = alLeft
+        BevelOuter = bvNone
+        TabOrder = 0
+        object Splitter2: TSplitter
+          Left = 0
+          Top = 51
+          Width = 537
+          Height = 3
+          Cursor = crVSplit
+          Align = alTop
+        end
+        object mmoCONTETNT: TDBMemoEh
+          Left = 0
+          Top = 0
+          Width = 537
+          Height = 51
+          Align = alTop
+          AutoSize = False
+          DataField = 'CONTETNT'
+          DataSource = srcRequests
+          DynProps = <>
+          EditButtons = <>
+          ShowHint = True
+          TabOrder = 0
+          Visible = True
+          WantReturns = True
+        end
+        object mmoTROUBLE: TDBMemoEh
+          Left = 0
+          Top = 54
+          Width = 537
+          Height = 58
+          Align = alClient
+          AutoSize = False
+          DataField = 'TROUBLE'
+          DataSource = srcRequests
+          DynProps = <>
+          EditButtons = <>
+          ShowHint = True
+          TabOrder = 1
+          Visible = True
+          WantReturns = True
+        end
+      end
+      object pnlPhoto: TPanel
+        Left = 540
+        Top = 0
+        Width = 323
         Height = 112
         Align = alClient
         BevelOuter = bvNone
-        TabOrder = 0
+        TabOrder = 1
         object spl1: TSplitter
-          Left = 361
+          Left = 177
           Top = 0
           Height = 112
         end
         object dbgPhotos: TDBGridEh
           Left = 0
           Top = 0
-          Width = 361
+          Width = 177
           Height = 112
           Align = alLeft
           AllowedOperations = [alopUpdateEh]
@@ -269,15 +323,15 @@ object apgEqpmntRequests: TapgEqpmntRequests
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-              Width = 251
+              Width = 162
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
         end
         object imgJPG: TDBImageEh
-          Left = 364
+          Left = 180
           Top = 0
-          Width = 499
+          Width = 143
           Height = 112
           Align = alClient
           DataField = 'JPG'
@@ -702,5 +756,15 @@ object apgEqpmntRequests: TapgEqpmntRequests
     DataSet = dsPhotos
     Left = 206
     Top = 205
+  end
+  object PropStorageEh: TPropStorageEh
+    Section = 'EQPREQ'
+    StorageManager = dmMain.iniPropStorage
+    StoredProps.Strings = (
+      'dbGridCustReq.RowDetailData.<P>.Height')
+    OnWriteCustomProps = PropStorageEhWriteCustomProps
+    OnReadProp = PropStorageEhReadProp
+    Left = 482
+    Top = 144
   end
 end

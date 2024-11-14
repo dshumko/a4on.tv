@@ -106,7 +106,7 @@ object NewTaskForm: TNewTaskForm
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SortLocal = True
       STFilter.Local = True
-      STFilter.Location = stflInTitleFilterEh
+      STFilter.Location = stflUnderTitleFilterEh
       STFilter.Visible = True
       TabOrder = 3
       Columns = <

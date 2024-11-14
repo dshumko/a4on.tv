@@ -8,8 +8,10 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.DBCtrls, Vcl.Buttons,
-  DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBCtrlsEh, DBLookupEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh, amSplitter;
+  DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBCtrlsEh,
+  DBLookupEh,
+  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh,
+  amSplitter;
 
 type
   TCallCenterForm = class(TForm)
@@ -207,7 +209,7 @@ begin
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-        Self.Name + '.' + Components[i].Name, false);
+        Self.Name + '.' + Components[i].Name, False);
   if dsRecourses.Active then
     dsRecourses.Close;
   if dsContacts.Active then
@@ -226,7 +228,12 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -246,7 +253,32 @@ begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
+
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
+      end;
     end;
+
   end;
   dbtxtSTATE.Font.Name := Font_name;
   dbtxtSTATE.Font.Size := Font_size;

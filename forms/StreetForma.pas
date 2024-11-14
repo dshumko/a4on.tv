@@ -155,23 +155,23 @@ type
     Label6: TLabel;
     memHouseNotice: TDBMemoEh;
     pnlHI: TPanel;
-    dbtxt1: TDBText;
+    dbtxt1: TDBEditEh;
     lbl3: TLabel;
     lbl2: TLabel;
-    dbtxtpost: TDBText;
-    dbtxtORG_NAME: TDBText;
+    dbtxtpost: TDBEditEh;
+    dbtxtORG_NAME: TDBEditEh;
     lbl1: TLabel;
-    dbtxtCHAIRMAN_PHONE: TDBText;
+    dbtxtCHAIRMAN_PHONE: TDBEditEh;
     Label5: TLabel;
-    dbtxtCHAIRMAN: TDBText;
+    dbtxtCHAIRMAN: TDBEditEh;
     Label4: TLabel;
-    dbtxtSUBAREA_NAME: TDBText;
+    dbtxtSUBAREA_NAME: TDBEditEh;
     Label9: TLabel;
     Label7: TLabel;
-    dbtxtHOUSE_NO: TDBText;
+    dbtxtHOUSE_NO: TDBEditEh;
     Label8: TLabel;
-    dbtxtQ_FLAT: TDBText;
-    dbtxtSUBAREA_NAME1: TDBText;
+    dbtxtQ_FLAT: TDBEditEh;
+    dbtxtSUBAREA_NAME1: TDBEditEh;
     lbl7: TLabel;
     btn7: TToolButton;
     btnViewCube: TToolButton;
@@ -248,8 +248,10 @@ type
     procedure dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure actQuickFilterExecute(Sender: TObject);
     procedure dsFlatsAfterPost(DataSet: TDataSet);
-    procedure DbGridHouseGetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DbGridHouseGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure dbgEquipGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     FCanEdit: Boolean;
@@ -260,7 +262,7 @@ type
     procedure actViewFile;
     procedure RefreshFloor;
   public
-    { Public declarations }
+    procedure FindIDs(const FilterVALUE: string);
   end;
 
 var
@@ -1161,6 +1163,17 @@ begin
     end;
 end;
 
+procedure TStreetForm.dbgEquipGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if not dbgEquip.DataSource.DataSet.FieldByName('COLOR').IsNull then
+    try
+      Background := StringToColor(dbgEquip.DataSource.DataSet.FieldByName('COLOR').Value);
+    except
+    end;
+end;
+
 procedure TStreetForm.dbgMapExit(Sender: TObject);
 begin
   inherited;
@@ -1186,8 +1199,7 @@ begin
   actHouseEdit.Execute;
 end;
 
-procedure TStreetForm.DbGridHouseGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
+procedure TStreetForm.DbGridHouseGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
   inherited;
@@ -1523,6 +1535,21 @@ begin
   dsFloor.CloseOpen(True);
   dsFloor.Locate('Floor_N', FN, []);
   dsFloor.EnableControls;
+end;
+
+procedure TStreetForm.FindIDs(const FilterVALUE: string);
+var
+  cr: TCursor;
+  val: TStringArray;
+  i: Integer;
+begin
+  val := Explode('~', FilterVALUE);
+  if Length(val) > 0 then
+    dsStreets.Locate('Street_ID', val[0], []);
+  if Length(val) > 1 then begin
+    dsHouses.CloseOpen(true);
+    dsHouses.Locate('House_ID', val[1], []);
+  end;
 end;
 
 end.

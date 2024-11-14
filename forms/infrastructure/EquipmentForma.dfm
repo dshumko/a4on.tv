@@ -2,8 +2,9 @@ inherited EquipmentForm: TEquipmentForm
   Left = 344
   Top = 228
   Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1074' '#1089#1077#1090#1080
-  ClientHeight = 623
+  ClientHeight = 603
   ClientWidth = 979
+  Menu = mmMain
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
@@ -12,7 +13,7 @@ inherited EquipmentForm: TEquipmentForm
   end
   object splMain: TSplitter [1]
     Left = 0
-    Top = 413
+    Top = 393
     Width = 979
     Height = 3
     Cursor = crVSplit
@@ -21,7 +22,7 @@ inherited EquipmentForm: TEquipmentForm
   inherited dbGrid: TDBGridEh
     Top = 61
     Width = 979
-    Height = 352
+    Height = 332
     AllowedOperations = []
     FooterRowCount = 1
     IndicatorTitle.ShowDropDownSign = True
@@ -70,6 +71,15 @@ inherited EquipmentForm: TEquipmentForm
         Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 167
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SYSNAME'
+        Footers = <>
+        Title.Caption = #1057#1083'. '#1080#1084#1103
+        Title.TitleButton = True
       end
       item
         AutoFitColWidth = False
@@ -319,10 +329,9 @@ inherited EquipmentForm: TEquipmentForm
         Top = 0
         Width = 162
         Height = 22
+        Action = actTree
         Align = alClient
-        Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072
         TabOrder = 0
-        OnClick = chkTREEClick
       end
       object pnl1: TPanel
         Left = 0
@@ -393,7 +402,7 @@ inherited EquipmentForm: TEquipmentForm
   end
   object pnlForms: TPanel [5]
     Left = 0
-    Top = 416
+    Top = 396
     Width = 979
     Height = 207
     Align = alBottom
@@ -542,6 +551,14 @@ inherited EquipmentForm: TEquipmentForm
       ImageIndex = 0
       ShortCut = 8306
       OnExecute = actSetFilterNExecute
+    end
+    object actFrize: TAction
+      Caption = #1047#1072#1082#1088#1077#1087#1080#1090#1100' '#1089#1090#1086#1083#1073#1094#1099' '#1090#1072#1073#1083#1080#1094#1099
+      OnExecute = actFrizeExecute
+    end
+    object actTree: TAction
+      Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072
+      OnExecute = actTreeExecute
     end
   end
   inherited pmPopUp: TPopupMenu
@@ -810,5 +827,30 @@ inherited EquipmentForm: TEquipmentForm
     ProviderDataSet = dsEquipments
     Left = 320
     Top = 296
+  end
+  object mmMain: TMainMenu
+    Left = 152
+    Top = 200
+    object miMi: TMenuItem
+      Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      GroupIndex = 2
+      object miTree: TMenuItem
+        Action = actTree
+      end
+      object miLayout: TMenuItem
+        Action = actLayout
+        Caption = #1043#1086#1088#1080#1079#1086#1085#1090#1072#1083#1100#1085#1086'/'#1042#1077#1088#1090#1080#1082#1072#1083#1100#1085#1086
+      end
+      object miMiFrozen: TMenuItem
+        Action = actFrize
+      end
+      object miN7: TMenuItem
+        Caption = '-'
+      end
+      object miN8: TMenuItem
+        Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1077
+        OnClick = miN8Click
+      end
+    end
   end
 end

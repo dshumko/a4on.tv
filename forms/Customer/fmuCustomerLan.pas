@@ -412,7 +412,7 @@ var
   cmd: string;
   eol_chars: Integer;
   CMD_TYPE: Integer;
-  URL, AUT_USER, AUT_PSWD: String;
+  URL, AUT_USER, AUT_PSWD, eid, pid: String;
 
   procedure replaceParams(var InStr: String);
   begin
@@ -432,6 +432,8 @@ var
     InStr := ReplaceStr(InStr, '<c_vlan>', C_VLAN);
     InStr := ReplaceStr(InStr, '<c_tag>', C_TAG);
     InStr := ReplaceStr(InStr, '<c_tagstr>', C_TAGSTR);
+    InStr := ReplaceStr(InStr, '<e_id>', eid);
+    InStr := ReplaceStr(InStr, '<prnt_id>', pid);
   end;
 
 begin
@@ -459,7 +461,7 @@ begin
   begin
     SQL.Clear;
     SQL.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
-    SQL.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD');
+    SQL.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
     SQL.Add('from equipment e');
     SQL.Add('  inner join equipment_cmd_grp ec');
     SQL.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
@@ -509,6 +511,15 @@ begin
       AUT_USER := FieldByName('AUT_USER').AsString;
     if not FieldByName('AUT_PSWD').IsNull then
       AUT_PSWD := FieldByName('AUT_PSWD').AsString;
+
+    if not FieldByName('eid').IsNUll then
+      eid := FieldByName('eid').asString
+    else
+      eid := '';
+    if not FieldByName('PARENT_ID').IsNUll then
+      pid := FieldByName('PARENT_ID').asString
+    else
+      pid := '';
 
     Close;
     Transaction.Rollback;

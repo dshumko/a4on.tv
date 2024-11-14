@@ -54,7 +54,6 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
     STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1

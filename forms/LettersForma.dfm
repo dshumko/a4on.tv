@@ -288,7 +288,7 @@ inherited LettersForm: TLettersForm
     SelectSQL.Strings = (
       'select *'
       'from lettertype'
-      'where LETTERTYPEID >=0 '
+      'where LETTERTYPEID >= 0 '
       'order by for_form, lettertypedescr')
     OnNewRecord = dsLettersNewRecord
     Transaction = dmMain.trRead

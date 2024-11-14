@@ -1,11 +1,11 @@
 ﻿#define MyAppName "A4on.TV"
 ;#define Client "Free" 
-#define Client "ОАО «Спутник-ТВ»" 
-#define City   "Осиповичи" 
-#define SetupName "SputnikTV"
+#define Client "ООО «АНТЕННА»" 
+#define City   "Кинешма" 
+#define SetupName "Antenna"
 ;#define City   "Каменка" 
 
-#define MyAppVerName "23.5"
+#define MyAppVerName "24.8"
 #define MyAppURL "http://A4on.TV"
 #define MyAppExeName "A4ON.exe"
 
@@ -42,9 +42,9 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={code:GetNoSystemDrive}\A4ON.TV
 DefaultGroupName={#MyAppName}
-AppCopyright=Copyright (C) 2005-2023 Шумко Дмитрий
+AppCopyright=Copyright (C) 2005-2024 Шумко Дмитрий
 AppContact=post@a4on.tv
-AppComments=Дистрибутив системы A4on.TV ( {#Client} {#City})
+AppComments=Дистрибутив системы A4on.TV ({#Client} {#City})
 OutputDir=setup
 UninstallDisplayIcon={app}\A4ON.exe
 VersionInfoVersion={#MyAppVerName}
@@ -104,6 +104,8 @@ Source: "{#a4files}\smartid\*";      DestDir: "{app}\smartid";                  
 ; Firebird client
 Source: "{#fbfiles}\fbclient.dll";           DestDir: "{app}";                   Components: ClientComponent SingleComponent;                 Flags: overwritereadonly sharedfile
 Source: "{#fbfiles}\firebird.msg ";          DestDir: "{app}";                   Components: ClientComponent SingleComponent;                 Flags: overwritereadonly sharedfile
+Source: "{#fbfiles}\msvcp100.dll";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
+Source: "{#fbfiles}\msvcr100.dll";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 #ifdef FBEMBDED
 Source: "{#fbfiles}\plugins\*";              DestDir: "{app}\plugins";           Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 Source: "{#fbfiles}\ib_util.dll";            DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
@@ -111,8 +113,6 @@ Source: "{#fbfiles}\icudt52.dll";            DestDir: "{app}";                  
 Source: "{#fbfiles}\icudt52l.dat";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 Source: "{#fbfiles}\icuin52.dll";            DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 Source: "{#fbfiles}\icuuc52.dll";            DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
-Source: "{#fbfiles}\msvcp100.dll";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
-Source: "{#fbfiles}\msvcr100.dll";           DestDir: "{app}";                   Components: SingleComponent;                                 Flags: overwritereadonly sharedfile
 #else
 ;Source: "{#fbfiles}\system32\vccrt10_Win32.msi";DestDir:"{tmp}";MinVersion: 0,5.0;Components: ClientComponent;
 #endif
@@ -126,8 +126,8 @@ Source: "Digit\*";                   DestDir: "{app}\Digit\";                   
 #endif
 
 #ifdef EPG
-Source: "{#a4files}\EPG_PERL\*";     DestDir: "{app}\EPG\";                      Components: ServerComponent;                                 Flags: ignoreversion recursesubdirs
-Source: "{#fbfiles}\fbclient.dll";DestDir:"{app}\EPG\perl\lib\auto\DBD\Firebird";Components: ServerComponent;                                 Flags: overwritereadonly sharedfile
+Source: "{#a4files}\EPG_PERL\*";     DestDir: "{app}\EPG\";                         Components: ServerComponent;                                 Flags: ignoreversion recursesubdirs
+Source: "{#fbfiles}\fbclient.dll";   DestDir:"{app}\EPG\perl\lib\auto\DBD\Firebird";Components: ServerComponent;                                 Flags: overwritereadonly sharedfile
 
 [Dirs]
 Name: "{app}\tmp\";                                                              Components: ServerComponent;
@@ -137,10 +137,10 @@ Root:HKLM;Subkey:"SYSTEM\CurrentControlSet\Control\Session Manager\Environment";
 #endif
 
 [Icons]
-Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: {app};        Components: ServerComponent ClientComponent SingleComponent; Parameters: /p:masterkey
-Name: "{group}\{#MyAppName}";       Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: {app};        Components: ServerComponent ClientComponent SingleComponent; 
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: {app};        Components: ServerComponent ClientComponent SingleComponent; Parameters: /p:masterkey
+Name: "{group}\{#MyAppName}";         Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: {app};        Components: ServerComponent ClientComponent SingleComponent; 
 #ifdef EPG
-Name: "{userdesktop}\OpenEPG.cmd";  Filename: "{app}\EPG\OpenEPG.cmd"; Tasks: desktopicon; WorkingDir: "{app}\EPG\"; Components: ServerComponent;
+Name: "{commondesktop}\OpenEPG.cmd";  Filename: "{app}\EPG\OpenEPG.cmd"; Tasks: desktopicon; WorkingDir: "{app}\EPG\"; Components: ServerComponent;
 #endif
 
 [Run]

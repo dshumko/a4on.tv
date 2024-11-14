@@ -43,6 +43,7 @@ type
     function FromWinToDos(const FileName: String): Boolean;
     function FromUtf8toDos(const FileName: String): Boolean;
     function FromUtf8toWin(const FileName: String): Boolean;
+    function FrSHA256(const Str: String) : string;
   public
     script: TStringList;
   end;
@@ -55,7 +56,7 @@ implementation
 uses
   Data.DB, pFIBQuery, FIBQuery,
   Vcl.Grids, Vcl.Forms,
-  RxStrUtils, synacode,
+  RxStrUtils, synacode, mormot.crypt.core,
   AtrStrUtils, atrCmdUtils,
   DM, MAIN;
 
@@ -90,6 +91,7 @@ begin
     AddMethod('function OpenCustomerByAccount(const ACCOUNT: String): Integer', CallMethod, grp);
     AddMethod('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', CallMethod, grp);
     AddMethod('function IncMAC(const MAC: string; const step: Integer): String', CallMethod, grp);
+    AddMethod('function SHA256(const Text: string): String', CallMethod, grp);
 
     AddClass(TCustomGrid, 'TCustomControl');
     AddClass(TDrawGrid, 'TCustomGrid');
@@ -137,13 +139,18 @@ begin
   else if MethodName = 'OPENCUSTOMERBYID' then
     Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
   else if MethodName = 'INCMAC' then
-    Result := AtrStrUtils.IncMAC(Params[0], Params[1]);
+    Result := AtrStrUtils.IncMAC(Params[0], Params[1])
+  else if MethodName = 'SHA256' then
+    Result := FrSHA256(Params[0]);
+end;
+
+function TSM.FrSHA256(const Str: String) : string;
+begin
+  RESULT :=string(Sha256(RawByteString(Str)));
 end;
 
 function TSM.CallMethodforCMD(Instance: TObject; ClassType: TClass; const MethodName: String;
   var Params: Variant): Variant;
-var
-  ResLines: TStringList;
 begin
   if MethodName = 'RUNCMD' then
   begin

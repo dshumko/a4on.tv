@@ -3,7 +3,7 @@ object UsersForm: TUsersForm
   Top = 200
   Caption = #1043#1088#1091#1087#1087#1099' '#1080' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
   ClientHeight = 487
-  ClientWidth = 717
+  ClientWidth = 904
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,7 +25,7 @@ object UsersForm: TUsersForm
   object pc: TPageControl
     Left = 0
     Top = 0
-    Width = 717
+    Width = 904
     Height = 487
     ActivePage = tabGroup
     Align = alClient
@@ -103,7 +103,7 @@ object UsersForm: TUsersForm
               Footers = <>
               Title.Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
               Title.TitleButton = True
-              Width = 82
+              Width = 146
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -160,9 +160,9 @@ object UsersForm: TUsersForm
       object pgcRights: TPageControl
         Left = 308
         Top = 0
-        Width = 401
+        Width = 588
         Height = 459
-        ActivePage = tsRights
+        ActivePage = tsRequest
         Align = alClient
         TabOrder = 1
         OnChange = pgcRightsChange
@@ -172,7 +172,7 @@ object UsersForm: TUsersForm
           object dbgRights: TDBGridEh
             Left = 0
             Top = 0
-            Width = 393
+            Width = 580
             Height = 431
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -249,7 +249,7 @@ object UsersForm: TUsersForm
           object dbgReports: TDBGridEh
             Left = 0
             Top = 0
-            Width = 393
+            Width = 580
             Height = 431
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -265,6 +265,7 @@ object UsersForm: TUsersForm
             STFilter.Visible = True
             TabOrder = 0
             OnExit = dbgRightsExit
+            OnGetCellParams = dbgReportsGetCellParams
             Columns = <
               item
                 AutoFitColWidth = False
@@ -312,7 +313,7 @@ object UsersForm: TUsersForm
           object dbgModules: TDBGridEh
             Left = 0
             Top = 0
-            Width = 393
+            Width = 580
             Height = 431
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -328,6 +329,7 @@ object UsersForm: TUsersForm
             STFilter.Visible = True
             TabOrder = 0
             OnExit = dbgRightsExit
+            OnGetCellParams = dbgReportsGetCellParams
             Columns = <
               item
                 AutoFitColWidth = False
@@ -357,6 +359,58 @@ object UsersForm: TUsersForm
             end
           end
         end
+        object tsRequest: TTabSheet
+          Caption = #1058#1080#1087' '#1079#1072#1103#1074#1086#1082
+          ImageIndex = 3
+          object dbgRequest: TDBGridEh
+            Left = 0
+            Top = 0
+            Width = 580
+            Height = 431
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            DataSource = srcRequest
+            DynProps = <>
+            Flat = True
+            FooterParams.Color = clWindow
+            GridLineParams.VertEmptySpaceStyle = dessNonEh
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+            SearchPanel.Enabled = True
+            STFilter.Local = True
+            STFilter.Visible = True
+            TabOrder = 0
+            OnExit = dbgRightsExit
+            OnGetCellParams = dbgReportsGetCellParams
+            Columns = <
+              item
+                AutoFitColWidth = False
+                CellButtons = <>
+                Checkboxes = True
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'RALLOWED'
+                Footers = <>
+                Title.Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100
+                Title.TitleButton = True
+                Width = 109
+              end
+              item
+                CellButtons = <>
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'NAME'
+                Footers = <>
+                Title.Caption = #1058#1080#1087' '#1079#1072#1103#1074#1086#1082
+                Title.TitleButton = True
+                Title.SortIndex = 1
+                Title.SortMarker = smUpEh
+                Width = 319
+              end>
+            object RowDetailData: TRowDetailPanelControlEh
+            end
+          end
+        end
       end
     end
     object tabUsers: TTabSheet
@@ -365,7 +419,7 @@ object UsersForm: TUsersForm
       object Splitter4: TSplitter
         Left = 0
         Top = 200
-        Width = 709
+        Width = 896
         Height = 3
         Cursor = crVSplit
         Align = alTop
@@ -373,7 +427,7 @@ object UsersForm: TUsersForm
       object Panel8: TPanel
         Left = 0
         Top = 0
-        Width = 709
+        Width = 896
         Height = 200
         Align = alTop
         BevelOuter = bvNone
@@ -381,7 +435,7 @@ object UsersForm: TUsersForm
         object dbgUsers: TDBGridEh
           Left = 0
           Top = 24
-          Width = 709
+          Width = 896
           Height = 176
           Align = alClient
           AllowedOperations = []
@@ -507,7 +561,7 @@ object UsersForm: TUsersForm
         object ToolBar1: TToolBar
           Left = 0
           Top = 0
-          Width = 709
+          Width = 896
           Height = 24
           ButtonHeight = 24
           ButtonWidth = 24
@@ -553,7 +607,7 @@ object UsersForm: TUsersForm
       object pcUserRA: TPageControl
         Left = 0
         Top = 203
-        Width = 709
+        Width = 896
         Height = 256
         ActivePage = tsGroups
         Align = alClient
@@ -564,7 +618,7 @@ object UsersForm: TUsersForm
           object Panel5: TPanel
             Left = 0
             Top = 0
-            Width = 701
+            Width = 888
             Height = 228
             Align = alClient
             BevelOuter = bvNone
@@ -718,7 +772,7 @@ object UsersForm: TUsersForm
             object Panel7: TPanel
               Left = 340
               Top = 0
-              Width = 361
+              Width = 548
               Height = 228
               Align = alClient
               BevelOuter = bvNone
@@ -726,7 +780,7 @@ object UsersForm: TUsersForm
               object dbgG: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 361
+                Width = 548
                 Height = 228
                 Align = alClient
                 AllowedOperations = []
@@ -779,7 +833,7 @@ object UsersForm: TUsersForm
           object pnlAreas: TPanel
             Left = 0
             Top = 24
-            Width = 701
+            Width = 888
             Height = 204
             Align = alClient
             BevelOuter = bvNone
@@ -800,7 +854,7 @@ object UsersForm: TUsersForm
               object lbl2: TLabel
                 Left = 0
                 Top = 0
-                Width = 337
+                Width = 89
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -914,7 +968,7 @@ object UsersForm: TUsersForm
             object Panel14: TPanel
               Left = 340
               Top = 0
-              Width = 361
+              Width = 548
               Height = 204
               Align = alClient
               BevelOuter = bvNone
@@ -922,7 +976,7 @@ object UsersForm: TUsersForm
               object lbl1: TLabel
                 Left = 0
                 Top = 0
-                Width = 361
+                Width = 104
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '
@@ -930,7 +984,7 @@ object UsersForm: TUsersForm
               object dbgUGA: TDBGridEh
                 Left = 0
                 Top = 13
-                Width = 361
+                Width = 548
                 Height = 191
                 Align = alClient
                 AllowedOperations = []
@@ -971,7 +1025,7 @@ object UsersForm: TUsersForm
           object pnl1: TPanel
             Left = 0
             Top = 0
-            Width = 701
+            Width = 888
             Height = 24
             Align = alTop
             BevelOuter = bvNone
@@ -979,7 +1033,7 @@ object UsersForm: TUsersForm
             object chkALL_AREAS: TDBCheckBoxEh
               Left = 0
               Top = 0
-              Width = 701
+              Width = 888
               Height = 24
               Align = alClient
               Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100' '#1074#1080#1076#1080#1090' '#1074#1089#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -2325,5 +2379,90 @@ object UsersForm: TUsersForm
     TPBMode = tpbDefault
     Left = 393
     Top = 104
+  end
+  object srcRequest: TDataSource
+    DataSet = dsRequest
+    Left = 696
+    Top = 220
+  end
+  object dsRequest: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'execute block ('
+      '    GROUP_ID  integer = :GROUP_ID,'
+      '    MODULE_ID integer = :id_MODULE,'
+      '    rALLOWED  integer = :rALLOWED)'
+      'as'
+      'begin'
+      
+        '  if ((not(rALLOWED is null)) and (not(GROUP_ID is null)) and (n' +
+        'ot(MODULE_ID is null))) then begin'
+      '    if (rALLOWED = 1) then begin'
+      
+        '      insert into Sys$Group_Rights (Group_Id, Rights_Type, Right' +
+        '_Id)'
+      '      values (:GROUP_ID, 3, :MODULE_ID);'
+      '    end'
+      '    else begin'
+      '      delete from Sys$Group_Rights where Rights_Type = 3'
+      '            and Right_Id = :MODULE_ID'
+      '            and Group_Id = :Group_Id;'
+      '    end'
+      '  end'
+      'end')
+    InsertSQL.Strings = (
+      'execute block ('
+      '    GROUP_ID  integer = :GROUP_ID,'
+      '    MODULE_ID integer = :id_MODULE,'
+      '    rALLOWED  integer = :rALLOWED)'
+      'as'
+      'begin'
+      
+        '  if ((not(rALLOWED is null)) and (not(GROUP_ID is null)) and (n' +
+        'ot(MODULE_ID is null))) then begin'
+      '    if (rALLOWED = 1) then begin'
+      
+        '      insert into Sys$Group_Rights (Group_Id, Rights_Type, Right' +
+        '_Id)'
+      '      values (:GROUP_ID, 3, :MODULE_ID);'
+      '    end'
+      '    else begin'
+      '      delete from Sys$Group_Rights where Rights_Type = 3'
+      '            and Right_Id = :MODULE_ID'
+      '            and Group_Id = :Group_Id;'
+      '    end'
+      '  end'
+      'end')
+    RefreshSQL.Strings = (
+      'select'
+      '  m.Rt_Id Id_Module,'
+      '  m.Rt_Name Name,'
+      '  coalesce(gr.Group_Id,:ID) Group_Id ,'
+      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      'from Request_Types m'
+      
+        '  left outer join Sys$Group_Rights gr on (m.Rt_Id = gr.Right_Id ' +
+        'and gr.Rights_Type = 3 and gr.Group_Id = :ID)'
+      'where m.Rt_Id = :old_Id_Module')
+    SelectSQL.Strings = (
+      'select'
+      '  m.Rt_Id Id_Module,'
+      '  m.Rt_Name Name,'
+      '  coalesce(gr.Group_Id,:ID) Group_Id ,'
+      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      'from Request_Types m'
+      
+        '  left outer join Sys$Group_Rights gr on (m.Rt_Id = gr.Right_Id ' +
+        'and gr.Rights_Type = 3 and gr.Group_Id = :ID)'
+      'order by m.Rt_Name')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    AutoCommit = True
+    DataSource = srcGroups
+    Left = 760
+    Top = 220
+    dcForceMasterRefresh = True
+    dcForceOpen = True
+    oFetchAll = True
   end
 end

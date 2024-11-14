@@ -290,6 +290,18 @@ begin
   pmMemo.Items.Add(NewItem);
 
   NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanEquipmentEID;
+  NewItem.Hint := '<e_id>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsLanEquipmentPID;
+  NewItem.Hint := '<prnt_id>';
+  NewItem.OnClick := IP1Click;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsLanTelnetWait;
   NewItem.Hint := 'wait';
   NewItem.OnClick := IP1Click;

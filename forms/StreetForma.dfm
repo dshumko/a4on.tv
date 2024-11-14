@@ -553,9 +553,9 @@ inherited StreetForm: TStreetForm
           Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
           object dbgServices: TDBGridEh
             Left = 0
-            Top = 201
+            Top = 177
             Width = 636
-            Height = 56
+            Height = 80
             Align = alClient
             DataSource = srcHouseService
             DynProps = <>
@@ -611,7 +611,7 @@ inherited StreetForm: TStreetForm
             Left = 0
             Top = 0
             Width = 636
-            Height = 201
+            Height = 177
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
@@ -619,7 +619,7 @@ inherited StreetForm: TStreetForm
               Left = 339
               Top = 0
               Width = 297
-              Height = 201
+              Height = 177
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
@@ -635,7 +635,7 @@ inherited StreetForm: TStreetForm
                 Left = 0
                 Top = 13
                 Width = 297
-                Height = 188
+                Height = 164
                 ScrollBars = ssVertical
                 Align = alClient
                 AutoSize = False
@@ -654,132 +654,48 @@ inherited StreetForm: TStreetForm
               Left = 0
               Top = 0
               Width = 339
-              Height = 201
+              Height = 177
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
-              object dbtxt1: TDBText
-                Left = 98
-                Top = 178
-                Width = 241
-                Height = 17
-                DataField = 'HOUSE_CODE'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object lbl3: TLabel
                 Left = 2
-                Top = 178
+                Top = 155
                 Width = 20
                 Height = 13
                 Caption = #1050#1086#1076
               end
               object lbl2: TLabel
                 Left = 2
-                Top = 154
+                Top = 134
                 Width = 90
                 Height = 13
                 Caption = #1055#1086#1095#1090#1086#1074#1099#1081' '#1080#1085#1076#1077#1082#1089
               end
-              object dbtxtpost: TDBText
-                Left = 98
-                Top = 154
-                Width = 241
-                Height = 17
-                DataField = 'POST_INDEX'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object dbtxtORG_NAME: TDBText
-                Left = 98
-                Top = 129
-                Width = 241
-                Height = 17
-                DataField = 'ORG_NAME'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object lbl1: TLabel
                 Left = 2
-                Top = 129
+                Top = 113
                 Width = 87
                 Height = 13
                 Caption = #1054#1073#1089#1083#1091#1078'. '#1087#1088#1077#1076#1087#1088'.'
               end
-              object dbtxtCHAIRMAN_PHONE: TDBText
-                Left = 82
-                Top = 105
-                Width = 257
-                Height = 17
-                DataField = 'CHAIRMAN_PHONE'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object Label5: TLabel
                 Left = 2
-                Top = 105
+                Top = 92
                 Width = 71
                 Height = 13
                 Caption = #1058#1077#1083'. '#1087#1088#1077#1076#1089'-'#1083#1103
               end
-              object dbtxtCHAIRMAN: TDBText
-                Left = 82
-                Top = 81
-                Width = 257
-                Height = 17
-                DataField = 'CHAIRMAN'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object Label4: TLabel
                 Left = 2
-                Top = 81
+                Top = 71
                 Width = 74
                 Height = 13
                 Caption = #1055#1088#1077#1076#1089#1077#1076#1072#1090#1077#1083#1100
               end
-              object dbtxtSUBAREA_NAME: TDBText
-                Left = 40
-                Top = 32
-                Width = 299
-                Height = 17
-                DataField = 'SUBAREA_NAME'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object Label9: TLabel
                 Left = 2
-                Top = 32
+                Top = 29
                 Width = 30
                 Height = 13
                 Caption = #1056#1072#1081#1086#1085
@@ -791,20 +707,6 @@ inherited StreetForm: TStreetForm
                 Height = 13
                 Caption = #1053#1086#1084#1077#1088
               end
-              object dbtxtHOUSE_NO: TDBText
-                Left = 40
-                Top = 8
-                Width = 95
-                Height = 17
-                DataField = 'HOUSE_NO'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object Label8: TLabel
                 Left = 141
                 Top = 8
@@ -812,40 +714,228 @@ inherited StreetForm: TStreetForm
                 Height = 13
                 Caption = #1050#1074#1072#1088#1090#1080#1088
               end
-              object dbtxtQ_FLAT: TDBText
-                Left = 191
-                Top = 8
-                Width = 56
-                Height = 17
-                DataField = 'Q_FLAT'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object dbtxtSUBAREA_NAME1: TDBText
-                Left = 40
-                Top = 57
-                Width = 299
-                Height = 17
-                DataField = 'NAME'
-                DataSource = srcHouses
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
               object lbl7: TLabel
                 Left = 2
-                Top = 57
+                Top = 50
                 Width = 30
                 Height = 13
                 Caption = #1047#1074#1077#1085#1086
+              end
+              object dbtxt1: TDBEditEh
+                Left = 98
+                Top = 155
+                Width = 241
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'HOUSE_CODE'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 8
+                Visible = True
+              end
+              object dbtxtpost: TDBEditEh
+                Left = 98
+                Top = 134
+                Width = 241
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'POST_INDEX'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 7
+                Visible = True
+              end
+              object dbtxtORG_NAME: TDBEditEh
+                Left = 98
+                Top = 113
+                Width = 241
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'ORG_NAME'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 6
+                Visible = True
+              end
+              object dbtxtCHAIRMAN_PHONE: TDBEditEh
+                Left = 82
+                Top = 92
+                Width = 257
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'CHAIRMAN_PHONE'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 5
+                Visible = True
+              end
+              object dbtxtCHAIRMAN: TDBEditEh
+                Left = 82
+                Top = 71
+                Width = 257
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'CHAIRMAN'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 4
+                Visible = True
+              end
+              object dbtxtSUBAREA_NAME: TDBEditEh
+                Left = 40
+                Top = 29
+                Width = 299
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'SUBAREA_NAME'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 2
+                Visible = True
+              end
+              object dbtxtHOUSE_NO: TDBEditEh
+                Left = 40
+                Top = 8
+                Width = 95
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'HOUSE_NO'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 0
+                Visible = True
+              end
+              object dbtxtQ_FLAT: TDBEditEh
+                Left = 191
+                Top = 8
+                Width = 148
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'Q_FLAT'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 1
+                Visible = True
+              end
+              object dbtxtSUBAREA_NAME1: TDBEditEh
+                Left = 40
+                Top = 50
+                Width = 299
+                Height = 21
+                TabStop = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                DataField = 'NAME'
+                DataSource = srcHouses
+                DynProps = <>
+                EditButtons = <>
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ReadOnly = True
+                ShowHint = True
+                TabOrder = 3
+                Visible = True
               end
             end
           end
@@ -867,10 +957,42 @@ inherited StreetForm: TStreetForm
             FooterParams.Color = clWindow
             GridLineParams.VertEmptySpaceStyle = dessNonEh
             OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
+            SearchPanel.Enabled = True
             SortLocal = True
             SumList.Active = True
             TabOrder = 1
+            OnGetCellParams = dbgEquipGetCellParams
             Columns = <
+              item
+                Alignment = taLeftJustify
+                ButtonStyle = cbsNone
+                CellButtons = <>
+                DynProps = <>
+                EditButton.Visible = False
+                EditButtons = <>
+                FieldName = 'EQ_TYPE'
+                Footers = <>
+                KeyList.Strings = (
+                  '1'
+                  '2'
+                  '3')
+                PickList.Strings = (
+                  #1057#1077#1090#1077#1074#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+                  #1050#1072#1073#1077#1083#1100#1085#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+                  #1055#1088#1086#1095#1077#1077)
+                Title.Caption = #1058#1080#1087
+                Title.TitleButton = True
+              end
+              item
+                CellButtons = <>
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'eqgroup'
+                Footers = <>
+                Title.Caption = #1043#1088#1091#1087#1087#1072
+                Title.TitleButton = True
+                Width = 63
+              end
               item
                 CellButtons = <>
                 DynProps = <>
@@ -880,16 +1002,14 @@ inherited StreetForm: TStreetForm
                 Visible = False
               end
               item
-                AutoFitColWidth = False
                 CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
                 FieldName = 'NAME'
-                Footer.ValueType = fvtCount
                 Footers = <>
                 Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
                 Title.TitleButton = True
-                Width = 93
+                Width = 95
               end
               item
                 AutoFitColWidth = False
@@ -899,6 +1019,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'MAC'
                 Footers = <>
                 Title.TitleButton = True
+                Width = 89
               end
               item
                 AutoFitColWidth = False
@@ -908,6 +1029,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'IP'
                 Footers = <>
                 Title.TitleButton = True
+                Width = 109
               end
               item
                 CellButtons = <>
@@ -917,15 +1039,25 @@ inherited StreetForm: TStreetForm
                 Footers = <>
                 Title.Caption = #1047#1072#1084#1077#1090#1082#1080
                 Title.TitleButton = True
+                Width = 129
               end
               item
                 CellButtons = <>
                 DynProps = <>
                 EditButtons = <>
-                FieldName = 'NAME'
+                FieldName = 'NODE_NAME'
                 Footers = <>
+                Title.Caption = #1059#1079#1077#1083
                 Title.TitleButton = True
-                Visible = False
+              end
+              item
+                CellButtons = <>
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'NODE_TYPE'
+                Footers = <>
+                Title.Caption = #1058#1080#1087' '#1091#1079#1083#1072
+                Title.TitleButton = True
               end>
             object RowDetailData: TRowDetailPanelControlEh
             end
@@ -999,6 +1131,7 @@ inherited StreetForm: TStreetForm
               FooterParams.Color = clWindow
               GridLineParams.VertEmptySpaceStyle = dessNonEh
               OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+              SearchPanel.Enabled = True
               TabOrder = 2
               TitleParams.MultiTitle = True
               OnExit = dbgrFloorsExit
@@ -1049,6 +1182,7 @@ inherited StreetForm: TStreetForm
               FooterParams.Color = clWindow
               GridLineParams.VertEmptySpaceStyle = dessNonEh
               OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+              SearchPanel.Enabled = True
               TabOrder = 1
               TitleParams.MultiTitle = True
               OnExit = dbgMapExit
@@ -1397,6 +1531,7 @@ inherited StreetForm: TStreetForm
               FooterParams.Color = clWindow
               GridLineParams.VertEmptySpaceStyle = dessNonEh
               OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
+              SearchPanel.Enabled = True
               SortLocal = True
               TabOrder = 1
               Columns = <
@@ -1615,6 +1750,7 @@ inherited StreetForm: TStreetForm
             DynProps = <>
             Flat = True
             FooterParams.Color = clWindow
+            SearchPanel.Enabled = True
             TabOrder = 1
             Columns = <
               item
@@ -2357,9 +2493,28 @@ inherited StreetForm: TStreetForm
       ''
       '    ')
     SelectSQL.Strings = (
-      'SELECT E.*'
-      'FROM EQUIPMENT E'
-      'WHERE E.HOUSE_ID =  :HOUSE_ID')
+      'select'
+      '    e.Eid'
+      '  , e.Name'
+      '  , e.Ip'
+      '  , e.Mac'
+      '  , e.Notice'
+      '  , e.Eq_Type'
+      '  , o.o_name as eqgroup'
+      '  , o.O_DIMENSION as COLOR'
+      '  , n.Name NODE_NAME'
+      '  , ot.O_Name NODE_TYPE'
+      '  from EQUIPMENT E'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      '       left outer join NODES n on (e.Node_Id = n.Node_Id)'
+      
+        '       left outer join objects ot on (ot.O_Id = n.Type_Id and ot' +
+        '.O_Type = 38)'
+      '  where E.HOUSE_ID = :HOUSE_ID'
+      ''
+      '  order by n.Name, o.O_Name, e.Name')
     AutoUpdateOptions.UpdateTableName = 'HOUSE'
     AutoUpdateOptions.KeyFields = 'HOUSE_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -2370,15 +2525,15 @@ inherited StreetForm: TStreetForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcHouses
-    Left = 183
-    Top = 364
+    Left = 559
+    Top = 420
   end
   object srcHouseEquipment: TDataSource
     AutoEdit = False
     DataSet = dsHouseEquipment
     OnDataChange = srcHouseEquipmentDataChange
-    Left = 408
-    Top = 176
+    Left = 560
+    Top = 480
   end
   object dsHouseService: TpFIBDataSet
     SelectSQL.Strings = (
@@ -2838,8 +2993,8 @@ inherited StreetForm: TStreetForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcHouses
-    Left = 528
-    Top = 337
+    Left = 504
+    Top = 377
   end
   object srcFlats: TDataSource
     DataSet = dsFlats
@@ -2848,8 +3003,8 @@ inherited StreetForm: TStreetForm
     Top = 399
   end
   object pmCustomers: TPopupMenu
-    Left = 529
-    Top = 458
+    Left = 457
+    Top = 442
     object N1: TMenuItem
       Action = actFindCustomer
     end
@@ -2937,8 +3092,8 @@ inherited StreetForm: TStreetForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcHouses
-    Left = 584
-    Top = 424
+    Left = 672
+    Top = 400
     object dsCirciutHC_ID: TFIBIntegerField
       FieldName = 'HC_ID'
     end

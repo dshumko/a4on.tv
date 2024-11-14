@@ -80,7 +80,7 @@ object ScripEditorForm: TScripEditorForm
       object lbl1: TLabel
         Left = 0
         Top = 0
-        Width = 101
+        Width = 139
         Height = 13
         Align = alTop
         Caption = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087' '#1092#1072#1081#1083#1072

@@ -135,7 +135,6 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     SearchPanel.Enabled = True
     SearchPanel.FilterOnTyping = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
@@ -143,6 +142,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     TitleParams.VTitleMargin = 4
     OnDblClick = dbgSingleServDblClick
     OnGetCellParams = dbgSingleServGetCellParams
+    OnSortMarkingChanged = dbgSingleServSortMarkingChanged
     Columns = <
       item
         AutoFitColWidth = False
@@ -224,7 +224,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
         EditButtons = <>
         FieldName = 'WHO_LAST'
         Footers = <>
-        Title.Caption = #1044#1086#1073#1072#1074#1080#1083
+        Title.Caption = #1044#1086#1073#1072#1074#1080#1083' '#1082#1090#1086
         Title.TitleButton = True
         Width = 76
       end
@@ -235,7 +235,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
         EditButtons = <>
         FieldName = 'ADDED_ON'
         Footers = <>
-        Title.Caption = #1050#1086#1075#1076#1072
+        Title.Caption = #1044#1086#1073#1072#1074#1080#1083' '#1082#1086#1075#1076#1072
         Title.TitleButton = True
       end
       item
@@ -395,10 +395,12 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       '  , srv.CAN_DELETE'
       '  , srv.SUBSCR_SRV'
       '  , srv.ORDER_N'
+      '  , srv.itsService'
       '  , srv.Srv_Type_Id'
       
-        '  , iif(srv.Srv_Type_Id = 2, srv.UNITS, round((coalesce(cf.fee, ' +
-        '0) / coalesce(cf.cnt, 1)), 2)) fee_cnt'
+        '  , iif(srv.Srv_Type_Id = 2, srv.UNITS, iif(srv.Srv_Type_Id is n' +
+        'ull, srv.Fee, round((coalesce(cf.fee, 0) / coalesce(cf.cnt, 1)),' +
+        ' 2))) fee_cnt'
       '  , b.O_NAME BUSINESS'
       
         '  , iif(coalesce(srv.Units, 0) = 0, srv.Units, iif((not srv.ORDE' +
@@ -432,22 +434,38 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
         '                                ), 0), srv.Units)) ORDER_PAY'
       ''
       '  from (select'
-      '            Ss.*'
+      '            Ss.Single_Service_Id'
+      '          , ss.Customer_Id'
+      '          , Ss.Service_Id'
+      '          , Ss.Serv_Date'
+      '          , Ss.Units'
+      '          , Ss.Notice'
+      '          , Ss.History_Id'
+      '          , Ss.Paid'
+      '          , Ss.Added_By'
+      '          , Ss.Added_On'
+      '          , Ss.Vatg_Id'
+      '          , Ss.Rq_Id'
+      '          , Ss.Tag'
+      '          , Ss.M_Id'
       '          , s.Srv_Type_Id'
       '          , s.NAME'
       '          , s.BUSINESS_TYPE'
       '          , s.Dimension'
       '          , coalesce(w.Surname, ss.Added_By) as WHO_LAST'
       '          , o.o_name as VAT_GROUP'
-      '          ,'
-      '            (select'
+      '          , (select'
       '                 count(sl.LINK_ID)'
       '               from SERVICES_LINKS sl'
       '               where sl.CHILD = s.service_id'
       '                     and sl.LINK_TYPE = 1'
       '                     and sl.PARENT is null) can_delete'
       '          , sh.Name SUBSCR_SRV'
-      '          , @@Colorize% null @ ORDER_N '
+      '          , 1 itsService'
+      '          , null Fee'
+      
+        '          , @@Colorize% null @ ORDER_N -- '#1074' '#1101#1090#1086' '#1084#1077#1089#1090#1086' '#1076#1086#1073#1072#1074#1083#1103#1077#1090#1089 +
+        #1103' '#1082#1086#1076' '#1076#1083#1103' '#1087#1086#1080#1089#1082#1072' '#1086#1087#1083#1072#1090' '#1079#1072#1103#1074#1086#1082' '#1051#1058#1042
       '          from SINGLE_SERV ss'
       
         '               inner join services s on (s.service_id = ss.servi' +
@@ -465,7 +483,13 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       
         '               left outer join services sh on (sh.Service_Id = s' +
         'v.Serv_Id)'
-      '          where SS.CUSTOMER_ID = :CUSTOMER_ID) srv'
+      '          where SS.CUSTOMER_ID = :CUSTOMER_ID'
+      ''
+      
+        '          @@show_works% @ -- '#1074' '#1101#1090#1086' '#1084#1077#1089#1090#1086' '#1076#1086#1073#1072#1074#1083#1103#1077#1090#1089#1103' '#1082#1086#1076' '#1074#1099#1074#1086#1076#1072' ' +
+        #1088#1072#1073#1086#1090' '#1079#1072#1103#1074#1086#1082
+      ''
+      '          ) srv'
       '       left outer join(select'
       '                           f.Customer_Id'
       '                         , f.Service_Id'
@@ -481,7 +505,10 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       
         '       left outer join objects b on (b.O_Id = srv.BUSINESS_TYPE ' +
         'and'
-      '             b.O_TYPE = 15)'
+      '             b.O_TYPE = 15'
+      ''
+      ''
+      '     )'
       ''
       '  order by srv.SERV_DATE desc')
     AutoUpdateOptions.UpdateTableName = 'SUBSCR_SERV'

@@ -129,7 +129,7 @@ implementation
 
 uses
   AtrCommon, AtrStrUtils, MAIN, DM, CF, PrjConst,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase,
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase, OverbyteIcsTypes,
   fmuCustomerInfo, fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv, fmuCustomerKoef, fmuCustomerLetters,
   fmuCustomerRecourse, fmuCustomerRequests, fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerCard,
   fmuCustomerDigit, fmuCustomerEdit, fmuCustomerBonus, fmuCustomerFiles, fmuCustomerMaterialsMove, fmuCustomerAppl,
@@ -694,6 +694,8 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False
     else
@@ -736,6 +738,21 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemoEh) then
+      begin
+        (Components[i] as TDBMemoEh).Font.Name := Font_name;
+        (Components[i] as TDBMemoEh).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
     end;
   end;
@@ -959,10 +976,10 @@ end;
 
 procedure TCustomerForm.FindDataOnTab(const TabType: Integer; const DataValue: string);
 begin
-//    FPageList.Add(TapgCustomerPayments);
+  // FPageList.Add(TapgCustomerPayments);
   // mtbPages.Locate('ID', TabType);
   // 4 - платежи
-{
+  {
     FPageList.Add(TapgCustomerSrv);
     FPageList.Add(TapgCustomerSingleSrv);
     FPageList.Add(TapgCustomerKoef);
@@ -980,8 +997,9 @@ begin
     FPageList.Add(TapgCustomerAppl);
     FPageList.Add(TapgCustomerCard);
     FPageList.Add(TapgCustomerBalance);
-}
-  if mtbPages.Locate('ID', TabType, []) then begin
+  }
+  if mtbPages.Locate('ID', TabType, []) then
+  begin
     SetPageIndex(TabType);
     FLastPage.FindData(DataValue);
   end;

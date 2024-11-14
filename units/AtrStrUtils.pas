@@ -104,6 +104,7 @@ function ValueHasMaskError(const inMask, inValue: string): Boolean;
 function ReplaceInMask(const inMask, inValue: string): String;
 
 function ExtractUrl(const S: String): string;
+function ExtractDigit(const S: String): string;
 
 implementation
 
@@ -870,6 +871,18 @@ begin
       else if ((msk[i] = C) and (inValue[i] = ' ')) then
         Result := True;
     end;
+  end;
+end;
+
+function ExtractDigit(const S: String): string;
+var
+  i : Integer;
+begin
+  Result := '';
+  for i := 1 to Length(s) do
+  begin
+      if (CharInSet(s[i], ['0' .. '9'])) then
+        Result := Result + s[i];
   end;
 end;
 

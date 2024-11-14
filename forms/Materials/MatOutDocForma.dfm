@@ -761,6 +761,7 @@ object MatOutDocForm: TMatOutDocForm
       '  , g.Mg_Name'
       '  , m.DESCRIPTION'
       '  , u.Serial'
+      '  , m.M_NUMBER  '
       '  from materials m'
       '       inner join Materials_Remain r on (m.M_Id = r.M_Id)'
       '       left outer join Materials_Group g on (m.Mg_Id = g.Mg_Id)'
@@ -773,6 +774,7 @@ object MatOutDocForm: TMatOutDocForm
       
         '        and ((coalesce(m.Is_Unit, 0) = 0) or (not u.Serial is nu' +
         'll))'
+      '        and r.Mr_Quant <> 0'
       '  order by m.Name, g.Mg_Name')
     Transaction = trRead
     Database = dmMain.dbTV
@@ -814,6 +816,8 @@ object MatOutDocForm: TMatOutDocForm
         'rrent_user'
       '                              and w.can_edit = 1)'
       '          or (current_user = '#39'SYSDBA'#39'))'
+      '    and coalesce(o.O_DELETED, 0) = 0'
+      'order by O_NAME              '
       ''
       '    ')
     Transaction = dmMain.trRead

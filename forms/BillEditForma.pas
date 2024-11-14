@@ -35,6 +35,9 @@ type
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure edtInetIPEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure edtSecretEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     procedure GenIP(const CUSTOMER_ID: Integer);
@@ -44,7 +47,7 @@ type
   end;
 
 function EditBillInfo(const aBILL_ID: Int64; const CUSTOMER_ID: Integer; const ACCOUNT: string;
-  const NOTICE: string = ''; const SetVPN: Boolean = True): Int64;
+  const NOTICE: string = ''; const SetVPN: Boolean = True; const HideCancel: Boolean = False): Int64;
 
 implementation
 
@@ -54,13 +57,16 @@ uses
 {$R *.dfm}
 
 function EditBillInfo(const aBILL_ID: Int64; const CUSTOMER_ID: Integer; const ACCOUNT: string;
-  const NOTICE: string = ''; const SetVPN: Boolean = True): Int64;
+  const NOTICE: string = ''; const SetVPN: Boolean = True; const HideCancel: Boolean = False): Int64;
 var
   pwd: AnsiString;
 begin
   result := -1;
   with TBillEditForm.Create(Application) do
     try
+      if HideCancel then
+        OkCancelFrame1.bbCancel.Visible := False;
+
       trWrite.Active := True;
       trRead.Active := True;
       dsBill.ParamByName('BLNG_ID').Value := aBILL_ID;
@@ -249,5 +255,21 @@ begin
     edtSecret.Text := GenPassword(8);
 end;
 
+procedure TBillEditForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  CanClose := (OkCancelFrame1.bbCancel.Visible) or (ModalResult = mrOk);
+end;
+
+procedure TBillEditForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then begin
+    ModalResult := mrOk;
+    OkCancelFrame1bbOkClick(Sender);
+  end;
+end;
+
 end.
+
 

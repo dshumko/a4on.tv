@@ -261,18 +261,24 @@ end;
 
 procedure TapgCustomerFiles.actViewExecute(Sender: TObject);
 var
-  fileName, ext: string;
+  fileName: string;
 begin
-  if dbgCustFiles.DataSource.DataSet.RecordCount = 0 then
+  if (dbgCustFiles.DataSource.DataSet.RecordCount = 0) or (dsCustFiles.FieldByName('CF_ID').IsNull) then
     exit;
 
-  ext := ExtractFileExt(dsCustFiles['FILENAME']);
-  fileName := GetTempA4onFile(ext);
-  if not DirectoryExists(fileName) then
-    CreateDir(fileName);
-  fileName := fileName + dsCustFiles['FILENAME'];
+  if not dsCustFiles.FieldByName('FILENAME').IsNull then
+  begin
+    fileName := GetTempDir();
+    if not DirectoryExists(fileName) then
+      CreateDir(fileName);
 
-  if fileName.IsEmpty then Exit;
+    fileName := fileName + dsCustFiles['FILENAME'];
+  end
+  else
+    fileName := GetTempA4onFile('');
+
+  if fileName.IsEmpty then
+    exit;
 
   if FileExists(fileName) then
     DeleteFile(fileName);
@@ -296,7 +302,8 @@ begin
     qReqFile.Transaction.Rollback;
   end;
 
-  if FileExists(fileName) then begin
+  if FileExists(fileName) then
+  begin
     ShellExecute(Handle, 'open', PWideChar(fileName), nil, nil, SW_SHOWNORMAL);
     // DeleteFile(fileName);
   end;
@@ -421,3 +428,4 @@ begin
 end;
 
 end.
+

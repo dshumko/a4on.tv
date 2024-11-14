@@ -51,30 +51,30 @@ type
   { TA4onPage }
 
   TA4onPage = class(TForm)
-    //pmPopUpA4onPage: TPopupMenu;
+    // pmPopUpA4onPage: TPopupMenu;
   private
     {
-    miFilterFLD: TMenuItem;
-    miCopy: TMenuItem;
-    miSelectAll: TMenuItem;
-    miSaveSelection: TMenuItem;
-    miSep1: TMenuItem;
-    miSep2: TMenuItem;
-    miSep3: TMenuItem;
-    miRefresh: TMenuItem;
+      miFilterFLD: TMenuItem;
+      miCopy: TMenuItem;
+      miSelectAll: TMenuItem;
+      miSaveSelection: TMenuItem;
+      miSep1: TMenuItem;
+      miSep2: TMenuItem;
+      miSep3: TMenuItem;
+      miRefresh: TMenuItem;
     }
     FOnStart: TNotifyEvent;
     FOnUpdate: TNotifyEvent;
     function GetDataSource: TDataSource;
     procedure InitControls;
     {
-    procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
-    procedure miFilterFLDClick(Sender: TObject);
-    procedure miRefreshClick(Sender: TObject);
-    procedure miSelectAllClick(Sender: TObject);
-    procedure miSaveSelectionClick(Sender: TObject);
-    procedure miCopyClick(Sender: TObject);
-    procedure CreateMenu;
+      procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
+      procedure miFilterFLDClick(Sender: TObject);
+      procedure miRefreshClick(Sender: TObject);
+      procedure miSelectAllClick(Sender: TObject);
+      procedure miSaveSelectionClick(Sender: TObject);
+      procedure miCopyClick(Sender: TObject);
+      procedure CreateMenu;
     }
   protected
     FDataSource: TDataSource;
@@ -123,7 +123,7 @@ begin
   inherited Destroy;
 end;
 
-class function TA4onPages.GetA4onPageName:String;
+class function TA4onPages.GetA4onPageName: String;
 begin
   Result := '';
 end;
@@ -266,10 +266,18 @@ begin
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then // or (Components[i] is TDBMemoEh) or (Components[i] is TDBMemo)) then
+      begin
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
     end;
   end;
-  //CreateMenu;
-  //SetGridsPopUpMenu(pmPopUpA4onPage);
+  // CreateMenu;
+  // SetGridsPopUpMenu(pmPopUpA4onPage);
 end;
 
 procedure TA4onPage.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
@@ -380,9 +388,10 @@ begin
   end;
   Result := S;
 end;
+
 {
-procedure TA4onPage.CreateMenu;
-begin
+  procedure TA4onPage.CreateMenu;
+  begin
   pmPopUpA4onPage := TPopupMenu.Create(Self);
   miFilterFLD := TMenuItem.Create(pmPopUpA4onPage);
   miSep1 := TMenuItem.Create(pmPopUpA4onPage);
@@ -417,123 +426,123 @@ begin
   miRefresh.Name := 'miRefresh';
   miRefresh.Caption := '&Перечитать данные';
   miRefresh.OnClick := miRefreshClick;
-end;
+  end;
 
-procedure TA4onPage.SetGridsPopUpMenu(pmGrid: TPopupMenu);
-var
+  procedure TA4onPage.SetGridsPopUpMenu(pmGrid: TPopupMenu);
+  var
   rghtExport: Boolean;
-var
+  var
   i: Integer;
-begin
+  begin
   rghtExport := dmMain.AllowedAction(rght_Export);
   for i := 0 to ComponentCount - 1 do
   begin
-    if Components[i] is TDBGridEh then
-    begin
-      (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
-      (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
+  if Components[i] is TDBGridEh then
+  begin
+  (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
+  (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
 
-      if rghtExport then begin
-        (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks,gstRectangle,gstColumns,gstAll];
-        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
-      end
-      else begin
-        (Components[i] as TDBGridEh).AllowedSelections := [];
-        (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
-      end;
-
-      if ((Components[i] as TDBGridEh).PopUpMenu = nil) then
-        (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
-    end;
+  if rghtExport then begin
+  (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks,gstRectangle,gstColumns,gstAll];
+  (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
+  end
+  else begin
+  (Components[i] as TDBGridEh).AllowedSelections := [];
+  (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
   end;
-end;
 
-procedure TA4onPage.miRefreshClick(Sender: TObject);
-var
+  if ((Components[i] as TDBGridEh).PopUpMenu = nil) then
+  (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
+  end;
+  end;
+  end;
+
+  procedure TA4onPage.miRefreshClick(Sender: TObject);
+  var
   bm: TbookMark;
   cr: TCursor;
   dbGrid: TDBGridEh;
-begin
+  begin
   if not(Sender is TMenuItem) then
-    exit;
+  exit;
 
   if not(((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent is TDBGridEh) then
-    exit;
+  exit;
 
   dbGrid := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as TDBGridEh);
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   try
-    bm := dbGrid.DataSource.DataSet.GetBookMark;
-    dbGrid.DataSource.DataSet.Close;
-    dbGrid.DataSource.DataSet.Open;
-    dbGrid.DataSource.DataSet.GotoBookmark(bm);
+  bm := dbGrid.DataSource.DataSet.GetBookMark;
+  dbGrid.DataSource.DataSet.Close;
+  dbGrid.DataSource.DataSet.Open;
+  dbGrid.DataSource.DataSet.GotoBookmark(bm);
   finally
-    Screen.Cursor := cr;
+  Screen.Cursor := cr;
   end;
-end;
+  end;
 
-procedure TA4onPage.miFilterFLDClick(Sender: TObject);
-var
+  procedure TA4onPage.miFilterFLDClick(Sender: TObject);
+  var
   dbGrid: TDBGridEh;
   vis: Boolean;
-begin
+  begin
   if not(Sender is TMenuItem) then
-    exit;
+  exit;
 
   if not(((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent is TDBGridEh) then
-    exit;
+  exit;
 
   dbGrid := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as TDBGridEh);
 
   vis := dbGrid.SearchPanel.Visible;
   try
-    dbGrid.SearchPanel.Visible := True;
-    dbGrid.SearchPanel.SearchingText := dbGrid.SelectedField.AsString;
-    dbGrid.SearchPanel.ApplySearchFilter;
-    dbGrid.SearchPanel.Active := True;
+  dbGrid.SearchPanel.Visible := True;
+  dbGrid.SearchPanel.SearchingText := dbGrid.SelectedField.AsString;
+  dbGrid.SearchPanel.ApplySearchFilter;
+  dbGrid.SearchPanel.Active := True;
   except
-    dbGrid.SearchPanel.CancelSearchFilter;
-    dbGrid.SearchPanel.Visible := vis;
+  dbGrid.SearchPanel.CancelSearchFilter;
+  dbGrid.SearchPanel.Visible := vis;
   end;
-end;
+  end;
 
-procedure TA4onPage.miCopyClick(Sender: TObject);
-var
+  procedure TA4onPage.miCopyClick(Sender: TObject);
+  var
   dbg: TDBGridEh;
-begin
+  begin
   if (ActiveControl is TDBGridEh) then
   begin
-    dbg := (ActiveControl as TDBGridEh);
-    if (geaCopyEh in dbg.EditActions) then
-      if dbg.CheckCopyAction then
-      begin
-        A4MainForm.CopyDBGrid(dbg);
-      end
-      else
-        StrToClipbrd(dbg.SelectedField.AsString);
+  dbg := (ActiveControl as TDBGridEh);
+  if (geaCopyEh in dbg.EditActions) then
+  if dbg.CheckCopyAction then
+  begin
+  A4MainForm.CopyDBGrid(dbg);
+  end
+  else
+  StrToClipbrd(dbg.SelectedField.AsString);
   end;
-end;
+  end;
 
-procedure TA4onPage.miSaveSelectionClick(Sender: TObject);
-begin
+  procedure TA4onPage.miSaveSelectionClick(Sender: TObject);
+  begin
   if (ActiveControl is TDBGridEh) then
-    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
-end;
+  A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
+  end;
 
-procedure TA4onPage.miSelectAllClick(Sender: TObject);
-begin
+  procedure TA4onPage.miSelectAllClick(Sender: TObject);
+  begin
   if (ActiveControl is TDBGridEh) then
-    with TDBGridEh(ActiveControl) do
-      if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
-        Selection.SelectAll;
-end;
+  with TDBGridEh(ActiveControl) do
+  if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
+  Selection.SelectAll;
+  end;
 
-destructor TA4onPage.Destroy;
-begin
+  destructor TA4onPage.Destroy;
+  begin
   if Assigned(pmPopUpA4onPage) then
-    FreeAndNil(pmPopUpA4onPage);
+  FreeAndNil(pmPopUpA4onPage);
   inherited Destroy;
-end;
+  end;
 }
 end.

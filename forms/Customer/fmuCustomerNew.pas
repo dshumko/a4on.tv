@@ -220,10 +220,9 @@ implementation
 
 uses
   System.TypInfo, System.RegularExpressions,
-  DM, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit,
-  ContactForma,
-  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase,
-  MAIN;
+  OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase, OverbyteIcsTypes,
+  DM, MAIN, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit,
+  ContactForma;
 
 {$R *.dfm}
 
@@ -479,6 +478,8 @@ begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False
     else

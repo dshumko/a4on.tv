@@ -61,7 +61,7 @@ object EPGViewForm: TEPGViewForm
       SearchPanel.FilterOnTyping = True
       STFilter.InstantApply = False
       STFilter.Local = True
-      STFilter.Location = stflInTitleFilterEh
+      STFilter.Location = stflUnderTitleFilterEh
       STFilter.Visible = True
       SumList.Active = True
       TabOrder = 0

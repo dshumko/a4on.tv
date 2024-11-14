@@ -212,6 +212,12 @@ type
     lbl2421: TLabel;
     edtPayCheckUrl: TDBEditEh;
     chkEmailCheck: TCheckBox;
+    chkIPUniqGlobal: TCheckBox;
+    chkRTGRestrict: TCheckBox;
+    CheckBox1: TCheckBox;
+    edtChIssue: TDBEditEh;
+    lbl2422: TLabel;
+    chkPortLine: TCheckBox;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -228,36 +234,30 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnGoApiClick(Sender: TObject);
-    procedure edtColorEditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
-    procedure edtColorWOSRVFONTEditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
-    procedure edtColorOFFMONEYEditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
-    procedure edtColorOFFEditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
-    procedure edtColorWOSRVFONT1EditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
-    procedure edtColorHLERROREditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
-    procedure edtColorHLWARNINGEditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
+    procedure edtColorEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtColorWOSRVFONTEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtColorOFFMONEYEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtColorOFFEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtColorWOSRVFONT1EditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtColorHLERROREditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtColorHLWARNINGEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure FEEExit(Sender: TObject);
   private
     { Private declarations }
     FLastAccount: integer;
-    FPassChanged: boolean;
+    FPassChanged: Boolean;
     FPageList: TStrings;
     // procedure SaveBilling;
-    function CheckCashReg: boolean;
-    function CheckInternetSetting: boolean;
-    function CashRegSettings: boolean;
+    function CheckCashReg: Boolean;
+    function CheckInternetSetting: Boolean;
+    function CashRegSettings: Boolean;
     procedure SaveSettingsStr(const name: string; const value: string = '');
     procedure SaveSettingsInt(const name: string; const value: integer = 0);
     procedure SaveSettingsBoolean(const name: string; const chBox: TCheckBox); overload;
     procedure SaveSettingsBoolean(const name: string; const chBox: TDBCheckBoxEh); overload;
-    procedure SaveSettingsBoolean(const name: string; const Checked: boolean); overload;
+    procedure SaveSettingsBoolean(const name: string; const Checked: Boolean); overload;
     procedure miClick(Sender: TObject);
-    function Internet: boolean;
+    function Internet: Boolean;
   public
     { Public declarations }
   end;
@@ -287,7 +287,7 @@ begin
   Query.Transaction.Commit;
 end;
 
-procedure TSettingsForm.SaveSettingsBoolean(const name: string; const Checked: boolean);
+procedure TSettingsForm.SaveSettingsBoolean(const name: string; const Checked: Boolean);
 begin
   if Checked then
     SaveSettingsStr(name, '1')
@@ -469,6 +469,7 @@ begin
       SaveSettingsInt('IDLEHOURS', edtIdleHoure.value);
       SaveSettingsStr('IPV6GETURL', edtIPv6Url.Text);
       SaveSettingsStr('PAY_CHECK_URL', edtPayCheckUrl.Text);
+      SaveSettingsStr('CH_ISSUE_CHECK_URL', edtChIssue.Text);
 
       SaveSettingsStr('BARCODE', edtBC.Text);
       SaveSettingsBoolean('BARNODELZERRO', chkBARDELZERRO);
@@ -555,6 +556,8 @@ begin
       SaveSettingsBoolean('LAN_VALAN4HOME', chkVlans4Home);
       SaveSettingsBoolean('LAN_VALANDISABLE', chkDisableVlan);
       SaveSettingsBoolean('LAN_PORTDICTDISABLE', chkDisablePortDict);
+      SaveSettingsBoolean('IP_UNIQ_GLOBAL', chkIPUniqGlobal);
+      SaveSettingsBoolean('PORT_LINE_LIMIT', chkPortLine);
 
       SaveSettingsBoolean('PAYMENT_SRV', cbPaymentSrv);
       SaveSettingsBoolean('NEGATIVE_PAY', cbNegativePay);
@@ -564,13 +567,14 @@ begin
       SaveSettingsBoolean('SAVE_SRV_WORKER', chkSrvWorker);
       SaveSettingsBoolean('FLAT_OWNER', chkFlatOwner);
       SaveSettingsBoolean('CAN_NEW_CONTRACT', chkNewContract);
+      SaveSettingsBoolean('REQUEST_TYPE_RESTRICT', chkRTGRestrict);
 
-      if FLastAccount <> AccNumber.value then
+      if (not VarIsNull(AccNumber.value)) then
       begin
         try
-          i := AccNumber.value;
-          s := IntToStr(i);
-          Query.SQL.Text := 'SET GENERATOR GEN_ACCOUNT_NO TO ' + s;
+          Query.SQL.Text :=
+            'select gen_id(GEN_ACCOUNT_NO,(cast(:N as integer)-gen_id(GEN_ACCOUNT_NO,0))) from rdb$database';
+          Query.ParamByName('N').AsInteger := AccNumber.value;
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
           Query.Transaction.Commit;
@@ -673,7 +677,7 @@ begin
   Screen.Cursor := cr;
 end;
 
-function TSettingsForm.CheckInternetSetting: boolean;
+function TSettingsForm.CheckInternetSetting: Boolean;
 var
   CashSettingsDialog: TDLLInternetSetting; // TInternetSetting;
   HLib: THandle;
@@ -697,7 +701,7 @@ begin
   end
 end;
 
-function TSettingsForm.CheckCashReg: boolean;
+function TSettingsForm.CheckCashReg: Boolean;
 var
   CashSettingsDialog: TCashSettingsDialog;
   HLib: THandle;
@@ -728,84 +732,84 @@ begin
   ed12M.Enabled := chkPayDiscount.Checked;
 end;
 
-procedure TSettingsForm.edtColorEditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TSettingsForm.edtColorEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorDolg.Font.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorDolg.Font.Color := dlgColor1.Color;
     edtColorDolg.Text := ColorToString(edtColorDolg.Font.Color);
   end;
   Handled := True;
 end;
 
-procedure TSettingsForm.edtColorHLERROREditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TSettingsForm.edtColorHLERROREditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorHLERROR.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorHLERROR.Color := dlgColor1.Color;
     edtColorHLERROR.Text := ColorToString(edtColorHLERROR.Color);
   end;
   Handled := True;
 end;
 
-procedure TSettingsForm.edtColorHLWARNINGEditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TSettingsForm.edtColorHLWARNINGEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorHLWARNING.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorHLWARNING.Color := dlgColor1.Color;
     edtColorHLWARNING.Text := ColorToString(edtColorHLWARNING.Color);
   end;
   Handled := True;
 end;
 
-procedure TSettingsForm.edtColorOFFEditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TSettingsForm.edtColorOFFEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorOFF.Font.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorOFF.Font.Color := dlgColor1.Color;
     edtColorOFF.Text := ColorToString(edtColorOFF.Font.Color);
   end;
   Handled := True;
 end;
 
-procedure TSettingsForm.edtColorOFFMONEYEditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TSettingsForm.edtColorOFFMONEYEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorOFFMONEY.Font.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorOFFMONEY.Font.Color := dlgColor1.Color;
     edtColorOFFMONEY.Text := ColorToString(edtColorOFFMONEY.Font.Color);
   end;
   Handled := True;
 end;
 
-procedure TSettingsForm.edtColorWOSRVFONT1EditButtons0Click(
-  Sender: TObject; var Handled: Boolean);
+procedure TSettingsForm.edtColorWOSRVFONT1EditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorWOSRVFONT.Font.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorWOSRVFONT.Font.Color := dlgColor1.Color;
     edtColorWOSRVFONT.Text := ColorToString(edtColorWOSRVFONT.Font.Color);
   end;
   Handled := True;
 end;
 
-procedure TSettingsForm.edtColorWOSRVFONTEditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TSettingsForm.edtColorWOSRVFONTEditButtons0Click(Sender: TObject; var Handled: Boolean);
 begin
   dlgColor1.Color := edtColorWOSRVFONT.Font.Color;
-  if dlgColor1.Execute then begin
+  if dlgColor1.Execute then
+  begin
     edtColorWOSRVFONT.Font.Color := dlgColor1.Color;
     edtColorWOSRVFONT.Text := ColorToString(edtColorWOSRVFONT.Font.Color);
   end;
   Handled := True;
 end;
 
-function TSettingsForm.CashRegSettings: boolean;
+function TSettingsForm.CashRegSettings: Boolean;
 var
   CashSettingsDialog: TCashSettingsDialog;
   HLib: THandle;
@@ -841,6 +845,15 @@ begin
   end
 end;
 
+procedure TSettingsForm.FEEExit(Sender: TObject);
+begin
+  if FEE.value > 2 then
+  begin
+    ShowMessage('Значение не может быть больше 2');
+    FEE.SetFocus;
+  end;
+end;
+
 procedure TSettingsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FPageList.Free;
@@ -859,7 +872,7 @@ var
   f: TFormatSettings;
   s: string;
   i: integer;
-  Global: boolean;
+  Global: Boolean;
   val: TStringArray;
 begin
   dsServices.Open;
@@ -929,6 +942,8 @@ begin
         edtIPv6Url.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PAY_CHECK_URL' then
         edtPayCheckUrl.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'CH_ISSUE_CHECK_URL' then
+        edtChIssue.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'MAP_HOUSE_URL' then
         edtMapHouseUrl.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'FEE_ROUND' then
@@ -957,6 +972,10 @@ begin
         chkDisableVlan.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'LAN_PORTDICTDISABLE' then
         chkDisablePortDict.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'IP_UNIQ_GLOBAL' then
+        chkIPUniqGlobal.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PORT_LINE_LIMIT' then
+        chkPortLine.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'PAYMENT_SRV' then
         cbPaymentSrv.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ACCOUNT_FORMAT' then
@@ -985,6 +1004,8 @@ begin
         chkFlatOwner.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'CAN_NEW_CONTRACT' then
         chkNewContract.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'REQUEST_TYPE_RESTRICT' then
+        chkRTGRestrict.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
       // пеня
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'SHOW_FINE' then
         cbFine.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
@@ -1085,7 +1106,8 @@ begin
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'EMAIL_REQ' then
         chkEMAIL_REQ.Checked := (select.FN('VAR_VALUE').AsInteger = 1);
 
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_DOLG' then begin
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_DOLG' then
+      begin
         try
           edtColorDolg.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
         Except
@@ -1094,7 +1116,8 @@ begin
         edtColorDolg.Text := ColorToString(edtColorDolg.Font.Color);
       end;
 
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFF' then begin
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFF' then
+      begin
         try
           edtColorOFF.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
         Except
@@ -1102,7 +1125,8 @@ begin
         end;
         edtColorOFF.Text := ColorToString(edtColorOFF.Font.Color);
       end;
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFFMONEY' then begin
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'COLOR_OFFMONEY' then
+      begin
         try
           edtColorOFFMONEY.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
         Except
@@ -1110,7 +1134,8 @@ begin
         end;
         edtColorOFFMONEY.Text := ColorToString(edtColorOFFMONEY.Font.Color);
       end;
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_WITHOUTSRV' then begin
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_WITHOUTSRV' then
+      begin
         try
           edtColorWOSRVFONT.Font.Color := StringToColor(select.FN('VAR_VALUE').AsString);
         Except
@@ -1119,7 +1144,8 @@ begin
         edtColorWOSRVFONT.Text := ColorToString(edtColorWOSRVFONT.Font.Color);
       end;
 
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_ERROR' then begin
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_ERROR' then
+      begin
         try
           edtColorHLERROR.Color := StringToColor(select.FN('VAR_VALUE').AsString);
         Except
@@ -1127,7 +1153,8 @@ begin
         end;
         edtColorHLERROR.Text := ColorToString(edtColorHLERROR.Color);
       end;
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_WARNING' then begin
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'ROW_HL_WARNING' then
+      begin
         try
           edtColorHLWARNING.Color := StringToColor(select.FN('VAR_VALUE').AsString);
         Except
@@ -1206,7 +1233,7 @@ begin
   pgSettings.ActivePageIndex := StrToInt(FPageList.Strings[lstSettings.ItemIndex]);
 end;
 
-function TSettingsForm.Internet: boolean;
+function TSettingsForm.Internet: Boolean;
 var
   CashSettingsDialog: TDLLInternetSetting;
   HLib: THandle;

@@ -97,6 +97,12 @@ type
     DBLookupComboboxEh1: TDBLookupComboboxEh;
     Label12: TLabel;
     DBLookupComboboxEh2: TDBLookupComboboxEh;
+    lbl13: TLabel;
+    edtSNAME: TDBEditEh;
+    lbl131: TLabel;
+    edtS_NAME: TDBEditEh;
+    edtS_NAME1: TDBEditEh;
+    lbl1311: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTypeEQChange(Sender: TObject);
@@ -585,6 +591,8 @@ begin
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
       // else if (ActiveControl is TDBGridEh) then
       // go := False
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
       if (ActiveControl is TDBMemoEh) and
@@ -921,7 +929,7 @@ end;
 
 procedure TEquipEditForm.CheckPortTemplate(const eid: Integer);
 var
-  gid, gcnt, ecnt: Integer;
+  gid, gcnt: Integer;
 begin
   gcnt := 0;
   gid := 1;
@@ -931,7 +939,7 @@ begin
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
       sql.Text := 'select (select count(*) cnt from port where EID = -1*e.Eq_Group) gcnt, ' +
-     '(select count(*) cnt from port where EID = e.Eid) ecnt, -1*e.Eq_Group gid from Equipment e where e.Eid = :eid';
+        '(select count(*) cnt from port where EID = e.Eid) ecnt, -1*e.Eq_Group gid from Equipment e where e.Eid = :eid';
       ParamByName('Eid').AsInteger := eid;
 
       Transaction.StartTransaction;

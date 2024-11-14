@@ -182,7 +182,7 @@ type
     NOTICE: PWCHAR; // String;
     ACCOUNT: PWCHAR; // String;
     FIO: PWCHAR; // String;
-    ADRES: PWCHAR; // String;
+    ADDRESS: PWCHAR; // String;
     Notify: PWCHAR; // String;
     Summa: Real;
     Balance: Real;
@@ -794,15 +794,19 @@ begin
         else
           ChequeInfo.FIO := PWCHAR(FCustomerRecord.FIO + '$' + FCustomerRecord.INN);
         if not FCustomerRecord.flat_No.IsEmpty then
-          ChequeInfo.ADRES := PWCHAR(Format(rsPrintCheckAdr, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO,
+          ChequeInfo.ADDRESS := PWCHAR(Format(rsPrintCheckAdr, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO,
             FCustomerRecord.flat_No]))
         else
-          ChequeInfo.ADRES := PWCHAR(Format(rsPrintCheckAdrWOF, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO]));
+          ChequeInfo.ADDRESS := PWCHAR(Format(rsPrintCheckAdrWOF, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO]));
 
         if (dmMain.GetSettingsValue('EMAIL_CHECK') = '1') then
-          ChequeInfo.Notify := PWCHAR(FCustomerRecord.Email)
-        else
-          ChequeInfo.Notify := PWCHAR(AtrStrUtils.CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry));
+          pass := FCustomerRecord.Email
+        else begin
+          pass := AtrStrUtils.CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry);
+          //if not FCustomerRecord.Email.IsEmpty then
+          //  pass := pass + ';' + FCustomerRecord.Email
+        end;
+        ChequeInfo.Notify := PWCHAR(pass);
 
         ChequeInfo.Summa := Summa;
         if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
@@ -879,7 +883,6 @@ begin
 end;
 
 function TPaymentForm.InsertPayment(const NeedPrintCheck: Boolean): Boolean;
-
 var
   pdi: int64;
   vSF: Boolean;
@@ -934,7 +937,7 @@ begin
     dsMemPayment['FINE_SUM'] := 0;
   end;
 
-  if not(dsMemPayment['customer_id'] > 0) then
+  if not(dsMemPayment['customer_id'] >= 0) then
   begin
     edLicevoy.SelectAll;
     CnErrors.SetError(edLicevoy, rsSelectAccount, iaMiddleLeft, bsNeverBlink);
@@ -1261,6 +1264,8 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
       if (ActiveControl = dePaySum) and cbManyPayments.Checked and bbOk.Enabled then
@@ -1411,7 +1416,8 @@ begin
   try
     q.DataBase := dmMain.dbTV;
     q.Transaction := dmMain.trReadQ;
-    q.SQL.Text := 'select list(RQ_ID) RQ_LIST from ( select r.RQ_ID , coalesce(Get_Request_Money(r.Rq_Id), 0) RQ_FEE '//
+    q.SQL.Text := 'select list(RQ_ID) RQ_LIST from ( select r.RQ_ID , coalesce(Get_Request_Money(r.Rq_Id), 0) RQ_FEE '
+    //
       + ' , coalesce((select sum(p.Pay_Sum) from payment p where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0) RQ_PAY '
       + ' , coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0) PAY_SRV '
       + ' from REQUEST R where r.Rq_Customer = :CID and r.Rq_Exec_Time >= ''2024-01-01'') where RQ_FEE + PAY_SRV <> RQ_PAY';

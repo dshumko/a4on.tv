@@ -101,8 +101,8 @@ object apgCustomerInfo: TapgCustomerInfo
         object dbtxtDEBT: TDBText
           Left = 2
           Top = 15
-          Width = 99
-          Height = 25
+          Width = 253
+          Height = 22
           Align = alClient
           Alignment = taCenter
           AutoSize = True
@@ -134,8 +134,8 @@ object apgCustomerInfo: TapgCustomerInfo
           object dbtxtPrepay: TDBText
             Left = 0
             Top = 0
-            Width = 84
-            Height = 19
+            Width = 253
+            Height = 21
             Hint = #1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
             Align = alClient
             Alignment = taCenter
@@ -171,11 +171,12 @@ object apgCustomerInfo: TapgCustomerInfo
           FooterParams.Color = clWindow
           FrozenCols = 2
           Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghExtendVertLines]
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghColumnResize, dghExtendVertLines]
           PopupMenu = pmContacts
           TabOrder = 1
           OnDblClick = dbgrdhContactsDblClick
           OnExit = dbgrdhContactsExit
+          OnGetCellParams = dbgrdhContactsGetCellParams
           OnKeyUp = dbgrdhContactsKeyUp
           Columns = <
             item
@@ -227,7 +228,7 @@ object apgCustomerInfo: TapgCustomerInfo
               EditButtons = <>
               FieldName = 'EDIT_BY'
               Footers = <>
-              Title.Caption = #1050#1090#1086
+              Title.Caption = #1050#1090#1086' '#1080#1079#1084#1077#1085#1080#1083
               Title.TitleButton = True
             end
             item
@@ -236,8 +237,24 @@ object apgCustomerInfo: TapgCustomerInfo
               EditButtons = <>
               FieldName = 'EDIT_ON'
               Footers = <>
-              Title.Caption = #1050#1086#1075#1076#1072
+              Title.Caption = #1050#1086#1075#1076#1072' '#1080#1079#1084#1077#1085#1080#1083
               Title.TitleButton = True
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'ADDED_BY'
+              Footers = <>
+              Title.Caption = #1050#1090#1086' '#1076#1086#1073#1072#1074#1080#1083
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'ADDED_ON'
+              Footers = <>
+              Title.Caption = #1050#1086#1075#1076#1072' '#1076#1086#1073#1072#1074#1080#1083
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -272,7 +289,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 96
             Top = 0
             Width = 21
-            Height = 13
+            Height = 18
             Align = alLeft
             Caption = '       '
           end
@@ -298,7 +315,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 218
             Top = 0
             Width = 21
-            Height = 13
+            Height = 18
             Align = alRight
             Caption = '       '
           end
@@ -483,8 +500,10 @@ object apgCustomerInfo: TapgCustomerInfo
       '  , coalesce(cc.Cc_Notify, 0) Cc_Notify'
       '  , cc.CC_NOTICE'
       '  , o.O_Name'
-      '  , coalesce(cc.Edit_By, cc.Added_By) Edit_By'
-      '  , coalesce(cc.Edit_On, cc.Added_On) Edit_On'
+      '  , cc.Edit_By'
+      '  , cc.Edit_On'
+      '  , cc.Added_By'
+      '  , cc.Added_On'
       '  from customer_contacts cc'
       '       inner join OBJECTS o on (o.O_Id = cc.Cc_Type and'
       '             o.O_TYPE = 45 and'

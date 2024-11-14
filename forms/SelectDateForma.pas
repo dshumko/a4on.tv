@@ -39,7 +39,7 @@ implementation
 function SelectRequestDate(const HOUSE_ID: Integer; const TYPE_ID: Integer; var Date: TDate): Boolean;
 begin
   Result := False;
-  with TSelectDateForm.Create(Application) do
+  with TSelectDateForm.Create(Application) do begin
     try
       House := HOUSE_ID;
       RTYPE := TYPE_ID;
@@ -48,8 +48,10 @@ begin
         Date := SelectedDate;
         Result := True;
       end;
-    finally Free;
+    finally //
+      Free;
     end;
+  end;
 end;
 
 procedure TSelectDateForm.SetHouse(Value: Integer);

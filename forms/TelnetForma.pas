@@ -69,6 +69,8 @@ implementation
 
 uses
   System.StrUtils,
+  OverbyteIcsUtils,
+  OverbyteIcsTypes,
   OverbyteIcsWSocket;
 
 {$R *.dfm}

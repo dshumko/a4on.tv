@@ -269,7 +269,7 @@ resourcestring
 
   rsCustomerInfo = 'Лицевой : %s '#13#10'Договор : %s'#13#10'ФИО : %s'#13#10'Сальдо : %s'#13#10'Статус : %s';
   rsACCOUNT = 'Лицевой';
-  rsEQUIPMENT = 'Оборудование в сети';
+  rsEQUIPMENT = 'Оборудование в сети на узле';
   rsCONTRACT = 'Договор';
   rsCODE = 'Код';
   rsFIO = 'ФИО';
@@ -439,8 +439,8 @@ resourcestring
   rsPaySource = ' Источник: %s';
   rsType = ' Тип: %s';
 
-  rsItogQuant = 'Итого|Кол-во';
-  rsItogSum = 'Итого|Сумма';
+  rsItogQuant = 'Общее кол-во';
+  rsItogSum = 'Общая ст-сть';
   rsExecuteTime = 'Выполнено за %d мс';
   rsFileNotFound = 'Файл (%s) не найден';
   rsFormOnTab = 'Карточка';
@@ -505,7 +505,7 @@ resourcestring
   rsProfileExportSettings = 'Настройка шаблонов экспорта';
   rsErrorMoveToArchive = 'Не удалось перенести файл '#13#10'%s в архив %s'#13#10'Сделайте это самостоятельно';
   rsMaterials = 'Материалы';
-  rsMaterialsМоve = 'Материалы по заявкам';
+  rsMaterialsМоve = 'Движение материалов по заявкам';
   rsMatNotDelete = 'Материалы в данной группе не будут удалены';
 
   rsSelectPayDoc = 'Не указан платежный документ!';
@@ -567,21 +567,23 @@ resourcestring
   rsModuleEditor = 'Редактор';
   rsMSG_CharCount = 'Символов в сообщении: %d';
 
-  rsColumnIP = 'Сеть|IP';
-  rsColumnMAC = 'Сеть|MAC';
-  rsColumnConnectTo = 'Сеть|Коммутатор';
-  rsColumnConnectToIP = 'Сеть|Ком-р IP';
-  rsColumnConnectToMAC = 'Сеть|Ком-р MAC';
-  rsColumnConnectToPort = 'Сеть|Ком-р Порт';
-  rsColumnLanTag = 'Сеть|ЦифИнфо';
-  rsColumnLanTagStr = 'Сеть|СтрИнфо';
+  rsColumnIP = 'СПД|IP';
+  rsColumnMAC = 'СПД|MAC';
+  rsColumnConnectTo = 'СПД|Коммутатор';
+  rsColumnConnectToIP = 'СПД|Ком-р IP';
+  rsColumnConnectToMAC = 'СПД|Ком-р MAC';
+  rsColumnConnectToPort = 'СПД|Ком-р Порт';
+  rsColumnLanTag = 'СПД|TAG Циф';
+  rsColumnLanTagStr = 'СПД|TAG Стр';
+  rsColumnVpnLogin= 'Интернет|Login';
+  rsColumnVpnIP= 'Интернет|IP';
   rsReporHide = 'Скрыть отчет?';
   rsCompiledOK = 'Скомпилировано OK, Выполнение...';
   rsPaymentCardExpired = ' Срок карты оплаты истек! ';
   rsLAN = 'СПД';
   rsAppliance = 'Оборудование';
   rsApplianceCustomer = 'Оборудование у абонента';
-  rsApplianceNode = 'Оборудование на узле';
+  rsApplianceNode = 'Оборудование узла и далее';
   rsErrorNeedDeleteHouseTeam = 'Сначала нужно удалить все дома звена, либо перенести дома на другое звено.';
   rsErrorNeedDeleteSubArea = 'Сначала нужно удалить все дома района или перенести дома на другой район.';
   rsErrorNeedDeleteHouse = 'Сначала нужно удалить все дома на улице!';
@@ -818,6 +820,8 @@ resourcestring
   rsFldApplicantName = '[ФИО_ЗАЯВИТ]';
   rsFldText = '[ТЕКСТ]';
   rsFldText1 = '[ТЕКСТ1]';
+  rsFldText2 = '[ТЕКСТ2]';
+  rsFldText3 = '[ТЕКСТ3]';
   rsBidN = '[ЗАЯВКА]';
   rsAddress = '[АДРЕС]';
   rsOldAddress = '[СТАРЫЙ АДРЕС]';
@@ -825,6 +829,9 @@ resourcestring
   rsOldCode = '[СТАРЫЙ КОД]';
   rsFldDEBT_FINE = '[ДОЛГ+ПЕНЯ]';
   rsFldFINE = '[ПЕНЯ]';
+  rsFldPAYMENTINFO = '[ПЛАТЕЖ_ИНФО]';
+  rsFldNOTICE = '[ПРИМЕЧАНИЕ]';
+  rsFldMaterial = '[МАТЕРИАЛ]';
 
   rsLanUserEquipment = 'Пользователь оборудования';
   rsLanPasswordEquipment = 'Пароль оборудования';
@@ -848,8 +855,11 @@ resourcestring
   rsLanTAGCustomer = 'Tag абонента';
   rsLanTAGSTRCustomer = 'TagSTR абонента';
   rsLanTelnetWait = 'wait пауза 1 сек.';
+  rsLanEquipmentEID = 'ID оборудования';
+  rsLanEquipmentPID = 'ID "родителя" оборудования';
 
   rsIPAagan = 'IP адрес';
+  rsIPinuse = 'IP занят';
   rsMACAagan = 'MAC адрес';
 
   rsServerVersion = 'Сервер версия        : %s';
@@ -862,7 +872,7 @@ resourcestring
   rsServerPatchLockFile = 'Расположение файла блокировок : %s';
   rsServerPatchSecurity = 'Расположение файла паролей    : %s';
   rsServerPatchMessages = 'Расположение файла сообщений  : %s';
-
+  rsNeedFileType = 'У абонента отсутствует файл %s';
   rsNeedPlanRequest = 'Переключитесь на закладку Запланированы.';
 
   rsQuant = 'Кол-во';
@@ -975,3 +985,4 @@ resourcestring
 implementation
 
 end.
+

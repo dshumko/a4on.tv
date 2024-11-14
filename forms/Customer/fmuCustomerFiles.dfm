@@ -31,7 +31,6 @@ object apgCustomerFiles: TapgCustomerFiles
     SearchPanel.FilterOnTyping = True
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     TabOrder = 0
     TitleParams.MultiTitle = True
@@ -67,7 +66,7 @@ object apgCustomerFiles: TapgCustomerFiles
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
-        Width = 213
+        Width = 204
       end
       item
         CellButtons = <>
@@ -85,7 +84,7 @@ object apgCustomerFiles: TapgCustomerFiles
         EditButtons = <>
         FieldName = 'ADDED_ON'
         Footers = <>
-        Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085
+        Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085' '#1082#1086#1075#1076#1072
         Title.TitleButton = True
         Width = 69
       end
@@ -105,7 +104,7 @@ object apgCustomerFiles: TapgCustomerFiles
         EditButtons = <>
         FieldName = 'EDIT_ON'
         Footers = <>
-        Title.Caption = #1048#1079#1084#1077#1085#1077#1085
+        Title.Caption = #1048#1079#1084#1077#1085#1077#1085' '#1082#1086#1075#1076#1072
         Title.TitleButton = True
         Width = 70
       end

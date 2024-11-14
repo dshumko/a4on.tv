@@ -277,7 +277,6 @@ begin
     finally
       Free;
     end;
-
 end;
 
 procedure TPaymentEditFrm.edLicevoyChange(Sender: TObject);

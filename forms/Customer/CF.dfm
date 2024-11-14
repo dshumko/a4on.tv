@@ -960,6 +960,10 @@ object CustomersForm: TCustomersForm
       ShortCut = 24649
       OnExecute = actCopyIDExecute
     end
+    object actFrozenCols: TAction
+      Caption = #1047#1072#1082#1088#1077#1087#1080#1090#1100' '#1089#1090#1086#1083#1073#1094#1099' '#1090#1072#1073#1083#1080#1094#1099
+      OnExecute = actFrozenColsExecute
+    end
   end
   object mmMenu: TMainMenu
     Left = 120
@@ -982,6 +986,10 @@ object CustomersForm: TCustomersForm
       object N33: TMenuItem
         Caption = #1055#1086#1080#1089#1082
         ImageIndex = 7
+      end
+      object miN58: TMenuItem
+        Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1077
+        OnClick = miN58Click
       end
       object N48: TMenuItem
         Caption = '-'
@@ -1012,6 +1020,9 @@ object CustomersForm: TCustomersForm
       end
       object N49: TMenuItem
         Action = actSelectColumns
+      end
+      object miFrozenCols: TMenuItem
+        Action = actFrozenCols
       end
       object N26: TMenuItem
         Action = actItogo
@@ -1239,6 +1250,9 @@ object CustomersForm: TCustomersForm
     end
     object N47: TMenuItem
       Caption = '-'
+    end
+    object miFrozenCols1: TMenuItem
+      Action = actFrozenCols
     end
     object actGTSelectColumns1: TMenuItem
       Action = actSelectColumns

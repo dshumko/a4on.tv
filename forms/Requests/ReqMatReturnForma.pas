@@ -72,9 +72,9 @@ begin
 
       // if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full))))
       if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full)))) then
-        dsReqMaterials.ParamByName('WH_FLTR').Value := '1'
+        dsReqMaterials.ParamByName('WH_OWNER').Value := '1'
       else
-        dsReqMaterials.ParamByName('WH_FLTR').Value := '0';
+        dsReqMaterials.ParamByName('WH_OWNER').Value := '0';
 
       dsReqMaterials.ParamByName('RQ_ID').AsInteger := aRequest;
 
@@ -145,7 +145,11 @@ var
   i: Integer;
   Font_size: Integer;
   Font_name: string;
+  Row_height: Integer;
 begin
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -165,7 +169,20 @@ begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
-    end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end;
+    end
   end;
   if dsReqMaterials.Active then
     dsReqMaterials.Close;

@@ -530,6 +530,8 @@ inherited WorkersForm: TWorkersForm
       DataSource = srcDataSource
       DynProps = <>
       TabOrder = 11
+      ValueChecked = '1'
+      ValueUnchecked = '0'
     end
     object cbIN_DOGOVOR: TDBCheckBoxEh
       Left = 581
@@ -543,8 +545,10 @@ inherited WorkersForm: TWorkersForm
       DataSource = srcDataSource
       DynProps = <>
       TabOrder = 13
+      ValueChecked = '1'
+      ValueUnchecked = '0'
     end
-    object cbIN_DOGOVOR1: TDBCheckBoxEh
+    object chkWORKING: TDBCheckBoxEh
       Left = 8
       Top = 219
       Width = 72
@@ -557,6 +561,8 @@ inherited WorkersForm: TWorkersForm
       DataSource = srcDataSource
       DynProps = <>
       TabOrder = 19
+      ValueChecked = '1'
+      ValueUnchecked = '0'
     end
     object edtPOST: TDBEditEh
       Left = 387
@@ -841,10 +847,30 @@ inherited WorkersForm: TWorkersForm
       ')')
     RefreshSQL.Strings = (
       'select'
-      '    W.*'
-      '  , wa.name as workarea'
-      '  , u.Last_Logged'
-      '  from WORKER W'
+      '    W.Worker_Id'
+      '  , W.Surname'
+      '  , W.Firstname'
+      '  , W.Midlename'
+      '  , W.Phone_No'
+      '  , W.Notice'
+      '  , cast(coalesce(W.Working, 0) as D_Iboolean) Working'
+      '  , W.Ibname'
+      '  , cast(coalesce(W.In_Dogovor, 0) as D_Iboolean) In_Dogovor'
+      '  , cast(coalesce(W.In_Request, 0) as D_Iboolean) In_Request'
+      '  , W.Email'
+      '  , W.Department'
+      '  , W.Post'
+      '  , W.Birthday'
+      '  , W.Team'
+      '  , W.Wa_Id'
+      '  , W.Print_Fio'
+      '  , W.Print_Text'
+      '  , W.Push_Token'
+      '  , W.Platform'
+      '  , W.Device_Id'
+      '  , W.H_Rate'
+      '  , W.Messenger'
+      '  from Worker W'
       '       left outer join workarea wa on (wa.wa_id = w.wa_id)'
       '       left outer join sys$user u on (u.Ibname = w.Ibname)'
       '  where W.WORKER_ID = :OLD_WORKER_ID'
@@ -852,10 +878,30 @@ inherited WorkersForm: TWorkersForm
       '    ')
     SelectSQL.Strings = (
       'select'
-      '    W.*'
-      '  , wa.name as workarea'
-      '  , u.Last_Logged'
-      '  from WORKER W'
+      '    W.Worker_Id'
+      '  , W.Surname'
+      '  , W.Firstname'
+      '  , W.Midlename'
+      '  , W.Phone_No'
+      '  , W.Notice'
+      '  , cast(coalesce(W.Working, 0) as D_Iboolean) Working'
+      '  , W.Ibname'
+      '  , cast(coalesce(W.In_Dogovor, 0) as D_Iboolean) In_Dogovor'
+      '  , cast(coalesce(W.In_Request, 0) as D_Iboolean) In_Request'
+      '  , W.Email'
+      '  , W.Department'
+      '  , W.Post'
+      '  , W.Birthday'
+      '  , W.Team'
+      '  , W.Wa_Id'
+      '  , W.Print_Fio'
+      '  , W.Print_Text'
+      '  , W.Push_Token'
+      '  , W.Platform'
+      '  , W.Device_Id'
+      '  , W.H_Rate'
+      '  , W.Messenger'
+      '  from Worker W'
       '       left outer join workarea wa on (wa.wa_id = w.wa_id)'
       '       left outer join sys$user u on (u.Ibname = w.Ibname)'
       '  order by W.SURNAME, W.FIRSTNAME')

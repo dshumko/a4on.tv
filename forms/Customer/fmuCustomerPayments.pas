@@ -21,7 +21,7 @@ type
     ActAddPayment: TAction;
     actPrepay: TAction;
     pnlButtons: TPanel;
-    btnDel1: TSpeedButton;
+    btnDel: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
     trRead: TpFIBTransaction;
@@ -44,8 +44,11 @@ type
     procedure miPayDocClick(Sender: TObject);
     procedure actMarkReqExecute(Sender: TObject);
     procedure srcPaymentDataChange(Sender: TObject; Field: TField);
+    procedure dbgCustPaymentSortMarkingChanged(Sender: TObject);
+    procedure btnDelClick(Sender: TObject);
   private
     FFine: boolean;
+    FFullAccess: boolean;
     // FTodayOnly: boolean;
     // FOnlyTheir: boolean;
     FSavedID: Integer;
@@ -85,12 +88,15 @@ procedure TapgCustomerPayments.srcPaymentDataChange(Sender: TObject; Field: TFie
 begin
   if Assigned(Field) and not(Field.Name = 'RQ_ID') then
   begin
-   if (dsPayment.State = dsEdit) then begin
-     dsPayment.Post;
-     dbgCustPayment.AllowedOperations := [];
-     dbgCustPayment.ReadOnly := True;
-   end;
-  end
+    if (dsPayment.State = dsEdit) then
+    begin
+      dsPayment.Post;
+      dbgCustPayment.AllowedOperations := [];
+      dbgCustPayment.ReadOnly := True;
+    end;
+  end;
+
+  btnDel.Visible := FFullAccess and ((not dsPayment.FieldByName('PT').IsNull) and (dsPayment['PT'] = 0));
 end;
 
 procedure TapgCustomerPayments.GotoSavedPosition;
@@ -112,13 +118,15 @@ begin
   bFull := dmMain.AllowedAction(rght_Pays_full); // Полный доступ к платежам
   bAdd := dmMain.AllowedAction(rght_Pays_add); // Добавление платежей
 
-  ActAddPayment.Enabled := bFull or bAdd or dmMain.AllowedAction(rght_Pays_AddToday);
-  actPrepay.Enabled := bFull or dmMain.AllowedAction(rght_Pays_AddPromis);
+  FFullAccess := bFull or dmMain.AllowedAction(rght_Customer_full);
+
+  ActAddPayment.Enabled := FFullAccess or bAdd or dmMain.AllowedAction(rght_Pays_AddToday);
+  actPrepay.Enabled := FFullAccess or dmMain.AllowedAction(rght_Pays_AddPromis);
   pnlButtons.Visible := ActAddPayment.Enabled or actPrepay.Enabled;
 
   s := dmMain.GetCompanyValue('NAME');
   actMarkReq.Visible := s.Contains('ЛТВ');
-  actMarkReq.Enabled := bFull or bAdd or dmMain.AllowedAction(rght_Request_Full) or
+  actMarkReq.Enabled := FFullAccess or bAdd or dmMain.AllowedAction(rght_Request_Full) or
     dmMain.AllowedAction(rght_Request_Close);
 
   if (dmMain.GetSettingsValue('SHOWALLCUSTPAYS') <> '1') then
@@ -197,7 +205,7 @@ begin
   if ReceivePayment(FDataSource.DataSet['CUSTOMER_ID'], -1, -1, dt, sm) <> -1 then
   begin
     if dsPayment.Active then
-      dsPayment.CloseOpen(true);
+      dsPayment.CloseOpen(True);
     EnableControls;
     UpdatePage;
   end;
@@ -223,15 +231,12 @@ begin
 end;
 
 procedure TapgCustomerPayments.actMarkReqExecute(Sender: TObject);
-var
-  rs: string;
-  rid: Integer;
 begin
   if dsPayment.RecordCount = 0 then
     exit;
   {
-  rs := InputBox('Укажите номер заявки', 'Заявка', '');
-  if (rs = '') or (not TryStrToInt(rs, rid)) then
+    rs := InputBox('Укажите номер заявки', 'Заявка', '');
+    if (rs = '') or (not TryStrToInt(rs, rid)) then
     exit;
   }
   dbgCustPayment.AllowedOperations := [alopUpdateEh];
@@ -261,10 +266,46 @@ begin
           Transaction.Commit;
           Close;
           FDataSource.DataSet.Refresh;
-          dsPayment.CloseOpen(true);
+          dsPayment.CloseOpen(True);
         finally
           free;
         end;
+    end;
+  end;
+end;
+
+procedure TapgCustomerPayments.btnDelClick(Sender: TObject);
+begin
+  if (not FFullAccess) then Exit;
+
+  // удалим обещанный
+  if (not dsPayment.FieldByName('PT').IsNull) and (dsPayment['PT'] = 0) and
+    (not dsPayment.FieldByName('VIEW_SUM').IsNull) then
+  begin
+    if MessageBoxW(Handle, PWideChar(WideFormat('Удалить обещанный платеж на сумму ' + dsPayment.FieldByName('VIEW_SUM')
+      .AsString, [])), 'Удалить обещанный платеж', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
+    begin
+      with TpFIBQuery.Create(Self) do
+      begin
+        try
+          Database := dmMain.dbTV;
+          Transaction := dmMain.trWriteQ;
+          sql.text :=
+            ' execute block (PAYMENT_ID D_Integer = :PAYMENT_ID, CUSTOMER_ID D_Integer = :CUSTOMER_ID) as begin' +
+            ' delete from PREPAY_DETAIL d where d.Ppd_Id = :PAYMENT_ID; ' +
+            ' update CUSTOMER set PREPAY = 0, prepay_time = null where CUSTOMER_ID = :Customer_Id; end';
+          ParamByName('PAYMENT_ID').Value := dsPayment['PAYMENT_ID'];
+          ParamByName('Customer_Id').Value := dsPayment['CUSTOMER_ID'];
+          Transaction.StartTransaction;
+          ExecQuery;
+          Transaction.Commit;
+          Close;
+        finally
+          free;
+        end;
+      end;
+      dsPayment.DataSource.DataSet.Refresh;
+      dsPayment.CloseOpen(True);
     end;
   end;
 end;
@@ -286,8 +327,8 @@ begin
   s := UpperCase(dbgCustPayment.Fields[Cell.X - 1].FieldName);
   if (s = 'NOTICE') then
     pmDblClick.Popup(ScrPt.X, ScrPt.Y)
-  else
-  if (s = 'RQ_ID') then begin
+  else if (s = 'RQ_ID') then
+  begin
     if (dsPayment.State = dsBrowse) then
       OpenRequest;
   end
@@ -318,6 +359,56 @@ begin
     if (gdFocused in State) or (gdSelected in State) then
       AFont.Color := clBlack;
   end;
+end;
+
+procedure TapgCustomerPayments.dbgCustPaymentSortMarkingChanged(Sender: TObject);
+var
+  cr: TCursor;
+  s: string;
+  grid: TCustomDBGridEh;
+  id, i, j: Integer;
+  FIBDS: TpFIBDataSet;
+  beOpened: boolean;
+begin
+  cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  grid := TCustomDBGridEh(Sender);
+  FIBDS := grid.DataSource.DataSet as TpFIBDataSet;
+  id := -1;
+  if Sender is TCustomDBGridEh then
+  begin
+    beOpened := FIBDS.Active;
+    if beOpened then
+    begin
+      if not FIBDS.FieldByName('PAYMENT_ID').IsNull then
+        id := FIBDS.FieldByName('PAYMENT_ID').AsInteger;
+      FIBDS.Close;
+    end;
+
+    j := grid.SortMarkedColumns.Count;
+    for i := 0 to pred(j) do
+    begin
+      s := s + grid.SortMarkedColumns[i].FieldName;
+      // s := s + ' COLLATE UNICODE_CI_AI ';
+      if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
+        s := s + ' desc';
+      if i <> pred(j) then
+        s := s + ', ';
+    end;
+    if s = 'PAY_DATE' then
+      s := s + ', ADDED_ON'
+    else if s = 'PAY_DATE desc' then
+      s := s + ', ADDED_ON desc';
+
+    FIBDS.OrderClause := s;
+    if beOpened then
+    begin
+      FIBDS.Open;
+      if id <> -1 then
+        FIBDS.Locate('PAYMENT_ID', id, []);
+    end;
+  end;
+  Screen.Cursor := cr;
 end;
 
 procedure TapgCustomerPayments.OpenRequest;
@@ -370,14 +461,15 @@ end;
 
 procedure TapgCustomerPayments.FindData(const Data: string);
 var
-  f,v : string;
-  i : Integer;
+  f, v: string;
+  i: Integer;
 begin
-//
+  //
   i := Pos('=', Data);
-  f := Copy(Data, 1, i-1);
-  v := Copy(Data, i+1, length(Data));
-  dsPayment.Locate(f,v,[]);
+  f := Copy(Data, 1, i - 1);
+  v := Copy(Data, i + 1, length(Data));
+  dsPayment.Locate(f, v, []);
 end;
 
 end.
+

@@ -67,9 +67,10 @@ type
     procedure actClearExecute(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
-    procedure pnlRecourseEnter(Sender: TObject);
     procedure DBLookupComboboxClick(Sender: TObject);
     procedure edtContactClick(Sender: TObject);
+    procedure cbRecourseEnter(Sender: TObject);
+    procedure edtContactEnter(Sender: TObject);
   private
     { Private declarations }
     vCustomerInfo: TCustomerInfo;
@@ -77,6 +78,7 @@ type
     FEnterSecondPress: Boolean;
     function FindCustomer(const lic, code: string; const id: integer): integer;
     procedure SaveRecourse(const CreateRequest: Boolean = False);
+    procedure FillPhones(const phones: String);
   public
     { Public declarations }
 
@@ -162,7 +164,7 @@ end;
 
 procedure TRecourseForm.actClearExecute(Sender: TObject);
 begin
-  edtContact.Items.Clear;
+  FillPhones('');
   vCustomerInfo.Customer_ID := -1;
   CustomerInfoFrm.Customer := vCustomerInfo;
 end;
@@ -171,7 +173,6 @@ procedure TRecourseForm.ActFindExecute(Sender: TObject);
 var
   Flat, p, f: String;
   s: string;
-  sa: TStringArray;
   fn: integer;
   FCustomerInfo: TCustomerInfo;
 begin
@@ -210,13 +211,8 @@ begin
   s := FCustomerInfo.phone_no;
   if FCustomerInfo.mobile <> '' then
     s := s + ',' + FCustomerInfo.mobile;
-  sa := Explode(',', s);
-  for fn := 0 to Length(sa) - 1 do
-  begin
-    s := trim(sa[fn]);
-    if not s.IsEmpty then
-      edtContact.Items.Add(s);
-  end;
+
+  FillPhones(s);
 
   {
 
@@ -244,6 +240,25 @@ begin
   }
 end;
 
+procedure TRecourseForm.FillPhones(const phones: String);
+var
+  i: integer;
+  s: String;
+  sa: TStringArray;
+begin
+  edtContact.Items.Clear;
+  sa := Explode(',', phones);
+  for i := 0 to Length(sa) - 1 do
+  begin
+    s := trim(sa[i]);
+    if not s.IsEmpty then
+    begin
+      edtContact.Items.Add(s);
+      // edtContact.KeyItems.Add(s);
+    end;
+  end;
+end;
+
 procedure TRecourseForm.actSaveExecute(Sender: TObject);
 begin
   SaveRecourse();
@@ -257,10 +272,27 @@ begin
   if (Sender as TDBComboBoxEh).Items.Count = 0 then
     exit;
 
+  if (Sender as TDBComboBoxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBComboBoxEh).ListVisible then
+      (Sender as TDBComboBoxEh).DropDown
+    else
+      (Sender as TDBComboBoxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBComboBoxEh).Tag := 0;
+end;
+
+procedure TRecourseForm.edtContactEnter(Sender: TObject);
+begin
+  if not(Sender is TDBComboBoxEh) then
+    exit;
+
   if not(Sender as TDBComboBoxEh).ListVisible then
-    (Sender as TDBComboBoxEh).DropDown
-  else
-    (Sender as TDBComboBoxEh).CloseUp(False);
+  begin
+    (Sender as TDBComboBoxEh).DropDown;
+    (Sender as TDBComboBoxEh).Tag := 1;
+  end;
 end;
 
 procedure TRecourseForm.eFLAT_NOExit(Sender: TObject);
@@ -270,11 +302,9 @@ end;
 
 function TRecourseForm.FindCustomer(const lic, code: string; const id: integer): integer;
 var
-  i: integer;
   s: string;
-  sa: TStringArray;
 begin
-  edtContact.Items.Clear;
+
   vCustomerInfo := dmMain.FindCustomer(lic, code, id);
   Result := vCustomerInfo.Customer_ID;
   CustomerInfoFrm.Customer := vCustomerInfo;
@@ -287,13 +317,8 @@ begin
   s := vCustomerInfo.phone_no;
   if vCustomerInfo.mobile <> '' then
     s := s + ',' + vCustomerInfo.mobile;
-  sa := Explode(',', s);
-  for i := 0 to Length(sa) - 1 do
-  begin
-    s := trim(sa[i]);
-    if not s.IsEmpty then
-      edtContact.Items.Add(s);
-  end;
+
+  FillPhones(s);
 
   {
     dsRequest['RQ_CUSTOMER'] := vCustomerInfo.CUSTOMER_ID;
@@ -331,10 +356,8 @@ begin
     go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
-      // else if (ActiveControl is TDBGridEh) then
-      // go := False
-      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-      // go := False;
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else
     begin
       if (ActiveControl is TDBMemoEh) and
@@ -377,12 +400,6 @@ end;
 procedure TRecourseForm.LupHOUSEChange(Sender: TObject);
 begin
   btnFind.Enabled := not VarIsNull(LupHOUSE.Value);
-end;
-
-procedure TRecourseForm.pnlRecourseEnter(Sender: TObject);
-begin
-  if not cbRecourse.ListVisible then
-    cbRecourse.DropDown;
 end;
 
 procedure TRecourseForm.FormCreate(Sender: TObject);
@@ -496,11 +513,11 @@ begin
   if NeedRequest then
   begin
     if cid <> -1 then
-      NewRequest(cid, fCallBack, False, Trim(edtContact.Text), Trim(mmoNotice.Lines.Text))
+      NewRequest(cid, fCallBack, False, trim(edtContact.Text), trim(mmoNotice.Lines.Text))
     else
     begin
       if ((s > -1) and (h > -1)) then
-        NewRequestByAdres(s, h, f, Trim(edtContact.Text), Trim(mmoNotice.Lines.Text));
+        NewRequestByAdres(s, h, f, trim(edtContact.Text), trim(mmoNotice.Lines.Text));
     end;
   end;
 end;
@@ -530,15 +547,32 @@ begin
   btnOkandRequest.Enabled := showBtn;
 end;
 
-procedure TRecourseForm.DBLookupComboboxClick(Sender: TObject);
+procedure TRecourseForm.cbRecourseEnter(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
     exit;
 
   if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+  end;
+end;
+
+procedure TRecourseForm.DBLookupComboboxClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 end.

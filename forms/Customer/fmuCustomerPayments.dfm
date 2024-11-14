@@ -33,13 +33,14 @@ object apgCustomerPayments: TapgCustomerPayments
     ReadOnly = True
     SearchPanel.Enabled = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
+    TitleParams.MultiTitle = True
     TitleParams.VTitleMargin = 4
     OnDblClick = dbgCustPaymentDblClick
     OnGetCellParams = dbgCustPaymentGetCellParams
+    OnSortMarkingChanged = dbgCustPaymentSortMarkingChanged
     Columns = <
       item
         AutoFitColWidth = False
@@ -50,7 +51,6 @@ object apgCustomerPayments: TapgCustomerPayments
         Footer.FieldName = 'PT'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Alignment = taCenter
         Title.Caption = #1044#1072#1090#1072' '#1087#1083#1072#1090#1077#1078#1072
         Title.TitleButton = True
         Width = 96
@@ -64,7 +64,6 @@ object apgCustomerPayments: TapgCustomerPayments
         Footer.FieldName = 'PAY_SUM'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Alignment = taCenter
         Title.Caption = #1057#1091#1084#1084#1072' '#1085#1072' '#1089#1095#1077#1090
         Title.TitleButton = True
         Width = 90
@@ -78,7 +77,6 @@ object apgCustomerPayments: TapgCustomerPayments
         FieldName = 'FINE_SUM'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Alignment = taCenter
         Title.Caption = #1055#1077#1085#1103
         Title.TitleButton = True
         Width = 80
@@ -104,7 +102,6 @@ object apgCustomerPayments: TapgCustomerPayments
         EditButtons = <>
         FieldName = 'PAY_DOC_NO'
         Footers = <>
-        Title.Alignment = taCenter
         Title.Caption = #1055#1083#1072#1090'. '#1076#1086#1082#1091#1084#1077#1085#1090
         Title.TitleButton = True
         Width = 120
@@ -127,7 +124,6 @@ object apgCustomerPayments: TapgCustomerPayments
         EditButtons = <>
         FieldName = 'PAYSOURCE_DESCR'
         Footers = <>
-        Title.Alignment = taCenter
         Title.Caption = #1052#1077#1089#1090#1086' '#1087#1083#1072#1090#1077#1078#1072
         Title.TitleButton = True
         Width = 99
@@ -227,7 +223,7 @@ object apgCustomerPayments: TapgCustomerPayments
     DesignSize = (
       26
       168)
-    object btnDel1: TSpeedButton
+    object btnDel: TSpeedButton
       Left = 2
       Top = 145
       Width = 22
@@ -271,6 +267,7 @@ object apgCustomerPayments: TapgCustomerPayments
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
       Layout = blGlyphTop
       Visible = False
+      OnClick = btnDelClick
     end
     object btnAdd1: TSpeedButton
       Left = 2
@@ -393,7 +390,8 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , 1 PT'
       '  , p.DEBT_SAVE'
       '  , p.DEBT_SAVE*-1 BAL_SAVE'
-      '  , p.RQ_ID    '
+      '  , p.RQ_ID'
+      '  , P.Added_On'
       '  from PAYMENT P'
       '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
       
@@ -427,6 +425,7 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , o.DEBT_SAVE'
       '  , o.DEBT_SAVE*-1 BAL_SAVE'
       '  , null RQ_ID   '
+      '  , O.Ppd_Date Added_On'
       '  from Prepay_Detail o'
       '       left outer join worker w on (w.Ibname = o.Who_Add)'
       '  where o.CUSTOMER_ID = :CUSTOMER_ID'

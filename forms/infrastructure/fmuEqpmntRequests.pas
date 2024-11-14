@@ -6,9 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, amSplitter;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
+  Vcl.ToolWin,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, amSplitter,
+  Vcl.StdCtrls, Vcl.Mask, PropFilerEh, PropStorageEh;
 
 type
   TapgEqpmntRequests = class(TA4onPage)
@@ -25,12 +28,18 @@ type
     btnEdit: TSpeedButton;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
-    pnlPhoto: TPanel;
     dsPhotos: TpFIBDataSet;
     srcPhotos: TDataSource;
-    dbgPhotos: TDBGridEh;
+    pnlText: TPanel;
+    pnlPhoto: TPanel;
     spl1: TSplitter;
+    dbgPhotos: TDBGridEh;
     imgJPG: TDBImageEh;
+    Splitter1: TSplitter;
+    mmoCONTETNT: TDBMemoEh;
+    mmoTROUBLE: TDBMemoEh;
+    Splitter2: TSplitter;
+    PropStorageEh: TPropStorageEh;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -39,12 +48,13 @@ type
       State: TGridDrawState);
     procedure imgJPGDblClick(Sender: TObject);
     procedure dbgPhotosDblClick(Sender: TObject);
-    procedure dbGridCustReqRowDetailPanelHide(Sender: TCustomDBGridEh;
-      var CanHide: Boolean);
-    procedure dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh;
-      var CanShow: Boolean);
+    procedure dbGridCustReqRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
+    procedure dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormResize(Sender: TObject);
+    procedure PropStorageEhWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
+    procedure PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
+      var Processed: Boolean);
   private
     CE: Boolean;
     CC: Boolean;
@@ -76,8 +86,8 @@ end;
 
 procedure TapgEqpmntRequests.SwitchLayout(const InVertical: Boolean);
 begin
-  if (FIsVertical = InVertical)
-  then Exit;
+  if (FIsVertical = InVertical) then
+    Exit;
 
   FIsVertical := InVertical;
   if not FIsVertical then
@@ -88,7 +98,7 @@ begin
     btnEdit.Top := 30;
     btnDel.Left := 2;
     btnDel.Top := pnlButtons.Height - btnDel.Height - 4;
-    btnDel.Anchors := [akLeft,akBottom];
+    btnDel.Anchors := [akLeft, akBottom];
   end
   else
   begin
@@ -98,7 +108,7 @@ begin
     btnEdit.Left := 30;
     btnDel.Top := 2;
     btnDel.Left := pnlButtons.Width - btnDel.Width - 4;
-    btnDel.Anchors := [akTop,akRight];
+    btnDel.Anchors := [akTop, akRight];
   end;
 end;
 
@@ -147,8 +157,7 @@ begin
   actDel.Enabled := dsRequests.RecordCount > 0;
 end;
 
-procedure TapgEqpmntRequests.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TapgEqpmntRequests.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
   FIsVertical := False;
@@ -156,7 +165,7 @@ end;
 
 procedure TapgEqpmntRequests.FormResize(Sender: TObject);
 var
-  b : Boolean;
+  b: Boolean;
 begin
   b := (dmMain.GetIniValue('EQUIPMENT_INFOLAYOUT') = '1');
   SwitchLayout(b);
@@ -166,6 +175,40 @@ procedure TapgEqpmntRequests.OpenData;
 begin
   dsRequests.Open;
   EnableControls;
+end;
+
+procedure TapgEqpmntRequests.PropStorageEhReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
+  var Processed: Boolean);
+begin
+  try
+    if PropName = 'pnlText_Width' then
+    begin
+      pnlText.Width := StrToInt(Reader.ReadString());
+      Processed := true;
+    end
+    else if PropName = 'mmoCONTETNT_Height' then
+    begin
+      mmoCONTETNT.Height := StrToInt(Reader.ReadString());
+      Processed := true;
+    end
+    else if PropName = 'RowPanel_Height' then
+    begin
+      dbGridCustReq.RowDetailPanel.Height := StrToInt(Reader.ReadString());
+      Processed := true;
+    end
+  except
+    Processed := true;
+  end;
+end;
+
+procedure TapgEqpmntRequests.PropStorageEhWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
+begin
+  Writer.WritePropName('pnlText_Width');
+  Writer.WriteString(IntToStr(pnlText.Width));
+  Writer.WritePropName('mmoCONTETNT_Height');
+  Writer.WriteString(IntToStr(mmoCONTETNT.Height));
+  Writer.WritePropName('RowPanel_Height');
+  Writer.WriteString(IntToStr(dbGridCustReq.RowDetailPanel.Height));
 end;
 
 procedure TapgEqpmntRequests.actDelExecute(Sender: TObject);
@@ -272,14 +315,12 @@ begin
     end;
 end;
 
-procedure TapgEqpmntRequests.dbGridCustReqRowDetailPanelHide(
-  Sender: TCustomDBGridEh; var CanHide: Boolean);
+procedure TapgEqpmntRequests.dbGridCustReqRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
 begin
   dsPhotos.Close;
 end;
 
-procedure TapgEqpmntRequests.dbGridCustReqRowDetailPanelShow(
-  Sender: TCustomDBGridEh; var CanShow: Boolean);
+procedure TapgEqpmntRequests.dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
 begin
   dsPhotos.Open;
 end;

@@ -15,9 +15,7 @@ type
   TapgNodeMaterials = class(TA4onPage)
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
-    srcMat: TDataSource;
     ActList: TActionList;
-    dsMat: TpFIBDataSet;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
@@ -25,7 +23,9 @@ type
     actDel: TAction;
     btnFind: TSpeedButton;
     actFind: TAction;
-    dbgrd1: TDBGrid;
+    dsEquipment: TpFIBDataSet;
+    srcEquipment: TDataSource;
+    dbgEquip: TDBGridEh;
     procedure actDelExecute(Sender: TObject);
     procedure actAddExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -57,12 +57,12 @@ begin
   actAdd.Enabled := FullAccess;
   actDel.Enabled := FullAccess;
 
-  dsMat.DataSource := FDataSource;
+  dsEquipment.DataSource := FDataSource;
 end;
 
 procedure TapgNodeMaterials.OpenData;
 begin
-  dsMat.Open;
+  dsEquipment.Open;
   // EnableControls;
 end;
 
@@ -72,40 +72,40 @@ begin
     Exit;
   if AddMaterial(FDataSource.DataSet['NODE_ID']) then
   begin
-    dsMat.CloseOpen(True);
+    dsEquipment.CloseOpen(True);
     UpdatePage;
   end
 end;
 
 procedure TapgNodeMaterials.actDelExecute(Sender: TObject);
 begin
-  if ((not dsMat.Active) or (dsMat.RecordCount = 0) or (srcMat.DataSet.FieldByName('NAME').IsNull)) then
+  if ((not dsEquipment.Active) or (dsEquipment.RecordCount = 0) or (dsEquipment.FieldByName('NAME').IsNull)) then
     Exit;
 
-  if ((srcMat.DataSet.FieldByName('ROW_TYPE').AsString = 'e')) then
+  if ((dsEquipment.FieldByName('ROW_TYPE').AsString = 'e')) then
     Exit;
 
-  if (MessageDlg(Format(rsDeleteWithName, [srcMat.DataSet['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if (MessageDlg(Format(rsDeleteWithName, [dsEquipment['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
-    srcMat.DataSet.Delete;
+    dsEquipment.Delete;
     UpdatePage;
   end;
 end;
 
 procedure TapgNodeMaterials.actFindExecute(Sender: TObject);
 begin
-  if (not dsMat.Active) or (dsMat.RecordCount = 0) then
+  if (not dsEquipment.Active) or (dsEquipment.RecordCount = 0) then
     Exit;
 
-  if (dsMat.FieldByName('NAME').IsNull) then
+  if (dsEquipment.FieldByName('NAME').IsNull) then
     Exit;
 
-  A4MainForm.OpenEquipmentByName(dsMat['NAME']);
+  A4MainForm.OpenEquipmentByName(dsEquipment['NAME']);
 end;
 
 procedure TapgNodeMaterials.CloseData;
 begin
-  dsMat.Close;
+  dsEquipment.Close;
 end;
 
 end.

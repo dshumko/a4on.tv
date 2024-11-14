@@ -196,7 +196,6 @@ type
     procedure cbbSTREETEnter(Sender: TObject);
     procedure cbbAREAChange(Sender: TObject);
     procedure cbbATTRTYPEChange(Sender: TObject);
-    procedure dbnvgrClick(Sender: TObject; Button: TNavigateBtn);
     procedure cbb2Enter(Sender: TObject);
     procedure lcbSERVICEEnter(Sender: TObject);
     procedure cbb3Enter(Sender: TObject);
@@ -304,6 +303,8 @@ begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
+    else if (ActiveControl is TDBComboBoxEh) then
+      go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
       go := False
     else
@@ -440,7 +441,7 @@ end;
 
 procedure TCustomersFilterForm.pgcFilterChange(Sender: TObject);
 begin
-  pnlFilter.Visible := pgcFilter.ActivePageIndex <= 1;
+  // pnlFilter.Visible := pgcFilter.ActivePageIndex <= 1;
   if (not dsLetterType.Active) and (pgcFilter.ActivePageIndex = 1) then
     dsLetterType.Open;
   if (not dsSingleServ.Active) and (pgcFilter.ActivePageIndex = 1) then
@@ -704,19 +705,19 @@ begin
       cbDolg.Checked := true;
 end;
 
-procedure TCustomersFilterForm.dbnvgrClick(Sender: TObject; Button: TNavigateBtn);
-begin
-  SetTab;
-end;
-
 procedure TCustomersFilterForm.DBLookupComboboxClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
     exit;
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
 end;
 
 end.

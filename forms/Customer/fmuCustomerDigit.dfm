@@ -45,7 +45,6 @@ object apgCustomerDigit: TapgCustomerDigit
     PopupMenu = pmDigit
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflInTitleFilterEh
     STFilter.Visible = True
     TabOrder = 1
     TitleParams.MultiTitle = True

@@ -509,6 +509,8 @@ type
     procedure ReceiveMessage(var Msg: TMessage); message WM_COPYDATA;
     procedure OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
     procedure OpnenNodeByID(const ID: Integer);
+    procedure OpnenHouseByID(const ID: Integer);
+    procedure OpnenStreetByID(const ID: Integer);
     procedure OpenEquipmentByName(const name: String);
     function OpenEquipmentByID(const eid: Integer): Boolean;
     function OpenRequest(const rq_id: Integer): Boolean;
@@ -992,6 +994,7 @@ begin
       AppIni.WriteString('MAIN', 'PRINT_CHECK_AND_REPORT', dmMain.GetIniValue('PRINT_CHECK_AND_REPORT'));
       AppIni.WriteString('MAIN', 'CASHBOXPSWD', dmMain.GetIniValue('CASHBOXPSWD'));
       AppIni.WriteString('MAIN', 'DISCOUNT', dmMain.GetIniValue('DISCOUNT'));
+      AppIni.WriteString('MAIN', 'SHOW_WORKS_IN_SINGLE', dmMain.GetIniValue('SHOW_WORKS_IN_SINGLE'));
 
       if dmMain.GetIniValue('FONT_SIZE') <> '' then
       begin
@@ -1013,6 +1016,11 @@ begin
 
       AppIni.WriteString('MSGSFRM', 'MSG_SENDED_ONLY', dmMain.GetIniValue('MSG_SENDED_ONLY'));
       AppIni.WriteString('MSGSFRM', 'MSG_MY_ONLY', dmMain.GetIniValue('MSG_MY_ONLY'));
+
+      AppIni.WriteString('MAIN', 'MATGRIDFROZEN', dmMain.GetIniValue('MATGRIDFROZEN'));
+      AppIni.WriteString('MAIN', 'EQPMNTGRIDFROZEN', dmMain.GetIniValue('EQPMNTGRIDFROZEN'));
+      AppIni.WriteString('MAIN', 'CUSTGRIDFROZEN', dmMain.GetIniValue('CUSTGRIDFROZEN'));
+      AppIni.WriteString('MAIN', 'REQGRIDFROZEN', dmMain.GetIniValue('REQGRIDFROZEN'));
     finally
       FreeAndNil(AppIni);
     end;
@@ -1067,6 +1075,10 @@ begin
     SetFromIniSettings('MAIN', 'DISCOUNT', '0');
     SetFromIniSettings('MAIN', 'DBSETTINGS', '0');
     SetFromIniSettings('MAIN', 'ROW_HEIGHT', '0');
+    SetFromIniSettings('MAIN', 'EQPMNTGRIDFROZEN', '0');
+    SetFromIniSettings('MAIN', 'CUSTGRIDFROZEN', '0');
+    SetFromIniSettings('MAIN', 'REQGRIDFROZEN', '0');
+    SetFromIniSettings('MAIN', 'MATGRIDFROZEN', '1');
 
     SetFromIniSettings('EQPMNT', 'EQUIPMENTASTREE', '0');
     SetFromIniSettings('EQPMNT', 'EQUIPMENT_INFOLAYOUT', '0');
@@ -1111,6 +1123,11 @@ begin
     dmMain.SetIniValue('RECTOCUSTOMER', '0');
     dmMain.SetIniValue('ALWAYSSHOW', '0');
     dmMain.SetIniValue('DBSETTINGS', '0');
+    dmMain.SetIniValue('MATGRIDFROZEN', '1');
+    dmMain.SetIniValue('EQPMNTGRIDFROZEN', '0');
+    dmMain.SetIniValue('CUSTGRIDFROZEN', '0');
+    dmMain.SetIniValue('REQGRIDFROZEN', '0');
+    dmMain.SetIniValue('SHOW_WORKS_IN_SINGLE', '0');
     actSettingUser.Execute;
   end;
 
@@ -2614,8 +2631,12 @@ begin
     if FileExists(iFileNameNew) then
     begin
       iFileName := dmMain.dbTV.LibraryName;
-      iFileNameBak := iFileName + '.bak';
+      iFileNameBak := iFileName + '.backup';
+      if FileExists(iFileNameBak) then
+        DeleteFile(iFileNameBak);
 
+      iFileName := dmMain.dbTV.LibraryName;
+      iFileNameBak := iFileName + '.bak';
       if FileExists(iFileNameBak) then
       begin
         // сначала во временную, а потом удалим
@@ -2673,8 +2694,12 @@ begin
     if FileExists(iFileNameNew) then
     begin
       iFileName := Application.ExeName;
-      iFileNameBak := iFileName + '.bak';
+      iFileNameBak := iFileName + '.backup';
+      if FileExists(iFileNameBak) then
+        DeleteFile(iFileNameBak);
 
+      iFileName := Application.ExeName;
+      iFileNameBak := iFileName + '.bak';
       if FileExists(iFileNameBak) then
       begin
         // сначала во временную, а потом удалим
@@ -3078,7 +3103,7 @@ begin
   actLoadServices.Enabled := (dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_AddSrv));
   miEvents.Visible := dmMain.AllowedAction(rght_Programm_ViewLog);
 
-  isSYSDBA := (dmMain.User = 'SYSDBA');
+  isSYSDBA := (dmMain.User.ToUpper = 'SYSDBA');
   actAdminUsers.Visible := isSYSDBA;
   actAdminQuery.Visible := isSYSDBA;
   actAdminService.Visible := isSYSDBA;
@@ -3718,7 +3743,7 @@ begin
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
       SQL.Clear;
-      SQL.Add('select datediff(DAY, coalesce(u.Pswd_Changed, cast(''2019-07-01'' as timestamp)), CURRENT_TIMESTAMP) as PE from Sys$User u');
+      SQL.Add('select datediff(DAY, coalesce(u.Pswd_Changed, cast(''2019-07-01'' as timestamp)), localtimestamp) as PE from Sys$User u');
       SQL.Add(Format('where u.Ibname = ''%s''', [dmMain.User]));
       Transaction.StartTransaction;
       ExecQuery;
@@ -3948,6 +3973,38 @@ begin
     end;
   finally
   end;
+end;
+
+procedure TA4MainForm.OpnenHouseByID(const ID: Integer);
+var
+  sid: Integer;
+begin
+  if (not actBuildings.Visible) then
+    Exit;
+  sid := dmMain.dbTV.QueryValue('select coalesce(Street_Id, -1) from house where house_id =' + ID.ToString, 0,
+    dmMain.trReadQ, False);
+
+  if sid < 0 then
+    Exit;
+
+  if Not Assigned(StreetForm) then
+    StreetForm := TStreetForm.Create(Application);
+  StreetForm.Show;
+  StreetForm.FindIDs(sid.ToString + '~' + ID.ToString);
+end;
+
+procedure TA4MainForm.OpnenStreetByID(const ID: Integer);
+begin
+  if (not actBuildings.Visible) then
+    Exit;
+
+  if ID < 0 then
+    Exit;
+
+  if Not Assigned(StreetForm) then
+    StreetForm := TStreetForm.Create(Application);
+  StreetForm.Show;
+  StreetForm.FindIDs(ID.ToString);
 end;
 
 end.

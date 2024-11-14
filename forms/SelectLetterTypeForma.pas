@@ -22,6 +22,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure cbLetterTypeClick(Sender: TObject);
+    procedure cbLetterTypeEnter(Sender: TObject);
   private
     { Private declarations }
   public
@@ -77,10 +78,25 @@ begin
   if not(Sender is TDBLookupComboboxEh) then
     Exit;
 
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-    (Sender as TDBLookupComboboxEh).DropDown
-  else
-    (Sender as TDBLookupComboboxEh).CloseUp(False);
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  (Sender as TDBLookupComboboxEh).Tag := 0;
+end;
+
+procedure TfrmSelectLetterType.cbLetterTypeEnter(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+  end;
 end;
 
 procedure TfrmSelectLetterType.FormCreate(Sender: TObject);

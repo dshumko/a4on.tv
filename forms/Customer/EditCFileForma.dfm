@@ -4,7 +4,7 @@ object EditCFileForm: TEditCFileForm
   ActiveControl = dbluFileType
   BorderIcons = [biSystemMenu]
   Caption = #1060#1072#1081#1083' '#1072#1073#1086#1085#1077#1085#1090#1072
-  ClientHeight = 595
+  ClientHeight = 712
   ClientWidth = 526
   Color = clBtnFace
   DoubleBuffered = True
@@ -65,13 +65,15 @@ object EditCFileForm: TEditCFileForm
       Style = csDropDownEh
       TabOrder = 0
       Visible = True
+      OnClick = dbluFileTypeClick
       OnDropDownBoxGetCellParams = dbluFileTypeDropDownBoxGetCellParams
+      OnEnter = dbluFileTypeEnter
       OnExit = dbluFileTypeExit
     end
   end
   object pnlBtm: TPanel
     Left = 0
-    Top = 561
+    Top = 678
     Width = 526
     Height = 34
     Align = alBottom
@@ -108,24 +110,33 @@ object EditCFileForm: TEditCFileForm
     Left = 0
     Top = 61
     Width = 526
-    Height = 500
+    Height = 617
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
     object pnlNotice: TPanel
       Left = 0
-      Top = 473
+      Top = 569
       Width = 526
-      Height = 27
+      Height = 48
       Align = alClient
       BevelOuter = bvNone
-      TabOrder = 11
+      TabOrder = 12
+      object splMemo: TSplitter
+        Left = 0
+        Top = 14
+        Width = 526
+        Height = 3
+        Cursor = crVSplit
+        Align = alTop
+        Visible = False
+      end
       object memNotice: TDBMemoEh
         AlignWithMargins = True
         Left = 5
-        Top = 0
+        Top = 17
         Width = 516
-        Height = 27
+        Height = 31
         Margins.Left = 5
         Margins.Top = 0
         Margins.Right = 5
@@ -139,23 +150,46 @@ object EditCFileForm: TEditCFileForm
         EditButtons = <>
         EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077
         ShowHint = True
-        TabOrder = 0
+        TabOrder = 1
         Visible = True
         WantReturns = True
+      end
+      object mmoMemo: TDBMemoEh
+        AlignWithMargins = True
+        Left = 5
+        Top = 0
+        Width = 516
+        Height = 14
+        Margins.Left = 5
+        Margins.Top = 0
+        Margins.Right = 5
+        Margins.Bottom = 0
+        ScrollBars = ssVertical
+        Align = alTop
+        AutoSize = False
+        DynProps = <>
+        EditButtons = <>
+        EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        ShowHint = True
+        TabOrder = 0
+        Visible = False
+        WantReturns = True
+        OnChange = mmoMemoChange
+        OnExit = mmoMemoExit
       end
     end
     object pnlText: TPanel
       Left = 0
-      Top = 418
+      Top = 469
       Width = 526
-      Height = 55
+      Height = 100
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 10
+      TabOrder = 11
       Visible = False
       DesignSize = (
         526
-        55)
+        100)
       object lblText: TLabel
         Tag = 1
         Left = 5
@@ -167,10 +201,26 @@ object EditCFileForm: TEditCFileForm
       object lblText1: TLabel
         Tag = 1
         Left = 5
-        Top = 31
-        Width = 56
+        Top = 29
+        Width = 62
         Height = 13
-        Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090
+        Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090'1'
+      end
+      object lblText2: TLabel
+        Tag = 1
+        Left = 6
+        Top = 54
+        Width = 62
+        Height = 13
+        Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090'2'
+      end
+      object lblText3: TLabel
+        Tag = 1
+        Left = 6
+        Top = 79
+        Width = 62
+        Height = 13
+        Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090'3'
       end
       object edtText: TDBEditEh
         Tag = 1
@@ -189,7 +239,7 @@ object EditCFileForm: TEditCFileForm
       object edtText1: TDBEditEh
         Tag = 1
         Left = 85
-        Top = 28
+        Top = 26
         Width = 436
         Height = 21
         Anchors = [akLeft, akTop, akRight]
@@ -200,15 +250,43 @@ object EditCFileForm: TEditCFileForm
         Visible = True
         OnExit = edtMobileExit
       end
+      object edtText2: TDBEditEh
+        Tag = 1
+        Left = 85
+        Top = 51
+        Width = 436
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        EditButtons = <>
+        ShowHint = True
+        TabOrder = 2
+        Visible = True
+        OnExit = edtMobileExit
+      end
+      object edtText3: TDBEditEh
+        Tag = 1
+        Left = 85
+        Top = 76
+        Width = 436
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        EditButtons = <>
+        ShowHint = True
+        TabOrder = 3
+        Visible = True
+        OnExit = edtMobileExit
+      end
     end
     object pnlMobile: TPanel
       Left = 0
-      Top = 392
+      Top = 443
       Width = 526
       Height = 26
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 9
+      TabOrder = 10
       Visible = False
       DesignSize = (
         526
@@ -239,28 +317,28 @@ object EditCFileForm: TEditCFileForm
       end
       object edtEMAIL: TDBEditEh
         Tag = 1
-        Left = 307
+        Left = 303
         Top = 2
-        Width = 214
+        Width = 218
         Height = 21
         Anchors = [akTop, akRight]
         DynProps = <>
         EditButtons = <>
         EmptyDataInfo.Text = 'email'
         ShowHint = True
-        TabOrder = 1
+        TabOrder = 2
         Visible = True
         OnExit = edtMobileExit
       end
       object chkWA: TCheckBox
-        Left = 263
+        Left = 260
         Top = 4
         Width = 39
         Height = 17
         Hint = #1077#1089#1083#1080' '#1085#1072' '#1090#1077#1083#1077#1092#1086#1085#1077' '#1077#1089#1090#1100' WA'
         Anchors = [akTop, akRight]
         Caption = 'WA'
-        TabOrder = 2
+        TabOrder = 1
       end
     end
     object pnlDoc: TPanel
@@ -535,26 +613,34 @@ object EditCFileForm: TEditCFileForm
         EditButtons = <>
         Kind = dtkDateEh
         ShowHint = True
-        TabOrder = 1
+        TabOrder = 2
         Visible = True
         OnChange = edDateChange
       end
       object lcbService: TDBLookupComboboxEh
-        Left = 85
+        Left = 309
         Top = 4
-        Width = 436
+        Width = 212
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = ''
+        DropDownBox.ListFieldNames = 'NAME'
+        DropDownBox.ListSource = srcService
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.AutoDrop = True
         EditButtons = <>
         KeyField = 'SERVICE_ID'
         ListField = 'NAME'
         ListSource = srcService
         ShowHint = True
-        TabOrder = 0
+        Style = csDropDownEh
+        TabOrder = 1
         Visible = True
         OnChange = lcbServiceChange
+        OnClick = lcbServiceClick
+        OnEnter = lcbServiceEnter
       end
       object lcbOnOffSrv: TDBLookupComboboxEh
         Left = 194
@@ -569,9 +655,33 @@ object EditCFileForm: TEditCFileForm
         ListField = 'NAME'
         ListSource = srcOnOffService
         ShowHint = True
-        TabOrder = 2
+        TabOrder = 3
         Visible = True
         OnChange = lcbOnOffSrvChange
+      end
+      object lcbServiceFrom: TDBLookupComboboxEh
+        Left = 85
+        Top = 4
+        Width = 218
+        Height = 21
+        DynProps = <>
+        DataField = ''
+        DropDownBox.ListFieldNames = 'NAME'
+        DropDownBox.ListSource = srcService
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.AutoDrop = True
+        EditButtons = <>
+        KeyField = 'SERVICE_ID'
+        ListField = 'NAME'
+        ListSource = srcServiceFrom
+        ShowHint = True
+        Style = csDropDownEh
+        TabOrder = 0
+        Visible = True
+        OnChange = lcbServiceChange
+        OnClick = lcbServiceClick
+        OnEnter = lcbServiceEnter
       end
     end
     object pnlContract: TPanel
@@ -766,12 +876,12 @@ object EditCFileForm: TEditCFileForm
     end
     object pnlBidPay: TPanel
       Left = 0
-      Top = 317
+      Top = 368
       Width = 526
       Height = 25
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 6
+      TabOrder = 7
       Visible = False
       object lblBP: TLabel
         Tag = 1
@@ -796,9 +906,9 @@ object EditCFileForm: TEditCFileForm
         OnExit = ednBidExit
       end
       object ednBidSum: TDBNumberEditEh
-        Left = 307
+        Left = 303
         Top = 1
-        Width = 103
+        Width = 109
         Height = 21
         AutoSelect = False
         DynProps = <>
@@ -873,12 +983,12 @@ object EditCFileForm: TEditCFileForm
     end
     object pnlTask: TPanel
       Left = 0
-      Top = 367
+      Top = 418
       Width = 526
       Height = 25
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 8
+      TabOrder = 9
       Visible = False
       DesignSize = (
         526
@@ -920,12 +1030,12 @@ object EditCFileForm: TEditCFileForm
     end
     object pnlPeriod: TPanel
       Left = 0
-      Top = 342
+      Top = 393
       Width = 526
       Height = 25
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 7
+      TabOrder = 8
       Visible = False
       object lblPeriod: TLabel
         Tag = 1
@@ -947,6 +1057,7 @@ object EditCFileForm: TEditCFileForm
         ShowHint = True
         TabOrder = 0
         Visible = True
+        OnExit = edPBeginExit
       end
       object edPEnd: TDBDateTimeEditEh
         Left = 194
@@ -960,6 +1071,85 @@ object EditCFileForm: TEditCFileForm
         ShowHint = True
         TabOrder = 1
         Visible = True
+        OnExit = edPEndExit
+      end
+    end
+    object pnlPayment: TPanel
+      Left = 0
+      Top = 317
+      Width = 526
+      Height = 25
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 6
+      Visible = False
+      DesignSize = (
+        526
+        25)
+      object lblBP2: TLabel
+        Tag = 1
+        Left = 6
+        Top = 4
+        Width = 39
+        Height = 13
+        Caption = #1055#1083#1072#1090#1077#1078
+      end
+      object lcbPayment: TDBLookupComboboxEh
+        Left = 85
+        Top = 1
+        Width = 436
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = ''
+        EditButtons = <>
+        KeyField = 'PAYMENT_ID'
+        ListField = 'INFO'
+        ListSource = srcPayment
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+        OnChange = lcbPaymentChange
+        OnExit = lcbPaymentExit
+      end
+    end
+    object pnlMaterials: TPanel
+      Left = 0
+      Top = 342
+      Width = 526
+      Height = 26
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 13
+      Visible = False
+      DesignSize = (
+        526
+        26)
+      object lblMat: TLabel
+        Tag = 1
+        Left = 6
+        Top = 5
+        Width = 50
+        Height = 13
+        Caption = #1052#1072#1090#1077#1088#1080#1072#1083
+      end
+      object lcbMaterial: TDBLookupComboboxEh
+        Left = 85
+        Top = 2
+        Width = 436
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        DataField = ''
+        EditButtons = <>
+        KeyField = 'COST'
+        ListField = 'NAME'
+        ListSource = srcMaterials
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+        OnChange = lcbMaterialChange
+        OnExit = lcbPaymentExit
       end
     end
   end
@@ -1061,8 +1251,8 @@ object EditCFileForm: TEditCFileForm
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = True
-    Left = 83
-    Top = 304
+    Left = 59
+    Top = 344
   end
   object dsCustFile: TpFIBDataSet
     UpdateSQL.Strings = (
@@ -1202,9 +1392,12 @@ object EditCFileForm: TEditCFileForm
   end
   object dsOnOffService: TpFIBDataSet
     SelectSQL.Strings = (
-      'select'
-      '    ID, DESCRIPTION, SERVICE_TYPE, s.Name || coalesce('#39' / '#39' ||'
-      '    case s.SERVICE_TYPE'
+      'select distinct'
+      '    ID'
+      '  , DESCRIPTION'
+      '  , SERVICE_TYPE'
+      '  , o.Name || coalesce('#39' / '#39' ||'
+      '    case o.SERVICE_TYPE'
       '      when 2 then null'
       '      else (select'
       
@@ -1212,16 +1405,31 @@ object EditCFileForm: TEditCFileForm
         '_SUM_JUR, 0)), coalesce(t.Tarif_Sum, 0), coalesce(t.Tarif_Sum, 0' +
         ') || '#39'/'#39' || coalesce(t.TARIF_SUM_JUR, 0))'
       '              from tarif t'
-      '              where t.Service_Id = s.ID'
+      '              where t.Service_Id = o.ID'
       
         '                    and current_date between t.Date_From and t.D' +
         'ate_To)'
       ''
       '    end, '#39#39') Name'
+      '  from (select'
+      '            ID'
+      '          , SERVICE_TYPE'
+      '          , Name'
+      '          , DESCRIPTION'
       
-        '  from selectonoffservice(:customer_id, :service_id, :subscr_ser' +
-        'v_id, :off) s'
-      'where @@debt%1=1@  ')
+        '          from selectonoffservice(:customer_id, :service_id, :su' +
+        'bscr_serv_id, :off) s'
+      '        union all'
+      '        select'
+      '            r.Service_Id ID'
+      '          , r.Srv_Type_Id SERVICE_TYPE'
+      '          , r.Name NAME'
+      '          , r.Description'
+      '          from services r'
+      '          where r.Service_Id = :onoffsrv) o'
+      'where @@add_filter%1=1@'
+      ''
+      '    ')
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcService
@@ -1357,5 +1565,102 @@ object EditCFileForm: TEditCFileForm
     TPBMode = tpbDefault
     Left = 472
     Top = 134
+  end
+  object dsPayment: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    p.Payment_Id'
+      '  , p.Pay_Sum'
+      '  , p.Fine_Sum'
+      
+        '  , '#39#1057#1091#1084#1084#1072' - '#39' || FORMAT_CURRENCY(p.Pay_Sum, '#39'.'#39', '#39','#39') || '#39#1088#1091#1073'.'#39 +
+        ' || iif(coalesce(p.Fine_Sum, 0) <> 0, '#39' '#1055#1077#1085#1103' - '#39' || FORMAT_CURRE' +
+        'NCY(p.Fine_Sum, '#39'.'#39', '#39','#39') || '#39#1088#1091#1073'.'#39', '#39#39') Info'
+      '  from payment p'
+      '       inner join customer c on (p.Customer_Id = c.Customer_Id)'
+      
+        '       left outer join services s on (s.Service_Id = p.Payment_S' +
+        'rv)'
+      '  where p.Pay_Date = current_date'
+      
+        '        and (((p.Added_By = current_user) and (p.CUSTOMER_ID = :' +
+        'CID)) '
+      '          or (current_user = '#39'SYSDBA'#39'))'
+      '  order by info')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    DataSource = srcHouse
+    Left = 354
+    Top = 428
+  end
+  object srcPayment: TDataSource
+    DataSet = dsPayment
+    Left = 354
+    Top = 476
+  end
+  object dsServiceFrom: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    s.Service_Id'
+      '  , s.Name'
+      '  , ss.State_Sgn'
+      '  from services s'
+      
+        '       left outer join Subscr_Serv ss on (ss.Serv_Id = s.Service' +
+        '_Id and ss.Customer_Id = :customer_id)'
+      '  where s.Srv_Type_Id = 0'
+      '        and s.Business_Type = :srv_type'
+      '        and ((s.Service_Id = :Srv) or (:Srv = -999) )'
+      '        and ('
+      '          ('
+      '            (:STATE = 0)'
+      '            and (ss.State_Sgn = 1)'
+      '          )'
+      '          or'
+      '          ('
+      '            (:STATE = 1)'
+      '            and (coalesce(ss.State_Sgn, 0) = 0)'
+      '            and ('
+      '              (:Srv <> -999)'
+      '              or exists(select'
+      '                       sl.Link_Id'
+      '                     from SERVICES_LINKS sl'
+      '                     where sl.LINK_TYPE = 0'
+      '                           and S.SERVICE_ID = sl.CHILD)'
+      '                 '
+      '            )          '
+      '          )'
+      '        )'
+      '  order by s.NAME')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    Left = 30
+    Top = 403
+  end
+  object srcServiceFrom: TDataSource
+    DataSet = dsServiceFrom
+    Left = 22
+    Top = 355
+  end
+  object dsMaterials: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    a.Name'
+      '    , a.Cost'
+      '  from Appliance a'
+      '  where a.OWN_ID = :CID'
+      '        and a.OWN_TYPE = 1 -- '#1040#1073#1086#1085#1077#1085#1090
+      '        and a.Property = 2 -- '#1040#1073#1086#1085#1077#1085#1090#1072' ('#1056#1072#1089#1089#1088#1086#1095#1082#1072')'
+      '  order by a.Name')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    DataSource = srcHouse
+    Left = 450
+    Top = 428
+  end
+  object srcMaterials: TDataSource
+    DataSet = dsMaterials
+    Left = 450
+    Top = 476
   end
 end

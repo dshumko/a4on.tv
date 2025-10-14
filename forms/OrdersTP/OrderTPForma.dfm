@@ -49,7 +49,7 @@ object OrderTPForm: TOrderTPForm
       TabOrder = 1
     end
     object btnOk: TBitBtn
-      Left = 68
+      Left = 74
       Top = 9
       Width = 625
       Height = 26
@@ -63,10 +63,10 @@ object OrderTPForm: TOrderTPForm
     object btnPrint: TBitBtn
       Left = 7
       Top = 9
-      Width = 51
+      Width = 62
       Height = 26
       Action = actPrint
-      Anchors = [akLeft, akRight, akBottom]
+      Anchors = [akLeft, akBottom]
       Caption = #1055#1077#1095#1072#1090#1100
       NumGlyphs = 2
       TabOrder = 2
@@ -457,7 +457,7 @@ object OrderTPForm: TOrderTPForm
       object edTO: TDBDateTimeEditEh
         Left = 224
         Top = 6
-        Width = 121
+        Width = 123
         Height = 21
         DataField = 'DATE_TO'
         DataSource = srcOrderTP
@@ -471,9 +471,9 @@ object OrderTPForm: TOrderTPForm
       end
     end
     object dbgAddons: TDBGridEh
-      Left = 6
+      Left = 3
       Top = 60
-      Width = 339
+      Width = 344
       Height = 321
       AllowedOperations = [alopUpdateEh]
       Anchors = [akLeft, akTop, akRight, akBottom]

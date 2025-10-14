@@ -106,6 +106,7 @@ type
     miSendSMS: TMenuItem;
     actSMSbalance: TAction;
     miSMSbalance1: TMenuItem;
+    actCopyID: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -151,6 +152,7 @@ type
     procedure miInOnlyClick(Sender: TObject);
     procedure actSMSbalanceExecute(Sender: TObject);
     procedure GetSMSCountForSend(var ReciverCount: Integer; var ForSendCount: Integer);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     fFirstOpen: Boolean; // Первое открытие Формы
     fParentMessage: Integer;
@@ -255,6 +257,7 @@ procedure TMessagesForm.actQuickFilterExecute(Sender: TObject);
 begin
   actQuickFilter.Checked := not actQuickFilter.Checked;
   dbgMessages.STFilter.Visible := actQuickFilter.Checked;
+  dbgMessages.SearchPanel.Enabled := actQuickFilter.Checked ;
 end;
 
 procedure TMessagesForm.SetMessagesFilter;
@@ -295,6 +298,11 @@ begin
   miNotSend.Checked := fShowNotSended;
   fShowMy := (dmMain.GetIniValue('MSG_MY_ONLY') = '1');
   miMyOnly.Checked := fShowMy;
+
+  actQuickFilter.Checked := (dmMain.GetIniValue('QUICK_FILTER') <> '0');
+  dbgMessages.STFilter.Visible := actQuickFilter.Checked;
+  dbgMessages.SearchPanel.Enabled := actQuickFilter.Checked ;
+
   SetMessagesFilter;
 
   InitSecurity;
@@ -431,6 +439,11 @@ begin
     mmoMessage.Lines.Text := '>' + dbgMessages.DataSource.DataSet['MES_TEXT'];
 end;
 
+procedure TMessagesForm.actCopyIDExecute(Sender: TObject);
+begin
+  A4MainForm.CopyDataSetFldToClipboard(dsMessages, 'MES_ID');
+end;
+
 procedure TMessagesForm.actDelExecute(Sender: TObject);
 var
   i: Integer;
@@ -536,7 +549,7 @@ var
   ForSendCount: Integer;
   ReciverCount: Integer;
   ErrorText: String;
-  rSMS: TpFIBQuery;
+//  rSMS: TpFIBQuery;
   BatcSize : Integer;
 begin
   GetSMSCountForSend(ReciverCount, ForSendCount);

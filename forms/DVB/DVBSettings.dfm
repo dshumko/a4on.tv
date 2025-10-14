@@ -1427,25 +1427,6 @@ object DVBSettinsForm: TDVBSettinsForm
     Left = 588
     Top = 136
   end
-  object PrintGrid: TPrintDBGridEh
-    DBGridEh = dbgView
-    Options = [pghFitGridToPageWidth, pghColored, pghOptimalColWidths]
-    PageFooter.Font.Charset = DEFAULT_CHARSET
-    PageFooter.Font.Color = clWindowText
-    PageFooter.Font.Height = -11
-    PageFooter.Font.Name = 'Tahoma'
-    PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
-    PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'Tahoma'
-    PageHeader.Font.Style = []
-    Title.Strings = (
-      #1057#1090#1088#1091#1082#1090#1091#1088#1072' DVB '#1087#1086#1090#1086#1082#1086#1074)
-    Units = MM
-    Left = 532
-    Top = 280
-  end
   object pmViewGrid: TPopupMenu
     Left = 416
     Top = 280

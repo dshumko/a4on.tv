@@ -49,7 +49,6 @@ object PayDocsForm: TPayDocsForm
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
       ReadOnly = True
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True
@@ -454,6 +453,11 @@ object PayDocsForm: TPayDocsForm
       ImageIndex = 40
       ShortCut = 16465
       OnExecute = actQuickFilterExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   object gridPopUp: TPopupMenu

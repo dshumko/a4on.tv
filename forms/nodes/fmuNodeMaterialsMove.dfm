@@ -47,15 +47,11 @@ object apgNodeMaterialsMove: TapgNodeMaterialsMove
     ParentShowHint = False
     RowDetailPanel.Height = 200
     RowSizingAllowed = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     ShowHint = True
     SortLocal = True
     STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflUnderTitleFilterEh
-    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True
@@ -133,7 +129,7 @@ object apgNodeMaterialsMove: TapgNodeMaterialsMove
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object Panel1: TPanel
+  object pnlButtons: TPanel
     Left = 0
     Top = 0
     Width = 26

@@ -3,7 +3,7 @@ object apgNodeLayout: TapgNodeLayout
   Top = 0
   Caption = #1050#1086#1084#1087#1086#1085#1086#1074#1082#1072
   ClientHeight = 166
-  ClientWidth = 504
+  ClientWidth = 848
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,11 +16,12 @@ object apgNodeLayout: TapgNodeLayout
   object dbgCustAttr: TDBGridEh
     Left = 32
     Top = 0
-    Width = 472
+    Width = 816
     Height = 166
     Align = alClient
     AllowedOperations = []
     DataSource = srcLayout
+    DrawMemoText = True
     DynProps = <>
     Flat = True
     FooterRowCount = 1
@@ -28,10 +29,9 @@ object apgNodeLayout: TapgNodeLayout
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     SumList.Active = True
     TabOrder = 0
+    TitleParams.MultiTitle = True
     OnDblClick = dbgCustAttrDblClick
     OnGetCellParams = dbgCustAttrGetCellParams
     Columns = <
@@ -39,39 +39,72 @@ object apgNodeLayout: TapgNodeLayout
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'O_NAME'
+        FieldName = 'ST_NAME'
         Footers = <>
-        Title.Caption = #1058#1080#1087' '#1084#1072#1090#1077#1088#1080#1072#1083#1072' / '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
+        HideDuplicates = True
+        Title.Caption = #1058#1080#1087' '#1091#1089#1083#1091#1075
         Title.TitleButton = True
-        Width = 84
+        Width = 92
       end
       item
         CellButtons = <>
-        DisplayFormat = ',#.##'
         DynProps = <>
         EditButtons = <>
-        FieldName = 'DEV_CNT'
-        Footer.Alignment = taRightJustify
-        Footer.DisplayFormat = ',#.##'
-        Footer.ValueType = fvtSum
+        FieldName = 'CUST_QNT'
         Footers = <>
-        Title.Caption = #1050#1086#1083'-'#1074#1086
+        HideDuplicates = True
+        Title.Caption = #1055#1083#1072#1085#1086#1074#1086#1077' '#1082#1086#1083'-'#1074#1086'|'#1040#1073#1086#1085#1077#1085#1090#1086#1074
         Title.TitleButton = True
-        Width = 89
+        Width = 82
+        OnGetCellParams = dbgCustAttrColumns1GetCellParams
       end
       item
         CellButtons = <>
-        DisplayFormat = ',#.##'
+        DisplayFormat = ',#.###'
         DynProps = <>
         EditButtons = <>
-        FieldName = 'USED_CNT'
-        Footer.Alignment = taRightJustify
-        Footer.DisplayFormat = ',#.##'
+        FieldName = 'MAT_QNT'
+        Footers = <>
+        Title.Caption = #1055#1083#1072#1085#1086#1074#1086#1077' '#1082#1086#1083'-'#1074#1086'|'#1052#1072#1090#1077#1088#1080#1072#1083#1086#1074
+        Title.TitleButton = True
+        Width = 73
+        OnGetCellParams = dbgCustAttrColumns1GetCellParams
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'MAT_LIST'
+        Footers = <>
+        ShowImageAndText = True
+        Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083' '#1080#1079' '#1089#1087#1080#1089#1082#1072
+        Title.TitleButton = True
+        Width = 178
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CUST_QNT_FACT'
+        Footers = <>
+        HideDuplicates = True
+        Title.Caption = #1060#1072#1082#1090#1080#1095#1077#1089#1082#1080' '#1082#1086#1083'-'#1074#1086'|'#1040#1073#1086#1085#1077#1085#1090#1086#1074
+        Title.TitleButton = True
+        Width = 70
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = ',#.###'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'MAT_QNT_FACT'
+        Footer.DisplayFormat = '0.###'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Caption = #1060#1072#1082#1090
-        Title.Hint = #1060#1072#1082#1090#1080#1095#1077#1089#1082#1080' '#1091#1089#1090#1072#1085#1086#1074#1083#1077#1085#1086' '#1085#1072' '#1091#1079#1083#1077
-        Width = 66
+        Title.Caption = #1060#1072#1082#1090#1080#1095#1077#1089#1082#1080' '#1082#1086#1083'-'#1074#1086'|'#1052#1072#1090#1077#1088#1080#1072#1083#1086#1074
+        Title.TitleButton = True
+        Width = 81
+        OnGetCellParams = dbgCustAttrColumns5GetCellParams
       end
       item
         CellButtons = <>
@@ -79,7 +112,7 @@ object apgNodeLayout: TapgNodeLayout
         EditButtons = <>
         FieldName = 'NOTICE'
         Footers = <>
-        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1082' '#1082#1086#1084#1087#1072#1085#1086#1074#1082#1077
         Title.TitleButton = True
         Width = 189
       end>
@@ -122,133 +155,42 @@ object apgNodeLayout: TapgNodeLayout
       Anchors = [akLeft, akBottom]
       Flat = True
     end
+    object btnRepair: TSpeedButton
+      Left = 3
+      Top = 86
+      Width = 23
+      Height = 22
+      Action = actRepair
+      Flat = True
+    end
   end
   object dsLayout: TpFIBDataSet
-    UpdateSQL.Strings = (
-      'UPDATE NODE_LAYOUT'
-      'SET '
-      '    NODE_ID = :NODE_ID,'
-      '    M_TYPE = :M_TYPE,'
-      '    DEV_CNT = :DEV_CNT,'
-      '    NOTICE = :NOTICE'
-      'WHERE'
-      '    NODE_ID = :OLD_NODE_ID'
-      '    and M_TYPE = :OLD_M_TYPE'
-      '    ')
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    NODE_LAYOUT'
       'WHERE'
-      '        NODE_ID = :OLD_NODE_ID'
-      '    and M_TYPE = :OLD_M_TYPE'
+      '        LT_ID = :OLD_LT_ID'
       '    ')
-    InsertSQL.Strings = (
-      'INSERT INTO NODE_LAYOUT('
-      '    NODE_ID,'
-      '    M_TYPE,'
-      '    DEV_CNT,'
-      '    NOTICE'
-      ')'
-      'VALUES('
-      '    :NODE_ID,'
-      '    :M_TYPE,'
-      '    :DEV_CNT,'
-      '    :NOTICE'
-      ')')
     RefreshSQL.Strings = (
       'select'
-      '    l.O_NAME'
-      '  , l.Node_Id'
-      '  , l.M_Type'
-      '  , l.Dev_Cnt'
-      '  , l.Notice'
-      '  , l.itsOwn'
-      '  , (select'
-      '         sum(i.Quant)'
-      '       from Inventory i'
-      '            inner join materials m on (m.M_Id = i.M_Id)'
-      '       where i.Owner_Type = 2'
-      '             and m.M_Type = l.M_Type'
-      '             and i.Owner = :OLD_NODE_ID) USED_CNT'
-      '  from (select'
-      '            A.O_NAME'
-      '          , CA.*'
-      '          , 1 itsOwn'
-      '          from Node_Layout CA'
-      '               inner join OBJECTS A on (CA.M_TYPE = A.O_ID and'
-      '                     A.O_TYPE = 48)'
-      '          where CA.Node_Id = :OLD_NODE_ID'
-      '        union all'
-      '        select'
-      '            A.O_NAME'
-      '          , CA.*'
-      '          , 0 itsOwn'
-      '          from Node_Layout CA'
-      '               inner join OBJECTS A on (CA.M_TYPE = A.O_ID and'
-      '                     A.O_TYPE = 48)'
-      '          where CA.Node_Id in (select'
-      '                                   -1 * n.Type_Id'
-      '                                 from nodes n'
-      '                                 where n.Node_Id = :OLD_NODE_ID'
-      '                                       and not exists(select'
-      
-        '                                                          nl.Nod' +
-        'e_Id'
-      
-        '                                                        from Nod' +
-        'e_Layout nl'
-      
-        '                                                        where nl' +
-        '.Node_Id = :OLD_NODE_ID))) l'
-      'where l.NODE_ID = :OLD_NODE_ID'
-      '        and l.M_TYPE = :OLD_M_TYPE'
-      ''
-      '    ')
+      '    Lt_Id'
+      '  , Node_Id'
+      '  , Srv_Type'
+      '  , Mat_Qnt'
+      '  , Cust_Qnt'
+      '  , Mat_Id_List'
+      '  , Mat_Req'
+      '  , Notice'
+      '  , St_Name'
+      '  , Itsown'
+      '  , Mat_List'
+      '  from Get_Node_Layout(:OLD_NODE_ID)'
+      '  order by Srv_Type, Cust_Qnt')
     SelectSQL.Strings = (
       'select'
-      '    l.O_NAME'
-      '  , l.Node_Id'
-      '  , l.M_Type'
-      '  , l.Dev_Cnt'
-      '  , l.Notice'
-      '  , l.itsOwn'
-      '  , (select'
-      '         count(i.Name)'
-      '       from Appliance i'
-      '            inner join materials m on (m.M_Id = i.M_Id)'
-      '       where i.Own_Type = 2'
-      '             and m.M_Type = l.M_Type'
-      '             and i.Own_Id = :NODE_ID) USED_CNT'
-      '  from (select'
-      '            A.O_NAME'
-      '          , CA.*'
-      '          , 1 itsOwn'
-      '          from Node_Layout CA'
-      '               inner join OBJECTS A on (CA.M_TYPE = A.O_ID and'
-      '                     A.O_TYPE = 48)'
-      '          where CA.Node_Id = :NODE_ID'
-      '        union all'
-      '        select'
-      '            A.O_NAME'
-      '          , CA.*'
-      '          , 0 itsOwn'
-      '          from Node_Layout CA'
-      '               inner join OBJECTS A on (CA.M_TYPE = A.O_ID and'
-      '                     A.O_TYPE = 48)'
-      '          where CA.Node_Id in (select'
-      '                                   -1 * n.Type_Id'
-      '                                 from nodes n'
-      '                                 where n.Node_Id = :NODE_ID'
-      '                                       and not exists(select'
-      
-        '                                                          nl.Nod' +
-        'e_Id'
-      
-        '                                                        from Nod' +
-        'e_Layout nl'
-      
-        '                                                        where nl' +
-        '.Node_Id = :NODE_ID))) l')
+      '    *'
+      '  from Get_Node_Layout_FACT(:NODE_ID)'
+      '  order by Srv_Type, Cust_Qnt  ')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -279,6 +221,10 @@ object apgNodeLayout: TapgNodeLayout
     object actDel: TAction
       ImageIndex = 3
       OnExecute = actDelExecute
+    end
+    object actRepair: TAction
+      ImageIndex = 92
+      OnExecute = actRepairExecute
     end
   end
   object trRead: TpFIBTransaction

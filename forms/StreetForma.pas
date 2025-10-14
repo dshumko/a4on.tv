@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
-  System.UITypes, System.RegularExpressions,
+  System.UITypes, System.RegularExpressions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
@@ -319,28 +319,28 @@ end;
 procedure TStreetForm.FormCreate(Sender: TObject);
 begin
   inherited;
-  dsStreets.Open;
-  dsHouses.Open;
 
-  // права пользователей полный доступ или редактирование улиц
-  actNew.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-  actDelete.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-  actEdit.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-
-  // права пользователей полный доступ или редактирование домов
-  actHouseNew.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-  actHouseEdit.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-  actHouseDel.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
   FCanEdit := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
   FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
 
+  // права пользователей полный доступ или редактирование домов
+  actNew.Visible := FCanEdit;
+  actDelete.Visible := FCanEdit;
+  actEdit.Visible := FCanEdit;
+
+  // права пользователей полный доступ или редактирование домов
+  actHouseNew.Visible := FCanEdit;
+  actHouseEdit.Visible := FCanEdit;
+  actHouseDel.Visible := FCanEdit;
+
   memHouseNotice.ReadOnly := not FCanEdit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
-  begin
-    srcPorch.AutoEdit := false;
-    srcFloor.AutoEdit := false;
-  end;
+  srcPorch.AutoEdit := FCanEdit;
+  srcFloor.AutoEdit := FCanEdit;
+
+  dsStreets.Open;
+  dsHouses.Open;
+
   DbGridHouse.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, Self.Name + '.' + DbGridHouse.Name,
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
 
@@ -445,7 +445,7 @@ var
   i: int64;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if ActiveControl.Name = 'dbgFLATS' then
@@ -482,7 +482,7 @@ begin
   inherited;
   if dsStreets.FieldByName('STREET_ID').IsNull then
     Exit;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if ActiveControl.Name = 'dbgFLATS' then
@@ -513,7 +513,7 @@ procedure TStreetForm.actDeleteExecute(Sender: TObject);
 begin
   inherited;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if dsHouses.RecordCount = 0 then
@@ -535,7 +535,7 @@ begin
   inherited;
   if dsHouses.FieldByName('HOUSE_NO').IsNull then
     Exit;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   with TpFIBQuery.Create(Nil) do
@@ -614,7 +614,7 @@ begin
   inherited;
   if dsStreets.FieldByName('STREET_ID').IsNull then
     Exit;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   i := EditHouse(-1, dsStreets['STREET_ID']);
@@ -630,7 +630,7 @@ begin
   inherited;
   if dsHouses.FieldByName('HOUSE_ID').IsNull then
     Exit;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if HouseWorkEdit(dsHouses['HOUSE_ID'], -1) then
@@ -643,7 +643,7 @@ begin
   if dsWorks.FieldByName('DATE_PPR').IsNull then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   If MessageDlg(Format(rsDeleteWithName, [DateToStr(dsWorks['DATE_PPR'])]), mtConfirmation, [mbNo, mbYes], 0) = mrYes
@@ -659,7 +659,7 @@ begin
   if dsHouses.FieldByName('HOUSE_ID').IsNull then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if HouseWorkEdit(dsHouses['HOUSE_ID'], dsWorks['HW_ID']) then
@@ -674,7 +674,7 @@ begin
   if dsHouses.FieldByName('HOUSE_ID').IsNull then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if EditHouse(dsHouses['HOUSE_ID'], dsStreets['STREET_ID']) > -1 then
@@ -790,7 +790,7 @@ begin
   if dsHouses.FieldByName('house_id').IsNull then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if CreateFlats(dsHouses['house_id']) then
@@ -1214,7 +1214,7 @@ var
   i: Integer;
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
   if (not dsFlats.Active) or (dsFlats.RecordCount = 0) then
     Exit;
@@ -1238,7 +1238,7 @@ end;
 procedure TStreetForm.btnFlatAddClick(Sender: TObject);
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
   dsFlats.Insert;
 end;
@@ -1254,7 +1254,7 @@ begin
   if not(dsFlats.State in [dsEdit, dsInsert]) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     dsFlats.Cancel;
 
   if dsFlats.FieldByName('FLAT_NO').IsNull then
@@ -1266,7 +1266,7 @@ end;
 procedure TStreetForm.btnFlatEditClick(Sender: TObject);
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   dsFlats.Edit;
@@ -1360,7 +1360,7 @@ begin
   if (dsHouses.RecordCount = 0) or (dsHouses.FieldByName('HOUSE_ID').IsNull) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   CircuitData := TMemoryStream.Create;
@@ -1514,7 +1514,7 @@ begin
   if dsHouses.RecordCount = 0 then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not(FCanEdit)) then
     Exit;
 
   if (MessageDlg(Format(rsDeleteWithName, [dsCirciut['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
@@ -1539,15 +1539,14 @@ end;
 
 procedure TStreetForm.FindIDs(const FilterVALUE: string);
 var
-  cr: TCursor;
-  val: TStringArray;
-  i: Integer;
+  val: TStringDynArray;
 begin
   val := Explode('~', FilterVALUE);
   if Length(val) > 0 then
     dsStreets.Locate('Street_ID', val[0], []);
-  if Length(val) > 1 then begin
-    dsHouses.CloseOpen(true);
+  if Length(val) > 1 then
+  begin
+    dsHouses.CloseOpen(True);
     dsHouses.Locate('House_ID', val[1], []);
   end;
 end;

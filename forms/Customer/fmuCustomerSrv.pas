@@ -492,20 +492,20 @@ end;
 
 procedure TapgCustomerSrv.actSubscrHistoryExecute(Sender: TObject);
 var
-  bm: TBookMark;
+  id: integer;
 begin
-  if (not FDataSource.DataSet.Active) or (FDataSource.DataSet.RecordCount = 0) or
-    (FDataSource.DataSet.FieldByName('Customer_ID').IsNull) or (not dsServices.Active) or (dsServices.RecordCount = 0)
+  if (not dsServices.Active) or (dsServices.RecordCount = 0) or
+    (dsServices.FieldByName('Customer_ID').IsNull) or (not dsServices.Active) or (dsServices.RecordCount = 0)
     or (dsServices.FieldByName('Serv_ID').IsNull) then
     exit;
 
-  bm := dsServices.GetBookmark;
-  if ShowCustSubscrHistory(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['Serv_ID'])
+  id := dsServices.FieldValues['Serv_ID'];
+  if ShowCustSubscrHistory(dsServices.FieldValues['Customer_ID'], id)
   // and ((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_History)))
   then
   begin
     dsServices.CloseOpen(true);
-    dsServices.GotoBookmark(bm);
+    dsServices.Locate('Serv_ID', id, []);
     RecalcCustomer;
     UpdatePage;
   end;

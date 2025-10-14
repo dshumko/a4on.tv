@@ -271,13 +271,15 @@ procedure TapgCustomerSingleSrv.dbgSingleServGetCellParams(Sender: TObject; Colu
 begin
   if FColorize then
   begin
-    if not dsSingleService.FieldByName('ORDER_PAY').IsNull then
-      if not dsSingleService.FieldByName('Units').IsNull then
-        if dsSingleService['ORDER_PAY'] <> dsSingleService['Units'] then
-          Background := clYellow;
+    if (not dsSingleService.FieldByName('ORDER_PAY').IsNull) //
+      and (not dsSingleService.FieldByName('Units').IsNull) //
+      and (not dsSingleService.FieldByName('FEE_CNT').IsNull) then
+      if (dsSingleService['ORDER_PAY'] <> dsSingleService['Units']) and (dsSingleService['FEE_CNT'] <> 0) then
+        Background := clYellow;
   end;
 
-  if FShowWorks then begin
+  if FShowWorks then
+  begin
     if (not dsSingleService.FieldByName('itsService').IsNull) and (dsSingleService['itsService'] = 0) then
       Background := $00D3D3D3;
   end;

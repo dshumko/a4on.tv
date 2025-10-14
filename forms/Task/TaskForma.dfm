@@ -727,7 +727,6 @@ inherited TaskForm: TTaskForm
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SortLocal = True
       STFilter.Local = True
-      STFilter.Location = stflUnderTitleFilterEh
       STFilter.Visible = True
       TabOrder = 7
       OnKeyPress = dbgUsersKeyPress
@@ -836,6 +835,11 @@ inherited TaskForm: TTaskForm
     object actOpenCustAddr: TAction
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1076#1088#1077#1089#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       OnExecute = actOpenCustAddrExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   inherited pmPopUp: TPopupMenu

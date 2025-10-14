@@ -217,10 +217,10 @@ object EPGSourceForm: TEPGSourceForm
       DataSource = srcMAPChennals
       DynProps = <>
       Flat = True
-      FooterRowCount = 1
+      HorzScrollBar.ExtraPanel.NavigatorButtons = [nbFirstEh, nbLastEh, nbInsertEh, nbDeleteEh, nbEditEh, nbPostEh, nbCancelEh]
+      HorzScrollBar.ExtraPanel.Visible = True
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       STFilter.Visible = True
@@ -233,8 +233,6 @@ object EPGSourceForm: TEPGSourceForm
           DynProps = <>
           EditButtons = <>
           FieldName = 'NAME'
-          Footer.FieldName = 'NAME'
-          Footer.ValueType = fvtCount
           Footers = <>
           LookupParams.KeyFieldNames = 'ID'
           LookupParams.LookupDataSet = dsChFromSRC
@@ -298,7 +296,6 @@ object EPGSourceForm: TEPGSourceForm
       Flat = True
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       STFilter.Visible = True
@@ -661,8 +658,8 @@ object EPGSourceForm: TEPGSourceForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 137
-    Top = 385
+    Left = 145
+    Top = 361
   end
   object srcSource: TDataSource
     DataSet = dsSource
@@ -673,7 +670,7 @@ object EPGSourceForm: TEPGSourceForm
     Transaction = trWriteQ
     Database = dmMain.dbTV
     Left = 35
-    Top = 378
+    Top = 370
   end
   object OpenDialog: TOpenDialog
     DefaultExt = '*.XML'

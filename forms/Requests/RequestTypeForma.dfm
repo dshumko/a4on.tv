@@ -3,17 +3,17 @@ inherited RequestTypeForm: TRequestTypeForm
   Top = 218
   Caption = #1058#1080#1087#1099' '#1079#1072#1103#1074#1086#1082
   ClientHeight = 543
-  ClientWidth = 975
+  ClientWidth = 909
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 77
-    Width = 975
+    Width = 909
   end
   object dnspltr1: TSplitter [1]
     Left = 0
     Top = 282
-    Width = 975
+    Width = 909
     Height = 4
     Cursor = crVSplit
     Align = alTop
@@ -21,7 +21,7 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   inherited dbGrid: TDBGridEh
     Top = 81
-    Width = 975
+    Width = 909
     Height = 201
     Align = alTop
     AllowedOperations = [alopUpdateEh]
@@ -90,7 +90,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Footers = <>
         Title.Caption = #1044#1083#1103' '#1085#1086#1074#1086#1081
         Title.TitleButton = True
-        Width = 49
+        Width = 70
       end
       item
         CellButtons = <>
@@ -101,7 +101,7 @@ inherited RequestTypeForm: TRequestTypeForm
         Footers = <>
         Title.Caption = #1044#1083#1103' '#1076#1086#1084' '#1074' '#1101#1082#1089'. '
         Title.TitleButton = True
-        Width = 68
+        Width = 92
       end
       item
         CellButtons = <>
@@ -117,7 +117,7 @@ inherited RequestTypeForm: TRequestTypeForm
   object pgcAddons: TPageControl [3]
     Left = 0
     Top = 286
-    Width = 975
+    Width = 909
     Height = 257
     ActivePage = tsTemplates
     Align = alClient
@@ -129,7 +129,7 @@ inherited RequestTypeForm: TRequestTypeForm
       object tlbTplt: TToolBar
         Left = 0
         Top = 0
-        Width = 967
+        Width = 901
         Height = 25
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
@@ -183,11 +183,12 @@ inherited RequestTypeForm: TRequestTypeForm
       object dbgTplt: TDBGridEh
         Left = 0
         Top = 25
-        Width = 967
+        Width = 901
         Height = 204
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcReqTemplates
+        DrawMemoText = True
         DynProps = <>
         EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
@@ -257,9 +258,9 @@ inherited RequestTypeForm: TRequestTypeForm
             CellButtons = <>
             DynProps = <>
             EditButtons = <>
-            FieldName = 'w_name'
+            FieldName = 'WORK_LIST'
             Footers = <>
-            Title.Caption = #1056#1072#1073#1086#1090#1072
+            Title.Caption = #1056#1072#1073#1086#1090#1099
             Title.TitleButton = True
             Width = 93
           end
@@ -281,18 +282,18 @@ inherited RequestTypeForm: TRequestTypeForm
             Footers = <>
             Title.Caption = #1044#1086#1087'. '#1076#1083#1103' '#1079#1072#1087#1086#1083#1085#1077#1085#1080#1103
             Title.TitleButton = True
-            Width = 283
+            Width = 148
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
       end
     end
     object tsWorks: TTabSheet
-      Caption = #1056#1072#1073#1086#1090#1099
+      Caption = #1056#1072#1073#1086#1090#1099' ('#1076#1083#1103' '#1074#1089#1077#1093' '#1090#1080#1087#1086#1074')'
       object dbgWorks: TDBGridEh
         Left = 0
         Top = 25
-        Width = 967
+        Width = 901
         Height = 204
         Align = alClient
         AllowedOperations = [alopUpdateEh]
@@ -408,7 +409,7 @@ inherited RequestTypeForm: TRequestTypeForm
       object tlbWorks: TToolBar
         Left = 0
         Top = 0
-        Width = 967
+        Width = 901
         Height = 25
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
@@ -465,7 +466,7 @@ inherited RequestTypeForm: TRequestTypeForm
       object tlb1: TToolBar
         Left = 0
         Top = 0
-        Width = 967
+        Width = 901
         Height = 25
         Caption = 'ToolBar1'
         Images = A4MainForm.ICONS_ACTIVE
@@ -519,7 +520,7 @@ inherited RequestTypeForm: TRequestTypeForm
       object dbgResult: TDBGridEh
         Left = 0
         Top = 25
-        Width = 967
+        Width = 901
         Height = 204
         Align = alClient
         AllowedOperations = [alopUpdateEh]
@@ -577,7 +578,7 @@ inherited RequestTypeForm: TRequestTypeForm
     end
   end
   inherited tlbMain: TToolBar
-    Width = 975
+    Width = 909
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -592,14 +593,14 @@ inherited RequestTypeForm: TRequestTypeForm
     end
   end
   inherited pnlEdit: TPanel
-    Width = 975
+    Width = 909
     Height = 52
     inherited btnSaveLink: TBitBtn
       Top = 19
-      Width = 522
+      Width = 456
     end
     inherited btnCancelLink: TBitBtn
-      Left = 613
+      Left = 547
       Top = 19
     end
   end
@@ -666,29 +667,47 @@ inherited RequestTypeForm: TRequestTypeForm
       '        RQTL_ID = :OLD_RQTL_ID'
       '    ')
     RefreshSQL.Strings = (
-      'select rt.*, o.o_name, w.name as w_name'
-      'from request_templates rt'
+      'select'
+      '    rt.*'
+      '  , o.o_name'
+      '  , iif(rt.Works is null, null,'
+      '    (select'
+      '         list(w.Name)'
+      '       from works w'
+      '       where w.Deleted = 0'
       
-        '  left outer join objects o on (o.o_id = rt.ANALYSE_ID and o.o_t' +
-        'ype = 14)'
-      '  left outer join works w on (rt.add_work = w.w_id)'
+        '             and ( position('#39'"i":'#39'||w.W_Id||'#39','#39', rt.Works) > 0  ' +
+        '))) WORK_LIST'
+      '  from request_templates rt'
+      
+        '       left outer join objects o on (o.o_id = rt.ANALYSE_ID and ' +
+        'o.o_type = 14)'
+      '       left outer join works w on (rt.add_work = w.w_id)'
       'where(  rt.rq_type = :rt_id'
       'and coalesce(rt.deleted,0) = 0'
       '     ) and (     RT.RQTL_ID = :OLD_RQTL_ID'
       '     )'
       '    ')
     SelectSQL.Strings = (
-      'select rt.*, o.o_name, w.name as w_name'
-      'from request_templates rt'
+      'select'
+      '    rt.*'
+      '  , o.o_name'
+      '  , iif(rt.Works is null, null,'
+      '    (select'
+      '         list(w.Name)'
+      '       from works w'
+      '       where w.Deleted = 0'
       
-        '  left outer join objects o on (o.o_id = rt.ANALYSE_ID and o.o_t' +
-        'ype = 14)'
-      '  left outer join works w on (rt.add_work = w.w_id)'
-      'where rt.rq_type = :rt_id'
-      'and coalesce(rt.deleted,0) = 0'
-      'order by rt.rq_content'
-      ''
-      '')
+        '             and (position('#39'"i":'#39'||w.W_Id||'#39','#39', rt.Works) > 0)))' +
+        ' WORK_LIST'
+      '  from request_templates rt'
+      
+        '       left outer join objects o on (o.o_id = rt.ANALYSE_ID and ' +
+        'o.o_type = 14)'
+      '       left outer join works w on (rt.add_work = w.w_id)'
+      '  where rt.rq_type = :rt_id'
+      '        and coalesce(rt.deleted, 0) = 0'
+      '  order by rt.rq_content')
     AutoUpdateOptions.UpdateTableName = 'REQUEST_TEMPLATES'
     AutoUpdateOptions.KeyFields = 'RT_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -819,8 +838,7 @@ inherited RequestTypeForm: TRequestTypeForm
       
         '       left outer join objects o on (w.W_Atr_Id = o.O_Id and o.O' +
         '_Type = 4)'
-      '  where w.rq_type = :rt_id  '
-      '    and W.W_ID = :OLD_W_ID'
+      '  where W.W_ID = :OLD_W_ID'
       '    and w.Deleted = 0'
       '     ')
     SelectSQL.Strings = (
@@ -858,8 +876,7 @@ inherited RequestTypeForm: TRequestTypeForm
       
         '       left outer join objects o on (w.W_Atr_Id = o.O_Id and o.O' +
         '_Type = 4)'
-      '  where w.rq_type = :rt_id'
-      '        and w.Deleted = 0'
+      '  where w.Deleted = 0'
       '  order by w.name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST_TEMPLATES'
     AutoUpdateOptions.KeyFields = 'RT_ID'

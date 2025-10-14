@@ -4,7 +4,7 @@ object AttrGeneralForm: TAttrGeneralForm
   BorderIcons = [biSystemMenu]
   Caption = #1040#1090#1088#1080#1073#1091#1090
   ClientHeight = 311
-  ClientWidth = 565
+  ClientWidth = 470
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object AttrGeneralForm: TAttrGeneralForm
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   DesignSize = (
-    565
+    470
     311)
   PixelsPerInch = 96
   TextHeight = 13
@@ -46,7 +46,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object dbluAttribute: TDBLookupComboboxEh
     Left = 71
     Top = 8
-    Width = 487
+    Width = 392
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -65,7 +65,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object mmoNOTICE: TDBMemoEh
     Left = 8
     Top = 80
-    Width = 550
+    Width = 455
     Height = 190
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
@@ -81,7 +81,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object dbValue: TDBEditEh
     Left = 71
     Top = 37
-    Width = 487
+    Width = 392
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'AVALUE'
@@ -96,7 +96,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object cbbList: TDBComboBoxEh
     Left = 71
     Top = 37
-    Width = 487
+    Width = 392
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'AVALUE'
@@ -111,7 +111,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object btnOk: TBitBtn
     Left = 8
     Top = 277
-    Width = 469
+    Width = 374
     Height = 28
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
@@ -122,7 +122,7 @@ object AttrGeneralForm: TAttrGeneralForm
     OnClick = btnOkClick
   end
   object btnCancel: TBitBtn
-    Left = 483
+    Left = 388
     Top = 277
     Width = 75
     Height = 28
@@ -135,7 +135,7 @@ object AttrGeneralForm: TAttrGeneralForm
   object mmoValue: TDBMemoEh
     Left = 71
     Top = 37
-    Width = 487
+    Width = 392
     Height = 21
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False

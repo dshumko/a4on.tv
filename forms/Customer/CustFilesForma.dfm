@@ -50,7 +50,6 @@ object CustFilesForm: TCustFilesForm
       PopupMenu = gridPopUp
       ReadOnly = True
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True
@@ -498,7 +497,7 @@ object CustFilesForm: TCustFilesForm
       '  , CF.Notice'
       '  , coalesce(CF.Act, 0) ACT'
       '  , CF.Anotice'
-      '  , c.HIS_COLOR'
+      '  , @@SQL_COLOR%c.HIS_COLOR@ HIS_COLOR'
       '  , coalesce(W.SURNAME, cf.ADDED_BY) ADDED_BY'
       '  , cf.ADDED_ON'
       '  , coalesce(E.SURNAME, cf.EDIT_BY) EDIT_BY'
@@ -533,7 +532,7 @@ object CustFilesForm: TCustFilesForm
       '  , CF.Notice'
       '  , coalesce(CF.Act, 0) ACT'
       '  , CF.Anotice'
-      '  , c.HIS_COLOR'
+      '  , @@SQL_COLOR%c.HIS_COLOR@ HIS_COLOR'
       '  , coalesce(W.SURNAME, cf.ADDED_BY) ADDED_BY'
       '  , cf.ADDED_ON'
       '  , coalesce(E.SURNAME, cf.EDIT_BY) EDIT_BY'

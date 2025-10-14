@@ -149,6 +149,11 @@ type
     status: Integer;
   end;
 
+  TSelectedMaterial = record
+    id : Integer;
+    name: string;
+  end;
+
   TSMSList = TList<TSMS>;
 
 implementation

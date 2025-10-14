@@ -101,8 +101,8 @@ object apgCustomerInfo: TapgCustomerInfo
         object dbtxtDEBT: TDBText
           Left = 2
           Top = 15
-          Width = 253
-          Height = 22
+          Width = 99
+          Height = 25
           Align = alClient
           Alignment = taCenter
           AutoSize = True
@@ -134,8 +134,8 @@ object apgCustomerInfo: TapgCustomerInfo
           object dbtxtPrepay: TDBText
             Left = 0
             Top = 0
-            Width = 253
-            Height = 21
+            Width = 84
+            Height = 19
             Hint = #1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
             Align = alClient
             Alignment = taCenter
@@ -289,7 +289,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 96
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alLeft
             Caption = '       '
           end
@@ -315,7 +315,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 218
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alRight
             Caption = '       '
           end

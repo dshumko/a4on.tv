@@ -43,8 +43,10 @@ type
   private
     { Private declarations }
     bView: Boolean;
-    bEdit: Boolean;
-    bFull: Boolean;
+    FRightAdd: Boolean;
+    FRightEdit: Boolean;
+    FRightDel: Boolean;
+    FRightFull: Boolean;
     procedure EnableControls;
   public
     procedure InitForm; override;
@@ -69,17 +71,23 @@ procedure TapgCustomerInternet.InitForm;
 begin
   dsInternet.DataSource := FDataSource;
 
-  bEdit := dmMain.AllowedAction(rght_Billing_edit);
-  bView := dmMain.AllowedAction(rght_Billing_view);
-  bFull := dmMain.AllowedAction(rght_Customer_full);
+  // rght_Customer_LanFull 38, 'ПОЛНЫЙ ДОСТУП К СПД/ИНТЕРНЕТ'
+  // rght_Customer_LanAdd  64, 'ДОБАВЛЕНИ СПД/ИНТЕРНЕТ'
+  // rght_Customer_LanEdit 65, 'РЕДАКТИРОВАНИЕ СПД/ИНТЕРНЕТ'
+  // rght_Customer_LanDel  66, 'УДАЛЕНИЕ СПД/ИНТЕРНЕТ'
+
+  FRightFull := dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_LanFull);
+  FRightAdd := dmMain.AllowedAction(rght_Customer_LanAdd);
+  FRightEdit := dmMain.AllowedAction(rght_Customer_LanEdit);
+  FRightDel := dmMain.AllowedAction(rght_Customer_LanDel);
 end;
 
 procedure TapgCustomerInternet.EnableControls;
 begin
-  actAdd.Enabled := (bEdit or bFull);
+  actAdd.Enabled := (FRightAdd or FRightFull);
+  actEdit.Enabled := (FRightEdit or FRightFull); // правка биллинга
+  actDelete.Enabled := (FRightDel or FRightFull); // правка биллинга
   actUnblock.Visible := False; // правка биллинга
-  actEdit.Enabled := (bEdit or bFull); // правка биллинга
-  actDelete.Enabled := (bEdit or bFull); // правка биллинга
 end;
 
 procedure TapgCustomerInternet.OpenData;
@@ -140,7 +148,7 @@ var
   DLLHandle: THandle;
   UnblockUser: TDllForm;
 begin
-  if (not(bEdit or bFull)) then
+  if (not(FRightEdit or FRightFull)) then
     Exit;
   if (dsInternet.RecordCount = 0) or dsInternet.FieldByName('BLNG_ID').IsNull then
     Exit;
@@ -181,7 +189,7 @@ var
   DLLHandle: THandle;
   AddUserForm: TDllForm;
 begin
-  if (not(bEdit or bFull)) then
+  if (not(FRightAdd or FRightFull)) then
     Exit;
 
   s := ExtractFilePath(Application.ExeName) + 'internet.dll';

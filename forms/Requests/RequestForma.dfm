@@ -3,7 +3,7 @@ object RequestForm: TRequestForm
   Top = 201
   Caption = #1047#1072#1103#1074#1082#1072
   ClientHeight = 562
-  ClientWidth = 784
+  ClientWidth = 882
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,35 +24,29 @@ object RequestForm: TRequestForm
   OnResize = FormResize
   OnShow = FormShow
   DesignSize = (
-    784
+    882
     562)
   PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
     Top = 525
-    Width = 784
+    Width = 882
     Height = 37
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 360
       Top = 6
-      Width = 250
+      Width = 348
       Height = 27
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFramebbOkClick
     end
     inherited bbCancel: TBitBtn
-      Left = 616
+      Left = 714
       Top = 6
       Width = 166
       Height = 27
@@ -62,7 +56,7 @@ object RequestForm: TRequestForm
   object pnlHead: TPanel
     Left = 0
     Top = 0
-    Width = 784
+    Width = 882
     Height = 188
     Align = alTop
     BevelOuter = bvNone
@@ -104,6 +98,7 @@ object RequestForm: TRequestForm
           DynProps = <>
           DataField = 'RQ_TYPE'
           DataSource = srcRequest
+          EmptyDataInfo.Text = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
           EditButtons = <>
           KeyField = 'RT_ID'
           ListField = 'RT_NAME'
@@ -317,6 +312,7 @@ object RequestForm: TRequestForm
           Height = 21
           DynProps = <>
           EditButtons = <>
+          EmptyDataInfo.Text = #1058#1077#1083#1077#1092#1086#1085' '#1076#1083#1103' '#1089#1074#1103#1079#1080
           ReadOnly = True
           TabOrder = 7
           Visible = True
@@ -374,7 +370,7 @@ object RequestForm: TRequestForm
     object pnlCI: TPanel
       Left = 410
       Top = 0
-      Width = 374
+      Width = 472
       Height = 188
       Align = alClient
       BevelOuter = bvNone
@@ -383,7 +379,7 @@ object RequestForm: TRequestForm
       object dbtxtUchZv: TDBText
         Left = 0
         Top = 171
-        Width = 374
+        Width = 472
         Height = 17
         Align = alBottom
         DataField = 'WAREA'
@@ -392,7 +388,7 @@ object RequestForm: TRequestForm
       object dbtParent: TDBText
         Left = 0
         Top = 154
-        Width = 374
+        Width = 472
         Height = 17
         Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1076#1083#1103' '#1086#1090#1082#1088#1099#1090#1080#1103' '#1079#1072#1103#1074#1082#1080
         Align = alBottom
@@ -409,7 +405,7 @@ object RequestForm: TRequestForm
       object dbtxtCHILD_INFO: TDBText
         Left = 0
         Top = 137
-        Width = 374
+        Width = 472
         Height = 17
         Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1076#1083#1103' '#1086#1090#1082#1088#1099#1090#1080#1103' '#1079#1072#1103#1074#1082#1080
         Align = alBottom
@@ -426,27 +422,18 @@ object RequestForm: TRequestForm
       inline CustomerInfoFrm: TCustomerInfoFrm
         Left = 0
         Top = 0
-        Width = 374
+        Width = 472
         Height = 137
         Align = alClient
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
         inherited gbInfo: TGroupBox
-          Width = 374
+          Width = 472
           Height = 137
-          inherited memAbonent: TMemo
-            Width = 370
-            Height = 83
-            OnDblClick = CustomerInfoFrmlblFIODblClick
-          end
-          inherited lblFIO: TDBEditEh
-            Width = 370
-            OnDblClick = CustomerInfoFrmlblFIODblClick
-          end
-          inherited lblDebt: TDBEditEh
-            Width = 370
-            Text = #1044#1054#1051#1043
+          inherited HtmlViewer: THtmlViewer
+            Width = 468
+            Height = 120
           end
         end
       end
@@ -455,7 +442,7 @@ object RequestForm: TRequestForm
   object PageControl: TPageControl
     Left = 0
     Top = 188
-    Width = 784
+    Width = 882
     Height = 337
     ActivePage = tabExecute
     Align = alClient
@@ -466,24 +453,24 @@ object RequestForm: TRequestForm
       Caption = #1055#1088#1080#1077#1084
       object Splitter: TSplitter
         Left = 0
-        Top = 112
-        Width = 776
+        Top = 113
+        Width = 874
         Height = 3
         Cursor = crVSplit
         Align = alTop
       end
-      object Panel2: TPanel
+      object pnlAddNot: TPanel
         Left = 0
-        Top = 115
-        Width = 776
-        Height = 153
+        Top = 116
+        Width = 874
+        Height = 193
         Align = alClient
         BevelOuter = bvNone
-        TabOrder = 1
+        TabOrder = 2
         object Label5: TLabel
           Left = 0
           Top = 29
-          Width = 67
+          Width = 874
           Height = 13
           Align = alTop
           Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -491,8 +478,8 @@ object RequestForm: TRequestForm
         object mmoNotice: TDBMemoEh
           Left = 0
           Top = 42
-          Width = 776
-          Height = 111
+          Width = 874
+          Height = 151
           ScrollBars = ssVertical
           Align = alClient
           AutoSize = False
@@ -508,14 +495,14 @@ object RequestForm: TRequestForm
         object pnlAddInfo: TPanel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 874
           Height = 29
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
           Visible = False
           DesignSize = (
-            776
+            874
             29)
           object lbl14: TLabel
             Left = 4
@@ -534,7 +521,7 @@ object RequestForm: TRequestForm
           object cbbAdd: TDBComboBoxEh
             Left = 96
             Top = 3
-            Width = 673
+            Width = 778
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DataField = 'ADD_INFO'
@@ -550,68 +537,111 @@ object RequestForm: TRequestForm
       end
       object pnlBid: TPanel
         Left = 0
+        Top = 28
+        Width = 874
+        Height = 85
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        DesignSize = (
+          874
+          85)
+        object lbl12: TLabel
+          Left = 4
+          Top = 5
+          Width = 83
+          Height = 13
+          Caption = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+        end
+        object luTemplate: TDBLookupComboboxEh
+          Left = 96
+          Top = 2
+          Width = 778
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          DynProps = <>
+          DataField = 'RQTL_ID'
+          DataSource = srcRequest
+          DropDownBox.AutoDrop = True
+          EmptyDataInfo.Text = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+          EditButtons = <>
+          KeyField = 'RQTL_ID'
+          ListField = 'RQ_CONTENT'
+          ListSource = srcErrors
+          TabOrder = 0
+          Visible = True
+          OnChange = luTemplateChange
+        end
+        object mmoContent: TDBMemoEh
+          Left = 0
+          Top = 29
+          Width = 874
+          Height = 52
+          ScrollBars = ssVertical
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          AutoSize = False
+          DataField = 'RQ_CONTENT'
+          DataSource = srcRequest
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = #1063#1090#1086' '#1085#1077#1086#1073#1093#1086#1076#1080#1084#1086' '#1074#1099#1087#1086#1083#1085#1080#1090#1100
+          TabOrder = 1
+          Visible = True
+          WantReturns = True
+        end
+      end
+      object pnlDateTime: TPanel
+        Left = 0
         Top = 0
-        Width = 776
-        Height = 112
+        Width = 874
+        Height = 28
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          776
-          112)
-        object Label11: TLabel
-          Left = 4
+          874
+          28)
+        object Label1: TLabel
+          Left = 5
           Top = 6
           Width = 142
           Height = 13
           Caption = #1055#1083#1072#1085#1086#1074#1072#1103' '#1076#1072#1090#1072' '#1074#1099#1087#1086#1083#1085#1077#1085#1080#1103
         end
-        object Label12: TLabel
-          Left = 356
-          Top = 6
-          Width = 42
-          Height = 13
-          Caption = #1074#1088#1077#1084#1103' '#1089':'
-        end
-        object Label13: TLabel
-          Left = 465
+        object Label2: TLabel
+          Left = 463
           Top = 6
           Width = 16
           Height = 13
           Caption = #1087#1086':'
         end
-        object lbl12: TLabel
-          Left = 4
-          Top = 33
-          Width = 83
+        object Label7: TLabel
+          Left = 354
+          Top = 6
+          Width = 42
           Height = 13
-          Caption = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
+          Caption = #1074#1088#1077#1084#1103' '#1089':'
         end
-        object PLANDATE: TDBDateTimeEditEh
-          Left = 156
+        object btnSelectDate: TBitBtn
+          Left = 275
           Top = 3
-          Width = 113
-          Height = 21
-          DataField = 'rq_plan_date'
-          DataSource = srcRequest
-          DynProps = <>
-          EditButtons = <>
-          EmptyDataInfo.Text = #1050#1086#1075#1076#1072' '#1087#1088#1080#1089#1090#1091#1087#1080#1090#1100
-          Kind = dtkDateEh
+          Width = 71
+          Height = 22
+          Caption = #1042#1099#1073#1086#1088' '#1076#1072#1090#1099
           TabOrder = 0
-          Visible = True
+          OnClick = btnSelectDateClick
         end
         object deTimeFrom: TDBDateTimeEditEh
           Left = 406
           Top = 3
-          Width = 50
+          Width = 48
           Height = 21
           DataField = 'RQ_TIME_FROM'
           DataSource = srcRequest
           DynProps = <>
           EditButton.Visible = False
           EditButtons = <>
-          TabOrder = 2
+          TabOrder = 1
           Visible = True
           OnExit = deTimeFromExit
           EditFormat = 'HH:NN'
@@ -626,81 +656,45 @@ object RequestForm: TRequestForm
           DynProps = <>
           EditButton.Visible = False
           EditButtons = <>
-          TabOrder = 3
+          TabOrder = 2
           Visible = True
           OnExit = deTimeToExit
           EditFormat = 'HH:NN'
         end
         object btnReqForAdres: TButton
-          Left = 669
+          Left = 563
           Top = 3
-          Width = 100
+          Width = 109
           Height = 22
           Action = actReqForAdres
           Anchors = [akTop, akRight]
-          TabOrder = 4
+          TabOrder = 3
           TabStop = False
         end
-        object btnSelectDate: TBitBtn
-          Left = 275
+        object btnCancel: TButton
+          Left = 710
           Top = 3
-          Width = 75
+          Width = 115
           Height = 22
-          Caption = #1042#1099#1073#1086#1088' '#1076#1072#1090#1099
-          TabOrder = 1
-          OnClick = btnSelectDateClick
+          Anchors = [akTop, akRight]
+          Caption = #1054#1090#1084#1077#1085#1080#1090#1100' '#1079#1072#1103#1074#1082#1091
+          TabOrder = 4
+          TabStop = False
+          OnClick = btnCancelClick
         end
-        object luTemplate: TDBLookupComboboxEh
-          Left = 96
-          Top = 30
-          Width = 673
+        object PLANDATE: TDBDateTimeEditEh
+          Left = 156
+          Top = 3
+          Width = 113
           Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          DynProps = <>
-          DataField = 'RQTL_ID'
+          DataField = 'rq_plan_date'
           DataSource = srcRequest
-          DropDownBox.AutoDrop = True
+          DynProps = <>
           EditButtons = <>
-          KeyField = 'RQTL_ID'
-          ListField = 'RQ_CONTENT'
-          ListSource = srcErrors
+          EmptyDataInfo.Text = #1050#1086#1075#1076#1072' '#1087#1088#1080#1089#1090#1091#1087#1080#1090#1100
+          Kind = dtkDateEh
           TabOrder = 5
           Visible = True
-          OnChange = luTemplateChange
-        end
-        object mmoContent: TDBMemoEh
-          Left = 96
-          Top = 55
-          Width = 673
-          Height = 55
-          ScrollBars = ssVertical
-          Anchors = [akLeft, akTop, akRight, akBottom]
-          AutoSize = False
-          DataField = 'RQ_CONTENT'
-          DataSource = srcRequest
-          DynProps = <>
-          EditButtons = <>
-          EmptyDataInfo.Text = #1063#1090#1086' '#1085#1077#1086#1073#1093#1086#1076#1080#1084#1086' '#1074#1099#1087#1086#1083#1085#1080#1090#1100
-          TabOrder = 6
-          Visible = True
-          WantReturns = True
-        end
-      end
-      object pnlActions: TPanel
-        Left = 0
-        Top = 268
-        Width = 776
-        Height = 41
-        Align = alBottom
-        TabOrder = 2
-        object btnCancel: TButton
-          Left = 4
-          Top = 9
-          Width = 192
-          Height = 25
-          Caption = #1054#1090#1084#1077#1085#1080#1090#1100' '#1079#1072#1103#1074#1082#1091
-          TabOrder = 0
-          OnClick = btnCancelClick
         end
       end
     end
@@ -710,18 +704,18 @@ object RequestForm: TRequestForm
       object Panel12: TPanel
         Left = 0
         Top = 33
-        Width = 776
+        Width = 874
         Height = 276
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
-          776
+          874
           276)
         object Label17: TLabel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 874
           Height = 21
           Align = alTop
           AutoSize = False
@@ -730,7 +724,7 @@ object RequestForm: TRequestForm
         object bbExecutors: TButton
           Left = 78
           Top = 2
-          Width = 503
+          Width = 601
           Height = 19
           Action = actExecutors
           Anchors = [akLeft, akTop, akRight]
@@ -739,7 +733,7 @@ object RequestForm: TRequestForm
         object Panel13: TPanel
           Left = 0
           Top = 21
-          Width = 776
+          Width = 874
           Height = 255
           Align = alClient
           BevelOuter = bvNone
@@ -748,7 +742,7 @@ object RequestForm: TRequestForm
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 770
+            Width = 868
             Height = 249
             TabStop = False
             Align = alClient
@@ -790,7 +784,7 @@ object RequestForm: TRequestForm
           end
         end
         object btnSMS: TButton
-          Left = 597
+          Left = 695
           Top = 2
           Width = 85
           Height = 19
@@ -799,7 +793,7 @@ object RequestForm: TRequestForm
           TabOrder = 0
         end
         object btnEMAIL: TButton
-          Left = 688
+          Left = 786
           Top = 2
           Width = 85
           Height = 19
@@ -811,13 +805,13 @@ object RequestForm: TRequestForm
       object pnlGiveTime: TPanel
         Left = 0
         Top = 0
-        Width = 776
+        Width = 874
         Height = 33
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          776
+          874
           33)
         object Label20: TLabel
           Left = 4
@@ -851,7 +845,7 @@ object RequestForm: TRequestForm
         object edExExecutors: TDBEditEh
           Left = 406
           Top = 6
-          Width = 367
+          Width = 465
           Height = 21
           Hint = #1057#1090#1086#1088#1086#1085#1085#1080#1077' '#1080#1089#1087#1086#1083#1085#1080#1090#1077#1083#1080' '#1087#1088#1086#1074#1086#1076#1080#1074#1096#1080#1077' '#1088#1072#1073#1086#1090#1091
           Anchors = [akLeft, akTop, akRight]
@@ -871,7 +865,7 @@ object RequestForm: TRequestForm
       object spl2: TSplitter
         Left = 0
         Top = 238
-        Width = 776
+        Width = 874
         Height = 3
         Cursor = crVSplit
         Align = alBottom
@@ -879,7 +873,7 @@ object RequestForm: TRequestForm
       object pnlExecTop: TPanel
         Left = 0
         Top = 0
-        Width = 776
+        Width = 874
         Height = 238
         Align = alClient
         BevelOuter = bvNone
@@ -887,13 +881,13 @@ object RequestForm: TRequestForm
         object pnlExecTime: TPanel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 874
           Height = 55
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
           DesignSize = (
-            776
+            874
             55)
           object Label10: TLabel
             Left = 4
@@ -965,7 +959,7 @@ object RequestForm: TRequestForm
           object luResult: TDBLookupComboboxEh
             Left = 408
             Top = 29
-            Width = 364
+            Width = 462
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DynProps = <>
@@ -984,7 +978,7 @@ object RequestForm: TRequestForm
           object edReceipt: TDBEditEh
             Left = 408
             Top = 3
-            Width = 364
+            Width = 462
             Height = 21
             TabStop = False
             Anchors = [akLeft, akTop, akRight]
@@ -1001,7 +995,7 @@ object RequestForm: TRequestForm
         object pnlWM: TPanel
           Left = 0
           Top = 55
-          Width = 776
+          Width = 874
           Height = 183
           Align = alClient
           BevelOuter = bvNone
@@ -1019,14 +1013,14 @@ object RequestForm: TRequestForm
               183)
             object lbl1: TLabel
               Left = 4
-              Top = 30
+              Top = 22
               Width = 58
               Height = 13
               Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099
             end
             object btnWorks: TButton
               Left = 4
-              Top = 8
+              Top = 0
               Width = 90
               Height = 21
               Action = actWorks
@@ -1035,7 +1029,7 @@ object RequestForm: TRequestForm
             end
             object btnMaterials: TButton
               Left = 4
-              Top = 45
+              Top = 37
               Width = 90
               Height = 21
               Action = actMaterials
@@ -1044,7 +1038,7 @@ object RequestForm: TRequestForm
             end
             object btnMatIn: TButton
               Left = 4
-              Top = 69
+              Top = 61
               Width = 90
               Height = 21
               Action = actMatIn
@@ -1053,19 +1047,18 @@ object RequestForm: TRequestForm
             end
             object btnBuyback: TButton
               Left = 4
-              Top = 93
+              Top = 85
               Width = 90
               Height = 21
               Action = actBuyback
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 3
-              Visible = False
             end
           end
           object pnlGrids: TPanel
             Left = 100
             Top = 0
-            Width = 676
+            Width = 774
             Height = 183
             Align = alClient
             BevelOuter = bvNone
@@ -1073,7 +1066,7 @@ object RequestForm: TRequestForm
             object splGrids: TSplitter
               Left = 0
               Top = 82
-              Width = 676
+              Width = 774
               Height = 3
               Cursor = crVSplit
               Align = alTop
@@ -1081,7 +1074,7 @@ object RequestForm: TRequestForm
             object dbgWorks: TDBGridEh
               Left = 0
               Top = 0
-              Width = 676
+              Width = 774
               Height = 82
               Align = alTop
               Color = clWhite
@@ -1160,7 +1153,7 @@ object RequestForm: TRequestForm
             object dbgMaterials: TDBGridEh
               Left = 0
               Top = 85
-              Width = 676
+              Width = 774
               Height = 98
               Align = alClient
               DataSource = srcMaterials
@@ -1226,13 +1219,17 @@ object RequestForm: TRequestForm
                     '0'
                     '1'
                     '2'
-                    '3')
+                    '3'
+                    '4'
+                    '5')
                   NotInKeyListIndex = 0
                   PickList.Strings = (
                     #1055#1088#1086#1076#1072#1078#1072
                     #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1072#1088#1077#1085#1076#1072' '#1073#1077#1079' '#1086#1087#1083#1072#1090#1099')'
                     #1056#1072#1089#1089#1088#1086#1095#1082#1072
-                    #1040#1088#1077#1085#1076#1072)
+                    #1040#1088#1077#1085#1076#1072
+                    #1042#1086#1079#1074#1088#1072#1090' '#1073#1077#1089#1087#1083#1072#1090#1085#1086
+                    #1042#1099#1082#1091#1087'('#1042#1086#1079#1074#1088#1072#1090' '#1079#1072' '#1076#1077#1085#1100#1075#1080')')
                   Title.Alignment = taCenter
                   Title.Caption = #1053#1072#1095#1080#1089#1083'.'
                   Width = 81
@@ -1278,7 +1275,7 @@ object RequestForm: TRequestForm
       object pnlNotice: TPanel
         Left = 0
         Top = 241
-        Width = 776
+        Width = 874
         Height = 68
         Align = alBottom
         BevelOuter = bvNone
@@ -1286,13 +1283,13 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 776
+          Width = 874
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
         end
         object splFlats: TSplitter
-          Left = 373
+          Left = 471
           Top = 13
           Height = 55
           Align = alRight
@@ -1301,7 +1298,7 @@ object RequestForm: TRequestForm
         object dbMemDefect: TDBMemoEh
           Left = 0
           Top = 13
-          Width = 373
+          Width = 471
           Height = 55
           ScrollBars = ssVertical
           Align = alClient
@@ -1310,13 +1307,14 @@ object RequestForm: TRequestForm
           DataSource = srcRequest
           DynProps = <>
           EditButtons = <>
+          EmptyDataInfo.Text = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
           TabOrder = 0
           Visible = True
           WantReturns = True
           OnChange = dbMemDefectChange
         end
         object dbgFlats: TDBGridEh
-          Left = 376
+          Left = 474
           Top = 13
           Width = 400
           Height = 55
@@ -1514,7 +1512,7 @@ object RequestForm: TRequestForm
       object pnlPhotoFile: TPanel
         Left = 372
         Top = 0
-        Width = 404
+        Width = 502
         Height = 309
         Align = alClient
         BevelOuter = bvNone
@@ -1524,7 +1522,7 @@ object RequestForm: TRequestForm
         object imgJPG: TDBImageEh
           Left = 0
           Top = 0
-          Width = 404
+          Width = 502
           Height = 309
           Align = alClient
           DataField = 'JPG'
@@ -1571,7 +1569,7 @@ object RequestForm: TRequestForm
       object pnlMSG: TPanel
         Left = 26
         Top = 0
-        Width = 750
+        Width = 848
         Height = 309
         Align = alClient
         BevelOuter = bvNone
@@ -1580,7 +1578,7 @@ object RequestForm: TRequestForm
         object spl3: TSplitter
           Left = 0
           Top = 104
-          Width = 750
+          Width = 848
           Height = 3
           Cursor = crVSplit
           Align = alTop
@@ -1588,7 +1586,7 @@ object RequestForm: TRequestForm
         object dbgMsg: TDBGridEh
           Left = 0
           Top = 107
-          Width = 750
+          Width = 848
           Height = 202
           Align = alClient
           ColumnDefValues.ToolTips = True
@@ -1644,7 +1642,7 @@ object RequestForm: TRequestForm
         object pnlMSGText: TPanel
           Left = 0
           Top = 0
-          Width = 750
+          Width = 848
           Height = 104
           Align = alTop
           BevelOuter = bvNone
@@ -1652,7 +1650,7 @@ object RequestForm: TRequestForm
           object mmoComment: TDBMemoEh
             Left = 0
             Top = 0
-            Width = 750
+            Width = 848
             Height = 75
             ScrollBars = ssVertical
             Align = alClient
@@ -1669,19 +1667,19 @@ object RequestForm: TRequestForm
           object pnlMSGButton: TPanel
             Left = 0
             Top = 75
-            Width = 750
+            Width = 848
             Height = 29
             Align = alBottom
             BevelOuter = bvNone
             TabOrder = 1
             Visible = False
             DesignSize = (
-              750
+              848
               29)
             object btnMSGSave: TButton
               Left = 8
               Top = 3
-              Width = 528
+              Width = 626
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -1689,7 +1687,7 @@ object RequestForm: TRequestForm
               OnClick = btnMSGSaveClick
             end
             object btnMSGCancel: TButton
-              Left = 551
+              Left = 649
               Top = 3
               Width = 198
               Height = 23
@@ -1704,9 +1702,9 @@ object RequestForm: TRequestForm
     end
   end
   object btnPrint: TButton
-    Left = 218
+    Left = 211
     Top = 531
-    Width = 136
+    Width = 117
     Height = 27
     Action = actPrint
     Anchors = [akLeft, akBottom]
@@ -2000,7 +1998,7 @@ object RequestForm: TRequestForm
       Caption = #1042#1086#1079#1074#1088#1072#1090' (F8)'
       Hint = #1042#1086#1079#1074#1088#1072#1090' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
       ShortCut = 119
-      OnExecute = actMatInExecute
+      OnExecute = actMatInOldExecute
     end
     object actSMS: TAction
       Caption = #1042#1099#1089#1083#1072#1090#1100' SMS'
@@ -2074,6 +2072,7 @@ object RequestForm: TRequestForm
       '  , rt.ADD_FIELD'
       '  , coalesce(rt.FLATS_NEED, 0) FLATS_NEED'
       '  , coalesce(rt.FLATS_RESULT, '#39#39') FLATS_RESULT'
+      '  , RT.WORKS '
       '  from request_templates rt'
       '  where rt.rq_type = :rt_id'
       '  order by rt.rq_content '
@@ -2299,30 +2298,37 @@ object RequestForm: TRequestForm
       '  , (NOT_CALC * COST) NOT_CALC_COST'
       '  , iif(NOT_CALC = 1, 0, COST) CALC_COST'
       '  from (select'
-      '            m.W_ID ID'
+      '            rw.W_ID ID'
       '          , w.name'
       '          , w.notice'
-      '          , m.w_quant QNT'
-      '          , round(m.w_time * m.w_quant, 2) time_total'
+      '          , rw.w_quant QNT'
+      '          , round(rw.w_time * rw.w_quant, 2) time_total'
+      '          , coalesce('
+      '                iif((w.As_Service is null) ,'
       
-        '          , coalesce(iif(w.As_Service is null, w.W_Cost, iif(coa' +
-        'lesce(s.Srv_Type_Id, 2) = 2, 0,'
-      '            (select'
-      '                 t.tarif_sum'
-      '               from tarif t'
-      '               where t.service_id = s.service_id'
+        '                  iif((coalesce(r.req_result, 0) > 1), rw.W_Cost' +
+        ', w.W_Cost),'
+      '                  iif(coalesce(s.Srv_Type_Id, 2) = 2,'
+      '                     0,'
+      '                     (select t.tarif_sum'
+      '                       from tarif t'
       
-        '                     and coalesce(rq.rq_exec_time, localtimestam' +
-        'p) between t.date_from and t.date_to))), 0) * m.w_quant COST'
-      '          , m.rq_id'
-      '          , coalesce(m.NOT_CALC, 0) NOT_CALC'
+        '                       where t.service_id = s.service_id and coa' +
+        'lesce(r.rq_exec_time, localtimestamp) between t.date_from and t.' +
+        'date_to'
+      '                     )'
+      '                  )'
+      '              ),'
+      '            0) * rw.w_quant COST'
+      '          , rw.rq_id'
+      '          , coalesce(rw.NOT_CALC, 0) NOT_CALC'
       '          from WORKS w'
-      '               inner join request_works m on (w.w_id = m.w_id)'
-      '               inner join request rq on (rq.Rq_Id = m.Rq_Id)'
+      '               inner join request_works rw on (w.w_id = rw.w_id)'
+      '               inner join request r on (r.Rq_Id = rw.Rq_Id)'
       
         '               left outer join services s on (w.as_service = s.s' +
         'ervice_id)'
-      '          where m.rq_id = :RQ_ID)'
+      '          where rw.rq_id = :RQ_ID)'
       '  order by name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
@@ -2387,8 +2393,9 @@ object RequestForm: TRequestForm
       '  , rm.Serial'
       '  from MATERIALS m'
       '       inner join REQUEST_MATERIALS rM on (M.M_ID = rM.M_ID)'
-      '       left outer join objects o on (o.O_Id = rm.Wh_Id and'
-      '             o.O_Type = 10)'
+      
+        '       left outer join objects o on (o.O_Id = rm.Wh_Id and o.O_T' +
+        'ype = 10)'
       '       left outer join Material_Unit u on (u.M_Id = rm.M_Id and'
       '             rm.Serial = u.Serial)'
       '  where rM.RQ_ID = :RQ_ID'
@@ -2402,9 +2409,9 @@ object RequestForm: TRequestForm
       '  , m.DEMENSION'
       '  , rM.Quant * (-1) QNT'
       
-        '  , iif((coalesce(rm.CALC,1) in (0,2)), rM.Quant * (-1) * coales' +
-        'ce(rm.Cost, m.Cost), 0) as COST'
-      '  , rm.CALC as PROP'
+        '  , iif((coalesce(rm.PROP,0) = 5), rM.Quant * (-1) * coalesce(rm' +
+        '.Cost, m.Cost), 0) as COST'
+      '  , coalesce(PROP, rm.CALC, 4) as PROP'
       '  , o.O_Name WH_NAME'
       '  , 1 as MT'
       '  , rm.ID Rm_Id'
@@ -2413,12 +2420,12 @@ object RequestForm: TRequestForm
       
         '       inner join Request_Materials_Return rM on (M.M_ID = rM.M_' +
         'ID)'
-      '       left outer join objects o on (o.O_Id = rm.Wh_Id and'
-      '             o.O_Type = 10)'
+      
+        '       left outer join objects o on (o.O_Id = rm.Wh_Id and o.O_T' +
+        'ype = 10)'
       
         '       left outer join Material_Unit u on (u.M_Id = rm.M_Id and ' +
         ' rm.Serial = u.Serial)'
-      ''
       '  where rM.RQ_ID = :RQ_ID'
       '  order by 2')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'

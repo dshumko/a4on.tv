@@ -517,22 +517,9 @@ object PortLinkForm: TPortLinkForm
             inherited gbInfo: TGroupBox
               Width = 327
               Height = 158
-              inherited lblDebt: TLabel
-                Top = 29
+              inherited HtmlViewer: THtmlViewer
                 Width = 323
-                Height = 14
-                Margins.Bottom = 0
-                Font.Height = -12
-              end
-              inherited memAbonent: TMemo
-                Top = 43
-                Width = 323
-                Height = 113
-              end
-              inherited lblFIO: TDBEditEh
-                Width = 323
-                Height = 14
-                Margins.Bottom = 0
+                Height = 141
               end
             end
           end

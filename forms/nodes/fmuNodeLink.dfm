@@ -1,9 +1,9 @@
 object apgNodeLink: TapgNodeLink
   Left = 0
   Top = 0
-  Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1085#1099#1077' '#1091#1079#1083#1099
+  Caption = #1051#1080#1085#1080#1080' '#1089#1074#1103#1079#1080
   ClientHeight = 229
-  ClientWidth = 797
+  ClientWidth = 890
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,12 +11,13 @@ object apgNodeLink: TapgNodeLink
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  ShowHint = True
   PixelsPerInch = 96
   TextHeight = 13
   object dbgNodeLink: TDBGridEh
     Left = 26
     Top = 0
-    Width = 771
+    Width = 864
     Height = 229
     Align = alClient
     AllowedOperations = []
@@ -27,7 +28,7 @@ object apgNodeLink: TapgNodeLink
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmGrid
     RowDetailPanel.Active = True
     RowDetailPanel.Height = 106
@@ -35,11 +36,12 @@ object apgNodeLink: TapgNodeLink
     RowDetailPanel.BevelOuter = bvNone
     RowDetailPanel.BorderStyle = bsNone
     RowDetailPanel.VertSizing = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
+    STFilter.InstantApply = True
+    STFilter.Local = True
     SumList.Active = True
     TabOrder = 0
     TitleParams.MultiTitle = True
+    OnCellClick = dbgNodeLinkCellClick
     OnDblClick = dbgNodeLinkDblClick
     OnGetCellParams = dbgNodeLinkGetCellParams
     OnRowDetailPanelHide = dbgNodeLinkRowDetailPanelHide
@@ -64,6 +66,8 @@ object apgNodeLink: TapgNodeLink
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083'. '#1091#1079#1077#1083
         Title.TitleButton = True
+        Title.SortIndex = 1
+        Title.SortMarker = smUpEh
         Width = 155
       end
       item
@@ -74,6 +78,8 @@ object apgNodeLink: TapgNodeLink
         Footers = <>
         Title.Caption = #1050#1072#1073#1077#1083#1100
         Title.TitleButton = True
+        Title.SortIndex = 2
+        Title.SortMarker = smUpEh
         Width = 158
       end
       item
@@ -125,6 +131,7 @@ object apgNodeLink: TapgNodeLink
         Footers = <>
         Title.Caption = #1045#1084#1082#1086#1089#1090#1100'|'#1042#1089#1077#1075#1086
         Title.TitleButton = True
+        OnGetCellParams = dbgNodeLinkColumns7GetCellParams
       end
       item
         CellButtons = <>
@@ -135,6 +142,7 @@ object apgNodeLink: TapgNodeLink
         Footers = <>
         Title.Caption = #1045#1084#1082#1086#1089#1090#1100'|'#1047#1072#1085#1103#1090#1086
         Title.TitleButton = True
+        OnGetCellParams = dbgNodeLinkColumns8GetCellParams
       end
       item
         CellButtons = <>
@@ -150,7 +158,7 @@ object apgNodeLink: TapgNodeLink
       object pnlRow: TPanel
         Left = 0
         Top = 0
-        Width = 738
+        Width = 831
         Height = 98
         Align = alClient
         BevelOuter = bvNone
@@ -158,85 +166,92 @@ object apgNodeLink: TapgNodeLink
         object dbgDetail: TDBGridEh
           Left = 25
           Top = 0
-          Width = 713
+          Width = 806
           Height = 98
           Align = alClient
           DataSource = srcEQ
           DynProps = <>
           Flat = True
           FooterRowCount = 1
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
           PopupMenu = pmOpen
           SumList.Active = True
           TabOrder = 0
+          OnCellClick = dbgDetailCellClick
           OnDblClick = dbgDetailDblClick
           Columns = <
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'Name'
+              FieldName = 'WLABEL'
+              Footers = <>
+              HideDuplicates = True
+              Title.Caption = #1052#1077#1090#1082#1072' '#1082#1072#1073#1077#1083#1103
+              Title.TitleButton = True
+              Width = 76
+              OnGetCellParams = dbgDetailColumns0GetCellParams
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'WLBL_FLOW'
+              Footers = <>
+              Title.Caption = #1050#1091#1076#1072
+              Title.TitleButton = True
+              Width = 34
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'WLBL_NAME'
               Footer.ValueType = fvtCount
               Footers = <>
               Title.Alignment = taCenter
-              Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
-              Width = 156
+              Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077'/'#1040#1073#1086#1085#1077#1085#1090
+              Title.TitleButton = True
+              Width = 174
             end
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'PORT'
+              FieldName = 'WLBL_PORT'
               Footers = <>
               Title.Alignment = taCenter
               Title.Caption = #1055#1086#1088#1090
-              Width = 87
-            end
-            item
-              CellButtons = <>
-              DynProps = <>
-              EditButtons = <>
-              FieldName = 'Account_No'
-              Footers = <>
-              Title.Alignment = taCenter
-              Title.Caption = #1051#1080#1094#1077#1074#1086#1081
-            end
-            item
-              CellButtons = <>
-              DynProps = <>
-              EditButtons = <>
-              FieldName = 'Cust_Code'
-              Footers = <>
-              Title.Alignment = taCenter
-              Title.Caption = #1050#1086#1076
-            end
-            item
-              CellButtons = <>
-              DynProps = <>
-              EditButtons = <>
-              FieldName = 'Ip'
-              Footers = <>
-              Title.Alignment = taCenter
-              Title.Caption = 'IP'
-            end
-            item
-              CellButtons = <>
-              DynProps = <>
-              EditButtons = <>
-              FieldName = 'Mac'
-              Footers = <>
-              Title.Alignment = taCenter
-              Title.Caption = 'MAC'
-              Width = 97
-            end
-            item
-              CellButtons = <>
-              DynProps = <>
-              EditButtons = <>
-              FieldName = 'WLABEL'
-              Footers = <>
-              Title.Caption = #1052#1077#1090#1082#1072' '#1082#1072#1073#1077#1083#1103
               Title.TitleButton = True
-              Width = 105
+              Width = 46
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'WLBL_IP'
+              Footers = <>
+              Title.Caption = 'IP'
+              Width = 106
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'WLBL_MAC'
+              Footers = <>
+              Title.Caption = 'MAC'
+              Width = 128
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'NODE_NAME'
+              Footers = <>
+              Title.Caption = #1059#1079#1077#1083
+              Title.TitleButton = True
+              Width = 182
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -437,48 +452,17 @@ object apgNodeLink: TapgNodeLink
       'select'
       '    l.*'
       '    , m.NAME MAT_NAME'
+      '    , coalesce((select sum(iif(cnt = 2, 1, iif(cnt > 2, 2, 0 )))'
       
-        '    , (select count(*) from port p where p.Wid = l.Wid) as USED ' +
-        '   '
-      '  from (select'
-      '            '#39'>'#39' FLOW'
-      '          , T.O_NAME'
-      '          , t.O_Dimension COLOR'
-      '          , n.Node_Id'
-      '          , n.Name CONN_NODE   '
-      '          , C.*'
-      '          from Wire C'
-      
-        '               inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O' +
-        '_TYPE = 56)'
-      
-        '               left outer join NODEs n on (n.Node_Id = c.Point_E' +
-        ')'
-      '          where (C.Point_S = :OLD_NODE_ID)'
-      '        union'
-      '        select'
-      '            '#39'<'#39' FLOW'
-      '          , T.O_NAME'
-      '          , t.O_Dimension COLOR'
-      '          , n.Node_Id'
-      '          , n.Name CONN_NODE         '
-      '          , C.*'
-      '          from Wire C'
-      
-        '               inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O' +
-        '_TYPE = 56)'
-      
-        '               left outer join NODEs n on (n.Node_Id = c.Point_S' +
-        ')'
-      '          where (C.Point_E = :OLD_NODE_ID)) l'
-      '       left outer join MATERIALS m on (m.M_Id =  l.M_ID)')
-    SelectSQL.Strings = (
-      'select'
-      '    l.*'
-      '    , m.NAME MAT_NAME'
-      
-        '    , (select count(*) from port p where p.Wid = l.Wid /* and no' +
-        't p.Con_Id is null*/) as USED'
+        '            from (select WLABEL , sum(iif(coalesce(WLBL_TYPE, 0)' +
+        ' = 1, 2, iif(coalesce(WLBL_TYPE, 0) = 2, 1, 0))) cnt'
+      '                  from Get_Wire_Info(l.Wid)'
+      '                  where not WLBL_ID is null group by 1))'
+      '            , 0) USED                '
+      '    , coalesce((select'
+      '                 count(distinct WLABEL) cnt'
+      '               from Get_Wire_Info(l.Wid)'
+      '               ), l.Capacity) LBL_COUNT'
       '  from (select'
       '            '#39'>'#39' FLOW'
       '          , T.O_NAME'
@@ -510,10 +494,57 @@ object apgNodeLink: TapgNodeLink
         '               left outer join NODEs n on (n.Node_Id = c.Point_S' +
         ')'
       '          where (C.Point_E = :NODE_ID)) l'
+      '       left outer join MATERIALS m on (m.M_Id =  l.M_ID)'
+      'where l.WID = :OLD_WID '
+      '  ')
+    SelectSQL.Strings = (
+      'select'
+      '    l.*'
+      '    , m.NAME MAT_NAME'
+      '    , coalesce((select sum(iif(cnt = 2, 1, iif(cnt > 2, 2, 0 )))'
       
-        '       left outer join MATERIALS m on (m.M_Id =  l.M_ID)        ' +
-        '  '
-      '  order by FLOW, O_NAME, Name')
+        '            from (select WLABEL , sum(iif(coalesce(WLBL_TYPE, 0)' +
+        ' = 1, 2, iif(coalesce(WLBL_TYPE, 0) = 2, 1, 0))) cnt'
+      '                  from Get_Wire_Info(l.Wid)'
+      '                  where not WLBL_ID is null group by 1))'
+      '            , 0) USED                '
+      '    , coalesce((select'
+      '                 count(distinct WLABEL) cnt'
+      '               from Get_Wire_Info(l.Wid)'
+      '               ), l.Capacity) LBL_COUNT'
+      '  from (select'
+      '            '#39'>'#39' FLOW'
+      '          , T.O_NAME'
+      '          , t.O_Dimension COLOR'
+      '          , n.Node_Id'
+      '          , n.Name CONN_NODE   '
+      '          , C.*'
+      '          from Wire C'
+      
+        '               inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O' +
+        '_TYPE = 56)'
+      
+        '               left outer join NODEs n on (n.Node_Id = c.Point_E' +
+        ')'
+      '          where (C.Point_S = :NODE_ID)'
+      '        union'
+      '        select'
+      '            '#39'<'#39' FLOW'
+      '          , T.O_NAME'
+      '          , t.O_Dimension COLOR'
+      '          , n.Node_Id'
+      '          , n.Name CONN_NODE         '
+      '          , C.*'
+      '          from Wire C'
+      
+        '               inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O' +
+        '_TYPE = 56)'
+      
+        '               left outer join NODEs n on (n.Node_Id = c.Point_S' +
+        ')'
+      '          where (C.Point_E = :NODE_ID)) l'
+      '       left outer join MATERIALS m on (m.M_Id =  l.M_ID)'
+      '  order by CONN_NODE, NAME, FLOW, O_NAME')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -555,8 +586,12 @@ object apgNodeLink: TapgNodeLink
       OnExecute = actOpenObjectExecute
     end
     object actOpenEqpmnt: TAction
-      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1054#1073#1086#1088#1091#1076'-'#1080#1077'/'#1040#1073#1086#1085#1077#1085#1090#1072
       OnExecute = actOpenEqpmntExecute
+    end
+    object actOpenEqpmntTo: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1091#1079#1077#1083
+      OnExecute = actOpenEqpmntToExecute
     end
     object actOpenCustomer: TAction
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1072
@@ -577,8 +612,8 @@ object apgNodeLink: TapgNodeLink
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 331
-    Top = 42
+    Left = 339
+    Top = 170
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -589,8 +624,8 @@ object apgNodeLink: TapgNodeLink
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 371
-    Top = 42
+    Left = 419
+    Top = 154
   end
   object qRead: TpFIBQuery
     Transaction = dmMain.trReadQ
@@ -603,72 +638,9 @@ object apgNodeLink: TapgNodeLink
   object dsEQ: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
-      '    w.WID'
-      '  , w.LABEL WLABEL'
-      '  , e.Name'
-      '  , p.Port'
-      '  , c.Customer_Id'
-      '  , c.Account_No'
-      '  , c.Cust_Code'
-      '  , l.Ip'
-      '  , l.Mac'
-      '  , e.Eid'
-      '  , e.Eq_Type'
-      '  , e.Eq_Group'
-      '  , e.Ip eIP'
-      '  , e.Mac EMAC'
-      '  from (select'
-      '            cast(:WID as integer) WID'
-      '          , STR as LABEL'
-      '          from Explode_No_Empty('#39','#39', coalesce((select'
-      '                                          w.Labels'
-      '                                        from WIRE w'
-      
-        '                                        where w.Wid = :WID), '#39#39')' +
-        ')) w'
-      '       left outer join port p on (w.wid = p.Wid and'
-      '             w.LABEL = p.Wlabel)'
-      '       left outer join Equipment e on (e.Eid = p.Eid)'
-      '       left outer join tv_lan l on (l.Eq_Id = e.Eid and'
-      '             l.Port = p.Port)'
-      
-        '       left outer join customer c on (c.Customer_Id = l.Customer' +
-        '_Id)'
-      '  where w.Wid = :WID'
-      'union'
-      'select'
-      '    P.WID'
-      '  , P.WLABEL'
-      '  , e.Name'
-      '  , p.Port'
-      '  , c.Customer_Id'
-      '  , c.Account_No'
-      '  , c.Cust_Code'
-      '  , l.Ip'
-      '  , l.Mac'
-      '  , e.Eid'
-      '  , e.Eq_Type'
-      '  , e.Eq_Group'
-      '  , e.Ip eIP'
-      '  , e.Mac EMAC'
-      '  from port p'
-      '       left outer join Equipment e on (e.Eid = p.Eid)'
-      '       left outer join tv_lan l on (l.Eq_Id = e.Eid and'
-      '             l.Port = p.Port)'
-      
-        '       left outer join customer c on (c.Customer_Id = l.Customer' +
-        '_Id)'
-      '  where p.Wid = :WID'
-      '        and (p.Wlabel is null'
-      '          or not exists(select'
-      '                            STR'
-      '                          from Explode_No_Empty('#39','#39', (select'
-      '                                                 w.Labels'
-      '                                               from WIRE w'
-      
-        '                                               where w.Wid = :WI' +
-        'D))'
-      '                          where STR = p.Wlabel))')
+      '    *'
+      '  from Get_Wire_Info(:Wid)'
+      '  order by WIRE_ID, Wlabel, WLBL_FLOW desc, WLBL_NAME')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_REQUEST'
@@ -693,8 +665,8 @@ object apgNodeLink: TapgNodeLink
     object miEqpmnt: TMenuItem
       Action = actOpenEqpmnt
     end
-    object miNodeFrom: TMenuItem
-      Action = actOpenCustomer
+    object miOpenEqpmntTo: TMenuItem
+      Action = actOpenEqpmntTo
     end
   end
   object pmGrid: TPopupMenu

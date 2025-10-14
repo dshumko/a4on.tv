@@ -187,7 +187,6 @@ inherited StreetForm: TStreetForm
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       STFilter.Local = True
       SumList.Active = True
       TabOrder = 1
@@ -301,6 +300,7 @@ inherited StreetForm: TStreetForm
         item
           AutoFitColWidth = False
           CellButtons = <>
+          Checkboxes = True
           DynProps = <>
           EditButtons = <>
           FieldName = 'EXIST_TV'
@@ -314,6 +314,7 @@ inherited StreetForm: TStreetForm
         item
           AutoFitColWidth = False
           CellButtons = <>
+          Checkboxes = True
           DynProps = <>
           EditButtons = <>
           FieldName = 'EXIST_LAN'
@@ -327,6 +328,7 @@ inherited StreetForm: TStreetForm
         item
           AutoFitColWidth = False
           CellButtons = <>
+          Checkboxes = True
           DynProps = <>
           EditButtons = <>
           FieldName = 'EXIST_DTV'
@@ -336,6 +338,30 @@ inherited StreetForm: TStreetForm
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 20
+        end
+        item
+          CellButtons = <>
+          Checkboxes = True
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'EXIST_INTER'
+          Footers = <>
+          Title.Caption = #1044#1086#1084#1086#1092#1086#1085
+          Title.TitleButton = True
+          Title.Orientation = tohVertical
+          Width = 23
+        end
+        item
+          CellButtons = <>
+          Checkboxes = True
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'EXIST_VIDEO'
+          Footers = <>
+          Title.Caption = #1042#1080#1076#1077#1086
+          Title.TitleButton = True
+          Title.Orientation = tohVertical
+          Width = 21
         end
         item
           AutoFitColWidth = False
@@ -727,9 +753,11 @@ inherited StreetForm: TStreetForm
                 Width = 241
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'HOUSE_CODE'
                 DataSource = srcHouses
                 DynProps = <>
@@ -751,9 +779,11 @@ inherited StreetForm: TStreetForm
                 Width = 241
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'POST_INDEX'
                 DataSource = srcHouses
                 DynProps = <>
@@ -775,9 +805,11 @@ inherited StreetForm: TStreetForm
                 Width = 241
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'ORG_NAME'
                 DataSource = srcHouses
                 DynProps = <>
@@ -799,9 +831,11 @@ inherited StreetForm: TStreetForm
                 Width = 257
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'CHAIRMAN_PHONE'
                 DataSource = srcHouses
                 DynProps = <>
@@ -823,9 +857,11 @@ inherited StreetForm: TStreetForm
                 Width = 257
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'CHAIRMAN'
                 DataSource = srcHouses
                 DynProps = <>
@@ -847,9 +883,11 @@ inherited StreetForm: TStreetForm
                 Width = 299
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'SUBAREA_NAME'
                 DataSource = srcHouses
                 DynProps = <>
@@ -871,9 +909,11 @@ inherited StreetForm: TStreetForm
                 Width = 95
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'HOUSE_NO'
                 DataSource = srcHouses
                 DynProps = <>
@@ -895,9 +935,11 @@ inherited StreetForm: TStreetForm
                 Width = 148
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'Q_FLAT'
                 DataSource = srcHouses
                 DynProps = <>
@@ -919,9 +961,11 @@ inherited StreetForm: TStreetForm
                 Width = 299
                 Height = 21
                 TabStop = False
+                Alignment = taLeftJustify
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
+                Color = clBtnFace
                 DataField = 'NAME'
                 DataSource = srcHouses
                 DynProps = <>
@@ -1216,7 +1260,8 @@ inherited StreetForm: TStreetForm
                   FieldName = 'GARRET'
                   Footers = <>
                   Title.Caption = #1063#1077#1088#1076#1072#1082
-                  Width = 44
+                  Title.Orientation = tohVertical
+                  Width = 29
                 end
                 item
                   AutoFitColWidth = False
@@ -1227,7 +1272,8 @@ inherited StreetForm: TStreetForm
                   FieldName = 'CELLAR'
                   Footers = <>
                   Title.Caption = #1055#1086#1076#1074#1072#1083
-                  Width = 46
+                  Title.Orientation = tohVertical
+                  Width = 32
                 end
                 item
                   AutoFitColWidth = False
@@ -1248,6 +1294,30 @@ inherited StreetForm: TStreetForm
                   Footers = <>
                   Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099'|'#1087#1086
                   Width = 37
+                end
+                item
+                  CellButtons = <>
+                  Checkboxes = True
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'INTER'
+                  Footers = <>
+                  Title.Caption = #1044'-'#1092#1086#1085
+                  Title.TitleButton = True
+                  Title.Orientation = tohVertical
+                  Width = 37
+                end
+                item
+                  CellButtons = <>
+                  Checkboxes = True
+                  DynProps = <>
+                  EditButtons = <>
+                  FieldName = 'VIDEO'
+                  Footers = <>
+                  Title.Caption = #1042#1080#1076#1077#1086
+                  Title.TitleButton = True
+                  Title.Orientation = tohVertical
+                  Width = 27
                 end
                 item
                   CellButtons = <>
@@ -1325,7 +1395,6 @@ inherited StreetForm: TStreetForm
               Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
               SearchPanel.Enabled = True
-              SearchPanel.FilterOnTyping = True
               STFilter.Local = True
               SumList.Active = True
               TabOrder = 1
@@ -1832,7 +1901,6 @@ inherited StreetForm: TStreetForm
             PopupMenu = pmCustomers
             ReadOnly = True
             SearchPanel.Enabled = True
-            SearchPanel.FilterOnTyping = True
             SortLocal = True
             STFilter.Local = True
             SumList.Active = True
@@ -2030,8 +2098,11 @@ inherited StreetForm: TStreetForm
     inherited btnQuickFilter: TToolButton
       Left = 164
     end
-    object ToolButton12: TToolButton
+    inherited sep444: TToolButton
       Left = 187
+    end
+    object ToolButton12: TToolButton
+      Left = 195
       Top = 0
       Width = 8
       Caption = 'ToolButton12'
@@ -2040,14 +2111,14 @@ inherited StreetForm: TStreetForm
       Visible = False
     end
     object ToolButton8: TToolButton
-      Left = 195
+      Left = 203
       Top = 0
       Caption = 'ToolButton8'
       ImageIndex = 5
       OnClick = ToolButton8Click
     end
     object btn6: TToolButton
-      Left = 218
+      Left = 226
       Top = 0
       Width = 8
       Caption = 'btn6'
@@ -2055,12 +2126,12 @@ inherited StreetForm: TStreetForm
       Style = tbsSeparator
     end
     object btnFindStreetCustomers: TToolButton
-      Left = 226
+      Left = 234
       Top = 0
       Action = actFindStreetCustomers
     end
     object btn7: TToolButton
-      Left = 249
+      Left = 257
       Top = 0
       Width = 8
       Caption = 'btn7'
@@ -2068,12 +2139,12 @@ inherited StreetForm: TStreetForm
       Style = tbsSeparator
     end
     object btnViewCube: TToolButton
-      Left = 257
+      Left = 265
       Top = 0
       Action = actViewCube
     end
     object Label1: TLabel
-      Left = 280
+      Left = 288
       Top = 0
       Width = 222
       Height = 22
@@ -2638,7 +2709,9 @@ inherited StreetForm: TStreetForm
       '    CELLAR = :CELLAR,'
       '    FLAT_FROM = :FLAT_FROM,'
       '    FLAT_TO = :FLAT_TO,'
-      '    NOTICE = :NOTICE'
+      '    NOTICE = :NOTICE,'
+      '    VIDEO = :VIDEO,'
+      '    INTER = :INTER'
       'WHERE'
       '    PORCH_ID = :OLD_PORCH_ID'
       '    ')
@@ -2658,7 +2731,9 @@ inherited StreetForm: TStreetForm
       '    CELLAR,'
       '    FLAT_FROM,'
       '    FLAT_TO,'
-      '    NOTICE'
+      '    NOTICE,'
+      '    VIDEO,'
+      '    INTER'
       ')'
       'VALUES('
       '    :PORCH_ID,'
@@ -2669,7 +2744,9 @@ inherited StreetForm: TStreetForm
       '    :CELLAR,'
       '    :FLAT_FROM,'
       '    :FLAT_TO,'
-      '    :NOTICE'
+      '    :NOTICE,'
+      '    :VIDEO,'
+      '    :INTER'
       ')')
     RefreshSQL.Strings = (
       'SELECT P.*'

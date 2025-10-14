@@ -3,8 +3,8 @@ object CustomerLanForm: TCustomerLanForm
   Top = 259
   ActiveControl = dbleEquipment
   Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1057#1055#1044
-  ClientHeight = 389
-  ClientWidth = 534
+  ClientHeight = 382
+  ClientWidth = 535
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,21 +20,27 @@ object CustomerLanForm: TCustomerLanForm
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   DesignSize = (
-    534
-    389)
+    535
+    382)
   PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
-    Top = 354
-    Width = 534
+    Top = 347
+    Width = 535
     Height = 35
     Align = alBottom
     TabOrder = 4
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 74
-      Width = 363
+      Width = 364
       Height = 27
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -42,7 +48,7 @@ object CustomerLanForm: TCustomerLanForm
       OnClick = OkCancelFrame1bbOkClick
     end
     inherited bbCancel: TBitBtn
-      Left = 444
+      Left = 445
       Width = 85
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
@@ -51,37 +57,37 @@ object CustomerLanForm: TCustomerLanForm
   object pnlMain: TPanel
     Left = 0
     Top = 156
-    Width = 534
+    Width = 535
     Height = 153
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
     DesignSize = (
-      534
+      535
       153)
     object Label4: TLabel
-      Left = 3
+      Left = 5
       Top = 7
       Width = 25
       Height = 13
       Caption = #1055#1086#1088#1090
     end
     object Label2: TLabel
-      Left = 3
+      Left = 5
       Top = 81
       Width = 22
       Height = 13
       Caption = 'MAC'
     end
     object Label1: TLabel
-      Left = 3
+      Left = 5
       Top = 56
       Width = 10
       Height = 13
       Caption = 'IP'
     end
     object lbl3: TLabel
-      Left = 3
+      Left = 5
       Top = 31
       Width = 25
       Height = 13
@@ -94,14 +100,14 @@ object CustomerLanForm: TCustomerLanForm
       ParentFont = False
     end
     object lbl1: TLabel
-      Left = 3
+      Left = 5
       Top = 105
       Width = 22
       Height = 13
       Caption = 'IPv6'
     end
     object lbl2: TLabel
-      Left = 3
+      Left = 5
       Top = 130
       Width = 20
       Height = 13
@@ -111,7 +117,7 @@ object CustomerLanForm: TCustomerLanForm
     object eMAC: TDBEditEh
       Left = 74
       Top = 78
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       CharCase = ecUpperCase
@@ -130,7 +136,7 @@ object CustomerLanForm: TCustomerLanForm
     object eIP: TDBEditEh
       Left = 74
       Top = 53
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'IP'
@@ -152,7 +158,7 @@ object CustomerLanForm: TCustomerLanForm
     object dbleVLAN: TDBLookupComboboxEh
       Left = 74
       Top = 28
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -212,7 +218,7 @@ object CustomerLanForm: TCustomerLanForm
     object eIPv6: TDBEditEh
       Left = 74
       Top = 102
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       CharCase = ecLowerCase
@@ -235,10 +241,9 @@ object CustomerLanForm: TCustomerLanForm
     object edtTAGSTR: TDBEditEh
       Left = 200
       Top = 127
-      Width = 329
+      Width = 330
       Height = 21
       Anchors = [akLeft, akTop, akRight]
-      CharCase = ecLowerCase
       DataField = 'TAG_STR'
       DataSource = srcLan
       DynProps = <>
@@ -268,7 +273,7 @@ object CustomerLanForm: TCustomerLanForm
     object lcbPort: TDBLookupComboboxEh
       Left = 201
       Top = 4
-      Width = 328
+      Width = 329
       Height = 21
       Hint = 
         #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1087#1086#1088#1090#1091#13#10#1089#1077#1088#1099#1081' '#1094#1074#1077#1090' - '#1087#1086#1088#1090' '#1079#1072#1085#1103#1090', '#1082#1091#1088#1089#1080#1074' - '#1089#1083#1091#1078#1077#1073#1085#1099#1081' '#1087 +
@@ -365,9 +370,9 @@ object CustomerLanForm: TCustomerLanForm
       Visible = False
     end
     object cbbTagList: TDBComboBoxEh
-      Left = 248
+      Left = 200
       Top = 118
-      Width = 233
+      Width = 330
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'TAG_STR'
@@ -382,7 +387,7 @@ object CustomerLanForm: TCustomerLanForm
   end
   object btn1: TButton
     Left = 3
-    Top = 358
+    Top = 351
     Width = 63
     Height = 27
     Anchors = [akLeft, akBottom]
@@ -394,13 +399,13 @@ object CustomerLanForm: TCustomerLanForm
   object pnlAddres: TPanel
     Left = 0
     Top = 0
-    Width = 534
+    Width = 535
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      534
+      535
       29)
     object Label3: TLabel
       Left = 3
@@ -416,7 +421,7 @@ object CustomerLanForm: TCustomerLanForm
       ParentFont = False
     end
     object lbl4: TLabel
-      Left = 316
+      Left = 317
       Top = 10
       Width = 20
       Height = 13
@@ -430,7 +435,7 @@ object CustomerLanForm: TCustomerLanForm
       ParentFont = False
     end
     object lbl5: TLabel
-      Left = 413
+      Left = 414
       Top = 10
       Width = 31
       Height = 13
@@ -440,7 +445,7 @@ object CustomerLanForm: TCustomerLanForm
     object LupStreets: TDBLookupComboboxEh
       Left = 74
       Top = 7
-      Width = 238
+      Width = 239
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -467,7 +472,7 @@ object CustomerLanForm: TCustomerLanForm
       Visible = True
     end
     object lcbHOUSE_ID: TDBLookupComboboxEh
-      Left = 341
+      Left = 342
       Top = 7
       Width = 68
       Height = 21
@@ -487,7 +492,7 @@ object CustomerLanForm: TCustomerLanForm
     end
     object edtPLACE: TDBEditEh
       Tag = 7
-      Left = 447
+      Left = 448
       Top = 7
       Width = 82
       Height = 21
@@ -505,18 +510,19 @@ object CustomerLanForm: TCustomerLanForm
   object pnlMemo: TPanel
     Left = 0
     Top = 309
-    Width = 534
-    Height = 45
+    Width = 535
+    Height = 38
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 6
     object mmoNOTICE: TDBMemoEh
-      Left = 0
+      Left = 5
       Top = 0
-      Width = 534
-      Height = 45
+      Width = 525
+      Height = 38
       Hint = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-      Align = alClient
+      Align = alCustom
+      Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       DataField = 'NOTICE'
       DataSource = srcLan
@@ -532,13 +538,13 @@ object CustomerLanForm: TCustomerLanForm
   object pnlEthernet: TPanel
     Left = 0
     Top = 29
-    Width = 534
+    Width = 535
     Height = 30
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      534
+      535
       30)
     object Label5: TLabel
       Left = 3
@@ -557,7 +563,7 @@ object CustomerLanForm: TCustomerLanForm
     object dbleEquipment: TDBLookupComboboxEh
       Left = 74
       Top = 4
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -675,14 +681,14 @@ object CustomerLanForm: TCustomerLanForm
   object pnlDOCSYS: TPanel
     Left = 0
     Top = 59
-    Width = 534
+    Width = 535
     Height = 97
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
     Visible = False
     DesignSize = (
-      534
+      535
       97)
     object Label6: TLabel
       Left = 3
@@ -727,7 +733,7 @@ object CustomerLanForm: TCustomerLanForm
     object edtModem: TDBEditEh
       Left = 74
       Top = 0
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -739,7 +745,7 @@ object CustomerLanForm: TCustomerLanForm
     object edtSerialModem: TDBEditEh
       Left = 74
       Top = 25
-      Width = 455
+      Width = 456
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -1071,7 +1077,7 @@ object CustomerLanForm: TCustomerLanForm
   end
   object pmLanPopUp: TPopupMenu
     Left = 424
-    Top = 248
+    Top = 168
   end
   object ActListEQ: TActionList
     Left = 160

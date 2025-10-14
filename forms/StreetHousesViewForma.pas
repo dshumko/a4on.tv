@@ -25,7 +25,6 @@ type
     pmgSelectAll: TMenuItem;
     pmgSep2: TMenuItem;
     pmgSaveSelection: TMenuItem;
-    prntdbgrdh: TPrintDBGridEh;
     miN1: TMenuItem;
     miN2: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -124,7 +123,8 @@ end;
 
 procedure TStreetHouseViewForm.miN2Click(Sender: TObject);
 begin
-  prntdbgrdh.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TStreetHouseViewForm.mniFilterFLDClick(Sender: TObject);

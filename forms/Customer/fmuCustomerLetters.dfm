@@ -31,9 +31,9 @@ object apgCustomerLetters: TapgCustomerLetters
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmGrid
     ReadOnly = True
-    SearchPanel.Enabled = True
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
+    STFilter.Visible = False
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgLettersDblClick

@@ -41,7 +41,6 @@ object apgCustomerLan: TapgCustomerLan
     ParentFont = False
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnCellMouseClick = dbgCustLANCellMouseClick

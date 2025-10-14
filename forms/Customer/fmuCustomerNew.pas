@@ -5,7 +5,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.Menus,
@@ -140,6 +140,10 @@ type
     pnlWarningInfo: TPanel;
     btnCloseWarningInfo: TButton;
     mmoWarning: TDBMemoEh;
+    lcbDT: TDBLookupComboboxEh;
+    lblDT: TLabel;
+    dsDocType: TpFIBDataSet;
+    srcDocType: TDataSource;
     procedure dbgrdhContactsExit(Sender: TObject);
     procedure chkJURIDICALClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -184,6 +188,7 @@ type
     { Private declarations }
     FFullAccess: Boolean;
     FCanAdd: Boolean;
+    FAddressRight : Boolean;
     FNotIgnoreContract: Boolean;
     FNeedSaveScan: Boolean;
     FFileScan: String;
@@ -207,6 +212,7 @@ type
     procedure ShowWarningMessage(const s: String);
     procedure HideWarningMessage;
     procedure FindSamePassport;
+    function DocNumberOk: Boolean;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -285,6 +291,7 @@ begin
   // i := (dmMain.AllowedAction(rght_Customer_edit));      // Изменение инфы о абоненте
   FFullAccess := (dmMain.AllowedAction(rght_Customer_full)); // полный доступ
   FCanAdd := (dmMain.AllowedAction(rght_Customer_add)); // полный доступ
+  FAddressRight := ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
 
   btnSAVE.Visible := FFullAccess or FCanAdd;
 
@@ -295,6 +302,8 @@ begin
   dsVATG.Open;
   dsStreets.Open;
   dsAttributes.Open;
+  dsDocType.Open;
+
   s := dmMain.GetSettingsValue('AREA_LOCK');
   if (s <> '') and (not dmMain.AllowedAction(rght_Programm_NotLockArea)) then
   begin
@@ -308,10 +317,8 @@ begin
 
   dbchkHiden.Visible := dmMain.SuperMode > 0;
   // спрячем кнопку + для добавления адреса если это запрещено
-  LupStreets.EditButtons[0].Visible :=
-    ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
-  LupHOUSE_ID.EditButtons[0].Visible :=
-    ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
+  LupStreets.EditButtons[0].Visible := FAddressRight;
+  LupHOUSE_ID.EditButtons[0].Visible := FAddressRight;
 
   if not ds.DataSet.FieldByName('HIS_COLOR').IsNull then
   begin
@@ -326,6 +333,7 @@ begin
     dsCustomerMEM['CONTRACT_DATE'] := Now();
   dsCustomerMEM['HAND_CONTROL'] := 0;
   dsCustomerMEM['JURIDICAL'] := 0;
+  dsCustomerMEM['DocType'] := 1;
   edtSecret.Text := GenPassword(8);
 
   SetJurVisible;
@@ -792,6 +800,8 @@ begin
     dsOrg.Close;
   if dsVATG.Active then
     dsVATG.Close;
+  if dsDocType.Active then
+    dsDocType.Close;
   if dsStreets.Active then
     dsStreets.Close;
   if dsAttributes.Active then
@@ -1001,6 +1011,7 @@ begin
     fldList.Add('EXTERNAL_ID');
     fldList.Add('CONTRACT_BASIS');
     fldList.Add('PASSPORT_VALID');
+    fldList.Add('DocType');
 {$ENDREGION}
     if GenInsertSQL(dsCustomerMEM) then
     begin
@@ -1009,14 +1020,17 @@ begin
         Result := cust_id;
 {$REGION 'INSERT PORCH'}
         fldList.Clear;
-        s_insert := '';
-        s_values := '';
-        fldList.Add('PORCH_N');
-        fldList.Add('FLOOR_N');
-        fldList.Add('FLAT_NO');
-        fldList.Add('HOUSE_ID');
-        if GenInsertSQL(dsCustomerMEM) then
-          InsertQuery(dsCustomerMEM, 'Houseflats', 'update or insert into', 'matching (House_Id, Flat_No)');
+        if FAddressRight then
+        begin
+          s_insert := '';
+          s_values := '';
+          fldList.Add('PORCH_N');
+          fldList.Add('FLOOR_N');
+          fldList.Add('FLAT_NO');
+          fldList.Add('HOUSE_ID');
+          if GenInsertSQL(dsCustomerMEM) then
+            InsertQuery(dsCustomerMEM, 'Houseflats', 'update or insert into', 'matching (House_Id, Flat_No)');
+        end;
 {$ENDREGION}
 {$REGION 'SAVE CONTACTS'}
         if dsContacts.State in [dsEdit, dsInsert] then
@@ -1054,7 +1068,9 @@ begin
   if not(FFullAccess or FCanAdd) then
     exit;
 
-  AllRight := True;
+  CnErrors.Clear;
+
+  AllRight := DocNumberOk;
 
   if (eACCOUNT_NO.Text.Trim = '') then
   begin
@@ -1069,11 +1085,7 @@ begin
       reg := reg.Trim(['^', '$']);
       AllRight := TRegEx.IsMatch(eACCOUNT_NO.Text, '^' + reg + '$');
       if not AllRight then
-      begin
         CnErrors.SetError(lblAccount, Format(rsINPUT_VALUE_FORMAT, [reg]), iaMiddleRight, bsNeverBlink);
-      end
-      else
-        CnErrors.Dispose(lblAccount);
     end;
 
     if AllRight then
@@ -1084,28 +1096,56 @@ begin
   begin
     AllRight := False;
     CnErrors.SetError(LupStreets, rsSelectStreet, iaTopCenter, bsNeverBlink);
-  end
-  else
-    CnErrors.Dispose(LupStreets);
+  end;
 
   if (LupHOUSE_ID.Text = '') then
   begin
     AllRight := False;
     CnErrors.SetError(LupHOUSE_ID, rsSelectHouse, iaTopCenter, bsNeverBlink);
-  end
-  else
-    CnErrors.Dispose(LupHOUSE_ID);
+  end;
 
   if (not FFullAccess) and (not(VarIsEmpty(eCONTRACT_DATE.Value) or VarIsNull(eCONTRACT_DATE.Value))) and
     (eCONTRACT_DATE.Value < dmMain.CurrentMonth) and (FNotIgnoreContract) then
   begin
     AllRight := False;
     CnErrors.SetError(eCONTRACT_DATE, rsContractDateError, iaTopCenter, bsNeverBlink);
-  end
-  else
-    CnErrors.Dispose(eCONTRACT_DATE);
+  end;
+
   Result := AllRight and btnSAVE.Visible;
   btnSAVE.Enabled := Result;
+end;
+
+function TapgCustomerNew.DocNumberOk: Boolean;
+begin
+  Result := True;
+
+  if (lcbDT.Text <> '') then
+  begin
+    dsDocType.DisableControls;
+    if dsDocType.Locate('O_ID', lcbDT.Value, []) and (not dsDocType.FieldByName('O_CHECK').IsNull) then
+    begin
+      if (dsDocType['O_CHECK'] <> '') then
+      begin
+        Result := TRegEx.IsMatch(edtPASSPORT_NUMBER.Text, '^' + dsDocType.FieldByName('O_CHECK').AsString + '$');
+        if (not Result) then
+          CnErrors.SetError(edtPASSPORT_NUMBER, Format(rsINPUT_VALUE_FORMAT, [dsDocType['O_CHECK']]), iaTopCenter,
+            bsNeverBlink)
+      end
+      else
+      begin
+        if lcbDT.Value = 1 then
+          Result := CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'));
+      end;
+    end
+    else
+    begin
+      if lcbDT.Value = 1 then
+        Result := CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'));
+    end;
+    dsDocType.EnableControls;
+  end
+  else
+    Result := CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'));
 end;
 
 procedure TapgCustomerNew.eCONTRACT_DATEExit(Sender: TObject);
@@ -1171,10 +1211,21 @@ begin
 end;
 
 procedure TapgCustomerNew.btnCancelClick(Sender: TObject);
+var
+  acc_no: string;
+  i: Integer;
 begin
   if dsCustomerMEM.State in [dsInsert, dsEdit] then
+  begin
+    acc_no := eACCOUNT_NO.Text;
     dsCustomerMEM.Cancel;
-
+    if (dmMain.GetSettingsValue('ACC_KEEP_SEQ') = '1') then
+    begin
+      i := dmMain.dbTV.Gen_Id('GEN_ACCOUNT_NO', 0);
+      if (acc_no = IntToStr(i)) then
+        i := dmMain.dbTV.Gen_Id('GEN_ACCOUNT_NO', -1);
+    end;
+  end;
 end;
 
 procedure TapgCustomerNew.edtBANK_ACCOUNTEnter(Sender: TObject);
@@ -1216,8 +1267,8 @@ begin
   end;
 
   FindSamePassport;
-
-  if CheckControlText((Sender as TDBEditEh), dmMain.GetSettingsValue('REG_PASSN')) then
+  CnErrors.Dispose(edtPASSPORT_NUMBER);
+  if DocNumberOk then
     CheckInBlackList((Sender as TDBEditEh), 1);
 end;
 
@@ -1249,7 +1300,7 @@ procedure TapgCustomerNew.TextToFileds(scResult: TStringList);
 var
   s: string;
   i: Integer;
-  r: TStringArray;
+  r: TStringDynArray;
   fs: TFormatSettings;
   pn: String;
   ps: String;
@@ -1440,7 +1491,11 @@ begin
   if chkJURIDICAL.Checked or FKeyMVD.IsEmpty then
     exit;
 
-  if eSURNAME.Text = '' then
+  // Еслі не паспорт, то не проверяем
+  if (lcbDT.Text.IsEmpty) and (lcbDT.Value > 1) then
+    exit;
+
+  if eSURNAME.Text.IsEmpty then
   begin
     errors := True;
     CnErrors.SetError(eSURNAME, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
@@ -1448,7 +1503,7 @@ begin
   else
     CnErrors.Dispose(eSURNAME);
 
-  if eFIRSTNAME.Text = '' then
+  if eFIRSTNAME.Text.IsEmpty then
   begin
     errors := True;
     CnErrors.SetError(eFIRSTNAME, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
@@ -1456,7 +1511,7 @@ begin
   else
     CnErrors.Dispose(eFIRSTNAME);
 
-  if ((edtPERSONAL_N.Text = '') or (HasInvalidChar(edtPERSONAL_N.Text)) or (Length(edtPERSONAL_N.Text) <> 14)) then
+  if ((edtPERSONAL_N.Text.IsEmpty) or (HasInvalidChar(edtPERSONAL_N.Text)) or (Length(edtPERSONAL_N.Text) <> 14)) then
   begin
     errors := True;
     CnErrors.SetError(edtPERSONAL_N, rsEmptyOrIncorrect, iaTopCenter, bsNeverBlink);
@@ -1464,13 +1519,12 @@ begin
   else
     CnErrors.Dispose(edtPERSONAL_N);
 
-  if ((edtPASSPORT_NUMBER.Text = '') or (HasInvalidChar(edtPASSPORT_NUMBER.Text))) then
+  CnErrors.Dispose(edtPASSPORT_NUMBER);
+  if ((edtPASSPORT_NUMBER.Text.IsEmpty) or (HasInvalidChar(edtPASSPORT_NUMBER.Text))) then
   begin
     errors := True;
     CnErrors.SetError(edtPASSPORT_NUMBER, rsEmptyOrIncorrect, iaTopCenter, bsNeverBlink);
-  end
-  else
-    CnErrors.Dispose(edtPASSPORT_NUMBER);
+  end;
 
   if errors then
     exit;

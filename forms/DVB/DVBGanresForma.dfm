@@ -1,5 +1,4 @@
 object DVBGanresForm: TDVBGanresForm
-  ShowHint = True
   Left = 0
   Top = 0
   Caption = 'DVB '#1078#1072#1085#1088#1099
@@ -13,6 +12,7 @@ object DVBGanresForm: TDVBGanresForm
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame1: TOkCancelFrame
@@ -23,6 +23,12 @@ object DVBGanresForm: TDVBGanresForm
     Align = alBottom
     TabOrder = 1
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 203
       Top = 6
@@ -41,14 +47,12 @@ object DVBGanresForm: TDVBGanresForm
     Height = 407
     Align = alClient
     AllowedOperations = [alopUpdateEh]
-    AutoFitColWidths = False
     DataSource = srcGanres
     DynProps = <>
     Flat = True
     FooterRowCount = 1
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     STFilter.Local = True
     STFilter.Visible = True
     SumList.Active = True

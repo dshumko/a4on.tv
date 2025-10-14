@@ -31,16 +31,12 @@ type
     actAtrADD: TAction;
     actAtrEdit: TAction;
     actAtrDel: TAction;
-    pnlChkTree: TPanel;
-    chkTREE: TCheckBox;
     miTreeBreak: TMenuItem;
     miTreeCollapse: TMenuItem;
     miTreeExpand: TMenuItem;
     actNewChild: TAction;
     miNewChild: TMenuItem;
     actFindCustomer: TAction;
-    btn1: TToolButton;
-    chkGroup: TCheckBox;
     btnRefresh: TToolButton;
     btn2: TToolButton;
     actEditCustLan: TAction;
@@ -53,17 +49,12 @@ type
     pnlDATA: TPanel;
     splMain: TSplitter;
     lstForms: TListBox;
-    btn3: TToolButton;
-    btnLayout: TToolButton;
     actLayout: TAction;
     miTreeExpandCurrent: TMenuItem;
-    pnl1: TPanel;
     dsFilter: TMemTableEh;
     btnActSetFilter: TToolButton;
     ActSetFilter: TAction;
-    actEnableFilter: TAction;
     pmFilter: TPopupMenu;
-    N31: TMenuItem;
     miSetFilterN: TMenuItem;
     N42: TMenuItem;
     N36: TMenuItem;
@@ -79,6 +70,16 @@ type
     actTree: TAction;
     miN7: TMenuItem;
     miN8: TMenuItem;
+    actCopyID: TAction;
+    miN9: TMenuItem;
+    miDelete: TMenuItem;
+    actGroup: TAction;
+    miGroup: TMenuItem;
+    btn1: TToolButton;
+    btnTree: TToolButton;
+    btnGroup: TToolButton;
+    btn3: TToolButton;
+    btnLayout: TToolButton;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -98,7 +99,6 @@ type
     procedure miTreeCollapseClick(Sender: TObject);
     procedure miTreeExpandClick(Sender: TObject);
     procedure actNewChildExecute(Sender: TObject);
-    procedure chkGroupClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
     procedure actCloneExecute(Sender: TObject);
     procedure dbGridColumns10GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
@@ -106,22 +106,29 @@ type
     procedure actLayoutExecute(Sender: TObject);
     procedure miTreeExpandCurrentClick(Sender: TObject);
     procedure ActSetFilterExecute(Sender: TObject);
-    procedure actEnableFilterExecute(Sender: TObject);
     procedure actSetFilterNExecute(Sender: TObject);
     procedure miN6Click(Sender: TObject);
     procedure actFrizeExecute(Sender: TObject);
     procedure actTreeExecute(Sender: TObject);
     procedure miN8Click(Sender: TObject);
+    procedure actQuickFilterExecute(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
+    procedure actGroupExecute(Sender: TObject);
+    procedure dbGridDataGroupGetRowText(Sender: TCustomDBGridEh;
+      GroupDataTreeNode: TGroupDataTreeNodeEh; var GroupRowText: string);
+    procedure dsFilterNewRecord(DataSet: TDataSet);
   private
     FLastPage: TA4onPage;
     // FAutoGen: Boolean; // автогенерация название
     FPageList: TA4onPages;
     FCanSave: Boolean;
     FInTreeView: Boolean;
+    FinGroupView: Boolean;
     FIsVertical: Boolean;
     FFrozencols: Integer;
     function GenerateFilter: string;
     procedure SetGridTreeMode(const inTree: Boolean);
+    procedure SetGridGroupMode(const inGroup: Boolean);
     procedure ShowPage(Page: TA4onPage);
     procedure UpdateCommands;
     procedure DoCreatePages;
@@ -135,6 +142,7 @@ type
     procedure SetLayout(Value: Boolean);
     function GetOrderColumns: String;
     procedure SetFrozen(const v: Integer);
+    procedure SetFilter(const filter: string);
   public
     { Public declarations }
     property IsVertical: Boolean read FIsVertical write SetLayout;
@@ -192,6 +200,12 @@ begin
       Items.EndUpdate;
     end;
   end;
+end;
+
+procedure TEquipmentForm.dsFilterNewRecord(DataSet: TDataSet);
+begin
+  inherited;
+  DataSet['NOT_NAME'] := 0;
 end;
 
 procedure TEquipmentForm.StartCommand(Sender: TObject);
@@ -279,7 +293,8 @@ begin
   if FCanSave then
     dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt', False);
 
-  dmMain.SetIniValue('EQUIPMENTASTREE', IfThen(FInTreeView,'1', '0'));
+  dmMain.SetIniValue('EQUIPMENTASTREE', IfThen(FInTreeView, '1', '0'));
+  dmMain.SetIniValue('EQUIPMENTGROUP', IfThen(FinGroupView, '1', '0'));
   dmMain.SetIniValue('EQUIPMENT_INFOLAYOUT', IfThen(FIsVertical, '1', '0'));
   dmMain.SetIniValue('EQPMNTGRIDFROZEN', FFrozencols.ToString);
 
@@ -312,6 +327,7 @@ begin
 
   FCanSave := True;
   FInTreeView := False;
+  FinGroupView := False;
 end;
 
 procedure TEquipmentForm.actCloneExecute(Sender: TObject);
@@ -334,6 +350,12 @@ begin
     srcDataSource.DataSet.Open;
     srcDataSource.DataSet.Locate('EID', id, []);
   end;
+end;
+
+procedure TEquipmentForm.actCopyIDExecute(Sender: TObject);
+begin
+  inherited;
+  A4MainForm.CopyDataSetFldToClipboard(dbGrid.DataSource.DataSet, 'EID');
 end;
 
 procedure TEquipmentForm.actDeleteExecute(Sender: TObject);
@@ -364,53 +386,59 @@ begin
   end;
 end;
 
+procedure TEquipmentForm.actQuickFilterExecute(Sender: TObject);
+var
+  i: Integer;
+begin
+  inherited;
+
+  if Assigned(FPageList) then
+  begin
+    for i := 0 to FPageList.Count - 1 do
+    begin
+      if Assigned(FPageList[i].Page) then
+      begin
+        FPageList[i].Page.ShowQuickFilter(actQuickFilter.Checked);
+      end;
+    end;
+  end;
+end;
+
 procedure TEquipmentForm.ActSetFilterExecute(Sender: TObject);
 var
   filter: string;
+  fResult: Boolean;
 begin
   inherited;
-  if not(srcDataSource.DataSet is TpFIBDataSet) then
+  {
+    if not(srcDataSource.DataSet is TpFIBDataSet) then
     Exit;
 
-  if FInTreeView then
-  begin
+    if FInTreeView then
+    begin
     ShowMessage(rsTreeMode);
     Exit;
-  end;
+    end;
+  }
+
+  // filter := '';
+
+  // if not dsFilter.Active then
+  // SetDefaultFilter;
 
   filter := '';
-
   with TEquipFilterForm.Create(Application) do
+  begin
     try
-      if not dsFilter.Active then
-        SetDefaultFilter;
-
-      actEnableFilter.Checked := (ShowModal = mrOk);
-      filter := GenerateFilter;
+      if ShowModal = mrOk then
+        filter := GenerateFilter;
     finally
       Free;
     end;
-
-  if (srcDataSource.DataSet.Filtered) then
-  begin
-    srcDataSource.DataSet.filter := '';
-    srcDataSource.DataSet.Filtered := False;
   end;
 
-  if filter <> '' then
-  begin
-    dsEquipments.Close;
-    dsEquipments.ParamByName('Filter').Value := filter;
-    try
-      dsEquipments.Open;
-    except
-      ShowMessage(rsErrorFilter);
-      dsEquipments.Close;
-      dsEquipments.ParamByName('Filter').Clear;
-      dsEquipments.Open;
-    end;
-  end;
-  UpdateInfoPanel;
+  if not filter.IsEmpty then
+    SetFilter(filter);
 end;
 
 procedure TEquipmentForm.actSetFilterNExecute(Sender: TObject);
@@ -434,101 +462,25 @@ begin
     EnableControls;
   end;
 
+  filter := '';
   with TEquipFilterForm.Create(Application) do
+  begin
     try
       if ShowModal = mrOk then
-      begin
-        actEnableFilter.Checked := True;
         filter := GenerateFilter;
-      end;
     finally
       Free;
     end;
-
-  if (dsEquipments.Filtered) then
-  begin
-    dsEquipments.filter := '';
-    dsEquipments.Filtered := False;
   end;
 
-  if filter <> '' then
-  begin
-    dsEquipments.Close;
-    dsEquipments.ParamByName('Filter').Value := filter;
-    dsEquipments.Open;
-    UpdateInfoPanel;
-  end;
+  if not filter.IsEmpty then
+    SetFilter(filter);
 end;
 
 procedure TEquipmentForm.actTreeExecute(Sender: TObject);
 begin
   inherited;
   SetGridTreeMode(not FInTreeView);
-end;
-
-procedure TEquipmentForm.SetGridTreeMode(const inTree: Boolean);
-  function findInex(const FLD_NAME: string; Grid: TDBGridEh): Integer;
-  var
-    i: Integer;
-  begin
-    Result := 0;
-    for i := 0 to Grid.Columns.Count - 1 do
-    begin
-      if UpperCase(Grid.Columns[i].FieldName) = FLD_NAME then
-        Result := Grid.Columns[i].Index;
-    end;
-  end;
-
-var
-  id: Integer;
-begin
-  inherited;
-
-  if (srcDataSource.DataSet.RecordCount >= 0) and (not srcDataSource.DataSet.FieldByName('EID').IsNull) then
-    id := srcDataSource.DataSet['EID']
-  else
-    id := -666;
-
-  FInTreeView := inTree;
-  actTree.Checked := FInTreeView;
-  if inTree then
-  begin
-    srcDataSource.DataSet := mtEQ;
-    mtEQ.Open;
-    mtEQ.TreeList.Active := True;
-    mtEQ.TreeList.DefaultNodeExpanded := True;
-    FCanSave := False;
-  end
-  else
-  begin
-    srcDataSource.DataSet := dsEquipments;
-    mtEQ.Close;
-    dsEquipments.Open;
-  end;
-  chkGroup.Enabled := not inTree;
-  miTreeBreak.Visible := inTree;
-  miTreeCollapse.Visible := inTree;
-  miTreeExpand.Visible := inTree;
-  miTreeExpandCurrent.Visible := inTree;
-  if inTree then
-    mtEQ.TreeList.FullCollapse;
-
-  if id <> -666 then
-  begin
-    if not inTree then
-      srcDataSource.DataSet.Locate('EID', id, [])
-    else
-    begin
-      mtEQ.TreeList.Locate('EID', id, []);
-      // mtEQ.TreeList.E
-    end;
-  end;
-  if FLastPage <> nil then
-  begin
-    FLastPage.CloseData;
-    FLastPage.OpenData;
-  end;
-  dbGrid.SetFocus;
 end;
 
 procedure TEquipmentForm.dbgCustomerGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -551,6 +503,18 @@ begin
   inherited;
   if not Params.Text.IsEmpty then
     Params.Text := StringReplace(Params.Text, #13#10, '. ', [rfReplaceAll]);
+end;
+
+procedure TEquipmentForm.dbGridDataGroupGetRowText(Sender: TCustomDBGridEh;
+  GroupDataTreeNode: TGroupDataTreeNodeEh; var GroupRowText: string);
+var
+ i : Integer;
+ s: string;
+begin
+  inherited;
+  i := Pos(': ',  GroupRowText);
+  if i>0 then
+    GroupRowText := copy(GroupRowText, i+2, 255);
 end;
 
 procedure TEquipmentForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -588,7 +552,7 @@ begin
 
   try
     Grid := TCustomDBGridEh(Sender);
-    if not FInTreeView then
+    if (not FInTreeView) and (not FinGroupView) then
     begin
       // Работаем с Firebird
       FIBDS := TpFIBDataSet(Grid.DataSource.DataSet);
@@ -696,17 +660,6 @@ begin
   end;
 end;
 
-procedure TEquipmentForm.actEnableFilterExecute(Sender: TObject);
-begin
-  inherited;
-  if srcDataSource.DataSet is TpFIBDataSet then
-  begin
-    actEnableFilter.Checked := not actEnableFilter.Checked;
-    dsEquipments.ParamByName('Filter').Value := GenerateFilter;
-    dsEquipments.CloseOpen(True);
-  end;
-end;
-
 procedure TEquipmentForm.actFrizeExecute(Sender: TObject);
 var
   q: string;
@@ -714,12 +667,18 @@ var
 begin
   inherited;
   q := FFrozencols.ToString;
-  if InputQuery('Закрепить столбцы', 'Количество', q)
-  then begin
+  if InputQuery('Закрепить столбцы', 'Количество', q) then
+  begin
     if not TryStrToInt(q, i) then
       i := 0;
     SetFrozen(i);
   end;
+end;
+
+procedure TEquipmentForm.actGroupExecute(Sender: TObject);
+begin
+  inherited;
+  SetGridGroupMode(not FinGroupView);
 end;
 
 procedure TEquipmentForm.actLayoutExecute(Sender: TObject);
@@ -755,9 +714,6 @@ begin
 
   dbGrid.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbGrdEqpmnt',
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-  dbGridSortMarkingChanged(dbGrid);
-  if not dsEquipments.Active then
-    dsEquipments.Open;
 
   if (TryStrToInt(dmMain.GetIniValue('EQPMNTGRIDFROZEN'), FFrozencols)) then
     SetFrozen(FFrozencols)
@@ -799,6 +755,14 @@ begin
     AddedBy := nil;
   end;
 
+  dbGridSortMarkingChanged(dbGrid);
+  SetFilter(GenerateFilter);
+
+  if (dmMain.GetIniValue('EQUIPMENTASTREE') = '1') then
+     SetGridTreeMode(True)
+  else if (dmMain.GetIniValue('EQUIPMENTGROUP') = '1') then
+     SetGridGroupMode(True);
+
   UpdateCommands;
 end;
 
@@ -809,9 +773,7 @@ begin
   actDelete.Enabled := actNew.Enabled;
   actEdit.Enabled := actNew.Enabled;
 
-  actEditCustLan.Visible := dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_EditLan);
-
-  SetGridTreeMode((dmMain.GetIniValue('EQUIPMENTASTREE') = '1'));
+  actEditCustLan.Visible := dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_LanFull);
 end;
 
 procedure TEquipmentForm.lstFormsClick(Sender: TObject);
@@ -892,8 +854,7 @@ end;
 procedure TEquipmentForm.miN8Click(Sender: TObject);
 begin
   inherited;
-  if not dsEquipments.FieldByName('HOUSE_ID').IsNull
-  then
+  if not dsEquipments.FieldByName('HOUSE_ID').IsNull then
     A4MainForm.OpnenHouseByID(dsEquipments['HOUSE_ID']);
 end;
 
@@ -932,37 +893,147 @@ begin
   end;
 end;
 
-procedure TEquipmentForm.chkGroupClick(Sender: TObject);
+procedure TEquipmentForm.SetGridTreeMode(const inTree: Boolean);
+  function findInex(const FLD_NAME: string; Grid: TDBGridEh): Integer;
+  var
+    i: Integer;
+  begin
+    Result := 0;
+    for i := 0 to Grid.Columns.Count - 1 do
+    begin
+      if UpperCase(Grid.Columns[i].FieldName) = FLD_NAME then
+        Result := Grid.Columns[i].Index;
+    end;
+  end;
+
 var
   Crsr: TCursor;
+  id: Integer;
 begin
   inherited;
+
+  if (srcDataSource.DataSet.Active) and (srcDataSource.DataSet.RecordCount >= 0) and
+    (not srcDataSource.DataSet.FieldByName('EID').IsNull) then
+    id := srcDataSource.DataSet['EID']
+  else
+    id := -666;
+
   Crsr := Screen.Cursor;
   Screen.Cursor := crSqlWait;
-  if chkGroup.Checked then
+
+  FInTreeView := inTree;
+  actTree.Checked := FInTreeView;
+
+  FinGroupView := FInTreeView;
+  actGroup.Checked := FinGroupView;
+
+  FinGroupView := False;
+  actGroup.Checked := FinGroupView;
+  actGroup.Enabled := not FInTreeView;
+
+  if FInTreeView then
   begin
     srcDataSource.DataSet := mtEQ;
-    dsEquipments.Close;
-    dbGrid.DataGrouping.GroupPanelVisible := True;
-    dbGrid.DataGrouping.Active := True;
-    srcDataSource.DataSet.Active := True;
     FCanSave := False;
   end
   else
   begin
-    dbGrid.DataGrouping.Active := False;
-    dbGrid.DataGrouping.GroupPanelVisible := False;
     srcDataSource.DataSet := dsEquipments;
-    mtEQ.Active := False;
-    srcDataSource.DataSet.Active := True;
+    if mtEQ.Active then
+      mtEQ.Close;
   end;
-  chkTREE.Enabled := not chkGroup.Checked;
+
+  srcDataSource.DataSet.DisableControls;
+  srcDataSource.DataSet.Open;
+  mtEQ.TreeList.Active := FInTreeView;
+  mtEQ.TreeList.DefaultNodeExpanded := FInTreeView;
+
+  miTreeBreak.Visible := FInTreeView;
+  miTreeCollapse.Visible := FInTreeView;
+  miTreeExpand.Visible := FInTreeView;
+  miTreeExpandCurrent.Visible := FInTreeView;
+
+  if FInTreeView then
+    mtEQ.TreeList.FullCollapse;
+
+  if id <> -666 then
+  begin
+    if not FInTreeView then
+      srcDataSource.DataSet.Locate('EID', id, [])
+    else
+    begin
+      mtEQ.TreeList.Locate('EID', id, []);
+      // mtEQ.TreeList.E
+    end;
+  end;
+
   if FLastPage <> nil then
   begin
     FLastPage.CloseData;
     FLastPage.OpenData;
   end;
+  srcDataSource.DataSet.EnableControls;
   Screen.Cursor := Crsr;
+  dbGrid.SetFocus;
+
+end;
+
+procedure TEquipmentForm.SetGridGroupMode(const inGroup: Boolean);
+var
+  Crsr: TCursor;
+  id: Integer;
+begin
+  inherited;
+
+  if (srcDataSource.DataSet.Active) and (srcDataSource.DataSet.RecordCount >= 0) and
+    (not srcDataSource.DataSet.FieldByName('EID').IsNull) then
+    id := srcDataSource.DataSet['EID']
+  else
+    id := -666;
+
+  Crsr := Screen.Cursor;
+  Screen.Cursor := crSqlWait;
+
+  FinGroupView := inGroup;
+  actGroup.Checked := FinGroupView;
+
+  FInTreeView := False;
+  actTree.Checked := FInTreeView;
+  actTree.Enabled := not FinGroupView;
+
+  if FinGroupView then
+  begin
+    srcDataSource.DataSet := mtEQ;
+    mtEQ.TreeList.Active := False;
+    FCanSave := False; // not FinGroupView;
+  end
+  else
+  begin
+    srcDataSource.DataSet := dsEquipments;
+    mtEQ.Close;
+  end;
+
+  srcDataSource.DataSet.DisableControls;
+  srcDataSource.DataSet.Active := True;
+  dbGrid.DataGrouping.GroupPanelVisible := FinGroupView;
+  dbGrid.DataGrouping.Active := FinGroupView;
+
+
+  if FLastPage <> nil then
+  begin
+    FLastPage.CloseData;
+    FLastPage.OpenData;
+  end;
+
+  if id <> -666 then
+  begin
+    srcDataSource.DataSet.Locate('EID', id, [])
+  end;
+
+  srcDataSource.DataSet.EnableControls;
+  Screen.Cursor := Crsr;
+
+  dbGrid.SetFocus;
 end;
 
 procedure TEquipmentForm.btnRefreshClick(Sender: TObject);
@@ -1037,6 +1108,7 @@ function TEquipmentForm.GenerateFilter: string;
   function RecordToFilter: string;
   var
     tmpSQL: string;
+    s : String;
   begin
     tmpSQL := '';
 
@@ -1063,8 +1135,25 @@ function TEquipmentForm.GenerateFilter: string;
         tmpSQL := tmpSQL + Format(' and (h.SUBAREA_ID  = %s)', [dsFilter.FieldByName('SUBAREA_ID').AsString]);
 
       if (not dsFilter.FieldByName('AREA_ID').IsNull) then
-        tmpSQL := tmpSQL + Format(' and ( S.AREA_ID = %s) ', [dsFilter.FieldByName('AREA_ID').AsString]);
+        tmpSQL := tmpSQL + Format(' and (S.AREA_ID = %s) ', [dsFilter.FieldByName('AREA_ID').AsString]);
     end;
+
+    if (not dsFilter.FieldByName('Eq_Type').IsNull) then
+      tmpSQL := tmpSQL + Format(' and (e.Eq_Type = %d)', [dsFilter.FieldByName('Eq_Type').AsInteger]);
+
+    if (not dsFilter.FieldByName('NAME').IsNull) then begin
+      s := dsFilter['NAME'];
+      if s.Contains('%') or s.Contains('_')  then
+        s := 'E.Name like ''%s'''
+      else
+        s := 'E.Name = ''%s''';
+      if (dsFilter['NOT_NAME'] = 1) then
+        s:= 'not '+s;
+      tmpSQL := tmpSQL + Format(' and ('+s+')', [dsFilter.FieldByName('NAME').AsString]);
+    end;
+
+    if (not dsFilter.FieldByName('NODE_ID').IsNull) then
+      tmpSQL := tmpSQL + Format(' and (E.NODE_ID = %s)', [dsFilter.FieldByName('NODE_ID').AsString]);
 
     // if (not dsFilter.FieldByName('NODE_TYPE').IsNull) then
     // tmpSQL := tmpSQL + Format(' and ( n.TYPE_ID = %s) ', [dsFilter.FieldByName('NODE_TYPE').AsString]);
@@ -1080,16 +1169,11 @@ function TEquipmentForm.GenerateFilter: string;
 
 var
   whereStr: string;
-  default: string;
 begin
-  default := filter_1_1;
-  Result := default;
   whereStr := '';
 
-  if (dsFilter.RecordCount = 0) or (not actEnableFilter.Checked) then
-    Exit;
-
-  srcDataSource.DataSet.DisableControls;
+  if (not dsFilter.Active) or (dsFilter.RecordCount = 0) then
+    SetDefaultFilter;
 
   try
     dsFilter.First;
@@ -1107,12 +1191,14 @@ begin
           whereStr := whereStr + ' AND '
     end;
   except
-    whereStr := default;
+    whereStr := '';
     ShowMessage(rsErrorSetFilter);
   end;
 
-  Result := whereStr;
-  srcDataSource.DataSet.EnableControls;
+  if not whereStr.IsEmpty then
+    Result := whereStr
+  else
+    Result := filter_1_1;
 end;
 
 procedure TEquipmentForm.UpdateInfoPanel;
@@ -1134,9 +1220,41 @@ begin
       dsFilter.Post;
     DatasetFromJson(dsFilter, f);
   end;
+end;
 
-  if dsFilter.RecordCount > 0 then
-    actEnableFilter.Checked := True;
+procedure TEquipmentForm.SetFilter(const filter: string);
+begin
+  srcDataSource.DataSet.DisableControls;
+
+  if FInTreeView or FinGroupView then
+    mtEQ.Close;
+
+  if dsEquipments.Active then
+    dsEquipments.Close;
+  if (not filter.IsEmpty) then
+  begin
+    dsEquipments.ParamByName('Filter').Value := filter;
+    try
+      dsEquipments.Open;
+    except
+      ShowMessage(rsErrorFilter);
+      if dsEquipments.Active then
+        dsEquipments.Close;
+      dsEquipments.ParamByName('Filter').Clear;
+    end;
+  end
+  else
+  begin
+    dsEquipments.ParamByName('Filter').Clear;
+  end;
+  if (not dsEquipments.Active) then
+    dsEquipments.Open;
+
+  if FInTreeView or FinGroupView then
+    mtEQ.Open;
+
+  srcDataSource.DataSet.EnableControls;
+  UpdateInfoPanel;
 end;
 
 function TEquipmentForm.GetOrderColumns: String;

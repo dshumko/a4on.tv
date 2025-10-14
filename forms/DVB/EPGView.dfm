@@ -58,7 +58,7 @@ object EPGViewForm: TEPGViewForm
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
+      SearchPanel.FilterOnTyping = False
       STFilter.InstantApply = False
       STFilter.Local = True
       STFilter.Location = stflUnderTitleFilterEh

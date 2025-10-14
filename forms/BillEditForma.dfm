@@ -17,6 +17,7 @@ object BillEditForm: TBillEditForm
   ShowHint = True
   OnCloseQuery = FormCloseQuery
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   DesignSize = (
     389
     251)
@@ -56,7 +57,7 @@ object BillEditForm: TBillEditForm
     Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ParentBiDiMode = False
   end
-  object lbl3: TLabel
+  object lblACCOUNT: TLabel
     Left = 9
     Top = 113
     Width = 66
@@ -127,7 +128,7 @@ object BillEditForm: TBillEditForm
     EditButtons = <>
     EmptyDataInfo.Text = #1051#1086#1075#1080#1085
     ShowHint = True
-    TabOrder = 2
+    TabOrder = 3
     Visible = True
     OnEnter = edtInetIPEnter
     EditMask = ''
@@ -175,7 +176,7 @@ object BillEditForm: TBillEditForm
       end>
     EmptyDataInfo.Text = #1055#1072#1088#1086#1083#1100'. '#1082#1085#1086#1087#1082#1072' '#1076#1083#1103' '#1075#1077#1085#1077#1088#1072#1094#1080#1080
     ShowHint = True
-    TabOrder = 3
+    TabOrder = 4
     Visible = True
     OnEnter = edtInetIPEnter
     EditMask = ''
@@ -183,9 +184,8 @@ object BillEditForm: TBillEditForm
   object chkVPN: TDBCheckBoxEh
     Left = 75
     Top = 35
-    Width = 279
+    Width = 110
     Height = 17
-    Anchors = [akLeft, akTop, akRight]
     Caption = 'VPN'
     DataField = 'VPN'
     DataSource = srcBill
@@ -195,9 +195,9 @@ object BillEditForm: TBillEditForm
   end
   object mmoNOTICE: TDBMemoEh
     Left = 75
-    Top = 135
+    Top = 137
     Width = 306
-    Height = 70
+    Height = 73
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'NOTICE'
@@ -206,7 +206,7 @@ object BillEditForm: TBillEditForm
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
-    TabOrder = 5
+    TabOrder = 6
     Visible = True
     WantReturns = True
   end
@@ -216,7 +216,7 @@ object BillEditForm: TBillEditForm
     Width = 389
     Height = 35
     Align = alBottom
-    TabOrder = 6
+    TabOrder = 7
     TabStop = True
     inherited Label2: TLabel
       Margins.Bottom = 0
@@ -234,7 +234,7 @@ object BillEditForm: TBillEditForm
       Width = 86
     end
   end
-  object edtLOGIN1: TDBEditEh
+  object edtACCOUNT: TDBEditEh
     Left = 75
     Top = 110
     Width = 306
@@ -246,10 +246,25 @@ object BillEditForm: TBillEditForm
     EditButtons = <>
     EmptyDataInfo.Text = 'Account_id '#1076#1083#1103' UTM'
     ShowHint = True
-    TabOrder = 4
+    TabOrder = 5
     Visible = True
     OnEnter = edtInetIPEnter
     EditMask = ''
+  end
+  object chkBLOCKED: TDBCheckBoxEh
+    Left = 271
+    Top = 35
+    Width = 110
+    Height = 17
+    Anchors = [akTop, akRight]
+    Caption = #1042' '#1073#1083#1086#1082#1080#1088#1086#1074#1082#1077
+    DataField = 'BLOCKED'
+    DataSource = srcBill
+    DynProps = <>
+    TabOrder = 2
+    OnClick = chkVPNClick
+    ValueChecked = '1'
+    ValueUnchecked = '0'
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV

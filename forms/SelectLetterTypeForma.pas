@@ -59,6 +59,8 @@ begin
         if (not VarIsNull(cbLetterType.Value)) and (cbLetterType.Text <> '') then
         begin
           Result := cbLetterType.Value;
+          dsLetterTypes.DisableControls;
+          dsLetterTypes.Locate('LETTERTYPEID', Result,[]);
           if not dsLetterTypes.FieldByName('RecordInDB').IsNull then
             RecordInDB := dsLetterTypes.FieldByName('RecordInDB').AsInteger = 1;
           if not dsLetterTypes.FieldByName('Save_PDF').IsNull then

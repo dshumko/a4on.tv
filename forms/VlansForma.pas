@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.UITypes, System.Classes, System.Actions,
+  System.SysUtils, System.Variants, System.UITypes, System.Classes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
   Vcl.Menus,
@@ -487,7 +487,7 @@ procedure TVlansForm.edtIP_BEGINExit(Sender: TObject);
 var
   ip, Mask: String;
   m_bin: Integer;
-  sa: TStringArray;
+  sa: TStringDynArray;
 begin
   inherited;
 

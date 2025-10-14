@@ -50,16 +50,19 @@ object ServicesForm: TServicesForm
         DataSource = srcServices
         DrawMemoText = True
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
+        FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         ParentShowHint = False
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         ShowHint = True
         SortLocal = True
+        SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
         OnDblClick = ASGridDblClick
@@ -69,6 +72,7 @@ object ServicesForm: TServicesForm
             DynProps = <>
             EditButtons = <>
             FieldName = 'NAME'
+            Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
             Title.TitleButton = True
@@ -166,6 +170,7 @@ object ServicesForm: TServicesForm
             DynProps = <>
             EditButtons = <>
             FieldName = 'ACT_CUST'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1040#1082#1090'. '#1072#1073#1086#1085#1077#1085#1090#1086#1074
             Title.Hint = #1050#1086#1083'-'#1074#1086' '#1072#1073#1086#1085#1077#1085#1090#1086#1074' '#1089' '#1074#1082#1083'. '#1091#1089#1083#1091#1075#1086#1081' '#1085#1072' '#1089#1077#1075#1086#1076#1085#1103
@@ -232,6 +237,7 @@ object ServicesForm: TServicesForm
             Footers = <>
             Title.Caption = #1040'-'#1073#1083'.'
             Title.Hint = #1040#1074#1090#1086#1073#1083#1086#1082#1080#1088#1086#1074#1082#1072
+            Title.TitleButton = True
             Width = 34
           end
           item
@@ -262,16 +268,19 @@ object ServicesForm: TServicesForm
         DataSource = srcServices
         DrawMemoText = True
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
+        FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         ParentShowHint = False
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         ShowHint = True
         SortLocal = True
+        SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
         OnDblClick = ASGridDblClick
@@ -281,6 +290,7 @@ object ServicesForm: TServicesForm
             DynProps = <>
             EditButtons = <>
             FieldName = 'NAME'
+            Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
             Title.TitleButton = True
@@ -386,16 +396,19 @@ object ServicesForm: TServicesForm
         DataSource = srcServices
         DrawMemoText = True
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
+        FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
         ParentShowHint = False
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         ShowHint = True
         SortLocal = True
+        SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
         OnDblClick = ASGridDblClick
@@ -405,6 +418,7 @@ object ServicesForm: TServicesForm
             DynProps = <>
             EditButtons = <>
             FieldName = 'NAME'
+            Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
             Title.TitleButton = True
@@ -558,9 +572,7 @@ object ServicesForm: TServicesForm
     object btnQF: TToolButton
       Left = 139
       Top = 0
-      Caption = 'btnQF'
-      ImageIndex = 33
-      OnClick = btnQFClick
+      Action = actQuickFilter
     end
     object chkHideOld: TCheckBox
       Left = 162
@@ -579,7 +591,7 @@ object ServicesForm: TServicesForm
     Top = 290
     Width = 836
     Height = 243
-    ActivePage = tsSwitch
+    ActivePage = tsTarif
     Align = alBottom
     TabOrder = 2
     OnChange = AddonPageChange
@@ -594,12 +606,15 @@ object ServicesForm: TServicesForm
         AllowedOperations = []
         DataSource = srcTarif
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SortLocal = True
         TabOrder = 0
+        OnGetCellParams = trfGridGetCellParams
         Columns = <
           item
             CellButtons = <>
@@ -793,10 +808,12 @@ object ServicesForm: TServicesForm
           AllowedOperations = []
           DataSource = srcLinks
           DynProps = <>
+          EditActions = [geaCopyEh, geaSelectAllEh]
           Flat = True
           FooterParams.Color = clWindow
           GridLineParams.VertEmptySpaceStyle = dessNonEh
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
+          PopupMenu = pmPopUp
           SortLocal = True
           TabOrder = 1
           OnDblClick = dbgLinkDblClick
@@ -1119,7 +1136,7 @@ object ServicesForm: TServicesForm
             object Label1: TLabel
               Left = 0
               Top = 0
-              Width = 125
+              Width = 321
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
@@ -1133,6 +1150,7 @@ object ServicesForm: TServicesForm
               AllowedOperations = []
               DataSource = srcSC
               DynProps = <>
+              EditActions = [geaCopyEh, geaSelectAllEh]
               Flat = True
               FooterRowCount = 1
               FooterParams.Color = clWindow
@@ -1141,7 +1159,6 @@ object ServicesForm: TServicesForm
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
               ReadOnly = True
               SearchPanel.Enabled = True
-              SearchPanel.FilterOnTyping = True
               SumList.Active = True
               TabOrder = 0
               OnDblClick = GridSCDblClick
@@ -1248,7 +1265,7 @@ object ServicesForm: TServicesForm
             object Label2: TLabel
               Left = 0
               Top = 0
-              Width = 106
+              Width = 476
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
@@ -1270,7 +1287,6 @@ object ServicesForm: TServicesForm
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
               ReadOnly = True
               SearchPanel.Enabled = True
-              SearchPanel.FilterOnTyping = True
               SumList.Active = True
               TabOrder = 0
               OnDblClick = GridCDblClick
@@ -1414,6 +1430,7 @@ object ServicesForm: TServicesForm
           AllowedOperations = []
           DataSource = srcSwitch
           DynProps = <>
+          EditActions = [geaCopyEh, geaSelectAllEh]
           Flat = True
           FooterParams.Color = clWindow
           GridLineParams.VertEmptySpaceStyle = dessNonEh
@@ -1750,10 +1767,12 @@ object ServicesForm: TServicesForm
           AllowedOperations = []
           DataSource = srcSrvAttr
           DynProps = <>
+          EditActions = [geaCopyEh, geaSelectAllEh]
           Flat = True
           FooterParams.Color = clWindow
           GridLineParams.VertEmptySpaceStyle = dessNonEh
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
+          PopupMenu = pmPopUp
           SortLocal = True
           TabOrder = 1
           OnDblClick = dbgAttrDblClick
@@ -2057,9 +2076,11 @@ object ServicesForm: TServicesForm
         AllowedOperations = [alopUpdateEh]
         DataSource = srcCMPLX
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+        PopupMenu = pmPopUp
         SumList.Active = True
         TabOrder = 0
         Columns = <
@@ -2501,17 +2522,25 @@ object ServicesForm: TServicesForm
       '    :DESCRIPTION'
       ')')
     RefreshSQL.Strings = (
-      'SELECT l.*, s.NAME'
-      'FROM SERVICES_LINKS l, services s'
-      'where(  s.SERVICE_ID = l.CHILD'
-      'and l.PARENT = :SERVICE_ID'
-      '     ) and (     L.LINK_ID = :OLD_LINK_ID'
-      '     )'
-      '    '
+      'select'
+      
+        '    l.*, s.Name||coalesce('#39' ('#39'|| (select first 1 t.Tarif_Sum fro' +
+        'm tarif t where t.Service_Id = s.Service_Id and current_date bet' +
+        'ween t.Date_From and t.Date_To) ||'#39')'#39', '#39#39') Name'
+      'FROM SERVICES_LINKS l'
+      '       inner join services s on (s.Service_Id = l.Child)'
+      ''
+      'where'
+      '(s.SERVICE_ID = l.CHILD and l.PARENT = :SERVICE_ID ) '
+      '  and (L.LINK_ID = :OLD_LINK_ID)'
+      '   '
       'order by s.NAME')
     SelectSQL.Strings = (
       'select'
-      '    l.*, s.Name'
+      
+        '    l.*, s.Name||coalesce('#39' / '#39'|| (select first 1 t.Tarif_Sum fr' +
+        'om tarif t where t.Service_Id = s.Service_Id and current_date be' +
+        'tween t.Date_From and t.Date_To) ||'#39' '#1088'.'#39', '#39#39') Name'
       'FROM SERVICES_LINKS l'
       '       inner join services s on (s.Service_Id = l.Child)'
       'where l.PARENT = :SERVICE_ID'
@@ -2540,10 +2569,22 @@ object ServicesForm: TServicesForm
   end
   object dsONOFFServices: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT s.*'
-      'FROM SERVICES s'
-      'where s.SRV_TYPE_ID in (1,2)'
-      'order by s.NAME')
+      'select'
+      '    S.Service_Id'
+      '  , s.Name || coalesce('#39' / '#39' ||(select first 1'
+      '                                   t.Tarif_Sum'
+      '                                 from tarif t'
+      
+        '                                 where t.Service_Id = s.Service_' +
+        'Id'
+      
+        '                                       and current_date between ' +
+        't.Date_From and t.Date_To) || '#39' '#1088'.'#39', '#39#39') Name'
+      '  from SERVICES s'
+      '  where s.SRV_TYPE_ID in ('
+      '                          1, 2'
+      '                         )'
+      '  order by s.NAME')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -2556,9 +2597,9 @@ object ServicesForm: TServicesForm
   object dsSC: TpFIBDataSet
     SelectSQL.Strings = (
       'select c.Ch_Id, c.Ch_Number, c.Ch_Name'
-      'FROM Channels c, Channels_In_Servce cs'
-      'where c.Ch_Id = cs.Ch_Id'
-      '  and cs.Srv_Id = :service'
+      'FROM Channels c '
+      '  inner join Channels_In_Servce cs on (cs.Ch_Id = c.Ch_Id)'
+      'where cs.Srv_Id = :service'
       '  and cs.On_Off = :Channel_On'
       'order by c.Ch_Name')
     Transaction = trRead
@@ -2634,6 +2675,18 @@ object ServicesForm: TServicesForm
       Hint = #1059#1076#1072#1083#1080#1090#1100' '#1082#1086#1084#1087#1083#1077#1082#1089
       ImageIndex = 3
       OnExecute = actCmxDelExecute
+    end
+    object actQuickFilter: TAction
+      Caption = #1041#1099#1089#1090#1088#1099#1081' '#1087#1086#1080#1089#1082
+      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1087#1086#1080#1089#1082
+      ImageIndex = 33
+      ShortCut = 16465
+      OnExecute = actQuickFilterExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   object srcSwitch: TDataSource
@@ -3041,5 +3094,35 @@ object ServicesForm: TServicesForm
     OnDataChange = srcCMPLXDataChange
     Left = 589
     Top = 470
+  end
+  object pmPopUp: TPopupMenu
+    Left = 627
+    Top = 159
+    object pmgCopy: TMenuItem
+      Caption = '&'#1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      OnClick = pmgCopyClick
+    end
+    object pmgSelectAll: TMenuItem
+      Caption = '&'#1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1077
+      OnClick = pmgSelectAllClick
+    end
+    object pmgSep2: TMenuItem
+      Caption = '-'
+    end
+    object pmgSaveSelection: TMenuItem
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' &'#1082#1072#1082' ...'
+      OnClick = pmgSaveSelectionClick
+    end
+    object miPrintGrid: TMenuItem
+      Caption = #1055#1077#1095#1072#1090#1100' '#1090#1072#1073#1083#1080#1094#1099
+      OnClick = miPrintGridClick
+    end
+    object pmgSep1: TMenuItem
+      Caption = '-'
+    end
+    object miRefresh: TMenuItem
+      Caption = '&'#1055#1077#1088#1077#1095#1080#1090#1072#1090#1100' '#1076#1072#1085#1085#1099#1077
+      OnClick = miRefreshClick
+    end
   end
 end

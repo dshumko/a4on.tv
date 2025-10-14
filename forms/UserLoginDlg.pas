@@ -206,16 +206,20 @@ begin
   Val(StrPas(Pk), i, C);
 
   case i of
+    42:
+      lblLANG.Caption := 'HY';
     409:
       lblLANG.Caption := 'EN';
     419:
       lblLANG.Caption := 'RU';
     422:
       lblLANG.Caption := 'UA';
+    423:
+      lblLANG.Caption := 'BE';
     10437:
       lblLANG.Caption := 'ქარ';
-    42:
-      lblLANG.Caption := 'HY';
+    20409:
+      lblLANG.Caption := 'EN INTL';
   else
     lblLANG.Caption := IntToStr(i);
   end;

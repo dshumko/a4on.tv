@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
   DBCtrlsEh, FIBDataSet, pFIBDataSet, PrjConst, A4onTypeUnit;
@@ -58,10 +58,10 @@ end;
 
 procedure THouseMapForm.BuildMapInfo;
 
-  function GetFlatsArray(const flats: string): TStringArray;
+  function GetFlatsArray(const flats: string): TStringDynArray;
   var
     i, b, e: integer;
-    f, g: TStringArray;
+    f, g: TStringDynArray;
     Count: integer;
   begin
     if flats = '' then
@@ -104,7 +104,7 @@ var
   pp: integer;
   i: integer;
   s: string;
-  af: TStringArray;
+  af: TStringDynArray;
 
 begin
   dsHouse.Close;

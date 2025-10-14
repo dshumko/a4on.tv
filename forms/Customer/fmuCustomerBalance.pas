@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
   Vcl.ExtCtrls,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
+  MemTableEh,
   FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, AtrPages, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst;
 
 type
@@ -23,9 +24,10 @@ type
     miN2: TMenuItem;
     procedure miN1Click(Sender: TObject);
     procedure miN2Click(Sender: TObject);
-    procedure dbgCustBalanceCellMouseClick(Grid: TCustomGridEh;
-      Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X,
-      Y: Integer; var Processed: Boolean);
+    procedure dbgCustBalanceCellMouseClick(Grid: TCustomGridEh; Cell: TGridCoord; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer; var Processed: Boolean);
+    procedure dbgCustBalanceGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     // FFine: boolean;
     // FTodayOnly: boolean;
@@ -107,8 +109,7 @@ begin
   dsBalance.Close;
 end;
 
-procedure TapgCustomerBalance.dbgCustBalanceCellMouseClick(
-  Grid: TCustomGridEh; Cell: TGridCoord; Button: TMouseButton;
+procedure TapgCustomerBalance.dbgCustBalanceCellMouseClick(Grid: TCustomGridEh; Cell: TGridCoord; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer; var Processed: Boolean);
 var
   CurDataNode: TGroupDataTreeNodeEh;
@@ -118,6 +119,26 @@ begin
     CurDataNode := (Grid as TDBGridEh).DataGrouping.CurDataNode;
     if CurDataNode.NodeType = dntDataGroupEh then
       CurDataNode.Expanded := not CurDataNode.Expanded;
+  end;
+end;
+
+procedure TapgCustomerBalance.dbgCustBalanceGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  // if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+  // Exit;
+
+  // AFont.Color := clWindowText;
+  // if (gdSelected in State) then
+  // begin
+  // AFont.Color := clHighlightText;
+  // Background := clHighlight;
+  // end
+  // else begin
+  if (not (gdSelected in State)) and (not mtBalance.FieldByName('B_SUM').IsNull) and (mtBalance['B_SUM'] > 0) then begin
+    //AFont.Style := AFont.Style + [fsBold];
+    // AFont.Color := $00006400;
+    Background := $00D7FFD7; //$0080FF80;
   end;
 end;
 

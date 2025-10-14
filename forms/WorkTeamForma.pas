@@ -98,6 +98,7 @@ type
     procedure dsWORKGROUPSBeforePost(DataSet: TDataSet);
   private
     { Private declarations }
+    FAddressRight : Boolean;
   public
     { Public declarations }
   end;
@@ -188,7 +189,7 @@ end;
 procedure TWorkTeamForm.actHouseEditExecute(Sender: TObject);
 begin
   inherited;
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not FAddressRight) then
     Exit;
   if EditHouse(dsHouses['HOUSE_ID'], dsHouses['STREET_ID']) > -1 then
   begin
@@ -204,7 +205,7 @@ begin
   if (not dsAreas.Active) or (dsAreas.RecordCount = 0) or (dsAreas.FieldByName('WA_ID').IsNull) then
     Exit;
 
-  if (not(dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street))) then
+  if (not FAddressRight) then
     Exit;
   i := EditHouse(-1, -1);
   if i > -1 then
@@ -343,8 +344,9 @@ begin
   tbCancelSub.Visible := actNew.Visible;
 
   // права пользователей полный доступ или редактирование домов
-  actHouseNew.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-  actHouseEdit.Visible := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
+  FAddressRight := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street);
+  actHouseNew.Visible := FAddressRight;
+  actHouseEdit.Visible := FAddressRight;
 
 end;
 

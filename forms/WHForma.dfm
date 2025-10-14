@@ -87,7 +87,6 @@ inherited WHform: TWHform
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     SortLocal = True
     STFilter.Local = True
     TabOrder = 3
@@ -256,6 +255,11 @@ inherited WHform: TWHform
     inherited actEdit: TAction
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
       OnExecute = actEditExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   inherited pmPopUp: TPopupMenu

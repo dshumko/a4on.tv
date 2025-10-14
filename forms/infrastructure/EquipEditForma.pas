@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.ActnList, Vcl.Forms, Vcl.Controls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ComCtrls,
   Vcl.Dialogs, Vcl.DBCtrls,
@@ -23,14 +23,12 @@ type
     btnPing: TSpeedButton;
     lbl2: TLabel;
     lbl5: TLabel;
-    Label9: TLabel;
     edtMAC: TDBEditEh;
     edtIP: TDBEditEh;
     edtMASK: TDBEditEh;
     dbleVLAN: TDBLookupComboboxEh;
     edtADMIN: TDBEditEh;
     edtPWD: TDBEditEh;
-    cbbEQG: TDBLookupComboboxEh;
     tsTV: TTabSheet;
     tsOther: TTabSheet;
     Panel2: TPanel;
@@ -44,10 +42,8 @@ type
     luStreet: TDBLookupComboboxEh;
     luHouse: TDBLookupComboboxEh;
     edtNAME: TDBEditEh;
-    DBMemo1: TDBMemoEh;
     dbedt1: TDBEditEh;
     DBEdit1: TDBEditEh;
-    cbTypeEQ: TDBComboBoxEh;
     edtPlace: TDBEditEh;
     srcVLANS: TDataSource;
     dsVlans: TpFIBDataSet;
@@ -90,19 +86,20 @@ type
     lblNODE: TLabel;
     lcbNODE: TDBLookupComboboxEh;
     srcNODE: TDataSource;
-    dsNODE: TpFIBDataSet;
+    dsNode: TpFIBDataSet;
     DBEditEh1: TDBEditEh;
     Label10: TLabel;
-    Label11: TLabel;
-    DBLookupComboboxEh1: TDBLookupComboboxEh;
+    dsEQtype: TpFIBDataSet;
+    srcEQtype: TDataSource;
+    lcbEQtype: TDBLookupComboboxEh;
+    pnl1: TPanel;
     Label12: TLabel;
     DBLookupComboboxEh2: TDBLookupComboboxEh;
-    lbl13: TLabel;
-    edtSNAME: TDBEditEh;
-    lbl131: TLabel;
-    edtS_NAME: TDBEditEh;
     edtS_NAME1: TDBEditEh;
     lbl1311: TLabel;
+    DBMemo1: TDBMemoEh;
+    ednPCE: TDBNumberEditEh;
+    lbl13: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTypeEQChange(Sender: TObject);
@@ -131,9 +128,11 @@ type
       State: TGridDrawState);
     procedure luHouseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure lcbEQtypeChange(Sender: TObject);
   private
     fCI: TCustomerInfo;
     FEnterSecondPress: Boolean;
+    FNodeRequired: Boolean;
     function CheckData: Boolean;
     procedure ShowTabs;
     procedure GetVlan;
@@ -194,7 +193,7 @@ begin
         end;
         if aEqType > 0 then
         begin
-          cbTypeEQ.Value := aEqType;
+          lcbEQtype.Value := aEqType;
           ActiveControl := edtNAME;
         end;
       end
@@ -289,7 +288,7 @@ begin
         end;
         if aEqType > 0 then
         begin
-          cbTypeEQ.Value := aEqType;
+          lcbEQtype.Value := aEqType;
           ActiveControl := edtNAME;
         end;
       end
@@ -367,14 +366,21 @@ var
   s: string;
 begin
   result := true;
-  if (cbTypeEQ.Text.IsEmpty) then
+  if (lcbEQtype.Text.IsEmpty) then
   begin
-    cnError.SetError(cbTypeEQ, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
-    cbTypeEQ.SetFocus;
+    cnError.SetError(lcbEQtype, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+    lcbEQtype.SetFocus;
     result := False;
   end
   else
-    cnError.Dispose(cbTypeEQ);
+    cnError.Dispose(lcbEQtype);
+
+  if (FNodeRequired and VarIsNull(lcbNODE.Value) and (not dmMain.UserIsAdmin)) then begin
+    cnError.SetError(lcbNODE, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+    result := False;
+  end
+  else
+    cnError.Dispose(lcbNODE);
 
   if (edtNAME.Text.IsEmpty) then
   begin
@@ -527,7 +533,7 @@ procedure TEquipEditForm.edtIPExit(Sender: TObject);
 var
   ip, Mask: String;
   m_bin: Integer;
-  sa: TStringArray;
+  sa: TStringDynArray;
 begin
   inherited;
   if (dmMain.GetIniValue('KBDSWITCH') = '0') then
@@ -572,7 +578,7 @@ begin
   dsNODE.Close;
   dsHomes.Close;
   dsParent.Close;
-
+  dsEQtype.Close;
   if edtNAME.MRUList.Active then
   begin
     f := GetSpecialFolderPath();
@@ -631,21 +637,23 @@ var
   i: Integer;
   f: string;
 begin
+  dsEQtype.Open;
   dsEQGroups.Open;
   dsStreets.Open;
   dsHomes.Open;
   dsParent.Open;
+
+  if not dsEquipment.FieldByName('NODE_ID').IsNull then
+    dsNODE.ParamByName('NODE_ID').AsInteger := dsEquipment.FieldByName('NODE_ID').AsInteger;
   dsNODE.Open;
 
   if dsEquipment.State = dsInsert then
-  begin
-    cbTypeEQ.SetFocus;
-  end;
-
-  for i := 0 to pgcTypeInfo.PageCount - 1 do
-    pgcTypeInfo.Pages[i].TabVisible := False;
+    ActiveControl := lcbEQtype
+  else
+    ActiveControl := edtNAME;
 
   ShowTabs;
+
   f := GetSpecialFolderPath();
   if f <> '' then
   begin
@@ -654,6 +662,8 @@ begin
     if FileExists(f) then
       edtNAME.MRUList.Items.LoadFromFile(f);
   end;
+
+  FNodeRequired := (dmMain.GetSettingsValue('EQUIPMENT_NODE_REQUIRED') = '1');
 end;
 
 procedure TEquipEditForm.lbl5DblClick(Sender: TObject);
@@ -662,6 +672,11 @@ begin
     edtPWD.PasswordChar := #0
   else
     edtPWD.PasswordChar := '*';
+end;
+
+procedure TEquipEditForm.lcbEQtypeChange(Sender: TObject);
+begin
+  ShowTabs;
 end;
 
 procedure TEquipEditForm.lcbNODEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -686,7 +701,7 @@ begin
   else
     luHouse.Color := clWindow;
 
-  if (VarIsNumeric(cbTypeEQ.Value)) and (cbTypeEQ.Value = 1) then
+  if (VarIsNumeric(lcbEQtype.Value)) and (lcbEQtype.Value = 1) then
     GetVlan;
 end;
 
@@ -708,9 +723,11 @@ end;
 procedure TEquipEditForm.ShowTabs;
 var
   i: Integer;
+  tv : Boolean;
 begin
-  if (TryStrToInt(cbTypeEQ.Value, i)) then
+  if (TryStrToInt(lcbEQtype.Value, i)) then
   begin
+    tv := i > 3;
     case i of
       2:
         pgcTypeInfo.ActivePage := tsTV;
@@ -725,9 +742,12 @@ begin
   end
   else
   begin
+    tv := True;
     pgcTypeInfo.ActivePage := tsLan;
     GetVlan;
   end;
+    for i := 0 to pgcTypeInfo.PageCount - 1 do
+      pgcTypeInfo.Pages[i].TabVisible := tv;
 end;
 
 procedure TEquipEditForm.GetVlan;

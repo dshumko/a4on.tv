@@ -12,7 +12,7 @@ uses
   DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh,
   FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
   pFIBQuery,
-  PrjConst, PropFilerEh, PropStorageEh;
+  PrjConst, PropFilerEh, PropStorageEh, Vcl.Menus;
 
 type
   TCustomersFilterForm = class(TForm)
@@ -175,6 +175,11 @@ type
     btnDBSave: TSpeedButton;
     actSaveToDb: TAction;
     actLoadFromDb: TAction;
+    pmMemo: TPopupMenu;
+    miCut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    SelectAll1: TMenuItem;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -205,6 +210,7 @@ type
     procedure cbxHouseNoChange(Sender: TObject);
     procedure cbxHouseNoDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
       var Background: TColor; State: TGridDrawState);
+    procedure cbbSTREETChange(Sender: TObject);
   private
     { Private declarations }
     FEnterSecondPress: Boolean;
@@ -346,6 +352,10 @@ begin
   dsMH.Open;
 
   dbchkHiden.Visible := dmMain.SuperMode = 1;
+
+  cbAdress.Top := grpAddress.Top - Trunc(cbAdress.Height/2);
+  cbDolg.Top := grpDolg.Top - Trunc(cbDolg.Height/2);
+  chkAddon.Top := grpAddon.Top - Trunc(chkAddon.Height/2);
 
   {
     0
@@ -681,6 +691,12 @@ begin
   dsAttributes.ParamByName('ATTRTYPE').AsInteger := t;
   if a then
     dsAttributes.Open;
+end;
+
+procedure TCustomersFilterForm.cbbSTREETChange(Sender: TObject);
+begin
+  if (srcFilter.DataSet.State in [dsEdit, dsInsert]) then
+    srcFilter.DataSet.FieldByName('HOUSE_ID').Clear;
 end;
 
 procedure TCustomersFilterForm.cbbSTREETEnter(Sender: TObject);

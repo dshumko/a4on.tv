@@ -68,7 +68,6 @@ type
     mtView: TMemTableEh;
     drvFIBView: TpFIBDataDriverEh;
     dsView: TDataSource;
-    PrintGrid: TPrintDBGridEh;
     pmViewGrid: TPopupMenu;
     actSave: TAction;
     actPrint: TAction;
@@ -76,6 +75,7 @@ type
     N1: TMenuItem;
     actlstDVB: TActionList;
     PropStorageEh: TPropStorageEh;
+    miN2: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pmgCopyClick(Sender: TObject);
     procedure pmgSelectAllClick(Sender: TObject);
@@ -95,6 +95,7 @@ type
     procedure dbgSourceColumns5CellDataLinkClick(Grid: TCustomDBGridEh; Column: TColumnEh);
     procedure dbgViewDblClick(Sender: TObject);
     procedure dbgSourceColumns3GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure miN2Click(Sender: TObject);
   private
     FTimeZone: Integer;
   public
@@ -325,6 +326,12 @@ begin
   dsChannel.Open;
 end;
 
+procedure TChanSourcesForm.miN2Click(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
+end;
+
 procedure TChanSourcesForm.dbgSourceColumns3GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   if not Params.Text.IsEmpty then
@@ -405,7 +412,8 @@ end;
 
 procedure TChanSourcesForm.N1Click(Sender: TObject);
 begin
-  PrintGrid.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TChanSourcesForm.actSaveExecute(Sender: TObject);
@@ -416,7 +424,8 @@ end;
 
 procedure TChanSourcesForm.actPrintExecute(Sender: TObject);
 begin
-  PrintGrid.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 end.

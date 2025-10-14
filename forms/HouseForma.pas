@@ -67,6 +67,8 @@ type
     edtHOUSE_CODE: TDBEditEh;
     ednTAG: TDBNumberEditEh;
     edtTAGSTR: TDBEditEh;
+    chkEXIST_VIDEO: TDBCheckBoxEh;
+    chkEXIST_INTER: TDBCheckBoxEh;
     procedure LupStreetsChange(Sender: TObject);
     procedure edHomeChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -218,19 +220,22 @@ end;
 
 procedure THouseForm.dsHouseNewRecord(DataSet: TDataSet);
 begin
-  with TpFIBQuery.Create(Nil) do
-    try
-      DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
-      SQL.Text := 'select count(*) count_h from house';
-      Transaction.StartTransaction;
-      ExecQuery;
-      edtHOUSE_CODE.Text := FieldbyName('count_h').asString;
-      Close;
-      Transaction.Commit;
-    finally
-      free;
-    end;
+  if (Pos('[КОД ДОМА]', dmMain.GetSettingsValue('ACCOUNT_FORMAT')) > 0) then
+  begin
+    with TpFIBQuery.Create(Nil) do
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        SQL.Text := 'select count(*) count_h from house';
+        Transaction.StartTransaction;
+        ExecQuery;
+        edtHOUSE_CODE.Text := FieldbyName('count_h').asString;
+        Close;
+        Transaction.Commit;
+      finally
+        free;
+      end;
+  end;
 end;
 
 procedure THouseForm.edHomeChange(Sender: TObject);

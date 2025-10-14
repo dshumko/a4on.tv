@@ -50,58 +50,11 @@ object MaterialsForm: TMaterialsForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      object ToolBar1: TToolBar
-        Left = 0
-        Top = 0
-        Width = 638
-        Height = 23
-        Caption = 'ToolBar1'
-        Images = A4MainForm.ICONS_ACTIVE
-        TabOrder = 0
-        object ToolButton1: TToolButton
-          Left = 0
-          Top = 0
-          Action = actNew
-        end
-        object ToolButton3: TToolButton
-          Left = 23
-          Top = 0
-          Action = actEdit
-        end
-        object ToolButton5: TToolButton
-          Left = 46
-          Top = 0
-          Width = 8
-          Caption = 'ToolButton5'
-          ImageIndex = 3
-          Style = tbsSeparator
-        end
-        object ToolButton2: TToolButton
-          Left = 54
-          Top = 0
-          Action = actDelete
-        end
-        object ToolButton9: TToolButton
-          Left = 77
-          Top = 0
-          Width = 31
-          Caption = 'ToolButton9'
-          ImageIndex = 27
-          Style = tbsSeparator
-        end
-        object btnRemainRecalc: TToolButton
-          Left = 108
-          Top = 0
-          Hint = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
-          Action = actRemainRecalc
-          PopupMenu = pmRecalcAll
-        end
-      end
       object DBGridEh: TDBGridEh
         Left = 0
-        Top = 23
+        Top = 27
         Width = 638
-        Height = 196
+        Height = 192
         Align = alClient
         AllowedOperations = [alopDeleteEh]
         AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -115,19 +68,78 @@ object MaterialsForm: TMaterialsForm
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
         ParentShowHint = False
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         ShowHint = True
         SortLocal = True
         STFilter.Local = True
         SumList.Active = True
-        TabOrder = 1
+        TabOrder = 0
         TitleParams.MultiTitle = True
         OnDblClick = DBGridEhDblClick
         OnDataHintShow = DBGridEhDataHintShow
         OnGetCellParams = DBGridEhGetCellParams
         OnMouseMove = DBGridEhMouseMove
         object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+      object pnlMatTop: TPanel
+        Left = 0
+        Top = 0
+        Width = 638
+        Height = 27
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        object pnlBreadCrumps: TPanel
+          Left = 165
+          Top = 0
+          Width = 473
+          Height = 27
+          Align = alClient
+          BevelOuter = bvNone
+          TabOrder = 1
+        end
+        object pnlMatBtns: TPanel
+          Left = 0
+          Top = 0
+          Width = 165
+          Height = 27
+          Align = alLeft
+          BevelOuter = bvNone
+          TabOrder = 0
+          object btnNew: TSpeedButton
+            Left = 4
+            Top = 2
+            Width = 22
+            Height = 22
+            Action = actNew
+            Flat = True
+          end
+          object btnEdit2: TSpeedButton
+            Left = 30
+            Top = 2
+            Width = 22
+            Height = 22
+            Action = actEdit
+            Flat = True
+          end
+          object btnDelete: TSpeedButton
+            Left = 72
+            Top = 2
+            Width = 22
+            Height = 22
+            Action = actDelete
+            Flat = True
+          end
+          object btnRemainRecalc: TSpeedButton
+            Left = 131
+            Top = 2
+            Width = 22
+            Height = 22
+            Action = actRemainRecalc
+            Flat = True
+          end
         end
       end
     end
@@ -141,9 +153,9 @@ object MaterialsForm: TMaterialsForm
       TabOrder = 0
       object DBGridGroups: TDBGridEh
         Left = 0
-        Top = 23
+        Top = 27
         Width = 281
-        Height = 196
+        Height = 192
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcMatGropups
@@ -153,6 +165,7 @@ object MaterialsForm: TMaterialsForm
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        SearchPanel.Enabled = True
         SortLocal = True
         STFilter.Local = True
         TabOrder = 1
@@ -166,6 +179,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'MG_NAME'
             Footers = <>
             Title.Caption = #1043#1088#1091#1087#1087#1072
+            Title.TitleButton = True
             Width = 93
           end
           item
@@ -175,70 +189,63 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'MG_NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-            Width = 154
+            Title.TitleButton = True
+            Width = 170
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
       end
-      object ToolBar3: TToolBar
+      object Panel7: TPanel
         Left = 0
         Top = 0
         Width = 281
-        Height = 23
-        Caption = 'ToolBar1'
-        Images = A4MainForm.ICONS_ACTIVE
+        Height = 27
+        Align = alTop
+        BevelOuter = bvNone
         TabOrder = 0
-        object ToolButton10: TToolButton
-          Left = 0
-          Top = 0
-          Width = 5
-          Caption = 'ToolButton4'
-          ImageIndex = 3
-          Style = tbsSeparator
-        end
-        object ToolButton12: TToolButton
+        DesignSize = (
+          281
+          27)
+        object btnAddGroup: TSpeedButton
           Left = 5
-          Top = 0
+          Top = 2
+          Width = 22
+          Height = 22
           Action = actAddGroup
+          Flat = True
         end
-        object ToolButton13: TToolButton
-          Left = 28
-          Top = 0
-          Width = 4
-          Caption = 'ToolButton5'
-          ImageIndex = 3
-          Style = tbsSeparator
-        end
-        object ToolButton16: TToolButton
-          Left = 32
-          Top = 0
+        object btnActEditGroup: TSpeedButton
+          Left = 31
+          Top = 2
+          Width = 22
+          Height = 22
           Action = ActEditGroup
+          Flat = True
         end
-        object ToolButton18: TToolButton
-          Left = 55
-          Top = 0
-          Width = 4
-          Caption = 'ToolButton6'
-          ImageIndex = 4
-          Style = tbsSeparator
-        end
-        object ToolButton20: TToolButton
-          Left = 59
-          Top = 0
+        object btnActDelGroup: TSpeedButton
+          Left = 73
+          Top = 2
+          Width = 22
+          Height = 22
           Action = ActDelGroup
+          Flat = True
         end
-        object btn1: TToolButton
-          Left = 82
-          Top = 0
-          Width = 34
-          Caption = 'btn1'
-          ImageIndex = 27
-          Style = tbsSeparator
-        end
-        object btnQuickFilter: TToolButton
-          Left = 116
-          Top = 0
+        object btnQuickFilter: TSpeedButton
+          Left = 115
+          Top = 2
+          Width = 22
+          Height = 22
           Action = actQuickFilter
+          Flat = True
+        end
+        object btnOpenDocs: TSpeedButton
+          Left = 250
+          Top = 2
+          Width = 22
+          Height = 22
+          Action = actOpenDocs
+          Anchors = [akTop, akRight]
+          Flat = True
         end
       end
     end
@@ -248,7 +255,7 @@ object MaterialsForm: TMaterialsForm
     Top = 222
     Width = 922
     Height = 230
-    ActivePage = tsJournal
+    ActivePage = tsIn
     Align = alBottom
     TabOrder = 1
     OnChange = pgcInOutChange
@@ -263,11 +270,14 @@ object MaterialsForm: TMaterialsForm
         AllowedOperations = []
         DataSource = srcRemain
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
         SortLocal = True
         STFilter.Local = True
@@ -343,13 +353,13 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        object btnactCnPrefixWizard: TBitBtn
+        object btnactCnPrefixWizard: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actShowSN
-          TabOrder = 0
+          Flat = True
         end
       end
     end
@@ -365,14 +375,15 @@ object MaterialsForm: TMaterialsForm
         AllowedOperations = []
         DataSource = srcIncome
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
         SumList.Active = True
@@ -503,19 +514,20 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        object btnShowSN: TBitBtn
+        object btnShowSN: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actShowSN
-          TabOrder = 0
+          Flat = True
         end
-        object btnPrintIncome: TBitBtn
+        object btnPrintIncome: TSpeedButton
           Left = 1
-          Top = 33
+          Top = 31
           Width = 23
           Height = 23
+          Flat = True
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
             2000000000000004000000000000000000000000000000000000FF00FF00FF00
@@ -551,7 +563,6 @@ object MaterialsForm: TMaterialsForm
             FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
             FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
             77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
-          TabOrder = 1
           OnClick = btnPrintIncomeClick
         end
       end
@@ -568,14 +579,15 @@ object MaterialsForm: TMaterialsForm
         AllowedOperations = []
         DataSource = srcMove
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
         SumList.Active = True
@@ -706,19 +718,20 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        object btnShowSN1: TBitBtn
+        object btnShowSN1: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actShowSN
-          TabOrder = 0
+          Flat = True
         end
-        object btnPrintMove: TBitBtn
+        object btnPrintMove: TSpeedButton
           Left = 1
-          Top = 33
+          Top = 31
           Width = 23
           Height = 23
+          Flat = True
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
             2000000000000004000000000000000000000000000000000000FF00FF00FF00
@@ -754,7 +767,6 @@ object MaterialsForm: TMaterialsForm
             FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
             FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
             77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
-          TabOrder = 1
           OnClick = btnPrintIncomeClick
         end
       end
@@ -771,14 +783,15 @@ object MaterialsForm: TMaterialsForm
         AllowedOperations = []
         DataSource = srcInvent
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
         SumList.Active = True
@@ -920,19 +933,20 @@ object MaterialsForm: TMaterialsForm
         BevelOuter = bvNone
         TabOrder = 1
         Visible = False
-        object btnShowSN2: TBitBtn
+        object btnShowSN2: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actShowSN
-          TabOrder = 0
+          Flat = True
         end
-        object btnPrintInvent: TBitBtn
+        object btnPrintInvent: TSpeedButton
           Left = 1
-          Top = 33
+          Top = 31
           Width = 23
           Height = 23
+          Flat = True
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
             2000000000000004000000000000000000000000000000000000FF00FF00FF00
@@ -968,7 +982,6 @@ object MaterialsForm: TMaterialsForm
             FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
             FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
             77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
-          TabOrder = 1
           OnClick = btnPrintIncomeClick
         end
       end
@@ -985,14 +998,15 @@ object MaterialsForm: TMaterialsForm
         AllowedOperations = []
         DataSource = srcOut
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
         SumList.Active = True
@@ -1127,19 +1141,20 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        object btnShowSN3: TBitBtn
+        object btnShowSN3: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actShowSN
-          TabOrder = 0
+          Flat = True
         end
-        object btnPrintOut: TBitBtn
+        object btnPrintOut: TSpeedButton
           Left = 1
-          Top = 33
+          Top = 31
           Width = 23
           Height = 23
+          Flat = True
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
             2000000000000004000000000000000000000000000000000000FF00FF00FF00
@@ -1175,7 +1190,6 @@ object MaterialsForm: TMaterialsForm
             FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
             FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
             77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
-          TabOrder = 1
           OnClick = btnPrintIncomeClick
         end
       end
@@ -1192,14 +1206,15 @@ object MaterialsForm: TMaterialsForm
         AllowedOperations = []
         DataSource = srcJournal
         DynProps = <>
+        EditActions = [geaCopyEh, geaSelectAllEh]
         Flat = True
         FooterRowCount = 1
         FooterParams.Color = clWindow
         GridLineParams.VertEmptySpaceStyle = dessNonEh
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+        PopupMenu = pmPopUp
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         SortLocal = True
         STFilter.Local = True
         SumList.Active = True
@@ -1249,12 +1264,16 @@ object MaterialsForm: TMaterialsForm
               '0'
               '1'
               '2'
-              '3')
+              '3'
+              '4'
+              '5')
             PickList.Strings = (
-              #1053#1072#1095#1080#1089#1083#1103#1090#1100
-              #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
+              #1055#1088#1086#1076#1072#1078#1072
+              #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080' ('#1072#1088#1077#1085#1076#1072' '#1073#1077#1079' '#1086#1087#1083#1072#1090#1099')'
               #1056#1072#1089#1089#1088#1086#1095#1082#1072
-              #1040#1088#1077#1085#1076#1072)
+              #1040#1088#1077#1085#1076#1072
+              #1042#1086#1079#1074#1088#1072#1090' '#1073#1077#1089#1087#1083#1072#1090#1085#1086
+              #1042#1099#1082#1091#1087'('#1042#1086#1079#1074#1088#1072#1090' '#1079#1072' '#1076#1077#1085#1100#1075#1080')')
             Title.Caption = #1053#1072#1095#1080#1089#1083'.'
             Title.Hint = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1085#1077' '#1085#1072#1095#1080#1089#1083#1103#1083#1072#1089#1100' '#1072#1073#1086#1085#1077#1085#1090#1091
             Title.TitleButton = True
@@ -1389,13 +1408,13 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 0
-        object btnPrintHistory: TBitBtn
+        object btnPrintHistory: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actPrintHistory
-          TabOrder = 0
+          Flat = True
         end
       end
     end
@@ -1452,6 +1471,7 @@ object MaterialsForm: TMaterialsForm
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
         ParentCtl3D = False
         ParentShowHint = False
+        PopupMenu = pmPopUp
         RowDetailPanel.Height = 200
         RowSizingAllowed = True
         ShowHint = True
@@ -1532,13 +1552,13 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        object btnItog: TBitBtn
+        object btnItog: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 23
           Action = actShowSN
-          TabOrder = 0
+          Flat = True
         end
       end
     end
@@ -1565,7 +1585,6 @@ object MaterialsForm: TMaterialsForm
         ParentShowHint = False
         PopupMenu = pmSerial
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         ShowHint = True
         EditButtonsShowOptions = [sebShowOnlyForCurCellEh]
         SortLocal = True
@@ -1731,11 +1750,12 @@ object MaterialsForm: TMaterialsForm
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
-        object BitBtn2: TBitBtn
+        object BitBtn2: TSpeedButton
           Left = 1
           Top = 4
           Width = 23
           Height = 24
+          Flat = True
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
             2000000000000004000000000000000000000000000000000000FF00FF00FF00
@@ -1771,7 +1791,6 @@ object MaterialsForm: TMaterialsForm
             FFFFFEFEFEFF777777FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
             FF00FF00FF00FF00FF00939393FF777777FF777777FF777777FF777777FF7777
             77FF777777FF959595FFFF00FF00FF00FF00FF00FF00FF00FF00}
-          TabOrder = 0
           OnClick = btnPrintIncomeClick
         end
       end
@@ -1854,7 +1873,7 @@ object MaterialsForm: TMaterialsForm
         end
         object btnSavePhoto1: TSpeedButton
           Left = 1
-          Top = 38
+          Top = 29
           Width = 22
           Height = 22
           Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1072#1081#1083
@@ -1890,7 +1909,7 @@ object MaterialsForm: TMaterialsForm
         end
         object btnViewPhoto: TSpeedButton
           Left = 1
-          Top = 78
+          Top = 71
           Width = 22
           Height = 22
           Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1092#1072#1081#1083
@@ -1918,6 +1937,7 @@ object MaterialsForm: TMaterialsForm
         DrawGraphicData = True
         DynProps = <>
         Flat = True
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
         TabOrder = 1
         OnDblClick = dbgPhotosDblClick
@@ -1957,49 +1977,33 @@ object MaterialsForm: TMaterialsForm
   end
   object actions: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 142
-    Top = 64
+    Left = 174
+    Top = 80
     object actNew: TAction
-      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1083#1072#1090#1077#1078
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
       ImageIndex = 2
       ShortCut = 16461
       OnExecute = actNewExecute
     end
     object actDelete: TAction
-      Caption = 'actPaymentDelete'
+      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
       ImageIndex = 3
       OnExecute = actDeleteExecute
     end
     object actEdit: TAction
-      Caption = 'actPaymentEdit'
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
       ImageIndex = 4
       OnExecute = actEditExecute
     end
     object actQuickFilter: TAction
-      Caption = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
+      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
       ImageIndex = 40
       OnExecute = actQuickFilterExecute
-    end
-    object actInNew: TAction
-      Caption = 'actInNew'
-      Hint = #1042#1085#1077#1089#1090#1080' '#1082#1086#1083'-'#1074#1086
-      ImageIndex = 2
-      ShortCut = 16464
-    end
-    object ActInDelete: TAction
-      Caption = 'ActInDelete'
-      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1087#1088#1080#1093#1086#1076
-      ImageIndex = 3
-    end
-    object ActAllMaterials: TAction
-      Caption = #1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099
-      Hint = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099'. '#1073#1077#1079' '#1091#1095#1077#1090#1072' '#1075#1088#1091#1087#1087'.'
-      OnExecute = ActAllMaterialsExecute
     end
     object actAddGroup: TAction
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1075#1088#1091#1087#1087#1091
       ImageIndex = 2
-      ShortCut = 16455
+      ShortCut = 49223
       OnExecute = actAddGroupExecute
     end
     object ActEditGroup: TAction
@@ -2010,41 +2014,15 @@ object MaterialsForm: TMaterialsForm
     object ActDelGroup: TAction
       Hint = #1059#1076#1072#1083#1080#1090#1100' '#1075#1088#1091#1087#1087#1091
       ImageIndex = 3
-      Visible = False
       OnExecute = ActDelGroupExecute
     end
-    object ActPostGroup: TAction
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1075#1088#1091#1087#1087#1091' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
-      ImageIndex = 25
-      Visible = False
-      OnExecute = ActPostGroupExecute
-    end
-    object actCancelGroup: TAction
-      Caption = #1054#1090#1084#1077#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
-      Hint = #1054#1090#1084#1077#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' '#1075#1088#1091#1087#1087#1099
-      ImageIndex = 26
-      OnExecute = actCancelGroupExecute
-    end
-    object actOutMaterials: TAction
-      Caption = #1057#1087#1080#1089#1072#1085#1080#1077
-      ImageIndex = 2
-    end
-    object actMatOutEdit: TAction
-      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
-      ImageIndex = 4
-    end
-    object actInEdit: TAction
-      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
-      ImageIndex = 4
-    end
     object actRemainRecalc: TAction
-      Caption = 'actRemainRecalc'
+      Hint = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080
       ImageIndex = 39
       OnExecute = actRemainRecalcExecute
     end
     object actOpenMatDoc: TAction
-      Caption = 'actOpenMatDoc'
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090
       OnExecute = actOpenMatDocExecute
     end
     object actPrintHistory: TAction
@@ -2069,6 +2047,16 @@ object MaterialsForm: TMaterialsForm
     object actPrintGrid: TAction
       Caption = #1055#1077#1095#1072#1090#1100' '#1090#1072#1073#1083#1080#1094#1099
       OnExecute = actPrintGridExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
+    end
+    object actOpenDocs: TAction
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1060#1086#1088#1084#1091' '#1044#1074#1080#1078#1077#1085#1080#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
+      ImageIndex = 28
+      OnExecute = actOpenDocsExecute
     end
   end
   object dsRemain: TpFIBDataSet
@@ -2118,7 +2106,6 @@ object MaterialsForm: TMaterialsForm
   object srcRemain: TDataSource
     AutoEdit = False
     DataSet = dsRemain
-    OnDataChange = srcRemainDataChange
     Left = 58
     Top = 334
   end
@@ -2166,23 +2153,46 @@ object MaterialsForm: TMaterialsForm
       '  MG_ID = :OLD_MG_ID'
       '    ')
     SelectSQL.Strings = (
-      'select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE, SOLD, RENT, LOAN'
-      'from MATERIALS_GROUP'
+      'select'
+      '    MG_ID'
+      '  , MG_NAME'
+      '  , PARENT_ID'
+      '  , MG_NOTICE'
+      '  , SOLD'
+      '  , RENT'
+      '  , LOAN'
+      '  , PATH'
+      '  from MATERIALS_GROUP'
       'union'
-      
-        'select null as MG_ID, '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME, null as PARENT_ID, ' +
-        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE, null SOLD, null RENT, null ' +
-        'LOAN'
-      'from RDB$DATABASE'
-      
-        'where (exists(select m.M_Id from materials m where m.Mg_Id is nu' +
-        'll and m.DELETED = 0))'
+      'select'
+      '    -999 as MG_ID'
+      '  , '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME'
+      '  , null as PARENT_ID'
+      '  , '#39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
+      '  , null SOLD'
+      '  , null RENT'
+      '  , null LOAN'
+      '  , null PATH'
+      '  from RDB$DATABASE'
+      '  where (exists(select'
+      '                    m.M_Id'
+      '                  from materials m'
+      '                  where m.Mg_Id is null'
+      '                        and m.DELETED = 0))'
       'union'
-      
-        'select -1 as MG_ID, '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME, null as PARENT_ID' +
-        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE, null SOLD, null RENT, null LOAN'
-      'from RDB$DATABASE'
-      'order by 2, 1')
+      'select'
+      '    -1 as MG_ID'
+      '  , '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME'
+      '  , null as PARENT_ID'
+      '  , '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
+      '  , null SOLD'
+      '  , null RENT'
+      '  , null LOAN'
+      '  , null PATH'
+      '  from RDB$DATABASE'
+      '  order by 2, 1'
+      ''
+      '   ')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'
     AutoUpdateOptions.KeyFields = 'MG_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
@@ -2196,7 +2206,8 @@ object MaterialsForm: TMaterialsForm
   end
   object srcMatGropups: TDataSource
     AutoEdit = False
-    DataSet = dsMatGropups
+    DataSet = mtGroups
+    OnDataChange = srcMatGropupsDataChange
     Left = 49
     Top = 156
   end
@@ -2217,7 +2228,8 @@ object MaterialsForm: TMaterialsForm
       '    M_TYPE = :M_TYPE,'
       '    SOLD = :SOLD,'
       '    RENT = :RENT, '
-      '    LOAN = :LOAN '
+      '    LOAN = :LOAN,'
+      '    PCE = :PCE '
       'where (M_ID = :M_ID)')
     DeleteSQL.Strings = (
       'UPDATE Materials SET DELETED = 1 WHERE (M_ID = :M_ID)')
@@ -2225,11 +2237,11 @@ object MaterialsForm: TMaterialsForm
       
         'insert into MATERIALS (M_ID, NAME, DIMENSION, IS_UNIT, DESCRIPTI' +
         'ON, MG_ID, DELETED, M_NUMBER, COST, BEST_COST, BEST_SHIPPER_ID, ' +
-        'IS_DIGIT, IS_NET, M_TYPE, SOLD, RENT, LOAN)'
+        'IS_DIGIT, IS_NET, M_TYPE, SOLD, RENT, LOAN, PCE)'
       
         'values (:M_ID, :NAME, :DIMENSION, :IS_UNIT, :DESCRIPTION, :GR_ID' +
         ', 0, :M_NUMBER, :COST, :BEST_COST, :BEST_SHIPPER_ID, :IS_DIGIT, ' +
-        ':IS_NET, :M_TYPE, :SOLD, :RENT, :LOAN)'
+        ':IS_NET, :M_TYPE, :SOLD, :RENT, :LOAN, :PCE)'
       '-- '#1042#1072#1078#1085#1086' MG_ID - GR_ID!!!')
     SelectSQL.Strings = (
       '-- Select SQL'
@@ -2242,7 +2254,8 @@ object MaterialsForm: TMaterialsForm
       '  ,GR_ID   INTEGER'
       '  ,NAME VARCHAR(255)'
       '  ,DIMENSION VARCHAR(10)'
-      '  ,COST NUMERIC(15,3)  '
+      '  ,COST NUMERIC(15,3)'
+      '  ,PCE NUMERIC(15,3)      '
       '  ,M_NUMBER  VARCHAR(20)'
       '  ,BEST_SHIPPER_ID   INTEGER '
       '  ,BEST_SHIPPER VARCHAR(255)'
@@ -2274,7 +2287,7 @@ object MaterialsForm: TMaterialsForm
         'COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,'
       
         '         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME MT_NAME' +
-        ', RENT, LOAN '
+        ', RENT, LOAN, m.PCE '
       '  from MATERIALS m'
       
         '    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and' +
@@ -2295,7 +2308,7 @@ object MaterialsForm: TMaterialsForm
         'IT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,'
       
         '       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :RENT, :' +
-        'LOAN'
+        'LOAN, :PCE'
       'DO BEGIN'
       '          QNTTOTAL = 0;'
       '    CSTTOTAL = 0;'
@@ -2413,7 +2426,7 @@ object MaterialsForm: TMaterialsForm
       '  , rm.Notice NOTICE'
       '  , r.Rq_Customer Customer_Id'
       '  , r.Node_Id  '
-      '  , 0 PROP'
+      '  , coalesce(PROP, rm.CALC, 4) as PROP'
       '  , rm.Serial'
       '  , r.House_Id'
       '  , coalesce(c.flat_no, n.place) place'
@@ -2448,7 +2461,6 @@ object MaterialsForm: TMaterialsForm
   object srcJournal: TDataSource
     AutoEdit = False
     DataSet = dsJournal
-    OnDataChange = srcRemainDataChange
     Left = 372
     Top = 334
   end
@@ -2561,13 +2573,6 @@ object MaterialsForm: TMaterialsForm
     DataSet = dsItogo
     Left = 500
     Top = 331
-  end
-  object pmRecalcAll: TPopupMenu
-    Left = 580
-    Top = 40
-    object N1: TMenuItem
-      Action = actRecalcAll
-    end
   end
   object dsMove: TpFIBDataSet
     SelectSQL.Strings = (
@@ -3026,9 +3031,73 @@ object MaterialsForm: TMaterialsForm
     object miMi: TMenuItem
       Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099
       GroupIndex = 2
+      object miQuickFilter: TMenuItem
+        Action = actQuickFilter
+        Caption = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
+      end
       object miMiFrozen: TMenuItem
         Caption = #1047#1072#1082#1088#1077#1087#1080#1090#1100' '#1089#1090#1086#1083#1073#1094#1099' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
         OnClick = miMiFrozenClick
+      end
+      object miN3: TMenuItem
+        Caption = '-'
+      end
+      object miN4: TMenuItem
+        Caption = #1043#1088#1091#1087#1087#1099
+        object miAddGroup: TMenuItem
+          Action = actAddGroup
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1075#1088#1091#1087#1087#1091
+          ShortCut = 16455
+        end
+        object miActEditGroup: TMenuItem
+          Action = ActEditGroup
+          Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1075#1088#1091#1087#1087#1091
+        end
+        object miN8: TMenuItem
+          Caption = '-'
+        end
+        object miActDelGroup: TMenuItem
+          Action = ActDelGroup
+          Caption = #1059#1076#1072#1083#1080#1090#1100' '#1075#1088#1091#1087#1087#1091
+        end
+      end
+      object miME: TMenuItem
+        Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099'/'#1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+        object miNew: TMenuItem
+          Action = actNew
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+        end
+        object miEdit: TMenuItem
+          Action = actEdit
+          Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+        end
+        object miN5: TMenuItem
+          Caption = '-'
+        end
+        object miDelete: TMenuItem
+          Action = actDelete
+          Caption = #1059#1076#1072#1083#1080#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+        end
+        object miN9: TMenuItem
+          Caption = '-'
+        end
+        object miRemainRecalc: TMenuItem
+          Action = actRemainRecalc
+          Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080
+        end
+      end
+      object miN7: TMenuItem
+        Caption = '-'
+      end
+      object miOpenDocs1: TMenuItem
+        Action = actOpenDocs
+        Caption = #1054#1090#1082#1088#1099#1090#1100' '#1060#1086#1088#1084#1091' '#1044#1074#1080#1078#1077#1085#1080#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
+      end
+      object miN6: TMenuItem
+        Caption = '-'
+      end
+      object miRecalcAll: TMenuItem
+        Action = actRecalcAll
       end
     end
   end
@@ -3111,5 +3180,177 @@ object MaterialsForm: TMaterialsForm
   object dlgSave: TSaveDialog
     Left = 860
     Top = 336
+  end
+  object mtGroups: TMemTableEh
+    Params = <>
+    DataDriver = drvFibGroups
+    TreeList.Active = True
+    TreeList.KeyFieldName = 'MG_ID'
+    TreeList.RefParentFieldName = 'Parent_ID'
+    TreeList.DefaultNodeExpanded = True
+    TreeList.FilterNodeIfParentVisible = False
+    Left = 104
+    Top = 112
+  end
+  object drvFibGroups: TpFIBDataDriverEh
+    Database = dmMain.dbTV
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select'
+      '    MG_ID'
+      '  , MG_NAME'
+      '  , PARENT_ID'
+      '  , MG_NOTICE'
+      '  , SOLD'
+      '  , RENT'
+      '  , LOAN'
+      '  , iif(coalesce(PATH, '#39#39') = '#39#39', MG_NAME, PATH) PATH'
+      '  from MATERIALS_GROUP g'
+      '  where coalesce(g.Deleted, 0) = 0'
+      'union'
+      'select'
+      '    -999 as MG_ID'
+      '  , '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME'
+      '  , null as PARENT_ID'
+      '  , '#39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
+      '  , null SOLD'
+      '  , null RENT'
+      '  , null LOAN'
+      '  , null PATH'
+      '  from RDB$DATABASE'
+      '  where (exists(select'
+      '                    m.M_Id'
+      '                  from materials m'
+      '                  where m.Mg_Id is null'
+      '                        and m.DELETED = 0))'
+      'union'
+      'select'
+      '    -1 as MG_ID'
+      '  , '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME'
+      '  , null as PARENT_ID'
+      '  , '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
+      '  , null SOLD'
+      '  , null RENT'
+      '  , null LOAN'
+      '  , null PATH'
+      '  from RDB$DATABASE'
+      '  order by 2, 1')
+    UpdateCommand.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'MG_NAME'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PARENT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'MG_NOTICE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SOLD'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'RENT'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'LOAN'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'OLD_MG_ID'
+        ParamType = ptUnknown
+      end>
+    UpdateCommand.CommandText.Strings = (
+      'UPDATE MATERIALS_GROUP'
+      'SET '
+      '    MG_NAME = :MG_NAME,'
+      '    PARENT_ID = :PARENT_ID,'
+      '    MG_NOTICE = :MG_NOTICE,'
+      '    SOLD = :SOLD,'
+      '    RENT = :RENT,'
+      '    LOAN = :LOAN'
+      'WHERE'
+      '    MG_ID = :OLD_MG_ID')
+    InsertCommand.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'MG_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'MG_NAME'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PARENT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'MG_NOTICE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SOLD'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'RENT'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'LOAN'
+        ParamType = ptUnknown
+      end>
+    InsertCommand.CommandText.Strings = (
+      'INSERT INTO MATERIALS_GROUP('
+      '    MG_ID,'
+      '    MG_NAME,'
+      '    PARENT_ID,'
+      '    MG_NOTICE,'
+      '    SOLD,'
+      '    RENT,'
+      '    LOAN'
+      ')'
+      'VALUES('
+      '    :MG_ID,'
+      '    :MG_NAME,'
+      '    :PARENT_ID,'
+      '    :MG_NOTICE,'
+      '    :SOLD,'
+      '    :RENT,'
+      '    :LOAN'
+      ')')
+    DeleteCommand.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'OLD_MG_ID'
+        ParamType = ptUnknown
+      end>
+    DeleteCommand.CommandText.Strings = (
+      'UPDATE MATERIALS_GROUP'
+      'SET '
+      '    DELETED = 1'
+      'WHERE'
+      '    MG_ID = :OLD_MG_ID')
+    GetrecCommand.Params = <>
+    Left = 84
+    Top = 59
   end
 end

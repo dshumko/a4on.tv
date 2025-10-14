@@ -5,10 +5,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  MemTableDataEh, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableEh, OkCancel_frame, FIBDatabase,
+  MemTableDataEh, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableEh, OkCancel_frame,
+  FIBDatabase,
   pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
@@ -24,15 +25,15 @@ type
     trRead: TpFIBTransaction;
   private
     { Private declarations }
-    procedure SetGanres(const value : string);
-    function GetGanres : String;
+    procedure SetGanres(const value: string);
+    function GetGanres: String;
   public
     { Public declarations }
-    property Selected:string read GetGanres write SetGanres ;
+    property Selected: string read GetGanres write SetGanres;
     procedure Init;
   end;
 
-function SelectDVBGanres(const ganres : string):string;
+function SelectDVBGanres(const ganres: string): string;
 
 implementation
 
@@ -40,24 +41,26 @@ uses
   DM, AtrStrUtils;
 
 {$R *.dfm}
-function SelectDVBGanres(const ganres : string):string;
+
+function SelectDVBGanres(const ganres: string): string;
 begin
   Result := ganres;
   with TDVBGanresForm.Create(Application) do
-  try
-    Init;
-    Selected := ganres;
-    if ShowModal = mrOk
-    then Result := Selected;
-  finally
-    free
-  end;
+    try
+      Init;
+      Selected := ganres;
+      if ShowModal = mrOk then
+        Result := Selected;
+    finally
+      free
+    end;
 end;
 
-procedure TDVBGanresForm.init;
+procedure TDVBGanresForm.Init;
 begin
   dsGenres.Open;
-  while not dsGenres.Eof do begin
+  while not dsGenres.Eof do
+  begin
     dsmGanres.Append;
     dsmGanres['CODE'] := IntToStr(dsGenres['GENRE_ID']);
     dsmGanres['NAME'] := dsGenres['NAME'];
@@ -69,15 +72,16 @@ begin
   dsmGanres.First;
 end;
 
-procedure TDVBGanresForm.SetGanres(const value : string);
+procedure TDVBGanresForm.SetGanres(const value: string);
 var
-  i : Integer;
-  val : TStringArray;
+  i: Integer;
+  val: TStringDynArray;
 begin
-  val := Explode(',',value);
-  for I := 0 to Length(val) - 1 do begin
-    if dsmGanres.Locate('CODE', val[i], [])
-    then begin
+  val := Explode(',', value);
+  for i := 0 to Length(val) - 1 do
+  begin
+    if dsmGanres.Locate('CODE', val[i], []) then
+    begin
       dsmGanres.Edit;
       dsmGanres['SELECTED'] := True;
       dsmGanres.Post;
@@ -85,21 +89,24 @@ begin
   end;
 end;
 
-function TDVBGanresForm.GetGanres : String;
+function TDVBGanresForm.GetGanres: String;
 begin
   Result := '';
 
-  if dsmGanres.State = dsEdit then dsmGanres.Post;
+  if dsmGanres.State = dsEdit then
+    dsmGanres.Post;
   DBGridEh.SearchPanel.CancelSearchFilter;
 
   dsmGanres.DisableControls;
   dsmGanres.First;
-  while not dsmGanres.Eof do begin
+  while not dsmGanres.Eof do
+  begin
     if dsmGanres['SELECTED'] then
-      Result := Result + dsmGanres['CODE']+',';
+      Result := Result + dsmGanres['CODE'] + ',';
     dsmGanres.Next;
   end;
-  if Result <> '' then Result := Copy(Result,1,Length(Result)-1);
+  if Result <> '' then
+    Result := Copy(Result, 1, Length(Result) - 1);
 
 end;
 

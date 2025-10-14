@@ -8,7 +8,7 @@ inherited EquipmentForm: TEquipmentForm
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
-    Top = 57
+    Top = 25
     Width = 979
   end
   object splMain: TSplitter [1]
@@ -20,9 +20,9 @@ inherited EquipmentForm: TEquipmentForm
     Align = alBottom
   end
   inherited dbGrid: TDBGridEh
-    Top = 61
+    Top = 29
     Width = 979
-    Height = 332
+    Height = 364
     AllowedOperations = []
     FooterRowCount = 1
     IndicatorTitle.ShowDropDownSign = True
@@ -30,6 +30,7 @@ inherited EquipmentForm: TEquipmentForm
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     SortLocal = False
     SumList.Active = True
+    OnDataGroupGetRowText = dbGridDataGroupGetRowText
     OnGetCellParams = dbGridGetCellParams
     OnSortMarkingChanged = dbGridSortMarkingChanged
     Columns = <
@@ -46,16 +47,8 @@ inherited EquipmentForm: TEquipmentForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'EQ_TYPE'
+        FieldName = 'EQ_TYPE_STR'
         Footers = <>
-        KeyList.Strings = (
-          '1'
-          '2'
-          '3')
-        PickList.Strings = (
-          #1057
-          #1050
-          #1055)
         Title.Caption = #1058#1080#1087
         Title.TitleButton = True
         Width = 24
@@ -71,15 +64,6 @@ inherited EquipmentForm: TEquipmentForm
         Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 167
-      end
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'SYSNAME'
-        Footers = <>
-        Title.Caption = #1057#1083'. '#1080#1084#1103
-        Title.TitleButton = True
       end
       item
         AutoFitColWidth = False
@@ -255,7 +239,7 @@ inherited EquipmentForm: TEquipmentForm
         EditButtons = <>
         FieldName = 'NODE_NAME'
         Footers = <>
-        Title.Caption = #1059#1079#1077#1083
+        Title.Caption = #1059#1079#1077#1083'|'#1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
         Title.TitleButton = True
       end
       item
@@ -264,13 +248,25 @@ inherited EquipmentForm: TEquipmentForm
         EditButtons = <>
         FieldName = 'NODE_TYPE'
         Footers = <>
-        Title.Caption = #1058#1080#1087' '#1091#1079#1083#1072
+        Title.Caption = #1059#1079#1077#1083'|'#1058#1080#1087
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SYSNAME'
+        Footers = <>
+        Title.Caption = #1057#1083'. '#1080#1084#1103
         Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
     Width = 979
     inherited ToolButton5: TToolButton
+      Visible = False
+    end
+    inherited btnDelete: TToolButton
       Visible = False
     end
     inherited ToolButton9: TToolButton
@@ -287,14 +283,14 @@ inherited EquipmentForm: TEquipmentForm
       Visible = False
     end
     object btnActSetFilter: TToolButton
-      Left = 178
+      Left = 186
       Top = 0
       Action = ActSetFilter
       DropdownMenu = pmFilter
       Style = tbsDropDown
     end
     object btn2: TToolButton
-      Left = 216
+      Left = 224
       Top = 0
       Width = 8
       Caption = 'btn2'
@@ -302,101 +298,58 @@ inherited EquipmentForm: TEquipmentForm
       Style = tbsSeparator
     end
     object btnRefresh: TToolButton
-      Left = 224
+      Left = 232
       Top = 0
       Caption = 'btnRefresh'
       ImageIndex = 27
       OnClick = btnRefreshClick
     end
     object btn1: TToolButton
-      Left = 247
+      Left = 255
       Top = 0
-      Width = 24
+      Width = 31
       Caption = 'btn1'
-      ImageIndex = 41
+      ImageIndex = 28
       Style = tbsSeparator
-      Visible = False
     end
-    object pnlChkTree: TPanel
-      Left = 271
+    object btnTree: TToolButton
+      Left = 286
       Top = 0
-      Width = 172
-      Height = 22
-      BevelOuter = bvNone
-      TabOrder = 0
-      object chkTREE: TCheckBox
-        Left = 10
-        Top = 0
-        Width = 162
-        Height = 22
-        Action = actTree
-        Align = alClient
-        TabOrder = 0
-      end
-      object pnl1: TPanel
-        Left = 0
-        Top = 0
-        Width = 10
-        Height = 22
-        ParentCustomHint = False
-        Align = alLeft
-        BevelOuter = bvNone
-        BiDiMode = bdLeftToRight
-        Ctl3D = True
-        DoubleBuffered = False
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentBiDiMode = False
-        ParentBackground = False
-        ParentCtl3D = False
-        ParentDoubleBuffered = False
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = False
-        TabOrder = 1
-      end
+      Action = actTree
     end
-    object chkGroup: TCheckBox
-      Left = 443
+    object btnGroup: TToolButton
+      Left = 309
       Top = 0
-      Width = 224
-      Height = 22
-      Align = alClient
-      Alignment = taLeftJustify
-      Caption = '('#1053#1077' '#1075#1086#1090#1086#1074#1086')   '#1042#1082#1083#1102#1095#1080#1090#1100' '#1075#1088#1091#1087#1087#1080#1088#1086#1074#1082#1091
-      TabOrder = 1
-      Visible = False
-      OnClick = chkGroupClick
+      Action = actGroup
     end
     object btn3: TToolButton
-      Left = 667
+      Left = 332
       Top = 0
-      Width = 18
+      Width = 8
       Caption = 'btn3'
-      ImageIndex = 42
+      ImageIndex = 25
       Style = tbsSeparator
     end
     object btnLayout: TToolButton
-      Left = 685
+      Left = 340
       Top = 0
       Action = actLayout
     end
   end
   inherited pnlEdit: TPanel
+    Top = 29
     Width = 979
-    Height = 32
+    Height = 0
     inherited btnSaveLink: TBitBtn
       Left = 108
-      Top = 103
+      Top = 71
       Width = 300
       TabOrder = 1
     end
     inherited btnCancelLink: TBitBtn
-      Left = 391
-      Top = -1
+      Left = 5
+      Top = -20
+      Height = 14
       TabOrder = 0
     end
   end
@@ -528,6 +481,7 @@ inherited EquipmentForm: TEquipmentForm
       ImageIndex = 4
     end
     object actLayout: TAction
+      Caption = #1056#1072#1089#1087#1086#1083#1086#1078#1077#1085#1080#1077' '#1087#1072#1085#1077#1083#1077#1081
       Hint = #1055#1077#1088#1077#1082#1083#1102#1095#1080#1090#1100' '#1088#1077#1078#1080#1084' '#1092#1086#1088#1084#1099'. '#1043#1086#1088#1080#1079#1086#1085#1090#1072#1083#1100#1085#1086'/'#1042#1077#1088#1090#1080#1082#1072#1083#1100#1085#1086
       ImageIndex = 93
       OnExecute = actLayoutExecute
@@ -539,11 +493,10 @@ inherited EquipmentForm: TEquipmentForm
       ShortCut = 114
       OnExecute = ActSetFilterExecute
     end
-    object actEnableFilter: TAction
-      Caption = #1074#1082#1083'/'#1074#1099#1082#1083' '#1092#1080#1083#1100#1090#1088
-      Hint = #1042#1082#1083#1102#1095#1080#1090#1100'/'#1074#1099#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088
-      ShortCut = 16498
-      OnExecute = actEnableFilterExecute
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
     object actSetFilterN: TAction
       Caption = #1053#1086#1074#1099#1081' '#1092#1080#1083#1100#1090#1088
@@ -558,7 +511,15 @@ inherited EquipmentForm: TEquipmentForm
     end
     object actTree: TAction
       Caption = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072
+      Hint = #1054#1090#1086#1073#1088#1072#1079#1080#1090#1100' '#1074' '#1074#1080#1076#1077' '#1076#1077#1088#1077#1074#1072
+      ImageIndex = 28
       OnExecute = actTreeExecute
+    end
+    object actGroup: TAction
+      Caption = #1042#1082#1083#1102#1095#1080#1090#1100' '#1075#1088#1091#1087#1087#1080#1088#1086#1074#1082#1091
+      Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1075#1088#1091#1087#1087#1080#1088#1086#1074#1082#1091
+      ImageIndex = 105
+      OnExecute = actGroupExecute
     end
   end
   inherited pmPopUp: TPopupMenu
@@ -620,35 +581,7 @@ inherited EquipmentForm: TEquipmentForm
     RefreshSQL.Strings = (
       'select'
       '    E.*'
-      '  , h.house_no'
-      '  , s.street_name || '#39' '#39' || s.street_short as street'
-      '  , o.o_name as eqgroup'
-      '  , p.name as parent_name'
-      '  , o.O_DIMENSION as COLOR'
-      '  , n.NAME NODE_NAME'
-      '  , nt.o_name as node_type '
-      '  , case(char_length(e.Parent_Port))'
-      '      when 1 then '#39'0'#39' || e.Parent_Port'
-      '      when 3 then '#39'0'#39' || e.Parent_Port'
-      '      else e.Parent_Port'
-      '    end Parent_Port_sort  '
-      '  from EQUIPMENT E'
-      '       left outer join house h on (e.house_id = h.house_id)'
-      '       left outer join street s on (s.street_id = h.street_id)'
-      
-        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
-        '_TYPE = 7)'
-      '       left outer join equipment p on (e.parent_id = p.eid)'
-      '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
-      
-        '       left join objects nt on (nt.O_Id = n.Type_Id and o.O_Type' +
-        ' = 38)              '
-      'where'
-      '        E.EID = :OLD_EID'
-      '    ')
-    SelectSQL.Strings = (
-      'select'
-      '    E.*'
+      '  , et.O_Dimension EQ_TYPE_STR'
       '  , h.house_no'
       '  , s.street_name || '#39' '#39' || s.street_short as street'
       '  , o.o_name as eqgroup'
@@ -672,7 +605,43 @@ inherited EquipmentForm: TEquipmentForm
       
         '       left join objects nt on (nt.O_Id = n.Type_Id and nt.O_Typ' +
         'e = 38)    '
-      'WHERE @@filter%1=1@                  '
+      
+        '       left join objects et on (et.O_Id = e.Eq_Type and et.O_Typ' +
+        'e = 73)              '
+      'where'
+      '        E.EID = :OLD_EID'
+      '    ')
+    SelectSQL.Strings = (
+      'select'
+      '    E.*'
+      '  , et.O_Dimension EQ_TYPE_STR'
+      '  , h.house_no'
+      '  , s.street_name || '#39' '#39' || s.street_short as street'
+      '  , o.o_name as eqgroup'
+      '  , p.name as parent_name'
+      '  , o.O_DIMENSION as COLOR'
+      '  , n.NAME NODE_NAME'
+      '  , nt.o_name as node_type '
+      '  , case(char_length(e.Parent_Port))'
+      '      when 1 then '#39'0'#39' || e.Parent_Port'
+      '      when 3 then '#39'0'#39' || e.Parent_Port'
+      '      else e.Parent_Port'
+      '    end Parent_Port_sort  '
+      '  from EQUIPMENT E'
+      '       left outer join house h on (e.house_id = h.house_id)'
+      '       left outer join street s on (s.street_id = h.street_id)'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      '       left outer join equipment p on (e.parent_id = p.eid)'
+      '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
+      
+        '       left join objects nt on (nt.O_Id = n.Type_Id and nt.O_Typ' +
+        'e = 38)    '
+      
+        '       left join objects et on (et.O_Id = e.Eq_Type and et.O_Typ' +
+        'e = 73)'
+      'WHERE @@filter%1=1@'
       'order by NAME')
     AutoUpdateOptions.UpdateTableName = 'EQUIPMENT'
     AutoUpdateOptions.KeyFields = 'EID'
@@ -708,10 +677,19 @@ inherited EquipmentForm: TEquipmentForm
   end
   object dsFilter: TMemTableEh
     Params = <>
+    OnNewRecord = dsFilterNewRecord
     Left = 483
     Top = 163
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
+        object NODE_ID: TMTNumericDataFieldEh
+          FieldName = 'NODE_ID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
         object inversion: TMTBooleanDataFieldEh
           FieldName = 'inversion'
           DefaultExpression = 'False'
@@ -801,6 +779,20 @@ inherited EquipmentForm: TEquipmentForm
           StringDataType = fdtStringEh
           DisplayWidth = 100
         end
+        object NAME: TMTStringDataFieldEh
+          FieldName = 'NAME'
+          StringDataType = fdtStringEh
+          DisplayWidth = 255
+          Size = 255
+        end
+        object NOT_NAME: TMTNumericDataFieldEh
+          FieldName = 'NOT_NAME'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
       end
       object RecordsList: TRecordsListEh
       end
@@ -809,9 +801,6 @@ inherited EquipmentForm: TEquipmentForm
   object pmFilter: TPopupMenu
     Left = 668
     Top = 218
-    object N31: TMenuItem
-      Action = actEnableFilter
-    end
     object miSetFilterN: TMenuItem
       Action = actSetFilterN
     end
@@ -837,6 +826,9 @@ inherited EquipmentForm: TEquipmentForm
       object miTree: TMenuItem
         Action = actTree
       end
+      object miGroup: TMenuItem
+        Action = actGroup
+      end
       object miLayout: TMenuItem
         Action = actLayout
         Caption = #1043#1086#1088#1080#1079#1086#1085#1090#1072#1083#1100#1085#1086'/'#1042#1077#1088#1090#1080#1082#1072#1083#1100#1085#1086
@@ -850,6 +842,12 @@ inherited EquipmentForm: TEquipmentForm
       object miN8: TMenuItem
         Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1077
         OnClick = miN8Click
+      end
+      object miN9: TMenuItem
+        Caption = '-'
+      end
+      object miDelete: TMenuItem
+        Action = actDelete
       end
     end
   end

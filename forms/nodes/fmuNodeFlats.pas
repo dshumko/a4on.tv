@@ -8,15 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
   AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  Vcl.Buttons, Vcl.ExtCtrls;
 
 type
   TapgNodeFlats = class(TA4onPage)
     dsFlats: TpFIBDataSet;
     srcFlats: TDataSource;
     dbgNodeFiles: TDBGridEh;
-    tbAttributes: TToolBar;
-    btnEdit: TToolButton;
     ActList: TActionList;
     actAdd: TAction;
     actEdit: TAction;
@@ -26,8 +25,9 @@ type
     qRead: TpFIBQuery;
     actView: TAction;
     actCustomers: TAction;
-    btn1: TToolButton;
-    btnCustomers: TToolButton;
+    pnlButtons: TPanel;
+    btnAdd1: TSpeedButton;
+    btnFind: TSpeedButton;
     procedure actEditExecute(Sender: TObject);
     procedure dbgNodeFilesDblClick(Sender: TObject);
     procedure actCustomersExecute(Sender: TObject);
@@ -52,13 +52,12 @@ uses
 
 class function TapgNodeFlats.GetPageName: string;
 begin
-  Result := rsClmnFlats;
+  Result := rsClmnHousesAndFlats;
 end;
 
 procedure TapgNodeFlats.InitForm;
 begin
-  // Attributes.Visible := FullAccess;
-  actEdit.Visible := tbAttributes.Visible;
+  actEdit.Visible := (dmMain.AllowedAction(rght_Comm_Nodes));
   dsFlats.DataSource := FDataSource;
 end;
 

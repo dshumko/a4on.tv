@@ -287,8 +287,6 @@ object apgEqpmntPort: TapgEqpmntPort
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     ReadOnly = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     STFilter.Local = True
     SumList.Active = True
     TabOrder = 1

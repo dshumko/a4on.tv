@@ -120,6 +120,44 @@ inherited MatDocsForm: TMatDocsForm
       end
       item
         CellButtons = <>
+        DisplayFormat = ',#0.#####'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'M_QUANT'
+        Footer.DisplayFormat = ',#0.#####'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1050#1086#1083'-'#1074#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = ',#0.#####'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ITOGO'
+        Footer.DisplayFormat = ',#0.#####'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100'|'#1057#1082#1083#1072#1076
+        Title.TitleButton = True
+        Width = 55
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = ',#0.#####'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SHIPPER_ITOGO'
+        Footer.DisplayFormat = ',#0.#####'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100'|'#1055#1086#1089#1090'-'#1082#1072
+        Title.TitleButton = True
+        Width = 57
+      end
+      item
+        CellButtons = <>
         Checkboxes = True
         DynProps = <>
         EditButtons = <>
@@ -213,26 +251,29 @@ inherited MatDocsForm: TMatDocsForm
     inherited btnQuickFilter: TToolButton
       Left = 170
     end
-    object ToolButton19: TToolButton
+    inherited sep444: TToolButton
       Left = 193
+    end
+    object ToolButton19: TToolButton
+      Left = 201
       Top = 0
     end
     object btnFilterNew: TToolButton
-      Left = 216
+      Left = 224
       Top = 0
       Action = actFilterSet
       DropdownMenu = pmFilter
       Style = tbsDropDown
     end
     object btnFilterDate: TToolButton
-      Left = 254
+      Left = 262
       Top = 0
       Action = actFilterDate
       DropdownMenu = pmPeriod
       Style = tbsDropDown
     end
     object btn1: TToolButton
-      Left = 292
+      Left = 300
       Top = 0
       Width = 8
       Caption = 'btn1'
@@ -240,9 +281,22 @@ inherited MatDocsForm: TMatDocsForm
       Style = tbsSeparator
     end
     object btnPrint: TToolButton
-      Left = 300
+      Left = 308
       Top = 0
       Action = actPrint
+    end
+    object btn2: TToolButton
+      Left = 331
+      Top = 0
+      Width = 31
+      Caption = 'btn2'
+      ImageIndex = 6
+      Style = tbsSeparator
+    end
+    object btnOpenMat: TToolButton
+      Left = 362
+      Top = 0
+      Action = actOpenMat
     end
   end
   object pnlDetail: TPanel [4]
@@ -495,6 +549,12 @@ inherited MatDocsForm: TMatDocsForm
       ShortCut = 16498
       OnExecute = actEnableFilterExecute
     end
+    object actOpenMat: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1084#1072#1090#1077#1088#1080#1072#1083#1099
+      Hint = #1054#1090#1082#1088#1099#1090#1100' '#1092#1086#1084#1091' '#1084#1072#1090#1077#1088#1080#1072#1083#1099
+      ImageIndex = 28
+      OnExecute = actOpenMatExecute
+    end
   end
   inherited pmPopUp: TPopupMenu
     Left = 243
@@ -503,7 +563,7 @@ inherited MatDocsForm: TMatDocsForm
   inherited CnErrors: TCnErrorProvider
     Top = 24
   end
-  object dsDocs: TpFIBDataSet [10]
+  object dsDocs: TpFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -528,7 +588,10 @@ inherited MatDocsForm: TMatDocsForm
       '  , Dt.O_CHARFIELD DT_REPORT'
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
       '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
-      '  , iif(b.Bl_Id is null, 0, 1) HAS_SCAN  '
+      '  , iif(b.Bl_Id is null, 0, 1) HAS_SCAN'
+      '  , i.M_Quant'
+      '  , i.Shipper_Itogo'
+      '  , i.Itogo'
       '  from material_docs d'
       
         '       left outer join objects dt on (dt.O_Id = d.Dt_Id and dt.O' +
@@ -543,7 +606,29 @@ inherited MatDocsForm: TMatDocsForm
       '       left outer join worker e on (e.Ibname = d.Edit_By)'
       
         '       left outer join Blob_Tbl b on (b.Owner_Id = d.Doc_Id and ' +
-        'b.Bl_Type = 3)       '
+        'b.Bl_Type = 3)'
+      '       left outer join(select'
+      '                           md.Doc_Id'
+      
+        '                         , sum(iif(u.Serial is null, coalesce(md' +
+        '.M_Quant, 0), 1)) M_Quant'
+      
+        '                         , sum((iif(u.Serial is null, coalesce(m' +
+        'd.M_Quant, 0), 1) * md.Shipper_Cost)) as Shipper_Itogo'
+      
+        '                         , sum((iif(u.Serial is null, coalesce(m' +
+        'd.M_Quant, 0), 1) * m.Cost)) as Itogo'
+      '                         from Materials_In_Doc md'
+      
+        '                              inner join materials m on (m.M_Id ' +
+        '= md.M_Id)'
+      
+        '                              left outer join Materials_In_Doc_U' +
+        'nit u on (u.M_Id = m.M_Id and u.Id = md.Id and u.Doc_Id = md.Doc' +
+        '_Id)'
+      
+        '                         group by md.Doc_Id) i on (i.doc_id = d.' +
+        'doc_id)       '
       '  where (     D.DOC_ID = :OLD_DOC_ID      )'
       '    '
       '  ')
@@ -567,6 +652,9 @@ inherited MatDocsForm: TMatDocsForm
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
       '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
       '  , iif(b.Bl_Id is null, 0, 1) HAS_SCAN'
+      '  , i.M_Quant'
+      '  , i.Shipper_Itogo'
+      '  , i.Itogo'
       '  from material_docs d'
       
         '       left outer join objects dt on (dt.O_Id = d.Dt_Id and dt.O' +
@@ -581,7 +669,29 @@ inherited MatDocsForm: TMatDocsForm
       '       left outer join worker e on (e.Ibname = d.Edit_By)'
       
         '       left outer join Blob_Tbl b on (b.Owner_Id = d.Doc_Id and ' +
-        'b.Bl_Type = 3)       '
+        'b.Bl_Type = 3)'
+      '       left outer join(select'
+      '                           md.Doc_Id'
+      
+        '                         , sum(iif(u.Serial is null, coalesce(md' +
+        '.M_Quant, 0), 1)) M_Quant'
+      
+        '                         , sum((iif(u.Serial is null, coalesce(m' +
+        'd.M_Quant, 0), 1) * md.Shipper_Cost)) as Shipper_Itogo'
+      
+        '                         , sum((iif(u.Serial is null, coalesce(m' +
+        'd.M_Quant, 0), 1) * m.Cost)) as Itogo'
+      '                         from Materials_In_Doc md'
+      
+        '                              inner join materials m on (m.M_Id ' +
+        '= md.M_Id)'
+      
+        '                              left outer join Materials_In_Doc_U' +
+        'nit u on (u.M_Id = m.M_Id and u.Id = md.Id and u.Doc_Id = md.Doc' +
+        '_Id)'
+      
+        '                         group by md.Doc_Id) i on (i.doc_id = d.' +
+        'doc_id)       '
       '  where '
       '  (@@filter%1=1@) '
       '       '
@@ -593,7 +703,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 192
     Top = 208
   end
-  object dsMaterials: TpFIBDataSet [11]
+  object dsMaterials: TpFIBDataSet
     SelectSQL.Strings = (
       '  select'
       '    md.M_Id'
@@ -632,12 +742,12 @@ inherited MatDocsForm: TMatDocsForm
     dcForceMasterRefresh = True
     dcIgnoreMasterClose = True
   end
-  object srcMaterials: TDataSource [12]
+  object srcMaterials: TDataSource
     DataSet = dsMaterials
     Left = 353
     Top = 417
   end
-  object pmBTN: TPopupMenu [13]
+  object pmBTN: TPopupMenu
     Left = 312
     Top = 144
     object N1: TMenuItem
@@ -657,7 +767,7 @@ inherited MatDocsForm: TMatDocsForm
       Caption = #1050#1086#1088#1088#1077#1082#1090#1080#1088#1086#1074#1082#1072
     end
   end
-  object frxReport: TfrxReport [14]
+  object frxReport: TfrxReport
     Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
@@ -675,7 +785,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 312
     Top = 208
   end
-  object trRead: TpFIBTransaction [15]
+  object trRead: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -687,7 +797,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 136
     Top = 190
   end
-  object trWrite: TpFIBTransaction [16]
+  object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -699,7 +809,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 136
     Top = 236
   end
-  object pmPeriod: TPopupMenu [17]
+  object pmPeriod: TPopupMenu
     Left = 393
     Top = 144
     object MenuItem1: TMenuItem
@@ -719,8 +829,9 @@ inherited MatDocsForm: TMatDocsForm
       OnClick = miMonthClick
     end
   end
-  object dsFilter: TMemTableEh [18]
+  object dsFilter: TMemTableEh
     Params = <>
+    OnNewRecord = dsFilterNewRecord
     Left = 27
     Top = 355
     object MemTableData: TMemTableDataEh
@@ -790,12 +901,16 @@ inherited MatDocsForm: TMatDocsForm
           currency = False
           Precision = 15
         end
+        object CLOSED: TMTBooleanDataFieldEh
+          FieldName = 'CLOSED'
+          DisplayWidth = 20
+        end
       end
       object RecordsList: TRecordsListEh
       end
     end
   end
-  object pmFilter: TPopupMenu [19]
+  object pmFilter: TPopupMenu
     Left = 655
     Top = 186
     object N31: TMenuItem
@@ -814,7 +929,7 @@ inherited MatDocsForm: TMatDocsForm
       Action = actQuickFilter
     end
   end
-  object mmMaterialDoc: TMainMenu [20]
+  object mmMaterialDoc: TMainMenu
     Left = 504
     Top = 160
     object L1: TMenuItem

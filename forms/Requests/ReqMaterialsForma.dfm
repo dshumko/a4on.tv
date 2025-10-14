@@ -4,7 +4,7 @@ object ReqMaterialsForm: TReqMaterialsForm
   ActiveControl = dbGrid
   Caption = #1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1076#1083#1103' '#1079#1072#1103#1074#1082#1080
   ClientHeight = 391
-  ClientWidth = 928
+  ClientWidth = 884
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,10 +21,10 @@ object ReqMaterialsForm: TReqMaterialsForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Panel2: TPanel
+  object pnlBottom: TPanel
     Left = 0
     Top = 354
-    Width = 928
+    Width = 884
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
@@ -32,7 +32,7 @@ object ReqMaterialsForm: TReqMaterialsForm
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
-      Width = 928
+      Width = 884
       Height = 37
       Align = alClient
       TabOrder = 0
@@ -45,7 +45,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       end
       inherited bbOk: TBitBtn
         Left = 185
-        Width = 497
+        Width = 453
         Height = 30
         Anchors = [akLeft, akRight, akBottom]
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -53,7 +53,7 @@ object ReqMaterialsForm: TReqMaterialsForm
         OnClick = OkCancelFrame1bbOkClick
       end
       inherited bbCancel: TBitBtn
-        Left = 688
+        Left = 644
         Width = 234
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -61,24 +61,24 @@ object ReqMaterialsForm: TReqMaterialsForm
       end
     end
   end
-  object Panel3: TPanel
+  object pnlGrids: TPanel
     Left = 0
     Top = 0
-    Width = 928
+    Width = 884
     Height = 354
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object Splitter1: TSplitter
-      Left = 185
+      Left = 233
       Top = 0
-      Height = 354
+      Height = 329
     end
     object dbGrid: TDBGridEh
-      Left = 188
+      Left = 236
       Top = 0
-      Width = 740
-      Height = 354
+      Width = 648
+      Height = 329
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = srcDataSource
@@ -90,11 +90,10 @@ object ReqMaterialsForm: TReqMaterialsForm
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghColumnResize, dghColumnMove]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       STFilter.Local = True
       STFilter.Visible = True
       SumList.Active = True
-      TabOrder = 1
+      TabOrder = 0
       TitleParams.MultiTitle = True
       OnExit = dbGridExit
       OnGetCellParams = dbGridGetCellParams
@@ -265,20 +264,46 @@ object ReqMaterialsForm: TReqMaterialsForm
       object RowDetailData: TRowDetailPanelControlEh
       end
     end
+    object tsGroup: TTabSet
+      Left = 0
+      Top = 329
+      Width = 884
+      Height = 25
+      Align = alBottom
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      SoftTop = True
+      Style = tsSoftTabs
+      Tabs.Strings = (
+        #1055#1086' '#1075#1088#1091#1087#1087#1072#1084
+        #1055#1086' '#1089#1082#1083#1072#1076#1072#1084)
+      TabIndex = 0
+      OnChange = tsGroupChange
+    end
     object dbGridGroups: TDBGridEh
       Left = 0
       Top = 0
-      Width = 185
-      Height = 354
+      Width = 233
+      Height = 329
       Align = alLeft
-      AllowedOperations = []
+      AllowedOperations = [alopUpdateEh]
       DataSource = srcMatGropups
       DynProps = <>
       Flat = True
       FooterParams.Color = clWindow
-      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-      TabOrder = 0
+      GridLineParams.VertEmptySpaceStyle = dessNonEh
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+      PopupMenu = pmTreeView
+      SearchPanel.Enabled = True
+      SortLocal = True
+      STFilter.Local = True
+      TabOrder = 2
       TitleParams.MultiTitle = True
+      OnGetCellParams = dbGridGroupsGetCellParams
       Columns = <
         item
           CellButtons = <>
@@ -286,9 +311,9 @@ object ReqMaterialsForm: TReqMaterialsForm
           EditButtons = <>
           FieldName = 'MG_NAME'
           Footers = <>
-          ReadOnly = True
           Title.Caption = #1043#1088#1091#1087#1087#1072
-          Width = 84
+          Title.TitleButton = True
+          Width = 93
         end
         item
           CellButtons = <>
@@ -296,9 +321,9 @@ object ReqMaterialsForm: TReqMaterialsForm
           EditButtons = <>
           FieldName = 'MG_NOTICE'
           Footers = <>
-          ReadOnly = True
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          Width = 85
+          Title.TitleButton = True
+          Width = 170
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -372,7 +397,7 @@ object ReqMaterialsForm: TReqMaterialsForm
       '  , Description'
       '  , Serial'
       '  , iif(prop = 0, Mr_Quant * Rm_Cost, null) Itog '
-      '  FROM get_mat_give_out(:RQ_ID, :Mg_Id, :Rq_Owner)'
+      '  FROM get_mat_give_out(:RQ_ID, :Mg_Id, :Rq_Owner, :FOR_WH_ID)'
       'order by NAME')
     BeforePost = dsReqMaterialsBeforePost
     Transaction = trRead
@@ -380,52 +405,14 @@ object ReqMaterialsForm: TReqMaterialsForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcMatGropups
-    Left = 234
-    Top = 146
-  end
-  object dsMatGropups: TpFIBDataSet
-    SelectSQL.Strings = (
-      'select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE'
-      'from MATERIALS_GROUP'
-      'union'
-      
-        'select null as MG_ID, '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME, null as PARENT_ID, ' +
-        #39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
-      'from RDB$DATABASE'
-      
-        'where (exists(select m.M_Id from materials m where m.Mg_Id is nu' +
-        'll and m.DELETED = 0))'
-      'union'
-      
-        'select -2 as MG_ID, '#39'  '#1042' '#1047#1040#1071#1042#1050#1045#39' MG_NAME, null as PARENT_ID, '#39#1052#1072 +
-        #1090#1077#1088#1080#1072#1083#1099' '#1074#1099#1076#1072#1085#1099' '#1076#1083#1103' '#1079#1072#1103#1074#1082#1080#39' as MG_NOTICE'
-      'from RDB$DATABASE'
-      'union'
-      
-        'select -1 as MG_ID, '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME, null as PARENT_ID' +
-        ', '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
-      'from RDB$DATABASE'
-      'union'
-      
-        'select -3 as MG_ID, '#39'  '#1053#1040' '#1042#1067#1050#1059#1055' '#39' MG_NAME, null as PARENT_ID, '#39#1054 +
-        #1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1091' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1074' '#1072#1088#1077#1085#1076#1077' '#1076#1083#1103' '#1074#1099#1082#1091#1087#39' as MG_NOTICE'
-      'from RDB$DATABASE'
-      'order by 2')
-    AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'
-    AutoUpdateOptions.KeyFields = 'MG_ID'
-    AutoUpdateOptions.GeneratorName = 'GEN_UID'
-    AutoUpdateOptions.WhenGetGenID = wgBeforePost
-    Transaction = trRead
-    Database = dmMain.dbTV
-    UpdateTransaction = trWrite
-    Left = 48
-    Top = 128
+    Left = 250
+    Top = 194
   end
   object srcMatGropups: TDataSource
     AutoEdit = False
-    DataSet = dsMatGropups
+    DataSet = mtGroups
     Left = 48
-    Top = 184
+    Top = 192
   end
   object PropStorage: TPropStorageEh
     StorageManager = dmMain.iniPropStorage
@@ -434,7 +421,8 @@ object ReqMaterialsForm: TReqMaterialsForm
       '<P>.Left'
       '<P>.PixelsPerInch'
       '<P>.Top'
-      '<P>.Width')
+      '<P>.Width'
+      'pnlGrids.dbGridGroups.<P>.Width')
     Left = 505
     Top = 97
   end
@@ -461,5 +449,188 @@ object ReqMaterialsForm: TReqMaterialsForm
     TPBMode = tpbDefault
     Left = 424
     Top = 196
+  end
+  object mtGroups: TMemTableEh
+    Params = <>
+    DataDriver = drvFibGroups
+    TreeList.Active = True
+    TreeList.KeyFieldName = 'MG_ID'
+    TreeList.RefParentFieldName = 'Parent_ID'
+    TreeList.FilterNodeIfParentVisible = False
+    Left = 120
+    Top = 128
+  end
+  object drvFibGroups: TpFIBDataDriverEh
+    Database = dmMain.dbTV
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select'
+      '    MG_ID'
+      '  , MG_NAME'
+      '  , PARENT_ID'
+      '  , MG_NOTICE'
+      '  , SOLD'
+      '  , RENT'
+      '  , LOAN'
+      '  , iif(coalesce(PATH, '#39#39') = '#39#39', MG_NAME, PATH) PATH'
+      '  from MATERIALS_GROUP g'
+      '  where coalesce(g.Deleted, 0) = 0'
+      'union'
+      'select'
+      '    -999 as MG_ID'
+      '  , '#39' '#1041#1045#1047' '#1043#1056#1059#1055#1055#1067#39' MG_NAME'
+      '  , null as PARENT_ID'
+      '  , '#39#1052#1072#1090#1077#1088#1080#1072#1083#1099' '#1073#1077#1079' '#1075#1088#1091#1087#1087#1099#39' as MG_NOTICE'
+      '  , null SOLD'
+      '  , null RENT'
+      '  , null LOAN'
+      '  , null PATH'
+      '  from RDB$DATABASE'
+      '  where (exists(select'
+      '                    m.M_Id'
+      '                  from materials m'
+      '                  where m.Mg_Id is null'
+      '                        and m.DELETED = 0))'
+      'union'
+      'select'
+      '    -1 as MG_ID'
+      '  , '#39'  '#1042#1057#1045' '#1052#1040#1058#1045#1056#1048#1040#1051#1067#39' MG_NAME'
+      '  , null as PARENT_ID'
+      '  , '#39#1042#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099#39' as MG_NOTICE'
+      '  , null SOLD'
+      '  , null RENT'
+      '  , null LOAN'
+      '  , null PATH'
+      '  from RDB$DATABASE'
+      '  order by 2, 1')
+    UpdateCommand.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'MG_NAME'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PARENT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'MG_NOTICE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SOLD'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'RENT'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'LOAN'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'OLD_MG_ID'
+        ParamType = ptUnknown
+      end>
+    UpdateCommand.CommandText.Strings = (
+      'UPDATE MATERIALS_GROUP'
+      'SET '
+      '    MG_NAME = :MG_NAME,'
+      '    PARENT_ID = :PARENT_ID,'
+      '    MG_NOTICE = :MG_NOTICE,'
+      '    SOLD = :SOLD,'
+      '    RENT = :RENT,'
+      '    LOAN = :LOAN'
+      'WHERE'
+      '    MG_ID = :OLD_MG_ID')
+    InsertCommand.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'MG_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'MG_NAME'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PARENT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'MG_NOTICE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SOLD'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'RENT'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'LOAN'
+        ParamType = ptUnknown
+      end>
+    InsertCommand.CommandText.Strings = (
+      'INSERT INTO MATERIALS_GROUP('
+      '    MG_ID,'
+      '    MG_NAME,'
+      '    PARENT_ID,'
+      '    MG_NOTICE,'
+      '    SOLD,'
+      '    RENT,'
+      '    LOAN'
+      ')'
+      'VALUES('
+      '    :MG_ID,'
+      '    :MG_NAME,'
+      '    :PARENT_ID,'
+      '    :MG_NOTICE,'
+      '    :SOLD,'
+      '    :RENT,'
+      '    :LOAN'
+      ')')
+    DeleteCommand.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'OLD_MG_ID'
+        ParamType = ptUnknown
+      end>
+    DeleteCommand.CommandText.Strings = (
+      'UPDATE MATERIALS_GROUP'
+      'SET '
+      '    DELETED = 1'
+      'WHERE'
+      '    MG_ID = :OLD_MG_ID')
+    GetrecCommand.Params = <>
+    Left = 116
+    Top = 67
+  end
+  object pmTreeView: TPopupMenu
+    Left = 96
+    Top = 192
+    object miFE: TMenuItem
+      Caption = #1056#1072#1079#1074#1077#1088#1085#1091#1090#1100' '#1074#1089#1077
+      OnClick = miFEClick
+    end
+    object miN1: TMenuItem
+      Caption = #1057#1074#1077#1088#1085#1091#1090#1100' '#1074#1089#1077
+      OnClick = miN1Click
+    end
   end
 end

@@ -47,14 +47,11 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
     ParentShowHint = False
     RowDetailPanel.Height = 200
     RowSizingAllowed = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     ShowHint = True
     SortLocal = True
     STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True

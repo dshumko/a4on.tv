@@ -111,7 +111,7 @@ inherited DeviceTypesForm: TDeviceTypesForm
       FooterRowCount = 1
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
+      SearchPanel.FilterOnTyping = False
       TabOrder = 0
       Columns = <
         item

@@ -78,7 +78,12 @@ const
   rght_Customer_DelSrv = 35;
   rght_Customer_EditSrv = 36;
   rght_Customer_History = 37;
-  rght_Customer_EditLan = 38;
+
+  rght_Customer_LanFull = 38; // 38, 'ПОЛНЫЙ ДОСТУП К СПД/ИНТЕРНЕТ'
+  rght_Customer_LanAdd = 64; // 64, 'ДОБАВЛЕНИ СПД/ИНТЕРНЕТ'
+  rght_Customer_LanEdit = 65; // 65, 'РЕДАКТИРОВАНИЕ СПД/ИНТЕРНЕТ'
+  rght_Customer_LanDel = 66; // 66, 'УДАЛЕНИЕ СПД/ИНТЕРНЕТ'
+
   rght_Customer_Appliance = 64;
   rght_Customer_DigitAdd = 39;
   rght_Customer_DigitEdit = 225;
@@ -107,6 +112,8 @@ const
   rght_Request_DateChange = 56;
   rght_Request_Close_Day = 57;
   rght_Request_Unclose = 58;
+  rght_Request_BuyBack = 59;
+  rght_Request_AnyReturn = 228;
 
   rght_Reports_Designer = 60;
   rght_Reports_view = 61;
@@ -162,8 +169,9 @@ const
   rght_Dictionary_MatDocMove = 181;
   rght_Dictionary_MatDocOUT = 182;
   rght_Dictionary_MatDocInvent = 183;
-  rght_Dictionary_MatDoc_Edit = 170;
+  rght_Dictionary_MatDoc_CreateEdit = 170;
   rght_Dictionary_MatDoc_Close = 186;
+  rght_Dictionary_MatDocsView = 227;
 
   rght_Dictionary_Distributor = 184; // ДИСТРИБЬЮТОР КАНАЛОВ
   rght_Dictionary_HeadEnd = 153;
@@ -202,8 +210,6 @@ const
   rght_Comm_Node_Links = 211; // rght_Dictionary_Node_Links = 211;
   rght_Comm_Equipment = 162; // rght_Dictionary_Equipment
   rght_Comm_Equipment_Ports = 210; // rght_Dictionary_Equipment_Ports
-
-
 
   rght_Messages_add = 172;
 
@@ -274,6 +280,7 @@ resourcestring
   rsCODE = 'Код';
   rsFIO = 'ФИО';
   rsSTATE = 'Статус';
+  rsSNotice = 'Прим-е';
 
   rsSALDO = 'Сальдо';
   rsBALANCE = 'Баланс';
@@ -297,7 +304,13 @@ resourcestring
   rsReportCategoryNameHint = 'Введите наименование категории:';
   rsReportNameHint = 'Введите наименование отчета:';
   rsInputFilterName = 'Введите наименование фильтра';
-  rsFindHint = 'Введите текст для поиска абонента';
+  rsFindHint = '(F11) Введите текст для поиска.' + #13#10 //
+    + 'строка "л 1234"  будет найден абонент с лицевым 1234' + #13#10 //
+    + '"т 223344" - будет найден абонент с телефоном 223344' + #13#10 //
+    + 'Пустая строка - сброс фильтра.' + #13#10 //
+    + 'Возможно задавать шаблон поиска через символ %.' + #13#10 //
+    + 'Например 2% - выдаст все лицевые начинающиеся с 2' + #13#10 //
+    + 'Если список, то разделяется запятой без пробелов 1,2,3,4';
   rsReson = 'Введите причину отмены';
 
   // rsAaeain3 = 'Баланс ';
@@ -529,6 +542,7 @@ resourcestring
 
   rsPayDocs = 'Платежные документы';
   rsPayments = 'Платежи';
+  rsLCPaySum = 'Сумма в BYN';
   rsPaymentsPeriod = 'Платежи за период с %s по %s';
   rsFilesPeriod = 'Файлы за период с %s по %s';
   rsPamentLessDebt = 'Платеж не может быть меньше суммы долга+пеня!';
@@ -575,8 +589,8 @@ resourcestring
   rsColumnConnectToPort = 'СПД|Ком-р Порт';
   rsColumnLanTag = 'СПД|TAG Циф';
   rsColumnLanTagStr = 'СПД|TAG Стр';
-  rsColumnVpnLogin= 'Интернет|Login';
-  rsColumnVpnIP= 'Интернет|IP';
+  rsColumnVpnLogin = 'Интернет|Login';
+  rsColumnVpnIP = 'Интернет|IP';
   rsReporHide = 'Скрыть отчет?';
   rsCompiledOK = 'Скомпилировано OK, Выполнение...';
   rsPaymentCardExpired = ' Срок карты оплаты истек! ';
@@ -747,6 +761,7 @@ resourcestring
   rsFindSurname = 'Ф';
   rsFindNotice = 'П';
   rsFindPhone = 'Т';
+  rsFindPhoneEng = 'T';
   rsFindStreet = 'У';
   rsFindDigit = 'Ц';
   rsFindIP = 'И';
@@ -756,6 +771,8 @@ resourcestring
   rsFindRequest = 'З';
   rsFindTask = 'Ч';
   rsFindJur = 'Ю';
+  rsFindContact = 'О';
+  rsFindContactEng = 'O';
 
   rsFldMiddleName = '[ОТЧЕСТВО]';
   rsFldSaldo = '[САЛЬДО]';
@@ -792,11 +809,12 @@ resourcestring
   rsFldTOTAL100 = '[ИТОГО_САЛЬДО]';
   rsFldPassportN = '[ПАСПОРТ_N]';
   rsFldPassportResidence = '[ПАСПОРТ_ПРОПИСКА]';
-  //rsFldPassportDomicile = '[ПАСПОРТ_РЕГИСТР_АДРЕС]';
+  // rsFldPassportDomicile = '[ПАСПОРТ_РЕГИСТР_АДРЕС]';
   rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН_МЕСТО]';
   rsFldPassportDate = '[ПАСПОРТ_ВЫДАН]';
   rsFldPassportBirthPlace = '[ПАСПОРТ_РОЖД_МЕСТО]';
   rsFldPassportBirthDate = '[ПАСПОРТ_РОЖД_ДАТА]';
+  rsFldPassportName = '[ПАСПОРТ_ФИО]';
   rsFldMonthFee = '[ОПЛАТА_В_МЕСЯЦ]';
   rsFldMonthNeed = '[ДОПЛАТА]';
   rsFldNextFee = '[ОПЛАТА_СЛ_МЕСЯЦ]';
@@ -822,6 +840,7 @@ resourcestring
   rsFldText1 = '[ТЕКСТ1]';
   rsFldText2 = '[ТЕКСТ2]';
   rsFldText3 = '[ТЕКСТ3]';
+  rsFldText4 = '[ТЕКСТ4]';
   rsBidN = '[ЗАЯВКА]';
   rsAddress = '[АДРЕС]';
   rsOldAddress = '[СТАРЫЙ АДРЕС]';
@@ -854,7 +873,7 @@ resourcestring
   rsLanVLANCustomer = 'VLAN абонента';
   rsLanTAGCustomer = 'Tag абонента';
   rsLanTAGSTRCustomer = 'TagSTR абонента';
-  rsLanTelnetWait = 'wait пауза 1 сек.';
+  rsLanTelnetWait = 'wait x.y - пауза x.y секунд.';
   rsLanEquipmentEID = 'ID оборудования';
   rsLanEquipmentPID = 'ID "родителя" оборудования';
 
@@ -918,6 +937,7 @@ resourcestring
   rsClmnFiles = 'Файлы';
   rsClmnLink = 'Линии связи';
   rsClmnFlats = 'Квартиры';
+  rsClmnHousesAndFlats = 'Дома и Квартиры';
   rsClmnValidTo = 'Договор до';
   rsClmnJur = 'Юр.лицо';
   rsClmnJurShrt = 'Юр/л';
@@ -925,6 +945,7 @@ resourcestring
   rsClmnPrepay = 'Об. платеж';
   rsMapLimit = 'Лимит запросов, повторите позже';
   rsMatQuantLess = 'Количество материала меньше чем есть на складе';
+  rsMatQuantMoreThan = 'Количество материала больше чем %s';
   rsFileAct = 'Установить дату обработки файлу %s';
   rsFileActNotice = 'Можно оставить результат обработки файла';
 
@@ -977,6 +998,8 @@ resourcestring
   rsPromoWarning = 'Внимане. Абонент подключен по АКЦИИ!';
   rsNotAllowedService = 'Этой услугой запрещено отключать. Укажите другую.';
 
+  rsCabelLabelError = 'Mетки "%s" нет в маркировке кабеля';
+
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';
   ms_DELETE_ACT = 'Удалить отметку выполнения № %s от %s';
@@ -985,4 +1008,3 @@ resourcestring
 implementation
 
 end.
-

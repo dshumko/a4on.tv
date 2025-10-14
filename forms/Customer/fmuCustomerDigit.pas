@@ -17,7 +17,6 @@ type
   TapgCustomerDigit = class(TA4onPage)
     dsDecoders: TpFIBDataSet;
     srcDecoders: TDataSource;
-    dbgCustDec: TDBGridEh;
     ActListCustomers: TActionList;
     actDigitDecoderAdd: TAction;
     actDigitDecoderEdit: TAction;
@@ -26,16 +25,11 @@ type
     actDigitPacketDel: TAction;
     dsDecoderPacket: TpFIBDataSet;
     srcDecoderPacket: TDataSource;
-    pnlButtons: TPanel;
-    btnDel1: TSpeedButton;
-    btnAdd1: TSpeedButton;
-    btnEdit1: TSpeedButton;
     pmDigit: TPopupMenu;
     actPairing: TAction;
     actResetPIN: TAction;
     actParing1: TMenuItem;
     actResetPIN1: TMenuItem;
-    btnMenu: TSpeedButton;
     actMenu: TAction;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
@@ -58,8 +52,15 @@ type
     pnl3: TPanel;
     btnChanDel: TSpeedButton;
     btnChanAdd: TSpeedButton;
-    spl1: TSplitter;
-    spl2: TSplitter;
+    splSC: TSplitter;
+    pnlMain: TPanel;
+    dbgCustDec: TDBGridEh;
+    pnlButtons: TPanel;
+    btnDel1: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnEdit1: TSpeedButton;
+    btnMenu: TSpeedButton;
+    splPers: TSplitter;
     procedure actDigitDecoderAddExecute(Sender: TObject);
     procedure actDigitDecoderEditExecute(Sender: TObject);
     procedure actDigitDecoderDelExecute(Sender: TObject);
@@ -122,9 +123,21 @@ begin
 
   pnlDecPackets.Visible := (dmMain.GetSettingsValue('PERS_PACKETS') = '1');
   pnlPersChannels.Visible := (dmMain.GetSettingsValue('PERS_CHANNEL') = '1');
-  if (not pnlDecPackets.Visible) and (pnlPersChannels.Visible) then
+  splSC.Visible := pnlDecPackets.Visible and pnlPersChannels.Visible;
+  if (not pnlDecPackets.Visible) and (pnlPersChannels.Visible) then begin
+    pnlDecPackets.Align := alLeft;
     pnlPersChannels.Align := alClient;
+  end
+  else begin
+    pnlDecPackets.Align := alClient;
+    pnlPersChannels.Align := alRight;
+  end;
+
+  //pnlPers.Width := 200;
   pnlPers.Visible := pnlDecPackets.Visible or pnlPersChannels.Visible;
+  splPers.Visible := pnlPers.Visible;
+  pnlPers.Realign;
+  //Self.Realign;
 
   dsDecoders.DataSource := FDataSource;
 end;

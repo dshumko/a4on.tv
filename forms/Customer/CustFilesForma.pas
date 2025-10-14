@@ -116,6 +116,7 @@ type
     FullAccess: Boolean;
     FFilesAdd: Boolean;
     FFilesEdit: Boolean;
+    FColorSql: string;
     procedure SetFilter;
     function GetOrderClause(grid: TDBGridEh): string;
   public
@@ -233,6 +234,9 @@ begin
   end
   else
     dsFiles.ParamByName('source').AsString := '';
+
+  dsFiles.ParamByName('SQL_COLOR').AsString := FColorSql;
+
   dsFiles.OrderClause := GetOrderClause(dbgFiles);
   dsFiles.Open;
 end;
@@ -242,7 +246,7 @@ var
   i: Integer;
   vBalance: Boolean;
   Font_size: Integer;
-  Font_name: string;
+  Font_name, s: string;
   Row_height: Integer;
 begin
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
@@ -294,6 +298,11 @@ begin
 
   fStartDate := Now;
   fEndDate := Now + 1;
+
+  FColorSql := dmMain.GetSettingsValue('FILES_GRID_COLOR_SQL');
+  if FColorSql.IsEmpty then
+    FColorSql := 'c.HIS_COLOR';
+
   SetFilter;
   dsFileType.Open;
 

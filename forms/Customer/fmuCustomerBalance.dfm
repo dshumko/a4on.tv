@@ -81,14 +81,15 @@ object apgCustomerBalance: TapgCustomerBalance
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmGrid
     ReadOnly = True
-    SearchPanel.Enabled = True
     SortLocal = True
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 0
+    TitleParams.MultiTitle = True
     TitleParams.VTitleMargin = 4
     OnCellMouseClick = dbgCustBalanceCellMouseClick
+    OnGetCellParams = dbgCustBalanceGetCellParams
     Columns = <
       item
         Alignment = taCenter
@@ -99,7 +100,6 @@ object apgCustomerBalance: TapgCustomerBalance
         FieldName = 'RYAER'
         Footers = <>
         HideDuplicates = True
-        Title.Alignment = taCenter
         Title.Caption = #1043#1086#1076
         Visible = False
         Width = 10
@@ -113,7 +113,6 @@ object apgCustomerBalance: TapgCustomerBalance
         FieldName = 'RMONTH'
         Footers = <>
         HideDuplicates = True
-        Title.Alignment = taCenter
         Title.Caption = #1052#1077#1089#1103#1094
         Visible = False
         Width = 5
@@ -128,26 +127,26 @@ object apgCustomerBalance: TapgCustomerBalance
         FieldName = 'B_MONTH'
         Footers = <>
         HideDuplicates = True
-        Title.Alignment = taCenter
         Title.Caption = #1044#1072#1090#1072
-        Width = 59
+        Width = 66
       end
       item
+        AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
         FieldName = 'B_DESCRIPTION'
         Footers = <>
         Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
-        Width = 158
+        Width = 206
       end
       item
+        AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
         FieldName = 'DEBT'
         Footers = <>
-        Title.Alignment = taRightJustify
         Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
         Width = 82
       end
@@ -159,20 +158,26 @@ object apgCustomerBalance: TapgCustomerBalance
         EditButtons = <>
         FieldName = 'B_SUM'
         Footers = <>
-        Title.Alignment = taRightJustify
         Title.Caption = #1057#1091#1084#1084#1072
         Title.Hint = #1057#1091#1084#1084#1072' '#1089#1087#1080#1089#1072#1085#1080#1103' / '#1086#1087#1083#1072#1090#1099
-        Width = 87
+        Width = 81
       end
       item
+        AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
         FieldName = 'DEBT_A'
         Footers = <>
-        Title.Alignment = taRightJustify
         Title.Caption = #1041#1072#1083#1072#1085#1089' '#1087#1086#1089#1083#1077
         Width = 89
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        Footers = <>
+        Width = 126
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end

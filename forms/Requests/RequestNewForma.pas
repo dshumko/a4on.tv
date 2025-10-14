@@ -6,7 +6,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.StdCtrls,
@@ -97,6 +97,7 @@ type
     lbl5: TLabel;
     edPhone: TDBEditEh;
     cbContact: TDBComboBoxEh;
+    dsAllWorks: TpFIBDataSet;
     procedure FormCreate(Sender: TObject);
     procedure edPhoneExit(Sender: TObject);
     procedure EdFloorExit(Sender: TObject);
@@ -147,7 +148,8 @@ type
     fRQ_ID: Integer;
     FFindNode: Boolean;
     FCustomerInfo: TCustomerInfo;
-    FullAccess: Boolean; // полный доступ
+    FFullAccess: Boolean; // полный доступ
+    FAddressRight: Boolean;
     FCanEdit: Boolean; // может изменять результат выполнения
     FCanClose: Boolean; // может закрыть заявку
     FCanCreate: Boolean; // может добавить заявку
@@ -159,7 +161,6 @@ type
     FLastFlat: string;
     FDenyCancel: Boolean;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
-    procedure ChangeWorks;
     procedure CheckData;
     function FindNearFreeDay: Boolean;
     procedure InitSecurity;
@@ -179,6 +180,8 @@ type
     function SavePhone(Const Phone: String): String;
     procedure SetPhonesCB(const list: String);
     procedure InitDataSetFilters;
+    procedure ClearWorks;
+    procedure InsertWorks;
   public
     { Public declarations }
     property Request_id: Integer read fRQ_ID;
@@ -206,8 +209,9 @@ implementation
 {$R *.dfm}
 
 uses
-  System.StrUtils, System.DateUtils, System.MaskUtils,
-  SelectDateForma, pFIBQuery, ReqAddWorkForma, MAIN, FIBQuery, pFIBProps, AtrCommon, HouseForma, StreetEditForma, CF,
+  System.StrUtils, System.DateUtils, System.MaskUtils, JsonDataObjects,
+  SelectDateForma, pFIBQuery, ReqAddWorkForma, MAIN, FIBQuery, pFIBProps,
+  AtrStrUtils, AtrCommon, HouseForma, StreetEditForma, CF,
   RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
@@ -217,13 +221,10 @@ begin
   with TRequestNewForm.Create(Application) do
   begin
     if FindNodes then
-    begin
-      Node_id := aCustomer;
-    end
+      Node_id := aCustomer
     else
-    begin
       Customer_id := aCustomer;
-    end;
+
     FindNode := FindNodes;
 
     if not Phone.IsEmpty then
@@ -427,7 +428,6 @@ begin
 end;
 
 procedure TRequestNewForm.SetReqType(Value: Integer);
-
 begin
   FReqType := Value;
   InitDataSetFilters;
@@ -643,16 +643,36 @@ begin
 end;
 
 procedure TRequestNewForm.actDelWorkExecute(Sender: TObject);
+var
+  CanDelete: Boolean;
+  s: string;
 begin
-  if dsWorks.FieldByName('w_id').IsNull then
+  if dsWorks.FieldByName('NAME').IsNull or dsWorks.FieldByName('W_ID').IsNull then
     Exit;
 
-  if Application.MessageBox(PWideChar(rsDeleteWork), PWideChar(format(rsDeleteWithName, [dsWorks['NAME']])),
-    MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
+  CanDelete := FFullAccess;
+  // проверим, можно ли удалять работу добавленную автоматически
+  if not CanDelete then
   begin
-    dsWorks.Delete;
+    if (dmMain.GetSettingsValue('REQUEST_WORKS_DEL_RESTRICT') <> '1') or dsErrors.FieldByName('WORKS').IsNull then
+      CanDelete := True
+    else
+    begin
+      // [{"i":832878,"q":1}]
+      s := '"i":' + dsWorks.FieldByName('W_ID').AsString + ',';
+      // Еслі не нашлі, то разрешім удаліть
+      CanDelete := not(Pos(s, dsErrors['WORKS']) > 0);
+    end;
   end;
 
+  if CanDelete then
+  begin
+    if Application.MessageBox(PWideChar(format(rsDeleteWithName, [dsWorks['NAME']])), PWideChar(rsDeleteWork),
+      MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
+    begin
+      dsWorks.Delete;
+    end;
+  end;
 end;
 
 procedure TRequestNewForm.actFindCustomerExecute(Sender: TObject);
@@ -818,20 +838,8 @@ begin
       if (Trim(EdFloor.Text) <> '') then
         ParamByName('FLOOR_N').AsString := Trim(EdFloor.Text);
 
-      // сохраним в заявке телефон, если введен руками
-      {
-        s := Trim(edPhone.Text);
-        if ((FCustomerInfo.Customer_id = -1) or (s <> Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO))) then
-        begin
-        if NOT s.IsEmpty then
-        ParamByName('PHONE').AsString := LeftStr(s, 50)
-        else
-        ParamByName('PHONE').Clear;
-        end;
-      }
-
       s := Trim(cbContact.Text);
-      if (FCustomerInfo.Customer_id <> -1) and (NOT s.IsEmpty) then
+      if (NOT s.IsEmpty) then
         ParamByName('PHONE').AsString := LeftStr(s, 50)
       else
         ParamByName('PHONE').Clear;
@@ -1002,7 +1010,12 @@ begin
       CC := dmMain.AllowedAction(rght_Request_Close);
       CG := dmMain.AllowedAction(rght_Request_Give);
       if (FA or CE or CC or CG) then
-        ReguestExecute(fRQ_ID, FCustomerInfo.Customer_id, 1);
+      begin
+        if (not FFindNode) then
+          ReguestExecute(fRQ_ID, FCustomerInfo.Customer_id, 1)
+        else
+          ReguestNodeExecute(fRQ_ID, FCustomerInfo.Customer_id, 1);
+      end;
     end;
 
     ModalResult := mrOk;
@@ -1017,8 +1030,13 @@ end;
 
 procedure TRequestNewForm.dbgWorksExit(Sender: TObject);
 begin
-  if (not dsWorks.FieldByName('W_ID').IsNull) and (dsWorks.State in [dsInsert, dsEdit]) then
-    dsWorks.Post;
+  if (dsWorks.State in [dsInsert, dsEdit]) then
+  begin
+    if (not dsWorks.FieldByName('W_ID').IsNull) then
+      dsWorks.Post
+    else
+      dsWorks.Cancel;
+  end;
 end;
 
 procedure TRequestNewForm.dsRequestTypeAfterOpen(DataSet: TDataSet);
@@ -1069,6 +1087,9 @@ var
   s: string;
   NeedSave: Boolean;
 begin
+  if (not FAddressRight) and (dmMain.GetSettingsValue('FP_ADDRESS_CHECK') = '1') then
+    Exit;
+
   NeedSave := False;
 
   if (EdFloor.Text <> '') and (EdPorch.Text <> '') and (edFLAT_NO.Text <> '') then
@@ -1091,8 +1112,7 @@ begin
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
-        SQL.Text :=
-          'UPDATE OR INSERT INTO HOUSEFLATS (house_id, flat_no, porch_n, floor_n) VALUES (:house_id, :flat_no, :porch_n, :floor_n) matching (house_id, flat_no)';
+        SQL.Text := 'execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N, :Floor_N)';
         ParamByName('PORCH_N').AsString := EdPorch.Text;
         ParamByName('FLOOR_N').AsString := EdFloor.Text;
         ParamByName('flat_no').AsString := edFLAT_NO.Text;
@@ -1159,6 +1179,8 @@ end;
 
 procedure TRequestNewForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  if dsAllWorks.Active then
+    dsAllWorks.Close;
 
   if A4MainForm.AddictSpell.Tag = 1 then
   begin
@@ -1277,10 +1299,8 @@ begin
   end;
 
   // спрячем кнопку + для добавления адреса если это запрещено
-  LupStreets.EditButtons[0].Visible :=
-    ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
-  LupHOUSE.EditButtons[0].Visible :=
-    ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
+  LupStreets.EditButtons[0].Visible := FAddressRight;
+  LupHOUSE.EditButtons[0].Visible := FAddressRight;
   lupType.EditButtons[0].Visible := (dmMain.AllowedAction(rght_Dictionary_full) or
     dmMain.AllowedAction(rght_Dictionary_ReqType));
   luTemplate.EditButtons[0].Visible := (dmMain.AllowedAction(rght_Dictionary_full) or
@@ -1365,7 +1385,7 @@ end;
 
 procedure TRequestNewForm.cbContactNotInList(Sender: TObject; NewText: string; var RecheckInList: Boolean);
 begin
-  if not NewText.Trim.IsEmpty then
+  if (not NewText.Trim.IsEmpty) and (FCustomerInfo.Customer_id > 0) then
     SavePhone(NewText);
   RecheckInList := False;
   // FPhoneChanged := False;
@@ -1465,7 +1485,7 @@ end;
 procedure TRequestNewForm.lupTypeChange(Sender: TObject);
 begin
   CheckData;
-  ChangeWorks;
+  ClearWorks;
   if (dsRequestType.Active) and (not dsRequestType.FieldByName('COLOR').IsNull) then
     lupType.Color := StringToColor(dsRequestType['COLOR'])
   else
@@ -1525,20 +1545,7 @@ procedure TRequestNewForm.luTemplateChange(Sender: TObject);
 begin
   if not varIsNull(luTemplate.Value) then
   begin
-    if not dsErrors.FieldByName('w_id').IsNull then
-    begin
-      if not dsWorks.Active then
-        dsWorks.Open;
-      dsWorks.First;
-      dsWorks.EmptyTable;
-      dsWorks.Append;
-      dsWorks['W_ID'] := dsErrors['W_ID'];
-      dsWorks['W_TIME'] := dsErrors['W_TIME'];
-      dsWorks['W_COST'] := dsErrors['W_COST'];
-      dsWorks['NAME'] := dsErrors['NAME'];
-      dsWorks['QUANT'] := 1;
-      dsWorks.Post;
-    end;
+    InsertWorks;
 
     chkRecreate.Visible := (not dsErrors.FieldByName('RECREATE_DAYS').IsNull);
     if (chkRecreate.Visible) then
@@ -1549,6 +1556,49 @@ begin
     ShowAddInfo;
   end;
 
+end;
+
+procedure TRequestNewForm.InsertWorks;
+var
+  ja: TJsonArray;
+  jv: TJsonDataValueHelper;
+begin
+  dsWorks.DisableControls;
+  ClearWorks;
+
+  if not dsErrors.FieldByName('WORKS').IsNull then
+  begin
+    ja := (TJsonObject.Parse(dsErrors['WORKS']) as TJsonArray);
+    try
+      if (ja.Count > 0) then
+      begin
+        if not dsAllWorks.Active then
+          dsAllWorks.Open;
+
+        if dsAllWorks.RecordCount > 0 then
+        begin
+          for jv in ja do
+          begin
+            if dsAllWorks.Locate('W_ID', jv.i['i'], []) then
+            begin
+              dsWorks.Append;
+              dsWorks['W_ID'] := dsAllWorks['W_ID'];
+              dsWorks['name'] := dsAllWorks['NAME'];
+              dsWorks['quant'] := jv.f['q'];
+              dsWorks['w_time'] := dsAllWorks['W_TIME'];
+              dsWorks['w_cost'] := dsAllWorks['W_COST'];
+              if (jv.s['n'] <> '') then
+                dsWorks['notice'] := jv.s['n'];
+              dsWorks.Post;
+            end;
+          end;
+        end;
+      end;
+    finally
+      ja.Free;
+    end;
+  end;
+  dsWorks.EnableControls;
 end;
 
 procedure TRequestNewForm.luTemplateEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -1594,25 +1644,29 @@ begin
     dsSame.Open;
 end;
 
-procedure TRequestNewForm.ChangeWorks;
+procedure TRequestNewForm.ClearWorks;
 begin
-  dsWorks.Close;
+  if dsWorks.Active then
+    dsWorks.Close;
   dsWorks.Open;
   dsWorks.EmptyTable;
-  if not dsDefaultWorks.Active then
+  {
+    if not dsDefaultWorks.Active then
     dsDefaultWorks.Open;
-  dsDefaultWorks.First;
-  while not dsDefaultWorks.Eof do
-  begin
+    dsDefaultWorks.First;
+    while not dsDefaultWorks.Eof do
+    begin
     dsWorks.Append;
     dsWorks['W_ID'] := dsDefaultWorks['W_ID'];
-    dsWorks['W_TIME'] := dsDefaultWorks['W_TIME'];
     dsWorks['NAME'] := dsDefaultWorks['NAME'];
+    dsWorks['W_TIME'] := dsDefaultWorks['W_TIME'];
+    dsWorks['W_COST'] := dsDefaultWorks['W_COST'];
     dsWorks['QUANT'] := 1;
     dsWorks.Post;
     dsDefaultWorks.Next;
-  end;
-  dsWorks.First;
+    end;
+    dsWorks.First;
+  }
 end;
 
 procedure TRequestNewForm.CheckData;
@@ -1634,20 +1688,21 @@ end;
 
 procedure TRequestNewForm.InitSecurity;
 begin
-  FullAccess := dmMain.AllowedAction(rght_Request_full);
+  FFullAccess := dmMain.AllowedAction(rght_Request_full);
   // (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ');
   FCanEdit := dmMain.AllowedAction(rght_Request_edit);
   // (52, 'РЕДАКТИРОВАНИЕ', 'ЗАЯВКИ', 'Редактирование заявки');
   FCanClose := dmMain.AllowedAction(rght_Request_Close); // (54, 'ЗАКРЫТИЕ', 'ЗАЯВКИ', 'Закрытие заявки');
   FCanGive := dmMain.AllowedAction(rght_Request_Give); // (53, 'ВЫДАЧА', 'ЗАЯВКИ', 'Выдача заявок в работу');
   FCanCreate := dmMain.AllowedAction(rght_Request_add); // (51, 'ДОБАВЛЕНИЕ', 'ЗАЯВКИ', 'Добавление заявок');
+  FAddressRight := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street);
 
-  frmOkCancel.bbOk.Enabled := (FCanCreate or FullAccess);
+  frmOkCancel.bbOk.Enabled := (FCanCreate or FFullAccess);
 
   // Запретим выбор даты вручную
-  edtPLANDATE.ReadOnly := not(FullAccess or dmMain.AllowedAction(rght_Request_DateChange));
+  edtPLANDATE.ReadOnly := not(FFullAccess or dmMain.AllowedAction(rght_Request_DateChange));
   // 56, 'Изменение даты заявки
-  edtPLANDATE.EditButton.Visible := FullAccess or dmMain.AllowedAction(rght_Request_DateChange);
+  edtPLANDATE.EditButton.Visible := FFullAccess or dmMain.AllowedAction(rght_Request_DateChange);
   // 56, 'Изменение даты заявки
 end;
 
@@ -1780,7 +1835,7 @@ procedure TRequestNewForm.SetPhonesCB(const list: String);
 var
   i: Integer;
   s: string;
-  phones: TStringArray;
+  phones: TStringDynArray;
 begin
   phones := Explode(',', list);
   cbContact.Items.Clear;

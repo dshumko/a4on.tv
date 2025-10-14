@@ -154,7 +154,7 @@ object edtNodeFlats: TedtNodeFlats
           Top = 2
           Width = 33
           Height = 60
-          Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103' '#1074' '#1075#1088#1091#1087#1087#1091
+          Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1074#1072#1088#1090#1080#1088#1091' '#1074' '#1091#1079#1077#1083
           Align = alTop
           Flat = True
           Glyph.Data = {
@@ -191,7 +191,7 @@ object edtNodeFlats: TedtNodeFlats
           Top = 204
           Width = 33
           Height = 60
-          Hint = #1059#1076#1072#1083#1080#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103' '#1080#1079' '#1075#1088#1091#1087#1087#1099
+          Hint = #1059#1076#1072#1083#1080#1090#1100' '#1080#1079' '#1091#1079#1083#1072
           Align = alBottom
           Flat = True
           Glyph.Data = {
@@ -222,6 +222,44 @@ object edtNodeFlats: TedtNodeFlats
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnUGremoveClick
+        end
+        object btnHouseAdd: TSpeedButton
+          Left = 1
+          Top = 112
+          Width = 33
+          Height = 41
+          Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1076#1086#1084' '#1074' '#1091#1079#1077#1083
+          Align = alCustom
+          Anchors = [akLeft, akTop, akBottom]
+          Flat = True
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000C30E0000C30E00000000000000000000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF787878797979FF00FFFF00
+            FF797979838383FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FF797979797979FF00FFFF00FF797979838383FF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFB57D45B4793EFF00FF797979797979ADADADADAD
+            AD797979838383FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB57D45B4793EFF
+            00FFFF00FF797979797979797979797979797979828282FF00FFFF00FFFF00FF
+            FF00FFFF00FFB57D46B4793EB47A3FFF00FF9F9E9D7979797979797979797979
+            797979797979799C9C9CFF00FFFF00FFFF00FFB57E46B4793EB4793EB98652FF
+            00FFFF00FFA1A1A1797979797979797979797979797979FF00FFFF00FFFF00FF
+            B57E47B4793EB4793EB88450FF00FFFF00FFFF00FFFF00FFA6A3A07979797979
+            79818181797979FF00FFFF00FFB67F48B4793EB4793EB4793EB4793EB4793EB4
+            793EB4793EB88553FF00FFA9A6A3A4A3A2C3C1BFA4A2A0FF00FFBA8856B4793E
+            B4793EB4793EB4793EB4793EB4793EB4793EB4793EB4793EB88451FF00FFFF00
+            FFCBB39BCCB7A1FF00FFFF00FFB67F49B4793EB4793EB4793EB4793EB4793EB4
+            793EB4793EB4793EB4793EB4793EB4793EB4793EB47B42FF00FFFF00FFFF00FF
+            B67F47B4793EB4793EB88450FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB57E47B4793EB4793EB98652FF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFB57E46B4793EB4793EB98654FF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB57D46B4793EB4
+            793EBA8856FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFB57D46B4793EB4793EBA8958FF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = btnUGAddClick
         end
       end
     end
@@ -359,7 +397,7 @@ object edtNodeFlats: TedtNodeFlats
       Width = 121
       Height = 17
       Hint = #1050#1074#1072#1088#1090#1080#1088#1099' '#1080#1079' '#1082#1072#1088#1090#1099' '#1076#1086#1084#1072
-      Caption = #1044#1086#1084' '#1080#1079' '#1082#1072#1088#1090#1099
+      Caption = #1044#1086#1084' '#1091#1079#1083#1072
       Checked = True
       DynProps = <>
       State = cbChecked
@@ -367,28 +405,39 @@ object edtNodeFlats: TedtNodeFlats
       OnClick = chkPorchClick
     end
     object chkPorch: TDBCheckBoxEh
-      Left = 168
+      Left = 159
       Top = 7
       Width = 181
       Height = 17
       Hint = #1058#1086#1083#1100#1082#1086' '#1087#1086#1076#1098#1077#1079#1076' / '#1101#1090#1072#1078' '#1091#1079#1083#1072' '#1080#1079' '#1082#1072#1088#1090#1099' '#1076#1086#1084#1072
-      Caption = #1055#1086#1076#1098#1077#1079#1076' / '#1101#1090#1072#1078' '#1091#1079#1083#1072' '#1080#1079' '#1082#1072#1088#1090#1099
+      Caption = #1055#1086#1076#1098#1077#1079#1076' / '#1101#1090#1072#1078' '#1091#1079#1083#1072' '#1080#1079' '#1082#1072#1088#1090#1099' '#1076#1086#1084#1072
       Checked = True
       DynProps = <>
       State = cbChecked
       TabOrder = 1
       OnClick = chkPorchClick
     end
-    object chkAllHouse: TDBCheckBoxEh
+    object chkCustHouse: TDBCheckBoxEh
       Left = 361
       Top = 7
       Width = 203
       Height = 17
       Hint = #1042#1089#1077' '#1082#1074#1072#1088#1090#1080#1088#1099' '#1080#1079' '#1089#1087#1080#1089#1082#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1074', '#1072' '#1085#1077' '#1080#1079' '#1082#1072#1088#1090#1099' '#1076#1086#1084#1072
-      Caption = #1044#1086#1084' '#1080#1079' '#1089#1087#1080#1089#1082#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+      Caption = #1044#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       DynProps = <>
       TabOrder = 2
       OnClick = chkPorchClick
+    end
+    object chkStreet: TDBCheckBoxEh
+      Left = 540
+      Top = 7
+      Width = 121
+      Height = 17
+      Hint = #1044#1086#1084' '#1085#1072' '#1091#1083#1080#1094#1077' '#1091#1079#1083#1072
+      Caption = #1059#1083#1080#1094#1072' '#1091#1079#1083#1072
+      DynProps = <>
+      TabOrder = 3
+      OnClick = chkStreetClick
     end
   end
   object dsOn: TpFIBDataSet
@@ -406,16 +455,21 @@ object edtNodeFlats: TedtNodeFlats
       '  set Notice = :Notice'
       '  where Node_Id = :node_id'
       '        and House_Id = :House_ID'
-      '        and Flat_No = :Flat_No;'
-      ''
       
-        '  execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N, :' +
-        'Floor_N);'
+        '        and ((Flat_No is null and :Flat_No is null) or (Flat_No ' +
+        '= :Flat_No));'
+      ''
+      '  if (not Flat_No is null) then'
+      
+        '    execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N,' +
+        ' :Floor_N);'
       'end')
     DeleteSQL.Strings = (
       'delete from Node_Flats'
       'where House_Id = :OLD_HOUSE_ID'
-      '    and Flat_No = :OLD_FLAT_NO'
+      
+        '    and ((Flat_No is null and :OLD_FLAT_NO is null) or (Flat_No ' +
+        '= :OLD_FLAT_NO))'
       '    '
       '')
     InsertSQL.Strings = (
@@ -438,9 +492,11 @@ object edtNodeFlats: TedtNodeFlats
       
         '       left outer join houseflats f on (f.House_Id  = nf.House_I' +
         'd and f.Flat_No = nf.Flat_No)'
-      '  where NF.HOUSE_ID = :OLD_HOUSE_ID'
-      '    and NF.FLAT_NO = :OLD_FLAT_NO'
-      '    and NF.NODE_ID = :OLD_NODE_ID'
+      '  where NF.NODE_ID = :OLD_NODE_ID '
+      '    and NF.HOUSE_ID = :OLD_HOUSE_ID'
+      
+        '    and ((NF.FLAT_NO is null and :OLD_FLAT_NO is null) or (NF.FL' +
+        'AT_NO = :OLD_FLAT_NO)) '
       '  '
       '  ')
     SelectSQL.Strings = (

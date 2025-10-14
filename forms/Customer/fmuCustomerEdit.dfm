@@ -136,7 +136,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Left = 102
           Top = 0
           Width = 21
-          Height = 13
+          Height = 18
           Align = alLeft
           Caption = '       '
         end
@@ -216,7 +216,7 @@ object apgCustomerEdit: TapgCustomerEdit
           Left = 381
           Top = 0
           Width = 21
-          Height = 13
+          Height = 18
           Align = alRight
           Caption = '       '
         end
@@ -359,11 +359,12 @@ object apgCustomerEdit: TapgCustomerEdit
     Top = 0
     Width = 505
     Height = 521
+    VertScrollBar.Position = 123
     Align = alLeft
     TabOrder = 0
     object pnlAddress: TPanel
       Left = 0
-      Top = 0
+      Top = -123
       Width = 484
       Height = 129
       Align = alTop
@@ -713,7 +714,7 @@ object apgCustomerEdit: TapgCustomerEdit
     end
     object pnlFIZ: TPanel
       Left = 0
-      Top = 129
+      Top = 6
       Width = 484
       Height = 191
       Align = alTop
@@ -733,11 +734,11 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object Label13: TLabel
         Tag = 1
-        Left = 8
+        Left = 75
         Top = 38
-        Width = 75
+        Width = 83
         Height = 13
-        Caption = #1055#1072#1089#1087#1086#1088#1090' '#1085#1086#1084#1077#1088
+        Caption = #1044#1086#1082#1091#1084#1077#1085#1090' '#1085#1086#1084#1077#1088
       end
       object lbl2: TLabel
         Tag = 1
@@ -757,11 +758,11 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object Label12: TLabel
         Tag = 1
-        Left = 138
+        Left = 236
         Top = 38
-        Width = 78
+        Width = 86
         Height = 13
-        Caption = #1055#1072#1089#1087#1086#1088#1090' '#1074#1099#1076#1072#1085
+        Caption = #1044#1086#1082#1091#1084#1077#1085#1090' '#1074#1099#1076#1072#1085
       end
       object Label4: TLabel
         Tag = 1
@@ -797,6 +798,13 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Caption = #1052#1077#1089#1090#1086' '#1088#1086#1078#1076#1077#1085#1080#1103
       end
+      object lblDT: TLabel
+        Left = 8
+        Top = 38
+        Width = 44
+        Height = 13
+        Caption = #1058#1080#1087' '#1076#1086#1082'.'
+      end
       object eSURNAME: TDBEditEh
         Left = 8
         Top = 17
@@ -816,7 +824,7 @@ object apgCustomerEdit: TapgCustomerEdit
       end
       object edtPASSPORT_NUMBER: TDBEditEh
         Tag = 1
-        Left = 8
+        Left = 75
         Top = 54
         Width = 124
         Height = 21
@@ -825,9 +833,9 @@ object apgCustomerEdit: TapgCustomerEdit
         DataSource = ds
         DynProps = <>
         EditButtons = <>
-        EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1087#1072#1089#1087#1086#1088#1090#1072
+        EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
         ShowHint = True
-        TabOrder = 3
+        TabOrder = 4
         Visible = True
         OnEnter = edtPASSPORT_NUMBEREnter
         OnExit = edtPASSPORT_NUMBERExit
@@ -844,7 +852,7 @@ object apgCustomerEdit: TapgCustomerEdit
         EditButtons = <>
         Kind = dtkDateEh
         ShowHint = True
-        TabOrder = 5
+        TabOrder = 6
         Visible = True
         OnEnter = edtBIRTHDAYEnter
         OnExit = edtBIRTHDAYExit
@@ -862,14 +870,14 @@ object apgCustomerEdit: TapgCustomerEdit
         EditButtons = <>
         EmptyDataInfo.Text = #1040#1076#1088#1077#1089' '#1087#1088#1086#1087#1080#1089#1082#1080' ('#1077#1089#1083#1080' '#1086#1090#1083#1080#1095#1072#1077#1090#1089#1103' '#1086#1090' '#1072#1076#1088#1077#1089#1072' '#1091#1089#1090#1072#1085#1086#1074#1082#1080')'
         ShowHint = True
-        TabOrder = 7
+        TabOrder = 8
         Visible = True
       end
       object edRegistration: TDBEditEh
         Tag = 1
-        Left = 138
+        Left = 205
         Top = 54
-        Width = 329
+        Width = 262
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'PASSPORT_REGISTRATION'
@@ -878,7 +886,7 @@ object apgCustomerEdit: TapgCustomerEdit
         EditButtons = <>
         EmptyDataInfo.Text = #1050#1077#1084' '#1074#1099#1076#1072#1085' '#1080' '#1076#1072#1090#1072' '#1074#1099#1076#1072#1095#1080
         ShowHint = True
-        TabOrder = 4
+        TabOrder = 5
         Visible = True
       end
       object eFIRSTNAME: TDBEditEh
@@ -930,7 +938,7 @@ object apgCustomerEdit: TapgCustomerEdit
         EditButtons = <>
         EmptyDataInfo.Text = #1051#1080#1095#1085#1099#1081' '#1085#1086#1084#1077#1088
         ShowHint = True
-        TabOrder = 6
+        TabOrder = 7
         Visible = True
         OnEnter = edtPERSONAL_NEnter
         OnExit = edtPERSONAL_NExit
@@ -948,13 +956,32 @@ object apgCustomerEdit: TapgCustomerEdit
         EditButtons = <>
         EmptyDataInfo.Text = #1052#1077#1089#1090#1086' '#1088#1086#1078#1076#1077#1085#1080#1103
         ShowHint = True
-        TabOrder = 8
+        TabOrder = 9
+        Visible = True
+      end
+      object lcbDT: TDBLookupComboboxEh
+        Left = 8
+        Top = 54
+        Width = 61
+        Height = 21
+        Hint = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+        DynProps = <>
+        DataField = 'DocType'
+        DataSource = ds
+        DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+        EditButtons = <>
+        KeyField = 'O_ID'
+        ListField = 'O_NAME'
+        ListSource = srcDocType
+        ShowHint = True
+        TabOrder = 3
         Visible = True
       end
     end
     object pnlJUR: TPanel
       Left = 0
-      Top = 320
+      Top = 197
       Width = 484
       Height = 211
       Align = alTop
@@ -1224,7 +1251,7 @@ object apgCustomerEdit: TapgCustomerEdit
     end
     object Panel2: TPanel
       Left = 0
-      Top = 531
+      Top = 408
       Width = 484
       Height = 109
       Align = alTop
@@ -1460,8 +1487,8 @@ object apgCustomerEdit: TapgCustomerEdit
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
-    Left = 566
-    Top = 292
+    Left = 678
+    Top = 332
   end
   object dsHouses: TpFIBDataSet
     SelectSQL.Strings = (
@@ -1683,5 +1710,23 @@ object apgCustomerEdit: TapgCustomerEdit
     UpdateTransaction = dmMain.trWrite
     Left = 657
     Top = 525
+  end
+  object dsDocType: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select o.o_name, o.O_id, o.O_CHECK'
+      'from objects o'
+      'where o.O_TYPE = 66'
+      'order by o.o_name')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    Left = 579
+    Top = 445
+  end
+  object srcDocType: TDataSource
+    AutoEdit = False
+    DataSet = dsDocType
+    Left = 620
+    Top = 445
   end
 end

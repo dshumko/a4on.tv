@@ -670,6 +670,7 @@ var
   CMD_TYPE: Integer;
   URL, AUT_USER, AUT_PSWD: String;
   C_FIO, C_ACCNT, C_ADDR, eid, pid: string;
+  scr: TCursor;
 
   procedure replaceParams(var InStr: String);
   begin
@@ -703,107 +704,113 @@ begin
   if dsData.RecordCount = 0 then
     exit;
 
-  if (not dsData.FieldByName('IP').IsNull) then
-    C_IP := dsData.FieldByName('IP').asString;
+  scr := Screen.Cursor;
+  Screen.Cursor := crHourGlass;
+  try
+    if (not dsData.FieldByName('IP').IsNull) then
+      C_IP := dsData.FieldByName('IP').asString;
 
-  if (not dsData.FieldByName('MAC').IsNull) then
-    C_MAC := dsData.FieldByName('MAC').asString;
+    if (not dsData.FieldByName('MAC').IsNull) then
+      C_MAC := dsData.FieldByName('MAC').asString;
 
-  if (not dsData.FieldByName('PORT').IsNull) then
-    C_PORT := dsData.FieldByName('PORT').asString;
+    if (not dsData.FieldByName('PORT').IsNull) then
+      C_PORT := dsData.FieldByName('PORT').asString;
 
-  if (not dsData.FieldByName('ACCOUNT_NO').IsNull) then
-    C_ACCNT := dsData.FieldByName('ACCOUNT_NO').asString;
+    if (not dsData.FieldByName('ACCOUNT_NO').IsNull) then
+      C_ACCNT := dsData.FieldByName('ACCOUNT_NO').asString;
 
-  if (not dsData.FieldByName('SURNAME').IsNull) then
-  begin
-    C_FIO := dsData.FieldByName('SURNAME').asString;
-    if (not dsData.FieldByName('INITIALS').IsNull) then
-      C_FIO := C_FIO + dsData.FieldByName('INITIALS').asString;
-  end;
-
-  if (not dsData.FieldByName('CUST_CODE').IsNull) then
-    C_ADDR := dsData.FieldByName('CUST_CODE').asString;
-
-  with dmMain.qRead do
-  begin
-    sql.Clear;
-    sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
-    sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
-    sql.Add('from equipment e');
-    sql.Add('  inner join equipment_cmd_grp ec');
-    sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
-    sql.Add('where e.eid = :eq_id');
-    ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
-    ParamByName('eq_id').AsInteger := dsData.DataSource.DataSet.FieldByName('EID').AsInteger;
-    Transaction.StartTransaction;
-    ExecQuery;
-
-    if not FieldByName('ip').IsNull then
-      Host := FieldByName('ip').asString;
-
-    if not FieldByName('e_admin').IsNull then
-      user := FieldByName('e_admin').asString;
-
-    if not FieldByName('e_pass').IsNull then
-      pswd := FieldByName('e_pass').asString;
-
-    if (not FieldByName('mac').IsNull) then
-      H_MAC := FieldByName('mac').asString;
-
-    if not FieldByName('command').IsNull then
-      cmd := FieldByName('command').asString;
-
-    if FieldByName('eol_chrs').IsNull then
-      eol_chars := 0
-    else
+    if (not dsData.FieldByName('SURNAME').IsNull) then
     begin
-      if FieldByName('eol_chrs').asString = '\r\n' then
-        eol_chars := 0
-      else if FieldByName('eol_chrs').asString = '\n\r' then
-        eol_chars := 1
-      else if FieldByName('eol_chrs').asString = '\n' then
-        eol_chars := 2
-      else if FieldByName('eol_chrs').asString = '\r' then
-        eol_chars := 3
-      else
-        eol_chars := 0
+      C_FIO := dsData.FieldByName('SURNAME').asString;
+      if (not dsData.FieldByName('INITIALS').IsNull) then
+        C_FIO := C_FIO + dsData.FieldByName('INITIALS').asString;
     end;
 
-    if FieldByName('CMD_TYPE').IsNull then
-      CMD_TYPE := 0
-    else
-      CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
-    if not FieldByName('URL').IsNull then
-      URL := FieldByName('URL').asString;
-    if not FieldByName('AUT_USER').IsNull then
-      AUT_USER := FieldByName('AUT_USER').asString;
-    if not FieldByName('AUT_PSWD').IsNull then
-      AUT_PSWD := FieldByName('AUT_PSWD').asString;
-    if not FieldByName('eid').IsNull then
-      eid := FieldByName('eid').asString
-    else
-      eid := '';
-    if not FieldByName('PARENT_ID').IsNull then
-      pid := FieldByName('PARENT_ID').asString
-    else
-      pid := '';
+    if (not dsData.FieldByName('CUST_CODE').IsNull) then
+      C_ADDR := dsData.FieldByName('CUST_CODE').asString;
 
-    Close;
-    Transaction.Rollback;
-  end;
+    with dmMain.qRead do
+    begin
+      sql.Clear;
+      sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
+      sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
+      sql.Add('from equipment e');
+      sql.Add('  inner join equipment_cmd_grp ec');
+      sql.Add('       on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id )');
+      sql.Add('where e.eid = :eq_id');
+      ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
+      ParamByName('eq_id').AsInteger := dsData.DataSource.DataSet.FieldByName('EID').AsInteger;
+      Transaction.StartTransaction;
+      ExecQuery;
 
-  if cmd <> '' then
-    replaceParams(cmd);
-  if URL <> '' then
-    replaceParams(URL);
+      if not FieldByName('ip').IsNull then
+        Host := FieldByName('ip').asString;
 
-  case CMD_TYPE of
-    2:
-      cmd := GetHtml(URL, AUT_USER, AUT_PSWD, cmd, true, (Sender as TMenuItem).Caption);
-  else
+      if not FieldByName('e_admin').IsNull then
+        user := FieldByName('e_admin').asString;
+
+      if not FieldByName('e_pass').IsNull then
+        pswd := FieldByName('e_pass').asString;
+
+      if (not FieldByName('mac').IsNull) then
+        H_MAC := FieldByName('mac').asString;
+
+      if not FieldByName('command').IsNull then
+        cmd := FieldByName('command').asString;
+
+      if FieldByName('eol_chrs').IsNull then
+        eol_chars := 0
+      else
+      begin
+        if FieldByName('eol_chrs').asString = '\r\n' then
+          eol_chars := 0
+        else if FieldByName('eol_chrs').asString = '\n\r' then
+          eol_chars := 1
+        else if FieldByName('eol_chrs').asString = '\n' then
+          eol_chars := 2
+        else if FieldByName('eol_chrs').asString = '\r' then
+          eol_chars := 3
+        else
+          eol_chars := 0
+      end;
+
+      if FieldByName('CMD_TYPE').IsNull then
+        CMD_TYPE := 0
+      else
+        CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
+      if not FieldByName('URL').IsNull then
+        URL := FieldByName('URL').asString;
+      if not FieldByName('AUT_USER').IsNull then
+        AUT_USER := FieldByName('AUT_USER').asString;
+      if not FieldByName('AUT_PSWD').IsNull then
+        AUT_PSWD := FieldByName('AUT_PSWD').asString;
+      if not FieldByName('eid').IsNull then
+        eid := FieldByName('eid').asString
+      else
+        eid := '';
+      if not FieldByName('PARENT_ID').IsNull then
+        pid := FieldByName('PARENT_ID').asString
+      else
+        pid := '';
+
+      Close;
+      Transaction.Rollback;
+    end;
+
     if cmd <> '' then
-      cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, true);
+      replaceParams(cmd);
+    if URL <> '' then
+      replaceParams(URL);
+
+    case CMD_TYPE of
+      2:
+        cmd := GetHtml(URL, AUT_USER, AUT_PSWD, cmd, true, (Sender as TMenuItem).Caption);
+    else
+      if cmd <> '' then
+        cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, true);
+    end;
+  finally
+    Screen.Cursor := scr;
   end;
 end;
 

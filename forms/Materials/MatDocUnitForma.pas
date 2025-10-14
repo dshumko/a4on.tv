@@ -69,24 +69,26 @@ type
     procedure dbGridColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     { Private declarations }
-    fMatDocID: Integer;
-    fMaterialID: Integer;
-    fRowID: Integer;
+    FMatDocID: Integer;
+    FMaterialID: Integer;
+    FRowID: Integer;
     FRecordCount: Integer;
+    FItsInvenoty: Boolean;
     function GetCount: Integer;
     procedure OpenDataset();
     function SaveUnits(): Boolean;
     function CheckUnitsInDB(): String;
     function GenUNITS: Boolean;
   public
-    property MatDocID: Integer read fMatDocID write fMatDocID;
-    property MaterialID: Integer read fMaterialID write fMaterialID;
-    property RowID: Integer read fRowID write fRowID;
+    property MatDocID: Integer read FMatDocID write FMatDocID;
+    property MaterialID: Integer read FMaterialID write FMaterialID;
+    property RowID: Integer read FRowID write FRowID;
     property UnitsCount: Integer read FRecordCount;
+    property ItsInvenoty: Boolean read FItsInvenoty write FItsInvenoty;
   end;
 
 function InputUnits(const aDocID: Integer; const aMatID: Integer; const aRowID: Integer;
-  const ReadOnly: Boolean = False): Integer;
+  const ReadOnly: Boolean = False; const aItsInvenoty: Boolean = False): Integer;
 
 implementation
 
@@ -97,7 +99,7 @@ uses
 {$R *.dfm}
 
 function InputUnits(const aDocID: Integer; const aMatID: Integer; const aRowID: Integer;
-  const ReadOnly: Boolean = False): Integer;
+  const ReadOnly: Boolean = False; const aItsInvenoty: Boolean = False): Integer;
 var
   mfu: TMatDocUnitForm;
 begin
@@ -107,6 +109,7 @@ begin
     mfu.MatDocID := aDocID;
     mfu.MaterialID := aMatID;
     mfu.RowID := aRowID;
+    mfu.ItsInvenoty := aItsInvenoty;
     mfu.pnlEdit.Visible := not ReadOnly;
     mfu.btnSave.Visible := not ReadOnly;
     if mfu.ShowModal = mrOk then
@@ -147,9 +150,9 @@ end;
 
 procedure TMatDocUnitForm.OpenDataset;
 begin
-  dsDMUnits.ParamByName('doc_id').AsInteger := fMatDocID;
-  dsDMUnits.ParamByName('mat_id').AsInteger := fMaterialID;
-  dsDMUnits.ParamByName('id').AsInteger := fRowID;
+  dsDMUnits.ParamByName('doc_id').AsInteger := FMatDocID;
+  dsDMUnits.ParamByName('mat_id').AsInteger := FMaterialID;
+  dsDMUnits.ParamByName('id').AsInteger := FRowID;
   dsDMUnits.Open;
   if not mtUnits.Active then
     mtUnits.Open;
@@ -158,9 +161,9 @@ begin
   while not dsDMUnits.EOF do
   begin
     mtUnits.Append;
-    mtUnits['Doc_Id'] := fMatDocID;
-    mtUnits['M_Id'] := fMaterialID;
-    mtUnits['Id'] := fRowID;
+    mtUnits['Doc_Id'] := FMatDocID;
+    mtUnits['M_Id'] := FMaterialID;
+    mtUnits['Id'] := FRowID;
     mtUnits['Serial'] := dsDMUnits['Serial'];
     if not dsDMUnits.FieldByName('Mac').IsNull then
       mtUnits['Mac'] := ValidateMAC(dsDMUnits['Mac']);
@@ -204,9 +207,9 @@ begin
       if Length(sa) > 0 then
       begin
         mtUnits.Append;
-        mtUnits['Doc_Id'] := fMatDocID;
-        mtUnits['M_Id'] := fMaterialID;
-        mtUnits['Id'] := fRowID;
+        mtUnits['Doc_Id'] := FMatDocID;
+        mtUnits['M_Id'] := FMaterialID;
+        mtUnits['Id'] := FRowID;
         mtUnits['Serial'] := sa[0];
         if Length(sa) > 1 then
         begin
@@ -266,9 +269,9 @@ begin
     exit;
   end;
 
-  dsDMUnits.ParamByName('doc_id').AsInteger := fMatDocID;
-  dsDMUnits.ParamByName('mat_id').AsInteger := fMaterialID;
-  dsDMUnits.ParamByName('id').AsInteger := fRowID;
+  dsDMUnits.ParamByName('doc_id').AsInteger := FMatDocID;
+  dsDMUnits.ParamByName('mat_id').AsInteger := FMaterialID;
+  dsDMUnits.ParamByName('id').AsInteger := FRowID;
   dsDMUnits.Open;
   while not dsDMUnits.EOF do
     dsDMUnits.Delete;
@@ -280,9 +283,9 @@ begin
     while not mtUnits.EOF do
     begin
       dsDMUnits.Append;
-      dsDMUnits['Doc_Id'] := fMatDocID;
-      dsDMUnits['M_Id'] := fMaterialID;
-      dsDMUnits['Id'] := fRowID;
+      dsDMUnits['Doc_Id'] := FMatDocID;
+      dsDMUnits['M_Id'] := FMaterialID;
+      dsDMUnits['Id'] := FRowID;
       dsDMUnits['Serial'] := mtUnits['Serial'];
       if not mtUnits.FieldByName('Mac').IsNull then
         dsDMUnits['Mac'] := ValidateMAC(mtUnits['Mac']);
@@ -304,39 +307,38 @@ var
   answer: string;
   q: TpFIBQuery;
 begin
-  if mtUnits.Active then
-  begin
-    mtUnits.DisableControls;
-    mtUnits.First;
-    q := TpFIBQuery.Create(Nil);
-    try
-      q.Database := dmMain.dbTV;
-      q.Transaction := dmMain.trReadQ;
-      q.sql.Text := 'select Notice from Get_Doc_Unit_Income(:M_Id, :Serial)';
-      q.Transaction.StartTransaction;
+  if (FItsInvenoty) or (not mtUnits.Active) then
+    exit;
 
-      while not mtUnits.EOF do
+  mtUnits.DisableControls;
+  mtUnits.First;
+  q := TpFIBQuery.Create(Nil);
+  try
+    q.Database := dmMain.dbTV;
+    q.Transaction := dmMain.trReadQ;
+    q.sql.Text := 'select Notice from Get_Doc_Unit_Income(:M_Id, :Serial)';
+    q.Transaction.StartTransaction;
+
+    while not mtUnits.EOF do
+    begin
+      q.ParamByName('M_ID').AsInteger := FMaterialID;
+      q.ParamByName('Serial').AsString := mtUnits['Serial'];
+      q.ExecQuery;
+      if not q.FN('NOTICE').IsNull then
       begin
-        q.ParamByName('M_ID').AsInteger := fMaterialID;
-        q.ParamByName('Serial').AsString := mtUnits['Serial'];
-        q.ExecQuery;
-        if not q.FN('NOTICE').IsNull then
-        begin
-          answer := mtUnits['Serial'] + ': ' + q.FN('NOTICE').AsString;
-          Result := Result + #13#10 + answer;
-          mtUnits.Edit;
-          mtUnits['ERROR'] := q.FN('NOTICE').AsString;
-          mtUnits.Post;
-        end;
-        q.Close;
-        mtUnits.Next;
+        answer := mtUnits['Serial'] + ': ' + q.FN('NOTICE').AsString;
+        Result := Result + #13#10 + answer;
+        mtUnits.Edit;
+        mtUnits['ERROR'] := q.FN('NOTICE').AsString;
+        mtUnits.Post;
       end;
-      q.Transaction.Commit;
-    finally
-      q.free;
-      mtUnits.EnableControls;
+      q.Close;
+      mtUnits.Next;
     end;
-
+    q.Transaction.Commit;
+  finally
+    q.free;
+    mtUnits.EnableControls;
   end;
 
   Result := Result.Trim;
@@ -369,9 +371,10 @@ end;
 
 procedure TMatDocUnitForm.FormCreate(Sender: TObject);
 begin
-  fMatDocID := -1;
-  fMaterialID := -1;
+  FMatDocID := -1;
+  FMaterialID := -1;
   FRecordCount := 0;
+  FItsInvenoty := False;
 end;
 
 procedure TMatDocUnitForm.FormShow(Sender: TObject);

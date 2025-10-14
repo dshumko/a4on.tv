@@ -203,6 +203,7 @@ object QueryForm: TQueryForm
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
+    PopupMenu = pmMemo
     TabOrder = 1
     Gutter.AutoSize = True
     Gutter.Font.Charset = DEFAULT_CHARSET
@@ -284,5 +285,21 @@ object QueryForm: TQueryForm
   object syndtsrch1: TSynEditSearch
     Left = 309
     Top = 96
+  end
+  object pmMemo: TPopupMenu
+    Left = 408
+    Top = 136
+    object miCut1: TMenuItem
+      Action = A4MainForm.EditCut1
+    end
+    object Copy1: TMenuItem
+      Action = A4MainForm.EditCopy1
+    end
+    object Paste1: TMenuItem
+      Action = A4MainForm.EditPaste1
+    end
+    object SelectAll1: TMenuItem
+      Action = A4MainForm.EditSelectAll1
+    end
   end
 end

@@ -95,7 +95,6 @@ var
   i: Integer;
   s: string;
 begin
-
   // права пользователей
   FullAccess := dmMain.AllowedAction(rght_Request_full);
   CA := dmMain.AllowedAction(rght_Request_add);
@@ -127,8 +126,19 @@ begin
     dsRequests.ParamByName('Colorize').AsString :=
       ', iif((r.Rq_Customer is null), 0, coalesce(Get_Request_Money(r.Rq_Id),0) ) RQ_FEE' +
       ', iif((r.Rq_Customer is null), 0, coalesce((select sum(p.Pay_Sum+coalesce(p.fine_sum,0)) from payment p ' +
-      '  where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0)) RQ_PAY ' +
-      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0)) PAY_SRV '
+      '                                            where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0)) RQ_PAY ' +
+      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0)) PAY_SRV ';
+
+     // (dsRequests['RQ_FEE'] + dsRequests['PAY_SRV']) <> dsRequests['RQ_PAY']
+    for i := 0 to dbGridCustReq.Columns.Count - 1 do
+    begin
+      if (AnsiUpperCase(dbGridCustReq.Columns[i].FieldName) = 'RQ_FEE') then
+        dbGridCustReq.Columns[i].Visible := True;
+      if (AnsiUpperCase(dbGridCustReq.Columns[i].FieldName) = 'PAY_SRV') then
+        dbGridCustReq.Columns[i].Visible := True;
+      if (AnsiUpperCase(dbGridCustReq.Columns[i].FieldName) = 'RQ_PAY') then
+        dbGridCustReq.Columns[i].Visible := True;
+    end;
   end;
 
   dsRequests.DataSource := FDataSource;
@@ -218,7 +228,7 @@ Begin
   else
     ReguestNodeExecute(aRequest, aNodeId, aMode);
 
-  dsRequests.CloseOpen(true);
+  RefreshDS;
 end;
 
 procedure TapgCustomerRequests.actAddExecute(Sender: TObject);
@@ -229,6 +239,7 @@ begin
     aCustomer := FDataSource.DataSet['CUSTOMER_ID']
   else
     aCustomer := -1;
+
   NewRequest(aCustomer, RefreshDS);
 end;
 

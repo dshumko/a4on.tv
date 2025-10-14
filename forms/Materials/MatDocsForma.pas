@@ -70,6 +70,9 @@ type
     actPaymentDelete1: TMenuItem;
     miN10: TMenuItem;
     miQuickFilter: TMenuItem;
+    btn2: TToolButton;
+    btnOpenMat: TToolButton;
+    actOpenMat: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -94,6 +97,8 @@ type
     procedure actSetFilterNewExecute(Sender: TObject);
     procedure actEnableFilterExecute(Sender: TObject);
     procedure actFilterSetExecute(Sender: TObject);
+    procedure actOpenMatExecute(Sender: TObject);
+    procedure dsFilterNewRecord(DataSet: TDataSet);
   private
     FFirstOpen: Boolean;
     fStartDate: TDateTime;
@@ -103,6 +108,8 @@ type
     FAccessMove: Boolean;
     FAccessOut: Boolean;
     FAccessInv: Boolean;
+    FViewAll: Boolean;
+    FCanEdit: Boolean;
     procedure AddReport(const report_id: Integer; const variable: string; const value: Variant;
       const AsNew: Boolean = False);
     procedure LoadReportBody(const fReport_ID: Integer);
@@ -122,7 +129,7 @@ implementation
 
 uses
   MAIN, DM, PrjConst, synacode, PeriodForma, AtrStrUtils, AtrCommon, MatCorrectionDocForma, MatIncomeDocForma,
-  MatMoveDocForma,
+  MatMoveDocForma, MaterialsForma,
   MatOutDocForma, MatInventoryDocForma, MatDocFilter;
 
 const
@@ -149,14 +156,18 @@ begin
   FAccessMove := dmMain.AllowedAction(rght_Dictionary_MatDocMove);
   FAccessOut := dmMain.AllowedAction(rght_Dictionary_MatDocOUT);
   FAccessInv := dmMain.AllowedAction(rght_Dictionary_MatDocInvent);
+  FViewAll := dmMain.AllowedAction(rght_Dictionary_MatDocsView);
 
-  actNew.Visible := FFullAccess or FAccessNew;
-  actDocMove.Visible := FFullAccess or FAccessMove;
-  actDocOUT.Visible := FFullAccess or FAccessOut;
-  actDocInventory.Visible := FFullAccess or FAccessInv;
+  FCanEdit := FFullAccess or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit) or
+    dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
+
+  actNew.Visible := FFullAccess or (FAccessNew and FCanEdit);
+  actDocMove.Visible := FFullAccess or (FAccessMove and FCanEdit);
+  actDocOUT.Visible := FFullAccess or (FAccessOut and FCanEdit);
+  actDocInventory.Visible := FFullAccess or (FAccessInv and FCanEdit);
 
   // если не все типы, то поставим фильтр
-  if not(FFullAccess or (FAccessNew and FAccessMove and FAccessOut and FAccessInv)) then
+  if not(FFullAccess or FViewAll) then
   begin
     s := '';
     if FAccessNew then
@@ -167,7 +178,10 @@ begin
       s := s + '3,';
     if FAccessInv then
       s := s + '4,5,';
-    dsDocs.SelectSQL.Add(format(' and D.Dt_Id in (%s) ', [s.TrimRight([','])]));
+    s := s.TrimRight([',']);
+    if s.IsEmpty then
+      s := '-1';
+    dsDocs.SelectSQL.Add(format(' and D.Dt_Id in (%s) ', [s]));
   end;
   dsDocs.SelectSQL.Add('order by d.DOC_Date desc, d.DOC_N');
 end;
@@ -323,14 +337,22 @@ end;
 procedure TMatDocsForm.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if (FFullAccess or FAccessNew) then
+  if (FFullAccess or (FAccessNew and FCanEdit)) then
     MaterialIncomeDocument(-1);
+end;
+
+procedure TMatDocsForm.actOpenMatExecute(Sender: TObject);
+begin
+  inherited;
+  if Not Assigned(MaterialsForm) then
+    MaterialsForm := TMaterialsForm.Create(Application);
+  MaterialsForm.Show;
 end;
 
 procedure TMatDocsForm.actDocMoveExecute(Sender: TObject);
 begin
   inherited;
-  if not(FFullAccess or FAccessMove) then
+  if not(FFullAccess or (FAccessMove and FCanEdit)) then
     exit;
   MaterialMoveDocument(-1);
 end;
@@ -338,7 +360,7 @@ end;
 procedure TMatDocsForm.actDocOUTExecute(Sender: TObject);
 begin
   inherited;
-  if not(FFullAccess or FAccessOut) then
+  if not(FFullAccess or (FAccessOut and FCanEdit)) then
     exit;
   MaterialOutDocument(-1);
 end;
@@ -346,7 +368,7 @@ end;
 procedure TMatDocsForm.actDocInventExecute(Sender: TObject);
 begin
   inherited;
-  if not(FFullAccess or FAccessInv) then
+  if not(FFullAccess or (FAccessInv and FCanEdit)) then
     exit;
   MaterialInventoryDocument(-1);
 end;
@@ -354,7 +376,7 @@ end;
 procedure TMatDocsForm.actDocInventoryExecute(Sender: TObject);
 begin
   inherited;
-  if not(FFullAccess or FAccessInv) then
+  if not(FFullAccess or (FAccessInv and FCanEdit)) then
     exit;
   MaterialInventoryDocument(-1);
 end;
@@ -373,6 +395,12 @@ begin
   end;
 end;
 
+procedure TMatDocsForm.dsFilterNewRecord(DataSet: TDataSet);
+begin
+  inherited;
+  dsFilter['CLOSED'] := False;
+end;
+
 procedure TMatDocsForm.LoadReportBody(const fReport_ID: Integer);
 var
   Stream: TStream;
@@ -388,7 +416,7 @@ begin
         Stream.Position := 0;
         frxReport.LoadFromStream(Stream);
         frxReport.FileName := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
-        frxReport.PreviewForm.Caption := frxReport.FILENAME;
+        frxReport.PreviewForm.Caption := frxReport.FileName;
       finally
         Stream.Free;
       end;
@@ -461,8 +489,9 @@ begin
     end;
   end;
 
-  if not FirstReport then begin
-    frxReport.ReportOptions.Name := frxReport.FILENAME;
+  if not FirstReport then
+  begin
+    frxReport.ReportOptions.Name := frxReport.FileName;
     frxReport.ShowPreparedReport;
   end;
 end;
@@ -471,6 +500,8 @@ procedure TMatDocsForm.FormCreate(Sender: TObject);
 begin
   inherited;
   dmMain.frxAddFunctions(frxReport);
+  actOpenMat.Visible := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_View) or
+    dmMain.AllowedAction(rght_Dictionary_Materials) or dmMain.AllowedAction(rght_Materials_full);
 end;
 
 function TMatDocsForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
@@ -558,6 +589,7 @@ begin
     dsFilter['dStart'] := fStartDate;
     dsFilter['dEnd'] := fEndDate;
     dsFilter['MD_STATE'] := -1;
+    dsFilter['CLOSED'] := False;
     dsFilter.Post;
     dsDocs.ParamByName('Filter').value := GenerateFilter;
     dsDocs.CloseOpen(True);
@@ -571,13 +603,13 @@ end;
 procedure TMatDocsForm.ToolButton1Click(Sender: TObject);
 begin
   inherited;
-  if (FFullAccess or FAccessNew) then
+  if (actNew.Visible) then
     MaterialIncomeDocument(-1)
-  else if FAccessMove then
+  else if actDocMove.Visible then
     MaterialMoveDocument(-1)
-  else if FAccessOut then
+  else if actDocOUT.Visible then
     MaterialOutDocument(-1)
-  else if FAccessInv then
+  else if actDocInventory.Visible then
     MaterialInventoryDocument(-1);
 end;
 
@@ -609,10 +641,8 @@ function TMatDocsForm.GenerateFilter: string;
 
     if (not dsFilter.FieldByName('MD_STATE').IsNull) then
     begin
-      if (dsFilter['MD_STATE'] = -1) then
-        tmpSQL := tmpSQL + ' or (D.Doc_Closed = 0) '
-      else
-        tmpSQL := tmpSQL + format(' and (D.Doc_Closed = %d) ', [dsFilter.FieldByName('MD_STATE').AsInteger]);
+      if (dsFilter['MD_STATE'] <> -1) then
+        tmpSQL := tmpSQL + format(' and D.Doc_Closed = %d ', [dsFilter.FieldByName('MD_STATE').AsInteger]);
     end;
 
     if (not dsFilter.FieldByName('M_ID').IsNull) then
@@ -631,6 +661,16 @@ function TMatDocsForm.GenerateFilter: string;
     begin
       tmpSQL := tmpSQL + format(' and d.From_Wh = %d ', [dsFilter.FieldByName('WH_OUT').AsInteger]);
     end;
+
+    if (not dsFilter.FieldByName('MD_STATE').IsNull) and (dsFilter['MD_STATE'] = -1) then
+    begin
+        tmpSQL := '(' + TrimAnd(tmpSQL) + ') or (D.Doc_Closed = 0) ';
+    end;
+
+//    if (not dsFilter.FieldByName('CLOSED').IsNull) and dsFilter['CLOSED'] then
+//    begin
+//      tmpSQL := tmpSQL + ' and D.Doc_Closed = 1 ';
+//    end;
 
     if (tmpSQL <> '') then
       Result := TrimAnd(tmpSQL)
@@ -677,24 +717,24 @@ begin
   srcDataSource.DataSet.EnableControls;
 end;
 
-//procedure TMatDocsForm.SetDefaultFilter;
-//var
-//  f: string;
-//begin
-//  dsFilter.Close;
-//  dsFilter.Open;
-//  dsFilter.EmptyTable;
-//  f := A4MainForm.GetUserFilterFolder + 'matdoc_default.ftr';
-//  if FileExists(f) then
-//  begin
-//    if dsFilter.State in [dsEdit, dsInsert] then
-//      dsFilter.Post;
-//    DatasetFromJson(dsFilter, f);
-//  end;
+// procedure TMatDocsForm.SetDefaultFilter;
+// var
+// f: string;
+// begin
+// dsFilter.Close;
+// dsFilter.Open;
+// dsFilter.EmptyTable;
+// f := A4MainForm.GetUserFilterFolder + 'matdoc_default.ftr';
+// if FileExists(f) then
+// begin
+// if dsFilter.State in [dsEdit, dsInsert] then
+// dsFilter.Post;
+// DatasetFromJson(dsFilter, f);
+// end;
 //
-//  if dsFilter.RecordCount > 0 then
-//    actEnableFilter.Checked := True;
-//end;
+// if dsFilter.RecordCount > 0 then
+// actEnableFilter.Checked := True;
+// end;
 
 procedure TMatDocsForm.actEnableFilterExecute(Sender: TObject);
 begin

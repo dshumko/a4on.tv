@@ -1,7 +1,6 @@
 object RequestWorksForm: TRequestWorksForm
   Left = 519
   Top = 314
-  ActiveControl = cbAllMaterials
   Caption = #1056#1072#1073#1086#1090#1099' '#1074' '#1079#1072#1103#1074#1082#1077
   ClientHeight = 368
   ClientWidth = 749
@@ -20,25 +19,6 @@ object RequestWorksForm: TRequestWorksForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Panel1: TPanel
-    Left = 0
-    Top = 0
-    Width = 749
-    Height = 25
-    Align = alTop
-    BevelOuter = bvNone
-    TabOrder = 0
-    object cbAllMaterials: TCheckBox
-      Left = 5
-      Top = 0
-      Width = 212
-      Height = 22
-      Hint = #1055#1086#1082#1072#1079#1072#1090#1100' '#1074#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099'. '#1041#1077#1079' '#1091#1095#1077#1090#1072' '#1075#1088#1091#1087#1087'.'
-      Caption = #1042#1089#1077' '#1088#1072#1073#1086#1090#1099
-      TabOrder = 0
-      OnClick = cbAllMaterialsClick
-    end
-  end
   object Panel2: TPanel
     Left = 0
     Top = 331
@@ -46,7 +26,7 @@ object RequestWorksForm: TRequestWorksForm
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 1
     inline OkCancelFrame1: TOkCancelFrame
       Left = 0
       Top = 0
@@ -77,22 +57,22 @@ object RequestWorksForm: TRequestWorksForm
   end
   object Panel3: TPanel
     Left = 0
-    Top = 25
+    Top = 0
     Width = 749
-    Height = 306
+    Height = 331
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 0
     object Splitter1: TSplitter
       Left = 185
       Top = 0
-      Height = 306
+      Height = 331
     end
     object dbGrid: TDBGridEh
       Left = 188
       Top = 0
       Width = 561
-      Height = 306
+      Height = 331
       Align = alClient
       DataSource = srcDataSource
       DynProps = <>
@@ -102,7 +82,6 @@ object RequestWorksForm: TRequestWorksForm
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       SortLocal = True
       STFilter.Local = True
       STFilter.Visible = True
@@ -188,7 +167,7 @@ object RequestWorksForm: TRequestWorksForm
       Left = 0
       Top = 0
       Width = 185
-      Height = 306
+      Height = 331
       Align = alLeft
       AllowedOperations = []
       DataSource = srcWorkGrps
@@ -198,6 +177,7 @@ object RequestWorksForm: TRequestWorksForm
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
       TabOrder = 0
       TitleParams.MultiTitle = True
+      OnGetCellParams = dbGridGroupsGetCellParams
       Columns = <
         item
           CellButtons = <>
@@ -266,7 +246,9 @@ object RequestWorksForm: TRequestWorksForm
         'd)'
       '       left outer join request rq on (r.rq_id = rq.rq_id)'
       '  where W.DELETED = 0'
-      '        and W.RQ_TYPE = :RT_ID'
+      
+        '        and ((W.RQ_TYPE = :RT_ID) or (cast(:RT_ID as INTEGER) = ' +
+        '-1))'
       '  order by W.NAME')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
@@ -281,7 +263,11 @@ object RequestWorksForm: TRequestWorksForm
       'select t.rt_id, t.rt_name, t.rt_notice'
       'from request_types t'
       'where RT_DELETED = 0'
-      'order by 2')
+      'union all'
+      'select -1 rt_id, '#39'  _'#1042#1089#1077' '#1088#1072#1073#1086#1090#1099'_  '#39' rt_name, '#39#39' rt_notice'
+      'from rdb$database t'
+      'order by 2'
+      '')
     AutoUpdateOptions.UpdateTableName = 'MATERIALS_GROUP'
     AutoUpdateOptions.KeyFields = 'MG_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'

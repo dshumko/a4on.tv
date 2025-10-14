@@ -4,8 +4,8 @@ object ReqAddWork: TReqAddWork
   ActiveControl = luWork
   BorderStyle = bsDialog
   Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1088#1072#1073#1086#1090#1091' '#1074' '#1079#1072#1103#1074#1082#1091
-  ClientHeight = 149
-  ClientWidth = 407
+  ClientHeight = 151
+  ClientWidth = 418
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,6 +18,9 @@ object ReqAddWork: TReqAddWork
   ShowHint = True
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
+  DesignSize = (
+    418
+    151)
   PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
@@ -43,34 +46,42 @@ object ReqAddWork: TReqAddWork
   end
   inline frmOk: TOkCancelFrame
     Left = 0
-    Top = 114
-    Width = 407
+    Top = 116
+    Width = 418
     Height = 35
     Align = alBottom
     TabOrder = 0
     TabStop = True
     inherited bbOk: TBitBtn
-      Left = 189
+      Left = 200
       Width = 125
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
     end
     inherited bbCancel: TBitBtn
-      Left = 320
+      Left = 331
       Width = 74
     end
   end
   object luWork: TDBLookupComboboxEh
     Left = 100
     Top = 14
-    Width = 294
+    Width = 308
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
+    DropDownBox.ListFieldNames = 'Name'
+    DropDownBox.ListSource = srcRTWorks
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
+    DropDownBox.Sizable = True
     EditButtons = <>
     KeyField = 'W_ID'
     ListField = 'NAME'
     ListSource = srcRTWorks
     ShowHint = True
+    Style = csDropDownEh
     TabOrder = 1
     Visible = True
   end
@@ -88,8 +99,9 @@ object ReqAddWork: TReqAddWork
   object mmoNotice: TDBMemoEh
     Left = 100
     Top = 68
-    Width = 294
-    Height = 45
+    Width = 308
+    Height = 47
+    Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>
@@ -100,12 +112,28 @@ object ReqAddWork: TReqAddWork
   end
   object dsRTWorks: TpFIBDataSet
     SelectSQL.Strings = (
-      'select w.* '
-      'from works w '
-      'where '
-      '  w.rq_type = :rt_id and w.Deleted = 0'
-      'order by w.name'
-      '')
+      'select'
+      '    w.W_Id'
+      '  , w.Name'
+      '  , w.W_Time'
+      
+        '  , coalesce(iif(w.As_Service is null, w.W_Cost, iif(coalesce(s.' +
+        'Srv_Type_Id, 2) = 2, 0,'
+      '    (select'
+      '         t.tarif_sum'
+      '       from tarif t'
+      '       where t.service_id = s.service_id'
+      
+        '             and current_date between t.date_from and t.date_to)' +
+        ')), 0) W_COST'
+      '  from works w'
+      
+        '       left outer join services s on (s.service_id = w.as_servic' +
+        'e)'
+      '  where (w.rq_type = :rt_id or -1 = :rt_id) '
+      '       and w.Deleted = 0'
+      '        --  and w.on_default = 1'
+      '  order by w.name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST_TEMPLATES'
     AutoUpdateOptions.KeyFields = 'RT_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

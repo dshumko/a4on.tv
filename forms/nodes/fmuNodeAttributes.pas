@@ -15,16 +15,16 @@ type
     dsAttributes: TpFIBDataSet;
     srcAttributes: TDataSource;
     dbgCustAttr: TDBGridEh;
-    tbAttributes: TToolBar;
-    btnAdd: TToolButton;
-    btnEdit: TToolButton;
-    btnDel: TToolButton;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    pnlButtons: TPanel;
+    btnDel1: TSpeedButton;
+    btnAdd1: TSpeedButton;
+    btnEdit1: TSpeedButton;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -55,10 +55,10 @@ var
   FullAccess: Boolean;
 begin
   FullAccess := (dmMain.AllowedAction(rght_Comm_Nodes));
-  tbAttributes.Visible := (dmMain.AllowedAction(rght_Comm_Nodes)) or FullAccess;
-  actAdd.Visible := tbAttributes.Visible;
-  actDel.Visible := tbAttributes.Visible;
-  actEdit.Visible := tbAttributes.Visible;
+  pnlButtons.Visible := (dmMain.AllowedAction(rght_Comm_Nodes)) or FullAccess;
+  actAdd.Visible := pnlButtons.Visible;
+  actDel.Visible := pnlButtons.Visible;
+  actEdit.Visible := pnlButtons.Visible;
   dsAttributes.DataSource := FDataSource;
 end;
 

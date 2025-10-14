@@ -40,6 +40,7 @@ begin
         lblText.Caption := Text;
       end;
       edtDate.Value := aDate;
+      Update;
       if ShowModal = mrOk then
       begin
         aDate := edtDate.Value;

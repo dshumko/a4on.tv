@@ -61,7 +61,6 @@ object UsersForm: TUsersForm
           Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
           SearchPanel.Enabled = True
-          SearchPanel.FilterOnTyping = True
           TabOrder = 1
           OnDblClick = dbgGroupsDblClick
           Columns = <
@@ -162,7 +161,7 @@ object UsersForm: TUsersForm
         Top = 0
         Width = 588
         Height = 459
-        ActivePage = tsRequest
+        ActivePage = tsModules
         Align = alClient
         TabOrder = 1
         OnChange = pgcRightsChange
@@ -448,7 +447,6 @@ object UsersForm: TUsersForm
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
           PopupMenu = PopupMenu1
           SearchPanel.Enabled = True
-          SearchPanel.FilterOnTyping = True
           STFilter.Local = True
           TabOrder = 1
           OnDblClick = dbgUsersDblClick
@@ -609,7 +607,7 @@ object UsersForm: TUsersForm
         Top = 203
         Width = 896
         Height = 256
-        ActivePage = tsGroups
+        ActivePage = tsAreas
         Align = alClient
         TabOrder = 1
         OnChange = pcUserRAChange
@@ -854,7 +852,7 @@ object UsersForm: TUsersForm
               object lbl2: TLabel
                 Left = 0
                 Top = 0
-                Width = 89
+                Width = 337
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -976,7 +974,7 @@ object UsersForm: TUsersForm
               object lbl1: TLabel
                 Left = 0
                 Top = 0
-                Width = 104
+                Width = 548
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '
@@ -1181,6 +1179,7 @@ object UsersForm: TUsersForm
     AutoCommit = True
     Left = 36
     Top = 360
+    WaitEndMasterScroll = True
     oFetchAll = True
   end
   object srcGroups: TDataSource
@@ -1310,6 +1309,7 @@ object UsersForm: TUsersForm
     DataSource = srcUsers
     Left = 483
     Top = 356
+    WaitEndMasterScroll = True
     dcForceOpen = True
     oFetchAll = True
   end
@@ -1333,6 +1333,7 @@ object UsersForm: TUsersForm
     DataSource = srcUsers
     Left = 392
     Top = 356
+    WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
@@ -2184,6 +2185,7 @@ object UsersForm: TUsersForm
     DataSource = srcGroups
     Left = 592
     Top = 212
+    WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
@@ -2274,6 +2276,7 @@ object UsersForm: TUsersForm
     DataSource = srcGroups
     Left = 584
     Top = 284
+    WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
@@ -2364,6 +2367,7 @@ object UsersForm: TUsersForm
     DataSource = srcGroups
     Left = 592
     Top = 124
+    WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
@@ -2461,6 +2465,7 @@ object UsersForm: TUsersForm
     DataSource = srcGroups
     Left = 760
     Top = 220
+    WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True

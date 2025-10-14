@@ -5,7 +5,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   Vcl.ComCtrls,
@@ -198,7 +198,7 @@ var
   i: Integer;
   b, e: Integer;
   ds: TDataSet;
-  sa: TStringArray;
+  sa: TStringDynArray;
   delZerro: Boolean;
   delChr: string;
   s: string;
@@ -706,12 +706,14 @@ begin
   while not mdsReestr.EOF do
   begin
     if not mdsReestr.FieldByName('pSUM').IsNull then
+
+    // TODO: нужно добавіть платеж по внешнему ІД і істочніку платежа
+
       if HasHeader then
         summa := summa + mdsReestr['pSum'];
 
     if not findCustomer then
     begin
-
       s := Format(rsERROR_CUST_FIND, [sas]);
       s := s + '(' + Format(rsFIO + rsSEP, [Trim(mdsReestr.FieldByName('pFIO').AsString)]) +
         Format(' ' + rsAdres + rsSEP, [Trim(mdsReestr.FieldByName('pAdress').AsString)]) +
@@ -721,8 +723,10 @@ begin
       addError(mdsReestr['pLine'] + b, s, mdsReestr['pLine']);
     end;
     qFindCustomer.Transaction.Commit;
+
     mdsReestr.Next;
   end;
+
   if HasHeader then
     edtDocSum.Value := summa;
   mdsReestr.First;
@@ -937,20 +941,22 @@ Begin
   end;
   mmoSQL.Lines.Clear;
   Script.Script.Clear;
-  if (mdsErrors.Active) and (mdsErrors.RecordCount > 0) and (not FScriptExecError) then
-  begin
+  { // устарело
+    if (mdsErrors.Active) and (mdsErrors.RecordCount > 0) and (not FScriptExecError) then
+    begin
     mdsErrors.First;
     Script.Script.Clear;
     while not mdsErrors.EOF do
     begin
-      Script.Script.Add('insert into JOURNAL (J_NOTICE) values (''' + ReplaceStr(mdsErrors['eText'], '''', '"') +
-        rsPayDocN + ReplaceStr(edtDocNumber.Text, '''', '"') + ''');');
-      mdsErrors.Next;
+    Script.Script.Add('insert into JOURNAL (J_NOTICE) values (''' + ReplaceStr(mdsErrors['eText'], '''', '"') +
+    rsPayDocN + ReplaceStr(edtDocNumber.Text, '''', '"') + ''');');
+    mdsErrors.Next;
     end;
     Script.Script.Add('commit;');
     Script.Transaction.StartTransaction;
     Script.ExecuteScript(1);
-  end;
+    end;
+  }
   Screen.Cursor := Save_Cursor;
 end;
 

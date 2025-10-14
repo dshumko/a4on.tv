@@ -91,7 +91,6 @@ type
     mtView: TMemTableEh;
     drvFIBView: TpFIBDataDriverEh;
     dsView: TDataSource;
-    PrintGrid: TPrintDBGridEh;
     pmViewGrid: TPopupMenu;
     actSave: TAction;
     actPrint: TAction;
@@ -600,7 +599,8 @@ end;
 
 procedure TDVBSettinsForm.N1Click(Sender: TObject);
 begin
-  PrintGrid.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TDVBSettinsForm.actSaveExecute(Sender: TObject);
@@ -611,7 +611,8 @@ end;
 
 procedure TDVBSettinsForm.actPrintExecute(Sender: TObject);
 begin
-  PrintGrid.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 end.

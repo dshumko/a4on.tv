@@ -332,6 +332,7 @@ inherited PromoForm: TPromoForm
       Anchors = [akTop, akRight]
       DataSource = srcCF
       DynProps = <>
+      Flat = True
       SearchPanel.Location = splHorzScrollBarExtraPanelEh
       TabOrder = 6
       Columns = <

@@ -6,11 +6,12 @@ interface
 
 uses
   Winapi.Windows,
-  System.Classes, System.SysUtils, System.Variants,
+  System.Classes, System.SysUtils, System.Variants, System.Types,
   Data.DB,
   Vcl.Menus, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs,
   FIBQuery, pFIBQuery, OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, PrjConst, FIBDatabase, pFIBDatabase,
-  DBGridEh, DBLookupEh;
+  DBGridEh, DBLookupEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh;
 
 type
   TSettingsForm = class(TForm)
@@ -218,6 +219,12 @@ type
     edtChIssue: TDBEditEh;
     lbl2422: TLabel;
     chkPortLine: TCheckBox;
+    tsRAW: TTabSheet;
+    dsRAW: TpFIBDataSet;
+    trWrite: TpFIBTransaction;
+    dbgRAW: TDBGridEh;
+    srcRAW: TDataSource;
+    lbl26: TLabel;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -242,6 +249,8 @@ type
     procedure edtColorHLERROREditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure edtColorHLWARNINGEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure FEEExit(Sender: TObject);
+    procedure pgSettingsChange(Sender: TObject);
+    procedure dbgRAWExit(Sender: TObject);
   private
     { Private declarations }
     FLastAccount: integer;
@@ -268,7 +277,7 @@ var
 implementation
 
 uses
-  DM, AtrStrUtils, BarSettingForma, ibase, synacode, atrCmdUtils;
+  System.UITypes, DM, EhLibFIB, AtrStrUtils, BarSettingForma, ibase, synacode, atrCmdUtils;
 
 type
   TCashSettingsDialog = function(AppHandle: THandle; OPER: PWChar; OPER_PASS: PWChar): integer; stdcall;
@@ -677,6 +686,11 @@ begin
   Screen.Cursor := cr;
 end;
 
+procedure TSettingsForm.pgSettingsChange(Sender: TObject);
+begin
+  dsRAW.Active := (pgSettings.ActivePage = tsRAW);
+end;
+
 function TSettingsForm.CheckInternetSetting: Boolean;
 var
   CashSettingsDialog: TDLLInternetSetting; // TInternetSetting;
@@ -730,6 +744,17 @@ begin
   ed3M.Enabled := chkPayDiscount.Checked;
   ed6M.Enabled := chkPayDiscount.Checked;
   ed12M.Enabled := chkPayDiscount.Checked;
+end;
+
+procedure TSettingsForm.dbgRAWExit(Sender: TObject);
+begin
+  if dsRAW.State in [dsEdit, dsInsert] then
+  begin
+    if MessageDlg(PChar('Данные изменены, сохранить?'), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      dsRAW.Post
+    else
+      dsRAW.Cancel;
+  end;
 end;
 
 procedure TSettingsForm.edtColorEditButtons0Click(Sender: TObject; var Handled: Boolean);
@@ -873,7 +898,7 @@ var
   s: string;
   i: integer;
   Global: Boolean;
-  val: TStringArray;
+  val: TStringDynArray;
 begin
   dsServices.Open;
   dsRQtype.Open;
@@ -892,7 +917,9 @@ begin
 {$ELSE}
       tsLAN.Visible := False;
 {$ENDIF}
-    end;
+    end
+    else if pgSettings.Pages[i].name = tsRAW.name then
+      pgSettings.Pages[i].Visible := dmMain.UserIsAdmin;
 
     if pgSettings.Pages[i].Visible then
     begin
@@ -1231,6 +1258,7 @@ end;
 procedure TSettingsForm.lstSettingsClick(Sender: TObject);
 begin
   pgSettings.ActivePageIndex := StrToInt(FPageList.Strings[lstSettings.ItemIndex]);
+  dsRAW.Active := (pgSettings.ActivePage = tsRAW);
 end;
 
 function TSettingsForm.Internet: Boolean;

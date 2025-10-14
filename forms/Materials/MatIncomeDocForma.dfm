@@ -337,6 +337,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
         Top = 30
         Width = 85
         Height = 21
+        DecimalPlaces = 3
         DynProps = <>
         EmptyDataInfo.Text = #1050#1086#1083'-'#1074#1086
         EditButton.Visible = True
@@ -818,6 +819,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     AutoUpdateOptions.KeyFields = 'ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
     AutoUpdateOptions.WhenGetGenID = wgOnNewRecord
+    AfterOpen = dsDocMatAfterOpen
     Transaction = trReadDS
     Database = dmMain.dbTV
     UpdateTransaction = trWrite

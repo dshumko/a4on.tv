@@ -149,7 +149,7 @@ object RequestsForm: TRequestsForm
     Top = 25
     Width = 799
     Height = 453
-    ActivePage = tsPlan
+    ActivePage = tsGive
     Align = alClient
     Style = tsFlatButtons
     TabOrder = 1
@@ -178,7 +178,6 @@ object RequestsForm: TRequestsForm
         PopupMenu = gridPopUp
         ReadOnly = True
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -574,7 +573,6 @@ object RequestsForm: TRequestsForm
         PopupMenu = gridPopUp
         ReadOnly = True
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -977,7 +975,6 @@ object RequestsForm: TRequestsForm
         PopupMenu = gridPopUp
         ReadOnly = True
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -1689,7 +1686,6 @@ object RequestsForm: TRequestsForm
         PopupMenu = gridPopUp
         ReadOnly = True
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True
@@ -2197,6 +2193,11 @@ object RequestsForm: TRequestsForm
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1076#1086#1084' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       OnExecute = actOpenHouseExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   object dsAll: TpFIBDataSet

@@ -378,9 +378,9 @@ object HouseForm: THouseForm
       Caption = ' '#1044#1086#1089#1090#1091#1087#1085#1086#1089#1090#1100' '#1091#1089#1083#1091#1075' '
       TabOrder = 11
       object dbckTV: TDBCheckBoxEh
-        Left = 65
+        Left = 6
         Top = 20
-        Width = 90
+        Width = 49
         Height = 17
         Caption = #1058#1042
         DataField = 'EXIST_TV'
@@ -389,9 +389,9 @@ object HouseForm: THouseForm
         TabOrder = 0
       end
       object dbckLAN: TDBCheckBoxEh
-        Left = 161
+        Left = 61
         Top = 20
-        Width = 90
+        Width = 61
         Height = 17
         Caption = #1057#1055#1044
         DataField = 'EXIST_LAN'
@@ -400,7 +400,7 @@ object HouseForm: THouseForm
         TabOrder = 1
       end
       object dbckDTV: TDBCheckBoxEh
-        Left = 261
+        Left = 138
         Top = 20
         Width = 90
         Height = 17
@@ -409,6 +409,28 @@ object HouseForm: THouseForm
         DataSource = srcHouse
         DynProps = <>
         TabOrder = 2
+      end
+      object chkEXIST_VIDEO: TDBCheckBoxEh
+        Left = 319
+        Top = 20
+        Width = 119
+        Height = 17
+        Caption = #1042#1080#1076#1077#1086#1085#1072#1073#1083#1102#1076#1077#1085#1080#1077
+        DataField = 'EXIST_VIDEO'
+        DataSource = srcHouse
+        DynProps = <>
+        TabOrder = 4
+      end
+      object chkEXIST_INTER: TDBCheckBoxEh
+        Left = 240
+        Top = 20
+        Width = 70
+        Height = 17
+        Caption = #1044#1086#1084#1086#1092#1086#1085
+        DataField = 'EXIST_INTER'
+        DataSource = srcHouse
+        DynProps = <>
+        TabOrder = 3
       end
     end
     object edtinput: TDBDateTimeEditEh
@@ -585,6 +607,12 @@ object HouseForm: THouseForm
     Align = alBottom
     TabOrder = 1
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 159
       Top = 3
@@ -700,7 +728,10 @@ object HouseForm: THouseForm
       '    LATITUDE = :LATITUDE,'
       '    LONGITUDE = :LONGITUDE,'
       '    TAG = :TAG,'
-      '    TAG_STR = :TAG_STR    '
+      '    TAG_STR = :TAG_STR,'
+      '    EXIST_VIDEO = :EXIST_VIDEO,'
+      '    EXIST_INTER = :EXIST_INTER    '
+      '        '
       'WHERE'
       '    HOUSE_ID = :OLD_HOUSE_ID'
       '    ')
@@ -737,7 +768,9 @@ object HouseForm: THouseForm
       '    LATITUDE,'
       '    LONGITUDE,'
       '    TAG,'
-      '    TAG_STR'
+      '    TAG_STR,'
+      '    EXIST_VIDEO,'
+      '    EXIST_INTER    '
       ')'
       'VALUES('
       '    :HOUSE_ID,'
@@ -765,7 +798,9 @@ object HouseForm: THouseForm
       '    :LATITUDE,'
       '    :LONGITUDE,'
       '    :TAG,'
-      '    :TAG_STR    '
+      '    :TAG_STR,'
+      '    :EXIST_VIDEO,'
+      '    :EXIST_INTER    '
       ')')
     RefreshSQL.Strings = (
       'select'

@@ -31,6 +31,9 @@ type
 function SelectRequestWork(const reqType: Integer; var work_id: Integer; var wname: string; var quant: Integer;
   var worktime: single; var workcost: single; var notice: string): Boolean;
 
+function SelectWork(var work_id: Integer; var wname: string; var quant: double;
+  var worktime: double; var workcost: double; var notice: string): Boolean;
+
 implementation
 
 uses
@@ -59,16 +62,15 @@ begin
           except
             quant := 1;
           end;
-          try
-            worktime := dsRTWorks['W_TIME'];
-          except
+          if (not dsRTWorks.FieldByName('W_TIME').IsNull) then
+            worktime := dsRTWorks['W_TIME']
+          else
             worktime := 0;
-          end;
-          try
-            workcost := dsRTWorks['W_COST'];
-          except
+
+          if (not dsRTWorks.FieldByName('W_COST').IsNull) then
+            workcost := dsRTWorks['W_COST']
+          else
             workcost := 0;
-          end;
           notice := mmoNotice.Lines.Text;
           Result := True;
         end;
@@ -78,6 +80,48 @@ begin
       free;
     end;
 end;
+
+function SelectWork(var work_id: Integer; var wname: string; var quant: double;
+  var worktime: double; var workcost: double; var notice: string): Boolean;
+begin
+  Result := False;
+  with TReqAddWork.Create(application) do
+    try
+      dsRTWorks.ParamByName('rt_id').AsInteger := -1;
+      dsRTWorks.Open;
+      edQuant.Value := 1;
+
+      if showModal = mrOk then
+      begin
+        if not varIsNull(luWork.Value) then
+        begin
+          work_id := dsRTWorks['W_ID'];
+          wname := dsRTWorks['NAME'];
+          try
+            quant := edQuant.Value;
+          except
+            quant := 1;
+          end;
+          if (not dsRTWorks.FieldByName('W_TIME').IsNull) then
+            worktime := dsRTWorks['W_TIME']
+          else
+            worktime := 0;
+
+          if (not dsRTWorks.FieldByName('W_COST').IsNull) then
+            workcost := dsRTWorks['W_COST']
+          else
+            workcost := 0;
+
+          notice := mmoNotice.Lines.Text;
+          Result := True;
+        end;
+      end;
+      dsRTWorks.Close;
+    finally
+      free;
+    end;
+end;
+
 
 procedure TReqAddWork.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin

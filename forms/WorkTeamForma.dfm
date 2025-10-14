@@ -126,7 +126,7 @@ inherited WorkTeamForm: TWorkTeamForm
         Left = 0
         Top = 0
         Width = 689
-        Height = 153
+        Height = 152
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -134,16 +134,18 @@ inherited WorkTeamForm: TWorkTeamForm
           Left = 0
           Top = 23
           Width = 689
-          Height = 130
+          Height = 129
           Align = alClient
           AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh]
           DataSource = srcWORKGROUPS
           DynProps = <>
           Flat = True
+          FooterRowCount = 1
           FooterParams.Color = clWindow
           GridLineParams.VertEmptySpaceStyle = dessNonEh
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
           SortLocal = True
+          SumList.Active = True
           TabOrder = 1
           Columns = <
             item
@@ -151,9 +153,33 @@ inherited WorkTeamForm: TWorkTeamForm
               DynProps = <>
               EditButtons = <>
               FieldName = 'NAME'
+              Footer.ValueType = fvtCount
               Footers = <>
               Title.Caption = #1047#1074#1077#1085#1086
+              Title.TitleButton = True
               Width = 164
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'H_COUNT'
+              Footer.ValueType = fvtSum
+              Footers = <>
+              Title.Caption = #1050#1086#1083'-'#1074#1086' '#1076#1086#1084#1086#1074
+              Title.TitleButton = True
+              Width = 83
+            end
+            item
+              CellButtons = <>
+              DynProps = <>
+              EditButtons = <>
+              FieldName = 'C_COUNT'
+              Footer.ValueType = fvtSum
+              Footers = <>
+              Title.Caption = #1040#1082#1090#1080#1074#1085#1099#1093' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
+              Title.TitleButton = True
+              Width = 126
             end
             item
               CellButtons = <>
@@ -162,7 +188,8 @@ inherited WorkTeamForm: TWorkTeamForm
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-              Width = 430
+              Title.TitleButton = True
+              Width = 300
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -247,7 +274,7 @@ inherited WorkTeamForm: TWorkTeamForm
         Left = 0
         Top = 25
         Width = 689
-        Height = 128
+        Height = 127
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcHouses
@@ -455,7 +482,7 @@ inherited WorkTeamForm: TWorkTeamForm
         Left = 0
         Top = 23
         Width = 689
-        Height = 130
+        Height = 129
         Align = alClient
         DataSource = srcLimit
         DynProps = <>
@@ -740,14 +767,42 @@ inherited WorkTeamForm: TWorkTeamForm
       '    :NOTICE'
       ')')
     RefreshSQL.Strings = (
-      'SELECT *'
-      'FROM WORKGROUPS'
+      'select'
+      '    w.*'
+      '  , (select'
+      '         count(*)'
+      '       from house h'
+      '       where h.Wg_Id = w.Wg_Id) H_COUNT'
+      '  , (select'
+      '         count(distinct c.Customer_Id)'
+      '       from customer c'
+      '            inner join house h on (h.House_Id = c.House_Id)'
+      
+        '            inner join Subscr_Serv ss on (ss.Customer_Id = c.Cus' +
+        'tomer_Id)'
+      '       where h.Wg_Id = w.Wg_Id'
+      '             and ss.State_Sgn = 1) C_COUNT'
+      '  from WORKGROUPS w'
       'where WG_ID = :OLD_WG_ID')
     SelectSQL.Strings = (
-      'SELECT *'
-      'FROM WORKGROUPS'
-      'where WA_ID = :WA_ID'
-      'order by NAME')
+      'select'
+      '    w.*'
+      '  , (select'
+      '         count(*)'
+      '       from house h'
+      '       where h.Wg_Id = w.Wg_Id) H_COUNT'
+      '  , (select'
+      '         count(distinct c.Customer_Id)'
+      '       from customer c'
+      '            inner join house h on (h.House_Id = c.House_Id)'
+      
+        '            inner join Subscr_Serv ss on (ss.Customer_Id = c.Cus' +
+        'tomer_Id)'
+      '       where h.Wg_Id = w.Wg_Id'
+      '             and ss.State_Sgn = 1) C_COUNT'
+      '  from WORKGROUPS w'
+      '  where w.WA_ID = :WA_ID'
+      '  order by w.NAME')
     AutoUpdateOptions.UpdateTableName = 'WORKGROUPS'
     AutoUpdateOptions.KeyFields = 'WG_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -759,8 +814,8 @@ inherited WorkTeamForm: TWorkTeamForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcDataSource
-    Left = 180
-    Top = 312
+    Left = 124
+    Top = 352
   end
   object MainMenu1: TMainMenu
     Left = 438
@@ -870,7 +925,7 @@ inherited WorkTeamForm: TWorkTeamForm
     UpdateTransaction = dmMain.trWrite
     DataSource = srcDataSource
     Left = 297
-    Top = 307
+    Top = 379
     WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True
@@ -879,8 +934,8 @@ inherited WorkTeamForm: TWorkTeamForm
     AutoEdit = False
     DataSet = dsHouses
     OnDataChange = srcHousesDataChange
-    Left = 386
-    Top = 302
+    Left = 402
+    Top = 366
   end
   object dsWH: TpFIBDataSet
     SelectSQL.Strings = (

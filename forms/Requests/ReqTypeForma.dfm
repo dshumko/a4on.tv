@@ -5,7 +5,7 @@ object ReqTypeForm: TReqTypeForm
   BorderStyle = bsSizeToolWin
   Caption = #1058#1080#1087' '#1079#1072#1103#1074#1086#1082
   ClientHeight = 296
-  ClientWidth = 416
+  ClientWidth = 432
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object ReqTypeForm: TReqTypeForm
   ShowHint = True
   OnKeyDown = FormKeyDown
   DesignSize = (
-    416
+    432
     296)
   PixelsPerInch = 96
   TextHeight = 13
@@ -46,26 +46,20 @@ object ReqTypeForm: TReqTypeForm
   inline okcnclfrm1: TOkCancelFrame
     Left = 0
     Top = 261
-    Width = 416
+    Width = 432
     Height = 35
     Align = alBottom
     TabOrder = 9
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 108
-      Width = 207
+      Width = 223
       Anchors = [akLeft, akRight, akBottom]
       TabOrder = 1
       OnClick = okcnclfrm1bbOkClick
     end
     inherited bbCancel: TBitBtn
-      Left = 319
+      Left = 335
       Top = 3
       Width = 90
       TabOrder = 0
@@ -74,7 +68,7 @@ object ReqTypeForm: TReqTypeForm
   object dbedt1: TDBEditEh
     Left = 108
     Top = 6
-    Width = 301
+    Width = 317
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'RT_NAME'
@@ -88,7 +82,7 @@ object ReqTypeForm: TReqTypeForm
   object dbedt2: TDBEditEh
     Left = 108
     Top = 57
-    Width = 301
+    Width = 317
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'RT_PRINTFORM'
@@ -102,7 +96,7 @@ object ReqTypeForm: TReqTypeForm
   object dbmmo1: TDBMemoEh
     Left = 8
     Top = 144
-    Width = 401
+    Width = 417
     Height = 113
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
@@ -119,7 +113,7 @@ object ReqTypeForm: TReqTypeForm
   object cbb1: TDBComboBoxEh
     Left = 108
     Top = 31
-    Width = 110
+    Width = 126
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DataField = 'RT_TYPE'
@@ -142,7 +136,7 @@ object ReqTypeForm: TReqTypeForm
     Visible = True
   end
   object btnColor: TBitBtn
-    Left = 225
+    Left = 241
     Top = 31
     Width = 90
     Height = 21
@@ -154,7 +148,7 @@ object ReqTypeForm: TReqTypeForm
     OnClick = btnColorClick
   end
   object btnClear: TButton
-    Left = 319
+    Left = 335
     Top = 31
     Width = 90
     Height = 21
@@ -178,7 +172,7 @@ object ReqTypeForm: TReqTypeForm
     TabOrder = 5
   end
   object chkCAUSE_NEED: TDBCheckBoxEh
-    Left = 234
+    Left = 250
     Top = 86
     Width = 175
     Height = 17
@@ -193,7 +187,7 @@ object ReqTypeForm: TReqTypeForm
   object chkCommissing: TDBCheckBoxEh
     Left = 8
     Top = 115
-    Width = 401
+    Width = 417
     Height = 17
     Alignment = taLeftJustify
     Anchors = [akLeft, akTop, akRight]

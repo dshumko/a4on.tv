@@ -9,7 +9,7 @@ uses
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
   FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame;
+  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh;
 
 type
 
@@ -214,6 +214,14 @@ begin
   begin
     Exit;
   end;
+
+  if cbLABELS.Text.IsEmpty then begin
+    cbLABELS.SetFocus;
+    CnErrors.SetError(cbLABELS, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+    errors := True;
+  end
+  else
+    CnErrors.Dispose(cbLABELS);
 
   if not errors then
     SavePort

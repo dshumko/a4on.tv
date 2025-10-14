@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.TimeSpan,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.TimeSpan, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ComCtrls,
   ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase,
@@ -83,7 +83,7 @@ implementation
 
 uses
   System.StrUtils, System.DateUtils,
-  DM, EPGSource, OXmlUtils, PrjConst, AtrCommon, JsonDataObjects, sevenzip;
+  DM, EPGSource, OXmlUtils, PrjConst, AtrStrUtils, AtrCommon, JsonDataObjects, sevenzip;
 
 resourcestring
   srUnknownFormat = 'Не верный формат файла, настройте пожалуйста источник EPG';
@@ -750,7 +750,7 @@ function TEPGImportForm.DownloadFTP: Boolean;
 var
   ftp: TFTPSend;
   eHost, eFile: string;
-  arr: TStringArray;
+  arr: TStringDynArray;
   i: Integer;
   URL, user, pass: string;
 begin

@@ -213,7 +213,7 @@ object ReqPhotosForm: TReqPhotosForm
         PopupMenu = gridPopUp
         ReadOnly = True
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
+        SearchPanel.FilterOnTyping = False
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True

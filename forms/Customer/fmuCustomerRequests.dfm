@@ -33,11 +33,9 @@ object apgCustomerRequests: TapgCustomerRequests
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
     ReadOnly = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     SortLocal = True
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True
@@ -112,7 +110,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'CONTETNT'
         Footers = <>
         Title.Caption = #1053#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100'|'#1047#1072#1103#1074#1083#1077#1085#1085#1072#1103
-        Width = 151
+        Width = 104
       end
       item
         AutoFitColWidth = False
@@ -123,7 +121,7 @@ object apgCustomerRequests: TapgCustomerRequests
         Footers = <>
         Title.Caption = #1053#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100'|'#1042#1099#1103#1074#1083#1077#1085#1085#1072#1103
         Title.TitleButton = True
-        Width = 161
+        Width = 126
       end
       item
         AutoFitColWidth = False
@@ -257,6 +255,45 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'FLAT_NO'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089'|'#1050#1074'.'
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RQ_PAY'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1054#1087#1083#1072#1090#1072
+        Title.Hint = 
+          #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
+          #1083#1090#1099#1081
+        Visible = False
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RQ_FEE'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1053#1072#1095#1080#1089#1083#1077#1085#1086
+        Title.Hint = 
+          #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
+          #1083#1090#1099#1081
+        Visible = False
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PAY_SRV'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1059#1089#1083#1091#1075#1080
+        Title.Hint = 
+          #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
+          #1083#1090#1099#1081
+        Visible = False
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end

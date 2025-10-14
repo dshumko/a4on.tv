@@ -352,6 +352,15 @@ begin
   else
     cnError.Dispose(edtFullMonthDays);
 
+  if (cbBusinessType.Value < 0) then
+  begin
+    cnError.SetError(cbBusinessType, rsInputIncorrect, iaMiddleLeft, bsNeverBlink);
+    errors := true;
+    ModalResult := mrNone;
+  end
+  else
+    cnError.Dispose(cbBusinessType);
+
   if not errors then
   begin
     ModalResult := mrOk;

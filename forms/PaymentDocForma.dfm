@@ -303,7 +303,7 @@ object PaymentDocForm: TPaymentDocForm
           Footer.DisplayFormat = ',#.##'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #1055#1077#1085#1103
+          Title.Caption = #1055#1077#1085#1080
           Title.TitleButton = True
         end
         item
@@ -492,6 +492,16 @@ object PaymentDocForm: TPaymentDocForm
           FieldName = 'BAL_SAVE'
           Footers = <>
           Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'LCPS'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #1057#1091#1084#1084#1072' '#1074' BYN'
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
@@ -835,7 +845,7 @@ object PaymentDocForm: TPaymentDocForm
       object Label14: TLabel
         Left = 0
         Top = 0
-        Width = 71
+        Width = 514
         Height = 13
         Align = alTop
         Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077':'
@@ -871,7 +881,7 @@ object PaymentDocForm: TPaymentDocForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 141
+      Width = 1067
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
@@ -1168,6 +1178,11 @@ object PaymentDocForm: TPaymentDocForm
       ImageIndex = 87
       ShortCut = 121
       OnExecute = actTaskExecute
+    end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
     end
   end
   object dsPayDoc: TpFIBDataSet

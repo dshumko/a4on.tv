@@ -55,7 +55,6 @@ type
     srcAddons: TDataSource;
     mtAddons: TMemTableEh;
     dbgAddons: TDBGridEh;
-    splitter: TSplitter;
     lblCharCNT: TLabel;
     lbl4: TLabel;
     ednAMOUNT: TDBNumberEditEh;
@@ -67,6 +66,7 @@ type
     btnPrint: TBitBtn;
     actlst1: TActionList;
     actPrint: TAction;
+    splitter: TSplitter;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure lcbOTTP_TYPEChange(Sender: TObject);
@@ -823,21 +823,11 @@ begin
   end;
 
   if (not dsOTPTypes.FieldByName('O_CHARFIELD').IsNull) then
-  begin
     ParseJson(dsOTPTypes['O_CHARFIELD']);
-  end;
 
   // сделано так чтоб сплиттер оставвался на месте
-  if (pnlPeriod.Visible or mtAddons.Active) then
-  begin
-    pnlAddons.Visible := True;
-    splitter.Visible := True;
-  end
-  else
-  begin
-    splitter.Visible := False;
-    pnlAddons.Visible := False;
-  end;
+  splitter.Visible := (pnlPeriod.Visible or mtAddons.Active);
+  pnlAddons.Visible := splitter.Visible;
 
   dbgAddons.Visible := mtAddons.Active;
   pnlAddonsResize(Self);

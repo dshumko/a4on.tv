@@ -103,7 +103,7 @@ object ReqExecutorsForm: TReqExecutorsForm
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = True
+        SearchPanel.FilterOnTyping = False
         SortLocal = True
         TabOrder = 1
         TitleParams.MultiTitle = True

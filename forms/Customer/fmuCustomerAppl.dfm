@@ -35,7 +35,6 @@ object apgCustomerAppl: TapgCustomerAppl
     ParentFont = False
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgApplianceDblClick
@@ -153,6 +152,15 @@ object apgCustomerAppl: TapgCustomerAppl
         FieldName = 'EDIT_ON'
         Footers = <>
         Title.Caption = #1048#1079#1084#1077#1085#1080#1083' '#1082#1086#1075#1076#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SOFT'
+        Footers = <>
+        Title.Caption = #1055#1054
         Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
@@ -313,6 +321,7 @@ object apgCustomerAppl: TapgCustomerAppl
       '    a.*'
       '  , o.O_Name'
       '  , case a.Property'
+      '      when -1 then '#39'A'#1073#1086#1085#1077#1085#1090#1072' ('#1050#1091#1087#1083#1077#1085#1086' '#1089#1072#1084#1086#1089#1090#1086#1103#1090#1077#1083#1100#1085#1086')'#39'  '
       '      when 0 then '#39#1040#1073#1086#1085#1077#1085#1090#1072' ('#1055#1088#1086#1076#1072#1085')'#39
       '      when 1 then '#39#1050#1086#1084#1087#1072#1085#1080#1080' ('#1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080')'#39
       '      when 2 then '#39#1040#1073#1086#1085#1077#1085#1090#1072' ('#1056#1072#1089#1089#1088#1086#1095#1082#1072')'#39

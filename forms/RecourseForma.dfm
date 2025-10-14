@@ -144,18 +144,9 @@ object RecourseForm: TRecourseForm
       inherited gbInfo: TGroupBox
         Width = 467
         Height = 71
-        inherited memAbonent: TMemo
+        inherited HtmlViewer: THtmlViewer
           Width = 463
-          Height = 17
-          ScrollBars = ssNone
-        end
-        inherited lblFIO: TDBEditEh
-          Width = 463
-          Margins.Bottom = 0
-        end
-        inherited lblDebt: TDBEditEh
-          Width = 463
-          Text = #1044#1054#1051#1043
+          Height = 54
         end
       end
     end

@@ -70,6 +70,7 @@ type
     miOpenCustAddr: TMenuItem;
     cbClose: TDBComboBoxEh;
     lbl4: TLabel;
+    actCopyID: TAction;
     procedure dbGridRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
     procedure dbGridRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
     procedure FormShow(Sender: TObject);
@@ -101,6 +102,7 @@ type
     procedure actCloseExecute(Sender: TObject);
     procedure srcDataSourceDataChange(Sender: TObject; Field: TField);
     procedure actOpenCustAddrExecute(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     FclOverdue: TColor;
     FclSoon: TColor;
@@ -178,6 +180,12 @@ begin
     dsTask.Locate('ID', id, []);
     dsTask.EnableControls;
   end;
+end;
+
+procedure TTaskForm.actCopyIDExecute(Sender: TObject);
+begin
+  inherited;
+  A4MainForm.CopyDataSetFldToClipboard(dsTask, 'Id');
 end;
 
 procedure TTaskForm.actDeleteExecute(Sender: TObject);

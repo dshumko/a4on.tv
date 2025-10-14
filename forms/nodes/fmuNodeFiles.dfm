@@ -20,14 +20,13 @@ object apgNodeFiles: TapgNodeFiles
     Height = 211
     Align = alClient
     AllowedOperations = []
-    AutoFitColWidths = False
     DataSource = srcFiles
     DynProps = <>
     Flat = True
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
-    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgNodeFilesDblClick
@@ -39,6 +38,7 @@ object apgNodeFiles: TapgNodeFiles
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1058#1080#1087' '#1092#1072#1081#1083#1072
+        Title.TitleButton = True
         Width = 129
       end
       item
@@ -48,6 +48,7 @@ object apgNodeFiles: TapgNodeFiles
         FieldName = 'NAME'
         Footers = <>
         Title.Caption = #1053#1086#1084#1077#1088' / '#1053#1072#1079#1074#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 193
       end
       item
@@ -57,6 +58,7 @@ object apgNodeFiles: TapgNodeFiles
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 213
       end
       item
@@ -66,6 +68,7 @@ object apgNodeFiles: TapgNodeFiles
         FieldName = 'FILENAME'
         Footers = <>
         Title.Caption = #1048#1084#1103' '#1092#1072#1081#1083#1072
+        Title.TitleButton = True
         Width = 138
       end>
     object RowDetailData: TRowDetailPanelControlEh

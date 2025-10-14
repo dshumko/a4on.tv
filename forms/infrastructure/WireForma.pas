@@ -90,6 +90,11 @@ type
     procedure actPointDelExecute(Sender: TObject);
     procedure dbgWireLinkGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure dbGridColumns7GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgWireLinkCellClick(Column: TColumnEh);
+    procedure dbgWireLinkColumns0GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
   private
     FFullAccess: Boolean;
     procedure InitForm;
@@ -111,6 +116,8 @@ uses
 
 const
   const_default_filter: string = ' 1=1 ';
+  clrCapacityError: Integer = $00B4B4FF;
+  clrLblFree: Integer = $00B4FEB4;
 
 {$R *.dfm}
 
@@ -145,19 +152,23 @@ end;
 procedure TWireForm.miOpenEqClick(Sender: TObject);
 begin
   inherited;
-  if ((dsPorts.FieldByName('Eid').IsNull) or (dsPorts.FieldByName('ENAME').IsNull)) then
-    exit;
 
-  A4MainForm.OpenEquipmentByName(dsPorts['ENAME']);
+  if ((dsPorts.RecordCount = 0) or (dsPorts.FieldByName('WLBL_NAME').IsNull) or (dsPorts.FieldByName('WLBL_TYPE').IsNull)) then
+    Exit;
+
+  if dsPorts['WLBL_TYPE'] = 2 then
+    A4MainForm.OpenEquipmentByID(dsPorts['WLBL_ID'])
+  else if dsPorts['WLBL_TYPE'] = 1 then
+    A4MainForm.ShowCustomers(7, IntToStr(dsPorts['WLBL_ID']));
 end;
 
 procedure TWireForm.miOpenNodeClick(Sender: TObject);
 begin
   inherited;
-  if dsPorts.FieldByName('NODE_ID').IsNull then
+  if dsPorts.FieldByName('WLBL_NODE').IsNull then
     exit;
 
-  A4MainForm.OpnenNodeByID(dsPorts['NODE_ID']);
+  A4MainForm.OpnenNodeByID(dsPorts['WLBL_NODE']);
 end;
 
 procedure TWireForm.pgcWireChange(Sender: TObject);
@@ -470,12 +481,80 @@ begin
   pmOpen.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
+procedure TWireForm.dbGridColumns7GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  inherited;
+{
+  if (dsWire.FieldByName('Capacity').IsNull or dsWire.FieldByName('USED').IsNull) then
+    Exit;
+  if dsWire['Capacity'] > dsWire['USED'] then
+    Params.Background := $00B4FEB4; // clrLblFree;
+}
+end;
+
 procedure TWireForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
   inherited;
   if not(dsWire.FieldByName('COLOR').IsNull) then
     Background := StringToColor(dsWire['COLOR']);
+end;
+
+procedure TWireForm.dbgWireLinkCellClick(Column: TColumnEh);
+var
+  ls: string;
+  l: string;
+  aPoint: TPoint;
+begin
+
+  inherited;
+  if not AnsiSameStr(Column.FieldName, 'WLABEL') then
+    Exit;
+
+  if dsWire.FieldByName('Labels').IsNull then
+    ls := ',,'
+  else
+    ls := ',' + dsWire['Labels'] + ',';
+
+  if dsPorts.FieldByName('WLABEL').IsNull then
+    l := ''
+  else
+    l := dsPorts['WLABEL'];
+
+  if pos(',' + l + ',', ls) = 0 then
+  begin
+    ls := Format(rsCabelLabelError, [l]); // 'Mетки "' + l + '" нет в маркировке кабеля';
+    aPoint := Mouse.CursorPos;
+    with TCustomHint.Create(Self) do
+    begin
+      Title := ls;
+      Delay := 0;
+      HideAfter := 2000;
+      ShowHint(aPoint);
+    end;
+  end;
+end;
+
+procedure TWireForm.dbgWireLinkColumns0GetCellParams(Sender: TObject;
+  EditMode: Boolean; Params: TColCellParamsEh);
+var
+  ls: string;
+  l: string;
+begin
+  inherited;
+  if dsWire.FieldByName('Labels').IsNull then
+    ls := ',,'
+  else
+    ls := ',' + dsWire['Labels'] + ',';
+
+  if dsPorts.FieldByName('WLABEL').IsNull then
+    l := ',,'
+  else
+    l := ',' + dsPorts['WLABEL'] + ',';
+
+  if pos(l, ls) = 0 then
+    Params.Background := clrCapacityError;
 end;
 
 procedure TWireForm.dbgWireLinkGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;

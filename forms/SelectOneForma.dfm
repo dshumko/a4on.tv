@@ -1,5 +1,4 @@
 object SelectOneForm: TSelectOneForm
-  ShowHint = True
   Left = 0
   Top = 0
   ActiveControl = dbgSelect
@@ -15,6 +14,7 @@ object SelectOneForm: TSelectOneForm
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   PixelsPerInch = 96
   TextHeight = 13
   object pnlBottom: TPanel
@@ -59,10 +59,11 @@ object SelectOneForm: TSelectOneForm
     Align = alClient
     AllowedOperations = []
     AllowedSelections = []
-    AutoFitColWidths = False
     DataSource = srcSelect
     DynProps = <>
     Flat = True
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
     STFilter.Local = True
     STFilter.Visible = True
     TabOrder = 0

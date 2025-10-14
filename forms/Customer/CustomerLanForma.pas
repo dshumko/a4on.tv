@@ -1846,7 +1846,6 @@ begin
     cbbTagList.Width := edtTAGSTR.Width;
     edtTAGSTR.Visible := False;
   end
-
 end;
 
 end.

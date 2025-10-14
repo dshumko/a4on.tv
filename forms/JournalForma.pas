@@ -8,13 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus,
   FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
   TJournalForm = class(TForm)
     dbgrdJournal: TDBGridEh;
     srcJournal: TDataSource;
     dsJournal: TpFIBDataSet;
+    trRead: TpFIBTransaction;
     procedure dbgrdJournalSortMarkingChanged(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);

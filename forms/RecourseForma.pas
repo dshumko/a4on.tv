@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.DBCtrls,
@@ -244,7 +244,7 @@ procedure TRecourseForm.FillPhones(const phones: String);
 var
   i: integer;
   s: String;
-  sa: TStringArray;
+  sa: TStringDynArray;
 begin
   edtContact.Items.Clear;
   sa := Explode(',', phones);

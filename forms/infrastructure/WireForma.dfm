@@ -39,6 +39,7 @@ inherited WireForm: TWireForm
         DynProps = <>
         EditButtons = <>
         FieldName = 'NAME'
+        Footer.FieldName = 'WID'
         Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
@@ -90,8 +91,10 @@ inherited WireForm: TWireForm
         DynProps = <>
         EditButtons = <>
         FieldName = 'CAPACITY'
+        Footer.FieldName = 'CAPACITY'
+        Footer.ValueType = fvtSum
         Footers = <>
-        Title.Caption = #1045#1084#1082#1086#1089#1090#1100
+        Title.Caption = #1045#1084#1082#1086#1089#1090#1100'|'#1042#1089#1077#1075#1086
         Title.TitleButton = True
         Width = 56
       end
@@ -274,6 +277,7 @@ inherited WireForm: TWireForm
           PopupMenu = pmOpen
           TabOrder = 0
           TitleParams.MultiTitle = True
+          OnCellClick = dbgWireLinkCellClick
           OnGetCellParams = dbgWireLinkGetCellParams
           Columns = <
             item
@@ -285,12 +289,13 @@ inherited WireForm: TWireForm
               HideDuplicates = True
               Title.Caption = #1052#1077#1090#1082#1072
               Width = 67
+              OnGetCellParams = dbgWireLinkColumns0GetCellParams
             end
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'PORT'
+              FieldName = 'WLBL_PORT'
               Footers = <>
               Title.Caption = #1055#1086#1088#1090
               Width = 70
@@ -299,31 +304,31 @@ inherited WireForm: TWireForm
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'ENAME'
+              FieldName = 'WLBL_NAME'
               Footers = <>
-              Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+              Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077'/'#1040#1073#1086#1085#1077#1085#1090
               Width = 185
             end
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'IP'
+              FieldName = 'WLBL_IP'
               Footers = <>
             end
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'MAC'
+              FieldName = 'WLBL_MAC'
               Footers = <>
-              Width = 241
+              Width = 213
             end
             item
               CellButtons = <>
               DynProps = <>
               EditButtons = <>
-              FieldName = 'NNAME'
+              FieldName = 'NODE_NAME'
               Footers = <>
               Title.Caption = #1059#1079#1077#1083
               Width = 95
@@ -736,6 +741,12 @@ inherited WireForm: TWireForm
       '  , ET.O_Name E_TYPE'
       '  , ES.Street_Name || '#39' '#39' || ES.street_short E_STREET'
       '  , EH.House_No E_HOUSE'
+      '  --, coalesce((select'
+      '  --       sum(iif(cnt = 2, 1, iif(cnt > 2, 2, 0)))'
+      '  --     from (select WLABEL , count(WLBL_ID) cnt'
+      '  --             from Get_Wire_Info(c.Wid)'
+      '  --             where not WLBL_ID is null'
+      '  --             group by 1)), 0) USED'
       '  from Wire C'
       
         '       inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O_TYPE = ' +
@@ -758,9 +769,7 @@ inherited WireForm: TWireForm
       
         '       left outer join objects ET on (ET.O_Id = e.Type_Id and ET' +
         '.O_Type = 38)'
-      ''
-      ' WHERE '
-      '        C.WID = :OLD_WID'
+      'WHERE C.WID = :OLD_WID'
       '    ')
     SelectSQL.Strings = (
       'select'
@@ -778,6 +787,12 @@ inherited WireForm: TWireForm
       '  , ET.O_Name E_TYPE'
       '  , ES.Street_Name || '#39' '#39' || ES.street_short E_STREET'
       '  , EH.House_No E_HOUSE'
+      '  --, coalesce((select'
+      '  --       sum(iif(cnt = 2, 1, iif(cnt > 2, 2, 0)))'
+      '  --     from (select WLABEL , count(WLBL_ID) cnt'
+      '  --             from Get_Wire_Info(c.Wid)'
+      '  --             where not WLBL_ID is null'
+      '  --             group by 1)), 0) USED  '
       '  from Wire C'
       
         '       inner join OBJECTS T on (C.WTYPE = T.O_ID and T.O_TYPE = ' +
@@ -877,75 +892,68 @@ inherited WireForm: TWireForm
       '    ')
     RefreshSQL.Strings = (
       'select'
-      '    p.Port'
-      '  , p.Wlabel'
-      '  , p.Wid'
-      '  , w.Name WNAME'
-      '  , w.Wtype'
-      '  , e.Eid'
-      '  , e.Name ENAME'
-      '  , e.Ip'
-      '  , e.Mac'
-      '  , e.Node_Id'
-      '  , w.Point_S'
-      '  , w.Point_E'
-      '  , n.Name NNAME'
+      '    i.*'
       '  , nt.O_Name NTNAME'
-      '  from port p'
-      '       inner join wire w on (p.Wid = w.Wid)'
+      '  , iif(coalesce(i.WLBL_TYPE, 0) = 1,'
+      '    (iif(exists(select'
+      '                    sh.Customer_Id'
+      '                  from Subscr_hist sh'
+      ''
       
-        '       left outer join equipment e on (e.Eid = p.Eid) --  and   ' +
-        '           e.Node_Id = w.Point_S)'
-      '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
+        '                       inner join services s on (sh.Serv_Id = s.' +
+        'Service_Id)'
+      ''
+      
+        '                       inner join TV_LAN l on (l.Customer_Id = s' +
+        'h.Customer_Id)'
+      '                  where s.Business_Type in ('
+      '                                            1, 3'
+      '                                           )'
+      '                        and sh.Customer_Id = i.WLBL_ID'
+      ''
+      
+        '                        and current_date between sh.Date_from an' +
+        'd sh.Date_To), 1, 0)), 2) CUST_CONNECTED'
+      '  from Get_Wire_Info(:OLD_WID) i'
+      '       left outer join NODES N on (n.Node_Id = i.WLBL_NODE)'
       
         '       left outer join objects nt on (nt.O_Id = n.Type_Id and nt' +
         '.O_Type = 38)'
-      '  where '
-      '        P.WLABEL = :OLD_WLABEL  '
-      '    and P.WID = :OLD_WID'
+      'where '
+      '  i.Wlabel = :OLD_Wlabel '
+      ''
       ''
       '    ')
     SelectSQL.Strings = (
       'select'
-      '    p.Port'
-      '  , p.Wlabel'
-      '  , p.Wid'
-      '  , w.Name WNAME'
-      '  , w.Wtype'
-      '  , e.Eid'
-      '  , e.Name ENAME'
-      '  , e.Ip'
-      '  , e.Mac'
-      '  , e.Node_Id'
-      '  , w.Point_S'
-      '  , w.Point_E'
-      '  , n.Name NNAME'
+      '    i.*'
       '  , nt.O_Name NTNAME'
-      '  , iif(coalesce(p.con,1) = 1, (iif(exists(select'
-      '                           sh.Customer_Id'
-      '                         from Subscr_hist sh'
+      '  , iif(coalesce(i.WLBL_TYPE, 0) = 1,'
+      '    (iif(exists(select'
+      '                    sh.Customer_Id'
+      '                  from Subscr_hist sh'
+      ''
       
-        '                              inner join services s on (sh.Serv_' +
-        'Id = s.Service_Id)'
+        '                       inner join services s on (sh.Serv_Id = s.' +
+        'Service_Id)'
+      ''
       
-        '                              inner join TV_LAN l on (l.Customer' +
-        '_Id = sh.Customer_Id)'
-      '                         where s.Business_Type in (1, 3)'
-      '                               and sh.Customer_Id = p.Con_Id'
+        '                       inner join TV_LAN l on (l.Customer_Id = s' +
+        'h.Customer_Id)'
+      '                  where s.Business_Type in ('
+      '                                            1, 3'
+      '                                           )'
+      '                        and sh.Customer_Id = i.WLBL_ID'
+      ''
       
-        '                               and current_date between sh.Date_' +
-        'From and sh.Date_To), 1,0)), 2) CUST_CONNECTED'
-      '  from port p'
-      '       inner join wire w on (p.Wid = w.Wid)'
-      
-        '       left outer join equipment e on (e.Eid = p.Eid) --  and   ' +
-        '           e.Node_Id = w.Point_S)'
-      '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
+        '                        and current_date between sh.Date_from an' +
+        'd sh.Date_To), 1, 0)), 2) CUST_CONNECTED'
+      '  from Get_Wire_Info(:Wid) i'
+      '       left outer join NODES N on (n.Node_Id = i.WLBL_NODE)'
       
         '       left outer join objects nt on (nt.O_Id = n.Type_Id and nt' +
         '.O_Type = 38)'
-      '  where p.Wid = :WID'
-      'order by w.Name, p.Wlabel, e.Name, p.PORT')
+      '  order by i.Wlabel, i.WLBL_FLOW desc, i.WLBL_NAME')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV
@@ -965,7 +973,7 @@ inherited WireForm: TWireForm
     Left = 112
     Top = 408
     object miOpenEq: TMenuItem
-      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1054#1073#1086#1088#1091#1076'-'#1080#1077'/'#1040#1073#1086#1085#1077#1085#1090#1072
       OnClick = miOpenEqClick
     end
     object miOpenNode: TMenuItem

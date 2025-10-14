@@ -114,6 +114,7 @@ type
     dbedtPAY_DOC_NO: TDBEditEh;
     Label1: TLabel;
     Label5: TLabel;
+    actCopyID: TAction;
     procedure ActPayDocCancelExecute(Sender: TObject);
     procedure ActPayDocPostExecute(Sender: TObject);
     procedure ActPayDocPrintExecute(Sender: TObject);
@@ -154,6 +155,7 @@ type
     procedure dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dsPayDocAfterOpen(DataSet: TDataSet);
     procedure dbgPayDocPaymentColumns5GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     { Private declarations }
     FullAccess: Boolean;
@@ -214,6 +216,11 @@ begin
     if PAYMENT_ID <> -1 then
       PDF.FindPaymentId(PAYMENT_ID);
   end;
+end;
+
+procedure TPaymentDocForm.actCopyIDExecute(Sender: TObject);
+begin
+  A4MainForm.CopyDataSetFldToClipboard(dsPayDocDetail, 'PAYMENT_ID');
 end;
 
 procedure TPaymentDocForm.actEditPaymentExecute(Sender: TObject);
@@ -516,12 +523,15 @@ end;
 procedure TPaymentDocForm.FormCreate(Sender: TObject);
 var
   vAsBalance: Boolean;
+  vShowLCPS: Boolean;
   i: Integer;
 begin
   vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1'); // пеня
-
+  vShowLCPS := (dmMain.GetSettingsValue('SHOW_LCPS') = '1');
   for i := 0 to dbgPayDocPayment.Columns.Count - 1 do
   begin
+    if (AnsiUpperCase(dbgPayDocPayment.Columns[i].FieldName) = 'LCPS') then
+      dbgPayDocPayment.Columns[i].Visible := vShowLCPS;
     if (AnsiUpperCase(dbgPayDocPayment.Columns[i].FieldName) = 'DEBT_SUM') then
       with dbgPayDocPayment.Columns[i] do
       begin
@@ -648,10 +658,11 @@ begin
   if dmMain.SuperMode = 0 then
     dsPayDocDetail.SQLs.SelectSQL.Add(' and ( cs.INVISIBLE = 0 )');
 
-  if FOnlyTheir then
+  if FOnlyTheir then begin
     dsPayDocDetail.SQLs.SelectSQL.Add(' and p.Added_By = current_user ');
-  if FTodayOnly then
-    dsPayDocDetail.SQLs.SelectSQL.Add(' and p.Pay_Date = current_date ');
+    if FTodayOnly then
+      dsPayDocDetail.SQLs.SelectSQL.Add(' and p.Pay_Date = current_date ');
+  end;
 
   dsPayDocDetail.SQLs.SelectSQL.Add('Order by P.Payment_Id');
 

@@ -4,10 +4,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.StrUtils,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  DBCtrlsEh, FIBQuery, pFIBQuery, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, A4onTypeUnit;
+  DBCtrlsEh, FIBQuery, pFIBQuery, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, A4onTypeUnit,
+  CustomerInfoFrame;
 
 type
   TPaymentEditFrm = class(TForm)
@@ -18,11 +19,9 @@ type
     Label5: TLabel;
     edCode: TEdit;
     edLicevoy: TEdit;
-    memAbonent: TDBMemoEh;
     pnlButtons: TPanel;
     lblPaySum: TLabel;
     dePaySum: TDBNumberEditEh;
-    mmoNotice: TDBMemoEh;
     pnlSRV: TPanel;
     lPaymentSrv: TLabel;
     luPaymentSrv: TDBLookupComboboxEh;
@@ -40,6 +39,13 @@ type
     dsPT: TpFIBDataSet;
     ednItogo: TDBNumberEditEh;
     lbl2: TLabel;
+    pnlLCPS: TPanel;
+    lbl11: TLabel;
+    ednLCPS: TDBNumberEditEh;
+    pnl1: TPanel;
+    mmoNotice: TDBMemoEh;
+    pnlTM: TPanel;
+    CustomerInfoFrm: TCustomerInfoFrm;
     procedure FormShow(Sender: TObject);
     procedure dePaySumChange(Sender: TObject);
     procedure edLicevoyChange(Sender: TObject);
@@ -55,6 +61,7 @@ type
     cr: TCustomerInfo;
     FPaymentSRV: Boolean;
     FFine: Boolean;
+    FShowLCPS: Boolean;
     FPayNegative: Boolean;
     procedure FindCustomer(const lic, code: string; const id: Integer);
     procedure SetPayID(Value: Integer);
@@ -100,37 +107,23 @@ procedure TPaymentEditFrm.FindCustomer(const lic, code: string; const id: Intege
 var
   s: string;
 begin
-  memAbonent.Lines.Clear;
   bbOk.Enabled := false;
 
   cr := dmMain.FindCustomer(lic, code, id);
-  if cr.CUSTOMER_ID = -1 then begin
-    memAbonent.Lines.Text := rsNOT_FOUND_CUST;
-    exit;
+  CustomerInfoFrm.Customer := cr;
+  CustomerInfoFrm.MakeHtml;
+
+  if ((cr.CUSTOMER_ID > -1) and (edLicevoy.Text = '')) then
+  begin
+    edLicevoy.OnChange := nil;
+    edLicevoy.Text := cr.Account_No;
+    edLicevoy.OnChange := edLicevoyChange;
   end;
-
-  s := rsACCOUNT + ' ' + cr.Account_no + ' ' + rsCODE + ' ' + cr.cust_code;
-  memAbonent.Lines.Add(s);
-  if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
-    s := rsBALANCE + ' ' + floatToStr(cr.Debt_sum)
-  else
-    s := rsSALDO + ' ' + floatToStr(cr.Debt_sum);
-
-  memAbonent.Lines.Add(s);
-  s := cr.FIO;
-  memAbonent.Lines.Add(s);
-  s := '' + cr.Street + ' ' + cr.HOUSE_NO + ' ' + cr.flat_No + rsEOL + cr.Notice;
-  memAbonent.Lines.Add(s);
-  if cr.color <> '' then
-    memAbonent.color := StringToColor(cr.color)
-  else
-    memAbonent.color := clBtnFace;
 
   bbOk.Enabled := ((cr.CUSTOMER_ID > -1) and (dePaySum.Value > 0));
 end;
 
-procedure TPaymentEditFrm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TPaymentEditFrm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   dsPT.Close;
 end;
@@ -150,6 +143,11 @@ begin
 
   vSF := dmMain.GetSettingsValue('NEGATIVE_PAY');
   FPayNegative := (vSF = '1');
+
+  vSF := dmMain.GetSettingsValue('SHOW_LCPS');
+  FShowLCPS := (vSF = '1');
+  pnlLCPS.Visible := FShowLCPS;
+
   dsPT.Open;
 end;
 
@@ -174,18 +172,18 @@ begin
   FPayment_id := Value;
   with TpFIBQuery.Create(Nil) do
     try
+      SQL.Text := 'select PAYMENT_SRV, PAY_TYPE_STR, LCPS from PAYMENT where payment_id = :payment_id';
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
-      SQL.Text := 'select PAYMENT_SRV, PAY_TYPE_STR from PAYMENT where (PAYMENT_ID = :PAYMENT_ID)';
       ParamByName('PAYMENT_ID').AsInt64 := FPayment_id;
       Transaction.StartTransaction;
       ExecQuery;
-      if FPaymentSRV then begin
-        if not FldByName['PAYMENT_SRV'].IsNull then
-          luPaymentSrv.Value := FldByName['PAYMENT_SRV'].AsInteger;
-      end;
+      if FPaymentSRV and (not FldByName['PAYMENT_SRV'].IsNull) then
+        luPaymentSrv.Value := FldByName['PAYMENT_SRV'].AsInteger;
       if not FldByName['PAY_TYPE_STR'].IsNull then
         cbbPayTypeStr.Value := FldByName['PAY_TYPE_STR'].AsString;
+      if FShowLCPS and (not FldByName['LCPS'].IsNull) then
+        ednLCPS.Value := FldByName['LCPS'].AsCurrency;
       Transaction.Commit;
       Close;
     finally
@@ -203,7 +201,7 @@ end;
 
 procedure TPaymentEditFrm.dePaySumChange(Sender: TObject);
 var
-  f : Double;
+  f: Double;
 begin
   bbOk.Enabled := ((cr.CUSTOMER_ID > -1) and ((dePaySum.Value > 0) or ((dePaySum.Value < 0) and FPayNegative)));
   ednItogo.Value := 0;
@@ -243,6 +241,8 @@ begin
       SQL.Add('  , NOTICE = :NOTICE             ');
       SQL.Add('  , FINE_SUM = :FINE_SUM         ');
       SQL.Add('  , PAY_TYPE_STR = :PAY_TYPE_STR ');
+      if FShowLCPS then
+        SQL.Add('  , LCPS = :LCPS               ');
       SQL.Add('where PAYMENT_ID = :PAYMENT_ID   ');
 
       ParamByName('CUSTOMER_ID').AsInt64 := cr.CUSTOMER_ID;
@@ -255,7 +255,8 @@ begin
       else
         ParamByName('FINE_SUM').AsCurrency := 0;
 
-      if FPaymentSRV then begin
+      if FPaymentSRV then
+      begin
         if VarIsNumeric(luPaymentSrv.Value) then
           ParamByName('PAYMENT_SRV').AsInteger := luPaymentSrv.Value
         else
@@ -268,6 +269,9 @@ begin
         ParamByName('PAY_TYPE_STR').AsString := cbbPayTypeStr.Value
       else
         ParamByName('PAY_TYPE_STR').IsNull := true;
+
+      if FShowLCPS then
+        ParamByName('LCPS').AsString := ednLCPS.Value;
 
       Transaction.StartTransaction;
       ExecQuery;

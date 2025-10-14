@@ -1,5 +1,4 @@
 object BarSettingForm: TBarSettingForm
-  ShowHint = True
   Left = 0
   Top = 0
   BorderStyle = bsDialog
@@ -14,6 +13,7 @@ object BarSettingForm: TBarSettingForm
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -32,7 +32,6 @@ object BarSettingForm: TBarSettingForm
       Width = 460
       Height = 208
       Align = alClient
-      AutoFitColWidths = False
       DataSource = dsFormat
       DynProps = <>
       Flat = True

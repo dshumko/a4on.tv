@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons,
   Vcl.ExtCtrls,
@@ -46,13 +46,21 @@ type
     procedure srcPaymentDataChange(Sender: TObject; Field: TField);
     procedure dbgCustPaymentSortMarkingChanged(Sender: TObject);
     procedure btnDelClick(Sender: TObject);
+    procedure dbgCustPaymentApplyFilter(Sender: TObject);
+    procedure dbgCustPaymentSearchPanelGetHighlightStrings(Grid: TCustomDBGridEh; Column: TColumnEh;
+      var Strings: TStringDynArray);
+    procedure dbgCustPaymentSearchPanelCheckCellHitSearch(Grid: TCustomDBGridEh; Column: TColumnEh;
+      var Accept: Boolean);
+    procedure dbgCustPaymentSearchPanelSearchEditChange(Grid: TCustomDBGridEh;
+      SearchEdit: TDBGridSearchPanelTextEditEh);
   private
-    FFine: boolean;
-    FFullAccess: boolean;
+    FFine: Boolean;
+    FFullAccess: Boolean;
     // FTodayOnly: boolean;
     // FOnlyTheir: boolean;
     FSavedID: Integer;
     FCheckUrl: string;
+    FSearchStrArr: TStringDynArray;
     procedure EnableControls;
     procedure OpenRequest;
   public
@@ -107,14 +115,16 @@ end;
 
 procedure TapgCustomerPayments.InitForm;
 var
-  bFull: boolean;
-  bAdd: boolean;
-  vShowPaySRV: boolean;
-  vAsBalance: boolean;
+  bFull: Boolean;
+  bAdd: Boolean;
+  vShowPaySRV: Boolean;
+  vAsBalance: Boolean;
+  vShowLCPS: Boolean;
   i: Integer;
   s: String;
 begin
   vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
+  vShowLCPS := (dmMain.GetSettingsValue('SHOW_LCPS') = '1');
   bFull := dmMain.AllowedAction(rght_Pays_full); // Полный доступ к платежам
   bAdd := dmMain.AllowedAction(rght_Pays_add); // Добавление платежей
 
@@ -165,6 +175,11 @@ begin
       dbgCustPayment.Columns[i].Visible := vAsBalance;
     if (AnsiUpperCase(dbgCustPayment.Columns[i].FieldName) = 'DEBT_SAVE') then
       dbgCustPayment.Columns[i].Visible := not vAsBalance;
+    if (AnsiUpperCase(dbgCustPayment.Columns[i].FieldName) = 'LCPS') then
+    begin
+      dbgCustPayment.Columns[i].Visible := vShowLCPS;
+      dbgCustPayment.Columns[i].Title.Caption := rsLCPaySum;
+    end;
   end;
   FCheckUrl := dmMain.GetSettingsValue('PAY_CHECK_URL');
   actCheckUrl.Visible := (FCheckUrl <> '');
@@ -231,17 +246,52 @@ begin
 end;
 
 procedure TapgCustomerPayments.actMarkReqExecute(Sender: TObject);
+var
+  rs: string;
+  i: Integer;
+  s: string;
 begin
-  if dsPayment.RecordCount = 0 then
+  if (dsPayment.RecordCount = 0) or (dsPayment['PT'] = 0) then
     exit;
-  {
-    rs := InputBox('Укажите номер заявки', 'Заявка', '');
-    if (rs = '') or (not TryStrToInt(rs, rid)) then
-    exit;
-  }
-  dbgCustPayment.AllowedOperations := [alopUpdateEh];
-  dbgCustPayment.ReadOnly := False;
-  dsPayment.Edit;
+
+  if not(dsPayment.FieldByName('RQ_ID').IsNull) then
+    rs := dsPayment['RQ_ID'];
+
+  rs := InputBox('Укажите № заявки', '№ Заявки или пустое(для очистки)', rs);
+  if (rs = '') then
+  begin
+    if not(dsPayment.FieldByName('RQ_ID').IsNull) then
+      s := 'null';
+  end
+  else
+  begin
+    if TryStrToInt(rs, i) then
+    begin
+      if (dsPayment.FieldByName('RQ_ID').IsNull or dsPayment['RQ_ID'] <> i) then
+        s := rs;
+    end;
+  end;
+
+  if not s.IsEmpty then
+  begin
+    with TpFIBQuery.Create(Self) do
+      try
+        Database := dmMain.dbTV;
+        Transaction := dmMain.trWriteQ;
+        sql.text := 'update payment set Rq_Id = ' + s + ' where Payment_Id = :PAYMENT_ID';
+        ParamByName('PAYMENT_ID').Value := dsPayment['PAYMENT_ID'];
+        Transaction.StartTransaction;
+        ExecQuery;
+        Transaction.Commit;
+        Close;
+      finally
+        free;
+      end;
+    dsPayment.Refresh;
+  end;
+  // dbgCustPayment.AllowedOperations := [alopUpdateEh];
+  // dbgCustPayment.ReadOnly := False;
+  // dsPayment.Edit;
 end;
 
 procedure TapgCustomerPayments.actPrepayExecute(Sender: TObject);
@@ -276,7 +326,8 @@ end;
 
 procedure TapgCustomerPayments.btnDelClick(Sender: TObject);
 begin
-  if (not FFullAccess) then Exit;
+  if (not FFullAccess) then
+    exit;
 
   // удалим обещанный
   if (not dsPayment.FieldByName('PT').IsNull) and (dsPayment['PT'] = 0) and
@@ -313,6 +364,11 @@ end;
 procedure TapgCustomerPayments.CloseData;
 begin
   dsPayment.Close;
+end;
+
+procedure TapgCustomerPayments.dbgCustPaymentApplyFilter(Sender: TObject);
+begin
+  // (Sender as TDBGridEh).SumList.RecalcAll;
 end;
 
 procedure TapgCustomerPayments.dbgCustPaymentDblClick(Sender: TObject);
@@ -361,19 +417,57 @@ begin
   end;
 end;
 
+procedure TapgCustomerPayments.dbgCustPaymentSearchPanelCheckCellHitSearch(Grid: TCustomDBGridEh; Column: TColumnEh;
+  var Accept: Boolean);
+var
+  s, SubStr: String;
+  Pos: Integer;
+  i: Integer;
+begin
+  s := Column.DisplayText;
+  if not Grid.SearchPanel.CaseSensitive then
+    s := NlsUpperCase(s);
+  for i := 0 to Length(FSearchStrArr) - 1 do
+  begin
+    SubStr := FSearchStrArr[i];
+    if not Grid.SearchPanel.CaseSensitive then
+      SubStr := NlsUpperCase(SubStr);
+    Pos := PosEx(SubStr, s);
+    if Pos > 0 then
+    begin
+      Accept := True;
+      Break;
+    end
+    else
+      Accept := False;
+  end;
+end;
+
+procedure TapgCustomerPayments.dbgCustPaymentSearchPanelGetHighlightStrings(Grid: TCustomDBGridEh; Column: TColumnEh;
+  var Strings: TStringDynArray);
+begin
+  Strings := FSearchStrArr;
+end;
+
+procedure TapgCustomerPayments.dbgCustPaymentSearchPanelSearchEditChange(Grid: TCustomDBGridEh;
+  SearchEdit: TDBGridSearchPanelTextEditEh);
+begin
+  FSearchStrArr := SplitString(SearchEdit.text, ' ');
+end;
+
 procedure TapgCustomerPayments.dbgCustPaymentSortMarkingChanged(Sender: TObject);
 var
   cr: TCursor;
   s: string;
-  grid: TCustomDBGridEh;
+  Grid: TCustomDBGridEh;
   id, i, j: Integer;
   FIBDS: TpFIBDataSet;
-  beOpened: boolean;
+  beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
-  grid := TCustomDBGridEh(Sender);
-  FIBDS := grid.DataSource.DataSet as TpFIBDataSet;
+  Grid := TCustomDBGridEh(Sender);
+  FIBDS := Grid.DataSource.DataSet as TpFIBDataSet;
   id := -1;
   if Sender is TCustomDBGridEh then
   begin
@@ -385,12 +479,12 @@ begin
       FIBDS.Close;
     end;
 
-    j := grid.SortMarkedColumns.Count;
+    j := Grid.SortMarkedColumns.Count;
     for i := 0 to pred(j) do
     begin
-      s := s + grid.SortMarkedColumns[i].FieldName;
+      s := s + Grid.SortMarkedColumns[i].FieldName;
       // s := s + ' COLLATE UNICODE_CI_AI ';
-      if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
+      if Grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
         s := s + ' desc';
       if i <> pred(j) then
         s := s + ', ';
@@ -467,7 +561,7 @@ begin
   //
   i := Pos('=', Data);
   f := Copy(Data, 1, i - 1);
-  v := Copy(Data, i + 1, length(Data));
+  v := Copy(Data, i + 1, Length(Data));
   dsPayment.Locate(f, v, []);
 end;
 

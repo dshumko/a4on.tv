@@ -26,6 +26,8 @@ type
     pnlDATA: TPanel;
     lstForms: TListBox;
     splMain: TSplitter;
+    lbl2: TLabel;
+    edPCE: TDBNumberEditEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

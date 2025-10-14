@@ -8,7 +8,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ImgList, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.Mask, Vcl.ActnList, Vcl.Buttons, Vcl.Menus,
-  fs_tree, fs_synmemo, fs_iinterpreter, DBCtrlsEh, SynEditHighlighter, PrjConst, CnErrorProvider, amSplitter;
+  fs_tree, fs_synmemo, fs_iinterpreter, DBCtrlsEh, SynEditHighlighter, PrjConst, CnErrorProvider, amSplitter,
+  Vcl.StdActns;
 
 type
   TScripEditorForm = class(TForm)
@@ -56,6 +57,14 @@ type
     btn2: TToolButton;
     btnDelete: TToolButton;
     actDelete: TAction;
+    EditPaste1: TEditPaste;
+    EditCopy1: TEditCopy;
+    EditSelectAll1: TEditSelectAll;
+    EditCut1: TEditCut;
+    EditCut2: TEditCut;
+    EditCopy2: TEditCopy;
+    EditPaste2: TEditPaste;
+    EditSelectAll2: TEditSelectAll;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure fsScript1RunLine(Sender: TfsScript; const UnitName, SourcePos: String);
     procedure edtExprKeyPress(Sender: TObject; var Key: Char);

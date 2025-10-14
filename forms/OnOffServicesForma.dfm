@@ -28,8 +28,14 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
-      Left = 5
+      Left = 3
       Top = 6
       Width = 311
       Height = 25
@@ -241,7 +247,7 @@ object OnOffServiceForm: TOnOffServiceForm
     object Label4: TLabel
       Left = 0
       Top = 0
-      Width = 67
+      Width = 424
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077

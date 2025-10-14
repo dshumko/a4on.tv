@@ -3,7 +3,7 @@ object RequestNewForm: TRequestNewForm
   Top = 0
   Caption = #1053#1086#1074#1072#1103' '#1079#1072#1103#1074#1082#1072
   ClientHeight = 522
-  ClientWidth = 753
+  ClientWidth = 832
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,14 @@ object RequestNewForm: TRequestNewForm
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   DesignSize = (
-    753
+    832
     522)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlAdresInfo: TPanel
     Left = 0
     Top = 0
-    Width = 753
+    Width = 832
     Height = 129
     Align = alTop
     BevelOuter = bvNone
@@ -261,7 +261,7 @@ object RequestNewForm: TRequestNewForm
     object pnlCI: TPanel
       Left = 363
       Top = 0
-      Width = 390
+      Width = 469
       Height = 129
       Align = alClient
       BevelOuter = bvNone
@@ -270,25 +270,18 @@ object RequestNewForm: TRequestNewForm
       inline CustomerInfoFrm: TCustomerInfoFrm
         Left = 0
         Top = 0
-        Width = 390
+        Width = 469
         Height = 129
         Align = alClient
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
         inherited gbInfo: TGroupBox
-          Width = 390
+          Width = 469
           Height = 129
-          inherited memAbonent: TMemo
-            Width = 386
-            Height = 75
-          end
-          inherited lblFIO: TDBEditEh
-            Width = 386
-          end
-          inherited lblDebt: TDBEditEh
-            Width = 386
-            Margins.Bottom = 0
+          inherited HtmlViewer: THtmlViewer
+            Width = 465
+            Height = 112
           end
         end
       end
@@ -297,13 +290,19 @@ object RequestNewForm: TRequestNewForm
   inline frmOkCancel: TOkCancelFrame
     Left = 0
     Top = 487
-    Width = 753
+    Width = 832
     Height = 35
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
-      Left = 279
+      Left = 358
       Top = 6
       Width = 334
       Hint = 
@@ -314,7 +313,7 @@ object RequestNewForm: TRequestNewForm
       OnClick = bbOkClick
     end
     inherited bbCancel: TBitBtn
-      Left = 625
+      Left = 704
       Top = 6
       Width = 123
       OnClick = frmOkCancelbbCancelClick
@@ -323,7 +322,7 @@ object RequestNewForm: TRequestNewForm
   object pnl1: TPanel
     Left = 0
     Top = 129
-    Width = 753
+    Width = 832
     Height = 358
     Align = alClient
     BevelOuter = bvNone
@@ -331,7 +330,7 @@ object RequestNewForm: TRequestNewForm
     object pnlRType: TPanel
       Left = 0
       Top = 0
-      Width = 753
+      Width = 832
       Height = 257
       Align = alTop
       BevelOuter = bvNone
@@ -339,7 +338,7 @@ object RequestNewForm: TRequestNewForm
       object pnlRWorks: TPanel
         Left = 481
         Top = 0
-        Width = 272
+        Width = 351
         Height = 257
         Align = alClient
         BevelOuter = bvNone
@@ -348,7 +347,7 @@ object RequestNewForm: TRequestNewForm
         object dbgWorks: TDBGridEh
           Left = 0
           Top = 30
-          Width = 272
+          Width = 351
           Height = 227
           TabStop = False
           Align = alClient
@@ -420,7 +419,7 @@ object RequestNewForm: TRequestNewForm
         object pnlBW: TPanel
           Left = 0
           Top = 0
-          Width = 272
+          Width = 351
           Height = 30
           Align = alTop
           BevelOuter = bvNone
@@ -800,7 +799,7 @@ object RequestNewForm: TRequestNewForm
     object pnlTime: TPanel
       Left = 0
       Top = 257
-      Width = 753
+      Width = 832
       Height = 101
       Align = alClient
       BevelOuter = bvNone
@@ -809,7 +808,7 @@ object RequestNewForm: TRequestNewForm
       object dbgSame: TDBGridEh
         Left = 0
         Top = 0
-        Width = 753
+        Width = 832
         Height = 101
         TabStop = False
         Align = alClient
@@ -1227,25 +1226,14 @@ object RequestNewForm: TRequestNewForm
       'select'
       '    RT.RQTL_ID'
       '  , RT.RQ_CONTENT'
-      '  , W.W_ID'
-      '  , W.NAME'
-      '  , W.W_TIME'
       '  , RT.ADD_FIELD'
       '  , coalesce(RT.NEED_NODE_RQ, 0) NEED_NODE_RQ'
       '  , RT.RECREATE_DAYS'
-      '  , coalesce(W.W_COST,'
-      '    (select first 1'
-      '         T.TARIF_SUM'
-      '       from TARIF T'
-      '       where T.SERVICE_ID = W.W_SRV'
-      
-        '             and current_date between T.DATE_FROM and T.DATE_TO)' +
-        ') W_COST'
+      '  , RT.WORKS         '
       '  from REQUEST_TEMPLATES RT'
-      '       left outer join WORKS W on (RT.ADD_WORK = W.W_ID)'
-      '  where RT.RQ_TYPE = :RT_ID'
+      '  where RT.Rq_Type = :RT_ID'
       '        and (RT.DELETED = 0 or RT.DELETED is null)'
-      '       @@RT_RESTRICT%@    '
+      '      @@RT_RESTRICT%@'
       '  order by RT.RQ_CONTENT')
     AutoCalcFields = False
     Transaction = dmMain.trRead
@@ -1278,14 +1266,28 @@ object RequestNewForm: TRequestNewForm
       'and w.Deleted = 0'
       '     ')
     SelectSQL.Strings = (
-      'select w.* '
-      'from works w '
-      'where '
-      '  w.rq_type = :rt_id '
-      '  and w.Deleted = 0 '
-      '  and w.on_default = 1'
-      'order by w.name'
-      '')
+      'select'
+      '    w.W_Id'
+      '  , w.Name'
+      '  , w.W_Time'
+      
+        '  , coalesce(iif(w.As_Service is null, w.W_Cost, iif(coalesce(s.' +
+        'Srv_Type_Id, 2) = 2, 0,'
+      '    (select'
+      '         t.tarif_sum'
+      '       from tarif t'
+      '       where t.service_id = s.service_id'
+      
+        '             and current_date between t.date_from and t.date_to)' +
+        ')), 0) W_COST'
+      '  from works w'
+      
+        '       left outer join services s on (s.service_id = w.as_servic' +
+        'e)'
+      '  where w.rq_type = :rt_id'
+      '        and w.Deleted = 0'
+      '        and w.on_default = 1'
+      '  order by w.name')
     AutoUpdateOptions.UpdateTableName = 'REQUEST_TEMPLATES'
     AutoUpdateOptions.KeyFields = 'RT_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -1366,5 +1368,33 @@ object RequestNewForm: TRequestNewForm
     DoubleBuffer = False
     Left = 184
     Top = 96
+  end
+  object dsAllWorks: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    w.W_Id'
+      '  , w.Name'
+      '  , w.W_Time'
+      
+        '  , coalesce(iif(w.As_Service is null, w.W_Cost, iif(coalesce(s.' +
+        'Srv_Type_Id, 2) = 2, 0,'
+      '    (select'
+      '         t.tarif_sum'
+      '       from tarif t'
+      '       where t.service_id = s.service_id'
+      
+        '             and current_date between t.date_from and t.date_to)' +
+        ')), 0) W_COST'
+      '  from works w'
+      
+        '       left outer join services s on (s.service_id = w.as_servic' +
+        'e)'
+      '  where w.Deleted = 0'
+      '  order by w.name')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 604
+    Top = 297
   end
 end

@@ -132,10 +132,8 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmGrid
     ReadOnly = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True

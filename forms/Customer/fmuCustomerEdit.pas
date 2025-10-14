@@ -5,7 +5,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.Menus,
@@ -140,6 +140,10 @@ type
     pnlWarningInfo: TPanel;
     mmoWarning: TDBMemoEh;
     btnCloseWarningInfo: TButton;
+    dsDocType: TpFIBDataSet;
+    srcDocType: TDataSource;
+    lcbDT: TDBLookupComboboxEh;
+    lblDT: TLabel;
     procedure dbgrdhContactsExit(Sender: TObject);
     procedure chkJURIDICALClick(Sender: TObject);
     procedure btnSelectColorClick(Sender: TObject);
@@ -182,12 +186,12 @@ type
     procedure LupHOUSE_IDChange(Sender: TObject);
     procedure btnCloseWarningInfoClick(Sender: TObject);
     procedure eFLAT_NOExit(Sender: TObject);
-    procedure dbgrdhContactsGetCellParams(Sender: TObject;
-      Column: TColumnEh; AFont: TFont; var Background: TColor;
+    procedure dbgrdhContactsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
   private
     { Private declarations }
     FullAccess: Boolean;
+    FAddressRight : Boolean;
     FPersonalData: Boolean;
     FNotIgnoreContract: Boolean;
     FDisableAddressEdit: Boolean;
@@ -221,6 +225,7 @@ type
     procedure ShowWarningMessage(const s: String);
     procedure HideWarningMessage;
     function GetOrderClause(grid: TCustomDBGridEh): string;
+    function DocNumberOk: Boolean;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -255,16 +260,15 @@ begin
   FullAccess := FullAccess or dmMain.AllowedAction(rght_Customer_History); // изменение истории
   FNotIgnoreContract := dmMain.GetSettingsValue('IGNORE_CONTRACT') <> '1';
   FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FAddressRight := ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
 
   dsContacts.DataSource := FDataSource;
   ds.DataSet := FDataSource.DataSet;
 
   dbchkHiden.Visible := dmMain.SuperMode > 0;
   // спрячем кнопку + для добавления адреса если это запрещено
-  LupStreets.EditButtons[0].Visible :=
-    ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
-  LupHOUSE_ID.EditButtons[0].Visible :=
-    ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
+  LupStreets.EditButtons[0].Visible := FAddressRight;
+  LupHOUSE_ID.EditButtons[0].Visible := FAddressRight;
 
   if not ds.DataSet.FieldByName('HIS_COLOR').IsNull then
     SetColor(ds.DataSet.FieldByName('HIS_COLOR').Value);
@@ -278,9 +282,7 @@ begin
   actExAddressEdit.Enabled := FDisableAddressEdit;
   actExAddressEdit.Visible := FDisableAddressEdit;
   if FDisableAddressEdit then
-  begin
     CreateMainMenuItem;
-  end;
   SetExAddressEdit(FDisableAddressEdit);
 
   // dsContacts.DataSource := FDataSource;
@@ -340,13 +342,12 @@ begin
   SaveContact;
 end;
 
-procedure TapgCustomerEdit.dbgrdhContactsGetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+procedure TapgCustomerEdit.dbgrdhContactsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
 begin
-  if (not (Sender as TDBGridEh).DataSource.DataSet.FieldByName('Cc_Notify').IsNull) //
+  if (not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('Cc_Notify').IsNull) //
     and ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('Cc_Notify').AsInteger = 1) then
-      Background := $00D7FFD7;
+    Background := $00D7FFD7;
 end;
 
 procedure TapgCustomerEdit.dbgrdhContactsKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -454,7 +455,7 @@ begin
     Query.SQL.Add('  where h.House_Id=:house_id ');
     Query.SQL.Add('  order by c.VALID_TO');
 
-    Query.ParamByName('HOUSE_ID').asInteger := LupHOUSE_ID.KeyValue;
+    Query.ParamByName('HOUSE_ID').AsInteger := LupHOUSE_ID.KeyValue;
     Query.ParamByName('FLAT_NO').AsString := eFLAT_NO.Text;
     Query.ParamByName('CUSTOMER_ID').Value := ds.DataSet['CUSTOMER_ID'];
     Query.Transaction.StartTransaction;
@@ -535,7 +536,7 @@ begin
   s := ' ';
   for i := 0 to pred(J) do
   begin
-      s := s + grid.SortMarkedColumns[i].FieldName;
+    s := s + grid.SortMarkedColumns[i].FieldName;
 
     if grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
       s := s + ' desc';
@@ -547,7 +548,7 @@ end;
 
 procedure TapgCustomerEdit.OpenData;
 var
-  s : string;
+  s: string;
 begin
 
   dsOrg.Open;
@@ -555,6 +556,7 @@ begin
   dsStreets.Open;
   dsHouses.Open;
   dsExecutor.Open;
+  dsDocType.Open;
 
   if not ds.DataSet.FieldByName('PORCH_N').IsNull then
     FSavedPorch := ds.DataSet['PORCH_N'];
@@ -572,10 +574,11 @@ begin
   LupHOUSE_ID.OnChange := LupHOUSE_IDChange;
   eFLAT_NO.OnChange := LupHOUSE_IDChange;
 
-  if (not dsContacts.Active) then begin
+  if (not dsContacts.Active) then
+  begin
     s := A4MainForm.GetIniFileName;
     dbgrdhContacts.RestoreColumnsLayoutIni(s, 'apgCustomerEdit.dbgrdhContacts',
-        [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+      [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
     s := GetOrderClause(dbgrdhContacts);
     dsContacts.OrderClause := s;
     dsContacts.Open;
@@ -688,7 +691,8 @@ begin
   if not dsContacts.Active then
     dsContacts.Open;
 
-  Contact.cID := -1;
+  Contact.cID := 1; // мобила
+  Contact.Notify := 1; // уведомлять
   Contact.CustID := ds.DataSet['CUSTOMER_ID'];
   if EditContact(Contact) then
   begin
@@ -835,7 +839,7 @@ var
   ini: string;
 begin
   ini := A4MainForm.GetIniFileName;
-  dbgrdhContacts.SaveColumnsLayoutIni(ini, 'apgCustomerEdit.dbgrdhContacts' , false);
+  dbgrdhContacts.SaveColumnsLayoutIni(ini, 'apgCustomerEdit.dbgrdhContacts', False);
 
   SaveContact;
   dsContacts.Close;
@@ -843,6 +847,7 @@ begin
   dsContacts.Close;
   dsOrg.Close;
   dsVATG.Close;
+  dsDocType.Close;
   dsStreets.Close;
   dsHouses.Close;
   dsExecutor.Close;
@@ -1003,7 +1008,7 @@ begin
 
   if (FPersonalData) and (not edtPASSPORT_NUMBER.Text.IsEmpty) then
   begin
-    if CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN')) then
+    if DocNumberOk then
     begin
       if not CheckInBlackList(edtPASSPORT_NUMBER, 1) then
         Result := False;
@@ -1025,6 +1030,39 @@ begin
   end
   else
     CnErrors.Dispose(eCONTRACT_DATE);
+end;
+
+function TapgCustomerEdit.DocNumberOk: Boolean;
+begin
+  Result := True;
+
+  if (lcbDT.Text <> '') then
+  begin
+    dsDocType.DisableControls;
+    if dsDocType.Locate('O_ID', lcbDT.Value, []) and (not dsDocType.FieldByName('O_CHECK').IsNull) then
+    begin
+      if (dsDocType['O_CHECK'] <> '') then
+      begin
+        Result := TRegEx.IsMatch(edtPASSPORT_NUMBER.Text, '^' + dsDocType.FieldByName('O_CHECK').AsString + '$');
+        if (not Result) then
+          CnErrors.SetError(edtPASSPORT_NUMBER, Format(rsINPUT_VALUE_FORMAT, [dsDocType['O_CHECK']]), iaTopCenter,
+            bsNeverBlink)
+      end
+      else
+      begin
+        if lcbDT.Value = 1 then
+          Result := CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'));
+      end;
+    end
+    else
+    begin
+      if lcbDT.Value = 1 then
+        Result := CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'));
+    end;
+    dsDocType.EnableControls;
+  end
+  else
+    Result := CheckControlText(edtPASSPORT_NUMBER, dmMain.GetSettingsValue('REG_PASSN'));
 end;
 
 procedure TapgCustomerEdit.LupHOUSE_IDExit(Sender: TObject);
@@ -1144,7 +1182,6 @@ procedure TapgCustomerEdit.edtPASSPORT_NUMBERExit(Sender: TObject);
 var
   s: string;
 begin
-
   s := (Sender as TDBEditEh).Text;
   (Sender as TDBEditEh).Text := Trim(s);
 
@@ -1159,7 +1196,8 @@ begin
       dmMain.RestoreKL;
   end;
 
-  if CheckControlText((Sender as TDBEditEh), dmMain.GetSettingsValue('REG_PASSN')) then
+  CnErrors.Dispose(edtPASSPORT_NUMBER);
+  if DocNumberOk then
     CheckInBlackList((Sender as TDBEditEh), 1);
 end;
 
@@ -1237,6 +1275,9 @@ procedure TapgCustomerEdit.UpdateFloorPorch();
 var
   qry: TpFIBQuery;
 begin
+  if (not FAddressRight) and (dmMain.GetSettingsValue('FP_ADDRESS_CHECK') = '1') then
+    Exit;
+
   if (eFLAT_NO.Text <> '') and (LupHOUSE_ID.Text <> '') then
   begin
     if (edFLOOR.Text <> FSavedFloor) or (edPORCH.Text <> FSavedPorch) or (eFLAT_NO.Text <> FSavedFlat) or
@@ -1306,7 +1347,7 @@ begin
   Query.SQL.Add('  suspend;');
   Query.SQL.Add('end');
 
-  Query.ParamByName('House_Id').asInteger := LupHOUSE_ID.KeyValue;
+  Query.ParamByName('House_Id').AsInteger := LupHOUSE_ID.KeyValue;
   Query.ParamByName('Flat_No').AsString := eFLAT_NO.Text;
   Query.ParamByName('OWNER_NAME').AsString := n;
   Query.ParamByName('OWNER_DOC').AsString := edtPASSPORT_NUMBER.Text;
@@ -1314,7 +1355,7 @@ begin
   Query.ExecQuery;
   if not(Query.FN('itsOwner').IsNull) then
   begin
-    Result := (Query.FN('itsOwner').asInteger > 0);
+    Result := (Query.FN('itsOwner').AsInteger > 0);
   end;
   if not(Query.FN('ownerS').IsNull) then
   begin
@@ -1352,7 +1393,7 @@ begin
       oQuery.SQL.Add('  matching(House_Id, Flat_No);');
       oQuery.SQL.Add('end');
 
-      oQuery.ParamByName('House_Id').asInteger := LupHOUSE_ID.KeyValue;
+      oQuery.ParamByName('House_Id').AsInteger := LupHOUSE_ID.KeyValue;
       oQuery.ParamByName('Flat_No').AsString := eFLAT_NO.Text;
       oQuery.ParamByName('OWNER_NAME').AsString := s;
       oQuery.ParamByName('OWNER_DOC').AsString := edtPASSPORT_NUMBER.Text;
@@ -1369,7 +1410,7 @@ procedure TapgCustomerEdit.TextToFileds(scResult: TStringList);
 var
   s: string;
   i: Integer;
-  r: TStringArray;
+  r: TStringDynArray;
   fs: TFormatSettings;
   pn: String;
   ps: String;
@@ -1605,9 +1646,9 @@ begin
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   if not(Query.FieldByName('F_CNT').IsNull) then
-    f := Query.FieldByName('F_CNT').asInteger;
+    f := Query.FieldByName('F_CNT').AsInteger;
   if not(Query.FieldByName('M_CNT').IsNull) then
-    m := Query.FieldByName('M_CNT').asInteger;
+    m := Query.FieldByName('M_CNT').AsInteger;
   Query.Transaction.Commit;
   Query.Close;
 
@@ -1658,7 +1699,7 @@ begin
   Query.SQL.Add(' and c.CUSTOMER_ID <> :CID');
 
   Query.ParamByName('PN').AsString := n;
-  Query.ParamByName('CID').asInteger := ds.DataSet['CUSTOMER_ID'];
+  Query.ParamByName('CID').AsInteger := ds.DataSet['CUSTOMER_ID'];
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
 

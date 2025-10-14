@@ -27,7 +27,7 @@ inherited ChannelsForm: TChannelsForm
     FrozenCols = 2
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove, dghAutoFitRowHeight]
     ReadOnly = True
-    SearchPanel.FilterOnTyping = True
+    SearchPanel.FilterOnTyping = False
     SumList.Active = True
     Columns = <
       item

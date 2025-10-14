@@ -40,7 +40,6 @@ object apgEqpmntRequests: TapgEqpmntRequests
     RowDetailPanel.BevelOuter = bvNone
     RowDetailPanel.BorderStyle = bsNone
     RowDetailPanel.VertSizing = True
-    SearchPanel.Enabled = True
     SortLocal = True
     STFilter.Local = True
     SumList.Active = True

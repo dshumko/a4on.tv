@@ -4,7 +4,7 @@ object EditCFileForm: TEditCFileForm
   ActiveControl = dbluFileType
   BorderIcons = [biSystemMenu]
   Caption = #1060#1072#1081#1083' '#1072#1073#1086#1085#1077#1085#1090#1072
-  ClientHeight = 712
+  ClientHeight = 720
   ClientWidth = 526
   Color = clBtnFace
   DoubleBuffered = True
@@ -73,7 +73,7 @@ object EditCFileForm: TEditCFileForm
   end
   object pnlBtm: TPanel
     Left = 0
-    Top = 678
+    Top = 686
     Width = 526
     Height = 34
     Align = alBottom
@@ -110,15 +110,15 @@ object EditCFileForm: TEditCFileForm
     Left = 0
     Top = 61
     Width = 526
-    Height = 617
+    Height = 625
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
     object pnlNotice: TPanel
       Left = 0
-      Top = 569
+      Top = 596
       Width = 526
-      Height = 48
+      Height = 29
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 12
@@ -131,12 +131,12 @@ object EditCFileForm: TEditCFileForm
         Align = alTop
         Visible = False
       end
-      object memNotice: TDBMemoEh
+      object mmoDesc: TDBMemoEh
         AlignWithMargins = True
         Left = 5
         Top = 17
         Width = 516
-        Height = 31
+        Height = 12
         Margins.Left = 5
         Margins.Top = 0
         Margins.Right = 5
@@ -154,7 +154,7 @@ object EditCFileForm: TEditCFileForm
         Visible = True
         WantReturns = True
       end
-      object mmoMemo: TDBMemoEh
+      object mmoNotice: TDBMemoEh
         AlignWithMargins = True
         Left = 5
         Top = 0
@@ -174,22 +174,22 @@ object EditCFileForm: TEditCFileForm
         TabOrder = 0
         Visible = False
         WantReturns = True
-        OnChange = mmoMemoChange
-        OnExit = mmoMemoExit
+        OnChange = mmoNoticeChange
+        OnExit = mmoNoticeExit
       end
     end
     object pnlText: TPanel
       Left = 0
       Top = 469
       Width = 526
-      Height = 100
+      Height = 127
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 11
       Visible = False
       DesignSize = (
         526
-        100)
+        127)
       object lblText: TLabel
         Tag = 1
         Left = 5
@@ -222,6 +222,14 @@ object EditCFileForm: TEditCFileForm
         Height = 13
         Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090'3'
       end
+      object lblText4: TLabel
+        Tag = 1
+        Left = 6
+        Top = 105
+        Width = 62
+        Height = 13
+        Caption = #1044#1086#1087'. '#1090#1077#1082#1089#1090'4'
+      end
       object edtText: TDBEditEh
         Tag = 1
         Left = 85
@@ -231,10 +239,11 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         EditButtons = <>
+        MaxLength = 100
         ShowHint = True
         TabOrder = 0
         Visible = True
-        OnExit = edtMobileExit
+        OnExit = edtTextExit
       end
       object edtText1: TDBEditEh
         Tag = 1
@@ -245,10 +254,11 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         EditButtons = <>
+        MaxLength = 100
         ShowHint = True
         TabOrder = 1
         Visible = True
-        OnExit = edtMobileExit
+        OnExit = edtTextExit
       end
       object edtText2: TDBEditEh
         Tag = 1
@@ -259,10 +269,11 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         EditButtons = <>
+        MaxLength = 100
         ShowHint = True
         TabOrder = 2
         Visible = True
-        OnExit = edtMobileExit
+        OnExit = edtTextExit
       end
       object edtText3: TDBEditEh
         Tag = 1
@@ -273,10 +284,26 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         EditButtons = <>
+        MaxLength = 100
         ShowHint = True
         TabOrder = 3
         Visible = True
-        OnExit = edtMobileExit
+        OnExit = edtTextExit
+      end
+      object edtText4: TDBEditEh
+        Tag = 1
+        Left = 85
+        Top = 102
+        Width = 436
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DynProps = <>
+        EditButtons = <>
+        MaxLength = 100
+        ShowHint = True
+        TabOrder = 4
+        Visible = True
+        OnExit = edtTextExit
       end
     end
     object pnlMobile: TPanel
@@ -604,7 +631,7 @@ object EditCFileForm: TEditCFileForm
         Height = 13
         Caption = #1042#1082#1083'/'#1054#1090#1082#1083'.'
       end
-      object edDate: TDBDateTimeEditEh
+      object edDateSrv: TDBDateTimeEditEh
         Left = 85
         Top = 31
         Width = 103
@@ -615,7 +642,7 @@ object EditCFileForm: TEditCFileForm
         ShowHint = True
         TabOrder = 2
         Visible = True
-        OnChange = edDateChange
+        OnChange = edDateSrvChange
       end
       object lcbService: TDBLookupComboboxEh
         Left = 309
@@ -904,6 +931,7 @@ object EditCFileForm: TEditCFileForm
         TabOrder = 0
         Visible = False
         OnExit = ednBidExit
+        OnKeyPress = ednBidKeyPress
       end
       object ednBidSum: TDBNumberEditEh
         Left = 303
@@ -913,6 +941,7 @@ object EditCFileForm: TEditCFileForm
         AutoSelect = False
         DynProps = <>
         EmptyDataInfo.Text = #1057#1091#1084#1084#1072' '#1087#1086' '#1079#1072#1103#1074#1082#1077
+        EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
         TabOrder = 2
@@ -926,6 +955,8 @@ object EditCFileForm: TEditCFileForm
         Height = 21
         DynProps = <>
         EmptyDataInfo.Text = #1057#1091#1084#1084#1072' '#1055#1050#1054
+        EditButton.DefaultAction = True
+        EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
         TabOrder = 1
@@ -939,6 +970,8 @@ object EditCFileForm: TEditCFileForm
         Height = 21
         DynProps = <>
         EmptyDataInfo.Text = #1057#1091#1084#1084#1072' '#1087#1077#1085#1080
+        EditButton.DefaultAction = True
+        EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
         TabOrder = 3
@@ -1045,7 +1078,7 @@ object EditCFileForm: TEditCFileForm
         Height = 13
         Caption = #1055#1077#1088#1080#1086#1076
       end
-      object edPBegin: TDBDateTimeEditEh
+      object edDateBegin: TDBDateTimeEditEh
         Left = 85
         Top = 1
         Width = 103
@@ -1057,9 +1090,9 @@ object EditCFileForm: TEditCFileForm
         ShowHint = True
         TabOrder = 0
         Visible = True
-        OnExit = edPBeginExit
+        OnExit = edDateBeginExit
       end
-      object edPEnd: TDBDateTimeEditEh
+      object edDateEnd: TDBDateTimeEditEh
         Left = 194
         Top = 1
         Width = 103
@@ -1071,7 +1104,7 @@ object EditCFileForm: TEditCFileForm
         ShowHint = True
         TabOrder = 1
         Visible = True
-        OnExit = edPEndExit
+        OnExit = edDateEndExit
       end
     end
     object pnlPayment: TPanel
@@ -1239,7 +1272,7 @@ object EditCFileForm: TEditCFileForm
     SelectSQL.Strings = (
       
         'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_CHARFIELD, O_DI' +
-        'MENSION'
+        'MENSION, coalesce(O_CHECK, '#39#39') O_CHECK'
       'FROM OBJECTS'
       'WHERE O_TYPE = 33 AND (:IsEdit = 1 or O_DELETED = 0)'
       'order BY O_NAME')
@@ -1301,6 +1334,7 @@ object EditCFileForm: TEditCFileForm
       '  , cf.Filename'
       '  , cf.CONTENT'
       '  , cf.addons'
+      '  , coalesce(t.O_CHECK, '#39#39') O_CHECK'
       '  from CUSTOMER_FILES CF'
       
         '       inner join OBJECTS T on (CF.Cf_Type = T.O_ID and T.O_TYPE' +
@@ -1647,6 +1681,8 @@ object EditCFileForm: TEditCFileForm
       'select'
       '    a.Name'
       '    , a.Cost'
+      '    , a.M_Id'
+      '    , a.Serial'
       '  from Appliance a'
       '  where a.OWN_ID = :CID'
       '        and a.OWN_TYPE = 1 -- '#1040#1073#1086#1085#1077#1085#1090

@@ -1,10 +1,10 @@
 object SettingsForm: TSettingsForm
   Left = 345
   Top = 222
-  ActiveControl = edtPswdExpire
+  ActiveControl = dbgRAW
   BorderIcons = [biSystemMenu]
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1089#1080#1089#1090#1077#1084#1099
-  ClientHeight = 602
+  ClientHeight = 598
   ClientWidth = 550
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -34,12 +34,18 @@ object SettingsForm: TSettingsForm
   end
   inline OkCancelFrame1: TOkCancelFrame
     Left = 0
-    Top = 565
+    Top = 561
     Width = 550
     Height = 37
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 4
       Top = 5
@@ -60,18 +66,19 @@ object SettingsForm: TSettingsForm
     Left = 152
     Top = 0
     Width = 398
-    Height = 565
-    ActivePage = tsOther
+    Height = 561
+    ActivePage = tsRAW
     Align = alClient
     MultiLine = True
     TabOrder = 1
+    OnChange = pgSettingsChange
     object tsGlobal: TTabSheet
       Tag = 1
       Caption = #1043#1083#1086#1073#1072#1083#1100#1085#1099#1077
       ImageIndex = 3
       DesignSize = (
         390
-        501)
+        497)
       object Label1: TLabel
         Left = 9
         Top = 73
@@ -429,7 +436,7 @@ object SettingsForm: TSettingsForm
       ImageIndex = 1
       DesignSize = (
         390
-        501)
+        497)
       object lbl1: TLabel
         Left = 7
         Top = 203
@@ -797,7 +804,7 @@ object SettingsForm: TSettingsForm
       ImageIndex = 2
       DesignSize = (
         390
-        501)
+        497)
       object Label10: TLabel
         Left = 8
         Top = 318
@@ -1624,12 +1631,12 @@ object SettingsForm: TSettingsForm
       ImageIndex = 5
       DesignSize = (
         390
-        501)
+        497)
       object gbMail: TGroupBox
         Left = 2
         Top = 34
         Width = 386
-        Height = 327
+        Height = 323
         Anchors = [akLeft, akTop, akRight, akBottom]
         Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1087#1086#1095#1090#1099' '
         TabOrder = 1
@@ -1715,7 +1722,7 @@ object SettingsForm: TSettingsForm
           Height = 17
           Hint = #1057#1083#1072#1090#1100' '#1082#1086#1087#1080#1102' '#1085#1072' '#1085#1072#1096' email'
           Alignment = taLeftJustify
-          Caption = #1050#1086#1087#1080#1102' '#1087#1080#1100#1089#1084#1072' '#1089#1077#1073#1077
+          Caption = #1050#1086#1087#1080#1102' '#1087#1080#1089#1077#1084' '#1089#1077#1073#1077
           DynProps = <>
           TabOrder = 7
         end
@@ -1804,7 +1811,7 @@ object SettingsForm: TSettingsForm
       end
       object grp1: TGroupBox
         Left = 3
-        Top = 367
+        Top = 363
         Width = 386
         Height = 131
         Anchors = [akLeft, akRight, akBottom]
@@ -1965,7 +1972,7 @@ object SettingsForm: TSettingsForm
       ImageIndex = 5
       DesignSize = (
         390
-        501)
+        497)
       object Label4: TLabel
         Left = 11
         Top = 25
@@ -2077,7 +2084,7 @@ object SettingsForm: TSettingsForm
       ImageIndex = 7
       DesignSize = (
         390
-        501)
+        497)
       object grpSrv: TGroupBox
         Left = 8
         Top = 14
@@ -2165,7 +2172,7 @@ object SettingsForm: TSettingsForm
       ImageIndex = 8
       DesignSize = (
         390
-        501)
+        497)
       object Label8: TLabel
         Left = 11
         Top = 18
@@ -2372,12 +2379,146 @@ object SettingsForm: TSettingsForm
         Visible = True
       end
     end
+    object tsRAW: TTabSheet
+      Caption = 'RAW'
+      ImageIndex = 9
+      object lbl26: TLabel
+        Left = 0
+        Top = 0
+        Width = 390
+        Height = 39
+        Align = alTop
+        Caption = 
+          #1042#1085#1080#1084#1072#1085#1080#1077'! '#1045#1089#1083#1080' '#1074#1099' '#1087#1088#1072#1074#1080#1090#1077' '#1076#1072#1085#1085#1099#1077' '#1074' '#1088#1077#1078#1080#1084#1077' RAW, '#1090#1086' '#1074' '#1086#1082#1085#1077' '#1085#1072#1089#1090#1088#1086#1077 +
+          #1082' '#1078#1084#1080#1090#1077' '#1054#1058#1052#1045#1053#1040', '#1080#1085#1072#1095#1077' '#1076#1072#1085#1085#1099#1077' '#1090#1072#1073#1083#1080#1094#1099' '#1087#1077#1088#1077#1079#1072#1087#1080#1096#1091#1090#1089#1103' '#1076#1072#1085#1085#1099#1084#1080' '#1080#1079' '#1086#1082 +
+          #1085#1072' '#1085#1072#1089#1090#1088#1086#1077#1082'.'
+        Layout = tlCenter
+        WordWrap = True
+      end
+      object dbgRAW: TDBGridEh
+        Left = 0
+        Top = 39
+        Width = 390
+        Height = 458
+        Align = alClient
+        DataSource = srcRAW
+        DynProps = <>
+        Flat = True
+        HorzScrollBar.ExtraPanel.NavigatorButtons = [nbFirstEh, nbPriorEh, nbNextEh, nbLastEh, nbInsertEh, nbDeleteEh, nbEditEh, nbPostEh, nbCancelEh]
+        HorzScrollBar.ExtraPanel.Visible = True
+        HorzScrollBar.ExtraPanel.VisibleItems = [gsbiNavigator]
+        IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghFitRowHeightToText, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghExtendVertLines]
+        RowHeight = 2
+        RowLines = 1
+        SearchPanel.Enabled = True
+        TabOrder = 0
+        OnExit = dbgRAWExit
+        Columns = <
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'VAR_NAME'
+            Footers = <>
+            Title.TitleButton = True
+            Width = 127
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'VAR_VALUE'
+            Footers = <>
+            Title.TitleButton = True
+            Width = 112
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'VAR_TYPE'
+            Footers = <>
+            KeyList.Strings = (
+              ''
+              'INTEGER'
+              'DATE'
+              'NUMERIC'
+              'BOOLEAN'
+              'STRING'
+              'FLOAT')
+            PickList.Strings = (
+              ''
+              'INTEGER'
+              'DATE'
+              'NUMERIC'
+              'BOOLEAN'
+              'STRING'
+              'FLOAT')
+            Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'VAR_CAPTION'
+            Footers = <>
+            Title.TitleButton = True
+            Width = 123
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'VAR_NOTICE'
+            Footers = <>
+            Title.TitleButton = True
+            Width = 121
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_BY'
+            Footers = <>
+            Title.TitleButton = True
+            Width = 67
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'ADDED_ON'
+            Footers = <>
+            Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_BY'
+            Footers = <>
+            Title.TitleButton = True
+            Width = 101
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'EDIT_ON'
+            Footers = <>
+            Title.TitleButton = True
+          end>
+        object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+    end
   end
   object pnl1: TPanel
     Left = 0
     Top = 0
     Width = 152
-    Height = 565
+    Height = 561
     Align = alLeft
     Caption = 'pnl1'
     TabOrder = 0
@@ -2393,7 +2534,7 @@ object SettingsForm: TSettingsForm
       Left = 1
       Top = 14
       Width = 150
-      Height = 550
+      Height = 546
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -2505,5 +2646,67 @@ object SettingsForm: TSettingsForm
     Options = [cdFullOpen, cdSolidColor, cdAnyColor]
     Left = 68
     Top = 476
+  end
+  object dsRAW: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE SETTINGS'
+      'SET '
+      '    VAR_VALUE = :VAR_VALUE,'
+      '    VAR_TYPE = :VAR_TYPE,'
+      '    VAR_CAPTION = :VAR_CAPTION,'
+      '    VAR_NOTICE = :VAR_NOTICE'
+      'WHERE'
+      '    VAR_NAME = :OLD_VAR_NAME'
+      '    ')
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    SETTINGS'
+      'WHERE'
+      '        VAR_NAME = :OLD_VAR_NAME'
+      '    ')
+    InsertSQL.Strings = (
+      'INSERT INTO SETTINGS('
+      '    VAR_NAME,'
+      '    VAR_VALUE,'
+      '    VAR_TYPE,'
+      '    VAR_CAPTION,'
+      '    VAR_NOTICE'
+      ')'
+      'VALUES('
+      '    :VAR_NAME,'
+      '    :VAR_VALUE,'
+      '    :VAR_TYPE,'
+      '    :VAR_CAPTION,'
+      '    :VAR_NOTICE'
+      ')')
+    RefreshSQL.Strings = (
+      'select * from Settings s '
+      ' WHERE '
+      '        S.VAR_NAME = :OLD_VAR_NAME'
+      '    ')
+    SelectSQL.Strings = (
+      'select * from Settings s order by s.Var_Name')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    AutoCommit = True
+    Left = 356
+    Top = 252
+  end
+  object trWrite: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 355
+    Top = 303
+  end
+  object srcRAW: TDataSource
+    DataSet = dsRAW
+    Left = 356
+    Top = 356
   end
 end

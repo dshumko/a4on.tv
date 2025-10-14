@@ -3,7 +3,7 @@ object apgCustomerKoef: TapgCustomerKoef
   Top = 0
   Caption = #1050#1086#1101#1092#1092#1080#1094#1080#1077#1085#1090#1099
   ClientHeight = 172
-  ClientWidth = 822
+  ClientWidth = 817
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object apgCustomerKoef: TapgCustomerKoef
   object dbgCustDiscFactor: TDBGridEh
     Left = 26
     Top = 0
-    Width = 796
+    Width = 791
     Height = 172
     Align = alClient
     DataSource = srcDiscount
@@ -27,8 +27,8 @@ object apgCustomerKoef: TapgCustomerKoef
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     TabOrder = 1
     TitleParams.MultiTitle = True
     TitleParams.VTitleMargin = 4
@@ -342,7 +342,7 @@ object apgCustomerKoef: TapgCustomerKoef
         '    DF.DISCOUNT_ID, DF.CUSTOMER_ID, DF.DATE_FROM, DF.DATE_TO, DF' +
         '.FACTOR_VALUE, DF.SERV_ID, DF.NOTICE,'
       '    case'
-      '      when (S.SERVICE_ID = -1)'
+      '      when (DF.Serv_Id = -1)'
       '      then'
       
         '        '#39#1042#1089#1077#39'||iif(DF.Srv_Type = -1, '#39#39', '#39'. '#39'||coalesce((select ' +

@@ -11,7 +11,8 @@ uses
   Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask,
   DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase,
   DBCtrlsEh,
-  DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter;
+  DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter,
+  PrnDbgeh, Vcl.Menus;
 
 type
   TServicesForm = class(TForm)
@@ -157,6 +158,16 @@ type
     btnSWAdd: TSpeedButton;
     btnSWEdit: TSpeedButton;
     chkHideOld: TCheckBox;
+    actQuickFilter: TAction;
+    pmPopUp: TPopupMenu;
+    pmgCopy: TMenuItem;
+    pmgSelectAll: TMenuItem;
+    pmgSep2: TMenuItem;
+    pmgSaveSelection: TMenuItem;
+    miPrintGrid: TMenuItem;
+    pmgSep1: TMenuItem;
+    miRefresh: TMenuItem;
+    actCopyID: TAction;
     procedure tbSrvCancelClick(Sender: TObject);
     procedure tbSrvOkClick(Sender: TObject);
     procedure srcServicesStateChange(Sender: TObject);
@@ -196,7 +207,6 @@ type
     procedure dbgSwitchDblClick(Sender: TObject);
     procedure dbgLinkDblClick(Sender: TObject);
     procedure dbluAttributeChange(Sender: TObject);
-    procedure btnQFClick(Sender: TObject);
     procedure actCmxAddExecute(Sender: TObject);
     procedure actCmxDelExecute(Sender: TObject);
     procedure btn3Click(Sender: TObject);
@@ -218,6 +228,15 @@ type
     procedure srcSrvAttrDataChange(Sender: TObject; Field: TField);
     procedure chkHideOldClick(Sender: TObject);
     procedure pcServicesChanging(Sender: TObject; var AllowChange: Boolean);
+    procedure trfGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure actQuickFilterExecute(Sender: TObject);
+    procedure pmgCopyClick(Sender: TObject);
+    procedure miPrintGridClick(Sender: TObject);
+    procedure pmgSelectAllClick(Sender: TObject);
+    procedure pmgSaveSelectionClick(Sender: TObject);
+    procedure miRefreshClick(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     { Private declarations }
     FCanEdit: Boolean;
@@ -241,7 +260,7 @@ implementation
 
 uses
   System.RegularExpressions, System.StrUtils,
-  DM, TarifForma, pFIBQuery, ServiceForma, MAIN;
+  AtrStrUtils, DM, TarifForma, pFIBQuery, ServiceForma, MAIN;
 
 {$R *.dfm}
 
@@ -291,6 +310,17 @@ begin
     dsTarif.Post
   else
     dsTarif.Cancel;
+end;
+
+procedure TServicesForm.trfGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if (dsTarif.RecordCount = 0) or dsTarif.FieldByName('DATE_FROM').IsNull or dsTarif.FieldByName('DATE_TO').IsNull then
+    exit;
+
+  if (NOW() >= dsTarif['DATE_FROM']) and (NOW() <= dsTarif['DATE_TO']) then
+    AFont.Style := AFont.Style + [fsBold];
+
 end;
 
 procedure TServicesForm.tbtarCancelClick(Sender: TObject);
@@ -377,6 +407,35 @@ begin
   end;
 end;
 
+procedure TServicesForm.pmgCopyClick(Sender: TObject);
+var
+  dbg: TDBGridEh;
+begin
+  if (ActiveControl is TDBGridEh) then
+  begin
+    dbg := (ActiveControl as TDBGridEh);
+    if (geaCopyEh in dbg.EditActions) then
+      if dbg.CheckCopyAction then
+        A4MainForm.CopyDBGrid(dbg)
+      else
+        StrToClipbrd(dbg.SelectedField.AsString);
+  end;
+end;
+
+procedure TServicesForm.pmgSaveSelectionClick(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
+end;
+
+procedure TServicesForm.pmgSelectAllClick(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    with TDBGridEh(ActiveControl) do
+      if CheckSelectAllAction and (geaSelectAllEh in EditActions) then
+        Selection.SelectAll;
+end;
+
 procedure TServicesForm.actAddSrvExecute(Sender: TObject);
 var
   i: int64;
@@ -423,6 +482,11 @@ begin
     dsCMPLX.Delete;
 end;
 
+procedure TServicesForm.actCopyIDExecute(Sender: TObject);
+begin
+  A4MainForm.CopyDataSetFldToClipboard(dsServices, 'Service_Id');
+end;
+
 procedure TServicesForm.actDelSrvExecute(Sender: TObject);
 var
   i, j: Integer;
@@ -460,6 +524,28 @@ begin
   begin
     ViewService(dsServices['SERVICE_ID'], dsServices['SRV_TYPE_ID']);
     dsServices.Refresh;
+  end;
+end;
+
+procedure TServicesForm.actQuickFilterExecute(Sender: TObject);
+var
+  o_n: Boolean;
+  i: Integer;
+begin
+  o_n := not ASGrid.STFilter.Visible;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).STFilter.Visible := o_n;
+      (Components[i] as TDBGridEh).STFilter.Local := o_n;
+
+      (Components[i] as TDBGridEh).SearchPanel.Enabled := o_n;
+      (Components[i] as TDBGridEh).SearchPanel.FilterOnTyping := False; // o_n;
+
+      if (not o_n) and ((Components[i] as TDBGridEh).DataSource.DataSet.Filtered) then
+        (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := False;
+    end;
   end;
 end;
 
@@ -822,6 +908,32 @@ begin
     sbChanRemoveClick(Sender);
 end;
 
+procedure TServicesForm.miPrintGridClick(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
+end;
+
+procedure TServicesForm.miRefreshClick(Sender: TObject);
+var
+  bm: TbookMark;
+  cr: TCursor;
+begin
+  if (ActiveControl is TDBGridEh) then
+  begin
+    cr := Screen.Cursor;
+    Screen.Cursor := crSQLWait;
+    try
+      bm := (ActiveControl as TDBGridEh).DataSource.DataSet.GetBookMark;
+      (ActiveControl as TDBGridEh).DataSource.DataSet.Close;
+      (ActiveControl as TDBGridEh).DataSource.DataSet.Open;
+      (ActiveControl as TDBGridEh).DataSource.DataSet.GotoBookmark(bm);
+    finally
+      Screen.Cursor := cr;
+    end;
+  end;
+end;
+
 procedure TServicesForm.ASGridDblClick(Sender: TObject);
 begin
   actEditSrv.Execute;
@@ -910,23 +1022,6 @@ begin
     if (MessageDlg(format(rsDeleteWithName, [dsTarif.FieldByName('DATE_FROM').AsString + ' - ' +
       dsTarif.FieldByName('DATE_TO').AsString]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
       dsTarif.Delete;
-  end;
-end;
-
-procedure TServicesForm.btnQFClick(Sender: TObject);
-var
-  o_n: Boolean;
-var
-  i: Integer;
-begin
-  o_n := not ASGrid.STFilter.Visible;
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDBGridEh then
-    begin
-      (Components[i] as TDBGridEh).STFilter.Visible := o_n;
-      (Components[i] as TDBGridEh).STFilter.Local := o_n;
-    end;
   end;
 end;
 

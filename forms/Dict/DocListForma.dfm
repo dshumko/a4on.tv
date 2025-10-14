@@ -295,7 +295,7 @@ inherited DocListForm: TDocListForm
       Flat = True
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
+      SearchPanel.FilterOnTyping = False
       TabOrder = 1
       OnDblClick = dbgHistoryDblClick
       Columns = <

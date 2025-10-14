@@ -5,7 +5,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Menus, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
   Vcl.Mask,
@@ -134,10 +134,10 @@ type
     pmSelectPrintDoc: TPopupMenu;
     N43: TMenuItem;
     pnlBtns: TPanel;
-    Panel2: TPanel;
+    pnlGridSearch: TPanel;
     SpeedButton2: TSpeedButton;
     tlbSearch: TToolBar;
-    btnFilterSearchText: TToolButton;
+    btnSearchFilterText: TToolButton;
     btnSearchNext: TToolButton;
     btnSearchPrev: TToolButton;
     edtSearch: TDBEditEh;
@@ -213,6 +213,7 @@ type
     miFrozenCols: TMenuItem;
     miFrozenCols1: TMenuItem;
     miN58: TMenuItem;
+    actSearchGrid: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbgrdh1DblClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
@@ -292,6 +293,16 @@ type
     procedure actCopyIDExecute(Sender: TObject);
     procedure actFrozenColsExecute(Sender: TObject);
     procedure miN58Click(Sender: TObject);
+    procedure PropStorageAfterLoadProps(Sender: TObject);
+    procedure actSearchGridExecute(Sender: TObject);
+    procedure AddrSearchFieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure AddrSearchFieldExit(Sender: TObject);
+    procedure AddrSearchFieldEnter(Sender: TObject);
+    procedure AddrSearchFieldClick(Sender: TObject);
+    procedure lcbStreetsButtonClick(Sender: TObject; var Handled: Boolean);
+    procedure lcbHOUSEButtonClick(Sender: TObject; var Handled: Boolean);
+    procedure lcbFLATButtonClick(Sender: TObject; var Handled: Boolean);
+    procedure cbbAREAButtonClick(Sender: TObject; var Handled: Boolean);
   private
     FLastPage: TA4onPage;
     FPageList: TA4onPages;
@@ -299,7 +310,7 @@ type
     FNeedRefresh: Boolean;
     SaldoSign: Integer;
     fVisibleColumns: Cardinal;
-    fRED_SUMM: single;
+    FRed_Sum: single;
     fZERRO_SUMM: single;
     fSelectedRow: Integer;
     FullAccess: Boolean;
@@ -344,8 +355,8 @@ type
     procedure miPrintReportClick(Sender: TObject);
     procedure SwitchIfoTab(const next: Boolean);
     procedure StartSearchAddress;
-    procedure StopSearchAdres;
-    procedure SetAdresFilter();
+    procedure StopSearchAddress;
+    procedure SetAddressFilter();
     procedure AddReport(const r_id: Integer; const variable: string; const value: Variant;
       const AsNew: Boolean = False);
     procedure LoadReportBody(const fReport_ID: Integer);
@@ -355,6 +366,9 @@ type
     procedure CopyOrderTP(const FromOrder: Integer; const ci: TCustomerInfo);
     procedure CloseDatasets;
     procedure SetFrozen(const v: Integer);
+    procedure ShowQuickFilter(const aShow: Boolean = true);
+    procedure FindTextInColumn(const SearchDown: Boolean = true);
+    procedure MakeMainFormSearchFilter(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
   public
     constructor CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
     procedure SetDefaultFilter;
@@ -365,6 +379,7 @@ type
     procedure RefreshRequestsList(aRequest: Integer = -1; aCustomer: Integer = -1);
     procedure NewTaskCallBack(const TaskID: Integer);
     procedure FindDataOnTab(const TabType: Integer; const DataValue: string);
+    procedure RefreshData;
   end;
 
 var
@@ -437,15 +452,7 @@ begin
     begin
       with CustomersForm do
       begin
-        FFilterField := FilterFIELD;
-        FFilterValue := FilterVALUE;
-        SetDefaultFilter;
-        dsCustomers.Close;
-        dsCustomers.ParamByName('Filter').value := GenerateFilter;
-        dsCustomers.filter := '';
-        dsCustomers.Filtered := False;
-        OpenDataSet;
-        fFinded := (CustomersForm.dsCustomers.RecordCount > 0);
+        MakeMainFormSearchFilter(FilterFIELD, FilterVALUE);
       end;
     end
   end;
@@ -461,6 +468,7 @@ end;
 constructor TCustomersForm.CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
 var
   i: Integer;
+  s: string;
 begin
   inherited Create(Application);
   InitForm;
@@ -474,14 +482,7 @@ begin
 
   if (FilterFIELD <> -1) and (FilterVALUE <> '') then
   begin
-    FFilterField := FilterFIELD;
-    FFilterValue := FilterVALUE;
-    SetDefaultFilter;
-    dsCustomers.Close;
-    dsCustomers.ParamByName('Filter').value := GenerateFilter;
-    dsCustomers.filter := '';
-    dsCustomers.Filtered := False;
-    OpenDataSet;
+    MakeMainFormSearchFilter(FilterFIELD, FilterVALUE);
   end
   else
   begin
@@ -499,6 +500,99 @@ begin
   end;
 
   fFinded := (dsCustomers.RecordCount > 0);
+end;
+
+procedure TCustomersForm.MakeMainFormSearchFilter(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
+var
+  FiledToListID: Integer;
+  s: string;
+begin
+
+  // переделываем фільтр под новые поля ListType ListValues
+  { FFilterField
+    1  rsFindContract
+    2  rsFindAccount
+    3  rsFindCode
+    4  rsFindSurname
+    5  rsFindNotice
+    6  rsFindPhone
+    8  rsFindStreet
+    9  rsFindDigit
+    10 rsFindIP
+    11 rsFindMAC
+    12 rsFindRequest
+    13 rsFindTask
+    15 rsFindJur
+    16 rsFindContact
+  }
+  { ListType
+    0 Лицевые счета
+    1 Код абонента
+    3 Карта доступа
+    6 Телефон
+    2 IP адрес
+    5 MAC адрес
+    7 ИНН/УНП Юр. лица
+    8 Список квартир
+    9 Договор
+    4 Customer_id
+  }
+  case FilterFIELD of
+    1:
+      FiledToListID := 9;
+    2:
+      FiledToListID := 0;
+    3:
+      FiledToListID := 1;
+    10:
+      FiledToListID := 2;
+    11:
+      FiledToListID := 5;
+    15:
+      FiledToListID := 7;
+  else
+    FiledToListID := -1;
+  end;
+
+  if (FiledToListID > -1) //
+    and (not(FilterVALUE.Contains('%') or FilterVALUE.Contains('_'))) // для like работаем по-сатрому
+  then
+  begin
+    dsFilter.Close;
+    dsFilter.Open;
+    dsFilter.EmptyTable;
+    dsFilter.Insert;
+    dsFilter['ListType'] := FiledToListID;
+    dsFilter['ListValues'] := FilterVALUE;
+    dsFilter.Post;
+  end
+  else
+  begin
+    FFilterField := FilterFIELD;
+    FFilterValue := FilterVALUE;
+    SetDefaultFilter;
+  end;
+
+  if dsCustomers.Active then
+    dsCustomers.Close;
+  dsCustomers.filter := '';
+  dsCustomers.Filtered := False;
+  s := GenerateFilter;
+  dsCustomers.ParamByName('Filter').value := s;
+  OpenDataSet;
+  fFinded := (dsCustomers.RecordCount > 0);
+
+  {
+    FFilterField := FilterFIELD;
+    FFilterValue := FilterVALUE;
+    SetDefaultFilter;
+    dsCustomers.Close;
+    s := GenerateFilter;
+    dsCustomers.ParamByName('Filter').value := s;
+    dsCustomers.filter := '';
+    dsCustomers.Filtered := False;
+    OpenDataSet;
+  }
 end;
 
 procedure TCustomersForm.InitPages;
@@ -553,6 +647,7 @@ begin
     SetPageIndex(i);
   end;
 
+  ShowQuickFilter((dmMain.GetIniValue('QUICK_FILTER') <> '0'));
 end;
 
 procedure TCustomersForm.dbgCustomersColumns2GetCellParams(Sender: TObject; EditMode: Boolean;
@@ -604,7 +699,7 @@ begin
       if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('CONNECTED').value > 0) // Подключен
       then
       begin
-        if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > fRED_SUMM) then
+        if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DEBT_SUM').value > FRed_Sum) then
           AFont.Color := FgCustActiveDebt
         else
           AFont.Color := clWindowText;
@@ -624,7 +719,7 @@ begin
     end;
 
     if FHL_ROW and (not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('ROW_HL_COLOR').IsNull) then
-        Background := FHL_COLOR; // TColor($00FF7B9E);// Purple
+      Background := FHL_COLOR; // TColor($00FF7B9E);// Purple
   end;
 end;
 
@@ -697,6 +792,11 @@ end;
 
 procedure TCustomersForm.UpdateTimerTimer(Sender: TObject);
 begin
+  RefreshData;
+end;
+
+procedure TCustomersForm.RefreshData;
+begin
   if (Screen.ActiveForm is TCustomersForm) then
     if not(dsCustomers.State in [dsEdit, dsInsert]) then
       ActionRefresh.Execute;
@@ -713,7 +813,7 @@ begin
   if Page <> nil then
   begin
     Page.Align := alClient;
-    Page.Visible := True;
+    Page.Visible := true;
     Page.Width := pnlDATA.ClientWidth;
     Page.OpenData;
   end;
@@ -823,7 +923,7 @@ end;
 
 procedure TCustomersForm.FormDeactivate(Sender: TObject);
 begin
-  FNeedRefresh := True;
+  FNeedRefresh := true;
 end;
 
 procedure TCustomersForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -871,7 +971,8 @@ begin
 end;
 
 procedure TCustomersForm.edtSearchChange(Sender: TObject);
-  procedure FindOnFildOnly;
+
+  procedure FindOnFieldOnly;
   var
     NesSs: string;
     f: string;
@@ -912,32 +1013,28 @@ procedure TCustomersForm.edtSearchChange(Sender: TObject);
 
     f := Copy(dbgCustomers.Columns[dbgCustomers.SelectedIndex].DisplayText, 1, Length(edtSearch.Text));
     if (AnsiUpperCase(f) <> AnsiUpperCase(NesSs)) then
-      edtSearch.Font.Color := clRed
-    else
-      edtSearch.Font.Color := clWindowText;
+      edtSearch.Font.Color := clRed;
+
   end;
 
 begin
   if not dsCustomers.Active then
     Exit;
 
+  edtSearch.Font.Color := clWindowText;
+
   if chkFldOnly.Checked then
-    FindOnFildOnly
+    FindOnFieldOnly
   else
   begin
     dbgCustomers.SearchPanel.SearchingText := edtSearch.Text;
     dbgCustomers.SearchPanel.RestartFind;
-    if edtSearch.Text <> '' then
-      actFilterSearchText.ImageIndex := 5
-    else
-      actFilterSearchText.ImageIndex := 2;
   end;
-
 end;
 
 procedure TCustomersForm.edtSearchEnter(Sender: TObject);
 begin
-  dbgCustomers.SearchPanel.Active := True;
+  dbgCustomers.SearchPanel.Active := true;
 end;
 
 procedure TCustomersForm.edtSearchExit(Sender: TObject);
@@ -946,31 +1043,40 @@ begin
 end;
 
 procedure TCustomersForm.edtSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-var
-  i: Integer;
-  ctrlpressed: Boolean;
+// var
+// i: Integer;
 begin
-  if not chkFldOnly.Checked then
-  begin
-    i := dbgCustomers.SearchPanel.FoundColumnIndex;
-    ctrlpressed := ssCtrl in Shift;
-    if i >= 0 then
-    begin
-      case Key of
-        VK_RETURN:
-          begin
-            if ctrlpressed then
-              actFilterSearchText.Execute
-            else
-              dbgCustomers.SetFocus
-          end;
-        VK_DOWN:
-          actSearchNext.Execute;
-        VK_UP:
-          actSearchPrev.Execute;
+  // i := dbgCustomers.SearchPanel.FoundColumnIndex;
+  // if i >= 0 then
+  // begin
+  case Key of
+    VK_RETURN:
+      begin
+        if (ssCtrl in Shift) then
+          dbgCustomers.SetFocus;
+
+        actFilterSearchText.Execute
       end;
-    end;
+    VK_DOWN:
+      if not chkFldOnly.Checked then
+        actSearchNext.Execute
+      else
+        FindTextInColumn(true);
+    VK_UP:
+      if not chkFldOnly.Checked then
+        actSearchPrev.Execute
+      else
+        FindTextInColumn(False);
+    VK_ESCAPE:
+      if actFilterSearchText.Checked then
+      begin
+        actFilterSearchText.Checked := False;
+        actFilterSearchText.ImageIndex := 5;
+        dbgCustomers.SearchPanel.CancelSearchFilter;
+        edtSearch.Text := '';
+      end
   end;
+  // end;
 end;
 
 function TCustomersForm.IndexToPage(Index: Integer): TA4onPage;
@@ -1014,7 +1120,7 @@ begin
   if not actAddressSearch.Checked then
     StartSearchAddress
   else
-    StopSearchAdres;
+    StopSearchAddress;
 
   {
     if not TryStrToInt(dmMain.GetIniValue('FETCHALL'), i)
@@ -1040,14 +1146,14 @@ begin
     actAddressSearch.Tag := 1;
   end;
 
-  actAddressSearch.Checked := True;
-  pnlSearchAdres.Visible := True;
+  actAddressSearch.Checked := true;
+  pnlSearchAdres.Visible := true;
   lcbStreets.SetFocus;
   dsArea.Open;
   dsStreets.Open;
 end;
 
-procedure TCustomersForm.StopSearchAdres;
+procedure TCustomersForm.StopSearchAddress;
 var
   bm: TBookMark;
 begin
@@ -1062,6 +1168,7 @@ begin
     dsStreets.Close;
   if dsArea.Active then
     dsArea.Close;
+
   bm := CustomersForm.dbgCustomers.DataSource.DataSet.GetBookmark;
   dbgCustomers.DataSource.DataSet.filter := '';
   dbgCustomers.DataSource.DataSet.Filtered := False;
@@ -1112,7 +1219,7 @@ begin
               fq.ParamByName('CUSTOMER_ID').AsInteger := dsCustomers['customer_id'];
               fq.ParamByName('CANCEL_DATE').AsDate := CancelDate.value;
               if VarIsNull(ServiceOff.KeyValue) then
-                fq.ParamByName('OFF_SERV_ID').IsNull := True
+                fq.ParamByName('OFF_SERV_ID').IsNull := true
               else
                 fq.ParamByName('OFF_SERV_ID').AsInteger := ServiceOff.KeyValue;
               fq.Transaction.StartTransaction;
@@ -1137,7 +1244,7 @@ begin
             fq.ParamByName('CUSTOMER_ID').AsInteger := dsCustomers['customer_id'];
             fq.ParamByName('CANCEL_DATE').AsDate := CancelDate.value;
             if VarIsNull(ServiceOff.KeyValue) then
-              fq.ParamByName('SERVICE_ID').IsNull := True
+              fq.ParamByName('SERVICE_ID').IsNull := true
             else
               fq.ParamByName('SERVICE_ID').AsInteger := ServiceOff.KeyValue;
             fq.Transaction.StartTransaction;
@@ -1195,17 +1302,7 @@ end;
 
 procedure TCustomersForm.actCopyIDExecute(Sender: TObject);
 begin
-  if (dsCustomers.FieldByName('CUSTOMER_ID').IsNull) then
-    Exit;
-
-  Clipboard.Open;
-  try
-    Clipboard.Clear;
-    Clipboard.AsText := dsCustomers.FieldByName('CUSTOMER_ID').AsString;
-  finally
-    Clipboard.Close;
-  end;
-
+  A4MainForm.CopyDataSetFldToClipboard(dsCustomers, 'CUSTOMER_ID');
 end;
 
 procedure TCustomersForm.actCustNodeExecute(Sender: TObject);
@@ -1223,7 +1320,7 @@ begin
   i := NewCustomer;
   if i > 0 then
   begin
-    dsCustomers_Refresh(True);
+    dsCustomers_Refresh(true);
     dsCustomers.Locate('CUSTOMER_ID', i, []);
     if (not mtbPages.FieldByName('ID').IsNull) then
       ShowPage(IndexToPage(mtbPages['ID']));
@@ -1282,7 +1379,7 @@ end;
 procedure TCustomersForm.actCustomerEditExecute(Sender: TObject);
 begin
   if not dsCustomers.FieldByName('Customer_ID').IsNull then
-    ShowCustomer(dsCustomers.FieldValues['Customer_ID'], True);
+    ShowCustomer(dsCustomers.FieldValues['Customer_ID'], true);
   // dsCustomers_Refresh;
 end;
 
@@ -1290,7 +1387,7 @@ procedure TCustomersForm.actEnableFilterExecute(Sender: TObject);
 begin
   actEnableFilter.Checked := not actEnableFilter.Checked;
   dsCustomers.ParamByName('Filter').value := GenerateFilter;
-  dsCustomers.CloseOpen(True);
+  dsCustomers.CloseOpen(true);
 end;
 
 procedure TCustomersForm.actFilterFLDExecute(Sender: TObject);
@@ -1303,16 +1400,37 @@ procedure TCustomersForm.actFilterSearchTextExecute(Sender: TObject);
 begin
   if actFilterSearchText.Checked then
   begin
-    actFilterSearchText.Checked := False;
     dbgCustomers.SearchPanel.CancelSearchFilter;
     edtSearch.Text := '';
+    actFilterSearchText.Checked := False;
+    actFilterSearchText.ImageIndex := 5;
   end
   else
   begin
     if edtSearch.Text <> '' then
     begin
-      actFilterSearchText.Checked := True;
+      if chkFldOnly.Checked then
+      begin
+        if dbgCustomers.SearchPanel.SearchScope <> gssCurrentColumnEh then
+          dbgCustomers.SearchPanel.CancelSearchFilter;
+
+        dbgCustomers.SearchPanel.SearchScope := gssCurrentColumnEh;
+        dbgCustomers.SearchPanel.SearchingText := edtSearch.Text;
+        dbgCustomers.SearchPanel.RestartFind;
+      end
+      else
+      begin
+        if dbgCustomers.SearchPanel.SearchScope <> gssEntireGridEh then
+          dbgCustomers.SearchPanel.CancelSearchFilter;
+
+        dbgCustomers.SearchPanel.SearchScope := gssEntireGridEh;
+        dbgCustomers.SearchPanel.SearchingText := edtSearch.Text;
+        dbgCustomers.SearchPanel.RestartFind;
+      end;
+
       dbgCustomers.SearchPanel.ApplySearchFilter;
+      actFilterSearchText.Checked := true;
+      actFilterSearchText.ImageIndex := 2;
     end;
   end;
 end;
@@ -1357,7 +1475,7 @@ begin
     i := dsCustomers['CUSTOMER_ID']
   else
     i := -1;
-  dsCustomers.CloseOpen(True);
+  dsCustomers.CloseOpen(true);
   if i > 0 then
     dsCustomers.Locate('CUSTOMER_ID', i, []);
 
@@ -1533,10 +1651,29 @@ end;
 
 procedure TCustomersForm.actQuickFilterExecute(Sender: TObject);
 begin
-  actQuickFilter.Checked := not actQuickFilter.Checked;
-  dbgCustomers.STFilter.Visible := actQuickFilter.Checked;
-  if not actQuickFilter.Checked then
+  ShowQuickFilter(not actQuickFilter.Checked);
+end;
+
+procedure TCustomersForm.ShowQuickFilter(const aShow: Boolean = true);
+var
+  i: Integer;
+begin
+  dbgCustomers.STFilter.Visible := aShow;
+  if not aShow then
     dbgCustomers.DataSource.DataSet.Filtered := False;
+
+  if Assigned(FPageList) then
+  begin
+    for i := 0 to FPageList.Count - 1 do
+    begin
+      if Assigned(FPageList[i].Page) then
+      begin
+        FPageList[i].Page.ShowQuickFilter(aShow);
+      end;
+    end;
+  end;
+
+  actQuickFilter.Checked := aShow;
 end;
 
 procedure TCustomersForm.actRequestExecute(Sender: TObject);
@@ -1593,6 +1730,11 @@ begin
     A4MainForm.ExportDBGrid((ActiveControl as TDBGridEh), rsTable);
 end;
 
+procedure TCustomersForm.actSearchGridExecute(Sender: TObject);
+begin
+  edtSearch.SetFocus;
+end;
+
 procedure TCustomersForm.actSearchNextExecute(Sender: TObject);
 begin
   dbgCustomers.SearchPanel.FindNext;
@@ -1630,21 +1772,28 @@ procedure TCustomersForm.ActSetFilterExecute(Sender: TObject);
 var
   filter: string;
   fidx: Integer;
+  Ok: Boolean;
 begin
   filter := '';
   with TCustomersFilterForm.Create(Application) do
     try
       if not dsFilter.Active then
         SetDefaultFilter;
-
-      actEnableFilter.Checked := (ShowModal = mrOk);
-      filter := GenerateFilter;
+      Ok := (ShowModal = mrOk);
+      actEnableFilter.Checked := Ok;
+      if Ok then
+        filter := GenerateFilter;
     finally
       Free;
     end;
 
+  if not Ok then
+    Exit;
+
   if (dsCustomers.Filtered) then
   begin
+    if actAddressSearch.Checked then
+      StopSearchAddress;
     dsCustomers.filter := '';
     dsCustomers.Filtered := False;
   end;
@@ -1652,6 +1801,7 @@ begin
   if filter <> '' then
   begin
     dsCustomers.Close;
+    {
     if (dmMain.AllowedAction(rght_Customer_Only_ONE) and (filter = const_default_filter)) then
     begin
       fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
@@ -1660,6 +1810,7 @@ begin
         dsCustomers.SelectSQL.Insert(1, cst_OneRecord);
       end;
     end;
+    }
     dsCustomers.ParamByName('Filter').value := filter;
     try
       OpenDataSet;
@@ -1670,7 +1821,6 @@ begin
       OpenDataSet;
     end;
   end;
-
 end;
 
 procedure TCustomersForm.actSetFilterNewExecute(Sender: TObject);
@@ -1693,7 +1843,7 @@ begin
     try
       if ShowModal = mrOk then
       begin
-        actEnableFilter.Checked := True;
+        actEnableFilter.Checked := true;
         filter := GenerateFilter;
       end;
     finally
@@ -1849,6 +1999,13 @@ begin
   ShowReport(rsRepCustomerBalance);
 end;
 
+procedure TCustomersForm.cbbAREAButtonClick(Sender: TObject;
+  var Handled: Boolean);
+begin
+  Handled := (cbbAREA.Tag = 1);
+  AddrSearchFieldEnter(cbbAREA);
+end;
+
 procedure TCustomersForm.cbbAREAChange(Sender: TObject);
 begin
   if (VarIsNumeric(cbbAREA.KeyValue)) then
@@ -1874,11 +2031,86 @@ begin
   end;
   dsCustomers.EnableControls;
   dsStreets.Open;
+
+  actAddressSearch.Tag := 0;
+end;
+
+procedure TCustomersForm.AddrSearchFieldClick(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+
+  if (Sender as TDBLookupComboboxEh).Tag = 0 then
+  begin
+    if not(Sender as TDBLookupComboboxEh).ListVisible then
+      (Sender as TDBLookupComboboxEh).DropDown
+    else
+      (Sender as TDBLookupComboboxEh).CloseUp(False);
+  end;
+
+  if (Sender as TDBLookupComboboxEh).Tag = 1 then
+    (Sender as TDBLookupComboboxEh).Tag := 0
+  else
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+end;
+
+procedure TCustomersForm.AddrSearchFieldEnter(Sender: TObject);
+begin
+  if not(Sender is TDBLookupComboboxEh) then
+    Exit;
+
+  if not(Sender as TDBLookupComboboxEh).ListVisible then
+  begin
+    (Sender as TDBLookupComboboxEh).DropDown;
+    (Sender as TDBLookupComboboxEh).Tag := 1;
+  end;
+end;
+
+procedure TCustomersForm.lcbStreetsButtonClick(Sender: TObject;
+  var Handled: Boolean);
+begin
+  Handled := (lcbStreets.Tag = 1);
+  AddrSearchFieldClick(lcbStreets);
 end;
 
 procedure TCustomersForm.chkFldOnlyClick(Sender: TObject);
+var
+  s: string;
+  WindowLocked: Boolean;
 begin
-  tlbSearch.Visible := not chkFldOnly.Checked;
+  WindowLocked := LockWindowUpdate(Self.Handle);
+  try
+    s := edtSearch.Text;
+    edtSearch.Text := '';
+    if actFilterSearchText.Checked then
+    begin
+      actFilterSearchText.Checked := False;
+      actFilterSearchText.ImageIndex := 5;
+      dbgCustomers.SearchPanel.CancelSearchFilter;
+    end;
+
+    // tlbSearch.Visible := true;
+    // btnSearchFilterText.Visible := not chkFldOnly.Checked;
+    // btnSearchNext.Visible := btnSearchFilterText.Visible;
+    // btnSearchPrev.Visible := btnSearchFilterText.Visible;
+    // if btnSearchFilterText.Visible then begin
+    // edtSearch.EmptyDataInfo.Text := 'Поиск. ↑↓ переход, Enter фильтр, ESC отменить';
+    // edtSearch.Hint := 'Поиск. ↑↓ - переход по результатам, Enter - включить фильтр по строке поиска, ESC - отменить фильтр (Ctrl+S)';
+    // tlbSearch.Width := btnSearchFilterText.Width * 3 + 3
+    // end
+    // else begin
+    // edtSearch.EmptyDataInfo.Text := 'Поиск. ↑↓ переход по результатам';
+    // edtSearch.Hint := 'Поиск. ↑↓ - переход по результатам (Ctrl+S)';
+    // tlbSearch.Width := 3;
+    // end;
+    edtSearch.Text := s;
+    edtSearch.SetFocus;
+    edtSearch.SelStart := Length(s);
+    edtSearch.SelLength := 0;
+  finally
+    if WindowLocked then
+      LockWindowUpdate(0);
+  end;
 end;
 
 procedure TCustomersForm.SetVisibleColumns(Mask: Integer);
@@ -1912,8 +2144,9 @@ begin
         'iif(exists(select ss.Customer_Id from SUBSCR_SERV ss where ss.CUSTOMER_ID = c.CUSTOMER_ID and ss.STATE_SGN = 1), 1, 0)'
   end;
 
-  select := ' C.*, s.street_short, S.Street_Name, H.House_No, h.POST_INDEX, h.Street_ID , -1*c.debt_sum as BALANCE ' +
-    rsEOL + ' , ' + ConnectedSQL + ' as CONNECTED ';
+  select := ' C.*' + rsEOL +
+    ', s.street_short, S.Street_Name, H.House_No, h.POST_INDEX, h.Street_ID , -1*c.debt_sum as BALANCE ' + rsEOL + ' , '
+    + ConnectedSQL + ' as CONNECTED ' + rsEOL;
 
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
@@ -1922,35 +2155,38 @@ begin
       select := select + rsEOL +
         ', iif(((coalesce(c.Passport_Number, '''') <> coalesce(hf.Owner_Doc, ''''))), ''+'', '''') F_RENT '
     else
-      select := select + rsEOL + '  , iif(exists(select Subscr_Serv_Id from Subscr_Serv j ' +
-        ' where j.Customer_Id = c.Customer_Id and j.State_Sgn = 1 and j.Serv_Id <> 819519 ' +
+      select := select + rsEOL + '  , iif(exists(select Subscr_Serv_Id from Subscr_Serv j ' + rsEOL +
+        ' where j.Customer_Id = c.Customer_Id and j.State_Sgn = 1 and j.Serv_Id <> 819519 ' + rsEOL +
         ' and (coalesce(j.Contract, '''') like ''%Ар. %'')), ''+'', '''') F_RENT ';
   end;
 
-  from := ' FROM CUSTOMER C INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID) INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)';
+  from := ' FROM CUSTOMER C INNER JOIN HOUSE H ON (H.HOUSE_ID = C.HOUSE_ID) INNER JOIN STREET S ON (S.STREET_ID = H.STREET_ID)'
+    + rsEOL;
   where := ' WHERE @filter ';
   // Ограничим видимость по участкам
   order := dmMain.UserAreas;
   if order <> '' then
   begin
-    from := from + ' inner join workgroups wg on (wg.wg_id = h.wg_id) inner join workarea wa on (wg.wa_id = wa.wa_id) ';
+    from := from +
+      ' inner join workgroups wg on (wg.wg_id = h.wg_id) inner join workarea wa on (wg.wa_id = wa.wa_id) ' + rsEOL;
     where := where + ' and wa.WA_ID in (' + dmMain.UserAreas + ')';
   end;
   order := ' Order by C.account_no ';
 
   if (Mask and clc_Koef) <> 0 then
   begin
-    select := select + rsEOL + ', df.factor_value, df.DATE_FROM, df.DATE_TO ';
-    from := from + rsEOL +
-      ' left outer join discount_factor df on (df.customer_id = c.customer_id and CURRENT_DATE between df.date_from and df.date_to) ';
+    select := select + rsEOL + ', df.factor_value, df.DATE_FROM, df.DATE_TO ' + rsEOL;
+    from := from +
+      ' left outer join discount_factor df on (df.customer_id = c.customer_id and CURRENT_DATE between df.date_from and df.date_to) '
+      + rsEOL;
   end;
 
   if (Mask and clc_PE) <> 0 then
   begin
-    select := select + rsEOL + ', hf.porch_n, hf.floor_n, ar.Area_Name, sa.Subarea_Name ';
-    from := from + rsEOL + ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ';
-    from := from + rsEOL + ' left outer join area ar on (ar.Area_Id = s.Area_Id) ';
-    from := from + rsEOL + ' left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id) ';
+    select := select + ', hf.porch_n, hf.floor_n, ar.Area_Name, sa.Subarea_Name ' + rsEOL;
+    from := from + ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ' + rsEOL;
+    from := from + ' left outer join area ar on (ar.Area_Id = s.Area_Id) ' + rsEOL;
+    from := from + ' left outer join Subarea sa on (sa.Subarea_Id = h.Subarea_Id) ' + rsEOL;
   end
   else
   begin
@@ -1958,8 +2194,8 @@ begin
     begin
       s := dmMain.GetCompanyValue('NAME');
       if (not s.Contains('ЛТВ')) then
-        from := from + rsEOL +
-          ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ';
+        from := from +
+          ' left outer join houseflats hf on (hf.house_id = c.house_id and hf.flat_no = c.flat_no) ' + rsEOL;
     end;
 
     select := select + rsEOL + ', '''' as porch_n, '''' as floor_n ';
@@ -1967,70 +2203,70 @@ begin
 
   if (Mask and clc_Lan) <> 0 then
   begin
-    select := select + rsEOL +
-      ', l.ip, l.mac, l.port, le.name as LE_NAME, le.IP as LE_IP, le.MAC as LE_MAC, l.TAG, l.TAG_STR, lb.Login, lb.Ip_Inet';
-    from := from + rsEOL +
-      ' left outer join tv_lan l on (l.customer_id = c.customer_id) '
-      + ' left outer join equipment le on (l.eq_id = le.eid) '
-      + ' left outer join Billing lb on (lb.Customer_Id = c.customer_id) ' ;
+    select := select +
+      ', l.ip, l.mac, l.port, le.name as LE_NAME, le.IP as LE_IP, le.MAC as LE_MAC, l.TAG, l.TAG_STR, lb.Login, lb.Ip_Inet'
+      + rsEOL;
+    from := from + ' left outer join tv_lan l on (l.customer_id = c.customer_id) ' + rsEOL +
+      ' left outer join equipment le on (l.eq_id = le.eid) ' + rsEOL +
+      ' left outer join Billing lb on (lb.Customer_Id = c.customer_id) ' + rsEOL;
   end;
   if (Mask and clc_Atrib) <> 0 then
   begin
-    select := select + rsEOL + ', ca.o_name as ca_name, ca.ca_value, ca.notice as ca_notice ';
-    from := from + rsEOL +
-      ' left outer join (select CA.CUSTOMER_ID, o.o_name, ca.ca_value, ca.notice from CUSTOMER_ATTRIBUTES CA ' +
-      '   inner join OBJECTS o on (o.O_ID = CA.O_ID and o.O_TYPE = 4)) ca on (C.CUSTOMER_ID = CA.CUSTOMER_ID) ';
+    select := select + ', ca.o_name as ca_name, ca.ca_value, ca.notice as ca_notice ' + rsEOL;
+    from := from +
+      ' left outer join (select CA.CUSTOMER_ID, o.o_name, ca.ca_value, ca.notice from CUSTOMER_ATTRIBUTES CA ' + rsEOL +
+      '   inner join OBJECTS o on (o.O_ID = CA.O_ID and o.O_TYPE = 4)) ca on (C.CUSTOMER_ID = CA.CUSTOMER_ID) ' + rsEOL;
   end;
 
   if (Mask and clc_Nps) <> 0 then
   begin
-    select := select + rsEOL + ', nps.Nps_Date, nps.Rating, nps.notice as nps_notice ';
-    from := from + rsEOL + ' left outer join (select n.Customer_Id, n.Rating, n.Notice, n.Nps_Date from nps n ' +
-      ' where n.NPS_DATE = (select max(s.NPS_DATE) from Nps s where s.Customer_Id = n.Customer_Id)) nps ' +
-      '  on (C.CUSTOMER_ID = nps.CUSTOMER_ID) ';
+    select := select + ', nps.Nps_Date, nps.Rating, nps.notice as nps_notice ' + rsEOL;
+    from := from + ' left outer join (select n.Customer_Id, n.Rating, n.Notice, n.Nps_Date from nps n ' + rsEOL +
+      ' where n.NPS_DATE = (select max(s.NPS_DATE) from Nps s where s.Customer_Id = n.Customer_Id)) nps ' + rsEOL +
+      '  on (C.CUSTOMER_ID = nps.CUSTOMER_ID) ' + rsEOL;
   end;
 
   if (Mask and clc_Decoder) <> 0 then
   begin
-    select := select + rsEOL + ', dgt.decoder_n, dgt.STB_N, dgt.NOTICE as dgt_notice, dgt.TV_MODEL';
-    from := from + rsEOL + ' left outer join CUSTOMER_DECODERS dgt on (C.CUSTOMER_ID = dgt.CUSTOMER_ID) ';
+    select := select + ', dgt.decoder_n, dgt.STB_N, dgt.NOTICE as dgt_notice, dgt.TV_MODEL' + rsEOL;
+    from := from + ' left outer join CUSTOMER_DECODERS dgt on (C.CUSTOMER_ID = dgt.CUSTOMER_ID) ' + rsEOL;
   end;
 
   if (Mask and clc_ATRLINE) <> 0 then
   begin
-    select := select + rsEOL + ', cal.ATR_LINE ';
-    from := from + rsEOL +
+    select := select + ', cal.ATR_LINE ' + rsEOL;
+    from := from +
       ' left outer join (select ca.Customer_Id, list(o.O_DIMENSION||(coalesce( '' (''||ca.Ca_Value||'')'', '''' ))) ATR_LINE'
-      + ' from Customer_Attributes ca inner join objects o on (ca.O_Id = o.O_Id and o.O_Type = 4) group by 1 ) cal ' +
-      ' on (cal.Customer_Id = c.Customer_Id ) '
+      + rsEOL + ' from Customer_Attributes ca inner join objects o on (ca.O_Id = o.O_Id and o.O_Type = 4) group by 1 ) cal '
+      + rsEOL + ' on (cal.Customer_Id = c.Customer_Id ) ' + rsEOL
   end;
 
   if (Mask and clc_MonPay) <> 0 then
   begin
-    select := select + rsEOL +
-      ', (select M_Tarif from Get_Tarif_Sum_Customer_Srv(c.Customer_Id, null, CURRENT_DATE)) MonPay ';
+    select := select +
+      ', (select M_Tarif from Get_Tarif_Sum_Customer_Srv(c.Customer_Id, null, CURRENT_DATE)) MonPay ' + rsEOL;
   end;
 
   if (Mask and clc_HeadEnd) <> 0 then
   begin
-    select := select + rsEOL + ', he.He_Name';
-    from := from + rsEOL + ' left outer join Headend he on (h.Headend_Id = he.He_Id) ';
+    select := select + ', he.He_Name' + rsEOL;
+    from := from + ' left outer join Headend he on (h.Headend_Id = he.He_Id) ' + rsEOL;
   end;
 
   if (Mask and clc_Org) <> 0 then
   begin
-    select := select + rsEOL + ', coalesce(oc.Org_Name, og.Org_Name) Org_Name ';
-    from := from + rsEOL + ' left outer join Organization oc on (oc.Org_Id = c.Org_Id) ';
-    from := from + rsEOL + ' left outer join Organization og on (og.Org_Id = h.Org_Id) ';
+    select := select + ', coalesce(oc.Org_Name, og.Org_Name) Org_Name ' + rsEOL;
+    from := from + ' left outer join Organization oc on (oc.Org_Id = c.Org_Id) ' + rsEOL;
+    from := from + ' left outer join Organization og on (og.Org_Id = h.Org_Id) ' + rsEOL;
   end;
 
   if (Mask and clc_Passport) <> 0 then
   begin
-    select := select + rsEOL + ', datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) as YEARS';
+    select := select + ', datediff(year, C.BIRTHDAY, dateadd(month, 1, current_date)) as YEARS' + rsEOL;
     if FVisiblePassport then
     begin
-      select := select + rsEOL + ', (select first 1 ''+'' from objects bl where ' +
-        ' bl.O_Type = 31 and bl.O_Name = c.Passport_Number)  as IN_BLACK';
+      select := select + ', (select first 1 ''+'' from objects bl where ' +
+        ' bl.O_Type = 31 and bl.O_Name = c.Passport_Number)  as IN_BLACK' + rsEOL;
     end;
   end;
 
@@ -2038,15 +2274,15 @@ begin
   begin
     if dmMain.GetSettingsValue('ROW_HL_TYPE') = '0' then
     begin
-      select := select + rsEOL + ', (select first 1 rtc.Single_Service_Id from Single_Serv rtc ' +
+      select := select + ', (select first 1 rtc.Single_Service_Id from Single_Serv rtc ' +
         ' where rtc.Customer_Id = c.Customer_Id and rtc.Service_Id = ' + dmMain.GetSettingsValue('ROW_HL_ID') +
-        ') ROW_HL_COLOR ';
+        ') ROW_HL_COLOR ' + rsEOL;
     end
     else
       FHL_ROW := False;
   end;
 
-  from := from + rsEOL + '@from_add';
+  from := from + rsEOL + '@from_add' + rsEOL;
   CreatGridColumns(Mask);
 
   dsCustomers.SQLs.SelectSQL.Text := 'select ';
@@ -2105,7 +2341,7 @@ begin
     Title.Caption := rsACCOUNT;
     Title.SortIndex := 1;
     Title.SortMarker := smDownEh;
-    Title.TitleButton := True;
+    Title.TitleButton := true;
     Width := 46;
   end;
   if (Mask and clc_KOD) <> 0 then
@@ -2113,7 +2349,7 @@ begin
     begin
       FieldName := 'CUST_CODE';
       Title.Caption := rsCODE;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 50;
     end;
   with dbgCustomers.Columns.Add do
@@ -2123,7 +2359,7 @@ begin
     Footer.ValueType := fvtCount;
     Footer.DisplayFormat := '#,##0';
     Title.Caption := rsClientSN;
-    Title.TitleButton := True;
+    Title.TitleButton := true;
     Width := 99;
     if (not FCanViewPersonalData) then
       onGetCellParams := dbgCustomersColumns2GetCellParams;
@@ -2133,7 +2369,7 @@ begin
     begin
       FieldName := 'INITIALS';
       Title.Caption := rsClientFM;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 30;
     end;
   if (Mask and clc_FullIO) <> 0 then
@@ -2142,14 +2378,14 @@ begin
     begin
       FieldName := 'FIRSTNAME';
       Title.Caption := rsClientFN;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 30;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'MIDLENAME';
       Title.Caption := rsClientMN;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 30;
     end;
   end;
@@ -2157,28 +2393,28 @@ begin
   begin
     FieldName := 'STREET_SHORT';
     Title.Caption := rsAddresST;
-    Title.TitleButton := True;
+    Title.TitleButton := true;
     Width := 20;
   end;
   with dbgCustomers.Columns.Add do
   begin
     FieldName := 'STREET_NAME';
     Title.Caption := rsAddresStreet;
-    Title.TitleButton := True;
+    Title.TitleButton := true;
     Width := 105;
   end;
   with dbgCustomers.Columns.Add do
   begin
     FieldName := 'HOUSE_NO';
     Title.Caption := rsAddresHouse;
-    Title.TitleButton := True;
+    Title.TitleButton := true;
     Width := 44;
   end;
   with dbgCustomers.Columns.Add do
   begin
     FieldName := 'FLAT_NO';
     Title.Caption := rsAddresFlat;
-    Title.TitleButton := True;
+    Title.TitleButton := true;
     Width := 41;
   end;
   if (Mask and clc_TAP) <> 0 then
@@ -2186,7 +2422,7 @@ begin
     begin
       FieldName := 'TAP';
       Title.Caption := rsAddresTAP;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 41;
     end;
 
@@ -2196,35 +2432,35 @@ begin
     begin
       FieldName := 'PORCH_N';
       Title.Caption := rsPorch;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 21;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'FLOOR_N';
       Title.Caption := rsFloor;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 18;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'POST_INDEX';
       Title.Caption := rsPostIndex;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 40;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'Area_Name';
       Title.Caption := rsCity;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 45;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'Subarea_Name';
       Title.Caption := rsDistrict;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 45;
     end;
   end;
@@ -2250,7 +2486,7 @@ begin
       DisplayFormat := DispNum;
       Footer.DisplayFormat := DispNum;
       Footer.ValueType := fvtSum;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 69;
     end;
   end;
@@ -2260,7 +2496,7 @@ begin
     begin
       FieldName := 'PHONE_NO';
       Title.Caption := rsClmnPhone;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 52;
     end;
 
@@ -2269,7 +2505,7 @@ begin
     begin
       FieldName := 'MOBILE_PHONE';
       Title.Caption := rsClmnMobilePhone;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
 
@@ -2278,7 +2514,7 @@ begin
     begin
       FieldName := 'EXTERNAL_ID';
       Title.Caption := rsClmnExternalID;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
 
@@ -2288,21 +2524,21 @@ begin
     begin
       FieldName := 'Rating';
       Title.Caption := rsNpsRating;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 40;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'Nps_Date';
       Title.Caption := rsNpsDay;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 65;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'nps_notice';
       Title.Caption := rsNpsNotice;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
   end;
@@ -2312,7 +2548,7 @@ begin
     begin
       FieldName := 'CUST_STATE_DESCR';
       Title.Caption := rsSTATE;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 165;
     end;
   if (Mask and clc_Notice) <> 0 then
@@ -2320,7 +2556,7 @@ begin
     begin
       FieldName := 'NOTICE';
       Title.Caption := rsClmnNotice;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 200;
       onGetCellParams := dbgCustomersColumnsGetCellParams;
     end;
@@ -2329,7 +2565,7 @@ begin
     begin
       FieldName := 'DOGOVOR_NO';
       Title.Caption := rsClmnContract;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 60;
     end;
   if (Mask and clc_DatDog) <> 0 then
@@ -2337,7 +2573,7 @@ begin
     begin
       FieldName := 'CONTRACT_DATE';
       Title.Caption := rsClmnContractDate;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 60;
     end;
   if (Mask and clc_DataAct) <> 0 then
@@ -2345,7 +2581,7 @@ begin
     begin
       FieldName := 'ACTIVIZ_DATE';
       Title.Caption := rsClmnFirstConnect;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 60;
     end;
   if (Mask and clc_ATRLINE) <> 0 then
@@ -2353,7 +2589,7 @@ begin
     begin
       FieldName := 'ATR_LINE';
       Title.Caption := rsClmnAttributes;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 70;
     end;
 
@@ -2362,7 +2598,7 @@ begin
     begin
       FieldName := 'MonPay';
       Title.Caption := rsMonthPay;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       DisplayFormat := DispNum;
       Footer.DisplayFormat := DispNum;
       Footer.ValueType := fvtSum;
@@ -2375,7 +2611,7 @@ begin
     begin
       FieldName := 'He_Name';
       Title.Caption := rsHeadEnd;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 70;
     end;
   end;
@@ -2386,7 +2622,7 @@ begin
     begin
       FieldName := 'Org_Name';
       Title.Caption := rsOrg;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 70;
     end;
   end;
@@ -2396,7 +2632,7 @@ begin
     begin
       FieldName := 'VALID_TO';
       Title.Caption := rsClmnValidTo;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 60;
     end;
 
@@ -2404,9 +2640,9 @@ begin
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'JURIDICAL';
-      Checkboxes := True;
+      Checkboxes := true;
       Title.Caption := rsClmnJurShrt;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 10;
     end;
 
@@ -2415,7 +2651,7 @@ begin
     begin
       FieldName := 'Email';
       Title.Caption := rsClmnEmail;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 30;
     end;
 
@@ -2424,7 +2660,7 @@ begin
     begin
       FieldName := 'PREPAY';
       Title.Caption := rsClmnPrepay;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 70;
     end;
 
@@ -2434,49 +2670,49 @@ begin
     begin
       FieldName := 'PASSPORT_NUMBER';
       Title.Caption := rsPassNumber;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'PASSPORT_REGISTRATION';
       Title.Caption := rsPassIssued;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'BIRTHDAY';
       Title.Caption := rsPassBirthDay;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 65;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'YEARS';
       Title.Caption := rsPassYears;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 65;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'ADRES_REGISTR';
       Title.Caption := rsPassAdres;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'PERSONAL_N';
       Title.Caption := rsPassPrivatNumber;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'CONTRACT_BASIS';
       Title.Caption := rsBirthPlace;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
     with dbgCustomers.Columns.Add do
@@ -2484,7 +2720,7 @@ begin
       FieldName := 'IN_BLACK';
       Alignment := taCenter;
       Title.Caption := rsInBlackList;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 97;
     end;
   end;
@@ -2494,30 +2730,30 @@ begin
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'decoder_n';
-      dbgCustomers.DrawMemoText := True;
+      dbgCustomers.DrawMemoText := true;
       Title.Caption := rsDigitDecoder;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'STB_N';
-      dbgCustomers.DrawMemoText := True;
+      dbgCustomers.DrawMemoText := true;
       Title.Caption := rsDigitSTBCAM;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'TV_MODEL';
-      dbgCustomers.DrawMemoText := True;
+      dbgCustomers.DrawMemoText := true;
       Title.Caption := rsDigitTV;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'dgt_notice';
-      dbgCustomers.DrawMemoText := True;
+      dbgCustomers.DrawMemoText := true;
       Title.Caption := rsDigitNotice;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
 
   end;
@@ -2528,14 +2764,14 @@ begin
     begin
       FieldName := 'CA_NAME';
       Title.Caption := rsAttrName;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 70;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'CA_VALUE';
       Title.Caption := rsAttrValue;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Width := 70;
     end;
     with dbgCustomers.Columns.Add do
@@ -2553,19 +2789,19 @@ begin
     begin
       FieldName := 'factor_value';
       Title.Caption := rsKoefValue;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'DATE_FROM';
       Title.Caption := rsKoefToD;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'DATE_TO';
       Title.Caption := rsKoefFromD;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
   end;
   if (Mask and clc_Lan) <> 0 then
@@ -2574,61 +2810,61 @@ begin
     begin
       FieldName := 'ip';
       Title.Caption := rsColumnIP;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'mac';
       Title.Caption := rsColumnMAC;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'LE_NAME';
       Title.Caption := rsColumnConnectTo;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'LE_IP';
       Title.Caption := rsColumnConnectToIP;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'LE_MAC';
       Title.Caption := rsColumnConnectToMAC;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'PORT';
       Title.Caption := rsColumnConnectToPort;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'TAG';
       Title.Caption := rsColumnLanTag;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'TAG_STR';
       Title.Caption := rsColumnLanTagStr;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'Login';
       Title.Caption := rsColumnVpnLogin;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
     with dbgCustomers.Columns.Add do
     begin
       FieldName := 'Ip_Inet';
       Title.Caption := rsColumnVpnIP;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
     end;
   end;
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
@@ -2638,7 +2874,7 @@ begin
       Alignment := taCenter;
       FieldName := 'F_RENT';
       Title.Caption := rsRentColumn;
-      Title.TitleButton := True;
+      Title.TitleButton := true;
       Title.Orientation := tohVertical;
     end;
   end;
@@ -2681,14 +2917,66 @@ begin
 end;
 
 function TCustomersForm.GenerateFilter: String;
-
 const
-  fltr_1_1 = ' (1=1) ';
-  function Del_1_1(const where_sql: String): String;
+  fltr_1_1 = '(1=1)';
+
+  function FixErrors(const where_sql: String): String;
   begin
-    Result := ReplaceStr(where_sql, fltr_1_1 + ' AND ', '');
-    if Result <> ' (  (1=1)  ) ' then
-      Result := ReplaceStr(Result, fltr_1_1, '');
+    // пока не вычистил ошибки в логике формирования
+    // буду тупо фиксить ошибки которые словил
+    Result := where_sql.Trim;
+    Result := ReplaceStr(Result, ' AND  ', ' AND ');
+    Result := ReplaceStr(Result, ' OR  ', ' OR ');
+    Result := ReplaceStr(Result, 'OR AND', 'OR');
+    Result := ReplaceStr(Result, 'AND AND', 'AND');
+    Result := ReplaceStr(Result, 'AND AND', 'AND');
+    Result := ReplaceStr(Result, 'AND OR', 'AND');
+    Result := ReplaceStr(Result, 'OR OR', 'OR');
+    Result := ReplaceStr(Result, '(  ', '( ');
+    Result := ReplaceStr(Result, '  )', ' )');
+    Result := ReplaceStr(Result, '( (', '((');
+    Result := ReplaceStr(Result, ') )', '))');
+    Result := ReplaceStr(Result, '( )', '');
+    Result := ReplaceStr(Result, '()', '');
+    Result := ReplaceStr(Result, '(((1=1))) AND', '');
+    Result := ReplaceStr(Result, '(((1=1))) OR', '');
+    Result := ReplaceStr(Result, '( AND ', '(');
+    Result := ReplaceStr(Result, ')  AND', ') AND');
+    Result := ReplaceStr(Result, ')  OR', ') OR');
+    Result := ReplaceStr(Result, '( OR ', '(');
+    Result := Result.Trim;
+    if Result <> '((1=1))' then
+      Result := ReplaceStr(Result, '(1=1) AND', '');
+
+    if (Result.Replace(' ', '').Replace('(', '').Replace(')', '').Replace('AND', '').Replace('OR', '')) = '' then
+      Result := '';
+  end;
+
+  function JoinFilter(const clue: String; const AValues: array of string; const braceAdd: Boolean = False): string;
+  var
+    i, J: Integer;
+    sC: string;
+    sA: array of string;
+  begin
+    J := 0;
+    for i := 0 to Length(AValues) - 1 do
+      if not((AValues[i].IsEmpty) or (AValues[i] = '()')) then
+        inc(J);
+
+    if J > 0 then
+    begin
+      setlength(sA, J);
+      J := 0;
+      for i := 0 to Length(AValues) - 1 do
+        if not((AValues[i].IsEmpty) or (AValues[i] = '()')) then
+        begin
+          sA[J] := IfThen(braceAdd, '(', '') + AValues[i] + IfThen(braceAdd, ')', '');
+          inc(J);
+        end;
+
+      sC := ' ' + clue.Trim + ' ';
+      Result := String.Join(sC, sA);
+    end
   end;
 
 // если скрываем абонентов, то скроем
@@ -2698,13 +2986,13 @@ const
     if dmMain.SuperMode >= 0 then
     begin
       if (dsFilter['SUPERMODE']) then
-        Result := ' AND ( c.INVISIBLE = 1 ) '
+        Result := 'c.INVISIBLE = 1'
       else if dmMain.SuperMode = 0 then
-        Result := ' AND ( c.INVISIBLE = 0 ) ';
+        Result := 'c.INVISIBLE = 0';
     end;
   end;
 
-  function RecordToFilter: String;
+  function RecordToFilter(): String;
   var
     startSQL, tmpSQL, s: string;
     st: String;
@@ -2753,15 +3041,26 @@ const
           // Примечание
           5:
             tmpSQL := Format(' (upper(C.notice) %s upper(%s)) ', [startSQL, s]);
+          // телефон
           6:
             begin
-              s := ReverseString(DigitsOnly(s));
-              s := Copy(s, 0, 7);
-              dsCustomers.ParamByName('from_add').value :=
-                ' inner join CUSTOMER_CONTACTS cc on ((c.customer_id = cc.customer_id) AND (cc.cc_val_reverse starting with '''
-                + s + ''')) ';
-              tmpSQL := '';
-              Exit;
+              if startSQL = '=' then
+              begin
+                startSQL := 'starting with';
+                s := ReverseString(DigitsOnly(s));
+                s := Copy(s, 0, 9); // нужно чтоб искать телефон 8029 и 37529
+              end
+              else
+              begin
+                // далее магия с % и _
+                s := ReplaceStr(s, '%', '000008090800000');
+                s := ReplaceStr(s, '_', '000008010800000');
+                s := ReverseString(DigitsOnly(s));
+                s := ReplaceStr(s, '000008090800000', '%');
+                s := ReplaceStr(s, '000008010800000', '_');
+              end;
+              tmpSQL := Format(' (exists(select cc.customer_id from CUSTOMER_CONTACTS cc ' +
+                'where (cc.customer_id = c.customer_id) AND (cc.cc_val_reverse %s ''%s''))) ', [startSQL, s]);
             end;
           // Список ID абонентов
           7:
@@ -2807,6 +3106,12 @@ const
             end
             else
               tmpSQL := ' (C.Jur_Inn = ''' + dsFilter.FieldByName('SFLTR_TEXT').AsString + ''') ';
+          // контакт
+          16:
+            begin
+              tmpSQL := Format(' (exists(select cc.customer_id from CUSTOMER_CONTACTS cc ' +
+                'where (cc.customer_id = c.customer_id) AND (cc.Cc_Value %s %s))) ', [startSQL, s]);
+            end;
         end;
       end;
     end;
@@ -2842,13 +3147,6 @@ const
           tmpSQL := tmpSQL + ' AND ((c.Debt_Sum - coalesce(c.PREPAY,0)) '
         else
           tmpSQL := tmpSQL + ' AND (c.Debt_Sum ';
-        // Ошибка в том что учитывало и отключенные услуги
-        // tmpSQL := tmpSQL + ' > (' + IntToStr(dsFilter['MONTH']) +
-        // ' * (select sum(iif(pt.Tarif_Sum is null, t.Tarif_Sum * coalesce(k.Factor_Value, 1), pt.Tarif_Sum)) ' + rsEOL
-        // + ' from Subscr_hist sh left outer join Tarif t on (t.Service_Id = sh.Serv_Id AND current_date between t.Date_From AND t.Date_To) '
-        // + rsEOL + '  left outer join Personal_Tarif pt on (pt.Service_Id = sh.Serv_Id AND pt.Customer_Id = sh.Customer_Id AND current_date between pt.Date_From AND pt.Date_To) '
-        // + rsEOL + '  left outer join Discount_Factor k on (((k.Serv_Id = sh.Serv_Id) OR (k.Serv_Id = -1)) AND k.Customer_Id = sh.Customer_Id AND current_date between k.Date_From AND k.Date_To) '
-        // + rsEOL + ' where sh.customer_id = c.customer_id))) ' + rsEOL;
 
         tmpSQL := tmpSQL + ' > coalesce((select sum(f.Fee) from Monthly_Fee f ' +
           ' inner join services sr on (sr.Service_Id = f.Service_Id AND sr.Srv_Type_Id = 0) ' +
@@ -2930,7 +3228,7 @@ const
     if (dsFilter['CHECK_ADRESS'] = 1) then
     begin
       if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
-        tmpSQL := tmpSQL + Format(' AND (C.House_Id = %d) ', [dsFilter.FieldByName('HOUSE_ID').AsInteger])
+        tmpSQL := tmpSQL + Format(' AND (C.HOUSE_ID = %d) ', [dsFilter.FieldByName('HOUSE_ID').AsInteger])
       else if (Not dsFilter.FieldByName('Street_Id').IsNull) then
         tmpSQL := tmpSQL + Format(' AND (S.STREET_ID = %d) ', [dsFilter.FieldByName('Street_Id').AsInteger]);
 
@@ -2962,14 +3260,6 @@ const
       if (not dsFilter.FieldByName('MAINHEAD').IsNull) then
         tmpSQL := tmpSQL + Format(' AND (h.HEADEND_ID = %d) ', [dsFilter.FieldByName('MAINHEAD').AsInteger]);
     end;
-
-    // еще не подключились
-    // if (dsFilter['SUBSCR_HIST_SGN'] = 1)
-    // then  tmpSQL:=tmpSQL+' AND (not exists (select sh.Customer_Id from Subscr_serv sh where sh.Customer_Id = C.Customer_Id))';
-
-    // с непустым примечанием
-    // if (dsFilter['NOTICE_SGN'] = 1)
-    // then tmpSQL:=tmpSQL+' AND (trim(coalesce(c.notice,'''')) <> '''')';
 
     // юр. лица
     if (dsFilter.FieldByName('JURIDICAL').AsInteger in [0, 1]) then
@@ -3097,9 +3387,9 @@ const
 
     // повторяющиеся адреса
     if (dsFilter['DoubleAddress'] = 1) then
-      tmpSQL := tmpSQL + ' AND exists( select r.HOUSE_ID from customer r' + rsEOL +
-        'where r.HOUSE_ID = c.HOUSE_ID AND (r.VALID_TO > CURRENT_DATE) OR (r.VALID_TO is null)' + rsEOL +
-        'group by r.HOUSE_ID, r.FLAT_NO' + rsEOL + 'HAVING Count(*)>1 AND c.FLAT_NO = r.FLAT_NO)';
+      tmpSQL := tmpSQL + ' AND exists(select r.Customer_Id from customer r' + rsEOL +
+        ' where r.HOUSE_ID = c.HOUSE_ID and r.Flat_No = c.Flat_No and r.Customer_Id <> c.Customer_Id' + rsEOL +
+        ' and (r.VALID_TO > current_date) or (r.VALID_TO is null))';
 
     // состояние подключения
     if (dsFilter['STATE_1'] > 0) then
@@ -3115,10 +3405,14 @@ const
         end
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
-          tmpSQL := tmpSQL +
-            ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
-            + ' where st.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString +
-            ' AND c.customer_id = ss.customer_id )) ';
+          if (dsFilter['SRVTYPES'] >= 0) then
+            tmpSQL := tmpSQL +
+              ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+              + ' where st.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString +
+              ' AND c.customer_id = ss.customer_id )) '
+          else
+            tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' +
+              'where c.customer_id = ss.customer_id )) ';
         end
         else if dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
@@ -3131,33 +3425,22 @@ const
       // 2. Подключен
       if (dsFilter['state_1'] = 2) then
       begin
-
         if (dsFilter['serv_id'] >= 0) then
         begin
-
-          // tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' +
-          // ' where ss.state_sgn = 1 AND ss.serv_id = ' + dsFilter.FieldByName('serv_id').AsString +
-          // ' AND c.customer_id = ss.customer_id )) ';
-
-          // правильная фильтрация подключенных абонентов
-          // tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from Subscr_Hist ss ' +
-          // ' inner join services s on (s.Service_Id = ss.Serv_Id)' + #13#10 +
-          // '  where ss.Customer_Id = c.customer_id' + #13#10 +
-          // '        AND ss.serv_id = ' + dsFilter.FieldByName('serv_id').AsString +
-          // '        AND ss.Date_From <= current_date' + #13#10 +
-          // '        AND ((s.CALC_TYPE <> 5 AND ss.date_to > dateadd(day, -1, current_date))' + #13#10 +
-          // '          OR (s.CALC_TYPE = 5 AND ss.date_to >= dateadd(day, -1, current_date)))))';
-
-          // и короткий вариант
+          // фильтрация подключенных абонентов
           tmpSQL := tmpSQL + ' AND (exists(select Srv_On from Check_Srv_Active(c.Customer_Id, ' +
             dsFilter.FieldByName('serv_id').AsString + ') where Srv_On = 1))';
         end
         else if not dsFilter.FieldByName('SRVTYPES').IsNull then
         begin
-          tmpSQL := tmpSQL +
-            ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
-            + ' where ss.state_sgn = 1 AND coalesce(st.business_type,0) = ' + dsFilter.FieldByName('SRVTYPES').AsString
-            + ' AND c.customer_id = ss.customer_id )) ';
+          if (dsFilter['SRVTYPES'] >= 0) then
+            tmpSQL := tmpSQL +
+              ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
+              + ' where ss.state_sgn = 1 AND coalesce(st.business_type,0) = ' + dsFilter.FieldByName('SRVTYPES')
+              .AsString + ' AND c.customer_id = ss.customer_id )) '
+          else
+            tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' +
+              ' where ss.state_sgn = 1 AND c.customer_id = ss.customer_id )) '
         end
         else
         begin
@@ -3229,8 +3512,7 @@ const
       if (dsFilter['STATE_1'] = 6) then
       begin
         tmpSQL := tmpSQL + ' AND ( exists (select ss.Customer_Id from subscr_serv ss ' +
-          '     where ss.Customer_Id = c.Customer_Id ' +
-          '       AND ss.State_Srv = -3 AND ss.State_Date <= current_date ';
+          ' where ss.Customer_Id = c.Customer_Id ' + ' AND ss.State_Srv = -3 AND ss.State_Date <= current_date ';
 
         if not dsFilter.FieldByName('serv_id').IsNull then
           tmpSQL := tmpSQL + Format(' AND ss.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
@@ -3241,10 +3523,9 @@ const
 
         tmpSQL := tmpSQL + ') OR ' +
           ' exists ( select ab.Customer_Id from subscr_hist ab where ab.Customer_Id = c.customer_id ' +
-          '   AND ab.Disact_Serv_Id = -3 AND (ab.Date_To + 0) < current_date' +
-          '   AND (not exists(select o.Customer_Id from Subscr_Hist o ' +
-          '      where o.Customer_Id = ab.Customer_Id AND o.Serv_Id = ab.Serv_Id ' +
-          '        AND o.Date_From > ab.Date_To)) ';
+          ' AND ab.Disact_Serv_Id = -3 AND (ab.Date_To + 0) < current_date' +
+          ' AND (not exists(select o.Customer_Id from Subscr_Hist o ' +
+          ' where o.Customer_Id = ab.Customer_Id AND o.Serv_Id = ab.Serv_Id ' + ' AND o.Date_From > ab.Date_To)) ';
 
         if not dsFilter.FieldByName('serv_id').IsNull then
           tmpSQL := tmpSQL + Format(' AND ab.serv_id = %d', [dsFilter.FieldByName('serv_id').AsInteger])
@@ -3293,29 +3574,11 @@ const
             + ' where ss.Customer_Id = c.Customer_Id AND ss.State_Sgn = 1 AND s.Business_Type <> %d))) ' //
             , [dsFilter.FieldByName('SRVTYPES').AsInteger, dsFilter.FieldByName('SRVTYPES').AsInteger]);
         end
-
-        {
-          if (dsFilter['serv_id'] >= 0) then
-          begin
-          tmpSQL := tmpSQL + ' AND (exists(select ss.customer_id from subscr_serv ss ' + ' where ss.serv_id = ' +
-          dsFilter.FieldByName('serv_id').AsString;
-          tmpSQL := tmpSQL + ' AND c.customer_id = ss.customer_id )) ';
-          end
-          else if not dsFilter.FieldByName('SRVTYPES').IsNull then
-          begin
-          tmpSQL := tmpSQL +
-          ' AND (exists(select ss.customer_id from subscr_serv ss inner join services st on (ss.serv_id = st.service_id) '
-          + ' where st.business_type = ' + dsFilter.FieldByName('SRVTYPES').AsString +
-          ' AND c.customer_id = ss.customer_id )) ';
-          end
-        }
-
       end;
     end;
 
     if (dsFilter['PERIOD_SGN'] = 1) then
     begin
-
       // Заключили договор
       if ((not dsFilter.FieldByName('CONTRACT_DATE_SGN').IsNull) AND (dsFilter['CONTRACT_DATE_SGN'] = 1)) then
       begin
@@ -3519,25 +3782,23 @@ const
         ' AND (-1*c.DEBT_SUM < (select M_Tarif from Get_Tarif_Sum_Customer_Srv(c.Customer_Id, null, MONTH_FIRST_DAY(dateadd(month, 1, current_date))))) '
     end;
 
-    // если скрываем абонентов, то скроем
-    startSQL := startSQL + AddInvisible;
-
-    Result := Del_1_1(' ( ' + startSQL + tmpSQL + ' ) ');
-
-    if dsFilter['inversion'] then
-      Result := ' NOT ' + Result;
-
+    Result := FixErrors(tmpSQL);
   end;
 
-  function ListToFilter: String;
+  function ListToFilter(): String;
   var
     startSQL, tmpSQL, s, t: string;
-    arr: TStringArray;
+    arr: TStringDynArray;
     i: Integer;
     ListType: Integer;
     Quote: String;
   begin
-    Result := ' ((C.Valid_To > CURRENT_DATE) OR (C.Valid_To is null)) ';
+    if (dsFilter.FieldByName('ListValues').IsNull) then
+    begin
+      Result := '';
+      Exit;
+    end;
+
     tmpSQL := '';
     startSQL := '';
 
@@ -3633,139 +3894,96 @@ const
     else
       startSQL := fltr_1_1;
 
-    // если скрываем абонентов, то скроем
-    tmpSQL := AddInvisible;
-
-    Result := Del_1_1(' ( ' + startSQL + tmpSQL + ' ) ');
+    Result := FixErrors(startSQL);
   end;
 
-  function SQLToFilter: String;
+  function SQLToFilter(): String;
   var
     startSQL, tmpSQL: string;
   begin
-    Result := ' ((C.Valid_To > CURRENT_DATE) OR (C.Valid_To is null)) ';
-    tmpSQL := '';
-    // startSQL := ' c.customer_id in ( ' + dsFilter['SQL_FLTR'] + ' ) ';
-    startSQL := Trim(UpperCase(dsFilter['SQL_FLTR']));
-    if (not startSQL.StartsWith('EXISTS')) then
-      startSQL := ' (exists (select ff.customer_id from ( ' + dsFilter['SQL_FLTR'] +
-        ') ff where ff.customer_id = c.customer_id) ) '
+    Result := '';
+    if (dsFilter.FieldByName('SQL_FLTR').IsNull) then
+      Exit;
+
+    tmpSQL := Trim(dsFilter['SQL_FLTR']);
+    if (tmpSQL.IsEmpty) then
+      Exit;
+
+    startSQL := Trim(tmpSQL);
+    if (not startSQL.ToUpper.StartsWith('EXISTS')) then
+      startSQL := 'exists(select ff.customer_id from (%s) ff where ff.customer_id = c.customer_id)'
     else
-      startSQL := ' ( ' + dsFilter['SQL_FLTR'] + ' ) ';
+      startSQL := '%s';
 
-    // если скрываем абонентов, то скроем
-    tmpSQL := AddInvisible;
-
-    Result := Del_1_1(' ( ' + startSQL + tmpSQL + ' ) ');
+    startSQL := Format(startSQL, [tmpSQL]);
+    Result := FixErrors(startSQL);
   end;
 
 var
-  whereStr: String;
-  ListSql: String;
-  default: string;
+  whereStr, whereRecord, whereList, whereSql: String;
+  b: Boolean;
   fidx: Integer;
-
 begin
-  default := const_default_filter;
-  if dmMain.SuperMode = 0 then
-    default := default +' AND ( c.INVISIBLE = 0 ) ';
-
-  Result := default;
+  Result := const_default_filter;
   whereStr := '';
 
   if (dsFilter.RecordCount = 0) OR (not actEnableFilter.Checked) then
     Exit;
-  srcCustomer.DataSet.DisableControls;
 
   try
     dsFilter.First;
-
+    whereStr := '';
     while not dsFilter.Eof do
     begin
+      whereRecord := RecordToFilter();
+      whereList := ListToFilter();
+      whereSql := SQLToFilter();
 
-      if (not dsFilter.FieldByName('ListValues').IsNull) then
-        ListSql := ' ( ' + ListToFilter + ' ) ';
+      whereRecord := JoinFilter('AND', [whereRecord, whereList, whereSql], true);
 
-      if (not dsFilter.FieldByName('SQL_FLTR').IsNull) then
-      begin
-        if not ListSql.IsEmpty then
-          ListSql := ListSql + ' AND ';
-        ListSql := ListSql + ' ( ' + SQLToFilter + ' ) ';
-      end;
+      if (not whereRecord.IsEmpty) and ((not dsFilter.FieldByName('inversion').IsNull) and dsFilter['inversion']) then
+        whereRecord := ' NOT (' + whereRecord + ')';
 
-      whereStr := whereStr + ' ( ' + RecordToFilter + ' ) ';
-      // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
-
-      if (dmMain.AllowedAction(rght_Customer_Only_ONE)) then
-      begin
-        if ((not dsFilter.FieldByName('FLAT_NO').IsNull) AND (dsFilter['CHECK_ADRESS'] = 1)) then
-        begin
-          fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
-          if (fidx = 1) then
-          begin
-            if dsCustomers.Active then
-              dsCustomers.Close;
-            dsCustomers.SelectSQL.Delete(fidx);
-          end;
-        end
-        else
-        begin
-          if (dmMain.AllowedAction(rght_Customer_Only_ONE)) then
-          begin
-            fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
-            if (fidx = -1) then
-            begin
-              if dsCustomers.Active then
-                dsCustomers.Close;
-              dsCustomers.SelectSQL.Insert(1, cst_OneRecord);
-            end;
-          end;
-        end;
-      end;
+      b := (dsFilter['next_condition'] = 0);
+      whereStr := JoinFilter(IfThen(b, 'OR', 'AND'), [whereStr, '(' + whereRecord + ')'], False);
 
       dsFilter.next;
-
-      whereStr := ReplaceStr(whereStr, '(  (  )  )', '').Trim;
-      if (not ListSql.IsEmpty) then
-      begin
-        if (not whereStr.IsEmpty) then
-          whereStr := whereStr + ' AND ' + ListSql
-        else
-          whereStr := ListSql;
-      end;
-
-      if not dsFilter.Eof then
-      begin
-        if dsFilter['next_condition'] = 0 then
-          whereStr := whereStr + ' OR '
-        else
-          whereStr := whereStr + ' AND '
-      end;
     end;
     // пофиксим баг. времмено, но постоянно
-    whereStr := ReplaceStr(whereStr, ' OR AND ', ' OR ');
-    whereStr := ReplaceStr(whereStr, ' AND AND ', ' AND ').Trim;
+    whereStr := FixErrors(whereStr);
   except
-    whereStr := default;
+    whereStr := const_default_filter;
     ShowMessage(rsErrorSetFilter);
   end;
 
-  // Восстановим сортировку
-  // dbgCustomerSortMarkingChanged(dbgCustomers);
-
-  if whereStr.IsEmpty then
-    whereStr := fltr_1_1;
-
-  // LogEvent('Customer', 'ФИЛЬТР', whereStr);
+  // проверим, если ограничение одной записи и фильтр по квартире. то скинем ограничение
+  if (dmMain.AllowedAction(rght_Customer_Only_ONE)) then
+  begin
+    if dsCustomers.Active then
+      dsCustomers.Close;
+    fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
+    // если стоит фильтр по кваритире и нет отрицания или или, то выводим все записи с этой квартирой
+    if whereStr.Contains('FLAT_NO') and whereStr.Contains('HOUSE_ID') //
+      and (not whereStr.Contains(' OR ')) and (not whereStr.Contains(' NOT ')) then
+    begin
+      if (fidx = 1) then
+        dsCustomers.SelectSQL.Delete(fidx);
+    end
+    else if (fidx = -1) then
+      dsCustomers.SelectSQL.Insert(1, cst_OneRecord);
+  end;
 
   Result := whereStr;
-  srcCustomer.DataSet.EnableControls;
+  if (Result.IsEmpty) then
+    Result := const_default_filter;
+
+  Result := JoinFilter('AND', [Result, AddInvisible], true);
 end;
 
 procedure TCustomersForm.SetDefaultFilter;
 var
   f: string;
-  sa: TStringArray;
+  sA: TStringDynArray;
 begin
   dsFilter.Close;
   dsFilter.Open;
@@ -3775,12 +3993,12 @@ begin
     // 13: Street_id  // 14: house_id
     if (FFilterField = 13) or (FFilterField = 14) then
     begin
-      sa := Explode('~', FFilterValue);
+      sA := Explode('~', FFilterValue);
       dsFilter.Insert;
       dsFilter['CHECK_ADRESS'] := 1;
-      dsFilter['Street_Id'] := StrToInt(sa[0]);
-      if (FFilterField = 14) and (Length(sa) > 1) then
-        dsFilter['HOUSE_ID'] := StrToInt(sa[1]);
+      dsFilter['Street_Id'] := StrToInt(sA[0]);
+      if (FFilterField = 14) and (Length(sA) > 1) then
+        dsFilter['HOUSE_ID'] := StrToInt(sA[1]);
       dsFilter.Post;
     end
     else if FFilterField > 99 then
@@ -3836,7 +4054,7 @@ begin
     end;
   end;
   if dsFilter.RecordCount > 0 then
-    actEnableFilter.Checked := True;
+    actEnableFilter.Checked := true;
 end;
 
 procedure TCustomersForm.InitSecurity;
@@ -3846,7 +4064,7 @@ begin
   if dsCustomers.Active then
     notEmptyDS := (dsCustomers.RecordCount > 0)
   else
-    notEmptyDS := True;
+    notEmptyDS := true;
 
   FullAccess := (dmMain.AllowedAction(rght_Customer_full));
   ChangeHistory := (dmMain.AllowedAction(rght_Customer_History));
@@ -3856,7 +4074,7 @@ begin
     (dmMain.AllowedAction(rght_Customer_add) //
     or dmMain.AllowedAction(rght_Customer_edit) //
     or dmMain.AllowedAction(rght_Customer_Files_Add) //
-    or dmMain.AllowedAction(rght_Customer_EditLan) //
+    or dmMain.AllowedAction(rght_Customer_LanFull) //
     or dmMain.AllowedAction(rght_Customer_DigitAdd) //
     or dmMain.AllowedAction(rght_Customer_DigitEdit) //
     or dmMain.AllowedAction(rght_Customer_Attribute)) //
@@ -3912,7 +4130,7 @@ begin
       while not Eof do
       begin
         s := FieldByName('NAME').value;
-        miExport.Add(NewItem(s, 0, False, True, miExportClick, 0, 'mie' + IntToStr(i)));
+        miExport.Add(NewItem(s, 0, False, true, miExportClick, 0, 'mie' + IntToStr(i)));
         next;
         i := i + 1;
       end;
@@ -3922,7 +4140,7 @@ begin
       Free;
     end;
   miExport.Add(NewLine);
-  miExport.Add(NewItem(rsProfileExportSettings, 0, False, True, miExportSettingsClick, 0, 'mieExport'));
+  miExport.Add(NewItem(rsProfileExportSettings, 0, False, true, miExportSettingsClick, 0, 'mieExport'));
 end;
 
 procedure TCustomersForm.InitPrintPopUpMenus;
@@ -3943,7 +4161,7 @@ var
       if pmSelectPrintDoc.Items[i].Caption = ACaption then
       begin
         Result := pmSelectPrintDoc.Items[i];
-        Find := True;
+        Find := true;
       end;
     end;
     if not Find then
@@ -3961,10 +4179,10 @@ begin
     try
       // ActBalanceExecute
       // ActPrintGridExecute
-      pmSelectPrintDoc.Items.Add(NewItem(ActPrintGrid.Caption, 0, False, True, ActPrintGrid.OnExecute, 0,
+      pmSelectPrintDoc.Items.Add(NewItem(ActPrintGrid.Caption, 0, False, true, ActPrintGrid.OnExecute, 0,
         'miRPPrintGrid'));
 
-      pmSelectPrintDoc.Items.Add(NewItem('-', 0, False, True, nil, 0, 'miRPsprt0'));
+      pmSelectPrintDoc.Items.Add(NewItem('-', 0, False, true, nil, 0, 'miRPsprt0'));
 
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
@@ -3981,7 +4199,7 @@ begin
         s := FieldByName('NAME').value;
         if not s.Contains('\') then
         begin
-          mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
+          mi := NewItem(s, 0, False, true, miPrintReportClick, 0, 'miRP' + IntToStr(i));
           mi.Tag := FieldByName('ID').value;
           mi.ImageIndex := FieldByName('RECORDINDB').value;
           mi.Hint := FieldByName('FILENAME').value;
@@ -3995,7 +4213,7 @@ begin
           sm := FindSubMenu(si, miFind);
           if miFind then
           begin
-            mi := NewItem(s, 0, False, True, miPrintReportClick, 0, 'miRP' + IntToStr(i));
+            mi := NewItem(s, 0, False, true, miPrintReportClick, 0, 'miRP' + IntToStr(i));
             mi.Tag := FieldByName('ID').value;
             mi.ImageIndex := FieldByName('RECORDINDB').value;
             mi.Hint := FieldByName('FILENAME').value;
@@ -4008,8 +4226,8 @@ begin
       Close;
       Transaction.Commit;
 
-      pmSelectPrintDoc.Items.Add(NewItem('-', 0, False, True, nil, 0, 'miRPsprt1'));
-      pmSelectPrintDoc.Items.Add(NewItem(ActBalance.Caption, 0, False, True, ActBalance.OnExecute, 0, 'miBalance'));
+      pmSelectPrintDoc.Items.Add(NewItem('-', 0, False, true, nil, 0, 'miRPsprt1'));
+      pmSelectPrintDoc.Items.Add(NewItem(ActBalance.Caption, 0, False, true, ActBalance.OnExecute, 0, 'miBalance'));
 
     finally
       Free;
@@ -4031,7 +4249,7 @@ end;
 procedure TCustomersForm.dsCustomers_Refresh(const full: Boolean = False);
 begin
   if full then
-    dsCustomers.CloseOpen(True)
+    dsCustomers.CloseOpen(true)
   else
     RefreshCurrentRecord(Self);
 end;
@@ -4192,8 +4410,7 @@ end;
 
 procedure TCustomersForm.miN58Click(Sender: TObject);
 begin
-  if not dsCustomers.FieldByName('HOUSE_ID').IsNull
-  then
+  if not dsCustomers.FieldByName('HOUSE_ID').IsNull then
     A4MainForm.OpnenHouseByID(dsCustomers['HOUSE_ID']);
 end;
 
@@ -4204,8 +4421,8 @@ var
   i, v: Integer;
   fldcount: Integer;
   sum: Currency;
-  lines, l: TStringArray;
-  ar_data: TStringArray;
+  lines, l: TStringDynArray;
+  ar_data: TStringDynArray;
 begin
 
   if FILENAME = '' then
@@ -4235,7 +4452,7 @@ begin
       if Length(l) > 4 then
       begin
         fldcount := fldcount + 1;
-        SetLength(ar_data, fldcount);
+        setlength(ar_data, fldcount);
         ar_data[fldcount - 1] := l[0];
         with dbf.DBFFieldDefs.Add as TVKDBFFieldDef do
         begin
@@ -4594,7 +4811,7 @@ begin
     actSetFilterNewExecute(Self);
   end
   else
-    FindResult := True;
+    FindResult := true;
 end;
 
 procedure TCustomersForm.LoadReportBody(const fReport_ID: Integer);
@@ -4691,7 +4908,7 @@ begin
 
           if (i = 1) then
           begin
-            FirstReport := True;
+            FirstReport := true;
             for i := 0 to rqList.Count - 1 do
             begin
               rq_id := StrToInt(rqList[i]);
@@ -4787,7 +5004,7 @@ begin
     if ci > 0 then
       dmMain.frxModalReport.Variables['CUSTOMER_ID'] := dsCustomers['CUSTOMER_ID'];
 
-    dmMain.frxModalReport.ShowReport(True);
+    dmMain.frxModalReport.ShowReport(true);
 
     if MessageDlg(rsSaveLetterDate, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
@@ -4882,72 +5099,59 @@ end;
 
 procedure TCustomersForm.tmrSearchTimer(Sender: TObject);
 begin
-  if (tmrSearch.Tag = 0) and (actAddressSearch.Checked) then
-  begin
-    tmrSearch.Enabled := False;
-    SetAdresFilter();
-  end;
-  tmrSearch.Tag := 0;
+  tmrSearch.Enabled := False;
+  SetAddressFilter();
 end;
 
-procedure TCustomersForm.SetAdresFilter();
+procedure TCustomersForm.SetAddressFilter();
 var
   filter: string;
   id: Integer;
   s: string;
   scr_cr: TCursor;
 begin
-  scr_cr := Screen.Cursor;
-  Screen.Cursor := crSQLWait;
-  try
-    filter := '';
-    if (actAddressSearch.Checked) then
-    begin
-      if VarIsNumeric(lcbHOUSE.KeyValue) then
-      begin
-        id := lcbHOUSE.KeyValue;
-        filter := Format('HOUSE_ID = %d ', [id]);
-        if not dsFLAT.Active then
-          dsFLAT.Open;
-        if lcbFLAT.Text <> '' then
-        begin
-          s := lcbFLAT.Text;
-          if s = '-' then
-            s := ''' or  FLAT_NO = ''-'; // некоторые операторы вместо пустого номера ставят -
-          filter := Format('%s and (FLAT_NO = ''%s'')', [filter, s]);
-        end;
-      end
-      else
-      begin
+  id := actAddressSearch.Tag;
+  actAddressSearch.Tag := 1;
 
-        if VarIsNumeric(lcbStreets.KeyValue) then
-        begin
-          id := lcbStreets.KeyValue;
-          filter := Format('STREET_ID = %d ', [id]);
-          if not dsHomes.Active then
-          begin
-            dsHomes.Open;
-          end;
-        end
+  if (id <> 0) or (not actAddressSearch.Checked) then
+    Exit;
+
+  try
+    scr_cr := Screen.Cursor;
+    Screen.Cursor := crSQLWait;
+    filter := '';
+    if VarIsNumeric(lcbHOUSE.KeyValue) then
+    begin
+      id := lcbHOUSE.KeyValue;
+      filter := Format('HOUSE_ID = %d ', [id]);
+      if not dsFLAT.Active then
+        dsFLAT.Open;
+      if lcbFLAT.Text <> '' then
+      begin
+        s := lcbFLAT.Text;
+        if s = '-' then
+          s := ''' or  FLAT_NO = ''-'; // некоторые операторы вместо пустого номера ставят -
+        filter := Format('%s and (FLAT_NO = ''%s'')', [filter, s]);
       end;
-      lcbHOUSE.Enabled := VarIsNumeric(lcbStreets.KeyValue);
-      lcbFLAT.Enabled := lcbHOUSE.Enabled and VarIsNumeric(lcbHOUSE.KeyValue);
-      if (not lcbFLAT.Enabled) and dsFLAT.Active then
-        dsFLAT.Close;
-      if (not lcbHOUSE.Enabled) and dsHomes.Active then
-        dsHomes.Close;
     end
     else
     begin
-      if dsFLAT.Active then
-        dsFLAT.Close;
-
-      if dsHomes.Active then
-        dsHomes.Close;
-
-      if dsStreets.Active then
-        dsStreets.Close;
+      if VarIsNumeric(lcbStreets.KeyValue) then
+      begin
+        id := lcbStreets.KeyValue;
+        filter := Format('STREET_ID = %d ', [id]);
+        if not dsHomes.Active then
+        begin
+          dsHomes.Open;
+        end;
+      end
     end;
+    lcbHOUSE.Enabled := VarIsNumeric(lcbStreets.KeyValue);
+    lcbFLAT.Enabled := lcbHOUSE.Enabled and VarIsNumeric(lcbHOUSE.KeyValue);
+    if (not lcbFLAT.Enabled) and dsFLAT.Active then
+      dsFLAT.Close;
+    if (not lcbHOUSE.Enabled) and dsHomes.Active then
+      dsHomes.Close;
 
     dbgCustomers.DataSource.DataSet.DisableControls;
     dbgCustomers.DataSource.DataSet.filter := filter;
@@ -4958,17 +5162,25 @@ begin
   end;
 end;
 
+procedure TCustomersForm.lcbHOUSEButtonClick(Sender: TObject;
+  var Handled: Boolean);
+begin
+  Handled := (lcbHOUSE.Tag = 1);
+  AddrSearchFieldClick(lcbHOUSE);
+end;
+
 procedure TCustomersForm.lcbHOUSEChange(Sender: TObject);
 begin
+
   if (dsHomes['inService'] <> '') then
     lcbHOUSE.Color := clYellow
   else
     lcbHOUSE.Color := clWindow;
 
   lcbFLAT.value := NULL;
-  tmrSearch.Tag := 1;
   tmrSearch.Enabled := False;
-  tmrSearch.Enabled := True;
+  tmrSearch.Enabled := true;
+  actAddressSearch.Tag := 0;
 end;
 
 procedure TCustomersForm.lcbHOUSEDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -4980,20 +5192,38 @@ begin
     Background := clWindow;
 end;
 
+procedure TCustomersForm.lcbFLATButtonClick(Sender: TObject;
+  var Handled: Boolean);
+begin
+  Handled := (lcbFLAT.Tag = 1);
+  AddrSearchFieldClick(lcbFLAT);
+end;
+
 procedure TCustomersForm.lcbFLATChange(Sender: TObject);
 begin
-  tmrSearch.Tag := 1;
   tmrSearch.Enabled := False;
-  tmrSearch.Enabled := True;
+  tmrSearch.Enabled := true;
+  actAddressSearch.Tag := 0;
 end;
 
 procedure TCustomersForm.lcbStreetsChange(Sender: TObject);
 begin
   lcbHOUSE.value := NULL;
   lcbFLAT.value := NULL;
-  tmrSearch.Tag := 1;
   tmrSearch.Enabled := False;
-  tmrSearch.Enabled := True;
+  tmrSearch.Enabled := true;
+  actAddressSearch.Tag := 0;
+end;
+
+procedure TCustomersForm.AddrSearchFieldExit(Sender: TObject);
+begin
+  tmrSearchTimer(Sender);
+end;
+
+procedure TCustomersForm.AddrSearchFieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+    tmrSearchTimer(Sender);
 end;
 
 procedure TCustomersForm.actAddBlackListExecute(Sender: TObject);
@@ -5457,7 +5687,7 @@ begin
       dsCustomers.Options := dsCustomers.Options - [poFetchAll];
   end;
 
-  fRED_SUMM := dmMain.GetSettingsValue('DOLG');
+  FRed_Sum := dmMain.GetSettingsValue('DOLG');
   fZERRO_SUMM := 0;
   s := dmMain.GetSettingsValue('ZERO4LIST');
   if s <> '' then
@@ -5526,10 +5756,15 @@ begin
   begin
     if (i > 0) then
     begin
-      UpdateTimer.Enabled := True;
+      UpdateTimer.Enabled := true;
       UpdateTimer.Interval := i * 60 * 1000
     end
   end;
+end;
+
+procedure TCustomersForm.PropStorageAfterLoadProps(Sender: TObject);
+begin
+  Self.ActiveControl := dbgCustomers;
 end;
 
 procedure TCustomersForm.ValidatePassport;
@@ -5557,7 +5792,7 @@ var
     while (i <= Length(s)) do
     begin
       if (not CharInSet(s[i], [' ', '0' .. '9', 'a' .. 'z', 'A' .. 'Z'])) then
-        Result := True;
+        Result := true;
       inc(i);
     end;
   end;
@@ -5641,7 +5876,7 @@ begin
   FHttpCli.ProxyAuth := httpAuthNone;
   FHttpCli.TimeOut := 30;
   FHttpCli.SslContext := FSslContext;
-  FHttpCli.ResponseNoException := True;
+  FHttpCli.ResponseNoException := true;
   Datax := TStringStream.Create('', TEncoding.UTF8);
   FHttpCli.OnRequestDone := Nil;
   FHttpCli.RcvdStream := Datax;
@@ -5686,7 +5921,7 @@ begin
 
     if answer <> '' then
     begin
-      qry.sql.Text := 'insert into Changelog (Log_Group, Object_Id, Value_Before, Value_After)';
+      qry.sql.Text := 'insert into Changelog(Log_Group, Object_Id, Value_Before, Value_After)';
       qry.sql.Add(' values (:Log_Group, :Object_Id, :Value_Before, :Value_After)');
       qry.ParamByName('Log_Group').value := 'PASSPORT_CHECK';
       qry.ParamByName('Object_Id').value := dsCustomers['CUSTOMER_ID'];
@@ -5714,6 +5949,37 @@ begin
 
   if (dbgCustomers.Columns.Count >= FFrozencols) then
     dbgCustomers.FrozenCols := FFrozencols;
+end;
+
+procedure TCustomersForm.FindTextInColumn(const SearchDown: Boolean = true);
+var
+  RecordFounded: Boolean;
+  Options: TLocateTextOptionsEh;
+  Matching: TLocateTextMatchingEh;
+  Direction: TLocateTextDirectionEh;
+  TreeFindRange: TLocateTextTreeFindRangeEh;
+  FieldName: String;
+
+begin
+  if Assigned(dbgCustomers) and Assigned(dbgCustomers.DataSource) and Assigned(dbgCustomers.DataSource.DataSet) and
+    dbgCustomers.DataSource.DataSet.Active then
+  begin
+    Options := [];
+    // Options := Options + [ltoCaseInsensitiveEh ltoMatchFormatEh ltoAllFieldsEh];
+
+    if SearchDown then
+      Direction := ltdDownEh
+    else
+      Direction := ltdUpEh;
+
+    Matching := ltmAnyPartEh;
+    TreeFindRange := lttInAllNodesEh;
+
+    FieldName := dbgCustomers.Columns[dbgCustomers.SelectedIndex].FieldName;
+
+    RecordFounded := dbgCustomers.LocateText(dbgCustomers, FieldName, edtSearch.Text, Options, Direction, Matching,
+      TreeFindRange);
+  end;
 end;
 
 end.

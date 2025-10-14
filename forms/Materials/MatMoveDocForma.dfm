@@ -204,7 +204,7 @@ object MatMoveDocForm: TMatMoveDocForm
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       PopupMenu = pmGrid
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
+      SearchPanel.FilterOnTyping = False
       SumList.Active = True
       TabOrder = 1
       TitleParams.MultiTitle = True
@@ -325,7 +325,7 @@ object MatMoveDocForm: TMatMoveDocForm
         Caption = #1050#1086#1083'-'#1074#1086
       end
       object lbl4: TLabel
-        Left = 177
+        Left = 181
         Top = 36
         Width = 26
         Height = 13
@@ -361,10 +361,12 @@ object MatMoveDocForm: TMatMoveDocForm
       object edtQuant: TDBNumberEditEh
         Left = 75
         Top = 33
-        Width = 85
+        Width = 96
         Height = 21
+        DecimalPlaces = 3
         DynProps = <>
         EmptyDataInfo.Text = #1050#1086#1083'-'#1074#1086
+        EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
         TabOrder = 1
@@ -399,11 +401,12 @@ object MatMoveDocForm: TMatMoveDocForm
       object edtCost: TDBNumberEditEh
         Left = 215
         Top = 33
-        Width = 85
+        Width = 98
         Height = 21
         DynProps = <>
         EmptyDataInfo.Text = #1062#1077#1085#1072
         Enabled = False
+        EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
         TabOrder = 2

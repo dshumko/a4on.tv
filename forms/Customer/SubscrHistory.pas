@@ -85,8 +85,10 @@ type
     FfcSrvDiscontedFuture: TColor;
     FfcSrvInAutoblock: TColor;
     FLastState: Integer;
+    FServiceID: Integer;
     function GetRecalc: Boolean;
   public
+    property ServiceID: Integer Write FServiceID;
     property NeedRecalc: Boolean read GetRecalc;
   end;
 
@@ -107,9 +109,8 @@ begin
       // dsServices.ParamByName('CUST_ID').AsInteger := ID;
       dsServices.ParamByName('CUSTOMER_ID').AsInteger := aCustomer_ID;
       dsServices.Open;
-      if aService_ID > -1 then
-        dsServices.Locate('SERV_ID', aService_ID, []);
       dsServicesHistory.Open;
+      ServiceID := aService_ID;
       ShowModal;
       Result := NeedRecalc;
     finally
@@ -326,6 +327,9 @@ begin
   except
     FfcSrvDiscontedFuture := clBlue;
   end;
+
+  if FServiceID > -1 then
+    dsServices.Locate('SERV_ID', FServiceID, []);
 end;
 
 procedure TCustSubscrHistoryForma.srcServicesHistoryStateChange(Sender: TObject);
@@ -342,7 +346,7 @@ begin
     dsServicesHistory.CloseOpen(True);
   end
   else
-    dsServices.cancel;
+    dsServices.Cancel;
 end;
 
 procedure TCustSubscrHistoryForma.actOkHstExecute(Sender: TObject);
@@ -352,19 +356,19 @@ begin
     dsServicesHistory.Post;
   end
   else
-    dsServicesHistory.cancel;
+    dsServicesHistory.Cancel;
 
   pnlBtnsHst.Visible := False;
 end;
 
 procedure TCustSubscrHistoryForma.actCancelExecute(Sender: TObject);
 begin
-  dsServices.cancel
+  dsServices.Cancel
 end;
 
 procedure TCustSubscrHistoryForma.actCancelHstExecute(Sender: TObject);
 begin
-  dsServicesHistory.cancel;
+  dsServicesHistory.Cancel;
   pnlBtnsHst.Visible := False;
 end;
 
@@ -503,7 +507,7 @@ begin
     exit;
 
   // Услуга не отключена выйдем
-  if ((dsServices.FieldByName('STATE_SGN').IsNull) and (dsServices['STATE_SGN'] = 1)) then
+  if ((dsServices.FieldByName('STATE_SGN').IsNull) or (dsServices['STATE_SGN'] = 1)) then
     exit;
 
   // Это точно автоблокировка

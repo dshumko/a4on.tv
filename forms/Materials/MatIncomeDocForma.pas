@@ -108,10 +108,11 @@ type
     procedure srcDocMatDataChange(Sender: TObject; Field: TField);
     procedure dbgDocMatColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbgDocMatDblClick(Sender: TObject);
+    procedure dsDocMatAfterOpen(DataSet: TDataSet);
   private
     { Private declarations }
-    fMatDocID: Integer;
-    fAddedMatID: Integer;
+    FMatDocID: Integer;
+    FAddedMatID: Integer;
     FReadOnly: Boolean;
     FNeedDelete: Boolean;
     FFileForSave: String;
@@ -124,10 +125,11 @@ type
     procedure SetFile(value: String);
     procedure ViewFile();
     procedure SaveFileToDB();
+    procedure ShowActUnit;
   public
     { Public declarations }
     property FileForSave: String read GetFile write SetFile;
-    property MatDocId: Integer read fMatDocID write SetMatDocID;
+    property MatDocId: Integer read FMatDocID write SetMatDocID;
   end;
 
 procedure MaterialIncomeDocument(MatDocId: Integer);
@@ -171,6 +173,8 @@ begin
 end;
 
 procedure TMatIncomeDocForm.SetReadOnlyMode(const readOnly: Boolean = true);
+var
+  vFullRights: Boolean;
 begin
   FReadOnly := readOnly;
   if dsDoc.State in [dsEdit, dsInsert] then
@@ -178,14 +182,15 @@ begin
   if dsDocMat.State in [dsEdit, dsInsert] then
     dsDocMat.Post;
 
+  vFullRights := dmMain.AllowedAction(rght_Materials_full);
   dbgDocMat.readOnly := readOnly;
   pnlMatAdd.Visible := not readOnly;
   dsMaterials.Active := not readOnly;
   srcDoc.AutoEdit := not readOnly;
   btnSave.Visible := not readOnly;
-  btnClose.Enabled := dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
+  btnClose.Enabled := vFullRights or dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
   btnClose.Visible := not readOnly;
-  btnOpen.Visible := readOnly and dmMain.AllowedAction(rght_Dictionary_MatDoc_Edit);
+  btnOpen.Visible := readOnly and vFullRights;
   pnlFile.Enabled := not readOnly;
 end;
 
@@ -195,24 +200,39 @@ begin
   dsDoc.ParamByName('DocumentType').value := DocumentType;
   dsDoc.Open;
 
-  if value = -1 then
+  if not(dmMain.AllowedAction(rght_Materials_full) //
+    or (dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit)) //
+    or (dmMain.AllowedAction(rght_Dictionary_MatDoc_Close))) then
   begin
-    dsDoc.Insert;
+    SetReadOnlyMode(true);
   end
   else
   begin
-    if dsDoc.RecordCount = 0 then
+    if ((value = -1) and (dmMain.AllowedAction(rght_Materials_full) //
+      or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit))) then
     begin
-      ActiveControl := edtD_N;
       dsDoc.Insert;
     end
     else
     begin
-      ActiveControl := edtMaterial;
-      if dsDoc['Doc_Closed'] <> 0 then
-        SetReadOnlyMode(true);
+      if dsDoc.RecordCount = 0 then
+      begin
+        ActiveControl := edtD_N;
+        if (dmMain.AllowedAction(rght_Materials_full) //
+          or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit)) then
+          dsDoc.Insert
+        else
+          SetReadOnlyMode(true);
+      end
+      else
+      begin
+        ActiveControl := edtMaterial;
+        if dsDoc['Doc_Closed'] <> 0 then
+          SetReadOnlyMode(true);
+      end;
     end;
   end;
+
   dsDoc.tag := value;
 
   if dsDoc.FieldByName('Doc_N').IsNull then
@@ -220,7 +240,7 @@ begin
   else
     Caption := dsDoc['Doc_N'] + ' ' + rsMadDocIn;
 
-  fMatDocID := dsDoc.FieldByName('DOC_ID').value;
+  FMatDocID := dsDoc.FieldByName('DOC_ID').value;
 end;
 
 procedure TMatIncomeDocForm.FormCreate(Sender: TObject);
@@ -265,7 +285,7 @@ end;
 procedure TMatIncomeDocForm.edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh;
   var DropDownForm: TCustomForm; DynParams: TDynVarsEh);
 begin
-  fAddedMatID := -1;
+  FAddedMatID := -1;
   DynParams['ID'].Clear;
   DynParams['NAME'].AsString := edtMaterial.Text;
   DynParams['DATASET'].AsRefObject := dsMaterials;
@@ -282,16 +302,15 @@ begin
   if DynParams.FindDynVar('dimension') <> nil then
     lblDem.Caption := rsQuant + ', ' + DynParams['dimension'].AsString;
 
-{$IFDEF IS_UNIT}
   actUNITS.Visible := (DynParams.FindDynVar('IS_UNIT') <> nil);
   edtQuant.Enabled := not actUNITS.Visible;
-{$ENDIF}
+
   if DynParams.FindDynVar('ID') <> nil then
   begin
-    fAddedMatID := DynParams['ID'].AsInteger;
+    FAddedMatID := DynParams['ID'].AsInteger;
     if actUNITS.Visible then
     begin
-      qnt := InputUnits(fMatDocID, fAddedMatID, -1);
+      qnt := InputUnits(fMatDocID, FAddedMatID, -1);
       if qnt >= 0 then
         edtQuant.value := qnt;
     end
@@ -588,6 +607,11 @@ begin
   end;
 end;
 
+procedure TMatIncomeDocForm.dsDocMatAfterOpen(DataSet: TDataSet);
+begin
+  ShowActUnit;
+end;
+
 procedure TMatIncomeDocForm.dsDocNewRecord(DataSet: TDataSet);
 begin
   dsDoc['DT_ID'] := DocumentType; // приходный документ
@@ -632,9 +656,7 @@ end;
 
 procedure TMatIncomeDocForm.srcDocMatDataChange(Sender: TObject; Field: TField);
 begin
-{$IFDEF IS_UNIT}
-  actUNITS.Visible := ((not dsDocMat.FieldByName('IS_UNIT').IsNull) and (dsDocMat['IS_UNIT']));
-{$ENDIF}
+  ShowActUnit;
 end;
 
 procedure TMatIncomeDocForm.srcDocStateChange(Sender: TObject);
@@ -755,6 +777,11 @@ begin
   qSaveFile.Transaction.StartTransaction;
   qSaveFile.ExecQuery;
   qSaveFile.Transaction.Commit;
+end;
+
+procedure TMatIncomeDocForm.ShowActUnit;
+begin
+  actUNITS.Visible := ((not dsDocMat.FieldByName('IS_UNIT').IsNull) and (dsDocMat['IS_UNIT']));
 end;
 
 end.

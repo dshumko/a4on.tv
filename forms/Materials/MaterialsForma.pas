@@ -13,7 +13,7 @@ uses
   FIBQuery, pFIBQuery, FIBDatabase, PropFilerEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping,
   ToolCtrlsEh,
   DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh, EhLibMTE, frxDBSet, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, Vcl.DBCtrls;
 
 type
   TMaterialsForm = class(TForm)
@@ -22,36 +22,18 @@ type
     actDelete: TAction;
     actEdit: TAction;
     actQuickFilter: TAction;
-    actInNew: TAction;
-    ActInDelete: TAction;
     dsRemain: TpFIBDataSet;
     srcRemain: TDataSource;
     pnlHead: TPanel;
     pnlMat: TPanel;
-    ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton9: TToolButton;
     pnlGroup: TPanel;
     DBGridGroups: TDBGridEh;
-    ToolBar3: TToolBar;
-    ToolButton10: TToolButton;
-    ToolButton12: TToolButton;
-    ToolButton13: TToolButton;
-    ToolButton16: TToolButton;
-    ToolButton18: TToolButton;
-    ToolButton20: TToolButton;
     Splitter2: TSplitter;
     dsMatGropups: TpFIBDataSet;
     srcMatGropups: TDataSource;
-    ActAllMaterials: TAction;
     actAddGroup: TAction;
     ActEditGroup: TAction;
     ActDelGroup: TAction;
-    ActPostGroup: TAction;
-    actCancelGroup: TAction;
     DBGridEh: TDBGridEh;
     dsMaterials: TpFIBDataSet;
     trWrite: TpFIBTransaction;
@@ -64,22 +46,18 @@ type
     DBGridIncome: TDBGridEh;
     PropStorage: TPropStorageEh;
     spl1: TSplitter;
-    actOutMaterials: TAction;
-    actMatOutEdit: TAction;
     tsJournal: TTabSheet;
     dbgJournal: TDBGridEh;
     dsJournal: TpFIBDataSet;
     srcJournal: TDataSource;
-    actInEdit: TAction;
     tsIncome: TTabSheet;
     dbgIncome: TDBGridEh;
     dsIncome: TpFIBDataSet;
     srcIncome: TDataSource;
-    btnRemainRecalc: TToolButton;
     actRemainRecalc: TAction;
     actOpenMatDoc: TAction;
     pnl1: TPanel;
-    btnPrintHistory: TBitBtn;
+    btnPrintHistory: TSpeedButton;
     actPrintHistory: TAction;
     frxReport: TfrxReport;
     tsItog: TTabSheet;
@@ -87,9 +65,7 @@ type
     drvFIB: TpFIBDataDriverEh;
     srcItog: TDataSource;
     dbgGridPivot: TDBGridEh;
-    pmRecalcAll: TPopupMenu;
     actRecalcAll: TAction;
-    N1: TMenuItem;
     tsMove: TTabSheet;
     tsOUT: TTabSheet;
     tsInventory: TTabSheet;
@@ -109,8 +85,6 @@ type
     dbgSN: TDBGridEh;
     trWriteDS: TpFIBTransaction;
     trReadDS: TpFIBTransaction;
-    btn1: TToolButton;
-    btnQuickFilter: TToolButton;
     pmPivot: TPopupMenu;
     miRowHight: TMenuItem;
     frxMaterials: TfrxDBDataset;
@@ -123,18 +97,18 @@ type
     actChangeSerial: TAction;
     miN2: TMenuItem;
     Panel1: TPanel;
-    btnShowSN: TBitBtn;
+    btnShowSN: TSpeedButton;
     Panel2: TPanel;
-    btnShowSN1: TBitBtn;
+    btnShowSN1: TSpeedButton;
     Panel3: TPanel;
-    btnShowSN2: TBitBtn;
+    btnShowSN2: TSpeedButton;
     Panel4: TPanel;
-    btnShowSN3: TBitBtn;
+    btnShowSN3: TSpeedButton;
     actShowSN: TAction;
     pnl2: TPanel;
-    btnactCnPrefixWizard: TBitBtn;
+    btnactCnPrefixWizard: TSpeedButton;
     Panel5: TPanel;
-    btnItog: TBitBtn;
+    btnItog: TSpeedButton;
     miSep1: TMenuItem;
     miStateChange: TMenuItem;
     miN01: TMenuItem;
@@ -151,13 +125,13 @@ type
     pmgSaveSelection: TMenuItem;
     pmgSep1: TMenuItem;
     miRefresh: TMenuItem;
-    btnPrintIncome: TBitBtn;
-    btnPrintMove: TBitBtn;
-    btnPrintInvent: TBitBtn;
-    btnPrintOut: TBitBtn;
+    btnPrintIncome: TSpeedButton;
+    btnPrintMove: TSpeedButton;
+    btnPrintInvent: TSpeedButton;
+    btnPrintOut: TSpeedButton;
     miPrint: TMenuItem;
     Panel6: TPanel;
-    BitBtn2: TBitBtn;
+    BitBtn2: TSpeedButton;
     printGridEh: TPrintDBGridEh;
     actPrintGrid: TAction;
     miPrintGrid: TMenuItem;
@@ -177,9 +151,42 @@ type
     dlgOpen: TOpenDialog;
     qSaveFile: TpFIBQuery;
     dlgSave: TSaveDialog;
+    actCopyID: TAction;
+    actOpenDocs: TAction;
+    mtGroups: TMemTableEh;
+    drvFibGroups: TpFIBDataDriverEh;
+    miN3: TMenuItem;
+    miN4: TMenuItem;
+    miAddGroup: TMenuItem;
+    miActEditGroup: TMenuItem;
+    miME: TMenuItem;
+    miNew: TMenuItem;
+    miEdit: TMenuItem;
+    miN5: TMenuItem;
+    miRemainRecalc: TMenuItem;
+    miN7: TMenuItem;
+    miOpenDocs1: TMenuItem;
+    miQuickFilter: TMenuItem;
+    miN8: TMenuItem;
+    miActDelGroup: TMenuItem;
+    miN9: TMenuItem;
+    miDelete: TMenuItem;
+    pnlMatTop: TPanel;
+    pnlBreadCrumps: TPanel;
+    pnlMatBtns: TPanel;
+    Panel7: TPanel;
+    btnAddGroup: TSpeedButton;
+    btnActEditGroup: TSpeedButton;
+    btnActDelGroup: TSpeedButton;
+    btnNew: TSpeedButton;
+    btnQuickFilter: TSpeedButton;
+    btnOpenDocs: TSpeedButton;
+    btnEdit2: TSpeedButton;
+    btnDelete: TSpeedButton;
+    btnRemainRecalc: TSpeedButton;
+    miN6: TMenuItem;
+    miRecalcAll: TMenuItem;
     procedure actAddGroupExecute(Sender: TObject);
-    procedure ActAllMaterialsExecute(Sender: TObject);
-    procedure actCancelGroupExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -190,10 +197,8 @@ type
     procedure srcDataSourceStateChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure srcDataSourceDataChange(Sender: TObject; Field: TField);
-    procedure ActPostGroupExecute(Sender: TObject);
     procedure actQuickFilterExecute(Sender: TObject);
     procedure DbGridMatDblClick(Sender: TObject);
-    procedure srcRemainDataChange(Sender: TObject; Field: TField);
     procedure btn1Click(Sender: TObject);
     procedure DBGridEhGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
@@ -234,6 +239,11 @@ type
     procedure btnFileAddClick(Sender: TObject);
     procedure btnFileDelClick(Sender: TObject);
     procedure btnSavePhoto1Click(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
+    procedure actOpenDocsExecute(Sender: TObject);
+    procedure miN6Click(Sender: TObject);
+    procedure srcMatGropupsDataChange(Sender: TObject; Field: TField);
+    procedure lblBcClick(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -260,10 +270,12 @@ type
     procedure ShowSNforItog;
     procedure ShowSNforInvent;
     procedure ShowSNforOut;
+    procedure EditGroup(const new: Boolean = False);
     procedure SetColumnVisibility(grid: TDBGridEh; const fld: string; vsbl: Boolean);
     procedure dbGridGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure LoadReportBody(const fReport_ID: Integer);
     procedure SetFrozen(const v: Integer);
+    procedure GenBreadCrumps();
   public
     { Public declarations }
   end;
@@ -274,11 +286,13 @@ var
 implementation
 
 uses
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Math, Winapi.ShellAPI,
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
+  System.Types, System.Math, System.StrUtils,
+  Winapi.ShellAPI,
   AtrCommon, AtrStrUtils,
   DM, MAIN, MaterialForma, ReportPreview,
   RequestForma, MatCorrectionDocForma, MatIncomeDocForma,
-  MatOutDocForma, TextEditForma, MatMoveDocForma,
+  MatOutDocForma, TextEditForma, MatMoveDocForma, MatDocsForma,
   MatInventoryDocForma, CustomerForma, MatGroupForma;
 
 const
@@ -310,19 +324,22 @@ begin
     trRead.Rollback;
   crsr := Screen.Cursor;
   Screen.Cursor := crHourGlass;
-  DBGridEh.Visible := false;
+  DBGridEh.Visible := False;
   DBGridEh.FrozenCols := 0;
   DBGridEh.Columns.Clear;
   lk_Col := DBGridEh.Columns.Add;
   // lk_Col.Color         := DBGridEh.FixedColor;
   lk_Col.FieldName := 'NAME';
   lk_Col.Title.Caption := rsTitle;
-  lk_Col.Title.TitleButton := True;
+  lk_Col.Title.TitleButton := true;
   lk_Col.Width := 320;
   lk_Col.Tag := 666;
-  lk_Col.Footer.ValueType := fvtStaticText;
-  lk_Col.Footer.Alignment := taLeftJustify;
-  lk_Col.Footer.Value := rsItogo;
+  //lk_Col.Footer.ValueType := fvtStaticText;
+  //lk_Col.Footer.Alignment := taLeftJustify;
+  //lk_Col.Footer.Value := rsItogo;
+  lk_Col.Footer.ValueType := fvtCount;
+  lk_Col.Footer.FieldName := lk_FldName;
+  lk_Col.Footer.Alignment := taRightJustify;
 
   lk_FldName := FldPrfx + 'TOTAL';
   lk_Col := DBGridEh.Columns.Add;
@@ -330,7 +347,7 @@ begin
   lk_Col.DisplayFormat := ',#0.###';
   lk_Col.FieldName := lk_FldName;
   lk_Col.Title.Caption := rsItogQuant;
-  lk_Col.Title.TitleButton := True;
+  lk_Col.Title.TitleButton := true;
   lk_Col.Width := 62;
   lk_Col.Footer.ValueType := fvtSum;
   lk_Col.Footer.FieldName := lk_FldName;
@@ -341,13 +358,13 @@ begin
   lk_Col := DBGridEh.Columns.Add;
   lk_Col.FieldName := 'M_NUMBER';
   lk_Col.Title.Caption := rsNumber;
-  lk_Col.Title.TitleButton := True;
+  lk_Col.Title.TitleButton := true;
   lk_Col.Width := 50;
 
   lk_Col := DBGridEh.Columns.Add;
   lk_Col.FieldName := 'DIMENSION';
   lk_Col.Title.Caption := rsMeasure;
-  lk_Col.Title.TitleButton := True;
+  lk_Col.Title.TitleButton := true;
   lk_Col.Footer.ValueType := fvtCount;
   lk_Col.Width := 30;
 
@@ -356,7 +373,7 @@ begin
     lk_Col := DBGridEh.Columns.Add;
     lk_Col.FieldName := 'COST';
     lk_Col.Title.Caption := rsCost;
-    lk_Col.Title.TitleButton := True;
+    lk_Col.Title.TitleButton := true;
     lk_Col.DisplayFormat := '#,###.##';
     lk_Col.Width := 50;
   end;
@@ -364,7 +381,7 @@ begin
   lk_Col := DBGridEh.Columns.Add;
   lk_Col.FieldName := 'TYPE_NAME';
   lk_Col.Title.Caption := rsMatType;
-  lk_Col.Title.TitleButton := True;
+  lk_Col.Title.TitleButton := true;
   lk_Col.Width := 50;
 
   if TrTemp.InTransaction then
@@ -377,7 +394,7 @@ begin
   try
     QrTemp.ExecQuery;
   except
-    DBGridEh.Visible := True;
+    DBGridEh.Visible := true;
     exit;
   end;
   lk_vars_s := '';
@@ -402,7 +419,7 @@ begin
     lk_Col.FieldName := lk_FldName;
     lk_Col.DisplayFormat := ',#0.###';
     lk_Col.Title.Caption := rsMatPlace + QrTemp.FN('NAME').AsString + rsPQuant;
-    lk_Col.Title.TitleButton := True;
+    lk_Col.Title.TitleButton := true;
     lk_Col.Width := 56;
     lk_Col.Tag := 1; // будем окрашивать по этому признаку
     lk_Col.Footer.ValueType := fvtSum;
@@ -417,7 +434,7 @@ begin
       lk_Col.FieldName := lk_FldNameCst;
       lk_Col.DisplayFormat := ',#0.###';
       lk_Col.Title.Caption := rsMatPlace + QrTemp.FN('NAME').AsString + rsSummaS;
-      lk_Col.Title.TitleButton := True;
+      lk_Col.Title.TitleButton := true;
       lk_Col.Width := 56;
       lk_Col.Tag := 1; // будем окрашивать по этому признаку
       lk_Col.Footer.ValueType := fvtSum;
@@ -447,7 +464,7 @@ begin
     lk_Col.DisplayFormat := ',#0.###';
     lk_Col.FieldName := lk_FldNameCst;
     lk_Col.Title.Caption := rsItogSum;
-    lk_Col.Title.TitleButton := True;
+    lk_Col.Title.TitleButton := true;
     lk_Col.Width := 62;
     lk_Col.Footer.ValueType := fvtSum;
     lk_Col.Footer.FieldName := lk_FldNameCst;
@@ -458,7 +475,7 @@ begin
   lk_Col := DBGridEh.Columns.Add;
   lk_Col.FieldName := 'DESCRIPTION';
   lk_Col.Title.Caption := rsClmnNotice;
-  lk_Col.Title.TitleButton := True;
+  lk_Col.Title.TitleButton := true;
   lk_Col.Width := 255;
 
   with dsMaterials.SQLs.SelectSQL do
@@ -474,6 +491,7 @@ begin
     Add('  ,M_NUMBER  D_VARCHAR20');
     Add('  ,DIMENSION D_VARCHAR10');
     Add('  ,COST D_N15_3');
+    Add('  ,PCE D_N15_3');
     Add('  ,DESCRIPTION D_NOTICE');
     Add('  ,BEST_SHIPPER_ID D_INTEGER ');
     Add('  ,BEST_SHIPPER D_VARCHAR255');
@@ -493,18 +511,27 @@ begin
     Add(lk_vars_s);
     Add(')AS ');
     Add('BEGIN ');
-    // Add('GR_ID = MG_ID;');
+    Add('MG_ID = iif(MG_ID = -999, null, MG_ID);'); // -999 это параметр для материалов без группы
     Add('FOR');
     Add('  select M_ID, NAME, DIMENSION, M_NUMBER, DESCRIPTION, IS_UNIT, COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,');
-    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, m.SOLD, m.RENT, m.LOAN  ');
+    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, m.SOLD, m.RENT, m.LOAN, m.PCE  ');
     Add('  from MATERIALS m');
     Add('    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and o.O_TYPE = 29) ');
     Add('    left outer join OBJECTS t on (t.O_ID = m.M_Type and t.O_TYPE = 48) ');
     Add('  where ((m.deleted =0 and :SHOW_DELETED = 0) or (:show_deleted = 1))');
-    Add('    and ((:MG_ID = -1) or (((m.MG_ID = :MG_ID) and (not :MG_ID is null)) or ((coalesce(m.MG_ID, -1) = -1) and (:MG_ID is null))))');
+    Add('    and ((:MG_ID = -1) or (((');
+    // выводим группу и ее детей
+    // Add('           m.MG_ID = :MG_ID
+    Add('m.MG_ID in (with recursive GroupsTree');
+    Add('   as (select mp.Mg_Id, mp.Parent_Id from MATERIALS_GROUP mp where mp.MG_ID = :MG_ID');
+    Add('       union all');
+    Add('       select mc.Mg_Id, mc.Parent_Id from MATERIALS_GROUP mc inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id)');
+    Add('    select Mg_Id from GroupsTree');
+    Add('    )');
+    Add(') and (not :MG_ID is null)) or ((coalesce(m.MG_ID, -1) = -1) and (:MG_ID is null))))');
     Add('  order by NAME');
     Add('  into :M_ID, :NAME, :DIMENSION, :M_NUMBER, :DESCRIPTION, :IS_UNIT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,');
-    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :SOLD, :RENT, :LOAN ');
+    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :SOLD, :RENT, :LOAN, :PCE ');
     Add('  DO BEGIN');
     Add('    BL_ID = null; BL_NAME = null;');
     Add('    select first 1 b.Bl_Id, b.Bl_Name from Blob_Tbl b where b.Owner_Id = :M_ID and b.Bl_Type = 4 into :BL_ID, :BL_NAME;');
@@ -524,7 +551,7 @@ begin
   except
   end;
   SetFrozen(FFrozencols);
-  DBGridEh.Visible := True;
+  DBGridEh.Visible := true;
 
   Screen.Cursor := crsr;
 end;
@@ -618,6 +645,11 @@ begin
   dsSerials.Refresh;
 end;
 
+procedure TMaterialsForm.miN6Click(Sender: TObject);
+begin
+  EditGroup(true);
+end;
+
 procedure TMaterialsForm.miRefreshClick(Sender: TObject);
 var
   bm: TbookMark;
@@ -658,10 +690,10 @@ begin
 
   vis := dbGrid.SearchPanel.Visible;
   try
-    dbGrid.SearchPanel.Visible := True;
+    dbGrid.SearchPanel.Visible := true;
     dbGrid.SearchPanel.SearchingText := dbGrid.SelectedField.AsString;
     dbGrid.SearchPanel.ApplySearchFilter;
-    dbGrid.SearchPanel.Active := True;
+    dbGrid.SearchPanel.Active := true;
   except
     dbGrid.SearchPanel.CancelSearchFilter;
     dbGrid.SearchPanel.Visible := vis;
@@ -713,47 +745,48 @@ end;
 
 procedure TMaterialsForm.actAddGroupExecute(Sender: TObject);
 begin
+  EditGroup(true);
+end;
+
+procedure TMaterialsForm.EditGroup(const new: Boolean = False);
+var
+  id, pid: Integer;
+begin
   if (not(FAccessFull or FAccessMat)) then
     exit;
+
   if (dsMaterials.State in [dsInsert, dsEdit]) then
     dsMaterials.Post;
-  dsMatGropups.Insert;
 
-  MatGroupForm := TMatGroupForm.Create(Application);
-  try
-    if MatGroupForm.ShowModal = mrOk then
-    begin
-      dsMatGropups.Post;
-    end
-    else
-      dsMatGropups.Cancel;
-  finally
-    FreeAndNil(MatGroupForm);
+  id := -1;
+  pid := -3;
+  if (not srcMatGropups.DataSet.FieldByName('MG_ID').IsNull) then
+    pid := srcMatGropups.DataSet['MG_ID'];
+
+  if not new then
+  begin
+    // служебные группы, редактирование запрещено
+    if (srcMatGropups.DataSet.FieldByName('MG_ID').IsNull) or (srcMatGropups.DataSet.FieldByName('MG_ID').AsInteger < 0)
+    then
+      exit;
+    id := srcMatGropups.DataSet['MG_ID'];
   end;
-end;
 
-procedure TMaterialsForm.ActAllMaterialsExecute(Sender: TObject);
-begin
-  //
-  ActAllMaterials.Checked := not ActAllMaterials.Checked;
-  dsMaterials.Close;
-  // Показ всех или группы
-  if ActAllMaterials.Checked then
-    dsMaterials.ParamByName('IN_GR').AsInteger := 0
-  else
-    dsMaterials.ParamByName('IN_GR').AsInteger := 1;
-  dsMaterials.Open;
-
-  pnlGroup.Enabled := not ActAllMaterials.Checked;
-  pnlGroup.Visible := not ActAllMaterials.Checked;
-  actAddGroup.Enabled := pnlGroup.Enabled;
-  ActEditGroup.Enabled := pnlGroup.Enabled;
-  ActDelGroup.Enabled := pnlGroup.Enabled;
-end;
-
-procedure TMaterialsForm.actCancelGroupExecute(Sender: TObject);
-begin
-  dsMatGropups.Cancel;
+  if EditMatGroup(id, pid) then
+  begin
+    with mtGroups do
+    begin
+      // srcMatGropups.DataSet.Locate('MG_ID', id, []); // не работает, поэтому костылим
+      dsMaterials.Close;
+      srcMatGropups.DataSet.Close;
+      srcMatGropups.DataSet.Open;
+      srcMatGropups.DataSet.Last;
+      srcMatGropups.DataSet.First;
+      while (not srcMatGropups.DataSet.Eof) and (srcMatGropups.DataSet.FieldByName('MG_ID').AsInteger <> id) do
+        srcMatGropups.DataSet.Next;
+      dsMaterials.Open;
+    end;
+  end;
 end;
 
 procedure TMaterialsForm.actChangeSerialExecute(Sender: TObject);
@@ -792,6 +825,11 @@ begin
     dsSerials.Locate('SERIAL', SERIAL, []);
 end;
 
+procedure TMaterialsForm.actCopyIDExecute(Sender: TObject);
+begin
+  A4MainForm.CopyDataSetFldToClipboard(dsMaterials, 'M_ID');
+end;
+
 procedure TMaterialsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
@@ -803,12 +841,12 @@ begin
       if (((Components[i] as TDBGridEh).DataGrouping.GroupLevels.Count = 0)) then
       begin
         (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
-          Self.Name + '.' + Components[i].Name, false);
+          Self.Name + '.' + Components[i].Name, False);
       end;
     end;
   Action := caFree;
   dsMaterials.Close;
-  dsMatGropups.Close;
+  srcMatGropups.DataSet.Close;
   MaterialsForm := nil;
 end;
 
@@ -819,8 +857,8 @@ begin
   srcDataSource.DataSet.Insert;
   MaterialForm := TMaterialForm.Create(Application);
   try
-    if not dsMatGropups.FieldByName('MG_ID').IsNull then
-      MaterialForm.dblMatGroup.Value := dsMatGropups['MG_ID'];
+    if not srcMatGropups.DataSet.FieldByName('MG_ID').IsNull then
+      MaterialForm.dblMatGroup.Value := srcMatGropups.DataSet['MG_ID'];
 
     if MaterialForm.ShowModal = mrOk then
     begin
@@ -842,11 +880,22 @@ begin
 end;
 
 procedure TMaterialsForm.ActDelGroupExecute(Sender: TObject);
+var
+  s: string;
 begin
   if (not(FAccessFull or FAccessMat)) then
     exit;
-  if (MessageDlg(rsDeleteMaterialGroup + rsEOL + rsMatNotDelete, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-    dsMatGropups.Delete;
+
+  // служебные группы
+  if (srcMatGropups.DataSet.FieldByName('MG_ID').AsInteger = -1) or
+    (srcMatGropups.DataSet.FieldByName('MG_ID').AsInteger = -999) then
+    exit;
+
+  if not srcMatGropups.DataSet.FieldByName('MG_NAME').IsNull then
+    s := srcMatGropups.DataSet['MG_NAME'];
+
+  if (MessageDlg(Format(rsDeleteRecord, [s]) + rsEOL + rsMatNotDelete, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    srcMatGropups.DataSet.Delete;
 end;
 
 procedure TMaterialsForm.actEditExecute(Sender: TObject);
@@ -869,38 +918,7 @@ end;
 
 procedure TMaterialsForm.ActEditGroupExecute(Sender: TObject);
 begin
-  if (not(FAccessFull or FAccessMat)) then
-    exit;
-
-  if (dsMatGropups.FieldByName('MG_ID').IsNull) then
-    exit;
-
-  if (dsMatGropups.FieldByName('MG_ID').AsInteger = -1) then
-    exit;
-
-  if (dsMatGropups.State in [dsInsert, dsEdit]) then
-    dsMaterials.Post;
-
-  dsMatGropups.Edit;
-  MatGroupForm := TMatGroupForm.Create(Application);
-  try
-    if MatGroupForm.ShowModal = mrOk then
-    begin
-      dsMatGropups.Post;
-    end
-    else
-      dsMatGropups.Cancel;
-  finally
-    FreeAndNil(MatGroupForm);
-  end;
-end;
-
-procedure TMaterialsForm.ActPostGroupExecute(Sender: TObject);
-begin
-  if ((FAccessFull or FAccessMat)) then
-    dsMatGropups.Post
-  else
-    dsMatGropups.Cancel;
+  EditGroup(False);
 end;
 
 procedure TMaterialsForm.actQuickFilterExecute(Sender: TObject);
@@ -917,9 +935,9 @@ begin
 
   if not actQuickFilter.Checked then
   begin
-    DBGridGroups.DataSource.DataSet.Filtered := false;
-    DBGridEh.DataSource.DataSet.Filtered := false;
-    DBGridIncome.DataSource.DataSet.Filtered := false;
+    DBGridGroups.DataSource.DataSet.Filtered := False;
+    DBGridEh.DataSource.DataSet.Filtered := False;
+    DBGridIncome.DataSource.DataSet.Filtered := False;
   end;
 end;
 
@@ -930,7 +948,7 @@ end;
 
 procedure TMaterialsForm.btnFileAddClick(Sender: TObject);
 var
-  FileName, docName: String;
+  docName: String;
   FileForSave: String;
   fs: TFileStream;
 begin
@@ -958,7 +976,7 @@ begin
     end;
   end;
 
-  dsFiles.CloseOpen(True);
+  dsFiles.CloseOpen(true);
 end;
 
 procedure TMaterialsForm.btnFileDelClick(Sender: TObject);
@@ -977,7 +995,7 @@ begin
   if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     dsFiles.Delete;
-    dsFiles.CloseOpen(True);
+    dsFiles.CloseOpen(true);
   end;
 end;
 
@@ -987,7 +1005,7 @@ var
   dbGrid: TDBGridEh;
   printDoc: Boolean;
 begin
-  printDoc := True;
+  printDoc := true;
   if pgcInOut.ActivePage = tsIncome then
     dbGrid := dbgIncome
   else if pgcInOut.ActivePage = tsMove then
@@ -998,7 +1016,7 @@ begin
     dbGrid := dbgOut
   else if pgcInOut.ActivePage = tsSerials then
   begin
-    printDoc := false;
+    printDoc := False;
     dbGrid := dbgSN;
   end
   else
@@ -1015,13 +1033,13 @@ begin
       then
         frxReport.Variables['DOC_ID'] := dbGrid.DataSource.DataSet['DOC_ID'];
 
-      frxReport.PrepareReport(True);
-      printDoc := True;
+      frxReport.PrepareReport(true);
+      printDoc := true;
     end;
   end
   else
   begin
-    printDoc := false;
+    printDoc := False;
     if pgcInOut.ActivePage = tsSerials then
     begin
       ri := dmMain.GET_ID_REPORT_BY_PATH('Материал_СН');
@@ -1033,8 +1051,8 @@ begin
         then
           frxReport.Variables['MAT_ID'] := dbGrid.DataSource.DataSet['M_Id'];
 
-        printDoc := True;
-        frxReport.PrepareReport(True);
+        printDoc := true;
+        frxReport.PrepareReport(true);
       end;
     end;
 
@@ -1105,7 +1123,7 @@ procedure TMaterialsForm.DBGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos
   GlobPnt: TPoint; // "лишняя" переменная для удобства отладки и читабельности кода
 }
 begin
-  Processed := false;
+  Processed := False;
   {
     if (dsMaterials.RecordCount = 0) or (dsMaterials.FieldByName('BL_ID').IsNull) or
     (dsMaterials.FieldByName('Bl_Name').IsNull) then
@@ -1223,14 +1241,14 @@ var
   b: Boolean;
 begin
   b := ((Sender as TDataSource).DataSet.State = dsBrowse);
-  ToolButton1.Enabled := b;
-  ToolButton2.Enabled := b;
-  ToolButton3.Enabled := b;
+  actNew.Enabled := b;
+  actEdit.Enabled := b;
+  actDelete.Enabled := b;
 end;
 
-procedure TMaterialsForm.srcRemainDataChange(Sender: TObject; Field: TField);
+procedure TMaterialsForm.srcMatGropupsDataChange(Sender: TObject; Field: TField);
 begin
-  ActInDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and actInNew.Enabled;
+  GenBreadCrumps();
 end;
 
 procedure TMaterialsForm.FormCreate(Sender: TObject);
@@ -1251,21 +1269,30 @@ begin
   actPrintGrid.Visible := dmMain.AllowedAction(rght_Reports_view);
 
   b := FAccessFull or FAccessMat;
+
   InitDataSet;
-  dsMatGropups.Open;
+  srcMatGropups.DataSet.Open;
+  srcMatGropups.DataSet.Last;
+  srcMatGropups.DataSet.First;
   dsMaterials.Open;
 
-  actNew.Enabled := b;
-  actDelete.Enabled := b;
-  actEdit.Enabled := b;
-  actAddGroup.Enabled := b;
-  ActEditGroup.Enabled := b;
-  ActDelGroup.Enabled := b;
-  actInNew.Enabled := FAccessFull;
-  actInEdit.Visible := FAccessFull;
-  ActInDelete.Visible := FAccessFull;
+  actNew.Visible := b;
+  actDelete.Visible := b;
+  actEdit.Visible := b;
+  actAddGroup.Visible := b;
+  ActEditGroup.Visible := b;
+  ActDelGroup.Visible := b;
+
   actChangeSerial.Visible := FAccessFull or FAccessMat;
   actRemainRecalc.Visible := FAccessFull or FAccessMat;
+  actOpenDocs.Visible := b //
+    or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit) //
+    or dmMain.AllowedAction(rght_Materials_full) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocNew) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocMove) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocOUT) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocInvent);
+
   pgcInOut.ActivePage := tsIn;
 
   if (TryStrToInt(dmMain.GetIniValue('MATGRIDFROZEN'), FFrozencols)) then
@@ -1329,12 +1356,12 @@ begin
   else
     dbgSN.AllowedOperations := [];
 
-  SetColumnVisibility(DBGridIncome, 'SERIAL', false);
-  SetColumnVisibility(dbgIncome, 'SERIAL', false);
-  SetColumnVisibility(dbgMove, 'SERIAL', false);
-  SetColumnVisibility(dbgInvent, 'SERIAL', false);
-  SetColumnVisibility(dbgOut, 'SERIAL', false);
-  SetColumnVisibility(dbgGridPivot, 'SERIAL', false);
+  SetColumnVisibility(DBGridIncome, 'SERIAL', False);
+  SetColumnVisibility(dbgIncome, 'SERIAL', False);
+  SetColumnVisibility(dbgMove, 'SERIAL', False);
+  SetColumnVisibility(dbgInvent, 'SERIAL', False);
+  SetColumnVisibility(dbgOut, 'SERIAL', False);
+  SetColumnVisibility(dbgGridPivot, 'SERIAL', False);
 
   miStateChange.Visible := FAccessFull;
   miSep1.Visible := miStateChange.Visible;
@@ -1345,7 +1372,6 @@ procedure TMaterialsForm.srcDataSourceDataChange(Sender: TObject; Field: TField)
 begin
   actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and actNew.Enabled;
   actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and actNew.Enabled;
-  actInNew.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and (FAccessFull or FAccessMat);
 
   tsSerials.TabVisible := (not dsMaterials.FieldByName('IS_UNIT').IsNull) and (dsMaterials['IS_UNIT'] = 1);
 end;
@@ -1371,7 +1397,6 @@ begin
   QrTemp.SQL.Add('    execute procedure Material_Remain_Recalc(:M_Id);');
   QrTemp.SQL.Add('  end');
   QrTemp.SQL.Add('end');
-
   try
     QrTemp.Transaction.StartTransaction;
     QrTemp.ExecQuery;
@@ -1391,15 +1416,16 @@ procedure TMaterialsForm.actRemainRecalcExecute(Sender: TObject);
 var
   mid: Integer;
 begin
-  if dsMaterials.FieldByName('M_ID').IsNull then
-    exit;
-
   if TrTemp.InTransaction then
     TrTemp.Rollback;
   mid := dsMaterials.FieldByName('M_ID').AsInteger;
   QrTemp.Transaction := trWrite;
   QrTemp.SQL.Text := 'execute procedure Material_Remain_Recalc(:M_Id)';
-  QrTemp.ParamByName('M_ID').AsInteger := mid;
+  if not dsMaterials.FieldByName('M_ID').IsNull then
+    QrTemp.ParamByName('M_ID').AsInteger := mid
+  else
+    QrTemp.ParamByName('M_ID').Clear;
+
   try
     QrTemp.Transaction.StartTransaction;
     QrTemp.ExecQuery;
@@ -1467,6 +1493,15 @@ begin
   end;
 end;
 
+procedure TMaterialsForm.actOpenDocsExecute(Sender: TObject);
+begin
+  if not Assigned(MatDocsForm) then
+  begin
+    MatDocsForm := TMatDocsForm.Create(Application);
+  end;
+  MatDocsForm.Show;
+end;
+
 procedure TMaterialsForm.dbgIncomeDblClick(Sender: TObject);
 begin
   actOpenMatDoc.Execute;
@@ -1475,10 +1510,7 @@ end;
 procedure TMaterialsForm.actPrintGridExecute(Sender: TObject);
 begin
   if (ActiveControl is TDBGridEh) then
-  begin
-    printGridEh.DBGridEh := (ActiveControl as TDBGridEh);
-    printGridEh.Preview;
-  end;
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TMaterialsForm.actPrintHistoryExecute(Sender: TObject);
@@ -1518,7 +1550,7 @@ begin
   if ReportID > 0 then
     frxReport.Variables['MATERIAL'] := dsMaterials['M_ID'];
 
-  frxReport.PrepareReport(True);
+  frxReport.PrepareReport(true);
   frxReport.ShowPreparedReport;
 end;
 
@@ -1641,7 +1673,7 @@ begin
     dsRemain.ParamByName('qnt_clause').Value := 'iif(u.Serial is null, m.Mr_Quant, 1)';
     dsRemain.ParamByName('sn_clause').Value := 'u.Serial';
     dsRemain.ParamByName('join_clause').Value := ' left outer join Material_Unit u on ' +
-      '(u.M_Id = t.M_Id and u.Owner_Type = 0 and u.Owner = m.WH_ID)';
+      '(u.M_Id = t.M_Id and u.Owner_Type = 0 and u.Owner = m.WH_ID and u.state = 0)';
   end
   else
   begin
@@ -1804,6 +1836,88 @@ begin
 
   if (DBGridEh.Columns.Count >= FFrozencols) then
     DBGridEh.FrozenCols := FFrozencols;
+end;
+
+procedure TMaterialsForm.lblBcClick(Sender: TObject);
+var
+  i, c: Integer;
+  s, b: string;
+  bm: TbookMark;
+begin
+  if not(Sender is TLabel) then
+    exit;
+
+  c := (Sender as TLabel).Tag;
+  for i := 0 to c - 1 do
+  begin
+    b := (pnlBreadCrumps.Controls[i] as TLabel).Caption;
+    s := s + b.TrimRight([' ', '>']) + ' > ';
+  end;
+
+  if not s.IsEmpty then
+  begin
+    s := s.TrimRight([' ', '>']);
+    srcMatGropups.DataSet.Locate('PATH', s, []);
+    {
+      srcMatGropups.DataSet.DisableControls;
+      bm := srcMatGropups.DataSet.GetBookmark;
+      i := 0;
+      srcMatGropups.DataSet.First;
+      while not srcMatGropups.DataSet.eof do begin
+      if srcMatGropups.DataSet.FieldByName('PATH').AsString = s then begin
+      bm := srcMatGropups.DataSet.GetBookmark;
+      end;
+      srcMatGropups.DataSet.Next;
+      end;
+      srcMatGropups.DataSet.GotoBookmark(bm);
+      srcMatGropups.DataSet.EnableControls;
+    }
+  end;
+end;
+
+procedure TMaterialsForm.GenBreadCrumps();
+var
+  i: Integer;
+  s: string;
+  WindowLocked: Boolean;
+  bc: TStringDynArray;
+begin
+  WindowLocked := LockWindowUpdate(Self.Handle);
+  try
+    while pnlBreadCrumps.ControlCount > 0 do
+      pnlBreadCrumps.Controls[pnlBreadCrumps.ControlCount - 1].Free;
+    if not srcMatGropups.DataSet.FieldByName('PATH').IsNull then
+      s := srcMatGropups.DataSet.FieldByName('PATH').AsString;
+
+    bc := SplitString(s, '>');
+    for i := 0 to Length(bc) - 1 do
+    begin
+      with TLabel.Create(Self) do
+      begin
+        Caption := Trim(bc[i]);
+        if i <> (Length(bc) - 1) then
+        begin
+          Caption := Caption + ' > ';
+          Cursor := crHandPoint;
+          OnClick := lblBcClick;
+        end;
+        AutoSize := true;
+        Name := 'lblbc' + IntToStr(i);
+        Parent := pnlBreadCrumps;
+        Left := pnlBreadCrumps.Width;
+        Top := 0;
+        Align := alLeft;
+        TabOrder := i + 1;
+        Tag := i + 1;
+        ParentFont := False;
+        Layout := tlCenter;
+        Font.Size := 10;
+      end;
+    end
+  finally
+    if WindowLocked then
+      LockWindowUpdate(0);
+  end;
 end;
 
 end.

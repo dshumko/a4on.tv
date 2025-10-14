@@ -145,20 +145,24 @@ begin
 end;
 
 procedure TMatMoveDocForm.SetReadOnlyMode(const readOnly: Boolean = true);
+var
+  vFullRights: Boolean;
 begin
   FReadOnly := readOnly;
   if dsDoc.State in [dsEdit, dsInsert] then
     dsDoc.Cancel;
   if dsDocMat.State in [dsEdit, dsInsert] then
     dsDocMat.Cancel;
+
+  vFullRights := dmMain.AllowedAction(rght_Materials_full);
   dbgDocMat.readOnly := readOnly;
   pnlMatAdd.Visible := not readOnly;
   dsMaterials.Active := not readOnly;
   srcDoc.AutoEdit := not readOnly;
   btnSave.Visible := not readOnly;
-  btnClose.Enabled := dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
+  btnClose.Enabled := vFullRights or dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
   btnClose.Visible := not readOnly;
-  btnOpen.Visible := readOnly and dmMain.AllowedAction(rght_Dictionary_MatDoc_Edit);
+  btnOpen.Visible := readOnly and vFullRights;
 end;
 
 procedure TMatMoveDocForm.SetMatDocID(value: Integer);
@@ -167,19 +171,16 @@ begin
   dsDoc.ParamByName('DocumentType').value := DocumentType;
   dsDoc.Open;
 
-  if (value = -1) then
+  if not(dmMain.AllowedAction(rght_Materials_full) //
+    or (dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit)) //
+    or (dmMain.AllowedAction(rght_Dictionary_MatDoc_Close))) then
   begin
-    ActiveControl := edtD_N;
-    dsDoc.Insert;
-    if (FAccessMove and (not FFullAccess)) then
-    begin
-      deD_DATE.value := Now();
-      deD_DATE.readOnly := true;
-    end;
+    SetReadOnlyMode(true);
   end
   else
   begin
-    if (dsDoc.RecordCount = 0) then
+    if ((value = -1) and (dmMain.AllowedAction(rght_Materials_full) //
+      or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit))) then
     begin
       ActiveControl := edtD_N;
       dsDoc.Insert;
@@ -191,9 +192,24 @@ begin
     end
     else
     begin
-      ActiveControl := edtMaterial;
-      if dsDoc['Doc_Closed'] <> 0 then
-        SetReadOnlyMode(true);
+      if (dsDoc.RecordCount = 0) then
+      begin
+        ActiveControl := edtD_N;
+        if (dmMain.AllowedAction(rght_Materials_full) //
+          or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit)) then begin
+          dsDoc.Insert;
+          deD_DATE.value := Now();
+          deD_DATE.readOnly := true;
+        end
+        else
+          SetReadOnlyMode(true);
+      end
+      else
+      begin
+        ActiveControl := edtMaterial;
+        if dsDoc['Doc_Closed'] <> 0 then
+          SetReadOnlyMode(true);
+      end;
     end;
   end;
 
@@ -518,7 +534,7 @@ begin
 
   i := dmMain.dbTV.QueryValue('select count(*) cnt from MATERIAL_DOCS d' +
     ' where d.Doc_Date = current_date and d.Dt_Id = ' + DocumentType.ToString, 0, dmMain.trReadQ, false);
-  dsDoc['DOC_N'] := (i+1).ToString.PadLeft(3, '0');
+  dsDoc['DOC_N'] := (i + 1).ToString.PadLeft(3, '0');
 end;
 
 procedure TMatMoveDocForm.btnCloseClick(Sender: TObject);

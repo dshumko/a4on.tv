@@ -1476,7 +1476,7 @@ object UserLoginDialog: TUserLoginDialog
       Anchors = [akLeft, akBottom]
       AutoSize = False
       BiDiMode = bdLeftToRight
-      Caption = ' EN '
+      Caption = 'EN'
       Color = clGray
       Font.Charset = RUSSIAN_CHARSET
       Font.Color = clWhite
@@ -1489,6 +1489,7 @@ object UserLoginDialog: TUserLoginDialog
       ParentShowHint = False
       ShowHint = False
       Transparent = False
+      Layout = tlCenter
     end
     object lblCAPS: TLabel
       Left = 48
@@ -1509,6 +1510,7 @@ object UserLoginDialog: TUserLoginDialog
       ParentFont = False
       ShowAccelChar = False
       Transparent = False
+      Layout = tlCenter
       Visible = False
     end
     object Panel1: TPanel
@@ -1550,7 +1552,7 @@ object UserLoginDialog: TUserLoginDialog
       object cbSERVER: TDBComboBoxEh
         Left = 85
         Top = 6
-        Width = 187
+        Width = 185
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         AutoSize = False
@@ -1577,7 +1579,7 @@ object UserLoginDialog: TUserLoginDialog
       object edUser: TDBEditEh
         Left = 85
         Top = 30
-        Width = 187
+        Width = 185
         Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone
@@ -1595,7 +1597,7 @@ object UserLoginDialog: TUserLoginDialog
       object edPassword: TDBEditEh
         Left = 85
         Top = 54
-        Width = 187
+        Width = 185
         Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone

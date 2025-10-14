@@ -130,6 +130,7 @@ type
     FTodayOnly: Boolean;
     FOnlyTheir: Boolean;
     FPersonalData: Boolean;
+    FShowLCPS: Boolean;
     procedure SetPaymentsFilter;
   public
     { Public declarations }
@@ -255,6 +256,7 @@ begin
     dsPayments.ParamByName('EndDate').AsDate := Date();
     dsPayments.ParamByName('source').AsString := ' and p.Added_By = current_user';
   end;
+
   dsPayments.Open;
 
   if dsErrors.Active then
@@ -340,7 +342,7 @@ begin
   vFine := (dmMain.GetSettingsValue('SHOW_FINE') = '1');
   vPaymentSRV := (dmMain.GetSettingsValue('PAYMENT_SRV') = '1');
   vBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
-
+  FShowLCPS := (dmMain.GetSettingsValue('SHOW_LCPS') = '1');
   for i := 0 to dbgPayments.Columns.Count - 1 do
   begin
     if (AnsiUpperCase(dbgPayments.Columns[i].FieldName) = 'FINE_SUM') then
@@ -351,6 +353,8 @@ begin
       dbgPayments.Columns[i].Visible := not vBalance;
     if (AnsiUpperCase(dbgPayments.Columns[i].FieldName) = 'BALANCE') then
       dbgPayments.Columns[i].Visible := vBalance;
+    if (AnsiUpperCase(dbgPayments.Columns[i].FieldName) = 'LCPS') then
+      dbgPayments.Columns[i].Visible := FShowLCPS;
   end;
 
   if dmMain.SuperMode = 0 then

@@ -104,6 +104,10 @@ object StreetHouseViewForm: TStreetHouseViewForm
           item
           end
           item
+          end
+          item
+          end
+          item
           end>
         ParentColor = False
         ShowFunctionName = False
@@ -120,7 +124,6 @@ object StreetHouseViewForm: TStreetHouseViewForm
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
     PopupMenu = pmPopUp
     SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     SortLocal = True
     STFilter.Local = True
     STFilter.Visible = True
@@ -160,6 +163,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
         Footers = <>
         Title.Caption = #1053#1072#1089'. '#1087#1091#1085#1082#1090
         Title.TitleButton = True
+        Width = 77
       end
       item
         CellButtons = <>
@@ -303,6 +307,27 @@ object StreetHouseViewForm: TStreetHouseViewForm
       end
       item
         CellButtons = <>
+        Checkboxes = True
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Exist_Inter'
+        Footers = <>
+        Title.Caption = #1059#1089#1083#1091#1075#1080'|'#1044#1060
+        Title.Hint = #1044#1086#1084#1086#1092#1086#1085
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        Checkboxes = True
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Exist_Video'
+        Footers = <>
+        Title.Caption = #1059#1089#1083#1091#1075#1080'|'#1042#1080#1076#1077#1086
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
         DynProps = <>
         EditButtons = <>
         FieldName = 'SUBAREA_NAME'
@@ -315,9 +340,9 @@ object StreetHouseViewForm: TStreetHouseViewForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
-        FieldName = 'NAME'
+        FieldName = 'WG_NAME'
         Footers = <>
-        Title.Caption = #1059#1095#1072#1089#1090#1086#1082
+        Title.Caption = #1047#1074#1077#1085#1086
         Title.TitleButton = True
         Width = 71
       end
@@ -463,11 +488,12 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '          , H.Exist_Tv'
       '          , H.Exist_Lan'
       '          , H.Exist_Dtv'
+      '          , H.Exist_Video          '
+      '          , H.Exist_Inter'
       '          , H.In_Date'
       '          , H.Repair_Date'
       '          , H.Tag'
-      '          ,'
-      '            (select'
+      '          , (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
@@ -480,8 +506,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
       
         '                                        and (current_date betwee' +
         'n ash.Date_From and ash.Date_To))) as CONNECTED'
-      '          ,'
-      '            (select'
+      '          , (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
@@ -496,7 +521,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
         'tween ash.Date_From and ash.Date_To))) as DISCONNECTED'
       '          , o.ORG_NAME'
       '          , s.SUBAREA_NAME'
-      '          , w.name'
+      '          , w.name WG_NAME'
       '          , he.he_name'
       '          , st.Street_Code'
       '          , st.Street_Name || '#39' '#39' || st.Street_Short Street_Name'
@@ -611,22 +636,5 @@ object StreetHouseViewForm: TStreetHouseViewForm
       Caption = #1055#1077#1095#1072#1090#1100
       OnClick = miN2Click
     end
-  end
-  object prntdbgrdh: TPrintDBGridEh
-    DBGridEh = dbgView
-    Options = []
-    PageFooter.Font.Charset = DEFAULT_CHARSET
-    PageFooter.Font.Color = clWindowText
-    PageFooter.Font.Height = -11
-    PageFooter.Font.Name = 'Tahoma'
-    PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
-    PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'Tahoma'
-    PageHeader.Font.Style = []
-    Units = MM
-    Left = 448
-    Top = 216
   end
 end

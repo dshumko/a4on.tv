@@ -374,8 +374,10 @@ object MatInventoryDocForm: TMatInventoryDocForm
         Top = 30
         Width = 85
         Height = 21
+        DecimalPlaces = 3
         DynProps = <>
         EmptyDataInfo.Text = #1050#1086#1083'-'#1074#1086
+        EditButton.Visible = True
         EditButtons = <>
         ShowHint = True
         TabOrder = 2
@@ -392,7 +394,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
         EditButtons = <>
         EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         ShowHint = True
-        TabOrder = 3
+        TabOrder = 4
         Visible = True
         WantReturns = True
       end
@@ -403,7 +405,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
         Height = 25
         Anchors = [akLeft, akRight, akBottom]
         Caption = #1044#1086#1073#1072#1074#1080#1090#1100
-        TabOrder = 4
+        TabOrder = 5
         OnClick = btnAddClick
       end
       object edtBefore: TDBNumberEditEh
@@ -412,8 +414,11 @@ object MatInventoryDocForm: TMatInventoryDocForm
         Width = 85
         Height = 21
         TabStop = False
+        DecimalPlaces = 3
         DynProps = <>
         EmptyDataInfo.Text = #1050#1086#1083'-'#1074#1086
+        EditButton.DefaultAction = True
+        EditButton.Visible = True
         EditButtons = <>
         ReadOnly = True
         ShowHint = True
@@ -462,9 +467,18 @@ object MatInventoryDocForm: TMatInventoryDocForm
           00000000000000000000A6AED9FF000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000}
-        TabOrder = 5
+        TabOrder = 6
         TabStop = False
         OnClick = btnDelClick
+      end
+      object btnUNIT: TButton
+        Left = 402
+        Top = 30
+        Width = 302
+        Height = 21
+        Action = actUNITS
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 3
       end
     end
   end
@@ -573,6 +587,8 @@ object MatInventoryDocForm: TMatInventoryDocForm
       '    md.ID'
       '  , md.M_Id'
       '  , m.Name'
+      '  , m.M_NUMBER'
+      '  , m.IS_UNIT'
       '  , md.M_Quant'
       '  , md.M_Cost'
       '  , md.M_Notice'
@@ -599,6 +615,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       '  , md.M_Id'
       '  , m.Name'
       '  , m.M_NUMBER'
+      '  , m.IS_UNIT'
       '  , md.M_Quant'
       '  , md.M_Cost'
       '  , md.M_Notice'
@@ -618,6 +635,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     AutoUpdateOptions.KeyFields = 'M_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_UID'
     AutoUpdateOptions.WhenGetGenID = wgBeforePost
+    AfterOpen = dsDocMatAfterOpen
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWriteQ
@@ -634,6 +652,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
   end
   object srcDocMat: TDataSource
     DataSet = dsDocMat
+    OnDataChange = srcDocMatDataChange
     Left = 168
     Top = 288
   end
@@ -647,14 +666,10 @@ object MatInventoryDocForm: TMatInventoryDocForm
   object dsMaterials: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
-      '    m.M_Id'
-      '  , m.Name'
+      '    m.*'
       '  , coalesce(m.Dimension, '#39#39') Dimension'
       '  , g.Mg_Name'
-      '  , m.DESCRIPTION'
-      '  , m.Cost'
       '  , coalesce(r.Mr_Quant, 0) B_QUANT'
-      '  , m.M_NUMBER'
       '  from materials m'
       
         '       left outer join Materials_Remain r on (r.M_Id = m.M_Id an' +
@@ -665,6 +680,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
         '  and (not exists( select md.M_Id from Materials_In_Doc md where' +
         ' md.Doc_Id = :doc_id and md.M_Id = m.M_Id))'
       '  order by m.Name, g.Mg_Name'
+      '  '
       '')
     Transaction = trRead
     Database = dmMain.dbTV
@@ -768,6 +784,12 @@ object MatInventoryDocForm: TMatInventoryDocForm
     object actEditNote: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080#1084#1077#1095#1072#1085#1080#1077
       OnExecute = actEditNoteExecute
+    end
+    object actUNITS: TAction
+      Caption = #1057'/'#1053#1086#1084#1077#1088#1072
+      Hint = #1054#1090#1082#1091#1088#1099#1090#1100' '#1092#1086#1088#1084#1091' '#1089#1077#1088#1080#1081#1085#1099#1081#1093' '#1085#1086#1084#1077#1088#1086#1074
+      Visible = False
+      OnExecute = actUNITSExecute
     end
   end
   object trWriteQ: TpFIBTransaction

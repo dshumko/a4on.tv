@@ -31,23 +31,17 @@ type
     dsErrors: TpFIBDataSet;
     PageControl: TPageControl;
     tabRequest: TTabSheet;
-    Panel2: TPanel;
+    pnlAddNot: TPanel;
     Label5: TLabel;
     mmoNotice: TDBMemoEh;
     tabExecute: TTabSheet;
     pnlExecTop: TPanel;
     pnlExecTime: TPanel;
     pnlBid: TPanel;
-    Label11: TLabel;
-    PLANDATE: TDBDateTimeEditEh;
-    Label12: TLabel;
-    Label13: TLabel;
     dsStreets: TpFIBDataSet;
     srcStreet: TDataSource;
     dsHouses: TpFIBDataSet;
     srcHouse: TDataSource;
-    deTimeFrom: TDBDateTimeEditEh;
-    deTimeTo: TDBDateTimeEditEh;
     Label10: TLabel;
     deEndExecDateTime: TDBDateTimeEditEh;
     actExecutors: TAction;
@@ -66,10 +60,8 @@ type
     cbResultExec: TDBComboBoxEh;
     dsRequests: TpFIBDataSet;
     frxDBrequests: TfrxDBDataset;
-    btnReqForAdres: TButton;
     actReqForAdres: TAction;
     actWorks: TAction;
-    btnSelectDate: TBitBtn;
     pnlRequestHead: TPanel;
     pnlReqType: TPanel;
     Label9: TLabel;
@@ -101,8 +93,6 @@ type
     lbl2: TLabel;
     lbl12: TLabel;
     luTemplate: TDBLookupComboboxEh;
-    pnlActions: TPanel;
-    btnCancel: TButton;
     dsResult: TpFIBDataSet;
     srcResult: TDataSource;
     lblRes: TLabel;
@@ -118,7 +108,6 @@ type
     btnPrint: TButton;
     actPrint: TAction;
     frxReport: TfrxReport;
-    actMatIn: TAction;
     btnWorks: TButton;
     btnMaterials: TButton;
     btnMatIn: TButton;
@@ -202,6 +191,17 @@ type
     imgJPG: TDBImageEh;
     SaveDialog: TSaveDialog;
     btnSavePhoto1: TSpeedButton;
+    actMatIn: TAction;
+    pnlDateTime: TPanel;
+    Label1: TLabel;
+    btnSelectDate: TBitBtn;
+    deTimeFrom: TDBDateTimeEditEh;
+    Label2: TLabel;
+    deTimeTo: TDBDateTimeEditEh;
+    btnReqForAdres: TButton;
+    btnCancel: TButton;
+    PLANDATE: TDBDateTimeEditEh;
+    Label7: TLabel;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -234,10 +234,8 @@ type
     procedure edExExecutorsExit(Sender: TObject);
     procedure luTemplateChange(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
-    procedure CustomerInfoFrmlblFIODblClick(Sender: TObject);
     procedure dbgWorkersDblClick(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
-    procedure actMatInExecute(Sender: TObject);
     procedure dsWorksAfterOpen(DataSet: TDataSet);
     procedure dsMaterialsAfterOpen(DataSet: TDataSet);
     procedure actSMSExecute(Sender: TObject);
@@ -282,6 +280,7 @@ type
     procedure dbgPhotosDblClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnSavePhoto1Click(Sender: TObject);
+    procedure actMatInOldExecute(Sender: TObject);
   private
     { Private declarations }
     FCustomerInfo: TCustomerInfo;
@@ -290,6 +289,8 @@ type
     fCustomer: Integer;
     fNodeId: Integer;
     FFullAccess: Boolean; // полный доступ
+    FStrictReturn: Boolean;
+    FAddressRight: Boolean;
     FCanEdit: Boolean; // может изменять результат выполнения
     FCanClose: Boolean; // может закрыть заявку
     FRequestClosed: Boolean; // Заявка закрыта
@@ -297,6 +298,7 @@ type
     FCanUnclose: Boolean; // может закрыть заявку
     FCanCreate: Boolean; // может добавить заявку
     FCanGive: Boolean; // может выдать заявку
+    FBuyBack: Boolean; // может делать выкуп
     FPhoneSaved: Boolean;
     FNeedExecutor: Boolean; // Требовать исполнителя заявки
     fVisibleCost: Boolean;
@@ -304,6 +306,7 @@ type
     FHL_ROW: Boolean;
     FHL_COLOR: TColor;
     FEnterSecondPress: Boolean;
+    FIsLTV: Boolean;
     procedure CheckData;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure FindNearFreeDay;
@@ -318,6 +321,7 @@ type
     procedure CancelMSG;
     procedure SetExAddressEdit(const DisableEdit: Boolean = False);
     function CheckExecutor: Boolean;
+    function CheckReqWorks: Boolean;
     function SavePhone(Const Phone: String): String;
     procedure OpenLinkedReq();
     function HasLinkedReq(const OnlyClosed: Boolean = False): Boolean;
@@ -325,6 +329,7 @@ type
     procedure OpenPayment(const receipt: string);
     procedure SendEmailMessage;
     procedure OpenPhotoFile;
+    function CheckNodeLayout(): Boolean;
   public
     { Public declarations }
     constructor CreateA(aOwner: TComponent; aRequest: Integer; const aCustomer: Integer; const aEditMode: Byte;
@@ -337,11 +342,12 @@ function ReguestNodeExecute(aRequest: Integer; const aNodeId: Integer = -1; cons
 implementation
 
 uses
-  Winapi.ShellAPI, System.DateUtils, System.StrUtils, AtrCommon, MAIN,
+  Winapi.ShellAPI, System.DateUtils, System.StrUtils, System.Math, JsonDataObjects,
+  AtrCommon, MAIN,
   ReqMaterialsForma, ReqExecutersForma, ReqForAdresForma,
   SelectDateForma, RequestWorksForma,
   CustomerForma, ReqMatBaybackForma, PaymentDocForma, PaymentForma,
-  ReqMatReturnForma, EditRFileForma, ContactForma, SendEmail;
+  ReqMatReturnForma, EditRFileForma, ContactForma, SendEmail, RequestMaterialReturnForma, ReqReturnMatStrictForma;
 
 {$R *.dfm}
 
@@ -396,12 +402,6 @@ begin
   fEditMode := aEditMode;
   SetRequest(aRequest);
   SetCustomer(aCustomer, FindNode);
-end;
-
-procedure TRequestForm.CustomerInfoFrmlblFIODblClick(Sender: TObject);
-begin
-  if (FCustomerInfo.CUSTOMER_ID <> -1) and (fNodeId = -1) then
-    ShowCustomer(FCustomerInfo.CUSTOMER_ID);
 end;
 
 procedure TRequestForm.SetCustomer(Value: Integer; const FindNode: Integer = 0);
@@ -562,6 +562,29 @@ begin
     dsMaterials.CloseOpen(true);
 end;
 
+procedure TRequestForm.actMatInOldExecute(Sender: TObject);
+var
+  OwnerID: Integer;
+  OwnerIsCustomer: Boolean;
+begin
+  if not FStrictReturn then
+    ReqMaterialsReturn(dsRequest['RQ_ID'], FRequestClosed)
+  else
+  begin
+    // сделать форму возврата материалов
+    OwnerIsCustomer := (fNodeId = -1);
+    if OwnerIsCustomer then
+      OwnerID := fCustomer
+    else
+      OwnerID := fNodeId;
+
+    if (not FRequestClosed) then
+      ReqMaterialReturnStrict(dsRequest['RQ_ID'], OwnerID, OwnerIsCustomer);
+  end;
+
+  dsMaterials.CloseOpen(true);
+end;
+
 procedure TRequestForm.actReqDelExecute(Sender: TObject);
 var
   dsOpen: Boolean;
@@ -610,7 +633,11 @@ procedure TRequestForm.actWorksExecute(Sender: TObject);
 begin
   ReqWorks(dsRequest['RQ_ID'], FRequestClosed, dsRequest['RQ_TYPE']);
   if (not FRequestClosed) then
+  begin
     dsWorks.CloseOpen(true);
+    if not CheckReqWorks then
+      ShowMessage('Удалена работа, которая добавлена автоматически');
+  end;
 end;
 
 procedure TRequestForm.btnCancelClick(Sender: TObject);
@@ -768,7 +795,8 @@ procedure TRequestForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
-  if (Key = #13) then // (Ord(Key) = VK_RETURN)
+  if (Key = #13) then
+  // (Ord(Key) = VK_RETURN)
   begin
     go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
@@ -912,19 +940,16 @@ begin
       if dsRequest.FN('RQ_COMPLETED').IsNull then
       begin
         if FCanGive or FFullAccess then
-        begin
           PageControl.ActivePage := tabGiveReq;
-        end;
-        actFindCustomer.Enabled := FFullAccess;
       end
       else
       begin
         if FCanEdit or FFullAccess then
-        begin
           PageControl.ActivePage := tabExecute;
-        end;
-        actFindCustomer.Enabled := FFullAccess;
       end;
+      actFindCustomer.Enabled := FFullAccess //
+        or ((FCanGive or FCanEdit or FCanCreate) and (dsRequest.FN('RQ_CUSTOMER').IsNull or
+        dsRequest.FN('NODE_ID').IsNull));
       PageControlChange(Sender);
       dsRequest.Edit;
     end;
@@ -1021,18 +1046,14 @@ end;
 
 procedure TRequestForm.miDelWorkClick(Sender: TObject);
 begin
-  if (actWorks.Enabled) and (dsWorks.RecordCount > 0) then
-  begin
+  if (not FRequestClosed) and (actWorks.Enabled) and (dsWorks.RecordCount > 0) then
     dsWorks.Delete;
-  end;
 end;
 
 procedure TRequestForm.miDelMatClick(Sender: TObject);
 begin
-  if (actMaterials.Enabled) and (dsMaterials.RecordCount > 0) then
-  begin
+  if (not FRequestClosed) and (actMaterials.Enabled) and (dsMaterials.RecordCount > 0) then
     dsMaterials.Delete;
-  end;
 end;
 
 procedure TRequestForm.Button2Click(Sender: TObject);
@@ -1043,7 +1064,6 @@ begin
     dsRequest['RQ_CONTENT'] := dsErrors['RQ_CONTENT']
   else
     dsRequest['RQ_CONTENT'] := dsRequest['RQ_CONTENT'] + rsEOL + dsErrors['RQ_CONTENT'];
-
 end;
 
 procedure TRequestForm.deTimeFromExit(Sender: TObject);
@@ -1105,10 +1125,27 @@ begin
           begin
             if (not dsRequest.FieldByName('RQ_EXEC_TIME').IsNull) then
             begin
-              if ((deEndExecDateTime.Value >= Date()) and FCanCloseDay) then
+              if FFullAccess then
                 AllFine := true
-              else if ((deEndExecDateTime.Value >= dmMain.CurrentMonth) and FCanClose) then
+              else if FCanClose then
+              begin
+                if (deEndExecDateTime.Value >= dmMain.CurrentMonth) then
+                  AllFine := true
+                else
+                  cnError.SetError(deEndExecDateTime, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
+              end
+              else if FCanCloseDay then
+              begin
+                if ((deEndExecDateTime.Value >= Date()) and (deEndExecDateTime.Value < IncDay(Date(), 1))) then
+                  AllFine := true
+                else
+                  cnError.SetError(deEndExecDateTime, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
+              end
+              else
+              begin
+                cnError.SetError(deEndExecDateTime, 'Непонятки с правами', iaMiddleLeft, bsNeverBlink);
                 AllFine := true;
+              end;
             end
             else
               AllFine := true;
@@ -1119,6 +1156,24 @@ begin
 
         if AllFine then
           AllFine := CheckExecutor;
+
+        if AllFine then
+          AllFine := CheckReqWorks;
+
+        // добавім проверку компановкі узла
+        if AllFine and (not dsRequest.FieldByName('NODE_ID').IsNull) and (dmMain.GetSettingsValue('NODE_LAYOUT') = '1')
+        then
+        begin
+          if (not dsRequest.FieldByName('REQ_RESULT').IsNull) then
+          begin
+            if (dsRequest['REQ_RESULT'] = 2) and //
+              (VarIsNull(dsRequest.FieldByName('REQ_RESULT').OldValue) //
+              or //
+              dsRequest.FieldByName('REQ_RESULT').OldValue <> 2) //
+            then
+              AllFine := CheckNodeLayout();
+          end;
+        end;
 
         if AllFine then
         begin
@@ -1171,6 +1226,39 @@ begin
     FindNearFreeDay;
   btnSelectDate.Enabled := b;
   OkCancelFrame.bbOk.Enabled := b and (FCanCreate or FCanEdit or FCanClose or FCanCloseDay or FCanGive or FFullAccess);
+end;
+
+function TRequestForm.CheckNodeLayout: Boolean;
+var
+  s: string;
+  deny: Boolean;
+begin
+  s := '';
+  deny := False;
+  with TpFIBQuery.Create(Nil) do
+  begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trReadQ;
+      SQL.Text := 'select ban, ban_text from Node_Check_Layout(:NODE_ID, :RQ_ID)';
+      ParamByName('RQ_ID').AsInteger := fRequest;
+      ParamByName('NODE_ID').AsInteger := fNodeId;
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not EOF then
+        if not FieldByName('ban_text').IsNull then
+          s := FieldByName('ban_text').AsString;
+      if not FieldByName('ban').IsNull then
+        deny := (FieldByName('ban').AsInteger = 1);
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
+  ShowMessage(s);
+
+  Result := not deny; // s.IsEmpty;
 end;
 
 procedure TRequestForm.dbDateChange(Sender: TObject);
@@ -1324,6 +1412,9 @@ var
   s: string;
   NeedSave: Boolean;
 begin
+  if (not FAddressRight) and (dmMain.GetSettingsValue('FP_ADDRESS_CHECK') = '1') then
+    Exit;
+
   NeedSave := False;
 
   if (EdFloor.Text <> '') and (EdPorch.Text <> '') and (edFLAT_NO.Text <> '') then
@@ -1346,8 +1437,7 @@ begin
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
-        SQL.Text := ' UPDATE OR INSERT INTO HOUSEFLATS (house_id, flat_no, porch_n, floor_n)       ' +
-          ' VALUES (:house_id, :flat_no, :porch_n, :floor_n) matching (house_id, flat_no)';
+        SQL.Text := 'execute procedure Set_Flat_Pf(:House_Id, :Flat_No, :Porch_N, :Floor_N)';
         ParamByName('PORCH_N').AsString := EdPorch.Text;
         ParamByName('FLOOR_N').AsString := EdFloor.Text;
         ParamByName('flat_no').AsString := edFLAT_NO.Text;
@@ -1427,7 +1517,6 @@ procedure TRequestForm.PropStorageEhReadProp(Sender: TObject; Reader: TPropReade
   var Processed: Boolean);
 begin
   if PropName = '111' then
-
     SetGridsHeight;
 end;
 
@@ -1501,7 +1590,12 @@ var
   NotClosed: Boolean;
   CloseDay: TDate;
   varBool: Boolean;
+  s: string;
+
 begin
+  s := dmMain.GetCompanyValue('NAME');
+  FIsLTV := s.Contains('ЛТВ');
+
   NotClosed := dsRequest.FieldByName('REQ_RESULT').IsNull;
   if not NotClosed then
   begin
@@ -1520,9 +1614,35 @@ begin
   FCanGive := dmMain.AllowedAction(rght_Request_Give);
   FCanCreate := dmMain.AllowedAction(rght_Request_add);
   FCanUnclose := dmMain.AllowedAction(rght_Request_Unclose);
+  FBuyBack := dmMain.AllowedAction(rght_Request_BuyBack);
+  FAddressRight := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street);
+  // огранічім возврат выданным
+  FStrictReturn := not(FFullAccess or dmMain.AllowedAction(rght_Request_AnyReturn));
+  // (dmMain.GetSettingsValue('REQUEST_RETURN_STRICT') = '1');
 
-  pnlRequestHead.Enabled := ((FCanEdit or FCanCreate) and NotClosed) or FFullAccess; // запретим править заголовок
-  tabRequest.Enabled := ((FCanEdit or FCanCreate) and NotClosed) or FFullAccess;
+  if FIsLTV then
+  begin
+    // pnlRequestHead.Enabled := FCanEdit or FFullAccess; // запретим править заголовок
+    // tabRequest.Enabled := FCanEdit or FFullAccess;
+    varBool := FCanEdit or FFullAccess;
+  end
+  else
+  begin
+    // было ((FCanEdit or FCanCreate) and NotClosed) or FFullAccess;
+    varBool := (FCanEdit and NotClosed) or FFullAccess; // запретим править заголовок
+    // pnlRequestHead.Enabled := varBool; // запретим править заголовок
+    // tabRequest.Enabled := varBool
+    // pnlAddNot
+    // pnlBid
+    // pnlDateTime
+  end;
+  varBool := not varBool;
+  luType.ReadOnly := varBool;
+  luTemplate.ReadOnly := varBool;
+  mmoContent.ReadOnly := varBool;
+  cbbAdd.ReadOnly := varBool;
+  mmoNotice.ReadOnly := varBool;
+
   tabGiveReq.Enabled := (FCanGive and NotClosed) or FFullAccess;
 
   varBool := ((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or FFullAccess;
@@ -1551,6 +1671,7 @@ begin
   actWorks.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
   miDelWork.Enabled := actWorks.Enabled;
   actMatIn.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
+  actBuyback.Enabled := ((FCanClose or FCanCloseDay) and FBuyBack and NotClosed) or FFullAccess;
   actFileDel.Enabled := FFullAccess;
 
   srcFlats.AutoEdit := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
@@ -1767,13 +1888,6 @@ begin
 
 end;
 
-procedure TRequestForm.actMatInExecute(Sender: TObject);
-begin
-  ReqMaterialsReturn(dsRequest['RQ_ID'], FRequestClosed);
-  if (not FRequestClosed) then
-    dsMaterials.CloseOpen(true);
-end;
-
 procedure TRequestForm.actMSGAddExecute(Sender: TObject);
 begin
   NewMSG;
@@ -1833,27 +1947,47 @@ begin
 end;
 
 procedure TRequestForm.SetGridsHeight;
+var
+  WindowLocked: Boolean;
+  i: Integer;
 begin
-  dbgWorks.Align := alTop;
-  dbgWorks.Visible := (dsWorks.RecordCount > 0);
-  dbgMaterials.Visible := (dsMaterials.RecordCount > 0);
-  splGrids.Visible := ((dsMaterials.RecordCount > 0) and (dsWorks.RecordCount > 0));
-  splGrids.Top := dbgWorks.Top + 10;
-  if (dsMaterials.RecordCount > 0) or (dsWorks.RecordCount > 0) then
-  begin
-    pnlWMbuttons.Width := 100;
-    if dbgMaterials.Visible then
+  WindowLocked := LockWindowUpdate(Self.Handle);
+  try
+    dbgWorks.Align := alTop;
+    dbgWorks.Visible := (dsWorks.RecordCount > 0);
+    dbgMaterials.Visible := (dsMaterials.RecordCount > 0);
+    splGrids.Visible := ((dsMaterials.RecordCount > 0) and (dsWorks.RecordCount > 0));
+    splGrids.Top := dbgWorks.Top + 10;
+    if dbgMaterials.Visible or dbgWorks.Visible then
     begin
-      dbgWorks.Height := Round(pnlGrids.Height * (dsWorks.RecordCount + 2) /
-        (dsMaterials.RecordCount + dsWorks.RecordCount + 4));
+      pnlWMbuttons.Width := 100;
+      i := IfThen(dbgMaterials.Visible, 1, 0) + IfThen(dbgWorks.Visible, 1, 0);
+      i := i * Trunc((tabExecute.Height - pnlExecTime.Height) / 3);
+      if btnBuyback.Visible then
+      begin
+        if i < (btnBuyback.Top + btnBuyback.Height) then
+          i := (btnBuyback.Top + btnBuyback.Height) + 2;
+      end
+      else
+      begin
+        if i < (btnMatIn.Top + btnMatIn.Height) then
+          i := (btnMatIn.Top + btnMatIn.Height) + 2;
+      end;
+
+      pnlNotice.Height := (tabExecute.Height - pnlExecTime.Height - i);
+      if not dbgMaterials.Visible then
+        dbgWorks.Align := alClient
+      else
+        dbgWorks.Height := Trunc(pnlGrids.Height / 2);
     end
     else
-      dbgWorks.Align := alClient;
-  end
-  else
-  begin
-    pnlWMbuttons.Width := pnlWM.Width;
-    pnlNotice.Height := tabExecute.Height - (pnlWM.Top + btnMatIn.Top + btnMatIn.Height + btnBuyback.Height + 10);
+    begin
+      pnlWMbuttons.Width := pnlWM.Width;
+      pnlNotice.Height := tabExecute.Height - (pnlWM.Top + btnMatIn.Top + btnMatIn.Height + btnBuyback.Height + 10);
+    end;
+  finally
+    if WindowLocked then
+      LockWindowUpdate(0);
   end;
 end;
 
@@ -1904,13 +2038,11 @@ end;
 
 procedure TRequestForm.actBuybackExecute(Sender: TObject);
 begin
-  if FRequestClosed then
+  if FRequestClosed or (fNodeId > -1) then
     Exit;
 
-  if (ReqBayBack(dsRequest['RQ_ID'])) then
-  begin
+  if ReqMaterialReturnByBack(dsRequest['RQ_ID'], fCustomer) then
     dsMaterials.CloseOpen(true);
-  end;
 end;
 
 procedure TRequestForm.actEMAILExecute(Sender: TObject);
@@ -2037,6 +2169,101 @@ begin
       and (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') //
     then
       deEndExecDateTime.Value := NOW(); // dsRequest['RQ_EXEC_TIME'] := NOW();
+  end;
+end;
+
+function TRequestForm.CheckReqWorks: Boolean;
+
+  function GetWorkName(const id: Integer): string;
+  begin
+    Result := '';
+    with TpFIBQuery.Create(Nil) do
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.trReadQ;
+        SQL.Text := 'select Name from WORKS where W_Id = :ID';
+        ParamByName('ID').AsInteger := id;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not EOF then
+          if not FieldByName('Name').IsNull then
+            Result := FieldByName('Name').AsString;
+        Close;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+  end;
+
+var
+  CanDelete: Boolean;
+  s, n: string;
+  bm: TBookmark;
+  ja: TJsonArray;
+  jv: TJsonDataValueHelper;
+  nc, ncw: Boolean;
+begin
+  Result := true;
+  // проверим, не удалили ли работы которые заданы автоматически
+  CanDelete := FFullAccess;
+  // проверим, можно ли удалять работу добавленную автоматически
+  if not CanDelete then
+  begin
+    if not dsErrors.Active then
+    begin
+      nc := true;
+      dsErrors.Open;
+    end;
+    if not dsWorks.Active then
+    begin
+      ncw := true;
+      dsWorks.Open;
+    end;
+
+    s := '';
+    if dsErrors.Locate('RQTL_ID', luTemplate.Value, []) then
+    begin
+      if (dmMain.GetSettingsValue('REQUEST_WORKS_DEL_RESTRICT') = '1') and (not dsErrors.FieldByName('WORKS').IsNull)
+      then
+      begin
+        ja := (TJsonObject.Parse(dsErrors['WORKS']) as TJsonArray);
+        try
+          if (ja.Count > 0) then
+          begin
+            dsWorks.DisableControls;
+            dsWorks.GetBookmark;
+            for jv in ja do
+            begin
+              if not dsWorks.Locate('ID', jv.i['i'], []) then
+              begin
+                CanDelete := true;
+                s := s + GetWorkName(jv.i['i']) + ',';
+              end;
+            end;
+            dsWorks.GotoBookmark(bm);
+            dsWorks.EnableControls;
+          end;
+        finally
+          ja.Free;
+        end;
+        // еслі не нашлі услугі і спісок пуст, то разрешім сохраненіе
+        // такое может быть еслі удалілі услугі
+        if (ReplaceStr(s, ',', '').Trim = '') then
+          CanDelete := False;
+
+        if CanDelete then
+        begin
+          cnError.SetError(OkCancelFrame.bbOk, 'Нет необходимых работ: ' + s, iaMiddleLeft, bsNeverBlink);
+          Result := False;
+        end
+        else
+          cnError.Dispose(OkCancelFrame.bbOk);
+      end;
+    end;
+    if nc then
+      dsErrors.Close;
+    if ncw then
+      dsWorks.Close;
   end;
 end;
 

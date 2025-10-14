@@ -60,7 +60,7 @@ object SelectColumnsForm: TSelectColumnsForm
       Width = 366
       Height = 17
       Align = alTop
-      Caption = 'IP - MAC'
+      Caption = 'IP, MAC'
       TabOrder = 2
       OnClick = chk4Click
     end
@@ -95,6 +95,12 @@ object SelectColumnsForm: TSelectColumnsForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
       Left = 185
       Width = 110
@@ -132,7 +138,7 @@ object SelectColumnsForm: TSelectColumnsForm
       Width = 171
       Height = 17
       Align = alTop
-      Caption = #1055#1086#1076#1098#1077#1079#1076'/'#1101#1090#1072#1078'. '#1043#1086#1088#1086#1076'. '#1056#1072#1081#1086#1085
+      Caption = #1055#1086#1076#1098#1077#1079#1076'/'#1101#1090#1072#1078', '#1043#1086#1088#1086#1076', '#1056#1072#1081#1086#1085
       TabOrder = 6
     end
     object chk3: TCheckBox
@@ -320,7 +326,7 @@ object SelectColumnsForm: TSelectColumnsForm
       Width = 185
       Height = 17
       Align = alTop
-      Caption = #1055#1072#1089#1087#1086#1088#1090', '#1044#1056
+      Caption = #1055#1072#1089#1087#1086#1088#1090', '#1044#1056', '#1063'/'#1057
       TabOrder = 0
     end
     object chkPrepay: TCheckBox

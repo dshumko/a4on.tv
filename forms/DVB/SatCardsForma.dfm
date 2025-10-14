@@ -643,6 +643,7 @@ inherited SatCardsForm: TSatCardsForm
     DataSource = srcDataSource
     Left = 240
     Top = 416
+    WaitEndMasterScroll = True
   end
   object srcChan: TDataSource
     AutoEdit = False

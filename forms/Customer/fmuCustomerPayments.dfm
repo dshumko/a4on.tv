@@ -31,13 +31,13 @@ object apgCustomerPayments: TapgCustomerPayments
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmPayment
     ReadOnly = True
-    SearchPanel.Enabled = True
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True
     TitleParams.VTitleMargin = 4
+    OnApplyFilter = dbgCustPaymentApplyFilter
     OnDblClick = dbgCustPaymentDblClick
     OnGetCellParams = dbgCustPaymentGetCellParams
     OnSortMarkingChanged = dbgCustPaymentSortMarkingChanged
@@ -77,7 +77,7 @@ object apgCustomerPayments: TapgCustomerPayments
         FieldName = 'FINE_SUM'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Caption = #1055#1077#1085#1103
+        Title.Caption = #1055#1077#1085#1080
         Title.TitleButton = True
         Width = 80
       end
@@ -115,7 +115,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Footers = <>
         Title.Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
         Title.TitleButton = True
-        Width = 88
+        Width = 95
       end
       item
         AutoFitColWidth = False
@@ -207,6 +207,16 @@ object apgCustomerPayments: TapgCustomerPayments
         Footers = <>
         ReadOnly = False
         Title.Caption = #1047#1072#1103#1074#1082#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'LCPS'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1057#1091#1084#1084#1072' '#1074' BYN'
         Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
@@ -367,7 +377,7 @@ object apgCustomerPayments: TapgCustomerPayments
   object dsPayment: TpFIBDataSet
     UpdateSQL.Strings = (
       'update payment set Rq_Id = :Rq_Id where Payment_Id = :PAYMENT_ID')
-    SelectSQL.Strings = (
+    RefreshSQL.Strings = (
       'select'
       '*'
       'from ('
@@ -392,6 +402,7 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , p.DEBT_SAVE*-1 BAL_SAVE'
       '  , p.RQ_ID'
       '  , P.Added_On'
+      '  , p.LCPS  '
       '  from PAYMENT P'
       '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
       
@@ -426,6 +437,73 @@ object apgCustomerPayments: TapgCustomerPayments
       '  , o.DEBT_SAVE*-1 BAL_SAVE'
       '  , null RQ_ID   '
       '  , O.Ppd_Date Added_On'
+      '  , null LCPS'
+      '  from Prepay_Detail o'
+      '       left outer join worker w on (w.Ibname = o.Who_Add)'
+      '  where o.CUSTOMER_ID = :CUSTOMER_ID'
+      ')'
+      'where PAYMENT_ID = :OLD_PAYMENT_ID')
+    SelectSQL.Strings = (
+      'select'
+      '*'
+      'from ('
+      'select'
+      '    P.PAY_DOC_ID'
+      '  , P.PAYMENT_ID'
+      '  , P.PAY_DATE'
+      '  , P.PAY_SUM'
+      '  , P.PAY_SUM VIEW_SUM  '
+      '  , D.PAY_DOC_NO'
+      '  , P.EXT_PAY_ID'
+      '  , D.PAY_DOC_DATE'
+      '  , PS.PAYSOURCE_DESCR'
+      '  , P.CUSTOMER_ID'
+      '  , P.NOTICE'
+      '  , P.FINE_SUM'
+      '  , (coalesce(p.Pay_Sum, 0) + coalesce(p.Fine_Sum, 0)) PAID'
+      '  , coalesce(W.SURNAME, p.ADDED_BY) as WHO_ADD'
+      '  , R.NAME'
+      '  , 1 PT'
+      '  , p.DEBT_SAVE'
+      '  , p.DEBT_SAVE*-1 BAL_SAVE'
+      '  , p.RQ_ID'
+      '  , P.Added_On'
+      '  , p.LCPS  '
+      '  from PAYMENT P'
+      '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
+      
+        '       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYS' +
+        'OURCE_ID)'
+      
+        '       left outer join SERVICES R on (P.PAYMENT_SRV = R.SERVICE_' +
+        'ID)'
+      
+        '       left outer join worker w on (w.Ibname = p.ADDED_BY)      ' +
+        ' '
+      '  where P.CUSTOMER_ID = :CUSTOMER_ID'
+      'union'
+      'select'
+      '    0 PAY_DOC_ID'
+      '  , o.Ppd_Id PAYMENT_ID'
+      '  , cast(o.Ppd_Date as DATE) PAY_DATE'
+      '  , null PAY_SUM'
+      '  , o.Ppd_Sum VIEW_SUM  '
+      '  , '#39#39' PAY_DOC_NO'
+      '  , '#39#39' EXT_PAY_ID'
+      '  , cast(o.Ppd_Date as DATE) PAY_DOC_DATE'
+      '  , '#39#39' PAYSOURCE_DESCR'
+      '  , o.CUSTOMER_ID'
+      '  , '#39#1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078#39' NOTICE'
+      '  , 0 FINE_SUM'
+      '  , 0 PAID'
+      '  , coalesce(W.SURNAME, o.Who_Add) WHO_ADD'
+      '  , '#39#39' NAME'
+      '  , 0 PT'
+      '  , o.DEBT_SAVE'
+      '  , o.DEBT_SAVE*-1 BAL_SAVE'
+      '  , null RQ_ID   '
+      '  , O.Ppd_Date Added_On'
+      '  , null LCPS'
       '  from Prepay_Detail o'
       '       left outer join worker w on (w.Ibname = o.Who_Add)'
       '  where o.CUSTOMER_ID = :CUSTOMER_ID'
@@ -434,8 +512,7 @@ object apgCustomerPayments: TapgCustomerPayments
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
-    AutoCommit = True
-    Left = 184
+    Left = 188
     Top = 59
     WaitEndMasterScroll = True
     dcForceMasterRefresh = True
@@ -444,7 +521,7 @@ object apgCustomerPayments: TapgCustomerPayments
     AutoEdit = False
     DataSet = dsPayment
     OnDataChange = srcPaymentDataChange
-    Left = 258
+    Left = 262
     Top = 42
   end
   object ActListCustomers: TActionList
@@ -482,7 +559,7 @@ object apgCustomerPayments: TapgCustomerPayments
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 492
+    Left = 496
     Top = 42
   end
   object trWrite: TpFIBTransaction
@@ -494,7 +571,7 @@ object apgCustomerPayments: TapgCustomerPayments
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 536
+    Left = 540
     Top = 42
   end
   object pmDblClick: TPopupMenu

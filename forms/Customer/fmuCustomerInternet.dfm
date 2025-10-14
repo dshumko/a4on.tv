@@ -26,8 +26,8 @@ object apgCustomerInternet: TapgCustomerInternet
     FooterParams.Color = clWindow
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
+    STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
     TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgrdBillDblClick

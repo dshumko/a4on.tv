@@ -391,11 +391,11 @@ object apgCustomerNew: TapgCustomerNew
       end
       object Label13: TLabel
         Tag = 1
-        Left = 8
+        Left = 75
         Top = 40
-        Width = 75
+        Width = 83
         Height = 13
-        Caption = #1055#1072#1089#1087#1086#1088#1090' '#1085#1086#1084#1077#1088
+        Caption = #1044#1086#1082#1091#1084#1077#1085#1090' '#1085#1086#1084#1077#1088
       end
       object lbl2: TLabel
         Tag = 1
@@ -415,11 +415,11 @@ object apgCustomerNew: TapgCustomerNew
       end
       object Label12: TLabel
         Tag = 1
-        Left = 138
+        Left = 205
         Top = 40
-        Width = 78
+        Width = 86
         Height = 13
-        Caption = #1055#1072#1089#1087#1086#1088#1090' '#1074#1099#1076#1072#1085
+        Caption = #1044#1086#1082#1091#1084#1077#1085#1090' '#1074#1099#1076#1072#1085
       end
       object Label4: TLabel
         Tag = 1
@@ -453,6 +453,13 @@ object apgCustomerNew: TapgCustomerNew
         Height = 13
         Caption = #1052#1077#1089#1090#1086' '#1088#1086#1078#1076#1077#1085#1080#1103
       end
+      object lblDT: TLabel
+        Left = 8
+        Top = 41
+        Width = 44
+        Height = 13
+        Caption = #1058#1080#1087' '#1076#1086#1082'.'
+      end
       object eSURNAME: TDBEditEh
         Left = 8
         Top = 17
@@ -470,7 +477,7 @@ object apgCustomerNew: TapgCustomerNew
       end
       object edtPASSPORT_NUMBER: TDBEditEh
         Tag = 1
-        Left = 8
+        Left = 75
         Top = 55
         Width = 124
         Height = 21
@@ -479,9 +486,9 @@ object apgCustomerNew: TapgCustomerNew
         DataSource = ds
         DynProps = <>
         EditButtons = <>
-        EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1087#1072#1089#1087#1086#1088#1090#1072
+        EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
         ShowHint = True
-        TabOrder = 3
+        TabOrder = 4
         Visible = True
         OnEnter = edtPASSPORT_NUMBEREnter
         OnExit = edtPASSPORT_NUMBERExit
@@ -498,7 +505,7 @@ object apgCustomerNew: TapgCustomerNew
         EditButtons = <>
         Kind = dtkDateEh
         ShowHint = True
-        TabOrder = 5
+        TabOrder = 6
         Visible = True
       end
       object edtADRES_REGISTR: TDBEditEh
@@ -513,14 +520,14 @@ object apgCustomerNew: TapgCustomerNew
         EditButtons = <>
         EmptyDataInfo.Text = #1040#1076#1088#1077#1089' '#1087#1088#1086#1087#1080#1089#1082#1080' ('#1077#1089#1083#1080' '#1086#1090#1083#1080#1095#1072#1077#1090#1089#1103' '#1086#1090' '#1072#1076#1088#1077#1089#1072' '#1091#1089#1090#1072#1085#1086#1074#1082#1080')'
         ShowHint = True
-        TabOrder = 7
+        TabOrder = 8
         Visible = True
       end
       object edRegistration: TDBEditEh
         Tag = 1
-        Left = 138
+        Left = 205
         Top = 55
-        Width = 346
+        Width = 279
         Height = 21
         DataField = 'PASSPORT_REGISTRATION'
         DataSource = ds
@@ -528,7 +535,7 @@ object apgCustomerNew: TapgCustomerNew
         EditButtons = <>
         EmptyDataInfo.Text = #1050#1077#1084' '#1074#1099#1076#1072#1085' '#1080' '#1076#1072#1090#1072' '#1074#1099#1076#1072#1095#1080
         ShowHint = True
-        TabOrder = 4
+        TabOrder = 5
         Visible = True
       end
       object eFIRSTNAME: TDBEditEh
@@ -576,7 +583,7 @@ object apgCustomerNew: TapgCustomerNew
         EditButtons = <>
         EmptyDataInfo.Text = #1051#1080#1095#1085#1099#1081' '#1085#1086#1084#1077#1088
         ShowHint = True
-        TabOrder = 6
+        TabOrder = 7
         Visible = True
         OnEnter = edtPERSONAL_NEnter
         OnExit = edtPERSONAL_NExit
@@ -593,7 +600,26 @@ object apgCustomerNew: TapgCustomerNew
         EditButtons = <>
         EmptyDataInfo.Text = #1052#1077#1089#1090#1086' '#1088#1086#1078#1076#1077#1085#1080#1103
         ShowHint = True
-        TabOrder = 8
+        TabOrder = 9
+        Visible = True
+      end
+      object lcbDT: TDBLookupComboboxEh
+        Left = 8
+        Top = 55
+        Width = 61
+        Height = 21
+        Hint = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+        DynProps = <>
+        DataField = 'DocType'
+        DataSource = ds
+        DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+        EditButtons = <>
+        KeyField = 'O_ID'
+        ListField = 'O_NAME'
+        ListSource = srcDocType
+        ShowHint = True
+        TabOrder = 3
         Visible = True
       end
     end
@@ -667,7 +693,7 @@ object apgCustomerNew: TapgCustomerNew
       end
       object Label14: TLabel
         Tag = 2
-        Left = 204
+        Left = 205
         Top = 1
         Width = 32
         Height = 13
@@ -1390,14 +1416,14 @@ object apgCustomerNew: TapgCustomerNew
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
-    Left = 667
-    Top = 373
+    Left = 683
+    Top = 389
   end
   object srcVATG: TDataSource
     AutoEdit = False
     DataSet = dsVATG
-    Left = 700
-    Top = 374
+    Left = 724
+    Top = 390
   end
   object srcStreet: TDataSource
     DataSet = dsStreets
@@ -1708,6 +1734,11 @@ object apgCustomerNew: TapgCustomerNew
         Name = 'PASSPORT_VALID'
         DataType = ftSmallint
         Precision = 15
+      end
+      item
+        Name = 'DocType'
+        DataType = ftSmallint
+        Precision = 15
       end>
     IndexDefs = <>
     Params = <>
@@ -1999,6 +2030,14 @@ object apgCustomerNew: TapgCustomerNew
           currency = False
           Precision = 15
         end
+        object DocType: TMTNumericDataFieldEh
+          FieldName = 'DocType'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
       end
       object RecordsList: TRecordsListEh
       end
@@ -2167,5 +2206,23 @@ object apgCustomerNew: TapgCustomerNew
     UpdateTransaction = dmMain.trWrite
     Left = 753
     Top = 517
+  end
+  object dsDocType: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select o.o_name, o.O_id, o.O_CHECK'
+      'from objects o'
+      'where o.O_TYPE = 66 and o.O_DELETED = 0'
+      'order by o.o_name')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    Left = 563
+    Top = 581
+  end
+  object srcDocType: TDataSource
+    AutoEdit = False
+    DataSet = dsDocType
+    Left = 604
+    Top = 582
   end
 end

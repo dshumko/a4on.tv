@@ -4,59 +4,19 @@ unit MAIN;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
-  System.Win.ComObj,
-  System.SysUtils,
-  System.Classes,
-  System.Variants,
-  System.UITypes,
-  System.Actions,
+  Winapi.Windows, Winapi.Messages, System.Win.ComObj, System.SysUtils, System.Classes,
+  System.Variants, System.UITypes, System.Actions, System.Types,
   Data.DB,
-  Vcl.Graphics,
-  Vcl.Forms,
-  Vcl.Controls,
-  Vcl.Menus,
-  Vcl.StdCtrls,
-  Vcl.Dialogs,
-  Vcl.Buttons,
-  Vcl.ExtCtrls,
-  Vcl.ComCtrls,
-  Vcl.StdActns,
-  Vcl.ActnList,
-  Vcl.ToolWin,
-  Vcl.ImgList,
-  Vcl.Mask,
-  Vcl.AppEvnts,
+  Vcl.Graphics, Vcl.Forms, Vcl.Controls, Vcl.Menus, Vcl.StdCtrls, Vcl.Dialogs, Vcl.Buttons,
+  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.ToolWin, Vcl.ImgList, Vcl.Mask, Vcl.AppEvnts,
 {$IFDEF VER290}
   System.ImageList,
 {$ENDIF}
-  FIBQuery,
-  pFIBQuery,
-  frxExportPDF,
-  frxExportRTF,
-  frxExportTXT,
-  frxExportHTML,
-  frxExportXLS,
-  frxExportImage,
+  FIBQuery, pFIBQuery, frxExportPDF, frxExportRTF, frxExportTXT, frxExportHTML, frxExportXLS, frxExportImage,
   frxExportCSV,
-  frxExportBIFF,
-  frxExportDBF,
-  frxExportODF,
-  frxExportMail,
-  JvDesktopAlert,
-  DBCtrlsEh,
-  frxClass,
-  frxExportXML,
-  EhLibLangConsts,
-  EhLibEmbeddedLangConsts,
-  LanguageResManEh,
-  MDIChildBar,
-  A4onTypeUnit,
-  DM, DBGridEh,
-  ad3SpellBase,
-  ad3Spell,
-  ad4Live;
+  frxExportBIFF, frxExportDBF, frxExportODF, frxExportMail, JvDesktopAlert, DBCtrlsEh,
+  frxClass, frxExportXML, EhLibLangConsts, EhLibEmbeddedLangConsts, LanguageResManEh, MDIChildBar,
+  A4onTypeUnit, DM, DBGridEh, ad3SpellBase, ad3Spell, ad4Live, PrnDbgeh;
 
 type
   TA4MainForm = class(TForm)
@@ -333,6 +293,20 @@ type
     miDocList: TMenuItem;
     actPromo: TAction;
     miPromo: TMenuItem;
+    EditCut1: TEditCut;
+    EditCopy1: TEditCopy;
+    EditPaste1: TEditPaste;
+    EditSelectAll1: TEditSelectAll;
+    printGridEh: TPrintDBGridEh;
+    actObjectsRAW: TAction;
+    miN73: TMenuItem;
+    miObjectsRAW: TMenuItem;
+    miN74: TMenuItem;
+    actEPoint: TAction;
+    miEPoint: TMenuItem;
+    actERecipient: TAction;
+    miEE: TMenuItem;
+    miERecipient: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -373,7 +347,6 @@ type
     procedure actAdminQueryExecute(Sender: TObject);
     procedure actAdminUsersExecute(Sender: TObject);
     procedure actAdminServiceExecute(Sender: TObject);
-    procedure miEventsClick(Sender: TObject);
     procedure N38Click(Sender: TObject);
     procedure actEquipmentCommandsExecute(Sender: TObject);
     procedure actOrgzExecute(Sender: TObject);
@@ -455,6 +428,9 @@ type
     procedure actPortTypeExecute(Sender: TObject);
     procedure actDocListExecute(Sender: TObject);
     procedure actPromoExecute(Sender: TObject);
+    procedure actObjectsRAWExecute(Sender: TObject);
+    procedure actEPointExecute(Sender: TObject);
+    procedure actERecipientExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -511,12 +487,14 @@ type
     procedure OpnenNodeByID(const ID: Integer);
     procedure OpnenHouseByID(const ID: Integer);
     procedure OpnenStreetByID(const ID: Integer);
+    procedure CopyDataSetFldToClipboard(ds: TDataSet; const FLD: String);
     procedure OpenEquipmentByName(const name: String);
     function OpenEquipmentByID(const eid: Integer): Boolean;
     function OpenRequest(const rq_id: Integer): Boolean;
     function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
     procedure ExportDBGrid(const aDBGrid: TDBGridEh; const aFileName: string);
     procedure CopyDBGrid(const aDBGrid: TDBGridEh; const ForWholeGrid: Boolean = False);
+    procedure PrintDBGrid(const aDBGrid: TDBGridEh);
     procedure OpenCustomerWithData(const aCustomer: Integer; const TabType: Integer; const DataValue: string);
     function ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
   end;
@@ -535,6 +513,7 @@ uses
   Winapi.CommCtrl,
   System.Threading,
   System.DateUtils,
+  Vcl.Clipbrd,
 {$IFDEF EurekaLog}
   FeedbackForma,
 {$ENDIF}
@@ -578,13 +557,13 @@ uses
   ScriptModule,
   fs_iinterpreter,
   ScripEditorForma,
-  EventsForma,
   EquipmentComands,
   OrganForma,
   EQGroupsForma,
   HeadEndsForma,
   RecourseTPLForma,
   RecoursesForma,
+  RequestNewForma,
   SUBDIVForma,
   WorkTeamForma,
   WHForma,
@@ -644,7 +623,7 @@ uses
   ContactTypeForma,
   LabelTypeForma,
   ConnectTypeForma,
-  PortTypeForma, DocListForma, PromoForma;
+  PortTypeForma, DocListForma, PromoForma, ObjectsRAWForma, ElectroPointForma, ElectroRecipientForma;
 
 type
 
@@ -995,6 +974,7 @@ begin
       AppIni.WriteString('MAIN', 'CASHBOXPSWD', dmMain.GetIniValue('CASHBOXPSWD'));
       AppIni.WriteString('MAIN', 'DISCOUNT', dmMain.GetIniValue('DISCOUNT'));
       AppIni.WriteString('MAIN', 'SHOW_WORKS_IN_SINGLE', dmMain.GetIniValue('SHOW_WORKS_IN_SINGLE'));
+      AppIni.WriteString('MAIN', 'QUICK_FILTER', dmMain.GetIniValue('QUICK_FILTER'));
 
       if dmMain.GetIniValue('FONT_SIZE') <> '' then
       begin
@@ -1021,6 +1001,9 @@ begin
       AppIni.WriteString('MAIN', 'EQPMNTGRIDFROZEN', dmMain.GetIniValue('EQPMNTGRIDFROZEN'));
       AppIni.WriteString('MAIN', 'CUSTGRIDFROZEN', dmMain.GetIniValue('CUSTGRIDFROZEN'));
       AppIni.WriteString('MAIN', 'REQGRIDFROZEN', dmMain.GetIniValue('REQGRIDFROZEN'));
+
+      AppIni.WriteString('BID', 'BIDMATGROUPIDX', dmMain.GetIniValue('BIDMATGROUPIDX'));
+      AppIni.WriteString('BID', 'BIDMATGROUPSEL', dmMain.GetIniValue('BIDMATGROUPSEL'));
     finally
       FreeAndNil(AppIni);
     end;
@@ -1079,6 +1062,7 @@ begin
     SetFromIniSettings('MAIN', 'CUSTGRIDFROZEN', '0');
     SetFromIniSettings('MAIN', 'REQGRIDFROZEN', '0');
     SetFromIniSettings('MAIN', 'MATGRIDFROZEN', '1');
+    SetFromIniSettings('MAIN', 'QUICK_FILTER', '1');
 
     SetFromIniSettings('EQPMNT', 'EQUIPMENTASTREE', '0');
     SetFromIniSettings('EQPMNT', 'EQUIPMENT_INFOLAYOUT', '0');
@@ -1089,6 +1073,8 @@ begin
 
     SetFromIniSettings('MSGSFRM', 'MSG_SENDED_ONLY', '1');
     SetFromIniSettings('MSGSFRM', 'MSG_MY_ONLY', '0');
+    SetFromIniSettings('BID', 'BIDMATGROUPIDX', '0');
+    SetFromIniSettings('BID', 'BIDMATGROUPSEL', '');
 
     s := AppIni.ReadString('MAIN', 'FONT_SIZE', '0');
     if s <> '0' then
@@ -1128,6 +1114,7 @@ begin
     dmMain.SetIniValue('CUSTGRIDFROZEN', '0');
     dmMain.SetIniValue('REQGRIDFROZEN', '0');
     dmMain.SetIniValue('SHOW_WORKS_IN_SINGLE', '0');
+    dmMain.SetIniValue('QUICK_FILTER', '0');
     actSettingUser.Execute;
   end;
 
@@ -1627,13 +1614,6 @@ begin
   EPGViewForm.Show;
 end;
 
-procedure TA4MainForm.miEventsClick(Sender: TObject);
-begin
-  if Not Assigned(EventsForm) then
-    EventsForm := TEventsForm.Create(Application);
-  EventsForm.Show;
-end;
-
 procedure TA4MainForm.miFeedbackClick(Sender: TObject);
 begin
 {$IFDEF EurekaLog}
@@ -1679,6 +1659,13 @@ begin
   if Not Assigned(EquipmentForm) then
     EquipmentForm := TEquipmentForm.Create(Application);
   EquipmentForm.Show;
+end;
+
+procedure TA4MainForm.actERecipientExecute(Sender: TObject);
+begin
+  if Not Assigned(ElectroRecipientForm) then
+    ElectroRecipientForm := TElectroRecipientForm.Create(Application);
+  ElectroRecipientForm.Show;
 end;
 
 procedure TA4MainForm.OpenEquipmentByName(const name: String);
@@ -2905,9 +2892,28 @@ begin
 end;
 
 procedure TA4MainForm.CreateModulesMenu;
+  function findMenuItem(const Caption: string): TMenuItem;
+  var
+    i: Integer;
+  begin
+    Result := nil;
+    for i := 0 to miPlugIns.Count - 1 do
+    begin
+      if miPlugIns.Items[i].Caption = Caption then
+      begin
+        Result := miPlugIns.Items[i];
+        Exit;
+      end;
+    end;
+    miPlugIns.Add(NewSubMenu(Caption, 0, 'miPlugIns' + IntToStr(miPlugIns.Count), []));
+    Result := findMenuItem(Caption);
+  end;
+
 var
   NewItem: TMenuItem;
+  pMenu: TMenuItem;
   tr: TFIBTransaction;
+  n, sn: string;
 begin
   if dmMain.AllowedAction(rght_Modules_Exec) then
   begin
@@ -2922,14 +2928,26 @@ begin
 
         while not EOF do
         begin
-          NewItem := TMenuItem.Create(miPlugIns);
+          n := fn('Name').AsString;
+          if n.Contains('\') then
+          begin
+            sn := Copy(n, 1, Pos('\', n) - 1);
+            n := Copy(n, Pos('\', n) + 1, Length(n));
+            pMenu := findMenuItem(sn);
+          end
+          else
+            pMenu := miPlugIns;
+
+          NewItem := TMenuItem.Create(pMenu);
           NewItem.name := 'miModules' + IntToStr(fn('Id_Module').AsInteger);
-          NewItem.Caption := fn('Name').AsString;
+          NewItem.Caption := n;
           NewItem.Tag := fn('Id_Module').AsInteger;
           if not fn('NOTICE').IsNull then
             NewItem.Hint := fn('NOTICE').AsString;
           NewItem.onclick := miModuleClick;
-          miPlugIns.Add(NewItem);
+
+          pMenu.Add(NewItem);
+
           Next;
         end;
       finally
@@ -3010,6 +3028,13 @@ begin
   if Not Assigned(EPGViewForm) then
     EPGViewForm := TEPGViewForm.Create(Application);
   EPGViewForm.Show;
+end;
+
+procedure TA4MainForm.actEPointExecute(Sender: TObject);
+begin
+  if Not Assigned(ElectroPointForm) then
+    ElectroPointForm := TElectroPointForm.Create(Application);
+  ElectroPointForm.Show;
 end;
 
 procedure TA4MainForm.actDVBExecute(Sender: TObject);
@@ -3127,9 +3152,11 @@ begin
   actBCItypes.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
   actBCISolution.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
 
-  actLinks.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
   actNodes.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
-  miNodesType.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
+  actLinks.Visible := actNodes.Visible;
+  actEPoint.Visible := actNodes.Visible;
+  actERecipient.Visible := actNodes.Visible;
+  miNodesType.Visible := actNodes.Visible;
   actPortView.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Equipment) or dmMain.AllowedAction(rght_Comm_View);
   actDeviceType.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Equipment) or
     dmMain.AllowedAction(rght_Comm_View);
@@ -3150,92 +3177,155 @@ begin
   rFull := dmMain.AllowedAction(rght_Dictionary_full);
   rFull := rFull or dmMain.AllowedAction(rght_Dictionary_View);
 
-  actAttributes.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_AtrAbonents) or
-    dmMain.AllowedAction(rght_Dictionary_AtrEquipments) or dmMain.AllowedAction(rght_Dictionary_AtrServices) or
-    dmMain.AllowedAction(rght_Dictionary_AtrIPTV);
+  actAttributes.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_AtrAbonents) //
+    or dmMain.AllowedAction(rght_Dictionary_AtrEquipments) //
+    or dmMain.AllowedAction(rght_Dictionary_AtrServices) //
+    or dmMain.AllowedAction(rght_Dictionary_AtrIPTV);
 
-  actBanks.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Banks);
-  actBillingAll.Visible := rFull or dmMain.AllowedAction(rght_Billing_view);
-  actBlackList.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_BlacList);
-  actBonuses.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Bonuses);
-  actPromo.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Services);
-  actBuildings.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Street);
-  actChannel.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Channels);
-  actDecoders.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_DigitEQP);
-  actEQGroups.Visible := rFull or dmMain.AllowedAction(rght_Comm_Equipment) or dmMain.AllowedAction(rght_Comm_View);
-  actEquipment.Visible := rFull or dmMain.AllowedAction(rght_Comm_Equipment) or dmMain.AllowedAction(rght_Comm_View);
-  actEquipmentCommands.Visible := rFull or dmMain.AllowedAction(rght_Comm_Equipment) or
-    dmMain.AllowedAction(rght_Comm_View);
-  actHeadEnds.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_HeadEnd);
-  actLetters.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Reports);
-  actMan.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_MANUFACTURERS);
-  actOrgz.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_CONTRACTORS);
-  actRecourseTPL.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_RecType);
-  actRequestType.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_ReqType);
-  actServices.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Services);
-  actShippers.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Shippers);
+  actBanks.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Banks);
+  actBillingAll.Visible := rFull //
+    or dmMain.AllowedAction(rght_Billing_view);
+  actBlackList.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_BlacList);
+  actBonuses.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Bonuses);
+  actPromo.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Services);
+  actBuildings.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Street);
+  actChannel.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Channels);
+  actDecoders.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_DigitEQP);
+  actEQGroups.Visible := rFull //
+    or dmMain.AllowedAction(rght_Comm_Equipment) //
+    or dmMain.AllowedAction(rght_Comm_View);
+  actEquipment.Visible := rFull //
+    or dmMain.AllowedAction(rght_Comm_Equipment) //
+    or dmMain.AllowedAction(rght_Comm_View);
+  actEquipmentCommands.Visible := rFull //
+    or dmMain.AllowedAction(rght_Comm_Equipment) //
+    or dmMain.AllowedAction(rght_Comm_View);
+  actHeadEnds.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_HeadEnd);
+  actLetters.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Reports);
+  actMan.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_MANUFACTURERS);
+  actOrgz.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_CONTRACTORS);
+  actRecourseTPL.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_RecType);
+  actRequestType.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_ReqType);
+  actServices.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Services);
+  actShippers.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Shippers);
   actSubDiv.Visible := rFull;
-  actVATGroups.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Services);
-  actVLANS.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Vlans);
-  actWareHouses.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Warehouses);
-  actWorkers.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Workers);
-  actWorkTeams.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_WorkAreas);
-  actZones.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Areas);
+  actVATGroups.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Services);
+  actVLANS.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Vlans);
+  actWareHouses.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Warehouses);
+  actWorkers.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Workers);
+  actWorkTeams.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_WorkAreas);
+  actZones.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Areas);
   actFileTypes.Visible := rFull;
   actContactTypes.Visible := rFull;
   actCableType.Visible := rFull;
   actLabelType.Visible := rFull;
   actConnectType.Visible := rFull;
   actPortType.Visible := rFull;
+  actObjectsRAW.Visible := dmMain.UserIsAdmin;
+  ActOrdersTPType.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_OrdersTPType);
 
-  ActOrdersTPType.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_OrdersTPType);
-  ActOrdersTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) or dmMain.AllowedAction(rght_OrdersTP_add) or
-    dmMain.AllowedAction(rght_OrdersTP_edit) or dmMain.AllowedAction(rght_OrdersTP_del) or
-    dmMain.AllowedAction(rght_OrdersTP_View);
+  ActOrdersTP.Visible := dmMain.AllowedAction(rght_OrdersTP_full) //
+    or dmMain.AllowedAction(rght_OrdersTP_add) //
+    or dmMain.AllowedAction(rght_OrdersTP_edit) //
+    or dmMain.AllowedAction(rght_OrdersTP_del) //
+    or dmMain.AllowedAction(rght_OrdersTP_View);
 
-  actMessages.Visible := rFull or dmMain.AllowedAction(rght_Messages_add);
+  actMessages.Visible := rFull //
+    or dmMain.AllowedAction(rght_Messages_add);
 
-  actMaterials.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Materials) or
-    dmMain.AllowedAction(rght_Materials_full);
+  actMaterials.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Materials) //
+    or dmMain.AllowedAction(rght_Materials_full);
 
-  actMatDoc.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_MatDoc_Edit) or
-    dmMain.AllowedAction(rght_Materials_full);
+  actMatDoc.Visible := rFull //
+    or dmMain.AllowedAction(rght_Materials_full) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDoc_CreateEdit) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocNew) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocMove) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocOUT) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocInvent) //
+    or dmMain.AllowedAction(rght_Dictionary_MatDocsView);
 
-  actPaymentSources.Visible := rFull or dmMain.AllowedAction(rght_Pays_full) or
-    dmMain.AllowedAction(rght_Dictionary_PaySources);
+  actPaymentSources.Visible := rFull //
+    or dmMain.AllowedAction(rght_Pays_full) //
+    or dmMain.AllowedAction(rght_Dictionary_PaySources);
 
-  OpenPaymentsDoc.Visible := dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Programm_ViewMoney) or
-    dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_AddToday);
+  OpenPaymentsDoc.Visible := dmMain.AllowedAction(rght_Pays_full) //
+    or dmMain.AllowedAction(rght_Programm_ViewMoney) //
+    or dmMain.AllowedAction(rght_Pays_add) //
+    or dmMain.AllowedAction(rght_Pays_AddToday);
 
-  actPayments.Visible := rFull or dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Programm_ViewMoney)
-    or dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_AddToday);
+  actPayments.Visible := rFull //
+    or dmMain.AllowedAction(rght_Pays_full) //
+    or dmMain.AllowedAction(rght_Programm_ViewMoney) //
+    or dmMain.AllowedAction(rght_Pays_add) //
+    or dmMain.AllowedAction(rght_Pays_AddToday);
 
-  actLoadPays.Visible := rFull or dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_add);
+  actLoadPays.Visible := rFull //
+    or dmMain.AllowedAction(rght_Pays_full) //
+    or dmMain.AllowedAction(rght_Pays_add);
 
-  actCardsPay.Visible := dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_CardsView);
+  actCardsPay.Visible := dmMain.AllowedAction(rght_Pays_full) //
+    or dmMain.AllowedAction(rght_Pays_CardsView);
 
-  actCardsPaySerials.Visible := dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_CardsView) or
-    dmMain.AllowedAction(rght_Dictionary_full);
+  actCardsPaySerials.Visible := dmMain.AllowedAction(rght_Pays_full) //
+    or dmMain.AllowedAction(rght_Pays_CardsView) //
+    or dmMain.AllowedAction(rght_Dictionary_full);
 
-  actEPG.Visible := rFull or dmMain.AllowedAction(rght_EPG_EditEvent);
+  actEPG.Visible := rFull //
+    or dmMain.AllowedAction(rght_EPG_EditEvent);
 
-  miHETypes.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_HeadEnd);
-  miCompany.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Company);
-  miRecourses.Visible := rFull or dmMain.AllowedAction(rght_Recourses_add) or dmMain.AllowedAction(rght_Recourses_del)
+  miHETypes.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_HeadEnd);
+  miCompany.Visible := rFull //
+    or dmMain.AllowedAction(rght_Dictionary_Company);
+  miRecourses.Visible := rFull //
+    or dmMain.AllowedAction(rght_Recourses_add) //
+    or dmMain.AllowedAction(rght_Recourses_del) //
     or dmMain.AllowedAction(rght_Recourses_edit);
 
-  actIPTVsettings.Visible := rFull or dmMain.AllowedAction(rght_IPTV_edit) or dmMain.AllowedAction(rght_IPTV_view);
+  actIPTVsettings.Visible := rFull //
+    or dmMain.AllowedAction(rght_IPTV_edit) //
+    or dmMain.AllowedAction(rght_IPTV_view);
 
-  ActRequest.Visible := dmMain.AllowedAction(rght_Request_full) or dmMain.AllowedAction(rght_Request_Add) or
-    dmMain.AllowedAction(rght_Request_Edit) or dmMain.AllowedAction(rght_Request_Give) or
-    dmMain.AllowedAction(rght_Request_Close) or dmMain.AllowedAction(rght_Request_Del) or
-    dmMain.AllowedAction(rght_Request_DateChange) or dmMain.AllowedAction(rght_Request_Close_Day) or
-    dmMain.AllowedAction(rght_Request_Unclose);
+  ActRequest.Visible := dmMain.AllowedAction(rght_Request_full) //
+    or dmMain.AllowedAction(rght_Request_Add) //
+    or dmMain.AllowedAction(rght_Request_Edit) //
+    or dmMain.AllowedAction(rght_Request_Give) //
+    or dmMain.AllowedAction(rght_Request_Close) //
+    or dmMain.AllowedAction(rght_Request_Del) //
+    or dmMain.AllowedAction(rght_Request_DateChange) //
+    or dmMain.AllowedAction(rght_Request_Close_Day) //
+    or dmMain.AllowedAction(rght_Request_Unclose);
 
   actReqPhotos.Visible := ActRequest.Visible;
 
   if (dmMain.GetSettingsValue('SHOW_DOC_LIST') = '1') then
-    actDocList.Visible := rFull or dmMain.AllowedAction(rght_Dictionary_Doclist)
+    actDocList.Visible := rFull //
+      or dmMain.AllowedAction(rght_Dictionary_Doclist)
   else
     actDocList.Visible := False;
 end;
@@ -3351,6 +3441,13 @@ begin
   if Not Assigned(NodesForm) then
     NodesForm := TNodesForm.Create(Application);
   NodesForm.Show;
+end;
+
+procedure TA4MainForm.actObjectsRAWExecute(Sender: TObject);
+begin
+  if Not Assigned(ObjectsRAWForm) then
+    ObjectsRAWForm := TObjectsRAWForm.Create(Application);
+  ObjectsRAWForm.Show;
 end;
 
 procedure TA4MainForm.actFilesExecute(Sender: TObject);
@@ -3547,7 +3644,7 @@ var
       Result := 4
     else if (s = rsFindNotice) then
       Result := 5
-    else if (s = rsFindPhone) then
+    else if (s = rsFindPhone) or (s = rsFindPhoneEng) then
       Result := 6
     else if (s = rsFindStreet) then
       Result := 8
@@ -3563,6 +3660,8 @@ var
       Result := 13
     else if (s = rsFindJur) then
       Result := 15
+    else if (s = rsFindContact) or (s = rsFindContactEng) then
+      Result := 16
     else
       Result := 0;
   end;
@@ -3624,13 +3723,21 @@ begin
   end
   else
   begin
-    if TryStrToInt(search_text, i) then
+    if (search_text <> '+') then
+    begin
+      if TryStrToInt(search_text, i) then
+      begin
+        if (search_field = 12) then
+          ReguestExecute(i, -2, 1)
+        else if (search_field = 13) then
+          FindTask(i);
+      end;
+    end
+    else
     begin
       if (search_field = 12) then
-        ReguestExecute(i, -2, 1)
-      else if (search_field = 13) then
-        FindTask(i);
-    end;
+        NewRequest(-1, nil, True);
+    end
   end;
 end;
 
@@ -3638,7 +3745,7 @@ procedure TA4MainForm.ReceiveMessage;
 var
   pcd: PCopyDataStruct;
   Data: String;
-  Params: TStringArray;
+  Params: TStringDynArray;
 begin
   // В PCopyDataStruct передадим данные вида
   // БАЗА;ТИП;данные для типа
@@ -3818,7 +3925,8 @@ end;
 procedure TA4MainForm.ExportDBGrid(const aDBGrid: TDBGridEh; const aFileName: string);
 var
   ExpClass: TDBGridEhExportClass;
-  Ext: String;
+  Ext, s: String;
+  filename: string;
 begin
   // Экспорт информации
   if (not dmMain.AllowedAction(rght_Export)) then
@@ -3831,33 +3939,33 @@ begin
       case A4MainForm.SaveDialog.FilterIndex of
         1:
           begin
-            ExpClass := TDBGridEhExportAsUnicodeText;
-            Ext := 'txt';
+            ExpClass := TDBGridEhExportAsText;
+            Ext := '.txt';
           end;
         2:
           begin
             ExpClass := TDBGridEhExportAsCSV;
-            Ext := 'csv';
+            Ext := '.csv';
           end;
         3:
           begin
             ExpClass := TDBGridEhExportAsHTML;
-            Ext := 'htm';
+            Ext := '.htm';
           end;
         4:
           begin
             ExpClass := TDBGridEhExportAsRTF;
-            Ext := 'rtf';
+            Ext := '.rtf';
           end;
         5:
           begin
-            ExpClass := TDBGridEhExportAsOLEXLS;
-            Ext := 'xls';
+            ExpClass := TDBGridEhExportAsXLS;
+            Ext := '.xls';
           end;
         6:
           begin
             ExpClass := TDBGridEhExportAsXlsx;
-            Ext := 'xlsx';
+            Ext := '.xlsx';
           end;
       else
         ExpClass := nil;
@@ -3865,10 +3973,11 @@ begin
       end;
       if ExpClass <> nil then
       begin
-        if AnsiUpperCase(Copy(A4MainForm.SaveDialog.filename, Length(A4MainForm.SaveDialog.filename) - 2, 3)) <>
-          AnsiUpperCase(Ext) then
-          A4MainForm.SaveDialog.filename := A4MainForm.SaveDialog.filename + '.' + Ext;
-        SaveDBGridEhToExportFile(ExpClass, aDBGrid, A4MainForm.SaveDialog.filename, False);
+        filename := A4MainForm.SaveDialog.filename;
+        s := ExtractFileExt(filename);
+        if AnsiUpperCase(s) <> AnsiUpperCase(Ext) then
+          filename := filename + '.' + Ext;
+        SaveDBGridEhToExportFile(ExpClass, aDBGrid, filename, False);
       end;
     end;
 end;
@@ -3879,6 +3988,15 @@ begin
     Exit;
 
   DBGridEh_DoCopyAction(aDBGrid, ForWholeGrid);
+end;
+
+procedure TA4MainForm.PrintDBGrid(const aDBGrid: TDBGridEh);
+begin
+  if (not dmMain.AllowedAction(rght_Export)) then
+    Exit;
+
+  printGridEh.DBGridEh := aDBGrid;
+  printGridEh.Preview;
 end;
 
 procedure TA4MainForm.OpenCustomerWithData(const aCustomer: Integer; const TabType: Integer; const DataValue: string);
@@ -4005,6 +4123,20 @@ begin
     StreetForm := TStreetForm.Create(Application);
   StreetForm.Show;
   StreetForm.FindIDs(ID.ToString);
+end;
+
+procedure TA4MainForm.CopyDataSetFldToClipboard(ds: TDataSet; const FLD: String);
+begin
+  Clipboard.Open;
+  try
+    Clipboard.Clear;
+    if (ds.FieldByName(FLD).IsNull) then
+      Clipboard.AsText := ''
+    else
+      Clipboard.AsText := ds.FieldByName(FLD).AsString;
+  finally
+    Clipboard.Close;
+  end;
 end;
 
 end.

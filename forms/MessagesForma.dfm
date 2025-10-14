@@ -625,6 +625,11 @@ object MessagesForm: TMessagesForm
       Caption = #1041#1072#1083#1072#1085#1089' SMS'
       OnExecute = actSMSbalanceExecute
     end
+    object actCopyID: TAction
+      Caption = 'actCopyID'
+      ShortCut = 24649
+      OnExecute = actCopyIDExecute
+    end
   end
   object gridPopUp: TPopupMenu
     Left = 132

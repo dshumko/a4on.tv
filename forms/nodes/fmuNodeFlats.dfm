@@ -1,7 +1,7 @@
 object apgNodeFlats: TapgNodeFlats
   Left = 0
   Top = 0
-  Caption = #1050#1074#1072#1088#1090#1080#1088#1099' '#1091#1079#1083#1072
+  Caption = #1044#1086#1084#1072' '#1080' '#1050#1074#1072#1088#1090#1080#1088#1099' '#1091#1079#1083#1072
   ClientHeight = 211
   ClientWidth = 779
   Color = clBtnFace
@@ -14,9 +14,9 @@ object apgNodeFlats: TapgNodeFlats
   PixelsPerInch = 96
   TextHeight = 13
   object dbgNodeFiles: TDBGridEh
-    Left = 27
+    Left = 26
     Top = 0
-    Width = 752
+    Width = 753
     Height = 211
     Align = alClient
     AllowedOperations = []
@@ -29,9 +29,8 @@ object apgNodeFlats: TapgNodeFlats
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
-    SearchPanel.Enabled = True
     SumList.Active = True
-    TabOrder = 1
+    TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgNodeFilesDblClick
     OnSortMarkingChanged = dbgNodeFilesSortMarkingChanged
@@ -124,35 +123,29 @@ object apgNodeFlats: TapgNodeFlats
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object tbAttributes: TToolBar
+  object pnlButtons: TPanel
     Left = 0
     Top = 0
-    Width = 27
+    Width = 26
     Height = 211
     Align = alLeft
-    EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-    Images = A4MainForm.ICONS_ACTIVE
-    TabOrder = 0
-    object btnEdit: TToolButton
-      Left = 0
-      Top = 0
+    BevelOuter = bvNone
+    TabOrder = 1
+    object btnAdd1: TSpeedButton
+      Left = 2
+      Top = 4
+      Width = 22
+      Height = 22
       Action = actEdit
-      ParentShowHint = False
-      ShowHint = True
+      Flat = True
     end
-    object btn1: TToolButton
-      Left = 0
-      Top = 0
-      Width = 17
-      Caption = 'btn1'
-      ImageIndex = 5
-      Wrap = True
-      Style = tbsSeparator
-    end
-    object btnCustomers: TToolButton
-      Left = 0
-      Top = 39
+    object btnFind: TSpeedButton
+      Left = 2
+      Top = 40
+      Width = 22
+      Height = 22
       Action = actCustomers
+      Flat = True
     end
   end
   object dsFlats: TpFIBDataSet
@@ -199,7 +192,6 @@ object apgNodeFlats: TapgNodeFlats
       ImageIndex = 2
     end
     object actEdit: TAction
-      Caption = #1055#1088#1080#1074#1103#1079#1072#1090#1100' '#1082#1074#1072#1088#1090#1080#1088#1099
       Hint = #1055#1088#1080#1074#1103#1079#1072#1090#1100' '#1082#1074#1072#1088#1090#1080#1088#1099' '#1082' '#1091#1079#1083#1091
       ImageIndex = 4
       OnExecute = actEditExecute
@@ -214,7 +206,6 @@ object apgNodeFlats: TapgNodeFlats
       ImageIndex = 38
     end
     object actCustomers: TAction
-      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1086#1074' '#1076#1086#1084#1072
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1086#1074' '#1076#1086#1084#1072
       ImageIndex = 9
       OnExecute = actCustomersExecute

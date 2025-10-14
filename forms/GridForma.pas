@@ -49,9 +49,9 @@ type
     pmgSep2: TMenuItem;
     miRefresh: TMenuItem;
     splPG: TSplitter;
-    printGridEh: TPrintDBGridEh;
     actPrintGrid: TAction;
     miPrintGrid: TMenuItem;
+    sep444: TToolButton;
     procedure actQuickFilterExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pmgCopyClick(Sender: TObject);
@@ -71,6 +71,7 @@ type
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
     procedure actPrintGridExecute(Sender: TObject);
+    procedure ShowQuickFilter(const aShow:Boolean = true);
   protected
     { Private declarations }
     FCanEdit: Boolean;
@@ -81,8 +82,10 @@ type
     procedure StopEdit(const Cancel: Boolean);
     procedure ResizeButtonImagesforHighDPI(const container: TWinControl);
     procedure CloseDatasets;
+    procedure RefreshDataInner;
   public
     function GetGridSortOrder(Grid: TDBGridEh): String;
+    procedure RefreshData;
   end;
 
 implementation
@@ -165,18 +168,33 @@ end;
 procedure TGridForm.actPrintGridExecute(Sender: TObject);
 begin
   if (ActiveControl is TDBGridEh) then
-  begin
-    printGridEh.DBGridEh := (ActiveControl as TDBGridEh);
-    printGridEh.Preview;
-  end;
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TGridForm.actQuickFilterExecute(Sender: TObject);
 begin
-  actQuickFilter.Checked := not actQuickFilter.Checked;
-  dbGrid.STFilter.Visible := actQuickFilter.Checked;
-  if not actQuickFilter.Checked then
-    dbGrid.DataSource.DataSet.Filtered := False;
+  ShowQuickFilter(not actQuickFilter.Checked);
+end;
+
+procedure TGridForm.ShowQuickFilter(const aShow:Boolean = true);
+var
+  i: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).STFilter.Visible := aShow;
+      (Components[i] as TDBGridEh).STFilter.Local := aShow;
+
+      (Components[i] as TDBGridEh).SearchPanel.Enabled := aShow;
+      (Components[i] as TDBGridEh).SearchPanel.FilterOnTyping := False; // aShow;
+
+      if (not actQuickFilter.Checked) and ((Components[i] as TDBGridEh).DataSource.DataSet.Filtered) then
+        (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := False;
+    end;
+  end;
+  actQuickFilter.Checked := aShow;
 end;
 
 procedure TGridForm.btnCancelLinkClick(Sender: TObject);
@@ -350,6 +368,8 @@ begin
   end;
   FinEditMode := False;
   SetGridsPopUpMenu(pmPopUp);
+
+  ShowQuickFilter((dmMain.GetIniValue('QUICK_FILTER')<>'0'));
 end;
 
 procedure TGridForm.pmgCopyClick(Sender: TObject);
@@ -536,6 +556,17 @@ begin
         (Components[i] as TDBGridEh).PopUpMenu := pmGrid;
     end;
   end;
+end;
+
+procedure TGridForm.RefreshData;
+begin
+  if not(srcDataSource.DataSet.State in [dsEdit, dsInsert]) then
+      RefreshDataInner;
+end;
+
+procedure TGridForm.RefreshDataInner;
+begin
+// перекроем метод в каждой форме
 end;
 
 end.

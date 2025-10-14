@@ -32,10 +32,17 @@ object SelDateForm: TSelDateForm
     Align = alBottom
     TabOrder = 0
     TabStop = True
+    inherited Label2: TLabel
+      Margins.Bottom = 0
+    end
+    inherited Label1: TLabel
+      Margins.Bottom = 0
+    end
     inherited bbOk: TBitBtn
-      Left = 66
+      Left = 12
       Top = 3
-      Width = 111
+      Width = 164
+      Anchors = [akLeft, akRight, akBottom]
       Caption = #1042#1099#1073#1088#1072#1090#1100
       Default = True
       OnClick = frm1bbOkClick

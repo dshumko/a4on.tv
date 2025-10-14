@@ -6,8 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
 
 type
@@ -25,6 +27,8 @@ type
     btnAddL: TSpeedButton;
     btnEditL: TSpeedButton;
     btnDelL: TSpeedButton;
+    btnRepair: TSpeedButton;
+    actRepair: TAction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -32,6 +36,9 @@ type
     procedure dbgCustAttrGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure srcLayoutDataChange(Sender: TObject; Field: TField);
+    procedure dbgCustAttrColumns5GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure actRepairExecute(Sender: TObject);
+    procedure dbgCustAttrColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
     procedure EnableControls;
   public
@@ -46,7 +53,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, A4onTypeUnit, AtrCommon, DM, NodesForma, NodeLayouteForma, FIBQuery, pFIBQuery;
+  MAIN, A4onTypeUnit, AtrCommon, DM, NodesForma, NodeLayoutForma, NodeLayoutFactForma, FIBQuery, pFIBQuery;
 
 class function TapgNodeLayout.GetPageName: string;
 begin
@@ -62,6 +69,7 @@ begin
   actAdd.Visible := pnlBottLeft.Visible;
   actDel.Visible := pnlBottLeft.Visible;
   actEdit.Visible := pnlBottLeft.Visible;
+  actRepair.Visible := FullAccess and dmMain.CompanyName.Contains('ЛТВ');
   dsLayout.DataSource := FDataSource;
 end;
 
@@ -83,7 +91,7 @@ end;
 
 procedure TapgNodeLayout.actAddExecute(Sender: TObject);
 var
-  NodeLayoutItem: TNodeLayoutItem;
+  NL_ID: Integer;
   NeedInsert: Boolean;
 begin
   if (FDataSource.DataSet.RecordCount = 0) then
@@ -101,20 +109,21 @@ begin
     if (MessageDlg(rsNodeLayotEmpty, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
       with TpFIBQuery.Create(self) do
+      begin
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
-          SQL.text := 'insert into Node_Layout (Node_Id, M_TYPE, Dev_Cnt, Notice)';
-          SQL.Add(' select :Node_Id, M_TYPE, Dev_Cnt,  Notice');
-          SQL.Add('from Node_Layout l where l.Node_Id = :O_ID');
-          ParamByName('Node_Id').AsInteger := FDataSource.DataSet['NODE_ID'];
-          ParamByName('O_ID').AsInteger := -1 * FDataSource.DataSet['Type_Id'];
+          SQL.Text := 'insert into Node_Layout (Node_Id, Notice, Srv_Type, Mat_Qnt, Cust_Qnt, Mat_Id_List, Mat_Req)';
+          SQL.Add('select :new_Id, Notice, Srv_Type, Mat_Qnt, Cust_Qnt, Mat_Id_List, Mat_Req from Node_Layout where Node_Id = :OLD_ID');
+          ParamByName('new_Id').AsInteger := FDataSource.DataSet['NODE_ID'];
+          ParamByName('OLD_ID').AsInteger := -1 * FDataSource.DataSet['Type_Id'];
           Transaction.StartTransaction;
           ExecQuery;
           Transaction.Commit;
         finally
-          Free;
+          free;
         end;
+      end;
       dsLayout.CloseOpen(True);
       NeedInsert := (dsLayout.RecordCount = 0);
       EnableControls;
@@ -124,18 +133,11 @@ begin
 
   if NeedInsert then
   begin
-    NodeLayoutItem.M_TYPE := -1;
-    NodeLayoutItem.NODE_ID := FDataSource.DataSet['NODE_ID'];
-    if EditLayoute(NodeLayoutItem) then
+    NL_ID := -1;
+    if EditLayoute(FDataSource.DataSet['NODE_ID'], NL_ID) then
     begin
-      dsLayout.Insert;
-      dsLayout['NODE_ID'] := NodeLayoutItem.NODE_ID;
-      dsLayout['M_TYPE'] := NodeLayoutItem.M_TYPE;
-      dsLayout['DEV_CNT'] := NodeLayoutItem.quant;
-      dsLayout['O_NAME'] := NodeLayoutItem.Name;
-      dsLayout['NOTICE'] := NodeLayoutItem.notice;
-      dsLayout.Post;
-      // dsLayout.CloseOpen(true);
+      dsLayout.CloseOpen(True);
+      dsLayout.Locate('LT_ID', NL_ID, []);
       EnableControls;
       UpdatePage;
     end
@@ -143,18 +145,25 @@ begin
 end;
 
 procedure TapgNodeLayout.actDelExecute(Sender: TObject);
+var
+  s: string;
 begin
   if ((not dsLayout.Active) or (dsLayout.RecordCount = 0)) then
     Exit;
+
   if (dsLayout['itsOwn'] = 0) then
   begin
     ShowMessage(rsLayoutNotDefined);
     Exit;
   end;
-  if (not srcLayout.DataSet.FieldByName('O_NAME').IsNull) then
+
+  if (not srcLayout.DataSet.FieldByName('MAT_LIST').IsNull) then
+    s := srcLayout.DataSet['MAT_LIST']
+  else
+    s := '';
+
   begin
-    if (MessageDlg(Format(rsDeleteWithName, [srcLayout.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
-    then
+    if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
       srcLayout.DataSet.Delete;
       EnableControls;
@@ -165,7 +174,7 @@ end;
 
 procedure TapgNodeLayout.actEditExecute(Sender: TObject);
 var
-  NodeLayoutItem: TNodeLayoutItem;
+  NL_ID: Integer;
 begin
   if ((not dsLayout.Active) or (dsLayout.RecordCount = 0)) then
     Exit;
@@ -174,32 +183,79 @@ begin
     ShowMessage(rsLayoutNotDefined);
     Exit;
   end;
-  if (dsLayout.FieldByName('O_NAME').IsNull) or (dsLayout.FieldByName('M_TYPE').IsNull) or
-    (FDataSource.DataSet.FieldByName('NODE_ID').IsNull) then
-    Exit;
 
-  NodeLayoutItem.M_TYPE := dsLayout['M_TYPE'];
-  NodeLayoutItem.quant := dsLayout['DEV_CNT'];
-  NodeLayoutItem.NODE_ID := FDataSource.DataSet['NODE_ID'];
-  if (not dsLayout.FieldByName('NOTICE').IsNull) then
-    NodeLayoutItem.notice := dsLayout['NOTICE'];
-  if EditLayoute(NodeLayoutItem) then
+  if (not dsLayout.FieldByName('LT_ID').IsNull) then
+    NL_ID := dsLayout['LT_ID']
+  else
+    NL_ID := -1;
+
+  if EditLayoute(dsLayout['NODE_ID'], NL_ID) then
   begin
-    dsLayout.Edit;
-    dsLayout['NODE_ID'] := NodeLayoutItem.NODE_ID;
-    dsLayout['M_TYPE'] := NodeLayoutItem.M_TYPE;
-    dsLayout['DEV_CNT'] := NodeLayoutItem.quant;
-    dsLayout['NOTICE'] := NodeLayoutItem.notice;
-    dsLayout.Post;
-    // dsLayout.CloseOpen(true);
+    dsLayout.CloseOpen(True);
+    dsLayout.Locate('LT_ID', NL_ID, []);
     EnableControls;
     UpdatePage;
   end
 end;
 
+procedure TapgNodeLayout.actRepairExecute(Sender: TObject);
+begin
+  if (FDataSource.DataSet.RecordCount = 0) or (dsLayout.RecordCount = 0) then
+    Exit;
+  if FDataSource.DataSet.FieldByName('NODE_ID').IsNull then
+    Exit;
+
+  EditLayouteFact(FDataSource.DataSet['NODE_ID']);
+end;
+
 procedure TapgNodeLayout.CloseData;
 begin
   dsLayout.Close;
+end;
+
+procedure TapgNodeLayout.dbgCustAttrColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+var
+  cp, cf: Integer;
+begin
+  if EditMode or (dsLayout.RecordCount = 0) then
+    Exit;
+
+  cp := 0;
+  cf := 0;
+
+  if (not dsLayout.FieldByName('CUST_QNT').IsNull) then
+    cp := dsLayout['CUST_QNT'];
+  if (not dsLayout.FieldByName('CUST_QNT_FACT').IsNull) then
+    cf := dsLayout['CUST_QNT_FACT'];
+
+  if (cf = cp) then
+    Params.Background := $00B4FEB4;
+end;
+
+procedure TapgNodeLayout.dbgCustAttrColumns5GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+var
+  cp, cf: Integer;
+  mp, mf: Double;
+begin
+  if EditMode then
+    Exit;
+
+  cp := 0;
+  cf := 0;
+  mp := 0;
+  mf := 0;
+
+  if (not dsLayout.FieldByName('CUST_QNT').IsNull) then
+    cp := dsLayout['CUST_QNT'];
+  if (not dsLayout.FieldByName('MAT_QNT').IsNull) then
+    mp := dsLayout['MAT_QNT'];
+  if (not dsLayout.FieldByName('CUST_QNT_FACT').IsNull) then
+    cf := dsLayout['CUST_QNT_FACT'];
+  if (not dsLayout.FieldByName('MAT_QNT_FACT').IsNull) then
+    mf := dsLayout['MAT_QNT_FACT'];
+
+  if ((cf = cp) and (mf <> mp)) or ((cf <> cp) and (mf <> 0)) then
+    Params.Background := clYellow;
 end;
 
 procedure TapgNodeLayout.dbgCustAttrDblClick(Sender: TObject);
@@ -219,6 +275,7 @@ end;
 procedure TapgNodeLayout.dbgCustAttrGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
+
   if (dsLayout['itsOwn'] = 0) then
     AFont.Color := clGrayText
   else

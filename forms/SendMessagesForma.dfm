@@ -163,7 +163,6 @@ object SendMessagesForm: TSendMessagesForm
       RowHeight = 2
       RowLines = 1
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       TabOrder = 1
       OnDblClick = dbgTemplateDblClick
       Columns = <

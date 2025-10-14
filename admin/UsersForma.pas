@@ -494,6 +494,7 @@ begin
   isVersion3plus := isVersion3plus or dmMain.dbTV.Version.Contains(' 4.');
   FormStorage.IniFileName := A4MainForm.GetIniFileName;
   pgcRights.ActivePage := tsRights;
+  pgcRightsChange(pgcRights);
   if not isVersion3plus then
   begin
     with fSecurity do
@@ -680,10 +681,12 @@ begin
 
   CheckAndCreateRole();
 
-  tsRequest.Visible := (dmMain.GetSettingsValue('REQUEST_TYPE_RESTRICT') = '1');
+  tsRequest.TabVisible := (dmMain.GetSettingsValue('REQUEST_TYPE_RESTRICT') = '1');
 
   pc.ActivePageIndex := 0;
+  pgcRights.ActivePageIndex := 0;
   pcChange(Sender);
+  pgcRightsChange(Sender);
 end;
 
 procedure TUsersForm.pcChange(Sender: TObject);

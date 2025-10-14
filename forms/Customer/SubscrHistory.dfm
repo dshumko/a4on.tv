@@ -52,7 +52,6 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
       PopupMenu = pmServices
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       TabOrder = 0
       OnExit = dbgCustSubscrServExit
       OnGetCellParams = dbgCustSubscrServGetCellParams
@@ -250,7 +249,6 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
       PopupMenu = pmHistory
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       TabOrder = 0
       TitleParams.MultiTitle = True
       OnExit = dbgCustSubscrServHistExit

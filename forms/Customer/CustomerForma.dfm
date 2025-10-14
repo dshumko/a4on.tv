@@ -225,7 +225,8 @@ object CustomerForm: TCustomerForm
       '    BANK_ID = :BANK_ID,'
       '    BANK_ACCOUNT = :BANK_ACCOUNT,'
       '    External_id = :External_id,'
-      '    CONTRACT_BASIS = :CONTRACT_BASIS      '
+      '    CONTRACT_BASIS = :CONTRACT_BASIS,'
+      '    DocType = :DocType      '
       'WHERE'
       '    CUSTOMER_ID = :OLD_CUSTOMER_ID')
     DeleteSQL.Strings = (
@@ -265,7 +266,8 @@ object CustomerForm: TCustomerForm
       '    BANK_ID,'
       '    BANK_ACCOUNT,'
       '    External_id,'
-      '    CONTRACT_BASIS'
+      '    CONTRACT_BASIS,'
+      '    DocType'
       ')'
       'VALUES('
       '    :CUSTOMER_ID,'
@@ -301,7 +303,8 @@ object CustomerForm: TCustomerForm
       '    :BANK_ID,'
       '    :BANK_ACCOUNT,'
       '    :External_id,'
-      '    :CONTRACT_BASIS'
+      '    :CONTRACT_BASIS,'
+      '    :DocType'
       ')')
     RefreshSQL.Strings = (
       'select'

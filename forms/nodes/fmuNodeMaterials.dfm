@@ -67,7 +67,6 @@ object apgNodeMaterials: TapgNodeMaterials
     FooterParams.Color = clWindow
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghColumnResize, dghColumnMove]
-    SearchPanel.Enabled = True
     SortLocal = True
     SumList.Active = True
     TabOrder = 1
@@ -79,7 +78,7 @@ object apgNodeMaterials: TapgNodeMaterials
         DynProps = <>
         EditButton.Visible = False
         EditButtons = <>
-        FieldName = 'EQ_TYPE'
+        FieldName = 'EQ_TYPE_STR'
         Footers = <>
         KeyList.Strings = (
           '1'
@@ -149,6 +148,25 @@ object apgNodeMaterials: TapgNodeMaterials
         Title.Caption = #1047#1072#1084#1077#1090#1082#1080
         Title.TitleButton = True
         Width = 129
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'STREET_NAME'
+        Footers = <>
+        Title.Caption = #1059#1083#1080#1094#1072
+        Title.TitleButton = True
+        Width = 109
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'HOUSE_NO'
+        Footers = <>
+        Title.Caption = #1044#1086#1084
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -204,9 +222,19 @@ object apgNodeMaterials: TapgNodeMaterials
     SelectSQL.Strings = (
       'select'
       '    E.*'
+      '  , case e.Eq_Type'
+      '      when 1 then '#39#1057#1077#1090#1077#1074#1086#1077#39
+      '      when 2 then '#39#1050#1072#1073#1077#1083#1100#1085#1086#1077#39
+      '      when 3 then '#39#1055#1088#1086#1095#1077#1077#39
+      '      else '#39#39
+      '    end EQ_TYPE_STR   '
       '  , o.o_name as eqgroup'
       '  , o.O_DIMENSION as COLOR'
+      '  , h.House_No'
+      '  , s.Street_Name || '#39' '#39' || s.Street_Short as Street_Name'
       '  from EQUIPMENT E'
+      '       left outer join house h on (h.House_Id = e.House_Id)'
+      '       left outer join street s on (s.Street_Id = h.Street_Id)'
       
         '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
         '_TYPE = 7)'

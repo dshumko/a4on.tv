@@ -116,6 +116,27 @@ object EquipFilterForm: TEquipFilterForm
         DesignSize = (
           567
           333)
+        object lbl4: TLabel
+          Left = 11
+          Top = 187
+          Width = 18
+          Height = 13
+          Caption = #1058#1080#1087
+        end
+        object lbl5: TLabel
+          Left = 11
+          Top = 215
+          Width = 73
+          Height = 13
+          Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+        end
+        object lbl41: TLabel
+          Left = 11
+          Top = 241
+          Width = 24
+          Height = 13
+          Caption = #1059#1079#1077#1083
+        end
         object grpAddress: TGroupBox
           Left = 5
           Top = 12
@@ -147,13 +168,6 @@ object EquipFilterForm: TEquipFilterForm
             Height = 13
             Caption = #1053#1072#1089'. '#1087#1091#1085#1082#1090
           end
-          object Label7: TLabel
-            Left = 6
-            Top = 135
-            Width = 30
-            Height = 13
-            Caption = #1056#1072#1081#1086#1085
-          end
           object lbl3: TLabel
             Left = 6
             Top = 77
@@ -174,6 +188,13 @@ object EquipFilterForm: TEquipFilterForm
             Width = 29
             Height = 13
             Caption = #1084#1077#1089#1090#1086
+          end
+          object lbl2: TLabel
+            Left = 6
+            Top = 135
+            Width = 30
+            Height = 13
+            Caption = #1056#1072#1081#1086#1085
           end
           object dblStreet: TDBLookupComboboxEh
             Left = 75
@@ -209,6 +230,7 @@ object EquipFilterForm: TEquipFilterForm
             ShowHint = True
             TabOrder = 0
             Visible = True
+            OnChange = dblStreetChange
             OnExit = checkAdressSign
           end
           object dblHouseNo: TDBLookupComboboxEh
@@ -322,14 +344,14 @@ object EquipFilterForm: TEquipFilterForm
             TabOrder = 3
             Visible = True
           end
-          object DBEditEh1: TDBEditEh
+          object edtPLACE: TDBEditEh
             Left = 336
             Top = 74
             Width = 207
             Height = 21
             Hint = #1101#1090#1072#1078
             Anchors = [akLeft, akTop, akRight]
-            DataField = 'FLOOR'
+            DataField = 'PLACE'
             DataSource = srcFilter
             DynProps = <>
             EditButtons = <>
@@ -351,6 +373,95 @@ object EquipFilterForm: TEquipFilterForm
           TabOrder = 0
           ValueChecked = '1'
           ValueUnchecked = '0'
+        end
+        object cbEQ_TYPE: TDBComboBoxEh
+          Left = 80
+          Top = 184
+          Width = 468
+          Height = 21
+          DataField = 'EQ_TYPE'
+          DataSource = srcFilter
+          DynProps = <>
+          EmptyDataInfo.Text = #1058#1080#1087' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
+          EditButtons = <>
+          Items.Strings = (
+            #1057#1077#1090#1077#1074#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+            #1050#1072#1073#1077#1083#1100#1085#1086#1077' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
+            #1055#1088#1086#1095#1077#1077)
+          KeyItems.Strings = (
+            '1'
+            '2'
+            '3')
+          ShowHint = True
+          TabOrder = 2
+          Visible = True
+        end
+        object edtNAME: TDBEditEh
+          Left = 127
+          Top = 211
+          Width = 421
+          Height = 21
+          DataField = 'NAME'
+          DataSource = srcFilter
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = #1056#1072#1074#1085#1086' '#1080#1083#1080' '#1089#1086#1076#1077#1088#1078#1080#1090' ('#1077#1089#1083#1080' '#1077#1089#1090#1100' '#1089#1080#1084#1074#1086#1083#1099' % _)'
+          ShowHint = True
+          TabOrder = 4
+          Visible = True
+        end
+        object chkCHECK_ADRESS: TDBCheckBoxEh
+          Left = 90
+          Top = 213
+          Width = 31
+          Height = 17
+          Hint = #1053#1077' '#1088#1072#1074#1085#1086' '#1080#1083#1080' '#1085#1077' '#1089#1086#1076#1077#1088#1078#1080#1090
+          Alignment = taLeftJustify
+          Caption = #1085#1077
+          DataField = 'NOT_NAME'
+          DataSource = srcFilter
+          DynProps = <>
+          TabOrder = 3
+          ValueChecked = '1'
+          ValueUnchecked = '0'
+        end
+        object lcbNode: TDBLookupComboboxEh
+          Left = 80
+          Top = 238
+          Width = 468
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          DynProps = <>
+          DataField = 'NODE_ID'
+          DataSource = srcFilter
+          DropDownBox.Columns = <
+            item
+              FieldName = 'NAME'
+              Title.Caption = #1059#1095#1072#1089#1090#1086#1082
+              Width = 60
+            end
+            item
+              FieldName = 'ADDRESS'
+              Title.Caption = #1056#1072#1081#1086#1085
+              Width = 40
+            end>
+          DropDownBox.ListSource = srcNodes
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterAllColumns = True
+          DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+          DropDownBox.AutoDrop = True
+          DropDownBox.ShowTitles = True
+          DropDownBox.Sizable = True
+          EmptyDataInfo.Text = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082' '#1091#1079#1083#1091
+          EditButtons = <>
+          KeyField = 'NODE_ID'
+          ListField = 'NAME'
+          ListSource = srcNodes
+          ShowHint = True
+          Style = csDropDownEh
+          TabOrder = 5
+          Visible = True
+          OnExit = checkAdressSign
         end
       end
     end
@@ -556,5 +667,33 @@ object EquipFilterForm: TEquipFilterForm
     DataSet = dsArea
     Left = 494
     Top = 245
+  end
+  object dsNodes: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    n.Node_Id'
+      '  , n.Name ||'#39' ('#39'|| o.O_Name ||'#39')'#39' name'
+      '  , o.O_DIMENSION as COLOR'
+      
+        '  , s.street_short ||'#39' '#39'||S.Street_Name||'#39' '#1076'. '#39'|| H.House_No Add' +
+        'ress'
+      '  from NODES n'
+      '       inner join HOUSE H on (n.HOUSE_ID = H.HOUSE_ID)'
+      '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
+      
+        '       inner join objects o on (o.O_Id = n.Type_Id and o.O_Type ' +
+        '= 38)'
+      'order by 2')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 457
+    Top = 293
+    oFetchAll = True
+  end
+  object srcNodes: TDataSource
+    DataSet = dsNodes
+    Left = 494
+    Top = 301
   end
 end

@@ -48,7 +48,7 @@ object PaymentsForm: TPaymentsForm
       PopupMenu = gridPopUp
       ReadOnly = True
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
+      SearchPanel.FilterOnTyping = False
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True
@@ -122,7 +122,7 @@ object PaymentsForm: TPaymentsForm
           Footer.DisplayFormat = ',#.##'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #1055#1083#1072#1090#1077#1078'|'#1055#1077#1085#1103
+          Title.Caption = #1055#1083#1072#1090#1077#1078'|'#1055#1077#1085#1080
           Title.TitleButton = True
         end
         item
@@ -297,6 +297,16 @@ object PaymentsForm: TPaymentsForm
           FieldName = 'PAY_TYPE_STR'
           Footers = <>
           Title.Caption = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
+          Title.TitleButton = True
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'LCPS'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #1055#1083#1072#1090#1077#1078'|'#1057#1091#1084#1084#1072' '#1074' BYN'
           Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
@@ -473,7 +483,7 @@ object PaymentsForm: TPaymentsForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 141
+      Width = 917
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
@@ -726,6 +736,7 @@ object PaymentsForm: TPaymentsForm
         '    R.NAME SRV_NAME, D.PAY_DOC_NO, D.PAY_DOC_DATE, PS.PAYSOURCE_' +
         'DESCR'
       '    , p.PAY_TYPE_STR'
+      '    , p.LCPS'
       '  from PAYMENT P'
       '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
       

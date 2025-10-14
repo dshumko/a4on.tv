@@ -35,8 +35,7 @@ object apgNodeAppl: TapgNodeAppl
     ParentFont = False
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Location = stflUnderTitleFilterEh
-    STFilter.Visible = True
+    STFilter.Visible = False
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgApplianceDblClick

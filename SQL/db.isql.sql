@@ -139,7 +139,9 @@ CREATE TABLE APPLIANCE (ID UID,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
-        CALC D_INTEGER DEFAULT 0);
+        CALC D_INTEGER DEFAULT 0,
+        SOFT D_VARCHAR255,
+        QUANT D_N15_5 DEFAULT 1);
 
 /* Table: AREA, Owner: SYSDBA */
 CREATE TABLE AREA (AREA_ID UID NOT NULL,
@@ -203,6 +205,10 @@ CREATE TABLE BILLING (CUSTOMER_ID UID NOT NULL,
         BLNG_ID UID NOT NULL,
         SECRET_WEB D_VARCHAR50,
         VPN D_IBOOLEAN DEFAULT 0,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
 CONSTRAINT PK_BILLING PRIMARY KEY (BLNG_ID));
 
 /* Table: BLB_GZIP, Owner: SYSDBA */
@@ -219,6 +225,10 @@ CREATE TABLE BLOB_TBL (BL_ID UID NOT NULL,
         BL_NAME D_VARCHAR255,
         NOTICE D_VARCHAR50,
         BL_BODY D_BLOB1K,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
 CONSTRAINT PK_BLOB_TBL PRIMARY KEY (BL_ID));
 
 /* Table: BONUS_RATE, Owner: SYSDBA */
@@ -262,13 +272,14 @@ CONSTRAINT UNQ_SRL_CARDS_SERIALS UNIQUE (CS_SERIAL));
 /* Table: CHANGELOG, Owner: SYSDBA */
 CREATE TABLE CHANGELOG (LOG_ID UID NOT NULL,
         LOG_GROUP D_VARCHAR50,
-        OBJECT_TYPE D_SMALLINT,
-        OBJECT_ID UID,
+        ACT D_VARCHAR5,
+        OBJECT_ID D_VARCHAR255,
         PARAM D_VARCHAR100,
         VALUE_BEFORE D_VARCHAR1000,
         VALUE_AFTER D_VARCHAR1000,
         WHO_CHANGE D_VARCHAR50,
         WHEN_CHANGE D_DATETIME,
+        OBJECT_TYPE D_SMALLINT,
 CONSTRAINT PK_CHANGELOG PRIMARY KEY (LOG_ID));
 
 /* Table: CHANNELS, Owner: SYSDBA */
@@ -429,6 +440,7 @@ CREATE TABLE CUSTOMER (CUSTOMER_ID UID NOT NULL,
         PASSPORT_VALID D_ICHECK,
         CONTRACT_BASIS D_VARCHAR255,
         BANK_ID D_UID_NULL,
+        DOCTYPE D_INTEGER,
 CONSTRAINT CSTMR_PK PRIMARY KEY (CUSTOMER_ID),
 CONSTRAINT UNQ_CUSTOMER_ACCOUNT UNIQUE (ACCOUNT_NO));
 
@@ -910,6 +922,7 @@ CREATE TABLE EQUIPMENT (EID UID NOT NULL,
         NODE_ID D_UID_NULL,
         M_ID D_UID_NULL,
         SYSNAME D_VARCHAR50,
+        PCE D_N15_3,
 CONSTRAINT PK_EQUIPMENT PRIMARY KEY (EID));
 
 /* Table: EQUIPMENT_ATTRIBUTES, Owner: SYSDBA */
@@ -1056,6 +1069,8 @@ CREATE TABLE HOUSE (HOUSE_ID UID NOT NULL,
         EXIST_TV D_IBOOLEAN DEFAULT 1,
         EXIST_LAN D_IBOOLEAN DEFAULT 1,
         EXIST_DTV D_IBOOLEAN DEFAULT 1,
+        EXIST_VIDEO D_IBOOLEAN DEFAULT 0,
+        EXIST_INTER D_IBOOLEAN DEFAULT 0,
         WG_ID D_UID_NULL,
         IN_DATE D_DATE,
         REPAIR_DATE D_DATE,
@@ -1108,6 +1123,8 @@ CREATE TABLE HOUSEPORCH (PORCH_ID UID NOT NULL,
         FLAT_FROM D_FLAT_NS,
         FLAT_TO D_FLAT_NS,
         NOTICE D_NOTICE,
+        INTER D_IBOOLEAN,
+        VIDEO D_IBOOLEAN,
 CONSTRAINT PK_HOUSEPORCH PRIMARY KEY (PORCH_ID));
 
 /* Table: HOUSES_ATTRIBUTES, Owner: SYSDBA */
@@ -1279,16 +1296,19 @@ CREATE TABLE MATERIALS (M_ID UID NOT NULL,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        PCE D_N15_3,
 CONSTRAINT PK_MATERIALS PRIMARY KEY (M_ID) USING INDEX PK_MATERIALS_ID);
 
 /* Table: MATERIALS_GROUP, Owner: SYSDBA */
 CREATE TABLE MATERIALS_GROUP (MG_ID UID NOT NULL,
-        MG_NAME D_VARCHAR50,
+        MG_NAME D_VARCHAR100,
         PARENT_ID D_UID_NULL,
         MG_NOTICE D_NOTICE,
         SOLD D_UID_NULL,
         RENT D_UID_NULL,
         LOAN D_UID_NULL,
+        PATH D_VARCHAR1000,
+        DELETED D_IBOOLEAN,
 CONSTRAINT PK_MATERIALS_GROUP PRIMARY KEY (MG_ID));
 
 /* Table: MATERIALS_IN_DOC, Owner: SYSDBA */
@@ -1326,7 +1346,11 @@ CREATE TABLE MATERIALS_REMAIN (M_ID UID,
         WH_ID UID,
         MR_QUANT D_N15_5,
         MR_COST D_N15_2,
-        INVENTORY D_DATE);
+        INVENTORY D_DATE,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME);
 
 /* Table: MATERIAL_DOCS, Owner: SYSDBA */
 CREATE TABLE MATERIAL_DOCS (DOC_ID UID NOT NULL,
@@ -1360,6 +1384,7 @@ CREATE TABLE MATERIAL_UNIT (M_ID UID,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        EQ_ID D_UID_NULL,
 CONSTRAINT PK_MATERIAL_UNIT PRIMARY KEY (M_ID, SERIAL));
 
 /* Table: MESSAGES, Owner: SYSDBA */
@@ -1380,7 +1405,8 @@ CREATE TABLE MESSAGES (MES_ID UID,
         INFO_INTERVAL D_INTEGER,
         TAG D_VARCHAR255,
         DIRECT D_SMALLINT,
-        PARENT_ID D_UID_NULL);
+        PARENT_ID D_UID_NULL,
+CONSTRAINT PK_MESSAGES PRIMARY KEY (MES_ID));
 
 /* Table: MESSAGE_TPL, Owner: SYSDBA */
 CREATE TABLE MESSAGE_TPL (MT_ID UID,
@@ -1430,18 +1456,21 @@ CREATE TABLE MONTH_NAME (MID D_INTEGER,
 CREATE TABLE NODES (NODE_ID UID NOT NULL,
         HOUSE_ID UID NOT NULL,
         TYPE_ID D_INTEGER,
-        NAME D_VARCHAR50,
+        NAME D_VARCHAR100,
         NOTICE D_VARCHAR500,
         LAT D_GEOPOINT,
         LON D_GEOPOINT,
         FLOOR_N D_VARCHAR10,
         PORCH_N D_VARCHAR10,
         PLACE D_VARCHAR50,
+        EPOINT INT_NULL,
+        EP_TAG D_VARCHAR255,
         PARENT_ID D_UID_NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
+        PCE D_N15_3,
 CONSTRAINT PK_NODES PRIMARY KEY (NODE_ID));
 
 /* Table: NODES_ATTRIBUTES, Owner: SYSDBA */
@@ -1479,15 +1508,17 @@ CREATE TABLE NODE_FLATS (NODE_ID UID NOT NULL,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
-        EDIT_ON D_DATETIME,
-CONSTRAINT UNQ_NODE_FLATS UNIQUE (HOUSE_ID, FLAT_NO));
+        EDIT_ON D_DATETIME);
 
 /* Table: NODE_LAYOUT, Owner: SYSDBA */
-CREATE TABLE NODE_LAYOUT (NODE_ID UID,
-        M_TYPE UID,
-        DEV_CNT D_N15_2,
-        NOTICE D_NOTICE,
-CONSTRAINT PK_NODE_LAYOUT PRIMARY KEY (NODE_ID, M_TYPE));
+CREATE TABLE NODE_LAYOUT (LT_ID UID,
+        NODE_ID UID,
+        SRV_TYPE D_UID_NULL,
+        MAT_QNT D_N15_2,
+        CUST_QNT D_INTEGER,
+        MAT_ID_LIST D_VARCHAR500,
+        MAT_REQ D_IBOOLEAN,
+        NOTICE D_NOTICE);
 
 /* Table: NPS, Owner: SYSDBA */
 CREATE TABLE NPS (NPS_DATE D_DATE NOT NULL,
@@ -1524,6 +1555,20 @@ CREATE TABLE OBJECTS_COVERAGE (OC_ID UID,
         O_ID UID,
         HOUSE_ID UID,
         NOTICE D_NOTICE);
+
+/* Table: OBJECTS_HISTORY, Owner: SYSDBA */
+CREATE TABLE OBJECTS_HISTORY (O_ID UID NOT NULL,
+        O_TYPE UID NOT NULL,
+        HDATE D_DATE NOT NULL,
+        CVALUE D_VARCHAR1000,
+        DVALUE D_DATE,
+        NOTICE D_NOTICE,
+        DELETED D_INTEGER DEFAULT 0,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
+        NVALUE D_N15_5);
 
 /* Table: OBJECTS_LINKS, Owner: SYSDBA */
 CREATE TABLE OBJECTS_LINKS (OL_ID UID,
@@ -1628,7 +1673,7 @@ CREATE TABLE PAYMENT (PAYMENT_ID UID NOT NULL,
         PAYMENT_TYPE D_UID_NULL DEFAULT 0,
         EXT_PAY_ID D_VARCHAR50,
         TAG D_INTEGER,
-        TAG_STR D_VARCHAR20,
+        TAG_STR D_VARCHAR100,
         NEED_CHECK D_IBOOLEAN DEFAULT 0,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
@@ -1639,6 +1684,7 @@ CREATE TABLE PAYMENT (PAYMENT_ID UID NOT NULL,
         CMSN D_N15_2,
         DEBT_SAVE D_N15_2,
         RQ_ID D_UID_NULL,
+        LCPS D_N15_2,
 CONSTRAINT PK_PAYMENT PRIMARY KEY (PAYMENT_ID));
 
 /* Table: PAYMENT_DELETED, Owner: SYSDBA */
@@ -1820,6 +1866,10 @@ CREATE TABLE QUEUE_SWITCH_SRV (CUSTOMER_ID UID,
         COMPLETED D_INTEGER DEFAULT 0,
         NOTICE D_NOTICE,
         UNITS D_N15_2,
+        ADDED_BY D_VARCHAR50,
+        ADDED_ON D_DATETIME,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
 CONSTRAINT PK_QUEUE_SWITCH_SRV PRIMARY KEY (CUSTOMER_ID, SRV_FROM));
 
 /* Table: RATES, Owner: SYSDBA */
@@ -1961,6 +2011,7 @@ CREATE TABLE REQUEST_MATERIALS_RETURN (ID UID NOT NULL,
         EDIT_ON D_TIMESTAMP,
         CALC D_INTEGER DEFAULT 0,
         BAYBACK D_IBOOLEAN,
+        PROP D_INTEGER,
 CONSTRAINT PK_REQUEST_MATERIALS_RETURN PRIMARY KEY (ID));
 
 /* Table: REQUEST_MSG, Owner: SYSDBA */
@@ -2018,6 +2069,7 @@ CREATE TABLE REQUEST_TEMPLATES (RQTL_ID UID NOT NULL,
         EDIT_ON D_DATETIME,
         FLATS_NEED D_IBOOLEAN,
         FLATS_RESULT D_VARCHAR500,
+        WORKS D_VARCHAR1000,
 CONSTRAINT PK_REQUEST_TEMPLATES PRIMARY KEY (RQTL_ID));
 
 /* Table: REQUEST_TYPES, Owner: SYSDBA */
@@ -2149,6 +2201,8 @@ CREATE TABLE SINGLE_SERV (SINGLE_SERVICE_ID UID NOT NULL,
         RQ_ID D_UID_NULL,
         TAG D_INTEGER,
         M_ID D_UID_NULL,
+        EDIT_BY D_VARCHAR50,
+        EDIT_ON D_DATETIME,
 CONSTRAINT PK_SINGLE_SERV PRIMARY KEY (SINGLE_SERVICE_ID));
 
 /* Table: STAT_IP, Owner: SYSDBA */
@@ -2237,7 +2291,7 @@ CONSTRAINT PK_SUBSCR_SERV PRIMARY KEY (SUBSCR_SERV_ID));
 
 /* Table: SYS$GROUP, Owner: SYSDBA */
 CREATE TABLE SYS$GROUP (ID UID NOT NULL,
-        GROUP_NAME D_VARCHAR20 NOT NULL,
+        GROUP_NAME D_VARCHAR100 NOT NULL,
         LOCKEDOUT D_IBOOLEAN DEFAULT 0,
         NOTICE D_NOTICE,
         ALL_REPORTS D_IBOOLEAN,
@@ -2483,7 +2537,7 @@ CREATE TABLE VPN_SESSIONS (ID UID,
 /* Table: WIRE, Owner: SYSDBA */
 CREATE TABLE WIRE (WID UID,
         WTYPE UID,
-        NAME D_NAME,
+        NAME D_VARCHAR100,
         METERS D_N15_2,
         STOCK D_N15_2,
         POINT_S D_UID_NULL,
@@ -2591,6 +2645,10 @@ SET AUTODDL OFF;
 SET TERM ^ ;
 
 /* Stored functions headers */
+CREATE OR ALTER FUNCTION ATTRIBUTES_LINE (CUST_ID TYPE OF UID)
+RETURNS D_VARCHAR500
+AS 
+BEGIN END ^
 CREATE OR ALTER FUNCTION CHECK_CUSTOMER_SERVICE (CUSTOMER_ID TYPE OF UID,
 FOR_SRV D_UID_NULL,
 FOR_DATE D_DATE = current_date)
@@ -2638,14 +2696,18 @@ SRV_ID TYPE OF UID = null)
 RETURNS D_ACCOUNT_NS
 AS 
 BEGIN END ^
+CREATE OR ALTER FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER (CUSTOMER_ID D_INTEGER,
+DEBT D_N15_2 = null)
+RETURNS D_N15_2
+AS 
+BEGIN END ^
 CREATE OR ALTER FUNCTION GET_REQUEST_MONEY (RQ_ID D_UID_NULL)
 RETURNS D_N15_2
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
 DEF_VALUE D_INTEGER = 0)
-RETURNS INTEGER
-DETERMINISTIC 
+RETURNS D_INTEGER
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_SETTING_VALUE (SETTING D_NAME,
@@ -2696,6 +2758,11 @@ BEGIN END ^
 CREATE OR ALTER FUNCTION ONLY_DIGITS (A_VALUE D_VARCHAR255)
 RETURNS D_VARCHAR255
 DETERMINISTIC 
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION SET_SETTINGS_VALUE (ANAME D_VARCHAR50,
+AVALUE D_VARCHAR1000)
+RETURNS D_IBOOLEAN
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION WHERE_IS_IP (IP D_IP)
@@ -2809,7 +2876,8 @@ PAYMENT_SRV D_INTEGER = null,
 EXT_PAY_ID D_VARCHAR50 = null,
 TAG D_INTEGER = null,
 CMSN D_N15_2 = null,
-PAY_TYPE_STR D_VARCHAR30 = 'CASH')
+PAY_TYPE_STR D_VARCHAR30 = 'CASH',
+LCPS D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 RESULT D_VARCHAR100)
 AS 
@@ -2836,7 +2904,8 @@ EXT_SYSTEMS_ID D_VARCHAR50 = null,
 NOTICE D_NOTICE = null,
 PAY_TYPE_STR D_VARCHAR30 = 'CASH',
 CMSN D_N15_2 = null,
-TAG D_INTEGER = null)
+TAG D_INTEGER = null,
+LCPS D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
 AS 
@@ -2906,9 +2975,9 @@ CREATE OR ALTER PROCEDURE ADD_SINGLE_SERVICE_VAT (P_CUSTOMER_ID TYPE OF UID,
 P_SERVICE_ID TYPE OF UID,
 P_UNITS D_N15_2,
 P_DATE D_DATE,
-P_NOTICE D_NOTICE,
-P_HISTORY TYPE OF UID,
-P_VATG_ID TYPE OF UID,
+P_NOTICE D_NOTICE = null,
+P_HISTORY TYPE OF UID = null,
+P_VATG_ID TYPE OF UID = null,
 RECALC D_IBOOLEAN = 1,
 RQ_ID D_UID_NULL = null,
 M_ID D_UID_NULL = null)
@@ -3078,10 +3147,6 @@ CREATE OR ALTER PROCEDURE APPLIANCE_TO_TABLE (APPL_ID UID,
 TO_FROM D_IBOOLEAN = 1)
 AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE ATRIBUTES_LINE (CUST_ID TYPE OF UID)
-RETURNS (A_LINE D_VARCHAR500)
-AS 
-BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE ATTRIBUTES_IUD (O_ID TYPE OF UID,
 O_NAME D_VARCHAR50,
 O_DESCRIPTION D_NOTICE,
@@ -3092,7 +3157,8 @@ O_CHECK D_VARCHAR255,
 P_ACTION D_INTEGER,
 O_TYPE D_INTEGER,
 O_UNIQ D_INTEGER = 0,
-O_MEMO D_INTEGER = 0)
+O_MEMO D_INTEGER = 0,
+O_NUMERICFIELD D_N15_3 = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE ATTRIBUTE_CHECK_UNIQ (TYPE_ID TYPE OF COLUMN ATTRIBUTE.TYPE_ID,
@@ -3121,6 +3187,9 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE BCISSUECH_ID (BI_ID TYPE OF COLUMN BCI_CHANNELS.BI_ID,
 CH_ID TYPE OF COLUMN BCI_CHANNELS.CH_ID,
 P_ACTION D_INTEGER = 0)
+AS 
+BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE BLOCK_CUSTOMER_SERVICE (CUSTOMER_ID D_INTEGER)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE BONUS_ADD_AFTER_PAYMENT (P_CUSTOMER_ID UID,
@@ -3192,7 +3261,8 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_FIXED_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
 P_MONTH D_DATE,
 FEE_ROUND D_INTEGER,
-P_DAILY D_INTEGER = 0)
+P_DAILY D_INTEGER = 0,
+BEFORE_DATE D_DATE = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_KOEF_TARIF (P_CUSTOMER_ID UID,
@@ -3234,7 +3304,8 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_SINGLE_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
 P_MONTH D_DATE,
 FEE_ROUND D_INTEGER,
-P_DAILY D_INTEGER = 0)
+P_DAILY D_INTEGER = 0,
+BEFORE_DATE D_DATE = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CALC_SURCHARGE_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
@@ -3372,7 +3443,7 @@ RETURNS (SRV_ON D_INTEGER,
 DATE_ON D_DATE)
 AS 
 BEGIN SUSPEND; END ^
-CREATE OR ALTER PROCEDURE CLOSE_DAY_PROC (P_MONTH D_DATE = null,
+CREATE OR ALTER PROCEDURE CLOSE_DAY_PROC (P_DAY D_DATE = null,
 P_CUSTOMER_ID TYPE OF UID = null)
 AS 
 BEGIN EXIT; END ^
@@ -3793,6 +3864,21 @@ SEPARATOR VARCHAR(10) CHARACTER SET UTF8)
 RETURNS (FULL_NAME VARCHAR(5000) CHARACTER SET UTF8)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_JSON_ARRAY_ROWS (JSON D_PATH)
+RETURNS (AROW D_VARCHAR255)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_LAYOUT_BY_ID (ID D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+NODE_ID D_INTEGER,
+SRV_TYPE D_INTEGER,
+MAT_QNT D_N15_3,
+CUST_QNT D_INTEGER,
+MAT_ID_LIST D_VARCHAR500,
+MAT_REQ D_IBOOLEAN,
+NOTICE D_VARCHAR1000)
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_MAT_FOR_NODE (NODE_ID UID)
 RETURNS (M_ID UID,
 NAME D_VARCHAR255,
@@ -3800,7 +3886,7 @@ M_TYPE D_UID_NULL,
 NEED_CNT D_N15_2,
 IS_UNIT D_IBOOLEAN)
 AS 
-BEGIN SUSPEND; END ^
+BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE GET_MAT_FOR_REQUEST (IRQ_ID D_UID_NULL,
 IMG_ID D_UID_NULL = null,
 IMT_ID D_UID_NULL = null)
@@ -3820,7 +3906,8 @@ AS
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_MAT_GIVE_OUT (FOR_RQ D_INTEGER,
 MG_ID D_INTEGER = -1,
-RQ_OWNER D_IBOOLEAN = 0)
+RQ_OWNER D_IBOOLEAN = 0,
+FOR_WH_ID D_INTEGER = -1)
 RETURNS (RM_ID D_INTEGER,
 M_ID D_INTEGER,
 NAME D_DESCRIPTION,
@@ -3841,7 +3928,7 @@ SERIAL D_SERIAL_NS)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_MAT_TAKE_IN (FOR_RQ_ID UID,
-MG_ID D_UID_NULL = -1,
+MG_ID D_UID_NULL = -2,
 WH_OWNER D_IBOOLEAN = 0)
 RETURNS (M_ID UID,
 NAME D_VARCHAR255,
@@ -3878,6 +3965,55 @@ CST_LIST D_VARCHAR500,
 STREET_NAME D_VARCHAR255,
 HOUSE_NO D_VARCHAR100,
 NOTICE D_NOTICE)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_NODE_LAYOUT (FOR_NODE D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+NODE_ID D_INTEGER,
+NODE_TYPE D_INTEGER,
+ITSOWN D_INTEGER,
+SRV_TYPE D_INTEGER,
+CUST_QNT D_INTEGER,
+MAT_QNT D_N15_3,
+MAT_REQ D_IBOOLEAN,
+MAT_ID_LIST D_VARCHAR500,
+NOTICE D_VARCHAR1000)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_NODE_LAYOUT_FACT (FOR_NODE D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+LT_POSITION D_INTEGER,
+NODE_ID D_INTEGER,
+NODE_TYPE D_INTEGER,
+ITSOWN D_INTEGER,
+SRV_TYPE D_INTEGER,
+ST_NAME D_VARCHAR100,
+CUST_QNT D_INTEGER,
+MAT_QNT D_N15_3,
+MAT_REQ D_IBOOLEAN,
+NOTICE D_VARCHAR1000,
+MAT_ID_LIST D_VARCHAR500,
+MAT_LIST D_VARCHAR1000,
+CUST_QNT_FACT D_INTEGER,
+MAT_QNT_FACT D_N15_3)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_NODE_LAYOUT_FACT_DETAIL (FOR_NODE D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+LT_POSITION D_INTEGER,
+NODE_ID D_INTEGER,
+NODE_TYPE D_INTEGER,
+ITSOWN D_INTEGER,
+SRV_TYPE D_INTEGER,
+ST_NAME D_VARCHAR100,
+CUST_QNT D_INTEGER,
+MAT_QNT D_N15_3,
+MAT_REQ D_IBOOLEAN,
+NOTICE D_VARCHAR1000,
+MAT_ID D_INTEGER,
+MAT_NAME D_VARCHAR100,
+CUST_QNT_FACT D_INTEGER,
+MAT_QNT_FACT D_N15_3)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_PAY_DOC (PAYSOURCE_ID D_INTEGER,
@@ -3950,6 +4086,21 @@ FOR_DAY D_DATE = null)
 RETURNS (M_TARIF D_N15_4)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GET_WIRE_INFO (WID D_INTEGER)
+RETURNS (WIRE_ID D_VARCHAR50,
+WNAME D_VARCHAR100,
+WLABEL D_VARCHAR50,
+WLBL_ID D_INTEGER,
+WLBL_TYPE D_INTEGER,
+WLBL_NAME D_VARCHAR255,
+WLBL_IP D_IP,
+WLBL_MAC D_MAC,
+WLBL_PORT D_PORT_NS,
+WLBL_NODE D_INTEGER,
+NODE_NAME D_VARCHAR255,
+WLBL_FLOW D_CHAR1)
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE HOUSE_IUD (OPERATION D_CHAR1,
 HOUSE_ID TYPE OF UID = null,
 STREET_ID TYPE OF UID = null,
@@ -4019,7 +4170,7 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE MATERIAL_DOCS_DELETE (DOC_ID D_INTEGER)
 AS 
 BEGIN EXIT; END ^
-CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC (M_ID TYPE OF UID,
+CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC (REC_M_ID TYPE OF UID,
 FOR_WH TYPE OF UID = null)
 AS 
 BEGIN EXIT; END ^
@@ -4105,6 +4256,12 @@ RETURNS (ERROR_CODE D_INTEGER,
 SALDO D_N15_2)
 AS 
 BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE NODE_CHECK_LAYOUT (FOR_NODE D_UID_NULL = null,
+RQ_ID D_UID_NULL = null)
+RETURNS (BAN D_IBOOLEAN,
+BAN_TEXT D_VARCHAR1000)
+AS 
+BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE OBJECTS_IUD (P_ACTION D_INTEGER,
 O_TYPE D_INTEGER,
 O_ID TYPE OF UID,
@@ -4181,7 +4338,8 @@ EXT_SYSTEMS_ID D_VARCHAR50 = null,
 NOTICE D_NOTICE = null,
 PAY_TYPE_STR D_VARCHAR30 = 'CASH',
 CMSN D_N15_2 = null,
-TAG D_INTEGER = null)
+TAG D_INTEGER = null,
+LCPS D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
 AS 
@@ -4339,7 +4497,8 @@ WH_ID TYPE OF UID,
 NOTICE D_NOTICE,
 P_ACTION D_INTEGER,
 SERIAL D_SERIAL_NS = null,
-COST D_N15_2 = null)
+COST D_N15_2 = null,
+PROP D_INTEGER = 4)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE REQUEST_MATERIAL_BAYBACK (RQ_ID TYPE OF UID,
@@ -4367,6 +4526,10 @@ W_COST D_N15_3,
 NOTICE D_DESCRIPTION,
 P_ACTION D_SMALLINT,
 NOT_CALC D_IBOOLEAN = 0)
+AS 
+BEGIN EXIT; END ^
+CREATE OR ALTER PROCEDURE SAVEPCEFOREMP (SAVEDATE D_DATE,
+EMPID D_INTEGER = null)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE SELECTONOFFSERVICE (ACUSTOMER_ID TYPE OF UID,
@@ -4554,7 +4717,8 @@ CREATE INDEX CUSTOMER_CHANNELS_IDX1 ON CUSTOMER_CHANNELS (CH_ID, DECODER_ID, DAT
 CREATE INDEX CUSTOMER_CONTACTS_IDX1 ON CUSTOMER_CONTACTS (CC_TYPE, CUSTOMER_ID, CC_VALUE);
 CREATE INDEX CUSTOMER_CONTACTS_IDX_REVERSE ON CUSTOMER_CONTACTS (CC_VAL_REVERSE);
 CREATE INDEX CUSTOMER_DECODERS_IDX1 ON CUSTOMER_DECODERS (STB_N);
-CREATE INDEX DAILY_FEE_CUST_DATE ON DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID);
+CREATE INDEX IDX_DF_CUST_DATE ON DAILY_FEE (CUSTOMER_ID, DAY_FEE);
+CREATE INDEX IDX_DF_DATE_CUST ON DAILY_FEE (DAY_FEE, CUSTOMER_ID);
 CREATE INDEX DAYS_TARIF_IDX1 ON DAYS_TARIF (SERV_ID, T_DAY);
 CREATE INDEX DEVICES_IDX_MAC ON DEVICES (MACADDRESS);
 CREATE INDEX DEVICES_IDX_NODE1 ON DEVICES (NODE1);
@@ -4577,6 +4741,7 @@ CREATE INDEX EPG_IDX1 ON EPG (CH_ID, EPG_DATE);
 CREATE INDEX EPG_IDX_DATE_CH ON EPG (EPG_DATE, CH_ID);
 CREATE INDEX EQUIPMENT_IDX_HID ON EQUIPMENT (HOUSE_ID);
 CREATE INDEX EQUIPMENT_IDX_IP ON EQUIPMENT (IP);
+CREATE INDEX EQUIPMENT_IDX_NODE ON EQUIPMENT (NODE_ID);
 CREATE INDEX EQUIPMENT_IDX_PARENT ON EQUIPMENT (PARENT_ID, PARENT_PORT);
 CREATE INDEX EQUIPMENT_IDX_VLAN_ID ON EQUIPMENT (VLAN_ID);
 CREATE INDEX EQUIPMENT_ATTRIBUTES_IDX1 ON EQUIPMENT_ATTRIBUTES (EID);
@@ -4620,14 +4785,20 @@ CREATE INDEX MONTHLY_FREEZE_MONTH_SERV ON MONTHLY_FREEZE (MONTH_ID, SERVICE_ID);
 CREATE INDEX MONTHLY_FREEZE_MON_CUST ON MONTHLY_FREEZE (MONTH_ID, CUSTOMER_ID);
 CREATE INDEX MONTHLY_FREEZE_SERV_ID ON MONTHLY_FREEZE (SERVICE_ID);
 CREATE INDEX NODES_HID ON NODES (HOUSE_ID);
+CREATE INDEX NODES_IDX_EP ON NODES (EPOINT);
 CREATE INDEX NODES_PRNT ON NODES (PARENT_ID);
 CREATE INDEX NODES_ATTRIBUTES_IDX1 ON NODES_ATTRIBUTES (NA_ID);
 CREATE INDEX NODES_ATTRIBUTES_OID ON NODES_ATTRIBUTES (O_ID);
-CREATE INDEX NODE_FLATS_IDX_NODES ON NODE_FLATS (NODE_ID);
+CREATE INDEX IDX_NODE ON NODE_FLATS (NODE_ID, HOUSE_ID, FLAT_NO);
+CREATE INDEX IDX_NODE_HOUSE ON NODE_FLATS (HOUSE_ID);
+CREATE INDEX NODE_LAYOUT_IDX1 ON NODE_LAYOUT (NODE_ID, SRV_TYPE);
+CREATE INDEX NODE_LAYOUT_IDX_ID ON NODE_LAYOUT (LT_ID);
 CREATE INDEX NPS_IDX_CID ON NPS (CUSTOMER_ID);
 CREATE INDEX NPS_IDX_DATE ON NPS (NPS_DATE);
 CREATE INDEX OBJECTS_IDX_NAME_TYPE ON OBJECTS (O_NAME, O_TYPE);
 CREATE INDEX OBJECTS_COVERAGE_IDX1 ON OBJECTS_COVERAGE (OC_TYPE, O_ID);
+CREATE INDEX OBJECTS_HISTORY_IDX1 ON OBJECTS_HISTORY (O_ID, O_TYPE, HDATE);
+CREATE INDEX OBJECTS_HISTORY_IDX2 ON OBJECTS_HISTORY (HDATE, O_TYPE);
 CREATE INDEX OBJECTS_LINKS_IDX_TCP ON OBJECTS_LINKS (OL_TYPE, PID, CID);
 CREATE INDEX ORDERS_TP_IDX_DATE ON ORDERS_TP (OTP_DATE);
 CREATE INDEX ORDERS_TP_IDX_TYPE ON ORDERS_TP (OTTP_TYPE);
@@ -4636,6 +4807,7 @@ CREATE INDEX OTHER_FEE_IDX2 ON OTHER_FEE (FEE_DATE, CUSTOMER_ID);
 CREATE INDEX PAYMENT_CUST_DATE ON PAYMENT (CUSTOMER_ID, PAY_DATE);
 CREATE INDEX PAYMENT_DATE ON PAYMENT (PAY_DATE);
 CREATE INDEX PAYMENT_IDX1 ON PAYMENT (CUSTOMER_ID, TAG);
+CREATE INDEX PAYMENT_IDX_RQ ON PAYMENT (RQ_ID);
 CREATE INDEX PAY_EXT_SYS_IDX ON PAYMENT (EXT_PAY_ID);
 CREATE INDEX PAYMENT_DELETED_IDX1 ON PAYMENT_DELETED (PAY_DOC_ID);
 CREATE INDEX PAYMENT_DELETED_IDX2 ON PAYMENT_DELETED (EXT_PAY_ID);
@@ -4878,18 +5050,47 @@ select
 /*  Exceptions */
 CREATE EXCEPTION E_CANNOT_DELETE '#1 Can not delete.';
 CREATE EXCEPTION E_DECODER_ERROR '#2 Decoder number incorrect.';
+CREATE EXCEPTION E_DUBLICATE '#10 Deublicate record';
 CREATE EXCEPTION E_INVALID_IP '#3 IP adres incorrect.';
 CREATE EXCEPTION E_INVALID_MAC '#4 MAC adres incorrect.';
 CREATE EXCEPTION E_MAT_QUANT_LESS '#8 Materials less then entered';
 CREATE EXCEPTION E_NOT_EMPTY '#5 Value should not be empty.';
 CREATE EXCEPTION E_STRICT_MODE '#7 Strict mode. Date operation before current date.';
 CREATE EXCEPTION E_TARIF_EXISTS '#6 Tarif with same date exists';
+CREATE EXCEPTION E_WRONG_DATE '#9 wrong on/off date';
 
 COMMIT WORK;
 SET AUTODDL OFF;
 SET TERM ^ ;
 
 /* Stored functions bodies */
+
+ALTER FUNCTION ATTRIBUTES_LINE (CUST_ID TYPE OF UID)
+RETURNS D_VARCHAR500
+AS 
+declare variable vStr  type of D_Varchar1000;
+declare variable vAttr type of D_Varchar1000;
+begin
+
+  vStr = '';
+  for select
+          O.O_Dimension
+        from Objects O
+             inner join Customer_Attributes A on (O.O_Id = A.O_Id and
+                   o.O_TYPE = 4)
+        where not(o.O_Dimension is null)
+              and (o.O_Dimension <> '')
+              and a.Customer_Id = :Cust_Id
+        order by o.O_Name
+      into :vAttr
+  do
+    vStr = vStr || ' ' || vAttr;
+  vStr = trim(vStr);
+  if (char_length(vStr) > 500) then
+    vStr = substring(vStr from 1 for 497) || '...';
+
+  RETURN vStr;
+end ^
 
 ALTER FUNCTION CHECK_CUSTOMER_SERVICE (CUSTOMER_ID TYPE OF UID,
 FOR_SRV D_UID_NULL,
@@ -5220,6 +5421,7 @@ begin
       end
     end
     res = substring(Json from b for e - b);
+    res = trim(both '"' from res);
   end
   else
     res = '';
@@ -5404,6 +5606,259 @@ begin
   return coalesce(ACCOUNT_NO, '');
 end ^
 
+ALTER FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER (CUSTOMER_ID D_INTEGER,
+DEBT D_N15_2 = null)
+RETURNS D_N15_2
+AS 
+declare variable PREPAY      D_N15_2;
+
+declare variable cmDate      D_DATE;
+declare variable cmLast      D_DATE;
+declare variable cmDays      D_INTEGER;
+declare variable cmDay       D_INTEGER;
+
+declare variable nmDate      D_DATE;
+declare variable nmFirst     D_DATE;
+declare variable nmLast      D_DATE;
+declare variable nmDays      D_INTEGER;
+declare variable nmDay       D_INTEGER;
+
+declare variable vTrf        D_N15_2;
+declare variable vSrv        D_INTEGER;
+declare variable vStt        D_INTEGER;
+declare variable vClc        D_INTEGER;
+
+declare variable vUblck      D_INTEGER;
+declare variable Extra       D_INTEGER;
+
+declare variable vIgnoreList D_Varchar1000;
+begin
+
+  vIgnoreList = ',' || Get_Setting_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
+  PREPAY = 0;
+
+  -- текущий месяц
+  cmDate = current_date;
+  cmLast = Month_Last_Day(cmDate);
+  cmDays = extract(day from cmLast);
+  cmDay = extract(day from cmDate);
+
+  --  RestDays = vDays; -- запомнім дней в месяце, для вычісленія дней прі таріфе 6
+
+  -- следующий месяц
+  nmDate = dateadd(month, 1, current_date);
+  nmFirst = Month_First_Day(nmDate);
+  nmLast = Month_Last_Day(nmDate);
+  nmDays = extract(day from nmLast);
+  nmDay = extract(day from nmDate);
+  Extra = null;
+
+  for select
+          s.Service_Id
+        , s.Calc_Type
+        , 1
+        , coalesce(s.Extra, 30)
+        , coalesce(s.Unbl_Meth, 0)
+        from Subscr_hist sh
+             inner join services s on (s.Service_Id = sh.Serv_Id)
+        where sh.Customer_Id = :CUSTOMER_ID
+              and :cmDate between sh.Date_From and sh.Date_To
+      union
+      select
+          s.Service_Id
+        , s.Calc_Type
+        , ss.State_Sgn
+        , coalesce(s.Extra, 30)
+        , coalesce(s.Unbl_Meth, 0)
+        from subscr_serv ss
+             inner join services s on (s.Service_Id = ss.Serv_Id)
+        where ss.Customer_Id = :CUSTOMER_ID
+              and ss.State_Srv = -3
+      into :vSrv, :vClc, :vStt, :Extra, :vUblck
+  do begin
+    if (position(',' || vSrv || ',', vIgnoreList) = 0) then begin
+      select
+          M_TARIF
+        from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :cmDate)
+      into :vTrf;
+
+      if (vClc = 3) then begin
+        -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
+        if (vStt = 1) then
+          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
+          vTrf = 0;
+      end
+      else
+      if (vClc = 0) then begin
+        -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
+        if (vStt = 1) then
+          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
+          vTrf = 0;
+      end
+      else
+      if (vClc = 1) then begin
+        -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
+        if (vStt = 1) then
+          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
+          vTrf = 0;
+      end
+      else
+      if ((vClc = 2)
+          or
+          (vClc = 5)) then begin
+        -- 2 Ежедневные начисления
+        -- 5 Ежедневные начисления (считаем если отключение в день подключения)
+
+        -- неважен статус услуги, мы платим за остаток дней
+        --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+        vTrf = ((cmDays - cmDay) * coalesce(vTrf, 0) / cmDays);
+        --else
+        --  vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / vDays);
+      end
+      else
+      if (vClc = 6) then begin
+        -- 6 Ежедневные начисления Extra дней в месяце
+
+        -- неважен статус услуги, мы платим за остаток дней
+        --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+        --  vTrf = 0;
+        --else begin
+        if (Extra > 0) then
+          vTrf = (Extra - cmDay) * coalesce(vTrf, 0) / coalesce(Extra, 30);
+        else
+          vTrf = (cmDays - cmDay) * coalesce(vTrf, 0) / cmDays;
+        --end
+      end
+
+      PREPAY = PREPAY + coalesce(vTrf, 0);
+    end
+  end
+
+  for select
+          s.Service_Id
+        , s.Calc_Type
+        , coalesce(s.Extra, 0)
+        , coalesce(s.Unbl_Meth, 0)
+        from Subscr_hist sh
+             inner join services s on (s.Service_Id = sh.Serv_Id)
+        where sh.Customer_Id = :CUSTOMER_ID
+              and :nmDate between sh.Date_From and sh.Date_To
+              and not exists(select
+                                 q.Srv_From
+                               from QUEUE_SWITCH_SRV q
+                               where q.Customer_Id = :CUSTOMER_ID
+                                     and q.Srv_From = s.Service_Id
+                                     and q.Switch_Date between :nmFirst and :nmLast)
+      union
+      select
+          s.Service_Id
+        , s.Calc_Type
+        , coalesce(s.Extra, 0)
+        , coalesce(s.Unbl_Meth, 0)
+        from subscr_serv ss
+             inner join services s on (s.Service_Id = ss.Serv_Id)
+        where ss.Customer_Id = :CUSTOMER_ID
+              and ss.State_Srv = -3
+      union
+      select
+          s.Service_Id
+        , s.Calc_Type
+        , coalesce(s.Extra, 0)
+        , coalesce(s.Unbl_Meth, 0)
+        from QUEUE_SWITCH_SRV q
+             inner join services s on (s.Service_Id = q.Srv_To)
+        where q.Customer_Id = :CUSTOMER_ID
+              and q.Switch_Date between :nmFirst and :nmLast
+      into :vSrv, :vClc, :Extra, :vUblck
+  do begin
+    if (position(',' || vSrv || ',', vIgnoreList) = 0) then begin
+      vTrf = null;
+      select
+          M_TARIF
+        from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :nmDate)
+      into :vTrf;
+      if (vTrf is null) then begin
+        select
+            t.Tarif_Sum
+          from tarif t
+          where t.Service_Id = :vSrv
+                and :nmDate between t.Date_From and t.Date_To
+        into :vTrf;
+      end
+      -- выставим сл. полный месяц
+      -- PREPAY = PREPAY + coalesce(vTrf, 0);
+
+      if (vClc = 3) then begin
+        -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
+        PREPAY = PREPAY + coalesce(vTrf, 0);
+      end
+      else
+      if (vClc = 0) then begin
+        -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
+        PREPAy = prepay + coalesce(vTrf, 0);
+      end
+      else
+      if ((vClc = 2)
+          or
+          (vClc = 5)) then begin
+        -- 2 Ежедневные начисления
+        -- 5 Ежедневные начисления (считаем если отключение в день подключения)
+        -- не смотрім на статус услугі
+        --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+        --  PREPAy = prepay + coalesce(vTrf, 0);
+        --else
+        -- iif(RestDays < vDays, 1, 0) еслі в прошлом месяце 30, а в этом 31 день. то на день больше берем
+        PREPAy = prepay + ((nmDay) * coalesce(vTrf, 0) / nmDays);
+      end
+      else
+      if (vClc = 1) then begin
+        -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
+        PREPAY = PREPAY + coalesce(vTrf, 0);
+      end
+      else
+      if (vClc = 6) then begin
+        -- 6 Ежедневные начисления 30 дней в месяце
+        --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
+        --  PREPAy = prepay + coalesce(vTrf, 0);
+        --else begin
+        if (Extra > 0) then
+          PREPAy = prepay + ((nmDay - (cmDays - Extra)) * coalesce(vTrf, 0) / coalesce(Extra, 30));
+
+        -- (cmDays - Extra) смеўаем день в завсімості от дней в прошлом месяце.
+        -- напрімер екстра 30 сегодня 15
+        -- еслі текуўем месяце 30 дней. значіт до 15 чісла следуюўего месяца счітаем
+        -- еслі екстра 30, а в месяце 31 день, то счітаем до 14 чісла
+        -- еслі екстра 30, а в месяце 29 дней, то счітаем до 16 чісла
+        else
+          PREPAy = prepay + 0;
+        --end
+      end
+    end
+  end
+
+  -- посмотрим на баланс
+  if (DEBT is null) then
+    select
+        c.debt_sum
+      from customer c
+      where customer_id = :CUSTOMER_ID
+    into :DEBT;
+
+  DEBT = -1 * DEBT;
+  if (DEBT > Prepay) then
+    Prepay = 0;
+  else
+    PREPAY = PREPAY - DEBT;
+
+  -- вернем только положительную сумму
+  if (PREPAY < 0) then
+    PREPAY = 0;
+  -- else
+  --  PREPAY = trunc(PREPAY, 0) + 1;
+
+  return PREPAY;
+end ^
+
 ALTER FUNCTION GET_REQUEST_MONEY (RQ_ID D_UID_NULL)
 RETURNS D_N15_2
 AS 
@@ -5412,18 +5867,25 @@ begin
   select
       sum(COST) as COST
     from (select
-              coalesce(r.W_Quant * coalesce(iif(w.As_Service is null, w.W_Cost, iif(coalesce(s.Srv_Type_Id, 2) = 2, 0,
-              (select
-                   t.tarif_sum
-                 from tarif t
-                 where t.service_id = s.service_id
-                       and coalesce(rq.rq_exec_time, localtimestamp) between t.date_from and t.date_to))), 0), 0) COST
-            from Request_works r
-                 inner join WORKS W on (R.W_ID = W.W_ID)
-                 inner join request rq on (r.rq_id = rq.rq_id)
+            coalesce(
+              iif((w.As_Service is null) ,
+                iif((coalesce(r.req_result, 0) > 1), rw.W_Cost, w.W_Cost),
+                iif(coalesce(s.Srv_Type_Id, 2) = 2,
+                     0,
+                     (select t.tarif_sum
+                       from tarif t
+                       where t.service_id = s.service_id and coalesce(r.rq_exec_time, localtimestamp) between t.date_from and t.date_to
+                     )
+                   )
+              ),
+            0) * rw.w_quant COST
+
+            from Request_works rw
+                 inner join WORKS W on (W.W_ID = RW.W_ID)
+                 inner join request r on (r.rq_id = rw.rq_id)
                  left outer join services s on (w.as_service = s.service_id)
-            where r.Rq_Id = :rq_id
-                  and coalesce(r.Not_Calc, 0) = 0
+            where rw.Rq_Id = :rq_id
+                  and coalesce(rw.Not_Calc, 0) = 0
           union all
           select
               coalesce(m.Rm_Quant * m.Rm_Cost, 0) COST
@@ -5440,17 +5902,10 @@ end ^
 
 ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
 DEF_VALUE D_INTEGER = 0)
-RETURNS INTEGER
-DETERMINISTIC 
+RETURNS D_INTEGER
 AS 
-declare variable INT_VALUE D_INTEGER;
 begin
-  select
-      cast(VAR_VALUE as integer)
-    from SETTINGS
-    where VAR_NAME = :SETTING
-  into :INT_VALUE;
-  return coalesce(:INT_VALUE, coalesce(DEF_VALUE, 0));
+  return GET_SETTING_VALUE(:SETTING, :DEF_VALUE);
 end ^
 
 ALTER FUNCTION GET_SETTING_VALUE (SETTING D_NAME,
@@ -5925,6 +6380,27 @@ begin
   return DIGITS;
 end ^
 
+ALTER FUNCTION SET_SETTINGS_VALUE (ANAME D_VARCHAR50,
+AVALUE D_VARCHAR1000)
+RETURNS D_IBOOLEAN
+AS 
+declare variable vVALUE D_VARCHAR1000;
+begin
+  ANAME = upper(:ANAME);
+  select
+      Var_Value
+    from settings
+    where var_name = :ANAME
+  into :vVALUE;
+
+  if (vVALUE is distinct from AVALUE) then
+    update or insert into Settings (Var_Name, Var_Value)
+    values (:ANAME, :AVALUE)
+    matching (Var_Name);
+
+  return 1;
+end ^
+
 ALTER FUNCTION WHERE_IS_IP (IP D_IP)
 RETURNS INTEGER
 AS 
@@ -6285,7 +6761,8 @@ PAYMENT_SRV D_INTEGER = null,
 EXT_PAY_ID D_VARCHAR50 = null,
 TAG D_INTEGER = null,
 CMSN D_N15_2 = null,
-PAY_TYPE_STR D_VARCHAR30 = 'CASH')
+PAY_TYPE_STR D_VARCHAR30 = 'CASH',
+LCPS D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 RESULT D_VARCHAR100)
 AS 
@@ -6309,8 +6786,8 @@ begin
   end
   if (PAYMENT_ID = 0) then begin
     PAYMENT_ID = gen_id(GEN_PAYMENT, 1);
-    insert into PAYMENT (PAYMENT_ID, PAY_DOC_ID, CUSTOMER_ID, PAY_DATE, PAY_SUM, FINE_SUM, NOTICE, PAYMENT_SRV, EXT_PAY_ID, TAG, PAY_DATETIME, CMSN, PAY_TYPE_STR, PAYMENT_TYPE)
-    values (:PAYMENT_ID, :PAY_DOC_ID, :CUSTOMER_ID, :PAY_DATE, :PAY_SUM, :FINE_SUM, :NOTICE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :PAY_TIME, :CMSN, :PAY_TYPE_STR, :PAYMENT_TYPE);
+    insert into PAYMENT (PAYMENT_ID, PAY_DOC_ID, CUSTOMER_ID, PAY_DATE, PAY_SUM, FINE_SUM, NOTICE, PAYMENT_SRV, EXT_PAY_ID, TAG, PAY_DATETIME, CMSN, PAY_TYPE_STR, PAYMENT_TYPE, LCPS)
+    values (:PAYMENT_ID, :PAY_DOC_ID, :CUSTOMER_ID, :PAY_DATE, :PAY_SUM, :FINE_SUM, :NOTICE, :PAYMENT_SRV, :EXT_PAY_ID, :TAG, :PAY_TIME, :CMSN, :PAY_TYPE_STR, :PAYMENT_TYPE, :LCPS);
   end
   suspend;
 end ^
@@ -6360,13 +6837,14 @@ EXT_SYSTEMS_ID D_VARCHAR50 = null,
 NOTICE D_NOTICE = null,
 PAY_TYPE_STR D_VARCHAR30 = 'CASH',
 CMSN D_N15_2 = null,
-TAG D_INTEGER = null)
+TAG D_INTEGER = null,
+LCPS D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
 AS 
 begin
   /* процедура будет удалена в следующих версиях */
-  execute procedure Payment_Add_From_Ext_Systems(:Account_No, :Pay_Sum, :Pay_Time, :Paysource_Id, :Ext_Systems_Id, :Notice, :PAY_TYPE_STR, :CMSN, :TAG)
+  execute procedure Payment_Add_From_Ext_Systems(:Account_No, :Pay_Sum, :Pay_Time, :Paysource_Id, :Ext_Systems_Id, :Notice, :PAY_TYPE_STR, :CMSN, :TAG, :LCPS)
       returning_values :Payment_Id, :IS_DELETED;
   suspend;
 end ^
@@ -6610,40 +7088,66 @@ ALTER PROCEDURE ADD_SINGLE_SERVICE_VAT (P_CUSTOMER_ID TYPE OF UID,
 P_SERVICE_ID TYPE OF UID,
 P_UNITS D_N15_2,
 P_DATE D_DATE,
-P_NOTICE D_NOTICE,
-P_HISTORY TYPE OF UID,
-P_VATG_ID TYPE OF UID,
+P_NOTICE D_NOTICE = null,
+P_HISTORY TYPE OF UID = null,
+P_VATG_ID TYPE OF UID = null,
 RECALC D_IBOOLEAN = 1,
 RQ_ID D_UID_NULL = null,
 M_ID D_UID_NULL = null)
 AS 
-declare variable V_C_MONTH D_DATE;
-declare variable V_I       D_INTEGER;
+declare variable V_C_MONTH  D_DATE;
+declare variable V_I        D_INTEGER;
+declare variable SINGLE_FEE D_INTEGER;
 begin
-  select
-      cast(VAR_VALUE as date)
-    from SETTINGS
-    where VAR_NAME = 'CURRENT_DATE'
-  into :V_C_MONTH;
+
+  if (P_UNITS is null) then begin
+    select
+        s.SRV_TYPE_ID
+      from Services s
+      where s.Service_Id = :P_SERVICE_ID
+    into :V_I;
+    if (V_I = 2) then begin -- фиксированные услуги
+      P_UNITS = 0;
+      RECALC = 0;
+    end
+    else
+      P_UNITS = 1;
+    V_I = null;
+  end
 
   insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE, HISTORY_ID, RQ_ID, M_ID)
   values (:P_CUSTOMER_ID, :P_SERVICE_ID, :P_DATE, :P_UNITS, :P_NOTICE, :P_HISTORY, :RQ_ID, :M_ID);
 
   -- если дата ранее или текущего месяца - просчитаем
   if (RECALC = 1) then begin
-    if (Month_First_Day(:P_DATE) <= V_C_MONTH) then begin
-      -- execute procedure Close_Month_Proc(:P_DATE, :P_CUSTOMER_ID);
+    V_C_MONTH = cast(Get_Setting_Value('CURRENT_DATE') as date);
+
+    if (Month_First_Day(:P_DATE) < V_C_MONTH) then begin
+      -- полный пересчет, при добавлении "задним" числом
       execute procedure FULL_RECALC_CUSTOMER(:P_CUSTOMER_ID, :P_DATE);
     end
     else begin
-      select
-          sum(SS.State_Sgn)
-        from SUBSCR_SERV SS
-        where SS.CUSTOMER_ID = :P_CUSTOMER_ID
-      into :v_I;
-      V_I = coalesce(V_I, 0);
-      if (V_I = 0) then begin
-        execute procedure FULL_RECALC_CUSTOMER(:P_CUSTOMER_ID);
+      if (Month_First_Day(:P_DATE) = V_C_MONTH) then begin
+        -- пересчитаем только текущий месяц
+        -- посмотрим нужно ли начислять разовые при закрытии дня
+        SINGLE_FEE = GET_SETTING_INT_VALUE('DAILY_SINGLE_FEE', 0);
+        if (SINGLE_FEE = 1) then
+          execute procedure Close_DAY_Proc(CURRENT_DATE, :P_CUSTOMER_ID);
+        else
+          execute procedure Close_MONTH_Proc(:P_DATE, :P_CUSTOMER_ID);
+      end
+      else begin
+        -- если будущим числом, то пересчитаем только если абонент отключен
+        select
+            sum(SS.State_Sgn)
+          from SUBSCR_SERV SS
+          where SS.CUSTOMER_ID = :P_CUSTOMER_ID
+        into :v_I;
+        V_I = coalesce(V_I, 0);
+        -- если нет активных услгу, то так просчитаем для любой даты
+        if (V_I = 0) then begin
+          execute procedure FULL_RECALC_CUSTOMER(:P_CUSTOMER_ID);
+        end
       end
     end
   end
@@ -6662,40 +7166,7 @@ AS
 declare variable V_C_MONTH D_DATE;
 declare variable V_B_MONTH D_DATE;
 begin
-  insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE, HISTORY_ID, RQ_ID, M_ID)
-  values (:P_CUSTOMER_ID, :P_SERVICE_ID, :P_DATE, :P_UNITS, :P_NOTICE, :P_HISTORY, :RQ_ID, :M_ID);
-  /*
-  V_B_MONTH = P_DATE - extract(day from P_DATE) + 1;
-
-  select
-      cast(VAR_VALUE as date)
-    from SETTINGS
-    where VAR_NAME = 'CURRENT_DATE'
-  into :V_C_MONTH;
-
-  -- если дата ранее или текущего месяца - просчитаем
-  if (V_B_MONTH <= V_C_MONTH) then begin
-    execute procedure Close_Month_Proc(:V_B_MONTH, :P_CUSTOMER_ID);
-
-    select
-        s.Srv_Type_Id
-      from SERVICES S where s.Service_Id = :P_SERVICE_ID
-    into :SRV_TYPE;
-
-    select
-        cast(VAR_VALUE as integer)
-      from SETTINGS
-      where VAR_NAME = 'FEE_ROUND'
-    into :V_ROUND;
-    V_ROUND = coalesce(V_ROUND, 2);
-    -- если услуга фиксирована, то сразу снимем с баланса
-    if (SRV_TYPE = 2) then
-      insert into MONTHLY_FEE (MONTH_ID, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-      values (:P_DATE, :P_CUSTOMER_ID, :P_SERVICE_ID, 1, round(:P_UNITS, :V_ROUND));
-    else
-      execute procedure Calc_Single_Srv_Customer(:P_CUSTOMER_ID, :V_B_MONTH, :V_ROUND);
-  end
-  */
+  execute procedure Add_Single_Service_Vat(:P_Customer_Id, :P_Service_Id, :P_Units, :P_Date, :P_Notice, :P_History, :P_Vatg_Id, 0, :Rq_Id, :M_Id);
 end ^
 
 ALTER PROCEDURE ADD_STAT_IP (IP_BIN TYPE OF D_INT_IP,
@@ -7616,33 +8087,6 @@ begin
   end
 end ^
 
-ALTER PROCEDURE ATRIBUTES_LINE (CUST_ID TYPE OF UID)
-RETURNS (A_LINE D_VARCHAR500)
-AS 
-declare variable vStr  type of D_Varchar1000;
-declare variable vAttr type of D_Varchar1000;
-begin
-  A_LINE = '';
-  vStr = '';
-  for select
-          O.O_Dimension
-        from Objects O
-             inner join Customer_Attributes A on (O.O_Id = A.O_Id and
-                   o.O_TYPE = 4)
-        where not(o.O_Dimension is null)
-              and (o.O_Dimension <> '')
-              and a.Customer_Id = :Cust_Id
-        order by o.O_Name
-      into :vAttr
-  do
-    vStr = vStr || ' ' || vAttr;
-  vStr = trim(vStr);
-  if (char_length(vStr) > 500) then
-    vStr = substring(vStr from 1 for 497) || '...';
-  A_LINE = vStr;
-  suspend;
-end ^
-
 ALTER PROCEDURE ATTRIBUTES_IUD (O_ID TYPE OF UID,
 O_NAME D_VARCHAR50,
 O_DESCRIPTION D_NOTICE,
@@ -7653,14 +8097,19 @@ O_CHECK D_VARCHAR255,
 P_ACTION D_INTEGER,
 O_TYPE D_INTEGER,
 O_UNIQ D_INTEGER = 0,
-O_MEMO D_INTEGER = 0)
+O_MEMO D_INTEGER = 0,
+O_NUMERICFIELD D_N15_3 = null)
 AS 
-declare variable O_Numericfield D_Integer;
+declare variable vN D_Integer;
 begin
   O_MEMO = coalesce(O_MEMO, 0);
   if (O_MEMO = 1) then
     O_MEMO = 2;
-  O_Numericfield = bin_xor(bin_and(:O_MEMO, 2), bin_and(:O_UNIQ, 1));
+
+
+  vN = bin_xor(bin_and(:O_MEMO, 2), bin_and(:O_UNIQ, 1));
+  O_Numericfield = coalesce(O_Numericfield, vn);
+
   -- P_ACTION -0 insert 1-update 2-delete
   if (P_ACTION = 1) then begin
     update OBJECTS
@@ -7677,7 +8126,7 @@ begin
   else begin
     if (P_ACTION = 0) then begin
       insert into OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_CHECK, O_Numericfield)
-      values (:O_ID, :O_TYPE, :O_NAME, :O_DESCRIPTION, 0, :O_DIMENSION, :O_CHARFIELD, :O_CHECK, :O_Numericfield);
+      values (:O_ID, :O_TYPE, :O_NAME, :O_DESCRIPTION, 0, :O_DIMENSION, :O_CHARFIELD, :O_CHECK, :vN);
     end
     else
       update OBJECTS
@@ -7767,19 +8216,25 @@ AS
 declare P_SUBSCR_SERV_ID type of UID;
 declare variable BUSINESS_TYPE    D_INTEGER;
 declare variable D_ACT            D_INTEGER;
-declare variable ACT_TIMESTAMP    type of D_TIMESTAMP;
+declare variable ACT_TIMESTAMP    D_TIMESTAMP;
 declare variable SWITCH_TO_SRV    D_INTEGER;
 declare variable srv_on_off       D_INTEGER;
+declare variable state_date       D_DATE;
 begin
   P_ACTSERVICE = coalesce(P_ACTSERVICE, -3);
   P_DATE = coalesce(P_DATE, current_date);
 
   select
-      SUBSCR_SERV_ID
-    from SUBSCR_SERV
+      SUBSCR_SERV_ID, s.State_Date
+    from SUBSCR_SERV s
     where CUSTOMER_ID = :P_CUSTOMER_ID
           and SERV_ID = :P_SERV_ID
-  into :P_SUBSCR_SERV_ID;
+  into :P_SUBSCR_SERV_ID, :state_date;
+
+  -- если мы отключаем датой ранее чем ее включили, то что-то идет не так
+  if ((state_date > P_DATE) and (state_date <= current_date)) then
+    P_DATE = state_date;
+  -- else exception E_WRONG_DATE;
 
   select
       S.BUSINESS_TYPE
@@ -7809,21 +8264,8 @@ begin
 
     insert into Subscr_Hist (Customer_Id, Serv_Id, Subscr_Serv_Id, Date_From, Date_To, Act_Serv_Id, Disact_Serv_Id, Act_Worker_Id, Disact_Worker_Id, Worker_On, Worker_Off, Req_On, Req_Off, Contract, Contract_Date)
     select
-        Customer_Id
-      , Serv_Id
-      , Subscr_Serv_Id
-      , dateadd(day, 1, Date_To)
-      , Date_To
-      , -3 -- Disact_Serv_Id
-      , Disact_Serv_Id
-      , Act_Worker_Id
-      , Disact_Worker_Id
-      , Worker_On
-      , Worker_Off
-      , Req_On
-      , Req_Off
-      , Contract
-      , Contract_Date
+        Customer_Id, Serv_Id, Subscr_Serv_Id, dateadd(day, 1, Date_To), Date_To, -3 -- Disact_Serv_Id
+        , Disact_Serv_Id, Act_Worker_Id, Disact_Worker_Id, Worker_On, Worker_Off, Req_On, Req_Off, Contract, Contract_Date
       from Subscr_Hist
       where Subscr_Hist_Id = :D_ACT;
 
@@ -7854,8 +8296,7 @@ begin
 
   -- проверим, если есть услуга вклюячаемая при автоблокировке. то выключим ее
   select first 1
-      l.Child
-    , l.Add_Srv
+      l.Child, l.Add_Srv
     from SERVICES_LINKS l
     where l.Link_Type = 6
           and l.Switch_Time = -1
@@ -8019,6 +8460,58 @@ begin
       Delete from Bci_Channels
       where (Bi_Id = :Bi_Id
             and Ch_Id = :Ch_Id);
+  end
+end ^
+
+ALTER PROCEDURE BLOCK_CUSTOMER_SERVICE (CUSTOMER_ID D_INTEGER)
+AS 
+declare variable DEBT          D_N15_2;
+declare variable JUR           D_IBOOLEAN;
+declare variable HAND          D_IBOOLEAN;
+declare variable SERVICE_ID    type of UID;
+declare variable V_DAYS        D_INTEGER;
+declare variable V_Result      D_INTEGER;
+declare variable POSITIVE_ONLY D_IBOOLEAN;
+declare variable UnblMeth      D_Integer;
+declare variable M_TARIF       D_N15_4;
+declare variable CALC_TYPE     D_INTEGER;
+declare variable EXTRA         D_INTEGER;
+begin
+  -- если сняли обещанный, то проверим и заблоируем услуги абонента
+  if (GET_SETTING_INT_VALUE('BLOCK_SRV_AFTER_DEL_PREPAY', 0) = 0) then
+    exit;
+
+  -- баланс и юрик
+  select
+      C.DEBT_SUM - coalesce(C.PREPAY, 0)
+    , coalesce(C.JURIDICAL, 0)
+    , coalesce(c.Hand_Control, 0)
+    from CUSTOMER C
+    where C.CUSTOMER_ID = :CUSTOMER_ID
+  into :DEBT, :JUR, :HAND;
+  DEBT = -1.00 * DEBT;
+
+  if (HAND = 1) then
+    exit;
+
+  if (DEBT > 0) then
+    exit;
+
+  for select
+          SERVICE_ID
+        , S.CALC_TYPE
+        , coalesce(POSITIVE_ONLY, 0)
+        , coalesce(s.Unbl_Meth, 0)
+        , coalesce(s.Extra, 1)
+        from SERVICES S
+             inner join SUBSCR_SERV SS on (SS.SERV_ID = S.SERVICE_ID)
+        where S.SRV_TYPE_ID = 0
+              and SS.STATE_SGN = 1
+              and S.AUTOOFF = 1
+              and SS.CUSTOMER_ID = :CUSTOMER_ID
+      into :SERVICE_ID, :CALC_TYPE, :POSITIVE_ONLY, :UnblMeth, :EXTRA
+  do begin
+    execute procedure Auto_Off_Service(:Customer_Id, :SERVICE_ID);
   end
 end ^
 
@@ -8222,7 +8715,7 @@ begin
     if (not vDATE_FROM is null) then begin
 
       -- посчитаем все начисления абонента до
-      vDATE_FROM = (vDATE_FROM - extract(day from vDATE_FROM) + 1);
+      vDATE_FROM = MONTH_FIRST_DAY(vDATE_FROM);
 
       select
           sum(Fee)
@@ -8299,7 +8792,7 @@ begin
           vSUM = DOLG_SUM;
 
           vDATE_TMP = dateadd(fine_month month to vDATE);
-          vDATE_TMP = vDATE_TMP - extract(day from vDATE_TMP) + 1;
+          vDATE_TMP = MONTH_FIRST_DAY(vDATE_TMP);
           vDATE_FINE = dateadd(fine_day day to vDATE_TMP);
 
           fine_days = datediff(day from vDATE_FINE to date_payment);
@@ -8416,12 +8909,12 @@ begin
     if (P_MONTH <> current_date) then
       AUTOOFF = 0; -- автоотключение только текущим числом
     -- начало месяца
-    V_S_MONTH = (P_MONTH - extract(day from P_MONTH) + 1);
+    V_S_MONTH = MONTH_FIRST_DAY(P_MONTH);
     -- если текущий месяц, то считаем до текущего числа, иначе до конца месяца
-    if (V_S_MONTH = (current_date - extract(day from current_date) + 1)) then
+    if (V_S_MONTH = MONTH_FIRST_DAY(current_date)) then
       V_E_MONTH = current_date;
     else
-      V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
+      V_E_MONTH = MONTH_LAST_DAY(V_S_MONTH);
 
     if (V_S_MONTH >= '2024-9-1') then
       -- сменим алгоритм начислений в автоблокировке с сентября 2024 года
@@ -8462,7 +8955,7 @@ begin
 
     PERS_TABLE = 0;
 
-    -- проверим есть ли персональный тариф
+    -- если был подключен в этом месяце
     if (V_UNITS <> 0) then begin
       if (V_IS_JUR = 1) then
         V_FEE = V_FEE_JUR; -- юр. по другому тарифу
@@ -8479,7 +8972,7 @@ begin
                                       or (P.DATE_TO between :V_S_MONTH and :V_E_MONTH))), 1, 0);
       if (PERS_TAR = 1) then begin
         execute procedure Calc_Pers_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :P_CALC_TYPE);
-        if (V_S_MONTH >= '2024-9-1') then
+        if (V_S_MONTH >= '2024-9-1') then begin
           -- сменим алгоритм начислений в автоблокировке с сентября 2024 года
           select
               sum(DT.TARIF)
@@ -8493,7 +8986,9 @@ begin
                   and S.CUSTOMER_ID = :P_CUSTOMER_ID
                   and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
           into :V_FEE;
-        else
+          V_FEE = coalesce(V_FEE, 0);
+        end
+        else begin
           select
               sum(DT.TARIF)
             from SUBSCR_HIST S
@@ -8503,6 +8998,8 @@ begin
                   and S.CUSTOMER_ID = :P_CUSTOMER_ID
                   and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
           into :V_FEE;
+          V_FEE = coalesce(V_FEE, 0);
+        end
         PERS_TABLE = 1;
       end
       else begin
@@ -8519,7 +9016,7 @@ begin
                            and ((D.Srv_Type = -1)
                              or (d.Srv_Type = :SrvType)))))) then begin
           execute procedure Calc_Koef_Tarif(:P_CUSTOMER_ID, :V_SERVICE_ID, :V_S_MONTH, :V_IS_JUR, :SrvType, :P_CALC_TYPE);
-          if (V_S_MONTH >= '2024-9-1') then
+          if (V_S_MONTH >= '2024-9-1') then begin
             -- сменим алгоритм начислений в автоблокировке с сентября 2024 года
             select
                 sum(DT.TARIF)
@@ -8533,7 +9030,9 @@ begin
                     and S.CUSTOMER_ID = :P_CUSTOMER_ID
                     and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
             into :V_FEE;
-          else
+            V_FEE = coalesce(V_FEE, 0);
+          end
+          else begin
             select
                 sum(DT.TARIF)
               from SUBSCR_HIST S
@@ -8543,6 +9042,8 @@ begin
                     and S.CUSTOMER_ID = :P_CUSTOMER_ID
                     and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
             into :V_FEE;
+            V_FEE = coalesce(V_FEE, 0);
+          end
           PERS_TABLE = 1;
         end
       end
@@ -8590,36 +9091,6 @@ begin
         update or insert into MONTHLY_FEE (MONTH_ID, SERVICE_ID, CUSTOMER_ID, UNITS, FEE)
         values (:V_S_MONTH, :V_SERVICE_ID, :P_CUSTOMER_ID, :V_UNITS, :V_FEE)
         matching (MONTH_ID, CUSTOMER_ID, SERVICE_ID);
-        if (P_DAILY = 1) then begin
-          if (PERS_TABLE = 0) then
-            insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-            select distinct
-                DT.T_DAY
-              , :P_CUSTOMER_ID
-              , DT.Serv_Id
-              , 1
-              , iif(:V_IS_JUR = 0, DT.TARIF, DT.Tarif_Jur)
-              from SUBSCR_HIST S
-                   inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
-              where S.SERV_ID = :V_SERVICE_ID
-                    and DT.T_DAY between S.DATE_FROM and S.DATE_TO
-                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
-          else
-            insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-            select
-                dt.T_Day
-              , :P_CUSTOMER_ID
-              , dt.Serv_Id
-              , 1
-              , DT.TARIF
-              from SUBSCR_HIST S
-                   inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
-              where S.SERV_ID = :V_SERVICE_ID
-                    and DT.T_DAY between S.DATE_FROM and S.DATE_TO
-                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
-        end
       end
       else begin
         -- отключим если нет денег
@@ -8632,6 +9103,38 @@ begin
         into :AUTOOFF;
         if (AUTOOFF > 0) then
           execute procedure Auto_Off_Service(:P_Customer_Id, :V_SERVICE_ID, current_date, null, null);
+      end
+
+      -- заполним таблицу с ежедневными списаниями
+      if (P_DAILY = 1) then begin
+        if (PERS_TABLE = 0) then
+          insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+          select distinct
+              DT.T_DAY
+            , :P_CUSTOMER_ID
+            , DT.Serv_Id
+            , 1
+            , iif(:V_IS_JUR = 0, DT.TARIF, DT.Tarif_Jur)
+            from SUBSCR_HIST S
+                 inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
+            where S.SERV_ID = :V_SERVICE_ID
+                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO
+                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
+        else
+          insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+          select
+              dt.T_Day
+            , :P_CUSTOMER_ID
+            , dt.Serv_Id
+            , 1
+            , DT.TARIF
+            from SUBSCR_HIST S
+                 inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
+            where S.SERV_ID = :V_SERVICE_ID
+                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO
+                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
       end
     end
   end
@@ -8694,12 +9197,12 @@ begin
     if (P_MONTH <> current_date) then
       AUTOOFF = 0; -- автоотключение только текущим числом
     -- начало месяца
-    V_S_MONTH = (P_MONTH - extract(day from P_MONTH) + 1);
+    V_S_MONTH = MONTH_FIRST_DAY(P_MONTH);
     -- если текущий месяц, то считаем до текущего числа, иначе до конца месяца
-    if (V_S_MONTH = (current_date - extract(day from current_date) + 1)) then
+    if (V_S_MONTH = MONTH_FIRST_DAY(current_date)) then
       V_E_MONTH = current_date;
     else
-      V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
+      V_E_MONTH = MONTH_LAST_DAY(V_S_MONTH);
 
     select
         count(DT.T_DAY)
@@ -8714,6 +9217,7 @@ begin
     into :V_UNITS, :V_FEE, :V_FEE_JUR;
     PERS_TABLE = 0;
 
+    -- если был подключен в этом месяце
     if (V_UNITS <> 0) then begin
 
       if (V_IS_JUR = 1) then
@@ -8740,6 +9244,7 @@ begin
                 and S.CUSTOMER_ID = :P_CUSTOMER_ID
                 and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
         into :V_FEE;
+        V_FEE = coalesce(V_FEE, 0);
         PERS_TABLE = 1;
       end
       else begin
@@ -8765,6 +9270,7 @@ begin
                   and S.CUSTOMER_ID = :P_CUSTOMER_ID
                   and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
           into :V_FEE;
+          V_FEE = coalesce(V_FEE, 0);
           PERS_TABLE = 1;
         end
       end
@@ -8790,7 +9296,7 @@ begin
           (hand_control = 1)) then
         Debt_Sum = V_FEE + 1; -- если не отключать, то баланс должен быть больше начислений
       else begin
-        /* Если нужно блокировать то посмотрим сколько за услугу уже начисленно в этом месяце и учтем это при блокировке */ 
+        /* Если нужно блокировать то посмотрим сколько за услугу уже начисленно в этом месяце и учтем это при блокировке */
         if (POSITIVE_ONLY = 1) then begin
           select
               sum(FEE)
@@ -8811,36 +9317,6 @@ begin
         update or insert into MONTHLY_FEE (MONTH_ID, SERVICE_ID, CUSTOMER_ID, UNITS, FEE)
         values (:V_S_MONTH, :V_SERVICE_ID, :P_CUSTOMER_ID, :V_UNITS, :V_FEE)
         matching (MONTH_ID, CUSTOMER_ID, SERVICE_ID);
-        if (P_DAILY = 1) then begin
-          if (PERS_TABLE = 0) then
-            insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-            select
-                DT.T_DAY
-              , :P_CUSTOMER_ID
-              , DT.Serv_Id
-              , 1
-              , iif(:V_IS_JUR = 0, DT.TARIF, DT.Tarif_Jur)
-              from SUBSCR_HIST S
-                   inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
-              where S.SERV_ID = :V_SERVICE_ID
-                    and DT.T_DAY between S.DATE_FROM and S.DATE_TO
-                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
-          else
-            insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-            select
-                dt.T_Day
-              , :P_CUSTOMER_ID
-              , dt.Serv_Id
-              , 1
-              , DT.TARIF
-              from SUBSCR_HIST S
-                   inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
-              where S.SERV_ID = :V_SERVICE_ID
-                    and DT.T_DAY between S.DATE_FROM and S.DATE_TO
-                    and S.CUSTOMER_ID = :P_CUSTOMER_ID
-                    and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
-        end
       end
       else begin
         -- отключим если нет денег
@@ -8853,6 +9329,38 @@ begin
         into :AUTOOFF;
         if (AUTOOFF > 0) then
           execute procedure Auto_Off_Service(:P_Customer_Id, :V_SERVICE_ID, current_date, null, null);
+      end
+
+      -- заполним таблицу с ежедневными списаниями
+      if (P_DAILY = 1) then begin
+        if (PERS_TABLE = 0) then
+          insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+          select
+              DT.T_DAY
+            , :P_CUSTOMER_ID
+            , DT.Serv_Id
+            , 1
+            , iif(:V_IS_JUR = 0, DT.TARIF, DT.Tarif_Jur)
+            from SUBSCR_HIST S
+                 inner join DAYS_TARIF DT on (DT.SERV_ID = S.SERV_ID)
+            where S.SERV_ID = :V_SERVICE_ID
+                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO
+                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
+        else
+          insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+          select
+              dt.T_Day
+            , :P_CUSTOMER_ID
+            , dt.Serv_Id
+            , 1
+            , DT.TARIF
+            from SUBSCR_HIST S
+                 inner join Pers_Tarif_Tmp DT on (DT.SERV_ID = S.SERV_ID)
+            where S.SERV_ID = :V_SERVICE_ID
+                  and DT.T_DAY between S.DATE_FROM and S.DATE_TO
+                  and S.CUSTOMER_ID = :P_CUSTOMER_ID
+                  and DT.T_DAY between :V_S_MONTH and :V_E_MONTH;
       end
     end
   end
@@ -8885,14 +9393,14 @@ begin
     from services s
   into :max_shift, :min_shift;
 
-  p_month = p_month - extract(day from p_month) + 1;
+  p_month = MONTH_FIRST_DAY(p_month);
   START_MONTH = p_month;
   j = min_shift;
   while (j <= max_shift) do begin
     p_month = dateadd(j month to START_MONTH);
 
     -- кол-во дней в месяце
-    ld = extract(day from dateadd(-1 day to(dateadd(1 month to p_month))));
+    ld = extract(day from MONTH_LAST_DAY(p_month));
 
     i = 0;
     while (i < ld) do begin
@@ -8955,7 +9463,7 @@ begin
     where VAR_NAME = 'DISCOUNT_3'
   into :DISCOUNT;
 
-  FOR_MONTH = FOR_MONTH - extract(day from FOR_MONTH) + 1;
+  FOR_MONTH = MONTH_FIRST_DAY(FOR_MONTH);
 
   select
       min(t.tarif_sum)
@@ -9145,7 +9653,7 @@ begin
         DISCOUNT = DISCOUNT_12;
       end
 
-      B_DATE = vPAY_DATE - extract(day from vPAY_DATE) + 1;
+      B_DATE = MONTH_FIRST_DAY(vPAY_DATE);
       E_DATE = dateadd(-1 day to(dateadd(VMONTH_QUANT + 1 month to B_DATE)));
 
       if (DISCOUNT > 0) then begin
@@ -9169,16 +9677,21 @@ end ^
 ALTER PROCEDURE CALC_FIXED_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
 P_MONTH D_DATE,
 FEE_ROUND D_INTEGER,
-P_DAILY D_INTEGER = 0)
+P_DAILY D_INTEGER = 0,
+BEFORE_DATE D_DATE = null)
 AS 
-declare variable V_SERVICE_ID D_INTEGER;
-declare variable V_E_MONTH    D_DATE;
-declare variable V_S_MONTH    D_DATE; 
+--declare variable V_SERVICE_ID D_INTEGER;
+declare variable V_E_MONTH D_DATE;
+declare variable V_S_MONTH D_DATE;
 begin
   P_DAILY = coalesce(P_DAILY, 0);
 
-  V_S_MONTH = :P_MONTH - extract(day from :P_MONTH) + 1;
-  V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
+  V_S_MONTH = MONTH_FIRST_DAY(:P_MONTH);
+  V_E_MONTH = MONTH_LAST_DAY(V_S_MONTH);
+
+  if ((not Before_Date is null) and (V_S_MONTH = Month_FIRST_Day(Before_Date))) then begin
+    V_E_MONTH = Before_Date;
+  end
 
   insert into MONTHLY_FEE (MONTH_ID, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
   select
@@ -9192,6 +9705,8 @@ begin
     where S.SRV_TYPE_ID = 2
           and SS.SERV_DATE between :V_S_MONTH and :V_E_MONTH
           and SS.CUSTOMER_ID = :P_CUSTOMER_ID;
+
+  -- заполним таблицу с ежедневными списаниями
   if (P_DAILY = 1) then begin
     insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
     select
@@ -9225,8 +9740,8 @@ declare variable CD     D_INTEGER;
 declare variable extra  D_INTEGER;
 begin
   delete from PERS_TARIF_TMP;
-  p_month = p_month - extract(day from p_month) + 1;
-  ld = extract(day from dateadd(-1 day to(dateadd(1 month to p_month))));
+  p_month = MONTH_FIRST_DAY(p_month);
+  ld = extract(day from MONTH_LAST_DAY(p_month));
   i = 0;
 
   if (P_CALC_TYPE is null) then
@@ -9330,7 +9845,7 @@ begin
     V_S_MONTH = dateadd(V_MONTH_SHIFT month to P_MONTH);
     V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
 
-    if (V_S_MONTH <> (current_date - extract(day from current_date) + 1)) then
+    if (V_S_MONTH <> MONTH_FIRST_DAY(current_date)) then
       AUTOOFF = 0; -- автоотключение только текущим числом
     -- начало месяца
 
@@ -9347,7 +9862,7 @@ begin
             and S.CUSTOMER_ID = :P_CUSTOMER_ID
     into :V_UNITS, :V_FEE, :V_FEE_JUR;
 
-    -- проверим есть ли персональный тариф
+    -- если был подключен в этом месяце
     if (V_UNITS > 0) then begin
       if (V_IS_JUR = 1) then
         V_FEE = V_FEE_JUR; -- юр. по другому тарифу
@@ -9371,6 +9886,7 @@ begin
                 and S.CUSTOMER_ID = :P_CUSTOMER_ID
                 and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
         into :V_FEE;
+        V_FEE = coalesce(V_FEE, 0);
       end
       else begin
         if (exists(select
@@ -9395,6 +9911,7 @@ begin
                   and S.CUSTOMER_ID = :P_CUSTOMER_ID
                   and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
           into :V_FEE;
+          V_FEE = coalesce(V_FEE, 0);
         end
       end
 
@@ -9418,7 +9935,7 @@ begin
           or
           (hand_control = 1)) then
         Debt_Sum = V_FEE + 1; -- если не отключать, то баланс должен быть больше начислений
-        /* else begin
+      /* else begin
           -- Если нужно блокировать то посмотрим сколько за услугу уже начисленно
           -- в этом месяце и учтем это при блокировке
           if (POSITIVE_ONLY = 1) then begin
@@ -9442,11 +9959,6 @@ begin
         update or insert into MONTHLY_FEE (MONTH_ID, SERVICE_ID, CUSTOMER_ID, UNITS, FEE)
         values (:P_MONTH, :V_SERVICE_ID, :P_CUSTOMER_ID, :V_UNITS, :V_FEE)
         matching (MONTH_ID, CUSTOMER_ID, SERVICE_ID);
-        if (P_DAILY = 1) then begin
-          update or insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-          values (:P_MONTH, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE)
-          matching (DAY_FEE, CUSTOMER_ID, SERVICE_ID);
-        end
       end
       else begin
         -- отключим если нет денег
@@ -9461,6 +9973,12 @@ begin
           execute procedure Auto_Off_Service(:P_Customer_Id, :V_SERVICE_ID, current_date, null, null);
       end
 
+      -- заполним таблицу с ежедневными списаниями
+      if (P_DAILY = 1) then begin
+        update or insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+        values (:P_MONTH, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE)
+        matching (DAY_FEE, CUSTOMER_ID, SERVICE_ID);
+      end
     end
   end
 end ^
@@ -9471,28 +9989,29 @@ FEE_ROUND D_INTEGER,
 P_CALC_TYPE D_INTEGER = null,
 P_DAILY D_INTEGER = 0)
 AS 
-declare variable V_SERVICE_ID   type of UID;
-declare variable V_S_MONTH      D_DATE;
-declare variable V_E_MONTH      D_DATE;
-declare variable V_MONTH_SHIFT  D_INTEGER;
-declare variable V_UNITS        D_N15_2;
-declare variable V_FEE          D_N15_2;
-declare variable V_DISCOUNT     D_N15_4;
-declare variable V_TARIF        D_N15_2;
-declare variable V_TARIF_JUR    D_N15_2;
-declare variable PERS_TAR       D_N15_2;
-declare variable VAT            D_N15_2;
-declare variable V_IS_JUR       D_SMALLINT;
-declare variable V_CUR_MONTH    D_DATE;
-declare variable AUTOOFF        D_SMALLINT;
-declare variable Debt_Sum       D_N15_2;
-declare variable hand_control   D_INTEGER;
-declare variable POSITIVE_ONLY  D_Iboolean;
-declare variable SrvType        D_Integer;
-declare variable V_EXTRA        D_INTEGER;
-declare variable DAYS_IN_MON    D_INTEGER;
-declare variable V_VATG_ID      D_INTEGER;
-declare variable Have_PersTarif D_INTEGER;
+declare variable V_SERVICE_ID    type of UID;
+declare variable V_S_MONTH       D_DATE;
+declare variable V_E_MONTH       D_DATE;
+declare variable V_MONTH_SHIFT   D_INTEGER;
+declare variable V_UNITS         D_N15_2;
+declare variable V_FEE           D_N15_2;
+declare variable V_DISCOUNT      D_N15_4;
+declare variable V_TARIF         D_N15_2;
+declare variable V_TARIF_JUR     D_N15_2;
+declare variable PERS_TAR        D_N15_2;
+declare variable VAT             D_N15_2;
+declare variable V_IS_JUR        D_SMALLINT;
+declare variable V_CUR_MONTH     D_DATE;
+declare variable AUTOOFF         D_SMALLINT;
+declare variable Debt_Sum        D_N15_2;
+declare variable hand_control    D_INTEGER;
+declare variable POSITIVE_ONLY   D_Iboolean;
+declare variable SrvType         D_Integer;
+declare variable V_EXTRA         D_INTEGER;
+declare variable DAYS_IN_MON     D_INTEGER;
+declare variable V_VATG_ID       D_INTEGER;
+declare variable Have_PersTarif  D_INTEGER;
+declare variable DaylyOnlyForNew D_INTEGER;
 begin
   /*
   P_CUSTOMER_ID = 18653;
@@ -9502,8 +10021,9 @@ begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 3);
   P_DAILY = coalesce(P_DAILY, 0);
   FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+  DaylyOnlyForNew = GET_SETTING_INT_VALUE('CALC3_DAYLY_FOR_NEW_ONLY', 0);
 
-  V_CUR_MONTH = current_date - extract(day from current_date) + 1;
+  V_CUR_MONTH = MONTH_FIRST_DAY(current_date);
 
   for select
           S.SERVICE_ID
@@ -9529,13 +10049,22 @@ begin
     if (P_MONTH <> V_CUR_MONTH) then
       AUTOOFF = 0; -- автоотключение только текущим числом
 
-    select
-        count(*)
-      from subscr_hist sh
-      where sh.Customer_Id = :P_CUSTOMER_ID
-            and sh.Serv_Id = :V_SERVICE_ID
-            and sh.Date_From < :P_MONTH
-    into :V_EXTRA;
+    -- настройка, только для новых или для всех подневной первый месяц
+    if (DaylyOnlyForNew = 0) then
+      select
+          count(*)
+        from subscr_hist sh
+        where sh.Customer_Id = :P_CUSTOMER_ID
+              and sh.Serv_Id = :V_SERVICE_ID
+              and sh.Date_From < :P_MONTH
+      into :V_EXTRA;
+    else
+      select
+          count(*)
+        from subscr_hist sh
+        where sh.Customer_Id = :P_CUSTOMER_ID
+              and sh.Date_From < :P_MONTH
+      into :V_EXTRA;
 
     if (V_EXTRA > 0) then begin
       -- Считаем по полной если месяц подключения не первый
@@ -9650,6 +10179,7 @@ begin
                   where DT.Serv_Id = :V_SERVICE_ID
                         and DT.T_DAY between :V_S_MONTH and Month_Last_Day(:V_S_MONTH)
                 into :V_FEE;
+                V_FEE = coalesce(V_FEE, 0);
               end
             end
             -- если ессть начисления, проверим юрик это или нет и если юрик посчитаем НДС
@@ -9668,7 +10198,8 @@ begin
             end
             V_FEE = round(V_FEE, FEE_ROUND);
 
-            /* проверим автоблкировка услуги включена и разрешена ли автоблокировка пользователя */
+            -- проверим автоблкировка услуги включена
+            -- или абонент с ручным управлением (безавтоблока)
             if ((AUTOOFF = 0)
                 or
                 (hand_control = 1)) then
@@ -9803,6 +10334,7 @@ begin
                         and S.CUSTOMER_ID = :P_CUSTOMER_ID
                         and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
                 into :V_FEE;
+                V_FEE = coalesce(V_FEE, 0);
               end
             end
           end
@@ -9866,7 +10398,7 @@ begin
   P_DAILY = coalesce(P_DAILY, 0);
   FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
-  V_CUR_MONTH = current_date - extract(day from current_date) + 1;
+  V_CUR_MONTH = MONTH_FIRST_DAY(current_date);
 
   for select
           S.SERVICE_ID
@@ -10008,11 +10540,6 @@ begin
             update or insert into MONTHLY_FEE (MONTH_ID, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
             values (:P_MONTH, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE)
             matching (MONTH_ID, CUSTOMER_ID, SERVICE_ID);
-            if (P_DAILY = 1) then begin
-              update or insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
-              values (:P_MONTH, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE)
-              matching (DAY_FEE, SERVICE_ID, CUSTOMER_ID);
-            end
           end
           else begin
             -- отключим если нет денег
@@ -10026,12 +10553,17 @@ begin
             if (AUTOOFF > 0) then
               execute procedure Auto_Off_Service(:P_Customer_Id, :V_SERVICE_ID, :P_MONTH, null, null);
           end
+
+          -- заполним таблицу с ежедневными списаниями
+          if (P_DAILY = 1) then begin
+            update or insert into DAILY_FEE (DAY_FEE, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
+            values (:P_MONTH, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE)
+            matching (DAY_FEE, SERVICE_ID, CUSTOMER_ID);
+          end
         end
       end
     end
-
   end
-
 end ^
 
 ALTER PROCEDURE CALC_PERS_TARIF (P_CUSTOMER_ID UID,
@@ -10050,8 +10582,8 @@ declare variable extra  D_INTEGER;
 begin
   delete from PERS_TARIF_TMP;
 
-  p_month = p_month - extract(day from p_month) + 1;
-  ld = extract(day from dateadd(-1 day to(dateadd(1 month to p_month))));
+  p_month = MONTH_FIRST_DAY(p_month);
+  ld = extract(day from MONTH_LAST_DAY(p_month));
   i = 0;
 
   if (P_CALC_TYPE is null) then
@@ -10110,20 +10642,21 @@ end ^
 ALTER PROCEDURE CALC_SINGLE_SRV_CUSTOMER (P_CUSTOMER_ID TYPE OF UID,
 P_MONTH D_DATE,
 FEE_ROUND D_INTEGER,
-P_DAILY D_INTEGER = 0)
+P_DAILY D_INTEGER = 0,
+BEFORE_DATE D_DATE = null)
 AS 
-declare variable V_SERVICE_ID D_INTEGER;
-declare variable V_S_MONTH    D_DATE;
-declare variable V_E_MONTH    D_DATE;
-declare variable V_DATE       D_DATE;
-declare variable V_DISCOUNT   D_N15_4;
-declare variable V_UNITS      D_N15_2;
-declare variable V_FEE        D_N15_2;
-declare variable V_FEE_JUR    D_N15_2;
-declare variable VAT          D_N15_2;
-declare variable V_IS_JUR     D_SMALLINT;
-declare variable V_VATG_ID    D_INTEGER;
-declare variable SrvType      D_Integer;
+declare variable V_Service_Id D_Integer;
+declare variable V_S_Month    D_Date;
+declare variable V_E_Month    D_Date;
+declare variable V_Date       D_Date;
+declare variable V_Discount   D_N15_4;
+declare variable V_Units      D_N15_2;
+declare variable V_Fee        D_N15_2;
+declare variable V_Fee_Jur    D_N15_2;
+declare variable Vat          D_N15_2;
+declare variable V_Is_Jur     D_Smallint;
+declare variable V_Vatg_Id    D_Integer;
+declare variable Srvtype      D_Integer;
 begin
   /*---------------------------------------------------------------------------------*/
   /*                     расчитываем разовые услуги                                  */
@@ -10132,8 +10665,12 @@ begin
   FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
 
   -- начало месяца и конец месяца
-  V_S_MONTH = :P_MONTH - extract(day from :P_MONTH) + 1;
-  V_E_MONTH = dateadd(-1 day to(dateadd(1 month to V_S_MONTH)));
+  V_S_MONTH = Month_First_Day(P_MONTH);
+  V_E_MONTH = Month_Last_Day(V_S_MONTH);
+
+  if ((not Before_Date is null) and (V_S_MONTH = Month_FIRST_Day(Before_Date))) then begin
+    V_E_MONTH = Before_Date;
+  end
 
   for select
           S.SERVICE_ID
@@ -11367,7 +11904,7 @@ begin
       into :SERVICE_ID, :CALC_TYPE, :POSITIVE_ONLY, :UnblMeth, :EXTRA
   do begin
     V_Result = 0;
-    -- CALC_TYPE
+    -- CALC_TYPE способа расчета.
     -- 0 - раз в месяц, пропорционально кол-ву дней в месяце
     -- 1 - раз в месяц, полный/неполный месяц
     -- 2 - ежедневное начисление
@@ -11376,6 +11913,10 @@ begin
     -- 5 - ежедневное начисление. С учетом дня включения, т.е. если выключена в день включения - считаем.
     -- 6 - ежедневное начисление. тариф действует екстра дней.
 
+    -- UnblMeth Снять блок при
+    -- 0 - любом плюсе
+    -- 1 - дневной тариф
+    -- 2 - месячный тариф
     if ((POSITIVE_ONLY = 1)
         or
         (UnblMeth > 0)) then
@@ -11385,14 +11926,28 @@ begin
 
     if ((UnblMeth = 2)
         or
-        ((POSITIVE_ONLY = 1) and ((CALC_TYPE = 0)
+        ((POSITIVE_ONLY = 1) and --
+        ((CALC_TYPE = 0)
         or
         (CALC_TYPE = 0)
         or
-        (CALC_TYPE = 3)))) then begin
+        (CALC_TYPE = 3))) --
+        ) then begin
       -- только если денег больше чем тариф на месяц
       if (DEBT >= M_TARIF) then
         V_Result = 1;
+      else
+      if (UnblMeth = 2) then begin
+        -- проверім, может баланс как сумма предоплаты, тогда разблокіруем
+        M_TARIF = GET_RECOM_PREPAY_FOR_CUSTOMER(:CUSTOMER_ID, (-1 * :DEBT));
+        if (DEBT >= M_TARIF) then
+          V_Result = 1;
+      end
+      else begin
+        if ((CALC_TYPE = 3) and (GET_SETTING_INT_VALUE('BLOCK_SRV_AFTER_DEL_PREPAY', 0) = 1) and (DEBT >= 0)) then
+        -- если признак блокировки при снятии обещанного, то разблокируем при 0 балансе
+          V_Result = 1;
+      end
     end
     else
     if ((UnblMeth = 1)
@@ -11514,7 +12069,7 @@ begin
   suspend;
 end ^
 
-ALTER PROCEDURE CLOSE_DAY_PROC (P_MONTH D_DATE = null,
+ALTER PROCEDURE CLOSE_DAY_PROC (P_DAY D_DATE = null,
 P_CUSTOMER_ID TYPE OF UID = null)
 AS 
 declare variable V_S_MONTH   D_DATE;
@@ -11522,17 +12077,25 @@ declare variable CUSTOMER_ID D_INTEGER;
 declare variable V_FEE_ROUND D_INTEGER;
 declare variable V_CALC_TYPE D_INTEGER; -- метод расчета услуги
 declare variable P_DAILY     D_INTEGER;
+declare variable SINGLE_FEE  D_INTEGER;
 declare variable need_2      D_INTEGER; -- оптимизация. если есть такие услуги то считаем иначе пропускаем
 declare variable need_5      D_INTEGER;
 declare variable need_6      D_INTEGER;
 begin
-  P_MONTH = coalesce(P_MONTH, current_date);
-  V_S_MONTH = (P_MONTH - extract(day from P_MONTH) + 1); -- начало месяца
-
+  P_DAY = coalesce(P_DAY, current_date);
+  -- начало месяца
+  V_S_MONTH = Month_First_Day(P_DAY);
   P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
-
-  /* получим значение число знаков после запятой для округления*/
+  -- получим значение число знаков после запятой для округления
   V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
+  -- посмотрим нужно ли начислять разовые при закрытии дня
+  SINGLE_FEE = GET_SETTING_INT_VALUE('DAILY_SINGLE_FEE', 0);
+
+  if (SINGLE_FEE = 1) then begin
+    -- начисляем разовые только если календарный месяц и день закрытия совпадают
+    if (Month_First_Day(current_date) <> Month_First_Day(P_DAY)) then
+      SINGLE_FEE = 0;
+  end
 
   if (P_DAILY = 1) then begin
     delete from DAILY_FEE F
@@ -11547,6 +12110,64 @@ begin
                                  and S.CALC_TYPE in (
                                                      2, 5, 6
                                                     ));
+  end
+
+  if (SINGLE_FEE = 1) then begin
+    -- сделаем начисления разовых услуг
+    -- Удалим начисления разовых до дня
+    delete from MONTHLY_FEE F
+        where F.MONTH_ID between :V_S_MONTH and Month_Last_Day(:V_S_MONTH)
+              and ((f.customer_id = :p_customer_id)
+                or (:p_customer_id is null))
+              and exists(select
+                             s.Service_Id
+                           from services s
+                           where s.Service_Id = f.Service_Id
+                                 and s.Srv_Type_Id <> 0);
+    if (P_DAILY = 1) then begin
+      -- Удалим разовые начисления до дня начисления за день
+      delete from DAILY_FEE F
+          where F.DAY_FEE between :V_S_MONTH and Month_Last_Day(:V_S_MONTH)
+                and ((f.customer_id = :p_customer_id)
+                  or (:p_customer_id is null))
+                and exists(select
+                               s.Service_Id
+                             from Services s
+                             where s.Service_Id = f.Service_Id
+                                   and S.SRV_TYPE_ID <> 0);
+    end
+
+    /*---------------------------------------------------------------------------------*/
+    /*                     рассчитываем разовые услуги                                 */
+    /*---------------------------------------------------------------------------------*/
+    for select distinct
+            Sh.CUSTOMER_ID
+          from SINGLE_SERV Sh
+               inner join SERVICES S on (S.SERVICE_ID = Sh.SERVICE_ID)
+          where S.SRV_TYPE_ID = 1
+                and Sh.SERV_DATE between :V_S_MONTH and :P_DAY
+                and ((sh.customer_id = :p_customer_id)
+                  or (:p_customer_id is null))
+          order by s.Priority nulls last
+        into :CUSTOMER_ID
+    do
+      execute procedure CALC_SINGLE_SRV_CUSTOMER(:CUSTOMER_ID, :V_S_MONTH, :V_FEE_ROUND, :P_DAILY, :P_DAY);
+
+    /*---------------------------------------------------------------------------------*/
+    /*                     расчитываем фиксированные услуги                            */
+    /*---------------------------------------------------------------------------------*/
+    for select distinct
+            Sh.CUSTOMER_ID
+          from SINGLE_SERV Sh
+               inner join SERVICES S on (S.SERVICE_ID = Sh.SERVICE_ID)
+          where S.SRV_TYPE_ID = 2
+                and Sh.SERV_DATE between :V_S_MONTH and :P_DAY
+                and ((sh.customer_id = :p_customer_id)
+                  or (:p_customer_id is null))
+          order by s.Priority nulls last
+        into :CUSTOMER_ID
+    do
+      execute procedure CALC_FIXED_SRV_CUSTOMER(:CUSTOMER_ID, :V_S_MONTH, :V_FEE_ROUND, :P_DAILY, :P_DAY);
   end
 
   -- для скорости рассчета. исключим те типы услуг,
@@ -11594,7 +12215,7 @@ begin
           order by s.Priority nulls last
         into :CUSTOMER_ID
     do
-      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_DAY, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
   end
   /*---------------------------------------------------------------------------------*/
   /*        расчет услуг с ежеденевным начислением с учетом дня подключения          */
@@ -11614,7 +12235,7 @@ begin
           order by s.Priority nulls last
         into :CUSTOMER_ID
     do
-      execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      execute procedure CALC_DAY_INC_SRV_CUSTOMER(:CUSTOMER_ID, :P_DAY, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
   end
   /*---------------------------------------------------------------------------------*/
   /*  6 - расчет услуг с ежедневным начислением (настраиваемое кол-во дней в тарифе) */
@@ -11633,8 +12254,11 @@ begin
           order by s.Priority nulls last
         into :CUSTOMER_ID
     do
-      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_MONTH, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
+      execute procedure CALC_DAY_SRV_CUSTOMER(:CUSTOMER_ID, :P_DAY, :V_FEE_ROUND, :V_CALC_TYPE, :P_DAILY);
   end
+
+  insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('CLOSE_DAY', 'E', -1, 'CLOSE_DAY_PROC', dateadd(month, -1, :P_DAY), :P_DAY);
 end ^
 
 ALTER PROCEDURE CLOSE_MATERIAL_DOC (DOC_ID UID)
@@ -11748,8 +12372,8 @@ begin
       or
       (type_Id = 4) -- инвинтаризация (коррекция)
       or
-      (type_Id = 5)) -- инвинтаризация
-  then begin
+      (type_Id = 5) -- инвинтаризация
+      ) then begin
     for select
             M_Id
           , sum(coalesce(M_Quant, 0))
@@ -11827,9 +12451,10 @@ begin
   end
 
   -- оприходуем на склад UNIT
-
-  if (type_Id = 1) -- Приход материалов
-  then begin
+  if ((type_Id = 1) -- Приход материалов
+      or
+      (type_Id = 5) -- инвинтаризация
+      ) then begin
     -- удалим юниты если они "зависли" с прошлых доков
     delete from material_unit m
         where exists(select
@@ -11855,10 +12480,9 @@ begin
       , mu.S_Version
       from Material_Docs d
            inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-           inner join Materials_In_Doc_Unit mu on (md.Doc_Id = mu.Doc_Id and
-                 md.M_Id = mu.M_Id and
-                 md.Id = mu.Id)
-      where d.Doc_Id = :DOC_ID;
+           inner join Materials_In_Doc_Unit mu on (md.Doc_Id = mu.Doc_Id and md.M_Id = mu.M_Id and md.Id = mu.Id)
+      where d.Doc_Id = :DOC_ID
+        and not exists(select u.M_Id from Material_Unit u where u.M_Id = mu.M_Id and u.Serial = mu.Serial);
   end
   else begin
     if (type_Id = 2) -- перемещение
@@ -12256,8 +12880,8 @@ begin
     set VAR_VALUE = extract(year from :P_MONTH) || '-' || extract(month from :P_MONTH) || '-1'
     where VAR_NAME = 'CURRENT_DATE';
 
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('SYSTEM', -1, -1, 'CLOSE_MONTH_PROC ' || :P_MONTH, localtimestamp, current_user);
+    insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+    values ('CLOSE_MONTH', 'E', -1, 'CLOSE_MONTH_PROC', dateadd(month, -1, :P_MONTH), :P_MONTH);
   end
 end ^
 
@@ -12268,9 +12892,9 @@ AS
 DECLARE VARIABLE F_MONTH D_DATE;
 BEGIN
   -- установим на первое число месяца
-  p_start_month = p_start_month - EXTRACT(DAY FROM p_start_month) + 1;
+  p_start_month = MONTH_FIRST_DAY(p_start_month);
   -- установим на первое число месяца
-  p_end_month = p_end_month - EXTRACT(DAY FROM p_end_month) + 1;
+  p_end_month = MONTH_FIRST_DAY(p_end_month);
 
   f_MONTH = p_start_month;
   while (f_month <= p_End_month) do begin
@@ -12540,7 +13164,7 @@ begin
     v_s = trim(v_s);
     if (v_s <> '') then
       FDESCRIPTION = substring(FDESCRIPTION || ' (' || v_s || ')' || (coalesce(' / ' || V_RQID, '')) from 1 for 500);
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
+    RMONTH = MONTH_FIRST_DAY(RMONTH);
 
     suspend;
   end
@@ -12567,7 +13191,7 @@ begin
     PDESCRIPTION = PDESCRIPTION || coalesce(' / ' || V_RQID, '');
     PDESCRIPTION = PDESCRIPTION || coalesce(' / ' || SRV_NAME, '');
 
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
+    RMONTH = MONTH_FIRST_DAY(RMONTH);
     suspend;
   end
 
@@ -12589,7 +13213,7 @@ begin
       into :RMONTH, :FSUMMA
   do begin
     FDESCRIPTION = 'Пеня';
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
+    RMONTH = MONTH_FIRST_DAY(RMONTH);
     suspend;
   end
 
@@ -12611,7 +13235,7 @@ begin
         order by m.Fee_Date
       into :RMONTH, :FDESCRIPTION, :FSUMMA, :V_S
   do begin
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
+    RMONTH = MONTH_FIRST_DAY(RMONTH);
     FDESCRIPTION = FDESCRIPTION || coalesce(' / ' || V_S, '');
     suspend;
     V_S = null;
@@ -12635,7 +13259,7 @@ begin
         order by p.Bonus_Date
       into :RMONTH, :PDESCRIPTION, :PSUMMA
   do begin
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
+    RMONTH = MONTH_FIRST_DAY(RMONTH);
     suspend;
   end
 end ^
@@ -12757,7 +13381,6 @@ begin
     if (v_s <> '') then
       FDESCRIPTION = substring(FDESCRIPTION || ' (' || v_s || ')' from 1 for 500);
 
-    -- RMONTH = (RMONTH - extract(day from RMONTH) + 1);
     suspend;
   end
 
@@ -12777,7 +13400,7 @@ begin
       into :RMONTH, :PSUMMA
   do begin
     PDESCRIPTION = lpad(extract(day from RMONTH), 2, '0') || '.' || lpad(extract(month from RMONTH), 2, '0') || '.' || extract(year from RMONTH);
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
+
     suspend;
   end
 
@@ -12799,7 +13422,6 @@ begin
       into :RMONTH, :FSUMMA
   do begin
     FDESCRIPTION = 'Пеня';
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
     suspend;
   end
 
@@ -12821,7 +13443,6 @@ begin
         order by m.Fee_Date
       into :RMONTH, :FDESCRIPTION, :FSUMMA, :V_S
   do begin
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
     if (not V_S is null) then
       FDESCRIPTION = FDESCRIPTION || ' / ' || V_S;
     suspend;
@@ -12846,7 +13467,6 @@ begin
         order by p.Bonus_Date
       into :RMONTH, :PDESCRIPTION, :PSUMMA
   do begin
-    RMONTH = (RMONTH - extract(day from RMONTH) + 1);
     suspend;
   end
 end ^
@@ -13080,6 +13700,7 @@ NOTICE D_NOTICE = null)
 AS 
 declare variable DECODER_N type of D_DECODER;
 declare variable STB_N     type of D_VARCHAR50;
+declare variable CD_NOT     D_Notice;
 begin
   if (DECODER_STATE is null) then
     DECODER_STATE = 1;
@@ -13091,22 +13712,26 @@ begin
   stb_n = null;
 
   select
-      decoder_n, stb_n
+      decoder_n, stb_n, NOTICE
     from CUSTOMER_DECODERS
     where DEC_ID = :DEC_ID
-  into :decoder_n, :stb_n;
+  into :decoder_n, :stb_n, :CD_NOT;
+
   delete from CUSTOMER_DECODERS where DEC_ID = :DEC_ID;
+
+  CD_NOT = coalesce(' ' || CD_NOT, '');
+  NOTICE = coalesce(' ' || NOTICE, '');
 
   if (not decoder_n is null) then
     update EQUIPMENT_DVB
     set EQ_state = :DECODER_STATE,
-        Notice = coalesce(Notice, '') || coalesce(' ' || :NOTICE, '')
+        Notice = coalesce(Notice, '') || :NOTICE || :CD_NOT
     where EQ_n = :decoder_n;
 
   if (not stb_n is null) then
     update EQUIPMENT_DVB
     set EQ_state = :STB_STATE,
-        Notice = coalesce(Notice, '') || coalesce(' ' || :NOTICE, '')
+        Notice = coalesce(Notice, '') || :NOTICE || :CD_NOT
     where EQ_n = :stb_n;
 end ^
 
@@ -13115,7 +13740,7 @@ AS
 declare variable P_DAILY D_INTEGER;
 begin
   -- установим на первое число месяца
-  P_MONTH = P_MONTH - extract(day from P_MONTH) + 1;
+  P_MONTH = MONTH_FIRST_DAY(P_MONTH);
   delete from MONTHLY_FEE M
       where M.MONTH_ID >= :P_MONTH;
 
@@ -13131,8 +13756,8 @@ begin
   set VAR_VALUE = extract(year from :P_MONTH) || '-' || extract(month from :P_MONTH) || '-1'
   where VAR_NAME = 'CURRENT_DATE';
 
-  insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SYSTEM', -1, -1, 'DELETE_MONTH_PROC '||:P_MONTH, LOCALTIMESTAMP, CURRENT_USER);
+  insert into CHANGELOG ( LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('DELETE_MONTH', 'E', -1, 'DELETE_MONTH_PROC', :P_MONTH, dateadd(month, 1, :P_MONTH));
 end ^
 
 ALTER PROCEDURE DELETE_NODE (ID TYPE OF UID)
@@ -13712,21 +14337,21 @@ declare variable j d_integer;
 declare variable d d_char1;
 begin
 
-  j = CHAR_LENGTH(a_value);
+  j = char_length(a_value);
   i = 1;
   STR = '';
   while (i <= j) do begin
-    d = substring(a_value FROM i FOR 1);
-    IF (d <>  separator)
-    then STR = str ||d;
+    d = substring(a_value from i for 1);
+    if (d <> separator) then
+      STR = str || d;
     else begin
       suspend;
       STR = '';
     end
     i = i + 1;
   end
-  suspend;
 
+  suspend;
 end ^
 
 ALTER PROCEDURE EXPLODE_NO_EMPTY (SEPARATOR D_CHAR1,
@@ -14207,7 +14832,7 @@ begin
           F_MONTH = P_END_MONTH;
       end
 
-      F_MONTH = F_MONTH - extract(day from F_MONTH) + 1;
+      F_MONTH = MONTH_FIRST_DAY(F_MONTH);
     end
   end
 
@@ -14846,8 +15471,8 @@ begin
 
     if (not debt_date is null) then begin
       -- месяц знаем, попытаемся вычислить день долга
-      debt_date = (debt_date - extract(day from debt_date) + 1);
-      days = extract(day from dateadd(-1 day to(dateadd(1 month to debt_date))));
+      debt_date = MONTH_FIRST_DAY(debt_date);
+      days = extract(day from MONTH_LAST_DAY(debt_date));
       select
           sum(f.Fee)
         from Monthly_Fee f
@@ -15544,6 +16169,63 @@ begin
   suspend;
 end ^
 
+ALTER PROCEDURE GET_JSON_ARRAY_ROWS (JSON D_PATH)
+RETURNS (AROW D_VARCHAR255)
+AS 
+declare variable l d_integer;
+declare variable b d_integer;
+declare variable e d_integer;
+declare variable p d_integer;
+declare variable d d_char1;
+begin
+
+  l = char_length(JSON);
+  AROW = '';
+  p = 1;
+  while (p <= l) do begin
+    b = position('{', JSON, p);
+    if (b > 0) then begin
+      e = position('}', JSON, b + 1);
+      if (e > 0) then begin
+        AROW = substring(JSON from b for e-b+1);
+        suspend;
+        p = e + 1;
+      end
+    end
+    else
+      p = l+1;
+  end
+end ^
+
+ALTER PROCEDURE GET_LAYOUT_BY_ID (ID D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+NODE_ID D_INTEGER,
+SRV_TYPE D_INTEGER,
+MAT_QNT D_N15_3,
+CUST_QNT D_INTEGER,
+MAT_ID_LIST D_VARCHAR500,
+MAT_REQ D_IBOOLEAN,
+NOTICE D_VARCHAR1000)
+AS 
+begin
+  for select
+          l.Lt_Id
+        , l.Node_Id
+        , l.Srv_Type
+        , l.Mat_Qnt
+        , l.CUST_QNT
+        , l.Mat_Id_List
+        , l.Mat_Req
+        , l.Notice
+        from Node_Layout l
+        where l.Node_Id = :ID
+        order by l.Srv_Type, l.CUST_QNT
+      into :LT_ID, :Node_Id, :SRV_TYPE, :MAT_QNT, :CUST_QNT, :MAT_ID_LIST, :MAT_REQ, :NOTICE
+  do begin
+    suspend;
+  end
+end ^
+
 ALTER PROCEDURE GET_MAT_FOR_NODE (NODE_ID UID)
 RETURNS (M_ID UID,
 NAME D_VARCHAR255,
@@ -15554,6 +16236,7 @@ AS
 declare variable T_NAME D_VARCHAR255;--declare variable v_used D_N15_2;
 declare variable v_flag D_INTEGER;
 begin
+/*
   v_flag = 0;
   -- выведем согласно компановке узла
   for select
@@ -15630,6 +16313,7 @@ begin
       suspend;
     end
   end
+*/
 end ^
 
 ALTER PROCEDURE GET_MAT_FOR_REQUEST (IRQ_ID D_UID_NULL,
@@ -15736,7 +16420,8 @@ end ^
 
 ALTER PROCEDURE GET_MAT_GIVE_OUT (FOR_RQ D_INTEGER,
 MG_ID D_INTEGER = -1,
-RQ_OWNER D_IBOOLEAN = 0)
+RQ_OWNER D_IBOOLEAN = 0,
+FOR_WH_ID D_INTEGER = -1)
 RETURNS (RM_ID D_INTEGER,
 M_ID D_INTEGER,
 NAME D_DESCRIPTION,
@@ -15758,124 +16443,254 @@ AS
 declare variable vIs_Unit D_Iboolean;
 begin
   RQ_ID = coalesce(:FOR_RQ, 0);
-
-  for select
-          rm.Rm_Id
-        , m.M_ID
-        , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
-        , m.Dimension
-        , w.O_Name
-        , w.O_ID as WH_ID
-        , rm.Rm_Quant
-        , rm.PROP
-        , coalesce(mr.Mr_Quant, 0)
-        , rm.Rm_Cost
-        , m.M_Number
-        , rm.Rm_Quant + coalesce(iif(m.Is_Unit = 1,
-          (iif(rm.Rm_Quant = 1, 0, 1)), mr.Mr_Quant), 0)
-        , rm.Rm_Quant
-        , rm.Rm_Notice
-        , m.Description
-        , rm.Serial
-        from MATERIALS M
-             inner join Request_Materials rm on (rm.M_Id = m.M_Id)
-             left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and
-                   mr.wh_id = rm.Wh_Id)
-             left outer join OBJECTS W on (W.O_ID = rm.Wh_Id and
-                   W.O_TYPE = 10)
-             left outer join Material_Unit u on (u.M_Id = rm.M_Id and
-                   u.Serial = rm.Serial -- and u.Owner = rm.Wh_Id and ((u.State = 0) or (u.State = -1*:RQ_ID))
-                   )
-        where rm.Rq_Id = :RQ_ID
-              and ((:MG_ID = -2)
-                or ((:MG_ID = -1)
-                or (M.MG_ID = :MG_ID
-              and not :MG_ID is null)
-                or (M.MG_ID is null
-              and :MG_ID is null)))
-              -- спрячем материалы без серияника, если они должны быть
-              and ((coalesce(m.Is_Unit, 0) = 0)
-                or (not u.Serial is null)
-                or (not rm.Rm_Id is null))
-
-      into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :PROP, :MR_QUANT, :RM_COST, --
-           :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description, :SERIAL
-  do begin
-    suspend;
-  end
-
-  RM_NOTICE = null;
-  Description = null;
-
-  if (MG_ID <> -2) then begin
-    RQ_ID = coalesce(:FOR_RQ, 0);
-
+  FOR_WH_ID = coalesce(FOR_WH_ID, -1);
+  if (FOR_WH_ID < 0) then begin
     for select
-            null
+            rm.Rm_Id
           , m.M_ID
           , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
           , m.Dimension
           , w.O_Name
-          , mr.Wh_Id
-          , null
-          , 0 CALC
-          , mr.Mr_Quant
-          , m.Cost
+          , w.O_ID as WH_ID
+          , rm.Rm_Quant
+          , rm.PROP
+          , coalesce(mr.Mr_Quant, 0)
+          , rm.Rm_Cost
           , m.M_Number
-          , coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
-          , 0
+          , rm.Rm_Quant + coalesce(iif(m.Is_Unit = 1,
+            (iif(rm.Rm_Quant = 1, 0, 1)), mr.Mr_Quant), 0)
+          , rm.Rm_Quant
+          , rm.Rm_Notice
           , m.Description
-          , u.Serial
-          , coalesce(m.Is_Unit, 0)
+          , rm.Serial
           from MATERIALS M
-               left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and
-                     (exists(select
-                                 wh.wh_id
-                               from SYS$USER u
-                                    inner join sys$user_wh wh on (wh.user_id = u.id)
-                               where u.ibname = current_user
-                                     and wh.can_view = 1
-                                     and wh.wh_id = mr.Wh_Id) or current_user = 'SYSDBA'))
-               left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and
-                     W.O_TYPE = 10)
-               left outer join Material_Unit u on (u.M_Id = mr.M_Id and
-                     u.Owner = mr.Wh_Id and
-                     u.State = 0)
+               inner join Request_Materials rm on (rm.M_Id = m.M_Id)
+               left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and mr.wh_id = rm.Wh_Id)
+               left outer join OBJECTS W on (W.O_ID = rm.Wh_Id and W.O_TYPE = 10)
+               left outer join Material_Unit u on (u.M_Id = rm.M_Id and u.Serial = rm.Serial -- and u.Owner = rm.Wh_Id and ((u.State = 0) or (u.State = -1*:RQ_ID))
+                     )
+          where rm.Rq_Id = :RQ_ID
+                -- группа материала
+               -- and (
+               --      :MG_ID = -2
+               --      or (
+               --        :MG_ID = -1
+               --        or ((M.MG_ID is null) and (:MG_ID is null))
+               --        or (M.MG_ID = :MG_ID and (not :MG_ID is null))
+               --      )
+               --  )
+                --
+                and (
+                  :MG_ID = -2
+                  or (
+                    :MG_ID = -1
+                    or (
+                      (M.MG_ID is null)
+                      and (:MG_ID is null)
+                    )
+                    or (
+                      (not :MG_ID is null)
+                      and (
+                        m.MG_ID in (
+                               with recursive GroupsTree as (select
+                                                                 mp.Mg_Id
+                                                                 , mp.Parent_Id
+                                                                 from MATERIALS_GROUP mp
+                                                                 where mp.MG_ID = :MG_ID
+                                                               union all
+                                                               select
+                                                                   mc.Mg_Id
+                                                                 , mc.Parent_Id
+                                                                 from MATERIALS_GROUP mc
+                                                                      inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id) select
+                                                                                                                               Mg_Id
+                                                                                                                             from GroupsTree
+                        )
+                      )
+                    )
+                  )
+                )
+                -- спрячем материалы без серияника, если они должны быть
+                and ((coalesce(m.Is_Unit, 0) = 0)
+                  or (not u.Serial is null)
+                  or (not rm.Rm_Id is null))
 
-          where (not exists(select
-                                rm.Rm_Id
-                              from Request_Materials rm
-                              where rm.M_Id = m.M_Id
-                                    and rm.Rq_Id = :FOR_RQ
-                                    and rm.WH_ID = mr.WH_ID))
-
-                and ((:MG_ID = -1)
-                  or (M.MG_ID = :MG_ID
-                and not :MG_ID is null)
-                  or (M.MG_ID is null
-                and :MG_ID is null))
-                and (((m.Deleted = 0)
-                and (mr.Mr_Quant > 0)))
-                and ((:RQ_Owner = 0)
-                  or exists(select
-                                e.Rq_Id
-                              from Request_Executors e
-                              where e.Exec_Id = w.O_Numericfield
-                                    and e.Rq_Id = :FOR_RQ))
         into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :PROP, :MR_QUANT, :RM_COST, --
-             :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description, :SERIAL, :vIs_Unit
+             :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description, :SERIAL
     do begin
-      -- если учет по серийнику, то он должен быть
-      if ((vIs_Unit <> 1)
-          or
-          (not SERIAL is null)) then
-        suspend;
+      suspend;
     end
+
+    RM_NOTICE = null;
+    Description = null;
+
+    if (MG_ID <> -2) then begin
+      RQ_ID = coalesce(:FOR_RQ, 0);
+
+      for select
+              null
+            , m.M_ID
+            , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
+            , m.Dimension
+            , w.O_Name
+            , mr.Wh_Id
+            , null
+            , 0 CALC
+            , mr.Mr_Quant
+            , m.Cost
+            , m.M_Number
+            , coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
+            , 0
+            , m.Description
+            , u.Serial
+            , coalesce(m.Is_Unit, 0)
+            from MATERIALS M
+                 left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and (exists(select
+                                                                                          wh.wh_id
+                                                                                        from SYS$USER u
+                                                                                             inner join sys$user_wh wh on (wh.user_id = u.id)
+                                                                                        where u.ibname = current_user
+                                                                                              and wh.can_view = 1
+                                                                                              and wh.wh_id = mr.Wh_Id) or current_user = 'SYSDBA'))
+                 left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and W.O_TYPE = 10)
+                 left outer join Material_Unit u on (u.M_Id = mr.M_Id and u.Owner = mr.Wh_Id and u.State = 0)
+
+            where (not exists(select
+                                  rm.Rm_Id
+                                from Request_Materials rm
+                                where rm.M_Id = m.M_Id
+                                      and rm.Rq_Id = :FOR_RQ
+                                      and rm.WH_ID = mr.WH_ID))
+
+                  and ((:MG_ID = -1)
+                    or (M.MG_ID = :MG_ID
+                  and not :MG_ID is null)
+                    or (M.MG_ID is null
+                  and :MG_ID is null))
+                  and (((m.Deleted = 0)
+                  and (mr.Mr_Quant > 0)))
+                  and ((:RQ_Owner = 0)
+                    or exists(select
+                                  e.Rq_Id
+                                from Request_Executors e
+                                where e.Exec_Id = w.O_Numericfield
+                                      and e.Rq_Id = :FOR_RQ))
+          into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :PROP, :MR_QUANT, :RM_COST, --
+               :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description, :SERIAL, :vIs_Unit
+      do begin
+        -- если учет по серийнику, то он должен быть
+        if ((vIs_Unit <> 1)
+            or
+            (not SERIAL is null)) then
+          suspend;
+      end
+    end
+  end
+  else begin -- Фільтр по складам
+    for select
+            rm.Rm_Id
+          , m.M_ID
+          , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
+          , m.Dimension
+          , w.O_Name
+          , w.O_ID as WH_ID
+          , rm.Rm_Quant
+          , rm.PROP
+          , coalesce(mr.Mr_Quant, 0)
+          , rm.Rm_Cost
+          , m.M_Number
+          , rm.Rm_Quant + coalesce(iif(m.Is_Unit = 1,
+            (iif(rm.Rm_Quant = 1, 0, 1)), mr.Mr_Quant), 0)
+          , rm.Rm_Quant
+          , rm.Rm_Notice
+          , m.Description
+          , rm.Serial
+          from MATERIALS M
+               inner join Request_Materials rm on (rm.M_Id = m.M_Id)
+               left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and mr.wh_id = rm.Wh_Id)
+               left outer join OBJECTS W on (W.O_ID = rm.Wh_Id and W.O_TYPE = 10)
+               left outer join Material_Unit u on (u.M_Id = rm.M_Id and u.Serial = rm.Serial -- and u.Owner = rm.Wh_Id and ((u.State = 0) or (u.State = -1*:RQ_ID))
+                     )
+          where rm.Rq_Id = :RQ_ID
+                -- группа материала
+                and (mr.Wh_Id = :FOR_WH_ID)
+                -- спрячем материалы без серияника, если они должны быть
+                and ((coalesce(m.Is_Unit, 0) = 0)
+                  or (not u.Serial is null)
+                  or (not rm.Rm_Id is null))
+
+        into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :PROP, :MR_QUANT, :RM_COST, --
+             :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :RM_NOTICE, :Description, :SERIAL
+    do begin
+      suspend;
+    end
+
+    RM_NOTICE = null;
+    Description = null;
+
+    if (MG_ID <> -2) then begin
+      RQ_ID = coalesce(:FOR_RQ, 0);
+
+      for select
+              null
+            , m.M_ID
+            , m.Name || coalesce('/' || u.Serial || coalesce('/' || u.MAC, ''), '') NAME
+            , m.Dimension
+            , w.O_Name
+            , mr.Wh_Id
+            , null
+            , 0 CALC
+            , mr.Mr_Quant
+            , m.Cost
+            , m.M_Number
+            , coalesce(iif(m.Is_Unit = 1, 1, mr.Mr_Quant), 0)
+            , 0
+            , m.Description
+            , u.Serial
+            , coalesce(m.Is_Unit, 0)
+            from MATERIALS M
+                 left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and (exists(select
+                                                                                          wh.wh_id
+                                                                                        from SYS$USER u
+                                                                                             inner join sys$user_wh wh on (wh.user_id = u.id)
+                                                                                        where u.ibname = current_user
+                                                                                              and wh.can_view = 1
+                                                                                              and wh.wh_id = mr.Wh_Id) or current_user = 'SYSDBA'))
+                 left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and W.O_TYPE = 10)
+                 left outer join Material_Unit u on (u.M_Id = mr.M_Id and u.Owner = mr.Wh_Id and u.State = 0)
+
+            where mr.Wh_Id = :FOR_WH_ID
+                  and (not exists(select
+                                      rm.Rm_Id
+                                    from Request_Materials rm
+                                    where rm.M_Id = m.M_Id
+                                          and rm.Rq_Id = :FOR_RQ
+                                          and rm.WH_ID = mr.WH_ID))
+                  and (mr.Wh_Id = :FOR_WH_ID)
+                  and (((m.Deleted = 0)
+                  and (mr.Mr_Quant > 0)))
+                  and ((:RQ_Owner = 0)
+                    or exists(select
+                                  e.Rq_Id
+                                from Request_Executors e
+                                where e.Exec_Id = w.O_Numericfield
+                                      and e.Rq_Id = :FOR_RQ))
+          into :RM_ID, :M_ID, :NAME, :DIMENSION, :O_NAME, :WH_ID, :RM_QUANT, :PROP, :MR_QUANT, :RM_COST, --
+               :M_NUMBER, :QUANT_TOTAL, :QUANT_IN_REQUEST, :Description, :SERIAL, :vIs_Unit
+      do begin
+        -- если учет по серийнику, то он должен быть
+        if ((vIs_Unit <> 1)
+            or
+            (not SERIAL is null)) then
+          suspend;
+      end
+    end
+    --
   end
 end ^
 
 ALTER PROCEDURE GET_MAT_TAKE_IN (FOR_RQ_ID UID,
-MG_ID D_UID_NULL = -1,
+MG_ID D_UID_NULL = -2,
 WH_OWNER D_IBOOLEAN = 0)
 RETURNS (M_ID UID,
 NAME D_VARCHAR255,
@@ -15890,107 +16705,303 @@ DESCRIPTION D_NOTICE,
 SERIAL D_SERIAL_NS,
 COST D_N15_2)
 AS 
-declare variable Is_Unit D_Iboolean;
-declare variable Mac     varchar(18);
-declare variable tNAME   D_VARCHAR100;
-declare variable tQUANT  D_N15_5;
-declare variable tSerial varchar(50);
-declare variable Notice  D_NOTICE;
-declare variable tCOST   D_N15_2;
+declare variable Is_Unit    D_Iboolean;
+declare variable Mac        D_Mac;
+declare variable tNAME      D_VARCHAR100;
+declare variable tQUANT     D_N15_5;
+declare variable tSerial    D_varchar50;
+declare variable Notice     D_NOTICE;
+declare variable tCOST      D_N15_2;
+declare variable OWNER_TYPE D_INTEGER;
+declare variable OWNER_ID   D_INTEGER;
+declare variable ByBack     D_INTEGER;
 begin
   -- Включіть ограніченіе на кого выдана заявка. абонента или узел
   WH_OWNER = coalesce(WH_OWNER, 0);
-
   COST = null;
-  for select
-          m.M_ID
-        , m.Name
-        , m.Dimension
-        , w.O_Name
-        , w.O_ID as WH_ID
-        , rm.Quant
-        , m.M_Number
-        , rm.Id
-        , m.DESCRIPTION
-        , rm.Serial
-        , m.Is_Unit
-        , rm.Cost
-        from MATERIALS M
-             left outer join OBJECTS W on (W.O_TYPE = 10 and w.O_Deleted = 0 and -- длф форматірованія
-                   ((:WH_OWNER = 0) or exists(select
-                                                  e.Rq_Id
-                                                from Request_Executors e
-                                                where e.Exec_Id = w.O_Numericfield
-                                                      and e.Rq_Id = :FOR_RQ_ID)) and (exists(select
-                                                                                                 wh.wh_id
-                                                                                               from SYS$USER u
-                                                                                                    inner join sys$user_wh wh on (wh.user_id = u.id)
-                                                                                               where u.ibname = current_user
-                                                                                                     and wh.can_view = 1
-                                                                                                     and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
-             left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and rm.Rq_Id = :FOR_RQ_ID and rm.WH_ID = w.O_Id)
-        where ((M.MG_ID = :MG_ID
-              and not :MG_ID is null)
-                or (((M.MG_ID is null)
-                or (M.MG_ID = -1))
-              and :MG_ID is null)
-                or (:MG_ID = -1))
-              and ((m.Deleted = 0)
-                or (coalesce(rm.Quant, 0) <> 0))
 
-        order by m.Name
+  if (coalesce(MG_ID, 0) <> -2) then begin
 
-      into :M_ID, :tNAME, :DIMENSION, :WH_NAME, :WH_ID, :tQUANT, :M_NUMBER, :ID, :DESCRIPTION, :tSerial, :Is_Unit, :cost
-  do begin
-    RQ_ID = FOR_RQ_ID;
-    if (Is_Unit = 1) then begin
-      for select
-              Serial
-            , Mac
-            , Cost
-            , Notice
-            from (select
-                      u.Serial
-                    , m.Mac
-                    , u.Cost
-                    , u.Notice
-                      -- , u.Owner, u.Owner_Type
-                    from Request_Materials_Return u
-                         inner join Material_Unit m on (m.M_Id = u.M_Id and m.Serial = u.Serial)
-                    where u.M_Id = :M_ID
-                          and u.Rq_Id = :FOR_RQ_ID
-                  union all
-                  select
-                      a.Serial
-                    , a.Mac
-                    , a.Cost
-                    , a.Notice
-                      -- , u.Owner, u.Owner_Type
-                    from Appliance a
-                         inner join request r on (r.Rq_Id = :FOR_RQ_ID and ((r.Rq_Customer = a.Own_Id and a.Own_Type = 1) or (r.Node_Id = a.Own_Id and a.Own_Type = 2)))
-                    where a.M_Id = :M_ID
-                          and a.Property <> 0
-                          and not exists(select
-                                             a.Id
-                                           from Request_Materials_Return u
-                                           where a.M_Id = u.M_Id
-                                                 and a.Serial = u.Serial
-                                                 and u.Rq_Id = :FOR_RQ_ID))
-          into :Serial, :Mac, :tCOST, :Notice
-               -- :Owner, :Owner_Type,
-      do begin
-        NAME = tName || coalesce('/' || Serial || coalesce('/' || MAC, ''), '');
+    for select
+            m.M_ID
+          , m.Name
+          , m.Dimension
+          , w.O_Name
+          , w.O_ID as WH_ID
+          , rm.Quant
+          , m.M_Number
+          , rm.Id
+          , m.DESCRIPTION
+          , rm.Serial
+          , m.Is_Unit
+          , rm.Cost
+          from MATERIALS M
+               left outer join OBJECTS W on (W.O_TYPE = 10 and w.O_Deleted = 0 and -- длф форматірованія
+                     ((:WH_OWNER = 0) or exists(select
+                                                    e.Rq_Id
+                                                  from Request_Executors e
+                                                  where e.Exec_Id = w.O_Numericfield
+                                                        and e.Rq_Id = :FOR_RQ_ID)) and (exists(select
+                                                                                                   wh.wh_id
+                                                                                                 from SYS$USER u
+                                                                                                      inner join sys$user_wh wh on (wh.user_id = u.id)
+                                                                                                 where u.ibname = current_user
+                                                                                                       and wh.can_view = 1
+                                                                                                       and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
+               left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and rm.Rq_Id = :FOR_RQ_ID and rm.WH_ID = w.O_Id)
+          where --        ((M.MG_ID = :MG_ID
+                --              and not :MG_ID is null)
+                --                or (((M.MG_ID is null)
+                --                or (M.MG_ID = -1))
+                --              and :MG_ID is null)
+                --                or (:MG_ID = -1))
+                (:MG_ID = -1
+                  or ((M.MG_ID is null)
+                and (:MG_ID is null))
+                  or ((not :MG_ID is null)
+                and (m.MG_ID in (
+                                 with recursive GroupsTree as (select
+                                                                   mp.Mg_Id
+                                                                 , mp.Parent_Id
+                                                                 from MATERIALS_GROUP mp
+                                                                 where mp.MG_ID = :MG_ID
+                                                               union all
+                                                               select
+                                                                   mc.Mg_Id
+                                                                 , mc.Parent_Id
+                                                                 from MATERIALS_GROUP mc
+                                                                      inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id) select
+                                                                                                                               Mg_Id
+                                                                                                                             from GroupsTree
+                                ))))
+                --
+                and ((m.Deleted = 0)
+                  or (coalesce(rm.Quant, 0) <> 0))
+          order by m.Name
+        into :M_ID, :tNAME, :DIMENSION, :WH_NAME, :WH_ID, :tQUANT, :M_NUMBER, :ID, :DESCRIPTION, :tSerial, :Is_Unit, :cost
+    do begin
+      RQ_ID = FOR_RQ_ID;
+      if (Is_Unit = 1) then begin
+        for select
+                Serial
+              , Mac
+              , Cost
+              , Notice
+              from (select
+                        u.Serial
+                      , m.Mac
+                      , u.Cost
+                      , u.Notice
+                        -- , u.Owner, u.Owner_Type
+                      from Request_Materials_Return u
+                           inner join Material_Unit m on (m.M_Id = u.M_Id and m.Serial = u.Serial)
+                      where u.M_Id = :M_ID
+                            and u.Rq_Id = :FOR_RQ_ID
+                    union all
+                    select
+                        a.Serial
+                      , a.Mac
+                      , a.Cost
+                      , a.Notice
+                        -- , u.Owner, u.Owner_Type
+                      from Appliance a
+                           inner join request r on (r.Rq_Id = :FOR_RQ_ID and ((r.Rq_Customer = a.Own_Id and a.Own_Type = 1) or (r.Node_Id = a.Own_Id and a.Own_Type = 2)))
+                      where a.M_Id = :M_ID
+                            and a.Property <> 0
+                            and not exists(select
+                                               a.Id
+                                             from Request_Materials_Return u
+                                             where a.M_Id = u.M_Id
+                                                   and a.Serial = u.Serial
+                                                   and u.Rq_Id = :FOR_RQ_ID))
+            into :Serial, :Mac, :tCOST, :Notice
+                 -- :Owner, :Owner_Type,
+        do begin
+          NAME = tName || coalesce('/' || Serial || coalesce('/' || MAC, ''), '');
+          QUANT = tQUANT;
+          COST = coalesce(tCOST, COST);
+          DESCRIPTION = coalesce(Notice || ' ', '') || DESCRIPTION;
+          suspend;
+        end
+      end
+      else begin
+        SERIAL = tSerial;
+        NAME = tNAME;
         QUANT = tQUANT;
-        COST = coalesce(tCOST, COST);
-        DESCRIPTION = coalesce(Notice || ' ', '') || DESCRIPTION;
         suspend;
       end
     end
-    else begin
-      SERIAL = tSerial;
-      NAME = tNAME;
-      QUANT = tQUANT;
-      suspend;
+  end
+  else begin
+    -- выведем материалы которые были ранее выданы
+    select
+        iif(r.Node_Id is null, 1, 2)
+      , iif(r.Node_Id is null, r.Rq_Customer, r.Node_Id)
+      from Request r
+      where r.Rq_Id = :FOR_RQ_ID
+    into :OWNER_TYPE, :OWNER_ID;
+    ByBack = 0; -- ?
+
+    for select
+    m.M_ID
+  , m.Name
+  , m.Dimension
+  , w.O_Name
+  , w.O_ID as WH_ID
+  , rm.Quant
+  , m.M_Number
+  , rm.Id
+  , m.DESCRIPTION
+  , rm.Serial
+  , m.Is_Unit
+  , rm.Cost
+  from (select
+            m.M_ID
+          , m.Name
+          , m.Dimension
+          , m.M_Number
+          , m.DESCRIPTION
+          , m.Is_Unit
+          , m.Deleted
+          , m.MG_ID
+          from (select
+                    M_ID
+                  , serial
+                  , sum(MT * coalesce(QUANT, 0)) QNT
+                  from (select
+                            RM.M_ID
+                          , RM.RM_QUANT QUANT
+                          , 1 as MT
+                          , coalesce(RM.Serial, '') SERIAL
+                          from REQUEST R
+                               inner join REQUEST_MATERIALS RM on (R.RQ_ID = RM.RQ_ID)
+                          where ((:OWNER_TYPE = 2)
+                                and (R.NODE_ID = :OWNER_ID))
+                                  or ((:OWNER_TYPE = 1)
+                                and (R.Rq_Customer = :OWNER_ID))
+                        union all
+                        select
+                            RM.M_ID
+                          , RM.QUANT QUANT
+                          , -1 as MT
+                          , coalesce(RM.Serial, '') SERIAL
+                          from REQUEST R
+                               inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = RM.RQ_ID)
+                          where ((:OWNER_TYPE = 2)
+                                and (R.NODE_ID = :OWNER_ID))
+                                  or ((:OWNER_TYPE = 1)
+                                and (R.Rq_Customer = :OWNER_ID))
+                                --
+                  )
+                  group by 1, 2) NM
+               inner join MATERIALS M on (M.M_ID = NM.M_ID)
+          where QNT > 0
+                -- уберем то что абоненту продано
+                and (((:ByBack = 1)
+                and (exists(select
+                                a.Id
+
+                              from Appliance a
+                              where a.OWN_ID = :OWNER_ID
+                                    and a.OWN_TYPE = :OWNER_TYPE
+                                    and a.Property in (
+                                                       -1, 0, 2
+                                                      )
+                                    and a.Serial = nm.Serial
+                                    and a.M_Id = nm.M_ID
+
+                )))
+                  or ((:ByBack = 0)
+                and (not exists(select
+                                    a.Id
+
+                                  from Appliance a
+                                  where a.OWN_ID = :OWNER_ID
+                                        and a.OWN_TYPE = :OWNER_TYPE
+                                        and a.Property in (
+                                                           -1, 0, 2
+                                                          )
+                                        and a.Serial = nm.Serial
+                                        and a.M_Id = nm.M_ID
+
+                )))
+
+                )
+                -- уберем то что уже в возврате
+                and not exists(select
+                                   rr.Id
+                                 from Request_Materials_Return rr
+                                 where rr.Rq_Id = :FOR_RQ_ID
+                                       and rr.M_Id = nm.M_Id
+                                       and coalesce(rr.Serial, '') = coalesce(nm.Serial, ''))) m
+       left outer join OBJECTS W on (W.O_TYPE = 10 and w.O_Deleted = 0 and -- длф форматірованія
+             ((:WH_OWNER = 0) or exists(select
+                                            e.Rq_Id
+                                          from Request_Executors e
+                                          where e.Exec_Id = w.O_Numericfield
+                                                and e.Rq_Id = :FOR_RQ_ID)) and (exists(select
+                                                                                           wh.wh_id
+                                                                                         from SYS$USER u
+                                                                                              inner join sys$user_wh wh on (wh.user_id = u.id)
+                                                                                         where u.ibname = current_user
+                                                                                               and wh.can_view = 1
+                                                                                               and wh.wh_id = w.O_Id) or current_user = 'SYSDBA'))
+       left outer join Request_Materials_Return rm on (rm.M_Id = m.M_Id and rm.Rq_Id = :FOR_RQ_ID and rm.WH_ID = w.O_Id)
+  where ((m.Deleted = 0)
+          or (coalesce(rm.Quant, 0) <> 0))
+  order by m.Name
+        into :M_ID, :tNAME, :DIMENSION, :WH_NAME, :WH_ID, :tQUANT, :M_NUMBER, :ID, :DESCRIPTION, :tSerial, :Is_Unit, :cost
+    do begin
+      RQ_ID = FOR_RQ_ID;
+      if (Is_Unit = 1) then begin
+        for select
+                Serial
+              , Mac
+              , Cost
+              , Notice
+              from (select
+                        u.Serial
+                      , m.Mac
+                      , u.Cost
+                      , u.Notice
+                        -- , u.Owner, u.Owner_Type
+                      from Request_Materials_Return u
+                           inner join Material_Unit m on (m.M_Id = u.M_Id and m.Serial = u.Serial)
+                      where u.M_Id = :M_ID
+                            and u.Rq_Id = :FOR_RQ_ID
+                    union all
+                    select
+                        a.Serial
+                      , a.Mac
+                      , a.Cost
+                      , a.Notice
+                        -- , u.Owner, u.Owner_Type
+                      from Appliance a
+                           inner join request r on (r.Rq_Id = :FOR_RQ_ID and ((r.Rq_Customer = a.Own_Id and a.Own_Type = 1) or (r.Node_Id = a.Own_Id and a.Own_Type = 2)))
+                      where a.M_Id = :M_ID
+                            and a.Property <> 0
+                            and not exists(select
+                                               a.Id
+                                             from Request_Materials_Return u
+                                             where a.M_Id = u.M_Id
+                                                   and a.Serial = u.Serial
+                                                   and u.Rq_Id = :FOR_RQ_ID))
+            into :Serial, :Mac, :tCOST, :Notice
+                 -- :Owner, :Owner_Type,
+        do begin
+          NAME = tName || coalesce('/' || Serial || coalesce('/' || MAC, ''), '');
+          QUANT = tQUANT;
+          COST = coalesce(tCOST, COST);
+          DESCRIPTION = coalesce(Notice || ' ', '') || DESCRIPTION;
+          suspend;
+        end
+      end
+      else begin
+        SERIAL = tSerial;
+        NAME = tNAME;
+        QUANT = tQUANT;
+        suspend;
+      end
     end
   end
 end ^
@@ -16149,6 +17160,350 @@ begin
   end
 end ^
 
+ALTER PROCEDURE GET_NODE_LAYOUT (FOR_NODE D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+NODE_ID D_INTEGER,
+NODE_TYPE D_INTEGER,
+ITSOWN D_INTEGER,
+SRV_TYPE D_INTEGER,
+CUST_QNT D_INTEGER,
+MAT_QNT D_N15_3,
+MAT_REQ D_IBOOLEAN,
+MAT_ID_LIST D_VARCHAR500,
+NOTICE D_VARCHAR1000)
+AS 
+declare variable ID D_INTEGER;
+begin
+  -- 1-1-1-1 = 92275 своя компановка
+  -- 1-1-1-5 = 92285 компановка тіпа
+  ITSOWN = 1;
+  ID = FOR_NODE;
+  while (LT_ID is null) do begin
+    if (FOR_NODE > 0) then
+      select
+          n.Type_Id
+        from nodes n
+        where n.Node_Id = :FOR_NODE
+      into :NODE_TYPE;
+
+    for select
+            Lt_Id
+          , Node_Id
+          , Srv_Type
+          , Mat_Qnt
+          , Cust_Qnt
+          , Mat_Id_List
+          , Mat_Req
+          , Notice
+          from GET_LAYOUT_BY_ID(:ID)
+        into :Lt_Id, :Node_Id, :Srv_Type, :Mat_Qnt, :Cust_Qnt, :Mat_Id_List, :Mat_Req, :Notice
+    do begin
+      if (ID < 0) then begin
+        NODE_TYPE = -ID;
+        Node_Id = FOR_NODE;
+      end
+
+      suspend;
+    end
+
+    -- проверка если нашли компановку для узла, то выходим
+    -- если нет, то возьмем компановку типа узла
+    if (LT_ID is null) then begin
+      if (ID > 0) then begin
+        ITSOWN = 0;
+        select
+            -1 * n.Type_Id
+          from nodes n
+          where n.Node_Id = :ID
+        into :ID;
+      end
+      else
+        LT_ID = -1;
+    end
+  end
+end ^
+
+ALTER PROCEDURE GET_NODE_LAYOUT_FACT (FOR_NODE D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+LT_POSITION D_INTEGER,
+NODE_ID D_INTEGER,
+NODE_TYPE D_INTEGER,
+ITSOWN D_INTEGER,
+SRV_TYPE D_INTEGER,
+ST_NAME D_VARCHAR100,
+CUST_QNT D_INTEGER,
+MAT_QNT D_N15_3,
+MAT_REQ D_IBOOLEAN,
+NOTICE D_VARCHAR1000,
+MAT_ID_LIST D_VARCHAR500,
+MAT_LIST D_VARCHAR1000,
+CUST_QNT_FACT D_INTEGER,
+MAT_QNT_FACT D_N15_3)
+AS 
+declare variable MAT_ID        D_INTEGER;
+declare variable MAT_NAME      D_Varchar100;
+declare variable Calculate_mat D_Iboolean;
+declare variable CALC_QNT      D_N15_3;
+begin
+
+  LT_POSITION = 1;
+
+  for select
+          Lt_Id
+        , Node_Id
+        , NODE_TYPE
+        , Itsown
+        , Srv_Type
+        , Cust_Qnt
+        , Mat_Qnt
+        , Mat_Req
+        , Mat_Id_List
+        , Notice
+        from Get_Node_Layout(:For_Node)
+        order by srv_type, cust_qnt, Mat_Qnt, MAT_ID_LIST
+      into :Lt_Id, :Node_Id, :NODE_TYPE, :Itsown, :Srv_Type, :Cust_Qnt, :Mat_Qnt, :Mat_Req, :Mat_Id_List, :Notice
+  do begin
+
+    CUST_QNT_FACT = Cust_Qnt;
+    if (Srv_Type > -1) then begin
+      select
+          st.O_Name
+        from objects st
+        where st.O_Id = :Srv_Type
+              and st.O_Type = 15
+      into :ST_NAME;
+      -- посчітаем абонентов на данном тіпе услуг
+      if (Cust_Qnt > -1) then begin
+        select
+            count(distinct c.Customer_Id)
+          from Node_Flats NF
+               inner join Customer c on (c.House_Id = nf.House_Id and c.Flat_No = nf.Flat_No)
+               inner join Subscr_Serv ss on (ss.Customer_Id = C.Customer_Id)
+               inner join services s on (s.Service_Id = ss.Serv_Id)
+          where nf.NODE_ID = :Node_Id
+                and s.Service_Id <> 819519
+                and ss.State_Sgn = 1
+                and (s.Business_Type = :SRV_TYPE)
+        into :CUST_QNT_FACT;
+      end
+    end
+    else begin
+      ST_NAME = '';
+      -- посчитаем кол-во активных абонентов
+      if (Cust_Qnt > -1) then begin
+        select
+            count(distinct c.Customer_Id)
+          from Node_Flats NF
+               inner join Customer c on (c.House_Id = nf.House_Id and c.Flat_No = nf.Flat_No)
+               inner join Subscr_Serv ss on (ss.Customer_Id = C.Customer_Id)
+               inner join services s on (s.Service_Id = ss.Serv_Id)
+          where nf.NODE_ID = :Node_Id
+                and s.Service_Id <> 819519
+                and ss.State_Sgn = 1
+        into :CUST_QNT_FACT;
+      end
+    end
+
+    MAT_LIST = '';
+    MAT_QNT_FACT = 0;
+
+    for select
+            m.M_Id
+          , m.Name
+          from materials m
+          where m.M_Id in (
+        select
+            cast(STR as integer)
+          from Explode_No_Empty(',', :MAT_ID_LIST)
+                          )
+          order by m.Name
+        into :MAT_ID, :MAT_NAME
+    do begin
+      MAT_LIST = substring(MAT_LIST || ',' || MAT_NAME from 1 for 1000);
+      CALC_QNT = 0;
+      Calculate_mat = 0;
+      -- нужно считать только те материалы, которые не попадают в компановку с этим количеством
+      if (CUST_QNT_FACT = Cust_Qnt) then
+        Calculate_mat = 1;
+      else begin
+        if (not exists(select
+                           Lt_Id
+                         from Get_Node_Layout(:Node_Id)
+                         where Srv_Type = :Srv_Type
+                               and cust_qnt = :CUST_QNT_FACT
+                               and position(',' || :MAT_ID || ',', ',' || MAT_ID_LIST || ',') > 0)) then
+          Calculate_mat = 1;
+      end
+
+      if (Calculate_mat = 1) then begin
+        select
+            sum(NM.MT * NM.QUANT) QNT_EXISTS
+          from (select
+                    RM.M_ID
+                  , RM.RM_QUANT QUANT
+                  , 1 as MT
+                  from REQUEST R
+                       inner join REQUEST_MATERIALS RM on (R.RQ_ID = RM.RQ_ID)
+                  where R.NODE_ID = :Node_Id
+                        and RM.M_ID = :MAT_ID
+                union all
+                select
+                    RM.M_ID
+                  , RM.QUANT QUANT
+                  , -1 as MT
+                  from REQUEST R
+                       inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = RM.RQ_ID)
+                  where R.NODE_ID = :Node_Id
+                        and RM.M_ID = :MAT_ID) NM
+
+        into :CALC_QNT;
+      end
+
+      MAT_QNT_FACT = MAT_QNT_FACT + coalesce(CALC_QNT, 0);
+    end
+    MAT_LIST = trim(',' from MAT_LIST);
+    suspend;
+  end
+end ^
+
+ALTER PROCEDURE GET_NODE_LAYOUT_FACT_DETAIL (FOR_NODE D_INTEGER)
+RETURNS (LT_ID D_INTEGER,
+LT_POSITION D_INTEGER,
+NODE_ID D_INTEGER,
+NODE_TYPE D_INTEGER,
+ITSOWN D_INTEGER,
+SRV_TYPE D_INTEGER,
+ST_NAME D_VARCHAR100,
+CUST_QNT D_INTEGER,
+MAT_QNT D_N15_3,
+MAT_REQ D_IBOOLEAN,
+NOTICE D_VARCHAR1000,
+MAT_ID D_INTEGER,
+MAT_NAME D_VARCHAR100,
+CUST_QNT_FACT D_INTEGER,
+MAT_QNT_FACT D_N15_3)
+AS 
+declare variable MAT_ID_LIST   D_VARCHAR500;
+declare variable Calculate_mat D_Iboolean;
+begin
+
+  LT_POSITION = 1;
+
+  for select
+          Lt_Id
+        , Node_Id
+        , NODE_TYPE
+        , Itsown
+        , Srv_Type
+        , Cust_Qnt
+        , Mat_Qnt
+        , Mat_Req
+        , Mat_Id_List
+        , Notice
+        from Get_Node_Layout(:For_Node)
+        order by srv_type, cust_qnt, Mat_Qnt, MAT_ID_LIST
+      into :Lt_Id, :Node_Id, :NODE_TYPE, :Itsown, :Srv_Type, :Cust_Qnt, :Mat_Qnt, :Mat_Req, :Mat_Id_List, :Notice
+  do begin
+
+    CUST_QNT_FACT = Cust_Qnt;
+    if (Srv_Type > -1) then begin
+      select
+          st.O_Name
+        from objects st
+        where st.O_Id = :Srv_Type
+              and st.O_Type = 15
+      into :ST_NAME;
+      -- посчітаем абонентов на данном тіпе услуг
+      if (Cust_Qnt > -1) then begin
+        select
+            count(distinct c.Customer_Id)
+          from Node_Flats NF
+               inner join Customer c on (c.House_Id = nf.House_Id and c.Flat_No = nf.Flat_No)
+               inner join Subscr_Serv ss on (ss.Customer_Id = C.Customer_Id)
+               inner join services s on (s.Service_Id = ss.Serv_Id)
+          where nf.NODE_ID = :Node_Id
+                and s.Service_Id <> 819519
+                and ss.State_Sgn = 1
+                and (s.Business_Type = :SRV_TYPE)
+        into :CUST_QNT_FACT;
+      end
+    end
+    else begin
+      ST_NAME = '';
+      -- посчитаем кол-во активных абонентов
+      if (Cust_Qnt > -1) then begin
+        select
+            count(distinct c.Customer_Id)
+          from Node_Flats NF
+               inner join Customer c on (c.House_Id = nf.House_Id and c.Flat_No = nf.Flat_No)
+               inner join Subscr_Serv ss on (ss.Customer_Id = C.Customer_Id)
+               inner join services s on (s.Service_Id = ss.Serv_Id)
+          where nf.NODE_ID = :Node_Id
+                and s.Service_Id <> 819519
+                and ss.State_Sgn = 1
+        into :CUST_QNT_FACT;
+      end
+    end
+
+    for select
+            m.M_Id
+          , m.Name
+          from materials m
+          where m.M_Id in (
+        select
+            cast(STR as integer)
+          from Explode_No_Empty(',', :MAT_ID_LIST)
+                          )
+          order by m.Name
+        into :MAT_ID, :MAT_NAME
+    do begin
+      MAT_QNT_FACT = 0;
+      Calculate_mat = 0;
+      -- нужно считать только те материалы, которые не попадают в компановку с этим количеством
+      if (CUST_QNT_FACT = Cust_Qnt) then
+        Calculate_mat = 1;
+      else begin
+        if (not exists(select
+                           Lt_Id
+                         from Get_Node_Layout(:Node_Id)
+                         where Srv_Type = :Srv_Type
+                               and cust_qnt = :CUST_QNT_FACT
+                               and position(',' || :MAT_ID || ',', ',' || MAT_ID_LIST || ',') > 0)) then
+          Calculate_mat = 1;
+      end
+
+      if (Calculate_mat = 1) then begin
+        select
+            sum(NM.MT * NM.QUANT) QNT_EXISTS
+          from (select
+                    RM.M_ID
+                  , RM.RM_QUANT QUANT
+                  , 1 as MT
+                  from REQUEST R
+                       inner join REQUEST_MATERIALS RM on (R.RQ_ID = RM.RQ_ID)
+                  where R.NODE_ID = :Node_Id
+                        and RM.M_ID = :MAT_ID
+                union all
+                select
+                    RM.M_ID
+                  , RM.QUANT QUANT
+                  , -1 as MT
+                  from REQUEST R
+                       inner join REQUEST_MATERIALS_RETURN RM on (R.RQ_ID = RM.RQ_ID)
+                  where R.NODE_ID = :Node_Id
+                        and RM.M_ID = :MAT_ID) NM
+
+        into :MAT_QNT_FACT;
+        MAT_QNT_FACT = coalesce(MAT_QNT_FACT, 0);
+      end
+
+      suspend;
+    end
+    LT_POSITION = LT_POSITION + 1;
+  end
+
+end ^
+
 ALTER PROCEDURE GET_PAY_DOC (PAYSOURCE_ID D_INTEGER,
 PAY_DATE D_DATE,
 PAY_DOC_NO D_VARCHAR255)
@@ -16232,228 +17587,8 @@ ALTER PROCEDURE GET_RECOMMENDED_PREPAY (CUSTOMER_ID D_INTEGER,
 DEBT D_N15_2 = null)
 RETURNS (PREPAY D_N15_2)
 AS 
-declare variable m_first     D_DATE;
-declare variable m_last      D_DATE;
-declare variable vCDay       D_INTEGER;
-declare variable vDays       D_INTEGER;
-declare variable vDate       D_DATE;
-declare variable vSrv        D_INTEGER;
-declare variable vStt        D_INTEGER;
-declare variable vClc        D_INTEGER;
-declare variable vTrf        D_N15_2;
-declare variable vUblck      D_INTEGER;
-declare variable Extra       D_INTEGER;
-declare variable vIgnoreList D_Varchar1000;
 begin
-
-  vIgnoreList = ',' || Get_Setting_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
-  PREPAY = 0;
-
-  -- текущий месяц
-  vDate = current_date;
-  m_last = Month_Last_Day(vDate);
-  vDays = extract(day from m_last);
-  vCDay = extract(day from vDate);
-
-  for select
-          s.Service_Id
-        , s.Calc_Type
-        , 1
-        , s.UNBL_METH
-        , coalesce(s.Extra, 30)
-        from Subscr_hist sh
-             inner join services s on (s.Service_Id = sh.Serv_Id)
-        where sh.Customer_Id = :CUSTOMER_ID
-              and :vDate between sh.Date_From and sh.Date_To
-      union
-      select
-          s.Service_Id
-        , s.Calc_Type
-        , ss.State_Sgn
-        , s.UNBL_METH
-        , coalesce(s.Extra, 30)
-        from subscr_serv ss
-             inner join services s on (s.Service_Id = ss.Serv_Id)
-        where ss.Customer_Id = :CUSTOMER_ID
-              and ss.State_Srv = -3
-      into :vSrv, :vClc, :vStt, :vUblck, :Extra
-  do begin
-    if (position(',' || vSrv || ',', vIgnoreList) = 0) then begin
-      select
-          M_TARIF
-        from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :vDate)
-      into :vTrf;
-
-      if (vClc = 3) then begin
-        -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
-        if (vStt = 1) then
-          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
-          vTrf = 0;
-      end
-      else
-      if (vClc = 0) then begin
-        -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
-        if (vStt = 1) then
-          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
-          vTrf = 0;
-      end
-      else
-      if (vClc = 1) then begin
-        -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
-        if (vStt = 1) then
-          -- если не блокирован, значит месяц оплачен. ничего не выставляем (+0 для визуализации)
-          vTrf = 0;
-      end
-      else
-      if ((vClc = 2)
-          or
-          (vClc = 5)) then begin
-        -- 2 Ежедневные начисления
-        -- 5 Ежедневные начисления (считаем если отключение в день подключения)
-        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-          vTrf = 0;
-        else
-          vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / vDays);
-      end
-      else
-      if (vClc = 6) then begin
-        -- 6 Ежедневные начисления 30 дней в месяце
-        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-          vTrf = 0;
-        else begin
-          if (Extra > 0) then
-            vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / coalesce(Extra, 30));
-          else
-            vTrf = 0;
-        end
-      end
-
-      PREPAY = PREPAY + coalesce(vTrf, 0);
-    end
-  end
-
-  -- следующий месяц
-  vDate = dateadd(month, 1, current_date);
-  m_first = Month_First_Day(vDate);
-  m_last = Month_Last_Day(vDate);
-  vDays = extract(day from m_last);
-  vCDay = extract(day from vDate);
-  Extra = null;
-
-  for select
-          s.Service_Id
-        , s.Calc_Type
-        , s.Unbl_Meth
-        , coalesce(s.Extra, 0)
-        from Subscr_hist sh
-             inner join services s on (s.Service_Id = sh.Serv_Id)
-        where sh.Customer_Id = :CUSTOMER_ID
-              and :vDate between sh.Date_From and sh.Date_To
-              and not exists(select
-                                 q.Srv_From
-                               from QUEUE_SWITCH_SRV q
-                               where q.Customer_Id = :CUSTOMER_ID
-                                     and q.Srv_From = s.Service_Id
-                                     and q.Switch_Date between :m_first and :m_last)
-      union
-      select
-          s.Service_Id
-        , s.Calc_Type
-        , s.Unbl_Meth
-        , coalesce(s.Extra, 0)
-        from subscr_serv ss
-             inner join services s on (s.Service_Id = ss.Serv_Id)
-        where ss.Customer_Id = :CUSTOMER_ID
-              and ss.State_Srv = -3
-      union
-      select
-          s.Service_Id
-        , s.Calc_Type
-        , s.Unbl_Meth
-        , coalesce(s.Extra, 0)
-        from QUEUE_SWITCH_SRV q
-             inner join services s on (s.Service_Id = q.Srv_To)
-        where q.Customer_Id = :CUSTOMER_ID
-              and q.Switch_Date between :m_first and :m_last
-      into :vSrv, :vClc, :vUblck, :Extra
-  do begin
-    if (position(',' || vSrv || ',', vIgnoreList) = 0) then begin
-      vTrf = null;
-      select
-          M_TARIF
-        from get_tarif_sum_customer_srv(:CUSTOMER_ID, :vSrv, :vDate)
-      into :vTrf;
-      if (vTrf is null) then begin
-        select
-            t.Tarif_Sum
-          from tarif t
-          where t.Service_Id = :vSrv
-                and :vDate between t.Date_From and t.Date_To
-        into :vTrf;
-      end
-      -- выставим сл. полный месяц
-      -- PREPAY = PREPAY + coalesce(vTrf, 0);
-
-      if (vClc = 3) then begin
-        -- 3 1-ый месяц пропорционально дням, далее ПОЛНЫЙ тариф
-        PREPAY = PREPAY + coalesce(vTrf, 0);
-      end
-      else
-      if (vClc = 0) then begin
-        -- 0 Раз в месяц (пропорционально кол-ва подкл. дней)
-        PREPAy = prepay + coalesce(vTrf, 0);
-      end
-      else
-      if ((vClc = 2)
-          or
-          (vClc = 5)) then begin
-        -- 2 Ежедневные начисления
-        -- 5 Ежедневные начисления (считаем если отключение в день подключения)
-        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-          PREPAy = prepay + coalesce(vTrf, 0);
-        else
-          PREPAy = prepay + (vCDay * coalesce(vTrf, 0) / vDays);
-      end
-      else
-      if (vClc = 1) then begin
-        -- 1 Полный/0 (полный тариф если подключен более Х дней или 0 если менее)
-        PREPAY = PREPAY + coalesce(vTrf, 0);
-      end
-      else
-      if (vClc = 6) then begin
-        -- 6 Ежедневные начисления 30 дней в месяце
-        if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-          PREPAy = prepay + coalesce(vTrf, 0);
-        else begin
-          if (Extra > 0) then
-            PREPAy = prepay + (vCDay * coalesce(vTrf, 0) / coalesce(Extra, 30));
-          else
-            PREPAy = prepay + 0;
-        end
-      end
-    end
-  end
-
-  -- посмотрим на баланс
-  if (DEBT is null) then
-    select
-        c.debt_sum
-      from customer c
-      where customer_id = :CUSTOMER_ID
-    into :DEBT;
-
-  DEBT = -1 * DEBT;
-  if (DEBT > Prepay) then
-    Prepay = 0;
-  else
-    PREPAY = PREPAY - DEBT;
-
-  -- вернем только положительную сумму
-  if (PREPAY < 0) then
-    PREPAY = 0;
-  -- else
-  --  PREPAY = trunc(PREPAY, 0) + 1;
-
+  PREPAY = GET_RECOM_PREPAY_FOR_CUSTOMER(:CUSTOMER_ID, :DEBT);
   suspend;
 end ^
 
@@ -16502,37 +17637,39 @@ TO_DATE D_DATE,
 TEMPLATE_ID D_INTEGER)
 RETURNS (BUSY_DAY D_DATE)
 AS 
-declare variable WA_ID  D_INTEGER; -- ID участка
-declare variable WA_LIMIT  D_INTEGER; -- Кол-во заявок на участок
-declare variable RT_RQ  D_INTEGER; -- Кол-во заявок на тип
-declare variable RC     D_INTEGER; -- Ограничение заявок на участок
-declare variable RC_TPL D_INTEGER; -- Ограничение заявок на тип
+declare variable WA_ID    D_INTEGER; -- ID участка
+declare variable WA_LIMIT D_INTEGER; -- Кол-во заявок на участок
+declare variable RT_RQ    D_INTEGER; -- Кол-во заявок на тип
+declare variable RC       D_INTEGER; -- Ограничение заявок на участок
+declare variable RC_TPL   D_INTEGER; -- Ограничение заявок на тип
 begin
 
   -- Защита от NULL
-  if (FROM_DATE is null) then FROM_DATE = CURRENT_DATE+1;-- - EXTRACT(DAY FROM CURRENT_DATE) + 1;
-  if (TO_DATE is NULL)
-  then TO_DATE   = FROM_DATE;
+  if (FROM_DATE is null) then
+    FROM_DATE = current_date + 1;
+  if (TO_DATE is null) then
+    TO_DATE = FROM_DATE;
   -- Установим на конец месяца
-  TO_DATE   = TO_DATE - EXTRACT(DAY FROM TO_DATE) + 1;
-  TO_DATE   = DATEADD( -1 DAY TO ( DATEADD( 1 MONTH TO TO_DATE )));
+  TO_DATE = MONTH_LAST_DAY(TO_DATE);
 
-  select first 1 A.WA_ID, A.REQ_LIMIT
-      from HOUSE H
-          inner join WORKGROUPS G on (H.WG_ID = G.WG_ID)
-          inner join WORKAREA A on (A.WA_ID = G.WA_ID)
-      where H.HOUSE_ID = :HOUSE_ID
+  select first 1
+      A.WA_ID
+    , A.REQ_LIMIT
+    from HOUSE H
+         inner join WORKGROUPS G on (H.WG_ID = G.WG_ID)
+         inner join WORKAREA A on (A.WA_ID = G.WA_ID)
+    where H.HOUSE_ID = :HOUSE_ID
   into :WA_ID, :WA_LIMIT;
 
-  if (not TEMPLATE_ID is null)
-  then begin
-    select WA.QUANT
-        from WORKAREALIMIT WA
-        where WA.WA_ID = :WA_ID and
-              WA.W_ID = :TEMPLATE_ID
+  if (not TEMPLATE_ID is null) then begin
+    select
+        WA.QUANT
+      from WORKAREALIMIT WA
+      where WA.WA_ID = :WA_ID
+            and WA.W_ID = :TEMPLATE_ID
     into :RT_RQ;
-    if (RT_RQ is null)
-    then RT_RQ = 9999999;
+    if (RT_RQ is null) then
+      RT_RQ = 9999999;
   end
   else begin
     TEMPLATE_ID = -1;
@@ -16540,54 +17677,60 @@ begin
   end
 
   /* Если установлено ограничение поищем занятые дни */
-  if (WA_LIMIT >=0)
-  then begin
+  if (WA_LIMIT >= 0) then begin
     -- запретим добавлять в дни ранее сегодняшнего
-    BUSY_DAY = FROM_DATE - EXTRACT(DAY FROM FROM_DATE) + 1;
-    while (BUSY_DAY <=  CURRENT_DATE) do begin
+    BUSY_DAY = MONTH_FIRST_DAY(FROM_DATE);
+    while (BUSY_DAY <= current_date) do begin
       suspend;
-      BUSY_DAY = BUSY_DAY+1;
+      BUSY_DAY = BUSY_DAY + 1;
     end
     FROM_DATE = BUSY_DAY;
     BUSY_DAY = null;
-    for
-        select r.RQ_PLAN_DATE, count(*)
-            from request r
-              inner join house h on (r.house_id = h.house_id)
-              inner join workgroups g on (h.wg_id = g.wg_id)
-            where g.wa_id = :WA_ID and r.RQ_PLAN_DATE between :FROM_DATE and :TO_DATE
-            GROUP BY r.RQ_PLAN_DATE
+    for select
+            r.RQ_PLAN_DATE
+          , count(*)
+          from request r
+               inner join house h on (r.house_id = h.house_id)
+               inner join workgroups g on (h.wg_id = g.wg_id)
+          where g.wa_id = :WA_ID
+                and r.RQ_PLAN_DATE between :FROM_DATE and :TO_DATE
+          group by r.RQ_PLAN_DATE
         into :BUSY_DAY, :RC
     do begin
-      if (RC >= WA_LIMIT)
-      then suspend;
+      if (RC >= WA_LIMIT) then
+        suspend;
       else begin
         -- Если число заявок меньше чем лимит
         -- Проверим не привысил лилимит конкретно по одной из работ
-        if (TEMPLATE_ID > 0)
-        then begin
-            select count(*)
-                from REQUEST R
-                    inner join HOUSE H on (R.HOUSE_ID = H.HOUSE_ID)
-                    inner join WORKGROUPS G on (H.WG_ID = G.WG_ID)
-                where G.WA_ID = :WA_ID
-                      and R.RQ_PLAN_DATE = :BUSY_DAY
-                      and (R.rqtl_id = :TEMPLATE_ID
-                        -- Для МТИС
-                        --37    Подключение абонента в ТВ сети (3 точки подключения)
-                        --38    Подключение абонента в ТВ сети (2 точки подключения)
-                        --39    Подключение абонента в ТВ сети (1 точка подключения)
-                        --44    Прокладка кабеля
-                        or  (:TEMPLATE_ID in (37,38,39,44) and R.rqtl_id in (37,38,39,44))
-                      )
-            into :RC_TPL;
+        if (TEMPLATE_ID > 0) then begin
+          select
+              count(*)
+            from REQUEST R
+                 inner join HOUSE H on (R.HOUSE_ID = H.HOUSE_ID)
+                 inner join WORKGROUPS G on (H.WG_ID = G.WG_ID)
+            where G.WA_ID = :WA_ID
+                  and R.RQ_PLAN_DATE = :BUSY_DAY
+                  and (R.rqtl_id = :TEMPLATE_ID
+                  -- Для МТИС
+                  --37    Подключение абонента в ТВ сети (3 точки подключения)
+                  --38    Подключение абонента в ТВ сети (2 точки подключения)
+                  --39    Подключение абонента в ТВ сети (1 точка подключения)
+                  --44    Прокладка кабеля
+                    or (:TEMPLATE_ID in (
+                                         37, 38, 39, 44
+                                        )
+                  and R.rqtl_id in (
+                                    37, 38, 39, 44
+                                   )))
+          into :RC_TPL;
         end
-        if (RC_TPL >= RT_RQ)
-        then suspend;
+        if (RC_TPL >= RT_RQ) then
+          suspend;
       end
     end
   end
-  else suspend;
+  else
+    suspend;
 end ^
 
 ALTER PROCEDURE GET_REQUEST_FREEDAY (HOUSE_ID TYPE OF UID,
@@ -17015,6 +18158,130 @@ begin
   end
   M_TARIF = round(M_TARIF, 2);
   suspend;
+end ^
+
+ALTER PROCEDURE GET_WIRE_INFO (WID D_INTEGER)
+RETURNS (WIRE_ID D_VARCHAR50,
+WNAME D_VARCHAR100,
+WLABEL D_VARCHAR50,
+WLBL_ID D_INTEGER,
+WLBL_TYPE D_INTEGER,
+WLBL_NAME D_VARCHAR255,
+WLBL_IP D_IP,
+WLBL_MAC D_MAC,
+WLBL_PORT D_PORT_NS,
+WLBL_NODE D_INTEGER,
+NODE_NAME D_VARCHAR255,
+WLBL_FLOW D_CHAR1)
+AS 
+declare variable EID       D_INTEGER;
+declare variable CID       D_INTEGER;
+declare variable EIP       D_Ip;
+declare variable CIP       D_Ip;
+declare variable ENM       D_VARCHAR50;
+declare variable CNM       D_VARCHAR50;
+declare variable EMAC      D_Mac;
+declare variable CMAC      D_Mac;
+declare variable LABELS    D_VARCHAR1000;
+declare variable PROC_LBLS D_VARCHAR1000;
+declare variable POINT_S   D_INTEGER;
+declare variable POINT_E   D_INTEGER;
+begin
+
+  for select
+          coalesce(LABELS, '')
+        , WID
+        , Name
+        , Point_S
+        , Point_E
+        from Wire w
+        where Wid = :WID
+      into :LABELS, :WIRE_ID, :WNAME, :POINT_S, :POINT_E
+  do begin
+    PROC_LBLS = '';
+
+    for select distinct
+            STR
+          from Explode(',', :LABELS)
+        into :WLABEL
+    do begin
+      PROC_LBLS = PROC_LBLS || '$#@' || WLABEL || '@#$';
+      WLBL_ID = null;
+      WLBL_ID = null;
+      WLBL_TYPE = null;
+      WLBL_NAME = null;
+      WLBL_IP = null;
+      WLBL_MAC = null;
+      WLBL_PORT = null;
+      WLBL_NODE = null;
+      WLBL_FLOW = '';
+      for select
+              p.Port
+            , e.Eid
+            , c.Customer_Id
+            , e.Node_Id
+            , e.IP
+            , l.IP
+            , e.Name
+            , c.Account_No||' ('||c.cust_code||')'
+            , e.Mac
+            , l.Mac
+            , n.Name
+            from port p
+                 inner join Equipment e on (e.Eid = p.Eid)
+                 left outer join NODEs n on (n.Node_Id = e.Node_Id)
+                 left outer join tv_lan l on (l.Eq_Id = e.Eid and l.Port = p.Port)
+                 left outer join customer c on (c.Customer_Id = l.Customer_Id)
+            where p.Wid = :WIRE_ID
+                  and p.Wlabel = :WLABEL
+            order by 1, 2
+          into :WLBL_PORT, :EID, :CID, :WLBL_NODE, :EIP, :CIP, :ENM, :CNM, :EMAC, :CMAC, :NODE_NAME
+      do begin
+        WLBL_FLOW = iif(WLBL_NODE = POINT_S, '>', iif(WLBL_NODE = POINT_E, '<', ''));
+        WLBL_TYPE = iif(CID is null, 2, 1);
+        WLBL_ID = coalesce(CID, EID);
+        WLBL_IP = coalesce(CIP, EIP);
+        WLBL_MAC = coalesce(CMAC, EMAC);
+        WLBL_NAME = coalesce('А: ' || CNM, 'О: ' || ENM);
+
+        suspend;
+      end
+      if (WLBL_ID is null) then
+        suspend;
+    end -- LABELS
+    for select
+            p.Wlabel
+          , p.Port
+          , e.Eid
+          , c.Customer_Id
+          , e.Node_Id
+          , e.IP
+          , l.IP
+          , e.Name
+          , c.Account_No||' ('||c.cust_code||')'
+          , e.Mac
+          , l.Mac
+          , n.Name
+          from port p
+               inner join Equipment e on (e.Eid = p.Eid)
+               left outer join NODEs n on (n.Node_Id = e.Node_Id)
+               left outer join tv_lan l on (l.Eq_Id = e.Eid and l.Port = p.Port)
+               left outer join customer c on (c.Customer_Id = l.Customer_Id)
+          where p.Wid = :WIRE_ID
+                and (position('$#@' || coalesce(p.Wlabel, '') || '@#$' in :PROC_LBLS) = 0)
+          order by 1, 2
+        into :WLABEL, :WLBL_PORT, :EID, :CID, :WLBL_NODE, :EIP, :CIP, :ENM, :CNM, :EMAC, :CMAC, :NODE_NAME
+    do begin
+      WLBL_FLOW = '';
+      WLBL_TYPE = iif(CID is null, 2, 1);
+      WLBL_ID = coalesce(CID, EID);
+      WLBL_IP = coalesce(CIP, EIP);
+      WLBL_MAC = coalesce(CMAC, EMAC);
+      WLBL_NAME = coalesce('А: ' || CNM, 'О: ' || ENM);
+
+      suspend;
+    end
+  end -- WIRE
 end ^
 
 ALTER PROCEDURE HOUSE_IUD (OPERATION D_CHAR1,
@@ -17647,81 +18914,262 @@ begin
   end
 end ^
 
-ALTER PROCEDURE MATERIAL_REMAIN_RECALC (M_ID TYPE OF UID,
+ALTER PROCEDURE MATERIAL_REMAIN_RECALC (REC_M_ID TYPE OF UID,
 FOR_WH TYPE OF UID = null)
 AS 
 declare variable Wh_Id     type of Uid;
 declare variable Mr_Quant  type of D_N15_5;
 declare variable Quant     type of D_N15_5;
--- declare variable from_date type of D_Date;
+declare variable M_ID      D_Integer;
+declare variable itsUnit   D_Integer; -- declare variable from_date type of D_Date;
+declare variable Old_Quant D_N15_5;
 begin
-  if (M_ID is null) then M_ID = -9999;
-
-  Mr_Quant = 0;
-
-  for
-    select O_Id from objects where O_Type = 10 and ((:FOR_WH is null) or (O_ID = :FOR_WH))
-    into :wh_id
+  for select
+          m.M_Id
+        , m.Is_Unit
+        from Materials m
+        where ((not :REC_M_ID is null)
+              and (m.M_Id = :REC_M_ID))
+                or (:REC_M_ID is null)
+      into :M_ID, :itsUnit
   do begin
-    -- + 1приход
-    Quant = null;
-    select sum(coalesce(M_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 1 and d.Wh_Id = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = coalesce(quant, 0);
-    -- + 2перемещение на склад
-    Quant = null;
-    select sum(coalesce(M_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 2 and d.Wh_Id = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = Mr_Quant + coalesce(quant, 0);
-    -- + 4корректировка
-    Quant = null;
-    select sum(coalesce(M_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 4 and d.Wh_Id = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = Mr_Quant + coalesce(quant, 0);
-    -- + 5инвентаризация
-    Quant = null;
-    select sum(coalesce(M_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 5 and d.Wh_Id = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = Mr_Quant + coalesce(quant, 0);
-    -- + вернули с заявок
-    Quant = null;
-    select sum(coalesce(rm.Quant,0)) from Request_Materials_Return rm inner join request r on (rm.Rq_Id = r.Rq_Id)
-    where rm.M_Id = :m_id and rm.Wh_Id = :Wh_Id -- and r.Added_On > :from_date
-    into :Quant;
-    Mr_Quant = Mr_Quant + coalesce(quant, 0);
-    -- - перемещение со склада
-    Quant = null;
-    select sum(coalesce(M_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 2 and d.From_Wh = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = Mr_Quant - coalesce(quant, 0);
-    -- - 3списание
-    Quant = null;
-    select sum(coalesce(M_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 3 and d.Wh_Id = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = Mr_Quant - coalesce(quant, 0);
-    -- - инвентаризация
-    Quant = null;
-    select sum(coalesce(b_Quant,0)) from Material_Docs d inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-    where d.Doc_Closed = 1 and d.Dt_Id = 5 and d.Wh_Id = :wh_id and md.M_Id = :m_id
-    into :quant;
-    Mr_Quant = Mr_Quant - coalesce(quant, 0);
-    -- - списано на заявку
-    Quant = null;
-    select sum(coalesce(Rm_Quant,0)) from Request_Materials rm inner join request r on (rm.Rq_Id = r.Rq_Id)
-    where rm.M_Id = :m_id and rm.Wh_Id = :Wh_Id
-    into :Quant;
-    Mr_Quant = Mr_Quant - coalesce(quant, 0);
 
-    -- внесем остатки на склад
-    update or insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
-    values (:M_Id, :Wh_Id, :Mr_Quant)
-    matching (M_Id, Wh_Id);
+    Mr_Quant = 0;
+
+    itsUnit = coalesce(itsUnit, 0);
+
+    for select
+            O_Id
+          from objects
+          where O_Type = 10
+                and ((:FOR_WH is null)
+                  or (O_ID = :FOR_WH))
+        into :wh_id
+    do begin
+      -- сохранім остаткі до
+      Old_Quant = null;
+      select
+          i.MR_QUANT
+        from MATERIALS_REMAIN i
+        where i.M_ID = :M_ID
+              and i.WH_ID = :WH_ID
+      into :Old_Quant;
+      Old_Quant = coalesce(Old_Quant, 0);
+
+      -- + 1 приход
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(M_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 1
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 1
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = coalesce(quant, 0);
+      -- + 2 перемещение на склад
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(M_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 2
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 2
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = Mr_Quant + coalesce(quant, 0);
+      -- + 4 корректировка
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(M_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 4
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 4
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = Mr_Quant + coalesce(quant, 0);
+      -- + 5 инвентаризация
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(M_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 5
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 5
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = Mr_Quant + coalesce(quant, 0);
+      -- - 2 перемещение со склада
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(M_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 2
+                and d.From_Wh = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 2
+                and d.From_Wh = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = Mr_Quant - coalesce(quant, 0);
+      -- - 3 списание
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(M_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 3
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 3
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = Mr_Quant - coalesce(quant, 0);
+      -- - 5 инвентаризация
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(b_Quant, 0))
+          from Material_Docs d
+               inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 5
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      else
+        select
+            count(md.Serial)
+          from Material_Docs d
+               inner join Materials_In_Doc_Unit md on (d.Doc_Id = md.Doc_Id)
+          where d.Doc_Closed = 1
+                and d.Dt_Id = 5
+                and d.Wh_Id = :wh_id
+                and md.M_Id = :m_id
+        into :quant;
+      Mr_Quant = Mr_Quant - coalesce(quant, 0);
+
+      -- + вернули с заявок
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(rm.Quant, 0))
+          from Request_Materials_Return rm
+               inner join request r on (rm.Rq_Id = r.Rq_Id)
+          where rm.M_Id = :m_id
+                and rm.Wh_Id = :Wh_Id -- and r.Added_On > :from_date
+        into :Quant;
+      else
+        select
+            count(rm.Serial)
+          from Request_Materials_Return rm
+               inner join request r on (rm.Rq_Id = r.Rq_Id)
+          where rm.M_Id = :m_id
+                and rm.Wh_Id = :Wh_Id -- and r.Added_On > :from_date
+        into :Quant;
+      Mr_Quant = Mr_Quant + coalesce(quant, 0);
+
+      -- - списано на заявку
+      Quant = null;
+      if (itsUnit = 0) then
+        select
+            sum(coalesce(Rm_Quant, 0))
+          from Request_Materials rm
+               inner join request r on (rm.Rq_Id = r.Rq_Id)
+          where rm.M_Id = :m_id
+                and rm.Wh_Id = :Wh_Id
+        into :Quant;
+      else
+        select
+            count(rm.Serial)
+          from Request_Materials rm
+               inner join request r on (rm.Rq_Id = r.Rq_Id)
+          where rm.M_Id = :m_id
+                and rm.Wh_Id = :Wh_Id
+        into :Quant;
+      Mr_Quant = Mr_Quant - coalesce(quant, 0);
+
+      if (Old_Quant <> Mr_Quant) then begin
+        -- внесем остатки на склад
+        if (Mr_Quant <> 0) then
+          update or insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
+          values (:M_Id, :Wh_Id, :Mr_Quant)
+          matching (M_Id, Wh_Id);
+        else
+          delete from Materials_Remain
+              where M_Id = :M_Id
+                    and Wh_Id = :Wh_Id;
+      end
+    end
   end
 end ^
 
@@ -18451,6 +19899,66 @@ begin
   suspend;
 end ^
 
+ALTER PROCEDURE NODE_CHECK_LAYOUT (FOR_NODE D_UID_NULL = null,
+RQ_ID D_UID_NULL = null)
+RETURNS (BAN D_IBOOLEAN,
+BAN_TEXT D_VARCHAR1000)
+AS 
+declare variable Lt_Position   D_integer;
+declare variable Cust_Qnt      D_integer;
+declare variable Mat_Qnt       D_N15_3;
+declare variable Mat_Name      D_varchar100;
+declare variable Cust_Qnt_Fact D_integer;
+declare variable Mat_Qnt_Fact  D_n15_3;
+declare variable CP            D_integer;
+declare variable Mat_List      D_varchar1000;
+declare variable Mat_Sum       D_n15_3;
+begin
+  if ((For_Node is null) and (not RQ_ID is null)) then
+    select
+        Node_Id
+      from request
+      where Rq_Id = :RQ_ID
+    into :For_Node;
+
+  if (For_Node is null) then
+    exit;
+  CP = 0;
+  Mat_List = '';
+  Mat_Sum = 0;
+  for select
+          Lt_Position
+        , Cust_Qnt
+        , Mat_Qnt
+        , Mat_Name
+        , Cust_Qnt_Fact
+        , Mat_Qnt_Fact
+        from Get_Node_Layout_Fact_Detail(:For_Node)
+      into :Lt_Position, :Cust_Qnt, :Mat_Qnt, :Mat_Name, :Cust_Qnt_Fact, :Mat_Qnt_Fact
+  do begin
+    if (CP <> Lt_Position) then begin
+      if (Mat_List <> '') then
+        ban_text = coalesce(ban_text, '') || 'Есть ' || Mat_Sum || ' нужно ' || MAT_QNT || ' из ' || Mat_List || ascii_char(13) || ascii_char(10);
+
+      Mat_List = '';
+      Mat_Sum = 0;
+    end
+    else begin
+      if ( --
+          (coalesce(Cust_Qnt, 0) = coalesce(Cust_Qnt_Fact, 0)) --
+          and (coalesce(Mat_Qnt_Fact, 0) <> coalesce(Mat_Qnt, 0)) --
+          ) then begin
+        Mat_List = coalesce(Mat_List, '') || ',' || coalesce(Mat_Name, '');
+        Mat_Sum = Mat_Sum + Mat_Qnt_Fact;
+      end
+    end
+    CP = Lt_Position;
+  end
+
+  ban = 0;
+  suspend;
+end ^
+
 ALTER PROCEDURE OBJECTS_IUD (P_ACTION D_INTEGER,
 O_TYPE D_INTEGER,
 O_ID TYPE OF UID,
@@ -19036,7 +20544,8 @@ EXT_SYSTEMS_ID D_VARCHAR50 = null,
 NOTICE D_NOTICE = null,
 PAY_TYPE_STR D_VARCHAR30 = 'CASH',
 CMSN D_N15_2 = null,
-TAG D_INTEGER = null)
+TAG D_INTEGER = null,
+LCPS D_N15_2 = null)
 RETURNS (PAYMENT_ID D_INTEGER,
 IS_DELETED D_IBOOLEAN)
 AS 
@@ -19073,7 +20582,7 @@ begin
 
         select
             PAYMENT_ID
-          from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, 0, null, null, :EXT_SYSTEMS_ID, :TAG, :CMSN, :PAY_TYPE_STR)
+          from ADD_PAYMENT_EXT(:PAY_DOC_ID, :CUSTOMER_ID, :PAY_SUM, :PAY_TIME, :NOTICE, 0, null, null, :EXT_SYSTEMS_ID, :TAG, :CMSN, :PAY_TYPE_STR, :LCPS)
         into :PAYMENT_ID;
 
         IS_DELETED = 0;
@@ -19317,7 +20826,6 @@ begin
           where s.var_name = 'PREPAYEXPIRE';
       insert into settings (var_name, var_value, var_notice)
       values ('PREPAYEXPIRE', :DAYS, 'Срок сгорания обещ. платежей (дней)');
-
     end
   end
 
@@ -19330,8 +20838,9 @@ begin
                 or (c.prepay_time is null))
               and c.prepay > 0
       into :v_customer_id
-  do
+  do begin
     execute procedure Set_Prepay(:v_customer_id, 0);
+  end
 end ^
 
 ALTER PROCEDURE PROMO_ADD (CID D_INTEGER,
@@ -19519,7 +21028,7 @@ begin
     else begin
       if (Switch_Time = 2) then begin
         /* 2 - Начало месяца */
-        vDate = dateadd(month, 1, (current_date - extract(day from current_date) + 1));
+        vDate = dateadd(month, 1, MONTH_FIRST_DAY(current_date));
         if (Switch_Date < vDate) then
           Switch_Date = vDate;
 
@@ -20003,14 +21512,14 @@ declare variable SERIAL      D_Serial_NS;
 declare variable customer_id d_uid_null;
 declare variable node_id     d_uid_null;
 declare variable COST        D_N15_2;
-declare variable CALC    D_IBOOLEAN;
+declare variable PROP        D_INTEGER;
 declare variable MAC         D_Mac;
 declare variable NAME        D_VARCHAR100;
 declare variable Own_Id      d_uid_null;
 declare variable Own_Type    d_uid_null;
 declare variable A_TYPE      D_UID_NULL;
 declare variable PROPERTY    D_INTEGER;
-begin /*$$IBE$$ 
+begin
   -- добавим СЕРИЙНИК
   for select
           RM.m_Id
@@ -20018,7 +21527,7 @@ begin /*$$IBE$$
         , RM.Serial
         , r.Rq_Customer
         , r.Node_Id
-        , rm.Calc
+        , rm.PROP
         , rm.Rm_Cost
         , u.Mac
         , m.Name
@@ -20026,12 +21535,10 @@ begin /*$$IBE$$
         from request r
              inner join REQUEST_MATERIALS RM on (r.Rq_Id = rm.Rq_Id)
              inner join MATERIALS M on (m.M_Id = rm.M_Id)
-             inner join Material_Unit u on (rm.M_Id = u.M_Id and
-                   u.Serial = rm.Serial)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and u.Serial = rm.Serial)
         where RM.RQ_ID = :RQ_ID
               and (coalesce(rm.Serial, '') <> '')
-              and u.State = -1 * :RQ_ID
-      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id, :CALC, :COST, :MAC, :NAME, :A_TYPE
+      into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id, :PROP, :COST, :MAC, :NAME, :A_TYPE
 
            -- нужно прописать оборудование абоненту и узлам, а также подменить одно оборудование на другое
            -- нужно вынести в процедуру
@@ -20040,10 +21547,20 @@ begin /*$$IBE$$
     Own_Id = coalesce(customer_id, node_id);
     Own_Type = iif((not customer_id is null), 1, iif((not node_id is null), 2, 3)); -- 0-склад, 1-абонент, 2-узел
     PROPERTY = 1; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
-    if ((Own_Type = 1) and (CALC = 0)) then
-      PROPERTY = 0; -- Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.
 
-    -- 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+    -- вернем стоимость за материалы возврата PROP (Calc - устарело, смотрим на PROP)
+    -- PROP Собственность
+    -- 0 Продажа / Начислять за этот материал абоненту.
+    -- 1 В пользовании / Не начислять
+    -- 2 Рассрочка материала
+    -- 3 Аренда материала
+    -- 4 Возврат бесплатно
+    -- 5 Возврат за деньги (Выкуп)
+
+    if ((Own_Type = 1) and (PROP = 0)) then
+      PROPERTY = 0;
+    else
+      PROPERTY = coalesce(PROP, 0);
 
     update Material_Unit u
     set u.State = 1,
@@ -20052,23 +21569,18 @@ begin /*$$IBE$$
     where u.M_Id = :M_Id
           and u.Serial = :SERIAL
           and u.Owner = :WH_ID
-          and u.Owner_Type = 0
-          and u.State = -1 * :RQ_ID;
-
-    --delete from Customer_Equipment ce where ce.M_Id = :M_ID and ce.Serial = :SERIAL;
+          and u.Owner_Type = 0; -- and u.State = -1 * :RQ_ID
 
     update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id)
     values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id)
     matching (M_Id, Serial);
 
     -- нужно дорабатывать. делать обмен данными оборудования
-    -- delete from Equipment e
-    --    where e.Serial_N = :SERIAL
-    --          and e.M_Id = :M_ID;
+    -- delete from Customer_Equipment ce where ce.M_Id = :M_ID and ce.Serial = :SERIAL;
+    -- delete from Equipment e where e.Serial_N = :SERIAL and e.M_Id = :M_ID;
   end
- $$IBE$$*/
 
-   -- возврат оборудования СЕРИЙНИК
+  -- возврат оборудования СЕРИЙНИК
   for select
           RM.m_Id
         , RM.Wh_Id
@@ -20078,8 +21590,7 @@ begin /*$$IBE$$
         from request r
              inner join Request_Materials_Return RM on (r.Rq_Id = rm.Rq_Id)
              inner join MATERIALS M on (m.M_Id = rm.M_Id)
-             inner join Material_Unit u on (rm.M_Id = u.M_Id and
-                   u.Serial = rm.Serial)
+             inner join Material_Unit u on (rm.M_Id = u.M_Id and u.Serial = rm.Serial)
         where RM.RQ_ID = :RQ_ID
               and (coalesce(rm.Serial, '') <> '')
       into :M_ID, :WH_ID, :SERIAL, :customer_id, :node_id
@@ -20097,12 +21608,21 @@ begin /*$$IBE$$
           and u.Serial = :SERIAL
           and u.Owner_Type <> 0;
 
-    -- номер заявки откличается от текущей, поэтому удалим по ид абонента/узла
-    customer_id = coalesce(customer_id, node_id);
-    delete from Appliance
-        where M_Id = :M_Id
-              and Own_Id = :customer_id
-              and Serial = :Serial;
+    -- удалим по ид абонента/узла
+    -- 1-Абонент 2-Узел
+    if (not customer_id is null) then
+      delete from Appliance a
+          where M_Id = :M_Id
+                and Own_Id = :customer_id
+                and Own_Type = 1
+                and Serial = :Serial;
+    else
+    if (not node_id is null) then
+      delete from Appliance a
+          where M_Id = :M_Id
+                and Own_Id = :node_id
+                and Own_Type = 2
+                and Serial = :Serial;
   end
 end ^
 
@@ -20112,6 +21632,7 @@ declare variable quant       d_n15_3;
 declare variable act         d_smallint;
 declare variable O_ID        d_uid_null;
 declare variable customer_id d_uid_null;
+declare variable node_id     d_uid_null;
 declare variable notice      d_notice;
 declare variable EXEC_DATE   d_date;
 declare variable vDate       d_date;
@@ -20130,136 +21651,154 @@ declare variable vSOLD       D_UID_NULL;
 declare variable vON_OFF     D_UID_NULL;
 declare variable vRqtl       D_UID_NULL;
 begin
+
+  -- делаем возможность персонализировать процесс закрытия заяки
+  -- вызов процедуры вида create or alter procedure IBE$RQUEST_BEFORE_CLOSE(RQ_ID UID) as begin end
+  if (exists(select
+                 Rdb$Procedure_Name
+               from Rdb$Procedures
+               where Rdb$Procedure_Name = 'IBE$RQUEST_BEFORE_CLOSE')) then begin
+
+    execute statement('execute procedure IBE$RQUEST_BEFORE_CLOSE(:Rq_Id)')(Rq_Id := :Rq_Id);
+  end
+
+  insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('REQUEST', 'E', :RQ_ID, 'REQUEST_CLOSE_PROCESS', current_user, localtimestamp);
+
   need_recalc = 0;
   select
       r.Rq_Customer
     , r.RQ_EXEC_TIME
       --, r.Node_Id
     , r.Rqtl_Id
+    , r.Node_Id
     from request r
     where R.RQ_ID = :RQ_ID
-  into :customer_id, :EXEC_DATE, :vRqtl;
+  into :customer_id, :EXEC_DATE, :vRqtl, :node_id;
 
-  /* если это на узел, то выходим */
-  if (customer_id is null) then
-    exit;
-
-  vDATE = coalesce(EXEC_DATE, current_date);
-  -- Установим, удалим атрибуты
-  for select
-          m.w_quant
-        , w.w_atr_ad
-        , w.w_atr_id
-        , m.notice
-        from WORKS w
-             inner join request_works m on (w.w_id = m.w_id)
-        where m.rq_id = :RQ_ID
-              and w.w_atr_ad in (
-                                 1, 2
-                                )
-              and (not w.w_atr_id is null)
-      into :quant, :act, :O_ID, :notice
-  do begin
-    if (act = 1) then
-      if (not exists(select
-                         CUSTOMER_ID
-                       from CUSTOMER_ATTRIBUTES
-                       where CUSTOMER_ID = :CUSTOMER_ID
-                             and O_ID = :O_ID)) then
-        insert into CUSTOMER_ATTRIBUTES (CUSTOMER_ID, O_ID, CA_VALUE, NOTICE, RQ_ID)
-        values (:CUSTOMER_ID, :O_ID, cast(round(:quant, 0) as integer), :NOTICE, :RQ_ID);
-      else
-        delete from CUSTOMER_ATTRIBUTES
-            where (CUSTOMER_ID = :CUSTOMER_ID)
-                  and (O_ID = :O_ID);
-  end
-
-  -- Установим разовые услуги
-  for select
-          iif(coalesce(m.NOT_CALC, 0) = 0, m.w_quant, 0)
-        , w.as_service
-        , w.Notice
-        from request_works m
-             inner join WORKS w on (w.w_id = m.w_id)
-        where m.rq_id = :RQ_ID
-              and (not w.as_service is null)
-      into :quant, :O_ID, :notice
-  do begin
-    notice = coalesce(notice || ' /', '') || RQ_ID;
-    insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE, HISTORY_ID, RQ_ID)
-    values (:CUSTOMER_ID, :O_ID, :vDATE, :quant, :notice, null, :RQ_ID);
-    need_recalc = 1;
-  end
-
-  -- Подключим периодические услуги
-  for select
-          m.w_quant
-        , w.W_SRV
-        , w.W_Srvonoff
-        , w.W_Onoff
-        , w.Notice
-        from request_works m
-             inner join WORKS w on (w.w_id = m.w_id)
-        where m.rq_id = :RQ_ID
-              and (not w.W_SRV is null)
-      into :quant, :vRENT, :vON_OFF, :act, :notice
-  do begin
-    act = coalesce(act, 1);
-    notice = coalesce(notice || ' /', '') || RQ_ID;
-    if (vON_OFF is null) then begin
-      select first 1
-          Child
-        from Services_Links l
-        where Parent = :vRENT
-              and ((:act = 1
-              and Link_Type in (
-                                2, 3
-                               ))
-                or (:act = 0
-              and Link_Type in (
-                                4, 5
-                               )))
-        order by Link_Type
-      into :vON_OFF;
-    end
-    if (not vON_OFF is null) then begin
+  if (not customer_id is null) then begin
+    /* если это на абонента, то сделаем начисления, поставим атрибуты и т.д. */
+    vDATE = coalesce(EXEC_DATE, current_date);
+    -- Установим, удалим атрибуты
+    for select
+            m.w_quant
+          , w.w_atr_ad
+          , w.w_atr_id
+          , m.notice
+          from WORKS w
+               inner join request_works m on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and w.w_atr_ad in (
+                                   1, 2
+                                  )
+                and (not w.w_atr_id is null)
+        into :quant, :act, :O_ID, :notice
+    do begin
       if (act = 1) then
-        -- подключаем
-        execute procedure Add_Subscr_Service_Vat(:CUSTOMER_ID, :vRENT, :vON_OFF, :vDATE, :Notice, 1, null, null, null, 0, null, :RQ_ID);
-      else
-        -- отключаем
-        execute procedure Onoff_Service_By_Id(:CUSTOMER_ID, :vRENT, :vON_OFF, :vDATE, 1, :Notice, 1, 0, 1, null, :RQ_ID);
+        if (not exists(select
+                           CUSTOMER_ID
+                         from CUSTOMER_ATTRIBUTES
+                         where CUSTOMER_ID = :CUSTOMER_ID
+                               and O_ID = :O_ID)) then
+          insert into CUSTOMER_ATTRIBUTES (CUSTOMER_ID, O_ID, CA_VALUE, NOTICE, RQ_ID)
+          values (:CUSTOMER_ID, :O_ID, cast(round(:quant, 0) as integer), :NOTICE, :RQ_ID);
+        else
+          delete from CUSTOMER_ATTRIBUTES
+              where (CUSTOMER_ID = :CUSTOMER_ID)
+                    and (O_ID = :O_ID);
     end
-    vRENT = null;
-    vON_OFF = null;
-    act = null;
-    need_recalc = 1;
-  end
 
-  -- добавим материалы
-  Fee_Type = 1;
-  for select
-          M.NAME || coalesce(' (' || rm.SERIAL || ')', '')
-        , M.Demension
-        , RM.RM_QUANT
-        , RM.RM_QUANT * RM.RM_COST
-        , rm.M_Id
-        , rm.Serial
-        , rm.Prop
-        , coalesce(m.Rent, mg.Rent)
-        , coalesce(m.Loan, mg.Loan)
-        , coalesce(m.Sold, mg.Sold)
-        from REQUEST_MATERIALS RM
-             inner join MATERIALS M on (M.M_ID = RM.M_ID)
-             left outer join Materials_Group mg on (mg.Mg_Id = m.Mg_Id)
-        where RM.RQ_ID = :RQ_ID
-              and (coalesce(rm.PROP, 0) <> 1)
-      into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL, :PROP, :vRENT, :vLOAN, :vSOLD
-  do begin
-    FEE = coalesce(FEE, 0);
-    if (FEE <> 0) then begin
-      -- продажа 0
-      if (PROP = 0) then begin
+    -- Установим разовые услуги
+    for select
+            iif(coalesce(m.NOT_CALC, 0) = 0, m.w_quant, 0)
+          , w.as_service
+          , w.Notice
+          from request_works m
+               inner join WORKS w on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and (not w.as_service is null)
+        into :quant, :O_ID, :notice
+    do begin
+      notice = coalesce(notice || ' /', '') || RQ_ID;
+      -- insert into SINGLE_SERV (CUSTOMER_ID, SERVICE_ID, SERV_DATE, UNITS, NOTICE, HISTORY_ID, RQ_ID)
+      -- values (:CUSTOMER_ID, :O_ID, :vDATE, :quant, :notice, null, :RQ_ID);
+
+      execute procedure Add_Single_Service_Vat(:CUSTOMER_ID, :O_ID, :quant, :vDATE, :notice, null, null, 0, :Rq_Id);
+
+      need_recalc = 1;
+    end
+
+    -- Подключим периодические услуги
+    for select
+            m.w_quant
+          , w.W_SRV
+          , w.W_Srvonoff
+          , w.W_Onoff
+          , w.Notice
+          from request_works m
+               inner join WORKS w on (w.w_id = m.w_id)
+          where m.rq_id = :RQ_ID
+                and (not w.W_SRV is null)
+        into :quant, :vRENT, :vON_OFF, :act, :notice
+    do begin
+      act = coalesce(act, 1);
+      notice = coalesce(notice || ' /', '') || RQ_ID;
+      if (vON_OFF is null) then begin
+        select first 1
+            Child
+          from Services_Links l
+          where Parent = :vRENT
+                and ((:act = 1
+                and Link_Type in (
+                                  2, 3
+                                 ))
+                  or (:act = 0
+                and Link_Type in (
+                                  4, 5
+                                 )))
+          order by Link_Type
+        into :vON_OFF;
+      end
+      if (not vON_OFF is null) then begin
+        if (act = 1) then
+          -- подключаем
+          execute procedure Add_Subscr_Service_Vat(:CUSTOMER_ID, :vRENT, :vON_OFF, :vDATE, :Notice, 1, null, null, null, 0, null, :RQ_ID);
+        else
+          -- отключаем
+          execute procedure Onoff_Service_By_Id(:CUSTOMER_ID, :vRENT, :vON_OFF, :vDATE, 1, :Notice, 1, 0, 1, null, :RQ_ID);
+      end
+      vRENT = null;
+      vON_OFF = null;
+      act = null;
+      need_recalc = 1;
+    end
+
+    -- добавим материалы
+    Fee_Type = 1;
+    for select
+            M.NAME || coalesce(' (' || rm.SERIAL || ')', '')
+          , M.Demension
+          , RM.RM_QUANT
+          , RM.RM_QUANT * RM.RM_COST
+          , rm.M_Id
+          , rm.Serial
+          , rm.Prop
+          , coalesce(m.Rent, mg.Rent)
+          , coalesce(m.Loan, mg.Loan)
+          , coalesce(m.Sold, mg.Sold)
+          from REQUEST_MATERIALS RM
+               inner join MATERIALS M on (M.M_ID = RM.M_ID)
+               left outer join Materials_Group mg on (mg.Mg_Id = m.Mg_Id)
+          where RM.RQ_ID = :RQ_ID
+                and (coalesce(rm.PROP, 0) <> 1)
+        into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL, :PROP, :vRENT, :vLOAN, :vSOLD
+    do begin
+      FEE = coalesce(FEE, 0);
+      -- 0 Продажа
+      -- 1 В пользовании (аренда без оплаты)
+      -- 2 Рассрочка
+      -- 3 Аренда
+      if ((FEE <> 0) and (PROP = 0)) then begin
         Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from UNITS)) || ' ' || coalesce(DEM, '');
         if (vSOLD is null) then begin
           insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
@@ -20271,8 +21810,7 @@ begin
         need_recalc = 1;
       end
 
-      -- аренда 2
-      if (PROP = 2) then begin
+      if (PROP = 3) then begin
         -- vRENT
         if (vRENT is null) then begin
           select
@@ -20296,8 +21834,8 @@ begin
         end
       end
 
-      -- рассрочка 3
-      if (PROP = 3) then begin
+      -- рассрочка 2
+      if (PROP = 2) then begin
         -- vLOAN
         if (vLOAN is null) then begin
           select
@@ -20336,116 +21874,129 @@ begin
         end
       end
     end
-  end
 
-  -- вернем стоимость за материалы возврата
-  -- rm.Calc 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.
-  Fee_Type = 2;
-  for select
-          M.NAME || coalesce(' (' || rm.SERIAL || ')', '')
-        , M.Demension
-        , RM.Quant
-        , RM.Quant * RM.COST
-        , rm.M_Id
-        , rm.Serial
-        from Request_Materials_Return RM
-             inner join MATERIALS M on (M.M_ID = RM.M_ID)
-        where RM.RQ_ID = :RQ_ID
-              -- and not rm.Serial is null
-              and coalesce(rm.Quant * RM.COST, 0) <> 0
-              and (coalesce(rm.Calc, 1) in (0, -- полный расчет/возврат
-                                            2 -- рассрочка
-                                            ))
-      into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
-  do begin
-    FEE = coalesce(-1 * FEE, 0);
-    if (FEE <> 0) then begin
-      Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from -1 * UNITS)) || ' ' || coalesce(DEM, '');
-      insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
-      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID, :M_ID, :SERIAL);
+    -- вернем стоимость за материалы возврата PROP (Calc - устарело, смотрим на PROP)
+    -- PROP Собственность
+    -- 0 Продажа / Начислять за этот материал абоненту.
+    -- 1 В пользовании / Не начислять
+    -- 2 Рассрочка материала
+    -- 3 Аренда материала
+    -- 4 Возврат бесплатно
+    -- 5 Возврат за деньги (Выкуп)
+    Fee_Type = 2;
+    for select
+            M.NAME || coalesce(' (' || rm.SERIAL || ')', '')
+          , M.Demension
+          , RM.Quant
+          , RM.Quant * RM.COST
+          , rm.M_Id
+          , rm.Serial
+          from Request_Materials_Return RM
+               inner join MATERIALS M on (M.M_ID = RM.M_ID)
+          where RM.RQ_ID = :RQ_ID
+                -- and not rm.Serial is null
+                and coalesce(rm.Quant * RM.COST, 0) <> 0
+                and (coalesce(rm.Prop, 1) = 5) -- 5-Возврат за деньги (Выкуп)
+        into :FEE_NAME, :DEM, :UNITS, :FEE, :M_ID, :SERIAL
+    do begin
+      FEE = coalesce(-1 * FEE, 0);
+      if (FEE <> 0) then begin
+        Fee_Name = Fee_Name || '. ' || trim(trailing '.' from trim(trailing '0' from -1 * UNITS)) || ' ' || coalesce(DEM, '');
+        insert into Other_Fee (Fee_Date, Customer_Id, Fee_Name, Units, Fee, Fee_Type, In_Request, M_ID, SERIAL)
+        values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID, :M_ID, :SERIAL);
+        need_recalc = 1;
+      end
+    end
+
+    -- добавим работы
+    Fee_Type = 2;
+    for select
+            M.NAME
+          , RM.W_QUANT
+          , RM.W_QUANT * RM.W_COST
+          from REQUEST_WORKS RM
+               inner join WORKS M on (M.W_ID = RM.W_ID)
+          where RM.RQ_ID = :RQ_ID
+                and (m.as_service is null)
+                and (coalesce(rm.NOT_CALC, 0) = 0)
+        into :FEE_NAME, :UNITS, :FEE
+    do begin
+      insert into OTHER_FEE (FEE_DATE, CUSTOMER_ID, FEE_NAME, UNITS, FEE, FEE_TYPE, IN_REQUEST)
+      values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID);
       need_recalc = 1;
     end
-  end
+
+    -- удалим LAN и DVB
+    DEM = null;
+    select
+        s.Var_Value
+      from settings s
+      where s.Var_Name = 'REQ_CLOSE_CLEAN_LAN'
+    into :DEM;
+    if (not DEM is null) then begin
+      DEM = coalesce(',' || DEM || ',', '');
+      DEM = replace(DEM, ' ', ',');
+      if (position(',' || vRqtl || ',', DEM) > 0) then begin
+        delete from TV_LAN_PACKETS p
+            where p.Lan_Id in (
+        select
+            l.Lan_Id
+          from Tv_Lan l
+          where l.Customer_Id = :customer_id
+                              );
+        delete from Tv_Lan l
+            where l.Customer_Id = :customer_id;
+      end
+    end
+
+    -- удалим DVB
+    DEM = null;
+    select
+        s.Var_Value
+      from settings s
+      where s.Var_Name = 'REQ_CLOSE_CLEAN_DVB'
+    into :DEM;
+    if (not DEM is null) then begin
+      DEM = coalesce(',' || DEM || ',', '');
+      DEM = replace(DEM, ' ', ',');
+      if (position(',' || vRqtl || ',', DEM) > 0) then begin
+        delete from decoder_packets p
+            where p.Decoder_N in (
+        select
+            d.Decoder_N
+          from Customer_Decoders d
+          where d.Customer_Id = :customer_id
+                                 );
+
+        delete from CUSTOMER_CHANNELS p
+            where p.Decoder_Id in (
+        select
+            d.Dec_Id
+          from Customer_Decoders d
+          where d.Customer_Id = :customer_id
+                                  );
+        delete from Customer_Decoders d
+            where d.Customer_Id = :customer_id;
+      end
+    end
+
+    -- начислим месяц абоненту
+    if ((need_recalc = 1) and (not EXEC_DATE is null)) then begin
+      EXEC_DATE = MONTH_FIRST_DAY(EXEC_DATE);
+      execute procedure Close_Month_Proc(:EXEC_DATE, :CUSTOMER_ID);
+    end
+  end -- not customer_id is null
 
   -- оборудование абоненту и узлам
   execute procedure REQUEST_CLOSE_MATERIALS(RQ_ID);
 
-  -- добавим работы
-  Fee_Type = 2;
-  for select
-          M.NAME
-        , RM.W_QUANT
-        , RM.W_QUANT * RM.W_COST
-        from REQUEST_WORKS RM
-             inner join WORKS M on (M.W_ID = RM.W_ID)
-        where RM.RQ_ID = :RQ_ID
-              and (m.as_service is null)
-              and (coalesce(rm.NOT_CALC, 0) = 0)
-      into :FEE_NAME, :UNITS, :FEE
-  do begin
-    insert into OTHER_FEE (FEE_DATE, CUSTOMER_ID, FEE_NAME, UNITS, FEE, FEE_TYPE, IN_REQUEST)
-    values (:vDATE, :customer_id, :Fee_Name, :Units, :Fee, :Fee_Type, :RQ_ID);
-    need_recalc = 1;
-  end
-
-  -- удалим LAN и DVB
-  DEM = null;
-  select
-      s.Var_Value
-    from settings s
-    where s.Var_Name = 'REQ_CLOSE_CLEAN_LAN'
-  into :DEM;
-  if (not DEM is null) then begin
-    DEM = coalesce(',' || DEM || ',', '');
-    DEM = replace(DEM, ' ', ',');
-    if (position(',' || vRqtl || ',', DEM) > 0) then begin
-      delete from TV_LAN_PACKETS p
-          where p.Lan_Id in (
-      select
-          l.Lan_Id
-        from Tv_Lan l
-        where l.Customer_Id = :customer_id
-                            );
-      delete from Tv_Lan l
-          where l.Customer_Id = :customer_id;
-    end
-  end
-
-  -- удалим DVB
-  DEM = null;
-  select
-      s.Var_Value
-    from settings s
-    where s.Var_Name = 'REQ_CLOSE_CLEAN_DVB'
-  into :DEM;
-  if (not DEM is null) then begin
-    DEM = coalesce(',' || DEM || ',', '');
-    DEM = replace(DEM, ' ', ',');
-    if (position(',' || vRqtl || ',', DEM) > 0) then begin
-      delete from decoder_packets p
-          where p.Decoder_N in (
-      select
-          d.Decoder_N
-        from Customer_Decoders d
-        where d.Customer_Id = :customer_id
-                               );
-
-      delete from CUSTOMER_CHANNELS p
-          where p.Decoder_Id in (
-      select
-          d.Dec_Id
-        from Customer_Decoders d
-        where d.Customer_Id = :customer_id
-                                );
-      delete from Customer_Decoders d
-          where d.Customer_Id = :customer_id;
-    end
-  end
-
-  -- начислим месяц абоненту
-  if ((need_recalc = 1) and (not EXEC_DATE is null)) then begin
-    EXEC_DATE = EXEC_DATE - extract(day from EXEC_DATE) + 1;
-    execute procedure Close_Month_Proc(:EXEC_DATE, :CUSTOMER_ID);
+  -- делаем возможность персонализировать процесс закрытия заяки
+  -- вызов процедуры вида create or alter procedure IBE$RQUEST_AFTER_CLOSE(RQ_ID UID) as begin end
+  if (exists(select
+                 Rdb$Procedure_Name
+               from Rdb$Procedures
+               where Rdb$Procedure_Name = 'IBE$RQUEST_AFTER_CLOSE')) then begin
+    execute statement('execute procedure IBE$RQUEST_AFTER_CLOSE(:Rq_Id)')(Rq_Id := :Rq_Id);
   end
 end ^
 
@@ -20461,6 +22012,9 @@ declare variable r_Date       d_Date;
 begin
   if (RQ_ID is null) then
     exit;
+
+  insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
+  values ('REQUEST', 'E', :RQ_ID, 'REQUEST_CLOSE_ROLLBACK', current_user, localtimestamp);
 
   need_recalc = 0; -- признак нужен ли пересчет абонента
   rec_cnt = 0;
@@ -20658,7 +22212,8 @@ WH_ID TYPE OF UID,
 NOTICE D_NOTICE,
 P_ACTION D_INTEGER,
 SERIAL D_SERIAL_NS = null,
-COST D_N15_2 = null)
+COST D_N15_2 = null,
+PROP D_INTEGER = 4)
 AS 
 declare variable calc D_INTEGER;
 begin
@@ -20687,11 +22242,19 @@ begin
       Quant = 1;
     end
 
+    -- Собственность
+    -- 0 Продажа / Начислять за этот материал абоненту.
+    -- 1 В пользовании / Не начислять
+    -- 2 Рассрочка материала
+    -- 3 Аренда маетриала
+    -- 4 Возврат бесплатно
+    -- 5 Возврат за деньги (Выкуп)
     -- если нет цены, то бесплатный возврат. иначе продажа
-    calc = coalesce(calc, iif(COST is null, 1, 0));
+    -- Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда 4-Возврат бесплатно, 5 - Возврат за деньги (Выкуп)
+    PROP = coalesce(PROP, 4);
 
-    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, SERIAL, COST, CALC)
-    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :SERIAL, :COST, :CALC);
+    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, SERIAL, COST, PROP)
+    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :SERIAL, :COST, :PROP);
   end
 end ^
 
@@ -20859,6 +22422,57 @@ BEGIN
     INSERT INTO request_works  (RQ_ID, w_id,w_quant, w_time, W_COST, NOTICE, NOT_CALC)
     VALUES (:RQ_ID,:W_ID,:W_QUANT, :W_TIME, :W_COST, :NOTICE, :NOT_CALC);
 END ^
+
+ALTER PROCEDURE SAVEPCEFOREMP (SAVEDATE D_DATE,
+EMPID D_INTEGER = null)
+AS 
+declare variable i      D_INTEGER;
+declare variable Nvalue D_N15_5;
+begin
+  SaveDate = Month_First_Day(SaveDate);
+
+  -- сохраним показания узлов
+  for select
+          n.Node_Id
+        , n.Pce
+        from OBJECTS o
+             inner join NODES n on (n.Epoint = o.O_ID)
+        where o.O_TYPE = 76
+              and o.o_DELETED = 0
+              and trim(coalesce(o.O_Dimension, '')) = ''
+              and ((:EmpId is null)
+                or (o.O_Id = :EmpId))
+      into :i, :Nvalue
+  do begin
+    Nvalue = coalesce(:Nvalue, 0);
+    update or insert into Objects_History (O_Id, O_Type, Hdate, Nvalue)
+    values (:i, 38, :SaveDate, :Nvalue) -- 38 Типы узлов
+    matching (O_Id, O_Type, Hdate);
+  end
+
+  -- сохраним показания ТУЭ
+  for select
+          o.O_Id
+        , (select
+               sum(n.Pce)
+             from NODES n
+             where n.Epoint = o.O_ID)
+        from OBJECTS o
+        where o.O_TYPE = 76
+              and o.o_DELETED = 0
+              and trim(coalesce(o.O_Dimension, '')) = ''
+              and ((:EmpId is null)
+                or (o.O_Id = :EmpId))
+      into :i, :Nvalue
+  do begin
+    Nvalue = coalesce(round(:Nvalue / 1000, 5), 0);
+    update or insert into Objects_History (O_Id, O_Type, Hdate, Nvalue)
+    values (:i, 76, :SaveDate, :Nvalue) -- 76 Точка УЭ
+    matching (O_Id, O_Type, Hdate);
+    Nvalue = null;
+  end
+
+end ^
 
 ALTER PROCEDURE SELECTONOFFSERVICE (ACUSTOMER_ID TYPE OF UID,
 ASERVICE_ID TYPE OF UID,
@@ -21195,10 +22809,12 @@ begin
   if (Prepay_Sum < 0) then
     Prepay_Sum = 0;
 
-  if (Prepay_Sum = 0) then
+  if (Prepay_Sum = 0) then begin
     update CUSTOMER
     set PREPAY = 0, prepay_time = null
     where CUSTOMER_ID = :Customer_Id;
+    execute procedure Block_Customer_Service(:Customer_Id);
+  end
   else
     insert into PREPAY_DETAIL (CUSTOMER_ID, PPD_SUM)
     values (:Customer_Id, :Prepay_Sum);
@@ -21209,19 +22825,8 @@ end ^
 ALTER PROCEDURE SET_SETTINGS (ANAME D_VARCHAR50,
 AVALUE D_VARCHAR1000)
 AS 
-declare variable V D_VARCHAR1000;
 begin
-  ANAME = upper(:ANAME);
-  select
-      Var_Value
-    from settings
-    where var_name = :ANAME
-  into :V;
-
-  if (V is distinct from AVALUE) then
-    update or insert into Settings (Var_Name, Var_Value)
-    values (:ANAME, :AVALUE)
-    matching (Var_Name);
+  SET_SETTINGS_VALUE(:ANAME, :AVALUE);
 end ^
 
 ALTER PROCEDURE SPLIT_STR_TO_ROWS (IDS D_VARCHAR1000)
@@ -21442,7 +23047,7 @@ begin
       else begin
         if (Switch_Time = 2) then begin
           /* 2 - Начало месяца */
-          vDate = dateadd(month, 1, (current_date - extract(day from current_date) + 1));
+          vDate = dateadd(month, 1, MONTH_FIRST_DAY(current_date));
           if (Switch_Date < vDate) then
             Switch_Date = vDate;
         end
@@ -21805,11 +23410,59 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = CAST('NOW' AS timestamp);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_APPLIANCE FOR APPLIANCE 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.ID is distinct from old.ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'ID', old.ID, new.ID);
+    if (new.A_TYPE is distinct from old.A_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'A_TYPE', old.A_TYPE, new.A_TYPE);
+    if (new.OWN_ID is distinct from old.OWN_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'OWN_ID', old.OWN_ID, new.OWN_ID);
+    if (new.OWN_TYPE is distinct from old.OWN_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'OWN_TYPE', old.OWN_TYPE, new.OWN_TYPE);
+    if (new.NAME is distinct from old.NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'NAME', old.NAME, new.NAME);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.MAC is distinct from old.MAC) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'MAC', old.MAC, new.MAC);
+    if (new.SERIAL is distinct from old.SERIAL) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'SERIAL', old.SERIAL, new.SERIAL);
+    if (new.COST is distinct from old.COST) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'COST', old.COST, new.COST);
+    if (new.PROPERTY is distinct from old.PROPERTY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'PROPERTY', old.PROPERTY, new.PROPERTY);
+    if (new.S_VERSION is distinct from old.S_VERSION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'S_VERSION', old.S_VERSION, new.S_VERSION);
+    if (new.M_ID is distinct from old.M_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'M_ID', old.M_ID, new.M_ID);
+    if (new.RQ_ID is distinct from old.RQ_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'RQ_ID', old.RQ_ID, new.RQ_ID);
+    if (new.FROM_WH is distinct from old.FROM_WH) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'FROM_WH', old.FROM_WH, new.FROM_WH);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.CALC is distinct from old.CALC) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'U', new.ID, 'CALC', old.CALC, new.CALC);
+  end
+  else begin
+    if (not old.ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'ID', old.ID, 'DELETE');
+    if (not old.A_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'A_TYPE', old.A_TYPE, 'DELETE');
+    if (not old.OWN_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'OWN_ID', old.OWN_ID, 'DELETE');
+    if (not old.OWN_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'OWN_TYPE', old.OWN_TYPE, 'DELETE');
+    if (not old.NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'NAME', old.NAME, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.MAC is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'MAC', old.MAC, 'DELETE');
+    if (not old.SERIAL is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'SERIAL', old.SERIAL, 'DELETE');
+    if (not old.COST is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'COST', old.COST, 'DELETE');
+    if (not old.PROPERTY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'PROPERTY', old.PROPERTY, 'DELETE');
+    if (not old.S_VERSION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'S_VERSION', old.S_VERSION, 'DELETE');
+    if (not old.M_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'M_ID', old.M_ID, 'DELETE');
+    if (not old.RQ_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'RQ_ID', old.RQ_ID, 'DELETE');
+    if (not old.FROM_WH is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'FROM_WH', old.FROM_WH, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.CALC is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('APPLIANCE', 'D', old.ID, 'CALC', old.CALC, 'DELETE');
   end
 end ^
 
@@ -21863,11 +23516,11 @@ begin
   new.ADeleted = coalesce(new.ADeleted, 0);
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.edit_by = current_user;
-    new.edit_on = localtimestamp;
+    new.edit_on = CAST('NOW' AS timestamp);
     new.OValue = old.AValue;
   end
 end ^
@@ -21886,124 +23539,74 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
-end ^
-
-CREATE TRIGGER BILLING_AU FOR BILLING 
-ACTIVE AFTER UPDATE POSITION 0 
-as
-begin
-  IF (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'CUSTOMER_ID', OLD.CUSTOMER_ID, NEW.CUSTOMER_ID);
-  IF (new.LOGIN is distinct from old.LOGIN) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'LOGIN', OLD.LOGIN, NEW.LOGIN);
-  IF (new.SECRET is distinct from old.SECRET) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'SECRET', OLD.SECRET, NEW.SECRET);
-  IF (new.IP_INET is distinct from old.IP_INET) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'IP_INET', OLD.IP_INET, NEW.IP_INET);
-  IF (new.ACCOUNT_ID is distinct from old.ACCOUNT_ID) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'ACCOUNT_ID', OLD.ACCOUNT_ID, NEW.ACCOUNT_ID);
-  IF (new.ACCOUNT_NAME is distinct from old.ACCOUNT_NAME) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'ACCOUNT_NAME', OLD.ACCOUNT_NAME, NEW.ACCOUNT_NAME);
-  IF (new.UNIT_ID is distinct from old.UNIT_ID) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'UNIT_ID', OLD.UNIT_ID, NEW.UNIT_ID);
-  IF (new.UNIT_NAME is distinct from old.UNIT_NAME) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'UNIT_NAME', OLD.UNIT_NAME, NEW.UNIT_NAME);
-  IF (new.PLAN_ID is distinct from old.PLAN_ID) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'PLAN_ID', OLD.PLAN_ID, NEW.PLAN_ID);
-  IF (new.PLAN_NAME is distinct from old.PLAN_NAME) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'PLAN_NAME', OLD.PLAN_NAME, NEW.PLAN_NAME);
-  IF (new.NOTICE is distinct from old.NOTICE) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'NOTICE', OLD.NOTICE, NEW.NOTICE);
-  IF (new.BLOCKED is distinct from old.BLOCKED) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'BLOCKED', OLD.BLOCKED, NEW.BLOCKED);
-  IF (new.BLNG_ID is distinct from old.BLNG_ID) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'BLNG_ID', OLD.BLNG_ID, NEW.BLNG_ID);
-  IF (new.SECRET_WEB is distinct from old.SECRET_WEB) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'SECRET_WEB', OLD.SECRET_WEB, NEW.SECRET_WEB);
-  IF (new.VPN is distinct from old.VPN) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, NEW.CUSTOMER_ID, 'VPN', OLD.VPN, NEW.VPN);    
-end ^
-
-CREATE TRIGGER BILLING_AD FOR BILLING 
-ACTIVE AFTER DELETE POSITION 0 
-as
-begin
-  IF (not old.CUSTOMER_ID is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'CUSTOMER_ID', 'DELETE', OLD.CUSTOMER_ID);
-  IF (not old.LOGIN is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'LOGIN', 'DELETE', OLD.LOGIN);
-  IF (not old.SECRET is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'SECRET', 'DELETE', OLD.SECRET);
-  IF (not old.IP_INET is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'IP_INET', 'DELETE', OLD.IP_INET);
-  IF (not old.ACCOUNT_ID is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'ACCOUNT_ID', 'DELETE', OLD.ACCOUNT_ID);
-  IF (not old.ACCOUNT_NAME is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'ACCOUNT_NAME', 'DELETE', OLD.ACCOUNT_NAME);
-  IF (not old.UNIT_ID is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'UNIT_ID', 'DELETE', OLD.UNIT_ID);
-  IF (not old.UNIT_NAME is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'UNIT_NAME', 'DELETE', OLD.UNIT_NAME);
-  IF (not old.PLAN_ID is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'PLAN_ID', 'DELETE', OLD.PLAN_ID);
-  IF (not old.PLAN_NAME is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'PLAN_NAME', 'DELETE', OLD.PLAN_NAME);
-  IF (not old.NOTICE is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'NOTICE', 'DELETE', OLD.NOTICE);
-  IF (not old.BLOCKED is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'BLOCKED', 'DELETE', OLD.BLOCKED);
-  IF (not old.BLNG_ID is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'BLNG_ID', 'DELETE', OLD.BLNG_ID);
-  IF (not old.SECRET_WEB is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'SECRET_WEB', 'DELETE', OLD.SECRET_WEB);
-  IF (not old.VPN is null) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('BILLING', 0, OLD.CUSTOMER_ID, 'VPN', 'DELETE', OLD.VPN);    
 end ^
 
 CREATE TRIGGER BILLING_BI FOR BILLING 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
-  if (NEW.blng_id is null) then new.blng_id = gen_id(gen_operations_uid,1);
+  if (new.blng_id is null) then
+    new.blng_id = gen_id(gen_operations_uid, 1);
 
-  NEW.IP_INET_BIN = INET_ATON(NEW.IP_INET);
-  NEW.secret = coalesce(NEW.secret, NEW.secret_web);
+  new.IP_INET_BIN = INET_ATON(new.IP_INET);
+  new.secret = coalesce(new.secret, new.secret_web);
+
+  if (updating) then begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = localtimestamp;
+  end
+  else begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = localtimestamp;
+  end
+end ^
+
+CREATE TRIGGER TRLOG_BILLING FOR BILLING 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.LOGIN is distinct from old.LOGIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'LOGIN', old.LOGIN, new.LOGIN);
+    if (new.SECRET is distinct from old.SECRET) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'SECRET', old.SECRET, new.SECRET);
+    if (new.IP_INET is distinct from old.IP_INET) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'IP_INET', old.IP_INET, new.IP_INET);
+    if (new.IP_INET_BIN is distinct from old.IP_INET_BIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'IP_INET_BIN', old.IP_INET_BIN, new.IP_INET_BIN);
+    if (new.ACCOUNT_ID is distinct from old.ACCOUNT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'ACCOUNT_ID', old.ACCOUNT_ID, new.ACCOUNT_ID);
+    if (new.ACCOUNT_NAME is distinct from old.ACCOUNT_NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'ACCOUNT_NAME', old.ACCOUNT_NAME, new.ACCOUNT_NAME);
+    if (new.UNIT_ID is distinct from old.UNIT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'UNIT_ID', old.UNIT_ID, new.UNIT_ID);
+    if (new.UNIT_NAME is distinct from old.UNIT_NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'UNIT_NAME', old.UNIT_NAME, new.UNIT_NAME);
+    if (new.PLAN_ID is distinct from old.PLAN_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'PLAN_ID', old.PLAN_ID, new.PLAN_ID);
+    if (new.PLAN_NAME is distinct from old.PLAN_NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'PLAN_NAME', old.PLAN_NAME, new.PLAN_NAME);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.BLOCKED is distinct from old.BLOCKED) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'BLOCKED', old.BLOCKED, new.BLOCKED);
+    if (new.BLNG_ID is distinct from old.BLNG_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'BLNG_ID', old.BLNG_ID, new.BLNG_ID);
+    if (new.SECRET_WEB is distinct from old.SECRET_WEB) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'SECRET_WEB', old.SECRET_WEB, new.SECRET_WEB);
+    if (new.VPN is distinct from old.VPN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'U', new.BLNG_ID, 'VPN', old.VPN, new.VPN);
+  end
+  else begin
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.LOGIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'LOGIN', old.LOGIN, 'DELETE');
+    if (not old.SECRET is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'SECRET', old.SECRET, 'DELETE');
+    if (not old.IP_INET is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'IP_INET', old.IP_INET, 'DELETE');
+    if (not old.IP_INET_BIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'IP_INET_BIN', old.IP_INET_BIN, 'DELETE');
+    if (not old.ACCOUNT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'ACCOUNT_ID', old.ACCOUNT_ID, 'DELETE');
+    if (not old.ACCOUNT_NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'ACCOUNT_NAME', old.ACCOUNT_NAME, 'DELETE');
+    if (not old.UNIT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'UNIT_ID', old.UNIT_ID, 'DELETE');
+    if (not old.UNIT_NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'UNIT_NAME', old.UNIT_NAME, 'DELETE');
+    if (not old.PLAN_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'PLAN_ID', old.PLAN_ID, 'DELETE');
+    if (not old.PLAN_NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'PLAN_NAME', old.PLAN_NAME, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.BLOCKED is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'BLOCKED', old.BLOCKED, 'DELETE');
+    if (not old.BLNG_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'BLNG_ID', old.BLNG_ID, 'DELETE');
+    if (not old.SECRET_WEB is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'SECRET_WEB', old.SECRET_WEB, 'DELETE');
+    if (not old.VPN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('BILLING', 'D', old.BLNG_ID, 'VPN', old.VPN, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER BLB_GZIP_BI FOR BLB_GZIP 
@@ -22019,6 +23622,15 @@ as
 begin
   if (NEW.Bl_Id is null) then NEW.Bl_Id = GEN_ID(Gen_Blb,1);
   NEW.bl_name = upper(new.bl_name);
+
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = CAST('NOW' AS timestamp);
+  end
+  else begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = CAST('NOW' AS timestamp);
+  end
 end ^
 
 CREATE TRIGGER BONUS_RATE_BI FOR BONUS_RATE 
@@ -22029,7 +23641,7 @@ begin
     new.ID = gen_id(Gen_Uid, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER BONUS_RATE_BU FOR BONUS_RATE 
@@ -22037,7 +23649,7 @@ ACTIVE BEFORE UPDATE POSITION 0
 as
 begin
   new.edit_by = current_user;
-  new.edit_on = localtimestamp;
+  new.edit_on = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER CARDS_PREPAY_AD FOR CARDS_PREPAY 
@@ -22076,11 +23688,11 @@ CREATE TRIGGER CHANGELOG_BI FOR CHANGELOG
 ACTIVE BEFORE INSERT POSITION 0 
 as
 begin
-  NEW.log_id = coalesce(NEW.log_id, gen_id(g_log_id,1));
-  NEW.Log_Group = upper(NEW.Log_Group);
-  NEW.Param = upper(NEW.Param);
-  NEW.who_change  = current_user;
-  NEW.when_change = localtimestamp;
+  new.log_id = coalesce(new.log_id, gen_id(g_log_id, 1));
+  new.Log_Group = upper(new.Log_Group);
+  new.Param = upper(new.Param);
+  new.who_change = current_user;
+  new.when_change = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER CHANNELS_AD FOR CHANNELS 
@@ -22118,11 +23730,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = cast('NOW' as timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = cast('NOW' as timestamp);
   end
 end ^
 
@@ -22133,7 +23745,7 @@ begin
   if (new.Cs_Id is null) then
     new.Cs_Id = gen_id(GEN_UID, 1);
   new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
+  new.ADDED_ON = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER CHANNEL_SRC_BU FOR CHANNEL_SRC 
@@ -22141,7 +23753,7 @@ ACTIVE BEFORE UPDATE POSITION 0
 as
 begin
   new.EDIT_BY = current_user;
-  new.EDIT_ON = localtimestamp;
+  new.EDIT_ON = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER CHANNEL_SRC_PARAM_AU FOR CHANNEL_SRC_PARAM 
@@ -22173,11 +23785,11 @@ begin
 
   if (inserting) then begin
     new.ADDED_BY = current_user;
-    new.ADDED_ON = localtimestamp;
+    new.ADDED_ON = cast('NOW' as timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = cast('NOW' as timestamp);
   end
 end ^
 
@@ -22203,11 +23815,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = cast('NOW' as timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = cast('NOW' as timestamp);
   end
 end ^
 
@@ -22239,6 +23851,9 @@ begin
     new.EXTERNAL_ID = null;
   if (new.hand_control is null) then
     new.hand_control = 0;
+
+  if (not new.Notice is null) then
+    new.Notice = trim(ascii_char(13) || ascii_char(10) from new.Notice);
 
   if (new.Secret is null) then
     select
@@ -22274,7 +23889,7 @@ begin
   end
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER CUSTOMER_BU0 FOR CUSTOMER 
@@ -22301,6 +23916,9 @@ begin
     else
       new.MIDLENAME = trim(new.MIDLENAME);
 
+    if (not new.Notice is null) then
+      new.Notice = trim(ascii_char(13) || ascii_char(10) from new.Notice);
+
     if ((new.HOUSE_ID is distinct from old.HOUSE_ID)
         or
         (new.FLAT_NO is distinct from old.FLAT_NO)) then begin
@@ -22325,7 +23943,7 @@ begin
       new.INITIALS = trim(substring(new.FIRSTNAME from 1 for 1) || ' ' || substring(new.MIDLENAME from 1 for 1));
 
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = cast('NOW' as timestamp);
 
   end
 
@@ -22368,121 +23986,10 @@ as
 begin
   if (old.debt_sum is distinct from new.debt_sum) then begin
     if ((new.debt_sum > 0) and (old.debt_sum < 0)) then
-      new.TIME_ON_MINUS = localtimestamp;
+      new.TIME_ON_MINUS = cast('NOW' as timestamp);
     if ((new.debt_sum < 0) and (old.debt_sum > 0)) then
       new.TIME_ON_MINUS = null;
   end
-end ^
-
-CREATE TRIGGER TR_CUSTOMER_CHANGELOG_AU FOR CUSTOMER 
-ACTIVE AFTER UPDATE POSITION 0 
-as
-begin
-  if (new.HOUSE_ID is distinct from old.HOUSE_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'HOUSE_ID', old.HOUSE_ID, new.HOUSE_ID);
-  if (new.ACCOUNT_NO is distinct from old.ACCOUNT_NO) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'ACCOUNT_NO', old.ACCOUNT_NO, new.ACCOUNT_NO);
-  if (new.DOGOVOR_NO is distinct from old.DOGOVOR_NO) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'DOGOVOR_NO', old.DOGOVOR_NO, new.DOGOVOR_NO);
-  if (new.SURNAME is distinct from old.SURNAME) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'SURNAME', old.SURNAME, new.SURNAME);
-  if (new.FIRSTNAME is distinct from old.FIRSTNAME) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'FIRSTNAME', old.FIRSTNAME, new.FIRSTNAME);
-  if (new.MIDLENAME is distinct from old.MIDLENAME) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'MIDLENAME', old.MIDLENAME, new.MIDLENAME);
-  if (new.CONTRACT_DATE is distinct from old.CONTRACT_DATE) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, new.CONTRACT_DATE);
-  if (new.NOTICE is distinct from old.NOTICE) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'NOTICE', old.NOTICE, new.NOTICE);
-  if (new.VALID_TO is distinct from old.VALID_TO) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'VALID_TO', old.VALID_TO, new.VALID_TO);
-  if (new.FLAT_NO is distinct from old.FLAT_NO) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'FLAT_NO', old.FLAT_NO, new.FLAT_NO);
-  if (new.PASSPORT_NUMBER is distinct from old.PASSPORT_NUMBER) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'PASSPORT_NUMBER', old.PASSPORT_NUMBER, new.PASSPORT_NUMBER);
-  if (new.PASSPORT_REGISTRATION is distinct from old.PASSPORT_REGISTRATION) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'PASSPORT_REGISTRATION', old.PASSPORT_REGISTRATION, new.PASSPORT_REGISTRATION);
-  if (new.PERSONAL_N is distinct from old.PERSONAL_N) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'PERSONAL_N', old.PERSONAL_N, new.PERSONAL_N);
-  if (new.MANAGER_ID is distinct from old.MANAGER_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'MANAGER_ID', old.MANAGER_ID, new.MANAGER_ID);
-  if (new.JURIDICAL is distinct from old.JURIDICAL) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'JURIDICAL', old.JURIDICAL, new.JURIDICAL);
-  if (new.JUR_INN is distinct from old.JUR_INN) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'JUR_INN', old.JUR_INN, new.JUR_INN);
-  if (new.JUR_DIRECTOR is distinct from old.JUR_DIRECTOR) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'JUR_DIRECTOR', old.JUR_DIRECTOR, new.JUR_DIRECTOR);
-  if (new.JUR_BUH is distinct from old.JUR_BUH) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'JUR_BUH', old.JUR_BUH, new.JUR_BUH);
-  if (new.HIS_COLOR is distinct from old.HIS_COLOR) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'HIS_COLOR', old.HIS_COLOR, new.HIS_COLOR);
-  if (new.INVISIBLE is distinct from old.INVISIBLE) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'INVISIBLE', old.INVISIBLE, new.INVISIBLE);
-  if (new.BIRTHDAY is distinct from old.BIRTHDAY) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'BIRTHDAY', old.BIRTHDAY, new.BIRTHDAY);
-  if (new.ADRES_REGISTR is distinct from old.ADRES_REGISTR) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'ADRES_REGISTR', old.ADRES_REGISTR, new.ADRES_REGISTR);
-  if (new.ORG_ID is distinct from old.ORG_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'ORG_ID', old.ORG_ID, new.ORG_ID);
-  if (new.VATG_ID is distinct from old.VATG_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'VATG_ID', old.VATG_ID, new.VATG_ID);
-  if (new.TAP is distinct from old.TAP) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'TAP', old.TAP, new.TAP);
-  if (new.SECRET is distinct from old.SECRET) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'SECRET', old.SECRET, new.SECRET);
-  if (new.HAND_CONTROL is distinct from old.HAND_CONTROL) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'HAND_CONTROL', old.HAND_CONTROL, new.HAND_CONTROL);
-  if (new.BANK is distinct from old.BANK) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'BANK', old.BANK, new.BANK);
-  if (new.BANK_ACCOUNT is distinct from old.BANK_ACCOUNT) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'BANK_ACCOUNT', old.BANK_ACCOUNT, new.BANK_ACCOUNT);
-  if (new.EXTERNAL_ID is distinct from old.EXTERNAL_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'EXTERNAL_ID', old.EXTERNAL_ID, new.EXTERNAL_ID);
-  if (new.PASSPORT_VALID is distinct from old.PASSPORT_VALID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'PASSPORT_VALID', old.PASSPORT_VALID, new.PASSPORT_VALID);
-  if (new.CONTRACT_BASIS is distinct from old.CONTRACT_BASIS) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, new.CUSTOMER_ID, 'CONTRACT_BASIS', old.CONTRACT_BASIS, new.CONTRACT_BASIS);
-  IF (NEW.PHONE_NO IS DISTINCT FROM OLD.PHONE_NO) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, NEW.CUSTOMER_ID, 'PHONE_NO', OLD.PHONE_NO, NEW.PHONE_NO);
-  IF (NEW.MOBILE_PHONE IS DISTINCT FROM OLD.MOBILE_PHONE) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, NEW.CUSTOMER_ID, 'MOBILE_PHONE', OLD.MOBILE_PHONE, NEW.MOBILE_PHONE);
-  IF (NEW.EMAIL IS DISTINCT FROM OLD.EMAIL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, NEW.CUSTOMER_ID, 'EMAIL', OLD.EMAIL, NEW.EMAIL);
 end ^
 
 CREATE TRIGGER CUSTOMER_AU_MONEY FOR CUSTOMER 
@@ -22500,201 +24007,125 @@ begin
   end
 end ^
 
-CREATE TRIGGER TR_CUSTOMER_CHANGELOG_AD FOR CUSTOMER 
-ACTIVE AFTER DELETE POSITION 0 
-AS BEGIN
-  IF (not OLD.CUSTOMER_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CUSTOMER_ID', 'DELETE', OLD.CUSTOMER_ID);
-  IF (not OLD.CUST_CODE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CUST_CODE', 'DELETE', OLD.CUST_CODE);
-  IF (not OLD.HOUSE_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'HOUSE_ID', 'DELETE', OLD.HOUSE_ID);
-  IF (not OLD.ACCOUNT_NO IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'ACCOUNT_NO', 'DELETE', OLD.ACCOUNT_NO);
-  IF (not OLD.DOGOVOR_NO IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'DOGOVOR_NO', 'DELETE', OLD.DOGOVOR_NO);
-  IF (not OLD.SURNAME IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'SURNAME', 'DELETE', OLD.SURNAME);
-  IF (not OLD.FIRSTNAME IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'FIRSTNAME', 'DELETE', OLD.FIRSTNAME);
-  IF (not OLD.MIDLENAME IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'MIDLENAME', 'DELETE', OLD.MIDLENAME);
-  IF (not OLD.INITIALS IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'INITIALS', 'DELETE', OLD.INITIALS);
-  IF (not OLD.CONTRACT_DATE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CONTRACT_DATE', 'DELETE', OLD.CONTRACT_DATE);
-  IF (not OLD.ACTIVIZ_DATE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'ACTIVIZ_DATE', 'DELETE', OLD.ACTIVIZ_DATE);
-  IF (not OLD.PHONE_NO IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PHONE_NO', 'DELETE', OLD.PHONE_NO);
-  IF (not OLD.NOTICE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'NOTICE', 'DELETE', OLD.NOTICE);
-  IF (not OLD.VALID_TO IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'VALID_TO', 'DELETE', OLD.VALID_TO);
-  IF (not OLD.CUST_STATE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CUST_STATE', 'DELETE', OLD.CUST_STATE);
-  IF (not OLD.CUST_STATE_DESCR IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CUST_STATE_DESCR', 'DELETE', OLD.CUST_STATE_DESCR);
-  IF (not OLD.CUST_PROP IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CUST_PROP', 'DELETE', OLD.CUST_PROP);
-  IF (not OLD.CUST_PROP_DESCR IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CUST_PROP_DESCR', 'DELETE', OLD.CUST_PROP_DESCR);
-  IF (not OLD.FLAT_NO IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'FLAT_NO', 'DELETE', OLD.FLAT_NO);
-  IF (not OLD.DEBT_SUM IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'DEBT_SUM', 'DELETE', OLD.DEBT_SUM);
-  IF (not OLD.PASSPORT_NUMBER IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PASSPORT_NUMBER', 'DELETE', OLD.PASSPORT_NUMBER);
-  IF (not OLD.PASSPORT_REGISTRATION IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PASSPORT_REGISTRATION', 'DELETE', OLD.PASSPORT_REGISTRATION);
-  IF (not OLD.PERSONAL_N IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PERSONAL_N', 'DELETE', OLD.PERSONAL_N);
-  IF (not OLD.MANAGER_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'MANAGER_ID', 'DELETE', OLD.MANAGER_ID);
-  IF (not OLD.JURIDICAL IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'JURIDICAL', 'DELETE', OLD.JURIDICAL);
-  IF (not OLD.JUR_INN IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'JUR_INN', 'DELETE', OLD.JUR_INN);
-  IF (not OLD.JUR_DIRECTOR IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'JUR_DIRECTOR', 'DELETE', OLD.JUR_DIRECTOR);
-  IF (not OLD.JUR_BUH IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'JUR_BUH', 'DELETE', OLD.JUR_BUH);
-  IF (not OLD.CGIS IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CGIS', 'DELETE', OLD.CGIS);
-  IF (not OLD.MOBILE_PHONE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'MOBILE_PHONE', 'DELETE', OLD.MOBILE_PHONE);
-  IF (not OLD.HIS_COLOR IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'HIS_COLOR', 'DELETE', OLD.HIS_COLOR);
-  IF (not OLD.INVISIBLE IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'INVISIBLE', 'DELETE', OLD.INVISIBLE);
-  IF (not OLD.EMAIL IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'EMAIL', 'DELETE', OLD.EMAIL);
-  IF (not OLD.TIME_ON_MINUS IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'TIME_ON_MINUS', 'DELETE', OLD.TIME_ON_MINUS);
-  IF (not OLD.BIRTHDAY IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'BIRTHDAY', 'DELETE', OLD.BIRTHDAY);
-  IF (not OLD.ADRES_REGISTR IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'ADRES_REGISTR', 'DELETE', OLD.ADRES_REGISTR);
-  IF (not OLD.ORG_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'ORG_ID', 'DELETE', OLD.ORG_ID);
-  IF (not OLD.VATG_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'VATG_ID', 'DELETE', OLD.VATG_ID);
-  IF (not OLD.TAP IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'TAP', 'DELETE', OLD.TAP);
-  IF (not OLD.PREPAY IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PREPAY', 'DELETE', OLD.PREPAY);
-  IF (not OLD.PREPAY_TIME IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PREPAY_TIME', 'DELETE', OLD.PREPAY_TIME);
-  IF (not OLD.SECRET IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'SECRET', 'DELETE', OLD.SECRET);
-  IF (not OLD.ADDED_BY IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'ADDED_BY', 'DELETE', OLD.ADDED_BY);
-  IF (not OLD.ADDED_ON IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'ADDED_ON', 'DELETE', OLD.ADDED_ON);
-  IF (not OLD.EDIT_BY IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'EDIT_BY', 'DELETE', OLD.EDIT_BY);
-  IF (not OLD.EDIT_ON IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'EDIT_ON', 'DELETE', OLD.EDIT_ON);
-  IF (not OLD.HAND_CONTROL IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'HAND_CONTROL', 'DELETE', OLD.HAND_CONTROL);
-  IF (not OLD.BANK IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'BANK', 'DELETE', OLD.BANK);
-  IF (not OLD.BANK_ACCOUNT IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'BANK_ACCOUNT', 'DELETE', OLD.BANK_ACCOUNT);
-  IF (not OLD.EXTERNAL_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'EXTERNAL_ID', 'DELETE', OLD.EXTERNAL_ID);
-  IF (not OLD.PASSPORT_VALID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'PASSPORT_VALID', 'DELETE', OLD.PASSPORT_VALID);
-  IF (not OLD.CONTRACT_BASIS IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER', 0, OLD.CUSTOMER_ID, 'CONTRACT_BASIS', 'DELETE', OLD.CONTRACT_BASIS);
-END ^
-
-CREATE TRIGGER CUSTOMER_ATTRIBUTES_AU FOR CUSTOMER_ATTRIBUTES 
-ACTIVE AFTER UPDATE POSITION 1 
+CREATE TRIGGER TRLOG_CUSTOMER FOR CUSTOMER 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
 as
 begin
-  IF (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, NEW.CUSTOMER_ID, 'CUSTOMER_ID', OLD.CUSTOMER_ID, NEW.CUSTOMER_ID);
-  IF (new.O_Id is distinct from old.O_Id) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, NEW.CUSTOMER_ID, 'O_ID', OLD.O_Id, NEW.O_Id);
-  IF (new.Ca_Value is distinct from old.Ca_Value) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, NEW.CUSTOMER_ID, 'CA_VALUE', OLD.Ca_Value, NEW.Ca_Value);
-  IF (new.Notice is distinct from old.Notice) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, NEW.CUSTOMER_ID, 'NOTICE', OLD.Notice, NEW.Notice);
-end ^
-
-CREATE TRIGGER CUSTOMER_ATTRIBUTES_AD FOR CUSTOMER_ATTRIBUTES 
-ACTIVE AFTER DELETE POSITION 1 
-as
-begin
-  IF (not OLD.CUSTOMER_ID IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, OLD.CUSTOMER_ID, 'CUSTOMER_ID', 'DELETE', OLD.CUSTOMER_ID);
-  IF (not OLD.O_Id IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, OLD.CUSTOMER_ID, 'O_ID', 'DELETE', OLD.O_Id);
-  IF (not OLD.Ca_Value IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, OLD.CUSTOMER_ID, 'CA_VALUE', 'DELETE', OLD.Ca_Value);
-  IF (not OLD.Notice IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('ATTRIBUTE', 0, OLD.CUSTOMER_ID, 'NOTICE', 'DELETE', OLD.Notice);
+  if (UPDATING) then begin
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.CUST_CODE is distinct from old.CUST_CODE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CUST_CODE', old.CUST_CODE, new.CUST_CODE);
+    if (new.HOUSE_ID is distinct from old.HOUSE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'HOUSE_ID', old.HOUSE_ID, new.HOUSE_ID);
+    if (new.ACCOUNT_NO is distinct from old.ACCOUNT_NO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'ACCOUNT_NO', old.ACCOUNT_NO, new.ACCOUNT_NO);
+    if (new.DOGOVOR_NO is distinct from old.DOGOVOR_NO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'DOGOVOR_NO', old.DOGOVOR_NO, new.DOGOVOR_NO);
+    if (new.SURNAME is distinct from old.SURNAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'SURNAME', old.SURNAME, new.SURNAME);
+    if (new.FIRSTNAME is distinct from old.FIRSTNAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'FIRSTNAME', old.FIRSTNAME, new.FIRSTNAME);
+    if (new.MIDLENAME is distinct from old.MIDLENAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'MIDLENAME', old.MIDLENAME, new.MIDLENAME);
+    if (new.INITIALS is distinct from old.INITIALS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'INITIALS', old.INITIALS, new.INITIALS);
+    if (new.CONTRACT_DATE is distinct from old.CONTRACT_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, new.CONTRACT_DATE);
+    if (new.ACTIVIZ_DATE is distinct from old.ACTIVIZ_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'ACTIVIZ_DATE', old.ACTIVIZ_DATE, new.ACTIVIZ_DATE);
+    if (new.PHONE_NO is distinct from old.PHONE_NO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PHONE_NO', old.PHONE_NO, new.PHONE_NO);
+    if (new.NOTICE is distinct from old.NOTICE) then begin
+      if (new.NOTICE is distinct from trim(ASCII_CHAR(13) || ASCII_CHAR(10) from old.Notice)) then
+        insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    end
+    if (new.VALID_TO is distinct from old.VALID_TO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'VALID_TO', old.VALID_TO, new.VALID_TO);
+    if (new.CUST_STATE is distinct from old.CUST_STATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CUST_STATE', old.CUST_STATE, new.CUST_STATE);
+    if (new.CUST_STATE_DESCR is distinct from old.CUST_STATE_DESCR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CUST_STATE_DESCR', old.CUST_STATE_DESCR, new.CUST_STATE_DESCR);
+    if (new.CUST_PROP is distinct from old.CUST_PROP) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CUST_PROP', old.CUST_PROP, new.CUST_PROP);
+    if (new.CUST_PROP_DESCR is distinct from old.CUST_PROP_DESCR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CUST_PROP_DESCR', old.CUST_PROP_DESCR, new.CUST_PROP_DESCR);
+    if (new.FLAT_NO is distinct from old.FLAT_NO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'FLAT_NO', old.FLAT_NO, new.FLAT_NO);
+    --if (new.DEBT_SUM is distinct from old.DEBT_SUM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'DEBT_SUM', old.DEBT_SUM, new.DEBT_SUM);
+    if (new.PASSPORT_NUMBER is distinct from old.PASSPORT_NUMBER) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PASSPORT_NUMBER', old.PASSPORT_NUMBER, new.PASSPORT_NUMBER);
+    if (new.PASSPORT_REGISTRATION is distinct from old.PASSPORT_REGISTRATION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PASSPORT_REGISTRATION', old.PASSPORT_REGISTRATION, new.PASSPORT_REGISTRATION);
+    if (new.PERSONAL_N is distinct from old.PERSONAL_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PERSONAL_N', old.PERSONAL_N, new.PERSONAL_N);
+    if (new.MANAGER_ID is distinct from old.MANAGER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'MANAGER_ID', old.MANAGER_ID, new.MANAGER_ID);
+    if (new.JURIDICAL is distinct from old.JURIDICAL) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'JURIDICAL', old.JURIDICAL, new.JURIDICAL);
+    if (new.JUR_INN is distinct from old.JUR_INN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'JUR_INN', old.JUR_INN, new.JUR_INN);
+    if (new.JUR_DIRECTOR is distinct from old.JUR_DIRECTOR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'JUR_DIRECTOR', old.JUR_DIRECTOR, new.JUR_DIRECTOR);
+    if (new.JUR_BUH is distinct from old.JUR_BUH) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'JUR_BUH', old.JUR_BUH, new.JUR_BUH);
+    if (new.CGIS is distinct from old.CGIS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CGIS', old.CGIS, new.CGIS);
+    if (new.MOBILE_PHONE is distinct from old.MOBILE_PHONE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'MOBILE_PHONE', old.MOBILE_PHONE, new.MOBILE_PHONE);
+    if (new.HIS_COLOR is distinct from old.HIS_COLOR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'HIS_COLOR', old.HIS_COLOR, new.HIS_COLOR);
+    if (new.INVISIBLE is distinct from old.INVISIBLE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'INVISIBLE', old.INVISIBLE, new.INVISIBLE);
+    if (new.EMAIL is distinct from old.EMAIL) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'EMAIL', old.EMAIL, new.EMAIL);
+    --if (new.TIME_ON_MINUS is distinct from old.TIME_ON_MINUS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'TIME_ON_MINUS', old.TIME_ON_MINUS, new.TIME_ON_MINUS);
+    if (new.BIRTHDAY is distinct from old.BIRTHDAY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'BIRTHDAY', old.BIRTHDAY, new.BIRTHDAY);
+    if (new.ADRES_REGISTR is distinct from old.ADRES_REGISTR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'ADRES_REGISTR', old.ADRES_REGISTR, new.ADRES_REGISTR);
+    if (new.ORG_ID is distinct from old.ORG_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'ORG_ID', old.ORG_ID, new.ORG_ID);
+    if (new.VATG_ID is distinct from old.VATG_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'VATG_ID', old.VATG_ID, new.VATG_ID);
+    if (new.FLAT_DIGIT is distinct from old.FLAT_DIGIT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'FLAT_DIGIT', old.FLAT_DIGIT, new.FLAT_DIGIT);
+    if (new.TAP is distinct from old.TAP) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'TAP', old.TAP, new.TAP);
+    if (new.PREPAY is distinct from old.PREPAY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PREPAY', old.PREPAY, new.PREPAY);
+    if (new.PREPAY_TIME is distinct from old.PREPAY_TIME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PREPAY_TIME', old.PREPAY_TIME, new.PREPAY_TIME);
+    if (new.SECRET is distinct from old.SECRET) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'SECRET', old.SECRET, new.SECRET);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.HAND_CONTROL is distinct from old.HAND_CONTROL) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'HAND_CONTROL', old.HAND_CONTROL, new.HAND_CONTROL);
+    if (new.BANK is distinct from old.BANK) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'BANK', old.BANK, new.BANK);
+    if (new.BANK_ACCOUNT is distinct from old.BANK_ACCOUNT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'BANK_ACCOUNT', old.BANK_ACCOUNT, new.BANK_ACCOUNT);
+    if (new.EXTERNAL_ID is distinct from old.EXTERNAL_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'EXTERNAL_ID', old.EXTERNAL_ID, new.EXTERNAL_ID);
+    if (new.PASSPORT_VALID is distinct from old.PASSPORT_VALID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'PASSPORT_VALID', old.PASSPORT_VALID, new.PASSPORT_VALID);
+    if (new.CONTRACT_BASIS is distinct from old.CONTRACT_BASIS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'CONTRACT_BASIS', old.CONTRACT_BASIS, new.CONTRACT_BASIS);
+    if (new.BANK_ID is distinct from old.BANK_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'U', new.CUSTOMER_ID, 'BANK_ID', old.BANK_ID, new.BANK_ID);
+  end
+  else begin
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.CUST_CODE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CUST_CODE', old.CUST_CODE, 'DELETE');
+    if (not old.HOUSE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'HOUSE_ID', old.HOUSE_ID, 'DELETE');
+    if (not old.ACCOUNT_NO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'ACCOUNT_NO', old.ACCOUNT_NO, 'DELETE');
+    if (not old.DOGOVOR_NO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'DOGOVOR_NO', old.DOGOVOR_NO, 'DELETE');
+    if (not old.SURNAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'SURNAME', old.SURNAME, 'DELETE');
+    if (not old.FIRSTNAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'FIRSTNAME', old.FIRSTNAME, 'DELETE');
+    if (not old.MIDLENAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'MIDLENAME', old.MIDLENAME, 'DELETE');
+    if (not old.INITIALS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'INITIALS', old.INITIALS, 'DELETE');
+    if (not old.CONTRACT_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, 'DELETE');
+    if (not old.ACTIVIZ_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'ACTIVIZ_DATE', old.ACTIVIZ_DATE, 'DELETE');
+    if (not old.PHONE_NO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PHONE_NO', old.PHONE_NO, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.VALID_TO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'VALID_TO', old.VALID_TO, 'DELETE');
+    if (not old.CUST_STATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CUST_STATE', old.CUST_STATE, 'DELETE');
+    if (not old.CUST_STATE_DESCR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CUST_STATE_DESCR', old.CUST_STATE_DESCR, 'DELETE');
+    if (not old.CUST_PROP is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CUST_PROP', old.CUST_PROP, 'DELETE');
+    if (not old.CUST_PROP_DESCR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CUST_PROP_DESCR', old.CUST_PROP_DESCR, 'DELETE');
+    if (not old.FLAT_NO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'FLAT_NO', old.FLAT_NO, 'DELETE');
+    if (not old.DEBT_SUM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'DEBT_SUM', old.DEBT_SUM, 'DELETE');
+    if (not old.PASSPORT_NUMBER is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PASSPORT_NUMBER', old.PASSPORT_NUMBER, 'DELETE');
+    if (not old.PASSPORT_REGISTRATION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PASSPORT_REGISTRATION', old.PASSPORT_REGISTRATION, 'DELETE');
+    if (not old.PERSONAL_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PERSONAL_N', old.PERSONAL_N, 'DELETE');
+    if (not old.MANAGER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'MANAGER_ID', old.MANAGER_ID, 'DELETE');
+    if (not old.JURIDICAL is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'JURIDICAL', old.JURIDICAL, 'DELETE');
+    if (not old.JUR_INN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'JUR_INN', old.JUR_INN, 'DELETE');
+    if (not old.JUR_DIRECTOR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'JUR_DIRECTOR', old.JUR_DIRECTOR, 'DELETE');
+    if (not old.JUR_BUH is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'JUR_BUH', old.JUR_BUH, 'DELETE');
+    if (not old.CGIS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CGIS', old.CGIS, 'DELETE');
+    if (not old.MOBILE_PHONE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'MOBILE_PHONE', old.MOBILE_PHONE, 'DELETE');
+    if (not old.HIS_COLOR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'HIS_COLOR', old.HIS_COLOR, 'DELETE');
+    if (not old.INVISIBLE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'INVISIBLE', old.INVISIBLE, 'DELETE');
+    if (not old.EMAIL is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'EMAIL', old.EMAIL, 'DELETE');
+    if (not old.TIME_ON_MINUS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'TIME_ON_MINUS', old.TIME_ON_MINUS, 'DELETE');
+    if (not old.BIRTHDAY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'BIRTHDAY', old.BIRTHDAY, 'DELETE');
+    if (not old.ADRES_REGISTR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'ADRES_REGISTR', old.ADRES_REGISTR, 'DELETE');
+    if (not old.ORG_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'ORG_ID', old.ORG_ID, 'DELETE');
+    if (not old.VATG_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'VATG_ID', old.VATG_ID, 'DELETE');
+    if (not old.FLAT_DIGIT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'FLAT_DIGIT', old.FLAT_DIGIT, 'DELETE');
+    if (not old.TAP is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'TAP', old.TAP, 'DELETE');
+    if (not old.PREPAY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PREPAY', old.PREPAY, 'DELETE');
+    if (not old.PREPAY_TIME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PREPAY_TIME', old.PREPAY_TIME, 'DELETE');
+    if (not old.SECRET is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'SECRET', old.SECRET, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.HAND_CONTROL is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'HAND_CONTROL', old.HAND_CONTROL, 'DELETE');
+    if (not old.BANK is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'BANK', old.BANK, 'DELETE');
+    if (not old.BANK_ACCOUNT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'BANK_ACCOUNT', old.BANK_ACCOUNT, 'DELETE');
+    if (not old.EXTERNAL_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'EXTERNAL_ID', old.EXTERNAL_ID, 'DELETE');
+    if (not old.PASSPORT_VALID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'PASSPORT_VALID', old.PASSPORT_VALID, 'DELETE');
+    if (not old.CONTRACT_BASIS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'CONTRACT_BASIS', old.CONTRACT_BASIS, 'DELETE');
+    if (not old.BANK_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER', 'D', old.CUSTOMER_ID, 'BANK_ID', old.BANK_ID, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER CUSTOMER_ATTRIBUTES_BIU0 FOR CUSTOMER_ATTRIBUTES 
@@ -22707,11 +24138,41 @@ begin
     new.ca_value = '';
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = cast('NOW' as timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = cast('NOW' as timestamp);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_CUSTOMER_ATTRIBUTES FOR CUSTOMER_ATTRIBUTES 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.CA_ID is distinct from old.CA_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'CA_ID', old.CA_ID, new.CA_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.O_ID is distinct from old.O_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'O_ID', old.O_ID, new.O_ID);
+    if (new.CA_VALUE is distinct from old.CA_VALUE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'CA_VALUE', old.CA_VALUE, new.CA_VALUE);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.RQ_ID is distinct from old.RQ_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'U', new.CA_ID, 'RQ_ID', old.RQ_ID, new.RQ_ID);
+  end
+  else begin
+    if (not old.CA_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'CA_ID', old.CA_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.O_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'O_ID', old.O_ID, 'DELETE');
+    if (not old.CA_VALUE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'CA_VALUE', old.CA_VALUE, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.RQ_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_ATTRIBUTES', 'D', old.CA_ID, 'RQ_ID', old.RQ_ID, 'DELETE');
   end
 end ^
 
@@ -22724,20 +24185,14 @@ begin
       or
       (new.O_ID is distinct from old.O_ID)) then begin
 
-    select
-        A_LINE
-      from ATRIBUTES_LINE(old.CUSTOMER_ID)
-    into :CODE;
+    CODE = ATTRIBUTES_LINE(old.CUSTOMER_ID);
 
     update CUSTOMER
     set CUST_PROP = :CODE
     where (CUSTOMER_ID = old.CUSTOMER_ID);
 
     if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then begin
-      select
-          A_LINE
-        from ATRIBUTES_LINE(new.CUSTOMER_ID)
-      into :CODE;
+      CODE = ATTRIBUTES_LINE(new.CUSTOMER_ID);
 
       update CUSTOMER
       set CUST_PROP = :CODE
@@ -22798,11 +24253,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = cast('NOW' as timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = cast('NOW' as timestamp);
   end
 end ^
 
@@ -22811,13 +24266,13 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = cast('NOW' as timestamp);
   if (new.date_on is null) then
     new.date_on = current_date;
   if (new.date_off is null) then
     new.date_off = cast('2100-01-01' as date);
   update customer_decoders d
-  set d.last_update = localtimestamp
+  set d.last_update = cast('NOW' as timestamp)
   where d.dec_id = new.decoder_id;
 end ^
 
@@ -22831,10 +24286,10 @@ begin
     new.date_off = cast('2100-01-01' as date);
 
   new.edit_by = current_user;
-  new.edit_on = localtimestamp;
+  new.edit_on = cast('NOW' as timestamp);
 
   update customer_decoders d
-  set d.last_update = localtimestamp
+  set d.last_update = cast('NOW' as timestamp)
   where d.dec_id = new.decoder_id;
 end ^
 
@@ -22843,7 +24298,7 @@ ACTIVE AFTER UPDATE OR DELETE POSITION 0
 as
 begin
   update customer_decoders d
-  set d.last_update = localtimestamp
+  set d.last_update = cast('NOW' as timestamp)
   where d.dec_id = old.decoder_id;
 end ^
 
@@ -22898,11 +24353,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = cast('NOW' as timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = cast('NOW' as timestamp);
   end
 end ^
 
@@ -22985,8 +24440,8 @@ begin
     new.Dec_Id = gen_id(Gen_Operations_Uid, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
-  new.last_update = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
+  new.last_update = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER CUSTOMER_DECODERS_AI FOR CUSTOMER_DECODERS 
@@ -23156,7 +24611,7 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER CUSTOMER_DOC_BU FOR CUSTOMER_DOC 
@@ -23182,50 +24637,7 @@ begin
     new.CE_ID = gen_id(GEN_EQ_ID, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
-end ^
-
-CREATE TRIGGER CUSTOMER_FILES_AU FOR CUSTOMER_FILES 
-ACTIVE AFTER UPDATE POSITION 0 
-as
-begin
-  if (new.Cf_Id is distinct from old.customer_id) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'Cf_Id', old.Cf_Id, new.Cf_Id);
-  if (new.Customer_Id is distinct from old.Customer_Id) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'CUSTOMER_ID', old.Customer_Id, new.Customer_Id);
-  if (new.Cf_Type is distinct from old.Cf_Type) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'CF_TYPE', old.Cf_Type, new.Cf_Type);
-  if (new.Name is distinct from old.Name) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'NAME', old.Name, new.Name);
-  if (new.Filename is distinct from old.Filename) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'FILENAME', old.Filename, new.Filename);
-  if (new.Notice is distinct from old.Notice) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'NOTICE', old.Notice, new.Notice);
-  if (new.Addons is distinct from old.Addons) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('CUSTOMER_FILES', 0, new.customer_id, 'ADDONS', old.Addons, new.Addons);
-end ^
-
-CREATE TRIGGER CUSTOMER_FILES_AD FOR CUSTOMER_FILES 
-ACTIVE AFTER DELETE POSITION 0 
-as
-begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('CUSTOMER_FILES', 0, old.customer_id, 'CUSTOMER_ID', 'DELETE', old.Customer_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('CUSTOMER_FILES', 0, old.customer_id, 'NAME', 'DELETE', old.name);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('CUSTOMER_FILES', 0, old.customer_id, 'CF_TYPE', 'DELETE', old.cf_type);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('CUSTOMER_FILES', 0, old.customer_id, 'FILENAME', 'DELETE', old.filename);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('CUSTOMER_FILES', 0, old.customer_id, 'NOTICE', 'DELETE', old.notice);
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER CUSTOMER_FILES_BI FOR CUSTOMER_FILES 
@@ -23241,7 +24653,49 @@ begin
   end
   begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_CUSTOMER_FILES FOR CUSTOMER_FILES 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.CF_ID is distinct from old.CF_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'CF_ID', old.CF_ID, new.CF_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.NAME is distinct from old.NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'NAME', old.NAME, new.NAME);
+    if (new.CF_TYPE is distinct from old.CF_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'CF_TYPE', old.CF_TYPE, new.CF_TYPE);
+    if (new.DATE_FROM is distinct from old.DATE_FROM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'DATE_FROM', old.DATE_FROM, new.DATE_FROM);
+    if (new.DATE_TO is distinct from old.DATE_TO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'DATE_TO', old.DATE_TO, new.DATE_TO);
+    if (new.FILENAME is distinct from old.FILENAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'FILENAME', old.FILENAME, new.FILENAME);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.ACT is distinct from old.ACT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'ACT', old.ACT, new.ACT);
+    if (new.ANOTICE is distinct from old.ANOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'ANOTICE', old.ANOTICE, new.ANOTICE);
+    --if (new.CONTENT is distinct from old.CONTENT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'CONTENT', old.CONTENT, new.CONTENT);
+    if (new.ADDONS is distinct from old.ADDONS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'U', new.CF_ID, 'ADDONS', old.ADDONS, new.ADDONS);
+  end
+  else begin
+    if (not old.CF_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'CF_ID', old.CF_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'NAME', old.NAME, 'DELETE');
+    if (not old.CF_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'CF_TYPE', old.CF_TYPE, 'DELETE');
+    if (not old.DATE_FROM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'DATE_FROM', old.DATE_FROM, 'DELETE');
+    if (not old.DATE_TO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'DATE_TO', old.DATE_TO, 'DELETE');
+    if (not old.FILENAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'FILENAME', old.FILENAME, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.ACT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'ACT', old.ACT, 'DELETE');
+    if (not old.ANOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'ANOTICE', old.ANOTICE, 'DELETE');
+    --if (not old.CONTENT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'CONTENT', old.CONTENT, 'DELETE');
+    if (not old.ADDONS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('CUSTOMER_FILES', 'D', old.CF_ID, 'ADDONS', old.ADDONS, 'DELETE');
   end
 end ^
 
@@ -23250,7 +24704,7 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER DECODER_PACKETS_AI FOR DECODER_PACKETS 
@@ -23277,6 +24731,26 @@ ACTIVE AFTER DELETE POSITION 0
 as
 begin
   execute procedure DIGITAL_EVENT_DECODER(old.decoder_n, null, old.Service_Id);
+end ^
+
+CREATE TRIGGER TRLOG_DECODER_PACKETS FOR DECODER_PACKETS 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.DECODER_N is distinct from old.DECODER_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'U', new.DECODER_N, 'DECODER_N', old.DECODER_N, new.DECODER_N);
+    if (new.SERVICE_ID is distinct from old.SERVICE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'U', new.DECODER_N, 'SERVICE_ID', old.SERVICE_ID, new.SERVICE_ID);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'U', new.DECODER_N, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'U', new.DECODER_N, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'U', new.DECODER_N, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+  end
+  else begin
+    if (not old.DECODER_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'D', old.DECODER_N, 'DECODER_N', old.DECODER_N, 'DELETE');
+    if (not old.SERVICE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'D', old.DECODER_N, 'SERVICE_ID', old.SERVICE_ID, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'D', old.DECODER_N, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'D', old.DECODER_N, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DECODER_PACKETS', 'D', old.DECODER_N, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER DEVICES_BI0 FOR DEVICES 
@@ -23372,8 +24846,9 @@ begin
     new.DATE_TO = '2100-01-01';
   if (new.Srv_Type is null) then
     new.Srv_Type = -1;
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER DISCOUNT_FACTOR_AI FOR DISCOUNT_FACTOR 
@@ -23453,21 +24928,44 @@ CREATE TRIGGER DISCOUNT_FACTOR_AD FOR DISCOUNT_FACTOR
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'CUSTOMER_ID', 'DELETE', old.Customer_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'DATE_FROM', 'DELETE', cast(old.Date_From as varchar(10)));
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'DATE_TO', 'DELETE', cast(old.Date_To as varchar(10)));
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'FACTOR_VALUE', 'DELETE', old.Factor_Value);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'SERV_ID', 'DELETE', old.Serv_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('DISCOUNT_FACTOR', 0, old.customer_id, 'SRV_TYPE', 'DELETE', old.Srv_Type);
-
   if (old.Date_From < current_date) then begin
     execute procedure FULL_RECALC_CUSTOMER(old.CUSTOMER_ID, old.Date_From);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_DISCOUNT_FACTOR FOR DISCOUNT_FACTOR 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.DISCOUNT_ID is distinct from old.DISCOUNT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'DISCOUNT_ID', old.DISCOUNT_ID, new.DISCOUNT_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.DATE_FROM is distinct from old.DATE_FROM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'DATE_FROM', old.DATE_FROM, new.DATE_FROM);
+    if (new.DATE_TO is distinct from old.DATE_TO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'DATE_TO', old.DATE_TO, new.DATE_TO);
+    if (new.FACTOR_VALUE is distinct from old.FACTOR_VALUE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'FACTOR_VALUE', old.FACTOR_VALUE, new.FACTOR_VALUE);
+    if (new.SERV_ID is distinct from old.SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'SERV_ID', old.SERV_ID, new.SERV_ID);
+    if (new.SRV_TYPE is distinct from old.SRV_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'SRV_TYPE', old.SRV_TYPE, new.SRV_TYPE);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.PROMO_ID is distinct from old.PROMO_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'U', new.DISCOUNT_ID, 'PROMO_ID', old.PROMO_ID, new.PROMO_ID);
+  end
+  else begin
+    if (not old.DISCOUNT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'DISCOUNT_ID', old.DISCOUNT_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.DATE_FROM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'DATE_FROM', old.DATE_FROM, 'DELETE');
+    if (not old.DATE_TO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'DATE_TO', old.DATE_TO, 'DELETE');
+    if (not old.FACTOR_VALUE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'FACTOR_VALUE', old.FACTOR_VALUE, 'DELETE');
+    if (not old.SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'SERV_ID', old.SERV_ID, 'DELETE');
+    if (not old.SRV_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'SRV_TYPE', old.SRV_TYPE, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.PROMO_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DISCOUNT_FACTOR', 'D', old.DISCOUNT_ID, 'PROMO_ID', old.PROMO_ID, 'DELETE');
   end
 end ^
 
@@ -23532,7 +25030,7 @@ CREATE TRIGGER DISTRIB_CONTRACT_REPORTS_BIU0 FOR DISTRIB_CONTRACT_REPORTS
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
-  NEW.Period = NEW.Period - extract(day from NEW.Period) + 1;
+  NEW.Period = MONTH_FIRST_DAY(NEW.Period);
 end ^
 
 CREATE TRIGGER DOC_LIST_BI FOR DOC_LIST 
@@ -23542,7 +25040,7 @@ begin
   new.Doc_Id = gen_id(Gen_Journal, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER DOC_LIST_BU FOR DOC_LIST 
@@ -23553,49 +25051,50 @@ begin
   new.Edit_On = localtimestamp;
 end ^
 
-CREATE TRIGGER DOC_LIST_AU FOR DOC_LIST 
-ACTIVE AFTER UPDATE POSITION 0 
+CREATE TRIGGER TRLOG_DOC_LIST FOR DOC_LIST 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
 as
 begin
-  IF (new.Doc_Id is distinct from old.Doc_Id) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_ID', OLD.Doc_Id, NEW.Doc_Id);
-  IF (new.Doc_Type is distinct from old.Doc_Type) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'O_TYPE', OLD.Doc_Type, NEW.Doc_Type);
-  IF (new.Doc_Number is distinct from old.Doc_Number) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_NUMBER', OLD.Doc_Number, NEW.Doc_Number);
-  IF (new.Surname is distinct from old.Surname) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'SURNAME', OLD.Surname, NEW.Surname);
-  IF (new.Firstname is distinct from old.Firstname) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'FIRSTNAME', OLD.Firstname, NEW.Firstname);
-  IF (new.Midlename is distinct from old.Midlename) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'MIDLENAME', OLD.Midlename, NEW.Midlename);
-  IF (new.Doc_Reg is distinct from old.Doc_Reg) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_REG', OLD.Doc_Reg, NEW.Doc_Reg);
-  IF (new.Doc_Date is distinct from old.Doc_Date) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'DOC_DATE', OLD.Doc_Date, NEW.Doc_Date);
-  IF (new.Personal_N is distinct from old.Personal_N) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'PERSONAL_N', OLD.Personal_N, NEW.Personal_N);
-  IF (new.Birthday is distinct from old.Birthday) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'BIRTHDAY', OLD.Birthday, NEW.Birthday);
-  IF (new.Addr_Registr is distinct from old.Addr_Registr) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'ADDR_REGISTR', OLD.Addr_Registr, NEW.Addr_Registr);
-  IF (new.Addr_Birth is distinct from old.Addr_Birth) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'ADDR_BIRTH', OLD.Addr_Birth, NEW.Addr_Birth);
-  IF (new.Notice is distinct from old.Notice) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('DOC_LIST', 0, NEW.Doc_Id, 'NOTICE', OLD.Notice, NEW.Notice);
+  if (UPDATING) then begin
+    if (new.DOC_TYPE is distinct from old.DOC_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'DOC_TYPE', old.DOC_TYPE, new.DOC_TYPE);
+    if (new.DOC_NUMBER is distinct from old.DOC_NUMBER) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'DOC_NUMBER', old.DOC_NUMBER, new.DOC_NUMBER);
+    if (new.SURNAME is distinct from old.SURNAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'SURNAME', old.SURNAME, new.SURNAME);
+    if (new.FIRSTNAME is distinct from old.FIRSTNAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'FIRSTNAME', old.FIRSTNAME, new.FIRSTNAME);
+    if (new.MIDLENAME is distinct from old.MIDLENAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'MIDLENAME', old.MIDLENAME, new.MIDLENAME);
+    if (new.DOC_REG is distinct from old.DOC_REG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'DOC_REG', old.DOC_REG, new.DOC_REG);
+    if (new.DOC_DATE is distinct from old.DOC_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'DOC_DATE', old.DOC_DATE, new.DOC_DATE);
+    if (new.PERSONAL_N is distinct from old.PERSONAL_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'PERSONAL_N', old.PERSONAL_N, new.PERSONAL_N);
+    if (new.BIRTHDAY is distinct from old.BIRTHDAY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'BIRTHDAY', old.BIRTHDAY, new.BIRTHDAY);
+    if (new.ADDR_REGISTR is distinct from old.ADDR_REGISTR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'ADDR_REGISTR', old.ADDR_REGISTR, new.ADDR_REGISTR);
+    if (new.ADDR_BIRTH is distinct from old.ADDR_BIRTH) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'ADDR_BIRTH', old.ADDR_BIRTH, new.ADDR_BIRTH);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.CF_ID is distinct from old.CF_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'CF_ID', old.CF_ID, new.CF_ID);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.DOC_ID is distinct from old.DOC_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'U', new.DOC_NUMBER, 'DOC_ID', old.DOC_ID, new.DOC_ID);
+  end
+  else begin
+    if (not old.DOC_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'DOC_TYPE', OLD.DOC_NUMBER, 'DELETE');
+    if (not old.DOC_NUMBER is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'DOC_NUMBER', old.DOC_NUMBER, 'DELETE');
+    if (not old.SURNAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'SURNAME', old.SURNAME, 'DELETE');
+    if (not old.FIRSTNAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'FIRSTNAME', old.FIRSTNAME, 'DELETE');
+    if (not old.MIDLENAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'MIDLENAME', old.MIDLENAME, 'DELETE');
+    if (not old.DOC_REG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'DOC_REG', old.DOC_REG, 'DELETE');
+    if (not old.DOC_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'DOC_DATE', old.DOC_DATE, 'DELETE');
+    if (not old.PERSONAL_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'PERSONAL_N', old.PERSONAL_N, 'DELETE');
+    if (not old.BIRTHDAY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'BIRTHDAY', old.BIRTHDAY, 'DELETE');
+    if (not old.ADDR_REGISTR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'ADDR_REGISTR', old.ADDR_REGISTR, 'DELETE');
+    if (not old.ADDR_BIRTH is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'ADDR_BIRTH', old.ADDR_BIRTH, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.CF_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'CF_ID', old.CF_ID, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.DOC_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('DOC_LIST', 'D', OLD.DOC_NUMBER, 'DOC_ID', old.DOC_ID, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER DVB_NETWORK_AD FOR DVB_NETWORK 
@@ -23767,9 +25266,6 @@ begin
         insert into equipment_coverage (eid, house_id)
         values (new.eid, new.house_id);
     end
-
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('EQUIPMENT', 1, new.eid, 'ADDRESS', old.house_id, new.house_id);
   end
 
   -- если порт очистили, сборсим в таблице портов
@@ -23841,14 +25337,14 @@ begin
     new.mac = Mac_Format(new.MAC);
   end
 
-  new.last_update = localtimestamp;
+  new.last_update = CAST('NOW' AS timestamp);
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -23869,6 +25365,86 @@ begin
   end
 end ^
 
+CREATE TRIGGER TRLOG_EQUIPMENT FOR EQUIPMENT 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.EID is distinct from old.EID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EID', old.EID, new.EID);
+    if (new.HOUSE_ID is distinct from old.HOUSE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'HOUSE_ID', old.HOUSE_ID, new.HOUSE_ID);
+    if (new.NAME is distinct from old.NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'NAME', old.NAME, new.NAME);
+    if (new.IP is distinct from old.IP) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'IP', old.IP, new.IP);
+    if (new.MAC is distinct from old.MAC) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'MAC', old.MAC, new.MAC);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.EQ_TYPE is distinct from old.EQ_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_TYPE', old.EQ_TYPE, new.EQ_TYPE);
+    if (new.PORCH_N is distinct from old.PORCH_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'PORCH_N', old.PORCH_N, new.PORCH_N);
+    if (new.FLOOR_N is distinct from old.FLOOR_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'FLOOR_N', old.FLOOR_N, new.FLOOR_N);
+    if (new.MASK is distinct from old.MASK) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'MASK', old.MASK, new.MASK);
+    if (new.VLAN_ID is distinct from old.VLAN_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'VLAN_ID', old.VLAN_ID, new.VLAN_ID);
+    if (new.IP_BIN is distinct from old.IP_BIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'IP_BIN', old.IP_BIN, new.IP_BIN);
+    if (new.PLACE is distinct from old.PLACE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'PLACE', old.PLACE, new.PLACE);
+    if (new.EQ_GROUP is distinct from old.EQ_GROUP) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_GROUP', old.EQ_GROUP, new.EQ_GROUP);
+    if (new.E_ADMIN is distinct from old.E_ADMIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'E_ADMIN', old.E_ADMIN, new.E_ADMIN);
+    if (new.E_PASS is distinct from old.E_PASS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'E_PASS', old.E_PASS, new.E_PASS);
+    if (new.LAST_UPDATE is distinct from old.LAST_UPDATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'LAST_UPDATE', old.LAST_UPDATE, new.LAST_UPDATE);
+    if (new.SERIAL_N is distinct from old.SERIAL_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'SERIAL_N', old.SERIAL_N, new.SERIAL_N);
+    if (new.PARENT_ID is distinct from old.PARENT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'PARENT_ID', old.PARENT_ID, new.PARENT_ID);
+    if (new.PARENT_PORT is distinct from old.PARENT_PORT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'PARENT_PORT', old.PARENT_PORT, new.PARENT_PORT);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.EQ_LINE is distinct from old.EQ_LINE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_LINE', old.EQ_LINE, new.EQ_LINE);
+    if (new.SIGNAL_IN is distinct from old.SIGNAL_IN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'SIGNAL_IN', old.SIGNAL_IN, new.SIGNAL_IN);
+    if (new.SIGNAL_OUT is distinct from old.SIGNAL_OUT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'SIGNAL_OUT', old.SIGNAL_OUT, new.SIGNAL_OUT);
+    if (new.EQ_ACTIVE is distinct from old.EQ_ACTIVE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_ACTIVE', old.EQ_ACTIVE, new.EQ_ACTIVE);
+    if (new.EQ_DELIVERY_DATE is distinct from old.EQ_DELIVERY_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_DELIVERY_DATE', old.EQ_DELIVERY_DATE, new.EQ_DELIVERY_DATE);
+    if (new.EQ_DELIVERY_COST is distinct from old.EQ_DELIVERY_COST) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_DELIVERY_COST', old.EQ_DELIVERY_COST, new.EQ_DELIVERY_COST);
+    if (new.EQ_REGNUBER is distinct from old.EQ_REGNUBER) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'EQ_REGNUBER', old.EQ_REGNUBER, new.EQ_REGNUBER);
+    if (new.IPV6 is distinct from old.IPV6) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'IPV6', old.IPV6, new.IPV6);
+    if (new.NODE_ID is distinct from old.NODE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'NODE_ID', old.NODE_ID, new.NODE_ID);
+    if (new.M_ID is distinct from old.M_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'M_ID', old.M_ID, new.M_ID);
+    if (new.SYSNAME is distinct from old.SYSNAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'U', new.EID, 'SYSNAME', old.SYSNAME, new.SYSNAME);
+  end
+  else begin
+    if (not old.EID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EID', old.EID, 'DELETE');
+    if (not old.HOUSE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'HOUSE_ID', old.HOUSE_ID, 'DELETE');
+    if (not old.NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'NAME', old.NAME, 'DELETE');
+    if (not old.IP is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'IP', old.IP, 'DELETE');
+    if (not old.MAC is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'MAC', old.MAC, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.EQ_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_TYPE', old.EQ_TYPE, 'DELETE');
+    if (not old.PORCH_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'PORCH_N', old.PORCH_N, 'DELETE');
+    if (not old.FLOOR_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'FLOOR_N', old.FLOOR_N, 'DELETE');
+    if (not old.MASK is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'MASK', old.MASK, 'DELETE');
+    if (not old.VLAN_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'VLAN_ID', old.VLAN_ID, 'DELETE');
+    if (not old.IP_BIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'IP_BIN', old.IP_BIN, 'DELETE');
+    if (not old.PLACE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'PLACE', old.PLACE, 'DELETE');
+    if (not old.EQ_GROUP is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_GROUP', old.EQ_GROUP, 'DELETE');
+    if (not old.E_ADMIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'E_ADMIN', old.E_ADMIN, 'DELETE');
+    if (not old.E_PASS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'E_PASS', old.E_PASS, 'DELETE');
+    if (not old.LAST_UPDATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'LAST_UPDATE', old.LAST_UPDATE, 'DELETE');
+    if (not old.SERIAL_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'SERIAL_N', old.SERIAL_N, 'DELETE');
+    if (not old.PARENT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'PARENT_ID', old.PARENT_ID, 'DELETE');
+    if (not old.PARENT_PORT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'PARENT_PORT', old.PARENT_PORT, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.EQ_LINE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_LINE', old.EQ_LINE, 'DELETE');
+    if (not old.SIGNAL_IN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'SIGNAL_IN', old.SIGNAL_IN, 'DELETE');
+    if (not old.SIGNAL_OUT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'SIGNAL_OUT', old.SIGNAL_OUT, 'DELETE');
+    if (not old.EQ_ACTIVE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_ACTIVE', old.EQ_ACTIVE, 'DELETE');
+    if (not old.EQ_DELIVERY_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_DELIVERY_DATE', old.EQ_DELIVERY_DATE, 'DELETE');
+    if (not old.EQ_DELIVERY_COST is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_DELIVERY_COST', old.EQ_DELIVERY_COST, 'DELETE');
+    if (not old.EQ_REGNUBER is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'EQ_REGNUBER', old.EQ_REGNUBER, 'DELETE');
+    if (not old.IPV6 is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'IPV6', old.IPV6, 'DELETE');
+    if (not old.NODE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'NODE_ID', old.NODE_ID, 'DELETE');
+    if (not old.M_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'M_ID', old.M_ID, 'DELETE');
+    if (not old.SYSNAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('EQUIPMENT', 'D', old.EID, 'SYSNAME', old.SYSNAME, 'DELETE');
+  end
+end ^
+
 CREATE TRIGGER EQUIPMENT_ATTRIBUTES_BIU0 FOR EQUIPMENT_ATTRIBUTES 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
@@ -23878,11 +25454,11 @@ begin
 
   if (inserting) then begin
     new.Added_By = current_user;
-    new.Added_On = localtimestamp;
+    new.Added_On = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -23901,7 +25477,7 @@ begin
     new.eq_id = gen_id(GEN_EQ_ID, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER EQUIPMENT_DGTL_AU0 FOR EQUIPMENT_DVB 
@@ -23958,11 +25534,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -23992,8 +25568,9 @@ begin
     new.HOUSE_ID = gen_id(gen_operations_uid, 1);
   if (new.Q_Flat is null) then
     new.Q_Flat = 0;
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER HOUSE_BU FOR HOUSE 
@@ -24051,7 +25628,7 @@ begin
   into new.FLAT_DIGIT;
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER HOUSEFLATS_BU0 FOR HOUSEFLATS 
@@ -24220,8 +25797,9 @@ begin
     new.HA_ID = gen_id(gen_uid, 1);
   if (new.HA_Value is null) then
     new.HA_Value = '';
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER HOUSES_ATTRIBUTES_BU FOR HOUSES_ATTRIBUTES 
@@ -24252,11 +25830,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -24293,7 +25871,7 @@ begin
     new.Disabled = 0;
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER IPTV_GROUP_BU FOR IPTV_GROUP 
@@ -24312,8 +25890,9 @@ as
 begin
   if (new.Iga_Id is null) then
     new.Iga_Id = gen_id(Gen_Operations_Uid, 1);
+
   new.Added_By = current_user;
-  new.Added_On = localtimestamp;
+  new.Added_On = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER IPTV_GROUP_ATTRIBUTES_BU FOR IPTV_GROUP_ATTRIBUTES 
@@ -24329,7 +25908,7 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER IPTV_GROUP_CHANNELS_BU FOR IPTV_GROUP_CHANNELS 
@@ -24423,7 +26002,7 @@ begin
   new.Is_Net = coalesce(new.Is_Net, 0);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER MATERIALS_BU FOR MATERIALS 
@@ -24438,19 +26017,53 @@ begin
   new.edit_on = localtimestamp;
 end ^
 
-CREATE TRIGGER MATERIALS_GROUP_BI FOR MATERIALS_GROUP 
-ACTIVE BEFORE INSERT POSITION 0 
+CREATE TRIGGER MATERIALS_GROUP_AU FOR MATERIALS_GROUP 
+ACTIVE AFTER UPDATE POSITION 0 
 as
 begin
-  if (NEW.MG_ID is NULL) then NEW.MG_ID = GEN_ID(GEN_UID, 1);
+  if ((new.Deleted = 1) and (coalesce(old.Deleted, 0) = 0)) then
+    update Materials
+    set Mg_Id = coalesce(old.Parent_Id, null)
+    where (Mg_Id = old.Mg_Id);
 end ^
 
 CREATE TRIGGER MATERIALS_GROUP_BD FOR MATERIALS_GROUP 
 ACTIVE BEFORE DELETE POSITION 0 
 as
 begin
-  UPDATE Materials SET Mg_Id = null
+  UPDATE Materials SET Mg_Id = coalesce(OLD.Parent_Id, null)
   WHERE (Mg_Id = OLD.Mg_Id);
+end ^
+
+CREATE TRIGGER MATERIALS_GROUP_BI FOR MATERIALS_GROUP 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
+as
+begin
+  new.MG_ID = coalesce(new.MG_ID, gen_id(GEN_UID, 1));
+  new.Deleted = coalesce(new.Deleted, 0);
+
+  if (not new.Parent_Id is null) then begin
+    new.PATH = (select first 1
+                    path
+                  from (with recursive GroupsTree as (select
+                                                          mp.Mg_Id
+                                                        , mp.Mg_Name as path
+                                                        from MATERIALS_GROUP mp
+                                                        where mp.Parent_Id is null
+                                                      union all
+                                                      select
+                                                          mc.Mg_Id
+                                                        , gt.path || ' > ' || mc.Mg_Name as path
+                                                        from MATERIALS_GROUP mc
+                                                             inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id) select
+                                                                                                                      Mg_Id
+                                                                                                                    , path
+                                                                                                                    from GroupsTree)
+                  where Mg_Id = new.Parent_Id);
+    new.PATH = coalesce(new.PATH, '')||' > '||new.Mg_Name;
+  end
+  else
+    new.PATH = '';
 end ^
 
 CREATE TRIGGER MATERIALS_IN_DOC_BI FOR MATERIALS_IN_DOC 
@@ -24463,7 +26076,8 @@ begin
     new.M_Quant = 0;
   if (new.B_Quant is null) then
     new.B_Quant = 0;
-  new.Added_On = localtimestamp;
+
+  new.Added_On = CAST('NOW' AS timestamp);
   new.Added_By = current_user;
 end ^
 
@@ -24492,11 +26106,33 @@ begin
   new.Edit_By = current_user;
 end ^
 
+CREATE TRIGGER MATERIALS_IN_DOC_BD FOR MATERIALS_IN_DOC 
+ACTIVE BEFORE DELETE POSITION 0 
+as
+begin
+  if (exists(select
+                 Doc_Id
+               from Material_Docs
+               where Doc_Id = old.Doc_Id
+                     and Doc_Closed = 1)) then
+    exception E_Cannot_Delete;
+end ^
+
+CREATE TRIGGER MATERIALS_IN_DOC_AD FOR MATERIALS_IN_DOC 
+ACTIVE AFTER DELETE POSITION 0 
+as
+begin
+  delete from Materials_In_Doc_Unit
+      where (Doc_Id = old.Doc_Id)
+            and (M_Id = old.M_Id)
+            and (Id = old.Id);
+end ^
+
 CREATE TRIGGER MATERIALS_IN_DOC_UNIT_BI FOR MATERIALS_IN_DOC_UNIT 
 ACTIVE BEFORE INSERT POSITION 0 
 as
 begin
-  new.Added_On = localtimestamp;
+  new.Added_On = CAST('NOW' AS timestamp);
   new.Added_By = current_user;
 end ^
 
@@ -24513,6 +26149,15 @@ ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
   new.Mr_Quant = coalesce(new.Mr_Quant, 0);
+
+  if (inserting) then begin
+    new.ADDED_BY = current_user;
+    new.ADDED_ON = CAST('NOW' AS timestamp);
+  end
+  else begin
+    new.Edit_By = current_user;
+    new.Edit_On = CAST('NOW' AS timestamp);
+  end
 end ^
 
 CREATE TRIGGER MATERIAL_DOCS_BI0 FOR MATERIAL_DOCS 
@@ -24521,7 +26166,8 @@ as
 begin
   if (new.Doc_Id is null) then
     new.Doc_Id = gen_id(Gen_Uid, 1);
-  new.Added_On = localtimestamp;
+
+  new.Added_On = CAST('NOW' AS timestamp);
   new.Added_By = current_user;
 end ^
 
@@ -24559,9 +26205,10 @@ begin
     new.Mes_Result = 0;
   if (new.Mes_Prior is null) then
     new.Mes_Prior = 0;
+
   if (new.added_by is null) then
     new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER MESSAGES_BU FOR MESSAGES 
@@ -24576,48 +26223,50 @@ begin
     new.Send_Date = localtimestamp;
 end ^
 
-CREATE TRIGGER MESSAGES_BD FOR MESSAGES 
-ACTIVE BEFORE DELETE POSITION 0 
+CREATE TRIGGER TRLOG_MESSAGES FOR MESSAGES 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
 as
-declare variable id Integer;
 begin
-  IF (not OLD.CUSTOMER_ID IS NULL) THEN begin
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, OLD.CUSTOMER_ID, 'CUSTOMER_ID', 'DELETE', OLD.CUSTOMER_ID);
-    id = OLD.CUSTOMER_ID;
+  if (UPDATING) then begin
+    if (new.MES_ID is distinct from old.MES_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'MES_ID', old.MES_ID, new.MES_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.MES_TYPE is distinct from old.MES_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'MES_TYPE', old.MES_TYPE, new.MES_TYPE);
+    if (new.RECIVER is distinct from old.RECIVER) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'RECIVER', old.RECIVER, new.RECIVER);
+    if (new.MES_HEAD is distinct from old.MES_HEAD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'MES_HEAD', old.MES_HEAD, new.MES_HEAD);
+    if (new.MES_TEXT is distinct from old.MES_TEXT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'MES_TEXT', old.MES_TEXT, new.MES_TEXT);
+    if (new.MES_RESULT is distinct from old.MES_RESULT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'MES_RESULT', old.MES_RESULT, new.MES_RESULT);
+    if (new.SEND_DATE is distinct from old.SEND_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'SEND_DATE', old.SEND_DATE, new.SEND_DATE);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.MES_PRIOR is distinct from old.MES_PRIOR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'MES_PRIOR', old.MES_PRIOR, new.MES_PRIOR);
+    if (new.EXT_ID is distinct from old.EXT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'EXT_ID', old.EXT_ID, new.EXT_ID);
+    if (new.TPL_ID is distinct from old.TPL_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'TPL_ID', old.TPL_ID, new.TPL_ID);
+    if (new.INFO_PERIOD is distinct from old.INFO_PERIOD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'INFO_PERIOD', old.INFO_PERIOD, new.INFO_PERIOD);
+    if (new.INFO_INTERVAL is distinct from old.INFO_INTERVAL) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'INFO_INTERVAL', old.INFO_INTERVAL, new.INFO_INTERVAL);
+    if (new.TAG is distinct from old.TAG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'TAG', old.TAG, new.TAG);
+    if (new.DIRECT is distinct from old.DIRECT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'DIRECT', old.DIRECT, new.DIRECT);
+    if (new.PARENT_ID is distinct from old.PARENT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'U', new.MES_ID, 'PARENT_ID', old.PARENT_ID, new.PARENT_ID);
   end
-  else
-    id = -1;
-  IF (not OLD.Mes_Type IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'MES_TYPE', 'DELETE', OLD.Mes_Type);
-  IF (not OLD.Reciver IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'RECIVER', 'DELETE', OLD.Reciver);
-  IF (not OLD.Mes_Head IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'MES_HEAD', 'DELETE', OLD.Mes_Head);
-  IF (not OLD.Mes_Text IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'MES_TEXT', 'DELETE', OLD.Mes_Text);
-  IF (not OLD.Mes_Result IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'MES_RESULT', 'DELETE', OLD.Mes_Result);
-  IF (not OLD.Send_Date IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'SEND_DATE', 'DELETE', OLD.Send_Date);
-  IF (not OLD.Ext_Id IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'EXT_ID', 'DELETE', OLD.Ext_Id);
-  IF (not OLD.Direct IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'DIRECT', 'DELETE', OLD.Direct);
-  IF (not OLD.ADDED_BY IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'ADDED_BY', 'DELETE', OLD.ADDED_BY);
-  IF (not OLD.ADDED_ON IS NULL) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('MESSAGES', 0, :id, 'ADDED_ON', 'DELETE', OLD.ADDED_ON);
+  else begin
+    if (not old.MES_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'MES_ID', old.MES_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.MES_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'MES_TYPE', old.MES_TYPE, 'DELETE');
+    if (not old.RECIVER is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'RECIVER', old.RECIVER, 'DELETE');
+    if (not old.MES_HEAD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'MES_HEAD', old.MES_HEAD, 'DELETE');
+    if (not old.MES_TEXT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'MES_TEXT', old.MES_TEXT, 'DELETE');
+    if (not old.MES_RESULT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'MES_RESULT', old.MES_RESULT, 'DELETE');
+    if (not old.SEND_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'SEND_DATE', old.SEND_DATE, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.MES_PRIOR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'MES_PRIOR', old.MES_PRIOR, 'DELETE');
+    if (not old.EXT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'EXT_ID', old.EXT_ID, 'DELETE');
+    if (not old.TPL_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'TPL_ID', old.TPL_ID, 'DELETE');
+    if (not old.INFO_PERIOD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'INFO_PERIOD', old.INFO_PERIOD, 'DELETE');
+    if (not old.INFO_INTERVAL is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'INFO_INTERVAL', old.INFO_INTERVAL, 'DELETE');
+    if (not old.TAG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'TAG', old.TAG, 'DELETE');
+    if (not old.DIRECT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'DIRECT', old.DIRECT, 'DELETE');
+    if (not old.PARENT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('MESSAGES', 'D', old.MES_ID, 'PARENT_ID', old.PARENT_ID, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER MODULES_BI0 FOR MODULES 
@@ -24673,7 +26322,7 @@ begin
   else
     OP_DATE = new.Month_Id;
 
-  if (OP_DATE < (current_date - extract(day from current_date) + 1)) then begin
+  if (OP_DATE < MONTH_FIRST_DAY(current_date)) then begin
     select
         cast(s.Var_Value as integer)
       from settings s
@@ -24709,7 +26358,7 @@ begin
     new.Node_Id = gen_id(Gen_Operations_Uid, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER NODES_BU FOR NODES 
@@ -24731,8 +26380,9 @@ begin
     new.NA_ID = gen_id(gen_uid, 1);
   if (new.NA_Value is null) then
     new.NA_Value = '';
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER NODES_ATTRIBUTES_BU FOR NODES_ATTRIBUTES 
@@ -24756,28 +26406,47 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
 end ^
 
-CREATE TRIGGER NODE_FLATS_BI0 FOR NODE_FLATS 
-ACTIVE BEFORE INSERT POSITION 0 
+CREATE TRIGGER NODE_FLATS_BIU0 FOR NODE_FLATS 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
-  new.added_by = current_user;
-  new.added_on = localtimestamp;
+  /* квартіра і дом может подключена быть к несколькім узлам
+  -- declare variable CC d_INTEGER;
+  select
+      count(*)
+    from Node_Flats f
+    where f.Node_Id <> new.Node_Id
+          and f.House_Id = new.House_Id
+          and (((f.Flat_No is null) and (new.Flat_No is null))
+            or (f.Flat_No = new.Flat_No))
+  into cc;
+
+  if (cc <> 0) then
+    exception E_DUBLICATE;
+*/
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = CAST('NOW' AS timestamp);
+  end
+  else begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = CAST('NOW' AS timestamp);
+  end
 end ^
 
-CREATE TRIGGER NODE_FLATS_BU0 FOR NODE_FLATS 
-ACTIVE BEFORE UPDATE POSITION 0 
+CREATE TRIGGER NODE_LAYOUT_BIU0 FOR NODE_LAYOUT 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
-  new.EDIT_by = current_user;
-  new.EDIT_on = localtimestamp;
+  new.Lt_Id = coalesce(new.Lt_Id, gen_id(Gen_Uid, 1));
 end ^
 
 CREATE TRIGGER NPS_BI FOR NPS 
@@ -24786,7 +26455,7 @@ as
 begin
   new.NPS_DATE = current_date;
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER NPS_BU FOR NPS 
@@ -24805,8 +26474,9 @@ begin
     new.O_ID = gen_id(GEN_UID, 1);
   if (new.O_Deleted is null) then
     new.O_Deleted = 0;
+
   new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
+  new.ADDED_ON = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER OBJECTS_BU FOR OBJECTS 
@@ -24817,39 +26487,6 @@ begin
     new.O_Deleted = 0;
   new.EDIT_BY = current_user;
   new.EDIT_ON = localtimestamp;
-end ^
-
-CREATE TRIGGER OBJECTS_AU FOR OBJECTS 
-ACTIVE AFTER UPDATE POSITION 0 
-as
-begin
-  IF (new.O_Id is distinct from old.O_Id) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_ID', OLD.O_Id, NEW.O_Id);
-  IF (new.O_Type is distinct from old.O_Type) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_TYPE', OLD.O_Type, NEW.O_Type);
-  IF (new.O_Name is distinct from old.O_Name) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_NAME', OLD.O_Name, NEW.O_Name);
-  IF (new.O_Description is distinct from old.O_Description) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_DESCRIPTION', OLD.O_Description, NEW.O_Description);
-  IF (new.O_Dimension is distinct from old.O_Dimension) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_DIMENSION', OLD.O_Dimension, NEW.O_Dimension);
-  IF (new.O_Deleted is distinct from old.O_Deleted) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_DELETED', OLD.O_Deleted, NEW.O_Deleted);
-  IF (new.O_Charfield is distinct from old.O_Charfield) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_CHARFIELD', OLD.O_Charfield, NEW.O_Charfield);
-  IF (new.O_Numericfield is distinct from old.O_Numericfield) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_NUMERICFIELD', OLD.O_Numericfield, NEW.O_Numericfield);
-  IF (new.O_Check is distinct from old.O_Check) THEN
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('OBJECTS', 0, NEW.O_Id, 'O_CHECK', OLD.O_Check, NEW.O_Check);
 end ^
 
 CREATE TRIGGER OBJECTS_BIU1 FOR OBJECTS 
@@ -24888,12 +26525,72 @@ begin
   end
 end ^
 
+CREATE TRIGGER TRLOG_OBJECTS FOR OBJECTS 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.O_ID is distinct from old.O_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_ID', old.O_ID, new.O_ID);
+    if (new.O_TYPE is distinct from old.O_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_TYPE', old.O_TYPE, new.O_TYPE);
+    if (new.O_NAME is distinct from old.O_NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_NAME', old.O_NAME, new.O_NAME);
+    if (new.O_DESCRIPTION is distinct from old.O_DESCRIPTION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_DESCRIPTION', old.O_DESCRIPTION, new.O_DESCRIPTION);
+    if (new.O_DELETED is distinct from old.O_DELETED) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_DELETED', old.O_DELETED, new.O_DELETED);
+    if (new.O_DIMENSION is distinct from old.O_DIMENSION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_DIMENSION', old.O_DIMENSION, new.O_DIMENSION);
+    if (new.O_CHARFIELD is distinct from old.O_CHARFIELD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_CHARFIELD', old.O_CHARFIELD, new.O_CHARFIELD);
+    if (new.O_NUMERICFIELD is distinct from old.O_NUMERICFIELD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_NUMERICFIELD', old.O_NUMERICFIELD, new.O_NUMERICFIELD);
+    if (new.O_DATEFIELD is distinct from old.O_DATEFIELD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_DATEFIELD', old.O_DATEFIELD, new.O_DATEFIELD);
+    if (new.O_DATEEND is distinct from old.O_DATEEND) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_DATEEND', old.O_DATEEND, new.O_DATEEND);
+    if (new.O_CHECK is distinct from old.O_CHECK) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_CHECK', old.O_CHECK, new.O_CHECK);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.O_DATEFILED is distinct from old.O_DATEFILED) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'U', new.O_ID, 'O_DATEFILED', old.O_DATEFILED, new.O_DATEFILED);
+  end
+  else begin
+    if (not old.O_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_ID', old.O_ID, 'DELETE');
+    if (not old.O_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_TYPE', old.O_TYPE, 'DELETE');
+    if (not old.O_NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_NAME', old.O_NAME, 'DELETE');
+    if (not old.O_DESCRIPTION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_DESCRIPTION', old.O_DESCRIPTION, 'DELETE');
+    if (not old.O_DELETED is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_DELETED', old.O_DELETED, 'DELETE');
+    if (not old.O_DIMENSION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_DIMENSION', old.O_DIMENSION, 'DELETE');
+    if (not old.O_CHARFIELD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_CHARFIELD', old.O_CHARFIELD, 'DELETE');
+    if (not old.O_NUMERICFIELD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_NUMERICFIELD', old.O_NUMERICFIELD, 'DELETE');
+    if (not old.O_DATEFIELD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_DATEFIELD', old.O_DATEFIELD, 'DELETE');
+    if (not old.O_DATEEND is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_DATEEND', old.O_DATEEND, 'DELETE');
+    if (not old.O_CHECK is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_CHECK', old.O_CHECK, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.O_DATEFILED is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('OBJECTS', 'D', old.O_ID, 'O_DATEFILED', old.O_DATEFILED, 'DELETE');
+  end
+end ^
+
 CREATE TRIGGER OBJECTS_COVERAGE_BI FOR OBJECTS_COVERAGE 
 ACTIVE BEFORE INSERT POSITION 0 
 as
 begin
   if (new.oc_id is null)
   then new.oc_id = gen_id(gen_operations_uid,1);
+end ^
+
+CREATE TRIGGER OBJECTS_HISTORY_BI FOR OBJECTS_HISTORY 
+ACTIVE BEFORE INSERT POSITION 0 
+as
+begin
+  new.Deleted = coalesce(new.Deleted, 0);
+  new.Added_By = current_user;
+  new.Added_On = cast('NOW' as timestamp);
+end ^
+
+CREATE TRIGGER OBJECTS_HISTORY_BU FOR OBJECTS_HISTORY 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  new.Deleted = coalesce(new.Deleted, 0);
+  new.Edit_By = current_user;
+  new.Edit_On = cast('NOW' as timestamp);
 end ^
 
 CREATE TRIGGER OBJECTS_LINKS_BI FOR OBJECTS_LINKS 
@@ -24904,7 +26601,7 @@ begin
     new.Ol_Id = gen_id(GEN_UID, 1);
 
   new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
+  new.ADDED_ON = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER OBJECTS_LINKS_BU FOR OBJECTS_LINKS 
@@ -24958,11 +26655,11 @@ begin
 
   if (inserting) then begin
     new.ADDED_BY = current_user;
-    new.ADDED_ON = localtimestamp;
+    new.ADDED_ON = CAST('NOW' AS timestamp);
   end
   else begin
     new.EDIT_BY = current_user;
-    new.EDIT_ON = localtimestamp;
+    new.EDIT_ON = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -25012,7 +26709,7 @@ begin
   else
     OP_DATE = new.Fee_Date;
 
-  if (OP_DATE < (current_date - extract(day from current_date) + 1)) then begin
+  if (OP_DATE < MONTH_FIRST_DAY(current_date)) then begin
     select
         cast(s.Var_Value as integer)
       from settings s
@@ -25031,13 +26728,14 @@ begin
       end
     end
   end
+
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -25062,7 +26760,7 @@ begin
   NEW.Ext_Pay_Id = trim(new.Ext_Pay_Id);
 
   new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
+  new.ADDED_ON = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER PAYMENT_AI_0 FOR PAYMENT 
@@ -25110,53 +26808,12 @@ begin
       where C.CUSTOMER_ID = new.CUSTOMER_ID;
     end
   end
-
-  if (old.CUSTOMER_ID is distinct from new.CUSTOMER_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
-  if (old.Pay_Date is distinct from new.Pay_Date) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAY_DATE', old.Pay_Date, new.Pay_Date);
-  if (old.Pay_Sum is distinct from new.Pay_Sum) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAY_SUM', old.Pay_Sum, new.Pay_Sum);
-  if (old.Fine_Sum is distinct from new.Fine_Sum) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'FINE_SUM', old.Fine_Sum, new.Fine_Sum);
-  if (old.Payment_Srv is distinct from new.Payment_Srv) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAYMENT_SRV', old.Payment_Srv, new.Payment_Srv);
-  if (old.Payment_Type is distinct from new.Payment_Type) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAYMENT_TYPE', old.Payment_Type, new.Payment_Type);
-  if (old.Ext_Pay_Id is distinct from new.Ext_Pay_Id) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'EXT_PAY_ID', old.Ext_Pay_Id, new.Ext_Pay_Id);
-  if (old.Tag is distinct from new.Tag) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'TAG', old.Tag, new.Tag);
-  if (old.Tag_Str is distinct from new.Tag_Str) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'TAG_STR', old.Tag_Str, new.Tag_Str);
-  if (old.Need_Check is distinct from new.Need_Check) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'NEED_CHECK', old.Need_Check, new.Need_Check);
-  if (old.Fiscal is distinct from new.Fiscal) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'FISCAL', old.Fiscal, new.Fiscal);
-  if (old.Pay_Type_Str is distinct from new.Pay_Type_Str) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'PAY_TYPE_STR', old.Pay_Type_Str, new.Pay_Type_Str);
-  if (old.Rq_Id is distinct from new.Rq_Id) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('PAYMENT', 0, old.PAYMENT_ID, 'RQ_ID', old.Rq_Id, new.Rq_Id);
 end ^
 
 CREATE TRIGGER PAYMENT_AD0 FOR PAYMENT 
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-
   update CUSTOMER C
   set C.DEBT_SUM = C.DEBT_SUM + round(old.PAY_SUM, 2)
   where C.CUSTOMER_ID = old.CUSTOMER_ID;
@@ -25166,14 +26823,66 @@ begin
      and Bt_Id in ( 1,2,3 )
      and Ext_Id = old.Payment_Id;
 
-  insert into OPERATION_LOG (OPERATION, OPER_WHAT, OPER_NOTE)
-  values (0, 'ПЛАТЕЖ', old.CUSTOMER_ID || ' ' || old.PAY_DATE || ' ' || old.PAY_SUM || ' ' || old.FINE_SUM);
-
   insert into PAYMENT_DELETED (PAYMENT_ID, PAY_DOC_ID, CUSTOMER_ID, PAY_DATE, PAY_SUM, FINE_SUM,
                                NOTICE, PAYMENT_SRV, EXT_PAY_ID, TAG, PAY_DATETIME, WHOM, FISCAL)
   values (old.PAYMENT_ID, old.PAY_DOC_ID, old.CUSTOMER_ID, old.PAY_DATE, old.PAY_SUM, old.FINE_SUM,
           old.NOTICE, old.PAYMENT_SRV, old.EXT_PAY_ID, old.TAG, old.Pay_Datetime, old.added_by, old.Fiscal);
+end ^
 
+CREATE TRIGGER TRLOG_PAYMENT FOR PAYMENT 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.PAYMENT_ID is distinct from old.PAYMENT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAYMENT_ID', old.PAYMENT_ID, new.PAYMENT_ID);
+    if (new.PAY_DOC_ID is distinct from old.PAY_DOC_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAY_DOC_ID', old.PAY_DOC_ID, new.PAY_DOC_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.PAY_DATE is distinct from old.PAY_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAY_DATE', old.PAY_DATE, new.PAY_DATE);
+    if (new.PAY_DATETIME is distinct from old.PAY_DATETIME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAY_DATETIME', old.PAY_DATETIME, new.PAY_DATETIME);
+    if (new.PAY_SUM is distinct from old.PAY_SUM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAY_SUM', old.PAY_SUM, new.PAY_SUM);
+    if (new.FINE_SUM is distinct from old.FINE_SUM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'FINE_SUM', old.FINE_SUM, new.FINE_SUM);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.PAYMENT_SRV is distinct from old.PAYMENT_SRV) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAYMENT_SRV', old.PAYMENT_SRV, new.PAYMENT_SRV);
+    if (new.PAYMENT_TYPE is distinct from old.PAYMENT_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAYMENT_TYPE', old.PAYMENT_TYPE, new.PAYMENT_TYPE);
+    if (new.EXT_PAY_ID is distinct from old.EXT_PAY_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'EXT_PAY_ID', old.EXT_PAY_ID, new.EXT_PAY_ID);
+    if (new.TAG is distinct from old.TAG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'TAG', old.TAG, new.TAG);
+    if (new.TAG_STR is distinct from old.TAG_STR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'TAG_STR', old.TAG_STR, new.TAG_STR);
+    if (new.NEED_CHECK is distinct from old.NEED_CHECK) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'NEED_CHECK', old.NEED_CHECK, new.NEED_CHECK);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.PAY_TYPE_STR is distinct from old.PAY_TYPE_STR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'PAY_TYPE_STR', old.PAY_TYPE_STR, new.PAY_TYPE_STR);
+    if (new.FISCAL is distinct from old.FISCAL) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'FISCAL', old.FISCAL, new.FISCAL);
+    if (new.CMSN is distinct from old.CMSN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'CMSN', old.CMSN, new.CMSN);
+    if (new.DEBT_SAVE is distinct from old.DEBT_SAVE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'DEBT_SAVE', old.DEBT_SAVE, new.DEBT_SAVE);
+    if (new.RQ_ID is distinct from old.RQ_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'U', new.PAYMENT_ID, 'RQ_ID', old.RQ_ID, new.RQ_ID);
+  end
+  else begin
+    if (not old.PAYMENT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAYMENT_ID', old.PAYMENT_ID, 'DELETE');
+    if (not old.PAY_DOC_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAY_DOC_ID', old.PAY_DOC_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.PAY_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAY_DATE', old.PAY_DATE, 'DELETE');
+    if (not old.PAY_DATETIME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAY_DATETIME', old.PAY_DATETIME, 'DELETE');
+    if (not old.PAY_SUM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAY_SUM', old.PAY_SUM, 'DELETE');
+    if (not old.FINE_SUM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'FINE_SUM', old.FINE_SUM, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.PAYMENT_SRV is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAYMENT_SRV', old.PAYMENT_SRV, 'DELETE');
+    if (not old.PAYMENT_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAYMENT_TYPE', old.PAYMENT_TYPE, 'DELETE');
+    if (not old.EXT_PAY_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'EXT_PAY_ID', old.EXT_PAY_ID, 'DELETE');
+    if (not old.TAG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'TAG', old.TAG, 'DELETE');
+    if (not old.TAG_STR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'TAG_STR', old.TAG_STR, 'DELETE');
+    if (not old.NEED_CHECK is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'NEED_CHECK', old.NEED_CHECK, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.PAY_TYPE_STR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'PAY_TYPE_STR', old.PAY_TYPE_STR, 'DELETE');
+    if (not old.FISCAL is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'FISCAL', old.FISCAL, 'DELETE');
+    if (not old.CMSN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'CMSN', old.CMSN, 'DELETE');
+    if (not old.DEBT_SAVE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'DEBT_SAVE', old.DEBT_SAVE, 'DELETE');
+    if (not old.RQ_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PAYMENT', 'D', old.PAYMENT_ID, 'RQ_ID', old.RQ_ID, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER PAYMENT_STRICTCHECK FOR PAYMENT 
@@ -25189,7 +26898,7 @@ begin
   else
     OP_DATE = new.Pay_Date;
 
-  if (OP_DATE < (current_date - extract(day from current_date) + 1)) then begin
+  if (OP_DATE < MONTH_FIRST_DAY(current_date)) then begin
     select
         cast(s.Var_Value as integer)
       from settings s
@@ -25227,7 +26936,7 @@ begin
     new.PAYMENT_ID = gen_id(GEN_PAYMENT, 1);
 
   new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
+  new.ADDED_ON = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER PAYSOURCE_BD FOR PAYSOURCE 
@@ -25262,7 +26971,7 @@ begin
     new.Pay_Doc_No = extract(year from new.Pay_Doc_Date) || lpad(extract(month from new.Pay_Doc_Date), 2, '0') || lpad(extract(day from new.Pay_Doc_Date), 2, '0');
 
   new.ADDED_BY = current_user;
-  new.ADDED_ON = localtimestamp;
+  new.ADDED_ON = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER PAY_DOC_BU FOR PAY_DOC 
@@ -25312,22 +27021,6 @@ begin
   if (new.pe_id is null) then new.pe_id = gen_id(gen_operations_uid, 1);
 end ^
 
-CREATE TRIGGER PERSONAL_TARIF_AD FOR PERSONAL_TARIF 
-ACTIVE AFTER DELETE POSITION 0 
-as
-begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('PERSONAL_TARIF', 0, old.customer_id, 'CUSTOMER_ID', 'DELETE', old.Customer_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('PERSONAL_TARIF', 0, old.customer_id, 'SERVICE_ID', 'DELETE', old.Service_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('PERSONAL_TARIF', 0, old.customer_id, 'DATE_FROM', 'DELETE', cast(old.Date_From as varchar(10)));
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('PERSONAL_TARIF', 0, old.customer_id, 'DATE_TO', 'DELETE', cast(old.Date_To as varchar(10)));
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('PERSONAL_TARIF', 0, old.customer_id, 'TARIF_SUM', 'DELETE', old.Tarif_Sum);
-end ^
-
 CREATE TRIGGER PERSONAL_TARIF_BI0 FOR PERSONAL_TARIF 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
@@ -25335,7 +27028,7 @@ begin
   if (new.TARIF_ID is null) then
     new.TARIF_ID = gen_id(gen_operations_uid, 1);
   if (new.date_from is null) then
-    new.date_from = current_date - extract(day from current_date) + 1;
+    new.date_from = MONTH_FIRST_DAY(current_date);
   if (new.date_to is null) then
     new.date_to = cast('2099-12-31' as date);
   /*
@@ -25344,17 +27037,51 @@ begin
     чтоб "не поплыли" остатки
   */
   if (new.date_from < '2018-06-01') then begin
-    new.date_from = new.date_from - extract(day from new.date_from) + 1;
+    new.date_from = MONTH_FIRST_DAY(new.date_from);
     new.date_to = dateadd(-1 day to(dateadd(1 month to(new.date_to - extract(day from new.date_to) + 1))));
   end
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.edit_by = current_user;
-    new.edit_on = localtimestamp;
+    new.edit_on = CAST('NOW' AS timestamp);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_PERSONAL_TARIF FOR PERSONAL_TARIF 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.TARIF_ID is distinct from old.TARIF_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'TARIF_ID', old.TARIF_ID, new.TARIF_ID);
+    if (new.SERVICE_ID is distinct from old.SERVICE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'SERVICE_ID', old.SERVICE_ID, new.SERVICE_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.DATE_FROM is distinct from old.DATE_FROM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'DATE_FROM', old.DATE_FROM, new.DATE_FROM);
+    if (new.DATE_TO is distinct from old.DATE_TO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'DATE_TO', old.DATE_TO, new.DATE_TO);
+    if (new.TARIF_SUM is distinct from old.TARIF_SUM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'TARIF_SUM', old.TARIF_SUM, new.TARIF_SUM);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.ADD_METHOD is distinct from old.ADD_METHOD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'ADD_METHOD', old.ADD_METHOD, new.ADD_METHOD);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'U', new.TARIF_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+  end
+  else begin
+    if (not old.TARIF_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'TARIF_ID', old.TARIF_ID, 'DELETE');
+    if (not old.SERVICE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'SERVICE_ID', old.SERVICE_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.DATE_FROM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'DATE_FROM', old.DATE_FROM, 'DELETE');
+    if (not old.DATE_TO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'DATE_TO', old.DATE_TO, 'DELETE');
+    if (not old.TARIF_SUM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'TARIF_SUM', old.TARIF_SUM, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.ADD_METHOD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'ADD_METHOD', old.ADD_METHOD, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('PERSONAL_TARIF', 'D', old.TARIF_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
   end
 end ^
 
@@ -25370,11 +27097,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -25415,6 +27142,20 @@ begin
   end
 end ^
 
+CREATE TRIGGER QUEUE_SWITCH_SRV_BIU0 FOR QUEUE_SWITCH_SRV 
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
+as
+begin
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = cast('NOW' as timestamp);
+  end
+  else begin
+    new.EDIT_by = current_user;
+    new.EDIT_on = cast('NOW' as timestamp);
+  end
+end ^
+
 CREATE TRIGGER RATES_BIU0 FOR RATES 
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
@@ -25428,8 +27169,9 @@ as
 begin
   if (new.rc_id is null) then
     new.rc_id = gen_id(gen_operations_uid, 1);
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER RECOURSE_BU FOR RECOURSE 
@@ -25459,8 +27201,9 @@ begin
     new.id_report = gen_id(gen_report_id, 1);
   if (new.no_visible is null) then
     new.no_visible = 0;
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REPORTS_BU FOR REPORTS 
@@ -25497,7 +27240,7 @@ begin
     new.REQ_RESULT = 0;
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_AI FOR REQUEST 
@@ -25593,87 +27336,88 @@ begin
   end
 end ^
 
-CREATE TRIGGER TR_REQUEST_CHANGELOG_AU FOR REQUEST 
-ACTIVE AFTER UPDATE POSITION 1 
-as
-begin
-  if (new.HOUSE_ID is distinct from old.HOUSE_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'HOUSE_ID', old.HOUSE_ID, new.HOUSE_ID);
-
-  if (new.Rq_Plan_Date is distinct from old.Rq_Plan_Date) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'RQ_PLAN_DATE', old.Rq_Plan_Date, new.Rq_Plan_Date);
-
-  if (new.RQ_TYPE is distinct from old.RQ_TYPE) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'RQ_TYPE', old.RQ_TYPE, new.RQ_TYPE);
-
-  if (new.RQTL_ID is distinct from old.RQTL_ID) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'RQTL_ID', old.RQTL_ID, new.RQTL_ID);
-
-  if (new.RQ_NOTICE is distinct from old.RQ_NOTICE) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'RQ_NOTICE', old.RQ_NOTICE, new.RQ_NOTICE);
-
-  if (new.ADD_INFO is distinct from old.ADD_INFO) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'ADD_INFO', old.ADD_INFO, new.ADD_INFO);
-
-  if (new.RQ_CONTENT is distinct from old.RQ_CONTENT) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, new.Rq_Id, 'RQ_CONTENT', old.RQ_CONTENT, new.RQ_CONTENT);
-end ^
-
 CREATE TRIGGER REQUEST_AD FOR REQUEST 
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
   -- вернем материалы и начисления
   execute procedure REQUEST_CLOSE_ROLLBACK(old.RQ_ID, old.RQ_CUSTOMER);
+end ^
 
-  insert into OPERATION_LOG (OPERATION, OPER_WHAT, OPER_NOTE)
-  values (0, 'ЗАЯВКА', old.RQ_ID);
-
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('REQUEST', 0, old.Rq_Id, 'RQ_ID', 'DELETE', old.Rq_Id);
-
-  if (not old.Rq_Customer is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'CUSTOMER_ID', 'DELETE', old.Rq_Customer);
-
-  if (not old.HOUSE_ID is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'HOUSE_ID', 'DELETE', old.HOUSE_ID);
-
-  if (not old.Rq_Plan_Date is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'RQ_PLAN_DATE', 'DELETE', old.Rq_Plan_Date);
-
-  if (not old.RQ_TYPE is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'RQ_TYPE', 'DELETE', old.RQ_TYPE);
-
-  if (not old.RQTL_ID is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'RQTL_ID', 'DELETE', old.RQTL_ID);
-
-  if (not old.RQ_NOTICE is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'RQ_NOTICE', 'DELETE', old.RQ_NOTICE);
-
-  if (not old.ADD_INFO is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'ADD_INFO', 'DELETE', old.ADD_INFO);
-
-  if (not old.RQ_CONTENT is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'RQ_CONTENT', 'DELETE', old.RQ_CONTENT);
-
-  if (not old.Node_Id is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('REQUEST', 0, old.Rq_Id, 'NODE_ID', 'DELETE', old.Node_Id);
+CREATE TRIGGER TRLOG_REQUEST FOR REQUEST 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.RQ_ID is distinct from old.RQ_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_ID', old.RQ_ID, new.RQ_ID);
+    if (new.RQ_TYPE is distinct from old.RQ_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_TYPE', old.RQ_TYPE, new.RQ_TYPE);
+    if (new.RQ_CUSTOMER is distinct from old.RQ_CUSTOMER) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_CUSTOMER', old.RQ_CUSTOMER, new.RQ_CUSTOMER);
+    if (new.RQ_CONTENT is distinct from old.RQ_CONTENT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_CONTENT', old.RQ_CONTENT, new.RQ_CONTENT);
+    if (new.RQ_DEFECT is distinct from old.RQ_DEFECT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_DEFECT', old.RQ_DEFECT, new.RQ_DEFECT);
+    if (new.RQ_COMPLETED is distinct from old.RQ_COMPLETED) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_COMPLETED', old.RQ_COMPLETED, new.RQ_COMPLETED);
+    if (new.RQ_NOTICE is distinct from old.RQ_NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_NOTICE', old.RQ_NOTICE, new.RQ_NOTICE);
+    if (new.RQ_PLAN_DATE is distinct from old.RQ_PLAN_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_PLAN_DATE', old.RQ_PLAN_DATE, new.RQ_PLAN_DATE);
+    if (new.RQ_TIME_FROM is distinct from old.RQ_TIME_FROM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_TIME_FROM', old.RQ_TIME_FROM, new.RQ_TIME_FROM);
+    if (new.RQ_TIME_TO is distinct from old.RQ_TIME_TO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_TIME_TO', old.RQ_TIME_TO, new.RQ_TIME_TO);
+    if (new.HOUSE_ID is distinct from old.HOUSE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'HOUSE_ID', old.HOUSE_ID, new.HOUSE_ID);
+    if (new.FLAT_NO is distinct from old.FLAT_NO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'FLAT_NO', old.FLAT_NO, new.FLAT_NO);
+    if (new.PORCH_N is distinct from old.PORCH_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'PORCH_N', old.PORCH_N, new.PORCH_N);
+    if (new.FLOOR_N is distinct from old.FLOOR_N) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'FLOOR_N', old.FLOOR_N, new.FLOOR_N);
+    if (new.PHONE is distinct from old.PHONE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'PHONE', old.PHONE, new.PHONE);
+    if (new.RQ_EXEC_TIME is distinct from old.RQ_EXEC_TIME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQ_EXEC_TIME', old.RQ_EXEC_TIME, new.RQ_EXEC_TIME);
+    if (new.GIVE_BY is distinct from old.GIVE_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'GIVE_BY', old.GIVE_BY, new.GIVE_BY);
+    if (new.GIVE_METHOD is distinct from old.GIVE_METHOD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'GIVE_METHOD', old.GIVE_METHOD, new.GIVE_METHOD);
+    if (new.REQ_RESULT is distinct from old.REQ_RESULT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'REQ_RESULT', old.REQ_RESULT, new.REQ_RESULT);
+    if (new.RQTL_ID is distinct from old.RQTL_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RQTL_ID', old.RQTL_ID, new.RQTL_ID);
+    if (new.DOOR_CODE is distinct from old.DOOR_CODE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'DOOR_CODE', old.DOOR_CODE, new.DOOR_CODE);
+    if (new.CAUSE_ID is distinct from old.CAUSE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'CAUSE_ID', old.CAUSE_ID, new.CAUSE_ID);
+    if (new.RESULT_ID is distinct from old.RESULT_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RESULT_ID', old.RESULT_ID, new.RESULT_ID);
+    if (new.RECEIPT is distinct from old.RECEIPT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'RECEIPT', old.RECEIPT, new.RECEIPT);
+    if (new.EXTEXECUTOR is distinct from old.EXTEXECUTOR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'EXTEXECUTOR', old.EXTEXECUTOR, new.EXTEXECUTOR);
+    if (new.ADD_INFO is distinct from old.ADD_INFO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'ADD_INFO', old.ADD_INFO, new.ADD_INFO);
+    if (new.TAG is distinct from old.TAG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'TAG', old.TAG, new.TAG);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.NODE_ID is distinct from old.NODE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'NODE_ID', old.NODE_ID, new.NODE_ID);
+    if (new.PARENT_RQ is distinct from old.PARENT_RQ) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'U', new.RQ_ID, 'PARENT_RQ', old.PARENT_RQ, new.PARENT_RQ);
+  end
+  else begin
+    if (not old.RQ_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_ID', old.RQ_ID, 'DELETE');
+    if (not old.RQ_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_TYPE', old.RQ_TYPE, 'DELETE');
+    if (not old.RQ_CUSTOMER is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_CUSTOMER', old.RQ_CUSTOMER, 'DELETE');
+    if (not old.RQ_CONTENT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_CONTENT', old.RQ_CONTENT, 'DELETE');
+    if (not old.RQ_DEFECT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_DEFECT', old.RQ_DEFECT, 'DELETE');
+    if (not old.RQ_COMPLETED is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_COMPLETED', old.RQ_COMPLETED, 'DELETE');
+    if (not old.RQ_NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_NOTICE', old.RQ_NOTICE, 'DELETE');
+    if (not old.RQ_PLAN_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_PLAN_DATE', old.RQ_PLAN_DATE, 'DELETE');
+    if (not old.RQ_TIME_FROM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_TIME_FROM', old.RQ_TIME_FROM, 'DELETE');
+    if (not old.RQ_TIME_TO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_TIME_TO', old.RQ_TIME_TO, 'DELETE');
+    if (not old.HOUSE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'HOUSE_ID', old.HOUSE_ID, 'DELETE');
+    if (not old.FLAT_NO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'FLAT_NO', old.FLAT_NO, 'DELETE');
+    if (not old.PORCH_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'PORCH_N', old.PORCH_N, 'DELETE');
+    if (not old.FLOOR_N is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'FLOOR_N', old.FLOOR_N, 'DELETE');
+    if (not old.PHONE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'PHONE', old.PHONE, 'DELETE');
+    if (not old.RQ_EXEC_TIME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQ_EXEC_TIME', old.RQ_EXEC_TIME, 'DELETE');
+    if (not old.GIVE_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'GIVE_BY', old.GIVE_BY, 'DELETE');
+    if (not old.GIVE_METHOD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'GIVE_METHOD', old.GIVE_METHOD, 'DELETE');
+    if (not old.REQ_RESULT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'REQ_RESULT', old.REQ_RESULT, 'DELETE');
+    if (not old.RQTL_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RQTL_ID', old.RQTL_ID, 'DELETE');
+    if (not old.DOOR_CODE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'DOOR_CODE', old.DOOR_CODE, 'DELETE');
+    if (not old.CAUSE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'CAUSE_ID', old.CAUSE_ID, 'DELETE');
+    if (not old.RESULT_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RESULT_ID', old.RESULT_ID, 'DELETE');
+    if (not old.RECEIPT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'RECEIPT', old.RECEIPT, 'DELETE');
+    if (not old.EXTEXECUTOR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'EXTEXECUTOR', old.EXTEXECUTOR, 'DELETE');
+    if (not old.ADD_INFO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'ADD_INFO', old.ADD_INFO, 'DELETE');
+    if (not old.TAG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'TAG', old.TAG, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.NODE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'NODE_ID', old.NODE_ID, 'DELETE');
+    if (not old.PARENT_RQ is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('REQUEST', 'D', old.RQ_ID, 'PARENT_RQ', old.PARENT_RQ, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER REQUEST_FLATS_BI FOR REQUEST_FLATS 
@@ -25681,7 +27425,7 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_FLATS_BU FOR REQUEST_FLATS 
@@ -25714,7 +27458,7 @@ begin
   new.Not_Calc = iif(new.Calc = 2, 3, iif(new.Calc = 3, 2, new.Calc));
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_MATERIALS_AI FOR REQUEST_MATERIALS 
@@ -25808,6 +27552,18 @@ begin
   end
 end ^
 
+CREATE TRIGGER REQUEST_MATERIALS_BD FOR REQUEST_MATERIALS 
+ACTIVE BEFORE DELETE POSITION 0 
+as
+begin
+  if (exists(select
+                 t.Rq_Id
+               from request t
+               where t.Rq_Id = old.Rq_Id
+                     and not t.Rq_Exec_Time is null)) then
+    exception E_CANNOT_DELETE;
+end ^
+
 CREATE TRIGGER REQUEST_MATERIALS_AD FOR REQUEST_MATERIALS 
 ACTIVE AFTER DELETE POSITION 0 
 as
@@ -25834,7 +27590,7 @@ begin
   new.Bayback = coalesce(new.Bayback, 0);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_MATERIALS_RETURN_AI FOR REQUEST_MATERIALS_RETURN 
@@ -25933,7 +27689,7 @@ begin
   if (new.deleted is null) then
     new.deleted = 0;
   new.Added_By = current_user;
-  new.Added_On = localtimestamp;
+  new.Added_On = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_MSG_BU FOR REQUEST_MSG 
@@ -25962,11 +27718,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.edit_by = current_user;
-    new.edit_on = localtimestamp;
+    new.edit_on = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -25985,7 +27741,7 @@ begin
     new.RQTL_ID = gen_id(gen_operations_uid, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_TEMPLATES_BIU1 FOR REQUEST_TEMPLATES 
@@ -26013,7 +27769,7 @@ as
 begin
   new.rt_id = coalesce(new.rt_id, gen_id(gen_operations_uid, 1));
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_TYPES_BU FOR REQUEST_TYPES 
@@ -26029,7 +27785,7 @@ ACTIVE BEFORE INSERT POSITION 0
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER REQUEST_WORKS_BU FOR REQUEST_WORKS 
@@ -26040,32 +27796,10 @@ begin
   new.edit_on = localtimestamp;
 end ^
 
-CREATE TRIGGER SERVICES_AU FOR SERVICES 
-ACTIVE AFTER UPDATE POSITION 0 
-as
-begin
-  if (new.Name is distinct from old.Name) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('SERVICES', 0, new.Service_Id, 'Name', old.Name, new.Name);
-  if (new.Srv_Type_Id is distinct from old.Srv_Type_Id) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('SERVICES', 0, new.Service_Id, 'Srv_Type_Id', old.Srv_Type_Id, new.Srv_Type_Id);
-  if (new.Business_Type is distinct from old.Business_Type) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('SERVICES', 0, new.Service_Id, 'Business_Type', old.Business_Type, new.Business_Type);
-end ^
-
 CREATE TRIGGER SERVICES_AD FOR SERVICES 
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES', 0, OLD.Service_Id, 'Name', 'DELETE', old.Name);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES', 0, OLD.Service_Id, 'Srv_Type_Id', 'DELETE', old.Srv_Type_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES', 0, OLD.Service_Id, 'Business_Type', 'DELETE', old.Business_Type);
-
   delete from TARIF t
       where t.Service_Id = old.Service_Id;
 end ^
@@ -26125,11 +27859,83 @@ begin
 
   if (inserting) then begin
     new.Added_By = current_user;
-    new.Added_On = localtimestamp;
+    new.Added_On = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_SERVICES FOR SERVICES 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.SERVICE_ID is distinct from old.SERVICE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'SERVICE_ID', old.SERVICE_ID, new.SERVICE_ID);
+    if (new.SRV_TYPE_ID is distinct from old.SRV_TYPE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'SRV_TYPE_ID', old.SRV_TYPE_ID, new.SRV_TYPE_ID);
+    if (new.SHIFT_MONTHS is distinct from old.SHIFT_MONTHS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'SHIFT_MONTHS', old.SHIFT_MONTHS, new.SHIFT_MONTHS);
+    if (new.NAME is distinct from old.NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'NAME', old.NAME, new.NAME);
+    if (new.SHORTNAME is distinct from old.SHORTNAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'SHORTNAME', old.SHORTNAME, new.SHORTNAME);
+    if (new.DESCRIPTION is distinct from old.DESCRIPTION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'DESCRIPTION', old.DESCRIPTION, new.DESCRIPTION);
+    if (new.DIMENSION is distinct from old.DIMENSION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'DIMENSION', old.DIMENSION, new.DIMENSION);
+    if (new.EXTRA is distinct from old.EXTRA) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'EXTRA', old.EXTRA, new.EXTRA);
+    if (new.EXTERNAL_ID is distinct from old.EXTERNAL_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'EXTERNAL_ID', old.EXTERNAL_ID, new.EXTERNAL_ID);
+    if (new.INET_SRV is distinct from old.INET_SRV) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'INET_SRV', old.INET_SRV, new.INET_SRV);
+    if (new.IP_BEGIN is distinct from old.IP_BEGIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'IP_BEGIN', old.IP_BEGIN, new.IP_BEGIN);
+    if (new.IP_END is distinct from old.IP_END) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'IP_END', old.IP_END, new.IP_END);
+    if (new.IP_BEGIN_BIN is distinct from old.IP_BEGIN_BIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'IP_BEGIN_BIN', old.IP_BEGIN_BIN, new.IP_BEGIN_BIN);
+    if (new.IP_END_BIN is distinct from old.IP_END_BIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'IP_END_BIN', old.IP_END_BIN, new.IP_END_BIN);
+    if (new.BUSINESS_TYPE is distinct from old.BUSINESS_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'BUSINESS_TYPE', old.BUSINESS_TYPE, new.BUSINESS_TYPE);
+    if (new.CALC_TYPE is distinct from old.CALC_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'CALC_TYPE', old.CALC_TYPE, new.CALC_TYPE);
+    if (new.USAGE is distinct from old.USAGE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'USAGE', old.USAGE, new.USAGE);
+    if (new.AUTOOFF is distinct from old.AUTOOFF) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'AUTOOFF', old.AUTOOFF, new.AUTOOFF);
+    if (new.EXPENSE_TYPE is distinct from old.EXPENSE_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'EXPENSE_TYPE', old.EXPENSE_TYPE, new.EXPENSE_TYPE);
+    if (new.POSITIVE_ONLY is distinct from old.POSITIVE_ONLY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'POSITIVE_ONLY', old.POSITIVE_ONLY, new.POSITIVE_ONLY);
+    if (new.PRIORITY is distinct from old.PRIORITY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'PRIORITY', old.PRIORITY, new.PRIORITY);
+    if (new.ONLY_ONE is distinct from old.ONLY_ONE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'ONLY_ONE', old.ONLY_ONE, new.ONLY_ONE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+    if (new.NOTE is distinct from old.NOTE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'NOTE', old.NOTE, new.NOTE);
+    if (new.TAG is distinct from old.TAG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'TAG', old.TAG, new.TAG);
+    if (new.TAG_STR is distinct from old.TAG_STR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'TAG_STR', old.TAG_STR, new.TAG_STR);
+    if (new.OPENLY is distinct from old.OPENLY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'OPENLY', old.OPENLY, new.OPENLY);
+    if (new.UNBL_METH is distinct from old.UNBL_METH) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'U', new.SERVICE_ID, 'UNBL_METH', old.UNBL_METH, new.UNBL_METH);
+  end
+  else begin
+    if (not old.SERVICE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'SERVICE_ID', old.SERVICE_ID, 'DELETE');
+    if (not old.SRV_TYPE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'SRV_TYPE_ID', old.SRV_TYPE_ID, 'DELETE');
+    if (not old.SHIFT_MONTHS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'SHIFT_MONTHS', old.SHIFT_MONTHS, 'DELETE');
+    if (not old.NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'NAME', old.NAME, 'DELETE');
+    if (not old.SHORTNAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'SHORTNAME', old.SHORTNAME, 'DELETE');
+    if (not old.DESCRIPTION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'DESCRIPTION', old.DESCRIPTION, 'DELETE');
+    if (not old.DIMENSION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'DIMENSION', old.DIMENSION, 'DELETE');
+    if (not old.EXTRA is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'EXTRA', old.EXTRA, 'DELETE');
+    if (not old.EXTERNAL_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'EXTERNAL_ID', old.EXTERNAL_ID, 'DELETE');
+    if (not old.INET_SRV is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'INET_SRV', old.INET_SRV, 'DELETE');
+    if (not old.IP_BEGIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'IP_BEGIN', old.IP_BEGIN, 'DELETE');
+    if (not old.IP_END is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'IP_END', old.IP_END, 'DELETE');
+    if (not old.IP_BEGIN_BIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'IP_BEGIN_BIN', old.IP_BEGIN_BIN, 'DELETE');
+    if (not old.IP_END_BIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'IP_END_BIN', old.IP_END_BIN, 'DELETE');
+    if (not old.BUSINESS_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'BUSINESS_TYPE', old.BUSINESS_TYPE, 'DELETE');
+    if (not old.CALC_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'CALC_TYPE', old.CALC_TYPE, 'DELETE');
+    if (not old.USAGE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'USAGE', old.USAGE, 'DELETE');
+    if (not old.AUTOOFF is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'AUTOOFF', old.AUTOOFF, 'DELETE');
+    if (not old.EXPENSE_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'EXPENSE_TYPE', old.EXPENSE_TYPE, 'DELETE');
+    if (not old.POSITIVE_ONLY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'POSITIVE_ONLY', old.POSITIVE_ONLY, 'DELETE');
+    if (not old.PRIORITY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'PRIORITY', old.PRIORITY, 'DELETE');
+    if (not old.ONLY_ONE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'ONLY_ONE', old.ONLY_ONE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+    if (not old.NOTE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'NOTE', old.NOTE, 'DELETE');
+    if (not old.TAG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'TAG', old.TAG, 'DELETE');
+    if (not old.TAG_STR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'TAG_STR', old.TAG_STR, 'DELETE');
+    if (not old.OPENLY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'OPENLY', old.OPENLY, 'DELETE');
+    if (not old.UNBL_METH is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES', 'D', old.SERVICE_ID, 'UNBL_METH', old.UNBL_METH, 'DELETE');
   end
 end ^
 
@@ -26141,8 +27947,9 @@ begin
     new.SA_ID = gen_id(gen_uid, 1);
   if (new.Sa_Value is null) then
     new.Sa_Value = '';
+
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER SERVICES_ATTRIBUTES_BU FOR SERVICES_ATTRIBUTES 
@@ -26171,29 +27978,12 @@ begin
 
   if (inserting) then begin
     new.Added_By = current_user;
-    new.Added_On = localtimestamp;
+    new.Added_On = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
-end ^
-
-CREATE TRIGGER SERVICES_LINKS_AD FOR SERVICES_LINKS 
-ACTIVE AFTER DELETE POSITION 0 
-as
-begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES_LINKS', 0, OLD.Link_Id, 'Link_Type', 'DELETE', old.Link_Type);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES_LINKS', 0, OLD.Link_Id, 'Parent', 'DELETE', old.Parent);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES_LINKS', 0, OLD.Link_Id, 'Child', 'DELETE', old.Child);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES_LINKS', 0, OLD.Link_Id, 'Add_Srv', 'DELETE', old.Add_Srv);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SERVICES_LINKS', 0, OLD.Link_Id, 'Switch_Time', 'DELETE', old.Switch_Time);
-
 end ^
 
 CREATE TRIGGER SERVICES_LINKS_BI0 FOR SERVICES_LINKS 
@@ -26208,13 +27998,28 @@ begin
     new.LINK_ID = gen_id(gen_operations_uid, 1);
 end ^
 
-CREATE TRIGGER SETTINGS_AU FOR SETTINGS 
-ACTIVE AFTER UPDATE POSITION 0 
+CREATE TRIGGER TRLOG_SERVICES_LINKS FOR SERVICES_LINKS 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
 as
 begin
-  if (new.Var_Value is distinct from old.Var_Value) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('SETTINGS', 0, 0, new.Var_Name, old.Var_Value, new.Var_Value);
+  if (UPDATING) then begin
+    if (new.LINK_ID is distinct from old.LINK_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'LINK_ID', old.LINK_ID, new.LINK_ID);
+    if (new.LINK_TYPE is distinct from old.LINK_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'LINK_TYPE', old.LINK_TYPE, new.LINK_TYPE);
+    if (new.PARENT is distinct from old.PARENT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'PARENT', old.PARENT, new.PARENT);
+    if (new.CHILD is distinct from old.CHILD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'CHILD', old.CHILD, new.CHILD);
+    if (new.ADD_SRV is distinct from old.ADD_SRV) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'ADD_SRV', old.ADD_SRV, new.ADD_SRV);
+    if (new.SWITCH_TIME is distinct from old.SWITCH_TIME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'SWITCH_TIME', old.SWITCH_TIME, new.SWITCH_TIME);
+    if (new.DESCRIPTION is distinct from old.DESCRIPTION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'U', new.LINK_ID, 'DESCRIPTION', old.DESCRIPTION, new.DESCRIPTION);
+  end
+  else begin
+    if (not old.LINK_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'LINK_ID', old.LINK_ID, 'DELETE');
+    if (not old.LINK_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'LINK_TYPE', old.LINK_TYPE, 'DELETE');
+    if (not old.PARENT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'PARENT', old.PARENT, 'DELETE');
+    if (not old.CHILD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'CHILD', old.CHILD, 'DELETE');
+    if (not old.ADD_SRV is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'ADD_SRV', old.ADD_SRV, 'DELETE');
+    if (not old.SWITCH_TIME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'SWITCH_TIME', old.SWITCH_TIME, 'DELETE');
+    if (not old.DESCRIPTION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SERVICES_LINKS', 'D', old.LINK_ID, 'DESCRIPTION', old.DESCRIPTION, 'DELETE');
+  end
 end ^
 
 CREATE TRIGGER SETTINGS_BIU0 FOR SETTINGS 
@@ -26226,11 +28031,39 @@ begin
 
   if (inserting) then begin
     new.Added_By = current_user;
-    new.Added_On = localtimestamp;
+    new.Added_On = CAST('NOW' AS timestamp);
   end
   else begin
     new.EDIT_by = current_user;
-    new.EDIT_on = localtimestamp;
+    new.EDIT_on = CAST('NOW' AS timestamp);
+  end
+end ^
+
+CREATE TRIGGER TRLOG_SETTINGS FOR SETTINGS 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (updating) then begin
+    if (new.VAR_NAME is distinct from old.VAR_NAME) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'VAR_NAME', old.VAR_NAME, new.VAR_NAME);
+    if (new.VAR_VALUE is distinct from old.VAR_VALUE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'VAR_VALUE', old.VAR_VALUE, new.VAR_VALUE);
+    if (new.VAR_TYPE is distinct from old.VAR_TYPE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'VAR_TYPE', old.VAR_TYPE, new.VAR_TYPE);
+    if (new.VAR_CAPTION is distinct from old.VAR_CAPTION) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'VAR_CAPTION', old.VAR_CAPTION, new.VAR_CAPTION);
+    if (new.VAR_NOTICE is distinct from old.VAR_NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'VAR_NOTICE', old.VAR_NOTICE, new.VAR_NOTICE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'U', NEW.VAR_NAME, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+  end
+  else begin
+    if (not old.VAR_NAME is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'VAR_NAME', NEW.VAR_NAME, 'DELETE');
+    if (not old.VAR_VALUE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'VAR_VALUE', old.VAR_VALUE, 'DELETE');
+    if (not old.VAR_TYPE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'VAR_TYPE', old.VAR_TYPE, 'DELETE');
+    if (not old.VAR_CAPTION is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'VAR_CAPTION', old.VAR_CAPTION, 'DELETE');
+    if (not old.VAR_NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'VAR_NOTICE', old.VAR_NOTICE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SETTINGS', 'D', OLD.VAR_NAME, 'EDIT_ON', old.EDIT_ON, 'DELETE');
   end
 end ^
 
@@ -26240,8 +28073,17 @@ as
 begin
   if (new.Single_Service_Id is null) then
     new.single_service_id = gen_id(gen_operations_uid, 1);
+
   new.Added_By = current_user;
-  new.Added_ON = localtimestamp;
+  new.Added_ON = CAST('NOW' AS timestamp);
+end ^
+
+CREATE TRIGGER SINGLE_SERV_BU FOR SINGLE_SERV 
+ACTIVE BEFORE UPDATE POSITION 0 
+as
+begin
+  new.edit_by = current_user;
+  new.edit_on = localtimestamp;
 end ^
 
 CREATE TRIGGER SINGLE_SERV_BD0 FOR SINGLE_SERV 
@@ -26265,6 +28107,44 @@ delete from single_serv_paid sp where sp.single_service_id = OLD.single_service_
 */
 end ^
 
+CREATE TRIGGER TRLOG_SINGLE_SERV FOR SINGLE_SERV 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.SINGLE_SERVICE_ID is distinct from old.SINGLE_SERVICE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'SINGLE_SERVICE_ID', old.SINGLE_SERVICE_ID, new.SINGLE_SERVICE_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.SERVICE_ID is distinct from old.SERVICE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'SERVICE_ID', old.SERVICE_ID, new.SERVICE_ID);
+    if (new.SERV_DATE is distinct from old.SERV_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'SERV_DATE', old.SERV_DATE, new.SERV_DATE);
+    if (new.UNITS is distinct from old.UNITS) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'UNITS', old.UNITS, new.UNITS);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.HISTORY_ID is distinct from old.HISTORY_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'HISTORY_ID', old.HISTORY_ID, new.HISTORY_ID);
+    if (new.PAID is distinct from old.PAID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'PAID', old.PAID, new.PAID);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    if (new.VATG_ID is distinct from old.VATG_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'VATG_ID', old.VATG_ID, new.VATG_ID);
+    if (new.RQ_ID is distinct from old.RQ_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'RQ_ID', old.RQ_ID, new.RQ_ID);
+    if (new.TAG is distinct from old.TAG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'TAG', old.TAG, new.TAG);
+    if (new.M_ID is distinct from old.M_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'U', new.SINGLE_SERVICE_ID, 'M_ID', old.M_ID, new.M_ID);
+  end
+  else begin
+    if (not old.SINGLE_SERVICE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'SINGLE_SERVICE_ID', old.SINGLE_SERVICE_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.SERVICE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'SERVICE_ID', old.SERVICE_ID, 'DELETE');
+    if (not old.SERV_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'SERV_DATE', old.SERV_DATE, 'DELETE');
+    if (not old.UNITS is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'UNITS', old.UNITS, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.HISTORY_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'HISTORY_ID', old.HISTORY_ID, 'DELETE');
+    if (not old.PAID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'PAID', old.PAID, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.VATG_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'VATG_ID', old.VATG_ID, 'DELETE');
+    if (not old.RQ_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'RQ_ID', old.RQ_ID, 'DELETE');
+    if (not old.TAG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'TAG', old.TAG, 'DELETE');
+    if (not old.M_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SINGLE_SERV', 'D', old.SINGLE_SERVICE_ID, 'M_ID', old.M_ID, 'DELETE');
+  end
+end ^
+
 CREATE TRIGGER STREET_BI0 FOR STREET 
 ACTIVE BEFORE INSERT POSITION 0 
 as
@@ -26273,7 +28153,7 @@ begin
     new.STREET_ID = gen_id(gen_operations_uid, 1);
 
   new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER STREET_BU FOR STREET 
@@ -26353,9 +28233,6 @@ begin
   if (new.DISACT_SERV_ID is null) then
     new.DISACT_SERV_ID = -1;
 
-  new.Added_By = current_user;
-  new.Added_ON = localtimestamp;
-
   if ((new.Serv_Id = 819519) and (coalesce(new.Contract, '') = '')) then begin
     select
         c.Passport_Number
@@ -26363,6 +28240,9 @@ begin
       where c.Customer_Id = new.Customer_Id
     into new.Contract;
   end
+
+  new.Added_By = current_user;
+  new.Added_ON = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER SUBSCR_HIST_BU FOR SUBSCR_HIST 
@@ -26389,19 +28269,6 @@ CREATE TRIGGER SUBSCR_HIST_AD0 FOR SUBSCR_HIST
 ACTIVE AFTER DELETE POSITION 0 
 as
 begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'SUBSCR_SERV_ID', 'DELETE', old.subscr_serv_id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'SERV_ID', 'DELETE', old.serv_id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'ACT_SERV_ID', 'DELETE', old.act_serv_id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'DISACT_SERV_ID', 'DELETE', old.disact_serv_id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'DATE_FROM', 'DELETE', cast(old.date_from as varchar(10)));
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_HIST', 0, old.customer_id, 'DATE_TO', 'DELETE', cast(old.date_to as varchar(10)));
-
   delete from SINGLE_SERV ss
       where ss.CUSTOMER_ID = old.CUSTOMER_ID
             and ss.SERVICE_ID = old.ACT_SERV_ID
@@ -26426,6 +28293,56 @@ begin
   end
 end ^
 
+CREATE TRIGGER TRLOG_SUBSCR_HIST FOR SUBSCR_HIST 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.SUBSCR_HIST_ID is distinct from old.SUBSCR_HIST_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'SUBSCR_HIST_ID', old.SUBSCR_HIST_ID, new.SUBSCR_HIST_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.SERV_ID is distinct from old.SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'SERV_ID', old.SERV_ID, new.SERV_ID);
+    if (new.SUBSCR_SERV_ID is distinct from old.SUBSCR_SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'SUBSCR_SERV_ID', old.SUBSCR_SERV_ID, new.SUBSCR_SERV_ID);
+    if (new.DATE_FROM is distinct from old.DATE_FROM) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'DATE_FROM', old.DATE_FROM, new.DATE_FROM);
+    if (new.DATE_TO is distinct from old.DATE_TO) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'DATE_TO', old.DATE_TO, new.DATE_TO);
+    if (new.ACT_SERV_ID is distinct from old.ACT_SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'ACT_SERV_ID', old.ACT_SERV_ID, new.ACT_SERV_ID);
+    if (new.DISACT_SERV_ID is distinct from old.DISACT_SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'DISACT_SERV_ID', old.DISACT_SERV_ID, new.DISACT_SERV_ID);
+    if (new.ACT_WORKER_ID is distinct from old.ACT_WORKER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'ACT_WORKER_ID', old.ACT_WORKER_ID, new.ACT_WORKER_ID);
+    if (new.DISACT_WORKER_ID is distinct from old.DISACT_WORKER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'DISACT_WORKER_ID', old.DISACT_WORKER_ID, new.DISACT_WORKER_ID);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    if (new.CLOSED_BY is distinct from old.CLOSED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'CLOSED_BY', old.CLOSED_BY, new.CLOSED_BY);
+    if (new.CLOSED_ON is distinct from old.CLOSED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'CLOSED_ON', old.CLOSED_ON, new.CLOSED_ON);
+    if (new.WORKER_ON is distinct from old.WORKER_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'WORKER_ON', old.WORKER_ON, new.WORKER_ON);
+    if (new.WORKER_OFF is distinct from old.WORKER_OFF) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'WORKER_OFF', old.WORKER_OFF, new.WORKER_OFF);
+    if (new.REQ_ON is distinct from old.REQ_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'REQ_ON', old.REQ_ON, new.REQ_ON);
+    if (new.REQ_OFF is distinct from old.REQ_OFF) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'REQ_OFF', old.REQ_OFF, new.REQ_OFF);
+    if (new.CONTRACT is distinct from old.CONTRACT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'CONTRACT', old.CONTRACT, new.CONTRACT);
+    if (new.CONTRACT_DATE is distinct from old.CONTRACT_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'U', new.SUBSCR_HIST_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, new.CONTRACT_DATE);
+  end
+  else begin
+    if (not old.SUBSCR_HIST_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'SUBSCR_HIST_ID', old.SUBSCR_HIST_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'SERV_ID', old.SERV_ID, 'DELETE');
+    if (not old.SUBSCR_SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'SUBSCR_SERV_ID', old.SUBSCR_SERV_ID, 'DELETE');
+    if (not old.DATE_FROM is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'DATE_FROM', old.DATE_FROM, 'DELETE');
+    if (not old.DATE_TO is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'DATE_TO', old.DATE_TO, 'DELETE');
+    if (not old.ACT_SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'ACT_SERV_ID', old.ACT_SERV_ID, 'DELETE');
+    if (not old.DISACT_SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'DISACT_SERV_ID', old.DISACT_SERV_ID, 'DELETE');
+    if (not old.ACT_WORKER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'ACT_WORKER_ID', old.ACT_WORKER_ID, 'DELETE');
+    if (not old.DISACT_WORKER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'DISACT_WORKER_ID', old.DISACT_WORKER_ID, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.CLOSED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'CLOSED_BY', old.CLOSED_BY, 'DELETE');
+    if (not old.CLOSED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'CLOSED_ON', old.CLOSED_ON, 'DELETE');
+    if (not old.WORKER_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'WORKER_ON', old.WORKER_ON, 'DELETE');
+    if (not old.WORKER_OFF is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'WORKER_OFF', old.WORKER_OFF, 'DELETE');
+    if (not old.REQ_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'REQ_ON', old.REQ_ON, 'DELETE');
+    if (not old.REQ_OFF is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'REQ_OFF', old.REQ_OFF, 'DELETE');
+    if (not old.CONTRACT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'CONTRACT', old.CONTRACT, 'DELETE');
+    if (not old.CONTRACT_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_HIST', 'D', old.SUBSCR_HIST_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, 'DELETE');
+  end
+end ^
+
 CREATE TRIGGER SUBSCR_SERV_BI0 FOR SUBSCR_SERV 
 ACTIVE BEFORE INSERT POSITION 0 
 AS
@@ -26439,14 +28356,6 @@ ACTIVE AFTER DELETE POSITION 0
 as
 declare variable ID D_INTEGER;
 begin
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_SERV', 0, old.customer_id, 'SUBSCR_SERV_ID', 'DELETE', old.Subscr_Serv_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_SERV', 0, old.customer_id, 'SERV_ID', 'DELETE', old.Serv_Id);
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_SERV', 0, old.customer_id, 'STATE_DATE', 'DELETE', cast(old.State_Date as varchar(10)));
-  insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-  values ('SUBSCR_SERV', 0, old.customer_id, 'STATE_SRV', 'DELETE', old.State_Srv);
 
   -- удалим начисления по этой услуге
   delete from Monthly_Fee f
@@ -26530,6 +28439,40 @@ begin
   end
 end ^
 
+CREATE TRIGGER TRLOG_SUBSCR_SERV FOR SUBSCR_SERV 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.SUBSCR_SERV_ID is distinct from old.SUBSCR_SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'SUBSCR_SERV_ID', old.SUBSCR_SERV_ID, new.SUBSCR_SERV_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.SERV_ID is distinct from old.SERV_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'SERV_ID', old.SERV_ID, new.SERV_ID);
+    if (new.STATE_SGN is distinct from old.STATE_SGN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'STATE_SGN', old.STATE_SGN, new.STATE_SGN);
+    if (new.STATE_DATE is distinct from old.STATE_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'STATE_DATE', old.STATE_DATE, new.STATE_DATE);
+    if (new.STATE_SRV is distinct from old.STATE_SRV) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'STATE_SRV', old.STATE_SRV, new.STATE_SRV);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.STATE_CHANGE_BY is distinct from old.STATE_CHANGE_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'STATE_CHANGE_BY', old.STATE_CHANGE_BY, new.STATE_CHANGE_BY);
+    if (new.STATE_CHANGE_ON is distinct from old.STATE_CHANGE_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'STATE_CHANGE_ON', old.STATE_CHANGE_ON, new.STATE_CHANGE_ON);
+    if (new.CONTRACT is distinct from old.CONTRACT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'CONTRACT', old.CONTRACT, new.CONTRACT);
+    if (new.CONTRACT_DATE is distinct from old.CONTRACT_DATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, new.CONTRACT_DATE);
+    if (new.VATG_ID is distinct from old.VATG_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'U', new.SUBSCR_SERV_ID, 'VATG_ID', old.VATG_ID, new.VATG_ID);
+  end
+  else begin
+    if (not old.SUBSCR_SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'SUBSCR_SERV_ID', old.SUBSCR_SERV_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.SERV_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'SERV_ID', old.SERV_ID, 'DELETE');
+    if (not old.STATE_SGN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'STATE_SGN', old.STATE_SGN, 'DELETE');
+    if (not old.STATE_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'STATE_DATE', old.STATE_DATE, 'DELETE');
+    if (not old.STATE_SRV is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'STATE_SRV', old.STATE_SRV, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.STATE_CHANGE_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'STATE_CHANGE_BY', old.STATE_CHANGE_BY, 'DELETE');
+    if (not old.STATE_CHANGE_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'STATE_CHANGE_ON', old.STATE_CHANGE_ON, 'DELETE');
+    if (not old.CONTRACT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'CONTRACT', old.CONTRACT, 'DELETE');
+    if (not old.CONTRACT_DATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'CONTRACT_DATE', old.CONTRACT_DATE, 'DELETE');
+    if (not old.VATG_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('SUBSCR_SERV', 'D', old.SUBSCR_SERV_ID, 'VATG_ID', old.VATG_ID, 'DELETE');
+  end
+end ^
+
 CREATE TRIGGER SYS$GROUP_AD FOR SYS$GROUP 
 ACTIVE AFTER DELETE POSITION 0 
 as
@@ -26545,9 +28488,10 @@ as
 begin
   if (new.id is null) then
     new.ID = gen_id(gen_uid, 1);
+
   if (inserting) then begin
     new.Added_By = current_user;
-    new.Added_On = localtimestamp;
+    new.Added_On = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -26569,17 +28513,19 @@ begin
     new.ID = gen_id(gen_uid, 1);
   if (new.Rights_Type is null) then
     new.Rights_Type = 0;
+
   if (inserting) then begin
     new.Added_By = current_user;
-    new.Added_On = localtimestamp;
+    new.Added_On = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
+
   update Sys$Group s
   set s.Edit_By = current_user,
-      s.Edit_On = localtimestamp
+      s.Edit_On = CAST('NOW' AS timestamp)
   where s.Id = new.Group_Id;
 end ^
 
@@ -26647,7 +28593,7 @@ begin
 
   if (new.added_by is null) then
     new.added_by = current_user;
-  new.added_on = localtimestamp;
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER TASKLIST_AI FOR TASKLIST 
@@ -26678,7 +28624,7 @@ begin
 
   if (new.added_by is null) then
     new.added_by = current_user;
-  new.Added_On = localtimestamp;
+  new.Added_On = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER TASKMSG_AI FOR TASKMSG 
@@ -26723,27 +28669,7 @@ ACTIVE BEFORE INSERT POSITION 1
 as
 begin
   new.added_by = current_user;
-  new.added_on = localtimestamp;
-end ^
-
-CREATE TRIGGER TV_LAN_AI1 FOR TV_LAN 
-ACTIVE AFTER INSERT POSITION 1 
-as
-begin
-  if (not new.ip is null)
-  then
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, NEW.customer_id, 'IP', null, NEW.ip);
-
-  if (not new.mac is null)
-  then
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, NEW.customer_id, 'MAC', null, NEW.mac);
-
-  if (not new.eq_id is null)
-  then
-    insert into CHANGELOG ( LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, NEW.customer_id, 'MODEM', null, NEW.eq_id);
+  new.added_on = CAST('NOW' AS timestamp);
 end ^
 
 CREATE TRIGGER TV_LAN_BU FOR TV_LAN 
@@ -26752,56 +28678,6 @@ as
 begin
   new.edit_by = current_user;
   new.edit_on = localtimestamp;
-end ^
-
-CREATE TRIGGER TV_LAN_AU1 FOR TV_LAN 
-ACTIVE AFTER UPDATE POSITION 1 
-as
-begin
-  if (new.ip is distinct from old.ip) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, new.customer_id, 'IP', old.ip, new.ip);
-
-  if (new.mac is distinct from old.mac) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, new.customer_id, 'MAC', old.mac, new.mac);
-
-  if (new.eq_id is distinct from old.eq_id) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, new.customer_id, 'MODEM', old.eq_id, new.eq_id);
-
-  if (new.Tag is distinct from old.Tag) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, new.customer_id, 'TAG', old.Tag, new.Tag);
-
-  if (new.Tag_Str is distinct from old.Tag_Str) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, new.customer_id, 'TAG_STR', old.Tag_Str, new.Tag_Str);
-end ^
-
-CREATE TRIGGER TV_LAN_AD FOR TV_LAN 
-ACTIVE AFTER DELETE POSITION 0 
-as
-begin
-  if (not((old.ip is null))) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, old.customer_id, 'IP', 'DELETE', old.ip);
-
-  if (not((old.mac is null))) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, old.customer_id, 'MAC', 'DELETE', old.mac);
-
-  if (not old.eq_id is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, old.customer_id, 'MODEM', 'DELETE', old.eq_id);
-
-  if (not old.Tag is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, old.customer_id, 'TAG', 'DELETE', old.Tag);
-
-  if (not old.Tag_Str is null) then
-    insert into CHANGELOG (LOG_GROUP, OBJECT_TYPE, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
-    values ('LAN', 0, old.customer_id, 'TAG_STR', 'DELETE', old.Tag_Str);
 end ^
 
 CREATE TRIGGER TV_LAN_BIU0 FOR TV_LAN 
@@ -26889,6 +28765,58 @@ begin
   end
 end ^
 
+CREATE TRIGGER TRLOG_TV_LAN FOR TV_LAN 
+ACTIVE AFTER UPDATE OR DELETE POSITION 999 
+as
+begin
+  if (UPDATING) then begin
+    if (new.LAN_ID is distinct from old.LAN_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'LAN_ID', old.LAN_ID, new.LAN_ID);
+    if (new.CUSTOMER_ID is distinct from old.CUSTOMER_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, new.CUSTOMER_ID);
+    if (new.IP is distinct from old.IP) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'IP', old.IP, new.IP);
+    if (new.IPV6 is distinct from old.IPV6) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'IPV6', old.IPV6, new.IPV6);
+    if (new.MAC is distinct from old.MAC) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'MAC', old.MAC, new.MAC);
+    if (new.IP_ADD is distinct from old.IP_ADD) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'IP_ADD', old.IP_ADD, new.IP_ADD);
+    if (new.PORT is distinct from old.PORT) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'PORT', old.PORT, new.PORT);
+    if (new.NOTICE is distinct from old.NOTICE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'NOTICE', old.NOTICE, new.NOTICE);
+    if (new.IP_BIN is distinct from old.IP_BIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'IP_BIN', old.IP_BIN, new.IP_BIN);
+    if (new.IP_ADD_BIN is distinct from old.IP_ADD_BIN) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'IP_ADD_BIN', old.IP_ADD_BIN, new.IP_ADD_BIN);
+    if (new.TAG is distinct from old.TAG) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'TAG', old.TAG, new.TAG);
+    if (new.TAG_STR is distinct from old.TAG_STR) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'TAG_STR', old.TAG_STR, new.TAG_STR);
+    if (new.EQ_ID is distinct from old.EQ_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'EQ_ID', old.EQ_ID, new.EQ_ID);
+    if (new.VLAN_ID is distinct from old.VLAN_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'VLAN_ID', old.VLAN_ID, new.VLAN_ID);
+    if (new.HOUSE_ID is distinct from old.HOUSE_ID) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'HOUSE_ID', old.HOUSE_ID, new.HOUSE_ID);
+    if (new.PLACE is distinct from old.PLACE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'PLACE', old.PLACE, new.PLACE);
+    --if (new.LAST_UPDATE is distinct from old.LAST_UPDATE) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'LAST_UPDATE', old.LAST_UPDATE, new.LAST_UPDATE);
+    if (new.ADDED_BY is distinct from old.ADDED_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'ADDED_BY', old.ADDED_BY, new.ADDED_BY);
+    if (new.ADDED_ON is distinct from old.ADDED_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'ADDED_ON', old.ADDED_ON, new.ADDED_ON);
+    --if (new.EDIT_BY is distinct from old.EDIT_BY) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'EDIT_BY', old.EDIT_BY, new.EDIT_BY);
+    --if (new.EDIT_ON is distinct from old.EDIT_ON) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'U', new.LAN_ID, 'EDIT_ON', old.EDIT_ON, new.EDIT_ON);
+  end
+  else begin
+    if (not old.LAN_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'LAN_ID', old.LAN_ID, 'DELETE');
+    if (not old.CUSTOMER_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'CUSTOMER_ID', old.CUSTOMER_ID, 'DELETE');
+    if (not old.IP is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'IP', old.IP, 'DELETE');
+    if (not old.IPV6 is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'IPV6', old.IPV6, 'DELETE');
+    if (not old.MAC is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'MAC', old.MAC, 'DELETE');
+    if (not old.IP_ADD is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'IP_ADD', old.IP_ADD, 'DELETE');
+    if (not old.PORT is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'PORT', old.PORT, 'DELETE');
+    if (not old.NOTICE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'NOTICE', old.NOTICE, 'DELETE');
+    if (not old.IP_BIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'IP_BIN', old.IP_BIN, 'DELETE');
+    if (not old.IP_ADD_BIN is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'IP_ADD_BIN', old.IP_ADD_BIN, 'DELETE');
+    if (not old.TAG is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'TAG', old.TAG, 'DELETE');
+    if (not old.TAG_STR is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'TAG_STR', old.TAG_STR, 'DELETE');
+    if (not old.EQ_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'EQ_ID', old.EQ_ID, 'DELETE');
+    if (not old.VLAN_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'VLAN_ID', old.VLAN_ID, 'DELETE');
+    if (not old.HOUSE_ID is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'HOUSE_ID', old.HOUSE_ID, 'DELETE');
+    if (not old.PLACE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'PLACE', old.PLACE, 'DELETE');
+    if (not old.LAST_UPDATE is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'LAST_UPDATE', old.LAST_UPDATE, 'DELETE');
+    if (not old.ADDED_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'ADDED_BY', old.ADDED_BY, 'DELETE');
+    if (not old.ADDED_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'ADDED_ON', old.ADDED_ON, 'DELETE');
+    if (not old.EDIT_BY is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'EDIT_BY', old.EDIT_BY, 'DELETE');
+    if (not old.EDIT_ON is null) then insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER) values ('TV_LAN', 'D', old.LAN_ID, 'EDIT_ON', old.EDIT_ON, 'DELETE');
+  end
+end ^
+
 CREATE TRIGGER TV_LAN_PACKETS_AI FOR TV_LAN_PACKETS 
 ACTIVE AFTER INSERT POSITION 0 
 as
@@ -26937,11 +28865,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.edit_by = current_user;
-    new.edit_on = localtimestamp;
+    new.edit_on = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -26964,11 +28892,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -26980,11 +28908,11 @@ begin
 
   if (inserting) then begin
     new.added_by = current_user;
-    new.added_on = localtimestamp;
+    new.added_on = CAST('NOW' AS timestamp);
   end
   else begin
     new.Edit_By = current_user;
-    new.Edit_On = localtimestamp;
+    new.Edit_On = CAST('NOW' AS timestamp);
   end
 end ^
 
@@ -27054,14 +28982,14 @@ CREATE TRIGGER WORKS_BIU0 FOR WORKS
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
-if (inserting) then begin
-  new.added_by = current_user;
-  new.added_on = localtimestamp;
-end
-else begin
-  new.edit_by = current_user;
-  new.edit_on = localtimestamp;
-end
+  if (inserting) then begin
+    new.added_by = current_user;
+    new.added_on = cast('NOW' as timestamp);
+  end
+  else begin
+    new.edit_by = current_user;
+    new.edit_on = cast('NOW' as timestamp);
+  end
 end ^
 
 
@@ -27134,8 +29062,13 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CONNECT_LOG TO ROLE ROLE_A4U
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO ROLE RDB$ADMIN;
 GRANT SELECT ON CUSTLETTER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTLETTER TO ROLE ROLE_A4USER;
+GRANT SELECT ON CUSTOMER TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
+GRANT SELECT ON CUSTOMER TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT SELECT ON CUSTOMER TO PROCEDURE FIND_FREE_LINKED_PORT;
 GRANT SELECT ON CUSTOMER TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT SELECT ON CUSTOMER TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
+GRANT SELECT ON CUSTOMER TO PROCEDURE GET_WIRE_INFO;
+GRANT SELECT ON CUSTOMER TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO ROLE RDB$ADMIN;
 GRANT SELECT ON CUSTOMER TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON CUSTOMER TO ROLE ROLE_A4USER;
@@ -27236,6 +29169,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE RDB$ADMI
 GRANT SELECT ON EPG_SOURCES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE ROLE_A4USER;
 GRANT SELECT ON EQUIPMENT TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON EQUIPMENT TO PROCEDURE GET_WIRE_INFO;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE RDB$ADMIN;
 GRANT SELECT ON EQUIPMENT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE ROLE_A4USER;
@@ -27320,23 +29254,28 @@ GRANT SELECT ON MAP_LOG TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP_LOG TO ROLE ROLE_A4USER;
 GRANT SELECT ON MAP_XY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MAP_XY TO ROLE ROLE_A4USER;
+GRANT SELECT ON MATERIALS TO PROCEDURE MATERIAL_REMAIN_RECALC;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO ROLE RDB$ADMIN;
 GRANT SELECT ON MATERIALS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO ROLE RDB$ADMIN;
 GRANT SELECT ON MATERIALS_GROUP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_GROUP TO ROLE ROLE_A4USER;
+GRANT SELECT ON MATERIALS_IN_DOC TO PROCEDURE MATERIAL_REMAIN_RECALC;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE RDB$ADMIN;
 GRANT SELECT ON MATERIALS_IN_DOC TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON MATERIALS_IN_DOC_UNIT TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON MATERIALS_IN_DOC_UNIT TO PROCEDURE MATERIAL_REMAIN_RECALC;
 GRANT SELECT ON MATERIALS_IN_DOC_UNIT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_IN_DOC_UNIT TO ROLE ROLE_A4USER;
+GRANT INSERT, SELECT, UPDATE ON MATERIALS_REMAIN TO PROCEDURE MATERIAL_REMAIN_RECALC;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE RDB$ADMIN;
 GRANT SELECT ON MATERIALS_REMAIN TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT SELECT ON MATERIALS_REMAIN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIALS_REMAIN TO ROLE ROLE_A4USER;
 GRANT SELECT ON MATERIAL_DOCS TO PROCEDURE GET_DOC_UNIT_INCOME;
+GRANT SELECT ON MATERIAL_DOCS TO PROCEDURE MATERIAL_REMAIN_RECALC;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE RDB$ADMIN;
 GRANT SELECT ON MATERIAL_DOCS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MATERIAL_DOCS TO ROLE ROLE_A4USER;
@@ -27374,6 +29313,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES_ATTRIBUTES TO ROLE ROL
 GRANT SELECT ON NODE_FILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FILES TO ROLE ROLE_A4USER;
 GRANT SELECT ON NODE_FLATS TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON NODE_FLATS TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT SELECT ON NODE_FLATS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODE_FLATS TO ROLE ROLE_A4USER;
 GRANT SELECT ON NODE_LAYOUT TO ROLE ROLE_A4READER;
@@ -27384,12 +29324,14 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO ROLE ROLE_A4USER;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT SELECT ON OBJECTS TO PROCEDURE GET_DOC_UNIT_INCOME;
+GRANT SELECT ON OBJECTS TO PROCEDURE MATERIAL_REMAIN_RECALC;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE RDB$ADMIN;
 GRANT SELECT ON OBJECTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE RDB$ADMIN;
 GRANT SELECT ON OBJECTS_COVERAGE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE ROLE_A4USER;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_LINKS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO ROLE RDB$ADMIN;
 GRANT SELECT ON OBJECTS_TYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_TYPE TO ROLE ROLE_A4USER;
@@ -27433,6 +29375,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERSONAL_TARIF TO ROLE ROLE_
 GRANT SELECT ON PERS_TARIF_TMP TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PERS_TARIF_TMP TO ROLE ROLE_A4USER;
 GRANT SELECT ON PORT TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON PORT TO PROCEDURE GET_WIRE_INFO;
 GRANT SELECT ON PORT TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PORT TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PREPAY_DETAIL TO ROLE RDB$ADMIN;
@@ -27443,6 +29386,7 @@ GRANT SELECT ON PROFILES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON PROFILES TO ROLE ROLE_A4USER;
 GRANT SELECT ON QRATING TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QRATING TO ROLE ROLE_A4USER;
+GRANT SELECT ON QUEUE_SWITCH_SRV TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO ROLE RDB$ADMIN;
 GRANT SELECT ON QUEUE_SWITCH_SRV TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON QUEUE_SWITCH_SRV TO ROLE ROLE_A4USER;
@@ -27463,6 +29407,8 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REMINDER TO ROLE ROLE_A4USER
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO ROLE RDB$ADMIN;
 GRANT SELECT ON REPORTS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REPORTS TO ROLE ROLE_A4USER;
+GRANT SELECT ON REQUEST TO PROCEDURE MATERIAL_REMAIN_RECALC;
+GRANT SELECT ON REQUEST TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO ROLE RDB$ADMIN;
 GRANT SELECT ON REQUEST TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST TO ROLE ROLE_A4USER;
@@ -27473,11 +29419,15 @@ GRANT SELECT ON REQUEST_FLATS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_FLATS TO ROLE ROLE_A4USER;
 GRANT SELECT ON REQUEST_MATERIALS TO FUNCTION GET_REQUEST_MONEY;
 GRANT SELECT, UPDATE ON REQUEST_MATERIALS TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON REQUEST_MATERIALS TO PROCEDURE MATERIAL_REMAIN_RECALC;
+GRANT SELECT ON REQUEST_MATERIALS TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE RDB$ADMIN;
 GRANT DELETE, INSERT, SELECT, UPDATE ON REQUEST_MATERIALS TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT SELECT ON REQUEST_MATERIALS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS TO ROLE ROLE_A4USER;
 GRANT SELECT, UPDATE ON REQUEST_MATERIALS_RETURN TO PROCEDURE MATERIAL_CHANGE_SN;
+GRANT SELECT ON REQUEST_MATERIALS_RETURN TO PROCEDURE MATERIAL_REMAIN_RECALC;
+GRANT SELECT ON REQUEST_MATERIALS_RETURN TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE RDB$ADMIN;
 GRANT SELECT ON REQUEST_MATERIALS_RETURN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_MATERIALS_RETURN TO ROLE ROLE_A4USER;
@@ -27499,9 +29449,14 @@ GRANT SELECT ON REQUEST_WORKS TO FUNCTION GET_REQUEST_MONEY;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO ROLE RDB$ADMIN;
 GRANT SELECT ON REQUEST_WORKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON REQUEST_WORKS TO ROLE ROLE_A4USER;
+GRANT SELECT ON SERVICES TO PROCEDURE AUTO_OFF_SERVICE;
+GRANT SELECT ON SERVICES TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
+GRANT SELECT ON SERVICES TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT SELECT ON SERVICES TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON SERVICES TO PROCEDURE CUSTOMER_BALANCE_DAILY;
 GRANT SELECT ON SERVICES TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT SELECT ON SERVICES TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
+GRANT SELECT ON SERVICES TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO ROLE RDB$ADMIN;
 GRANT SELECT ON SERVICES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES TO ROLE ROLE_A4USER;
@@ -27511,6 +29466,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_ATTRIBUTES TO ROLE 
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO ROLE RDB$ADMIN;
 GRANT SELECT ON SERVICES_CMPLX TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_CMPLX TO ROLE ROLE_A4USER;
+GRANT SELECT ON SERVICES_LINKS TO PROCEDURE AUTO_OFF_SERVICE;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE RDB$ADMIN;
 GRANT SELECT ON SERVICES_LINKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE ROLE_A4USER;
@@ -27539,13 +29495,20 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBAREA TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO ROLE RDB$ADMIN;
 GRANT SELECT ON SUBDIVISIONS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBDIVISIONS TO ROLE ROLE_A4USER;
+GRANT INSERT, SELECT, UPDATE ON SUBSCR_HIST TO PROCEDURE AUTO_OFF_SERVICE;
 GRANT SELECT ON SUBSCR_HIST TO FUNCTION CHECK_CUSTOMER_SERVICE;
 GRANT SELECT ON SUBSCR_HIST TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT SELECT ON SUBSCR_HIST TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO ROLE RDB$ADMIN;
 GRANT SELECT ON SUBSCR_HIST TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_HIST TO ROLE ROLE_A4USER;
+GRANT SELECT, UPDATE ON SUBSCR_SERV TO PROCEDURE AUTO_OFF_SERVICE;
+GRANT SELECT ON SUBSCR_SERV TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
 GRANT SELECT ON SUBSCR_SERV TO FUNCTION CHECK_CUSTOMER_SERVICE;
+GRANT SELECT ON SUBSCR_SERV TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT SELECT ON SUBSCR_SERV TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT SELECT ON SUBSCR_SERV TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
+GRANT SELECT ON SUBSCR_SERV TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO ROLE RDB$ADMIN;
 GRANT SELECT ON SUBSCR_SERV TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SUBSCR_SERV TO ROLE ROLE_A4USER;
@@ -27570,6 +29533,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_GROUPS TO ROLE ROLE
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO ROLE RDB$ADMIN;
 GRANT SELECT ON SYS$USER_WH TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SYS$USER_WH TO ROLE ROLE_A4USER;
+GRANT SELECT ON TARIF TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO ROLE RDB$ADMIN;
 GRANT SELECT ON TARIF TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TARIF TO ROLE ROLE_A4USER;
@@ -27585,6 +29549,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO ROLE RDB$ADMIN;
 GRANT SELECT ON TQUEUE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TQUEUE TO ROLE ROLE_A4USER;
 GRANT SELECT ON TV_LAN TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON TV_LAN TO PROCEDURE GET_WIRE_INFO;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO ROLE RDB$ADMIN;
 GRANT SELECT ON TV_LAN TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TV_LAN TO ROLE ROLE_A4USER;
@@ -27619,6 +29584,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_ORDER_CREATOR TO ROLE ROLE
 GRANT SELECT ON V_PAYMENTTYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON V_PAYMENTTYPE TO ROLE ROLE_A4USER;
 GRANT SELECT ON WIRE TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON WIRE TO PROCEDURE GET_WIRE_INFO;
 GRANT SELECT ON WIRE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WIRE TO ROLE ROLE_A4USER;
 GRANT SELECT ON WIRE_POINT TO ROLE ROLE_A4READER;
@@ -27639,6 +29605,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE RDB$ADMIN;
 GRANT SELECT ON WORKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE ROLE_A4USER;
 GRANT ROLE_A4USER TO APOG;
+GRANT ROLE_A4USER TO ELENA;
 GRANT ROLE_A4USER TO MIRONOVA;
 GRANT ROLE_A4USER TO NA;
 GRANT ROLE_A4USER TO S1;
@@ -27679,6 +29646,7 @@ GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE ADD_STAT_IP TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_STAT_IP TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO PROCEDURE AUTO_OFF_SERVICE;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE ADD_SUBSCR_SERVICE_VAT TO ROLE RDB$ADMIN;
@@ -27714,16 +29682,17 @@ GRANT EXECUTE ON PROCEDURE API_SET_PREPAY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE API_SET_SWITCH_QUEUE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE API_SET_SWITCH_QUEUE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE APPLIANCE_TO_TABLE TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON PROCEDURE ATRIBUTES_LINE TO ROLE RDB$ADMIN;
-GRANT EXECUTE ON PROCEDURE ATRIBUTES_LINE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE ATTRIBUTES_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ATTRIBUTES_IUD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE ATTRIBUTE_CHECK_UNIQ TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE AUTO_OFF_SERVICE TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
 GRANT EXECUTE ON PROCEDURE AUTO_OFF_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE AUTO_OFF_SERVICE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE AUTO_ON_SERVICE TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON PROCEDURE AUTO_ON_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE AUTO_ON_SERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE BCISSUECH_ID TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE BLOCK_CUSTOMER_SERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE BONUS_ADD_AFTER_PAYMENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE BONUS_ADD_AFTER_PAYMENT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE BONUS_RATE_INS TO ROLE RDB$ADMIN;
@@ -27824,6 +29793,7 @@ GRANT EXECUTE ON PROCEDURE DELETE_OBJECT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_OBJECT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE DELETE_SUBSCR_SERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DELETE_SUBSCR_SERVICE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT TO PROCEDURE AUTO_OFF_SERVICE;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE DIGITAL_EVENT_ADD TO ROLE RDB$ADMIN;
@@ -27840,9 +29810,11 @@ GRANT EXECUTE ON PROCEDURE EPG_ADD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EPG_ADD_BY_SC TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EQUIPMENT_UPD TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE EXPLODE TO PROCEDURE GET_WIRE_INFO;
 GRANT EXECUTE ON PROCEDURE EXPLODE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXPLODE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO PROCEDURE NODE_CHECK_LAYOUT;
 GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE EXPLODE_NO_EMPTY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE EXTRACT_ALL_DIGITS TO ROLE RDB$ADMIN;
@@ -27936,6 +29908,8 @@ GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_MODULES_FOR_MENU TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_NODE_FLAT_LVL TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_NODE_FLAT_LVL TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_NODE_LAYOUT TO PROCEDURE NODE_CHECK_LAYOUT;
+GRANT EXECUTE ON PROCEDURE GET_NODE_LAYOUT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_PAY_DOC TO ROLE ROLE_A4USER;
@@ -27961,8 +29935,10 @@ GRANT EXECUTE ON PROCEDURE GET_SERVICES_TO_SWITCH TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_STATISTICS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_STATISTICS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GET_WIRE_INFO TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE HOUSE_IUD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE HOUSE_MAP TO ROLE RDB$ADMIN;
@@ -27982,8 +29958,10 @@ GRANT EXECUTE ON PROCEDURE MATERIALS_SUMMARY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MATERIAL_CHANGE_SN TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_DOCS_DELETE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO USER PAYDEAMON;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO USER WEBJOB;
 GRANT EXECUTE ON PROCEDURE MATERIAL_UNIT_MOVE TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT EXECUTE ON PROCEDURE MATERIAL_UNIT_MOVE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MAT_MOVE_DETAILS TO ROLE ROLE_A4USER;
@@ -28059,6 +30037,7 @@ GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_SEND_SMS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE REQUEST_WORKS_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE REQUEST_WORKS_IUD TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE SAVEPCEFOREMP TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE SELECTONOFFSERVICE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE SELECTONOFFSERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE SELECTPAYDOC TO ROLE RDB$ADMIN;
@@ -28092,6 +30071,7 @@ GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION ATTRIBUTES_LINE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION CHECK_CUSTOMER_SERVICE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION DISTANCE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION ESCAPE_STRING TO ROLE ROLE_A4USER;
@@ -28104,20 +30084,29 @@ GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_NEW_ACCOUNT TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_NEW_ACCOUNT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO PROCEDURE CHECK_FOR_UNBLOCK;
+GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
+GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SETTING_VALUE TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT EXECUTE ON FUNCTION GET_SETTING_VALUE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_SETTING_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION INET_ATON TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION INET_NTOA TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION MAC_FORMAT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION NUMBER_AS_STR TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION ONLY_DIGITS TO ROLE ROLE_A4USER;
@@ -28184,6 +30173,8 @@ GRANT USAGE ON EXCEPTION E_NOT_EMPTY TO ROLE ROLE_A4USER;
 GRANT USAGE ON EXCEPTION E_STRICT_MODE TO ROLE ROLE_A4USER;
 GRANT USAGE ON EXCEPTION E_TARIF_EXISTS TO PUBLIC;
 GRANT USAGE ON EXCEPTION E_TARIF_EXISTS TO ROLE ROLE_A4USER;
+GRANT USAGE ON EXCEPTION E_WRONG_DATE TO PROCEDURE AUTO_OFF_SERVICE;
+GRANT USAGE ON EXCEPTION E_WRONG_DATE TO ROLE ROLE_A4USER;
 
 /* Comments for database objects. */
 COMMENT ON DOMAIN       D_SERIAL IS 'Для полей серийных номеров';
@@ -28202,12 +30193,14 @@ COMMENT ON    COLUMN    APPLIANCE.NOTICE IS 'Примечание';
 COMMENT ON    COLUMN    APPLIANCE.MAC IS 'MAC адрес устройства';
 COMMENT ON    COLUMN    APPLIANCE.SERIAL IS 'Серийный номер';
 COMMENT ON    COLUMN    APPLIANCE.COST IS 'Стоимость на момент передаци';
-COMMENT ON    COLUMN    APPLIANCE.PROPERTY IS 'Собственность. 0-абонента. 1-компании. 2-рассрочка. 3-аренда.';
+COMMENT ON    COLUMN    APPLIANCE.PROPERTY IS 'Собственность. -1-абонента(купил сам). 0-абонента. 1-компании. 2-рассрочка. 3-аренда.';
 COMMENT ON    COLUMN    APPLIANCE.S_VERSION IS 'Версия софта прошивки';
 COMMENT ON    COLUMN    APPLIANCE.M_ID IS 'Ссылка на материал, если это собственность компании';
 COMMENT ON    COLUMN    APPLIANCE.RQ_ID IS 'Какой заявкой передано';
 COMMENT ON    COLUMN    APPLIANCE.FROM_WH IS 'С какого склада пришло';
 COMMENT ON    COLUMN    APPLIANCE.CALC IS 'Метод расчет за материал. 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.';
+COMMENT ON    COLUMN    APPLIANCE.SOFT IS 'Версия ПО';
+COMMENT ON    COLUMN    APPLIANCE.QUANT IS 'Количество';
 COMMENT ON TABLE        AREA IS 'Участки';
 COMMENT ON TABLE        ATTRIBUTE IS 'Универсальная таблица хранения атрибутов на объекты';
 COMMENT ON    COLUMN    ATTRIBUTE.TYPE_ID IS 'Тип атрибута. соответствует типам с таблицу object_type
@@ -28262,8 +30255,8 @@ COMMENT ON    COLUMN    CARDS_SERIALS.CS_SOURCE_ID IS 'Для полей ссы�
 COMMENT ON TABLE        CHANGELOG IS 'Журнал изменений';
 COMMENT ON    COLUMN    CHANGELOG.LOG_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    CHANGELOG.LOG_GROUP IS 'таблица изменений';
-COMMENT ON    COLUMN    CHANGELOG.OBJECT_TYPE IS '0 - абонент, 1 - оборудование';
 COMMENT ON    COLUMN    CHANGELOG.OBJECT_ID IS 'id абонента или оборудования';
+COMMENT ON    COLUMN    CHANGELOG.OBJECT_TYPE IS 'устарело, будет удалено';
 COMMENT ON TABLE        CHANNELS IS 'ТВ каналы';
 COMMENT ON    COLUMN    CHANNELS.CH_NUMBER IS 'номер в аналаге';
 COMMENT ON    COLUMN    CHANNELS.CH_NAME IS 'название канала';
@@ -28371,12 +30364,13 @@ null не проверен
 1 - все ок';
 COMMENT ON    COLUMN    CUSTOMER.CONTRACT_BASIS IS 'Для юр. лиц "В ЛИЦЕ... на основании" / Для физ. лица. "Место рождения"';
 COMMENT ON    COLUMN    CUSTOMER.BANK_ID IS 'ид банка';
+COMMENT ON    COLUMN    CUSTOMER.DOCTYPE IS 'Тип документа Objects type 66';
 COMMENT ON TABLE        CUSTOMER_ATTRIBUTES IS 'Атрибуты абонентов';
 COMMENT ON    COLUMN    CUSTOMER_ATTRIBUTES.RQ_ID IS 'Какой заявкой был выставлен атрибут';
 COMMENT ON TABLE        CUSTOMER_BONUSES IS 'Таблица бонусов';
 COMMENT ON    COLUMN    CUSTOMER_BONUSES.CUSTOMER_DEBT IS 'Баланс абонента в момент добавления бонуса';
 COMMENT ON    COLUMN    CUSTOMER_BONUSES.BONUS_DATE IS 'Дата бонуса';
-COMMENT ON    COLUMN    CUSTOMER_BONUSES.BT_ID IS 'За что бонус (оплата, акция. и прочее)';
+COMMENT ON    COLUMN    CUSTOMER_BONUSES.BT_ID IS 'За что бонус (оплата, акция. и прочее) O_Type = 30';
 COMMENT ON    COLUMN    CUSTOMER_BONUSES.UNITS IS 'Кол-во бонусов (единицы)';
 COMMENT ON    COLUMN    CUSTOMER_BONUSES.BONUS IS 'Сумма бонусов (деньги)';
 COMMENT ON    COLUMN    CUSTOMER_BONUSES.EXT_ID IS 'номер платежа или другой номер в зависимости от типа';
@@ -28388,7 +30382,7 @@ COMMENT ON    COLUMN    CUSTOMER_CHANNELS.NOTICE IS 'Примечание';
 COMMENT ON    COLUMN    CUSTOMER_CHANNELS.DECODER_ID IS 'код декодера абонента';
 COMMENT ON TABLE        CUSTOMER_CONTACTS IS 'Таблица контактов абонента (телефон, емаил и т.д.)';
 COMMENT ON    COLUMN    CUSTOMER_CONTACTS.CUSTOMER_ID IS 'FOR PRIMARY KEYS';
-COMMENT ON    COLUMN    CUSTOMER_CONTACTS.CC_TYPE IS 'Тип контакта
+COMMENT ON    COLUMN    CUSTOMER_CONTACTS.CC_TYPE IS 'Тип контакта O_TYPE = 45
 0 - телефон
 1 - мобильный телефон
 2 - email
@@ -28484,6 +30478,7 @@ COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.V_NUM IS 'для личных �
 COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.V_DATE IS 'для личных нужд оператора';
 COMMENT ON    COLUMN    DISTRIB_CONTRACT_REPORTS.V_TEXT IS 'для личных нужд оператора';
 COMMENT ON TABLE        DOC_LIST IS 'Картотека документов абонентов';
+COMMENT ON    COLUMN    DOC_LIST.DOC_TYPE IS 'O_TYPE = 66';
 COMMENT ON TABLE        DVB_NETWORK IS 'Сети DVB';
 COMMENT ON    COLUMN    DVB_NETWORK.DVBN_ID IS 'Уникальный ID сети';
 COMMENT ON    COLUMN    DVB_NETWORK.NAME IS 'Название сети (Передается в NIT)';
@@ -28619,6 +30614,7 @@ COMMENT ON    COLUMN    EQUIPMENT.EQ_REGNUBER IS 'Инвентарный ном�
 COMMENT ON    COLUMN    EQUIPMENT.NODE_ID IS 'ID узла';
 COMMENT ON    COLUMN    EQUIPMENT.M_ID IS 'ID материала';
 COMMENT ON    COLUMN    EQUIPMENT.SYSNAME IS 'Служебное имя, используется в скриптах';
+COMMENT ON    COLUMN    EQUIPMENT.PCE IS 'Потребляемая мощность в час';
 COMMENT ON TABLE        EQUIPMENT_ATTRIBUTES IS 'Атрибуты аоборудования';
 COMMENT ON TABLE        EQUIPMENT_CMD_GRP IS 'Связка КОММАНДА - ТИП ОБОРУДОВАНИЯ';
 COMMENT ON    COLUMN    EQUIPMENT_CMD_GRP.EC_ID IS 'Код комманды';
@@ -28691,6 +30687,8 @@ COMMENT ON    COLUMN    HOUSE.HOUSE_CODE IS 'Код дома';
 COMMENT ON    COLUMN    HOUSE.EXIST_TV IS 'Доступно Аналоговое ТВ';
 COMMENT ON    COLUMN    HOUSE.EXIST_LAN IS 'Доступна сеть передачи данных';
 COMMENT ON    COLUMN    HOUSE.EXIST_DTV IS 'Доступно Цифровое ТВ';
+COMMENT ON    COLUMN    HOUSE.EXIST_VIDEO IS 'Доступно видеонаблюдение';
+COMMENT ON    COLUMN    HOUSE.EXIST_INTER IS 'Доступна домофония';
 COMMENT ON    COLUMN    HOUSE.WG_ID IS 'ID звена (рабочей группы)';
 COMMENT ON    COLUMN    HOUSE.IN_DATE IS 'Дата вводв в экспл.';
 COMMENT ON    COLUMN    HOUSE.REPAIR_DATE IS 'Дата последнего кап ремонта';
@@ -28712,6 +30710,8 @@ COMMENT ON    COLUMN    HOUSEPORCH.GARRET IS 'Чердак';
 COMMENT ON    COLUMN    HOUSEPORCH.CELLAR IS 'Подвал';
 COMMENT ON    COLUMN    HOUSEPORCH.FLAT_FROM IS 'Квартиры с';
 COMMENT ON    COLUMN    HOUSEPORCH.FLAT_TO IS 'Квартиры по';
+COMMENT ON    COLUMN    HOUSEPORCH.INTER IS 'Есть домофон';
+COMMENT ON    COLUMN    HOUSEPORCH.VIDEO IS 'Есть видеонаблюдение';
 COMMENT ON TABLE        HOUSES_ATTRIBUTES IS 'Атрибуты домов';
 COMMENT ON    COLUMN    HOUSES_ATTRIBUTES.HA_VALUE IS 'Значение атрибута';
 COMMENT ON TABLE        HOUSEWORKS IS 'Работы по дому';
@@ -28723,6 +30723,7 @@ COMMENT ON    COLUMN    IPTV_GROUP.URL IS 'URL';
 COMMENT ON    COLUMN    IPTV_GROUP.DISABLED IS 'Признак что группа отключена';
 COMMENT ON    COLUMN    IPTV_GROUP.NOTICE IS 'Примечание';
 COMMENT ON TABLE        IPTV_GROUP_ATTRIBUTES IS 'Атрибуты IPTV групп';
+COMMENT ON    COLUMN    IPTV_GROUP_ATTRIBUTES.O_ID IS 'O_TYPE = 32';
 COMMENT ON TABLE        IPTV_GROUP_CHANNELS IS 'Каналы в IPTV группе';
 COMMENT ON    COLUMN    IPTV_GROUP_CHANNELS.IG_ID IS 'ID IPTV группы';
 COMMENT ON    COLUMN    IPTV_GROUP_CHANNELS.CH_ID IS 'ID канала';
@@ -28758,12 +30759,14 @@ COMMENT ON    COLUMN    MATERIALS.M_TYPE IS 'Тип устройства. в с�
 COMMENT ON    COLUMN    MATERIALS.SOLD IS 'Услуга продажи';
 COMMENT ON    COLUMN    MATERIALS.RENT IS 'Услуга аренды';
 COMMENT ON    COLUMN    MATERIALS.LOAN IS 'Услуга рассрочки';
+COMMENT ON    COLUMN    MATERIALS.PCE IS 'Мощность, Вт/ч';
 COMMENT ON TABLE        MATERIALS_GROUP IS 'Группы материалов';
 COMMENT ON    COLUMN    MATERIALS_GROUP.MG_ID IS 'FOR PRIMARY KEYS';
 COMMENT ON    COLUMN    MATERIALS_GROUP.PARENT_ID IS 'Для полей ссылок которые могут содержать Null';
 COMMENT ON    COLUMN    MATERIALS_GROUP.SOLD IS 'Услуга продажи';
 COMMENT ON    COLUMN    MATERIALS_GROUP.RENT IS 'Услуга аренды';
 COMMENT ON    COLUMN    MATERIALS_GROUP.LOAN IS 'Услуга рассрочки';
+COMMENT ON    COLUMN    MATERIALS_GROUP.PATH IS 'путь группы (от корня к листу)';
 COMMENT ON TABLE        MATERIALS_IN_DOC IS 'Материалы в документах прихода/расхода';
 COMMENT ON    COLUMN    MATERIALS_IN_DOC.B_QUANT IS 'Количество до пересчета';
 COMMENT ON    COLUMN    MATERIALS_IN_DOC.TTN IS 'Номер в ТТН (для сортировки)';
@@ -28785,13 +30788,13 @@ COMMENT ON TABLE        MATERIAL_DOCS IS 'Документы';
 COMMENT ON    COLUMN    MATERIAL_DOCS.DOC_ID IS 'ID документа';
 COMMENT ON    COLUMN    MATERIAL_DOCS.DOC_N IS 'Номер документа';
 COMMENT ON    COLUMN    MATERIAL_DOCS.DOC_DATE IS 'ДАТА доумента';
-COMMENT ON    COLUMN    MATERIAL_DOCS.DT_ID IS 'Тип документа';
+COMMENT ON    COLUMN    MATERIAL_DOCS.DT_ID IS 'Тип документа O_TYPE = 28';
 COMMENT ON    COLUMN    MATERIAL_DOCS.NOTICE IS 'ПРимечание';
-COMMENT ON    COLUMN    MATERIAL_DOCS.WH_ID IS 'Склад прихода';
+COMMENT ON    COLUMN    MATERIAL_DOCS.WH_ID IS 'Склад прихода O_TYPE = 10';
 COMMENT ON    COLUMN    MATERIAL_DOCS.DOC_CLOSED IS '1 = Документ закрыт (редактировать нельзя)';
 COMMENT ON    COLUMN    MATERIAL_DOCS.EXT_ID IS 'Номер прихода во внешней системе';
 COMMENT ON    COLUMN    MATERIAL_DOCS.FROM_WH IS 'С какого склада';
-COMMENT ON    COLUMN    MATERIAL_DOCS.SHIPPER IS 'Поставщик';
+COMMENT ON    COLUMN    MATERIAL_DOCS.SHIPPER IS 'Поставщик O_TYPE = 29';
 COMMENT ON TABLE        MATERIAL_UNIT IS 'Единичный учет материала/оборудования';
 COMMENT ON    COLUMN    MATERIAL_UNIT.SERIAL IS 'Серийный номер ИД оборудования/материала';
 COMMENT ON    COLUMN    MATERIAL_UNIT.OWNER IS 'ID владельца';
@@ -28820,7 +30823,7 @@ COMMENT ON    COLUMN    MESSAGES.ADDED_ON IS 'Когда добавили';
 COMMENT ON    COLUMN    MESSAGES.ADDED_BY IS 'Кто добавил';
 COMMENT ON    COLUMN    MESSAGES.MES_PRIOR IS 'Приоритет сообщения, все что выше 0 отправляется вне зависимости от времени суток';
 COMMENT ON    COLUMN    MESSAGES.EXT_ID IS 'ID сообщения во внешней сисеме';
-COMMENT ON    COLUMN    MESSAGES.TPL_ID IS 'Тип сообщения';
+COMMENT ON    COLUMN    MESSAGES.TPL_ID IS 'Тип сообщения  O_TYPE = 23';
 COMMENT ON    COLUMN    MESSAGES.INFO_PERIOD IS 'Период, в течение которого, соблюдая интервал, отправляется сообщение Инфокас';
 COMMENT ON    COLUMN    MESSAGES.INFO_INTERVAL IS 'Интервал отправки сообщения Инфокас';
 COMMENT ON    COLUMN    MESSAGES.TAG IS 'пометка для аналитики. типа #ДОЛГ #ДР';
@@ -28853,14 +30856,18 @@ COMMENT ON    COLUMN    NODES.LON IS 'Координаты. Долгота';
 COMMENT ON    COLUMN    NODES.FLOOR_N IS 'этаж';
 COMMENT ON    COLUMN    NODES.PORCH_N IS 'подъезд';
 COMMENT ON    COLUMN    NODES.PLACE IS 'Место установки';
+COMMENT ON    COLUMN    NODES.EPOINT IS 'Точка учета электроэнергии Objects type = 76';
+COMMENT ON    COLUMN    NODES.EP_TAG IS 'Дополнительная информация к точке УЭ';
 COMMENT ON    COLUMN    NODES.PARENT_ID IS 'К какому узлу подулючен узел';
+COMMENT ON    COLUMN    NODES.PCE IS 'Потребляемая мощность в час';
 COMMENT ON TABLE        NODES_ATTRIBUTES IS 'Атрибуты услуг';
+COMMENT ON    COLUMN    NODES_ATTRIBUTES.O_ID IS 'O_TYPE = 39';
 COMMENT ON    COLUMN    NODES_ATTRIBUTES.NA_VALUE IS 'Значение атрибута';
 COMMENT ON TABLE        NODE_FILES IS 'Документы узла';
 COMMENT ON    COLUMN    NODE_FILES.NF_ID IS 'ID файла';
 COMMENT ON    COLUMN    NODE_FILES.NODE_ID IS 'ID абонента';
 COMMENT ON    COLUMN    NODE_FILES.NAME IS 'название / номер документа';
-COMMENT ON    COLUMN    NODE_FILES.NF_TYPE IS 'Тип документа';
+COMMENT ON    COLUMN    NODE_FILES.NF_TYPE IS 'Тип документа O_TYPE = 40';
 COMMENT ON    COLUMN    NODE_FILES.DATE_FROM IS 'Дествует с';
 COMMENT ON    COLUMN    NODE_FILES.DATE_TO IS 'Действует по';
 COMMENT ON    COLUMN    NODE_FILES.FILENAME IS 'Имя файла';
@@ -28869,11 +30876,9 @@ COMMENT ON    COLUMN    NODE_FILES.ADDED_BY IS 'Кто добавил';
 COMMENT ON    COLUMN    NODE_FILES.ADDED_ON IS 'Когда добавил';
 COMMENT ON    COLUMN    NODE_FILES.EDIT_BY IS 'Кто изменил';
 COMMENT ON    COLUMN    NODE_FILES.EDIT_ON IS 'Когда изменил';
-COMMENT ON TABLE        NODE_FLATS IS 'Квартиры узла';
+COMMENT ON TABLE        NODE_FLATS IS 'Дома (если квартира = нулл) и Квартиры узла';
 COMMENT ON TABLE        NODE_LAYOUT IS 'Схема расположения оборудования на узле';
 COMMENT ON    COLUMN    NODE_LAYOUT.NODE_ID IS 'Ид узла, если < 0, то это ид типа узла';
-COMMENT ON    COLUMN    NODE_LAYOUT.M_TYPE IS 'Ид типа материала/оборудования';
-COMMENT ON    COLUMN    NODE_LAYOUT.DEV_CNT IS 'Кол-во на узле';
 COMMENT ON TABLE        NPS IS 'Индекс потребительской лояльности';
 COMMENT ON    COLUMN    NPS.NPS_DATE IS 'Дата проведения опроса';
 COMMENT ON    COLUMN    NPS.CUSTOMER_ID IS 'Абонент';
@@ -28901,6 +30906,14 @@ COMMENT ON    COLUMN    OBJECTS_COVERAGE.OC_TYPE IS 'тип объектов
 2 - IP зоны';
 COMMENT ON    COLUMN    OBJECTS_COVERAGE.O_ID IS 'ID объекта (модема зоны или прочее)';
 COMMENT ON    COLUMN    OBJECTS_COVERAGE.HOUSE_ID IS 'ID дома';
+COMMENT ON TABLE        OBJECTS_HISTORY IS 'Таблица хранения изменений значений объектов';
+COMMENT ON    COLUMN    OBJECTS_HISTORY.O_ID IS 'ссылка на талицу OBJECTS';
+COMMENT ON    COLUMN    OBJECTS_HISTORY.O_TYPE IS 'ссылка на талицу OBJECTS';
+COMMENT ON    COLUMN    OBJECTS_HISTORY.HDATE IS 'Дата значения';
+COMMENT ON    COLUMN    OBJECTS_HISTORY.CVALUE IS 'Строковое значение';
+COMMENT ON    COLUMN    OBJECTS_HISTORY.DVALUE IS 'Значение даты';
+COMMENT ON    COLUMN    OBJECTS_HISTORY.NVALUE IS 'Цифровое значение';
+COMMENT ON    COLUMN    OBJECTS_LINKS.OL_TYPE IS 'Object_type = 74';
 COMMENT ON TABLE        OBJECTS_TYPE IS 'Вид справочника';
 COMMENT ON    COLUMN    OBJECTS_TYPE.OT_ID IS 'ID типа';
 COMMENT ON TABLE        OPERATION_LOG IS 'Лог операций';
@@ -28945,7 +30958,7 @@ COMMENT ON    COLUMN    PAYMENT.PAY_SUM IS 'Сумма';
 COMMENT ON    COLUMN    PAYMENT.FINE_SUM IS 'Сумма пения';
 COMMENT ON    COLUMN    PAYMENT.NOTICE IS 'Примечание';
 COMMENT ON    COLUMN    PAYMENT.PAYMENT_SRV IS 'Услуга за которую платит';
-COMMENT ON    COLUMN    PAYMENT.PAYMENT_TYPE IS 'Тип платежа';
+COMMENT ON    COLUMN    PAYMENT.PAYMENT_TYPE IS 'Тип платежа O_TYPE = 2';
 COMMENT ON    COLUMN    PAYMENT.EXT_PAY_ID IS 'Идентификатор платежа во внешних системах (терминалы и прочее)';
 COMMENT ON    COLUMN    PAYMENT.TAG IS 'цифровое поле. для личных нужд';
 COMMENT ON    COLUMN    PAYMENT.TAG_STR IS 'текстовое поле. для личных нужд';
@@ -28956,11 +30969,12 @@ COMMENT ON    COLUMN    PAYMENT.ADDED_BY IS 'кто добавил';
 COMMENT ON    COLUMN    PAYMENT.ADDED_ON IS 'когда добавил';
 COMMENT ON    COLUMN    PAYMENT.EDIT_BY IS 'кто изменил';
 COMMENT ON    COLUMN    PAYMENT.EDIT_ON IS 'когда изменил';
-COMMENT ON    COLUMN    PAYMENT.PAY_TYPE_STR IS 'Способ оплаты CASH, CARD: XXX, WEB, и т.д.';
+COMMENT ON    COLUMN    PAYMENT.PAY_TYPE_STR IS 'Способ оплаты CASH, CARD: XXX, WEB, и т.д.  O_TYPE = 61';
 COMMENT ON    COLUMN    PAYMENT.FISCAL IS 'Пробит ли чек по данному платежу: 0 - нет, 1 - да';
 COMMENT ON    COLUMN    PAYMENT.CMSN IS 'Коммиссия плат. агента';
 COMMENT ON    COLUMN    PAYMENT.DEBT_SAVE IS 'Сохранима баланс до платежа';
 COMMENT ON    COLUMN    PAYMENT.RQ_ID IS 'Номер заявки через который пришел платеж';
+COMMENT ON    COLUMN    PAYMENT.LCPS IS 'Сумма в локальной валюте, при работе с несколькими валютами';
 COMMENT ON TABLE        PAYMENT_DELETED IS 'Удаленные платежи';
 COMMENT ON    COLUMN    PAYMENT_DELETED.PAY_DATETIME IS 'Дата и время платежа';
 COMMENT ON TABLE        PAYMENT_HOLD IS 'Платежи ожидающие обработку. например рассылка чеков с онлайн оплат';
@@ -29134,12 +31148,15 @@ COMMENT ON    COLUMN    REQUEST_MATERIALS.WH_ID IS 'Склад';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.RM_QUANT IS 'Количество';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.RM_COST IS 'Цена по которой списали';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.PROP IS 'Собственность
-0 - Начислять за этот материал абоненту.
-1 - Не начислять (в пользовании)
-2 - Рассрочка материала
-3 - Аренда маетриала';
+0 Продажа / Начислять за этот материал абоненту.
+1 В пользовании / Не начислять
+2 Рассрочка материала
+3 Аренда материала
+4 Возврат бесплатно
+5 Возврат за деньги (Выкуп)';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.RM_NOTICE IS 'Примечание';
-COMMENT ON    COLUMN    REQUEST_MATERIALS.CALC IS 'Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда';
+COMMENT ON    COLUMN    REQUEST_MATERIALS.CALC IS 'Будет удалено
+Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда 4-Возврат бесплатно, 5 - Возврат за деньги (Выкуп)';
 COMMENT ON    COLUMN    REQUEST_MATERIALS.NOT_CALC IS 'устаревшее. будет удалено
 Начислять ли за этот материал абоненту.
 0 - Начислять
@@ -29151,8 +31168,16 @@ COMMENT ON TABLE        REQUEST_MATERIALS_RETURN IS 'возврат матери
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.M_ID IS 'Код материала';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.QUANT IS 'Количество';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.NOTICE IS 'Примечание';
-COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.CALC IS 'Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда';
+COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.CALC IS 'Будет удалено
+Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда 4-Возврат бесплатно, 5-Возврат за деньги (Выкуп)';
 COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.BAYBACK IS 'Признак выкупа';
+COMMENT ON    COLUMN    REQUEST_MATERIALS_RETURN.PROP IS 'Собственность
+0 Продажа / Начислять за этот материал абоненту.
+1 В пользовании / Не начислять
+2 Рассрочка материала
+3 Аренда материала
+4 Возврат бесплатно
+5 Возврат за деньги (Выкуп)';
 COMMENT ON TABLE        REQUEST_MSG IS 'Переписка по заявкам';
 COMMENT ON TABLE        REQUEST_PHOTOS IS 'Фотографии заявки';
 COMMENT ON    COLUMN    REQUEST_PHOTOS.ID IS 'ID фото';
@@ -29171,7 +31196,7 @@ COMMENT ON    COLUMN    REQUEST_TEMPLATES.RQ_TYPE IS 'Ссылка на тип �
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.RQ_MAXTIME IS 'Максимальный срок выполнения или -1(без срока)';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.RQ_COLOR IS 'Цвет заявки';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.ANALYSE_ID IS 'Признак группы анализа причины заявок';
-COMMENT ON    COLUMN    REQUEST_TEMPLATES.ADD_WORK IS 'При выборе причины добавлять работу';
+COMMENT ON    COLUMN    REQUEST_TEMPLATES.ADD_WORK IS 'Устарело, будет удалено (При выборе причины добавлять работу)';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.RQ_ONOFF IS 'Заявка на вкл/отключение услуги';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.RQ_SRV IS 'Подключаемая/отключаемая услуга';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.RQ_SRVONOFF IS 'Какой услугой подключать/отключать';
@@ -29187,6 +31212,7 @@ COMMENT ON    COLUMN    REQUEST_TEMPLATES.SMS_CREATE IS 'Текст SMS абон
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.SMS_CLOSE IS 'Текст SMS абоненту после закрытия заявки';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.FLATS_NEED IS 'При заявке на узел результат по каждой квартире';
 COMMENT ON    COLUMN    REQUEST_TEMPLATES.FLATS_RESULT IS 'Список результатов для квартир';
+COMMENT ON    COLUMN    REQUEST_TEMPLATES.WORKS IS 'JSON cписка работ [{"i":work_id,"q":1},../]';
 COMMENT ON TABLE        REQUEST_TYPES IS 'Типы заявок';
 COMMENT ON    COLUMN    REQUEST_TYPES.RT_ID IS 'код';
 COMMENT ON    COLUMN    REQUEST_TYPES.RT_NAME IS 'Наименование';
@@ -29250,6 +31276,7 @@ COMMENT ON    COLUMN    SERVICES.UNBL_METH IS 'Снять блок при
 1 - дневной тариф
 2 - месячный тариф';
 COMMENT ON TABLE        SERVICES_ATTRIBUTES IS 'Атрибуты услуг';
+COMMENT ON    COLUMN    SERVICES_ATTRIBUTES.O_ID IS 'O_TYPE = 25';
 COMMENT ON    COLUMN    SERVICES_ATTRIBUTES.SA_VALUE IS 'Значение атрибута';
 COMMENT ON TABLE        SERVICES_CMPLX IS 'Таблица для комплексных услуг. Услуга которая состит из нескольких подразделов';
 COMMENT ON    COLUMN    SERVICES_CMPLX.SERVICE_ID IS 'ИД услуги';
@@ -29645,12 +31672,12 @@ COMMENT ON    PROCEDURE PARAMETER API_SET_CUSTOMER_SERVICE.SET_DATE IS 'когд
 COMMENT ON PROCEDURE    API_SET_PREPAY IS 'Добавим обещанный с проверкой суммы и вернем удачно или нет';
 COMMENT ON PROCEDURE    API_SET_SWITCH_QUEUE IS 'ставим в очередь переключения услуг';
 COMMENT ON PROCEDURE    APPLIANCE_TO_TABLE IS 'перемещаем оборудование в спд/цифру в зависимости от типа';
-COMMENT ON PROCEDURE    ATRIBUTES_LINE IS 'Вывод всех атрибутов в строку';
 COMMENT ON PROCEDURE    ATTRIBUTES_IUD IS 'Процедура добавления/редактирования/удаления атрибутов абонента';
 COMMENT ON PROCEDURE    ATTRIBUTE_CHECK_UNIQ IS 'проверим на уникальность значение атрибута, если он есть у кого-то вернем его';
 COMMENT ON PROCEDURE    AUTO_OFF_SERVICE IS 'Авто блокировка услуги';
 COMMENT ON PROCEDURE    AUTO_ON_SERVICE IS 'Авто разблокировка услуги';
 COMMENT ON PROCEDURE    BCISSUECH_ID IS 'Добавляет.удаляет каналы с проблемы вещания';
+COMMENT ON PROCEDURE    BLOCK_CUSTOMER_SERVICE IS 'Проверим баланс абонента и заблоируем услуги если он должник';
 COMMENT ON PROCEDURE    BONUS_ADD_AFTER_PAYMENT IS 'Добавить бонус после оплаты суммы';
 COMMENT ON PROCEDURE    CALCULATE_SRV_TYPE_0 IS 'Расчт услуг с ежемесячными начислениям пропорционально дням';
 COMMENT ON PROCEDURE    CALC_DAY_INC_SRV_CUSTOMER IS 'расчет ежедневных начислений, если выключена в день включения - считаем';
@@ -29666,6 +31693,16 @@ COMMENT ON PROCEDURE    CALC_MONTH_DAY_SRV_CUSTOMER IS 'начисления р�
 COMMENT ON PROCEDURE    CALC_MONTH_FIX_SRV_CUSTOMER IS 'если подключен хоть день, то снимаем полную абонплату';
 COMMENT ON PROCEDURE    CALC_MONTH_SRV_CUSTOMER IS 'начисления за полный/0 месяц';
 COMMENT ON PROCEDURE    CALC_PERS_TARIF IS 'Процедура заполнения таблицы персонального тарифа абонента по дням';
+COMMENT ON PROCEDURE    CALC_SINGLE_SRV_CUSTOMER IS '    P_CUSTOMER_ID type of UID,
+    P_MONTH       D_DATE,
+    FEE_ROUND     D_INTEGER,
+    P_DAILY       D_INTEGER = 0,
+    BEFORE_DATE   D_DATE = null';
+COMMENT ON    PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.P_CUSTOMER_ID IS 'АБонент';
+COMMENT ON    PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.P_MONTH IS 'Дата';
+COMMENT ON    PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.FEE_ROUND IS 'округлять до знаков';
+COMMENT ON    PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.P_DAILY IS 'Использовать таблицу с дневными начислениями';
+COMMENT ON    PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.BEFORE_DATE IS 'Eсли указана, то с начала месяца до этой даты, иначе полный месяц';
 COMMENT ON PROCEDURE    CALC_SURCHARGE_CUSTOMER IS 'Расчет услуг по алгоритму тариф за месяц.
 Абонент платит фиксированную сумму, вне зависимости от услуг периодических и разовых';
 COMMENT ON PROCEDURE    CANCEL_CONTRACT IS 'Процедура разрыва договора с абонентом';
@@ -29799,6 +31836,14 @@ COMMENT ON PROCEDURE    GET_FREE_IP IS 'Выдает свободный IP. ес
 COMMENT ON PROCEDURE    GET_FREE_VLAN_IP IS 'Выдает первый свободный IP для определенной подсети';
 COMMENT ON PROCEDURE    GET_FULLNAME_ALLREPORTS IS 'Выдает полное имя отчета включая все категории';
 COMMENT ON PROCEDURE    GET_FULLNAME_REPORT IS 'Выдает полное имя отчета включая все категории';
+COMMENT ON PROCEDURE    GET_JSON_ARRAY_ROWS IS 'извлечение строк массива из простого json
+пример:
+[{"i":11,"q":1},{"i":22,"q":2},{"i":33,"q":3}]
+строки:
+{"i":11,"q":1}
+{"i":22,"q":2}
+{"i":33,"q":3}';
+COMMENT ON PROCEDURE    GET_LAYOUT_BY_ID IS 'Вывод компановки по ИД узла или типа';
 COMMENT ON PROCEDURE    GET_MAT_FOR_NODE IS 'список оборудования/материалов для узла соглсно компановки, если она есть';
 COMMENT ON PROCEDURE    GET_MAT_FOR_REQUEST IS 'Вывод всех доступных материалов с количесвом потраченным на заявку';
 COMMENT ON PROCEDURE    GET_MAT_GIVE_OUT IS 'Материалы для заявки с учетом уже выданных';
@@ -29810,6 +31855,9 @@ COMMENT ON PROCEDURE    GET_MAX_INET_IP IS 'Выдает max свободный 
 COMMENT ON PROCEDURE    GET_MODULES_FOR_MENU IS 'Выборка всех модулей пользователя для построения меню';
 COMMENT ON PROCEDURE    GET_NODE_FLAT_LVL IS 'Вывод списка квартир узла по уровням
 уровни: 1 - подключен к узлу, 2 - к дочернему узлу, 3 дочернему дочернего узла...';
+COMMENT ON PROCEDURE    GET_NODE_LAYOUT IS 'Получаем компановку узла или типа узла';
+COMMENT ON PROCEDURE    GET_NODE_LAYOUT_FACT IS 'Выдает компановку и фактически установленные материалы';
+COMMENT ON PROCEDURE    GET_NODE_LAYOUT_FACT_DETAIL IS 'Выдает компановку и фактически установленные материалы в разреже каждого матеріала';
 COMMENT ON PROCEDURE    GET_PAY_DOC IS 'Возвращает ид платежного документа. если документа нет на эту дату, то создает его.';
 COMMENT ON PROCEDURE    GET_RECOMMENDED_PREPAY IS 'Процедура выдает сумму рекомендованой оплаты на месяц, с учетом баланса. целое чесло, без копеек';
 COMMENT ON PROCEDURE    GET_REPORT_ID IS 'Получить ID_REPORT по полному имени отчета (обратная GET_FULLNAME_REPORT)';
@@ -29829,13 +31877,14 @@ COMMENT ON    PROCEDURE PARAMETER GET_STATISTICS.P_OFF IS 'отключился 
 COMMENT ON    PROCEDURE PARAMETER GET_STATISTICS.E_ON IS 'подключен на конец';
 COMMENT ON    PROCEDURE PARAMETER GET_STATISTICS.E_BLOCK IS 'в блоке на конец';
 COMMENT ON PROCEDURE    GET_TARIF_SUM_CUSTOMER_SRV IS 'Получим тариф абонента на все услуги или выбранную в определенный день';
+COMMENT ON PROCEDURE    GET_WIRE_INFO IS 'Информация по линии связи';
 COMMENT ON PROCEDURE    INT2IP IS 'переводит двоичное представление IP в строковое';
 COMMENT ON PROCEDURE    IP2INT IS 'переводит строковое представление IP  в двоичное';
 COMMENT ON PROCEDURE    MATERIALS_SUMMARY IS 'процедура вывода сводных данных по перемещению';
 COMMENT ON PROCEDURE    MATERIAL_CHANGE_SN IS 'Процедура замены ошибочного с/н на новый';
 COMMENT ON PROCEDURE    MATERIAL_DOCS_DELETE IS 'Процедура удаления документа материалов';
-COMMENT ON PROCEDURE    MATERIAL_REMAIN_RECALC IS 'Процедура пересчета остатков материала на складах';
-COMMENT ON    PROCEDURE PARAMETER MATERIAL_REMAIN_RECALC.M_ID IS 'Какой материал пересчитаем';
+COMMENT ON PROCEDURE    MATERIAL_REMAIN_RECALC IS 'Процедура пересчета остатков материала на складах
+если REC_M_ID null то пересчітываем все материалы';
 COMMENT ON    PROCEDURE PARAMETER MATERIAL_REMAIN_RECALC.FOR_WH IS 'Пересчитаем все или конкретный склад';
 COMMENT ON PROCEDURE    MATERIAL_UNIT_MOVE IS 'перенос материала абоненту или узлу при добавлении в заявку';
 COMMENT ON PROCEDURE    MAT_MOVE_DETAILS IS 'Процедура вывода детального лога перемещения материала';
@@ -29850,6 +31899,7 @@ COMMENT ON    PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.SALDO IS 'саль�
 COMMENT ON PROCEDURE    MIGRATE_SERVICE_BY_BILL_ACCOUNT IS 'Добавление услуги, если услуга уже есть, то ее обновляет
 ищем абонента по аккаунту билинга';
 COMMENT ON PROCEDURE    MIGRATE_SERVICE_BY_CUSTOMER_ID IS 'Добавление услуги, если услуга уже есть, то ее обновляет';
+COMMENT ON PROCEDURE    NODE_CHECK_LAYOUT IS 'Проверяет материалы с компановкой. если нет расхождений, то пустой ответ. иначее покажем сообщение';
 COMMENT ON PROCEDURE    OBJECTS_IUD IS 'Процедура работы с таблицей OBJECTS';
 COMMENT ON PROCEDURE    ONOFF_SERVICE IS 'Процедура подключения, отключения услуги';
 COMMENT ON    PROCEDURE PARAMETER ONOFF_SERVICE.RECALC IS 'Пересчитывать ли абонента после добавления';
@@ -29909,6 +31959,7 @@ COMMENT ON PROCEDURE    REQUEST_MATERIALS_RETURN_IUD IS 'добавление.и
 COMMENT ON PROCEDURE    REQUEST_MATERIAL_BAYBACK IS 'Выкуп материала абонентом через заявку';
 COMMENT ON PROCEDURE    REQUEST_RECREATE IS 'Пересоздать новую заявку черезХ дней согласно настроек типа заявки';
 COMMENT ON PROCEDURE    REQUEST_SEND_SMS IS 'Выслать sms исполнителям заявок';
+COMMENT ON PROCEDURE    SAVEPCEFOREMP IS 'Сохраним мощность ТУЕ и узлов на определеннфй месяц (месяц это всегда первое число месяца)';
 COMMENT ON PROCEDURE    SELECTONOFFSERVICE IS 'Процедура выборки разовых услуг включения / выключения
 для абонентской услуги абонента
 
@@ -29930,6 +31981,7 @@ COMMENT ON PROCEDURE    UPDATE_SERVICES_TREE IS 'Процедура обновл
 COMMENT ON PROCEDURE    YEARWEEK IS 'Процедура вычисления номера недели года';
 COMMENT ON TRIGGER      CUSTOMER_BU1 IS 'Триггер срабатывает при изменении баланса';
 COMMENT ON TRIGGER      TR_ON_CONNECT IS 'Выполняем при входе в систему пользователя';
+COMMENT ON FUNCTION     ATTRIBUTES_LINE IS 'Вывод всех атрибутов в строку';
 COMMENT ON FUNCTION     CHECK_CUSTOMER_SERVICE IS 'Функция проверки была ли услуга подключена абоненту';
 COMMENT ON FUNCTION     ESCAPE_STRING IS 'экранирование строк для json';
 COMMENT ON FUNCTION     FORMAT_CURRENCY IS 'Форматирование числа с разделителями тысяч и дробиной части
@@ -29938,6 +31990,7 @@ DS DecimalSeparator;';
 COMMENT ON FUNCTION     GET_FREE_IP_BY_MASK IS 'находит первый свободный IP по маске';
 COMMENT ON FUNCTION     GET_JSON_VALUE IS 'Извлечь значение парматра из json строки';
 COMMENT ON FUNCTION     GET_NEW_ACCOUNT IS 'Возвращает новый номер лицевого. делаеет 1000 попыток найти свободный номер, если не найдет, то выдает null';
+COMMENT ON FUNCTION     GET_RECOM_PREPAY_FOR_CUSTOMER IS 'Функция выдает сумму рекомендованой оплаты на месяц, с учетом баланса. целое чесло, без копеек';
 COMMENT ON FUNCTION     GET_REQUEST_MONEY IS 'Возврат начислений по заявке';
 COMMENT ON FUNCTION     GET_SETTING_INT_VALUE IS 'Возвращает числовой параметр настройки';
 COMMENT ON FUNCTION     GET_SETTING_VALUE IS 'Возвращает строковый параметр настройки';
@@ -29948,6 +32001,7 @@ COMMENT ON FUNCTION     MONTH_FIRST_DAY IS 'первое число месяца
 COMMENT ON FUNCTION     MONTH_LAST_DAY IS 'Последнее число месяц';
 COMMENT ON FUNCTION     NUMBER_AS_STR IS 'число в строку';
 COMMENT ON FUNCTION     ONLY_DIGITS IS 'Возвращает только цифры из переданной строки, если цифр нет возвращает пустую строку';
+COMMENT ON FUNCTION     SET_SETTINGS_VALUE IS 'Установка параметров системы, таблица SETTINGS';
 COMMENT ON FUNCTION     WHERE_IS_IP IS 'Проверяем где используеться IP
 0 - оборудование
 1 - абонент

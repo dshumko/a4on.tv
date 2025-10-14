@@ -6,7 +6,7 @@ interface
 
 uses
   Winapi.Windows,
-  System.SysUtils, System.Classes, System.UITypes, System.Variants,
+  System.SysUtils, System.Classes, System.UITypes, System.Variants, System.Types,
   Data.DB,
   Vcl.ImgList, Vcl.Dialogs,
   FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBErrorHandler, FIBDatabase, FIB, pFIBDatabase, OverbyteIcsWndControl,
@@ -125,7 +125,7 @@ type
     procedure GetCompany;
     procedure CheckFirebirdVersion;
     function CheckAdminUser: Boolean;
-    function FrSHA256(const Str: String) : string;
+    function FrSHA256(const Str: String): string;
   public
     { Public declarations }
     frxChartObject1: TfrxChartObject;
@@ -308,13 +308,18 @@ begin
   // Прочитаем типы услуг
   while not qRead.Eof do
   begin
-    dsmSrvTypes.Insert;
+    dsmSrvTypes.append;
     dsmSrvTypes['ID'] := qRead.FN('O_ID').AsInteger;
     dsmSrvTypes['NAME'] := qRead.FN('O_NAME').AsString;
     dsmSrvTypes['DESCRIPTION'] := qRead.FN('O_DESCRIPTION').AsString;
     dsmSrvTypes.Post;
     qRead.Next;
   end;
+  dsmSrvTypes.append;
+  dsmSrvTypes['ID'] := -1;
+  dsmSrvTypes['NAME'] := 'Любой вид';
+  dsmSrvTypes['DESCRIPTION'] := 'Любой вид услуг';
+  dsmSrvTypes.Post;
   qRead.Close;
   qRead.Transaction.Commit;
 
@@ -852,7 +857,8 @@ begin
           // не найден файл базы данных
           335544344:
             begin
-              MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_NOT_FOUND, mtWarning, [mbOK], 0);
+              s := ErrorValue.IBMessage;
+              MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_NOT_FOUND + rsEOL + s, mtWarning, [mbOK], 0);
               DoRaise := False;
             end;
 
@@ -862,7 +868,8 @@ begin
               DoRaise := False;
               if dbTV.Tag = 1 then
               begin
-                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER, mtWarning, [mbOK], 0);
+                s := ErrorValue.IBMessage;
+                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER + rsEOL + s, mtWarning, [mbOK], 0);
               end;
               dbTV.Tag := 1;
             end;
@@ -873,7 +880,8 @@ begin
               DoRaise := False;
               if dbTV.Tag = 1 then
               begin
-                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER, mtWarning, [mbOK], 0);
+                s := ErrorValue.IBMessage;
+                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER + rsEOL + s, mtWarning, [mbOK], 0);
               end;
               dbTV.Tag := 1;
             end;
@@ -881,14 +889,16 @@ begin
           // база данных не доступна
           335544375:
             begin
-              MessageDlg(rsERROR_DB_DENIED + rsEOL + rsERROR_FIREBIRD_NOT_RUN, mtWarning, [mbOK], 0);
+              s := ErrorValue.IBMessage;
+              MessageDlg(rsERROR_DB_DENIED + rsEOL + rsERROR_FIREBIRD_NOT_RUN + rsEOL + s, mtWarning, [mbOK], 0);
               DoRaise := False;
             end;
 
           // Версия сервера не соответствует формату БД
           335544379:
             begin
-              MessageDlg(rsERROR_FIREBIRD_WRONG_VERSION + rsEOL + rsERROR_FIREBIRD_LAST_VERSION, mtWarning, [mbOK], 0);
+              s := ErrorValue.IBMessage;
+              MessageDlg(rsERROR_FIREBIRD_WRONG_VERSION + rsEOL + rsERROR_FIREBIRD_LAST_VERSION + rsEOL + s, mtWarning, [mbOK], 0);
               DoRaise := False;
             end;
           // нет активной БД
@@ -1040,7 +1050,7 @@ begin
 
   mdsCompany.CreateDataSet;
   mdsCompany.Open;
-  mdsCompany.Append;
+  mdsCompany.append;
   aDS.First;
   while not aDS.Eof do
   begin
@@ -1058,7 +1068,8 @@ end;
 
 procedure TdmMain.dbTVAfterDisconnect(Sender: TObject);
 begin
-  mdsCompany.Close;
+  if Assigned(mdsCompany) and (mdsCompany.Active) then
+    mdsCompany.Close;
 end;
 
 procedure TdmMain.FormStorage1SavePlacement(Sender: TObject);
@@ -1083,9 +1094,9 @@ begin
   else if MethodName = 'MONTHASSTRING' then
     Result := MonthAsString(Params[0], Params[1], Params[2])
   else if MethodName = 'OPENCUSTOMERBYACCOUNT' then
-    Result := A4MainForm.ShowCustomers(100, Params[0]) // 100 - лицевой
+    Result := A4MainForm.ShowCustomers(100, Trim(Params[0])) // 100 - лицевой
   else if MethodName = 'OPENCUSTOMERBYID' then
-    Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
+    Result := A4MainForm.ShowCustomers(104, Trim(Params[0])) // 104 - customer_id
   else if MethodName = 'OPENREQUEST' then
     Result := A4MainForm.OpenRequest(Params[0])
   else if MethodName = 'INCMAC' then
@@ -1096,9 +1107,9 @@ begin
     Result := null;
 end;
 
-function TdmMain.FrSHA256(const Str: String) : string;
+function TdmMain.FrSHA256(const Str: String): string;
 begin
-  RESULT :=string(Sha256(RawByteString(Str)));
+  Result := string(Sha256(RawByteString(Str)));
 end;
 
 procedure TdmMain.GlobalInitReport(Report: TfrxReport);
@@ -1138,8 +1149,7 @@ begin
   Report.AddFunction('function OpenRequest(const RQ_ID: String): Integer', rsFunctionsA4onTV, 'Открыть заявку');
   Report.AddFunction('function IncMAC(const MAC: string; const step: Integer): String;', rsFunctionsA4onTV,
     'Увеличить/уменьшить MAC адресс на STEP');
-  Report.AddFunction('function Sha256(const text: string): String;', rsFunctionsA4onTV,
-    'Считаем Sha256 для строки');
+  Report.AddFunction('function Sha256(const text: string): String;', rsFunctionsA4onTV, 'Считаем Sha256 для строки');
 end;
 
 function TdmMain.GetNextIP(InetIP: Boolean; const mask: string = ''): string;
@@ -1358,7 +1368,7 @@ end;
 function TdmMain.GenerateBarCodeFromFormat(const FORMAT, ACCOUNT: string; const DEBT: Currency; const id: Integer;
   const UL, HOUSE, Flat, FIO: string): string;
 var
-  sa, sl: TStringArray;
+  sa, sl: TStringDynArray;
   cnt, i, j: Integer;
   barcode: string;
   rubl: string;
@@ -1455,7 +1465,7 @@ var
   old: Extended;
   i, j, cp, tolen: Integer;
   FORMAT, c: string;
-  sa, sl: TStringArray;
+  sa, sl: TStringDynArray;
   pos_id, len_id, pos_rub, len_rub, pos_kop, len_kop, pos_acc, len_acc: Integer;
   chr_id, chr_rub, chr_kop, chr_acc: Char;
   NeedDelZerro: Boolean;
@@ -1751,7 +1761,7 @@ begin
   json := TJsonObject.Create;
   json.s['login'] := dmMain.GetSettingsValue('A4LOGIN');
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := string( mormot.crypt.core.MD5(json.ToString));
+  Str := string(mormot.crypt.core.MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
 

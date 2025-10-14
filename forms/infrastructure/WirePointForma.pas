@@ -13,7 +13,7 @@ uses
   PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
   FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh,
-  DBVertGridsEh, CustomerInfoFrame;
+  DBVertGridsEh;
 
 type
 

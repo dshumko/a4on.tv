@@ -27,11 +27,9 @@ object apgCustomerFiles: TapgCustomerFiles
     GridLineParams.VertEmptySpaceStyle = dessNonEh
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
+    STFilter.Visible = False
     TabOrder = 0
     TitleParams.MultiTitle = True
     OnCellClick = dbgCustFilesCellClick

@@ -25,9 +25,10 @@ type
     mmoNOTICE: TDBMemoEh;
     lbl2: TLabel;
     OkCancelFrame1: TOkCancelFrame;
-    lbl3: TLabel;
-    edtLOGIN1: TDBEditEh;
+    lblACCOUNT: TLabel;
+    edtACCOUNT: TDBEditEh;
     CnErrors: TCnErrorProvider;
+    chkBLOCKED: TDBCheckBoxEh;
     procedure chkVPNClick(Sender: TObject);
     procedure edtInetIPEnter(Sender: TObject);
     procedure edtInetIPExit(Sender: TObject);
@@ -38,6 +39,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     procedure GenIP(const CUSTOMER_ID: Integer);
@@ -268,6 +270,21 @@ begin
     ModalResult := mrOk;
     OkCancelFrame1bbOkClick(Sender);
   end;
+end;
+
+procedure TBillEditForm.FormShow(Sender: TObject);
+var
+  s: string;
+begin
+  s := dmMain.GetSettingsValue('BILLING_IP');
+  if s.isEmpty then begin
+    lblACCOUNT.Visible := False;
+    edtACCOUNT.Visible := False;
+    mmoNOTICE.Height := mmoNOTICE.Height + mmoNOTICE.Top - edtACCOUNT.Top;
+    mmoNOTICE.Top := edtACCOUNT.Top;
+  end;
+
+  chkBLOCKED.Visible := dmMain.UserIsAdmin;
 end;
 
 end.

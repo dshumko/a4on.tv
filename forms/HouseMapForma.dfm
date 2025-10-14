@@ -1,5 +1,4 @@
 object HouseMapForm: THouseMapForm
-  ShowHint = True
   Left = 0
   Top = 0
   Caption = #1050#1072#1088#1090#1072' '#1076#1086#1084#1072
@@ -12,6 +11,7 @@ object HouseMapForm: THouseMapForm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
@@ -57,6 +57,7 @@ object HouseMapForm: THouseMapForm
       DynProps = <>
       EditButton.Visible = True
       EditButtons = <>
+      ShowHint = True
       TabOrder = 0
       Value = 2.000000000000000000
       Visible = True
@@ -117,8 +118,7 @@ object HouseMapForm: THouseMapForm
       'from houseporch p'
       '   inner join housefloor f on (p.porch_id = f.porch_id)'
       'where p.house_id = :house_id'
-      
-        'order by p.porch_n, f.floor_n')
+      'order by p.porch_n, f.floor_n')
     AutoUpdateOptions.UpdateTableName = 'HOUSE'
     AutoUpdateOptions.KeyFields = 'HOUSE_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

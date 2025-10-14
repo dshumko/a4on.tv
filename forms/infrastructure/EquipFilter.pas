@@ -32,7 +32,6 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label6: TLabel;
-    Label7: TLabel;
     dblStreet: TDBLookupComboboxEh;
     dblHouseNo: TDBLookupComboboxEh;
     dblArea: TDBLookupComboboxEh;
@@ -58,8 +57,18 @@ type
     chkinversion: TDBCheckBoxEh;
     btnAND: TButton;
     btnOR: TButton;
-    DBEditEh1: TDBEditEh;
+    edtPLACE: TDBEditEh;
     Label3: TLabel;
+    cbEQ_TYPE: TDBComboBoxEh;
+    lbl4: TLabel;
+    lbl5: TLabel;
+    lbl2: TLabel;
+    edtNAME: TDBEditEh;
+    chkCHECK_ADRESS: TDBCheckBoxEh;
+    lbl41: TLabel;
+    dsNodes: TpFIBDataSet;
+    srcNodes: TDataSource;
+    lcbNode: TDBLookupComboboxEh;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -73,6 +82,7 @@ type
     procedure btnORClick(Sender: TObject);
     procedure btnANDClick(Sender: TObject);
     procedure srcFilterDataChange(Sender: TObject; Field: TField);
+    procedure dblStreetChange(Sender: TObject);
   private
     procedure SaveFilter(const filename: string);
   public
@@ -95,6 +105,7 @@ begin
   dsHomes.Close;
   dsArea.Close;
   dsSubArea.Close;
+  dsNodes.Close;
 end;
 
 procedure TEquipFilterForm.FormCreate(Sender: TObject);
@@ -135,6 +146,7 @@ begin
   dsHomes.Open;
   dsArea.Open;
   dsSubArea.Open;
+  dsNodes.Open;
 
   pgcFilter.ActivePage := tsFilter;
 end;
@@ -227,6 +239,12 @@ begin
     if not VarIsClear((Sender as TDBLookupComboboxEh).Value) then
       if not chkAddress.Checked then
         chkAddress.Checked := true;
+end;
+
+procedure TEquipFilterForm.dblStreetChange(Sender: TObject);
+begin
+  if (srcFilter.DataSet.State in [dsEdit, dsInsert]) then
+    srcFilter.DataSet.FieldByName('HOUSE_ID').Clear;
 end;
 
 end.

@@ -4,7 +4,7 @@ object PaymentForm: TPaymentForm
   ActiveControl = dePaySum
   BorderIcons = [biSystemMenu]
   Caption = #1042#1085#1077#1089#1090#1080' '#1087#1083#1072#1090#1077#1078
-  ClientHeight = 490
+  ClientHeight = 515
   ClientWidth = 709
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,6 +17,7 @@ object PaymentForm: TPaymentForm
   Position = poDefault
   Scaled = False
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -26,14 +27,14 @@ object PaymentForm: TPaymentForm
   object spl1: TSplitter
     Left = 369
     Top = 0
-    Height = 449
+    Height = 474
     Align = alRight
   end
   object pnlFine: TPanel
     Left = 372
     Top = 0
     Width = 337
-    Height = 449
+    Height = 474
     Align = alRight
     TabOrder = 1
     TabStop = True
@@ -41,7 +42,7 @@ object PaymentForm: TPaymentForm
       Left = 1
       Top = 29
       Width = 335
-      Height = 419
+      Height = 444
       TabStop = False
       Align = alClient
       DataSource = srcFine
@@ -130,13 +131,21 @@ object PaymentForm: TPaymentForm
     Left = 0
     Top = 0
     Width = 369
-    Height = 449
+    Height = 474
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    object spl2: TSplitter
+      Left = 0
+      Top = 135
+      Width = 369
+      Height = 3
+      Cursor = crVSplit
+      Align = alTop
+    end
     object pnlCustInfo: TPanel
       Left = 0
-      Top = 265
+      Top = 268
       Width = 369
       Height = 64
       Align = alTop
@@ -243,7 +252,7 @@ object PaymentForm: TPaymentForm
     end
     object pnlSRV: TPanel
       Left = 0
-      Top = 329
+      Top = 332
       Width = 369
       Height = 31
       Align = alTop
@@ -275,11 +284,12 @@ object PaymentForm: TPaymentForm
         ShowHint = True
         TabOrder = 0
         Visible = True
+        OnExit = luPaymentSrvExit
       end
     end
     object pnlPayDoc: TPanel
       Left = 0
-      Top = 135
+      Top = 138
       Width = 369
       Height = 31
       Align = alTop
@@ -337,11 +347,11 @@ object PaymentForm: TPaymentForm
     end
     object Panel5: TPanel
       Left = 0
-      Top = 417
+      Top = 446
       Width = 369
-      Height = 32
+      Height = 28
       Align = alClient
-      TabOrder = 8
+      TabOrder = 9
       object Label9: TLabel
         Left = 1
         Top = 1
@@ -354,7 +364,7 @@ object PaymentForm: TPaymentForm
         Left = 1
         Top = 14
         Width = 367
-        Height = 17
+        Height = 13
         Align = alClient
         AutoSize = False
         DataField = 'NOTICE'
@@ -368,7 +378,7 @@ object PaymentForm: TPaymentForm
     end
     object pnlPayType: TPanel
       Left = 0
-      Top = 360
+      Top = 363
       Width = 369
       Height = 31
       Align = alTop
@@ -405,7 +415,7 @@ object PaymentForm: TPaymentForm
     end
     object pnlFineSum: TPanel
       Left = 0
-      Top = 166
+      Top = 169
       Width = 369
       Height = 99
       Align = alTop
@@ -418,7 +428,7 @@ object PaymentForm: TPaymentForm
         Top = 70
         Width = 182
         Height = 18
-        Caption = #1050' '#1086#1087#1083#1072#1090#1077' ('#1044#1086#1083#1075' + '#1087#1077#1085#1103')'
+        Caption = #1050' '#1086#1087#1083#1072#1090#1077' ('#1044#1086#1083#1075' + '#1087#1077#1085#1080')'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
@@ -432,7 +442,7 @@ object PaymentForm: TPaymentForm
         Width = 29
         Height = 14
         Alignment = taRightJustify
-        Caption = #1055#1077#1085#1103
+        Caption = #1055#1077#1085#1080
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -651,27 +661,16 @@ object PaymentForm: TPaymentForm
         inherited gbInfo: TGroupBox
           Width = 200
           Height = 92
-          inherited memAbonent: TMemo
-            Top = 43
+          inherited HtmlViewer: THtmlViewer
             Width = 196
-            Height = 47
-          end
-          inherited lblFIO: TDBEditEh
-            Width = 196
-            Height = 14
-          end
-          inherited lblDebt: TDBEditEh
-            Top = 29
-            Width = 196
-            Height = 14
-            Margins.Bottom = 0
+            Height = 75
           end
         end
       end
     end
     object pnlPayInput: TPanel
       Left = 0
-      Top = 391
+      Top = 394
       Width = 369
       Height = 26
       Align = alTop
@@ -680,16 +679,16 @@ object PaymentForm: TPaymentForm
         369
         26)
       object Label2: TLabel
-        Left = 7
+        Left = 10
         Top = 5
         Width = 77
         Height = 13
         Caption = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
       end
       object cbbPayTypeStr: TDBLookupComboboxEh
-        Left = 89
+        Left = 93
         Top = 2
-        Width = 274
+        Width = 270
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -706,10 +705,41 @@ object PaymentForm: TPaymentForm
         Visible = True
       end
     end
+    object pnlLCPS: TPanel
+      Left = 0
+      Top = 420
+      Width = 369
+      Height = 26
+      Align = alTop
+      TabOrder = 8
+      object lbl11: TLabel
+        Left = 10
+        Top = 5
+        Width = 62
+        Height = 13
+        Caption = #1057#1091#1084#1084#1072' '#1074' BYN'
+      end
+      object ednLCPS: TDBNumberEditEh
+        Tag = 13
+        Left = 93
+        Top = 2
+        Width = 105
+        Height = 21
+        DataField = 'LCPS'
+        DataSource = srcMemPayment
+        DisplayFormat = ',0.00'
+        DynProps = <>
+        EditButtons = <>
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+      end
+    end
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 449
+    Top = 474
     Width = 709
     Height = 41
     Align = alBottom
@@ -928,11 +958,11 @@ object PaymentForm: TPaymentForm
       
         'insert into payment (payment_id, pay_doc_id, customer_id, pay_da' +
         'te, pay_sum, fine_sum, payment_type, notice, payment_srv, ext_pa' +
-        'y_id, PAY_TYPE_STR, FISCAL, RQ_ID)'
+        'y_id, PAY_TYPE_STR, FISCAL, RQ_ID, LCPS)'
       
         'values (:payment_id, :pay_doc_id, :customer_id, :pay_date, :pay_' +
         'sum, :fine_sum, :payment_type, :notice, :payment_srv, :EXT_PAY_I' +
-        'D, :PAY_TYPE_STR, :FISCAL, :RQ_ID)'
+        'D, :PAY_TYPE_STR, :FISCAL, :RQ_ID, :LCPS)'
       'returning payment_id')
     Left = 481
     Top = 300
@@ -1159,6 +1189,14 @@ object PaymentForm: TPaymentForm
           FieldName = 'OnDebt'
           Calculated = True
           NumericDataType = fdtFloatEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object LCPS: TMTNumericDataFieldEh
+          FieldName = 'LCPS'
+          NumericDataType = fdtCurrencyEh
           AutoIncrement = False
           DisplayWidth = 20
           currency = False

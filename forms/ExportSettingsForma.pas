@@ -6,7 +6,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ToolWin,
   Vcl.DBCtrls, Vcl.Menus, Vcl.ActnList,
@@ -161,7 +161,7 @@ end;
 procedure TExportSettingsForm.FormShow(Sender: TObject);
 var
   i: Integer;
-  val: TStringArray;
+  val: TStringDynArray;
 begin
   for i := 0 to pgcFileBody.PageCount - 1 do
     pgcFileBody.Pages[i].TabVisible := False;
@@ -226,7 +226,7 @@ end;
 procedure TExportSettingsForm.TextToDataset();
 var
   i: Integer;
-  val: TStringArray;
+  val: TStringDynArray;
   s: string;
 begin
   if memDBF.Active then

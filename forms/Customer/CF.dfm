@@ -1,6 +1,7 @@
 object CustomersForm: TCustomersForm
   Left = 0
   Top = 0
+  ActiveControl = dbgCustomers
   Caption = #1057#1087#1080#1089#1086#1082' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
   ClientHeight = 526
   ClientWidth = 970
@@ -291,7 +292,7 @@ object CustomersForm: TCustomersForm
         Footers = <>
         Title.Caption = #1057#1090#1072#1090#1091#1089
         Title.TitleButton = True
-        Width = 165
+        Width = 128
       end
       item
         CellButtons = <>
@@ -301,7 +302,7 @@ object CustomersForm: TCustomersForm
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
-        Width = 200
+        Width = 140
       end
       item
         CellButtons = <>
@@ -311,7 +312,7 @@ object CustomersForm: TCustomersForm
         Footers = <>
         Title.Caption = #1044#1086#1075#1086#1074#1086#1088' '#1076#1086
         Title.TitleButton = True
-        Width = 97
+        Width = 66
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -324,10 +325,10 @@ object CustomersForm: TCustomersForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    object Panel2: TPanel
+    object pnlGridSearch: TPanel
       Left = 0
       Top = 0
-      Width = 309
+      Width = 350
       Height = 24
       Align = alLeft
       BevelOuter = bvNone
@@ -352,16 +353,17 @@ object CustomersForm: TCustomersForm
         OnClick = SpeedButton2Click
       end
       object tlbSearch: TToolBar
-        Left = 236
+        Left = 277
         Top = 0
         Width = 73
         Height = 24
         Align = alRight
         Images = A4MainForm.ilFilter
         TabOrder = 2
-        object btnFilterSearchText: TToolButton
+        object btnSearchFilterText: TToolButton
           Left = 0
           Top = 0
+          Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1074#1074#1077#1076#1077#1085#1085#1086#1084#1091' '#1090#1077#1082#1089#1090#1091
           Action = actFilterSearchText
         end
         object btnSearchNext: TToolButton
@@ -378,12 +380,15 @@ object CustomersForm: TCustomersForm
       object edtSearch: TDBEditEh
         Left = 63
         Top = 0
-        Width = 173
+        Width = 214
         Height = 24
+        Hint = 
+          #1055#1086#1080#1089#1082'. '#8593#8595' - '#1087#1077#1088#1077#1093#1086#1076' '#1087#1086' '#1088#1077#1079#1091#1083#1100#1090#1072#1090#1072#1084', Enter - '#1074#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1089 +
+          #1090#1088#1086#1082#1077' '#1087#1086#1080#1089#1082#1072', ESC - '#1086#1090#1084#1077#1085#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' (Ctrl+S)'
         Align = alClient
         DynProps = <>
         EditButtons = <>
-        EmptyDataInfo.Text = #1042#1074#1077#1076#1080#1090#1077' '#1090#1077#1082#1089#1090' '#1076#1083#1103' '#1087#1086#1080#1089#1082#1072
+        EmptyDataInfo.Text = #1055#1086#1080#1089#1082'. '#8593#8595' '#1087#1077#1088#1077#1093#1086#1076', Enter '#1092#1080#1083#1100#1090#1088', ESC '#1086#1090#1084#1077#1085#1080#1090#1100
         ShowHint = True
         TabOrder = 1
         Visible = True
@@ -404,9 +409,9 @@ object CustomersForm: TCustomersForm
       end
     end
     object pnlToolBars: TPanel
-      Left = 309
+      Left = 350
       Top = 0
-      Width = 661
+      Width = 620
       Height = 24
       Align = alClient
       BevelOuter = bvNone
@@ -414,7 +419,7 @@ object CustomersForm: TCustomersForm
       object ToolBar1: TToolBar
         Left = 92
         Top = 0
-        Width = 569
+        Width = 528
         Height = 24
         Align = alClient
         Caption = 'ToolBar1'
@@ -599,7 +604,12 @@ object CustomersForm: TCustomersForm
       ShowHint = True
       TabOrder = 1
       Visible = True
+      OnButtonClick = lcbStreetsButtonClick
       OnChange = lcbStreetsChange
+      OnClick = AddrSearchFieldClick
+      OnEnter = AddrSearchFieldEnter
+      OnExit = AddrSearchFieldExit
+      OnKeyDown = AddrSearchFieldKeyDown
     end
     object lcbHOUSE: TDBLookupComboboxEh
       Left = 457
@@ -627,11 +637,16 @@ object CustomersForm: TCustomersForm
       ShowHint = True
       TabOrder = 2
       Visible = True
+      OnButtonClick = lcbHOUSEButtonClick
       OnChange = lcbHOUSEChange
+      OnClick = AddrSearchFieldClick
       OnDropDownBoxGetCellParams = lcbHOUSEDropDownBoxGetCellParams
+      OnEnter = AddrSearchFieldEnter
+      OnExit = AddrSearchFieldExit
+      OnKeyDown = AddrSearchFieldKeyDown
     end
     object lcbFLAT: TDBLookupComboboxEh
-      Left = 588
+      Left = 586
       Top = 6
       Width = 85
       Height = 21
@@ -647,7 +662,12 @@ object CustomersForm: TCustomersForm
       ShowHint = True
       TabOrder = 3
       Visible = True
+      OnButtonClick = lcbFLATButtonClick
       OnChange = lcbFLATChange
+      OnClick = AddrSearchFieldClick
+      OnEnter = AddrSearchFieldEnter
+      OnExit = AddrSearchFieldExit
+      OnKeyDown = AddrSearchFieldKeyDown
     end
     object cbbAREA: TDBLookupComboboxEh
       Left = 107
@@ -667,7 +687,12 @@ object CustomersForm: TCustomersForm
       ShowHint = True
       TabOrder = 0
       Visible = True
+      OnButtonClick = cbbAREAButtonClick
       OnChange = cbbAREAChange
+      OnClick = AddrSearchFieldClick
+      OnEnter = AddrSearchFieldEnter
+      OnExit = AddrSearchFieldExit
+      OnKeyDown = AddrSearchFieldKeyDown
     end
   end
   object trRead: TpFIBTransaction
@@ -726,8 +751,8 @@ object CustomersForm: TCustomersForm
         'ected,'
       'SECRET'
       'FROM CUSTOMER C'
-      '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
-      '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
+      '   INNER JOIN HOUSE H ON (H.HOUSE_ID = C.HOUSE_ID)'
+      '   INNER JOIN STREET S ON (S.STREET_ID = H.STREET_ID)'
       '   LEFT OUTER JOIN WORKGROUPS wg ON (WG.WG_ID = H.WG_ID)'
       '')
     AutoUpdateOptions.UpdateTableName = 'CUSTOMER'
@@ -964,6 +989,13 @@ object CustomersForm: TCustomersForm
       Caption = #1047#1072#1082#1088#1077#1087#1080#1090#1100' '#1089#1090#1086#1083#1073#1094#1099' '#1090#1072#1073#1083#1080#1094#1099
       OnExecute = actFrozenColsExecute
     end
+    object actSearchGrid: TAction
+      Caption = 'actSearchGrid'
+      SecondaryShortCuts.Strings = (
+        'Ctrl+'#1055)
+      ShortCut = 16467
+      OnExecute = actSearchGridExecute
+    end
   end
   object mmMenu: TMainMenu
     Left = 120
@@ -1118,7 +1150,7 @@ object CustomersForm: TCustomersForm
     Top = 93
     object actFilterSearchText: TAction
       Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086'  '#1074#1074#1077#1076#1077#1085#1085#1086#1084#1091' '#1090#1077#1082#1089#1090#1091
-      ImageIndex = 2
+      ImageIndex = 5
       OnExecute = actFilterSearchTextExecute
     end
     object actSearchNext: TAction
@@ -1230,9 +1262,10 @@ object CustomersForm: TCustomersForm
   object PropStorage: TPropStorageEh
     StorageManager = dmMain.iniPropStorage
     StoredProps.Strings = (
-      'pnlBtns.Panel2.chkFldOnly.<P>.Checked'
+      'pnlBtns.pnlGridSearch.chkFldOnly.<P>.Checked'
       'pnlForms.<P>.Height'
       'pnlForms.pnlGrdForms.<P>.Width')
+    AfterLoadProps = PropStorageAfterLoadProps
     Left = 593
     Top = 145
   end
@@ -2246,7 +2279,6 @@ object CustomersForm: TCustomersForm
   end
   object tmrSearch: TTimer
     Enabled = False
-    Interval = 100
     OnTimer = tmrSearchTimer
     Left = 712
     Top = 336

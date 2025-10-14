@@ -124,6 +124,7 @@ begin
   dsMat.SelectSQL.Clear;
   dsMat.SelectSQL.Add('select');
   dsMat.SelectSQL.Add('    NM.M_ID');
+
   if Grouping then
   begin
     dsMat.SelectSQL.Add('  , M.NAME');
@@ -132,19 +133,22 @@ begin
   begin
     dsMat.SelectSQL.Add('  , M.NAME||coalesce(''/''||nm.Serial, '''') NAME');
   end;
+
   dsMat.SelectSQL.Add('  , M.COST');
   dsMat.SelectSQL.Add('  , M.DIMENSION');
-  dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
-  dsMat.SelectSQL.Add('  , NM.WH_ID');
 
   if Grouping then
   begin
+    dsMat.SelectSQL.Add('  , null WH_NAME');
+    dsMat.SelectSQL.Add('  , null WH_ID');
     dsMat.SelectSQL.Add('  , ''Итого'' OPER, NULL RQ_ID, NULL RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , m.DESCRIPTION NOTICE, null CALC');
     dsMat.SelectSQL.Add('  , SUM(NM.MT * NM.QUANT) QNT');
   end
   else
   begin
+    dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
+    dsMat.SelectSQL.Add('  , NM.WH_ID');
     dsMat.SelectSQL.Add('  , iif(NM.MT = 1, ''Установка'', ''Возврат'') OPER, NM.RQ_ID, NM.RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , NM.NOTICE, NM.CALC');
     dsMat.SelectSQL.Add('  , NM.MT * NM.QUANT QNT');
@@ -181,10 +185,11 @@ begin
   dsMat.SelectSQL.Add('      where R.Rq_Customer = :CUSTOMER_ID) NM');
   dsMat.SelectSQL.Add('    inner join MATERIALS M on (M.M_ID = NM.M_ID)');
   dsMat.SelectSQL.Add('    left outer join OBJECTS O on (O.O_ID = NM.WH_ID and O.O_TYPE = 10)');
+
   if Grouping then
     dsMat.SelectSQL.Add('group by 1,2,3,4,5,6,7,8,9,10,11')
   else
-    dsMat.SelectSQL.Add('order by 1');
+    dsMat.SelectSQL.Add('order by 2');
 end;
 
 end.

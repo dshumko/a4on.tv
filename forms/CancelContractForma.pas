@@ -69,9 +69,15 @@ end;
 procedure TCancelContractForm.CancelDateExit(Sender: TObject);
 begin
   bbOk.Enabled := False;
-  if (dmMain.AllowedAction(rght_Customer_add)) then
-    if VarToDateTime(CancelDate.value) >= dmMain.CurrentMonth then
-      bbOk.Enabled := true;
+  if (dmMain.AllowedAction(rght_Customer_EditSrv)) then begin
+    if (dmMain.AllowedAction(rght_Customer_History)) then
+      bbOk.Enabled := true
+    else begin
+      if VarToDateTime(CancelDate.value) >= dmMain.CurrentMonth then
+        bbOk.Enabled := true;
+    end;
+  end;
+
   if (dmMain.AllowedAction(rght_Customer_full)) then
     bbOk.Enabled := true;
 end;

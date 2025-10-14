@@ -6,7 +6,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
   MemTableDataEh, MemTableEh, GridsEh, DBGridEh, FIBQuery, pFIBQuery, OkCancel_frame, ToolCtrlsEh, DBGridEhToolCtrls,
@@ -68,7 +68,7 @@ uses
 procedure TBarSettingForm.SetCodeType(const value :integer);
 var
   i : Integer;
-  val : TStringArray;
+  val : TStringDynArray;
   cl : TColumnEh;
 begin
   case Value of
@@ -178,7 +178,7 @@ end;
 
 procedure TBarSettingForm.SetBarCode(const value : string);
 var
-  sa, sl    : TStringArray;
+  sa, sl    : TStringDynArray;
   cnt, i, j : Integer;
 begin
   mdFormat.Close;

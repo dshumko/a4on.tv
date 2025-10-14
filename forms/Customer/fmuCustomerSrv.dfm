@@ -2,8 +2,8 @@ object apgCustomerSrv: TapgCustomerSrv
   Left = 0
   Top = 0
   Caption = #1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080
-  ClientHeight = 303
-  ClientWidth = 682
+  ClientHeight = 331
+  ClientWidth = 952
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,23 +16,23 @@ object apgCustomerSrv: TapgCustomerSrv
   object Panel7: TPanel
     Left = 31
     Top = 0
-    Width = 651
-    Height = 303
+    Width = 921
+    Height = 331
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object pnlSubscrServ: TPanel
       Left = 0
       Top = 0
-      Width = 651
-      Height = 303
+      Width = 921
+      Height = 331
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object Splitter3: TSplitter
         Left = 0
-        Top = 217
-        Width = 651
+        Top = 245
+        Width = 921
         Height = 3
         Cursor = crVSplit
         Align = alBottom
@@ -40,8 +40,8 @@ object apgCustomerSrv: TapgCustomerSrv
       object dbgCustSubscrServ: TDBGridEh
         Left = 0
         Top = 0
-        Width = 651
-        Height = 217
+        Width = 921
+        Height = 245
         Align = alClient
         AllowedOperations = []
         DataSource = srcServices
@@ -60,7 +60,6 @@ object apgCustomerSrv: TapgCustomerSrv
         ReadOnly = True
         STFilter.InstantApply = True
         STFilter.Local = True
-        STFilter.Visible = True
         SumList.Active = True
         TabOrder = 0
         TitleParams.MultiTitle = True
@@ -75,7 +74,7 @@ object apgCustomerSrv: TapgCustomerSrv
             EditButtons = <>
             FieldName = 'NAME'
             Footer.Alignment = taRightJustify
-            Footer.Value = #1047#1072' '#1084#1077#1089#1103#1094
+            Footer.Value = #1058#1072#1088#1080#1092' '#1085#1072' '#1089#1077#1075#1086#1076#1085#1103
             Footer.ValueType = fvtStaticText
             Footers = <>
             Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
@@ -84,16 +83,18 @@ object apgCustomerSrv: TapgCustomerSrv
           end
           item
             CellButtons = <>
-            DisplayFormat = '#.##'
+            DisplayFormat = '#0.##'
             DynProps = <>
             EditButtons = <>
             FieldName = 'tarif_sum'
-            Footer.DisplayFormat = '#.##'
+            Footer.DisplayFormat = '#0.##'
             Footer.FieldName = 'TARIF_SUM'
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1058#1072#1088#1080#1092
+            Title.Hint = #1058#1072#1088#1080#1092' '#1085#1072' '#1089#1077#1075#1086#1076#1085#1103
             Title.TitleButton = True
+            Width = 55
           end
           item
             AutoFitColWidth = False
@@ -115,7 +116,7 @@ object apgCustomerSrv: TapgCustomerSrv
             DynProps = <>
             EditButtons = <>
             FieldName = 'STATE_DATE'
-            Footer.DisplayFormat = '#.##'
+            Footer.DisplayFormat = '#0.##'
             Footer.FieldName = 'TARIF_DAY'
             Footer.ValueType = fvtSum
             Footers = <>
@@ -207,14 +208,42 @@ object apgCustomerSrv: TapgCustomerSrv
             Title.TitleButton = True
             Visible = False
             Width = 67
+          end
+          item
+            Alignment = taLeftJustify
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'Calc_Type'
+            Footers = <>
+            KeyList.Strings = (
+              '0'
+              '1'
+              '5'
+              '2'
+              '4'
+              '3'
+              '6')
+            PickList.Strings = (
+              '0 '#1056#1072#1079' '#1074' '#1084#1077#1089#1103#1094' ('#1087#1088#1086#1087#1086#1088#1094#1080#1086#1085#1072#1083#1100#1085#1086' '#1082#1086#1083'-'#1074#1072' '#1087#1086#1076#1082#1083'. '#1076#1085#1077#1081')'
+              
+                '1 '#1055#1086#1083#1085#1099#1081'/0 ('#1087#1086#1083#1085#1099#1081' '#1090#1072#1088#1080#1092' '#1077#1089#1083#1080' '#1087#1086#1076#1082#1083#1102#1095#1077#1085' '#1073#1086#1083#1077#1077' '#1061' '#1076#1085#1077#1081' '#1080#1083#1080' 0 '#1077#1089#1083#1080' ' +
+                #1084#1077#1085#1077#1077')'
+              '5 '#1045#1078#1077#1076#1085#1077#1074#1085#1099#1077' '#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103' ('#1089#1095#1080#1090#1072#1077#1084' '#1076#1077#1085#1100' '#1086#1090#1082#1083#1102#1095#1077#1085#1080#1103')'
+              '2 '#1045#1078#1077#1076#1085#1077#1074#1085#1099#1077' '#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103
+              '4 '#1044#1086#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103' '#1076#1086' '#1090#1072#1088#1080#1092#1072
+              '3 1-'#1099#1081' '#1084#1077#1089#1103#1094' '#1087#1088#1086#1087#1086#1088#1094#1080#1086#1085#1072#1083#1100#1085#1086' '#1076#1085#1103#1084', '#1076#1072#1083#1077#1077' '#1055#1054#1051#1053#1067#1049' '#1090#1072#1088#1080#1092' '
+              '6 '#1045#1078#1077#1076#1085#1077#1074#1085#1099#1077' '#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103' ('#1090#1072#1088#1080#1092' '#1085#1072' '#1091#1082#1072#1079#1072#1085#1085#1086#1077' '#1082#1086#1083'-'#1074#1086' '#1076#1085#1077#1081')')
+            Title.Caption = #1057#1087#1086#1089#1086#1073' '#1088#1072#1089#1095#1077#1090#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
       end
       object pnlPersonelTarif: TPanel
         Left = 0
-        Top = 220
-        Width = 651
+        Top = 248
+        Width = 921
         Height = 83
         Align = alBottom
         BevelOuter = bvNone
@@ -222,7 +251,7 @@ object apgCustomerSrv: TapgCustomerSrv
         object Label14: TLabel
           Left = 0
           Top = 0
-          Width = 651
+          Width = 921
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
@@ -230,7 +259,7 @@ object apgCustomerSrv: TapgCustomerSrv
         object dbgPersTarif: TDBGridEh
           Left = 27
           Top = 13
-          Width = 624
+          Width = 894
           Height = 70
           Align = alClient
           DataSource = srcPersonelTarif
@@ -338,7 +367,7 @@ object apgCustomerSrv: TapgCustomerSrv
     Left = 0
     Top = 0
     Width = 31
-    Height = 303
+    Height = 331
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
@@ -387,7 +416,7 @@ object apgCustomerSrv: TapgCustomerSrv
     end
     object ToolBar2: TToolBar
       Left = 0
-      Top = 272
+      Top = 300
       Width = 31
       Height = 31
       Align = alBottom
@@ -405,61 +434,6 @@ object apgCustomerSrv: TapgCustomerSrv
   end
   object dsServices: TpFIBDataSet
     RefreshSQL.Strings = (
-      'select'
-      '    sl.*'
-      
-        '  , coalesce(sl.tarif_sum / extract(day from dateadd(-1 day to(d' +
-        'ateadd(1 month to current_date - extract(day from current_date) ' +
-        '+ 1)))), 0) as tarif_day'
-      
-        '  , iif(exists(select l.Link_Id from SERVICES_LINKS l where l.PA' +
-        'RENT is null and l.CHILD = sl.SERV_ID), 1, 0) as SRV_ACTIVE  '
-      '  from (select'
-      '            SS.*'
-      '          , s.name'
-      '          ,'
-      '            case ss.state_sgn'
-      '              when 0 then '#39#1054#1090#1082#1083#1102#1095#1077#1085#39
-      '              when 1 then '#39#1055#1086#1076#1082#1083#1102#1095#1077#1085#39
-      '              else '#39#1085#1077#1087#1086#1085#1103#1090#1082#1080' '#39#39#39' || ss.state_sgn || '#39#39#39#39
-      '            end as State,'
-      '            coalesce(w.Surname, ss.State_Change_By) as WHO_LAST'
-      '          , sd.Name as STATE_SRV_NAME'
-      '          , o.o_name as VAT_GROUP'
-      '          ,'
-      '            (select'
-      '                 M_TARIF'
-      
-        '               from Get_Tarif_Sum_Customer_Srv(ss.Customer_Id, s' +
-        's.Serv_Id, current_date)'
-      ''
-      '            ) tarif_sum'
-      '          , b.O_NAME BUSINESS'
-      '          from SUBSCR_SERV SS'
-      
-        '               inner join services s on (s.service_id = ss.Serv_' +
-        'Id)'
-      
-        '               inner join objects b on (b.O_Id = s.BUSINESS_TYPE' +
-        ' and'
-      '                     b.O_TYPE = 15)'
-      
-        '               left outer join services sd on (ss.State_Srv = sd' +
-        '.Service_Id)'
-      
-        '               left outer join worker w on (w.Ibname = ss.State_' +
-        'Change_By)'
-      
-        '               left outer join objects o on (o.o_id = ss.vatg_id' +
-        ' and'
-      '                     o.o_type = 13)'
-      'where ss.CUSTOMER_ID=:OLD_CUSTOMER_ID'
-      'and SS.SUBSCR_SERV_ID = :OLD_SUBSCR_SERV_ID'
-      ') sl'
-      '  order by state_sgn desc, name'
-      ''
-      '    ')
-    SelectSQL.Strings = (
       'select *'
       'from ('
       'select'
@@ -482,13 +456,23 @@ object apgCustomerSrv: TapgCustomerSrv
       '  , sl.VAT_GROUP'
       '  , sl.BUSINESS'
       
-        '  , iif(sl.Calc_Type <> 6, sl.TARIF_SUM, round(sl.TARIF_SUM / Ex' +
-        'tra * extract(day from Month_Last_Day(current_date)), 2)) TARIF_' +
-        'SUM'
+        '  , iif((((STATE_SGN = 1) and (STATE_DATE <= current_date)) or (' +
+        'STATE_SRV = -3) or ((STATE_SGN = 0) and (STATE_DATE >= current_d' +
+        'ate))),'
+      '        iif(sl.Calc_Type <> 6'
+      '            , sl.TARIF_SUM'
       
-        '  , coalesce(round(sl.tarif_sum / iif(sl.Calc_Type <> 6, extract' +
-        '(day from Month_Last_Day(current_date)), Extra), 2), 0) as tarif' +
-        '_day'
+        '            , round(sl.TARIF_SUM / Extra * extract(day from Mont' +
+        'h_Last_Day(current_date)), 2))'
+      '        , 0) TARIF_SUM'
+      
+        '  , iif((((STATE_SGN = 1) and (STATE_DATE <= current_date)) or (' +
+        'STATE_SRV = -3) or ((STATE_SGN = 0) and (STATE_DATE >= current_d' +
+        'ate))),'
+      
+        '         coalesce(round(sl.tarif_sum / iif(sl.Calc_Type <> 6, ex' +
+        'tract(day from Month_Last_Day(current_date)), Extra), 2), 0)'
+      '         , 0) as tarif_day'
       '  , iif(exists(select'
       '                   l.Link_Id'
       '                 from SERVICES_LINKS l'
@@ -496,6 +480,7 @@ object apgCustomerSrv: TapgCustomerSrv
       
         '                       and l.CHILD = sl.SERV_ID), 1, 0) as SRV_A' +
         'CTIVE'
+      '  , sl.Calc_Type'
       '  -- , extract(day from Month_Last_Day(current_date))'
       '  from (select'
       '            SS.*'
@@ -557,6 +542,127 @@ object apgCustomerSrv: TapgCustomerSrv
       '  , 0 TARIF_SUM'
       '  , 0 tarif_day'
       '  , 0 SRV_ACTIVE'
+      '  , s.Calc_Type'
+      '  -- , null'
+      'from Queue_Switch_Srv q'
+      '  inner join services s on (s.Service_Id = q.Srv_To)'
+      'where q.Completed = 0 and q.Customer_Id = :CUSTOMER_ID'
+      ')'
+      'where CUSTOMER_ID=:OLD_CUSTOMER_ID'
+      'and SUBSCR_SERV_ID = :OLD_SUBSCR_SERV_ID'
+      ''
+      ''
+      '    ')
+    SelectSQL.Strings = (
+      'select *'
+      'from ('
+      'select'
+      '    sl.SUBSCR_SERV_ID'
+      '  , sl.STATE_SGN'
+      '  , sl.NAME'
+      '  , sl.CUSTOMER_ID'
+      '  , sl.SERV_ID'
+      '  , sl.STATE_DATE'
+      '  , sl.STATE_SRV'
+      '  , sl.NOTICE'
+      '  , sl.STATE_CHANGE_BY'
+      '  , sl.STATE_CHANGE_ON'
+      '  , sl.CONTRACT'
+      '  , sl.CONTRACT_DATE'
+      '  , sl.VATG_ID'
+      '  , sl.STATE'
+      '  , sl.WHO_LAST'
+      '  , sl.STATE_SRV_NAME'
+      '  , sl.VAT_GROUP'
+      '  , sl.BUSINESS'
+      
+        '  , iif((((STATE_SGN = 1) and (STATE_DATE <= current_date)) or (' +
+        'STATE_SRV = -3) or ((STATE_SGN = 0) and (STATE_DATE >= current_d' +
+        'ate))),'
+      '        iif(sl.Calc_Type <> 6'
+      '            , sl.TARIF_SUM'
+      
+        '            , round(sl.TARIF_SUM / Extra * extract(day from Mont' +
+        'h_Last_Day(current_date)), 2))'
+      '        , 0) TARIF_SUM'
+      
+        '  , iif((((STATE_SGN = 1) and (STATE_DATE <= current_date)) or (' +
+        'STATE_SRV = -3) or ((STATE_SGN = 0) and (STATE_DATE >= current_d' +
+        'ate))),'
+      
+        '         coalesce(round(sl.tarif_sum / iif(sl.Calc_Type <> 6, ex' +
+        'tract(day from Month_Last_Day(current_date)), Extra), 2), 0)'
+      '         , 0) as tarif_day'
+      '  , iif(exists(select'
+      '                   l.Link_Id'
+      '                 from SERVICES_LINKS l'
+      '                 where l.PARENT is null'
+      
+        '                       and l.CHILD = sl.SERV_ID), 1, 0) as SRV_A' +
+        'CTIVE'
+      '  , sl.Calc_Type'
+      '  -- , extract(day from Month_Last_Day(current_date))'
+      '  from (select'
+      '            SS.*'
+      '          , s.name'
+      '          , case ss.state_sgn'
+      '              when 0 then '#39#1054#1090#1082#1083#1102#1095#1077#1085#39
+      '              when 1 then '#39#1055#1086#1076#1082#1083#1102#1095#1077#1085#39
+      '              else '#39#1085#1077#1087#1086#1085#1103#1090#1082#1080' '#39#39#39' || ss.state_sgn || '#39#39#39#39
+      '            end as State,'
+      '            coalesce(w.Surname, ss.State_Change_By) as WHO_LAST'
+      '          , sd.Name as STATE_SRV_NAME'
+      '          , o.o_name as VAT_GROUP'
+      '          , coalesce( (select'
+      '                 M_TARIF'
+      
+        '               from Get_Tarif_Sum_Customer_Srv(ss.Customer_Id, s' +
+        's.Serv_Id, current_date)'
+      '            ), 0) tarif_sum'
+      '          , b.O_NAME BUSINESS'
+      '          , s.Calc_Type'
+      '          , coalesce(s.Extra, 1) Extra'
+      '          from SUBSCR_SERV SS'
+      
+        '               inner join services s on (s.service_id = ss.Serv_' +
+        'Id)'
+      
+        '               inner join objects b on (b.O_Id = s.BUSINESS_TYPE' +
+        ' and b.O_TYPE = 15)'
+      
+        '               left outer join services sd on (ss.State_Srv = sd' +
+        '.Service_Id)'
+      
+        '               left outer join worker w on (w.Ibname = ss.State_' +
+        'Change_By)'
+      
+        '               left outer join objects o on (o.o_id = ss.vatg_id' +
+        ' and o.o_type = 13)'
+      '          where ss.CUSTOMER_ID = :CUSTOMER_ID) sl'
+      'union all'
+      'select'
+      '    q.Srv_From SUBSCR_SERV_ID'
+      '  , -999 STATE_SGN'
+      '  , s.Name'
+      '  , q.CUSTOMER_ID'
+      '  , q.Srv_To SERV_ID'
+      '  , q.Switch_Date STATE_DATE'
+      '  , -999 STATE_SRV'
+      '  , null NOTICE'
+      '  , null STATE_CHANGE_BY'
+      '  , null STATE_CHANGE_ON'
+      '  , null CONTRACT'
+      '  , null CONTRACT_DATE'
+      '  , null VATG_ID'
+      '  , '#39#1042' '#1086#1095#1077#1088#1077#1076#1080#39' STATE'
+      '  , null WHO_LAST'
+      '  , null STATE_SRV_NAME'
+      '  , null VAT_GROUP'
+      '  , null BUSINESS'
+      '  , 0 TARIF_SUM'
+      '  , 0 tarif_day'
+      '  , 0 SRV_ACTIVE'
+      '  , s.Calc_Type'
       '  -- , null'
       'from Queue_Switch_Srv q'
       '  inner join services s on (s.Service_Id = q.Srv_To)'

@@ -9,23 +9,29 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrjConst,
-  FIBDatabase, pFIBDatabase, amSplitter;
+  FIBDatabase, pFIBDatabase, amSplitter, Vcl.Tabs, MemTableDataEh,
+  DataDriverEh, pFIBDataDriverEh, MemTableEh, Vcl.Menus;
 
 type
   TReqMaterialsForm = class(TForm)
-    Panel2: TPanel;
-    Panel3: TPanel;
+    pnlBottom: TPanel;
+    pnlGrids: TPanel;
     dbGrid: TDBGridEh;
     srcDataSource: TDataSource;
     dsReqMaterials: TpFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
-    dbGridGroups: TDBGridEh;
-    dsMatGropups: TpFIBDataSet;
     srcMatGropups: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    tsGroup: TTabSet;
+    mtGroups: TMemTableEh;
+    drvFibGroups: TpFIBDataDriverEh;
+    dbGridGroups: TDBGridEh;
+    pmTreeView: TPopupMenu;
+    miFE: TMenuItem;
+    miN1: TMenuItem;
     procedure dbGridExit(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
@@ -37,18 +43,27 @@ type
     procedure srcDataSourceUpdateData(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OkCancelFrame1bbCancelClick(Sender: TObject);
+    procedure dbGridGroupsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure tsGroupChange(Sender: TObject; NewTab: Integer; var AllowChange: Boolean);
+    procedure miFEClick(Sender: TObject);
+    procedure miN1Click(Sender: TObject);
   private
     { Private declarations }
     FReadOnly: Boolean;
-    fRequest: Integer;
-    fVisibleCost: Boolean;
+    FRequest: Integer;
+    FVisibleCost: Boolean;
+    FGroupIndex: Integer;
+    FROW_HL_WARNING: TColor;
     procedure SetRequest(const Value: Integer);
     procedure SetEditMode(const Value: Boolean);
     procedure SaveAndExit;
+    procedure SetMatGroup(const GrpIndex: Integer);
+    procedure TreeExpandBranch(const MG_ID: Integer);
   public
     { Public declarations }
     property ReadOnlyMode: Boolean read FReadOnly write SetEditMode;
-    property pRequest: Integer read fRequest write SetRequest;
+    property pRequest: Integer read FRequest write SetRequest;
   end;
 
 function ReqMaterials(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
@@ -92,7 +107,7 @@ end;
 
 procedure TReqMaterialsForm.SetRequest(const Value: Integer);
 begin
-  fRequest := Value;
+  FRequest := Value;
 end;
 
 procedure TReqMaterialsForm.dbGridExit(Sender: TObject);
@@ -121,9 +136,24 @@ begin
   end
 end;
 
+procedure TReqMaterialsForm.dbGridGroupsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+    Exit;
+
+  if (gdSelected in State) then
+  begin
+    AFont.Color := clHighlightText;
+    Background := clHighlight;
+  end
+  else if (Sender as TDBGridEh).DataSource.DataSet['MG_ID'] = -1 then
+    Background := FROW_HL_WARNING;
+end;
+
 procedure TReqMaterialsForm.dsReqMaterialsBeforePost(DataSet: TDataSet);
 begin
-  DataSet['RQ_ID'] := fRequest;
+  DataSet['RQ_ID'] := FRequest;
   if not DataSet.FieldByName('RM_QUANT').IsNull then
     DataSet['RM_QUANT'] := RoundTo(DataSet['RM_QUANT'], -5);
 end;
@@ -132,22 +162,32 @@ procedure TReqMaterialsForm.FormClose(Sender: TObject; var Action: TCloseAction)
 var
   i: Integer;
 begin
+  dmMain.SetIniValue('BIDMATGROUPIDX', FGroupIndex.ToString);
+  if (FGroupIndex = 0) and mtGroups.Active then begin
+    if (not mtGroups.FieldByName('MG_ID').IsNull) and (mtGroups['MG_ID'] > 0) then
+      dmMain.SetIniValue('BIDMATGROUPSEL', mtGroups.FieldByName('MG_ID').AsString);
+  end;
+
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
       (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, false);
-  // dbGrid.SaveColumnsLayoutIni(A4MainForm.GetIniFileName, 'RecMatGrid', true);
 end;
 
 procedure TReqMaterialsForm.FormCreate(Sender: TObject);
 var
   i: Integer;
 begin
-  fVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
+  if (dmMain.GetIniValue('BIDMATGROUPIDX') = '1') then
+    FGroupIndex := 1
+  else
+    FGroupIndex := 0;
+  FVisibleCost := dmMain.AllowedAction(rght_Material_Cost); // просмотр цены
+
   for i := 0 to dbGrid.Columns.Count - 1 do
   begin
     if dbGrid.Columns[i].FieldName = 'RM_COST' then
-      dbGrid.Columns[i].Visible := fVisibleCost;
+      dbGrid.Columns[i].Visible := FVisibleCost;
   end;
 end;
 
@@ -202,8 +242,26 @@ begin
     end;
   end;
 
-  dsMatGropups.Open;
-  dsReqMaterials.Open;
+  try
+    FROW_HL_WARNING := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+  except
+    FROW_HL_WARNING := $0066FFFF;
+  end;
+
+  tsGroup.OnChange := nil;
+  tsGroup.TabIndex := FGroupIndex;
+  tsGroup.OnChange := tsGroupChange;
+  SetMatGroup(FGroupIndex);
+end;
+
+procedure TReqMaterialsForm.miFEClick(Sender: TObject);
+begin
+  mtGroups.TreeList.FullExpand;
+end;
+
+procedure TReqMaterialsForm.miN1Click(Sender: TObject);
+begin
+  mtGroups.TreeList.FullCollapse;
 end;
 
 procedure TReqMaterialsForm.OkCancelFrame1bbCancelClick(Sender: TObject);
@@ -244,6 +302,89 @@ begin
     end;
   end;
   dsReqMaterials.EnableControls;
+end;
+
+procedure TReqMaterialsForm.tsGroupChange(Sender: TObject; NewTab: Integer; var AllowChange: Boolean);
+begin
+  SetMatGroup(NewTab);
+end;
+
+procedure TReqMaterialsForm.SetMatGroup(const GrpIndex: Integer);
+var
+  s : string;
+begin
+  mtGroups.Close;
+  dsReqMaterials.Close;
+
+  FGroupIndex := GrpIndex;
+  if FGroupIndex = 1 then
+  begin
+    dbGridGroups.Columns[0].Title.Caption := 'Склад';
+    with drvFibGroups.SelectSQL do
+    begin
+      Clear;
+      Add('select -5 MG_ID, W.O_Name MG_NAME, -1 PARENT_ID, w.O_Description MG_NOTICE, w.O_Id FOR_WH_ID from OBJECTS W where W.O_TYPE = 10 and w.O_Deleted = 0');
+    end
+  end
+  else
+  begin
+    dbGridGroups.Columns[0].Title.Caption := 'Группа';
+    with drvFibGroups.SelectSQL do
+    begin
+      Clear;
+      Add('select MG_ID, MG_NAME, PARENT_ID, MG_NOTICE, -2 GRP_WH_ID from MATERIALS_GROUP g  where coalesce(g.Deleted, 0) = 0');
+      Add('union');
+      Add('select null as MG_ID, '' БЕЗ ГРУППЫ'' MG_NAME, null as PARENT_ID, ''Материалы без группы'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE where (exists(select m.M_Id from materials m where m.Mg_Id is null and m.DELETED = 0))');
+      Add('union');
+      Add('select -2 as MG_ID, ''  В ЗАЯВКЕ'' MG_NAME, null as PARENT_ID, ''Материалы выданы для заявки'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE');
+      Add('union');
+      Add('select -1 as MG_ID, ''  ВСЕ МАТЕРИАЛЫ'' MG_NAME, null as PARENT_ID, ''Все материалы'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE');
+      // TODO: Сделать выкуп
+      //Add('union');
+      //Add('select -3 as MG_ID, ''  НА ВЫКУП '' MG_NAME, null as PARENT_ID, ''Оборудование у абонента в аренде для выкупа'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE');
+    end;
+  end;
+  drvFibGroups.SelectSQL.Add('order by 2');
+
+  mtGroups.Open;
+  mtGroups.Last;
+  mtGroups.First;
+  s := dmMain.GetIniValue('BIDMATGROUPSEL');
+  if (s <> '') then
+    TreeExpandBranch(s.ToInteger);
+
+  dsReqMaterials.Open;
+end;
+
+
+procedure TReqMaterialsForm.TreeExpandBranch(const MG_ID: Integer);
+var
+  EID: Integer;
+  CurrNode: TMemRecViewEh;
+
+  procedure OpenTreeNode(Node: TMemRecViewEh);
+  var
+    i, id: Integer;
+    CurSubNode: TMemRecViewEh;
+  begin
+    for i := 0 to Node.NodesCount - 1 do
+    begin
+      CurSubNode := Node.NodeItems[i];
+      id := CurSubNode.Rec.DataValues['MG_ID', dvvValueEh];
+      mtGroups.TreeList.Locate('MG_ID', id, []);
+      OpenTreeNode(CurSubNode);
+    end;
+  end;
+
+begin
+  EID := MG_ID;
+  dbGrid.DataSource.DataSet.DisableControls;
+  mtGroups.TreeList.FullCollapse;
+  mtGroups.TreeList.Locate('MG_ID', EID, []);
+  CurrNode := mtGroups.RecView;
+  OpenTreeNode(CurrNode);
+  mtGroups.TreeList.Locate('MG_ID', EID, []);
+  dbGrid.DataSource.DataSet.EnableControls;
 end;
 
 procedure TReqMaterialsForm.SetEditMode(const Value: Boolean);

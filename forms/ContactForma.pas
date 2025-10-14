@@ -352,6 +352,8 @@ begin
   ce := false;
   if ((dbValue.Text <> '')) then
   begin
+    dsContactType.DisableControls;
+    dsContactType.Locate('O_ID', cbbContactType.KeyValue, []);
     if dsContactType['REGEXP'] <> '' then
     begin
       s := dbValue.Text;
@@ -368,6 +370,7 @@ begin
       else
         ce := (dbValue.Text = '');
     end;
+    dsContactType.EnableControls;
   end;
 
   if ce then

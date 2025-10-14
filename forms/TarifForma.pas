@@ -60,7 +60,7 @@ begin
     then qryChannel.ParamByName('ACTION').AsInteger := 0
     else qryChannel.ParamByName('ACTION').AsInteger := 1;
     DecodeDate(NOW(), Year, Month, Day);
-    deDate_from.Value := EncodeDate(Year, Month, 1);
+    deDate_from.Value := IncMonth(EncodeDate(Year, Month, 1), 1);
     if ShowModal = mrOk
     then begin
       if deTarif.Value>0 then begin
@@ -99,7 +99,7 @@ begin
     else Query.ParamByName('ACTION').AsInteger := 1;
     Query.ParamByName('DATE_TO').IsNull := true;
     DecodeDate(NOW(), Year, Month, Day);
-    deDate_from.Value := EncodeDate(Year, Month, 1);
+    deDate_from.Value := IncMonth(EncodeDate(Year, Month, 1), 1);
     if ShowModal = mrOk
     then begin
       Query.ParamByName('DATE_FROM').AsDate := deDate_from.Value;
@@ -110,7 +110,9 @@ begin
       end
       else begin
         Query.ParamByName('tarif_sum_jur').AsFloat := deTarifJur.Value;
-        Query.ParamByName('VAT').AsFloat := ednVAT.Value;
+        if ednVAT.Text <> ''
+        then Query.ParamByName('VAT').AsFloat := ednVAT.Value
+        else Query.ParamByName('VAT').AsFloat := 0;
       end;
       Query.Transaction.StartTransaction;
       Query.ExecProc;

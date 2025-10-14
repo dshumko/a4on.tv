@@ -206,7 +206,6 @@ object EPGImportForm: TEPGImportForm
       FooterRowCount = 1
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
       SumList.Active = True
       TabOrder = 1
       Columns = <

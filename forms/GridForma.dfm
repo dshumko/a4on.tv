@@ -150,6 +150,13 @@ object GridForm: TGridForm
       Top = 0
       Action = actQuickFilter
     end
+    object sep444: TToolButton
+      Left = 178
+      Top = 0
+      Width = 8
+      ImageIndex = 41
+      Style = tbsSeparator
+    end
   end
   object pnlEdit: TPanel
     Left = 0
@@ -265,21 +272,5 @@ object GridForm: TGridForm
     DoubleBuffer = False
     Left = 288
     Top = 200
-  end
-  object printGridEh: TPrintDBGridEh
-    Options = []
-    PageFooter.Font.Charset = DEFAULT_CHARSET
-    PageFooter.Font.Color = clWindowText
-    PageFooter.Font.Height = -11
-    PageFooter.Font.Name = 'Tahoma'
-    PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
-    PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'Tahoma'
-    PageHeader.Font.Style = []
-    Units = MM
-    Left = 232
-    Top = 216
   end
 end

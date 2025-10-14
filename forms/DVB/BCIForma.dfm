@@ -382,7 +382,7 @@ object BCIForm: TBCIForm
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
           SearchPanel.Enabled = True
-          SearchPanel.FilterOnTyping = True
+          SearchPanel.FilterOnTyping = False
           SortLocal = True
           STFilter.Local = True
           STFilter.Visible = True
@@ -612,7 +612,7 @@ object BCIForm: TBCIForm
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
           SearchPanel.Enabled = True
-          SearchPanel.FilterOnTyping = True
+          SearchPanel.FilterOnTyping = False
           SortLocal = True
           STFilter.Local = True
           STFilter.Visible = True

@@ -63,6 +63,8 @@ type
     lcbSOLD: TDBLookupComboboxEh;
     dsSoldSRV: TpFIBDataSet;
     srcSoldSRV: TDataSource;
+    lblPCE: TLabel;
+    ednPCE: TDBNumberEditEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -74,6 +76,8 @@ type
     procedure btnScanerClick(Sender: TObject);
     procedure edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure dsDocAfterOpen(DataSet: TDataSet);
+    procedure dblMatGroupEditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
   private
     { Private declarations }
     FNeedCheckNN: Boolean;
@@ -97,7 +101,7 @@ implementation
 
 uses
   Winapi.ShellAPI,
-  MaterialsForma, DM, PrjConst, ScanImageForma, AtrCommon;
+  MaterialsForma, MatGroupForma, DM, PrjConst, ScanImageForma, AtrCommon;
 
 {$R *.dfm}
 
@@ -240,6 +244,20 @@ begin
   edtFILE.Text := ExtractFileName(ChangeFileExt(FileName, '.jpg'));
   edtFILE.Enabled := False;
   FNeedDelete := True;
+end;
+
+procedure TMaterialForm.dblMatGroupEditButtons0Click(Sender: TObject;
+  var Handled: Boolean);
+var
+  id : Integer;
+begin
+  //
+  if EditMatGroup(id) then begin
+    dsMGropups.CloseOpen(true);
+    dblMatGroup.Value := id;
+  end;
+
+  Handled := True;
 end;
 
 procedure TMaterialForm.dsDocAfterOpen(DataSet: TDataSet);

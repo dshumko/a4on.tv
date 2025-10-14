@@ -123,6 +123,13 @@ object NodesFilterForm: TNodesFilterForm
           Height = 13
           Caption = #1058#1080#1087' '#1091#1079#1083#1072
         end
+        object lbl21: TLabel
+          Left = 11
+          Top = 229
+          Width = 47
+          Height = 13
+          Caption = #1058#1086#1095#1082#1072' '#1059#1069
+        end
         object grpAddress: TGroupBox
           Left = 5
           Top = 12
@@ -209,6 +216,7 @@ object NodesFilterForm: TNodesFilterForm
             ShowHint = True
             TabOrder = 0
             Visible = True
+            OnChange = dblStreetChange
             OnExit = checkAdressSign
           end
           object dblHouseNo: TDBLookupComboboxEh
@@ -346,6 +354,11 @@ object NodesFilterForm: TNodesFilterForm
           DynProps = <>
           DataField = 'NODE_TYPE'
           DataSource = srcFilter
+          DropDownBox.ListFieldNames = 'O_NAME'
+          DropDownBox.ListSource = srcNodeType
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1058#1080#1087' '#1091#1079#1083#1072
@@ -354,9 +367,44 @@ object NodesFilterForm: TNodesFilterForm
           ListField = 'O_NAME'
           ListSource = srcNodeType
           ShowHint = True
+          Style = csDropDownEh
           TabOrder = 2
           Visible = True
           OnExit = checkAdressSign
+        end
+        object lcbEpoint: TDBLookupComboboxEh
+          Left = 80
+          Top = 226
+          Width = 468
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          DynProps = <>
+          DataField = 'EPOINT'
+          DataSource = srcFilter
+          DropDownBox.Columns = <
+            item
+              FieldName = 'O_NAME'
+              Width = 80
+            end
+            item
+              FieldName = 'O_DESCRIPTION'
+              Width = 20
+            end>
+          DropDownBox.ListSource = srcEPoint
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
+          DropDownBox.AutoDrop = True
+          DropDownBox.Sizable = True
+          EmptyDataInfo.Text = #1058#1086#1095#1082#1072' '#1091#1095#1077#1090#1072' '#1101#1083#1077#1082#1090#1088#1086#1101#1085#1077#1088#1075#1080#1080
+          EditButtons = <>
+          KeyField = 'O_ID'
+          ListField = 'O_NAME'
+          ListSource = srcEPoint
+          ShowHint = True
+          Style = csDropDownEh
+          TabOrder = 3
+          Visible = True
         end
       end
     end
@@ -582,5 +630,26 @@ object NodesFilterForm: TNodesFilterForm
     DataSet = dsArea
     Left = 246
     Top = 389
+  end
+  object dsEPoint: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    o.O_Id'
+      '    , o.O_Name'
+      '    , o.O_DESCRIPTION'
+      '  from objects o'
+      '  where o.O_Type = 76'
+      '        and coalesce(o.O_Deleted,0) <> 1'
+      '  order by o.O_Name  ')
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 449
+    Top = 297
+    oFetchAll = True
+  end
+  object srcEPoint: TDataSource
+    DataSet = dsEPoint
+    Left = 491
+    Top = 297
   end
 end

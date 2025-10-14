@@ -2,7 +2,7 @@ object MaterialForm: TMaterialForm
   Left = 0
   Top = 0
   Caption = #1052#1072#1090#1077#1088#1080#1072#1083
-  ClientHeight = 395
+  ClientHeight = 422
   ClientWidth = 481
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object MaterialForm: TMaterialForm
   OnShow = FormShow
   DesignSize = (
     481
-    395)
+    422)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -46,7 +46,7 @@ object MaterialForm: TMaterialForm
   end
   object Label4: TLabel
     Left = 6
-    Top = 307
+    Top = 332
     Width = 61
     Height = 13
     Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -114,6 +114,13 @@ object MaterialForm: TMaterialForm
     Height = 13
     Caption = #1059#1089#1083#1091#1075#1072' '#1087#1088#1086#1076#1072#1078#1080
   end
+  object lblPCE: TLabel
+    Left = 7
+    Top = 307
+    Width = 80
+    Height = 13
+    Caption = #1052#1086#1078#1085#1086#1089#1090#1100', '#1042#1090'/'#1095
+  end
   object dblMatGroup: TDBLookupComboboxEh
     Left = 97
     Top = 115
@@ -129,7 +136,11 @@ object MaterialForm: TMaterialForm
     DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.AutoDrop = True
     EmptyDataInfo.Text = #1043#1088#1091#1087#1087#1072' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
-    EditButtons = <>
+    EditButtons = <
+      item
+        Style = ebsPlusEh
+        OnClick = dblMatGroupEditButtons0Click
+      end>
     KeyField = 'MG_ID'
     ListField = 'MG_NAME'
     ListSource = srcMGropups
@@ -140,9 +151,9 @@ object MaterialForm: TMaterialForm
   end
   object DBMemo1: TDBMemoEh
     Left = 96
-    Top = 304
+    Top = 329
     Width = 376
-    Height = 53
+    Height = 56
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DataField = 'DESCRIPTION'
@@ -151,7 +162,7 @@ object MaterialForm: TMaterialForm
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
-    TabOrder = 17
+    TabOrder = 18
     Visible = True
     WantReturns = True
   end
@@ -204,26 +215,26 @@ object MaterialForm: TMaterialForm
   end
   object btnOk: TBitBtn
     Left = 6
-    Top = 362
+    Top = 389
     Width = 384
     Height = 28
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     NumGlyphs = 2
-    TabOrder = 18
+    TabOrder = 19
     OnClick = OkCancelFrame1bbOkClick
   end
   object btnCancel: TBitBtn
     Left = 397
-    Top = 362
+    Top = 389
     Width = 75
     Height = 28
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 19
+    TabOrder = 20
   end
   object edtCost: TDBNumberEditEh
     Left = 96
@@ -233,7 +244,7 @@ object MaterialForm: TMaterialForm
     DataField = 'COST'
     DataSource = MaterialsForm.srcDataSource
     DynProps = <>
-    EmptyDataInfo.Text = #1062#1077#1085#1072' '#1084#1072#1090#1077#1088#1080#1072#1083#1072'      .'
+    EmptyDataInfo.Text = #1062#1077#1085#1072' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
     EditButton.Visible = True
     EditButtons = <>
     ShowHint = True
@@ -277,7 +288,7 @@ object MaterialForm: TMaterialForm
   end
   object chkItsEquipment: TDBCheckBoxEh
     Left = 96
-    Top = 168
+    Top = 170
     Width = 97
     Height = 17
     Hint = #1048#1084#1077#1077#1090' '#1091#1085#1080#1082#1072#1083#1100#1085#1099#1081' '#1089#1077#1088#1080#1081#1085#1099#1081' '#1085#1086#1084#1077#1088
@@ -291,7 +302,7 @@ object MaterialForm: TMaterialForm
   end
   object chkIsDigit: TDBCheckBoxEh
     Left = 235
-    Top = 168
+    Top = 170
     Width = 97
     Height = 17
     Hint = #1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1076#1083#1103' '#1094#1080#1092#1088#1086#1074#1086#1075#1086' '#1058#1042
@@ -305,7 +316,7 @@ object MaterialForm: TMaterialForm
   end
   object chkIsNet: TDBCheckBoxEh
     Left = 368
-    Top = 168
+    Top = 170
     Width = 97
     Height = 17
     Hint = #1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1076#1083#1103' '#1057#1055#1044
@@ -471,10 +482,47 @@ object MaterialForm: TMaterialForm
     TabOrder = 11
     Visible = True
   end
+  object ednPCE: TDBNumberEditEh
+    Left = 97
+    Top = 304
+    Width = 105
+    Height = 21
+    DataField = 'PCE'
+    DataSource = MaterialsForm.srcDataSource
+    DynProps = <>
+    EmptyDataInfo.Text = #1042#1090'/'#1095
+    EditButton.Visible = True
+    EditButtons = <>
+    ShowHint = True
+    TabOrder = 17
+    Visible = True
+  end
   object dsMGropups: TpFIBDataSet
     SelectSQL.Strings = (
-      'Select * from materials_group'
-      'order by MG_NAME')
+      'select * from ('
+      'with recursive GroupsTree'
+      'as (select'
+      '        mp.Mg_Id'
+      '      , cast(coalesce(mp.Mg_Name, '#39#39') as varchar(1000)) as path'
+      '      from MATERIALS_GROUP mp'
+      
+        '      where mp.Parent_Id is null and coalesce(mp. Deleted, 0) = ' +
+        '0'
+      '    union all'
+      '    select'
+      '        mc.Mg_Id'
+      
+        '      , cast(gt.path || '#39' > '#39' || coalesce(mc.Mg_Name, '#39#39') as var' +
+        'char(1000)) as path'
+      '      from MATERIALS_GROUP mc'
+      '           inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id'
+      '      where coalesce(mc. Deleted, 0) = 0     '
+      '           )'
+      'select'
+      '    Mg_Id, path as Mg_Name'
+      '  from GroupsTree'
+      ')'
+      'order by Mg_Name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -527,8 +575,8 @@ object MaterialForm: TMaterialForm
         '       left outer join HOUSEFLATS f on (f.House_Id = h.House_Id ' +
         'and f.Flat_No = :flat_no)'
       '  where h.House_Id=:house_id   ')
-    Left = 13
-    Top = 222
+    Left = 37
+    Top = 182
   end
   object trReadQ: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV

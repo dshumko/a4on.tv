@@ -154,15 +154,13 @@ end;
 
 procedure TapgEqpmntInfo.dbtxtHOUSEDblClick(Sender: TObject);
 begin
-  if not dsData.FieldByName('HOUSE_ID').IsNull
-  then
+  if not dsData.FieldByName('HOUSE_ID').IsNull then
     A4MainForm.OpnenHouseByID(dsData['HOUSE_ID']);
 end;
 
 procedure TapgEqpmntInfo.dbtxtSTREETDblClick(Sender: TObject);
 begin
-  if not dsData.FieldByName('STREET_ID').IsNull
-  then
+  if not dsData.FieldByName('STREET_ID').IsNull then
     A4MainForm.OpnenStreetByID(dsData['STREET_ID']);
 end;
 
@@ -257,91 +255,97 @@ var
   eol_chars: Integer;
   CMD_TYPE: Integer;
   URL, AUT_USER, AUT_PSWD, eid, pid: String;
+  scr: TCursor;
 begin
   if not(Sender is TMenuItem) then
     exit;
 
-  with dmMain.qRead do
-  begin
-    sql.Clear;
-    sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs, e.SYSNAME');
-    sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
-    sql.Add('from equipment e');
-    sql.Add('   inner join equipment_cmd_grp ec on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id)');
-    sql.Add('where e.eid = :eq_id');
-    ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
-    ParamByName('eq_id').AsInteger := FDataSource.DataSet.FieldByName('Eid').AsInteger;
-    Transaction.StartTransaction;
-    ExecQuery;
-
-    Host := ifThen(not FieldByName('ip').IsNull, FieldByName('ip').asString, '');
-    user := ifThen(not FieldByName('e_admin').IsNull, FieldByName('e_admin').asString, '');
-    pswd := ifThen(not FieldByName('e_pass').IsNull, FieldByName('e_pass').asString, '');
-    URL := ifThen(not FieldByName('URL').IsNull, FieldByName('URL').asString, '');
-    AUT_USER := ifThen(not FieldByName('AUT_USER').IsNull, FieldByName('AUT_USER').asString, '');
-    AUT_PSWD := ifThen(not FieldByName('AUT_PSWD').IsNull, FieldByName('AUT_PSWD').asString, '');
-    H_MAC := ifThen(not FieldByName('mac').IsNull, FieldByName('mac').asString, '');
-    SYSNAME := ifThen(not FieldByName('SYSNAME').IsNull, FieldByName('SYSNAME').asString, '');
-    cmd := ifThen(not FieldByName('command').IsNull, FieldByName('command').asString, '');
-    eid := ifThen(not FieldByName('eid').IsNull, FieldByName('eid').asString, '');
-    pid := ifThen(not FieldByName('PARENT_ID').IsNull, FieldByName('PARENT_ID').asString, '');
-
-    if FieldByName('CMD_TYPE').IsNull then
-      CMD_TYPE := 0
-    else
-      CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
-
-    if FieldByName('eol_chrs').IsNull then
-      eol_chars := 0
-    else
+  scr := Screen.Cursor;
+  Screen.Cursor := crHourGlass;
+  try
+    with dmMain.qRead do
     begin
-      if FieldByName('eol_chrs').asString = '\r\n' then
-        eol_chars := 0
-      else if FieldByName('eol_chrs').asString = '\n\r' then
-        eol_chars := 1
-      else if FieldByName('eol_chrs').asString = '\n' then
-        eol_chars := 2
-      else if FieldByName('eol_chrs').asString = '\r' then
-        eol_chars := 3
+      sql.Clear;
+      sql.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs, e.SYSNAME');
+      sql.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
+      sql.Add('from equipment e');
+      sql.Add('   inner join equipment_cmd_grp ec on ((ec.eg_id = e.eq_group or ec.eg_id = -1) and ec.ec_id = :ec_id)');
+      sql.Add('where e.eid = :eq_id');
+      ParamByName('ec_id').AsInteger := (Sender as TMenuItem).Tag;
+      ParamByName('eq_id').AsInteger := FDataSource.DataSet.FieldByName('Eid').AsInteger;
+      Transaction.StartTransaction;
+      ExecQuery;
+
+      Host := ifThen(not FieldByName('ip').IsNull, FieldByName('ip').asString, '');
+      user := ifThen(not FieldByName('e_admin').IsNull, FieldByName('e_admin').asString, '');
+      pswd := ifThen(not FieldByName('e_pass').IsNull, FieldByName('e_pass').asString, '');
+      URL := ifThen(not FieldByName('URL').IsNull, FieldByName('URL').asString, '');
+      AUT_USER := ifThen(not FieldByName('AUT_USER').IsNull, FieldByName('AUT_USER').asString, '');
+      AUT_PSWD := ifThen(not FieldByName('AUT_PSWD').IsNull, FieldByName('AUT_PSWD').asString, '');
+      H_MAC := ifThen(not FieldByName('mac').IsNull, FieldByName('mac').asString, '');
+      SYSNAME := ifThen(not FieldByName('SYSNAME').IsNull, FieldByName('SYSNAME').asString, '');
+      cmd := ifThen(not FieldByName('command').IsNull, FieldByName('command').asString, '');
+      eid := ifThen(not FieldByName('eid').IsNull, FieldByName('eid').asString, '');
+      pid := ifThen(not FieldByName('PARENT_ID').IsNull, FieldByName('PARENT_ID').asString, '');
+
+      if FieldByName('CMD_TYPE').IsNull then
+        CMD_TYPE := 0
       else
+        CMD_TYPE := FieldByName('CMD_TYPE').AsInteger;
+
+      if FieldByName('eol_chrs').IsNull then
         eol_chars := 0
+      else
+      begin
+        if FieldByName('eol_chrs').asString = '\r\n' then
+          eol_chars := 0
+        else if FieldByName('eol_chrs').asString = '\n\r' then
+          eol_chars := 1
+        else if FieldByName('eol_chrs').asString = '\n' then
+          eol_chars := 2
+        else if FieldByName('eol_chrs').asString = '\r' then
+          eol_chars := 3
+        else
+          eol_chars := 0
+      end;
+
+      Close;
+      Transaction.Rollback;
     end;
 
-    Close;
-    Transaction.Rollback;
+    if cmd <> '' then
+    begin
+      cmd := ReplaceStr(cmd, '<e_admin>', user);
+      cmd := ReplaceStr(cmd, '<sysname>', SYSNAME);
+      cmd := ReplaceStr(cmd, '<e_pass>', pswd);
+      cmd := ReplaceStr(cmd, '<e_mac>', H_MAC);
+      cmd := ReplaceStr(cmd, '<e_mac_h>', H_MAC.Replace(':', '-'));
+      cmd := ReplaceStr(cmd, '<e_mac_d>', H_MAC.Replace(':', '.'));
+      cmd := ReplaceStr(cmd, '<e_mac_j>', FormatMACas4CD(H_MAC));
+      cmd := ReplaceStr(cmd, '<e_ip>', Host);
+      cmd := ReplaceStr(cmd, '<c_ip>', C_IP);
+      cmd := ReplaceStr(cmd, '<c_mac>', C_MAC);
+      cmd := ReplaceStr(cmd, '<c_mac_h>', C_MAC.Replace(':', '-'));
+      cmd := ReplaceStr(cmd, '<c_mac_d>', C_MAC.Replace(':', '.'));
+      cmd := ReplaceStr(cmd, '<c_mac_j>', FormatMACas4CD(C_MAC));
+      cmd := ReplaceStr(cmd, '<c_port>', C_PORT);
+      cmd := ReplaceStr(cmd, '<c_vlan>', C_VLAN);
+      cmd := ReplaceStr(cmd, '<e_id>', eid);
+      cmd := ReplaceStr(cmd, '<prnt_id>', pid);
+    end;
+
+    URL := ReplaceStr(URL, '<e_ip>', Host);
+    URL := ReplaceStr(URL, '<c_ip>', C_IP);
+
+    case CMD_TYPE of
+      2:
+        cmd := GetHtml(URL, AUT_USER, AUT_PSWD, cmd, true, (Sender as TMenuItem).Caption);
+    else
+      cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, true);
+    end;
+  finally
+    Screen.Cursor := scr;
   end;
-
-  if cmd <> '' then
-  begin
-    cmd := ReplaceStr(cmd, '<e_admin>', user);
-    cmd := ReplaceStr(cmd, '<sysname>', sysname);
-    cmd := ReplaceStr(cmd, '<e_pass>', pswd);
-    cmd := ReplaceStr(cmd, '<e_mac>', H_MAC);
-    cmd := ReplaceStr(cmd, '<e_mac_h>', H_MAC.Replace(':', '-'));
-    cmd := ReplaceStr(cmd, '<e_mac_d>', H_MAC.Replace(':', '.'));
-    cmd := ReplaceStr(cmd, '<e_mac_j>', FormatMACas4CD(H_MAC));
-    cmd := ReplaceStr(cmd, '<e_ip>', Host);
-    cmd := ReplaceStr(cmd, '<c_ip>', C_IP);
-    cmd := ReplaceStr(cmd, '<c_mac>', C_MAC);
-    cmd := ReplaceStr(cmd, '<c_mac_h>', C_MAC.Replace(':', '-'));
-    cmd := ReplaceStr(cmd, '<c_mac_d>', C_MAC.Replace(':', '.'));
-    cmd := ReplaceStr(cmd, '<c_mac_j>', FormatMACas4CD(C_MAC));
-    cmd := ReplaceStr(cmd, '<c_port>', C_PORT);
-    cmd := ReplaceStr(cmd, '<c_vlan>', C_VLAN);
-    cmd := ReplaceStr(cmd, '<e_id>', eid);
-    cmd := ReplaceStr(cmd, '<prnt_id>', pid);
-  end;
-
-  URL := ReplaceStr(URL, '<e_ip>', Host);
-  URL := ReplaceStr(URL, '<c_ip>', C_IP);
-
-  case CMD_TYPE of
-    2:
-      cmd := GetHtml(URL, AUT_USER, AUT_PSWD, cmd, true, (Sender as TMenuItem).Caption);
-  else
-    cmd := telnet(Host, 'telnet', ReplaceStr(cmd, #13#10, '\r'), eol_chars, true);
-  end;
-
 end;
 
 procedure TapgEqpmntInfo.mmoNoticeChange(Sender: TObject);

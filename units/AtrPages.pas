@@ -100,6 +100,7 @@ type
     constructor CreatePageGrid(AOwner: TComponent; AGrid: TDBGridEh); virtual;
     // destructor Destroy; virtual;
     procedure InitForm; virtual;
+    procedure ShowQuickFilter(const aShow: Boolean); virtual;
     property OnStart: TNotifyEvent read FOnStart write FOnStart;
     property OnUpdate: TNotifyEvent read FOnUpdate write FOnUpdate;
   end;
@@ -306,6 +307,25 @@ end;
 procedure TA4onPage.InitForm;
 begin
 
+end;
+
+procedure TA4onPage.ShowQuickFilter(const aShow: Boolean);
+var
+  i: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then begin
+      (Components[i] as TDBGridEh).STFilter.Visible := aShow;
+      (Components[i] as TDBGridEh).STFilter.Local := aShow;
+
+      (Components[i] as TDBGridEh).SearchPanel.Enabled := aShow;
+      (Components[i] as TDBGridEh).SearchPanel.FilterOnTyping := False; // aShow;
+
+      if (not aShow) and ((Components[i] as TDBGridEh).DataSource.DataSet.Filtered) then
+        (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := False;
+    end;
+  end;
 end;
 
 procedure TA4onPage.UpdateObject;

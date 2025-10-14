@@ -62,6 +62,10 @@ type
     chkinversion: TDBCheckBoxEh;
     btnAND: TButton;
     btnOR: TButton;
+    dsEPoint: TpFIBDataSet;
+    srcEPoint: TDataSource;
+    lcbEpoint: TDBLookupComboboxEh;
+    lbl21: TLabel;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -75,6 +79,7 @@ type
     procedure btnORClick(Sender: TObject);
     procedure btnANDClick(Sender: TObject);
     procedure srcFilterDataChange(Sender: TObject; Field: TField);
+    procedure dblStreetChange(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFilter(const filename: string);
@@ -99,6 +104,7 @@ begin
   dsArea.Close;
   dsSubArea.Close;
   dsNodeType.Close;
+  dsEPoint.Close;
 end;
 
 procedure TNodesFilterForm.FormCreate(Sender: TObject);
@@ -140,6 +146,7 @@ begin
   dsArea.Open;
   dsSubArea.Open;
   dsNodeType.Open;
+  dsEPoint.Open;
 
   pgcFilter.ActivePage := tsFilter;
 end;
@@ -232,6 +239,12 @@ begin
     if not VarIsClear((Sender as TDBLookupComboboxEh).Value) then
       if not chkAddress.Checked then
         chkAddress.Checked := true;
+end;
+
+procedure TNodesFilterForm.dblStreetChange(Sender: TObject);
+begin
+  if (srcFilter.DataSet.State in [dsEdit, dsInsert]) then
+    srcFilter.DataSet.FieldByName('HOUSE_ID').Clear;
 end;
 
 end.

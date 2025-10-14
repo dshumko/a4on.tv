@@ -41,6 +41,8 @@ type
     procedure CustomDropDownFormEhShow(Sender: TObject);
     procedure CustomDropDownFormEhClose(Sender: TObject;
       var Action: TCloseAction);
+  private
+    procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
     class function GetGlobalRef: TCustomDropDownFormEh; override;
   end;
@@ -51,17 +53,78 @@ var
 implementation
 
 uses
-  Data.DBConsts;
+  DM, MAIN, Data.DBConsts;
 
 {$R *.DFM}
 
 procedure TMaterialsInvSelect.FormCreate(Sender: TObject);
+var
+  i, c: Integer;
+  Font_size: Integer;
+  Font_name, s: string;
+  Row_height: Integer;
 begin
+  Font_size := 0;
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
+    Font_size := i;
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+  end;
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+
+      if Font_size <> 0 then
+      begin
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+      for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+      begin
+        s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
+        if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
+          (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
+          (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end
+      else if (Components[i] is TDBMemo) then
+      begin
+        (Components[i] as TDBMemo).Font.Name := Font_name;
+        (Components[i] as TDBMemo).Font.Size := Font_size;
+      end;
+    end
+  end;
+
   Panel3.DoubleBuffered := True;
   Panel3.ParentBackground := False;
 
   FormElements := [ddfeLeftGripEh, ddfeRightGripEh, ddfeCloseButtonEh];
 end;
+
+procedure TMaterialsInvSelect.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.Text.IsEmpty then
+    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
+end;
+
 
 procedure TMaterialsInvSelect.sbOkClick(Sender: TObject);
 begin
@@ -139,6 +202,10 @@ begin
   DynParams['Cost'].AsFloat := srcMaterials.DataSet.FieldByName('Cost').AsFloat;
   DynParams['B_Quant'].AsFloat := srcMaterials.DataSet.FieldByName('B_Quant').AsFloat;
   DynParams['dimension'].AsString := srcMaterials.DataSet.FieldByName('dimension').AsString;
+
+  if (not srcMaterials.DataSet.FieldByName('IS_UNIT').IsNull) and
+    (srcMaterials.DataSet.FieldByName('IS_UNIT').AsInteger = 1) then
+    DynParams['IS_UNIT'].AsInteger := 1;
 end;
 
 class function TMaterialsInvSelect.GetGlobalRef: TCustomDropDownFormEh;

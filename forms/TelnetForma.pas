@@ -325,7 +325,10 @@ var
   commands : TStrings;
   i : Integer;
   w : Integer;
+  f : Extended;
+  vFS : TFormatSettings;
 begin
+  vFS.DecimalSeparator := '.';
   if TnCnx.State <> wsConnected
   then begin
     DisplayMemo.Lines.Add('*** NOT CONNECTED ***');
@@ -339,10 +342,15 @@ begin
     commands.Text := cmd;
     for i := 0 to commands.Count - 1 do begin
       cmd := commands[i];
-      if cmd = 'wait' then begin
-        Sleep(1000);
+      if (UpperCase(cmd).StartsWith('WAIT')) then begin
+        cmd := UpperCase(cmd).Replace('WAIT', '').Trim;
+        if TryStrToFloat(cmd, f, vFS) then
+          Sleep(Trunc(f*1000))
+        else
+          Sleep(1000);
         Continue;
       end;
+
       case fEOL of
         1 :  cmd := cmd + LF+CR;
         2 :  cmd := cmd + LF;

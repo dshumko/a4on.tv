@@ -13,7 +13,6 @@ uses
 
 type
   TRequestWorksForm = class(TForm)
-    Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     dbGrid: TDBGridEh;
@@ -21,12 +20,10 @@ type
     dsWorks: TpFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
     dbGridGroups: TDBGridEh;
-    cbAllMaterials: TCheckBox;
     dsWorkGrps: TpFIBDataSet;
     srcWorkGrps: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;
-    procedure cbAllMaterialsClick(Sender: TObject);
     procedure dbGridExit(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
@@ -34,16 +31,19 @@ type
     procedure FormShow(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure dbGridGroupsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     FReadOnly: Boolean;
+    FROW_HL_WARNING : TColor;
     procedure SetEditMode(const Value: Boolean);
   public
     { Public declarations }
     property ReadOnlyMode: Boolean read FReadOnly write SetEditMode;
   end;
 
-function ReqWorks(const aRequest: Integer; const aReadOnly: Boolean; const RQ_TYPE: Integer = -1): boolean;
+function ReqWorks(const aRequest: Integer; const aReadOnly: Boolean; const RQ_TYPE: Integer = -1): Boolean;
 
 var
   RequestWorksForm: TRequestWorksForm;
@@ -55,7 +55,7 @@ uses
 
 {$R *.dfm}
 
-function ReqWorks(const aRequest: Integer; const aReadOnly: Boolean; const RQ_TYPE: Integer = -1): boolean;
+function ReqWorks(const aRequest: Integer; const aReadOnly: Boolean; const RQ_TYPE: Integer = -1): Boolean;
 begin
   result := false;
   with TRequestWorksForm.Create(Application) do
@@ -71,23 +71,6 @@ begin
     finally
       free
     end;
-end;
-
-procedure TRequestWorksForm.cbAllMaterialsClick(Sender: TObject);
-var
-  s: string;
-begin
-  dsWorks.Close;
-  s := dsWorks.SelectSQL.Text;
-  s := StringReplace(s, 'and w.rq_type = :rt_id', '', [rfReplaceAll, rfIgnoreCase]);
-  s := StringReplace(s, 'ORDER BY 2', '', [rfReplaceAll, rfIgnoreCase]);
-  dsWorks.SelectSQL.Text := Trim(s);
-  if not cbAllMaterials.Checked then
-    dsWorks.SelectSQL.Add(' and w.rq_type = :rt_id ');
-  dsWorks.SelectSQL.Add(' ORDER BY 2 ');
-  dsWorks.Open;
-
-  dbGridGroups.Visible := not cbAllMaterials.Checked;
 end;
 
 procedure TRequestWorksForm.dbGridExit(Sender: TObject);
@@ -114,6 +97,23 @@ begin
   end
 end;
 
+procedure TRequestWorksForm.dbGridGroupsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+var
+  s: string;
+begin
+  if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+    Exit;
+
+  if (gdSelected in State) then
+  begin
+    AFont.Color := clHighlightText;
+    Background := clHighlight;
+  end
+  else if (Sender as TDBGridEh).DataSource.DataSet['rt_id'] = -1 then
+    Background := FROW_HL_WARNING;
+end;
+
 procedure TRequestWorksForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 
@@ -131,12 +131,57 @@ var
   i: Integer;
   s: String;
   h: Boolean;
+  Font_size: Integer;
+  Font_name: string;
+  Row_height: Integer;
 begin
-  dbGrid.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'RecWorkGrid',
-    [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  Font_size := 0;
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
+    Font_size := i;
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+  end;
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+        Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+      if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
+        (Components[i] as TDBGridEh).DefaultApplySorting;
+      if Font_size <> 0 then
+      begin
+        (Components[i] as TDBGridEh).Font.Name := Font_name;
+        (Components[i] as TDBGridEh).Font.Size := Font_size;
+      end;
+      if Row_height <> 0 then
+      begin
+        (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+        (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+    end
+    else if Font_size <> 0 then
+    begin
+      if (Components[i] is TMemo) then
+      begin
+        (Components[i] as TMemo).Font.Name := Font_name;
+        (Components[i] as TMemo).Font.Size := Font_size;
+      end;
+    end;
+  end;
+
+  try
+    FROW_HL_WARNING := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+  except
+    FROW_HL_WARNING := $0066FFFF;
+  end;
 
   s := dmMain.GetSettingsValue('REQ_WORKS_NOT_CALC');
-  if (s = '1') then begin
+  if (s = '1') then
+  begin
     h := dmMain.AllowedAction(rght_Dictionary_ReqWorks) //
       or dmMain.AllowedAction(rght_Request_Full) //
       or dmMain.AllowedAction(rght_Dictionary_full);
@@ -144,7 +189,7 @@ begin
     for i := 0 to dbGrid.Columns.Count - 1 do
     begin
       if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'NOT_CALC') then
-        dbGrid.Columns[i].Visible := True
+        dbGrid.Columns[i].Visible := true
       else if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'W_COST') then
         dbGrid.Columns[i].ReadOnly := not h;
     end;

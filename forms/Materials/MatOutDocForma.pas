@@ -123,20 +123,23 @@ begin
 end;
 
 procedure TMatOutDocForm.SetReadOnlyMode(const readOnly: Boolean = true);
+var
+  vFullRights : Boolean;
 begin
   if dsDoc.State in [dsEdit, dsInsert] then
     dsDoc.Post;
   if dsDocMat.State in [dsEdit, dsInsert] then
     dsDocMat.Post;
 
+  vFullRights := dmMain.AllowedAction(rght_Materials_full);
   dbgDocMat.readOnly := readOnly;
   pnlMatAdd.Visible := not readOnly;
   dsMaterials.Active := not readOnly;
   srcDoc.AutoEdit := not readOnly;
   btnSave.Visible := not readOnly;
-  btnClose.Enabled := dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
+  btnClose.Enabled := vFullRights or dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
   btnClose.Visible := not readOnly;
-  btnOpen.Visible := readOnly and dmMain.AllowedAction(rght_Dictionary_MatDoc_Edit);
+  btnOpen.Visible := readOnly and vFullRights;
 end;
 
 procedure TMatOutDocForm.SetMatDocID(value: Integer);

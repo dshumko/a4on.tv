@@ -8,21 +8,26 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
-  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
+  DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter,
+  MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, Vcl.Menus;
 
 type
   TReqMatReturnForm = class(TForm)
     Panel2: TPanel;
-    Panel3: TPanel;
+    pnlGrids: TPanel;
     dbGrid: TDBGridEh;
     srcDataSource: TDataSource;
     dsReqMaterials: TpFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
-    dbGridGroups: TDBGridEh;
-    dsMatGropups: TpFIBDataSet;
     srcMatGropups: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;
+    mtGroups: TMemTableEh;
+    drvFibGroups: TpFIBDataDriverEh;
+    dbGridGroups: TDBGridEh;
+    pmTreeView: TPopupMenu;
+    miFE: TMenuItem;
+    miN1: TMenuItem;
     procedure dbGridExit(Sender: TObject);
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
@@ -32,23 +37,25 @@ type
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure dsReqMaterialsBeforePost(DataSet: TDataSet);
     procedure srcDataSourceUpdateData(Sender: TObject);
+    procedure dbGridGroupsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure miFEClick(Sender: TObject);
+    procedure miN1Click(Sender: TObject);
   private
     { Private declarations }
     FReadOnly: Boolean;
-    fRequest: Integer;
+    FRequest: Integer;
+    FROW_HL_WARNING: TColor;
     procedure SetRequest(const Value: Integer);
     procedure SetEditMode(const Value: Boolean);
     function GetGridSortOrder(Grid: TDBGridEh): String;
   public
     { Public declarations }
     property ReadOnlyMode: Boolean read FReadOnly write SetEditMode;
-    property pRequest: Integer read fRequest write SetRequest;
+    property pRequest: Integer read FRequest write SetRequest;
   end;
 
 function ReqMaterialsReturn(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
-
-var
-  ReqMatReturnForm: TReqMatReturnForm;
 
 implementation
 
@@ -65,7 +72,10 @@ begin
   with TReqMatReturnForm.Create(Application) do
     try
       ReadOnlyMode := aReadOnly;
-      dsMatGropups.Open;
+      mtGroups.Open;
+      mtGroups.Last;
+      mtGroups.First;
+
       pRequest := aRequest;
 
       FWHOwner := (dmMain.GetSettingsValue('WH_REQ_OWNER') = '1');
@@ -78,8 +88,6 @@ begin
 
       dsReqMaterials.ParamByName('RQ_ID').AsInteger := aRequest;
 
-      dsMatGropups.Open;
-
       if ShowModal = mrOk then
         result := True;
     finally
@@ -89,7 +97,7 @@ end;
 
 procedure TReqMatReturnForm.SetRequest(const Value: Integer);
 begin
-  fRequest := Value;
+  FRequest := Value;
 end;
 
 procedure TReqMatReturnForm.dbGridExit(Sender: TObject);
@@ -118,9 +126,24 @@ begin
   end
 end;
 
+procedure TReqMatReturnForm.dbGridGroupsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+    Exit;
+
+  if (gdSelected in State) then
+  begin
+    AFont.Color := clHighlightText;
+    Background := clHighlight;
+  end
+  else if (Sender as TDBGridEh).DataSource.DataSet['MG_ID'] = -1 then
+    Background := FROW_HL_WARNING;
+end;
+
 procedure TReqMatReturnForm.dsReqMaterialsBeforePost(DataSet: TDataSet);
 begin
-  DataSet['RQ_ID'] := fRequest;
+  DataSet['RQ_ID'] := FRequest;
 end;
 
 procedure TReqMatReturnForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -184,10 +207,18 @@ begin
       end;
     end
   end;
+
+  try
+    FROW_HL_WARNING := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+  except
+    FROW_HL_WARNING := $0066FFFF;
+  end;
+
   if dsReqMaterials.Active then
     dsReqMaterials.Close;
   dsReqMaterials.OrderClause := GetGridSortOrder(dbGrid);
   dsReqMaterials.Open;
+
   // dbGrid.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'RecMatReturnGrid',
   // [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
 end;
@@ -224,6 +255,16 @@ begin
     result := result + ','
   end;
   result := result.TrimRight([',']);
+end;
+
+procedure TReqMatReturnForm.miFEClick(Sender: TObject);
+begin
+  mtGroups.TreeList.FullExpand;
+end;
+
+procedure TReqMatReturnForm.miN1Click(Sender: TObject);
+begin
+  mtGroups.TreeList.FullCollapse;
 end;
 
 procedure TReqMatReturnForm.SetEditMode(const Value: Boolean);

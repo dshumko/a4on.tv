@@ -3,7 +3,7 @@ object SettingsUserForm: TSettingsUserForm
   Top = 0
   BorderStyle = bsDialog
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
-  ClientHeight = 385
+  ClientHeight = 410
   ClientWidth = 522
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object SettingsUserForm: TSettingsUserForm
   OnShow = FormShow
   DesignSize = (
     522
-    385)
+    410)
   PixelsPerInch = 96
   TextHeight = 13
   object Label9: TLabel
@@ -45,7 +45,7 @@ object SettingsUserForm: TSettingsUserForm
   end
   object btnUpdate: TSpeedButton
     Left = 8
-    Top = 356
+    Top = 381
     Width = 77
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -56,7 +56,7 @@ object SettingsUserForm: TSettingsUserForm
   end
   object btnDelSettings: TSpeedButton
     Left = 91
-    Top = 356
+    Top = 381
     Width = 71
     Height = 25
     Hint = #1059#1076#1072#1083#1080#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1085#1072#1089#1090#1088#1086#1081#1082#1080' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
@@ -75,7 +75,7 @@ object SettingsUserForm: TSettingsUserForm
   end
   object btnExplore: TSpeedButton
     Left = 175
-    Top = 356
+    Top = 381
     Width = 18
     Height = 25
     Hint = #1054#1090#1082#1088#1099#1090#1100' '#1082#1072#1090#1072#1083#1086#1075' '#1089' '#1085#1072#1089#1090#1088#1086#1081#1082#1072#1084#1080
@@ -284,7 +284,7 @@ object SettingsUserForm: TSettingsUserForm
   end
   object btnOk: TBitBtn
     Left = 201
-    Top = 356
+    Top = 381
     Width = 175
     Height = 25
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
@@ -292,19 +292,19 @@ object SettingsUserForm: TSettingsUserForm
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     ModalResult = 1
     NumGlyphs = 2
-    TabOrder = 24
+    TabOrder = 25
     OnClick = frmOkCancelbbOkClick
   end
   object btnCancel: TBitBtn
     Left = 385
-    Top = 356
+    Top = 381
     Width = 129
     Height = 25
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 25
+    TabOrder = 26
   end
   object cbKBDSWITCH: TDBComboBoxEh
     Left = 271
@@ -339,11 +339,11 @@ object SettingsUserForm: TSettingsUserForm
   end
   object grp1: TGroupBox
     Left = 8
-    Top = 288
+    Top = 314
     Width = 506
     Height = 61
     Caption = #1054#1090#1086#1073#1088#1072#1078#1077#1085#1080#1077' '#1082#1085#1086#1087#1086#1082' '#1085#1072' '#1075#1083#1072#1074#1085#1086#1081' '#1087#1072#1085#1077#1083#1080' '
-    TabOrder = 23
+    TabOrder = 24
     object chkBtnA: TCheckBox
       Tag = 1
       Left = 9
@@ -502,6 +502,16 @@ object SettingsUserForm: TSettingsUserForm
     Alignment = taLeftJustify
     Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1088#1072#1073#1086#1090#1099' '#1080#1079' '#1079#1072#1103#1074#1086#1082' '#1074' '#1088#1072#1079#1086#1074#1099#1093
     TabOrder = 22
+  end
+  object chkQuckFilter: TCheckBox
+    Left = 8
+    Top = 288
+    Width = 240
+    Height = 17
+    Hint = #1042#1082#1083#1102#1095#1072#1090#1100' '#1073#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088' '#1090#1072#1073#1083#1080#1094' '#1074' '#1092#1086#1088#1084#1072#1093
+    Alignment = taLeftJustify
+    Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1073#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
+    TabOrder = 23
   end
   object dlgFont: TFontDialog
     Font.Charset = DEFAULT_CHARSET

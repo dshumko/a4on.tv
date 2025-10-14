@@ -76,7 +76,11 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (69, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (70, 'Акции', 'Акции на услуги') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (71, 'EPG lang codes', 'Список языков в EPG') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (72, 'Тип связей объектов', 'Связи между объектам базы') MATCHING (OT_ID);
-
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (73, 'Тип обрудования', 'Тип обрудования в сети') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (74, 'Тип связи объектов', NULL) MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (75, 'Тип точки УЭ', 'Тип точки учета электроэнергии') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (76, 'Точка УЭ', 'Точка учета электроэнергии') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (77, 'Получатель оплаты электроэнергии', '') MATCHING (OT_ID);
 commit;
 
 -- Владелец оборудования/материала 51
@@ -98,7 +102,7 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (2, 41, 'DVB-ASI', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (2, 42, 'MPEG-4', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (2, 43, 'Betacrypt', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL) MATCHING (O_ID, O_TYPE);
-UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (2, 45, 'email', '', 0, 'Жестко прошит в коде', NULL, NULL, NULL, NULL, '(([0-9A-Za-z]{1}[-0-9A-z\.]*[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]*[0-9А-Яа-я]{1}))@((([-0-9A-Za-z]+\.){1,2}[-A-Za-z]{2,})|(([-0-9А-Яа-я]+\.){1,2}[-А-Яа-я]{2,}))') MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (2, 45, 'email', '', 0, 'Жестко прошит в коде', NULL, NULL, NULL, NULL, '[a-zA-Zа-яА-Я0-9._%+-]+@[a-zA-Zа-яА-Я-9.-]+\.[a-zA-Zа-яА-Я0-9]{2,}') MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (3, 28, 'Списание материалов', NULL, 0, NULL, 'АКТ-СПИСАНИЯ', NULL, NULL, NULL, NULL) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (3, 41, 'DVB-C', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFILED, O_DATEEND, O_CHECK) VALUES (3, 42, 'H.265', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL) MATCHING (O_ID, O_TYPE);
@@ -192,49 +196,145 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) V
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (1, 72, 'Зона обслуживания для модемов', 'Зона обслуживания для объектов (модемы зоны и прочее)', 0) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (2, 72, 'Зона обслуживания для IP зоны', 'Зона обслуживания для объектов (модемы зоны и прочее)', 0) MATCHING (O_ID, O_TYPE);
 
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION) VALUES (1, 73, 'Сетевое оборудование', '', 0, 'С') MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION) VALUES (2, 73, 'Кабельное оборудование', '', 0, 'К') MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION) VALUES (3, 73, 'Прочее оборудование', '', 0, 'П') MATCHING (O_ID, O_TYPE);
+
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (2, 74, 'Vlan', 'Привязка влана к адресу', 0) MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (3, 74, 'Дерово групп оборудования', '', 0) MATCHING (O_ID, O_TYPE);
 commit;
 
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (1, 'НАСТРОЙКИ', 'ПРОГРАММА', 'Настройка параметров системы') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (2, 'ПРОСМОТР СУММ', 'ПРОГРАММА', 'Просмотр сумм начислений/платежей') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (3, 'ПРОСМОТР ЖУРНАЛА', 'ПРОГРАММА', 'Просмотр и редактирование журнала') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (4, 'СМЕНА ПАРОЛЯ', 'ПРОГРАММА', 'Смена своего пароля') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (5, 'ПРОСМОТР СПРАВОЧНИКОВ', 'СПРАВОЧНИКИ', 'Просмотр всех справочников') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (6, 'ВСЕ ДОМА', 'ПРОГРАММА', 'Доступ ко всем домам в заявках и обращениях, без ограничения настройки AREA_LOCK') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (11, 'ЗАКРЫТИЕ', 'РАСЧЕТЫ', 'Начисление абонплаты') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (12, 'ОТКАТ', 'РАСЧЕТЫ', 'Откат на предыдущий месяц') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (13, 'ПЕРЕСЧЕТ', 'РАСЧЕТЫ', 'Пересчет периода') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (20, 'ПОЛНЫЙ ДОСТУП', 'ПЛАТЕЖИ', 'Добавление/удаление платежей в любом периоде') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (21, 'ДОБАВЛЕНИЕ', 'ПЛАТЕЖИ', 'Добавление платежа абоненту в текущем месяц или активация карт') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (22, 'УДАЛЕНИЕ', 'ПЛАТЕЖИ', 'Удаление платежа в текущем месяце или карт оплат') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (23, 'ГЕНЕРАЦИЯ КАРТ ОПЛАТ', 'ПЛАТЕЖИ', 'Генерация карт оплат') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (24, 'ПРОСМОТР КАРТ ОПЛАТ', 'ПЛАТЕЖИ', 'Просмотр карт оплат') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (25, 'ОБЕЩАННЫЙ', 'ПЛАТЕЖИ', 'Добавление обещанного платежа') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (26, 'ДОБАВЛЕНИЕ ТОЛЬКО ТЕКУЩИМ ДНЕМ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Добавление и просмотр платежей только текущим днем!') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (27, 'ТОЛЬКО СВОИ ПЛАТЕЖИ', 'ПЛАТЕЖИ', 'Внимание, ограничение! Оператор видит только свои платежи и пл.документы со своими платежами') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (28, 'ПРАВКА ПЕНИ', 'ПЛАТЕЖИ', 'Разрешать изменять сумма платежа и пени при работе в режиме ПЕНИ');
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (28, 'ПРАВКА ПЕНИ', 'ПЛАТЕЖИ', 'Разрешать изменять сумма платежа и пени при работе в режиме ПЕНИ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (30, 'ПОЛНЫЙ ДОСТУП', 'АБОНЕНТЫ', 'Полный доступ к абонентам') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (31, 'ДОБАВЛЕНИЕ', 'АБОНЕНТЫ', 'Добавление абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (32, 'УДАЛЕНИЕ', 'АБОНЕНТЫ', 'Удаление абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (33, 'ИЗМЕНЕНИЕ', 'АБОНЕНТЫ', 'Изменение информации по абоненту') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (34, 'ДОБАВЛЕНИЕ УСЛУГИ', 'АБОНЕНТЫ', 'Добавление услуг абоненту') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (35, 'УДАЛЕНИЕ УСЛУГИ', 'АБОНЕНТЫ', 'Удаление услуг абоненту') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (36, 'ИЗМЕНЕНИЕ УСЛУГИ', 'АБОНЕНТЫ', 'Изменение услуг абоненту') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (37, 'ИЗМЕНЕНИЕ ИСТОРИИ', 'АБОНЕНТЫ', 'Изменение истории абонента (удаление, изменение услуг в любом периоде )') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (38, 'ПОЛНЫЙ ДОСТУП К СПД/ИНТЕРНЕТ', 'АБОНЕНТЫ', 'Полный доступ к закладе СПД и Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (64, 'ДОБАВЛЕНИ СПД/ИНТЕРНЕТ', 'АБОНЕНТЫ', 'Добавление записей в закладе СПД и Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (65, 'РЕДАКТИРОВАНИЕ СПД/ИНТЕРНЕТ', 'АБОНЕНТЫ', 'Редактирование записей в закладе СПД и Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (66, 'УДАЛЕНИЕ СПД/ИНТЕРНЕТ', 'АБОНЕНТЫ', 'Удаление записей в закладе СПД и Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (39, 'НАСТРОЙКА ЦИФРЫ', 'АБОНЕНТЫ', 'Изменение "цифры" абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (40, 'ПОЛНЫЙ ДОСТУП', 'СПРАВОЧНИКИ', 'Полный доступ к справочникам') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (41, 'КОЭФФИЦИЕНТЫ', 'АБОНЕНТЫ', 'Доступ к изменению добавлению коэффициентов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (42, 'БОНУСЫ', 'АБОНЕНТЫ', 'Добавление или удаление бонусов в ручном режиме') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (43, 'ПРОСМОТР СПИСКА', 'АБОНЕНТЫ', 'Просмотр списка абонентов') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (44, 'ФАЙЛЫ ДОБАВЛЕНИЕ', 'АБОНЕНТЫ', 'Добавление файлов абонента (сканов , документов)') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (45, 'ИЗМЕРЯТЬ ЛОЯЛЬНОСТЬ', 'АБОНЕНТЫ', 'Добавление оценки лояльности абонента') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (46, '1 ЗАПИСЬ', 'АБОНЕНТЫ', 'Внимание, ограничение! Отображать только одну запись в списке абонентов.') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (48, 'СБРОС ПАРОЛЯ', 'АБОНЕНТЫ', 'Сгенерировать новый пароль и отобразить оператору');
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (47, 'ПРОСМОТР БАЛАНСА', 'АБОНЕНТЫ', 'Просмотр суммы баланса абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (48, 'СБРОС ПАРОЛЯ', 'АБОНЕНТЫ', 'Сгенерировать новый пароль и отобразить оператору') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (49, 'ФАЙЛЫ ИЗМЕНЕНИЕ/УДАЛЕНИЕ', 'АБОНЕНТЫ', 'Изменение / Удаление файлов абонента') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (63, 'ЭКСПОРТ', 'ЭКСПОРТ', 'Экспорт отчетов и данных. Просмотр итоговой информации.');
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (70, 'Интернет просмотр', 'АБОНЕНТЫ', 'Просмотри информации закладки Интернет') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (71, 'ИНТЕРНЕТ ИЗМЕНЕНИЕ', 'АБОНЕНТЫ', 'Изменение, добавление, удаление информации закладки Интернет');
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (51, 'ДОБАВЛЕНИЕ', 'ЗАЯВКИ', 'Добавление заявок') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (52, 'РЕДАКТИРОВАНИЕ', 'ЗАЯВКИ', 'Редактирование заявки') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (53, 'ВЫДАЧА', 'ЗАЯВКИ', 'Выдача заявки в работу') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (54, 'ЗАКРЫТИЕ', 'ЗАЯВКИ', 'Закрытие заявки текущим месяцем') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (55, 'УДАЛЕНИЕ', 'ЗАЯВКИ', 'Удаление заявки') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (56, 'ИЗМЕНЕНИЕ ДАТЫ', 'ЗАЯВКИ', 'Возможность изменить дату на которую принята заявка') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (57, 'ЗАКРЫТИЕ ДЕНЬ', 'ЗАЯВКИ', 'Закрытие заявки текущим днем') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (58, 'ОТКАТ ЗАКРЫТИЯ', 'ЗАЯВКИ', 'Отменить закрытие заявки') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (60, 'ДИЗАЙНЕР', 'ОТЧЕТЫ', 'Доступ к дизайнеру') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (61, 'ПРОСМОТР', 'ОТЧЕТЫ', 'Просмотр отчетов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (62, 'СОХРАНЕНИЕ', 'ОТЧЕТЫ', 'Сохранение отчетов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (63, 'ЭКСПОРТ', 'ЭКСПОРТ', 'Экспорт отчетов и данных. Просмотр итоговой информации.') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (64, 'ОБОРУДОВАНИЕ АБОНЕНТА', 'АБОНЕНТЫ', 'Добавление/редактирование вкладки Оборудование у абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (70, 'ИНТЕРНЕТ ПРОСМОТР', 'АБОНЕНТЫ', 'Просмотри информации закладки Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (71, 'ИНТЕРНЕТ ИЗМЕНЕНИЕ', 'АБОНЕНТЫ', 'Изменение, добавление, удаление информации закладки Интернет') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (80, 'ДОБАВЛЕНИЕ', 'ОБРАЩЕНИЯ', 'Добавление обращений абонентов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (82, 'УДАЛЕНИЕ', 'ОБРАЩЕНИЯ', 'Удаление обращений абонентов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (83, 'ИЗМЕНЕНИЯ', 'ОБРАЩЕНИЯ', 'Изменение обращений абонентов') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (84, 'ПРОСМОТР ТОЛЬКО СВОИХ', 'ОБРАЩЕНИЯ', 'Внимание, ограничение! Просмотр в списке Обращений только те, которые создал пользователь.') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (90, 'ЦИФР. ОБОРУДОВАНИЕ', 'СПРАВОЧНИКИ', 'Создание редактирование цифрового оборудования') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (91, 'ИЗМЕНЕНИЕ ДЕКОДЕРОВ', 'ЦИФРА', 'Изменение декодеров') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (92, 'УДАЛЕНИЕ ДЕКОДЕРОВ', 'ЦИФРА', 'Удаление декодеров') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (100, 'РЕДКТИРОВАНИЕ', 'МОДУЛИ', 'Редактирование  и создание дополнительных модулей') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (101, 'ВЫПОЛНЕНИЕ ', 'МОДУЛИ', 'Выполнение дополнительных модулей') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (110, 'НАСТРОЙКА СХЕМЫ DVB', 'ЦИФРА', 'НАСТРОЙКА СХЕМЫ DVB') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (111, 'ПРОСМОТР СХЕМЫ DVB', 'ЦИФРА', 'ПРОСМОТР СХЕМЫ DVB') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (114, 'РЕДАКТ-Е ПРОГРАММЫ', 'EPG', 'Редактирование телепрограммы и объявлений EPG') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (115, 'НАСТРОЙКА IPTV', 'IPTV', 'НАСТРОЙКА IPTV') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (116, 'ПРОСМОТР IPTV', 'IPTV', 'ПРОСМОТР IPTV') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (120, 'ПОЛНЫЙ ДОСТУП', 'СТОРОННИЕ ЗАКАЗЫ', 'Полный доступ к сторонним заказам') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (121, 'ДОБАВЛЕНИЕ', 'СТОРОННИЕ ЗАКАЗЫ', 'Добавление сторонних заказов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (122, 'РЕДАКТИРОВАНИЕ', 'СТОРОННИЕ ЗАКАЗЫ', 'Редактирование стороннего заказа') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (123, 'УДАЛЕНИЕ', 'СТОРОННИЕ ЗАКАЗЫ', 'Удаление стороннего заказа') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (124, 'ОТОБРАЖАТЬ ТЕКУЩИЙ ДЕНЬ', 'СТОРОННИЕ ЗАКАЗЫ', 'Отображать сторонних заказов только за текущий день') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (125, 'ПРОСМОТР', 'СТОРОННИЕ ЗАКАЗЫ', 'ТОлько просмотр сторонних заказов') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (143, 'УЛИЦЫ и ДОМА', 'СПРАВОЧНИКИ', 'Изменение справочника улиц и домов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (141, 'РАЙОНЫ', 'СПРАВОЧНИКИ', 'Изменение справочника районов города') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (142, 'КОНТРАГЕНТЫ', 'СПРАВОЧНИКИ', 'Изменение справочника обслуживающих предприятий') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (143, 'УЛИЦЫ И ДОМА', 'СПРАВОЧНИКИ', 'Изменение справочника улиц и домов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (144, 'УЧАСТКИ И ЗВЕНЬЯ', 'СПРАВОЧНИКИ', 'Изменение справочника участков и звеньев') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (146, 'АТР.ДОМОВ', 'СПРАВОЧНИКИ', 'Изменение справочника атрибутов Домов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (147, 'ТИП ОБРАЩЕНИЙ ', 'СПРАВОЧНИКИ', 'Изменение справочника типов обращений ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (148, 'ТИП ЗАЯВОК', 'СПРАВОЧНИКИ', 'Изменение справочника типов заявок') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (149, 'ШАБЛОНЫ ЗАЯВОК', 'СПРАВОЧНИКИ', 'Изменение справочника шаблонов заявок') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (150, 'РАБОТЫ ПО ЗАЯВКАМ', 'СПРАВОЧНИКИ', 'Изменение справочника работ по заявкам') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (151, 'МАТЕРИАЛЫ', 'СПРАВОЧНИКИ', 'Изменение справочника материалов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (152, 'ТВ КАНАЛЫ', 'СПРАВОЧНИКИ', 'Изменение справочника ТВ каналов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (153, 'ГС И ОУ', 'СПРАВОЧНИКИ', 'Изменение справочника ГС и ОУ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (154, 'РАБОТНИКИ', 'СПРАВОЧНИКИ', 'Изменение справочника работников') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (155, 'ИСТОЧНИКИ ПЛАТЕЖЕЙ', 'СПРАВОЧНИКИ', 'Изменение справочника источников платежей') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (156, 'УСЛУГИ', 'СПРАВОЧНИКИ', 'Изменение справочника услуг') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (157, 'IP СЕТИ', 'СПРАВОЧНИКИ', 'Изменение справочника IP сетей') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (158, 'АТР.АБОНЕНТОВ', 'СПРАВОЧНИКИ', 'Изменение справочника атрибутов абонентов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (159, 'АТР.ОБОРУДОВАНИЯ', 'СПРАВОЧНИКИ', 'Изменение справочника атрибутов оборудования') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (160, 'РЕКВИЗИТЫ', 'СПРАВОЧНИКИ', 'Реквизиты предприятия') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (161, 'ГР.ОБОРУДОВАНИЯ', 'СПРАВОЧНИКИ', 'Изменение справочника групп оборудования (типов и команд)') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (162, 'ОБОРУДОВАНИЕ', 'СПРАВОЧНИКИ', 'Изменение справочника оборудования') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (163, 'ПЕЧАТНЫЕ ФОРМЫ', 'СПРАВОЧНИКИ', 'Изменение шаблонов печатных форм') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (164, 'СКЛАД', 'СПРАВОЧНИКИ', 'Изменение справочника складов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (165, 'ПОЛНЫЙ ДОСТУП', 'МАТЕРИАЛЫ', 'Полный доступ к материалам и мат. документам') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (166, 'ПРОИЗВОДИТЕЛИ', 'СПРАВОЧНИКИ', NULL) MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (167, 'БАНКИ', 'СПРАВОЧНИКИ', NULL) MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (168, 'ТИПЫ СТОР-Х ЗАКАЗОВ', 'СПРАВОЧНИКИ', 'Типы сторонних заказов') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (169, 'ПОСТАВЩИКИ', 'СПРАВОЧНИКИ', 'Поставщики материалов и оборудования') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (170, 'Редактирование Мат. документов', 'СПРАВОЧНИКИ', 'Редактирование закрытых документов прихода и расхода материалов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (170, 'РЕДАКТИРОВАНИЕ МАТ. ДОКУМЕНТОВ', 'МАТЕРИАЛЫ', 'Создание и редактирование документов движения материалов') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (171, 'БОНУСЫ', 'СПРАВОЧНИКИ', 'Установка размера бонуса и дат действия бонусов') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (172, 'РАССЫЛКА СООБЩЕНИЙ', 'ПРОГРАММА', 'Рассылка сообщений абоненту') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (173, '"ЧЕРНЫЙ" СПИСОК', 'СПРАВОЧНИКИ', 'Редактирование "черного" списка') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (174, 'АТР.УСЛУГ', 'СПРАВОЧНИКИ', 'Изменение справочника атрибутов услуг') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (175, 'АТР.IPTV', 'СПРАВОЧНИКИ', 'Изменение справочника атрибутов IPTV') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (176, 'ПРОСМОТР ЦЕН', 'МАТЕРИАЛЫ', 'Просмотр цены материала') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (178, 'СПРАВОЧНИК УЗЛОВ', 'УЗЛЫ', 'Полный доступ к узлам') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (179, 'CallCenter', 'ПРОГРАММА', 'Для работы службы обзвона. Список всех квартир дома') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (180, 'ПРИХОД', 'МАТЕРИАЛЫ', 'Оформление документов прихода на склад') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (181, 'ПЕРЕМЕЩЕНИЕ', 'МАТЕРИАЛЫ', 'Оформление документов перемещения между складами') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (182, 'СПИСАНИЕ', 'МАТЕРИАЛЫ', 'Оформление документов списания со склада') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (183, 'ИНВЕНТАРИЗАЦИЯ', 'МАТЕРИАЛЫ', 'Оформление документов инвентаризации') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (178, 'СПРАВОЧНИК УЗЛОВ', 'ОБЪЕКТЫ', 'Полный доступ к узлам') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (179, 'CALLCENTER', 'ПРОГРАММА', 'Для работы службы обзвона. Список всех квартир дома') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (180, 'ПРИХОД', 'МАТЕРИАЛЫ', 'Доступ к документам прихода на склад') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (181, 'ПЕРЕМЕЩЕНИЕ', 'МАТЕРИАЛЫ', 'Доступ к документам перемещения между складами') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (182, 'СПИСАНИЕ', 'МАТЕРИАЛЫ', 'Доступ к документам списания со склада') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (183, 'ИНВЕНТАРИЗАЦИЯ', 'МАТЕРИАЛЫ', 'Доступ к документам инвентаризации') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (184, 'ДИСТРИБЬЮТОР КАНАЛОВ', 'СПРАВОЧНИКИ', 'Дистрибьюция каналов. Договора и отчеты.') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (185, 'ЗАДАЧИ ВСЕХ', 'ПРОГРАММА', 'Просмотр задач всех сотрудников') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (186, 'ЗАКРЫТИЕ МАТ. ДОКУМЕНТОВ', 'МАТЕРИАЛЫ', 'Закрытие материальных документов на которые есть права создания') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (187, 'Закрывать свою задачу', 'ПРОГРАММА', 'Закрывать задачу в которой пользователь стоит в исполнителях') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (189, 'Добавлять, изменять, удалять атрибуты', 'АБОНЕНТЫ', 'Добавлять, изменять, удалять атрибуты абонентов') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (190, 'ПРОБЛЕМЫ ВЕЩАНИЯ. Добавлять', 'ТВ', NULL) MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (191, 'ПРОБЛЕМЫ ВЕЩАНИЯ. Удалять', 'ТВ', NULL) MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (192, 'ПРОБЛЕМЫ ВЕЩАНИЯ. Закрывать', 'ТВ', NULL) MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (193, 'ПРОБЛЕМЫ ВЕЩАНИЯ. Справочники', 'ТВ', 'Типы проблем. Решения проблем') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (187, 'ЗАКРЫВАТЬ СВОЮ ЗАДАЧУ', 'ПРОГРАММА', 'Закрывать задачу в которой пользователь стоит в исполнителях') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (189, 'ДОБАВЛЯТЬ, ИЗМЕНЯТЬ, УДАЛЯТЬ АТРИБУТЫ', 'АБОНЕНТЫ', 'Добавлять, изменять, удалять атрибуты абонентов') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (190, 'ПРОБЛЕМЫ ВЕЩАНИЯ. ДОБАВЛЯТЬ', 'ТВ', NULL) MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (191, 'ПРОБЛЕМЫ ВЕЩАНИЯ. УДАЛЯТЬ', 'ТВ', NULL) MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (192, 'ПРОБЛЕМЫ ВЕЩАНИЯ. ЗАКРЫВАТЬ', 'ТВ', NULL) MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (193, 'ПРОБЛЕМЫ ВЕЩАНИЯ. СПРАВОЧНИКИ', 'ТВ', 'Типы проблем. Решения проблем') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (200, 'ПОЛНЫЙ ДОСТУП', 'МОБИЛЬНОЕ ПРИЛОЖЕНИЕ', 'Полный доступ к настройкам моб. приложений') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (201, 'НОВОСТИ', 'МОБИЛЬНОЕ ПРИЛОЖЕНИЕ', 'Публиковать новости') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (210, 'ПОРТЫ', 'ОБОРУДОВАНИЕ', 'Создание/редактирование портов оборудования') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (211, 'ЛИНИИ СВЯЗИ', 'УЗЛЫ', 'Создание/редактирование линий связи узлов ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (211, 'ЛИНИИ СВЯЗИ', 'ОБЪЕКТЫ', 'Создание/редактирование линий связи узлов ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (212, 'РЕЕСТР ДОКУМЕНТОВ', 'СПРАВОЧНИКИ', 'Справочник документов абонентов (паспорта/свдиетельства и т.д.)') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (221, 'ПРОСМОТР ТВ', 'ТВ', 'Просмотр всех пунктов меню ТВ') MATCHING (ID);
@@ -243,6 +343,9 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (223, 'Р
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (224, 'ПИСЬМА', 'АБОНЕНТЫ', 'Удаление писем абонентов') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (225, 'РЕДАКТИРОВАНИЕ ЦИФРЫ', 'АБОНЕНТЫ', 'Редактировани закладки цифры у абонента') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (226, 'ПРОСМОТР ТОЛЬКО ТЕКУЩЕГО ДНЯ', 'ОБРАЩЕНИЯ', 'Внимание, ограничение! Добавление и просмотр обращений только текущим днем!') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (227, 'ПРОСМОТР ВСЕХ МАТ. ДОКУМЕНТОВ', 'МАТЕРИАЛЫ', 'Просмотр всех типов материальных документов без учета прав создани') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (59,  'ВЫКУП', 'ЗАЯВКИ', 'Выкуп оборудования у абонента') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (228, 'ВОЗВРАТ ВСЕГО', 'ЗАЯВКИ', 'Возврат любого материала, а не только того что был у абонента/узла') MATCHING (ID);
 commit;
 
 execute block as
@@ -433,7 +536,90 @@ begin
   s = 'PORT_LINE_LIMIT';
   if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES (:s, '', 'BOOLEAN', NULL, 'Предлагать абоненту подключать только порт с линией связи') 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Предлагать абоненту подключать только порт с линией связи') 
+    MATCHING (VAR_NAME);
+  s = 'SHOW_LCPS';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Отображать платежи в локальной валюте, при мультивалютном режиме') 
+    MATCHING (VAR_NAME);
+  s = 'FT_CHECK_PERMISSIONS';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'Имя процедура проверки разрешения добавления файла абоненту Prohibit (1-запрет, 0-предупреждение) (select Prohibit, Prohibit_text from FT_CHECK_PERMISSIONS(CUSTOMER_ID, FileType_ID))')
+    MATCHING (VAR_NAME);
+
+  s = 'FT_CHECK_SAVE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'Имя процедура проверки разрешения сохранения файла абонент Prohibit (1-запрет, 0-предупреждение) (select Prohibit, Prohibit_text from FT_CHECK_SAVE(CUSTOMER_ID, FileType_ID))')
+    MATCHING (VAR_NAME);
+
+  s = 'CALC3_DAYLY_FOR_NEW_ONLY';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE)
+    VALUES (:s, '0', 'INTEGER', 'Алгоритм 3 расчета абонплаты (1-ый месяц пропорционально дням, далее фикса)
+       если 1, то считаем первый месяц по дням только для новых абонентов, если не было услуг ранее
+       если 0, то считаем если не было услуги, которую просчитываем ранее.')
+    MATCHING (VAR_NAME);
+  s = 'ACC_KEEP_SEQ';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE)
+    VALUES (:s, '0', 'BOOLEAN', 'Сохраняем последовательность номера ЛС при отмене создания новго абонента')
+    MATCHING (VAR_NAME);
+  s = 'FP_ADDRESS_CHECK';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_NOTICE)
+    VALUES (:s, '0', 'BOOLEAN', 'Проверять права на справочник улиц при сохранении подъезда/этажа')
+    MATCHING (VAR_NAME);
+
+  s = 'BLOCK_SRV_AFTER_DEL_PREPAY';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Блокируем услуги после снятия обещанного')
+    MATCHING (VAR_NAME);
+
+  s = 'REQUEST_WORKS_DEL_RESTRICT';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Разрешение удалять работы в заявке добавленные автоматически')
+    MATCHING (VAR_NAME);
+
+  s = 'PAY_AFTER_SAVE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'Процедура вида XXX(PAYMENT_ID) которая выполняется после сохранения платежа')
+    MATCHING (VAR_NAME);
+
+  s = 'DAILY_SINGLE_FEE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Начислять ли разовые при закрытии дня или, как прежде, начислять при закрытии месяца и добавлении услуги')
+    MATCHING (VAR_NAME);
+  /*
+  переделано на разрешение
+  s = 'REQUEST_RETURN_STRICT';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Ограничить возврат материалов с заявки только теми, что есть у абонента/узла')
+    MATCHING (VAR_NAME);
+  */
+  s = 'EQUIPMENT_NODE_REQUIRED';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Требовать укзание узла при редактировании оборудования')
+    MATCHING (VAR_NAME);
+
+  s = 'FILES_GRID_COLOR_SQL';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'Запрос управления цветом для строки таблицы файлов')
+    MATCHING (VAR_NAME);
+
+  s = 'NODE_LAYOUT';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Включить компановку узла и контроль материалов по нему на заявках')
     MATCHING (VAR_NAME);
 
 end;

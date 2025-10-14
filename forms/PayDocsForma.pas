@@ -69,6 +69,7 @@ type
     N15: TMenuItem;
     trRead: TpFIBTransaction;
     trWrite: TpFIBTransaction;
+    actCopyID: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -97,6 +98,7 @@ type
     procedure dbgPayDocGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure FormCreate(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     FFirstOpen: Boolean; // Первое открытие Формы
     fStartDate: TDateTime;
@@ -419,6 +421,11 @@ begin
   end
 end;
 
+procedure TPayDocsForm.actCopyIDExecute(Sender: TObject);
+begin
+  A4MainForm.CopyDataSetFldToClipboard(dsPayDocs, 'PAY_DOC_ID');
+end;
+
 procedure TPayDocsForm.actPayDocDelExecute(Sender: TObject);
 var
   AR: Boolean;
@@ -538,21 +545,21 @@ begin
   dsPayDocs.SQLs.RefreshSQL.AddStrings(dsPayDocs.SQLs.SelectSQL);
   dsPayDocs.SQLs.RefreshSQL.Add('where D.PAY_DOC_ID = :OLD_PAY_DOC_ID');
 
-  dsPayDocs.SQLs.SelectSQL.Add('where d.PAY_DOC_DATE between :StartDate and :EndDate @source');
-
-  if (FTodayOnly) then
-  begin
-    dsPayDocs.SQLs.SelectSQL.Add(' and (exists(select pt.Pay_Doc_Id from payment pt ');
-    dsPayDocs.SQLs.SelectSQL.Add(' where p.Pay_Doc_Id = d.Pay_Doc_Id ');
-    dsPayDocs.SQLs.SelectSQL.Add(' and pt.Pay_Date = current_date and pt.Added_By = current_user) ');
-    dsPayDocs.SQLs.SelectSQL.Add(' or (d.Added_By = current_user and cast(d.Added_on as date) = current_date)) ');
-  end;
+  dsPayDocs.SQLs.SelectSQL.Add('where d.PAY_DOC_DATE between :StartDate and :EndDate ');
 
   if FOnlyTheir then
   begin
     dsPayDocs.SQLs.SelectSQL.Add(' and (exists (select p.Payment_Id from payment p ');
     dsPayDocs.SQLs.SelectSQL.Add(' where p.Pay_Doc_Id = d.Pay_Doc_Id and p.Added_By = current_user) ');
     dsPayDocs.SQLs.SelectSQL.Add(' or ( d.Added_By = current_user )) ');
+
+    if FTodayOnly then
+    begin
+      dsPayDocs.SQLs.SelectSQL.Add(' and (exists(select pt.Pay_Doc_Id from payment pt ');
+      dsPayDocs.SQLs.SelectSQL.Add(' where p.Pay_Doc_Id = d.Pay_Doc_Id ');
+      dsPayDocs.SQLs.SelectSQL.Add(' and pt.Pay_Date = current_date and pt.Added_By = current_user) ');
+      dsPayDocs.SQLs.SelectSQL.Add(' or (d.Added_By = current_user and cast(d.Added_on as date) = current_date)) ');
+    end;
   end;
 
   dsPayDocs.SQLs.SelectSQL.Add(' @source ');

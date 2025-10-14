@@ -63,7 +63,6 @@ object apgEqpmntRegion: TapgEqpmntRegion
     DynProps = <>
     Flat = True
     FooterParams.Color = clWindow
-    SearchPanel.Enabled = True
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgHousesDblClick

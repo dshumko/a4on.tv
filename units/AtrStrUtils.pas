@@ -3,14 +3,11 @@
 interface
 
 uses
-  System.Classes, System.SysUtils, System.Variants,
-  Data.DB;
+  System.Classes, System.SysUtils, System.Variants, System.Types,
+  System.StrUtils, Data.DB;
 
 const
   Codes64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
-
-type
-  TStringArray = array of string;
 
 function MonthFirstDay(const aDate: TDateTime): TDateTime;
 
@@ -27,7 +24,7 @@ procedure StrToClipbrd(const StrValue: string);
 function GetStrFromClipbrd: string;
 
 // аналог функции Explode PHP
-function Explode(Ch: Char; const Text: string): TStringArray;
+function Explode(Ch: Char; const Text: string): TStringDynArray;
 
 // проверка на корректность IP адреса
 function CheckIP(const IP: string): Boolean;
@@ -112,6 +109,7 @@ uses
   Winapi.Windows,
   System.DateUtils, System.RegularExpressions, System.MaskUtils,
   Vcl.Clipbrd,
+  Vcl.Dialogs,
   CnBigNumber,
   RxStrUtils;
 
@@ -299,36 +297,9 @@ begin
 end;
 
 // аналог функции Explode PHP
-function Explode(Ch: Char; const Text: string): TStringArray;
-var
-  i, k, Len: Integer;
-  Count: Integer;
+function Explode(Ch: Char; const Text: string): TStringDynArray;
 begin
-  if Text = '' then
-  begin
-    Result := nil;
-    Exit;
-  end; // if
-  Count := 0;
-  Len := Length(Text);
-  for i := 1 to Len do
-  begin
-    if Text[i] = Ch then
-      Inc(Count);
-  end; // for i
-  SetLength(Result, Count + 1);
-  Count := 0;
-  k := 1;
-  for i := 1 to Len do
-  begin
-    if Text[i] = Ch then
-    begin
-      Result[Count] := Copy(Text, k, i - k);
-      Inc(Count);
-      k := i + 1;
-    end; // if
-  end;
-  Result[Count] := Copy(Text, k, Len - k + 1);
+  Result := SplitString(Text, Ch);
 end;
 
 procedure StrToClipbrd(const StrValue: string);
@@ -392,7 +363,7 @@ function CheckIP(const IP: string): Boolean;
 var
   i1, i2, i3, i4: Integer;
   S: string;
-  ar: TStringArray;
+  ar: TStringDynArray;
 begin
   Result := False;
   S := IP;
@@ -695,7 +666,7 @@ end;
 
 function NormalizeFIO(const S: string): String;
 var
-  sa: TStringArray;
+  sa: TStringDynArray;
   fio: String;
   i: Integer;
 begin
@@ -726,13 +697,13 @@ end;
 
 function FormatMACas4Cd(const S: string): String;
 var
-  aMac: TStringArray;
+  aMac: TStringDynArray;
 begin
   Result := '';
   if CheckMAC(S) then
   begin
     aMac := Explode(':', S);
-    Result := LowerCase(aMac[0] + aMac[1] + '.' + aMac[2] + aMac[3] + '.' + aMac[4] + aMac[5]);
+    Result := AnsiLowerCase(aMac[0] + aMac[1] + '.' + aMac[2] + aMac[3] + '.' + aMac[4] + aMac[5]);
   end;
 end;
 

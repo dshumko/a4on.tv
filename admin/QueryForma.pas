@@ -38,6 +38,11 @@ type
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
     syndtsrch1: TSynEditSearch;
+    pmMemo: TPopupMenu;
+    miCut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    SelectAll1: TMenuItem;
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure SpeedButton2Click(Sender: TObject);

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Data.DB,
@@ -14,6 +14,22 @@ uses
   PrjConst, A4onTypeUnit;
 
 type
+
+  TProhibitiontType = record
+    Lock: Boolean;
+    Message: string;
+  end;
+
+  TFileTypeAddendumResult = record
+    RemoveFile: Boolean;
+    Processed: Boolean;
+    Message: string;
+    Result: Integer;
+    RQ_ID: Integer;
+    FROM_CID: Integer;
+    FROM_RQ_ID: Integer;
+  end;
+
   TEditCFileForm = class(TForm)
     srcFileTypes: TDataSource;
     dsFileTypes: TpFIBDataSet;
@@ -36,7 +52,7 @@ type
     Query: TpFIBQuery;
     pnlClient: TPanel;
     pnlNotice: TPanel;
-    memNotice: TDBMemoEh;
+    mmoDesc: TDBMemoEh;
     pnlText: TPanel;
     lblText: TLabel;
     edtText: TDBEditEh;
@@ -66,7 +82,7 @@ type
     btnOcr: TButton;
     pnlSrv: TPanel;
     lblOnOff: TLabel;
-    edDate: TDBDateTimeEditEh;
+    edDateSrv: TDBDateTimeEditEh;
     lcbService: TDBLookupComboboxEh;
     lcbOnOffSrv: TDBLookupComboboxEh;
     pnlContract: TPanel;
@@ -108,8 +124,8 @@ type
     edtTskName: TDBEditEh;
     pnlPeriod: TPanel;
     lblPeriod: TLabel;
-    edPBegin: TDBDateTimeEditEh;
-    edPEnd: TDBDateTimeEditEh;
+    edDateBegin: TDBDateTimeEditEh;
+    edDateEnd: TDBDateTimeEditEh;
     pmFile: TPopupMenu;
     miFileClear: TMenuItem;
     trWriteQ: TpFIBTransaction;
@@ -125,7 +141,7 @@ type
     lcbServiceFrom: TDBLookupComboboxEh;
     dsServiceFrom: TpFIBDataSet;
     srcServiceFrom: TDataSource;
-    mmoMemo: TDBMemoEh;
+    mmoNotice: TDBMemoEh;
     splMemo: TSplitter;
     pnlMaterials: TPanel;
     lblMat: TLabel;
@@ -136,6 +152,8 @@ type
     edtText2: TDBEditEh;
     lblText3: TLabel;
     edtText3: TDBEditEh;
+    lblText4: TLabel;
+    edtText4: TDBEditEh;
     procedure btnOkClick(Sender: TObject);
     procedure edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -147,7 +165,7 @@ type
     procedure RenameFileName;
     procedure FormShow(Sender: TObject);
     procedure lcbServiceChange(Sender: TObject);
-    procedure edDateChange(Sender: TObject);
+    procedure edDateSrvChange(Sender: TObject);
     procedure lcbOnOffSrvChange(Sender: TObject);
     procedure chkContractClick(Sender: TObject);
     procedure chkFOwnerClick(Sender: TObject);
@@ -168,24 +186,25 @@ type
       var Background: TColor; State: TGridDrawState);
     procedure edtFILEExit(Sender: TObject);
     procedure miFileClearClick(Sender: TObject);
-    procedure edPBeginExit(Sender: TObject);
+    procedure edDateBeginExit(Sender: TObject);
     procedure dbluFileTypeEnter(Sender: TObject);
     procedure dbluFileTypeClick(Sender: TObject);
     procedure lcbPaymentChange(Sender: TObject);
     procedure lcbServiceEnter(Sender: TObject);
     procedure lcbServiceClick(Sender: TObject);
-    procedure edPEndExit(Sender: TObject);
+    procedure edDateEndExit(Sender: TObject);
     procedure lcbPaymentExit(Sender: TObject);
-    procedure mmoMemoExit(Sender: TObject);
-    procedure mmoMemoChange(Sender: TObject);
+    procedure mmoNoticeExit(Sender: TObject);
+    procedure mmoNoticeChange(Sender: TObject);
     procedure lcbMaterialChange(Sender: TObject);
+    procedure edtTextExit(Sender: TObject);
+    procedure ednBidKeyPress(Sender: TObject; var Key: Char);
   private
     FNeedDelete: Boolean;
     FFileForSave: String;
     FCustomerInfo: TCustomerInfo;
     FNeedSrv: Boolean;
     FIsOff: Integer;
-    FAllowedFT: Integer;
     FOpenInet: Boolean;
     FSingleSrv: Integer;
     FSinglSrvOnOff: Integer;
@@ -214,15 +233,21 @@ type
     FText1Reg: string;
     FText2Reg: string;
     FText3Reg: string;
+    FText4Reg: string;
     FOwnerOldState: Integer;
     FFileType: Integer;
     FFileTypeName: String;
     FFileInMem: TMemoryStream;
+    FProcList: string;
+    FCheckTypeProc: string;
+    FCheckSaveProc: string;
+    FFileRequred: Boolean;
     function FieldsToStr(const str: string): string;
     procedure ShowAddons;
+    procedure GetDefValues;
     procedure ShowControlsJson(const json: String);
     function CheckAddons(const errors: Boolean): Boolean;
-    procedure ExecuteAddons(const FileID: Integer);
+    function ExecuteAddons(const FileID: Integer): Boolean;
     procedure UpdateNotice;
     procedure CheckAndGenContract;
     procedure SetContract;
@@ -246,13 +271,14 @@ type
     procedure MakeBidPayment;
     procedure SetPasswordIfEmpty();
     procedure Renegotiation();
-    procedure CheckPromo();
+    procedure CheckPromo(const CID: Integer = -1);
     procedure ToJudge();
     procedure CreateTask;
     function CheckEnoughMoney: Boolean;
     procedure SetInfoFromRequest;
     function CheckBlockDays: String;
     function CheckDecoder(edt: TDBEditEh): String;
+    function IsDecoderText(edt: TDBEditEh): Boolean;
     function CheckDatesOnOff: String;
     procedure MakePromo;
     procedure MoveDVB();
@@ -260,7 +286,7 @@ type
     function ExistsPassportInAccount(const PN: String): Boolean;
     procedure SetImageFromImageList();
     procedure SetFileFromInMemStream();
-    procedure CheckTypeReuse;
+    function CheckTypeReuse: String;
     function ValidateData(): Boolean;
     function ParamExists(const Param: String): Boolean;
     procedure GetBlockSrvName(var SrvName: String; var OffSrvName: String);
@@ -277,13 +303,24 @@ type
     procedure OcrFile;
     procedure SetServiceDSparams(CID: Integer; SrvState: Integer);
     procedure ADD_RT();
-    function CheckAllowedFT: String;
+    procedure GenMaterialsSelect(const CustOnly: Boolean = true);
+    function CheckAllowedFT(): TProhibitiontType;
+    function ExecSQLforFileType(const aCustomerID: Integer; const aFileID: Integer): TFileTypeAddendumResult;
+    function ExecCheckSaveSQL(): TFileTypeAddendumResult;
+    function GetProcParams(proc: string; var rSQL: string): TStringDynArray;
+    procedure SetProcParamsValue(const aCustomerID: Integer; const aFileID: Integer; qry: TpFIBQuery;
+      FList: TStringDynArray);
+    procedure MakeDebugLog(Module, SQL: string);
+    procedure OpenInetDialog;
+    procedure GetRentReturnFields;
+    function CheckFileTypeExists(const TypeID: Integer): Boolean;
+    // procedure CheckRegistration; // отключили проверку прописку пасопрта
   public
     property CustomerInfo: TCustomerInfo read FCustomerInfo write FCustomerInfo;
     property FileForSave: String read GetFile write SetFile;
     property NeedDelete: Boolean read FNeedDelete;
     property FileInMem: TMemoryStream read FFileInMem;
-    procedure SetFileType(const FileType: Integer = -1; const FileTypeName: String = '');
+    procedure SetFileType(const FileType: Integer = -1; const FileTypeName: String = ''; const ProcList: String = '');
   end;
 
 function EditFile(const ci: TCustomerInfo; const Name: string; const CF_ID: Integer = -1;
@@ -292,8 +329,9 @@ function EditFile(const ci: TCustomerInfo; const Name: string; const CF_ID: Inte
 implementation
 
 uses
-  Winapi.ShellAPI, System.StrUtils, System.DateUtils, System.RegularExpressions, System.MaskUtils, AtrCommon,
-  AtrStrUtils, DM, JsonDataObjects, ScanImageForma, BillEditForma, RequestNewForma, synacode, MAIN;
+  Winapi.ShellAPI, System.StrUtils, System.DateUtils, System.RegularExpressions, System.MaskUtils, System.Math,
+  AtrCommon, AtrStrUtils, DM, JsonDataObjects, ScanImageForma, BillEditForma, RequestNewForma, synacode, MAIN,
+  RequestForma;
 
 {$R *.dfm}
 
@@ -328,7 +366,7 @@ begin
         dsCustFile.Edit;
         ActiveControl := edtFILE;
         if not dsCustFile.FieldByName('Cf_Type').IsNull then
-          SetFileType(dsCustFile['Cf_Type'], dsCustFile['O_NAME']);
+          SetFileType(dsCustFile['Cf_Type'], dsCustFile['O_NAME'], dsCustFile['O_CHECK']);
       end;
 
       if not FileName.IsEmpty then
@@ -356,18 +394,18 @@ begin
 
         if ForInsert then
         begin
-          ExecuteAddons(i);
+          Result := ExecuteAddons(i);
 
           if NeedDelete and FileExists(FileForSave) then
             DeleteFile(FileForSave);
-        end;
-
-        result := true;
+        end
+        else
+          Result := true;
       end
       else
       begin
         dsCustFile.Cancel;
-        result := False;
+        Result := False;
       end;
       if dsFileTypes.Active then
         dsFileTypes.Close;
@@ -380,13 +418,18 @@ function TEditCFileForm.FieldsToStr(const str: string): string;
 var
   s, r, o: string;
   own: string;
-  sum, rest: Double;
+  sum: Double;
+  BID_SUM: Double;
+  SRV_SUM: Double;
+  PAY_SUM: Double;
+  PAYED: Double;
+  FINE: Double;
   fs: TFormatSettings;
   oc: TCustomerInfo;
   ow: Integer;
 begin
   s := str;
-  result := s;
+  Result := s;
   if s.IsEmpty then
     Exit;
 
@@ -411,7 +454,10 @@ begin
   if (pnlPassport.Visible) then
   begin
     if (Trim(edtSURNAME.Text + ' ' + edtFIRSTNAME.Text + ' ' + edtMIDLENAME.Text) <> '') then
+    begin
       s := ReplaceStr(s, rsFldApplicantName, Trim(edtSURNAME.Text + ' ' + edtFIRSTNAME.Text + ' ' + edtMIDLENAME.Text));
+      s := ReplaceStr(s, rsFldPassportName, Trim(edtSURNAME.Text + ' ' + edtFIRSTNAME.Text + ' ' + edtMIDLENAME.Text));
+    end;
 
     // rsFldPassportResidence = '[ПАСПОРТ_ПРОПИСКА]';
     // rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН_МЕСТО]';
@@ -454,6 +500,7 @@ begin
   s := ReplaceStr(s, rsFldText1, edtText1.Text);
   s := ReplaceStr(s, rsFldText2, edtText2.Text);
   s := ReplaceStr(s, rsFldText3, edtText3.Text);
+  s := ReplaceStr(s, rsFldText4, edtText4.Text);
 
   if pnlSrv.Visible then
   begin
@@ -461,8 +508,8 @@ begin
       s := ReplaceStr(s, rsFldFileSrv, lcbService.Text);
     if not lcbOnOffSrv.Text.IsEmpty then
       s := ReplaceStr(s, rsFldFileOnOffSrv, lcbOnOffSrv.Text);
-    if not VarIsNull(edDate.value) then
-      s := ReplaceStr(s, rsFldFileDate, edDate.Text);
+    if not VarIsNull(edDateSrv.value) then
+      s := ReplaceStr(s, rsFldFileDate, edDateSrv.Text);
   end
   else
   begin
@@ -484,12 +531,12 @@ begin
 
   if pnlPeriod.Visible then
   begin
-    if (not VarIsNull(edPBegin.value)) then
-      s := ReplaceStr(s, '[ДАТА_Н]', FormatDateTime('dd.mm.yyyy', edPBegin.value));
-    if (not VarIsNull(edPEnd.value)) then
-      s := ReplaceStr(s, '[ДАТА_О]', FormatDateTime('dd.mm.yyyy', edPEnd.value));
-    if not VarIsNull(edDate.value) then
-      s := ReplaceStr(s, rsFldFileDate, edDate.Text);
+    if (not VarIsNull(edDateBegin.value)) then
+      s := ReplaceStr(s, '[ДАТА_Н]', FormatDateTime('dd.mm.yyyy', edDateBegin.value));
+    if (not VarIsNull(edDateEnd.value)) then
+      s := ReplaceStr(s, '[ДАТА_О]', FormatDateTime('dd.mm.yyyy', edDateEnd.value));
+    if not VarIsNull(edDateSrv.value) then
+      s := ReplaceStr(s, rsFldFileDate, edDateSrv.Text);
   end;
 
   s := ReplaceStr(s, '[ИСПОЛН]', FWorker);
@@ -504,22 +551,62 @@ begin
       s := ReplaceStr(s, rsFldFINE, FloatToStr(ednFineSum.value, fs))
     else
       s := ReplaceStr(s, rsFldFINE, '');
+
     if ednBidSum.Visible then
     begin
       sum := 0;
-      if not ednCheckSum.Text.IsEmpty then
-      begin
-        s := ReplaceStr(s, rsFldPAYMENT, FloatToStr(ednCheckSum.value, fs));
-        sum := ednCheckSum.value;
-      end;
+      PAY_SUM := 0; // оплата
+      PAYED := 0; // оплата до
+      SRV_SUM := 0; // оплата услуг
+      FINE := 0; // пеня
+      BID_SUM := 0; // Сумма в заявке
+      // ednBidSum.Tag Сумма оплаты услуг
       if not ednBidSum.Text.IsEmpty then
       begin
-        s := ReplaceStr(s, '[СУММА_ЗАЯВКИ]', FloatToStr(ednBidSum.value, fs));
-        sum := sum - ednBidSum.value;
+        BID_SUM := ednBidSum.value;
+        SRV_SUM := ednBidSum.Tag / 100;
+      end;
+      // ednCheckSum.Tag Сумма частиной опалты
+      if not ednCheckSum.Text.IsEmpty then
+      begin
+        PAY_SUM := ednCheckSum.value;
+        PAYED := ednCheckSum.Tag / 100;
       end;
       if not ednFineSum.Text.IsEmpty then
-        sum := sum - ednFineSum.value;
-      s := ReplaceStr(s, '[СУММА_ОСТАТОК]', FloatToStr(Round(sum * 100) / 100));
+        FINE := ednFineSum.value;
+
+      sum := BID_SUM + SRV_SUM - PAY_SUM - PAYED - FINE;
+
+      if sum < 0 then
+      begin
+        sum := -1 * sum + SRV_SUM;
+        // PAY_SUM := BID_SUM - SRV_SUM - PAYED - FINE;
+      end
+      else
+      begin
+        if sum = 0 then
+        begin
+          sum := SRV_SUM;
+        end
+        else
+        begin
+          if BID_SUM < PAY_SUM then
+          begin
+            sum := PAY_SUM - BID_SUM;
+            PAY_SUM := BID_SUM;
+          end
+          else
+          begin
+            sum := 0;
+          end;
+        end;
+      end;
+
+      sum := Round(sum * 100) / 100;
+
+      s := ReplaceStr(s, '[СУММА_ЗАЯВКИ]', FloatToStr(BID_SUM, fs));
+      s := ReplaceStr(s, rsFldPAYMENT, FloatToStr(PAY_SUM, fs));
+      s := ReplaceStr(s, '[СУММА_ОСТАТОК]', FloatToStr(sum, fs));
     end
     else
     begin
@@ -554,8 +641,8 @@ begin
       end
     end;
   end;
-  if mmoMemo.Visible then
-    s := ReplaceStr(s, rsFldNOTICE, mmoMemo.Lines.Text);
+  if mmoNotice.Visible then
+    s := ReplaceStr(s, rsFldNOTICE, mmoNotice.Lines.Text);
 
   own := '';
   if chkFOwner.Checked then
@@ -589,19 +676,19 @@ begin
   if s.Contains('[СПИСОК_УСЛ]') then
     s := ReplaceStr(s, '[СПИСОК_УСЛ]', GetSrvList());
 
-  result := s;
+  Result := s;
 end;
 
 function TEditCFileForm.ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
 begin
-  result := A4MainForm.ParseCaptured(_scanName, scResult);
+  Result := A4MainForm.ParseCaptured(_scanName, scResult);
 end;
 
 procedure TEditCFileForm.TextToFileds(scResult: TStringList);
 var
   s: string;
   i: Integer;
-  r: TStringArray;
+  r: TStringDynArray;
   fs: TFormatSettings;
   PN: String;
   ps: String;
@@ -720,6 +807,7 @@ end;
 procedure TEditCFileForm.btnOkClick(Sender: TObject);
 var
   errors: Boolean;
+  AResult: TFileTypeAddendumResult;
 begin
   if not btnOk.Visible then
     Exit;
@@ -728,14 +816,22 @@ begin
 
   if (not errors) and (FIsLTV) and (btnOk.Tag = 0) then
   begin
-
-    if (dsCustFile.State = dsInsert) and (Application.MessageBox('Вы проверили файл который добавляете?',
-      'Проверка файла', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO) then
+    if (dsCustFile.State = dsInsert) and FFileRequred and
+      (Application.MessageBox('Вы проверили файл который добавляете?', 'Проверка файла',
+      MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO) then
     begin
       errors := true;
       btnOk.Tag := 1;
       ShowFile;
     end;
+  end;
+
+  if (not errors) and (FCheckSaveProc <> '') then
+  begin
+    AResult := ExecCheckSaveSQL();
+    errors := AResult.RemoveFile;
+    if (AResult.Message <> '') then
+      MessageBoxW(Handle, PWideChar(WideFormat('Ошибка: %s', [AResult.Message])), 'Проверка', MB_OK + MB_ICONSTOP);
   end;
 
   if not errors then
@@ -800,7 +896,7 @@ end;
 
 procedure TEditCFileForm.dbluFileTypeExit(Sender: TObject);
 var
-  s: string;
+  Prohibit: TProhibitiontType;
 begin
   if dbluFileType.Text = '' then
     Exit;
@@ -809,35 +905,43 @@ begin
   begin
     if (FFileType <> dbluFileType.value) then
     begin
-      SetFileType(dbluFileType.value, dbluFileType.Text);
       if (dsCustFile.State = dsInsert) then
       begin
-        ShowAddons;
-        s := CheckAllowedFT;
-        if s.IsEmpty then
+        FFileRequred := true;
+        dsFileTypes.DisableControls;
+        dsFileTypes.Locate('O_ID', dbluFileType.value, []);
+        dsFileTypes.EnableControls;
+        Prohibit := CheckAllowedFT();
+        if (not Prohibit.Message.IsEmpty) then
+          ShowMessage(Prohibit.Message);
+
+        // если нет запрета, то разрешаем этот тип файла, продолжаем
+        if (not Prohibit.Lock) then
         begin
+          SetFileType(dbluFileType.value, dbluFileType.Text, dsFileTypes['O_CHECK']);
+          ShowAddons;
           UpdateNotice;
 
-          if (FFileTypeName.Contains('ОТКЛ') or FFileTypeName.Contains('СМЕН')) then
-            CheckPromo;
+          if FIsLTV then
+          begin
+            if (FFileTypeName.Contains('ОТКЛ') or FFileTypeName.Contains('СМЕН')) then
+              CheckPromo;
+            edtFILE.EditButtons[0].Visible := (not FFileTypeName.Contains('ПАСПОРТ'));
+          end;
         end
         else
         begin
-          ShowMessage(s);
           FFileType := -1;
           dbluFileType.SetFocus;
         end;
       end;
     end;
-
-    if FIsLTV then
-      edtFILE.EditButtons[0].Visible := (not FFileTypeName.Contains('ПАСПОРТ'));
   end
   else
     SetFileType(-1);
 end;
 
-procedure TEditCFileForm.edDateChange(Sender: TObject);
+procedure TEditCFileForm.edDateSrvChange(Sender: TObject);
 begin
   UpdateNotice;
 end;
@@ -848,16 +952,32 @@ begin
   UpdateNotice;
 end;
 
-procedure TEditCFileForm.edPBeginExit(Sender: TObject);
+procedure TEditCFileForm.ednBidKeyPress(Sender: TObject; var Key: Char);
 begin
-  if FIsLTV and FFileTypeName.Contains('СПД.') and (FFileTypeName.Contains('БЛОК') and FFileTypeName.Contains('ПОДКЛ'))
-  then
-    SetBlockDays;
+  ednBid.Tag := 0;
+end;
+
+procedure TEditCFileForm.edDateBeginExit(Sender: TObject);
+begin
+  if FIsLTV then
+  begin
+    if FFileTypeName.Contains('ПОДК') then
+    begin
+      if FFileTypeName.Contains('СПД.') and (FFileTypeName.Contains('БЛОК')) then
+        SetBlockDays
+      else
+      begin
+        if FFileTypeName.Contains('РАССР') then
+          if edDateEnd.Visible and VarIsNull(edDateEnd.value) and not VarIsNull(edDateBegin.value) then
+            edDateEnd.value := IncMonth(edDateBegin.value, 25);
+      end;
+    end;
+  end;
 
   UpdateNotice;
 end;
 
-procedure TEditCFileForm.edPEndExit(Sender: TObject);
+procedure TEditCFileForm.edDateEndExit(Sender: TObject);
 begin
   UpdateNotice;
 end;
@@ -983,17 +1103,6 @@ begin
         FOldNumber := '';
         Exit;
       end;
-      {
-        n := '';
-        n := InputBox('Повторный ввод номера паспорта', 'Номер паспорта', n);
-        n := Trim(n);
-        if n <> s then
-        begin
-        edtPASSPORT.SetFocus;
-        FOldNumber := '';
-        Exit;
-        end
-      }
     end;
   end;
 
@@ -1003,6 +1112,16 @@ end;
 
 procedure TEditCFileForm.edtSURNAMEChange(Sender: TObject);
 begin
+  UpdateNotice;
+end;
+
+procedure TEditCFileForm.edtTextExit(Sender: TObject);
+begin
+  if (Sender is TDBEditEh) then
+  begin
+    if ((Sender as TDBEditEh).Text <> (Sender as TDBEditEh).Text.Trim) then
+      (Sender as TDBEditEh).Text := (Sender as TDBEditEh).Text.Trim;
+  end;
   UpdateNotice;
 end;
 
@@ -1024,6 +1143,9 @@ begin
 
   s := dmMain.GetCompanyValue('NAME');
   FIsLTV := s.Contains('ЛТВ');
+
+  FCheckTypeProc := dmMain.GetSettingsValue('FT_CHECK_PERMISSIONS');
+  FCheckSaveProc := dmMain.GetSettingsValue('FT_CHECK_SAVE');
 end;
 
 procedure TEditCFileForm.FormDestroy(Sender: TObject);
@@ -1206,7 +1328,7 @@ end;
 
 function TEditCFileForm.GetFile: String;
 begin
-  result := FFileForSave;
+  Result := FFileForSave;
 end;
 
 procedure TEditCFileForm.lcbFLATExit(Sender: TObject);
@@ -1226,6 +1348,9 @@ begin
     if CID > 0 then
     begin
       SetServiceDSparams(CID, FIsOff);
+
+      if FIsLTV then
+        CheckPromo(CID);
     end;
   end;
 end;
@@ -1248,7 +1373,15 @@ begin
   if FPeriodServiceFrm = UndefinedSrv then
   begin
     dsService.ParamByName('CUSTOMER_ID').AsInteger := CID;
-    dsService.ParamByName('state').AsInteger := SrvState; // FPeriodSrvState;
+    if FIsLTV and (FFileTypeName.Contains('ОТКЛ') and FFileTypeName.Contains('ДОСРОЧНО')) then
+    begin
+      if FFileTypeName.Contains('СТВ') then
+        dsService.ParamByName('state').AsInteger := 0
+      else
+        dsService.ParamByName('state').AsInteger := 1
+    end
+    else
+      dsService.ParamByName('state').AsInteger := SrvState;
     dsService.ParamByName('srv_type').AsInteger := FPeriodSrvType;
     dsService.ParamByName('Srv').AsInteger := FPeriodService;
   end
@@ -1347,6 +1480,52 @@ begin
   end;
 end;
 
+procedure TEditCFileForm.GetDefValues;
+var
+  Q: TpFIBQuery;
+  s: string;
+begin
+  if not FIsLTV then
+    Exit;
+
+  GetRentReturnFields;
+
+  s := '';
+  if FFileTypeName.Contains('СУД.') then
+  begin
+    if FFileTypeName.Contains('ГОСПОШЛИНА') then
+      s := 'select get_setting_int_value(''JUDGE_N'') JN from rdb$database '
+    else
+      s := Format('select Ca_Value JN from Customer_Attributes where O_Id = 212343 and Customer_Id = %s',
+        [FCustomerInfo.CUSTOMER_ID.ToString]);
+    //
+
+    if not s.IsEmpty then
+    begin
+      Q := TpFIBQuery.Create(Self);
+      try
+        Q.DataBase := dmMain.dbTV;
+        Q.Transaction := trReadQ;
+        Q.SQL.Text := s;
+        Q.Transaction.StartTransaction;
+        Q.ExecQuery;
+        if (Q.FieldIndex['JN'] >= 0) and (not Q.FN('JN').IsNull) then
+        begin
+          if edtText.EmptyDataInfo.Text.ToUpper.Contains('ПРЕТЕНЗ') then
+            edtText.Text := Q.FN('JN').AsString
+          else if edtText1.EmptyDataInfo.Text.ToUpper.Contains('ПРЕТЕНЗ') then
+            edtText1.Text := Q.FN('JN').AsString
+          else if edtText2.EmptyDataInfo.Text.ToUpper.Contains('ПРЕТЕНЗ') then
+            edtText2.Text := Q.FN('JN').AsString;
+          Q.Transaction.Commit;
+        end;
+      finally
+        Q.Free;
+      end;
+    end
+  end;
+end;
+
 procedure TEditCFileForm.ShowAddons;
 var
   ItsJson: Boolean;
@@ -1358,16 +1537,16 @@ begin
     edtNAME.Text := '';
     FHandNameInput := '';
     edtNAME.ReadOnly := False;
-    memNotice.ReadOnly := False;
+    mmoDesc.ReadOnly := False;
 
     ItsJson := (CustomerInfo.CUSTOMER_ID > 0);
     json := '';
-    if dsFileTypes.Locate('O_ID', FFileType, []) then
-    begin
-      if (not dsFileTypes.FieldByName('O_CHARFIELD').IsNull) then
-        json := dsFileTypes['O_CHARFIELD'];
-      ItsJson := ItsJson and (not json.IsEmpty);
-    end;
+    // if dsFileTypes.Locate('O_ID', FFileType, []) then
+    // begin
+    if (not dsFileTypes.FieldByName('O_CHARFIELD').IsNull) then
+      json := dsFileTypes['O_CHARFIELD'];
+    ItsJson := ItsJson and (not json.IsEmpty);
+    // end;
 
     chkContract.Visible := ItsJson and FNewContract and (ParamExists(rsFldContract) or ParamExists(rsFldContractDate));
 
@@ -1386,10 +1565,11 @@ begin
     ednCheckSum.Visible := False;
     ednFineSum.Visible := False;
     chkFOwner.Visible := False;
-    edPBegin.Enabled := true;
+    edDateBegin.Enabled := true;
     // chkFOwner.Enabled := False;
     pnlText.Visible := False;
     lblText.Caption := 'Доп. текст';
+    edtText.Visible := False;
     edtText.Text := '';
     edtText.EmptyDataInfo.Text := '';
     edtText.Hint := '';
@@ -1407,16 +1587,21 @@ begin
     lblText3.Caption := rsFldText3;
     edtText3.Visible := False;
 
+    lblText4.Visible := False;
+    lblText4.Caption := rsFldText4;
+    edtText4.Visible := False;
+
     FTextReg := '';
     FText1Reg := '';
     FText2Reg := '';
     FText3Reg := '';
+    FText4Reg := '';
 
     FFileInMem.Clear;
     pnlMaterials.Visible := False;
     lcbServiceFrom.Visible := False;
-    lcbService.Left := edDate.Left;
-    lcbService.Width := pnlSrv.Width - edDate.Left - 5;
+    lcbService.Left := edDateSrv.Left;
+    lcbService.Width := pnlSrv.Width - edDateSrv.Left - 5;
 
     dsService.Active := False;
     dsOnOffService.Active := False;
@@ -1441,16 +1626,15 @@ begin
     FReqTempl := -1;
     FOpenInet := False;
     FNeedSrv := False;
-    FAllowedFT := -1;
 
     if ItsJson then
       ShowControlsJson(json);
 
-    mmoMemo.Visible := FNoticeFmt.Contains(rsFldNOTICE);
-    splMemo.Visible := mmoMemo.Visible;
-    if mmoMemo.Visible then
+    mmoNotice.Visible := FNoticeFmt.Contains(rsFldNOTICE);
+    splMemo.Visible := mmoNotice.Visible;
+    if mmoNotice.Visible then
     begin
-      mmoMemo.Height := 40;
+      mmoNotice.Height := 40;
     end;
 
     pnlClient.Visible := true;
@@ -1466,27 +1650,31 @@ begin
 
     dsService.Active := (pnlSrv.Visible and (not pnlAdr.Visible));
     dsOnOffService.Active := (pnlSrv.Visible and (not pnlAdr.Visible));
-
-    if (FFileTypeName.Contains('ПЕРЕОФОРМЛЕНИЕ ДОГОВОРА')) then
+    if FIsLTV then
     begin
-      edtText.Text := GetSrvList;
-      edtText.EmptyDataInfo.Text := GetSrvList;
-    end
-    else if (FFileTypeName.Contains('БЛОК') and FFileTypeName.Contains('ДОСРОЧНО')) then
-    begin
-      edPBegin.Enabled := False;
-      GetCurrentBlock;
-    end
-    else if FIsLTV and FFileTypeName.Contains('СПД.') and
-      (FFileTypeName.Contains('БЛОК') and FFileTypeName.Contains('ПОДКЛ')) then
-      SetBlockDays;
-
-    if pnlMaterials.Visible then
-    begin
-      dsMaterials.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-      dsMaterials.Active := true;
+      if (FFileTypeName.Contains('ПЕРЕОФОРМЛЕНИЕ ДОГОВОРА')) then
+      begin
+        edtText.Text := GetSrvList;
+        edtText.EmptyDataInfo.Text := GetSrvList;
+      end
+      else if (FFileTypeName.Contains('БЛОК') and FFileTypeName.Contains('ДОСРОЧНО')) then
+      begin
+        if not FFileTypeName.Contains('ОТКЛ') then
+        begin
+          edDateBegin.Enabled := False;
+          GetCurrentBlock;
+        end
+        else
+        begin
+          edDateBegin.Enabled := true;
+          edDateBegin.EmptyDataInfo.Text := 'откл. досрочного';
+        end;
+      end
+      else if FFileTypeName.Contains('СПД.') and (FFileTypeName.Contains('БЛОК') and FFileTypeName.Contains('ПОДКЛ'))
+      then
+        SetBlockDays;
     end;
-
+    GetDefValues;
   finally
     if WindowLocked then
       LockWindowUpdate(0);
@@ -1499,28 +1687,51 @@ var
   ShowPnl: Boolean;
   s: string;
   w: Integer;
-  sa: TStringArray;
+  sa: TStringDynArray;
+
+  procedure SetTextField(cntrl: TDBEditEh; lbl: TLabel; fld: string; var regFld: string);
+  begin
+    if JO.Contains(fld) and (not JO[fld].IsNull) then
+    begin
+      cntrl.Visible := true;
+      s := JO.s[fld];
+      if s.Contains('|') then
+      begin
+        // меняем двойной || на символы чтоб корректно разбить строук
+        s := s.Replace('||', '@^#');
+        sa := Explode('|', s);
+        cntrl.Text := sa[0];
+        if length(sa) > 1 then
+          cntrl.EmptyDataInfo.Text := sa[1];
+        if length(sa) > 2 then
+        begin
+          FText1Reg := sa[2].Replace('@^#', '|');
+        end;
+        if not cntrl.EmptyDataInfo.Text.IsEmpty then
+        begin
+          lbl.Caption := cntrl.EmptyDataInfo.Text;
+          cntrl.Hint := cntrl.EmptyDataInfo.Text;
+        end;
+      end
+      else
+        cntrl.Text := s;
+    end;
+  end;
+
 begin
   JO := TJsonObject.Parse(json) as TJsonObject;
   try
+    if JO.Contains('EF') and (not JO['EF'].IsNull) then
+      FFileRequred := (JO.i['EF'] <> 1)
+    else
+      FFileRequred := true;
 
-    if JO.Contains('AFT') then
-    begin
-      if not JO['AFT'].IsNull then
-        FAllowedFT := JO.i['AFT'];
-    end;
+    if JO.Contains('Nfmt') and (not JO['Nfmt'].IsNull) then
+      FNameFmt := JO.s['Nfmt'];
 
-    if JO.Contains('Nfmt') then
-    begin
-      if not JO['Nfmt'].IsNull then
-        FNameFmt := JO.s['Nfmt'];
-    end;
-    if JO.Contains('nRO') then
-    begin
-      if not JO['nRO'].IsNull then
-        edtNAME.ReadOnly := (not FNameFmt.IsEmpty) and
-          (JO.B['nRO'] and (not dmMain.UserIsAdmin) and (not dmMain.AllowedAction(rght_Customer_full)));
-    end;
+    if JO.Contains('nRO') and (not JO['nRO'].IsNull) then
+      edtNAME.ReadOnly := (not FNameFmt.IsEmpty) and
+        (JO.B['nRO'] and (not dmMain.UserIsAdmin) and (not dmMain.AllowedAction(rght_Customer_full)));
 
     if JO.Contains('OnOff') then
     begin
@@ -1547,9 +1758,9 @@ begin
       // if (dmMain.GetIniValue('SET_AS_CURRENT_DATE') <> '0') then
       // begin
       if ShowPnl then
-        edDate.value := Date();
+        edDateSrv.value := Date();
       if pnlPeriod.Visible then
-        edPBegin.value := Date();
+        edDateBegin.value := Date();
       // end;
     end;
 
@@ -1592,7 +1803,7 @@ begin
           lcbServiceFrom.value := FPeriodServiceFrm;
           lcbServiceFrom.Enabled := False;
 
-          w := Round((pnlSrv.Width - edDate.Left - 5) / 2);
+          w := Round((pnlSrv.Width - edDateSrv.Left - 5) / 2);
           lcbServiceFrom.Width := w - 5;
           lcbService.Left := lcbServiceFrom.Left + w;
           lcbService.Width := w;
@@ -1613,50 +1824,43 @@ begin
       end;
     end;
 
-    if JO.Contains('ReqType') then
-    begin
-      if not JO['ReqType'].IsNull then
-        FReqType := JO.i['ReqType'];
-    end;
+    if JO.Contains('ReqType') and (not JO['ReqType'].IsNull) then
+      FReqType := JO.i['ReqType'];
 
-    if JO.Contains('ReqTempl') then
-    begin
-      if not JO['ReqTempl'].IsNull then
-        FReqTempl := JO.i['ReqTempl'];
-    end;
+    if JO.Contains('ReqTempl') and (not JO['ReqTempl'].IsNull) then
+      FReqTempl := JO.i['ReqTempl'];
 
     if JO.Contains('Psprt') then
     begin
       if not JO['Psprt'].IsNull then
         pnlPassport.Visible := JO.B['Psprt'];
 
-      if JO.Contains('Card') then
+      if JO.Contains('Card') and (not JO['Card'].IsNull) then
       begin
-        if not JO['Card'].IsNull then
-        begin
-          pnlDoc.Visible := JO.B['Card'];
-          btnOcr.Visible := pnlDoc.Visible;
-        end;
+        pnlDoc.Visible := JO.B['Card'];
+        btnOcr.Visible := pnlDoc.Visible;
       end;
     end;
 
-    if JO.Contains('Own') then
-    begin
-      if not JO['Own'].IsNull then
-        chkFOwner.Visible := JO.B['Own'];
-      // chkFOwner.Enabled := JO.B['Own'];
-    end;
+    if JO.Contains('Own') and (not JO['Own'].IsNull) then
+      chkFOwner.Visible := JO.B['Own'];
 
-    if JO.Contains('Mobile') then
-    begin
-      if not JO['Mobile'].IsNull then
-        pnlMobile.Visible := JO.B['Mobile'];
-    end;
+    if JO.Contains('Mobile') and (not JO['Mobile'].IsNull) then
+      pnlMobile.Visible := JO.B['Mobile'];
 
     if JO.Contains('Txt') then
     begin
       if not JO['Txt'].IsNull then
+      begin
         pnlText.Visible := JO.B['Txt'];
+        edtText.Visible := JO.B['Txt'];
+      end;
+      {
+        SetTextField(edtText, lblText, 'Hint', FTextReg);
+        SetTextField(edtText1, lblText1, 'Txt1', FText1Reg);
+        SetTextField(edtText2, lblText2, 'Txt2', FText2Reg);
+        SetTextField(edtText3, lblText3, 'Txt3', FText3Reg);
+      }
       if JO.Contains('Hint') then
       begin
         if not JO['Hint'].IsNull then
@@ -1686,144 +1890,149 @@ begin
         end;
       end;
 
-      if JO.Contains('Txt1') and (FNoticeFmt.Contains(rsFldText1) or FNameFmt.Contains(rsFldText1)) then
+      if JO.Contains('Txt1') and (not JO['Txt1'].IsNull) then
       begin
-        if not JO['Txt1'].IsNull then
+        edtText1.Visible := true;
+        s := JO.s['Txt1'];
+        if s.Contains('|') then
         begin
-          edtText1.Visible := true;
-          s := JO.s['Txt1'];
-          if s.Contains('|') then
+          // меняем двойной || на символы чтоб корректно разбить строук
+          s := s.Replace('||', '@^#');
+          sa := Explode('|', s);
+          edtText1.Text := sa[0];
+          if length(sa) > 1 then
+            edtText1.EmptyDataInfo.Text := sa[1];
+          if length(sa) > 2 then
           begin
-            // меняем двойной || на символы чтоб корректно разбить строук
-            s := s.Replace('||', '@^#');
-            sa := Explode('|', s);
-            edtText1.Text := sa[0];
-            if length(sa) > 1 then
-              edtText1.EmptyDataInfo.Text := sa[1];
-            if length(sa) > 2 then
-            begin
-              FText1Reg := sa[2].Replace('@^#', '|');
-            end;
-            if not edtText1.EmptyDataInfo.Text.IsEmpty then
-            begin
-              lblText1.Caption := edtText1.EmptyDataInfo.Text;
-              edtText1.Hint := edtText1.EmptyDataInfo.Text;
-            end;
-          end
-          else
-            edtText1.Text := s;
-        end;
-      end;
-
-      if JO.Contains('Txt2') and (FNoticeFmt.Contains(rsFldText2) or FNameFmt.Contains(rsFldText2)) then
-      begin
-        if not JO['Txt2'].IsNull then
-        begin
-          edtText2.Visible := true;
-          lblText2.Visible := true;
-          s := JO.s['Txt2'];
-          if s.Contains('|') then
+            FText1Reg := sa[2].Replace('@^#', '|');
+          end;
+          if not edtText1.EmptyDataInfo.Text.IsEmpty then
           begin
-            s := s.Replace('||', '@^#');
-            sa := Explode('|', s);
-            edtText2.Text := sa[0];
-            if length(sa) > 1 then
-              edtText2.EmptyDataInfo.Text := sa[1];
-            if length(sa) > 2 then
-            begin
-              FText2Reg := sa[2].Replace('@^#', '|');
-            end;
-            if not edtText2.EmptyDataInfo.Text.IsEmpty then
-            begin
-              lblText2.Caption := edtText2.EmptyDataInfo.Text;
-              edtText2.Hint := edtText2.EmptyDataInfo.Text;
-            end;
-          end
-          else
-            edtText1.Text := s;
-        end;
+            lblText1.Caption := edtText1.EmptyDataInfo.Text;
+            edtText1.Hint := edtText1.EmptyDataInfo.Text;
+          end;
+        end
+        else
+          edtText1.Text := s;
       end;
 
-      if JO.Contains('Txt3') and (FNoticeFmt.Contains(rsFldText3) or FNameFmt.Contains(rsFldText3)) then
+      if JO.Contains('Txt2') and (not JO['Txt2'].IsNull) then
       begin
-        if not JO['Txt3'].IsNull then
+        edtText2.Visible := true;
+        lblText2.Visible := true;
+        s := JO.s['Txt2'];
+        if s.Contains('|') then
         begin
-          edtText3.Visible := true;
-          lblText3.Visible := true;
-          s := JO.s['Txt3'];
-          if s.Contains('|') then
+          s := s.Replace('||', '@^#');
+          sa := Explode('|', s);
+          edtText2.Text := sa[0];
+          if length(sa) > 1 then
+            edtText2.EmptyDataInfo.Text := sa[1];
+          if length(sa) > 2 then
           begin
-            s := s.Replace('||', '@^#');
-            sa := Explode('|', s);
-            edtText3.Text := sa[0];
-            if length(sa) > 1 then
-              edtText3.EmptyDataInfo.Text := sa[1];
-            if length(sa) > 2 then
-            begin
-              FText3Reg := sa[2].Replace('@^#', '|');
-            end;
-            if not edtText3.EmptyDataInfo.Text.IsEmpty then
-            begin
-              lblText3.Caption := edtText3.EmptyDataInfo.Text;
-              edtText3.Hint := edtText3.EmptyDataInfo.Text;
-            end;
-          end
-          else
-            edtText3.Text := s;
-        end;
+            FText2Reg := sa[2].Replace('@^#', '|');
+          end;
+          if not edtText2.EmptyDataInfo.Text.IsEmpty then
+          begin
+            lblText2.Caption := edtText2.EmptyDataInfo.Text;
+            edtText2.Hint := edtText2.EmptyDataInfo.Text;
+          end;
+        end
+        else
+          edtText2.Text := s;
       end;
-    end;
 
-    if JO.Contains('mRO') then
-    begin
-      if not JO['mRO'].IsNull then
-        memNotice.ReadOnly := (JO.B['mRO'] and (not dmMain.UserIsAdmin) and
-          (not dmMain.AllowedAction(rght_Customer_full)));
-    end;
-
-    if JO.Contains('Bid') then
-    begin
-      if not JO['Bid'].IsNull then
-        ednBid.Visible := JO.B['Bid'];
-    end;
-
-    if JO.Contains('Pay') then
-    begin
-      if not JO['Pay'].IsNull then
+      if JO.Contains('Txt3') and (not JO['Txt3'].IsNull) then
       begin
-        ednBidSum.Visible := ednBid.Visible and JO.B['Pay'];
-        ednCheckSum.Visible := JO.B['Pay'];
-        ednFineSum.Visible := (JO.B['Pay'] and (dmMain.GetSettingsValue('SHOW_FINE') = '1'));
-      end;
-    end;
-
-    if JO.Contains('Adr') then
-    begin
-      if not JO['Adr'].IsNull then
-        pnlAdr.Visible := JO.B['Adr'];
-    end;
-
-    if JO.Contains('Tsk') then
-    begin
-      if not JO['Tsk'].IsNull then
-        pnlTask.Visible := JO.B['Tsk'];
-    end;
-
-    if JO.Contains('Prd') then
-    begin
-      if not JO['Prd'].IsNull then
-      begin
-        edPEnd.Visible := true;
-        if (JO['Prd'].Typ = jdtBool) then
-          pnlPeriod.Visible := JO.B['Prd']
-        else if (JO['Prd'].Typ = jdtInt) then
+        edtText3.Visible := true;
+        lblText3.Visible := true;
+        s := JO.s['Txt3'];
+        if s.Contains('|') then
         begin
-          pnlPeriod.Visible := (JO.i['Prd'] > 0);
-          edPEnd.Visible := (JO.i['Prd'] = 1);
-          if edPEnd.Visible then
-            lblPeriod.Caption := 'Перод'
-          else
-            lblPeriod.Caption := 'Дата';
+          s := s.Replace('||', '@^#');
+          sa := Explode('|', s);
+          edtText3.Text := sa[0];
+          if length(sa) > 1 then
+            edtText3.EmptyDataInfo.Text := sa[1];
+          if length(sa) > 2 then
+          begin
+            FText3Reg := sa[2].Replace('@^#', '|');
+          end;
+          if not edtText3.EmptyDataInfo.Text.IsEmpty then
+          begin
+            lblText3.Caption := edtText3.EmptyDataInfo.Text;
+            edtText3.Hint := edtText3.EmptyDataInfo.Text;
+          end;
+        end
+        else
+          edtText3.Text := s;
+      end;
+
+      if JO.Contains('Txt4') and (not JO['Txt4'].IsNull) then
+      begin
+        edtText4.Visible := true;
+        lblText4.Visible := true;
+        s := JO.s['Txt4'];
+        if s.Contains('|') then
+        begin
+          s := s.Replace('||', '@^#');
+          sa := Explode('|', s);
+          edtText4.Text := sa[0];
+          if length(sa) > 1 then
+            edtText4.EmptyDataInfo.Text := sa[1];
+          if length(sa) > 2 then
+          begin
+            FText4Reg := sa[2].Replace('@^#', '|');
+          end;
+          if not edtText4.EmptyDataInfo.Text.IsEmpty then
+          begin
+            lblText4.Caption := edtText4.EmptyDataInfo.Text;
+            edtText4.Hint := edtText4.EmptyDataInfo.Text;
+          end;
+        end
+        else
+          edtText4.Text := s;
+      end;
+
+    end;
+
+    if JO.Contains('mRO') and (not JO['mRO'].IsNull) then
+      mmoDesc.ReadOnly := (JO.B['mRO'] and (not dmMain.UserIsAdmin) and (not dmMain.AllowedAction(rght_Customer_full)));
+
+    if JO.Contains('Bid') and (not JO['Bid'].IsNull) then
+      ednBid.Visible := JO.B['Bid'];
+
+    if JO.Contains('Pay') and (not JO['Pay'].IsNull) then
+    begin
+      ednBidSum.Visible := ednBid.Visible and JO.B['Pay'];
+      ednCheckSum.Visible := JO.B['Pay'];
+      ednFineSum.Visible := (JO.B['Pay'] and (dmMain.GetSettingsValue('SHOW_FINE') = '1'));
+    end;
+
+    if JO.Contains('Adr') and (not JO['Adr'].IsNull) then
+      pnlAdr.Visible := JO.B['Adr'];
+
+    if JO.Contains('Tsk') and (not JO['Tsk'].IsNull) then
+      pnlTask.Visible := JO.B['Tsk'];
+
+    if JO.Contains('Prd') and (not JO['Prd'].IsNull) then
+    begin
+      edDateEnd.Visible := true;
+      if (JO['Prd'].Typ = jdtBool) then
+        pnlPeriod.Visible := JO.B['Prd']
+      else if (JO['Prd'].Typ = jdtInt) then
+      begin
+        pnlPeriod.Visible := (JO.i['Prd'] > 0);
+        edDateEnd.Visible := (JO.i['Prd'] = 1);
+        if edDateEnd.Visible then
+        begin
+          lblPeriod.Caption := 'Перод';
+          edDateBegin.EmptyDataInfo.Text := 'Начало';
+        end
+        else
+        begin
+          lblPeriod.Caption := 'Дата';
+          edDateBegin.EmptyDataInfo.Text := 'Дата';
         end;
       end;
     end;
@@ -1835,17 +2044,39 @@ begin
 
     lblBP.Visible := ednBid.Visible;
     pnlBidPay.Visible := ednBid.Visible or ednCheckSum.Visible;
-    if (FIsLTV and (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.')) then
+    if (FIsLTV) then
     begin
-      pnlPayment.Visible := true;
-      pnlBidPay.Visible := true;
-      ednCheckSum.Visible := true;
-      ednFineSum.Visible := true;
-      dsPayment.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-      dsPayment.Open;
+      if (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.')
+      // or (FFileTypeName.Contains('ОПЛАТА') and FFileTypeName.Contains('ЗАЯВК') and FFileTypeName.Contains('ВЗАИМОРАСЧЕТ'))
+      then
+      begin
+        pnlPayment.Visible := true;
+        pnlBidPay.Visible := true;
+        ednCheckSum.Visible := true;
+        ednFineSum.Visible := (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.');
+        dsPayment.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+        dsPayment.Open;
+      end;
+
+      if (FFileTypeName.Contains('ШТРАФ')) then
+      begin
+        ednCheckSum.Visible := False;
+      end;
     end;
 
-    pnlMaterials.Visible := (FIsLTV and FFileTypeName.StartsWith('РАССРОЧКА'));
+    if (JO.Contains('Mat')) and (not JO['Mat'].IsNull) and (JO.B['Mat']) then
+    begin
+      pnlMaterials.Visible := true;
+      if (JO.Contains('MatCO')) and (not JO['MatCO'].IsNull) and (JO.B['MatCO']) then
+        GenMaterialsSelect(JO.B['MatCO'])
+      else
+        GenMaterialsSelect(False);
+    end
+    else
+    begin
+      pnlMaterials.Visible := (FIsLTV and FFileTypeName.StartsWith('РАССРОЧКА'));
+      GenMaterialsSelect(False);
+    end;
 
     SetPanelOrder;
 
@@ -1872,10 +2103,32 @@ begin
   end;
 end;
 
+procedure TEditCFileForm.GenMaterialsSelect(const CustOnly: Boolean = true);
+begin
+  if dsMaterials.Active then
+    dsMaterials.Close;
+
+  dsMaterials.SelectSQL.Clear;
+
+  // if CustOnly then пока не реалізовано
+  begin
+    dsMaterials.SelectSQL.Add('select a.Name, a.Cost, a.M_Id, a.Serial');
+    dsMaterials.SelectSQL.Add('  from Appliance a');
+    dsMaterials.SelectSQL.Add('  where a.OWN_ID = :CID');
+    dsMaterials.SelectSQL.Add('        and a.OWN_TYPE = 1 -- Абонент');
+    dsMaterials.SelectSQL.Add('        and a.Property = 2 -- Абонента (Рассрочка)');
+    dsMaterials.SelectSQL.Add('  order by a.Name');
+    dsMaterials.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+  end;
+
+  dsMaterials.Active := true;
+end;
+
 procedure TEditCFileForm.UpdateNotice;
 var
   s: string;
 begin
+
   if (dsCustFile.State = dsInsert) then
   begin
     if not FNameFmt.IsEmpty then
@@ -1888,7 +2141,7 @@ begin
     if not FNoticeFmt.IsEmpty then
     begin
       s := FieldsToStr(FNoticeFmt);
-      memNotice.Lines.Text := s;
+      mmoDesc.Lines.Text := s;
     end;
   end;
 end;
@@ -1898,7 +2151,7 @@ var
   s: string;
   d1, d2: Integer;
 begin
-  result := errors;
+  Result := errors;
 
   if pnlSrv.Visible then
   begin
@@ -1906,7 +2159,7 @@ begin
     begin
       if (lcbService.Text = '') then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(lcbService, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else
@@ -1914,50 +2167,50 @@ begin
 
       if (lcbOnOffSrv.Text = '') then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(lcbOnOffSrv, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else
       begin
         if ((FSinglSrvOnOff > -1) and (FSinglSrvOnOff <> lcbOnOffSrv.value)) then
         begin
-          result := true;
+          Result := true;
           CnErrors.SetError(lcbOnOffSrv, rsNotAllowedService, iaMiddleLeft, bsNeverBlink);
         end
         else
           CnErrors.Dispose(lcbOnOffSrv);
       end;
 
-      if (VarIsNull(edDate.value)) then
+      if (VarIsNull(edDateSrv.value)) then
       begin
-        result := true;
-        CnErrors.SetError(edDate, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+        Result := true;
+        CnErrors.SetError(edDateSrv, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else
       begin
-        if (not FFullAccess) and (FIsOff = 1) and (VarToDateTime(edDate.value) < (Date() + 1)) then
+        if (not FFullAccess) and (FIsOff = 1) and (VarToDateTime(edDateSrv.value) < (Date() + 1)) then
         begin
-          result := true;
-          CnErrors.SetError(edDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
+          Result := true;
+          CnErrors.SetError(edDateSrv, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
         end
         else
         begin
           // прверим даты подключения
-          if (FOnlyToday and (VarToDateTime(edDate.value) < Date())) then
+          if (FOnlyToday and (VarToDateTime(edDateSrv.value) < Date())) then
           begin
-            result := true;
-            CnErrors.SetError(edDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
+            Result := true;
+            CnErrors.SetError(edDateSrv, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
           end
           else
           begin
             if (((dmMain.InStrictMode) or (not(FFullAccess or FChangeHistory))) and
-              (VarToDateTime(edDate.value) < dmMain.CurrentMonth)) then
+              (VarToDateTime(edDateSrv.value) < dmMain.CurrentMonth)) then
             begin
-              result := true;
-              CnErrors.SetError(edDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
+              Result := true;
+              CnErrors.SetError(edDateSrv, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
             end
             else
-              CnErrors.Dispose(edDate);
+              CnErrors.Dispose(edDateSrv);
           end;
         end;
 
@@ -1972,102 +2225,102 @@ begin
 
           if (d2 > d1) or (d1 = 350) then
           begin
-            if (VarToDateTime(edDate.value) < Date()) then
+            if (VarToDateTime(edDateSrv.value) < Date()) then
             begin
-              result := true;
-              CnErrors.SetError(edDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
+              Result := true;
+              CnErrors.SetError(edDateSrv, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
             end
             else
-              CnErrors.Dispose(edDate);
+              CnErrors.Dispose(edDateSrv);
           end
           else
           begin
-            if (VarToDateTime(edDate.value) <> IncMonth(dmMain.CurrentMonth, 1)) and
-              (VarToDateTime(edDate.value) <> IncMonth(dmMain.CurrentMonth, 2)) then
+            if (VarToDateTime(edDateSrv.value) <> IncMonth(dmMain.CurrentMonth, 1)) and
+              (VarToDateTime(edDateSrv.value) <> IncMonth(dmMain.CurrentMonth, 2)) then
             begin
-              result := true;
-              CnErrors.SetError(edDate, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
+              Result := true;
+              CnErrors.SetError(edDateSrv, rsPastDateIncorrect, iaMiddleLeft, bsNeverBlink);
             end
             else
-              CnErrors.Dispose(edDate);
+              CnErrors.Dispose(edDateSrv);
           end;
         end;
       end;
 
       if not CheckEnoughMoney then
       begin
-        result := true;
-        CnErrors.SetError(edDate, rsEnoughMoneyDateIncorrect, iaMiddleLeft, bsNeverBlink);
+        Result := true;
+        CnErrors.SetError(edDateSrv, rsEnoughMoneyDateIncorrect, iaMiddleLeft, bsNeverBlink);
       end;
 
       s := CheckDatesOnOff();
       if not s.IsEmpty then
       begin
-        result := true;
-        CnErrors.SetError(edDate, s, iaMiddleLeft, bsNeverBlink);
+        Result := true;
+        CnErrors.SetError(edDateSrv, s, iaMiddleLeft, bsNeverBlink);
       end;
     end
     else
     begin
       CnErrors.Dispose(lcbService);
-      CnErrors.Dispose(edDate);
+      CnErrors.Dispose(edDateSrv);
       CnErrors.Dispose(lcbOnOffSrv);
     end;
   end;
 
   if pnlPeriod.Visible then
   begin
-    if (VarIsNull(edPBegin.value)) then
+    if (VarIsNull(edDateBegin.value)) then
     begin
-      result := true;
-      CnErrors.SetError(edPBegin, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+      Result := true;
+      CnErrors.SetError(edDateBegin, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
     begin
-      if (edPBegin.value < Date()) and (not dmMain.AllowedAction(rght_Customer_full)) and edPBegin.Enabled then
+      if (edDateBegin.value < Date()) and (not dmMain.AllowedAction(rght_Customer_full)) and edDateBegin.Enabled then
       begin
-        result := true;
-        CnErrors.SetError(edPBegin, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
+        Result := true;
+        CnErrors.SetError(edDateBegin, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
       end
       else
       begin
-        if (edPBegin.value <> Date()) and FFileTypeName.Contains('ПОРУЧЕНИЕ') and edPBegin.Visible and edPBegin.Enabled
-        then
+        if (edDateBegin.value <> Date()) and FFileTypeName.Contains('ПОРУЧЕНИЕ') and edDateBegin.Visible and
+          edDateBegin.Enabled then
         begin
-          result := true;
-          CnErrors.SetError(edPBegin, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
+          Result := true;
+          CnErrors.SetError(edDateBegin, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
         end
         else
-          CnErrors.Dispose(edPBegin);
+          CnErrors.Dispose(edDateBegin);
       end;
     end;
 
-    if (edPEnd.Visible) and (VarIsNull(edPEnd.value)) then
+    if (edDateEnd.Visible) and (VarIsNull(edDateEnd.value)) then
     begin
-      result := true;
-      CnErrors.SetError(edPEnd, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+      Result := true;
+      CnErrors.SetError(edDateEnd, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
-      CnErrors.Dispose(edPEnd);
+      CnErrors.Dispose(edDateEnd);
 
-    if (edPEnd.Visible) and (not result) then
+    if (edDateEnd.Visible) and (not Result) then
     begin
       s := CheckBlockDays;
       if s <> '' then
       begin
-        result := true;
-        CnErrors.SetError(edPBegin, s, iaMiddleLeft, bsNeverBlink);
+        Result := true;
+        CnErrors.SetError(edDateBegin, s, iaMiddleLeft, bsNeverBlink);
       end
       else
-        CnErrors.Dispose(edPBegin);
+        CnErrors.Dispose(edDateBegin);
 
-      if (edPEnd.value < edPBegin.value) or (edPEnd.value < Date()) then
+      if (edDateEnd.value < edDateBegin.value) or (edDateEnd.value < Date()) then
       begin
-        result := true;
-        CnErrors.SetError(edPEnd, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
+        Result := true;
+        CnErrors.SetError(edDateEnd, rsSuspiciousDate, iaMiddleLeft, bsNeverBlink);
       end
       else
-        CnErrors.Dispose(edPEnd);
+        CnErrors.Dispose(edDateEnd);
     end;
   end;
 
@@ -2076,44 +2329,44 @@ begin
     s := CheckDecoder(edtText);
     if s <> '' then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtText, s, iaMiddleLeft, bsNeverBlink);
     end;
     s := CheckDecoder(edtText1);
     if s <> '' then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtText1, s, iaMiddleLeft, bsNeverBlink);
     end;
     s := CheckDecoder(edtText2);
     if s <> '' then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtText2, s, iaMiddleLeft, bsNeverBlink);
     end;
     s := CheckDecoder(edtText3);
     if s <> '' then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtText3, s, iaMiddleLeft, bsNeverBlink);
     end;
   end;
 
-  if not edtNAME.ReadOnly and edtNAME.Text.Contains('***') then
+  if (not edtNAME.ReadOnly) and edtNAME.Text.Contains('*') then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(edtNAME, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
     CnErrors.Dispose(edtNAME);
 
-  if not memNotice.ReadOnly and memNotice.Lines.Text.Contains('***') then
+  if (not mmoDesc.ReadOnly) and mmoDesc.Lines.Text.Contains('***') then
   begin
-    result := true;
-    CnErrors.SetError(memNotice, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+    Result := true;
+    CnErrors.SetError(mmoDesc, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
-    CnErrors.Dispose(memNotice);
+    CnErrors.Dispose(mmoDesc);
 end;
 
 procedure TEditCFileForm.CheckAndGenContract;
@@ -2172,6 +2425,8 @@ begin
     end;
   end;
 
+  // CheckRegistration; // отключили проверку прописку пасопрта
+
   if FContract.IsEmpty then
     CheckAndGenContract
   else
@@ -2179,6 +2434,26 @@ begin
 
   UpdateNotice;
 end;
+
+{
+  // отключили проверку прописку пасопрта
+  procedure TEditCFileForm.CheckRegistration;
+  begin
+  if FIsLTV and chkFOwner.Checked then
+  begin
+  if FFileTypeName.Contains('ПРОПИСКА') then
+  begin
+  // 47999 собственность
+  if (not edtADRES_REGISTR.Text.Contains(FCustomerInfo.cust_code)) and (not CheckFileTypeExists(47999)) then
+  begin
+  chkFOwner.Checked := False;
+  MessageDlg('Прописка ' + edtADRES_REGISTR.Text + ' отличается от адреса ' + FCustomerInfo.cust_code + #13#10 +
+  'Нужен документ Собственность', mtWarning, [mbOK], 0);
+  end;
+  end;
+  end;
+  end;
+}
 
 procedure TEditCFileForm.SetContract;
 var
@@ -2199,51 +2474,97 @@ begin
   edtContract.Text := s;
 end;
 
-procedure TEditCFileForm.ExecuteAddons(const FileID: Integer);
+function TEditCFileForm.ExecuteAddons(const FileID: Integer): Boolean;
 var
   d: TDate;
   NewCustomer: Integer;
   s, rs, os: String;
   oldOwner: Integer;
   c: TCustomerInfo;
+  AResult: TFileTypeAddendumResult;
 begin
-  NewCustomer := -1;
-  if (pnlSrv.Visible and FNeedSrv) then
+  // если для типа файла есть процедура, то выполняем только ее, иначе все работает как раньше - пошагово
+  AResult := ExecSQLforFileType(FCustomerInfo.CUSTOMER_ID, FileID);
+  if AResult.RemoveFile then
   begin
-    AddOrOffService();
-    // если указан новый адрес. перенесем туда
-    if pnlAdr.Visible then
-      NewCustomer := MoveService;
+    // удалим файл если ошибка
+    //
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := trWriteQ;
+        SQL.Text := 'delete from Customer_Files where Cf_Id = :FileID';
+        ParamByName('FileID').AsInteger := FileID;
+        Transaction.StartTransaction;
+        ExecQuery;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+    Result := False;
+    Exit;
   end;
 
-  MakeBidPayment();
-  // переоформление договора
-  Renegotiation();
-  SaveDocument(FileID);
-  SavePhone();
-  UpdateCustomerInfo(FCustomerInfo.CUSTOMER_ID);
-  SaveFlatOwner(FCustomerInfo.CUSTOMER_ID);
-  CreateTask();
-  MakeBlock();
-  UnMakeBlock();
-  MakePromo();
-  MoveDVB();
-  UpdatePayment();
-  PaymentOrder();
-  InstallmentPay();
-  ADD_RT();
+  Result := true;
+
+  // если старый режим работы, то выполним оп шагам
+  if (not AResult.Processed) then
+  begin
+    NewCustomer := -1;
+    if (pnlSrv.Visible and FNeedSrv) then
+    begin
+      AddOrOffService();
+      // если указан новый адрес. перенесем туда
+      if pnlAdr.Visible then
+        NewCustomer := MoveService;
+    end;
+
+    MakeBidPayment();
+    Renegotiation();
+    CreateTask();
+    MakeBlock();
+    UnMakeBlock();
+    MakePromo();
+    MoveDVB();
+    UpdatePayment();
+    PaymentOrder();
+    InstallmentPay();
+    ADD_RT();
+  end;
+
+  if FIsLTV then
+  begin
+    SavePhone();
+    SaveDocument(FileID);
+    UpdateCustomerInfo(FCustomerInfo.CUSTOMER_ID);
+    SaveFlatOwner(FCustomerInfo.CUSTOMER_ID);
+  end;
+
+  if (AResult.Processed) then
+  begin
+    if (AResult.RQ_ID > 0) then
+      ReguestExecute(AResult.RQ_ID, FCustomerInfo.CUSTOMER_ID, 1);
+    NewCustomer := AResult.FROM_CID;
+  end;
 
   if (FSingleSrv > -1) then
     AddSingleSrv;
 
   if FReqType > -1 then
   begin
-    if not VarIsNull(edDate.value) then
-      d := edDate.value
+    if pnlSrv.Visible and (not VarIsNull(edDateSrv.value)) then
+      d := edDateSrv.value
     else
-      d := Date();
+    begin
+      if pnlPeriod.Visible and (not VarIsNull(edDateBegin.value)) then
+        d := edDateBegin.value
+      else
+        d := Date();
+    end;
 
-    NewFileRequest(CustomerInfo.CUSTOMER_ID, FReqType, FReqTempl, d, memNotice.Lines.Text, False);
+    NewFileRequest(CustomerInfo.CUSTOMER_ID, FReqType, FReqTempl, d, mmoDesc.Lines.Text, False);
     if pnlAdr.Visible and (NewCustomer > 0) then
     begin
       if FIsLTV then
@@ -2282,7 +2603,7 @@ begin
         end;
       end;
 
-      s := memNotice.Lines.Text; // ReplaceStr(memNotice.Lines.Text, os, rs);
+      s := mmoDesc.Lines.Text; // ReplaceStr(mmoDesc.Lines.Text, os, rs);
       s := s.Replace(os, rs);
       s := s.Replace(AnsiLowerCase(os), AnsiLowerCase(rs));
       if FShowFlatOwner then
@@ -2303,20 +2624,17 @@ begin
   end;
 
   if FOpenInet then
-  begin
-    EditBillInfo(-1, CustomerInfo.CUSTOMER_ID, CustomerInfo.Account_No, memNotice.Lines.Text, False, true);
-    SetPasswordIfEmpty();
-  end;
+    OpenInetDialog;
 end;
 
 function TEditCFileForm.CheckControlText(const Contrl: TDBEditEh; const regexp: String): Boolean;
 begin
-  result := true;
+  Result := true;
   if (Contrl.Text.IsEmpty or regexp.IsEmpty) then
     Exit;
 
-  result := TRegEx.IsMatch(Contrl.Text, '^' + regexp + '$');
-  if (not result) then
+  Result := TRegEx.IsMatch(Contrl.Text, '^' + regexp + '$');
+  if (not Result) then
     CnErrors.SetError(Contrl, rsInputIncorrect + ' ' + regexp, iaMiddleLeft, bsNeverBlink)
   else
     CnErrors.Dispose(Contrl);
@@ -2326,7 +2644,7 @@ function TEditCFileForm.CheckInBlackList(const Sender: TDBEditEh; const NT: Inte
 var
   s, n: string;
 begin
-  result := true;
+  Result := true;
 
   if (Sender.Text = '') then
   begin
@@ -2342,6 +2660,9 @@ begin
   Query.SQL.Add(' and upper(replace(replace(o.O_Name, '' '', ''''), ''№'', '''')) ');
   Query.SQL.Add('     = upper(replace(replace(cast(:PN as VARCHAR(500)), '' '', ''''), ''№'', ''''))');
   Query.ParamByName('PN').AsString := n;
+
+  MakeDebugLog('CheckInBlackList', Query.SQL.Text);
+
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   if not(Query.FN('O_Name').IsNull) then
@@ -2353,10 +2674,10 @@ begin
   Query.Transaction.Commit;
   Query.Close;
 
-  result := s.IsEmpty;
+  Result := s.IsEmpty;
 
   // btnOk.Enabled := (s.IsEmpty) or dmMain.AllowedAction(rght_Customer_full);
-  if (not result) then
+  if (not Result) then
   begin
     CnErrors.Dispose(Sender);
     CnErrors.SetError(Sender, rsCustomerInBlackList + #13#10 + s, iaMiddleLeft, bsNeverBlink);
@@ -2441,6 +2762,9 @@ begin
   begin
     Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
   end;
+
+  MakeDebugLog('FindSamePassport', Query.SQL.Text);
+
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   if not(Query.FN('Surname').IsNull) then
@@ -2492,6 +2816,7 @@ begin
 
   chkFOwner.OnClick := nil;
   chkFOwner.Checked := (FOwnerOldState = 1);
+  // CheckRegistration; // отключили проверку прописку пасопрта
   chkFOwner.OnClick := chkFOwnerClick;
 
   if vSurn.IsEmpty then
@@ -2504,6 +2829,14 @@ begin
     CheckAndGenContract
   else
     SetContract;
+
+  if (FOwnerOldState <> -1) then
+  begin
+    if ((FOwnerOldState = 1) and (FFileTypeName.Contains('(АР.)'))) then
+      ShowMessage('Абонент собственник. Проверьте тип файла.');
+    if ((FOwnerOldState <> 1) and (FFileTypeName.Contains('(СОБ.)'))) then
+      ShowMessage('Абонент НЕ указан собственником. Проверьте тип файла.');
+  end;
 
   UpdateNotice;
 end;
@@ -2543,8 +2876,8 @@ begin
       s := s + '"srv":' + FloatToStr(lcbService.value) + ',';
     if not lcbOnOffSrv.IsEmpty then
       s := s + '"srvo":' + FloatToStr(lcbOnOffSrv.value) + ',';
-    if not VarIsNull(edDate.value) then
-      s := s + '"srvdt:"' + FormatDateTime('yyyy-mm-dd', edDate.value) + '",';
+    if not VarIsNull(edDateSrv.value) then
+      s := s + '"srvdt:"' + FormatDateTime('yyyy-mm-dd', edDateSrv.value) + '",';
     if not lcbServiceFrom.IsEmpty then
       s := s + '"srvFrm":' + FloatToStr(lcbServiceFrom.value) + ',';
   end;
@@ -2563,10 +2896,10 @@ begin
 
   if pnlPeriod.Visible then
   begin
-    if not VarIsNull(edPBegin.value) then
-      s := s + '"prdf:"' + FormatDateTime('yyyy-mm-dd', edPBegin.value) + '",';
-    if (edPEnd.Visible) and (not VarIsNull(edPEnd.value)) then
-      s := s + '"prdt:"' + FormatDateTime('yyyy-mm-dd', edPEnd.value) + '",';
+    if not VarIsNull(edDateBegin.value) then
+      s := s + '"prdf:"' + FormatDateTime('yyyy-mm-dd', edDateBegin.value) + '",';
+    if (edDateEnd.Visible) and (not VarIsNull(edDateEnd.value)) then
+      s := s + '"prdt:"' + FormatDateTime('yyyy-mm-dd', edDateEnd.value) + '",';
   end;
 
   if pnlTask.Visible then
@@ -2583,7 +2916,7 @@ begin
   if NOT s.IsEmpty then
     s := '{' + s.TrimRight([',']) + '}';
 
-  result := s;
+  Result := s;
 end;
 
 procedure TEditCFileForm.SaveDocument(const FileID: Integer);
@@ -2594,7 +2927,7 @@ begin
   if (dmMain.GetSettingsValue('SHOW_DOC_LIST') <> '1') then
     Exit;
 
-  if FFileTypeName.Contains('НЕУПЛАТА') then
+  if ((FFileTypeName.Contains('НЕУПЛ')) and (not FFileTypeName.Contains('ПРИОСТАН'))) then
   begin
     ToJudge();
     Exit;
@@ -2636,6 +2969,8 @@ begin
 
   if (pnlMobile.Visible) then
     Query.ParamByName('PERSONAL_N').AsString := edtMobile.Text;
+
+  MakeDebugLog('SaveDocument', Query.SQL.Text);
 
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
@@ -2694,6 +3029,7 @@ begin
   Query.ParamByName('Cc_Type').AsInteger := 1;
   Query.ParamByName('Cc_Notice').AsString := Trim(s);
   Query.ParamByName('Cc_Notify').AsInteger := 1;
+
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   Query.Transaction.Commit;
@@ -2790,6 +3126,8 @@ begin
   if not edtADRES_REGISTR.IsEmpty then
     Query.ParamByName('Adres_Registr').AsString := Trim(edtADRES_REGISTR.Text);
 
+  MakeDebugLog('UpdateCustomerInfo', Query.SQL.Text);
+
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   Query.Transaction.Commit;
@@ -2817,21 +3155,21 @@ begin
   else
     CnErrors.Dispose(edtMobile);
 
-  result := ce;
+  Result := ce;
 end;
 
 function TEditCFileForm.CheckPasport(const errors: Boolean): Boolean;
 begin
-  result := errors;
+  Result := errors;
 
   if pnlDoc.Visible then
   begin
     if not CheckControlText(edtPASSPORT, dmMain.GetSettingsValue('REG_PASSN')) then
-      result := true;
+      Result := true;
 
     if (edtSURNAME.Text = '') then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtSURNAME, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2839,7 +3177,7 @@ begin
 
     if (edtFIRSTNAME.Text = '') then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtFIRSTNAME, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2847,7 +3185,7 @@ begin
 
     if (edtMIDLENAME.Text = '') then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtMIDLENAME, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2855,7 +3193,7 @@ begin
 
     if (VarIsNull(edtDOCDATE.value)) then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtDOCDATE, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2863,7 +3201,7 @@ begin
 
     if (VarIsNull(edtBIRTHDAY.value)) then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtBIRTHDAY, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2871,7 +3209,7 @@ begin
 
     if (edtPlaceBirth.Text = '') then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtPlaceBirth, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2879,7 +3217,7 @@ begin
 
     if (edtADRES_REGISTR.Text = '') then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtADRES_REGISTR, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -2998,6 +3336,9 @@ begin
   Query.ParamByName('OWNER_NAME').AsString := s;
   Query.ParamByName('OWNER_DOC').AsString := PN;
   Query.ParamByName('MOBILE').AsString := edtMobile.Text;
+
+  MakeDebugLog('SaveFlatOwner', Query.SQL.Text);
+
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   Query.Transaction.Commit;
@@ -3006,6 +3347,7 @@ end;
 procedure TEditCFileForm.AddOrOffService;
 var
   Save_Cursor: TCursor;
+  s: String;
 begin
   if not pnlSrv.Visible then
     Exit;
@@ -3042,14 +3384,27 @@ begin
           // для ЛТВ ОТКЛ: доначисление услуги до полного тарифа
           if FIsLTV then
           begin
-            if (FFileTypeName.Contains('ОТКЛ') and FFileTypeName.Contains('СТВ.')) then
+            if FFileTypeName.Contains('ОТКЛ') then
             begin
-              SQL.Add('  CalcDate = dateadd(DAY, -1, Set_Date);');
-              SQL.Add('  select M_Tarif from Get_Tarif_Sum_Customer_Srv(:Customer_Id, :Service_Id, :CalcDate) into :tar;');
-              SQL.Add('  tar = coalesce(tar, 0);');
-              SQL.Add('  cd = extract(day from dateadd(DAY, -1, Set_Date));');
-              SQL.Add('  md = extract(day from Month_Last_Day(CalcDate));');
-              SQL.Add('  bal = round(((md-cd)*tar/md) ,2);');
+
+              if (FFileTypeName.Contains('ДОСРОЧНО')) then
+              begin
+                // если отключаем досрочно, то откатим отключение и потом отключим нужной датой
+                SQL.Add('  select Subscr_Serv_Id from Subscr_Serv where Customer_Id = :Customer_Id and State_Sgn = 0 and Serv_Id = :Service_Id');
+                SQL.Add('  into :md;');
+                SQL.Add('  if (not md is null) then');
+                SQL.Add('    select Result from Cancel_Last_Subscribe_Action(:md) into :md;');
+              end;
+
+              if FFileTypeName.Contains('СТВ.') then
+              begin
+                SQL.Add('  CalcDate = dateadd(DAY, -1, Set_Date);');
+                SQL.Add('  select M_Tarif from Get_Tarif_Sum_Customer_Srv(:Customer_Id, :Service_Id, :CalcDate) into :tar;');
+                SQL.Add('  tar = coalesce(tar, 0);');
+                SQL.Add('  cd = extract(day from dateadd(DAY, -1, Set_Date));');
+                SQL.Add('  md = extract(day from Month_Last_Day(CalcDate));');
+                SQL.Add('  bal = round(((md-cd)*tar/md) ,2);');
+              end;
             end;
           end;
 
@@ -3068,21 +3423,21 @@ begin
             begin
               // 942519  'Доначисление СТВ'
               if FFileTypeName.Contains('СТВ.') then
-                SQL.Add('  if (bal>0) then execute procedure Add_Single_Service(:Customer_Id, 942519, :bal, current_date, :notice);');
-              // 942520  'Доначисление СПД'
-              // if FFileTypeName.Contains('СПД.') then
-              // SQL.Add('  if (bal>0) then execute procedure Add_Single_Service(:Customer_Id, 942520, :bal, :Set_Date, :notice);');
+              begin
+                SQL.Add('  if (bal>0) then ');
+                SQL.Add('    execute procedure Add_Single_Service(:Customer_Id, 942519, :bal, current_date, :notice);');
+              end;
 
               // спишем долги АБОНЕНТА если нет услуг
               // 39964 услуга "остаток"
               SQL.Add('  bal = null;');
               SQL.Add('  select c.Debt_Sum from customer c where c.Customer_Id = :Customer_Id');
-              SQL.Add('   and (not exists(select ss.Subscr_Serv_Id from Subscr_Serv ss');
-              SQL.Add('      where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id <> 819519)) into :bal;');
-              SQL.Add('  if (coalesce(bal,0) < 0) then execute procedure Add_Single_Service(:Customer_Id, 39964, (-1*:bal), :Set_Date, :notice);');
-              // если долг, то подготовка документов в суд
-              // 473760 услуга "документов в суд"
-              SQL.Add('  else if (coalesce(bal,0) > 0) then execute procedure IBE$toJUDGE(:Customer_Id, :notice, 1);');
+              SQL.Add('    and (not exists(select ss.Subscr_Serv_Id from Subscr_Serv ss');
+              SQL.Add('      where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id <> 819519))');
+              SQL.Add('  into :bal;');
+              SQL.Add('  if (coalesce(bal,0) < 0) then ');
+              SQL.Add('    execute procedure Add_Single_Service(:Customer_Id, 39964, (-1*:bal), :Set_Date, :notice);');
+              SQL.Add('  execute procedure IBE$toJUDGE(:Customer_Id, :notice, 1);');
             end
             else if FFileTypeName.Contains('РАССР') then // расскрочка
             begin
@@ -3120,9 +3475,31 @@ begin
               SQL.Add('  execute procedure Onoff_Service_By_Id(:Customer_Id, :cd, :Srv_On_Off, :Set_Date, 1, :NOTICE, 1);');
             end;
           end;
+
+          if FIsLTV and FFileTypeName.Contains('DVB') and FFileTypeName.Contains('ПОДКЛ') then
+          begin
+            s := '';
+            if IsDecoderText(edtText) then
+              s := edtText.Text
+            else if IsDecoderText(edtText1) then
+              s := edtText1.Text
+            else if IsDecoderText(edtText2) then
+              s := edtText2.Text
+            else if IsDecoderText(edtText3) then
+              s := edtText3.Text;
+
+            if not s.IsEmpty then
+            begin
+              // КАМ
+              SQL.Add('  delete from Decoder_Packets p where p.Service_Id = :SERVICE_ID and p.Decoder_N in (select d.Decoder_N from Customer_Decoders d where d.Customer_Id = :Customer_Id);');
+              SQL.Add('  insert into Decoder_Packets (Decoder_N, Service_Id, Notice) values (''' + s +
+                ''', :Service_Id, :NOTICE);');
+            end
+          end;
+
           SQL.Add('end');
 
-          //ShowMessage(SQL.Text); // debug
+          // ShowMessage(SQL.Text); // debug
 
           ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
           // если не указана услуга переключения
@@ -3140,7 +3517,7 @@ begin
             ParamByName('Set_On').AsInteger := 1;
           end;
 
-          ParamByName('Set_Date').AsDate := edDate.value;
+          ParamByName('Set_Date').AsDate := edDateSrv.value;
           ParamByName('Srv_On_Off').AsInteger := lcbOnOffSrv.value;
           if (FIsLTV and (FPeriodServiceFrm = UndefinedSrv)) then
           begin
@@ -3156,7 +3533,7 @@ begin
             else if (FFileTypeName.Contains('СТВ.') and FFileTypeName.Contains('ПЕРЕНОС')) then
               ParamByName('Srv_On_Off').AsInteger := 996415;
           end;
-          ParamByName('notice').AsString := Trim(memNotice.Lines.Text);
+          ParamByName('notice').AsString := Trim(mmoDesc.Lines.Text);
           if (pnlContract.Visible) and (chkContract.Checked) then
           begin
             ParamByName('CONTR_N').AsString := edtContract.value;
@@ -3168,6 +3545,9 @@ begin
             if FShowFlatOwner then
               ParamByName('CONTR_N').AsString := edtContract.Text;
           end;
+
+          MakeDebugLog('AddOrOffService', SQL.Text);
+
           Transaction.StartTransaction;
           ExecQuery;
           Transaction.Commit;
@@ -3187,7 +3567,7 @@ var
   oldOwner: Integer;
   oldC: TCustomerInfo;
 begin
-  result := -1;
+  Result := -1;
 
   if not pnlSrv.Visible then
     Exit;
@@ -3198,8 +3578,8 @@ begin
     if FNeedSrv then
     begin
       oldC := GetCustomerByAddress(oldOwner);
-      result := oldC.CUSTOMER_ID;
-      if result > 0 then
+      Result := oldC.CUSTOMER_ID;
+      if Result > 0 then
       begin
         with TpFIBQuery.Create(Self) do
         begin
@@ -3207,8 +3587,8 @@ begin
             DataBase := dmMain.dbTV;
             Transaction := trWriteQ;
             SQL.Text := 'execute block (';
-            SQL.Add('  CUSTOMER_ID    D_INTEGER = :CUSTOMER_ID,');
-            SQL.Add('  OLD_CUSTOMER_ID    D_INTEGER = :OLD_CUSTOMER_ID,');
+            SQL.Add('  CUSTOMER_ID     D_INTEGER = :CUSTOMER_ID,');
+            SQL.Add('  OLD_CUSTOMER_ID D_INTEGER = :OLD_CUSTOMER_ID,');
             SQL.Add('  SERVICE_ID  UID = :SERVICE_ID,');
             SQL.Add('  SET_ON      D_INTEGER = :Set_On,');
             SQL.Add('  SET_DATE    D_DATE = :Set_Date,');
@@ -3220,26 +3600,45 @@ begin
             SQL.Add('  FOwnerS     varchar(10) = :FOwnerS,');
             SQL.Add('  FRentS      varchar(10) = :FRentS,');
             SQL.Add('  CF_ID       D_INTEGER = :CF_ID,');
-            SQL.Add('  New_Type D_INTEGER = :New_Type)');
+            SQL.Add('  New_Type    D_INTEGER = :New_Type)');
             SQL.Add('as');
-            SQL.Add('declare variable old_own integer;');
-            SQL.Add('declare variable NCF integer;');
-            SQL.Add('declare variable bal D_N15_4;');
-            SQL.Add('declare variable tar D_N15_4;');
-            SQL.Add('declare variable srA integer;');
-            SQL.Add('declare variable md D_INTEGER;');
-            SQL.Add('declare variable cd D_INTEGER;');
+            SQL.Add('declare variable old_own D_integer;');
+            SQL.Add('declare variable NCF  D_integer;');
+            SQL.Add('declare variable bal  D_N15_4;');
+            SQL.Add('declare variable tar  D_N15_4;');
+            SQL.Add('declare variable srA  D_integer;');
+            SQL.Add('declare variable md   D_INTEGER;');
+            SQL.Add('declare variable cd   D_INTEGER;');
             SQL.Add('begin');
+            SQL.Add('  if (OLD_CUSTOMER_ID is null) then exit;');
             SQL.Add('  bal = 0;');
             SQL.Add('  FRentS = coalesce(FRentS, ''''); FOwnerS = coalesce(FOwnerS, '''');');
             SQL.Add('  if (not CONTR_N is null) then begin');
             SQL.Add('    CONTR_DATE = coalesce(CONTR_DATE, SET_DATE);');
             SQL.Add('  end');
-            SQL.Add('  if (not OLD_CUSTOMER_ID is null) then begin');
 
-            // для ЛТВ: доначисление услуги до полного тарифа
             if (FIsLTV) then
             begin
+              if FFileTypeName.Contains('ПЕРЕНОС') and FFileTypeName.Contains('СПД.') then
+              begin
+                // еслі есть промо услуги, то отключим их
+                SQL.Add('  for select ss.Subscr_Serv_Id, ss.State_Sgn');
+                SQL.Add('    from subscr_serv ss inner join services s on (s.Service_Id = ss.Serv_Id)');
+                SQL.Add('    where ss.Customer_Id = :OLD_CUSTOMER_ID and s.Business_Type = 1');
+                SQL.Add('        and ss.State_Date >= :SET_DATE and upper(s.Name) like ''%PROMO%''');
+                SQL.Add('    into :old_own, :md');
+                SQL.Add('  do begin');
+                SQL.Add('    select Result from Cancel_Last_Subscribe_Action(:old_own) into :srA;');
+                SQL.Add('    if ((srA = 1) and (md = 0)) then');
+                SQL.Add('      execute procedure Onoff_Service(:OLD_CUSTOMER_ID, :old_own, :Srv_On_Off, :SET_DATE, 1, :NOTICE, 1, 1)');
+                SQL.Add('      returning_values :srA;');
+                SQL.Add('    old_own = null; md = null; srA = null;');
+                SQL.Add('  end');
+                // перенос закладки Интернет к новому
+                SQL.Add('  delete from billing where customer_id = :CUSTOMER_ID;');
+                SQL.Add('  update billing set customer_id = :CUSTOMER_ID where customer_id = :OLD_CUSTOMER_ID;');
+              end;
+              // для ЛТВ: доначисление услуги до полного тарифа
               SQL.Add('  select M_Tarif from Get_Tarif_Sum_Customer_Srv(:OLD_Customer_Id, :Service_Id, :Set_Date) into :tar;');
               SQL.Add('  tar = coalesce(tar, 0);');
               SQL.Add('  cd = extract(day from Set_Date)-1;');
@@ -3249,30 +3648,30 @@ begin
 
             if FShowFlatOwner then
             begin
-              SQL.Add('    select iif(exists(select f.Owner_Doc from Houseflats f where f.House_Id = c.House_Id');
-              SQL.Add('           and f.Flat_No = c.Flat_No and f.Owner_Doc = c.Passport_Number), 1, 0) OWNER');
+              SQL.Add('  select iif(exists(select f.Owner_Doc from Houseflats f where f.House_Id = c.House_Id');
+              SQL.Add('         and f.Flat_No = c.Flat_No and f.Owner_Doc = c.Passport_Number), 1, 0) OWNER');
               SQL.Add('    from customer c where c.Customer_Id = :OLD_CUSTOMER_ID');
-              SQL.Add('    into :old_own;');
-              SQL.Add('    old_own = coalesce(old_own, 0);');
-              SQL.Add('    NEW_OWN = coalesce(NEW_OWN, 0);');
-              SQL.Add('    if (old_own <> NEW_OWN) then begin');
-              SQL.Add('      if (OLD_OWN = 1) then begin');
-              SQL.Add('        CONTR_N = replace(CONTR_N, FRentS, FOwnerS);');
-              SQL.Add('        notice = replace(notice, FRentS, FOwnerS);');
-              SQL.Add('      end');
-              SQL.Add('      else begin');
-              SQL.Add('        CONTR_N = replace(CONTR_N, FOwnerS, FRentS);');
-              SQL.Add('        notice = replace(notice, FOwnerS, FRentS);');
-              SQL.Add('      end');
+              SQL.Add('  into :old_own;');
+              SQL.Add('  old_own = coalesce(old_own, 0);');
+              SQL.Add('  NEW_OWN = coalesce(NEW_OWN, 0);');
+              SQL.Add('  if (old_own <> NEW_OWN) then begin');
+              SQL.Add('    if (OLD_OWN = 1) then begin');
+              SQL.Add('      CONTR_N = replace(CONTR_N, FRentS, FOwnerS);');
+              SQL.Add('      notice = replace(notice, FRentS, FOwnerS);');
               SQL.Add('    end');
+              SQL.Add('    else begin');
+              SQL.Add('      CONTR_N = replace(CONTR_N, FOwnerS, FRentS);');
+              SQL.Add('      notice = replace(notice, FOwnerS, FRentS);');
+              SQL.Add('    end');
+              SQL.Add('  end');
             end;
 
-            SQL.Add('    execute procedure Api_Set_Customer_Service(:OLD_Customer_Id, :Service_Id, :Set_On, :Set_Date, :Srv_On_Off, :CONTR_N, :CONTR_DATE);');
-            SQL.Add('    NOTICE = coalesce(NOTICE, '''');');
-            SQL.Add('    if (NOTICE <> '''') then begin');
-            SQL.Add('      update Subscr_Serv set Notice = :notice where Serv_Id = :Service_Id and Customer_Id = :OLD_Customer_Id;');
-            SQL.Add('      update Single_Serv set Notice = :notice where Service_Id = :Srv_On_Off and Customer_Id = :OLD_Customer_Id and Serv_Date = :Set_Date;');
-            SQL.Add('    end');
+            SQL.Add('  execute procedure Api_Set_Customer_Service(:OLD_Customer_Id, :Service_Id, :Set_On, :Set_Date, :Srv_On_Off, :CONTR_N, :CONTR_DATE);');
+            SQL.Add('  NOTICE = coalesce(NOTICE, '''');');
+            SQL.Add('  if (NOTICE <> '''') then begin');
+            SQL.Add('    update Subscr_Serv set Notice = :notice where Serv_Id = :Service_Id and Customer_Id = :OLD_Customer_Id;');
+            SQL.Add('    update Single_Serv set Notice = :notice where Service_Id = :Srv_On_Off and Customer_Id = :OLD_Customer_Id and Serv_Date = :Set_Date;');
+            SQL.Add('  end');
 
             // для ЛТВ
             if FIsLTV then
@@ -3299,8 +3698,8 @@ begin
               SQL.Add('       cf.Notice = replace(replace(cf.Notice, ''Подкл'', ''Откл''), ''подкл'', ''откл'')  ');
               SQL.Add('    where cf.Cf_Id = :NCF; ');
               SQL.Add('  end');
-
             end;
+
             if FShowFlatOwner then
             begin
               SQL.Add('    if (old_own <> NEW_OWN) then begin');
@@ -3311,8 +3710,6 @@ begin
               SQL.Add('    end');
             end;
 
-            SQL.Add('  end');
-
             if FIsLTV then // and FFileTypeName.Contains('СТВ') then // если перенос СТВ, то
             begin
               // спишем остаток со строго лицевого
@@ -3321,15 +3718,14 @@ begin
               SQL.Add('    and (not exists(select ss.Subscr_Serv_Id from Subscr_Serv ss');
               SQL.Add('      where ss.Customer_Id = c.Customer_Id and ss.State_Sgn = 1 and ss.Serv_Id <> 819519)) into :bal;');
               SQL.Add('  if (coalesce(bal,0) < 0) then execute procedure Add_Single_Service(:OLD_customer_id, 39964, (-1*:bal), :Set_Date, :notice);');
-              SQL.Add('  -- else if (coalesce(bal,0) > 0) then execute procedure IBE$toJUDGE(:OLD_customer_id, :notice, 1);');
             end;
 
             SQL.Add('end');
 
-            // ShowMessage(SQL.Text);
+            // SQL.SaveToFile('b:\move.sql');
 
             ParamByName('CUSTOMER_ID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-            ParamByName('OLD_CUSTOMER_ID').AsInteger := result;
+            ParamByName('OLD_CUSTOMER_ID').AsInteger := Result;
             ParamByName('NEW_OWN').AsInteger := 0;
             if chkFOwner.Checked then
               ParamByName('NEW_OWN').AsInteger := 1;
@@ -3339,7 +3735,7 @@ begin
             ParamByName('Set_On').AsInteger := 0;
             if FIsOff = 1 then
               ParamByName('Set_On').AsInteger := 1;
-            ParamByName('Set_Date').AsDate := edDate.value;
+            ParamByName('Set_Date').AsDate := edDateSrv.value;
             ParamByName('New_Type').Clear;
             ParamByName('Srv_On_Off').AsInteger := lcbOnOffSrv.value;
             if FIsLTV and FFileTypeName.Contains('ПЕРЕНОС') then
@@ -3355,7 +3751,7 @@ begin
                 ParamByName('New_Type').AsInteger := 48501; // СТВ. Перенос. (откл.)
               end;
             end;
-            ParamByName('notice').AsString := Trim(memNotice.Lines.Text);
+            ParamByName('notice').AsString := Trim(mmoDesc.Lines.Text);
             ParamByName('CF_ID').AsInteger := dsCustFile.FieldByName('CF_ID').AsInteger;
             if FShowFlatOwner then
               ParamByName('CONTR_N').AsString := edtContract.Text;
@@ -3365,6 +3761,9 @@ begin
               if not VarIsNull(edtContractDate.value) then
                 ParamByName('CONTR_DATE').AsDate := edtContractDate.value;
             end;
+
+            MakeDebugLog('MoveService', SQL.Text);
+
             Transaction.StartTransaction;
             ExecQuery;
             Transaction.Commit;
@@ -3385,13 +3784,13 @@ var
   qnt: Double;
   // d: TDate;
 begin
-  qnt := 1;
+  qnt := -1;
   if pnlBidPay.Visible and ednCheckSum.Visible then
   begin
     try
       qnt := ednCheckSum.value;
     except
-      qnt := 1;
+      qnt := -1;
     end;
   end;
 
@@ -3403,12 +3802,31 @@ begin
       try
         DataBase := dmMain.dbTV;
         Transaction := trWriteQ;
-        SQL.Text := 'execute procedure Add_Single_Service' +
-          '(:CUSTOMER_ID, :SERVICE_ID, :QNT, CURRENT_DATE, :NOTICE, null);';
+        SQL.Clear;
+        SQL.Add('execute procedure Add_Single_Service(:CUSTOMER_ID, :SERVICE_ID, :QNT, :SrvDate, :NOTICE, null);');
+
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
         ParamByName('Service_Id').AsInteger := FSingleSrv;
-        ParamByName('QNT').AsFloat := qnt;
-        ParamByName('notice').AsString := Trim(memNotice.Lines.Text);
+
+        if qnt <> -1 then
+          ParamByName('QNT').AsFloat := qnt
+        else
+          ParamByName('QNT').Clear;
+
+        if pnlSrv.Visible and (not VarIsNull(edDateSrv.value)) then
+          ParamByName('SrvDate').AsDate := edDateSrv.value
+        else
+        begin
+          if pnlPeriod.Visible and (not VarIsNull(edDateBegin.value)) then
+            ParamByName('SrvDate').AsDate := edDateBegin.value
+          else
+            ParamByName('SrvDate').AsDate := Date();
+        end;
+
+        ParamByName('notice').AsString := Trim(mmoDesc.Lines.Text);
+
+        MakeDebugLog('AddSingleSrv', SQL.Text);
+
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
@@ -3425,14 +3843,24 @@ procedure TEditCFileForm.MakeBidPayment;
 var
   Save_Cursor: TCursor;
   SRV_SUM: Double;
+  PAY_SUM: Double;
+  PAYED: Double;
+  BID_SUM: Double;
+  FINE: Double;
+  sum: Double;
 begin
   if (not pnlBidPay.Visible) or (not ednBid.Visible) or ednBid.Text.IsEmpty then
     Exit;
 
+  // ПКО
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
     SRV_SUM := 0;
+    PAY_SUM := 0;
+    BID_SUM := 0;
+    PAYED := 0;
+    FINE := 0;
     with TpFIBQuery.Create(Self) do
     begin
       try
@@ -3441,6 +3869,7 @@ begin
         SQL.Text := 'execute block (';
         SQL.Add('    RQ_ID    integer = :RQ_ID ,');
         SQL.Add('    CUSTOMER_ID    integer = :CUSTOMER_ID,');
+        SQL.Add('    PAY_SUM  numeric(18,2) = :PAY_SUM,');
         SQL.Add('    SRV_SUM  numeric(18,2) = :SRV_SUM,');
         SQL.Add('    BID_SUM  numeric(18,2) = :BID_SUM,');
         SQL.Add('    FINE_SUM numeric(18,2) = :FINE_SUM,');
@@ -3456,7 +3885,7 @@ begin
           SQL.Add('  Bsrv_ID = 307044;')
         else
           SQL.Add('  Bsrv_ID = null;');
-        SQL.Add('  execute procedure Add_Payment(:Customer_Id, :BID_SUM, localtimestamp, null, null, :Bsrv_ID, :Notice)');
+        SQL.Add('  execute procedure Add_Payment(:Customer_Id, :PAY_SUM, localtimestamp, null, null, :Bsrv_ID, :Notice)');
         SQL.Add('        returning_values :Payment_Id;');
         SQL.Add('  update payment set Rq_Id = :RQ_ID where Payment_Id = :Payment_Id;');
         SQL.Add('  update Request r set r.Receipt = :Payment_Id where r.Rq_Id = :Rq_Id;');
@@ -3474,23 +3903,66 @@ begin
         // s := SQL.Text; // отладка
         // ParamByName('notice').AsString := s;
 
+        // GetBidRestSum(BID_SUM, PAY_SUM, SUM);
+        PAY_SUM := 0; // оплата
+        PAYED := 0; // оплата до
+        SRV_SUM := 0; // оплата услуг
+        FINE := 0; // пеня
+        BID_SUM := 0; // Сумма в заявке
+        // ednBidSum.Tag Сумма оплаты услуг
+        if not ednBidSum.Text.IsEmpty then
+        begin
+          BID_SUM := ednBidSum.value;
+          SRV_SUM := ednBidSum.Tag / 100;
+        end;
+        // ednCheckSum.Tag Сумма частиной опалты
+        if not ednCheckSum.Text.IsEmpty then
+        begin
+          PAY_SUM := ednCheckSum.value;
+          PAYED := ednCheckSum.Tag / 100;
+        end;
+        if not ednFineSum.Text.IsEmpty then
+          FINE := ednFineSum.value;
+
+        sum := BID_SUM + SRV_SUM - PAY_SUM - PAYED - FINE;
+
+        if sum < 0 then
+        begin
+          sum := -1 * sum + SRV_SUM;
+          // PAY_SUM := BID_SUM - SRV_SUM - PAYED - FINE;
+        end
+        else
+        begin
+          if sum = 0 then
+          begin
+            sum := SRV_SUM;
+            PAY_SUM := PAY_SUM - SRV_SUM;
+          end
+          else
+          begin
+            if BID_SUM < PAY_SUM then
+            begin
+              sum := PAY_SUM - BID_SUM;
+              PAY_SUM := BID_SUM;
+            end
+            else
+            begin
+              sum := 0;
+            end;
+          end;
+        end;
+
+        sum := Round(sum * 100) / 100;
+
+        ParamByName('PAY_SUM').AsExtended := PAY_SUM;
+        ParamByName('BID_SUM').AsExtended := BID_SUM;
+        ParamByName('SRV_SUM').AsExtended := sum;
+        ParamByName('FINE_SUM').AsExtended := FINE;
         ParamByName('RQ_ID').AsInteger := ednBid.value;
         ParamByName('CUSTOMER_ID').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('notice').AsString := memNotice.Lines.Text;
-        if (not ednCheckSum.Text.IsEmpty) and (VarIsNumeric(ednCheckSum.value)) then
-        begin
-          SRV_SUM := ednCheckSum.value;
-        end;
-        if (not ednBidSum.Text.IsEmpty) and (VarIsNumeric(ednBidSum.value)) then
-        begin
-          ParamByName('BID_SUM').AsExtended := ednBidSum.value;
-          SRV_SUM := Round((SRV_SUM - ednBidSum.value) * 100) / 100;
-        end;
-        if (not ednFineSum.Text.IsEmpty) and (VarIsNumeric(ednFineSum.value)) then
-        begin
-          ParamByName('FINE_SUM').AsExtended := ednFineSum.value;
-        end;
-        ParamByName('SRV_SUM').AsExtended := SRV_SUM;
+        ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
+
+        MakeDebugLog('MakeBidPayment', SQL.Text);
 
         Transaction.StartTransaction;
         ExecQuery;
@@ -3506,7 +3978,7 @@ end;
 
 function TEditCFileForm.GetCustomerByAddress(var oldOwner: Integer): TCustomerInfo;
 begin
-  result.CUSTOMER_ID := -1;
+  Result.CUSTOMER_ID := -1;
   oldOwner := -1;
   if lcbHOUSE.Text.IsEmpty or lcbFLAT.Text.IsEmpty then
     Exit;
@@ -3527,14 +3999,17 @@ begin
       ParamByName('FLAT').AsString := lcbFLAT.Text;
       if FShowFlatOwner then
         ParamByName('PN').AsString := edtPASSPORT.Text;
+
+      MakeDebugLog('GetCustomerByAddress', SQL.Text);
+
       Transaction.StartTransaction;
       ExecQuery;
       if not FN('CUSTOMER_ID').IsNull then
-        result.CUSTOMER_ID := FN('CUSTOMER_ID').AsInteger;
+        Result.CUSTOMER_ID := FN('CUSTOMER_ID').AsInteger;
       if not FN('Account_NO').IsNull then
-        result.Account_No := FN('Account_NO').AsString;
+        Result.Account_No := FN('Account_NO').AsString;
       if not FN('cust_code').IsNull then
-        result.cust_code := FN('cust_code').AsString;
+        Result.cust_code := FN('cust_code').AsString;
       if FShowFlatOwner then
         if (not FN('OWNER').IsNull) then
           oldOwner := FN('OWNER').AsInteger;
@@ -3556,6 +4031,9 @@ begin
       SQL.Add('update customer set Secret = :pswd where Customer_Id = :CID and coalesce(SECRET, '''') = ''''');
       ParamByName('CID').AsInteger := CustomerInfo.CUSTOMER_ID;
       ParamByName('pswd').AsString := EncodeBase64(CustomerInfo.Account_No);
+
+      MakeDebugLog('SetPasswordIfEmpty', SQL.Text);
+
       Transaction.StartTransaction;
       ExecQuery;
       Transaction.Commit;
@@ -3586,7 +4064,7 @@ begin
         SQL.Text := 'EXECUTE PROCEDURE IBE$RENEGOTIATION(:CUSTOMER_ID, :CONTR_N, :CONTR_DATE, :forSRV, :NOTICE)';
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
         ParamByName('forSRV').AsString := Trim(edtText.Text);
-        ParamByName('notice').AsString := Trim(memNotice.Lines.Text);
+        ParamByName('notice').AsString := Trim(mmoDesc.Lines.Text);
         if (pnlContract.Visible) and (chkContract.Checked) then
         begin
           ParamByName('CONTR_N').AsString := edtContract.Text;
@@ -3598,6 +4076,9 @@ begin
           if FShowFlatOwner then
             ParamByName('CONTR_N').AsString := edtContract.Text;
         end;
+
+        MakeDebugLog('Renegotiation', SQL.Text);
+
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
@@ -3610,15 +4091,30 @@ begin
   end;
 end;
 
-procedure TEditCFileForm.CheckPromo;
+procedure TEditCFileForm.CheckPromo(const CID: Integer = -1);
 var
   alert: Boolean;
 begin
   QueryClear;
-  Query.SQL.Add('select count(*) CNT from subscr_serv s where s.Customer_Id = :CID ');
-  Query.SQL.Add('and s.State_Sgn = 1 and s.State_Date > dateadd(year, -1, current_date) ');
-  Query.SQL.Add('and s.State_Srv in (57386, 791412, 791414)');
-  Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+  // еслі передан параметр, то проверим есть ли у этого абонента промо услуги
+  if CID = -1 then
+  begin
+    Query.SQL.Add('select count(*) CNT from subscr_serv s where s.Customer_Id = :CID ');
+    Query.SQL.Add('and s.State_Sgn = 1 and s.State_Date > dateadd(year, -1, current_date) ');
+    Query.SQL.Add('and s.State_Srv in (57386, 791412, 791414)');
+    Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID
+  end
+  else
+  begin
+    Query.SQL.Add('select count(*) CNT ');
+    Query.SQL.Add('    from subscr_serv ss inner join services s on (s.Service_Id = ss.Serv_Id)');
+    Query.SQL.Add('    where ss.Customer_Id = :CID and s.Business_Type = 1');
+    Query.SQL.Add('          and ss.State_Date >= CURRENT_DATE and upper(s.Name) like ''%PROMO%''');;
+    Query.ParamByName('CID').AsInteger := CID;
+  end;
+
+  MakeDebugLog('CheckPromo', Query.SQL.Text);
+
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   alert := Query.FN('CNT').AsInteger > 0;
@@ -3638,7 +4134,9 @@ begin
   Query.SQL.Text := 'execute procedure IBE$toJUDGE(:CID, :notice)';
 
   Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-  Query.ParamByName('notice').AsString := Trim(memNotice.Lines.Text);
+  Query.ParamByName('notice').AsString := Trim(mmoDesc.Lines.Text);
+
+  MakeDebugLog('ToJudge', Query.SQL.Text);
 
   Query.Transaction := trWrite;
   Query.Transaction.StartTransaction;
@@ -3653,7 +4151,7 @@ var
   PN: string;
   addCharge: Boolean;
 begin
-  result := true;
+  Result := true;
   if not pnlSrv.Visible then
     Exit;
 
@@ -3673,13 +4171,16 @@ begin
         Transaction := trWriteQ;
         SQL.Text := 'execute procedure IBE$EnoughMoney(:CUSTOMER_ID, :SET_DATE, :Service_Id, :SRV_OFF);';
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        if not VarIsNull(edDate.value) then
-          ParamByName('Set_Date').AsDate := edDate.value;
+        if not VarIsNull(edDateSrv.value) then
+          ParamByName('Set_Date').AsDate := edDateSrv.value;
         ParamByName('Service_Id').AsInteger := lcbService.value;
         ParamByName('SRV_OFF').AsInteger := lcbOnOffSrv.value;
+
+        MakeDebugLog('CheckEnoughMoney', SQL.Text);
+
         Transaction.StartTransaction;
         ExecQuery;
-        result := (FN('enough').AsInteger = 1);
+        Result := (FN('enough').AsInteger = 1);
         Transaction.Rollback;
       finally
         Free;
@@ -3690,13 +4191,13 @@ begin
     Screen.Cursor := Save_Cursor;
   end;
 
-  if not result then
+  if not Result then
     ShowMessage(rsEnoughMoneyDateIncorrect);
 
   // за неуплату можно отключать в любой день
   PN := lcbOnOffSrv.Text.ToUpper;
   if PN.Contains('НЕУП') then
-    result := true;
+    Result := true;
 end;
 
 procedure TEditCFileForm.CreateTask;
@@ -3731,6 +4232,8 @@ begin
   Query.ParamByName('TITLE').AsString := edtTskName.Text;
   Query.ParamByName('TDATE').AsDate := edTskDate.value;
 
+  MakeDebugLog('CreateTask', Query.SQL.Text);
+
   Query.Transaction := trWrite;
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
@@ -3742,7 +4245,8 @@ procedure TEditCFileForm.SetInfoFromRequest;
 var
   r: Integer;
   HasError: Boolean;
-  rc, rs: Double;
+  COST, SRV_COST, PAYED: Double;
+  CID: Integer;
 begin
   CnErrors.Dispose(ednBid);
   HasError := False;
@@ -3750,50 +4254,44 @@ begin
   if (ednBid.Text.IsEmpty) or (not TryStrToInt(ednBid.Text, r)) then
     Exit;
 
-  rc := 0;
-  rs := 0;
+  COST := 0;
+  SRV_COST := 0;
+  PAYED := 0;
+  CID := -1;
 
   QueryClear;
   Query.SQL.Add('select coalesce(r.Rq_Customer, -1) customer_id ');
-  Query.SQL.Add(' , Get_Request_Money(r.Rq_Id) COST ');
-  Query.SQL.Add
-    (' , (select sum(w_quant * w_cost) SU_COST from request_works where rq_id = r.Rq_Id and w_id = 983987) ');
+  Query.SQL.Add(' , coalesce(Get_Request_Money(r.Rq_Id), 0) COST ');
+  Query.SQL.Add(' , coalesce((select sum(w_quant) ');
+  Query.SQL.Add('      from request_works where rq_id = r.Rq_Id ');
+  Query.SQL.Add('           and w_id in (984742, 983987)), 0) SRV_COST '); // Две услуги для зачисления на счет
+  Query.SQL.Add(' , coalesce((select sum(p.Pay_Sum) as PAY ');
+  Query.SQL.Add('     from payment p where p.customer_id = r.rq_customer and p.Rq_Id = r.rq_id), 0) PAYED');
   Query.SQL.Add('from request r where r.Rq_Id = :rq_id');
   Query.ParamByName('rq_id').AsInteger := r;
   Query.Transaction := trReadQ;
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
-  if (not Query.FieldByName('COST').IsNull) then
-    rc := Query.FieldByName('COST').AsDouble;
-  if (not Query.FieldByName('SU_COST').IsNull) then
-    rs := Query.FieldByName('SU_COST').AsDouble;
-  if (Query.FieldByName('customer_id').AsInteger <> FCustomerInfo.CUSTOMER_ID) then
+  if Query.RecordCount > 0 then
   begin
-    HasError := true;
-    CnErrors.SetError(ednBid, 'Эта заявка для другого абонента', iaMiddleLeft, bsNeverBlink);
+    COST := Query.FieldByName('COST').AsDouble;
+    SRV_COST := Query.FieldByName('SRV_COST').AsDouble;
+    PAYED := Query.FieldByName('PAYED').AsDouble;
+    if Query.FieldByName('customer_id').AsInteger > 0 then
+    begin
+      CID := Query.FieldByName('customer_id').AsInteger;
+      if (not FFileTypeName.Contains('ШТРАФ')) and
+        (Query.FieldByName('customer_id').AsInteger <> FCustomerInfo.CUSTOMER_ID) then
+      begin
+        HasError := true;
+        CID := -1;
+        CnErrors.SetError(ednBid, 'Эта заявка для другого абонента', iaMiddleLeft, bsNeverBlink);
+      end;
+    end;
   end;
   Query.Transaction.Commit;
   Query.Close;
-  if HasError then
-  begin
-    ednBid.SetFocus;
-    Exit;
-  end;
 
-  QueryClear;
-  Query.SQL.Add('select sum(p.Pay_Sum) as PAY from payment p where p.customer_id = :cid and p.Rq_Id =  :rq_id');
-  Query.ParamByName('cid').AsInteger := FCustomerInfo.CUSTOMER_ID;
-  Query.ParamByName('rq_id').AsInteger := r;
-  Query.Transaction := trReadQ;
-  Query.Transaction.StartTransaction;
-  Query.ExecQuery;
-  if (Query.FieldByName('PAY').AsFloat > 0) then
-  begin
-    HasError := true;
-    CnErrors.SetError(ednBid, 'Эта заявка уже оплачена', iaMiddleLeft, bsNeverBlink);
-  end;
-  Query.Transaction.Commit;
-  Query.Close;
   if HasError then
   begin
     ednBid.SetFocus;
@@ -3801,7 +4299,33 @@ begin
   end;
 
   if (ednBidSum.Text.IsEmpty) then
-    ednBidSum.value := rc - rs;
+    ednBidSum.value := COST;
+
+  COST := COST + SRV_COST - PAYED;
+
+  if COST <= 0 then
+  begin
+    HasError := true;
+    CnErrors.SetError(ednBid, 'Эта заявка уже оплачена', iaMiddleLeft, bsNeverBlink);
+  end
+  else if PAYED > 0 then
+  begin
+    if ednBid.Tag = 0 then
+      ShowMessage('Заявка частично оплачена. Остаток по оплате: ' + COST.ToString);
+    ednBid.Tag := 1;
+  end;
+
+  ednBidSum.Tag := Trunc(SRV_COST * 100); // Сумма оплаты услуг
+  ednCheckSum.Tag := Trunc(PAYED * 100); // Сумма частиной опалты
+
+  if HasError then
+  begin
+    ednBid.SetFocus;
+    Exit;
+  end;
+
+  if (FIsLTV and (FFileTypeName.Contains('ШТРАФ'))) then
+    ednCheckSum.value := ednBidSum.value;
 
   QueryClear;
   Query.SQL.Add('select list(w.Surname||'' ''||coalesce(w.Firstname||'' ''||coalesce(w.Midlename, ''''), '''')) FIO');
@@ -3817,26 +4341,43 @@ begin
   Query.Close;
 end;
 
+function TEditCFileForm.IsDecoderText(edt: TDBEditEh): Boolean;
+var
+  s: String;
+begin
+  Result := (pnlText.Visible) and (edt.Visible);
+  if Result then
+  begin
+    s := AnsiUpperCase(edt.EmptyDataInfo.Text);
+    Result := (s.Contains('НОМЕР КАМ') or s.Contains('ДЕКОДЕР'));
+  end;
+end;
+
 function TEditCFileForm.CheckDecoder(edt: TDBEditEh): String;
 var
   Save_Cursor: TCursor;
-  s, f, a: string;
+  f, a: string;
   h: Integer;
   CID: Integer;
 begin
-  result := '';
-  if (not pnlText.Visible) or (not edt.Visible) then
+  Result := '';
+  {
+    if (not pnlText.Visible) or (not edt.Visible) then
     Exit;
 
-  s := AnsiUpperCase(edt.EmptyDataInfo.Text);
-  if not(s.Contains('НОМЕР КАМ') //
+    s := AnsiUpperCase(edt.EmptyDataInfo.Text);
+    if not(s.Contains('НОМЕР КАМ') //
     or s.Contains('ДЕКОДЕР ') //
     ) then
+    Exit;
+  }
+
+  if not IsDecoderText(edt) then
     Exit;
 
   if edt.Text.IsEmpty then
   begin
-    result := rsIncorrectDecoder;
+    Result := rsIncorrectDecoder;
     Exit;
   end;
 
@@ -3863,7 +4404,7 @@ begin
         Transaction.StartTransaction;
         ExecQuery;
         if (FN('Eq_N').IsNull) then
-          result := rsNOT_FOUND_DECODER
+          Result := rsNOT_FOUND_DECODER
         else
         begin
           if (not FN('House_Id').IsNull) then
@@ -3886,16 +4427,16 @@ begin
     Screen.Cursor := Save_Cursor;
   end;
 
-  if result.IsEmpty then
+  if Result.IsEmpty then
   begin
     if pnlAdr.Visible then
     begin
       if (h <> lcbHOUSE.value) or (f <> lcbFLAT.Text) then
-        result := 'Декодера ' + edt.Text + ' нет по старому адресу';
+        Result := 'Декодера ' + edt.Text + ' нет по старому адресу';
     end
     else if (CID > -1) and (CID <> FCustomerInfo.CUSTOMER_ID) then
     begin
-      result := 'Декодер ' + edt.Text + ' выдан абоненту ' + a;
+      Result := 'Декодер ' + edt.Text + ' выдан абоненту ' + a;
     end;
   end;
 end;
@@ -3905,7 +4446,7 @@ var
   Save_Cursor: TCursor;
   addCharge: Boolean;
 begin
-  result := '';
+  Result := '';
   if not pnlPeriod.Visible then
     Exit;
 
@@ -3916,15 +4457,15 @@ begin
   if not addCharge then
     Exit;
 
-  if (VarIsNull(edPBegin.value) or (edPEnd.Visible and VarIsNull(edPEnd.value))) then
+  if (VarIsNull(edDateBegin.value) or (edDateEnd.Visible and VarIsNull(edDateEnd.value))) then
   begin
-    result := rsERROR_NOT_FILL_ALL;
+    Result := rsERROR_NOT_FILL_ALL;
     Exit;
   end;
 
-  if (not edPEnd.Visible) or (edPBegin.value > edPEnd.value) or (edPBegin.value < Date()) then
+  if (not edDateEnd.Visible) or (edDateBegin.value > edDateEnd.value) or (edDateBegin.value < Date()) then
   begin
-    result := rsERROR_NOT_FILL_ALL;
+    Result := rsERROR_NOT_FILL_ALL;
     Exit;
   end;
 
@@ -3937,35 +4478,36 @@ begin
         DataBase := dmMain.dbTV;
         Transaction := trReadQ;
 
-        SQL.Clear;
-        SQL.Add('execute block( CUSTOMER_ID D_INTEGER = :CUSTOMER_ID, Date_S D_DATE = :Date_S, Date_E D_DATE = :Date_E )');
-        SQL.Add('returns (enough D_Varchar255) as');
-        SQL.Add('declare variable days D_Integer;');
-        SQL.Add('begin');
-        SQL.Add('  select sum(EXISTS_DAYS) EXISTS_DAYS from IBE$GET_CUSTOMERS_BLOCK_DAYS(:CUSTOMER_ID, :Date_S) into :days;');
-        SQL.Add('  days = coalesce(days, 180);');
-        SQL.Add('  if (Date_E <= dateadd(day, days, Date_S)) then enough = ''''; else enough = ''Разрешена блокировка до ''||dateadd(day, days, Date_S);');
-        SQL.Add('  if (enough = '''') then begin');
-        SQL.Add('    days = null; Date_E = null;');
-        SQL.Add('    select first 1 ss.State_Date, ss.State_Sgn');
-        SQL.Add('    from Subscr_Serv ss inner join services s on (s.Service_Id = ss.Serv_Id)');
-        SQL.Add('    where s.Srv_Type_Id = 0 and s.Name like ''%Блок%'' and ss.Customer_Id = :CUSTOMER_ID');
-        SQL.Add('    order by ss.State_Date desc');
-        SQL.Add('    into :Date_E, :days;');
-        SQL.Add('    days = coalesce(days, 0);');
-        SQL.Add('    if (days = 1) then enough = ''Абонент в блокировке с ''||Date_E;');
-        SQL.Add('    else');
-        SQL.Add('    if ((not Date_E is null) and (Date_S <= dateadd(day, 14, Date_E))) then enough = ''Прошло менее 14 дней'';');
-        SQL.Add('  end');
-        SQL.Add('  suspend;');
-        SQL.Add('end');
-
+        SQL.Text := 'select enough from ibe$check_lan_block(:customer_id, :date_s, :date_e)';
+        {
+          SQL.Add('execute block( CUSTOMER_ID D_INTEGER = :CUSTOMER_ID, Date_S D_DATE = :Date_S, Date_E D_DATE = :Date_E )');
+          SQL.Add('returns (enough D_Varchar255) as');
+          SQL.Add('declare variable days D_Integer;');
+          SQL.Add('begin');
+          SQL.Add('  select sum(EXISTS_DAYS) EXISTS_DAYS from IBE$GET_CUSTOMERS_BLOCK_DAYS(:CUSTOMER_ID, :Date_S) into :days;');
+          SQL.Add('  days = coalesce(days, 180);');
+          SQL.Add('  if (Date_E <= dateadd(day, days, Date_S)) then enough = ''''; else enough = ''Разрешена блокировка до ''||dateadd(day, days, Date_S);');
+          SQL.Add('  if (enough = '''') then begin');
+          SQL.Add('    days = null; Date_E = null;');
+          SQL.Add('    select first 1 ss.State_Date, ss.State_Sgn');
+          SQL.Add('    from Subscr_Serv ss inner join services s on (s.Service_Id = ss.Serv_Id)');
+          SQL.Add('    where s.Srv_Type_Id = 0 and s.Name like ''%СПД%ДБ%'' and ss.Customer_Id = :CUSTOMER_ID');
+          SQL.Add('    order by ss.State_Date desc');
+          SQL.Add('    into :Date_E, :days;');
+          SQL.Add('    days = coalesce(days, 0);');
+          SQL.Add('    if (days = 1) then enough = ''Абонент в блокировке с ''||Date_E;');
+          SQL.Add('    else');
+          SQL.Add('    if ((not Date_E is null) and (Date_S <= dateadd(day, 14, Date_E))) then enough = ''Прошло менее 14 дней'';');
+          SQL.Add('  end');
+          SQL.Add('  suspend;');
+          SQL.Add('end');
+        }
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('Date_S').AsDate := edPBegin.value;
-        ParamByName('Date_E').AsDate := edPEnd.value;
+        ParamByName('Date_S').AsDate := edDateBegin.value;
+        ParamByName('Date_E').AsDate := edDateEnd.value;
         Transaction.StartTransaction;
         ExecQuery;
-        result := (FN('enough').AsString);
+        Result := (FN('enough').AsString);
         Transaction.Commit;
       finally
         Free;
@@ -4005,10 +4547,13 @@ begin
         SQL.Text := 'execute procedure IBE$MAKEBLOCK(:Customer_Id, :DATE_B, :DATE_E, :NOTICE, :CONTR_N);';
 
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('DATE_B').AsDate := edPBegin.value;
-        ParamByName('DATE_E').AsDate := edPEnd.value;
-        ParamByName('NOTICE').AsString := memNotice.Lines.Text;
+        ParamByName('DATE_B').AsDate := edDateBegin.value;
+        ParamByName('DATE_E').AsDate := edDateEnd.value;
+        ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
         ParamByName('CONTR_N').AsString := edtContract.Text;
+
+        MakeDebugLog('MakeBlock', SQL.Text);
+
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
@@ -4033,7 +4578,7 @@ begin
   if not pnlPeriod.Visible then
     Exit;
 
-  if (VarIsNull(edPBegin.value) or VarIsNull(edPEnd.value)) then
+  if (VarIsNull(edDateBegin.value) or VarIsNull(edDateEnd.value)) then
     Exit;
 
   // проверим. это отключение СПД и ЛТВ ли
@@ -4054,8 +4599,8 @@ begin
         Transaction := trWriteQ;
         SQL.Text := 'select srvName, OFFSRVNAME from IBE$MAKEBLOCK_SRV(:Customer_Id, :DATE_B, :DATE_E)';
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('DATE_B').AsDate := edPBegin.value;
-        ParamByName('DATE_E').AsDate := edPEnd.value;
+        ParamByName('DATE_B').AsDate := edDateBegin.value;
+        ParamByName('DATE_E').AsDate := edDateEnd.value;
         Transaction.StartTransaction;
         ExecQuery;
         if not FN('srvName').IsNull then
@@ -4078,10 +4623,10 @@ var
 begin
   if not FLstSrv.IsEmpty then
   begin
-    result := FLstSrv;
+    Result := FLstSrv;
     Exit;
   end;
-  result := '';
+  Result := '';
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
@@ -4098,7 +4643,7 @@ begin
         Transaction.StartTransaction;
         ExecQuery;
         FLstSrv := (FN('lst').AsString);
-        result := FLstSrv;
+        Result := FLstSrv;
         Transaction.Commit;
       finally
         Free;
@@ -4117,7 +4662,7 @@ begin
   // if not pnlPeriod.Visible then
   // Exit;
 
-  if not FFileTypeName.Contains('СПД. ПОДКЛ. И-НЕТ.') then
+  if not(FFileTypeName.Contains('СПД.') and FFileTypeName.Contains('ПОДКЛ.') and FFileTypeName.Contains('И-НЕТ.')) then
     Exit;
 
   if not lcbService.Text.Contains('PROMO') then
@@ -4138,11 +4683,13 @@ begin
         SQL.Text := 'execute procedure IBE$MAKEPROMO(:Customer_Id, :DATE_B, :DATE_E, :NOTICE, :CONTR_N, :TEXT);';
 
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('DATE_B').AsDate := edDate.value;
-        ParamByName('DATE_E').AsDate := edDate.value;
-        ParamByName('NOTICE').AsString := memNotice.Lines.Text;
+        ParamByName('DATE_B').AsDate := edDateSrv.value;
+        ParamByName('DATE_E').AsDate := edDateSrv.value;
+        ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
         ParamByName('CONTR_N').AsString := edtContract.Text;
         ParamByName('TEXT').AsString := lcbService.Text;
+
+        MakeDebugLog('MakePromo', SQL.Text);
 
         Transaction.StartTransaction;
         ExecQuery;
@@ -4163,38 +4710,39 @@ begin
   SetFile(edtFILE.Text);
 end;
 
-procedure TEditCFileForm.mmoMemoChange(Sender: TObject);
+procedure TEditCFileForm.mmoNoticeChange(Sender: TObject);
 begin
   UpdateNotice;
 end;
 
-procedure TEditCFileForm.mmoMemoExit(Sender: TObject);
+procedure TEditCFileForm.mmoNoticeExit(Sender: TObject);
 begin
   UpdateNotice;
 end;
 
-procedure TEditCFileForm.SetFileType(const FileType: Integer = -1; const FileTypeName: String = '');
+procedure TEditCFileForm.SetFileType(const FileType: Integer = -1; const FileTypeName: String = '';
+  const ProcList: String = '');
 begin
   if (FileTypeName.IsEmpty) or (FileType = -1) then
   begin
     FFileType := -1;
     FFileTypeName := '';
     FFileInMem.Clear;
+    FProcList := '';
   end
   else
   begin
     FFileType := FileType;
+    FProcList := ProcList;
     FFileTypeName := FileTypeName.ToUpper.Trim;
     if FFileTypeName.StartsWith('РТ') then
       SetImageFromImageList;
-    if dsCustFile.State = dsInsert then
-      CheckTypeReuse;
   end;
 end;
 
 function TEditCFileForm.ExistsPassportInAccount(const PN: String): Boolean;
 begin
-  result := False;
+  Result := False;
 
   QueryClear;
   Query.SQL.Add('select count(*) cnt from Customer_Files cf');
@@ -4205,7 +4753,7 @@ begin
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   if not Query.FN('cnt').IsNull then
-    result := (Query.FN('cnt').AsInteger > 0);
+    Result := (Query.FN('cnt').AsInteger > 0);
   Query.Transaction.Commit;
   Query.Close;
 end;
@@ -4232,17 +4780,18 @@ begin
   end;
 end;
 
-procedure TEditCFileForm.CheckTypeReuse;
+function TEditCFileForm.CheckTypeReuse: String;
 var
   ShowWarning: Boolean;
 begin
   ShowWarning := False;
+  Result := '';
 
   QueryClear;
   Query.SQL.Add('select count(*) cnt from Customer_Files ');
   Query.SQL.Add(' where customer_id = :CID and CF_TYPE = :FT and cast(Added_On as Date) = current_date');
   Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-  Query.ParamByName('FT').AsInteger := FFileType;
+  Query.ParamByName('FT').AsInteger := dbluFileType.value;
   Query.Transaction := trReadQ;
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
@@ -4252,30 +4801,38 @@ begin
   Query.Close;
 
   if ShowWarning then
-    ShowMessage(dbluFileType.Text + ' такой тип сегодня уже добавляли абоненту');
+    Result := dbluFileType.Text + ' такой тип сегодня уже добавляли абоненту';
 end;
 
 function TEditCFileForm.CheckDatesOnOff: String;
 begin
-  result := '';
+  Result := '';
 
   if lcbService.Text.IsEmpty then
     Exit;
 
-  QueryClear;
-  Query.SQL.Add('select State_Date from Subscr_Serv where Customer_Id = :CID and Serv_Id = :SID');
-  Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-  Query.ParamByName('SID').AsInteger := lcbService.value;
-  Query.Transaction := trReadQ;
-  Query.Transaction.StartTransaction;
-  Query.ExecQuery;
-  if not Query.FN('State_Date').IsNull then
+  if FIsLTV and (FFileTypeName.Contains('ОТКЛ') and FFileTypeName.Contains('ДОСРОЧНО')) then
   begin
-    if VarToDateTime(edDate.value) < Query.FN('State_Date').AsDate then
-      result := 'Дата не может быть раньше чем ' + FormatDateTime('dd.mm.yyyy', Query.FN('State_Date').AsDate);
+    if VarToDateTime(edDateSrv.value) < Date() then
+      Result := 'Дата не может быть раньше чем ' + FormatDateTime('dd.mm.yyyy', Date());
+  end
+  else
+  begin
+    QueryClear;
+    Query.SQL.Add('select State_Date from Subscr_Serv where Customer_Id = :CID and Serv_Id = :SID');
+    Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+    Query.ParamByName('SID').AsInteger := lcbService.value;
+    Query.Transaction := trReadQ;
+    Query.Transaction.StartTransaction;
+    Query.ExecQuery;
+    if not Query.FN('State_Date').IsNull then
+    begin
+      if VarToDateTime(edDateSrv.value) < Query.FN('State_Date').AsDate then
+        Result := 'Дата не может быть раньше чем ' + FormatDateTime('dd.mm.yyyy', Query.FN('State_Date').AsDate);
+    end;
+    Query.Transaction.Commit;
+    Query.Close;
   end;
-  Query.Transaction.Commit;
-  Query.Close;
 end;
 
 function TEditCFileForm.ValidateData: Boolean;
@@ -4283,11 +4840,11 @@ var
   errors: Boolean;
   cs: string;
 begin
-  result := False;
+  Result := False;
 
   if (FFileTypeName.IsEmpty) then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(dbluFileType, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
@@ -4295,15 +4852,15 @@ begin
 
   if (edtNAME.Text = '') then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(edtNAME, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
     CnErrors.Dispose(edtNAME);
 
-  if (edtFILE.Text = '') then
+  if (edtFILE.Text = '') and FFileRequred then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(edtFILE, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
@@ -4316,7 +4873,7 @@ begin
 
   if (pnlPassport.Visible) and (edtPASSPORT.Text = '') then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(edtPASSPORT, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
@@ -4326,7 +4883,7 @@ begin
   begin
     if (chkContract.State = cbGrayed) then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(chkContract, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -4345,7 +4902,7 @@ begin
 
       if (edtContract.Text.IsEmpty) or (Trim(edtContract.Text) = cs) or (FContract.IsEmpty) then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(edtContract, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else
@@ -4353,7 +4910,7 @@ begin
 
       if (VarIsNull(edtContractDate.value)) then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(edtContractDate, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else
@@ -4363,7 +4920,7 @@ begin
     if (pnlMobile.Visible) then
     begin
       if HasErrorInPhone then
-        result := true;
+        Result := true;
     end;
   end;
 
@@ -4373,14 +4930,14 @@ begin
     begin
       if (not FNameFmt.IsEmpty) and FNameFmt.Contains(rsFldText) then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(edtText, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else if (not dsFileTypes.FieldByName('O_DESCRIPTION').IsNull) then
       begin
         if (dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(rsFldText)) then
         begin
-          result := true;
+          Result := true;
           CnErrors.SetError(edtText, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
         end
         else
@@ -4393,7 +4950,7 @@ begin
       begin
         errors := not CheckControlText(edtText, FTextReg);
         if errors then
-          result := true;
+          Result := true;
       end;
     end;
   end
@@ -4406,14 +4963,14 @@ begin
     begin
       if (not FNameFmt.IsEmpty) and FNameFmt.Contains(rsFldText) then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(edtText1, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else if (not dsFileTypes.FieldByName('O_DESCRIPTION').IsNull) then
       begin
         if (dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(rsFldText)) then
         begin
-          result := true;
+          Result := true;
           CnErrors.SetError(edtText1, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
         end
         else
@@ -4426,7 +4983,7 @@ begin
       begin
         errors := not CheckControlText(edtText1, FText1Reg);
         if errors then
-          result := true;
+          Result := true;
       end;
     end;
   end
@@ -4439,14 +4996,14 @@ begin
     begin
       if (not FNameFmt.IsEmpty) and FNameFmt.Contains(rsFldText2) then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(edtText2, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else if (not dsFileTypes.FieldByName('O_DESCRIPTION').IsNull) then
       begin
         if (dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(rsFldText2)) then
         begin
-          result := true;
+          Result := true;
           CnErrors.SetError(edtText2, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
         end
         else
@@ -4459,7 +5016,7 @@ begin
       begin
         errors := not CheckControlText(edtText2, FText2Reg);
         if errors then
-          result := true;
+          Result := true;
       end;
     end;
   end
@@ -4472,14 +5029,14 @@ begin
     begin
       if (not FNameFmt.IsEmpty) and FNameFmt.Contains(rsFldText3) then
       begin
-        result := true;
+        Result := true;
         CnErrors.SetError(edtText3, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
       end
       else if (not dsFileTypes.FieldByName('O_DESCRIPTION').IsNull) then
       begin
         if (dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(rsFldText3)) then
         begin
-          result := true;
+          Result := true;
           CnErrors.SetError(edtText3, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
         end
         else
@@ -4492,18 +5049,51 @@ begin
       begin
         errors := not CheckControlText(edtText3, FText3Reg);
         if errors then
-          result := true;
+          Result := true;
       end;
     end;
   end
   else
     CnErrors.Dispose(edtText3);
 
+  if (edtText4.Visible) then
+  begin
+    if (edtText4.Text.IsEmpty) then
+    begin
+      if (not FNameFmt.IsEmpty) and FNameFmt.Contains(rsFldText3) then
+      begin
+        Result := true;
+        CnErrors.SetError(edtText4, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+      end
+      else if (not dsFileTypes.FieldByName('O_DESCRIPTION').IsNull) then
+      begin
+        if (dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(rsFldText3)) then
+        begin
+          Result := true;
+          CnErrors.SetError(edtText4, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+        end
+        else
+          CnErrors.Dispose(edtText4);
+      end
+    end
+    else
+    begin
+      if (not FText4Reg.IsEmpty) then
+      begin
+        errors := not CheckControlText(edtText4, FText4Reg);
+        if errors then
+          Result := true;
+      end;
+    end;
+  end
+  else
+    CnErrors.Dispose(edtText4);
+
   if (pnlBidPay.Visible) then
   begin
     if ednBid.Visible and ednBid.Text.IsEmpty then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(ednBid, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -4511,7 +5101,7 @@ begin
 
     if ednBid.Visible and ednBidSum.Text.IsEmpty then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(ednBidSum, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -4519,7 +5109,7 @@ begin
 
     if ednCheckSum.Text.IsEmpty then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(ednCheckSum, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -4536,7 +5126,7 @@ begin
   begin
     if edtTskName.Text.IsEmpty then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edtTskName, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -4544,7 +5134,7 @@ begin
 
     if edTskDate.Text.IsEmpty then
     begin
-      result := true;
+      Result := true;
       CnErrors.SetError(edTskDate, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
@@ -4558,31 +5148,31 @@ begin
 
   if pnlPeriod.Visible then
   begin
-    if edPBegin.Text.IsEmpty then
+    if edDateBegin.Text.IsEmpty then
     begin
-      result := true;
-      CnErrors.SetError(edPBegin, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+      Result := true;
+      CnErrors.SetError(edDateBegin, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
-      CnErrors.Dispose(edPBegin);
+      CnErrors.Dispose(edDateBegin);
 
-    if edPEnd.Visible and edPEnd.Text.IsEmpty then
+    if edDateEnd.Visible and edDateEnd.Text.IsEmpty then
     begin
-      result := true;
-      CnErrors.SetError(edPEnd, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+      Result := true;
+      CnErrors.SetError(edDateEnd, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
     end
     else
-      CnErrors.Dispose(edPEnd);
+      CnErrors.Dispose(edDateEnd);
   end
   else
   begin
-    CnErrors.Dispose(edPBegin);
-    CnErrors.Dispose(edPEnd);
+    CnErrors.Dispose(edDateBegin);
+    CnErrors.Dispose(edDateEnd);
   end;
 
   if (FShowFlatOwner and (pnlContract.Visible) and (chkFOwner.State = cbGrayed)) and (ParamExists(rsFldOwnerText)) then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(chkFOwner, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
@@ -4590,32 +5180,31 @@ begin
 
   if (pnlPayment.Visible) and (lcbPayment.Text.IsEmpty) then
   begin
-    result := true;
+    Result := true;
     CnErrors.SetError(lcbPayment, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
     CnErrors.Dispose(lcbPayment);
 
-  result := CheckPasport(result);
-  result := CheckAddons(result);
+  Result := CheckPasport(Result);
+  Result := CheckAddons(Result);
 end;
 
 procedure TEditCFileForm.MoveDVB();
 var
   ci: TCustomerInfo;
   i: Integer;
-  PN: string;
 begin
   if not FIsLTV then
     Exit;
 
-  if not FFileTypeName.Contains('ЦТВ. КАМ STV-CRYPT') then
+  if (not FFileTypeName.Contains('ЦТВ.')) or (not FFileTypeName.Contains('КАМ STV-CRYPT')) then
     Exit;
 
   if not( //
     (FFileTypeName.Contains('ПРОДАЖА')) //
     or (FFileTypeName.Contains('ПЕРЕНОС')) //
-    or (FFileTypeName.Contains('ПОДКЛЮЧИТЬ')) //
+    or (FFileTypeName.Contains('ПОДКЛ')) //
     ) then
     Exit;
 
@@ -4631,6 +5220,7 @@ begin
       SQL.Add('  FROM_CID    D_integer     = :FROM_CID,');
       SQL.Add('  DVB_SUM     D_N15_2       = :DVB_SUM,');
       SQL.Add('  CF_ID       D_INTEGER     = :CF_ID,');
+      SQL.Add('  SRV_ID      D_INTEGER     = :SRV_ID,');
       SQL.Add('  NOTICE      varchar(1000) = :NOTICE)');
       SQL.Add('as');
       SQL.Add('declare variable s D_INTEGER;');
@@ -4668,43 +5258,57 @@ begin
       SQL.Add('  update Single_Serv set Notice = :Notice ');
       SQL.Add('  where Notice = :DECODER_N and Customer_Id = :CUSTOMER_ID and Serv_Date = current_date;');
 
-      if (FFileTypeName.Contains('ПОДКЛЮЧИТЬ')) then
+      if (FIsLTV) then
       begin
-        // 385285 КАМ_STV-Crypt.  Рассрочка - 1.
-        // 468026 КАМ_STV-Crypt.  Рассрочка - 2.
-        SQL.Add('  select count(*) from Customer_Decoders where Customer_Id = :CUSTOMER_ID into :s; ');
-        SQL.Add('  if (s = 1) then begin s = 385285; n = 385291; f = 415690; end ');
-        SQL.Add('  else begin s = 468026; n = 468030; f = 712297; end ');
-        SQL.Add('  execute procedure Add_Subscr_Service(:Customer_Id, :s, :n, current_date, :NOTICE, 1, :CONTR_N, null);');
-        SQL.Add('  execute procedure Onoff_Service_By_Id(:Customer_Id, :s, :f, dateadd(YEAR,2,current_date), 1, :NOTICE, 1);');
-      end
-      else if (FIsLTV and FFileTypeName.Contains('ПЕРЕНОС')) then
-      begin
-        // 994408, 'КАМ STV Crypt.  ПЕРЕНОС. (отключить).'
-        // 994407, 'КАМ STV Crypt.  ПЕРЕНОС. (подключить).'
-        SQL.Add('  if (not DVB_SUM is null) then begin');
-        SQL.Add('    execute procedure Add_Single_Service(:CUSTOMER_ID, 994407, :DVB_SUM, current_date, :NOTICE);');
-        SQL.Add('    execute procedure Add_Single_Service(:FROM_CID, 994408, :DVB_SUM, current_date, :NOTICE);');
-        SQL.Add('  end');
-        // нужно вставіть файл абоненту с которого переносім
-        SQL.Add('  i = gen_id(Gen_Operations_Uid, 1);');
-        SQL.Add('  insert into Customer_Files (CF_ID, Customer_Id, Name, Cf_Type, Date_From, Date_To, Filename, Notice, Act, Anotice, Content, Addons)');
-        SQL.Add('  select :i, :FROM_CID, Name, 47970, Date_From, Date_To, Filename, Notice, Act, Anotice, Content, Addons');
-        SQL.Add('  from Customer_Files where Cf_Id = :Cf_Id;');
-        SQL.Add('  update Customer_Files cf ');
-        SQL.Add('    set cf.Name = replace(replace(cf.Name, ''Подкл'', ''Откл''), ''подкл'', ''откл''), ');
-        SQL.Add('    cf.Notice = replace(replace(cf.Notice, ''Подкл'', ''Откл''), ''подкл'', ''откл'')  ');
-        SQL.Add('  where cf.Cf_Id = :i; ');
+        if FFileTypeName.Contains('ПЕРЕНОС') then
+        begin
+          // 994408, 'КАМ STV Crypt.  ПЕРЕНОС. (отключить).'
+          // 994407, 'КАМ STV Crypt.  ПЕРЕНОС. (подключить).'
+          SQL.Add('  if (not DVB_SUM is null) then begin');
+          SQL.Add('    execute procedure Add_Single_Service(:CUSTOMER_ID, 994407, :DVB_SUM, current_date, :NOTICE);');
+          SQL.Add('    execute procedure Add_Single_Service(:FROM_CID, 994408, :DVB_SUM, current_date, :NOTICE);');
+          SQL.Add('  end');
+          // нужно вставіть файл абоненту с которого переносім
+          SQL.Add('  i = gen_id(Gen_Operations_Uid, 1);');
+          SQL.Add('  insert into Customer_Files (CF_ID, Customer_Id, Name, Cf_Type, Date_From, Date_To, Filename, Notice, Act, Anotice, Content, Addons)');
+          SQL.Add('  select :i, :FROM_CID, Name, 47970, Date_From, Date_To, Filename, Notice, Act, Anotice, Content, Addons');
+          SQL.Add('  from Customer_Files where Cf_Id = :Cf_Id;');
+          SQL.Add('  update Customer_Files cf ');
+          SQL.Add('    set cf.Name = replace(replace(replace(cf.Name, ''Подкл'', ''Откл''), ''подкл'', ''откл''), ''ПОДКЛ'', ''ОТКЛ''), ');
+          SQL.Add('    cf.Notice = replace(replace(replace(cf.Notice, ''Подкл'', ''Откл''), ''подкл'', ''откл''), ''ПОДКЛ'', ''ОТКЛ'')  ');
+          SQL.Add('  where cf.Cf_Id = :i; ');
+        end
+        else
+        begin
+          if (FFileTypeName.Contains('РАССР')) and (FFileTypeName.Contains('ПОДКЛ')) then
+          begin
+            // 385285 КАМ_STV-Crypt.  Рассрочка - 1.
+            // 468026 КАМ_STV-Crypt.  Рассрочка - 2.
+            // SQL.Add('  select count(*) from Customer_Decoders where Customer_Id = :CUSTOMER_ID into :s; ');
+            // SQL.Add('  if (s = 1) then begin s = 385285; n = 385291; f = 415690; end ');
+            // SQL.Add('  else begin s = 468026; n = 468030; f = 712297; end ');
+            // SQL.Add('  execute procedure Add_Subscr_Service(:Customer_Id, :s, :n, current_date, :NOTICE, 1, :CONTR_N, null);');
+            SQL.Add('  if (SRV_ID = 385285) then f = 415690;'); // КАМ_STV-Crypt.  Рассрочка - 1
+            SQL.Add('  if (SRV_ID = 468026) then f = 712297;'); // КАМ_STV-Crypt.  Рассрочка - 2
+            SQL.Add('  if (SRV_ID = 563493) then f = 712300;'); // КАМ_STV-Crypt.  Рассрочка - 3
+            SQL.Add('  if (SRV_ID = 1061007) then f = 1061012;'); // КАМ_STV-Crypt.  Рассрочка - 4
+            SQL.Add('  execute procedure Onoff_Service_By_Id(:Customer_Id, :SRV_ID, :f, dateadd(YEAR,2,current_date), 1, :NOTICE, 1);');
+          end;
+        end;
       end;
+
+      // if (FFileTypeName.Contains('ПРОДАЖА')) then
+      // begin
+      // end;
 
       SQL.Add('end');
 
-      PN := SQL.Text;
+      // showMessage(SQL.Text);
 
       ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
       ParamByName('CF_ID').AsInteger := dsCustFile.FieldByName('CF_ID').AsInteger;
       ParamByName('DECODER_N').AsString := edtText.Text;
-      ParamByName('NOTICE').AsString := memNotice.Lines.Text;
+      ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
       if FShowFlatOwner then
         ParamByName('CONTR_N').AsString := edtContract.Text;
 
@@ -4714,7 +5318,13 @@ begin
         ParamByName('FROM_CID').AsInteger := ci.CUSTOMER_ID;
         if not ednCheckSum.Text.IsEmpty then
           ParamByName('DVB_SUM').AsDouble := ednCheckSum.value;
+      end
+      else if (FFileTypeName.Contains('РАССР')) then
+      begin
+        ParamByName('SRV_ID').AsInteger := lcbService.KeyValue;
       end;
+
+      MakeDebugLog('MoveDVB', SQL.Text);
 
       Transaction.StartTransaction;
       ExecQuery;
@@ -4728,12 +5338,12 @@ end;
 function TEditCFileForm.ParamExists(const Param: String): Boolean;
 begin
   // проверим есть ли переменная в имени или описании
-  result := False;
+  Result := False;
   if not FNameFmt.IsEmpty then
-    result := FNameFmt.Contains(Param);
+    Result := FNameFmt.Contains(Param);
 
   if (not dsFileTypes.FieldByName('O_DESCRIPTION').IsNull) then
-    result := result or dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(Param);
+    Result := Result or dsFileTypes.FieldByName('O_DESCRIPTION').AsString.Contains(Param);
 end;
 
 procedure TEditCFileForm.UnMakeBlock;
@@ -4764,9 +5374,12 @@ begin
         SQL.Text := 'execute procedure IBE$MAKEUNBLOCK(:Customer_Id, :DATE_B, :NOTICE, :CONTR_N);';
 
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('DATE_B').AsDate := edPEnd.value;
-        ParamByName('NOTICE').AsString := memNotice.Lines.Text;
+        ParamByName('DATE_B').AsDate := edDateEnd.value;
+        ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
         ParamByName('CONTR_N').AsString := edtContract.Text;
+
+        MakeDebugLog('UnMakeBlock', SQL.Text);
+
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
@@ -4806,8 +5419,8 @@ begin
         Transaction := trWriteQ;
         SQL.Text := 'select srvName, OFFSRVNAME from IBE$MAKEUNBLOCK_SRV(:Customer_Id, :DATE_B)';
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        if (pnlPeriod.Visible) and (not VarIsNull(edPBegin.value)) then
-          ParamByName('DATE_B').AsDate := edPBegin.value
+        if (pnlPeriod.Visible) and (not VarIsNull(edDateBegin.value)) then
+          ParamByName('DATE_B').AsDate := edDateBegin.value
         else
           ParamByName('DATE_B').AsDate := Date();
         Transaction.StartTransaction;
@@ -4876,18 +5489,20 @@ begin
   MoveControl((pnlPeriod as TCustomControl));
   MoveControl((pnlMobile as TCustomControl));
 
-  pnlText.Visible := edtText.Visible or edtText1.Visible or edtText2.Visible or edtText3.Visible;
+  pnlText.Visible := edtText.Visible or edtText1.Visible or edtText2.Visible or edtText3.Visible or edtText4.Visible;
   if pnlText.Visible then
   begin
     pnlText.Top := tPosition;
     lblText1.Visible := edtText1.Visible;
-    pnlText.Height := 100;
+    pnlText.Height := edtText4.Top + edtText4.Height + (edtText4.Top - edtText3.Top - edtText3.Height);
     if not edtText1.Visible then
       pnlText.Height := edtText1.Top
     else if not edtText2.Visible then
       pnlText.Height := edtText2.Top
     else if not edtText3.Visible then
-      pnlText.Height := edtText3.Top;
+      pnlText.Height := edtText3.Top
+    else if not edtText4.Visible then
+      pnlText.Height := edtText4.Top;
 
     pnlText.TabOrder := vTabOrder;
     Inc(vTabOrder);
@@ -4919,7 +5534,8 @@ begin
 
   // проверим. это отключение СПД и ЛТВ ли
   // СПД. Добр. Блок.  ПОДКЛЮЧИТЬ.
-  addCharge := FIsLTV and FFileTypeName.Contains('БЛОК') and FFileTypeName.Contains('ДОСРОЧНО');
+  addCharge := FIsLTV and FFileTypeName.Contains('СПД') and FFileTypeName.Contains('БЛОК') and
+    FFileTypeName.Contains('ДОСРОЧНО');
   if not addCharge then
     Exit;
 
@@ -4941,11 +5557,11 @@ begin
         if not FN('SrvName').IsNull then
           edtText.Text := FN('SrvName').AsString;
         if not FN('Date_from').IsNull then
-          edPBegin.value := FN('Date_from').AsDate;
+          edDateBegin.value := FN('Date_from').AsDate;
         if not FN('Date_to').IsNull then
         begin
-          // edPEnd.Value := FN('Date_to').AsDate;
-          edDate.value := FN('Date_to').AsDate;
+          // edDateEnd.Value := FN('Date_to').AsDate;
+          edDateSrv.value := FN('Date_to').AsDate;
         end;
         Transaction.Commit;
       finally
@@ -4995,15 +5611,15 @@ begin
         SQL.Add('end');
 
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-        if (not VarIsNull(edPBegin.value)) then
-          ParamByName('Date_S').AsDate := edPBegin.value;
+        if (not VarIsNull(edDateBegin.value)) then
+          ParamByName('Date_S').AsDate := edDateBegin.value;
 
         Transaction.StartTransaction;
         ExecQuery;
-        if (VarIsNull(edPBegin.value)) then
-          edPBegin.value := Date() + 1;
+        if (VarIsNull(edDateBegin.value)) then
+          edDateBegin.value := Date() + 1;
         if not FN('Date_E').IsNull then
-          edPEnd.value := FN('Date_E').AsDate;
+          edDateEnd.value := FN('Date_E').AsDate;
 
         Transaction.Commit;
       finally
@@ -5018,7 +5634,7 @@ end;
 
 function TEditCFileForm.UpdatePayment: Boolean;
 begin
-  result := False;
+  Result := False;
   if (FFileTypeName.Trim <> 'КОРРЕКТИРОВКА ПЛАТЕЖА.') then
     Exit;
 
@@ -5043,13 +5659,15 @@ begin
         ParamByName('FINE_SUM').AsCurrency := ednFineSum.value
       else
         ParamByName('FINE_SUM').AsCurrency := 0;
-      ParamByName('NOTICE').AsString := memNotice.Lines.Text;
+      ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
+
+      MakeDebugLog('UpdatePayment', SQL.Text);
 
       Transaction.StartTransaction;
       ExecQuery;
       Transaction.Commit;
       Close;
-      result := true;
+      Result := true;
     finally
       Free;
     end;
@@ -5075,14 +5693,20 @@ begin
         SQL.Text := 'execute procedure Ibe$Payorder(:FT, :CI, :PD, :PS, :N, :ON, :PDN)';
         ParamByName('FT').AsString := FFileTypeName;
         ParamByName('CI').AsInteger := CustomerInfo.CUSTOMER_ID;
-        ParamByName('PD').AsDate := edPBegin.value;
+        ParamByName('PD').AsDate := edDateBegin.value;
         ParamByName('PS').AsFloat := ednCheckSum.value;
-        ParamByName('N').AsString := Trim(memNotice.Lines.Text);
-        ParamByName('PDN').AsString := Trim(edtText.Text);
-        if FFileTypeName.Contains('РЕКЛАМА') then
-          ParamByName('ON').AsString := Trim(edtText1.Text)
+        ParamByName('N').AsString := Trim(mmoDesc.Lines.Text);
+        if edtText.EmptyDataInfo.Text.ToUpper.Contains('П/П') then
+        begin
+          ParamByName('PDN').AsString := Trim(edtText.Text);
+          if edtText1.EmptyDataInfo.Text.ToUpper.Contains('СЗ') then
+            ParamByName('ON').AsString := Trim(edtText1.Text)
+        end
         else
-          ParamByName('ON').Clear;
+          ParamByName('PDN').AsString := Trim(edtText1.Text);
+
+        MakeDebugLog('PaymentOrder', SQL.Text);
+
         Transaction.StartTransaction;
         ExecQuery;
         Transaction.Commit;
@@ -5116,8 +5740,10 @@ begin
         ParamByName('CI').AsInteger := CustomerInfo.CUSTOMER_ID;
         ParamByName('COST').AsFloat := ednCheckSum.value;
         ParamByName('MC').AsString := Trim(edtText.Text);
-        ParamByName('N').AsString := Trim(memNotice.Lines.Text);
-        // ParamByName('SD').AsDate := edPBegin.value;
+        ParamByName('N').AsString := Trim(mmoDesc.Lines.Text);
+        // ParamByName('SD').AsDate := edDateBegin.value;
+
+        MakeDebugLog('InstallmentPay', SQL.Text);
 
         Transaction.StartTransaction;
         ExecQuery;
@@ -5133,10 +5759,6 @@ begin
 end;
 
 procedure TEditCFileForm.ADD_RT();
-var
-  ci: TCustomerInfo;
-  i: Integer;
-  PN: string;
 begin
   if not FIsLTV then
     Exit;
@@ -5159,9 +5781,12 @@ begin
       DataBase := dmMain.dbTV;
       Transaction := trWriteQ;
       SQL.Text :=
-        'execute procedure Add_Subscr_Service(:Customer_Id, 819519, 650507, current_date, :NOTICE, 1, null, null, 0);';
+        'execute procedure Add_Subscr_Service(:Customer_Id, 819519, 650507, current_date, :NOTICE, 1, :CONTR_N, null, 0);';
       ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
-      ParamByName('NOTICE').AsString := memNotice.Lines.Text;
+      ParamByName('NOTICE').AsString := mmoDesc.Lines.Text;
+      ParamByName('CONTR_N').AsString := edtContract.Text;
+      MakeDebugLog('ADD_RT', SQL.Text);
+
       Transaction.StartTransaction;
       ExecQuery;
       Transaction.Commit;
@@ -5171,36 +5796,581 @@ begin
   end;
 end;
 
-function TEditCFileForm.CheckAllowedFT: String;
+function TEditCFileForm.CheckAllowedFT(): TProhibitiontType;
 var
-  ci: TCustomerInfo;
-  i: Integer;
-  PN: string;
+  JO: TJsonObject;
+  s: string;
+  CheckFT: Integer;
 begin
-  result := '';
-  if FAllowedFT = -1 then
+  Result.Lock := False; // запрет на выбор типа файла
+  Result.Message := '';
+
+  // сначала проверим, можно ли добавлять этот тип файла по настройкам из JOSN
+  s := '';
+  CheckFT := -1;
+  if dsFileTypes.Locate('O_ID', Integer(dbluFileType.value), []) then
+  begin
+    if (not dsFileTypes.FieldByName('O_CHARFIELD').IsNull) then
+    begin
+      s := dsFileTypes['O_CHARFIELD'];
+      JO := TJsonObject.Parse(s) as TJsonObject;
+      try
+        if JO.Contains('AFT') then
+        begin
+          if not JO['AFT'].IsNull then
+            CheckFT := JO.i['AFT'];
+        end;
+      finally
+        JO.Free;
+      end;
+    end;
+  end;
+
+  // если указано что тип можно добавлять просле определенных типов, то проверим это
+  if CheckFT <> -1 then
+  begin
+    // if not FIsLTV then Exit;
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := trWriteQ;
+        SQL.Text := 'select o.O_ID, o.O_NAME ' +
+          '  , iif(exists(select first 1 Cf_Id from CUSTOMER_FILES where Customer_Id = :CID and Cf_Type = o.O_Id order by CF_ID desc), 1, 0) ALLOW '
+          + '  from OBJECTS o  where O_TYPE = 33 and o.O_ID = :AFT';
+        ParamByName('CID').AsInteger := CustomerInfo.CUSTOMER_ID;
+        ParamByName('AFT').AsInteger := CheckFT;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if (not FN('ALLOW').IsNull) and (FN('ALLOW').AsInteger = 0) then
+        begin
+          Result.Lock := true;
+          // запрет на выбор типа файла
+          Result.Message := Format(rsNeedFileType, [FN('O_NAME').AsString]);
+        end;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  // если по настройкам было можно,
+  // то проверим есть ли процедура проверки и выполним ее если есть
+  if (Result.Message.IsEmpty) and (FCheckTypeProc <> '') then
+  begin
+    // процедура вида
+    // select Prohibit, Prohibit_text from FT_CHECK_PERMISSIONS(CUSTOMER_ID, FileType_ID)
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := trWriteQ;
+        SQL.Text := 'select Prohibit, Prohibit_text from ' + FCheckTypeProc + '(:CUSTOMER_ID, :FileType_ID)';
+        ParamByName('CUSTOMER_ID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+        ParamByName('FileType_ID').AsInteger := dbluFileType.value;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if (not FN('Prohibit').IsNull) then
+        begin
+          Result.Lock := (FN('Prohibit').AsInteger = 1); // запрет на выбор типа файла
+          Result.Message := FN('Prohibit').AsString;
+        end;
+        if (not FN('Prohibit_text').IsNull) then
+          Result.Message := FN('Prohibit_text').AsString;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  // проверим, был ли такйо файл у абонента сегодня.
+  // если был сообщим, но разрешим
+  if (Result.Message.IsEmpty) then
+  begin
+    Result.Lock := False; // запрет на выбор типа файла
+    Result.Message := CheckTypeReuse;
+  end;
+end;
+
+procedure TEditCFileForm.OpenInetDialog;
+var
+  id: Integer;
+begin
+  id := -1;
+  if FIsLTV then
+  begin
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := trReadQ;
+        SQL.Text := 'select BLNG_ID from billing where customer_id = :CID';
+        ParamByName('CID').AsInteger := CustomerInfo.CUSTOMER_ID;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not FN('BLNG_ID').IsNull then
+          id := FN('BLNG_ID').AsInteger;
+        Transaction.Commit;
+
+        // удалім другіе запісі, еслі оні есть
+        if id <> -1 then
+        begin
+          Transaction := trWriteQ;
+          SQL.Text := 'delete from billing where customer_id = :CID and BLNG_ID <> :ID';
+          ParamByName('CID').AsInteger := CustomerInfo.CUSTOMER_ID;
+          ParamByName('ID').AsInteger := id;
+          Transaction.StartTransaction;
+          ExecQuery;
+          Transaction.Commit;
+        end;
+      finally
+        Free;
+      end;
+    end;
+  end;
+
+  EditBillInfo(id, CustomerInfo.CUSTOMER_ID, CustomerInfo.Account_No, mmoDesc.Lines.Text, False, true);
+  SetPasswordIfEmpty();
+
+  if id <> -1 then
+  begin
+    with TpFIBQuery.Create(Self) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := trWriteQ;
+        SQL.Add('update billing set blocked = 0 where BLNG_ID = :BLNG_ID');
+        ParamByName('BLNG_ID').AsInteger := CustomerInfo.CUSTOMER_ID;
+        Transaction.StartTransaction;
+        ExecQuery;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+  end
+end;
+
+procedure TEditCFileForm.MakeDebugLog(Module, SQL: string);
+var
+  FN: string;
+begin
+  if AtrCommon.GetComputerNetName.ToUpper.Contains('A4ON') then
+  begin
+    FN := ChangeFileExt(Application.ExeName, '.log');
+    LogEvent('FT_' + FFileType.ToString, Module, SQL, FN);
+  end;
+end;
+
+procedure TEditCFileForm.GetRentReturnFields;
+var
+  st: string;
+begin
+  if not FIsLTV then
     Exit;
 
-  // if not FIsLTV then Exit;
+  if not(FFileTypeName.Contains('АРЕНД') and FFileTypeName.Contains('ОТКЛ')) then
+    Exit;
+
+  if not(FFileTypeName.Contains('АРЕНД') and FFileTypeName.Contains('ОТКЛ')) then
+    Exit;
+
+  if (FFileTypeName.Contains('GPON_И')) then
+    st := 'GPON_NTE'
+  else if (FFileTypeName.Contains('GPON_Т')) then
+    st := 'GEPON_WDM_FTTH'
+  else if (FFileTypeName.Contains('WI-FI')) then
+    st := 'Wi-Fi';
+
+  if st.IsEmpty then
+    Exit;
+
   with TpFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := trWriteQ;
-      SQL.Text := 'select o.O_ID, o.O_NAME ' +
-        '  , iif(exists(select first 1 Cf_Id from CUSTOMER_FILES where Customer_Id = :CID and Cf_Type = o.O_Id order by CF_ID desc), 1, 0) ALLOW ' +
-        '  from OBJECTS o  where O_TYPE = 33 and o.O_ID = :AFT';
-      ParamByName('CID').AsInteger := CustomerInfo.CUSTOMER_ID;
-      ParamByName('AFT').AsInteger := FAllowedFT;
+      Transaction := trReadQ;
+      SQL.Text := 'select first 1 a.Mac, a.Serial, a.Name from Appliance a ' +
+        ' where a.Own_Id = :CID and a.Own_Type = 1 and a.Name like ''%' + st + '%''';
+      ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
       Transaction.StartTransaction;
       ExecQuery;
-      if (not FN('ALLOW').IsNull) and (FN('ALLOW').AsInteger = 0) then
-        result := Format(rsNeedFileType, [FN('O_NAME').AsString]);
+      if (not FFileTypeName.Contains('WI-FI')) then
+      begin
+        if (not FN('Serial').IsNull) then
+          edtText.Text := FN('Serial').AsString;
+        if (not FN('Mac').IsNull) then
+          edtText1.Text := FN('Mac').AsString;
+      end
+      else
+      begin
+        if (not FN('Name').IsNull) then
+          edtText.Text := FN('Name').AsString;
+        if (not FN('Serial').IsNull) then
+          edtText1.Text := FN('Serial').AsString;
+      end;
       Transaction.Commit;
     finally
       Free;
     end;
   end;
+end;
+
+function TEditCFileForm.CheckFileTypeExists(const TypeID: Integer): Boolean;
+begin
+  Result := False;
+
+  QueryClear;
+  Query.SQL.Add('select count(*) cnt from Customer_Files cf');
+  Query.SQL.Add('where cf.customer_id = :CID and cf.Cf_Type = :FT ');
+  if FIsLTV and pnlPassport.Visible and (not edtPASSPORT.Text.IsEmpty) then
+  begin
+    Query.SQL.Add(' and (cf.Name like :pn or cf.Notice like :pn)');
+    Query.ParamByName('pn').AsString := '%' + edtPASSPORT.Text + '%';
+  end;
+  Query.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+  Query.ParamByName('FT').AsInteger := TypeID;
+  Query.Transaction := trReadQ;
+  Query.Transaction.StartTransaction;
+  Query.ExecQuery;
+  if not Query.FN('cnt').IsNull then
+    Result := (Query.FN('cnt').AsInteger > 0);
+  Query.Transaction.Commit;
+  Query.Close;
+end;
+
+function TEditCFileForm.GetProcParams(proc: string; var rSQL: string): TStringDynArray;
+var
+  c: Integer;
+begin
+  rSQL := 'select * from ' + proc + '(';
+  with TpFIBQuery.Create(Self) do
+  begin
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := trReadQ;
+      SQL.Text := 'SELECT p.Rdb$Parameter_Name FLD FROM rdb$procedure_parameters p ' + //
+        ' WHERE p.Rdb$Procedure_Name = :ProcName and p.Rdb$Parameter_Type = 0 ' + //
+        ' order by p.Rdb$Parameter_Number';
+      ParamByName('ProcName').AsString := proc;
+      Transaction.StartTransaction;
+      ExecQuery;
+      c := 0;
+      SetLength(Result, 255);
+      while not EOF do
+      begin
+        if (not FN('FLD').IsNull) then
+        begin
+          Result[c] := FN('FLD').AsString.Trim;
+          rSQL := rSQL + ':' + FN('FLD').AsString.Trim + ',';
+          Inc(c);
+        end;
+        Next;
+      end;
+      SetLength(Result, c);
+      Transaction.Commit;
+    finally
+      Free;
+    end;
+  end;
+  rSQL := rSQL.TrimRight([',']) + ')';
+end;
+
+procedure TEditCFileForm.SetProcParamsValue(const aCustomerID: Integer; const aFileID: Integer; qry: TpFIBQuery;
+  FList: TStringDynArray);
+var
+  fi: Integer;
+  f, err: string;
+
+  function CheckVarSet(const V: Variant): Boolean;
+  begin
+    Result := (not VarIsEmpty(V)) and (not VarIsNull(V)) and (not VarIsClear(V));
+  end;
+
+begin
+  err := '';
+  for fi := 0 to length(FList) - 1 do
+  begin
+    f := AnsiUpperCase(FList[fi]);
+    try
+      if (f = 'FFILETYPE') then
+        qry.ParamByName(FList[fi]).AsInteger := FFileType
+      else if (f = 'FFILETYPENAME') then
+        qry.ParamByName(FList[fi]).AsString := FFileTypeName
+      else if (f = 'FILEID') then
+        qry.ParamByName(FList[fi]).AsInteger := aFileID
+      else if (f = 'CUSTOMERID') then
+        qry.ParamByName(FList[fi]).AsInteger := aCustomerID
+      else if (f = 'CHKCONTRACT') then
+        qry.ParamByName(FList[fi]).AsInteger := IfThen(chkContract.Checked, 1, 0)
+      else if (f = 'CHKFOWNER') then
+        qry.ParamByName(FList[fi]).AsInteger := IfThen(chkFOwner.Checked, 1, 0)
+      else if ((f = 'CHKNEWOWNER')) then
+        qry.ParamByName(FList[fi]).AsInteger := IfThen(chkNewOwner.Checked, 1, 0)
+      else if ((f = 'CHKWA')) then
+        qry.ParamByName(FList[fi]).AsInteger := IfThen(chkWA.Checked, 1, 0)
+      else if ((f = 'DBLUFILETYPE') and CheckVarSet(dbluFileType.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := dbluFileType.value
+      else if ((f = 'EDDATESRV') and CheckVarSet(edDateSrv.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edDateSrv.value
+      else if ((f = 'EDDATE') and CheckVarSet(edDateSrv.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edDateSrv.value
+      else if ((f = 'EDDATEBEGIN') and CheckVarSet(edDateBegin.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edDateBegin.value
+      else if ((f = 'EDPBEGIN') and CheckVarSet(edDateBegin.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edDateBegin.value
+      else if ((f = 'EDDATEEND') and CheckVarSet(edDateEnd.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edDateEnd.value
+      else if ((f = 'EDPEND') and CheckVarSet(edDateEnd.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edDateEnd.value
+      else if ((f = 'EDTSKDATE') and CheckVarSet(edTskDate.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edTskDate.value
+      else if ((f = 'EDNBID') and CheckVarSet(ednBid.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := ednBid.value
+      else if ((f = 'EDNBIDSUM') and CheckVarSet(ednBidSum.value)) then
+        qry.ParamByName(FList[fi]).AsFloat := ednBidSum.value
+      else if ((f = 'EDNCHECKSUM') and CheckVarSet(ednCheckSum.value)) then
+        qry.ParamByName(FList[fi]).AsFloat := ednCheckSum.value
+      else if ((f = 'EDNFINESUM') and CheckVarSet(ednFineSum.value)) then
+        qry.ParamByName(FList[fi]).AsFloat := ednFineSum.value
+      else if ((f = 'EDTADRES_REGISTR') and CheckVarSet(edtADRES_REGISTR.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtADRES_REGISTR.value
+      else if ((f = 'EDTBIRTHDAY') and CheckVarSet(edtBIRTHDAY.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edtBIRTHDAY.value
+      else if ((f = 'EDTCONTRACT') and CheckVarSet(edtContract.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtContract.value
+      else if ((f = 'EDTCONTRACTDATE') and CheckVarSet(edtContractDate.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edtContractDate.value
+      else if ((f = 'EDTDOCDATE') and CheckVarSet(edtDOCDATE.value)) then
+        qry.ParamByName(FList[fi]).AsDate := edtDOCDATE.value
+      else if ((f = 'EDTEMAIL') and CheckVarSet(edtEMAIL.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtEMAIL.value
+      else if ((f = 'EDTFILE') and CheckVarSet(edtFILE.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtFILE.value
+      else if ((f = 'EDTFIRSTNAME') and CheckVarSet(edtFIRSTNAME.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtFIRSTNAME.value
+      else if ((f = 'EDTMIDLENAME') and CheckVarSet(edtMIDLENAME.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtMIDLENAME.value
+      else if ((f = 'EDTMOBILE') and CheckVarSet(edtMobile.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtMobile.value
+      else if ((f = 'EDTNAME') and CheckVarSet(edtNAME.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtNAME.value
+      else if ((f = 'EDTPASSPORT') and CheckVarSet(edtPASSPORT.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtPASSPORT.value
+      else if ((f = 'EDTPLACEBIRTH') and CheckVarSet(edtPlaceBirth.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtPlaceBirth.value
+      else if ((f = 'EDTREGISTRATION') and CheckVarSet(edtRegistration.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtRegistration.value
+      else if ((f = 'EDTSURNAME') and CheckVarSet(edtSURNAME.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtSURNAME.value
+      else if ((f = 'EDTTEXT') and CheckVarSet(edtText.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtText.value
+      else if ((f = 'EDTTEXT1') and CheckVarSet(edtText1.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtText1.value
+      else if ((f = 'EDTTEXT2') and CheckVarSet(edtText2.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtText2.value
+      else if ((f = 'EDTTEXT3') and CheckVarSet(edtText3.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtText3.value
+      else if ((f = 'EDTTEXT4') and CheckVarSet(edtText4.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtText4.value
+      else if ((f = 'EDTTSKNAME') and CheckVarSet(edtTskName.value)) then
+        qry.ParamByName(FList[fi]).AsString := edtTskName.value
+      else if ((f = 'LCBFLAT') and CheckVarSet(lcbFLAT.value)) then
+        qry.ParamByName(FList[fi]).AsString := lcbFLAT.Text
+      else if ((f = 'LCBHOUSE') and CheckVarSet(lcbHOUSE.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbHOUSE.value
+      else if ((f = 'LCBMATERIAL') and CheckVarSet(lcbMaterial.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbMaterial.value
+      else if ((f = 'LCBONOFFSRV') and CheckVarSet(lcbOnOffSrv.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbOnOffSrv.value
+      else if ((f = 'LCBPAYMENT') and CheckVarSet(lcbPayment.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbPayment.value
+      else if ((f = 'LCBSERVICE') and CheckVarSet(lcbService.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbService.value
+      else if ((f = 'LCBSERVICEFROM') and lcbServiceFrom.Visible and CheckVarSet(lcbServiceFrom.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbServiceFrom.value
+      else if ((f = 'LCBSTREETS') and CheckVarSet(lcbStreets.value)) then
+        qry.ParamByName(FList[fi]).AsInteger := lcbStreets.value
+      else if ((f = 'MMODESC') and CheckVarSet(mmoDesc.value)) then
+        qry.ParamByName(FList[fi]).AsString := mmoDesc.Lines.Text
+      else if ((f = 'MMONOTICE') and CheckVarSet(mmoNotice.value)) then
+        qry.ParamByName(FList[fi]).AsString := mmoNotice.Lines.Text;
+    except
+      err := err + #13#10 + f;
+    end;
+  end;
+  if not err.IsEmpty then
+    ShowMessage('Ошибка установки параметров: ' + #13#10 + err);
+end;
+
+function TEditCFileForm.ExecCheckSaveSQL(): TFileTypeAddendumResult;
+var
+  ProcList, FieldList: TStringDynArray;
+  Q: TpFIBQuery;
+  vSql: string;
+begin
+  Result.RemoveFile := False;
+  Result.RQ_ID := -1;
+  Result.Result := 0;
+  Result.Message := '';
+  Result.Processed := False;
+  Result.FROM_CID := -1;
+  Result.FROM_RQ_ID := -1;
+
+  if FCheckSaveProc.IsEmpty then
+    Exit;
+
+  FieldList := GetProcParams(FCheckSaveProc, vSql);
+  Q := TpFIBQuery.Create(Self);
+  try
+    Q.DataBase := dmMain.dbTV;
+    Q.Transaction := trWriteQ;
+    Q.SQL.Text := vSql;
+    SetProcParamsValue(FCustomerInfo.CUSTOMER_ID, FFileType, Q, FieldList);
+    Q.Transaction.StartTransaction;
+    Q.ExecQuery;
+    if (Q.FieldIndex['PROHIBIT_TEXT'] >= 0) and (not Q.FN('PROHIBIT_TEXT').IsNull) then
+      Result.Message := Q.FN('PROHIBIT_TEXT').AsString;
+    if (Q.FieldIndex['PROHIBIT'] >= 0) and (not Q.FN('PROHIBIT').IsNull) then
+      Result.RemoveFile := (Q.FN('PROHIBIT').AsInteger = 1);
+    Q.Transaction.Commit;
+  finally
+    Q.Free;
+  end;
+end;
+
+// если для типа файла есть процедура, то выполняем ее
+// 0 - нет процедур, не обрабатывалась
+// 1 - все ок
+// -1 - Ошибка удалим файл
+function TEditCFileForm.ExecSQLforFileType(const aCustomerID: Integer; const aFileID: Integer): TFileTypeAddendumResult;
+var
+  ProcList, FieldList: TStringDynArray;
+  i: Integer;
+  Q: TpFIBQuery;
+  vSql: string;
+begin
+  Result.RemoveFile := False;
+  Result.RQ_ID := -1;
+  Result.Result := 0;
+  Result.Message := '';
+  Result.Processed := False;
+  Result.FROM_CID := -1;
+  Result.FROM_RQ_ID := -1;
+
+  if FProcList.IsEmpty then
+    Exit;
+
+  ProcList := Explode(',', FProcList);
+  i := 0;
+  // TODO: Переделать условіе проверкі Result.Message.IsEmpty
+  // подумать над выполнением каскада процедур
+  while ((i < length(ProcList)) and (not Result.Processed)) do
+  begin
+    FieldList := GetProcParams(ProcList[i], vSql);
+    Q := TpFIBQuery.Create(Self);
+    try
+      Q.DataBase := dmMain.dbTV;
+      Q.Transaction := trWriteQ;
+      Q.SQL.Text := vSql;
+      SetProcParamsValue(aCustomerID, aFileID, Q, FieldList);
+      Q.Transaction.StartTransaction;
+      Q.ExecQuery;
+      vSql := '';
+      if (Q.FieldIndex['RESULT_TEXT'] >= 0) and (not Q.FN('RESULT_TEXT').IsNull) then
+      begin
+        Result.Message := Q.FN('RESULT_TEXT').AsString;
+        Result.Processed := true;
+      end;
+      if (Q.FieldIndex['RQ_ID'] >= 0) and (not Q.FN('RQ_ID').IsNull) then
+        Result.RQ_ID := Q.FN('RQ_ID').AsInteger;
+      if (Q.FieldIndex['FROM_CID'] >= 0) and (not Q.FN('FROM_CID').IsNull) then
+        Result.FROM_CID := Q.FN('FROM_CID').AsInteger;
+      if (Q.FieldIndex['FROM_RQ_ID'] >= 0) and (not Q.FN('FROM_RQ_ID').IsNull) then
+        Result.FROM_RQ_ID := Q.FN('FROM_RQ_ID').AsInteger;
+      Q.Transaction.Commit;
+    finally
+      Q.Free;
+    end;
+
+    if not Result.Message.IsEmpty then
+    begin
+      MessageBoxW(Handle, PWideChar(WideFormat('Ошибка: %s'#13#10'Файл будет удален.', [Result.Message])),
+        'Ошибка добавления', MB_OK + MB_ICONSTOP);
+      Result.RemoveFile := true;
+    end;
+    Inc(i);
+  end;
+
+  {
+    // выполняем процедуру такого плана
+    create or alter procedure IBE$EXAMPLE (
+    FFileType              Integer ,
+    FFileTypeName          Varchar(255)  ,
+    CustomerID             Integer ,
+    FileID                 Integer ,
+    chkContract            Integer ,
+    chkFOwner              Integer ,
+    chkNewOwner            Integer ,
+    chkWA                  Integer ,
+    dbluFileType           Integer ,
+    edDate                 Date    ,
+    edDateSrv              Date    ,
+    edDateBegin            Date    ,
+    edDateEnd              Date    ,
+    edTskDate              Date    ,
+    ednBid                 Integer ,
+    ednBidSum              Float   ,
+    ednCheckSum            Float   ,
+    ednFineSum             Float   ,
+    edtADRES_REGISTR       Varchar(255)  ,
+    edtBIRTHDAY            Date    ,
+    edtContract            Varchar(255)  ,
+    edtContractDate        Date    ,
+    edtDOCDATE             Date    ,
+    edtEMAIL               Varchar(255)  ,
+    edtFILE                Varchar(255)  ,
+    edtFIRSTNAME           Varchar(255)  ,
+    edtMIDLENAME           Varchar(255)  ,
+    edtMobile              Varchar(255)  ,
+    edtNAME                Varchar(255)  ,
+    edtPASSPORT            Varchar(255)  ,
+    edtPlaceBirth          Varchar(255)  ,
+    edtRegistration        Varchar(255)  ,
+    edtSURNAME             Varchar(255)  ,
+    edtText                Varchar(255)  ,
+    edtText1               Varchar(255)  ,
+    edtText2               Varchar(255)  ,
+    edtText3               Varchar(255)  ,
+    edtTskName             Varchar(255)  ,
+    lcbFLAT                Varchar(255)  ,
+    lcbHOUSE               Integer ,
+    lcbMaterial            Integer ,
+    lcbOnOffSrv            Integer ,
+    lcbPayment             Integer ,
+    lcbService             Integer ,
+    lcbServiceFrom         Integer ,
+    lcbStreets             Integer ,
+    mmoNotice              Varchar(1000)  ,
+    mmoDesc                Varchar(1000)
+    )
+    returns (
+    FROM_CID      integer,
+    RQ_ID         integer,
+    FROM_RQ_ID         integer,
+    RESULT_TEXT varchar(255)
+    )
+    as
+    begin
+    -- возращаем RESULT_TEXT
+    -- если пустое RESULT_TEXT, то нет ошибки иначе покажем Ошибку пользователю
+
+    RESULT_TEXT = '';
+    suspend;
+    end
+  }
 end;
 
 end.

@@ -54,7 +54,6 @@ type
     mtView: TMemTableEh;
     drvFIBView: TpFIBDataDriverEh;
     dsView: TDataSource;
-    PrintGrid: TPrintDBGridEh;
     pmViewGrid: TPopupMenu;
     actSave: TAction;
     actPrint: TAction;
@@ -73,6 +72,7 @@ type
     dbgCh: TDBGridEh;
     dsAttributes: TpFIBDataSet;
     srcAttributes: TDataSource;
+    miN2: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pmgCopyClick(Sender: TObject);
     procedure pmgSelectAllClick(Sender: TObject);
@@ -91,6 +91,7 @@ type
     procedure dbgAtrDblClick(Sender: TObject);
     procedure dbgIPTVGroupGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure miN2Click(Sender: TObject);
   protected
     { Private declarations }
   public
@@ -230,6 +231,12 @@ begin
   dsAttributes.Open;
 end;
 
+procedure TIPTVSettinsForm.miN2Click(Sender: TObject);
+begin
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
+end;
+
 procedure TIPTVSettinsForm.dbgIPTVGroupDblClick(Sender: TObject);
 begin
   actGroupEdit.Execute;
@@ -268,7 +275,8 @@ end;
 
 procedure TIPTVSettinsForm.N1Click(Sender: TObject);
 begin
-  PrintGrid.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TIPTVSettinsForm.actSaveExecute(Sender: TObject);
@@ -279,7 +287,8 @@ end;
 
 procedure TIPTVSettinsForm.actPrintExecute(Sender: TObject);
 begin
-  PrintGrid.Preview;
+  if (ActiveControl is TDBGridEh) then
+    A4MainForm.PrintDBGrid((ActiveControl as TDBGridEh));
 end;
 
 procedure TIPTVSettinsForm.actAtrAddExecute(Sender: TObject);

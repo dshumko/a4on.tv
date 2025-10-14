@@ -43,6 +43,8 @@ type
     dsMat: TpFIBDataSet;
     srcMat: TDataSource;
     lcbApplMID: TDBLookupComboboxEh;
+    lbl2: TLabel;
+    edtSOFT: TDBEditEh;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure bbOkClick(Sender: TObject);
@@ -296,8 +298,8 @@ end;
 
 procedure TEditApplianceForm.cbApplPropertyChange(Sender: TObject);
 begin
-  edtName.Enabled := (cbApplProperty.Value = 0);
-  lcbApplMID.Enabled := (cbApplProperty.Value <> 0);
+  edtName.Enabled := (cbApplProperty.Value <= 0);
+  lcbApplMID.Enabled := (cbApplProperty.Value > 0);
 end;
 
 function TEditApplianceForm.CheckData: Boolean;
@@ -397,6 +399,8 @@ begin
   dsAppl['MAC'] := edtMAC.Text;
   dsAppl['SERIAL'] := edtSN.Text;
   dsAppl['NOTICE'] := mmoNotice.Lines.Text;
+  if edtSOFT.Text <> '' then
+    dsAppl['SOFT'] := edtSOFT.Value;
   if ednCost.Text <> '' then
     dsAppl['COST'] := ednCost.Value;
   if lcbApplMID.Text <> '' then

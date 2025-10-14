@@ -65,7 +65,9 @@ type
     procedure actOpenObjectExecute(Sender: TObject);
     procedure actOpenEqpmntExecute(Sender: TObject);
   private
+    FRightAdd: Boolean;
     FRightEdit: Boolean;
+    FRightDel: Boolean;
     FRightFull: Boolean;
     function GetCustomerInfo: TCustomerInfo;
     procedure miLanClickClick(Sender: TObject);
@@ -107,15 +109,25 @@ begin
       dbgCustLAN.Columns[i].Visible := ShowAddr;
   end;
 
-  FRightFull := dmMain.AllowedAction(rght_Customer_full); // Полный доступ
-  FRightEdit := dmMain.AllowedAction(rght_Customer_EditLan); // Сеть
-  actAdd.Visible := FRightEdit or FRightFull;
+  // rght_Customer_LanFull 38, 'ПОЛНЫЙ ДОСТУП К СПД/ИНТЕРНЕТ'
+  // rght_Customer_LanAdd  64, 'ДОБАВЛЕНИ СПД/ИНТЕРНЕТ'
+  // rght_Customer_LanEdit 65, 'РЕДАКТИРОВАНИЕ СПД/ИНТЕРНЕТ'
+  // rght_Customer_LanDel  66, 'УДАЛЕНИЕ СПД/ИНТЕРНЕТ'
+
+  FRightFull := dmMain.AllowedAction(rght_Customer_full) or dmMain.AllowedAction(rght_Customer_LanFull);
+  // Полный доступ
+  FRightAdd := dmMain.AllowedAction(rght_Customer_LanAdd); // Сеть
+  FRightEdit := dmMain.AllowedAction(rght_Customer_LanEdit); // Сеть
+  FRightDel := dmMain.AllowedAction(rght_Customer_LanDel); // Сеть
+
+  actAdd.Visible := FRightAdd or FRightFull;
   actEdit.Visible := FRightEdit or FRightFull;
-  actDel.Visible := FRightEdit or FRightFull;
-  pnlButtons.Visible := FRightEdit or FRightFull;
-  actAddPack.Visible := FRightEdit or FRightFull;
-  actDelPack.Visible := FRightEdit or FRightFull;
-  pnlPack.Visible := FRightEdit or FRightFull;
+  actDel.Visible := FRightDel or FRightFull;
+
+  pnlButtons.Visible := FRightAdd or FRightEdit or FRightDel or FRightFull;
+  actAddPack.Visible := FRightAdd or FRightEdit or FRightFull;
+  actDelPack.Visible := FRightDel or FRightFull;
+  pnlPack.Visible := actAddPack.Visible;
 
   dsLAN.DataSource := FDataSource;
   PanelIPTV.Visible := (VarToStr(dmMain.GetSettingsValue('IPTV_PACKET')) = '1');
@@ -162,7 +174,8 @@ begin
 
   if (dmMain.GetSettingsValue('LAN_SRV_EXISTS') = '1') then
   begin
-    if (not LanServicesExists()) then begin
+    if (not LanServicesExists()) then
+    begin
       ShowMessage(rsErrorLANsrvNotExists);
       Exit;
     end;
@@ -512,12 +525,12 @@ begin
     if not FieldByName('AUT_PSWD').IsNull then
       AUT_PSWD := FieldByName('AUT_PSWD').AsString;
 
-    if not FieldByName('eid').IsNUll then
-      eid := FieldByName('eid').asString
+    if not FieldByName('eid').IsNull then
+      eid := FieldByName('eid').AsString
     else
       eid := '';
-    if not FieldByName('PARENT_ID').IsNUll then
-      pid := FieldByName('PARENT_ID').asString
+    if not FieldByName('PARENT_ID').IsNull then
+      pid := FieldByName('PARENT_ID').AsString
     else
       pid := '';
 

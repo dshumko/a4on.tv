@@ -6,8 +6,8 @@ interface
 
 uses
   Winapi.Windows,
-  System.Classes, System.SysUtils, System.Variants,
-  Data.DB,
+  System.Classes, System.SysUtils, System.Variants, System.Types,
+  Data.DB, AtrStrUtils,
   Vcl.Forms, Vcl.Controls, Vcl.Graphics;
 
 type
@@ -16,7 +16,6 @@ type
     property Font;
   end;
 
-  TStringArray = array of string;
   TStatusWindowHandle = type HWND;
 
 var
@@ -40,7 +39,7 @@ var
   gCustInactiveDebt: TColor; // Отключен и долг
   gCustPPAct: TColor; // Повторно подключался
 
-function LogEvent(const AUnit, ADescr, ANonice: String): Boolean;
+function LogEvent(const AUnit, ADescr: string; const ANotice: String = ''; const aLogFileName: String = ''): Boolean;
 procedure SetKeyboardLayout(const aLayout: String);
 function MonthFirstDay(const aDate: TDateTime): TDateTime;
 function MonthLastDay(const aDate: TDateTime): TDateTime;
@@ -60,26 +59,18 @@ procedure DatasetToJson(DS: TDataset; const FileName: string);
 function DatasetToJsonStr(DS: TDataset): string;
 procedure DatasetFromJson(DS: TDataset; const FileName: string);
 procedure DatasetFromJsonStr(DS: TDataset; const AJson: string);
-
 procedure DatasetToINI(Dataset: TDataset; const FileName: string);
 procedure DatasetFromINI(Dataset: TDataset; const FileName: string);
 // записать строку в буфер обмена
 procedure StrToClipbrd(StrValue: string);
 // прочесть строку из буфера обмена
 function GetStrFromClipbrd: string;
-
-// аналог функции Explode PHP
-function Explode(Ch: Char; const Text: string): TStringArray;
-
 // проверка на корректность IP адреса
 function CheckIP(const IP: string): Boolean;
-
 // проверка на корректность MAC адреса
 function CheckMAC(const MAC: string): Boolean;
-
 // переведем маску вида /24 в 255.255.255.0
 function IntToMask(const int_mask: Integer): String;
-
 function AdvSelectDirectory(const Caption: string; const Root: WideString; var Directory: string;
   EditBox: Boolean = False; ShowFiles: Boolean = False; AllowCreateDirs: Boolean = true): Boolean;
 
@@ -145,7 +136,9 @@ function GetWineAvail: Boolean;
 
 procedure RemoveStatusWindow(StatusWindow: TStatusWindowHandle);
 function CreateStatusWindow(const Text: string): TStatusWindowHandle;
-
+// добавим строку к логу
+procedure WriteLog(const Line:String; const LogFile:string = 'a4on.log');
+function GetComputerNetName: string;
 
 implementation
 
@@ -167,7 +160,8 @@ function GetTempA4onFile(const ext: string = ''): String;
 var
   TempPath, TmpFile, Prefix: string;
 begin
-  TmpFile := 'a4_' + FormatDateTime('yymmddhhnnssz', now());
+  Prefix := 'a4_';
+  TmpFile := Prefix + FormatDateTime('yymmddhhnnssz', now());
   TempPath := GetTempDir;
   Result := TempPath + TmpFile + ext;
   if FileExists(Result) then
@@ -543,39 +537,6 @@ begin
   Result := Retvar;
 end;
 
-// аналог функции Explode PHP
-function Explode(Ch: Char; const Text: string): TStringArray;
-var
-  I, k, Len: Integer;
-  Count: Integer;
-begin
-  if Text = '' then
-  begin
-    Result := nil;
-    Exit;
-  end; // if
-  Count := 0;
-  Len := Length(Text);
-  for I := 1 to Len do
-  begin
-    if Text[I] = Ch then
-      Inc(Count);
-  end; // for i
-  SetLength(Result, Count + 1);
-  Count := 0;
-  k := 1;
-  for I := 1 to Len do
-  begin
-    if Text[I] = Ch then
-    begin
-      Result[Count] := Copy(Text, k, I - k);
-      Inc(Count);
-      k := I + 1;
-    end; // if
-  end;
-  Result[Count] := Copy(Text, k, Len - k + 1);
-end;
-
 procedure SetGlobalConst;
 {$IFDEF MSWINDOWS}
 var
@@ -653,30 +614,35 @@ begin
   Result := EncodeDate(y, m, d);
 end;
 
-// Log Event in Database
-// If AEvent_Id<0 then insert mode, else Update mode
-// Return True if ok
-function LogEvent(const AUnit, ADescr, ANonice: String): Boolean;
+// Log Event in file
+function LogEvent(const AUnit, ADescr: string; const ANotice: String = ''; const aLogFileName: String = ''): Boolean;
 var
   F: TextFile;
+  vLogFileName : string;
 begin
+  if (aLogFileName = '') then
+    vLogFileName := LogFileName
+  else
+    vLogFileName := aLogFileName;
+
   Result := False;
+  {
   if not DebugMode then
     Exit;
-  AssignFile(F, LogFileName);
-  if (not FileExists(LogFileName)) then
+  }
+  AssignFile(F, vLogFileName);
+  if (not FileExists(vLogFileName)) then
     Rewrite(F) // create
   else
     Append(F);
 
   if ioresult = 0 then
   begin
-    Writeln(F, format('%10s:  %s  :%s :%s', [DateTimeToStr(now), AUnit, ADescr, ANonice]));
+    Writeln(F, format('%15s: %s :%s :%s', [FormatDateTime('yymmddhhnnsszzz', now()), AUnit, ADescr, ANotice]));
     Flush(F);
     CloseFile(F);
     Result := true;
   end;
-
 end;
 
 procedure SetKeyboardLayout(const aLayout: String);
@@ -1101,7 +1067,7 @@ function CheckIP(const IP: string): Boolean;
 var
   i1, i2, i3, i4: Integer;
   S: string;
-  ar: TStringArray;
+  ar: TStringDynArray;
 begin
   Result := False;
   S := IP;
@@ -1126,7 +1092,7 @@ end;
 function CheckMAC(const MAC: string): Boolean;
 var
   S: string;
-  // ar : TStringArray;
+  // ar : TStringDynArray;
 begin
   Result := False;
 
@@ -1640,6 +1606,23 @@ end;
 procedure RemoveStatusWindow(StatusWindow: TStatusWindowHandle);
 begin
   DestroyWindow(StatusWindow);
+end;
+
+procedure WriteLog(const Line:String; const LogFile:string = 'a4on.log');
+begin
+  LogEvent('EXE', Line, '', LogFile);
+end;
+
+function GetComputerNetName: string;
+var
+  buffer: array[0..255] of char;
+  size: dword;
+begin
+  size := 256;
+  if GetComputerName(buffer, size) then
+    Result := buffer
+  else
+    Result := ''
 end;
 
 {

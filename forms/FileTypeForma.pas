@@ -66,15 +66,22 @@ type
     lcbService: TDBLookupComboboxEh;
     lcbServiceFrom: TDBLookupComboboxEh;
     lbl5: TLabel;
-    lbl6: TLabel;
-    lbl51: TLabel;
+    lblText1: TLabel;
+    lblText2: TLabel;
     edtText2: TDBEditEh;
-    lbl52: TLabel;
+    lblText3: TLabel;
     edtText3: TDBEditEh;
     lbl11: TLabel;
     lcbAllowFT: TDBLookupComboboxEh;
     srcAllowFT: TDataSource;
     dsAllowFT: TpFIBDataSet;
+    edtPROC: TDBEditEh;
+    chkMat: TDBCheckBoxEh;
+    chkMatCustOnly: TDBCheckBoxEh;
+    actCopyID: TAction;
+    chkFileReq: TDBCheckBoxEh;
+    lblText4: TLabel;
+    edtText4: TDBEditEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -91,6 +98,13 @@ type
     procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure cbOnOffChange(Sender: TObject);
+    procedure edtHintEditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtText1EditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtText2EditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure edtText3EditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure actCopyIDExecute(Sender: TObject);
+    procedure edtText4EditButtons0Click(Sender: TObject; var Handled: Boolean);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     FOwner: Boolean;
@@ -102,6 +116,7 @@ type
     procedure InitControls;
     procedure SetCheckOwner;
     procedure ShowHideControls;
+    procedure ResizeButtons;
   public
     { Public declarations }
   end;
@@ -112,7 +127,7 @@ var
 implementation
 
 uses
-  System.StrUtils, DM, JsonDataObjects;
+  System.StrUtils, DM, JsonDataObjects, TextVarSettingsForma, MAIN;
 
 {$R *.dfm}
 
@@ -191,6 +206,12 @@ begin
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldPassportName;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  // rsFldPassportName = '[ПАСПОРТ_ФИО]';
   // rsFldPassportReg = '[ПАСПОРТ_РЕГИСТР]';
   // rsFldPassportPerm = '[ПАСПОРТ_ПРОПИСКА]';
   // rsFldPassportIssue = '[ПАСПОРТ_ВЫДАН]';
@@ -243,11 +264,6 @@ begin
 
   NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsFldMobile;
-  NewItem.OnClick := memoMiClick;
-  pmMemo.Items.Add(NewItem);
-
-  NewItem := TMenuItem.Create(pmMemo);
-  NewItem.Caption := rsFldApplicantName;
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
@@ -320,6 +336,12 @@ begin
   end;
 end;
 
+procedure TFileTypeForm.FormResize(Sender: TObject);
+begin
+  inherited;
+  ResizeButtons;
+end;
+
 procedure TFileTypeForm.actNewExecute(Sender: TObject);
 begin
   inherited;
@@ -374,16 +396,18 @@ var
 begin
   inherited;
 
+  inherited;
+
   WindowLocked := LockWindowUpdate(Self.Handle);
   try
-    if VarIsNull(cbOnOff.Value) or (cbOnOff.Value = '')  then
+    if VarIsNull(cbOnOff.Value) or (cbOnOff.Value = '') then
       t := 0
     else
       t := cbOnOff.Value;
 
-    if ( t = 2 ) then
+    if (t = 2) then
     begin
-      t := Round((gbJSON.Width - lcbSrvType.Left - lcbSrvType.Width - 7)/3);
+      t := Round((gbJSON.Width - lcbSrvType.Left - lcbSrvType.Width - 7) / 3);
 
       lcbService.Left := lcbServiceFrom.Left + t;
       lcbOnOffSrv.Left := gbJSON.Width - t;
@@ -394,7 +418,7 @@ begin
     end
     else
     begin
-      t := Round((gbJSON.Width - lcbSrvType.Left - lcbSrvType.Width - 7)/2);
+      t := Round((gbJSON.Width - lcbSrvType.Left - lcbSrvType.Width - 7) / 2);
 
       lcbServiceFrom.Visible := False;
       lcbService.Left := lcbServiceFrom.Left;
@@ -402,10 +426,42 @@ begin
       lcbOnOffSrv.Left := gbJSON.Width - t;
       lcbOnOffSrv.Width := t - 7;
     end;
+
+    ResizeButtons;
   finally
     if WindowLocked then
       LockWindowUpdate(0);
   end;
+end;
+
+procedure TFileTypeForm.ResizeButtons;
+var
+  fw: Integer;
+begin
+  fw := pnlEdit.Width;
+  fw := Trunc((fw - 5 * (lblText1.Width + 12)) / 5);
+
+  edtHint.Width := fw;
+
+  lblText1.Left := edtHint.Left + edtHint.Width + 5;
+  edtText1.Left := lblText1.Left + lblText1.Width + 5;
+  edtText1.Width := fw;
+
+  lblText2.Left := edtText1.Left + edtText1.Width + 5;
+  edtText2.Left := lblText2.Left + lblText2.Width + 5;
+  edtText2.Width := fw;
+
+  lblText3.Left := edtText2.Left + edtText2.Width + 5;
+  edtText3.Left := lblText3.Left + lblText3.Width + 5;
+  edtText3.Width := fw;
+
+  lblText4.Left := edtText3.Left + edtText3.Width + 5;
+  edtText4.Left := lblText4.Left + lblText4.Width + 5;
+  edtText4.Width := pnlEdit.Width - edtText4.Left - 6;
+
+  edtNameFmt.Width := lblText3.Left + lblText3.Width;
+  edtPROC.Left := lblText3.Left;
+  edtPROC.Width := pnlEdit.Width - edtPROC.Left - 6;
 end;
 
 procedure TFileTypeForm.cbOnOffChange(Sender: TObject);
@@ -441,6 +497,72 @@ begin
       Background := StringToColor(dsFileType.FieldByName('O_DIMENSION').Value);
     except
     end;
+end;
+
+procedure TFileTypeForm.edtHintEditButtons0Click(Sender: TObject; var Handled: Boolean);
+var
+  s: string;
+begin
+  inherited;
+  s := edtHint.Text;
+  if EditTextVarSettings(s) then
+    edtHint.Text := s;
+
+  Handled := True;
+end;
+
+procedure TFileTypeForm.edtText1EditButtons0Click(Sender: TObject; var Handled: Boolean);
+var
+  s: string;
+begin
+  inherited;
+  s := edtText1.Text;
+  if EditTextVarSettings(s) then
+    edtText1.Text := s;
+
+  Handled := True;
+end;
+
+procedure TFileTypeForm.edtText2EditButtons0Click(Sender: TObject; var Handled: Boolean);
+var
+  s: string;
+begin
+  inherited;
+  s := edtText2.Text;
+  if EditTextVarSettings(s) then
+    edtText2.Text := s;
+
+  Handled := True;
+end;
+
+procedure TFileTypeForm.edtText3EditButtons0Click(Sender: TObject; var Handled: Boolean);
+var
+  s: string;
+begin
+  inherited;
+  s := edtText3.Text;
+  if EditTextVarSettings(s) then
+    edtText3.Text := s;
+
+  Handled := True;
+end;
+
+procedure TFileTypeForm.edtText4EditButtons0Click(Sender: TObject; var Handled: Boolean);
+var
+  s: string;
+begin
+  inherited;
+  s := edtText4.Text;
+  if EditTextVarSettings(s) then
+    edtText4.Text := s;
+
+  Handled := True;
+end;
+
+procedure TFileTypeForm.actCopyIDExecute(Sender: TObject);
+begin
+  inherited;
+  A4MainForm.CopyDataSetFldToClipboard(dsFileType, 'O_ID');
 end;
 
 procedure TFileTypeForm.actDeleteExecute(Sender: TObject);
@@ -521,7 +643,8 @@ begin
     dsAllowFT.ParamByName('O_ID').AsInteger := -1;
   dsAllowFT.Open;
 
-  if (not new) and (not dsFileType.FieldByName('O_CHARFIELD').IsNull) then
+  chkFileReq.Checked := True;
+  if (not New) and (not dsFileType.FieldByName('O_CHARFIELD').IsNull) then
     ParseJson(dsFileType['O_CHARFIELD']);
 
   StartEdit(New);
@@ -612,6 +735,10 @@ begin
         lcbTempl.Value := JO['ReqTempl'];
     end;
 
+    chkFileReq.Checked := True;
+    if JO.Contains('EF') and (not JO['EF'].IsNull) then
+      chkFileReq.Checked := (JO.I['EF'] <> 1);
+
     SetChk('OpenInet', chkOpenInet);
     SetChk('Psprt', chkPassport);
     SetChk('Card', chkCustomerCard);
@@ -676,6 +803,17 @@ begin
       if not JO['Txt3'].IsNull then
         edtText3.Text := JO.s['Txt3'];
     end;
+
+    if JO.Contains('Txt4') then
+    begin
+      if not JO['Txt4'].IsNull then
+        edtText4.Text := JO.s['Txt4'];
+    end;
+
+    SetChk('Mat', chkMat);
+    if chkMat.Checked then
+      SetChk('MatCO', chkMatCustOnly);
+
   finally
     JO.Free;
   end;
@@ -687,6 +825,8 @@ var
 begin
   JO := TJsonObject.Create;
   try
+    if not chkFileReq.Checked then
+      JO.I['EF'] := 1;
     if not cbOnOff.Text.IsEmpty then
       JO['OnOff'] := cbOnOff.Value;
     if not lcbSrvType.Text.IsEmpty then
@@ -733,14 +873,26 @@ begin
       JO.s['Txt2'] := trim(edtText2.Text);
     if not edtText3.Text.IsEmpty then
       JO.s['Txt3'] := trim(edtText3.Text);
+    if not edtText4.Text.IsEmpty then
+      JO.s['Txt4'] := trim(edtText4.Text);
     if chkTask.Checked then
       JO.B['Tsk'] := chkTask.Checked;
     if not cbPeriod.Text.IsEmpty then
-      JO.I['Prd'] := cbPeriod.Value;
+    begin
+      if cbPeriod.Value <> 0 then
+        JO.I['Prd'] := cbPeriod.Value;
+    end;
     if FOwner and chkOwner.Checked then
       JO.B['Own'] := chkOwner.Checked;
     if not lcbAllowFT.IsEmpty then
       JO.I['AFT'] := lcbAllowFT.Value;
+    if chkMat.Checked then
+    begin
+      JO.B['Mat'] := chkMat.Checked;
+      if chkMatCustOnly.Checked then
+        JO.B['MatCO'] := chkMatCustOnly.Checked;
+    end;
+
     // if chkSSum.Checked then JO.B['SSum'] := chkSSum.Checked;
 
     Result := JO.ToString
@@ -765,6 +917,7 @@ begin
   edtText1.Text := '';
   edtText2.Text := '';
   edtText3.Text := '';
+  edtText4.Text := '';
   for I := 0 to pnlEdit.ComponentCount - 1 do
   begin
     if pnlEdit.Components[I] is TDBCheckBoxEh then

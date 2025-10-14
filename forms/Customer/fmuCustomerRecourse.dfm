@@ -43,11 +43,9 @@ object apgCustomerRecourse: TapgCustomerRecourse
     RowHeight = 2
     RowLines = 1
     RowSizingAllowed = True
-    SearchPanel.Enabled = True
-    SearchPanel.FilterOnTyping = True
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
+    STFilter.Visible = False
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgRecoursesDblClick

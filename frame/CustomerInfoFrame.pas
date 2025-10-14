@@ -6,76 +6,189 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Dm, PrjConst, A4onTypeUnit, Vcl.Mask, DBCtrlsEh;
+  Vcl.Menus, Vcl.Mask,
+  Dm, PrjConst, A4onTypeUnit, DBCtrlsEh, HtmlView, HTMLSubs,
+  HTMLUn2,
+  FramView, FramBrwz;
 
 type
   TCustomerInfoFrm = class(TFrame)
     gbInfo: TGroupBox;
-    memAbonent: TMemo;
-    lblFIO: TDBEditEh;
-    lblDebt: TDBEditEh;
+    pmHV: TPopupMenu;
+    miCopy: TMenuItem;
+    HtmlViewer: THtmlViewer;
+    procedure HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase; Button: TMouseButton; Shift: TShiftState;
+      X, Y, IX, IY: Integer);
+    procedure HtmlViewerHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
+    procedure miCopyClick(Sender: TObject);
+    procedure FrameResize(Sender: TObject);
   private
     { Private declarations }
+    Font_size: Integer;
+    Font_name: string;
+    FRed_Sum: single;
+    FShowAsBalance: Boolean;
+    FShowMoney: Boolean;
     ci: TCustomerInfo;
     procedure SetCI(Value: TCustomerInfo);
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
     property Customer: TCustomerInfo read ci write SetCI;
+    procedure MakeHtml;
   end;
 
 implementation
 
+uses
+  MAIN, CustomerForma;
+
 {$R *.dfm}
 
-procedure TCustomerInfoFrm.SetCI(Value: TCustomerInfo);
+constructor TCustomerInfoFrm.Create(AOwner: TComponent);
 var
+  i: Integer;
+begin
+  inherited;
+  Font_size := 8;
+  Font_name := 'Tahoma';
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  begin
+    Font_size := i;
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+  end;
+  FRed_Sum := dmMain.GetSettingsValue('DOLG');
+  FShowAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
+  FShowMoney := (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full))
+end;
+
+procedure TCustomerInfoFrm.FrameResize(Sender: TObject);
+begin
+  MakeHtml;
+end;
+
+procedure TCustomerInfoFrm.MakeHtml;
+var
+  FHtml: string;
   clr: TColor;
-  s: string;
+  addr, sText, lText: string;
+  dText, dColor: string;
+  fo: TCustomForm;
+begin
+  HtmlViewer.defBackground := clBtnFace;
+
+  if ci.CUSTOMER_ID = -1 then
+    FHtml := '<html><body>' + rsNOT_FOUND_CUST + '</body></html>'
+  else
+  begin
+    if FShowMoney // просмотр сумм
+    then
+    begin
+      dColor := '';
+      if FShowAsBalance then
+      begin
+        dText := rsBALANCE;
+        if (-1 * ci.Debt_sum > FRed_Sum) then
+          dColor := ' color="RED"';
+      end
+      else
+      begin
+        dText := rsSALDO;
+        if (ci.Debt_sum > FRed_Sum) then
+          dColor := ' color="RED"';
+      end;
+      dText := '<i>' + dText + '</i>: ' + '<font' + dColor + '><strong>' + FormatFloat(',0.00', ci.Debt_sum) + '</strong></font><br>';
+    end;
+
+    addr := '' + ci.Street + ' д.' + ci.HOUSE_NO;
+    if not ci.flat_No.IsEmpty then
+      addr := addr + ' кв.' + ci.flat_No;
+    if not ci.City.IsEmpty then
+      addr := addr + ' (' + ci.City + ')';
+
+    if not ci.CUST_STATE_DESCR.IsEmpty then
+      sText := '<i>' + rsSTATE + '</i>: ' + ci.CUST_STATE_DESCR;
+
+    if not ci.notice.IsEmpty then
+    begin
+      if not sText.IsEmpty then
+        sText := sText + '<br>';
+      sText := sText + '<i>' + rsSNotice + '</i>: ' + ci.notice;
+    end;
+
+    lText := '<strong>' + ci.Account_no + '</strong>';
+    fo := GetParentForm(Self);
+    if (not(fsModal in fo.FormState)) then
+      lText := '<a href="ls:' + ci.Account_no + '">' + lText + '</a>';
+
+    FHtml := '<html><body>' +
+    // для соохранения форматирования
+      '<i>ЛC</i>: ' + lText + ' ' + ci.FIO + '<br>' +
+    // для соохранения форматирования
+      dText +
+    // для соохранения форматирования
+      '<i>' + rsCode + '</i>: ' + ci.cust_code + ' ' + addr + ' ' + '<br>' +
+    // для соохранения форматирования
+      sText +
+    // для соохранения форматирования
+      '</body></html>';
+
+    if ci.Color <> '' then
+      clr := StringToColor(ci.Color)
+    else
+      clr := clBtnFace;
+
+    HtmlViewer.DefFontName := Font_name;
+    HtmlViewer.DefFontSize := Font_size;
+    HtmlViewer.defBackground := clr;
+    gbInfo.Color := clr;
+  end;
+
+  HtmlViewer.LoadFromString(FHtml);
+end;
+
+procedure TCustomerInfoFrm.HtmlViewerHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
+begin
+  if ci.CUSTOMER_ID <> -1 then
+    ShowCustomer(ci.CUSTOMER_ID);
+  Handled := True;
+end;
+
+procedure TCustomerInfoFrm.HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if (Shift = [ssCtrl]) then
+  begin
+    case Key of
+      67:
+        HtmlViewer.CopySelectedAsTextToClipboard;
+      65:
+        HtmlViewer.SelectAll; // Ctrl+A
+    end;
+  end;
+end;
+
+procedure TCustomerInfoFrm.HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase; Button: TMouseButton;
+  Shift: TShiftState; X, Y, IX, IY: Integer);
+var
+  pt: TPoint;
+begin
+  if HtmlViewer.SelLength <> 0 then
+  begin
+    pt := Mouse.CursorPos;
+    pmHV.Popup(pt.X, pt.Y);
+  end;
+end;
+
+procedure TCustomerInfoFrm.miCopyClick(Sender: TObject);
+begin
+  HtmlViewer.CopySelectedAsTextToClipboard;
+end;
+
+procedure TCustomerInfoFrm.SetCI(Value: TCustomerInfo);
 begin
   ci := Value;
-  memAbonent.Lines.Clear;
-  lblFIO.Text := '';
-  lblDebt.Text := '';
-
-  if Value.CUSTOMER_ID = -1 then
-  begin
-    lblFIO.Text := rsNOT_FOUND_CUST;
-    exit;
-  end;
-
-  lblFIO.Text := Value.Account_no + ' ' + Value.FIO;
-
-  if (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full)) // просмотр сумм
-  then
-  begin
-    if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
-      s := rsBALANCE + ': ' + floatToStr(Value.Debt_sum)
-    else
-      s := rsSALDO + ': ' + floatToStr(Value.Debt_sum);
-    lblDebt.Text := s;
-  end;
-
-  s := '' + Value.Street + ' д.' + Value.HOUSE_NO;
-  if not Value.flat_No.IsEmpty then
-    s := s + ' кв.' + Value.flat_No;
-  if not Value.City.IsEmpty then
-    s := s + ' (' + Value.City + ')';
-
-  memAbonent.Lines.Add(s);
-  memAbonent.Lines.Add(Value.CUST_STATE_DESCR);
-  memAbonent.Lines.Add(Value.notice);
-  s := rsCode + ' ' + Value.cust_code;
-  memAbonent.Lines.Insert(0, s);
-  memAbonent.Lines.Delete(memAbonent.Lines.Count - 1);
-  if Value.color <> '' then
-    clr := StringToColor(Value.color)
-  else
-    clr := clBtnFace;
-
-  memAbonent.color := clr;
-  lblFIO.color := clr;
-  lblDebt.color := clr;
-  gbInfo.color := clr;
+  MakeHtml;
 end;
 
 end.

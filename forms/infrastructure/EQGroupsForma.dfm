@@ -63,7 +63,7 @@ inherited EQGroupsForm: TEQGroupsForm
         Footers = <>
         Title.Caption = #1043#1088#1091#1087#1087#1072' ('#1084#1072#1088#1082#1072')'
         Title.TitleButton = True
-        Width = 157
+        Width = 185
       end
       item
         AutoFitColWidth = False
@@ -75,6 +75,16 @@ inherited EQGroupsForm: TEQGroupsForm
         Title.Caption = #1050#1086#1076
         Visible = False
         Width = 41
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'O_NUMERICFIELD'
+        Footers = <>
+        Title.Caption = #1055'. '#1084#1086#1097#1085#1086#1089#1090#1100
+        Title.TitleButton = True
+        Width = 73
       end
       item
         CellButtons = <>
@@ -128,15 +138,22 @@ inherited EQGroupsForm: TEQGroupsForm
       Height = 13
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
     end
+    object lbl2: TLabel [2]
+      Left = 5
+      Top = 34
+      Width = 52
+      Height = 13
+      Caption = #1052#1086#1097#1085#1086#1089#1090#1100
+    end
     inherited btnSaveLink: TBitBtn
       Top = 111
-      Width = 428
-      TabOrder = 4
+      Width = 440
+      TabOrder = 5
     end
     inherited btnCancelLink: TBitBtn
       Left = 519
       Top = 111
-      TabOrder = 5
+      TabOrder = 6
     end
     object edtName: TDBEditEh
       Left = 73
@@ -166,30 +183,46 @@ inherited EQGroupsForm: TEQGroupsForm
       EditButtons = <>
       EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077' '#1075#1088#1091#1087#1087#1099
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 4
       Visible = True
       WantReturns = True
     end
     object btnColorClear: TButton
       Left = 519
-      Top = 29
+      Top = 30
       Width = 86
-      Height = 25
+      Height = 23
       Hint = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085' '#1076#1083#1103' '#1074#1099#1076#1077#1083#1077#1085#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
       Anchors = [akTop, akRight]
       Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085
-      TabOrder = 2
+      TabOrder = 3
       TabStop = False
       OnClick = btnColorClearClick
     end
     object btnColorSet: TButtonColor
-      Left = 73
-      Top = 29
-      Width = 428
+      Left = 224
+      Top = 30
+      Width = 289
+      Height = 23
       Anchors = [akLeft, akTop, akRight]
       Caption = #1062#1074#1077#1090' '#1075#1088#1091#1087#1087#1099
-      TabOrder = 1
+      TabOrder = 2
       OnClick = btnColorSetClick
+    end
+    object edPCE: TDBNumberEditEh
+      Left = 73
+      Top = 31
+      Width = 145
+      Height = 21
+      DataField = 'O_NUMERICFIELD'
+      DataSource = srcDataSource
+      DecimalPlaces = 3
+      DynProps = <>
+      EmptyDataInfo.Text = #1087#1086#1090'. '#1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090'/'#1095
+      EditButtons = <>
+      ShowHint = True
+      TabOrder = 1
+      Visible = True
     end
   end
   object pnlForms: TPanel [5]
@@ -239,7 +272,7 @@ inherited EQGroupsForm: TEQGroupsForm
     UpdateSQL.Strings = (
       
         'execute procedure Attributes_Iud(:O_Id, :O_Name, :O_Description,' +
-        ' :COLOR, :O_Deleted, null, null, 1, 7)')
+        ' :COLOR, :O_Deleted, null, null, 1, 7, 0, 0, :O_Numericfield)')
     DeleteSQL.Strings = (
       
         'execute procedure Attributes_Iud(:O_Id, :O_Name, :O_Description,' +
@@ -247,7 +280,7 @@ inherited EQGroupsForm: TEQGroupsForm
     InsertSQL.Strings = (
       
         'execute procedure Attributes_Iud(:O_Id, :O_Name, :O_Description,' +
-        ' :COLOR, :O_Deleted, null, null, 0, 7)')
+        ' :COLOR, :O_Deleted, null, null, 0, 7, 0, 0, :O_Numericfield)')
     RefreshSQL.Strings = (
       'select'
       '    O_ID'
@@ -256,9 +289,12 @@ inherited EQGroupsForm: TEQGroupsForm
       '  , O_DELETED'
       '  , O_DIMENSION as COLOR'
       '  , O_TYPE'
+      '  , -1*O_ID EID'
+      '  , O_NUMERICFIELD'
       '  from OBJECTS'
-      '  where OBJECTS.O_ID = :OLD_O_ID'
-      '    and OBJECTS.O_TYPE = :OLD_O_TYPE'
+      '  where O_TYPE = 7 '
+      '    and O_ID = :OLD_O_ID'
+      '    and O_TYPE = :OLD_O_TYPE'
       '    '
       '  ')
     SelectSQL.Strings = (
@@ -270,6 +306,7 @@ inherited EQGroupsForm: TEQGroupsForm
       '  , O_DIMENSION as COLOR'
       '  , O_TYPE'
       '  , -1*O_ID EID'
+      '  , O_NUMERICFIELD'
       '  from OBJECTS'
       '  where O_TYPE = 7'
       '        and O_DELETED = 0'

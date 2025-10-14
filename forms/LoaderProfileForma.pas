@@ -5,7 +5,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls, Vcl.Mask, Vcl.Menus,
   Vcl.DBCtrls,
@@ -181,7 +181,7 @@ type
     { Private declarations }
     FileStrings: TStringList;
     dbf: TVKDBFNTX;
-    procedure initGrid(SG: TStringGrid; const Rows: Integer; const sa: TStringArray);
+    procedure initGrid(SG: TStringGrid; const Rows: Integer; const sa: TStringDynArray);
     procedure ReadTabFile;
     procedure ReadHeaderFile;
     procedure ParseFile(const FileName: string);
@@ -423,7 +423,7 @@ begin
     FileToStrings(FileName, FileStrings, LoaderReestrForm.mdsFileFormats['CodePage'], True);
 end;
 
-procedure TLoaderProfileForm.initGrid(SG: TStringGrid; const Rows: Integer; const sa: TStringArray);
+procedure TLoaderProfileForm.initGrid(SG: TStringGrid; const Rows: Integer; const sa: TStringDynArray);
 var
   i: Integer;
 begin
@@ -452,7 +452,7 @@ var
   i, b, j: Integer;
   S: string;
   Les_Strings: TStringList;
-  sa: TStringArray;
+  sa: TStringDynArray;
   sprt: Char;
 begin
   Les_Strings := TStringList.Create;
@@ -507,7 +507,7 @@ var
   i, b, j: Integer;
   S: string;
   Les_Strings: TStringList;
-  sa: TStringArray;
+  sa: TStringDynArray;
   sprt: Char;
 begin
   Les_Strings := TStringList.Create;

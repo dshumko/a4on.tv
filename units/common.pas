@@ -36,6 +36,10 @@ var
   gCustInactiveDebt:TColor; //Отключен и долг
   gCustPPAct:TColor;        //Повторно подключался
 
+const
+  clrCapacityError: Integer = $00B4B4FF;
+  clrLblFree: Integer = $00B4FEB4;
+
 function LogEvent(const AUnit, ADescr, ANonice:String):boolean;
 procedure SetGlobalConst;
 function GetExePath: string;

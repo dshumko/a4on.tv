@@ -5,7 +5,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.UITypes, System.Classes, System.SysUtils, System.Actions, System.Variants,
+  System.UITypes, System.Classes, System.SysUtils, System.Actions, System.Variants, System.Types,
   Data.DB,
   Vcl.Menus, Vcl.ActnList, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Dialogs,
@@ -155,7 +155,6 @@ type
     trReadParent: TpFIBTransaction;
     srcParent: TDataSource;
     btn1: TToolButton;
-    chkTREE: TCheckBox;
     mtNodes: TMemTableEh;
     drvNodes: TpFIBDataDriverEh;
     miTreeBreak: TMenuItem;
@@ -165,6 +164,21 @@ type
     miN2: TMenuItem;
     miLinkNodes: TMenuItem;
     miLinkNodes1: TMenuItem;
+    actCopyID: TAction;
+    btn2: TToolButton;
+    btn3: TToolButton;
+    btnTree: TToolButton;
+    actTree: TAction;
+    miTree: TMenuItem;
+    splTop: TSplitter;
+    lbl21: TLabel;
+    lcbEpoint: TDBLookupComboboxEh;
+    dsEPoint: TpFIBDataSet;
+    srcEPoint: TDataSource;
+    lbl111: TLabel;
+    edtNAME1: TDBEditEh;
+    lbl13: TLabel;
+    ednPCE: TDBNumberEditEh;
     procedure lstFormsClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtSearchChange(Sender: TObject);
@@ -209,7 +223,6 @@ type
     procedure edtNAMEKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure actTaskExecute(Sender: TObject);
     procedure dbgNodesDblClick(Sender: TObject);
-    procedure chkTREEClick(Sender: TObject);
     procedure miTreeExpandClick(Sender: TObject);
     procedure miTreeCollapseClick(Sender: TObject);
     procedure dbgNodesGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -223,6 +236,8 @@ type
     procedure PropStorageWriteCustomProps(Sender: TObject; Writer: TPropWriterEh);
     procedure PropStorageReadProp(Sender: TObject; Reader: TPropReaderEh; const PropName: string;
       var Processed: Boolean);
+    procedure actCopyIDExecute(Sender: TObject);
+    procedure actTreeExecute(Sender: TObject);
   private
     FLastPage: TA4onPage;
     FSavedPageIndex: Integer;
@@ -483,7 +498,8 @@ begin
   FPageList.Add(TapgNodeFlats);
   FPageList.Add(TapgNodeRequests);
   FPageList.Add(TapgNodeAttributes);
-  FPageList.Add(TapgNodeLayout);
+  if (dmMain.GetSettingsValue('NODE_LAYOUT') = '1') then
+    FPageList.Add(TapgNodeLayout);
   FPageList.Add(TapgNodeFiles);
   FPageList.Add(TapgNodeLink);
   FPageList.Add(TapgNodeCIRCUIT);
@@ -781,6 +797,11 @@ begin
   end;
 end;
 
+procedure TNodesForm.actCopyIDExecute(Sender: TObject);
+begin
+  A4MainForm.CopyDataSetFldToClipboard(dbgNodes.DataSource.DataSet, 'NODE_ID');
+end;
+
 procedure TNodesForm.actLinkNodesExecute(Sender: TObject);
 var
   LinkItem, SecondItem: TNodeLinkItem;
@@ -934,11 +955,24 @@ begin
 end;
 
 procedure TNodesForm.actQuickFilterExecute(Sender: TObject);
+var
+  i: Integer;
 begin
   actQuickFilter.Checked := not actQuickFilter.Checked;
   dbgNodes.STFilter.Visible := actQuickFilter.Checked;
   if not actQuickFilter.Checked then
     dbgNodes.DataSource.DataSet.Filtered := False;
+
+  if Assigned(FPageList) then
+  begin
+    for i := 0 to FPageList.Count - 1 do
+    begin
+      if Assigned(FPageList[i].Page) then
+      begin
+        FPageList[i].Page.ShowQuickFilter(actQuickFilter.Checked);
+      end;
+    end;
+  end;
 end;
 
 procedure TNodesForm.actRequestExecute(Sender: TObject);
@@ -1072,22 +1106,19 @@ begin
   A4MainForm.MakeTask('N', dbgNodes.DataSource.DataSet.FieldByName('Node_Id').AsString);
 end;
 
-procedure TNodesForm.chkFldOnlyClick(Sender: TObject);
-begin
-  tlbSearch.Visible := not chkFldOnly.Checked;
-end;
-
-procedure TNodesForm.chkTREEClick(Sender: TObject);
+procedure TNodesForm.actTreeExecute(Sender: TObject);
 var
   id: Integer;
 begin
   inherited;
+  actTree.Checked := not actTree.Checked;
+
   if (srcNodes.DataSet.RecordCount >= 0) and (not srcNodes.DataSet.FieldByName('NODE_ID').IsNull) then
     id := srcNodes.DataSet['NODE_ID']
   else
     id := -666;
 
-  if chkTREE.Checked then
+  if actTree.Checked then
   begin
     drvNodes.SelectSQL.Text := dsNodes.SQLs.SelectSQL.Text;
     drvNodes.DeleteSQL.Text := dsNodes.SQLs.DeleteSQL.Text;
@@ -1111,9 +1142,9 @@ begin
   {
     chkGroup.Enabled := not chkTREE.Checked;
   }
-  miTreeBreak.Visible := chkTREE.Checked;
-  miTreeCollapse.Visible := chkTREE.Checked;
-  miTreeExpand.Visible := chkTREE.Checked;
+  miTreeBreak.Visible := actTREE.Checked;
+  miTreeCollapse.Visible := actTREE.Checked;
+  miTreeExpand.Visible := actTREE.Checked;
 
   srcNodes.DataSet.DisableControls;
   if not srcNodes.DataSet.Active then
@@ -1122,6 +1153,11 @@ begin
     srcNodes.DataSet.Locate('NODE_ID', id, []);
   srcNodes.DataSet.EnableControls;
   dbgNodes.SetFocus;
+end;
+
+procedure TNodesForm.chkFldOnlyClick(Sender: TObject);
+begin
+  tlbSearch.Visible := not chkFldOnly.Checked;
 end;
 
 function TNodesForm.GetOrderClause(grid: TCustomDBGridEh): string;
@@ -1194,6 +1230,9 @@ function TNodesForm.GenerateFilter: string;
 
     if (not dsFilter.FieldByName('NODE_ID').IsNull) then
       tmpSQL := tmpSQL + Format(' and ( n.NODE_ID = %s) ', [dsFilter.FieldByName('NODE_ID').AsString]);
+
+    if (not dsFilter.FieldByName('EPOINT').IsNull) then
+      tmpSQL := tmpSQL + Format(' and ( n.EPOINT = %s) ', [dsFilter.FieldByName('EPOINT').AsString]);
 
     if (tmpSQL <> '') then
       Result := TrimAnd(tmpSQL)
@@ -1278,6 +1317,7 @@ procedure TNodesForm.dsFilterNewRecord(DataSet: TDataSet);
 begin
   DataSet['inversion'] := False; // инверсия фильтра т.е. добавляем not
   DataSet['next_condition'] := 0; // следующее условие AND/OR
+  DataSet['CHECK_ADRESS'] := 1; // следующее условие AND/OR
 end;
 
 procedure TNodesForm.dsNodesAfterOpen(DataSet: TDataSet);
@@ -1297,7 +1337,7 @@ end;
 procedure TNodesForm.SetFilter(const FilterFIELD: Integer; const FilterVALUE: string);
 var
   cr: TCursor;
-  val: TStringArray;
+  val: TStringDynArray;
   i: Integer;
 begin
   if not(srcNodes.DataSet is TpFIBDataSet) or (FilterFIELD < 1) then
@@ -1374,7 +1414,7 @@ begin
   else
     CnErrors.Dispose(cbbHOUSE_ID);
 
-  if (cbbTYPE_ID.Text = '') then
+  if (VarIsNull(cbbTYPE_ID.Value)) and (not dmMain.UserIsAdmin) then
   begin
     errors := True;
     CnErrors.SetError(cbbTYPE_ID, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
@@ -1611,6 +1651,7 @@ begin
   dsNodeType.Open;
   dsStreets.Open;
   dsParentNode.Open;
+  dsEPoint.Open;
 
   SetEditMode(True, New);
 
@@ -1655,6 +1696,7 @@ begin
 
   dsNodeType.Close;
   dsParentNode.Close;
+  dsEPoint.Close;
 
   SetEditMode(False, False);
   dbgNodes.SetFocus;

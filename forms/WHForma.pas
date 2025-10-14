@@ -26,6 +26,7 @@ type
     lbl4: TLabel;
     srcOwner: TDataSource;
     dsOwner: TpFIBDataSet;
+    actCopyID: TAction;
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure srcDataSourceStateChange(Sender: TObject);
@@ -36,6 +37,7 @@ type
     procedure dbgRightsExit(Sender: TObject);
     procedure dsRightsBeforePost(DataSet: TDataSet);
     procedure btnCancelLinkClick(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,9 +50,15 @@ var
 implementation
 
 uses
-  DM;
+  DM, MAIN;
 
 {$R *.dfm}
+
+procedure TWHform.actCopyIDExecute(Sender: TObject);
+begin
+  inherited;
+  A4MainForm.CopyDataSetFldToClipboard(dbGrid.DataSource.DataSet, 'O_ID');
+end;
 
 procedure TWHform.actDeleteExecute(Sender: TObject);
 begin

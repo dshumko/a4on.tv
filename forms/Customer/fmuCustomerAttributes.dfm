@@ -29,7 +29,7 @@ object apgCustomerAttributes: TapgCustomerAttributes
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = True
+    STFilter.Visible = False
     TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgCustAttrDblClick

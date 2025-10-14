@@ -6,9 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
+  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ActnList,
   Vcl.Menus,
-  PrjConst, AtrPages, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase,
+  PrjConst, AtrPages, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, FIBQuery, pFIBQuery, FIBDatabase,
+  pFIBDatabase,
   FIBDataSet, pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, A4onTypeUnit;
 
 type
@@ -37,7 +39,6 @@ type
     btnFindCustomer: TSpeedButton;
     pmOpen: TPopupMenu;
     miEqpmnt: TMenuItem;
-    miNodeFrom: TMenuItem;
     actOpenEqpmnt: TAction;
     actOpenCustomer: TAction;
     btnLink: TSpeedButton;
@@ -48,6 +49,8 @@ type
     miAdd: TMenuItem;
     miN1: TMenuItem;
     miEdit: TMenuItem;
+    actOpenEqpmntTo: TAction;
+    miOpenEqpmntTo: TMenuItem;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -63,6 +66,12 @@ type
     procedure actOpenCustomerExecute(Sender: TObject);
     procedure actWireLinkExecute(Sender: TObject);
     procedure btnDelClick(Sender: TObject);
+    procedure actOpenEqpmntToExecute(Sender: TObject);
+    procedure dbgNodeLinkColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgNodeLinkColumns8GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgDetailColumns0GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbgDetailCellClick(Column: TColumnEh);
+    procedure dbgNodeLinkCellClick(Column: TColumnEh);
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
@@ -83,6 +92,10 @@ implementation
 uses
   MAIN, AtrCommon, DM, NodeLinkForma, WireLinkForma, EQPort;
 
+const
+  clrCapacityError: Integer = $00B4B4FF;
+  clrLblFree: Integer = $00B4FEB4;
+
 class function TapgNodeLink.GetPageName: string;
 begin
   Result := rsClmnLink;
@@ -95,11 +108,12 @@ begin
 
   pnlButtons.Visible := FRightFull or FRightEdit;
   actAdd.Visible := pnlButtons.Visible;
-  actDel.Visible := pnlButtons.Visible;
+  actDel.Visible := dmMain.AllowedAction(rght_Dictionary_full);
   actEdit.Visible := pnlButtons.Visible;
 
-  actPEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment) or
-    dmMain.AllowedAction(rght_Comm_Equipment_Ports);
+  actPEdit.Enabled := dmMain.AllowedAction(rght_Dictionary_full) //
+    or dmMain.AllowedAction(rght_Comm_Equipment) //
+    or dmMain.AllowedAction(rght_Comm_Equipment_Ports);
 
   dsLink.DataSource := FDataSource;
 end;
@@ -165,8 +179,8 @@ begin
     Exit;
   if ((not dsLink.Active) or (dsLink.RecordCount = 0)) then
     Exit;
-  if (dsLink.FieldByName('NAME').IsNull) or (dsLink.FieldByName('WID').IsNull) or
-    (FDataSource.DataSet.FieldByName('NODE_ID').IsNull) then
+
+  if (dsLink.FieldByName('WID').IsNull) or (FDataSource.DataSet.FieldByName('NODE_ID').IsNull) then
     Exit;
 
   // редактируем только если с этого узла
@@ -213,19 +227,30 @@ end;
 
 procedure TapgNodeLink.actOpenCustomerExecute(Sender: TObject);
 begin
-  if dsEQ.RecordCount = 0 then
+  if ((dsEQ.RecordCount = 0) or (dsEQ.FieldByName('WLBL_NAME').IsNull) or (dsEQ.FieldByName('WLBL_TYPE').IsNull)) then
     Exit;
 
-  if not dsEQ.FieldByName('CUSTOMER_ID').IsNull then
-    A4MainForm.ShowCustomers(7, IntToStr(dsEQ['CUSTOMER_ID']));
+  if dsEQ['WLBL_TYPE'] = 1 then
+    A4MainForm.ShowCustomers(7, IntToStr(dsEQ['WLBL_ID']));
 end;
 
 procedure TapgNodeLink.actOpenEqpmntExecute(Sender: TObject);
 begin
-  if ((dsEQ.RecordCount = 0) or (dsEQ.FieldByName('Name').IsNull)) then
+  if ((dsEQ.RecordCount = 0) or (dsEQ.FieldByName('WLBL_NAME').IsNull) or (dsEQ.FieldByName('WLBL_TYPE').IsNull)) then
     Exit;
 
-  A4MainForm.OpenEquipmentByName(dsEQ['Name']);
+  if dsEQ['WLBL_TYPE'] = 2 then
+    A4MainForm.OpenEquipmentByID(dsEQ['WLBL_ID'])
+  else if dsEQ['WLBL_TYPE'] = 1 then
+    A4MainForm.ShowCustomers(7, IntToStr(dsEQ['WLBL_ID']));
+end;
+
+procedure TapgNodeLink.actOpenEqpmntToExecute(Sender: TObject);
+begin
+  if ((dsEQ.RecordCount = 0) or (dsEQ.FieldByName('WLBL_NODE').IsNull)) then
+    Exit;
+
+  A4MainForm.OpnenNodeByID(dsEQ['WLBL_NODE']);
 end;
 
 procedure TapgNodeLink.actOpenObjectExecute(Sender: TObject);
@@ -280,7 +305,7 @@ begin
   if not(FRightFull or FRightEdit) then
     Exit;
 
-  if (dsEQ.RecordCount = 0) or (dsEQ.FieldByName('WID').IsNull) then
+  if (dsEQ.RecordCount = 0) or (dsEQ.FieldByName('WIRE_ID').IsNull) then
     Exit;
 
   if Application.MessageBox(PWideChar(rsWireUnLinkQuest), PWideChar(rsWireUnLink),
@@ -298,7 +323,7 @@ begin
         SQL.Add(' and WLABEL = :WLABEL ');
         ParamByName('WLABEL').asString := dsEQ['WLABEL'];
       end;
-      ParamByName('WID').AsInteger := dsEQ['WID'];
+      ParamByName('WID').AsInteger := dsEQ['WIRE_ID'];
       Transaction.StartTransaction;
       ExecQuery;
       Transaction.Commit;
@@ -313,6 +338,58 @@ end;
 procedure TapgNodeLink.CloseData;
 begin
   dsLink.Close;
+end;
+
+procedure TapgNodeLink.dbgDetailCellClick(Column: TColumnEh);
+var
+  ls: string;
+  l: string;
+  aPoint: TPoint;
+begin
+  if not AnsiSameStr(Column.FieldName, 'WLABEL') then
+    Exit;
+
+  if dsLink.FieldByName('Labels').IsNull then
+    ls := ',,'
+  else
+    ls := ',' + dsLink['Labels'] + ',';
+
+  if dsEQ.FieldByName('WLABEL').IsNull then
+    l := ''
+  else
+    l := dsEQ['WLABEL'];
+
+  if pos(',' + l + ',', ls) = 0 then
+  begin
+    ls := Format(rsCabelLabelError, [l]);
+    aPoint := Mouse.CursorPos;
+    with TCustomHint.Create(Self) do
+    begin
+      Title := ls;
+      Delay := 0;
+      HideAfter := 2000;
+      ShowHint(aPoint);
+    end;
+  end;
+end;
+
+procedure TapgNodeLink.dbgDetailColumns0GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+var
+  ls: string;
+  l: string;
+begin
+  if dsLink.FieldByName('Labels').IsNull then
+    ls := ',,'
+  else
+    ls := ',' + dsLink['Labels'] + ',';
+
+  if dsEQ.FieldByName('WLABEL').IsNull then
+    l := ',,'
+  else
+    l := ',' + dsEQ['WLABEL'] + ',';
+
+  if pos(l, ls) = 0 then
+    Params.Background := clrCapacityError;
 end;
 
 procedure TapgNodeLink.dbgDetailDblClick(Sender: TObject);
@@ -330,6 +407,54 @@ begin
   begin
     actPEdit.Execute;
   end;
+end;
+
+procedure TapgNodeLink.dbgNodeLinkCellClick(Column: TColumnEh);
+var
+  c: Integer;
+  l: Integer;
+  aPoint: TPoint;
+begin
+  if not AnsiSameStr(Column.FieldName, 'CAPACITY') then
+    Exit;
+
+  if (dsLink.FieldByName('CAPACITY').IsNull) then
+    c := 0
+  else
+    c := dsLink['CAPACITY'];
+
+  if (dsLink.FieldByName('LBL_COUNT').IsNull) then
+    l := 0
+  else
+    l := dsLink['LBL_COUNT'];
+
+  if c < l then
+  begin
+    aPoint := Mouse.CursorPos;
+    with TCustomHint.Create(Self) do
+    begin
+      Title := 'Подключенны метки, которых нет в маркировке кабеля';
+      Delay := 0;
+      HideAfter := 2000;
+      ShowHint(aPoint);
+    end;
+  end;
+end;
+
+procedure TapgNodeLink.dbgNodeLinkColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (dsLink.FieldByName('Capacity').IsNull or dsLink.FieldByName('LBL_COUNT').IsNull) then
+    Exit;
+  if dsLink['Capacity'] < dsLink['LBL_COUNT'] then
+    Params.Background := clrCapacityError;
+end;
+
+procedure TapgNodeLink.dbgNodeLinkColumns8GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if (dsLink.FieldByName('Capacity').IsNull or dsLink.FieldByName('USED').IsNull) then
+    Exit;
+  if dsLink['Capacity'] > dsLink['USED'] then
+    Params.Background := clrLblFree;
 end;
 
 procedure TapgNodeLink.dbgNodeLinkDblClick(Sender: TObject);

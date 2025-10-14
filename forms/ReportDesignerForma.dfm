@@ -175,7 +175,7 @@ object ReportDesignerForm: TReportDesignerForm
       ParentFont = False
       PopupMenu = PopupMenu1
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = True
+      SearchPanel.FilterOnTyping = False
       TabOrder = 1
       OnDblClick = aViewPrewievExecute
       OnDrawColumnCell = ReportsTreeDrawColumnCell

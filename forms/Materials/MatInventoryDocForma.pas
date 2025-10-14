@@ -62,6 +62,8 @@ type
     N1: TMenuItem;
     actEditNote: TAction;
     miEditNote: TMenuItem;
+    btnUNIT: TButton;
+    actUNITS: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh; var DropDownForm: TCustomForm;
       DynParams: TDynVarsEh);
@@ -79,27 +81,31 @@ type
     procedure actDocCloseExecute(Sender: TObject);
     procedure btnDelClick(Sender: TObject);
     procedure actEditNoteExecute(Sender: TObject);
+    procedure actUNITSExecute(Sender: TObject);
+    procedure srcDocMatDataChange(Sender: TObject; Field: TField);
+    procedure dsDocMatAfterOpen(DataSet: TDataSet);
   private
     { Private declarations }
-    fMatDocID: Integer;
-    fAddedMatID: Integer;
+    FMatDocID: Integer;
+    FAddedMatID: Integer;
     FReadOnly: Boolean;
     FEnterSecondPress: Boolean;
     procedure SetMatDocID(value: Integer);
     function CheckRowData: Boolean;
     procedure AddRow;
     procedure SetReadOnlyMode(const readOnly: Boolean = true);
+    procedure ShowActUnit;
   public
     { Public declarations }
-    property MatDocId: Integer read fMatDocID write SetMatDocID;
+    property MatDocId: Integer read FMatDocID write SetMatDocID;
   end;
 
-procedure MaterialInventoryDocument(MatDocId: Integer);
+procedure MaterialInventoryDocument(MatDocId: Integer = -1);
 
 implementation
 
 uses
-  DM, MAIN, DropDownFormEh, PrjConst, TextEditForma;
+  DM, MAIN, DropDownFormEh, PrjConst, TextEditForma, MatDocUnitForma;
 
 {$R *.dfm}
 
@@ -109,7 +115,7 @@ const
 type
   TDBEditEhCrack = class(TDBEditEh);
 
-procedure MaterialInventoryDocument(MatDocId: Integer);
+procedure MaterialInventoryDocument(MatDocId: Integer = -1);
 var
   MDF: TMatInventoryDocForm;
   i: Integer;
@@ -137,6 +143,8 @@ begin
 end;
 
 procedure TMatInventoryDocForm.SetReadOnlyMode(const readOnly: Boolean = true);
+var
+  vFullRights: Boolean;
 begin
   FReadOnly := readOnly;
   if dsDoc.State in [dsEdit, dsInsert] then
@@ -145,14 +153,15 @@ begin
   if dsDocMat.State in [dsEdit, dsInsert] then
     dsDocMat.Cancel;
 
+  vFullRights := dmMain.AllowedAction(rght_Materials_full);
   dbgDocMat.readOnly := readOnly;
   pnlMatAdd.Visible := not readOnly;
   // dsMaterials.Active := not readOnly;
   srcDoc.AutoEdit := not readOnly;
   btnSave.Visible := not readOnly;
-  actDocClose.Enabled := dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
+  actDocClose.Enabled := vFullRights or dmMain.AllowedAction(rght_Dictionary_MatDoc_Close);
   actDocClose.Visible := not readOnly;
-  actDocOpen.Visible := readOnly and (dmMain.AllowedAction(rght_Dictionary_MatDoc_Edit));
+  actDocOpen.Visible := readOnly and vFullRights;
   actDelRecord.Enabled := not ReadOnly;
 end;
 
@@ -171,7 +180,7 @@ begin
     if dsDoc.RecordCount = 0 then
     begin
       ActiveControl := edtD_N;
-      // dsDoc.Insert;
+      //
       SetReadOnlyMode(false);
     end
     else
@@ -190,6 +199,10 @@ begin
   else
     Caption := dsDoc['Doc_N'] + ' ' + rsMadDocInv;
 
+  if value = -1 then
+    dsDoc.Insert;
+
+  FMatDocID := dsDoc.FieldByName('DOC_ID').value;
 end;
 
 procedure TMatInventoryDocForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -218,7 +231,7 @@ end;
 procedure TMatInventoryDocForm.edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh;
   var DropDownForm: TCustomForm; DynParams: TDynVarsEh);
 begin
-  fAddedMatID := -1;
+  FAddedMatID := -1;
   DynParams['ID'].Clear;
   DynParams['NAME'].AsString := edtMaterial.Text;
   DynParams['DATASET'].AsRefObject := dsMaterials;
@@ -226,6 +239,8 @@ end;
 
 procedure TMatInventoryDocForm.edtMaterialCloseDropDownForm(EditControl: TControl; Button: TEditButtonEh;
   Accept: Boolean; DropDownForm: TCustomForm; DynParams: TDynVarsEh);
+var
+  qnt: Integer;
 begin
   if DynParams.FindDynVar('Name') <> nil then
     edtMaterial.Text := DynParams['Name'].AsString;
@@ -233,10 +248,21 @@ begin
     edtBefore.value := DynParams['B_QUANT'].AsFloat;
   if DynParams.FindDynVar('dimension') <> nil then
     lblDem.Caption := rsQuant + ', ' + DynParams['dimension'].AsString;
+
+  actUNITS.Visible := (DynParams.FindDynVar('IS_UNIT') <> nil);
+  edtQuant.Enabled := not actUNITS.Visible;
+
   if DynParams.FindDynVar('ID') <> nil then
   begin
-    fAddedMatID := DynParams['ID'].AsInteger;
-    edtQuant.SetFocus;
+    FAddedMatID := DynParams['ID'].AsInteger;
+    if actUNITS.Visible then
+    begin
+      qnt := InputUnits(FMatDocID, FAddedMatID, -1, False, true);
+      if qnt >= 0 then
+        edtQuant.value := qnt;
+    end
+    else
+      edtQuant.SetFocus;
   end;
 end;
 
@@ -351,7 +377,7 @@ begin
 
   dsDocMat.Open;
   dsWH.Open;
-  fAddedMatID := -1;
+  FAddedMatID := -1;
 end;
 
 procedure TMatInventoryDocForm.btnSaveClick(Sender: TObject);
@@ -387,7 +413,7 @@ end;
 
 function TMatInventoryDocForm.CheckRowData: Boolean;
 begin
-  Result := (fAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
+  Result := (FAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
   if edtQuant.Text.IsEmpty then
     edtQuant.SetFocus;
 end;
@@ -450,6 +476,28 @@ begin
   end;
 end;
 
+procedure TMatInventoryDocForm.actUNITSExecute(Sender: TObject);
+var
+  qnt: Integer;
+begin
+  if (FAddedMatID <> -1) then
+  begin
+    qnt := InputUnits(FMatDocID, FAddedMatID, -1, False, true);
+    if qnt >= 0 then
+      edtQuant.value := qnt;
+  end
+  else
+  begin
+    qnt := InputUnits(FMatDocID, dsDocMat['M_Id'], dsDocMat['ID'], FReadOnly, true);
+    if qnt >= 0 then
+    begin
+      dsDocMat.Edit;
+      dsDocMat['M_QUANT'] := qnt;
+      dsDocMat.Post;
+    end;
+  end;
+end;
+
 procedure TMatInventoryDocForm.actDocCloseExecute(Sender: TObject);
 begin
   if dsDoc.State in [dsEdit, dsEdit] then
@@ -479,7 +527,7 @@ begin
   dsDocMat.Append;
   dsDocMat['DOC_ID'] := dsDoc['DOC_ID'];
   dsDocMat['NAME'] := edtMaterial.Text;
-  dsDocMat['M_Id'] := fAddedMatID;
+  dsDocMat['M_Id'] := FAddedMatID;
   dsDocMat['B_QUANT'] := edtBefore.value;
   dsDocMat['M_QUANT'] := edtQuant.value;
   // dsDocMat['M_Cost'] := edtCost.value;
@@ -490,8 +538,13 @@ begin
   edtQuant.Text := '';
   // edtCost.Text := '';
   memNotice.Lines.Text := '';
-  fAddedMatID := -1;
+  FAddedMatID := -1;
   edtMaterial.SetFocus;
+end;
+
+procedure TMatInventoryDocForm.dsDocMatAfterOpen(DataSet: TDataSet);
+begin
+  ShowActUnit;
 end;
 
 procedure TMatInventoryDocForm.dsDocNewRecord(DataSet: TDataSet);
@@ -504,7 +557,17 @@ begin
 
   i := dmMain.dbTV.QueryValue('select count(*) cnt from MATERIAL_DOCS d' +
     ' where d.Doc_Date = current_date and d.Dt_Id = ' + DocumentType.ToString, 0, dmMain.trReadQ, false);
-  dsDoc['DOC_N'] := (i+1).ToString.PadLeft(3, '0');
+  dsDoc['DOC_N'] := (i + 1).ToString.PadLeft(3, '0');
+end;
+
+procedure TMatInventoryDocForm.srcDocMatDataChange(Sender: TObject; Field: TField);
+begin
+  ShowActUnit;
+end;
+
+procedure TMatInventoryDocForm.ShowActUnit;
+begin
+  actUNITS.Visible := ((not dsDocMat.FieldByName('IS_UNIT').IsNull) and (dsDocMat['IS_UNIT']));
 end;
 
 procedure TMatInventoryDocForm.srcDocStateChange(Sender: TObject);

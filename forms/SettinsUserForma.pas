@@ -54,6 +54,7 @@ type
     lbl2: TLabel;
     chkAlwaysShow: TCheckBox;
     chkShowWorks: TCheckBox;
+    chkQuckFilter: TCheckBox;
     procedure frmOkCancelbbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbAutoClick(Sender: TObject);
@@ -141,6 +142,7 @@ begin
   ReadCheckSettings('ALWAYSSHOW', chkAlwaysShow);
   ReadCheckSettings('DBSETTINGS', chkDBsettings);
   ReadCheckSettings('SHOW_WORKS_IN_SINGLE', chkShowWorks);
+  ReadCheckSettings('QUICK_FILTER', chkQuckFilter);
 
   if not TryStrToInt(dmMain.GetIniValue('KBDSWITCH'), i) then
     i := 0;
@@ -218,6 +220,7 @@ begin
   SetCheckSettings(chkDBsettings.Checked, 'DBSETTINGS');
   SetCheckSettings(chkHint.Checked, 'HIDEHINT');
   SetCheckSettings(chkShowWorks.Checked, 'SHOW_WORKS_IN_SINGLE');
+  SetCheckSettings(chkQuckFilter.Checked, 'QUICK_FILTER');
 
   dmMain.SetIniValue('AUTOOPEN', cbAutoOpen.Value);
   if cbAuto.Checked then

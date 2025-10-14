@@ -6,7 +6,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.StrUtils,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.StrUtils, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ComCtrls,
   Vcl.Mask,
@@ -360,7 +360,7 @@ end;
 
 procedure TSendMessagesForm.FormShow(Sender: TObject);
 var
-  val: TStringArray;
+  val: TStringDynArray;
   I: Integer;
   Font_size: Integer;
   Font_name, s: string;

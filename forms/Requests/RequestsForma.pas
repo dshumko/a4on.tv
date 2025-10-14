@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Menus,
@@ -156,6 +156,7 @@ type
     actOpenHouse: TAction;
     miOpenHouse: TMenuItem;
     miN19: TMenuItem;
+    actCopyID: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -212,6 +213,7 @@ type
     procedure dbgGridColumns14GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure actOpenHouseExecute(Sender: TObject);
     procedure miN19Click(Sender: TObject);
+    procedure actCopyIDExecute(Sender: TObject);
   private
     { Private declarations }
     fSelectedRow: Integer; // число помеченных строк
@@ -346,7 +348,7 @@ var
   function ListToFilter: String;
   var
     startSQL, tmpSQL, s, t: string;
-    arr: TStringArray;
+    arr: TStringDynArray;
     i: Integer;
   begin
     Result := '';
@@ -986,6 +988,20 @@ begin
       finally
         Free;
       end;
+  end;
+end;
+
+procedure TRequestsForm.actCopyIDExecute(Sender: TObject);
+begin
+  case pgcGrids.ActivePageIndex of
+    0:
+      A4MainForm.CopyDataSetFldToClipboard(dsPlan, 'RQ_ID');
+    1:
+      A4MainForm.CopyDataSetFldToClipboard(dsGive, 'RQ_ID');
+    2:
+      A4MainForm.CopyDataSetFldToClipboard(dsExec, 'RQ_ID');
+    3:
+      A4MainForm.CopyDataSetFldToClipboard(dsAll, 'RQ_ID');
   end;
 end;
 

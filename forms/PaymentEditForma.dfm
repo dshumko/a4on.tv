@@ -1,6 +1,7 @@
 object PaymentEditFrm: TPaymentEditFrm
   Left = 0
   Top = 0
+  ActiveControl = dePaySum
   Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1077' '#1087#1083#1072#1090#1077#1078#1072
   ClientHeight = 328
   ClientWidth = 400
@@ -21,7 +22,7 @@ object PaymentEditFrm: TPaymentEditFrm
   TextHeight = 13
   object pnlAbonent: TPanel
     Left = 0
-    Top = 0
+    Top = 7
     Width = 400
     Height = 130
     Align = alTop
@@ -99,22 +100,23 @@ object PaymentEditFrm: TPaymentEditFrm
         OnChange = dePaySumChange
       end
     end
-    object memAbonent: TDBMemoEh
+    inline CustomerInfoFrm: TCustomerInfoFrm
       Left = 172
       Top = 0
       Width = 228
       Height = 130
-      TabStop = False
       Align = alClient
-      AutoSize = False
-      BorderStyle = bsNone
-      Color = clBtnFace
-      DynProps = <>
-      EditButtons = <>
-      ReadOnly = True
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
-      Visible = True
-      WantReturns = True
+      inherited gbInfo: TGroupBox
+        Width = 228
+        Height = 130
+        inherited HtmlViewer: THtmlViewer
+          Width = 224
+          Height = 113
+        end
+      end
     end
   end
   object pnlButtons: TPanel
@@ -124,7 +126,7 @@ object PaymentEditFrm: TPaymentEditFrm
     Height = 38
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 5
     DesignSize = (
       400
       38)
@@ -151,29 +153,14 @@ object PaymentEditFrm: TPaymentEditFrm
       TabOrder = 1
     end
   end
-  object mmoNotice: TDBMemoEh
-    Left = 5
-    Top = 210
-    Width = 389
-    Height = 80
-    Align = alCustom
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    AutoSize = False
-    DynProps = <>
-    EditButtons = <>
-    TabOrder = 3
-    Visible = True
-    WantReturns = True
-    OnChange = mmoNoticeChange
-  end
   object pnlSRV: TPanel
     Left = 0
-    Top = 182
+    Top = 215
     Width = 400
     Height = 28
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 4
     DesignSize = (
       400
       28)
@@ -204,7 +191,7 @@ object PaymentEditFrm: TPaymentEditFrm
   end
   object pnlFine: TPanel
     Left = 0
-    Top = 156
+    Top = 137
     Width = 400
     Height = 26
     Align = alTop
@@ -270,12 +257,12 @@ object PaymentEditFrm: TPaymentEditFrm
   end
   object pnlTYPE: TPanel
     Left = 0
-    Top = 130
+    Top = 163
     Width = 400
     Height = 26
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 5
+    TabOrder = 2
     DesignSize = (
       400
       26)
@@ -304,6 +291,71 @@ object PaymentEditFrm: TPaymentEditFrm
       TabOrder = 0
       Visible = True
     end
+  end
+  object pnlLCPS: TPanel
+    Left = 0
+    Top = 189
+    Width = 400
+    Height = 26
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 3
+    object lbl11: TLabel
+      Left = 5
+      Top = 6
+      Width = 62
+      Height = 13
+      Caption = #1057#1091#1084#1084#1072' '#1074' BYN'
+    end
+    object ednLCPS: TDBNumberEditEh
+      Tag = 13
+      Left = 89
+      Top = 2
+      Width = 109
+      Height = 21
+      DisplayFormat = ',0.00'
+      DynProps = <>
+      EditButtons = <>
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      Value = 0.000000000000000000
+      Visible = True
+      OnChange = dePaySumChange
+    end
+  end
+  object pnl1: TPanel
+    Left = 0
+    Top = 243
+    Width = 400
+    Height = 47
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 6
+    object mmoNotice: TDBMemoEh
+      Left = 5
+      Top = 1
+      Width = 389
+      Height = 44
+      Align = alCustom
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      AutoSize = False
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 0
+      Visible = True
+      WantReturns = True
+      OnChange = mmoNoticeChange
+    end
+  end
+  object pnlTM: TPanel
+    Left = 0
+    Top = 0
+    Width = 400
+    Height = 7
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 7
   end
   object srcPaymentSRV: TDataSource
     AutoEdit = False

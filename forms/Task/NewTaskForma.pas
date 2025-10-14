@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.Buttons,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CustomerInfoFrame, FIBQuery, pFIBQuery, DM,
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, DM,
   CnErrorProvider, PrjConst, A4onTypeUnit, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
   MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, PropFilerEh, PropStorageEh, Main;
 

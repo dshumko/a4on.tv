@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ComCtrls,
   FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
@@ -126,7 +126,7 @@ uses
 {$IFNDEF VER300}
   EConsts, ETypes, EClasses, EHash, ESysInfo, ESend, ESendAPIMantis,
 {$ENDIF}
-  DM, AtrCommon, JsonDataObjects, sevenzip;
+  DM, AtrStrUtils, AtrCommon, JsonDataObjects, sevenzip;
 
 {$R *.dfm}
 
@@ -878,7 +878,7 @@ function TEPGSourceForm.DownloadFTP: Boolean;
 var
   ftp: TFTPSend;
   eHost, eFile: string;
-  arr: TStringArray;
+  arr: TStringDynArray;
   i: Integer;
 begin
   Result := False;

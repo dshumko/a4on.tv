@@ -5,7 +5,7 @@ object ServiceForm: TServiceForm
   BorderIcons = [biSystemMenu]
   Caption = #1059#1089#1083#1091#1075#1072
   ClientHeight = 461
-  ClientWidth = 405
+  ClientWidth = 450
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,13 +22,13 @@ object ServiceForm: TServiceForm
   object pnlSrv: TPanel
     Left = 0
     Top = 0
-    Width = 405
+    Width = 450
     Height = 78
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      405
+      450
       78)
     object Label1: TLabel
       Left = 8
@@ -59,7 +59,7 @@ object ServiceForm: TServiceForm
       Caption = #1042#1080#1076' '#1091#1089#1083#1091#1075#1080
     end
     object cbShowService: TDBCheckBoxEh
-      Left = 294
+      Left = 339
       Top = 31
       Width = 103
       Height = 17
@@ -79,14 +79,14 @@ object ServiceForm: TServiceForm
     object edName: TDBEditEh
       Left = 94
       Top = 5
-      Width = 303
+      Width = 348
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'NAME'
       DataSource = srcService
       DynProps = <>
       EditButtons = <>
-      MaxLength = 60
+      MaxLength = 255
       TabOrder = 0
       Visible = True
     end
@@ -119,7 +119,7 @@ object ServiceForm: TServiceForm
     object cbBusinessType: TDBLookupComboboxEh
       Left = 94
       Top = 54
-      Width = 303
+      Width = 348
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -127,7 +127,7 @@ object ServiceForm: TServiceForm
       DataSource = srcService
       EditButtons = <>
       KeyField = 'ID'
-      ListField = 'NAME'
+      ListField = 'NAME_ID'
       ListSource = dmMain.srcSrvTypes
       TabOrder = 4
       Visible = True
@@ -137,7 +137,7 @@ object ServiceForm: TServiceForm
   object pnlNotice: TPanel
     Left = 0
     Top = 382
-    Width = 405
+    Width = 450
     Height = 38
     Align = alClient
     BevelOuter = bvNone
@@ -145,7 +145,7 @@ object ServiceForm: TServiceForm
     object pgc1: TPageControl
       Left = 0
       Top = 0
-      Width = 405
+      Width = 450
       Height = 38
       ActivePage = tsNotice
       Align = alClient
@@ -155,7 +155,7 @@ object ServiceForm: TServiceForm
         object mmoDESCRIPTION: TDBMemoEh
           Left = 0
           Top = 0
-          Width = 397
+          Width = 442
           Height = 10
           ScrollBars = ssVertical
           Align = alClient
@@ -176,7 +176,7 @@ object ServiceForm: TServiceForm
         object pnlNote: TPanel
           Left = 0
           Top = 67
-          Width = 397
+          Width = 442
           Height = 2
           Align = alClient
           BevelOuter = bvNone
@@ -184,7 +184,7 @@ object ServiceForm: TServiceForm
           object Label4: TLabel
             Left = 0
             Top = 0
-            Width = 397
+            Width = 442
             Height = 13
             Align = alTop
             Caption = ' '#1054#1087#1080#1089#1072#1085#1080#1077' '#1076#1083#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
@@ -192,7 +192,7 @@ object ServiceForm: TServiceForm
           object Notice: TDBMemoEh
             Left = 0
             Top = 13
-            Width = 397
+            Width = 442
             Height = 1
             ScrollBars = ssVertical
             Align = alClient
@@ -210,13 +210,13 @@ object ServiceForm: TServiceForm
         object pnlTop: TPanel
           Left = 0
           Top = 0
-          Width = 397
+          Width = 442
           Height = 67
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
           DesignSize = (
-            397
+            442
             67)
           object lbl6: TLabel
             Left = 4
@@ -228,7 +228,7 @@ object ServiceForm: TServiceForm
           object edtTAGSTR: TDBEditEh
             Left = 30
             Top = 37
-            Width = 260
+            Width = 305
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             DataField = 'TAG_STR'
@@ -241,7 +241,7 @@ object ServiceForm: TServiceForm
             Visible = True
           end
           object edtTAGINT: TDBNumberEditEh
-            Left = 296
+            Left = 341
             Top = 37
             Width = 97
             Height = 21
@@ -256,7 +256,7 @@ object ServiceForm: TServiceForm
             Visible = True
           end
           object chkONLY_ONE: TDBCheckBoxEh
-            Left = 4
+            Left = 49
             Top = 10
             Width = 255
             Height = 17
@@ -278,14 +278,14 @@ object ServiceForm: TServiceForm
   object gbInet: TGroupBox
     Left = 0
     Top = 237
-    Width = 405
+    Width = 450
     Height = 75
     Align = alTop
     Ctl3D = True
     ParentCtl3D = False
     TabOrder = 6
     DesignSize = (
-      405
+      450
       75)
     object Label3: TLabel
       Left = 8
@@ -310,7 +310,7 @@ object ServiceForm: TServiceForm
       Caption = #1042#1085#1077#1096#1085#1080#1081' ID'
     end
     object btn1: TSpeedButton
-      Left = 362
+      Left = 407
       Top = 48
       Width = 35
       Height = 21
@@ -351,7 +351,7 @@ object ServiceForm: TServiceForm
     object eIPEnd: TDBEditEh
       Left = 237
       Top = 48
-      Width = 120
+      Width = 165
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'IP_END'
@@ -366,7 +366,7 @@ object ServiceForm: TServiceForm
     object edtEXTID: TDBEditEh
       Left = 94
       Top = 21
-      Width = 303
+      Width = 348
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'EXTERNAL_ID'
@@ -382,7 +382,7 @@ object ServiceForm: TServiceForm
   object pnlPayType: TGroupBox
     Left = 0
     Top = 367
-    Width = 405
+    Width = 450
     Height = 15
     Align = alTop
     Caption = ' '#1042#1080#1076' '#1091#1095#1077#1090#1072' '
@@ -393,13 +393,13 @@ object ServiceForm: TServiceForm
   object pnlPeriodSrv: TPanel
     Left = 0
     Top = 78
-    Width = 405
+    Width = 450
     Height = 25
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      405
+      450
       25)
     object lbl4: TLabel
       Left = 8
@@ -411,7 +411,7 @@ object ServiceForm: TServiceForm
     object cbCalcType: TDBComboBoxEh
       Left = 94
       Top = 0
-      Width = 303
+      Width = 348
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'CALC_TYPE'
@@ -446,7 +446,7 @@ object ServiceForm: TServiceForm
   object gbDIGIT: TGroupBox
     Left = 0
     Top = 312
-    Width = 405
+    Width = 450
     Height = 45
     Align = alTop
     Caption = ' '#1062#1080#1092#1088#1072' '
@@ -454,7 +454,7 @@ object ServiceForm: TServiceForm
     ParentCtl3D = False
     TabOrder = 7
     DesignSize = (
-      405
+      450
       45)
     object lbl2: TLabel
       Left = 8
@@ -467,7 +467,7 @@ object ServiceForm: TServiceForm
     object edtDigExtID: TDBEditEh
       Left = 94
       Top = 15
-      Width = 169
+      Width = 214
       Height = 21
       Hint = #1045#1089#1083#1080' ID '#1085#1077#1089#1082#1086#1083#1100#1082#1086', '#1090#1086' '#1091#1082#1072#1079#1072#1090#1100' '#1095#1077#1088#1077#1079' , ('#1079#1072#1087#1103#1090#1091#1102')'
       Anchors = [akLeft, akTop, akRight]
@@ -484,7 +484,7 @@ object ServiceForm: TServiceForm
       OnKeyPress = edtDigExtIDKeyPress
     end
     object chkOnlyOne: TDBCheckBoxEh
-      Left = 276
+      Left = 321
       Top = 17
       Width = 121
       Height = 17
@@ -501,7 +501,7 @@ object ServiceForm: TServiceForm
   object pnlFull: TPanel
     Left = 0
     Top = 126
-    Width = 405
+    Width = 450
     Height = 25
     Align = alTop
     BevelOuter = bvNone
@@ -542,14 +542,14 @@ object ServiceForm: TServiceForm
   object pnlAllDays: TPanel
     Left = 0
     Top = 151
-    Width = 405
+    Width = 450
     Height = 52
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 4
     Visible = False
     DesignSize = (
-      405
+      450
       52)
     object chkAUTOOFF: TDBCheckBoxEh
       Left = 8
@@ -568,7 +568,7 @@ object ServiceForm: TServiceForm
     object cbUnblMeth: TDBComboBoxEh
       Left = 269
       Top = 3
-      Width = 128
+      Width = 173
       Height = 21
       Hint = #1088#1072#1079#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1080' '#1091#1089#1083#1086#1074#1080#1080', '#1095#1090#1086' '#1073#1072#1083#1072#1085#1089
       Anchors = [akLeft, akTop, akRight]
@@ -589,7 +589,7 @@ object ServiceForm: TServiceForm
       Visible = False
     end
     object chkPOSITIVE: TDBCheckBoxEh
-      Left = 269
+      Left = 314
       Top = 30
       Width = 128
       Height = 17
@@ -610,7 +610,7 @@ object ServiceForm: TServiceForm
   object pnlAddToMin: TPanel
     Left = 0
     Top = 357
-    Width = 405
+    Width = 450
     Height = 10
     Align = alTop
     BevelOuter = bvNone
@@ -621,7 +621,7 @@ object ServiceForm: TServiceForm
   object pnlShift: TPanel
     Left = 0
     Top = 103
-    Width = 405
+    Width = 450
     Height = 23
     Align = alTop
     BevelOuter = bvNone
@@ -665,7 +665,7 @@ object ServiceForm: TServiceForm
   object pnlAUTO: TPanel
     Left = 0
     Top = 203
-    Width = 405
+    Width = 450
     Height = 34
     Align = alTop
     BevelOuter = bvNone
@@ -698,18 +698,18 @@ object ServiceForm: TServiceForm
   object pnlBottom: TPanel
     Left = 0
     Top = 420
-    Width = 405
+    Width = 450
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 11
     DesignSize = (
-      405
+      450
       41)
     object btnOk: TBitBtn
       Left = 94
       Top = 6
-      Width = 225
+      Width = 270
       Height = 30
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akRight, akBottom]
@@ -719,7 +719,7 @@ object ServiceForm: TServiceForm
       OnClick = btnOkClick
     end
     object btnCancel: TBitBtn
-      Left = 325
+      Left = 370
       Top = 6
       Width = 75
       Height = 30

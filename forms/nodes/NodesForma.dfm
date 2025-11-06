@@ -281,7 +281,7 @@ object NodesForm: TNodesForm
         Footer.DisplayFormat = '#0.###'
         Footer.ValueType = fvtSum
         Footers = <>
-        Title.Caption = #1042#1090'/'#1095
+        Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090
         Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
@@ -585,7 +585,7 @@ object NodesForm: TNodesForm
     object lbl3: TLabel
       Left = 5
       Top = 111
-      Width = 75
+      Width = 61
       Height = 13
       Anchors = [akLeft, akTop, akRight]
       Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -716,10 +716,10 @@ object NodesForm: TNodesForm
     object lbl13: TLabel
       Left = 785
       Top = 85
-      Width = 22
+      Width = 12
       Height = 13
       Anchors = [akTop, akRight]
-      Caption = #1042#1090'/'#1095
+      Caption = #1042#1090
     end
     object btnSaveLink: TBitBtn
       Left = 72
@@ -1045,7 +1045,7 @@ object NodesForm: TNodesForm
       DataSource = srcNodes
       DecimalPlaces = 3
       DynProps = <>
-      EmptyDataInfo.Text = #1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090'/'#1095
+      EmptyDataInfo.Text = #1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090
       EditButtons = <>
       ParentShowHint = False
       ShowHint = True

@@ -1,11 +1,23 @@
 execute ibeblock
 as
 begin
+  CREATE CONNECTION ACon DBNAME 'localhost:A4ON_DB' USER 'SYSDBA' PASSWORD 'masterkey' CLIENTLIB 'D:\RDBMS\Firebird\30X\fbclient.dll' SQL_DIALECT 3 NAMES UTF8;
+  USE ACon;
+  select VAR_VALUE from settings where VAR_NAME = 'A4APIKEY' into :api;
+  select VAR_VALUE from settings where VAR_NAME = 'SMTP_PASS' into :ps;
+  select VAR_VALUE from settings where VAR_NAME = 'MYSQL_PASS' into :pm;
+  update settings set VAR_VALUE = '' where VAR_NAME = 'A4APIKEY';
+  update settings set VAR_VALUE = '' where VAR_NAME = 'SMTP_PASS';
+  update settings set VAR_VALUE = '' where VAR_NAME = 'MYSQL_PASS';
+  commit;
+  CLOSE CONNECTION ACon;
+
   DB = ibec_CreateConnection(__ctInterBase,
                              'DBName="localhost:A4ON_DB";
                               ClientLib=D:\RDBMS\Firebird\30X\fbclient.dll;
                               User=SYSDBA; Password=masterkey; Names=UTF8; SqlDialect=3');
   try
+
     ibec_ExtractMetadata(DB, 'D:\PROJECTS\a4on.tv\Sources\SQL\A4ON_DB.sql',
                              'GenerateCreate;
                               SuppressComments;
@@ -25,7 +37,16 @@ begin
                              DataTables=SETTINGS, LETTERTYPE, MONTH_NAME, OBJECTS_TYPE, OBJECTS, SERVICES_TYPE, SERVICES, STREET_TYPE, SYS$RIGHTS, EPG_GENRE, REPORTS, COMPANY, DOC_TYPE, PAYSOURCE, MODULES;
                              ExtractBLOBs;SuppressComments; CommitAfter=1000', nil);
 
+
   finally
     ibec_CloseConnection(DB);
   end;
+
+  CREATE CONNECTION ACon DBNAME 'localhost:A4ON_DB' USER 'SYSDBA' PASSWORD 'masterkey' CLIENTLIB 'D:\RDBMS\Firebird\30X\fbclient.dll' SQL_DIALECT 3 NAMES UTF8;
+  USE ACon;
+  update settings set VAR_VALUE = :api where VAR_NAME = 'A4APIKEY';
+  update settings set VAR_VALUE = :ps where VAR_NAME = 'SMTP_PASS';
+  update settings set VAR_VALUE = :pm where VAR_NAME = 'MYSQL_PASS';
+  commit;
+  CLOSE CONNECTION ACon;
 end;

@@ -307,6 +307,8 @@ type
     actERecipient: TAction;
     miEE: TMenuItem;
     miERecipient: TMenuItem;
+    actTimeSeries: TAction;
+    miTimeSeries: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -431,6 +433,7 @@ type
     procedure actObjectsRAWExecute(Sender: TObject);
     procedure actEPointExecute(Sender: TObject);
     procedure actERecipientExecute(Sender: TObject);
+    procedure actTimeSeriesExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -623,7 +626,7 @@ uses
   ContactTypeForma,
   LabelTypeForma,
   ConnectTypeForma,
-  PortTypeForma, DocListForma, PromoForma, ObjectsRAWForma, ElectroPointForma, ElectroRecipientForma;
+  PortTypeForma, DocListForma, PromoForma, ObjectsRAWForma, ElectroPointForma, ElectroRecipientForma, TimeSeriesForma;
 
 type
 
@@ -2148,6 +2151,13 @@ begin
   TaskForm.Show;
 end;
 
+procedure TA4MainForm.actTimeSeriesExecute(Sender: TObject);
+begin
+  if Not Assigned(TimeSeriesForm) then
+    TimeSeriesForm := TTimeSeriesForm.Create(Application);
+  TimeSeriesForm.Show;
+end;
+
 procedure TA4MainForm.actVATGroupsExecute(Sender: TObject);
 begin
   if Not Assigned(VATForm) then
@@ -3322,6 +3332,9 @@ begin
     or dmMain.AllowedAction(rght_Request_Unclose);
 
   actReqPhotos.Visible := ActRequest.Visible;
+
+  actTimeSeries.Visible := dmMain.AllowedAction(rght_Dictionary_full) //
+    or dmMain.AllowedAction(rght_Dictionary_TimeSeries);
 
   if (dmMain.GetSettingsValue('SHOW_DOC_LIST') = '1') then
     actDocList.Visible := rFull //

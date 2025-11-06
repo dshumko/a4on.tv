@@ -372,4 +372,16 @@ object NodeLayoutFactForm: TNodeLayoutFactForm
     Left = 131
     Top = 69
   end
+  object PropStorage: TPropStorageEh
+    Section = 'LT_DETAIL'
+    StorageManager = dmMain.iniPropStorage
+    StoredProps.Strings = (
+      '<P>.Height'
+      '<P>.Left'
+      '<P>.PixelsPerInch'
+      '<P>.Top'
+      '<P>.Width')
+    Left = 153
+    Top = 217
+  end
 end

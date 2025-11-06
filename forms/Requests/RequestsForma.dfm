@@ -149,7 +149,7 @@ object RequestsForm: TRequestsForm
     Top = 25
     Width = 799
     Height = 453
-    ActivePage = tsGive
+    ActivePage = tsPlan
     Align = alClient
     Style = tsFlatButtons
     TabOrder = 1
@@ -237,16 +237,14 @@ object RequestsForm: TRequestsForm
             Width = 26
           end
           item
-            AutoFitColWidth = False
             CellButtons = <>
-            DisplayFormat = 'DD.MM.YY'
             DynProps = <>
             EditButtons = <>
             FieldName = 'GIV_EXEC_DATE'
             Footers = <>
-            Title.Caption = #1044#1072#1090#1072'|'#1042#1099#1076'/'#1042#1099#1087
+            Title.Caption = #1044#1072#1090#1072'|'#1042#1099#1076#1072#1095#1080
             Title.TitleButton = True
-            Width = 60
+            Visible = False
           end
           item
             AutoFitColWidth = False
@@ -639,7 +637,7 @@ object RequestsForm: TRequestsForm
             EditButtons = <>
             FieldName = 'GIV_EXEC_DATE'
             Footers = <>
-            Title.Caption = #1042#1099#1076#1072#1085#1099' '#1085#1072' '#1076#1072#1090#1091
+            Title.Caption = #1044#1072#1090#1072'|'#1042#1099#1076#1072#1095#1080
             Title.TitleButton = True
             Width = 60
           end
@@ -1177,8 +1175,9 @@ object RequestsForm: TRequestsForm
             EditButtons = <>
             FieldName = 'RES_TEXT'
             Footers = <>
-            Title.Caption = #1057#1090#1072#1090#1091#1089
+            Title.Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
             Title.TitleButton = True
+            Width = 64
           end
           item
             CellButtons = <>
@@ -2228,6 +2227,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,'
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -2240,9 +2240,7 @@ object RequestsForm: TRequestsForm
       '    R.GIVE_BY,'
       '    R.GIVE_METHOD,'
       '    R.REQ_RESULT,'
-      '    C.ACCOUNT_NO,'
       '    C.CUST_CODE,'
-      '    C.SURNAME || '#39' '#39' || C.INITIALS as FIO,'
       '    coalesce(RT.RT_PRINTFORM, '#39#39') as REPORT,'
       '    coalesce(RT.RT_NAME, '#39#39') as RT_NAME,'
       '    S.STREET_NAME || '#39' '#39' || S.STREET_SHORT as STREET_NAME,'
@@ -2277,10 +2275,17 @@ object RequestsForm: TRequestsForm
       '    RR.NAME as RESULT_NAME,     '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
-      '    r.Add_Info'
+      '    r.Add_Info,'
+      '    coalesce(C.SURNAME || '#39' '#39' || C.INITIALS, n.Name, '#39#39') as FIO,'
+      '    coalesce(C.ACCOUNT_NO, '#39#1059#1079#1077#1083' '#39'||n.NAME, '#39#39') ACCOUNT_NO'
+      '    , r.Node_id'
+      '    , c.DEBT_SUM'
+      '    , -1*c.debt_sum as BALANCE    '
+      '    , a.AREA_NAME'
       '    from REQUEST R'
       '        inner join HOUSE H on (R.HOUSE_ID = H.HOUSE_ID)'
       '        inner join STREET S on (S.STREET_ID = H.STREET_ID)'
+      '        left outer join area a on (a.AREA_ID = s.AREA_ID)'
       '        left outer join WORKGROUPS WG on (WG.WG_ID = H.WG_ID)'
       
         '        left outer join REQUEST_TYPES RT on (R.RQ_TYPE = RT.RT_I' +
@@ -2298,6 +2303,7 @@ object RequestsForm: TRequestsForm
       
         '        left outer join HOUSEFLATS hf on (hf.house_id = r.house_' +
         'id and hf.flat_no = r.flat_no)'
+      '        left outer join NODES n on (n.Node_Id = r.Node_Id)'
       '        left outer join(select'
       '                            RE.RQ_ID,'
       '                            list(distinct W.TEAM) TEAM,'
@@ -2426,8 +2432,11 @@ object RequestsForm: TRequestsForm
       
         '                            group by RE.RQ_ID) RE on (RE.RQ_ID =' +
         ' R.RQ_ID)'
-      '    @FILTER'
-      '    order by R.RQ_ID  ')
+      '    WHERE'
+      ''
+      '    @@SQL_FILTER%1=1@'
+      ''
+      '    ORDER BY R.RQ_ID  ')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -2991,7 +3000,6 @@ object RequestsForm: TRequestsForm
     RefreshSQL.Strings = (
       'select'
       '    C.CUSTOMER_ID,'
-      '  '
       '    R.RQ_ID,'
       '    R.RQ_TYPE,'
       '    R.ADDED_ON RQ_DATE,'
@@ -3010,6 +3018,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,    '
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3022,9 +3031,7 @@ object RequestsForm: TRequestsForm
       '    R.GIVE_BY,'
       '    R.GIVE_METHOD,'
       '    R.REQ_RESULT,'
-      '    C.ACCOUNT_NO,'
       '    C.CUST_CODE,'
-      '    C.SURNAME || '#39' '#39' || C.INITIALS as FIO,'
       '    coalesce(RT.RT_PRINTFORM, '#39#39') as REPORT,'
       '    coalesce(RT.RT_NAME, '#39#39') as RT_NAME,'
       '    S.STREET_NAME || '#39' '#39' || S.STREET_SHORT as STREET_NAME,'
@@ -3056,13 +3063,24 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME, '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info'
+      
+        '    , coalesce(C.SURNAME || '#39' '#39' || C.INITIALS, n.Name, '#39#39') as FI' +
+        'O'
+      
+        '    , coalesce(C.ACCOUNT_NO, '#39#1059#1079#1077#1083' '#39'||n.Name, '#39#39') ACCOUNT_NO    ' +
+        '   '
+      '    , r.Node_id'
+      '    , c.DEBT_SUM'
+      '    , -1*c.debt_sum as BALANCE    '
+      '    , a.AREA_NAME'
       '    from REQUEST R'
       '        inner join HOUSE H on (R.HOUSE_ID = H.HOUSE_ID)'
       '        inner join STREET S on (S.STREET_ID = H.STREET_ID)'
+      '        left outer join area a on (a.AREA_ID = s.AREA_ID)'
       '        left outer join WORKGROUPS WG on (WG.WG_ID = H.WG_ID)'
       
         '        left outer join REQUEST_TYPES RT on (R.RQ_TYPE = RT.RT_I' +
@@ -3080,6 +3098,7 @@ object RequestsForm: TRequestsForm
       
         '        left outer join HOUSEFLATS hf on (hf.house_id = r.house_' +
         'id and hf.flat_no = r.flat_no)        '
+      '        left outer join NODES n on (n.Node_Id = r.Node_Id)'
       '        left outer join(select'
       '                            RE.RQ_ID,'
       '                            list(distinct W.TEAM) TEAM,'
@@ -3093,9 +3112,8 @@ object RequestsForm: TRequestsForm
       
         '                            group by RE.RQ_ID) RE on (RE.RQ_ID =' +
         ' R.RQ_ID)'
-      '  '
-      ' WHERE '
-      '        R.RQ_ID = :OLD_RQ_ID'
+      '    WHERE '
+      '      R.RQ_ID = :OLD_RQ_ID'
       '    ')
     SelectSQL.Strings = (
       'select'
@@ -3212,7 +3230,10 @@ object RequestsForm: TRequestsForm
       
         '                            group by RE.RQ_ID) RE on (RE.RQ_ID =' +
         ' R.RQ_ID)'
-      '    @FILTER'
+      '    WHERE '
+      '      '
+      '    @@SQL_FILTER%1=1@'
+      ''
       '    ORDER BY R.RQ_ID  ')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
@@ -3251,6 +3272,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,'
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3263,9 +3285,7 @@ object RequestsForm: TRequestsForm
       '    R.GIVE_BY,'
       '    R.GIVE_METHOD,'
       '    R.REQ_RESULT,'
-      '    C.ACCOUNT_NO,'
       '    C.CUST_CODE,'
-      '    C.SURNAME || '#39' '#39' || C.INITIALS as FIO,'
       '    coalesce(RT.RT_PRINTFORM, '#39#39') as REPORT,'
       '    coalesce(RT.RT_NAME, '#39#39') as RT_NAME,'
       '    S.STREET_NAME || '#39' '#39' || S.STREET_SHORT as STREET_NAME,'
@@ -3300,10 +3320,17 @@ object RequestsForm: TRequestsForm
       '    RR.NAME as RESULT_NAME,     '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
-      '    r.Add_Info'
+      '    r.Add_Info,'
+      '    coalesce(C.SURNAME || '#39' '#39' || C.INITIALS, n.Name, '#39#39') as FIO,'
+      '    coalesce(C.ACCOUNT_NO, '#39#1059#1079#1077#1083' '#39'||n.Name, '#39#39') ACCOUNT_NO'
+      '    , r.Node_id    '
+      '    , c.DEBT_SUM'
+      '    , -1*c.debt_sum as BALANCE    '
+      '    , a.AREA_NAME'
       '    from REQUEST R'
       '        inner join HOUSE H on (R.HOUSE_ID = H.HOUSE_ID)'
       '        inner join STREET S on (S.STREET_ID = H.STREET_ID)'
+      '        left outer join area a on (a.AREA_ID = s.AREA_ID)'
       '        left outer join WORKGROUPS WG on (WG.WG_ID = H.WG_ID)'
       
         '        left outer join REQUEST_TYPES RT on (R.RQ_TYPE = RT.RT_I' +
@@ -3321,6 +3348,7 @@ object RequestsForm: TRequestsForm
       
         '        left outer join HOUSEFLATS hf on (hf.house_id = r.house_' +
         'id and hf.flat_no = r.flat_no)'
+      '        left outer join NODES n on (n.Node_Id = r.Node_Id)'
       '        left outer join(select'
       '                            RE.RQ_ID,'
       '                            list(distinct W.TEAM) TEAM,'
@@ -3448,8 +3476,12 @@ object RequestsForm: TRequestsForm
       
         '                            group by RE.RQ_ID) RE on (RE.RQ_ID =' +
         ' R.RQ_ID)'
-      '    @FILTER'
-      'ORDER BY R.RQ_ID  ')
+      ''
+      '    WHERE'
+      ''
+      '    @@SQL_FILTER%1=1@'
+      ''
+      '    ORDER BY R.RQ_ID  ')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -3485,6 +3517,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
+      '    S.STREET_ID,'
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3497,9 +3530,7 @@ object RequestsForm: TRequestsForm
       '    R.GIVE_BY,'
       '    R.GIVE_METHOD,'
       '    R.REQ_RESULT,'
-      '    C.ACCOUNT_NO,'
       '    C.CUST_CODE,'
-      '    C.SURNAME || '#39' '#39' || C.INITIALS as FIO,'
       '    coalesce(RT.RT_PRINTFORM, '#39#39') as REPORT,'
       '    coalesce(RT.RT_NAME, '#39#39') as RT_NAME,'
       '    S.STREET_NAME || '#39' '#39' || S.STREET_SHORT as STREET_NAME,'
@@ -3534,13 +3565,20 @@ object RequestsForm: TRequestsForm
       '    RR.NAME as RESULT_NAME,     '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
-      '    r.Add_Info'
+      '    r.Add_Info,'
+      '    coalesce(C.SURNAME || '#39' '#39' || C.INITIALS, n.Name, '#39#39') as FIO,'
+      '    coalesce(C.ACCOUNT_NO, '#39#1059#1079#1077#1083' '#39'||n.Name, '#39#39') ACCOUNT_NO'
+      '    , r.Node_id'
+      '    , c.DEBT_SUM'
+      '    , -1*c.debt_sum as BALANCE    '
+      '    , a.AREA_NAME'
       
         '    , datediff(minute, r.Rq_Completed, r.Rq_Exec_Time) EXEC_MINU' +
-        'T    '
+        'T'
       '    from REQUEST R'
       '        inner join HOUSE H on (R.HOUSE_ID = H.HOUSE_ID)'
       '        inner join STREET S on (S.STREET_ID = H.STREET_ID)'
+      '        left outer join area a on (a.AREA_ID = s.AREA_ID)'
       '        left outer join WORKGROUPS WG on (WG.WG_ID = H.WG_ID)'
       
         '        left outer join REQUEST_TYPES RT on (R.RQ_TYPE = RT.RT_I' +
@@ -3558,6 +3596,7 @@ object RequestsForm: TRequestsForm
       
         '        left outer join HOUSEFLATS hf on (hf.house_id = r.house_' +
         'id and hf.flat_no = r.flat_no)'
+      '        left outer join NODES n on (n.Node_Id = r.Node_Id)'
       '        left outer join(select'
       '                            RE.RQ_ID,'
       '                            list(distinct W.TEAM) TEAM,'
@@ -3571,7 +3610,6 @@ object RequestsForm: TRequestsForm
       
         '                            group by RE.RQ_ID) RE on (RE.RQ_ID =' +
         ' R.RQ_ID)'
-      '   '
       ' WHERE '
       '        R.RQ_ID = :OLD_RQ_ID'
       '    ')
@@ -3689,8 +3727,11 @@ object RequestsForm: TRequestsForm
       
         '                            group by RE.RQ_ID) RE on (RE.RQ_ID =' +
         ' R.RQ_ID)'
-      '    @FILTER'
-      '    order by R.RQ_ID  ')
+      '    WHERE'
+      ''
+      '    @@SQL_FILTER%1=1@'
+      ''
+      '    ORDER BY R.RQ_ID  ')
     AutoUpdateOptions.UpdateTableName = 'REQUEST'
     AutoUpdateOptions.KeyFields = 'RQ_ID'
     AutoUpdateOptions.AutoReWriteSqls = True
@@ -3722,6 +3763,22 @@ object RequestsForm: TRequestsForm
     Top = 154
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
+        object TABS: TMTNumericDataFieldEh
+          FieldName = 'TABS'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object R_STATE: TMTNumericDataFieldEh
+          FieldName = 'R_STATE'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
         object ListBids: TMTStringDataFieldEh
           FieldName = 'ListBids'
           StringDataType = fdtStringEh

@@ -3,8 +3,8 @@ object RequestFilterForm: TRequestFilterForm
   Top = 186
   BorderIcons = [biSystemMenu]
   Caption = #1060#1080#1083#1100#1090#1088' '#1079#1072#1103#1074#1086#1082
-  ClientHeight = 394
-  ClientWidth = 564
+  ClientHeight = 423
+  ClientWidth = 561
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,14 +23,14 @@ object RequestFilterForm: TRequestFilterForm
   TextHeight = 13
   object pnlOKCancel: TPanel
     Left = 0
-    Top = 357
-    Width = 564
+    Top = 386
+    Width = 561
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      564
+      561
       37)
     object SpeedButton3: TSpeedButton
       Left = 192
@@ -78,7 +78,7 @@ object RequestFilterForm: TRequestFilterForm
       Flat = True
     end
     object chkDefaultFilter: TCheckBox
-      Left = 267
+      Left = 264
       Top = 11
       Width = 113
       Height = 17
@@ -88,7 +88,7 @@ object RequestFilterForm: TRequestFilterForm
       TabOrder = 2
     end
     object bbOk: TBitBtn
-      Left = 383
+      Left = 380
       Top = 2
       Width = 93
       Height = 30
@@ -100,7 +100,7 @@ object RequestFilterForm: TRequestFilterForm
       OnClick = actOkExecute
     end
     object bbCancel: TBitBtn
-      Left = 485
+      Left = 482
       Top = 2
       Width = 74
       Height = 30
@@ -113,15 +113,15 @@ object RequestFilterForm: TRequestFilterForm
   end
   object pnlBtns: TPanel
     Left = 0
-    Top = 322
-    Width = 564
+    Top = 351
+    Width = 561
     Height = 35
     Align = alBottom
     BevelInner = bvRaised
     BevelOuter = bvLowered
     TabOrder = 1
     DesignSize = (
-      564
+      561
       35)
     object lbl4: TLabel
       Left = 185
@@ -152,7 +152,7 @@ object RequestFilterForm: TRequestFilterForm
       ParentFont = False
     end
     object dbnvgr1: TDBNavigator
-      Left = 404
+      Left = 401
       Top = 5
       Width = 155
       Height = 25
@@ -202,16 +202,16 @@ object RequestFilterForm: TRequestFilterForm
   object pgcFilter: TPageControl
     Left = 0
     Top = 0
-    Width = 564
-    Height = 322
+    Width = 561
+    Height = 351
     ActivePage = tsMain
     Align = alClient
     TabOrder = 0
     object tsMain: TTabSheet
       Caption = #1054#1089#1085#1086#1074#1085#1086#1081
       DesignSize = (
-        556
-        294)
+        553
+        323)
       object Label9: TLabel
         Left = 8
         Top = 141
@@ -234,7 +234,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1040#1085#1072#1083#1080#1090#1080#1082#1072
       end
       object lbl6: TLabel
-        Left = 439
+        Left = 436
         Top = 35
         Width = 17
         Height = 13
@@ -242,7 +242,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1050#1074'.'
       end
       object lbl7: TLabel
-        Left = 292
+        Left = 289
         Top = 35
         Width = 41
         Height = 13
@@ -257,7 +257,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1059#1083#1080#1094#1072
       end
       object lbl2: TLabel
-        Left = 292
+        Left = 289
         Top = 8
         Width = 30
         Height = 13
@@ -272,8 +272,8 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1059#1095#1072#1089#1090#1086#1082
       end
       object lbl9: TLabel
-        Left = 292
-        Top = 248
+        Left = 289
+        Top = 275
         Width = 30
         Height = 13
         Anchors = [akTop, akRight]
@@ -301,7 +301,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1053#1072' '#1087#1077#1088#1080#1086#1076' '#1089':'
       end
       object lbl13: TLabel
-        Left = 292
+        Left = 289
         Top = 61
         Width = 14
         Height = 13
@@ -312,7 +312,7 @@ object RequestFilterForm: TRequestFilterForm
         ShowHint = True
       end
       object lblWork: TLabel
-        Left = 292
+        Left = 289
         Top = 168
         Width = 36
         Height = 13
@@ -320,7 +320,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1056#1072#1073#1086#1090#1072
       end
       object lbl14: TLabel
-        Left = 434
+        Left = 431
         Top = 61
         Width = 30
         Height = 13
@@ -331,7 +331,7 @@ object RequestFilterForm: TRequestFilterForm
         ShowHint = True
       end
       object lblOgz: TLabel
-        Left = 292
+        Left = 289
         Top = 195
         Width = 41
         Height = 13
@@ -339,22 +339,24 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1054#1088#1075'-'#1094#1080#1103
       end
       object lblHE: TLabel
-        Left = 292
-        Top = 222
+        Left = 289
+        Top = 248
         Width = 13
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1043#1057
       end
       object lblResult: TLabel
-        Left = 8
-        Top = 222
-        Width = 53
+        Left = 289
+        Top = 221
+        Width = 40
         Height = 13
-        Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+        Hint = #1056#1072#1089#1096#1080#1088#1077#1085#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
+        Anchors = [akTop, akRight]
+        Caption = #1056'. '#1088#1077#1079'-'#1090
       end
       object Label1: TLabel
-        Left = 292
+        Left = 289
         Top = 141
         Width = 43
         Height = 13
@@ -369,7 +371,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1055#1088#1086#1089#1088#1086#1095#1077#1085#1086', '#1095#1072#1089#1086#1074
       end
       object lbl15: TLabel
-        Left = 439
+        Left = 436
         Top = 115
         Width = 16
         Height = 13
@@ -377,7 +379,7 @@ object RequestFilterForm: TRequestFilterForm
         Caption = #1087#1086':'
       end
       object lbl16: TLabel
-        Left = 292
+        Left = 289
         Top = 115
         Width = 42
         Height = 13
@@ -392,10 +394,24 @@ object RequestFilterForm: TRequestFilterForm
         Height = 13
         Caption = #1047#1072#1103#1074#1082#1080' '#1076#1083#1103
       end
+      object lbl18: TLabel
+        Left = 8
+        Top = 221
+        Width = 53
+        Height = 13
+        Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+      end
+      object lblTabs: TLabel
+        Left = 79
+        Top = 302
+        Width = 72
+        Height = 13
+        Caption = #1044#1083#1103' '#1089#1090#1088#1072#1085#1080#1094#1099
+      end
       object luType: TDBLookupComboboxEh
         Left = 79
         Top = 138
-        Width = 201
+        Width = 198
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
@@ -407,6 +423,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
         EditButtons = <>
         KeyField = 'RT_ID'
         ListField = 'RT_NAME'
@@ -422,7 +439,7 @@ object RequestFilterForm: TRequestFilterForm
       object DBLookupComboboxEh2: TDBLookupComboboxEh
         Left = 79
         Top = 165
-        Width = 201
+        Width = 198
         Height = 21
         Hint = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1079#1072#1103#1074#1082#1080
         Anchors = [akLeft, akTop, akRight]
@@ -431,6 +448,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
         EditButtons = <>
         KeyField = 'WORKER_ID'
         ListField = 'FIO'
@@ -443,7 +461,7 @@ object RequestFilterForm: TRequestFilterForm
       object luAnalysGrp: TDBLookupComboboxEh
         Left = 79
         Top = 192
-        Width = 201
+        Width = 198
         Height = 21
         Hint = #1043#1088#1091#1087#1087#1072' '#1072#1085#1072#1083#1080#1090#1080#1082#1080' ('#1074#1086#1079#1084#1086#1078#1085#1086' '#1091#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1075#1088#1091#1087#1087#1077')'
         Anchors = [akLeft, akTop, akRight]
@@ -452,6 +470,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1040#1085#1072#1083#1080#1090#1080#1082#1072
         EditButtons = <>
         KeyField = 'O_ID'
         ListField = 'O_NAME'
@@ -462,7 +481,7 @@ object RequestFilterForm: TRequestFilterForm
         OnEnter = luWorkEnter
       end
       object ed1: TDBEditEh
-        Left = 465
+        Left = 462
         Top = 32
         Width = 85
         Height = 21
@@ -472,12 +491,13 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1050#1074#1072#1088#1090#1080#1088#1072
         ShowHint = True
         TabOrder = 4
         Visible = True
       end
       object luHouseNo: TDBLookupComboboxEh
-        Left = 342
+        Left = 337
         Top = 32
         Width = 90
         Height = 21
@@ -497,6 +517,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 200
+        EmptyDataInfo.Text = #1044#1086#1084
         EditButtons = <>
         KeyField = 'HOUSE_ID'
         ListField = 'HOUSE_NO'
@@ -509,7 +530,7 @@ object RequestFilterForm: TRequestFilterForm
       object luUpCuststreetFilter: TDBLookupComboboxEh
         Left = 79
         Top = 32
-        Width = 201
+        Width = 198
         Height = 21
         Hint = #1059#1083#1080#1094#1072
         Anchors = [akLeft, akTop, akRight]
@@ -531,6 +552,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1059#1083#1080#1094#1072
         EditButtons = <>
         KeyField = 'STREET_ID'
         ListField = 'STREET_NAME'
@@ -543,7 +565,7 @@ object RequestFilterForm: TRequestFilterForm
         OnEnter = luWorkEnter
       end
       object lucbb2: TDBLookupComboboxEh
-        Left = 340
+        Left = 337
         Top = 5
         Width = 210
         Height = 21
@@ -561,6 +583,7 @@ object RequestFilterForm: TRequestFilterForm
           end>
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1047#1074#1077#1085#1086
         EditButtons = <>
         KeyField = 'WG_ID'
         ListField = 'WG_NAME'
@@ -572,7 +595,7 @@ object RequestFilterForm: TRequestFilterForm
       object lucbb1: TDBLookupComboboxEh
         Left = 79
         Top = 5
-        Width = 201
+        Width = 198
         Height = 21
         Hint = #1059#1095#1072#1089#1090#1086#1082
         Anchors = [akLeft, akTop, akRight]
@@ -581,6 +604,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1059#1095#1072#1089#1090#1086#1082
         EditButtons = <>
         KeyField = 'WA_ID'
         ListField = 'NAME'
@@ -592,7 +616,7 @@ object RequestFilterForm: TRequestFilterForm
       object luDBLookupComboBox1: TDBLookupComboboxEh
         Left = 79
         Top = 245
-        Width = 201
+        Width = 198
         Height = 21
         Hint = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
         Anchors = [akLeft, akTop, akRight]
@@ -601,6 +625,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1053#1072#1089'. '#1087#1091#1085#1082#1090
         EditButtons = <>
         KeyField = 'AREA_ID'
         ListField = 'AREA_NAME'
@@ -613,7 +638,7 @@ object RequestFilterForm: TRequestFilterForm
       object dePLANTO: TDBDateTimeEditEh
         Left = 79
         Top = 85
-        Width = 199
+        Width = 196
         Height = 21
         Alignment = taLeftJustify
         Anchors = [akLeft, akTop, akRight]
@@ -621,6 +646,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1047#1072#1103#1074#1082#1080' '#1087#1086' '#1076#1072#1090#1091' '#1074#1082#1083#1102#1095#1080#1090#1077#1083#1100#1085#1086
         ShowHint = True
         TabOrder = 6
         Visible = True
@@ -629,7 +655,7 @@ object RequestFilterForm: TRequestFilterForm
       object dePLANFROM: TDBDateTimeEditEh
         Left = 79
         Top = 58
-        Width = 199
+        Width = 196
         Height = 21
         Alignment = taLeftJustify
         Anchors = [akLeft, akTop, akRight]
@@ -637,13 +663,14 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DynProps = <>
         EditButtons = <>
+        EmptyDataInfo.Text = #1047#1072#1103#1074#1082#1080' '#1089' '#1076#1072#1090#1099' '#1074#1082#1083#1102#1095#1080#1090#1077#1083#1100#1085#1086
         ShowHint = True
         TabOrder = 5
         Visible = True
         EditFormat = 'DD/MM/YYYY HH:NN'
       end
       object edTo: TDBNumberEditEh
-        Left = 342
+        Left = 337
         Top = 58
         Width = 90
         Height = 21
@@ -653,6 +680,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DecimalPlaces = 0
         DynProps = <>
+        EmptyDataInfo.Text = #1044#1085#1077#1081' '#1076#1086' '#1089#1077#1075#1086#1076#1085#1103
         EditButton.Style = ebsUpDownEh
         EditButton.Visible = True
         EditButtons = <>
@@ -663,7 +691,7 @@ object RequestFilterForm: TRequestFilterForm
         Visible = True
       end
       object edAfter: TDBNumberEditEh
-        Left = 465
+        Left = 462
         Top = 58
         Width = 85
         Height = 21
@@ -673,6 +701,7 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DecimalPlaces = 0
         DynProps = <>
+        EmptyDataInfo.Text = #1044#1085#1077#1081' '#1087#1086#1089#1083#1077' '#1089#1077#1075#1086#1076#1085#1103
         EditButton.Style = ebsUpDownEh
         EditButton.Visible = True
         EditButtons = <>
@@ -683,7 +712,7 @@ object RequestFilterForm: TRequestFilterForm
         Visible = True
       end
       object luWork: TDBLookupComboboxEh
-        Left = 340
+        Left = 337
         Top = 165
         Width = 210
         Height = 21
@@ -701,6 +730,7 @@ object RequestFilterForm: TRequestFilterForm
           end>
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1056#1072#1073#1086#1090#1072
         EditButtons = <>
         KeyField = 'W_ID'
         ListField = 'NAME'
@@ -711,7 +741,7 @@ object RequestFilterForm: TRequestFilterForm
         OnEnter = luWorkEnter
       end
       object luOgz: TDBLookupComboboxEh
-        Left = 340
+        Left = 337
         Top = 192
         Width = 210
         Height = 21
@@ -728,6 +758,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.Options = []
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1054#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
         EditButtons = <>
         KeyField = 'ORG_ID'
         ListField = 'ORG_NAME'
@@ -738,8 +769,8 @@ object RequestFilterForm: TRequestFilterForm
         OnEnter = luWorkEnter
       end
       object luHE: TDBLookupComboboxEh
-        Left = 340
-        Top = 219
+        Left = 337
+        Top = 245
         Width = 210
         Height = 21
         Anchors = [akTop, akRight]
@@ -750,21 +781,23 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.Options = []
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1043#1086#1083#1086#1074#1085#1072#1103' '#1089#1090#1072#1085#1094#1080#1103
         EditButtons = <>
         KeyField = 'HE_ID'
         ListField = 'HE_NAME'
         ListSource = srcMH
         ShowHint = True
-        TabOrder = 20
+        TabOrder = 22
         Visible = True
         OnEnter = luWorkEnter
       end
       object luResult: TDBLookupComboboxEh
-        Left = 79
-        Top = 219
-        Width = 201
+        Left = 337
+        Top = 218
+        Width = 210
         Height = 21
-        Anchors = [akLeft, akTop, akRight]
+        Hint = #1088#1072#1089#1096#1080#1088#1077#1085#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
+        Anchors = [akTop, akRight]
         DynProps = <>
         DataField = 'RESULT_ID'
         DataSource = srcFilter
@@ -779,17 +812,18 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.Options = []
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1056#1072#1089#1096#1080#1088#1077#1085#1085#1099#1081' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
         EditButtons = <>
         KeyField = 'RR_ID'
         ListField = 'NAME'
         ListSource = srcResult
         ShowHint = True
-        TabOrder = 19
+        TabOrder = 20
         Visible = True
         OnEnter = luWorkEnter
       end
       object luTemplate: TDBLookupComboboxEh
-        Left = 340
+        Left = 337
         Top = 138
         Width = 210
         Height = 21
@@ -813,6 +847,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
         EditButtons = <>
         KeyField = 'RQTL_ID'
         ListField = 'RQ_CONTENT'
@@ -825,8 +860,8 @@ object RequestFilterForm: TRequestFilterForm
         OnEnter = luWorkEnter
       end
       object cbbSUBAREA: TDBLookupComboboxEh
-        Left = 340
-        Top = 245
+        Left = 337
+        Top = 272
         Width = 210
         Height = 21
         Anchors = [akTop, akRight]
@@ -845,17 +880,18 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
+        EmptyDataInfo.Text = #1056#1072#1081#1086#1085
         EditButtons = <>
         KeyField = 'SUBAREA_ID'
         ListField = 'SUBAREA_NAME'
         ListSource = srcSubArea
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 22
+        TabOrder = 24
         Visible = True
       end
       object DBCheckBoxEh1: TDBCheckBoxEh
-        Left = 292
+        Left = 289
         Top = 87
         Width = 258
         Height = 17
@@ -870,7 +906,7 @@ object RequestFilterForm: TRequestFilterForm
       object edExpired: TDBNumberEditEh
         Left = 196
         Top = 112
-        Width = 84
+        Width = 81
         Height = 21
         Hint = #1047#1072#1103#1074#1082#1072' '#1087#1088#1086#1089#1088#1086#1095#1077#1085#1072' '#1085#1072' '#1061' '#1095#1072#1089#1086#1074
         Anchors = [akLeft, akTop, akRight]
@@ -878,13 +914,14 @@ object RequestFilterForm: TRequestFilterForm
         DataSource = srcFilter
         DecimalPlaces = 0
         DynProps = <>
+        EmptyDataInfo.Text = #1055#1088#1086#1089#1088#1086#1095#1077#1085#1086
         EditButtons = <>
         ShowHint = True
         TabOrder = 10
         Visible = True
       end
       object deTimeTo: TDBDateTimeEditEh
-        Left = 465
+        Left = 462
         Top = 112
         Width = 85
         Height = 21
@@ -894,13 +931,14 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         EditButton.Visible = False
         EditButtons = <>
+        EmptyDataInfo.Text = #1042#1088#1077#1084#1103' '#1087#1086
         ShowHint = True
         TabOrder = 12
         Visible = True
         EditFormat = 'HH:NN'
       end
       object deTimeFrom: TDBDateTimeEditEh
-        Left = 342
+        Left = 337
         Top = 112
         Width = 90
         Height = 21
@@ -910,6 +948,7 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         EditButton.Visible = False
         EditButtons = <>
+        EmptyDataInfo.Text = #1042#1088#1077#1084#1103' '#1089
         ShowHint = True
         TabOrder = 11
         Visible = True
@@ -918,7 +957,7 @@ object RequestFilterForm: TRequestFilterForm
       object cbbWhose: TDBComboBoxEh
         Left = 79
         Top = 272
-        Width = 201
+        Width = 198
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         DataField = 'Whose'
@@ -940,6 +979,56 @@ object RequestFilterForm: TRequestFilterForm
         TabOrder = 23
         Visible = True
       end
+      object cbResultExec: TDBComboBoxEh
+        Left = 79
+        Top = 218
+        Width = 198
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DataField = 'R_STATE'
+        DataSource = srcFilter
+        DynProps = <>
+        EmptyDataInfo.Text = #1089' '#1082#1072#1082#1080#1084' '#1088#1077#1079#1091#1083#1100#1090#1072#1090#1086#1084
+        EditButtons = <>
+        Items.Strings = (
+          #1042#1099#1087#1086#1083#1085#1077#1085#1072
+          #1054#1090#1084#1077#1085#1077#1085#1072' '#1072#1073#1086#1085#1077#1085#1090#1086#1084
+          #1053#1077#1074#1086#1079#1084#1086#1078#1085#1086' '#1074#1099#1087#1086#1083#1085#1080#1090#1100)
+        KeyItems.Strings = (
+          '2'
+          '3'
+          '4')
+        ShowHint = True
+        TabOrder = 19
+        Visible = True
+      end
+      object cbTABS: TDBComboBoxEh
+        Left = 181
+        Top = 299
+        Width = 224
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        DataField = 'TABS'
+        DataSource = srcFilter
+        DynProps = <>
+        EmptyDataInfo.Text = #1044#1083#1103' '#1082#1072#1082#1086#1081' '#1089#1090#1088#1072#1085#1080#1094#1099' '#1092#1080#1083#1100#1090#1088
+        EditButtons = <>
+        Items.Strings = (
+          #1047#1072#1087#1083#1072#1085#1080#1088#1086#1074#1072#1085#1099
+          #1042#1099#1076#1072#1085#1099' '#1074' '#1088#1072#1073#1086#1090#1091
+          #1042#1099#1087#1086#1083#1085#1077#1085#1099
+          #1042#1089#1077' '#1079#1072#1103#1074#1082#1080
+          #1051#1102#1073#1086#1081' '#1089#1090#1088#1072#1085#1080#1094#1099)
+        KeyItems.Strings = (
+          '0'
+          '1'
+          '2'
+          '3'
+          '-1')
+        ShowHint = True
+        TabOrder = 25
+        Visible = True
+      end
     end
     object tsList: TTabSheet
       Caption = #1055#1086' '#1089#1087#1080#1089#1082#1091
@@ -947,8 +1036,8 @@ object RequestFilterForm: TRequestFilterForm
       object mmoListBids: TDBMemoEh
         Left = 0
         Top = 0
-        Width = 556
-        Height = 294
+        Width = 553
+        Height = 323
         ScrollBars = ssVertical
         Align = alClient
         AutoSize = False

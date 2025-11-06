@@ -438,17 +438,10 @@ begin
 
   actGetIpv6.Visible := (dmMain.GetSettingsValue('IPV6GETURL') <> '');
 
-  if (dmMain.GetSettingsValue('LAN_ADDRES') = '1') then
-  begin
-    pnlAddres.Visible := True;
-    mmoNOTICE.Top := pnlAddres.Top + pnlAddres.Height + 4;
-  end
-  else
-  begin
-    pnlAddres.Visible := False;
-    mmoNOTICE.Top := edtTAG.Top + edtTAG.Height + 4;
-  end;
-  mmoNOTICE.Height := OkCancelFrame.Top - 8;
+  pnlAddres.Visible := (dmMain.GetSettingsValue('LAN_ADDRES') = '1');
+  mmoNOTICE.Top := 1;
+  mmoNOTICE.Height := pnlMemo.Height - 5;
+  // pnlMemo.Height := OkCancelFrame.Top - 10;
 
   if pnlAddres.Visible then
     pnlAddres.Top := 1000;

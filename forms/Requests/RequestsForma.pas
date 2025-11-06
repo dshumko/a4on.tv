@@ -281,16 +281,25 @@ begin
   f := A4MainForm.GetUserFilterFolder + 'RDefault.JRF';
   if FileExists(f) then
   begin
+    dsFilter.OnNewRecord := nil;
     DatasetFromJson(dsFilter, f);
+    dsFilter.OnNewRecord := dsFilterNewRecord;
   end
   else
   begin
     f := A4MainForm.GetUserFilterFolder + 'RDefault.rf';
     if FileExists(f) then
     begin
+      dsFilter.OnNewRecord := nil;
       DatasetFromINI(dsFilter, f);
+      dsFilter.OnNewRecord := dsFilterNewRecord;
     end
   end;
+  if dsFilter.RecordCount = 0 then
+  begin
+    dsFilter.Insert;
+    dsFilter.Post;
+  end
 end;
 
 function TRequestsForm.GenerateFilter: string;
@@ -413,6 +422,10 @@ var
     // Фильтр по типу
     if not(dsFilter.FieldByName('REQUEST_TYPE').IsNull) then
       addToFilter(format('(R.RQ_TYPE = %d)', [dsFilter.FieldByName('REQUEST_TYPE').AsInteger]));
+
+    // Фильтр по статусу
+    if not(dsFilter.FieldByName('R_STATE').IsNull) then
+      addToFilter(format('(R.REQ_RESULT = %d)', [dsFilter.FieldByName('R_STATE').AsInteger]));
 
     // Фильтр для кого заявки
     if (not(dsFilter.FieldByName('Whose').IsNull) and (dsFilter['Whose'] > 0)) then
@@ -566,10 +579,8 @@ var
     // ВЫПОЛНЕНЫ   R.RQ_COMPLETED
     // ПЛАНОВАЯ    R.RQ_PLAN_DATE
     // ВЫДАНЫ      R.RQ_EXEC_TIME
-
     if (period <> '') or (before <> '') or (after <> '') then
     begin
-      // dmMain.GetIniValue('REQALL')
       if pgcGrids.ActivePageIndex <= 2 then
       begin
         case pgcGrids.ActivePageIndex of
@@ -579,36 +590,41 @@ var
             fld := 'R.RQ_COMPLETED';
           2:
             fld := 'R.RQ_EXEC_TIME';
+        else
+          fld := 'R.ADDED_ON';
         end;
+
         if (period <> '') then
           s := DatesFltr(fld, period, '', '')
         else
           s := DatesFltr(fld, period, before, after);
 
-        if s <> '' then
+        if (s <> '') then
           addToFilter(' ( ' + s + ' ) ');
       end
       else
       begin
-        fld := 'R.RQ_PLAN_DATE';
-        s := DatesFltr(fld, period, before, after);
-        fld := DatesFltr('R.added_on', period, before, after);
+        fld := DatesFltr('R.ADDED_ON', period, before, after);
         s := format('( %s )', [fld]);
+
         fld := DatesFltr('R.RQ_COMPLETED', period, before, after);
         if s <> '' then
           s := format('(( %s ) or ( %s ))', [s, fld])
         else
           s := format('( %s )', [fld]);
+
         fld := DatesFltr('R.RQ_PLAN_DATE', period, before, after);
         if s <> '' then
           s := format('(( %s ) or ( %s ))', [s, fld])
         else
           s := format('( %s )', [fld]);
+
         fld := DatesFltr('R.RQ_EXEC_TIME', period, before, after);
         if s <> '' then
           s := format('(( %s ) or ( %s ))', [s, fld])
         else
           s := format('( %s )', [fld]);
+
         if s <> '' then
           addToFilter(format('( %s )', [s]));
       end;
@@ -625,43 +641,91 @@ var
   end;
 
 begin
-  if (dmMain.GetIniValue('REQALL') = '1') then
-    default := ' 1=1 '
-  else
-    case pgcGrids.ActivePageIndex of
-      1:
-        default := ' (R.RQ_COMPLETED  >= CURRENT_DATE and R.RQ_COMPLETED  < DATEADD(1 DAY TO CURRENT_DATE)) ';
-      2:
-        default := ' (R.RQ_EXEC_TIME  >= CURRENT_DATE and R.RQ_EXEC_TIME  < DATEADD(1 DAY TO CURRENT_DATE)) ';
-    else
-      default := ' (R.rq_plan_date  >= CURRENT_DATE and R.rq_plan_date  < DATEADD(1 DAY TO CURRENT_DATE)) ';
-    end;
+  default := '';
+  {
+    if (dmMain.GetIniValue('REQALL') = '1') then
 
-  whereStr := ' (1=1) ';
+    else
+    begin
+
+    // ПОЛУЧЕНЫ    R.RQ_DATE
+    // ВЫПОЛНЕНЫ   R.RQ_COMPLETED
+    // ПЛАНОВАЯ    R.RQ_PLAN_DATE
+    // ВЫДАНЫ      R.RQ_EXEC_TIME
+
+    // if (not(dmMain.GetSettingsValue('SHOW_UNCLOSED_BIDS') = '1')) then
+    // begin
+    // case pgcGrids.ActivePageIndex of
+    // 1:
+    // default := ' (R.RQ_COMPLETED  >= CURRENT_DATE and R.RQ_COMPLETED  < DATEADD(1 DAY TO CURRENT_DATE)) ';
+    // 2:
+    // default := ' (R.RQ_EXEC_TIME  >= CURRENT_DATE and R.RQ_EXEC_TIME  < DATEADD(1 DAY TO CURRENT_DATE)) ';
+    // else
+    // default := ' (R.rq_plan_date  >= CURRENT_DATE and R.rq_plan_date  < DATEADD(1 DAY TO CURRENT_DATE)) ';
+    // end;
+    // end
+    // else
+    // begin
+
+    // по дефолту выводім все заявкі до сегодняшнего дня включітельно
+    case pgcGrids.ActivePageIndex of
+    1:
+    default := ' (R.RQ_COMPLETED < DATEADD(1 DAY TO CURRENT_DATE)) ';
+    2:
+    default :=
+    ' (R.RQ_EXEC_TIME > DATEADD(-1 DAY TO CURRENT_DATE) and R.RQ_EXEC_TIME < DATEADD(1 DAY TO CURRENT_DATE)) ';
+    else
+    default := ' (coalesce(R.rq_plan_date, CURRENT_DATE) < DATEADD(1 DAY TO CURRENT_DATE) ) ';
+    end;
+    // end
+    end;
+  }
+
+  whereStr := '';
   // если = 1 то Объединение таблиц плана и выданых
   if dmMain.GetIniValue('REQUNION') = '1' then
     case pgcGrids.ActivePageIndex of
       2:
         whereStr := ' ( R.REQ_RESULT >= 2 ) ';
     else
-      whereStr := ' (( R.REQ_RESULT <= 1) or ( R.REQ_RESULT is null )) ';
+      whereStr :=
+        //' ( R.REQ_RESULT <= 1 ) or ( R.REQ_RESULT is null ) or (R.RQ_PLAN_DATE is null and r.RQ_COMPLETED is null and r.RQ_EXEC_TIME is null) ';
+        ' ((R.REQ_RESULT <= 1) or (R.REQ_RESULT is null)) ';
     end
   else
     case pgcGrids.ActivePageIndex of
       0:
-        whereStr := ' (( R.REQ_RESULT = 0 ) or ( R.REQ_RESULT is null ))';
+        whereStr :=
+          //' ( R.REQ_RESULT = 0 ) or ( R.REQ_RESULT is null ) or ((R.RQ_PLAN_DATE is null) and (r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null))';
+          ' ((R.REQ_RESULT = 0) or (R.REQ_RESULT is null)) ';
       1:
-        whereStr := ' ( R.REQ_RESULT = 1 ) ';
+        whereStr :=
+          //' ( R.REQ_RESULT = 1 ) or (( not R.RQ_PLAN_DATE is null ) and (r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null)) ';
+          ' (R.REQ_RESULT = 1) ';
       2:
-        whereStr := ' ( R.REQ_RESULT >= 2 ) ';
+        whereStr :=
+          //' ( R.REQ_RESULT >= 2 ) or (( not R.RQ_PLAN_DATE is null ) and (not r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null)) ';
+          ' (R.REQ_RESULT >= 2) ';
+    else
+      whereStr := ' ( 1=1 ) ';
     end;
 
   if dmMain.UserAreas <> '' then
-    whereStr := format('%s and (wg.wa_id in (%s)) ', [whereStr, dmMain.UserAreas]);
+    whereStr := format('(%s) and (wg.wa_id in (%s)) ', [whereStr, dmMain.UserAreas]);
 
   if (dsFilter.RecordCount = 0) or (not actEnableFilter.Checked) then
   begin
-    Result := format(' where %s and ( %s ) ', [whereStr, default]);
+    if (whereStr <> '') and (default <> '') then
+      Result := format(' ( %s ) and ( %s ) ', [whereStr, default])
+    else
+    begin
+      if (whereStr <> '') then
+        Result := whereStr
+      else if (default <> '') then
+        Result := default
+      else
+        Result := '';
+    end;
     exit;
   end;
 
@@ -672,29 +736,45 @@ begin
     cr := 0;
     while not dsFilter.Eof do
     begin
-      RecordFtr := '';
-      if not dsFilter.FieldByName('ListBids').IsNull then
-        RecordFtr := ListToFilter
-      else
-        RecordToFilter;
-
-      if dsFilter['inversion'] then
-        RecordFtr := format(' NOT ( %s ) ', [RecordFtr]);
-
-      if cr <> 0 then
+      if (dsFilter.FieldByName('TABS').IsNull) or //
+        (dsFilter['TABS'] = -1) or //
+        (dsFilter['TABS'] = pgcGrids.ActivePageIndex) then
       begin
-        if dsFilter['next_condition'] = 0 then
-          RecordFtr := format(' or ( %s )', [RecordFtr])
+
+        RecordFtr := '';
+        if not dsFilter.FieldByName('ListBids').IsNull then
+          RecordFtr := ListToFilter
         else
-          RecordFtr := format(' and ( %s )', [RecordFtr]);
-        filter.Add(RecordFtr);
-      end
-      else
-        filter.Text := format('( %s )', [RecordFtr]);
-      inc(cr);
+          RecordToFilter;
+
+        if dsFilter['inversion'] then
+          RecordFtr := format(' NOT ( %s ) ', [RecordFtr]);
+
+        if cr <> 0 then
+        begin
+          if dsFilter['next_condition'] = 0 then
+            RecordFtr := format(' or ( %s )', [RecordFtr])
+          else
+            RecordFtr := format(' and ( %s )', [RecordFtr]);
+          filter.Add(RecordFtr);
+        end
+        else
+          filter.Text := format('( %s )', [RecordFtr]);
+        inc(cr);
+      end;
       dsFilter.Next;
     end;
-    whereStr := format(' where %s and ( %s ) ', [whereStr, filter.Text]);
+
+    filter.Text := trim(filter.Text);
+    RecordFtr := filter.Text;
+    RecordFtr := RecordFtr.Replace('(', '').Replace(')', '').Replace(' ', '').Trim;
+    if (whereStr <> '') and ((filter.Text <> '') and (RecordFtr <> '')) then
+      whereStr := format(' (%s) and (%s) ', [whereStr, filter.Text])
+    else if ((filter.Text <> '') and (RecordFtr <> '')) then
+      whereStr := filter.Text
+    else if (whereStr = '') then
+      whereStr := '1=1';
+
     Result := whereStr;
   finally
     filter.Free;
@@ -1305,13 +1385,13 @@ begin
       (Grid.DataSource.DataSet).Close;
       case pgcGrids.ActivePageIndex of
         0:
-          dsPlan.ParamByName('Filter').value := GenerateFilter;
+          dsPlan.ParamByName('SQL_FILTER').value := GenerateFilter;
         1:
-          dsGive.ParamByName('Filter').value := GenerateFilter;
+          dsGive.ParamByName('SQL_FILTER').value := GenerateFilter;
         2:
-          dsExec.ParamByName('Filter').value := GenerateFilter;
+          dsExec.ParamByName('SQL_FILTER').value := GenerateFilter;
         3:
-          dsAll.ParamByName('Filter').value := GenerateFilter;
+          dsAll.ParamByName('SQL_FILTER').value := GenerateFilter;
       end;
 
       try
@@ -1373,7 +1453,7 @@ end;
 procedure TRequestsForm.actEnableFilterExecute(Sender: TObject);
 begin
   actEnableFilter.Checked := not actEnableFilter.Checked;
-  // dsRequests.ParamByName('FILTER').Value :=  GenerateFilter;
+  // dsRequests.ParamByName('SQL_FILTER').Value :=  GenerateFilter;
   pgcGridsChange(Sender);
   // reopen;
 end;
@@ -1681,13 +1761,13 @@ begin
     filter := GenerateFilter;
     case pgcGrids.ActivePageIndex of
       0:
-        dsPlan.ParamByName('Filter').value := filter;
+        dsPlan.ParamByName('SQL_FILTER').value := filter;
       1:
-        dsGive.ParamByName('Filter').value := filter;
+        dsGive.ParamByName('SQL_FILTER').value := filter;
       2:
-        dsExec.ParamByName('Filter').value := filter;
+        dsExec.ParamByName('SQL_FILTER').value := filter;
       3:
-        dsAll.ParamByName('Filter').value := filter;
+        dsAll.ParamByName('SQL_FILTER').value := filter;
     end;
     try
       Grid.DataSource.DataSet.Open;
@@ -1706,6 +1786,8 @@ begin
 
     end;
     dbGridSortMarkingChanged(Grid);
+    Grid.DataSource.DataSet.First;
+
   finally
     Screen.Cursor := cr;
   end;
@@ -1901,7 +1983,7 @@ begin
       p := 0;
     if (p <> 0) and (not FileExists(A4MainForm.GetUserFilterFolder + 'RDefault.ftr')) then
       actFilter.Execute;
-    dsPlan.ParamByName('FILTER').value := GenerateFilter;
+    dsPlan.ParamByName('SQL_FILTER').value := GenerateFilter;
     dbGridSortMarkingChanged(dbgPlan);
     dsPlan.Open;
 
@@ -1910,9 +1992,7 @@ begin
   end;
 
   if dmMain.GetIniValue('REQUNION') = '1' then
-  begin
     tsGive.TabVisible := False;
-  end;
 
   for i := 0 to ComponentCount - 1 do
   begin
@@ -1935,6 +2015,11 @@ begin
       frmReqMaterials.dbGrid.Columns[i].Visible := fVisibleCost;
   end;
 
+  for i := 0 to dbgPlan.Columns.Count - 1 do
+  begin
+    if (dbgPlan.Columns[i].FieldName = 'GIV_EXEC_DATE') then
+      dbgPlan.Columns[i].Visible := not tsGive.TabVisible;
+  end;
 end;
 
 procedure TRequestsForm.dbGridSortMarkingChanged(Sender: TObject);
@@ -2004,11 +2089,12 @@ end;
 
 procedure TRequestsForm.dsFilterNewRecord(DataSet: TDataSet);
 begin
-  // dsFilter['PLAN_FROM'] := Today;
-  // dsFilter['PLAN_TO'] := Today;
+  dsFilter['DATE_FROM'] := Today;
+  dsFilter['DATE_TO'] := Tomorrow - 1 / 24 / 60;
 
   dsFilter['INVERSION'] := False;
   dsFilter['repeated'] := False;
+  dsFilter['TABS'] := -1;
 
   dsFilter['NEXT_CONDITION'] := 1;
 end;

@@ -112,6 +112,10 @@ type
     actLoadFromDb: TAction;
     btnDBSave: TSpeedButton;
     btnDBLoad: TSpeedButton;
+    lbl18: TLabel;
+    cbResultExec: TDBComboBoxEh;
+    lblTabs: TLabel;
+    cbTABS: TDBComboBoxEh;
     procedure SpeedButton3Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure actOkExecute(Sender: TObject);
@@ -302,7 +306,14 @@ begin
 end;
 
 procedure TRequestFilterForm.FormShow(Sender: TObject);
+
 begin
+
+  if (dmMain.GetSettingsValue('BIDS_SHOW_TABFILTER') <> '1') then begin
+    lblTabs.Visible := False;
+    cbTABS.Visible := False;
+    Height := 440;
+  end;
 
   dsStreets.Open;
   dsHomes.Open;
@@ -363,6 +374,7 @@ begin
     if not Active then
       Open;
     (srcFilter.DataSet as TMemTableEh).EmptyTable;
+    (srcFilter.DataSet as TMemTableEh).Insert;
     EnableControls;
   end;
 end;

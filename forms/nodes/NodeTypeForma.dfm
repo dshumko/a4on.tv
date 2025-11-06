@@ -134,9 +134,12 @@ inherited NodeTypeForm: TNodeTypeForm
         end
         item
           CellButtons = <>
+          DisplayFormat = ',#.###'
           DynProps = <>
           EditButtons = <>
           FieldName = 'MAT_QNT'
+          Footer.DisplayFormat = ',#.###'
+          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1050#1086#1083'-'#1074#1086' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
           Title.TitleButton = True

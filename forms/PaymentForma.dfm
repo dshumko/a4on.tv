@@ -355,7 +355,7 @@ object PaymentForm: TPaymentForm
       object Label9: TLabel
         Left = 1
         Top = 1
-        Width = 64
+        Width = 367
         Height = 13
         Align = alTop
         Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -599,7 +599,7 @@ object PaymentForm: TPaymentForm
         object Label1: TLabel
           Left = 0
           Top = 0
-          Width = 106
+          Width = 167
           Height = 13
           Align = alTop
           Caption = '  '#1055#1086#1080#1089#1082' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1087#1086':'

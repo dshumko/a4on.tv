@@ -763,6 +763,7 @@ begin
     ModalResult := mrNone;
     dsMemPayment.Close;
     dsMemPayment.Open;
+    dsMemPayment.EmptyTable;
     dsMemPayment.Insert;
     if actShtrih.Checked then
     begin
@@ -951,6 +952,7 @@ var
   s: String;
   PrintReport: Boolean;
   vCommitPayment: Boolean;
+  HasErrors : Boolean;
 begin
   Result := False;
   FullAccess := dmMain.AllowedAction(rght_Pays_full);
@@ -958,14 +960,20 @@ begin
   AR := dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_AddToday); // добавление
   AR := AR or FullAccess; // полный доступ
   PrintReport := False;
+
   if (not AR) then
     Exit;
+
+  if dsMemPayment.State in [dsEdit, dsInsert] then
+    dsMemPayment.Post;
+
+  HasErrors := False;
 
   if dmMain.AllowedAction(rght_Pays_AddToday) and (VarToDateTime(dsMemPayment['PAY_DATE']) <> FCurrentDate) then
   begin
     deDate.Value := FCurrentDate;
     CnErrors.SetError(deDate, rsWrongDate, iaMiddleLeft, bsNeverBlink);
-    Exit;
+    HasErrors := True;
   end
   else
     CnErrors.Dispose(deDate);
@@ -974,7 +982,7 @@ begin
   then
   begin
     CnErrors.SetError(deDate, rsWrongDate, iaMiddleLeft, bsNeverBlink);
-    Exit;
+    HasErrors := True;
   end
   else
     CnErrors.Dispose(deDate);
@@ -991,9 +999,9 @@ begin
 
   if not FCalculateFine then
   begin
-    if not(dsMemPayment.State in [dsEdit, dsInsert]) then
-      dsMemPayment.Edit;
+    dsMemPayment.Edit;
     dsMemPayment['FINE_SUM'] := 0;
+    dsMemPayment.Post;
   end;
 
   if not(dsMemPayment['customer_id'] >= 0) then
@@ -1002,7 +1010,7 @@ begin
     CnErrors.SetError(edLicevoy, rsSelectAccount, iaMiddleLeft, bsNeverBlink);
     if pnlSearchAbonent.Visible then
       edLicevoy.SetFocus;
-    Exit;
+    HasErrors := True;
   end
   else
     CnErrors.Dispose(edLicevoy);
@@ -1017,20 +1025,25 @@ begin
   if dsMemPayment.FieldByName('PAY_SUM').IsNull then
   begin
     CnErrors.SetError(dePaySum, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
-    Exit;
+    HasErrors := True;
   end
   else
     CnErrors.Dispose(dePaySum);
 
-  if dsMemPayment.State in [dsEdit, dsInsert] then
-    dsMemPayment.Post;
+  if (dsMemPayment['PAY_SUM'] = 0) and (not dmMain.UserIsAdmin) then
+  begin
+    CnErrors.SetError(dePaySum, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
+    HasErrors := True;
+  end
+  else
+    CnErrors.Dispose(dePaySum);
 
   if ((dsMemPayment['PAY_SUM'] < 0) and (dmMain.GetSettingsValue('NEGATIVE_PAY') <> 1)) then
   begin
     CnErrors.SetError(dePaySum, rsNotNegativePayment, iaMiddleLeft, bsNeverBlink);
     dePaySum.SelectAll;
     dePaySum.SetFocus;
-    Exit;
+    HasErrors := True;
   end
   else
     CnErrors.Dispose(dePaySum);
@@ -1045,15 +1058,18 @@ begin
       dsMemPayment['PAY_SUM'] := dsMemPayment['DEBT_SUM'] + dsMemPayment['FINE_SUM'];
       dsMemPayment.Post;
       dePaySum.SetFocus;
-      Exit;
+      HasErrors := True;
     end
     else
       CnErrors.Dispose(dePaySum);
   end;
 
+  if HasErrors
+  then Exit;
+
   // сохраним дату и сумму платежа для многоплатежного ввода
   FDatePay := dsMemPayment['PAY_DATE'];
-  FSumPay := dsMemPayment['pay_sum'];
+  FSumPay := dsMemPayment['PAY_SUM'];
 
   with qInsertPayment do
   begin
@@ -1093,10 +1109,10 @@ begin
     else
       ParamByName('fine_sum').AsCurrency := 0;
 
-    if not dsMemPayment.FieldByName('pay_sum').IsNull then
+    if not dsMemPayment.FieldByName('fine_sum').IsNull then
       ParamByName('pay_sum').AsCurrency := dsMemPayment['pay_sum'] - dsMemPayment['fine_sum']
     else
-      ParamByName('pay_sum').AsCurrency := 0;
+      ParamByName('pay_sum').AsCurrency := dsMemPayment['pay_sum'];
 
     if not dsMemPayment.FieldByName('pay_date').IsNull then
       ParamByName('pay_date').AsDate := dsMemPayment['pay_date']

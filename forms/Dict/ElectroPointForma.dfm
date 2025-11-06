@@ -340,7 +340,7 @@ inherited ElectroPointForm: TElectroPointForm
     Top = 304
     Width = 939
     Height = 226
-    ActivePage = tsNodes
+    ActivePage = tsCoverage
     Align = alBottom
     TabOrder = 3
     OnChange = pgcInfoChange
@@ -444,7 +444,7 @@ inherited ElectroPointForm: TElectroPointForm
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
             Title.TitleButton = True
-            Width = 657
+            Width = 337
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -519,7 +519,7 @@ inherited ElectroPointForm: TElectroPointForm
             Footer.DisplayFormat = '#0.###'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090'/'#1095'|'#1059#1079#1083#1072
+            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090'|'#1059#1079#1083#1072
             Title.TitleButton = True
           end
           item
@@ -531,7 +531,7 @@ inherited ElectroPointForm: TElectroPointForm
             Footer.DisplayFormat = '#0.###'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090'/'#1095'|'#1054#1073#1086#1088'-'#1103
+            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090'|'#1054#1073#1086#1088'-'#1103
             Title.Hint = #1057#1091#1084#1084#1072#1088#1085#1072#1103' '#1084#1086#1097#1085#1086#1089#1090#1100' '#1091#1089#1090#1072#1085#1086#1074#1083#1077#1085#1085#1086#1075#1086' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
             Title.TitleButton = True
           end
@@ -544,7 +544,7 @@ inherited ElectroPointForm: TElectroPointForm
             Footer.DisplayFormat = '#0.###'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090'/'#1095'|'#1056#1072#1079#1085#1080#1094#1072
+            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090'|'#1056#1072#1079#1085#1080#1094#1072
             Title.TitleButton = True
           end
           item
@@ -716,7 +716,7 @@ inherited ElectroPointForm: TElectroPointForm
               EditButtons = <>
               FieldName = 'NVALUE'
               Footers = <>
-              Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077', '#1042#1090'/'#1095
+              Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077', '#1042#1090
               Title.TitleButton = True
               Width = 85
             end>
@@ -777,6 +777,11 @@ inherited ElectroPointForm: TElectroPointForm
     object actPCEFixingNode: TAction
       Hint = #1047#1072#1092#1080#1082#1089#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1082#1072#1079#1072#1085#1080#1103' '#1058#1059
       ImageIndex = 101
+    end
+    object actLockPeriod: TAction
+      Caption = #1047#1072#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1084#1077#1089#1103#1094
+      ImageIndex = 106
+      OnExecute = actLockPeriodExecute
     end
   end
   inherited pmPopUp: TPopupMenu
@@ -1134,6 +1139,9 @@ inherited ElectroPointForm: TElectroPointForm
       object miPCEFixing: TMenuItem
         Action = actPCEFixing
       end
+      object miLockPeriod: TMenuItem
+        Action = actLockPeriod
+      end
     end
   end
   object PropStorage: TPropStorageEh
@@ -1161,41 +1169,13 @@ inherited ElectroPointForm: TElectroPointForm
       'matching (O_Id, O_Type, Hdate);')
     RefreshSQL.Strings = (
       'select'
-      '    nl.*'
-      '  , (coalesce(NL.Pce, 0) - coalesce(NL.PCE_FACT, 0)) PCE_DIF'
-      '  from (select'
-      '            n.Node_Id'
-      '          , n.House_Id'
-      '          , n.Porch_N'
-      '          , n.Floor_N'
-      '          , n.Place'
-      '          , n.Pce'
-      '          , n.name'
-      '          , n.NOTICE'
-      '          , o.O_Name'
-      '          , o.O_DIMENSION as COLOR'
-      '          , s.street_short'
-      '          , S.Street_Name'
-      '          , H.House_No'
-      '          , h.Street_ID'
-      '          , (select'
-      '                 sum(coalesce(e.Pce, eg.O_Numericfield, 0))'
-      '               from Equipment e'
-      
-        '                    left outer join objects eg on (e.Eq_Group = ' +
-        'eg.O_Id and eg.O_Type = 7)'
-      '               where e.Node_Id = n.Node_Id) PCE_FACT'
-      '          from NODES n'
-      '               inner join HOUSE H on (n.HOUSE_ID = H.HOUSE_ID)'
-      
-        '               inner join STREET S on (H.STREET_ID = S.STREET_ID' +
-        ')'
-      
-        '               inner join objects o on (o.O_Id = n.Type_Id and o' +
-        '.O_Type = 38)'
-      '          where n.Epoint = :O_ID) nl'
-      'where Node_Id = :OLD_Node_Id          '
-      '  ')
+      '  qh.O_Id  NODE_ID'
+      '  , qh.Hdate'
+      '  , qh.Nvalue'
+      '  from Objects_History qh'
+      '  where qh.O_Type = 38'
+      '        and qh.O_Id = :OLD_Node_Id'
+      '        and qh.Hdate = :OLD_Hdate')
     SelectSQL.Strings = (
       'select'
       '  qh.O_Id  NODE_ID'

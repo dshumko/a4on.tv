@@ -388,9 +388,10 @@ begin
     TrTemp.Rollback;
   TrTemp.StartTransaction;
   QrTemp.SQL.Text := 'select O_ID as ID, O_NAME as NAME from OBJECTS o where O_TYPE = 10 and O_DELETED = 0';
+  QrTemp.SQL.Add(' and exists(select m.M_Id from Materials_Remain m where m.Wh_Id = o.O_Id) ');
   QrTemp.SQL.Add(' and (exists(select w.wh_id from SYS$USER u inner join sys$user_wh w on (w.user_id = u.id) ');
-  QrTemp.SQL.Add
-    (' where w.wh_id = o.O_ID and u.ibname = current_user and w.can_view = 1) or current_user = ''SYSDBA'') order by O_NAME');
+  QrTemp.SQL.Add('      where w.wh_id = o.O_ID and u.ibname = current_user and w.can_view = 1) or current_user = ''SYSDBA'') ');
+  QrTemp.SQL.Add('order by O_NAME');
   try
     QrTemp.ExecQuery;
   except

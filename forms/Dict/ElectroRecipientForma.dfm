@@ -23,6 +23,8 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Width = 939
     Height = 124
     AllowedOperations = [alopUpdateEh]
+    FooterRowCount = 1
+    SumList.Active = True
     Columns = <
       item
         AutoFitColWidth = False
@@ -30,10 +32,21 @@ inherited ElectroRecipientForm: TElectroRecipientForm
         DynProps = <>
         EditButtons = <>
         FieldName = 'O_NAME'
+        Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 136
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'EPC'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1058#1086#1095#1077#1082' '#1091#1095#1077#1090#1072
+        Width = 83
       end
       item
         CellButtons = <>
@@ -86,9 +99,6 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       Visible = False
     end
     inherited ToolButton6: TToolButton
-      Visible = False
-    end
-    inherited btnDelete: TToolButton
       Visible = False
     end
     inherited ToolButton9: TToolButton
@@ -243,6 +253,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1044#1072#1090#1072
+            Title.TitleButton = True
             Title.SortIndex = 1
             Title.SortMarker = smDownEh
             Width = 79
@@ -256,68 +267,110 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             FieldName = 'RATE'
             Footers = <>
             Title.Caption = #1058#1072#1088#1080#1092
+            Title.TitleButton = True
             Width = 98
           end
           item
             CellButtons = <>
-            DisplayFormat = '#0.####'
+            DisplayFormat = '###,###,##0'
             DynProps = <>
             EditButtons = <>
-            FieldName = 'PCE'
-            Footer.DisplayFormat = '#0.####'
+            FieldName = 'PAY_PCE'
+            Footer.DisplayFormat = '###,###,##0'
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1054#1087#1083#1072#1095#1077#1085#1086'|'#1052#1086#1097#1085#1086#1089#1090#1100', '#1082#1042#1090
+            Title.TitleButton = True
             Width = 90
           end
           item
             CellButtons = <>
-            DisplayFormat = '#0.####'
+            DisplayFormat = '###,###,##0.##'
             DynProps = <>
             EditButtons = <>
-            FieldName = 'NVALUE'
+            FieldName = 'PAY_SUM'
+            Footer.DisplayFormat = '###,###,##0.##'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1054#1087#1083#1072#1095#1077#1085#1086'|'#1057#1090#1086#1080#1084#1086#1089#1090#1100', '#1088#1091#1073'.'
+            Title.TitleButton = True
             Width = 88
           end
           item
             CellButtons = <>
-            DisplayFormat = '#0.####'
+            DisplayFormat = '###,###,##0'
             DynProps = <>
             EditButtons = <>
-            FieldName = 'F_PCE'
+            FieldName = 'F_CNTR'
+            Footer.DisplayFormat = '###,###,##0'
+            Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = #1056#1072#1089#1095#1105#1090#1085#1072#1103'|'#1052#1086#1097#1085#1086#1089#1090#1100', '#1082#1042#1090' '
-            Width = 87
+            Title.Caption = #1056#1072#1089#1095#1105#1090#1085#1072#1103'|'#1087#1086' '#1089#1095#1077#1090#1095#1080#1082#1072#1084', '#1082#1042#1090' '
+            Title.TitleButton = True
+            Width = 104
           end
           item
             CellButtons = <>
-            DisplayFormat = '#0.##'
+            DisplayFormat = '###,###,##0'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'F_PCE'
+            Footer.DisplayFormat = '###,###,##0'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Caption = #1056#1072#1089#1095#1105#1090#1085#1072#1103'|'#1087#1086' '#1084#1086#1097#1085#1086#1089#1090#1080', '#1082#1042#1090' '
+            Title.TitleButton = True
+            Width = 113
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = '###,###,##0'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'F_CNTR_PCE'
+            Footer.DisplayFormat = '###,###,##0.##'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Caption = #1056#1072#1089#1095#1105#1090#1085#1072#1103'|'#1057#1091#1084#1084#1072#1088#1085#1086', '#1082#1042#1090' '
+            Title.TitleButton = True
+            Width = 90
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = '###,###,##0.##'
             DynProps = <>
             EditButtons = <>
             FieldName = 'F_PCE_S'
+            Footer.DisplayFormat = '###,###,##0.##'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1056#1072#1089#1095#1105#1090#1085#1072#1103'|'#1057#1090#1086#1080#1084#1086#1089#1090#1100', '#1088#1091#1073
+            Title.TitleButton = True
             Width = 93
           end
           item
             CellButtons = <>
-            DisplayFormat = '#0.####'
+            DisplayFormat = '###,###,##0'
             DynProps = <>
             EditButtons = <>
             FieldName = 'DIF_PCE'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1056#1072#1079#1085#1080#1094#1072'|'#1082#1042#1090
+            Title.TitleButton = True
             Width = 64
           end
           item
             CellButtons = <>
-            DisplayFormat = '#0.##'
+            DisplayFormat = '###,###,##0.##'
             DynProps = <>
             EditButtons = <>
             FieldName = 'DIF_PCE_S'
+            Footer.DisplayFormat = '###,###,##0.##'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1056#1072#1079#1085#1080#1094#1072'|'#1088#1091#1073'.'
+            Title.TitleButton = True
             Width = 78
           end
           item
@@ -327,6 +380,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 199
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -427,7 +481,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footer.DisplayFormat = '#0.####'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1082#1042#1090'/'#1095'|'#1059#1079#1083#1072
+            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1082#1042#1090'|'#1059#1079#1083#1072
             Title.TitleButton = True
           end
           item
@@ -439,7 +493,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footer.DisplayFormat = '#0.####'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1082#1042#1090'/'#1095'|'#1054#1073#1086#1088'-'#1103
+            Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1082#1042#1090'|'#1054#1073#1086#1088'-'#1103
             Title.TitleButton = True
           end
           item
@@ -489,6 +543,9 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       ImageIndex = 3
       OnExecute = actDelPExecute
     end
+    object actLockPeriod: TAction
+      Caption = 'actLockPeriod'
+    end
   end
   inherited pmPopUp: TPopupMenu
     Left = 395
@@ -515,14 +572,18 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     RefreshSQL.Strings = (
       'select'
       '    o.O_ID'
+      '  , o.O_TYPE'
       '  , o.O_NAME'
       '  , o.O_DESCRIPTION'
       '  , o.O_DELETED'
       '  , o.O_TYPE'
-      '  from OBJECTS o'
-      '  where O.O_TYPE = 77'
-      '    and O_DELETED = 0  '
-      '    and O.O_ID = :OLD_O_ID')
+      
+        '  , (select count(e.O_Name) from objects e where e.O_Type = 76 a' +
+        'nd e.o_deleted = 0 and e.O_Numericfield = o.O_ID) EPC'
+      'from OBJECTS o'
+      'where O_TYPE = 77'
+      '  and O_DELETED = 0'
+      '  and O.O_ID = :OLD_O_ID')
     SelectSQL.Strings = (
       'select'
       '    o.O_ID'
@@ -531,10 +592,13 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '  , o.O_DESCRIPTION'
       '  , o.O_DELETED'
       '  , o.O_TYPE'
-      '  from OBJECTS o'
-      '  where O_TYPE = 77'
+      
+        '  , (select count(e.O_Name) from objects e where e.O_Type = 76 a' +
+        'nd e.o_deleted = 0 and e.O_Numericfield = o.O_ID) EPC'
+      'from OBJECTS o'
+      'where O_TYPE = 77'
       '  and O_DELETED = 0'
-      '  order by O_NAME  ')
+      'order by O_NAME  ')
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -574,9 +638,10 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '    NVALUE = :NVALUE,'
       '    NOTICE = :NOTICE'
       'WHERE'
-      '    O_ID = :OLD_O_ID'
-      '    and O_TYPE = :OLD_O_TYPE'
-      '    and HDATE = :OLD_HDATE'
+      '    O_ID = :O_ID'
+      '    and O_TYPE = :O_TYPE'
+      '    and HDATE = :HDATE'
+      '    and HId = :HId'
       '    ')
     DeleteSQL.Strings = (
       'DELETE FROM'
@@ -585,6 +650,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '        O_ID = :OLD_O_ID'
       '    and O_TYPE = :OLD_O_TYPE'
       '    and HDATE = :OLD_HDATE'
+      '    and HId = :HId'
       '    ')
     InsertSQL.Strings = (
       'INSERT INTO OBJECTS_HISTORY('
@@ -593,7 +659,8 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '    HDATE,'
       '    CVALUE,'
       '    NVALUE,'
-      '    NOTICE'
+      '    NOTICE,'
+      '    HId'
       ')'
       'VALUES('
       '    :O_ID,'
@@ -601,163 +668,23 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '    :HDATE,'
       '    :CVALUE,'
       '    :NVALUE,'
-      '    :NOTICE'
+      '    :NOTICE,'
+      '    :HId'
       ')')
     RefreshSQL.Strings = (
-      'select'
-      '    O_Id'
-      '  , O_Type'
-      '  , Hdate'
-      '  , Cvalue'
-      '  , Nvalue'
-      '  , Notice'
-      '  , rate'
-      '  , pce'
-      '  , H_PCE'
-      '  , DAYS'
-      '  , C_CNTR'
-      '  , P_CNTR'
-      '  , (24 * DAYS * H_PCE) + (C_CNTR - P_CNTR) F_PCE'
-      '  , (PCE - (24 * DAYS * H_PCE) - (C_CNTR - P_CNTR)) DIF_PCE'
-      '  , (rate * ((24 * DAYS * H_PCE ) + (C_CNTR - P_CNTR))) F_PCE_S'
-      
-        '  , (NVALUE - (rate * ((24 * DAYS * H_PCE ) + (C_CNTR - P_CNTR))' +
-        ')) DIF_PCE_S'
-      '  from (select'
-      '            oh.O_Id'
-      '          , oh.O_Type'
-      '          , oh.Hdate'
-      '          , oh.Cvalue'
-      '          , oh.Nvalue'
-      '          , oh.Notice'
-      '          , trunc(Get_Json_Value(oh.Cvalue, '#39'rate'#39'), 6) rate'
-      '          , trunc(Get_Json_Value(oh.Cvalue, '#39'pce'#39'), 6) pce'
-      '          , extract(day from Month_Last_Day(oh.Hdate)) days'
-      '          , coalesce((select'
-      '                      sum(eph.Nvalue)'
-      '                    from Objects_History eph'
-      
-        '                         inner join OBJECTS EP on (ep.O_Id = eph' +
-        '.O_Id and ep.O_Type = 76)'
-      '                    where ep.O_Numericfield = oh.O_ID'
-      '                          and coalesce(ep.O_Dimension, '#39#39') = '#39#39
-      
-        '                          and eph.Hdate between Month_First_Day(' +
-        'oh.Hdate) and Month_Last_Day(oh.Hdate)),0) H_PCE'
-      '          , coalesce((select'
-      '                      sum(eph.Nvalue)'
-      '                    from Objects_History eph'
-      
-        '                         inner join OBJECTS EP on (ep.O_Id = eph' +
-        '.O_Id and ep.O_Type = 76)'
-      '                    where ep.O_Numericfield = oh.O_ID'
-      '                          and coalesce(ep.O_Dimension, '#39#39') <> '#39#39
-      
-        '                          and eph.Hdate between Month_First_Day(' +
-        'oh.Hdate) and Month_Last_Day(oh.Hdate)),0) C_CNTR'
-      '          , coalesce((select'
-      '                      sum(eph.Nvalue)'
-      '                    from Objects_History eph'
-      
-        '                         inner join OBJECTS EP on (ep.O_Id = eph' +
-        '.O_Id and ep.O_Type = 76)'
-      '                    where ep.O_Numericfield = oh.O_ID'
-      '                          and coalesce(ep.O_Dimension, '#39#39') <> '#39#39
-      
-        '                          and eph.Hdate between Month_First_Day(' +
-        ' dateadd(month,  -1, oh.Hdate)) '
-      
-        '                          and Month_Last_Day(dateadd(month,  -1,' +
-        ' oh.Hdate))),0) P_CNTR'
-      ''
-      '          from Objects_History oh'
-      '          where oh.O_Id = :OLD_O_ID'
-      '                and oh.Hdate = :OLD_Hdate'
-      
-        '                and oh.O_Type = 77 -- '#1055#1086#1083#1091#1095#1072#1090#1077#1083#1100' '#1086#1087#1083#1072#1090#1099' '#1101#1083#1077#1082#1090#1088#1086#1101 +
-        #1085#1077#1088#1075#1080#1080
-      '                and oh.Deleted = 0) h')
+      'select * from GET_ER_PAY_STATISTIC(:O_ID)'
+      'where HDATE = :OLD_HDATE and HID = :OLD_HID')
     SelectSQL.Strings = (
-      'select'
-      '    O_Id'
-      '  , O_Type'
-      '  , Hdate'
-      '  , Cvalue'
-      '  , Nvalue'
-      '  , Notice'
-      '  , rate'
-      '  , pce'
-      '  , H_PCE'
-      '  , DAYS'
-      '  , C_CNTR'
-      '  , P_CNTR'
-      '  , (24 * DAYS * H_PCE) + (C_CNTR - P_CNTR) F_PCE'
-      '  , (PCE - (24 * DAYS * H_PCE) - (C_CNTR - P_CNTR)) DIF_PCE'
-      '  , (rate * ((24 * DAYS * H_PCE ) + (C_CNTR - P_CNTR))) F_PCE_S'
-      
-        '  , (NVALUE - (rate * ((24 * DAYS * H_PCE ) + (C_CNTR - P_CNTR))' +
-        ')) DIF_PCE_S'
-      '  from (select'
-      '            oh.O_Id'
-      '          , oh.O_Type'
-      '          , oh.Hdate'
-      '          , oh.Cvalue'
-      '          , oh.Nvalue'
-      '          , oh.Notice'
-      '          , trunc(Get_Json_Value(oh.Cvalue, '#39'rate'#39'), 6) rate'
-      '          , trunc(Get_Json_Value(oh.Cvalue, '#39'pce'#39'), 6) pce'
-      '          , extract(day from Month_Last_Day(oh.Hdate)) days'
-      '          , coalesce((select'
-      '                      sum(eph.Nvalue)'
-      '                    from Objects_History eph'
-      
-        '                         inner join OBJECTS EP on (ep.O_Id = eph' +
-        '.O_Id and ep.O_Type = 76)'
-      '                    where ep.O_Numericfield = oh.O_ID'
-      '                          and coalesce(ep.O_Dimension, '#39#39') = '#39#39
-      
-        '                          and eph.Hdate between Month_First_Day(' +
-        'oh.Hdate) and Month_Last_Day(oh.Hdate)),0) H_PCE'
-      '          , coalesce((select'
-      '                      sum(eph.Nvalue)'
-      '                    from Objects_History eph'
-      
-        '                         inner join OBJECTS EP on (ep.O_Id = eph' +
-        '.O_Id and ep.O_Type = 76)'
-      '                    where ep.O_Numericfield = oh.O_ID'
-      '                          and coalesce(ep.O_Dimension, '#39#39') <> '#39#39
-      
-        '                          and eph.Hdate between Month_First_Day(' +
-        'oh.Hdate) and Month_Last_Day(oh.Hdate)),0) C_CNTR'
-      '          , coalesce((select'
-      '                      sum(eph.Nvalue)'
-      '                    from Objects_History eph'
-      
-        '                         inner join OBJECTS EP on (ep.O_Id = eph' +
-        '.O_Id and ep.O_Type = 76)'
-      '                    where ep.O_Numericfield = oh.O_ID'
-      '                          and coalesce(ep.O_Dimension, '#39#39') <> '#39#39
-      
-        '                          and eph.Hdate between Month_First_Day(' +
-        ' dateadd(month,  -1, oh.Hdate)) '
-      
-        '                          and Month_Last_Day(dateadd(month,  -1,' +
-        ' oh.Hdate))),0) P_CNTR'
-      ''
-      '          from Objects_History oh'
-      '          where oh.O_Id = :O_ID'
-      
-        '                and oh.O_Type = 77 -- '#1055#1086#1083#1091#1095#1072#1090#1077#1083#1100' '#1086#1087#1083#1072#1090#1099' '#1101#1083#1077#1082#1090#1088#1086#1101 +
-        #1085#1077#1088#1075#1080#1080
-      '                and oh.Deleted = 0) h'
-      '  order by h.Hdate desc  ')
+      'select * from GET_ER_PAY_STATISTIC(:O_ID)'
+      'order by HDATE desc, HID'
+      '')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcDataSource
-    Left = 213
-    Top = 299
+    Left = 197
+    Top = 443
     WaitEndMasterScroll = True
     oFetchAll = True
   end

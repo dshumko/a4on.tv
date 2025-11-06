@@ -137,18 +137,21 @@ procedure TCountersIndicationForm.edDateChange(Sender: TObject);
 var
  d : TDate;
  fs : TFormatSettings;
+ t, m, y: Word;
 begin
-  if (dmMain.GetSettingsValue('PCE_START_DATE') = '')
-  then Exit;
-
   if (VarIsNull(edDate.Value))
   then Exit;
+
+  edDate.OnChange := nil;
+  DecodeDate(edDate.Value, y, m, t);
+  edDate.Value := EncodeDate(y, m, 1);
+  edDate.OnChange := edDateChange;
 
   fs.DateSeparator := '-';
   fs.ShortDateFormat := 'yyyy-mm-dd';
   d := StrToDate(dmMain.GetSettingsValue('PCE_START_DATE'), fs);
-  if (edDate.Value < d) then begin
-    ShowMessage(rsWrongDate);
+  if (edDate.Value <= d) then begin
+    ShowMessage(rsSuspiciousDate);
     edDate.SetFocus;
   end;
 end;

@@ -240,7 +240,7 @@ object CountersIndicationForm: TCountersIndicationForm
     Params = <>
     OnCalcFields = mtCntCalcFields
     Left = 288
-    Top = 336
+    Top = 296
     object mtCntNAME: TStringField
       FieldName = 'NAME'
       Size = 255

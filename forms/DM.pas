@@ -311,6 +311,7 @@ begin
     dsmSrvTypes.append;
     dsmSrvTypes['ID'] := qRead.FN('O_ID').AsInteger;
     dsmSrvTypes['NAME'] := qRead.FN('O_NAME').AsString;
+    dsmSrvTypes['NAME_ID'] := qRead.FN('O_NAME').AsString + ' ('+qRead.FN('O_ID').AsString + ')';
     dsmSrvTypes['DESCRIPTION'] := qRead.FN('O_DESCRIPTION').AsString;
     dsmSrvTypes.Post;
     qRead.Next;
@@ -1710,6 +1711,7 @@ begin
     System.SysUtils.DeleteFile(FileName);
 
   action := 'day';
+  //action := 'channels';
   json := TJsonObject.Create;
   json.s['login'] := Str;
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
@@ -1724,6 +1726,8 @@ begin
     strmData.WriteString(Str);
     fHTTP.TargetHost := 'a4on.tv';
     fHTTP.Protocol := '1.1';
+    fHTTP.Timeout := 900000;
+    fHTTP.KeepAliveTimeout := 600;
     fHTTP.MimeType := 'application/x-www-form-urlencoded';
     fHTTP.Headers.Add('Accept-Encoding: gzip');
     fHTTP.Document.LoadFromStream(strmData);
@@ -1753,6 +1757,7 @@ var
   fError: string;
   json: TJsonObject;
   action: string;
+  proxy_url: string;
 begin
   if System.SysUtils.FileExists(FileName) then
     System.SysUtils.DeleteFile(FileName);
@@ -1764,25 +1769,36 @@ begin
   Str := string(mormot.crypt.core.MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
+  proxy_url := dmMain.GetSettingsValue('A4ON_EPG_PROXY');
 
   fHTTP := THTTPSend.Create;
   strmData := TStringStream.Create;
   try
     Str := json.ToString;
     strmData.WriteString(Str);
-    fHTTP.TargetHost := 'a4on.tv';
     fHTTP.Protocol := '1.1';
+    fHTTP.Timeout := 600000;
     fHTTP.MimeType := 'application/x-www-form-urlencoded';
     fHTTP.Headers.Add('Accept-Encoding: gzip');
     fHTTP.Document.LoadFromStream(strmData);
-    fHTTP.HTTPMethod('post', API_URL + action + '/');
+
+    if (proxy_url = '') then begin
+      fHTTP.TargetHost := 'a4on.tv';
+      fHTTP.HTTPMethod('post', API_URL + Action + '/');
+    end
+    else begin
+      fHTTP.TargetHost := 'api.a4on.net';
+      proxy_url := proxy_url.TrimRight(['/']) + '/';
+      fHTTP.HTTPMethod('post', proxy_url + Action + '/');
+    end;
+
     strmData.Clear;
     HeadersToList(fHTTP.Headers);
     if Trim(fHTTP.Headers.Values['Content-Encoding']) = 'gzip' then
       GZDecompressStream(fHTTP.Document, strmData)
     else
       fHTTP.Document.SaveToStream(strmData);
-    strmData.SaveToFile(FileName);
+      strmData.SaveToFile(FileName);
   finally
     strmData.Free;
     fHTTP.Free;

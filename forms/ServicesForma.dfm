@@ -1136,7 +1136,7 @@ object ServicesForm: TServicesForm
             object Label1: TLabel
               Left = 0
               Top = 0
-              Width = 321
+              Width = 125
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
@@ -1265,7 +1265,7 @@ object ServicesForm: TServicesForm
             object Label2: TLabel
               Left = 0
               Top = 0
-              Width = 476
+              Width = 106
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
@@ -2338,7 +2338,7 @@ object ServicesForm: TServicesForm
       '                     and o.O_TYPE = 2) as O_Name'
       '          ,'
       '            (select'
-      '                 o.O_NAME'
+      '                 o.O_NAME || '#39' ('#39'||o.O_Id||'#39')'#39
       '               from objects o'
       '               where o.O_Id = s.BUSINESS_TYPE'
       '                     and o.O_TYPE = 15) BUSINESS'
@@ -2367,10 +2367,10 @@ object ServicesForm: TServicesForm
         'O_Type = 25)'
       '               where a.Service_Id = s.Service_Id) ATR_LIST'
       '          from SERVICES s'
-      
-        '          where (s.SRV_TYPE_ID = :SERV_TYPE) and (S.SERVICE_ID =' +
-        ' :OLD_SERVICE_ID)'
-      '        )'
+      '          where s.SRV_TYPE_ID = :SERV_TYPE)'
+      '          '
+      'where SERVICE_ID = :OLD_SERVICE_ID'
+      ''
       ''
       '    ')
     SelectSQL.Strings = (
@@ -2405,7 +2405,7 @@ object ServicesForm: TServicesForm
       '                     and o.O_TYPE = 2) as O_Name'
       '          ,'
       '            (select'
-      '                 o.O_NAME'
+      '                 o.O_NAME || '#39' ('#39'||o.O_Id||'#39')'#39
       '               from objects o'
       '               where o.O_Id = s.BUSINESS_TYPE'
       '                     and o.O_TYPE = 15) BUSINESS'

@@ -48,7 +48,7 @@ type
     FContact: TContact;
     FEnterSecondPress: Boolean;
     procedure CheckPhone(const Show: Boolean = false);
-    function HasErrorInPhone: Boolean;
+    function HasErrorInContact: Boolean;
     procedure FindSamePassport;
     procedure SetContact(const Value: TContact);
   public
@@ -117,7 +117,7 @@ begin
   else
     CnErrors.Dispose(cbbContactType);
 
-  if HasErrorInPhone then
+  if HasErrorInContact then
     errors := True;
 
   if not errors then
@@ -243,7 +243,7 @@ begin
   if (cbbContactType.Value > 1) then
     Exit;
 
-  if HasErrorInPhone then
+  if HasErrorInContact then
     Exit;
 
   result := '';
@@ -343,7 +343,7 @@ begin
   end;
 end;
 
-function TContactForm.HasErrorInPhone: Boolean;
+function TContactForm.HasErrorInContact: Boolean;
 var
   ce: Boolean;
   s: string;

@@ -197,6 +197,8 @@ const
   rght_Dictionary_Banks = 167;
   rght_Dictionary_OrdersTPType = 168;
   rght_Dictionary_Doclist = 212;
+  rght_Electro = 229;
+  rght_Dictionary_TimeSeries = 230;
 
   rght_TV_View = 221; // Просмотр всех пунктов меню ТВ
   rght_DVB_edit = 110; // НАСТРОЙКА СХЕМЫ DVB
@@ -634,6 +636,7 @@ resourcestring
   rsDeleteSelectedRecords = 'Удалить выбранные записи?';
   rsDeleteSubArea = 'Удалить район %s?';
   rsDeleteOrder = 'Удалить заказ №%s?';
+  rsDeleteDenyRelation = 'Удаление невозожно. Связано с %s.';
   rsDemo_Restrict = 'Ограничение Демо версии';
 
   rsDeleteViaRequest = 'Удалить можно через заявку, вернуть на склад';

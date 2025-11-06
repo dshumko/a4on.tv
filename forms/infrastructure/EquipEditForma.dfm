@@ -26,7 +26,7 @@ object EquipEditForm: TEquipEditForm
     Top = 177
     Width = 456
     Height = 175
-    ActivePage = tsTV
+    ActivePage = tsLan
     Align = alTop
     MultiLine = True
     Style = tsFlatButtons
@@ -204,6 +204,7 @@ object EquipEditForm: TEquipEditForm
         ShowHint = True
         TabOrder = 0
         Visible = True
+        OnChange = dbleVLANChange
         OnDropDownBoxGetCellParams = dbleVLANDropDownBoxGetCellParams
       end
       object edtADMIN: TDBEditEh
@@ -866,10 +867,10 @@ object EquipEditForm: TEquipEditForm
     object lbl13: TLabel
       Left = 322
       Top = 31
-      Width = 22
+      Width = 12
       Height = 13
       Anchors = [akTop, akRight]
-      Caption = #1042#1090'/'#1095
+      Caption = #1042#1090
     end
     object DBLookupComboboxEh2: TDBLookupComboboxEh
       Left = 46
@@ -948,7 +949,7 @@ object EquipEditForm: TEquipEditForm
       DataSource = srcDataSource
       DecimalPlaces = 3
       DynProps = <>
-      EmptyDataInfo.Text = #1087#1086#1090'. '#1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090'/'#1095
+      EmptyDataInfo.Text = #1087#1086#1090'. '#1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090
       EditButtons = <>
       ShowHint = True
       TabOrder = 2

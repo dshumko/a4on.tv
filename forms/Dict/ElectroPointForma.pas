@@ -80,6 +80,8 @@ type
     dsNodePce: TpFIBDataSet;
     srcNodePce: TDataSource;
     spl2: TSplitter;
+    actLockPeriod: TAction;
+    miLockPeriod: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -98,6 +100,7 @@ type
     procedure actSetCountersValueExecute(Sender: TObject);
     procedure actEditNodePCEExecute(Sender: TObject);
     procedure actPCEFixingExecute(Sender: TObject);
+    procedure actLockPeriodExecute(Sender: TObject);
   private
     procedure StartEdt(const New: Boolean = False);
     procedure FixingReading(const fd: TDate; const ID: Integer = -1);
@@ -186,10 +189,12 @@ end;
 
 procedure TElectroPointForm.PCEFixing(const ID: Integer = -1);
 var
-  fd: TDate;
+  fd, pd: TDate;
   d, m, y: Word;
-
+  fs: TFormatSettings;
+  s: String;
 begin
+
   inherited;
   DecodeDate(Now(), y, m, d);
   // DecodeDate(EncodeDate(y, m, 1) - 1, y, m, d);
@@ -197,6 +202,21 @@ begin
 
   if SelectDate(fd, 'Укажите месяц фиксации') then
   begin
+    DecodeDate(fd, y, m, d);
+    fd := EncodeDate(y, m, 1);
+    s := dmMain.GetSettingsValue('PCE_START_DATE');
+    if s <> '' then
+    begin
+      fs.DateSeparator := '-';
+      fs.ShortDateFormat := 'yyyy-mm-dd';
+      pd := StrToDate(s, fs);
+      if (fd <= pd) then
+      begin
+        ShowMessage(rsSuspiciousDate);
+        Exit;
+      end;
+    end;
+
     if CheckReading(fd, ID) then
       if Application.MessageBox(PChar(Format('Ранее уже были зафиксированны показания.' + #13#10 +
         'Вы уверены, что хотите их заменить?', [])), 'Заменить показания', MB_YESNO + MB_ICONWARNING + MB_DEFBUTTON2) = IDNO
@@ -284,15 +304,37 @@ begin
 end;
 
 procedure TElectroPointForm.actDeleteExecute(Sender: TObject);
+var
+  s: string;
 begin
   inherited;
   if srcDataSource.DataSet.RecordCount = 0 then
     Exit;
 
   if fCanEdit then
-    if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
-      = mrYes) then
-      srcDataSource.DataSet.Delete;
+  begin
+
+    with dmMain.qRead do
+    begin;
+      sql.Clear;
+      sql.Text := 'select list(n.Name) EP from nodes n where Epoint = :O_ID';
+      ParamByName('O_ID').AsInteger := srcDataSource.DataSet['O_ID'];
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not FN('EP').IsNull then
+        s := FN('EP').AsString;
+      Transaction.Commit;
+    end;
+
+    if s.IsEmpty then
+    begin
+      if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
+        = mrYes) then
+        srcDataSource.DataSet.Delete;
+    end
+    else
+      ShowMessage(Format(rsDeleteDenyRelation, [s]));
+  end;
 end;
 
 procedure TElectroPointForm.actEditExecute(Sender: TObject);
@@ -362,6 +404,37 @@ begin
   dsHistory.Edit;
 end;
 
+procedure TElectroPointForm.actLockPeriodExecute(Sender: TObject);
+var
+  fd: TDate;
+  d, m, y: Word;
+
+begin
+  inherited;
+  DecodeDate(Now(), y, m, d);
+  // DecodeDate(EncodeDate(y, m, 1) - 1, y, m, d);
+  fd := EncodeDate(y, m, 1);
+
+  if SelectDate(fd, 'Укажите месяц для блокировки (сейчас ' + dmMain.GetSettingsValue('PCE_START_DATE') + ')') then
+  begin
+    with dmMain.Query do
+    begin;
+      sql.Clear;
+      sql.Text := 'execute block ( lm D_DATE = :lm) as' + #13#10 + 'declare variable cm D_DATE;' + #13#10 + 'begin' +
+        #13#10 + '  lm = Month_First_Day(coalesce(lm, current_date));' + #13#10 + '  select' + #13#10 +
+        '      cast(Var_Value as date)' + #13#10 + '    from Settings' + #13#10 +
+        '    where (Var_Name = ''PCE_START_DATE'')' + #13#10 + '  into :cm;' + #13#10 + '  cm = coalesce(cm, lm);' +
+        #13#10 + '  if (cm <= lm) then' + #13#10 + '    update Settings' + #13#10 + '    set Var_Value = :lm' + #13#10 +
+        '    where (Var_Name = ''PCE_START_DATE'');' + #13#10 + 'end';
+    end;
+
+    dmMain.Query.ParamByName('lm').AsDate := fd;
+    dmMain.Query.Transaction.StartTransaction;
+    dmMain.Query.ExecQuery;
+    dmMain.Query.Transaction.Commit;
+  end;
+end;
+
 procedure TElectroPointForm.FormShow(Sender: TObject);
 var
   vFull: Boolean;
@@ -380,6 +453,7 @@ begin
   dbGrid.DefaultApplySorting;
   dsElectroPoint.First;
 
+  actLockPeriod.Caption := actLockPeriod.Caption + ' (блокировка ' + dmMain.GetSettingsValue('PCE_START_DATE') + ')';
   pgcInfoChange(Sender);
 end;
 

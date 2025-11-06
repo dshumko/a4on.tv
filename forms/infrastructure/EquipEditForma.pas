@@ -129,10 +129,12 @@ type
     procedure luHouseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure lcbEQtypeChange(Sender: TObject);
+    procedure dbleVLANChange(Sender: TObject);
   private
     fCI: TCustomerInfo;
     FEnterSecondPress: Boolean;
     FNodeRequired: Boolean;
+    VlanIsSet : Boolean;
     function CheckData: Boolean;
     procedure ShowTabs;
     procedure GetVlan;
@@ -209,6 +211,13 @@ begin
           begin
             i := dmMain.dbTV.Gen_Id('GEN_OPERATIONS_UID', 1, dmMain.trWriteQ);
             dsEquipment['EID'] := i;
+            if dbleVLAN.Text <> ''
+            then begin
+              i := dbleVLAN.Value;
+              dsEquipment['VLAN_ID'] := i;
+            end
+            else
+              dsEquipment.FieldByName('VLAN_ID').Clear;
           end
           else
             i := aEQ_ID;
@@ -480,6 +489,11 @@ begin
   end;
 end;
 
+procedure TEquipEditForm.dbleVLANChange(Sender: TObject);
+begin
+  VlanIsSet := True;
+end;
+
 procedure TEquipEditForm.dbleVLANDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
@@ -571,6 +585,8 @@ procedure TEquipEditForm.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   f: string;
 begin
+  // обнуляло выбор влан прі закрытіі датасета, отключім обработчік
+  luHouse.OnChange := nil;
 
   dsEQGroups.Close;
   dsVlans.Close;
@@ -701,8 +717,10 @@ begin
   else
     luHouse.Color := clWindow;
 
-  if (VarIsNumeric(lcbEQtype.Value)) and (lcbEQtype.Value = 1) then
+  if (VarIsNumeric(lcbEQtype.Value)) and (lcbEQtype.Value = 1) then begin
+    VlanIsSet := False;
     GetVlan;
+  end;
 end;
 
 procedure TEquipEditForm.luHouseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -752,17 +770,23 @@ end;
 
 procedure TEquipEditForm.GetVlan;
 begin
+  dbleVLAN.OnChange := nil;
   dsVlans.Close;
   if VarIsNull(luHouse.Value) then
     dsVlans.ParamByName('HOUSE_ID').Clear
   else
     dsVlans.ParamByName('HOUSE_ID').AsInteger := luHouse.Value;
   dsVlans.Open;
-  if dsEquipment.State = dsInsert then
-    if dsVlans['FINDED'] = 1 then
-      dbleVLAN.Value := dsVlans['V_ID']
-    else
-      dbleVLAN.Value := Unassigned;
+
+  if dsEquipment.State = dsInsert then begin
+    if not VlanIsSet then begin
+      if dsVlans['FINDED'] = 1 then
+        dbleVLAN.Value := dsVlans['V_ID']
+      else
+        dbleVLAN.Value := Unassigned;
+    end;
+  end;
+  dbleVLAN.OnChange := dbleVLANChange;
 end;
 
 procedure TEquipEditForm.edtIP1Exit(Sender: TObject);

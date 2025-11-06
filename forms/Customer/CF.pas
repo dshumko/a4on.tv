@@ -369,6 +369,7 @@ type
     procedure ShowQuickFilter(const aShow: Boolean = true);
     procedure FindTextInColumn(const SearchDown: Boolean = true);
     procedure MakeMainFormSearchFilter(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
+    procedure FindOnFieldPrevNext(const next: Boolean = true);
   public
     constructor CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
     procedure SetDefaultFilter;
@@ -1735,14 +1736,92 @@ begin
   edtSearch.SetFocus;
 end;
 
+procedure TCustomersForm.FindOnFieldPrevNext(const next: Boolean = true);
+var
+  NesSs: string;
+  f: string;
+  bm: TBookMark;
+  v: Extended;
+  Finded: Boolean;
+begin
+  NesSs := edtSearch.Text;
+  // Если ищем в цифровых полях, а ввели не цифры, то выйдем
+  if (dbgCustomers.Columns[dbgCustomers.SelectedIndex].Field.DataType in [ftSmallint, ftInteger, ftWord, ftFloat,
+    ftCurrency, ftBCD]) then
+    if not TryStrToFloat(NesSs, v) then
+      Exit;
+
+  // Нужно заменить все запятые на точки
+  if (dbgCustomers.Columns[dbgCustomers.SelectedIndex].FieldName = 'CUST_CODE') then
+  begin
+    NesSs := StringReplace(edtSearch.Text, '.', '-', [rfReplaceAll]);
+    NesSs := StringReplace(NesSs, ',', '-', [rfReplaceAll]);
+    NesSs := StringReplace(NesSs, ' ', '-', [rfReplaceAll]);
+  end;
+
+  if (dbgCustomers.Columns[dbgCustomers.SelectedIndex].FieldName = 'ACCOUNT_NO') then
+    NesSs := StringReplace(edtSearch.Text, ',', '.', [rfReplaceAll]);
+
+  NesSs := NesSs.ToUpper;
+  dbgCustomers.DataSource.DataSet.DisableControls;
+  bm := dbgCustomers.DataSource.DataSet.GetBookmark;
+  Finded := False;
+
+  if next then
+  begin
+    while not(dbgCustomers.DataSource.DataSet.Eof or Finded) do
+    begin
+      if not dbgCustomers.DataSource.DataSet.Eof then
+        dbgCustomers.DataSource.DataSet.next;
+      if not dbgCustomers.Columns[dbgCustomers.SelectedIndex].Field.IsNull then
+      begin
+        f := dbgCustomers.Columns[dbgCustomers.SelectedIndex].Field.value;
+        f := f.ToUpper;
+        Finded := (Pos(NesSs, f) > 0);
+      end
+    end;
+  end
+  else
+  begin
+    while not(dbgCustomers.DataSource.DataSet.Bof or Finded) do
+    begin
+      if not dbgCustomers.DataSource.DataSet.Bof then
+        dbgCustomers.DataSource.DataSet.Prior;
+      if not dbgCustomers.Columns[dbgCustomers.SelectedIndex].Field.IsNull then
+      begin
+        f := dbgCustomers.Columns[dbgCustomers.SelectedIndex].Field.value;
+        f := f.ToUpper;
+        Finded := (Pos(NesSs, f) > 0);
+      end;
+    end;
+  end;
+
+  if not Finded then
+  begin
+    dbgCustomers.DataSource.DataSet.GotoBookmark(bm);
+    edtSearch.Font.Color := clRed;
+  end
+  else if edtSearch.Font.Color = clRed then
+    edtSearch.Font.Color := clWindowText;
+
+  dbgCustomers.DataSource.DataSet.EnableControls;
+  dbgCustomers.Repaint;
+end;
+
 procedure TCustomersForm.actSearchNextExecute(Sender: TObject);
 begin
-  dbgCustomers.SearchPanel.FindNext;
+  if not chkFldOnly.Checked then
+    dbgCustomers.SearchPanel.FindNext
+  else
+    FindOnFieldPrevNext(true);
 end;
 
 procedure TCustomersForm.actSearchPrevExecute(Sender: TObject);
 begin
-  dbgCustomers.SearchPanel.FindPrev;
+  if not chkFldOnly.Checked then
+    dbgCustomers.SearchPanel.FindPrev
+  else
+    FindOnFieldPrevNext(False);
 end;
 
 procedure TCustomersForm.actSelectAllExecute(Sender: TObject);
@@ -1802,14 +1881,14 @@ begin
   begin
     dsCustomers.Close;
     {
-    if (dmMain.AllowedAction(rght_Customer_Only_ONE) and (filter = const_default_filter)) then
-    begin
+      if (dmMain.AllowedAction(rght_Customer_Only_ONE) and (filter = const_default_filter)) then
+      begin
       fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
       if (fidx = -1) then
       begin
-        dsCustomers.SelectSQL.Insert(1, cst_OneRecord);
+      dsCustomers.SelectSQL.Insert(1, cst_OneRecord);
       end;
-    end;
+      end;
     }
     dsCustomers.ParamByName('Filter').value := filter;
     try
@@ -1999,8 +2078,7 @@ begin
   ShowReport(rsRepCustomerBalance);
 end;
 
-procedure TCustomersForm.cbbAREAButtonClick(Sender: TObject;
-  var Handled: Boolean);
+procedure TCustomersForm.cbbAREAButtonClick(Sender: TObject; var Handled: Boolean);
 begin
   Handled := (cbbAREA.Tag = 1);
   AddrSearchFieldEnter(cbbAREA);
@@ -2066,8 +2144,7 @@ begin
   end;
 end;
 
-procedure TCustomersForm.lcbStreetsButtonClick(Sender: TObject;
-  var Handled: Boolean);
+procedure TCustomersForm.lcbStreetsButtonClick(Sender: TObject; var Handled: Boolean);
 begin
   Handled := (lcbStreets.Tag = 1);
   AddrSearchFieldClick(lcbStreets);
@@ -3009,7 +3086,7 @@ const
       s := dsFilter.FieldByName('SFLTR_TEXT').AsString;
       if s <> '' then
       begin
-        if (pos('%', s) > 0) OR (pos('_', s) > 0) then
+        if (Pos('%', s) > 0) OR (Pos('_', s) > 0) then
           startSQL := 'like'
         else
           startSQL := '=';
@@ -3025,7 +3102,7 @@ const
             tmpSQL := Format(' (C.ACCOUNT_NO %s %s) ', [startSQL, s]);
           // Код
           3:
-            if pos(',', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0 then
+            if Pos(',', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0 then
             begin
               tmpSQL := dsFilter.FieldByName('SFLTR_TEXT').AsString;
               tmpSQL := UpperCase('''' + ReplaceStr(tmpSQL, ',', ''',''') + '''');
@@ -3065,7 +3142,7 @@ const
           // Список ID абонентов
           7:
             begin
-              if pos(',', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0 then
+              if Pos(',', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0 then
               begin
                 tmpSQL := dsFilter.FieldByName('SFLTR_TEXT').AsString;
                 tmpSQL := Format(' (C.CUSTOMER_ID in ( %s )) ', [tmpSQL]);
@@ -3098,8 +3175,8 @@ const
           // 13: Street_id
           // 14: house_id
           15: // ИНН/УНН
-            if (pos('%', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0) or
-              (pos('_', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0) then
+            if (Pos('%', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0) or
+              (Pos('_', dsFilter.FieldByName('SFLTR_TEXT').AsString) > 0) then
             begin
               tmpSQL := dsFilter.FieldByName('SFLTR_TEXT').AsString;
               tmpSQL := Format(' (upper(C.Jur_Inn) like ''%s'' ) ', [tmpSQL]);
@@ -3279,7 +3356,7 @@ const
 
       if s <> '' then
       begin
-        if pos('%', s) > 0 then
+        if Pos('%', s) > 0 then
           s := ' like ''' + s + ''''
         else
           s := ' = ''' + s + '''';
@@ -3842,7 +3919,7 @@ const
     s := ReplaceStr(s, ';', ',');
     s := ReplaceStr(s, ',,', ',');
     s := ReplaceStr(s, ',,', ',');
-    if pos(',', s) > 0 then
+    if Pos(',', s) > 0 then
     begin
       arr := Explode(',', s);
       if Length(arr) > 0 then
@@ -4208,8 +4285,8 @@ begin
         end
         else
         begin
-          si := Copy(s, 1, pos('\', s) - 1);
-          s := Copy(s, pos('\', s) + 1, 500);
+          si := Copy(s, 1, Pos('\', s) - 1);
+          s := Copy(s, Pos('\', s) + 1, 500);
           sm := FindSubMenu(si, miFind);
           if miFind then
           begin
@@ -4657,7 +4734,7 @@ begin
     s := ReplaceStr(s, rsFldCurrentYear, FormatDateTime('yyyy', NOW()));
 
     // выведем тариф на услуги в месяц. и сумму доплаты
-    if (((pos(rsFldMonthNeed, s) > 0) or (pos(rsFldMonthFee, s) > 0)) and dsCustomers.FieldExist('MonPay', i) and
+    if (((Pos(rsFldMonthNeed, s) > 0) or (Pos(rsFldMonthFee, s) > 0)) and dsCustomers.FieldExist('MonPay', i) and
       (not dsCustomers.FieldByName('MonPay').IsNull)) then
     begin
       form_perc := 2;
@@ -4687,7 +4764,7 @@ begin
   end;
   // выведем тариф на услуги в месяц. и сумму доплаты
   // rsFldNextNeed = '[ДОПЛАТА+СЛ_МЕСЯЦ]';
-  if ((pos(rsFldNextFee, s) > 0) or (pos(rsFldNextNeed, s) > 0)) then
+  if ((Pos(rsFldNextFee, s) > 0) or (Pos(rsFldNextNeed, s) > 0)) then
   begin
     need := 0;
     with TpFIBQuery.Create(Nil) do
@@ -4718,7 +4795,7 @@ begin
   end;
 
   // rsDEBT_FINE = '[ДОЛГ+ПЕНЯ]';
-  if (pos(rsFldDEBT_FINE, s) > 0) or (pos(rsFldFINE, s) > 0) then
+  if (Pos(rsFldDEBT_FINE, s) > 0) or (Pos(rsFldFINE, s) > 0) then
   begin
     need := 0;
     if (dmMain.GetSettingsValue('SHOW_FINE') = '1') or (dsCustomers.FieldByName('DEBT_SUM').AsFloat > 0) then
@@ -5089,7 +5166,7 @@ begin
     end
     else
     begin
-      if mtbPages.BOF then
+      if mtbPages.Bof then
         mtbPages.Last
       else
         mtbPages.Prior;
@@ -5162,8 +5239,7 @@ begin
   end;
 end;
 
-procedure TCustomersForm.lcbHOUSEButtonClick(Sender: TObject;
-  var Handled: Boolean);
+procedure TCustomersForm.lcbHOUSEButtonClick(Sender: TObject; var Handled: Boolean);
 begin
   Handled := (lcbHOUSE.Tag = 1);
   AddrSearchFieldClick(lcbHOUSE);
@@ -5192,8 +5268,7 @@ begin
     Background := clWindow;
 end;
 
-procedure TCustomersForm.lcbFLATButtonClick(Sender: TObject;
-  var Handled: Boolean);
+procedure TCustomersForm.lcbFLATButtonClick(Sender: TObject; var Handled: Boolean);
 begin
   Handled := (lcbFLAT.Tag = 1);
   AddrSearchFieldClick(lcbFLAT);

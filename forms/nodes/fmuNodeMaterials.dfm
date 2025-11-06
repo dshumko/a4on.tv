@@ -3,7 +3,7 @@ object apgNodeMaterials: TapgNodeMaterials
   Top = 0
   Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' '#1074' '#1089#1077#1090#1080' '#1085#1072' '#1091#1079#1083#1077
   ClientHeight = 211
-  ClientWidth = 779
+  ClientWidth = 821
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -56,7 +56,7 @@ object apgNodeMaterials: TapgNodeMaterials
   object dbgEquip: TDBGridEh
     Left = 26
     Top = 0
-    Width = 753
+    Width = 795
     Height = 211
     Align = alClient
     AllowedOperations = [alopUpdateEh]
@@ -70,6 +70,7 @@ object apgNodeMaterials: TapgNodeMaterials
     SortLocal = True
     SumList.Active = True
     TabOrder = 1
+    TitleParams.MultiTitle = True
     Columns = <
       item
         Alignment = taLeftJustify
@@ -114,6 +115,7 @@ object apgNodeMaterials: TapgNodeMaterials
         DynProps = <>
         EditButtons = <>
         FieldName = 'NAME'
+        Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
         Title.TitleButton = True
@@ -167,6 +169,16 @@ object apgNodeMaterials: TapgNodeMaterials
         Footers = <>
         Title.Caption = #1044#1086#1084
         Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PCE'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090
+        Width = 81
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -219,9 +231,13 @@ object apgNodeMaterials: TapgNodeMaterials
     UpdateSQL.Strings = (
       ''
       '    ')
-    SelectSQL.Strings = (
+    RefreshSQL.Strings = (
       'select'
-      '    E.*'
+      '  e.EID'
+      '  , e.IP'
+      '  , e.MAC'
+      '  , e.NAME'
+      '  , e.NOTICE'
       '  , case e.Eq_Type'
       '      when 1 then '#39#1057#1077#1090#1077#1074#1086#1077#39
       '      when 2 then '#39#1050#1072#1073#1077#1083#1100#1085#1086#1077#39
@@ -232,6 +248,36 @@ object apgNodeMaterials: TapgNodeMaterials
       '  , o.O_DIMENSION as COLOR'
       '  , h.House_No'
       '  , s.Street_Name || '#39' '#39' || s.Street_Short as Street_Name'
+      '  , coalesce(e.pce, o.o_numericfield, 0) PCE'
+      '  from EQUIPMENT E'
+      '       left outer join house h on (h.House_Id = e.House_Id)'
+      '       left outer join street s on (s.Street_Id = h.Street_Id)'
+      
+        '       left outer join objects o on (e.eq_group = o.o_id and o.O' +
+        '_TYPE = 7)'
+      '  where(  e.Node_Id = :Node_Id'
+      '     ) and (     E.EID = :OLD_EID'
+      '     )'
+      '    '
+      '')
+    SelectSQL.Strings = (
+      'select'
+      '  e.EID'
+      '  , e.IP'
+      '  , e.MAC'
+      '  , e.NAME'
+      '  , e.NOTICE'
+      '  , case e.Eq_Type'
+      '      when 1 then '#39#1057#1077#1090#1077#1074#1086#1077#39
+      '      when 2 then '#39#1050#1072#1073#1077#1083#1100#1085#1086#1077#39
+      '      when 3 then '#39#1055#1088#1086#1095#1077#1077#39
+      '      else '#39#39
+      '    end EQ_TYPE_STR   '
+      '  , o.o_name as eqgroup'
+      '  , o.O_DIMENSION as COLOR'
+      '  , h.House_No'
+      '  , s.Street_Name || '#39' '#39' || s.Street_Short as Street_Name'
+      '  , coalesce(e.pce, o.o_numericfield, 0) PCE'
       '  from EQUIPMENT E'
       '       left outer join house h on (h.House_Id = e.House_Id)'
       '       left outer join street s on (s.Street_Id = h.Street_Id)'

@@ -81,6 +81,7 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (74, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (75, 'Тип точки УЭ', 'Тип точки учета электроэнергии') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (76, 'Точка УЭ', 'Точка учета электроэнергии') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (77, 'Получатель оплаты электроэнергии', '') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (78, 'Временные ряды', 'То для чего необходимо хранить временные показания, например тарифы') MATCHING (OT_ID);
 commit;
 
 -- Владелец оборудования/материала 51
@@ -202,6 +203,8 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O
 
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (2, 74, 'Vlan', 'Привязка влана к адресу', 0) MATCHING (O_ID, O_TYPE);
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (3, 74, 'Дерово групп оборудования', '', 0) MATCHING (O_ID, O_TYPE);
+
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (1, 78, 'Тариф электроэнергии', 'Ежемесмячный тариф на электроэнергию', 0) MATCHING (O_ID, O_TYPE);
 commit;
 
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (1, 'НАСТРОЙКИ', 'ПРОГРАММА', 'Настройка параметров системы') MATCHING (ID);
@@ -346,6 +349,8 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (226, 'П
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (227, 'ПРОСМОТР ВСЕХ МАТ. ДОКУМЕНТОВ', 'МАТЕРИАЛЫ', 'Просмотр всех типов материальных документов без учета прав создани') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (59,  'ВЫКУП', 'ЗАЯВКИ', 'Выкуп оборудования у абонента') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (228, 'ВОЗВРАТ ВСЕГО', 'ЗАЯВКИ', 'Возврат любого материала, а не только того что был у абонента/узла') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (229, 'Учет электроэнергии ', 'ЭЛЕКТРОЭНЕРГИЯ', 'Работа с показателями электроэнергии') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (230, 'Хронологические данные', 'СПРАВОЧНИКИ', 'Внесение переодических данных') MATCHING (ID);
 commit;
 
 execute block as
@@ -596,14 +601,7 @@ begin
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
     VALUES (:s, '0', 'BOOLEAN', NULL, 'Начислять ли разовые при закрытии дня или, как прежде, начислять при закрытии месяца и добавлении услуги')
     MATCHING (VAR_NAME);
-  /*
-  переделано на разрешение
-  s = 'REQUEST_RETURN_STRICT';
-  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
-    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES (:s, '0', 'BOOLEAN', NULL, 'Ограничить возврат материалов с заявки только теми, что есть у абонента/узла')
-    MATCHING (VAR_NAME);
-  */
+
   s = 'EQUIPMENT_NODE_REQUIRED';
   if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
@@ -622,6 +620,18 @@ begin
     VALUES (:s, '0', 'BOOLEAN', NULL, 'Включить компановку узла и контроль материалов по нему на заявках')
     MATCHING (VAR_NAME);
 
+  s = 'BIDS_SHOW_TABFILTER';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'В фильтре заявок отображать условие "Страница" для настройки разного фильтра для разной страницы')
+    MATCHING (VAR_NAME);
+
+  s = 'A4ON_EPG_PROXY';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'урл прокси для загрузки епг http://api.a4on.net/epg/')
+    MATCHING (VAR_NAME);
+	
 end;
 
 COMMIT;

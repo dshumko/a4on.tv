@@ -337,7 +337,8 @@ uses
   ReqReturnMatStrictForma in 'forms\Requests\ReqReturnMatStrictForma.pas' {ReqMaterialReturnStrictForm},
   CountersIndicationForma in 'forms\Dict\CountersIndicationForma.pas' {CountersIndicationForm},
   SelectOneMatForma in 'forms\Materials\SelectOneMatForma.pas' {SelectMaterialForm},
-  NodeLayoutFactForma in 'forms\nodes\NodeLayoutFactForma.pas' {NodeLayoutFactForm};
+  NodeLayoutFactForma in 'forms\nodes\NodeLayoutFactForma.pas' {NodeLayoutFactForm},
+  TimeSeriesForma in 'forms\Dict\TimeSeriesForma.pas' {TimeSeriesForm};
 
 {$R *.RES}
 

@@ -11,7 +11,7 @@ uses
   A4onTypeUnit,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   MemTableDataEh, Vcl.Buttons, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList, PropFilerEh, PropStorageEh;
 
 type
 
@@ -23,6 +23,7 @@ type
     btnCancel: TBitBtn;
     dsLayout: TpFIBDataSet;
     dbgCustAttr: TDBGridEh;
+    PropStorage: TPropStorageEh;
     procedure OkClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -149,8 +150,6 @@ begin
     begin
       (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
-      if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
-        (Components[i] as TDBGridEh).DefaultApplySorting;
       if Font_size <> 0 then
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;

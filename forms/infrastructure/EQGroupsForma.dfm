@@ -218,7 +218,7 @@ inherited EQGroupsForm: TEQGroupsForm
       DataSource = srcDataSource
       DecimalPlaces = 3
       DynProps = <>
-      EmptyDataInfo.Text = #1087#1086#1090'. '#1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090'/'#1095
+      EmptyDataInfo.Text = #1087#1086#1090'. '#1084#1086#1097#1085#1086#1089#1090#1100' '#1042#1090
       EditButtons = <>
       ShowHint = True
       TabOrder = 1

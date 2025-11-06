@@ -563,7 +563,7 @@ object dmMain: TdmMain
           StringDataType = fdtStringEh
           DisplayLabel = 'NAME'
           DisplayWidth = 50
-          Size = 50
+          Size = 255
           Transliterate = True
         end
         object DESCRIPTION: TMTStringDataFieldEh
@@ -573,6 +573,12 @@ object dmMain: TdmMain
           DisplayWidth = 500
           Size = 500
           Transliterate = True
+        end
+        object NAME_ID: TMTStringDataFieldEh
+          FieldName = 'NAME_ID'
+          StringDataType = fdtStringEh
+          DisplayWidth = 100
+          Size = 255
         end
       end
       object RecordsList: TRecordsListEh

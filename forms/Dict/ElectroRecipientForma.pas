@@ -41,6 +41,7 @@ type
     dsElectroPoint: TpFIBDataSet;
     dbgEP: TDBGridEh;
     srcElectroPoint: TDataSource;
+    actLockPeriod: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -87,7 +88,7 @@ end;
 procedure TElectroRecipientForm.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if fCanEdit then
+  if FCanEdit then
   begin
     StartEdt(True);
   end;
@@ -112,15 +113,37 @@ begin
 end;
 
 procedure TElectroRecipientForm.actDeleteExecute(Sender: TObject);
+var
+  s: string;
 begin
   inherited;
+
   if srcDataSource.DataSet.RecordCount = 0 then
     Exit;
 
-  if fCanEdit then
-    if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
-      = mrYes) then
-      srcDataSource.DataSet.Delete;
+  if FCanEdit then
+  begin
+    with dmMain.qRead do
+    begin;
+      sql.Clear;
+      sql.Text := 'select list(O_Name) EP from objects where O_Type = 76 and o_deleted = 0 and O_Numericfield = :O_ID';
+      ParamByName('O_ID').AsInteger := srcDataSource.DataSet['O_ID'];
+      Transaction.StartTransaction;
+      ExecQuery;
+      if not FN('EP').IsNull then
+        s := FN('EP').AsString;
+      Transaction.Commit;
+    end;
+
+    if s.IsEmpty then
+    begin
+      if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
+        = mrYes) then
+        srcDataSource.DataSet.Delete;
+    end
+    else
+      ShowMessage(Format(rsDeleteDenyRelation, [s]));
+  end;
 end;
 
 procedure TElectroRecipientForm.actDelPExecute(Sender: TObject);
@@ -129,7 +152,7 @@ begin
   if dsHistory.RecordCount = 0 then
     Exit;
 
-  if fCanEdit then
+  if FCanEdit then
     if (MessageDlg(Format(rsDeleteWithName, [dsHistory['HDATE']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
       dsHistory.Delete;
 end;
@@ -137,7 +160,7 @@ end;
 procedure TElectroRecipientForm.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if fCanEdit then
+  if FCanEdit then
   begin
     StartEdt();
   end;
@@ -166,18 +189,33 @@ begin
       v: Double;
       d: TDateTime;
     begin
-      Result := TryStrToDate(Values[0], d) and TryStrToFloat(Values[1], v) and TryStrToFloat(Values[2], v) and TryStrToFloat(Values[3], v);
+      Result := TryStrToDate(Values[0], d) and TryStrToFloat(Values[1], v) and TryStrToFloat(Values[2], v) and
+        TryStrToFloat(Values[3], v);
     end) then
   begin
     fs.ShortDateFormat := 'dd.mm.yyyy';
-    dsHistory.Insert;
-    dsHistory['O_Id'] := dsElectroRecipient['O_ID'];
-    dsHistory['O_Type'] := 77; // Получатель оплаты электроэнергии
-    dsHistory['Hdate'] := StrToDate(AValues[0]); // Получатель оплаты электроэнергии
-    dsHistory['Cvalue'] := '{"rate":'+ AValues[1].Replace(',','.')+ ',' + '"pce":'+ AValues[2].Replace(',','.')+ '}';
-    dsHistory['NVALUE'] := StrToFloat(AValues[3]);
-    dsHistory['NOTICE'] := AValues[4];
-    dsHistory.Post;
+    d := StrToDate(AValues[0]);
+
+    with dmMain.Query do
+    begin;
+      sql.Clear;
+      sql.Text := dsHistory.InsertSQL.Text;
+
+      ParamByName('O_ID').AsInteger := dsElectroRecipient['O_ID'];
+      ParamByName('O_TYPE').AsInteger := 77; // Получатель оплаты электроэнергии
+      ParamByName('HDATE').AsDate := d;
+
+      ParamByName('NVALUE').AsFloat := StrToFloat(AValues[3]);
+      ParamByName('NOTICE').AsString := AValues[4];
+      ParamByName('Cvalue').AsString := Format('{"rate":%s,"pce":%s}',
+        [AValues[1].Replace(',', '.'), AValues[2].Replace(',', '.')]);
+
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+      dsHistory.CloseOpen(True);
+      dsHistory.Locate('HDATE', d, []);
+    end;
   end;
 end;
 
@@ -185,25 +223,25 @@ procedure TElectroRecipientForm.actEditPExecute(Sender: TObject);
 var
   pce: String;
   AValues: array of string;
-
+  d: TDateTime;
 begin
   inherited;
   if (not dsElectroRecipient.Active) or (dsElectroRecipient.RecordCount = 0) then
     Exit;
 
   SetLength(AValues, 4);
-  if not dsHistory.FieldByName('rate').IsNull then
-    AValues[0] := dsHistory.FieldByName('rate').AsString
+  if not dsHistory.FieldByName('RATE').IsNull then
+    AValues[0] := dsHistory.FieldByName('RATE').AsString
   else
     AValues[0] := '0';
 
-  if not dsHistory.FieldByName('PCE').IsNull then
-    AValues[1] := dsHistory.FieldByName('PCE').AsString
+  if not dsHistory.FieldByName('PAY_PCE').IsNull then
+    AValues[1] := dsHistory.FieldByName('PAY_PCE').AsString
   else
     AValues[1] := '0';
 
-  if not dsHistory.FieldByName('NVALUE').IsNull then
-    AValues[2] := dsHistory.FieldByName('NVALUE').AsString
+  if not dsHistory.FieldByName('PAY_SUM').IsNull then
+    AValues[2] := dsHistory.FieldByName('PAY_SUM').AsString
   else
     AValues[2] := '0';
 
@@ -220,11 +258,26 @@ begin
       Result := TryStrToFloat(Values[0], v) and TryStrToFloat(Values[1], v) and TryStrToFloat(Values[2], v);
     end) then
   begin
-    dsHistory.Edit;
-    dsHistory['Cvalue'] := '{"rate":'+ AValues[0].Replace(',','.')+ ',' + '"pce":'+ AValues[1].Replace(',','.')+ '}';
-    dsHistory['NVALUE'] := StrToFloat(AValues[2]);
-    dsHistory['NOTICE'] := AValues[3];
-    dsHistory.Post;
+    with dmMain.Query do
+    begin;
+      sql.Clear;
+      sql.Text := dsHistory.UpdateSQL.Text;
+
+      ParamByName('HID').AsInteger := dsHistory['HID'];
+      ParamByName('O_ID').AsInteger := dsHistory['O_ID'];
+      ParamByName('O_TYPE').AsInteger := 77;
+      ParamByName('HDATE').AsDate := dsHistory['HDATE'];
+
+      ParamByName('NVALUE').AsFloat := StrToFloat(AValues[2]);
+      ParamByName('NOTICE').AsString := AValues[3];
+      ParamByName('Cvalue').AsString := Format('{"rate":%s,"pce":%s}',
+        [AValues[0].Replace(',', '.'), AValues[1].Replace(',', '.')]);
+
+      Transaction.StartTransaction;
+      ExecQuery;
+      Transaction.Commit;
+      dsHistory.Refresh;
+    end;
   end;
 end;
 
@@ -234,13 +287,13 @@ var
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full);
-  fCanEdit := vFull;
+  FCanEdit := vFull;
 
-  fCanCreate := fCanEdit;
+  FCanCreate := FCanEdit;
 
-  actNew.Visible := fCanEdit;
-  // actDelete.Visible := fCanEdit;
-  actEdit.Visible := fCanEdit;
+  actNew.Visible := FCanEdit;
+  actDelete.Visible := FCanEdit;
+  actEdit.Visible := FCanEdit;
 
   dsElectroRecipient.Open;
   dbGrid.DefaultApplySorting;
@@ -265,8 +318,8 @@ end;
 procedure TElectroRecipientForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
 begin
   inherited;
-  actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
-  // actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and fCanEdit;
+  actEdit.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
+  actDelete.Enabled := ((Sender as TDataSource).DataSet.RecordCount > 0) and FCanEdit;
 end;
 
 end.

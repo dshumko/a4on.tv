@@ -1537,7 +1537,9 @@ begin
     edtNAME.Text := '';
     FHandNameInput := '';
     edtNAME.ReadOnly := False;
+    edtNAME.Color := clWindow;
     mmoDesc.ReadOnly := False;
+    mmoDesc.Color := clWindow;
 
     ItsJson := (CustomerInfo.CUSTOMER_ID > 0);
     json := '';
@@ -1730,8 +1732,12 @@ begin
       FNameFmt := JO.s['Nfmt'];
 
     if JO.Contains('nRO') and (not JO['nRO'].IsNull) then
+    begin
       edtNAME.ReadOnly := (not FNameFmt.IsEmpty) and
         (JO.B['nRO'] and (not dmMain.UserIsAdmin) and (not dmMain.AllowedAction(rght_Customer_full)));
+      if edtNAME.ReadOnly then
+        edtNAME.Color := clBtnFace;
+    end;
 
     if JO.Contains('OnOff') then
     begin
@@ -1997,7 +2003,11 @@ begin
     end;
 
     if JO.Contains('mRO') and (not JO['mRO'].IsNull) then
+    begin
       mmoDesc.ReadOnly := (JO.B['mRO'] and (not dmMain.UserIsAdmin) and (not dmMain.AllowedAction(rght_Customer_full)));
+      if mmoDesc.ReadOnly then
+        mmoDesc.Color := clBtnFace;
+    end;
 
     if JO.Contains('Bid') and (not JO['Bid'].IsNull) then
       ednBid.Visible := JO.B['Bid'];
@@ -6276,6 +6286,9 @@ begin
       Q.Transaction := trWriteQ;
       Q.SQL.Text := vSql;
       SetProcParamsValue(aCustomerID, aFileID, Q, FieldList);
+
+      MakeDebugLog('ExecSQLforFileType', Q.SQL.Text);
+
       Q.Transaction.StartTransaction;
       Q.ExecQuery;
       vSql := '';

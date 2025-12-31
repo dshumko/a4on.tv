@@ -760,6 +760,7 @@ object RequestForm: TRequestForm
                 FieldName = 'FIO'
                 Footers = <>
                 Title.Caption = #1060#1048#1054
+                Title.TitleButton = True
                 Width = 135
               end
               item
@@ -769,6 +770,7 @@ object RequestForm: TRequestForm
                 FieldName = 'Phone_NO'
                 Footers = <>
                 Title.Caption = #1058#1077#1083#1077#1092#1086#1085
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -777,6 +779,7 @@ object RequestForm: TRequestForm
                 FieldName = 'NOTICE'
                 Footers = <>
                 Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                Title.TitleButton = True
                 Width = 440
               end>
             object RowDetailData: TRowDetailPanelControlEh
@@ -1096,6 +1099,7 @@ object RequestForm: TRequestForm
                   Footer.ValueType = fvtCount
                   Footers = <>
                   Title.Caption = #1056#1072#1073#1086#1090#1072
+                  Title.TitleButton = True
                   Width = 340
                 end
                 item
@@ -1108,6 +1112,7 @@ object RequestForm: TRequestForm
                   Footers = <>
                   Title.Alignment = taRightJustify
                   Title.Caption = #1050#1086#1083'-'#1074#1086
+                  Title.TitleButton = True
                 end
                 item
                   AutoFitColWidth = False
@@ -1122,6 +1127,7 @@ object RequestForm: TRequestForm
                   Footers = <>
                   Title.Alignment = taRightJustify
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
+                  Title.TitleButton = True
                   Width = 80
                 end
                 item
@@ -1135,6 +1141,7 @@ object RequestForm: TRequestForm
                   Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089#1083'.'
+                  Title.TitleButton = True
                   Visible = False
                   Width = 58
                 end
@@ -1145,6 +1152,7 @@ object RequestForm: TRequestForm
                   FieldName = 'NOTICE'
                   Footers = <>
                   Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                  Title.TitleButton = True
                   Width = 80
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -1174,6 +1182,7 @@ object RequestForm: TRequestForm
                   Footer.ValueType = fvtCount
                   Footers = <>
                   Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
+                  Title.TitleButton = True
                   Width = 261
                 end
                 item
@@ -1183,6 +1192,7 @@ object RequestForm: TRequestForm
                   FieldName = 'SERIAL'
                   Footers = <>
                   Title.Caption = #1057'/'#1053
+                  Title.TitleButton = True
                   Width = 78
                 end
                 item
@@ -1193,6 +1203,7 @@ object RequestForm: TRequestForm
                   FieldName = 'DIMENSION'
                   Footers = <>
                   Title.Caption = #1045#1076'. '#1080#1079#1084'.'
+
                 end
                 item
                   AutoFitColWidth = False
@@ -1204,6 +1215,7 @@ object RequestForm: TRequestForm
                   Footers = <>
                   Title.Alignment = taRightJustify
                   Title.Caption = #1050#1086#1083'-'#1074#1086
+                  Title.TitleButton = True
                   Width = 80
                 end
                 item
@@ -1229,9 +1241,10 @@ object RequestForm: TRequestForm
                     #1056#1072#1089#1089#1088#1086#1095#1082#1072
                     #1040#1088#1077#1085#1076#1072
                     #1042#1086#1079#1074#1088#1072#1090' '#1073#1077#1089#1087#1083#1072#1090#1085#1086
-                    #1042#1099#1082#1091#1087'('#1042#1086#1079#1074#1088#1072#1090' '#1079#1072' '#1076#1077#1085#1100#1075#1080')')
+                    #1042#1099#1082#1091#1087' ('#1074#1086#1079#1074#1088#1072#1090' '#1079#1072' '#1076#1077#1085#1100#1075#1080')')
                   Title.Alignment = taCenter
                   Title.Caption = #1053#1072#1095#1080#1089#1083'.'
+                  Title.TitleButton = True
                   Width = 81
                 end
                 item
@@ -1246,6 +1259,7 @@ object RequestForm: TRequestForm
                   Footers = <>
                   Title.Alignment = taRightJustify
                   Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
+                  Title.TitleButton = True
                   Width = 88
                 end
                 item
@@ -1255,6 +1269,7 @@ object RequestForm: TRequestForm
                   FieldName = 'NOTICE'
                   Footers = <>
                   Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                  Title.TitleButton = True
                   Width = 78
                 end
                 item
@@ -1264,6 +1279,7 @@ object RequestForm: TRequestForm
                   FieldName = 'WH_NAME'
                   Footers = <>
                   Title.Caption = #1057#1082#1083#1072#1076
+                  Title.TitleButton = True
                   Width = 52
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -1339,6 +1355,7 @@ object RequestForm: TRequestForm
               Footers = <>
               ReadOnly = True
               Title.Caption = #1050#1074'-'#1088#1072
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -1348,6 +1365,7 @@ object RequestForm: TRequestForm
               Footers = <>
               ReadOnly = True
               Title.Caption = #1087'-'#1076
+              Title.TitleButton = True
               Width = 25
             end
             item
@@ -1358,6 +1376,7 @@ object RequestForm: TRequestForm
               Footers = <>
               ReadOnly = True
               Title.Caption = #1101#1090#1078
+              Title.TitleButton = True
               Width = 25
             end
             item
@@ -1374,6 +1393,7 @@ object RequestForm: TRequestForm
                 '1'
                 '2')
               Title.Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+              Title.TitleButton = True
               Width = 91
             end
             item
@@ -1383,6 +1403,7 @@ object RequestForm: TRequestForm
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
               Width = 165
             end
             item
@@ -1393,6 +1414,7 @@ object RequestForm: TRequestForm
               Footers = <>
               ReadOnly = True
               Title.Caption = #1059#1089#1083#1091#1075#1080
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -1438,6 +1460,7 @@ object RequestForm: TRequestForm
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 251
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -2411,7 +2434,7 @@ object RequestForm: TRequestForm
       
         '  , iif((coalesce(rm.PROP,0) = 5), rM.Quant * (-1) * coalesce(rm' +
         '.Cost, m.Cost), 0) as COST'
-      '  , coalesce(PROP, rm.CALC, 4) as PROP'
+      '  , coalesce(rm.PROP, rm.CALC, 4) as PROP'
       '  , o.O_Name WH_NAME'
       '  , 1 as MT'
       '  , rm.ID Rm_Id'

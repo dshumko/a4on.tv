@@ -67,6 +67,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
+        Title.TitleButton = True
         Width = 203
       end
       item
@@ -76,6 +77,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         FieldName = 'DIMENSION'
         Footers = <>
         Title.Caption = #1045#1076'.'#1080#1079#1084'.'
+        Title.TitleButton = True
         Width = 56
       end
       item
@@ -85,6 +87,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         FieldName = 'WH_NAME'
         Footers = <>
         Title.Caption = #1057#1082#1083#1072#1076
+        Title.TitleButton = True
         Width = 112
       end
       item
@@ -95,6 +98,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1047#1072#1103#1074#1082#1072
+        Title.TitleButton = True
         Width = 76
       end
       item
@@ -104,6 +108,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         FieldName = 'RQ_EXEC_TIME'
         Footers = <>
         Title.Caption = #1044#1072#1090#1072
+        Title.TitleButton = True
         Width = 87
       end
       item
@@ -113,6 +118,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         FieldName = 'OPER'
         Footers = <>
         Title.Caption = #1054#1087#1077#1088#1072#1094#1080#1103
+        Title.TitleButton = True
         Width = 133
       end
       item
@@ -124,6 +130,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1050#1086#1083'-'#1074#1086
+        Title.TitleButton = True
         Width = 65
       end
       item
@@ -135,6 +142,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1053#1077' '#1085#1072#1095#1080#1089'.'
+        Title.TitleButton = True
         Width = 72
       end
       item
@@ -144,6 +152,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 104
       end>
     object RowDetailData: TRowDetailPanelControlEh

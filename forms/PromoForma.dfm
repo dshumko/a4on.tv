@@ -40,6 +40,7 @@ inherited PromoForm: TPromoForm
         FieldName = 'O_DATEFIELD'
         Footers = <>
         Title.Caption = #1044#1077#1081#1089#1090#1074#1091#1077#1090'|'#1089
+        Title.TitleButton = True
         Title.SortIndex = 1
         Title.SortMarker = smUpEh
       end
@@ -50,6 +51,7 @@ inherited PromoForm: TPromoForm
         FieldName = 'O_DATEEND'
         Footers = <>
         Title.Caption = #1044#1077#1081#1089#1090#1074#1091#1077#1090'|'#1087#1086
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -58,6 +60,7 @@ inherited PromoForm: TPromoForm
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1047#1072#1075#1086#1083#1086#1074#1086#1082
+        Title.TitleButton = True
         Width = 196
       end
       item
@@ -68,6 +71,7 @@ inherited PromoForm: TPromoForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 131
       end
       item
@@ -77,6 +81,7 @@ inherited PromoForm: TPromoForm
         FieldName = 'O_CHARFIELD'
         Footers = <>
         Title.Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
+        Title.TitleButton = True
         Width = 206
       end>
   end
@@ -343,6 +348,7 @@ inherited PromoForm: TPromoForm
           FieldName = 'dur'
           Footers = <>
           Title.Caption = #1055#1077#1088#1080#1086#1076' ('#1084#1077#1089')'
+          Title.TitleButton = True
           Width = 82
         end
         item
@@ -352,6 +358,7 @@ inherited PromoForm: TPromoForm
           FieldName = 'Cf'
           Footers = <>
           Title.Caption = #1050#1086#1077#1092#1092#1080#1094#1080#1077#1085#1090
+          Title.TitleButton = True
           Width = 133
         end>
       object RowDetailData: TRowDetailPanelControlEh

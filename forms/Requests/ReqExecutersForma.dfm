@@ -118,6 +118,7 @@ object ReqExecutorsForm: TReqExecutorsForm
             Footers = <>
             ReadOnly = True
             Title.Caption = #1060#1048#1054
+            Title.TitleButton = True
             Width = 150
           end
           item
@@ -129,6 +130,7 @@ object ReqExecutorsForm: TReqExecutorsForm
             FieldName = 'SELECTED'
             Footers = <>
             Title.Caption = #1048#1057#1055
+            Title.TitleButton = True
             Width = 30
           end
           item
@@ -138,6 +140,7 @@ object ReqExecutorsForm: TReqExecutorsForm
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1079#1072#1103#1074#1082#1080
+            Title.TitleButton = True
             Width = 105
           end
           item
@@ -147,6 +150,7 @@ object ReqExecutorsForm: TReqExecutorsForm
             FieldName = 'W_NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1072
+            Title.TitleButton = True
             Width = 159
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -174,6 +178,7 @@ object ReqExecutorsForm: TReqExecutorsForm
             FieldName = 'TEAM'
             Footers = <>
             Title.Caption = #1047#1074#1077#1085#1086
+            Title.TitleButton = True
             Width = 118
           end
           item
@@ -183,6 +188,7 @@ object ReqExecutorsForm: TReqExecutorsForm
             FieldName = 'AREA_NAME'
             Footers = <>
             Title.Caption = #1059#1095#1072#1089#1090#1086#1082
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end

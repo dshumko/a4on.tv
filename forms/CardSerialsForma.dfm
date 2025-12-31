@@ -45,6 +45,7 @@ object fmCardPaySerials: TfmCardPaySerials
         FieldName = 'CS_SERIAL'
         Footers = <>
         Title.Caption = #1057#1045#1056#1048#1071
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -53,6 +54,7 @@ object fmCardPaySerials: TfmCardPaySerials
         FieldName = 'PAYSOURCE_DESCR'
         Footers = <>
         Title.Caption = #1048#1089#1090#1086#1095#1085#1080#1082' '#1087#1083#1072#1090#1077#1078#1072
+        Title.TitleButton = True
         Width = 108
       end
       item
@@ -62,6 +64,7 @@ object fmCardPaySerials: TfmCardPaySerials
         FieldName = 'CS_NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 250
       end>
     object RowDetailData: TRowDetailPanelControlEh

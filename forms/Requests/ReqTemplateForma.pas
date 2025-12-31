@@ -8,63 +8,68 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.DBCtrls, Vcl.Menus, Vcl.StdCtrls, Vcl.Controls, Vcl.Mask, Vcl.Dialogs, Vcl.Buttons,
   OkCancel_frame, CnErrorProvider, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBGridEh,
-  GridsEh,
+  GridsEh, amSplitter,
   DBCtrlsEh, DBLookupEh, Vcl.ComCtrls, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls, DynVarsEh, EhLibVCL, DBAxisGridsEh, Vcl.ExtCtrls,
-  MemTableDataEh, MemTableEh, System.Actions, Vcl.ActnList;
+  MemTableDataEh, MemTableEh, System.Actions, Vcl.ActnList, PropFilerEh,
+  PropStorageEh;
 
 type
   TReqTemplateForm = class(TForm)
-    srcRQTL: TDataSource;
-    dsRQTL: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    Label2: TLabel;
-    edContent: TDBEditEh;
-    luAnalysGrp: TDBLookupComboboxEh;
-    dsANALYS: TpFIBDataSet;
-    srcANALYS: TDataSource;
-    lbl1: TLabel;
-    dsAllWorks: TpFIBDataSet;
-    lbl3: TLabel;
-    mmoAddons: TDBMemoEh;
-    btnCancel: TBitBtn;
-    btnOk: TBitBtn;
-    CnErrors: TCnErrorProvider;
-    chkNeedPhoto: TDBCheckBoxEh;
-    chkNEED_NODE_RQ: TDBCheckBoxEh;
-    lblRecreate: TLabel;
-    edtDaysRecreate: TDBNumberEditEh;
-    cbbRecreateType: TDBLookupComboboxEh;
-    srcTypes: TDataSource;
-    dsTypes: TpFIBDataSet;
-    btnClear: TButton;
-    btnColor: TBitBtn;
-    dlgColor: TColorDialog;
-    pmSMS: TPopupMenu;
-    miNN1: TMenuItem;
-    miPD1: TMenuItem;
-    miTEXT: TMenuItem;
-    pgc: TPageControl;
-    tsAdd: TTabSheet;
-    tsWorks: TTabSheet;
-    chkFlatsResult: TDBCheckBoxEh;
-    mmoFlatsResult: TDBMemoEh;
-    tsSMS: TTabSheet;
-    lbl5: TLabel;
-    mmoCreate: TDBMemoEh;
-    lbl4: TLabel;
-    mmoClose: TDBMemoEh;
-    pnlRWorks: TPanel;
-    dbgWorks: TDBGridEh;
-    pnlBW: TPanel;
-    btnAddWork: TButton;
-    btnDelWork: TButton;
     mtWorks: TMemTableEh;
     srcWorks: TDataSource;
     actlst: TActionList;
     actAddWork: TAction;
     actDelWork: TAction;
+    pnlB: TPanel;
+    btnOk: TBitBtn;
+    btnCancel: TBitBtn;
+    pnlRW: TPanel;
+    pgc: TPageControl;
+    tsWorks: TTabSheet;
+    pnlRWorks: TPanel;
+    dbgWorks: TDBGridEh;
+    pnlBW: TPanel;
+    btnAddWork: TButton;
+    btnDelWork: TButton;
+    tsAdd: TTabSheet;
+    chkFlatsResult: TDBCheckBoxEh;
+    mmoFlatsResult: TDBMemoEh;
+    tsSMS: TTabSheet;
+    lbl5: TLabel;
+    lbl4: TLabel;
+    mmoCreate: TDBMemoEh;
+    mmoClose: TDBMemoEh;
+    pnlL: TPanel;
+    Label1: TLabel;
+    lbl1: TLabel;
+    lblRecreate: TLabel;
+    edContent: TDBEditEh;
+    luAnalysGrp: TDBLookupComboboxEh;
+    mmoAddons: TDBMemoEh;
+    chkNeedPhoto: TDBCheckBoxEh;
+    chkNEED_NODE_RQ: TDBCheckBoxEh;
+    edtDaysRecreate: TDBNumberEditEh;
+    cbbRecreateType: TDBLookupComboboxEh;
+    btnClear: TButton;
+    btnColor: TBitBtn;
+    srcRQTL: TDataSource;
+    dsRQTL: TpFIBDataSet;
+    trWrite: TpFIBTransaction;
+    trRead: TpFIBTransaction;
+    dsANALYS: TpFIBDataSet;
+    srcANALYS: TDataSource;
+    dsAllWorks: TpFIBDataSet;
+    CnErrors: TCnErrorProvider;
+    srcTypes: TDataSource;
+    dsTypes: TpFIBDataSet;
+    dlgColor: TColorDialog;
+    pmSMS: TPopupMenu;
+    miNN1: TMenuItem;
+    miPD1: TMenuItem;
+    miTEXT: TMenuItem;
+    spl1: TSplitter;
+    PropStorageEh: TPropStorageEh;
     procedure dsRQTLAfterOpen(DataSet: TDataSet);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);

@@ -15,6 +15,7 @@ object NodesForm: TNodesForm
   KeyPreview = True
   Menu = mmMenu
   OldCreateOrder = False
+  ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnActivate = FormActivate
@@ -238,6 +239,7 @@ object NodesForm: TNodesForm
         FieldName = 'P_NAME'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082'|'#1059#1079#1077#1083
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -246,6 +248,7 @@ object NodesForm: TNodesForm
         FieldName = 'P_TYPE'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082'|'#1058#1080#1087
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -254,6 +257,7 @@ object NodesForm: TNodesForm
         FieldName = 'P_STREET'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082'|'#1059#1083#1080#1094#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -262,6 +266,7 @@ object NodesForm: TNodesForm
         FieldName = 'P_HOUSE'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085' '#1082'|'#1044#1086#1084
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -355,6 +360,7 @@ object NodesForm: TNodesForm
         DynProps = <>
         EditButtons = <>
         EmptyDataInfo.Text = #1042#1074#1077#1076#1080#1090#1077' '#1090#1077#1082#1089#1090' '#1076#1083#1103' '#1087#1086#1080#1089#1082#1072
+        ShowHint = True
         TabOrder = 1
         Visible = True
         OnChange = edtSearchChange
@@ -540,6 +546,7 @@ object NodesForm: TNodesForm
       KeyField = 'STREET_ID'
       ListField = 'STREET_NAME'
       ListSource = srcStreet
+      ShowHint = True
       TabOrder = 0
       Visible = True
       OnChange = lcbStreetsChange
@@ -558,6 +565,7 @@ object NodesForm: TNodesForm
       KeyField = 'HOUSE_ID'
       ListField = 'HOUSE_NO'
       ListSource = srcHouse
+      ShowHint = True
       TabOrder = 1
       Visible = True
       OnChange = lcbHOUSEChange
@@ -570,6 +578,8 @@ object NodesForm: TNodesForm
     Height = 196
     Align = alTop
     BevelOuter = bvNone
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 2
     Visible = False
     DesignSize = (
@@ -765,6 +775,7 @@ object NodesForm: TNodesForm
       KeyField = 'O_ID'
       ListField = 'O_NAME'
       ListSource = srcNodeType
+      ShowHint = True
       TabOrder = 5
       Visible = True
     end
@@ -780,6 +791,7 @@ object NodesForm: TNodesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ShowHint = True
       TabOrder = 12
       Visible = True
       WantReturns = True
@@ -853,6 +865,7 @@ object NodesForm: TNodesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1052#1077#1089#1090#1086
+      ShowHint = True
       TabOrder = 4
       Visible = True
       OnChange = OnAddressChange
@@ -867,6 +880,7 @@ object NodesForm: TNodesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1086#1076#1098#1077#1079#1076
+      ShowHint = True
       TabOrder = 2
       Visible = True
       OnChange = OnAddressChange
@@ -881,6 +895,7 @@ object NodesForm: TNodesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1069#1090#1072#1078
+      ShowHint = True
       TabOrder = 3
       Visible = True
       OnChange = OnAddressChange
@@ -890,13 +905,15 @@ object NodesForm: TNodesForm
       Top = 56
       Width = 88
       Height = 21
+      Hint = #1045#1089#1083#1080' '#1079#1072#1076#1072#1090#1100' 999, '#1090#1086' '#1073#1091#1076#1077#1090' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100#1089#1103' '#1076#1083#1103' '#1083#1102#1073#1086#1075#1086' '#1072#1076#1088#1077#1089#1072
       Anchors = [akTop, akRight]
       DataField = 'LON'
       DataSource = srcNodes
       DecimalPlaces = 8
       DynProps = <>
-      EmptyDataInfo.Text = 'Longitude'
+      EmptyDataInfo.Text = 'Longitude /999'
       EditButtons = <>
+      ShowHint = True
       TabOrder = 9
       Visible = True
     end
@@ -905,13 +922,15 @@ object NodesForm: TNodesForm
       Top = 56
       Width = 90
       Height = 21
+      Hint = #1045#1089#1083#1080' '#1079#1072#1076#1072#1090#1100' 999, '#1090#1086' '#1073#1091#1076#1077#1090' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100#1089#1103' '#1076#1083#1103' '#1083#1102#1073#1086#1075#1086' '#1072#1076#1088#1077#1089#1072
       Anchors = [akTop, akRight]
       DataField = 'LAT'
       DataSource = srcNodes
       DecimalPlaces = 8
       DynProps = <>
-      EmptyDataInfo.Text = 'Latitude'
+      EmptyDataInfo.Text = 'Latitude /999'
       EditButtons = <>
+      ShowHint = True
       TabOrder = 8
       Visible = True
     end
@@ -926,6 +945,7 @@ object NodesForm: TNodesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1053#1072#1079#1074#1072#1085#1080#1077
+      ShowHint = True
       TabOrder = 6
       Visible = True
       OnKeyDown = edtNAMEKeyDown
@@ -1015,6 +1035,7 @@ object NodesForm: TNodesForm
       KeyField = 'O_ID'
       ListField = 'O_NAME'
       ListSource = srcEPoint
+      ShowHint = True
       Style = csDropDownEh
       TabOrder = 10
       Visible = True
@@ -1030,6 +1051,7 @@ object NodesForm: TNodesForm
       DynProps = <>
       EditButtons = <>
       EmptyDataInfo.Text = #1044#1086#1087'. '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1058#1059#1069
+      ShowHint = True
       TabOrder = 11
       Visible = True
       OnKeyDown = edtNAMEKeyDown

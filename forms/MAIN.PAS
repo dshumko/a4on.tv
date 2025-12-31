@@ -434,6 +434,7 @@ type
     procedure actEPointExecute(Sender: TObject);
     procedure actERecipientExecute(Sender: TObject);
     procedure actTimeSeriesExecute(Sender: TObject);
+    procedure miEventsClick(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -1615,6 +1616,11 @@ begin
   if Not Assigned(EPGViewForm) then
     EPGViewForm := TEPGViewForm.Create(Application);
   EPGViewForm.Show;
+end;
+
+procedure TA4MainForm.miEventsClick(Sender: TObject);
+begin
+// ?
 end;
 
 procedure TA4MainForm.miFeedbackClick(Sender: TObject);

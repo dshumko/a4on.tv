@@ -98,6 +98,7 @@ object apgCustomerLetters: TapgCustomerLetters
         FieldName = 'WHO_ADD'
         Footers = <>
         Title.Caption = #1050#1090#1086' '#1076#1086#1073#1072#1074#1080#1083
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end

@@ -46,6 +46,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1058#1086#1095#1077#1082' '#1091#1095#1077#1090#1072
+        Title.TitleButton = True
         Width = 83
       end
       item
@@ -252,11 +253,22 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             FieldName = 'HDATE'
             Footer.ValueType = fvtCount
             Footers = <>
-            Title.Caption = #1044#1072#1090#1072
+            Title.Caption = #1044#1072#1090#1072' '#1087#1083#1072#1090#1077#1078#1072
             Title.TitleButton = True
             Title.SortIndex = 1
             Title.SortMarker = smDownEh
             Width = 79
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = 'mmm yyyy'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'PAY_MONTH'
+            Footers = <>
+            Title.Caption = #1054#1087#1072#1083#1090#1072' '#1079#1072' '#1084#1077#1089#1103#1094
+            Title.TitleButton = True
+            Width = 73
           end
           item
             Alignment = taRightJustify
@@ -265,10 +277,11 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             DynProps = <>
             EditButtons = <>
             FieldName = 'RATE'
+            Footer.ValueType = fvtAvg
             Footers = <>
             Title.Caption = #1058#1072#1088#1080#1092
             Title.TitleButton = True
-            Width = 98
+            Width = 87
           end
           item
             CellButtons = <>
@@ -427,7 +440,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footers = <>
             Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1090#1086#1095#1082#1080
             Title.TitleButton = True
-            Width = 326
+            Width = 317
           end
           item
             CellButtons = <>
@@ -448,7 +461,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footers = <>
             Title.Caption = #8470' '#1089#1095#1077#1090#1095#1080#1082#1072
             Title.TitleButton = True
-            Width = 125
+            Width = 107
           end
           item
             CellButtons = <>
@@ -458,7 +471,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footers = <>
             Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
             Title.TitleButton = True
-            Width = 275
+            Width = 192
           end
           item
             CellButtons = <>
@@ -504,6 +517,16 @@ inherited ElectroRecipientForm: TElectroRecipientForm
             Footers = <>
             Title.Caption = #1044#1072#1090#1072' '#1089#1074#1077#1088#1082#1080
             Title.TitleButton = True
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'T_NAME'
+            Footers = <>
+            Title.Caption = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082' '#1090#1072#1088#1080#1092#1072
+            Title.TitleButton = True
+            Width = 68
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -636,6 +659,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       'SET '
       '    CVALUE = :CVALUE,'
       '    NVALUE = :NVALUE,'
+      '    DVALUE = Month_first_day(:DVALUE),'
       '    NOTICE = :NOTICE'
       'WHERE'
       '    O_ID = :O_ID'
@@ -660,7 +684,8 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '    CVALUE,'
       '    NVALUE,'
       '    NOTICE,'
-      '    HId'
+      '    HId,'
+      '    DVALUE'
       ')'
       'VALUES('
       '    :O_ID,'
@@ -669,7 +694,8 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '    :CVALUE,'
       '    :NVALUE,'
       '    :NOTICE,'
-      '    :HId'
+      '    :HId,'
+      '    Month_first_day(:DVALUE)'
       ')')
     RefreshSQL.Strings = (
       'select * from GET_ER_PAY_STATISTIC(:O_ID)'
@@ -709,10 +735,22 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       '  , o.O_TYPE'
       '  , o.O_NAME'
       '  , o.O_DESCRIPTION'
-      '  , o.O_DATEFIELD '
+      '  , o.O_DATEFIELD'
+      '  , o.O_CHARFIELD   '
+      '  , et.O_NAME || coalesce('#39' / '#39' ||(select'
+      '                                    avg(oh.Nvalue)'
+      '                                  from Objects_History oh'
+      '                                  where oh.O_Type = 78'
+      '                                        and oh.O_Id = et.O_Id'
+      
+        '                                        and oh.Hdate between Mon' +
+        'th_First_Day(current_date) and Month_Last_Day(current_date)), '#39#39 +
+        ')   '
+      '    T_NAME'
       
         '  , cast(coalesce(o.O_NUMERICFIELD, 0) as integer) O_NUMERICFIEL' +
         'D'
+      '  , er.O_Name ERecipient'
       '  , iif(o.O_Dimension <> '#39#39', o.O_Dimension, null) ECOUNTER'
       '  , (select'
       '         count(*)'
@@ -732,6 +770,12 @@ inherited ElectroRecipientForm: TElectroRecipientForm
         'and eg.O_Type = 7)'
       '       where n.Epoint = o.O_ID) as D_N15_4)/1000 PCE_FACT'
       '  from OBJECTS o'
+      
+        '       left outer join OBJECTS er on (er.O_Id = o.O_Numericfield' +
+        ' and er.O_Type = 77)'
+      
+        '       left outer join OBJECTS et on (et.O_Id = o.O_CHARFIELD an' +
+        'd et.O_Type = 78)'
       '  where o.O_TYPE = 76'
       '        and o.o_DELETED = 0'
       '        and o.O_NUMERICFIELD = :O_ID '

@@ -34,6 +34,7 @@ inherited DistribForm: TDistribForm
         FieldName = 'O_ID'
         Footers = <>
         Title.Caption = 'ID'
+        Title.TitleButton = True
         Visible = False
       end
       item
@@ -56,6 +57,7 @@ inherited DistribForm: TDistribForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1060#1080#1085#1072#1085#1089#1099
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -65,6 +67,7 @@ inherited DistribForm: TDistribForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1050#1072#1085#1072#1083#1086#1074
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -112,6 +115,7 @@ inherited DistribForm: TDistribForm
         FieldName = 'CHANNELS'
         Footers = <>
         Title.Caption = #1050#1072#1085#1072#1083#1099
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
@@ -365,6 +369,7 @@ inherited DistribForm: TDistribForm
                   Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #1062#1077#1085#1072
+                  Title.TitleButton = True
                   Width = 64
                 end
                 item
@@ -385,6 +390,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'ATV'
                   Footers = <>
                   Title.Caption = #1055#1072#1082#1077#1090'|'#1040#1058#1042
+                  Title.TitleButton = True
                   Width = 35
                 end
                 item
@@ -395,6 +401,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'DTV'
                   Footers = <>
                   Title.Caption = #1055#1072#1082#1077#1090'|'#1062#1058#1042
+                  Title.TitleButton = True
                   Width = 35
                 end
                 item
@@ -405,6 +412,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'IPTV'
                   Footers = <>
                   Title.Caption = #1055#1072#1082#1077#1090'|IPTV'
+                  Title.TitleButton = True
                   Width = 35
                 end
                 item
@@ -415,6 +423,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'OTT'
                   Footers = <>
                   Title.Caption = #1055#1072#1082#1077#1090'|OTT'
+                  Title.TitleButton = True
                   Width = 35
                 end
                 item
@@ -424,6 +433,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'NOTICE'
                   Footers = <>
                   Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                  Title.TitleButton = True
                   Width = 127
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -563,6 +573,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'V_NUM'
                   Footers = <>
                   Title.Caption = #1055#1077#1088#1077#1084#1077#1085#1085#1099#1077'|'#1063#1080#1089#1083#1086
+                  Title.TitleButton = True
                 end
                 item
                   CellButtons = <>
@@ -571,6 +582,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'V_DATE'
                   Footers = <>
                   Title.Caption = #1055#1077#1088#1077#1084#1077#1085#1085#1099#1077'|'#1044#1072#1090#1072
+                  Title.TitleButton = True
                 end
                 item
                   CellButtons = <>
@@ -579,6 +591,7 @@ inherited DistribForm: TDistribForm
                   FieldName = 'V_TEXT'
                   Footers = <>
                   Title.Caption = #1055#1077#1088#1077#1084#1077#1085#1085#1099#1077'|'#1058#1077#1082#1089#1090
+                  Title.TitleButton = True
                 end
                 item
                   CellButtons = <>
@@ -757,6 +770,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'CH_COUNT'
                 Footers = <>
                 Title.Caption = #1050#1072#1085#1072#1083#1086#1074
+                Title.TitleButton = True
                 Width = 54
               end
               item
@@ -766,6 +780,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'C_DATE'
                 Footers = <>
                 Title.Caption = #1057' '#1076#1072#1090#1099
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -774,6 +789,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'C_DATE_BEFORE'
                 Footers = <>
                 Title.Caption = #1055#1086' '#1076#1072#1090#1091
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -783,6 +799,7 @@ inherited DistribForm: TDistribForm
                 Footer.ValueType = fvtSum
                 Footers = <>
                 Title.Caption = #1059#1089#1083#1086#1074#1080#1103'|'#1060#1080#1085', '#1088#1091#1073'.'
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -791,6 +808,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'MINTERMS'
                 Footers = <>
                 Title.Caption = #1059#1089#1083#1086#1074#1080#1103'|'#1052#1080#1085', '#1095#1077#1083'.'
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -809,6 +827,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'REPORT_NAME'
                 Footers = <>
                 Title.Caption = #1054#1090#1095#1077#1090
+                Title.TitleButton = True
                 Width = 104
               end
               item
@@ -818,6 +837,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'REPORT_FRMT'
                 Footers = <>
                 Title.Caption = #1060#1086#1088#1084#1072#1090
+                Title.TitleButton = True
                 Width = 45
               end
               item
@@ -827,6 +847,7 @@ inherited DistribForm: TDistribForm
                 FieldName = 'NOTICE'
                 Footers = <>
                 Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                Title.TitleButton = True
                 Width = 100
               end>
             object RowDetailData: TRowDetailPanelControlEh
@@ -1011,6 +1032,7 @@ inherited DistribForm: TDistribForm
               Footer.ValueType = fvtSum
               Footers = <>
               Title.Caption = #1050#1086#1083'-'#1074#1086' '#1082#1072#1085#1072#1083#1086#1074
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -1030,6 +1052,7 @@ inherited DistribForm: TDistribForm
               Footers = <>
               Title.Caption = 'Chip ID'
               Title.ShowImageAndText = False
+              Title.TitleButton = True
               Width = 88
             end
             item
@@ -1039,6 +1062,7 @@ inherited DistribForm: TDistribForm
               FieldName = 'CRYPT_NAME'
               Footers = <>
               Title.Caption = #1050#1086#1076#1080#1088#1086#1074#1082#1072
+              Title.TitleButton = True
               Width = 75
             end
             item

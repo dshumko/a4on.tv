@@ -1,4 +1,4 @@
-object ReqMaterialReturnStrictForm: TReqMaterialReturnStrictForm
+object ReqSingleMatGiveForm: TReqSingleMatGiveForm
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
@@ -14,7 +14,6 @@ object ReqMaterialReturnStrictForm: TReqMaterialReturnStrictForm
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -282,20 +281,16 @@ object ReqMaterialReturnStrictForm: TReqMaterialReturnStrictForm
       '            and '
       '            (exists(select'
       '                           a.Id'
+      ''
       '                         from Appliance a'
       '                         where a.OWN_ID = :OWNER_ID'
       '                               and a.OWN_TYPE = :OWNER_TYPE'
-      
-        '                               and a.Property in (-1, -- '#1050#1091#1087#1083#1077#1085#1086 +
-        ' '#1089#1072#1084#1086#1089#1090#1086#1103#1090#1077#1083#1100#1085#1086' '
-      '                                                   0, -- '#1055#1088#1086#1076#1072#1085
-      
-        '                                                   2, -- '#1056#1072#1089#1089#1088#1086#1095 +
-        #1082#1072
-      '                                                   5  -- '#1042#1099#1082#1091#1087
-      '                                                  )'
+      '                               and a.Property in ('
+      '                                                      -1, 0, 2'
+      '                                                     )'
       '                               and a.Serial = nm.Serial'
       '                               and a.M_Id = nm.M_ID'
+      ''
       '           ))'
       '         )'
       '         or'
@@ -304,20 +299,16 @@ object ReqMaterialReturnStrictForm: TReqMaterialReturnStrictForm
       '            and '
       '            (not exists(select'
       '                           a.Id'
+      ''
       '                         from Appliance a'
       '                         where a.OWN_ID = :OWNER_ID'
       '                               and a.OWN_TYPE = :OWNER_TYPE'
-      
-        '                               and a.Property in (-1, -- '#1050#1091#1087#1083#1077#1085#1086 +
-        ' '#1089#1072#1084#1086#1089#1090#1086#1103#1090#1077#1083#1100#1085#1086' '
-      '                                                   0, -- '#1055#1088#1086#1076#1072#1085
-      
-        '                                                   2, -- '#1056#1072#1089#1089#1088#1086#1095 +
-        #1082#1072
-      '                                                   5  -- '#1042#1099#1082#1091#1087
-      '                                                  )'
+      '                               and a.Property in ('
+      '                                                      -1, 0, 2'
+      '                                                     )'
       '                               and a.Serial = nm.Serial'
       '                               and a.M_Id = nm.M_ID'
+      ''
       '           ))'
       '         )'
       '         '

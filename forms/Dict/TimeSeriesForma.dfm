@@ -27,6 +27,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1061#1088#1086#1085#1086#1083#1086#1075#1080#1103
+        Title.TitleButton = True
         Width = 169
       end
       item
@@ -36,6 +37,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 288
       end>
   end
@@ -158,6 +160,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
           FieldName = 'HDATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072
+          Title.TitleButton = True
           Width = 54
         end
         item
@@ -167,6 +170,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
           FieldName = 'NVALUE'
           Footers = <>
           Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+          Title.TitleButton = True
           Width = 68
         end
         item
@@ -176,6 +180,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 110
         end>
       object RowDetailData: TRowDetailPanelControlEh

@@ -80,6 +80,7 @@ inherited LettersForm: TLettersForm
         FieldName = 'SAVE_PDF'
         Footers = <>
         Title.Caption = #1057#1086#1093#1088#1072#1085#1103#1090#1100'|'#1082#1072#1082' PDF'
+        Title.TitleButton = True
         Width = 73
       end>
   end

@@ -241,6 +241,7 @@ object MatOutDocForm: TMatOutDocForm
           FieldName = 'SHIPPER_COST'
           Footers = <>
           Title.Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+          Title.TitleButton = True
           Width = 71
         end
         item
@@ -251,6 +252,7 @@ object MatOutDocForm: TMatOutDocForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+          Title.TitleButton = True
           Width = 68
         end
         item
@@ -271,6 +273,7 @@ object MatOutDocForm: TMatOutDocForm
           FieldName = 'M_NUMBER'
           Footers = <>
           Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+          Title.TitleButton = True
           Width = 73
         end
         item

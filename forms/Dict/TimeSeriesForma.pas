@@ -6,8 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GridForma, DBGridEhGrouping,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, Vcl.Menus,
-  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh,
+  System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons, System.UITypes,
+  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh, amSplitter,
   DBAxisGridsEh, DBGridEh, Vcl.Mask, DBCtrlsEh, FIBDatabase, pFIBDatabase,
   FIBDataSet, pFIBDataSet;
 
@@ -57,8 +57,6 @@ uses
 {$R *.dfm}
 
 procedure TTimeSeriesForm.StartEdt(const New: Boolean = False);
-var
-  i: Integer;
 begin
   StartEdit(New);
 
@@ -95,7 +93,6 @@ end;
 
 procedure TTimeSeriesForm.actVAddExecute(Sender: TObject);
 var
-  pce: String;
   d: TDateTime;
   fs: TFormatSettings;
   AValues: array of string;
@@ -143,8 +140,6 @@ begin
 end;
 
 procedure TTimeSeriesForm.actVdelExecute(Sender: TObject);
-var
-  s: string;
 begin
   inherited;
   if dsValues.RecordCount = 0 then
@@ -160,9 +155,7 @@ end;
 
 procedure TTimeSeriesForm.actVEditExecute(Sender: TObject);
 var
-  pce: String;
   AValues: array of string;
-  d: TDateTime;
 begin
   inherited;
   if (not dsValues.Active) or (dsValues.RecordCount = 0) then

@@ -545,6 +545,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
             Footer.DisplayFormat = ',0.###'
             Footers = <>
             Title.Caption = #1062#1077#1085#1072' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+            Title.TitleButton = True
             Width = 74
           end
           item
@@ -558,6 +559,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
             Footers = <>
             ReadOnly = True
             Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+            Title.TitleButton = True
             Width = 69
           end
           item
@@ -601,6 +603,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
             Footer.DisplayFormat = ',#0.###'
             Footers = <>
             Title.Caption = #1062#1077#1085#1072' '#1085#1072' '#1089#1082#1083#1072#1076#1077
+            Title.TitleButton = True
             Width = 57
           end
           item
@@ -613,6 +616,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1085#1072' '#1089#1082#1083#1072#1076#1077
+            Title.TitleButton = True
             Width = 73
           end>
         object RowDetailData: TRowDetailPanelControlEh

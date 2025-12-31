@@ -54,6 +54,7 @@
         FieldName = 'O_CHARFIELD'
         Footers = <>
         Title.Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1074' JSON'
+        Title.TitleButton = True
         Width = 89
       end
       item

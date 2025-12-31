@@ -1,7 +1,7 @@
 object apgNodeFlats: TapgNodeFlats
   Left = 0
   Top = 0
-  Caption = #1044#1086#1084#1072' '#1080' '#1050#1074#1072#1088#1090#1080#1088#1099' '#1091#1079#1083#1072
+  Caption = #1050#1074#1072#1088#1090#1080#1088#1099' '#1080' '#1076#1086#1084#1072' '#1091#1079#1083#1072
   ClientHeight = 211
   ClientWidth = 779
   Color = clBtnFace
@@ -53,6 +53,9 @@ object apgNodeFlats: TapgNodeFlats
         Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1072
+        Title.Hint = 
+          #1044#1074#1086#1081#1085#1086#1081' '#1097#1077#1083#1095#1086#1082' '#1087#1086' '#1082#1074#1072#1088#1090#1080#1088#1077' - '#1086#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1086#1074' '#1082#1074#1072#1088#1090#1080#1088#1099' '#1074' '#1089#1087#1080#1089#1082#1077 +
+          ' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
         Title.TitleButton = True
         Width = 95
       end
@@ -209,6 +212,9 @@ object apgNodeFlats: TapgNodeFlats
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1086#1074' '#1076#1086#1084#1072
       ImageIndex = 9
       OnExecute = actCustomersExecute
+    end
+    object actOpenFlat: TAction
+      OnExecute = actOpenFlatExecute
     end
   end
   object trRead: TpFIBTransaction

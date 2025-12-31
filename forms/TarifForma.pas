@@ -22,6 +22,8 @@ type
     btnOk: TBitBtn;
     lblVAT: TLabel;
     ednVAT: TDBNumberEditEh;
+    lblPARTNER: TLabel;
+    ednPARTNER: TDBNumberEditEh;
     procedure deTarifChange(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -52,6 +54,8 @@ begin
     deTarifJur.Visible := False;
     lblVAT.Visible := False;
     ednVAT.Visible := False;
+    lblPARTNER.Visible := False;
+    ednPARTNER.Visible := False;
     Height := deTarif.Top + 100;
     Caption := format(rsTarChan, [aChannel]);
     qryChannel.ParamByName('CHT_ID').AsInteger := aTarif_ID;
@@ -114,6 +118,11 @@ begin
         then Query.ParamByName('VAT').AsFloat := ednVAT.Value
         else Query.ParamByName('VAT').AsFloat := 0;
       end;
+
+      if ednPARTNER.Text <> ''
+      then Query.ParamByName('PARTNER_TARIF').AsFloat := ednPARTNER.Value
+      else Query.ParamByName('PARTNER_TARIF').Clear;
+
       Query.Transaction.StartTransaction;
       Query.ExecProc;
       Query.Transaction.Commit;

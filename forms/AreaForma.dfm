@@ -45,6 +45,7 @@ inherited AreaForm: TAreaForm
         FieldName = 'AREA_NAME'
         Footers = <>
         Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1085#1072#1089'. '#1087#1091#1085#1082#1090#1072
+        Title.TitleButton = True
         Width = 145
       end
       item
@@ -55,6 +56,7 @@ inherited AreaForm: TAreaForm
         FieldName = 'AREA_CODE'
         Footers = <>
         Title.Caption = #1050#1086#1076
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -64,6 +66,7 @@ inherited AreaForm: TAreaForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1086#1084#1086#1074
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -73,6 +76,7 @@ inherited AreaForm: TAreaForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1050#1074#1072#1088#1090#1080#1088
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -92,6 +96,7 @@ inherited AreaForm: TAreaForm
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 152
       end>
   end
@@ -129,6 +134,7 @@ inherited AreaForm: TAreaForm
           FieldName = 'SUBAREA_NAME'
           Footers = <>
           Title.Caption = #1056#1072#1081#1086#1085
+          Title.TitleButton = True
           Width = 144
         end
         item
@@ -139,6 +145,7 @@ inherited AreaForm: TAreaForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1044#1086#1084#1086#1074
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -148,6 +155,7 @@ inherited AreaForm: TAreaForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1050#1074#1072#1088#1090#1080#1088
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -167,6 +175,7 @@ inherited AreaForm: TAreaForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 223
         end>
       object RowDetailData: TRowDetailPanelControlEh

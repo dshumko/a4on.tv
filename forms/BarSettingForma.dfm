@@ -61,6 +61,7 @@ object BarSettingForm: TBarSettingForm
             '['#1055#1056#1045#1044'_'#1052#1045#1057#1071#1062']'
             '['#1055#1056#1045#1044'_'#1043#1054#1044']')
           Title.Caption = #1044#1072#1085#1085#1099#1077
+          Title.TitleButton = True
           Width = 188
         end
         item
@@ -71,6 +72,7 @@ object BarSettingForm: TBarSettingForm
           FieldName = 'SIZE'
           Footers = <>
           Title.Caption = #1056#1072#1079#1084#1077#1088
+          Title.TitleButton = True
           Width = 60
         end
         item
@@ -81,6 +83,7 @@ object BarSettingForm: TBarSettingForm
           FieldName = 'FILL'
           Footers = <>
           Title.Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1100' '#1089#1083#1077#1074#1072' '#1089#1080#1084#1074#1086#1083#1086#1084
+          Title.TitleButton = True
           Width = 87
         end>
       object RowDetailData: TRowDetailPanelControlEh

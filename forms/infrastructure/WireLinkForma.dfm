@@ -135,27 +135,32 @@ object WireLinkForm: TWireLinkForm
             Title.Hint = 
               #1089#1077#1088#1099#1081' '#1094#1074#1077#1090' - '#1087#1086#1088#1090' '#1079#1072#1085#1103#1090', '#1082#1091#1088#1089#1080#1074' - '#1089#1083#1091#1078#1077#1073#1085#1099#1081' '#1087#1086#1088#1090', '#1079#1072#1095#1077#1088#1082#1085#1091#1090' - '#1085#1077 +
               #1080#1089#1087#1088#1072#1074#1077#1085
+            Title.TitleButton = True
             Width = 25
           end
           item
             AutoFitColWidth = False
             FieldName = 'SPEED'
             Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100
+            Title.TitleButton = True
             Width = 25
           end
           item
             FieldName = 'O_NAME'
             Title.Caption = #1058#1080#1087
+            Title.TitleButton = True
             Width = 20
           end
           item
             FieldName = 'NOTICE'
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 40
           end
           item
             FieldName = 'V_NAME'
             Title.Caption = #1057#1077#1090#1100
+            Title.TitleButton = True
             Width = 30
           end
           item
@@ -163,12 +168,14 @@ object WireLinkForm: TWireLinkForm
             AutoFitColWidth = False
             FieldName = 'WHOSE'
             Title.Caption = #1063#1090#1086
+            Title.TitleButton = True
             Width = 10
           end
           item
             AutoFitColWidth = False
             FieldName = 'WHOSE_NAME'
             Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 40
           end>
         DropDownBox.ListSource = srcPortS
@@ -206,35 +213,41 @@ object WireLinkForm: TWireLinkForm
           item
             FieldName = 'NAME'
             Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 90
           end
           item
             FieldName = 'STREET_NAME'
             Title.Caption = #1059#1083#1080#1094#1072
+            Title.TitleButton = True
             Width = 60
           end
           item
             AutoFitColWidth = False
             FieldName = 'HOUSE_NO'
             Title.Caption = #1044#1086#1084
+            Title.TitleButton = True
             Width = 35
           end
           item
             AutoFitColWidth = False
             FieldName = 'PORCH_N'
             Title.Caption = #1055'-'#1076
+            Title.TitleButton = True
             Width = 20
           end
           item
             AutoFitColWidth = False
             FieldName = 'FLOOR_N'
             Title.Caption = #1069#1058'.'
+            Title.TitleButton = True
             Width = 20
           end
           item
             AutoFitColWidth = False
             FieldName = 'PLACE'
             Title.Caption = #1052#1077#1089#1090#1086
+            Title.TitleButton = True
             Width = 20
           end
           item
@@ -314,35 +327,41 @@ object WireLinkForm: TWireLinkForm
           item
             FieldName = 'NAME'
             Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 90
           end
           item
             FieldName = 'STREET_NAME'
             Title.Caption = #1059#1083#1080#1094#1072
+            Title.TitleButton = True
             Width = 60
           end
           item
             AutoFitColWidth = False
             FieldName = 'HOUSE_NO'
             Title.Caption = #1044#1086#1084
+            Title.TitleButton = True
             Width = 35
           end
           item
             AutoFitColWidth = False
             FieldName = 'PORCH_N'
             Title.Caption = #1055'-'#1076
+            Title.TitleButton = True
             Width = 20
           end
           item
             AutoFitColWidth = False
             FieldName = 'FLOOR_N'
             Title.Caption = #1069#1058'.'
+            Title.TitleButton = True
             Width = 20
           end
           item
             AutoFitColWidth = False
             FieldName = 'PLACE'
             Title.Caption = #1052#1077#1089#1090#1086
+            Title.TitleButton = True
             Width = 20
           end
           item
@@ -429,27 +448,32 @@ object WireLinkForm: TWireLinkForm
             Title.Hint = 
               #1089#1077#1088#1099#1081' '#1094#1074#1077#1090' - '#1087#1086#1088#1090' '#1079#1072#1085#1103#1090', '#1082#1091#1088#1089#1080#1074' - '#1089#1083#1091#1078#1077#1073#1085#1099#1081' '#1087#1086#1088#1090', '#1079#1072#1095#1077#1088#1082#1085#1091#1090' - '#1085#1077 +
               #1080#1089#1087#1088#1072#1074#1077#1085
+            Title.TitleButton = True
             Width = 25
           end
           item
             AutoFitColWidth = False
             FieldName = 'SPEED'
             Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100
+            Title.TitleButton = True
             Width = 25
           end
           item
             FieldName = 'O_NAME'
             Title.Caption = #1058#1080#1087
+            Title.TitleButton = True
             Width = 20
           end
           item
             FieldName = 'NOTICE'
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 40
           end
           item
             FieldName = 'V_NAME'
             Title.Caption = #1057#1077#1090#1100
+            Title.TitleButton = True
             Width = 30
           end
           item
@@ -457,12 +481,14 @@ object WireLinkForm: TWireLinkForm
             AutoFitColWidth = False
             FieldName = 'WHOSE'
             Title.Caption = #1063#1090#1086
+            Title.TitleButton = True
             Width = 10
           end
           item
             AutoFitColWidth = False
             FieldName = 'WHOSE_NAME'
             Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 40
           end>
         DropDownBox.ListSource = srcPortE

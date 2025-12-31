@@ -73,7 +73,6 @@ object PeriodForm: TPeriodForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
-    TabStop = True
     object btnPrevMonth: TToolButton
       Left = 0
       Top = 0

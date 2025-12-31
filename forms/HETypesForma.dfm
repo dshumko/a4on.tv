@@ -38,6 +38,7 @@ inherited HETypesForm: THETypesForm
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1058#1080#1087
+        Title.TitleButton = True
       end
       item
         AutoFitColWidth = False
@@ -47,6 +48,7 @@ inherited HETypesForm: THETypesForm
         FieldName = 'O_DIMENSION'
         Footers = <>
         Title.Caption = #1050#1086#1076
+        Title.TitleButton = True
         Visible = False
         Width = 41
       end
@@ -57,6 +59,7 @@ inherited HETypesForm: THETypesForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
       end
       item
         CellButtons = <>

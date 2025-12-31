@@ -58,6 +58,7 @@ object ReqPlanerForm: TReqPlanerForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 148
         end>
       object RowDetailData: TRowDetailPanelControlEh

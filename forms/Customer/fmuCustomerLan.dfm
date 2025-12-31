@@ -170,6 +170,7 @@ object apgCustomerLan: TapgCustomerLan
         FieldName = 'STREET_NAME'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103'|'#1059#1083#1080#1094#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -178,6 +179,7 @@ object apgCustomerLan: TapgCustomerLan
         FieldName = 'HOUSE_NO'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103'|'#1044#1086#1084
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -186,6 +188,7 @@ object apgCustomerLan: TapgCustomerLan
         FieldName = 'PLACE'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103'|'#1052#1077#1089#1090#1086
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -203,6 +206,7 @@ object apgCustomerLan: TapgCustomerLan
         FieldName = 'WLABEL'
         Footers = <>
         Title.Caption = #1052#1077#1090#1082#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -211,6 +215,7 @@ object apgCustomerLan: TapgCustomerLan
         FieldName = 'SPEED'
         Footers = <>
         Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100' '#1087#1086#1088#1090#1072
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -466,6 +471,7 @@ object apgCustomerLan: TapgCustomerLan
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1059#1089#1083#1091#1075#1072
+          Title.TitleButton = True
           Width = 86
         end
         item
@@ -475,6 +481,7 @@ object apgCustomerLan: TapgCustomerLan
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 127
         end>
       object RowDetailData: TRowDetailPanelControlEh

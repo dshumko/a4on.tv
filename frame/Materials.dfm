@@ -39,6 +39,7 @@
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
+        Title.TitleButton = True
         Width = 150
       end
       item
@@ -47,6 +48,7 @@
         FieldName = 'RM_QUANT'
         Footers = <>
         Title.Caption = #1050'-'#1074#1086
+        Title.TitleButton = True
       end
       item
         AutoFitColWidth = False
@@ -54,6 +56,7 @@
         FieldName = 'O_DIMENSION'
         Footers = <>
         Title.Caption = #1045#1076'. '#1080#1079#1084'.'
+        Title.TitleButton = True
         Width = 63
       end>
   end

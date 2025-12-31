@@ -27,6 +27,11 @@ uses
   NHunXml in 'Units\NHunXml.pas',
   PasZip in 'Units\PasZip.pas',
   ad3MainDictionary in 'Units\ad3MainDictionary.pas',
+  LibMoney in 'Units\LibMoney.pas',
+  WorkWithGrids in 'units\WorkWithGrids.pas',
+  AtrStrUtils in 'units\AtrStrUtils.pas',
+  atrCmdUtils in 'units\atrCmdUtils.pas',
+  uFBServices in 'admin\uFBServices.pas',
   MAIN in 'FORMS\MAIN.PAS' {A4MainForm},
   OkCancel_frame in 'FRAME\OkCancel_frame.pas' {OkCancelFrame: TFrame},
   PeriodForma in 'FORMS\PeriodForma.pas' {PeriodForm},
@@ -61,7 +66,6 @@ uses
   PaymentForma in 'forms\PaymentForma.pas' {PaymentForm},
   PayDocsForma in 'forms\PayDocsForma.pas' {PayDocsForm},
   PaymentDocForma in 'forms\PaymentDocForma.pas' {PaymentDocForm},
-  LibMoney in 'Units\LibMoney.pas',
   HouseForma in 'forms\HouseForma.pas' {HouseForm},
   AttributeForma in 'forms\AttributeForma.pas' {AttributeForm},
   ChannelsForma in 'forms\DVB\ChannelsForma.pas' {ChannelsForm},
@@ -75,11 +79,8 @@ uses
   CardPayActivateForma in 'forms\CardPayActivateForma.pas' {fmCardPayActivate},
   CardsPaySettingsForma in 'forms\CardsPaySettingsForma.pas' {CardsPaySettingsForm},
   HouseWorkForma in 'forms\HouseWorkForma.pas' {HouseWorkForm},
-  WorkWithGrids in 'units\WorkWithGrids.pas',
   LoaderReestrForma in 'forms\LoaderReestrForma.pas' {LoaderReestrForm},
   LoaderProfileForma in 'forms\LoaderProfileForma.pas' {LoaderProfileForm},
-  AtrStrUtils in 'units\AtrStrUtils.pas',
-  atrCmdUtils in 'units\atrCmdUtils.pas',
   EquipAttributesForma in 'forms\infrastructure\EquipAttributesForma.pas' {EquipAttributesForm},
   EquipCoverage in 'forms\infrastructure\EquipCoverage.pas' {EquipCoverageForm},
   VlansForma in 'forms\VlansForma.pas' {VlansForm},
@@ -90,7 +91,6 @@ uses
   UserForma in 'admin\UserForma.pas' {UF},
   UsersForma in 'admin\UsersForma.pas' {UsersForm},
   GroupForma in 'admin\GroupForma.pas' {GF},
-  uFBServices in 'admin\uFBServices.pas',
   SrvServiceForma in 'admin\SrvServiceForma.pas' {SrvServiceForm},
   ScriptModule in 'forms\ScriptModule.pas' {SM: TDataModule},
   ScripEditorForma in 'forms\ScripEditorForma.pas' {ScripEditorForm},
@@ -338,7 +338,8 @@ uses
   CountersIndicationForma in 'forms\Dict\CountersIndicationForma.pas' {CountersIndicationForm},
   SelectOneMatForma in 'forms\Materials\SelectOneMatForma.pas' {SelectMaterialForm},
   NodeLayoutFactForma in 'forms\nodes\NodeLayoutFactForma.pas' {NodeLayoutFactForm},
-  TimeSeriesForma in 'forms\Dict\TimeSeriesForma.pas' {TimeSeriesForm};
+  TimeSeriesForma in 'forms\Dict\TimeSeriesForma.pas' {TimeSeriesForm},
+  ReqSingleMatGiveForma in 'forms\Requests\ReqSingleMatGiveForma.pas' {ReqSingleMatGiveForm};
 
 {$R *.RES}
 

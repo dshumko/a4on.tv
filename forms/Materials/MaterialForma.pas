@@ -65,6 +65,8 @@ type
     srcSoldSRV: TDataSource;
     lblPCE: TLabel;
     ednPCE: TDBNumberEditEh;
+    cbProp: TDBComboBoxEh;
+    lblPCE1: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

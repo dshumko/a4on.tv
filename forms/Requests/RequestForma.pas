@@ -290,6 +290,7 @@ type
     fNodeId: Integer;
     FFullAccess: Boolean; // полный доступ
     FStrictReturn: Boolean;
+    FSingleGive: Boolean; // Форма выдачі для одно матеріала
     FAddressRight: Boolean;
     FCanEdit: Boolean; // может изменять результат выполнения
     FCanClose: Boolean; // может закрыть заявку
@@ -347,7 +348,8 @@ uses
   ReqMaterialsForma, ReqExecutersForma, ReqForAdresForma,
   SelectDateForma, RequestWorksForma,
   CustomerForma, ReqMatBaybackForma, PaymentDocForma, PaymentForma,
-  ReqMatReturnForma, EditRFileForma, ContactForma, SendEmail, RequestMaterialReturnForma, ReqReturnMatStrictForma;
+  ReqMatReturnForma, EditRFileForma, ContactForma, SendEmail, RequestMaterialReturnForma,
+  ReqSingleMatGiveForma, ReqReturnMatStrictForma;
 
 {$R *.dfm}
 
@@ -557,7 +559,14 @@ end;
 
 procedure TRequestForm.actMaterialsExecute(Sender: TObject);
 begin
-  ReqMaterials(dsRequest['RQ_ID'], FRequestClosed);
+  if FSingleGive then
+  begin
+    //if not FRequestClosed then
+    //  SingleMatGive(dsRequest['RQ_ID']);
+  end
+  else
+    ReqMaterials(dsRequest['RQ_ID'], FRequestClosed);
+
   if (not FRequestClosed) then
     dsMaterials.CloseOpen(true);
 end;
@@ -1618,7 +1627,7 @@ begin
   FAddressRight := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street);
   // огранічім возврат выданным
   FStrictReturn := not(FFullAccess or dmMain.AllowedAction(rght_Request_AnyReturn));
-  // (dmMain.GetSettingsValue('REQUEST_RETURN_STRICT') = '1');
+  FSingleGive := (dmMain.GetSettingsValue('REQUEST_SINGLE_GIVE') = '1');
 
   if FIsLTV then
   begin

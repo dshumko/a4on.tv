@@ -83,6 +83,7 @@ object ReqForAdresForm: TReqForAdresForm
           FieldName = 'FLAT_NO'
           Footers = <>
           Title.Caption = #1040#1076#1088#1077#1089'|'#1050#1074'.'
+          Title.TitleButton = True
           Width = 41
         end
         item
@@ -137,6 +138,7 @@ object ReqForAdresForm: TReqForAdresForm
           FieldName = 'ZVENO'
           Footers = <>
           Title.Caption = #1047#1074#1077#1085#1086
+          Title.TitleButton = True
           Width = 72
         end
         item

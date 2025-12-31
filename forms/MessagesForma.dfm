@@ -226,6 +226,7 @@ object MessagesForm: TMessagesForm
           FieldName = 'SODATE'
           Footers = <>
           Title.Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1077'|'#1044#1072#1090#1072' '#1086#1090#1087'-'#1082#1080
+          Title.TitleButton = True
           Width = 78
         end
         item

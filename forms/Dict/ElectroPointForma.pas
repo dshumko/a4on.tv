@@ -10,7 +10,7 @@ uses
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  CnErrorProvider,
+  CnErrorProvider, amSplitter,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
   PrnDbgeh, DBLookupEh, PropFilerEh, PropStorageEh;
 
@@ -82,6 +82,10 @@ type
     spl2: TSplitter;
     actLockPeriod: TAction;
     miLockPeriod: TMenuItem;
+    lbl211: TLabel;
+    lcbTarif: TDBLookupComboboxEh;
+    dsTarif: TpFIBDataSet;
+    srcTarif: TDataSource;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -128,10 +132,9 @@ begin
 end;
 
 procedure TElectroPointForm.StartEdt(const New: Boolean = False);
-var
-  i: Integer;
 begin
   dsERecipient.Open;
+  dsTarif.Open;
   pgcInfo.Enabled := False;
   StartEdit(New);
 
@@ -262,7 +265,9 @@ end;
 procedure TElectroPointForm.btnCancelLinkClick(Sender: TObject);
 begin
   inherited;
+  dsTarif.Close;
   dsERecipient.Close;
+
   pgcInfo.Enabled := True;
 end;
 
@@ -385,10 +390,22 @@ begin
 end;
 
 procedure TElectroPointForm.actHDelExecute(Sender: TObject);
+var
+  s: string;
+  fs: TFormatSettings;
 begin
   inherited;
-  if dsHistory.RecordCount = 0 then
+  if (dsHistory.RecordCount = 0) then
     Exit;
+
+  s := dmMain.GetSettingsValue('PCE_START_DATE');
+  if (s <> '') and (not dsHistory.FieldByName('HDATE').IsNull) and (not dmMain.UserIsAdmin) then
+  begin
+    fs.DateSeparator := '-';
+    fs.ShortDateFormat := 'yyyy-mm-dd';
+    if (dsHistory.FieldByName('HDATE').AsDateTime <= StrToDate(s, fs)) then
+      Exit;
+  end;
 
   if fCanEdit then
     if (MessageDlg(Format(rsDeleteWithName, [dsHistory['HDATE']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
@@ -396,10 +413,22 @@ begin
 end;
 
 procedure TElectroPointForm.actHEditExecute(Sender: TObject);
+var
+  s: string;
+  fs: TFormatSettings;
 begin
   inherited;
-  if dsHistory.RecordCount = 0 then
+  if (dsHistory.RecordCount = 0) then
     Exit;
+
+  s := dmMain.GetSettingsValue('PCE_START_DATE');
+  if (s <> '') and (not dsHistory.FieldByName('HDATE').IsNull) and (not dmMain.UserIsAdmin) then
+  begin
+    fs.DateSeparator := '-';
+    fs.ShortDateFormat := 'yyyy-mm-dd';
+    if (dsHistory.FieldByName('HDATE').AsDateTime <= StrToDate(s, fs)) then
+      Exit;
+  end;
 
   dsHistory.Edit;
 end;
@@ -408,7 +437,7 @@ procedure TElectroPointForm.actLockPeriodExecute(Sender: TObject);
 var
   fd: TDate;
   d, m, y: Word;
-
+  AFormatSettings: TFormatSettings;
 begin
   inherited;
   DecodeDate(Now(), y, m, d);
@@ -432,6 +461,10 @@ begin
     dmMain.Query.Transaction.StartTransaction;
     dmMain.Query.ExecQuery;
     dmMain.Query.Transaction.Commit;
+    AFormatSettings.DateSeparator := '-';
+    AFormatSettings.ShortDateFormat := 'yyyy-mm-dd';
+    dmMain.SetSettingsValue('PCE_START_DATE', DateToStr(fd, AFormatSettings));
+    actLockPeriod.Caption := 'Заблокировать месяц (блокировка ' + dmMain.GetSettingsValue('PCE_START_DATE') + ')';
   end;
 end;
 

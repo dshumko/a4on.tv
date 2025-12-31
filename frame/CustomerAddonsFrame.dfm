@@ -525,6 +525,7 @@
                 Footers = <>
                 Title.Caption = #1044#1072#1090#1072' '#1089#1090'.'
                 Title.Hint = #1044#1072#1090#1072' '#1089#1090#1072#1090#1091#1089#1072
+                Title.TitleButton = True
                 Width = 59
               end
               item
@@ -533,6 +534,7 @@
                 FieldName = 'STATE_SRV_NAME'
                 Footers = <>
                 Title.Caption = #1059#1089#1083#1091#1075#1072' '#1087#1086#1076#1082#1083'./'#1086#1090#1082#1083'.'
+                Title.TitleButton = True
                 Title.Hint = #1059#1089#1083#1091#1075#1072' '#1089#1090#1072#1090#1091#1089#1072
                 Width = 245
               end
@@ -541,6 +543,7 @@
                 FieldName = 'NOTICE'
                 Footers = <>
                 Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                Title.TitleButton = True
                 Width = 115
               end
               item
@@ -549,6 +552,7 @@
                 FieldName = 'WHO_LAST'
                 Footers = <>
                 Title.Caption = #1048#1079#1084#1077#1085#1080#1083
+                Title.TitleButton = True
                 Width = 83
               end>
             object RowDetailData: TRowDetailPanelControlEh
@@ -604,6 +608,7 @@
                   FieldName = 'DATE_FROM'
                   Footers = <>
                   Title.Caption = #1044#1072#1090#1072' '#1089
+                  Title.TitleButton = True
                   Width = 95
                 end
                 item
@@ -611,6 +616,7 @@
                   FieldName = 'DATE_TO'
                   Footers = <>
                   Title.Caption = #1044#1072#1090#1072' '#1087#1086
+                  Title.TitleButton = True
                   Width = 87
                 end
                 item
@@ -618,6 +624,7 @@
                   FieldName = 'TARIF_SUM'
                   Footers = <>
                   Title.Caption = #1058#1072#1088#1080#1092
+                  Title.TitleButton = True
                   Width = 111
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -871,6 +878,7 @@
             FieldName = 'WHO_LAST'
             Footers = <>
             Title.Caption = #1044#1086#1073#1072#1074#1080#1083
+            Title.TitleButton = True
             Width = 76
           end
           item
@@ -879,6 +887,7 @@
             FieldName = 'ADDED_ON'
             Footers = <>
             Title.Caption = #1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -994,6 +1003,7 @@
             FieldName = 'DATE_FROM'
             Footers = <>
             Title.Caption = #1057
+            Title.TitleButton = True
           end
           item
             AutoFitColWidth = False
@@ -1001,6 +1011,7 @@
             FieldName = 'DATE_TO'
             Footers = <>
             Title.Caption = #1055#1086
+            Title.TitleButton = True
           end
           item
             AutoFitColWidth = False
@@ -1008,6 +1019,7 @@
             FieldName = 'FACTOR_VALUE'
             Footers = <>
             Title.Caption = #1050#1086#1101#1092#1092#1080#1094#1080#1077#1085#1090
+            Title.TitleButton = True
             Width = 90
           end
           item
@@ -1015,6 +1027,7 @@
             FieldName = 'S_NAME'
             Footers = <>
             Title.Caption = #1059#1089#1083#1091#1075#1072
+            Title.TitleButton = True
             Width = 183
           end
           item
@@ -1022,6 +1035,7 @@
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 302
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -1131,6 +1145,7 @@
             Footers = <>
             Title.Alignment = taCenter
             Title.Caption = #1055#1077#1085#1103
+            Title.TitleButton = True
             Width = 90
           end
           item
@@ -1178,6 +1193,7 @@
             FieldName = 'NAME'
             Footers = <>
             Title.Caption = #1059#1089#1083#1091#1075#1072
+            Title.TitleButton = True
             Width = 80
           end
           item
@@ -1185,6 +1201,7 @@
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 100
           end
           item
@@ -1193,6 +1210,7 @@
             FieldName = 'PAYMENT_ID'
             Footers = <>
             Title.Caption = #8470' '#1087#1083#1072#1090#1077#1078#1072
+            Title.TitleButton = True
             Width = 72
           end
           item
@@ -1201,6 +1219,7 @@
             FieldName = 'WHO_ADD'
             Footers = <>
             Title.Caption = #1055#1083#1072#1090#1077#1078' '#1087#1088#1080#1085#1103#1083
+            Title.TitleButton = True
             Width = 82
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -1263,6 +1282,7 @@
             Footers = <>
             Title.Alignment = taCenter
             Title.Caption = #1044#1072#1090#1072
+            Title.TitleButton = True
             Width = 101
           end
           item
@@ -1271,6 +1291,7 @@
             Footers = <>
             Title.Alignment = taCenter
             Title.Caption = #1058#1080#1087
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1358,6 +1379,7 @@
               FieldName = 'RQ_PLAN_DATE'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072'|'#1087#1083#1072#1085#1086#1074#1072#1103
+              Title.TitleButton = True
             end
             item
               AutoFitColWidth = False
@@ -1365,6 +1387,7 @@
               FieldName = 'RQ_TIME_FROM'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072'|'#1089
+              Title.TitleButton = True
               Width = 28
             end
             item
@@ -1373,6 +1396,7 @@
               FieldName = 'RQ_TIME_TO'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072'|'#1076#1086
+              Title.TitleButton = True
               Width = 29
             end
             item
@@ -1406,6 +1430,7 @@
               FieldName = 'RES_TEXT'
               Footers = <>
               Title.Caption = #1057#1090#1072#1090#1091#1089
+              Title.TitleButton = True
               Width = 49
             end
             item
@@ -1515,18 +1540,21 @@
             FieldName = 'O_NAME'
             Footers = <>
             Title.Caption = #1040#1090#1088#1080#1073#1091#1090
+            Title.TitleButton = True
           end
           item
             EditButtons = <>
             FieldName = 'CA_VALUE'
             Footers = <>
             Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+            Title.TitleButton = True
           end
           item
             EditButtons = <>
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 189
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -1638,6 +1666,7 @@
             FieldName = 'E_NAME'
             Footers = <>
             Title.Caption = #1082#1086#1084'-'#1088'/'#1084#1086#1076#1077#1084
+            Title.TitleButton = True
             Width = 119
           end
           item
@@ -1645,6 +1674,7 @@
             FieldName = 'EQ_IP'
             Footers = <>
             Title.Caption = 'IP '#1082#1086#1084'-'#1088#1072'/'#1084#1086#1076#1077#1084#1072
+            Title.TitleButton = True
             Width = 123
           end
           item
@@ -1653,6 +1683,7 @@
             FieldName = 'PORT'
             Footers = <>
             Title.Caption = #1055#1086#1088#1090
+            Title.TitleButton = True
             Width = 34
           end
           item
@@ -1660,6 +1691,7 @@
             FieldName = 'V_NAME'
             Footers = <>
             Title.Caption = 'VLAN'
+            Title.TitleButton = True
             Width = 74
           end
           item
@@ -1667,6 +1699,7 @@
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 93
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -1785,6 +1818,7 @@
               FieldName = 'DECODER_N'
               Footers = <>
               Title.Caption = #1053#1086#1084#1077#1088
+              Title.TitleButton = True
               Width = 65
             end
             item
@@ -1793,6 +1827,7 @@
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
               Width = 110
             end
             item
@@ -1800,6 +1835,7 @@
               FieldName = 'STB_N'
               Footers = <>
               Title.Caption = #8470' STB'
+              Title.TitleButton = True
               Width = 87
             end
             item
@@ -1808,6 +1844,7 @@
               FieldName = 'ADDED_BY'
               Footers = <>
               Title.Caption = #1044#1086#1073#1072#1074#1080#1083
+              Title.TitleButton = True
             end
             item
               AutoFitColWidth = False
@@ -1815,6 +1852,7 @@
               FieldName = 'ADDED_ON'
               Footers = <>
               Title.Caption = #1050#1086#1075#1076#1072
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -1908,6 +1946,7 @@
               FieldName = 'CH_NAME'
               Footers = <>
               Title.Caption = #1050#1072#1085#1072#1083
+              Title.TitleButton = True
               Width = 169
             end
             item
@@ -1916,6 +1955,7 @@
               FieldName = 'DATE_ON'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072' '#1074#1082#1083'.'
+              Title.TitleButton = True
               Width = 73
             end
             item
@@ -1924,6 +1964,7 @@
               FieldName = 'DATE_OFF'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072' '#1074#1099#1082#1083'.'
+              Title.TitleButton = True
               Width = 77
             end
             item
@@ -1931,6 +1972,7 @@
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end

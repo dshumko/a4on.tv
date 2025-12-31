@@ -100,6 +100,7 @@ object EditRFileForm: TEditRFileForm
   object dlgOpen: TOpenDialog
     DefaultExt = '*.*'
     Filter = #1042#1089#1077' '#1092#1072#1081#1083#1099'|*.*|'#1060#1086#1090#1086'|*.jpg;*.png|Sor|*.sor'
+    Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
     Left = 216
     Top = 56
   end

@@ -636,9 +636,10 @@ object dmMain: TdmMain
       '                  from Customer_Contacts cc'
       '                  where cc.Customer_Id = c.Customer_Id'
       '                        and cc.Cc_Type = 2'
+      '                        @@ONLY_NOTYFY% @'
       
-        '                  order by cc.Cc_Notify desc), c.EMAIL, '#39#39') as E' +
-        'MAIL                   '
+        '                  order by cc.Cc_Notify desc), '#39#39') as EMAIL     ' +
+        '              '
       'FROM CUSTOMER C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'

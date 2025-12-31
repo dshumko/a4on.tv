@@ -187,6 +187,7 @@ object ReportDesignerForm: TReportDesignerForm
           FieldName = 'REPORT_NAME'
           Footers = <>
           Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1086#1090#1095#1105#1090#1072
+          Title.TitleButton = True
           Width = 288
         end
         item
@@ -197,6 +198,7 @@ object ReportDesignerForm: TReportDesignerForm
           Footers = <>
           Title.Caption = #1057#1082#1088#1099#1090#1100' '#1080#1079' '#1084#1077#1085#1102
           Title.Hint = #1053#1077' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1074' '#1075#1083#1072#1074#1085#1086#1084' '#1084#1077#1085#1102
+          Title.TitleButton = True
           Width = 48
         end>
       object RowDetailData: TRowDetailPanelControlEh

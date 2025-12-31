@@ -246,7 +246,7 @@ var
   i: Integer;
   vBalance: Boolean;
   Font_size: Integer;
-  Font_name, s: string;
+  Font_name: string;
   Row_height: Integer;
 begin
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then

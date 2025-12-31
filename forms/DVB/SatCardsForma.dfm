@@ -54,6 +54,7 @@ inherited SatCardsForm: TSatCardsForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1050#1086#1083'-'#1074#1086' '#1082#1072#1085#1072#1083#1086#1074
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -73,6 +74,7 @@ inherited SatCardsForm: TSatCardsForm
         Footers = <>
         Title.Caption = 'Chip ID'
         Title.ShowImageAndText = False
+        Title.TitleButton = True
         Width = 88
       end
       item
@@ -82,6 +84,7 @@ inherited SatCardsForm: TSatCardsForm
         FieldName = 'CRYPT_NAME'
         Footers = <>
         Title.Caption = #1050#1086#1076#1080#1088#1086#1074#1082#1072
+        Title.TitleButton = True
         Width = 75
       end
       item
@@ -101,6 +104,7 @@ inherited SatCardsForm: TSatCardsForm
         FieldName = 'Distrib'
         Footers = <>
         Title.Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088
+        Title.TitleButton = True
         Width = 90
       end
       item
@@ -120,6 +124,7 @@ inherited SatCardsForm: TSatCardsForm
         FieldName = 'CAPACITY'
         Footers = <>
         Title.Caption = #1052#1072#1082#1089'. '#1082#1072#1085#1072#1083#1086#1074
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
@@ -226,6 +231,7 @@ inherited SatCardsForm: TSatCardsForm
           FieldName = 'COST'
           Footers = <>
           Title.Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088'|'#1062#1077#1085#1072
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -234,6 +240,7 @@ inherited SatCardsForm: TSatCardsForm
           FieldName = 'C_NUMBER'
           Footers = <>
           Title.Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088'|'#1044#1086#1075#1086#1074#1086#1088
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -242,6 +249,7 @@ inherited SatCardsForm: TSatCardsForm
           FieldName = 'C_DATE'
           Footers = <>
           Title.Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088'|'#1044#1072#1090#1072
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -250,6 +258,7 @@ inherited SatCardsForm: TSatCardsForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088'|'#1044#1080#1089#1090#1088#1080#1073#1100#1102#1090#1086#1088
+          Title.TitleButton = True
           Width = 96
         end>
       object RowDetailData: TRowDetailPanelControlEh

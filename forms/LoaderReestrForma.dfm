@@ -211,6 +211,7 @@ object LoaderReestrForm: TLoaderReestrForm
           Footer.ValueType = fvtCount
           Footers = <>
           Title.Caption = #1054#1096#1080#1073#1082#1072
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

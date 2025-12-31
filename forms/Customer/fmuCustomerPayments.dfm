@@ -43,6 +43,7 @@ object apgCustomerPayments: TapgCustomerPayments
     OnSortMarkingChanged = dbgCustPaymentSortMarkingChanged
     Columns = <
       item
+        Alignment = taCenter
         AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
@@ -56,6 +57,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Width = 96
       end
       item
+        Alignment = taRightJustify
         AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
@@ -82,6 +84,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Width = 80
       end
       item
+        Alignment = taRightJustify
         CellButtons = <>
         DisplayFormat = ',0.00'
         DynProps = <>
@@ -95,7 +98,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Width = 71
       end
       item
-        Alignment = taRightJustify
+        Alignment = taLeftJustify
         AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
@@ -107,6 +110,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Width = 120
       end
       item
+        Alignment = taCenter
         AutoFitColWidth = False
         CellButtons = <>
         DynProps = <>
@@ -182,6 +186,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Width = 82
       end
       item
+        Alignment = taRightJustify
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
@@ -191,6 +196,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Title.TitleButton = True
       end
       item
+        Alignment = taRightJustify
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
@@ -210,6 +216,7 @@ object apgCustomerPayments: TapgCustomerPayments
         Title.TitleButton = True
       end
       item
+        Alignment = taRightJustify
         CellButtons = <>
         DynProps = <>
         EditButtons = <>

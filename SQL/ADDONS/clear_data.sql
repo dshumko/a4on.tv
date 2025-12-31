@@ -125,6 +125,9 @@ DELETE FROM QUEUE_SWITCH_SRV; commit;
 DELETE FROM SYS$USER_AREAS; commit;
 DELETE FROM WORKAREA; commit;
 
+DELETE FROM EPG; commit;
+DELETE FROM EPG_SOURCES; commit;
+DELETE FROM DAILY_FEE; commit;
 
 ALTER TRIGGER CUSTOMER_AU_MONEY  ACTIVE;
 ALTER TRIGGER DISCOUNT_FACTOR_AD ACTIVE;
@@ -189,4 +192,26 @@ delete from Objects where O_Type = 46; -- Тип платежа резерв. Н
 --delete from Objects where O_Type = 52; -- Тип события Тип события для EVENT_DETAIL
 --delete from Objects where O_Type = 53; -- Тип проблем вещания Тип сбоев вещания сервисов в сети
 --delete from Objects where O_Type = 54; -- Решение проблем Решение проблем вещания
+delete from Objects where O_Type = 55; -- Фильтры
+
+DELETE FROM OBJECTS_LINKS;
+DELETE FROM OBJECTS_HISTORY;
+DELETE FROM MATERIAL_UNIT;
+DELETE FROM CHANNELS;
+DELETE FROM DVB_STREAM_CHANNELS;
+DELETE FROM DVB_STREAMS;
+DELETE FROM MATERIALS_IN_DOC_UNIT;
+DELETE FROM DVB_NETWORK;
+DELETE FROM STAT_IP;
+DELETE FROM OBJECTS_LINKS;
+DELETE FROM REQUEST_TYPES;
+DELETE FROM PAYSOURCE where PAYSOURCE_ID > 2;
+UPDATE COMPANY SET C_VALUE = '';
+
+DELETE FROM Changelog; commit;
 commit;
+
+drop table IBE$VERSION_HISTORY;
+drop table IBE$TODO;
+DROP SEQUENCE IBE$TODO_ITEM_ID_GEN;
+DROP SEQUENCE IBE$VERSION_HISTORY_ID_GEN;

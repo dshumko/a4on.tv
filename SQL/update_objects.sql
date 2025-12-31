@@ -202,7 +202,7 @@ UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION) VALUES (3, 73, 'Прочее оборудование', '', 0, 'П') MATCHING (O_ID, O_TYPE);
 
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (2, 74, 'Vlan', 'Привязка влана к адресу', 0) MATCHING (O_ID, O_TYPE);
-UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (3, 74, 'Дерово групп оборудования', '', 0) MATCHING (O_ID, O_TYPE);
+UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (3, 74, 'Дерево групп оборудования', '', 0) MATCHING (O_ID, O_TYPE);
 
 UPDATE OR INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED) VALUES (1, 78, 'Тариф электроэнергии', 'Ежемесмячный тариф на электроэнергию', 0) MATCHING (O_ID, O_TYPE);
 commit;
@@ -632,6 +632,24 @@ begin
     VALUES (:s, '', 'STRING', NULL, 'урл прокси для загрузки епг http://api.a4on.net/epg/')
     MATCHING (VAR_NAME);
 	
+  s = 'REQUEST_ALLOW_EMPTY_PHONE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Разрешить создавать заявку без указания телефона')
+    MATCHING (VAR_NAME);
+
+  s = 'REQUEST_SINGLE_GIVE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'В заявке форма выдачи для ОДНОГО матирала')
+    MATCHING (VAR_NAME);
+
+  s = 'SAVE_DAILY_MAT_REMAIN';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'При закрытии дня сохранять остатки материалов')
+    MATCHING (VAR_NAME);
+
 end;
 
 COMMIT;

@@ -77,6 +77,7 @@ object SelectOneForm: TSelectOneForm
         FieldName = 'O_TYPE'
         Footers = <>
         Title.Caption = #1058#1080#1087
+        Title.TitleButton = True
         Width = 25
       end
       item
@@ -86,6 +87,7 @@ object SelectOneForm: TSelectOneForm
         FieldName = 'Account_No'
         Footers = <>
         Title.Caption = #1051#1080#1094#1077#1074#1086#1081' / '#1053#1086#1084#1077#1088
+        Title.TitleButton = True
         Width = 90
       end
       item
@@ -95,6 +97,7 @@ object SelectOneForm: TSelectOneForm
         FieldName = 'FIO'
         Footers = <>
         Title.Caption = #1060#1048#1054' / '#1053#1072#1079#1074#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 128
       end
       item
@@ -104,6 +107,7 @@ object SelectOneForm: TSelectOneForm
         FieldName = 'FLAT_NO'
         Footers = <>
         Title.Caption = #1050#1074'.'
+        Title.TitleButton = True
         Width = 39
       end
       item
@@ -113,6 +117,7 @@ object SelectOneForm: TSelectOneForm
         FieldName = 'CUST_STATE_DESCR'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 195
       end>
     object RowDetailData: TRowDetailPanelControlEh

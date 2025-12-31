@@ -1309,6 +1309,7 @@ object EquipEditForm: TEquipEditForm
         '  or (exists(select f.Node_Id from Node_Flats f where f.Node_Id ' +
         '= n.Node_Id and f.House_Id = :HOUSE_ID and f.Flat_No is null))'
       '  or ((not :NODE_ID is null) and (n.Node_Id = :NODE_ID))'
+      '  or (n.lat = 999 and n.lon = 999)'
       'order by 2')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

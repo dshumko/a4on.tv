@@ -28,6 +28,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1043#1088#1091#1087#1087#1072
+        Title.TitleButton = True
         Width = 105
       end
       item
@@ -37,6 +38,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
         FieldName = 'NAME'
         Footers = <>
         Title.Caption = #1050#1086#1084#1072#1085#1076#1072
+        Title.TitleButton = True
         Width = 101
       end
       item
@@ -55,6 +57,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
           'SNMP'
           'HTTP')
         Title.Caption = #1058#1080#1087
+        Title.TitleButton = True
         Width = 38
       end
       item
@@ -65,6 +68,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
         FieldName = 'IN_GUI'
         Footers = <>
         Title.Caption = #1042#1099#1087#1086#1083#1085#1103#1090#1100' '#1080#1079' '#1055#1054
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -81,6 +85,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 90
       end>
   end

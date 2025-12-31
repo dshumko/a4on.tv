@@ -44,6 +44,7 @@ object FlatsAddForm: TFlatsAddForm
         FieldName = 'PorchCount'
         Footers = <>
         Title.Caption = #1055#1086#1076#1098#1077#1079#1076'|'#1050#1086#1083'-'#1074#1086
+        Title.TitleButton = True
         Width = 66
       end
       item
@@ -54,6 +55,7 @@ object FlatsAddForm: TFlatsAddForm
         FieldName = 'PorchFrom'
         Footers = <>
         Title.Caption = #1055#1086#1076#1098#1077#1079#1076'|'#1053#1091#1084#1077#1088#1086#1074#1072#1090#1100' '#1089
+        Title.TitleButton = True
         Width = 82
       end
       item
@@ -64,6 +66,7 @@ object FlatsAddForm: TFlatsAddForm
         FieldName = 'FloorCount'
         Footers = <>
         Title.Caption = #1069#1090#1072#1078#1080'|'#1050#1086#1083'-'#1074#1086
+        Title.TitleButton = True
         Width = 68
       end
       item
@@ -74,6 +77,7 @@ object FlatsAddForm: TFlatsAddForm
         FieldName = 'FloorFrom'
         Footers = <>
         Title.Caption = #1069#1090#1072#1078#1080'|'#1053#1091#1084#1077#1088#1086#1074#1072#1090#1100' '#1089
+        Title.TitleButton = True
         Width = 84
       end
       item
@@ -84,6 +88,7 @@ object FlatsAddForm: TFlatsAddForm
         FieldName = 'FlatsCount'
         Footers = <>
         Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099'|'#1085#1072' '#1101#1090#1072#1078#1077
+        Title.TitleButton = True
         Width = 68
       end
       item
@@ -94,6 +99,7 @@ object FlatsAddForm: TFlatsAddForm
         FieldName = 'FlatsFrom'
         Footers = <>
         Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099'|'#1053#1091#1084#1077#1088#1086#1074#1072#1090#1100' '#1089
+        Title.TitleButton = True
         Width = 80
       end>
     object RowDetailData: TRowDetailPanelControlEh

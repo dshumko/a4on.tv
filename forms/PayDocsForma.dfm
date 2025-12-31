@@ -133,6 +133,7 @@ object PayDocsForm: TPayDocsForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1057#1091#1084#1084#1072' '#1074#1085#1077#1089#1077#1085#1085#1099#1093' '#1087#1083#1072#1090#1077#1078#1077#1081
+          Title.TitleButton = True
           Width = 72
         end
         item
@@ -159,6 +160,7 @@ object PayDocsForm: TPayDocsForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1057#1091#1084#1084#1072' '#1087#1083#1072#1090#1077#1078#1077#1081' '#1085#1072' '#1089#1095#1077#1090#1072' '#1072#1073#1086#1085'.'
+          Title.TitleButton = True
           Width = 80
         end
         item

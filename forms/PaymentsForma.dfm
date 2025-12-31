@@ -514,6 +514,7 @@ object PaymentsForm: TPaymentsForm
           Footer.ValueType = fvtStaticText
           Footers = <>
           Title.Caption = #1054#1096#1080#1073#1082#1072
+          Title.TitleButton = True
           Width = 118
         end
         item
@@ -523,6 +524,7 @@ object PaymentsForm: TPaymentsForm
           FieldName = 'LINE'
           Footers = <>
           Title.Caption = #1057#1090#1088#1086#1082#1072' '#1089' '#1086#1096#1080#1073#1082#1086#1081
+          Title.TitleButton = True
           Width = 462
         end
         item
@@ -533,6 +535,7 @@ object PaymentsForm: TPaymentsForm
           FieldName = 'PAY_DATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1087#1083#1072#1090#1077#1078#1072
+          Title.TitleButton = True
           Width = 79
         end
         item
@@ -544,6 +547,7 @@ object PaymentsForm: TPaymentsForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1057#1091#1084#1084#1072
+          Title.TitleButton = True
           Width = 80
         end>
       object RowDetailData: TRowDetailPanelControlEh

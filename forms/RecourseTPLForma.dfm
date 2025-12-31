@@ -32,6 +32,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1058#1080#1087
+        Title.TitleButton = True
         Width = 116
       end
       item
@@ -41,6 +42,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 572
       end
       item
@@ -100,6 +102,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1057#1086#1076#1077#1088#1078#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 194
         end
         item
@@ -111,6 +114,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
           Footers = <>
           Title.Alignment = taCenter
           Title.Caption = #1047#1072#1103#1074#1082#1072
+          Title.TitleButton = True
           Width = 53
         end
         item
@@ -120,6 +124,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 432
         end>
       object RowDetailData: TRowDetailPanelControlEh

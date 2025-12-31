@@ -37,6 +37,10 @@ type
     trWrite: TpFIBTransaction;
     dsGroup: TpFIBDataSet;
     srcGroup: TDataSource;
+    cbProp: TDBComboBoxEh;
+    lblPCE1: TLabel;
+    ednPCE: TDBNumberEditEh;
+    lblPCE: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
   private
@@ -56,7 +60,6 @@ uses
 function EditMatGroup(var GroupID: Integer; const RootID: Integer = -3): Boolean;
 var
   MatGroupForm: TMatGroupForm;
-  id, pid: Integer;
 begin
   Result := False;
   if (not(dmMain.AllowedAction(rght_Dictionary_Materials) or dmMain.AllowedAction(rght_Dictionary_full))) then
@@ -88,6 +91,11 @@ begin
           lcbLAON.Value := dsGroup['LOAN'];
         if not dsGroup.FieldByName('PARENT_ID').IsNull then
           lcbGR_ID.Value := dsGroup['PARENT_ID'];
+        if not dsGroup.FieldByName('PROP').IsNull then
+          cbProp.Value := dsGroup['PROP'];
+        if not dsGroup.FieldByName('PCE').IsNull then
+          ednPCE.Value := dsGroup['PCE'];
+
 
         dsGroup.Close;
       end
@@ -124,6 +132,14 @@ begin
           dsGroup['PARENT_ID'] := lcbGR_ID.Value
         else
           dsGroup.FieldByName('PARENT_ID').Clear;
+        if not cbProp.Text.IsEmpty then
+          dsGroup['PROP'] := cbProp.Value
+        else
+          dsGroup.FieldByName('PROP').Clear;
+        if not ednPCE.Text.IsEmpty then
+          dsGroup['PCE'] := ednPCE.Value
+        else
+          dsGroup.FieldByName('PCE').Clear;
 
         dsGroup.Post;
         Result := True;

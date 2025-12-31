@@ -152,6 +152,7 @@ object DVBStreamForm: TDVBStreamForm
             Footers = <>
             Title.Caption = 'Bitrate'
             Title.Hint = #1057#1082#1086#1088#1086#1089#1090#1100' '#1087#1086#1090#1086#1082#1072
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -188,6 +189,7 @@ object DVBStreamForm: TDVBStreamForm
             Footers = <>
             Title.Caption = 'NID'
             Title.Hint = #1045#1089#1083#1080' '#1086#1090#1083#1080#1095#1072#1077#1090#1089#1103' '#1086#1090' '#1089#1077#1090#1077#1074#1086#1075#1086
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -197,6 +199,7 @@ object DVBStreamForm: TDVBStreamForm
             Footers = <>
             Title.Caption = 'ONID'
             Title.Hint = #1045#1089#1083#1080' '#1086#1090#1083#1080#1095#1072#1077#1090#1089#1103' '#1086#1090' '#1089#1077#1090#1077#1074#1086#1075#1086
+            Title.TitleButton = True
           end
           item
             AutoFitColWidth = False

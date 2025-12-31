@@ -350,6 +350,7 @@ object HeadEndForm: THeadEndForm
                 Footer.ValueType = fvtCount
                 Footers = <>
                 Title.Caption = #1053#1086#1084#1077#1088
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -358,6 +359,7 @@ object HeadEndForm: THeadEndForm
                 FieldName = 'CH_NAME'
                 Footers = <>
                 Title.Caption = #1050#1072#1085#1072#1083
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -366,6 +368,7 @@ object HeadEndForm: THeadEndForm
                 FieldName = 'CH_FREQ'
                 Footers = <>
                 Title.Caption = #1063#1072#1089#1090#1086#1090#1072
+                Title.TitleButton = True
               end>
             object RowDetailData: TRowDetailPanelControlEh
             end
@@ -498,6 +501,7 @@ object HeadEndForm: THeadEndForm
                 FieldName = 'CH_NUMBER'
                 Footers = <>
                 Title.Caption = #1053#1086#1084#1077#1088
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -506,6 +510,7 @@ object HeadEndForm: THeadEndForm
                 FieldName = 'CH_NAME'
                 Footers = <>
                 Title.Caption = #1050#1072#1085#1072#1083
+                Title.TitleButton = True
               end>
             object RowDetailData: TRowDetailPanelControlEh
             end
@@ -570,6 +575,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1050#1074#1072#1088#1090#1080#1088
             Title.Hint = #1050#1074#1072#1088#1090#1080#1088
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 33
           end
           item
@@ -583,6 +589,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1055#1086#1076#1082#1083'.'
             Title.Hint = #1055#1086#1076#1082#1083'.'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 32
           end
           item
@@ -595,6 +602,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1054#1090#1082#1083'.'
             Title.Hint = #1054#1090#1082#1083'.'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 27
           end
           item
@@ -604,6 +612,7 @@ object HeadEndForm: THeadEndForm
             FieldName = 'HOUSE_CODE'
             Footers = <>
             Title.Caption = #1050#1086#1076
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -638,6 +647,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1045#1089#1090#1100'|TB'
             Title.Hint = 'TB'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 20
           end
           item
@@ -650,6 +660,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1045#1089#1090#1100'|'#1057#1055#1044
             Title.Hint = #1057#1055#1044
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 23
           end
           item
@@ -662,6 +673,7 @@ object HeadEndForm: THeadEndForm
             Title.Caption = #1045#1089#1090#1100'|'#1062'TB'
             Title.Hint = #1062'TB'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 24
           end>
         object RowDetailData: TRowDetailPanelControlEh

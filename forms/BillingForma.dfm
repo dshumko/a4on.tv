@@ -52,6 +52,7 @@ object BillingForm: TBillingForm
         FieldName = 'ACCOUNT_NO'
         Footers = <>
         Title.Caption = #1051#1080#1094'. '#1089#1095#1077#1090
+        Title.TitleButton = True
       end
       item
         DynProps = <>
@@ -59,6 +60,7 @@ object BillingForm: TBillingForm
         FieldName = 'FIO'
         Footers = <>
         Title.Caption = #1060#1048#1054
+        Title.TitleButton = True
         Width = 120
       end
       item
@@ -67,6 +69,7 @@ object BillingForm: TBillingForm
         FieldName = 'DEBT_SUM'
         Footers = <>
         Title.Caption = #1057#1072#1083#1100#1076#1086
+        Title.TitleButton = True
       end
       item
         DynProps = <>
@@ -81,6 +84,7 @@ object BillingForm: TBillingForm
         FieldName = 'IP_INET'
         Footers = <>
         Title.Caption = 'IP Internet'
+        Title.TitleButton = True
       end
       item
         DynProps = <>
@@ -88,6 +92,7 @@ object BillingForm: TBillingForm
         FieldName = 'ACCOUNT_HEX'
         Footers = <>
         Title.Caption = 'ACCOUNT ID'
+        Title.TitleButton = True
         Width = 68
       end
       item
@@ -96,6 +101,7 @@ object BillingForm: TBillingForm
         FieldName = 'ACCOUNT_NAME'
         Footers = <>
         Title.Caption = 'ACCOUNT'
+        Title.TitleButton = True
         Width = 147
       end
       item
@@ -104,6 +110,7 @@ object BillingForm: TBillingForm
         FieldName = 'UNIT_HEX'
         Footers = <>
         Title.Caption = 'UNIT ID'
+        Title.TitleButton = True
         Width = 60
       end
       item
@@ -112,6 +119,7 @@ object BillingForm: TBillingForm
         FieldName = 'UNIT_NAME'
         Footers = <>
         Title.Caption = 'UNIT NAME'
+        Title.TitleButton = True
         Width = 130
       end
       item
@@ -120,6 +128,7 @@ object BillingForm: TBillingForm
         FieldName = 'PLAN_NAME'
         Footers = <>
         Title.Caption = #1058#1072#1088#1080#1092
+        Title.TitleButton = True
         Width = 139
       end
       item
@@ -128,6 +137,7 @@ object BillingForm: TBillingForm
         FieldName = 'BLOCKED'
         Footers = <>
         Title.Caption = #1041#1083#1086#1082#1080#1088#1086#1074#1082#1072
+        Title.TitleButton = True
       end
       item
         DynProps = <>
@@ -135,6 +145,7 @@ object BillingForm: TBillingForm
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 288
       end
       item
@@ -143,6 +154,7 @@ object BillingForm: TBillingForm
         FieldName = 'STREET'
         Footers = <>
         Title.Caption = #1059#1083#1080#1094#1072
+        Title.TitleButton = True
         Width = 151
       end
       item
@@ -151,6 +163,7 @@ object BillingForm: TBillingForm
         FieldName = 'HOUSE_NO'
         Footers = <>
         Title.Caption = #1044#1086#1084
+        Title.TitleButton = True
       end
       item
         DynProps = <>
@@ -158,6 +171,7 @@ object BillingForm: TBillingForm
         FieldName = 'FLAT_NO'
         Footers = <>
         Title.Caption = #1050#1074'.'
+        Title.TitleButton = True
       end
       item
         DynProps = <>
@@ -165,6 +179,7 @@ object BillingForm: TBillingForm
         FieldName = 'CUST_STATE_DESCR'
         Footers = <>
         Title.Caption = #1057#1090#1072#1091#1089
+        Title.TitleButton = True
         Width = 401
       end>
     object RowDetailData: TRowDetailPanelControlEh

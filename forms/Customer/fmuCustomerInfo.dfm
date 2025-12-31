@@ -68,20 +68,6 @@ object apgCustomerInfo: TapgCustomerInfo
         OnClick = sbRecalcClick
         OnMouseDown = sbRecalcMouseDown
       end
-      object btnAlign: TSpeedButton
-        Left = 2
-        Top = 2
-        Width = 23
-        Height = 13
-        Caption = #1074'/'#1075
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -8
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        OnClick = btnAlignClick
-      end
       object gbSaldo: TGroupBox
         Left = 0
         Top = 0
@@ -89,7 +75,7 @@ object apgCustomerInfo: TapgCustomerInfo
         Height = 60
         Hint = #1057#1072#1083#1100#1076#1086' '#1088#1072#1089#1095#1077#1090#1086#1074
         Align = alTop
-        Caption = '          '#1057#1072#1083#1100#1076#1086' '
+        Caption = #1057#1072#1083#1100#1076#1086' '
         Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -101,8 +87,8 @@ object apgCustomerInfo: TapgCustomerInfo
         object dbtxtDEBT: TDBText
           Left = 2
           Top = 15
-          Width = 99
-          Height = 25
+          Width = 253
+          Height = 22
           Align = alClient
           Alignment = taCenter
           AutoSize = True
@@ -134,8 +120,8 @@ object apgCustomerInfo: TapgCustomerInfo
           object dbtxtPrepay: TDBText
             Left = 0
             Top = 0
-            Width = 84
-            Height = 19
+            Width = 253
+            Height = 21
             Hint = #1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
             Align = alClient
             Alignment = taCenter
@@ -247,6 +233,7 @@ object apgCustomerInfo: TapgCustomerInfo
               FieldName = 'ADDED_BY'
               Footers = <>
               Title.Caption = #1050#1090#1086' '#1076#1086#1073#1072#1074#1080#1083
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -255,6 +242,7 @@ object apgCustomerInfo: TapgCustomerInfo
               FieldName = 'ADDED_ON'
               Footers = <>
               Title.Caption = #1050#1086#1075#1076#1072' '#1076#1086#1073#1072#1074#1080#1083
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -289,7 +277,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 96
             Top = 0
             Width = 21
-            Height = 13
+            Height = 18
             Align = alLeft
             Caption = '       '
           end
@@ -315,7 +303,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 218
             Top = 0
             Width = 21
-            Height = 13
+            Height = 18
             Align = alRight
             Caption = '       '
           end
@@ -337,11 +325,26 @@ object apgCustomerInfo: TapgCustomerInfo
       Width = 240
       Height = 229
       Align = alClient
-      Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '
+      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '
       TabOrder = 1
       DesignSize = (
         240
         229)
+      object btnAlign: TSpeedButton
+        Left = 214
+        Top = 0
+        Width = 23
+        Height = 13
+        Anchors = [akTop, akRight]
+        Caption = #1074'/'#1075
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        OnClick = btnAlignClick
+      end
       object memCustNotice: TDBMemoEh
         Left = 2
         Top = 15

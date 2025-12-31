@@ -329,7 +329,8 @@ begin
       if not pf.dsMemPayment.FieldByName('pay_sum').IsNull then
         aPaySum := pf.dsMemPayment['pay_sum'];
 
-      pf.AfterSave(pf.dsMemPayment['payment_id']);
+      if not pf.dsMemPayment.FieldByName('payment_id').IsNull then
+        pf.AfterSave(pf.dsMemPayment['payment_id']);
     end;
     // pf.dsMemPayment.Close;
   finally
@@ -848,12 +849,12 @@ begin
           ChequeInfo.ADDRESS := PWCHAR(Format(rsPrintCheckAdrWOF, [FCustomerRecord.Street, FCustomerRecord.HOUSE_NO]));
 
         if (dmMain.GetSettingsValue('EMAIL_CHECK') = '1') then
-          pass := FCustomerRecord.Email
+          pass := ';' + FCustomerRecord.Email
         else
         begin
           pass := AtrStrUtils.CorrectPhone(FCustomerRecord.mobile, dmMain.CompanyCountry);
-          // if not FCustomerRecord.Email.IsEmpty then
-          // pass := pass + ';' + FCustomerRecord.Email
+          if not FCustomerRecord.Email.IsEmpty then
+            pass := pass + ';' + FCustomerRecord.Email
         end;
         ChequeInfo.Notify := PWCHAR(pass);
 

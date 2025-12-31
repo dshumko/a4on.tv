@@ -37,6 +37,7 @@ object apgNodeAttributes: TapgNodeAttributes
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1040#1090#1088#1080#1073#1091#1090
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -45,6 +46,7 @@ object apgNodeAttributes: TapgNodeAttributes
         FieldName = 'NA_VALUE'
         Footers = <>
         Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -53,6 +55,7 @@ object apgNodeAttributes: TapgNodeAttributes
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 189
       end>
     object RowDetailData: TRowDetailPanelControlEh

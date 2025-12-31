@@ -75,6 +75,16 @@ inherited ElectroPointForm: TElectroPointForm
         CellButtons = <>
         DynProps = <>
         EditButtons = <>
+        FieldName = 'T_NAME'
+        Footers = <>
+        Title.Caption = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082' '#1090#1072#1088#1080#1092#1072
+        Title.TitleButton = True
+        Width = 68
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
@@ -224,18 +234,25 @@ inherited ElectroPointForm: TElectroPointForm
       Anchors = [akTop, akRight]
       Caption = #1044#1072#1090#1072' '#1089#1074#1077#1088#1082#1080
     end
+    object lbl211: TLabel [5]
+      Left = 286
+      Top = 58
+      Width = 102
+      Height = 13
+      Caption = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082' '#1090#1072#1088#1080#1092#1072
+    end
     inherited btnSaveLink: TBitBtn
       Left = 82
       Top = 135
       Width = 744
-      TabOrder = 5
+      TabOrder = 6
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
       Top = 135
       Width = 98
       Cancel = True
-      TabOrder = 6
+      TabOrder = 7
     end
     object edtName: TDBEditEh
       Left = 82
@@ -265,7 +282,7 @@ inherited ElectroPointForm: TElectroPointForm
       EditButtons = <>
       EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077' '#1090#1086#1095#1082#1080
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 5
       Visible = True
       WantReturns = True
     end
@@ -306,9 +323,8 @@ inherited ElectroPointForm: TElectroPointForm
     object edtO_NAME: TDBEditEh
       Left = 82
       Top = 55
-      Width = 639
+      Width = 191
       Height = 21
-      Anchors = [akLeft, akTop, akRight]
       DataField = 'ECOUNTER'
       DataSource = srcDataSource
       DynProps = <>
@@ -331,6 +347,40 @@ inherited ElectroPointForm: TElectroPointForm
       EditButtons = <>
       Kind = dtkDateEh
       ShowHint = True
+      TabOrder = 4
+      Visible = True
+    end
+    object lcbTarif: TDBLookupComboboxEh
+      Left = 394
+      Top = 55
+      Width = 319
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = 'O_CHARFIELD'
+      DataSource = srcDataSource
+      DropDownBox.Columns = <
+        item
+          FieldName = 'O_NAME'
+          Width = 80
+        end
+        item
+          FieldName = 'O_DESCRIPTION'
+          Width = 20
+        end>
+      DropDownBox.ListSource = srcTarif
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1058#1072#1088#1080#1092' ('#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080' - '#1093#1088#1086#1085'. '#1076#1072#1085#1085#1099#1077')'
+      EditButtons = <>
+      KeyField = 'O_ID'
+      ListField = 'O_NAME'
+      ListSource = srcTarif
+      ShowHint = True
+      Style = csDropDownEh
       TabOrder = 3
       Visible = True
     end
@@ -683,7 +733,7 @@ inherited ElectroPointForm: TElectroPointForm
         object lbl4: TLabel
           Left = 0
           Top = 0
-          Width = 185
+          Width = 124
           Height = 13
           Align = alTop
           Caption = #1048#1089#1090#1086#1088#1080#1103' '#1087#1086#1082#1072#1079#1072#1085#1080#1081' '#1091#1079#1083#1072
@@ -734,8 +784,8 @@ inherited ElectroPointForm: TElectroPointForm
   end
   inherited actions: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 406
-    Top = 64
+    Left = 230
+    Top = 112
     inherited actNew: TAction
       OnExecute = actNewExecute
     end
@@ -796,7 +846,7 @@ inherited ElectroPointForm: TElectroPointForm
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 76, :O_ID, :O_Name, :O_Descript' +
-        'ion, :ECOUNTER, 0, null, :O_Numericfield, :O_DATEFIELD)')
+        'ion, :ECOUNTER, 0, :O_CHARFIELD, :O_Numericfield, :O_DATEFIELD)')
     DeleteSQL.Strings = (
       
         'execute procedure Objects_Iud(2, 76, :O_ID, :O_Name, :O_Descript' +
@@ -804,14 +854,25 @@ inherited ElectroPointForm: TElectroPointForm
     InsertSQL.Strings = (
       
         'execute procedure Objects_Iud(0, 76, :O_ID, :O_Name, :O_Descript' +
-        'ion, :ECOUNTER, 0, null, :O_Numericfield, :O_DATEFIELD)')
+        'ion, :ECOUNTER, 0, :O_CHARFIELD, :O_Numericfield, :O_DATEFIELD)')
     RefreshSQL.Strings = (
       'select'
       '    o.O_ID'
       '  , o.O_TYPE'
       '  , o.O_NAME'
       '  , o.O_DESCRIPTION'
-      '  , o.O_DATEFIELD '
+      '  , o.O_DATEFIELD'
+      '  , o.O_CHARFIELD   '
+      '  , et.O_NAME|| coalesce('#39' / '#39' ||(select'
+      '                                    avg(oh.Nvalue)'
+      '                                  from Objects_History oh'
+      '                                  where oh.O_Type = 78'
+      '                                        and oh.O_Id = et.O_Id'
+      
+        '                                        and oh.Hdate between Mon' +
+        'th_First_Day(current_date) and Month_Last_Day(current_date)), '#39#39 +
+        ')   '
+      '    T_NAME'
       
         '  , cast(coalesce(o.O_NUMERICFIELD, 0) as integer) O_NUMERICFIEL' +
         'D'
@@ -838,6 +899,9 @@ inherited ElectroPointForm: TElectroPointForm
       
         '       left outer join OBJECTS er on (er.O_Id = o.O_Numericfield' +
         ' and er.O_Type = 77)'
+      
+        '       left outer join OBJECTS et on (et.O_Id = o.O_CHARFIELD an' +
+        'd et.O_Type = 78)'
       '  where o.O_TYPE = 76'
       '        and o.o_DELETED = 0'
       '        and o.O_ID = :OLD_O_ID')
@@ -847,7 +911,18 @@ inherited ElectroPointForm: TElectroPointForm
       '  , o.O_TYPE'
       '  , o.O_NAME'
       '  , o.O_DESCRIPTION'
-      '  , o.O_DATEFIELD '
+      '  , o.O_DATEFIELD'
+      '  , o.O_CHARFIELD   '
+      '  , et.O_NAME || coalesce('#39' / '#39' ||(select'
+      '                                    avg(oh.Nvalue)'
+      '                                  from Objects_History oh'
+      '                                  where oh.O_Type = 78'
+      '                                        and oh.O_Id = et.O_Id'
+      
+        '                                        and oh.Hdate between Mon' +
+        'th_First_Day(current_date) and Month_Last_Day(current_date)), '#39#39 +
+        ')   '
+      '    T_NAME'
       
         '  , cast(coalesce(o.O_NUMERICFIELD, 0) as integer) O_NUMERICFIEL' +
         'D'
@@ -874,6 +949,9 @@ inherited ElectroPointForm: TElectroPointForm
       
         '       left outer join OBJECTS er on (er.O_Id = o.O_Numericfield' +
         ' and er.O_Type = 77)'
+      
+        '       left outer join OBJECTS et on (et.O_Id = o.O_CHARFIELD an' +
+        'd et.O_Type = 78)'
       '  where o.O_TYPE = 76'
       '        and o.o_DELETED = 0'
       '  order by o.O_NAME')
@@ -926,8 +1004,8 @@ inherited ElectroPointForm: TElectroPointForm
   end
   object srcERecipient: TDataSource
     DataSet = dsERecipient
-    Left = 542
-    Top = 320
+    Left = 518
+    Top = 384
   end
   object srcHistory: TDataSource
     DataSet = dsHistory
@@ -938,11 +1016,13 @@ inherited ElectroPointForm: TElectroPointForm
     UpdateSQL.Strings = (
       'UPDATE OBJECTS_HISTORY'
       'SET '
-      '    NVALUE = :NVALUE'
+      '    NVALUE = :NVALUE,'
+      '    DVALUE = :DVALUE,'
+      '    NOTICE = :NOTICE,'
+      '    HDATE = :HDATE'
       'WHERE'
-      '    O_ID = :O_ID'
-      '    and O_TYPE = :O_TYPE'
-      '    and HDATE = :HDATE    ')
+      '    HID = :OLD_HID'
+      '    ')
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    OBJECTS_HISTORY'
@@ -1094,8 +1174,8 @@ inherited ElectroPointForm: TElectroPointForm
     oFetchAll = True
   end
   object mmMenu: TMainMenu
-    Left = 472
-    Top = 65
+    Left = 288
+    Top = 145
     object N18: TMenuItem
       Caption = #1057#1087#1080#1089#1086#1082' '#1058#1059#1069
       GroupIndex = 5
@@ -1200,5 +1280,36 @@ inherited ElectroPointForm: TElectroPointForm
     DataSet = dsNodePce
     Left = 849
     Top = 414
+  end
+  object dsTarif: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    o.O_Id'
+      '  , o.O_Name || coalesce('#39' / '#39' ||(select'
+      '                                    avg(oh.Nvalue)'
+      '                                  from Objects_History oh'
+      '                                  where oh.O_Type = 78'
+      '                                        and oh.O_Id = o.O_Id'
+      
+        '                                        and oh.Hdate between Mon' +
+        'th_First_Day(current_date) and Month_Last_Day(current_date)), '#39#39 +
+        ') O_Name'
+      '  , o.O_DESCRIPTION'
+      '  from objects o'
+      '  where o.O_Type = 78'
+      '        and coalesce(o.O_Deleted, 0) <> 1'
+      '  order by o.O_Name')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 633
+    Top = 424
+    oFetchAll = True
+  end
+  object srcTarif: TDataSource
+    AutoEdit = False
+    DataSet = dsTarif
+    Left = 630
+    Top = 376
   end
 end

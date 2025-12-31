@@ -88,6 +88,7 @@ object NodeLayoutFactForm: TNodeLayoutFactForm
         HideDuplicates = True
         ReadOnly = True
         Title.Caption = #1055#1086#1079#1080#1094#1080#1103
+        Title.TitleButton = True
       end
       item
         CellButtons = <>

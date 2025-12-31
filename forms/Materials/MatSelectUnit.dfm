@@ -70,6 +70,7 @@ object MaterialsSelect: TMaterialsSelect
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
+          Title.TitleButton = True
           Width = 198
         end
         item
@@ -80,6 +81,7 @@ object MaterialsSelect: TMaterialsSelect
           FieldName = 'DIMENSION'
           Footers = <>
           Title.Caption = #1045#1076'. '#1080#1079#1084'.'
+          Title.TitleButton = True
           Width = 53
         end
         item
@@ -90,6 +92,7 @@ object MaterialsSelect: TMaterialsSelect
           FieldName = 'COST'
           Footers = <>
           Title.Caption = #1062#1077#1085#1072
+          Title.TitleButton = True
           Width = 62
         end
         item
@@ -99,6 +102,7 @@ object MaterialsSelect: TMaterialsSelect
           FieldName = 'MG_NAME'
           Footers = <>
           Title.Caption = #1043#1088#1091#1087#1087#1072
+          Title.TitleButton = True
           Width = 112
         end
         item
@@ -108,6 +112,7 @@ object MaterialsSelect: TMaterialsSelect
           FieldName = 'M_NUMBER'
           Footers = <>
           Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+          Title.TitleButton = True
           Width = 88
         end
         item
@@ -117,6 +122,7 @@ object MaterialsSelect: TMaterialsSelect
           FieldName = 'DESCRIPTION'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 151
         end>
       object RowDetailData: TRowDetailPanelControlEh

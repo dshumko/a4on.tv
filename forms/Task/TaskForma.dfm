@@ -127,6 +127,7 @@ inherited TaskForm: TTaskForm
         FieldName = 'ID'
         Footers = <>
         Title.Caption = #1048#1044' '#1079#1072#1076#1072#1095#1080
+        Title.TitleButton = True
         Width = 65
       end>
     inherited RowDetailData: TRowDetailPanelControlEh
@@ -213,6 +214,7 @@ inherited TaskForm: TTaskForm
                 FieldName = 'OBJ_INFO'
                 Footers = <>
                 Title.Caption = #1048#1085#1092#1086' '#1087#1086' '#1086#1073#1098#1077#1082#1090#1091
+                Title.TitleButton = True
                 Width = 168
               end>
             object RowDetailData: TRowDetailPanelControlEh

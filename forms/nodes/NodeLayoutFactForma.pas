@@ -210,7 +210,6 @@ end;
 procedure TNodeLayoutFactForm.SaveLayoutInDB;
 var
   vMatList: string;
-  r, t: TStringDynArray;
   i: Integer;
   o, n: Double;
 begin

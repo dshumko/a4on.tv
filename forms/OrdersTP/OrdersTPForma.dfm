@@ -224,6 +224,7 @@ object OrdersTPForm: TOrdersTPForm
           FieldName = 'CANCEL_TIME'
           Footers = <>
           Title.Caption = #1054#1090#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -232,6 +233,7 @@ object OrdersTPForm: TOrdersTPForm
           FieldName = 'CANCEL_RESON'
           Footers = <>
           Title.Caption = #1054#1090#1084#1077#1085#1077#1085'|'#1055#1088#1080#1095#1080#1085#1072
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

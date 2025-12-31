@@ -461,6 +461,7 @@ object PaymentDocForm: TPaymentDocForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1050#1086#1084#1080#1089#1089#1080#1103
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -469,6 +470,7 @@ object PaymentDocForm: TPaymentDocForm
           FieldName = 'PHONE'
           Footers = <>
           Title.Caption = #1058#1077#1083#1077#1092#1086#1085#1099
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -484,6 +486,7 @@ object PaymentDocForm: TPaymentDocForm
           FieldName = 'DEBT_SAVE'
           Footers = <>
           Title.Caption = #1057#1072#1083#1100#1076#1086' '#1076#1086
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -492,6 +495,7 @@ object PaymentDocForm: TPaymentDocForm
           FieldName = 'BAL_SAVE'
           Footers = <>
           Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -919,6 +923,7 @@ object PaymentDocForm: TPaymentDocForm
           Footer.ValueType = fvtStaticText
           Footers = <>
           Title.Caption = #1054#1096#1080#1073#1082#1072
+          Title.TitleButton = True
           Width = 193
         end
         item
@@ -928,6 +933,7 @@ object PaymentDocForm: TPaymentDocForm
           FieldName = 'LINE'
           Footers = <>
           Title.Caption = #1057#1090#1088#1086#1082#1072' '#1089' '#1086#1096#1080#1073#1082#1086#1081
+          Title.TitleButton = True
           Width = 231
         end
         item
@@ -938,6 +944,7 @@ object PaymentDocForm: TPaymentDocForm
           FieldName = 'PAY_DATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1087#1083#1072#1090#1077#1078#1072
+          Title.TitleButton = True
           Width = 110
         end
         item
@@ -949,6 +956,7 @@ object PaymentDocForm: TPaymentDocForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1057#1091#1084#1084#1072
+          Title.TitleButton = True
           Width = 107
         end>
       object RowDetailData: TRowDetailPanelControlEh

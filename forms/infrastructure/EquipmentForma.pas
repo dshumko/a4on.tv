@@ -509,7 +509,6 @@ procedure TEquipmentForm.dbGridDataGroupGetRowText(Sender: TCustomDBGridEh;
   GroupDataTreeNode: TGroupDataTreeNodeEh; var GroupRowText: string);
 var
  i : Integer;
- s: string;
 begin
   inherited;
   i := Pos(': ',  GroupRowText);

@@ -101,6 +101,7 @@ object apgCustomerBalance: TapgCustomerBalance
         Footers = <>
         HideDuplicates = True
         Title.Caption = #1043#1086#1076
+        Title.TitleButton = True
         Visible = False
         Width = 10
       end
@@ -114,6 +115,7 @@ object apgCustomerBalance: TapgCustomerBalance
         Footers = <>
         HideDuplicates = True
         Title.Caption = #1052#1077#1089#1103#1094
+        Title.TitleButton = True
         Visible = False
         Width = 5
       end
@@ -128,6 +130,7 @@ object apgCustomerBalance: TapgCustomerBalance
         Footers = <>
         HideDuplicates = True
         Title.Caption = #1044#1072#1090#1072
+        Title.TitleButton = True
         Width = 66
       end
       item
@@ -138,6 +141,7 @@ object apgCustomerBalance: TapgCustomerBalance
         FieldName = 'B_DESCRIPTION'
         Footers = <>
         Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 206
       end
       item
@@ -148,6 +152,7 @@ object apgCustomerBalance: TapgCustomerBalance
         FieldName = 'DEBT'
         Footers = <>
         Title.Caption = #1041#1072#1083#1072#1085#1089' '#1076#1086
+        Title.TitleButton = True
         Width = 82
       end
       item
@@ -160,6 +165,7 @@ object apgCustomerBalance: TapgCustomerBalance
         Footers = <>
         Title.Caption = #1057#1091#1084#1084#1072
         Title.Hint = #1057#1091#1084#1084#1072' '#1089#1087#1080#1089#1072#1085#1080#1103' / '#1086#1087#1083#1072#1090#1099
+        Title.TitleButton = True
         Width = 81
       end
       item
@@ -170,6 +176,7 @@ object apgCustomerBalance: TapgCustomerBalance
         FieldName = 'DEBT_A'
         Footers = <>
         Title.Caption = #1041#1072#1083#1072#1085#1089' '#1087#1086#1089#1083#1077
+        Title.TitleButton = True
         Width = 89
       end
       item

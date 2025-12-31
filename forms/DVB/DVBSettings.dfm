@@ -156,6 +156,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'VPID'
               Footers = <>
               Title.Caption = 'Video PID'
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -164,6 +165,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'APID'
               Footers = <>
               Title.Caption = 'Audio PID'
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -172,6 +174,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'A2PID'
               Footers = <>
               Title.Caption = 'Audio sec. PID'
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -181,6 +184,7 @@ object DVBSettinsForm: TDVBSettinsForm
               Footer.ValueType = fvtSum
               Footers = <>
               Title.Caption = 'Bitrate'
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -189,6 +193,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'CNID'
               Footers = <>
               Title.Caption = 'NID'
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -197,6 +202,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'CONID'
               Footers = <>
               Title.Caption = 'ONID'
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -262,6 +268,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'minage'
               Footers = <>
               Title.Caption = #1052#1080#1085'. '#1074#1086#1079#1088#1072#1089#1090
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -346,6 +353,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'PIDS'
               Footers = <>
               Title.Caption = 'PIDs'
+              Title.TitleButton = True
             end
             item
               AutoFitColWidth = False
@@ -366,6 +374,7 @@ object DVBSettinsForm: TDVBSettinsForm
               FieldName = 'LANG'
               Footers = <>
               Title.Caption = #1054#1089#1085#1086#1074#1085#1086#1081' '#1103#1079#1099#1082' '#1089#1077#1090#1080
+              Title.TitleButton = True
               Width = 65
             end
             item
@@ -1053,6 +1062,7 @@ object DVBSettinsForm: TDVBSettinsForm
             FieldName = 'SRC_NAME'
             Footers = <>
             Title.Caption = #1048#1089#1090#1086#1095#1085#1080#1082' '#1076#1083#1103' DVB'
+            Title.TitleButton = True
             Width = 78
           end
           item
@@ -1062,6 +1072,7 @@ object DVBSettinsForm: TDVBSettinsForm
             FieldName = 'CARD_NAME'
             Footers = <>
             Title.Caption = #1048#1089#1090#1086#1095#1085#1080#1082' '#1082#1072#1088#1090#1086#1095#1082#1072
+            Title.TitleButton = True
             Width = 55
           end
           item
@@ -1071,6 +1082,7 @@ object DVBSettinsForm: TDVBSettinsForm
             FieldName = 'IP'
             Footers = <>
             Title.Caption = 'IP '#1080#1089#1090#1086#1095#1085#1080#1082#1072
+            Title.TitleButton = True
             Width = 59
           end
           item

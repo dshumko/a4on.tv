@@ -178,6 +178,7 @@ object apgNodeMaterials: TapgNodeMaterials
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090
+        Title.TitleButton = True
         Width = 81
       end>
     object RowDetailData: TRowDetailPanelControlEh

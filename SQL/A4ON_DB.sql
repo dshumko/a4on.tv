@@ -129,6 +129,9 @@ NUMERIC(18,0);
 CREATE DOMAIN D_N18_5 AS
 NUMERIC(18,5);
 
+CREATE DOMAIN D_N18_6 AS
+NUMERIC(18,6);
+
 CREATE DOMAIN D_NAME AS
 VARCHAR(50)
 NOT NULL;
@@ -292,13 +295,13 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 886752;
+SET GENERATOR GEN_OPERATIONS_UID TO 886758;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_ORDER_TP TO 0;
 
 CREATE GENERATOR GEN_PAYMENT START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_PAYMENT TO 238506;
+SET GENERATOR GEN_PAYMENT TO 238511;
 
 CREATE GENERATOR GEN_QUEUE START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_QUEUE TO 50001115;
@@ -319,7 +322,7 @@ CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 5063072;
+SET GENERATOR G_LOG_ID TO 5063132;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -2227,7 +2230,8 @@ END;
 
 
 CREATE OR ALTER PROCEDURE GET_ER_PAY_STATISTIC (
-    ER_ID D_INTEGER)
+    ER_ID D_INTEGER,
+    PAY_DATE D_DATE = null)
 RETURNS (
     O_ID D_INTEGER,
     O_TYPE D_INTEGER,
@@ -2243,7 +2247,8 @@ RETURNS (
     DIF_PCE D_DOUBLE,
     F_PCE_S D_DOUBLE,
     DIF_PCE_S D_DOUBLE,
-    HID D_INTEGER)
+    HID D_INTEGER,
+    PAY_MONTH D_DATE)
 AS
 BEGIN
   SUSPEND;
@@ -2252,14 +2257,13 @@ END;
 
 
 CREATE OR ALTER PROCEDURE GET_ER_STATISTIC (
-    ER_ID D_INTEGER)
+    ER_ID D_INTEGER,
+    FOR_DATE D_DATE)
 RETURNS (
     O_ID D_INTEGER,
     O_TYPE D_INTEGER,
-    HDATE D_DATE,
     PAY_SUM D_N18_5,
     PAY_PCE D_DOUBLE,
-    NOTICE D_VARCHAR1000,
     RATE D_DOUBLE,
     DAYS D_SMALLINT,
     F_CNTR D_N18_5,
@@ -2267,8 +2271,7 @@ RETURNS (
     F_CNTR_PCE D_N18_5,
     DIF_PCE D_DOUBLE,
     F_PCE_S D_DOUBLE,
-    DIF_PCE_S D_DOUBLE,
-    HID D_INTEGER)
+    DIF_PCE_S D_DOUBLE)
 AS
 BEGIN
   SUSPEND;
@@ -2941,6 +2944,16 @@ END;
 
 
 
+CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC_TEST (
+    REC_M_ID TYPE OF UID,
+    FOR_WH TYPE OF UID = null)
+AS
+BEGIN
+  EXIT;
+END;
+
+
+
 CREATE OR ALTER PROCEDURE MATERIAL_UNIT_MOVE (
     RQ_ID UID,
     WH_ID UID,
@@ -2966,7 +2979,9 @@ RETURNS (
     M_DOC D_VARCHAR255,
     QUANT D_N15_5,
     DOC_ID D_INTEGER,
-    SERIAL D_SERIAL_NS)
+    SERIAL D_SERIAL_NS,
+    QUANT_BEFORE D_N15_5,
+    WH_ID D_INTEGER)
 AS
 BEGIN
   SUSPEND;
@@ -3099,6 +3114,25 @@ RETURNS (
 AS
 BEGIN
   SUSPEND;
+END;
+
+
+
+CREATE OR ALTER PROCEDURE OBJECT_WL_IUD (
+    P_ACTION D_INTEGER,
+    O_TYPE D_INTEGER,
+    O_ID TYPE OF UID,
+    O_NAME D_VARCHAR50,
+    LINK_TYPE D_INTEGER = null,
+    PARENT_ID D_INTEGER = null,
+    O_DESCRIPTION D_NOTICE = null,
+    O_DIMENSION D_VARCHAR50 = null,
+    O_DELETED D_INTEGER = 0,
+    O_CHECK D_VARCHAR255 = null,
+    O_NUMERICFIELD D_N15_3 = null)
+AS
+BEGIN
+  EXIT;
 END;
 
 
@@ -3787,7 +3821,8 @@ CREATE OR ALTER PROCEDURE TARIF_IUD (
     P_TARIF_SUM D_N15_2,
     P_TARIF_JUR D_N15_2,
     P_ACTION D_INTEGER,
-    P_VAT D_N15_2 = 0)
+    P_VAT D_N15_2 = 0,
+    PARTNER_TARIF D_N15_2 = null)
 AS
 BEGIN
   EXIT;
@@ -3942,6 +3977,20 @@ CREATE OR ALTER FUNCTION GET_JSON_VALUE (
     JSON D_PATH,
     PARAM D_VARCHAR50)
 RETURNS D_VARCHAR255 DETERMINISTIC
+AS
+BEGIN
+  RETURN NULL;
+END;
+
+
+
+
+
+CREATE OR ALTER FUNCTION GET_MAT_REMAIN_FOR_DATE (
+    FOR_MID UID,
+    FOR_WH UID,
+    FOR_DATE DATE = null)
+RETURNS D_N15_5
 AS
 BEGIN
   RETURN NULL;
@@ -5336,7 +5385,7 @@ CREATE TABLE MATERIAL_UNIT (
 
 CREATE TABLE MATERIALS (
     M_ID             UID NOT NULL,
-    NAME             D_VARCHAR100,
+    NAME             D_VARCHAR500,
     DIMENSION        D_VARCHAR10,
     DESCRIPTION      D_NOTICE,
     DELETED          D_IBOOLEAN DEFAULT 0,
@@ -5358,7 +5407,8 @@ CREATE TABLE MATERIALS (
     ADDED_ON         D_DATETIME,
     EDIT_BY          D_VARCHAR50,
     EDIT_ON          D_DATETIME,
-    PCE              D_N15_3
+    PCE              D_N15_3,
+    PROP             D_INTEGER
 );
 
 CREATE TABLE MATERIALS_GROUP (
@@ -5370,7 +5420,9 @@ CREATE TABLE MATERIALS_GROUP (
     RENT       D_UID_NULL,
     LOAN       D_UID_NULL,
     PATH       D_VARCHAR1000,
-    DELETED    D_IBOOLEAN
+    DELETED    D_IBOOLEAN,
+    PCE        D_N15_3,
+    PROP       D_INTEGER
 );
 
 CREATE TABLE MATERIALS_IN_DOC (
@@ -5607,7 +5659,7 @@ CREATE TABLE OBJECTS_HISTORY (
     ADDED_ON  D_DATETIME,
     EDIT_BY   D_VARCHAR50,
     EDIT_ON   D_DATETIME,
-    NVALUE    D_N15_5
+    NVALUE    D_N18_6
 );
 
 CREATE TABLE OBJECTS_LINKS (
@@ -5620,7 +5672,8 @@ CREATE TABLE OBJECTS_LINKS (
     ADDED_BY  D_VARCHAR50,
     ADDED_ON  D_DATETIME,
     EDIT_BY   D_VARCHAR50,
-    EDIT_ON   D_DATETIME
+    EDIT_ON   D_DATETIME,
+    PATH      D_VARCHAR1000
 );
 
 CREATE TABLE OBJECTS_TYPE (
@@ -6407,6 +6460,7 @@ CREATE TABLE TARIF (
     DATE_TO        D_DATE DEFAULT '2100-01-01' NOT NULL,
     TARIF_SUM      D_N15_2 NOT NULL,
     TARIF_SUM_JUR  D_N15_2,
+    PARTNER_TARIF  D_N15_2,
     VAT            D_N15_2 DEFAULT 0,
     EDIT_BY        D_VARCHAR100,
     EDIT_ON        D_DATETIME
@@ -7012,6 +7066,7 @@ CREATE INDEX BILLING_IDX_UID ON BILLING (UNIT_ID);
 CREATE INDEX BLOB_TBL_TYPE_OWN ON BLOB_TBL (BL_TYPE, OWNER_ID);
 CREATE INDEX BONUS_RATE_IDX1 ON BONUS_RATE (BT_ID, UNITS_FROM, UNITS_TO);
 CREATE INDEX CHANGELOG_IDX1 ON CHANGELOG (LOG_GROUP, OBJECT_ID);
+CREATE INDEX CHANGELOG_IDX_WHEN ON CHANGELOG (WHEN_CHANGE);
 CREATE INDEX CHANNELS_IDX_FRQ ON CHANNELS (CH_FREQ);
 CREATE INDEX PK_CHANNELS_ID ON CHANNELS (CH_ID);
 CREATE INDEX CHANNEL_SRCP_IDX_CH_ID ON CHANNEL_SRC_PARAM (CH_ID);
@@ -9869,7 +9924,31 @@ begin
     new.Ol_Id = gen_id(GEN_UID, 1);
 
   new.ADDED_BY = current_user;
-  new.ADDED_ON = CAST('NOW' AS timestamp);
+  new.ADDED_ON = cast('NOW' as timestamp);
+
+  if (not new.Pid is null) then begin
+    if (new.Ol_Type = 3) then begin
+      /*
+    new.PATH = (select first 1
+                    path
+                  from (with recursive GroupsTree as (select
+                                                          mp.Mg_Id
+                                                        , mp.Mg_Name as path
+                                                        from MATERIALS_GROUP mp
+                                                        where mp.Parent_Id is null
+                                                      union all
+                                                      select
+                                                          mc.Mg_Id
+                                                        , gt.path || ' > ' || mc.Mg_Name as path
+                                                        from MATERIALS_GROUP mc
+                                                             inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id) select
+                                                                                                                      Mg_Id
+                                                                                                                    , path
+                                                                                                                    from GroupsTree)
+                  where Mg_Id = new.Parent_Id);
+*/
+    end
+  end
 end;
 
 CREATE OR ALTER TRIGGER OBJECTS_LINKS_BU FOR OBJECTS_LINKS
@@ -18799,6 +18878,7 @@ begin
 
   insert into CHANGELOG (LOG_GROUP, ACT, OBJECT_ID, PARAM, VALUE_BEFORE, VALUE_AFTER)
   values ('CLOSE_DAY', 'E', -1, 'CLOSE_DAY_PROC', dateadd(month, -1, :P_DAY), :P_DAY);
+
 end;
 
 
@@ -18835,6 +18915,12 @@ begin
   end
 
   if (type_Id is null) then begin
+    result = 0;
+    suspend;
+    exit;
+  end
+
+  if (doc_date is null) then begin
     result = 0;
     suspend;
     exit;
@@ -22547,7 +22633,8 @@ end;
 
 
 CREATE OR ALTER PROCEDURE GET_ER_PAY_STATISTIC (
-    ER_ID D_INTEGER)
+    ER_ID D_INTEGER,
+    PAY_DATE D_DATE = null)
 RETURNS (
     O_ID D_INTEGER,
     O_TYPE D_INTEGER,
@@ -22563,7 +22650,8 @@ RETURNS (
     DIF_PCE D_DOUBLE,
     F_PCE_S D_DOUBLE,
     DIF_PCE_S D_DOUBLE,
-    HID D_INTEGER)
+    HID D_INTEGER,
+    PAY_MONTH D_DATE)
 AS
 --declare variable CVALUE     D_VARCHAR1000;
 declare variable C_Cntr D_N18_5;
@@ -22576,18 +22664,25 @@ begin
           oh.Hdate
         , oh.Nvalue
         , oh.Notice
-        , trunc(Get_Json_Value(oh.Cvalue, 'rate'), 6) rate
         , trunc(Get_Json_Value(oh.Cvalue, 'pce'), 6) pce
         , oh.Hid
+        , oh.Dvalue
         from Objects_History oh
         where oh.O_Id = :O_ID
               and oh.O_Type = :O_TYPE
               and oh.Deleted = 0
-        order by oh.Hdate desc, HID desc
-      into :HDATE, :PAY_SUM, :NOTICE, :RATE, :PAY_PCE, :HID
+              and (
+                   (:PAY_DATE is null)
+                   or
+                   (oh.Hdate >= month_first_day(:PAY_DATE) and oh.Hdate < DateAdd(month, 1, month_first_day(:PAY_DATE)))
+              )
+        order by Dvalue desc, Hdate desc,  HID desc
+      into :HDATE, :PAY_SUM, :NOTICE, :PAY_PCE, :HID, :PAY_MONTH
   do begin
-    VDATE = Month_First_Day(HDATE);
+    VDATE = Month_First_Day(coalesce(PAY_MONTH, HDATE));
     DAYS = extract(day from Month_Last_Day(VDATE));
+    RATE = null;
+
     -- Показания по счетчикам
     select
         sum(t.CVALUE)
@@ -22617,6 +22712,7 @@ begin
     -- Показания по мощности
     select
         sum(24 * :DAYS * PCE)
+      , avg(RATE)
       from (select
                 cast(coalesce((select
                                    sum(qh.Nvalue)
@@ -22625,12 +22721,32 @@ begin
                                        and qh.Hdate >= :VDATE
                                        and qh.Hdate < dateadd(month, 1, :VDATE)
                                        and qh.O_Id = o.O_Id), 0) as d_N15_4) PCE
+              , coalesce((select
+                              avg(h.Nvalue)
+                            from Objects_History h
+                            where h.O_Id = o.O_Charfield
+                                  and h.O_Type = 78
+                                  and h.Hdate >= :VDATE
+                                  and h.Hdate < dateadd(month, 1, :VDATE)), 0) as RATE
               from OBJECTS o
               where o.O_TYPE = 76
                     and o.o_DELETED = 0
                     and trim(coalesce(o.O_DIMENSION, '')) = ''
                     and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID) t
-    into :F_PCE;
+    into :F_PCE, :RATE;
+
+    -- если тариф не найден, то возьмем первый найденный узла для данного получателя оплат
+    if (RATE is null) then begin
+      select
+          avg(h.Nvalue)
+        from OBJECTS o
+             inner join Objects_History h on (h.O_Id = o.O_Charfield and h.O_Type = 78 and h.Hdate >= :VDATE and h.Hdate < dateadd(month, 1, :VDATE))
+        where o.O_TYPE = 76
+              and o.o_DELETED = 0
+              and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID
+      into :RATE;
+      RATE = coalesce(RATE, 0);
+    end
 
     PAY_PCE = coalesce(PAY_PCE, 0);
     F_PCE = coalesce(F_PCE, 0);
@@ -22647,14 +22763,13 @@ end;
 
 
 CREATE OR ALTER PROCEDURE GET_ER_STATISTIC (
-    ER_ID D_INTEGER)
+    ER_ID D_INTEGER,
+    FOR_DATE D_DATE)
 RETURNS (
     O_ID D_INTEGER,
     O_TYPE D_INTEGER,
-    HDATE D_DATE,
     PAY_SUM D_N18_5,
     PAY_PCE D_DOUBLE,
-    NOTICE D_VARCHAR1000,
     RATE D_DOUBLE,
     DAYS D_SMALLINT,
     F_CNTR D_N18_5,
@@ -22662,87 +22777,114 @@ RETURNS (
     F_CNTR_PCE D_N18_5,
     DIF_PCE D_DOUBLE,
     F_PCE_S D_DOUBLE,
-    DIF_PCE_S D_DOUBLE,
-    HID D_INTEGER)
+    DIF_PCE_S D_DOUBLE)
 AS
 --declare variable CVALUE     D_VARCHAR1000;
 declare variable C_Cntr D_N18_5;
 declare variable P_Cntr D_N18_5;
 declare variable VDATE  D_DATE;
 begin
+  --ER_ID = 1036791;
+  --FOR_DATE ='2025-11-01';
+
+
   O_TYPE = 77; -- Получатель оплаты электроэнергии
   O_ID = ER_ID;
-  for select
-          oh.Hdate
-        , oh.Nvalue
-        , oh.Notice
-        , trunc(Get_Json_Value(oh.Cvalue, 'rate'), 6) rate
-        , trunc(Get_Json_Value(oh.Cvalue, 'pce'), 6) pce
-        , oh.Hid
-        from Objects_History oh
-        where oh.O_Id = :O_ID
-              and oh.O_Type = :O_TYPE
-              and oh.Deleted = 0
-        order by oh.Hdate desc, HID desc
-      into :HDATE, :PAY_SUM, :NOTICE, :RATE, :PAY_PCE, :HID
-  do begin
-    VDATE = Month_First_Day(HDATE);
-    DAYS = extract(day from Month_Last_Day(VDATE));
-    -- Показания по счетчикам
+
+  VDATE = Month_First_Day(FOR_DATE);
+  DAYS = extract(day from Month_Last_Day(VDATE));
+
+  select
+      sum(oh.Nvalue)
+    , sum(trunc(Get_Json_Value(oh.Cvalue, 'pce'), 6)) pce
+    from Objects_History oh
+    where oh.O_Id = :O_ID
+          and oh.O_Type = :O_TYPE
+          and oh.dvalue >= :VDATE
+          and oh.dvalue < dateadd(month, 1, :VDATE)
+          and oh.Deleted = 0
+  into :PAY_SUM, :PAY_PCE;
+
+  RATE = null;
+
+  -- Показания по счетчикам
+  select
+      sum(t.PVALUE)
+    , sum(t.CVALUE)
+    from (select
+              coalesce(trunc((select first 1
+                                  h.Nvalue
+                                from Objects_History h
+                                where h.O_Id = o.O_Id
+                                      and h.O_Type = o.O_Type
+                                      and h.Hdate >= dateadd(month, -1, :VDATE)
+                                      and h.Hdate < :VDATE), 0), 0) as PVALUE
+            , coalesce(trunc((select first 1
+                                  h.Nvalue
+                                from Objects_History h
+                                where h.O_Id = o.O_Id
+                                      and h.O_Type = o.O_Type
+                                      and h.Hdate >= :VDATE
+                                      and h.Hdate < dateadd(month, 1, :VDATE)), 0), 0) as CVALUE
+            from Objects o
+            where o.O_Type = 76
+                  and trim(coalesce(o.O_DIMENSION, '')) <> ''
+                  and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID
+                  and o.o_DELETED = 0) t
+  into :P_CNTR, :C_CNTR;
+
+  -- Показания по мощности
+  select
+      sum(24 * :DAYS * PCE)
+    , avg(RATE)
+    from (select
+              cast(coalesce((select
+                                 sum(qh.Nvalue)
+                               from Objects_History qh
+                               where qh.O_Type = 76
+                                     and qh.Hdate >= :VDATE
+                                     and qh.Hdate < dateadd(month, 1, :VDATE)
+                                     and qh.O_Id = o.O_Id), 0) as d_N15_4) PCE
+            , coalesce((select
+                            avg(h.Nvalue)
+                          from Objects_History h
+                          where h.O_Id = o.O_Charfield
+                                and h.O_Type = 78
+                                and h.Hdate >= :VDATE
+                                and h.Hdate < dateadd(month, 1, :VDATE)), 0) as RATE
+            from OBJECTS o
+            where o.O_TYPE = 76
+                  and o.o_DELETED = 0
+                  and trim(coalesce(o.O_DIMENSION, '')) = ''
+                  and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID) t
+  into :F_PCE, :RATE;
+
+  -- если тариф не найден, то возьмем первый найденный узла для данного получателя оплат
+  if (RATE is null) then begin
     select
-        sum(t.CVALUE)
-      , sum(t.PVALUE)
-      from (select
-                coalesce(trunc((select first 1
-                                    h.Nvalue
-                                  from Objects_History h
-                                  where h.O_Id = o.O_Id
-                                        and h.O_Type = o.O_Type
-                                        and h.Hdate >= dateadd(month, -1, :VDATE)
-                                        and h.Hdate < :VDATE), 0), 0) as PVALUE
-              , coalesce(trunc((select first 1
-                                    h.Nvalue
-                                  from Objects_History h
-                                  where h.O_Id = o.O_Id
-                                        and h.O_Type = o.O_Type
-                                        and h.Hdate >= :VDATE
-                                        and h.Hdate < dateadd(month, 1, :VDATE)), 0), 0) as CVALUE
-              from Objects o
-              where o.O_Type = 76
-                    and trim(coalesce(o.O_DIMENSION, '')) <> ''
-                    and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID
-                    and o.o_DELETED = 0) t
-    into :C_CNTR, :P_CNTR;
-
-    -- Показания по мощности
-    select
-        sum(24 * :DAYS * PCE)
-      from (select
-                cast(coalesce((select
-                                   sum(qh.Nvalue)
-                                 from Objects_History qh
-                                 where qh.O_Type = 76
-                                       and qh.Hdate >= :VDATE
-                                       and qh.Hdate < dateadd(month, 1, :VDATE)
-                                       and qh.O_Id = o.O_Id), 0) as d_N15_4) PCE
-              from OBJECTS o
-              where o.O_TYPE = 76
-                    and o.o_DELETED = 0
-                    and trim(coalesce(o.O_DIMENSION, '')) = ''
-                    and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID) t
-    into :F_PCE;
-
-    PAY_PCE = coalesce(PAY_PCE, 0);
-    F_PCE = coalesce(F_PCE, 0);
-    F_CNTR = coalesce(C_CNTR, 0) - coalesce(P_CNTR, 0);
-    DIF_PCE = PAY_PCE - F_PCE - F_CNTR;
-    F_PCE_S = rate * (F_PCE + F_CNTR);
-    DIF_PCE_S = (PAY_SUM - F_PCE_S);
-
-    F_CNTR_PCE = F_CNTR + F_PCE;
-
-    suspend;
+        avg(h.Nvalue)
+      from OBJECTS o
+           inner join Objects_History h on (h.O_Id = o.O_Charfield
+                 and h.O_Type = 78
+                 and h.Hdate >= :VDATE
+                 and h.Hdate < dateadd(month, 1, :VDATE))
+      where o.O_TYPE = 76
+            and o.o_DELETED = 0
+            and coalesce(cast(o.O_Numericfield as integer), 0) = :O_ID
+    into :RATE;
+    RATE = coalesce(RATE, 0);
   end
+
+  PAY_PCE = coalesce(PAY_PCE, 0);
+  F_PCE = coalesce(F_PCE, 0);
+  F_CNTR = coalesce(C_CNTR, 0) - coalesce(P_CNTR, 0);
+  DIF_PCE = PAY_PCE - F_PCE - F_CNTR;
+  F_PCE_S = rate * (F_PCE + F_CNTR);
+  DIF_PCE_S = (PAY_SUM - F_PCE_S);
+
+  F_CNTR_PCE = F_CNTR + F_PCE;
+
+  suspend;
 end;
 
 
@@ -23318,6 +23460,7 @@ begin
           , rm.Serial
           from MATERIALS M
                inner join Request_Materials rm on (rm.M_Id = m.M_Id)
+               left outer join Materials_Group mg on (mg.Mg_Id = m.Mg_Id)
                left outer join Materials_Remain mr on (mr.M_Id = m.M_Id and mr.wh_id = rm.Wh_Id)
                left outer join OBJECTS W on (W.O_ID = rm.Wh_Id and W.O_TYPE = 10)
                left outer join Material_Unit u on (u.M_Id = rm.M_Id and u.Serial = rm.Serial -- and u.Owner = rm.Wh_Id and ((u.State = 0) or (u.State = -1*:RQ_ID))
@@ -23388,7 +23531,7 @@ begin
             , w.O_Name
             , mr.Wh_Id
             , null
-            , 0 CALC
+            , coalesce(m.Prop, mg.Prop, 0) PROP
             , mr.Mr_Quant
             , m.Cost
             , m.M_Number
@@ -23407,6 +23550,7 @@ begin
                                                                                               and wh.wh_id = mr.Wh_Id) or current_user = 'SYSDBA'))
                  left outer join OBJECTS W on (W.O_ID = mr.Wh_Id and W.O_TYPE = 10)
                  left outer join Material_Unit u on (u.M_Id = mr.M_Id and u.Owner = mr.Wh_Id and u.State = 0)
+                 left outer join Materials_Group mg on (mg.Mg_Id = m.Mg_Id)
 
             where (not exists(select
                                   rm.Rm_Id
@@ -26106,6 +26250,66 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE MATERIAL_REMAIN_RECALC_TEST (
+    REC_M_ID TYPE OF UID,
+    FOR_WH TYPE OF UID = null)
+AS
+declare variable Wh_Id     type of Uid;
+declare variable Mr_Quant  D_N15_5;
+declare variable M_ID      D_Integer;
+declare variable itsUnit   D_Integer;
+declare variable Old_Quant D_N15_5;
+begin
+  for select
+          m.M_Id
+        , m.Is_Unit
+        from Materials m
+        where ((not :REC_M_ID is null)
+              and (m.M_Id = :REC_M_ID))
+                or (:REC_M_ID is null)
+      into :M_ID, :itsUnit
+  do begin
+
+    Mr_Quant = 0;
+
+    itsUnit = coalesce(itsUnit, 0);
+
+    for select
+            O_Id
+          from objects
+          where O_Type = 10
+                and ((:FOR_WH is null)
+                  or (O_ID = :FOR_WH))
+        into :wh_id
+    do begin
+      -- сохранім остаткі до
+      Old_Quant = null;
+      select
+          i.MR_QUANT
+        from MATERIALS_REMAIN i
+        where i.M_ID = :M_ID
+              and i.WH_ID = :WH_ID
+      into :Old_Quant;
+      Old_Quant = coalesce(Old_Quant, 0);
+
+      Mr_Quant = GET_MAT_REMAIN_FOR_DATE(:m_id, :Wh_Id);
+
+      if (Old_Quant <> Mr_Quant) then begin
+        -- внесем остатки на склад
+        if (Mr_Quant <> 0) then
+          update or insert into Materials_Remain (M_Id, Wh_Id, Mr_Quant)
+          values (:M_Id, :Wh_Id, :Mr_Quant)
+          matching (M_Id, Wh_Id);
+        else
+          delete from Materials_Remain
+              where M_Id = :M_Id
+                    and Wh_Id = :Wh_Id;
+      end
+    end
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE MATERIAL_UNIT_MOVE (
     RQ_ID UID,
     WH_ID UID,
@@ -26237,7 +26441,9 @@ RETURNS (
     M_DOC D_VARCHAR255,
     QUANT D_N15_5,
     DOC_ID D_INTEGER,
-    SERIAL D_SERIAL_NS)
+    SERIAL D_SERIAL_NS,
+    QUANT_BEFORE D_N15_5,
+    WH_ID D_INTEGER)
 AS
 begin
   M_ID = FOR_M_ID;
@@ -26270,7 +26476,8 @@ begin
           , m_doc
           , quant
           , doc_id
-          , case m_type_id
+          ,
+            case m_type_id
               when 1 then 'Приход'
               when 2 then 'пер-ие НА склад'
               when 3 then 'пер-ие СО склада'
@@ -26280,7 +26487,8 @@ begin
               when 7 then 'возврат С заявки'
               when 8 then 'списание НА заявку'
               else M_TYPE_ID
-            end m_type
+            end m_type,
+            WH_ID
           from (select
                     d.Wh_Id
                   , d.Doc_Date M_DATE
@@ -26388,11 +26596,24 @@ begin
                        inner join request r on (rm.Rq_Id = r.Rq_Id)
                   where rm.M_Id = :FOR_M_ID
                   group by 1, 2, 3, 4, 5) m
-               inner join objects w on (w.O_Id = m.Wh_Id and
-                     O_Type = 10)
+               inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
           order by 1, 2, 3
-        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :DOC_ID, :M_TYPE
+        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :DOC_ID, :M_TYPE, WH_ID
     do begin
+      QUANT_BEFORE = null;
+      select
+          cast(C_Str as D_N15_5)
+        from Tmp_Col
+        where c_DATE = :M_DATE
+              and C_Int = :FOR_M_ID
+              and C_Num = :WH_ID
+      into :QUANT_BEFORE;
+      if (QUANT_BEFORE is null) then begin
+        QUANT_BEFORE = Get_Mat_Remain_For_Date(:FOR_M_ID, :WH_ID, :M_DATE);
+        insert into Tmp_Col (C_Date, C_Str, C_Int, C_Num)
+        values (:M_DATE, :QUANT_BEFORE, :FOR_M_ID, :WH_ID);
+      end
+
       suspend;
     end
   end
@@ -26404,7 +26625,8 @@ begin
           , m_doc
           , quant
           , serial
-          , case m_type_id
+          ,
+            case m_type_id
               when 1 then 'Приход'
               when 2 then 'пер-ие НА склад'
               when 3 then 'пер-ие СО склада'
@@ -26414,8 +26636,9 @@ begin
               when 7 then 'возврат С заявки'
               when 8 then 'списание НА заявку'
               else M_TYPE_ID
-            end m_type
-          , DOC_ID
+            end m_type,
+            DOC_ID
+          , WH_ID
           from (select
                     d.Wh_Id
                   , d.Doc_Date M_DATE
@@ -26426,9 +26649,7 @@ begin
                   , d.Doc_Id DOC_ID
                   from Material_Docs d
                        inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and
-                             u.M_Id = md.M_ID and
-                             u.Id = md.Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
                   where d.Doc_Closed = 1
                         and d.Dt_Id = 1
                         and md.M_Id = :FOR_M_ID
@@ -26443,9 +26664,7 @@ begin
                   , d.Doc_Id DOC_ID
                   from Material_Docs d
                        inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and
-                             u.M_Id = md.M_ID and
-                             u.Id = md.Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
                   where d.Doc_Closed = 1
                         and d.Dt_Id = 2
                         and md.M_Id = :FOR_M_ID
@@ -26460,9 +26679,7 @@ begin
                   , d.Doc_Id DOC_ID
                   from Material_Docs d
                        inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and
-                             u.M_Id = md.M_ID and
-                             u.Id = md.Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
                   where d.Doc_Closed = 1
                         and d.Dt_Id = 2
                         and md.M_Id = :FOR_M_ID
@@ -26477,9 +26694,7 @@ begin
                   , d.Doc_Id DOC_ID
                   from Material_Docs d
                        inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and
-                             u.M_Id = md.M_ID and
-                             u.Id = md.Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
                   where d.Doc_Closed = 1
                         and d.Dt_Id = 3
                         and md.M_Id = :FOR_M_ID
@@ -26494,9 +26709,7 @@ begin
                   , d.Doc_Id DOC_ID
                   from Material_Docs d
                        inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and
-                             u.M_Id = md.M_ID and
-                             u.Id = md.Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
                   where d.Doc_Closed = 1
                         and d.Dt_Id = 4
                         and md.M_Id = :FOR_M_ID
@@ -26511,9 +26724,7 @@ begin
                   , d.Doc_Id DOC_ID
                   from Material_Docs d
                        inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and
-                             u.M_Id = md.M_ID and
-                             u.Id = md.Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
                   where d.Doc_Closed = 1
                         and d.Dt_Id = 5
                         and md.M_Id = :FOR_M_ID
@@ -26542,11 +26753,23 @@ begin
                   from Request_Materials rm
                        inner join request r on (rm.Rq_Id = r.Rq_Id)
                   where rm.M_Id = :FOR_M_ID) m
-               inner join objects w on (w.O_Id = m.Wh_Id and
-                     O_Type = 10)
+               inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
           order by 1, 2, 3
-        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :SERIAL, :M_TYPE, :DOC_ID
+        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :SERIAL, :M_TYPE, :DOC_ID, :WH_ID
     do begin
+      QUANT_BEFORE = null;
+      select
+          cast(C_Str as D_N15_5)
+        from Tmp_Col
+        where c_DATE = :M_DATE
+              and C_Int = :FOR_M_ID
+              and C_Num = :WH_ID
+      into :QUANT_BEFORE;
+      if (QUANT_BEFORE is null) then begin
+        QUANT_BEFORE = Get_Mat_Remain_For_Date(:FOR_M_ID, :WH_ID, :M_DATE);
+        insert into Tmp_Col (C_Date, C_Str, C_Int, C_Num)
+        values (:M_DATE, :QUANT_BEFORE, :FOR_M_ID, :WH_ID);
+      end
       suspend;
     end
   end
@@ -27000,6 +27223,48 @@ begin
 
   ban = 0;
   suspend;
+end;
+
+
+CREATE OR ALTER PROCEDURE OBJECT_WL_IUD (
+    P_ACTION D_INTEGER,
+    O_TYPE D_INTEGER,
+    O_ID TYPE OF UID,
+    O_NAME D_VARCHAR50,
+    LINK_TYPE D_INTEGER = null,
+    PARENT_ID D_INTEGER = null,
+    O_DESCRIPTION D_NOTICE = null,
+    O_DIMENSION D_VARCHAR50 = null,
+    O_DELETED D_INTEGER = 0,
+    O_CHECK D_VARCHAR255 = null,
+    O_NUMERICFIELD D_N15_3 = null)
+AS
+declare variable O_CHARFIELD D_Varchar1000;
+begin
+  -- P_ACTION -0 insert 1-update 2-delete
+  if (P_ACTION = 1) then begin
+    update OBJECTS
+    set O_NAME = :O_NAME,
+        O_DESCRIPTION = :O_DESCRIPTION,
+        O_DIMENSION = :O_DIMENSION,
+        O_CHARFIELD = :O_CHARFIELD,
+        O_CHECK = :O_CHECK,
+        O_Numericfield = :O_Numericfield,
+        O_DELETED = coalesce(:O_DELETED, 0)
+    where O_ID = :O_ID
+          and O_TYPE = :O_TYPE;
+  end
+  else begin
+    if (P_ACTION = 0) then begin
+      insert into OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_CHECK, O_Numericfield)
+      values (:O_ID, :O_TYPE, :O_NAME, :O_DESCRIPTION, 0, :O_DIMENSION, :O_CHARFIELD, :O_CHECK, :O_NUMERICFIELD);
+    end
+    else
+      update OBJECTS
+      set O_DELETED = 1
+      where O_ID = :O_ID
+            and O_TYPE = :O_TYPE;
+  end
 end;
 
 
@@ -29285,7 +29550,7 @@ begin
         where m.Id = :ID;
 
   if ((P_Action <> 2) and (QUANT <> 0)) then begin
-    if (not SERIAL is null) then begin
+    if (coalesce(trim(SERIAL), '') <> '') then begin
       -- посмотрим алгоритм расчета возврата материала
       select
           a.Property
@@ -30276,7 +30541,8 @@ CREATE OR ALTER PROCEDURE TARIF_IUD (
     P_TARIF_SUM D_N15_2,
     P_TARIF_JUR D_N15_2,
     P_ACTION D_INTEGER,
-    P_VAT D_N15_2 = 0)
+    P_VAT D_N15_2 = 0,
+    PARTNER_TARIF D_N15_2 = null)
 AS
 declare variable v_tarif_id  type of UID;
 declare variable v_date_to   d_date;
@@ -30304,8 +30570,8 @@ begin
         set date_to = (:p_date_from - 1)
         where (tarif_id = :v_tarif_id);
       p_date_to = '2100-01-01';
-      insert into tarif (service_id, date_from, date_to, tarif_sum, tarif_sum_jur, vat)
-      values (:p_service_id, :p_date_from, :p_date_to, :p_tarif_sum, :P_TARIF_JUR, :P_VAT);
+      insert into tarif (service_id, date_from, date_to, tarif_sum, tarif_sum_jur, vat, PARTNER_TARIF)
+      values (:p_service_id, :p_date_from, :p_date_to, :p_tarif_sum, :P_TARIF_JUR, :P_VAT, :PARTNER_TARIF);
     end
     else
       exception E_TARIF_EXISTS;
@@ -30315,7 +30581,8 @@ begin
     update tarif
     set tarif_sum = :p_tarif_sum,
         tarif_sum_jur = :P_TARIF_JUR,
-        vat = :P_VAT
+        vat = :P_VAT,
+        PARTNER_TARIF = :PARTNER_TARIF
     where (tarif_id = :p_tarif_id);
   end
 
@@ -30874,6 +31141,143 @@ begin
   else
     res = '';
   return res;
+end;
+
+
+CREATE OR ALTER FUNCTION GET_MAT_REMAIN_FOR_DATE (
+    FOR_MID UID,
+    FOR_WH UID,
+    FOR_DATE DATE = null)
+RETURNS D_N15_5
+AS
+declare variable Mr_Quant type of D_N15_5;
+declare variable Quant    type of D_N15_5;
+begin
+  -- остаток до даты FOR_DATE ісключая саму дату
+  -- или если FOR_DATE null то всех движений
+
+  if (FOR_DATE is null) then
+    FOR_DATE = cast('9999-12-31' as date);
+
+  -- + 1 приход
+  Quant = null;
+  select
+      sum(coalesce(M_Quant, 0))
+    from Material_Docs d
+         inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+    where d.Doc_Closed = 1
+          and d.Dt_Id = 1
+          and d.Wh_Id = :FOR_WH
+          and md.M_Id = :FOR_MID
+          and d.Doc_Date < :FOR_DATE
+  into :quant;
+  Mr_Quant = coalesce(quant, 0);
+
+  -- + 2 перемещение на склад
+  Quant = null;
+  select
+      sum(coalesce(M_Quant, 0))
+    from Material_Docs d
+         inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+    where d.Doc_Closed = 1
+          and d.Dt_Id = 2
+          and d.Wh_Id = :FOR_WH
+          and md.M_Id = :FOR_MID
+          and d.Doc_Date < :FOR_DATE
+  into :quant;
+  Mr_Quant = Mr_Quant + coalesce(quant, 0);
+
+  -- + 4 корректировка
+  Quant = null;
+  select
+      sum(coalesce(M_Quant, 0))
+    from Material_Docs d
+         inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+    where d.Doc_Closed = 1
+          and d.Dt_Id = 4
+          and d.Wh_Id = :FOR_WH
+          and md.M_Id = :FOR_MID
+          and d.Doc_Date < :FOR_DATE
+  into :quant;
+  Mr_Quant = Mr_Quant + coalesce(quant, 0);
+
+  -- + 5 инвентаризация
+  Quant = null;
+  select
+      sum(coalesce(M_Quant, 0) - coalesce(b_Quant, 0))
+    from Material_Docs d
+         inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+    where d.Doc_Closed = 1
+          and d.Dt_Id = 5
+          and d.Wh_Id = :FOR_WH
+          and md.M_Id = :FOR_MID
+          and d.Doc_Date < :FOR_DATE
+  into :quant;
+  Mr_Quant = Mr_Quant + coalesce(quant, 0);
+
+  -- - 2 перемещение со склада
+  Quant = null;
+  select
+      sum(coalesce(M_Quant, 0))
+    from Material_Docs d
+         inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+    where d.Doc_Closed = 1
+          and d.Dt_Id = 2
+          and d.From_Wh = :FOR_WH
+          and md.M_Id = :FOR_MID
+          and d.Doc_Date < :FOR_DATE
+  into :quant;
+  Mr_Quant = Mr_Quant - coalesce(quant, 0);
+
+  -- - 3 списание
+  Quant = null;
+  select
+      sum(coalesce(M_Quant, 0))
+    from Material_Docs d
+         inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+    where d.Doc_Closed = 1
+          and d.Dt_Id = 3
+          and d.Wh_Id = :FOR_WH
+          and md.M_Id = :FOR_MID
+          and d.Doc_Date < :FOR_DATE
+  into :quant;
+  Mr_Quant = Mr_Quant - coalesce(quant, 0);
+
+  -- + вернули с заявок
+  Quant = null;
+  select
+      sum(iif(coalesce(rm.Serial, '') = '', coalesce(Quant, 0), 1))
+    from Request_Materials_Return rm
+         inner join request r on (rm.Rq_Id = r.Rq_Id)
+    where rm.M_Id = :FOR_MID
+          and rm.Wh_Id = :FOR_WH
+          and (
+               ((not r.Rq_Exec_Time is null) and (r.Rq_Exec_Time < :FOR_DATE))
+            or ((r.Rq_Exec_Time is null) and (not r.Rq_Completed is null) and (r.Rq_Completed < :FOR_DATE))
+            or ((r.Rq_Exec_Time is null) and (r.Rq_Completed is null) and (not r.Rq_Plan_Date is null) and (r.Rq_Plan_Date < :FOR_DATE))
+            or ((r.Rq_Exec_Time is null) and (not r.Rq_Completed is null) and (r.Rq_Plan_Date is null) and (not r.Added_On is null) and (r.Added_On < :FOR_DATE))
+          )
+  into :Quant;
+  Mr_Quant = Mr_Quant + coalesce(quant, 0);
+
+  -- - списано на заявку
+  Quant = null;
+  select
+      sum(iif(coalesce(rm.Serial, '') = '', coalesce(Rm_Quant, 0), 1))
+    from Request_Materials rm
+         inner join request r on (rm.Rq_Id = r.Rq_Id)
+    where rm.M_Id = :FOR_MID
+          and rm.Wh_Id = :FOR_WH
+          and (
+               ((not r.Rq_Exec_Time is null) and (r.Rq_Exec_Time < :FOR_DATE))
+            or ((r.Rq_Exec_Time is null) and (not r.Rq_Completed is null) and (r.Rq_Completed < :FOR_DATE))
+            or ((r.Rq_Exec_Time is null) and (r.Rq_Completed is null) and (not r.Rq_Plan_Date is null) and (r.Rq_Plan_Date < :FOR_DATE))
+            or ((r.Rq_Exec_Time is null) and (not r.Rq_Completed is null) and (r.Rq_Plan_Date is null) and (not r.Added_On is null) and (r.Added_On < :FOR_DATE))
+          )
+  into :Quant;
+  Mr_Quant = Mr_Quant - coalesce(quant, 0);
+
+  return :Mr_Quant;
 end;
 
 
@@ -33011,6 +33415,10 @@ COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC IS
 'Процедура пересчета остатков материала на складах
 если REC_M_ID null то пересчітываем все материалы';
 
+COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC_TEST IS
+'Процедура пересчета остатков материала на складах
+если REC_M_ID null то пересчітываем все материалы';
+
 COMMENT ON PROCEDURE MATERIAL_UNIT_MOVE IS
 'перенос материала абоненту или узлу при добавлении в заявку';
 
@@ -33194,6 +33602,9 @@ COMMENT ON FUNCTION GET_FREE_IP_BY_MASK IS
 
 COMMENT ON FUNCTION GET_JSON_VALUE IS
 'Извлечь значение парматра из json строки';
+
+COMMENT ON FUNCTION GET_MAT_REMAIN_FOR_DATE IS
+'Пересчет отстаков материалов по складу до даты (дата не включается в расчет)';
 
 COMMENT ON FUNCTION GET_NEW_ACCOUNT IS
 'Возвращает новый номер лицевого. делаеет 1000 попыток найти свободный номер, если не найдет, то выдает null';
@@ -34651,7 +35062,16 @@ COMMENT ON COLUMN MATERIALS.LOAN IS
 'Услуга рассрочки';
 
 COMMENT ON COLUMN MATERIALS.PCE IS
-'Мощность, Вт/ч';
+'Мощность, Вт';
+
+COMMENT ON COLUMN MATERIALS.PROP IS
+'Собственность
+0 Продажа / Начислять за этот материал абоненту.
+1 В пользовании / Не начислять
+2 Рассрочка материала
+3 Аренда материала
+4 Возврат бесплатно
+5 Возврат за деньги (Выкуп)';
 
 COMMENT ON COLUMN MATERIALS_GROUP.MG_ID IS
 'FOR PRIMARY KEYS';
@@ -34670,6 +35090,18 @@ COMMENT ON COLUMN MATERIALS_GROUP.LOAN IS
 
 COMMENT ON COLUMN MATERIALS_GROUP.PATH IS
 'путь группы (от корня к листу)';
+
+COMMENT ON COLUMN MATERIALS_GROUP.PCE IS
+'Мощность, Вт';
+
+COMMENT ON COLUMN MATERIALS_GROUP.PROP IS
+'Собственность
+0 Продажа / Начислять за этот материал абоненту.
+1 В пользовании / Не начислять
+2 Рассрочка материала
+3 Аренда материала
+4 Возврат бесплатно
+5 Возврат за деньги (Выкуп)';
 
 COMMENT ON COLUMN MATERIALS_IN_DOC.B_QUANT IS
 'Количество до пересчета';
@@ -36107,6 +36539,9 @@ COMMENT ON COLUMN SYS$USER_WH.WH_ID IS
 
 COMMENT ON COLUMN TARIF.TARIF_SUM_JUR IS
 'Тариф юр. лицам';
+
+COMMENT ON COLUMN TARIF.PARTNER_TARIF IS
+'Тариф при работе с партнерами';
 
 COMMENT ON COLUMN TARIF.VAT IS
 'НДС на услугу';

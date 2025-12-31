@@ -497,6 +497,7 @@ object OrderTPForm: TOrderTPForm
           ReadOnly = True
           Title.Alignment = taCenter
           Title.Caption = #1044#1086#1087'. '#1091#1089#1083#1091#1075#1072
+          Title.TitleButton = True
           Width = 127
         end
         item
@@ -508,6 +509,7 @@ object OrderTPForm: TOrderTPForm
           ReadOnly = True
           Title.Alignment = taCenter
           Title.Caption = #1062#1077#1085#1072
+          Title.TitleButton = True
           Width = 60
         end
         item
@@ -519,6 +521,7 @@ object OrderTPForm: TOrderTPForm
           Footers = <>
           Title.Alignment = taCenter
           Title.Caption = #1050#1086#1083'-'#1074#1086
+          Title.TitleButton = True
           Width = 49
         end
         item
@@ -528,6 +531,7 @@ object OrderTPForm: TOrderTPForm
           FieldName = 'rc'
           Footers = <>
           Title.Caption = #1050#1086#1101#1092#1092'.'
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -538,6 +542,7 @@ object OrderTPForm: TOrderTPForm
           Footers = <>
           ReadOnly = True
           Title.Caption = '* '#1076#1085#1077#1081
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -547,6 +552,7 @@ object OrderTPForm: TOrderTPForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1048#1090#1086#1075#1086
+          Title.TitleButton = True
           Width = 48
         end>
       object RowDetailData: TRowDetailPanelControlEh

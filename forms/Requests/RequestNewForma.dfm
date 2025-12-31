@@ -371,6 +371,7 @@ object RequestNewForm: TRequestNewForm
               FieldName = 'NAME'
               Footers = <>
               Title.Caption = #1056#1072#1073#1086#1090#1072
+              Title.TitleButton = True
               Width = 178
             end
             item
@@ -382,6 +383,7 @@ object RequestNewForm: TRequestNewForm
               Footers = <>
               Title.Alignment = taCenter
               Title.Caption = #1050#1086#1083'-'#1074#1086
+              Title.TitleButton = True
               Width = 42
             end
             item
@@ -393,6 +395,7 @@ object RequestNewForm: TRequestNewForm
               Footers = <>
               Title.Alignment = taCenter
               Title.Caption = #1053'/'#1063
+              Title.TitleButton = True
               Width = 32
             end
             item
@@ -402,6 +405,7 @@ object RequestNewForm: TRequestNewForm
               FieldName = 'W_COST'
               Footers = <>
               Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
+              Title.TitleButton = True
               Width = 63
             end
             item
@@ -411,6 +415,7 @@ object RequestNewForm: TRequestNewForm
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
               Width = 149
             end>
           object RowDetailData: TRowDetailPanelControlEh
@@ -854,6 +859,7 @@ object RequestNewForm: TRequestNewForm
             FieldName = 'FLAT_NO'
             Footers = <>
             Title.Caption = #1050#1074'.'
+            Title.TitleButton = True
             Width = 41
           end
           item
@@ -909,6 +915,7 @@ object RequestNewForm: TRequestNewForm
             FieldName = 'ZVENO'
             Footers = <>
             Title.Caption = #1047#1074#1077#1085#1086
+            Title.TitleButton = True
             Width = 72
           end
           item

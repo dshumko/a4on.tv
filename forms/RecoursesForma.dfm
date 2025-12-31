@@ -186,6 +186,7 @@ inherited RecoursesForm: TRecoursesForm
         FieldName = 'CONTACT'
         Footers = <>
         Title.Caption = #1050#1086#1085#1090#1072#1082#1090
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar

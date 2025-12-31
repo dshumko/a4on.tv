@@ -101,6 +101,7 @@ inherited VlansForm: TVlansForm
         FieldName = 'VLAN_NUM'
         Footers = <>
         Title.Caption = #1053#1086#1084#1077#1088
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -119,6 +120,7 @@ inherited VlansForm: TVlansForm
           #1054#1073#1086#1088#1091#1076'.'
           #1048#1085#1092#1086#1088#1084'.')
         Title.Caption = #1057#1077#1090#1100' '#1076#1083#1103
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -245,6 +247,7 @@ inherited VlansForm: TVlansForm
                 FieldName = 'STREET_SHORT'
                 Footers = <>
                 Title.Caption = #1089#1086#1082#1088'.'
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -253,6 +256,7 @@ inherited VlansForm: TVlansForm
                 FieldName = 'STREET_NAME'
                 Footers = <>
                 Title.Caption = #1059#1083#1080#1094#1072
+                Title.TitleButton = True
                 Width = 168
               end
               item
@@ -263,6 +267,7 @@ inherited VlansForm: TVlansForm
                 Footer.ValueType = fvtCount
                 Footers = <>
                 Title.Caption = #1044#1086#1084
+                Title.TitleButton = True
                 Width = 58
               end>
             object RowDetailData: TRowDetailPanelControlEh
@@ -319,6 +324,7 @@ inherited VlansForm: TVlansForm
                 FieldName = 'STREET_SHORT'
                 Footers = <>
                 Title.Caption = #1089#1086#1082#1088'.'
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -327,6 +333,7 @@ inherited VlansForm: TVlansForm
                 FieldName = 'STREET_NAME'
                 Footers = <>
                 Title.Caption = #1059#1083#1080#1094#1072
+                Title.TitleButton = True
                 Width = 189
               end
               item
@@ -337,6 +344,7 @@ inherited VlansForm: TVlansForm
                 Footer.ValueType = fvtCount
                 Footers = <>
                 Title.Caption = #1044#1086#1084
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -482,6 +490,7 @@ inherited VlansForm: TVlansForm
             Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1058#1080#1087
+            Title.TitleButton = True
             Width = 25
           end
           item
@@ -491,6 +500,7 @@ inherited VlansForm: TVlansForm
             FieldName = 'SURNAME'
             Footers = <>
             Title.Caption = #1060#1048#1054' / '#1053#1072#1079#1074#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 235
           end
           item
@@ -500,6 +510,7 @@ inherited VlansForm: TVlansForm
             FieldName = 'STREET_SHORT'
             Footers = <>
             Title.Caption = #1089#1086#1082#1088
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -508,6 +519,7 @@ inherited VlansForm: TVlansForm
             FieldName = 'STREET_NAME'
             Footers = <>
             Title.Caption = #1059#1083#1080#1094#1072
+            Title.TitleButton = True
             Width = 181
           end
           item
@@ -517,6 +529,7 @@ inherited VlansForm: TVlansForm
             FieldName = 'HOUSE_NO'
             Footers = <>
             Title.Caption = #1044#1086#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -525,6 +538,7 @@ inherited VlansForm: TVlansForm
             FieldName = 'FLAT_NO'
             Footers = <>
             Title.Caption = #1050#1074'.'
+            Title.TitleButton = True
           end
           item
             CellButtons = <>

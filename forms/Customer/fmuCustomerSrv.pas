@@ -151,7 +151,7 @@ begin
   FFullAccess := (dmMain.AllowedAction(rght_Customer_full)); // Полный доступ
   FChangeHistory := (dmMain.AllowedAction(rght_Customer_History)) or FFullAccess; // Изменение истории
   cAdd := (dmMain.AllowedAction(rght_Customer_AddSrv)) or FFullAccess; // ДОБАВЛЕНИЕ УСЛУГИ
-  cChg := (dmMain.AllowedAction(rght_Customer_EditSrv)); // ДОБАВЛЕНИЕ УСЛУГИ
+  cChg := (dmMain.AllowedAction(rght_Customer_EditSrv)) or FFullAccess; // ДОБАВЛЕНИЕ УСЛУГИ
   actSrvAdd.Visible := cAdd;
   actSrvPause.Visible := cChg;
   ActSrvOn.Visible := cChg;

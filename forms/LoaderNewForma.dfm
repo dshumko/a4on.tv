@@ -192,6 +192,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'pLine'
             Footers = <>
             Title.Caption = #1057#1090#1088#1086#1082#1072
+            Title.TitleButton = True
             Width = 58
           end
           item
@@ -203,6 +204,7 @@ object LoaderForm: TLoaderForm
             Footer.ValueType = fvtCount
             Footers = <>
             Title.Caption = #1051#1080#1094#1077#1074#1086#1081
+            Title.TitleButton = True
             Width = 89
           end
           item
@@ -212,6 +214,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'pFIO'
             Footers = <>
             Title.Caption = #1060#1048#1054'|'#1080#1079' '#1092#1072#1081#1083#1072
+            Title.TitleButton = True
             Width = 78
           end
           item
@@ -221,6 +224,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'dbFio'
             Footers = <>
             Title.Caption = #1060#1048#1054'|'#1080#1079' '#1041#1044
+            Title.TitleButton = True
             Width = 78
           end
           item
@@ -232,6 +236,7 @@ object LoaderForm: TLoaderForm
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1057#1091#1084#1084#1072
+            Title.TitleButton = True
           end
           item
             AutoFitColWidth = False
@@ -241,6 +246,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'pDate'
             Footers = <>
             Title.Caption = #1044#1072#1090#1072
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -249,6 +255,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'pAdress'
             Footers = <>
             Title.Caption = #1040#1076#1088#1077#1089'|'#1080#1079' '#1092#1072#1081#1083#1072
+            Title.TitleButton = True
             Width = 80
           end
           item
@@ -258,6 +265,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'dbAdress'
             Footers = <>
             Title.Caption = #1040#1076#1088#1077#1089'|'#1080#1079' '#1041#1044
+            Title.TitleButton = True
             Width = 80
           end
           item
@@ -267,6 +275,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'pNotice'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 80
           end
           item
@@ -277,6 +286,7 @@ object LoaderForm: TLoaderForm
             FieldName = 'pPayment_No'
             Footers = <>
             Title.Caption = 'N '#1087#1083#1072#1090#1077#1078#1072
+            Title.TitleButton = True
             Width = 70
           end>
         object RowDetailData: TRowDetailPanelControlEh

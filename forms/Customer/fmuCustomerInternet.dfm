@@ -47,6 +47,7 @@ object apgCustomerInternet: TapgCustomerInternet
         FieldName = 'IP_INET'
         Footers = <>
         Title.Caption = 'IP'
+        Title.TitleButton = True
         Width = 95
       end
       item
@@ -56,6 +57,7 @@ object apgCustomerInternet: TapgCustomerInternet
         FieldName = 'UNIT_ID'
         Footers = <>
         Title.Caption = 'USER ID'
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -64,6 +66,7 @@ object apgCustomerInternet: TapgCustomerInternet
         FieldName = 'ACCOUNT_ID'
         Footers = <>
         Title.Caption = 'ACCOUNT N'
+        Title.TitleButton = True
         Width = 74
       end
       item
@@ -74,6 +77,7 @@ object apgCustomerInternet: TapgCustomerInternet
         FieldName = 'BLOCKED'
         Footers = <>
         Title.Caption = #1041#1083#1086#1082
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -90,6 +94,7 @@ object apgCustomerInternet: TapgCustomerInternet
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end

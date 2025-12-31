@@ -280,6 +280,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
                 FieldName = 'O_NAME'
                 Footers = <>
                 Title.Caption = #1040#1090#1088#1080#1073#1091#1090
+                Title.TitleButton = True
                 Width = 101
               end
               item
@@ -289,6 +290,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
                 FieldName = 'CA_VALUE'
                 Footers = <>
                 Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+                Title.TitleButton = True
                 Width = 74
               end
               item
@@ -298,6 +300,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
                 FieldName = 'NOTICE'
                 Footers = <>
                 Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                Title.TitleButton = True
                 Width = 109
               end>
             object RowDetailData: TRowDetailPanelControlEh

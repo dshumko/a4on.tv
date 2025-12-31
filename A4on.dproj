@@ -63,10 +63,10 @@
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_Build>780</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=25.11.0.780;LegalCopyright=Copyright (C) 2005-2025, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=25.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=25.12.0.780;LegalCopyright=Copyright (C) 2005-2025, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=25.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <VerInfo_MajorVer>25</VerInfo_MajorVer>
-        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_MinorVer>12</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -79,9 +79,8 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_MinorVer>11</VerInfo_MinorVer>
-        <VerInfo_Build>998</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=25.11.0.998;LegalCopyright=Copyright (C) 2005-2025, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=25.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Build>1008</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=25.12.0.1008;LegalCopyright=Copyright (C) 2005-2025, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=25.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_AdditionalSwitches>-x-fvs -x-fpr -x-orc</DCC_AdditionalSwitches>
         <DCC_MapFile>3</DCC_MapFile>
@@ -114,6 +113,11 @@
         <DCCReference Include="Units\NHunXml.pas"/>
         <DCCReference Include="Units\PasZip.pas"/>
         <DCCReference Include="Units\ad3MainDictionary.pas"/>
+        <DCCReference Include="Units\LibMoney.pas"/>
+        <DCCReference Include="units\WorkWithGrids.pas"/>
+        <DCCReference Include="units\AtrStrUtils.pas"/>
+        <DCCReference Include="units\atrCmdUtils.pas"/>
+        <DCCReference Include="admin\uFBServices.pas"/>
         <DCCReference Include="FORMS\MAIN.PAS">
             <Form>A4MainForm</Form>
         </DCCReference>
@@ -219,7 +223,6 @@
         <DCCReference Include="forms\PaymentDocForma.pas">
             <Form>PaymentDocForm</Form>
         </DCCReference>
-        <DCCReference Include="Units\LibMoney.pas"/>
         <DCCReference Include="forms\HouseForma.pas">
             <Form>HouseForm</Form>
         </DCCReference>
@@ -259,15 +262,12 @@
         <DCCReference Include="forms\HouseWorkForma.pas">
             <Form>HouseWorkForm</Form>
         </DCCReference>
-        <DCCReference Include="units\WorkWithGrids.pas"/>
         <DCCReference Include="forms\LoaderReestrForma.pas">
             <Form>LoaderReestrForm</Form>
         </DCCReference>
         <DCCReference Include="forms\LoaderProfileForma.pas">
             <Form>LoaderProfileForm</Form>
         </DCCReference>
-        <DCCReference Include="units\AtrStrUtils.pas"/>
-        <DCCReference Include="units\atrCmdUtils.pas"/>
         <DCCReference Include="forms\infrastructure\EquipAttributesForma.pas">
             <Form>EquipAttributesForm</Form>
         </DCCReference>
@@ -299,7 +299,6 @@
         <DCCReference Include="admin\GroupForma.pas">
             <Form>GF</Form>
         </DCCReference>
-        <DCCReference Include="admin\uFBServices.pas"/>
         <DCCReference Include="admin\SrvServiceForma.pas">
             <Form>SrvServiceForm</Form>
         </DCCReference>
@@ -1061,6 +1060,10 @@
         </DCCReference>
         <DCCReference Include="forms\Dict\TimeSeriesForma.pas">
             <Form>TimeSeriesForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="forms\Requests\ReqSingleMatGiveForma.pas">
+            <Form>ReqSingleMatGiveForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">

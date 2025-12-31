@@ -116,6 +116,7 @@ object apgNodeRequests: TapgNodeRequests
         FieldName = 'CONTETNT'
         Footers = <>
         Title.Caption = #1053#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100'|'#1047#1072#1103#1074#1083#1077#1085#1085#1072#1103
+        Title.TitleButton = True
         Width = 151
       end
       item
@@ -266,6 +267,7 @@ object apgNodeRequests: TapgNodeRequests
               FieldName = 'NOTICE'
               Footers = <>
               Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+              Title.TitleButton = True
               Width = 251
             end>
           object RowDetailData: TRowDetailPanelControlEh

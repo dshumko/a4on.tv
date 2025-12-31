@@ -40,6 +40,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'NAME'
         Footers = <>
         Title.Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1091#1095#1072#1089#1090#1082#1072
+        Title.TitleButton = True
         Width = 158
       end
       item
@@ -50,6 +51,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'WA_CODE'
         Footers = <>
         Title.Caption = #1050#1086#1076
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -58,6 +60,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'WH'
         Footers = <>
         Title.Caption = #1057#1082#1083#1072#1076
+        Title.TitleButton = True
       end
       item
         AutoFitColWidth = False
@@ -67,6 +70,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'REQ_LIMIT'
         Footers = <>
         Title.Caption = #1047#1072#1103#1074#1086#1082' '#1074' '#1076#1077#1085#1100
+        Title.TitleButton = True
         Width = 45
       end
       item
@@ -76,6 +80,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 190
       end
       item
@@ -85,6 +90,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'PHONE'
         Footers = <>
         Title.Caption = #1058#1077#1083#1077#1092#1086#1085
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -93,6 +99,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'ADRES'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -101,6 +108,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'BOSS'
         Footers = <>
         Title.Caption = #1053#1072#1095#1072#1083#1100#1085#1080#1082
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -109,6 +117,7 @@ inherited WorkTeamForm: TWorkTeamForm
         FieldName = 'FOREMAN'
         Footers = <>
         Title.Caption = #1052#1072#1089#1090#1077#1088
+        Title.TitleButton = True
       end>
   end
   object pgcADD: TPageControl [3]
@@ -325,6 +334,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Title.Caption = #1050#1074#1072#1088#1090#1080#1088
             Title.Hint = #1050#1074#1072#1088#1090#1080#1088
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 33
           end
           item
@@ -338,6 +348,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Title.Caption = #1055#1086#1076#1082#1083'.'
             Title.Hint = #1055#1086#1076#1082#1083'.'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 32
           end
           item
@@ -350,6 +361,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Title.Caption = #1054#1090#1082#1083'.'
             Title.Hint = #1054#1090#1082#1083'.'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 27
           end
           item
@@ -359,6 +371,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'HOUSE_CODE'
             Footers = <>
             Title.Caption = #1050#1086#1076
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -393,6 +406,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Title.Caption = #1045#1089#1090#1100'|TB'
             Title.Hint = 'TB'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 20
           end
           item
@@ -405,6 +419,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Title.Caption = #1045#1089#1090#1100'|'#1057#1055#1044
             Title.Hint = #1057#1055#1044
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 23
           end
           item
@@ -417,6 +432,7 @@ inherited WorkTeamForm: TWorkTeamForm
             Title.Caption = #1045#1089#1090#1100'|'#1062'TB'
             Title.Hint = #1062'TB'
             Title.Orientation = tohVertical
+            Title.TitleButton = True
             Width = 24
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -508,6 +524,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'RT_NAME'
             Footers = <>
             Title.Caption = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
+            Title.TitleButton = True
             Width = 133
           end
           item
@@ -518,6 +535,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'QUANT'
             Footers = <>
             Title.Caption = #1082#1086#1083'-'#1074#1086
+            Title.TitleButton = True
             Width = 44
           end
           item
@@ -527,6 +545,7 @@ inherited WorkTeamForm: TWorkTeamForm
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 232
           end>
         object RowDetailData: TRowDetailPanelControlEh

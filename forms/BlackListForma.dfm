@@ -92,6 +92,7 @@ inherited BlackListForm: TBlackListForm
         FieldName = 'ADDED_ON'
         Footers = <>
         Title.Caption = #1050#1086#1075#1076#1072' '#1074#1085#1077#1089#1077#1085
+        Title.TitleButton = True
         Width = 56
       end
       item
@@ -101,6 +102,7 @@ inherited BlackListForm: TBlackListForm
         FieldName = 'ADDED_BY'
         Footers = <>
         Title.Caption = #1050#1077#1084' '#1074#1085#1077#1089#1077#1085
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar

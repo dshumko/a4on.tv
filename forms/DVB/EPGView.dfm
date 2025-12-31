@@ -267,6 +267,7 @@ object EPGViewForm: TEPGViewForm
           FieldName = 'GENRES'
           Footers = <>
           Title.Caption = #1046#1072#1085#1088
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -275,6 +276,7 @@ object EPGViewForm: TEPGViewForm
           FieldName = 'UTC_START'
           Footers = <>
           Title.Caption = 'UTC|'#1057#1090#1072#1088#1090
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -283,6 +285,7 @@ object EPGViewForm: TEPGViewForm
           FieldName = 'UTC_STOP'
           Footers = <>
           Title.Caption = 'UTC|'#1057#1090#1086#1087
+          Title.TitleButton = True
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end

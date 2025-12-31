@@ -350,6 +350,7 @@ object CallCenterForm: TCallCenterForm
                 'Android'
                 'iOS')
               Title.Caption = #1058#1080#1087
+              Title.TitleButton = True
               Width = 30
             end
             item
@@ -359,6 +360,7 @@ object CallCenterForm: TCallCenterForm
               FieldName = 'CC_VALUE'
               Footers = <>
               Title.Caption = #1050#1086#1085#1090#1072#1082#1090
+              Title.TitleButton = True
               Width = 106
             end
             item
@@ -368,6 +370,7 @@ object CallCenterForm: TCallCenterForm
               FieldName = 'FIO'
               Footers = <>
               Title.Caption = #1060#1048#1054
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -376,6 +379,7 @@ object CallCenterForm: TCallCenterForm
               FieldName = 'ACCOUNT_NO'
               Footers = <>
               Title.Caption = #1051#1080#1094#1077#1074#1086#1081
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -384,6 +388,7 @@ object CallCenterForm: TCallCenterForm
               FieldName = 'DEBT_SUM'
               Footers = <>
               Title.Caption = #1057#1072#1083#1100#1076#1086
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -392,6 +397,7 @@ object CallCenterForm: TCallCenterForm
               FieldName = 'CUST_STATE_DESCR'
               Footers = <>
               Title.Caption = #1057#1090#1072#1090#1091#1089
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -616,6 +622,7 @@ object CallCenterForm: TCallCenterForm
             FieldName = 'EDIT_BY'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1080#1083
+            Title.TitleButton = True
           end
           item
             CellButtons = <>

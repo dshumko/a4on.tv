@@ -26,6 +26,7 @@ inherited SubDivForm: TSubDivForm
         FieldName = 'NAME'
         Footers = <>
         Title.Caption = #1055#1086#1076#1088#1072#1079#1076#1077#1083#1077#1085#1080#1077
+        Title.TitleButton = True
         Width = 155
       end
       item
@@ -35,6 +36,7 @@ inherited SubDivForm: TSubDivForm
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 120
       end
       item
@@ -52,6 +54,7 @@ inherited SubDivForm: TSubDivForm
         FieldName = 'ADRES'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089
+        Title.TitleButton = True
         Width = 91
       end
       item
@@ -61,6 +64,7 @@ inherited SubDivForm: TSubDivForm
         FieldName = 'BOSS'
         Footers = <>
         Title.Caption = #1056#1091#1082#1086#1074#1086#1076#1080#1090#1077#1083#1100
+        Title.TitleButton = True
         Width = 100
       end>
   end

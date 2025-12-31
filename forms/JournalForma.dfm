@@ -49,6 +49,7 @@ object JournalForm: TJournalForm
         FieldName = 'LOG_GROUP'
         Footers = <>
         Title.Caption = #1054#1073#1098#1077#1082#1090
+        Title.TitleButton = True
         Width = 96
       end
       item
@@ -58,6 +59,7 @@ object JournalForm: TJournalForm
         FieldName = 'ACT'
         Footers = <>
         Title.Caption = #1054#1087#1077#1088#1072#1094#1080#1103
+        Title.TitleButton = True
         Width = 74
       end
       item
@@ -67,6 +69,7 @@ object JournalForm: TJournalForm
         FieldName = 'OBJECT_ID'
         Footers = <>
         Title.Caption = #1048#1044' '#1086#1073#1098#1077#1082#1090#1072
+        Title.TitleButton = True
         Width = 97
       end
       item
@@ -76,6 +79,7 @@ object JournalForm: TJournalForm
         FieldName = 'PARAM'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088
+        Title.TitleButton = True
         Width = 114
       end
       item
@@ -85,6 +89,7 @@ object JournalForm: TJournalForm
         FieldName = 'VALUE_BEFORE'
         Footers = <>
         Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077'|'#1044#1086
+        Title.TitleButton = True
         Width = 157
       end
       item
@@ -94,6 +99,7 @@ object JournalForm: TJournalForm
         FieldName = 'VALUE_AFTER'
         Footers = <>
         Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077'|'#1055#1086#1089#1083#1077
+        Title.TitleButton = True
         Width = 140
       end
       item
@@ -103,6 +109,7 @@ object JournalForm: TJournalForm
         FieldName = 'WHO_CHANGE'
         Footers = <>
         Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1090#1086
+        Title.TitleButton = True
         Width = 78
       end
       item
@@ -112,6 +119,7 @@ object JournalForm: TJournalForm
         FieldName = 'WHEN_CHANGE'
         Footers = <>
         Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1086#1075#1076#1072
+        Title.TitleButton = True
         Width = 71
       end>
     object RowDetailData: TRowDetailPanelControlEh

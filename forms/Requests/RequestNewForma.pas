@@ -160,6 +160,7 @@ type
     FReqTempl: Integer;
     FLastFlat: string;
     FDenyCancel: Boolean;
+    FAllowEmptyPhone : Boolean;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure CheckData;
     function FindNearFreeDay: Boolean;
@@ -805,7 +806,7 @@ begin
   else
     cnError.Dispose(luTemplate);
 
-  if ((GetCustomer_ID <> -1) and (cbContact.Text = '')) then
+  if ((GetCustomer_ID <> -1) and (cbContact.Text = '') and (Not FAllowEmptyPhone) ) then
   begin
     cbContact.SetFocus;
     ExistsError := True;
@@ -1297,6 +1298,8 @@ begin
     A4MainForm.AddictSpell.AddControl(mmoContent);
     A4MainForm.AddictSpell.AddControl(mmoNotice);
   end;
+
+  FAllowEmptyPhone := (dmMain.GetSettingsValue('REQUEST_ALLOW_EMPTY_PHONE') = '1');
 
   // спрячем кнопку + для добавления адреса если это запрещено
   LupStreets.EditButtons[0].Visible := FAddressRight;
@@ -1845,7 +1848,9 @@ begin
     if not s.IsEmpty then
       cbContact.Items.Add(s);
   end;
-  cbContact.Items.Add('Без номера');
+
+  if not FAllowEmptyPhone then
+    cbContact.Items.Add('Без номера');
 end;
 
 end.

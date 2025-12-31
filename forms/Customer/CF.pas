@@ -356,7 +356,8 @@ type
     procedure SwitchIfoTab(const next: Boolean);
     procedure StartSearchAddress;
     procedure StopSearchAddress;
-    procedure SetAddressFilter();
+    procedure ClearSearchAddress;
+    procedure SetAddressFilter;
     procedure AddReport(const r_id: Integer; const variable: string; const value: Variant;
       const AsNew: Boolean = False);
     procedure LoadReportBody(const fReport_ID: Integer);
@@ -469,7 +470,6 @@ end;
 constructor TCustomersForm.CreateA(const FilterFIELD: Integer = -1; const FilterVALUE: string = '');
 var
   i: Integer;
-  s: string;
 begin
   inherited Create(Application);
   InitForm;
@@ -1143,9 +1143,7 @@ end;
 procedure TCustomersForm.StartSearchAddress;
 begin
   if (actAddressSearch.Tag <> 1) and (dmMain.GetIniValue('FETCHALL') = '0') then
-  begin
     actAddressSearch.Tag := 1;
-  end;
 
   actAddressSearch.Checked := true;
   pnlSearchAdres.Visible := true;
@@ -1176,6 +1174,34 @@ begin
   dbgCustomers.DataSource.DataSet.GotoBookmark(bm);
 
   dbgCustomers.SetFocus;
+end;
+
+procedure TCustomersForm.ClearSearchAddress;
+begin
+  dsCustomers.DisableControls;
+  if (VarIsNumeric(cbbAREA.KeyValue)) then
+    dsStreets.ParamByName('area_id').AsInteger := cbbAREA.KeyValue
+  else
+    dsStreets.ParamByName('area_id').Clear;
+
+  if dsFLAT.Active then
+  begin
+    lcbFLAT.Clear;
+    dsFLAT.Close;
+  end;
+
+  if dsHomes.Active then
+  begin
+    lcbHOUSE.Clear;
+    dsHomes.Close;
+  end;
+
+  if dsStreets.Active then
+    lcbStreets.Clear;
+
+  dsCustomers.EnableControls;
+
+  actAddressSearch.Tag := 0;
 end;
 
 procedure TCustomersForm.ActCancelContractExecute(Sender: TObject);
@@ -1850,7 +1876,6 @@ end;
 procedure TCustomersForm.ActSetFilterExecute(Sender: TObject);
 var
   filter: string;
-  fidx: Integer;
   Ok: Boolean;
 begin
   filter := '';
@@ -1872,7 +1897,8 @@ begin
   if (dsCustomers.Filtered) then
   begin
     if actAddressSearch.Checked then
-      StopSearchAddress;
+      ClearSearchAddress;
+
     dsCustomers.filter := '';
     dsCustomers.Filtered := False;
   end;
@@ -5192,11 +5218,11 @@ begin
 
   if (id <> 0) or (not actAddressSearch.Checked) then
     Exit;
-
+  scr_cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  filter := '';
   try
-    scr_cr := Screen.Cursor;
-    Screen.Cursor := crSQLWait;
-    filter := '';
+
     if VarIsNumeric(lcbHOUSE.KeyValue) then
     begin
       id := lcbHOUSE.KeyValue;
@@ -5254,6 +5280,8 @@ begin
     lcbHOUSE.Color := clWindow;
 
   lcbFLAT.value := NULL;
+  lcbFLAT.Enabled := (lcbHOUSE.Text <> '');
+
   tmrSearch.Enabled := False;
   tmrSearch.Enabled := true;
   actAddressSearch.Tag := 0;
@@ -5284,7 +5312,11 @@ end;
 procedure TCustomersForm.lcbStreetsChange(Sender: TObject);
 begin
   lcbHOUSE.value := NULL;
+  lcbHOUSE.Enabled := (lcbStreets.Text <> '');
+
   lcbFLAT.value := NULL;
+  lcbFLAT.Enabled := False;
+
   tmrSearch.Enabled := False;
   tmrSearch.Enabled := true;
   actAddressSearch.Tag := 0;
@@ -6028,13 +6060,11 @@ end;
 
 procedure TCustomersForm.FindTextInColumn(const SearchDown: Boolean = true);
 var
-  RecordFounded: Boolean;
   Options: TLocateTextOptionsEh;
   Matching: TLocateTextMatchingEh;
   Direction: TLocateTextDirectionEh;
   TreeFindRange: TLocateTextTreeFindRangeEh;
   FieldName: String;
-
 begin
   if Assigned(dbgCustomers) and Assigned(dbgCustomers.DataSource) and Assigned(dbgCustomers.DataSource.DataSet) and
     dbgCustomers.DataSource.DataSet.Active then
@@ -6052,8 +6082,7 @@ begin
 
     FieldName := dbgCustomers.Columns[dbgCustomers.SelectedIndex].FieldName;
 
-    RecordFounded := dbgCustomers.LocateText(dbgCustomers, FieldName, edtSearch.Text, Options, Direction, Matching,
-      TreeFindRange);
+    dbgCustomers.LocateText(dbgCustomers, FieldName, edtSearch.Text, Options, Direction, Matching, TreeFindRange);
   end;
 end;
 

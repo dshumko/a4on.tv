@@ -125,6 +125,7 @@ object ReqGiveForm: TReqGiveForm
         FieldName = 'FIO'
         Footers = <>
         Title.Caption = #1060#1048#1054
+        Title.TitleButton = True
         Width = 150
       end
       item
@@ -136,6 +137,7 @@ object ReqGiveForm: TReqGiveForm
         FieldName = 'SELECTED'
         Footers = <>
         Title.Caption = #1048#1057#1055
+        Title.TitleButton = True
         Width = 30
       end>
     object RowDetailData: TRowDetailPanelControlEh

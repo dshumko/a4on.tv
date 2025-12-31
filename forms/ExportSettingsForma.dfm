@@ -43,6 +43,7 @@ object ExportSettingsForm: TExportSettingsForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 103
         end
         item
@@ -52,6 +53,7 @@ object ExportSettingsForm: TExportSettingsForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 102
         end>
       object RowDetailData: TRowDetailPanelControlEh
@@ -478,6 +480,7 @@ object ExportSettingsForm: TExportSettingsForm
                 '['#1052#1045#1057#1071#1062']'
                 '['#1043#1054#1044']')
               Title.Caption = #1044#1072#1085#1085#1099#1077
+              Title.TitleButton = True
               Width = 188
             end
             item
@@ -487,6 +490,7 @@ object ExportSettingsForm: TExportSettingsForm
               FieldName = 'FLDNAME'
               Footers = <>
               Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' DBF '#1087#1086#1083#1103
+              Title.TitleButton = True
             end
             item
               AutoFitColWidth = False
@@ -504,6 +508,7 @@ object ExportSettingsForm: TExportSettingsForm
                 #1057#1090#1088#1086#1082#1072
                 #1044#1072#1090#1072)
               Title.Caption = #1058#1080#1087' '#1076#1072#1085#1085#1099#1093
+              Title.TitleButton = True
               Width = 60
             end
             item
@@ -513,6 +518,7 @@ object ExportSettingsForm: TExportSettingsForm
               FieldName = 'FLDSIZE'
               Footers = <>
               Title.Caption = #1056#1072#1079#1084#1077#1088
+              Title.TitleButton = True
               Width = 53
             end
             item
@@ -522,6 +528,7 @@ object ExportSettingsForm: TExportSettingsForm
               FieldName = 'FLDPERC'
               Footers = <>
               Title.Caption = #1047#1085#1072#1082#1086#1074' '#1087#1086#1089#1083#1077' '#1079#1072#1087#1103#1090#1086#1081
+              Title.TitleButton = True
               Width = 57
             end>
           object RowDetailData: TRowDetailPanelControlEh

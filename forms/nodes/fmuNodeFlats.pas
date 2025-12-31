@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
   Vcl.Buttons, Vcl.ExtCtrls;
 
@@ -28,10 +29,12 @@ type
     pnlButtons: TPanel;
     btnAdd1: TSpeedButton;
     btnFind: TSpeedButton;
+    actOpenFlat: TAction;
     procedure actEditExecute(Sender: TObject);
     procedure dbgNodeFilesDblClick(Sender: TObject);
     procedure actCustomersExecute(Sender: TObject);
     procedure dbgNodeFilesSortMarkingChanged(Sender: TObject);
+    procedure actOpenFlatExecute(Sender: TObject);
   private
     { Private declarations }
     procedure EnableControls;
@@ -129,15 +132,41 @@ begin
   end
 end;
 
+procedure TapgNodeFlats.actOpenFlatExecute(Sender: TObject);
+var
+  s: string;
+begin
+  if (not dsFlats.FieldByName('CST_LIST').IsNUll) then
+  begin
+    s := dsFlats['CST_LIST'];
+    s := s.Trim([',']);
+    ShowCustomers(7, s);
+  end;
+end;
+
 procedure TapgNodeFlats.CloseData;
 begin
   dsFlats.Close;
 end;
 
 procedure TapgNodeFlats.dbgNodeFilesDblClick(Sender: TObject);
+var
+  ScrPt, GrdPt: TPoint;
+  Cell: TGridCoord;
+  s: String;
 begin
-  if actEdit.Visible then
-    actEdit.Execute;
+  ScrPt := Mouse.CursorPos;
+  GrdPt := dbgNodeFiles.ScreenToClient(ScrPt);
+  Cell := dbgNodeFiles.MouseCoord(GrdPt.X, GrdPt.Y);
+  s := UpperCase(dbgNodeFiles.Fields[Cell.X - 1].FieldName);
+
+  if (s = 'FLAT_NO') then
+    actOpenFlat.Execute
+  else
+  begin
+    if actEdit.Visible then
+      actEdit.Execute;
+  end;
 end;
 
 procedure TapgNodeFlats.dbgNodeFilesSortMarkingChanged(Sender: TObject);
@@ -159,7 +188,7 @@ begin
     beOpened := FIBDS.Active;
     if beOpened then
     begin
-      if not FIBDS.FieldByName('FLAT_NO').IsNull then
+      if not FIBDS.FieldByName('FLAT_NO').IsNUll then
         id := FIBDS.FieldByName('FLAT_NO').asString;
       FIBDS.Close;
     end;

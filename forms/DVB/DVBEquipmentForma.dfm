@@ -239,6 +239,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'EDIT_BY'
           Footers = <>
           Title.Caption = #1050#1090#1086
+          Title.TitleButton = True
           Width = 87
         end
         item
@@ -248,6 +249,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'EDIT_ON'
           Footers = <>
           Title.Caption = #1050#1086#1075#1076#1072
+          Title.TitleButton = True
           Width = 82
         end
         item
@@ -257,6 +259,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'STATE_NAME'
           Footers = <>
           Title.Caption = #1063#1090#1086
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -265,6 +268,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'ACCOUNT_NO'
           Footers = <>
           Title.Caption = #1051#1080#1094#1077#1074#1086#1081
+          Title.TitleButton = True
           Width = 64
         end
         item
@@ -274,6 +278,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'FIO'
           Footers = <>
           Title.Caption = #1060#1048#1054
+          Title.TitleButton = True
           Width = 143
         end
         item
@@ -283,6 +288,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'DEBT_SUM'
           Footers = <>
           Title.Caption = #1057#1072#1083#1100#1076#1086
+          Title.TitleButton = True
           Width = 59
         end
         item
@@ -292,6 +298,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'STREET_NAME'
           Footers = <>
           Title.Caption = #1059#1083#1080#1094#1072
+          Title.TitleButton = True
           Width = 138
         end
         item
@@ -301,6 +308,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'HOUSE_NO'
           Footers = <>
           Title.Caption = #1044#1086#1084
+          Title.TitleButton = True
           Width = 34
         end
         item
@@ -310,6 +318,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
           FieldName = 'FLAT_NO'
           Footers = <>
           Title.Caption = #1050#1074'.'
+          Title.TitleButton = True
           Width = 35
         end>
       object RowDetailData: TRowDetailPanelControlEh

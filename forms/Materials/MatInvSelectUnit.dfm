@@ -123,6 +123,7 @@ object MaterialsInvSelect: TMaterialsInvSelect
           FieldName = 'M_NUMBER'
           Footers = <>
           Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+          Title.TitleButton = True
           Width = 75
         end
         item

@@ -110,6 +110,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'CONTETNT'
         Footers = <>
         Title.Caption = #1053#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100'|'#1047#1072#1103#1074#1083#1077#1085#1085#1072#1103
+        Title.TitleButton = True
         Width = 104
       end
       item
@@ -222,6 +223,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'ACCOUNT_NO'
         Footers = <>
         Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1051#1080#1094#1077#1074#1086#1081
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -230,6 +232,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'FIO'
         Footers = <>
         Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1060#1048#1054
+        Title.TitleButton = True
         OnGetCellParams = dbGridCustReqColumns17GetCellParams
       end
       item
@@ -239,6 +242,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'STREET_NAME'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089'|'#1059#1083#1080#1094#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -247,6 +251,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'HOUSE_NO'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089'|'#1044#1086#1084
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -255,6 +260,7 @@ object apgCustomerRequests: TapgCustomerRequests
         FieldName = 'FLAT_NO'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089'|'#1050#1074'.'
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -264,6 +270,7 @@ object apgCustomerRequests: TapgCustomerRequests
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1054#1087#1083#1072#1090#1072
+        Title.TitleButton = True
         Title.Hint = 
           #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
           #1083#1090#1099#1081
@@ -277,6 +284,7 @@ object apgCustomerRequests: TapgCustomerRequests
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1053#1072#1095#1080#1089#1083#1077#1085#1086
+        Title.TitleButton = True
         Title.Hint = 
           #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
           #1083#1090#1099#1081
@@ -290,6 +298,7 @@ object apgCustomerRequests: TapgCustomerRequests
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1059#1089#1083#1091#1075#1080
+        Title.TitleButton = True
         Title.Hint = 
           #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
           #1083#1090#1099#1081

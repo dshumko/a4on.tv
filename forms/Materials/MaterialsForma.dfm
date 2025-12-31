@@ -132,14 +132,6 @@ object MaterialsForm: TMaterialsForm
             Action = actDelete
             Flat = True
           end
-          object btnRemainRecalc: TSpeedButton
-            Left = 131
-            Top = 2
-            Width = 22
-            Height = 22
-            Action = actRemainRecalc
-            Flat = True
-          end
         end
       end
     end
@@ -296,6 +288,7 @@ object MaterialsForm: TMaterialsForm
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086
+            Title.TitleButton = True
             Width = 107
           end
           item
@@ -306,6 +299,7 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             ReadOnly = True
             Title.Caption = #1057#1082#1083#1072#1076
+            Title.TitleButton = True
             Width = 146
           end
           item
@@ -340,6 +334,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'INVENTORY'
             Footers = <>
             Title.Caption = #1044#1072#1090#1072' '#1080#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1080
+            Title.TitleButton = True
             Width = 105
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -478,6 +473,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_BY'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -486,6 +482,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_ON'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -494,6 +491,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_BY'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -502,6 +500,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_ON'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -682,6 +681,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_BY'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -690,6 +690,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_ON'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -698,6 +699,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_BY'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -706,6 +708,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_ON'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -819,6 +822,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'B_QUANT'
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086'|'#1044#1086
+            Title.TitleButton = True
           end
           item
             AutoFitColWidth = False
@@ -842,6 +846,7 @@ object MaterialsForm: TMaterialsForm
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086'|'#1056#1072#1079#1085#1080#1094#1072
+            Title.TitleButton = True
           end
           item
             AutoFitColWidth = False
@@ -896,6 +901,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_BY'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -904,6 +910,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_ON'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -912,6 +919,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_BY'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -920,6 +928,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_ON'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1105,6 +1114,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_BY'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -1113,6 +1123,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'ADDED_ON'
             Footers = <>
             Title.Caption = #1057#1086#1079#1076#1072#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -1121,6 +1132,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_BY'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1077#1084
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -1129,6 +1141,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'EDIT_ON'
             Footers = <>
             Title.Caption = #1048#1079#1084#1077#1085#1077#1085'|'#1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1450,6 +1463,8 @@ object MaterialsForm: TMaterialsForm
               end
               item
                 ValueType = gfvSumEh
+              end
+              item
               end>
             Visible = True
           end>
@@ -1483,6 +1498,8 @@ object MaterialsForm: TMaterialsForm
         TitleParams.VTitleMargin = 5
         VertScrollBar.SmoothStep = True
         OnDblClick = dbgGridPivotDblClick
+        OnDataGroupGetRowParams = dbgGridPivotDataGroupGetRowParams
+        OnGetCellParams = dbgGridPivotGetCellParams
         Columns = <
           item
             CellButtons = <>
@@ -1491,6 +1508,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'WH'
             Footers = <>
             Title.Caption = #1057#1082#1083#1072#1076
+            Title.TitleButton = True
             Width = 155
           end
           item
@@ -1500,6 +1518,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'M_DATE'
             Footers = <>
             Title.Caption = #1044#1072#1090#1072
+            Title.TitleButton = True
             Width = 87
           end
           item
@@ -1510,6 +1529,7 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1054#1087#1077#1088#1072#1094#1080#1103
             Title.Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1087#1086' '#1087#1086#1083#1102' - '#1086#1090#1082#1088#1099#1090#1080#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1072' '
+            Title.TitleButton = True
             Width = 152
           end
           item
@@ -1520,6 +1540,7 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1044#1086#1082#1091#1084#1077#1085#1090
             Title.Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1087#1086' '#1087#1086#1083#1102' - '#1086#1090#1082#1088#1099#1090#1080#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1072' '
+            Title.TitleButton = True
             Width = 97
           end
           item
@@ -1529,6 +1550,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'SERIAL'
             Footers = <>
             Title.Caption = #1057'/'#1053
+            Title.TitleButton = True
             Visible = False
           end
           item
@@ -1539,7 +1561,20 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'QUANT'
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086
-            Width = 125
+            Title.TitleButton = True
+            Width = 88
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = ',#0.#####'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'QUANT_BEFORE'
+            Footers = <>
+            Title.Caption = #1050#1086#1083'-'#1074#1086' '#1076#1086
+            Title.Hint = #1050#1086#1083'-'#1074#1086' '#1076#1086' '#1076#1072#1090#1099' '#1086#1087#1077#1088#1072#1094#1080#1080' '#1085#1072' '#1089#1082#1083#1072#1076#1077
+            Title.TitleButton = True
+            Width = 73
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1674,6 +1709,7 @@ object MaterialsForm: TMaterialsForm
               #1056#1072#1089#1089#1088'.'
               #1040#1088#1077#1085#1076#1072)
             Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094'|'#1053#1072#1095#1080#1089#1083'.'
+            Title.TitleButton = True
             Width = 66
           end
           item
@@ -1968,6 +2004,7 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 352
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -2017,7 +2054,8 @@ object MaterialsForm: TMaterialsForm
       OnExecute = ActDelGroupExecute
     end
     object actRemainRecalc: TAction
-      Hint = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080
+      Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
+      Hint = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1086#1089#1090#1072#1090#1082#1080' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
       ImageIndex = 39
       OnExecute = actRemainRecalcExecute
     end
@@ -2031,7 +2069,7 @@ object MaterialsForm: TMaterialsForm
     end
     object actRecalcAll: TAction
       Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1074#1089#1077' '#1086#1089#1090#1072#1090#1082#1080
-      ImageIndex = 39
+      ImageIndex = 101
       OnExecute = actRecalcAllExecute
     end
     object actChangeSerial: TAction
@@ -2058,6 +2096,10 @@ object MaterialsForm: TMaterialsForm
       ImageIndex = 28
       OnExecute = actOpenDocsExecute
     end
+    object actRecalcWH: TAction
+      Caption = #1055#1077#1088#1077#1089#1095#1080#1090#1072#1090#1100' '#1089#1082#1072#1083#1072#1076
+      OnExecute = actRecalcWHExecute
+    end
   end
   object dsRemain: TpFIBDataSet
     SelectSQL.Strings = (
@@ -2069,6 +2111,7 @@ object MaterialsForm: TMaterialsForm
       '  , @@sn_clause%null@ SERIAL'
       '  , t.COST*(@@qnt_clause%m.Mr_Quant@) TOTAL'
       '  , o.O_DESCRIPTION WH_NOTICE'
+      '  , m.WH_ID'
       '  from Materials_Remain m'
       
         '       inner join objects o on (o.o_id = m.WH_ID and o.o_type = ' +
@@ -2229,7 +2272,8 @@ object MaterialsForm: TMaterialsForm
       '    SOLD = :SOLD,'
       '    RENT = :RENT, '
       '    LOAN = :LOAN,'
-      '    PCE = :PCE '
+      '    PCE = :PCE,'
+      '    PROP = :PROP '
       'where (M_ID = :M_ID)')
     DeleteSQL.Strings = (
       'UPDATE Materials SET DELETED = 1 WHERE (M_ID = :M_ID)')
@@ -2237,11 +2281,11 @@ object MaterialsForm: TMaterialsForm
       
         'insert into MATERIALS (M_ID, NAME, DIMENSION, IS_UNIT, DESCRIPTI' +
         'ON, MG_ID, DELETED, M_NUMBER, COST, BEST_COST, BEST_SHIPPER_ID, ' +
-        'IS_DIGIT, IS_NET, M_TYPE, SOLD, RENT, LOAN, PCE)'
+        'IS_DIGIT, IS_NET, M_TYPE, SOLD, RENT, LOAN, PCE, PROP)'
       
         'values (:M_ID, :NAME, :DIMENSION, :IS_UNIT, :DESCRIPTION, :GR_ID' +
         ', 0, :M_NUMBER, :COST, :BEST_COST, :BEST_SHIPPER_ID, :IS_DIGIT, ' +
-        ':IS_NET, :M_TYPE, :SOLD, :RENT, :LOAN, :PCE)'
+        ':IS_NET, :M_TYPE, :SOLD, :RENT, :LOAN, :PCE, :PROP)'
       '-- '#1042#1072#1078#1085#1086' MG_ID - GR_ID!!!')
     SelectSQL.Strings = (
       '-- Select SQL'
@@ -2483,7 +2527,7 @@ object MaterialsForm: TMaterialsForm
       '  , t.O_CHARFIELD DT_REPORT'
       '  , @@qnt_clause%im.M_Quant@ M_Quant  '
       '  , @@sn_clause%null@ SERIAL'
-      '   '
+      '  , d.Wh_Id '
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       
@@ -2559,6 +2603,7 @@ object MaterialsForm: TMaterialsForm
         DataType = ftUnknown
         Name = 'M_ID'
         ParamType = ptUnknown
+        Value = Null
       end>
     SelectCommand.CommandText.Strings = (
       'select * from MATERIALS_SUMMARY(:M_ID, 0)')
@@ -2594,7 +2639,7 @@ object MaterialsForm: TMaterialsForm
       '  , t.O_CHARFIELD DT_REPORT  '
       '  , @@qnt_clause%im.M_Quant@ M_Quant  '
       '  , @@sn_clause%null@ SERIAL'
-      '      '
+      '  , d.Wh_Id      '
       '  from Material_Docs d'
       '       inner join(select'
       '                      im.Doc_Id'
@@ -2660,7 +2705,8 @@ object MaterialsForm: TMaterialsForm
       '  , D.Edit_On'
       '  , t.O_CHARFIELD DT_REPORT  '
       '  , coalesce(a.Surname, d.Added_By) as Added_By'
-      '  , coalesce(e.Surname, d.Edit_By) as Edit_By    '
+      '  , coalesce(e.Surname, d.Edit_By) as Edit_By'
+      '  , d.Wh_Id      '
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       '       inner join materials m on (m.M_Id = im.M_Id)'
@@ -2722,7 +2768,7 @@ object MaterialsForm: TMaterialsForm
       '  , @@qnt_clause%-1*im.M_Quant@ M_Quant'
       '  , @@itg_clause%-1*im.M_Quant*m.Cost@ ITOGO  '
       '  , @@sn_clause%null@ SERIAL'
-      '        '
+      '  , d.Wh_Id        '
       '  from Material_Docs d'
       '       inner join Materials_In_Doc im on (d.Doc_Id = im.Doc_Id)'
       '       inner join materials m on (m.M_Id = im.M_Id)'
@@ -2825,6 +2871,7 @@ object MaterialsForm: TMaterialsForm
       '      when 2 then '#39#1074' '#1088#1077#1084#1086#1085#1090#1077#39
       '      when 3 then '#39#1087#1088#1086#1076#1072#1085#39
       '      when 4 then '#39#1089#1087#1080#1089#1072#1085#39
+      '      when 5 then '#39#1074#1099#1082#1091#1087#39
       '      else u.State || '#39' '#1085#1077' '#1086#1087#1088#1077#1076#1077#1083#1077#1085#39
       '    end STATE_STR'
       '  , o.O_Name OT_NAME'
@@ -2893,8 +2940,8 @@ object MaterialsForm: TMaterialsForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 680
-    Top = 272
+    Left = 784
+    Top = 280
   end
   object pmPivot: TPopupMenu
     Left = 668
@@ -2974,8 +3021,9 @@ object MaterialsForm: TMaterialsForm
     end
   end
   object pmPopUp: TPopupMenu
-    Left = 203
-    Top = 87
+    OnPopup = pmPopUpPopup
+    Left = 219
+    Top = 119
     object mniFilterFLD: TMenuItem
       Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1079#1085#1072#1095#1077#1085#1080#1102
       OnClick = mniFilterFLDClick
@@ -3008,6 +3056,18 @@ object MaterialsForm: TMaterialsForm
       Caption = '&'#1055#1077#1088#1077#1095#1080#1090#1072#1090#1100' '#1076#1072#1085#1085#1099#1077
       OnClick = miRefreshClick
     end
+    object miSpltWh: TMenuItem
+      Caption = '-'
+      Visible = False
+    end
+    object miRecalcWH: TMenuItem
+      Action = actRecalcWH
+      Visible = False
+    end
+    object miRemainRecalcMat: TMenuItem
+      Action = actRemainRecalc
+      Visible = False
+    end
   end
   object printGridEh: TPrintDBGridEh
     Options = []
@@ -3026,6 +3086,7 @@ object MaterialsForm: TMaterialsForm
     Top = 160
   end
   object mmMaterials: TMainMenu
+    Images = A4MainForm.ICONS_ACTIVE
     Left = 144
     Top = 144
     object miMi: TMenuItem
@@ -3094,6 +3155,12 @@ object MaterialsForm: TMaterialsForm
         Caption = #1054#1090#1082#1088#1099#1090#1100' '#1060#1086#1088#1084#1091' '#1044#1074#1080#1078#1077#1085#1080#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1086#1074
       end
       object miN6: TMenuItem
+        Caption = '-'
+      end
+      object miRemainRecalcMatMain: TMenuItem
+        Action = actRemainRecalc
+      end
+      object miN1: TMenuItem
         Caption = '-'
       end
       object miRecalcAll: TMenuItem
@@ -3205,6 +3272,8 @@ object MaterialsForm: TMaterialsForm
       '  , RENT'
       '  , LOAN'
       '  , iif(coalesce(PATH, '#39#39') = '#39#39', MG_NAME, PATH) PATH'
+      '  , g.Pce'
+      '  , g.Prop'
       '  from MATERIALS_GROUP g'
       '  where coalesce(g.Deleted, 0) = 0'
       'union'
@@ -3217,6 +3286,8 @@ object MaterialsForm: TMaterialsForm
       '  , null RENT'
       '  , null LOAN'
       '  , null PATH'
+      '  , null Pce'
+      '  , null Prop'
       '  from RDB$DATABASE'
       '  where (exists(select'
       '                    m.M_Id'
@@ -3233,8 +3304,11 @@ object MaterialsForm: TMaterialsForm
       '  , null RENT'
       '  , null LOAN'
       '  , null PATH'
+      '  , null Pce'
+      '  , null Prop'
       '  from RDB$DATABASE'
-      '  order by 2, 1')
+      '  order by 2, 1'
+      '')
     UpdateCommand.Params = <
       item
         DataType = ftUnknown
@@ -3268,6 +3342,16 @@ object MaterialsForm: TMaterialsForm
       end
       item
         DataType = ftUnknown
+        Name = 'PCE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PROP'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
         Name = 'OLD_MG_ID'
         ParamType = ptUnknown
       end>
@@ -3279,7 +3363,9 @@ object MaterialsForm: TMaterialsForm
       '    MG_NOTICE = :MG_NOTICE,'
       '    SOLD = :SOLD,'
       '    RENT = :RENT,'
-      '    LOAN = :LOAN'
+      '    LOAN = :LOAN,'
+      '    PCE = :PCE,'
+      '    PROP = :PROP'
       'WHERE'
       '    MG_ID = :OLD_MG_ID')
     InsertCommand.Params = <
@@ -3317,6 +3403,16 @@ object MaterialsForm: TMaterialsForm
         DataType = ftUnknown
         Name = 'LOAN'
         ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PCE'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'PROP'
+        ParamType = ptUnknown
       end>
     InsertCommand.CommandText.Strings = (
       'INSERT INTO MATERIALS_GROUP('
@@ -3326,7 +3422,9 @@ object MaterialsForm: TMaterialsForm
       '    MG_NOTICE,'
       '    SOLD,'
       '    RENT,'
-      '    LOAN'
+      '    LOAN,'
+      '    PCE,'
+      '    PROP'
       ')'
       'VALUES('
       '    :MG_ID,'
@@ -3335,7 +3433,9 @@ object MaterialsForm: TMaterialsForm
       '    :MG_NOTICE,'
       '    :SOLD,'
       '    :RENT,'
-      '    :LOAN'
+      '    :LOAN,'
+      '    :PCE,'
+      '    :PROP'
       ')')
     DeleteCommand.Params = <
       item

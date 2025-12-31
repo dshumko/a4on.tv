@@ -94,6 +94,7 @@ object ChanSourcesForm: TChanSourcesForm
               FieldName = 'DEG'
               Footers = <>
               Title.Caption = #1043#1088#1072#1076#1091#1089
+              Title.TitleButton = True
             end
             item
               CellButtons = <>
@@ -124,6 +125,7 @@ object ChanSourcesForm: TChanSourcesForm
               FieldName = 'URL'
               Footers = <>
               Title.Caption = 'WEB'
+              Title.TitleButton = True
               Width = 234
               OnCellDataLinkClick = dbgSourceColumns5CellDataLinkClick
             end>
@@ -353,6 +355,7 @@ object ChanSourcesForm: TChanSourcesForm
               FieldName = 'S_SYSTEM'
               Footers = <>
               Title.Caption = #1057#1090#1072#1085#1076#1072#1088#1090
+              Title.TitleButton = True
               Width = 81
             end
             item

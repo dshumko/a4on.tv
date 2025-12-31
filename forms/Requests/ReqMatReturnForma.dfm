@@ -129,6 +129,7 @@ object ReqMatReturnForm: TReqMatReturnForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1045#1076'. '#1080#1079#1084'.'
+          Title.TitleButton = True
           Width = 37
         end
         item
@@ -159,6 +160,7 @@ object ReqMatReturnForm: TReqMatReturnForm
           Footers = <>
           Title.Caption = #1062#1077#1085#1072
           Title.Hint = #1045#1089#1083#1080' '#1091#1082#1072#1079#1072#1090#1100' '#1094#1077#1085#1091', '#1090#1086' '#1073#1091#1076#1077#1090' '#1074#1086#1079#1074#1088#1072#1090' '#1101#1090#1086#1081' '#1089#1091#1084#1084#1099' '#1072#1073#1086#1085#1077#1085#1090#1091
+          Title.TitleButton = True
           Width = 63
         end
         item
@@ -182,6 +184,7 @@ object ReqMatReturnForm: TReqMatReturnForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+          Title.TitleButton = True
           Width = 88
         end
         item

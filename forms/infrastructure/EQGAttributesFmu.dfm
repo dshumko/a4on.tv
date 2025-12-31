@@ -38,6 +38,7 @@ object apgEQGAttributes: TapgEQGAttributes
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1040#1090#1088#1080#1073#1091#1090
+        Title.TitleButton = True
         Width = 116
       end
       item
@@ -47,6 +48,7 @@ object apgEQGAttributes: TapgEQGAttributes
         FieldName = 'AVALUE'
         Footers = <>
         Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+        Title.TitleButton = True
         Width = 155
       end
       item
@@ -56,6 +58,7 @@ object apgEQGAttributes: TapgEQGAttributes
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 212
       end>
     object RowDetailData: TRowDetailPanelControlEh

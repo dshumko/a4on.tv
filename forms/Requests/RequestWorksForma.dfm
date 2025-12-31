@@ -107,6 +107,7 @@ object RequestWorksForm: TRequestWorksForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1042#1080#1076' '#1088#1072#1073#1086#1090
+          Title.TitleButton = True
           Width = 150
         end
         item
@@ -118,6 +119,7 @@ object RequestWorksForm: TRequestWorksForm
           FieldName = 'W_QUANT'
           Footers = <>
           Title.Caption = #1050'-'#1074#1086' '#1096#1090'./'#1095
+          Title.TitleButton = True
           Width = 44
         end
         item
@@ -127,6 +129,7 @@ object RequestWorksForm: TRequestWorksForm
           FieldName = 'W_COST'
           Footers = <>
           Title.Caption = #1062#1077#1085#1072' '#1096#1090'./'#1095#1072#1089#1072
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -149,6 +152,7 @@ object RequestWorksForm: TRequestWorksForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1042#1088#1077#1084#1103'| '#1085#1086#1088#1084'.'
+          Title.TitleButton = True
           Width = 51
         end
         item
@@ -158,6 +162,7 @@ object RequestWorksForm: TRequestWorksForm
           FieldName = 'NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 146
         end>
       object RowDetailData: TRowDetailPanelControlEh
@@ -186,6 +191,7 @@ object RequestWorksForm: TRequestWorksForm
           FieldName = 'RT_NAME'
           Footers = <>
           Title.Caption = #1043#1088#1091#1087#1087#1072
+          Title.TitleButton = True
           Width = 73
         end
         item
@@ -195,6 +201,7 @@ object RequestWorksForm: TRequestWorksForm
           FieldName = 'RT_NOTICE'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
           Width = 85
         end>
       object RowDetailData: TRowDetailPanelControlEh

@@ -84,6 +84,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'NAME'
             Footers = <>
             Title.Caption = #1059#1089#1083#1091#1075#1072
+            Title.TitleButton = True
             Width = 136
           end
           item
@@ -93,6 +94,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
             Width = 185
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -174,6 +176,7 @@ object apgCustomerDigit: TapgCustomerDigit
             Footers = <>
             ReadOnly = True
             Title.Caption = #1050#1072#1085#1072#1083
+            Title.TitleButton = True
             Width = 169
           end
           item
@@ -184,6 +187,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'DATE_ON'
             Footers = <>
             Title.Caption = #1044#1072#1090#1072' '#1074#1082#1083'.'
+            Title.TitleButton = True
             Width = 73
           end
           item
@@ -194,6 +198,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'DATE_OFF'
             Footers = <>
             Title.Caption = #1044#1072#1090#1072' '#1074#1099#1082#1083'.'
+            Title.TitleButton = True
             Width = 77
           end
           item
@@ -203,6 +208,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'NOTICE'
             Footers = <>
             Title.Caption = #1055#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -211,6 +217,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'ADDED_BY'
             Footers = <>
             Title.Caption = #1044#1086#1073#1072#1074#1080#1083
+            Title.TitleButton = True
           end
           item
             CellButtons = <>
@@ -219,6 +226,7 @@ object apgCustomerDigit: TapgCustomerDigit
             FieldName = 'ADDED_ON'
             Footers = <>
             Title.Caption = #1050#1086#1075#1076#1072
+            Title.TitleButton = True
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -392,6 +400,7 @@ object apgCustomerDigit: TapgCustomerDigit
           FieldName = 'eq_type_name'
           Footers = <>
           Title.Caption = #1058#1080#1087
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -400,6 +409,7 @@ object apgCustomerDigit: TapgCustomerDigit
           FieldName = 'man_name'
           Footers = <>
           Title.Caption = #1055#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1100
+          Title.TitleButton = True
           Width = 85
         end
         item
@@ -409,6 +419,7 @@ object apgCustomerDigit: TapgCustomerDigit
           FieldName = 'dvb_notice'
           Footers = <>
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '#1080#1079' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1072
+          Title.TitleButton = True
           Width = 74
         end>
       object RowDetailData: TRowDetailPanelControlEh

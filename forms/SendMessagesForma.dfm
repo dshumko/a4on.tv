@@ -173,6 +173,7 @@ object SendMessagesForm: TSendMessagesForm
           FieldName = 'O_DESCRIPTION'
           Footers = <>
           Title.Caption = #1064#1072#1073#1083#1086#1085
+          Title.TitleButton = True
           Width = 115
         end
         item
@@ -182,6 +183,7 @@ object SendMessagesForm: TSendMessagesForm
           FieldName = 'O_CHARFIELD'
           Footers = <>
           Title.Caption = #1058#1077#1082#1089#1090
+          Title.TitleButton = True
           Width = 161
           WordWrap = True
         end>

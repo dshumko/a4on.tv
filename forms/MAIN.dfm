@@ -358,6 +358,7 @@ object A4MainForm: TA4MainForm
       end
       object miEvents: TMenuItem
         Caption = #1046#1091#1088#1085#1072#1083' '#1089#1086#1073#1099#1090#1080#1081
+        OnClick = miEventsClick
       end
       object N11: TMenuItem
         Action = actJournal

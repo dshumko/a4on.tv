@@ -288,6 +288,7 @@ inherited WireForm: TWireForm
               Footers = <>
               HideDuplicates = True
               Title.Caption = #1052#1077#1090#1082#1072
+              Title.TitleButton = True
               Width = 67
               OnGetCellParams = dbgWireLinkColumns0GetCellParams
             end
@@ -298,6 +299,7 @@ inherited WireForm: TWireForm
               FieldName = 'WLBL_PORT'
               Footers = <>
               Title.Caption = #1055#1086#1088#1090
+              Title.TitleButton = True
               Width = 70
             end
             item
@@ -307,6 +309,7 @@ inherited WireForm: TWireForm
               FieldName = 'WLBL_NAME'
               Footers = <>
               Title.Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077'/'#1040#1073#1086#1085#1077#1085#1090
+              Title.TitleButton = True
               Width = 185
             end
             item
@@ -331,6 +334,7 @@ inherited WireForm: TWireForm
               FieldName = 'NODE_NAME'
               Footers = <>
               Title.Caption = #1059#1079#1077#1083
+              Title.TitleButton = True
               Width = 95
             end
             item
@@ -340,6 +344,7 @@ inherited WireForm: TWireForm
               FieldName = 'NTNAME'
               Footers = <>
               Title.Caption = #1058#1080#1087' '#1091#1079#1083#1072
+              Title.TitleButton = True
               Width = 109
             end>
           object RowDetailData: TRowDetailPanelControlEh

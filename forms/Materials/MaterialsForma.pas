@@ -183,9 +183,14 @@ type
     btnOpenDocs: TSpeedButton;
     btnEdit2: TSpeedButton;
     btnDelete: TSpeedButton;
-    btnRemainRecalc: TSpeedButton;
     miN6: TMenuItem;
     miRecalcAll: TMenuItem;
+    actRecalcWH: TAction;
+    miSpltWh: TMenuItem;
+    miRecalcWH: TMenuItem;
+    miRemainRecalcMat: TMenuItem;
+    miRemainRecalcMatMain: TMenuItem;
+    miN1: TMenuItem;
     procedure actAddGroupExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
@@ -244,6 +249,12 @@ type
     procedure miN6Click(Sender: TObject);
     procedure srcMatGropupsDataChange(Sender: TObject; Field: TField);
     procedure lblBcClick(Sender: TObject);
+    procedure dbgGridPivotGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
+    procedure dbgGridPivotDataGroupGetRowParams(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
+      Params: TGroupRowParamsEh);
+    procedure actRecalcWHExecute(Sender: TObject);
+    procedure pmPopUpPopup(Sender: TObject);
   private
     { Private declarations }
     fVisibleCost: Boolean;
@@ -262,6 +273,8 @@ type
     FMatDocAccessOut: Boolean;
     FMatDocAccessInv: Boolean;
     FFrozencols: Integer;
+    FclWarning: TColor;
+    FclError: TColor;
     procedure InitDataSet;
     procedure ShowSNforGrid();
     procedure ShowSNforRem;
@@ -276,6 +289,7 @@ type
     procedure LoadReportBody(const fReport_ID: Integer);
     procedure SetFrozen(const v: Integer);
     procedure GenBreadCrumps();
+    procedure RemainRecalc(const aMID: Integer = -1; const aWH: Integer = -1);
   public
     { Public declarations }
   end;
@@ -334,9 +348,9 @@ begin
   lk_Col.Title.TitleButton := true;
   lk_Col.Width := 320;
   lk_Col.Tag := 666;
-  //lk_Col.Footer.ValueType := fvtStaticText;
-  //lk_Col.Footer.Alignment := taLeftJustify;
-  //lk_Col.Footer.Value := rsItogo;
+  // lk_Col.Footer.ValueType := fvtStaticText;
+  // lk_Col.Footer.Alignment := taLeftJustify;
+  // lk_Col.Footer.Value := rsItogo;
   lk_Col.Footer.ValueType := fvtCount;
   lk_Col.Footer.FieldName := lk_FldName;
   lk_Col.Footer.Alignment := taRightJustify;
@@ -390,7 +404,8 @@ begin
   QrTemp.SQL.Text := 'select O_ID as ID, O_NAME as NAME from OBJECTS o where O_TYPE = 10 and O_DELETED = 0';
   QrTemp.SQL.Add(' and exists(select m.M_Id from Materials_Remain m where m.Wh_Id = o.O_Id) ');
   QrTemp.SQL.Add(' and (exists(select w.wh_id from SYS$USER u inner join sys$user_wh w on (w.user_id = u.id) ');
-  QrTemp.SQL.Add('      where w.wh_id = o.O_ID and u.ibname = current_user and w.can_view = 1) or current_user = ''SYSDBA'') ');
+  QrTemp.SQL.Add
+    ('      where w.wh_id = o.O_ID and u.ibname = current_user and w.can_view = 1) or current_user = ''SYSDBA'') ');
   QrTemp.SQL.Add('order by O_NAME');
   try
     QrTemp.ExecQuery;
@@ -486,53 +501,56 @@ begin
     Add('MG_ID D_INTEGER = :MG_ID,');
     Add('SHOW_DELETED D_integer = :SHOW_DELETED)');
     Add('RETURNS(');
-    Add('   M_ID   D_INTEGER ');
-    Add('  ,GR_ID   D_INTEGER ');
-    Add('  ,NAME D_VARCHAR100');
+    Add('   M_ID      D_INTEGER ');
+    Add('  ,GR_ID     D_INTEGER ');
+    Add('  ,NAME      D_VARCHAR100');
     Add('  ,M_NUMBER  D_VARCHAR20');
     Add('  ,DIMENSION D_VARCHAR10');
-    Add('  ,COST D_N15_3');
-    Add('  ,PCE D_N15_3');
-    Add('  ,DESCRIPTION D_NOTICE');
+    Add('  ,COST      D_N15_3');
+    Add('  ,PCE       D_N15_3');
+    Add('  ,DESCRIPTION     D_NOTICE');
     Add('  ,BEST_SHIPPER_ID D_INTEGER ');
-    Add('  ,BEST_SHIPPER D_VARCHAR255');
+    Add('  ,BEST_SHIPPER    D_VARCHAR255');
     Add('  ,BEST_COST D_N15_3');
-    Add('  ,IS_UNIT D_IBOOLEAN');
-    Add('  ,IS_NET D_IBOOLEAN');
-    Add('  ,IS_DIGIT D_IBOOLEAN');
-    Add('  ,M_TYPE  D_INTEGER');
+    Add('  ,IS_UNIT   D_IBOOLEAN');
+    Add('  ,IS_NET    D_IBOOLEAN');
+    Add('  ,IS_DIGIT  D_IBOOLEAN');
+    Add('  ,M_TYPE    D_INTEGER');
     Add('  ,TYPE_NAME D_VARCHAR255');
-    Add('  ,SOLD D_UID_NULL');
-    Add('  ,RENT D_UID_NULL');
-    Add('  ,LOAN D_UID_NULL');
-    Add('  ,BL_ID  D_INTEGER');
-    Add('  ,BL_NAME  D_VARCHAR255');
-    Add('  ,QNTTOTAL NUMERIC(15,3)');
-    Add('  ,CSTTOTAL NUMERIC(15,3)');
+    Add('  ,SOLD      D_UID_NULL');
+    Add('  ,RENT      D_UID_NULL');
+    Add('  ,LOAN      D_UID_NULL');
+    Add('  ,BL_ID     D_INTEGER');
+    Add('  ,BL_NAME   D_VARCHAR255');
+    Add('  ,QNTTOTAL  D_N15_3');
+    Add('  ,CSTTOTAL  D_N15_3');
+    Add('  ,PROP      D_INTEGER');
     Add(lk_vars_s);
     Add(')AS ');
     Add('BEGIN ');
     Add('MG_ID = iif(MG_ID = -999, null, MG_ID);'); // -999 это параметр для материалов без группы
     Add('FOR');
     Add('  select M_ID, NAME, DIMENSION, M_NUMBER, DESCRIPTION, IS_UNIT, COST, m.BEST_SHIPPER_ID, m.BEST_COST, o.O_NAME,');
-    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, m.SOLD, m.RENT, m.LOAN, m.PCE  ');
+    Add('         m.Mg_Id, m.IS_DIGIT, m.IS_NET, M_TYPE, t.O_NAME TYPE_NAME, m.SOLD, m.RENT, m.LOAN, ');
+    Add('         coalesce(m.PCE, mg.PCE) PCE, coalesce(m.PROP, mg.PROP) PROP  ');
     Add('  from MATERIALS m');
     Add('    left outer join OBJECTS o on (o.O_ID = m.BEST_SHIPPER_ID and o.O_TYPE = 29) ');
     Add('    left outer join OBJECTS t on (t.O_ID = m.M_Type and t.O_TYPE = 48) ');
+    Add('    left outer join MATERIALS_GROUP mg on (mg.MG_ID = m.MG_ID) ');
     Add('  where ((m.deleted =0 and :SHOW_DELETED = 0) or (:show_deleted = 1))');
     Add('    and ((:MG_ID = -1) or (((');
     // выводим группу и ее детей
     // Add('           m.MG_ID = :MG_ID
-    Add('m.MG_ID in (with recursive GroupsTree');
-    Add('   as (select mp.Mg_Id, mp.Parent_Id from MATERIALS_GROUP mp where mp.MG_ID = :MG_ID');
-    Add('       union all');
-    Add('       select mc.Mg_Id, mc.Parent_Id from MATERIALS_GROUP mc inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id)');
-    Add('    select Mg_Id from GroupsTree');
-    Add('    )');
+    Add('   m.MG_ID in (with recursive GroupsTree');
+    Add('      as (select mp.Mg_Id, mp.Parent_Id from MATERIALS_GROUP mp where mp.MG_ID = :MG_ID');
+    Add('          union all');
+    Add('          select mc.Mg_Id, mc.Parent_Id from MATERIALS_GROUP mc inner join GroupsTree gt on mc.Parent_Id = gt.Mg_Id)');
+    Add('      select Mg_Id from GroupsTree');
+    Add('      )');
     Add(') and (not :MG_ID is null)) or ((coalesce(m.MG_ID, -1) = -1) and (:MG_ID is null))))');
     Add('  order by NAME');
     Add('  into :M_ID, :NAME, :DIMENSION, :M_NUMBER, :DESCRIPTION, :IS_UNIT, :COST, :BEST_SHIPPER_ID, :BEST_COST, :BEST_SHIPPER,');
-    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :SOLD, :RENT, :LOAN, :PCE ');
+    Add('       :GR_ID, :IS_DIGIT, :IS_NET, :M_TYPE, :TYPE_NAME, :SOLD, :RENT, :LOAN, :PCE, :PROP ');
     Add('  DO BEGIN');
     Add('    BL_ID = null; BL_NAME = null;');
     Add('    select first 1 b.Bl_Id, b.Bl_Name from Blob_Tbl b where b.Owner_Id = :M_ID and b.Bl_Type = 4 into :BL_ID, :BL_NAME;');
@@ -702,17 +720,25 @@ begin
 end;
 
 procedure TMaterialsForm.pgcInOutChange(Sender: TObject);
+var
+  cr: TCursor;
 begin
-  dsRemain.Active := (pgcInOut.ActivePage = tsIn);
-  dsJournal.Active := (pgcInOut.ActivePage = tsJournal);
-  dsIncome.Active := (pgcInOut.ActivePage = tsIncome);
-  dsMove.Active := (pgcInOut.ActivePage = tsMove);
-  dsOut.Active := (pgcInOut.ActivePage = tsOUT);
-  dsInvent.Active := (pgcInOut.ActivePage = tsInventory);
+  cr := Screen.Cursor;
+  Screen.Cursor := crSQLWait;
+  try
+    dsRemain.Active := (pgcInOut.ActivePage = tsIn);
+    dsJournal.Active := (pgcInOut.ActivePage = tsJournal);
+    dsIncome.Active := (pgcInOut.ActivePage = tsIncome);
+    dsMove.Active := (pgcInOut.ActivePage = tsMove);
+    dsOut.Active := (pgcInOut.ActivePage = tsOUT);
+    dsInvent.Active := (pgcInOut.ActivePage = tsInventory);
 
-  dsItogo.Active := (pgcInOut.ActivePage = tsItog);
-  dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
-  dsFiles.Active := (pgcInOut.ActivePage = tsFiles);
+    dsItogo.Active := (pgcInOut.ActivePage = tsItog);
+    dsSerials.Active := (pgcInOut.ActivePage = tsSerials);
+    dsFiles.Active := (pgcInOut.ActivePage = tsFiles);
+  finally
+    Screen.Cursor := cr;
+  end;
 end;
 
 procedure TMaterialsForm.pmgCopyClick(Sender: TObject);
@@ -744,6 +770,28 @@ begin
         Selection.SelectAll;
 end;
 
+procedure TMaterialsForm.pmPopUpPopup(Sender: TObject);
+var
+  v, m: Boolean;
+begin
+  v := False;
+  m := False;
+  if (ActiveControl is TDBGridEh) then
+  begin
+    v := ((ActiveControl as TDBGridEh).Name = 'DBGridIncome') //
+      or ((ActiveControl as TDBGridEh).Name = 'dbgIncome') //
+      or ((ActiveControl as TDBGridEh).Name = 'dbgMove') //
+      or ((ActiveControl as TDBGridEh).Name = 'dbgInvent') //
+      or ((ActiveControl as TDBGridEh).Name = 'dbgOut');
+
+    m := ((ActiveControl as TDBGridEh).Name = 'DBGridEh');
+  end;
+
+  miRecalcWH.Visible := v;
+  miRemainRecalcMat.Visible := m;
+  miSpltWh.Visible := v or m;
+end;
+
 procedure TMaterialsForm.actAddGroupExecute(Sender: TObject);
 begin
   EditGroup(true);
@@ -754,6 +802,10 @@ var
   id, pid: Integer;
 begin
   if (not(FAccessFull or FAccessMat)) then
+    exit;
+
+  // не редактіруем служебные группы
+  if (srcMatGropups.DataSet.FieldByName('MG_ID').IsNull) or (srcMatGropups.DataSet['MG_ID'] < 0) then
     exit;
 
   if (dsMaterials.State in [dsInsert, dsEdit]) then
@@ -876,6 +928,7 @@ procedure TMaterialsForm.actDeleteExecute(Sender: TObject);
 begin
   if (not(FAccessFull or FAccessMat)) then
     exit;
+
   if (MessageDlg(rsDeleteMaterial, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     srcDataSource.DataSet.Delete;
 end;
@@ -1255,6 +1308,7 @@ end;
 procedure TMaterialsForm.FormCreate(Sender: TObject);
 var
   b: Boolean;
+  s: string;
 begin
   // права пользователей
   FAccessMat := dmMain.AllowedAction(rght_Dictionary_Materials);
@@ -1300,6 +1354,26 @@ begin
     SetFrozen(FFrozencols)
   else
     SetFrozen(1);
+
+  s := dmMain.GetSettingsValue('ROW_HL_ERROR');
+  if not s.IsEmpty then
+    try
+      FclError := StringToColor(dmMain.GetSettingsValue('ROW_HL_ERROR'));
+    except
+      FclError := $006666FF;
+    end
+  else
+    FclError := $006666FF;
+
+  s := dmMain.GetSettingsValue('ROW_HL_WARNING');
+  if not s.IsEmpty then
+    try
+      FclWarning := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+    except
+      FclWarning := $0066FFFF;
+    end
+  else
+    FclWarning := $0066FFFF;
 end;
 
 procedure TMaterialsForm.FormShow(Sender: TObject);
@@ -1378,26 +1452,51 @@ begin
 end;
 
 procedure TMaterialsForm.actRecalcAllExecute(Sender: TObject);
-var
-  mid: Integer;
 begin
-  mid := -1;
-  if dsMaterials.FieldByName('M_ID').IsNull then
-    mid := dsMaterials.FieldByName('M_ID').AsInteger;
+  RemainRecalc(-1, -1);
+end;
 
+procedure TMaterialsForm.actRecalcWHExecute(Sender: TObject);
+var
+  wh: Integer;
+  grd: TDBGridEh;
+begin
+  if not(Self.ActiveControl is TDBGridEh) then
+    exit;
+
+  grd := (Self.ActiveControl as TDBGridEh);
+  try
+    wh := grd.DataSource.DataSet.FieldByName('Wh_Id').AsInteger;
+  except
+    wh := -1;
+  end;
+
+  RemainRecalc(-1, wh);
+
+  grd.DataSource.DataSet.Close;
+  grd.DataSource.DataSet.Open;
+
+  if (wh <> -1) then
+    grd.DataSource.DataSet.Locate('Wh_Id', wh, []);
+end;
+
+procedure TMaterialsForm.RemainRecalc(const aMID: Integer = -1; const aWH: Integer = -1);
+begin
   if TrTemp.InTransaction then
     TrTemp.Rollback;
-  QrTemp.Transaction := trWrite;
 
-  QrTemp.SQL.Clear;
-  QrTemp.SQL.Add('execute block as');
-  QrTemp.SQL.Add('declare variable M_Id integer;');
-  QrTemp.SQL.Add('begin');
-  QrTemp.SQL.Add('  for select m.M_Id from materials m into :M_Id');
-  QrTemp.SQL.Add('  do begin');
-  QrTemp.SQL.Add('    execute procedure Material_Remain_Recalc(:M_Id);');
-  QrTemp.SQL.Add('  end');
-  QrTemp.SQL.Add('end');
+  QrTemp.Transaction := trWrite;
+  QrTemp.SQL.Text := 'execute procedure Material_Remain_Recalc(:M_ID, :WH)';
+  if (aMID <> -1) then
+    QrTemp.ParamByName('M_ID').AsInteger := aMID
+  else
+    QrTemp.ParamByName('M_ID').Clear;
+
+  if (aWH <> -1) then
+    QrTemp.ParamByName('WH').AsInteger := aWH
+  else
+    QrTemp.ParamByName('WH').Clear;
+
   try
     QrTemp.Transaction.StartTransaction;
     QrTemp.ExecQuery;
@@ -1407,38 +1506,25 @@ begin
       QrTemp.Transaction.Rollback;
   end;
   QrTemp.Transaction := TrTemp;
-  dsMaterials.Close;
-  dsMaterials.Open;
-  if mid <> -1 then
-    dsMaterials.Locate('M_ID', mid, []);
+
+  if aWH = -1  then begin
+    dsMaterials.Close;
+    dsMaterials.Open;
+    if (aMID <> -1) then
+      dsMaterials.Locate('M_ID', aMID, []);
+  end
 end;
 
 procedure TMaterialsForm.actRemainRecalcExecute(Sender: TObject);
 var
   mid: Integer;
 begin
-  if TrTemp.InTransaction then
-    TrTemp.Rollback;
-  mid := dsMaterials.FieldByName('M_ID').AsInteger;
-  QrTemp.Transaction := trWrite;
-  QrTemp.SQL.Text := 'execute procedure Material_Remain_Recalc(:M_Id)';
-  if not dsMaterials.FieldByName('M_ID').IsNull then
-    QrTemp.ParamByName('M_ID').AsInteger := mid
+  if dsMaterials.FieldByName('M_ID').IsNull then
+    mid := dsMaterials.FieldByName('M_ID').AsInteger
   else
-    QrTemp.ParamByName('M_ID').Clear;
+    mid := -1;
 
-  try
-    QrTemp.Transaction.StartTransaction;
-    QrTemp.ExecQuery;
-    QrTemp.Transaction.Commit;
-  finally
-    if QrTemp.Transaction.InTransaction then
-      QrTemp.Transaction.Rollback;
-  end;
-  QrTemp.Transaction := TrTemp;
-  dsMaterials.Close;
-  dsMaterials.Open;
-  dsMaterials.Locate('M_ID', mid, []);
+  RemainRecalc(mid);
 end;
 
 procedure TMaterialsForm.actShowSNExecute(Sender: TObject);
@@ -1561,6 +1647,21 @@ begin
     Params.Text := '';
 end;
 
+procedure TMaterialsForm.dbgGridPivotDataGroupGetRowParams(Sender: TCustomDBGridEh;
+  GroupDataTreeNode: TGroupDataTreeNodeEh; Params: TGroupRowParamsEh);
+var
+  Column: TColumnEh;
+  FooterVal: Variant;
+begin
+  Column := dbgGridPivot.FieldColumns['QUANT'];
+  if dbgGridPivot.DataGrouping.CurDataNode.NodeType = dntDataGroupEh then
+  begin
+    FooterVal := GroupDataTreeNode.FooterItems[0].FooterValues[Column.Index];
+    if VarIsNumeric(FooterVal) and (FooterVal < 0) then
+      Params.Color := FclError;
+  end;
+end;
+
 procedure TMaterialsForm.dbgGridPivotDblClick(Sender: TObject);
 var
   i: Integer;
@@ -1608,6 +1709,18 @@ begin
             MaterialInventoryDocument(dsItogo['DOC_ID']); // Инвентаризация
       end;
     end;
+  end;
+end;
+
+procedure TMaterialsForm.dbgGridPivotGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; State: TGridDrawState);
+begin
+  if not dbgGridPivot.DataSource.DataSet.FieldByName('QUANT').IsNull then
+  begin
+    if dbgGridPivot.DataSource.DataSet['QUANT'] < 0 then
+      Background := FclWarning
+      // else if dbgGridPivot.DataSource.DataSet['QUANT'] > 0 then
+      // Background := FclPositive;
   end;
 end;
 
@@ -1843,7 +1956,6 @@ procedure TMaterialsForm.lblBcClick(Sender: TObject);
 var
   i, c: Integer;
   s, b: string;
-  bm: TbookMark;
 begin
   if not(Sender is TLabel) then
     exit;

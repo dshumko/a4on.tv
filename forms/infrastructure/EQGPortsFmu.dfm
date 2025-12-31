@@ -235,6 +235,7 @@ object apgEQGPort: TapgEQGPort
         FieldName = 'WLABEL'
         Footers = <>
         Title.Caption = #1052#1077#1090#1082#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>

@@ -74,6 +74,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
         FieldName = 'STREET_NAME'
         Footers = <>
         Title.Caption = #1059#1083#1080#1094#1072
+        Title.TitleButton = True
         Width = 102
       end
       item
@@ -83,6 +84,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
         FieldName = 'HOUSE_NO'
         Footers = <>
         Title.Caption = #1044#1086#1084
+        Title.TitleButton = True
         Width = 44
       end
       item
@@ -92,6 +94,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 125
       end
       item
@@ -101,6 +104,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
         FieldName = 'AREA_NAME'
         Footers = <>
         Title.Caption = #1053'.'#1055'.'
+        Title.TitleButton = True
         Width = 231
       end
       item
@@ -110,6 +114,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
         FieldName = 'SUBAREA_NAME'
         Footers = <>
         Title.Caption = #1056#1072#1081#1086#1085
+        Title.TitleButton = True
         Width = 85
       end>
     object RowDetailData: TRowDetailPanelControlEh

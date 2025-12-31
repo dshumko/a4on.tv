@@ -40,6 +40,7 @@ inherited NewsForm: TNewsForm
         FieldName = 'O_NAME'
         Footers = <>
         Title.Caption = #1047#1072#1075#1086#1083#1086#1074#1086#1082
+        Title.TitleButton = True
         Width = 196
       end
       item
@@ -50,6 +51,7 @@ inherited NewsForm: TNewsForm
         FieldName = 'O_DESCRIPTION'
         Footers = <>
         Title.Caption = 'URL'
+        Title.TitleButton = True
         Width = 131
       end
       item
@@ -59,6 +61,7 @@ inherited NewsForm: TNewsForm
         FieldName = 'O_CHARFIELD'
         Footers = <>
         Title.Caption = #1058#1077#1082#1089#1090
+        Title.TitleButton = True
         Width = 206
       end
       item
@@ -68,6 +71,7 @@ inherited NewsForm: TNewsForm
         FieldName = 'O_DATEFIELD'
         Footers = <>
         Title.Caption = #1055#1091#1073#1083#1080#1082#1086#1074#1072#1089#1090#1100'|'#1089
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -76,6 +80,7 @@ inherited NewsForm: TNewsForm
         FieldName = 'O_DATEEND'
         Footers = <>
         Title.Caption = #1055#1091#1073#1083#1080#1082#1086#1074#1072#1089#1090#1100'|'#1076#1086
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar

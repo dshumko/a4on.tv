@@ -116,10 +116,17 @@ object MaterialForm: TMaterialForm
   end
   object lblPCE: TLabel
     Left = 7
-    Top = 307
-    Width = 80
+    Top = 306
+    Width = 71
     Height = 13
-    Caption = #1052#1086#1078#1085#1086#1089#1090#1100', '#1042#1090'/'#1095
+    Caption = #1052#1086#1097#1085#1086#1089#1090#1100', '#1042#1090
+  end
+  object lblPCE1: TLabel
+    Left = 210
+    Top = 306
+    Width = 60
+    Height = 13
+    Caption = #1053#1072#1095#1080#1089#1083#1077#1085#1080#1103
   end
   object dblMatGroup: TDBLookupComboboxEh
     Left = 97
@@ -162,7 +169,7 @@ object MaterialForm: TMaterialForm
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
-    TabOrder = 18
+    TabOrder = 19
     Visible = True
     WantReturns = True
   end
@@ -222,7 +229,7 @@ object MaterialForm: TMaterialForm
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     NumGlyphs = 2
-    TabOrder = 19
+    TabOrder = 20
     OnClick = OkCancelFrame1bbOkClick
   end
   object btnCancel: TBitBtn
@@ -234,7 +241,7 @@ object MaterialForm: TMaterialForm
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 20
+    TabOrder = 21
   end
   object edtCost: TDBNumberEditEh
     Left = 96
@@ -484,17 +491,44 @@ object MaterialForm: TMaterialForm
   end
   object ednPCE: TDBNumberEditEh
     Left = 97
-    Top = 304
+    Top = 303
     Width = 105
     Height = 21
     DataField = 'PCE'
     DataSource = MaterialsForm.srcDataSource
+    DecimalPlaces = 3
     DynProps = <>
-    EmptyDataInfo.Text = #1042#1090'/'#1095
+    EmptyDataInfo.Text = #1042#1090
     EditButton.Visible = True
     EditButtons = <>
     ShowHint = True
     TabOrder = 17
+    Visible = True
+  end
+  object cbProp: TDBComboBoxEh
+    Left = 288
+    Top = 303
+    Width = 185
+    Height = 21
+    Hint = #1079#1085#1072#1095#1077#1085#1080#1077' '#1053#1072#1095#1080#1089#1083#1077#1085#1080#1103' '#1087#1088#1080' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1080' '#1074' '#1079#1072#1103#1074#1082#1091' '#1087#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
+    Anchors = [akLeft, akTop, akRight]
+    DataField = 'PROP'
+    DataSource = MaterialsForm.srcDataSource
+    DynProps = <>
+    EmptyDataInfo.Text = #1053#1072#1095#1080#1089#1083#1077#1085#1080#1103' '#1087#1088#1080' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1080' '#1074' '#1079#1072#1103#1074#1082#1091
+    EditButtons = <>
+    Items.Strings = (
+      #1055#1088#1086#1076#1072#1078#1072
+      #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
+      #1056#1072#1089#1089#1088#1086#1095#1082#1072
+      #1040#1088#1077#1085#1076#1072)
+    KeyItems.Strings = (
+      '0'
+      '1'
+      '2'
+      '3')
+    ShowHint = True
+    TabOrder = 18
     Visible = True
   end
   object dsMGropups: TpFIBDataSet
@@ -679,14 +713,14 @@ object MaterialForm: TMaterialForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 333
-    Top = 277
+    Left = 341
+    Top = 253
     oFetchAll = True
   end
   object srcServices: TDataSource
     DataSet = dsServices
     Left = 389
-    Top = 285
+    Top = 261
   end
   object dsSoldSRV: TpFIBDataSet
     SelectSQL.Strings = (
@@ -706,12 +740,12 @@ object MaterialForm: TMaterialForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     Left = 181
-    Top = 309
+    Top = 333
     oFetchAll = True
   end
   object srcSoldSRV: TDataSource
     DataSet = dsSoldSRV
-    Left = 237
-    Top = 317
+    Left = 117
+    Top = 333
   end
 end

@@ -10,7 +10,7 @@ uses
   Data.DB,
   FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, FIBDatabase,
   GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, PropFilerEh, PropStorageEh,
-  CnErrorProvider,
+  CnErrorProvider, amSplitter,
   PrjConst, A4onTypeUnit;
 
 type
@@ -4489,29 +4489,7 @@ begin
         Transaction := trReadQ;
 
         SQL.Text := 'select enough from ibe$check_lan_block(:customer_id, :date_s, :date_e)';
-        {
-          SQL.Add('execute block( CUSTOMER_ID D_INTEGER = :CUSTOMER_ID, Date_S D_DATE = :Date_S, Date_E D_DATE = :Date_E )');
-          SQL.Add('returns (enough D_Varchar255) as');
-          SQL.Add('declare variable days D_Integer;');
-          SQL.Add('begin');
-          SQL.Add('  select sum(EXISTS_DAYS) EXISTS_DAYS from IBE$GET_CUSTOMERS_BLOCK_DAYS(:CUSTOMER_ID, :Date_S) into :days;');
-          SQL.Add('  days = coalesce(days, 180);');
-          SQL.Add('  if (Date_E <= dateadd(day, days, Date_S)) then enough = ''''; else enough = ''Разрешена блокировка до ''||dateadd(day, days, Date_S);');
-          SQL.Add('  if (enough = '''') then begin');
-          SQL.Add('    days = null; Date_E = null;');
-          SQL.Add('    select first 1 ss.State_Date, ss.State_Sgn');
-          SQL.Add('    from Subscr_Serv ss inner join services s on (s.Service_Id = ss.Serv_Id)');
-          SQL.Add('    where s.Srv_Type_Id = 0 and s.Name like ''%СПД%ДБ%'' and ss.Customer_Id = :CUSTOMER_ID');
-          SQL.Add('    order by ss.State_Date desc');
-          SQL.Add('    into :Date_E, :days;');
-          SQL.Add('    days = coalesce(days, 0);');
-          SQL.Add('    if (days = 1) then enough = ''Абонент в блокировке с ''||Date_E;');
-          SQL.Add('    else');
-          SQL.Add('    if ((not Date_E is null) and (Date_S <= dateadd(day, 14, Date_E))) then enough = ''Прошло менее 14 дней'';');
-          SQL.Add('  end');
-          SQL.Add('  suspend;');
-          SQL.Add('end');
-        }
+
         ParamByName('Customer_Id').AsInteger := CustomerInfo.CUSTOMER_ID;
         ParamByName('Date_S').AsDate := edDateBegin.value;
         ParamByName('Date_E').AsDate := edDateEnd.value;

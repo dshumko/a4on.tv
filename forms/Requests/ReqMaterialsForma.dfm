@@ -37,12 +37,6 @@ object ReqMaterialsForm: TReqMaterialsForm
       Align = alClient
       TabOrder = 0
       TabStop = True
-      inherited Label2: TLabel
-        Margins.Bottom = 0
-      end
-      inherited Label1: TLabel
-        Margins.Bottom = 0
-      end
       inherited bbOk: TBitBtn
         Left = 185
         Width = 453
@@ -134,6 +128,7 @@ object ReqMaterialsForm: TReqMaterialsForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1045#1076'. '#1080#1079#1084'.'
+          Title.TitleButton = True
           Width = 37
         end
         item
@@ -170,14 +165,17 @@ object ReqMaterialsForm: TReqMaterialsForm
             '0'
             '1'
             '2'
-            '3')
+            '3'
+            '5')
           NotInKeyListIndex = 0
           PickList.Strings = (
             #1055#1088#1086#1076#1072#1078#1072
             #1042' '#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1080
             #1056#1072#1089#1089#1088#1086#1095#1082#1072
-            #1040#1088#1077#1085#1076#1072)
+            #1040#1088#1077#1085#1076#1072
+            #1042#1099#1082#1091#1087)
           Title.Caption = #1053#1072#1095#1080#1089#1083'.'
+          Title.TitleButton = True
           Title.Font.Charset = DEFAULT_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -11
@@ -238,6 +236,7 @@ object ReqMaterialsForm: TReqMaterialsForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+          Title.TitleButton = True
           Width = 56
         end
         item
@@ -259,6 +258,7 @@ object ReqMaterialsForm: TReqMaterialsForm
           Footers = <>
           ReadOnly = True
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077'|'#1084#1072#1090#1077#1088#1080#1072#1083#1072
+          Title.TitleButton = True
           Width = 104
         end>
       object RowDetailData: TRowDetailPanelControlEh

@@ -114,6 +114,7 @@ inherited StreetForm: TStreetForm
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1050#1074'-'#1088' '#1087#1086#1076#1082#1083'.'
+        Title.TitleButton = True
         Width = 71
       end
       item
@@ -597,6 +598,7 @@ inherited StreetForm: TStreetForm
                 Footers = <>
                 HideDuplicates = True
                 Title.Caption = #1059#1089#1083#1091#1075#1072
+                Title.TitleButton = True
                 Width = 72
               end
               item
@@ -607,6 +609,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'SRV_STATE'
                 Footers = <>
                 Title.Caption = #1057#1090#1072#1090#1091#1089
+                Title.TitleButton = True
                 Width = 97
               end
               item
@@ -617,6 +620,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'SRV_COUNT'
                 Footers = <>
                 Title.Caption = #1050#1086#1083'-'#1074#1086
+                Title.TitleButton = True
                 Width = 53
               end
               item
@@ -628,6 +632,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'percent'
                 Footers = <>
                 Title.Caption = '%'
+                Title.TitleButton = True
                 Width = 48
               end>
             object RowDetailData: TRowDetailPanelControlEh
@@ -1188,6 +1193,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'FLOOR_N'
                   Footers = <>
                   Title.Caption = #1069#1090#1072#1078
+                  Title.TitleButton = True
                   Width = 38
                 end
                 item
@@ -1200,6 +1206,7 @@ inherited StreetForm: TStreetForm
                   ReadOnly = True
                   Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099
                   Title.Hint = #1050#1074#1072#1088#1090#1080#1088#1099' '#1076#1086#1084#1072', '#1084#1086#1078#1085#1086' '#1074#1085#1086#1089#1080#1090' '#1082#1072#1082' 1-5 '#1080#1083#1080' 1-3,4,5'
+                  Title.TitleButton = True
                   Width = 118
                 end
                 item
@@ -1209,6 +1216,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'NOTICE'
                   Footers = <>
                   Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                  Title.TitleButton = True
                   Width = 256
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -1239,6 +1247,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'PORCH_N'
                   Footers = <>
                   Title.Caption = #1055#1086#1076#1098#1077#1079#1076
+                  Title.TitleButton = True
                   Width = 53
                 end
                 item
@@ -1249,6 +1258,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'FLOORS'
                   Footers = <>
                   Title.Caption = #1069#1090#1072#1078#1077#1081
+                  Title.TitleButton = True
                   Width = 46
                 end
                 item
@@ -1261,6 +1271,7 @@ inherited StreetForm: TStreetForm
                   Footers = <>
                   Title.Caption = #1063#1077#1088#1076#1072#1082
                   Title.Orientation = tohVertical
+                  Title.TitleButton = True
                   Width = 29
                 end
                 item
@@ -1273,6 +1284,7 @@ inherited StreetForm: TStreetForm
                   Footers = <>
                   Title.Caption = #1055#1086#1076#1074#1072#1083
                   Title.Orientation = tohVertical
+                  Title.TitleButton = True
                   Width = 32
                 end
                 item
@@ -1283,6 +1295,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'FLAT_FROM'
                   Footers = <>
                   Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099'|c'
+                  Title.TitleButton = True
                   Width = 39
                 end
                 item
@@ -1293,6 +1306,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'FLAT_TO'
                   Footers = <>
                   Title.Caption = #1050#1074#1072#1088#1090#1080#1088#1099'|'#1087#1086
+                  Title.TitleButton = True
                   Width = 37
                 end
                 item
@@ -1326,6 +1340,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'NOTICE'
                   Footers = <>
                   Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                  Title.TitleButton = True
                   Width = 135
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -1493,6 +1508,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'ADDED_BY'
                   Footers = <>
                   Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1090#1086
+                  Title.TitleButton = True
                   Width = 75
                 end
                 item
@@ -1503,6 +1519,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'ADDED_ON'
                   Footers = <>
                   Title.Caption = #1044#1086#1073#1072#1074#1080#1083'|'#1050#1086#1075#1076#1072
+                  Title.TitleButton = True
                   Width = 54
                 end
                 item
@@ -1513,6 +1530,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'EDIT_BY'
                   Footers = <>
                   Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1090#1086
+                  Title.TitleButton = True
                 end
                 item
                   AutoFitColWidth = False
@@ -1522,6 +1540,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'EDIT_ON'
                   Footers = <>
                   Title.Caption = #1048#1079#1084#1077#1085#1080#1083'|'#1050#1086#1075#1076#1072
+                  Title.TitleButton = True
                   Width = 53
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -1622,6 +1641,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'O_DIMENSION'
                   Footers = <>
                   Title.Caption = #1050#1086#1076
+                  Title.TitleButton = True
                   Width = 34
                 end
                 item
@@ -1652,6 +1672,7 @@ inherited StreetForm: TStreetForm
                   FieldName = 'O_DESCRIPTION'
                   Footers = <>
                   Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+                  Title.TitleButton = True
                   Width = 200
                 end>
               object RowDetailData: TRowDetailPanelControlEh
@@ -1830,6 +1851,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'DATE_PPR'
                 Footers = <>
                 Title.Caption = #1044#1072#1090#1072
+                Title.TitleButton = True
               end
               item
                 CellButtons = <>
@@ -1838,6 +1860,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'SURNAME'
                 Footers = <>
                 Title.Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
+                Title.TitleButton = True
                 Width = 99
               end
               item
@@ -1847,6 +1870,7 @@ inherited StreetForm: TStreetForm
                 FieldName = 'NOTICE'
                 Footers = <>
                 Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                Title.TitleButton = True
                 Width = 195
               end>
             object RowDetailData: TRowDetailPanelControlEh

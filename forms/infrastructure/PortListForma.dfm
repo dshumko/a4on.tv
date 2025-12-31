@@ -43,6 +43,7 @@ inherited PortListForm: TPortListForm
         FieldName = 'PS_NAME'
         Footers = <>
         Title.Caption = #1057#1090#1072#1090#1091#1089
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -150,6 +151,7 @@ inherited PortListForm: TPortListForm
           #1072#1073#1086#1085#1077#1085#1090
           #1082#1072#1073#1077#1083#1100)
         Title.Caption = #1053#1072' '#1087#1086#1088#1090#1091'|'#1058#1080#1087
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -158,6 +160,7 @@ inherited PortListForm: TPortListForm
         FieldName = 'OP_NAME'
         Footers = <>
         Title.Caption = #1053#1072' '#1087#1086#1088#1090#1091'|'#1053#1072#1079#1074#1072#1085#1080#1077
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -166,6 +169,7 @@ inherited PortListForm: TPortListForm
         FieldName = 'OP_IP'
         Footers = <>
         Title.Caption = #1053#1072' '#1087#1086#1088#1090#1091'|IP'
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -174,6 +178,7 @@ inherited PortListForm: TPortListForm
         FieldName = 'OP_MAC'
         Footers = <>
         Title.Caption = #1053#1072' '#1087#1086#1088#1090#1091'|MAC'
+        Title.TitleButton = True
       end
       item
         CellButtons = <>

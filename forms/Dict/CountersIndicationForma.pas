@@ -65,8 +65,6 @@ begin
 end;
 
 procedure TCountersIndicationForm.btnOkClick(Sender: TObject);
-var
-  d: Word;
 begin
   if VarIsNull(edDate.Value) then
     Exit;

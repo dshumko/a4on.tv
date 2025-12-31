@@ -50,6 +50,7 @@ inherited EQGroupsForm: TEQGroupsForm
           #1057#1077#1090#1077#1074#1086#1077
           #1050#1072#1073#1077#1083#1100#1085#1086#1077)
         Title.Caption = #1058#1080#1087' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
+        Title.TitleButton = True
         Visible = False
         Width = 91
       end
@@ -73,6 +74,7 @@ inherited EQGroupsForm: TEQGroupsForm
         FieldName = 'O_DIMENSION'
         Footers = <>
         Title.Caption = #1050#1086#1076
+        Title.TitleButton = True
         Visible = False
         Width = 41
       end

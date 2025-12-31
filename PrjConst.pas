@@ -630,6 +630,7 @@ resourcestring
   rsDeleteService = 'Удалить выбранную услугу?';
 
   rsDeleteWithName = 'Удалить %s?';
+  rsSetAsDeletedWithName = 'Пометить как удаленный %s?';
   rsDelIP = 'Удалить данные o ip %s?';
   rsDeleteHouseZone = 'Удалить дом из зоны обслуживания?';
   rsHouseInService = 'В этом доме есть подключенные абоненты. Продолжить?';

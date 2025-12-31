@@ -55,6 +55,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$ATTACHMENT_ID'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077'|'#1050#1086#1076
+        Title.TitleButton = True
         Width = 39
       end
       item
@@ -64,6 +65,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$REMOTE_ADDRESS'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077'|'#1040#1076#1088#1077#1089
+        Title.TitleButton = True
         Width = 74
       end
       item
@@ -73,6 +75,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$REMOTE_PROTOCOL'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077'|'#1055#1088#1086#1090#1086#1082#1086#1083
+        Title.TitleButton = True
         Width = 54
       end
       item
@@ -82,6 +85,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$REMOTE_PID'
         Footers = <>
         Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077'|'#1050#1086#1076' '#1087#1088#1086#1094#1077#1089#1089#1072' '#1082#1083#1080#1077#1085#1090#1072
+        Title.TitleButton = True
         Width = 60
       end
       item
@@ -91,6 +95,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$TIMESTAMP'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1042#1088#1077#1084#1103' '#1085#1072#1095#1072#1083#1072
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -99,6 +104,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$SERVER_PID'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1050#1086#1076' '#1087#1088#1086#1094#1077#1089#1089#1072' '#1089#1077#1088#1074#1077#1088#1072
+        Title.TitleButton = True
         Width = 63
       end
       item
@@ -108,6 +114,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$ATTACHMENT_NAME'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1048#1084#1103' '#1092#1072#1081#1083#1072' '#1073#1072#1079#1099' '#1076#1072#1085#1085#1099#1093
+        Title.TitleButton = True
         Width = 134
       end
       item
@@ -117,6 +124,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$USER'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
+        Title.TitleButton = True
         Width = 86
       end
       item
@@ -126,6 +134,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$ROLE'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1056#1086#1083#1100
+        Title.TitleButton = True
         Width = 45
       end
       item
@@ -135,6 +144,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'CHARACTER_SET_NAME'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1050#1086#1076#1080#1088#1086#1074#1082#1072
+        Title.TitleButton = True
         Width = 60
       end
       item
@@ -144,6 +154,7 @@ object MonDBForm: TMonDBForm
         FieldName = 'MON$STATE_TYPE_NAME'
         Footers = <>
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1057#1086#1089#1090#1086#1103#1085#1080#1077
+        Title.TitleButton = True
         Width = 66
       end
       item
@@ -159,6 +170,7 @@ object MonDBForm: TMonDBForm
           #1053#1077#1090
           #1044#1072)
         Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1057#1073#1086#1088#1082#1072' '#1084#1091#1089#1086#1088#1072
+        Title.TitleButton = True
         Width = 55
       end>
     object RowDetailData: TRowDetailPanelControlEh
@@ -207,6 +219,7 @@ object MonDBForm: TMonDBForm
           FieldName = 'MON$TRANSACTION_ID'
           Footers = <>
           Title.Caption = #1058#1088#1072#1085#1079#1072#1082#1094#1080#1103'|'#1050#1086#1076
+          Title.TitleButton = True
           Width = 45
         end
         item
@@ -216,6 +229,7 @@ object MonDBForm: TMonDBForm
           FieldName = 'MON$STATE_TYPE_NAME'
           Footers = <>
           Title.Caption = #1058#1088#1072#1085#1079#1072#1082#1094#1080#1103'|'#1057#1086#1089#1090#1086#1103#1085#1080#1077
+          Title.TitleButton = True
           Width = 59
         end
         item
@@ -231,6 +245,7 @@ object MonDBForm: TMonDBForm
             #1090#1086#1083#1100#1082#1086' '#1095#1090#1077#1085#1080#1077
             #1095#1090#1077#1085#1080#1077'/'#1079#1072#1087#1080#1089#1100)
           Title.Caption = #1058#1088#1072#1085#1079#1072#1082#1094#1080#1103'|'#1058#1086#1083#1100#1082#1086' '#1095#1090#1077#1085#1080#1077
+          Title.TitleButton = True
           Width = 82
         end
         item
@@ -240,6 +255,7 @@ object MonDBForm: TMonDBForm
           FieldName = 'MON$TIMESTAMP'
           Footers = <>
           Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1042#1088#1077#1084#1103' '#1085#1072#1095#1072#1083#1072
+          Title.TitleButton = True
           Width = 106
         end
         item
@@ -249,6 +265,7 @@ object MonDBForm: TMonDBForm
           FieldName = 'MON$ISOLATION_MODE_NAME'
           Footers = <>
           Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1059#1088#1086#1074#1077#1085#1080' '#1080#1079#1086#1083#1103#1094#1080#1080
+          Title.TitleButton = True
           Width = 150
         end
         item
@@ -258,6 +275,7 @@ object MonDBForm: TMonDBForm
           FieldName = 'MON$LOCK_TIMEOUT'
           Footers = <>
           Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1058#1072#1081#1084#1072#1091#1090' '#1073#1083#1086#1082#1080' '#1088#1086#1074#1082#1080
+          Title.TitleButton = True
           Width = 125
         end
         item
@@ -273,6 +291,7 @@ object MonDBForm: TMonDBForm
             '  '
             #1040#1074#1090#1086#1087#1086#1076#1090#1074#1077#1088#1078#1076#1077#1085#1080#1077)
           Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1040#1074#1090#1086' '#1087#1086#1076#1090#1074#1077#1088' '#1078#1076#1077#1085#1080#1077
+          Title.TitleButton = True
           Width = 110
         end
         item
@@ -288,6 +307,7 @@ object MonDBForm: TMonDBForm
             '  '
             #1040#1074#1090#1086#1086#1090#1082#1072#1090)
           Title.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099'|'#1040#1074#1090#1086' '#1086#1090#1082#1072#1090
+          Title.TitleButton = True
           Width = 122
         end>
       object RowDetailData: TRowDetailPanelControlEh
@@ -329,6 +349,7 @@ object MonDBForm: TMonDBForm
             FieldName = 'MON$STATEMENT_ID'
             Footers = <>
             Title.Caption = #1047#1072#1087#1088#1086#1089'|'#1050#1086#1076
+            Title.TitleButton = True
             Width = 67
           end
           item
@@ -338,6 +359,7 @@ object MonDBForm: TMonDBForm
             FieldName = 'MON$STATE_TYPE_NAME'
             Footers = <>
             Title.Caption = #1047#1072#1087#1088#1086#1089'|'#1057#1086#1089#1090#1086#1103#1085#1080#1077
+            Title.TitleButton = True
             Width = 95
           end
           item
@@ -347,6 +369,7 @@ object MonDBForm: TMonDBForm
             FieldName = 'MON$TIMESTAMP'
             Footers = <>
             Title.Caption = #1047#1072#1087#1088#1086#1089'|'#1042#1088#1077#1084#1103' '#1085#1072#1095#1072#1083#1072
+            Title.TitleButton = True
             Width = 150
           end>
         object RowDetailData: TRowDetailPanelControlEh

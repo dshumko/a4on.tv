@@ -4,24 +4,24 @@ inherited WHform: TWHform
   ClientWidth = 692
   PixelsPerInch = 96
   TextHeight = 13
-  object lbl1: TLabel [0]
-    Left = 0
-    Top = 368
-    Width = 692
-    Height = 13
-    Align = alTop
-    Caption = #1055#1088#1072#1074#1072' '#1076#1086#1089#1090#1091#1087#1082#1072' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1077#1081' '#1082' '#1089#1082#1083#1072#1076#1091
-  end
   inherited splPG: TSplitter
     Top = 161
     Width = 692
+  end
+  object Splitter1: TSplitter [1]
+    Left = 0
+    Top = 380
+    Width = 692
+    Height = 4
+    Cursor = crVSplit
+    Align = alTop
   end
   inherited dbGrid: TDBGridEh
     AlignWithMargins = True
     Left = 3
     Top = 168
     Width = 686
-    Height = 197
+    Height = 209
     Align = alTop
     Columns = <
       item
@@ -53,10 +53,36 @@ inherited WHform: TWHform
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 264
+      end
+      item
+        CellButtons = <>
+        DisplayFormat = '#.#####'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'REM'
+        Footers = <>
+        Title.Caption = #1054#1089#1090#1072#1090#1082#1080' '#1085#1072' '#1089#1082#1083#1072#1076#1077
+        Title.TitleButton = True
+        Width = 64
+      end
+      item
+        CellButtons = <>
+        Checkboxes = True
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'O_DELETED'
+        Footers = <>
+        Title.Caption = #1057#1082#1088#1099#1090
+        Title.Hint = #1053#1077#1076#1086#1089#1090#1091#1087#1077#1085' '#1076#1083#1103' '#1086#1087#1077#1088#1072#1094#1080#1081' '#1089#1086' '#1089#1082#1083#1072#1076#1086#1084
+        Title.TitleButton = True
+        Width = 77
       end>
   end
   inherited tlbMain: TToolBar
     Width = 692
+    inherited btnDelete: TToolButton
+      Hint = #1059#1076#1072#1083#1080#1090#1100', '#1077#1089#1083#1080' '#1085#1077' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1083#1089#1103' (Ctrl+Del)'
+    end
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -68,87 +94,6 @@ inherited WHform: TWHform
     end
     inherited ToolButton20: TToolButton
       Visible = False
-    end
-  end
-  object dbgRights: TDBGridEh [4]
-    AlignWithMargins = True
-    Left = 3
-    Top = 384
-    Width = 686
-    Height = 129
-    Align = alClient
-    AllowedOperations = [alopUpdateEh]
-    DataSource = srcRights
-    DynProps = <>
-    EditActions = [geaCopyEh, geaSelectAllEh]
-    Flat = True
-    FooterParams.Color = clWindow
-    GridLineParams.VertEmptySpaceStyle = dessNonEh
-    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-    OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
-    SearchPanel.Enabled = True
-    SortLocal = True
-    STFilter.Local = True
-    TabOrder = 3
-    TitleParams.MultiTitle = True
-    OnExit = dbgRightsExit
-    Columns = <
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'FIO'
-        Footers = <>
-        ReadOnly = True
-        Title.Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
-        Title.SortIndex = 1
-        Title.SortMarker = smDownEh
-        Width = 178
-      end
-      item
-        AutoFitColWidth = False
-        CellButtons = <>
-        Checkboxes = True
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'LOCKEDOUT'
-        Footers = <>
-        ReadOnly = True
-        Title.Caption = #1041#1083#1086#1082#1080#1088#1086#1074#1072#1085
-        Width = 66
-      end
-      item
-        AutoFitColWidth = False
-        CellButtons = <>
-        Checkboxes = True
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'CAN_VIEW'
-        Footers = <>
-        Title.Caption = #1056#1072#1079#1088#1077#1096#1077#1085#1086'|'#1055#1088#1086#1089#1084#1072#1090#1088#1080#1074#1072#1090#1100
-        Width = 100
-      end
-      item
-        AutoFitColWidth = False
-        CellButtons = <>
-        Checkboxes = True
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'CAN_EDIT'
-        Footers = <>
-        Title.Caption = #1056#1072#1079#1088#1077#1096#1077#1085#1086'|'#1048#1079#1084#1077#1085#1103#1090#1100
-        Width = 100
-      end
-      item
-        CellButtons = <>
-        DynProps = <>
-        EditButtons = <>
-        FieldName = 'NOTICE'
-        Footers = <>
-        Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-        Width = 264
-      end>
-    object RowDetailData: TRowDetailPanelControlEh
     end
   end
   inherited pnlEdit: TPanel
@@ -179,12 +124,12 @@ inherited WHform: TWHform
       Left = 97
       Top = 108
       Width = 482
-      TabOrder = 2
+      TabOrder = 4
     end
     inherited btnCancelLink: TBitBtn
       Left = 597
       Top = 108
-      TabOrder = 3
+      TabOrder = 5
     end
     object edtName: TDBEditEh
       Left = 97
@@ -213,7 +158,7 @@ inherited WHform: TWHform
       DynProps = <>
       EditButtons = <>
       ShowHint = True
-      TabOrder = 1
+      TabOrder = 2
       Visible = True
       WantReturns = True
     end
@@ -232,8 +177,128 @@ inherited WHform: TWHform
       ListField = 'W_OWNER'
       ListSource = srcOwner
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 1
       Visible = True
+    end
+    object chkDel: TDBCheckBoxEh
+      Left = 5
+      Top = 85
+      Width = 77
+      Height = 17
+      Hint = #1053#1077#1076#1086#1089#1090#1091#1087#1077#1085' '#1076#1083#1103' '#1086#1087#1077#1088#1072#1094#1080#1081' '#1089#1086' '#1089#1082#1083#1072#1076#1086#1084
+      Alignment = taLeftJustify
+      Anchors = [akLeft, akBottom]
+      Caption = #1057#1082#1088#1099#1090
+      DataField = 'O_DELETED'
+      DataSource = srcDataSource
+      DynProps = <>
+      TabOrder = 3
+      ValueChecked = '1'
+      ValueUnchecked = '0'
+    end
+  end
+  object pnlBtm: TPanel [5]
+    Left = 0
+    Top = 384
+    Width = 692
+    Height = 132
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 3
+    object lbl1: TLabel
+      Left = 0
+      Top = 0
+      Width = 692
+      Height = 13
+      Align = alTop
+      Caption = #1055#1088#1072#1074#1072' '#1076#1086#1089#1090#1091#1087#1082#1072' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1077#1081' '#1082' '#1089#1082#1083#1072#1076#1091
+    end
+    object dbgRights: TDBGridEh
+      AlignWithMargins = True
+      Left = 3
+      Top = 16
+      Width = 686
+      Height = 113
+      Align = alClient
+      AllowedOperations = [alopUpdateEh]
+      DataSource = srcRights
+      DynProps = <>
+      EditActions = [geaCopyEh, geaSelectAllEh]
+      Flat = True
+      FooterParams.Color = clWindow
+      GridLineParams.VertEmptySpaceStyle = dessNonEh
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+      SearchPanel.Enabled = True
+      SortLocal = True
+      STFilter.Local = True
+      TabOrder = 0
+      TitleParams.MultiTitle = True
+      OnExit = dbgRightsExit
+      Columns = <
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'FIO'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100'|'#1060#1048#1054
+          Title.SortIndex = 1
+          Title.SortMarker = smDownEh
+          Title.TitleButton = True
+          Width = 178
+        end
+        item
+          AutoFitColWidth = False
+          CellButtons = <>
+          Checkboxes = True
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'LOCKEDOUT'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100'|'#1041#1083#1086#1082'-'#1085
+          Title.Hint = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100' '#1073#1083#1086#1082#1080#1088#1086#1074#1072#1085
+          Title.TitleButton = True
+          Width = 86
+        end
+        item
+          AutoFitColWidth = False
+          CellButtons = <>
+          Checkboxes = True
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CAN_VIEW'
+          Footers = <>
+          Title.Caption = #1056#1072#1079#1088#1077#1096#1077#1085#1086'|'#1055#1088#1086#1089#1084#1072#1090#1088#1080#1074#1072#1090#1100
+          Title.TitleButton = True
+          Width = 100
+        end
+        item
+          AutoFitColWidth = False
+          CellButtons = <>
+          Checkboxes = True
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CAN_EDIT'
+          Footers = <>
+          Title.Caption = #1056#1072#1079#1088#1077#1096#1077#1085#1086'|'#1048#1079#1084#1077#1085#1103#1090#1100
+          Title.TitleButton = True
+          Width = 100
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'NOTICE'
+          Footers = <>
+          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          Title.TitleButton = True
+          Width = 264
+        end>
+      object RowDetailData: TRowDetailPanelControlEh
+      end
     end
   end
   inherited srcDataSource: TDataSource
@@ -272,11 +337,7 @@ inherited WHform: TWHform
   end
   object dsWH: TpFIBDataSet
     UpdateSQL.Strings = (
-      'UPDATE OBJECTS'
-      'SET '
-      '    O_NAME = :O_NAME,'
-      '    O_DESCRIPTION = :O_DESCRIPTION,'
-      '    O_NUMERICFIELD = :OWNER_ID'
+      'DELETE FROM OBJECTS'
       'WHERE'
       '    O_ID = :OLD_O_ID and O_TYPE = 10'
       '    ')
@@ -291,13 +352,15 @@ inherited WHform: TWHform
       '    O_TYPE,'
       '    O_NAME,'
       '    O_DESCRIPTION,'
-      '    O_NUMERICFIELD'
+      '    O_NUMERICFIELD,'
+      '    O_DELETED'
       ')'
       'VALUES('
       '    10,'
       '    :O_NAME,'
       '    :O_DESCRIPTION,'
-      '    :OWNER_ID'
+      '    :OWNER_ID,'
+      '    :O_DELETED'
       ')')
     RefreshSQL.Strings = (
       'select'
@@ -309,6 +372,10 @@ inherited WHform: TWHform
       
         '  , w.Surname||'#39' '#39'||coalesce(w.Firstname||'#39' '#39'||coalesce(w.Midlen' +
         'ame, '#39#39'), '#39#39') W_OWNER'
+      '  , o.O_DELETED'
+      
+        '  , (select sum(r.Mr_Quant) from Materials_Remain r where r.Wh_I' +
+        'd = o.O_ID) REM '
       '  from OBJECTS o'
       
         '       left outer join WORKER w on (o.O_NUMERICFIELD = w.Worker_' +
@@ -327,12 +394,15 @@ inherited WHform: TWHform
       
         '  , w.Surname||'#39' '#39'||coalesce(w.Firstname||'#39' '#39'||coalesce(w.Midlen' +
         'ame, '#39#39'), '#39#39') W_OWNER'
+      '  , coalesce(o.O_DELETED, 0) O_DELETED'
+      
+        '  , (select sum(r.Mr_Quant) from Materials_Remain r where r.Wh_I' +
+        'd = o.O_ID) REM '
       '  from OBJECTS o'
       
         '       left outer join WORKER w on (o.O_NUMERICFIELD = w.Worker_' +
         'Id)'
       '  where o.O_TYPE = 10'
-      '        and o.O_DELETED = 0'
       '  order by o.O_NAME')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV

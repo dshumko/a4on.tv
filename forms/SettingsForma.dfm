@@ -1,7 +1,7 @@
 object SettingsForm: TSettingsForm
   Left = 345
   Top = 222
-  ActiveControl = dbgRAW
+  ActiveControl = cbCreatePayDoc
   BorderIcons = [biSystemMenu]
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1089#1080#1089#1090#1077#1084#1099
   ClientHeight = 598
@@ -40,12 +40,6 @@ object SettingsForm: TSettingsForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    inherited Label2: TLabel
-      Margins.Bottom = 0
-    end
-    inherited Label1: TLabel
-      Margins.Bottom = 0
-    end
     inherited bbOk: TBitBtn
       Left = 4
       Top = 5
@@ -67,7 +61,7 @@ object SettingsForm: TSettingsForm
     Top = 0
     Width = 398
     Height = 561
-    ActivePage = tsRAW
+    ActivePage = tsPayment
     Align = alClient
     MultiLine = True
     TabOrder = 1
@@ -439,7 +433,7 @@ object SettingsForm: TSettingsForm
         497)
       object lbl1: TLabel
         Left = 7
-        Top = 203
+        Top = 180
         Width = 57
         Height = 13
         Caption = #1064#1090#1088#1080#1093'-'#1082#1086#1076
@@ -494,10 +488,10 @@ object SettingsForm: TSettingsForm
       end
       object grpFine: TGroupBox
         Left = 3
-        Top = 145
+        Top = 122
         Width = 358
         Height = 45
-        TabOrder = 7
+        TabOrder = 6
         object Label6: TLabel
           Left = 4
           Top = 18
@@ -578,9 +572,9 @@ object SettingsForm: TSettingsForm
       end
       object cbPaymentSrv: TCheckBox
         Left = 7
-        Top = 55
+        Top = 48
         Width = 351
-        Height = 14
+        Height = 17
         Hint = #1044#1086#1073#1072#1074#1083#1103#1077#1090' '#1074#1086#1079#1084#1086#1078#1085#1086#1089#1090#1100' '#1091#1082#1072#1079#1099#1074#1072#1090#1100' '#1074' '#1087#1083#1072#1090#1077#1078#1077' '#1086#1087#1083#1072#1095#1080#1074#1072#1077#1084#1091#1102' '#1091#1089#1083#1091#1075#1091' '
         Alignment = taLeftJustify
         Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1091#1089#1083#1091#1075#1091' '#1074' '#1087#1083#1072#1090#1077#1078#1077
@@ -588,7 +582,7 @@ object SettingsForm: TSettingsForm
       end
       object cbNegativePay: TCheckBox
         Left = 7
-        Top = 33
+        Top = 29
         Width = 351
         Height = 17
         Hint = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1085#1086#1089#1080#1090#1100' '#1086#1090#1088#1080#1094#1072#1090#1077#1083#1100#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
@@ -608,55 +602,55 @@ object SettingsForm: TSettingsForm
       end
       object edtBC: TEdit
         Left = 68
-        Top = 200
+        Top = 177
         Width = 223
         Height = 21
         TabStop = False
         ReadOnly = True
-        TabOrder = 9
+        TabOrder = 8
       end
       object btnBarSettings: TButton
         Left = 295
-        Top = 198
+        Top = 175
         Width = 63
         Height = 25
         Caption = #1053#1072#1089#1090#1088#1086#1080#1090#1100
-        TabOrder = 8
+        TabOrder = 7
         OnClick = btnBarSettingsClick
       end
       object cbFine: TCheckBox
         Left = 7
-        Top = 137
+        Top = 114
         Width = 95
         Height = 18
         Hint = #1057#1095#1080#1090#1072#1090#1100' '#1087#1077#1085#1102' '#1072#1073#1086#1085#1077#1085#1090#1072#1084
         Alignment = taLeftJustify
         Caption = #1057#1095#1080#1090#1072#1090#1100' '#1087#1077#1085#1102
-        TabOrder = 6
+        TabOrder = 5
         OnClick = cbFineClick
       end
       object btnCashReg: TButton
         Left = 269
-        Top = 250
+        Top = 227
         Width = 89
         Height = 23
         Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1060#1056
-        TabOrder = 12
+        TabOrder = 10
         OnClick = btnCashRegClick
       end
       object chkBARDELZERRO: TCheckBox
         Left = 7
-        Top = 228
+        Top = 205
         Width = 351
         Height = 17
         Hint = #1053#1077' '#1091#1076#1072#1083#1103#1090#1100' '#1083#1080#1076#1080#1088#1091#1102#1097#1080#1077' 0 '#1074' '#1083#1080#1094#1077#1074#1086#1084' '#1089#1095#1077#1090#1077' '#1096#1090#1088#1080#1093#1082#1086#1076#1072
         Alignment = taLeftJustify
         Caption = #1053#1077' '#1091#1076#1072#1083#1103#1090#1100' '#1083#1080#1076#1080#1088#1091#1097#1080#1077' 0 '
-        TabOrder = 10
+        TabOrder = 9
       end
       object chkBARADDPAY: TCheckBox
         Left = 7
-        Top = 253
+        Top = 230
         Width = 227
         Height = 17
         Hint = #1040#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1080' '#1074#1085#1086#1089#1080#1090#1100' '#1087#1083#1072#1090#1077#1078' '#1087#1086#1089#1083#1077' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1103
@@ -696,9 +690,9 @@ object SettingsForm: TSettingsForm
       end
       object chkHidePayAdd: TCheckBox
         Left = 7
-        Top = 75
+        Top = 68
         Width = 351
-        Height = 14
+        Height = 17
         Hint = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1088#1080' '#1087#1088#1080#1077#1084#1077' '#1087#1083#1072#1090#1077#1078#1072
         Alignment = taLeftJustify
         Caption = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '
@@ -706,9 +700,9 @@ object SettingsForm: TSettingsForm
       end
       object chkHidePayPrint: TCheckBox
         Left = 7
-        Top = 94
+        Top = 87
         Width = 351
-        Height = 14
+        Height = 17
         Hint = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '#1080' '#1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100' '#1087#1088#1080' '#1087#1088#1080#1077#1084#1077' '#1087#1083#1072#1090#1077#1078#1072
         Alignment = taLeftJustify
         Caption = #1057#1082#1088#1099#1090#1100' '#1082#1085#1086#1087#1082#1091' '#1044#1086#1073#1072#1074#1080#1090#1100' '#1080' '#1056#1072#1089#1087#1077#1095#1072#1090#1072#1090#1100
@@ -789,13 +783,13 @@ object SettingsForm: TSettingsForm
       end
       object chkEmailCheck: TCheckBox
         Left = 7
-        Top = 114
+        Top = 255
         Width = 351
-        Height = 22
+        Height = 17
         Hint = #1055#1077#1088#1077#1076#1072#1074#1072#1090#1100' '#1074' '#1082#1082#1084' '#1077#1084#1072#1080#1083' '#1072' '#1085#1077' '#1090#1077#1083#1077#1092#1086#1085' '#1076#1083#1103' '#1086#1090#1087#1088#1072#1074#1091#1080' '#1074' '#1054#1060#1044
         Alignment = taLeftJustify
         Caption = #1063#1077#1082#1080' '#1085#1072' '#1087#1086#1095#1090#1091' '#1087#1088#1080' '#1088#1072#1073#1086#1090#1077' '#1089' '#1050#1050#1052
-        TabOrder = 5
+        TabOrder = 12
       end
     end
     object tsLAN: TTabSheet

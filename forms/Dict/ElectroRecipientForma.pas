@@ -10,7 +10,7 @@ uses
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  CnErrorProvider,
+  CnErrorProvider, amSplitter,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
   PrnDbgeh, PropFilerEh, PropStorageEh;
 
@@ -65,7 +65,7 @@ var
 implementation
 
 uses
-  DM, MAIN;
+  DM, MAIN, System.DateUtils;
 
 {$R *.dfm}
 
@@ -77,8 +77,6 @@ begin
 end;
 
 procedure TElectroRecipientForm.StartEdt(const New: Boolean = False);
-var
-  i: Integer;
 begin
   StartEdit(New);
 
@@ -168,7 +166,6 @@ end;
 
 procedure TElectroRecipientForm.actAddPExecute(Sender: TObject);
 var
-  pce: String;
   d: TDateTime;
   fs: TFormatSettings;
   AValues: array of string;
@@ -179,18 +176,18 @@ begin
 
   SetLength(AValues, 5);
   AValues[0] := DateToStr(Now());
-  AValues[1] := '';
+  AValues[1] := DateToStr(StartOfTheMonth(Now()));
   AValues[2] := '';
   AValues[3] := '';
   AValues[4] := '';
-  if InputQuery('Оплата', ['Дата', 'Тариф', 'Оплачено кВт', 'Сумма оплаты', 'Примечание'], AValues,
+
+  if InputQuery('Оплата', ['Дата платежа (д.м.г)', 'За месяц (1.м.г)',  'Оплачено кВт', 'Сумма оплаты', 'Примечание'], AValues,
     function(const Values: array of string): Boolean
     var
       v: Double;
       d: TDateTime;
     begin
-      Result := TryStrToDate(Values[0], d) and TryStrToFloat(Values[1], v) and TryStrToFloat(Values[2], v) and
-        TryStrToFloat(Values[3], v);
+      Result := TryStrToDate(Values[0], d) and TryStrToDate(Values[1], d) and TryStrToFloat(Values[2], v) and TryStrToFloat(Values[3], v);
     end) then
   begin
     fs.ShortDateFormat := 'dd.mm.yyyy';
@@ -205,10 +202,10 @@ begin
       ParamByName('O_TYPE').AsInteger := 77; // Получатель оплаты электроэнергии
       ParamByName('HDATE').AsDate := d;
 
+      ParamByName('DVALUE').AsDate := StrToDate(AValues[1]);
       ParamByName('NVALUE').AsFloat := StrToFloat(AValues[3]);
       ParamByName('NOTICE').AsString := AValues[4];
-      ParamByName('Cvalue').AsString := Format('{"rate":%s,"pce":%s}',
-        [AValues[1].Replace(',', '.'), AValues[2].Replace(',', '.')]);
+      ParamByName('Cvalue').AsString := Format('{"pce":%s}', [AValues[2].Replace(',', '.')]);
 
       Transaction.StartTransaction;
       ExecQuery;
@@ -221,7 +218,6 @@ end;
 
 procedure TElectroRecipientForm.actEditPExecute(Sender: TObject);
 var
-  pce: String;
   AValues: array of string;
   d: TDateTime;
 begin
@@ -230,10 +226,11 @@ begin
     Exit;
 
   SetLength(AValues, 4);
-  if not dsHistory.FieldByName('RATE').IsNull then
-    AValues[0] := dsHistory.FieldByName('RATE').AsString
+
+  if not dsHistory.FieldByName('PAY_MONTH').IsNull then
+    AValues[0] := dsHistory.FieldByName('PAY_MONTH').AsString
   else
-    AValues[0] := '0';
+    AValues[0] := '';
 
   if not dsHistory.FieldByName('PAY_PCE').IsNull then
     AValues[1] := dsHistory.FieldByName('PAY_PCE').AsString
@@ -250,12 +247,12 @@ begin
   else
     AValues[3] := '';
 
-  if InputQuery('Оплата', ['Тариф', 'Оплачено кВт', 'Сумма оплаты', 'Примечание'], AValues,
+  if InputQuery('Оплата', ['За месяц (1.м.г)', 'Оплачено кВт', 'Сумма оплаты', 'Примечание'], AValues,
     function(const Values: array of string): Boolean
     var
       v: Double;
     begin
-      Result := TryStrToFloat(Values[0], v) and TryStrToFloat(Values[1], v) and TryStrToFloat(Values[2], v);
+      Result := TryStrToDate(Values[0], d) and TryStrToFloat(Values[1], v) and TryStrToFloat(Values[2], v);
     end) then
   begin
     with dmMain.Query do
@@ -268,10 +265,10 @@ begin
       ParamByName('O_TYPE').AsInteger := 77;
       ParamByName('HDATE').AsDate := dsHistory['HDATE'];
 
+      ParamByName('DVALUE').AsDate := StrToDate(AValues[0]);
       ParamByName('NVALUE').AsFloat := StrToFloat(AValues[2]);
       ParamByName('NOTICE').AsString := AValues[3];
-      ParamByName('Cvalue').AsString := Format('{"rate":%s,"pce":%s}',
-        [AValues[0].Replace(',', '.'), AValues[1].Replace(',', '.')]);
+      ParamByName('Cvalue').AsString := Format('{"pce":%s}', [AValues[1].Replace(',', '.')]);
 
       Transaction.StartTransaction;
       ExecQuery;

@@ -24,13 +24,11 @@ type
     pnlMain: TPanel;
     Panel10: TPanel;
     Panel11: TPanel;
-    GMMap: TGMMap;
     Label32: TLabel;
     lLatEvent: TLabel;
     lLngEvent: TLabel;
     Label34: TLabel;
     GMInfoWindow: TGMInfoWindow;
-    gmMovements: TGMPolyline;
     mmMap: TMainMenu;
     GMGeoCode: TGMGeoCode;
     N1: TMenuItem;
@@ -44,10 +42,8 @@ type
     actlst: TActionList;
     actShowBid: TAction;
     actGeocoding: TAction;
-    gmMrkrBids: TGMMarker;
     actLastPosition: TAction;
     miLastPosition: TMenuItem;
-    gmMrkrLast: TGMMarker;
     SaveDialog1: TSaveDialog;
     miN3: TMenuItem;
     miSave: TMenuItem;
@@ -58,7 +54,6 @@ type
     procedure actShowBidExecute(Sender: TObject);
     procedure actGeocodingExecute(Sender: TObject);
     procedure actLastPositionExecute(Sender: TObject);
-    procedure miSaveClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actMovementsExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -189,52 +184,8 @@ begin
 end;
 
 procedure TMapForm.ControlIEVersion;
-{$IFNDEF EMBEDDEDWB}
-var
-  Tmp: string;
-  L: TStringList;
-  Ver: integer;
-  Reg: TRegistry;
-{$ENDIF}
 begin
-{$IFNDEF EMBEDDEDWB}
-  Tmp := GMMap.GetIEVersion;
-  if Tmp.IsEmpty then
-  begin
-    L := TStringList.Create;
-    try
-      L.Delimiter := '.';
-      L.DelimitedText := Tmp;
-      Ver := StrToInt(L[0]);
-    finally
-      FreeAndNil(L);
-    end;
-  end
-  else
-    Ver := 10;
 
-  if Ver < 7 then
-    Ver := 7
-  else if Ver > 11 then
-    Ver := 11;
-
-  Ver := Ver * 1000;
-
-  Tmp := ExtractFileName(ParamStr(0));
-  Reg := TRegistry.Create;
-  try
-    Reg.RootKey := HKEY_CURRENT_USER;
-    if Reg.OpenKey('SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION', False) then
-      try
-        if not Reg.ValueExists(Tmp) then
-          Reg.WriteInteger(Tmp, Ver);
-      finally
-        Reg.CloseKey;
-      end;
-  finally
-    Reg.Free;
-  end;
-{$ENDIF}
 end;
 
 constructor TMapForm.Create(aOwner: TComponent);
@@ -270,9 +221,6 @@ var
   lat, lng: Real;
   vz: integer;
 begin
-  if not GMMap.Active then
-    Exit;
-
   lat := 52.1;
   lng := 23.7;
   vz := 14;
@@ -288,37 +236,10 @@ begin
     FreeAndNil(AppIni);
   end;
 
-  GMMap.RequiredProp.Center.lat := lat;
-  GMMap.RequiredProp.Center.lng := lng;
-  GMMap.RequiredProp.Zoom := vz;
-  GMMap.RequiredProp.MapType := TTransform.StrToMapTypeId(s);
-  GMMap.Language := Russian;
-  GMMap.DoMap;
 end;
 
 procedure TMapForm.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  AppIni: TIniFile;
-  ll: TLatLng;
-  s: string;
 begin
-  if GMMap.Active then
-  begin
-    AppIni := TIniFile.Create(A4MainForm.GetIniFileName);
-    ll := TLatLng.Create();
-    try
-      GMMap.GetCenter(ll);
-      AppIni.WriteFloat('MAP', 'LAT', ll.lat);
-      AppIni.WriteFloat('MAP', 'LNG', ll.lng);
-      AppIni.WriteInteger('MAP', 'ZOOM', GMMap.RequiredProp.Zoom);
-      s := TTransform.MapTypeIdToStr(GMMap.RequiredProp.MapType);
-      AppIni.WriteString('MAP', 'TYPE', s);
-    finally
-      FreeAndNil(AppIni);
-      FreeAndNil(ll);
-    end;
-  end;
-  MapForm := nil;
   Action := caFree;
 end;
 
@@ -335,14 +256,6 @@ begin
   wbWeb.PrintOptions.HTMLHeader.Clear;
   wbWeb.PrintOptions.HTMLHeader.Add('<HTML></HTML>');
   GMMap.WebBrowser := wbWeb;
-{$ELSE}
-  wbWeb := TWebBrowser.Create(Self);
-  TWinControl(wbWeb).Parent := pnlMain;
-  wbWeb.Silent := true;
-  wbWeb.Align := alClient;
-  wbWeb.Align := alClient;
-  wbWeb.TabOrder := 0;
-  GMMap.WebBrowser := wbWeb;
 {$ENDIF}
 end;
 
@@ -354,6 +267,7 @@ end;
 
 procedure TMapForm.FormShow(Sender: TObject);
 begin
+{
   GMMap.APIKey := dmMain.GetSettingsValue('GMAPI');
   if GMMap.APIKey <> '' then
     GMMap.Active := true
@@ -361,6 +275,7 @@ begin
   begin
     ShowMessage(rsERROR_GMAPI);
   end;
+}
 end;
 
 procedure TMapForm.gmMapAfterPageLoaded(Sender: TObject; First: Boolean);
@@ -401,6 +316,7 @@ begin
     if (not qRead.FN('Latitude').IsNull) and (not qRead.FN('Longitude').IsNull) then
     begin
       s := qRead.FN('Rt_Name').AsString;
+      {
       m := gmMrkrBids.Add(qRead.FN('Latitude').AsExtended, qRead.FN('Longitude').AsExtended, s);
       m.MarkerType := mtColored;
       m.ShowInfoWinMouseOver := true;
@@ -412,6 +328,7 @@ begin
       else
         s := 'clWhite';
       m.ColoredMarker.PrimaryColor := StringToColor(s);
+      }
     end;
     qRead.Next;
   end;
@@ -421,8 +338,7 @@ end;
 
 procedure TMapForm.HideBids;
 begin
-  while gmMrkrBids.Count > 0 do
-    gmMrkrBids.Delete(gmMrkrBids.Count - 1);
+
 end;
 
 procedure TMapForm.ShowLastPosition;
@@ -448,6 +364,7 @@ begin
     if (not qRead.FN('Lat').IsNull) and (not qRead.FN('Lon').IsNull) then
     begin
       s := qRead.FN('Surname').AsString + ' ' + qRead.FN('Firstname').AsString;
+      {
       m := gmMrkrLast.Add(qRead.FN('Lat').AsExtended, qRead.FN('Lon').AsExtended, s);
       m.MarkerType := mtStandard;
       m.Draggable := False;
@@ -455,6 +372,7 @@ begin
       s := '<h1>' + qRead.FN('Surname').AsString + '</h1>';
       s := s + '<p>' + DateTimeToStr(qRead.FN('Gps_Time').AsDateTime) + '</p>';
       m.InfoWindow.HTMLContent := s;
+      }
     end;
     qRead.Next;
   end;
@@ -464,14 +382,7 @@ end;
 
 procedure TMapForm.HideLastPosition;
 begin
-  while gmMrkrLast.Count > 0 do
-    gmMrkrLast.Delete(gmMrkrLast.Count - 1);
-end;
 
-procedure TMapForm.miSaveClick(Sender: TObject);
-begin
-  if SaveDialog1.Execute then
-    GMMap.SaveToJPGFile(SaveDialog1.FileName);
 end;
 
 procedure TMapForm.ShowMovements;
@@ -500,12 +411,14 @@ begin
       if ul <> qRead.FN('worker').AsString then
       begin
         ul := qRead.FN('worker').AsString;
+        {
         pl := gmMovements.Add();
         pl.Text := qRead.FN('FIO').AsString;
         pl.Clickable := true;
         pl.Editable := False;
         pl.StrokeColor := GenerateRandomColor();
         pl.InfoWindow.HTMLContent := qRead.FN('FIO').AsString;
+        }
       end;
       if assigned(pl) then
         pl.AddLinePoint(qRead.FN('Lat').AsExtended, qRead.FN('Lon').AsExtended);
@@ -518,8 +431,7 @@ end;
 
 procedure TMapForm.HideMovements;
 begin
-  while gmMovements.Count > 0 do
-    gmMovements.Delete(gmMovements.Count - 1);
+
 end;
 
 end.

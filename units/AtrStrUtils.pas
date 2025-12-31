@@ -709,7 +709,7 @@ end;
 
 function CorrectPhone(const phone: string; const aCountry: String = 'BY'): string;
 const
-  pfRU: string = '^79[0-9]{9}$';
+  pfRU: string = '^7[0-9]{10}$';
   pfBY: string = '^375(24|25|29|33|44)[1-9]{1}[0-9]{6}$';
   pfUA: string = '^380(50|63|66|67|68|91|92|93|94|95|96|97|98|99)[0-9]{7}$';
 
@@ -735,7 +735,9 @@ const
           // 80297349634
           S := Copy(p, 1, 2);
           if S = '80' then
-            Result := prefix + Copy(p, 3, 9);
+            Result := prefix + Copy(p, 3, 9)
+          else
+            Result := p;
         end;
       end;
     end;
@@ -763,7 +765,9 @@ const
     case l of
       11:
         if Copy(p, 1, 1) = '8' then
-          Result := prefix + Copy(p, 2, 10);
+          Result := prefix + Copy(p, 2, 10)
+        else
+          Result := p;
       10:
         Result := prefix + p; // 297346934
     end;

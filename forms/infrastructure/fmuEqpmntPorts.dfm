@@ -473,6 +473,7 @@ object apgEqpmntPort: TapgEqpmntPort
         FieldName = 'PORCH_N'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089'|'#1055'-'#1076
+        Title.TitleButton = True
         Width = 32
       end
       item
@@ -482,6 +483,7 @@ object apgEqpmntPort: TapgEqpmntPort
         FieldName = 'FLOOR_N'
         Footers = <>
         Title.Caption = #1040#1076#1088#1077#1089'|'#1069'-'#1078
+        Title.TitleButton = True
         Width = 31
       end
       item
@@ -562,6 +564,7 @@ object apgEqpmntPort: TapgEqpmntPort
         FieldName = 'WLABEL'
         Footers = <>
         Title.Caption = #1051#1080#1085#1080#1103' '#1089#1074#1103#1079#1080'|'#1084#1077#1090#1082#1072
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end

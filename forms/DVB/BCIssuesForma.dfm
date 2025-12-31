@@ -148,6 +148,7 @@ inherited BCIssuesForm: TBCIssuesForm
         FieldName = 'CH_LIST'
         Footers = <>
         Title.Caption = #1050#1072#1085#1072#1083#1099
+        Title.TitleButton = True
         Width = 170
       end
       item

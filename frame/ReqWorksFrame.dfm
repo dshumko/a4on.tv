@@ -41,6 +41,7 @@ object frmReqWorks: TfrmReqWorks
         Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1042#1080#1076' '#1088#1072#1073#1086#1090
+        Title.TitleButton = True
         Width = 111
       end
       item
@@ -52,6 +53,7 @@ object frmReqWorks: TfrmReqWorks
         FieldName = 'W_QUANT'
         Footers = <>
         Title.Caption = #1050'-'#1074#1086
+        Title.TitleButton = True
         Width = 66
       end
       item
@@ -64,6 +66,7 @@ object frmReqWorks: TfrmReqWorks
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1085'/'#1095
+        Title.TitleButton = True
         Width = 32
       end
       item
@@ -77,6 +80,7 @@ object frmReqWorks: TfrmReqWorks
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100
+        Title.TitleButton = True
       end
       item
         CellButtons = <>
@@ -85,6 +89,7 @@ object frmReqWorks: TfrmReqWorks
         FieldName = 'NOTICE'
         Footers = <>
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Title.TitleButton = True
         Width = 69
       end
       item
@@ -95,6 +100,7 @@ object frmReqWorks: TfrmReqWorks
         FieldName = 'W_COST'
         Footers = <>
         Title.Caption = #1062#1077#1085#1072
+        Title.TitleButton = True
         Width = 0
       end>
     object RowDetailData: TRowDetailPanelControlEh

@@ -174,6 +174,7 @@ type
     property CurrentMonth: TDateTime read fCurrentMonth write SetCurrentMonth;
     function GetRecordsCount(const aTableName, aWhereStr: String): Integer;
     function GetSettingsValue(const aSettingName: string): Variant;
+    procedure SetSettingsValue(const aSettingName: string; const aValue: string);
     function GetCompanyValue(const aSettingName: string): Variant;
     function AllowedAction(const aRightsID: Integer): Boolean;
     procedure SetIniValue(const aSettingName: string; const aSettingValue: string);
@@ -828,6 +829,12 @@ begin
   else
     Result := '';
 end;
+
+procedure TdmMain.SetSettingsValue(const aSettingName: string; const aValue: string);
+begin
+  FA4onList.Values[aSettingName] := aValue;
+end;
+
 
 procedure TdmMain.FibErrorHandlerFIBErrorEvent(Sender: TObject; ErrorValue: EFIBError; KindIBError: TKindIBError;
   var DoRaise: Boolean);

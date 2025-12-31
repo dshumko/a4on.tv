@@ -63,6 +63,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'NAME'
           Footers = <>
           Title.Caption = #1059#1089#1083#1091#1075#1072
+          Title.TitleButton = True
           Width = 76
         end
         item
@@ -73,6 +74,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'DOLG_SUM'
           Footers = <>
           Title.Caption = #1053#1072#1095#1080#1089'.'
+          Title.TitleButton = True
           Width = 64
         end
         item
@@ -84,6 +86,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'DOLG_DATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072
+          Title.TitleButton = True
           Width = 52
         end
         item
@@ -95,6 +98,7 @@ object PaymentForm: TPaymentForm
           FieldName = 'FINE_DAYS'
           Footers = <>
           Title.Caption = #1055#1077#1085#1103'|'#1044#1085#1077#1081
+          Title.TitleButton = True
           Width = 39
         end
         item
@@ -106,6 +110,7 @@ object PaymentForm: TPaymentForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1055#1077#1085#1103'|'#1057#1091#1084#1084#1072
+          Title.TitleButton = True
           Width = 68
         end>
       object RowDetailData: TRowDetailPanelControlEh

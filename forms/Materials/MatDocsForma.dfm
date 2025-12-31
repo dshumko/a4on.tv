@@ -78,6 +78,7 @@ inherited MatDocsForm: TMatDocsForm
         FieldName = 'DT_NAME'
         Footers = <>
         Title.Caption = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+        Title.TitleButton = True
         Width = 69
       end
       item
@@ -97,6 +98,7 @@ inherited MatDocsForm: TMatDocsForm
         FieldName = 'FROM_WH_NAME'
         Footers = <>
         Title.Caption = #1057#1086' '#1089#1082#1083#1072#1076#1072
+        Title.TitleButton = True
         Width = 99
       end
       item
@@ -403,6 +405,7 @@ inherited MatDocsForm: TMatDocsForm
           Footer.DisplayFormat = ',#0.#####'
           Footers = <>
           Title.Caption = #1057#1082#1083#1072#1076'|'#1062#1077#1085#1072
+          Title.TitleButton = True
           Width = 69
         end
         item
@@ -415,6 +418,7 @@ inherited MatDocsForm: TMatDocsForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1057#1082#1083#1072#1076'|'#1057#1090#1086#1080#1084#1086#1089#1090#1100
+          Title.TitleButton = True
           Width = 88
         end
         item
@@ -434,6 +438,7 @@ inherited MatDocsForm: TMatDocsForm
           FieldName = 'M_NUMBER'
           Footers = <>
           Title.Caption = #1053#1086#1084'. '#1085#1086#1084#1077#1088
+          Title.TitleButton = True
           Width = 71
         end
         item

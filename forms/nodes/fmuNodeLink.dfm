@@ -232,6 +232,7 @@ object apgNodeLink: TapgNodeLink
               FieldName = 'WLBL_IP'
               Footers = <>
               Title.Caption = 'IP'
+              Title.TitleButton = True
               Width = 106
             end
             item
@@ -241,6 +242,7 @@ object apgNodeLink: TapgNodeLink
               FieldName = 'WLBL_MAC'
               Footers = <>
               Title.Caption = 'MAC'
+              Title.TitleButton = True
               Width = 128
             end
             item

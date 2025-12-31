@@ -161,7 +161,7 @@ object UsersForm: TUsersForm
         Top = 0
         Width = 588
         Height = 459
-        ActivePage = tsModules
+        ActivePage = tsRights
         Align = alClient
         TabOrder = 1
         OnChange = pgcRightsChange
@@ -542,6 +542,7 @@ object UsersForm: TUsersForm
               FieldName = 'LAST_LOGGED'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072' '#1087#1086#1089#1083'. '#1074#1093#1086#1076#1072
+              Title.TitleButton = True
               Visible = False
               Width = 60
             end
@@ -552,6 +553,7 @@ object UsersForm: TUsersForm
               FieldName = 'PSWD_CHANGED'
               Footers = <>
               Title.Caption = #1044#1072#1090#1072' '#1089#1084#1077#1085#1099' '#1087#1072#1088#1086#1083#1103
+              Title.TitleButton = True
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
@@ -607,7 +609,7 @@ object UsersForm: TUsersForm
         Top = 203
         Width = 896
         Height = 256
-        ActivePage = tsAreas
+        ActivePage = tsGroups
         Align = alClient
         TabOrder = 1
         OnChange = pcUserRAChange
@@ -659,6 +661,7 @@ object UsersForm: TUsersForm
                     FieldName = 'GROUP_NAME'
                     Footers = <>
                     Title.Caption = #1043#1088#1091#1087#1087#1072
+                    Title.TitleButton = True
                   end
                   item
                     AutoFitColWidth = False
@@ -668,6 +671,7 @@ object UsersForm: TUsersForm
                     FieldName = 'LOCKEDOUT'
                     Footers = <>
                     Title.Caption = #1041#1083#1086#1082
+                    Title.TitleButton = True
                     Width = 29
                   end
                   item
@@ -677,6 +681,7 @@ object UsersForm: TUsersForm
                     FieldName = 'NOTICE'
                     Footers = <>
                     Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                    Title.TitleButton = True
                     Width = 89
                   end>
                 object RowDetailData: TRowDetailPanelControlEh
@@ -800,6 +805,7 @@ object UsersForm: TUsersForm
                     FieldName = 'GROUP_NAME'
                     Footers = <>
                     Title.Caption = #1043#1088#1091#1087#1087#1072
+                    Title.TitleButton = True
                   end
                   item
                     AutoFitColWidth = False
@@ -809,6 +815,7 @@ object UsersForm: TUsersForm
                     FieldName = 'LOCKEDOUT'
                     Footers = <>
                     Title.Caption = #1041#1083#1086#1082
+                    Title.TitleButton = True
                     Width = 29
                   end
                   item
@@ -818,6 +825,7 @@ object UsersForm: TUsersForm
                     FieldName = 'NOTICE'
                     Footers = <>
                     Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                    Title.TitleButton = True
                   end>
                 object RowDetailData: TRowDetailPanelControlEh
                 end
@@ -883,6 +891,7 @@ object UsersForm: TUsersForm
                     FieldName = 'NAME'
                     Footers = <>
                     Title.Caption = #1059#1095#1072#1089#1090#1086#1082
+                    Title.TitleButton = True
                     Width = 157
                   end
                   item
@@ -892,6 +901,7 @@ object UsersForm: TUsersForm
                     FieldName = 'NOTICE'
                     Footers = <>
                     Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                    Title.TitleButton = True
                   end>
                 object RowDetailData: TRowDetailPanelControlEh
                 end
@@ -1005,6 +1015,7 @@ object UsersForm: TUsersForm
                     FieldName = 'NAME'
                     Footers = <>
                     Title.Caption = #1059#1095#1072#1089#1090#1086#1082
+                    Title.TitleButton = True
                     Width = 174
                   end
                   item
@@ -1014,6 +1025,7 @@ object UsersForm: TUsersForm
                     FieldName = 'NOTICE'
                     Footers = <>
                     Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                    Title.TitleButton = True
                   end>
                 object RowDetailData: TRowDetailPanelControlEh
                 end
@@ -1334,7 +1346,6 @@ object UsersForm: TUsersForm
     Left = 392
     Top = 356
     WaitEndMasterScroll = True
-    dcForceMasterRefresh = True
     dcForceOpen = True
     oFetchAll = True
   end
@@ -2058,6 +2069,7 @@ object UsersForm: TUsersForm
     DataSource = srcUsers
     Left = 390
     Top = 411
+    WaitEndMasterScroll = True
     dcForceOpen = True
     oFetchAll = True
   end
@@ -2075,7 +2087,7 @@ object UsersForm: TUsersForm
     DataSource = srcUsers
     Left = 483
     Top = 410
-    dcForceMasterRefresh = True
+    WaitEndMasterScroll = True
     dcForceOpen = True
     oFetchAll = True
   end

@@ -67,6 +67,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Title.Caption = #1058#1080#1087' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1086#1081' '#1091#1089#1083#1091#1075#1080
           Title.SortIndex = 2
           Title.SortMarker = smUpEh
+          Title.TitleButton = True
           Width = 307
         end
         item
@@ -85,6 +86,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Title.Caption = #1057#1090#1072#1090#1091#1089
           Title.SortIndex = 1
           Title.SortMarker = smUpEh
+          Title.TitleButton = True
           Width = 92
         end
         item
@@ -95,6 +97,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1089#1090#1072#1090#1091#1089#1072
+          Title.TitleButton = True
           Width = 78
         end
         item
@@ -105,6 +108,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1059#1089#1083#1091#1075#1072' '#1080#1079#1084'. '#1089#1090#1072#1090#1091#1089#1072
+          Title.TitleButton = True
           Width = 134
         end
         item
@@ -116,6 +120,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1048#1079#1084#1077#1085#1080#1083
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -124,6 +129,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'CONTRACT'
           Footers = <>
           Title.Caption = #1044#1086#1075#1086#1074#1086#1088
+          Title.TitleButton = True
           Width = 76
         end
         item
@@ -133,6 +139,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'CONTRACT_DATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1076#1086#1075'.'
+          Title.TitleButton = True
           Width = 87
         end
         item
@@ -262,6 +269,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1087#1086#1076#1082#1083
+          Title.TitleButton = True
           Width = 80
         end
         item
@@ -272,6 +280,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1059#1089#1083'. '#1087#1086#1076#1082#1083'.'
+          Title.TitleButton = True
           Width = 130
         end
         item
@@ -283,6 +292,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1044#1072#1090#1072' '#1086#1090#1082#1083
+          Title.TitleButton = True
           Width = 78
         end
         item
@@ -293,6 +303,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1059#1089#1083'. '#1086#1090#1082#1083'.'
+          Title.TitleButton = True
           Width = 126
         end
         item
@@ -303,6 +314,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1083
+          Title.TitleButton = True
           Width = 81
         end
         item
@@ -313,6 +325,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1050#1086#1075#1076#1072' '#1087#1086#1076#1082#1083'.'
+          Title.TitleButton = True
           Width = 84
         end
         item
@@ -323,6 +336,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1054#1090#1082#1083#1102#1095#1080#1083
+          Title.TitleButton = True
           Width = 74
         end
         item
@@ -333,6 +347,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1050#1086#1075#1076#1072' '#1086#1090#1082#1083'.'
+          Title.TitleButton = True
           Visible = False
           Width = 101
         end
@@ -344,6 +359,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1057#1086#1090#1088'-'#1082' '#1087#1086#1076#1082#1083'.'
+          Title.TitleButton = True
           Width = 87
         end
         item
@@ -354,6 +370,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1057#1086#1090#1088'-'#1082' '#1086#1090#1082#1083'.'
+          Title.TitleButton = True
           Width = 55
         end
         item
@@ -364,6 +381,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1047#1072#1103#1074#1082#1072' '#1087#1086#1076#1082#1083'.'
+          Title.TitleButton = True
           Width = 66
         end
         item
@@ -374,6 +392,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           Footers = <>
           ReadOnly = True
           Title.Caption = #1047#1072#1103#1074#1082#1072' '#1086#1090#1082#1083'.'
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -382,6 +401,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'CONTRACT'
           Footers = <>
           Title.Caption = #1044#1086#1075#1086#1074#1086#1088
+          Title.TitleButton = True
         end
         item
           CellButtons = <>
@@ -390,6 +410,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           FieldName = 'CONTRACT_DATE'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1076#1086#1075#1086#1074#1086#1088#1072
+          Title.TitleButton = True
           Width = 58
         end
         item

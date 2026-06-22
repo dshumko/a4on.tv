@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst;
+  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
+  CnClasses;
 
 type
   TNodeAttributForm = class(TForm)
@@ -55,10 +56,12 @@ begin
 
   with TNodeAttributForm.Create(Application) do
     try
-      if Attribute = '' then begin
+      if Attribute = '' then
+      begin
         dsAttributes.ParamByName('IS_OLD').AsInteger := 0;
       end
-      else begin
+      else
+      begin
         dsAttributes.ParamByName('IS_OLD').AsInteger := 1;
         dbluAttribute.Enabled := false;
       end;
@@ -72,14 +75,17 @@ begin
       else
         dsNodeAttribute.Edit;
 
-      if ShowModal = mrOk then begin
+      if ShowModal = mrOk then
+      begin
         ForSelected := false;
-        if Assigned(NodesForm) then begin
+        if Assigned(NodesForm) then
+        begin
           if (NodesForm.dbgNodes.SelectedRows.Count > 0) then
             ForSelected := (MessageDlg(rsProcessAllSelectedRows, mtConfirmation, [mbYes, mbNo], 0) = mrYes);
         end;
 
-        if ForSelected and (dsAttributes['O_UNIQ'] <> 1) then begin
+        if ForSelected and (dsAttributes['O_UNIQ'] <> 1) then
+        begin
           Save_Cursor := Screen.Cursor;
           Screen.Cursor := crHourGlass;
           AID := dbluAttribute.VALUE;
@@ -89,7 +95,8 @@ begin
           dsNodeAttribute.DisableControls;
           bm := NodesForm.dbgNodes.DataSource.DataSet.GetBookmark;
           NodesForm.dbgNodes.DataSource.DataSet.DisableControls;
-          for i := 0 to NodesForm.dbgNodes.SelectedRows.Count - 1 do begin
+          for i := 0 to NodesForm.dbgNodes.SelectedRows.Count - 1 do
+          begin
             NodesForm.dbgNodes.DataSource.DataSet.Bookmark := NodesForm.dbgNodes.SelectedRows[i];
             try
               FCID := NodesForm.dbgNodes.DataSource.DataSet['NODE_ID'];
@@ -108,13 +115,15 @@ begin
           NodesForm.dbgNodes.DataSource.DataSet.EnableControls;
           Screen.Cursor := Save_Cursor;
         end
-        else begin
+        else
+        begin
           dsNodeAttribute.FieldByName('NODE_ID').AsInteger := NODE_ID;
           dsNodeAttribute.Post;
         end;
         result := true;
       end
-      else begin
+      else
+      begin
         dsNodeAttribute.Cancel;
         result := false;
       end;
@@ -149,14 +158,17 @@ var
   fq: TpFIBQuery;
 begin
   errors := false;
-  if (dbluAttribute.Text = '') then begin
+  if (dbluAttribute.Text = '') then
+  begin
     errors := true;
     CnErrors.SetError(dbluAttribute, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
   end
   else
     CnErrors.Dispose(dbluAttribute);
-  if ((dbluAttribute.Text <> '')) then begin
-    if dsAttributes['REGEXP'] <> '' then begin
+  if ((dbluAttribute.Text <> '')) then
+  begin
+    if dsAttributes['REGEXP'] <> '' then
+    begin
       s := edtNA_VALUE.Text;
       reg := '^' + dsAttributes['REGEXP'] + '$';
       errors := not TRegEx.IsMatch(s, reg);
@@ -167,12 +179,14 @@ begin
     end
   end;
 
-  if (dsAttributes['O_UNIQ'] = 1) then begin
+  if (dsAttributes['O_UNIQ'] = 1) then
+  begin
     fq := TpFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
       fq.Transaction := dmMain.trReadQ;
-      with fq.sql do begin
+      with fq.sql do
+      begin
         Clear;
         add('select first 1 c.Name as who');
         add('from Nodes_Attributes a inner join Nodes c on (a.Node_Id = c.Node_Id)');
@@ -194,7 +208,8 @@ begin
     finally
       fq.free;
     end;
-    if s <> '' then begin
+    if s <> '' then
+    begin
       errors := true;
       s := format(rsERROR_UNIQUE, [s]);
       if cbbList.Visible then

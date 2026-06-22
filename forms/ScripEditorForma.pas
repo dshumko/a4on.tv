@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ImgList, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.Mask, Vcl.ActnList, Vcl.Buttons, Vcl.Menus,
   fs_tree, fs_synmemo, fs_iinterpreter, DBCtrlsEh, SynEditHighlighter, PrjConst, CnErrorProvider, amSplitter,
-  Vcl.StdActns;
+  Vcl.StdActns, CnClasses, System.ImageList;
 
 type
   TScripEditorForm = class(TForm)

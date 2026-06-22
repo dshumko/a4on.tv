@@ -11,14 +11,12 @@ object ServicesForm: TServicesForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -1158,7 +1156,7 @@ object ServicesForm: TServicesForm
             object Label1: TLabel
               Left = 0
               Top = 0
-              Width = 321
+              Width = 125
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
@@ -1287,7 +1285,7 @@ object ServicesForm: TServicesForm
             object Label2: TLabel
               Left = 0
               Top = 0
-              Width = 476
+              Width = 106
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
@@ -2377,7 +2375,7 @@ object ServicesForm: TServicesForm
       '               where o.O_Id = s.BUSINESS_TYPE'
       '                     and o.O_TYPE = 15) BUSINESS'
       '          ,'
-      '            (select'
+      '            (select first 1'
       '                 t.Tarif_Sum'
       '               from Tarif t'
       '               where t.Service_Id = s.Service_Id'
@@ -2444,7 +2442,7 @@ object ServicesForm: TServicesForm
       '               where o.O_Id = s.BUSINESS_TYPE'
       '                     and o.O_TYPE = 15) BUSINESS'
       '          ,'
-      '            (select'
+      '            (select first 1'
       '                 t.Tarif_Sum'
       '               from Tarif t'
       '               where t.Service_Id = s.Service_Id'

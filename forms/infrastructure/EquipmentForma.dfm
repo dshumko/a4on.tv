@@ -5,11 +5,15 @@ inherited EquipmentForm: TEquipmentForm
   ClientHeight = 603
   ClientWidth = 979
   Menu = mmMain
+  ExplicitWidth = 995
+  ExplicitHeight = 662
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 25
     Width = 979
+    ExplicitTop = 25
+    ExplicitWidth = 979
   end
   object splMain: TSplitter [1]
     Left = 0
@@ -263,6 +267,7 @@ inherited EquipmentForm: TEquipmentForm
   end
   inherited tlbMain: TToolBar
     Width = 979
+    ExplicitWidth = 979
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -340,17 +345,26 @@ inherited EquipmentForm: TEquipmentForm
     Top = 29
     Width = 979
     Height = 0
+    ExplicitTop = 29
+    ExplicitWidth = 979
+    ExplicitHeight = 0
     inherited btnSaveLink: TBitBtn
       Left = 108
       Top = 71
       Width = 300
       TabOrder = 1
+      ExplicitLeft = 108
+      ExplicitTop = 71
+      ExplicitWidth = 300
     end
     inherited btnCancelLink: TBitBtn
       Left = 5
       Top = -20
       Height = 14
       TabOrder = 0
+      ExplicitLeft = 5
+      ExplicitTop = -20
+      ExplicitHeight = 14
     end
   end
   object pnlForms: TPanel [5]

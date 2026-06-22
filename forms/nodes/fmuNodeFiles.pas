@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
 
 type
@@ -99,8 +100,7 @@ begin
     Exit;
   if (not srcFiles.DataSet.FieldByName('NAME').IsNull) then
   begin
-    if (MessageDlg(Format(rsDeleteWithName, [srcFiles.DataSet['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
-    then
+    if (MessageDlg(Format(rsDeleteWithName, [srcFiles.DataSet['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
       srcFiles.DataSet.Delete;
       EnableControls;

@@ -308,7 +308,7 @@ CREATE TABLE CHANNELS (CH_ID UID,
         CONTRACT_ID D_UID_NULL,
         CH_LIC D_VARCHAR255,
         CH_CERT D_VARCHAR255,
-        CH_THEME D_VARCHAR50,
+        CH_THEME D_DESCRIPTION,
         CH_ICON D_BLOB1K);
 
 /* Table: CHANNELS_IN_SERVCE, Owner: SYSDBA */
@@ -1315,6 +1315,7 @@ CREATE TABLE MATERIALS_GROUP (MG_ID UID NOT NULL,
         DELETED D_IBOOLEAN,
         PCE D_N15_3,
         PROP D_INTEGER,
+        EXCL_LAYOUT D_IBOOLEAN DEFAULT 0,
 CONSTRAINT PK_MATERIALS_GROUP PRIMARY KEY (MG_ID));
 
 /* Table: MATERIALS_IN_DOC, Owner: SYSDBA */
@@ -1477,6 +1478,7 @@ CREATE TABLE NODES (NODE_ID UID NOT NULL,
         EDIT_BY D_VARCHAR50,
         EDIT_ON D_DATETIME,
         PCE D_N15_3,
+        LT_ID D_UID_NULL,
 CONSTRAINT PK_NODES PRIMARY KEY (NODE_ID));
 
 /* Table: NODES_ATTRIBUTES, Owner: SYSDBA */
@@ -1517,8 +1519,8 @@ CREATE TABLE NODE_FLATS (NODE_ID UID NOT NULL,
         EDIT_ON D_DATETIME);
 
 /* Table: NODE_LAYOUT, Owner: SYSDBA */
-CREATE TABLE NODE_LAYOUT (LT_ID UID,
-        NODE_ID UID,
+CREATE TABLE NODE_LAYOUT (L_ID UID,
+        LT_ID UID,
         SRV_TYPE D_UID_NULL,
         MAT_QNT D_N15_2,
         CUST_QNT D_INTEGER,
@@ -1896,7 +1898,10 @@ CREATE TABLE RECOURSE (RC_ID UID NOT NULL,
         NOTICE D_NOTICE,
         RQ_ID D_UID_NULL,
         CONTACT D_VARCHAR50,
-        TAG D_VARCHAR255,
+        TAG D_VARCHAR500,
+        RESULT_ID D_UID_NULL,
+        TASK_ID D_UID_NULL,
+        ADD_DATA D_VARCHAR1000,
         ADDED_BY D_VARCHAR50,
         ADDED_ON D_DATETIME,
         EDIT_BY D_VARCHAR50,
@@ -2664,6 +2669,22 @@ FOR_DATE D_DATE = current_date)
 RETURNS D_INTEGER
 AS 
 BEGIN END ^
+CREATE OR ALTER FUNCTION CURRENCY_FORMAT (CURR D_N15_2,
+TS D_CHAR1 = ' ',
+DS D_CHAR1 = ',')
+RETURNS D_VARCHAR50
+DETERMINISTIC 
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION DATE_FORMAT (A_DATE D_DATE = current_date,
+FORMAT D_VARCHAR1000 = null,
+LONG_DAY_NAMES D_VARCHAR100 = null,
+SHORT_DAY_NAMES D_VARCHAR50 = null,
+LONG_MONTH_NAMES D_VARCHAR255 = null,
+SHORT_MONTH_NAMES D_VARCHAR255 = null)
+RETURNS D_VARCHAR255
+AS 
+BEGIN END ^
 CREATE OR ALTER FUNCTION DISTANCE (LNG1 D_GEOPOINT,
 LAT1 D_GEOPOINT,
 LNG2 D_GEOPOINT,
@@ -2764,9 +2785,8 @@ RETURNS D_DATE
 DETERMINISTIC 
 AS 
 BEGIN END ^
-CREATE OR ALTER FUNCTION NUMBER_AS_STR (VAL D_N15_2,
-LANG D_VARCHAR5 = 'RU',
-SHOWCURRENCY D_INTEGER = 0)
+CREATE OR ALTER FUNCTION NUMBER_TO_STRING_R (VAL D_N15_2,
+SHOWCURRENCY D_INTEGER = null)
 RETURNS D_VARCHAR1000
 AS 
 BEGIN END ^
@@ -3478,7 +3498,7 @@ P_CUSTOMER_ID TYPE OF UID)
 AS 
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CURRENCY_TO_STR (VAL D_N15_2,
-SHOWCURRENCY D_INTEGER)
+SHOWCURRENCY D_INTEGER = null)
 RETURNS (CURR_STR D_VARCHAR1000)
 AS 
 BEGIN SUSPEND; END ^
@@ -3698,6 +3718,21 @@ BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE GEN_PASSWORD (MIN_LENGTH D_SMALLINT = 8,
 MAX_LENGTH D_SMALLINT = 10)
 RETURNS (PWD D_VARCHAR100)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE GETEPCOUNTERS (DT D_DATE,
+EP D_INTEGER = null)
+RETURNS (O_ID D_INTEGER,
+O_NAME D_VARCHAR500,
+ECOUNTER D_VARCHAR50,
+PCE D_N15_3,
+PCE_FACT D_N15_3,
+PV D_N18_6,
+CV D_N18_6,
+NOTICE D_VARCHAR1000,
+CDATE D_DATE,
+A_INC D_INTEGER,
+A_TO D_INTEGER)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GETSERVICES (P_CUSTOMER_ID TYPE OF UID,
@@ -3920,8 +3955,8 @@ RETURNS (AROW D_VARCHAR255)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_LAYOUT_BY_ID (ID D_INTEGER)
-RETURNS (LT_ID D_INTEGER,
-NODE_ID D_INTEGER,
+RETURNS (L_ID D_INTEGER,
+LT_ID D_INTEGER,
 SRV_TYPE D_INTEGER,
 MAT_QNT D_N15_3,
 CUST_QNT D_INTEGER,
@@ -4019,9 +4054,9 @@ NOTICE D_NOTICE)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_NODE_LAYOUT (FOR_NODE D_INTEGER)
-RETURNS (LT_ID D_INTEGER,
+RETURNS (L_ID D_INTEGER,
 NODE_ID D_INTEGER,
-NODE_TYPE D_INTEGER,
+LT_ID D_INTEGER,
 ITSOWN D_INTEGER,
 SRV_TYPE D_INTEGER,
 CUST_QNT D_INTEGER,
@@ -4134,7 +4169,8 @@ BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV (CUSTOMER_ID UID,
 SERVICE_ID D_UID_NULL = null,
 FOR_DAY D_DATE = null)
-RETURNS (M_TARIF D_N15_4)
+RETURNS (M_TARIF D_N15_4,
+D_TARIF D_N15_4)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE GET_WIRE_INFO (WID D_INTEGER)
@@ -4863,8 +4899,8 @@ CREATE INDEX NODES_ATTRIBUTES_IDX1 ON NODES_ATTRIBUTES (NA_ID);
 CREATE INDEX NODES_ATTRIBUTES_OID ON NODES_ATTRIBUTES (O_ID);
 CREATE INDEX IDX_NODE ON NODE_FLATS (NODE_ID, HOUSE_ID, FLAT_NO);
 CREATE INDEX IDX_NODE_HOUSE ON NODE_FLATS (HOUSE_ID);
-CREATE INDEX NODE_LAYOUT_IDX1 ON NODE_LAYOUT (NODE_ID, SRV_TYPE);
-CREATE INDEX NODE_LAYOUT_IDX_ID ON NODE_LAYOUT (LT_ID);
+CREATE INDEX NODE_LAYOUT_IDX1 ON NODE_LAYOUT (LT_ID, SRV_TYPE);
+CREATE INDEX NODE_LAYOUT_IDX_ID ON NODE_LAYOUT (L_ID);
 CREATE INDEX NPS_IDX_CID ON NPS (CUSTOMER_ID);
 CREATE INDEX NPS_IDX_DATE ON NPS (NPS_DATE);
 CREATE INDEX OBJECTS_IDX_NAME_TYPE ON OBJECTS (O_NAME, O_TYPE);
@@ -5237,6 +5273,124 @@ begin
   return result;
 end ^
 
+ALTER FUNCTION CURRENCY_FORMAT (CURR D_N15_2,
+TS D_CHAR1 = ' ',
+DS D_CHAR1 = ',')
+RETURNS D_VARCHAR50
+DETERMINISTIC 
+AS 
+declare variable vTh  D_INTEGER;
+declare variable vP   D_INTEGER;
+declare variable vRes D_Varchar50;
+begin
+  TS = coalesce(TS, '');
+  DS = coalesce(DS, '');
+
+  vP = mod(round(Curr * 100, 0), 100);
+  vTh = round(Curr, 0);
+  vRes = DS || lpad(vP, 2, '0');
+  while (vTh <> 0) do begin
+    vP = mod(vTh, 1000);
+    vTh = round(vTh / 1000, 0);
+    vRes = ts || lpad(vP, 3, '0') || vRes;
+  end
+
+  return trim(leading '0' from trim(leading ts from vRes));
+end ^
+
+ALTER FUNCTION DATE_FORMAT (A_DATE D_DATE = current_date,
+FORMAT D_VARCHAR1000 = null,
+LONG_DAY_NAMES D_VARCHAR100 = null,
+SHORT_DAY_NAMES D_VARCHAR50 = null,
+LONG_MONTH_NAMES D_VARCHAR255 = null,
+SHORT_MONTH_NAMES D_VARCHAR255 = null)
+RETURNS D_VARCHAR255
+AS 
+declare variable D_Year  D_Smallint;
+declare variable D_Month D_Smallint;
+declare variable D_Day   D_Smallint;
+declare variable M       D_Smallint;
+declare variable D       D_Smallint;
+declare variable L       D_Smallint;
+declare variable S       D_Smallint;
+declare variable L_Month D_Varchar20;
+declare variable S_Month D_Varchar10;
+declare variable L_Day   D_Varchar20;
+declare variable S_Day   D_Varchar10;
+declare variable Result  D_Varchar255;
+begin
+
+  if (Long_Day_Names is null) then
+    Long_Day_Names = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
+  if (Short_Day_Names is null) then
+    Short_Day_Names = 'пн,вт,ср,чт,пт,сб,вс';
+  if (Long_Month_Names is null) then
+    Long_Month_Names = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря';
+  if (Short_Month_Names is null) then
+    Short_Month_Names = 'янв,фев,мар,апр,мая,июн,июл,авг,сен,окт,ноя,дек';
+  if (Format is null) then
+    Format = 'DD.MM.YYYY';
+  else
+    Format = upper(Format);
+
+  if (A_DATE is null) then
+    RESULT = null;
+  else begin
+    D_YEAR = extract(year from A_DATE);
+    D_MONTH = extract(month from A_DATE);
+    D_DAY = extract(day from A_DATE);
+    RESULT = FORMAT;
+
+    if (FORMAT is null) then
+      RESULT = D_DAY || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
+    else begin
+      RESULT = replace(replace(RESULT, 'YYYY', D_YEAR), 'YY', mod(extract(year from current_date), 100));
+      S_MONTH = '';
+      L_MONTH = '';
+      if (RESULT like '%MMM%') then begin
+        M = D_MONTH;
+        while (M > 0) do begin
+          L = position(',', LONG_MONTH_NAMES);
+          S = position(',', SHORT_MONTH_NAMES);
+          if (M = 1) then begin
+            L_MONTH = substring(LONG_MONTH_NAMES from 1 for L - 1);
+            S_MONTH = substring(SHORT_MONTH_NAMES from 1 for S - 1);
+          end
+          else begin
+            LONG_MONTH_NAMES = substring(LONG_MONTH_NAMES from L + 1);
+            SHORT_MONTH_NAMES = substring(SHORT_MONTH_NAMES from S + 1);
+          end
+          M = M - 1;
+        end
+        RESULT = replace(replace(RESULT, 'MMMM', coalesce(L_MONTH, '')), 'MMM', coalesce(S_MONTH, ''));
+      end
+      if (RESULT like '%DDD%') then begin
+        D = coalesce(nullif(extract(weekday from A_DATE), 0), 7);
+        while (D > 0) do begin
+          L = position(',', LONG_DAY_NAMES);
+          S = position(',', SHORT_DAY_NAMES);
+          if (D = 1) then begin
+            L_DAY = substring(LONG_DAY_NAMES from 1 for L - 1);
+            S_DAY = substring(SHORT_DAY_NAMES from 1 for S - 1);
+          end
+          else begin
+            LONG_DAY_NAMES = substring(LONG_DAY_NAMES from L + 1);
+            SHORT_DAY_NAMES = substring(SHORT_DAY_NAMES from S + 1);
+          end
+          D = D - 1;
+        end
+        RESULT = replace(replace(RESULT, 'DDDD', coalesce(L_DAY, '')), 'DDD', coalesce(S_DAY, ''));
+      end
+      RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
+      RESULT = replace(RESULT, 'M', D_MONTH);
+      RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
+      RESULT = replace(RESULT, 'D', D_DAY);
+    end
+  end
+
+  return RESULT;
+end ^
+
 ALTER FUNCTION DISTANCE (LNG1 D_GEOPOINT,
 LAT1 D_GEOPOINT,
 LNG2 D_GEOPOINT,
@@ -5313,11 +5467,11 @@ begin
   DS = coalesce(DS, '');
 
   vP = mod(round(Curr * 100, 0), 100);
-  vTh = round(Curr, 0);
+  vTh = trunc(Curr,0);
   vRes = DS || lpad(vP, 2, '0');
   while (vTh <> 0) do begin
     vP = mod(vTh, 1000);
-    vTh = round(vTh / 1000, 0);
+    vTh = trunc(vTh / 1000, 0);
     vRes = ts || lpad(vP, 3, '0') || vRes;
   end
 
@@ -5476,7 +5630,7 @@ declare variable res D_Varchar255;
 declare variable b   D_Integer;
 declare variable e   D_Integer;
 begin
-  res = '"' || Param || '":';
+  res = '"' || trim(Param) || '":';
   b = position(res, Json);
   if (b > 0) then begin
     b = b + char_length(res);
@@ -5841,6 +5995,7 @@ declare variable vClc        D_INTEGER;
 declare variable vUblck      D_INTEGER;
 declare variable Extra       D_INTEGER;
 
+declare variable d       D_INTEGER;
 declare variable vIgnoreList D_Varchar1000;
 begin
 
@@ -5921,7 +6076,8 @@ begin
 
         -- неважен статус услуги, мы платим за остаток дней
         --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-        vTrf = ((cmDays - cmDay) * coalesce(vTrf, 0) / cmDays);
+        d = (cmDays - cmDay);
+        vTrf = (d * coalesce(vTrf, 0) / cmDays);
         --else
         --  vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / vDays);
       end
@@ -5933,11 +6089,14 @@ begin
         --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
         --  vTrf = 0;
         --else begin
-        if (Extra > 0) then
-          vTrf = (Extra - cmDay) * coalesce(vTrf, 0) / coalesce(Extra, 30);
-        else
-          vTrf = (cmDays - cmDay) * coalesce(vTrf, 0) / cmDays;
-        --end
+        if (Extra > 0) then begin
+          d = (Extra - cmDay);
+          vTrf = d * coalesce(vTrf, 0) / coalesce(Extra, 30);
+        end
+        else begin
+          d = (cmDays - cmDay);
+          vTrf = d * coalesce(vTrf, 0) / cmDays;
+        end
       end
 
       PREPAY = PREPAY + coalesce(vTrf, 0);
@@ -6031,14 +6190,16 @@ begin
         --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
         --  PREPAy = prepay + coalesce(vTrf, 0);
         --else begin
-        if (Extra > 0) then
-          PREPAy = prepay + ((nmDay - (cmDays - Extra)) * coalesce(vTrf, 0) / coalesce(Extra, 30));
+        if (Extra > 0) then begin
+          d = nmDay + (cmDays - Extra);
+          PREPAy = prepay + (d * coalesce(vTrf, 0) / coalesce(Extra, 30));
 
-        -- (cmDays - Extra) смеўаем день в завсімості от дней в прошлом месяце.
-        -- напрімер екстра 30 сегодня 15
-        -- еслі текуўем месяце 30 дней. значіт до 15 чісла следуюўего месяца счітаем
-        -- еслі екстра 30, а в месяце 31 день, то счітаем до 14 чісла
-        -- еслі екстра 30, а в месяце 29 дней, то счітаем до 16 чісла
+        -- (cmDays - Extra) смещаем день в завсимости от дней в прошлом месяцею
+        -- например екстра 30 сегодня 15
+        -- если текущем месяце 30 дней. значит до 15 числа следующего месяца считаем
+        -- если екстра 30, а в месяце 31 день, то считаем до 16 числа
+        -- если екстра 30, а в месяце 29 дней, то считаем до 14 числа
+        end
         else
           PREPAy = prepay + 0;
         --end
@@ -6077,18 +6238,12 @@ begin
   select
       sum(COST) as COST
     from (select
-            coalesce(
-              iif((w.As_Service is null) ,
-                iif((coalesce(r.req_result, 0) > 1), rw.W_Cost, w.W_Cost),
-                iif(coalesce(s.Srv_Type_Id, 2) = 2,
-                     0,
-                     (select t.tarif_sum
-                       from tarif t
-                       where t.service_id = s.service_id and coalesce(r.rq_exec_time, localtimestamp) between t.date_from and t.date_to
-                     )
-                   )
-              ),
-            0) * rw.w_quant COST
+              coalesce(iif((w.As_Service is null), iif((coalesce(r.req_result, 0) > 1), rw.W_Cost, w.W_Cost), iif(coalesce(s.Srv_Type_Id, 2) = 2, 0,
+              (select
+                   t.tarif_sum
+                 from tarif t
+                 where t.service_id = s.service_id
+                       and coalesce(cast(r.rq_exec_time as date), current_date) between t.date_from and t.date_to))), 0) * rw.w_quant COST
 
             from Request_works rw
                  inner join WORKS W on (W.W_ID = RW.W_ID)
@@ -6312,78 +6467,47 @@ begin
   return dateadd(-1 day to(dateadd(1 month to (MON_DAY - extract(day from MON_DAY) + 1))));
 end ^
 
-ALTER FUNCTION NUMBER_AS_STR (VAL D_N15_2,
-LANG D_VARCHAR5 = 'RU',
-SHOWCURRENCY D_INTEGER = 0)
+ALTER FUNCTION NUMBER_TO_STRING_R (VAL D_N15_2,
+SHOWCURRENCY D_INTEGER = null)
 RETURNS D_VARCHAR1000
 AS 
-declare variable RAZRYAD      varchar(50);
-declare variable RAZRYAD_IDX  varchar(28);
-declare variable HUNDREDS     varchar(64);
-declare variable HUNDREDS_IDX varchar(30);
-declare variable TENS         varchar(69);
-declare variable TENS_IDX     varchar(40);
-declare variable ONES         varchar(139);
-declare variable ONES_IDX     varchar(100);
-declare variable SIGN_OF_VAL  varchar(6);
-declare variable RAZ          integer;
-declare variable CENTS        D_Varchar5;
-declare variable VAL_STR      varchar(20);
-declare variable NUM          varchar(20);
-declare variable I            integer;
-declare variable BUF          varchar(200);
-declare variable BUF1         varchar(200);
-declare variable CURR_ABR     D_Varchar5;
-declare variable MINUS_STR    varchar(10);
-declare variable CURR_STR     D_Varchar1000;
+declare variable CURR_STR     D_VARCHAR1000;
+declare variable razryad      d_varchar50;
+declare variable razryad_idx  d_varchar50;
+declare variable hundreds     d_varchar100;
+declare variable hundreds_idx d_varchar50;
+declare variable tens         d_varchar100;
+declare variable tens_idx     d_varchar50;
+declare variable ones         d_varchar255;
+declare variable ones_idx     d_varchar100;
+
+declare variable sign_of_val  d_varchar10;
+declare variable raz          d_integer;
+declare variable cents        d_varchar5;
+declare variable val_str      d_varchar50;
+declare variable num          d_varchar50;
+declare variable i            d_integer;
+declare variable buf          d_varchar255;
+declare variable buf1         d_varchar255;
+
 begin
-  lang = coalesce(upper(lang), 'RU');
-  showcurrency = coalesce(showcurrency, 0);
+  /* Константы */
+  razryad_idx = /* 2.2 */ '0100010506071308210829114011';
+  razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
+  hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
+  hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
+  tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
+  tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
+  ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
+  ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
 
-  if ((:lang = 'RU')) then begin
-    curr_abr = 'руб.';
-    minus_str = 'минус';
-    razryad_idx = /* 2.2 */ '0100010506071308210829114011';
-    razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
-    hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
-    hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
-    tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
-    tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
-    ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
-    ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
-  end
-  else
-  if (:lang = 'UA') then begin
-    curr_abr = 'грн.';
-    minus_str = 'мінус';
-    razryad_idx = /* 2.2 */ '0100010506071307200828113911';
-    razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
-    hundreds_idx = /* 2.1 */ '010013046106169257318396458539';
-    hundreds = 'стодвістітристачотиристап''ятсотшістсотсімсотвісімсотдев''ятсот';
-    tens_idx = /* 2.2 */ '0100010001080908170522093109400848105810';
-    tens = 'двадцятьтридцятьсорокп''ятдесятшістдесятсімдесятвісімдесятдев''яносто';
-    ones_idx = /* 3.2 */ '0010000100001000010300406010050150502003023050280703506041100511006110071120831109411105101151212713';
-    ones = 'тричотирип''ятьшістьсімвісімдев''ятьдесятьодинадцятьдванадцятьтринадцятьчотирнадцятьп''ятнадцятьшістнадцятьсімнадцятьвісімнадцятьдев''ятнадцять';
-  end
-  else
-  if (:lang = 'BY') then begin
-    curr_abr = 'руб.';
-    minus_str = 'мінус';
-    razryad_idx = /* 2.2 */ '0100010506071307200828113911';
-    razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
-    hundreds_idx = /* 2.1 */ '010013046106169257318396458539';
-    hundreds = 'стодвістітристачотиристап''ятсотшістсотсімсотвісімсотдев''ятсот';
-    tens_idx = /* 2.2 */ '0100010001080908170522093109400848105810';
-    tens = 'двадцятьтридцятьсорокп''ятдесятшістдесятсімдесятвісімдесятдев''яносто';
-    ones_idx = /* 3.2 */ '0010000100001000010300406010050150502003023050280703506041100511006110071120831109411105101151212713';
-    ones = 'тричотирип''ятьшістьсімвісімдев''ятьдесятьодинадцятьдванадцятьтринадцятьчотирнадцятьп''ятнадцятьшістнадцятьсімнадцятьвісімнадцятьдев''ятнадцять';
-  end
-
+  if (ShowCurrency is null) then
+    ShowCurrency = 0;
   curr_str = '';
 
   /* Смотрим знак */
   if (val < 0) then begin
-    sign_of_val = minus_str || ' ';
+    sign_of_val = 'минус ';
     val = -val;
   end
   else
@@ -6393,8 +6517,7 @@ begin
   val_str = cast(val as varchar(20));
   i = position('.' in val_str);
   cents = lpad(substring(val_str from i + 1 for 2), 2, '0');
-  --  val_str = lpad(substring(val_str FROM 1 FOR i-1), ((i+1)/3*3), '0');
-  val_str = lpad(substring(val_str from 1 for i - 1), (trunc((i + 1) / 3) * 3), '0');
+  val_str = lpad(substring(val_str from 1 for i - 1), ((i + 1) / 3 * 3), '0');
 
   /* Разбираем число */
   raz = 0;
@@ -6431,39 +6554,17 @@ begin
         i = cast(substring(num from 3 for 1) as int);
         /* Смотрим количество для нужного окончания */
         if (i = 1) then begin
-          if (:lang = 'UA') then begin
-            if (raz in (
-                        0, 1
-                       )) then
-              buf1 = 'одна';
-            else
-              buf1 = 'один';
-          end
+          if (raz = 1) then
+            buf1 = 'одна';
           else
-          if (:lang = 'RU') then begin
-            if (raz = 1) then
-              buf1 = 'одна';
-            else
-              buf1 = 'один';
-          end
+            buf1 = 'один';
         end
         else
         if (i = 2) then begin
-          if (:lang = 'UA') then begin
-            if (raz in (
-                        0, 1
-                       )) then
-              buf1 = 'дві';
-            else
-              buf1 = 'два';
-          end
+          if (raz = 1) then
+            buf1 = 'две';
           else
-          if (:lang = 'RU') then begin
-            if (raz = 1) then
-              buf1 = 'две';
-            else
-              buf1 = 'два';
-          end
+            buf1 = 'два';
         end
         else
           buf1 = substring(ones from cast(substring(ones_idx from i * 5 + 1 for 3) as int) for cast(substring(ones_idx from i * 5 + 4 for 2) as int));
@@ -6476,67 +6577,25 @@ begin
       buf1 = substring(razryad from cast(substring(razryad_idx from raz * 4 + 1 for 2) as int) for cast(substring(razryad_idx from raz * 4 + 3 for 2) as int));
       if (buf1 != '') then begin
         /* Подбор окончания для разряда */
-        if (:lang = 'UA') then begin
-          if (i = 1) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (i in (
-                    2, 3, 4
-                   )) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'и';
-            else
-            if (raz > 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (raz > 1) then
-            buf1 = buf1 || 'ів';
+        if (i = 1) then begin
+          if (raz = 1) then
+            buf1 = buf1 || 'а';
         end
         else
-        if (:lang = 'RU') then begin
-          if (i = 1) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (i in (
-                    2, 3, 4
-                   )) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'и';
-            else
-            if (raz > 1) then
-              buf1 = buf1 || 'а';
-          end
+        if (i in (
+                  2, 3, 4
+                 )) then begin
+          if (raz = 1) then
+            buf1 = buf1 || 'и';
           else
           if (raz > 1) then
-            buf1 = buf1 || 'ов';
+            buf1 = buf1 || 'а';
         end
+        else
+        if (raz > 1) then
+          buf1 = buf1 || 'ов';
         buf = buf || ' ' || buf1;
       end
-      else 
-      if (:lang = 'BY') then begin
-          if (i = 1) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (i in (
-                    2, 3, 4
-                   )) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'и';
-            else
-            if (raz > 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (raz > 1) then
-            buf1 = buf1 || 'ів';
-        end
     end
     else
       buf = '';
@@ -6557,14 +6616,10 @@ begin
   curr_str = upper(substring(curr_str from 1 for 1)) || substring(curr_str from 2);
 
   /* Флаг "показать название валюты" */
-  if (showcurrency != 0) then begin
-    if (curr_str != '') then
-      curr_str = curr_str || ' ' || curr_abr || ' ';
+  if (ShowCurrency = 1) then
+    curr_str = curr_str || ' руб. ' || cents || ' коп.';
 
-    curr_str = curr_str || cents || ' коп.';
-  end
-
-  return :CURR_STR;
+  return curr_str;
 end ^
 
 ALTER FUNCTION ONLY_DIGITS (A_VALUE D_VARCHAR255)
@@ -13133,131 +13188,11 @@ BEGIN
 END ^
 
 ALTER PROCEDURE CURRENCY_TO_STR (VAL D_N15_2,
-SHOWCURRENCY D_INTEGER)
+SHOWCURRENCY D_INTEGER = null)
 RETURNS (CURR_STR D_VARCHAR1000)
 AS 
-declare razryad d_varchar50;
-declare razryad_idx d_varchar50;
-declare hundreds d_varchar100;
-declare hundreds_idx d_varchar50;
-declare tens d_varchar100;
-declare tens_idx d_varchar50;
-declare ones d_varchar255;
-declare ones_idx d_varchar100;
- 
-declare sign_of_val d_varchar10;
-declare raz d_integer;
-declare cents d_varchar5;
-declare val_str d_varchar50;
-declare num d_varchar50;
-declare i d_integer;
-declare buf d_varchar255;
-declare buf1 d_varchar255;
- 
 begin
-  /* Константы */
-  razryad_idx = /* 2.2 */ '0100010506071308210829114011';
-  razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
-  hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
-  hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
-  tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
-  tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
-  ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
-  ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
- 
-  IF (ShowCurrency IS NULL) then ShowCurrency = 0;
-  curr_str = '';
- 
-  /* Смотрим знак */
-  IF (val < 0) then begin
-    sign_of_val = 'минус ';
-    val = -val;
-  end else
-    sign_of_val = '';
- 
-  /* Выбираем и запоминаем копейки, убираем их из числа */
-  val_str = cast(val AS varchar(20));
-  i = position('.' IN val_str);
-  cents = lpad(substring(val_str FROM i+1 FOR 2), 2, '0');
-  val_str = lpad(substring(val_str FROM 1 FOR i-1), ((i+1)/3*3), '0');
- 
-  /* Разбираем число */
-  raz = 0; curr_str = '';
-  while (val_str != '') do begin
-    /* Берём триаду символов */
-    num = RIGHT(val_str, 3);
-    /* Если не нулевое число */
-    IF (num != '000') then begin
-      /* Берём сотни */
-      i = cast(substring(num FROM 1 FOR 1) AS int);
-      buf = substring(hundreds FROM cast(substring(hundreds_idx FROM i*3+1 FOR 2) AS int) FOR cast(substring(hundreds_idx FROM i*3+3 FOR 1) AS int));
- 
-      /* Далее десятки */
-      /* Для "десятнадцатых" упрощённая обработка */
-      IF (substring(num FROM 2 FOR 1) = '1') then begin
-          /* Вставляем нужную "десятнадцать" */
-          i = cast(substring(num FROM 2 FOR 2) AS int);
-          buf1 = substring(ones FROM cast(substring(ones_idx FROM i*5+1 FOR 3) AS int) FOR cast(substring(ones_idx FROM i*5+4 FOR 2) AS int));
-          IF (buf != '') then buf = buf || ' ';
-          buf = buf || buf1;
-      end else
-      /* Для "нормальных" чисел своя обработка */
-      begin
-        /* Десятки */
-        i = cast(substring(num FROM 2 FOR 1) AS int);
-        buf1 = substring(tens FROM cast(substring(tens_idx FROM i*4+1 FOR 2) AS int) FOR cast(substring(tens_idx FROM i*4+3 FOR 2) AS int));
-        IF (buf != '' AND buf1 != '') then buf = buf || ' ';
-        buf = buf || buf1;
- 
-        /* Единицы */
-        i = cast(substring(num FROM 3 FOR 1) AS int);
-        /* Смотрим количество для нужного окончания */
-        IF (i = 1) then begin
-          IF (raz = 1) then buf1 = 'одна'; else buf1 = 'один';
-        end else
-        IF (i = 2) then begin
-          IF (raz = 1) then buf1 = 'две'; else buf1 = 'два';
-        end else
-          buf1 = substring(ones FROM cast(substring(ones_idx FROM i*5+1 FOR 3) AS int) FOR cast(substring(ones_idx FROM i*5+4 FOR 2) AS int));
-        IF (buf != '' AND buf1 != '') then buf = buf || ' ';
-        buf = buf || buf1;
-      end
- 
-      /* Разряд числа */
-      buf1 = substring(razryad FROM cast(substring(razryad_idx FROM raz*4+1 FOR 2) AS int) FOR cast(substring(razryad_idx FROM raz*4+3 FOR 2) AS int));
-      IF (buf1 != '') then begin
-        /* Подбор окончания для разряда */
-        IF (i = 1) then begin
-          IF (raz = 1) then buf1 = buf1 || 'а';
-        end else
-        IF (i IN (2,3,4)) then begin
-          IF (raz = 1) then buf1 = buf1 || 'и';
-          else IF (raz > 1) then buf1 = buf1 || 'а';
-        end else
-          IF (raz > 1) then buf1 = buf1 || 'ов';
-        buf = buf || ' ' || buf1;
-      end
-    end else
-      buf = '';
- 
-    /* Присоединяем обработанную триаду к результату */
-    IF (curr_str != '' AND buf != '') then buf = buf || ' ';
-    curr_str = buf || curr_str;
-    /* Переходим к следующей триаде */
-    val_str = LEFT(val_str, char_length(val_str)-3);
-    /* Увеличиваем счётчик разряда */
-    raz = raz + 1;
-  end
- 
-  /* Припысываем знак */
-  curr_str = sign_of_val || curr_str;
-  /* Делаем первую букву прописной */
-  curr_str = upper(substring(curr_str FROM 1 FOR 1)) || substring(curr_str FROM 2);
- 
-  /* Флаг "показать название валюты" */
-  IF (ShowCurrency = 1) then
-    curr_str = curr_str || ' руб. ' || cents || ' коп.';
- 
+  CURR_STR = Number_To_String_R(:Val, :Showcurrency);
   suspend;
 end ^
 
@@ -14847,83 +14782,8 @@ LONG_MONTH_NAMES D_VARCHAR255 = null,
 SHORT_MONTH_NAMES D_VARCHAR255 = null)
 RETURNS (RESULT D_VARCHAR1000)
 AS 
-declare variable D_Year  smallint;
-declare variable D_Month smallint;
-declare variable D_Day   smallint;
-declare variable M       smallint;
-declare variable D       smallint;
-declare variable L       smallint;
-declare variable S       smallint;
-declare variable L_Month varchar(15);
-declare variable S_Month varchar(10);
-declare variable L_Day   varchar(15);
-declare variable S_Day   varchar(10);
 begin
-  if (Long_Day_Names is null) then
-    Long_Day_Names = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
-  if (Short_Day_Names is null) then
-    Short_Day_Names = 'пн,вт,ср,чт,пт,сб,вс';
-  if (Long_Month_Names is null) then
-    Long_Month_Names = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря';
-  if (Short_Month_Names is null) then
-    Short_Month_Names = 'янв,фев,мар,апр,мая,июн,июл,авг,сен,окт,ноя,дек';
-  if (Format is null) then
-    Format = 'DD.MM.YYYY';
-
-  if (A_DATE is null) then
-    RESULT = null;
-  else begin
-    D_YEAR = extract(year from A_DATE);
-    D_MONTH = extract(month from A_DATE);
-    D_DAY = extract(day from A_DATE);
-    RESULT = FORMAT;
-
-    if (FORMAT is null) then
-      RESULT = D_DAY || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
-    else begin
-      RESULT = replace(replace(RESULT, 'YYYY', D_YEAR), 'YY', mod(extract(year from current_date), 100));
-      S_MONTH = '';
-      L_MONTH = '';
-      if (RESULT like '%MMM%') then begin
-        M = D_MONTH;
-        while (M > 0) do begin
-          L = position(',', LONG_MONTH_NAMES);
-          S = position(',', SHORT_MONTH_NAMES);
-          if (M = 1) then begin
-            L_MONTH = substring(LONG_MONTH_NAMES from 1 for L - 1);
-            S_MONTH = substring(SHORT_MONTH_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_MONTH_NAMES = substring(LONG_MONTH_NAMES from L + 1);
-            SHORT_MONTH_NAMES = substring(SHORT_MONTH_NAMES from S + 1);
-          end
-          M = M - 1;
-        end
-        RESULT = replace(replace(RESULT, 'MMMM', coalesce(L_MONTH, '')), 'MMM', coalesce(S_MONTH, ''));
-      end
-      if (RESULT like '%DDD%') then begin
-        D = coalesce(nullif(extract(weekday from A_DATE), 0), 7);
-        while (D > 0) do begin
-          L = position(',', LONG_DAY_NAMES);
-          S = position(',', SHORT_DAY_NAMES);
-          if (D = 1) then begin
-            L_DAY = substring(LONG_DAY_NAMES from 1 for L - 1);
-            S_DAY = substring(SHORT_DAY_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_DAY_NAMES = substring(LONG_DAY_NAMES from L + 1);
-            SHORT_DAY_NAMES = substring(SHORT_DAY_NAMES from S + 1);
-          end
-          D = D - 1;
-        end
-        RESULT = replace(replace(RESULT, 'DDDD', coalesce(L_DAY, '')), 'DDD', coalesce(S_DAY, ''));
-      end
-      RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'M', D_MONTH);
-      RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'D', D_DAY);
-    end
-  end
+  RESULT = Date_Format (A_Date, Format, Long_Day_Names, Short_Day_Names, Long_Month_Names, Short_Month_Names);
   suspend;
 end ^
 
@@ -15218,6 +15078,109 @@ begin
                PWD
              from GEN_PASSWORD(:MIN_LENGTH, :MAX_LENGTH));
   suspend;
+end ^
+
+ALTER PROCEDURE GETEPCOUNTERS (DT D_DATE,
+EP D_INTEGER = null)
+RETURNS (O_ID D_INTEGER,
+O_NAME D_VARCHAR500,
+ECOUNTER D_VARCHAR50,
+PCE D_N15_3,
+PCE_FACT D_N15_3,
+PV D_N18_6,
+CV D_N18_6,
+NOTICE D_VARCHAR1000,
+CDATE D_DATE,
+A_INC D_INTEGER,
+A_TO D_INTEGER)
+AS 
+declare variable O_TYPE  D_Integer;
+declare variable PNOTICE D_Varchar1000;
+declare variable PJSON   D_Varchar1000;
+declare variable JSON    D_Varchar1000;
+declare variable PDATE   D_DATE;
+begin
+  DT = Month_First_Day(coalesce(:DT, current_date));
+
+  for select
+          O.O_ID
+        , O.O_NAME
+        , O.O_DIMENSION ECOUNTER
+        , O.O_TYPE
+        from OBJECTS O
+        where O.O_TYPE = 76
+              and O.O_DELETED = 0
+              and trim(coalesce(O.O_DIMENSION, '')) <> ''
+              and ((:EP is null) or (O.O_Id = :EP))
+        order by O.O_NAME
+      into :O_ID, :O_NAME, :ECOUNTER, :O_TYPE
+  do begin
+    JSON = null;
+    PJSON = null;
+    NOTICE = null;
+    PNOTICE = null;
+    CDATE = null;
+    PDATE = null;
+    select
+        sum(N.PCE)
+      from NODES N
+      where N.EPOINT = :O_ID
+    into :PCE;
+
+    select
+        sum(coalesce(E.PCE, EG.O_NUMERICFIELD, 0))
+      from NODES N
+           inner join EQUIPMENT E on (E.NODE_ID = N.NODE_ID)
+           left outer join OBJECTS EG on (E.EQ_GROUP = EG.O_ID and EG.O_TYPE = 7)
+      where N.EPOINT = :O_ID
+    into :PCE_FACT;
+
+    select first 1
+        OH.NVALUE
+      , OH.Notice
+      , OH.Dvalue
+      , oh.Cvalue
+      from OBJECTS_HISTORY OH
+      where OH.O_ID = :O_ID
+            and OH.O_TYPE = :O_TYPE
+            and OH.DELETED = 0
+            and OH.HDATE >= dateadd(month, -1, :DT)
+            and OH.HDATE < :DT
+      order by OH.HDATE
+    into :PV, :PNOTICE, :PDATE, :PJSON;
+
+    select first 1
+        OH.NVALUE
+      , OH.NOTICE
+      , OH.Dvalue
+      , oh.Cvalue
+      from OBJECTS_HISTORY OH
+      where OH.O_ID = :O_ID
+            and OH.O_TYPE = :O_TYPE
+            and OH.DELETED = 0
+            and OH.HDATE >= :DT
+            and OH.HDATE < dateadd(month, 1, :DT)
+      order by OH.HDATE
+    into :CV, :NOTICE, :CDATE, :JSON;
+
+    NOTICE = coalesce(NOTICE, PNOTICE);
+    CDATE = coalesce(CDATE, PDATE);
+
+    JSON = coalesce(JSON, PJSON, '');
+    PJSON = Get_Json_Value(Json, 'INC');
+    if (PJSON <> '') then
+      A_INC = PJSON;
+    else
+      A_INC = null;
+
+    PJSON = Get_Json_Value(Json, 'TO');
+    if (PJSON <> '') then
+      A_TO = PJSON;
+    else
+      A_TO = null;
+
+    suspend;
+  end
 end ^
 
 ALTER PROCEDURE GETSERVICES (P_CUSTOMER_ID TYPE OF UID,
@@ -16677,8 +16640,8 @@ begin
 end ^
 
 ALTER PROCEDURE GET_LAYOUT_BY_ID (ID D_INTEGER)
-RETURNS (LT_ID D_INTEGER,
-NODE_ID D_INTEGER,
+RETURNS (L_ID D_INTEGER,
+LT_ID D_INTEGER,
 SRV_TYPE D_INTEGER,
 MAT_QNT D_N15_3,
 CUST_QNT D_INTEGER,
@@ -16688,8 +16651,8 @@ NOTICE D_VARCHAR1000)
 AS 
 begin
   for select
-          l.Lt_Id
-        , l.Node_Id
+          l.L_Id
+        , l.LT_Id
         , l.Srv_Type
         , l.Mat_Qnt
         , l.CUST_QNT
@@ -16697,9 +16660,9 @@ begin
         , l.Mat_Req
         , l.Notice
         from Node_Layout l
-        where l.Node_Id = :ID
+        where l.LT_Id = :ID
         order by l.Srv_Type, l.CUST_QNT
-      into :LT_ID, :Node_Id, :SRV_TYPE, :MAT_QNT, :CUST_QNT, :MAT_ID_LIST, :MAT_REQ, :NOTICE
+      into :L_ID, :LT_ID, :SRV_TYPE, :MAT_QNT, :CUST_QNT, :MAT_ID_LIST, :MAT_REQ, :NOTICE
   do begin
     suspend;
   end
@@ -17617,8 +17580,7 @@ begin
             from Node_Flats NF
                  inner join house h on (nf.House_Id = h.House_Id)
                  inner join street s on (s.Street_Id = h.Street_Id)
-                 left outer join houseflats F on (f.House_Id = nf.House_Id and
-                       f.Flat_No = nf.Flat_No)
+                 left outer join houseflats F on (f.House_Id = nf.House_Id and f.Flat_No = nf.Flat_No)
             where nf.NODE_ID = :T_NODE
             order by f.porch_n, f.Floor_N, f.Flat_No
           into :HOUSE_ID, :FLAT_NO, :PORCH_N, :FLOOR_N, :STREET_NAME, :HOUSE_NO, :NOTICE
@@ -17629,8 +17591,7 @@ begin
             list(distinct c.CUSTOMER_ID) CST_LIST
           , list(distinct R.Shortname) SRV_LIST
           from customer c
-               left outer join subscr_serv ss on (ss.Customer_Id = c.Customer_Id and
-                     ss.State_Sgn = 1)
+               left outer join Subscr_Hist ss on (ss.Customer_Id = c.Customer_Id and current_date between ss.Date_From and ss.Date_To)
                left outer join services r on (r.Service_Id = ss.Serv_Id)
           where c.House_Id = :HOUSE_ID
                 and c.Flat_No = :Flat_No
@@ -17642,9 +17603,9 @@ begin
 end ^
 
 ALTER PROCEDURE GET_NODE_LAYOUT (FOR_NODE D_INTEGER)
-RETURNS (LT_ID D_INTEGER,
+RETURNS (L_ID D_INTEGER,
 NODE_ID D_INTEGER,
-NODE_TYPE D_INTEGER,
+LT_ID D_INTEGER,
 ITSOWN D_INTEGER,
 SRV_TYPE D_INTEGER,
 CUST_QNT D_INTEGER,
@@ -17657,19 +17618,22 @@ declare variable ID D_INTEGER;
 begin
   -- 1-1-1-1 = 92275 своя компановка
   -- 1-1-1-5 = 92285 компановка тіпа
-  ITSOWN = 1;
-  ID = FOR_NODE;
-  while (LT_ID is null) do begin
-    if (FOR_NODE > 0) then
-      select
-          n.Type_Id
-        from nodes n
-        where n.Node_Id = :FOR_NODE
-      into :NODE_TYPE;
+  L_ID = null;
 
+  ITSOWN = 1;
+  select
+      Lt_Id
+    from NODEs n
+    where n.Node_Id = :FOR_NODE
+  into :LT_ID;
+  if (LT_ID is null) then
+    exit;
+
+  ID = FOR_NODE; -- сначала посмотрим компановку узла
+  while (L_ID is null) do begin
     for select
-            Lt_Id
-          , Node_Id
+            L_Id
+          , LT_Id
           , Srv_Type
           , Mat_Qnt
           , Cust_Qnt
@@ -17677,10 +17641,10 @@ begin
           , Mat_Req
           , Notice
           from GET_LAYOUT_BY_ID(:ID)
-        into :Lt_Id, :Node_Id, :Srv_Type, :Mat_Qnt, :Cust_Qnt, :Mat_Id_List, :Mat_Req, :Notice
+        into :L_Id, :LT_Id, :Srv_Type, :Mat_Qnt, :Cust_Qnt, :Mat_Id_List, :Mat_Req, :Notice
     do begin
       if (ID < 0) then begin
-        NODE_TYPE = -ID;
+        LT_Id = -ID;
         Node_Id = FOR_NODE;
       end
 
@@ -17689,17 +17653,13 @@ begin
 
     -- проверка если нашли компановку для узла, то выходим
     -- если нет, то возьмем компановку типа узла
-    if (LT_ID is null) then begin
+    if (L_Id is null) then begin
       if (ID > 0) then begin
         ITSOWN = 0;
-        select
-            -1 * n.Type_Id
-          from nodes n
-          where n.Node_Id = :ID
-        into :ID;
+        ID = -1*LT_ID;
       end
       else
-        LT_ID = -1;
+        L_ID = -1; -- Выход из цикла
     end
   end
 end ^
@@ -17726,7 +17686,7 @@ declare variable MAT_NAME      D_Varchar100;
 declare variable Calculate_mat D_Iboolean;
 declare variable CALC_QNT      D_N15_3;
 begin
-
+/*
   LT_POSITION = 1;
 
   for select
@@ -17844,7 +17804,10 @@ begin
     end
     MAT_LIST = trim(',' from MAT_LIST);
     suspend;
+    LT_POSITION = LT_POSITION + 1;
   end
+*/
+  suspend;
 end ^
 
 ALTER PROCEDURE GET_NODE_LAYOUT_FACT_DETAIL (FOR_NODE D_INTEGER)
@@ -17867,7 +17830,7 @@ AS
 declare variable MAT_ID_LIST   D_VARCHAR500;
 declare variable Calculate_mat D_Iboolean;
 begin
-
+  /*
   LT_POSITION = 1;
 
   for select
@@ -17979,10 +17942,11 @@ begin
       end
 
       suspend;
+      LT_POSITION = LT_POSITION + 1;
     end
-    LT_POSITION = LT_POSITION + 1;
   end
-
+  */
+  suspend;
 end ^
 
 ALTER PROCEDURE GET_PAY_DOC (PAYSOURCE_ID D_INTEGER,
@@ -18601,15 +18565,17 @@ end ^
 ALTER PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV (CUSTOMER_ID UID,
 SERVICE_ID D_UID_NULL = null,
 FOR_DAY D_DATE = null)
-RETURNS (M_TARIF D_N15_4)
+RETURNS (M_TARIF D_N15_4,
+D_TARIF D_N15_4)
 AS 
 declare variable Jur     D_Integer;
 declare variable SRV     UID;
 declare variable ALL_SUM D_N15_4;
+declare variable TDAYS   D_Integer;
 begin
   For_Day = coalesce(For_Day, current_date);
   M_Tarif = null;
-
+  D_TARIF = null;
   select
       coalesce(c.Juridical, 0)
     from customer c
@@ -18636,6 +18602,15 @@ begin
     ALL_SUM = GET_SRV_TARIF_FOR_CUSTOMER(:Customer_Id, :SRV, :FOR_DAY, :Jur);
 
     M_Tarif = coalesce(M_Tarif, 0) + coalesce(ALL_SUM, 0);
+
+    TDAYS = null;
+    select
+        iif(s.Calc_Type = 6, s.Extra, null)
+      from services s
+      where s.Service_Id = :SRV
+    into :TDAYS;
+    TDAYS = coalesce(TDAYS, extract(day from Month_Last_Day(:FOR_DAY)));
+    D_TARIF = coalesce(D_Tarif, 0) + coalesce(ALL_SUM, 0) / TDAYS;
   end
   M_TARIF = round(M_TARIF, 2);
   suspend;
@@ -20467,7 +20442,7 @@ AS
 declare variable Lt_Position   D_integer;
 declare variable Cust_Qnt      D_integer;
 declare variable Mat_Qnt       D_N15_3;
-declare variable Mat_Name      D_varchar100;
+declare variable Mat_Name      D_varchar1000;
 declare variable Cust_Qnt_Fact D_integer;
 declare variable Mat_Qnt_Fact  D_n15_3;
 declare variable CP            D_integer;
@@ -20483,6 +20458,8 @@ begin
 
   if (For_Node is null) then
     exit;
+
+
   CP = 0;
   Mat_List = '';
   Mat_Sum = 0;
@@ -20490,11 +20467,12 @@ begin
           Lt_Position
         , Cust_Qnt
         , Mat_Qnt
-        , Mat_Name
         , Cust_Qnt_Fact
-        , Mat_Qnt_Fact
+        , list(Mat_Name)
+        , sum(Mat_Qnt_Fact)
         from Get_Node_Layout_Fact_Detail(:For_Node)
-      into :Lt_Position, :Cust_Qnt, :Mat_Qnt, :Mat_Name, :Cust_Qnt_Fact, :Mat_Qnt_Fact
+        group by 1, 2, 3, 4
+      into :Lt_Position, :Cust_Qnt, :Mat_Qnt, :Cust_Qnt_Fact, :Mat_Name, :Mat_Qnt_Fact
   do begin
     if (CP <> Lt_Position) then begin
       if (Mat_List <> '') then
@@ -20508,14 +20486,18 @@ begin
           (coalesce(Cust_Qnt, 0) = coalesce(Cust_Qnt_Fact, 0)) --
           and (coalesce(Mat_Qnt_Fact, 0) <> coalesce(Mat_Qnt, 0)) --
           ) then begin
-        Mat_List = coalesce(Mat_List, '') || ',' || coalesce(Mat_Name, '');
+        Mat_List = coalesce(Mat_List, '') || ',' || coalesce(trim(Mat_Name), '');
         Mat_Sum = Mat_Sum + Mat_Qnt_Fact;
       end
     end
     CP = Lt_Position;
   end
 
-  ban = 0;
+  if ((ban_text <> '') and (get_setting_value('REQ_LAYOUT_BLOCK') = '1')) then begin
+    ban = 1;
+  end
+  else
+    ban = 0;
   suspend;
 end ^
 
@@ -21706,7 +21688,7 @@ begin
               and sl.Link_Type = 6
       into :SWITCH_SRV;
     end
-    if (SWITCH_SRV is not null) then begin
+    if (not SWITCH_SRV is null) then begin
       /* Проверим статус услуги, и если она включена, то переключим иначе - нет */
       select
           ss.State_Srv
@@ -27048,7 +27030,7 @@ CREATE TRIGGER NODE_LAYOUT_BIU0 FOR NODE_LAYOUT
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0 
 as
 begin
-  new.Lt_Id = coalesce(new.Lt_Id, gen_id(Gen_Uid, 1));
+  new.L_Id = coalesce(new.L_Id, gen_id(Gen_Uid, 1));
 end ^
 
 CREATE TRIGGER NPS_BI FOR NPS 
@@ -29796,6 +29778,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE RDB$ADMI
 GRANT SELECT ON EPG_SOURCES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EPG_SOURCES TO ROLE ROLE_A4USER;
 GRANT SELECT ON EQUIPMENT TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON EQUIPMENT TO PROCEDURE GETEPCOUNTERS;
 GRANT SELECT ON EQUIPMENT TO PROCEDURE GET_WIRE_INFO;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON EQUIPMENT TO ROLE RDB$ADMIN;
 GRANT SELECT ON EQUIPMENT TO ROLE ROLE_A4READER;
@@ -29933,6 +29916,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO ROLE RDB$ADMIN
 GRANT SELECT ON MONTH_NAME TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON MONTH_NAME TO ROLE ROLE_A4USER;
 GRANT SELECT ON NODES TO PROCEDURE FIND_FREE_LINKED_PORT;
+GRANT SELECT ON NODES TO PROCEDURE GETEPCOUNTERS;
 GRANT SELECT ON NODES TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NODES TO ROLE ROLE_A4USER;
 GRANT SELECT ON NODES_ATTRIBUTES TO ROLE ROLE_A4READER;
@@ -29950,6 +29934,7 @@ GRANT SELECT ON NPS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON NPS TO ROLE ROLE_A4USER;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE;
 GRANT SELECT ON OBJECTS TO PROCEDURE CUSTOMER_BALANCE_DAILY;
+GRANT SELECT ON OBJECTS TO PROCEDURE GETEPCOUNTERS;
 GRANT SELECT ON OBJECTS TO PROCEDURE GET_DOC_UNIT_INCOME;
 GRANT SELECT ON OBJECTS TO PROCEDURE GET_ER_STATISTIC;
 GRANT SELECT ON OBJECTS TO PROCEDURE MATERIAL_REMAIN_RECALC;
@@ -29960,6 +29945,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS TO ROLE ROLE_A4USER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE RDB$ADMIN;
 GRANT SELECT ON OBJECTS_COVERAGE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_COVERAGE TO ROLE ROLE_A4USER;
+GRANT SELECT ON OBJECTS_HISTORY TO PROCEDURE GETEPCOUNTERS;
 GRANT SELECT ON OBJECTS_HISTORY TO PROCEDURE GET_ER_STATISTIC;
 GRANT SELECT ON OBJECTS_HISTORY TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON OBJECTS_HISTORY TO ROLE ROLE_A4USER;
@@ -30237,12 +30223,25 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKGROUPS TO ROLE ROLE_A4US
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE RDB$ADMIN;
 GRANT SELECT ON WORKS TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON WORKS TO ROLE ROLE_A4USER;
+GRANT ROLE_A4USER TO AMETR;
 GRANT ROLE_A4USER TO APOG;
+GRANT ROLE_A4USER TO BUH;
 GRANT ROLE_A4USER TO ELENA;
+GRANT ROLE_A4USER TO IVANOV;
+GRANT ROLE_A4USER TO KISEL;
+GRANT ROLE_A4USER TO LEPESHA;
+GRANT ROLE_A4USER TO MAKAR;
+GRANT ROLE_A4USER TO MIKHNOVETS;
+GRANT ROLE_A4USER TO NA;
+GRANT ROLE_A4USER TO OSETROV;
+GRANT ROLE_A4USER TO PETRUL;
 GRANT ROLE_A4USER TO S2;
 GRANT ROLE_A4USER TO S3;
 GRANT ROLE_A4USER TO S4;
 GRANT ROLE_A4USER TO S5;
+GRANT ROLE_A4USER TO SEVKO;
+GRANT ROLE_A4USER TO TATK;
+GRANT ROLE_A4USER TO TUREV;
 GRANT EXECUTE ON PROCEDURE ADD_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE ADD_FLAT_TO_HOUSE TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE ADD_FLAT_TO_HOUSE TO ROLE ROLE_A4USER;
@@ -30461,6 +30460,8 @@ GRANT EXECUTE ON PROCEDURE FREELANEQUIPMENT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE FULL_RECALC_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GEN_PASSWORD TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE GETEPCOUNTERS TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON PROCEDURE GETEPCOUNTERS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON PROCEDURE GETSERVICES TO ROLE ROLE_A4USER;
@@ -30598,6 +30599,7 @@ GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO USER PAYDEAMON;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC TO USER WEBJOB;
+GRANT EXECUTE ON PROCEDURE MATERIAL_REMAIN_RECALC_TEST TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MATERIAL_UNIT_MOVE TO PROCEDURE REQUEST_MATERIAL_BAYBACK;
 GRANT EXECUTE ON PROCEDURE MATERIAL_UNIT_MOVE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE MAT_MOVE_DETAILS TO ROLE ROLE_A4USER;
@@ -30709,23 +30711,35 @@ GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE WORKER_IUD TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE YEARWEEK TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION ATTRIBUTES_LINE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION ATTRIBUTES_LINE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION CHECK_CUSTOMER_SERVICE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION CHECK_CUSTOMER_SERVICE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION CURRENCY_FORMAT TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION CURRENCY_FORMAT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION DATE_FORMAT TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION DATE_FORMAT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION DISTANCE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION DISTANCE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION ESCAPE_STRING TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION ESCAPE_STRING TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION FORMAT_CURRENCY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION FORMAT_CURRENCY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_MASK TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_MASK TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_RANGE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_FREE_IP_BY_RANGE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO PROCEDURE GETEPCOUNTERS;
 GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO PROCEDURE GET_ER_STATISTIC;
 GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_JSON_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_MAT_REMAIN_FOR_DATE TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_MAT_REMAIN_FOR_DATE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_NEW_ACCOUNT TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_NEW_ACCOUNT TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO PROCEDURE GET_RECOMMENDED_PREPAY;
+GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4USER;
@@ -30739,21 +30753,30 @@ GRANT EXECUTE ON FUNCTION GET_SETTING_VALUE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_SRV_TARIF_FOR_CUSTOMER TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION INET_ATON TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION INET_ATON TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION INET_NTOA TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION INET_NTOA TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION MAC_FORMAT TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION MAC_FORMAT TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO PROCEDURE GETEPCOUNTERS;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO PROCEDURE GET_ER_STATISTIC;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
+GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION MONTH_FIRST_DAY TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO PROCEDURE GET_ER_STATISTIC;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO PROCEDURE GET_RECOMMENDED_PREPAY;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
+GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION MONTH_LAST_DAY TO ROLE ROLE_A4USER;
-GRANT EXECUTE ON FUNCTION NUMBER_AS_STR TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION NUMBER_TO_STRING_R TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION NUMBER_TO_STRING_R TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION ONLY_DIGITS TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION ONLY_DIGITS TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION SET_SETTINGS_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION WHERE_IS_IP TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION WHERE_IS_IP TO ROLE ROLE_A4USER;
 GRANT USAGE ON SEQUENCE GEN_ACCOUNT_NO TO PUBLIC;
 GRANT USAGE ON SEQUENCE GEN_ACCOUNT_NO TO ROLE ROLE_A4USER;
@@ -30852,7 +30875,7 @@ COMMENT ON    COLUMN    ATTRIBUTE.TYPE_ID IS 'Тип атрибута. соот�
 например:
 32-Атрибуты IPTV групп, 6-Атрибуты ТВ оборудования,
 4-Атрибуты абонента, 50-Атрибуты для типа, 37-Атрибуты домов,
-5-Атрибуты сетевого оборудования, 39-Атрибуты узлов, 25-Атрибуты услуг';
+5-Атрибуты сетевого оборудования, 39-Атрибуты узлов, 25-Атрибуты услуг, 80-ТУ електро';
 COMMENT ON    COLUMN    ATTRIBUTE.OBJECT_ID IS 'Объект чей атрибут (ID абонент. ID заявка. ID заказа. ID задачи и т.д.)';
 COMMENT ON    COLUMN    ATTRIBUTE.AID IS 'Значение из таблицы objects';
 COMMENT ON    COLUMN    ATTRIBUTE.AVALUE IS 'Значение';
@@ -31427,6 +31450,7 @@ COMMENT ON    COLUMN    MATERIALS_GROUP.PROP IS 'Собственность
 3 Аренда материала
 4 Возврат бесплатно
 5 Возврат за деньги (Выкуп)';
+COMMENT ON    COLUMN    MATERIALS_GROUP.EXCL_LAYOUT IS 'Исключить группу из компоновки';
 COMMENT ON TABLE        MATERIALS_IN_DOC IS 'Материалы в документах прихода/расхода';
 COMMENT ON    COLUMN    MATERIALS_IN_DOC.B_QUANT IS 'Количество до пересчета';
 COMMENT ON    COLUMN    MATERIALS_IN_DOC.TTN IS 'Номер в ТТН (для сортировки)';
@@ -31520,6 +31544,7 @@ COMMENT ON    COLUMN    NODES.EPOINT IS 'Точка учета электроэ�
 COMMENT ON    COLUMN    NODES.EP_TAG IS 'Дополнительная информация к точке УЭ';
 COMMENT ON    COLUMN    NODES.PARENT_ID IS 'К какому узлу подулючен узел';
 COMMENT ON    COLUMN    NODES.PCE IS 'Потребляемая мощность в час';
+COMMENT ON    COLUMN    NODES.LT_ID IS 'ИД компановки узла';
 COMMENT ON TABLE        NODES_ATTRIBUTES IS 'Атрибуты услуг';
 COMMENT ON    COLUMN    NODES_ATTRIBUTES.O_ID IS 'O_TYPE = 39';
 COMMENT ON    COLUMN    NODES_ATTRIBUTES.NA_VALUE IS 'Значение атрибута';
@@ -31538,7 +31563,7 @@ COMMENT ON    COLUMN    NODE_FILES.EDIT_BY IS 'Кто изменил';
 COMMENT ON    COLUMN    NODE_FILES.EDIT_ON IS 'Когда изменил';
 COMMENT ON TABLE        NODE_FLATS IS 'Дома (если квартира = нулл) и Квартиры узла';
 COMMENT ON TABLE        NODE_LAYOUT IS 'Схема расположения оборудования на узле';
-COMMENT ON    COLUMN    NODE_LAYOUT.NODE_ID IS 'Ид узла, если < 0, то это ид типа узла';
+COMMENT ON    COLUMN    NODE_LAYOUT.LT_ID IS 'Ид узла, если < 0, то это ид типа компоновки';
 COMMENT ON TABLE        NPS IS 'Индекс потребительской лояльности';
 COMMENT ON    COLUMN    NPS.NPS_DATE IS 'Дата проведения опроса';
 COMMENT ON    COLUMN    NPS.CUSTOMER_ID IS 'Абонент';
@@ -31573,7 +31598,7 @@ COMMENT ON    COLUMN    OBJECTS_HISTORY.HDATE IS 'Дата значения';
 COMMENT ON    COLUMN    OBJECTS_HISTORY.CVALUE IS 'Строковое значение';
 COMMENT ON    COLUMN    OBJECTS_HISTORY.DVALUE IS 'Значение даты';
 COMMENT ON    COLUMN    OBJECTS_HISTORY.NVALUE IS 'Цифровое значение';
-COMMENT ON    COLUMN    OBJECTS_LINKS.OL_TYPE IS 'Object_type = 74';
+COMMENT ON    COLUMN    OBJECTS_LINKS.OL_TYPE IS 'ID (Objects O_TYPE = 74)';
 COMMENT ON TABLE        OBJECTS_TYPE IS 'Вид справочника';
 COMMENT ON    COLUMN    OBJECTS_TYPE.OT_ID IS 'ID типа';
 COMMENT ON TABLE        OPERATION_LOG IS 'Лог операций';
@@ -31744,8 +31769,10 @@ COMMENT ON    COLUMN    RECOURSE.NOTICE IS 'Содержание';
 COMMENT ON    COLUMN    RECOURSE.RQ_ID IS 'Заявка созданная обращением';
 COMMENT ON    COLUMN    RECOURSE.CONTACT IS 'Контакт обращения';
 COMMENT ON    COLUMN    RECOURSE.TAG IS 'Флаги. для поиска или фильтрации. используется по усмотрению оператора';
+COMMENT ON    COLUMN    RECOURSE.TASK_ID IS 'Задача созданная обращением';
+COMMENT ON    COLUMN    RECOURSE.ADD_DATA IS 'Доп. данные. Формат Название=значение;Название2=значение2';
 COMMENT ON TABLE        RECOURSE_TEMPLATES IS 'Шаблонs обращений';
-COMMENT ON    COLUMN    RECOURSE_TEMPLATES.RT_ID IS 'ID';
+COMMENT ON    COLUMN    RECOURSE_TEMPLATES.RT_ID IS 'ID (Objects O_TYPE = 8)';
 COMMENT ON    COLUMN    RECOURSE_TEMPLATES.TYPE_ID IS 'Тип';
 COMMENT ON    COLUMN    RECOURSE_TEMPLATES.NAME IS 'название';
 COMMENT ON    COLUMN    RECOURSE_TEMPLATES.NOTICE IS 'Описание';
@@ -32025,7 +32052,7 @@ COMMENT ON TABLE        SYS$GROUP IS 'Группы пользователей';
 COMMENT ON    COLUMN    SYS$GROUP.ALL_REPORTS IS 'Доступ ко всем отчетам';
 COMMENT ON    COLUMN    SYS$GROUP.ALL_MODULES IS 'Доступ ко всем модулям';
 COMMENT ON TABLE        SYS$GROUP_RIGHTS IS 'Права для груп пользователей';
-COMMENT ON    COLUMN    SYS$GROUP_RIGHTS.RIGHTS_TYPE IS '0-разрешение 1-отчет 2-модуль 3-тип заявки';
+COMMENT ON    COLUMN    SYS$GROUP_RIGHTS.RIGHTS_TYPE IS '0-разрешение 1-отчет 2-модуль 3-тип заявки 4 - Тип обращений';
 COMMENT ON    COLUMN    SYS$GROUP_RIGHTS.RIGHT_ID IS 'ИД разрешения или отчета или модуля';
 COMMENT ON TABLE        SYS$RIGHTS IS 'Права доступа сиситемы';
 COMMENT ON TABLE        SYS$USER IS 'Пользователи системы';
@@ -32403,7 +32430,7 @@ COMMENT ON PROCEDURE    CLOSE_PERIOD_PROC IS 'Процедура расчета 
 
 P_START_MONTH  - с первого числа месяца
 P_END_MONTH    - по месяц (включительно)';
-COMMENT ON PROCEDURE    CURRENCY_TO_STR IS 'перевод чисел в строку, т.е. 100 - сто';
+COMMENT ON PROCEDURE    CURRENCY_TO_STR IS 'устарело, будет удалено используйте Number_To_String_R';
 COMMENT ON PROCEDURE    CUSTOMERS_SERVICES_STATE IS 'Обновление статуса для всех абонентов';
 COMMENT ON PROCEDURE    CUSTOMER_BALANCE IS 'Процедура выборки полного баланса абонента';
 COMMENT ON    PROCEDURE PARAMETER CUSTOMER_BALANCE.P_CUSTOMER_ID IS 'ID абонента';
@@ -32442,24 +32469,13 @@ COMMENT ON PROCEDURE    EXTRACT_NUMBER IS 'Извлекает из строки 
 COMMENT ON PROCEDURE    FIND_FREE_LINKED_PORT IS 'Находим свободные порты оборудования с линией связи для абонента';
 COMMENT ON PROCEDURE    FIND_IP_INFO IS 'Ищет информацию по IP адресу.';
 COMMENT ON PROCEDURE    FIX_PORT_CONNECT IS 'исправляем иноформацию порта по подключению к абоненту/устройству';
-COMMENT ON PROCEDURE    FORMAT_DATE IS 'Вывод даты согласно формату:
-D — день без лидирующего пробела
-DD — день с лидирующим пробелом
-DDD — день недели, краткое название
-DDDD — день недели, длинное название
-M — месяц без лидирующего пробела
-MM — месяц с лидирующим пробелом
-MMM — месяц, краткое название
-MMMM — месяц, полное название
-YY — год, 2 последние цифры
-YYYY — год, 4 цифры.';
-COMMENT ON    PROCEDURE PARAMETER FORMAT_DATE.A_DATE IS 'дата';
+COMMENT ON PROCEDURE    FORMAT_DATE IS 'Устарело, будет удалено используйте Date_Format';
 COMMENT ON    PROCEDURE PARAMETER FORMAT_DATE.FORMAT IS 'строка, содержащая шаблон форматирования даты. Заменяются следующие комбинации символов:';
 COMMENT ON    PROCEDURE PARAMETER FORMAT_DATE.LONG_DAY_NAMES IS 'полные названия дней недели через запятую (с понедельника по воскресенье)';
 COMMENT ON    PROCEDURE PARAMETER FORMAT_DATE.SHORT_DAY_NAMES IS 'сокращённые названия дней недели через запятую';
 COMMENT ON    PROCEDURE PARAMETER FORMAT_DATE.LONG_MONTH_NAMES IS 'полные названия месяцев через запятую';
 COMMENT ON    PROCEDURE PARAMETER FORMAT_DATE.SHORT_MONTH_NAMES IS 'сокращённые названия месяцев через запятую';
-COMMENT ON PROCEDURE    FORMAT_MAC IS 'приводим mac адрес к виду XX:XX:XX:XX:XX:XX';
+COMMENT ON PROCEDURE    FORMAT_MAC IS 'Устарело, будет удалено используйте Mac_Format';
 COMMENT ON PROCEDURE    FREELANEQUIPMENT IS 'очистить сетевые настройки абонента при откллючении';
 COMMENT ON PROCEDURE    FULL_RECALC_CUSTOMER IS 'Процедура полного пересчета абонента
 P_CUSTOMER - ID абонента
@@ -32467,6 +32483,7 @@ P_FROM_DATE с какой даты
 или
 P_DEPTH - глубина расчета, на сколько лет назад. если null то полный пересчет';
 COMMENT ON PROCEDURE    GEN_PASSWORD IS 'Генератор паролей.';
+COMMENT ON PROCEDURE    GETEPCOUNTERS IS 'Получить показание точек на определенный месяц';
 COMMENT ON PROCEDURE    GETSERVICES IS 'Процедура выборки доступных абоненту услуг
 
 P_CUSTOMER_ID - код абонента
@@ -32648,10 +32665,29 @@ COMMENT ON TRIGGER      CUSTOMER_BU1 IS 'Триггер срабатывает �
 COMMENT ON TRIGGER      TR_ON_CONNECT IS 'Выполняем при входе в систему пользователя';
 COMMENT ON FUNCTION     ATTRIBUTES_LINE IS 'Вывод всех атрибутов в строку';
 COMMENT ON FUNCTION     CHECK_CUSTOMER_SERVICE IS 'Функция проверки была ли услуга подключена абоненту';
-COMMENT ON FUNCTION     ESCAPE_STRING IS 'экранирование строк для json';
-COMMENT ON FUNCTION     FORMAT_CURRENCY IS 'Форматирование числа с разделителями тысяч и дробиной части
+COMMENT ON FUNCTION     CURRENCY_FORMAT IS 'Форматирование числа с разделителями тысяч и дробиной части
 TS ThousandSeparator;
 DS DecimalSeparator;';
+COMMENT ON FUNCTION     DATE_FORMAT IS 'Форматирование даты по шаблону
+Вывод даты согласно формату:
+D — день без лидирующего пробела
+DD — день с лидирующим пробелом
+DDD — день недели, краткое название
+DDDD — день недели, длинное название
+M — месяц без лидирующего пробела
+MM — месяц с лидирующим пробелом
+MMM — месяц, краткое название
+MMMM — месяц, полное название
+YY — год, 2 последние цифры
+YYYY — год, 4 цифры.';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.A_DATE IS 'Дата';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.FORMAT IS 'строка, содержащая шаблон форматирования даты. Заменяются следующие комбинации символов:';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.LONG_DAY_NAMES IS 'полные названия дней недели через запятую (с понедельника по воскресенье)';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.SHORT_DAY_NAMES IS 'сокращённые названия дней недели через запятую';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.LONG_MONTH_NAMES IS 'полные названия месяцев через запятую';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.SHORT_MONTH_NAMES IS 'сокращённые названия месяцев через запятую';
+COMMENT ON FUNCTION     ESCAPE_STRING IS 'экранирование строк для json';
+COMMENT ON FUNCTION     FORMAT_CURRENCY IS 'устарела, будет удалено используйте Currency_Format';
 COMMENT ON FUNCTION     GET_FREE_IP_BY_MASK IS 'находит первый свободный IP по маске';
 COMMENT ON FUNCTION     GET_JSON_VALUE IS 'Извлечь значение парматра из json строки';
 COMMENT ON FUNCTION     GET_MAT_REMAIN_FOR_DATE IS 'Пересчет отстаков материалов по складу до даты (дата не включается в расчет)';
@@ -32665,7 +32701,7 @@ COMMENT ON FUNCTION     INET_NTOA IS 'переводит двоичное пре
 COMMENT ON FUNCTION     MAC_FORMAT IS 'Форматирование MAC разделитель :';
 COMMENT ON FUNCTION     MONTH_FIRST_DAY IS 'первое число месяца';
 COMMENT ON FUNCTION     MONTH_LAST_DAY IS 'Последнее число месяц';
-COMMENT ON FUNCTION     NUMBER_AS_STR IS 'число в строку';
+COMMENT ON FUNCTION     NUMBER_TO_STRING_R IS 'перевод чисел в строку на русском, т.е. 100 - сто';
 COMMENT ON FUNCTION     ONLY_DIGITS IS 'Возвращает только цифры из переданной строки, если цифр нет возвращает пустую строку';
 COMMENT ON FUNCTION     SET_SETTINGS_VALUE IS 'Установка параметров системы, таблица SETTINGS';
 COMMENT ON FUNCTION     WHERE_IS_IP IS 'Проверяем где используеться IP

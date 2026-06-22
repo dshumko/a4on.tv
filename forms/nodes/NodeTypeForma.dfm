@@ -4,24 +4,20 @@ inherited NodeTypeForm: TNodeTypeForm
   Caption = #1058#1080#1087#1099' '#1091#1079#1083#1086#1074
   ClientHeight = 495
   ClientWidth = 762
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 778
+  ExplicitHeight = 534
   TextHeight = 13
-  object spl1: TSplitter [0]
-    Left = 0
-    Top = 270
-    Width = 762
-    Height = 3
-    Cursor = crVSplit
-    Align = alBottom
-  end
   inherited splPG: TSplitter
     Top = 169
     Width = 762
+    ExplicitTop = 169
+    ExplicitWidth = 762
   end
   inherited dbGrid: TDBGridEh
     Top = 173
     Width = 762
-    Height = 97
+    Height = 322
     AllowedOperations = [alopUpdateEh]
     OnGetCellParams = dbGridGetCellParams
     Columns = <
@@ -66,6 +62,7 @@ inherited NodeTypeForm: TNodeTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 762
+    ExplicitWidth = 762
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -79,146 +76,13 @@ inherited NodeTypeForm: TNodeTypeForm
       Visible = False
     end
   end
-  object pnlBottom: TPanel [4]
-    Left = 0
-    Top = 273
-    Width = 762
-    Height = 222
-    Align = alBottom
-    BevelOuter = bvNone
-    TabOrder = 3
-    object lbl4: TLabel
-      Left = 0
-      Top = 0
-      Width = 762
-      Height = 13
-      Align = alTop
-      Caption = ' '#1050#1086#1084#1087#1086#1085#1086#1074#1082#1072' '#1091#1079#1083#1086#1074' '#1076#1072#1085#1085#1086#1075#1086' '#1090#1080#1087#1072
-    end
-    object dbgLayout: TDBGridEh
-      Left = 28
-      Top = 13
-      Width = 734
-      Height = 209
-      Align = alClient
-      DataSource = srcLayout
-      DrawMemoText = True
-      DynProps = <>
-      Flat = True
-      FooterRowCount = 1
-      SearchPanel.Enabled = True
-      SumList.Active = True
-      TabOrder = 0
-      TitleParams.MultiTitle = True
-      Columns = <
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'ST_NAME'
-          Footers = <>
-          HideDuplicates = True
-          Title.Caption = #1058#1080#1087' '#1091#1089#1083#1091#1075
-          Title.TitleButton = True
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'CUST_QNT'
-          Footers = <>
-          HideDuplicates = True
-          Title.Caption = #1050#1086#1083'-'#1074#1086' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
-          Title.TitleButton = True
-          Width = 60
-        end
-        item
-          CellButtons = <>
-          DisplayFormat = ',#.###'
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'MAT_QNT'
-          Footer.DisplayFormat = ',#.###'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #1050#1086#1083'-'#1074#1086' '#1084#1072#1090#1077#1088#1080#1072#1083#1072
-          Title.TitleButton = True
-          Width = 69
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'MAT_LIST'
-          Footers = <>
-          ShowImageAndText = True
-          Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083' '#1080#1079' '#1089#1087#1080#1089#1082#1072
-          Title.TitleButton = True
-          Width = 148
-        end
-        item
-          CellButtons = <>
-          DynProps = <>
-          EditButtons = <>
-          FieldName = 'NOTICE'
-          Footers = <>
-          Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          Title.TitleButton = True
-          Width = 189
-        end>
-      object RowDetailData: TRowDetailPanelControlEh
-      end
-    end
-    object pnlBottLeft: TPanel
-      Left = 0
-      Top = 13
-      Width = 28
-      Height = 209
-      Align = alLeft
-      BevelOuter = bvNone
-      TabOrder = 1
-      DesignSize = (
-        28
-        209)
-      object btnAddL: TSpeedButton
-        Left = 2
-        Top = 6
-        Width = 23
-        Height = 22
-        Action = actAddL
-        Flat = True
-      end
-      object btnEditL: TSpeedButton
-        Left = 2
-        Top = 34
-        Width = 23
-        Height = 22
-        Action = actEditL
-        Flat = True
-      end
-      object btnDelL: TSpeedButton
-        Left = 2
-        Top = 185
-        Width = 23
-        Height = 22
-        Action = actDelL
-        Anchors = [akLeft, akBottom]
-        Flat = True
-      end
-      object btnCopy: TSpeedButton
-        Left = 2
-        Top = 84
-        Width = 23
-        Height = 22
-        Action = actCopy
-        Flat = True
-      end
-    end
-  end
   inherited pnlEdit: TPanel
     Width = 762
     Height = 144
     ParentCtl3D = False
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 762
+    ExplicitHeight = 144
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -246,6 +110,9 @@ inherited NodeTypeForm: TNodeTypeForm
       Top = 116
       Width = 577
       TabOrder = 4
+      ExplicitLeft = 72
+      ExplicitTop = 116
+      ExplicitWidth = 577
     end
     inherited btnCancelLink: TBitBtn
       Left = 655
@@ -253,6 +120,9 @@ inherited NodeTypeForm: TNodeTypeForm
       Width = 98
       Cancel = True
       TabOrder = 5
+      ExplicitLeft = 655
+      ExplicitTop = 116
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -331,8 +201,8 @@ inherited NodeTypeForm: TNodeTypeForm
   end
   inherited actions: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 158
-    Top = 280
+    Left = 174
+    Top = 256
     inherited actNew: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
       OnExecute = actNewExecute
@@ -344,26 +214,6 @@ inherited NodeTypeForm: TNodeTypeForm
     inherited actEdit: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       OnExecute = actEditExecute
-    end
-    object actAddL: TAction
-      Hint = #1044#1086#1073#1072#1074#1080#1090#1100
-      ImageIndex = 2
-      OnExecute = actAddLExecute
-    end
-    object actEditL: TAction
-      Hint = #1048#1079#1084#1077#1085#1080#1090#1100
-      ImageIndex = 4
-      OnExecute = actEditLExecute
-    end
-    object actDelL: TAction
-      Hint = #1059#1076#1072#1083#1080#1090#1100
-      ImageIndex = 3
-      OnExecute = actDelLExecute
-    end
-    object actCopy: TAction
-      Hint = #1057#1086#1079#1076#1072#1090#1100' '#1082#1086#1087#1080#1102' '#1082#1072#1082' '#1091' '#1090#1080#1087#1072' '#1061
-      ImageIndex = 13
-      OnExecute = actCopyExecute
     end
   end
   inherited pmPopUp: TPopupMenu
@@ -418,83 +268,6 @@ inherited NodeTypeForm: TNodeTypeForm
     AutoCommit = True
     Left = 64
     Top = 240
-  end
-  object srcLayout: TDataSource
-    AutoEdit = False
-    DataSet = dsLayout
-    OnDataChange = srcLayoutDataChange
-    Left = 304
-    Top = 400
-  end
-  object dsLayout: TpFIBDataSet
-    DeleteSQL.Strings = (
-      'DELETE FROM'
-      '    NODE_LAYOUT'
-      'WHERE'
-      '        LT_ID = :OLD_LT_ID'
-      '    ')
-    RefreshSQL.Strings = (
-      'select'
-      '    Lt_Id'
-      '  , Node_Id'
-      '  , Srv_Type'
-      '  , Mat_Qnt'
-      '  , Cust_Qnt'
-      '  , Mat_Id_List'
-      '  , Mat_Req'
-      '  , Notice'
-      '  , (select'
-      '          st.O_Name'
-      '        from objects st'
-      '        where st.O_Id = Srv_Type'
-      '              and st.O_Type = 15) St_Name'
-      '  , Itsown'
-      '  ,'
-      '  (select'
-      '            list(m.Name)'
-      '          from materials m'
-      '          where m.M_Id in ('
-      '        select'
-      '            cast(STR as integer)'
-      '          from Explode_No_Empty('#39','#39', Mat_Id_List)'
-      '                          )) as Mat_List'
-      '  from Get_Node_Layout(-1*:O_ID)'
-      '  where Lt_Id = :OLD_Lt_Id')
-    SelectSQL.Strings = (
-      'select'
-      '    Lt_Id'
-      '  , Node_Id'
-      '  , Srv_Type'
-      '  , Mat_Qnt'
-      '  , Cust_Qnt'
-      '  , Mat_Id_List'
-      '  , Mat_Req'
-      '  , Notice'
-      '  , (select'
-      '          st.O_Name'
-      '        from objects st'
-      '        where st.O_Id = Srv_Type'
-      '              and st.O_Type = 15) St_Name'
-      '  , Itsown'
-      '  ,'
-      '  (select'
-      '            list(m.Name)'
-      '          from materials m'
-      '          where m.M_Id in ('
-      '        select'
-      '            cast(STR as integer)'
-      '          from Explode_No_Empty('#39','#39', Mat_Id_List)'
-      '                          )) as Mat_List'
-      '  from Get_Node_Layout(-1*:O_ID)'
-      '  order by Srv_Type, Cust_Qnt  ')
-    AutoCalcFields = False
-    Transaction = trRead
-    Database = dmMain.dbTV
-    UpdateTransaction = trWrite
-    AutoCommit = True
-    DataSource = srcDataSource
-    Left = 107
-    Top = 413
   end
   object trWrite: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV

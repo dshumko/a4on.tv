@@ -11,13 +11,11 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   OnClose = FormClose
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlHead: TPanel
     Left = 0

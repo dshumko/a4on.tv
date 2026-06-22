@@ -10,10 +10,8 @@ object DVBGanresForm: TDVBGanresForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame1: TOkCancelFrame
     Left = 0
@@ -23,21 +21,35 @@ object DVBGanresForm: TDVBGanresForm
     Align = alBottom
     TabOrder = 1
     TabStop = True
+    ExplicitTop = 407
+    ExplicitWidth = 418
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 203
       Top = 6
       Width = 128
+      ExplicitLeft = 203
+      ExplicitTop = 6
+      ExplicitWidth = 128
     end
     inherited bbCancel: TBitBtn
       Left = 337
       Top = 6
       Width = 74
+      ExplicitLeft = 337
+      ExplicitTop = 6
+      ExplicitWidth = 74
     end
   end
   object DBGridEh: TDBGridEh

@@ -10,8 +10,6 @@ object apgCustomerSrv: TapgCustomerSrv
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel7: TPanel
     Left = 31
@@ -255,6 +253,7 @@ object apgCustomerSrv: TapgCustomerSrv
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
+          ExplicitWidth = 139
         end
         object dbgPersTarif: TDBGridEh
           Left = 27

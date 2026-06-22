@@ -54,8 +54,7 @@ procedure TStreetHouseViewForm.FormClose(Sender: TObject; var Action: TCloseActi
 var
   i: Integer;
 begin
-  if (dbgView.DataGrouping.ActiveGroupLevelsCount = 0) then
-  begin
+  if (dbgView.DataGrouping.ActiveGroupLevelsCount = 0) then begin
     for i := 0 to ComponentCount - 1 do
       if Components[i] is TDBGridEh then
         (Components[i] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
@@ -74,39 +73,43 @@ var
   Font_name: string;
   Row_height: Integer;
   cr: TCursor;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   Font_size := 0;
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
-  begin
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
   end;
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDBGridEh then
-    begin
+  for i := 0 to ComponentCount - 1 do begin
+    if Components[i] is TDBGridEh then begin
       (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
       if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
         (Components[i] as TDBGridEh).DefaultApplySorting;
-      if Font_size <> 0 then
-      begin
+      if Font_size <> 0 then begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
-      if Row_height <> 0 then
-      begin
+      if Row_height <> 0 then begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
+
+      if ShowToolTips then begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
+      end;
     end
-    else if Font_size <> 0 then
-    begin
-      if (Components[i] is TMemo) then
-      begin
+    else if Font_size <> 0 then begin
+      if (Components[i] is TMemo) then begin
         (Components[i] as TMemo).Font.Name := Font_name;
         (Components[i] as TMemo).Font.Size := Font_size;
       end;
@@ -144,12 +147,10 @@ procedure TStreetHouseViewForm.pmgCopyClick(Sender: TObject);
 var
   dbg: TDBGridEh;
 begin
-  if (ActiveControl is TDBGridEh) then
-  begin
+  if (ActiveControl is TDBGridEh) then begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
-      if dbg.CheckCopyAction then
-      begin
+      if dbg.CheckCopyAction then begin
         A4MainForm.CopyDBGrid(dbg);
       end
       else

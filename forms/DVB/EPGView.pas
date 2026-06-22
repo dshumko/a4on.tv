@@ -396,7 +396,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -419,6 +422,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := True;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
       end;
     end
     else if Font_size <> 0 then
@@ -666,8 +678,8 @@ begin
           if chkUTC.Checked and chkLocal.Checked then
             Query.SQL.Add(',');
           if chkLocal.Checked then
-            Query.SQL.Add
-              ('Epg_Date = dateadd(minute, :mns, Epg_Date), Date_Start = dateadd(minute, :mns, Date_Start), Date_Stop = dateadd(minute, :mns, Date_Stop)');
+            Query.SQL.Add('Epg_Date = dateadd(minute, :mns, Epg_Date), Date_Start = dateadd(minute, :mns, Date_Start), '
+              + 'Date_Stop = dateadd(minute, :mns, Date_Stop)');
           if ch_id > 0 then
             Query.SQL.Add('where Ch_Id = ' + ch_id.ToString);
           Query.SQL.Add(';');
@@ -720,9 +732,10 @@ begin
   try
     Query.Transaction := trWriteQ;
     Query.SQL.Clear;
-    Query.SQL.Add('Select c.Ch_Name from Channels c ');
     Query.SQL.Add
-      ('where not exists(select * from epg e where e.Ch_Id = c.Ch_Id and LOCALTIMESTAMP between e.Date_Start and e.Date_Stop)');
+      ('Select distinct c.Ch_Name from Channels c inner join DVB_Stream_Channels sc on (sc.Ch_Id = c.Ch_Id) ');
+    Query.SQL.Add('where not exists(select e.Ch_Id from epg e where e.Ch_Id = c.Ch_Id ' +
+      ' and LOCALTIMESTAMP between e.Date_Start and e.Date_Stop)');
     Query.SQL.Add('order by 1');
     Query.Transaction.StartTransaction;
     Query.ExecQuery;

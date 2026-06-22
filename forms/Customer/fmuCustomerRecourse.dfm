@@ -1,7 +1,7 @@
 object apgCustomerRecourse: TapgCustomerRecourse
   Left = 0
   Top = 0
-  Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1103
+  Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1103' / '#1079#1074#1086#1085#1082#1080
   ClientHeight = 211
   ClientWidth = 687
   Color = clBtnFace
@@ -10,9 +10,7 @@ object apgCustomerRecourse: TapgCustomerRecourse
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgRecourses: TDBGridEh
     Left = 26
@@ -45,7 +43,6 @@ object apgCustomerRecourse: TapgCustomerRecourse
     RowSizingAllowed = True
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = False
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgRecoursesDblClick
@@ -133,6 +130,43 @@ object apgCustomerRecourse: TapgCustomerRecourse
         Title.Caption = #1050#1090#1086' '#1080#1079#1084#1077#1085#1080#1083
         Title.TitleButton = True
         Width = 100
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADD_DATA'
+        Footers = <>
+        Title.Caption = #1044#1086#1087'. '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103
+        Title.TitleButton = True
+        Width = 74
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'TAG'
+        Footers = <>
+        Title.Caption = #1052#1077#1090#1082#1080
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'REC_REQ'
+        Footers = <>
+        Title.Caption = #1047#1072#1103#1074#1082#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'REC_TASK'
+        Footers = <>
+        Title.Caption = #1047#1072#1076#1072#1095#1072
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
       object pnl1: TPanel
@@ -344,6 +378,10 @@ object apgCustomerRecourse: TapgCustomerRecourse
       '          , R.Contact'
       '          , rt.name'
       '          , o.o_name'
+      '          , r.Add_Data'
+      '          , r.Tag'
+      '          , r.Rq_Id REC_REQ'
+      '          , r.Task_Id REC_TASK'
       '          from recourse r'
       
         '               inner join recourse_templates rt on (r.rc_type = ' +
@@ -372,6 +410,10 @@ object apgCustomerRecourse: TapgCustomerRecourse
       
         '          , iif(t.Exec_Date is null, '#39#1047#1072#1076#1072#1095#1072'. '#39', '#39#1048#1089#1087'. '#39') || t.T' +
         'itle O_NAME'
+      '          , null Add_Data'
+      '          , null TAG'
+      '          , null REC_REQ'
+      '          , null REC_TASK'
       '          from Tasklist t'
       '               left outer join(select'
       '                                   m.Task_Id'

@@ -73,6 +73,12 @@ type
     qRead: TpFIBQuery;
     btnEdit: TToolButton;
     actEdit: TAction;
+    miN6: TMenuItem;
+    miAct: TMenuItem;
+    miDel: TMenuItem;
+    miEdit: TMenuItem;
+    miFilterCustomers: TMenuItem;
+    miN7: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -248,7 +254,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -273,6 +282,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := True;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
       end;
     end
     else if Font_size <> 0 then
@@ -381,7 +399,6 @@ begin
     qRead.Transaction.Rollback;
     ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
   end;
-
 end;
 
 procedure TCustFilesForm.actActExecute(Sender: TObject);
@@ -653,4 +670,3 @@ begin
 end;
 
 end.
-

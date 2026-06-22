@@ -4,17 +4,22 @@ inherited OrganForm: TOrganForm
   Caption = #1054#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080
   ClientHeight = 282
   ClientWidth = 646
+  ExplicitWidth = 662
+  ExplicitHeight = 321
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Width = 646
+    ExplicitWidth = 646
   end
   inherited dbGrid: TDBGridEh
     Width = 646
     Height = 197
     AllowedOperations = []
+    FooterRowCount = 1
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
     OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
+    SumList.Active = True
     Columns = <
       item
         CellButtons = <>
@@ -31,6 +36,8 @@ inherited OrganForm: TOrganForm
         DynProps = <>
         EditButtons = <>
         FieldName = 'ORG_NAME'
+        Footer.FieldName = 'ORG_NAME'
+        Footer.ValueType = fvtCount
         Footers = <>
         Title.Caption = #1054#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
         Title.TitleButton = True
@@ -139,21 +146,33 @@ inherited OrganForm: TOrganForm
   end
   inherited tlbMain: TToolBar
     Width = 646
+    ExplicitWidth = 646
     inherited tbOk: TToolButton
+      Visible = False
       OnClick = tbOkClick
     end
+    inherited ToolButton10: TToolButton
+      Visible = False
+    end
     inherited tbCancel: TToolButton
+      Visible = False
       OnClick = tbCancelClick
+    end
+    inherited ToolButton20: TToolButton
+      Visible = False
     end
   end
   inherited pnlEdit: TPanel
     Width = 646
+    ExplicitWidth = 646
   end
   inherited srcDataSource: TDataSource
     DataSet = dsOrgan
     OnDataChange = srcDataSourceDataChange
   end
   inherited actions: TActionList
+    Left = 86
+    Top = 200
     inherited actNew: TAction
       OnExecute = actNewExecute
     end

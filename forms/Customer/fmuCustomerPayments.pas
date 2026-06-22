@@ -120,11 +120,14 @@ var
   vShowPaySRV: Boolean;
   vAsBalance: Boolean;
   vShowLCPS: Boolean;
+  vLastPrepay: Boolean;
   i: Integer;
   s: String;
 begin
   vAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
   vShowLCPS := (dmMain.GetSettingsValue('SHOW_LCPS') = '1');
+  vLastPrepay := (dmMain.GetSettingsValue('SHOW_ONLY_ACTIVE_PREPAY') = '1');
+
   bFull := dmMain.AllowedAction(rght_Pays_full); // Полный доступ к платежам
   bAdd := dmMain.AllowedAction(rght_Pays_add); // Добавление платежей
 
@@ -156,6 +159,21 @@ begin
   end;
 
   dsPayment.SQLs.SelectSQL.Add(' order by P.PAY_DATE desc ');
+  if not vLastPrepay then
+  begin
+    dsPayment.ParamByName('PREP_1').AsString := '';
+    dsPayment.ParamByName('PREP_F').AsString := '';
+    dsPayment.ParamByName('PREP_W').AsString := '';
+    dsPayment.ParamByName('PREP_O').AsString := '';
+  end
+  else
+  begin
+    dsPayment.ParamByName('PREP_1').AsString := 'first 1';
+    dsPayment.ParamByName('PREP_F').AsString := 'inner join customer cp on (cp.Customer_Id = o.CUSTOMER_ID)';
+    dsPayment.ParamByName('PREP_W').AsString := 'and not cp.Prepay is null and cp.Prepay <> 0';
+    dsPayment.ParamByName('PREP_O').AsString := 'order by o.Ppd_Date desc';
+
+  end;
 
   dsPayment.DataSource := FDataSource;
 
@@ -392,6 +410,7 @@ begin
   begin
     if dsPayment.FieldByName('pay_doc_id').IsNull then
       exit;
+
     CreatePayDoc(dsPayment['pay_doc_id'], dsPayment['PAYMENT_ID']);
   end;
 end;
@@ -566,4 +585,3 @@ begin
 end;
 
 end.
-

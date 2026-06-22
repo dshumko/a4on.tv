@@ -13,7 +13,6 @@ object NodesFilterForm: TNodesFilterForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -21,7 +20,6 @@ object NodesFilterForm: TNodesFilterForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -118,17 +116,24 @@ object NodesFilterForm: TNodesFilterForm
           333)
         object lbl5: TLabel
           Left = 11
-          Top = 195
+          Top = 187
           Width = 44
           Height = 13
           Caption = #1058#1080#1087' '#1091#1079#1083#1072
         end
         object lbl21: TLabel
           Left = 11
-          Top = 229
+          Top = 214
           Width = 47
           Height = 13
           Caption = #1058#1086#1095#1082#1072' '#1059#1069
+        end
+        object lbl2: TLabel
+          Left = 11
+          Top = 242
+          Width = 43
+          Height = 13
+          Caption = #1040#1090#1088#1080#1073#1091#1090
         end
         object grpAddress: TGroupBox
           Left = 5
@@ -347,7 +352,7 @@ object NodesFilterForm: TNodesFilterForm
         end
         object cbbNODE_TYPE: TDBLookupComboboxEh
           Left = 80
-          Top = 192
+          Top = 184
           Width = 468
           Height = 21
           Anchors = [akLeft, akTop, akRight]
@@ -374,7 +379,7 @@ object NodesFilterForm: TNodesFilterForm
         end
         object lcbEpoint: TDBLookupComboboxEh
           Left = 80
-          Top = 226
+          Top = 211
           Width = 468
           Height = 21
           Anchors = [akLeft, akTop, akRight]
@@ -404,6 +409,57 @@ object NodesFilterForm: TNodesFilterForm
           ShowHint = True
           Style = csDropDownEh
           TabOrder = 3
+          Visible = True
+        end
+        object chkCUST_NOT_ATTRIBUTE: TDBCheckBoxEh
+          Left = 80
+          Top = 240
+          Width = 55
+          Height = 16
+          Caption = #1053#1077' '#1091#1089#1090'.'
+          DataField = 'NOT_ATTRIBUTE'
+          DataSource = srcFilter
+          DynProps = <>
+          TabOrder = 4
+          ValueChecked = '1'
+          ValueUnchecked = '0'
+        end
+        object lcbCUST_ATTRIBUTE: TDBLookupComboboxEh
+          Left = 139
+          Top = 239
+          Width = 254
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          DynProps = <>
+          DataField = 'ATTRIBUTE'
+          DataSource = srcFilter
+          DropDownBox.ListSource = srcAttributes
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterAllColumns = True
+          DropDownBox.AutoDrop = True
+          EmptyDataInfo.Text = #1040#1090#1088#1080#1073#1091#1090
+          EditButtons = <>
+          KeyField = 'O_ID'
+          ListField = 'O_NAME'
+          ListSource = srcAttributes
+          ShowHint = True
+          Style = csDropDownEh
+          TabOrder = 5
+          Visible = True
+        end
+        object edtATTRIB_VALUE: TDBEditEh
+          Left = 397
+          Top = 239
+          Width = 151
+          Height = 21
+          Anchors = [akTop, akRight]
+          DataField = 'ATTRIBUTE_VALUE'
+          DataSource = srcFilter
+          DynProps = <>
+          EditButtons = <>
+          EmptyDataInfo.Text = #1047#1085#1072#1095#1077#1085#1080#1077' '#1072#1090#1088#1080#1073#1091#1090#1072
+          ShowHint = True
+          TabOrder = 6
           Visible = True
         end
       end
@@ -569,12 +625,19 @@ object NodesFilterForm: TNodesFilterForm
   end
   object dsNodeType: TpFIBDataSet
     SelectSQL.Strings = (
+      'select * from '
+      '('
+      'select'
+      '    -1 O_Id, '#39' '#1041#1077#1079' '#1090#1080#1087#1072#39' O_Name'
+      '  from rdb$database'
+      'union all  '
       'select'
       '    o.O_Id, o.O_Name'
       '  from objects o'
       '  where o.O_Type = 38'
       '        and coalesce(o.O_Deleted,0) <> 1'
-      '  order by o.O_Name  ')
+      ')        '
+      'order by O_Name  ')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
@@ -633,6 +696,16 @@ object NodesFilterForm: TNodesFilterForm
   end
   object dsEPoint: TpFIBDataSet
     SelectSQL.Strings = (
+      'select *'
+      'from ('
+      'select'
+      '    -1 O_Id'
+      '    , '#39' '#1041#1077#1079' '#1090#1086#1095#1082#1080' '#1091#1095#1077#1090#1072' '#39' O_Name'
+      '    , '#39#1058'o'#1095#1082#1072' '#1091#1095#1077#1090#1072' '#1085#1077' '#1087#1088#1086#1087#1080#1089#1072#1085#1072#39' O_DESCRIPTION'
+      '  from rdb$database'
+      '        '
+      'union all '
+      '  '
       'select'
       '    o.O_Id'
       '    , o.O_Name'
@@ -640,7 +713,8 @@ object NodesFilterForm: TNodesFilterForm
       '  from objects o'
       '  where o.O_Type = 76'
       '        and coalesce(o.O_Deleted,0) <> 1'
-      '  order by o.O_Name  ')
+      ')        '
+      'order by O_Name  ')
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     Left = 449
@@ -651,5 +725,24 @@ object NodesFilterForm: TNodesFilterForm
     DataSet = dsEPoint
     Left = 491
     Top = 297
+  end
+  object dsAttributes: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION'
+      'FROM OBJECTS'
+      'WHERE O_TYPE = 39 AND O_DELETED = 0'
+      'order BY O_NAME')
+    AutoCalcFields = False
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 274
+    Top = 283
+  end
+  object srcAttributes: TDataSource
+    AutoEdit = False
+    DataSet = dsAttributes
+    Left = 330
+    Top = 298
   end
 end

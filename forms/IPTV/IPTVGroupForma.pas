@@ -183,7 +183,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -210,6 +213,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then

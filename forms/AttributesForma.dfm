@@ -4,11 +4,15 @@ inherited AttributesForm: TAttributesForm
   Caption = #1040#1090#1088#1080#1073#1091#1090#1099
   ClientHeight = 550
   ClientWidth = 939
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 955
+  ExplicitHeight = 589
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 305
     Width = 939
+    ExplicitTop = 305
+    ExplicitWidth = 939
   end
   inherited dbGrid: TDBGridEh
     Top = 309
@@ -115,6 +119,7 @@ inherited AttributesForm: TAttributesForm
   end
   inherited tlbMain: TToolBar
     Width = 939
+    ExplicitWidth = 939
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -132,6 +137,9 @@ inherited AttributesForm: TAttributesForm
     Width = 939
     Height = 280
     ParentCtl3D = False
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 939
+    ExplicitHeight = 280
     object lbl2: TLabel [0]
       Left = 5
       Top = 36
@@ -179,6 +187,9 @@ inherited AttributesForm: TAttributesForm
       Top = 247
       Width = 754
       TabOrder = 8
+      ExplicitLeft = 72
+      ExplicitTop = 247
+      ExplicitWidth = 754
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
@@ -186,6 +197,9 @@ inherited AttributesForm: TAttributesForm
       Width = 98
       Cancel = True
       TabOrder = 9
+      ExplicitLeft = 832
+      ExplicitTop = 247
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -356,7 +370,7 @@ inherited AttributesForm: TAttributesForm
   end
   inherited actions: TActionList
     Left = 94
-    Top = 296
+    Top = 392
     inherited actNew: TAction
       OnExecute = actNewExecute
     end
@@ -430,20 +444,7 @@ inherited AttributesForm: TAttributesForm
         ' 2) = 2, 1, 0), 0) as INTEGER) O_MEMO  -- '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1082#1072#1082' '#1084#1077#1084#1086
       'from OBJECTS o'
       '     left outer join OBJECTS_TYPE T on (o.O_TYPE = t.OT_ID)'
-      'where O_TYPE in ('
-      '                 4 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1072#1073#1086#1085#1077#1085#1090#1072
-      '               , 5 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1089#1077#1090#1077#1074#1086#1075#1086' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
-      '               , 6 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1058#1042' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
-      '               ,25 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1091#1089#1083#1091#1075
-      '               ,32 -- '#1040#1090#1088#1080#1073#1091#1090#1099' IPTV '#1075#1088#1091#1087#1087
-      '               ,37 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1076#1086#1084#1086#1074
-      '               ,39 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1091#1079#1083#1086#1074
-      
-        '               ,50 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1076#1083#1103' '#1090#1080#1087#1072' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103'            ' +
-        '   '
-      '               ,63 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1089#1077#1090#1077#1081
-      '               ,69 -- '#1040#1090#1088#1080#1073#1091#1090#1099' '#1075#1088#1091#1087#1087' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103'  '
-      '               )'
+      'where O_TYPE in (@@ATTR_LIST%4,5,6@ )'
       '        and O_DELETED = 0'
       'order by O_NAME  ')
     Transaction = trRead

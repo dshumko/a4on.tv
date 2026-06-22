@@ -12,11 +12,11 @@ uses
   DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
   CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, MemTableDataEh, MemTableEh, PrjConst, EhLibVCL,
   PropFilerEh,
-  PropStorageEh, BaseForms, A4onTypeUnit, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter;
+  PropStorageEh, A4onTypeUnit, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter, CnClasses;
 
 type
 
-  TPaymentForm = class(TBaseForm) // подробней http://www.delphinotes.ru/2013/06/vcl-form-and-frame-scale-fix.html
+  TPaymentForm = class(TForm)
     pnlFine: TPanel;
     dbgFine: TDBGridEh;
     pnlAll: TPanel;
@@ -95,6 +95,7 @@ type
     lbl11: TLabel;
     ednLCPS: TDBNumberEditEh;
     spl2: TSplitter;
+    pmMonthCalc: TPopupMenu;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCalcFineClick(Sender: TObject);
@@ -129,7 +130,6 @@ type
     FPayDoc_id: int64;
     FDatePay: TDate; // сохраним дату платежа для многоплатежного ввода
     FSumPay: Currency; // сохраним сумму платежа для многоплатежного ввода
-    FPixelsPerInch: Integer;
     FProcessPay: Boolean;
     FCurrentDate: TDate;
     FForForm: string;
@@ -148,17 +148,13 @@ type
     procedure RefreshPayDoc;
     function ParseBarCode: Boolean;
     function PrintCheck: TPrintCheckResult;
-    procedure WriteClientHeight(Writer: TWriter);
-    procedure WriteClientWidth(Writer: TWriter);
-    procedure WriteScaleFix(Writer: TWriter);
-    procedure ReadScaleFix(Reader: TReader);
     procedure PrintReportIfNeed(const NeedPrint: Boolean);
     procedure CheckAndSetContract(const CID: Integer);
     procedure CheckRequestPay(const CID: Integer);
     procedure JudgeInput;
+    procedure CreateMonthMenu;
+    procedure MiMonthClick(Sender: TObject);
   protected
-    procedure DefineProperties(Filer: TFiler); override;
-    procedure Loaded; override;
     procedure AfterSave(const PaymentId: Integer);
   public
     { Public declarations }
@@ -178,7 +174,7 @@ function ReceivePayment(const aCustomer_id: int64; const aPayDoc_id: int64; cons
 implementation
 
 uses
-  System.RegularExpressions, IOUtils, System.Math,
+  System.RegularExpressions, IOUtils, System.Math, System.StrUtils,
   AtrCommon, MAIN, ReportPreview, AtrStrUtils;
 
 type
@@ -202,7 +198,6 @@ type
   TPrintChequeDialogStr = function(ChequeInfo: TChequeInfo): TStrCheckResult; stdcall;
 
 {$R *.dfm}
-{$I BaseFormsFrndHackTypes.inc}
 
 function FindOpenPayDoc(): string;
 var
@@ -591,6 +586,7 @@ begin
   // ЛТВ
   // if (FIsLTV) and (dsMemPayment['Customer_Id'] > -1) then
   // CheckRequestPay(dsMemPayment['Customer_Id']);
+  CreateMonthMenu;
 end;
 
 procedure TPaymentForm.btnCalcFineClick(Sender: TObject);
@@ -953,7 +949,7 @@ var
   s: String;
   PrintReport: Boolean;
   vCommitPayment: Boolean;
-  HasErrors : Boolean;
+  HasErrors: Boolean;
 begin
   Result := False;
   FullAccess := dmMain.AllowedAction(rght_Pays_full);
@@ -974,7 +970,7 @@ begin
   begin
     deDate.Value := FCurrentDate;
     CnErrors.SetError(deDate, rsWrongDate, iaMiddleLeft, bsNeverBlink);
-    HasErrors := True;
+    HasErrors := true;
   end
   else
     CnErrors.Dispose(deDate);
@@ -983,7 +979,7 @@ begin
   then
   begin
     CnErrors.SetError(deDate, rsWrongDate, iaMiddleLeft, bsNeverBlink);
-    HasErrors := True;
+    HasErrors := true;
   end
   else
     CnErrors.Dispose(deDate);
@@ -1011,7 +1007,7 @@ begin
     CnErrors.SetError(edLicevoy, rsSelectAccount, iaMiddleLeft, bsNeverBlink);
     if pnlSearchAbonent.Visible then
       edLicevoy.SetFocus;
-    HasErrors := True;
+    HasErrors := true;
   end
   else
     CnErrors.Dispose(edLicevoy);
@@ -1026,7 +1022,7 @@ begin
   if dsMemPayment.FieldByName('PAY_SUM').IsNull then
   begin
     CnErrors.SetError(dePaySum, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
-    HasErrors := True;
+    HasErrors := true;
   end
   else
     CnErrors.Dispose(dePaySum);
@@ -1034,7 +1030,7 @@ begin
   if (dsMemPayment['PAY_SUM'] = 0) and (not dmMain.UserIsAdmin) then
   begin
     CnErrors.SetError(dePaySum, rsINPUT_VALUE, iaMiddleLeft, bsNeverBlink);
-    HasErrors := True;
+    HasErrors := true;
   end
   else
     CnErrors.Dispose(dePaySum);
@@ -1044,7 +1040,7 @@ begin
     CnErrors.SetError(dePaySum, rsNotNegativePayment, iaMiddleLeft, bsNeverBlink);
     dePaySum.SelectAll;
     dePaySum.SetFocus;
-    HasErrors := True;
+    HasErrors := true;
   end
   else
     CnErrors.Dispose(dePaySum);
@@ -1059,14 +1055,14 @@ begin
       dsMemPayment['PAY_SUM'] := dsMemPayment['DEBT_SUM'] + dsMemPayment['FINE_SUM'];
       dsMemPayment.Post;
       dePaySum.SetFocus;
-      HasErrors := True;
+      HasErrors := true;
     end
     else
       CnErrors.Dispose(dePaySum);
   end;
 
-  if HasErrors
-  then Exit;
+  if HasErrors then
+    Exit;
 
   // сохраним дату и сумму платежа для многоплатежного ввода
   FDatePay := dsMemPayment['PAY_DATE'];
@@ -1389,63 +1385,6 @@ begin
   end;
 end;
 
-procedure TPaymentForm.WriteClientHeight(Writer: TWriter);
-begin
-  Writer.WriteInteger(ClientHeight);
-end;
-
-procedure TPaymentForm.WriteClientWidth(Writer: TWriter);
-begin
-  Writer.WriteInteger(ClientWidth);
-end;
-
-procedure TPaymentForm.WriteScaleFix(Writer: TWriter);
-begin
-  // просто сохраняем флаг в DFM-файл, чтобы при его чтении можно было вклиниться в процесс метода ReadState
-  Writer.WriteBoolean(true);
-end;
-
-procedure TPaymentForm.ReadScaleFix(Reader: TReader);
-begin
-  if not Reader.ReadBoolean then
-    Exit;
-
-  // запоминаем прочитанное ранее свойство PixelsPerInch
-  FPixelsPerInch := THackCustomForm(Self).FPixelsPerInch;
-  // и устанавливаем текущее
-  THackCustomForm(Self).FPixelsPerInch := Screen.PixelsPerInch;
-
-  // сбрасываем свойство FTextHeight для отключения масштабирования на уровне VCL
-  THackCustomForm(Self).FTextHeight := 0;
-end;
-
-procedure TPaymentForm.DefineProperties(Filer: TFiler);
-  function NeedWriteClientSize: Boolean;
-  begin
-    Result := Scaled and (AutoScroll or (HorzScrollBar.Range <> 0) or (VertScrollBar.Range <> 0));
-  end;
-
-begin
-  inherited DefineProperties(Filer);
-
-  // ClientHeight и ClientWidth сохраняются не всегда, а вместо этого сохраняются внешние размеры формы.
-  // Это не совсем правильно, т.к. масштабировать необходимо именно клиентскую область. Функция NeedWriteClientSize
-  // определяет, нужно ли принудительно сохранять размер клиентской области.
-  Filer.DefineProperty('ClientHeight', nil, WriteClientHeight, NeedWriteClientSize);
-  Filer.DefineProperty('ClientWidth', nil, WriteClientWidth, NeedWriteClientSize);
-  Filer.DefineProperty('ScaleFix', ReadScaleFix, WriteScaleFix, Scaled);
-end;
-
-procedure TPaymentForm.Loaded;
-begin
-  // подробней http://www.delphinotes.ru/2013/06/vcl-form-and-frame-scale-fix.html
-  // после обновления BaseForm ошибка
-  // if (FPixelsPerInch > 0) and (FPixelsPerInch <> Screen.PixelsPerInch) then
-  // ScaleControl(Self, Screen.PixelsPerInch, FPixelsPerInch);
-
-  inherited Loaded;
-end;
-
 procedure TPaymentForm.JudgeInput;
 var
   pN, pD, pS, pA: string;
@@ -1487,7 +1426,11 @@ begin
   Values[1] := pD;
   Values[2] := pS;
   // номер претензии, дата от какого числа и на какую сумму претензия.
-  if not InputQuery('Ведите данные по суду', ['Номер претензии', 'Дата', 'Сумма'], Values, nil) then
+  if not InputQuery('Ведите данные по суду', ['Номер претензии', 'Дата', 'Сумма'], Values,
+    function(const Values: array of string): Boolean
+    begin
+      Result := (Values[0] <> '') and (Values[1] <> '') and (Values[2] <> '');
+    end) then
     Exit;
 
   mmoNOTICE.Lines.Add('Суд претензия №- ' + Values[0] + ' от ' + Values[1] + 'г.');
@@ -1589,6 +1532,67 @@ begin
   s := 'Необходимо внести оплату по заявкам: ' + #13#10 + s;
   Panel6.Caption := s;
   application.MessageBox(PWideChar(s), 'Внимание!', MB_OK + MB_ICONWARNING);
+end;
+
+procedure TPaymentForm.MiMonthClick(Sender: TObject);
+var
+  m: Integer;
+  s: string;
+  f: Currency;
+begin
+  m := 1;
+  if (Sender is TMenuItem) and (ActiveControl.Name = 'dePaySum') then
+  begin
+    if (Sender as TMenuItem).Tag = 0 then
+    begin
+      s := InputBox(rsMonthInput, rsMonthInput, '1');
+      if not TryStrToInt(s, m) then
+        m := -1;
+    end
+    else
+      m := (Sender as TMenuItem).Tag;
+
+    if m > 0 then
+    begin
+      // dsMemPayment['PAY_SUM'] := dsMemPayment['DEBT_SUM'] + dsMemPayment['FINE_SUM'];
+      if (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1') then
+        f := -1 * FCustomerRecord.Debt_sum
+      else
+        f := FCustomerRecord.Debt_sum;
+
+      if not dsMemPayment.FieldByName('FINE_SUM').IsNull then
+        f := f + dsMemPayment['FINE_SUM'];
+
+      f := f + m * FCustomerRecord.Tarif_Month;
+      dsMemPayment['PAY_SUM'] := f;
+    end;
+  end;
+end;
+
+procedure TPaymentForm.CreateMonthMenu;
+var
+  i: Integer;
+  NewItem: TMenuItem;
+begin
+
+  pmMonthCalc.Items.Clear;
+  for i := 1 to 12 do
+  begin
+    NewItem := TMenuItem.Create(pmMonthCalc);
+    NewItem.Caption := 'Оплата на месяцев ' + IfThen((i < 11), '&', '') + i.ToString;
+    NewItem.OnClick := MiMonthClick;
+    NewItem.Tag := i;
+    pmMonthCalc.Items.Add(NewItem);
+  end;
+  NewItem := TMenuItem.Create(pmMonthCalc);
+  NewItem.Caption := '-';
+  pmMonthCalc.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMonthCalc);
+  NewItem.Caption := rsMonthInput;
+  NewItem.OnClick := MiMonthClick;
+  NewItem.Tag := 0;
+  pmMonthCalc.Items.Add(NewItem);
 end;
 
 end.

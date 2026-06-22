@@ -82,6 +82,9 @@ UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (75, 
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (76, 'Точка УЭ', 'Точка учета электроэнергии') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (77, 'Получатель оплаты электроэнергии', '') MATCHING (OT_ID);
 UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (78, 'Временные ряды', 'То для чего необходимо хранить временные показания, например тарифы') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (79, 'Типы компановки', 'Типы компановки для узлов') MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (80, 'Атрибуты точек учета электроэнергии', NULL) MATCHING (OT_ID);
+UPDATE OR INSERT INTO OBJECTS_TYPE (OT_ID, OT_NAME, OT_DESCRIPTION) VALUES (81, 'Резултаты обращений', 'Результат для типа обращений') MATCHING (OT_ID);
 commit;
 
 -- Владелец оборудования/материала 51
@@ -339,7 +342,7 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (201, 'Н
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (210, 'ПОРТЫ', 'ОБОРУДОВАНИЕ', 'Создание/редактирование портов оборудования') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (211, 'ЛИНИИ СВЯЗИ', 'ОБЪЕКТЫ', 'Создание/редактирование линий связи узлов ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (212, 'РЕЕСТР ДОКУМЕНТОВ', 'СПРАВОЧНИКИ', 'Справочник документов абонентов (паспорта/свдиетельства и т.д.)') MATCHING (ID);
-UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (220, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ. ФАМИЛИЮ И ПАСПОРТ', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным (фамилии и паспорту)') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (221, 'ПРОСМОТР ТВ', 'ТВ', 'Просмотр всех пунктов меню ТВ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (222, 'ПРОСМОТР ОБЪЕКТЫ', 'ОБЪЕКТЫ', 'Просмотр всех пунктов меню ОБЪЕКТЫ') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (223, 'РЕДАКТИРОВАНИЕ КОНТАКТОВ', 'АБОНЕНТЫ', 'Возможность редактировать контакты абонента') MATCHING (ID);
@@ -351,6 +354,7 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (59,  'В
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (228, 'ВОЗВРАТ ВСЕГО', 'ЗАЯВКИ', 'Возврат любого материала, а не только того что был у абонента/узла') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (229, 'Учет электроэнергии ', 'ЭЛЕКТРОЭНЕРГИЯ', 'Работа с показателями электроэнергии') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (230, 'Хронологические данные', 'СПРАВОЧНИКИ', 'Внесение переодических данных') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (231, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ. ИМЯ И ОТЧЕСТВО', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным (имя и отчество)') MATCHING (ID);
 commit;
 
 execute block as
@@ -641,13 +645,68 @@ begin
   s = 'REQUEST_SINGLE_GIVE';
   if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES (:s, '0', 'BOOLEAN', NULL, 'В заявке форма выдачи для ОДНОГО матирала')
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'В заявке форма выдачи для ОДНОГО материала')
     MATCHING (VAR_NAME);
 
   s = 'SAVE_DAILY_MAT_REMAIN';
   if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
     VALUES (:s, '0', 'BOOLEAN', NULL, 'При закрытии дня сохранять остатки материалов')
+    MATCHING (VAR_NAME);
+
+  s = 'SHOW_ONLY_ACTIVE_PREPAY';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'В платежах обонента отображать только активный обещанный платеж')
+    MATCHING (VAR_NAME);
+
+  s = 'REQ_LAYOUT_BLOCK';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Блокировать сохранение заявки, если компоновка не соответствует')
+    MATCHING (VAR_NAME);
+
+  s = 'HOUSE_NEED_AREA';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Необходимо указать район для дома')
+    MATCHING (VAR_NAME);
+
+  s = 'MVD_URL';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '', 'STRING', NULL, 'адрес для проверки паспорта')
+    MATCHING (VAR_NAME);
+
+  s = 'MVD_KEY';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then begin
+    if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper('KEY_MVD'))) then
+      insert into SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE)
+      select :S, VAR_VALUE, 'STRING', NULL, 'токен для проверки паспорта'
+      FROM SETTINGS
+      where upper(VAR_NAME) = upper('KEY_MVD');
+    else
+      UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+      VALUES (:s, '', 'STRING', NULL, 'токен для проверки паспорта')
+      MATCHING (VAR_NAME);
+  end
+
+  s = 'MVD_DATA';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '{"desc":"[COMPANY]","desc_address":"[CITY] [STREET] [HOUSE]","sery":"[SER]","num":"[NUM]","identif":"[IDENTIF]","surname":"[SURNAME]","name":"[NAME]","lastname":"[LASTNAME]"}', 'STRING', NULL, 'джсон для проверки паспорта')
+    MATCHING (VAR_NAME);
+
+  s = 'HOUSE_NEED_WORKGROUP';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Необходимо указать звено для дома')
+    MATCHING (VAR_NAME);
+
+  s = 'RECOURSE_DIRECT';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'Отображать направление обращения / звонка ')
     MATCHING (VAR_NAME);
 
 end;

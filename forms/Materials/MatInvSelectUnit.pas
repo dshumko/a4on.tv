@@ -8,16 +8,17 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls,
   DBGridEh, GridsEh,
-  {$IFDEF EH_LIB_7}
+{$IFDEF EH_LIB_7}
   Winapi.UxTheme,
   Vcl.Themes,
-  {$ENDIF}
-  {$IFDEF EH_LIB_17}
+{$ENDIF}
+{$IFDEF EH_LIB_17}
   System.UITypes,
-  {$ENDIF}
+{$ENDIF}
   Data.Win.ADODB,
   Vcl.StdCtrls, Vcl.DBCtrls,
-  ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, DBAxisGridsEh, DropDownFormEh, DataDriverEh, DBVertGridsEh, DynVarsEh, EhLibVCL,
+  ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, DBAxisGridsEh, DropDownFormEh, DataDriverEh, DBVertGridsEh, DynVarsEh,
+  EhLibVCL,
   FIBDatabase, FIBDataSet, DBGridEhGrouping, pFIBDataDriverEh;
 
 type
@@ -39,8 +40,7 @@ type
     procedure CustomDropDownFormEhInitForm(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
     procedure CustomDropDownFormEhReturnParams(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
     procedure CustomDropDownFormEhShow(Sender: TObject);
-    procedure CustomDropDownFormEhClose(Sender: TObject;
-      var Action: TCloseAction);
+    procedure CustomDropDownFormEhClose(Sender: TObject; var Action: TCloseAction);
   private
     procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   public
@@ -63,7 +63,9 @@ var
   Font_size: Integer;
   Font_name, s: string;
   Row_height: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -97,6 +99,15 @@ begin
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
+      end;
     end
     else if Font_size <> 0 then
     begin
@@ -113,7 +124,7 @@ begin
     end
   end;
 
-  Panel3.DoubleBuffered := True;
+  Panel3.DoubleBuffered := true;
   Panel3.ParentBackground := False;
 
   FormElements := [ddfeLeftGripEh, ddfeRightGripEh, ddfeCloseButtonEh];
@@ -124,7 +135,6 @@ begin
   if not Params.Text.IsEmpty then
     Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
 end;
-
 
 procedure TMaterialsInvSelect.sbOkClick(Sender: TObject);
 begin
@@ -166,11 +176,10 @@ begin
   sbOk.Enabled := not srcMaterials.DataSet.IsEmpty;
 end;
 
-procedure TMaterialsInvSelect.CustomDropDownFormEhClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TMaterialsInvSelect.CustomDropDownFormEhClose(Sender: TObject; var Action: TCloseAction);
 begin
-//  srcMaterials.DataSet.Close;
-//  Action := caFree;
+  // srcMaterials.DataSet.Close;
+  // Action := caFree;
 end;
 
 procedure TMaterialsInvSelect.CustomDropDownFormEhInitForm(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
@@ -218,7 +227,7 @@ end;
 procedure TMaterialsInvSelect.CustomDropDownFormEhShow(Sender: TObject);
 begin
   MainGrid.SetFocus;
-  MainGrid.SearchPanel.Active := True;
+  MainGrid.SearchPanel.Active := true;
 end;
 
 initialization

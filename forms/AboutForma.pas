@@ -56,9 +56,6 @@ begin
    lblVersion.Caption:=lblVersion.Caption + ' FREE' + rsDEMO;
   {$ENDIF}
 
-  {$IFDEF BETAVERSION}
-  lblVersion.Caption:=lblVersion.Caption + ' BETA';
-  {$ENDIF}
    s := '';
   {$IFDEF DIGIT}
    S := s+'D';

@@ -1,5 +1,6 @@
 ﻿unit CustomersFilter;
 
+
 interface
 
 uses
@@ -180,6 +181,10 @@ type
     Copy1: TMenuItem;
     Paste1: TMenuItem;
     SelectAll1: TMenuItem;
+    lblSrvAtr: TLabel;
+    lcbSrvAtr: TDBLookupComboboxEh;
+    dsSrvAttr: TpFIBDataSet;
+    srcSrvAttr: TDataSource;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -242,6 +247,7 @@ begin
   dsWORKAREA.Close;
   dsWORKGROUP.Close;
   dsMH.Close;
+  dsSrvAttr.Close;
 
   if (dsLetterType.Active) then
     dsLetterType.Close;
@@ -350,6 +356,7 @@ begin
   dsOrg.Open;
   dsWORKGROUP.Open;
   dsMH.Open;
+  dsSrvAttr.Open;
 
   dbchkHiden.Visible := dmMain.SuperMode = 1;
 
@@ -737,4 +744,4 @@ begin
 end;
 
 end.
-
+

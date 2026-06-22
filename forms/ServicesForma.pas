@@ -12,7 +12,7 @@ uses
   DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase,
   DBCtrlsEh,
   DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter,
-  PrnDbgeh, Vcl.Menus;
+  PrnDbgeh, Vcl.Menus, CnClasses;
 
 type
   TServicesForm = class(TForm)
@@ -541,10 +541,10 @@ begin
       (Components[i] as TDBGridEh).STFilter.Local := o_n;
 
       (Components[i] as TDBGridEh).SearchPanel.Enabled := o_n;
-      (Components[i] as TDBGridEh).SearchPanel.FilterOnTyping := False; // o_n;
+      (Components[i] as TDBGridEh).SearchPanel.FilterOnTyping := false; // o_n;
 
       if (not o_n) and ((Components[i] as TDBGridEh).DataSource.DataSet.Filtered) then
-        (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := False;
+        (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := false;
     end;
   end;
 end;
@@ -658,10 +658,12 @@ end;
 procedure TServicesForm.FormShow(Sender: TObject);
 var
   vSF: string;
-  i: Integer;
+  i, c: Integer;
   Font_size: Integer;
   Font_name: string;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
@@ -672,6 +674,15 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+
+        if ShowToolTips then
+        begin
+          if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+            (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+          (Components[i] as TDBGridEh).ShowHint := True;
+          for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+            (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
+        end;
       end
       else if (Components[i] is TMemo) then
       begin
@@ -916,7 +927,7 @@ end;
 
 procedure TServicesForm.miRefreshClick(Sender: TObject);
 var
-  bm: TbookMark;
+  bm: TBookmark;
   cr: TCursor;
 begin
   if (ActiveControl is TDBGridEh) then
@@ -924,7 +935,7 @@ begin
     cr := Screen.Cursor;
     Screen.Cursor := crSQLWait;
     try
-      bm := (ActiveControl as TDBGridEh).DataSource.DataSet.GetBookMark;
+      bm := (ActiveControl as TDBGridEh).DataSource.DataSet.GetBookmark;
       (ActiveControl as TDBGridEh).DataSource.DataSet.Close;
       (ActiveControl as TDBGridEh).DataSource.DataSet.Open;
       (ActiveControl as TDBGridEh).DataSource.DataSet.GotoBookmark(bm);

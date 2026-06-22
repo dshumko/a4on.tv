@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
   DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider, FIBDatabase, pFIBDatabase, FIBQuery,
-  pFIBQuery;
+  pFIBQuery, CnClasses;
 
 type
   TMatGroupForm = class(TForm)
@@ -41,6 +41,7 @@ type
     lblPCE1: TLabel;
     ednPCE: TDBNumberEditEh;
     lblPCE: TLabel;
+    chkEL: TDBCheckBoxEh;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
   private
@@ -95,7 +96,6 @@ begin
           cbProp.Value := dsGroup['PROP'];
         if not dsGroup.FieldByName('PCE').IsNull then
           ednPCE.Value := dsGroup['PCE'];
-
 
         dsGroup.Close;
       end

@@ -12,13 +12,11 @@ object MatMoveDocForm: TMatMoveDocForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   OnClose = FormClose
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlHead: TPanel
     Left = 0
@@ -204,7 +202,6 @@ object MatMoveDocForm: TMatMoveDocForm
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       PopupMenu = pmGrid
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = False
       SumList.Active = True
       TabOrder = 1
       TitleParams.MultiTitle = True

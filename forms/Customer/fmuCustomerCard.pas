@@ -98,20 +98,11 @@ begin
 
   frxReport.Variables['CUSTOMER'] := srcForScroolWait.DataSet['CUSTOMER_ID'];
   frxReport.ShowReport(True);
-  // frxReport.ShowPreparedReport;
-
 end;
 
 function TapgCustomerCard.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
 begin
   Result := dmMain.frxReportUserFunction(MethodName, Params);
-  {
-
-    if MethodName = 'BASE64_DECODE' then Result := DecodeBase64(Params[0]);
-    if MethodName = 'BASE64_ENCODE' then Result := EncodeBase64(Params[0]);
-    if MethodName = 'GEN_BARCODE'   then Result := dmMain.GenerateBarCode(Params[0],Params[1],Params[2],Params[3],Params[4],Params[5],Params[5]);
-    if MethodName = 'InSuperMode'   then Result := dmMain.SuperMode;
-  }
 end;
 
 end.

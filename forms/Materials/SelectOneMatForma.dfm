@@ -13,10 +13,8 @@ object SelectMaterialForm: TSelectMaterialForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnKeyUp = FormKeyUp
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlB: TPanel
     Left = 0

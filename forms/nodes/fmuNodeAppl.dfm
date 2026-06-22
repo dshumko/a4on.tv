@@ -10,9 +10,7 @@ object apgNodeAppl: TapgNodeAppl
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgAppliance: TDBGridEh
     Left = 26
@@ -35,7 +33,6 @@ object apgNodeAppl: TapgNodeAppl
     ParentFont = False
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = False
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgApplianceDblClick

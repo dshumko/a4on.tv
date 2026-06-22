@@ -9,7 +9,7 @@ uses
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms,
   FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit;
+  FIBDatabase, pFIBDatabase, A4onTypeUnit, CnClasses;
 
 type
 

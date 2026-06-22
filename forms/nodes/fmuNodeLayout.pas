@@ -275,7 +275,6 @@ end;
 procedure TapgNodeLayout.dbgCustAttrGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
-
   if (dsLayout['itsOwn'] = 0) then
     AFont.Color := clGrayText
   else

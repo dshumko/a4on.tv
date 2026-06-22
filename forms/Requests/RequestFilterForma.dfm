@@ -12,14 +12,12 @@ object RequestFilterForm: TRequestFilterForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlOKCancel: TPanel
     Left = 0
@@ -119,6 +117,7 @@ object RequestFilterForm: TRequestFilterForm
     Align = alBottom
     BevelInner = bvRaised
     BevelOuter = bvLowered
+    ParentBackground = False
     TabOrder = 1
     DesignSize = (
       561
@@ -159,6 +158,7 @@ object RequestFilterForm: TRequestFilterForm
       DataSource = srcFilter
       VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbDelete]
       Anchors = [akTop, akRight]
+      Flat = True
       TabOrder = 2
     end
     object chk1: TDBCheckBoxEh

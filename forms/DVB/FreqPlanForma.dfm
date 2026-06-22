@@ -4,11 +4,15 @@ inherited FreqPlanForm: TFreqPlanForm
   Caption = #1063#1072#1089#1090#1086#1090#1085#1099#1081' '#1087#1083#1072#1085
   ClientHeight = 503
   ClientWidth = 987
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 1003
+  ExplicitHeight = 542
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 987
+    ExplicitTop = 193
+    ExplicitWidth = 987
   end
   inherited dbGrid: TDBGridEh
     Top = 197
@@ -162,6 +166,7 @@ inherited FreqPlanForm: TFreqPlanForm
   end
   inherited tlbMain: TToolBar
     Width = 987
+    ExplicitWidth = 987
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -175,7 +180,7 @@ inherited FreqPlanForm: TFreqPlanForm
       Visible = False
     end
     object btn1: TToolButton
-      Left = 178
+      Left = 186
       Top = 0
       Width = 8
       Caption = 'btn1'
@@ -183,7 +188,7 @@ inherited FreqPlanForm: TFreqPlanForm
       Style = tbsSeparator
     end
     object btnPrint: TToolButton
-      Left = 186
+      Left = 194
       Top = 0
       Action = actPrint
     end
@@ -192,6 +197,9 @@ inherited FreqPlanForm: TFreqPlanForm
     Width = 987
     Height = 168
     ParentCtl3D = False
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 987
+    ExplicitHeight = 168
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -245,6 +253,9 @@ inherited FreqPlanForm: TFreqPlanForm
       Top = 137
       Width = 802
       TabOrder = 8
+      ExplicitLeft = 72
+      ExplicitTop = 137
+      ExplicitWidth = 802
     end
     inherited btnCancelLink: TBitBtn
       Left = 884
@@ -252,6 +263,9 @@ inherited FreqPlanForm: TFreqPlanForm
       Width = 98
       Cancel = True
       TabOrder = 9
+      ExplicitLeft = 884
+      ExplicitTop = 137
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 75

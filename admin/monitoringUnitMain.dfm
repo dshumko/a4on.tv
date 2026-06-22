@@ -380,6 +380,7 @@ object MonDBForm: TMonDBForm
         Top = 1
         Width = 546
         Height = 175
+        Cursor = crIBeam
         DataField = 'MON$SQL_TEXT'
         DataSource = dsTransactionsStatments
         Align = alClient
@@ -388,6 +389,7 @@ object MonDBForm: TMonDBForm
         Font.Height = -13
         Font.Name = 'Courier New'
         Font.Style = []
+        Font.Quality = fqClearTypeNatural
         ParentColor = False
         ParentFont = False
         TabOrder = 1
@@ -396,7 +398,9 @@ object MonDBForm: TMonDBForm
         Gutter.Font.Height = -11
         Gutter.Font.Name = 'Courier New'
         Gutter.Font.Style = []
+        Gutter.Font.Quality = fqClearTypeNatural
         Gutter.ShowLineNumbers = True
+        Gutter.Bands = <>
         Highlighter = synsqlsyn2
         ReadOnly = True
       end
@@ -581,9 +585,6 @@ object MonDBForm: TMonDBForm
     end
   end
   object synsqlsyn2: TSynSQLSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
     Left = 595
     Top = 58
   end

@@ -34,7 +34,6 @@ uses
 
 function SmsQuest(const ForSendCount, ReciverCount, balance: Integer; var BatchSize: Integer): boolean;
 begin
-  result := false;
   with TSmsQuestForm.Create(Application) do
   begin
     try

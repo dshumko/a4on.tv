@@ -12,7 +12,7 @@ uses
   DBCtrlsEh, DBLookupEh, Vcl.ComCtrls, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls, DynVarsEh, EhLibVCL, DBAxisGridsEh, Vcl.ExtCtrls,
   MemTableDataEh, MemTableEh, System.Actions, Vcl.ActnList, PropFilerEh,
-  PropStorageEh;
+  PropStorageEh, CnClasses;
 
 type
   TReqTemplateForm = class(TForm)
@@ -292,7 +292,7 @@ begin
   // set Works
   if not dsRQTL.FieldByName('WORKS').IsNull then
   begin
-    ja := (TJsonObject.Parse(dsRQTL['WORKS']) as TJsonArray);
+    ja := (TJsonObject.Parse(dsRQTL.FieldByName('WORKS').AsString) as TJsonArray);
     try
       if (ja.Count > 0) then
       begin

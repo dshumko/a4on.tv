@@ -142,7 +142,8 @@ end;
 procedure TOrdersTPFilterForm.SpeedButton2Click(Sender: TObject);
 begin
   OpenDialog1.InitialDir := A4MainForm.GetUserFilterFolder;
-  if OpenDialog1.Execute then begin
+  if OpenDialog1.Execute then
+  begin
     srcFilter.DataSet.DisableControls;
     if not srcFilter.DataSet.Active then
       srcFilter.DataSet.Open;

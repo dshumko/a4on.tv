@@ -13,7 +13,6 @@ object PayDocsForm: TPayDocsForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
@@ -21,7 +20,6 @@ object PayDocsForm: TPayDocsForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAll: TPanel
     Left = 0
@@ -30,6 +28,7 @@ object PayDocsForm: TPayDocsForm
     Height = 501
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 481
     object dbgPayDoc: TDBGridEh
       Left = 1
       Top = 30
@@ -205,6 +204,17 @@ object PayDocsForm: TPayDocsForm
           Width = 94
         end
         item
+          CellButtons = <>
+          DisplayFormat = ',#.##'
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'TAX_PRC'
+          Footers = <>
+          Title.Caption = #1053#1044#1057'|%'
+          Title.TitleButton = True
+          Width = 43
+        end
+        item
           AutoFitColWidth = False
           CellButtons = <>
           DisplayFormat = ',#.##'
@@ -214,11 +224,10 @@ object PayDocsForm: TPayDocsForm
           Footer.DisplayFormat = ',#.##'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #1057#1091#1084#1084#1072' '#1053#1044#1057
-          Title.Hint = #1057#1091#1084#1084#1072' '#1053#1044#1057
+          Title.Caption = #1053#1044#1057'|'#1057#1091#1084#1084#1072
           Title.TitleButton = True
           Title.ToolTips = True
-          Width = 59
+          Width = 63
         end
         item
           AutoFitColWidth = False
@@ -518,55 +527,6 @@ object PayDocsForm: TPayDocsForm
       ')')
     RefreshSQL.Strings = (
       'select'
-      
-        '    D.PAY_DOC_ID, D.PAYSOURCE_ID, D.PAY_DOC_NO, D.PAY_DOC_DATE, ' +
-        'D.PAY_DOC_SUM, D.NOTICE, ps.paysource_descr, ps.leak_prc'
-      
-        '    , round(ps.leak_prc * (D.PAY_DOC_SUM + FINE_SUM) / 100, 2) a' +
-        's c_SUM_leak'
-      
-        '    , round(ps.tax_prc * ps.leak_prc * (D.PAY_DOC_SUM + FINE_SUM' +
-        ') / 10000, 2) as c_SUM_TAX'
-      
-        '    , ((p.SUM_INTERED + FINE_SUM) - round(((ps.tax_prc * ps.leak' +
-        '_prc * (D.PAY_DOC_SUM + FINE_SUM)/ 10000) + (ps.leak_prc * (D.PA' +
-        'Y_DOC_SUM + FINE_SUM) / 100)), 2)) as c_SUM_LEAK_TAX'
-      '    , p.SUM_INTERED'
-      '    , FINE_SUM'
-      
-        '    , ( coalesce(D.PAY_DOC_SUM,0) - coalesce(p.SUM_INTERED,0) ) ' +
-        'as SUM_DIFFERENCE'
-      
-        '    , ( coalesce(p.SUM_INTERED,0) + coalesce(p.FINE_SUM, 0) ) SU' +
-        'M_PAID     '
-      '    , (select'
-      '         count(*)'
-      '       from pay_errors pe'
-      '       where pe.pay_doc_id = Pay_Doc_Id) pay_errors,'
-      '  coalesce(w.Surname, d.Added_By) Added_By,'
-      '  d.Added_On       '
-      '  from PAY_DOC D'
-      
-        '       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYS' +
-        'OURCE_ID)'
-      
-        '       left outer join Worker w  on (w.Ibname =  d.Added_By)    ' +
-        '   '
-      '       left outer join(select'
-      '                           PAY_DOC_ID'
-      '                           , sum(PAY_SUM) as SUM_INTERED'
-      
-        '                           , sum(coalesce(Fine_Sum, 0)) as FINE_' +
-        'SUM'
-      '                         from PAYMENT'
-      
-        '                         group by PAY_DOC_ID) P on (P.PAY_DOC_ID' +
-        ' = D.PAY_DOC_ID)'
-      '  '
-      'where   D.PAY_DOC_ID = :OLD_PAY_DOC_ID'
-      '    ')
-    SelectSQL.Strings = (
-      'select'
       '    D.PAY_DOC_ID'
       '  , D.PAYSOURCE_ID'
       '  , D.PAY_DOC_NO'
@@ -575,20 +535,21 @@ object PayDocsForm: TPayDocsForm
       '  , D.NOTICE'
       '  , ps.paysource_descr'
       '  , ps.leak_prc'
+      '  , ps.tax_prc'
       '  , p.c_SUM_leak'
-      '  , round(ps.tax_prc * p.c_SUM_leak / 100, 2) as c_SUM_TAX'
       
-        '  , ((p.SUM_INTERED + FINE_SUM) - round(((ps.tax_prc * p.c_SUM_l' +
-        'eak / 100) + p.c_SUM_leak), 2)) as c_SUM_LEAK_TAX'
-      '  , p.SUM_INTERED'
+        '  , iif(coalesce(ps.tax_prc,0) <> 0, round(p.SUM_Entered*ps.tax_' +
+        'prc/(100+ps.tax_prc),2), 0) as c_SUM_TAX'
       
-        '  , ( coalesce(p.SUM_INTERED,0) + coalesce(p.FINE_SUM, 0) ) SUM_' +
-        'PAID  '
+        '  , (p.TOTAL - round(iif(coalesce(ps.tax_prc,0) <> 0, round(p.SU' +
+        'M_Entered*ps.tax_prc/(100+ps.tax_prc),2), 0) + p.c_SUM_leak, 2))' +
+        ' as c_SUM_LEAK_TAX'
+      '  , p.SUM_Entered'
+      '  , p.SUM_Entered as SUM_Intered'
+      '  , p.TOTAL SUM_PAID'
       '  , FINE_SUM'
       '  , CNT_PAYS'
-      
-        '  , (coalesce(D.PAY_DOC_SUM, 0) - coalesce(p.SUM_INTERED, 0) - c' +
-        'oalesce(p.FINE_SUM, 0)) as SUM_DIFFERENCE'
+      '  , (coalesce(D.PAY_DOC_SUM, 0) - p.TOTAL) as SUM_DIFFERENCE'
       '  , (select'
       '         count(*)'
       '       from pay_errors pe'
@@ -603,13 +564,17 @@ object PayDocsForm: TPayDocsForm
       '       left outer join(select'
       '                           p.PAY_DOC_ID'
       '                         , count(*) as CNT_PAYS'
-      '                         , sum(p.PAY_SUM) as SUM_INTERED'
+      '                         , sum(p.PAY_SUM) as SUM_Entered'
       
         '                         , sum(coalesce(p.Fine_Sum, 0)) as FINE_' +
         'SUM'
       
-        '                         , sum(coalesce(p.Cmsn, ((p.Pay_Sum + p.' +
-        'Fine_Sum) * ss.Leak_Prc)/ 100, 0)) as c_SUM_leak'
+        '                         , sum(coalesce(p.Cmsn, ((coalesce(p.Pay' +
+        '_Sum,0) + coalesce(p.Fine_Sum,0)) * ss.Leak_Prc)/ 100, 0)) as c_' +
+        'SUM_leak'
+      
+        '                         , sum(coalesce(p.Pay_Sum,0) + coalesce(' +
+        'p.Fine_Sum,0))  as TOTAL'
       '                         from PAYMENT p'
       
         '                           inner join PAY_DOC ds on (p.Pay_Doc_I' +
@@ -620,8 +585,72 @@ object PayDocsForm: TPayDocsForm
       
         '                         group by PAY_DOC_ID) P on (P.PAY_DOC_ID' +
         ' = D.PAY_DOC_ID)'
-      '  where D.Pay_Doc_Date between :StartDate and :EndDate @source'
-      '  order by PAY_DOC_DATE, PAY_DOC_NO')
+      ''
+      'where D.PAY_DOC_ID = :OLD_PAY_DOC_ID')
+    SelectSQL.Strings = (
+      'select'
+      '    D.PAY_DOC_ID'
+      '  , D.PAYSOURCE_ID'
+      '  , D.PAY_DOC_NO'
+      '  , D.PAY_DOC_DATE'
+      '  , D.PAY_DOC_SUM'
+      '  , D.NOTICE'
+      '  , ps.paysource_descr'
+      '  , ps.leak_prc'
+      '  , ps.tax_prc'
+      '  , p.c_SUM_leak'
+      
+        '  , iif(coalesce(ps.tax_prc,0) <> 0, round(p.SUM_Entered*ps.tax_' +
+        'prc/(100+ps.tax_prc),2), 0) as c_SUM_TAX'
+      
+        '  , (p.TOTAL - round(iif(coalesce(ps.tax_prc,0) <> 0, round(p.SU' +
+        'M_Entered*ps.tax_prc/(100+ps.tax_prc),2), 0) + p.c_SUM_leak, 2))' +
+        ' as c_SUM_LEAK_TAX'
+      '  , p.SUM_Entered'
+      '  , p.SUM_Entered as SUM_Intered'
+      '  , p.TOTAL SUM_PAID'
+      '  , FINE_SUM'
+      '  , CNT_PAYS'
+      '  , (coalesce(D.PAY_DOC_SUM, 0) - p.TOTAL) as SUM_DIFFERENCE'
+      '  , (select'
+      '         count(*)'
+      '       from pay_errors pe'
+      '       where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors'
+      '  , coalesce(w.Surname, d.Added_By) Added_By'
+      '  , d.Added_On'
+      '  from PAY_DOC D'
+      
+        '       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYS' +
+        'OURCE_ID)'
+      '       left outer join Worker w on (w.Ibname = d.Added_By)'
+      '       left outer join(select'
+      '                           p.PAY_DOC_ID'
+      '                         , count(*) as CNT_PAYS'
+      '                         , sum(p.PAY_SUM) as SUM_Entered'
+      
+        '                         , sum(coalesce(p.Fine_Sum, 0)) as FINE_' +
+        'SUM'
+      
+        '                         , sum(coalesce(p.Cmsn, ((coalesce(p.Pay' +
+        '_Sum,0) + coalesce(p.Fine_Sum,0)) * ss.Leak_Prc)/ 100, 0)) as c_' +
+        'SUM_leak'
+      
+        '                         , sum(coalesce(p.Pay_Sum,0) + coalesce(' +
+        'p.Fine_Sum,0))  as TOTAL'
+      '                         from PAYMENT p'
+      
+        '                           inner join PAY_DOC ds on (p.Pay_Doc_I' +
+        'd = ds.Pay_Doc_Id)'
+      
+        '                           left outer join PAYSOURCE ss on (ds.P' +
+        'AYSOURCE_ID = ss.PAYSOURCE_ID)'
+      
+        '                         group by PAY_DOC_ID) P on (P.PAY_DOC_ID' +
+        ' = D.PAY_DOC_ID)'
+      '  '
+      'where D.Pay_Doc_Date between :StartDate and :EndDate '
+      '@source'
+      'order by PAY_DOC_DATE, PAY_DOC_NO')
     AutoUpdateOptions.UpdateTableName = 'PAY_DOC'
     AutoUpdateOptions.KeyFields = 'PAY_DOC_ID'
     AutoUpdateOptions.AutoReWriteSqls = True

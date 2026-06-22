@@ -14,7 +14,7 @@ uses
   DBLookupEh,
   FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   pFIBDatabase, EhLibFIB,
-  PropFilerEh, PropStorageEh, amSplitter;
+  PropFilerEh, PropStorageEh, amSplitter, CnClasses;
 
 type
   TapgCustomerEdit = class(TA4onPage)
@@ -70,15 +70,15 @@ type
     edFLOOR: TDBEditEh;
     chkHAND: TDBCheckBoxEh;
     pnlFIZ: TPanel;
-    Label3: TLabel;
-    Label13: TLabel;
-    lbl2: TLabel;
-    lbl3: TLabel;
-    Label12: TLabel;
-    Label4: TLabel;
-    Label9: TLabel;
-    Label5: TLabel;
-    lbl9: TLabel;
+    LabelS: TLabel;
+    LabelDN: TLabel;
+    LabelBD: TLabel;
+    LabelAR: TLabel;
+    LabelDR: TLabel;
+    LabelF: TLabel;
+    LabelM: TLabel;
+    LabelPN: TLabel;
+    LabelBP: TLabel;
     eSURNAME: TDBEditEh;
     edtPASSPORT_NUMBER: TDBEditEh;
     edtBIRTHDAY: TDBDateTimeEditEh;
@@ -191,8 +191,9 @@ type
   private
     { Private declarations }
     FullAccess: Boolean;
-    FAddressRight : Boolean;
-    FPersonalData: Boolean;
+    FAddressRight: Boolean;
+    FShowPersonalData: Boolean;
+    FShowPersonalName: Boolean;
     FNotIgnoreContract: Boolean;
     FDisableAddressEdit: Boolean;
     FSavedFloor: string;
@@ -259,7 +260,8 @@ begin
   FullAccess := dmMain.AllowedAction(rght_Customer_full); // полный доступ
   FullAccess := FullAccess or dmMain.AllowedAction(rght_Customer_History); // изменение истории
   FNotIgnoreContract := dmMain.GetSettingsValue('IGNORE_CONTRACT') <> '1';
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FShowPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FShowPersonalName := (not dmMain.AllowedAction(rght_Customer_PersonalName));
   FAddressRight := ((dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street)));
 
   dsContacts.DataSource := FDataSource;
@@ -892,11 +894,25 @@ begin
     pnlJUR.Visible := False;
     pnlFIZ.Visible := True;
 
-    eSURNAME.Visible := FPersonalData;
-    edtPASSPORT_NUMBER.Visible := FPersonalData;
-    edRegistration.Visible := FPersonalData;
-    edtBIRTHDAY.Visible := FPersonalData;
-    edtPERSONAL_N.Visible := FPersonalData;
+    eSURNAME.Visible := FShowPersonalData;
+    LabelS.Visible := FShowPersonalData;
+    eFIRSTNAME.Visible := FShowPersonalName;
+    LabelM.Visible := FShowPersonalName;
+    eMIDLENAME.Visible := FShowPersonalName;
+    LabelF.Visible := FShowPersonalName;
+
+    edtPASSPORT_NUMBER.Visible := FShowPersonalData;
+    LabelDN.Visible := FShowPersonalData;
+    edRegistration.Visible := FShowPersonalData;
+    LabelDR.Visible := FShowPersonalData;
+    edtBIRTHDAY.Visible := FShowPersonalData;
+    LabelBD.Visible := FShowPersonalData;
+    edtPERSONAL_N.Visible := FShowPersonalData;
+    LabelPN.Visible := FShowPersonalData;
+    edtADRES_REGISTR.Visible := FShowPersonalData;
+    LabelAR.Visible := FShowPersonalData;
+    edtPlaceBirth.Visible := FShowPersonalData;
+    LabelBP.Visible := FShowPersonalData;
   end;
   dsBANKS.Active := pnlJUR.Visible;
   // scrlbx1.Realign;
@@ -993,7 +1009,7 @@ begin
   else
     CnErrors.Dispose(LupHOUSE_ID);
 
-  if (FPersonalData) and (not edtPERSONAL_N.Text.IsEmpty) then
+  if (FShowPersonalData) and (not edtPERSONAL_N.Text.IsEmpty) then
   begin
     if CheckControlText(edtPERSONAL_N, dmMain.GetSettingsValue('REG_PERSN')) then
     begin
@@ -1006,7 +1022,7 @@ begin
   else
     CnErrors.Dispose(edtPERSONAL_N);
 
-  if (FPersonalData) and (not edtPASSPORT_NUMBER.Text.IsEmpty) then
+  if (FShowPersonalData) and (not edtPASSPORT_NUMBER.Text.IsEmpty) then
   begin
     if DocNumberOk then
     begin

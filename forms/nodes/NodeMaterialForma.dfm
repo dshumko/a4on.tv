@@ -13,14 +13,12 @@ object NodeMaterialForm: TNodeMaterialForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     401
     234)
-  PixelsPerInch = 96
   TextHeight = 13
   object lblAttribute: TLabel
     Left = 8
@@ -44,11 +42,19 @@ object NodeMaterialForm: TNodeMaterialForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
+    ExplicitTop = 199
+    ExplicitWidth = 401
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -56,9 +62,12 @@ object NodeMaterialForm: TNodeMaterialForm
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 67
+      ExplicitWidth = 245
     end
     inherited bbCancel: TBitBtn
       Left = 318
+      ExplicitLeft = 318
     end
   end
   object dbluMat: TDBLookupComboboxEh

@@ -11,7 +11,6 @@ object SendMessagesForm: TSendMessagesForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -19,7 +18,6 @@ object SendMessagesForm: TSendMessagesForm
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter: TSplitter
     Left = 391

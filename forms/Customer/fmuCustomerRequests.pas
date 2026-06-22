@@ -41,9 +41,9 @@ type
     CA: Boolean;
     FullAccess: Boolean;
     FSavedID: Integer;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     FColorize: Boolean;
-    // FLastID: Integer;
     procedure EnableControls;
   public
     procedure RefreshDS;
@@ -101,7 +101,9 @@ begin
   CE := dmMain.AllowedAction(rght_Request_edit);
   CC := dmMain.AllowedAction(rght_Request_Close);
   CG := dmMain.AllowedAction(rght_Request_Give);
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
 
   actAdd.Visible := FullAccess or CA;
   actEdit.Visible := FullAccess or CE;
@@ -125,19 +127,18 @@ begin
   begin
     dsRequests.ParamByName('Colorize').AsString :=
       ', iif((r.Rq_Customer is null), 0, coalesce(Get_Request_Money(r.Rq_Id),0) ) RQ_FEE' +
-      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(p.Pay_Sum+coalesce(p.fine_sum,0)) from payment p ' +
-      '                                            where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0)) RQ_PAY ' +
-      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0)) PAY_SRV ';
+      ', iif((r.Rq_Customer is null), 0, coalesce((select sum(p.Pay_Sum+coalesce(p.fine_sum,0)) from payment p where p.Rq_Id = r.Rq_Id), 0)) RQ_PAY '
+      + ', iif((r.Rq_Customer is null), 0, coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0)) PAY_SRV ';
 
-     // (dsRequests['RQ_FEE'] + dsRequests['PAY_SRV']) <> dsRequests['RQ_PAY']
+    // (dsRequests['RQ_FEE'] + dsRequests['PAY_SRV']) <> dsRequests['RQ_PAY']
     for i := 0 to dbGridCustReq.Columns.Count - 1 do
     begin
       if (AnsiUpperCase(dbGridCustReq.Columns[i].FieldName) = 'RQ_FEE') then
-        dbGridCustReq.Columns[i].Visible := True;
+        dbGridCustReq.Columns[i].Visible := true;
       if (AnsiUpperCase(dbGridCustReq.Columns[i].FieldName) = 'PAY_SRV') then
-        dbGridCustReq.Columns[i].Visible := True;
+        dbGridCustReq.Columns[i].Visible := true;
       if (AnsiUpperCase(dbGridCustReq.Columns[i].FieldName) = 'RQ_PAY') then
-        dbGridCustReq.Columns[i].Visible := True;
+        dbGridCustReq.Columns[i].Visible := true;
     end;
   end;
 
@@ -156,6 +157,7 @@ begin
   if dsRequests.Active then
     SavePosition;
   dsRequests.OrderClause := GetOrderClause(dbGridCustReq);
+
   dsRequests.Open;
   GotoSavedPosition;
   EnableControls;
@@ -251,8 +253,8 @@ end;
 procedure TapgCustomerRequests.dbGridCustReqColumns17GetCellParams(Sender: TObject; EditMode: Boolean;
   Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TapgCustomerRequests.dbGridCustReqDblClick(Sender: TObject);
@@ -298,4 +300,3 @@ begin
 end;
 
 end.
-

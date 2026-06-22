@@ -12,7 +12,6 @@ object ReqPhotosForm: TReqPhotosForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
@@ -20,7 +19,6 @@ object ReqPhotosForm: TReqPhotosForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAll: TPanel
     Left = 0
@@ -29,6 +27,7 @@ object ReqPhotosForm: TReqPhotosForm
     Height = 491
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 471
     object ToolBar3: TToolBar
       Left = 1
       Top = 1
@@ -173,6 +172,7 @@ object ReqPhotosForm: TReqPhotosForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitHeight = 440
       object spl1: TSplitter
         Left = 669
         Top = 0
@@ -190,6 +190,7 @@ object ReqPhotosForm: TReqPhotosForm
         DynProps = <>
         TabOrder = 0
         OnDblClick = imgJPGDblClick
+        ExplicitHeight = 440
       end
       object dbgFiles: TDBGridEh
         Left = 0
@@ -213,7 +214,6 @@ object ReqPhotosForm: TReqPhotosForm
         PopupMenu = gridPopUp
         ReadOnly = True
         SearchPanel.Enabled = True
-        SearchPanel.FilterOnTyping = False
         STFilter.Local = True
         SumList.Active = True
         SumList.VirtualRecords = True

@@ -13,7 +13,6 @@ object frmReqMaterials: TfrmReqMaterials
     Width = 451
     Height = 305
     Align = alClient
-    AutoFitColWidths = False
     DataSource = srcDataSource
     DynProps = <>
     Flat = True

@@ -4,24 +4,22 @@ object CountersIndicationForm: TCountersIndicationForm
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = #1055#1086#1082#1072#1079#1072#1085#1080#1103' '#1089#1095#1077#1090#1095#1080#1082#1086#1074
   ClientHeight = 441
-  ClientWidth = 831
+  ClientWidth = 1112
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgCnt: TDBGridEh
     Left = 0
     Top = 37
-    Width = 831
+    Width = 1112
     Height = 368
     Hint = #1042#1099' '#1084#1086#1078#1077#1090#1077' '#1080#1079#1084#1077#1085#1103#1090#1100' '#1087#1086#1083#1103' '#1058#1077#1082#1091#1097#1077#1077' '#1087#1086#1082#1072#1079#1072#1085#1080#1103' '#1080' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     Align = alClient
@@ -78,10 +76,44 @@ object CountersIndicationForm: TCountersIndicationForm
         Footer.ValueType = fvtSum
         Footers = <>
         ReadOnly = True
-        Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100' '#13#10#1042#1090'/'#1095
+        Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100'|'#1042' '#1095#1072#1089', '#1042#1090
         Title.Hint = #1057#1091#1084#1084#1072#1088#1085#1072#1103' '#1084#1086#1097#1085#1086#1089#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103' '#1085#1072' '#1091#1079#1083#1072#1093' '#1087#1088#1080#1074#1103#1079#1072#1085#1085#1099#1093' '#1082' '#1089#1095#1077#1090#1095#1080#1082#1091
         Title.TitleButton = True
-        Width = 60
+        Width = 48
+      end
+      item
+        CellButtons = <>
+        Color = clBtnFace
+        DisplayFormat = '0.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PCM'
+        Footer.DisplayFormat = '0.##'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        ReadOnly = True
+        Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100'|'#1052#1077#1089#1103#1094', '#1082#1042#1090
+        Title.Hint = #1057#1091#1084#1084#1072#1088#1085#1072#1103' '#1084#1086#1097#1085#1086#1089#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103' '#1085#1072' '#1091#1079#1083#1072#1093' '#1074' '#1084#1077#1089#1103#1094
+        Title.TitleButton = True
+        Width = 52
+      end
+      item
+        CellButtons = <>
+        Color = clBtnFace
+        DisplayFormat = '0.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PC30'
+        Footer.DisplayFormat = '0.##'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        ReadOnly = True
+        Title.Caption = #1052#1086#1097#1085#1086#1089#1090#1100'|30 '#1076#1085', '#1082#1042#1090
+        Title.Hint = 
+          #1057#1091#1084#1084#1072#1088#1085#1072#1103' '#1084#1086#1097#1085#1086#1089#1090#1100' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103' '#1085#1072' '#1091#1079#1083#1072#1093' '#1087#1088#1080#1074#1103#1079#1072#1085#1085#1099#1093' '#1082' '#1089#1095#1077#1090#1095#1080#1082#1091' ' +
+          #1079#1072' 30 '#1076#1085#1077#1081
+        Title.TitleButton = True
+        Width = 50
       end
       item
         AutoFitColWidth = False
@@ -145,6 +177,28 @@ object CountersIndicationForm: TCountersIndicationForm
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Title.TitleButton = True
         Width = 236
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'A_INC'
+        Footers = <>
+        Title.Caption = #1059#1074#1077#1083#1080#1095#1080#1074#1072#1090#1100' '#1087#1086#1082#1072#1079#1072#1085#1080#1103'|'#1085#1072
+      end
+      item
+        CellButtons = <
+          item
+            Hint = #1056#1072#1089#1089#1095#1077#1090' '#1079#1085#1072#1095#1077#1085#1080#1103' '#1044#1054
+            Style = ebsPlusEh
+            OnClick = dbgCntColumns9CellButtons0Click
+          end>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'A_TO'
+        Footers = <>
+        Title.Caption = #1059#1074#1077#1083#1080#1095#1080#1074#1072#1090#1100' '#1087#1086#1082#1072#1079#1072#1085#1080#1103'|'#1076#1086' '#1079#1085#1072#1095#1077#1085#1080#1103
+        Width = 81
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -152,13 +206,13 @@ object CountersIndicationForm: TCountersIndicationForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 831
+    Width = 1112
     Height = 37
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      831
+      1112
       37)
     object edDate: TDBDateTimeEditEh
       Left = 8
@@ -188,7 +242,7 @@ object CountersIndicationForm: TCountersIndicationForm
     object btnSet: TButton
       Left = 296
       Top = 6
-      Width = 530
+      Width = 811
       Height = 25
       Hint = 
         #1042#1085#1080#1084#1072#1085#1080#1077', '#1077#1089#1083#1080' '#1088#1072#1085#1077#1077' '#1073#1099#1083#1086' '#1074#1085#1077#1089#1077#1085#1086' '#1079#1085#1072#1095#1077#1085#1080#1077', '#1086#1085#1086' '#1073#1091#1076#1077#1090' '#1087#1077#1088#1077#1079#1072#1087#1080#1089#1072 +
@@ -202,18 +256,18 @@ object CountersIndicationForm: TCountersIndicationForm
   object pnl1: TPanel
     Left = 0
     Top = 405
-    Width = 831
+    Width = 1112
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      831
+      1112
       36)
     object btnOk: TButton
       Left = 8
       Top = 6
-      Width = 716
+      Width = 997
       Height = 25
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1087#1086#1082#1072#1079#1072#1085#1080#1103' '#1074' '#1073#1072#1079#1077
       Anchors = [akLeft, akTop, akRight]
@@ -222,7 +276,7 @@ object CountersIndicationForm: TCountersIndicationForm
       OnClick = btnOkClick
     end
     object btnCancel: TButton
-      Left = 739
+      Left = 1020
       Top = 6
       Width = 87
       Height = 25
@@ -277,6 +331,18 @@ object CountersIndicationForm: TCountersIndicationForm
     object mtCntCDATE: TDateField
       FieldName = 'CDATE'
     end
+    object intgrfldCntA_INC: TIntegerField
+      FieldName = 'A_INC'
+    end
+    object intgrfldCntA_TO: TIntegerField
+      FieldName = 'A_TO'
+    end
+    object fltfldCntPCM: TFloatField
+      FieldName = 'PCM'
+    end
+    object fltfldCntPC30: TFloatField
+      FieldName = 'PC30'
+    end
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
         object CDATE: TMTDateTimeDataFieldEh
@@ -326,6 +392,22 @@ object CountersIndicationForm: TCountersIndicationForm
           currency = False
           Precision = 15
         end
+        object PCM: TMTNumericDataFieldEh
+          FieldName = 'PCM'
+          NumericDataType = fdtFloatEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object PC30: TMTNumericDataFieldEh
+          FieldName = 'PC30'
+          NumericDataType = fdtFloatEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
         object SCV: TMTNumericDataFieldEh
           FieldName = 'SCV'
           NumericDataType = fdtFloatEh
@@ -337,6 +419,22 @@ object CountersIndicationForm: TCountersIndicationForm
         object CV: TMTNumericDataFieldEh
           FieldName = 'CV'
           NumericDataType = fdtFloatEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object A_INC: TMTNumericDataFieldEh
+          FieldName = 'A_INC'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object A_TO: TMTNumericDataFieldEh
+          FieldName = 'A_TO'
+          NumericDataType = fdtIntegerEh
           AutoIncrement = False
           DisplayWidth = 20
           currency = False
@@ -382,86 +480,7 @@ object CountersIndicationForm: TCountersIndicationForm
       '        and o.o_DELETED = 0'
       '        and o.O_ID = :OLD_O_ID')
     SelectSQL.Strings = (
-      'execute block ('
-      '    DT D_DATE = :DT)'
-      'returns ('
-      '    O_ID     D_integer,'
-      '    O_NAME   D_Varchar500,'
-      '    ECOUNTER D_Varchar50,'
-      '    PCE      D_N15_3,'
-      '    PCE_FACT D_N15_3,'
-      '    PV       D_N18_6,'
-      '    CV       D_N18_6,'
-      '    NOTICE   D_Varchar1000,'
-      '    CDATE    D_date)'
-      'as'
-      'declare variable O_TYPE  D_Integer;'
-      'declare variable PNOTICE D_Varchar1000;'
-      'declare variable PDATE D_DATE;'
-      'begin'
-      '  DT = Month_First_Day(:DT);'
-      ''
-      '  for select'
-      '          O.O_ID'
-      '        , O.O_NAME'
-      '        , O.O_DIMENSION ECOUNTER'
-      '        , O.O_TYPE'
-      '        from OBJECTS O'
-      '        where O.O_TYPE = 76'
-      '              and O.O_DELETED = 0'
-      '              and trim(coalesce(O.O_DIMENSION, '#39#39')) <> '#39#39
-      '        order by O.O_NAME'
-      '      into :O_ID, :O_NAME, :ECOUNTER, :O_TYPE'
-      '  do begin'
-      '    -- , :PCE, :PCE_FACT, :PV, :CV, :NOTICE, :CDATE'
-      '    select'
-      '        sum(N.PCE)'
-      '      from NODES N'
-      '      where N.EPOINT = :O_ID'
-      '    into :PCE;'
-      ''
-      '    select'
-      '        sum(coalesce(E.PCE, EG.O_NUMERICFIELD, 0))'
-      '      from NODES N'
-      '           inner join EQUIPMENT E on (E.NODE_ID = N.NODE_ID)'
-      
-        '           left outer join OBJECTS EG on (E.EQ_GROUP = EG.O_ID a' +
-        'nd EG.O_TYPE = 7)'
-      '      where N.EPOINT = :O_ID'
-      '    into :PCE_FACT;'
-      ''
-      '    select first 1'
-      '        OH.NVALUE'
-      '      , OH.Notice'
-      '      , OH.Dvalue'
-      '      from OBJECTS_HISTORY OH'
-      '      where OH.O_ID = :O_ID'
-      '            and OH.O_TYPE = :O_TYPE'
-      '            and OH.DELETED = 0'
-      '            and OH.HDATE >= dateadd(month, -1, :DT)'
-      '            and OH.HDATE < :DT'
-      '      order by OH.HDATE'
-      '    into :PV, :PNOTICE, :PDATE;'
-      ''
-      '    select first 1'
-      '        OH.NVALUE'
-      '      , OH.NOTICE'
-      '      , OH.Dvalue'
-      '      from OBJECTS_HISTORY OH'
-      '      where OH.O_ID = :O_ID'
-      '            and OH.O_TYPE = :O_TYPE'
-      '            and OH.DELETED = 0'
-      '            and OH.HDATE >= :DT'
-      '            and OH.HDATE < dateadd(month, 1, :DT)'
-      '      order by OH.HDATE'
-      '    into :CV, :NOTICE, :CDATE;'
-      ''
-      '    NOTICE = coalesce(NOTICE, PNOTICE);'
-      '    CDATE = coalesce(CDATE, PDATE);'
-      ''
-      '    suspend;'
-      '  end'
-      'end')
+      'select * from Getepcounters(:Dt) order by O_Name')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     AutoCommit = True
@@ -477,15 +496,16 @@ object CountersIndicationForm: TCountersIndicationForm
       '    Hdate  D_DATE = :Hdate,'
       '    Nvalue D_N15_3 = :Nvalue,'
       '    NOTICE D_Notice = :NOTICE,'
-      '    CDATE  D_DATE = :CDATE)'
+      '    CDATE  D_DATE = :CDATE,'
+      '    Cvalue D_NOTICE = :Cvalue)'
       'as'
       'begin'
       '  Hdate = Month_First_Day(Hdate);'
       ''
       
         '  update or insert into Objects_History (O_Id, O_Type, Hdate, Nv' +
-        'alue, NOTICE, DVALUE)'
-      '  values (:O_Id, 76, :Hdate, :Nvalue, :NOTICE, :CDATE)'
+        'alue, NOTICE, DVALUE, Cvalue)'
+      '  values (:O_Id, 76, :Hdate, :Nvalue, :NOTICE, :CDATE, :Cvalue)'
       '  matching (O_Id, O_Type, Hdate);'
       ''
       '  if (not CDATE is null) then'

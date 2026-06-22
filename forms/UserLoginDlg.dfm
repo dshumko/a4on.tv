@@ -13,7 +13,6 @@ object UserLoginDialog: TUserLoginDialog
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poDesktopCenter
   ShowHint = True
   OnActivate = FormActivate
@@ -23,7 +22,6 @@ object UserLoginDialog: TUserLoginDialog
   DesignSize = (
     391
     169)
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlLogin: TPanel
     Left = 8
@@ -1552,7 +1550,7 @@ object UserLoginDialog: TUserLoginDialog
       object cbSERVER: TDBComboBoxEh
         Left = 85
         Top = 6
-        Width = 185
+        Width = 183
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         AutoSize = False
@@ -1579,7 +1577,7 @@ object UserLoginDialog: TUserLoginDialog
       object edUser: TDBEditEh
         Left = 85
         Top = 30
-        Width = 185
+        Width = 183
         Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone
@@ -1597,7 +1595,7 @@ object UserLoginDialog: TUserLoginDialog
       object edPassword: TDBEditEh
         Left = 85
         Top = 54
-        Width = 185
+        Width = 183
         Height = 19
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone

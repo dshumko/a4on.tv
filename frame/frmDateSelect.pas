@@ -242,19 +242,19 @@ begin
     sgCalendar.Canvas.Font.Color := OldColor;
   end;
   {
-  else
-  begin
-    if ACol < 5 then
-      sgCalendar.Canvas.Font.Color := clWindowText
     else
-      sgCalendar.Canvas.Font.Color := clRed;
+    begin
+    if ACol < 5 then
+    sgCalendar.Canvas.Font.Color := clWindowText
+    else
+    sgCalendar.Canvas.Font.Color := clRed;
 
     with Rect, sgCalendar.Canvas do
     begin
-      TextRect(Rect, Left, Top + (Bottom - Top - TextHeight(TheText))
-        div 2, TheText);
+    TextRect(Rect, Left, Top + (Bottom - Top - TextHeight(TheText))
+    div 2, TheText);
     end;
-  end;
+    end;
   }
 
 end;

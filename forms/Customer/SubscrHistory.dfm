@@ -11,13 +11,11 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter
     Left = 0
@@ -65,9 +63,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
           ReadOnly = True
           Title.Alignment = taCenter
           Title.Caption = #1058#1080#1087' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1086#1081' '#1091#1089#1083#1091#1075#1080
+          Title.TitleButton = True
           Title.SortIndex = 2
           Title.SortMarker = smUpEh
-          Title.TitleButton = True
           Width = 307
         end
         item
@@ -84,9 +82,9 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
             #1054#1090#1082#1083'.'
             #1055#1086#1076#1082#1083'.')
           Title.Caption = #1057#1090#1072#1090#1091#1089
+          Title.TitleButton = True
           Title.SortIndex = 1
           Title.SortMarker = smUpEh
-          Title.TitleButton = True
           Width = 92
         end
         item

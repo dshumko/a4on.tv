@@ -12,7 +12,7 @@ uses
   DBGridEh, DBCtrlsEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery, DBGridEhGrouping,
   MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DynVarsEh, CnErrorProvider, DBLookupEh, amSplitter;
+  DynVarsEh, CnErrorProvider, DBLookupEh, amSplitter, CnClasses;
 
 type
   TMessagesForm = class(TForm)
@@ -159,7 +159,8 @@ type
     fForCustomer: Integer;
     CanEdit: Boolean;
     CanCreate: Boolean;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     inEditMode: Boolean;
     fStartDate: TDateTime;
     fEndDate: TDateTime;
@@ -257,7 +258,7 @@ procedure TMessagesForm.actQuickFilterExecute(Sender: TObject);
 begin
   actQuickFilter.Checked := not actQuickFilter.Checked;
   dbgMessages.STFilter.Visible := actQuickFilter.Checked;
-  dbgMessages.SearchPanel.Enabled := actQuickFilter.Checked ;
+  dbgMessages.SearchPanel.Enabled := actQuickFilter.Checked;
 end;
 
 procedure TMessagesForm.SetMessagesFilter;
@@ -288,9 +289,68 @@ begin
 end;
 
 procedure TMessagesForm.FormShow(Sender: TObject);
+var
+  i, c: Integer;
+  Font_size: Integer;
+  Font_name, s: string;
+  Row_height: Integer;
+  ShowToolTips: Boolean;
 begin
-  dbgMessages.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgMessages',
-    [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
+  if not TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+    i := 0;
+  Font_size := i;
+
+  if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
+    i := 0;
+  Row_height := i;
+  if (Font_size <> 0) or (Row_height <> 0) then
+  begin
+    Font_name := dmMain.GetIniValue('FONT_NAME');
+    for i := 0 to ComponentCount - 1 do
+    begin
+      if Components[i] is TDBGridEh then
+      begin
+        (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
+          Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
+        if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
+        then
+          (Components[i] as TDBGridEh).DefaultApplySorting;
+        if Font_size <> 0 then
+        begin
+          (Components[i] as TDBGridEh).Font.Name := Font_name;
+          (Components[i] as TDBGridEh).Font.Size := Font_size;
+        end;
+        if Row_height <> 0 then
+        begin
+          (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
+          (Components[i] as TDBGridEh).RowHeight := Row_height;
+        end;
+
+        if ShowToolTips then
+        begin
+          if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+            (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+          (Components[i] as TDBGridEh).ShowHint := true;
+          for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+            (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
+        end;
+      end
+      else if Font_size <> 0 then
+      begin
+        if (Components[i] is TMemo) then
+        begin
+          (Components[i] as TMemo).Font.Name := Font_name;
+          (Components[i] as TMemo).Font.Size := Font_size;
+        end
+        else if (Components[i] is TDBMemoEh) then
+        begin
+          (Components[i] as TDBMemoEh).Font.Name := Font_name;
+          (Components[i] as TDBMemoEh).Font.Size := Font_size;
+        end;
+      end;
+    end;
+  end;
 
   fEndDate := now;
   fStartDate := MonthFirstDay(dmMain.CurrentMonth);
@@ -301,7 +361,7 @@ begin
 
   actQuickFilter.Checked := (dmMain.GetIniValue('QUICK_FILTER') <> '0');
   dbgMessages.STFilter.Visible := actQuickFilter.Checked;
-  dbgMessages.SearchPanel.Enabled := actQuickFilter.Checked ;
+  dbgMessages.SearchPanel.Enabled := actQuickFilter.Checked;
 
   SetMessagesFilter;
 
@@ -315,7 +375,8 @@ procedure TMessagesForm.InitSecurity;
 begin
   CanEdit := (dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full));
   CanCreate := (dmMain.AllowedAction(rght_Messages_add) or dmMain.AllowedAction(rght_Customer_full));
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
 
   // права пользователей
   actNew.Visible := CanEdit;
@@ -340,8 +401,8 @@ end;
 
 procedure TMessagesForm.dbgMessagesColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TMessagesForm.dbgMessagesDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
@@ -424,13 +485,13 @@ begin
   then
     exit;
 
-  FParentMessage := -1;
-  FForCustomer := -1;
+  fParentMessage := -1;
+  fForCustomer := -1;
   if not dbgMessages.DataSource.DataSet.FieldByName('Mes_Id').IsNull then
   begin
-    FParentMessage := dbgMessages.DataSource.DataSet.FieldByName('Mes_Id').AsInteger;
+    fParentMessage := dbgMessages.DataSource.DataSet.FieldByName('Mes_Id').AsInteger;
     if not dbgMessages.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
-      FForCustomer := dbgMessages.DataSource.DataSet.FieldByName('CUSTOMER_ID').AsInteger;
+      fForCustomer := dbgMessages.DataSource.DataSet.FieldByName('CUSTOMER_ID').AsInteger;
   end;
 
   StartEdit(true);
@@ -461,7 +522,7 @@ begin
       Screen.Cursor := crHourGlass;
       for i := 0 to (dbgMessages.SelectedRows.Count - 1) do
       begin
-        dbgMessages.DataSource.DataSet.GotoBookmark(pointer(dbgMessages.SelectedRows.Items[i]));
+        dbgMessages.DataSource.DataSet.GotoBookmark(TBookMark(dbgMessages.SelectedRows.Items[i]));
         dbgMessages.DataSource.DataSet.Delete;
       end;
     finally
@@ -506,8 +567,8 @@ end;
 
 procedure TMessagesForm.actNewExecute(Sender: TObject);
 begin
-  FParentMessage := -1;
-  FForCustomer := -1;
+  fParentMessage := -1;
+  fForCustomer := -1;
   StartEdit(true);
 end;
 
@@ -517,9 +578,9 @@ var
   filter: string;
   inFilter: Boolean;
 begin
-  if FFirstOpen then
+  if fFirstOpen then
   begin
-    FFirstOpen := False;
+    fFirstOpen := False;
     exit;
   end;
 
@@ -549,8 +610,8 @@ var
   ForSendCount: Integer;
   ReciverCount: Integer;
   ErrorText: String;
-//  rSMS: TpFIBQuery;
-  BatcSize : Integer;
+  // rSMS: TpFIBQuery;
+  BatcSize: Integer;
 begin
   GetSMSCountForSend(ReciverCount, ForSendCount);
 
@@ -609,7 +670,7 @@ begin
     balance := 0
   end;
 
-  ShowMessage(format(rsSMSInfo, [balance, ForSendCount, ReciverCount]));
+  ShowMessage(Format(rsSMSInfo, [balance, ForSendCount, ReciverCount]));
 
 end;
 
@@ -773,17 +834,17 @@ begin
     dsMessages['MES_HEAD'] := edtHEAD.Text;
     dsMessages['MES_TEXT'] := mmoMessage.Lines.Text;
     dsMessages['MES_RESULT'] := 0;
-    if FParentMessage > 0 then
+    if fParentMessage > 0 then
     begin
-      dsMessages['PARENT_ID'] := FParentMessage;
+      dsMessages['PARENT_ID'] := fParentMessage;
     end
     else
     begin
       dsMessages.FieldByName('PARENT_ID').Clear;
     end;
-    if FForCustomer > 0 then
+    if fForCustomer > 0 then
     begin
-      dsMessages['CUSTOMER_ID'] := FForCustomer;
+      dsMessages['CUSTOMER_ID'] := fForCustomer;
     end
     else
     begin
@@ -796,14 +857,15 @@ begin
   dbgMessages.SetFocus;
   dsMessType.Close;
 
-  if (not Cancel) and (FInTreeView) then begin
+  if (not Cancel) and (FInTreeView) then
+  begin
     mtTM.Refresh;
-    if FParentMessage > -1
-    then mtTM.Locate('Mes_Id', FParentMessage, []);
+    if fParentMessage > -1 then
+      mtTM.Locate('Mes_Id', fParentMessage, []);
   end;
 
-  FParentMessage := -1;
-  FForCustomer := -1;
+  fParentMessage := -1;
+  fForCustomer := -1;
   inEditMode := False;
 end;
 
@@ -996,7 +1058,8 @@ begin
     rSMS.Transaction := dmMain.trReadQ;
     rSMS.SQL.Add('select count(m.reciver) as CNT');
     rSMS.SQL.Add(' , sum(iif(char_length(m.Mes_Text) <= 70, 1, iif(char_length(m.Mes_Text) <= 134, 2, ');
-    rSMS.SQL.Add('       iif(char_length(m.Mes_Text) <= 201, 3, iif(char_length(m.Mes_Text) <= 268, 4, 5))))) SMS_CNT ');
+    rSMS.SQL.Add
+      ('       iif(char_length(m.Mes_Text) <= 201, 3, iif(char_length(m.Mes_Text) <= 268, 4, 5))))) SMS_CNT ');
     rSMS.SQL.Add(' from messages m where m.mes_result = 0 and m.Mes_Type = ''SMS'' ');
     rSMS.Transaction.StartTransaction;
     rSMS.ExecQuery;

@@ -248,7 +248,10 @@ var
   i: Boolean;
   Font_size, f: Integer;
   Font_name: string;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), f) then
   begin
     Font_size := f;
@@ -259,6 +262,14 @@ begin
       begin
         (Components[f] as TDBGridEh).Font.Name := Font_name;
         (Components[f] as TDBGridEh).Font.Size := Font_size;
+
+        if ShowToolTips and (not Assigned((Components[f] as TDBGridEh).OnDataHintShow)) then
+        begin
+          (Components[f] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+          (Components[f] as TDBGridEh).ShowHint := true;
+          for c := 0 to (Components[f] as TDBGridEh).Columns.Count - 1 do
+            (Components[f] as TDBGridEh).Columns[c].ToolTips := true;
+        end;
       end;
     end;
   end;
@@ -515,30 +526,47 @@ end;
 
 procedure TPayDocsForm.GenDocSQL;
 begin
-  dsPayDocs.SQLs.SelectSQL.Clear;
-  dsPayDocs.SQLs.SelectSQL.Add('select D.PAY_DOC_ID, D.PAYSOURCE_ID, D.PAY_DOC_NO, D.PAY_DOC_DATE ');
-  dsPayDocs.SQLs.SelectSQL.Add(' , D.PAY_DOC_SUM, d.Added_By , d.Added_On, D.NOTICE, ps.paysource_descr, ps.leak_prc');
-
   with dsPayDocs.SQLs.SelectSQL do
   begin
-    Add(', CNT_PAYS, p.SUM_INTERED, p.FINE_SUM ');
-    Add(', p.c_SUM_leak');
-    Add(', round(ps.tax_prc * p.c_SUM_leak / 100, 2) as c_SUM_TAX');
-    Add(', ((p.SUM_INTERED + FINE_SUM) - round(((ps.tax_prc * p.c_SUM_leak / 100) + p.c_SUM_leak), 2)) as c_SUM_LEAK_TAX');
-    Add(', (coalesce(D.PAY_DOC_SUM,0) - coalesce(p.SUM_INTERED,0) - coalesce(p.FINE_SUM, 0) ) SUM_DIFFERENCE');
-    Add(', (coalesce(p.SUM_INTERED,0) + coalesce(p.FINE_SUM, 0) ) SUM_PAID');
-    Add(', (select count(*) from pay_errors pe where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors');
-    Add('from PAY_DOC D');
-    Add('left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYSOURCE_ID)');
-    Add('left outer join(select p.PAY_DOC_ID, count(*) as CNT_PAYS, sum(p.PAY_SUM) as SUM_INTERED');
-    Add(', sum(coalesce(Fine_Sum, 0)) as FINE_SUM ');
-    Add(', sum(coalesce(p.Cmsn, ((p.Pay_Sum + coalesce(p.Fine_Sum,0)) * ss.Leak_Prc)/ 100, 0)) as c_SUM_leak');
-    Add('  from PAYMENT p ');
-    Add('    inner join PAY_DOC ds on (p.Pay_Doc_Id = ds.Pay_Doc_Id)');
-    Add('    inner join PAYSOURCE ss on (ds.PAYSOURCE_ID = ss.PAYSOURCE_ID)');
+    Clear;
+    Add('select');
+    Add('    D.PAY_DOC_ID');
+    Add('  , D.PAYSOURCE_ID');
+    Add('  , D.PAY_DOC_NO');
+    Add('  , D.PAY_DOC_DATE');
+    Add('  , D.PAY_DOC_SUM');
+    Add('  , D.NOTICE');
+    Add('  , ps.paysource_descr');
+    Add('  , ps.leak_prc');
+    Add('  , ps.tax_prc');
+    Add('  , p.c_SUM_leak');
+    Add('  , iif(coalesce(ps.tax_prc,0) <> 0, round(p.SUM_Entered*ps.tax_prc/(100+ps.tax_prc),2), 0) as c_SUM_TAX');
+    Add('  , (p.TOTAL - round(iif(coalesce(ps.tax_prc,0) <> 0, round(p.SUM_Entered*ps.tax_prc/(100+ps.tax_prc),2), 0) + p.c_SUM_leak, 2)) as c_SUM_LEAK_TAX');
+    Add('  , p.SUM_Entered');
+    Add('  , p.SUM_Entered as SUM_Intered');
+    Add('  , p.TOTAL SUM_PAID');
+    Add('  , FINE_SUM');
+    Add('  , CNT_PAYS');
+    Add('  , (coalesce(D.PAY_DOC_SUM, 0) - p.TOTAL) as SUM_DIFFERENCE');
+    Add('  , (select count(*) from pay_errors pe where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors');
+    Add('  , coalesce(w.Surname, d.Added_By) Added_By');
+    Add('  , d.Added_On');
+    Add('  from PAY_DOC D');
+    Add('       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYSOURCE_ID)');
+    Add('       left outer join Worker w on (w.Ibname = d.Added_By)');
+    Add('       left outer join(select');
+    Add('                           p.PAY_DOC_ID');
+    Add('                         , count(*) as CNT_PAYS');
+    Add('                         , sum(p.PAY_SUM) as SUM_Entered');
+    Add('                         , sum(coalesce(p.Fine_Sum, 0)) as FINE_SUM');
+    Add('                         , sum(coalesce(p.Cmsn, ((coalesce(p.Pay_Sum,0) + coalesce(p.Fine_Sum,0)) * ss.Leak_Prc)/ 100, 0)) as c_SUM_leak');
+    Add('                         , sum(coalesce(p.Pay_Sum,0) + coalesce(p.Fine_Sum,0))  as TOTAL');
+    Add('                         from PAYMENT p');
+    Add('                           inner join PAY_DOC ds on (p.Pay_Doc_Id = ds.Pay_Doc_Id)');
+    Add('                           left outer join PAYSOURCE ss on (ds.PAYSOURCE_ID = ss.PAYSOURCE_ID)');
     if dmMain.SuperMode = 0 then
       Add('inner join customer c on (p.customer_id = c.customer_id and c.INVISIBLE = 0)');
-    Add('group by PAY_DOC_ID) P on (P.PAY_DOC_ID = D.PAY_DOC_ID)');
+    Add('                         group by PAY_DOC_ID) P on (P.PAY_DOC_ID = D.PAY_DOC_ID)');
   end;
 
   dsPayDocs.SQLs.RefreshSQL.Clear;

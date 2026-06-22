@@ -14,7 +14,6 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
   Font.Style = []
   FormStyle = fsStayOnTop
   KeyPreview = True
-  OldCreateOrder = True
   Position = poDesigned
   ShowHint = True
   OnClose = CustomDropDownFormEhClose
@@ -27,13 +26,12 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
   DesignSize = (
     726
     438)
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
-    Left = 3
-    Top = 37
-    Width = 719
-    Height = 398
+    Left = 1
+    Top = 33
+    Width = 723
+    Height = 404
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel2'
@@ -43,8 +41,8 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
     object MainGrid: TDBGridEh
       Left = 0
       Top = 0
-      Width = 719
-      Height = 398
+      Width = 723
+      Height = 404
       Align = alClient
       Border.EdgeBorders = [ebTop, ebRight, ebBottom]
       Border.ExtendedDraw = True
@@ -139,16 +137,16 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
     end
   end
   object Panel3: TPanel
-    Left = 3
-    Top = 6
-    Width = 720
+    Left = 1
+    Top = 2
+    Width = 724
     Height = 31
     Align = alTop
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
     DesignSize = (
-      720
+      724
       31)
     object SpeedButton3: TSpeedButton
       Left = 9
@@ -257,10 +255,10 @@ object MaterialsMoveSelect: TMaterialsMoveSelect
     end
   end
   object DBVertGridEh1: TDBVertGridEh
-    Left = 722
-    Top = 37
+    Left = 724
+    Top = 33
     Width = 1
-    Height = 398
+    Height = 404
     Align = alRight
     AllowedSelections = []
     Border.Color = clBtnShadow

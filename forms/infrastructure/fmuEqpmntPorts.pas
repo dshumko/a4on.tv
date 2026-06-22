@@ -85,7 +85,8 @@ type
   private
     FRightEdit: Boolean;
     FRightFull: Boolean;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     FIsVertical: Boolean;
     procedure EnableControls;
     function GetCustomerInfo: TCustomerInfo;
@@ -122,7 +123,8 @@ begin
   Caption := GetPageName;
 
   FRightFull := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Comm_Equipment));
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
   // полный доступ
   FRightEdit := (dmMain.AllowedAction(rght_Comm_Equipment_Ports)); // полный доступ
 
@@ -420,8 +422,8 @@ end;
 
 procedure TapgEqpmntPort.dbgCustomerColumns8GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TapgEqpmntPort.dbgCustomerDblClick(Sender: TObject);

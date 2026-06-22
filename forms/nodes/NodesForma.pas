@@ -14,7 +14,7 @@ uses
   pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
   MemTableDataEh,
   MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh, pFIBDataDriverEh,
-  amSplitter;
+  amSplitter, CnClasses;
 
 type
   TNodesForm = class(TForm)
@@ -179,6 +179,10 @@ type
     edtNAME1: TDBEditEh;
     lbl13: TLabel;
     ednPCE: TDBNumberEditEh;
+    lbl14: TLabel;
+    lcbTYPE_ID: TDBLookupComboboxEh;
+    dsLayoutType: TpFIBDataSet;
+    srcLayoutType: TDataSource;
     procedure lstFormsClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtSearchChange(Sender: TObject);
@@ -527,7 +531,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -552,6 +559,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := True;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
       end;
     end
     else if Font_size <> 0 then
@@ -1142,9 +1158,9 @@ begin
   {
     chkGroup.Enabled := not chkTREE.Checked;
   }
-  miTreeBreak.Visible := actTREE.Checked;
-  miTreeCollapse.Visible := actTREE.Checked;
-  miTreeExpand.Visible := actTREE.Checked;
+  miTreeBreak.Visible := actTree.Checked;
+  miTreeCollapse.Visible := actTree.Checked;
+  miTreeExpand.Visible := actTree.Checked;
 
   srcNodes.DataSet.DisableControls;
   if not srcNodes.DataSet.Active then
@@ -1190,7 +1206,7 @@ function TNodesForm.GenerateFilter: string;
 
   function RecordToFilter: string;
   var
-    tmpSQL: string;
+    tmpSQL, s: string;
   begin
     tmpSQL := '';
 
@@ -1226,13 +1242,54 @@ function TNodesForm.GenerateFilter: string;
     end;
 
     if (not dsFilter.FieldByName('NODE_TYPE').IsNull) then
-      tmpSQL := tmpSQL + Format(' and ( n.TYPE_ID = %s) ', [dsFilter.FieldByName('NODE_TYPE').AsString]);
+    begin
+      if (dsFilter.FieldByName('NODE_TYPE').AsInteger >= 0) then
+        tmpSQL := tmpSQL + Format(' and ( n.TYPE_ID = %s) ', [dsFilter.FieldByName('NODE_TYPE').AsString])
+      else
+        tmpSQL := tmpSQL + ' and ( n.TYPE_ID is null) ';
+    end;
 
     if (not dsFilter.FieldByName('NODE_ID').IsNull) then
       tmpSQL := tmpSQL + Format(' and ( n.NODE_ID = %s) ', [dsFilter.FieldByName('NODE_ID').AsString]);
 
     if (not dsFilter.FieldByName('EPOINT').IsNull) then
-      tmpSQL := tmpSQL + Format(' and ( n.EPOINT = %s) ', [dsFilter.FieldByName('EPOINT').AsString]);
+    begin
+      if (dsFilter.FieldByName('EPOINT').AsInteger >= 0) then
+        tmpSQL := tmpSQL + Format(' and ( n.EPOINT = %s) ', [dsFilter.FieldByName('EPOINT').AsString])
+      else
+        tmpSQL := tmpSQL + ' and ( n.EPOINT is null) ';
+    end;
+
+    // установлен атрибут
+    if (not dsFilter.FieldByName('ATTRIBUTE').IsNull) then
+    begin
+      if (not dsFilter.FieldByName('ATTRIBUTE_VALUE').IsNull) then
+        s := Trim(dsFilter.FieldByName('ATTRIBUTE_VALUE').AsString)
+      else
+        s := '';
+
+      tmpSQL := tmpSQL + ' AND (';
+
+      if (not dsFilter.FieldByName('NOT_ATTRIBUTE').IsNull) and (dsFilter.FieldByName('NOT_ATTRIBUTE').AsInteger = 1)
+      then
+        tmpSQL := tmpSQL + ' not ';
+
+      // атрибут абонента
+      tmpSQL := tmpSQL + 'exists (SELECT NA.NODE_ID FROM NODES_ATTRIBUTES NA ' +
+        ' WHERE NA.NODE_ID = N.NODE_Id AND NA.O_ID = ' + dsFilter.FieldByName('ATTRIBUTE').AsString;
+
+      if s <> '' then
+      begin
+        if Pos('%', s) > 0 then
+          s := ' like ''' + s + ''''
+        else
+          s := ' = ''' + s + '''';
+
+        tmpSQL := tmpSQL + ' AND NA.na_value ' + s;
+      end;
+
+      tmpSQL := tmpSQL + ' ))';
+    end;
 
     if (tmpSQL <> '') then
       Result := TrimAnd(tmpSQL)
@@ -1649,6 +1706,7 @@ begin
 
   dsHomes.Open;
   dsNodeType.Open;
+  dsLayoutType.Open;
   dsStreets.Open;
   dsParentNode.Open;
   dsEPoint.Open;
@@ -1695,6 +1753,7 @@ begin
   end;
 
   dsNodeType.Close;
+  dsLayoutType.Close;
   dsParentNode.Close;
   dsEPoint.Close;
 

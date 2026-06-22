@@ -13,7 +13,6 @@
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -22,7 +21,6 @@
   DesignSize = (
     484
     331)
-  PixelsPerInch = 96
   TextHeight = 13
   object lblAttribute: TLabel
     Left = 5
@@ -114,6 +112,7 @@
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = srcMat
     DynProps = <>
+    Flat = True
     TabOrder = 8
     Columns = <
       item

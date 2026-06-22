@@ -13,7 +13,7 @@ uses
   GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
   DBAxisGridsEh,
   DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TTaskForm = class(TGridForm)

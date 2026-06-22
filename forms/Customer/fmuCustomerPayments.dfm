@@ -10,9 +10,7 @@ object apgCustomerPayments: TapgCustomerPayments
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgCustPayment: TDBGridEh
     Left = 26
@@ -452,69 +450,81 @@ object apgCustomerPayments: TapgCustomerPayments
       'where PAYMENT_ID = :OLD_PAYMENT_ID')
     SelectSQL.Strings = (
       'select'
-      '*'
-      'from ('
-      'select'
-      '    P.PAY_DOC_ID'
-      '  , P.PAYMENT_ID'
-      '  , P.PAY_DATE'
-      '  , P.PAY_SUM'
-      '  , P.PAY_SUM VIEW_SUM  '
-      '  , D.PAY_DOC_NO'
-      '  , P.EXT_PAY_ID'
-      '  , D.PAY_DOC_DATE'
-      '  , PS.PAYSOURCE_DESCR'
-      '  , P.CUSTOMER_ID'
-      '  , P.NOTICE'
-      '  , P.FINE_SUM'
-      '  , (coalesce(p.Pay_Sum, 0) + coalesce(p.Fine_Sum, 0)) PAID'
-      '  , coalesce(W.SURNAME, p.ADDED_BY) as WHO_ADD'
-      '  , R.NAME'
-      '  , 1 PT'
-      '  , p.DEBT_SAVE'
-      '  , p.DEBT_SAVE*-1 BAL_SAVE'
-      '  , p.RQ_ID'
-      '  , P.Added_On'
-      '  , p.LCPS  '
-      '  from PAYMENT P'
-      '       inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC_ID)'
+      '    *'
+      '  from (select'
+      '            P.PAY_DOC_ID'
+      '          , P.PAYMENT_ID'
+      '          , P.PAY_DATE'
+      '          , P.PAY_SUM'
+      '          , P.PAY_SUM VIEW_SUM'
+      '          , D.PAY_DOC_NO'
+      '          , P.EXT_PAY_ID'
+      '          , D.PAY_DOC_DATE'
+      '          , PS.PAYSOURCE_DESCR'
+      '          , P.CUSTOMER_ID'
+      '          , P.NOTICE'
+      '          , P.FINE_SUM'
+      '          ,'
       
-        '       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYS' +
-        'OURCE_ID)'
+        '            (coalesce(p.Pay_Sum, 0) + coalesce(p.Fine_Sum, 0)) P' +
+        'AID'
+      '          , coalesce(W.SURNAME, p.ADDED_BY) as WHO_ADD'
+      '          , R.NAME'
+      '          , 1 PT'
+      '          , p.DEBT_SAVE'
+      '          , p.DEBT_SAVE * -1 BAL_SAVE'
+      '          , p.RQ_ID'
+      '          , P.Added_On'
+      '          , p.LCPS'
+      '          from PAYMENT P'
       
-        '       left outer join SERVICES R on (P.PAYMENT_SRV = R.SERVICE_' +
-        'ID)'
+        '               inner join PAY_DOC D on (P.PAY_DOC_ID = D.PAY_DOC' +
+        '_ID)'
       
-        '       left outer join worker w on (w.Ibname = p.ADDED_BY)      ' +
-        ' '
-      '  where P.CUSTOMER_ID = :CUSTOMER_ID'
-      'union'
-      'select'
-      '    0 PAY_DOC_ID'
-      '  , o.Ppd_Id PAYMENT_ID'
-      '  , cast(o.Ppd_Date as DATE) PAY_DATE'
-      '  , null PAY_SUM'
-      '  , o.Ppd_Sum VIEW_SUM  '
-      '  , '#39#39' PAY_DOC_NO'
-      '  , '#39#39' EXT_PAY_ID'
-      '  , cast(o.Ppd_Date as DATE) PAY_DOC_DATE'
-      '  , '#39#39' PAYSOURCE_DESCR'
-      '  , o.CUSTOMER_ID'
-      '  , '#39#1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078#39' NOTICE'
-      '  , 0 FINE_SUM'
-      '  , 0 PAID'
-      '  , coalesce(W.SURNAME, o.Who_Add) WHO_ADD'
-      '  , '#39#39' NAME'
-      '  , 0 PT'
-      '  , o.DEBT_SAVE'
-      '  , o.DEBT_SAVE*-1 BAL_SAVE'
-      '  , null RQ_ID   '
-      '  , O.Ppd_Date Added_On'
-      '  , null LCPS'
-      '  from Prepay_Detail o'
-      '       left outer join worker w on (w.Ibname = o.Who_Add)'
-      '  where o.CUSTOMER_ID = :CUSTOMER_ID'
-      ')')
+        '               left outer join PAYSOURCE PS on (D.PAYSOURCE_ID =' +
+        ' PS.PAYSOURCE_ID)'
+      
+        '               left outer join SERVICES R on (P.PAYMENT_SRV = R.' +
+        'SERVICE_ID)'
+      
+        '               left outer join worker w on (w.Ibname = p.ADDED_B' +
+        'Y)'
+      '          where P.CUSTOMER_ID = :CUSTOMER_ID'
+      '        union'
+      '        select'
+      '            *'
+      '          from (select @@PREP_1@'
+      '                    0 PAY_DOC_ID'
+      '                  , o.Ppd_Id PAYMENT_ID'
+      '                  , cast(o.Ppd_Date as date) PAY_DATE'
+      '                  , null PAY_SUM'
+      '                  , o.Ppd_Sum VIEW_SUM'
+      '                  , '#39#39' PAY_DOC_NO'
+      '                  , '#39#39' EXT_PAY_ID'
+      '                  , cast(o.Ppd_Date as date) PAY_DOC_DATE'
+      '                  , '#39#39' PAYSOURCE_DESCR'
+      '                  , o.CUSTOMER_ID'
+      '                  , '#39#1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078#39' NOTICE'
+      '                  , 0 FINE_SUM'
+      '                  , 0 PAID'
+      '                  , coalesce(W.SURNAME, o.Who_Add) WHO_ADD'
+      '                  , '#39#39' NAME'
+      '                  , 0 PT'
+      '                  , o.DEBT_SAVE'
+      '                  , o.DEBT_SAVE * -1 BAL_SAVE'
+      '                  , null RQ_ID'
+      '                  , O.Ppd_Date Added_On'
+      '                  , null LCPS'
+      '                  from Prepay_Detail o'
+      '                  @@PREP_F@'
+      
+        '                       left outer join worker w on (w.Ibname = o' +
+        '.Who_Add)'
+      '                  where o.CUSTOMER_ID = :CUSTOMER_ID'
+      '                  @@PREP_W@'
+      '                  @@PREP_O@'
+      '          )'
+      '  )')
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV

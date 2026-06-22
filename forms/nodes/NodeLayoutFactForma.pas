@@ -11,7 +11,7 @@ uses
   A4onTypeUnit,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   MemTableDataEh, Vcl.Buttons, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  System.Actions, Vcl.ActnList, PropFilerEh, PropStorageEh;
+  System.Actions, Vcl.ActnList, PropFilerEh, PropStorageEh, CnClasses;
 
 type
 
@@ -133,7 +133,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -160,6 +163,14 @@ begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
+
+      if ShowToolTips and (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+      begin
+        (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
+      end;
     end
     else if Font_size <> 0 then
     begin
@@ -176,7 +187,7 @@ procedure TNodeLayoutFactForm.OkClick(Sender: TObject);
 var
   errors: Boolean;
 begin
-  errors := false;
+
   if (mtLayout.State = dsEdit) then
     mtLayout.Post;
 
@@ -237,7 +248,7 @@ begin
   if vMatList.IsEmpty then
     Exit;
 
-  with TpFIBQuery.Create(self) do
+  with TpFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;

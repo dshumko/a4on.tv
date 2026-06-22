@@ -12,7 +12,6 @@ object DVBEqGenForm: TDVBEqGenForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -21,7 +20,6 @@ object DVBEqGenForm: TDVBEqGenForm
   DesignSize = (
     389
     234)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 8

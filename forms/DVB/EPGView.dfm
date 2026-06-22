@@ -13,7 +13,6 @@ object EPGViewForm: TEPGViewForm
   FormStyle = fsMDIChild
   KeyPreview = True
   Menu = mmEPG
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -21,7 +20,6 @@ object EPGViewForm: TEPGViewForm
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 185
@@ -36,13 +34,15 @@ object EPGViewForm: TEPGViewForm
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitHeight = 352
     object Label2: TLabel
       Left = 0
       Top = 0
-      Width = 84
+      Width = 185
       Height = 13
       Align = alTop
       Caption = ' '#1057#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074
+      ExplicitWidth = 84
     end
     object dbgChannels: TDBGridEh
       Left = 0
@@ -58,10 +58,8 @@ object EPGViewForm: TEPGViewForm
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghPreferIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = False
       STFilter.InstantApply = False
       STFilter.Local = True
-      STFilter.Location = stflUnderTitleFilterEh
       STFilter.Visible = True
       SumList.Active = True
       TabOrder = 0
@@ -108,13 +106,15 @@ object EPGViewForm: TEPGViewForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitHeight = 352
     object Label1: TLabel
       Left = 0
       Top = 0
-      Width = 108
+      Width = 713
       Height = 13
       Align = alTop
       Caption = #1056#1072#1089#1087#1080#1089#1072#1085#1080#1077' '#1087#1088#1086#1075#1088#1072#1084#1084
+      ExplicitWidth = 108
     end
     object dbgEPG: TDBGridEh
       Left = 0
@@ -982,7 +982,7 @@ object EPGViewForm: TEPGViewForm
       OnExecute = actReloadEPGExecute
     end
     object actGetEmptyEPG: TAction
-      Hint = #1055#1086#1082#1072#1079#1072#1090#1100' '#1082#1072#1085#1072#1083#1099' '#1073#1077#1079' EPG'
+      Hint = #1055#1086#1082#1072#1079#1072#1090#1100' '#1082#1072#1085#1072#1083#1099' '#1074#1077#1097#1072#1077#1084#1099#1077' '#1074' DVB '#1073#1077#1079' EPG'
       ImageIndex = 19
       OnExecute = actGetEmptyEPGExecute
     end

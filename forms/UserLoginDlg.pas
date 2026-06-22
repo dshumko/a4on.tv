@@ -6,15 +6,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Classes, System.Actions,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Buttons, Vcl.Mask, Vcl.Grids,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Buttons, Vcl.Mask,
+  Vcl.Grids,
   Vcl.Imaging.pngimage,
   DBCtrlsEh, PrjConst;
-
-{$IFDEF Scale4k}
-
-const
-  WM_DPICHANGED = 736; // 0x02E0
-{$ENDIF}
 
 type
   TUserLoginDialog = class(TForm)
@@ -43,8 +38,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure mbbCancelClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure cbSERVERNotInList(Sender: TObject; NewText: String;
-      var RecheckInList: Boolean);
+    procedure cbSERVERNotInList(Sender: TObject; NewText: String; var RecheckInList: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure actEditDBExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -55,19 +49,15 @@ type
     procedure LoadListOfDataBases;
     procedure SetDataBase(const Value: string);
     function GetDataBase: string;
-{$IFDEF Scale4k}
-    procedure WMDpiChanged(var Message: TMessage); message WM_DPICHANGED;
-{$ENDIF}
   public
     { Public declarations }
-    procedure CreateParams(VAR Params: TCreateParams);
+    procedure CreateParams(VAR Params: TCreateParams); override;
     property DataBase: string read GetDataBase write SetDataBase;
   end;
 
 function LoginDialog(var ADatabaseName, AUserName, APassword: string): Boolean;
 // Возвращает базу пароль логин и алиас (название) базы
-function LoginDialogA(var ADatabaseName, AUserName, APassword,
-  ADatabaseAlias: string): Boolean;
+function LoginDialogA(var ADatabaseName, AUserName, APassword, ADatabaseAlias: string): Boolean;
 
 implementation
 
@@ -82,7 +72,7 @@ function LoginDialog(var ADatabaseName, AUserName, APassword: string): Boolean;
 var
   LoginDlg: TUserLoginDialog;
 begin
-  LoginDlg := TUserLoginDialog.Create(nil);
+  LoginDlg := TUserLoginDialog.Create(Application);
   with LoginDlg do
     try
       DataBase := ADatabaseName;
@@ -99,12 +89,11 @@ begin
     end
 end;
 
-function LoginDialogA(var ADatabaseName, AUserName, APassword,
-  ADatabaseAlias: string): Boolean;
+function LoginDialogA(var ADatabaseName, AUserName, APassword, ADatabaseAlias: string): Boolean;
 var
   LoginDlg: TUserLoginDialog;
 begin
-  LoginDlg := TUserLoginDialog.Create(nil);
+  LoginDlg := TUserLoginDialog.Create(Application);
   with LoginDlg do
     try
       DataBase := ADatabaseName;
@@ -122,39 +111,6 @@ begin
       Free;
     end
 end;
-
-{$IFDEF Scale4k}
-
-procedure TUserLoginDialog.WMDpiChanged(var Message: TMessage);
-{$IFDEF DELPHI_STYLE_SCALING}
-  function FontHeightAtDpi(aDPI, aFontSize: integer): integer;
-  var
-    tmpCanvas: TCanvas;
-  begin
-    tmpCanvas := TCanvas.Create;
-    try
-      tmpCanvas.Handle := GetDC(0);
-      tmpCanvas.Font.Assign(self.Font);
-      tmpCanvas.Font.PixelsPerInch := aDPI; // must be set BEFORE size
-      tmpCanvas.Font.size := aFontSize;
-      Result := tmpCanvas.TextHeight('0');
-    finally
-      tmpCanvas.Free;
-    end;
-  end;
-{$ENDIF}
-
-begin
-  inherited;
-{$IFDEF DELPHI_STYLE_SCALING}
-  ChangeScale(FontHeightAtDpi(LOWORD(Message.wParam), self.Font.size),
-    FontHeightAtDpi(self.PixelsPerInch, self.Font.size));
-{$ELSE}
-  ChangeScale(LOWORD(Message.wParam), self.PixelsPerInch);
-{$ENDIF}
-  self.PixelsPerInch := LOWORD(Message.wParam);
-end;
-{$ENDIF}
 
 procedure TUserLoginDialog.SetDataBase(const Value: string);
 var
@@ -278,12 +234,10 @@ begin
         while (not lzForm.temp.Eof) do
         begin
           if (lzForm.temp.FieldByName('IP').AsString <> '') then
-            c1 := lzForm.temp.FieldByName('IP').AsString + ':' +
-              lzForm.temp.FieldByName('WAY').AsString
+            c1 := lzForm.temp.FieldByName('IP').AsString + ':' + lzForm.temp.FieldByName('WAY').AsString
           else
             c1 := lzForm.temp.FieldByName('WAY').AsString;
-          AppIni.WriteString('DATABASES', lzForm.temp.FieldByName('NAME')
-            .AsString, c1);
+          AppIni.WriteString('DATABASES', lzForm.temp.FieldByName('NAME').AsString, c1);
           lzForm.temp.Next;
         end;
       except
@@ -310,8 +264,7 @@ begin
   FDatabases.Free;
 end;
 
-procedure TUserLoginDialog.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TUserLoginDialog.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
     actLoginExecute(Sender);
@@ -340,7 +293,6 @@ end;
 
 procedure TUserLoginDialog.mbbCancelClick(Sender: TObject);
 begin
-  // Halt;
   ModalResult := mrCancel;
 end;
 
@@ -349,8 +301,7 @@ begin
   UpdateKbdState;
 end;
 
-procedure TUserLoginDialog.cbSERVERNotInList(Sender: TObject; NewText: String;
-  var RecheckInList: Boolean);
+procedure TUserLoginDialog.cbSERVERNotInList(Sender: TObject; NewText: String; var RecheckInList: Boolean);
 var
   InputString: string;
   AppIni: TIniFile;
@@ -382,8 +333,10 @@ end;
 procedure TUserLoginDialog.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params); { CreateWindowEx }
-  Params.ExStyle := Params.ExStyle or WS_EX_APPWINDOW;
-  Params.WndParent := GetDesktopWindow; // дочерняя форма рабочего стола
+  // Params.ExStyle := Params.ExStyle or WS_EX_APPWINDOW;
+  // Params.WndParent := GetDesktopWindow; // дочерняя форма рабочего стола
+  // Params.ExStyle := Params.ExStyle or WS_EX_APPWINDOW;﻿
+  // Params.WndParent := 0;
 end;
 
 procedure TUserLoginDialog.edUserExit(Sender: TObject);

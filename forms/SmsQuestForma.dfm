@@ -33,8 +33,8 @@ object SmsQuestForm: TSmsQuestForm
   object lblText: TLabel
     Left = 8
     Top = 8
-    Width = 343
-    Height = 25
+    Width = 145
+    Height = 13
     Anchors = [akLeft, akTop, akRight]
     Caption = #1050' '#1086#1090#1087#1088#1072#1074#1082#1077' '#1061' '#1087#1086#1083#1091#1095#1072#1090#1077#1083#1077#1081' Y'
   end

@@ -12,7 +12,6 @@ object OrdersTPForm: TOrdersTPForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
@@ -20,7 +19,6 @@ object OrdersTPForm: TOrdersTPForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAll: TPanel
     Left = 0
@@ -29,6 +27,7 @@ object OrdersTPForm: TOrdersTPForm
     Height = 461
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 441
     object dbgOrdersTP: TDBGridEh
       Left = 1
       Top = 30

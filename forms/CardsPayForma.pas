@@ -345,7 +345,7 @@ begin
       Screen.Cursor := crHourGlass;
       for I := 0 to (dbgrdhCardPay.SelectedRows.Count - 1) do
       begin
-        Ds.GotoBookmark(pointer(dbgrdhCardPay.SelectedRows.Items[I]));
+        Ds.GotoBookmark(TBookMark(dbgrdhCardPay.SelectedRows.Items[I]));
         Ds.Delete;
       end;
     finally

@@ -104,8 +104,6 @@ begin
 end;
 
 procedure TPaymentEditFrm.FindCustomer(const lic, code: string; const id: Integer);
-var
-  s: string;
 begin
   bbOk.Enabled := false;
 

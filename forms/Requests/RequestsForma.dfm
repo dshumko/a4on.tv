@@ -13,7 +13,6 @@ object RequestsForm: TRequestsForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = True
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -21,7 +20,6 @@ object RequestsForm: TRequestsForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object ToolBar1: TToolBar
     Left = 0
@@ -1386,6 +1384,7 @@ object RequestsForm: TRequestsForm
             Height = 13
             Align = alTop
             Caption = #1042#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100' '
+            ExplicitWidth = 136
           end
           object splWork: TSplitter
             Left = 164
@@ -1442,6 +1441,8 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
+                ExplicitWidth = 350
+                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 350
                   Height = 176
@@ -1571,6 +1572,8 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
+                ExplicitWidth = 271
+                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 271
                   Height = 176

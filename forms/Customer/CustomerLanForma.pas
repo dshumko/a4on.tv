@@ -13,7 +13,7 @@ uses
   Vcl.ExtCtrls,
   OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
   FIBDatabase,
-  pFIBDatabase, A4onTypeUnit, EhlibFIB;
+  pFIBDatabase, A4onTypeUnit, EhlibFIB, CnClasses;
 
 type
   TCustomerLanForm = class(TForm)
@@ -473,11 +473,12 @@ begin
     Exit;
 
   with TpFIBQuery.Create(Nil) do
+  begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
       sql.Clear;
-      sql.Add(' select Id, Info, Mac, Ip_Where from FIND_IP_INFO(:ip, :VLAN_id)');
+      sql.Add('select Id, Info, Mac, Ip_Where from FIND_IP_INFO(:ip, :VLAN_id)');
       if VLAN_ID <> -1 then
         ParamByName('VLAN_id').AsInteger := VLAN_ID;
 
@@ -502,6 +503,7 @@ begin
     finally
       free;
     end;
+  end;
 end;
 
 function TCustomerLanForm.CheckUniqMAC(const MAC: String): string;
@@ -511,6 +513,7 @@ begin
     Exit;
 
   with TpFIBQuery.Create(Nil) do
+  begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
@@ -537,6 +540,7 @@ begin
     finally
       free;
     end;
+  end;
 end;
 
 procedure TCustomerLanForm.CheckPort();
@@ -1842,4 +1846,3 @@ begin
 end;
 
 end.
-

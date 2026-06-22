@@ -12,11 +12,9 @@ object RequestResult: TRequestResult
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
-  OnKeyDown = FormKeyDown
   ShowHint = True
-  PixelsPerInch = 96
+  OnKeyDown = FormKeyDown
   TextHeight = 13
   object lbl1: TLabel
     Left = 8
@@ -40,20 +38,31 @@ object RequestResult: TRequestResult
     Align = alBottom
     TabOrder = 0
     TabStop = True
+    ExplicitTop = 146
+    ExplicitWidth = 440
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 210
       Width = 140
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = frmOkbbOkClick
+      ExplicitLeft = 210
+      ExplicitWidth = 140
     end
     inherited bbCancel: TBitBtn
       Left = 356
+      ExplicitLeft = 356
     end
   end
   object edNAME: TDBEditEh
@@ -65,6 +74,7 @@ object RequestResult: TRequestResult
     DataSource = srcResult
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 1
     Visible = True
   end
@@ -91,6 +101,7 @@ object RequestResult: TRequestResult
     DataSource = srcResult
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 3
     Visible = True
     WantReturns = True

@@ -14,7 +14,6 @@ object CustomersForm: TCustomersForm
   FormStyle = fsMDIChild
   KeyPreview = True
   Menu = mmMenu
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -24,7 +23,6 @@ object CustomersForm: TCustomersForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object splMain: TSplitter
     Left = 0
@@ -57,7 +55,6 @@ object CustomersForm: TCustomersForm
       Height = 251
       Align = alClient
       BevelOuter = bvNone
-      Caption = '````'
       TabOrder = 1
     end
     object pnlGrdForms: TPanel
@@ -396,6 +393,7 @@ object CustomersForm: TCustomersForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
+        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46
@@ -1493,6 +1491,14 @@ object CustomersForm: TCustomersForm
     Top = 331
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
+        object SRVATTR: TMTNumericDataFieldEh
+          FieldName = 'SRVATTR'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
         object FLAT_NO: TMTStringDataFieldEh
           FieldName = 'FLAT_NO'
           StringDataType = fdtStringEh

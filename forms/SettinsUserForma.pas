@@ -8,7 +8,9 @@ uses
   System.Win.ComObj,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
-  DBCtrlsEh;
+  DBCtrlsEh,
+  // Styles
+  System.Rtti, Vcl.Themes, Vcl.Styles;
 
 type
   TSettingsUserForm = class(TForm)
@@ -55,6 +57,9 @@ type
     chkAlwaysShow: TCheckBox;
     chkShowWorks: TCheckBox;
     chkQuckFilter: TCheckBox;
+    lbl3: TLabel;
+    cbStyles: TDBComboBoxEh;
+    chkShowToolTips: TCheckBox;
     procedure frmOkCancelbbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbAutoClick(Sender: TObject);
@@ -63,9 +68,12 @@ type
     procedure btnDelSettingsClick(Sender: TObject);
     procedure btnFontClick(Sender: TObject);
     procedure btnExploreClick(Sender: TObject);
+    procedure cbStylesChange(Sender: TObject);
   private
     { Private declarations }
     CallExist: Boolean;
+    FCurrentStyle: String;
+    procedure CreateStyleItems;
   public
     { Public declarations }
   end;
@@ -106,10 +114,31 @@ begin
   edMinutes.Enabled := cbAuto.Checked;
 end;
 
+procedure TSettingsUserForm.cbStylesChange(Sender: TObject);
+begin
+  FCurrentStyle := cbStyles.Value;
+end;
+
 procedure TSettingsUserForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
     frmOkCancelbbOkClick(Sender);
+end;
+
+procedure TSettingsUserForm.CreateStyleItems;
+var
+  s: String;
+begin
+  cbStyles.OnChange := nil;
+  cbStyles.Items.Clear;
+  cbStyles.KeyItems.Clear;
+  for s in TStyleManager.StyleNames do
+  begin
+    cbStyles.Items.Add(s);
+    cbStyles.KeyItems.Add(s);
+  end;
+  cbStyles.Value := TStyleManager.ActiveStyle.name;
+  FCurrentStyle := TStyleManager.ActiveStyle.name;
 end;
 
 procedure TSettingsUserForm.FormShow(Sender: TObject);
@@ -124,7 +153,10 @@ procedure TSettingsUserForm.FormShow(Sender: TObject);
 
 var
   i: Integer;
+  s: String;
 begin
+  CreateStyleItems;
+
   CallExist := False;
 
   ReadCheckSettings('SHOWFILTER', cbShowFilter);
@@ -173,13 +205,15 @@ begin
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     btnFont.Font.Size := i;
-    btnFont.Font.Name := dmMain.GetIniValue('FONT_NAME');
+    btnFont.Font.name := dmMain.GetIniValue('FONT_NAME');
   end;
 
   if TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     ednRH.Value := i
   else
     ednRH.Value := 0;
+
+  chkShowToolTips.Checked := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
 
   if not TryStrToInt(dmMain.GetIniValue('BUTTONS'), i) then
     i := 0;
@@ -192,6 +226,10 @@ begin
 
   chkPrintBothCheck.Enabled := FileExists(ExtractFilePath(Application.ExeName) + 'cashrgst.dll');
   edtCBPSWD.Enabled := chkPrintBothCheck.Enabled;
+
+  s := dmMain.GetIniValue('AppStyle');
+  // if not s.IsEmpty then
+  cbStyles.Text := s;
 end;
 
 procedure TSettingsUserForm.frmOkCancelbbOkClick(Sender: TObject);
@@ -254,9 +292,16 @@ begin
     i := (i or chkBtnT.Tag);
   dmMain.SetIniValue('BUTTONS', IntToStr(i));
 
+  if chkShowToolTips.Checked then
+    dmMain.SetIniValue('SHOW_TOOLTIPS', '1')
+  else
+    dmMain.SetIniValue('SHOW_TOOLTIPS', '0');
+
   dmMain.SetIniValue('FONT_SIZE', IntToStr(btnFont.Font.Size));
-  dmMain.SetIniValue('FONT_NAME', btnFont.Font.Name);
+  dmMain.SetIniValue('FONT_NAME', btnFont.Font.name);
   dmMain.SetIniValue('ROW_HEIGHT', ednRH.Text);
+  if cbStyles.Text <> '' then
+    dmMain.SetIniValue('AppStyle', cbStyles.Text);
 
   ModalResult := mrOk;
 end;

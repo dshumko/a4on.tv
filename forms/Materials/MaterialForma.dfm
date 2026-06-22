@@ -11,7 +11,6 @@ object MaterialForm: TMaterialForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -21,7 +20,6 @@ object MaterialForm: TMaterialForm
   DesignSize = (
     481
     422)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 6

@@ -13,14 +13,12 @@ object NodeAttributForm: TNodeAttributForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     401
     194)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -51,15 +49,30 @@ object NodeAttributForm: TNodeAttributForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
+    ExplicitTop = 159
+    ExplicitWidth = 401
+    inherited Label2: TLabel
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
+    end
+    inherited Label1: TLabel
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
+    end
     inherited bbOk: TBitBtn
       Left = 67
       Width = 245
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 67
+      ExplicitWidth = 245
     end
     inherited bbCancel: TBitBtn
       Left = 318
+      ExplicitLeft = 318
     end
   end
   object dbluAttribute: TDBLookupComboboxEh
@@ -149,7 +162,9 @@ object NodeAttributForm: TNodeAttributForm
       '        and (( not exists(select'
       '                               ca.o_id'
       '                             from NODES_ATTRIBUTES ca'
-      '                             where ca.o_id = o1.O_ID and ca.node_id = :CID))'
+      
+        '                             where ca.o_id = o1.O_ID and ca.node' +
+        '_id = :CID))'
       '          or (1 = :IS_OLD))'
       '  order by O_NAME')
     AutoCalcFields = False

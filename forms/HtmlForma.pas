@@ -7,7 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus,
   Vcl.ComCtrls,
-  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh, HTMLUn2, HtmlView,
+  SynEditHighlighter, OverbyteIcsWndControl, OverbyteIcsTnCnx, DBCtrlsEh,
+  //{$IFDEF USE_PIXIE}
+ // Pixie.HtmlView.VCL, Pixie.Document,
+ // {$ELSE}
+  HTMLUn2, HtmlView,
+ // {$IFEND}
+
 {$IFDEF INDY}
   IdBaseComponent,
   IdComponent, IdGlobal,

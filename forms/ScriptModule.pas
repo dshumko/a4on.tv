@@ -54,9 +54,9 @@ var
 implementation
 
 uses
-  Data.DB, pFIBQuery, FIBQuery,
-  Vcl.Grids, Vcl.Forms,
-  RxStrUtils, synacode, mormot.crypt.core,
+  Data.DB, System.NetEncoding, System.Hash, Vcl.Grids, Vcl.Forms,
+  pFIBQuery, FIBQuery,
+  RxStrUtils, mormot.crypt.core,
   AtrStrUtils, atrCmdUtils,
   DM, MAIN;
 
@@ -120,10 +120,10 @@ begin
     Result := System.SysUtils.RenameFile(Params[0], Params[1])
   else if MethodName = 'OEMTOANSISTR' then
     Result := OemToAnsiStr(Params[0])
-  else if MethodName = 'BASE64_DECODE' then
-    Result := DecodeBase64(Params[0])
-  else if MethodName = 'BASE64_ENCODE' then
-    Result := EncodeBase64(Params[0])
+  else if MethodName = 'BASE64_ENCODE' then // я напутал с названием, нужно наоборот, но будет уже так
+    Result := TNetEncoding.Base64.EncodeBytesToString(TEncoding.UTF8.GetBytes(String(Params[0]))) // DecodeBase64(AnsiString(Params[0]))
+  else if MethodName = 'BASE64_DECODE' then // я напутал с названием, нужно наоборот, но будет уже так
+     Result := TEncoding.UTF8.GetString(TNetEncoding.Base64.DecodeStringToBytes(String(Params[0]))) // EncodeBase64(AnsiString(Params[0]))
   else if MethodName = 'FROMWINTOUTF8' then
     Result := FromWinToUtf8(Params[0])
   else if MethodName = 'FROMUTF8TODOS' then

@@ -11,7 +11,7 @@ uses
   DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst,
   Vcl.Mask, FIBDatabase, pFIBDatabase, pFIBDataSet, MemTableDataEh,
-  MemTableEh, amSplitter;
+  MemTableEh, amSplitter, CnClasses;
 
 type
   TMatDocUnitForm = class(TForm)
@@ -383,7 +383,9 @@ var
   Font_size: Integer;
   Font_name, S: string;
   Row_height: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -413,6 +415,15 @@ begin
         if (S.Contains('NOTICE') or S.Contains('DESCRIPTION')) and
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := True;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
       end;
     end
     else if Font_size <> 0 then

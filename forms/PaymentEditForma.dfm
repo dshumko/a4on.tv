@@ -2,9 +2,10 @@ object PaymentEditFrm: TPaymentEditFrm
   Left = 0
   Top = 0
   ActiveControl = dePaySum
+  BorderIcons = [biSystemMenu]
   Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1077' '#1087#1083#1072#1090#1077#1078#1072
-  ClientHeight = 328
-  ClientWidth = 400
+  ClientHeight = 346
+  ClientWidth = 416
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,18 +13,16 @@ object PaymentEditFrm: TPaymentEditFrm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAbonent: TPanel
     Left = 0
     Top = 7
-    Width = 400
+    Width = 416
     Height = 130
     Align = alTop
     BevelOuter = bvNone
@@ -43,6 +42,7 @@ object PaymentEditFrm: TPaymentEditFrm
         Height = 13
         Align = alTop
         Caption = '  '#1055#1086#1080#1089#1082' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1087#1086':'
+        ExplicitWidth = 106
       end
       object Label2: TLabel
         Left = 5
@@ -103,37 +103,38 @@ object PaymentEditFrm: TPaymentEditFrm
     inline CustomerInfoFrm: TCustomerInfoFrm
       Left = 172
       Top = 0
-      Width = 228
+      Width = 244
       Height = 130
       Align = alClient
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
+      ExplicitLeft = 172
+      ExplicitWidth = 244
+      ExplicitHeight = 130
       inherited gbInfo: TGroupBox
-        Width = 228
+        Width = 244
         Height = 130
-        inherited HtmlViewer: THtmlViewer
-          Width = 224
-          Height = 113
-        end
+        ExplicitWidth = 244
+        ExplicitHeight = 130
       end
     end
   end
   object pnlButtons: TPanel
     Left = 0
-    Top = 290
-    Width = 400
+    Top = 308
+    Width = 416
     Height = 38
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 5
     DesignSize = (
-      400
+      416
       38)
     object bbOk: TBitBtn
       Left = 59
       Top = 6
-      Width = 249
+      Width = 265
       Height = 25
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
@@ -142,7 +143,7 @@ object PaymentEditFrm: TPaymentEditFrm
       OnClick = bbOkClick
     end
     object bbCancel: TBitBtn
-      Left = 314
+      Left = 330
       Top = 6
       Width = 80
       Height = 25
@@ -156,13 +157,13 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlSRV: TPanel
     Left = 0
     Top = 215
-    Width = 400
+    Width = 416
     Height = 28
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 4
     DesignSize = (
-      400
+      416
       28)
     object lPaymentSrv: TLabel
       Left = 5
@@ -174,7 +175,7 @@ object PaymentEditFrm: TPaymentEditFrm
     object luPaymentSrv: TDBLookupComboboxEh
       Left = 89
       Top = 2
-      Width = 305
+      Width = 321
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -192,13 +193,13 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlFine: TPanel
     Left = 0
     Top = 137
-    Width = 400
+    Width = 416
     Height = 26
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      400
+      416
       26)
     object lbl1: TLabel
       Left = 5
@@ -234,7 +235,7 @@ object PaymentEditFrm: TPaymentEditFrm
       Tag = 13
       Left = 280
       Top = 2
-      Width = 114
+      Width = 130
       Height = 21
       TabStop = False
       Anchors = [akLeft, akTop, akRight]
@@ -258,13 +259,13 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlTYPE: TPanel
     Left = 0
     Top = 163
-    Width = 400
+    Width = 416
     Height = 26
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      400
+      416
       26)
     object Label3: TLabel
       Left = 5
@@ -276,7 +277,7 @@ object PaymentEditFrm: TPaymentEditFrm
     object cbbPayTypeStr: TDBLookupComboboxEh
       Left = 89
       Top = 2
-      Width = 305
+      Width = 321
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -295,7 +296,7 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlLCPS: TPanel
     Left = 0
     Top = 189
-    Width = 400
+    Width = 416
     Height = 26
     Align = alTop
     BevelOuter = bvNone
@@ -327,16 +328,16 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnl1: TPanel
     Left = 0
     Top = 243
-    Width = 400
-    Height = 47
+    Width = 416
+    Height = 65
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 6
     object mmoNotice: TDBMemoEh
       Left = 5
       Top = 1
-      Width = 389
-      Height = 44
+      Width = 405
+      Height = 62
       Align = alCustom
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -351,7 +352,7 @@ object PaymentEditFrm: TPaymentEditFrm
   object pnlTM: TPanel
     Left = 0
     Top = 0
-    Width = 400
+    Width = 416
     Height = 7
     Align = alTop
     BevelOuter = bvNone

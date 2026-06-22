@@ -1,5 +1,4 @@
 object NodeProperties: TNodeProperties
-  ShowHint = True
   Left = 627
   Top = 57
   BorderStyle = bsDialog
@@ -12,9 +11,8 @@ object NodeProperties: TNodeProperties
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
+  ShowHint = True
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Bevel1: TBevel
     Left = 14
@@ -56,7 +54,7 @@ object NodeProperties: TNodeProperties
     object Label2: TLabel
       Left = 16
       Top = 24
-      Width = 44
+      Width = 43
       Height = 13
       Caption = #1060#1080#1075#1091#1088#1099':'
       FocusControl = NodeBodyColor
@@ -64,7 +62,7 @@ object NodeProperties: TNodeProperties
     object Label3: TLabel
       Left = 16
       Top = 58
-      Width = 47
+      Width = 48
       Height = 13
       Caption = #1043#1088#1072#1085#1080#1094#1099':'
       FocusControl = NodeBorderColor
@@ -166,21 +164,21 @@ object NodeProperties: TNodeProperties
     object Label5: TLabel
       Left = 16
       Top = 27
-      Width = 39
+      Width = 41
       Height = 13
       Caption = #1043#1086#1088#1080#1079'..:'
     end
     object Label6: TLabel
       Left = 16
       Top = 59
-      Width = 30
+      Width = 32
       Height = 13
       Caption = #1042#1077#1088#1090'.:'
     end
     object Label7: TLabel
       Left = 16
       Top = 92
-      Width = 38
+      Width = 41
       Height = 13
       Caption = #1054#1090#1089#1090#1091#1087':'
     end
@@ -231,7 +229,7 @@ object NodeProperties: TNodeProperties
     Width = 318
     Height = 43
     Columns = 2
-    ItemHeight = 13
+    ItemHeight = 17
     Items.Strings = (
       #1057#1074#1103#1079#1099#1074#1072#1077#1084#1099#1081
       #1042#1099#1076#1077#1083#1103#1077#1084#1099#1081
@@ -251,7 +249,7 @@ object NodeProperties: TNodeProperties
     object Label8: TLabel
       Left = 16
       Top = 24
-      Width = 43
+      Width = 44
       Height = 13
       Caption = #1047#1072#1087#1086#1083#1085'.:'
       FocusControl = FillStyle
@@ -259,7 +257,7 @@ object NodeProperties: TNodeProperties
     object Label9: TLabel
       Left = 16
       Top = 56
-      Width = 47
+      Width = 48
       Height = 13
       Caption = #1043#1088#1072#1085#1080#1094#1099':'
       FocusControl = BorderStyle

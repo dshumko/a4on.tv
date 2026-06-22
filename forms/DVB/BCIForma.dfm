@@ -10,10 +10,8 @@ object BCIForm: TBCIForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
     Left = 0
@@ -274,10 +272,11 @@ object BCIForm: TBCIForm
         object lbl1: TLabel
           Left = 0
           Top = 0
-          Width = 117
+          Width = 448
           Height = 13
           Align = alTop
           Caption = '           '#1042#1089#1077' '#1082#1072#1085#1072#1083#1099' '#1089#1077#1090#1080
+          ExplicitWidth = 117
         end
         object pnlBtns: TPanel
           Left = 0
@@ -382,7 +381,6 @@ object BCIForm: TBCIForm
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
           SearchPanel.Enabled = True
-          SearchPanel.FilterOnTyping = False
           SortLocal = True
           STFilter.Local = True
           STFilter.Visible = True
@@ -587,10 +585,11 @@ object BCIForm: TBCIForm
         object lbl2: TLabel
           Left = 0
           Top = 0
-          Width = 107
+          Width = 433
           Height = 13
           Align = alTop
           Caption = ' '#1050#1072#1085#1072#1083#1099' '#1089' '#1087#1088#1086#1073#1083#1077#1084#1086#1081
+          ExplicitWidth = 107
         end
         object dbgChlsSelected: TDBGridEh
           Left = 0
@@ -612,7 +611,6 @@ object BCIForm: TBCIForm
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
           OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghIncSearch, dghRowHighlight, dghColumnResize, dghColumnMove]
           SearchPanel.Enabled = True
-          SearchPanel.FilterOnTyping = False
           SortLocal = True
           STFilter.Local = True
           STFilter.Visible = True

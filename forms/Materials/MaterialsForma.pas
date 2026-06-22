@@ -980,11 +980,18 @@ var
   i: Integer;
 begin
   actQuickFilter.Checked := not actQuickFilter.Checked;
+  btnQuickFilter.Down := actQuickFilter.Checked;
 
   for i := 0 to ComponentCount - 1 do
   begin
     if Components[i] is TDBGridEh then
+    begin
+      (Components[i] as TDBGridEh).SearchPanel.Enabled := actQuickFilter.Checked;
+
       (Components[i] as TDBGridEh).STFilter.Visible := actQuickFilter.Checked;
+      if (not actQuickFilter.Checked) and ((Components[i] as TDBGridEh).DataSource.DataSet.Filtered) then
+        (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := False;
+    end;
   end;
 
   if not actQuickFilter.Checked then
@@ -1382,7 +1389,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -1410,6 +1420,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.DBGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then
@@ -1441,6 +1460,8 @@ begin
   miStateChange.Visible := FAccessFull;
   miSep1.Visible := miStateChange.Visible;
   SetGridsPopUpMenu(pmPopUp);
+  if (dmMain.GetIniValue('QUICK_FILTER') <> '0') then
+    actQuickFilterExecute(Sender);
 end;
 
 procedure TMaterialsForm.srcDataSourceDataChange(Sender: TObject; Field: TField);
@@ -1507,7 +1528,8 @@ begin
   end;
   QrTemp.Transaction := TrTemp;
 
-  if aWH = -1  then begin
+  if aWH = -1 then
+  begin
     dsMaterials.Close;
     dsMaterials.Open;
     if (aMID <> -1) then

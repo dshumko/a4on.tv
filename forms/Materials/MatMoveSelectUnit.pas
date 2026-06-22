@@ -67,7 +67,9 @@ var
   Font_size: Integer;
   Font_name, s: string;
   Row_height: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
@@ -101,6 +103,15 @@ begin
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
       end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
+      end;
     end
     else if Font_size <> 0 then
     begin
@@ -117,7 +128,7 @@ begin
     end
   end;
 
-  Panel3.DoubleBuffered := True;
+  Panel3.DoubleBuffered := true;
   Panel3.ParentBackground := False;
 
   FormElements := [ddfeLeftGripEh, ddfeRightGripEh, ddfeCloseButtonEh];
@@ -235,7 +246,7 @@ end;
 procedure TMaterialsMoveSelect.CustomDropDownFormEhShow(Sender: TObject);
 begin
   MainGrid.SetFocus;
-  MainGrid.SearchPanel.Active := True;
+  MainGrid.SearchPanel.Active := true;
 end;
 
 initialization

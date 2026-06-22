@@ -3,7 +3,7 @@ object apgCustomerNew: TapgCustomerNew
   Top = 0
   Caption = #1053#1086#1074#1099#1081' '#1072#1073#1086#1085#1077#1085#1090
   ClientHeight = 706
-  ClientWidth = 879
+  ClientWidth = 958
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,14 +11,17 @@ object apgCustomerNew: TapgCustomerNew
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
+  object spl1: TSplitter
+    Left = 497
+    Top = 0
+    Height = 665
+  end
   object pnlInfo: TPanel
     Left = 0
     Top = 0
@@ -36,6 +39,9 @@ object apgCustomerNew: TapgCustomerNew
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
+      DesignSize = (
+        497
+        129)
       object Label19: TLabel
         Left = 236
         Top = 85
@@ -88,6 +94,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 5
         Width = 25
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1044#1086#1084
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -101,6 +108,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 5
         Width = 29
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1050#1074'-'#1088#1072
       end
       object Label21: TLabel
@@ -108,6 +116,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 5
         Width = 45
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1055#1086#1076#1098#1077#1079#1076
       end
       object Label23: TLabel
@@ -115,6 +124,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 5
         Width = 27
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1069#1090#1072#1078
       end
       object lblContract: TLabel
@@ -122,6 +132,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 45
         Width = 43
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1044#1086#1075#1086#1074#1086#1088
       end
       object chkJURIDICAL: TDBCheckBoxEh
@@ -131,6 +142,7 @@ object apgCustomerNew: TapgCustomerNew
         Height = 17
         Hint = #1045#1089#1083#1080' '#1102#1088'. '#1083#1080#1094#1086' '#1091#1089#1090#1072#1085#1086#1074#1080#1090#1077' '#1092#1083#1086#1078#1086#1082
         Alignment = taLeftJustify
+        Anchors = [akTop, akRight]
         Caption = #1070#1088'. '#1083#1080#1094#1086
         DataField = 'JURIDICAL'
         DataSource = ds
@@ -145,6 +157,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 101
         Width = 144
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = 'MANAGER_ID'
         DataSource = ds
@@ -163,6 +176,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 59
         Width = 144
         Height = 21
+        Anchors = [akTop, akRight]
         DataField = 'DOGOVOR_NO'
         DataSource = ds
         DynProps = <>
@@ -177,6 +191,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 59
         Width = 92
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'ACCOUNT_NO'
         DataSource = ds
         DynProps = <>
@@ -233,6 +248,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 20
         Width = 222
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = 'STREET_ID'
         DataSource = ds
@@ -270,6 +286,7 @@ object apgCustomerNew: TapgCustomerNew
         Width = 89
         Height = 21
         Hint = #1046#1077#1083#1090#1099#1084' '#1087#1086#1084#1077#1095#1077#1085#1099' '#1076#1086#1084#1072' '#1085#1077' '#1089#1076#1072#1085#1085#1099#1077' '#1074' '#1101#1082#1089#1087#1083#1091#1072#1090#1072#1094#1080#1102
+        Anchors = [akTop, akRight]
         DynProps = <>
         DataField = 'HOUSE_ID'
         DataSource = ds
@@ -312,6 +329,7 @@ object apgCustomerNew: TapgCustomerNew
         Width = 51
         Height = 21
         Hint = #1050#1074#1072#1088#1090#1080#1088#1072
+        Anchors = [akTop, akRight]
         DataField = 'FLAT_NO'
         DataSource = ds
         DynProps = <>
@@ -329,6 +347,7 @@ object apgCustomerNew: TapgCustomerNew
         Width = 47
         Height = 21
         Hint = #1055#1086#1076#1098#1077#1079#1076
+        Anchors = [akTop, akRight]
         DataField = 'PORCH_N'
         DataSource = ds
         DynProps = <>
@@ -345,6 +364,7 @@ object apgCustomerNew: TapgCustomerNew
         Width = 45
         Height = 21
         Hint = #1069#1090#1072#1078
+        Anchors = [akTop, akRight]
         DataField = 'FLOOR_N'
         DataSource = ds
         DynProps = <>
@@ -363,6 +383,7 @@ object apgCustomerNew: TapgCustomerNew
           #1045#1089#1083#1080' '#1092#1083#1072#1078#1086#1082' '#1091#1089#1090#1072#1085#1086#1074#1083#1077#1085', '#1090#1086' '#1072#1073#1086#1085#1077#1085#1090' '#1085#1077' '#1073#1091#1076#1077#1090' '#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100#1089#1103' '#1072#1074#1090#1086#1084#1072 +
           #1090#1080#1095#1077#1089#1082#1080
         Alignment = taLeftJustify
+        Anchors = [akTop, akRight]
         Caption = #1056#1091#1095#1085#1086#1077' '#1091#1087#1088'.'
         DataField = 'HAND_CONTROL'
         DataSource = ds
@@ -381,6 +402,9 @@ object apgCustomerNew: TapgCustomerNew
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 1
+      DesignSize = (
+        497
+        191)
       object Label3: TLabel
         Tag = 1
         Left = 8
@@ -427,6 +451,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 3
         Width = 19
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1048#1084#1103
       end
       object Label9: TLabel
@@ -435,6 +460,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 3
         Width = 49
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1054#1090#1095#1077#1089#1090#1074#1086
       end
       object Label5: TLabel
@@ -465,6 +491,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 17
         Width = 155
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'SURNAME'
         DataSource = ds
         DynProps = <>
@@ -514,6 +541,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 129
         Width = 476
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'ADRES_REGISTR'
         DataSource = ds
         DynProps = <>
@@ -529,6 +557,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 55
         Width = 279
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'PASSPORT_REGISTRATION'
         DataSource = ds
         DynProps = <>
@@ -544,6 +573,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 17
         Width = 155
         Height = 21
+        Anchors = [akTop, akRight]
         DataField = 'FIRSTNAME'
         DataSource = ds
         DynProps = <>
@@ -560,6 +590,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 17
         Width = 155
         Height = 21
+        Anchors = [akTop, akRight]
         DataField = 'MIDLENAME'
         DataSource = ds
         DynProps = <>
@@ -576,6 +607,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 91
         Width = 346
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         CharCase = ecUpperCase
         DataField = 'PERSONAL_N'
         DataSource = ds
@@ -594,6 +626,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 166
         Width = 476
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'CONTRACT_BASIS'
         DataSource = ds
         DynProps = <>
@@ -650,6 +683,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 1
         Width = 21
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1059#1053#1053
       end
       object Label17: TLabel
@@ -673,6 +707,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 1
         Width = 61
         Height = 13
+        Anchors = [akTop, akRight]
         Caption = #1043#1088#1091#1087#1087#1072' '#1053#1044#1057
       end
       object Label16: TLabel
@@ -721,6 +756,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 15
         Width = 191
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'SURNAME'
         DataSource = ds
         DynProps = <>
@@ -736,6 +772,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 15
         Width = 117
         Height = 21
+        Anchors = [akTop, akRight]
         DataField = 'JUR_INN'
         DataSource = ds
         DynProps = <>
@@ -751,6 +788,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 52
         Width = 248
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'JUR_BUH'
         DataSource = ds
         DynProps = <>
@@ -781,6 +819,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 15
         Width = 98
         Height = 21
+        Anchors = [akTop, akRight]
         DynProps = <>
         DataField = 'VATG_ID'
         DataSource = ds
@@ -814,6 +853,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 189
         Width = 477
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'CONTRACT_BASIS'
         DataSource = ds
         DynProps = <>
@@ -882,7 +922,7 @@ object apgCustomerNew: TapgCustomerNew
         OnExit = lcbBANKExit
       end
     end
-    object Panel2: TPanel
+    object pnlSecret: TPanel
       Left = 0
       Top = 536
       Width = 497
@@ -947,6 +987,7 @@ object apgCustomerNew: TapgCustomerNew
         Width = 120
         Height = 25
         Hint = #1042#1099#1073#1088#1072#1090#1100' '#1092#1086#1085' '#1076#1083#1103' '#1074#1099#1076#1077#1083#1077#1085#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
+        Anchors = [akTop, akRight]
         Caption = #1042#1099#1073#1088#1072#1090#1100' '#1092#1086#1085
         TabOrder = 1
         TabStop = False
@@ -958,6 +999,7 @@ object apgCustomerNew: TapgCustomerNew
         Width = 120
         Height = 25
         Hint = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085' '#1076#1083#1103' '#1074#1099#1076#1077#1083#1077#1085#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
+        Anchors = [akTop, akRight]
         Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1092#1086#1085
         TabOrder = 2
         TabStop = False
@@ -968,6 +1010,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 4
         Width = 377
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = 'ORG_ID'
         DataSource = ds
@@ -986,6 +1029,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 28
         Width = 377
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'SECRET'
         DataSource = ds
         DynProps = <>
@@ -1000,6 +1044,7 @@ object apgCustomerNew: TapgCustomerNew
         Top = 52
         Width = 377
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         DataField = 'EXTERNAL_ID'
         DataSource = ds
         DynProps = <>
@@ -1012,18 +1057,26 @@ object apgCustomerNew: TapgCustomerNew
     end
   end
   object pnlClient: TPanel
-    Left = 497
+    Left = 500
     Top = 0
-    Width = 382
+    Width = 458
     Height = 665
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    object splMemo: TSplitter
+      Left = 0
+      Top = 290
+      Width = 458
+      Height = 3
+      Cursor = crVSplit
+      Align = alTop
+    end
     object pnlContacts: TPanel
       Left = 0
-      Top = 331
-      Width = 382
-      Height = 334
+      Top = 334
+      Width = 458
+      Height = 331
       Align = alClient
       BevelOuter = bvNone
       Color = clWhite
@@ -1031,7 +1084,7 @@ object apgCustomerNew: TapgCustomerNew
       object lbl5: TLabel
         Left = 0
         Top = 0
-        Width = 382
+        Width = 458
         Height = 18
         Align = alTop
         AutoSize = False
@@ -1129,8 +1182,8 @@ object apgCustomerNew: TapgCustomerNew
       object dbgrdhContacts: TDBGridEh
         Left = 0
         Top = 18
-        Width = 382
-        Height = 316
+        Width = 458
+        Height = 313
         Align = alClient
         DataSource = srcContacts
         DynProps = <>
@@ -1190,7 +1243,7 @@ object apgCustomerNew: TapgCustomerNew
     object pnlNotice: TPanel
       Left = 0
       Top = 145
-      Width = 382
+      Width = 458
       Height = 145
       Align = alTop
       BevelOuter = bvNone
@@ -1198,7 +1251,7 @@ object apgCustomerNew: TapgCustomerNew
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
-        Width = 382
+        Width = 458
         Height = 145
         Align = alClient
         Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077' '
@@ -1208,7 +1261,7 @@ object apgCustomerNew: TapgCustomerNew
         object mmoNOTICE: TDBMemoEh
           Left = 2
           Top = 15
-          Width = 378
+          Width = 454
           Height = 128
           Align = alClient
           AutoSize = False
@@ -1226,19 +1279,19 @@ object apgCustomerNew: TapgCustomerNew
     end
     object pnlPassport: TPanel
       Left = 0
-      Top = 290
-      Width = 382
+      Top = 293
+      Width = 458
       Height = 41
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 2
       DesignSize = (
-        382
+        458
         41)
       object btnPassport: TButton
         Left = 10
         Top = 8
-        Width = 367
+        Width = 443
         Height = 25
         Anchors = [akLeft, akTop, akRight]
         Caption = #1050#1085#1086#1087#1082#1072' '#1076#1083#1103' '#1088#1072#1073#1086#1090#1099' '#1089' '#1087#1072#1089#1087#1086#1088#1090#1086#1084
@@ -1249,7 +1302,7 @@ object apgCustomerNew: TapgCustomerNew
     object pnlWarningInfo: TPanel
       Left = 0
       Top = 0
-      Width = 382
+      Width = 458
       Height = 145
       Align = alTop
       Color = 13619199
@@ -1257,12 +1310,12 @@ object apgCustomerNew: TapgCustomerNew
       TabOrder = 3
       Visible = False
       DesignSize = (
-        382
+        458
         145)
       object mmoWarning: TDBMemoEh
         Left = 1
         Top = 1
-        Width = 380
+        Width = 456
         Height = 143
         Lines.Strings = (
           'mmoWarning')
@@ -1291,7 +1344,7 @@ object apgCustomerNew: TapgCustomerNew
         WantReturns = True
       end
       object btnCloseWarningInfo: TButton
-        Left = 360
+        Left = 436
         Top = 5
         Width = 19
         Height = 13
@@ -1305,16 +1358,16 @@ object apgCustomerNew: TapgCustomerNew
   object pnlBUTTONS: TPanel
     Left = 0
     Top = 665
-    Width = 879
+    Width = 958
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      879
+      958
       41)
     object btnCancel: TButton
-      Left = 780
+      Left = 859
       Top = 8
       Width = 80
       Height = 25
@@ -1326,7 +1379,7 @@ object apgCustomerNew: TapgCustomerNew
       OnClick = btnCancelClick
     end
     object btnSAVE: TButton
-      Left = 138
+      Left = 217
       Top = 8
       Width = 636
       Height = 25
@@ -1741,7 +1794,7 @@ object apgCustomerNew: TapgCustomerNew
       end
       item
         Name = 'DocType'
-        DataType = ftSmallint
+        DataType = ftInteger
         Precision = 15
       end>
     IndexDefs = <>
@@ -2036,7 +2089,7 @@ object apgCustomerNew: TapgCustomerNew
         end
         object DocType: TMTNumericDataFieldEh
           FieldName = 'DocType'
-          NumericDataType = fdtSmallintEh
+          NumericDataType = fdtIntegerEh
           AutoIncrement = False
           DisplayWidth = 20
           currency = False
@@ -2154,7 +2207,7 @@ object apgCustomerNew: TapgCustomerNew
       'read_committed')
     TPBMode = tpbDefault
     Left = 636
-    Top = 108
+    Top = 140
   end
   object trWriteQ: TpFIBTransaction
     DefaultDatabase = dmMain.dbTV
@@ -2165,8 +2218,8 @@ object apgCustomerNew: TapgCustomerNew
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 680
-    Top = 116
+    Left = 704
+    Top = 148
   end
   object PropStorageEh: TPropStorageEh
     Section = 'CUSTOMER'
@@ -2174,10 +2227,13 @@ object apgCustomerNew: TapgCustomerNew
     StoredProps.Strings = (
       '<P>.Height'
       '<P>.Left'
+      '<P>.PixelsPerInch'
       '<P>.Top'
-      '<P>.Width')
-    Left = 601
-    Top = 513
+      '<P>.Width'
+      'pnlClient.pnlNotice.<P>.Height'
+      'pnlInfo.<P>.Width')
+    Left = 561
+    Top = 497
   end
   object actlst: TActionList
     Left = 681

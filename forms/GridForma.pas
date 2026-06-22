@@ -10,7 +10,7 @@ uses
   Vcl.ExtCtrls,
   DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TGridForm = class(TForm)
@@ -68,10 +68,9 @@ type
     procedure dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: string);
     procedure FormCreate(Sender: TObject);
-    procedure dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure SetGridsPopUpMenu(pmGrid: TPopupMenu);
     procedure actPrintGridExecute(Sender: TObject);
-    procedure ShowQuickFilter(const aShow:Boolean = true);
+    procedure ShowQuickFilter(const aShow: Boolean = true);
   protected
     { Private declarations }
     FCanEdit: Boolean;
@@ -117,14 +116,12 @@ var
       b.Height := MulDiv(16, Screen.PixelsPerInch, 96);
       b.Canvas.FillRect(b.Canvas.ClipRect);
 
-      if Assigned(sb) AND (NOT sb.Glyph.Empty) then
-      begin
+      if Assigned(sb) AND (NOT sb.Glyph.Empty) then begin
         b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), sb.Glyph);
         sb.Glyph.Assign(b);
       end;
 
-      if Assigned(bb) AND (NOT bb.Glyph.Empty) then
-      begin
+      if Assigned(bb) AND (NOT bb.Glyph.Empty) then begin
         b.Canvas.StretchDraw(Rect(0, 0, b.Width, b.Height), bb.Glyph);
         bb.Glyph.Assign(b);
       end;
@@ -139,8 +136,7 @@ begin
   if Screen.PixelsPerInch * 100 / 96 <= 150 then
     Exit;
 
-  for i := 0 to -1 + container.ControlCount do
-  begin
+  for i := 0 to -1 + container.ControlCount do begin
     if container.Controls[i] IS TBitBtn then
       ResizeGlyph(nil, TBitBtn(container.Controls[i]));
     if container.Controls[i] IS TSpeedButton then
@@ -155,10 +151,10 @@ end;
 procedure TGridForm.actFilterFLDExecute(Sender: TObject);
 begin
   try
-    dbGrid.SearchPanel.Visible := True;
+    dbGrid.SearchPanel.Visible := true;
     dbGrid.SearchPanel.SearchingText := dbGrid.SelectedField.AsString;
     dbGrid.SearchPanel.ApplySearchFilter;
-    dbGrid.SearchPanel.Active := True;
+    dbGrid.SearchPanel.Active := true;
   except
     dbGrid.SearchPanel.CancelSearchFilter;
     dbGrid.SearchPanel.Visible := False;
@@ -176,14 +172,12 @@ begin
   ShowQuickFilter(not actQuickFilter.Checked);
 end;
 
-procedure TGridForm.ShowQuickFilter(const aShow:Boolean = true);
+procedure TGridForm.ShowQuickFilter(const aShow: Boolean = true);
 var
   i: Integer;
 begin
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDBGridEh then
-    begin
+  for i := 0 to ComponentCount - 1 do begin
+    if Components[i] is TDBGridEh then begin
       (Components[i] as TDBGridEh).STFilter.Visible := aShow;
       (Components[i] as TDBGridEh).STFilter.Local := aShow;
 
@@ -199,7 +193,7 @@ end;
 
 procedure TGridForm.btnCancelLinkClick(Sender: TObject);
 begin
-  StopEdit(True);
+  StopEdit(true);
 end;
 
 procedure TGridForm.btnSaveLinkClick(Sender: TObject);
@@ -212,8 +206,7 @@ var
   i: Integer;
   v: TfsCustomVariable;
 begin
-  if fsGlobalUnit <> nil then
-  begin
+  if fsGlobalUnit <> nil then begin
     v := fsGlobalUnit.Find(Self.Name);
     if v <> nil then
       fsGlobalUnit.RemoveItems(Self);
@@ -233,10 +226,8 @@ procedure TGridForm.CloseDatasets;
 var
   i: Integer;
 begin
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDataSet then
-    begin
+  for i := 0 to ComponentCount - 1 do begin
+    if Components[i] is TDataSet then begin
       if (Components[i] as TDataSet).Active then
         (Components[i] as TDataSet).Close;
     end;
@@ -246,13 +237,11 @@ end;
 procedure TGridForm.FormCreate(Sender: TObject);
 begin
   // http://zarko-gajic.iz.hr/making-the-glyph-property-high-dpi-aware-for-tbitbtn-and-tspeedbutton/
-  if Screen.PixelsPerInch <> 96 then
-  begin
+  if Screen.PixelsPerInch <> 96 then begin
     ResizeButtonImagesforHighDPI(Self);
   end;
 
-  with fsGlobalUnit do
-  begin
+  with fsGlobalUnit do begin
     AddedBy := Self;
     AddForm(Self);
     AddedBy := nil;
@@ -264,7 +253,7 @@ begin
   if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) and (pnlEdit.Visible) then
     StopEdit(False);
   if (Ord(Key) = VK_ESCAPE) and (pnlEdit.Visible) then
-    StopEdit(True);
+    StopEdit(true);
 end;
 
 procedure TGridForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -276,32 +265,28 @@ begin
 
   if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := True;
+    go := true;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBComboBoxEh) then
       go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
       go := False
-    else
-    begin
+    else begin
       if (ActiveControl is TDBMemoEh) and
-        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
-      begin
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then begin
         go := False;
-        FEnterSecondPress := True;
+        FEnterSecondPress := true;
       end;
     end;
 
-    if go then
-    begin
+    if go then begin
       FEnterSecondPress := False;
       Key := #0; // eat enter key
       PostMessage(Self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
   end
-  else
-  begin
+  else begin
     if (ActiveControl is TDBMemoEh) then
       FEnterSecondPress := False;
   end;
@@ -313,7 +298,9 @@ var
   Font_size: Integer;
   Font_name, s: string;
   Row_height: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
     i := 0;
   Font_size := i;
@@ -321,45 +308,44 @@ begin
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
-  if (Font_size <> 0) or (Row_height <> 0) then
-  begin
+  if (Font_size <> 0) or (Row_height <> 0) then begin
     Font_name := dmMain.GetIniValue('FONT_NAME');
-    for i := 0 to ComponentCount - 1 do
-    begin
-      if Components[i] is TDBGridEh then
-      begin
+    for i := 0 to ComponentCount - 1 do begin
+      if Components[i] is TDBGridEh then begin
         (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
           Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
         if ((Components[i] as TDBGridEh).DataSource <> nil) and ((Components[i] as TDBGridEh).DataSource.DataSet.Active)
         then
           (Components[i] as TDBGridEh).DefaultApplySorting;
-        if Font_size <> 0 then
-        begin
+        if Font_size <> 0 then begin
           (Components[i] as TDBGridEh).Font.Name := Font_name;
           (Components[i] as TDBGridEh).Font.Size := Font_size;
         end;
-        if Row_height <> 0 then
-        begin
+        if Row_height <> 0 then begin
           (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
           (Components[i] as TDBGridEh).RowHeight := Row_height;
         end;
-        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
-        begin
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do begin
           s := (Components[i] as TDBGridEh).Columns[c].FieldName.toUpper;
           if (s.Contains('NOTICE') or s.Contains('DESCRIPTION')) and
             (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
-            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+            (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := A4MainForm.dbGridColumnsReplaceEOL
+        end;
+
+        if ShowToolTips then begin
+          if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+            (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+          (Components[i] as TDBGridEh).ShowHint := true;
+          for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+            (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
         end;
       end
-      else if Font_size <> 0 then
-      begin
-        if (Components[i] is TMemo) then
-        begin
+      else if Font_size <> 0 then begin
+        if (Components[i] is TMemo) then begin
           (Components[i] as TMemo).Font.Name := Font_name;
           (Components[i] as TMemo).Font.Size := Font_size;
         end
-        else if (Components[i] is TDBMemoEh) then
-        begin
+        else if (Components[i] is TDBMemoEh) then begin
           (Components[i] as TDBMemoEh).Font.Name := Font_name;
           (Components[i] as TDBMemoEh).Font.Size := Font_size;
         end;
@@ -369,15 +355,14 @@ begin
   FinEditMode := False;
   SetGridsPopUpMenu(pmPopUp);
 
-  ShowQuickFilter((dmMain.GetIniValue('QUICK_FILTER')<>'0'));
+  ShowQuickFilter((dmMain.GetIniValue('QUICK_FILTER') <> '0'));
 end;
 
 procedure TGridForm.pmgCopyClick(Sender: TObject);
 var
   dbg: TDBGridEh;
 begin
-  if (ActiveControl is TDBGridEh) then
-  begin
+  if (ActiveControl is TDBGridEh) then begin
     dbg := (ActiveControl as TDBGridEh);
     if (geaCopyEh in dbg.EditActions) then
       if dbg.CheckCopyAction then
@@ -407,16 +392,15 @@ begin
   if not FCanEdit then
     Exit;
 
-  if (not New) then
-  begin
+  if (not New) then begin
     if (srcDataSource.DataSet.RecordCount = 0) then
       Exit
     else
       srcDataSource.DataSet.Refresh;
   end;
 
-  pnlEdit.Visible := True;
-  splPG.Visible := True;
+  pnlEdit.Visible := true;
+  splPG.Visible := true;
   dbGrid.Enabled := False;
   tlbMain.Enabled := False;
 
@@ -428,24 +412,21 @@ begin
   else
     srcDataSource.DataSet.Edit;
 
-  FinEditMode := True;
+  FinEditMode := true;
 end;
 
 procedure TGridForm.StopEdit(const Cancel: Boolean);
 begin
   splPG.Visible := False;
   pnlEdit.Visible := False;
-  dbGrid.Enabled := True;
-  tlbMain.Enabled := True;
-  if (Cancel) or (not FCanEdit) then
-  begin
+  dbGrid.Enabled := true;
+  tlbMain.Enabled := true;
+  if (Cancel) or (not FCanEdit) then begin
     if (srcDataSource.DataSet.State in [dsEdit, dsInsert]) then
       srcDataSource.DataSet.Cancel
   end
-  else
-  begin
-    if (srcDataSource.DataSet.State in [dsEdit, dsInsert]) then
-    begin
+  else begin
+    if (srcDataSource.DataSet.State in [dsEdit, dsInsert]) then begin
       if FCanEdit then
         srcDataSource.DataSet.Post
       else
@@ -475,22 +456,14 @@ begin
   end;
 end;
 
-procedure TGridForm.dbGridColumnsGetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
-begin
-  if not Params.Text.IsEmpty then
-    Params.Text := StringReplace(Params.Text, #13#10, ' ', [rfReplaceAll]);
-end;
-
 procedure TGridForm.dbGridDblClick(Sender: TObject);
 begin
-  if srcDataSource.DataSet.RecordCount > 0 then
-  begin
+  if srcDataSource.DataSet.RecordCount > 0 then begin
     if not(actEdit.Enabled or actEdit.Visible) then
       Exit;
     actEdit.Execute;
   end
-  else
-  begin
+  else begin
     if not(actNew.Enabled or actNew.Visible) then
       Exit;
     actNew.Execute;
@@ -502,8 +475,7 @@ procedure TGridForm.dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer
 var
   i: Integer;
 begin
-  if (DataCol = 1) and (Row = 0) then
-  begin
+  if (DataCol = 1) and (Row = 0) then begin
     i := (Sender as TDBGridEh).SelectedRows.Count;
     if i > 1 then
       Text := IntToStr(i);
@@ -515,8 +487,7 @@ var
   i: Integer;
 begin
   Result := '';
-  for i := 0 to pred(Grid.SortMarkedColumns.Count) do
-  begin
+  for i := 0 to pred(Grid.SortMarkedColumns.Count) do begin
     Result := Result + Grid.SortMarkedColumns[i].FieldName;
     if Grid.SortMarkedColumns[i].Title.SortMarker = smDownEh then
       Result := Result + ' desc';
@@ -533,21 +504,17 @@ var
 begin
   actPrintGrid.Visible := dmMain.AllowedAction(rght_Reports_view);
   rghtExport := dmMain.AllowedAction(rght_Export);
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDBGridEh then
-    begin
+  for i := 0 to ComponentCount - 1 do begin
+    if Components[i] is TDBGridEh then begin
       (Components[i] as TDBGridEh).EditActions := (Components[i] as TDBGridEh).EditActions + [geaCopyEh];
       (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgRowSelect];
       (Components[i] as TDBGridEh).OptionsEh := (Components[i] as TDBGridEh).OptionsEh + [dghRowHighlight];
 
-      if rghtExport then
-      begin
+      if rghtExport then begin
         (Components[i] as TDBGridEh).AllowedSelections := [gstRecordBookmarks, gstRectangle, gstColumns, gstAll];
         (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options + [dgMultiSelect];
       end
-      else
-      begin
+      else begin
         (Components[i] as TDBGridEh).AllowedSelections := [];
         (Components[i] as TDBGridEh).Options := (Components[i] as TDBGridEh).Options - [dgMultiSelect];
       end;
@@ -561,12 +528,12 @@ end;
 procedure TGridForm.RefreshData;
 begin
   if not(srcDataSource.DataSet.State in [dsEdit, dsInsert]) then
-      RefreshDataInner;
+    RefreshDataInner;
 end;
 
 procedure TGridForm.RefreshDataInner;
 begin
-// перекроем метод в каждой форме
+  // перекроем метод в каждой форме
 end;
 
 end.

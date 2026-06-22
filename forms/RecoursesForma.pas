@@ -11,7 +11,7 @@ uses
   GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TRecoursesForm = class(TGridForm)
@@ -47,15 +47,20 @@ type
     procedure FormCreate(Sender: TObject);
     procedure dbGridColumns4GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
     procedure dbGridDblClick(Sender: TObject);
+    procedure dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+      State: TGridDrawState);
   private
     { Private declarations }
     FFirstOpen: Boolean;
     fStartDate: TDateTime;
     fEndDate: TDateTime;
     FCanSaveColumns: Boolean;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     FTodayOnly: Boolean;
     FOnlyTheir: Boolean;
+    FclOutcome: TColor;
+    FShowDirect: Boolean;
     procedure SetFilter;
     procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
   public
@@ -93,13 +98,14 @@ var
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crHourGlass;
-  if (FTodayOnly) then begin
+  if (FTodayOnly) then
+  begin
     fStartDate := Now;
     fEndDate := fStartDate;
   end;
 
   dsRecourses.Close;
-  if FOnlyTheir  then
+  if FOnlyTheir then
     dsRecourses.ParamByName('owned').AsString := 'and r.ADDED_BY = CURRENT_USER'
   else
     dsRecourses.ParamByName('owned').AsString := '';
@@ -150,9 +156,8 @@ end;
 procedure TRecoursesForm.dbGridColumns4GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   inherited;
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
-
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TRecoursesForm.dbGridDblClick(Sender: TObject);
@@ -180,12 +185,31 @@ begin
         atrCmdUtils.ShellExecute(Application.MainForm.Handle, '', s.trim);
       end
     end;
+  end
+  else if (s = 'RQ_ID') and (not dbGrid.DataSource.DataSet.FieldByName('RQ_ID').IsNull) then
+    A4MainForm.OpenRequest(dbGrid.DataSource.DataSet.FieldByName('RQ_ID').AsInteger)
+  else if (s = 'TASK_ID') and (not dbGrid.DataSource.DataSet.FieldByName('TASK_ID').IsNull) then
+    A4MainForm.OpenTask(dbGrid.DataSource.DataSet.FieldByName('TASK_ID').AsInteger);
+
+end;
+
+procedure TRecoursesForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if not(Sender as TDBGridEh).DataSource.DataSet.Active then
+    exit;
+
+  if not(Sender as TDBGridEh).DataSource.DataSet.FieldByName('DIRECT').IsNull then
+  begin
+    if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('DIRECT').AsInteger = 1) then
+      Background := FclOutcome;
   end;
 end;
 
 procedure TRecoursesForm.FormActivate(Sender: TObject);
 var
-  b: integer;
+  b: Integer;
   filter: string;
   inFilter: Boolean;
 begin
@@ -228,12 +252,16 @@ procedure TRecoursesForm.FormCreate(Sender: TObject);
 begin
   inherited;
   FFirstOpen := true;
-
+  try
+    FclOutcome := StringToColor(dmMain.GetSettingsValue('ROW_HL_WARNING'));
+  except
+    FclOutcome := $0066FFFF;
+  end;
 end;
 
 procedure TRecoursesForm.FormShow(Sender: TObject);
 var
-  I: integer;
+  i: Integer;
 begin
   inherited;
 
@@ -241,16 +269,24 @@ begin
   actNew.Visible := (dmMain.AllowedAction(rght_Recourses_add));
   actEdit.Visible := (dmMain.AllowedAction(rght_Recourses_edit)) and False;
   actDelete.Visible := (dmMain.AllowedAction(rght_Recourses_del));
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
 
   FTodayOnly := dmMain.AllowedAction(rght_Recourses_TodayOnly);
   FOnlyTheir := dmMain.AllowedAction(rght_Recourses_owner);
 
-  fStartDate := now - 7;
-  fEndDate := now;
-  if not TryStrToInt(dmMain.GetIniValue('FETCHALL'), I) then
-    I := 0;
-  if (I = 0) then
+  FShowDirect := (dmMain.GetSettingsValue('RECOURSE_DIRECT') = '1');
+  for i := 0 to dbGrid.Columns.Count - 1 do
+  begin
+    if (AnsiUpperCase(dbGrid.Columns[i].FieldName) = 'DIRECT') then
+      dbGrid.Columns[i].Visible := FShowDirect;
+  end;
+
+  fStartDate := Now - 7;
+  fEndDate := Now;
+  if not TryStrToInt(dmMain.GetIniValue('FETCHALL'), i) then
+    i := 0;
+  if (i = 0) then
     dsRecourses.Options := dsRecourses.Options - [poFetchAll];
 
   SetFilter;
@@ -259,38 +295,38 @@ end;
 procedure TRecoursesForm.N1Click(Sender: TObject);
 begin
   inherited;
-  fStartDate := now;
-  fEndDate := now;
+  fStartDate := Now;
+  fEndDate := Now;
   SetFilter;
 end;
 
 procedure TRecoursesForm.N2Click(Sender: TObject);
 begin
   inherited;
-  fStartDate := now - 7;
-  fEndDate := now;
+  fStartDate := Now - 7;
+  fEndDate := Now;
   SetFilter;
 end;
 
 procedure TRecoursesForm.N3Click(Sender: TObject);
 begin
   inherited;
-  fStartDate := MonthFirstDay(now);
-  fEndDate := MonthLastDay(now);
+  fStartDate := MonthFirstDay(Now);
+  fEndDate := MonthLastDay(Now);
   SetFilter;
 end;
 
 procedure TRecoursesForm.N4Click(Sender: TObject);
 begin
   inherited;
-  fStartDate := now - 1;
-  fEndDate := now - 1;
+  fStartDate := Now - 1;
+  fEndDate := Now - 1;
   SetFilter;
 end;
 
 procedure TRecoursesForm.actFilterCustomerExecute(Sender: TObject);
 var
-  I: integer;
+  i: Integer;
   b: TBookMark;
   customers: TStringList;
   s: string;
@@ -310,9 +346,9 @@ begin
     b := dbGrid.DataSource.DataSet.GetBookmark;
     dbGrid.DataSource.DataSet.Disablecontrols;
     dbGrid.DataSource.DataSet.First;
-    for I := 0 to dbGrid.SelectedRows.Count - 1 do
+    for i := 0 to dbGrid.SelectedRows.Count - 1 do
     begin
-      dbGrid.DataSource.DataSet.Bookmark := dbGrid.SelectedRows[I];
+      dbGrid.DataSource.DataSet.Bookmark := dbGrid.SelectedRows[i];
       if not dbGrid.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
         customers.Add(IntToStr(dbGrid.DataSource.DataSet['CUSTOMER_ID']));
     end;

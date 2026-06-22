@@ -24,6 +24,7 @@ object TextEditForm: TTextEditForm
     Width = 562
     Height = 13
     Align = alTop
+    ExplicitWidth = 3
   end
   object Text: TSynEdit
     Left = 0
@@ -36,23 +37,26 @@ object TextEditForm: TTextEditForm
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
+    Font.Quality = fqClearTypeNatural
     TabOrder = 0
-    Gutter.AutoSize = True
+    UseCodeFolding = False
     Gutter.DigitCount = 3
     Gutter.Font.Charset = DEFAULT_CHARSET
     Gutter.Font.Color = clWindowText
     Gutter.Font.Height = -11
     Gutter.Font.Name = 'Courier New'
     Gutter.Font.Style = []
+    Gutter.Font.Quality = fqClearTypeNatural
     Gutter.ShowLineNumbers = True
+    Gutter.Bands = <>
     Highlighter = syngnrlsyn1
     RightEdge = 255
     RightEdgeColor = clWindow
     ScrollBars = ssVertical
+    ScrollbarAnnotations = <>
     WordWrap = True
     WordWrapGlyph.Visible = False
     OnChange = TextChange
-    FontSmoothing = fsmNone
   end
   object pnl1: TPanel
     Left = 0
@@ -90,9 +94,6 @@ object TextEditForm: TTextEditForm
     end
   end
   object syngnrlsyn1: TSynGeneralSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
     DetectPreprocessor = False
     IdentifierChars = 
       '!"#$%&'#39'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`' +

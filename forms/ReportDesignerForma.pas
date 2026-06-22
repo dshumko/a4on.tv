@@ -14,7 +14,7 @@ uses
   System.Actions,
   Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ImgList,
   ToolCtrlsEh, DBGridEhToolCtrls, ReportPreview, frxClass, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
-  DynVarsEh, amSplitter;
+  DynVarsEh, amSplitter, System.ImageList;
 
 type
   TReportDesignerForm = class(TForm)

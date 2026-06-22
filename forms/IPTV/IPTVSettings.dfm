@@ -14,13 +14,11 @@ object IPTVSettinsForm: TIPTVSettinsForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pgcMode: TPageControl
     Left = 0
@@ -708,6 +706,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
   end
   object mtView: TMemTableEh
     AutoCalcFields = False
+    FilterOptions = [foCaseInsensitive]
     FetchAllOnOpen = True
     Params = <>
     DataDriver = drvFIBView

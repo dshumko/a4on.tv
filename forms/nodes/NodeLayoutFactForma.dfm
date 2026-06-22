@@ -13,7 +13,6 @@ object NodeLayoutFactForm: TNodeLayoutFactForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -22,7 +21,6 @@ object NodeLayoutFactForm: TNodeLayoutFactForm
   DesignSize = (
     856
     406)
-  PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TBitBtn
     Left = 5

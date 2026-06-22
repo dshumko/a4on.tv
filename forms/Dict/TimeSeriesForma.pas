@@ -9,7 +9,7 @@ uses
   System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons, System.UITypes,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh, amSplitter,
   DBAxisGridsEh, DBGridEh, Vcl.Mask, DBCtrlsEh, FIBDatabase, pFIBDatabase,
-  FIBDataSet, pFIBDataSet;
+  FIBDataSet, pFIBDataSet, CnClasses;
 
 type
   TTimeSeriesForm = class(TGridForm)
@@ -69,11 +69,17 @@ begin
   if srcDataSource.DataSet.RecordCount = 0 then
     Exit;
 
+  if (dsValues.Active and (dsValues.RecordCount > 0)) then
+  begin
+    ShowMessage(rsDeleteDenyChildExists);
+    Exit;
+  end;
+
   if FCanEdit then
   begin
     if (MessageDlg(Format(rsDeleteWithName, [srcDataSource.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
-        = mrYes) then
-        srcDataSource.DataSet.Delete;
+      = mrYes) then
+      srcDataSource.DataSet.Delete;
   end;
 end;
 
@@ -145,11 +151,11 @@ begin
   if dsValues.RecordCount = 0 then
     Exit;
 
-  if fCanEdit then
+  if FCanEdit then
   begin
-      if (MessageDlg(Format(rsDeleteWithName, [dsValues.FieldByName('HDATE').AsString]), mtConfirmation, [mbYes, mbNo], 0)
-        = mrYes) then
-        dsValues.Delete;
+    if (MessageDlg(Format(rsDeleteWithName, [dsValues.FieldByName('HDATE').AsString]), mtConfirmation, [mbYes, mbNo], 0)
+      = mrYes) then
+      dsValues.Delete;
   end;
 end;
 
@@ -168,9 +174,9 @@ begin
     AValues[0] := '0';
 
   if not dsValues.FieldByName('NOTICE').IsNull then
-    AValues[3] := dsValues.FieldByName('NOTICE').AsString
+    AValues[1] := dsValues.FieldByName('NOTICE').AsString
   else
-    AValues[3] := '';
+    AValues[1] := '';
 
   if InputQuery('Тариф', ['Тариф', 'Примечание'], AValues,
     function(const Values: array of string): Boolean
@@ -186,7 +192,6 @@ begin
       sql.Text := dsValues.UpdateSQL.Text;
 
       ParamByName('OLD_HID').AsInteger := dsValues['HID'];
-      ParamByName('HID').AsInteger := dsValues['HID'];
       ParamByName('O_ID').AsInteger := dsValues['O_ID'];
       ParamByName('HDATE').AsDate := dsValues['HDATE'];
 
@@ -219,8 +224,7 @@ begin
     inherited;
 end;
 
-procedure TTimeSeriesForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TTimeSeriesForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
 
@@ -236,18 +240,17 @@ var
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_TimeSeries);
-  fCanEdit := vFull;
+  FCanEdit := vFull;
 
-  fCanCreate := fCanEdit;
+  fCanCreate := FCanEdit;
 
-  actNew.Visible := fCanEdit;
-  actDelete.Visible := fCanEdit;
-  actEdit.Visible := fCanEdit;
+  actNew.Visible := FCanEdit;
+  actDelete.Visible := FCanEdit;
+  actEdit.Visible := FCanEdit;
 
-  actVAdd.Visible := fCanEdit;
-  actVDel.Visible := fCanEdit;
-  actVEdit.Visible := fCanEdit;
-
+  actVAdd.Visible := FCanEdit;
+  actVdel.Visible := FCanEdit;
+  actVEdit.Visible := FCanEdit;
 
   dsSeries.Open;
   dsValues.Open;

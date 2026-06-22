@@ -11,11 +11,9 @@ object DVBNetworkForm: TDVBNetworkForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -74,11 +72,19 @@ object DVBNetworkForm: TDVBNetworkForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
+    ExplicitTop = 387
+    ExplicitWidth = 409
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 190
@@ -87,12 +93,20 @@ object DVBNetworkForm: TDVBNetworkForm
       Height = 24
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 190
+      ExplicitTop = 7
+      ExplicitWidth = 128
+      ExplicitHeight = 24
     end
     inherited bbCancel: TBitBtn
       Left = 327
       Top = 7
       Width = 74
       Height = 24
+      ExplicitLeft = 327
+      ExplicitTop = 7
+      ExplicitWidth = 74
+      ExplicitHeight = 24
     end
   end
   object edtNAME: TDBEditEh

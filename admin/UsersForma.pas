@@ -18,7 +18,7 @@ uses
 {$ENDIF}
   System.Actions,
   PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh,
-  amSplitter;
+  amSplitter, System.ImageList;
 
 type
   TUsersForm = class(TForm)
@@ -119,6 +119,10 @@ type
     dbgRequest: TDBGridEh;
     srcRequest: TDataSource;
     dsRequest: TpFIBDataSet;
+    tsRec: TTabSheet;
+    dbgRecourses: TDBGridEh;
+    srcRecourses: TDataSource;
+    dsRecourses: TpFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actAddGroupExecute(Sender: TObject);
     procedure actEditGroupExecute(Sender: TObject);
@@ -632,7 +636,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), I) then
     I := 0;
   Row_height := I;
@@ -659,6 +666,15 @@ begin
       begin
         (Components[I] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[I] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[I] as TDBGridEh).OnDataHintShow)) then
+          (Components[I] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[I] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[I] as TDBGridEh).Columns.Count - 1 do
+          (Components[I] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then
@@ -996,6 +1012,7 @@ begin
   dsReports.Active := (pgcRights.ActivePageIndex = 1);
   dsModules.Active := (pgcRights.ActivePageIndex = 2);
   dsRequest.Active := (pgcRights.ActivePageIndex = 3);
+  dsRecourses.Active := (pgcRights.ActivePageIndex = 4);
 end;
 
 procedure TUsersForm.dbgReportsGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
@@ -1030,8 +1047,8 @@ begin
     AFont.Style := AFont.Style - [fsBold];
 
   if ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('Right_Id').AsInteger in [ // rght_Customer_View,
-    rght_Customer_Only_ONE, rght_Customer_PersonalData, rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner,
-    rght_OrdersTP_Today, rght_Recourses_TodayOnly]) then
+    rght_Customer_Only_ONE, rght_Customer_PersonalData, rght_Customer_PersonalName, rght_Pays_TheirAdd,
+    rght_Pays_AddToday, rght_Recourses_owner, rght_OrdersTP_Today, rght_Recourses_TodayOnly]) then
     Background := clRed
   else
     Background := clWindow;

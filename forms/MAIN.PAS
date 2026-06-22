@@ -14,9 +14,12 @@ uses
 {$ENDIF}
   FIBQuery, pFIBQuery, frxExportPDF, frxExportRTF, frxExportTXT, frxExportHTML, frxExportXLS, frxExportImage,
   frxExportCSV,
-  frxExportBIFF, frxExportDBF, frxExportODF, frxExportMail, JvDesktopAlert, DBCtrlsEh,
+  frxExportBIFF, frxExportDBF, frxExportODF, frxExportMail, JvDesktopAlert, DBCtrlsEh, GridsEh,
   frxClass, frxExportXML, EhLibLangConsts, EhLibEmbeddedLangConsts, LanguageResManEh, MDIChildBar,
-  A4onTypeUnit, DM, DBGridEh, ad3SpellBase, ad3Spell, ad4Live, PrnDbgeh;
+  A4onTypeUnit, DM, DBGridEh, ad3SpellBase, ad3Spell, ad4Live, PrnDbgeh,
+  System.ImageList,
+  // Styles
+  System.Rtti, Vcl.Themes, Vcl.Styles;
 
 type
   TA4MainForm = class(TForm)
@@ -309,6 +312,8 @@ type
     miERecipient: TMenuItem;
     actTimeSeries: TAction;
     miTimeSeries: TMenuItem;
+    actNodeLayouts: TAction;
+    miNodeLayouts: TMenuItem;
     procedure actReturnToPreviosMonthExecute(Sender: TObject);
     procedure actClosePeriodExecute(Sender: TObject);
     procedure actServicesExecute(Sender: TObject);
@@ -435,6 +440,7 @@ type
     procedure actERecipientExecute(Sender: TObject);
     procedure actTimeSeriesExecute(Sender: TObject);
     procedure miEventsClick(Sender: TObject);
+    procedure actNodeLayoutsExecute(Sender: TObject);
   private
     { Private declarations }
     FRunning: Boolean; // скрипт работает
@@ -445,6 +451,7 @@ type
     procedure LoadLang;
     procedure ReadUserSettings;
     procedure ReadInitSettings;
+    procedure SetStyleForUser(UserName: String = ''; DbAlias: String = '');
     procedure WriteSettings;
     function CheckCashReg: Boolean;
     function GetApplicationPath: string;
@@ -472,7 +479,7 @@ type
     property ApplicationPath: string read GetApplicationPath;
     // Возвращает имя файла в котором сохраним последнего юзвера
     function GetLastIniFileName: string;
-    function GetIniFileName: String;
+    function GetIniFileName(UserName: string = ''; DbAlias: String = ''): string;
     function GetUserFilterFolder: String;
     function GetMainIniFileName: String;
     function FindOpenPayDoc: string;
@@ -484,7 +491,8 @@ type
     procedure ClearAlert(const All: Boolean = True);
     function SuspiciousDate(const vDate: TDateTime): Boolean;
     procedure MakeCall(const CallType: Integer; const CallNumber: String);
-    procedure MakeTask(const Object_Type: string; const Object_ID: string; CallBackVar: TTaskCreateCallBack = nil);
+    procedure MakeTask(const Object_Type: string; const Object_ID: string; CallBackVar: TTaskCreateCallBack = nil;
+      const notice: String = '');
     procedure SearchFromTask(const Object_Type: string; const Object_ID: string);
     procedure ReceiveMessage(var Msg: TMessage); message WM_COPYDATA;
     procedure OpnenNodeByFlat(const HOUSE: Integer; const Flat: String);
@@ -495,12 +503,16 @@ type
     procedure OpenEquipmentByName(const name: String);
     function OpenEquipmentByID(const eid: Integer): Boolean;
     function OpenRequest(const rq_id: Integer): Boolean;
+    function OpenTask(const Task_id: Integer): Boolean;
     function ShowCustomers(const FilterFIELD: Integer = -1; const FilterVALUE: string = ''): Integer;
     procedure ExportDBGrid(const aDBGrid: TDBGridEh; const aFileName: string);
     procedure CopyDBGrid(const aDBGrid: TDBGridEh; const ForWholeGrid: Boolean = False);
     procedure PrintDBGrid(const aDBGrid: TDBGridEh);
     procedure OpenCustomerWithData(const aCustomer: Integer; const TabType: Integer; const DataValue: string);
     function ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
+    procedure dbGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos: TPoint; Cell: TGridCoord;
+      InCellCursorPos: TPoint; Column: TColumnEh; var Params: TDBGridEhDataHintParams; var Processed: Boolean);
+    procedure dbGridColumnsReplaceEOL(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   end;
 
 var
@@ -514,119 +526,28 @@ implementation
 {$R *.dfm}
 
 uses
-  Winapi.CommCtrl,
-  System.Threading,
-  System.DateUtils,
-  Vcl.Clipbrd,
+  Winapi.CommCtrl, System.Threading, System.DateUtils, Vcl.Clipbrd,
 {$IFDEF EurekaLog}
   FeedbackForma,
 {$ENDIF}
-  System.StrUtils,
-  System.IniFiles,
-  DBGridEhImpExp,
-  RxStrUtils,
-  AtrCommon,
-  PrjConst,
-  PeriodForma,
-  PaymentSourcesForma,
-  ScreenShotForma,
-  CompanyForma,
-  AreaForma,
-  StreetForma,
-  ServicesForma,
-  EquipmentForma,
-  AboutForma,
-  WorkersForma,
-  RequestTypeForma,
-  RequestsForma,
-  MaterialsForma,
-  FIBDatabase,
-  UserLoginDlg,
-  SettingsForma,
-  PaymentTypeForma,
-  AttributesForma,
-  LettersForma,
-  PayDocsForma,
-  ChannelsForma,
-  CardsPayForma,
-  CardSerialsForma,
-  ReportPreview,
-  LoaderReestrForma,
-  AtrStrUtils,
-  VlansForma,
-  JournalForma,
-  QueryForma,
-  UsersForma,
-  SrvServiceForma,
-  ScriptModule,
-  fs_iinterpreter,
-  ScripEditorForma,
-  EquipmentComands,
-  OrganForma,
-  EQGroupsForma,
-  HeadEndsForma,
-  RecourseTPLForma,
-  RecoursesForma,
-  RequestNewForma,
-  SUBDIVForma,
-  WorkTeamForma,
-  WHForma,
-  monitoringUnitMain,
-  VATForma,
-  ChangePwdForma,
-  HETypesForma,
-  BanksForma,
-  SettinsUserForma,
-  PaymentsForma,
-  CF,
-  MessagesForma,
-  PaymentDocForma,
-  ReportDesignerForma,
-  DVBEquipmentForma,
-  ManForma,
-  EPGView,
-  OTPTypesForma,
-  OrdersTPForma,
-  DVBSettings,
-  MatDocsForma,
-  EPGAdForma,
-  ShippersForma,
-  atrCmdUtils,
-  BonusesForma,
-  BlackListForma,
-  RequestForma,
-  RatesForma,
-  IPTVSettings,
-  fmuCustomerNew,
-  CustomerForma,
-  FileTypeForma,
-  MapForma,
-  NodesForma,
-  NodeTypeForma,
-  NFileTypeForma,
-  TaskForma,
-  NewTaskForma,
-  CallCenterForma,
-  ChanSourcesForma,
-  CustFilesForma,
-  BCIssuesForma,
-  BCIssuesTypeForma,
-  SatCardsForma,
-  DistribForma,
-  FreqPlanForma,
-  JclLocales,
-  DeviceTypesForma,
-  WebBrowserForma,
-  BCIssuesSolutionForma,
-  ReqPhotosForma,
-  NewsForma,
-  NHunspell,
-  WireTypeForma,
-  WireForma,
-  PortListForma,
-  ContactTypeForma,
-  LabelTypeForma,
-  ConnectTypeForma,
+  System.StrUtils, System.IniFiles, DBGridEhImpExp, RxStrUtils, AtrCommon, PrjConst,
+  PeriodForma, PaymentSourcesForma, ScreenShotForma, CompanyForma, AreaForma,
+  StreetForma, ServicesForma, EquipmentForma, AboutForma, WorkersForma, RequestTypeForma,
+  RequestsForma, MaterialsForma, FIBDatabase, UserLoginDlg, SettingsForma, PaymentTypeForma,
+  AttributesForma, LettersForma, PayDocsForma, ChannelsForma, CardsPayForma,
+  CardSerialsForma, ReportPreview, LoaderReestrForma, AtrStrUtils, VlansForma, JournalForma, QueryForma,
+  UsersForma, SrvServiceForma, ScriptModule, fs_iinterpreter, ScripEditorForma, EquipmentComands, OrganForma,
+  EQGroupsForma, HeadEndsForma,
+  RecourseTPLForma, RecoursesForma, RequestNewForma, SUBDIVForma, WorkTeamForma,
+  WHForma, monitoringUnitMain, VATForma, ChangePwdForma, HETypesForma, BanksForma, SettinsUserForma, PaymentsForma,
+  CF, MessagesForma, PaymentDocForma, ReportDesignerForma, DVBEquipmentForma, ManForma, EPGView, OTPTypesForma,
+  OrdersTPForma, DVBSettings, MatDocsForma, EPGAdForma, ShippersForma, atrCmdUtils, BonusesForma, BlackListForma,
+  RequestForma, RatesForma, IPTVSettings, fmuCustomerNew, CustomerForma, FileTypeForma,
+  MapForma, NodesForma, NodeTypeForma, NodeLayoutsForma, NFileTypeForma, TaskForma, NewTaskForma,
+  CallCenterForma, ChanSourcesForma, CustFilesForma,
+  BCIssuesForma, BCIssuesTypeForma, SatCardsForma, DistribForma, FreqPlanForma,
+  JclLocales, DeviceTypesForma, WebBrowserForma, BCIssuesSolutionForma, ReqPhotosForma, NewsForma,
+  NHunspell, WireTypeForma, WireForma, PortListForma, ContactTypeForma, LabelTypeForma, ConnectTypeForma,
   PortTypeForma, DocListForma, PromoForma, ObjectsRAWForma, ElectroPointForma, ElectroRecipientForma, TimeSeriesForma;
 
 type
@@ -866,17 +787,23 @@ begin
 end;
 
 // Возвращает имя файла с настройками пользователя
-function TA4MainForm.GetIniFileName: string;
+function TA4MainForm.GetIniFileName(UserName: string = ''; DbAlias: String = ''): string;
 var
   s: string;
   f: string;
   alias: string;
 begin
+  if UserName.IsEmpty then
+    UserName := dmMain.User;
+
+  if DbAlias.IsEmpty then
+    DbAlias := dmMain.DbAlias;
+
   s := rsAplicationName;
   f := dmMain.GetIniValue('DBSETTINGS');
   if (f = '1') then
   begin
-    f := dmMain.DBAlias;
+    f := DbAlias;
     f := f.Replace('\', '_').Replace(' ', '_').Replace(':', '_');
     alias := Copy('_' + f, 1, 255);
   end
@@ -889,13 +816,13 @@ begin
     f := f + '\' + s + '\';
     ForceDirectories(f);
     if FileExists(f + s + '.ini') then
-      RenameFile(f + s + '.ini', f + s + '_' + dmMain.User + '.ini');
+      RenameFile(f + s + '.ini', f + s + '_' + UserName + '.ini');
 
-    f := f + s + '_' + dmMain.User + alias + '.ini';
+    f := f + s + '_' + UserName + alias + '.ini';
   end
   else
   begin
-    f := GetApplicationPath() + s + '_' + dmMain.User + alias + '.ini';
+    f := GetApplicationPath() + s + '_' + UserName + alias + '.ini';
   end;
   Result := f;
 end;
@@ -979,6 +906,7 @@ begin
       AppIni.WriteString('MAIN', 'DISCOUNT', dmMain.GetIniValue('DISCOUNT'));
       AppIni.WriteString('MAIN', 'SHOW_WORKS_IN_SINGLE', dmMain.GetIniValue('SHOW_WORKS_IN_SINGLE'));
       AppIni.WriteString('MAIN', 'QUICK_FILTER', dmMain.GetIniValue('QUICK_FILTER'));
+      AppIni.WriteString('MAIN', 'AppStyle', dmMain.GetIniValue('AppStyle'));
 
       if dmMain.GetIniValue('FONT_SIZE') <> '' then
       begin
@@ -986,6 +914,7 @@ begin
         AppIni.WriteString('MAIN', 'FONT_NAME', dmMain.GetIniValue('FONT_NAME'));
       end;
       AppIni.WriteString('MAIN', 'ROW_HEIGHT', dmMain.GetIniValue('ROW_HEIGHT'));
+      AppIni.WriteString('MAIN', 'SHOW_TOOLTIPS', dmMain.GetIniValue('SHOW_TOOLTIPS'));
 
       AppIni.WriteString('GRIDS', 'ServiceGrid', dmMain.GetIniValue('ServiceGrid'));
       AppIni.WriteString('GRIDS', 'StreetGrid', dmMain.GetIniValue('StreetGrid'));
@@ -1067,6 +996,7 @@ begin
     SetFromIniSettings('MAIN', 'REQGRIDFROZEN', '0');
     SetFromIniSettings('MAIN', 'MATGRIDFROZEN', '1');
     SetFromIniSettings('MAIN', 'QUICK_FILTER', '1');
+    SetFromIniSettings('MAIN', 'AppStyle', '');
 
     SetFromIniSettings('EQPMNT', 'EQUIPMENTASTREE', '0');
     SetFromIniSettings('EQPMNT', 'EQUIPMENT_INFOLAYOUT', '0');
@@ -1087,6 +1017,7 @@ begin
       s := AppIni.ReadString('MAIN', 'FONT_NAME', '0');
       dmMain.SetIniValue('FONT_NAME', s);
     end;
+    SetFromIniSettings('MAIN', 'SHOW_TOOLTIPS', '0');
 
     FreeAndNil(AppIni);
   end
@@ -1178,6 +1109,7 @@ begin
     FreeAndNil(KeyboradLocalesList);
     end;
   }
+
   s := rsAplicationName;
 
   dmMain.SetIniValue('LASTDATABASE', s);
@@ -1364,6 +1296,31 @@ begin
   FToolTipStack := TjvDesktopAlertStack.Create(self);
   LoadLang;
   ReadInitSettings;
+  SetStyleForUser;
+end;
+
+procedure TA4MainForm.SetStyleForUser(UserName: String = ''; DbAlias: String = '');
+var
+  s: String;
+  AppIni: TIniFile;
+  fName: string;
+begin
+  if UserName.IsEmpty then
+    UserName := dmMain.GetIniValue('LASTUSERNAME');
+
+  if DbAlias.IsEmpty then
+    DbAlias := dmMain.GetIniValue('LASTDATABASE');
+
+  fName := GetIniFileName(UserName, DbAlias);
+  AppIni := TIniFile.Create(fName);
+  try
+    s := AppIni.ReadString('MAIN', 'AppStyle', 'Windows');
+  finally
+    FreeAndNil(AppIni);
+  end;
+
+  if (not s.IsEmpty) and (not SameText(TStyleManager.ActiveStyle.name, s)) then
+    TStyleManager.SetStyle(s);
 end;
 
 procedure TA4MainForm.OpenPaymentsDocExecute(Sender: TObject);
@@ -1620,7 +1577,7 @@ end;
 
 procedure TA4MainForm.miEventsClick(Sender: TObject);
 begin
-// ?
+  // ?
 end;
 
 procedure TA4MainForm.miFeedbackClick(Sender: TObject);
@@ -1756,6 +1713,7 @@ var
   i: Integer;
   Handle: THandle;
 begin
+
   DB := dmMain.GetIniValue('LASTDATABASE');
   User := dmMain.GetIniValue('LASTUSERNAME');
   dmMain.dbTV.ConnectParams.CharSet := dmMain.GetIniValue('CHARSET');
@@ -1815,13 +1773,15 @@ begin
   if not LoginDialogA(DB, User, pass, alias) then
     Halt;
 
+  SetStyleForUser(User, alias);
+
   s := dmMain.GetIniValue('KEYBOARD');
   if not s.IsEmpty then
   begin
     SetKeyboardLayout(s);
   end;
 
-  dmMain.DBAlias := alias;
+  dmMain.DbAlias := alias;
   dmMain.dbTV.DatabaseName := DB;
   dmMain.dbTV.ConnectParams.UserName := User;
   if User.ToUpper <> 'SYSDBA' then
@@ -2798,53 +2758,42 @@ procedure TA4MainForm.CreateReportMenu;
         Result := miParent.Items[i];
         Exit;
       end;
+
       if miParent.Items[i].Count >= 1 then
+      begin
         Result := findMenuItem(miParent.Items[i], parentTag);
+        if Assigned(Result) then
+          Exit;
+      end;
     end;
   end;
 
-  procedure AddMenuItem(const PARENT_ID: Integer; const miName: String; const miTag: Integer);
+  procedure AddMenuItem(const PARENT_ID: Integer; const miName: String; const miTag: Integer;
+    const ItsReport: Integer = 0);
   var
     NewItem: TMenuItem;
     miParent: TMenuItem;
   begin
-    miParent := nil;
-    if PARENT_ID <> 0 then
+    if PARENT_ID = 0 then
+      miParent := miReports
+    else
       miParent := findMenuItem(miReports, PARENT_ID);
 
-    if miParent = nil then
-      miParent := miReports;
+    if (miParent = nil) then
+    begin
+      if (ItsReport = 1) then
+        Exit
+      else
+        miParent := miReports;
+    end;
 
     NewItem := TMenuItem.Create(miParent);
     try
       NewItem.name := 'miReport' + IntToStr(miTag);
       NewItem.Caption := miName;
       NewItem.Tag := miTag;
-      NewItem.onclick := miPreviewReportClick;
-
-      miParent.Add(NewItem);
-    except
-      NewItem.Free;
-      raise;
-    end;
-  end;
-
-  procedure AddSubMenuItem(const PARENT_ID: Integer; const miName: String; const miTag: Integer);
-  var
-    NewItem: TMenuItem;
-    miParent: TMenuItem;
-  begin
-    miParent := nil;
-    if PARENT_ID <> 0 then
-      miParent := findMenuItem(miReports, PARENT_ID);
-
-    if miParent = nil then
-      miParent := miReports;
-
-    NewItem := NewSubMenu(miName, 0, 'miReport' + IntToStr(miTag), []);
-    try
-      NewItem.Tag := miTag;
-      // NewItem.onclick:=Click;
+      if (ItsReport = 1) then
+        NewItem.onclick := miPreviewReportClick;
 
       miParent.Add(NewItem);
     except
@@ -2855,6 +2804,8 @@ procedure TA4MainForm.CreateReportMenu;
 
 var
   tr: TFIBTransaction;
+  ri, rp, rf: Integer;
+  rn: string;
 begin
 
   with dmMain.qCommon do
@@ -2862,8 +2813,9 @@ begin
     tr := Transaction;
     try
       Transaction := dmMain.trRepRead;
-      SQL.text := 'select ID_REPORT, ID_PARENT, REPORT_NAME, NO_VISIBLE, LVL, IS_FILE, PATH from Get_All_Reports ' +
-        ' order by IS_FILE, ID_PARENT, REPORT_NAME';
+      SQL.text :=
+        'select ID_REPORT, coalesce(ID_PARENT, 0) ID_PARENT, REPORT_NAME, NO_VISIBLE, LVL, IS_FILE, PATH from Get_All_Reports '
+        + ' order by LVL, IS_FILE, REPORT_NAME';
       Transaction.StartTransaction;
       ExecQuery;
 
@@ -2871,10 +2823,11 @@ begin
       begin
         if fn('NO_VISIBLE').AsInteger = 0 then
         begin
-          if fn('is_file').AsInteger = 1 then
-            AddMenuItem(fn('id_parent').AsInteger, fn('report_name').AsString, fn('id_report').AsInteger)
-          else
-            AddSubMenuItem(fn('id_parent').AsInteger, fn('report_name').AsString, fn('id_report').AsInteger);
+          ri := fn('id_report').AsInteger;
+          rn := fn('report_name').AsString;
+          rp := fn('id_parent').AsInteger;
+          rf := fn('is_file').AsInteger;
+          AddMenuItem(rp, rn, ri, rf);
         end;
         Next;
       end;
@@ -2912,7 +2865,6 @@ procedure TA4MainForm.CreateModulesMenu;
   var
     i: Integer;
   begin
-    Result := nil;
     for i := 0 to miPlugIns.Count - 1 do
     begin
       if miPlugIns.Items[i].Caption = Caption then
@@ -3169,6 +3121,7 @@ begin
   actBCISolution.Visible := DictFull or dmMain.AllowedAction(rght_BCIssuesType);
 
   actNodes.Visible := DictFull or dmMain.AllowedAction(rght_Comm_Nodes) or dmMain.AllowedAction(rght_Comm_View);
+  actNodeLayouts.Visible := actNodes.Visible;
   actLinks.Visible := actNodes.Visible;
   actEPoint.Visible := actNodes.Visible;
   actERecipient.Visible := actNodes.Visible;
@@ -3455,6 +3408,13 @@ begin
   NFileTypeForm.Show;
 end;
 
+procedure TA4MainForm.actNodeLayoutsExecute(Sender: TObject);
+begin
+  if Not Assigned(NodeLayoutsForm) then
+    NodeLayoutsForm := TNodeLayoutsForm.Create(Application);
+  NodeLayoutsForm.Show;
+end;
+
 procedure TA4MainForm.actNodesExecute(Sender: TObject);
 begin
   if Not Assigned(NodesForm) then
@@ -3600,9 +3560,9 @@ begin
 end;
 
 procedure TA4MainForm.MakeTask(const Object_Type: string; const Object_ID: string;
-  CallBackVar: TTaskCreateCallBack = nil);
+  CallBackVar: TTaskCreateCallBack = nil; const notice: String = '');
 begin
-  NewTask(Object_Type, Object_ID, CallBackVar);
+  NewTask(Object_Type, Object_ID, CallBackVar, notice);
 end;
 
 procedure TA4MainForm.SearchFromTask(const Object_Type: string; const Object_ID: string);
@@ -3655,29 +3615,29 @@ var
     s := sw.ToUpper;
     if (s = rsFindContract) then
       Result := 1
-    else if (s = rsFindAccount) then
+    else if (s = rsFindAccount) or (s = rsFindAccountEng) then
       Result := 2
-    else if (s = rsFindCode) then
+    else if (s = rsFindCode) or (s = rsFindCodeEng) then
       Result := 3
-    else if (s = rsFindSurname) then
+    else if (s = rsFindSurname) or (s = rsFindSurnameEng) then
       Result := 4
-    else if (s = rsFindNotice) then
+    else if (s = rsFindNotice) or (s = rsFindNoticeEng) then
       Result := 5
     else if (s = rsFindPhone) or (s = rsFindPhoneEng) then
       Result := 6
-    else if (s = rsFindStreet) then
+    else if (s = rsFindStreet) or (s = rsFindStreetEng) then
       Result := 8
-    else if (s = rsFindDigit) then
+    else if (s = rsFindDigit) or (s = rsFindDigitEng) then
       Result := 9
     else if (s = rsFindIP) or (s = rsFindIPEng) then
       Result := 10
     else if (s = rsFindMAC) or (s = rsFindMacEng) then
       Result := 11
-    else if (s = rsFindRequest) then
+    else if (s = rsFindRequest) or (s = rsFindRequestEng) then
       Result := 12
-    else if (s = rsFindTask) then
+    else if (s = rsFindTask) or (s = rsFindTaskEng) then
       Result := 13
-    else if (s = rsFindJur) then
+    else if (s = rsFindJur) or (s = rsFindJurEng) then
       Result := 15
     else if (s = rsFindContact) or (s = rsFindContactEng) then
       Result := 16
@@ -3771,7 +3731,7 @@ begin
   // ТИП = P - поиск по телефону
   pcd := PCopyDataStruct(Msg.LParam);
   Msg.Result := 1;
-  SetLength(Data, pcd.cbData div SizeOf(Char));
+  SetLength(Data, pcd.cbData div SizeOf(char));
   Move(pcd.lpData^, PChar(Data)^, pcd.cbData and (not 1));
 
   // Data := string(pcd.lpData);
@@ -3808,7 +3768,7 @@ begin
       with cData do
       begin
         DWData := 0;
-        cbData := Length(Data) * SizeOf(Char);
+        cbData := Length(Data) * SizeOf(char);
         lpData := PChar(Data);
       end;
       wHandle := FindWindow(PChar('TA4CallListenerForm'), nil);
@@ -4040,6 +4000,12 @@ begin
   end;
 end;
 
+function TA4MainForm.OpenTask(const Task_id: Integer): Boolean;
+begin
+  Result := True;
+  FindTask(Task_id);
+end;
+
 function TA4MainForm.OpenRequest(const rq_id: Integer): Boolean;
 begin
   Result := (ReguestExecute(rq_id, -2, 1) >= 0);
@@ -4156,6 +4122,19 @@ begin
   finally
     Clipboard.Close;
   end;
+end;
+
+procedure TA4MainForm.dbGridEhDataHintShow(Sender: TCustomDBGridEh; CursorPos: TPoint; Cell: TGridCoord;
+InCellCursorPos: TPoint; Column: TColumnEh; var Params: TDBGridEhDataHintParams; var Processed: Boolean);
+begin
+  Params.HintColor := $00E1FFFF; // clInfoBk; dmMain.GetIniValue('ROW_HL_WARNING');
+  Processed := False;
+end;
+
+procedure TA4MainForm.dbGridColumnsReplaceEOL(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+begin
+  if not Params.text.IsEmpty then
+    Params.text := StringReplace(Params.text, #13#10, ' ', [rfReplaceAll]);
 end;
 
 end.

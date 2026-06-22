@@ -4,11 +4,15 @@ inherited RequestTypeForm: TRequestTypeForm
   Caption = #1058#1080#1087#1099' '#1079#1072#1103#1074#1086#1082
   ClientHeight = 543
   ClientWidth = 909
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 925
+  ExplicitHeight = 582
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 77
     Width = 909
+    ExplicitTop = 77
+    ExplicitWidth = 909
   end
   object dnspltr1: TSplitter [1]
     Left = 0
@@ -579,6 +583,7 @@ inherited RequestTypeForm: TRequestTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 909
+    ExplicitWidth = 909
     inherited tbOk: TToolButton
       Visible = False
     end
@@ -595,13 +600,20 @@ inherited RequestTypeForm: TRequestTypeForm
   inherited pnlEdit: TPanel
     Width = 909
     Height = 52
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 909
+    ExplicitHeight = 52
     inherited btnSaveLink: TBitBtn
       Top = 19
       Width = 456
+      ExplicitTop = 19
+      ExplicitWidth = 456
     end
     inherited btnCancelLink: TBitBtn
       Left = 547
       Top = 19
+      ExplicitLeft = 547
+      ExplicitTop = 19
     end
   end
   inherited srcDataSource: TDataSource

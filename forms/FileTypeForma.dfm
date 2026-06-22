@@ -4,12 +4,16 @@
   Caption = #1058#1080#1087#1099' '#1072#1073#1086#1085#1077#1085#1090#1089#1082#1080#1093' '#1092#1072#1081#1083#1086#1074
   ClientHeight = 535
   ClientWidth = 857
+  StyleElements = [seFont, seClient, seBorder]
   OnResize = FormResize
-  PixelsPerInch = 96
+  ExplicitWidth = 873
+  ExplicitHeight = 574
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 362
     Width = 857
+    ExplicitTop = 362
+    ExplicitWidth = 857
   end
   inherited dbGrid: TDBGridEh
     Top = 366
@@ -70,6 +74,7 @@
   end
   inherited tlbMain: TToolBar
     Width = 857
+    ExplicitWidth = 857
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -87,6 +92,9 @@
     Width = 857
     Height = 337
     ParentCtl3D = False
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 857
+    ExplicitHeight = 337
     DesignSize = (
       857
       337)
@@ -143,6 +151,9 @@
       Top = 310
       Width = 512
       TabOrder = 26
+      ExplicitLeft = 232
+      ExplicitTop = 310
+      ExplicitWidth = 512
     end
     inherited btnCancelLink: TBitBtn
       Left = 752
@@ -150,6 +161,9 @@
       Width = 98
       Cancel = True
       TabOrder = 27
+      ExplicitLeft = 752
+      ExplicitTop = 310
+      ExplicitWidth = 98
     end
     object gbJSON: TGroupBox
       Left = 0

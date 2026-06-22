@@ -79,7 +79,7 @@ end;
 
 procedure TedtNodeFlats.btnUGAddClick(Sender: TObject);
 var
-  ah : Boolean;
+  ah: Boolean;
 begin
   if (dsOff.RecordCount = 0) or (dsOff.FieldByName('HOUSE_ID').IsNull) then
     Exit;

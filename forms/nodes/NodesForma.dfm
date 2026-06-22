@@ -4,7 +4,7 @@ object NodesForm: TNodesForm
   ActiveControl = dbgNodes
   Caption = #1057#1087#1080#1089#1086#1082' '#1091#1079#1083#1086#1074
   ClientHeight = 554
-  ClientWidth = 908
+  ClientWidth = 916
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,6 @@ object NodesForm: TNodesForm
   FormStyle = fsMDIChild
   KeyPreview = True
   Menu = mmMenu
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -24,12 +23,11 @@ object NodesForm: TNodesForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object splMain: TSplitter
     Left = 0
     Top = 337
-    Width = 908
+    Width = 916
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -37,11 +35,12 @@ object NodesForm: TNodesForm
   object pnlForms: TPanel
     Left = 0
     Top = 340
-    Width = 908
+    Width = 916
     Height = 214
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
+    ExplicitTop = 320
     object spl1: TSplitter
       Left = 128
       Top = 0
@@ -50,7 +49,7 @@ object NodesForm: TNodesForm
     object pnlDATA: TPanel
       Left = 131
       Top = 0
-      Width = 777
+      Width = 785
       Height = 214
       Align = alClient
       BevelOuter = bvNone
@@ -91,7 +90,7 @@ object NodesForm: TNodesForm
   object dbgNodes: TDBGridEh
     Left = 0
     Top = 249
-    Width = 908
+    Width = 916
     Height = 88
     Align = alClient
     AllowedOperations = []
@@ -131,7 +130,6 @@ object NodesForm: TNodesForm
     OnGetCellParams = dbgNodesGetCellParams
     OnGetFooterParams = dbgNodesGetFooterParams
     OnSortMarkingChanged = dbgNodesSortMarkingChanged
-    OnSelectedRowsItemChanged = dbgNodesSelectedRowsItemChanged
     Columns = <
       item
         CellButtons = <>
@@ -295,7 +293,7 @@ object NodesForm: TNodesForm
   object pnlBtns: TPanel
     Left = 0
     Top = 0
-    Width = 908
+    Width = 916
     Height = 24
     Align = alTop
     BevelOuter = bvNone
@@ -367,6 +365,7 @@ object NodesForm: TNodesForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
+        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46
@@ -382,7 +381,7 @@ object NodesForm: TNodesForm
     object pnlToolBars: TPanel
       Left = 309
       Top = 0
-      Width = 599
+      Width = 607
       Height = 24
       Align = alClient
       BevelOuter = bvNone
@@ -390,7 +389,7 @@ object NodesForm: TNodesForm
       object ToolBar1: TToolBar
         Left = 94
         Top = 0
-        Width = 505
+        Width = 513
         Height = 24
         Align = alClient
         Caption = 'ToolBar1'
@@ -494,7 +493,7 @@ object NodesForm: TNodesForm
   object pnlSearchAddress: TPanel
     Left = 0
     Top = 24
-    Width = 908
+    Width = 916
     Height = 29
     Align = alTop
     BevelOuter = bvNone
@@ -574,7 +573,7 @@ object NodesForm: TNodesForm
   object pnlEdit: TPanel
     Left = 0
     Top = 53
-    Width = 908
+    Width = 916
     Height = 196
     Align = alTop
     BevelOuter = bvNone
@@ -583,7 +582,7 @@ object NodesForm: TNodesForm
     TabOrder = 2
     Visible = False
     DesignSize = (
-      908
+      916
       196)
     object lbl2: TLabel
       Left = 5
@@ -615,7 +614,7 @@ object NodesForm: TNodesForm
       Caption = #8470' '#1076#1086#1084#1072
     end
     object lbl6: TLabel
-      Left = 784
+      Left = 780
       Top = 9
       Width = 31
       Height = 13
@@ -636,7 +635,7 @@ object NodesForm: TNodesForm
       Caption = #1069#1090#1072#1078
     end
     object btnMap: TSpeedButton
-      Left = 876
+      Left = 884
       Top = 55
       Width = 23
       Height = 22
@@ -671,7 +670,7 @@ object NodesForm: TNodesForm
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     end
     object lbl10: TLabel
-      Left = 730
+      Left = 729
       Top = 59
       Width = 46
       Height = 13
@@ -679,7 +678,7 @@ object NodesForm: TNodesForm
       Caption = #1044#1086#1083#1075#1086#1090#1072' '
     end
     object lbl9: TLabel
-      Left = 578
+      Left = 586
       Top = 59
       Width = 40
       Height = 13
@@ -687,7 +686,7 @@ object NodesForm: TNodesForm
       Caption = #1064#1080#1088#1086#1090#1072
     end
     object lbl11: TLabel
-      Left = 347
+      Left = 265
       Top = 34
       Width = 48
       Height = 13
@@ -703,7 +702,7 @@ object NodesForm: TNodesForm
     object splTop: TSplitter
       Left = 0
       Top = 193
-      Width = 908
+      Width = 916
       Height = 3
       Cursor = crVSplit
       Align = alBottom
@@ -716,7 +715,7 @@ object NodesForm: TNodesForm
       Caption = #1058#1086#1095#1082#1072' '#1059#1069
     end
     object lbl111: TLabel
-      Left = 578
+      Left = 586
       Top = 85
       Width = 41
       Height = 13
@@ -724,38 +723,46 @@ object NodesForm: TNodesForm
       Caption = #1044#1086#1087'. '#1059#1069
     end
     object lbl13: TLabel
-      Left = 785
+      Left = 793
       Top = 85
       Width = 12
       Height = 13
       Anchors = [akTop, akRight]
       Caption = #1042#1090
     end
+    object lbl14: TLabel
+      Left = 729
+      Top = 34
+      Width = 41
+      Height = 13
+      Anchors = [akTop, akRight]
+      Caption = #1050#1086#1084#1087'-'#1082#1072
+    end
     object btnSaveLink: TBitBtn
       Left = 72
       Top = 163
-      Width = 723
+      Width = 731
       Height = 25
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      TabOrder = 13
+      TabOrder = 15
       OnClick = btnSaveLinkClick
     end
     object btnCancelLink: TBitBtn
-      Left = 801
+      Left = 809
       Top = 163
       Width = 98
       Height = 25
       Anchors = [akRight, akBottom]
       Cancel = True
       Caption = #1054#1090#1084#1077#1085#1072
-      TabOrder = 14
+      TabOrder = 16
       OnClick = btnCancelLinkClick
     end
     object cbbTYPE_ID: TDBLookupComboboxEh
       Left = 72
       Top = 31
-      Width = 271
+      Width = 187
       Height = 21
       DynProps = <>
       DataField = 'TYPE_ID'
@@ -782,7 +789,7 @@ object NodesForm: TNodesForm
     object mmoNOTICE: TDBMemoEh
       Left = 72
       Top = 108
-      Width = 827
+      Width = 835
       Height = 49
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
@@ -792,7 +799,7 @@ object NodesForm: TNodesForm
       EditButtons = <>
       EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
       ShowHint = True
-      TabOrder = 12
+      TabOrder = 14
       Visible = True
       WantReturns = True
     end
@@ -854,9 +861,9 @@ object NodesForm: TNodesForm
       Visible = True
     end
     object edtPlace: TDBEditEh
-      Left = 821
+      Left = 815
       Top = 6
-      Width = 78
+      Width = 92
       Height = 21
       Hint = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' / '#1071#1097#1080#1082
       Anchors = [akLeft, akTop, akRight]
@@ -901,9 +908,9 @@ object NodesForm: TNodesForm
       OnChange = OnAddressChange
     end
     object edtLon: TDBNumberEditEh
-      Left = 782
+      Left = 781
       Top = 56
-      Width = 88
+      Width = 97
       Height = 21
       Hint = #1045#1089#1083#1080' '#1079#1072#1076#1072#1090#1100' 999, '#1090#1086' '#1073#1091#1076#1077#1090' '#1086#1090#1086#1073#1088#1072#1078#1072#1090#1100#1089#1103' '#1076#1083#1103' '#1083#1102#1073#1086#1075#1086' '#1072#1076#1088#1077#1089#1072
       Anchors = [akTop, akRight]
@@ -914,11 +921,11 @@ object NodesForm: TNodesForm
       EmptyDataInfo.Text = 'Longitude /999'
       EditButtons = <>
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 10
       Visible = True
     end
     object edtLat: TDBNumberEditEh
-      Left = 625
+      Left = 633
       Top = 56
       Width = 90
       Height = 21
@@ -931,13 +938,13 @@ object NodesForm: TNodesForm
       EmptyDataInfo.Text = 'Latitude /999'
       EditButtons = <>
       ShowHint = True
-      TabOrder = 8
+      TabOrder = 9
       Visible = True
     end
     object edtNAME: TDBEditEh
-      Left = 397
+      Left = 319
       Top = 31
-      Width = 502
+      Width = 404
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DataField = 'NAME'
@@ -954,7 +961,7 @@ object NodesForm: TNodesForm
     object cbbPARENT: TDBLookupComboboxEh
       Left = 72
       Top = 56
-      Width = 500
+      Width = 508
       Height = 21
       Hint = #1059#1082#1072#1078#1080#1090#1077' '#1082' '#1082#1072#1082#1086#1084#1091' '#1091#1079#1083#1091' '#1087#1086#1076#1082#1083#1102#1095#1077#1085
       AutoSize = False
@@ -1003,13 +1010,13 @@ object NodesForm: TNodesForm
       ListSource = srcParent
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 7
+      TabOrder = 8
       Visible = True
     end
     object lcbEpoint: TDBLookupComboboxEh
       Left = 72
       Top = 82
-      Width = 500
+      Width = 508
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -1037,11 +1044,11 @@ object NodesForm: TNodesForm
       ListSource = srcEPoint
       ShowHint = True
       Style = csDropDownEh
-      TabOrder = 10
+      TabOrder = 11
       Visible = True
     end
     object edtNAME1: TDBEditEh
-      Left = 625
+      Left = 633
       Top = 82
       Width = 151
       Height = 21
@@ -1052,15 +1059,15 @@ object NodesForm: TNodesForm
       EditButtons = <>
       EmptyDataInfo.Text = #1044#1086#1087'. '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1058#1059#1069
       ShowHint = True
-      TabOrder = 11
+      TabOrder = 12
       Visible = True
       OnKeyDown = edtNAMEKeyDown
       OnKeyUp = edtNAMEKeyUp
     end
     object ednPCE: TDBNumberEditEh
-      Left = 814
+      Left = 815
       Top = 82
-      Width = 85
+      Width = 92
       Height = 21
       Anchors = [akTop, akRight]
       DataField = 'PCE'
@@ -1071,7 +1078,35 @@ object NodesForm: TNodesForm
       EditButtons = <>
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 15
+      TabOrder = 13
+      Visible = True
+    end
+    object lcbTYPE_ID: TDBLookupComboboxEh
+      Left = 781
+      Top = 31
+      Width = 126
+      Height = 21
+      Anchors = [akTop, akRight]
+      DynProps = <>
+      DataField = 'LT_ID'
+      DataSource = srcNodes
+      DropDownBox.Columns = <
+        item
+          FieldName = 'O_NAME'
+          Width = 80
+        end
+        item
+          FieldName = 'O_DIMENSION'
+          Width = 20
+        end>
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1058#1080#1087' '#1082#1086#1084#1087#1086#1085#1086#1074#1082#1080
+      EditButtons = <>
+      KeyField = 'O_ID'
+      ListField = 'O_NAME'
+      ListSource = srcLayoutType
+      ShowHint = True
+      TabOrder = 7
       Visible = True
     end
   end
@@ -1113,7 +1148,8 @@ object NodesForm: TNodesForm
       '    Parent_Id = :Parent_Id,'
       '    EPOINT = :EPOINT,'
       '    EP_TAG = :EP_TAG,'
-      '    PCE = :PCE'
+      '    PCE = :PCE,'
+      '    LT_ID = :LT_ID'
       'where Node_Id = :Node_Id')
     DeleteSQL.Strings = (
       'execute procedure Delete_Node(:OLD_NODE_ID)'
@@ -1122,11 +1158,12 @@ object NodesForm: TNodesForm
     InsertSQL.Strings = (
       
         'insert into Nodes (Node_Id, House_Id, Type_Id, Name, Notice, Lat' +
-        ', Lon, Floor_N, Porch_N, PLACE, Parent_Id, EPOINT, EP_TAG, PCE)'
+        ', Lon, Floor_N, Porch_N, PLACE, Parent_Id, EPOINT, EP_TAG, PCE, ' +
+        'LT_ID)'
       
         'values (:Node_Id, :House_Id, :Type_Id, :Name, :Notice, :Lat, :Lo' +
         'n, :Floor_N, :Porch_N, :PLACE, :Parent_Id, :EPOINT, :EP_TAG, :PC' +
-        'E)')
+        'E, :LT_ID)')
     RefreshSQL.Strings = (
       'select'
       '    n.*'
@@ -1146,6 +1183,7 @@ object NodesForm: TNodesForm
         'p.O_Dimension || '#39')'#39', '#39#39')'
       '    || iif(coalesce(n.Ep_Tag, '#39#39') <> '#39#39', '#39' / '#39' || n.Ep_Tag, '#39#39')'
       '    as EPName'
+      '  , el.O_Name LT_NAME  '
       '  from NODES n'
       '       inner join HOUSE H on (n.HOUSE_ID = H.HOUSE_ID)'
       '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
@@ -1163,7 +1201,11 @@ object NodesForm: TNodesForm
       
         '       left outer join objects ep on (ep.O_Id = n.Epoint and ep.' +
         'O_Type = 76)'
+      
+        '       left outer join objects el on (el.O_Id = n.LT_ID and el.O' +
+        '_Type = 79)'
       'where '
+      ''
       '  N.NODE_ID = :OLD_NODE_ID')
     SelectSQL.Strings = (
       'select'
@@ -1184,6 +1226,7 @@ object NodesForm: TNodesForm
         'p.O_Dimension || '#39')'#39', '#39#39')'
       '    || iif(coalesce(n.Ep_Tag, '#39#39') <> '#39#39', '#39' / '#39' || n.Ep_Tag, '#39#39')'
       '    as EPName'
+      '  , el.O_Name LT_NAME  '
       '  from NODES n'
       '       inner join HOUSE H on (n.HOUSE_ID = H.HOUSE_ID)'
       '       inner join STREET S on (H.STREET_ID = S.STREET_ID)'
@@ -1201,6 +1244,9 @@ object NodesForm: TNodesForm
       
         '       left outer join objects ep on (ep.O_Id = n.Epoint and ep.' +
         'O_Type = 76)'
+      
+        '       left outer join objects el on (el.O_Id = n.LT_ID and el.O' +
+        '_Type = 79)'
       '  where @@filter%1=1@')
     AutoUpdateOptions.UpdateTableName = 'NODES'
     AutoUpdateOptions.KeyFields = 'NODE_ID'
@@ -1525,6 +1571,28 @@ object NodesForm: TNodesForm
     Top = 355
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
+        object ATTRIBUTE_VALUE: TMTStringDataFieldEh
+          FieldName = 'ATTRIBUTE_VALUE'
+          StringDataType = fdtStringEh
+          DisplayWidth = 100
+          Size = 255
+        end
+        object ATTRIBUTE: TMTNumericDataFieldEh
+          FieldName = 'ATTRIBUTE'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
+        object NOT_ATTRIBUTE: TMTNumericDataFieldEh
+          FieldName = 'NOT_ATTRIBUTE'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
         object Epoint: TMTNumericDataFieldEh
           FieldName = 'Epoint'
           NumericDataType = fdtIntegerEh
@@ -1837,5 +1905,27 @@ object NodesForm: TNodesForm
     DataSet = dsEPoint
     Left = 590
     Top = 504
+  end
+  object dsLayoutType: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    o.O_Id'
+      '    , o.O_Name'
+      '    , coalesce(o.O_DIMENSION, '#39#39') O_DIMENSION'
+      '  from objects o'
+      '  where o.O_Type = 79'
+      '        and coalesce(o.O_Deleted,0) <> 1'
+      'order by O_Name  ')
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 609
+    Top = 408
+    oFetchAll = True
+  end
+  object srcLayoutType: TDataSource
+    DataSet = dsLayoutType
+    Left = 670
+    Top = 400
   end
 end

@@ -29,7 +29,6 @@ object apgCustomerFiles: TapgCustomerFiles
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = False
     TabOrder = 0
     TitleParams.MultiTitle = True
     OnCellClick = dbgCustFilesCellClick
@@ -117,6 +116,7 @@ object apgCustomerFiles: TapgCustomerFiles
         Width = 75
       end
       item
+        Alignment = taCenter
         CellButtons = <>
         Checkboxes = True
         DynProps = <>
@@ -305,9 +305,7 @@ object apgCustomerFiles: TapgCustomerFiles
       '       inner join request r on (p.Rq_Id = r.RQ_ID)'
       '  where r.Rq_Customer = :customer_id'
       ')'
-      'order by O_NAME, Name, Added_On'
-      ''
-      '  ')
+      'order by O_NAME, Name, Added_On')
     AutoCalcFields = False
     AfterOpen = dsCustFilesAfterOpen
     AfterRefresh = dsCustFilesAfterRefresh

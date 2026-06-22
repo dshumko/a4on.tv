@@ -6,8 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
+  Vcl.ToolWin,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, amSplitter;
 
 type
@@ -39,10 +41,8 @@ type
       State: TGridDrawState);
     procedure imgJPGDblClick(Sender: TObject);
     procedure dbgPhotosDblClick(Sender: TObject);
-    procedure dbGridCustReqRowDetailPanelHide(Sender: TCustomDBGridEh;
-      var CanHide: Boolean);
-    procedure dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh;
-      var CanShow: Boolean);
+    procedure dbGridCustReqRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
+    procedure dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
   private
     CE: Boolean;
     CC: Boolean;
@@ -225,14 +225,12 @@ begin
     end;
 end;
 
-procedure TapgNodeRequests.dbGridCustReqRowDetailPanelHide(
-  Sender: TCustomDBGridEh; var CanHide: Boolean);
+procedure TapgNodeRequests.dbGridCustReqRowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean);
 begin
   dsPhotos.Close;
 end;
 
-procedure TapgNodeRequests.dbGridCustReqRowDetailPanelShow(
-  Sender: TCustomDBGridEh; var CanShow: Boolean);
+procedure TapgNodeRequests.dbGridCustReqRowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean);
 begin
   dsPhotos.Open;
 end;

@@ -10,11 +10,9 @@ object apgEqpmntPort: TapgEqpmntPort
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object splInfo: TSplitter
     Left = 637

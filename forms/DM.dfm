@@ -1,5 +1,4 @@
 object dmMain: TdmMain
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Height = 580
@@ -42,7 +41,6 @@ object dmMain: TdmMain
     AfterDisconnect = dbTVAfterDisconnect
     DesignDBOptions = [ddoIsDefaultDatabase]
     UseRepositories = []
-    LibraryName = 'fbclient.dll'
     WaitForRestoreConnect = 0
     AfterConnect = dbTVAfterConnect
     Left = 22
@@ -637,9 +635,9 @@ object dmMain: TdmMain
       '                  where cc.Customer_Id = c.Customer_Id'
       '                        and cc.Cc_Type = 2'
       '                        @@ONLY_NOTYFY% @'
-      
-        '                  order by cc.Cc_Notify desc), '#39#39') as EMAIL     ' +
-        '              '
+      '                  order by cc.Cc_Notify desc), '#39#39') as EMAIL'
+      '    , b.M_Tarif'
+      '    , b.D_Tarif'
       'FROM CUSTOMER C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'
@@ -648,6 +646,9 @@ object dmMain: TdmMain
         'd hf.flat_no = c.flat_no)'
       '   left outer join AREA a on (a.Area_Id = s.Area_Id)'
       '   left outer join SUBAREA sa on (sa.Subarea_Id = h.Subarea_Id)'
+      
+        '   left outer join GET_TARIF_SUM_CUSTOMER_SRV(c.Customer_Id) b o' +
+        'n (1=1)'
       'where'
       '  @@filter%1=2@'
       'union all'
@@ -676,7 +677,9 @@ object dmMain: TdmMain
         '    , coalesce(a.Area_Name||coalesce('#39'. '#39'||sa.Subarea_Name, '#39#39'),' +
         ' '#39#39') as City'
       '    , '#39#39' as MOBILE_WN'
-      '    , '#39#39' as EMAIL    '
+      '    , '#39#39' as EMAIL'
+      '    , null M_Tarif'
+      '    , null D_Tarif'
       'FROM NODES C'
       '   INNER JOIN HOUSE H ON (C.HOUSE_ID = H.HOUSE_ID)'
       '   INNER JOIN STREET S ON (H.STREET_ID = S.STREET_ID)'

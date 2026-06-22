@@ -1,7 +1,5 @@
 ﻿unit fmuCustomerInternet;
-
 interface
-
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
@@ -11,13 +9,11 @@ uses
   AtrPages, ToolCtrlsEh, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ibase, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
   Vcl.Buttons;
-
 type
   TDllForm = procedure(AppHandle: THandle; DBHandle: TISC_DB_HANDLE; ID: Integer; UserName: PWChar;
     Password: PWChar); StdCall;
   TDisconnectInDLL = procedure; stdcall;
   EDLLLoadError = class(Exception);
-
   TapgCustomerInternet = class(TA4onPage)
     srcInternet: TDataSource;
     dsInternet: TpFIBDataSet;
@@ -42,7 +38,6 @@ type
     procedure dbgrdBillDblClick(Sender: TObject);
   private
     { Private declarations }
-    bView: Boolean;
     FRightAdd: Boolean;
     FRightEdit: Boolean;
     FRightDel: Boolean;
@@ -54,23 +49,17 @@ type
     procedure CloseData; override;
     class function GetPageName: string; override;
   end;
-
 implementation
-
 {$R *.dfm}
-
 uses
   MAIN, AtrCommon, DM, BillEditForma;
-
 class function TapgCustomerInternet.GetPageName: string;
 begin
   Result := rsInternet;
 end;
-
 procedure TapgCustomerInternet.InitForm;
 begin
   dsInternet.DataSource := FDataSource;
-
   // rght_Customer_LanFull 38, 'ПОЛНЫЙ ДОСТУП К СПД/ИНТЕРНЕТ'
   // rght_Customer_LanAdd  64, 'ДОБАВЛЕНИ СПД/ИНТЕРНЕТ'
   // rght_Customer_LanEdit 65, 'РЕДАКТИРОВАНИЕ СПД/ИНТЕРНЕТ'
@@ -81,7 +70,6 @@ begin
   FRightEdit := dmMain.AllowedAction(rght_Customer_LanEdit);
   FRightDel := dmMain.AllowedAction(rght_Customer_LanDel);
 end;
-
 procedure TapgCustomerInternet.EnableControls;
 begin
   actAdd.Enabled := (FRightAdd or FRightFull);
@@ -89,28 +77,23 @@ begin
   actDelete.Enabled := (FRightDel or FRightFull); // правка биллинга
   actUnblock.Visible := False; // правка биллинга
 end;
-
 procedure TapgCustomerInternet.OpenData;
 begin
   dsInternet.Open;
   EnableControls;
 end;
-
 procedure TapgCustomerInternet.srcInternetStateChange(Sender: TObject);
 begin
   EnableControls;
 end;
-
 procedure TapgCustomerInternet.actDeleteExecute(Sender: TObject);
 var
   s: string;
   DLLHandle: THandle;
   ShowDeleteForm: TDllForm;
-
 begin
   if (dsInternet.RecordCount = 0) or dsInternet.FieldByName('BLNG_ID').IsNull then
     Exit;
-
   s := ExtractFilePath(Application.ExeName);
   s := s + 'internet.dll';
   if FileExists(s) then
@@ -122,7 +105,6 @@ begin
       else
       begin
         @ShowDeleteForm := GetProcAddress(DLLHandle, 'ShowDeleteForm');
-
         if Assigned(ShowDeleteForm) then
           ShowDeleteForm(Application.Handle, dmMain.dbTV.Handle, dsInternet.FieldByName('UNIT_ID').AsInteger,
             PChar(dmMain.USER), PChar(dmMain.Password))
@@ -138,10 +120,8 @@ begin
     if MessageDlg(format(rsDeleteWithName, [dsInternet['LOGIN']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
       dsInternet.Delete;
   end;
-
   dsInternet.CloseOpen(true);
 end;
-
 procedure TapgCustomerInternet.actEditExecute(Sender: TObject);
 var
   s: string;
@@ -152,7 +132,6 @@ begin
     Exit;
   if (dsInternet.RecordCount = 0) or dsInternet.FieldByName('BLNG_ID').IsNull then
     Exit;
-
   s := ExtractFilePath(Application.ExeName);
   s := s + 'internet.dll';
   if FileExists(s) then
@@ -180,9 +159,7 @@ begin
       FDataSource.DataSet.FieldByName('ACCOUNT_NO').AsString) > 0 then
       dsInternet.Refresh;
   end;
-
 end;
-
 procedure TapgCustomerInternet.actAddExecute(Sender: TObject);
 var
   s: string;
@@ -191,7 +168,6 @@ var
 begin
   if (not(FRightAdd or FRightFull)) then
     Exit;
-
   s := ExtractFilePath(Application.ExeName) + 'internet.dll';
   if FileExists(s) then
   begin
@@ -222,7 +198,6 @@ begin
       dsInternet.CloseOpen(true);
   end;
 end;
-
 procedure TapgCustomerInternet.actUnblockExecute(Sender: TObject);
 var
   s: string;
@@ -251,21 +226,17 @@ begin
     end;
   end
 end;
-
 procedure TapgCustomerInternet.CloseData;
 begin
   dsInternet.Close;
 end;
-
 procedure TapgCustomerInternet.dbgrdBillDblClick(Sender: TObject);
 begin
   if (not(Sender as TDBGridEh).DataSource.DataSet.Active) then
     Exit;
-
   if (Sender as TDBGridEh).DataSource.DataSet.RecordCount = 0 then
     actAdd.Execute
   else
     actEdit.Execute;
 end;
-
 end.

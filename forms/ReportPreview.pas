@@ -152,8 +152,7 @@ begin
       if A4MainForm.MDIChildren[i].tag = aREPORT_ID then
         A4MainForm.MDIChildren[i].Close;
 
-  with TReportChild.Create(application) do
-  begin
+  with TReportChild.Create(application) do begin
     REPORT_ID := aREPORT_ID;
     LoadReportBody;
     ShowReportBody;
@@ -173,10 +172,9 @@ procedure TReportChild.ShowReportBody;
 var
   ci: Integer;
 begin
-  if Assigned(CustomersForm) then
-  begin
+  if Assigned(CustomersForm) then begin
     ci := frxReport.Variables.IndexOf('CUSTOMER_ID');
-    if (ci > 0) and (not CustomersForm.dsCustomers.FieldByName('CUSTOMER_ID').IsNull)  then
+    if (ci > 0) and (not CustomersForm.dsCustomers.FieldByName('CUSTOMER_ID').IsNull) then
       frxReport.Variables['CUSTOMER_ID'] := CustomersForm.dsCustomers['CUSTOMER_ID'];
   end;
 
@@ -199,8 +197,7 @@ begin
   try
     dmMain.fdsLoadReport.ParamByName('ID_REPORT').value := fReport_ID;
     dmMain.fdsLoadReport.Open;
-    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then
-    begin
+    if dmMain.fdsLoadReport.FieldByName('REPORT_BODY').value <> NULL then begin
       { переделал с файлов в стрим
         vFN := GetTempDir;
         vFN := vFN + dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
@@ -223,8 +220,7 @@ begin
       Stream := TMemoryStream.Create;
       try
         TBlobField(dmMain.fdsLoadReport.FieldByName('REPORT_BODY')).SaveToStream(Stream);
-        if Stream.Size > 0 then
-        begin
+        if Stream.Size > 0 then begin
           Stream.Position := 0;
           frxReport.LoadFromStream(Stream);
           vFN := dmMain.fdsLoadReport.FieldByName('REPORT_NAME').AsString;
@@ -330,8 +326,7 @@ var
 begin
   ToolBar.Images := frxResources.PreviewButtonImages;
 
-  for i := 0 to frxExportFilters.Count - 1 do
-  begin
+  for i := 0 to frxExportFilters.Count - 1 do begin
     if frxExportFilters[i].Filter = frxDotMatrixExport then
       continue;
     m := TMenuItem.Create(ExportPopup);
@@ -339,15 +334,12 @@ begin
     m.Caption := TfrxCustomExportFilter(frxExportFilters[i].Filter).GetDescription + '...';
     m.tag := i;
     m.OnClick := ExportMIClick;
-    if TfrxCustomExportFilter(frxExportFilters[i].Filter).ClassName = 'TfrxPDFExport' then
-    begin
+    if TfrxCustomExportFilter(frxExportFilters[i].Filter).ClassName = 'TfrxPDFExport' then begin
       FPDFExport := TfrxCustomExportFilter(frxExportFilters[i].Filter);
       PdfB.Visible := pbExportQuick in frxReport.PreviewOptions.Buttons;
     end;
-    if not(pbNoEmail in frxReport.PreviewOptions.Buttons) then
-    begin
-      if TfrxCustomExportFilter(frxExportFilters[i].Filter).ClassName = 'TfrxMailExport' then
-      begin
+    if not(pbNoEmail in frxReport.PreviewOptions.Buttons) then begin
+      if TfrxCustomExportFilter(frxExportFilters[i].Filter).ClassName = 'TfrxMailExport' then begin
         FEmailExport := TfrxCustomExportFilter(frxExportFilters[i].Filter);
         EmailB.Visible := pbExportQuick in frxReport.PreviewOptions.Buttons;
       end;
@@ -413,8 +405,7 @@ begin
     frxPreview.ZoomMode := zmPageWidth
   else if ZoomCB.ItemIndex = 7 then
     frxPreview.ZoomMode := zmWholePage
-  else
-  begin
+  else begin
     s := ZoomCB.Text;
 
     if Pos('%', s) <> 0 then
@@ -441,8 +432,7 @@ begin
     frxPreview.PageNo := frxPreview.PageCount
   else if (Key = vk_F3) and (pbFind in frxReport.PreviewOptions.Buttons) then
     frxPreview.FindNext
-  else if ssCtrl in Shift then
-  begin
+  else if ssCtrl in Shift then begin
     if (Key = Ord('P')) and (pbPrint in frxReport.PreviewOptions.Buttons) then
       frxPreview.Print
     else if (Key = Ord('S')) and (pbSave in frxReport.PreviewOptions.Buttons) then
@@ -454,8 +444,7 @@ end;
 
 procedure TReportChild.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then
-  begin
+  if Key = #13 then begin
     if ActiveControl = ZoomCB then
       ZoomCBClick(nil)
     else if ActiveControl = PageE then

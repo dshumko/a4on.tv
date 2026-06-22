@@ -3,8 +3,8 @@ object NewTaskForm: TNewTaskForm
   Top = 390
   BorderIcons = [biSystemMenu]
   Caption = #1053#1086#1074#1072#1103' '#1079#1072#1076#1072#1095#1072
-  ClientHeight = 231
-  ClientWidth = 507
+  ClientHeight = 299
+  ClientWidth = 588
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,26 +13,24 @@ object NewTaskForm: TNewTaskForm
   Font.Style = []
   FormStyle = fsStayOnTop
   KeyPreview = True
-  OldCreateOrder = False
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlRecourse: TPanel
     Left = 0
     Top = 0
-    Width = 507
-    Height = 190
+    Width = 588
+    Height = 258
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      507
-      190)
+      588
+      258)
     object edtTitle: TDBEditEh
       Left = 16
       Top = 8
@@ -74,7 +72,7 @@ object NewTaskForm: TNewTaskForm
       Left = 16
       Top = 57
       Width = 313
-      Height = 132
+      Height = 200
       Anchors = [akLeft, akTop, akBottom]
       AutoSize = False
       DynProps = <>
@@ -94,8 +92,8 @@ object NewTaskForm: TNewTaskForm
     object dbgUsers: TDBGridEh
       Left = 335
       Top = 6
-      Width = 172
-      Height = 155
+      Width = 253
+      Height = 223
       Hint = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1080' '#1079#1072#1076#1072#1095#1080
       AllowedOperations = [alopUpdateEh]
       Anchors = [akLeft, akTop, akRight, akBottom]
@@ -125,13 +123,13 @@ object NewTaskForm: TNewTaskForm
     end
     object cbClose: TDBComboBoxEh
       Left = 335
-      Top = 167
-      Width = 167
+      Top = 235
+      Width = 248
       Height = 21
       Hint = 
         #1050#1086#1084#1091' '#1084#1086#1078#1085#1086' '#1079#1072#1082#1088#1099#1074#1072#1090#1100' '#1079#1072#1076#1072#1095#1091'. '#1045#1089#1083#1080' '#1086#1089#1090#1072#1074#1080#1090#1100' '#1087#1091#1089#1090#1099#1084', '#1090#1086' '#1079#1072#1082#1088#1099#1090#1100' '#1084#1086 +
         #1078#1077#1090' '#1090#1086#1090' '#1082#1090#1086' '#1087#1086#1089#1090#1072#1074#1080#1083
-      Anchors = [akLeft, akTop, akRight]
+      Anchors = [akLeft, akRight, akBottom]
       DynProps = <>
       EmptyDataInfo.Text = #1050#1090#1086' '#1084#1086#1078#1077#1090' '#1079#1072#1082#1088#1099#1090#1100
       EditButtons = <>
@@ -150,19 +148,19 @@ object NewTaskForm: TNewTaskForm
   end
   object pnl1: TPanel
     Left = 0
-    Top = 190
-    Width = 507
+    Top = 258
+    Width = 588
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      507
+      588
       41)
     object btnOk: TBitBtn
       Left = 16
       Top = 5
-      Width = 400
+      Width = 481
       Height = 30
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -172,7 +170,7 @@ object NewTaskForm: TNewTaskForm
       OnClick = btnOkClick
     end
     object btnCancel: TBitBtn
-      Left = 427
+      Left = 508
       Top = 5
       Width = 75
       Height = 30

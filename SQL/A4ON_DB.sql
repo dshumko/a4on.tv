@@ -247,7 +247,7 @@ INTEGER
 NOT NULL;
 
 CREATE GENERATOR GEN_ACCOUNT_NO START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_ACCOUNT_NO TO 95003;
+SET GENERATOR GEN_ACCOUNT_NO TO 95005;
 
 CREATE GENERATOR GEN_APPLIANCE_UID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_APPLIANCE_UID TO 19;
@@ -259,7 +259,7 @@ CREATE GENERATOR GEN_CARD_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_CARD_ID TO 0;
 
 CREATE GENERATOR GEN_CUSTOMER_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_CUSTOMER_UID TO 9799;
+SET GENERATOR GEN_CUSTOMER_UID TO 9801;
 
 CREATE GENERATOR GEN_DEVICES_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_DEVICES_ID TO 0;
@@ -274,7 +274,7 @@ CREATE GENERATOR GEN_DIGIT_SEQ START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_DIGIT_SEQ TO 1;
 
 CREATE GENERATOR GEN_EPG START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_EPG TO 4211;
+SET GENERATOR GEN_EPG TO 7093;
 
 CREATE GENERATOR GEN_EQ_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_EQ_ID TO 91;
@@ -295,13 +295,13 @@ CREATE GENERATOR GEN_MODULE_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_MODULE_ID TO 0;
 
 CREATE GENERATOR GEN_OPERATIONS_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_OPERATIONS_UID TO 886758;
+SET GENERATOR GEN_OPERATIONS_UID TO 886812;
 
 CREATE GENERATOR GEN_ORDER_TP START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_ORDER_TP TO 0;
 
 CREATE GENERATOR GEN_PAYMENT START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_PAYMENT TO 238511;
+SET GENERATOR GEN_PAYMENT TO 238520;
 
 CREATE GENERATOR GEN_QUEUE START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_QUEUE TO 50001115;
@@ -310,19 +310,19 @@ CREATE GENERATOR GEN_REPORT_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_REPORT_ID TO 390;
 
 CREATE GENERATOR GEN_REQUEST START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_REQUEST TO 15625;
+SET GENERATOR GEN_REQUEST TO 15635;
 
 CREATE GENERATOR GEN_TASK START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_TASK TO 8;
+SET GENERATOR GEN_TASK TO 30;
 
 CREATE GENERATOR GEN_UID START WITH 0 INCREMENT BY 1;
-SET GENERATOR GEN_UID TO 29883;
+SET GENERATOR GEN_UID TO 29907;
 
 CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 5063132;
+SET GENERATOR G_LOG_ID TO 5063319;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -1560,7 +1560,7 @@ END;
 
 CREATE OR ALTER PROCEDURE CURRENCY_TO_STR (
     VAL D_N15_2,
-    SHOWCURRENCY D_INTEGER)
+    SHOWCURRENCY D_INTEGER = null)
 RETURNS (
     CURR_STR D_VARCHAR1000)
 AS
@@ -2373,8 +2373,8 @@ END;
 CREATE OR ALTER PROCEDURE GET_LAYOUT_BY_ID (
     ID D_INTEGER)
 RETURNS (
+    L_ID D_INTEGER,
     LT_ID D_INTEGER,
-    NODE_ID D_INTEGER,
     SRV_TYPE D_INTEGER,
     MAT_QNT D_N15_3,
     CUST_QNT D_INTEGER,
@@ -2528,9 +2528,9 @@ END;
 CREATE OR ALTER PROCEDURE GET_NODE_LAYOUT (
     FOR_NODE D_INTEGER)
 RETURNS (
-    LT_ID D_INTEGER,
+    L_ID D_INTEGER,
     NODE_ID D_INTEGER,
-    NODE_TYPE D_INTEGER,
+    LT_ID D_INTEGER,
     ITSOWN D_INTEGER,
     SRV_TYPE D_INTEGER,
     CUST_QNT D_INTEGER,
@@ -2727,7 +2727,8 @@ CREATE OR ALTER PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV (
     SERVICE_ID D_UID_NULL = null,
     FOR_DAY D_DATE = null)
 RETURNS (
-    M_TARIF D_N15_4)
+    M_TARIF D_N15_4,
+    D_TARIF D_N15_4)
 AS
 BEGIN
   SUSPEND;
@@ -2750,6 +2751,28 @@ RETURNS (
     WLBL_NODE D_INTEGER,
     NODE_NAME D_VARCHAR255,
     WLBL_FLOW D_CHAR1)
+AS
+BEGIN
+  SUSPEND;
+END;
+
+
+
+CREATE OR ALTER PROCEDURE GETEPCOUNTERS (
+    DT D_DATE,
+    EP D_INTEGER = null)
+RETURNS (
+    O_ID D_INTEGER,
+    O_NAME D_VARCHAR500,
+    ECOUNTER D_VARCHAR50,
+    PCE D_N15_3,
+    PCE_FACT D_N15_3,
+    PV D_N18_6,
+    CV D_N18_6,
+    NOTICE D_VARCHAR1000,
+    CDATE D_DATE,
+    A_INC D_INTEGER,
+    A_TO D_INTEGER)
 AS
 BEGIN
   SUSPEND;
@@ -3906,6 +3929,37 @@ END;
 
 
 
+CREATE OR ALTER FUNCTION CURRENCY_FORMAT (
+    CURR D_N15_2,
+    TS D_CHAR1 = ' ',
+    DS D_CHAR1 = ',')
+RETURNS D_VARCHAR50 DETERMINISTIC
+AS
+BEGIN
+  RETURN NULL;
+END;
+
+
+
+
+
+CREATE OR ALTER FUNCTION DATE_FORMAT (
+    A_DATE D_DATE = current_date,
+    FORMAT D_VARCHAR1000 = null,
+    LONG_DAY_NAMES D_VARCHAR100 = null,
+    SHORT_DAY_NAMES D_VARCHAR50 = null,
+    LONG_MONTH_NAMES D_VARCHAR255 = null,
+    SHORT_MONTH_NAMES D_VARCHAR255 = null)
+RETURNS D_VARCHAR255
+AS
+BEGIN
+  RETURN NULL;
+END;
+
+
+
+
+
 CREATE OR ALTER FUNCTION DISTANCE (
     LNG1 D_GEOPOINT,
     LAT1 D_GEOPOINT,
@@ -4141,10 +4195,9 @@ END;
 
 
 
-CREATE OR ALTER FUNCTION NUMBER_AS_STR (
+CREATE OR ALTER FUNCTION NUMBER_TO_STRING_R (
     VAL D_N15_2,
-    LANG D_VARCHAR5 = 'RU',
-    SHOWCURRENCY D_INTEGER = 0)
+    SHOWCURRENCY D_INTEGER = null)
 RETURNS D_VARCHAR1000
 AS
 BEGIN
@@ -4246,12 +4299,6 @@ CREATE TABLE ATTRIBUTE (
     OVALUE     D_VARCHAR4000
 );
 
-CREATE TABLE BCI_CHANNELS (
-    BI_ID   UID,
-    CH_ID   UID,
-    NOTICE  D_NOTICE
-);
-
 CREATE TABLE BCISSUE (
     BI_ID         UID,
     BI_TYPE       UID,
@@ -4268,6 +4315,12 @@ CREATE TABLE BCISSUE (
     ADDED_ON      D_DATETIME,
     EDIT_BY       D_VARCHAR50,
     EDIT_ON       D_DATETIME
+);
+
+CREATE TABLE BCI_CHANNELS (
+    BI_ID   UID,
+    CH_ID   UID,
+    NOTICE  D_NOTICE
 );
 
 CREATE TABLE BILLING (
@@ -4362,6 +4415,39 @@ CREATE TABLE CHANGELOG (
     OBJECT_TYPE   D_SMALLINT
 );
 
+CREATE TABLE CHANNELS (
+    CH_ID            UID,
+    CH_NUMBER        D_INTEGER,
+    CH_NAME          D_NAME,
+    CH_NOTICE        D_NOTICE,
+    CH_PAID_TO       D_DATE,
+    CH_FREQ          D_N15_3 DEFAULT 0,
+    CH_CODED         D_IBOOLEAN DEFAULT 0,
+    CH_TRUNK         D_INTEGER,
+    CH_TRUNK_NUMBER  D_INTEGER,
+    CH_CONTACT       D_VARCHAR100,
+    DEFINITION       D_VARCHAR5,
+    LANG             D_VARCHAR5 DEFAULT 'RUS',
+    DVBGENRES        D_VARCHAR255,
+    MINAGE           D_INTEGER,
+    ACCESS_ID        D_INTEGER,
+    ADDED_BY         D_VARCHAR50,
+    ADDED_ON         D_DATETIME,
+    EDIT_BY          D_VARCHAR50,
+    EDIT_ON          D_DATETIME,
+    CONTRACT_ID      D_UID_NULL,
+    CH_LIC           D_VARCHAR255,
+    CH_CERT          D_VARCHAR255,
+    CH_THEME         D_DESCRIPTION,
+    CH_ICON          D_BLOB1K
+);
+
+CREATE TABLE CHANNELS_IN_SERVCE (
+    SRV_ID  UID NOT NULL,
+    CH_ID   UID NOT NULL,
+    ON_OFF  D_IBOOLEAN NOT NULL
+);
+
 CREATE TABLE CHANNEL_SRC (
     CS_ID     UID,
     NAME      D_NAME,
@@ -4400,39 +4486,6 @@ CREATE TABLE CHANNEL_SRC_PARAM (
     VPID       D_INTEGER,
     APID       D_INTEGER,
     A2PID      D_INTEGER
-);
-
-CREATE TABLE CHANNELS (
-    CH_ID            UID,
-    CH_NUMBER        D_INTEGER,
-    CH_NAME          D_NAME,
-    CH_NOTICE        D_NOTICE,
-    CH_PAID_TO       D_DATE,
-    CH_FREQ          D_N15_3 DEFAULT 0,
-    CH_CODED         D_IBOOLEAN DEFAULT 0,
-    CH_TRUNK         D_INTEGER,
-    CH_TRUNK_NUMBER  D_INTEGER,
-    CH_CONTACT       D_VARCHAR100,
-    DEFINITION       D_VARCHAR5,
-    LANG             D_VARCHAR5 DEFAULT 'RUS',
-    DVBGENRES        D_VARCHAR255,
-    MINAGE           D_INTEGER,
-    ACCESS_ID        D_INTEGER,
-    ADDED_BY         D_VARCHAR50,
-    ADDED_ON         D_DATETIME,
-    EDIT_BY          D_VARCHAR50,
-    EDIT_ON          D_DATETIME,
-    CONTRACT_ID      D_UID_NULL,
-    CH_LIC           D_VARCHAR255,
-    CH_CERT          D_VARCHAR255,
-    CH_THEME         D_VARCHAR50,
-    CH_ICON          D_BLOB1K
-);
-
-CREATE TABLE CHANNELS_IN_SERVCE (
-    SRV_ID  UID NOT NULL,
-    CH_ID   UID NOT NULL,
-    ON_OFF  D_IBOOLEAN NOT NULL
 );
 
 CREATE TABLE CLIENT_FILES (
@@ -4673,7 +4726,8 @@ CREATE GLOBAL TEMPORARY TABLE DAYS_TARIF (
     T_DAY      D_DATE NOT NULL,
     TARIF      D_N15_5 DEFAULT 0,
     TARIF_JUR  D_N15_5
-) ON COMMIT DELETE ROWS;
+)
+ON COMMIT DELETE ROWS;
 
 CREATE TABLE DECODER_PACKETS (
     DECODER_N   D_DECODER NOT NULL,
@@ -4751,9 +4805,34 @@ CREATE TABLE DISCOUNT_FACTOR (
     PROMO_ID      D_UID_NULL
 );
 
+CREATE TABLE DISTRIBUTOR (
+    ID        UID,
+    NAME      D_VARCHAR100,
+    ADDRESS   D_DESCRIPTION,
+    JADDRESS  D_DESCRIPTION,
+    EMAIL     D_VARCHAR100,
+    PHONES    D_VARCHAR100,
+    NOTICE    D_DESCRIPTION
+);
+
 CREATE TABLE DISTRIB_CARDS (
     DISTRIBUTOR_ID  UID,
     CARD            D_VARCHAR50,
+    NOTICE          D_VARCHAR500
+);
+
+CREATE TABLE DISTRIB_CONTRACTS (
+    ID              UID,
+    DISTRIBUTOR_ID  UID,
+    C_NUMBER        D_VARCHAR50,
+    C_DATE          D_DATE,
+    C_DATE_BEFORE   D_DATE,
+    REPORT_FRMT     D_VARCHAR10,
+    DELIVERY        D_INTEGER,
+    FINTERMS        D_N15_2,
+    MINTERMS        D_INTEGER,
+    REPORT_ID       D_UID_NULL,
+    CTYPE           D_VARCHAR20,
     NOTICE          D_VARCHAR500
 );
 
@@ -4793,31 +4872,6 @@ CREATE TABLE DISTRIB_CONTRACT_REPORTS_CH (
     NOTICE       D_VARCHAR50
 );
 
-CREATE TABLE DISTRIB_CONTRACTS (
-    ID              UID,
-    DISTRIBUTOR_ID  UID,
-    C_NUMBER        D_VARCHAR50,
-    C_DATE          D_DATE,
-    C_DATE_BEFORE   D_DATE,
-    REPORT_FRMT     D_VARCHAR10,
-    DELIVERY        D_INTEGER,
-    FINTERMS        D_N15_2,
-    MINTERMS        D_INTEGER,
-    REPORT_ID       D_UID_NULL,
-    CTYPE           D_VARCHAR20,
-    NOTICE          D_VARCHAR500
-);
-
-CREATE TABLE DISTRIBUTOR (
-    ID        UID,
-    NAME      D_VARCHAR100,
-    ADDRESS   D_DESCRIPTION,
-    JADDRESS  D_DESCRIPTION,
-    EMAIL     D_VARCHAR100,
-    PHONES    D_VARCHAR100,
-    NOTICE    D_DESCRIPTION
-);
-
 CREATE TABLE DOC_LIST (
     DOC_TYPE      UID,
     DOC_NUMBER    D_VARCHAR50 NOT NULL,
@@ -4854,21 +4908,6 @@ CREATE TABLE DVB_NETWORK (
     AOSTRM       D_INTEGER
 );
 
-CREATE TABLE DVB_STREAM_CHANNELS (
-    DVBS_ID  UID,
-    CH_ID    UID,
-    SID      D_INTEGER,
-    LCN      D_INTEGER,
-    NOTICE   D_NOTICE,
-    TSID     D_INTEGER,
-    VPID     D_INTEGER,
-    APID     D_INTEGER,
-    A2PID    D_INTEGER,
-    BITRATE  D_N15_2,
-    CONID    D_INTEGER,
-    CNID     D_INTEGER
-);
-
 CREATE TABLE DVB_STREAMS (
     DVBN_ID      UID,
     DVBS_ID      UID,
@@ -4883,6 +4922,21 @@ CREATE TABLE DVB_STREAMS (
     EPG_UPDATED  D_DATETIME,
     ONID         D_INTEGER,
     AOSTRM       D_IBOOLEAN
+);
+
+CREATE TABLE DVB_STREAM_CHANNELS (
+    DVBS_ID  UID,
+    CH_ID    UID,
+    SID      D_INTEGER,
+    LCN      D_INTEGER,
+    NOTICE   D_NOTICE,
+    TSID     D_INTEGER,
+    VPID     D_INTEGER,
+    APID     D_INTEGER,
+    A2PID    D_INTEGER,
+    BITRATE  D_N15_2,
+    CONID    D_INTEGER,
+    CNID     D_INTEGER
 );
 
 CREATE TABLE EPG (
@@ -5180,19 +5234,6 @@ CREATE TABLE HOUSE (
     EDIT_ON         D_DATETIME
 );
 
-CREATE TABLE HOUSE_CIRCUIT (
-    HC_ID     UID NOT NULL,
-    HOUSE_ID  UID,
-    NAME      D_NAME,
-    NOTICE    D_NOTICE,
-    ADDED_BY  D_VARCHAR50,
-    ADDED_ON  D_DATETIME,
-    EDIT_BY   D_VARCHAR50,
-    EDIT_ON   D_DATETIME,
-    PNG       D_BLOB1K,
-    CIRCUIT   D_BLOB1K
-);
-
 CREATE TABLE HOUSEFLATS (
     HOUSE_ID    UID NOT NULL,
     FLAT_NO     D_FLAT_NS,
@@ -5254,6 +5295,19 @@ CREATE TABLE HOUSEWORKS (
     DATE_PPR    D_DATE_NOW NOT NULL,
     WORKER_PPR  D_INTEGER,
     NOTICE      D_NOTICE
+);
+
+CREATE TABLE HOUSE_CIRCUIT (
+    HC_ID     UID NOT NULL,
+    HOUSE_ID  UID,
+    NAME      D_NAME,
+    NOTICE    D_NOTICE,
+    ADDED_BY  D_VARCHAR50,
+    ADDED_ON  D_DATETIME,
+    EDIT_BY   D_VARCHAR50,
+    EDIT_ON   D_DATETIME,
+    PNG       D_BLOB1K,
+    CIRCUIT   D_BLOB1K
 );
 
 CREATE TABLE IPTV_GROUP (
@@ -5348,41 +5402,6 @@ CREATE TABLE MAP_XY (
     MODIFIED  D_TIMESTAMP DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE MATERIAL_DOCS (
-    DOC_ID      UID NOT NULL,
-    DOC_N       D_VARCHAR50,
-    DOC_DATE    D_DATE,
-    DT_ID       UID,
-    NOTICE      D_NOTICE,
-    WH_ID       D_UID_NULL,
-    DOC_CLOSED  D_INTEGER DEFAULT 0,
-    EXT_ID      D_VARCHAR20,
-    FROM_WH     D_UID_NULL,
-    ADDED_BY    D_VARCHAR50,
-    ADDED_ON    D_DATETIME,
-    EDIT_BY     D_VARCHAR50,
-    EDIT_ON     D_DATETIME,
-    SHIPPER     D_UID_NULL
-);
-
-CREATE TABLE MATERIAL_UNIT (
-    M_ID        UID,
-    SERIAL      D_SERIAL_NS NOT NULL,
-    OWNER       D_UID_NULL,
-    OWNER_TYPE  D_UID_NULL,
-    STATE       D_UID_NULL,
-    NOTICE      D_NOTICE,
-    MAC         D_MAC,
-    DOC_INCOME  D_UID_NULL,
-    COST        D_N15_2,
-    S_VERSION   D_VARCHAR50,
-    ADDED_BY    D_VARCHAR50,
-    ADDED_ON    D_DATETIME,
-    EDIT_BY     D_VARCHAR50,
-    EDIT_ON     D_DATETIME,
-    EQ_ID       D_UID_NULL
-);
-
 CREATE TABLE MATERIALS (
     M_ID             UID NOT NULL,
     NAME             D_VARCHAR500,
@@ -5412,17 +5431,18 @@ CREATE TABLE MATERIALS (
 );
 
 CREATE TABLE MATERIALS_GROUP (
-    MG_ID      UID NOT NULL,
-    MG_NAME    D_VARCHAR100,
-    PARENT_ID  D_UID_NULL,
-    MG_NOTICE  D_NOTICE,
-    SOLD       D_UID_NULL,
-    RENT       D_UID_NULL,
-    LOAN       D_UID_NULL,
-    PATH       D_VARCHAR1000,
-    DELETED    D_IBOOLEAN,
-    PCE        D_N15_3,
-    PROP       D_INTEGER
+    MG_ID        UID NOT NULL,
+    MG_NAME      D_VARCHAR100,
+    PARENT_ID    D_UID_NULL,
+    MG_NOTICE    D_NOTICE,
+    SOLD         D_UID_NULL,
+    RENT         D_UID_NULL,
+    LOAN         D_UID_NULL,
+    PATH         D_VARCHAR1000,
+    DELETED      D_IBOOLEAN,
+    PCE          D_N15_3,
+    PROP         D_INTEGER,
+    EXCL_LAYOUT  D_IBOOLEAN DEFAULT 0
 );
 
 CREATE TABLE MATERIALS_IN_DOC (
@@ -5467,13 +5487,39 @@ CREATE TABLE MATERIALS_REMAIN (
     EDIT_ON    D_DATETIME
 );
 
-CREATE TABLE MESSAGE_TPL (
-    MT_ID     UID,
-    MT_NAME   D_VARCHAR20,
-    MES_HEAD  D_VARCHAR20,
-    MES_TEXT  D_MESSAGE,
-    MES_TYPE  D_VARCHAR10,
-    NOTICE    D_NOTICE
+CREATE TABLE MATERIAL_DOCS (
+    DOC_ID      UID NOT NULL,
+    DOC_N       D_VARCHAR50,
+    DOC_DATE    D_DATE,
+    DT_ID       UID,
+    NOTICE      D_NOTICE,
+    WH_ID       D_UID_NULL,
+    DOC_CLOSED  D_INTEGER DEFAULT 0,
+    EXT_ID      D_VARCHAR20,
+    FROM_WH     D_UID_NULL,
+    ADDED_BY    D_VARCHAR50,
+    ADDED_ON    D_DATETIME,
+    EDIT_BY     D_VARCHAR50,
+    EDIT_ON     D_DATETIME,
+    SHIPPER     D_UID_NULL
+);
+
+CREATE TABLE MATERIAL_UNIT (
+    M_ID        UID,
+    SERIAL      D_SERIAL_NS NOT NULL,
+    OWNER       D_UID_NULL,
+    OWNER_TYPE  D_UID_NULL,
+    STATE       D_UID_NULL,
+    NOTICE      D_NOTICE,
+    MAC         D_MAC,
+    DOC_INCOME  D_UID_NULL,
+    COST        D_N15_2,
+    S_VERSION   D_VARCHAR50,
+    ADDED_BY    D_VARCHAR50,
+    ADDED_ON    D_DATETIME,
+    EDIT_BY     D_VARCHAR50,
+    EDIT_ON     D_DATETIME,
+    EQ_ID       D_UID_NULL
 );
 
 CREATE TABLE MESSAGES (
@@ -5497,6 +5543,15 @@ CREATE TABLE MESSAGES (
     PARENT_ID      D_UID_NULL
 );
 
+CREATE TABLE MESSAGE_TPL (
+    MT_ID     UID,
+    MT_NAME   D_VARCHAR20,
+    MES_HEAD  D_VARCHAR20,
+    MES_TEXT  D_MESSAGE,
+    MES_TYPE  D_VARCHAR10,
+    NOTICE    D_NOTICE
+);
+
 CREATE TABLE MODULES (
     ID_MODULE  UID NOT NULL,
     ID_PARENT  D_UID_NULL,
@@ -5505,12 +5560,6 @@ CREATE TABLE MODULES (
     LANG       D_INTEGER,
     IN_MENU    D_IBOOLEAN DEFAULT 1,
     MODULE     D_BLOB1K
-);
-
-CREATE TABLE MONTH_NAME (
-    MID    D_INTEGER,
-    MNAME  D_VARCHAR20,
-    RNAME  D_VARCHAR20
 );
 
 CREATE TABLE MONTHLY_FEE (
@@ -5535,6 +5584,46 @@ CREATE TABLE MONTHLY_FREEZE (
     ADDED_ON      D_DATE,
     TAG_INT       D_INTEGER,
     TAG_STR       D_VARCHAR10
+);
+
+CREATE TABLE MONTH_NAME (
+    MID    D_INTEGER,
+    MNAME  D_VARCHAR20,
+    RNAME  D_VARCHAR20
+);
+
+CREATE TABLE NODES (
+    NODE_ID    UID NOT NULL,
+    HOUSE_ID   UID NOT NULL,
+    TYPE_ID    D_INTEGER,
+    NAME       D_VARCHAR100,
+    NOTICE     D_VARCHAR500,
+    LAT        D_GEOPOINT,
+    LON        D_GEOPOINT,
+    FLOOR_N    D_VARCHAR10,
+    PORCH_N    D_VARCHAR10,
+    PLACE      D_VARCHAR50,
+    EPOINT     INT_NULL,
+    EP_TAG     D_VARCHAR255,
+    PARENT_ID  D_UID_NULL,
+    ADDED_BY   D_VARCHAR50,
+    ADDED_ON   D_DATETIME,
+    EDIT_BY    D_VARCHAR50,
+    EDIT_ON    D_DATETIME,
+    PCE        D_N15_3,
+    LT_ID      D_UID_NULL
+);
+
+CREATE TABLE NODES_ATTRIBUTES (
+    NA_ID     UID,
+    NODE_ID   UID NOT NULL,
+    O_ID      UID NOT NULL,
+    NA_VALUE  D_VARCHAR100 NOT NULL,
+    NOTICE    D_NOTICE,
+    ADDED_BY  D_VARCHAR50,
+    ADDED_ON  D_DATETIME,
+    EDIT_BY   D_VARCHAR50,
+    EDIT_ON   D_DATETIME
 );
 
 CREATE TABLE NODE_FILES (
@@ -5565,47 +5654,14 @@ CREATE TABLE NODE_FLATS (
 );
 
 CREATE TABLE NODE_LAYOUT (
+    L_ID         UID,
     LT_ID        UID,
-    NODE_ID      UID,
     SRV_TYPE     D_UID_NULL,
     MAT_QNT      D_N15_2,
     CUST_QNT     D_INTEGER,
     MAT_ID_LIST  D_VARCHAR500,
     MAT_REQ      D_IBOOLEAN,
     NOTICE       D_NOTICE
-);
-
-CREATE TABLE NODES (
-    NODE_ID    UID NOT NULL,
-    HOUSE_ID   UID NOT NULL,
-    TYPE_ID    D_INTEGER,
-    NAME       D_VARCHAR100,
-    NOTICE     D_VARCHAR500,
-    LAT        D_GEOPOINT,
-    LON        D_GEOPOINT,
-    FLOOR_N    D_VARCHAR10,
-    PORCH_N    D_VARCHAR10,
-    PLACE      D_VARCHAR50,
-    EPOINT     INT_NULL,
-    EP_TAG     D_VARCHAR255,
-    PARENT_ID  D_UID_NULL,
-    ADDED_BY   D_VARCHAR50,
-    ADDED_ON   D_DATETIME,
-    EDIT_BY    D_VARCHAR50,
-    EDIT_ON    D_DATETIME,
-    PCE        D_N15_3
-);
-
-CREATE TABLE NODES_ATTRIBUTES (
-    NA_ID     UID,
-    NODE_ID   UID NOT NULL,
-    O_ID      UID NOT NULL,
-    NA_VALUE  D_VARCHAR100 NOT NULL,
-    NOTICE    D_NOTICE,
-    ADDED_BY  D_VARCHAR50,
-    ADDED_ON  D_DATETIME,
-    EDIT_BY   D_VARCHAR50,
-    EDIT_ON   D_DATETIME
 );
 
 CREATE TABLE NPS (
@@ -5755,29 +5811,6 @@ CREATE TABLE OTHER_FEE (
     SERIAL       D_SERIAL_NS
 );
 
-CREATE TABLE PAY_DOC (
-    PAY_DOC_ID    UID NOT NULL,
-    PAYSOURCE_ID  UID,
-    PAY_DOC_NO    D_NAME NOT NULL,
-    PAY_DOC_DATE  D_DATE_NOW NOT NULL,
-    PAY_DOC_SUM   D_N15_2 NOT NULL,
-    NOTICE        D_NOTICE,
-    AMOUNT        D_N15_2,
-    ADDED_BY      D_VARCHAR50,
-    ADDED_ON      D_DATETIME,
-    EDIT_BY       D_VARCHAR50,
-    EDIT_ON       D_DATETIME
-);
-
-CREATE TABLE PAY_ERRORS (
-    PE_ID       UID NOT NULL,
-    PAY_DOC_ID  D_UID_NULL,
-    PAY_DATE    D_DATETIME,
-    PAY_SUM     D_N15_2,
-    LINE        D_NOTICE,
-    ERROR_TEXT  D_NOTICE
-);
-
 CREATE TABLE PAYMENT (
     PAYMENT_ID    UID NOT NULL,
     PAY_DOC_ID    UID,
@@ -5848,11 +5881,28 @@ CREATE TABLE PAYSOURCE (
     DELETED          D_IBOOLEAN
 );
 
-CREATE GLOBAL TEMPORARY TABLE PERS_TARIF_TMP (
-    SERV_ID  UID,
-    T_DAY    D_DATE NOT NULL,
-    TARIF    D_DAY_TARIF DEFAULT 0
-) ON COMMIT DELETE ROWS;
+CREATE TABLE PAY_DOC (
+    PAY_DOC_ID    UID NOT NULL,
+    PAYSOURCE_ID  UID,
+    PAY_DOC_NO    D_NAME NOT NULL,
+    PAY_DOC_DATE  D_DATE_NOW NOT NULL,
+    PAY_DOC_SUM   D_N15_2 NOT NULL,
+    NOTICE        D_NOTICE,
+    AMOUNT        D_N15_2,
+    ADDED_BY      D_VARCHAR50,
+    ADDED_ON      D_DATETIME,
+    EDIT_BY       D_VARCHAR50,
+    EDIT_ON       D_DATETIME
+);
+
+CREATE TABLE PAY_ERRORS (
+    PE_ID       UID NOT NULL,
+    PAY_DOC_ID  D_UID_NULL,
+    PAY_DATE    D_DATETIME,
+    PAY_SUM     D_N15_2,
+    LINE        D_NOTICE,
+    ERROR_TEXT  D_NOTICE
+);
 
 CREATE TABLE PERSONAL_TARIF (
     TARIF_ID     UID NOT NULL,
@@ -5868,6 +5918,13 @@ CREATE TABLE PERSONAL_TARIF (
     EDIT_BY      D_VARCHAR50,
     EDIT_ON      D_TIMESTAMP
 );
+
+CREATE GLOBAL TEMPORARY TABLE PERS_TARIF_TMP (
+    SERV_ID  UID,
+    T_DAY    D_DATE NOT NULL,
+    TARIF    D_DAY_TARIF DEFAULT 0
+)
+ON COMMIT DELETE ROWS;
 
 CREATE TABLE PORT (
     EID       UID,
@@ -5986,7 +6043,10 @@ CREATE TABLE RECOURSE (
     NOTICE       D_NOTICE,
     RQ_ID        D_UID_NULL,
     CONTACT      D_VARCHAR50,
-    TAG          D_VARCHAR255,
+    TAG          D_VARCHAR500,
+    RESULT_ID    D_UID_NULL,
+    TASK_ID      D_UID_NULL,
+    ADD_DATA     D_VARCHAR1000,
     ADDED_BY     D_VARCHAR50,
     ADDED_ON     D_DATETIME,
     EDIT_BY      D_VARCHAR50,
@@ -6502,7 +6562,8 @@ CREATE GLOBAL TEMPORARY TABLE TMP_COL (
     C_STR   D_VARCHAR255,
     C_INT   D_INTEGER,
     C_NUM   D_N15_2
-) ON COMMIT DELETE ROWS;
+)
+ON COMMIT DELETE ROWS;
 
 CREATE TABLE TQUEUE (
     ID                    UID NOT NULL,
@@ -6883,7 +6944,7 @@ ALTER TABLE EPG_MAPPING ADD CONSTRAINT UNQ1_EPG_MAPPING UNIQUE (EPG_ID, CH_ID);
 ALTER TABLE HOUSEFLATS ADD CONSTRAINT UNQ_HOUSEFLATS UNIQUE (HOUSE_ID, FLAT_NO);
 ALTER TABLE PERSONAL_TARIF ADD CONSTRAINT UNQ1_PERSONAL_TARIF UNIQUE (CUSTOMER_ID, SERVICE_ID, DATE_FROM);
 ALTER TABLE TV_LAN ADD CONSTRAINT UNQ2_TV_LAN UNIQUE (MAC)
-USING INDEX UNQ_LAN_MAC;
+  USING INDEX UNQ_LAN_MAC;
 ALTER TABLE TV_LAN ADD CONSTRAINT UNQ_TV_IP_VLAN UNIQUE (IP, VLAN_ID);
 ALTER TABLE VLANS ADD CONSTRAINT UNQ1_VLANS UNIQUE (IP_BEGIN_BIN);
 ALTER TABLE AREA ADD CONSTRAINT PK_AREA PRIMARY KEY (AREA_ID);
@@ -6940,7 +7001,7 @@ ALTER TABLE HOUSEWORKS ADD CONSTRAINT PK_HOUSEWORKS PRIMARY KEY (HW_ID);
 ALTER TABLE MAP ADD CONSTRAINT PK_MAP PRIMARY KEY (ID);
 ALTER TABLE MAP_XY ADD CONSTRAINT PK_MAP_XY PRIMARY KEY (ID);
 ALTER TABLE MATERIALS ADD CONSTRAINT PK_MATERIALS PRIMARY KEY (M_ID)
-USING INDEX PK_MATERIALS_ID;
+  USING INDEX PK_MATERIALS_ID;
 ALTER TABLE MATERIALS_GROUP ADD CONSTRAINT PK_MATERIALS_GROUP PRIMARY KEY (MG_ID);
 ALTER TABLE MATERIALS_IN_DOC ADD CONSTRAINT PK_MATERIALS_IN_DOC PRIMARY KEY (ID);
 ALTER TABLE MATERIALS_IN_DOC_UNIT ADD CONSTRAINT PK_MATERIALS_IN_DOC_UNIT PRIMARY KEY (DOC_ID, M_ID, SERIAL, ID);
@@ -6995,9 +7056,9 @@ ALTER TABLE TQUEUE ADD CONSTRAINT PK_TQUEUE PRIMARY KEY (ID);
 ALTER TABLE TV_LAN ADD CONSTRAINT PK_TV_LAN PRIMARY KEY (LAN_ID);
 ALTER TABLE VLANS ADD CONSTRAINT PK_VLANS PRIMARY KEY (V_ID);
 ALTER TABLE WIRE ADD CONSTRAINT PK_WIRE_ID PRIMARY KEY (WID)
-USING INDEX PK_WIRE;
+  USING INDEX PK_WIRE;
 ALTER TABLE WIRE_POINT ADD CONSTRAINT PK_WIRE_PWN PRIMARY KEY (WID, NODE_ID)
-USING INDEX PK_WIRE_POINT;
+  USING INDEX PK_WIRE_POINT;
 ALTER TABLE WORKAREA ADD CONSTRAINT PK_WORKAREA PRIMARY KEY (WA_ID);
 ALTER TABLE WORKAREALIMIT ADD CONSTRAINT PK_WORKAREALIMIT PRIMARY KEY (WA_ID, W_ID);
 ALTER TABLE WORKER ADD CONSTRAINT PK_WORKER PRIMARY KEY (WORKER_ID);
@@ -7161,8 +7222,8 @@ CREATE INDEX NODES_ATTRIBUTES_IDX1 ON NODES_ATTRIBUTES (NA_ID);
 CREATE INDEX NODES_ATTRIBUTES_OID ON NODES_ATTRIBUTES (O_ID);
 CREATE INDEX IDX_NODE ON NODE_FLATS (NODE_ID, HOUSE_ID, FLAT_NO);
 CREATE INDEX IDX_NODE_HOUSE ON NODE_FLATS (HOUSE_ID);
-CREATE INDEX NODE_LAYOUT_IDX1 ON NODE_LAYOUT (NODE_ID, SRV_TYPE);
-CREATE INDEX NODE_LAYOUT_IDX_ID ON NODE_LAYOUT (LT_ID);
+CREATE INDEX NODE_LAYOUT_IDX1 ON NODE_LAYOUT (LT_ID, SRV_TYPE);
+CREATE INDEX NODE_LAYOUT_IDX_ID ON NODE_LAYOUT (L_ID);
 CREATE INDEX NPS_IDX_CID ON NPS (CUSTOMER_ID);
 CREATE INDEX NPS_IDX_DATE ON NPS (NPS_DATE);
 CREATE INDEX OBJECTS_IDX_NAME_TYPE ON OBJECTS (O_NAME, O_TYPE);
@@ -9810,7 +9871,7 @@ CREATE OR ALTER TRIGGER NODE_LAYOUT_BIU0 FOR NODE_LAYOUT
 ACTIVE BEFORE INSERT OR UPDATE POSITION 0
 as
 begin
-  new.Lt_Id = coalesce(new.Lt_Id, gen_id(Gen_Uid, 1));
+  new.L_Id = coalesce(new.L_Id, gen_id(Gen_Uid, 1));
 end;
 
 CREATE OR ALTER TRIGGER NPS_BI FOR NPS
@@ -13095,41 +13156,6 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE ADD_PAYMENT_BY_ACC_SUR (
-    ACCOUNT_NO D_ACCOUNT,
-    SURNAME D_VARCHAR100,
-    PAY_SUM D_N15_2,
-    PAY_TIME D_DATETIME,
-    PAYSOURCE_ID TYPE OF UID,
-    PAYMENT_TYPE D_INTEGER,
-    PAYMENT_SRV D_INTEGER,
-    NOTICE D_NOTICE,
-    EXT_PAY_ID D_VARCHAR50,
-    CMSN D_N15_2 = null)
-RETURNS (
-    PAYMENT_ID D_INTEGER)
-AS
-declare variable Customer_Id type of UID;
-begin
-  PAYMENT_ID = 0;
-  if (not Account_No is null) then begin
-    select
-        Customer_Id
-      from customer c
-      where c.Account_No = :Account_No
-            and upper(:SURNAME) = upper(c.SURNAME)
-    into Customer_Id;
-    if (not Customer_Id is null) then begin
-      select
-          Payment_Id
-        from Add_Payment(:Customer_Id, :Pay_Sum, :Pay_TIME, :Paysource_Id, null, :Payment_Srv, :Notice, :CMSN, :EXT_PAY_ID)
-      into :Payment_Id;
-    end
-  end
-  suspend;
-end;
-
-
 CREATE OR ALTER PROCEDURE ADD_PAYMENT_BY_ACCOUNT (
     ACCOUNT_NO D_ACCOUNT,
     PAY_SUM D_N15_2,
@@ -13190,6 +13216,41 @@ begin
       select
           Payment_Id
         from Add_Payment_fine(:Customer_Id, :Pay_Sum, :Pay_Date, :Paysource_Id, null, :Payment_Srv, :Notice, :FINE, :CMSN, :EXT_PAY_ID)
+      into :Payment_Id;
+    end
+  end
+  suspend;
+end;
+
+
+CREATE OR ALTER PROCEDURE ADD_PAYMENT_BY_ACC_SUR (
+    ACCOUNT_NO D_ACCOUNT,
+    SURNAME D_VARCHAR100,
+    PAY_SUM D_N15_2,
+    PAY_TIME D_DATETIME,
+    PAYSOURCE_ID TYPE OF UID,
+    PAYMENT_TYPE D_INTEGER,
+    PAYMENT_SRV D_INTEGER,
+    NOTICE D_NOTICE,
+    EXT_PAY_ID D_VARCHAR50,
+    CMSN D_N15_2 = null)
+RETURNS (
+    PAYMENT_ID D_INTEGER)
+AS
+declare variable Customer_Id type of UID;
+begin
+  PAYMENT_ID = 0;
+  if (not Account_No is null) then begin
+    select
+        Customer_Id
+      from customer c
+      where c.Account_No = :Account_No
+            and upper(:SURNAME) = upper(c.SURNAME)
+    into Customer_Id;
+    if (not Customer_Id is null) then begin
+      select
+          Payment_Id
+        from Add_Payment(:Customer_Id, :Pay_Sum, :Pay_TIME, :Paysource_Id, null, :Payment_Srv, :Notice, :CMSN, :EXT_PAY_ID)
       into :Payment_Id;
     end
   end
@@ -14607,6 +14668,57 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE ATTRIBUTES_IUD (
+    O_ID TYPE OF UID,
+    O_NAME D_VARCHAR50,
+    O_DESCRIPTION D_NOTICE,
+    O_DIMENSION D_VARCHAR50,
+    O_DELETED D_INTEGER,
+    O_CHARFIELD D_VARCHAR1000,
+    O_CHECK D_VARCHAR255,
+    P_ACTION D_INTEGER,
+    O_TYPE D_INTEGER,
+    O_UNIQ D_INTEGER = 0,
+    O_MEMO D_INTEGER = 0,
+    O_NUMERICFIELD D_N15_3 = null)
+AS
+declare variable vN D_Integer;
+begin
+  O_MEMO = coalesce(O_MEMO, 0);
+  if (O_MEMO = 1) then
+    O_MEMO = 2;
+
+
+  vN = bin_xor(bin_and(:O_MEMO, 2), bin_and(:O_UNIQ, 1));
+  O_Numericfield = coalesce(O_Numericfield, vn);
+
+  -- P_ACTION -0 insert 1-update 2-delete
+  if (P_ACTION = 1) then begin
+    update OBJECTS
+    set O_NAME = :O_NAME,
+        O_DESCRIPTION = :O_DESCRIPTION,
+        O_DIMENSION = :O_DIMENSION,
+        O_CHARFIELD = :O_CHARFIELD,
+        O_CHECK = :O_CHECK,
+        O_Numericfield = :O_Numericfield,
+        O_DELETED = coalesce(:O_DELETED, 0)
+    where O_ID = :O_ID
+          and O_TYPE = :O_TYPE;
+  end
+  else begin
+    if (P_ACTION = 0) then begin
+      insert into OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_CHECK, O_Numericfield)
+      values (:O_ID, :O_TYPE, :O_NAME, :O_DESCRIPTION, 0, :O_DIMENSION, :O_CHARFIELD, :O_CHECK, :vN);
+    end
+    else
+      update OBJECTS
+      set O_DELETED = 1
+      where O_ID = :O_ID
+            and O_TYPE = :O_TYPE;
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE ATTRIBUTE_CHECK_UNIQ (
     TYPE_ID TYPE OF COLUMN ATTRIBUTE.TYPE_ID,
     OBJECT_ID TYPE OF COLUMN ATTRIBUTE.OBJECT_ID,
@@ -14678,57 +14790,6 @@ begin
     -- 5  'Атрибуты сетевого оборудования';
   end
   suspend;
-end;
-
-
-CREATE OR ALTER PROCEDURE ATTRIBUTES_IUD (
-    O_ID TYPE OF UID,
-    O_NAME D_VARCHAR50,
-    O_DESCRIPTION D_NOTICE,
-    O_DIMENSION D_VARCHAR50,
-    O_DELETED D_INTEGER,
-    O_CHARFIELD D_VARCHAR1000,
-    O_CHECK D_VARCHAR255,
-    P_ACTION D_INTEGER,
-    O_TYPE D_INTEGER,
-    O_UNIQ D_INTEGER = 0,
-    O_MEMO D_INTEGER = 0,
-    O_NUMERICFIELD D_N15_3 = null)
-AS
-declare variable vN D_Integer;
-begin
-  O_MEMO = coalesce(O_MEMO, 0);
-  if (O_MEMO = 1) then
-    O_MEMO = 2;
-
-
-  vN = bin_xor(bin_and(:O_MEMO, 2), bin_and(:O_UNIQ, 1));
-  O_Numericfield = coalesce(O_Numericfield, vn);
-
-  -- P_ACTION -0 insert 1-update 2-delete
-  if (P_ACTION = 1) then begin
-    update OBJECTS
-    set O_NAME = :O_NAME,
-        O_DESCRIPTION = :O_DESCRIPTION,
-        O_DIMENSION = :O_DIMENSION,
-        O_CHARFIELD = :O_CHARFIELD,
-        O_CHECK = :O_CHECK,
-        O_Numericfield = :O_Numericfield,
-        O_DELETED = coalesce(:O_DELETED, 0)
-    where O_ID = :O_ID
-          and O_TYPE = :O_TYPE;
-  end
-  else begin
-    if (P_ACTION = 0) then begin
-      insert into OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_CHECK, O_Numericfield)
-      values (:O_ID, :O_TYPE, :O_NAME, :O_DESCRIPTION, 0, :O_DIMENSION, :O_CHARFIELD, :O_CHECK, :vN);
-    end
-    else
-      update OBJECTS
-      set O_DELETED = 1
-      where O_ID = :O_ID
-            and O_TYPE = :O_TYPE;
-  end
 end;
 
 
@@ -15178,6 +15239,222 @@ begin
       Rate = :Rate,
       Notice = :Notice
   where Id = :Id;
+end;
+
+
+CREATE OR ALTER PROCEDURE CALCULATE_FINE (
+    CUSTOMER_ID TYPE OF UID,
+    DATE_PAYMENT D_DATE = null,
+    FINE_PERCENT D_N15_2 = null,
+    FINE_MONTH D_INTEGER = null,
+    FINE_DAY D_INTEGER = null)
+RETURNS (
+    SERVICE_ID TYPE OF UID,
+    DOLG_SUM D_N15_2,
+    DOLG_DATE D_DATE,
+    FINE_SUM D_N15_2,
+    FINE_DAYS D_INTEGER)
+AS
+declare variable vDATE_FROM  d_date;
+declare variable vDATE       d_date;
+declare variable vDATE_TMP   d_date;
+declare variable vDATE_FINE  d_date;
+declare variable vSUM        D_N15_2;
+declare variable V_FEE_ROUND d_INTEGER;
+declare variable vTypeSRV    d_integer;
+declare variable vPAYED      D_N15_2;
+declare variable vNUMBER_TMP D_N15_2;
+begin
+  if (DATE_PAYMENT is null) then
+    DATE_PAYMENT = current_date;
+
+  select
+      c.Debt_Sum
+    from customer c
+    where c.customer_id = :customer_id
+  into :vSUM;
+  -- если переплата, то какая пеня?
+  if (vSUM >= 0) then begin
+    /* получим значение число знаков после запятой для округления*/
+    V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
+
+    if (fine_day is null) then
+      select
+          s.var_value
+        from settings s
+        where s.var_name = 'FINE_DAYS'
+      into :fine_day;
+
+    if (fine_month is null) then
+      select
+          s.var_value
+        from settings s
+        where s.var_name = 'FINE_MONTH'
+      into :fine_month;
+
+    if (fine_percent is null) then
+      select
+          cast(s.var_value as float)
+        from settings s
+        where s.var_name = 'FINE_PERCENT'
+      into :fine_percent;
+
+    if (FINE_PERCENT is null) then
+      FINE_PERCENT = 0;
+
+    if (fine_day is null) then
+      fine_day = 0;
+    else
+      fine_day = fine_day - 1;
+
+    if (fine_month is null) then
+      fine_month = 1;
+
+    select
+        Debt_Date
+      from Get_Debt_Start_Date_CID(:CUSTOMER_ID)
+    into :vDATE_FROM;
+
+    if (not vDATE_FROM is null) then begin
+
+      -- посчитаем все начисления абонента до
+      vDATE_FROM = MONTH_FIRST_DAY(vDATE_FROM);
+
+      select
+          sum(Fee)
+        from Monthly_Fee f
+             inner join services s on (f.Service_Id = s.Service_Id)
+        where f.customer_id = :customer_id
+              and f.Month_Id < :vDATE_FROM -- dateadd(month, coalesce(s.Shift_Months, 0), f.Month_Id) < :vDATE_FROM
+      into :vSUM;
+      select
+          sum(coalesce(fee, 0))
+        from Other_Fee
+        where Customer_Id = :customer_id
+              and Fee_Date < :vDATE_FROM
+      into :vPAYED;
+      vSUM = coalesce(vSUM, 0) + coalesce(vPAYED, 0);
+
+      -- посчитаем все платежи абонента до
+      select
+          coalesce(sum(p.Pay_Sum), 0)
+        from payment p
+        where p.customer_id = :customer_id
+      into :vPAYED;
+      -- выясним. была ли переплата
+      vPAYED = coalesce(vPAYED, 0) - vSUM;
+      if (vPAYED < 0) then
+        vPAYED = 0;
+
+      for select
+              service_id
+            , month_id
+            , fee
+            , Srv_Type_Id
+            from (select
+                      m.service_id
+                    , dateadd(month, coalesce(s.Shift_Months, 0), m.Month_Id) month_id
+                    , m.fee
+                    , s.Srv_Type_Id
+                    , s.SHIFT_MONTHS
+                    from monthly_fee m
+                         inner join Services s on (m.Service_Id = s.Service_Id)
+                    where m.Month_Id >= :vDATE_FROM
+                          and m.customer_id = :customer_id
+                  union
+                  select
+                      -1
+                    , Fee_Date
+                    , Fee
+                    , -1
+                    , 0
+                    from Other_Fee
+                    where Customer_Id = :customer_id
+                          and Fee_Date >= :vDATE_FROM
+                          and coalesce(fee, 0) <> 0)
+            order by coalesce(SHIFT_MONTHS, 0), month_id
+          into :SERVICE_ID, :DOLG_DATE, :DOLG_SUM, :vTypeSRV
+      do begin
+        fine_sum = 0;
+        FINE_DAYS = 0;
+        vDATE = DOLG_DATE;
+
+        if (DOLG_SUM > 0) then begin
+          -- проверим есть ли остаток и если есть учтем его
+          -- отнимем переплату
+          if (vPAYED > 0) then begin
+            if (DOLG_SUM > vPAYED) then begin
+              DOLG_SUM = DOLG_SUM - vPAYED;
+              vPAYED = 0;
+            end
+            else begin
+              vPAYED = vPAYED - DOLG_SUM;
+              DOLG_SUM = 0;
+            end
+          end
+          vSUM = DOLG_SUM;
+
+          vDATE_TMP = dateadd(fine_month month to vDATE);
+          vDATE_TMP = MONTH_FIRST_DAY(vDATE_TMP);
+          vDATE_FINE = dateadd(fine_day day to vDATE_TMP);
+
+          fine_days = datediff(day from vDATE_FINE to date_payment);
+          if (fine_days < 0) then
+            fine_days = 0;
+          -- если это не периодическая услуг. берем сумму полностью
+          if (vTypeSRV <> 0) then begin
+            fine_sum = fine_days * fine_percent * vSUM / 100;
+          end
+          else begin
+            -- если периодическая, вычислим за какой месяц начисление
+            vDATE_TMP = cast((extract(year from DATE_PAYMENT) || '-' || extract(month from DATE_PAYMENT) || '-1') as date);
+            if (vDATE_TMP = vDATE) then begin
+              -- если месяц платежа и месяц начислений одинаковы.
+              -- то высчитаем реальное кол-во дней начислений
+              --vSUM = DOLG_SUM;
+              --vPAYED = vPREVPAY;
+              vDATE_TMP = dateadd(-1 day to(dateadd(1 month to vDATE_TMP)));
+              vSUM = vSUM / extract(day from vDATE_TMP) * (fine_days);
+              fine_sum = fine_days * fine_percent * vSUM / 100;
+            end
+            else begin -- иначе это целый месяц
+              -- если был оплачен не полностью месяц
+              -- то высчитаем кол-во оплачены дней и уменьшим
+              vDATE_TMP = dateadd(-1 day to(dateadd(1 month to DOLG_DATE)));
+              -- кол-во дней в месяце
+              vNUMBER_TMP = extract(day from vDATE_TMP);
+              -- сколько дней было оплачено
+              if (DOLG_SUM <> 0) then
+                vNUMBER_TMP = (vNUMBER_TMP - round(vSUM * Vnumber_Tmp / DOLG_SUM, 0));
+              else
+                vNUMBER_TMP = 0;
+              -- уменьшим кол-во дней пени на оплаченные дни
+              Fine_Days = Fine_Days - vNUMBER_TMP;
+              if (Fine_Days < 0) then
+                Fine_Days = 0;
+
+              fine_sum = fine_days * fine_percent * vSUM / 100;
+            end
+          end
+        end
+        fine_sum = round(fine_sum, V_FEE_ROUND);
+        if ((fine_sum > DOLG_SUM) and (DOLG_SUM > 0)) then
+          fine_sum = DOLG_SUM;
+        suspend;
+      end
+    end
+    else
+      suspend;
+  end
+end;
+
+
+CREATE OR ALTER PROCEDURE CALCULATE_SRV_TYPE_0 (
+    ACUSTOMER TYPE OF UID)
+AS
+begin
+  /* Procedure Text */
+  -- suspend;
 end;
 
 
@@ -17285,276 +17562,6 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE CALCULATE_FINE (
-    CUSTOMER_ID TYPE OF UID,
-    DATE_PAYMENT D_DATE = null,
-    FINE_PERCENT D_N15_2 = null,
-    FINE_MONTH D_INTEGER = null,
-    FINE_DAY D_INTEGER = null)
-RETURNS (
-    SERVICE_ID TYPE OF UID,
-    DOLG_SUM D_N15_2,
-    DOLG_DATE D_DATE,
-    FINE_SUM D_N15_2,
-    FINE_DAYS D_INTEGER)
-AS
-declare variable vDATE_FROM  d_date;
-declare variable vDATE       d_date;
-declare variable vDATE_TMP   d_date;
-declare variable vDATE_FINE  d_date;
-declare variable vSUM        D_N15_2;
-declare variable V_FEE_ROUND d_INTEGER;
-declare variable vTypeSRV    d_integer;
-declare variable vPAYED      D_N15_2;
-declare variable vNUMBER_TMP D_N15_2;
-begin
-  if (DATE_PAYMENT is null) then
-    DATE_PAYMENT = current_date;
-
-  select
-      c.Debt_Sum
-    from customer c
-    where c.customer_id = :customer_id
-  into :vSUM;
-  -- если переплата, то какая пеня?
-  if (vSUM >= 0) then begin
-    /* получим значение число знаков после запятой для округления*/
-    V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
-
-    if (fine_day is null) then
-      select
-          s.var_value
-        from settings s
-        where s.var_name = 'FINE_DAYS'
-      into :fine_day;
-
-    if (fine_month is null) then
-      select
-          s.var_value
-        from settings s
-        where s.var_name = 'FINE_MONTH'
-      into :fine_month;
-
-    if (fine_percent is null) then
-      select
-          cast(s.var_value as float)
-        from settings s
-        where s.var_name = 'FINE_PERCENT'
-      into :fine_percent;
-
-    if (FINE_PERCENT is null) then
-      FINE_PERCENT = 0;
-
-    if (fine_day is null) then
-      fine_day = 0;
-    else
-      fine_day = fine_day - 1;
-
-    if (fine_month is null) then
-      fine_month = 1;
-
-    select
-        Debt_Date
-      from Get_Debt_Start_Date_CID(:CUSTOMER_ID)
-    into :vDATE_FROM;
-
-    if (not vDATE_FROM is null) then begin
-
-      -- посчитаем все начисления абонента до
-      vDATE_FROM = MONTH_FIRST_DAY(vDATE_FROM);
-
-      select
-          sum(Fee)
-        from Monthly_Fee f
-             inner join services s on (f.Service_Id = s.Service_Id)
-        where f.customer_id = :customer_id
-              and f.Month_Id < :vDATE_FROM -- dateadd(month, coalesce(s.Shift_Months, 0), f.Month_Id) < :vDATE_FROM
-      into :vSUM;
-      select
-          sum(coalesce(fee, 0))
-        from Other_Fee
-        where Customer_Id = :customer_id
-              and Fee_Date < :vDATE_FROM
-      into :vPAYED;
-      vSUM = coalesce(vSUM, 0) + coalesce(vPAYED, 0);
-
-      -- посчитаем все платежи абонента до
-      select
-          coalesce(sum(p.Pay_Sum), 0)
-        from payment p
-        where p.customer_id = :customer_id
-      into :vPAYED;
-      -- выясним. была ли переплата
-      vPAYED = coalesce(vPAYED, 0) - vSUM;
-      if (vPAYED < 0) then
-        vPAYED = 0;
-
-      for select
-              service_id
-            , month_id
-            , fee
-            , Srv_Type_Id
-            from (select
-                      m.service_id
-                    , dateadd(month, coalesce(s.Shift_Months, 0), m.Month_Id) month_id
-                    , m.fee
-                    , s.Srv_Type_Id
-                    , s.SHIFT_MONTHS
-                    from monthly_fee m
-                         inner join Services s on (m.Service_Id = s.Service_Id)
-                    where m.Month_Id >= :vDATE_FROM
-                          and m.customer_id = :customer_id
-                  union
-                  select
-                      -1
-                    , Fee_Date
-                    , Fee
-                    , -1
-                    , 0
-                    from Other_Fee
-                    where Customer_Id = :customer_id
-                          and Fee_Date >= :vDATE_FROM
-                          and coalesce(fee, 0) <> 0)
-            order by coalesce(SHIFT_MONTHS, 0), month_id
-          into :SERVICE_ID, :DOLG_DATE, :DOLG_SUM, :vTypeSRV
-      do begin
-        fine_sum = 0;
-        FINE_DAYS = 0;
-        vDATE = DOLG_DATE;
-
-        if (DOLG_SUM > 0) then begin
-          -- проверим есть ли остаток и если есть учтем его
-          -- отнимем переплату
-          if (vPAYED > 0) then begin
-            if (DOLG_SUM > vPAYED) then begin
-              DOLG_SUM = DOLG_SUM - vPAYED;
-              vPAYED = 0;
-            end
-            else begin
-              vPAYED = vPAYED - DOLG_SUM;
-              DOLG_SUM = 0;
-            end
-          end
-          vSUM = DOLG_SUM;
-
-          vDATE_TMP = dateadd(fine_month month to vDATE);
-          vDATE_TMP = MONTH_FIRST_DAY(vDATE_TMP);
-          vDATE_FINE = dateadd(fine_day day to vDATE_TMP);
-
-          fine_days = datediff(day from vDATE_FINE to date_payment);
-          if (fine_days < 0) then
-            fine_days = 0;
-          -- если это не периодическая услуг. берем сумму полностью
-          if (vTypeSRV <> 0) then begin
-            fine_sum = fine_days * fine_percent * vSUM / 100;
-          end
-          else begin
-            -- если периодическая, вычислим за какой месяц начисление
-            vDATE_TMP = cast((extract(year from DATE_PAYMENT) || '-' || extract(month from DATE_PAYMENT) || '-1') as date);
-            if (vDATE_TMP = vDATE) then begin
-              -- если месяц платежа и месяц начислений одинаковы.
-              -- то высчитаем реальное кол-во дней начислений
-              --vSUM = DOLG_SUM;
-              --vPAYED = vPREVPAY;
-              vDATE_TMP = dateadd(-1 day to(dateadd(1 month to vDATE_TMP)));
-              vSUM = vSUM / extract(day from vDATE_TMP) * (fine_days);
-              fine_sum = fine_days * fine_percent * vSUM / 100;
-            end
-            else begin -- иначе это целый месяц
-              -- если был оплачен не полностью месяц
-              -- то высчитаем кол-во оплачены дней и уменьшим
-              vDATE_TMP = dateadd(-1 day to(dateadd(1 month to DOLG_DATE)));
-              -- кол-во дней в месяце
-              vNUMBER_TMP = extract(day from vDATE_TMP);
-              -- сколько дней было оплачено
-              if (DOLG_SUM <> 0) then
-                vNUMBER_TMP = (vNUMBER_TMP - round(vSUM * Vnumber_Tmp / DOLG_SUM, 0));
-              else
-                vNUMBER_TMP = 0;
-              -- уменьшим кол-во дней пени на оплаченные дни
-              Fine_Days = Fine_Days - vNUMBER_TMP;
-              if (Fine_Days < 0) then
-                Fine_Days = 0;
-
-              fine_sum = fine_days * fine_percent * vSUM / 100;
-            end
-          end
-        end
-        fine_sum = round(fine_sum, V_FEE_ROUND);
-        if ((fine_sum > DOLG_SUM) and (DOLG_SUM > 0)) then
-          fine_sum = DOLG_SUM;
-        suspend;
-      end
-    end
-    else
-      suspend;
-  end
-end;
-
-
-CREATE OR ALTER PROCEDURE CALCULATE_SRV_TYPE_0 (
-    ACUSTOMER TYPE OF UID)
-AS
-begin
-  /* Procedure Text */
-  -- suspend;
-end;
-
-
-CREATE OR ALTER PROCEDURE CAN_USER_VIEW_ADDRESS (
-    HOUSE_ID D_UID_NULL = null,
-    STREET_ID D_UID_NULL = null,
-    USER_NAME D_VARCHAR30 = current_user)
-RETURNS (
-    CAN_VIEW D_IBOOLEAN)
-AS
-declare variable USER_ID D_Uid_Null;
-begin
-  if (USER_NAME is null) then
-    USER_NAME = current_user;
-
-  select
-      u.Id
-    , u.All_Areas
-    from sys$user u
-    where u.Ibname = :USER_NAME
-          and u.Lockedout = 0
-  into :USER_ID, :CAN_VIEW;
-
-  CAN_VIEW = coalesce(CAN_VIEW, 0);
-  -- если пользователь есть, но не видит все участки, то пройдем по участкам
-  if ((not(USER_ID is null))
-      or
-      (CAN_VIEW = 0)) then begin
-
-    if (not HOUSE_ID is null) then begin
-      if (exists(select
-                     ua.User_Id
-                   from house h
-                        inner join Workgroups z on (h.Wg_Id = z.Wg_Id)
-                        inner join Sys$User_Areas ua on (ua.Area_Id = z.Wa_Id)
-                   where h.House_Id = :HOUSE_ID
-                         and ua.User_Id = :USER_ID)) then
-        CAN_VIEW = 1;
-    end
-    else begin
-      if (not Street_ID is null) then begin
-        if (exists(select
-                       ua.User_Id
-                     from street s
-                          inner join house h on (s.Street_Id = h.Street_Id)
-                          inner join Workgroups z on (h.Wg_Id = z.Wg_Id)
-                          inner join Sys$User_Areas ua on (ua.Area_Id = z.Wa_Id)
-                     where s.Street_Id = :Street_ID
-                           and ua.User_Id = :USER_ID)) then
-          CAN_VIEW = 1;
-      end
-    end
-  end
-  suspend;
-end;
-
-
 CREATE OR ALTER PROCEDURE CANCEL_CONTRACT (
     PCUSTOMER_ID TYPE OF UID,
     PCANCEL_DATE D_DATE,
@@ -17736,6 +17743,60 @@ begin
     execute procedure DIGITAL_EVENT(:State_Sgn, :CUSTOMER_ID, null, :SERV_ID, localtimestamp, null);
   end
 
+  suspend;
+end;
+
+
+CREATE OR ALTER PROCEDURE CAN_USER_VIEW_ADDRESS (
+    HOUSE_ID D_UID_NULL = null,
+    STREET_ID D_UID_NULL = null,
+    USER_NAME D_VARCHAR30 = current_user)
+RETURNS (
+    CAN_VIEW D_IBOOLEAN)
+AS
+declare variable USER_ID D_Uid_Null;
+begin
+  if (USER_NAME is null) then
+    USER_NAME = current_user;
+
+  select
+      u.Id
+    , u.All_Areas
+    from sys$user u
+    where u.Ibname = :USER_NAME
+          and u.Lockedout = 0
+  into :USER_ID, :CAN_VIEW;
+
+  CAN_VIEW = coalesce(CAN_VIEW, 0);
+  -- если пользователь есть, но не видит все участки, то пройдем по участкам
+  if ((not(USER_ID is null))
+      or
+      (CAN_VIEW = 0)) then begin
+
+    if (not HOUSE_ID is null) then begin
+      if (exists(select
+                     ua.User_Id
+                   from house h
+                        inner join Workgroups z on (h.Wg_Id = z.Wg_Id)
+                        inner join Sys$User_Areas ua on (ua.Area_Id = z.Wa_Id)
+                   where h.House_Id = :HOUSE_ID
+                         and ua.User_Id = :USER_ID)) then
+        CAN_VIEW = 1;
+    end
+    else begin
+      if (not Street_ID is null) then begin
+        if (exists(select
+                       ua.User_Id
+                     from street s
+                          inner join house h on (s.Street_Id = h.Street_Id)
+                          inner join Workgroups z on (h.Wg_Id = z.Wg_Id)
+                          inner join Sys$User_Areas ua on (ua.Area_Id = z.Wa_Id)
+                     where s.Street_Id = :Street_ID
+                           and ua.User_Id = :USER_ID)) then
+          CAN_VIEW = 1;
+      end
+    end
+  end
   suspend;
 end;
 
@@ -18260,87 +18321,6 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE CHANNEL_SRC_PARAM_IU (
-    CSP_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CSP_ID,
-    CS_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_ID,
-    CH_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CH_ID,
-    NOTICE TYPE OF COLUMN CHANNEL_SRC_PARAM.NOTICE,
-    FREQ TYPE OF COLUMN CHANNEL_SRC_PARAM.FREQ,
-    SYMRATE TYPE OF COLUMN CHANNEL_SRC_PARAM.SYMRATE,
-    IP TYPE OF COLUMN CHANNEL_SRC_PARAM.IP,
-    V_CODEC TYPE OF COLUMN CHANNEL_SRC_PARAM.V_CODEC,
-    S_CRYPT TYPE OF COLUMN CHANNEL_SRC_PARAM.S_CRYPT,
-    CS_SYSTEM TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM,
-    CARD_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CARD_ID,
-    ON_ANALOG TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_ANALOG,
-    ON_DVB TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_DVB,
-    ON_IPTV TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_IPTV,
-    NID TYPE OF COLUMN CHANNEL_SRC_PARAM.NID,
-    ONID TYPE OF COLUMN CHANNEL_SRC_PARAM.ONID,
-    TSID TYPE OF COLUMN CHANNEL_SRC_PARAM.TSID,
-    SID TYPE OF COLUMN CHANNEL_SRC_PARAM.SID,
-    VPID TYPE OF COLUMN CHANNEL_SRC_PARAM.VPID,
-    APID TYPE OF COLUMN CHANNEL_SRC_PARAM.APID,
-    A2PID TYPE OF COLUMN CHANNEL_SRC_PARAM.A2PID)
-AS
-begin
-  Csp_Id = coalesce(Csp_Id, gen_id(GEN_UID, 1));
-  if (Csp_Id = -1) then
-    Csp_Id = gen_id(GEN_UID, 1);
-  On_Analog = coalesce(On_Analog, 0);
-  On_Dvb = coalesce(On_Dvb, 0);
-  On_Iptv = coalesce(On_Iptv, 0);
-
-  if (exists(select
-                 Csp_Id
-               from Channel_Src_Param
-               where (Csp_Id = :Csp_Id))) then
-    update Channel_Src_Param
-    set Cs_Id = :Cs_Id,
-        Ch_Id = :Ch_Id,
-        Notice = :Notice,
-        Freq = :Freq,
-        Symrate = :Symrate,
-        Ip = :Ip,
-        V_Codec = :V_Codec,
-        S_Crypt = :S_Crypt,
-        Cs_System = :Cs_System,
-        Card_Id = :Card_Id,
-        On_Analog = :On_Analog,
-        On_Dvb = :On_Dvb,
-        On_Iptv = :On_Iptv,
-        Nid = :Nid,
-        Onid = :Onid,
-        Tsid = :Tsid,
-        Sid = :Sid,
-        Vpid = :Vpid,
-        Apid = :Apid,
-        A2pid = :A2pid
-    where (Csp_Id = :Csp_Id);
-  else
-    insert into Channel_Src_Param (Csp_Id, Cs_Id, Ch_Id, Notice, Freq, Symrate, Ip, V_Codec, S_Crypt, Cs_System, Card_Id, On_Analog, On_Dvb, On_Iptv, Nid, Onid, Tsid, Sid, Vpid, Apid, A2pid)
-    values (:Csp_Id, :Cs_Id, :Ch_Id, :Notice, :Freq, :Symrate, :Ip, :V_Codec, :S_Crypt, :Cs_System, :Card_Id, :On_Analog, :On_Dvb, :On_Iptv, :Nid, :Onid, :Tsid, :Sid, :Vpid, :Apid, :A2pid);
-
-  if (On_Analog = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Analog = 0
-    where Ch_Id = :Ch_Id
-          and Csp_Id <> :Csp_Id;
-
-  if (On_Dvb = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Dvb = 0
-    where Ch_Id = :Ch_Id
-          and Csp_Id <> :Csp_Id;
-
-  if (On_Iptv = 1) then
-    update CHANNEL_SRC_PARAM
-    set On_Iptv = 0
-    where Ch_Id = :Ch_Id
-          and Csp_Id <> :Csp_Id;
-end;
-
-
 CREATE OR ALTER PROCEDURE CHANNELS_DEL (
     CH_ID TYPE OF COLUMN CHANNELS.CH_ID)
 AS
@@ -18445,6 +18425,108 @@ DO BEGIN
 END
 
 
+end;
+
+
+CREATE OR ALTER PROCEDURE CHANNEL_SRC_PARAM_IU (
+    CSP_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CSP_ID,
+    CS_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_ID,
+    CH_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CH_ID,
+    NOTICE TYPE OF COLUMN CHANNEL_SRC_PARAM.NOTICE,
+    FREQ TYPE OF COLUMN CHANNEL_SRC_PARAM.FREQ,
+    SYMRATE TYPE OF COLUMN CHANNEL_SRC_PARAM.SYMRATE,
+    IP TYPE OF COLUMN CHANNEL_SRC_PARAM.IP,
+    V_CODEC TYPE OF COLUMN CHANNEL_SRC_PARAM.V_CODEC,
+    S_CRYPT TYPE OF COLUMN CHANNEL_SRC_PARAM.S_CRYPT,
+    CS_SYSTEM TYPE OF COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM,
+    CARD_ID TYPE OF COLUMN CHANNEL_SRC_PARAM.CARD_ID,
+    ON_ANALOG TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_ANALOG,
+    ON_DVB TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_DVB,
+    ON_IPTV TYPE OF COLUMN CHANNEL_SRC_PARAM.ON_IPTV,
+    NID TYPE OF COLUMN CHANNEL_SRC_PARAM.NID,
+    ONID TYPE OF COLUMN CHANNEL_SRC_PARAM.ONID,
+    TSID TYPE OF COLUMN CHANNEL_SRC_PARAM.TSID,
+    SID TYPE OF COLUMN CHANNEL_SRC_PARAM.SID,
+    VPID TYPE OF COLUMN CHANNEL_SRC_PARAM.VPID,
+    APID TYPE OF COLUMN CHANNEL_SRC_PARAM.APID,
+    A2PID TYPE OF COLUMN CHANNEL_SRC_PARAM.A2PID)
+AS
+begin
+  Csp_Id = coalesce(Csp_Id, gen_id(GEN_UID, 1));
+  if (Csp_Id = -1) then
+    Csp_Id = gen_id(GEN_UID, 1);
+  On_Analog = coalesce(On_Analog, 0);
+  On_Dvb = coalesce(On_Dvb, 0);
+  On_Iptv = coalesce(On_Iptv, 0);
+
+  if (exists(select
+                 Csp_Id
+               from Channel_Src_Param
+               where (Csp_Id = :Csp_Id))) then
+    update Channel_Src_Param
+    set Cs_Id = :Cs_Id,
+        Ch_Id = :Ch_Id,
+        Notice = :Notice,
+        Freq = :Freq,
+        Symrate = :Symrate,
+        Ip = :Ip,
+        V_Codec = :V_Codec,
+        S_Crypt = :S_Crypt,
+        Cs_System = :Cs_System,
+        Card_Id = :Card_Id,
+        On_Analog = :On_Analog,
+        On_Dvb = :On_Dvb,
+        On_Iptv = :On_Iptv,
+        Nid = :Nid,
+        Onid = :Onid,
+        Tsid = :Tsid,
+        Sid = :Sid,
+        Vpid = :Vpid,
+        Apid = :Apid,
+        A2pid = :A2pid
+    where (Csp_Id = :Csp_Id);
+  else
+    insert into Channel_Src_Param (Csp_Id, Cs_Id, Ch_Id, Notice, Freq, Symrate, Ip, V_Codec, S_Crypt, Cs_System, Card_Id, On_Analog, On_Dvb, On_Iptv, Nid, Onid, Tsid, Sid, Vpid, Apid, A2pid)
+    values (:Csp_Id, :Cs_Id, :Ch_Id, :Notice, :Freq, :Symrate, :Ip, :V_Codec, :S_Crypt, :Cs_System, :Card_Id, :On_Analog, :On_Dvb, :On_Iptv, :Nid, :Onid, :Tsid, :Sid, :Vpid, :Apid, :A2pid);
+
+  if (On_Analog = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Analog = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+
+  if (On_Dvb = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Dvb = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+
+  if (On_Iptv = 1) then
+    update CHANNEL_SRC_PARAM
+    set On_Iptv = 0
+    where Ch_Id = :Ch_Id
+          and Csp_Id <> :Csp_Id;
+end;
+
+
+CREATE OR ALTER PROCEDURE CHECKCONTRACT (
+    CONTRACT TYPE OF D_VARCHAR20)
+RETURNS (
+    CORRECT TYPE OF D_IBOOLEAN)
+AS
+declare variable I d_integer;
+begin
+  CORRECT = 1;
+  select count(*) from customer c where c.dogovor_no = :CONTRACT
+  into :i;
+  if (i=0)
+  then begin
+      select count(*) from SUBSCR_SERV S where s.contract = :CONTRACT
+      into :i;
+      if (i>0) then correct = 0;
+  end
+  else correct = 0;
+  suspend;
 end;
 
 
@@ -18662,27 +18744,6 @@ begin
   else
     SRV_ON = 1;
 
-  suspend;
-end;
-
-
-CREATE OR ALTER PROCEDURE CHECKCONTRACT (
-    CONTRACT TYPE OF D_VARCHAR20)
-RETURNS (
-    CORRECT TYPE OF D_IBOOLEAN)
-AS
-declare variable I d_integer;
-begin
-  CORRECT = 1;
-  select count(*) from customer c where c.dogovor_no = :CONTRACT
-  into :i;
-  if (i=0)
-  then begin
-      select count(*) from SUBSCR_SERV S where s.contract = :CONTRACT
-      into :i;
-      if (i>0) then correct = 0;
-  end
-  else correct = 0;
   suspend;
 end;
 
@@ -19551,133 +19612,26 @@ END;
 
 CREATE OR ALTER PROCEDURE CURRENCY_TO_STR (
     VAL D_N15_2,
-    SHOWCURRENCY D_INTEGER)
+    SHOWCURRENCY D_INTEGER = null)
 RETURNS (
     CURR_STR D_VARCHAR1000)
 AS
-declare razryad d_varchar50;
-declare razryad_idx d_varchar50;
-declare hundreds d_varchar100;
-declare hundreds_idx d_varchar50;
-declare tens d_varchar100;
-declare tens_idx d_varchar50;
-declare ones d_varchar255;
-declare ones_idx d_varchar100;
- 
-declare sign_of_val d_varchar10;
-declare raz d_integer;
-declare cents d_varchar5;
-declare val_str d_varchar50;
-declare num d_varchar50;
-declare i d_integer;
-declare buf d_varchar255;
-declare buf1 d_varchar255;
- 
 begin
-  /* Константы */
-  razryad_idx = /* 2.2 */ '0100010506071308210829114011';
-  razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
-  hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
-  hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
-  tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
-  tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
-  ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
-  ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
- 
-  IF (ShowCurrency IS NULL) then ShowCurrency = 0;
-  curr_str = '';
- 
-  /* Смотрим знак */
-  IF (val < 0) then begin
-    sign_of_val = 'минус ';
-    val = -val;
-  end else
-    sign_of_val = '';
- 
-  /* Выбираем и запоминаем копейки, убираем их из числа */
-  val_str = cast(val AS varchar(20));
-  i = position('.' IN val_str);
-  cents = lpad(substring(val_str FROM i+1 FOR 2), 2, '0');
-  val_str = lpad(substring(val_str FROM 1 FOR i-1), ((i+1)/3*3), '0');
- 
-  /* Разбираем число */
-  raz = 0; curr_str = '';
-  while (val_str != '') do begin
-    /* Берём триаду символов */
-    num = RIGHT(val_str, 3);
-    /* Если не нулевое число */
-    IF (num != '000') then begin
-      /* Берём сотни */
-      i = cast(substring(num FROM 1 FOR 1) AS int);
-      buf = substring(hundreds FROM cast(substring(hundreds_idx FROM i*3+1 FOR 2) AS int) FOR cast(substring(hundreds_idx FROM i*3+3 FOR 1) AS int));
- 
-      /* Далее десятки */
-      /* Для "десятнадцатых" упрощённая обработка */
-      IF (substring(num FROM 2 FOR 1) = '1') then begin
-          /* Вставляем нужную "десятнадцать" */
-          i = cast(substring(num FROM 2 FOR 2) AS int);
-          buf1 = substring(ones FROM cast(substring(ones_idx FROM i*5+1 FOR 3) AS int) FOR cast(substring(ones_idx FROM i*5+4 FOR 2) AS int));
-          IF (buf != '') then buf = buf || ' ';
-          buf = buf || buf1;
-      end else
-      /* Для "нормальных" чисел своя обработка */
-      begin
-        /* Десятки */
-        i = cast(substring(num FROM 2 FOR 1) AS int);
-        buf1 = substring(tens FROM cast(substring(tens_idx FROM i*4+1 FOR 2) AS int) FOR cast(substring(tens_idx FROM i*4+3 FOR 2) AS int));
-        IF (buf != '' AND buf1 != '') then buf = buf || ' ';
-        buf = buf || buf1;
- 
-        /* Единицы */
-        i = cast(substring(num FROM 3 FOR 1) AS int);
-        /* Смотрим количество для нужного окончания */
-        IF (i = 1) then begin
-          IF (raz = 1) then buf1 = 'одна'; else buf1 = 'один';
-        end else
-        IF (i = 2) then begin
-          IF (raz = 1) then buf1 = 'две'; else buf1 = 'два';
-        end else
-          buf1 = substring(ones FROM cast(substring(ones_idx FROM i*5+1 FOR 3) AS int) FOR cast(substring(ones_idx FROM i*5+4 FOR 2) AS int));
-        IF (buf != '' AND buf1 != '') then buf = buf || ' ';
-        buf = buf || buf1;
-      end
- 
-      /* Разряд числа */
-      buf1 = substring(razryad FROM cast(substring(razryad_idx FROM raz*4+1 FOR 2) AS int) FOR cast(substring(razryad_idx FROM raz*4+3 FOR 2) AS int));
-      IF (buf1 != '') then begin
-        /* Подбор окончания для разряда */
-        IF (i = 1) then begin
-          IF (raz = 1) then buf1 = buf1 || 'а';
-        end else
-        IF (i IN (2,3,4)) then begin
-          IF (raz = 1) then buf1 = buf1 || 'и';
-          else IF (raz > 1) then buf1 = buf1 || 'а';
-        end else
-          IF (raz > 1) then buf1 = buf1 || 'ов';
-        buf = buf || ' ' || buf1;
-      end
-    end else
-      buf = '';
- 
-    /* Присоединяем обработанную триаду к результату */
-    IF (curr_str != '' AND buf != '') then buf = buf || ' ';
-    curr_str = buf || curr_str;
-    /* Переходим к следующей триаде */
-    val_str = LEFT(val_str, char_length(val_str)-3);
-    /* Увеличиваем счётчик разряда */
-    raz = raz + 1;
-  end
- 
-  /* Припысываем знак */
-  curr_str = sign_of_val || curr_str;
-  /* Делаем первую букву прописной */
-  curr_str = upper(substring(curr_str FROM 1 FOR 1)) || substring(curr_str FROM 2);
- 
-  /* Флаг "показать название валюты" */
-  IF (ShowCurrency = 1) then
-    curr_str = curr_str || ' руб. ' || cents || ' коп.';
- 
+  CURR_STR = Number_To_String_R(:Val, :Showcurrency);
   suspend;
+end;
+
+
+CREATE OR ALTER PROCEDURE CUSTOMERS_SERVICES_STATE
+AS
+declare variable ID  type of UID;
+begin
+  for
+    SELECT c.customer_id
+      FROM customer c
+      into :ID
+  do
+  execute procedure customer_services_state (:ID);
 end;
 
 
@@ -20237,19 +20191,6 @@ begin
         c.CUST_PROP_DESCR = :STATE_SRV
     where c.CUSTOMER_ID = :P_CUSTOMER_ID;
   end
-end;
-
-
-CREATE OR ALTER PROCEDURE CUSTOMERS_SERVICES_STATE
-AS
-declare variable ID  type of UID;
-begin
-  for
-    SELECT c.customer_id
-      FROM customer c
-      into :ID
-  do
-  execute procedure customer_services_state (:ID);
 end;
 
 
@@ -21339,83 +21280,8 @@ CREATE OR ALTER PROCEDURE FORMAT_DATE (
 RETURNS (
     RESULT D_VARCHAR1000)
 AS
-declare variable D_Year  smallint;
-declare variable D_Month smallint;
-declare variable D_Day   smallint;
-declare variable M       smallint;
-declare variable D       smallint;
-declare variable L       smallint;
-declare variable S       smallint;
-declare variable L_Month varchar(15);
-declare variable S_Month varchar(10);
-declare variable L_Day   varchar(15);
-declare variable S_Day   varchar(10);
 begin
-  if (Long_Day_Names is null) then
-    Long_Day_Names = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
-  if (Short_Day_Names is null) then
-    Short_Day_Names = 'пн,вт,ср,чт,пт,сб,вс';
-  if (Long_Month_Names is null) then
-    Long_Month_Names = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря';
-  if (Short_Month_Names is null) then
-    Short_Month_Names = 'янв,фев,мар,апр,мая,июн,июл,авг,сен,окт,ноя,дек';
-  if (Format is null) then
-    Format = 'DD.MM.YYYY';
-
-  if (A_DATE is null) then
-    RESULT = null;
-  else begin
-    D_YEAR = extract(year from A_DATE);
-    D_MONTH = extract(month from A_DATE);
-    D_DAY = extract(day from A_DATE);
-    RESULT = FORMAT;
-
-    if (FORMAT is null) then
-      RESULT = D_DAY || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
-    else begin
-      RESULT = replace(replace(RESULT, 'YYYY', D_YEAR), 'YY', mod(extract(year from current_date), 100));
-      S_MONTH = '';
-      L_MONTH = '';
-      if (RESULT like '%MMM%') then begin
-        M = D_MONTH;
-        while (M > 0) do begin
-          L = position(',', LONG_MONTH_NAMES);
-          S = position(',', SHORT_MONTH_NAMES);
-          if (M = 1) then begin
-            L_MONTH = substring(LONG_MONTH_NAMES from 1 for L - 1);
-            S_MONTH = substring(SHORT_MONTH_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_MONTH_NAMES = substring(LONG_MONTH_NAMES from L + 1);
-            SHORT_MONTH_NAMES = substring(SHORT_MONTH_NAMES from S + 1);
-          end
-          M = M - 1;
-        end
-        RESULT = replace(replace(RESULT, 'MMMM', coalesce(L_MONTH, '')), 'MMM', coalesce(S_MONTH, ''));
-      end
-      if (RESULT like '%DDD%') then begin
-        D = coalesce(nullif(extract(weekday from A_DATE), 0), 7);
-        while (D > 0) do begin
-          L = position(',', LONG_DAY_NAMES);
-          S = position(',', SHORT_DAY_NAMES);
-          if (D = 1) then begin
-            L_DAY = substring(LONG_DAY_NAMES from 1 for L - 1);
-            S_DAY = substring(SHORT_DAY_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_DAY_NAMES = substring(LONG_DAY_NAMES from L + 1);
-            SHORT_DAY_NAMES = substring(SHORT_DAY_NAMES from S + 1);
-          end
-          D = D - 1;
-        end
-        RESULT = replace(replace(RESULT, 'DDDD', coalesce(L_DAY, '')), 'DDD', coalesce(S_DAY, ''));
-      end
-      RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'M', D_MONTH);
-      RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'D', D_DAY);
-    end
-  end
+  RESULT = Date_Format (A_Date, Format, Long_Day_Names, Short_Day_Names, Long_Month_Names, Short_Month_Names);
   suspend;
 end;
 
@@ -21720,6 +21586,185 @@ begin
                PWD
              from GEN_PASSWORD(:MIN_LENGTH, :MAX_LENGTH));
   suspend;
+end;
+
+
+CREATE OR ALTER PROCEDURE GETEPCOUNTERS (
+    DT D_DATE,
+    EP D_INTEGER = null)
+RETURNS (
+    O_ID D_INTEGER,
+    O_NAME D_VARCHAR500,
+    ECOUNTER D_VARCHAR50,
+    PCE D_N15_3,
+    PCE_FACT D_N15_3,
+    PV D_N18_6,
+    CV D_N18_6,
+    NOTICE D_VARCHAR1000,
+    CDATE D_DATE,
+    A_INC D_INTEGER,
+    A_TO D_INTEGER)
+AS
+declare variable O_TYPE  D_Integer;
+declare variable PNOTICE D_Varchar1000;
+declare variable PJSON   D_Varchar1000;
+declare variable JSON    D_Varchar1000;
+declare variable PDATE   D_DATE;
+begin
+  DT = Month_First_Day(coalesce(:DT, current_date));
+
+  for select
+          O.O_ID
+        , O.O_NAME
+        , O.O_DIMENSION ECOUNTER
+        , O.O_TYPE
+        from OBJECTS O
+        where O.O_TYPE = 76
+              and O.O_DELETED = 0
+              and trim(coalesce(O.O_DIMENSION, '')) <> ''
+              and ((:EP is null) or (O.O_Id = :EP))
+        order by O.O_NAME
+      into :O_ID, :O_NAME, :ECOUNTER, :O_TYPE
+  do begin
+    JSON = null;
+    PJSON = null;
+    NOTICE = null;
+    PNOTICE = null;
+    CDATE = null;
+    PDATE = null;
+    select
+        sum(N.PCE)
+      from NODES N
+      where N.EPOINT = :O_ID
+    into :PCE;
+
+    select
+        sum(coalesce(E.PCE, EG.O_NUMERICFIELD, 0))
+      from NODES N
+           inner join EQUIPMENT E on (E.NODE_ID = N.NODE_ID)
+           left outer join OBJECTS EG on (E.EQ_GROUP = EG.O_ID and EG.O_TYPE = 7)
+      where N.EPOINT = :O_ID
+    into :PCE_FACT;
+
+    select first 1
+        OH.NVALUE
+      , OH.Notice
+      , OH.Dvalue
+      , oh.Cvalue
+      from OBJECTS_HISTORY OH
+      where OH.O_ID = :O_ID
+            and OH.O_TYPE = :O_TYPE
+            and OH.DELETED = 0
+            and OH.HDATE >= dateadd(month, -1, :DT)
+            and OH.HDATE < :DT
+      order by OH.HDATE
+    into :PV, :PNOTICE, :PDATE, :PJSON;
+
+    select first 1
+        OH.NVALUE
+      , OH.NOTICE
+      , OH.Dvalue
+      , oh.Cvalue
+      from OBJECTS_HISTORY OH
+      where OH.O_ID = :O_ID
+            and OH.O_TYPE = :O_TYPE
+            and OH.DELETED = 0
+            and OH.HDATE >= :DT
+            and OH.HDATE < dateadd(month, 1, :DT)
+      order by OH.HDATE
+    into :CV, :NOTICE, :CDATE, :JSON;
+
+    NOTICE = coalesce(NOTICE, PNOTICE);
+    CDATE = coalesce(CDATE, PDATE);
+
+    JSON = coalesce(JSON, PJSON, '');
+    PJSON = Get_Json_Value(Json, 'INC');
+    if (PJSON <> '') then
+      A_INC = PJSON;
+    else
+      A_INC = null;
+
+    PJSON = Get_Json_Value(Json, 'TO');
+    if (PJSON <> '') then
+      A_TO = PJSON;
+    else
+      A_TO = null;
+
+    suspend;
+  end
+end;
+
+
+CREATE OR ALTER PROCEDURE GETSERVICES (
+    P_CUSTOMER_ID TYPE OF UID,
+    P_TYPE TYPE OF UID)
+RETURNS (
+    SERVICE_ID TYPE OF UID,
+    SRV_TYPE_ID TYPE OF UID,
+    SHIFT_MONTHS D_INTEGER,
+    NAME D_SERVICE_NAME,
+    SHORTNAME D_VARCHAR10,
+    DESCRIPTION D_NOTICE,
+    DIMENSION D_VARCHAR5)
+AS
+--declare variable cnt d_integer;
+begin
+  if (P_TYPE = 0) then
+    for select
+            s.SERVICE_ID, s.SRV_TYPE_ID, s.SHIFT_MONTHS, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMENSION
+            --, (select count(*) from subscr_serv h where h.serv_id = s.service_id and h.state_sgn = 1)
+          from SERVICES S
+               inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)
+          where sl.LINK_TYPE = 0
+                and (not exists(select
+                                    SS.SERV_ID
+                                  from SUBSCR_SERV SS
+                                  where SS.CUSTOMER_ID = :P_customer_id
+                                        and ss.Serv_Id = S.SERVICE_ID))
+          order by s.NAME
+        into :SERVICE_ID, :SRV_TYPE_ID, :SHIFT_MONTHS, :NAME, :SHORTNAME, :DESCRIPTION, :DIMENSION
+             --, :cnt
+    do
+      suspend;
+  else begin
+    for select
+            s.SERVICE_ID, s.SRV_TYPE_ID, s.SHIFT_MONTHS, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMENSION
+          from SERVICES S
+               inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)
+          where sl.LINK_TYPE = 1
+          order by s.NAME
+        into :SERVICE_ID, :SRV_TYPE_ID, :SHIFT_MONTHS, :NAME, :SHORTNAME, :DESCRIPTION, :DIMENSION
+    do
+      suspend;
+  end
+end;
+
+
+CREATE OR ALTER PROCEDURE GETSERVICESTOSWITCH (
+    P_CUSTOMER_ID TYPE OF UID,
+    P_SERVICE TYPE OF UID)
+RETURNS (
+    SERVICE_ID TYPE OF UID,
+    SRV_TYPE_ID TYPE OF UID,
+    NAME D_SERVICE_NAME,
+    SHORTNAME D_VARCHAR10,
+    DESCRIPTION D_NOTICE,
+    DIMENSION D_VARCHAR5)
+AS
+begin
+  for select
+          s.SERVICE_ID, s.SRV_TYPE_ID, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMENSION
+          --, (select count(*) from subscr_serv h where h.serv_id = s.service_id and h.state_sgn = 1)
+        from SERVICES S
+             inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)
+        where sl.LINK_TYPE = 6
+              and sl.Parent = :P_SERVICE
+        order by s.NAME
+      into :SERVICE_ID, :SRV_TYPE_ID, :NAME, :SHORTNAME, :DESCRIPTION, :DIMENSION
+           --, :cnt
+  do
+    suspend;
+
 end;
 
 
@@ -23184,8 +23229,8 @@ end;
 CREATE OR ALTER PROCEDURE GET_LAYOUT_BY_ID (
     ID D_INTEGER)
 RETURNS (
+    L_ID D_INTEGER,
     LT_ID D_INTEGER,
-    NODE_ID D_INTEGER,
     SRV_TYPE D_INTEGER,
     MAT_QNT D_N15_3,
     CUST_QNT D_INTEGER,
@@ -23195,8 +23240,8 @@ RETURNS (
 AS
 begin
   for select
-          l.Lt_Id
-        , l.Node_Id
+          l.L_Id
+        , l.LT_Id
         , l.Srv_Type
         , l.Mat_Qnt
         , l.CUST_QNT
@@ -23204,9 +23249,9 @@ begin
         , l.Mat_Req
         , l.Notice
         from Node_Layout l
-        where l.Node_Id = :ID
+        where l.LT_Id = :ID
         order by l.Srv_Type, l.CUST_QNT
-      into :LT_ID, :Node_Id, :SRV_TYPE, :MAT_QNT, :CUST_QNT, :MAT_ID_LIST, :MAT_REQ, :NOTICE
+      into :L_ID, :LT_ID, :SRV_TYPE, :MAT_QNT, :CUST_QNT, :MAT_ID_LIST, :MAT_REQ, :NOTICE
   do begin
     suspend;
   end
@@ -24145,8 +24190,7 @@ begin
             from Node_Flats NF
                  inner join house h on (nf.House_Id = h.House_Id)
                  inner join street s on (s.Street_Id = h.Street_Id)
-                 left outer join houseflats F on (f.House_Id = nf.House_Id and
-                       f.Flat_No = nf.Flat_No)
+                 left outer join houseflats F on (f.House_Id = nf.House_Id and f.Flat_No = nf.Flat_No)
             where nf.NODE_ID = :T_NODE
             order by f.porch_n, f.Floor_N, f.Flat_No
           into :HOUSE_ID, :FLAT_NO, :PORCH_N, :FLOOR_N, :STREET_NAME, :HOUSE_NO, :NOTICE
@@ -24157,8 +24201,7 @@ begin
             list(distinct c.CUSTOMER_ID) CST_LIST
           , list(distinct R.Shortname) SRV_LIST
           from customer c
-               left outer join subscr_serv ss on (ss.Customer_Id = c.Customer_Id and
-                     ss.State_Sgn = 1)
+               left outer join Subscr_Hist ss on (ss.Customer_Id = c.Customer_Id and current_date between ss.Date_From and ss.Date_To)
                left outer join services r on (r.Service_Id = ss.Serv_Id)
           where c.House_Id = :HOUSE_ID
                 and c.Flat_No = :Flat_No
@@ -24173,9 +24216,9 @@ end;
 CREATE OR ALTER PROCEDURE GET_NODE_LAYOUT (
     FOR_NODE D_INTEGER)
 RETURNS (
-    LT_ID D_INTEGER,
+    L_ID D_INTEGER,
     NODE_ID D_INTEGER,
-    NODE_TYPE D_INTEGER,
+    LT_ID D_INTEGER,
     ITSOWN D_INTEGER,
     SRV_TYPE D_INTEGER,
     CUST_QNT D_INTEGER,
@@ -24188,19 +24231,22 @@ declare variable ID D_INTEGER;
 begin
   -- 1-1-1-1 = 92275 своя компановка
   -- 1-1-1-5 = 92285 компановка тіпа
-  ITSOWN = 1;
-  ID = FOR_NODE;
-  while (LT_ID is null) do begin
-    if (FOR_NODE > 0) then
-      select
-          n.Type_Id
-        from nodes n
-        where n.Node_Id = :FOR_NODE
-      into :NODE_TYPE;
+  L_ID = null;
 
+  ITSOWN = 1;
+  select
+      Lt_Id
+    from NODEs n
+    where n.Node_Id = :FOR_NODE
+  into :LT_ID;
+  if (LT_ID is null) then
+    exit;
+
+  ID = FOR_NODE; -- сначала посмотрим компановку узла
+  while (L_ID is null) do begin
     for select
-            Lt_Id
-          , Node_Id
+            L_Id
+          , LT_Id
           , Srv_Type
           , Mat_Qnt
           , Cust_Qnt
@@ -24208,10 +24254,10 @@ begin
           , Mat_Req
           , Notice
           from GET_LAYOUT_BY_ID(:ID)
-        into :Lt_Id, :Node_Id, :Srv_Type, :Mat_Qnt, :Cust_Qnt, :Mat_Id_List, :Mat_Req, :Notice
+        into :L_Id, :LT_Id, :Srv_Type, :Mat_Qnt, :Cust_Qnt, :Mat_Id_List, :Mat_Req, :Notice
     do begin
       if (ID < 0) then begin
-        NODE_TYPE = -ID;
+        LT_Id = -ID;
         Node_Id = FOR_NODE;
       end
 
@@ -24220,17 +24266,13 @@ begin
 
     -- проверка если нашли компановку для узла, то выходим
     -- если нет, то возьмем компановку типа узла
-    if (LT_ID is null) then begin
+    if (L_Id is null) then begin
       if (ID > 0) then begin
         ITSOWN = 0;
-        select
-            -1 * n.Type_Id
-          from nodes n
-          where n.Node_Id = :ID
-        into :ID;
+        ID = -1*LT_ID;
       end
       else
-        LT_ID = -1;
+        L_ID = -1; -- Выход из цикла
     end
   end
 end;
@@ -24260,7 +24302,7 @@ declare variable MAT_NAME      D_Varchar100;
 declare variable Calculate_mat D_Iboolean;
 declare variable CALC_QNT      D_N15_3;
 begin
-
+/*
   LT_POSITION = 1;
 
   for select
@@ -24378,7 +24420,10 @@ begin
     end
     MAT_LIST = trim(',' from MAT_LIST);
     suspend;
+    LT_POSITION = LT_POSITION + 1;
   end
+*/
+  suspend;
 end;
 
 
@@ -24404,7 +24449,7 @@ AS
 declare variable MAT_ID_LIST   D_VARCHAR500;
 declare variable Calculate_mat D_Iboolean;
 begin
-
+  /*
   LT_POSITION = 1;
 
   for select
@@ -24516,10 +24561,11 @@ begin
       end
 
       suspend;
+      LT_POSITION = LT_POSITION + 1;
     end
-    LT_POSITION = LT_POSITION + 1;
   end
-
+  */
+  suspend;
 end;
 
 
@@ -25168,15 +25214,17 @@ CREATE OR ALTER PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV (
     SERVICE_ID D_UID_NULL = null,
     FOR_DAY D_DATE = null)
 RETURNS (
-    M_TARIF D_N15_4)
+    M_TARIF D_N15_4,
+    D_TARIF D_N15_4)
 AS
 declare variable Jur     D_Integer;
 declare variable SRV     UID;
 declare variable ALL_SUM D_N15_4;
+declare variable TDAYS   D_Integer;
 begin
   For_Day = coalesce(For_Day, current_date);
   M_Tarif = null;
-
+  D_TARIF = null;
   select
       coalesce(c.Juridical, 0)
     from customer c
@@ -25203,6 +25251,15 @@ begin
     ALL_SUM = GET_SRV_TARIF_FOR_CUSTOMER(:Customer_Id, :SRV, :FOR_DAY, :Jur);
 
     M_Tarif = coalesce(M_Tarif, 0) + coalesce(ALL_SUM, 0);
+
+    TDAYS = null;
+    select
+        iif(s.Calc_Type = 6, s.Extra, null)
+      from services s
+      where s.Service_Id = :SRV
+    into :TDAYS;
+    TDAYS = coalesce(TDAYS, extract(day from Month_Last_Day(:FOR_DAY)));
+    D_TARIF = coalesce(D_Tarif, 0) + coalesce(ALL_SUM, 0) / TDAYS;
   end
   M_TARIF = round(M_TARIF, 2);
   suspend;
@@ -25333,79 +25390,6 @@ begin
       suspend;
     end
   end -- WIRE
-end;
-
-
-CREATE OR ALTER PROCEDURE GETSERVICES (
-    P_CUSTOMER_ID TYPE OF UID,
-    P_TYPE TYPE OF UID)
-RETURNS (
-    SERVICE_ID TYPE OF UID,
-    SRV_TYPE_ID TYPE OF UID,
-    SHIFT_MONTHS D_INTEGER,
-    NAME D_SERVICE_NAME,
-    SHORTNAME D_VARCHAR10,
-    DESCRIPTION D_NOTICE,
-    DIMENSION D_VARCHAR5)
-AS
---declare variable cnt d_integer;
-begin
-  if (P_TYPE = 0) then
-    for select
-            s.SERVICE_ID, s.SRV_TYPE_ID, s.SHIFT_MONTHS, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMENSION
-            --, (select count(*) from subscr_serv h where h.serv_id = s.service_id and h.state_sgn = 1)
-          from SERVICES S
-               inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)
-          where sl.LINK_TYPE = 0
-                and (not exists(select
-                                    SS.SERV_ID
-                                  from SUBSCR_SERV SS
-                                  where SS.CUSTOMER_ID = :P_customer_id
-                                        and ss.Serv_Id = S.SERVICE_ID))
-          order by s.NAME
-        into :SERVICE_ID, :SRV_TYPE_ID, :SHIFT_MONTHS, :NAME, :SHORTNAME, :DESCRIPTION, :DIMENSION
-             --, :cnt
-    do
-      suspend;
-  else begin
-    for select
-            s.SERVICE_ID, s.SRV_TYPE_ID, s.SHIFT_MONTHS, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMENSION
-          from SERVICES S
-               inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)
-          where sl.LINK_TYPE = 1
-          order by s.NAME
-        into :SERVICE_ID, :SRV_TYPE_ID, :SHIFT_MONTHS, :NAME, :SHORTNAME, :DESCRIPTION, :DIMENSION
-    do
-      suspend;
-  end
-end;
-
-
-CREATE OR ALTER PROCEDURE GETSERVICESTOSWITCH (
-    P_CUSTOMER_ID TYPE OF UID,
-    P_SERVICE TYPE OF UID)
-RETURNS (
-    SERVICE_ID TYPE OF UID,
-    SRV_TYPE_ID TYPE OF UID,
-    NAME D_SERVICE_NAME,
-    SHORTNAME D_VARCHAR10,
-    DESCRIPTION D_NOTICE,
-    DIMENSION D_VARCHAR5)
-AS
-begin
-  for select
-          s.SERVICE_ID, s.SRV_TYPE_ID, s.NAME, s.SHORTNAME, s.DESCRIPTION, s.DIMENSION
-          --, (select count(*) from subscr_serv h where h.serv_id = s.service_id and h.state_sgn = 1)
-        from SERVICES S
-             inner join SERVICES_LINKS sl on (S.SERVICE_ID = sl.CHILD)
-        where sl.LINK_TYPE = 6
-              and sl.Parent = :P_SERVICE
-        order by s.NAME
-      into :SERVICE_ID, :SRV_TYPE_ID, :NAME, :SHORTNAME, :DESCRIPTION, :DIMENSION
-           --, :cnt
-  do
-    suspend;
-
 end;
 
 
@@ -25677,251 +25661,349 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE MAT_MOVE_DETAILS (
-    M_ID TYPE OF UID,
-    WH_ID TYPE OF UID,
-    SDATE D_DATE,
-    EDATE D_DATE)
+CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (
+    FOR_M_ID D_INTEGER,
+    SHOW_SN D_IBOOLEAN = 0)
 RETURNS (
-    MOVE_DAY D_DATE,
-    Q_WH_IN D_N15_5,
-    Q_WH_OUT D_N15_5,
-    Q_REQ_OUT D_N15_5,
-    Q_REQ_IN D_N15_5,
-    REQ_OUT D_VARCHAR1000,
-    REQ_IN D_VARCHAR1000,
-    NOTICE D_VARCHAR255,
-    KEEP D_N15_5)
+    WH D_VARCHAR500,
+    M_ID D_INTEGER,
+    M_DATE D_DATE,
+    M_TYPE D_VARCHAR100,
+    M_TYPE_ID D_INTEGER,
+    M_DOC D_VARCHAR255,
+    QUANT D_N15_5,
+    DOC_ID D_INTEGER,
+    SERIAL D_SERIAL_NS,
+    QUANT_BEFORE D_N15_5,
+    WH_ID D_INTEGER)
 AS
-declare variable CUR_DAY D_DATE;
-declare variable MAX_DAY D_DATE;
-declare variable MIN_DAY D_DATE;
-declare variable Q_TMP   D_N15_5;
-declare variable R_OUT   D_VARCHAR1000;
-declare variable R_IN    D_VARCHAR1000;
-
 begin
-  -- если даты периода не заданы, найдем минимальную и максимальную дату движения материала
-  if ((SDATE is null)
-      or
-      (EDATE is null)) then begin
+  M_ID = FOR_M_ID;
+  /*
+1 'Приход'
+2 'пер-ие НА склад'
+3 'пер-ие СО склада'
+4 'Списание'
+5 'Корректировка'
+6 'Инвентаризация'
+7 'возврат С заявки'
+8 'списание НА заявку'
+*/
+  Show_SN = coalesce(Show_SN, 0);
+  if (Show_SN = 1) then begin
+    -- Если показывать серийник, то проверим включен ли штучный учет
     select
-        min(cast(rm.Added_On as date))
-      , max(cast(rm.Added_On as date))
-      from Request_Materials rm
-      where rm.M_Id = :m_id
-            and rm.Wh_Id = :Wh_Id
-    into :MIN_DAY, :MAX_DAY;
+        coalesce(m.Is_Unit, 0)
+      from materials m
+      where m.M_Id = :M_ID
+    into :Show_SN;
+  end
 
-    select
-        min(d.DOC_DATE)
-      , max(d.DOC_DATE)
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 2
-            and d.From_Wh = :wh_id
-            and md.M_Id = :m_id
-    into :move_day, :CUR_DAY;
-    move_day = coalesce(move_day, MIN_DAY);
-    CUR_DAY = coalesce(CUR_DAY, MAX_DAY);
-    if (move_day < MIN_DAY) then
-      MIN_DAY = move_day;
-    if (CUR_DAY > MAX_DAY) then
-      MAX_DAY = CUR_DAY;
-    move_day = null;
-    CUR_DAY = null;
-    select
-        min(d.DOC_DATE)
-      , max(d.DOC_DATE)
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.Dt_Id <> 2
-    into :move_day, :CUR_DAY;
-    move_day = coalesce(move_day, MIN_DAY);
-    CUR_DAY = coalesce(CUR_DAY, MAX_DAY);
-    if (move_day < MIN_DAY) then
-      MIN_DAY = move_day;
-    if (CUR_DAY > MAX_DAY) then
-      MAX_DAY = CUR_DAY;
-    move_day = null;
-    CUR_DAY = null;
+  if (Show_SN = 0) then begin
+    SERIAL = null;
+    for select
+            w.O_Name WH
+          , M_DATE
+          , m_type_id
+          , m_doc
+          , quant
+          , doc_id
+          ,
+            case m_type_id
+              when 1 then 'Приход'
+              when 2 then 'пер-ие НА склад'
+              when 3 then 'пер-ие СО склада'
+              when 4 then 'Списание'
+              when 5 then 'Корректировка'
+              when 6 then 'Инвентаризация'
+              when 7 then 'возврат С заявки'
+              when 8 then 'списание НА заявку'
+              else M_TYPE_ID
+            end m_type,
+            WH_ID
+          from (select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 1 m_type_id
+                  , d.Doc_N m_doc
+                  , d.Doc_Id
+                  , sum(md.M_Quant) quant
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 1
+                        and md.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 2 m_type_id
+                  , d.Doc_N m_doc
+                  , d.Doc_Id
+                  , sum(md.M_Quant) quant
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 2
+                        and md.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    d.From_Wh Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 3 m_type_id
+                  , d.Doc_N m_doc
+                  , d.Doc_Id
+                  , sum(-1 * md.M_Quant) quant
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 2
+                        and md.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 4 m_type_id
+                  , d.Doc_N m_doc
+                  , d.Doc_Id
+                  , sum(-1 * md.M_Quant) quant
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 3
+                        and md.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 5 m_type_id
+                  , d.Doc_N m_doc
+                  , d.Doc_Id
+                  , sum(md.M_Quant) quant
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 4
+                        and md.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 6 m_type_id
+                  , d.Doc_N m_doc
+                  , d.Doc_Id
+                  , sum(md.M_Quant - coalesce(md.B_Quant, 0)) quant
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 5
+                        and md.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    rm.Wh_Id
+                  , cast(r.RQ_EXEC_TIME as date) M_DATE
+                  , 7 m_type_id
+                  , r.Rq_Id m_doc
+                  , r.Rq_Id Doc_Id
+                  , sum(rm.Quant) quant
+                  from Request_Materials_Return rm
+                       inner join request r on (rm.Rq_Id = r.Rq_Id)
+                  where rm.M_Id = :M_ID
+                  group by 1, 2, 3, 4, 5
+                union
+                select
+                    rm.Wh_Id
+                  , cast(r.RQ_EXEC_TIME as date) M_DATE
+                  , 8 m_type_id
+                  , r.Rq_Id m_doc
+                  , r.Rq_Id Doc_Id
+                  , sum(-1 * rm.Rm_Quant) quant
+                  from Request_Materials rm
+                       inner join request r on (rm.Rq_Id = r.Rq_Id)
+                  where rm.M_Id = :FOR_M_ID
+                  group by 1, 2, 3, 4, 5) m
+               inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
+          order by 1, 2, 3
+        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :DOC_ID, :M_TYPE, WH_ID
+    do begin
+      QUANT_BEFORE = null;
+      select
+          cast(C_Str as D_N15_5)
+        from Tmp_Col
+        where c_DATE = :M_DATE
+              and C_Int = :FOR_M_ID
+              and C_Num = :WH_ID
+      into :QUANT_BEFORE;
+      if (QUANT_BEFORE is null) then begin
+        QUANT_BEFORE = Get_Mat_Remain_For_Date(:FOR_M_ID, :WH_ID, :M_DATE);
+        insert into Tmp_Col (C_Date, C_Str, C_Int, C_Num)
+        values (:M_DATE, :QUANT_BEFORE, :FOR_M_ID, :WH_ID);
+      end
 
-    select
-        min(cast(rm.Added_On as date))
-      , max(cast(rm.Added_On as date))
-      from Request_Materials_Return rm
-      where rm.M_Id = :m_id
-            and rm.Wh_Id = :Wh_Id
-    into :move_day, :CUR_DAY;
-    move_day = coalesce(move_day, MIN_DAY);
-    CUR_DAY = coalesce(CUR_DAY, MAX_DAY);
-    if (move_day < MIN_DAY) then
-      MIN_DAY = move_day;
-    if (CUR_DAY > MAX_DAY) then
-      MAX_DAY = CUR_DAY;
-    move_day = null;
+      suspend;
+    end
   end
   else begin
-    MIN_DAY = SDATE;
-    MAX_DAY = EDATE;
-  end
+    for select
+            w.O_Name WH
+          , M_DATE
+          , m_type_id
+          , m_doc
+          , quant
+          , serial
+          ,
+            case m_type_id
+              when 1 then 'Приход'
+              when 2 then 'пер-ие НА склад'
+              when 3 then 'пер-ие СО склада'
+              when 4 then 'Списание'
+              when 5 then 'Корректировка'
+              when 6 then 'Инвентаризация'
+              when 7 then 'возврат С заявки'
+              when 8 then 'списание НА заявку'
+              else M_TYPE_ID
+            end m_type,
+            DOC_ID
+          , WH_ID
+          from (select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 1 m_type_id
+                  , d.Doc_N m_doc
+                  , 1 quant
+                  , u.Serial
+                  , d.Doc_Id DOC_ID
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 1
+                        and md.M_Id = :FOR_M_ID
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 2 m_type_id
+                  , d.Doc_N m_doc
+                  , 1 quant
+                  , u.Serial
+                  , d.Doc_Id DOC_ID
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 2
+                        and md.M_Id = :FOR_M_ID
+                union
+                select
+                    d.From_Wh Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 3 m_type_id
+                  , d.Doc_N m_doc
+                  , -1 quant
+                  , u.Serial
+                  , d.Doc_Id DOC_ID
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 2
+                        and md.M_Id = :FOR_M_ID
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 4 m_type_id
+                  , d.Doc_N m_doc
+                  , -1 quant
+                  , u.Serial
+                  , d.Doc_Id DOC_ID
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 3
+                        and md.M_Id = :FOR_M_ID
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 5 m_type_id
+                  , d.Doc_N m_doc
+                  , 1 quant
+                  , u.Serial
+                  , d.Doc_Id DOC_ID
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 4
+                        and md.M_Id = :FOR_M_ID
+                union
+                select
+                    d.Wh_Id
+                  , d.Doc_Date M_DATE
+                  , 6 m_type_id
+                  , d.Doc_N m_doc
+                  , 1 quant
+                  , u.Serial
+                  , d.Doc_Id DOC_ID
+                  from Material_Docs d
+                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
+                  where d.Doc_Closed = 1
+                        and d.Dt_Id = 5
+                        and md.M_Id = :FOR_M_ID
+                union
+                select
+                    rm.Wh_Id
+                  , cast(r.RQ_EXEC_TIME as date) M_DATE
+                  , 7 m_type_id
+                  , r.Rq_Id m_doc
+                  , rm.Quant quant
+                  , rm.Serial
+                  , r.Rq_Id DOC_ID
+                  from Request_Materials_Return rm
+                       inner join request r on (rm.Rq_Id = r.Rq_Id)
+                  where rm.M_Id = :M_ID
 
-  CUR_DAY = MIN_DAY;
-  keep = 0;
-  REQ_OUT = '';
-  REQ_IN = '';
-  while (CUR_DAY <= MAX_DAY) do begin
-    MIN_DAY = dateadd(day, 1, :CUR_DAY);
-
-    -- + 1приход
-    Q_TMP = null;
-    select
-        sum(coalesce(M_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 1
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_IN = coalesce(Q_TMP, 0);
-    -- + 2перемещение на склад
-    Q_TMP = null;
-    select
-        sum(coalesce(M_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 2
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_IN = Q_WH_IN + coalesce(Q_TMP, 0);
-    -- + 4корректировка
-    Q_TMP = null;
-    select
-        sum(coalesce(M_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 4
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_IN = Q_WH_IN + coalesce(Q_TMP, 0);
-    -- + 5инвентаризация
-    Q_TMP = null;
-    select
-        sum(coalesce(M_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 5
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_IN = Q_WH_IN + coalesce(Q_TMP, 0);
-
-    -- - перемещение со склада
-    Q_TMP = null;
-    select
-        sum(coalesce(M_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 2
-            and d.From_Wh = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_OUT = coalesce(Q_TMP, 0);
-
-    -- - 3списание
-    Q_TMP = null;
-    select
-        sum(coalesce(M_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 3
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_OUT = Q_WH_OUT + coalesce(Q_TMP, 0);
-    -- - инвентаризация
-    Q_TMP = null;
-    select
-        sum(coalesce(b_Quant, 0))
-      from Material_Docs d
-           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-      where d.Doc_Closed = 1
-            and d.Dt_Id = 5
-            and d.Wh_Id = :wh_id
-            and md.M_Id = :m_id
-            and d.DOC_DATE >= :CUR_DAY
-            and d.DOC_DATE < :MIN_DAY
-    into :Q_TMP;
-    Q_WH_OUT = Q_WH_OUT + coalesce(Q_TMP, 0);
-
-    -- + вернули с заявок
-    Q_TMP = null;
-    select
-        sum(coalesce(rm.Quant, 0)), list(distinct rm.Rq_Id)
-      from Request_Materials_Return rm
-      where rm.M_Id = :m_id
-            and rm.Wh_Id = :Wh_Id
-            and rm.Added_On >= :CUR_DAY
-            and rm.Added_On < :MIN_DAY
-    into :Q_TMP, :R_IN;
-    Q_REQ_IN = coalesce(Q_TMP, 0);
-    REQ_IN = coalesce(R_IN, '');
-    -- - списано на заявку
-    Q_TMP = null;
-    select
-        sum(coalesce(Rm_Quant, 0)), list(distinct rm.Rq_Id)
-      from Request_Materials rm
-      where rm.M_Id = :m_id
-            and rm.Wh_Id = :Wh_Id
-            and rm.Added_On >= :CUR_DAY
-            and rm.Added_On < :MIN_DAY
-    into :Q_TMP, :R_OUT;
-    Q_REQ_OUT = coalesce(Q_TMP, 0);
-    REQ_OUT = coalesce(R_OUT, '');
-
-    keep = keep + Q_WH_IN - Q_WH_OUT - Q_REQ_OUT + Q_REQ_IN;
-    move_day = CUR_DAY;
-    if ((Q_WH_IN <> 0)
-        or
-        (Q_WH_OUT <> 0)
-        or
-        (Q_REQ_OUT <> 0)
-        or
-        (Q_REQ_IN <> 0)) then
+                union
+                select
+                    rm.Wh_Id
+                  , cast(r.RQ_EXEC_TIME as date) M_DATE
+                  , 8 m_type_id
+                  , r.Rq_Id m_doc
+                  , -1 * rm.Rm_Quant quant
+                  , rm.Serial
+                  , r.Rq_Id DOC_ID
+                  from Request_Materials rm
+                       inner join request r on (rm.Rq_Id = r.Rq_Id)
+                  where rm.M_Id = :FOR_M_ID) m
+               inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
+          order by 1, 2, 3
+        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :SERIAL, :M_TYPE, :DOC_ID, :WH_ID
+    do begin
+      QUANT_BEFORE = null;
+      select
+          cast(C_Str as D_N15_5)
+        from Tmp_Col
+        where c_DATE = :M_DATE
+              and C_Int = :FOR_M_ID
+              and C_Num = :WH_ID
+      into :QUANT_BEFORE;
+      if (QUANT_BEFORE is null) then begin
+        QUANT_BEFORE = Get_Mat_Remain_For_Date(:FOR_M_ID, :WH_ID, :M_DATE);
+        insert into Tmp_Col (C_Date, C_Str, C_Int, C_Num)
+        values (:M_DATE, :QUANT_BEFORE, :FOR_M_ID, :WH_ID);
+      end
       suspend;
-
-
-    CUR_DAY = dateadd(day, 1, CUR_DAY);
-    Q_WH_IN = null;
-    Q_WH_OUT = null;
-    Q_REQ_OUT = null;
-    Q_REQ_IN = null;
-    R_OUT = null;
-    R_IN = null;
+    end
   end
 end;
 
@@ -26429,349 +26511,251 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE MATERIALS_SUMMARY (
-    FOR_M_ID D_INTEGER,
-    SHOW_SN D_IBOOLEAN = 0)
+CREATE OR ALTER PROCEDURE MAT_MOVE_DETAILS (
+    M_ID TYPE OF UID,
+    WH_ID TYPE OF UID,
+    SDATE D_DATE,
+    EDATE D_DATE)
 RETURNS (
-    WH D_VARCHAR500,
-    M_ID D_INTEGER,
-    M_DATE D_DATE,
-    M_TYPE D_VARCHAR100,
-    M_TYPE_ID D_INTEGER,
-    M_DOC D_VARCHAR255,
-    QUANT D_N15_5,
-    DOC_ID D_INTEGER,
-    SERIAL D_SERIAL_NS,
-    QUANT_BEFORE D_N15_5,
-    WH_ID D_INTEGER)
+    MOVE_DAY D_DATE,
+    Q_WH_IN D_N15_5,
+    Q_WH_OUT D_N15_5,
+    Q_REQ_OUT D_N15_5,
+    Q_REQ_IN D_N15_5,
+    REQ_OUT D_VARCHAR1000,
+    REQ_IN D_VARCHAR1000,
+    NOTICE D_VARCHAR255,
+    KEEP D_N15_5)
 AS
+declare variable CUR_DAY D_DATE;
+declare variable MAX_DAY D_DATE;
+declare variable MIN_DAY D_DATE;
+declare variable Q_TMP   D_N15_5;
+declare variable R_OUT   D_VARCHAR1000;
+declare variable R_IN    D_VARCHAR1000;
+
 begin
-  M_ID = FOR_M_ID;
-  /*
-1 'Приход'
-2 'пер-ие НА склад'
-3 'пер-ие СО склада'
-4 'Списание'
-5 'Корректировка'
-6 'Инвентаризация'
-7 'возврат С заявки'
-8 'списание НА заявку'
-*/
-  Show_SN = coalesce(Show_SN, 0);
-  if (Show_SN = 1) then begin
-    -- Если показывать серийник, то проверим включен ли штучный учет
+  -- если даты периода не заданы, найдем минимальную и максимальную дату движения материала
+  if ((SDATE is null)
+      or
+      (EDATE is null)) then begin
     select
-        coalesce(m.Is_Unit, 0)
-      from materials m
-      where m.M_Id = :M_ID
-    into :Show_SN;
-  end
+        min(cast(rm.Added_On as date))
+      , max(cast(rm.Added_On as date))
+      from Request_Materials rm
+      where rm.M_Id = :m_id
+            and rm.Wh_Id = :Wh_Id
+    into :MIN_DAY, :MAX_DAY;
 
-  if (Show_SN = 0) then begin
-    SERIAL = null;
-    for select
-            w.O_Name WH
-          , M_DATE
-          , m_type_id
-          , m_doc
-          , quant
-          , doc_id
-          ,
-            case m_type_id
-              when 1 then 'Приход'
-              when 2 then 'пер-ие НА склад'
-              when 3 then 'пер-ие СО склада'
-              when 4 then 'Списание'
-              when 5 then 'Корректировка'
-              when 6 then 'Инвентаризация'
-              when 7 then 'возврат С заявки'
-              when 8 then 'списание НА заявку'
-              else M_TYPE_ID
-            end m_type,
-            WH_ID
-          from (select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 1 m_type_id
-                  , d.Doc_N m_doc
-                  , d.Doc_Id
-                  , sum(md.M_Quant) quant
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 1
-                        and md.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 2 m_type_id
-                  , d.Doc_N m_doc
-                  , d.Doc_Id
-                  , sum(md.M_Quant) quant
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 2
-                        and md.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    d.From_Wh Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 3 m_type_id
-                  , d.Doc_N m_doc
-                  , d.Doc_Id
-                  , sum(-1 * md.M_Quant) quant
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 2
-                        and md.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 4 m_type_id
-                  , d.Doc_N m_doc
-                  , d.Doc_Id
-                  , sum(-1 * md.M_Quant) quant
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 3
-                        and md.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 5 m_type_id
-                  , d.Doc_N m_doc
-                  , d.Doc_Id
-                  , sum(md.M_Quant) quant
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 4
-                        and md.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 6 m_type_id
-                  , d.Doc_N m_doc
-                  , d.Doc_Id
-                  , sum(md.M_Quant - coalesce(md.B_Quant, 0)) quant
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 5
-                        and md.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    rm.Wh_Id
-                  , cast(r.RQ_EXEC_TIME as date) M_DATE
-                  , 7 m_type_id
-                  , r.Rq_Id m_doc
-                  , r.Rq_Id Doc_Id
-                  , sum(rm.Quant) quant
-                  from Request_Materials_Return rm
-                       inner join request r on (rm.Rq_Id = r.Rq_Id)
-                  where rm.M_Id = :M_ID
-                  group by 1, 2, 3, 4, 5
-                union
-                select
-                    rm.Wh_Id
-                  , cast(r.RQ_EXEC_TIME as date) M_DATE
-                  , 8 m_type_id
-                  , r.Rq_Id m_doc
-                  , r.Rq_Id Doc_Id
-                  , sum(-1 * rm.Rm_Quant) quant
-                  from Request_Materials rm
-                       inner join request r on (rm.Rq_Id = r.Rq_Id)
-                  where rm.M_Id = :FOR_M_ID
-                  group by 1, 2, 3, 4, 5) m
-               inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
-          order by 1, 2, 3
-        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :DOC_ID, :M_TYPE, WH_ID
-    do begin
-      QUANT_BEFORE = null;
-      select
-          cast(C_Str as D_N15_5)
-        from Tmp_Col
-        where c_DATE = :M_DATE
-              and C_Int = :FOR_M_ID
-              and C_Num = :WH_ID
-      into :QUANT_BEFORE;
-      if (QUANT_BEFORE is null) then begin
-        QUANT_BEFORE = Get_Mat_Remain_For_Date(:FOR_M_ID, :WH_ID, :M_DATE);
-        insert into Tmp_Col (C_Date, C_Str, C_Int, C_Num)
-        values (:M_DATE, :QUANT_BEFORE, :FOR_M_ID, :WH_ID);
-      end
+    select
+        min(d.DOC_DATE)
+      , max(d.DOC_DATE)
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 2
+            and d.From_Wh = :wh_id
+            and md.M_Id = :m_id
+    into :move_day, :CUR_DAY;
+    move_day = coalesce(move_day, MIN_DAY);
+    CUR_DAY = coalesce(CUR_DAY, MAX_DAY);
+    if (move_day < MIN_DAY) then
+      MIN_DAY = move_day;
+    if (CUR_DAY > MAX_DAY) then
+      MAX_DAY = CUR_DAY;
+    move_day = null;
+    CUR_DAY = null;
+    select
+        min(d.DOC_DATE)
+      , max(d.DOC_DATE)
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.Dt_Id <> 2
+    into :move_day, :CUR_DAY;
+    move_day = coalesce(move_day, MIN_DAY);
+    CUR_DAY = coalesce(CUR_DAY, MAX_DAY);
+    if (move_day < MIN_DAY) then
+      MIN_DAY = move_day;
+    if (CUR_DAY > MAX_DAY) then
+      MAX_DAY = CUR_DAY;
+    move_day = null;
+    CUR_DAY = null;
 
-      suspend;
-    end
+    select
+        min(cast(rm.Added_On as date))
+      , max(cast(rm.Added_On as date))
+      from Request_Materials_Return rm
+      where rm.M_Id = :m_id
+            and rm.Wh_Id = :Wh_Id
+    into :move_day, :CUR_DAY;
+    move_day = coalesce(move_day, MIN_DAY);
+    CUR_DAY = coalesce(CUR_DAY, MAX_DAY);
+    if (move_day < MIN_DAY) then
+      MIN_DAY = move_day;
+    if (CUR_DAY > MAX_DAY) then
+      MAX_DAY = CUR_DAY;
+    move_day = null;
   end
   else begin
-    for select
-            w.O_Name WH
-          , M_DATE
-          , m_type_id
-          , m_doc
-          , quant
-          , serial
-          ,
-            case m_type_id
-              when 1 then 'Приход'
-              when 2 then 'пер-ие НА склад'
-              when 3 then 'пер-ие СО склада'
-              when 4 then 'Списание'
-              when 5 then 'Корректировка'
-              when 6 then 'Инвентаризация'
-              when 7 then 'возврат С заявки'
-              when 8 then 'списание НА заявку'
-              else M_TYPE_ID
-            end m_type,
-            DOC_ID
-          , WH_ID
-          from (select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 1 m_type_id
-                  , d.Doc_N m_doc
-                  , 1 quant
-                  , u.Serial
-                  , d.Doc_Id DOC_ID
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 1
-                        and md.M_Id = :FOR_M_ID
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 2 m_type_id
-                  , d.Doc_N m_doc
-                  , 1 quant
-                  , u.Serial
-                  , d.Doc_Id DOC_ID
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 2
-                        and md.M_Id = :FOR_M_ID
-                union
-                select
-                    d.From_Wh Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 3 m_type_id
-                  , d.Doc_N m_doc
-                  , -1 quant
-                  , u.Serial
-                  , d.Doc_Id DOC_ID
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 2
-                        and md.M_Id = :FOR_M_ID
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 4 m_type_id
-                  , d.Doc_N m_doc
-                  , -1 quant
-                  , u.Serial
-                  , d.Doc_Id DOC_ID
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 3
-                        and md.M_Id = :FOR_M_ID
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 5 m_type_id
-                  , d.Doc_N m_doc
-                  , 1 quant
-                  , u.Serial
-                  , d.Doc_Id DOC_ID
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 4
-                        and md.M_Id = :FOR_M_ID
-                union
-                select
-                    d.Wh_Id
-                  , d.Doc_Date M_DATE
-                  , 6 m_type_id
-                  , d.Doc_N m_doc
-                  , 1 quant
-                  , u.Serial
-                  , d.Doc_Id DOC_ID
-                  from Material_Docs d
-                       inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
-                       left outer join Materials_In_Doc_Unit u on (u.Doc_Id = d.Doc_Id and u.M_Id = md.M_ID and u.Id = md.Id)
-                  where d.Doc_Closed = 1
-                        and d.Dt_Id = 5
-                        and md.M_Id = :FOR_M_ID
-                union
-                select
-                    rm.Wh_Id
-                  , cast(r.RQ_EXEC_TIME as date) M_DATE
-                  , 7 m_type_id
-                  , r.Rq_Id m_doc
-                  , rm.Quant quant
-                  , rm.Serial
-                  , r.Rq_Id DOC_ID
-                  from Request_Materials_Return rm
-                       inner join request r on (rm.Rq_Id = r.Rq_Id)
-                  where rm.M_Id = :M_ID
+    MIN_DAY = SDATE;
+    MAX_DAY = EDATE;
+  end
 
-                union
-                select
-                    rm.Wh_Id
-                  , cast(r.RQ_EXEC_TIME as date) M_DATE
-                  , 8 m_type_id
-                  , r.Rq_Id m_doc
-                  , -1 * rm.Rm_Quant quant
-                  , rm.Serial
-                  , r.Rq_Id DOC_ID
-                  from Request_Materials rm
-                       inner join request r on (rm.Rq_Id = r.Rq_Id)
-                  where rm.M_Id = :FOR_M_ID) m
-               inner join objects w on (w.O_Id = m.Wh_Id and O_Type = 10)
-          order by 1, 2, 3
-        into :WH, :M_DATE, :M_TYPE_ID, :M_DOC, :QUANT, :SERIAL, :M_TYPE, :DOC_ID, :WH_ID
-    do begin
-      QUANT_BEFORE = null;
-      select
-          cast(C_Str as D_N15_5)
-        from Tmp_Col
-        where c_DATE = :M_DATE
-              and C_Int = :FOR_M_ID
-              and C_Num = :WH_ID
-      into :QUANT_BEFORE;
-      if (QUANT_BEFORE is null) then begin
-        QUANT_BEFORE = Get_Mat_Remain_For_Date(:FOR_M_ID, :WH_ID, :M_DATE);
-        insert into Tmp_Col (C_Date, C_Str, C_Int, C_Num)
-        values (:M_DATE, :QUANT_BEFORE, :FOR_M_ID, :WH_ID);
-      end
+  CUR_DAY = MIN_DAY;
+  keep = 0;
+  REQ_OUT = '';
+  REQ_IN = '';
+  while (CUR_DAY <= MAX_DAY) do begin
+    MIN_DAY = dateadd(day, 1, :CUR_DAY);
+
+    -- + 1приход
+    Q_TMP = null;
+    select
+        sum(coalesce(M_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 1
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_IN = coalesce(Q_TMP, 0);
+    -- + 2перемещение на склад
+    Q_TMP = null;
+    select
+        sum(coalesce(M_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 2
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_IN = Q_WH_IN + coalesce(Q_TMP, 0);
+    -- + 4корректировка
+    Q_TMP = null;
+    select
+        sum(coalesce(M_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 4
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_IN = Q_WH_IN + coalesce(Q_TMP, 0);
+    -- + 5инвентаризация
+    Q_TMP = null;
+    select
+        sum(coalesce(M_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 5
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_IN = Q_WH_IN + coalesce(Q_TMP, 0);
+
+    -- - перемещение со склада
+    Q_TMP = null;
+    select
+        sum(coalesce(M_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 2
+            and d.From_Wh = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_OUT = coalesce(Q_TMP, 0);
+
+    -- - 3списание
+    Q_TMP = null;
+    select
+        sum(coalesce(M_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 3
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_OUT = Q_WH_OUT + coalesce(Q_TMP, 0);
+    -- - инвентаризация
+    Q_TMP = null;
+    select
+        sum(coalesce(b_Quant, 0))
+      from Material_Docs d
+           inner join Materials_In_Doc md on (d.Doc_Id = md.Doc_Id)
+      where d.Doc_Closed = 1
+            and d.Dt_Id = 5
+            and d.Wh_Id = :wh_id
+            and md.M_Id = :m_id
+            and d.DOC_DATE >= :CUR_DAY
+            and d.DOC_DATE < :MIN_DAY
+    into :Q_TMP;
+    Q_WH_OUT = Q_WH_OUT + coalesce(Q_TMP, 0);
+
+    -- + вернули с заявок
+    Q_TMP = null;
+    select
+        sum(coalesce(rm.Quant, 0)), list(distinct rm.Rq_Id)
+      from Request_Materials_Return rm
+      where rm.M_Id = :m_id
+            and rm.Wh_Id = :Wh_Id
+            and rm.Added_On >= :CUR_DAY
+            and rm.Added_On < :MIN_DAY
+    into :Q_TMP, :R_IN;
+    Q_REQ_IN = coalesce(Q_TMP, 0);
+    REQ_IN = coalesce(R_IN, '');
+    -- - списано на заявку
+    Q_TMP = null;
+    select
+        sum(coalesce(Rm_Quant, 0)), list(distinct rm.Rq_Id)
+      from Request_Materials rm
+      where rm.M_Id = :m_id
+            and rm.Wh_Id = :Wh_Id
+            and rm.Added_On >= :CUR_DAY
+            and rm.Added_On < :MIN_DAY
+    into :Q_TMP, :R_OUT;
+    Q_REQ_OUT = coalesce(Q_TMP, 0);
+    REQ_OUT = coalesce(R_OUT, '');
+
+    keep = keep + Q_WH_IN - Q_WH_OUT - Q_REQ_OUT + Q_REQ_IN;
+    move_day = CUR_DAY;
+    if ((Q_WH_IN <> 0)
+        or
+        (Q_WH_OUT <> 0)
+        or
+        (Q_REQ_OUT <> 0)
+        or
+        (Q_REQ_IN <> 0)) then
       suspend;
-    end
+
+
+    CUR_DAY = dateadd(day, 1, CUR_DAY);
+    Q_WH_IN = null;
+    Q_WH_OUT = null;
+    Q_REQ_OUT = null;
+    Q_REQ_IN = null;
+    R_OUT = null;
+    R_IN = null;
   end
 end;
 
@@ -27173,7 +27157,7 @@ AS
 declare variable Lt_Position   D_integer;
 declare variable Cust_Qnt      D_integer;
 declare variable Mat_Qnt       D_N15_3;
-declare variable Mat_Name      D_varchar100;
+declare variable Mat_Name      D_varchar1000;
 declare variable Cust_Qnt_Fact D_integer;
 declare variable Mat_Qnt_Fact  D_n15_3;
 declare variable CP            D_integer;
@@ -27189,6 +27173,8 @@ begin
 
   if (For_Node is null) then
     exit;
+
+
   CP = 0;
   Mat_List = '';
   Mat_Sum = 0;
@@ -27196,11 +27182,12 @@ begin
           Lt_Position
         , Cust_Qnt
         , Mat_Qnt
-        , Mat_Name
         , Cust_Qnt_Fact
-        , Mat_Qnt_Fact
+        , list(Mat_Name)
+        , sum(Mat_Qnt_Fact)
         from Get_Node_Layout_Fact_Detail(:For_Node)
-      into :Lt_Position, :Cust_Qnt, :Mat_Qnt, :Mat_Name, :Cust_Qnt_Fact, :Mat_Qnt_Fact
+        group by 1, 2, 3, 4
+      into :Lt_Position, :Cust_Qnt, :Mat_Qnt, :Cust_Qnt_Fact, :Mat_Name, :Mat_Qnt_Fact
   do begin
     if (CP <> Lt_Position) then begin
       if (Mat_List <> '') then
@@ -27214,15 +27201,52 @@ begin
           (coalesce(Cust_Qnt, 0) = coalesce(Cust_Qnt_Fact, 0)) --
           and (coalesce(Mat_Qnt_Fact, 0) <> coalesce(Mat_Qnt, 0)) --
           ) then begin
-        Mat_List = coalesce(Mat_List, '') || ',' || coalesce(Mat_Name, '');
+        Mat_List = coalesce(Mat_List, '') || ',' || coalesce(trim(Mat_Name), '');
         Mat_Sum = Mat_Sum + Mat_Qnt_Fact;
       end
     end
     CP = Lt_Position;
   end
 
-  ban = 0;
+  if ((ban_text <> '') and (get_setting_value('REQ_LAYOUT_BLOCK') = '1')) then begin
+    ban = 1;
+  end
+  else
+    ban = 0;
   suspend;
+end;
+
+
+CREATE OR ALTER PROCEDURE OBJECTS_IUD (
+    P_ACTION D_INTEGER,
+    O_TYPE D_INTEGER,
+    O_ID TYPE OF UID,
+    O_NAME D_VARCHAR500 = null,
+    O_DESCRIPTION D_NOTICE = null,
+    O_DIMENSION D_VARCHAR50 = null,
+    O_DELETED D_INTEGER = 0,
+    O_CHARFIELD D_VARCHAR1000 = null,
+    O_NUMERICFIELD D_N15_3 = null,
+    O_DATEFIELD D_DATE = null,
+    O_DATEEND D_DATE = null,
+    O_CHECK D_VARCHAR255 = null)
+AS
+begin
+  -- P_ACTION -0 insert 1-update 2-delete
+  if ((P_ACTION = 1)
+      or
+      (P_ACTION = 0)) then begin
+    update or insert into Objects (O_Id, O_Type, O_Name, O_Description, O_Deleted, O_Dimension, O_Charfield, O_Numericfield, O_DATEFIELD, O_Dateend, O_Check)
+    values (:O_Id, :O_Type, :O_Name, :O_Description, :O_Deleted, :O_Dimension, :O_Charfield, :O_Numericfield, :O_DATEFIELD, :O_Dateend, :O_Check)
+    matching (O_Id, O_Type);
+  end
+  else begin
+    if (P_ACTION = 2) then
+      update OBJECTS
+      set O_DELETED = 1
+      where (O_ID = :O_ID
+            and O_TYPE = :O_TYPE);
+  end
 end;
 
 
@@ -27264,39 +27288,6 @@ begin
       set O_DELETED = 1
       where O_ID = :O_ID
             and O_TYPE = :O_TYPE;
-  end
-end;
-
-
-CREATE OR ALTER PROCEDURE OBJECTS_IUD (
-    P_ACTION D_INTEGER,
-    O_TYPE D_INTEGER,
-    O_ID TYPE OF UID,
-    O_NAME D_VARCHAR500 = null,
-    O_DESCRIPTION D_NOTICE = null,
-    O_DIMENSION D_VARCHAR50 = null,
-    O_DELETED D_INTEGER = 0,
-    O_CHARFIELD D_VARCHAR1000 = null,
-    O_NUMERICFIELD D_N15_3 = null,
-    O_DATEFIELD D_DATE = null,
-    O_DATEEND D_DATE = null,
-    O_CHECK D_VARCHAR255 = null)
-AS
-begin
-  -- P_ACTION -0 insert 1-update 2-delete
-  if ((P_ACTION = 1)
-      or
-      (P_ACTION = 0)) then begin
-    update or insert into Objects (O_Id, O_Type, O_Name, O_Description, O_Deleted, O_Dimension, O_Charfield, O_Numericfield, O_DATEFIELD, O_Dateend, O_Check)
-    values (:O_Id, :O_Type, :O_Name, :O_Description, :O_Deleted, :O_Dimension, :O_Charfield, :O_Numericfield, :O_DATEFIELD, :O_Dateend, :O_Check)
-    matching (O_Id, O_Type);
-  end
-  else begin
-    if (P_ACTION = 2) then
-      update OBJECTS
-      set O_DELETED = 1
-      where (O_ID = :O_ID
-            and O_TYPE = :O_TYPE);
   end
 end;
 
@@ -27829,6 +27820,36 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE PAYMENTTYPE_IUD (
+    O_ID TYPE OF UID,
+    O_NAME D_VARCHAR50,
+    O_DESCRIPTION D_NOTICE,
+    P_ACTION D_INTEGER)
+AS
+BEGIN
+-- P_ACTION -0 insert 1-update 2-delete
+  IF (P_ACTION = 1)
+  THEN BEGIN
+    UPDATE OBJECTS
+    SET O_TYPE = 2,
+        O_NAME = :O_NAME,
+        O_DESCRIPTION = :O_DESCRIPTION
+    WHERE (O_ID = :O_ID);
+  END
+  ELSE BEGIN
+    IF (P_ACTION = 0)
+    THEN BEGIN
+      INSERT INTO OBJECTS(O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED)
+      VALUES (:O_ID, 2, :O_NAME, :O_DESCRIPTION, 0);
+    END
+    ELSE
+    UPDATE OBJECTS
+    SET O_DELETED = 1
+    WHERE (O_ID = :O_ID and O_TYPE = 2);
+  end
+end;
+
+
 CREATE OR ALTER PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS (
     ACCOUNT_NO TYPE OF D_ACCOUNT,
     PAY_SUM D_N15_2,
@@ -28109,33 +28130,11 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE PAYMENTTYPE_IUD (
-    O_ID TYPE OF UID,
-    O_NAME D_VARCHAR50,
-    O_DESCRIPTION D_NOTICE,
-    P_ACTION D_INTEGER)
+CREATE OR ALTER PROCEDURE PREPAYEXPIRE (
+    DAYS D_INTEGER)
 AS
-BEGIN
--- P_ACTION -0 insert 1-update 2-delete
-  IF (P_ACTION = 1)
-  THEN BEGIN
-    UPDATE OBJECTS
-    SET O_TYPE = 2,
-        O_NAME = :O_NAME,
-        O_DESCRIPTION = :O_DESCRIPTION
-    WHERE (O_ID = :O_ID);
-  END
-  ELSE BEGIN
-    IF (P_ACTION = 0)
-    THEN BEGIN
-      INSERT INTO OBJECTS(O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED)
-      VALUES (:O_ID, 2, :O_NAME, :O_DESCRIPTION, 0);
-    END
-    ELSE
-    UPDATE OBJECTS
-    SET O_DELETED = 1
-    WHERE (O_ID = :O_ID and O_TYPE = 2);
-  end
+begin
+  execute procedure Prepay_Expire(:Days);
 end;
 
 
@@ -28172,14 +28171,6 @@ begin
   do begin
     execute procedure Set_Prepay(:v_customer_id, 0);
   end
-end;
-
-
-CREATE OR ALTER PROCEDURE PREPAYEXPIRE (
-    DAYS D_INTEGER)
-AS
-begin
-  execute procedure Prepay_Expire(:Days);
 end;
 
 
@@ -28459,7 +28450,7 @@ begin
               and sl.Link_Type = 6
       into :SWITCH_SRV;
     end
-    if (SWITCH_SRV is not null) then begin
+    if (not SWITCH_SRV is null) then begin
       /* Проверим статус услуги, и если она включена, то переключим иначе - нет */
       select
           ss.State_Srv
@@ -28602,6 +28593,110 @@ begin
   update CUSTOMER C
   set C.DEBT_SUM = coalesce(:FEE, 0)
   where C.CUSTOMER_ID = :P_CUSTOMER_ID;
+
+end;
+
+
+CREATE OR ALTER PROCEDURE REQUESTGIVE (
+    P_REQUEST TYPE OF UID,
+    P_DATE D_DATETIME,
+    WORKGROUP D_UID_NULL,
+    WORKERS D_VARCHAR1000,
+    AGIVEAS D_INTEGER = 0)
+AS
+-- declare variable id D_Integer;
+begin
+  if (p_date is null) then
+    p_date = localtimestamp;
+  if (WORKERS is null) then
+    WORKERS = '';
+  if (aGiveAs is null) then
+    aGiveAs = 0;
+
+  update request r
+  set r.req_result = 1,
+      r.RQ_COMPLETED = :P_DATE,
+      r.give_method = :aGiveAs,
+      r.GIVE_BY = current_user
+  where r.rq_id = :p_request
+        and coalesce(r.req_result, 0) <= 1;
+
+  delete from request_executors
+      where rq_id = :p_request;
+
+  if (not WORKGROUP is null) then begin
+    insert into request_executors (rq_id, exec_id)
+    select
+        :p_request
+      , w.worker_id
+      from worker w
+           inner join workgroups wg on (w.team = wg.name)
+      where w.working = 1
+            and w.in_request = 1
+            and wg.wg_id = :WORKGROUP;
+  end
+  else begin
+    if (WORKERS <> '') then begin
+      insert into request_executors (rq_id, exec_id)
+      select
+          :p_request
+        , w.Worker_Id
+        from worker w
+             inner join Split_Str_To_Rows(:WORKERS) wg on (w.Worker_Id = wg.ID)
+        where w.working = 1
+              and w.in_request = 1
+              and not exists(select
+                                 exec_id
+                               from request_executors
+                               where exec_id = wg.Id
+                                     and rq_id = :p_request);
+    end
+    else begin
+      -- если не задано ни группы ни исполнителей, то выдадим звену которое обслуживает дом
+      insert into request_executors (rq_id, exec_id)
+      select
+          r.rq_id
+        , w.worker_id
+        from worker w
+             inner join workgroups wg on (w.team = wg.name)
+             inner join house h on (h.wg_id = wg.wg_id)
+             inner join request r on (r.house_id = h.house_id)
+        where w.working = 1
+              and w.in_request = 1
+              and r.rq_id = :p_request;
+    end
+  end
+end;
+
+
+CREATE OR ALTER PROCEDURE REQUESTMOVE (
+    P_REQUEST TYPE OF UID,
+    P_DATE D_DATETIME)
+AS
+declare variable rState d_integer;
+begin
+  select
+      r.req_result
+    from request r
+    where r.rq_id = :p_request
+  into :rState;
+
+  if (rstate <= 2) then begin
+
+    if (p_date is null) then
+      p_date = localtimestamp;
+
+    update request r
+    set r.req_result = 0,
+        r.rq_plan_date = :P_DATE,
+        r.RQ_COMPLETED = null,
+        r.rq_exec_time = null
+    where r.rq_id = :p_request;
+
+    delete from request_executors
+        where rq_id = :p_request;
+
+  end
 
 end;
 
@@ -29357,58 +29452,6 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE REQUEST_MATERIAL_BAYBACK (
-    RQ_ID TYPE OF UID,
-    M_ID TYPE OF UID,
-    QUANT D_N15_5,
-    COST D_N15_2,
-    NOTICE D_NOTICE,
-    SERIAL D_SERIAL_NS = null,
-    P_ACTION D_INTEGER = 0)
-RETURNS (
-    RET_RM_ID D_INTEGER)
-AS
-declare variable RM_ID D_INTEGER;
-declare variable WH_ID D_INTEGER;
-begin
-  QUANT = coalesce(QUANT, 0);
-
-  if (P_ACTION = 0) then begin
-    insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP, SERIAL, BAYBACK)
-    values (:RQ_ID, :WH_ID, :M_ID, :QUANT, :COST, :NOTICE, 0, :SERIAL, 1)
-    returning RM_ID
-    into :RM_ID;
-
-    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, Serial, Cost, Calc, Bayback)
-    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :Serial, :Cost, 0, 1);
-
-    -- обработать в REQUEST_CLOSE_PROCESS
-
-    -- update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id, FROM_WH, calc)
-    -- values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id, :WH_ID, :PROP)
-    -- matching (M_Id, Serial);
-  end
-  else
-  if (P_ACTION = 2) then begin -- удалим
-    delete from REQUEST_MATERIALS
-        where RQ_ID = :RQ_ID
-              and M_ID = :M_ID
-              and RM_QUANT = :QUANT
-              and SERIAL = :SERIAL
-              and BAYBACK = 1;
-
-    delete from Request_Materials_Return
-        where RQ_ID = :RQ_ID
-              and M_ID = :M_ID
-              and Quant = :QUANT
-              and SERIAL = :SERIAL
-              and BAYBACK = 1;
-  end
-  RET_RM_ID = RM_ID;
-  suspend;
-end;
-
-
 CREATE OR ALTER PROCEDURE REQUEST_MATERIALS_IUD (
     RM_ID TYPE OF UID,
     RQ_ID TYPE OF UID,
@@ -29584,6 +29627,58 @@ begin
 end;
 
 
+CREATE OR ALTER PROCEDURE REQUEST_MATERIAL_BAYBACK (
+    RQ_ID TYPE OF UID,
+    M_ID TYPE OF UID,
+    QUANT D_N15_5,
+    COST D_N15_2,
+    NOTICE D_NOTICE,
+    SERIAL D_SERIAL_NS = null,
+    P_ACTION D_INTEGER = 0)
+RETURNS (
+    RET_RM_ID D_INTEGER)
+AS
+declare variable RM_ID D_INTEGER;
+declare variable WH_ID D_INTEGER;
+begin
+  QUANT = coalesce(QUANT, 0);
+
+  if (P_ACTION = 0) then begin
+    insert into REQUEST_MATERIALS (RQ_ID, WH_ID, M_ID, RM_QUANT, RM_COST, RM_NOTICE, PROP, SERIAL, BAYBACK)
+    values (:RQ_ID, :WH_ID, :M_ID, :QUANT, :COST, :NOTICE, 0, :SERIAL, 1)
+    returning RM_ID
+    into :RM_ID;
+
+    insert into Request_Materials_Return (Rq_Id, M_Id, Wh_Id, Quant, Notice, Serial, Cost, Calc, Bayback)
+    values (:Rq_Id, :M_Id, :Wh_Id, :Quant, :Notice, :Serial, :Cost, 0, 1);
+
+    -- обработать в REQUEST_CLOSE_PROCESS
+
+    -- update or insert into Appliance (A_Type, Own_Id, Own_Type, Notice, Mac, Serial, Cost, Property, M_Id, Rq_Id, FROM_WH, calc)
+    -- values (:A_Type, :Own_Id, :Own_Type, :Name, :Mac, :Serial, :Cost, :Property, :M_Id, :Rq_Id, :WH_ID, :PROP)
+    -- matching (M_Id, Serial);
+  end
+  else
+  if (P_ACTION = 2) then begin -- удалим
+    delete from REQUEST_MATERIALS
+        where RQ_ID = :RQ_ID
+              and M_ID = :M_ID
+              and RM_QUANT = :QUANT
+              and SERIAL = :SERIAL
+              and BAYBACK = 1;
+
+    delete from Request_Materials_Return
+        where RQ_ID = :RQ_ID
+              and M_ID = :M_ID
+              and Quant = :QUANT
+              and SERIAL = :SERIAL
+              and BAYBACK = 1;
+  end
+  RET_RM_ID = RM_ID;
+  suspend;
+end;
+
+
 CREATE OR ALTER PROCEDURE REQUEST_RECREATE (
     FROM_REQUEST D_INTEGER)
 AS
@@ -29704,110 +29799,6 @@ BEGIN
     INSERT INTO request_works  (RQ_ID, w_id,w_quant, w_time, W_COST, NOTICE, NOT_CALC)
     VALUES (:RQ_ID,:W_ID,:W_QUANT, :W_TIME, :W_COST, :NOTICE, :NOT_CALC);
 END;
-
-
-CREATE OR ALTER PROCEDURE REQUESTGIVE (
-    P_REQUEST TYPE OF UID,
-    P_DATE D_DATETIME,
-    WORKGROUP D_UID_NULL,
-    WORKERS D_VARCHAR1000,
-    AGIVEAS D_INTEGER = 0)
-AS
--- declare variable id D_Integer;
-begin
-  if (p_date is null) then
-    p_date = localtimestamp;
-  if (WORKERS is null) then
-    WORKERS = '';
-  if (aGiveAs is null) then
-    aGiveAs = 0;
-
-  update request r
-  set r.req_result = 1,
-      r.RQ_COMPLETED = :P_DATE,
-      r.give_method = :aGiveAs,
-      r.GIVE_BY = current_user
-  where r.rq_id = :p_request
-        and coalesce(r.req_result, 0) <= 1;
-
-  delete from request_executors
-      where rq_id = :p_request;
-
-  if (not WORKGROUP is null) then begin
-    insert into request_executors (rq_id, exec_id)
-    select
-        :p_request
-      , w.worker_id
-      from worker w
-           inner join workgroups wg on (w.team = wg.name)
-      where w.working = 1
-            and w.in_request = 1
-            and wg.wg_id = :WORKGROUP;
-  end
-  else begin
-    if (WORKERS <> '') then begin
-      insert into request_executors (rq_id, exec_id)
-      select
-          :p_request
-        , w.Worker_Id
-        from worker w
-             inner join Split_Str_To_Rows(:WORKERS) wg on (w.Worker_Id = wg.ID)
-        where w.working = 1
-              and w.in_request = 1
-              and not exists(select
-                                 exec_id
-                               from request_executors
-                               where exec_id = wg.Id
-                                     and rq_id = :p_request);
-    end
-    else begin
-      -- если не задано ни группы ни исполнителей, то выдадим звену которое обслуживает дом
-      insert into request_executors (rq_id, exec_id)
-      select
-          r.rq_id
-        , w.worker_id
-        from worker w
-             inner join workgroups wg on (w.team = wg.name)
-             inner join house h on (h.wg_id = wg.wg_id)
-             inner join request r on (r.house_id = h.house_id)
-        where w.working = 1
-              and w.in_request = 1
-              and r.rq_id = :p_request;
-    end
-  end
-end;
-
-
-CREATE OR ALTER PROCEDURE REQUESTMOVE (
-    P_REQUEST TYPE OF UID,
-    P_DATE D_DATETIME)
-AS
-declare variable rState d_integer;
-begin
-  select
-      r.req_result
-    from request r
-    where r.rq_id = :p_request
-  into :rState;
-
-  if (rstate <= 2) then begin
-
-    if (p_date is null) then
-      p_date = localtimestamp;
-
-    update request r
-    set r.req_result = 0,
-        r.rq_plan_date = :P_DATE,
-        r.RQ_COMPLETED = null,
-        r.rq_exec_time = null
-    where r.rq_id = :p_request;
-
-    delete from request_executors
-        where rq_id = :p_request;
-
-  end
-
-end;
 
 
 CREATE OR ALTER PROCEDURE SAVEPCEFOREMP (
@@ -30614,31 +30605,6 @@ begin
 end;
 
 
-CREATE OR ALTER PROCEDURE UPDATE_SERVICES_TREE (
-    CUSTOMER_ID TYPE OF UID,
-    SERVICE_ID TYPE OF UID)
-AS
-declare variable B_ID D_INTEGER;
-begin
-  select
-      s.business_type
-    from services s
-    where s.service_id = :service_id
-  into :b_id;
-
-  if (b_id = 1) then -- СЕТЬ
-    update tv_lan l
-    set l.last_update = localtimestamp
-    where l.customer_id = :CUSTOMER_ID;
-  else begin
-    if (b_id >= 2) then -- ЦИФРА
-      update customer_decoders l
-      set l.last_update = localtimestamp
-      where l.customer_id = :CUSTOMER_ID;
-  end
-end;
-
-
 CREATE OR ALTER PROCEDURE UPDATECUSTOMERDEBT4PAY (
     P_CUSTOMER_ID UID,
     P_SUM D_N15_2)
@@ -30674,6 +30640,31 @@ begin
   end
 
   execute procedure CHECK_FOR_UNBLOCK(:P_CUSTOMER_ID);
+end;
+
+
+CREATE OR ALTER PROCEDURE UPDATE_SERVICES_TREE (
+    CUSTOMER_ID TYPE OF UID,
+    SERVICE_ID TYPE OF UID)
+AS
+declare variable B_ID D_INTEGER;
+begin
+  select
+      s.business_type
+    from services s
+    where s.service_id = :service_id
+  into :b_id;
+
+  if (b_id = 1) then -- СЕТЬ
+    update tv_lan l
+    set l.last_update = localtimestamp
+    where l.customer_id = :CUSTOMER_ID;
+  else begin
+    if (b_id >= 2) then -- ЦИФРА
+      update customer_decoders l
+      set l.last_update = localtimestamp
+      where l.customer_id = :CUSTOMER_ID;
+  end
 end;
 
 
@@ -30869,6 +30860,127 @@ begin
 end;
 
 
+CREATE OR ALTER FUNCTION CURRENCY_FORMAT (
+    CURR D_N15_2,
+    TS D_CHAR1 = ' ',
+    DS D_CHAR1 = ',')
+RETURNS D_VARCHAR50 DETERMINISTIC
+AS
+declare variable vTh  D_INTEGER;
+declare variable vP   D_INTEGER;
+declare variable vRes D_Varchar50;
+begin
+  TS = coalesce(TS, '');
+  DS = coalesce(DS, '');
+
+  vP = mod(round(Curr * 100, 0), 100);
+  vTh = round(Curr, 0);
+  vRes = DS || lpad(vP, 2, '0');
+  while (vTh <> 0) do begin
+    vP = mod(vTh, 1000);
+    vTh = round(vTh / 1000, 0);
+    vRes = ts || lpad(vP, 3, '0') || vRes;
+  end
+
+  return trim(leading '0' from trim(leading ts from vRes));
+end;
+
+
+CREATE OR ALTER FUNCTION DATE_FORMAT (
+    A_DATE D_DATE = current_date,
+    FORMAT D_VARCHAR1000 = null,
+    LONG_DAY_NAMES D_VARCHAR100 = null,
+    SHORT_DAY_NAMES D_VARCHAR50 = null,
+    LONG_MONTH_NAMES D_VARCHAR255 = null,
+    SHORT_MONTH_NAMES D_VARCHAR255 = null)
+RETURNS D_VARCHAR255
+AS
+declare variable D_Year  D_Smallint;
+declare variable D_Month D_Smallint;
+declare variable D_Day   D_Smallint;
+declare variable M       D_Smallint;
+declare variable D       D_Smallint;
+declare variable L       D_Smallint;
+declare variable S       D_Smallint;
+declare variable L_Month D_Varchar20;
+declare variable S_Month D_Varchar10;
+declare variable L_Day   D_Varchar20;
+declare variable S_Day   D_Varchar10;
+declare variable Result  D_Varchar255;
+begin
+
+  if (Long_Day_Names is null) then
+    Long_Day_Names = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
+  if (Short_Day_Names is null) then
+    Short_Day_Names = 'пн,вт,ср,чт,пт,сб,вс';
+  if (Long_Month_Names is null) then
+    Long_Month_Names = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря';
+  if (Short_Month_Names is null) then
+    Short_Month_Names = 'янв,фев,мар,апр,мая,июн,июл,авг,сен,окт,ноя,дек';
+  if (Format is null) then
+    Format = 'DD.MM.YYYY';
+  else
+    Format = upper(Format);
+
+  if (A_DATE is null) then
+    RESULT = null;
+  else begin
+    D_YEAR = extract(year from A_DATE);
+    D_MONTH = extract(month from A_DATE);
+    D_DAY = extract(day from A_DATE);
+    RESULT = FORMAT;
+
+    if (FORMAT is null) then
+      RESULT = D_DAY || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
+    else begin
+      RESULT = replace(replace(RESULT, 'YYYY', D_YEAR), 'YY', mod(extract(year from current_date), 100));
+      S_MONTH = '';
+      L_MONTH = '';
+      if (RESULT like '%MMM%') then begin
+        M = D_MONTH;
+        while (M > 0) do begin
+          L = position(',', LONG_MONTH_NAMES);
+          S = position(',', SHORT_MONTH_NAMES);
+          if (M = 1) then begin
+            L_MONTH = substring(LONG_MONTH_NAMES from 1 for L - 1);
+            S_MONTH = substring(SHORT_MONTH_NAMES from 1 for S - 1);
+          end
+          else begin
+            LONG_MONTH_NAMES = substring(LONG_MONTH_NAMES from L + 1);
+            SHORT_MONTH_NAMES = substring(SHORT_MONTH_NAMES from S + 1);
+          end
+          M = M - 1;
+        end
+        RESULT = replace(replace(RESULT, 'MMMM', coalesce(L_MONTH, '')), 'MMM', coalesce(S_MONTH, ''));
+      end
+      if (RESULT like '%DDD%') then begin
+        D = coalesce(nullif(extract(weekday from A_DATE), 0), 7);
+        while (D > 0) do begin
+          L = position(',', LONG_DAY_NAMES);
+          S = position(',', SHORT_DAY_NAMES);
+          if (D = 1) then begin
+            L_DAY = substring(LONG_DAY_NAMES from 1 for L - 1);
+            S_DAY = substring(SHORT_DAY_NAMES from 1 for S - 1);
+          end
+          else begin
+            LONG_DAY_NAMES = substring(LONG_DAY_NAMES from L + 1);
+            SHORT_DAY_NAMES = substring(SHORT_DAY_NAMES from S + 1);
+          end
+          D = D - 1;
+        end
+        RESULT = replace(replace(RESULT, 'DDDD', coalesce(L_DAY, '')), 'DDD', coalesce(S_DAY, ''));
+      end
+      RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
+      RESULT = replace(RESULT, 'M', D_MONTH);
+      RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
+      RESULT = replace(RESULT, 'D', D_DAY);
+    end
+  end
+
+  return RESULT;
+end;
+
+
 CREATE OR ALTER FUNCTION DISTANCE (
     LNG1 D_GEOPOINT,
     LAT1 D_GEOPOINT,
@@ -30948,11 +31060,11 @@ begin
   DS = coalesce(DS, '');
 
   vP = mod(round(Curr * 100, 0), 100);
-  vTh = round(Curr, 0);
+  vTh = trunc(Curr,0);
   vRes = DS || lpad(vP, 2, '0');
   while (vTh <> 0) do begin
     vP = mod(vTh, 1000);
-    vTh = round(vTh / 1000, 0);
+    vTh = trunc(vTh / 1000, 0);
     vRes = ts || lpad(vP, 3, '0') || vRes;
   end
 
@@ -31116,7 +31228,7 @@ declare variable res D_Varchar255;
 declare variable b   D_Integer;
 declare variable e   D_Integer;
 begin
-  res = '"' || Param || '":';
+  res = '"' || trim(Param) || '":';
   b = position(res, Json);
   if (b > 0) then begin
     b = b + char_length(res);
@@ -31487,6 +31599,7 @@ declare variable vClc        D_INTEGER;
 declare variable vUblck      D_INTEGER;
 declare variable Extra       D_INTEGER;
 
+declare variable d       D_INTEGER;
 declare variable vIgnoreList D_Varchar1000;
 begin
 
@@ -31567,7 +31680,8 @@ begin
 
         -- неважен статус услуги, мы платим за остаток дней
         --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
-        vTrf = ((cmDays - cmDay) * coalesce(vTrf, 0) / cmDays);
+        d = (cmDays - cmDay);
+        vTrf = (d * coalesce(vTrf, 0) / cmDays);
         --else
         --  vTrf = ((vDays - vCDay) * coalesce(vTrf, 0) / vDays);
       end
@@ -31579,11 +31693,14 @@ begin
         --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
         --  vTrf = 0;
         --else begin
-        if (Extra > 0) then
-          vTrf = (Extra - cmDay) * coalesce(vTrf, 0) / coalesce(Extra, 30);
-        else
-          vTrf = (cmDays - cmDay) * coalesce(vTrf, 0) / cmDays;
-        --end
+        if (Extra > 0) then begin
+          d = (Extra - cmDay);
+          vTrf = d * coalesce(vTrf, 0) / coalesce(Extra, 30);
+        end
+        else begin
+          d = (cmDays - cmDay);
+          vTrf = d * coalesce(vTrf, 0) / cmDays;
+        end
       end
 
       PREPAY = PREPAY + coalesce(vTrf, 0);
@@ -31677,14 +31794,16 @@ begin
         --if ((vStt = 0) and (coalesce(vUblck, 0) = 2)) then
         --  PREPAy = prepay + coalesce(vTrf, 0);
         --else begin
-        if (Extra > 0) then
-          PREPAy = prepay + ((nmDay - (cmDays - Extra)) * coalesce(vTrf, 0) / coalesce(Extra, 30));
+        if (Extra > 0) then begin
+          d = nmDay + (cmDays - Extra);
+          PREPAy = prepay + (d * coalesce(vTrf, 0) / coalesce(Extra, 30));
 
-        -- (cmDays - Extra) смеўаем день в завсімості от дней в прошлом месяце.
-        -- напрімер екстра 30 сегодня 15
-        -- еслі текуўем месяце 30 дней. значіт до 15 чісла следуюўего месяца счітаем
-        -- еслі екстра 30, а в месяце 31 день, то счітаем до 14 чісла
-        -- еслі екстра 30, а в месяце 29 дней, то счітаем до 16 чісла
+        -- (cmDays - Extra) смещаем день в завсимости от дней в прошлом месяцею
+        -- например екстра 30 сегодня 15
+        -- если текущем месяце 30 дней. значит до 15 числа следующего месяца считаем
+        -- если екстра 30, а в месяце 31 день, то считаем до 16 числа
+        -- если екстра 30, а в месяце 29 дней, то считаем до 14 числа
+        end
         else
           PREPAy = prepay + 0;
         --end
@@ -31725,18 +31844,12 @@ begin
   select
       sum(COST) as COST
     from (select
-            coalesce(
-              iif((w.As_Service is null) ,
-                iif((coalesce(r.req_result, 0) > 1), rw.W_Cost, w.W_Cost),
-                iif(coalesce(s.Srv_Type_Id, 2) = 2,
-                     0,
-                     (select t.tarif_sum
-                       from tarif t
-                       where t.service_id = s.service_id and coalesce(r.rq_exec_time, localtimestamp) between t.date_from and t.date_to
-                     )
-                   )
-              ),
-            0) * rw.w_quant COST
+              coalesce(iif((w.As_Service is null), iif((coalesce(r.req_result, 0) > 1), rw.W_Cost, w.W_Cost), iif(coalesce(s.Srv_Type_Id, 2) = 2, 0,
+              (select
+                   t.tarif_sum
+                 from tarif t
+                 where t.service_id = s.service_id
+                       and coalesce(cast(r.rq_exec_time as date), current_date) between t.date_from and t.date_to))), 0) * rw.w_quant COST
 
             from Request_works rw
                  inner join WORKS W on (W.W_ID = RW.W_ID)
@@ -31971,79 +32084,48 @@ begin
 end;
 
 
-CREATE OR ALTER FUNCTION NUMBER_AS_STR (
+CREATE OR ALTER FUNCTION NUMBER_TO_STRING_R (
     VAL D_N15_2,
-    LANG D_VARCHAR5 = 'RU',
-    SHOWCURRENCY D_INTEGER = 0)
+    SHOWCURRENCY D_INTEGER = null)
 RETURNS D_VARCHAR1000
 AS
-declare variable RAZRYAD      varchar(50);
-declare variable RAZRYAD_IDX  varchar(28);
-declare variable HUNDREDS     varchar(64);
-declare variable HUNDREDS_IDX varchar(30);
-declare variable TENS         varchar(69);
-declare variable TENS_IDX     varchar(40);
-declare variable ONES         varchar(139);
-declare variable ONES_IDX     varchar(100);
-declare variable SIGN_OF_VAL  varchar(6);
-declare variable RAZ          integer;
-declare variable CENTS        D_Varchar5;
-declare variable VAL_STR      varchar(20);
-declare variable NUM          varchar(20);
-declare variable I            integer;
-declare variable BUF          varchar(200);
-declare variable BUF1         varchar(200);
-declare variable CURR_ABR     D_Varchar5;
-declare variable MINUS_STR    varchar(10);
-declare variable CURR_STR     D_Varchar1000;
+declare variable CURR_STR     D_VARCHAR1000;
+declare variable razryad      d_varchar50;
+declare variable razryad_idx  d_varchar50;
+declare variable hundreds     d_varchar100;
+declare variable hundreds_idx d_varchar50;
+declare variable tens         d_varchar100;
+declare variable tens_idx     d_varchar50;
+declare variable ones         d_varchar255;
+declare variable ones_idx     d_varchar100;
+
+declare variable sign_of_val  d_varchar10;
+declare variable raz          d_integer;
+declare variable cents        d_varchar5;
+declare variable val_str      d_varchar50;
+declare variable num          d_varchar50;
+declare variable i            d_integer;
+declare variable buf          d_varchar255;
+declare variable buf1         d_varchar255;
+
 begin
-  lang = coalesce(upper(lang), 'RU');
-  showcurrency = coalesce(showcurrency, 0);
+  /* Константы */
+  razryad_idx = /* 2.2 */ '0100010506071308210829114011';
+  razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
+  hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
+  hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
+  tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
+  tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
+  ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
+  ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
 
-  if ((:lang = 'RU')) then begin
-    curr_abr = 'руб.';
-    minus_str = 'минус';
-    razryad_idx = /* 2.2 */ '0100010506071308210829114011';
-    razryad = 'тысячмиллионмиллиардтриллионквадриллионквинтиллион';
-    hundreds_idx = /* 2.1 */ '010013046106169257328407479569';
-    hundreds = 'стодвеститристачетырестапятьсотшестьсотсемьсотвосемьсотдевятьсот';
-    tens_idx = /* 2.2 */ '0100010001080908170522093110410950116109';
-    tens = 'двадцатьтридцатьсорокпятьдесятшестьдесятсемьдесятвосемьдесятдевяносто';
-    ones_idx = /* 3.2 */ '0010000100001000010300406010040140501904023060290603506041110521006210072120841009411105101151212712';
-    ones = 'тричетырепятьшестьсемьвосемьдевятьдесятьодиннадцатьдвенадцатьтринадцатьчетырнадцатьпятнадцатьшестнадцатьсемнадцатьвосемнадцатьдевятнадцать';
-  end
-  else
-  if (:lang = 'UA') then begin
-    curr_abr = 'грн.';
-    minus_str = 'мінус';
-    razryad_idx = /* 2.2 */ '0100010506071307200828113911';
-    razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
-    hundreds_idx = /* 2.1 */ '010013046106169257318396458539';
-    hundreds = 'стодвістітристачотиристап''ятсотшістсотсімсотвісімсотдев''ятсот';
-    tens_idx = /* 2.2 */ '0100010001080908170522093109400848105810';
-    tens = 'двадцятьтридцятьсорокп''ятдесятшістдесятсімдесятвісімдесятдев''яносто';
-    ones_idx = /* 3.2 */ '0010000100001000010300406010050150502003023050280703506041100511006110071120831109411105101151212713';
-    ones = 'тричотирип''ятьшістьсімвісімдев''ятьдесятьодинадцятьдванадцятьтринадцятьчотирнадцятьп''ятнадцятьшістнадцятьсімнадцятьвісімнадцятьдев''ятнадцять';
-  end
-  else
-  if (:lang = 'BY') then begin
-    curr_abr = 'руб.';
-    minus_str = 'мінус';
-    razryad_idx = /* 2.2 */ '0100010506071307200828113911';
-    razryad = 'тисячмільйонмільярдтрильйонквадрильйонквінтильйон';
-    hundreds_idx = /* 2.1 */ '010013046106169257318396458539';
-    hundreds = 'стодвістітристачотиристап''ятсотшістсотсімсотвісімсотдев''ятсот';
-    tens_idx = /* 2.2 */ '0100010001080908170522093109400848105810';
-    tens = 'двадцятьтридцятьсорокп''ятдесятшістдесятсімдесятвісімдесятдев''яносто';
-    ones_idx = /* 3.2 */ '0010000100001000010300406010050150502003023050280703506041100511006110071120831109411105101151212713';
-    ones = 'тричотирип''ятьшістьсімвісімдев''ятьдесятьодинадцятьдванадцятьтринадцятьчотирнадцятьп''ятнадцятьшістнадцятьсімнадцятьвісімнадцятьдев''ятнадцять';
-  end
-
+  if (ShowCurrency is null) then
+    ShowCurrency = 0;
   curr_str = '';
 
   /* Смотрим знак */
   if (val < 0) then begin
-    sign_of_val = minus_str || ' ';
+    sign_of_val = 'минус ';
     val = -val;
   end
   else
@@ -32053,8 +32135,7 @@ begin
   val_str = cast(val as varchar(20));
   i = position('.' in val_str);
   cents = lpad(substring(val_str from i + 1 for 2), 2, '0');
-  --  val_str = lpad(substring(val_str FROM 1 FOR i-1), ((i+1)/3*3), '0');
-  val_str = lpad(substring(val_str from 1 for i - 1), (trunc((i + 1) / 3) * 3), '0');
+  val_str = lpad(substring(val_str from 1 for i - 1), ((i + 1) / 3 * 3), '0');
 
   /* Разбираем число */
   raz = 0;
@@ -32091,39 +32172,17 @@ begin
         i = cast(substring(num from 3 for 1) as int);
         /* Смотрим количество для нужного окончания */
         if (i = 1) then begin
-          if (:lang = 'UA') then begin
-            if (raz in (
-                        0, 1
-                       )) then
-              buf1 = 'одна';
-            else
-              buf1 = 'один';
-          end
+          if (raz = 1) then
+            buf1 = 'одна';
           else
-          if (:lang = 'RU') then begin
-            if (raz = 1) then
-              buf1 = 'одна';
-            else
-              buf1 = 'один';
-          end
+            buf1 = 'один';
         end
         else
         if (i = 2) then begin
-          if (:lang = 'UA') then begin
-            if (raz in (
-                        0, 1
-                       )) then
-              buf1 = 'дві';
-            else
-              buf1 = 'два';
-          end
+          if (raz = 1) then
+            buf1 = 'две';
           else
-          if (:lang = 'RU') then begin
-            if (raz = 1) then
-              buf1 = 'две';
-            else
-              buf1 = 'два';
-          end
+            buf1 = 'два';
         end
         else
           buf1 = substring(ones from cast(substring(ones_idx from i * 5 + 1 for 3) as int) for cast(substring(ones_idx from i * 5 + 4 for 2) as int));
@@ -32136,67 +32195,25 @@ begin
       buf1 = substring(razryad from cast(substring(razryad_idx from raz * 4 + 1 for 2) as int) for cast(substring(razryad_idx from raz * 4 + 3 for 2) as int));
       if (buf1 != '') then begin
         /* Подбор окончания для разряда */
-        if (:lang = 'UA') then begin
-          if (i = 1) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (i in (
-                    2, 3, 4
-                   )) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'и';
-            else
-            if (raz > 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (raz > 1) then
-            buf1 = buf1 || 'ів';
+        if (i = 1) then begin
+          if (raz = 1) then
+            buf1 = buf1 || 'а';
         end
         else
-        if (:lang = 'RU') then begin
-          if (i = 1) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (i in (
-                    2, 3, 4
-                   )) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'и';
-            else
-            if (raz > 1) then
-              buf1 = buf1 || 'а';
-          end
+        if (i in (
+                  2, 3, 4
+                 )) then begin
+          if (raz = 1) then
+            buf1 = buf1 || 'и';
           else
           if (raz > 1) then
-            buf1 = buf1 || 'ов';
+            buf1 = buf1 || 'а';
         end
+        else
+        if (raz > 1) then
+          buf1 = buf1 || 'ов';
         buf = buf || ' ' || buf1;
       end
-      else 
-      if (:lang = 'BY') then begin
-          if (i = 1) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (i in (
-                    2, 3, 4
-                   )) then begin
-            if (raz = 1) then
-              buf1 = buf1 || 'и';
-            else
-            if (raz > 1) then
-              buf1 = buf1 || 'а';
-          end
-          else
-          if (raz > 1) then
-            buf1 = buf1 || 'ів';
-        end
     end
     else
       buf = '';
@@ -32217,14 +32234,10 @@ begin
   curr_str = upper(substring(curr_str from 1 for 1)) || substring(curr_str from 2);
 
   /* Флаг "показать название валюты" */
-  if (showcurrency != 0) then begin
-    if (curr_str != '') then
-      curr_str = curr_str || ' ' || curr_abr || ' ';
+  if (ShowCurrency = 1) then
+    curr_str = curr_str || ' руб. ' || cents || ' коп.';
 
-    curr_str = curr_str || cents || ' коп.';
-  end
-
-  return :CURR_STR;
+  return curr_str;
 end;
 
 
@@ -32331,568 +32344,568 @@ end;
 
 CREATE ROLE ROLE_A4READER;
 CREATE ROLE ROLE_A4USER;
-COMMENT ON DOMAIN D_SERIAL IS
+COMMENT ON DOMAIN D_SERIAL IS 
 'Для полей серийных номеров';
 
-COMMENT ON DOMAIN D_UID_NULL IS
+COMMENT ON DOMAIN D_UID_NULL IS 
 'Для полей ссылок которые могут содержать Null';
 
-COMMENT ON DOMAIN UID IS
+COMMENT ON DOMAIN UID IS 
 'FOR PRIMARY KEYS';
 
-COMMENT ON TABLE ALL_USED_IP IS
+COMMENT ON TABLE ALL_USED_IP IS 
 'Список зарезервированных IP адресов, которые не выдаються абонентам и оборудованию.';
 
-COMMENT ON TABLE APPLIANCE IS
+COMMENT ON TABLE APPLIANCE IS 
 'Список устройств/приборов в сети. Как операторские, так и абонентские';
 
-COMMENT ON TABLE AREA IS
+COMMENT ON TABLE AREA IS 
 'Участки';
 
-COMMENT ON TABLE ATTRIBUTE IS
+COMMENT ON TABLE ATTRIBUTE IS 
 'Универсальная таблица хранения атрибутов на объекты';
 
-COMMENT ON TABLE BCISSUE IS
-'Проблемы/Сбои вещания каналов';
-
-COMMENT ON TABLE BCI_CHANNELS IS
+COMMENT ON TABLE BCI_CHANNELS IS 
 'на каких каналах проблема';
 
-COMMENT ON TABLE BILLING IS
+COMMENT ON TABLE BCISSUE IS 
+'Проблемы/Сбои вещания каналов';
+
+COMMENT ON TABLE BILLING IS 
 'Параметры для интернет биллинга';
 
-COMMENT ON TABLE BLB_GZIP IS
+COMMENT ON TABLE BLB_GZIP IS 
 'Хранение сжатых бинарных файлов';
 
-COMMENT ON TABLE BLOB_TBL IS
+COMMENT ON TABLE BLOB_TBL IS 
 'Хранения бинарных данных';
 
-COMMENT ON TABLE BONUS_RATE IS
+COMMENT ON TABLE BONUS_RATE IS 
 'Таблица тарифов на бонусы';
 
-COMMENT ON TABLE CARDS_PREPAY IS
+COMMENT ON TABLE CARDS_PREPAY IS 
 'Карты оплаты';
 
-COMMENT ON TABLE CARDS_SERIALS IS
+COMMENT ON TABLE CARDS_SERIALS IS 
 'Серии кар оплат';
 
-COMMENT ON TABLE CHANGELOG IS
+COMMENT ON TABLE CHANGELOG IS 
 'Журнал изменений';
 
-COMMENT ON TABLE CHANNELS IS
-'ТВ каналы';
-
-COMMENT ON TABLE CHANNELS_IN_SERVCE IS
-'Каналы в услуге';
-
-COMMENT ON TABLE CHANNEL_SRC IS
+COMMENT ON TABLE CHANNEL_SRC IS 
 'Источники сигнала каналов';
 
-COMMENT ON TABLE CHANNEL_SRC_PARAM IS
+COMMENT ON TABLE CHANNEL_SRC_PARAM IS 
 'Параметры канала в источнике';
 
-COMMENT ON TABLE CLIENT_FILES IS
+COMMENT ON TABLE CHANNELS IS 
+'ТВ каналы';
+
+COMMENT ON TABLE CHANNELS_IN_SERVCE IS 
+'Каналы в услуге';
+
+COMMENT ON TABLE CLIENT_FILES IS 
 'Файлы для обновления софта на клиенте';
 
-COMMENT ON TABLE COMPANY IS
+COMMENT ON TABLE COMPANY IS 
 'Информация о фирме';
 
-COMMENT ON TABLE CONNECT_LOG IS
+COMMENT ON TABLE CONNECT_LOG IS 
 'Журнал подключения к базе данных';
 
-COMMENT ON TABLE CUSTLETTER IS
+COMMENT ON TABLE CUSTLETTER IS 
 'Письма абонентам';
 
-COMMENT ON TABLE CUSTOMER IS
+COMMENT ON TABLE CUSTOMER IS 
 'Таблица абонентов';
 
-COMMENT ON TABLE CUSTOMER_ATTRIBUTES IS
+COMMENT ON TABLE CUSTOMER_ATTRIBUTES IS 
 'Атрибуты абонентов';
 
-COMMENT ON TABLE CUSTOMER_BONUSES IS
+COMMENT ON TABLE CUSTOMER_BONUSES IS 
 'Таблица бонусов';
 
-COMMENT ON TABLE CUSTOMER_CHANNELS IS
+COMMENT ON TABLE CUSTOMER_CHANNELS IS 
 'Персональные каналы у абонентов';
 
-COMMENT ON TABLE CUSTOMER_CONTACTS IS
+COMMENT ON TABLE CUSTOMER_CONTACTS IS 
 'Таблица контактов абонента (телефон, емаил и т.д.)';
 
-COMMENT ON TABLE CUSTOMER_DECODERS IS
+COMMENT ON TABLE CUSTOMER_DECODERS IS 
 'Связка абонент-декодер';
 
-COMMENT ON TABLE CUSTOMER_DOC IS
+COMMENT ON TABLE CUSTOMER_DOC IS 
 'Картотека документов абонентов';
 
-COMMENT ON TABLE CUSTOMER_EQUIPMENT IS
+COMMENT ON TABLE CUSTOMER_EQUIPMENT IS 
 'Связка абонент-оборудование';
 
-COMMENT ON TABLE CUSTOMER_FILES IS
+COMMENT ON TABLE CUSTOMER_FILES IS 
 'Документы абонента (сканы справок паспортов)';
 
-COMMENT ON TABLE DAILY_FEE IS
+COMMENT ON TABLE DAILY_FEE IS 
 'Записываем сюда ежедневные начисления';
 
-COMMENT ON TABLE DAYS_TARIF IS
+COMMENT ON TABLE DAYS_TARIF IS 
 'Временная таблица для расчетов';
 
-COMMENT ON TABLE DECODER_PACKETS IS
+COMMENT ON TABLE DECODER_PACKETS IS 
 'Таблица пакетов для декодера (цифрового оборудования)';
 
-COMMENT ON TABLE DEVICES IS
+COMMENT ON TABLE DEVICES IS 
 'будет удалена. Таблица для карты.';
 
-COMMENT ON TABLE DEVPORTS IS
+COMMENT ON TABLE DEVPORTS IS 
 'будет удалена. Таблица для карты.';
 
-COMMENT ON TABLE DEVPROFILES IS
+COMMENT ON TABLE DEVPROFILES IS 
 'будет удалена. Таблица для карты.';
 
-COMMENT ON TABLE DISCOUNT_FACTOR IS
+COMMENT ON TABLE DISCOUNT_FACTOR IS 
 'Таблица скидок для абонентов';
 
-COMMENT ON TABLE DISTRIBUTOR IS
-'ДИСТРИБЬЮТОР каналов';
-
-COMMENT ON TABLE DISTRIB_CARDS IS
+COMMENT ON TABLE DISTRIB_CARDS IS 
 'Карты дистрибьютера';
 
-COMMENT ON TABLE DISTRIB_CONTRACT_CH IS
+COMMENT ON TABLE DISTRIB_CONTRACT_CH IS 
 'Каналы по договору';
 
-COMMENT ON TABLE DOC_LIST IS
+COMMENT ON TABLE DISTRIBUTOR IS 
+'ДИСТРИБЬЮТОР каналов';
+
+COMMENT ON TABLE DOC_LIST IS 
 'Картотека документов абонентов';
 
-COMMENT ON TABLE DVB_NETWORK IS
+COMMENT ON TABLE DVB_NETWORK IS 
 'Сети DVB';
 
-COMMENT ON TABLE DVB_STREAMS IS
-'Потоки (транспондеры) DVB';
-
-COMMENT ON TABLE DVB_STREAM_CHANNELS IS
+COMMENT ON TABLE DVB_STREAM_CHANNELS IS 
 'Каналы в потоке (транспондере)';
 
-COMMENT ON TABLE EPG IS
+COMMENT ON TABLE DVB_STREAMS IS 
+'Потоки (транспондеры) DVB';
+
+COMMENT ON TABLE EPG IS 
 'программа передач';
 
-COMMENT ON TABLE EPG_AD IS
+COMMENT ON TABLE EPG_AD IS 
 'Таблица рекламных объявлений в EPG';
 
-COMMENT ON TABLE EPG_AD_CHANNELS IS
+COMMENT ON TABLE EPG_AD_CHANNELS IS 
 'На каких каналах пускать объявления';
 
-COMMENT ON TABLE EPG_GENRE IS
+COMMENT ON TABLE EPG_GENRE IS 
 'Жанр программ передач';
 
-COMMENT ON TABLE EPG_LOCAL IS
+COMMENT ON TABLE EPG_LOCAL IS 
 'EPG для локальных врезок, создает сам оператор';
 
-COMMENT ON TABLE EPG_MAPPING IS
+COMMENT ON TABLE EPG_MAPPING IS 
 'Соответствие ID канала в a4on.tv и ID канала в загружаемом файле';
 
-COMMENT ON TABLE EPG_MAPPING_GENRE IS
+COMMENT ON TABLE EPG_MAPPING_GENRE IS 
 'Соответстиве жанра источника с жанром стандарта DVB';
 
-COMMENT ON TABLE EPG_SOURCES IS
+COMMENT ON TABLE EPG_SOURCES IS 
 'Спсиок источников программ передач';
 
-COMMENT ON TABLE EQUIPMENT IS
+COMMENT ON TABLE EQUIPMENT IS 
 'Таблица сетевого оборудования';
 
-COMMENT ON TABLE EQUIPMENT_ATTRIBUTES IS
+COMMENT ON TABLE EQUIPMENT_ATTRIBUTES IS 
 'Атрибуты аоборудования';
 
-COMMENT ON TABLE EQUIPMENT_CMD_GRP IS
+COMMENT ON TABLE EQUIPMENT_CMD_GRP IS 
 'Связка КОММАНДА - ТИП ОБОРУДОВАНИЯ';
 
-COMMENT ON TABLE EQUIPMENT_COVERAGE IS
+COMMENT ON TABLE EQUIPMENT_COVERAGE IS 
 'Зона обслуживания оборудования';
 
-COMMENT ON TABLE EQUIPMENT_DVB IS
+COMMENT ON TABLE EQUIPMENT_DVB IS 
 'Цифровое оборудование. карточки стб модули';
 
-COMMENT ON TABLE EQUIPMENT_HISTORY IS
+COMMENT ON TABLE EQUIPMENT_HISTORY IS 
 'Таблица истории смены статса оборудования';
 
-COMMENT ON TABLE EQUIPMENT_LOG IS
+COMMENT ON TABLE EQUIPMENT_LOG IS 
 'Журнал оборудования';
 
-COMMENT ON TABLE EVENT_DETAIL IS
+COMMENT ON TABLE EVENT_DETAIL IS 
 'Суммарная информация по событиям абонента (тарфика, вход, или еще что)';
 
-COMMENT ON TABLE EXPORTTYPES IS
+COMMENT ON TABLE EXPORTTYPES IS 
 'Описание форматов экспорта данных';
 
-COMMENT ON TABLE FREQPLAN IS
+COMMENT ON TABLE FREQPLAN IS 
 'Частоты и номера кабельных и телевизионных каналов';
 
-COMMENT ON TABLE GPS_LOG IS
+COMMENT ON TABLE GPS_LOG IS 
 'Лог координат монтажников';
 
-COMMENT ON TABLE HEADEND IS
+COMMENT ON TABLE HEADEND IS 
 'Головные станции';
 
-COMMENT ON TABLE HEADEND_CHANNELS IS
+COMMENT ON TABLE HEADEND_CHANNELS IS 
 'каналы головных станций';
 
-COMMENT ON TABLE HOUSE IS
+COMMENT ON TABLE HOUSE IS 
 'Дома';
 
-COMMENT ON TABLE HOUSEFLATS IS
-'Карта дома квартира этаж подъезд';
-
-COMMENT ON TABLE HOUSEFLOOR IS
-'Этажи дома';
-
-COMMENT ON TABLE HOUSEPORCH IS
-'Подъезды дома';
-
-COMMENT ON TABLE HOUSES_ATTRIBUTES IS
-'Атрибуты домов';
-
-COMMENT ON TABLE HOUSEWORKS IS
-'Работы по дому';
-
-COMMENT ON TABLE HOUSE_CIRCUIT IS
+COMMENT ON TABLE HOUSE_CIRCUIT IS 
 'Схемы для дома';
 
-COMMENT ON TABLE IPTV_GROUP IS
+COMMENT ON TABLE HOUSEFLATS IS 
+'Карта дома квартира этаж подъезд';
+
+COMMENT ON TABLE HOUSEFLOOR IS 
+'Этажи дома';
+
+COMMENT ON TABLE HOUSEPORCH IS 
+'Подъезды дома';
+
+COMMENT ON TABLE HOUSES_ATTRIBUTES IS 
+'Атрибуты домов';
+
+COMMENT ON TABLE HOUSEWORKS IS 
+'Работы по дому';
+
+COMMENT ON TABLE IPTV_GROUP IS 
 'Групп для IPTV';
 
-COMMENT ON TABLE IPTV_GROUP_ATTRIBUTES IS
+COMMENT ON TABLE IPTV_GROUP_ATTRIBUTES IS 
 'Атрибуты IPTV групп';
 
-COMMENT ON TABLE IPTV_GROUP_CHANNELS IS
+COMMENT ON TABLE IPTV_GROUP_CHANNELS IS 
 'Каналы в IPTV группе';
 
-COMMENT ON TABLE JOURNAL IS
+COMMENT ON TABLE JOURNAL IS 
 'Журнал (сообщения ошибки)';
 
-COMMENT ON TABLE LETTERTYPE IS
+COMMENT ON TABLE LETTERTYPE IS 
 'Вид печатных документов';
 
-COMMENT ON TABLE MAP_LOG IS
+COMMENT ON TABLE MAP_LOG IS 
 'Журнал работы с картой';
 
-COMMENT ON TABLE MATERIALS IS
-'Таблица текущего кол-ва материала';
-
-COMMENT ON TABLE MATERIALS_GROUP IS
-'Группы материалов';
-
-COMMENT ON TABLE MATERIALS_IN_DOC IS
-'Материалы в документах прихода/расхода';
-
-COMMENT ON TABLE MATERIALS_IN_DOC_UNIT IS
-'Материалы в документах прихода/расхода поштучно';
-
-COMMENT ON TABLE MATERIALS_REMAIN IS
-'Остаток материалов на складах';
-
-COMMENT ON TABLE MATERIAL_DOCS IS
+COMMENT ON TABLE MATERIAL_DOCS IS 
 'Документы';
 
-COMMENT ON TABLE MATERIAL_UNIT IS
+COMMENT ON TABLE MATERIAL_UNIT IS 
 'Единичный учет материала/оборудования';
 
-COMMENT ON TABLE MESSAGES IS
-'Таблица рассылки сообщений (sms email digitaltv)';
+COMMENT ON TABLE MATERIALS IS 
+'Таблица текущего кол-ва материала';
 
-COMMENT ON TABLE MESSAGE_TPL IS
+COMMENT ON TABLE MATERIALS_GROUP IS 
+'Группы материалов';
+
+COMMENT ON TABLE MATERIALS_IN_DOC IS 
+'Материалы в документах прихода/расхода';
+
+COMMENT ON TABLE MATERIALS_IN_DOC_UNIT IS 
+'Материалы в документах прихода/расхода поштучно';
+
+COMMENT ON TABLE MATERIALS_REMAIN IS 
+'Остаток материалов на складах';
+
+COMMENT ON TABLE MESSAGE_TPL IS 
 'Шаблоны сообщений';
 
-COMMENT ON TABLE MODULES IS
+COMMENT ON TABLE MESSAGES IS 
+'Таблица рассылки сообщений (sms email digitaltv)';
+
+COMMENT ON TABLE MODULES IS 
 'Таблица модулей системы (меню Модули)';
 
-COMMENT ON TABLE MONTHLY_FEE IS
-'Месячные начисления';
-
-COMMENT ON TABLE MONTHLY_FREEZE IS
-'Заморозка начислений';
-
-COMMENT ON TABLE MONTH_NAME IS
+COMMENT ON TABLE MONTH_NAME IS 
 'Наименование месяцев';
 
-COMMENT ON TABLE NODES IS
-'Узлы/ящики где установлено оборудование';
+COMMENT ON TABLE MONTHLY_FEE IS 
+'Месячные начисления';
 
-COMMENT ON TABLE NODES_ATTRIBUTES IS
-'Атрибуты услуг';
+COMMENT ON TABLE MONTHLY_FREEZE IS 
+'Заморозка начислений';
 
-COMMENT ON TABLE NODE_FILES IS
+COMMENT ON TABLE NODE_FILES IS 
 'Документы узла';
 
-COMMENT ON TABLE NODE_FLATS IS
+COMMENT ON TABLE NODE_FLATS IS 
 'Дома (если квартира = нулл) и Квартиры узла';
 
-COMMENT ON TABLE NODE_LAYOUT IS
+COMMENT ON TABLE NODE_LAYOUT IS 
 'Схема расположения оборудования на узле';
 
-COMMENT ON TABLE NPS IS
+COMMENT ON TABLE NODES IS 
+'Узлы/ящики где установлено оборудование';
+
+COMMENT ON TABLE NODES_ATTRIBUTES IS 
+'Атрибуты услуг';
+
+COMMENT ON TABLE NPS IS 
 'Индекс потребительской лояльности';
 
-COMMENT ON TABLE OBJECTS IS
+COMMENT ON TABLE OBJECTS IS 
 'Тблица справочников';
 
-COMMENT ON TABLE OBJECTS_COVERAGE IS
+COMMENT ON TABLE OBJECTS_COVERAGE IS 
 'Зона обслуживания для объектов (модемы зоны и прочее)';
 
-COMMENT ON TABLE OBJECTS_HISTORY IS
+COMMENT ON TABLE OBJECTS_HISTORY IS 
 'Таблица хранения изменений значений объектов';
 
-COMMENT ON TABLE OBJECTS_TYPE IS
+COMMENT ON TABLE OBJECTS_TYPE IS 
 'Вид справочника';
 
-COMMENT ON TABLE OPERATION_LOG IS
+COMMENT ON TABLE OPERATION_LOG IS 
 'Лог операций';
 
-COMMENT ON TABLE ORDERS_TP IS
+COMMENT ON TABLE ORDERS_TP IS 
 'сторонние заказы (third-party orders)';
 
-COMMENT ON TABLE ORGANIZATION IS
+COMMENT ON TABLE ORGANIZATION IS 
 'Обслуживающие организации';
 
-COMMENT ON TABLE OTHER_FEE IS
+COMMENT ON TABLE OTHER_FEE IS 
 'Прочие начисления абоненту';
 
-COMMENT ON TABLE PAYMENT IS
-'Таблица принятых платежей';
-
-COMMENT ON TABLE PAYMENT_DELETED IS
-'Удаленные платежи';
-
-COMMENT ON TABLE PAYMENT_HOLD IS
-'Платежи ожидающие обработку. например рассылка чеков с онлайн оплат';
-
-COMMENT ON TABLE PAYSOURCE IS
-'Источник платежа';
-
-COMMENT ON TABLE PAY_DOC IS
+COMMENT ON TABLE PAY_DOC IS 
 'Список платежных документов (мемориалный оредер) документ с кодом (-1), реестр обещаных платежей';
 
-COMMENT ON TABLE PAY_ERRORS IS
+COMMENT ON TABLE PAY_ERRORS IS 
 'Ошибки загрузчика платежей';
 
-COMMENT ON TABLE PERSONAL_TARIF IS
-'Таблица персональных тарифов';
+COMMENT ON TABLE PAYMENT IS 
+'Таблица принятых платежей';
 
-COMMENT ON TABLE PERS_TARIF_TMP IS
+COMMENT ON TABLE PAYMENT_DELETED IS 
+'Удаленные платежи';
+
+COMMENT ON TABLE PAYMENT_HOLD IS 
+'Платежи ожидающие обработку. например рассылка чеков с онлайн оплат';
+
+COMMENT ON TABLE PAYSOURCE IS 
+'Источник платежа';
+
+COMMENT ON TABLE PERS_TARIF_TMP IS 
 'Временная таблица для расчетов';
 
-COMMENT ON TABLE PORT IS
+COMMENT ON TABLE PERSONAL_TARIF IS 
+'Таблица персональных тарифов';
+
+COMMENT ON TABLE PORT IS 
 'Таблица портов оборудования сети';
 
-COMMENT ON TABLE PREPAY_DETAIL IS
+COMMENT ON TABLE PREPAY_DETAIL IS 
 'История обещаных платежей';
 
-COMMENT ON TABLE PROFILES IS
+COMMENT ON TABLE PROFILES IS 
 'Проифили загрузчика платежей и начислений';
 
-COMMENT ON TABLE QRATING IS
+COMMENT ON TABLE QRATING IS 
 'Таблица оценок
 NPS - лояльность абонентов
 BID - оценка выполнения заявок';
 
-COMMENT ON TABLE QUEUE_SWITCH_SRV IS
+COMMENT ON TABLE QUEUE_SWITCH_SRV IS 
 'Очередь запланированного переключения услуг';
 
-COMMENT ON TABLE RATES IS
+COMMENT ON TABLE RATES IS 
 'Курсы валют';
 
-COMMENT ON TABLE RECOURSE IS
+COMMENT ON TABLE RECOURSE IS 
 'Обращения абонентов (звонки)';
 
-COMMENT ON TABLE RECOURSE_TEMPLATES IS
+COMMENT ON TABLE RECOURSE_TEMPLATES IS 
 'Шаблонs обращений';
 
-COMMENT ON TABLE REMINDER IS
+COMMENT ON TABLE REMINDER IS 
 'Напоминалка для пользователя';
 
-COMMENT ON TABLE REPORTS IS
+COMMENT ON TABLE REPORTS IS 
 'Отчеты';
 
-COMMENT ON TABLE REQUEST IS
+COMMENT ON TABLE REQUEST IS 
 'Заявки';
 
-COMMENT ON TABLE REQUEST_EXECUTORS IS
+COMMENT ON TABLE REQUEST_EXECUTORS IS 
 'Исполнители заявок';
 
-COMMENT ON TABLE REQUEST_FLATS IS
+COMMENT ON TABLE REQUEST_FLATS IS 
 'Поквартирный результат заявки для узла';
 
-COMMENT ON TABLE REQUEST_MATERIALS IS
+COMMENT ON TABLE REQUEST_MATERIALS IS 
 'Материалы для заявки';
 
-COMMENT ON TABLE REQUEST_MATERIALS_RETURN IS
+COMMENT ON TABLE REQUEST_MATERIALS_RETURN IS 
 'возврат материалов с заявки';
 
-COMMENT ON TABLE REQUEST_MSG IS
+COMMENT ON TABLE REQUEST_MSG IS 
 'Переписка по заявкам';
 
-COMMENT ON TABLE REQUEST_PHOTOS IS
+COMMENT ON TABLE REQUEST_PHOTOS IS 
 'Фотографии заявки';
 
-COMMENT ON TABLE REQUEST_RESULTS IS
+COMMENT ON TABLE REQUEST_RESULTS IS 
 'Результат закрытия заявки';
 
-COMMENT ON TABLE REQUEST_TEMPLATES IS
+COMMENT ON TABLE REQUEST_TEMPLATES IS 
 'Шаблоны заявок';
 
-COMMENT ON TABLE REQUEST_TYPES IS
+COMMENT ON TABLE REQUEST_TYPES IS 
 'Типы заявок';
 
-COMMENT ON TABLE REQUEST_WORKS IS
+COMMENT ON TABLE REQUEST_WORKS IS 
 'Работы по заявке';
 
-COMMENT ON TABLE SERVICES IS
+COMMENT ON TABLE SERVICES IS 
 'Услуги';
 
-COMMENT ON TABLE SERVICES_ATTRIBUTES IS
+COMMENT ON TABLE SERVICES_ATTRIBUTES IS 
 'Атрибуты услуг';
 
-COMMENT ON TABLE SERVICES_CMPLX IS
+COMMENT ON TABLE SERVICES_CMPLX IS 
 'Таблица для комплексных услуг. Услуга которая состит из нескольких подразделов';
 
-COMMENT ON TABLE SERVICES_LINKS IS
+COMMENT ON TABLE SERVICES_LINKS IS 
 'Таблица связей услуг. включение отключение абонентский услуг';
 
-COMMENT ON TABLE SETTINGS IS
+COMMENT ON TABLE SETTINGS IS 
 'Настройки';
 
-COMMENT ON TABLE SINGLE_SERV IS
+COMMENT ON TABLE SINGLE_SERV IS 
 'Разовые услуги абоненту';
 
-COMMENT ON TABLE STAT_IP IS
+COMMENT ON TABLE STAT_IP IS 
 'Таблица статистики трафика по IP';
 
-COMMENT ON TABLE STREET IS
+COMMENT ON TABLE STREET IS 
 'Справочник улиц';
 
-COMMENT ON TABLE STREET_TYPE IS
+COMMENT ON TABLE STREET_TYPE IS 
 'Сокращенное название улиц';
 
-COMMENT ON TABLE SUBAREA IS
+COMMENT ON TABLE SUBAREA IS 
 'Справочник участков';
 
-COMMENT ON TABLE SUBDIVISIONS IS
+COMMENT ON TABLE SUBDIVISIONS IS 
 'Участки (подразделения предприятия)';
 
-COMMENT ON TABLE SUBSCR_HIST IS
+COMMENT ON TABLE SUBSCR_HIST IS 
 'История подключений отключений';
 
-COMMENT ON TABLE SUBSCR_SERV IS
+COMMENT ON TABLE SUBSCR_SERV IS 
 'Подписанные услуги абоненту';
 
-COMMENT ON TABLE SYS$GROUP IS
+COMMENT ON TABLE SYS$GROUP IS 
 'Группы пользователей';
 
-COMMENT ON TABLE SYS$GROUP_RIGHTS IS
+COMMENT ON TABLE SYS$GROUP_RIGHTS IS 
 'Права для груп пользователей';
 
-COMMENT ON TABLE SYS$RIGHTS IS
+COMMENT ON TABLE SYS$RIGHTS IS 
 'Права доступа сиситемы';
 
-COMMENT ON TABLE SYS$USER IS
+COMMENT ON TABLE SYS$USER IS 
 'Пользователи системы';
 
-COMMENT ON TABLE SYS$USER_AREAS IS
+COMMENT ON TABLE SYS$USER_AREAS IS 
 'Связка пользователь-район';
 
-COMMENT ON TABLE SYS$USER_GROUPS IS
+COMMENT ON TABLE SYS$USER_GROUPS IS 
 'Связка пользователь-группа';
 
-COMMENT ON TABLE SYS$USER_WH IS
+COMMENT ON TABLE SYS$USER_WH IS 
 'Разрешенные склады для пользователя';
 
-COMMENT ON TABLE TARIF IS
+COMMENT ON TABLE TARIF IS 
 'Тарифы на услуги и на НДС Object_TYPE = 13';
 
-COMMENT ON TABLE TASKLIST IS
+COMMENT ON TABLE TASKLIST IS 
 'Таблица задач сотрудников';
 
-COMMENT ON TABLE TASKMSG IS
+COMMENT ON TABLE TASKMSG IS 
 'Переписка по задачам';
 
-COMMENT ON TABLE TASKUSER IS
+COMMENT ON TABLE TASKUSER IS 
 'Таблица исполнителей задач';
 
-COMMENT ON TABLE TMP_COL IS
+COMMENT ON TABLE TMP_COL IS 
 'Временная таблица для внутренних целей';
 
-COMMENT ON TABLE TQUEUE IS
+COMMENT ON TABLE TQUEUE IS 
 'События цифрового ТВ';
 
-COMMENT ON TABLE TV_LAN IS
+COMMENT ON TABLE TV_LAN IS 
 'Настройки сети для абонента';
 
-COMMENT ON TABLE TV_LAN_PACKETS IS
+COMMENT ON TABLE TV_LAN_PACKETS IS 
 'Пакеты для сетевого оборудования';
 
-COMMENT ON TABLE UNIT_PORT IS
+COMMENT ON TABLE UNIT_PORT IS 
 'Порты оборудоания. сделано если мы снимае с сети, чтоб отсавалась история';
 
-COMMENT ON TABLE VLANS IS
+COMMENT ON TABLE VLANS IS 
 'Подсети СПД';
 
-COMMENT ON TABLE WIRE IS
+COMMENT ON TABLE WIRE IS 
 'Кабельная инфраструктура';
 
-COMMENT ON TABLE WORKAREA IS
+COMMENT ON TABLE WORKAREA IS 
 'Участки обслуживания';
 
-COMMENT ON TABLE WORKAREALIMIT IS
+COMMENT ON TABLE WORKAREALIMIT IS 
 'Ограничение кол-во заявок на учатске по типу заявки';
 
-COMMENT ON TABLE WORKER IS
+COMMENT ON TABLE WORKER IS 
 'Работники организации (монтажники)';
 
-COMMENT ON TABLE WORKGROUPS IS
+COMMENT ON TABLE WORKGROUPS IS 
 'Звенья обслуживания';
 
-COMMENT ON TABLE WORKS IS
+COMMENT ON TABLE WORKS IS 
 'Работы для заявок';
 
-COMMENT ON VIEW RAYON IS
+COMMENT ON VIEW RAYON IS 
 'УДАЛИТЬ. непонтяно что это и кто создал. позже удалю';
 
-COMMENT ON VIEW SERVICES_TYPE IS
+COMMENT ON VIEW SERVICES_TYPE IS 
 'замена таблицы SERVICES_TYPE';
 
-COMMENT ON VIEW V_ADRESS IS
+COMMENT ON VIEW V_ADRESS IS 
 'устаревшее. может быть удалено в любой момент';
 
-COMMENT ON VIEW V_ALL_IP IS
+COMMENT ON VIEW V_ALL_IP IS 
 'Все IP адреса системы';
 
-COMMENT ON VIEW V_ALL_MAC IS
+COMMENT ON VIEW V_ALL_MAC IS 
 'Все MAC адреса системы';
 
-COMMENT ON PROCEDURE ADD_CUSTOMER IS
+COMMENT ON PROCEDURE ADD_CUSTOMER IS 
 'Добавление абонента с минимальным набором данных.';
 
-COMMENT ON PROCEDURE ADD_FLAT_TO_HOUSE IS
+COMMENT ON PROCEDURE ADD_FLAT_TO_HOUSE IS 
 'Добавим новую квартиру в дом';
 
-COMMENT ON PROCEDURE ADD_OR_MOVE_PAYMENT IS
+COMMENT ON PROCEDURE ADD_OR_MOVE_PAYMENT IS 
 'Добавляет или перемещает в платежный документ платеж абонента';
 
-COMMENT ON PROCEDURE ADD_PAYMENT IS
+COMMENT ON PROCEDURE ADD_PAYMENT IS 
 'Добавление платежа абоненту.
 при этом создается новый платежный документ. если его не было ранее';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT IS
-'Добавление платежа абоненту.
-при этом создается новый платежный документ. если его не было ранее';
-
-COMMENT ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT_FINE IS
-'Добавление платежа абоненту.
-при этом создается новый платежный документ. если его не было ранее';
-
-COMMENT ON PROCEDURE ADD_PAYMENT_BY_ACC_SUR IS
+COMMENT ON PROCEDURE ADD_PAYMENT_BY_ACC_SUR IS 
 'Добавление платежа абоненту. Проверка по Фамилии и Лицевому
 при этом создается новый платежный документ. если его не было ранее';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_EXT IS
+COMMENT ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT IS 
+'Добавление платежа абоненту.
+при этом создается новый платежный документ. если его не было ранее';
+
+COMMENT ON PROCEDURE ADD_PAYMENT_BY_ACCOUNT_FINE IS 
+'Добавление платежа абоненту.
+при этом создается новый платежный документ. если его не было ранее';
+
+COMMENT ON PROCEDURE ADD_PAYMENT_EXT IS 
 'Добавление платежа абоненту.
 Примечание (если используете в своих проектах, учтите то что процедура будет менятся согласно таблице PAYMENTS)
 возвращает
@@ -32901,18 +32914,18 @@ COMMENT ON PROCEDURE ADD_PAYMENT_EXT IS
 -3 не указан плат документ
 >=0 ID платежа';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_FINE IS
+COMMENT ON PROCEDURE ADD_PAYMENT_FINE IS 
 'Добавление платежа абоненту.
 при этом создается новый платежный документ. если его не было ранее';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS IS
+COMMENT ON PROCEDURE ADD_PAYMENT_FROM_EXT_SYSTEMS IS 
 'Добавить платеж с внешних систем, такие как терминалы и прочие';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_SRC_ACCOUNT IS
+COMMENT ON PROCEDURE ADD_PAYMENT_SRC_ACCOUNT IS 
 'Добавляет платеж абоненту.
 платеж заносится в платежный документ с источником src и датой платежа';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_SRC_CUSTID IS
+COMMENT ON PROCEDURE ADD_PAYMENT_SRC_CUSTID IS 
 'Добавление платежа абоненту.
 Поиск абонента по его ID
 добавляет в плат документ за дату платежа с кодом источника указанным при выполнении
@@ -32920,7 +32933,7 @@ COMMENT ON PROCEDURE ADD_PAYMENT_SRC_CUSTID IS
 Если источник с кодом не найдем, создадим его
 >=0 ID платежа';
 
-COMMENT ON PROCEDURE ADD_PAYMENT_SRC_DOG_FIO IS
+COMMENT ON PROCEDURE ADD_PAYMENT_SRC_DOG_FIO IS 
 'Добавление платежа абоненту. Поиск по номеру договора и фамилии, если фио не указана не сравниваем
 добавляет в плат документ за дату платежа с кодом источника указанным при выполнении
 возвращает
@@ -32929,7 +32942,7 @@ COMMENT ON PROCEDURE ADD_PAYMENT_SRC_DOG_FIO IS
 -6 не указан код источника
 >=0 ID платежа';
 
-COMMENT ON PROCEDURE ADD_SINGLE_SERVICE IS
+COMMENT ON PROCEDURE ADD_SINGLE_SERVICE IS 
 '    P_CUSTOMER_ID  - абонент
 P_SERVICE_ID   - услуга
 P_UNITS        - кол-во
@@ -32937,7 +32950,7 @@ P_DATE         - дата
 P_NOTICE       - примечание
 P_HISTORY      - если эта услуга включения/отключения то тут храниться номер записи в таблице историй подключений SUBSCR_HIST';
 
-COMMENT ON PROCEDURE ADD_SINGLE_SERVICE_VAT IS
+COMMENT ON PROCEDURE ADD_SINGLE_SERVICE_VAT IS 
 '    P_CUSTOMER_ID  - абонент
 P_SERVICE_ID   - услуга
 P_UNITS        - кол-во
@@ -32945,286 +32958,651 @@ P_DATE         - дата
 P_NOTICE       - примечание
 P_HISTORY      - если эта услуга включения/отключения то тут храниться номер записи в таблице историй подключений SUBSCR_HIST';
 
-COMMENT ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC IS
+COMMENT ON PROCEDURE ADD_SINGLE_SERVICE_WO_CALC IS 
 'Добавление разовой услуги без полного пересчета.';
 
-COMMENT ON PROCEDURE ADD_STAT_IP IS
+COMMENT ON PROCEDURE ADD_STAT_IP IS 
 'Добавить трафик по IP   с учетом класса трафика';
 
-COMMENT ON PROCEDURE ADD_SUBSCR_SERVICE IS
+COMMENT ON PROCEDURE ADD_SUBSCR_SERVICE IS 
 'Добавление периодической услуги абоненту';
 
-COMMENT ON PROCEDURE ADD_SUBSCR_SERVICE_VAT IS
+COMMENT ON PROCEDURE ADD_SUBSCR_SERVICE_VAT IS 
 'Добавление периодической услуги абоненту с группой НДС';
 
-COMMENT ON PROCEDURE API_GET_CUSTOMER_BALANCE IS
+COMMENT ON PROCEDURE API_GET_CUSTOMER_BALANCE IS 
 'получение детализации баланса абонента';
 
-COMMENT ON PROCEDURE API_GET_CUSTOMER_SERVICES IS
+COMMENT ON PROCEDURE API_GET_CUSTOMER_SERVICES IS 
 'Процедура вывода доступных абоненту услуг для работы с API (ЛК)';
 
-COMMENT ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW IS
+COMMENT ON PROCEDURE API_GET_CUSTOMER_SERVICES_NEW IS 
 'эту процедуру нужно удалить
 Процедура вывода доступных абоненту услуг для работы с API (ЛК)';
 
-COMMENT ON PROCEDURE API_GET_NEW_ACCOUNT IS
+COMMENT ON PROCEDURE API_GET_NEW_ACCOUNT IS 
 'Создание нового номера лицевого';
 
-COMMENT ON PROCEDURE API_GET_SERVICES IS
+COMMENT ON PROCEDURE API_GET_SERVICES IS 
 'Процедура выборки доступных абоненту услуг
 
 P_CUSTOMER_ID - код абонента
 P_TYPE        - код услуг (абонентской -0 / разовой - 1)';
 
-COMMENT ON PROCEDURE API_REMAIN_DAYS IS
+COMMENT ON PROCEDURE API_REMAIN_DAYS IS 
 'Процедура расчета на сколько примерно дней хватит текущего баланса';
 
-COMMENT ON PROCEDURE API_REQUEST_CLOSE IS
+COMMENT ON PROCEDURE API_REQUEST_CLOSE IS 
 'Закрытие заявки';
 
-COMMENT ON PROCEDURE API_REQUEST_JOIN IS
+COMMENT ON PROCEDURE API_REQUEST_JOIN IS 
 'Добавить пользователя к заявке';
 
-COMMENT ON PROCEDURE API_REQUEST_REFUSE IS
+COMMENT ON PROCEDURE API_REQUEST_REFUSE IS 
 'отказаться от заявки
 возвращаем
 0 - не смогли отказаться
 1 - все хорошо. отказались
 2 - чужая';
 
-COMMENT ON PROCEDURE API_REQUEST_TAKE IS
+COMMENT ON PROCEDURE API_REQUEST_TAKE IS 
 'Взять заявку
 возвращаем
 0 - не смогли взять
 1 - все хорошо. взяли
 2 - чужая';
 
-COMMENT ON PROCEDURE API_SET_CUSTOMER_SERVICE IS
+COMMENT ON PROCEDURE API_SET_CUSTOMER_SERVICE IS 
 'Включить или выключить абоненту услугу через ЛК
 услуги включения берутся из настроек service_link';
 
-COMMENT ON PROCEDURE API_SET_PREPAY IS
+COMMENT ON PROCEDURE API_SET_PREPAY IS 
 'Добавим обещанный с проверкой суммы и вернем удачно или нет';
 
-COMMENT ON PROCEDURE API_SET_SWITCH_QUEUE IS
+COMMENT ON PROCEDURE API_SET_SWITCH_QUEUE IS 
 'ставим в очередь переключения услуг';
 
-COMMENT ON PROCEDURE APPLIANCE_TO_TABLE IS
+COMMENT ON PROCEDURE APPLIANCE_TO_TABLE IS 
 'перемещаем оборудование в спд/цифру в зависимости от типа';
 
-COMMENT ON PROCEDURE ATTRIBUTES_IUD IS
-'Процедура добавления/редактирования/удаления атрибутов абонента';
-
-COMMENT ON PROCEDURE ATTRIBUTE_CHECK_UNIQ IS
+COMMENT ON PROCEDURE ATTRIBUTE_CHECK_UNIQ IS 
 'проверим на уникальность значение атрибута, если он есть у кого-то вернем его';
 
-COMMENT ON PROCEDURE AUTO_OFF_SERVICE IS
+COMMENT ON PROCEDURE ATTRIBUTES_IUD IS 
+'Процедура добавления/редактирования/удаления атрибутов абонента';
+
+COMMENT ON PROCEDURE AUTO_OFF_SERVICE IS 
 'Авто блокировка услуги';
 
-COMMENT ON PROCEDURE AUTO_ON_SERVICE IS
+COMMENT ON PROCEDURE AUTO_ON_SERVICE IS 
 'Авто разблокировка услуги';
 
-COMMENT ON PROCEDURE BCISSUECH_ID IS
+COMMENT ON PROCEDURE BCISSUECH_ID IS 
 'Добавляет.удаляет каналы с проблемы вещания';
 
-COMMENT ON PROCEDURE BLOCK_CUSTOMER_SERVICE IS
+COMMENT ON PROCEDURE BLOCK_CUSTOMER_SERVICE IS 
 'Проверим баланс абонента и заблоируем услуги если он должник';
 
-COMMENT ON PROCEDURE BONUS_ADD_AFTER_PAYMENT IS
+COMMENT ON PROCEDURE BONUS_ADD_AFTER_PAYMENT IS 
 'Добавить бонус после оплаты суммы';
 
-COMMENT ON PROCEDURE CALCULATE_SRV_TYPE_0 IS
-'Расчт услуг с ежемесячными начислениям пропорционально дням';
-
-COMMENT ON PROCEDURE CALC_DAY_INC_SRV_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_DAY_INC_SRV_CUSTOMER IS 
 'расчет ежедневных начислений, если выключена в день включения - считаем';
 
-COMMENT ON PROCEDURE CALC_DAY_SRV_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_DAY_SRV_CUSTOMER IS 
 'расчет ежедневных начислений';
 
-COMMENT ON PROCEDURE CALC_DAY_TARIF IS
+COMMENT ON PROCEDURE CALC_DAY_TARIF IS 
 'Процедура заполнения таблицы тарифов по дням
 
 P_SERV_ID  - код услуги
 P_MONTH    - месяц';
 
-COMMENT ON PROCEDURE CALC_DISCOUNT IS
+COMMENT ON PROCEDURE CALC_DISCOUNT IS 
 'Расчет скидки за предоплату';
 
-COMMENT ON PROCEDURE CALC_DISCOUNT_AFTER_PAY IS
+COMMENT ON PROCEDURE CALC_DISCOUNT_AFTER_PAY IS 
 'Расчет скидки на платеж';
 
-COMMENT ON PROCEDURE CALC_KOEF_TARIF IS
+COMMENT ON PROCEDURE CALC_KOEF_TARIF IS 
 'Процедура заполнения таблицы тарифа с учетом коэффициента абонента по дням';
 
-COMMENT ON PROCEDURE CALC_MONTH_DAY_SRV_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_MONTH_DAY_SRV_CUSTOMER IS 
 'начисления раз в месяц пропорционально дням';
 
-COMMENT ON PROCEDURE CALC_MONTH_FIX_SRV_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_MONTH_FIX_SRV_CUSTOMER IS 
 'если подключен хоть день, то снимаем полную абонплату';
 
-COMMENT ON PROCEDURE CALC_MONTH_SRV_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_MONTH_SRV_CUSTOMER IS 
 'начисления за полный/0 месяц';
 
-COMMENT ON PROCEDURE CALC_PERS_TARIF IS
+COMMENT ON PROCEDURE CALC_PERS_TARIF IS 
 'Процедура заполнения таблицы персонального тарифа абонента по дням';
 
-COMMENT ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_SINGLE_SRV_CUSTOMER IS 
 '    P_CUSTOMER_ID type of UID,
     P_MONTH       D_DATE,
     FEE_ROUND     D_INTEGER,
     P_DAILY       D_INTEGER = 0,
     BEFORE_DATE   D_DATE = null';
 
-COMMENT ON PROCEDURE CALC_SURCHARGE_CUSTOMER IS
+COMMENT ON PROCEDURE CALC_SURCHARGE_CUSTOMER IS 
 'Расчет услуг по алгоритму тариф за месяц.
 Абонент платит фиксированную сумму, вне зависимости от услуг периодических и разовых';
 
-COMMENT ON PROCEDURE CANCEL_CONTRACT IS
-'Процедура разрыва договора с абонентом';
+COMMENT ON PROCEDURE CALCULATE_SRV_TYPE_0 IS 
+'Расчт услуг с ежемесячными начислениям пропорционально дням';
 
-COMMENT ON PROCEDURE CANCEL_LAST_SUBSCRIBE_ACTION IS
-'Отмена последнего действия над подключеной услугой';
-
-COMMENT ON PROCEDURE CAN_USER_VIEW_ADDRESS IS
+COMMENT ON PROCEDURE CAN_USER_VIEW_ADDRESS IS 
 'Проверка, видит ли пользователь адрес согласно принадлежнасти к участку';
 
-COMMENT ON PROCEDURE CARDS_PREPAY_ACTIVATE IS
+COMMENT ON PROCEDURE CANCEL_CONTRACT IS 
+'Процедура разрыва договора с абонентом';
+
+COMMENT ON PROCEDURE CANCEL_LAST_SUBSCRIBE_ACTION IS 
+'Отмена последнего действия над подключеной услугой';
+
+COMMENT ON PROCEDURE CARDS_PREPAY_ACTIVATE IS 
 'Активация карты оплаты';
 
-COMMENT ON PROCEDURE CARDS_PREPAY_GENERATE IS
+COMMENT ON PROCEDURE CARDS_PREPAY_GENERATE IS 
 'Генерация карт оплат';
 
-COMMENT ON PROCEDURE CHANGE_AUTOBLOCK_OFF IS
+COMMENT ON PROCEDURE CHANGE_AUTOBLOCK_OFF IS 
 'Замена услуги автоблокировка на другую услугу отключения';
 
-COMMENT ON PROCEDURE CHANGE_CH_TO_CH IS
+COMMENT ON PROCEDURE CHANGE_CH_TO_CH IS 
 'Замена параметров одного канала на другой в указанных сетях';
 
-COMMENT ON PROCEDURE CHANGE_OFF_TO_AUTOBLOCK IS
+COMMENT ON PROCEDURE CHANGE_OFF_TO_AUTOBLOCK IS 
 'Замена услуги отключения на автоблокировку';
 
-COMMENT ON PROCEDURE CHANGE_TO_NEGATIVE IS
+COMMENT ON PROCEDURE CHANGE_TO_NEGATIVE IS 
 'Выполняем когда у абонента баланс отрицательный и он больше долга визуализации';
 
-COMMENT ON PROCEDURE CHANGE_TO_POSITIVE IS
+COMMENT ON PROCEDURE CHANGE_TO_POSITIVE IS 
 'Выполняем когда у абонента сменился баланс на положительный';
 
-COMMENT ON PROCEDURE CHANNELS_DEL IS
+COMMENT ON PROCEDURE CHANNELS_DEL IS 
 'Процедура удаления каналов. Не удаляет если канал где-то задйствован';
 
-COMMENT ON PROCEDURE CHANNELS_FOR_ALL_CUSTOMER IS
+COMMENT ON PROCEDURE CHANNELS_FOR_ALL_CUSTOMER IS 
 'Выборка всех каналов всех декодеров на определенную дату';
 
-COMMENT ON PROCEDURE CHECKCONTRACT IS
-'Проверка на наличие договра в системе.
-если есть то возвращает - 0, нет - 1';
-
-COMMENT ON PROCEDURE CHECK_FOR_UNBLOCK IS
+COMMENT ON PROCEDURE CHECK_FOR_UNBLOCK IS 
 'Разблокировка автомтически заблокированных услуг
 Проверим услуги абонента и если есть что включать включим';
 
-COMMENT ON PROCEDURE CHECK_IN_BLOCK IS
+COMMENT ON PROCEDURE CHECK_IN_BLOCK IS 
 'Прверяем. была ли услуга у абонента в блокировке на дату';
 
-COMMENT ON PROCEDURE CHECK_IN_OFF IS
+COMMENT ON PROCEDURE CHECK_IN_OFF IS 
 'Проверим. услуга отключена на дату? (не в блокировке, а отключена)';
 
-COMMENT ON PROCEDURE CHECK_SRV_ACTIVE IS
+COMMENT ON PROCEDURE CHECK_SRV_ACTIVE IS 
 'Процедура проверки активна ли услуга у абонента на дату.
 если услуга не указана смотрим любую услугу';
 
-COMMENT ON PROCEDURE CLOSE_DAY_PROC IS
+COMMENT ON PROCEDURE CHECKCONTRACT IS 
+'Проверка на наличие договра в системе.
+если есть то возвращает - 0, нет - 1';
+
+COMMENT ON PROCEDURE CLOSE_DAY_PROC IS 
 'Процедура закрытия дня';
 
-COMMENT ON PROCEDURE CLOSE_MATERIAL_DOC IS
+COMMENT ON PROCEDURE CLOSE_MATERIAL_DOC IS 
 'Процедура закрытия документа движения.';
 
-COMMENT ON PROCEDURE CLOSE_MONTH_PROC IS
+COMMENT ON PROCEDURE CLOSE_MONTH_PROC IS 
 'Процедура расчета платы абонентов за месяц
 с учетом предоплаты / постплаты ....
 
 P_MONTH    - месяц расчета';
 
-COMMENT ON PROCEDURE CLOSE_PERIOD_PROC IS
+COMMENT ON PROCEDURE CLOSE_PERIOD_PROC IS 
 'Процедура расчета определенного периода
 
 P_START_MONTH  - с первого числа месяца
 P_END_MONTH    - по месяц (включительно)';
 
-COMMENT ON PROCEDURE CURRENCY_TO_STR IS
-'перевод чисел в строку, т.е. 100 - сто';
+COMMENT ON PROCEDURE CURRENCY_TO_STR IS 
+'устарело, будет удалено используйте Number_To_String_R';
 
-COMMENT ON PROCEDURE CUSTOMERS_SERVICES_STATE IS
-'Обновление статуса для всех абонентов';
-
-COMMENT ON PROCEDURE CUSTOMER_BALANCE IS
+COMMENT ON PROCEDURE CUSTOMER_BALANCE IS 
 'Процедура выборки полного баланса абонента';
 
-COMMENT ON PROCEDURE CUSTOMER_BALANCE_DAILY IS
+COMMENT ON PROCEDURE CUSTOMER_BALANCE_DAILY IS 
 'Процедура выборки полного баланса абонента c ежедневной детализацией';
 
-COMMENT ON PROCEDURE CUSTOMER_CONTACTS_IU IS
+COMMENT ON PROCEDURE CUSTOMER_CONTACTS_IU IS 
 'Добавление или обновление контактов абонента';
 
-COMMENT ON PROCEDURE CUSTOMER_SERVICES_STATE IS
+COMMENT ON PROCEDURE CUSTOMER_SERVICES_STATE IS 
 'Обновление поля статус абонента';
 
-COMMENT ON PROCEDURE DAY_TARIF_FOR_SRV IS
+COMMENT ON PROCEDURE CUSTOMERS_SERVICES_STATE IS 
+'Обновление статуса для всех абонентов';
+
+COMMENT ON PROCEDURE DAY_TARIF_FOR_SRV IS 
 'Процедура заполнения таблицы тарифов по дням
 
 P_SERV_ID  - код услуги
 P_MONTH    - месяц';
 
-COMMENT ON PROCEDURE DECL_OF_NUM IS
+COMMENT ON PROCEDURE DECL_OF_NUM IS 
 'Склонение размерности единиц измерения при числительных';
 
-COMMENT ON PROCEDURE DELETE_CUSTOMER IS
+COMMENT ON PROCEDURE DELETE_CUSTOMER IS 
 'Удаление пользователя';
 
-COMMENT ON PROCEDURE DELETE_CUSTOMER_DECODER IS
+COMMENT ON PROCEDURE DELETE_CUSTOMER_DECODER IS 
 'Процедура удаления декодера у абонента и установка статуса декодеру';
 
-COMMENT ON PROCEDURE DELETE_NODE IS
+COMMENT ON PROCEDURE DELETE_NODE IS 
 'Удаление узла';
 
-COMMENT ON PROCEDURE DISCOUNT_IU IS
+COMMENT ON PROCEDURE DISCOUNT_IU IS 
 'Процедура добавления скидки.';
 
-COMMENT ON PROCEDURE DUBLICATE_REQUEST IS
+COMMENT ON PROCEDURE DUBLICATE_REQUEST IS 
 'Дубликат заявки для пользователя';
 
-COMMENT ON PROCEDURE EPG_ADD IS
+COMMENT ON PROCEDURE EPG_ADD IS 
 'Добавление программы передач, с автоматической корректеровкой расписания';
 
-COMMENT ON PROCEDURE EPG_ADD_BY_SC IS
+COMMENT ON PROCEDURE EPG_ADD_BY_SC IS 
 'Добавим EPG по ID источника и коду канала из источника. так как одному коду может соответствовать несколько каналов';
 
-COMMENT ON PROCEDURE EXPLODE IS
+COMMENT ON PROCEDURE EXPLODE IS 
 'Аналог функции EXPLODE PHP (разбивает строку 1,2,3 на записи три записи 1 2 3)';
 
-COMMENT ON PROCEDURE EXPLODE_NO_EMPTY IS
+COMMENT ON PROCEDURE EXPLODE_NO_EMPTY IS 
 'Аналог функции EXPLODE PHP но не возвращает пустые строки';
 
-COMMENT ON PROCEDURE EXTRACT_ALL_DIGITS IS
+COMMENT ON PROCEDURE EXTRACT_ALL_DIGITS IS 
 'устарело, используйте ONLY_DIGITS(A_VALUE)
 Удаляет все кроме чисел в строке';
 
-COMMENT ON PROCEDURE EXTRACT_NUMBER IS
+COMMENT ON PROCEDURE EXTRACT_NUMBER IS 
 'Извлекает из строки цифры до первого не цифрового символа.
 например 17/2 - 17';
 
-COMMENT ON PROCEDURE FIND_FREE_LINKED_PORT IS
+COMMENT ON PROCEDURE FIND_FREE_LINKED_PORT IS 
 'Находим свободные порты оборудования с линией связи для абонента';
 
-COMMENT ON PROCEDURE FIND_IP_INFO IS
+COMMENT ON PROCEDURE FIND_IP_INFO IS 
 'Ищет информацию по IP адресу.';
 
-COMMENT ON PROCEDURE FIX_PORT_CONNECT IS
+COMMENT ON PROCEDURE FIX_PORT_CONNECT IS 
 'исправляем иноформацию порта по подключению к абоненту/устройству';
 
-COMMENT ON PROCEDURE FORMAT_DATE IS
-'Вывод даты согласно формату:
+COMMENT ON PROCEDURE FORMAT_DATE IS 
+'Устарело, будет удалено используйте Date_Format';
+
+COMMENT ON PROCEDURE FORMAT_MAC IS 
+'Устарело, будет удалено используйте Mac_Format';
+
+COMMENT ON PROCEDURE FREELANEQUIPMENT IS 
+'очистить сетевые настройки абонента при откллючении';
+
+COMMENT ON PROCEDURE FULL_RECALC_CUSTOMER IS 
+'Процедура полного пересчета абонента
+P_CUSTOMER - ID абонента
+P_FROM_DATE с какой даты
+или
+P_DEPTH - глубина расчета, на сколько лет назад. если null то полный пересчет';
+
+COMMENT ON PROCEDURE GEN_PASSWORD IS 
+'Генератор паролей.';
+
+COMMENT ON PROCEDURE GET_ACTIVE_DAYS IS 
+'Получить количество активных дней абонента за период
+либо для услуги, либо для типа услуг';
+
+COMMENT ON PROCEDURE GET_ALL_REPORTS IS 
+'Выборка всех отчетов пользователя для построения меню';
+
+COMMENT ON PROCEDURE GET_CONNECTED_DAYS IS 
+'Выдает количество подключенных дней абонента к услуге';
+
+COMMENT ON PROCEDURE GET_CUSTOMER_CHANNELS IS 
+'Выборка всех каналов абонента на определенную дату';
+
+COMMENT ON PROCEDURE GET_CUSTOMER_CURRENT_SRV IS 
+'Возвращает текущие услуги абонента (которые активны или в автоблокировке)';
+
+COMMENT ON PROCEDURE GET_DAYS_TOTAL IS 
+'Получить количество дней когда абонент был подключен и с какой даты
+и количество активных дней (дней без отключения)';
+
+COMMENT ON PROCEDURE GET_DEBT_START_DATE IS 
+'Считаем с какого числа пошла задолженность у абонента';
+
+COMMENT ON PROCEDURE GET_DEBT_START_DATE_CID IS 
+'Считаем с какого числа пошла задолженность у абонента';
+
+COMMENT ON PROCEDURE GET_DISTANCE IS 
+'Позволяет вычислить расстояние в метрах между двумя геоточками WGS84';
+
+COMMENT ON PROCEDURE GET_DOC_UNIT_INCOME IS 
+'Поиск документа прихода для серийника';
+
+COMMENT ON PROCEDURE GET_EPG IS 
+'Выборка EPG ult описание включает все поля';
+
+COMMENT ON PROCEDURE GET_EPG_APART IS 
+'Выборка EPG раздельно по всем полям';
+
+COMMENT ON PROCEDURE GET_ER_PAY_STATISTIC IS 
+'Вывод статистики по получателям оплаты электроэнергии';
+
+COMMENT ON PROCEDURE GET_ER_STATISTIC IS 
+'Вывод статистики по получателям оплаты электроэнергии';
+
+COMMENT ON PROCEDURE GET_FREE_INET_IP IS 
+'Выдает первый свободный IP для определенного тарифного плана';
+
+COMMENT ON PROCEDURE GET_FREE_INET_IP_CUSTOMER IS 
+'Выборка всех IP адресов для услуг абонента';
+
+COMMENT ON PROCEDURE GET_FREE_IP IS 
+'Выдает свободный IP. если задана маска ищем по ней, если не нашли. берем первый адрес по маске';
+
+COMMENT ON PROCEDURE GET_FREE_VLAN_IP IS 
+'Выдает первый свободный IP для определенной подсети';
+
+COMMENT ON PROCEDURE GET_FULLNAME_ALLREPORTS IS 
+'Выдает полное имя отчета включая все категории';
+
+COMMENT ON PROCEDURE GET_FULLNAME_REPORT IS 
+'Выдает полное имя отчета включая все категории';
+
+COMMENT ON PROCEDURE GET_JSON_ARRAY_ROWS IS 
+'извлечение строк массива из простого json
+пример:
+[{"i":11,"q":1},{"i":22,"q":2},{"i":33,"q":3}]
+строки:
+{"i":11,"q":1}
+{"i":22,"q":2}
+{"i":33,"q":3}';
+
+COMMENT ON PROCEDURE GET_LAYOUT_BY_ID IS 
+'Вывод компановки по ИД узла или типа';
+
+COMMENT ON PROCEDURE GET_MAT_FOR_NODE IS 
+'список оборудования/материалов для узла соглсно компановки, если она есть';
+
+COMMENT ON PROCEDURE GET_MAT_FOR_REQUEST IS 
+'Вывод всех доступных материалов с количесвом потраченным на заявку';
+
+COMMENT ON PROCEDURE GET_MAT_GIVE_OUT IS 
+'Материалы для заявки с учетом уже выданных';
+
+COMMENT ON PROCEDURE GET_MAT_TAKE_IN IS 
+'Материалы для возврата с заявки с учетом уже выданных';
+
+COMMENT ON PROCEDURE GET_MAX_INET_IP IS 
+'Выдает max свободный IP для определенного тарифного плана';
+
+COMMENT ON PROCEDURE GET_MODULES_FOR_MENU IS 
+'Выборка всех модулей пользователя для построения меню';
+
+COMMENT ON PROCEDURE GET_NODE_FLAT_LVL IS 
+'Вывод списка квартир узла по уровням
+уровни: 1 - подключен к узлу, 2 - к дочернему узлу, 3 дочернему дочернего узла...';
+
+COMMENT ON PROCEDURE GET_NODE_LAYOUT IS 
+'Получаем компановку узла или типа узла';
+
+COMMENT ON PROCEDURE GET_NODE_LAYOUT_FACT IS 
+'Выдает компановку и фактически установленные материалы';
+
+COMMENT ON PROCEDURE GET_NODE_LAYOUT_FACT_DETAIL IS 
+'Выдает компановку и фактически установленные материалы в разреже каждого матеріала';
+
+COMMENT ON PROCEDURE GET_PAY_DOC IS 
+'Возвращает ид платежного документа. если документа нет на эту дату, то создает его.';
+
+COMMENT ON PROCEDURE GET_RECOMMENDED_PREPAY IS 
+'Процедура выдает сумму рекомендованой оплаты на месяц, с учетом баланса. целое чесло, без копеек';
+
+COMMENT ON PROCEDURE GET_REPORT_ID IS 
+'Получить ID_REPORT по полному имени отчета (обратная GET_FULLNAME_REPORT)';
+
+COMMENT ON PROCEDURE GET_REQUEST_BUSY_DAYS IS 
+'Возвращает занятые дни для принятия заявок по адресу';
+
+COMMENT ON PROCEDURE GET_REQUEST_FREEDAY IS 
+'Возвращает первый свободные день для заявки';
+
+COMMENT ON PROCEDURE GET_SERVICES_FOR_IP IS 
+'Возвращает услуги абонента по его IP';
+
+COMMENT ON PROCEDURE GET_SERVICES_TO_SWITCH IS 
+'Получить список услуг на которые можно переключить услугу у абонента';
+
+COMMENT ON PROCEDURE GET_STATISTICS IS 
+'Статистика по всем услугам за период';
+
+COMMENT ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV IS 
+'Получим тариф абонента на все услуги или выбранную в определенный день';
+
+COMMENT ON PROCEDURE GET_WIRE_INFO IS 
+'Информация по линии связи';
+
+COMMENT ON PROCEDURE GETEPCOUNTERS IS 
+'Получить показание точек на определенный месяц';
+
+COMMENT ON PROCEDURE GETSERVICES IS 
+'Процедура выборки доступных абоненту услуг
+
+P_CUSTOMER_ID - код абонента
+P_TYPE        - код услуг (абонентской -0 / разовой - 1)';
+
+COMMENT ON PROCEDURE GETSERVICESTOSWITCH IS 
+'Устарела. будет удалена';
+
+COMMENT ON PROCEDURE INT2IP IS 
+'переводит двоичное представление IP в строковое';
+
+COMMENT ON PROCEDURE IP2INT IS 
+'переводит строковое представление IP  в двоичное';
+
+COMMENT ON PROCEDURE MAT_MOVE_DETAILS IS 
+'Процедура вывода детального лога перемещения материала';
+
+COMMENT ON PROCEDURE MATERIAL_CHANGE_SN IS 
+'Процедура замены ошибочного с/н на новый';
+
+COMMENT ON PROCEDURE MATERIAL_DOCS_DELETE IS 
+'Процедура удаления документа материалов';
+
+COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC IS 
+'Процедура пересчета остатков материала на складах
+если REC_M_ID null то пересчітываем все материалы';
+
+COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC_TEST IS 
+'Процедура пересчета остатков материала на складах
+если REC_M_ID null то пересчітываем все материалы';
+
+COMMENT ON PROCEDURE MATERIAL_UNIT_MOVE IS 
+'перенос материала абоненту или узлу при добавлении в заявку';
+
+COMMENT ON PROCEDURE MATERIALS_SUMMARY IS 
+'процедура вывода сводных данных по перемещению';
+
+COMMENT ON PROCEDURE MESSAGE_FOR_CUSTOMER IS 
+'Отправка сообщений абоненту';
+
+COMMENT ON PROCEDURE MIGRATE_SERVICE_BY_ACCOUNT IS 
+'Добавление услуги, если услуга уже есть, то ее обновляет';
+
+COMMENT ON PROCEDURE MIGRATE_SERVICE_BY_BILL_ACCOUNT IS 
+'Добавление услуги, если услуга уже есть, то ее обновляет
+ищем абонента по аккаунту билинга';
+
+COMMENT ON PROCEDURE MIGRATE_SERVICE_BY_CUSTOMER_ID IS 
+'Добавление услуги, если услуга уже есть, то ее обновляет';
+
+COMMENT ON PROCEDURE NODE_CHECK_LAYOUT IS 
+'Проверяет материалы с компановкой. если нет расхождений, то пустой ответ. иначее покажем сообщение';
+
+COMMENT ON PROCEDURE OBJECTS_IUD IS 
+'Процедура работы с таблицей OBJECTS';
+
+COMMENT ON PROCEDURE ONOFF_SERVICE IS 
+'Процедура подключения, отключения услуги';
+
+COMMENT ON PROCEDURE ONOFF_SERVICE_BY_ID IS 
+'включение/отключение абоненту услуги по ее ID';
+
+COMMENT ON PROCEDURE ONOFF_SERVICE_FOR_GROUP IS 
+'Процедура включения/отключения услуг. создана специально для групповых операций';
+
+COMMENT ON PROCEDURE OPEN_MATERIAL_DOC IS 
+'Процедура отмены закрытия документа движения материалов.';
+
+COMMENT ON PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS IS 
+'Добавить платеж из внешних источников с проверкой на существование этого номера';
+
+COMMENT ON PROCEDURE PAYMENT_DEL_FROM_EXT_SYSTEMS IS 
+'Удаление платежей из внешних систем';
+
+COMMENT ON PROCEDURE PAYMENT_EXT_STATE IS 
+'Возвращает статус платежа из внешних систем';
+
+COMMENT ON PROCEDURE PAYMENT_SPLIT_INSERT IS 
+'разобьем платеж относительно  начислений
+сначала вся оплата на
+потом пропорционально между';
+
+COMMENT ON PROCEDURE PREPAY_EXPIRE IS 
+'Удаление просроченных обещанных платежей';
+
+COMMENT ON PROCEDURE PREPAYEXPIRE IS 
+'Устарело. будет удалено.';
+
+COMMENT ON PROCEDURE PROMO_ADD IS 
+'Добавление акции абоненту на услугу
+0 - удачно
+-1 - не нашли акцию
+-2 - уже есть коэффициент';
+
+COMMENT ON PROCEDURE PROMO_CHECK IS 
+'Проверка акций на услугу на дату.
+возвращает количество акций и ее ид, если она одна';
+
+COMMENT ON PROCEDURE QUEUE_SWITCH IS 
+'Занесем информацию о смене тарифа в таблицу очереди';
+
+COMMENT ON PROCEDURE QUEUE_SWITCH_CANCEL IS 
+'удаление из очереди смены тарифа';
+
+COMMENT ON PROCEDURE QUEUE_SWITCH_HANDLE IS 
+'обработка очереди переключения услуг';
+
+COMMENT ON PROCEDURE RECALCCUSTOMERDEBT IS 
+'обновление баланса. берем все начисления и вычитаем платежи и бонусы';
+
+COMMENT ON PROCEDURE REQUEST_ADD IS 
+'Процедура добавления заявки';
+
+COMMENT ON PROCEDURE REQUEST_CLOSE_AS IS 
+'Закрыть заявку аналогично закрытой заявке';
+
+COMMENT ON PROCEDURE REQUEST_CLOSE_MATERIALS IS 
+'Удалить
+Процедура переноса сн оборудование абоненту и узлам, а также подменить одно оборудование на другое';
+
+COMMENT ON PROCEDURE REQUEST_CLOSE_PROCESS IS 
+'Добавление/удаление работ из заявки абоненту';
+
+COMMENT ON PROCEDURE REQUEST_CLOSE_ROLLBACK IS 
+'Удалим начисления за заявку';
+
+COMMENT ON PROCEDURE REQUEST_MATERIAL_BAYBACK IS 
+'Выкуп материала абонентом через заявку';
+
+COMMENT ON PROCEDURE REQUEST_MATERIALS_IUD IS 
+'добавление.изменение.удаление материалов в заявке';
+
+COMMENT ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD IS 
+'добавление.изменение.удаление материалов в заявке';
+
+COMMENT ON PROCEDURE REQUEST_RECREATE IS 
+'Пересоздать новую заявку черезХ дней согласно настроек типа заявки';
+
+COMMENT ON PROCEDURE REQUEST_SEND_SMS IS 
+'Выслать sms исполнителям заявок';
+
+COMMENT ON PROCEDURE REQUESTGIVE IS 
+'Выдать  заявку звену';
+
+COMMENT ON PROCEDURE REQUESTMOVE IS 
+'Перенести заявку на другой день';
+
+COMMENT ON PROCEDURE SAVEPCEFOREMP IS 
+'Сохраним мощность ТУЕ и узлов на определеннфй месяц (месяц это всегда первое число месяца)';
+
+COMMENT ON PROCEDURE SELECTONOFFSERVICE IS 
+'Процедура выборки разовых услуг включения / выключения
+для абонентской услуги абонента
+
+ACUSTOMER_ID - код абонента
+ASERVICE_ID  - код услуги
+AOFF         - включение (0) / выключение (1)';
+
+COMMENT ON PROCEDURE SELECTSWITCHSERVICE IS 
+'Процедура выбора какой услугой переключить услугу на услугу';
+
+COMMENT ON PROCEDURE SET_DISTRIB_REPORT IS 
+'Установка значений отчетов дистрибьютора за период';
+
+COMMENT ON PROCEDURE SET_DISTRIB_REPORT_AS_PERIOD IS 
+'Установка значений отчетов дистрибьютора';
+
+COMMENT ON PROCEDURE SET_FLAT_PF IS 
+'Установить подъезд / этаж для квартиры дома';
+
+COMMENT ON PROCEDURE SET_PREPAY IS 
+'Внести обещанный платеж
+если платеж <= 0, то анулируем платеж';
+
+COMMENT ON PROCEDURE SET_SETTINGS IS 
+'Установка параметров системы, таблица SETTINGS';
+
+COMMENT ON PROCEDURE SPLIT_STR_TO_ROWS IS 
+'Процедура которая разбивает строку на числа';
+
+COMMENT ON PROCEDURE SWITCH_CANCEL IS 
+'Процедура отмены переключиния услуг';
+
+COMMENT ON PROCEDURE SWITCH_SERVICE IS 
+'Процедура переключиния услуги на услугу. Не переключает если стоит автоблокировка и не хватает денег до смены';
+
+COMMENT ON PROCEDURE UPDATE_SERVICES_TREE IS 
+'Процедура обновляет дату последних изменений у зависящих от услуги сервисах';
+
+COMMENT ON PROCEDURE UPDATECUSTOMERDEBT4PAY IS 
+'Обновим баланс абонента';
+
+COMMENT ON PROCEDURE YEARWEEK IS 
+'Процедура вычисления номера недели года';
+
+COMMENT ON FUNCTION ATTRIBUTES_LINE IS 
+'Вывод всех атрибутов в строку';
+
+COMMENT ON FUNCTION CHECK_CUSTOMER_SERVICE IS 
+'Функция проверки была ли услуга подключена абоненту';
+
+COMMENT ON FUNCTION CURRENCY_FORMAT IS 
+'Форматирование числа с разделителями тысяч и дробиной части
+TS ThousandSeparator;
+DS DecimalSeparator;';
+
+COMMENT ON FUNCTION DATE_FORMAT IS 
+'Форматирование даты по шаблону
+Вывод даты согласно формату:
 D — день без лидирующего пробела
 DD — день с лидирующим пробелом
 DDD — день недели, краткое название
@@ -33236,416 +33614,61 @@ MMMM — месяц, полное название
 YY — год, 2 последние цифры
 YYYY — год, 4 цифры.';
 
-COMMENT ON PROCEDURE FORMAT_MAC IS
-'приводим mac адрес к виду XX:XX:XX:XX:XX:XX';
-
-COMMENT ON PROCEDURE FREELANEQUIPMENT IS
-'очистить сетевые настройки абонента при откллючении';
-
-COMMENT ON PROCEDURE FULL_RECALC_CUSTOMER IS
-'Процедура полного пересчета абонента
-P_CUSTOMER - ID абонента
-P_FROM_DATE с какой даты
-или
-P_DEPTH - глубина расчета, на сколько лет назад. если null то полный пересчет';
-
-COMMENT ON PROCEDURE GEN_PASSWORD IS
-'Генератор паролей.';
-
-COMMENT ON PROCEDURE GETSERVICES IS
-'Процедура выборки доступных абоненту услуг
-
-P_CUSTOMER_ID - код абонента
-P_TYPE        - код услуг (абонентской -0 / разовой - 1)';
-
-COMMENT ON PROCEDURE GETSERVICESTOSWITCH IS
-'Устарела. будет удалена';
-
-COMMENT ON PROCEDURE GET_ACTIVE_DAYS IS
-'Получить количество активных дней абонента за период
-либо для услуги, либо для типа услуг';
-
-COMMENT ON PROCEDURE GET_ALL_REPORTS IS
-'Выборка всех отчетов пользователя для построения меню';
-
-COMMENT ON PROCEDURE GET_CONNECTED_DAYS IS
-'Выдает количество подключенных дней абонента к услуге';
-
-COMMENT ON PROCEDURE GET_CUSTOMER_CHANNELS IS
-'Выборка всех каналов абонента на определенную дату';
-
-COMMENT ON PROCEDURE GET_CUSTOMER_CURRENT_SRV IS
-'Возвращает текущие услуги абонента (которые активны или в автоблокировке)';
-
-COMMENT ON PROCEDURE GET_DAYS_TOTAL IS
-'Получить количество дней когда абонент был подключен и с какой даты
-и количество активных дней (дней без отключения)';
-
-COMMENT ON PROCEDURE GET_DEBT_START_DATE IS
-'Считаем с какого числа пошла задолженность у абонента';
-
-COMMENT ON PROCEDURE GET_DEBT_START_DATE_CID IS
-'Считаем с какого числа пошла задолженность у абонента';
-
-COMMENT ON PROCEDURE GET_DISTANCE IS
-'Позволяет вычислить расстояние в метрах между двумя геоточками WGS84';
-
-COMMENT ON PROCEDURE GET_DOC_UNIT_INCOME IS
-'Поиск документа прихода для серийника';
-
-COMMENT ON PROCEDURE GET_EPG IS
-'Выборка EPG ult описание включает все поля';
-
-COMMENT ON PROCEDURE GET_EPG_APART IS
-'Выборка EPG раздельно по всем полям';
-
-COMMENT ON PROCEDURE GET_ER_PAY_STATISTIC IS
-'Вывод статистики по получателям оплаты электроэнергии';
-
-COMMENT ON PROCEDURE GET_ER_STATISTIC IS
-'Вывод статистики по получателям оплаты электроэнергии';
-
-COMMENT ON PROCEDURE GET_FREE_INET_IP IS
-'Выдает первый свободный IP для определенного тарифного плана';
-
-COMMENT ON PROCEDURE GET_FREE_INET_IP_CUSTOMER IS
-'Выборка всех IP адресов для услуг абонента';
-
-COMMENT ON PROCEDURE GET_FREE_IP IS
-'Выдает свободный IP. если задана маска ищем по ней, если не нашли. берем первый адрес по маске';
-
-COMMENT ON PROCEDURE GET_FREE_VLAN_IP IS
-'Выдает первый свободный IP для определенной подсети';
-
-COMMENT ON PROCEDURE GET_FULLNAME_ALLREPORTS IS
-'Выдает полное имя отчета включая все категории';
-
-COMMENT ON PROCEDURE GET_FULLNAME_REPORT IS
-'Выдает полное имя отчета включая все категории';
-
-COMMENT ON PROCEDURE GET_JSON_ARRAY_ROWS IS
-'извлечение строк массива из простого json
-пример:
-[{"i":11,"q":1},{"i":22,"q":2},{"i":33,"q":3}]
-строки:
-{"i":11,"q":1}
-{"i":22,"q":2}
-{"i":33,"q":3}';
-
-COMMENT ON PROCEDURE GET_LAYOUT_BY_ID IS
-'Вывод компановки по ИД узла или типа';
-
-COMMENT ON PROCEDURE GET_MAT_FOR_NODE IS
-'список оборудования/материалов для узла соглсно компановки, если она есть';
-
-COMMENT ON PROCEDURE GET_MAT_FOR_REQUEST IS
-'Вывод всех доступных материалов с количесвом потраченным на заявку';
-
-COMMENT ON PROCEDURE GET_MAT_GIVE_OUT IS
-'Материалы для заявки с учетом уже выданных';
-
-COMMENT ON PROCEDURE GET_MAT_TAKE_IN IS
-'Материалы для возврата с заявки с учетом уже выданных';
-
-COMMENT ON PROCEDURE GET_MAX_INET_IP IS
-'Выдает max свободный IP для определенного тарифного плана';
-
-COMMENT ON PROCEDURE GET_MODULES_FOR_MENU IS
-'Выборка всех модулей пользователя для построения меню';
-
-COMMENT ON PROCEDURE GET_NODE_FLAT_LVL IS
-'Вывод списка квартир узла по уровням
-уровни: 1 - подключен к узлу, 2 - к дочернему узлу, 3 дочернему дочернего узла...';
-
-COMMENT ON PROCEDURE GET_NODE_LAYOUT IS
-'Получаем компановку узла или типа узла';
-
-COMMENT ON PROCEDURE GET_NODE_LAYOUT_FACT IS
-'Выдает компановку и фактически установленные материалы';
-
-COMMENT ON PROCEDURE GET_NODE_LAYOUT_FACT_DETAIL IS
-'Выдает компановку и фактически установленные материалы в разреже каждого матеріала';
-
-COMMENT ON PROCEDURE GET_PAY_DOC IS
-'Возвращает ид платежного документа. если документа нет на эту дату, то создает его.';
-
-COMMENT ON PROCEDURE GET_RECOMMENDED_PREPAY IS
-'Процедура выдает сумму рекомендованой оплаты на месяц, с учетом баланса. целое чесло, без копеек';
-
-COMMENT ON PROCEDURE GET_REPORT_ID IS
-'Получить ID_REPORT по полному имени отчета (обратная GET_FULLNAME_REPORT)';
-
-COMMENT ON PROCEDURE GET_REQUEST_BUSY_DAYS IS
-'Возвращает занятые дни для принятия заявок по адресу';
-
-COMMENT ON PROCEDURE GET_REQUEST_FREEDAY IS
-'Возвращает первый свободные день для заявки';
-
-COMMENT ON PROCEDURE GET_SERVICES_FOR_IP IS
-'Возвращает услуги абонента по его IP';
-
-COMMENT ON PROCEDURE GET_SERVICES_TO_SWITCH IS
-'Получить список услуг на которые можно переключить услугу у абонента';
-
-COMMENT ON PROCEDURE GET_STATISTICS IS
-'Статистика по всем услугам за период';
-
-COMMENT ON PROCEDURE GET_TARIF_SUM_CUSTOMER_SRV IS
-'Получим тариф абонента на все услуги или выбранную в определенный день';
-
-COMMENT ON PROCEDURE GET_WIRE_INFO IS
-'Информация по линии связи';
-
-COMMENT ON PROCEDURE INT2IP IS
-'переводит двоичное представление IP в строковое';
-
-COMMENT ON PROCEDURE IP2INT IS
-'переводит строковое представление IP  в двоичное';
-
-COMMENT ON PROCEDURE MATERIALS_SUMMARY IS
-'процедура вывода сводных данных по перемещению';
-
-COMMENT ON PROCEDURE MATERIAL_CHANGE_SN IS
-'Процедура замены ошибочного с/н на новый';
-
-COMMENT ON PROCEDURE MATERIAL_DOCS_DELETE IS
-'Процедура удаления документа материалов';
-
-COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC IS
-'Процедура пересчета остатков материала на складах
-если REC_M_ID null то пересчітываем все материалы';
-
-COMMENT ON PROCEDURE MATERIAL_REMAIN_RECALC_TEST IS
-'Процедура пересчета остатков материала на складах
-если REC_M_ID null то пересчітываем все материалы';
-
-COMMENT ON PROCEDURE MATERIAL_UNIT_MOVE IS
-'перенос материала абоненту или узлу при добавлении в заявку';
-
-COMMENT ON PROCEDURE MAT_MOVE_DETAILS IS
-'Процедура вывода детального лога перемещения материала';
-
-COMMENT ON PROCEDURE MESSAGE_FOR_CUSTOMER IS
-'Отправка сообщений абоненту';
-
-COMMENT ON PROCEDURE MIGRATE_SERVICE_BY_ACCOUNT IS
-'Добавление услуги, если услуга уже есть, то ее обновляет';
-
-COMMENT ON PROCEDURE MIGRATE_SERVICE_BY_BILL_ACCOUNT IS
-'Добавление услуги, если услуга уже есть, то ее обновляет
-ищем абонента по аккаунту билинга';
-
-COMMENT ON PROCEDURE MIGRATE_SERVICE_BY_CUSTOMER_ID IS
-'Добавление услуги, если услуга уже есть, то ее обновляет';
-
-COMMENT ON PROCEDURE NODE_CHECK_LAYOUT IS
-'Проверяет материалы с компановкой. если нет расхождений, то пустой ответ. иначее покажем сообщение';
-
-COMMENT ON PROCEDURE OBJECTS_IUD IS
-'Процедура работы с таблицей OBJECTS';
-
-COMMENT ON PROCEDURE ONOFF_SERVICE IS
-'Процедура подключения, отключения услуги';
-
-COMMENT ON PROCEDURE ONOFF_SERVICE_BY_ID IS
-'включение/отключение абоненту услуги по ее ID';
-
-COMMENT ON PROCEDURE ONOFF_SERVICE_FOR_GROUP IS
-'Процедура включения/отключения услуг. создана специально для групповых операций';
-
-COMMENT ON PROCEDURE OPEN_MATERIAL_DOC IS
-'Процедура отмены закрытия документа движения материалов.';
-
-COMMENT ON PROCEDURE PAYMENT_ADD_FROM_EXT_SYSTEMS IS
-'Добавить платеж из внешних источников с проверкой на существование этого номера';
-
-COMMENT ON PROCEDURE PAYMENT_DEL_FROM_EXT_SYSTEMS IS
-'Удаление платежей из внешних систем';
-
-COMMENT ON PROCEDURE PAYMENT_EXT_STATE IS
-'Возвращает статус платежа из внешних систем';
-
-COMMENT ON PROCEDURE PAYMENT_SPLIT_INSERT IS
-'разобьем платеж относительно  начислений
-сначала вся оплата на
-потом пропорционально между';
-
-COMMENT ON PROCEDURE PREPAYEXPIRE IS
-'Устарело. будет удалено.';
-
-COMMENT ON PROCEDURE PREPAY_EXPIRE IS
-'Удаление просроченных обещанных платежей';
-
-COMMENT ON PROCEDURE PROMO_ADD IS
-'Добавление акции абоненту на услугу
-0 - удачно
--1 - не нашли акцию
--2 - уже есть коэффициент';
-
-COMMENT ON PROCEDURE PROMO_CHECK IS
-'Проверка акций на услугу на дату.
-возвращает количество акций и ее ид, если она одна';
-
-COMMENT ON PROCEDURE QUEUE_SWITCH IS
-'Занесем информацию о смене тарифа в таблицу очереди';
-
-COMMENT ON PROCEDURE QUEUE_SWITCH_CANCEL IS
-'удаление из очереди смены тарифа';
-
-COMMENT ON PROCEDURE QUEUE_SWITCH_HANDLE IS
-'обработка очереди переключения услуг';
-
-COMMENT ON PROCEDURE RECALCCUSTOMERDEBT IS
-'обновление баланса. берем все начисления и вычитаем платежи и бонусы';
-
-COMMENT ON PROCEDURE REQUESTGIVE IS
-'Выдать  заявку звену';
-
-COMMENT ON PROCEDURE REQUESTMOVE IS
-'Перенести заявку на другой день';
-
-COMMENT ON PROCEDURE REQUEST_ADD IS
-'Процедура добавления заявки';
-
-COMMENT ON PROCEDURE REQUEST_CLOSE_AS IS
-'Закрыть заявку аналогично закрытой заявке';
-
-COMMENT ON PROCEDURE REQUEST_CLOSE_MATERIALS IS
-'Удалить
-Процедура переноса сн оборудование абоненту и узлам, а также подменить одно оборудование на другое';
-
-COMMENT ON PROCEDURE REQUEST_CLOSE_PROCESS IS
-'Добавление/удаление работ из заявки абоненту';
-
-COMMENT ON PROCEDURE REQUEST_CLOSE_ROLLBACK IS
-'Удалим начисления за заявку';
-
-COMMENT ON PROCEDURE REQUEST_MATERIALS_IUD IS
-'добавление.изменение.удаление материалов в заявке';
-
-COMMENT ON PROCEDURE REQUEST_MATERIALS_RETURN_IUD IS
-'добавление.изменение.удаление материалов в заявке';
-
-COMMENT ON PROCEDURE REQUEST_MATERIAL_BAYBACK IS
-'Выкуп материала абонентом через заявку';
-
-COMMENT ON PROCEDURE REQUEST_RECREATE IS
-'Пересоздать новую заявку черезХ дней согласно настроек типа заявки';
-
-COMMENT ON PROCEDURE REQUEST_SEND_SMS IS
-'Выслать sms исполнителям заявок';
-
-COMMENT ON PROCEDURE SAVEPCEFOREMP IS
-'Сохраним мощность ТУЕ и узлов на определеннфй месяц (месяц это всегда первое число месяца)';
-
-COMMENT ON PROCEDURE SELECTONOFFSERVICE IS
-'Процедура выборки разовых услуг включения / выключения
-для абонентской услуги абонента
-
-ACUSTOMER_ID - код абонента
-ASERVICE_ID  - код услуги
-AOFF         - включение (0) / выключение (1)';
-
-COMMENT ON PROCEDURE SELECTSWITCHSERVICE IS
-'Процедура выбора какой услугой переключить услугу на услугу';
-
-COMMENT ON PROCEDURE SET_DISTRIB_REPORT IS
-'Установка значений отчетов дистрибьютора за период';
-
-COMMENT ON PROCEDURE SET_DISTRIB_REPORT_AS_PERIOD IS
-'Установка значений отчетов дистрибьютора';
-
-COMMENT ON PROCEDURE SET_FLAT_PF IS
-'Установить подъезд / этаж для квартиры дома';
-
-COMMENT ON PROCEDURE SET_PREPAY IS
-'Внести обещанный платеж
-если платеж <= 0, то анулируем платеж';
-
-COMMENT ON PROCEDURE SET_SETTINGS IS
-'Установка параметров системы, таблица SETTINGS';
-
-COMMENT ON PROCEDURE SPLIT_STR_TO_ROWS IS
-'Процедура которая разбивает строку на числа';
-
-COMMENT ON PROCEDURE SWITCH_CANCEL IS
-'Процедура отмены переключиния услуг';
-
-COMMENT ON PROCEDURE SWITCH_SERVICE IS
-'Процедура переключиния услуги на услугу. Не переключает если стоит автоблокировка и не хватает денег до смены';
-
-COMMENT ON PROCEDURE UPDATECUSTOMERDEBT4PAY IS
-'Обновим баланс абонента';
-
-COMMENT ON PROCEDURE UPDATE_SERVICES_TREE IS
-'Процедура обновляет дату последних изменений у зависящих от услуги сервисах';
-
-COMMENT ON PROCEDURE YEARWEEK IS
-'Процедура вычисления номера недели года';
-
-COMMENT ON FUNCTION ATTRIBUTES_LINE IS
-'Вывод всех атрибутов в строку';
-
-COMMENT ON FUNCTION CHECK_CUSTOMER_SERVICE IS
-'Функция проверки была ли услуга подключена абоненту';
-
-COMMENT ON FUNCTION ESCAPE_STRING IS
+COMMENT ON FUNCTION ESCAPE_STRING IS 
 'экранирование строк для json';
 
-COMMENT ON FUNCTION FORMAT_CURRENCY IS
-'Форматирование числа с разделителями тысяч и дробиной части
-TS ThousandSeparator;
-DS DecimalSeparator;';
+COMMENT ON FUNCTION FORMAT_CURRENCY IS 
+'устарела, будет удалено используйте Currency_Format';
 
-COMMENT ON FUNCTION GET_FREE_IP_BY_MASK IS
+COMMENT ON FUNCTION GET_FREE_IP_BY_MASK IS 
 'находит первый свободный IP по маске';
 
-COMMENT ON FUNCTION GET_JSON_VALUE IS
+COMMENT ON FUNCTION GET_JSON_VALUE IS 
 'Извлечь значение парматра из json строки';
 
-COMMENT ON FUNCTION GET_MAT_REMAIN_FOR_DATE IS
+COMMENT ON FUNCTION GET_MAT_REMAIN_FOR_DATE IS 
 'Пересчет отстаков материалов по складу до даты (дата не включается в расчет)';
 
-COMMENT ON FUNCTION GET_NEW_ACCOUNT IS
+COMMENT ON FUNCTION GET_NEW_ACCOUNT IS 
 'Возвращает новый номер лицевого. делаеет 1000 попыток найти свободный номер, если не найдет, то выдает null';
 
-COMMENT ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER IS
+COMMENT ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER IS 
 'Функция выдает сумму рекомендованой оплаты на месяц, с учетом баланса. целое чесло, без копеек';
 
-COMMENT ON FUNCTION GET_REQUEST_MONEY IS
+COMMENT ON FUNCTION GET_REQUEST_MONEY IS 
 'Возврат начислений по заявке';
 
-COMMENT ON FUNCTION GET_SETTING_INT_VALUE IS
+COMMENT ON FUNCTION GET_SETTING_INT_VALUE IS 
 'Возвращает числовой параметр настройки';
 
-COMMENT ON FUNCTION GET_SETTING_VALUE IS
+COMMENT ON FUNCTION GET_SETTING_VALUE IS 
 'Возвращает строковый параметр настройки';
 
-COMMENT ON FUNCTION INET_ATON IS
+COMMENT ON FUNCTION INET_ATON IS 
 'переводит строковое представление IPv4 в двоичное';
 
-COMMENT ON FUNCTION INET_NTOA IS
+COMMENT ON FUNCTION INET_NTOA IS 
 'переводит двоичное представление IPv4 в строковое';
 
-COMMENT ON FUNCTION MAC_FORMAT IS
+COMMENT ON FUNCTION MAC_FORMAT IS 
 'Форматирование MAC разделитель :';
 
-COMMENT ON FUNCTION MONTH_FIRST_DAY IS
+COMMENT ON FUNCTION MONTH_FIRST_DAY IS 
 'первое число месяца';
 
-COMMENT ON FUNCTION MONTH_LAST_DAY IS
+COMMENT ON FUNCTION MONTH_LAST_DAY IS 
 'Последнее число месяц';
 
-COMMENT ON FUNCTION NUMBER_AS_STR IS
-'число в строку';
+COMMENT ON FUNCTION NUMBER_TO_STRING_R IS 
+'перевод чисел в строку на русском, т.е. 100 - сто';
 
-COMMENT ON FUNCTION ONLY_DIGITS IS
+COMMENT ON FUNCTION ONLY_DIGITS IS 
 'Возвращает только цифры из переданной строки, если цифр нет возвращает пустую строку';
 
-COMMENT ON FUNCTION SET_SETTINGS_VALUE IS
+COMMENT ON FUNCTION SET_SETTINGS_VALUE IS 
 'Установка параметров системы, таблица SETTINGS';
 
-COMMENT ON FUNCTION WHERE_IS_IP IS
+COMMENT ON FUNCTION WHERE_IS_IP IS 
 'Проверяем где используеться IP
 0 - оборудование
 1 - абонент
@@ -33653,10 +33676,10 @@ COMMENT ON FUNCTION WHERE_IS_IP IS
 3 - Интеренет биллинг
 4 - Черный список';
 
-COMMENT ON TRIGGER CUSTOMER_BU1 IS
+COMMENT ON TRIGGER CUSTOMER_BU1 IS 
 'Триггер срабатывает при изменении баланса';
 
-COMMENT ON TRIGGER TR_ON_CONNECT IS
+COMMENT ON TRIGGER TR_ON_CONNECT IS 
 'Выполняем при входе в систему пользователя';
 
 COMMENT ON COLUMN ALL_USED_IP.IP IS
@@ -33665,17 +33688,26 @@ COMMENT ON COLUMN ALL_USED_IP.IP IS
 COMMENT ON COLUMN ALL_USED_IP.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN APPLIANCE.ID IS
-'FOR PRIMARY KEYS';
-
 COMMENT ON COLUMN APPLIANCE.A_TYPE IS
 'Тип устройства. в справочнике Objects_type = 48';
 
-COMMENT ON COLUMN APPLIANCE.OWN_ID IS
-'ID владельца (абонента/узла)';
+COMMENT ON COLUMN APPLIANCE.CALC IS
+'Метод расчет за материал. 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.';
 
-COMMENT ON COLUMN APPLIANCE.OWN_TYPE IS
-'Тип владелеца где установлен type=51. 1-Абонент 2-Узел';
+COMMENT ON COLUMN APPLIANCE.COST IS
+'Стоимость на момент передаци';
+
+COMMENT ON COLUMN APPLIANCE.FROM_WH IS
+'С какого склада пришло';
+
+COMMENT ON COLUMN APPLIANCE.ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN APPLIANCE.M_ID IS
+'Ссылка на материал, если это собственность компании';
+
+COMMENT ON COLUMN APPLIANCE.MAC IS
+'MAC адрес устройства';
 
 COMMENT ON COLUMN APPLIANCE.NAME IS
 'Название';
@@ -33683,48 +33715,32 @@ COMMENT ON COLUMN APPLIANCE.NAME IS
 COMMENT ON COLUMN APPLIANCE.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN APPLIANCE.MAC IS
-'MAC адрес устройства';
+COMMENT ON COLUMN APPLIANCE.OWN_ID IS
+'ID владельца (абонента/узла)';
 
-COMMENT ON COLUMN APPLIANCE.SERIAL IS
-'Серийный номер';
-
-COMMENT ON COLUMN APPLIANCE.COST IS
-'Стоимость на момент передаци';
+COMMENT ON COLUMN APPLIANCE.OWN_TYPE IS
+'Тип владелеца где установлен type=51. 1-Абонент 2-Узел';
 
 COMMENT ON COLUMN APPLIANCE.PROPERTY IS
 'Собственность. -1-абонента(купил сам). 0-абонента. 1-компании. 2-рассрочка. 3-аренда.';
 
-COMMENT ON COLUMN APPLIANCE.S_VERSION IS
-'Версия софта прошивки';
-
-COMMENT ON COLUMN APPLIANCE.M_ID IS
-'Ссылка на материал, если это собственность компании';
+COMMENT ON COLUMN APPLIANCE.QUANT IS
+'Количество';
 
 COMMENT ON COLUMN APPLIANCE.RQ_ID IS
 'Какой заявкой передано';
 
-COMMENT ON COLUMN APPLIANCE.FROM_WH IS
-'С какого склада пришло';
+COMMENT ON COLUMN APPLIANCE.S_VERSION IS
+'Версия софта прошивки';
 
-COMMENT ON COLUMN APPLIANCE.CALC IS
-'Метод расчет за материал. 0 - полный расчет/возврат. 1 - бесплатно. 2-рассрочка. 3-аренда.';
+COMMENT ON COLUMN APPLIANCE.SERIAL IS
+'Серийный номер';
 
 COMMENT ON COLUMN APPLIANCE.SOFT IS
 'Версия ПО';
 
-COMMENT ON COLUMN APPLIANCE.QUANT IS
-'Количество';
-
-COMMENT ON COLUMN ATTRIBUTE.TYPE_ID IS
-'Тип атрибута. соответствует типам с таблицу object_type
-например:
-32-Атрибуты IPTV групп, 6-Атрибуты ТВ оборудования,
-4-Атрибуты абонента, 50-Атрибуты для типа, 37-Атрибуты домов,
-5-Атрибуты сетевого оборудования, 39-Атрибуты узлов, 25-Атрибуты услуг';
-
-COMMENT ON COLUMN ATTRIBUTE.OBJECT_ID IS
-'Объект чей атрибут (ID абонент. ID заявка. ID заказа. ID задачи и т.д.)';
+COMMENT ON COLUMN ATTRIBUTE.ADELETED IS
+'если 1, считаем, что атрибут удален';
 
 COMMENT ON COLUMN ATTRIBUTE.AID IS
 'Значение из таблицы objects';
@@ -33735,50 +33751,57 @@ COMMENT ON COLUMN ATTRIBUTE.AVALUE IS
 COMMENT ON COLUMN ATTRIBUTE.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN ATTRIBUTE.ADELETED IS
-'если 1, считаем, что атрибут удален';
+COMMENT ON COLUMN ATTRIBUTE.OBJECT_ID IS
+'Объект чей атрибут (ID абонент. ID заявка. ID заказа. ID задачи и т.д.)';
 
 COMMENT ON COLUMN ATTRIBUTE.OVALUE IS
 'сохраним старое значение';
 
-COMMENT ON COLUMN BCISSUE.BI_TYPE IS
-'Тип сбоя';
+COMMENT ON COLUMN ATTRIBUTE.TYPE_ID IS
+'Тип атрибута. соответствует типам с таблицу object_type
+например:
+32-Атрибуты IPTV групп, 6-Атрибуты ТВ оборудования,
+4-Атрибуты абонента, 50-Атрибуты для типа, 37-Атрибуты домов,
+5-Атрибуты сетевого оборудования, 39-Атрибуты узлов, 25-Атрибуты услуг, 80-ТУ електро';
 
-COMMENT ON COLUMN BCISSUE.ISSUE IS
-'Описание сбоя';
-
-COMMENT ON COLUMN BCISSUE.DTV IS
-'в цифре';
+COMMENT ON COLUMN BCISSUE.ALTER_CONFIG IS
+'Вносились ли исправления в конфиг ГС/системы';
 
 COMMENT ON COLUMN BCISSUE.ATV IS
 'в аналоге';
 
+COMMENT ON COLUMN BCISSUE.BI_TYPE IS
+'Тип сбоя';
+
+COMMENT ON COLUMN BCISSUE.DTV IS
+'в цифре';
+
 COMMENT ON COLUMN BCISSUE.IPTV IS
 'в iptv';
+
+COMMENT ON COLUMN BCISSUE.ISSUE IS
+'Описание сбоя';
 
 COMMENT ON COLUMN BCISSUE.OTT IS
 'в ott';
 
-COMMENT ON COLUMN BCISSUE.SOLUTION IS
-'результат исправления';
+COMMENT ON COLUMN BCISSUE.RESULT_ON IS
+'КОгда выполнено';
 
 COMMENT ON COLUMN BCISSUE.RESULT_TEXT IS
 'Результат';
 
-COMMENT ON COLUMN BCISSUE.RESULT_ON IS
-'КОгда выполнено';
+COMMENT ON COLUMN BCISSUE.SOLUTION IS
+'результат исправления';
 
-COMMENT ON COLUMN BCISSUE.ALTER_CONFIG IS
-'Вносились ли исправления в конфиг ГС/системы';
+COMMENT ON COLUMN BILLING.IP_INET IS
+'IP интернета';
 
 COMMENT ON COLUMN BILLING.LOGIN IS
 'Логин интернета';
 
 COMMENT ON COLUMN BILLING.SECRET IS
 'Пароль доступа к интернету';
-
-COMMENT ON COLUMN BILLING.IP_INET IS
-'IP интернета';
 
 COMMENT ON COLUMN BILLING.SECRET_WEB IS
 'Пароль доступа к странице статистики и настроек';
@@ -33807,23 +33830,23 @@ COMMENT ON COLUMN BONUS_RATE.DATE_FROM IS
 COMMENT ON COLUMN BONUS_RATE.DATE_TO IS
 'Действует по';
 
+COMMENT ON COLUMN BONUS_RATE.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN BONUS_RATE.RATE IS
+'сумма за это кол-во';
+
 COMMENT ON COLUMN BONUS_RATE.UNITS_FROM IS
 'Бонус начинается с кол-ва (сумма платежа, кол-во месяцев и т.д.) больше или равно';
 
 COMMENT ON COLUMN BONUS_RATE.UNITS_TO IS
 'верхняя граница кол-ва (не включительно, т.е. должно быть меньше но не равно)';
 
-COMMENT ON COLUMN BONUS_RATE.RATE IS
-'сумма за это кол-во';
-
-COMMENT ON COLUMN BONUS_RATE.NOTICE IS
-'Примечание';
+COMMENT ON COLUMN CARDS_PREPAY.CARD_STATE IS
+'0 - не активирована 1 - активирована -1 - аннулирована';
 
 COMMENT ON COLUMN CARDS_PREPAY.EXPIRATION_DATE IS
 'До какой даты действует';
-
-COMMENT ON COLUMN CARDS_PREPAY.CARD_STATE IS
-'0 - не активирована 1 - активирована -1 - аннулирована';
 
 COMMENT ON COLUMN CARDS_SERIALS.CS_ID IS
 'FOR PRIMARY KEYS';
@@ -33831,11 +33854,11 @@ COMMENT ON COLUMN CARDS_SERIALS.CS_ID IS
 COMMENT ON COLUMN CARDS_SERIALS.CS_SOURCE_ID IS
 'Для полей ссылок которые могут содержать Null';
 
-COMMENT ON COLUMN CHANGELOG.LOG_ID IS
-'FOR PRIMARY KEYS';
-
 COMMENT ON COLUMN CHANGELOG.LOG_GROUP IS
 'таблица изменений';
+
+COMMENT ON COLUMN CHANGELOG.LOG_ID IS
+'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN CHANGELOG.OBJECT_ID IS
 'id абонента или оборудования';
@@ -33843,67 +33866,11 @@ COMMENT ON COLUMN CHANGELOG.OBJECT_ID IS
 COMMENT ON COLUMN CHANGELOG.OBJECT_TYPE IS
 'устарело, будет удалено';
 
-COMMENT ON COLUMN CHANNELS.CH_NUMBER IS
-'номер в аналаге';
-
-COMMENT ON COLUMN CHANNELS.CH_NAME IS
-'название канала';
-
-COMMENT ON COLUMN CHANNELS.CH_NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN CHANNELS.CH_FREQ IS
-'Частота в аналоге';
-
-COMMENT ON COLUMN CHANNELS.CH_CODED IS
-'Кодирован ли канал в цифре';
-
-COMMENT ON COLUMN CHANNELS.CH_TRUNK IS
-'STVcrypt ствол';
-
-COMMENT ON COLUMN CHANNELS.CH_TRUNK_NUMBER IS
-'STVcrypt номер в стволе';
-
-COMMENT ON COLUMN CHANNELS.DEFINITION IS
-'SD HD 4k 3D';
-
-COMMENT ON COLUMN CHANNELS.LANG IS
-'Основной язык трансляции
-ENGLISH ENG, RUSSIAN RUS, LATVIAN LAV, LITHUANIAN LIT, ESTONIAN EST, BELARUSIAN BEL, UKRAINIAN UKR, GERMAN DEU, FRENCH FRA';
-
-COMMENT ON COLUMN CHANNELS.DVBGENRES IS
-'основные жанры DVB для канала';
-
-COMMENT ON COLUMN CHANNELS.MINAGE IS
-'Минимальный возраст';
-
-COMMENT ON COLUMN CHANNELS.ACCESS_ID IS
-'Ключ доступа для систем кодирования CONAX И подообных';
-
-COMMENT ON COLUMN CHANNELS.CONTRACT_ID IS
-'договор с дистрибьютором';
-
-COMMENT ON COLUMN CHANNELS.CH_LIC IS
-'Лицензия';
-
-COMMENT ON COLUMN CHANNELS.CH_CERT IS
-'Свидетельство СМИ';
-
-COMMENT ON COLUMN CHANNELS.CH_THEME IS
-'Тематика';
-
-COMMENT ON COLUMN CHANNELS_IN_SERVCE.SRV_ID IS
-'Код услуги';
-
-COMMENT ON COLUMN CHANNELS_IN_SERVCE.CH_ID IS
-'Код канала';
-
-COMMENT ON COLUMN CHANNELS_IN_SERVCE.ON_OFF IS
-'1 - при включенной услуге
-0 - при отключенной услуге';
-
 COMMENT ON COLUMN CHANNEL_SRC.CS_ID IS
 'ID источника';
+
+COMMENT ON COLUMN CHANNEL_SRC.DEG IS
+'Орбитальное положение';
 
 COMMENT ON COLUMN CHANNEL_SRC.NAME IS
 'Название';
@@ -33911,44 +33878,32 @@ COMMENT ON COLUMN CHANNEL_SRC.NAME IS
 COMMENT ON COLUMN CHANNEL_SRC.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN CHANNEL_SRC.DEG IS
-'Орбитальное положение';
-
 COMMENT ON COLUMN CHANNEL_SRC.URL IS
 'Ссылка на источник в интернете';
 
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.CSP_ID IS
-'ID записи';
-
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.CS_ID IS
-'ID источника';
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.CARD_ID IS
+'Номер карты/декодера';
 
 COMMENT ON COLUMN CHANNEL_SRC_PARAM.CH_ID IS
 'ID Канала';
 
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.FREQ IS
-'Частота / поляризация';
-
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.SYMRATE IS
-'Скорость';
-
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.IP IS
-'IP потока';
-
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.V_CODEC IS
-'Видео кодек';
-
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.S_CRYPT IS
-'Система кодирования сигнала';
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.CS_ID IS
+'ID источника';
 
 COMMENT ON COLUMN CHANNEL_SRC_PARAM.CS_SYSTEM IS
 'Стандарт вещания';
 
-COMMENT ON COLUMN CHANNEL_SRC_PARAM.CARD_ID IS
-'Номер карты/декодера';
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.CSP_ID IS
+'ID записи';
+
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.FREQ IS
+'Частота / поляризация';
+
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.IP IS
+'IP потока';
+
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.NOTICE IS
+'Примечание';
 
 COMMENT ON COLUMN CHANNEL_SRC_PARAM.ON_ANALOG IS
 'Основной для аналога';
@@ -33959,6 +33914,74 @@ COMMENT ON COLUMN CHANNEL_SRC_PARAM.ON_DVB IS
 COMMENT ON COLUMN CHANNEL_SRC_PARAM.ON_IPTV IS
 'Основной для IPTV';
 
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.S_CRYPT IS
+'Система кодирования сигнала';
+
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.SYMRATE IS
+'Скорость';
+
+COMMENT ON COLUMN CHANNEL_SRC_PARAM.V_CODEC IS
+'Видео кодек';
+
+COMMENT ON COLUMN CHANNELS.ACCESS_ID IS
+'Ключ доступа для систем кодирования CONAX И подообных';
+
+COMMENT ON COLUMN CHANNELS.CH_CERT IS
+'Свидетельство СМИ';
+
+COMMENT ON COLUMN CHANNELS.CH_CODED IS
+'Кодирован ли канал в цифре';
+
+COMMENT ON COLUMN CHANNELS.CH_FREQ IS
+'Частота в аналоге';
+
+COMMENT ON COLUMN CHANNELS.CH_LIC IS
+'Лицензия';
+
+COMMENT ON COLUMN CHANNELS.CH_NAME IS
+'название канала';
+
+COMMENT ON COLUMN CHANNELS.CH_NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN CHANNELS.CH_NUMBER IS
+'номер в аналаге';
+
+COMMENT ON COLUMN CHANNELS.CH_THEME IS
+'Тематика';
+
+COMMENT ON COLUMN CHANNELS.CH_TRUNK IS
+'STVcrypt ствол';
+
+COMMENT ON COLUMN CHANNELS.CH_TRUNK_NUMBER IS
+'STVcrypt номер в стволе';
+
+COMMENT ON COLUMN CHANNELS.CONTRACT_ID IS
+'договор с дистрибьютором';
+
+COMMENT ON COLUMN CHANNELS.DEFINITION IS
+'SD HD 4k 3D';
+
+COMMENT ON COLUMN CHANNELS.DVBGENRES IS
+'основные жанры DVB для канала';
+
+COMMENT ON COLUMN CHANNELS.LANG IS
+'Основной язык трансляции
+ENGLISH ENG, RUSSIAN RUS, LATVIAN LAV, LITHUANIAN LIT, ESTONIAN EST, BELARUSIAN BEL, UKRAINIAN UKR, GERMAN DEU, FRENCH FRA';
+
+COMMENT ON COLUMN CHANNELS.MINAGE IS
+'Минимальный возраст';
+
+COMMENT ON COLUMN CHANNELS_IN_SERVCE.CH_ID IS
+'Код канала';
+
+COMMENT ON COLUMN CHANNELS_IN_SERVCE.ON_OFF IS
+'1 - при включенной услуге
+0 - при отключенной услуге';
+
+COMMENT ON COLUMN CHANNELS_IN_SERVCE.SRV_ID IS
+'Код услуги';
+
 COMMENT ON COLUMN COMPANY.C_TYPE IS
 'ftString, ftFixedChar, ftWideString,
 ftSmallint, ftInteger, ftLargeint, ftWord, ftFloat, ftCurrency,
@@ -33968,119 +33991,11 @@ ftVariant,
 ftGuid,
 ftBlob';
 
-COMMENT ON COLUMN CUSTOMER.CUSTOMER_ID IS
-'уникальный код абонента. все таблицы ссылаются на этот код.';
-
-COMMENT ON COLUMN CUSTOMER.CUST_CODE IS
-'Код абонента';
-
-COMMENT ON COLUMN CUSTOMER.HOUSE_ID IS
-'Код дома таблица HOUSE';
-
 COMMENT ON COLUMN CUSTOMER.ACCOUNT_NO IS
 'Лиц. счет';
 
-COMMENT ON COLUMN CUSTOMER.DOGOVOR_NO IS
-'Номер договора';
-
-COMMENT ON COLUMN CUSTOMER.SURNAME IS
-'Фамилия';
-
-COMMENT ON COLUMN CUSTOMER.FIRSTNAME IS
-'Имя или форма собственности у ЮЛ';
-
-COMMENT ON COLUMN CUSTOMER.MIDLENAME IS
-'Отчество';
-
-COMMENT ON COLUMN CUSTOMER.INITIALS IS
-'Инициалы';
-
-COMMENT ON COLUMN CUSTOMER.CONTRACT_DATE IS
-'Дата договора';
-
 COMMENT ON COLUMN CUSTOMER.ACTIVIZ_DATE IS
 'Дата первого подключения';
-
-COMMENT ON COLUMN CUSTOMER.PHONE_NO IS
-'телефон';
-
-COMMENT ON COLUMN CUSTOMER.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN CUSTOMER.VALID_TO IS
-'Договор до';
-
-COMMENT ON COLUMN CUSTOMER.CUST_STATE IS
-'Статус подключения если 0 то ни к одной услуге не подключен';
-
-COMMENT ON COLUMN CUSTOMER.CUST_STATE_DESCR IS
-'Статус подключения Код абонентской услуги и наименование услуги вкл./выкл.';
-
-COMMENT ON COLUMN CUSTOMER.FLAT_NO IS
-'Квартира';
-
-COMMENT ON COLUMN CUSTOMER.DEBT_SUM IS
-'Долг';
-
-COMMENT ON COLUMN CUSTOMER.PASSPORT_NUMBER IS
-'Паспорт';
-
-COMMENT ON COLUMN CUSTOMER.PASSPORT_REGISTRATION IS
-'кем и когда выдан';
-
-COMMENT ON COLUMN CUSTOMER.PERSONAL_N IS
-'Личный номер паспорта или БИК у ЮЛ';
-
-COMMENT ON COLUMN CUSTOMER.MANAGER_ID IS
-'Кто принял заказ  ссылка на таблицу Worker';
-
-COMMENT ON COLUMN CUSTOMER.JURIDICAL IS
-'Признак юр. лица';
-
-COMMENT ON COLUMN CUSTOMER.JUR_INN IS
-'ИНН юр. лица';
-
-COMMENT ON COLUMN CUSTOMER.JUR_DIRECTOR IS
-'ФИО директора';
-
-COMMENT ON COLUMN CUSTOMER.JUR_BUH IS
-'ФИО бухгалтера';
-
-COMMENT ON COLUMN CUSTOMER.CGIS IS
-'Поле может использоваться в своих целях';
-
-COMMENT ON COLUMN CUSTOMER.MOBILE_PHONE IS
-'Мобильный телефон';
-
-COMMENT ON COLUMN CUSTOMER.HIS_COLOR IS
-'цвет фона для абонента';
-
-COMMENT ON COLUMN CUSTOMER.TIME_ON_MINUS IS
-'Дата и время когда баланс стал отрицательным';
-
-COMMENT ON COLUMN CUSTOMER.BIRTHDAY IS
-'Дата рождения';
-
-COMMENT ON COLUMN CUSTOMER.ADRES_REGISTR IS
-'Адрес регистрации';
-
-COMMENT ON COLUMN CUSTOMER.ORG_ID IS
-'В какой организации обслуживается';
-
-COMMENT ON COLUMN CUSTOMER.VATG_ID IS
-'Группа НДС';
-
-COMMENT ON COLUMN CUSTOMER.FLAT_DIGIT IS
-'квартира. только цифры';
-
-COMMENT ON COLUMN CUSTOMER.TAP IS
-'Отвод';
-
-COMMENT ON COLUMN CUSTOMER.PREPAY IS
-'Обещанный платеж';
-
-COMMENT ON COLUMN CUSTOMER.PREPAY_TIME IS
-'Время внесения обещаного платежа';
 
 COMMENT ON COLUMN CUSTOMER.ADDED_BY IS
 'кто добавил';
@@ -34088,14 +34003,8 @@ COMMENT ON COLUMN CUSTOMER.ADDED_BY IS
 COMMENT ON COLUMN CUSTOMER.ADDED_ON IS
 'когда добавил';
 
-COMMENT ON COLUMN CUSTOMER.EDIT_BY IS
-'кто изменил';
-
-COMMENT ON COLUMN CUSTOMER.EDIT_ON IS
-'когда изменил';
-
-COMMENT ON COLUMN CUSTOMER.HAND_CONTROL IS
-'"ручное управление". т.е. услуги не отключать автоматом';
+COMMENT ON COLUMN CUSTOMER.ADRES_REGISTR IS
+'Адрес регистрации';
 
 COMMENT ON COLUMN CUSTOMER.BANK IS
 'Банковские реквизиты юр. лица';
@@ -34103,26 +34012,140 @@ COMMENT ON COLUMN CUSTOMER.BANK IS
 COMMENT ON COLUMN CUSTOMER.BANK_ACCOUNT IS
 'Рассчетный счет';
 
+COMMENT ON COLUMN CUSTOMER.BANK_ID IS
+'ид банка';
+
+COMMENT ON COLUMN CUSTOMER.BIRTHDAY IS
+'Дата рождения';
+
+COMMENT ON COLUMN CUSTOMER.CGIS IS
+'Поле может использоваться в своих целях';
+
+COMMENT ON COLUMN CUSTOMER.CONTRACT_BASIS IS
+'Для юр. лиц "В ЛИЦЕ... на основании" / Для физ. лица. "Место рождения"';
+
+COMMENT ON COLUMN CUSTOMER.CONTRACT_DATE IS
+'Дата договора';
+
+COMMENT ON COLUMN CUSTOMER.CUST_CODE IS
+'Код абонента';
+
+COMMENT ON COLUMN CUSTOMER.CUST_STATE IS
+'Статус подключения если 0 то ни к одной услуге не подключен';
+
+COMMENT ON COLUMN CUSTOMER.CUST_STATE_DESCR IS
+'Статус подключения Код абонентской услуги и наименование услуги вкл./выкл.';
+
+COMMENT ON COLUMN CUSTOMER.CUSTOMER_ID IS
+'уникальный код абонента. все таблицы ссылаются на этот код.';
+
+COMMENT ON COLUMN CUSTOMER.DEBT_SUM IS
+'Долг';
+
+COMMENT ON COLUMN CUSTOMER.DOCTYPE IS
+'Тип документа Objects type 66';
+
+COMMENT ON COLUMN CUSTOMER.DOGOVOR_NO IS
+'Номер договора';
+
+COMMENT ON COLUMN CUSTOMER.EDIT_BY IS
+'кто изменил';
+
+COMMENT ON COLUMN CUSTOMER.EDIT_ON IS
+'когда изменил';
+
+COMMENT ON COLUMN CUSTOMER.FIRSTNAME IS
+'Имя или форма собственности у ЮЛ';
+
+COMMENT ON COLUMN CUSTOMER.FLAT_DIGIT IS
+'квартира. только цифры';
+
+COMMENT ON COLUMN CUSTOMER.FLAT_NO IS
+'Квартира';
+
+COMMENT ON COLUMN CUSTOMER.HAND_CONTROL IS
+'"ручное управление". т.е. услуги не отключать автоматом';
+
+COMMENT ON COLUMN CUSTOMER.HIS_COLOR IS
+'цвет фона для абонента';
+
+COMMENT ON COLUMN CUSTOMER.HOUSE_ID IS
+'Код дома таблица HOUSE';
+
+COMMENT ON COLUMN CUSTOMER.INITIALS IS
+'Инициалы';
+
+COMMENT ON COLUMN CUSTOMER.JUR_BUH IS
+'ФИО бухгалтера';
+
+COMMENT ON COLUMN CUSTOMER.JUR_DIRECTOR IS
+'ФИО директора';
+
+COMMENT ON COLUMN CUSTOMER.JUR_INN IS
+'ИНН юр. лица';
+
+COMMENT ON COLUMN CUSTOMER.JURIDICAL IS
+'Признак юр. лица';
+
+COMMENT ON COLUMN CUSTOMER.MANAGER_ID IS
+'Кто принял заказ  ссылка на таблицу Worker';
+
+COMMENT ON COLUMN CUSTOMER.MIDLENAME IS
+'Отчество';
+
+COMMENT ON COLUMN CUSTOMER.MOBILE_PHONE IS
+'Мобильный телефон';
+
+COMMENT ON COLUMN CUSTOMER.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN CUSTOMER.ORG_ID IS
+'В какой организации обслуживается';
+
+COMMENT ON COLUMN CUSTOMER.PASSPORT_NUMBER IS
+'Паспорт';
+
+COMMENT ON COLUMN CUSTOMER.PASSPORT_REGISTRATION IS
+'кем и когда выдан';
+
 COMMENT ON COLUMN CUSTOMER.PASSPORT_VALID IS
 'Проверен ли паспорт
 null не проверен
 0 - невалиден
 1 - все ок';
 
-COMMENT ON COLUMN CUSTOMER.CONTRACT_BASIS IS
-'Для юр. лиц "В ЛИЦЕ... на основании" / Для физ. лица. "Место рождения"';
+COMMENT ON COLUMN CUSTOMER.PERSONAL_N IS
+'Личный номер паспорта или БИК у ЮЛ';
 
-COMMENT ON COLUMN CUSTOMER.BANK_ID IS
-'ид банка';
+COMMENT ON COLUMN CUSTOMER.PHONE_NO IS
+'телефон';
 
-COMMENT ON COLUMN CUSTOMER.DOCTYPE IS
-'Тип документа Objects type 66';
+COMMENT ON COLUMN CUSTOMER.PREPAY IS
+'Обещанный платеж';
+
+COMMENT ON COLUMN CUSTOMER.PREPAY_TIME IS
+'Время внесения обещаного платежа';
+
+COMMENT ON COLUMN CUSTOMER.SURNAME IS
+'Фамилия';
+
+COMMENT ON COLUMN CUSTOMER.TAP IS
+'Отвод';
+
+COMMENT ON COLUMN CUSTOMER.TIME_ON_MINUS IS
+'Дата и время когда баланс стал отрицательным';
+
+COMMENT ON COLUMN CUSTOMER.VALID_TO IS
+'Договор до';
+
+COMMENT ON COLUMN CUSTOMER.VATG_ID IS
+'Группа НДС';
 
 COMMENT ON COLUMN CUSTOMER_ATTRIBUTES.RQ_ID IS
 'Какой заявкой был выставлен атрибут';
 
-COMMENT ON COLUMN CUSTOMER_BONUSES.CUSTOMER_DEBT IS
-'Баланс абонента в момент добавления бонуса';
+COMMENT ON COLUMN CUSTOMER_BONUSES.BONUS IS
+'Сумма бонусов (деньги)';
 
 COMMENT ON COLUMN CUSTOMER_BONUSES.BONUS_DATE IS
 'Дата бонуса';
@@ -34130,32 +34153,32 @@ COMMENT ON COLUMN CUSTOMER_BONUSES.BONUS_DATE IS
 COMMENT ON COLUMN CUSTOMER_BONUSES.BT_ID IS
 'За что бонус (оплата, акция. и прочее) O_Type = 30';
 
-COMMENT ON COLUMN CUSTOMER_BONUSES.UNITS IS
-'Кол-во бонусов (единицы)';
-
-COMMENT ON COLUMN CUSTOMER_BONUSES.BONUS IS
-'Сумма бонусов (деньги)';
+COMMENT ON COLUMN CUSTOMER_BONUSES.CUSTOMER_DEBT IS
+'Баланс абонента в момент добавления бонуса';
 
 COMMENT ON COLUMN CUSTOMER_BONUSES.EXT_ID IS
 'номер платежа или другой номер в зависимости от типа';
 
+COMMENT ON COLUMN CUSTOMER_BONUSES.UNITS IS
+'Кол-во бонусов (единицы)';
+
 COMMENT ON COLUMN CUSTOMER_CHANNELS.CH_ID IS
 'код канала';
-
-COMMENT ON COLUMN CUSTOMER_CHANNELS.DATE_ON IS
-'дата включения канала';
 
 COMMENT ON COLUMN CUSTOMER_CHANNELS.DATE_OFF IS
 'дата выключения канала';
 
-COMMENT ON COLUMN CUSTOMER_CHANNELS.NOTICE IS
-'Примечание';
+COMMENT ON COLUMN CUSTOMER_CHANNELS.DATE_ON IS
+'дата включения канала';
 
 COMMENT ON COLUMN CUSTOMER_CHANNELS.DECODER_ID IS
 'код декодера абонента';
 
-COMMENT ON COLUMN CUSTOMER_CONTACTS.CUSTOMER_ID IS
-'FOR PRIMARY KEYS';
+COMMENT ON COLUMN CUSTOMER_CHANNELS.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN CUSTOMER_CONTACTS.CC_NOTIFY IS
+'контакт для уведомлений (смс, email)';
 
 COMMENT ON COLUMN CUSTOMER_CONTACTS.CC_TYPE IS
 'Тип контакта O_TYPE = 45
@@ -34167,20 +34190,23 @@ COMMENT ON COLUMN CUSTOMER_CONTACTS.CC_TYPE IS
 5 - ANDROID PUSH ID
 6 - IOS PUSH ID';
 
-COMMENT ON COLUMN CUSTOMER_CONTACTS.CC_NOTIFY IS
-'контакт для уведомлений (смс, email)';
-
 COMMENT ON COLUMN CUSTOMER_CONTACTS.CC_VAL_REVERSE IS
 'реверс значения для поиска по телефону';
 
-COMMENT ON COLUMN CUSTOMER_DECODERS.DEC_ID IS
+COMMENT ON COLUMN CUSTOMER_CONTACTS.CUSTOMER_ID IS
 'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN CUSTOMER_DECODERS.CUSTOMER_ID IS
 'FOR PRIMARY KEYS';
 
+COMMENT ON COLUMN CUSTOMER_DECODERS.DEC_ID IS
+'FOR PRIMARY KEYS';
+
 COMMENT ON COLUMN CUSTOMER_DECODERS.DECODER_N IS
 'Номер декодера';
+
+COMMENT ON COLUMN CUSTOMER_DECODERS.PAIRING IS
+'Связан ли декодер с устройством';
 
 COMMENT ON COLUMN CUSTOMER_DECODERS.STB_N IS
 'Номер приставки';
@@ -34191,44 +34217,20 @@ COMMENT ON COLUMN CUSTOMER_DECODERS.TV_MODEL IS
 COMMENT ON COLUMN CUSTOMER_DECODERS.TV_SOFT IS
 'версия софта телевизора';
 
-COMMENT ON COLUMN CUSTOMER_DECODERS.PAIRING IS
-'Связан ли декодер с устройством';
-
 COMMENT ON COLUMN CUSTOMER_EQUIPMENT.CUSTOMER_ID IS
 'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN CUSTOMER_EQUIPMENT.M_ID IS
 'ссылка на материал';
 
-COMMENT ON COLUMN CUSTOMER_EQUIPMENT.SERIAL IS
-'Серийник материала';
-
 COMMENT ON COLUMN CUSTOMER_EQUIPMENT.SALE IS
 'Признак продажи';
 
-COMMENT ON COLUMN CUSTOMER_FILES.CF_ID IS
-'ID файла';
+COMMENT ON COLUMN CUSTOMER_EQUIPMENT.SERIAL IS
+'Серийник материала';
 
-COMMENT ON COLUMN CUSTOMER_FILES.CUSTOMER_ID IS
-'ID абонента';
-
-COMMENT ON COLUMN CUSTOMER_FILES.NAME IS
-'название / номер документа';
-
-COMMENT ON COLUMN CUSTOMER_FILES.CF_TYPE IS
-'Тип документа (OBJECTS.O_TYPE = 33)';
-
-COMMENT ON COLUMN CUSTOMER_FILES.DATE_FROM IS
-'Дествует с';
-
-COMMENT ON COLUMN CUSTOMER_FILES.DATE_TO IS
-'Действует по';
-
-COMMENT ON COLUMN CUSTOMER_FILES.FILENAME IS
-'Имя файла';
-
-COMMENT ON COLUMN CUSTOMER_FILES.NOTICE IS
-'Примечание';
+COMMENT ON COLUMN CUSTOMER_FILES.ACT IS
+'Рассмотрен / Обработан';
 
 COMMENT ON COLUMN CUSTOMER_FILES.ADDED_BY IS
 'Кто добавил';
@@ -34236,20 +34238,41 @@ COMMENT ON COLUMN CUSTOMER_FILES.ADDED_BY IS
 COMMENT ON COLUMN CUSTOMER_FILES.ADDED_ON IS
 'Когда добавил';
 
+COMMENT ON COLUMN CUSTOMER_FILES.ADDONS IS
+'Сохраняем доп поля в json';
+
+COMMENT ON COLUMN CUSTOMER_FILES.ANOTICE IS
+'Комментарий к обработке';
+
+COMMENT ON COLUMN CUSTOMER_FILES.CF_ID IS
+'ID файла';
+
+COMMENT ON COLUMN CUSTOMER_FILES.CF_TYPE IS
+'Тип документа (OBJECTS.O_TYPE = 33)';
+
+COMMENT ON COLUMN CUSTOMER_FILES.CUSTOMER_ID IS
+'ID абонента';
+
+COMMENT ON COLUMN CUSTOMER_FILES.DATE_FROM IS
+'Дествует с';
+
+COMMENT ON COLUMN CUSTOMER_FILES.DATE_TO IS
+'Действует по';
+
 COMMENT ON COLUMN CUSTOMER_FILES.EDIT_BY IS
 'Кто изменил';
 
 COMMENT ON COLUMN CUSTOMER_FILES.EDIT_ON IS
 'Когда изменил';
 
-COMMENT ON COLUMN CUSTOMER_FILES.ACT IS
-'Рассмотрен / Обработан';
+COMMENT ON COLUMN CUSTOMER_FILES.FILENAME IS
+'Имя файла';
 
-COMMENT ON COLUMN CUSTOMER_FILES.ANOTICE IS
-'Комментарий к обработке';
+COMMENT ON COLUMN CUSTOMER_FILES.NAME IS
+'название / номер документа';
 
-COMMENT ON COLUMN CUSTOMER_FILES.ADDONS IS
-'Сохраняем доп поля в json';
+COMMENT ON COLUMN CUSTOMER_FILES.NOTICE IS
+'Примечание';
 
 COMMENT ON COLUMN DEVPORTS.ID IS
 'будет удалена. Таблица для карты.';
@@ -34269,77 +34292,26 @@ COMMENT ON COLUMN DISCOUNT_FACTOR.DATE_TO IS
 COMMENT ON COLUMN DISCOUNT_FACTOR.FACTOR_VALUE IS
 'Скидка';
 
-COMMENT ON COLUMN DISCOUNT_FACTOR.SERV_ID IS
-'ID услуги или -1 если на все услуги';
-
-COMMENT ON COLUMN DISCOUNT_FACTOR.SRV_TYPE IS
-'ид типа услуг или -1 для всех услуг';
-
 COMMENT ON COLUMN DISCOUNT_FACTOR.NOTICE IS
 'Примечание';
 
 COMMENT ON COLUMN DISCOUNT_FACTOR.PROMO_ID IS
 'ИД акции';
 
-COMMENT ON COLUMN DISTRIBUTOR.ID IS
-'FOR PRIMARY KEYS';
+COMMENT ON COLUMN DISCOUNT_FACTOR.SERV_ID IS
+'ID услуги или -1 если на все услуги';
 
-COMMENT ON COLUMN DISTRIBUTOR.NAME IS
-'ДИСТРИБЬЮТОР';
+COMMENT ON COLUMN DISCOUNT_FACTOR.SRV_TYPE IS
+'ид типа услуг или -1 для всех услуг';
 
-COMMENT ON COLUMN DISTRIBUTOR.ADDRESS IS
-'Почтовый адрес';
-
-COMMENT ON COLUMN DISTRIBUTOR.JADDRESS IS
-'Юр. адрес';
-
-COMMENT ON COLUMN DISTRIBUTOR.EMAIL IS
-'емаил';
-
-COMMENT ON COLUMN DISTRIBUTOR.PHONES IS
-'телефоны';
-
-COMMENT ON COLUMN DISTRIBUTOR.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.DISTRIBUTOR_ID IS
-'ID дистрибьютора';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.C_NUMBER IS
-'Номер договора';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.C_DATE IS
-'Дата договора';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.C_DATE_BEFORE IS
-'Договор до даты';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.REPORT_FRMT IS
-'Формат доставки PDF DOC';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.DELIVERY IS
-'Как доставлять 0-EMAIL 1-ОБЫЧНАЯ ПОЧТА';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.FINTERMS IS
-'Финансовые условия по договору';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.MINTERMS IS
-'Количество абонентов, чел';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.REPORT_ID IS
-'ИД отчета';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.CTYPE IS
-'Вид договора';
-
-COMMENT ON COLUMN DISTRIB_CONTRACTS.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN DISTRIB_CONTRACT_CH.CONTRACT_ID IS
-'Договор';
+COMMENT ON COLUMN DISTRIB_CONTRACT_CH.ATV IS
+'Канала в аналоге';
 
 COMMENT ON COLUMN DISTRIB_CONTRACT_CH.CH_ID IS
 'Канал';
+
+COMMENT ON COLUMN DISTRIB_CONTRACT_CH.CONTRACT_ID IS
+'Договор';
 
 COMMENT ON COLUMN DISTRIB_CONTRACT_CH.COST IS
 'Цена';
@@ -34350,17 +34322,20 @@ COMMENT ON COLUMN DISTRIB_CONTRACT_CH.CUST_COUNT IS
 COMMENT ON COLUMN DISTRIB_CONTRACT_CH.DTV IS
 'Канала в цифре';
 
-COMMENT ON COLUMN DISTRIB_CONTRACT_CH.ATV IS
-'Канала в аналоге';
-
 COMMENT ON COLUMN DISTRIB_CONTRACT_CH.IPTV IS
 'Канала в iptv';
+
+COMMENT ON COLUMN DISTRIB_CONTRACT_CH.NOTICE IS
+'Примечание';
 
 COMMENT ON COLUMN DISTRIB_CONTRACT_CH.OTT IS
 'Канала в ott';
 
-COMMENT ON COLUMN DISTRIB_CONTRACT_CH.NOTICE IS
-'Примечание';
+COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.END_CNT IS
+'Цифра на конец периода';
+
+COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.END_SUM IS
+'Сумма на конец';
 
 COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.PERIOD IS
 'за какой месяц отчет';
@@ -34368,41 +34343,106 @@ COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.PERIOD IS
 COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.START_CNT IS
 'Цифра на начало периода';
 
-COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.END_CNT IS
-'Цифра на конец периода';
-
 COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.START_SUM IS
 'Сумма на начало';
 
-COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.END_SUM IS
-'Сумма на конец';
-
-COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.V_NUM IS
+COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.V_DATE IS
 'для личных нужд оператора';
 
-COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.V_DATE IS
+COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.V_NUM IS
 'для личных нужд оператора';
 
 COMMENT ON COLUMN DISTRIB_CONTRACT_REPORTS.V_TEXT IS
 'для личных нужд оператора';
 
+COMMENT ON COLUMN DISTRIB_CONTRACTS.C_DATE IS
+'Дата договора';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.C_DATE_BEFORE IS
+'Договор до даты';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.C_NUMBER IS
+'Номер договора';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.CTYPE IS
+'Вид договора';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.DELIVERY IS
+'Как доставлять 0-EMAIL 1-ОБЫЧНАЯ ПОЧТА';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.DISTRIBUTOR_ID IS
+'ID дистрибьютора';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.FINTERMS IS
+'Финансовые условия по договору';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.MINTERMS IS
+'Количество абонентов, чел';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.REPORT_FRMT IS
+'Формат доставки PDF DOC';
+
+COMMENT ON COLUMN DISTRIB_CONTRACTS.REPORT_ID IS
+'ИД отчета';
+
+COMMENT ON COLUMN DISTRIBUTOR.ADDRESS IS
+'Почтовый адрес';
+
+COMMENT ON COLUMN DISTRIBUTOR.EMAIL IS
+'емаил';
+
+COMMENT ON COLUMN DISTRIBUTOR.ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN DISTRIBUTOR.JADDRESS IS
+'Юр. адрес';
+
+COMMENT ON COLUMN DISTRIBUTOR.NAME IS
+'ДИСТРИБЬЮТОР';
+
+COMMENT ON COLUMN DISTRIBUTOR.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN DISTRIBUTOR.PHONES IS
+'телефоны';
+
 COMMENT ON COLUMN DOC_LIST.DOC_TYPE IS
 'O_TYPE = 66';
+
+COMMENT ON COLUMN DVB_NETWORK.AOSTRM IS
+'Будет удалено';
+
+COMMENT ON COLUMN DVB_NETWORK.COUNTRY IS
+'Страна ISO 3166 3-х буквенная';
+
+COMMENT ON COLUMN DVB_NETWORK.DESCRIPTORS IS
+' ExtendedEventDescriptor - расширеное описание
+ ParentalRatingDescriptor - возрастной контроль
+ ContentDescriptor - жанр';
 
 COMMENT ON COLUMN DVB_NETWORK.DVBN_ID IS
 'Уникальный ID сети';
 
+COMMENT ON COLUMN DVB_NETWORK.EPG_UPDATED IS
+'Дата последнего изменения телепрограммы';
+
+COMMENT ON COLUMN DVB_NETWORK.LANG IS
+'Основной язык сети';
+
 COMMENT ON COLUMN DVB_NETWORK.NAME IS
 'Название сети (Передается в NIT)';
+
+COMMENT ON COLUMN DVB_NETWORK.NID IS
+'NID (Network ID) – Идентификатор цифровой сети.';
 
 COMMENT ON COLUMN DVB_NETWORK.NOTICE IS
 'Примечание';
 
 COMMENT ON COLUMN DVB_NETWORK.ONID IS
 'ONID (Original Network ID) - Идентификатор оператора ТВ';
-
-COMMENT ON COLUMN DVB_NETWORK.NID IS
-'NID (Network ID) – Идентификатор цифровой сети.';
 
 COMMENT ON COLUMN DVB_NETWORK.PIDS IS
 'BAT - Bouquet Association Table
@@ -34421,65 +34461,29 @@ TDT - Time and Date Table
 TOT - Time Offset Table
 TSDT- Transport Stream Description Table';
 
-COMMENT ON COLUMN DVB_NETWORK.DESCRIPTORS IS
-' ExtendedEventDescriptor - расширеное описание
- ParentalRatingDescriptor - возрастной контроль
- ContentDescriptor - жанр';
-
 COMMENT ON COLUMN DVB_NETWORK.TIMEOFFSET IS
 'Сдвиг времени в минутах относительно UTC';
 
-COMMENT ON COLUMN DVB_NETWORK.LANG IS
-'Основной язык сети';
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.A2PID IS
+'Выходной аудио PID вторая дорожка';
 
-COMMENT ON COLUMN DVB_NETWORK.COUNTRY IS
-'Страна ISO 3166 3-х буквенная';
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.APID IS
+'Выходной аудио PID';
 
-COMMENT ON COLUMN DVB_NETWORK.EPG_UPDATED IS
-'Дата последнего изменения телепрограммы';
-
-COMMENT ON COLUMN DVB_NETWORK.AOSTRM IS
-'Будет удалено';
-
-COMMENT ON COLUMN DVB_STREAMS.DVBN_ID IS
-'Network ID (Epg network)';
-
-COMMENT ON COLUMN DVB_STREAMS.ES_IP IS
-'IP приемника/мультипдлексора';
-
-COMMENT ON COLUMN DVB_STREAMS.ES_PORT IS
-'Порт приемника';
-
-COMMENT ON COLUMN DVB_STREAMS.BITRATE IS
-'Скорость потока Килобайт в секунду';
-
-COMMENT ON COLUMN DVB_STREAMS.TSID IS
-'TSID (Transport stream ID) – идентификатор транспортного потока';
-
-COMMENT ON COLUMN DVB_STREAMS.QAM IS
-'QAM, используется в NIT';
-
-COMMENT ON COLUMN DVB_STREAMS.FREQ IS
-'Частота, используется в NIT';
-
-COMMENT ON COLUMN DVB_STREAMS.EPG_UPDATED IS
-'Дата последнего изменения телепрограммы';
-
-COMMENT ON COLUMN DVB_STREAMS.ONID IS
-'ONID (Original Network ID) - Идентификатор оператора ТВ';
-
-COMMENT ON COLUMN DVB_STREAMS.AOSTRM IS
-'Если установлен, то передавать в EIT Actual\Other Stream  (для всех потоков),
-иначе только для текущего потока';
-
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.DVBS_ID IS
-'ID потока';
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.BITRATE IS
+'Символьная скорость';
 
 COMMENT ON COLUMN DVB_STREAM_CHANNELS.CH_ID IS
 'ID кнала';
 
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.SID IS
-'номер SID в EPG';
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.CNID IS
+'NID для канала, если отличается от сети';
+
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.CONID IS
+'ONID для канала, если отличается от сети';
+
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.DVBS_ID IS
+'ID потока';
 
 COMMENT ON COLUMN DVB_STREAM_CHANNELS.LCN IS
 'номер канала LCN в EPG';
@@ -34487,32 +34491,54 @@ COMMENT ON COLUMN DVB_STREAM_CHANNELS.LCN IS
 COMMENT ON COLUMN DVB_STREAM_CHANNELS.NOTICE IS
 'Примечание';
 
+COMMENT ON COLUMN DVB_STREAM_CHANNELS.SID IS
+'номер SID в EPG';
+
 COMMENT ON COLUMN DVB_STREAM_CHANNELS.VPID IS
 'Выходной видео PID';
 
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.APID IS
-'Выходной аудио PID';
+COMMENT ON COLUMN DVB_STREAMS.AOSTRM IS
+'Если установлен, то передавать в EIT Actual\Other Stream  (для всех потоков),
+иначе только для текущего потока';
 
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.A2PID IS
-'Выходной аудио PID вторая дорожка';
+COMMENT ON COLUMN DVB_STREAMS.BITRATE IS
+'Скорость потока Килобайт в секунду';
 
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.BITRATE IS
-'Символьная скорость';
+COMMENT ON COLUMN DVB_STREAMS.DVBN_ID IS
+'Network ID (Epg network)';
 
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.CONID IS
-'ONID для канала, если отличается от сети';
+COMMENT ON COLUMN DVB_STREAMS.EPG_UPDATED IS
+'Дата последнего изменения телепрограммы';
 
-COMMENT ON COLUMN DVB_STREAM_CHANNELS.CNID IS
-'NID для канала, если отличается от сети';
+COMMENT ON COLUMN DVB_STREAMS.ES_IP IS
+'IP приемника/мультипдлексора';
+
+COMMENT ON COLUMN DVB_STREAMS.ES_PORT IS
+'Порт приемника';
+
+COMMENT ON COLUMN DVB_STREAMS.FREQ IS
+'Частота, используется в NIT';
+
+COMMENT ON COLUMN DVB_STREAMS.ONID IS
+'ONID (Original Network ID) - Идентификатор оператора ТВ';
+
+COMMENT ON COLUMN DVB_STREAMS.QAM IS
+'QAM, используется в NIT';
+
+COMMENT ON COLUMN DVB_STREAMS.TSID IS
+'TSID (Transport stream ID) – идентификатор транспортного потока';
+
+COMMENT ON COLUMN EPG.ACTORS IS
+'Актеры';
 
 COMMENT ON COLUMN EPG.CH_ID IS
 'Код канала';
 
-COMMENT ON COLUMN EPG.EPG_DATE IS
-'Дата события';
+COMMENT ON COLUMN EPG.COUNTRY IS
+'Страна производитель';
 
-COMMENT ON COLUMN EPG.UTC_DATE IS
-'День по UTC';
+COMMENT ON COLUMN EPG.CREATE_YEAR IS
+'Год создания';
 
 COMMENT ON COLUMN EPG.DATE_START IS
 'Время начала';
@@ -34520,41 +34546,50 @@ COMMENT ON COLUMN EPG.DATE_START IS
 COMMENT ON COLUMN EPG.DATE_STOP IS
 'Время окончания';
 
+COMMENT ON COLUMN EPG.DESCRIPTION IS
+'Описание';
+
+COMMENT ON COLUMN EPG.DIRECTED IS
+'Режисер';
+
+COMMENT ON COLUMN EPG.DURATION IS
+'Продолжительность';
+
+COMMENT ON COLUMN EPG.DVBGENRES IS
+'коды жанров DVB через ,';
+
+COMMENT ON COLUMN EPG.EPG_DATE IS
+'Дата события';
+
+COMMENT ON COLUMN EPG.GENRES IS
+'Категории из источника';
+
+COMMENT ON COLUMN EPG.MINAGE IS
+'Ограничение по возрасту';
+
+COMMENT ON COLUMN EPG.TITLE IS
+'Название';
+
+COMMENT ON COLUMN EPG.UTC_DATE IS
+'День по UTC';
+
 COMMENT ON COLUMN EPG.UTC_START IS
 'Дата и время по UTC';
 
 COMMENT ON COLUMN EPG.UTC_STOP IS
 'Окончание по UTC';
 
-COMMENT ON COLUMN EPG.DURATION IS
-'Продолжительность';
+COMMENT ON COLUMN EPG_AD.AD_DESCRIPTION IS
+'Что передавать в описании.';
 
-COMMENT ON COLUMN EPG.TITLE IS
-'Название';
+COMMENT ON COLUMN EPG_AD.AD_TITLE IS
+'Что передавать в заголовке EPG';
 
-COMMENT ON COLUMN EPG.DESCRIPTION IS
-'Описание';
+COMMENT ON COLUMN EPG_AD.ALL_CHAN IS
+'Все каналы или нет';
 
-COMMENT ON COLUMN EPG.GENRES IS
-'Категории из источника';
-
-COMMENT ON COLUMN EPG.DVBGENRES IS
-'коды жанров DVB через ,';
-
-COMMENT ON COLUMN EPG.MINAGE IS
-'Ограничение по возрасту';
-
-COMMENT ON COLUMN EPG.CREATE_YEAR IS
-'Год создания';
-
-COMMENT ON COLUMN EPG.ACTORS IS
-'Актеры';
-
-COMMENT ON COLUMN EPG.DIRECTED IS
-'Режисер';
-
-COMMENT ON COLUMN EPG.COUNTRY IS
-'Страна производитель';
+COMMENT ON COLUMN EPG_AD.FOR_EMPTY IS
+'Для каналов без расписания';
 
 COMMENT ON COLUMN EPG_AD.ID IS
 'FOR PRIMARY KEYS';
@@ -34565,32 +34600,20 @@ COMMENT ON COLUMN EPG_AD.START_TIME IS
 COMMENT ON COLUMN EPG_AD.STOP_TIME IS
 'Время окончания';
 
-COMMENT ON COLUMN EPG_AD.AD_TITLE IS
-'Что передавать в заголовке EPG';
-
-COMMENT ON COLUMN EPG_AD.AD_DESCRIPTION IS
-'Что передавать в описании.';
-
-COMMENT ON COLUMN EPG_AD.ALL_CHAN IS
-'Все каналы или нет';
-
-COMMENT ON COLUMN EPG_AD.FOR_EMPTY IS
-'Для каналов без расписания';
+COMMENT ON COLUMN EPG_LOCAL.ACTORS IS
+'Актеры';
 
 COMMENT ON COLUMN EPG_LOCAL.CH_ID IS
 'Код канала';
 
+COMMENT ON COLUMN EPG_LOCAL.COUNTRY IS
+'Страна производитель';
+
+COMMENT ON COLUMN EPG_LOCAL.CREATE_YEAR IS
+'Год создания';
+
 COMMENT ON COLUMN EPG_LOCAL.DATE_START IS
 'Время начала';
-
-COMMENT ON COLUMN EPG_LOCAL.EPG_DATE IS
-'Дата события';
-
-COMMENT ON COLUMN EPG_LOCAL.TITLE IS
-'Название';
-
-COMMENT ON COLUMN EPG_LOCAL.DURATION IS
-'Продолжительность';
 
 COMMENT ON COLUMN EPG_LOCAL.DATE_STOP IS
 'Время окончания';
@@ -34598,26 +34621,26 @@ COMMENT ON COLUMN EPG_LOCAL.DATE_STOP IS
 COMMENT ON COLUMN EPG_LOCAL.DESCRIPTION IS
 'Описание';
 
-COMMENT ON COLUMN EPG_LOCAL.GENRES IS
-'Категории из источника';
+COMMENT ON COLUMN EPG_LOCAL.DIRECTED IS
+'Режисер';
+
+COMMENT ON COLUMN EPG_LOCAL.DURATION IS
+'Продолжительность';
 
 COMMENT ON COLUMN EPG_LOCAL.DVBGENRES IS
 'коды жанров DVB через ,';
 
+COMMENT ON COLUMN EPG_LOCAL.EPG_DATE IS
+'Дата события';
+
+COMMENT ON COLUMN EPG_LOCAL.GENRES IS
+'Категории из источника';
+
 COMMENT ON COLUMN EPG_LOCAL.MINAGE IS
 'Ограничение по возрасту';
 
-COMMENT ON COLUMN EPG_LOCAL.CREATE_YEAR IS
-'Год создания';
-
-COMMENT ON COLUMN EPG_LOCAL.ACTORS IS
-'Актеры';
-
-COMMENT ON COLUMN EPG_LOCAL.DIRECTED IS
-'Режисер';
-
-COMMENT ON COLUMN EPG_LOCAL.COUNTRY IS
-'Страна производитель';
+COMMENT ON COLUMN EPG_LOCAL.TITLE IS
+'Название';
 
 COMMENT ON COLUMN EPG_LOCAL.UTC_DATE IS
 'День по UTC';
@@ -34628,41 +34651,50 @@ COMMENT ON COLUMN EPG_LOCAL.UTC_START IS
 COMMENT ON COLUMN EPG_LOCAL.UTC_STOP IS
 'Окончание по UTC';
 
-COMMENT ON COLUMN EPG_MAPPING.EPG_ID IS
-'EPG_ID';
-
 COMMENT ON COLUMN EPG_MAPPING.CH_ID IS
 'Channel ID';
 
 COMMENT ON COLUMN EPG_MAPPING.EPG_CODE IS
 'Код канала в источнике EPG';
 
+COMMENT ON COLUMN EPG_MAPPING.EPG_ID IS
+'EPG_ID';
+
 COMMENT ON COLUMN EPG_MAPPING.SHIFT_M IS
 'Сдивг времени для этого канала источника';
-
-COMMENT ON COLUMN EPG_SOURCES.ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN EPG_SOURCES.TIME_SHIFT IS
-'Сдвиг времени в часах';
-
-COMMENT ON COLUMN EPG_SOURCES.PARSEAS IS
-'Алгоритм разбора файла';
-
-COMMENT ON COLUMN EPG_SOURCES.LOCAL_TZONE IS
-'Использовать локальный часовой пояс вместо указанного в файле';
-
-COMMENT ON COLUMN EPG_SOURCES.LOCAL_FILE IS
-'Локальный файл (какой файл открывать и в какой файл скачивать из интернета)';
 
 COMMENT ON COLUMN EPG_SOURCES.HAND_ONLY IS
 'Загрузка только в ручном режиме';
 
-COMMENT ON COLUMN EQUIPMENT.IP IS
-'IP сети';
+COMMENT ON COLUMN EPG_SOURCES.ID IS
+'FOR PRIMARY KEYS';
 
-COMMENT ON COLUMN EQUIPMENT.MAC IS
-'MAC сети';
+COMMENT ON COLUMN EPG_SOURCES.LOCAL_FILE IS
+'Локальный файл (какой файл открывать и в какой файл скачивать из интернета)';
+
+COMMENT ON COLUMN EPG_SOURCES.LOCAL_TZONE IS
+'Использовать локальный часовой пояс вместо указанного в файле';
+
+COMMENT ON COLUMN EPG_SOURCES.PARSEAS IS
+'Алгоритм разбора файла';
+
+COMMENT ON COLUMN EPG_SOURCES.TIME_SHIFT IS
+'Сдвиг времени в часах';
+
+COMMENT ON COLUMN EQUIPMENT.EQ_ACTIVE IS
+'Активное - пассивное';
+
+COMMENT ON COLUMN EQUIPMENT.EQ_DELIVERY_COST IS
+'Стоимость на момент ввода в эксплуатацию';
+
+COMMENT ON COLUMN EQUIPMENT.EQ_DELIVERY_DATE IS
+'Дата ввода в эксплуатацию';
+
+COMMENT ON COLUMN EQUIPMENT.EQ_LINE IS
+'Магистраль 0 - Внешняя 1 - Домовая';
+
+COMMENT ON COLUMN EQUIPMENT.EQ_REGNUBER IS
+'Инвентарный номер';
 
 COMMENT ON COLUMN EQUIPMENT.EQ_TYPE IS
 'Тип оборудования
@@ -34670,17 +34702,23 @@ COMMENT ON COLUMN EQUIPMENT.EQ_TYPE IS
 2-TV
 3-прочее';
 
-COMMENT ON COLUMN EQUIPMENT.PORCH_N IS
-'Подъезд';
-
 COMMENT ON COLUMN EQUIPMENT.FLOOR_N IS
 'Этаж';
+
+COMMENT ON COLUMN EQUIPMENT.IP IS
+'IP сети';
+
+COMMENT ON COLUMN EQUIPMENT.M_ID IS
+'ID материала';
+
+COMMENT ON COLUMN EQUIPMENT.MAC IS
+'MAC сети';
 
 COMMENT ON COLUMN EQUIPMENT.MASK IS
 'Маска сети';
 
-COMMENT ON COLUMN EQUIPMENT.VLAN_ID IS
-'ID VLAN из справочника вланов';
+COMMENT ON COLUMN EQUIPMENT.NODE_ID IS
+'ID узла';
 
 COMMENT ON COLUMN EQUIPMENT.PARENT_ID IS
 'Подключен к';
@@ -34688,8 +34726,11 @@ COMMENT ON COLUMN EQUIPMENT.PARENT_ID IS
 COMMENT ON COLUMN EQUIPMENT.PARENT_PORT IS
 'Подключен к порту или гнезду';
 
-COMMENT ON COLUMN EQUIPMENT.EQ_LINE IS
-'Магистраль 0 - Внешняя 1 - Домовая';
+COMMENT ON COLUMN EQUIPMENT.PCE IS
+'Потребляемая мощность в час';
+
+COMMENT ON COLUMN EQUIPMENT.PORCH_N IS
+'Подъезд';
 
 COMMENT ON COLUMN EQUIPMENT.SIGNAL_IN IS
 'Уровень входного сигнала';
@@ -34697,29 +34738,23 @@ COMMENT ON COLUMN EQUIPMENT.SIGNAL_IN IS
 COMMENT ON COLUMN EQUIPMENT.SIGNAL_OUT IS
 'Уровень выходного сигнала';
 
-COMMENT ON COLUMN EQUIPMENT.EQ_ACTIVE IS
-'Активное - пассивное';
-
-COMMENT ON COLUMN EQUIPMENT.EQ_DELIVERY_DATE IS
-'Дата ввода в эксплуатацию';
-
-COMMENT ON COLUMN EQUIPMENT.EQ_DELIVERY_COST IS
-'Стоимость на момент ввода в эксплуатацию';
-
-COMMENT ON COLUMN EQUIPMENT.EQ_REGNUBER IS
-'Инвентарный номер';
-
-COMMENT ON COLUMN EQUIPMENT.NODE_ID IS
-'ID узла';
-
-COMMENT ON COLUMN EQUIPMENT.M_ID IS
-'ID материала';
-
 COMMENT ON COLUMN EQUIPMENT.SYSNAME IS
 'Служебное имя, используется в скриптах';
 
-COMMENT ON COLUMN EQUIPMENT.PCE IS
-'Потребляемая мощность в час';
+COMMENT ON COLUMN EQUIPMENT.VLAN_ID IS
+'ID VLAN из справочника вланов';
+
+COMMENT ON COLUMN EQUIPMENT_CMD_GRP.AUT_PSWD IS
+'Авторизация пароль';
+
+COMMENT ON COLUMN EQUIPMENT_CMD_GRP.AUT_USER IS
+'Авторизация пользователь (http basic например)';
+
+COMMENT ON COLUMN EQUIPMENT_CMD_GRP.CMD_TYPE IS
+'0-телнет, 1-SNMP, 2-HTTP';
+
+COMMENT ON COLUMN EQUIPMENT_CMD_GRP.COMMAND IS
+'сама комманда';
 
 COMMENT ON COLUMN EQUIPMENT_CMD_GRP.EC_ID IS
 'Код комманды';
@@ -34727,29 +34762,17 @@ COMMENT ON COLUMN EQUIPMENT_CMD_GRP.EC_ID IS
 COMMENT ON COLUMN EQUIPMENT_CMD_GRP.EG_ID IS
 'Код группы оборудования или -1 = Все группы';
 
-COMMENT ON COLUMN EQUIPMENT_CMD_GRP.NAME IS
-'Название комманды';
-
-COMMENT ON COLUMN EQUIPMENT_CMD_GRP.COMMAND IS
-'сама комманда';
-
-COMMENT ON COLUMN EQUIPMENT_CMD_GRP.CMD_TYPE IS
-'0-телнет, 1-SNMP, 2-HTTP';
+COMMENT ON COLUMN EQUIPMENT_CMD_GRP.EOL_CHRS IS
+'Символы конца строки';
 
 COMMENT ON COLUMN EQUIPMENT_CMD_GRP.IN_GUI IS
 'Возможность исполнять из ПО';
 
-COMMENT ON COLUMN EQUIPMENT_CMD_GRP.EOL_CHRS IS
-'Символы конца строки';
+COMMENT ON COLUMN EQUIPMENT_CMD_GRP.NAME IS
+'Название комманды';
 
 COMMENT ON COLUMN EQUIPMENT_CMD_GRP.URL IS
 'Ссылка HTTP или подобное';
-
-COMMENT ON COLUMN EQUIPMENT_CMD_GRP.AUT_USER IS
-'Авторизация пользователь (http basic например)';
-
-COMMENT ON COLUMN EQUIPMENT_CMD_GRP.AUT_PSWD IS
-'Авторизация пароль';
 
 COMMENT ON COLUMN EQUIPMENT_COVERAGE.EID IS
 'Код оборудования';
@@ -34757,8 +34780,14 @@ COMMENT ON COLUMN EQUIPMENT_COVERAGE.EID IS
 COMMENT ON COLUMN EQUIPMENT_COVERAGE.HOUSE_ID IS
 'Код дома';
 
-COMMENT ON COLUMN EQUIPMENT_DVB.EQ_TYPE IS
-'OBJECT TYPE 19 0 - Карточка 1-приставка 2-модуль';
+COMMENT ON COLUMN EQUIPMENT_DVB.ADDED_BY IS
+'Кто добавил';
+
+COMMENT ON COLUMN EQUIPMENT_DVB.ADDED_ON IS
+'Когда';
+
+COMMENT ON COLUMN EQUIPMENT_DVB.EQ_MAN IS
+'Производитель';
 
 COMMENT ON COLUMN EQUIPMENT_DVB.EQ_N IS
 'Номер';
@@ -34770,8 +34799,8 @@ COMMENT ON COLUMN EQUIPMENT_DVB.EQ_STATE IS
 3 - Утерян/Списан
 4 - Ремонт';
 
-COMMENT ON COLUMN EQUIPMENT_DVB.EQ_MAN IS
-'Производитель';
+COMMENT ON COLUMN EQUIPMENT_DVB.EQ_TYPE IS
+'OBJECT TYPE 19 0 - Карточка 1-приставка 2-модуль';
 
 COMMENT ON COLUMN EQUIPMENT_DVB.NOTICE IS
 'Примечание';
@@ -34780,56 +34809,50 @@ COMMENT ON COLUMN EQUIPMENT_DVB.TEXT_ENCODE IS
 'Кодировка сообщений
 ISO WIN UTF';
 
-COMMENT ON COLUMN EQUIPMENT_DVB.ADDED_BY IS
-'Кто добавил';
-
-COMMENT ON COLUMN EQUIPMENT_DVB.ADDED_ON IS
-'Когда';
-
 COMMENT ON COLUMN EQUIPMENT_HISTORY.EQ_STATE IS
 '0-Удален 1-Возврат 2-Выдан 3-Утерян/Списан 4-В ремонте и Непонятки';
-
-COMMENT ON COLUMN EVENT_DETAIL.E_DATE IS
-'Дата';
-
-COMMENT ON COLUMN EVENT_DETAIL.E_YEAR IS
-'Год';
-
-COMMENT ON COLUMN EVENT_DETAIL.E_MONTH IS
-'Месяц';
-
-COMMENT ON COLUMN EVENT_DETAIL.E_DAY IS
-'Год';
 
 COMMENT ON COLUMN EVENT_DETAIL.E_COUNT IS
 'счетчик (потрачено байт или кол-во входов)';
 
+COMMENT ON COLUMN EVENT_DETAIL.E_DATE IS
+'Дата';
+
+COMMENT ON COLUMN EVENT_DETAIL.E_DAY IS
+'Год';
+
 COMMENT ON COLUMN EVENT_DETAIL.E_MONEY IS
 'Выражено в деньгах';
 
-COMMENT ON COLUMN FREQPLAN.WAVE IS
-'Длина волны МВ ДМВ УКВ';
+COMMENT ON COLUMN EVENT_DETAIL.E_MONTH IS
+'Месяц';
 
-COMMENT ON COLUMN FREQPLAN.NAME IS
-'Номер ТВ канала';
-
-COMMENT ON COLUMN FREQPLAN.LOW_FQ IS
-'нижняя  Частотные границы канала (полосы), МГц';
-
-COMMENT ON COLUMN FREQPLAN.HIGH_FQ IS
-'верхняя Частотные границы канала (полосы), МГц';
-
-COMMENT ON COLUMN FREQPLAN.VIDEO IS
-'Несущая частота изображения, МГц Аналоговое телевидение';
-
-COMMENT ON COLUMN FREQPLAN.SOUND IS
-'Несущая частота звука, МГц Аналоговое телевидение';
+COMMENT ON COLUMN EVENT_DETAIL.E_YEAR IS
+'Год';
 
 COMMENT ON COLUMN FREQPLAN.DTV IS
 'Частота для настройки цифрового телевидения, МГц';
 
+COMMENT ON COLUMN FREQPLAN.HIGH_FQ IS
+'верхняя Частотные границы канала (полосы), МГц';
+
+COMMENT ON COLUMN FREQPLAN.LOW_FQ IS
+'нижняя  Частотные границы канала (полосы), МГц';
+
+COMMENT ON COLUMN FREQPLAN.NAME IS
+'Номер ТВ канала';
+
 COMMENT ON COLUMN FREQPLAN.NOTICE IS
 'Примечание / Диапазон';
+
+COMMENT ON COLUMN FREQPLAN.SOUND IS
+'Несущая частота звука, МГц Аналоговое телевидение';
+
+COMMENT ON COLUMN FREQPLAN.VIDEO IS
+'Несущая частота изображения, МГц Аналоговое телевидение';
+
+COMMENT ON COLUMN FREQPLAN.WAVE IS
+'Длина волны МВ ДМВ УКВ';
 
 COMMENT ON COLUMN HEADEND.HE_ID IS
 'код';
@@ -34837,71 +34860,56 @@ COMMENT ON COLUMN HEADEND.HE_ID IS
 COMMENT ON COLUMN HEADEND.HE_NAME IS
 'Название';
 
-COMMENT ON COLUMN HEADEND.HOUSE_ID IS
-'код дома';
-
 COMMENT ON COLUMN HEADEND.HE_PLACE IS
 'место';
 
 COMMENT ON COLUMN HEADEND.HE_TYPE IS
 'Тип';
 
+COMMENT ON COLUMN HEADEND.HOUSE_ID IS
+'код дома';
+
 COMMENT ON COLUMN HEADEND.PARENT_ID IS
 'К чему подключено';
-
-COMMENT ON COLUMN HEADEND_CHANNELS.CH_ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN HEADEND_CHANNELS.HE_ID IS
-'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN HEADEND_CHANNELS.CH_FREQ IS
 'Частота';
 
+COMMENT ON COLUMN HEADEND_CHANNELS.CH_ID IS
+'FOR PRIMARY KEYS';
+
 COMMENT ON COLUMN HEADEND_CHANNELS.CH_NUMBER IS
 'Номер канала';
 
-COMMENT ON COLUMN HOUSE.HOUSE_BLB IS
-'Сссылка на таблицу BLOB_TBL (бинарные данные)';
-
-COMMENT ON COLUMN HOUSE.MAP_FLATS IS
-'Для карты. квартир в ряд';
-
-COMMENT ON COLUMN HOUSE.MAP_WIDTH IS
-'Для карты. ширина';
-
-COMMENT ON COLUMN HOUSE.MAP_HEIGHT IS
-'Для карты. высота';
-
-COMMENT ON COLUMN HOUSE.HEADEND_ID IS
-'Головная станция';
-
-COMMENT ON COLUMN HOUSE.HOUSE_CODE IS
-'Код дома';
-
-COMMENT ON COLUMN HOUSE.EXIST_TV IS
-'Доступно Аналоговое ТВ';
-
-COMMENT ON COLUMN HOUSE.EXIST_LAN IS
-'Доступна сеть передачи данных';
+COMMENT ON COLUMN HEADEND_CHANNELS.HE_ID IS
+'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN HOUSE.EXIST_DTV IS
 'Доступно Цифровое ТВ';
 
-COMMENT ON COLUMN HOUSE.EXIST_VIDEO IS
-'Доступно видеонаблюдение';
-
 COMMENT ON COLUMN HOUSE.EXIST_INTER IS
 'Доступна домофония';
 
-COMMENT ON COLUMN HOUSE.WG_ID IS
-'ID звена (рабочей группы)';
+COMMENT ON COLUMN HOUSE.EXIST_LAN IS
+'Доступна сеть передачи данных';
+
+COMMENT ON COLUMN HOUSE.EXIST_TV IS
+'Доступно Аналоговое ТВ';
+
+COMMENT ON COLUMN HOUSE.EXIST_VIDEO IS
+'Доступно видеонаблюдение';
+
+COMMENT ON COLUMN HOUSE.HEADEND_ID IS
+'Головная станция';
+
+COMMENT ON COLUMN HOUSE.HOUSE_BLB IS
+'Сссылка на таблицу BLOB_TBL (бинарные данные)';
+
+COMMENT ON COLUMN HOUSE.HOUSE_CODE IS
+'Код дома';
 
 COMMENT ON COLUMN HOUSE.IN_DATE IS
 'Дата вводв в экспл.';
-
-COMMENT ON COLUMN HOUSE.REPAIR_DATE IS
-'Дата последнего кап ремонта';
 
 COMMENT ON COLUMN HOUSE.LATITUDE IS
 'Широта (вертикаль)';
@@ -34909,35 +34917,35 @@ COMMENT ON COLUMN HOUSE.LATITUDE IS
 COMMENT ON COLUMN HOUSE.LONGITUDE IS
 'Долгота (горизонталь)';
 
+COMMENT ON COLUMN HOUSE.MAP_FLATS IS
+'Для карты. квартир в ряд';
+
+COMMENT ON COLUMN HOUSE.MAP_HEIGHT IS
+'Для карты. высота';
+
+COMMENT ON COLUMN HOUSE.MAP_WIDTH IS
+'Для карты. ширина';
+
+COMMENT ON COLUMN HOUSE.REPAIR_DATE IS
+'Дата последнего кап ремонта';
+
 COMMENT ON COLUMN HOUSE.TAG IS
 'цифровое поле для использование оператором';
 
 COMMENT ON COLUMN HOUSE.TAG_STR IS
 'Текстовое поле для использование оператором';
 
-COMMENT ON COLUMN HOUSEFLATS.OWNER_NAME IS
-'Фио владельца';
+COMMENT ON COLUMN HOUSE.WG_ID IS
+'ID звена (рабочей группы)';
 
 COMMENT ON COLUMN HOUSEFLATS.OWNER_DOC IS
 'документ владельца (паспорт)';
 
+COMMENT ON COLUMN HOUSEFLATS.OWNER_NAME IS
+'Фио владельца';
+
 COMMENT ON COLUMN HOUSEFLOOR.FLATS IS
 'Номера квартир, например 10-12,15 т.е. 10 11 12 15';
-
-COMMENT ON COLUMN HOUSEPORCH.PORCH_ID IS
-'код подъезда';
-
-COMMENT ON COLUMN HOUSEPORCH.HOUSE_ID IS
-'код дома';
-
-COMMENT ON COLUMN HOUSEPORCH.PORCH_N IS
-'Номер подъезда';
-
-COMMENT ON COLUMN HOUSEPORCH.FLOORS IS
-'Этажей';
-
-COMMENT ON COLUMN HOUSEPORCH.GARRET IS
-'Чердак';
 
 COMMENT ON COLUMN HOUSEPORCH.CELLAR IS
 'Подвал';
@@ -34948,8 +34956,23 @@ COMMENT ON COLUMN HOUSEPORCH.FLAT_FROM IS
 COMMENT ON COLUMN HOUSEPORCH.FLAT_TO IS
 'Квартиры по';
 
+COMMENT ON COLUMN HOUSEPORCH.FLOORS IS
+'Этажей';
+
+COMMENT ON COLUMN HOUSEPORCH.GARRET IS
+'Чердак';
+
+COMMENT ON COLUMN HOUSEPORCH.HOUSE_ID IS
+'код дома';
+
 COMMENT ON COLUMN HOUSEPORCH.INTER IS
 'Есть домофон';
+
+COMMENT ON COLUMN HOUSEPORCH.PORCH_ID IS
+'код подъезда';
+
+COMMENT ON COLUMN HOUSEPORCH.PORCH_N IS
+'Номер подъезда';
 
 COMMENT ON COLUMN HOUSEPORCH.VIDEO IS
 'Есть видеонаблюдение';
@@ -34957,44 +34980,41 @@ COMMENT ON COLUMN HOUSEPORCH.VIDEO IS
 COMMENT ON COLUMN HOUSES_ATTRIBUTES.HA_VALUE IS
 'Значение атрибута';
 
-COMMENT ON COLUMN IPTV_GROUP.NAME IS
-'Имя группы';
-
 COMMENT ON COLUMN IPTV_GROUP.CODE IS
 'Код';
-
-COMMENT ON COLUMN IPTV_GROUP.URL IS
-'URL';
 
 COMMENT ON COLUMN IPTV_GROUP.DISABLED IS
 'Признак что группа отключена';
 
+COMMENT ON COLUMN IPTV_GROUP.NAME IS
+'Имя группы';
+
 COMMENT ON COLUMN IPTV_GROUP.NOTICE IS
 'Примечание';
+
+COMMENT ON COLUMN IPTV_GROUP.URL IS
+'URL';
 
 COMMENT ON COLUMN IPTV_GROUP_ATTRIBUTES.O_ID IS
 'O_TYPE = 32';
 
-COMMENT ON COLUMN IPTV_GROUP_CHANNELS.IG_ID IS
-'ID IPTV группы';
-
 COMMENT ON COLUMN IPTV_GROUP_CHANNELS.CH_ID IS
 'ID канала';
 
-COMMENT ON COLUMN IPTV_GROUP_CHANNELS.LCN IS
-'Номер в группе';
-
 COMMENT ON COLUMN IPTV_GROUP_CHANNELS.CODE IS
 'код в группе';
+
+COMMENT ON COLUMN IPTV_GROUP_CHANNELS.IG_ID IS
+'ID IPTV группы';
+
+COMMENT ON COLUMN IPTV_GROUP_CHANNELS.LCN IS
+'Номер в группе';
 
 COMMENT ON COLUMN IPTV_GROUP_CHANNELS.URL IS
 'url';
 
 COMMENT ON COLUMN JOURNAL.J_ID IS
 'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN LETTERTYPE.LETTERTYPEID IS
-'если отрицательное значение, значит служебное. такое скрываем от добавления и не даем удалить';
 
 COMMENT ON COLUMN LETTERTYPE.FILENAME IS
 'имя файла письма';
@@ -35004,35 +35024,75 @@ COMMENT ON COLUMN LETTERTYPE.FOR_FORM IS
 0 - Абоненты
 1 - Заявки';
 
+COMMENT ON COLUMN LETTERTYPE.LETTERTYPEID IS
+'если отрицательное значение, значит служебное. такое скрываем от добавления и не даем удалить';
+
 COMMENT ON COLUMN LETTERTYPE.SAVE_PDF IS
 'Сохранять как PDF в базе';
-
-COMMENT ON COLUMN MAP.O_TYPE IS
-'Тип объекта на карте';
 
 COMMENT ON COLUMN MAP.CONNECTED IS
 'Подключен к';
 
+COMMENT ON COLUMN MAP.O_TYPE IS
+'Тип объекта на карте';
+
 COMMENT ON COLUMN MAP_LOG.UNIQUE_ID IS
 'FOR PRIMARY KEYS';
 
-COMMENT ON COLUMN MATERIALS.M_ID IS
-'ID метериала. наименование в таблице OBJECTS';
+COMMENT ON COLUMN MATERIAL_DOCS.DOC_CLOSED IS
+'1 = Документ закрыт (редактировать нельзя)';
 
-COMMENT ON COLUMN MATERIALS.DESCRIPTION IS
-'Примечание';
+COMMENT ON COLUMN MATERIAL_DOCS.DOC_DATE IS
+'ДАТА доумента';
 
-COMMENT ON COLUMN MATERIALS.MG_ID IS
-'Группа материала. Ссылка на MATERIALS_GROUP';
+COMMENT ON COLUMN MATERIAL_DOCS.DOC_ID IS
+'ID документа';
 
-COMMENT ON COLUMN MATERIALS.M_NUMBER IS
-'номенклатурный номер';
+COMMENT ON COLUMN MATERIAL_DOCS.DOC_N IS
+'Номер документа';
 
-COMMENT ON COLUMN MATERIALS.ROUND_TO IS
-'Округлять до';
+COMMENT ON COLUMN MATERIAL_DOCS.DT_ID IS
+'Тип документа O_TYPE = 28';
 
-COMMENT ON COLUMN MATERIALS.COST IS
-'Цена материала';
+COMMENT ON COLUMN MATERIAL_DOCS.EXT_ID IS
+'Номер прихода во внешней системе';
+
+COMMENT ON COLUMN MATERIAL_DOCS.FROM_WH IS
+'С какого склада';
+
+COMMENT ON COLUMN MATERIAL_DOCS.NOTICE IS
+'ПРимечание';
+
+COMMENT ON COLUMN MATERIAL_DOCS.SHIPPER IS
+'Поставщик O_TYPE = 29';
+
+COMMENT ON COLUMN MATERIAL_DOCS.WH_ID IS
+'Склад прихода O_TYPE = 10';
+
+COMMENT ON COLUMN MATERIAL_UNIT.COST IS
+'Цена закупки';
+
+COMMENT ON COLUMN MATERIAL_UNIT.DOC_INCOME IS
+'Первичный документ прихода';
+
+COMMENT ON COLUMN MATERIAL_UNIT.MAC IS
+'MAC';
+
+COMMENT ON COLUMN MATERIAL_UNIT.OWNER IS
+'ID владельца';
+
+COMMENT ON COLUMN MATERIAL_UNIT.OWNER_TYPE IS
+'Владелец (0-склад, 1-абонент, 2-узел) OBJECTS_TYPE = 51';
+
+COMMENT ON COLUMN MATERIAL_UNIT.S_VERSION IS
+'Версия софта';
+
+COMMENT ON COLUMN MATERIAL_UNIT.SERIAL IS
+'Серийный номер ИД оборудования/материала';
+
+COMMENT ON COLUMN MATERIAL_UNIT.STATE IS
+'Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
+или временный статус = -1*ID объекта (заявки, склада)';
 
 COMMENT ON COLUMN MATERIALS.BEST_COST IS
 'Лучшая цена поставщика';
@@ -35040,8 +35100,11 @@ COMMENT ON COLUMN MATERIALS.BEST_COST IS
 COMMENT ON COLUMN MATERIALS.BEST_SHIPPER_ID IS
 'Лучший поставщик';
 
-COMMENT ON COLUMN MATERIALS.IS_UNIT IS
-'штучный учет';
+COMMENT ON COLUMN MATERIALS.COST IS
+'Цена материала';
+
+COMMENT ON COLUMN MATERIALS.DESCRIPTION IS
+'Примечание';
 
 COMMENT ON COLUMN MATERIALS.IS_DIGIT IS
 'для работы цифрового тв';
@@ -35049,17 +35112,23 @@ COMMENT ON COLUMN MATERIALS.IS_DIGIT IS
 COMMENT ON COLUMN MATERIALS.IS_NET IS
 'для работы в сети';
 
-COMMENT ON COLUMN MATERIALS.M_TYPE IS
-'Тип устройства. в справочнике Objects_type = 48';
-
-COMMENT ON COLUMN MATERIALS.SOLD IS
-'Услуга продажи';
-
-COMMENT ON COLUMN MATERIALS.RENT IS
-'Услуга аренды';
+COMMENT ON COLUMN MATERIALS.IS_UNIT IS
+'штучный учет';
 
 COMMENT ON COLUMN MATERIALS.LOAN IS
 'Услуга рассрочки';
+
+COMMENT ON COLUMN MATERIALS.M_ID IS
+'ID метериала. наименование в таблице OBJECTS';
+
+COMMENT ON COLUMN MATERIALS.M_NUMBER IS
+'номенклатурный номер';
+
+COMMENT ON COLUMN MATERIALS.M_TYPE IS
+'Тип устройства. в справочнике Objects_type = 48';
+
+COMMENT ON COLUMN MATERIALS.MG_ID IS
+'Группа материала. Ссылка на MATERIALS_GROUP';
 
 COMMENT ON COLUMN MATERIALS.PCE IS
 'Мощность, Вт';
@@ -35073,20 +35142,26 @@ COMMENT ON COLUMN MATERIALS.PROP IS
 4 Возврат бесплатно
 5 Возврат за деньги (Выкуп)';
 
+COMMENT ON COLUMN MATERIALS.RENT IS
+'Услуга аренды';
+
+COMMENT ON COLUMN MATERIALS.ROUND_TO IS
+'Округлять до';
+
+COMMENT ON COLUMN MATERIALS.SOLD IS
+'Услуга продажи';
+
+COMMENT ON COLUMN MATERIALS_GROUP.EXCL_LAYOUT IS
+'Исключить группу из компоновки';
+
+COMMENT ON COLUMN MATERIALS_GROUP.LOAN IS
+'Услуга рассрочки';
+
 COMMENT ON COLUMN MATERIALS_GROUP.MG_ID IS
 'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN MATERIALS_GROUP.PARENT_ID IS
 'Для полей ссылок которые могут содержать Null';
-
-COMMENT ON COLUMN MATERIALS_GROUP.SOLD IS
-'Услуга продажи';
-
-COMMENT ON COLUMN MATERIALS_GROUP.RENT IS
-'Услуга аренды';
-
-COMMENT ON COLUMN MATERIALS_GROUP.LOAN IS
-'Услуга рассрочки';
 
 COMMENT ON COLUMN MATERIALS_GROUP.PATH IS
 'путь группы (от корня к листу)';
@@ -35103,6 +35178,12 @@ COMMENT ON COLUMN MATERIALS_GROUP.PROP IS
 4 Возврат бесплатно
 5 Возврат за деньги (Выкуп)';
 
+COMMENT ON COLUMN MATERIALS_GROUP.RENT IS
+'Услуга аренды';
+
+COMMENT ON COLUMN MATERIALS_GROUP.SOLD IS
+'Услуга продажи';
+
 COMMENT ON COLUMN MATERIALS_IN_DOC.B_QUANT IS
 'Количество до пересчета';
 
@@ -35112,14 +35193,11 @@ COMMENT ON COLUMN MATERIALS_IN_DOC.TTN IS
 COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.DOC_ID IS
 'ID документа';
 
-COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.M_ID IS
-'ID материала';
-
 COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.ID IS
 'ID строки с материалом в документе';
 
-COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.SERIAL IS
-'Серийный номер ИД оборудования/материала';
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.M_ID IS
+'ID материала';
 
 COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.MAC IS
 'MAC';
@@ -35130,142 +35208,23 @@ COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.NOTICE IS
 COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.S_VERSION IS
 'Версия софта';
 
-COMMENT ON COLUMN MATERIALS_REMAIN.M_ID IS
-'ID материала';
-
-COMMENT ON COLUMN MATERIALS_REMAIN.WH_ID IS
-'ID склада';
-
-COMMENT ON COLUMN MATERIALS_REMAIN.MR_QUANT IS
-'Кол-во материала';
-
-COMMENT ON COLUMN MATERIALS_REMAIN.MR_COST IS
-'Цена материала';
+COMMENT ON COLUMN MATERIALS_IN_DOC_UNIT.SERIAL IS
+'Серийный номер ИД оборудования/материала';
 
 COMMENT ON COLUMN MATERIALS_REMAIN.INVENTORY IS
 'Дата последней инвентаризации';
 
-COMMENT ON COLUMN MATERIAL_DOCS.DOC_ID IS
-'ID документа';
+COMMENT ON COLUMN MATERIALS_REMAIN.M_ID IS
+'ID материала';
 
-COMMENT ON COLUMN MATERIAL_DOCS.DOC_N IS
-'Номер документа';
+COMMENT ON COLUMN MATERIALS_REMAIN.MR_COST IS
+'Цена материала';
 
-COMMENT ON COLUMN MATERIAL_DOCS.DOC_DATE IS
-'ДАТА доумента';
+COMMENT ON COLUMN MATERIALS_REMAIN.MR_QUANT IS
+'Кол-во материала';
 
-COMMENT ON COLUMN MATERIAL_DOCS.DT_ID IS
-'Тип документа O_TYPE = 28';
-
-COMMENT ON COLUMN MATERIAL_DOCS.NOTICE IS
-'ПРимечание';
-
-COMMENT ON COLUMN MATERIAL_DOCS.WH_ID IS
-'Склад прихода O_TYPE = 10';
-
-COMMENT ON COLUMN MATERIAL_DOCS.DOC_CLOSED IS
-'1 = Документ закрыт (редактировать нельзя)';
-
-COMMENT ON COLUMN MATERIAL_DOCS.EXT_ID IS
-'Номер прихода во внешней системе';
-
-COMMENT ON COLUMN MATERIAL_DOCS.FROM_WH IS
-'С какого склада';
-
-COMMENT ON COLUMN MATERIAL_DOCS.SHIPPER IS
-'Поставщик O_TYPE = 29';
-
-COMMENT ON COLUMN MATERIAL_UNIT.SERIAL IS
-'Серийный номер ИД оборудования/материала';
-
-COMMENT ON COLUMN MATERIAL_UNIT.OWNER IS
-'ID владельца';
-
-COMMENT ON COLUMN MATERIAL_UNIT.OWNER_TYPE IS
-'Владелец (0-склад, 1-абонент, 2-узел) OBJECTS_TYPE = 51';
-
-COMMENT ON COLUMN MATERIAL_UNIT.STATE IS
-'Статус. 0-на складе, 1-выдан, 2-в ремонте, 3-продан, 4-списан
-или временный статус = -1*ID объекта (заявки, склада)';
-
-COMMENT ON COLUMN MATERIAL_UNIT.MAC IS
-'MAC';
-
-COMMENT ON COLUMN MATERIAL_UNIT.DOC_INCOME IS
-'Первичный документ прихода';
-
-COMMENT ON COLUMN MATERIAL_UNIT.COST IS
-'Цена закупки';
-
-COMMENT ON COLUMN MATERIAL_UNIT.S_VERSION IS
-'Версия софта';
-
-COMMENT ON COLUMN MESSAGES.MES_ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN MESSAGES.CUSTOMER_ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN MESSAGES.MES_TYPE IS
-'Тип собщения
-SMS, EMAIL, STB, OSD';
-
-COMMENT ON COLUMN MESSAGES.RECIVER IS
-'телефон, карта или адрес получателя. т.е. куда отправлять';
-
-COMMENT ON COLUMN MESSAGES.MES_HEAD IS
-'Тема сообщений';
-
-COMMENT ON COLUMN MESSAGES.MES_TEXT IS
-'Текст сообщений, для email может содержать имя формы отчета';
-
-COMMENT ON COLUMN MESSAGES.MES_RESULT IS
-'Результат
-0 - добавлен
-1 - в обработке
-2 - обработан
-с минусом - ошибки';
-
-COMMENT ON COLUMN MESSAGES.SEND_DATE IS
-'Дата отправки';
-
-COMMENT ON COLUMN MESSAGES.ADDED_ON IS
-'Когда добавили';
-
-COMMENT ON COLUMN MESSAGES.ADDED_BY IS
-'Кто добавил';
-
-COMMENT ON COLUMN MESSAGES.MES_PRIOR IS
-'Приоритет сообщения, все что выше 0 отправляется вне зависимости от времени суток';
-
-COMMENT ON COLUMN MESSAGES.EXT_ID IS
-'ID сообщения во внешней сисеме';
-
-COMMENT ON COLUMN MESSAGES.TPL_ID IS
-'Тип сообщения  O_TYPE = 23';
-
-COMMENT ON COLUMN MESSAGES.INFO_PERIOD IS
-'Период, в течение которого, соблюдая интервал, отправляется сообщение Инфокас';
-
-COMMENT ON COLUMN MESSAGES.INFO_INTERVAL IS
-'Интервал отправки сообщения Инфокас';
-
-COMMENT ON COLUMN MESSAGES.TAG IS
-'пометка для аналитики. типа #ДОЛГ #ДР';
-
-COMMENT ON COLUMN MESSAGES.DIRECT IS
-'Направление
-0 от оператора
-1 к оператору';
-
-COMMENT ON COLUMN MESSAGES.PARENT_ID IS
-'ID сообщения на которое ответили';
-
-COMMENT ON COLUMN MESSAGE_TPL.MT_ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN MESSAGE_TPL.MT_NAME IS
-'название шаблона';
+COMMENT ON COLUMN MATERIALS_REMAIN.WH_ID IS
+'ID склада';
 
 COMMENT ON COLUMN MESSAGE_TPL.MES_HEAD IS
 'Заголовок';
@@ -35276,89 +35235,84 @@ COMMENT ON COLUMN MESSAGE_TPL.MES_TEXT IS
 COMMENT ON COLUMN MESSAGE_TPL.MES_TYPE IS
 'Тип сообщения';
 
+COMMENT ON COLUMN MESSAGE_TPL.MT_ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN MESSAGE_TPL.MT_NAME IS
+'название шаблона';
+
 COMMENT ON COLUMN MESSAGE_TPL.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN MODULES.LANG IS
-'0 Pascal, 1 C++, 2 JavaScript, 3 Basic';
+COMMENT ON COLUMN MESSAGES.ADDED_BY IS
+'Кто добавил';
+
+COMMENT ON COLUMN MESSAGES.ADDED_ON IS
+'Когда добавили';
+
+COMMENT ON COLUMN MESSAGES.CUSTOMER_ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN MESSAGES.DIRECT IS
+'Направление
+0 от оператора
+1 к оператору';
+
+COMMENT ON COLUMN MESSAGES.EXT_ID IS
+'ID сообщения во внешней сисеме';
+
+COMMENT ON COLUMN MESSAGES.INFO_INTERVAL IS
+'Интервал отправки сообщения Инфокас';
+
+COMMENT ON COLUMN MESSAGES.INFO_PERIOD IS
+'Период, в течение которого, соблюдая интервал, отправляется сообщение Инфокас';
+
+COMMENT ON COLUMN MESSAGES.MES_HEAD IS
+'Тема сообщений';
+
+COMMENT ON COLUMN MESSAGES.MES_ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN MESSAGES.MES_PRIOR IS
+'Приоритет сообщения, все что выше 0 отправляется вне зависимости от времени суток';
+
+COMMENT ON COLUMN MESSAGES.MES_RESULT IS
+'Результат
+0 - добавлен
+1 - в обработке
+2 - обработан
+с минусом - ошибки';
+
+COMMENT ON COLUMN MESSAGES.MES_TEXT IS
+'Текст сообщений, для email может содержать имя формы отчета';
+
+COMMENT ON COLUMN MESSAGES.MES_TYPE IS
+'Тип собщения
+SMS, EMAIL, STB, OSD';
+
+COMMENT ON COLUMN MESSAGES.PARENT_ID IS
+'ID сообщения на которое ответили';
+
+COMMENT ON COLUMN MESSAGES.RECIVER IS
+'телефон, карта или адрес получателя. т.е. куда отправлять';
+
+COMMENT ON COLUMN MESSAGES.SEND_DATE IS
+'Дата отправки';
+
+COMMENT ON COLUMN MESSAGES.TAG IS
+'пометка для аналитики. типа #ДОЛГ #ДР';
+
+COMMENT ON COLUMN MESSAGES.TPL_ID IS
+'Тип сообщения  O_TYPE = 23';
 
 COMMENT ON COLUMN MODULES.IN_MENU IS
 'Отображать в меню';
 
+COMMENT ON COLUMN MODULES.LANG IS
+'0 Pascal, 1 C++, 2 JavaScript, 3 Basic';
+
 COMMENT ON COLUMN MONTHLY_FEE.VAT_TAX IS
 'Ставка НДС';
-
-COMMENT ON COLUMN NODES.NODE_ID IS
-'ID узла';
-
-COMMENT ON COLUMN NODES.HOUSE_ID IS
-'Ближайший дом';
-
-COMMENT ON COLUMN NODES.TYPE_ID IS
-'Тип узла OBJECTS_TYPE 38';
-
-COMMENT ON COLUMN NODES.NAME IS
-'Название узла';
-
-COMMENT ON COLUMN NODES.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN NODES.LAT IS
-'Координаты. Широта';
-
-COMMENT ON COLUMN NODES.LON IS
-'Координаты. Долгота';
-
-COMMENT ON COLUMN NODES.FLOOR_N IS
-'этаж';
-
-COMMENT ON COLUMN NODES.PORCH_N IS
-'подъезд';
-
-COMMENT ON COLUMN NODES.PLACE IS
-'Место установки';
-
-COMMENT ON COLUMN NODES.EPOINT IS
-'Точка учета электроэнергии Objects type = 76';
-
-COMMENT ON COLUMN NODES.EP_TAG IS
-'Дополнительная информация к точке УЭ';
-
-COMMENT ON COLUMN NODES.PARENT_ID IS
-'К какому узлу подулючен узел';
-
-COMMENT ON COLUMN NODES.PCE IS
-'Потребляемая мощность в час';
-
-COMMENT ON COLUMN NODES_ATTRIBUTES.O_ID IS
-'O_TYPE = 39';
-
-COMMENT ON COLUMN NODES_ATTRIBUTES.NA_VALUE IS
-'Значение атрибута';
-
-COMMENT ON COLUMN NODE_FILES.NF_ID IS
-'ID файла';
-
-COMMENT ON COLUMN NODE_FILES.NODE_ID IS
-'ID абонента';
-
-COMMENT ON COLUMN NODE_FILES.NAME IS
-'название / номер документа';
-
-COMMENT ON COLUMN NODE_FILES.NF_TYPE IS
-'Тип документа O_TYPE = 40';
-
-COMMENT ON COLUMN NODE_FILES.DATE_FROM IS
-'Дествует с';
-
-COMMENT ON COLUMN NODE_FILES.DATE_TO IS
-'Действует по';
-
-COMMENT ON COLUMN NODE_FILES.FILENAME IS
-'Имя файла';
-
-COMMENT ON COLUMN NODE_FILES.NOTICE IS
-'Примечание';
 
 COMMENT ON COLUMN NODE_FILES.ADDED_BY IS
 'Кто добавил';
@@ -35366,26 +35320,89 @@ COMMENT ON COLUMN NODE_FILES.ADDED_BY IS
 COMMENT ON COLUMN NODE_FILES.ADDED_ON IS
 'Когда добавил';
 
+COMMENT ON COLUMN NODE_FILES.DATE_FROM IS
+'Дествует с';
+
+COMMENT ON COLUMN NODE_FILES.DATE_TO IS
+'Действует по';
+
 COMMENT ON COLUMN NODE_FILES.EDIT_BY IS
 'Кто изменил';
 
 COMMENT ON COLUMN NODE_FILES.EDIT_ON IS
 'Когда изменил';
 
-COMMENT ON COLUMN NODE_LAYOUT.NODE_ID IS
-'Ид узла, если < 0, то это ид типа узла';
+COMMENT ON COLUMN NODE_FILES.FILENAME IS
+'Имя файла';
 
-COMMENT ON COLUMN NPS.NPS_DATE IS
-'Дата проведения опроса';
+COMMENT ON COLUMN NODE_FILES.NAME IS
+'название / номер документа';
 
-COMMENT ON COLUMN NPS.CUSTOMER_ID IS
-'Абонент';
+COMMENT ON COLUMN NODE_FILES.NF_ID IS
+'ID файла';
 
-COMMENT ON COLUMN NPS.RATING IS
-'Оценка';
+COMMENT ON COLUMN NODE_FILES.NF_TYPE IS
+'Тип документа O_TYPE = 40';
 
-COMMENT ON COLUMN NPS.NOTICE IS
-'Текст (почему)';
+COMMENT ON COLUMN NODE_FILES.NODE_ID IS
+'ID абонента';
+
+COMMENT ON COLUMN NODE_FILES.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN NODE_LAYOUT.LT_ID IS
+'Ид узла, если < 0, то это ид типа компоновки';
+
+COMMENT ON COLUMN NODES.EP_TAG IS
+'Дополнительная информация к точке УЭ';
+
+COMMENT ON COLUMN NODES.EPOINT IS
+'Точка учета электроэнергии Objects type = 76';
+
+COMMENT ON COLUMN NODES.FLOOR_N IS
+'этаж';
+
+COMMENT ON COLUMN NODES.HOUSE_ID IS
+'Ближайший дом';
+
+COMMENT ON COLUMN NODES.LAT IS
+'Координаты. Широта';
+
+COMMENT ON COLUMN NODES.LON IS
+'Координаты. Долгота';
+
+COMMENT ON COLUMN NODES.LT_ID IS
+'ИД компановки узла';
+
+COMMENT ON COLUMN NODES.NAME IS
+'Название узла';
+
+COMMENT ON COLUMN NODES.NODE_ID IS
+'ID узла';
+
+COMMENT ON COLUMN NODES.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN NODES.PARENT_ID IS
+'К какому узлу подулючен узел';
+
+COMMENT ON COLUMN NODES.PCE IS
+'Потребляемая мощность в час';
+
+COMMENT ON COLUMN NODES.PLACE IS
+'Место установки';
+
+COMMENT ON COLUMN NODES.PORCH_N IS
+'подъезд';
+
+COMMENT ON COLUMN NODES.TYPE_ID IS
+'Тип узла OBJECTS_TYPE 38';
+
+COMMENT ON COLUMN NODES_ATTRIBUTES.NA_VALUE IS
+'Значение атрибута';
+
+COMMENT ON COLUMN NODES_ATTRIBUTES.O_ID IS
+'O_TYPE = 39';
 
 COMMENT ON COLUMN NPS.ADDED_BY IS
 'Кто добавил';
@@ -35393,41 +35410,59 @@ COMMENT ON COLUMN NPS.ADDED_BY IS
 COMMENT ON COLUMN NPS.ADDED_ON IS
 'Когда добавил';
 
+COMMENT ON COLUMN NPS.CUSTOMER_ID IS
+'Абонент';
+
 COMMENT ON COLUMN NPS.EDIT_BY IS
 'Кто изменил';
 
 COMMENT ON COLUMN NPS.EDIT_ON IS
 'Когда изменил';
 
-COMMENT ON COLUMN OBJECTS.O_TYPE IS
-'тип (вид) справочника (береться из таблицы OBJECTS_TYPE)';
+COMMENT ON COLUMN NPS.NOTICE IS
+'Текст (почему)';
 
-COMMENT ON COLUMN OBJECTS.O_NAME IS
-'Наименовние';
+COMMENT ON COLUMN NPS.NPS_DATE IS
+'Дата проведения опроса';
 
-COMMENT ON COLUMN OBJECTS.O_DESCRIPTION IS
-'Описание, примечание';
-
-COMMENT ON COLUMN OBJECTS.O_DELETED IS
-'Признак удаления, если 1-значит удалено';
-
-COMMENT ON COLUMN OBJECTS.O_DIMENSION IS
-'измерение  / Цвет для групп оборудования / и т.д. для каждого типа свое значение';
+COMMENT ON COLUMN NPS.RATING IS
+'Оценка';
 
 COMMENT ON COLUMN OBJECTS.O_CHARFIELD IS
 'Поле для хранения текстовой информации';
 
-COMMENT ON COLUMN OBJECTS.O_NUMERICFIELD IS
-'Поле для хранения числовой информации';
+COMMENT ON COLUMN OBJECTS.O_CHECK IS
+'Проверка значений / или другое. зависит от типа';
 
 COMMENT ON COLUMN OBJECTS.O_DATEFIELD IS
 'Поле для хранения данных типа Дата';
 
-COMMENT ON COLUMN OBJECTS.O_CHECK IS
-'Проверка значений / или другое. зависит от типа';
-
 COMMENT ON COLUMN OBJECTS.O_DATEFILED IS
 'Опечатка. будет удалено';
+
+COMMENT ON COLUMN OBJECTS.O_DELETED IS
+'Признак удаления, если 1-значит удалено';
+
+COMMENT ON COLUMN OBJECTS.O_DESCRIPTION IS
+'Описание, примечание';
+
+COMMENT ON COLUMN OBJECTS.O_DIMENSION IS
+'измерение  / Цвет для групп оборудования / и т.д. для каждого типа свое значение';
+
+COMMENT ON COLUMN OBJECTS.O_NAME IS
+'Наименовние';
+
+COMMENT ON COLUMN OBJECTS.O_NUMERICFIELD IS
+'Поле для хранения числовой информации';
+
+COMMENT ON COLUMN OBJECTS.O_TYPE IS
+'тип (вид) справочника (береться из таблицы OBJECTS_TYPE)';
+
+COMMENT ON COLUMN OBJECTS_COVERAGE.HOUSE_ID IS
+'ID дома';
+
+COMMENT ON COLUMN OBJECTS_COVERAGE.O_ID IS
+'ID объекта (модема зоны или прочее)';
 
 COMMENT ON COLUMN OBJECTS_COVERAGE.OC_ID IS
 'FOR PRIMARY KEYS';
@@ -35437,11 +35472,17 @@ COMMENT ON COLUMN OBJECTS_COVERAGE.OC_TYPE IS
 1 - модем
 2 - IP зоны';
 
-COMMENT ON COLUMN OBJECTS_COVERAGE.O_ID IS
-'ID объекта (модема зоны или прочее)';
+COMMENT ON COLUMN OBJECTS_HISTORY.CVALUE IS
+'Строковое значение';
 
-COMMENT ON COLUMN OBJECTS_COVERAGE.HOUSE_ID IS
-'ID дома';
+COMMENT ON COLUMN OBJECTS_HISTORY.DVALUE IS
+'Значение даты';
+
+COMMENT ON COLUMN OBJECTS_HISTORY.HDATE IS
+'Дата значения';
+
+COMMENT ON COLUMN OBJECTS_HISTORY.NVALUE IS
+'Цифровое значение';
 
 COMMENT ON COLUMN OBJECTS_HISTORY.O_ID IS
 'ссылка на талицу OBJECTS';
@@ -35449,32 +35490,20 @@ COMMENT ON COLUMN OBJECTS_HISTORY.O_ID IS
 COMMENT ON COLUMN OBJECTS_HISTORY.O_TYPE IS
 'ссылка на талицу OBJECTS';
 
-COMMENT ON COLUMN OBJECTS_HISTORY.HDATE IS
-'Дата значения';
-
-COMMENT ON COLUMN OBJECTS_HISTORY.CVALUE IS
-'Строковое значение';
-
-COMMENT ON COLUMN OBJECTS_HISTORY.DVALUE IS
-'Значение даты';
-
-COMMENT ON COLUMN OBJECTS_HISTORY.NVALUE IS
-'Цифровое значение';
-
 COMMENT ON COLUMN OBJECTS_LINKS.OL_TYPE IS
-'Object_type = 74';
+'ID (Objects O_TYPE = 74)';
 
 COMMENT ON COLUMN OBJECTS_TYPE.OT_ID IS
 'ID типа';
 
+COMMENT ON COLUMN OPERATION_LOG.FROM_ADDRESS IS
+'с какого адреса прошло изменение';
+
+COMMENT ON COLUMN OPERATION_LOG.OPER_NOTE IS
+'что сделали с объектом';
+
 COMMENT ON COLUMN OPERATION_LOG.OPER_TIME IS
 'Время действия';
-
-COMMENT ON COLUMN OPERATION_LOG.OPERATION IS
-'какая операция
-0 - удаление
-1 - добавление
-2 - изменение';
 
 COMMENT ON COLUMN OPERATION_LOG.OPER_WHAT IS
 'над чем операция (Абонент. платеж...)';
@@ -35482,47 +35511,26 @@ COMMENT ON COLUMN OPERATION_LOG.OPER_WHAT IS
 COMMENT ON COLUMN OPERATION_LOG.OPER_WHO IS
 'Кто сделал';
 
-COMMENT ON COLUMN OPERATION_LOG.OPER_NOTE IS
-'что сделали с объектом';
+COMMENT ON COLUMN OPERATION_LOG.OPERATION IS
+'какая операция
+0 - удаление
+1 - добавление
+2 - изменение';
 
-COMMENT ON COLUMN OPERATION_LOG.FROM_ADDRESS IS
-'с какого адреса прошло изменение';
-
-COMMENT ON COLUMN ORDERS_TP.OTP_ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN ORDERS_TP.OTTP_TYPE IS
-'Тип заказа OBJECTS_TYPE = 22';
-
-COMMENT ON COLUMN ORDERS_TP.OTP_NUMBER IS
-'Номер заказа';
-
-COMMENT ON COLUMN ORDERS_TP.OTP_DATE IS
-'Дата';
-
-COMMENT ON COLUMN ORDERS_TP.FIO IS
-'ФИО закзачика';
+COMMENT ON COLUMN ORDERS_TP.ADDONS IS
+'Храним дополнительные параметры по начислениям заказа';
 
 COMMENT ON COLUMN ORDERS_TP.ADRESS IS
 'адрес заказчика';
 
-COMMENT ON COLUMN ORDERS_TP.PASSPORT IS
-'паспорт заказчика';
-
-COMMENT ON COLUMN ORDERS_TP.PHONE IS
-'телефон заказчика';
-
-COMMENT ON COLUMN ORDERS_TP.QUANT IS
-'Количество единиц';
-
-COMMENT ON COLUMN ORDERS_TP.PRICE IS
-'Стомость единицы заказа';
-
 COMMENT ON COLUMN ORDERS_TP.AMOUNT IS
 'сумма заказа';
 
-COMMENT ON COLUMN ORDERS_TP.PAY_DATE IS
-'Дата оплаты';
+COMMENT ON COLUMN ORDERS_TP.CANCEL_RESON IS
+'Причина отмены';
+
+COMMENT ON COLUMN ORDERS_TP.CANCEL_TIME IS
+'Время отмены';
 
 COMMENT ON COLUMN ORDERS_TP.CUSTOMER_ID IS
 'Если абонент, то его ID';
@@ -35533,61 +35541,59 @@ COMMENT ON COLUMN ORDERS_TP.DATE_FROM IS
 COMMENT ON COLUMN ORDERS_TP.DATE_TO IS
 'Дата Окончания';
 
-COMMENT ON COLUMN ORDERS_TP.ADDONS IS
-'Храним дополнительные параметры по начислениям заказа';
+COMMENT ON COLUMN ORDERS_TP.FIO IS
+'ФИО закзачика';
 
-COMMENT ON COLUMN ORDERS_TP.CANCEL_TIME IS
-'Время отмены';
+COMMENT ON COLUMN ORDERS_TP.OTP_DATE IS
+'Дата';
 
-COMMENT ON COLUMN ORDERS_TP.CANCEL_RESON IS
-'Причина отмены';
+COMMENT ON COLUMN ORDERS_TP.OTP_ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN ORDERS_TP.OTP_NUMBER IS
+'Номер заказа';
+
+COMMENT ON COLUMN ORDERS_TP.OTTP_TYPE IS
+'Тип заказа OBJECTS_TYPE = 22';
+
+COMMENT ON COLUMN ORDERS_TP.PASSPORT IS
+'паспорт заказчика';
+
+COMMENT ON COLUMN ORDERS_TP.PAY_DATE IS
+'Дата оплаты';
+
+COMMENT ON COLUMN ORDERS_TP.PHONE IS
+'телефон заказчика';
+
+COMMENT ON COLUMN ORDERS_TP.PRICE IS
+'Стомость единицы заказа';
+
+COMMENT ON COLUMN ORDERS_TP.QUANT IS
+'Количество единиц';
 
 COMMENT ON COLUMN OTHER_FEE.FEE_TYPE IS
 '1 - списание материалов, 2 - возврат материалов';
 
-COMMENT ON COLUMN PAYMENT.PAYMENT_ID IS
-'ID Платежа';
+COMMENT ON COLUMN PAY_DOC.AMOUNT IS
+'Зачисленная сумма';
 
-COMMENT ON COLUMN PAYMENT.PAY_DOC_ID IS
-'ID платежного документа';
-
-COMMENT ON COLUMN PAYMENT.CUSTOMER_ID IS
-'Абонент ID';
-
-COMMENT ON COLUMN PAYMENT.PAY_DATE IS
-'Дата платежа';
-
-COMMENT ON COLUMN PAYMENT.PAY_DATETIME IS
-'Дата и время платежа';
-
-COMMENT ON COLUMN PAYMENT.PAY_SUM IS
-'Сумма';
-
-COMMENT ON COLUMN PAYMENT.FINE_SUM IS
-'Сумма пения';
-
-COMMENT ON COLUMN PAYMENT.NOTICE IS
+COMMENT ON COLUMN PAY_DOC.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN PAYMENT.PAYMENT_SRV IS
-'Услуга за которую платит';
+COMMENT ON COLUMN PAY_DOC.PAY_DOC_DATE IS
+'Дата докумнта';
 
-COMMENT ON COLUMN PAYMENT.PAYMENT_TYPE IS
-'Тип платежа O_TYPE = 2';
+COMMENT ON COLUMN PAY_DOC.PAY_DOC_ID IS
+'внутренний код документа';
 
-COMMENT ON COLUMN PAYMENT.EXT_PAY_ID IS
-'Идентификатор платежа во внешних системах (терминалы и прочее)';
+COMMENT ON COLUMN PAY_DOC.PAY_DOC_NO IS
+'номер документа';
 
-COMMENT ON COLUMN PAYMENT.TAG IS
-'цифровое поле. для личных нужд';
+COMMENT ON COLUMN PAY_DOC.PAY_DOC_SUM IS
+'Сумма документа';
 
-COMMENT ON COLUMN PAYMENT.TAG_STR IS
-'текстовое поле. для личных нужд';
-
-COMMENT ON COLUMN PAYMENT.NEED_CHECK IS
-'Признак нужна ли проверка платежа.
-Нужно например для обработки реесстров платежей,
-если реестр не итоговый ставим признак необходимости проверки.';
+COMMENT ON COLUMN PAY_DOC.PAYSOURCE_ID IS
+'код источника платежей (таблица PAYSOURCE)';
 
 COMMENT ON COLUMN PAYMENT.ADDED_BY IS
 'кто добавил';
@@ -35595,87 +35601,95 @@ COMMENT ON COLUMN PAYMENT.ADDED_BY IS
 COMMENT ON COLUMN PAYMENT.ADDED_ON IS
 'когда добавил';
 
+COMMENT ON COLUMN PAYMENT.CMSN IS
+'Коммиссия плат. агента';
+
+COMMENT ON COLUMN PAYMENT.CUSTOMER_ID IS
+'Абонент ID';
+
+COMMENT ON COLUMN PAYMENT.DEBT_SAVE IS
+'Сохранима баланс до платежа';
+
 COMMENT ON COLUMN PAYMENT.EDIT_BY IS
 'кто изменил';
 
 COMMENT ON COLUMN PAYMENT.EDIT_ON IS
 'когда изменил';
 
-COMMENT ON COLUMN PAYMENT.PAY_TYPE_STR IS
-'Способ оплаты CASH, CARD: XXX, WEB, и т.д.  O_TYPE = 61';
+COMMENT ON COLUMN PAYMENT.EXT_PAY_ID IS
+'Идентификатор платежа во внешних системах (терминалы и прочее)';
+
+COMMENT ON COLUMN PAYMENT.FINE_SUM IS
+'Сумма пения';
 
 COMMENT ON COLUMN PAYMENT.FISCAL IS
 'Пробит ли чек по данному платежу: 0 - нет, 1 - да';
 
-COMMENT ON COLUMN PAYMENT.CMSN IS
-'Коммиссия плат. агента';
+COMMENT ON COLUMN PAYMENT.LCPS IS
+'Сумма в локальной валюте, при работе с несколькими валютами';
 
-COMMENT ON COLUMN PAYMENT.DEBT_SAVE IS
-'Сохранима баланс до платежа';
+COMMENT ON COLUMN PAYMENT.NEED_CHECK IS
+'Признак нужна ли проверка платежа.
+Нужно например для обработки реесстров платежей,
+если реестр не итоговый ставим признак необходимости проверки.';
+
+COMMENT ON COLUMN PAYMENT.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN PAYMENT.PAY_DATE IS
+'Дата платежа';
+
+COMMENT ON COLUMN PAYMENT.PAY_DATETIME IS
+'Дата и время платежа';
+
+COMMENT ON COLUMN PAYMENT.PAY_DOC_ID IS
+'ID платежного документа';
+
+COMMENT ON COLUMN PAYMENT.PAY_SUM IS
+'Сумма';
+
+COMMENT ON COLUMN PAYMENT.PAY_TYPE_STR IS
+'Способ оплаты CASH, CARD: XXX, WEB, и т.д.  O_TYPE = 61';
+
+COMMENT ON COLUMN PAYMENT.PAYMENT_ID IS
+'ID Платежа';
+
+COMMENT ON COLUMN PAYMENT.PAYMENT_SRV IS
+'Услуга за которую платит';
+
+COMMENT ON COLUMN PAYMENT.PAYMENT_TYPE IS
+'Тип платежа O_TYPE = 2';
 
 COMMENT ON COLUMN PAYMENT.RQ_ID IS
 'Номер заявки через который пришел платеж';
 
-COMMENT ON COLUMN PAYMENT.LCPS IS
-'Сумма в локальной валюте, при работе с несколькими валютами';
+COMMENT ON COLUMN PAYMENT.TAG IS
+'цифровое поле. для личных нужд';
+
+COMMENT ON COLUMN PAYMENT.TAG_STR IS
+'текстовое поле. для личных нужд';
 
 COMMENT ON COLUMN PAYMENT_DELETED.PAY_DATETIME IS
 'Дата и время платежа';
 
-COMMENT ON COLUMN PAYSOURCE.PAYSOURCE_DESCR IS
-'Название источника';
-
 COMMENT ON COLUMN PAYSOURCE.CODE IS
 'Код в платежны системах';
+
+COMMENT ON COLUMN PAYSOURCE.DELETED IS
+'1 - Пометка удаленного источника';
 
 COMMENT ON COLUMN PAYSOURCE.FOR_FORM IS
 'В этом поле будут служебные признаки. разделены ;
 OTP - для сторонних заказов; CL - списко абонентов и т.д.';
 
-COMMENT ON COLUMN PAYSOURCE.DELETED IS
-'1 - Пометка удаленного источника';
-
-COMMENT ON COLUMN PAY_DOC.PAY_DOC_ID IS
-'внутренний код документа';
-
-COMMENT ON COLUMN PAY_DOC.PAYSOURCE_ID IS
-'код источника платежей (таблица PAYSOURCE)';
-
-COMMENT ON COLUMN PAY_DOC.PAY_DOC_NO IS
-'номер документа';
-
-COMMENT ON COLUMN PAY_DOC.PAY_DOC_DATE IS
-'Дата докумнта';
-
-COMMENT ON COLUMN PAY_DOC.PAY_DOC_SUM IS
-'Сумма документа';
-
-COMMENT ON COLUMN PAY_DOC.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN PAY_DOC.AMOUNT IS
-'Зачисленная сумма';
+COMMENT ON COLUMN PAYSOURCE.PAYSOURCE_DESCR IS
+'Название источника';
 
 COMMENT ON COLUMN PERSONAL_TARIF.ADD_METHOD IS
 'Как добавлен
  0 - руками через ПО
  1 - при расчете скидок
  2 - акция';
-
-COMMENT ON COLUMN PORT.EID IS
-'Устройство';
-
-COMMENT ON COLUMN PORT.PORT IS
-'Номер порта';
-
-COMMENT ON COLUMN PORT.NOTICE IS
-'Примечание';
-
-COMMENT ON COLUMN PORT.P_TYPE IS
-'Тип порта (OBJECT_TYPE 57)';
-
-COMMENT ON COLUMN PORT.P_STATE IS
-'Статус порта (OBJECT_TYPE 60)';
 
 COMMENT ON COLUMN PORT.CON IS
 'Тип подключения 0-оборудование, 1-абонент, 2-кабель и т.д.
@@ -35686,6 +35700,24 @@ COMMENT ON COLUMN PORT.CON_ID IS
 
 COMMENT ON COLUMN PORT.CON_PORT IS
 'Подключен к порту оборудования (ставить автоматом)';
+
+COMMENT ON COLUMN PORT.CONFIG IS
+'Конфигурация порта';
+
+COMMENT ON COLUMN PORT.EID IS
+'Устройство';
+
+COMMENT ON COLUMN PORT.NOTICE IS
+'Примечание';
+
+COMMENT ON COLUMN PORT.P_STATE IS
+'Статус порта (OBJECT_TYPE 60)';
+
+COMMENT ON COLUMN PORT.P_TYPE IS
+'Тип порта (OBJECT_TYPE 57)';
+
+COMMENT ON COLUMN PORT.PORT IS
+'Номер порта';
 
 COMMENT ON COLUMN PORT.SPEED IS
 'Скорость порта МБит';
@@ -35699,119 +35731,107 @@ COMMENT ON COLUMN PORT.WID IS
 COMMENT ON COLUMN PORT.WLABEL IS
 'Метка на кабеле (пучок/жила)';
 
-COMMENT ON COLUMN PORT.CONFIG IS
-'Конфигурация порта';
-
-COMMENT ON COLUMN PROFILES.PROFILE IS
-'Название профиля';
-
-COMMENT ON COLUMN PROFILES.PROFTYPE IS
-'Если платежи = 0, начисления = 1';
-
-COMMENT ON COLUMN PROFILES.FILETYPE IS
-'Текст/DBF/EXCEL';
-
-COMMENT ON COLUMN PROFILES.FILEEXT IS
-'расширение файлов';
-
-COMMENT ON COLUMN PROFILES.FILEDIR IS
-'В каком каталоге файлы';
-
-COMMENT ON COLUMN PROFILES.PAYMENTSRC IS
-'Источник платежа';
-
-COMMENT ON COLUMN PROFILES.CODEPAGE IS
-'Кодировка файла (DOS/WIN/UTF)';
-
-COMMENT ON COLUMN PROFILES.ARCHDIR IS
-'Куда переносить файл после обработки';
-
-COMMENT ON COLUMN PROFILES.KOPEYKI IS
-'Сумма в копейках?';
-
-COMMENT ON COLUMN PROFILES.DECIMALSPRT IS
-'Разделитель десятичной части';
-
-COMMENT ON COLUMN PROFILES.HEADSUMLINE IS
-'строка суммы документа';
-
-COMMENT ON COLUMN PROFILES.HEADSUMCOL IS
-'колонка суммы документа';
-
-COMMENT ON COLUMN PROFILES.HEADSPRT IS
-'Разделитель колонок заголовка';
-
-COMMENT ON COLUMN PROFILES.HEADREMCH IS
-'Какие символы удалять из строк заголовка';
-
-COMMENT ON COLUMN PROFILES.HEADNUMLINE IS
-'строка номера документа';
-
-COMMENT ON COLUMN PROFILES.HEADNUMCOL IS
-'колонка номера документа';
-
-COMMENT ON COLUMN PROFILES.HEADERTO IS
-'Заголовок по строку';
-
-COMMENT ON COLUMN PROFILES.HEADERFROM IS
-'Заголовк  со строки ';
-
-COMMENT ON COLUMN PROFILES.HEADEREXIST IS
-'Есть ли заголовок';
-
-COMMENT ON COLUMN PROFILES.HEADDATELINE IS
-'строка даты документа';
-
-COMMENT ON COLUMN PROFILES.HEADDATEFMT IS
-'формат даты';
-
-COMMENT ON COLUMN PROFILES.HEADDATECOL IS
-'колонка даты документа';
-
-COMMENT ON COLUMN PROFILES.DATAFROM IS
-'С какой строки начинаются данные';
-
-COMMENT ON COLUMN PROFILES.DATATO IS
-'по какую строку данные';
-
-COMMENT ON COLUMN PROFILES.DATASPRT IS
-'разделитель столбцов данных';
-
-COMMENT ON COLUMN PROFILES.DATAREMZERO IS
-'Удалять ли 0 в начале строк';
-
-COMMENT ON COLUMN PROFILES.DATAREMCH IS
-'из данных удалять символы';
-
 COMMENT ON COLUMN PROFILES.ACCOUNT IS
 'лицевой';
-
-COMMENT ON COLUMN PROFILES.FIO IS
-'фио';
 
 COMMENT ON COLUMN PROFILES.ADRES IS
 'адрес';
 
-COMMENT ON COLUMN PROFILES.HOUSE IS
-'дом';
+COMMENT ON COLUMN PROFILES.ARCHDIR IS
+'Куда переносить файл после обработки';
 
-COMMENT ON COLUMN PROFILES.KORP IS
-'корпус';
-
-COMMENT ON COLUMN PROFILES.FLAT IS
-'квартира';
+COMMENT ON COLUMN PROFILES.CODEPAGE IS
+'Кодировка файла (DOS/WIN/UTF)';
 
 COMMENT ON COLUMN PROFILES.DATADATE IS
 'дата данных';
 
-COMMENT ON COLUMN PROFILES.DATEFMT IS
-'Формат даты в данных';
+COMMENT ON COLUMN PROFILES.DATAFROM IS
+'С какой строки начинаются данные';
+
+COMMENT ON COLUMN PROFILES.DATAREMCH IS
+'из данных удалять символы';
+
+COMMENT ON COLUMN PROFILES.DATAREMZERO IS
+'Удалять ли 0 в начале строк';
+
+COMMENT ON COLUMN PROFILES.DATASPRT IS
+'разделитель столбцов данных';
 
 COMMENT ON COLUMN PROFILES.DATASUM IS
 'сумма данных';
 
+COMMENT ON COLUMN PROFILES.DATATO IS
+'по какую строку данные';
+
+COMMENT ON COLUMN PROFILES.DATEFMT IS
+'Формат даты в данных';
+
+COMMENT ON COLUMN PROFILES.DECIMALSPRT IS
+'Разделитель десятичной части';
+
 COMMENT ON COLUMN PROFILES.EXTID IS
 'номер платежа';
+
+COMMENT ON COLUMN PROFILES.FILEDIR IS
+'В каком каталоге файлы';
+
+COMMENT ON COLUMN PROFILES.FILEEXT IS
+'расширение файлов';
+
+COMMENT ON COLUMN PROFILES.FILETYPE IS
+'Текст/DBF/EXCEL';
+
+COMMENT ON COLUMN PROFILES.FIO IS
+'фио';
+
+COMMENT ON COLUMN PROFILES.FLAT IS
+'квартира';
+
+COMMENT ON COLUMN PROFILES.HEADDATECOL IS
+'колонка даты документа';
+
+COMMENT ON COLUMN PROFILES.HEADDATEFMT IS
+'формат даты';
+
+COMMENT ON COLUMN PROFILES.HEADDATELINE IS
+'строка даты документа';
+
+COMMENT ON COLUMN PROFILES.HEADEREXIST IS
+'Есть ли заголовок';
+
+COMMENT ON COLUMN PROFILES.HEADERFROM IS
+'Заголовк  со строки ';
+
+COMMENT ON COLUMN PROFILES.HEADERTO IS
+'Заголовок по строку';
+
+COMMENT ON COLUMN PROFILES.HEADNUMCOL IS
+'колонка номера документа';
+
+COMMENT ON COLUMN PROFILES.HEADNUMLINE IS
+'строка номера документа';
+
+COMMENT ON COLUMN PROFILES.HEADREMCH IS
+'Какие символы удалять из строк заголовка';
+
+COMMENT ON COLUMN PROFILES.HEADSPRT IS
+'Разделитель колонок заголовка';
+
+COMMENT ON COLUMN PROFILES.HEADSUMCOL IS
+'колонка суммы документа';
+
+COMMENT ON COLUMN PROFILES.HEADSUMLINE IS
+'строка суммы документа';
+
+COMMENT ON COLUMN PROFILES.HOUSE IS
+'дом';
+
+COMMENT ON COLUMN PROFILES.KOPEYKI IS
+'Сумма в копейках?';
+
+COMMENT ON COLUMN PROFILES.KORP IS
+'корпус';
 
 COMMENT ON COLUMN PROFILES.NOTICE IS
 'примечание 1';
@@ -35819,43 +35839,70 @@ COMMENT ON COLUMN PROFILES.NOTICE IS
 COMMENT ON COLUMN PROFILES.NOTICE1 IS
 'примечание 2';
 
+COMMENT ON COLUMN PROFILES.PAYMENTSRC IS
+'Источник платежа';
+
+COMMENT ON COLUMN PROFILES.PROFILE IS
+'Название профиля';
+
+COMMENT ON COLUMN PROFILES.PROFTYPE IS
+'Если платежи = 0, начисления = 1';
+
 COMMENT ON COLUMN QRATING.QR_TYPE IS
 'Тип. NPS BID';
-
-COMMENT ON COLUMN QUEUE_SWITCH_SRV.CUSTOMER_ID IS
-'Кому';
-
-COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_FROM IS
-'С какой услуги';
-
-COMMENT ON COLUMN QUEUE_SWITCH_SRV.SWITCH_DATE IS
-'Дата переключения';
-
-COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_TO IS
-'на какую услугу';
-
-COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_ACT IS
-'какой услугой переключать';
 
 COMMENT ON COLUMN QUEUE_SWITCH_SRV.COMPLETED IS
 '1 - обработан удачно
 2 - обработано с ошибкой
 3 - просрочен или услуга была отключена';
 
-COMMENT ON COLUMN RATES.RDATE IS
-'Дата курса';
+COMMENT ON COLUMN QUEUE_SWITCH_SRV.CUSTOMER_ID IS
+'Кому';
+
+COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_ACT IS
+'какой услугой переключать';
+
+COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_FROM IS
+'С какой услуги';
+
+COMMENT ON COLUMN QUEUE_SWITCH_SRV.SRV_TO IS
+'на какую услугу';
+
+COMMENT ON COLUMN QUEUE_SWITCH_SRV.SWITCH_DATE IS
+'Дата переключения';
 
 COMMENT ON COLUMN RATES.CUR IS
 'Валюта';
 
-COMMENT ON COLUMN RATES.USD IS
-'Доллар';
-
 COMMENT ON COLUMN RATES.EUR IS
 'Евро';
 
+COMMENT ON COLUMN RATES.RDATE IS
+'Дата курса';
+
 COMMENT ON COLUMN RATES.RUR IS
 'Рос.руб.';
+
+COMMENT ON COLUMN RATES.USD IS
+'Доллар';
+
+COMMENT ON COLUMN RECOURSE.ADD_DATA IS
+'Доп. данные. Формат Название=значение;Название2=значение2';
+
+COMMENT ON COLUMN RECOURSE.CONTACT IS
+'Контакт обращения';
+
+COMMENT ON COLUMN RECOURSE.CUSTOMER_ID IS
+'Код абонента';
+
+COMMENT ON COLUMN RECOURSE.FLAT_NO IS
+'Квартира';
+
+COMMENT ON COLUMN RECOURSE.HOUSE_ID IS
+'Код дома';
+
+COMMENT ON COLUMN RECOURSE.NOTICE IS
+'Содержание';
 
 COMMENT ON COLUMN RECOURSE.RC_ID IS
 'ID обращения';
@@ -35863,44 +35910,29 @@ COMMENT ON COLUMN RECOURSE.RC_ID IS
 COMMENT ON COLUMN RECOURSE.RC_TYPE IS
 'Тип обращения';
 
-COMMENT ON COLUMN RECOURSE.CUSTOMER_ID IS
-'Код абонента';
-
-COMMENT ON COLUMN RECOURSE.HOUSE_ID IS
-'Код дома';
-
-COMMENT ON COLUMN RECOURSE.FLAT_NO IS
-'Квартира';
-
-COMMENT ON COLUMN RECOURSE.NOTICE IS
-'Содержание';
-
 COMMENT ON COLUMN RECOURSE.RQ_ID IS
 'Заявка созданная обращением';
-
-COMMENT ON COLUMN RECOURSE.CONTACT IS
-'Контакт обращения';
 
 COMMENT ON COLUMN RECOURSE.TAG IS
 'Флаги. для поиска или фильтрации. используется по усмотрению оператора';
 
-COMMENT ON COLUMN RECOURSE_TEMPLATES.RT_ID IS
-'ID';
-
-COMMENT ON COLUMN RECOURSE_TEMPLATES.TYPE_ID IS
-'Тип';
+COMMENT ON COLUMN RECOURSE.TASK_ID IS
+'Задача созданная обращением';
 
 COMMENT ON COLUMN RECOURSE_TEMPLATES.NAME IS
 'название';
 
-COMMENT ON COLUMN RECOURSE_TEMPLATES.NOTICE IS
-'Описание';
-
 COMMENT ON COLUMN RECOURSE_TEMPLATES.NEED_REQUEST IS
 'Нужна заявка';
 
-COMMENT ON COLUMN REMINDER.REM_USER IS
-'Для кого напоминание';
+COMMENT ON COLUMN RECOURSE_TEMPLATES.NOTICE IS
+'Описание';
+
+COMMENT ON COLUMN RECOURSE_TEMPLATES.RT_ID IS
+'ID (Objects O_TYPE = 8)';
+
+COMMENT ON COLUMN RECOURSE_TEMPLATES.TYPE_ID IS
+'Тип';
 
 COMMENT ON COLUMN REMINDER.REM_DATE IS
 'Дата напоминания';
@@ -35908,35 +35940,104 @@ COMMENT ON COLUMN REMINDER.REM_DATE IS
 COMMENT ON COLUMN REMINDER.REM_NOTICE IS
 'Что сделать';
 
-COMMENT ON COLUMN REPORTS.ID_REPORT IS
-'Идент. номер';
+COMMENT ON COLUMN REMINDER.REM_USER IS
+'Для кого напоминание';
 
 COMMENT ON COLUMN REPORTS.ID_PARENT IS
 'Идент. номер группы';
 
-COMMENT ON COLUMN REPORTS.REPORT_NAME IS
-'Наименование отчета';
+COMMENT ON COLUMN REPORTS.ID_REPORT IS
+'Идент. номер';
 
 COMMENT ON COLUMN REPORTS.NO_VISIBLE IS
 'Признак невидимости в главном окне';
 
-COMMENT ON COLUMN REQUEST.RQ_ID IS
-'уникальный номер заявки';
+COMMENT ON COLUMN REPORTS.REPORT_NAME IS
+'Наименование отчета';
 
-COMMENT ON COLUMN REQUEST.RQ_TYPE IS
-'Тип заявки';
+COMMENT ON COLUMN REQUEST.ADD_INFO IS
+'Поле с дополнительной информацией';
 
-COMMENT ON COLUMN REQUEST.RQ_CUSTOMER IS
-'Код абонента';
+COMMENT ON COLUMN REQUEST.ADDED_BY IS
+'кто внес';
+
+COMMENT ON COLUMN REQUEST.ADDED_ON IS
+'Дата приема';
+
+COMMENT ON COLUMN REQUEST.CAUSE_ID IS
+'Причина вызова';
+
+COMMENT ON COLUMN REQUEST.DOOR_CODE IS
+'Код домофона';
+
+COMMENT ON COLUMN REQUEST.EDIT_BY IS
+'Изменен пользователем';
+
+COMMENT ON COLUMN REQUEST.EDIT_ON IS
+'Дата изменения';
+
+COMMENT ON COLUMN REQUEST.EXTEXECUTOR IS
+'Другие исполнители';
+
+COMMENT ON COLUMN REQUEST.FLAT_NO IS
+'Квартира';
+
+COMMENT ON COLUMN REQUEST.FLOOR_N IS
+'Этаж';
+
+COMMENT ON COLUMN REQUEST.GIVE_BY IS
+'Кто выдал';
+
+COMMENT ON COLUMN REQUEST.GIVE_METHOD IS
+'Как выдал
+0 - через программу
+1 - через веб';
+
+COMMENT ON COLUMN REQUEST.HOUSE_ID IS
+'ИД дома';
+
+COMMENT ON COLUMN REQUEST.NODE_ID IS
+'ID узла';
+
+COMMENT ON COLUMN REQUEST.PARENT_RQ IS
+'Заявка - родитель';
+
+COMMENT ON COLUMN REQUEST.PHONE IS
+'Телефон';
+
+COMMENT ON COLUMN REQUEST.PORCH_N IS
+'Подъезд';
+
+COMMENT ON COLUMN REQUEST.RECEIPT IS
+'Номер квитанции';
+
+COMMENT ON COLUMN REQUEST.REQ_RESULT IS
+'Принята 0
+Выдана 1
+Выполнена 2
+Отменена абонентом 3
+Невозможно выполнить 4';
+
+COMMENT ON COLUMN REQUEST.RESULT_ID IS
+'Сылка на результат операции';
+
+COMMENT ON COLUMN REQUEST.RQ_COMPLETED IS
+'Дата и время выдачи';
 
 COMMENT ON COLUMN REQUEST.RQ_CONTENT IS
 'содержание заявки';
 
+COMMENT ON COLUMN REQUEST.RQ_CUSTOMER IS
+'Код абонента';
+
 COMMENT ON COLUMN REQUEST.RQ_DEFECT IS
 'Выявленный дефект';
 
-COMMENT ON COLUMN REQUEST.RQ_COMPLETED IS
-'Дата и время выдачи';
+COMMENT ON COLUMN REQUEST.RQ_EXEC_TIME IS
+'Дата и Время выполнения';
+
+COMMENT ON COLUMN REQUEST.RQ_ID IS
+'уникальный номер заявки';
 
 COMMENT ON COLUMN REQUEST.RQ_NOTICE IS
 'Заметки';
@@ -35950,95 +36051,35 @@ COMMENT ON COLUMN REQUEST.RQ_TIME_FROM IS
 COMMENT ON COLUMN REQUEST.RQ_TIME_TO IS
 'время по';
 
-COMMENT ON COLUMN REQUEST.HOUSE_ID IS
-'ИД дома';
-
-COMMENT ON COLUMN REQUEST.FLAT_NO IS
-'Квартира';
-
-COMMENT ON COLUMN REQUEST.PORCH_N IS
-'Подъезд';
-
-COMMENT ON COLUMN REQUEST.FLOOR_N IS
-'Этаж';
-
-COMMENT ON COLUMN REQUEST.PHONE IS
-'Телефон';
-
-COMMENT ON COLUMN REQUEST.RQ_EXEC_TIME IS
-'Дата и Время выполнения';
-
-COMMENT ON COLUMN REQUEST.GIVE_BY IS
-'Кто выдал';
-
-COMMENT ON COLUMN REQUEST.GIVE_METHOD IS
-'Как выдал
-0 - через программу
-1 - через веб';
-
-COMMENT ON COLUMN REQUEST.REQ_RESULT IS
-'Принята 0
-Выдана 1
-Выполнена 2
-Отменена абонентом 3
-Невозможно выполнить 4';
+COMMENT ON COLUMN REQUEST.RQ_TYPE IS
+'Тип заявки';
 
 COMMENT ON COLUMN REQUEST.RQTL_ID IS
 'код шаблона заявки';
 
-COMMENT ON COLUMN REQUEST.DOOR_CODE IS
-'Код домофона';
-
-COMMENT ON COLUMN REQUEST.CAUSE_ID IS
-'Причина вызова';
-
-COMMENT ON COLUMN REQUEST.RESULT_ID IS
-'Сылка на результат операции';
-
-COMMENT ON COLUMN REQUEST.RECEIPT IS
-'Номер квитанции';
-
-COMMENT ON COLUMN REQUEST.EXTEXECUTOR IS
-'Другие исполнители';
-
-COMMENT ON COLUMN REQUEST.ADD_INFO IS
-'Поле с дополнительной информацией';
-
 COMMENT ON COLUMN REQUEST.TAG IS
 'Цифровое поле для собственных нужд';
-
-COMMENT ON COLUMN REQUEST.ADDED_BY IS
-'кто внес';
-
-COMMENT ON COLUMN REQUEST.ADDED_ON IS
-'Дата приема';
-
-COMMENT ON COLUMN REQUEST.EDIT_BY IS
-'Изменен пользователем';
-
-COMMENT ON COLUMN REQUEST.EDIT_ON IS
-'Дата изменения';
-
-COMMENT ON COLUMN REQUEST.NODE_ID IS
-'ID узла';
-
-COMMENT ON COLUMN REQUEST.PARENT_RQ IS
-'Заявка - родитель';
 
 COMMENT ON COLUMN REQUEST_FLATS.TAG IS
 'Цифровое поле для нужд оператора';
 
+COMMENT ON COLUMN REQUEST_MATERIALS.BAYBACK IS
+'Признак выкупа';
+
+COMMENT ON COLUMN REQUEST_MATERIALS.CALC IS
+'Будет удалено
+Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда 4-Возврат бесплатно, 5 - Возврат за деньги (Выкуп)';
+
 COMMENT ON COLUMN REQUEST_MATERIALS.M_ID IS
 'Код материала';
 
-COMMENT ON COLUMN REQUEST_MATERIALS.WH_ID IS
-'Склад';
-
-COMMENT ON COLUMN REQUEST_MATERIALS.RM_QUANT IS
-'Количество';
-
-COMMENT ON COLUMN REQUEST_MATERIALS.RM_COST IS
-'Цена по которой списали';
+COMMENT ON COLUMN REQUEST_MATERIALS.NOT_CALC IS
+'устаревшее. будет удалено
+Начислять ли за этот материал абоненту.
+0 - Начислять
+1 - Не начислять (в пользовании)
+2 - Аренда
+3 - Рассрочка';
 
 COMMENT ON COLUMN REQUEST_MATERIALS.PROP IS
 'Собственность
@@ -36049,39 +36090,30 @@ COMMENT ON COLUMN REQUEST_MATERIALS.PROP IS
 4 Возврат бесплатно
 5 Возврат за деньги (Выкуп)';
 
+COMMENT ON COLUMN REQUEST_MATERIALS.RM_COST IS
+'Цена по которой списали';
+
 COMMENT ON COLUMN REQUEST_MATERIALS.RM_NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN REQUEST_MATERIALS.CALC IS
-'Будет удалено
-Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда 4-Возврат бесплатно, 5 - Возврат за деньги (Выкуп)';
-
-COMMENT ON COLUMN REQUEST_MATERIALS.NOT_CALC IS
-'устаревшее. будет удалено
-Начислять ли за этот материал абоненту.
-0 - Начислять
-1 - Не начислять (в пользовании)
-2 - Аренда
-3 - Рассрочка';
-
-COMMENT ON COLUMN REQUEST_MATERIALS.BAYBACK IS
-'Признак выкупа';
-
-COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.M_ID IS
-'Код материала';
-
-COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.QUANT IS
+COMMENT ON COLUMN REQUEST_MATERIALS.RM_QUANT IS
 'Количество';
 
-COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.NOTICE IS
-'Примечание';
+COMMENT ON COLUMN REQUEST_MATERIALS.WH_ID IS
+'Склад';
+
+COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.BAYBACK IS
+'Признак выкупа';
 
 COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.CALC IS
 'Будет удалено
 Метод расчет за материал. 0-Продажа/Возврат 1-В пользовании (аренда без оплаты) 2-Рассрочка 3-Аренда 4-Возврат бесплатно, 5-Возврат за деньги (Выкуп)';
 
-COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.BAYBACK IS
-'Признак выкупа';
+COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.M_ID IS
+'Код материала';
+
+COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.NOTICE IS
+'Примечание';
 
 COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.PROP IS
 'Собственность
@@ -36092,14 +36124,29 @@ COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.PROP IS
 4 Возврат бесплатно
 5 Возврат за деньги (Выкуп)';
 
+COMMENT ON COLUMN REQUEST_MATERIALS_RETURN.QUANT IS
+'Количество';
+
+COMMENT ON COLUMN REQUEST_PHOTOS.HOUSE_ID IS
+'ID дома';
+
 COMMENT ON COLUMN REQUEST_PHOTOS.ID IS
 'ID фото';
 
 COMMENT ON COLUMN REQUEST_PHOTOS.RQ_ID IS
 'ID заявки';
 
-COMMENT ON COLUMN REQUEST_PHOTOS.HOUSE_ID IS
-'ID дома';
+COMMENT ON COLUMN REQUEST_RESULTS.DELETED IS
+'Признак удаления';
+
+COMMENT ON COLUMN REQUEST_RESULTS.FINISHED IS
+'Признак того что заявка считается успешно выполненой';
+
+COMMENT ON COLUMN REQUEST_RESULTS.NAME IS
+'Оисание результата';
+
+COMMENT ON COLUMN REQUEST_RESULTS.NOTICE IS
+'Примечание к результату';
 
 COMMENT ON COLUMN REQUEST_RESULTS.RR_ID IS
 'FOR PRIMARY KEYS';
@@ -36107,35 +36154,43 @@ COMMENT ON COLUMN REQUEST_RESULTS.RR_ID IS
 COMMENT ON COLUMN REQUEST_RESULTS.RT_ID IS
 'Тип заявки';
 
-COMMENT ON COLUMN REQUEST_RESULTS.NAME IS
-'Оисание результата';
+COMMENT ON COLUMN REQUEST_TEMPLATES.ADD_FIELD IS
+'Дополнительное поле.
+перечень признаков через ;
+если есть обязательно для заполнения';
 
-COMMENT ON COLUMN REQUEST_RESULTS.FINISHED IS
-'Признак того что заявка считается успешно выполненой';
-
-COMMENT ON COLUMN REQUEST_RESULTS.NOTICE IS
-'Примечание к результату';
-
-COMMENT ON COLUMN REQUEST_RESULTS.DELETED IS
-'Признак удаления';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.RQTL_ID IS
-'код';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_TYPE IS
-'Ссылка на тип работ REQUEST_TYPES';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_MAXTIME IS
-'Максимальный срок выполнения или -1(без срока)';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_COLOR IS
-'Цвет заявки';
+COMMENT ON COLUMN REQUEST_TEMPLATES.ADD_WORK IS
+'Устарело, будет удалено (При выборе причины добавлять работу)';
 
 COMMENT ON COLUMN REQUEST_TEMPLATES.ANALYSE_ID IS
 'Признак группы анализа причины заявок';
 
-COMMENT ON COLUMN REQUEST_TEMPLATES.ADD_WORK IS
-'Устарело, будет удалено (При выборе причины добавлять работу)';
+COMMENT ON COLUMN REQUEST_TEMPLATES.DELETED IS
+'Признек удаления';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.FLATS_NEED IS
+'При заявке на узел результат по каждой квартире';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.FLATS_RESULT IS
+'Список результатов для квартир';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.NEED_NODE_RQ IS
+'Нужно ли создавать заявку на узел при создании заявки на абонента';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.NEED_PHOTO IS
+'Нужно фото при закрытии';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.RECREATE_DAYS IS
+'Если не null, то создать заявку типа через Х дней';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.RECREATE_TYPE IS
+'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_COLOR IS
+'Цвет заявки';
+
+COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_MAXTIME IS
+'Максимальный срок выполнения или -1(без срока)';
 
 COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_ONOFF IS
 'Заявка на вкл/отключение услуги';
@@ -36146,76 +36201,23 @@ COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_SRV IS
 COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_SRVONOFF IS
 'Какой услугой подключать/отключать';
 
-COMMENT ON COLUMN REQUEST_TEMPLATES.DELETED IS
-'Признек удаления';
+COMMENT ON COLUMN REQUEST_TEMPLATES.RQ_TYPE IS
+'Ссылка на тип работ REQUEST_TYPES';
 
-COMMENT ON COLUMN REQUEST_TEMPLATES.ADD_FIELD IS
-'Дополнительное поле.
-перечень признаков через ;
-если есть обязательно для заполнения';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.NEED_PHOTO IS
-'Нужно фото при закрытии';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.NEED_NODE_RQ IS
-'Нужно ли создавать заявку на узел при создании заявки на абонента';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.RECREATE_DAYS IS
-'Если не null, то создать заявку типа через Х дней';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.RECREATE_TYPE IS
-'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CREATE IS
-'Текст SMS абоненту при создании заявки';
+COMMENT ON COLUMN REQUEST_TEMPLATES.RQTL_ID IS
+'код';
 
 COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CLOSE IS
 'Текст SMS абоненту после закрытия заявки';
 
-COMMENT ON COLUMN REQUEST_TEMPLATES.FLATS_NEED IS
-'При заявке на узел результат по каждой квартире';
-
-COMMENT ON COLUMN REQUEST_TEMPLATES.FLATS_RESULT IS
-'Список результатов для квартир';
+COMMENT ON COLUMN REQUEST_TEMPLATES.SMS_CREATE IS
+'Текст SMS абоненту при создании заявки';
 
 COMMENT ON COLUMN REQUEST_TEMPLATES.WORKS IS
 'JSON cписка работ [{"i":work_id,"q":1},../]';
 
-COMMENT ON COLUMN REQUEST_TYPES.RT_ID IS
-'код';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_NAME IS
-'Наименование';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_TYPE IS
-'ППР или обслуживание абонентов';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_NOTICE IS
-'Примеание';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_PRINTFORM IS
-'Печатная форма';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_DELETED IS
-'1 = удалена';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_COLOR IS
-'Цвет в таблице заявок';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_DEFAULT IS
-'В новую заявку по умолчанию';
-
 COMMENT ON COLUMN REQUEST_TYPES.CAUSE_NEED IS
 'Обязательна ли причина вызова для типа заявки';
-
-COMMENT ON COLUMN REQUEST_TYPES.RT_HC_NEED IS
-'Только для домов введенных в эксплуатацию (стоит дата IN_DATE в доме)';
-
-COMMENT ON COLUMN REQUEST_TYPES.RECREATE_DAYS IS
-'Если не null, то создать копию заявки через Х дней';
-
-COMMENT ON COLUMN REQUEST_TYPES.RECREATE_TYPE IS
-'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
 
 COMMENT ON COLUMN REQUEST_TYPES.FLATS_NEED IS
 'При заявке на узел результат по каждой квартире';
@@ -36223,54 +36225,53 @@ COMMENT ON COLUMN REQUEST_TYPES.FLATS_NEED IS
 COMMENT ON COLUMN REQUEST_TYPES.FLATS_RESULT IS
 'Список результатов для квартир';
 
-COMMENT ON COLUMN REQUEST_WORKS.W_TIME IS
-'Время выполнения факт';
+COMMENT ON COLUMN REQUEST_TYPES.RECREATE_DAYS IS
+'Если не null, то создать копию заявки через Х дней';
 
-COMMENT ON COLUMN REQUEST_WORKS.W_QUANT IS
-'Колв-во';
+COMMENT ON COLUMN REQUEST_TYPES.RECREATE_TYPE IS
+'Пересоздавтаь с новым типом заявки или, если пусто, таким же';
 
-COMMENT ON COLUMN REQUEST_WORKS.W_COST IS
-'Стоимость работ';
+COMMENT ON COLUMN REQUEST_TYPES.RT_COLOR IS
+'Цвет в таблице заявок';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_DEFAULT IS
+'В новую заявку по умолчанию';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_DELETED IS
+'1 = удалена';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_HC_NEED IS
+'Только для домов введенных в эксплуатацию (стоит дата IN_DATE в доме)';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_ID IS
+'код';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_NAME IS
+'Наименование';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_NOTICE IS
+'Примеание';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_PRINTFORM IS
+'Печатная форма';
+
+COMMENT ON COLUMN REQUEST_TYPES.RT_TYPE IS
+'ППР или обслуживание абонентов';
 
 COMMENT ON COLUMN REQUEST_WORKS.NOT_CALC IS
 'не начислять';
 
-COMMENT ON COLUMN SERVICES.SRV_TYPE_ID IS
-'0 - переодическая услуга (по кол-ву дней)
-1 - разовая услуга
-2 - услуга по факту';
+COMMENT ON COLUMN REQUEST_WORKS.W_COST IS
+'Стоимость работ';
 
-COMMENT ON COLUMN SERVICES.SHIFT_MONTHS IS
-'Смещение начислений относительно активного месяца в программе
-например -1 месяц назад. 1 месяц вперед';
+COMMENT ON COLUMN REQUEST_WORKS.W_QUANT IS
+'Колв-во';
 
-COMMENT ON COLUMN SERVICES.NAME IS
-'Название';
+COMMENT ON COLUMN REQUEST_WORKS.W_TIME IS
+'Время выполнения факт';
 
-COMMENT ON COLUMN SERVICES.SHORTNAME IS
-'Код';
-
-COMMENT ON COLUMN SERVICES.DESCRIPTION IS
-'Описание услуги (для абонента)';
-
-COMMENT ON COLUMN SERVICES.DIMENSION IS
-'ед. измерения';
-
-COMMENT ON COLUMN SERVICES.EXTRA IS
-'Поле для доп. признаков:
--колво дней, чтоб считать месяц полным для услуг с неполным месяцем';
-
-COMMENT ON COLUMN SERVICES.EXTERNAL_ID IS
-'Код услуги во внешней системе';
-
-COMMENT ON COLUMN SERVICES.INET_SRV IS
-'Признак того что это интернет тариф';
-
-COMMENT ON COLUMN SERVICES.IP_BEGIN IS
-'Начало диапазона IP зоны (сделано для связки с UTM)';
-
-COMMENT ON COLUMN SERVICES.IP_END IS
-'Конец диапазона IP зоны (сделано для связки с UTM)';
+COMMENT ON COLUMN SERVICES.AUTOOFF IS
+'Отключать ли услугу при недостатке средств';
 
 COMMENT ON COLUMN SERVICES.BUSINESS_TYPE IS
 'Управление услугами (в таблице OBJECTS O_TYPE = 15)
@@ -36288,14 +36289,42 @@ COMMENT ON COLUMN SERVICES.CALC_TYPE IS
 5 - ежедневное начисление. С учетом дня включения, т.е. если выключена в день включения - считаем.
 6 - ежедневное (считаем 30 дней в месяце)';
 
-COMMENT ON COLUMN SERVICES.USAGE IS
-'Частота использования услуги';
+COMMENT ON COLUMN SERVICES.DESCRIPTION IS
+'Описание услуги (для абонента)';
 
-COMMENT ON COLUMN SERVICES.AUTOOFF IS
-'Отключать ли услугу при недостатке средств';
+COMMENT ON COLUMN SERVICES.DIMENSION IS
+'ед. измерения';
 
 COMMENT ON COLUMN SERVICES.EXPENSE_TYPE IS
 'Начисления абонплата - 0, подключение - 1';
+
+COMMENT ON COLUMN SERVICES.EXTERNAL_ID IS
+'Код услуги во внешней системе';
+
+COMMENT ON COLUMN SERVICES.EXTRA IS
+'Поле для доп. признаков:
+-колво дней, чтоб считать месяц полным для услуг с неполным месяцем';
+
+COMMENT ON COLUMN SERVICES.INET_SRV IS
+'Признак того что это интернет тариф';
+
+COMMENT ON COLUMN SERVICES.IP_BEGIN IS
+'Начало диапазона IP зоны (сделано для связки с UTM)';
+
+COMMENT ON COLUMN SERVICES.IP_END IS
+'Конец диапазона IP зоны (сделано для связки с UTM)';
+
+COMMENT ON COLUMN SERVICES.NAME IS
+'Название';
+
+COMMENT ON COLUMN SERVICES.NOTE IS
+'Примечание';
+
+COMMENT ON COLUMN SERVICES.ONLY_ONE IS
+'Для цифровых услуг, можно ли услугу привязывать к нескольким картам или нет. по умолчанию null или 0 - можно, 1 - нет';
+
+COMMENT ON COLUMN SERVICES.OPENLY IS
+'Показывать абоненту в ЛК или мобильном приложении';
 
 COMMENT ON COLUMN SERVICES.POSITIVE_ONLY IS
 'Не допускать минус на балансе, т.е. отключать услугу если у абонента не хватает денег на оплату в расчетном периоде.';
@@ -36303,11 +36332,17 @@ COMMENT ON COLUMN SERVICES.POSITIVE_ONLY IS
 COMMENT ON COLUMN SERVICES.PRIORITY IS
 'Приоритет услуг.';
 
-COMMENT ON COLUMN SERVICES.ONLY_ONE IS
-'Для цифровых услуг, можно ли услугу привязывать к нескольким картам или нет. по умолчанию null или 0 - можно, 1 - нет';
+COMMENT ON COLUMN SERVICES.SHIFT_MONTHS IS
+'Смещение начислений относительно активного месяца в программе
+например -1 месяц назад. 1 месяц вперед';
 
-COMMENT ON COLUMN SERVICES.NOTE IS
-'Примечание';
+COMMENT ON COLUMN SERVICES.SHORTNAME IS
+'Код';
+
+COMMENT ON COLUMN SERVICES.SRV_TYPE_ID IS
+'0 - переодическая услуга (по кол-ву дней)
+1 - разовая услуга
+2 - услуга по факту';
 
 COMMENT ON COLUMN SERVICES.TAG IS
 'Цифровое поле для свих нужд';
@@ -36315,14 +36350,14 @@ COMMENT ON COLUMN SERVICES.TAG IS
 COMMENT ON COLUMN SERVICES.TAG_STR IS
 'Текстовое поле для свих нужд';
 
-COMMENT ON COLUMN SERVICES.OPENLY IS
-'Показывать абоненту в ЛК или мобильном приложении';
-
 COMMENT ON COLUMN SERVICES.UNBL_METH IS
 'Снять блок при
 0 - любом плюсе
 1 - дневной тариф
 2 - месячный тариф';
+
+COMMENT ON COLUMN SERVICES.USAGE IS
+'Частота использования услуги';
 
 COMMENT ON COLUMN SERVICES_ATTRIBUTES.O_ID IS
 'O_TYPE = 25';
@@ -36330,23 +36365,29 @@ COMMENT ON COLUMN SERVICES_ATTRIBUTES.O_ID IS
 COMMENT ON COLUMN SERVICES_ATTRIBUTES.SA_VALUE IS
 'Значение атрибута';
 
-COMMENT ON COLUMN SERVICES_CMPLX.SERVICE_ID IS
-'ИД услуги';
-
-COMMENT ON COLUMN SERVICES_CMPLX.NAME IS
-'Название подраздела';
-
-COMMENT ON COLUMN SERVICES_CMPLX."PERCENT" IS
-'% от начислений услуги';
-
 COMMENT ON COLUMN SERVICES_CMPLX.DATE_FROM IS
 '% действует с даты';
 
 COMMENT ON COLUMN SERVICES_CMPLX.DATE_TO IS
 '% действует по дату';
 
+COMMENT ON COLUMN SERVICES_CMPLX.NAME IS
+'Название подраздела';
+
 COMMENT ON COLUMN SERVICES_CMPLX.NOTICE IS
 'Примечание';
+
+COMMENT ON COLUMN SERVICES_CMPLX."PERCENT" IS
+'% от начислений услуги';
+
+COMMENT ON COLUMN SERVICES_CMPLX.SERVICE_ID IS
+'ИД услуги';
+
+COMMENT ON COLUMN SERVICES_LINKS.ADD_SRV IS
+'если тип 6 то какой услугой переключать';
+
+COMMENT ON COLUMN SERVICES_LINKS.CHILD IS
+'какой услугой или на какую услугу';
 
 COMMENT ON COLUMN SERVICES_LINKS.LINK_TYPE IS
 '0 абонентская
@@ -36361,12 +36402,6 @@ COMMENT ON COLUMN SERVICES_LINKS.LINK_TYPE IS
 
 COMMENT ON COLUMN SERVICES_LINKS.PARENT IS
 'для какой период услуги';
-
-COMMENT ON COLUMN SERVICES_LINKS.CHILD IS
-'какой услугой или на какую услугу';
-
-COMMENT ON COLUMN SERVICES_LINKS.ADD_SRV IS
-'если тип 6 то какой услугой переключать';
 
 COMMENT ON COLUMN SERVICES_LINKS.SWITCH_TIME IS
 'Когда переключать
@@ -36384,14 +36419,14 @@ ftVariant,
 ftGuid,
 ftBlob';
 
+COMMENT ON COLUMN SINGLE_SERV.M_ID IS
+'ID материала продажи';
+
 COMMENT ON COLUMN SINGLE_SERV.PAID IS
 'Оплачена ли услуга
 0-нет
 1-частично
 2-да';
-
-COMMENT ON COLUMN SINGLE_SERV.VATG_ID IS
-'Группа НДС';
 
 COMMENT ON COLUMN SINGLE_SERV.RQ_ID IS
 'Заявка через которую добавили работу';
@@ -36399,11 +36434,8 @@ COMMENT ON COLUMN SINGLE_SERV.RQ_ID IS
 COMMENT ON COLUMN SINGLE_SERV.TAG IS
 'Цифровое поле, используеться оператором как угодно';
 
-COMMENT ON COLUMN SINGLE_SERV.M_ID IS
-'ID материала продажи';
-
-COMMENT ON COLUMN STAT_IP.TC_ID IS
-'Класс трафика';
+COMMENT ON COLUMN SINGLE_SERV.VATG_ID IS
+'Группа НДС';
 
 COMMENT ON COLUMN STAT_IP.BYTES IS
 'Кол-во байт за час для IP';
@@ -36411,38 +36443,20 @@ COMMENT ON COLUMN STAT_IP.BYTES IS
 COMMENT ON COLUMN STAT_IP.GRP_LVL IS
 'Уровень группировки H - час D - день W - неделя M - месяц Y - Год';
 
+COMMENT ON COLUMN STAT_IP.TC_ID IS
+'Класс трафика';
+
 COMMENT ON COLUMN SUBDIVISIONS.ID IS
 'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN SUBDIVISIONS.ID_PARENT IS
 'Для полей ссылок которые могут содержать Null';
 
-COMMENT ON COLUMN SUBSCR_HIST.CUSTOMER_ID IS
-'Абонент';
-
-COMMENT ON COLUMN SUBSCR_HIST.SERV_ID IS
-'Услуга';
-
-COMMENT ON COLUMN SUBSCR_HIST.SUBSCR_SERV_ID IS
-'Ссылка на таблицу subscr_serv';
-
-COMMENT ON COLUMN SUBSCR_HIST.DATE_FROM IS
-'Дата начала услуги';
-
-COMMENT ON COLUMN SUBSCR_HIST.DATE_TO IS
-'Дата окончания услуги';
-
 COMMENT ON COLUMN SUBSCR_HIST.ACT_SERV_ID IS
 'Какой услугой включили';
 
-COMMENT ON COLUMN SUBSCR_HIST.DISACT_SERV_ID IS
-'Какой услугой выключили';
-
 COMMENT ON COLUMN SUBSCR_HIST.ACT_WORKER_ID IS
 'Кто включил';
-
-COMMENT ON COLUMN SUBSCR_HIST.DISACT_WORKER_ID IS
-'Кто отключил';
 
 COMMENT ON COLUMN SUBSCR_HIST.ADDED_BY IS
 'Кто добавил услугу';
@@ -36456,22 +36470,49 @@ COMMENT ON COLUMN SUBSCR_HIST.CLOSED_BY IS
 COMMENT ON COLUMN SUBSCR_HIST.CLOSED_ON IS
 'Когда закрыта';
 
-COMMENT ON COLUMN SUBSCR_HIST.WORKER_ON IS
-'Сотрудник физически включивший услуг у абонента';
-
-COMMENT ON COLUMN SUBSCR_HIST.WORKER_OFF IS
-'Сотрудник физически отключивший услуг у абонента';
-
-COMMENT ON COLUMN SUBSCR_HIST.REQ_ON IS
-'Какой заявкой подключили';
-
-COMMENT ON COLUMN SUBSCR_HIST.REQ_OFF IS
-'Какой заявкой отключили';
-
 COMMENT ON COLUMN SUBSCR_HIST.CONTRACT IS
 'Номер договора';
 
 COMMENT ON COLUMN SUBSCR_HIST.CONTRACT_DATE IS
+'Дата договора';
+
+COMMENT ON COLUMN SUBSCR_HIST.CUSTOMER_ID IS
+'Абонент';
+
+COMMENT ON COLUMN SUBSCR_HIST.DATE_FROM IS
+'Дата начала услуги';
+
+COMMENT ON COLUMN SUBSCR_HIST.DATE_TO IS
+'Дата окончания услуги';
+
+COMMENT ON COLUMN SUBSCR_HIST.DISACT_SERV_ID IS
+'Какой услугой выключили';
+
+COMMENT ON COLUMN SUBSCR_HIST.DISACT_WORKER_ID IS
+'Кто отключил';
+
+COMMENT ON COLUMN SUBSCR_HIST.REQ_OFF IS
+'Какой заявкой отключили';
+
+COMMENT ON COLUMN SUBSCR_HIST.REQ_ON IS
+'Какой заявкой подключили';
+
+COMMENT ON COLUMN SUBSCR_HIST.SERV_ID IS
+'Услуга';
+
+COMMENT ON COLUMN SUBSCR_HIST.SUBSCR_SERV_ID IS
+'Ссылка на таблицу subscr_serv';
+
+COMMENT ON COLUMN SUBSCR_HIST.WORKER_OFF IS
+'Сотрудник физически отключивший услуг у абонента';
+
+COMMENT ON COLUMN SUBSCR_HIST.WORKER_ON IS
+'Сотрудник физически включивший услуг у абонента';
+
+COMMENT ON COLUMN SUBSCR_SERV.CONTRACT IS
+'Номер договора';
+
+COMMENT ON COLUMN SUBSCR_SERV.CONTRACT_DATE IS
 'Дата договора';
 
 COMMENT ON COLUMN SUBSCR_SERV.CUSTOMER_ID IS
@@ -36480,53 +36521,47 @@ COMMENT ON COLUMN SUBSCR_SERV.CUSTOMER_ID IS
 COMMENT ON COLUMN SUBSCR_SERV.SERV_ID IS
 'Код услуги';
 
-COMMENT ON COLUMN SUBSCR_SERV.STATE_SGN IS
-'Статус услуги 1-включена 0 - выключена';
-
-COMMENT ON COLUMN SUBSCR_SERV.STATE_DATE IS
-'Дата установки статуса';
-
-COMMENT ON COLUMN SUBSCR_SERV.STATE_SRV IS
-'какая услуга включила или отключения';
-
 COMMENT ON COLUMN SUBSCR_SERV.STATE_CHANGE_BY IS
 'Кто последний менял статус';
 
 COMMENT ON COLUMN SUBSCR_SERV.STATE_CHANGE_ON IS
 'когда изменился статус';
 
-COMMENT ON COLUMN SUBSCR_SERV.CONTRACT IS
-'Номер договора';
+COMMENT ON COLUMN SUBSCR_SERV.STATE_DATE IS
+'Дата установки статуса';
 
-COMMENT ON COLUMN SUBSCR_SERV.CONTRACT_DATE IS
-'Дата договора';
+COMMENT ON COLUMN SUBSCR_SERV.STATE_SGN IS
+'Статус услуги 1-включена 0 - выключена';
+
+COMMENT ON COLUMN SUBSCR_SERV.STATE_SRV IS
+'какая услуга включила или отключения';
 
 COMMENT ON COLUMN SUBSCR_SERV.VATG_ID IS
 'Группа НДС';
 
-COMMENT ON COLUMN SYS$GROUP.ALL_REPORTS IS
-'Доступ ко всем отчетам';
-
 COMMENT ON COLUMN SYS$GROUP.ALL_MODULES IS
 'Доступ ко всем модулям';
 
-COMMENT ON COLUMN SYS$GROUP_RIGHTS.RIGHTS_TYPE IS
-'0-разрешение 1-отчет 2-модуль 3-тип заявки';
+COMMENT ON COLUMN SYS$GROUP.ALL_REPORTS IS
+'Доступ ко всем отчетам';
 
 COMMENT ON COLUMN SYS$GROUP_RIGHTS.RIGHT_ID IS
 'ИД разрешения или отчета или модуля';
 
-COMMENT ON COLUMN SYS$USER.IBNAME IS
-'Firebird логин пользователя';
-
-COMMENT ON COLUMN SYS$USER.LOCKEDOUT IS
-'Блокирован или нет';
+COMMENT ON COLUMN SYS$GROUP_RIGHTS.RIGHTS_TYPE IS
+'0-разрешение 1-отчет 2-модуль 3-тип заявки 4 - Тип обращений';
 
 COMMENT ON COLUMN SYS$USER.ALL_AREAS IS
 'Если 1 то пользователь видит все районы';
 
+COMMENT ON COLUMN SYS$USER.IBNAME IS
+'Firebird логин пользователя';
+
 COMMENT ON COLUMN SYS$USER.LAST_LOGGED IS
 'Дата последнего входа';
+
+COMMENT ON COLUMN SYS$USER.LOCKEDOUT IS
+'Блокирован или нет';
 
 COMMENT ON COLUMN SYS$USER.PSWD_CHANGED IS
 'Когда менялся пароль';
@@ -36537,32 +36572,14 @@ COMMENT ON COLUMN SYS$USER_WH.USER_ID IS
 COMMENT ON COLUMN SYS$USER_WH.WH_ID IS
 'FOR PRIMARY KEYS';
 
-COMMENT ON COLUMN TARIF.TARIF_SUM_JUR IS
-'Тариф юр. лицам';
-
 COMMENT ON COLUMN TARIF.PARTNER_TARIF IS
 'Тариф при работе с партнерами';
 
+COMMENT ON COLUMN TARIF.TARIF_SUM_JUR IS
+'Тариф юр. лицам';
+
 COMMENT ON COLUMN TARIF.VAT IS
 'НДС на услугу';
-
-COMMENT ON COLUMN TASKLIST.ID IS
-'FOR PRIMARY KEYS';
-
-COMMENT ON COLUMN TASKLIST.TITLE IS
-'Задача';
-
-COMMENT ON COLUMN TASKLIST.NOTICE IS
-'Описание';
-
-COMMENT ON COLUMN TASKLIST.PLAN_DATE IS
-'Плановая дата';
-
-COMMENT ON COLUMN TASKLIST.EXEC_DATE IS
-'Фактическая дата выполнения';
-
-COMMENT ON COLUMN TASKLIST.WHO_CAN IS
-'Кто может закрывать. 1 - исполнитель, 2 - исполнитель, но нет должников в задаче';
 
 COMMENT ON COLUMN TASKLIST.ADDED_BY IS
 'Владелец';
@@ -36570,38 +36587,127 @@ COMMENT ON COLUMN TASKLIST.ADDED_BY IS
 COMMENT ON COLUMN TASKLIST.ADDED_ON IS
 'Когда создал';
 
-COMMENT ON COLUMN TASKMSG.TASK_ID IS
-'ID задачи';
+COMMENT ON COLUMN TASKLIST.EXEC_DATE IS
+'Фактическая дата выполнения';
 
-COMMENT ON COLUMN TASKMSG.ADDED_ON IS
-'Время сообщения';
+COMMENT ON COLUMN TASKLIST.ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN TASKLIST.NOTICE IS
+'Описание';
+
+COMMENT ON COLUMN TASKLIST.PLAN_DATE IS
+'Плановая дата';
+
+COMMENT ON COLUMN TASKLIST.TITLE IS
+'Задача';
+
+COMMENT ON COLUMN TASKLIST.WHO_CAN IS
+'Кто может закрывать. 1 - исполнитель, 2 - исполнитель, но нет должников в задаче';
 
 COMMENT ON COLUMN TASKMSG.ADDED_BY IS
 'Кто написал';
 
-COMMENT ON COLUMN TASKMSG.TEXT IS
-'Что написал';
-
-COMMENT ON COLUMN TASKMSG.OBJ_TYPE IS
-'Тип A - абонент, P - платеж, R - заявка';
+COMMENT ON COLUMN TASKMSG.ADDED_ON IS
+'Время сообщения';
 
 COMMENT ON COLUMN TASKMSG.OBJ_ID IS
 'Лицевой, номер заявки или другой ид объекта';
 
-COMMENT ON COLUMN TASKUSER.TASK_ID IS
+COMMENT ON COLUMN TASKMSG.OBJ_TYPE IS
+'Тип A - абонент, P - платеж, R - заявка';
+
+COMMENT ON COLUMN TASKMSG.TASK_ID IS
 'ID задачи';
+
+COMMENT ON COLUMN TASKMSG.TEXT IS
+'Что написал';
 
 COMMENT ON COLUMN TASKUSER.FORUSER IS
 'Кому назначена. ALL - всем';
 
-COMMENT ON COLUMN TQUEUE.ID IS
-'Порядковый номер запроса (не должен повторяться)';
+COMMENT ON COLUMN TASKUSER.TASK_ID IS
+'ID задачи';
+
+COMMENT ON COLUMN TQUEUE."ACTION" IS
+'Тип команды запроса
+-1 - сбросить PIN
+-2 - pairing где в HARDWARE_ID - номер карточки, CARD_NUM_FIRST указываем номер приставки';
+
+COMMENT ON COLUMN TQUEUE.CARD_ID IS
+'Секретный код карты оплаты';
+
+COMMENT ON COLUMN TQUEUE.CARD_NUM_FIRST IS
+'Номер первой карты оплаты';
+
+COMMENT ON COLUMN TQUEUE.CARD_NUM_LAST IS
+'Номер последней карты оплаты';
 
 COMMENT ON COLUMN TQUEUE.CLASS_ID IS
 'Класс который активируется';
 
+COMMENT ON COLUMN TQUEUE.COUNTER IS
+'Значение счетчика для подписки';
+
+COMMENT ON COLUMN TQUEUE.COUNTERUNIT IS
+' Единица  измерения  для  счетчика  подписки  (0  –  часы,  1  -минуты, 3 – дни)';
+
+COMMENT ON COLUMN TQUEUE.DATEADDED IS
+'Дата добавления запроса на WS';
+
+COMMENT ON COLUMN TQUEUE.DATETIME IS
+'Дата используется в зависимости от типа команды описание см. ниже';
+
+COMMENT ON COLUMN TQUEUE.DAYCOUNT IS
+'Количество дней активации пакета каналов';
+
+COMMENT ON COLUMN TQUEUE.DEVICE_MODEL_ID IS
+'Номер модели устройства DRE Crypt, знаю что 2 - смарткарта';
+
+COMMENT ON COLUMN TQUEUE.EMAIL IS
+'Email пользователя ';
+
+COMMENT ON COLUMN TQUEUE.ENDDATE IS
+'Дата окончания подписки';
+
+COMMENT ON COLUMN TQUEUE.FNAME IS
+'Имя пользователя ';
+
+COMMENT ON COLUMN TQUEUE.GEOCODE IS
+'Значение  геокода  (Значения:  Геокод  1  –  1,  Геокод  2  –  2, Геокод  3  –  4,  Геокод  4  –  8,  Геокод  5  –  16,  Геокод  6  –  32,  Геокод  7  –  64,  Геокод  8  –  128,  Геокод  9  –  256,  удал?н  –  0.  При  использовании  нескольких  геокодов  зада?тся  их сумма)';
+
+COMMENT ON COLUMN TQUEUE.GEOCODE_HEX IS
+'Шестнадцетиричное  представление  геокода.  Поля GEOCODE  и  GEOCODE_HEX  взаимоисключающие,  т.е.  если одно заполнено, другое – NULL.';
+
 COMMENT ON COLUMN TQUEUE.HARDWARE_ID IS
 'ID устройства DRE Crypt';
+
+COMMENT ON COLUMN TQUEUE.HARDWARE_ID_CH IS
+'ID устройства DRE Crypt';
+
+COMMENT ON COLUMN TQUEUE.ID IS
+'Порядковый номер запроса (не должен повторяться)';
+
+COMMENT ON COLUMN TQUEUE.INFOCAS_INTERVAL IS
+'Интервал отправки инфокас сообщения';
+
+COMMENT ON COLUMN TQUEUE.INFOCAS_MESSAGE_ID IS
+'Номер инфокас сообщения в системе SMS';
+
+COMMENT ON COLUMN TQUEUE.INFOCAS_MESSAGE_TEXT IS
+'Текст инфокас сообщения';
+
+COMMENT ON COLUMN TQUEUE.INFOCAS_PERIOD IS
+'Период в течении которого соблюдая интервал отправляется инфокас сообщение';
+
+COMMENT ON COLUMN TQUEUE.PHONE IS
+'Номер телефона пользователя';
+
+COMMENT ON COLUMN TQUEUE.PNAME IS
+'Отчество пользователя';
+
+COMMENT ON COLUMN TQUEUE.SNAME IS
+'Фамилия пользователя';
 
 COMMENT ON COLUMN TQUEUE.STATUS IS
 'Статус обработки. 
@@ -36634,121 +36740,11 @@ COMMENT ON COLUMN TQUEUE.STATUS IS
 24   Ошибка: карта оплаты заблокирована
 25   Ошибка: неверная контрольная сумма';
 
-COMMENT ON COLUMN TQUEUE.DATEADDED IS
-'Дата добавления запроса на WS';
-
 COMMENT ON COLUMN TQUEUE.TRANSACTIONNUM IS
 'Номер транзакции оплаты услуг';
 
-COMMENT ON COLUMN TQUEUE."ACTION" IS
-'Тип команды запроса
--1 - сбросить PIN
--2 - pairing где в HARDWARE_ID - номер карточки, CARD_NUM_FIRST указываем номер приставки';
-
-COMMENT ON COLUMN TQUEUE.DATETIME IS
-'Дата используется в зависимости от типа команды описание см. ниже';
-
-COMMENT ON COLUMN TQUEUE.DAYCOUNT IS
-'Количество дней активации пакета каналов';
-
 COMMENT ON COLUMN TQUEUE.USER_ID IS
 'Уникальный номер пользователя в системе SMS';
-
-COMMENT ON COLUMN TQUEUE.EMAIL IS
-'Email пользователя ';
-
-COMMENT ON COLUMN TQUEUE.SNAME IS
-'Фамилия пользователя';
-
-COMMENT ON COLUMN TQUEUE.FNAME IS
-'Имя пользователя ';
-
-COMMENT ON COLUMN TQUEUE.PNAME IS
-'Отчество пользователя';
-
-COMMENT ON COLUMN TQUEUE.PHONE IS
-'Номер телефона пользователя';
-
-COMMENT ON COLUMN TQUEUE.CARD_NUM_FIRST IS
-'Номер первой карты оплаты';
-
-COMMENT ON COLUMN TQUEUE.CARD_NUM_LAST IS
-'Номер последней карты оплаты';
-
-COMMENT ON COLUMN TQUEUE.CARD_ID IS
-'Секретный код карты оплаты';
-
-COMMENT ON COLUMN TQUEUE.HARDWARE_ID_CH IS
-'ID устройства DRE Crypt';
-
-COMMENT ON COLUMN TQUEUE.DEVICE_MODEL_ID IS
-'Номер модели устройства DRE Crypt, знаю что 2 - смарткарта';
-
-COMMENT ON COLUMN TQUEUE.INFOCAS_PERIOD IS
-'Период в течении которого соблюдая интервал отправляется инфокас сообщение';
-
-COMMENT ON COLUMN TQUEUE.INFOCAS_INTERVAL IS
-'Интервал отправки инфокас сообщения';
-
-COMMENT ON COLUMN TQUEUE.INFOCAS_MESSAGE_TEXT IS
-'Текст инфокас сообщения';
-
-COMMENT ON COLUMN TQUEUE.INFOCAS_MESSAGE_ID IS
-'Номер инфокас сообщения в системе SMS';
-
-COMMENT ON COLUMN TQUEUE.COUNTER IS
-'Значение счетчика для подписки';
-
-COMMENT ON COLUMN TQUEUE.COUNTERUNIT IS
-' Единица  измерения  для  счетчика  подписки  (0  –  часы,  1  -минуты, 3 – дни)';
-
-COMMENT ON COLUMN TQUEUE.GEOCODE IS
-'Значение  геокода  (Значения:  Геокод  1  –  1,  Геокод  2  –  2, Геокод  3  –  4,  Геокод  4  –  8,  Геокод  5  –  16,  Геокод  6  –  32,  Геокод  7  –  64,  Геокод  8  –  128,  Геокод  9  –  256,  удал?н  –  0.  При  использовании  нескольких  геокодов  зада?тся  их сумма)';
-
-COMMENT ON COLUMN TQUEUE.ENDDATE IS
-'Дата окончания подписки';
-
-COMMENT ON COLUMN TQUEUE.GEOCODE_HEX IS
-'Шестнадцетиричное  представление  геокода.  Поля GEOCODE  и  GEOCODE_HEX  взаимоисключающие,  т.е.  если одно заполнено, другое – NULL.';
-
-COMMENT ON COLUMN TV_LAN.CUSTOMER_ID IS
-'код абонента';
-
-COMMENT ON COLUMN TV_LAN.IP IS
-'IP абонента';
-
-COMMENT ON COLUMN TV_LAN.MAC IS
-'MAC абонента';
-
-COMMENT ON COLUMN TV_LAN.IP_ADD IS
-'IP дополнительное (например адрес маршрутизатора)';
-
-COMMENT ON COLUMN TV_LAN.PORT IS
-'порт маршрутизатора';
-
-COMMENT ON COLUMN TV_LAN.NOTICE IS
-'примечание';
-
-COMMENT ON COLUMN TV_LAN.IP_BIN IS
-'двоичный формат';
-
-COMMENT ON COLUMN TV_LAN.IP_ADD_BIN IS
-'двоичный формат';
-
-COMMENT ON COLUMN TV_LAN.EQ_ID IS
-'Ссылка на коммутатор из справочника EQUIPMENT';
-
-COMMENT ON COLUMN TV_LAN.VLAN_ID IS
-'Ссылка на влан из справочника VLANS';
-
-COMMENT ON COLUMN TV_LAN.HOUSE_ID IS
-'Дом регистрации этого IP (если отличается от адреса абонента)';
-
-COMMENT ON COLUMN TV_LAN.PLACE IS
-'место регистрации этого IP (если отличается от адреса абонента)';
-
-COMMENT ON COLUMN TV_LAN.LAST_UPDATE IS
-'Дата последнего изменения записи';
 
 COMMENT ON COLUMN TV_LAN.ADDED_BY IS
 'Кто добавил';
@@ -36756,17 +36752,66 @@ COMMENT ON COLUMN TV_LAN.ADDED_BY IS
 COMMENT ON COLUMN TV_LAN.ADDED_ON IS
 'Когда добавил';
 
+COMMENT ON COLUMN TV_LAN.CUSTOMER_ID IS
+'код абонента';
+
 COMMENT ON COLUMN TV_LAN.EDIT_BY IS
 'Кто изменил';
 
 COMMENT ON COLUMN TV_LAN.EDIT_ON IS
 'Когда изменил';
 
-COMMENT ON COLUMN VLANS.V_ID IS
-'VLAN ID';
+COMMENT ON COLUMN TV_LAN.EQ_ID IS
+'Ссылка на коммутатор из справочника EQUIPMENT';
 
-COMMENT ON COLUMN VLANS.NAME IS
-'название';
+COMMENT ON COLUMN TV_LAN.HOUSE_ID IS
+'Дом регистрации этого IP (если отличается от адреса абонента)';
+
+COMMENT ON COLUMN TV_LAN.IP IS
+'IP абонента';
+
+COMMENT ON COLUMN TV_LAN.IP_ADD IS
+'IP дополнительное (например адрес маршрутизатора)';
+
+COMMENT ON COLUMN TV_LAN.IP_ADD_BIN IS
+'двоичный формат';
+
+COMMENT ON COLUMN TV_LAN.IP_BIN IS
+'двоичный формат';
+
+COMMENT ON COLUMN TV_LAN.LAST_UPDATE IS
+'Дата последнего изменения записи';
+
+COMMENT ON COLUMN TV_LAN.MAC IS
+'MAC абонента';
+
+COMMENT ON COLUMN TV_LAN.NOTICE IS
+'примечание';
+
+COMMENT ON COLUMN TV_LAN.PLACE IS
+'место регистрации этого IP (если отличается от адреса абонента)';
+
+COMMENT ON COLUMN TV_LAN.PORT IS
+'порт маршрутизатора';
+
+COMMENT ON COLUMN TV_LAN.VLAN_ID IS
+'Ссылка на влан из справочника VLANS';
+
+COMMENT ON COLUMN VLANS.CONFIG_FILE IS
+'Конфиг файл для модемов';
+
+COMMENT ON COLUMN VLANS.DNS IS
+'DNS сервер для сети';
+
+COMMENT ON COLUMN VLANS.FOR_OBJECTS IS
+'Для кого эта зона
+всех - 0
+абонентов - 1
+оборудования - 2
+как информационное поле - -1';
+
+COMMENT ON COLUMN VLANS.GATEWAY IS
+'Шлюз';
 
 COMMENT ON COLUMN VLANS.IP_BEGIN IS
 'Первый IP';
@@ -36777,33 +36822,17 @@ COMMENT ON COLUMN VLANS.IP_END IS
 COMMENT ON COLUMN VLANS.MASK IS
 'Маска плана';
 
-COMMENT ON COLUMN VLANS.GATEWAY IS
-'Шлюз';
-
-COMMENT ON COLUMN VLANS.CONFIG_FILE IS
-'Конфиг файл для модемов';
-
-COMMENT ON COLUMN VLANS.FOR_OBJECTS IS
-'Для кого эта зона
-всех - 0
-абонентов - 1
-оборудования - 2
-как информационное поле - -1';
-
-COMMENT ON COLUMN VLANS.VLAN_NUM IS
-'Номер сети на коммутаторе';
-
-COMMENT ON COLUMN VLANS.DNS IS
-'DNS сервер для сети';
+COMMENT ON COLUMN VLANS.NAME IS
+'название';
 
 COMMENT ON COLUMN VLANS.PARAMS IS
 'индивидуальные настройки сети';
 
-COMMENT ON COLUMN VPN_SESSIONS.ID IS
-'FOR PRIMARY KEYS';
+COMMENT ON COLUMN VLANS.V_ID IS
+'VLAN ID';
 
-COMMENT ON COLUMN VPN_SESSIONS.CLASS IS
-'Тип сессии: IPoE или VPN';
+COMMENT ON COLUMN VLANS.VLAN_NUM IS
+'Номер сети на коммутаторе';
 
 COMMENT ON COLUMN VPN_SESSIONS.ACCOUNT_NO IS
 'Номер лицевого счёта';
@@ -36811,8 +36840,17 @@ COMMENT ON COLUMN VPN_SESSIONS.ACCOUNT_NO IS
 COMMENT ON COLUMN VPN_SESSIONS.BEGIN_DATE IS
 'Время начала сессии';
 
+COMMENT ON COLUMN VPN_SESSIONS.CLASS IS
+'Тип сессии: IPoE или VPN';
+
 COMMENT ON COLUMN VPN_SESSIONS.END_DATE IS
 'Время окончания сессии';
+
+COMMENT ON COLUMN VPN_SESSIONS.ID IS
+'FOR PRIMARY KEYS';
+
+COMMENT ON COLUMN VPN_SESSIONS.INTERFACE IS
+'Имя интерфейса на VPN-сервере ppp*';
 
 COMMENT ON COLUMN VPN_SESSIONS.IP IS
 'Локальный IP-адрес или IP-адрес IPoE';
@@ -36820,38 +36858,29 @@ COMMENT ON COLUMN VPN_SESSIONS.IP IS
 COMMENT ON COLUMN VPN_SESSIONS.IP_VPN IS
 'IP-адрес VPN';
 
-COMMENT ON COLUMN VPN_SESSIONS.USERNAME IS
-'Имя пользователя VPN';
-
-COMMENT ON COLUMN VPN_SESSIONS.INTERFACE IS
-'Имя интерфейса на VPN-сервере ppp*';
-
 COMMENT ON COLUMN VPN_SESSIONS.SERVER IS
 'IP-адрес VPN-сервера';
 
 COMMENT ON COLUMN VPN_SESSIONS.STATUS IS
 'Статус сессии: Открыта, Закрыта, Открыта автоматически, Закрыта автоматически';
 
-COMMENT ON COLUMN WIRE.WID IS
-'ID кабеля';
+COMMENT ON COLUMN VPN_SESSIONS.USERNAME IS
+'Имя пользователя VPN';
 
-COMMENT ON COLUMN WIRE.WTYPE IS
-'Тип кабеля OBJECTS_TYPE = 56';
+COMMENT ON COLUMN WIRE.CAPACITY IS
+'Кол-во жил';
 
-COMMENT ON COLUMN WIRE.NAME IS
-'Название/номер';
+COMMENT ON COLUMN WIRE.LABELS IS
+'метки на кабеле. через ;';
+
+COMMENT ON COLUMN WIRE.M_ID IS
+'ID Материала';
 
 COMMENT ON COLUMN WIRE.METERS IS
 'Длина в метрах';
 
-COMMENT ON COLUMN WIRE.STOCK IS
-'Запас кабеля';
-
-COMMENT ON COLUMN WIRE.POINT_S IS
-'Подключен к узлу';
-
-COMMENT ON COLUMN WIRE.POINT_E IS
-'Подключен к узлу';
+COMMENT ON COLUMN WIRE.NAME IS
+'Название/номер';
 
 COMMENT ON COLUMN WIRE.NOTICE IS
 'Примечание';
@@ -36859,20 +36888,23 @@ COMMENT ON COLUMN WIRE.NOTICE IS
 COMMENT ON COLUMN WIRE.PATH IS
 'Координаты для отображения на карте';
 
-COMMENT ON COLUMN WIRE.CAPACITY IS
-'Кол-во жил';
+COMMENT ON COLUMN WIRE.POINT_E IS
+'Подключен к узлу';
 
-COMMENT ON COLUMN WIRE.M_ID IS
-'ID Материала';
+COMMENT ON COLUMN WIRE.POINT_S IS
+'Подключен к узлу';
 
-COMMENT ON COLUMN WIRE.LABELS IS
-'метки на кабеле. через ;';
+COMMENT ON COLUMN WIRE.STOCK IS
+'Запас кабеля';
 
-COMMENT ON COLUMN WORKAREA.REQ_LIMIT IS
-'Ограничение заявок на участок. -1 не ограничивать';
+COMMENT ON COLUMN WIRE.WID IS
+'ID кабеля';
 
-COMMENT ON COLUMN WORKAREA.WH_ID IS
-'Склад участка';
+COMMENT ON COLUMN WIRE.WTYPE IS
+'Тип кабеля OBJECTS_TYPE = 56';
+
+COMMENT ON COLUMN WORKAREA.ADRES IS
+'Адрес';
 
 COMMENT ON COLUMN WORKAREA.BOSS IS
 'Начальник';
@@ -36883,14 +36915,26 @@ COMMENT ON COLUMN WORKAREA.FOREMAN IS
 COMMENT ON COLUMN WORKAREA.PHONE IS
 'Телефон';
 
-COMMENT ON COLUMN WORKAREA.ADRES IS
-'Адрес';
+COMMENT ON COLUMN WORKAREA.REQ_LIMIT IS
+'Ограничение заявок на участок. -1 не ограничивать';
+
+COMMENT ON COLUMN WORKAREA.WH_ID IS
+'Склад участка';
+
+COMMENT ON COLUMN WORKAREALIMIT.W_ID IS
+'FOR PRIMARY KEYS';
 
 COMMENT ON COLUMN WORKAREALIMIT.WA_ID IS
 'FOR PRIMARY KEYS';
 
-COMMENT ON COLUMN WORKAREALIMIT.W_ID IS
-'FOR PRIMARY KEYS';
+COMMENT ON COLUMN WORKER.BIRTHDAY IS
+'День рождения';
+
+COMMENT ON COLUMN WORKER.DEPARTMENT IS
+'Подразделение';
+
+COMMENT ON COLUMN WORKER.H_RATE IS
+'часовая ставка';
 
 COMMENT ON COLUMN WORKER.IN_DOGOVOR IS
 'Выводить в списке "Договор составил"';
@@ -36898,20 +36942,14 @@ COMMENT ON COLUMN WORKER.IN_DOGOVOR IS
 COMMENT ON COLUMN WORKER.IN_REQUEST IS
 'Выводить в списке Монтажников';
 
-COMMENT ON COLUMN WORKER.DEPARTMENT IS
-'Подразделение';
+COMMENT ON COLUMN WORKER.MESSENGER IS
+'Telega/Viber/WhatsApp/Skype и т.д.';
+
+COMMENT ON COLUMN WORKER.PLATFORM IS
+'5 - Android 6 -iOS';
 
 COMMENT ON COLUMN WORKER.POST IS
 'Должность';
-
-COMMENT ON COLUMN WORKER.BIRTHDAY IS
-'День рождения';
-
-COMMENT ON COLUMN WORKER.TEAM IS
-'Звено';
-
-COMMENT ON COLUMN WORKER.WA_ID IS
-'Участок пользователя';
 
 COMMENT ON COLUMN WORKER.PRINT_FIO IS
 'Фио в родительном падеже';
@@ -36919,26 +36957,18 @@ COMMENT ON COLUMN WORKER.PRINT_FIO IS
 COMMENT ON COLUMN WORKER.PRINT_TEXT IS
 'Доп поле для печать в документах';
 
-COMMENT ON COLUMN WORKER.PLATFORM IS
-'5 - Android 6 -iOS';
+COMMENT ON COLUMN WORKER.TEAM IS
+'Звено';
 
-COMMENT ON COLUMN WORKER.H_RATE IS
-'часовая ставка';
-
-COMMENT ON COLUMN WORKER.MESSENGER IS
-'Telega/Viber/WhatsApp/Skype и т.д.';
+COMMENT ON COLUMN WORKER.WA_ID IS
+'Участок пользователя';
 
 COMMENT ON COLUMN WORKGROUPS.RQ_LIMIT IS
 'Ограничение заявок на участок. -1 не ограничивать';
 
-COMMENT ON COLUMN WORKS.W_ID IS
-' ID';
-
-COMMENT ON COLUMN WORKS.RQ_TYPE IS
-'Тип заявки';
-
-COMMENT ON COLUMN WORKS.WG_ID IS
-'Группа работ';
+COMMENT ON COLUMN WORKS.AS_SERVICE IS
+'Работа равна услуге.
+т.е. добавляет абоненту разовую услугу';
 
 COMMENT ON COLUMN WORKS.NAME IS
 'Названеи';
@@ -36946,18 +36976,11 @@ COMMENT ON COLUMN WORKS.NAME IS
 COMMENT ON COLUMN WORKS.NOTICE IS
 'Примечание';
 
-COMMENT ON COLUMN WORKS.W_TIME IS
-'Время выполнения, часов';
+COMMENT ON COLUMN WORKS.ON_DEFAULT IS
+'при выбое типа заявок, добавлять работу в заявку';
 
-COMMENT ON COLUMN WORKS.W_COST IS
-'Стоимость работ';
-
-COMMENT ON COLUMN WORKS.W_SRV IS
-'Какую услуг подключать/отключать';
-
-COMMENT ON COLUMN WORKS.W_SRVONOFF IS
-'Какой услугой подкл./откл.
-если 0 - то выбор услуги при откл/подкл.';
+COMMENT ON COLUMN WORKS.RQ_TYPE IS
+'Тип заявки';
 
 COMMENT ON COLUMN WORKS.W_ATR_AD IS
 '1 - Добавить атрибут
@@ -36967,15 +36990,27 @@ COMMENT ON COLUMN WORKS.W_ATR_AD IS
 COMMENT ON COLUMN WORKS.W_ATR_ID IS
 'ID добавляемого атрибута';
 
-COMMENT ON COLUMN WORKS.AS_SERVICE IS
-'Работа равна услуге.
-т.е. добавляет абоненту разовую услугу';
+COMMENT ON COLUMN WORKS.W_COST IS
+'Стоимость работ';
 
-COMMENT ON COLUMN WORKS.ON_DEFAULT IS
-'при выбое типа заявок, добавлять работу в заявку';
+COMMENT ON COLUMN WORKS.W_ID IS
+' ID';
 
 COMMENT ON COLUMN WORKS.W_ONOFF IS
 'Периодическую услугу вкл или отключать';
+
+COMMENT ON COLUMN WORKS.W_SRV IS
+'Какую услуг подключать/отключать';
+
+COMMENT ON COLUMN WORKS.W_SRVONOFF IS
+'Какой услугой подкл./откл.
+если 0 - то выбор услуги при откл/подкл.';
+
+COMMENT ON COLUMN WORKS.W_TIME IS
+'Время выполнения, часов';
+
+COMMENT ON COLUMN WORKS.WG_ID IS
+'Группа работ';
 
 COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.ACCOUNT_NO IS 
 'Лицевой';
@@ -36986,11 +37021,11 @@ COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.CMSN IS
 COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.EXT_SYSTEMS_ID IS 
 'ИД платежа во внешней системе';
 
+COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.IS_DELETED IS 
+'Платеж в удаленных или нет (1,0)';
+
 COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.NOTICE IS 
 'Примечание';
-
-COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAYSOURCE_ID IS 
-'Источник платежа';
 
 COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAY_SUM IS 
 'Сумма';
@@ -37001,26 +37036,26 @@ COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAY_TIME IS
 COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAY_TYPE_STR IS 
 'Способ оплаты CASH, CARD: XXX, WEB, и т.д.';
 
-COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.TAG IS 
-'Текстовое поле, для целей оператора';
-
-COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.IS_DELETED IS 
-'Платеж в удаленных или нет (1,0)';
-
 COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAYMENT_ID IS 
 'Вернет ИД платежа или ошибку, если < 0';
 
-COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.CUSTOMER_ID IS 
-'ID абонента';
+COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.PAYSOURCE_ID IS 
+'Источник платежа';
 
-COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.FOR_DATE IS 
-'на какую дату';
+COMMENT ON PROCEDURE PARAMETER ADD_PAYMENT_FROM_EXT_SYSTEMS.TAG IS 
+'Текстовое поле, для целей оператора';
 
 COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.CAN_OFF IS 
 '1 - Выключать в ЛК';
 
 COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.CAN_ON IS 
 '1 - Включать в ЛК';
+
+COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.CUSTOMER_ID IS 
+'ID абонента';
+
+COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.FOR_DATE IS 
+'на какую дату';
 
 COMMENT ON PROCEDURE PARAMETER API_GET_CUSTOMER_SERVICES.SERVICE_ID IS 
 'ID Услуги';
@@ -37058,14 +37093,8 @@ COMMENT ON PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.P_DAILY IS
 COMMENT ON PROCEDURE PARAMETER CALC_SINGLE_SRV_CUSTOMER.P_MONTH IS 
 'Дата';
 
-COMMENT ON PROCEDURE PARAMETER CANCEL_CONTRACT.PCANCEL_DATE IS 
-'Дата отключения';
-
-COMMENT ON PROCEDURE PARAMETER CANCEL_CONTRACT.PCUSTOMER_ID IS 
-'ID абонента';
-
-COMMENT ON PROCEDURE PARAMETER CANCEL_CONTRACT.POFF_SRV_ID IS 
-'Услуга отключения';
+COMMENT ON PROCEDURE PARAMETER CAN_USER_VIEW_ADDRESS.CAN_VIEW IS 
+'1 - видит, 0 - нет';
 
 COMMENT ON PROCEDURE PARAMETER CAN_USER_VIEW_ADDRESS.HOUSE_ID IS 
 'ID дома';
@@ -37076,8 +37105,14 @@ COMMENT ON PROCEDURE PARAMETER CAN_USER_VIEW_ADDRESS.STREET_ID IS
 COMMENT ON PROCEDURE PARAMETER CAN_USER_VIEW_ADDRESS.USER_NAME IS 
 'пользователь';
 
-COMMENT ON PROCEDURE PARAMETER CAN_USER_VIEW_ADDRESS.CAN_VIEW IS 
-'1 - видит, 0 - нет';
+COMMENT ON PROCEDURE PARAMETER CANCEL_CONTRACT.PCANCEL_DATE IS 
+'Дата отключения';
+
+COMMENT ON PROCEDURE PARAMETER CANCEL_CONTRACT.PCUSTOMER_ID IS 
+'ID абонента';
+
+COMMENT ON PROCEDURE PARAMETER CANCEL_CONTRACT.POFF_SRV_ID IS 
+'Услуга отключения';
 
 COMMENT ON PROCEDURE PARAMETER CUSTOMER_BALANCE.FROM_DATE IS 
 'дата c которой нужна детализация';
@@ -37114,9 +37149,6 @@ COMMENT ON PROCEDURE PARAMETER DUBLICATE_REQUEST.FOR_NODE IS
 
 COMMENT ON PROCEDURE PARAMETER DUBLICATE_REQUEST.FROM_REQUEST IS 
 'с какой заявки';
-
-COMMENT ON PROCEDURE PARAMETER FORMAT_DATE.A_DATE IS 
-'дата';
 
 COMMENT ON PROCEDURE PARAMETER FORMAT_DATE.FORMAT IS 
 'строка, содержащая шаблон форматирования даты. Заменяются следующие комбинации символов:';
@@ -37178,20 +37210,20 @@ COMMENT ON PROCEDURE PARAMETER GET_STATISTICS.P_RETURN IS
 COMMENT ON PROCEDURE PARAMETER GET_STATISTICS.P_SWITCH IS 
 'переключился за период';
 
-COMMENT ON PROCEDURE PARAMETER GET_STATISTICS.SERVICE_ID IS 
-'услуга';
-
 COMMENT ON PROCEDURE PARAMETER GET_STATISTICS.S_BLOCK IS 
 'в блоке на начало';
 
 COMMENT ON PROCEDURE PARAMETER GET_STATISTICS.S_ON IS 
 'включен на начало';
 
-COMMENT ON PROCEDURE PARAMETER MATERIAL_REMAIN_RECALC.FOR_WH IS 
-'Пересчитаем все или конкретный склад';
+COMMENT ON PROCEDURE PARAMETER GET_STATISTICS.SERVICE_ID IS 
+'услуга';
 
 COMMENT ON PROCEDURE PARAMETER MAT_MOVE_DETAILS.KEEP IS 
 'остатки после операции';
+
+COMMENT ON PROCEDURE PARAMETER MATERIAL_REMAIN_RECALC.FOR_WH IS 
+'Пересчитаем все или конкретный склад';
 
 COMMENT ON PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.P_ACCOUNT IS 
 'Лицевой';
@@ -37202,11 +37234,11 @@ COMMENT ON PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.P_DATE IS
 COMMENT ON PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.P_UNITS IS 
 'Кол-во';
 
-COMMENT ON PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.V_SERVICE_ID IS 
-'Услуга';
-
 COMMENT ON PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.SALDO IS 
 'сальдо после добавления';
+
+COMMENT ON PROCEDURE PARAMETER MIGRATE_SERVICE_BY_ACCOUNT.V_SERVICE_ID IS 
+'Услуга';
 
 COMMENT ON PROCEDURE PARAMETER ONOFF_SERVICE.ADD_SGL IS 
 'Добавлять ли разовую услугу абоненту';
@@ -37276,4 +37308,22 @@ COMMENT ON PROCEDURE PARAMETER QUEUE_SWITCH.UNITS IS
 
 COMMENT ON PROCEDURE PARAMETER QUEUE_SWITCH_HANDLE.FOR_CUSTOMER_ID IS 
 'Если ID указан, то обработаем только этого абонента, иначе - всех';
+
+COMMENT ON FUNCTION PARAMETER DATE_FORMAT.A_DATE IS 
+'Дата';
+
+COMMENT ON FUNCTION PARAMETER DATE_FORMAT.FORMAT IS 
+'строка, содержащая шаблон форматирования даты. Заменяются следующие комбинации символов:';
+
+COMMENT ON FUNCTION PARAMETER DATE_FORMAT.LONG_DAY_NAMES IS 
+'полные названия дней недели через запятую (с понедельника по воскресенье)';
+
+COMMENT ON FUNCTION PARAMETER DATE_FORMAT.LONG_MONTH_NAMES IS 
+'полные названия месяцев через запятую';
+
+COMMENT ON FUNCTION PARAMETER DATE_FORMAT.SHORT_DAY_NAMES IS 
+'сокращённые названия дней недели через запятую';
+
+COMMENT ON FUNCTION PARAMETER DATE_FORMAT.SHORT_MONTH_NAMES IS 
+'сокращённые названия месяцев через запятую';
 

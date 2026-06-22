@@ -14,7 +14,7 @@ uses
   DataDriverEh, pFIBDataDriverEh, MemTableEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL,
   GridsEh,
   DBAxisGridsEh, EhLibFIB, EhLibMTE, FIBQuery, PrjConst, A4onTypeUnit, AtrPages, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TEquipmentForm = class(TGridForm)
@@ -407,7 +407,6 @@ end;
 procedure TEquipmentForm.ActSetFilterExecute(Sender: TObject);
 var
   filter: string;
-  fResult: Boolean;
 begin
   inherited;
   {

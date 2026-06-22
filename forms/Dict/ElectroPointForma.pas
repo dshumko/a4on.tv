@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider, amSplitter,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
-  PrnDbgeh, DBLookupEh, PropFilerEh, PropStorageEh;
+  PrnDbgeh, DBLookupEh, PropFilerEh, PropStorageEh, CnClasses;
 
 type
   TElectroPointForm = class(TGridForm)
@@ -86,6 +86,19 @@ type
     lcbTarif: TDBLookupComboboxEh;
     dsTarif: TpFIBDataSet;
     srcTarif: TDataSource;
+    tsAttr: TTabSheet;
+    Panel2: TPanel;
+    SpeedButton2: TSpeedButton;
+    btnAAdd: TSpeedButton;
+    btnAEdit: TSpeedButton;
+    dbgAttr: TDBGridEh;
+    srcAttributes: TDataSource;
+    ActAttrList: TActionList;
+    actAAdd: TAction;
+    actAEdit: TAction;
+    actADel: TAction;
+    btnADel: TSpeedButton;
+    dsAttributes: TpFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -105,6 +118,9 @@ type
     procedure actEditNodePCEExecute(Sender: TObject);
     procedure actPCEFixingExecute(Sender: TObject);
     procedure actLockPeriodExecute(Sender: TObject);
+    procedure actAAddExecute(Sender: TObject);
+    procedure actAEditExecute(Sender: TObject);
+    procedure actADelExecute(Sender: TObject);
   private
     procedure StartEdt(const New: Boolean = False);
     procedure FixingReading(const fd: TDate; const ID: Integer = -1);
@@ -120,7 +136,7 @@ var
 implementation
 
 uses
-  DM, CountersIndicationForma, SelDateForma;
+  DM, CountersIndicationForma, SelDateForma, AttrGeneralForma;
 
 {$R *.dfm}
 
@@ -447,14 +463,13 @@ begin
   if SelectDate(fd, 'Укажите месяц для блокировки (сейчас ' + dmMain.GetSettingsValue('PCE_START_DATE') + ')') then
   begin
     with dmMain.Query do
-    begin;
+    begin
       sql.Clear;
-      sql.Text := 'execute block ( lm D_DATE = :lm) as' + #13#10 + 'declare variable cm D_DATE;' + #13#10 + 'begin' +
-        #13#10 + '  lm = Month_First_Day(coalesce(lm, current_date));' + #13#10 + '  select' + #13#10 +
-        '      cast(Var_Value as date)' + #13#10 + '    from Settings' + #13#10 +
-        '    where (Var_Name = ''PCE_START_DATE'')' + #13#10 + '  into :cm;' + #13#10 + '  cm = coalesce(cm, lm);' +
-        #13#10 + '  if (cm <= lm) then' + #13#10 + '    update Settings' + #13#10 + '    set Var_Value = :lm' + #13#10 +
-        '    where (Var_Name = ''PCE_START_DATE'');' + #13#10 + 'end';
+      sql.Text := 'execute block ( lm D_DATE = :lm) as declare variable cm D_DATE; begin ' +
+        ' lm = Month_First_Day(coalesce(lm, current_date));  select cast(Var_Value as date) ' +
+        ' from Settings  where (Var_Name = ''PCE_START_DATE'') into :cm; ' +
+        ' cm = coalesce(cm, lm); if (cm <= lm) then update Settings ' +
+        ' set Var_Value = :lm where (Var_Name = ''PCE_START_DATE''); end';
     end;
 
     dmMain.Query.ParamByName('lm').AsDate := fd;
@@ -503,12 +518,69 @@ begin
   dsHistory.Active := (pgcInfo.ActivePage = tsCoverage);
   dsNodes.Active := (pgcInfo.ActivePage = tsNodes);
   dsNodePce.Active := (pgcInfo.ActivePage = tsNodes);
+  dsAttributes.Active := (pgcInfo.ActivePage = tsAttr);
 
   if dsNodes.Active then
     dbgUsed.DefaultApplySorting
-  else
-    dbgHistory.DefaultApplySorting;
+  else if dsHistory.Active then
+    dbgHistory.DefaultApplySorting
+  else if dsAttributes.Active then
+    dbgAttr.DefaultApplySorting;
+end;
 
+procedure TElectroPointForm.actAAddExecute(Sender: TObject);
+begin
+  inherited;
+  if (not dsAttributes.Active) then
+    Exit;
+
+  if (srcDataSource.DataSet.FieldByName('O_ID').IsNull) then
+    Exit;
+
+  if AddOrEditAttribute(rsAttrID_EP, srcDataSource.DataSet['O_ID'], -1) then
+    dsAttributes.CloseOpen(True);
+end;
+
+procedure TElectroPointForm.actAEditExecute(Sender: TObject);
+begin
+  inherited;
+
+  if ((not dsAttributes.Active) or (dsAttributes.RecordCount = 0)) then
+    Exit;
+
+  if (dsAttributes.FieldByName('O_NAME').IsNull) or (dsAttributes.FieldByName('AID').IsNull) or
+    (srcDataSource.DataSet.FieldByName('O_ID').IsNull) then
+    Exit;
+
+  if AddOrEditAttribute(rsAttrID_EP, srcDataSource.DataSet['O_ID'], dsAttributes['AID']) then
+    dsAttributes.Refresh;
+end;
+
+procedure TElectroPointForm.actADelExecute(Sender: TObject);
+begin
+  inherited;
+  if ((not dsAttributes.Active) or (dsAttributes.RecordCount = 0)) then
+    Exit;
+
+  if (dsAttributes.FieldByName('O_NAME').IsNull) or (dsAttributes.FieldByName('AID').IsNull) or
+    (srcDataSource.DataSet.FieldByName('O_ID').IsNull) then
+    Exit;
+
+  if srcAttributes.DataSet.State in [dsInsert, dsEdit] then
+    srcAttributes.DataSet.Cancel
+  else
+  begin
+    if ((not dsAttributes.Active) or (dsAttributes.RecordCount = 0)) then
+      Exit;
+    if (not srcAttributes.DataSet.FieldByName('O_NAME').IsNull) then
+    begin
+      if (MessageDlg(Format(rsDeleteWithName, [srcAttributes.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
+        = mrYes) then
+      begin
+        srcAttributes.DataSet.Delete;
+      end;
+    end;
+  end;
 end;
 
 end.

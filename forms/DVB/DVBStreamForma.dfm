@@ -13,13 +13,11 @@ object DVBStreamForm: TDVBStreamForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame1: TOkCancelFrame
     Left = 0
@@ -29,11 +27,19 @@ object DVBStreamForm: TDVBStreamForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 452
+    ExplicitWidth = 860
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 100
@@ -41,10 +47,15 @@ object DVBStreamForm: TDVBStreamForm
       Width = 672
       Anchors = [akLeft, akRight, akBottom]
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 100
+      ExplicitTop = 6
+      ExplicitWidth = 672
     end
     inherited bbCancel: TBitBtn
       Left = 778
       Top = 6
+      ExplicitLeft = 778
+      ExplicitTop = 6
     end
   end
   object pnlChannels: TPanel
@@ -71,10 +82,11 @@ object DVBStreamForm: TDVBStreamForm
       object lbl1: TLabel
         Left = 0
         Top = 0
-        Width = 117
+        Width = 497
         Height = 13
         Align = alTop
         Caption = '.:: '#1050#1072#1085#1072#1083#1099' '#1074' '#1087#1086#1090#1086#1082#1077' ::.'
+        ExplicitWidth = 117
       end
       object dbgrdGridSC: TDBGridEh
         Left = 0
@@ -311,10 +323,11 @@ object DVBStreamForm: TDVBStreamForm
       object lbl2: TLabel
         Left = 0
         Top = 0
-        Width = 150
+        Width = 360
         Height = 13
         Align = alTop
         Caption = '.:: '#1055#1077#1088#1077#1095#1077#1085#1100' '#1074#1089#1077#1093' '#1082#1072#1085#1072#1083#1086#1074' ::.'
+        ExplicitWidth = 150
       end
       object dbgrdGridC: TDBGridEh
         Left = 0

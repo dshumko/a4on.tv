@@ -13,12 +13,10 @@ object edtNodeFlats: TedtNodeFlats
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyUp = FormKeyUp
-  PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
     Left = 0
@@ -48,6 +46,7 @@ object edtNodeFlats: TedtNodeFlats
         Height = 13
         Align = alTop
         Caption = #1050#1074#1072#1088#1090#1080#1088#1099' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1085#1099#1077' '#1082' '#1091#1079#1083#1091
+        ExplicitWidth = 167
       end
       object dbgOn: TDBGridEh
         Left = 0
@@ -279,6 +278,7 @@ object edtNodeFlats: TedtNodeFlats
         Height = 13
         Align = alTop
         Caption = #1057#1074#1086#1073#1086#1076#1085#1099#1077' '#1082#1074#1072#1088#1090#1080#1088#1099
+        ExplicitWidth = 111
       end
       object dbgOff: TDBGridEh
         Left = 0

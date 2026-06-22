@@ -5,7 +5,9 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   ClientHeight = 422
   ClientWidth = 778
   Position = poDesigned
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 794
+  ExplicitHeight = 461
   TextHeight = 13
   object splitter: TSplitter [0]
     Left = 0
@@ -18,6 +20,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   end
   inherited splPG: TSplitter
     Width = 778
+    ExplicitWidth = 778
   end
   inherited dbGrid: TDBGridEh
     Width = 778
@@ -172,6 +175,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   end
   inherited tlbMain: TToolBar
     Width = 778
+    ExplicitWidth = 778
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -185,7 +189,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       Visible = False
     end
     object btn2: TToolButton
-      Left = 178
+      Left = 186
       Top = 0
       Width = 8
       Caption = 'btn2'
@@ -193,12 +197,12 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       Style = tbsSeparator
     end
     object btnHistory: TToolButton
-      Left = 186
+      Left = 194
       Top = 0
       Action = actHistory
     end
     object btn1: TToolButton
-      Left = 209
+      Left = 217
       Top = 0
       Width = 8
       Caption = 'btn1'
@@ -206,7 +210,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       Style = tbsSeparator
     end
     object btnFindCustomer: TToolButton
-      Left = 217
+      Left = 225
       Top = 0
       Action = actFindCustomer
     end
@@ -344,6 +348,8 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   end
   inherited pnlEdit: TPanel
     Width = 778
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 778
   end
   inherited srcDataSource: TDataSource
     DataSet = dsEQ

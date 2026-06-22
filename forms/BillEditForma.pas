@@ -7,7 +7,8 @@ uses
   System.Classes, System.SysUtils, System.Variants,
   Data.DB,
   Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.Mask, Vcl.Buttons, Vcl.StdCtrls, Vcl.Forms,
-  CnErrorProvider, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, OkCancel_frame, DBCtrlsEh;
+  CnErrorProvider, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, OkCancel_frame, DBCtrlsEh,
+  CnClasses;
 
 type
   TBillEditForm = class(TForm)
@@ -54,14 +55,14 @@ function EditBillInfo(const aBILL_ID: Int64; const CUSTOMER_ID: Integer; const A
 implementation
 
 uses
-  DM, AtrStrUtils, AtrCommon, RxStrUtils, synacode, pFIBQuery, PrjConst;
+  System.NetEncoding, DM, AtrStrUtils, AtrCommon, RxStrUtils, pFIBQuery, PrjConst;
 
 {$R *.dfm}
 
 function EditBillInfo(const aBILL_ID: Int64; const CUSTOMER_ID: Integer; const ACCOUNT: string;
   const NOTICE: string = ''; const SetVPN: Boolean = True; const HideCancel: Boolean = False): Int64;
 var
-  pwd: AnsiString;
+  pwd: String;
 begin
   result := -1;
   with TBillEditForm.Create(Application) do
@@ -85,8 +86,8 @@ begin
       begin
         if not dsBill.FieldByName('SECRET').IsNull then
         begin
-          pwd := dsBill.FieldByName('SECRET').AsAnsiString;
-          edtSecret.Text := string(DecodeBase64(pwd));
+          pwd := dsBill.FieldByName('SECRET').AsString;
+          edtSecret.Text := TEncoding.UTF8.GetString(TNetEncoding.Base64.DecodeStringToBytes(pwd)); // string(DecodeBase64(pwd));
         end;
 
         dsBill.Edit;
@@ -101,9 +102,9 @@ begin
 
       if ShowModal = mrOk then
       begin
-        pwd := AnsiString(edtSecret.Text);
-        pwd := EncodeBase64(pwd);
-        dsBill.FieldByName('SECRET').AsAnsiString := pwd;
+        // pwd := AnsiString(edtSecret.Text);
+        pwd := TNetEncoding.Base64.EncodeBytesToString(TEncoding.UTF8.GetBytes(edtSecret.Text)); // EncodeBase64(pwd);
+        dsBill.FieldByName('SECRET').AsString := pwd;
         dsBill.Post;
         result := 1;
       end

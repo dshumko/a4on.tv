@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider, amSplitter,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
-  PrnDbgeh, PropFilerEh, PropStorageEh;
+  PrnDbgeh, PropFilerEh, PropStorageEh, CnClasses;
 
 type
   TElectroRecipientForm = class(TGridForm)

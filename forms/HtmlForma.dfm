@@ -136,6 +136,7 @@ object HtmlForm: THtmlForm
         PrintMarginRight = 2.000000000000000000
         PrintMarginTop = 2.000000000000000000
         PrintScale = 1.000000000000000000
+        Text = ''
         OnImageRequest = htmlviewerImageRequest
         Align = alClient
         PopupMenu = pmHTML

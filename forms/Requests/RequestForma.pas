@@ -14,7 +14,10 @@ uses
   FIBQuery,
   pFIBQuery, DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh, CnErrorProvider, FIBDatabase, pFIBDatabase, GridsEh,
   DBCtrlsEh,
-  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, OkCancel_frame, amSplitter;
+  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, OkCancel_frame, amSplitter,
+  CnClasses
+  // , WebpImageX
+    ;
 
 type
   TRequestForm = class(TForm)
@@ -561,8 +564,8 @@ procedure TRequestForm.actMaterialsExecute(Sender: TObject);
 begin
   if FSingleGive then
   begin
-    //if not FRequestClosed then
-    //  SingleMatGive(dsRequest['RQ_ID']);
+    // if not FRequestClosed then
+    // SingleMatGive(dsRequest['RQ_ID']);
   end
   else
     ReqMaterials(dsRequest['RQ_ID'], FRequestClosed);
@@ -848,7 +851,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -877,6 +883,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then
@@ -1265,7 +1280,37 @@ begin
       Free;
     end;
   end;
-  ShowMessage(s);
+
+  if FIsLTV and (deny or (s <> '')) then
+  begin
+    // проверим, если установки компоновки не было, то поставим, если была, то запрет сохранения
+    deny := False;
+    with TpFIBQuery.Create(Nil) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.trWriteQ;
+        SQL.Text := 'select ban from ibe$Node_Check_Layout(:NODE_ID)';
+        ParamByName('NODE_ID').AsInteger := fNodeId;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if not EOF then
+        begin
+          if not FieldByName('ban').IsNull then
+            deny := (FieldByName('ban').AsInteger = 1)
+        end;
+        Close;
+        Transaction.Commit;
+      finally
+        Free;
+      end;
+    end;
+    if (not deny) then
+      s := '';
+  end;
+
+  if (s <> '') then
+    ShowMessage(s);
 
   Result := not deny; // s.IsEmpty;
 end;
@@ -2206,13 +2251,15 @@ function TRequestForm.CheckReqWorks: Boolean;
 
 var
   CanDelete: Boolean;
-  s, n: string;
+  s: string;
   bm: TBookmark;
   ja: TJsonArray;
   jv: TJsonDataValueHelper;
   nc, ncw: Boolean;
 begin
   Result := true;
+  nc := False;
+  ncw := False;
   // проверим, не удалили ли работы которые заданы автоматически
   CanDelete := FFullAccess;
   // проверим, можно ли удалять работу добавленную автоматически
@@ -2235,7 +2282,7 @@ begin
       if (dmMain.GetSettingsValue('REQUEST_WORKS_DEL_RESTRICT') = '1') and (not dsErrors.FieldByName('WORKS').IsNull)
       then
       begin
-        ja := (TJsonObject.Parse(dsErrors['WORKS']) as TJsonArray);
+        ja := TJsonObject.Parse((dsErrors.FieldByName('WORKS').AsString)) as TJsonArray;
         try
           if (ja.Count > 0) then
           begin

@@ -10,9 +10,7 @@ object apgCustomerRequests: TapgCustomerRequests
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbGridCustReq: TDBGridEh
     Left = 26
@@ -270,10 +268,10 @@ object apgCustomerRequests: TapgCustomerRequests
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1054#1087#1083#1072#1090#1072
-        Title.TitleButton = True
         Title.Hint = 
           #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
           #1083#1090#1099#1081
+        Title.TitleButton = True
         Visible = False
       end
       item
@@ -284,10 +282,10 @@ object apgCustomerRequests: TapgCustomerRequests
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1053#1072#1095#1080#1089#1083#1077#1085#1086
-        Title.TitleButton = True
         Title.Hint = 
           #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
           #1083#1090#1099#1081
+        Title.TitleButton = True
         Visible = False
       end
       item
@@ -298,10 +296,10 @@ object apgCustomerRequests: TapgCustomerRequests
         Footer.ValueType = fvtSum
         Footers = <>
         Title.Caption = #1044#1077#1085#1100#1075#1080'|'#1059#1089#1083#1091#1075#1080
-        Title.TitleButton = True
         Title.Hint = 
           #1077#1089#1083#1080' '#1054#1087#1083#1072#1090#1072' '#1085#1077' '#1088#1072#1074#1085#1072' '#1053#1072#1095#1080#1089#1083#1077#1085#1086' + '#1059#1089#1083#1091#1075#1080', '#1090#1086' '#1079#1072#1103#1074#1082#1072' '#1082#1088#1072#1089#1080#1090#1089#1103' '#1074' '#1078#1077 +
           #1083#1090#1099#1081
+        Title.TitleButton = True
         Visible = False
       end>
     object RowDetailData: TRowDetailPanelControlEh

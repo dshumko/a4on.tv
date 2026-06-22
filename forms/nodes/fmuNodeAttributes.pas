@@ -6,8 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibVCL,
+  Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ToolWin,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh;
 
 type
@@ -54,7 +56,7 @@ procedure TapgNodeAttributes.InitForm;
 var
   FullAccess: Boolean;
 begin
-  FullAccess := (dmMain.AllowedAction(rght_Comm_Nodes));
+  FullAccess := (dmMain.AllowedAction(rght_Dictionary_full));
   pnlButtons.Visible := (dmMain.AllowedAction(rght_Comm_Nodes)) or FullAccess;
   actAdd.Visible := pnlButtons.Visible;
   actDel.Visible := pnlButtons.Visible;

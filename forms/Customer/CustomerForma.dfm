@@ -13,7 +13,6 @@ object CustomerForm: TCustomerForm
   FormStyle = fsMDIChild
   KeyPreview = True
   Menu = mmCustomer
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -21,7 +20,6 @@ object CustomerForm: TCustomerForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -39,6 +37,7 @@ object CustomerForm: TCustomerForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitHeight = 143
     object spl1: TSplitter
       Left = 145
       Top = 0
@@ -52,6 +51,7 @@ object CustomerForm: TCustomerForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitHeight = 143
     end
     object dbgForms: TDBGridEh
       Left = 0

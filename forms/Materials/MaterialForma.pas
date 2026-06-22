@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls,
   Vcl.Mask, Vcl.Buttons,
   DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider,
-  FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
+  FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, CnClasses;
 
 type
   TMaterialForm = class(TForm)
@@ -78,8 +78,7 @@ type
     procedure btnScanerClick(Sender: TObject);
     procedure edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure dsDocAfterOpen(DataSet: TDataSet);
-    procedure dblMatGroupEditButtons0Click(Sender: TObject;
-      var Handled: Boolean);
+    procedure dblMatGroupEditButtons0Click(Sender: TObject; var Handled: Boolean);
   private
     { Private declarations }
     FNeedCheckNN: Boolean;
@@ -248,15 +247,15 @@ begin
   FNeedDelete := True;
 end;
 
-procedure TMaterialForm.dblMatGroupEditButtons0Click(Sender: TObject;
-  var Handled: Boolean);
+procedure TMaterialForm.dblMatGroupEditButtons0Click(Sender: TObject; var Handled: Boolean);
 var
-  id : Integer;
+  id: Integer;
 begin
   //
-  if EditMatGroup(id) then begin
-    dsMGropups.CloseOpen(true);
-    dblMatGroup.Value := id;
+  if EditMatGroup(id) then
+  begin
+    dsMGropups.CloseOpen(True);
+    dblMatGroup.value := id;
   end;
 
   Handled := True;

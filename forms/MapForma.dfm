@@ -18,7 +18,6 @@ object MapForm: TMapForm
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
@@ -93,11 +92,6 @@ object MapForm: TMapForm
       end
     end
   end
-  object gmInfoWindow: TGMInfoWindow
-    VisualObjects = <>
-    Left = 184
-    Top = 256
-  end
   object mmMap: TMainMenu
     Left = 400
     Top = 152
@@ -126,12 +120,6 @@ object MapForm: TMapForm
         Action = actGeocoding
       end
     end
-  end
-  object gmGeoCode: TGMGeoCode
-    Region = rBELARUS
-    LangCode = lcRUSSIAN
-    Left = 632
-    Top = 168
   end
   object qWrite: TpFIBQuery
     Transaction = trWrite

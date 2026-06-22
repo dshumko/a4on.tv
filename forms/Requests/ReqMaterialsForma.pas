@@ -163,7 +163,8 @@ var
   i: Integer;
 begin
   dmMain.SetIniValue('BIDMATGROUPIDX', FGroupIndex.ToString);
-  if (FGroupIndex = 0) and mtGroups.Active then begin
+  if (FGroupIndex = 0) and mtGroups.Active then
+  begin
     if (not mtGroups.FieldByName('MG_ID').IsNull) and (mtGroups['MG_ID'] > 0) then
       dmMain.SetIniValue('BIDMATGROUPSEL', mtGroups.FieldByName('MG_ID').AsString);
   end;
@@ -203,7 +204,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -230,6 +234,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := True;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
       end;
     end
     else if Font_size <> 0 then
@@ -311,7 +324,7 @@ end;
 
 procedure TReqMaterialsForm.SetMatGroup(const GrpIndex: Integer);
 var
-  s : string;
+  s: string;
 begin
   mtGroups.Close;
   dsReqMaterials.Close;
@@ -340,8 +353,8 @@ begin
       Add('union');
       Add('select -1 as MG_ID, ''  ВСЕ МАТЕРИАЛЫ'' MG_NAME, null as PARENT_ID, ''Все материалы'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE');
       // TODO: Сделать выкуп
-      //Add('union');
-      //Add('select -3 as MG_ID, ''  НА ВЫКУП '' MG_NAME, null as PARENT_ID, ''Оборудование у абонента в аренде для выкупа'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE');
+      // Add('union');
+      // Add('select -3 as MG_ID, ''  НА ВЫКУП '' MG_NAME, null as PARENT_ID, ''Оборудование у абонента в аренде для выкупа'' as MG_NOTICE, -2 FOR_WH_ID from RDB$DATABASE');
     end;
   end;
   drvFibGroups.SelectSQL.Add('order by 2');
@@ -355,7 +368,6 @@ begin
 
   dsReqMaterials.Open;
 end;
-
 
 procedure TReqMaterialsForm.TreeExpandBranch(const MG_ID: Integer);
 var

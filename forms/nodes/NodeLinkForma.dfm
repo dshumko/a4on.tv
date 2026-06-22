@@ -13,13 +13,11 @@ object NodeLinkForm: TNodeLinkForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -29,11 +27,19 @@ object NodeLinkForm: TNodeLinkForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 302
+    ExplicitWidth = 534
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -41,9 +47,12 @@ object NodeLinkForm: TNodeLinkForm
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 67
+      ExplicitWidth = 378
     end
     inherited bbCancel: TBitBtn
       Left = 451
+      ExplicitLeft = 451
     end
   end
   object pnlMain: TPanel

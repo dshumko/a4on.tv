@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
   FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh,
-  Vcl.Buttons, FIBDatabase, pFIBDatabase;
+  Vcl.Buttons, FIBDatabase, pFIBDatabase, CnClasses;
 
 type
   TAttrGeneralForm = class(TForm)

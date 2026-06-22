@@ -29,6 +29,8 @@ object PortLinkForm: TPortLinkForm
     Align = alBottom
     TabOrder = 0
     TabStop = True
+    ExplicitTop = 326
+    ExplicitWidth = 584
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -42,9 +44,12 @@ object PortLinkForm: TPortLinkForm
       Enabled = False
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 67
+      ExplicitWidth = 428
     end
     inherited bbCancel: TBitBtn
       Left = 501
+      ExplicitLeft = 501
     end
   end
   object pnlSecond: TPanel
@@ -401,6 +406,7 @@ object PortLinkForm: TPortLinkForm
               Height = 13
               Align = alTop
               Caption = '  '#1055#1086#1080#1089#1082' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103' '#1087#1086':'
+              ExplicitWidth = 131
             end
             object edtEqIP: TDBEditEh
               Left = 9
@@ -464,6 +470,7 @@ object PortLinkForm: TPortLinkForm
               Height = 13
               Align = alTop
               Caption = '  '#1055#1086#1080#1089#1082' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1087#1086':'
+              ExplicitWidth = 106
             end
             object edCode: TDBEditEh
               Left = 9
@@ -514,13 +521,14 @@ object PortLinkForm: TPortLinkForm
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
+            ExplicitTop = 70
+            ExplicitWidth = 327
+            ExplicitHeight = 158
             inherited gbInfo: TGroupBox
               Width = 327
               Height = 158
-              inherited HtmlViewer: THtmlViewer
-                Width = 323
-                Height = 141
-              end
+              ExplicitWidth = 327
+              ExplicitHeight = 158
             end
           end
         end

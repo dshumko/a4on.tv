@@ -11,7 +11,7 @@ uses
   A4onTypeUnit,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   MemTableDataEh, Vcl.Buttons, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList, CnClasses;
 
 type
 

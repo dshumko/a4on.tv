@@ -218,7 +218,8 @@ type
     { Private declarations }
     fSelectedRow: Integer; // число помеченных строк
     FullAccess: Boolean; // полный доступ
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     CE: Boolean; // может изменять результат выполнения
     CC: Boolean; // может закрыть заявку
     CA: Boolean; // может добавить заявку
@@ -689,22 +690,22 @@ begin
         whereStr := ' ( R.REQ_RESULT >= 2 ) ';
     else
       whereStr :=
-        //' ( R.REQ_RESULT <= 1 ) or ( R.REQ_RESULT is null ) or (R.RQ_PLAN_DATE is null and r.RQ_COMPLETED is null and r.RQ_EXEC_TIME is null) ';
+      // ' ( R.REQ_RESULT <= 1 ) or ( R.REQ_RESULT is null ) or (R.RQ_PLAN_DATE is null and r.RQ_COMPLETED is null and r.RQ_EXEC_TIME is null) ';
         ' ((R.REQ_RESULT <= 1) or (R.REQ_RESULT is null)) ';
     end
   else
     case pgcGrids.ActivePageIndex of
       0:
         whereStr :=
-          //' ( R.REQ_RESULT = 0 ) or ( R.REQ_RESULT is null ) or ((R.RQ_PLAN_DATE is null) and (r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null))';
+        // ' ( R.REQ_RESULT = 0 ) or ( R.REQ_RESULT is null ) or ((R.RQ_PLAN_DATE is null) and (r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null))';
           ' ((R.REQ_RESULT = 0) or (R.REQ_RESULT is null)) ';
       1:
         whereStr :=
-          //' ( R.REQ_RESULT = 1 ) or (( not R.RQ_PLAN_DATE is null ) and (r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null)) ';
+        // ' ( R.REQ_RESULT = 1 ) or (( not R.RQ_PLAN_DATE is null ) and (r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null)) ';
           ' (R.REQ_RESULT = 1) ';
       2:
         whereStr :=
-          //' ( R.REQ_RESULT >= 2 ) or (( not R.RQ_PLAN_DATE is null ) and (not r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null)) ';
+        // ' ( R.REQ_RESULT >= 2 ) or (( not R.RQ_PLAN_DATE is null ) and (not r.RQ_COMPLETED is null) and (r.RQ_EXEC_TIME is null)) ';
           ' (R.REQ_RESULT >= 2) ';
     else
       whereStr := ' ( 1=1 ) ';
@@ -765,7 +766,7 @@ begin
       dsFilter.Next;
     end;
 
-    filter.Text := trim(filter.Text);
+    filter.Text := Trim(filter.Text);
     RecordFtr := filter.Text;
     RecordFtr := RecordFtr.Replace('(', '').Replace(')', '').Replace(' ', '').Trim;
     if (whereStr <> '') and ((filter.Text <> '') and (RecordFtr <> '')) then
@@ -1510,16 +1511,6 @@ end;
 function TRequestsForm.frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
 begin
   Result := dmMain.frxReportUserFunction(MethodName, Params);
-  {
-    if MethodName = 'BASE64_DECODE'
-    then Result := DecodeBase64(AnsiString(Params[0]));
-    if MethodName = 'BASE64_ENCODE'
-    then Result := EncodeBase64(AnsiString(Params[0]));
-    if MethodName = 'GEN_BARCODE'
-    then Result := dmMain.GenerateBarCode(Params[0], Params[1], Params[2], Params[3], Params[4], Params[5], Params[5]);
-    if MethodName = 'InSuperMode'
-    then Result := dmMain.SuperMode;
-  }
 end;
 
 procedure TRequestsForm.LoadReportBody(const fReport_ID: Integer);
@@ -1653,23 +1644,20 @@ end;
 
 procedure TRequestsForm.dbgExecColumns15GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
-
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TRequestsForm.dbgGiveColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
-
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TRequestsForm.dbgGridColumns14GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
-
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TRequestsForm.dbgGridDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;
@@ -1702,26 +1690,12 @@ begin
         Background := StringToColor((Sender as TDBGridEh).DataSource.DataSet.FieldByName('RT_COLOR').value);
       except
       end;
-  {
-    try
-    if dbgPlan.DataSource.DataSet.FieldByName('RQ_COMPLETED').IsNull
-    then begin
-    if not (dbgPlan.DataSource.DataSet.FieldByName('DAYS').IsNull
-    OR dbgPlan.DataSource.DataSet.FieldByName('RQ_PLAN_DATE').IsNull)
-    then begin
-    if IncDay(dbgPlan.DataSource.DataSet.FieldByName('RQ_PLAN_DATE').AsDateTime, dbgPlan.DataSource.DataSet.FieldByName('DAYS').AsInteger) < Now()
-    then Background := clRed;
-    end;
-    end;
-    finally
-    end;
-  }
 end;
 
 procedure TRequestsForm.dbgPlanColumns13GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TRequestsForm.dbGridGetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -1876,7 +1850,10 @@ var
   Font_name: string;
   j: Integer;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -1897,6 +1874,14 @@ begin
           begin
             (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
             (Components[i] as TDBGridEh).RowHeight := Row_height;
+          end;
+          if ShowToolTips then
+          begin
+            if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+              (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+            (Components[i] as TDBGridEh).ShowHint := true;
+            for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+              (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
           end;
         end
         else if Font_size <> 0 then
@@ -1945,7 +1930,8 @@ begin
   end;
 
   FullAccess := dmMain.AllowedAction(rght_Request_full);
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
   // (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ');
   CE := dmMain.AllowedAction(rght_Request_edit);
   // (52, 'РЕДАКТИРОВАНИЕ', 'ЗАЯВКИ', 'Редактирование заявки');

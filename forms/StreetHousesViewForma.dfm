@@ -57,6 +57,8 @@ object StreetHouseViewForm: TStreetHouseViewForm
             ValueType = gfvAvgEh
           end
           item
+          end
+          item
             DisplayFormat = ',#.##'
             ValueType = gfvSumEh
           end
@@ -228,6 +230,16 @@ object StreetHouseViewForm: TStreetHouseViewForm
         Title.Caption = #1040#1073#1086#1085#1077#1085#1090#1086#1074'|% '#1087#1086#1076#1082#1083'.'
         Title.TitleButton = True
         Width = 66
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'NOT_CONNECTED'
+        Footers = <>
+        Title.Caption = #1040#1073#1086#1085#1077#1085#1090#1086#1074'|'#1053#1077' '#1087#1086#1076#1082#1083'.'
+        Title.TitleButton = True
+        Width = 61
       end
       item
         CellButtons = <>
@@ -488,12 +500,13 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '          , H.Exist_Tv'
       '          , H.Exist_Lan'
       '          , H.Exist_Dtv'
-      '          , H.Exist_Video          '
+      '          , H.Exist_Video'
       '          , H.Exist_Inter'
       '          , H.In_Date'
       '          , H.Repair_Date'
       '          , H.Tag'
-      '          , (select'
+      '          ,'
+      '            (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
@@ -506,7 +519,8 @@ object StreetHouseViewForm: TStreetHouseViewForm
       
         '                                        and (current_date betwee' +
         'n ash.Date_From and ash.Date_To))) as CONNECTED'
-      '          , (select'
+      '          ,'
+      '            (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
@@ -514,11 +528,28 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '                                        ash.Customer_Id'
       '                                      from Subscr_Hist ash'
       
-        '                                      where (a.Customer_Id = ash' +
+        '                                      where (ash.Customer_Id = a' +
         '.Customer_Id)'
       
         '                                            and (current_date be' +
-        'tween ash.Date_From and ash.Date_To))) as DISCONNECTED'
+        'tween ash.Date_From and ash.Date_To))'
+      '                     and exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_serv ash'
+      
+        '                                  where ash.Customer_Id = a.Cust' +
+        'omer_Id)) as DISCONNECTED'
+      '          ,'
+      '            (select'
+      '                 count(distinct a.Flat_No)'
+      '               from CUSTOMER A'
+      '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and not exists(select'
+      '                                        ash.Customer_Id'
+      '                                      from Subscr_serv ash'
+      
+        '                                      where ash.Customer_Id = a.' +
+        'Customer_Id)) as NOT_CONNECTED'
       '          , o.ORG_NAME'
       '          , s.SUBAREA_NAME'
       '          , w.name WG_NAME'
@@ -528,44 +559,53 @@ object StreetHouseViewForm: TStreetHouseViewForm
       '          , coalesce(a.AREA_NAME, '#39#39') CITY'
       '          , cast((select'
       
-        '                      list(o.O_DIMENSION||coalesce('#39':'#39'||sa.HA_VA' +
-        'LUE, '#39#39'))'
+        '                      list(o.O_DIMENSION || coalesce('#39':'#39' || sa.H' +
+        'A_VALUE, '#39#39'))'
       '                    from Houses_Attributes sa'
       
         '                         inner join objects o on (o.O_Id = sa.O_' +
-        'Id and'
-      '                               o.O_Type = 37)'
+        'Id and o.O_Type = 37)'
       
         '                    where sa.HOUSE_Id = h.House_Id) as varchar(5' +
         '00)) H_ATTR'
       ''
-      '          , (select'
+      '          ,'
+      '            (select'
       '                 sum(f.Fee)'
-      
-        '               from CUSTOMER A inner join Monthly_Fee f on (f.Cu' +
-        'stomer_Id = A.Customer_Id)'
-      
-        '               where a.HOUSE_ID = h.HOUSE_ID and f.Month_Id >= M' +
-        'onth_First_Day(CURRENT_DATE) and f.Month_Id <= Month_Last_Day(CU' +
-        'RRENT_DATE)'
-      '                     ) as FEE_TOTAL'
-      '          , (select'
-      '                 sum(p.Pay_Sum)'
-      
-        '               from CUSTOMER A inner join payment p on (p.Custom' +
-        'er_Id = A.Customer_Id)'
-      
-        '               where a.HOUSE_ID = h.HOUSE_ID and p.Pay_Date >= M' +
-        'onth_First_Day(CURRENT_DATE) and p.Pay_Date <= Month_Last_Day(CU' +
-        'RRENT_DATE)'
-      '                     ) as PAY_TOTAL'
-      '          , (select'
-      
-        '                 sum(coalesce((select M_Tarif from Get_Tarif_Sum' +
-        '_Customer_Srv(a.Customer_Id, null, CURRENT_DATE)), 0))'
       '               from CUSTOMER A'
+      
+        '                    inner join Monthly_Fee f on (f.Customer_Id =' +
+        ' A.Customer_Id)'
       '               where a.HOUSE_ID = h.HOUSE_ID'
-      '                     ) as TARIF_TOTAL'
+      
+        '                     and f.Month_Id >= Month_First_Day(current_d' +
+        'ate)'
+      
+        '                     and f.Month_Id <= Month_Last_Day(current_da' +
+        'te)) as FEE_TOTAL'
+      '          ,'
+      '            (select'
+      '                 sum(p.Pay_Sum)'
+      '               from CUSTOMER A'
+      
+        '                    inner join payment p on (p.Customer_Id = A.C' +
+        'ustomer_Id)'
+      '               where a.HOUSE_ID = h.HOUSE_ID'
+      
+        '                     and p.Pay_Date >= Month_First_Day(current_d' +
+        'ate)'
+      
+        '                     and p.Pay_Date <= Month_Last_Day(current_da' +
+        'te)) as PAY_TOTAL'
+      '          ,'
+      '            (select'
+      '                 sum(coalesce((select'
+      '                                   M_Tarif'
+      
+        '                                 from Get_Tarif_Sum_Customer_Srv' +
+        '(a.Customer_Id, null, current_date)), 0))'
+      '               from CUSTOMER A'
+      '               where a.HOUSE_ID = h.HOUSE_ID) as TARIF_TOTAL'
       '          from HOUSE H'
       
         '               inner join STREET st on (st.STREET_ID = h.street_' +
@@ -586,7 +626,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
         '               left outer join headend he on (he.he_id = h.heade' +
         'nd_id)) ah'
       ''
-      'order by CITY, Street_Name, House_No')
+      '  order by CITY, Street_Name, House_No')
     UpdateCommand.Params = <>
     InsertCommand.Params = <>
     DeleteCommand.Params = <>
@@ -596,6 +636,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
   end
   object mtView: TMemTableEh
     AutoCalcFields = False
+    FilterOptions = [foCaseInsensitive]
     FetchAllOnOpen = True
     Params = <>
     DataDriver = drvFIBView

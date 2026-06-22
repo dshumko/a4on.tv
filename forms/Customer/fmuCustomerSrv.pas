@@ -492,11 +492,10 @@ end;
 
 procedure TapgCustomerSrv.actSubscrHistoryExecute(Sender: TObject);
 var
-  id: integer;
+  id: Integer;
 begin
-  if (not dsServices.Active) or (dsServices.RecordCount = 0) or
-    (dsServices.FieldByName('Customer_ID').IsNull) or (not dsServices.Active) or (dsServices.RecordCount = 0)
-    or (dsServices.FieldByName('Serv_ID').IsNull) then
+  if (not dsServices.Active) or (dsServices.RecordCount = 0) or (dsServices.FieldByName('Customer_ID').IsNull) or
+    (not dsServices.Active) or (dsServices.RecordCount = 0) or (dsServices.FieldByName('Serv_ID').IsNull) then
     exit;
 
   id := dsServices.FieldValues['Serv_ID'];
@@ -669,4 +668,3 @@ begin
 end;
 
 end.
-

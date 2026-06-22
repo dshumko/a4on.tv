@@ -176,6 +176,16 @@ begin
         vContinue := False;
       end;
     end;
+  end
+  else if (s = 'REC_REQ') and (not dsRecourses.FieldByName('REC_REQ').IsNull) then
+  begin
+    A4MainForm.OpenRequest(dsRecourses.FieldByName('REC_REQ').AsInteger);
+    vContinue := False;
+  end
+  else if (s = 'REC_TASK') and (not dsRecourses.FieldByName('REC_TASK').IsNull) then
+  begin
+    A4MainForm.OpenTask(dsRecourses.FieldByName('REC_TASK').AsInteger);
+    vContinue := False;
   end;
 
   if vContinue then

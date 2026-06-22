@@ -4,11 +4,15 @@ inherited ManForm: TManForm
   Caption = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082' '#1087#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1077#1081' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
   ClientHeight = 282
   ClientWidth = 707
+  ExplicitWidth = 723
+  ExplicitHeight = 321
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 145
     Width = 707
+    ExplicitTop = 145
+    ExplicitWidth = 707
   end
   inherited dbGrid: TDBGridEh
     Top = 149
@@ -76,6 +80,7 @@ inherited ManForm: TManForm
   end
   inherited tlbMain: TToolBar
     Width = 707
+    ExplicitWidth = 707
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -94,6 +99,8 @@ inherited ManForm: TManForm
   inherited pnlEdit: TPanel
     Width = 707
     Height = 120
+    ExplicitWidth = 707
+    ExplicitHeight = 120
     object Label1: TLabel [0]
       Left = 5
       Top = 9
@@ -113,12 +120,17 @@ inherited ManForm: TManForm
       Top = 87
       Width = 504
       TabOrder = 2
+      ExplicitLeft = 90
+      ExplicitTop = 87
+      ExplicitWidth = 504
     end
     inherited btnCancelLink: TBitBtn
       Left = 612
       Top = 87
       Cancel = True
       TabOrder = 3
+      ExplicitLeft = 612
+      ExplicitTop = 87
     end
     object dbeName: TDBEditEh
       Left = 90
@@ -172,9 +184,6 @@ inherited ManForm: TManForm
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       OnExecute = actEditExecute
-    end
-    inherited actQuickFilter: TAction
-      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
     end
   end
   inherited CnErrors: TCnErrorProvider

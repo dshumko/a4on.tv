@@ -14,14 +14,12 @@ object DVBSettinsForm: TDVBSettinsForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
   Position = poDefault
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pgcMode: TPageControl
     Left = 0
@@ -502,6 +500,7 @@ object DVBSettinsForm: TDVBSettinsForm
               OnEnter = edtSearchEnter
               OnExit = edtSearchExit
               OnKeyUp = edtSearchKeyUp
+              ExplicitHeight = 21
             end
           end
           object ToolBar3: TToolBar
@@ -690,6 +689,7 @@ object DVBSettinsForm: TDVBSettinsForm
               OnEnter = edtSearchEnter
               OnExit = edtSearchExit
               OnKeyUp = edtSearchKeyUp
+              ExplicitHeight = 21
             end
           end
           object ToolBar1: TToolBar
@@ -1378,6 +1378,7 @@ object DVBSettinsForm: TDVBSettinsForm
   end
   object mtView: TMemTableEh
     AutoCalcFields = False
+    FilterOptions = [foCaseInsensitive]
     FetchAllOnOpen = True
     Params = <>
     DataDriver = drvFIBView

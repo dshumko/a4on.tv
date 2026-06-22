@@ -2,8 +2,8 @@ object MatGroupForm: TMatGroupForm
   Left = 0
   Top = 0
   Caption = #1043#1088#1091#1087#1087#1072' '#1084#1072#1090#1077#1088#1080#1072#1083#1072'/'#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
-  ClientHeight = 285
-  ClientWidth = 448
+  ClientHeight = 314
+  ClientWidth = 525
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,66 +11,64 @@ object MatGroupForm: TMatGroupForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   DesignSize = (
-    448
-    285)
-  PixelsPerInch = 96
+    525
+    314)
   TextHeight = 13
   object Label1: TLabel
-    Left = 6
+    Left = 4
     Top = 10
     Width = 73
     Height = 13
     Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
   end
   object Label4: TLabel
-    Left = 6
-    Top = 166
+    Left = 4
+    Top = 173
     Width = 61
     Height = 13
     Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
   end
   object lbl41: TLabel
-    Left = 6
-    Top = 65
+    Left = 4
+    Top = 64
     Width = 77
     Height = 13
     Caption = #1059#1089#1083#1091#1075#1072' '#1072#1088#1077#1085#1076#1099
   end
   object lbl42: TLabel
-    Left = 6
+    Left = 4
     Top = 92
     Width = 90
     Height = 13
     Caption = #1059#1089#1083#1091#1075#1072' '#1088#1072#1089#1089#1088#1086#1095#1082#1080
   end
   object lblSold: TLabel
-    Left = 6
+    Left = 4
     Top = 37
     Width = 83
     Height = 13
     Caption = #1059#1089#1083#1091#1075#1072' '#1087#1088#1086#1076#1072#1078#1080
   end
   object lbl1: TLabel
-    Left = 6
-    Top = 117
+    Left = 4
+    Top = 119
     Width = 73
     Height = 13
     Caption = #1056#1086#1076#1080#1090'. '#1075#1088#1091#1087#1087#1072
   end
   object lblPCE1: TLabel
-    Left = 209
+    Left = 326
     Top = 146
     Width = 60
     Height = 13
     Caption = #1053#1072#1095#1080#1089#1083#1077#1085#1080#1103
   end
   object lblPCE: TLabel
-    Left = 6
+    Left = 4
     Top = 146
     Width = 71
     Height = 13
@@ -79,22 +77,22 @@ object MatGroupForm: TMatGroupForm
   object mmoMG_NOTICE: TDBMemoEh
     Left = 96
     Top = 170
-    Width = 344
-    Height = 76
+    Width = 421
+    Height = 105
     Anchors = [akLeft, akTop, akRight, akBottom]
     AutoSize = False
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
     ShowHint = True
-    TabOrder = 7
+    TabOrder = 8
     Visible = True
     WantReturns = True
   end
   object edtNAME: TDBEditEh
     Left = 96
     Top = 7
-    Width = 344
+    Width = 421
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -106,31 +104,31 @@ object MatGroupForm: TMatGroupForm
   end
   object btnOk: TBitBtn
     Left = 6
-    Top = 252
-    Width = 351
+    Top = 281
+    Width = 428
     Height = 28
     Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
     Anchors = [akLeft, akRight, akBottom]
     Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
     NumGlyphs = 2
-    TabOrder = 8
+    TabOrder = 9
     OnClick = OkCancelFrame1bbOkClick
   end
   object btnCancel: TBitBtn
-    Left = 364
-    Top = 252
+    Left = 441
+    Top = 281
     Width = 76
     Height = 28
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 9
+    TabOrder = 10
   end
   object lcbRENT: TDBLookupComboboxEh
     Left = 97
-    Top = 62
-    Width = 343
+    Top = 61
+    Width = 420
     Height = 21
     Hint = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1072#1088#1077#1085#1076#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
     Anchors = [akLeft, akTop, akRight]
@@ -155,7 +153,7 @@ object MatGroupForm: TMatGroupForm
   object lcbLAON: TDBLookupComboboxEh
     Left = 97
     Top = 89
-    Width = 343
+    Width = 420
     Height = 21
     Hint = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1088#1072#1089#1089#1088#1086#1095#1082#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
     Anchors = [akLeft, akTop, akRight]
@@ -180,7 +178,7 @@ object MatGroupForm: TMatGroupForm
   object lcbSOLD: TDBLookupComboboxEh
     Left = 96
     Top = 34
-    Width = 344
+    Width = 421
     Height = 21
     Hint = #1050#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1086#1076#1082#1083#1102#1095#1072#1090#1100' '#1087#1088#1080' '#1072#1088#1077#1085#1076#1077' '#1095#1077#1088#1077#1079' '#1079#1072#1103#1074#1082#1091
     Anchors = [akLeft, akTop, akRight]
@@ -205,7 +203,7 @@ object MatGroupForm: TMatGroupForm
   object lcbGR_ID: TDBLookupComboboxEh
     Left = 96
     Top = 116
-    Width = 344
+    Width = 421
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
@@ -226,9 +224,9 @@ object MatGroupForm: TMatGroupForm
     Visible = True
   end
   object cbProp: TDBComboBoxEh
-    Left = 275
+    Left = 392
     Top = 143
-    Width = 165
+    Width = 125
     Height = 21
     Hint = #1079#1085#1072#1095#1077#1085#1080#1077' '#1053#1072#1095#1080#1089#1083#1077#1085#1080#1103' '#1087#1088#1080' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1080' '#1074' '#1079#1072#1103#1074#1082#1091' '#1087#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
     Anchors = [akLeft, akTop, akRight]
@@ -246,13 +244,13 @@ object MatGroupForm: TMatGroupForm
       '2'
       '3')
     ShowHint = True
-    TabOrder = 6
+    TabOrder = 7
     Visible = True
   end
   object ednPCE: TDBNumberEditEh
     Left = 96
     Top = 143
-    Width = 105
+    Width = 91
     Height = 21
     DecimalPlaces = 3
     DynProps = <>
@@ -262,6 +260,19 @@ object MatGroupForm: TMatGroupForm
     ShowHint = True
     TabOrder = 5
     Visible = True
+  end
+  object chkEL: TDBCheckBoxEh
+    Left = 194
+    Top = 145
+    Width = 120
+    Height = 18
+    Hint = #1048#1089#1082#1083#1102#1095#1080#1090#1100' '#1087#1088#1086#1074#1077#1088#1082#1091' '#1075#1088#1091#1087#1087#1099' '#1074' '#1082#1086#1084#1087#1086#1085#1086#1074#1082#1077
+    Alignment = taLeftJustify
+    Caption = #1050#1086#1084#1087'-'#1082#1072' '#1080#1089#1082#1083#1102#1095#1080#1090#1100
+    DataField = 'EXCL_LAYOUT'
+    DataSource = srcGroup
+    DynProps = <>
+    TabOrder = 6
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
@@ -328,14 +339,14 @@ object MatGroupForm: TMatGroupForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 301
-    Top = 147
+    Left = 237
+    Top = 211
     oFetchAll = True
   end
   object srcSoldSRV: TDataSource
     DataSet = dsSoldSRV
-    Left = 373
-    Top = 147
+    Left = 437
+    Top = 203
   end
   object srcMGropups: TDataSource
     DataSet = dsMGropups
@@ -451,7 +462,8 @@ object MatGroupForm: TMatGroupForm
       '    PATH = :PATH,'
       '    DELETED = :DELETED,'
       '    PROP = :PROP,'
-      '    PCE = :PCE    '
+      '    PCE = :PCE,'
+      '    EXCL_LAYOUT = :EXCL_LAYOUT    '
       'WHERE'
       '    MG_ID = :OLD_MG_ID'
       '    ')
@@ -472,7 +484,8 @@ object MatGroupForm: TMatGroupForm
       '    LOAN,'
       '    DELETED,'
       '    PROP,'
-      '    PCE'
+      '    PCE,'
+      '    EXCL_LAYOUT'
       ')'
       'VALUES('
       '    :MG_ID,'
@@ -484,7 +497,8 @@ object MatGroupForm: TMatGroupForm
       '    :LOAN,'
       '    0,'
       '    :PROP,'
-      '    :PCE    '
+      '    :PCE,'
+      '    :EXCL_LAYOUT    '
       ')')
     RefreshSQL.Strings = (
       'select * from materials_group'

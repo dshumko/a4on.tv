@@ -13,7 +13,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
   Vcl.Mask, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TDocListForm = class(TGridForm)
@@ -90,8 +90,8 @@ type
     procedure btnCancelLinkClick(Sender: TObject);
     procedure mmoNoticeChange(Sender: TObject);
   private
-    FPersonalData: Boolean;
-    // FCanEdit: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     procedure GetGridCustomer(Grid: TDBGridEh);
     procedure StartEdit(const New: Boolean = False);
     function CheckControlText(const Contrl: TDBEditEh; const regexp: String): Boolean;
@@ -120,7 +120,8 @@ end;
 procedure TDocListForm.FormCreate(Sender: TObject);
 begin
   inherited;
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
   FCanEdit := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Doclist));
 
   // права пользователей
@@ -138,8 +139,8 @@ end;
 procedure TDocListForm.dbGridColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   inherited;
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TDocListForm.edtNUMBERExit(Sender: TObject);
@@ -330,7 +331,7 @@ end;
 procedure TDocListForm.mmoNoticeChange(Sender: TObject);
 begin
   inherited;
-  if not btnSaveLink.Enabled  then
+  if not btnSaveLink.Enabled then
     btnSaveLink.Enabled := True;
 end;
 

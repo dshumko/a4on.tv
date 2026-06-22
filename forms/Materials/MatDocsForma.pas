@@ -11,7 +11,7 @@ uses
   GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
   pFIBDataSet,
   frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TMatDocsForm = class(TGridForm)
@@ -664,13 +664,13 @@ function TMatDocsForm.GenerateFilter: string;
 
     if (not dsFilter.FieldByName('MD_STATE').IsNull) and (dsFilter['MD_STATE'] = -1) then
     begin
-        tmpSQL := '(' + TrimAnd(tmpSQL) + ') or (D.Doc_Closed = 0) ';
+      tmpSQL := '(' + TrimAnd(tmpSQL) + ') or (D.Doc_Closed = 0) ';
     end;
 
-//    if (not dsFilter.FieldByName('CLOSED').IsNull) and dsFilter['CLOSED'] then
-//    begin
-//      tmpSQL := tmpSQL + ' and D.Doc_Closed = 1 ';
-//    end;
+    // if (not dsFilter.FieldByName('CLOSED').IsNull) and dsFilter['CLOSED'] then
+    // begin
+    // tmpSQL := tmpSQL + ' and D.Doc_Closed = 1 ';
+    // end;
 
     if (tmpSQL <> '') then
       Result := TrimAnd(tmpSQL)

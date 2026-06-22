@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet, pFIBDataSet,
   PropStorageEh, DBGridEh, DBCtrlsEh, Vcl.Mask, DBLookupEh,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL,
-  GridsEh, DBAxisGridsEh, CnErrorProvider, A4onTypeUnit;
+  GridsEh, DBAxisGridsEh, CnErrorProvider, A4onTypeUnit, CnClasses;
 
 type
   TSelectMaterialForm = class(TForm)

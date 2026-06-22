@@ -85,6 +85,7 @@ object ScripEditorForm: TScripEditorForm
         Align = alTop
         Caption = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087' '#1092#1072#1081#1083#1072
         Transparent = False
+        ExplicitWidth = 101
       end
       object cbLanguage: TDBComboBoxEh
         Left = 0
@@ -109,6 +110,7 @@ object ScripEditorForm: TScripEditorForm
         TabOrder = 0
         Visible = True
         OnChange = cbLanguageChange
+        ExplicitHeight = 21
       end
     end
     object ToolButton3: TToolButton

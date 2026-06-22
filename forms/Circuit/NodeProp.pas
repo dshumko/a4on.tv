@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtDlgs, Vcl.CheckLst,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtDlgs,
+  Vcl.CheckLst,
   SimpleGraph;
 
 type
@@ -86,7 +87,7 @@ begin
   Result := '';
   for I := 2 to Length(AClassName) do
   begin
-    if(UpCase(AClassName[I]) = AClassName[I]) and (Result <> '') then
+    if (UpCase(AClassName[I]) = AClassName[I]) and (Result <> '') then
       Result := Result + ' ' + AClassName[I]
     else
       Result := Result + AClassName[I]
@@ -100,45 +101,51 @@ class function TNodeProperties.Execute(Nodes: TGraphObjectList): Boolean;
 begin
   Result := False;
   with Create(Application) do
-  try
-    N := Nodes;
-    ListRegistredNodeClasses;
-    with TGraphNode(Nodes[0]) do
-    begin
-      S := Owner;
-      case Alignment of
-        taLeftJustify: cbAlignment.ItemIndex := 0;
-        taCenter: cbAlignment.ItemIndex := 1;
-        taRightJustify: cbAlignment.ItemIndex := 2;
+    try
+      N := Nodes;
+      ListRegistredNodeClasses;
+      with TGraphNode(Nodes[0]) do
+      begin
+        S := Owner;
+        case Alignment of
+          taLeftJustify:
+            cbAlignment.ItemIndex := 0;
+          taCenter:
+            cbAlignment.ItemIndex := 1;
+          taRightJustify:
+            cbAlignment.ItemIndex := 2;
+        end;
+        case Layout of
+          tlTop:
+            cbLayout.ItemIndex := 0;
+          tlCenter:
+            cbLayout.ItemIndex := 1;
+          tlBottom:
+            cbLayout.ItemIndex := 2;
+        end;
+        UpDownMargin.Position := Margin;
+        NodeText.Lines.Text := Text;
+        if Nodes.Count = 1 then
+          NodeShape.ItemIndex := NodeShape.Items.IndexOfObject(TObject(ClassType))
+        else
+          NodeShape.ItemIndex := -1;
+        BodyColor.Brush.Color := Brush.Color;
+        BorderColor.Brush.Color := Pen.Color;
+        FillStyle.ItemIndex := Ord(Brush.Style);
+        BorderStyle.ItemIndex := Ord(Pen.Style);
+        FontDialog.Font := Font;
+        MarginRect := BackgroundMargins;
+        SetObjectOptions(Options);
+        SetNodeOptions(NodeOptions);
       end;
-      case Layout of
-        tlTop: cbLayout.ItemIndex := 0;
-        tlCenter: cbLayout.ItemIndex := 1;
-        tlBottom: cbLayout.ItemIndex := 2;
+      if ShowModal = mrOK then
+      begin
+        ApplyChanges;
+        Result := True;
       end;
-      UpDownMargin.Position := Margin;
-      NodeText.Lines.Text := Text;
-      if Nodes.Count = 1 then
-        NodeShape.ItemIndex := NodeShape.Items.IndexOfObject(TObject(ClassType))
-      else
-        NodeShape.ItemIndex := -1;
-      BodyColor.Brush.Color := Brush.Color;
-      BorderColor.Brush.Color := Pen.Color;
-      FillStyle.ItemIndex := Ord(Brush.Style);
-      BorderStyle.ItemIndex := Ord(Pen.Style);
-      FontDialog.Font := Font;
-      MarginRect := BackgroundMargins;
-      SetObjectOptions(Options);
-      SetNodeOptions(NodeOptions);
+    finally
+      Free;
     end;
-    if ShowModal = mrOK then
-    begin
-      ApplyChanges;
-      Result := True;
-    end;
-  finally
-    Free;
-  end;
 end;
 
 procedure TNodeProperties.ListRegistredNodeClasses;
@@ -149,8 +156,7 @@ begin
   for I := 0 to TSimpleGraph.NodeClassCount - 1 do
   begin
     NodeClass := TSimpleGraph.NodeClasses(I);
-    NodeShape.Items.AddObject(PrettyNodeClassName(NodeClass.ClassName),
-      TObject(NodeClass));
+    NodeShape.Items.AddObject(PrettyNodeClassName(NodeClass.ClassName), TObject(NodeClass));
   end;
 end;
 
@@ -166,14 +172,20 @@ begin
         BeginUpdate;
         try
           case cbAlignment.ItemIndex of
-            0: Alignment := taLeftJustify;
-            1: Alignment := taCenter;
-            2: Alignment := taRightJustify;
+            0:
+              Alignment := taLeftJustify;
+            1:
+              Alignment := taCenter;
+            2:
+              Alignment := taRightJustify;
           end;
           case cbLayout.ItemIndex of
-            0: Layout := tlTop;
-            1: Layout := tlCenter;
-            2: Layout := tlBottom;
+            0:
+              Layout := tlTop;
+            1:
+              Layout := tlCenter;
+            2:
+              Layout := tlBottom;
           end;
           Margin := UpDownMargin.Position;
           Text := NodeText.Lines.Text;
@@ -283,4 +295,3 @@ begin
 end;
 
 end.
-

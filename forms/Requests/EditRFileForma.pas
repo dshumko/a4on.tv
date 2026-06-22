@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, pFIBQuery;
+  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, pFIBQuery, CnClasses;
 
 type
   TEditRFileForm = class(TForm)
@@ -33,7 +33,7 @@ function EditFile(const RQ_ID: Integer; const HOUSE_ID: Integer = -1): Boolean;
 implementation
 
 uses
-  System.Types, DM, AtrStrUtils;
+  System.Types, DM, AtrStrUtils, atrCommon;
 
 {$R *.dfm}
 
@@ -52,41 +52,35 @@ end;
 
 function TEditRFileForm.SaveFiles(const RQ_ID: Integer; const HOUSE_ID: Integer): Boolean;
 var
-  s, f: string;
+  fPath, fName, fExt: string;
   i: Integer;
   a: TStringDynArray;
 begin
   try
-    if edtFILE.Tag = 1 then
+    a := Explode(',', edtFILE.Hint);
+    for i := 0 to Length(a) - 1 do
     begin
-      with qryFile do
-      begin
-        ParamByName('RQ_ID').AsInteger := RQ_ID;
-        ParamByName('HOUSE_ID').AsInteger := HOUSE_ID;
-        ParamByName('Jpg').LoadFromFile(edtFILE.Hint);
-        ParamByName('Notice').AsString := memNotice.Lines.Text + '(' + ExtractFileName(edtFILE.Hint) + ')';
-        ExecQuery;
-      end;
-      Result := true;
-    end
-    else if edtFILE.Tag = 2 then
-    begin
-      a := Explode(',', edtFILE.Hint);
-      for i := 0 to Length(a) -1 do
+      fPath := ConvertWebpFileToJpgFile(a[i]);
+      if FileExists(fPath) then
       begin
         with qryFile do
         begin
           ParamByName('RQ_ID').AsInteger := RQ_ID;
           ParamByName('HOUSE_ID').AsInteger := HOUSE_ID;
-          ParamByName('Jpg').LoadFromFile(a[i]);
-          ParamByName('Notice').AsString := memNotice.Lines.Text + '(' + ExtractFileName(a[i]) + ')';
-          ExecQuery;
+          fName := ExtractFileName(fPath);
+          fExt := UpperCase(ExtractFileExt(fPath));
+          ParamByName('Jpg').LoadFromFile(fPath);
+          ParamByName('Notice').AsString := memNotice.Lines.Text + '(' + fName + ')';
+          try
+            ExecQuery;
+          finally
+            if fPath <> a[i] then
+              DeleteFile(fPath);
+          end;
         end;
       end;
-      Result := true;
-    end
-    else
-      Result := false;
+    end;
+    Result := true;
   except
     Result := false;
   end;

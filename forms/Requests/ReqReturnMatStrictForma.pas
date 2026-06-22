@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet, pFIBDataSet,
   PropStorageEh, DBGridEh, DBCtrlsEh, Vcl.Mask, DBLookupEh,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL,
-  GridsEh, DBAxisGridsEh, CnErrorProvider;
+  GridsEh, DBAxisGridsEh, CnErrorProvider, CnClasses;
 
 type
   TReqMaterialReturnStrictForm = class(TForm)
@@ -184,8 +184,10 @@ procedure TReqMaterialReturnStrictForm.lcbEquipmentChange(Sender: TObject);
 begin
   btnOk.Visible := not(VarIsNull(lcbEquipment.KeyValue) or VarIsNull(lcbWH.KeyValue));
   lblDim.Caption := '';
-  if dsMaterial.Active then begin
-    if (not VarIsNull(lcbEquipment.KeyValue)) and dsMaterial.Locate('ID', lcbEquipment.KeyValue, []) then begin
+  if dsMaterial.Active then
+  begin
+    if (not VarIsNull(lcbEquipment.KeyValue)) and dsMaterial.Locate('ID', lcbEquipment.KeyValue, []) then
+    begin
       if not dsMaterial.FieldByName('DIMENSION').IsNull then
         lblDim.Caption := dsMaterial['DIMENSION'];
 

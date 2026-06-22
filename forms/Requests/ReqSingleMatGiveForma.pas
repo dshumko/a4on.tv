@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet, pFIBDataSet,
   PropStorageEh, DBGridEh, DBCtrlsEh, Vcl.Mask, DBLookupEh,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL,
-  GridsEh, DBAxisGridsEh, CnErrorProvider;
+  GridsEh, DBAxisGridsEh, CnErrorProvider, CnClasses;
 
 type
   TReqSingleMatGiveForm = class(TForm)
@@ -51,8 +51,8 @@ type
     property OwnerIsCustomer: Boolean read FOwnerIsCustomer write FOwnerIsCustomer;
   end;
 
-function SingleMatGive(const aRequest: Integer; const aOwnerID: Integer;
-  const aOwnerIsCustomer: Boolean = True; const aByBack: Boolean = False): Boolean;
+function SingleMatGive(const aRequest: Integer; const aOwnerID: Integer; const aOwnerIsCustomer: Boolean = True;
+  const aByBack: Boolean = False): Boolean;
 
 implementation
 
@@ -61,8 +61,8 @@ uses
 
 {$R *.dfm}
 
-function SingleMatGive(const aRequest: Integer; const aOwnerID: Integer;
-  const aOwnerIsCustomer: Boolean = True; const aByBack: Boolean = False): Boolean;
+function SingleMatGive(const aRequest: Integer; const aOwnerID: Integer; const aOwnerIsCustomer: Boolean = True;
+  const aByBack: Boolean = False): Boolean;
 begin
   with TReqSingleMatGiveForm.Create(Application) do
   begin
@@ -156,8 +156,10 @@ procedure TReqSingleMatGiveForm.lcbEquipmentChange(Sender: TObject);
 begin
   btnOk.Visible := not(VarIsNull(lcbEquipment.KeyValue) or VarIsNull(lcbWH.KeyValue));
   lblDim.Caption := '';
-  if dsMaterial.Active then begin
-    if (not VarIsNull(lcbEquipment.KeyValue)) and dsMaterial.Locate('ID', lcbEquipment.KeyValue, []) then begin
+  if dsMaterial.Active then
+  begin
+    if (not VarIsNull(lcbEquipment.KeyValue)) and dsMaterial.Locate('ID', lcbEquipment.KeyValue, []) then
+    begin
       if not dsMaterial.FieldByName('DIMENSION').IsNull then
         lblDim.Caption := dsMaterial['DIMENSION'];
 

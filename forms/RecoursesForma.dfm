@@ -1,21 +1,25 @@
 inherited RecoursesForm: TRecoursesForm
-  Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1103
-  ClientHeight = 306
-  ClientWidth = 739
+  Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1103' / '#1079#1074#1086#1085#1082#1080
+  ClientHeight = 303
+  ClientWidth = 852
+  StyleElements = [seFont, seClient, seBorder]
   OnActivate = FormActivate
-  PixelsPerInch = 96
+  ExplicitWidth = 868
+  ExplicitHeight = 342
   TextHeight = 13
   inherited splPG: TSplitter
-    Width = 739
+    Width = 852
+    ExplicitWidth = 739
   end
   inherited dbGrid: TDBGridEh
-    Width = 739
-    Height = 221
+    Width = 852
+    Height = 218
     AllowedOperations = [alopInsertEh, alopUpdateEh, alopAppendEh]
     FooterRowCount = 1
     STFilter.InstantApply = False
     SumList.Active = True
     SumList.VirtualRecords = True
+    OnGetCellParams = dbGridGetCellParams
     Columns = <
       item
         CellButtons = <>
@@ -187,19 +191,87 @@ inherited RecoursesForm: TRecoursesForm
         Footers = <>
         Title.Caption = #1050#1086#1085#1090#1072#1082#1090
         Title.TitleButton = True
+        Width = 57
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADD_DATA'
+        Footers = <>
+        Title.Caption = #1044#1086#1087'. '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103
+        Title.TitleButton = True
+        Width = 75
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'TAG'
+        Footers = <>
+        Title.Caption = #1052#1077#1090#1082#1080
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RES_NAME'
+        Footers = <>
+        Title.Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+        Title.TitleButton = True
+        Width = 61
+      end
+      item
+        Alignment = taLeftJustify
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'DIRECT'
+        Footers = <>
+        KeyList.Strings = (
+          '0'
+          '1'
+          '-1')
+        PickList.Strings = (
+          #1042#1093'.'
+          #1048#1089#1093'.'
+          #1042#1089#1077)
+        Title.Caption = #1053#1072#1087#1088#1072#1074#1083#1077#1085#1080#1077
+        Title.TitleButton = True
+        Width = 91
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'RQ_ID'
+        Footers = <>
+        Title.Caption = #1047#1072#1103#1074#1082#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'TASK_ID'
+        Footers = <>
+        Title.Caption = #1047#1072#1076#1072#1095#1072
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
-    Width = 739
+    Width = 852
+    ExplicitWidth = 852
     object btnDateFilter: TToolButton
-      Left = 178
+      Left = 186
       Top = 0
       Action = actDateFilter
       DropdownMenu = pmPeriod
       Style = tbsDropDown
     end
     object btn2: TToolButton
-      Left = 216
+      Left = 224
       Top = 0
       Width = 8
       Caption = 'btn2'
@@ -207,12 +279,12 @@ inherited RecoursesForm: TRecoursesForm
       Style = tbsSeparator
     end
     object btnFilterCustomer: TToolButton
-      Left = 224
+      Left = 232
       Top = 0
       Action = actFilterCustomer
     end
     object ToolButton7: TToolButton
-      Left = 247
+      Left = 255
       Top = 0
       Width = 8
       Caption = 'ToolButton7'
@@ -220,7 +292,7 @@ inherited RecoursesForm: TRecoursesForm
       Style = tbsSeparator
     end
     object chkGroup: TCheckBox
-      Left = 255
+      Left = 263
       Top = 0
       Width = 154
       Height = 22
@@ -231,7 +303,17 @@ inherited RecoursesForm: TRecoursesForm
     end
   end
   inherited pnlEdit: TPanel
-    Width = 739
+    Width = 852
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 852
+    inherited btnSaveLink: TBitBtn
+      Width = 364
+      ExplicitWidth = 364
+    end
+    inherited btnCancelLink: TBitBtn
+      Left = 455
+      ExplicitLeft = 455
+    end
   end
   inherited srcDataSource: TDataSource
     DataSet = dsRecourses
@@ -269,25 +351,52 @@ inherited RecoursesForm: TRecoursesForm
       OnExecute = actFilterCustomerExecute
     end
   end
-  object dsRecourses: TpFIBDataSet [8]
+  object dsRecourses: TpFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM RECOURSE WHERE (RC_ID = :OLD_RC_ID)')
-    SelectSQL.Strings = (
+    RefreshSQL.Strings = (
       'select'
       '  s.street_name'
       '  , h.house_no'
       '  , rt.name'
       '  , o.o_name'
+      '  , cast(o.O_Numericfield as INTEGER) DIRECT'
       '  , r.*'
       '  , c.account_no'
       '  , c.surname'
       '  , c.initials'
+      '  , t.O_Name RES_NAME'
       'from recourse r'
       '  inner join recourse_templates rt on (r.rc_type = rt.rt_id)'
       '  inner join objects o on (rt.type_id = o.o_id and o.O_TYPE = 8)'
       '  left outer join house h on (h.house_id = r.house_id)'
       '  left outer join street s on (s.street_id = h.street_id)'
       '  left outer join customer c on (r.customer_id = c.customer_id)'
+      
+        '  left outer join objects t on (t.O_ID = r.Result_Id and t.O_TYP' +
+        'E = 81)'
+      'where r.Rc_Id = :OLD_Rc_Id')
+    SelectSQL.Strings = (
+      'select'
+      '  s.street_name'
+      '  , h.house_no'
+      '  , rt.name'
+      '  , o.o_name'
+      '  , cast(o.O_Numericfield as INTEGER) DIRECT'
+      '  , r.*'
+      '  , c.account_no'
+      '  , c.surname'
+      '  , c.initials'
+      '  , t.O_Name RES_NAME'
+      'from recourse r'
+      '  inner join recourse_templates rt on (r.rc_type = rt.rt_id)'
+      '  inner join objects o on (rt.type_id = o.o_id and o.O_TYPE = 8)'
+      '  left outer join house h on (h.house_id = r.house_id)'
+      '  left outer join street s on (s.street_id = h.street_id)'
+      '  left outer join customer c on (r.customer_id = c.customer_id)'
+      
+        '  left outer join objects t on (t.O_ID = r.Result_Id and t.O_TYP' +
+        'E = 81)'
       
         'where r.Added_on between :start_date and dateadd(1 day to :end_d' +
         'ate)'
@@ -304,7 +413,7 @@ inherited RecoursesForm: TRecoursesForm
     dcForceMasterRefresh = True
     oFetchAll = True
   end
-  object pmPeriod: TPopupMenu [9]
+  object pmPeriod: TPopupMenu
     Left = 225
     Top = 201
     object N1: TMenuItem
@@ -324,13 +433,13 @@ inherited RecoursesForm: TRecoursesForm
       OnClick = N3Click
     end
   end
-  object mtRecourses: TMemTableEh [10]
+  object mtRecourses: TMemTableEh
     Params = <>
     DataDriver = drvRecourses
     Left = 395
     Top = 205
   end
-  object drvRecourses: TpFIBDataDriverEh [11]
+  object drvRecourses: TpFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>

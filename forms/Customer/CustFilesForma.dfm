@@ -13,7 +13,6 @@ object CustFilesForm: TCustFilesForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
@@ -21,7 +20,6 @@ object CustFilesForm: TCustFilesForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAll: TPanel
     Left = 0
@@ -30,6 +28,7 @@ object CustFilesForm: TCustFilesForm
     Height = 491
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 471
     object dbgFiles: TDBGridEh
       Left = 1
       Top = 30
@@ -62,6 +61,7 @@ object CustFilesForm: TCustFilesForm
       OnKeyPress = dbgFilesKeyPress
       Columns = <
         item
+          Alignment = taCenter
           CellButtons = <>
           Checkboxes = True
           DynProps = <>
@@ -399,7 +399,7 @@ object CustFilesForm: TCustFilesForm
     Left = 272
     Top = 112
     object actAct: TAction
-      Caption = #1054#1073#1088#1072#1073#1086#1090#1072#1090#1100
+      Caption = #1054#1090#1084#1077#1090#1082#1072' '#1086#1073#1088#1072#1073#1086#1090#1082#1080
       Hint = #1055#1086#1089#1090#1072#1074#1080#1090#1100' '#1086#1090#1084#1077#1090#1082#1091' '#1086' '#1086#1073#1088#1072#1073#1086#1090#1082#1077
       ImageIndex = 25
       ShortCut = 114
@@ -414,7 +414,7 @@ object CustFilesForm: TCustFilesForm
     end
     object actDel: TAction
       Caption = #1059#1076#1072#1083#1080#1090#1100' '#1086#1090#1084#1077#1090#1082#1091
-      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1086#1090#1084#1077#1090#1082#1091' '#1086' '#1086#1073#1088#1072#1073#1086#1090#1082#1077
+      Hint = #1059#1076#1072#1083#1080#1090#1100' '#1086#1090#1084#1077#1090#1082#1091' '#1086#1073#1088#1072#1073#1086#1090#1082#1080
       ImageIndex = 3
       ShortCut = 16430
       OnExecute = actDelExecute
@@ -453,7 +453,7 @@ object CustFilesForm: TCustFilesForm
       OnExecute = actQuickFilterExecute
     end
     object actFilterCustomers: TAction
-      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1089#1087#1080#1089#1082#1077
+      Caption = #1054#1090#1082#1088#1099#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       Hint = #1054#1090#1082#1088#1099#1090#1100' '#1074' '#1089#1087#1080#1089#1082#1077' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
       ImageIndex = 9
       OnExecute = actFilterCustomersExecute
@@ -642,7 +642,25 @@ object CustFilesForm: TCustFilesForm
       object N15: TMenuItem
         Action = actQuickFilter
       end
+      object miN7: TMenuItem
+        Caption = '-'
+      end
+      object miFilterCustomers: TMenuItem
+        Action = actFilterCustomers
+      end
       object N8: TMenuItem
+        Caption = '-'
+      end
+      object miEdit: TMenuItem
+        Action = actEdit
+      end
+      object miAct: TMenuItem
+        Action = actAct
+      end
+      object miDel: TMenuItem
+        Action = actDel
+      end
+      object miN6: TMenuItem
         Caption = '-'
       end
       object N12: TMenuItem

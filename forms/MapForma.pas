@@ -11,11 +11,7 @@ uses
   Vcl.Samples.Spin, Vcl.OleCtrls, Vcl.Menus, Vcl.ActnList,
   GMMap, GMLinkedComponents, GMInfoWindow, GMClasses, GMMapVCL, GMConstants, GMMarker, GMMarkerVCL, GMPolyline, GMPolylineVCL,
   GMGeoCode, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
-  {$IFDEF EMBEDDEDWB}
-  SHDocVw_EWB, EwbCore, EmbeddedWB,
-  {$ELSE}
   SHDocVw,
-  {$ENDIF}
   System.TimeSpan,
   PropFilerEh, PropStorageEh;
 
@@ -28,9 +24,7 @@ type
     lLatEvent: TLabel;
     lLngEvent: TLabel;
     Label34: TLabel;
-    GMInfoWindow: TGMInfoWindow;
     mmMap: TMainMenu;
-    GMGeoCode: TGMGeoCode;
     N1: TMenuItem;
     N2: TMenuItem;
     miGeoCode: TMenuItem;
@@ -57,7 +51,6 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actMovementsExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
     procedure DoMap;
@@ -70,11 +63,7 @@ type
     procedure ShowMovements;
     procedure HideMovements;
   public
-{$IFDEF EMBEDDEDWB}
-    wbWeb: TEmbeddedWB;
-{$ELSE}
     wbWeb: TWebBrowser;
-{$ENDIF}
     constructor Create(aOwner: TComponent); override;
   end;
 
@@ -197,7 +186,7 @@ end;
 function TMapForm.GetGeo(const adres: string; var lat, lng: Real): integer;
 begin
   Result := 0;
-
+{
   GMGeoCode.Geocode(adres);
   if GMGeoCode.GeoStatus = gsWithoutState then
     Exit;
@@ -212,6 +201,7 @@ begin
     lat := GMGeoCode[0].Geometry.Location.lat;
     lng := GMGeoCode[0].Geometry.Location.lng;
   end;
+}
 end;
 
 procedure TMapForm.DoMap;
@@ -241,22 +231,6 @@ end;
 procedure TMapForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := caFree;
-end;
-
-procedure TMapForm.FormCreate(Sender: TObject);
-begin
-{$IFDEF EMBEDDEDWB}
-  wbWeb := TEmbeddedWB.Create(Self);
-  wbWeb.Name := 'wbWeb';
-  wbWeb.Parent := pnlMain;
-  wbWeb.Align := alClient;
-  wbWeb.TabOrder := 0;
-  wbWeb.DisableCtrlShortcuts := 'N';
-  wbWeb.UserInterfaceOptions := [EnablesFormsAutoComplete, EnableThemes];
-  wbWeb.PrintOptions.HTMLHeader.Clear;
-  wbWeb.PrintOptions.HTMLHeader.Add('<HTML></HTML>');
-  GMMap.WebBrowser := wbWeb;
-{$ENDIF}
 end;
 
 procedure TMapForm.FormDestroy(Sender: TObject);

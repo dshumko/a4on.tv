@@ -8,7 +8,8 @@ uses
   Data.DB,
   Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus,
   Vcl.ToolWin, Vcl.Dialogs,
-  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls,
   DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit;
 
 type
@@ -115,9 +116,10 @@ begin
   if dsAppliance.RecordCount = 0 then
     Exit;
 
-  if not dsAppliance.FieldByName('RQ_ID').IsNull then begin
+  if not dsAppliance.FieldByName('RQ_ID').IsNull then
+  begin
     ShowMessage(rsDeleteViaRequest);
-    exit;
+    Exit;
   end;
 
   if (MessageDlg(Format(rsDeleteWithName, [dsAppliance['Name']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then

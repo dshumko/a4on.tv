@@ -322,7 +322,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   dbgOrdersTP.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgOrdersTP',
     [crpColIndexEh, crpColWidthsEh, crpColVisibleEh]);
 
@@ -351,6 +354,16 @@ begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := True;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
+      end;
+
     end
     else if Font_size <> 0 then
     begin
@@ -598,7 +611,7 @@ begin
     notice := notice + #13#10 + dsOrdersTP.FieldByName('ADRESS').AsString;
   if not dsOrdersTP.FieldByName('ADDONS').IsNull then
   begin
-    JO := TJsonObject.Parse(dsOrdersTP['ADDONS']) as TJsonObject;
+    JO := TJsonObject.Parse(dsOrdersTP.FieldByName('ADDONS').AsString) as TJsonObject;
     try
       if JO.Contains('srv') then
       begin
@@ -1085,4 +1098,3 @@ end;
   end;
 }
 end.
-

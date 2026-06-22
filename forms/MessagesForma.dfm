@@ -12,7 +12,6 @@ object MessagesForm: TMessagesForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDefault
   ShowHint = True
   Visible = True
@@ -21,7 +20,6 @@ object MessagesForm: TMessagesForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAll: TPanel
     Left = 0
@@ -30,6 +28,7 @@ object MessagesForm: TMessagesForm
     Height = 450
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 430
     object Splitter1: TSplitter
       Left = 1
       Top = 257
@@ -46,17 +45,21 @@ object MessagesForm: TMessagesForm
       Align = alClient
       AllowedOperations = []
       AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
+      ColumnDefValues.Title.ToolTips = True
+      ColumnDefValues.ToolTips = True
       DataSource = srcMessages
+      DrawMemoText = True
       DynProps = <>
       EditActions = [geaCopyEh, geaSelectAllEh]
       Flat = True
       FooterRowCount = 1
       FooterParams.Color = clWindow
-      GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgMultiSelect]
-      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
+      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghFitRowHeightToText, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove, dghExtendVertLines]
       PopupMenu = gridPopUp
       ReadOnly = True
+      RowHeight = 2
+      RowLines = 1
       SearchPanel.Enabled = True
       SortLocal = True
       STFilter.Local = True
@@ -95,8 +98,10 @@ object MessagesForm: TMessagesForm
           EditButtons = <>
           FieldName = 'MES_TEXT'
           Footers = <>
+          ShowImageAndText = True
           Title.Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1077'|'#1058#1077#1082#1089#1090
           Title.TitleButton = True
+          ToolTips = False
           Width = 160
         end
         item
@@ -178,6 +183,7 @@ object MessagesForm: TMessagesForm
           Footers = <>
           Title.Caption = #1040#1073#1086#1085#1077#1085#1090'|'#1057#1090#1072#1090#1091#1089
           Title.TitleButton = True
+          ToolTips = False
           Width = 141
         end
         item
@@ -499,6 +505,7 @@ object MessagesForm: TMessagesForm
           Width = 825
           Height = 13
           Align = alTop
+          ExplicitWidth = 3
         end
         object pnlHead: TPanel
           Left = 0

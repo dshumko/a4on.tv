@@ -12,12 +12,10 @@ object HouseForm: THouseForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -184,7 +182,7 @@ object HouseForm: THouseForm
     end
     object edHome: TDBEditEh
       Left = 254
-      Top = 24
+      Top = 23
       Width = 93
       Height = 21
       Hint = #1053#1086#1084#1077#1088' '#1076#1086#1084#1072
@@ -196,8 +194,9 @@ object HouseForm: THouseForm
       TabOrder = 1
       Visible = True
       OnChange = edHomeChange
+      OnExit = edHomeExit
     end
-    object DBNumberEditEh2: TDBNumberEditEh
+    object ednFLATS: TDBNumberEditEh
       Left = 353
       Top = 24
       Width = 97
@@ -213,6 +212,7 @@ object HouseForm: THouseForm
       EditButtons = <>
       TabOrder = 2
       Visible = True
+      OnExit = ednFLATSExit
     end
     object DBEditEh1: TDBEditEh
       Left = 8
@@ -343,7 +343,7 @@ object HouseForm: THouseForm
       TabOrder = 9
       Visible = True
     end
-    object cbb3: TDBLookupComboboxEh
+    object lcbWG: TDBLookupComboboxEh
       Left = 208
       Top = 185
       Width = 242
@@ -368,6 +368,7 @@ object HouseForm: THouseForm
       ListSource = srcWORKGROUP
       TabOrder = 10
       Visible = True
+      OnExit = ednFLATSExit
     end
     object grpSRV: TGroupBox
       Left = 8
@@ -506,6 +507,7 @@ object HouseForm: THouseForm
       ShowHint = True
       TabOrder = 3
       Visible = True
+      OnExit = ednFLATSExit
     end
     object DBEditEh3: TDBEditEh
       Left = 254
@@ -607,11 +609,20 @@ object HouseForm: THouseForm
     Align = alBottom
     TabOrder = 1
     TabStop = True
+    ExplicitTop = 428
+    ExplicitWidth = 456
+    ExplicitHeight = 34
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 159
@@ -619,12 +630,20 @@ object HouseForm: THouseForm
       Width = 208
       Height = 28
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 159
+      ExplicitTop = 3
+      ExplicitWidth = 208
+      ExplicitHeight = 28
     end
     inherited bbCancel: TBitBtn
       Left = 373
       Top = 3
       Width = 77
       Height = 28
+      ExplicitLeft = 373
+      ExplicitTop = 3
+      ExplicitWidth = 77
+      ExplicitHeight = 28
     end
   end
   object dsSubAreas: TpFIBDataSet
@@ -980,5 +999,10 @@ object HouseForm: THouseForm
     DataSet = dsWORKGROUP
     Left = 43
     Top = 329
+  end
+  object CnErrors: TCnErrorProvider
+    DoubleBuffer = False
+    Left = 352
+    Top = 352
   end
 end

@@ -4,13 +4,13 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.SysUtils, System.Variants, System.Classes, System.Actions, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.Buttons,
   OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, DM,
   CnErrorProvider, PrjConst, A4onTypeUnit, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
-  MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, PropFilerEh, PropStorageEh, Main;
+  MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, PropFilerEh, PropStorageEh, Main, CnClasses;
 
 type
   TNewTaskForm = class(TForm)
@@ -53,19 +53,26 @@ type
     property TaskID: Integer read FTaskId;
   end;
 
-procedure NewTask(const Object_Type: string; const Object_ID: string; CallBackVar: TTaskCreateCallBack = nil);
+procedure NewTask(const Object_Type: string; const Object_ID: string; CallBackVar: TTaskCreateCallBack = nil;
+  const Notice: String = '');
 
 implementation
 
 {$R *.dfm}
 
-procedure NewTask(const Object_Type: string; const Object_ID: string; CallBackVar: TTaskCreateCallBack = nil);
+uses AtrStrUtils, JsonDataObjects;
+
+procedure NewTask(const Object_Type: string; const Object_ID: string; CallBackVar: TTaskCreateCallBack = nil;
+  const Notice: String = '');
 begin
   with TNewTaskForm.Create(Application) do
   begin
     ObjectID := Object_ID;
     ObjectType := Object_Type;
     CallBackNew := CallBackVar;
+    if not Notice.IsEmpty then
+      mmoNotice.Lines.Text := Notice;
+
     Show;
   end;
 end;
@@ -83,7 +90,25 @@ begin
 end;
 
 procedure TNewTaskForm.SetCaption;
+var
+  JO: TJsonObject;
+  s: string;
 begin
+  s := FID;
+  // в ид может быть json
+  if s.Contains('{') then
+    try
+      JO := TJsonObject.Parse(s) as TJsonObject;
+      try
+        if JO.Contains('acc') and (not JO['acc'].IsNull) then
+          s := JO.s['acc'];
+      finally
+        JO.Free;
+      end;
+    except
+      // not valid json
+    end;
+
   if FType = 'A' then
     Caption := 'Абонента'
   else if FType = 'R' then
@@ -92,10 +117,14 @@ begin
     Caption := 'Платеж'
   else if FType = 'N' then
     Caption := 'Узел'
+  else if FType = 'С' then
+    Caption := 'Звонок'
+  else if FType = 'AС' then
+    Caption := 'Звонок абонента'
   else
     Caption := 'непонятка';
 
-  Caption := 'Новая задача на ' + Caption + ' ' + FID;
+  Caption := 'Новая задача на ' + Caption + ' ' + s;
 end;
 
 procedure TNewTaskForm.actSaveExecute(Sender: TObject);
@@ -132,14 +161,15 @@ begin
     else if (ActiveControl is TDBComboBoxEh) then
       go := not(ActiveControl as TDBComboBoxEh).ListVisible
     else if (ActiveControl is TDBGridEh) then
-      go := False	  
-	//else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
-    //  go := False;
-    //else if (ActiveControl is TDBAxisGridInplaceEdit) then
-    //  go := False
+      go := False
+      // else if (ActiveControl is TDBSynEdit) and not(Trim((ActiveControl as TDBSynEdit).Lines.Text) = '') then
+      // go := False;
+      // else if (ActiveControl is TDBAxisGridInplaceEdit) then
+      // go := False
     else
     begin
-      if (ActiveControl is TDBMemoEh) and (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
+      if (ActiveControl is TDBMemoEh) and
+        (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
         go := False;
         FEnterSecondPress := true;
@@ -174,8 +204,8 @@ begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
-      SQL.Text := 'select w.Surname || coalesce('' ''||w.Firstname, '''') FIO , w.Ibname ' +
-        'from worker w where not (w.Ibname is null) and (w.Working = 1) order by 1';
+      SQL.Text := 'select w.Surname || coalesce('' ''||w.Firstname, '''') FIO , w.Ibname from worker w ' +
+        'where not (w.Ibname is null) and (w.Working = 1) and w.Surname <> '''' order by 1';
       Transaction.StartTransaction;
       ExecQuery;
       while not Eof do
@@ -183,7 +213,7 @@ begin
         mtbUsers.Append;
         mtbUsers['FIO'] := FN('FIO').AsString;
         mtbUsers['Ibname'] := FN('Ibname').AsString;
-        mtbUsers['IN_TASK'] := False;
+        mtbUsers['IN_TASK'] := (dmMain.User = FN('Ibname').AsString);
         mtbUsers.Post;
         Next;
       end;
@@ -193,13 +223,16 @@ begin
       Free;
     end;
   end;
+  mtbUsers.First;
   mtbUsers.EnableControls;
 end;
 
 procedure TNewTaskForm.SaveTask();
 var
-  allOk: boolean;
+  allOk: Boolean;
   dt: TDateTime;
+  JO: TJsonObject;
+  s, a, r: string;
 
   function GetUsers: String;
   var
@@ -216,7 +249,24 @@ var
   end;
 
 begin
-  allOk := True;
+  s := FID;
+  // в ид может быть json
+  if s.Contains('{') then
+    try
+      JO := TJsonObject.Parse(s) as TJsonObject;
+      try
+        if JO.Contains('acc') and (not JO['acc'].IsNull) then
+          a := JO.s['acc'];
+        if JO.Contains('rcid') and (not JO['rcid'].IsNull) then
+          r := JO.s['rcid'];
+      finally
+        JO.Free;
+      end;
+    except
+      // not vaid json
+    end;
+
+  allOk := true;
 
   if not TryStrToDateTime(edtDate.Text, dt) then
   begin
@@ -256,9 +306,9 @@ begin
       SQL.Add('declare variable Ibname  d_varchar20;                                               ');
       SQL.Add('begin                                                                               ');
       SQL.Add('  WHO_CLOSE = coalesce(WHO_CLOSE, 0);                                               ');
-      SQL.Add('  insert into TASKLIST (TITLE, NOTICE, PLAN_DATE, DELETED, WHO_CAN)                 ');
-      SQL.Add('  values (:TITLE, :NOTICE, :PLAN_DATE, 0, :WHO_CLOSE)                               ');
-      SQL.Add('  returning ID into :TASK_ID;                                                       ');
+      SQL.Add('  TASK_ID = gen_id(Gen_Task, 1);                                                    ');
+      SQL.Add('  insert into TASKLIST (ID, TITLE, NOTICE, PLAN_DATE, DELETED, WHO_CAN)             ');
+      SQL.Add('  values (:TASK_ID, :TITLE, :NOTICE, :PLAN_DATE, 0, :WHO_CLOSE);                    ');
       SQL.Add('  if ((OBJ_TYPE <> '''') and (OBJ_ID <> '''')) then begin                           ');
       SQL.Add('    insert into TASKMSG (TASK_ID, TEXT, OBJ_TYPE, OBJ_ID)                           ');
       SQL.Add('    values (:TASK_ID, :NOTICE, :OBJ_TYPE, :OBJ_ID);                                 ');
@@ -274,23 +324,56 @@ begin
       ParamByName('NOTICE').AsString := mmoNotice.Lines.Text;
       ParamByName('PLAN_DATE').AsDateTime := edtDate.Value;
       ParamByName('USERS').AsString := GetUsers;
-      ParamByName('OBJ_TYPE').AsString := FType;
-      ParamByName('OBJ_ID').AsString := FID;
-      if (not cbClose.Text.IsEmpty) then begin
-        ParamByName('WHO_CLOSE').AsInteger := cbClose.Value;
+
+      if (FType = 'AС') then
+      begin
+        ParamByName('OBJ_TYPE').AsString := 'A';
+        ParamByName('OBJ_ID').AsString := a;
+      end
+      else
+      begin
+        ParamByName('OBJ_TYPE').AsString := FType;
+        ParamByName('OBJ_ID').AsString := FID;
       end;
+
+      if (not cbClose.Text.IsEmpty) then
+        ParamByName('WHO_CLOSE').AsInteger := cbClose.Value;
+
       Transaction.StartTransaction;
       ExecQuery;
       FTaskId := FN('TASK_ID').AsInteger;
       Transaction.Commit;
       Close;
-      allOk := True;
+      allOk := true;
     finally
       Free;
     end;
 
   if allOk then
   begin
+    if (FType = 'С') or (FType = 'AС') then
+    begin
+      // отметім номер заявкі в обращеніі
+      with TpFIBQuery.Create(Nil) do
+        try
+          Database := dmMain.dbTV;
+          Transaction := dmMain.trWriteQ;
+          SQL.Clear;
+          SQL.Add('update Recourse set TASK_ID = :TASK_ID where Rc_Id = :Rc_Id');
+          if (FType = 'AС') then
+            ParamByName('Rc_Id').AsString := r
+          else
+            ParamByName('Rc_Id').AsString := FID;
+          ParamByName('TASK_ID').AsInteger := FTaskId;
+          Transaction.StartTransaction;
+          ExecQuery;
+          Transaction.Commit;
+          Close;
+        finally
+          Free;
+        end;
+    end;
+
     if Assigned(FCallBackNew) then
       FCallBackNew(FTaskId);
     Close;

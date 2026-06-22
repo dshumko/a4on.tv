@@ -8,8 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
   FIBDataSet, pFIBDataSet, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
-  DBGridEh,
-  PrjConst;
+  DBGridEh, CnClasses, CnErrorProvider;
 
 type
   THouseForm = class(TForm)
@@ -20,7 +19,7 @@ type
     edHome: TDBEditEh;
     Label9: TLabel;
     Label8: TLabel;
-    DBNumberEditEh2: TDBNumberEditEh;
+    ednFLATS: TDBNumberEditEh;
     Label4: TLabel;
     DBEditEh1: TDBEditEh;
     Label5: TLabel;
@@ -46,7 +45,7 @@ type
     srcHE: TDataSource;
     lblCODE: TLabel;
     lbl4: TLabel;
-    cbb3: TDBLookupComboboxEh;
+    lcbWG: TDBLookupComboboxEh;
     grpSRV: TGroupBox;
     dbckTV: TDBCheckBoxEh;
     dbckLAN: TDBCheckBoxEh;
@@ -69,6 +68,7 @@ type
     edtTAGSTR: TDBEditEh;
     chkEXIST_VIDEO: TDBCheckBoxEh;
     chkEXIST_INTER: TDBCheckBoxEh;
+    CnErrors: TCnErrorProvider;
     procedure LupStreetsChange(Sender: TObject);
     procedure edHomeChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -79,10 +79,13 @@ type
     procedure FormShow(Sender: TObject);
     procedure btnMapClick(Sender: TObject);
     procedure edtinputChange(Sender: TObject);
+    procedure edHomeExit(Sender: TObject);
+    procedure ednFLATSExit(Sender: TObject);
   private
     { Private declarations }
     FEnterSecondPress: Boolean;
     procedure CheckData;
+    function AllDataCorrect: Boolean;
   public
     { Public declarations }
   end;
@@ -92,7 +95,7 @@ function EditHouse(const aHouse_ID, aStreet_ID: Int64): Int64;
 implementation
 
 uses
-  DM, SubAreaEditForma, atrCmdUtils;
+  DM, SubAreaEditForma, atrCmdUtils, PrjConst;
 
 {$R *.dfm}
 
@@ -122,7 +125,7 @@ begin
       else
         dsHouse.Edit;
       CheckData;
-      if ShowModal = mrOk then
+      if (ShowModal = mrOk) then
       begin
         try
           if aHouse_ID = -1 then
@@ -196,16 +199,56 @@ begin
 
 end;
 
-procedure THouseForm.CheckData;
+function THouseForm.AllDataCorrect: Boolean;
 var
-  En: Boolean;
+  i: Integer;
 begin
-  En := true;
+  result := true;
 
-  En := En and not dsHouse.FieldbyName('STREET_ID').IsNull;
-  En := En and (trim(edHome.Text) <> '');
+  if (LupStreets.Text = '') then
+  begin
+    result := False;
+    CnErrors.SetError(LupStreets, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(LupStreets);
 
-  OkCancelFrame.bbOk.Enabled := En;
+  if (edHome.Text = '') then
+  begin
+    result := False;
+    CnErrors.SetError(edHome, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(edHome);
+
+  if (ednFLATS.Text = '') or (not TryStrToInt(ednFLATS.Text, i)) or (i < 1) then
+  begin
+    result := False;
+    CnErrors.SetError(ednFLATS, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(ednFLATS);
+
+  if (dmMain.GetSettingsValue('HOUSE_NEED_AREA') = '1') and (cbbSUBAREA.Text = '') then
+  begin
+    result := False;
+    CnErrors.SetError(cbbSUBAREA, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(cbbSUBAREA);
+
+  if (dmMain.GetSettingsValue('HOUSE_NEED_WORKGROUP') = '1') and (lcbWG.Text = '') then
+  begin
+    result := False;
+    CnErrors.SetError(lcbWG, rsEmptyFieldError, iaTopCenter, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(lcbWG);
+end;
+
+procedure THouseForm.CheckData;
+begin
+  OkCancelFrame.bbOk.Enabled := AllDataCorrect;
 end;
 
 procedure THouseForm.LupStreetsChange(Sender: TObject);
@@ -215,7 +258,8 @@ end;
 
 procedure THouseForm.OkCancelFramebbOkClick(Sender: TObject);
 begin
-  OkCancelFrame.actExitExecute(Sender);
+  if AllDataCorrect then
+    OkCancelFrame.actExitExecute(Sender);
 end;
 
 procedure THouseForm.dsHouseNewRecord(DataSet: TDataSet);
@@ -239,6 +283,16 @@ begin
 end;
 
 procedure THouseForm.edHomeChange(Sender: TObject);
+begin
+  CheckData;
+end;
+
+procedure THouseForm.edHomeExit(Sender: TObject);
+begin
+  CheckData;
+end;
+
+procedure THouseForm.ednFLATSExit(Sender: TObject);
 begin
   CheckData;
 end;

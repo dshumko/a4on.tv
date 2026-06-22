@@ -4,7 +4,7 @@ object EditCFileForm: TEditCFileForm
   ActiveControl = dbluFileType
   BorderIcons = [biSystemMenu]
   Caption = #1060#1072#1081#1083' '#1072#1073#1086#1085#1077#1085#1090#1072
-  ClientHeight = 720
+  ClientHeight = 743
   ClientWidth = 526
   Color = clBtnFace
   DoubleBuffered = True
@@ -14,14 +14,12 @@ object EditCFileForm: TEditCFileForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
     Left = 0
@@ -73,7 +71,7 @@ object EditCFileForm: TEditCFileForm
   end
   object pnlBtm: TPanel
     Left = 0
-    Top = 686
+    Top = 709
     Width = 526
     Height = 34
     Align = alBottom
@@ -110,7 +108,7 @@ object EditCFileForm: TEditCFileForm
     Left = 0
     Top = 61
     Width = 526
-    Height = 625
+    Height = 648
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -118,7 +116,7 @@ object EditCFileForm: TEditCFileForm
       Left = 0
       Top = 596
       Width = 526
-      Height = 29
+      Height = 52
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 12
@@ -136,7 +134,7 @@ object EditCFileForm: TEditCFileForm
         Left = 5
         Top = 17
         Width = 516
-        Height = 12
+        Height = 35
         Margins.Left = 5
         Margins.Top = 0
         Margins.Right = 5
@@ -910,6 +908,9 @@ object EditCFileForm: TEditCFileForm
       BevelOuter = bvNone
       TabOrder = 7
       Visible = False
+      DesignSize = (
+        526
+        25)
       object lblBP: TLabel
         Tag = 1
         Left = 6
@@ -968,6 +969,7 @@ object EditCFileForm: TEditCFileForm
         Top = 1
         Width = 103
         Height = 21
+        Anchors = [akTop, akRight]
         DynProps = <>
         EmptyDataInfo.Text = #1057#1091#1084#1084#1072' '#1087#1077#1085#1080
         EditButton.DefaultAction = True
@@ -1358,6 +1360,7 @@ object EditCFileForm: TEditCFileForm
   end
   object dlgOpen: TOpenDialog
     DefaultExt = '*.*'
+    Filter = #1042#1089#1077' '#1092#1072#1081#1083#1099'|*.*'
     Left = 440
     Top = 64
   end
@@ -1615,10 +1618,10 @@ object EditCFileForm: TEditCFileForm
       
         '       left outer join services s on (s.Service_Id = p.Payment_S' +
         'rv)'
-      '  where p.Pay_Date = current_date'
+      '  where p.CUSTOMER_ID = :CID'
       
-        '        and (((p.Added_By = current_user) and (p.CUSTOMER_ID = :' +
-        'CID)) '
+        '        and (((p.Added_By = current_user) and (p.Pay_Date = curr' +
+        'ent_date))'
       '          or (current_user = '#39'SYSDBA'#39'))'
       '  order by info')
     Transaction = trRead

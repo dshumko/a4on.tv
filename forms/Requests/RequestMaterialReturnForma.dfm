@@ -11,7 +11,6 @@ object RequestMaterialReturn: TRequestMaterialReturn
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -19,7 +18,6 @@ object RequestMaterialReturn: TRequestMaterialReturn
   DesignSize = (
     444
     269)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl2: TLabel
     Left = 8

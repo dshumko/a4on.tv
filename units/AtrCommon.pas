@@ -120,7 +120,7 @@ function FileGetTempFolder: string;
 // Получить временное имя файла
 function FileGetTempName(const Prefix: string): string;
 // Procedure PostKeyEx
-procedure PostKeyExHWND(hWindow: HWnd; key: Word; const shift: TShiftState; specialkey: Boolean);
+procedure PostKeyExHWND(hWindow: HWND; key: Word; const shift: TShiftState; specialkey: Boolean);
 // Каталог для кэша WKE браузера
 function GetUserCacheFolder(): string;
 
@@ -129,6 +129,8 @@ function GetStringFromClipboard: WideString;
 
 procedure Jpeg2Png(aPicStream: TMemoryStream);
 procedure Png2Jpeg(aPicStream: TMemoryStream);
+// конвертирует исходный файл картинки файл в новый файл jpg
+function ConvertWebpFileToJpgFile(const aPath: String): String;
 
 function myQuestion(const Caption, Text: String): Boolean;
 // Работаем под wine
@@ -137,7 +139,7 @@ function GetWineAvail: Boolean;
 procedure RemoveStatusWindow(StatusWindow: TStatusWindowHandle);
 function CreateStatusWindow(const Text: string): TStatusWindowHandle;
 // добавим строку к логу
-procedure WriteLog(const Line:String; const LogFile:string = 'a4on.log');
+procedure WriteLog(const Line: String; const LogFile: string = 'a4on.log');
 function GetComputerNetName: string;
 
 implementation
@@ -146,7 +148,8 @@ uses
   Winapi.Messages, Winapi.ShlObj, Winapi.ActiveX, Winapi.SHFolder,
   System.DateUtils, System.IniFiles, System.ZLib, System.ZLibConst, System.IOUtils,
   Vcl.Clipbrd, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
-  JsonDataObjects, PrjConst;
+  JsonDataObjects, PrjConst, Winapi.GDIPOBJ // , WebpHelpers, libwebp
+    ;
 
 function GetTempDir: String;
 begin
@@ -618,7 +621,7 @@ end;
 function LogEvent(const AUnit, ADescr: string; const ANotice: String = ''; const aLogFileName: String = ''): Boolean;
 var
   F: TextFile;
-  vLogFileName : string;
+  vLogFileName: string;
 begin
   if (aLogFileName = '') then
     vLogFileName := LogFileName
@@ -627,7 +630,7 @@ begin
 
   Result := False;
   {
-  if not DebugMode then
+    if not DebugMode then
     Exit;
   }
   AssignFile(F, vLogFileName);
@@ -979,7 +982,7 @@ function AdvSelectDirectory(const Caption: string; const Root: WideString; var D
 
 // Callback-Funktion, die aufgerufen wird, wenn der Dialog initialisiert oder
 // ein neues Verzeichnis selektiert wurde
-  function SelectDirCB(Wnd: HWnd; uMsg: UINT; lParam, lpData: lParam): Integer; stdcall;
+  function SelectDirCB(Wnd: HWND; uMsg: UINT; lParam, lpData: lParam): Integer; stdcall;
   // var
   // PathName: array[0..MAX_PATH] of Char;
   begin
@@ -1327,7 +1330,7 @@ begin
   end;
 end;
 
-procedure PostKeyExHWND(hWindow: HWnd; key: Word; const shift: TShiftState; specialkey: Boolean);
+procedure PostKeyExHWND(hWindow: HWND; key: Word; const shift: TShiftState; specialkey: Boolean);
 type
   TBuffers = array [0 .. 1] of TKeyboardState;
 var
@@ -1566,7 +1569,105 @@ begin
     FreeAndNil(PNG);
     FreeAndNil(BMP);
   end;
-end; (* все работает *)
+end;
+
+procedure WebpDecode(fs: TStream; var Data: PByte; var bitmap: TGPBitmap);
+
+type
+  TWebPDecodeBGRA = function(const Data: PByte; data_size: Cardinal; Width, Height: PInteger): PByte; stdcall;
+
+var
+  buffer: TBytes;
+  Width, Height: Integer;
+  hLib: HMODULE;
+  WebPDecodeBGRA: TWebPDecodeBGRA;
+begin
+  // 2. Загружаем библиотеку
+  hLib := LoadLibrary(PWideChar(ExtractFilePath(Application.ExeName) + 'libwebp.dll'));
+
+  if hLib <> 0 then
+  begin
+    fs.Position := 0;
+    SetLength(buffer, fs.Size);
+    fs.ReadBuffer(buffer, fs.Size);
+    try
+      // 3. Получаем адрес функции
+      @WebPDecodeBGRA := GetProcAddress(hLib, 'WebPDecodeBGRA');
+
+      if Assigned(WebPDecodeBGRA) then
+      begin
+        Data := WebPDecodeBGRA(@buffer[0], fs.Size, @Width, @Height);
+        // Free buffer
+        SetLength(buffer, 0);
+        // Load to image
+        bitmap := TGPBitmap.Create(Width, Height, 4 * Width, 2498570, Data);
+      end
+    finally
+      // 5. Выгружаем библиотеку
+      FreeLibrary(hLib);
+    end;
+  end
+end;
+
+function ConvertWebpFileToJpgFile(const aPath: String): String;
+type
+  TWebPDecodeBGRA = function(const Data: PByte; data_size: Cardinal; Width, Height: PInteger): PByte; stdcall;
+const
+  gJPG: TGUID = '{557CF401-1A04-11D3-9A73-0000F81EF32E}';
+var
+  libPath, jpgPath: string;
+  fName, fExt: string;
+  fs: TFileStream;
+  hLib: THandle;
+  BMP: TGPBitmap;
+  Data: PByte;
+  buffer: TBytes;
+  Width, Height: Integer;
+  WebPDecodeBGRA: TWebPDecodeBGRA;
+begin
+  fExt := UpperCase(ExtractFileExt(aPath));
+  if (fExt = '.WEBP') then
+  begin
+    libPath := ExtractFilePath(Application.ExeName) + 'libwebp.dll';
+    if FileExists(libPath) then
+    begin
+      hLib := LoadLibrary(PWideChar(libPath));
+      if hLib > HINSTANCE_ERROR then
+      begin
+        try
+          WebPDecodeBGRA := GetProcAddress(hLib, 'WebPDecodeBGRA');
+          if Assigned(WebPDecodeBGRA) then
+          begin
+            fName := ExtractFileName(aPath);
+            fName := ChangeFileExt(fName, '.jpg');
+            jpgPath := GetTempDir() + fName;
+            if FileExists(jpgPath) then
+              DeleteFile(jpgPath);
+            fs := TFileStream.Create(aPath, fmOpenRead);
+            fs.Position := 0;
+            SetLength(buffer, fs.Size);
+            fs.ReadBuffer(buffer, fs.Size);
+            Data := WebPDecodeBGRA(@buffer[0], fs.Size, @Width, @Height);
+            SetLength(buffer, 0);
+            BMP := TGPBitmap.Create(Width, Height, 4 * Width, 2498570, Data);
+            BMP.Save(jpgPath, gJPG);
+          end;
+        finally
+          if Assigned(BMP) then
+            BMP.Free;
+          if Assigned(fs) then
+            fs.Free;
+          FreeLibrary(hLib);
+        end;
+      end;
+    end;
+  end;
+
+  if FileExists(jpgPath) then
+    Result := jpgPath
+  else
+    Result := aPath;
+end;
 
 function GetWineAvail: Boolean;
 var
@@ -1583,24 +1684,15 @@ end;
 
 function CreateStatusWindow(const Text: string): TStatusWindowHandle;
 var
-  FormWidth,
-  FormHeight: integer;
+  FormWidth, FormHeight: Integer;
 begin
   FormWidth := 400;
   FormHeight := 164;
-  result := CreateWindow('STATIC',
-                         PChar(Text),
-                         WS_OVERLAPPED or WS_POPUPWINDOW or WS_THICKFRAME or SS_CENTER or SS_CENTERIMAGE,
-                         (Screen.Width - FormWidth) div 2,
-                         (Screen.Height - FormHeight) div 2,
-                         FormWidth,
-                         FormHeight,
-                         Application.MainForm.Handle,
-                         0,
-                         HInstance,
-                         nil);
-  ShowWindow(result, SW_SHOWNORMAL);
-  UpdateWindow(result);
+  Result := CreateWindow('STATIC', PChar(Text), WS_OVERLAPPED or WS_POPUPWINDOW or WS_THICKFRAME or SS_CENTER or
+    SS_CENTERIMAGE, (Screen.Width - FormWidth) div 2, (Screen.Height - FormHeight) div 2, FormWidth, FormHeight,
+    Application.MainForm.Handle, 0, HInstance, nil);
+  ShowWindow(Result, SW_SHOWNORMAL);
+  UpdateWindow(Result);
 end;
 
 procedure RemoveStatusWindow(StatusWindow: TStatusWindowHandle);
@@ -1608,41 +1700,22 @@ begin
   DestroyWindow(StatusWindow);
 end;
 
-procedure WriteLog(const Line:String; const LogFile:string = 'a4on.log');
+procedure WriteLog(const Line: String; const LogFile: string = 'a4on.log');
 begin
   LogEvent('EXE', Line, '', LogFile);
 end;
 
 function GetComputerNetName: string;
 var
-  buffer: array[0..255] of char;
-  size: dword;
+  buffer: array [0 .. 255] of Char;
+  Size: DWORD;
 begin
-  size := 256;
-  if GetComputerName(buffer, size) then
+  Size := 256;
+  if GetComputerName(buffer, Size) then
     Result := buffer
   else
     Result := ''
 end;
-
-{
-procedure TForm1.btn1Click(Sender: TObject);
-var
-  status: TStatusWindowHandle;
-  i:Integer;
-begin
-  status := CreateStatusWindow('Please Wait...');
-  try
-    for i:= 1 to 100 do begin
-      btn1.Caption := i.ToString;
-      Sleep(200);
-    end
-  finally
-    RemoveStatusWindow(status);
-  end;
-end;
-
-}
 
 initialization
 

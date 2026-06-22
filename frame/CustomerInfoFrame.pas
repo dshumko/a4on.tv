@@ -1,5 +1,7 @@
 ﻿unit CustomerInfoFrame;
 
+{$I defines.inc}
+
 interface
 
 uses
@@ -7,34 +9,51 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.Menus, Vcl.Mask,
-  Dm, PrjConst, A4onTypeUnit, DBCtrlsEh, HtmlView, HTMLSubs,
-  HTMLUn2,
-  FramView, FramBrwz;
+  Dm, PrjConst, A4onTypeUnit, DBCtrlsEh,
+{$IFDEF USE_PIXIE}
+  Vcl.Clipbrd, Pixie.HtmlView.Vcl, Pixie.Document
+{$ELSE}
+  Vcl.ExtCtrls, HtmlView, HTMLSubs, HTMLUn2, FramView, FramBrwz
+{$IFEND}
+    ;
 
 type
   TCustomerInfoFrm = class(TFrame)
     gbInfo: TGroupBox;
     pmHV: TPopupMenu;
     miCopy: TMenuItem;
-    HtmlViewer: THtmlViewer;
-    procedure HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase; Button: TMouseButton; Shift: TShiftState;
-      X, Y, IX, IY: Integer);
-    procedure HtmlViewerHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
     procedure miCopyClick(Sender: TObject);
     procedure FrameResize(Sender: TObject);
   private
     { Private declarations }
-    Font_size: Integer;
-    Font_name: string;
+    FFontSize: Integer;
+    FFontName: string;
     FRed_Sum: single;
     FShowAsBalance: Boolean;
     FShowMoney: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     ci: TCustomerInfo;
+    FHtmlForCID: Integer;
+{$IFDEF USE_PIXIE}
+    HtmlViewer: TPixieHtmlView;
+    procedure PixieHtmlViewerSectionClick(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure ViewAnchorClick(Sender: TObject; const Url: string);
+{$ELSE}
+    HtmlViewer: THtmlViewer;
+    procedure CreateBerndGabrielHtmlViewer();
+    procedure HtmlViewerKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure HtmlViewerSectionClick(Sender: TObject; Obj: TSectionBase; Button: TMouseButton; Shift: TShiftState;
+      X, Y, IX, IY: Integer);
+    procedure HtmlViewerHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
+{$IFEND}
     procedure SetCI(Value: TCustomerInfo);
+    procedure CreateHtmlView;
+    procedure DestroyHtmlView;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     property Customer: TCustomerInfo read ci write SetCI;
     procedure MakeHtml;
   end;
@@ -42,7 +61,7 @@ type
 implementation
 
 uses
-  MAIN, CustomerForma;
+  AtrStrUtils, MAIN, CustomerForma;
 
 {$R *.dfm}
 
@@ -51,16 +70,49 @@ var
   i: Integer;
 begin
   inherited;
-  Font_size := 8;
-  Font_name := 'Tahoma';
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
+  FFontSize := 8;
+  FFontName := 'Tahoma';
+  if TryStrToInt(dmMain.GetIniValue('FFontSize'), i) then
   begin
-    Font_size := i;
-    Font_name := dmMain.GetIniValue('FONT_NAME');
+    FFontSize := i;
+    FFontName := dmMain.GetIniValue('FFontName');
   end;
   FRed_Sum := dmMain.GetSettingsValue('DOLG');
   FShowAsBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
-  FShowMoney := (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full))
+  FShowMoney := (dmMain.AllowedAction(rght_Customer_Debt)) or (dmMain.AllowedAction(rght_Customer_full));
+  FHidePersonalData := dmMain.AllowedAction(rght_Customer_PersonalData);
+  FHidePersonalName := dmMain.AllowedAction(rght_Customer_PersonalName);
+
+  CreateHtmlView;
+end;
+
+destructor TCustomerInfoFrm.Destroy;
+begin
+  DestroyHtmlView;
+  inherited;
+end;
+
+procedure TCustomerInfoFrm.CreateHtmlView;
+begin
+{$IFDEF USE_PIXIE}
+  HtmlViewer := TPixieHtmlView.Create(Self);
+  HtmlViewer.Parent := gbInfo;
+  HtmlViewer.Align := alClient;
+  HtmlViewer.BorderStyle := bsNone;
+  HtmlViewer.Color := clWhite;
+  HtmlViewer.OnMouseUp := PixieHtmlViewerSectionClick;
+  HtmlViewer.OnAnchorClick := ViewAnchorClick;
+{$ELSE}
+  CreateBerndGabrielHtmlViewer;
+{$IFEND}
+end;
+
+procedure TCustomerInfoFrm.DestroyHtmlView;
+begin
+  // if Assigned(FWkeWebbrowser) then
+  // FWkeWebbrowser.Free;
+  if Assigned(HtmlViewer) then
+    HtmlViewer.Free;
 end;
 
 procedure TCustomerInfoFrm.FrameResize(Sender: TObject);
@@ -76,7 +128,10 @@ var
   dText, dColor: string;
   fo: TCustomForm;
 begin
-  HtmlViewer.defBackground := clBtnFace;
+  if FHtmlForCID = ci.CUSTOMER_ID then
+    Exit;
+
+  clr := clBtnFace;
 
   if ci.CUSTOMER_ID = -1 then
     FHtml := '<html><body>' + rsNOT_FOUND_CUST + '</body></html>'
@@ -98,7 +153,17 @@ begin
         if (ci.Debt_sum > FRed_Sum) then
           dColor := ' color="RED"';
       end;
-      dText := '<i>' + dText + '</i>: ' + '<font' + dColor + '><strong>' + FormatFloat(',0.00', ci.Debt_sum) + '</strong></font><br>';
+      dText := '<i>' + dText + '</i>: ' + '<font' + dColor + '><strong>' + FormatFloat(',0.00', ci.Debt_sum) +
+        '</strong></font>';
+      if (ci.Tarif_Month > -1) or (ci.Tarif_Month > -1) then
+      begin
+        dText := dText + ' <i>Сумма тарифов</i>';
+        if ci.Tarif_Month > -1 then
+          dText := dText + ' <i>за месяц</i>: ' + FormatFloat(',0.00', ci.Tarif_Month);
+        if ci.Tarif_Day > -1 then
+          dText := dText + ' <i>за день</i>: ' + FormatFloat(',0.00', ci.Tarif_Day);
+      end;
+      dText := dText + '<br>';
     end;
 
     addr := '' + ci.Street + ' д.' + ci.HOUSE_NO;
@@ -136,16 +201,70 @@ begin
 
     if ci.Color <> '' then
       clr := StringToColor(ci.Color)
-    else
-      clr := clBtnFace;
-
-    HtmlViewer.DefFontName := Font_name;
-    HtmlViewer.DefFontSize := Font_size;
-    HtmlViewer.defBackground := clr;
-    gbInfo.Color := clr;
   end;
 
+{$IFDEF USE_PIXIE}
+  HtmlViewer.Color := clr;
+{$ELSE}
+  HtmlViewer.DefFontName := FFontName;
+  HtmlViewer.DefFontSize := FFontSize;
+  HtmlViewer.defBackground := clr;
+{$IFEND}
+  gbInfo.Color := clr;
   HtmlViewer.LoadFromString(FHtml);
+  FHtmlForCID := ci.CUSTOMER_ID
+end;
+
+{$IFDEF USE_PIXIE}
+
+procedure TCustomerInfoFrm.PixieHtmlViewerSectionClick(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
+var
+  pt: TPoint;
+begin
+  if (Button = mbRight) and HtmlViewer.Document.HasSelection and (Length(HtmlViewer.Document.GetSelectedText) > 0) then
+  begin
+    pt := Mouse.CursorPos;
+    pmHV.Popup(pt.X, pt.Y);
+  end;
+end;
+
+procedure TCustomerInfoFrm.ViewAnchorClick(Sender: TObject; const Url: string);
+var
+  FullUrl: string;
+begin
+  FullUrl := Url;
+  if (Pos('ls:', LowerCase(FullUrl)) = 1) then
+  begin
+    if ci.CUSTOMER_ID <> -1 then
+      ShowCustomer(ci.CUSTOMER_ID);
+  end;
+end;
+{$ELSE}
+
+procedure TCustomerInfoFrm.CreateBerndGabrielHtmlViewer;
+begin
+  HtmlViewer := THtmlViewer.Create(Self);
+
+  HtmlViewer.Name := 'HtmlViewer';
+  HtmlViewer.Parent := gbInfo;
+  HtmlViewer.ParentCustomHint := False;
+  HtmlViewer.BorderStyle := htNone;
+  HtmlViewer.DefFontName := 'Tahoma';
+  HtmlViewer.DefFontSize := 8;
+  HtmlViewer.DefHotSpotColor := clBtnText;
+  HtmlViewer.DefOverLinkColor := clBtnText;
+  HtmlViewer.HistoryMaxCount := 0;
+  HtmlViewer.HtOptions := [htOverLinksActive];
+  HtmlViewer.NoSelect := False;
+  HtmlViewer.Text := '';
+  HtmlViewer.ViewImages := False;
+  HtmlViewer.Align := alClient;
+  HtmlViewer.PopupMenu := pmHV;
+  HtmlViewer.TabOrder := 0;
+  HtmlViewer.OnKeyUp := HtmlViewerKeyUp;
+  HtmlViewer.OnHotSpotClick := HtmlViewerHotSpotClick;
+  HtmlViewer.OnSectionClick := HtmlViewerSectionClick;
 end;
 
 procedure TCustomerInfoFrm.HtmlViewerHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
@@ -179,15 +298,24 @@ begin
     pmHV.Popup(pt.X, pt.Y);
   end;
 end;
+{$IFEND}
 
 procedure TCustomerInfoFrm.miCopyClick(Sender: TObject);
 begin
+{$IFDEF USE_PIXIE}
+  if HtmlViewer.Document.HasSelection then
+    Clipboard.AsText := HtmlViewer.Document.GetSelectedText;
+{$ELSE}
   HtmlViewer.CopySelectedAsTextToClipboard;
+{$IFEND}
 end;
 
 procedure TCustomerInfoFrm.SetCI(Value: TCustomerInfo);
 begin
   ci := Value;
+  if FHidePersonalData or FHidePersonalName then
+    ci.FIO := HideFullName(ci.FIO, FHidePersonalData, FHidePersonalName);
+
   MakeHtml;
 end;
 

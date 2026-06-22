@@ -43,11 +43,11 @@ object TarifForm: TTarifForm
     Caption = #1058#1072#1088#1080#1092' '#1076#1083#1103' '#1102#1088'. '#1083#1080#1094
   end
   object lblVAT: TLabel
-    Left = 94
+    Left = 78
     Top = 129
-    Width = 22
+    Width = 40
     Height = 13
-    Caption = #1053#1044#1057
+    Caption = #1053#1044#1057', %'
   end
   object lblPARTNER: TLabel
     Left = 7

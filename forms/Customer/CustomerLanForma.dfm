@@ -12,7 +12,6 @@ object CustomerLanForm: TCustomerLanForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -22,7 +21,6 @@ object CustomerLanForm: TCustomerLanForm
   DesignSize = (
     535
     382)
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -32,11 +30,19 @@ object CustomerLanForm: TCustomerLanForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
+    ExplicitTop = 347
+    ExplicitWidth = 535
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 74
@@ -46,12 +52,18 @@ object CustomerLanForm: TCustomerLanForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 74
+      ExplicitWidth = 364
+      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 445
       Width = 85
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
+      ExplicitLeft = 445
+      ExplicitWidth = 85
+      ExplicitHeight = 27
     end
   end
   object pnlMain: TPanel

@@ -218,6 +218,8 @@ object BillEditForm: TBillEditForm
     Align = alBottom
     TabOrder = 7
     TabStop = True
+    ExplicitTop = 216
+    ExplicitWidth = 389
     inherited Label2: TLabel
       Margins.Bottom = 0
     end
@@ -228,10 +230,14 @@ object BillEditForm: TBillEditForm
       Left = 75
       Width = 214
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 75
+      ExplicitWidth = 214
     end
     inherited bbCancel: TBitBtn
       Left = 295
       Width = 86
+      ExplicitLeft = 295
+      ExplicitWidth = 86
     end
   end
   object edtACCOUNT: TDBEditEh

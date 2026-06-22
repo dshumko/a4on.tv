@@ -13,7 +13,7 @@ uses
   DBGridEhToolCtrls,
   DBAxisGridsEh, DBLookupEh, DBCtrlsEh, DBGridEh, MemTableDataEh, MemTableEh, CnErrorProvider, EhLibVCL,
   DBGridEhGrouping,
-  DynVarsEh, PropFilerEh, PropStorageEh, EhlibFIB;
+  DynVarsEh, PropFilerEh, PropStorageEh, EhlibFIB, amSplitter, CnClasses;
 
 type
   TapgCustomerNew = class(TA4onPage)
@@ -93,7 +93,7 @@ type
     lblVAT: TLabel;
     eDIRECTOR: TDBEditEh;
     Label16: TLabel;
-    Panel2: TPanel;
+    pnlSecret: TPanel;
     dbchkHiden: TDBCheckBox;
     Button1: TButton;
     Button2: TButton;
@@ -144,6 +144,8 @@ type
     lblDT: TLabel;
     dsDocType: TpFIBDataSet;
     srcDocType: TDataSource;
+    spl1: TSplitter;
+    splMemo: TSplitter;
     procedure dbgrdhContactsExit(Sender: TObject);
     procedure chkJURIDICALClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -188,11 +190,13 @@ type
     { Private declarations }
     FFullAccess: Boolean;
     FCanAdd: Boolean;
-    FAddressRight : Boolean;
+    FAddressRight: Boolean;
     FNotIgnoreContract: Boolean;
     FNeedSaveScan: Boolean;
     FFileScan: String;
     FKeyMVD: string;
+    FUrlMVD: String;
+    FDataMVD: String;
     FNeedCheckAccount: Boolean;
     FEnterSecondPress: Boolean;
     procedure GenerateAccountN;
@@ -296,7 +300,9 @@ begin
   btnSAVE.Visible := FFullAccess or FCanAdd;
 
   FNotIgnoreContract := dmMain.GetSettingsValue('IGNORE_CONTRACT') <> '1';
-  FKeyMVD := dmMain.GetSettingsValue('KEY_MVD');
+  FKeyMVD := dmMain.GetSettingsValue('MVD_KEY');
+  FUrlMVD := dmMain.GetSettingsValue('MVD_URL');
+  FDataMVD := dmMain.GetSettingsValue('MVD_DATA');
   dsContacts.Open;
   dsOrg.Open;
   dsVATG.Open;
@@ -1223,7 +1229,7 @@ begin
     begin
       i := dmMain.dbTV.Gen_Id('GEN_ACCOUNT_NO', 0);
       if (acc_no = IntToStr(i)) then
-        i := dmMain.dbTV.Gen_Id('GEN_ACCOUNT_NO', -1);
+        dmMain.dbTV.Gen_Id('GEN_ACCOUNT_NO', -1);
     end;
   end;
 end;
@@ -1455,10 +1461,13 @@ var
   FHttpCli: TSslHttpCli;
   FSslContext: TSslContext;
   Datax: TStringStream;
+  RequestData: TStringStream;
   url: string;
+  CheckPassportURL: String;
   errors: Boolean;
   unp, ps, pn: string;
   answer: string;
+  sToPost: string;
   pValid: Integer;
   qry: TpFIBQuery;
 
@@ -1494,6 +1503,11 @@ begin
   // Еслі не паспорт, то не проверяем
   if (lcbDT.Text.IsEmpty) and (lcbDT.Value > 1) then
     exit;
+
+  if FUrlMVD.IsEmpty then
+    CheckPassportURL := rsCheckPassportURL
+  else
+    CheckPassportURL := FUrlMVD;
 
   if eSURNAME.Text.IsEmpty then
   begin
@@ -1534,76 +1548,120 @@ begin
   if unp = '' then
     unp := dmMain.GetCompanyValue('UNP');
 
-  url := Format('surname=%s&name=%s&lastname=%s', [UrlEncode(eSURNAME.Text), UrlEncode(eFIRSTNAME.Text),
-    UrlEncode(eMIDLENAME.Text)]) + Format('&ser=%s&num=%s&identif=%s',
-    [UrlEncode(ps), UrlEncode(pn), UrlEncode(edtPERSONAL_N.Text)]) +
-    Format('&unp=%s&region=%s&district=%s&city=%s&street=%s&house=%s&housing=%s&room=%s',
-    [UrlEncode(unp), UrlEncode(dmMain.GetCompanyValue('REGION')), UrlEncode(dmMain.GetCompanyValue('DISTRICT')),
-    UrlEncode(dmMain.GetCompanyValue('CITY')), UrlEncode(dmMain.GetCompanyValue('STREET')),
-    UrlEncode(dmMain.GetCompanyValue('HOUSE')), UrlEncode(dmMain.GetCompanyValue('HOUSING')),
-    UrlEncode(dmMain.GetCompanyValue('ROOM'))]);
+  Datax := TStringStream.Create('', TEncoding.UTF8);
 
   FSslContext := TSslContext.Create(nil);
   FSslContext.Name := 'FSslContext';
-  FSslContext.SslDHParamLines.Clear;
+  // FSslContext.SslDHParamLines.Clear;
   FSslContext.SslVerifyPeer := False;
 
   FHttpCli := TSslHttpCli.Create(nil);
   FHttpCli.Name := 'FHttpCli';
   FHttpCli.Agent := 'a4on/1.0';
-  FHttpCli.ServerAuth := httpAuthBearer;
-  FHttpCli.AuthBearerToken := FKeyMVD;
   FHttpCli.ProxyAuth := httpAuthNone;
-  FHttpCli.TimeOut := 30;
+  FHttpCli.TimeOut := 10;
+  FHttpCli.NoCache := True;
   FHttpCli.SslContext := FSslContext;
   FHttpCli.ResponseNoException := True;
-  Datax := TStringStream.Create('', TEncoding.UTF8);
   FHttpCli.OnRequestDone := Nil;
   FHttpCli.RcvdStream := Datax;
-  FHttpCli.url := rsCheckPassportURL + url;
-  FHttpCli.Get; // sync
+  FHttpCli.url := CheckPassportURL;
+  FHttpCli.ServerAuth := httpAuthBearer;
+  FHttpCli.AuthBearerToken := FKeyMVD;
 
-  // HideWarningMessage;
-
-  if FHttpCli.StatusCode = 200 then
-  begin
-    // {"rs":"Машиночитаемый документ - 0A0007083 - не выдавался"}
-    // {"rs":"Машиночитаемый документ - MC2134811 - выдан, действителен, дата выдачи 11.06.2010"}
-    // {"rs":"Машиночитаемый документ - MC1828933 - недействителен, дата постановки на учет 10.12.2019"}
-    answer := Datax.DataString;
-    if answer.ToLower.Contains('выдан, действителен') then
+  try
+    if CheckPassportURL.Contains('/v1/') then
     begin
-      pValid := 1;
+      url := Format('surname=%s&name=%s&lastname=%s', [UrlEncode(eSURNAME.Text), UrlEncode(eFIRSTNAME.Text),
+        UrlEncode(eMIDLENAME.Text)]) + Format('&ser=%s&num=%s&identif=%s',
+        [UrlEncode(ps), UrlEncode(pn), UrlEncode(edtPERSONAL_N.Text)]) +
+        Format('&unp=%s&region=%s&district=%s&city=%s&street=%s&house=%s&housing=%s&room=%s',
+        [UrlEncode(unp), UrlEncode(dmMain.GetCompanyValue('REGION')), UrlEncode(dmMain.GetCompanyValue('DISTRICT')),
+        UrlEncode(dmMain.GetCompanyValue('CITY')), UrlEncode(dmMain.GetCompanyValue('STREET')),
+        UrlEncode(dmMain.GetCompanyValue('HOUSE')), UrlEncode(dmMain.GetCompanyValue('HOUSING')),
+        UrlEncode(dmMain.GetCompanyValue('ROOM'))]);
+
+      FHttpCli.url := FHttpCli.url + url;
+      FHttpCli.Get;
+    end
+    else
+    begin // v2
+      if FDataMVD.IsEmpty then
+        sToPost := '{"desc":"[COMPANY]","desc_address":"[CITY] [STREET] [HOUSE]",' +
+          '"sery":"[SER]","num":"[NUM]","identif":"[IDENTIF]",' +
+          '"surname":"[SURNAME]","name":"[NAME]","lastname":"[LASTNAME]"}'
+      else
+        sToPost := FDataMVD;
+
+      sToPost := sToPost.replace('[SURNAME]', eSURNAME.Text);
+      sToPost := sToPost.replace('[NAME]', eFIRSTNAME.Text);
+      sToPost := sToPost.replace('[LASTNAME]', eMIDLENAME.Text);
+      sToPost := sToPost.replace('[SER]', ps);
+      sToPost := sToPost.replace('[NUM]', pn);
+      sToPost := sToPost.replace('[IDENTIF]', edtPERSONAL_N.Text);
+
+      sToPost := sToPost.replace('[UNP]', unp);
+      sToPost := sToPost.replace('[COMPANY]', dmMain.GetCompanyValue('NAME'));
+      sToPost := sToPost.replace('[REGION]', dmMain.GetCompanyValue('REGION'));
+      sToPost := sToPost.replace('[DISTRICT]', dmMain.GetCompanyValue('DISTRICT'));
+      sToPost := sToPost.replace('[CITY]', dmMain.GetCompanyValue('CITY'));
+      sToPost := sToPost.replace('[STREET]', dmMain.GetCompanyValue('STREET'));
+      sToPost := sToPost.replace('[HOUSE]', dmMain.GetCompanyValue('HOUSE'));
+      sToPost := sToPost.replace('[HOUSING]', dmMain.GetCompanyValue('HOUSING'));
+      sToPost := sToPost.replace('[ROOM]', dmMain.GetCompanyValue('ROOM'));
+
+      RequestData := TStringStream.Create(sToPost, TEncoding.UTF8);
+
+      FHttpCli.ContentTypePost := 'application/json';
+      FHttpCli.SendStream := RequestData;
+      FHttpCli.SendStream.Position := 0;
+      FHttpCli.Post;
+    end;
+
+    if FHttpCli.StatusCode = 200 then
+    begin
+      // {"rs":"Машиночитаемый документ - 0A0007083 - не выдавался"}
+      // {"rs":"Машиночитаемый документ - MC2134811 - выдан, действителен, дата выдачи 11.06.2010"}
+      // {"rs":"Машиночитаемый документ - MC1828933 - недействителен, дата постановки на учет 10.12.2019"}
+      answer := Datax.DataString;
+      if answer.ToLower.Contains('выдан, действителен') then
+      begin
+        pValid := 1;
+      end
+      else
+      begin
+        ShowWarningMessage(answer);
+        CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
+        pValid := 0;
+      end
     end
     else
     begin
+      answer := rsError + ' ' + FHttpCli.StatusCode.ToString;
       ShowWarningMessage(answer);
       CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
-      pValid := 0;
-    end
-  end
-  else
-  begin
-    answer := rsError + ' ' + FHttpCli.StatusCode.ToString;
-    ShowWarningMessage(answer);
-    CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
-    pValid := -1;
-    {
-      401 Unauthorized	Возвращается в случаях несанкционированного доступа к сервису
-      403 Forbidden	Возвращается в случае, если запрашиваемый ресурс существует, но у клиента  недостаточно прав на его просмотр или модификацию
-      500 Internal Server Error
-      502 Bad Gateway
-      504 Gateway Timeout
-      200 ОК	Пакет получен
-      400 Bad Request	Структура пакета неверна
-      500 Internal Server Error	Непредвиденная ошибка сервера
-    }
-  end;
+      pValid := -1;
+      {
+        401 Unauthorized	Возвращается в случаях несанкционированного доступа к сервису
+        403 Forbidden	Возвращается в случае, если запрашиваемый ресурс существует, но у клиента  недостаточно прав на его просмотр или модификацию
+        500 Internal Server Error
+        502 Bad Gateway
+        504 Gateway Timeout
+        200 ОК	Пакет получен
+        400 Bad Request	Структура пакета неверна
+        500 Internal Server Error	Непредвиденная ошибка сервера
+      }
+    end;
 
-  FHttpCli.RcvdStream.Free;
-  FHttpCli.RcvdStream := nil;
-  FHttpCli.Free;
-  FSslContext.Free;
+  finally
+    FHttpCli.RcvdStream := nil;
+    FHttpCli.Free;
+    FSslContext.Free;
+    if Assigned(Datax) then
+      Datax.Free;
+    if Assigned(RequestData) then
+      RequestData.Free;
+  end;
 
   if dsCustomerMEM.FieldByName('CUSTOMER_ID').IsNull then
   begin

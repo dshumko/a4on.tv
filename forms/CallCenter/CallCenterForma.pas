@@ -111,8 +111,7 @@ uses
 
 procedure TCallCenterForm.actAdresFilterExecute(Sender: TObject);
 begin
-  if VarIsNumeric(cbbHOUSE.KeyValue) then
-  begin
+  if VarIsNumeric(cbbHOUSE.KeyValue) then begin
     SetAdresFilter();
   end
 end;
@@ -173,13 +172,11 @@ begin
   else
     dsStreets.ParamByName('area_id').Clear;
 
-  if dsHomes.Active then
-  begin
+  if dsHomes.Active then begin
     cbbHOUSE.Clear;
     dsHomes.Close;
   end;
-  if dsStreets.Active then
-  begin
+  if dsStreets.Active then begin
     cbbStreets.Clear;
     dsStreets.Close;
   end;
@@ -188,8 +185,7 @@ end;
 
 procedure TCallCenterForm.cbbStreetsChange(Sender: TObject);
 begin
-  if dsHomes.Active then
-  begin
+  if dsHomes.Active then begin
     cbbHOUSE.Clear;
     dsHomes.Close;
   end;
@@ -229,51 +225,53 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
 
   Font_size := 0;
-  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
-  begin
+  if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then begin
     Font_size := i;
     Font_name := dmMain.GetIniValue('FONT_NAME');
   end;
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDBGridEh then
-    begin
+  for i := 0 to ComponentCount - 1 do begin
+    if Components[i] is TDBGridEh then begin
       (Components[i] as TDBGridEh).RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[i].Name, [crpColIndexEh, crpColWidthsEh, crpColVisibleEh, crpSortMarkerEh]);
       if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
         (Components[i] as TDBGridEh).DefaultApplySorting;
-      if Font_size <> 0 then
-      begin
+      if Font_size <> 0 then begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
       end;
 
-      if Row_height <> 0 then
-      begin
+      if Row_height <> 0 then begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
       end;
+
+      if ShowToolTips then begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := True;
+      end;
     end
-    else if Font_size <> 0 then
-    begin
-      if (Components[i] is TMemo) then
-      begin
+    else if Font_size <> 0 then begin
+      if (Components[i] is TMemo) then begin
         (Components[i] as TMemo).Font.Name := Font_name;
         (Components[i] as TMemo).Font.Size := Font_size;
       end
-      else if (Components[i] is TDBMemoEh) then
-      begin
+      else if (Components[i] is TDBMemoEh) then begin
         (Components[i] as TDBMemoEh).Font.Name := Font_name;
         (Components[i] as TDBMemoEh).Font.Size := Font_size;
       end
-      else if (Components[i] is TDBMemo) then
-      begin
+      else if (Components[i] is TDBMemo) then begin
         (Components[i] as TDBMemo).Font.Name := Font_name;
         (Components[i] as TDBMemo).Font.Size := Font_size;
       end;
@@ -308,8 +306,7 @@ var
   id: Integer;
 begin
   filter := '';
-  if VarIsNumeric(cbbHOUSE.KeyValue) then
-  begin
+  if VarIsNumeric(cbbHOUSE.KeyValue) then begin
     id := cbbHOUSE.KeyValue;
     filter := Format(' f.HOUSE_ID = %d ', [id]);
   end
@@ -345,13 +342,11 @@ begin
     exit;
 
   f := '';
-  if itsMobile then
-  begin
+  if itsMobile then begin
     if (not dsFlats.FieldByName('MOBILE').IsNull) then
       f := dsFlats['MOBILE'];
   end
-  else
-  begin
+  else begin
     if (not dsFlats.FieldByName('PHONE').IsNull) then
       f := dsFlats['PHONE'];
   end;

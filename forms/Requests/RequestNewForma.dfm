@@ -11,7 +11,6 @@ object RequestNewForm: TRequestNewForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -22,7 +21,6 @@ object RequestNewForm: TRequestNewForm
   DesignSize = (
     832
     522)
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAdresInfo: TPanel
     Left = 0
@@ -276,13 +274,13 @@ object RequestNewForm: TRequestNewForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
+        ExplicitWidth = 469
+        ExplicitHeight = 129
         inherited gbInfo: TGroupBox
           Width = 469
           Height = 129
-          inherited HtmlViewer: THtmlViewer
-            Width = 465
-            Height = 112
-          end
+          ExplicitWidth = 469
+          ExplicitHeight = 129
         end
       end
     end
@@ -295,11 +293,19 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 487
+    ExplicitWidth = 832
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 358
@@ -311,12 +317,18 @@ object RequestNewForm: TRequestNewForm
       Caption = '&'#1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = bbOkClick
+      ExplicitLeft = 358
+      ExplicitTop = 6
+      ExplicitWidth = 334
     end
     inherited bbCancel: TBitBtn
       Left = 704
       Top = 6
       Width = 123
       OnClick = frmOkCancelbbCancelClick
+      ExplicitLeft = 704
+      ExplicitTop = 6
+      ExplicitWidth = 123
     end
   end
   object pnl1: TPanel

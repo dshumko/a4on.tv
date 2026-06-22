@@ -4,7 +4,9 @@ inherited StreetForm: TStreetForm
   Caption = #1059#1083#1080#1094#1099' '#1080' '#1076#1086#1084#1072
   ClientHeight = 565
   ClientWidth = 993
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 1009
+  ExplicitHeight = 604
   TextHeight = 13
   object Splitter1: TSplitter [0]
     Left = 0
@@ -17,6 +19,8 @@ inherited StreetForm: TStreetForm
   inherited splPG: TSplitter
     Top = 75
     Width = 993
+    ExplicitTop = 75
+    ExplicitWidth = 993
   end
   inherited dbGrid: TDBGridEh
     Top = 79
@@ -229,7 +233,7 @@ inherited StreetForm: TStreetForm
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #1055#1086#1076#1082#1083'.'
-          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1087#1086#1076#1083#1102#1095#1077#1085#1085#1099#1093' '#1082#1074#1072#1088#1090#1080#1088
+          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1087#1086#1076#1083#1102#1095#1077#1085#1085#1099#1093' '#1082#1074#1072#1088#1090#1080#1088' '#1085#1072' '#1089#1077#1075#1086#1076#1085#1103
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 39
@@ -242,7 +246,7 @@ inherited StreetForm: TStreetForm
           FieldName = 'DISCONNECTED'
           Footers = <>
           Title.Caption = #1054#1090#1082#1083'.'
-          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1086#1090#1082#1083#1102#1095#1077#1085#1085#1099#1093' '#1082#1074#1072#1088#1090#1080#1088
+          Title.Hint = #1050#1086#1083'-'#1074#1086' '#1086#1090#1082#1083#1102#1095#1077#1085#1085#1099#1093' '#1082#1074#1072#1088#1090#1080#1088' '#1085#1072' '#1089#1077#1075#1086#1076#1085#1103
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 34
@@ -261,6 +265,18 @@ inherited StreetForm: TStreetForm
           Title.TitleButton = True
           Title.Orientation = tohVertical
           Width = 34
+        end
+        item
+          CellButtons = <>
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'NOT_CONNECTED'
+          Footers = <>
+          Title.Caption = #1053#1077' '#1087#1086#1076#1082#1083'.'
+          Title.Hint = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086' '#1082#1074#1072#1088#1090#1080#1088#1077' '#1077#1089#1090#1100', '#1085#1086' '#1091#1089#1083#1091#1075#1080' '#1085#1077' '#1087#1086#1076#1082#1083#1102#1095#1072#1083#1080#1089#1100
+          Title.TitleButton = True
+          Title.Orientation = tohVertical
+          Width = 29
         end
         item
           AutoFitColWidth = False
@@ -661,6 +677,7 @@ inherited StreetForm: TStreetForm
                 Height = 13
                 Align = alTop
                 Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+                ExplicitWidth = 61
               end
               object memHouseNotice: TDBMemoEh
                 Left = 0
@@ -1270,8 +1287,8 @@ inherited StreetForm: TStreetForm
                   FieldName = 'GARRET'
                   Footers = <>
                   Title.Caption = #1063#1077#1088#1076#1072#1082
-                  Title.Orientation = tohVertical
                   Title.TitleButton = True
+                  Title.Orientation = tohVertical
                   Width = 29
                 end
                 item
@@ -1283,8 +1300,8 @@ inherited StreetForm: TStreetForm
                   FieldName = 'CELLAR'
                   Footers = <>
                   Title.Caption = #1055#1086#1076#1074#1072#1083
-                  Title.Orientation = tohVertical
                   Title.TitleButton = True
+                  Title.Orientation = tohVertical
                   Width = 32
                 end
                 item
@@ -2078,52 +2095,67 @@ inherited StreetForm: TStreetForm
   end
   inherited tlbMain: TToolBar
     Width = 993
+    ExplicitWidth = 993
     inherited ToolButton4: TToolButton
       Width = 8
+      ExplicitWidth = 8
     end
     inherited btnNew: TToolButton
       Left = 8
+      ExplicitLeft = 8
     end
     inherited btnEdit: TToolButton
       Left = 31
+      ExplicitLeft = 31
     end
     inherited ToolButton5: TToolButton
       Left = 54
       Width = 10
+      ExplicitLeft = 54
+      ExplicitWidth = 10
     end
     inherited ToolButton6: TToolButton
       Left = 64
       Visible = False
+      ExplicitLeft = 64
     end
     inherited btnDelete: TToolButton
       Left = 68
+      ExplicitLeft = 68
     end
     inherited ToolButton9: TToolButton
       Left = 91
+      ExplicitLeft = 91
     end
     inherited tbOk: TToolButton
       Left = 106
       Visible = False
       OnClick = tbOkClick
+      ExplicitLeft = 106
     end
     inherited ToolButton10: TToolButton
       Left = 129
       Visible = False
+      ExplicitLeft = 129
     end
     inherited tbCancel: TToolButton
       Left = 133
       Visible = False
       OnClick = tbCancelClick
+      ExplicitLeft = 133
     end
     inherited ToolButton20: TToolButton
       Left = 156
       Visible = False
+      ExplicitLeft = 156
     end
     inherited btnQuickFilter: TToolButton
       Left = 164
+      ExplicitLeft = 164
     end
     inherited sep444: TToolButton
       Left = 187
+      ExplicitLeft = 187
     end
     object ToolButton12: TToolButton
       Left = 195
@@ -2188,13 +2220,20 @@ inherited StreetForm: TStreetForm
   inherited pnlEdit: TPanel
     Width = 993
     Height = 50
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 993
+    ExplicitHeight = 50
     inherited btnSaveLink: TBitBtn
       Top = 17
       Width = 407
+      ExplicitTop = 17
+      ExplicitWidth = 407
     end
     inherited btnCancelLink: TBitBtn
       Left = 498
       Top = 17
+      ExplicitLeft = 498
+      ExplicitTop = 17
     end
   end
   inherited srcDataSource: TDataSource
@@ -2315,34 +2354,64 @@ inherited StreetForm: TStreetForm
         'null)')
     RefreshSQL.Strings = (
       'select'
-      '    ah.*,'
+      '    ah.*'
       
-        '    iif((coalesce(ah.Q_Flat,0) <> 0), round(ah.CONNECTED *100 / ' +
-        'ah.Q_Flat,1), 0.0) PERCENT'
+        '  , iif((coalesce(ah.Q_Flat, 0) <> 0), round(ah.CONNECTED * 100 ' +
+        '/ ah.Q_Flat, 1), 0.0) PERCENT'
       
         '  , iif(coalesce(ah.In_Date, dateadd(day, 1, current_date)) <= c' +
-        'urrent_date, '#39#39', '#39'-'#39') InService     '
+        'urrent_date, '#39#39', '#39'-'#39') InService'
       '  from (select'
-      '            H.*,'
+      '            H.*'
+      '          ,'
       '            (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_Hist ash'
       
-        '                  and exists(select ash.Customer_Id from Subscr_' +
-        'Hist ash where (a.Customer_Id = ash.Customer_Id) and (current_da' +
-        'te between ash.Date_From and ash.Date_To))'
-      '               ) as CONNECTED,'
+        '                                  where (a.Customer_Id = ash.Cus' +
+        'tomer_Id)'
+      
+        '                                        and (current_date betwee' +
+        'n ash.Date_From and ash.Date_To))) as CONNECTED'
+      '          ,'
       '            (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and not exists(select'
+      '                                        ash.Customer_Id'
+      '                                      from Subscr_Hist ash'
       
-        '                  and not exists(select ash.Customer_Id from Sub' +
-        'scr_Hist ash where (a.Customer_Id = ash.Customer_Id) and (curren' +
-        't_date between ash.Date_From and ash.Date_To))'
-      '                     ) as DISCONNECTED'
-      '            , o.ORG_NAME, s.SUBAREA_NAME, w.name, he.he_name'
+        '                                      where (ash.Customer_Id = a' +
+        '.Customer_Id)'
+      
+        '                                            and (current_date be' +
+        'tween ash.Date_From and ash.Date_To))'
+      '                     and exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_serv ash'
+      
+        '                                  where ash.Customer_Id = a.Cust' +
+        'omer_Id)) as DISCONNECTED'
+      '          ,'
+      '            (select'
+      '                 count(distinct a.Flat_No)'
+      '               from CUSTOMER A'
+      '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and not exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_serv ash'
+      
+        '                                  where ash.Customer_Id = a.Cust' +
+        'omer_Id)) as NOT_CONNECTED'
+      '          , o.ORG_NAME'
+      '          , s.SUBAREA_NAME'
+      '          , w.name'
+      '          , he.he_name'
       '          from HOUSE H'
       
         '               left outer join ORGANIZATION o on (o.ORG_ID = h.O' +
@@ -2358,44 +2427,69 @@ inherited StreetForm: TStreetForm
         'nd_id)'
       '          where h.street_id = :STREET_ID) ah'
       ''
-      ''
-      ''
-      'where(  ah.street_id = :STREET_ID'
-      '     ) and (     aH.HOUSE_ID = :OLD_HOUSE_ID'
-      '     )'
-      '    '
-      ''
-      ' ')
+      '  where (ah.street_id = :STREET_ID)'
+      '        and (aH.HOUSE_ID = :OLD_HOUSE_ID)'
+      '    ')
     SelectSQL.Strings = (
       'select'
-      '    ah.*,'
+      '    ah.*'
       
-        '    iif((coalesce(ah.Q_Flat,0) <> 0), round(ah.CONNECTED *100 / ' +
-        'ah.Q_Flat,1), 0.0) PERCENT'
+        '  , iif((coalesce(ah.Q_Flat, 0) <> 0), round(ah.CONNECTED * 100 ' +
+        '/ ah.Q_Flat, 1), 0.0) PERCENT'
       
         '  , iif(coalesce(ah.In_Date, dateadd(day, 1, current_date)) <= c' +
-        'urrent_date, '#39#39', '#39'-'#39') InService      '
+        'urrent_date, '#39#39', '#39'-'#39') InService'
       '  from (select'
-      '            H.*,'
+      '            H.*'
+      '          ,'
       '            (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_Hist ash'
       
-        '                  and exists(select ash.Customer_Id from Subscr_' +
-        'Hist ash where (a.Customer_Id = ash.Customer_Id) and (current_da' +
-        'te between ash.Date_From and ash.Date_To))'
-      '               ) as CONNECTED,'
+        '                                  where (a.Customer_Id = ash.Cus' +
+        'tomer_Id)'
+      
+        '                                        and (current_date betwee' +
+        'n ash.Date_From and ash.Date_To))) as CONNECTED'
+      '          ,'
       '            (select'
       '                 count(distinct a.Flat_No)'
       '               from CUSTOMER A'
       '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and not exists(select'
+      '                                        ash.Customer_Id'
+      '                                      from Subscr_Hist ash'
       
-        '                  and not exists(select ash.Customer_Id from Sub' +
-        'scr_Hist ash where (a.Customer_Id = ash.Customer_Id) and (curren' +
-        't_date between ash.Date_From and ash.Date_To))'
-      '                     ) as DISCONNECTED'
-      '            , o.ORG_NAME, s.SUBAREA_NAME, w.name, he.he_name'
+        '                                      where (ash.Customer_Id = a' +
+        '.Customer_Id)'
+      
+        '                                            and (current_date be' +
+        'tween ash.Date_From and ash.Date_To))'
+      '                     and exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_serv ash'
+      
+        '                                  where ash.Customer_Id = a.Cust' +
+        'omer_Id)) as DISCONNECTED'
+      '          ,'
+      '            (select'
+      '                 count(distinct a.Flat_No)'
+      '               from CUSTOMER A'
+      '               where a.HOUSE_ID = h.HOUSE_ID'
+      '                     and not exists(select'
+      '                                    ash.Customer_Id'
+      '                                  from Subscr_serv ash'
+      
+        '                                  where ash.Customer_Id = a.Cust' +
+        'omer_Id)) as NOT_CONNECTED'
+      '          , o.ORG_NAME'
+      '          , s.SUBAREA_NAME'
+      '          , w.name'
+      '          , he.he_name'
       '          from HOUSE H'
       
         '               left outer join ORGANIZATION o on (o.ORG_ID = h.O' +

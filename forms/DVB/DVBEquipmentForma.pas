@@ -7,11 +7,12 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TDVBEquipmentForm = class(TGridForm)
@@ -40,10 +41,10 @@ type
     procedure actFindCustomerExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actCustHistExecute(Sender: TObject);
-    procedure dbGridColumns7GetCellParams(Sender: TObject;
-      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure dbGridColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
   private
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     procedure GetGridCustomer(Grid: TDBGridEh);
   public
     { Public declarations }
@@ -75,12 +76,11 @@ begin
     dsEQ.CloseOpen(True);
 end;
 
-procedure TDVBEquipmentForm.dbGridColumns7GetCellParams(Sender: TObject;
-  EditMode: Boolean; Params: TColCellParamsEh);
+procedure TDVBEquipmentForm.dbGridColumns7GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   inherited;
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TDVBEquipmentForm.actCustHistExecute(Sender: TObject);
@@ -122,7 +122,8 @@ begin
   else
     i := dsEQ.FieldByName('EQ_TYPE').AsInteger;
   c := EditDigitEQ(s, i);
-  if c then begin
+  if c then
+  begin
     dsEQ.CloseOpen(True);
     dsEQ.Locate('EQ_N', s, []);
   end;
@@ -172,8 +173,10 @@ var
   a: Boolean;
 begin
   inherited;
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
-  if dmMain.SuperMode = 0 then begin
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
+  if dmMain.SuperMode = 0 then
+  begin
     a := dsEQ.Active;
     if a then
       dsEQ.Close;
@@ -193,14 +196,17 @@ begin
 
   customers := '';
 
-  if (Grid.SelectedRows.Count = 0) then begin
+  if (Grid.SelectedRows.Count = 0) then
+  begin
     if not Grid.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
       customers := customers + ',' + IntToStr(Grid.DataSource.DataSet['CUSTOMER_ID']);
   end
-  else begin
+  else
+  begin
     b := Grid.DataSource.DataSet.GetBookmark;
     Grid.DataSource.DataSet.Disablecontrols;
-    for i := 0 to Grid.SelectedRows.Count - 1 do begin
+    for i := 0 to Grid.SelectedRows.Count - 1 do
+    begin
       Grid.DataSource.DataSet.Bookmark := Grid.SelectedRows[i];
       if not Grid.DataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
         customers := customers + ',' + IntToStr(Grid.DataSource.DataSet['CUSTOMER_ID']);

@@ -17,7 +17,7 @@ uses
   ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh,
   FIBDatabase,
-  pFIBDatabase, DBLookupEh, amSplitter, PrnDbgeh;
+  pFIBDatabase, DBLookupEh, amSplitter, PrnDbgeh, CnClasses;
 
 type
   TStreetForm = class(TGridForm)
@@ -246,16 +246,17 @@ type
     procedure actViewCubeExecute(Sender: TObject);
     procedure miPNG1Click(Sender: TObject);
     procedure dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
-    procedure actQuickFilterExecute(Sender: TObject);
     procedure dsFlatsAfterPost(DataSet: TDataSet);
     procedure DbGridHouseGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
     procedure dbgEquipGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure actQuickFilterExecute(Sender: TObject);
   private
     { Private declarations }
     FCanEdit: Boolean;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    // FHidePersonalName: Boolean;
     procedure SaveFlatGrid;
     procedure StartAttr(const New: Boolean = True);
     procedure StopAttr(const Cancel: Boolean);
@@ -321,8 +322,8 @@ begin
   inherited;
 
   FCanEdit := (dmMain.AllowedAction(rght_Dictionary_full) or dmMain.AllowedAction(rght_Dictionary_Street));
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
-
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  // FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
   // права пользователей полный доступ или редактирование домов
   actNew.Visible := FCanEdit;
   actDelete.Visible := FCanEdit;
@@ -475,6 +476,13 @@ begin
       actHouseNew.Enabled := dsStreets.RecordCount > 0;
     end;
   end;
+end;
+
+procedure TStreetForm.actQuickFilterExecute(Sender: TObject);
+begin
+  actQuickFilter.Checked := not actQuickFilter.Checked;
+  inherited;
+
 end;
 
 procedure TStreetForm.actEditExecute(Sender: TObject);
@@ -726,28 +734,6 @@ procedure TStreetForm.ToolButton8Click(Sender: TObject);
 begin
   inherited;
   ShowReport(rsRepHouses);
-end;
-
-procedure TStreetForm.actQuickFilterExecute(Sender: TObject);
-var
-  i: Integer;
-begin
-  inherited;
-
-  actQuickFilter.Checked := not actQuickFilter.Checked;
-
-  for i := 0 to ComponentCount - 1 do
-  begin
-    if Components[i] is TDBGridEh then
-    begin
-      (Components[i] as TDBGridEh).STFilter.Visible := actQuickFilter.Checked;
-      if not actQuickFilter.Checked then
-      begin
-        if (Components[i] as TDBGridEh).DataSource.DataSet.Active then
-          (Components[i] as TDBGridEh).DataSource.DataSet.Filtered := false;
-      end;
-    end;
-  end;
 end;
 
 procedure TStreetForm.actViewCubeExecute(Sender: TObject);
@@ -1144,7 +1130,7 @@ end;
 procedure TStreetForm.dbgCustomerColumns1GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
   inherited;
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
+  if (FHidePersonalData) and (not Params.Text.IsEmpty) then
     Params.Text := HideSurname(Params.Text);
 end;
 

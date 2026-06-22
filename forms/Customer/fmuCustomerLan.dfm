@@ -45,6 +45,7 @@ object apgCustomerLan: TapgCustomerLan
     TitleParams.MultiTitle = True
     OnCellMouseClick = dbgCustLANCellMouseClick
     OnDblClick = dbgCustLANDblClick
+    OnGetCellParams = dbgCustLANGetCellParams
     Columns = <
       item
         AutoFitColWidth = False
@@ -451,6 +452,7 @@ object apgCustomerLan: TapgCustomerLan
         #1088#1099#1077' '#1087#1086#1076#1087#1080#1089#1072#1085' '#1072#1073#1086#1085#1077#1085#1090
       Align = alTop
       Caption = '.:: '#1059#1089#1083#1091#1075#1080' '#1076#1083#1103' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1072' ::.'
+      ExplicitWidth = 148
     end
     object DBGridEh1: TDBGridEh
       Left = 26
@@ -566,6 +568,7 @@ object apgCustomerLan: TapgCustomerLan
       '  , p.Speed'
       '  , p.Wlabel'
       '  , w.Name WNAME'
+      '  , coalesce(p.p_state, 1) P_STATE  -- 1 - '#1080#1089#1087#1088#1072#1074#1077#1085
       '  from tv_lan f'
       '       left outer join vlans v on (f.vlan_id = v.v_id)'
       '       left outer join equipment e on (f.eq_id = e.eid)'
@@ -575,9 +578,7 @@ object apgCustomerLan: TapgCustomerLan
         '       left outer join port p on (p.Eid = f.Eq_Id and p.Port = f' +
         '.Port)'
       '       left outer join wire w on (w.Wid = p.Wid)'
-      '  where f.CUSTOMER_ID = :CUSTOMER_ID   '
-      ''
-      '')
+      '  where f.CUSTOMER_ID = :CUSTOMER_ID   ')
     AutoUpdateOptions.UpdateTableName = 'DISCOUNT_FACTOR'
     AutoUpdateOptions.KeyFields = 'DISCOUNT_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'

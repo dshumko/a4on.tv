@@ -12,14 +12,12 @@ object MaterialsForm: TMaterialsForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = mmMaterials
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter
     Left = 0
@@ -37,6 +35,7 @@ object MaterialsForm: TMaterialsForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 199
     object Splitter2: TSplitter
       Left = 281
       Top = 0
@@ -50,6 +49,7 @@ object MaterialsForm: TMaterialsForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitHeight = 199
       object DBGridEh: TDBGridEh
         Left = 0
         Top = 27
@@ -143,6 +143,7 @@ object MaterialsForm: TMaterialsForm
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitHeight = 199
       object DBGridGroups: TDBGridEh
         Left = 0
         Top = 27
@@ -227,8 +228,46 @@ object MaterialsForm: TMaterialsForm
           Top = 2
           Width = 22
           Height = 22
-          Action = actQuickFilter
+          Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
+          AllowAllUp = True
+          GroupIndex = 99
           Flat = True
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00319FE2FF89C6EDFFFF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00A3D3F1FF2198E1FF3BA3E3FFFF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF006C6C6CFFC7C7C7FF82C4ECFF2198E1FF2297
+            DFFF83C4ECFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF006C6C6CFF7C7C7CFFFF00FF0036A1E2FF2198
+            E1FF2198E1FF309EE1FFCDE6F6FFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF006B6B6BFFE9E9E9FFFF00FF00FF00FF002598
+            DFFF2198E1FF2198E1FF2699E0FF69B8E9FFFF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF006C6C6CFFFF00FF002B9BE0FF2198E1FF2198
+            E1FF2198E1FF2198E1FF2198E1FF2198E1FF2498DFFFFF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF006C6C6CFF939393FFFF00FF0051ADE6FF2198
+            E1FF2198E1FF2198E1FF35A0E2FFFF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF006C6C6CFF6C6C6CFFDDDDDDFFFF00FF002198
+            E1FF2198E1FF2198E1FF2198E1FF2198E1FFACD7F2FFFF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00929292FF6C6C6CFF6C6C6CFFC6C6C6FFD2D2D2FFFF00
+            FF002198E1FF2198E1FF2198E1FF2198E1FF2198E1FF4FACE5FFFF00FF00FF00
+            FF00FF00FF00AAAAAAFF6C6C6CFF6C6C6CFF6C6C6CFF858585FFE7E7E7FFE2E2
+            E2FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00C5C5C5FF6B6B6BFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFFC9C9C9FFDEDE
+            DEFF8D8D8DFFD4D4D4FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00DBDB
+            DBFF6E6E6EFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF808080FFFCFC
+            FCFFCECECEFF6F6F6FFFDFDFDFFFFF00FF00FF00FF00FF00FF00FF00FF007777
+            77FF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFFC3C3
+            C3FFFFFFFFFFB9B9B9FF7A7A7AFFFF00FF00FF00FF00FF00FF00898989FF6C6C
+            6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF7A7A
+            7AFFFAFAFAFFFEFEFEFF9F9F9FFF8C8C8CFFFF00FF00FF00FF006C6C6CFF6C6C
+            6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C6CFF6C6C
+            6CFF6E6E6EFF6E6E6EFF6C6C6CFF6C6C6CFFB6B6B6FFFF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+          OnClick = actQuickFilterExecute
         end
         object btnOpenDocs: TSpeedButton
           Left = 250
@@ -251,6 +290,7 @@ object MaterialsForm: TMaterialsForm
     Align = alBottom
     TabOrder = 1
     OnChange = pgcInOutChange
+    ExplicitTop = 202
     object tsIn: TTabSheet
       Caption = #1054#1089#1090#1072#1090#1082#1080
       object DBGridIncome: TDBGridEh
@@ -1508,7 +1548,6 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'WH'
             Footers = <>
             Title.Caption = #1057#1082#1083#1072#1076
-            Title.TitleButton = True
             Width = 155
           end
           item
@@ -1518,7 +1557,6 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'M_DATE'
             Footers = <>
             Title.Caption = #1044#1072#1090#1072
-            Title.TitleButton = True
             Width = 87
           end
           item
@@ -1529,7 +1567,6 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1054#1087#1077#1088#1072#1094#1080#1103
             Title.Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1087#1086' '#1087#1086#1083#1102' - '#1086#1090#1082#1088#1099#1090#1080#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1072' '
-            Title.TitleButton = True
             Width = 152
           end
           item
@@ -1540,7 +1577,6 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1044#1086#1082#1091#1084#1077#1085#1090
             Title.Hint = #1044#1074#1086#1081#1085#1086#1081' '#1082#1083#1080#1082' '#1087#1086' '#1087#1086#1083#1102' - '#1086#1090#1082#1088#1099#1090#1080#1077' '#1076#1086#1082#1091#1084#1077#1085#1090#1072' '
-            Title.TitleButton = True
             Width = 97
           end
           item
@@ -1550,7 +1586,6 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'SERIAL'
             Footers = <>
             Title.Caption = #1057'/'#1053
-            Title.TitleButton = True
             Visible = False
           end
           item
@@ -1561,7 +1596,6 @@ object MaterialsForm: TMaterialsForm
             FieldName = 'QUANT'
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086
-            Title.TitleButton = True
             Width = 88
           end
           item
@@ -1573,7 +1607,6 @@ object MaterialsForm: TMaterialsForm
             Footers = <>
             Title.Caption = #1050#1086#1083'-'#1074#1086' '#1076#1086
             Title.Hint = #1050#1086#1083'-'#1074#1086' '#1076#1086' '#1076#1072#1090#1099' '#1086#1087#1077#1088#1072#1094#1080#1080' '#1085#1072' '#1089#1082#1083#1072#1076#1077
-            Title.TitleButton = True
             Width = 73
           end>
         object RowDetailData: TRowDetailPanelControlEh

@@ -11,7 +11,7 @@ object QueryForm: TQueryForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
+  OldCreateOrder = True
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -203,23 +203,24 @@ object QueryForm: TQueryForm
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
+    Font.Quality = fqClearTypeNatural
     PopupMenu = pmMemo
     TabOrder = 1
-    Gutter.AutoSize = True
+    UseCodeFolding = False
     Gutter.Font.Charset = DEFAULT_CHARSET
     Gutter.Font.Color = clWindowText
     Gutter.Font.Height = -11
     Gutter.Font.Name = 'Courier New'
     Gutter.Font.Style = []
+    Gutter.Font.Quality = fqClearTypeNatural
     Gutter.ShowLineNumbers = True
+    Gutter.GradientStartColor = clBtnFace
+    Gutter.Bands = <>
     Highlighter = SynSQLSyn1
     RightEdgeColor = clWindow
-    FontSmoothing = fsmNone
+    ScrollbarAnnotations = <>
   end
   object SynSQLSyn1: TSynSQLSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
     CommentAttri.Foreground = clSilver
     StringAttri.Foreground = clGreen
     SQLDialect = sqlInterbase6
@@ -292,10 +293,10 @@ object QueryForm: TQueryForm
     object miCut1: TMenuItem
       Action = A4MainForm.EditCut1
     end
-    object Copy1: TMenuItem
+    object miactCnPrefixWizard: TMenuItem
       Action = A4MainForm.EditCopy1
     end
-    object Paste1: TMenuItem
+    object miactCnPrefixWizard1: TMenuItem
       Action = A4MainForm.EditPaste1
     end
     object SelectAll1: TMenuItem

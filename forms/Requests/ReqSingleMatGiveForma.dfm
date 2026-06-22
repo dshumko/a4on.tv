@@ -11,11 +11,9 @@ object ReqSingleMatGiveForm: TReqSingleMatGiveForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlB: TPanel
     Left = 0

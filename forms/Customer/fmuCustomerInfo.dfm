@@ -10,11 +10,9 @@ object apgCustomerInfo: TapgCustomerInfo
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object dnSplitterHTML: TSplitter
     Left = 441
@@ -99,6 +97,8 @@ object apgCustomerInfo: TapgCustomerInfo
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
+          ExplicitWidth = 99
+          ExplicitHeight = 25
         end
         object pnlPrepay: TPanel
           Left = 2
@@ -133,6 +133,8 @@ object apgCustomerInfo: TapgCustomerInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             ParentFont = False
+            ExplicitWidth = 84
+            ExplicitHeight = 19
           end
         end
       end
@@ -280,6 +282,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Height = 18
             Align = alLeft
             Caption = '       '
+            ExplicitHeight = 13
           end
           object btnCAdd: TSpeedButton
             Left = 60
@@ -306,6 +309,7 @@ object apgCustomerInfo: TapgCustomerInfo
             Height = 18
             Align = alRight
             Caption = '       '
+            ExplicitHeight = 13
           end
           object btnCEdit: TSpeedButton
             Left = 78
@@ -394,7 +398,7 @@ object apgCustomerInfo: TapgCustomerInfo
       Align = alTop
       BevelOuter = bvNone
       ParentColor = True
-      TabOrder = 1
+      TabOrder = 0
       Visible = False
       DesignSize = (
         441
@@ -431,34 +435,6 @@ object apgCustomerInfo: TapgCustomerInfo
         Visible = True
         OnDblClick = dbeACCOUNT_NODblClick
       end
-    end
-    object HtmlViewer: THtmlViewer
-      Left = 0
-      Top = 37
-      Width = 441
-      Height = 192
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      ParentCustomHint = False
-      BorderStyle = htNone
-      DefFontName = 'Tahoma'
-      HistoryMaxCount = 0
-      HtOptions = []
-      NoSelect = False
-      PrintMarginBottom = 2.000000000000000000
-      PrintMarginLeft = 2.000000000000000000
-      PrintMarginRight = 2.000000000000000000
-      PrintMarginTop = 2.000000000000000000
-      PrintScale = 1.000000000000000000
-      OnSectionClick = HtmlViewerSectionClick
-      Align = alClient
-      PopupMenu = pmHV
-      TabOrder = 0
-      OnKeyUp = HtmlViewerKeyUp
-      Touch.InteractiveGestures = [igPan]
-      Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia]
     end
   end
   object dsContacts: TpFIBDataSet

@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
   FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  DBCtrlsEh, Vcl.Mask, DBLookupEh, Vcl.Buttons, CnErrorProvider;
+  DBCtrlsEh, Vcl.Mask, DBLookupEh, Vcl.Buttons, CnErrorProvider, CnClasses;
 
 type
   TReqMatBaybackForm = class(TForm)
@@ -34,13 +34,13 @@ type
     { Private declarations }
     fRequest: Integer;
     procedure SetRequest(Value: Integer);
-    function CheckData:Boolean;
+    function CheckData: Boolean;
   public
     { Public declarations }
     property Request: Integer read fRequest write SetRequest;
   end;
 
-function ReqBayBack(const aRequest: Integer): boolean;
+function ReqBayBack(const aRequest: Integer): Boolean;
 
 var
   ReqMatBaybackForm: TReqMatBaybackForm;
@@ -52,14 +52,15 @@ uses
 
 {$R *.dfm}
 
-function ReqBayBack(const aRequest: Integer): boolean;
+function ReqBayBack(const aRequest: Integer): Boolean;
 begin
   result := false;
   with TReqMatBaybackForm.Create(Application) do
     try
       Request := aRequest;
 
-      if ShowModal = mrOk then begin
+      if ShowModal = mrOk then
+      begin
         result := true;
       end;
     finally
@@ -77,8 +78,8 @@ end;
 
 procedure TReqMatBaybackForm.bbOkClick(Sender: TObject);
 begin
-   if CheckData then
-     ModalResult := mrOk;
+  if CheckData then
+    ModalResult := mrOk;
 end;
 
 procedure TReqMatBaybackForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -95,9 +96,9 @@ begin
   dsReqMaterials.Open;
 end;
 
-function TReqMatBaybackForm.CheckData:Boolean;
+function TReqMatBaybackForm.CheckData: Boolean;
 begin
-  RESULT := True;
+  result := true;
 end;
 
 end.

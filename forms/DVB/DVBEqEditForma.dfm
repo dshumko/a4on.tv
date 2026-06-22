@@ -1,5 +1,4 @@
 object DVBEqEditForm: TDVBEqEditForm
-  ShowHint = True
   Left = 526
   Top = 248
   ActiveControl = cbState
@@ -14,14 +13,13 @@ object DVBEqEditForm: TDVBEqEditForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
     426
     238)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 8
@@ -91,11 +89,19 @@ object DVBEqEditForm: TDVBEqEditForm
     Align = alBottom
     TabOrder = 6
     TabStop = True
+    ExplicitTop = 203
+    ExplicitWidth = 426
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 150
@@ -104,10 +110,15 @@ object DVBEqEditForm: TDVBEqEditForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = okcnclfrmbbOkClick
+      ExplicitLeft = 150
+      ExplicitTop = 6
+      ExplicitWidth = 187
     end
     inherited bbCancel: TBitBtn
       Left = 343
       Top = 6
+      ExplicitLeft = 343
+      ExplicitTop = 6
     end
   end
   object edtNumber: TDBEditEh
@@ -122,6 +133,7 @@ object DVBEqEditForm: TDVBEqEditForm
     EditButtons = <>
     EmptyDataInfo.Text = #1042#1074#1077#1076#1080#1090#1077' '#1085#1072#1095#1072#1083#1100#1085#1099#1081' '#1085#1086#1084#1077#1088
     ReadOnly = True
+    ShowHint = True
     TabOrder = 1
     Visible = True
   end
@@ -146,6 +158,7 @@ object DVBEqEditForm: TDVBEqEditForm
       '2'
       '3'
       '4')
+    ShowHint = True
     TabOrder = 3
     Visible = True
   end
@@ -155,7 +168,13 @@ object DVBEqEditForm: TDVBEqEditForm
     Width = 306
     Height = 54
     Anchors = [akLeft, akTop, akRight, akBottom]
+    AutoSize = False
+    DynProps = <>
+    EditButtons = <>
+    ShowHint = True
     TabOrder = 5
+    Visible = True
+    WantReturns = True
   end
   object cbMAN: TDBLookupComboboxEh
     Left = 112
@@ -179,6 +198,7 @@ object DVBEqEditForm: TDVBEqEditForm
     KeyField = 'O_ID'
     ListField = 'O_NAME'
     ListSource = srcMAN
+    ShowHint = True
     TabOrder = 2
     Visible = True
   end
@@ -204,6 +224,7 @@ object DVBEqEditForm: TDVBEqEditForm
     KeyField = 'O_ID'
     ListField = 'O_NAME'
     ListSource = srcType
+    ShowHint = True
     TabOrder = 0
     Visible = True
   end
@@ -222,6 +243,7 @@ object DVBEqEditForm: TDVBEqEditForm
     KeyItems.Strings = (
       'UTF'
       'ISO')
+    ShowHint = True
     TabOrder = 4
     Visible = True
   end

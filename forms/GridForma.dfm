@@ -219,7 +219,7 @@ object GridForm: TGridForm
     end
     object actQuickFilter: TAction
       Caption = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
-      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088' (Ctrl+Q)'
+      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
       ImageIndex = 40
       ShortCut = 16465
       OnExecute = actQuickFilterExecute

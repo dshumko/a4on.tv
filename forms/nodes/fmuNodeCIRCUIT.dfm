@@ -10,8 +10,6 @@ object apgNodeCIRCUIT: TapgNodeCIRCUIT
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object tbAttributes: TToolBar
     Left = 0

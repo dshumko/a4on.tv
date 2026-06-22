@@ -6,11 +6,13 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TAttributesForm = class(TGridForm)
@@ -123,6 +125,7 @@ end;
 procedure TAttributesForm.FormShow(Sender: TObject);
 var
   vFull: Boolean;
+  AttrList: String;
 begin
   inherited;
   vFull := dmMain.AllowedAction(rght_Dictionary_full);
@@ -142,6 +145,7 @@ begin
   begin
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_elan));
     cbAtrType.Items.Add(rsAttrName_elan);
+
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_etv));
     cbAtrType.Items.Add(rsAttrName_etv);
     cbAtrType.KeyItems.Add(IntToStr(rsAttrID_eall));
@@ -193,11 +197,23 @@ begin
     fCanEdit := True;
   end;
 
+  if vFull then
+  begin
+    cbAtrType.KeyItems.Add(IntToStr(rsAttrID_EP));
+    cbAtrType.Items.Add(rsAttrName_EP);
+    fCanEdit := True;
+  end;
+
   fCanCreate := fCanEdit;
 
   actNew.Visible := fCanEdit;
   actDelete.Visible := fCanEdit;
   actEdit.Visible := fCanEdit;
+
+  AttrList := cbAtrType.KeyItems.CommaText;
+  if AttrList = '' then
+    AttrList := '-1';
+  dsAttributes.ParamByName('ATTR_LIST').AsString := AttrList;
 
   dsAttributes.Open;
   dbGrid.DefaultApplySorting;

@@ -13,13 +13,11 @@ object IPTVGroupForm: TIPTVGroupForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame1: TOkCancelFrame
     Left = 0
@@ -29,11 +27,20 @@ object IPTVGroupForm: TIPTVGroupForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 446
+    ExplicitWidth = 811
+    ExplicitHeight = 41
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 100
@@ -42,11 +49,18 @@ object IPTVGroupForm: TIPTVGroupForm
       Height = 29
       Anchors = [akLeft, akRight, akBottom]
       OnClick = OkCancelFrame1bbOkClick
+      ExplicitLeft = 100
+      ExplicitTop = 5
+      ExplicitWidth = 623
+      ExplicitHeight = 29
     end
     inherited bbCancel: TBitBtn
       Left = 729
       Top = 5
       Height = 29
+      ExplicitLeft = 729
+      ExplicitTop = 5
+      ExplicitHeight = 29
     end
   end
   object pnlChannels: TPanel
@@ -74,10 +88,11 @@ object IPTVGroupForm: TIPTVGroupForm
       object lbl1: TLabel
         Left = 0
         Top = 0
-        Width = 116
+        Width = 497
         Height = 13
         Align = alTop
         Caption = '.:: '#1050#1072#1085#1072#1083#1099' '#1074' '#1075#1088#1091#1087#1087#1077' ::.'
+        ExplicitWidth = 116
       end
       object dbgrdGridSC: TDBGridEh
         Left = 0
@@ -260,10 +275,11 @@ object IPTVGroupForm: TIPTVGroupForm
       object lbl2: TLabel
         Left = 0
         Top = 0
-        Width = 150
+        Width = 311
         Height = 13
         Align = alTop
         Caption = '.:: '#1055#1077#1088#1077#1095#1077#1085#1100' '#1074#1089#1077#1093' '#1082#1072#1085#1072#1083#1086#1074' ::.'
+        ExplicitWidth = 150
       end
       object dbgrdGridC: TDBGridEh
         Left = 0

@@ -11,13 +11,11 @@ object RequestWorksForm: TRequestWorksForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
     Left = 0
@@ -35,11 +33,19 @@ object RequestWorksForm: TRequestWorksForm
       Align = alClient
       TabOrder = 0
       TabStop = True
+      ExplicitWidth = 749
+      ExplicitHeight = 37
       inherited Label2: TLabel
+        Height = 13
         Margins.Bottom = 0
+        StyleElements = [seFont, seClient, seBorder]
+        ExplicitHeight = 13
       end
       inherited Label1: TLabel
+        Height = 13
         Margins.Bottom = 0
+        StyleElements = [seFont, seClient, seBorder]
+        ExplicitHeight = 13
       end
       inherited bbOk: TBitBtn
         Left = 584
@@ -47,11 +53,15 @@ object RequestWorksForm: TRequestWorksForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
+        ExplicitLeft = 584
+        ExplicitTop = 6
       end
       inherited bbCancel: TBitBtn
         Left = 665
         Top = 6
         Caption = #1047#1072#1082#1088#1099#1090#1100
+        ExplicitLeft = 665
+        ExplicitTop = 6
       end
     end
   end

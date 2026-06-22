@@ -309,7 +309,8 @@ procedure TRequestFilterForm.FormShow(Sender: TObject);
 
 begin
 
-  if (dmMain.GetSettingsValue('BIDS_SHOW_TABFILTER') <> '1') then begin
+  if (dmMain.GetSettingsValue('BIDS_SHOW_TABFILTER') <> '1') then
+  begin
     lblTabs.Visible := False;
     cbTABS.Visible := False;
     Height := 440;

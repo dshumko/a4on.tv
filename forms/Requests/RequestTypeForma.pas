@@ -6,10 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
+  Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter, PrnDbgeh;
+  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter, PrnDbgeh, CnClasses;
 
 type
   TRequestTypeForm = class(TGridForm)
@@ -73,7 +75,6 @@ type
     procedure actTpltsAddExecute(Sender: TObject);
     procedure actTpltsDelExecute(Sender: TObject);
     procedure actTpltsEditExecute(Sender: TObject);
-    procedure actQuickFilterExecute(Sender: TObject);
     procedure actTpltsQfltrExecute(Sender: TObject);
     procedure pgcAddonsChange(Sender: TObject);
     procedure InitSecurity;
@@ -170,15 +171,6 @@ begin
     dsRequestType.CloseOpen(True);
     dsRequestType.GotoBookmark(bm);
   end;
-end;
-
-procedure TRequestTypeForm.actQuickFilterExecute(Sender: TObject);
-begin
-  inherited;
-  actQuickFilter.Checked := not actQuickFilter.Checked;
-  dbGrid.STFilter.Visible := actQuickFilter.Checked;
-  if not actQuickFilter.Checked then
-    dbGrid.DataSource.DataSet.Filtered := False;
 end;
 
 procedure TRequestTypeForm.actQuickFltrWExecute(Sender: TObject);

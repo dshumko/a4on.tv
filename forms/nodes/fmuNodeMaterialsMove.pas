@@ -6,9 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, MemTableDataEh, DataDriverEh,
+  pFIBDataDriverEh,
   MemTableEh;
 
 type
@@ -95,12 +98,14 @@ begin
   if dsMat.FieldDefs.IndexOf('RQ_ID') = -1 then
     Exit;
 
-  if (not dsMat.FieldByName('RQ_ID').IsNull) then begin
+  if (not dsMat.FieldByName('RQ_ID').IsNull) then
+  begin
 
     if not(FullAccess or CE or CC or CG or CA) then
       Exit;
 
-    if not dsMat.FieldByName('RQ_ID').IsNull then begin
+    if not dsMat.FieldByName('RQ_ID').IsNull then
+    begin
       if not(FullAccess or CE or CC or CG) then
         Exit;
       aMode := 1;
@@ -122,13 +127,15 @@ begin
   dsMat.SelectSQL.Add('  , M.NAME');
   dsMat.SelectSQL.Add('  , M.COST');
   dsMat.SelectSQL.Add('  , M.DIMENSION');
-  if Grouping then begin
+  if Grouping then
+  begin
     dsMat.SelectSQL.Add('  , NULL WH_NAME');
     dsMat.SelectSQL.Add('  , NULL WH_ID');
     dsMat.SelectSQL.Add('  , ''Итого'' OPER, NULL RQ_ID, NULL RQ_EXEC_TIME');
     dsMat.SelectSQL.Add('  , SUM(NM.MT * NM.QUANT) QNT');
   end
-  else begin
+  else
+  begin
     dsMat.SelectSQL.Add('  , O.O_NAME WH_NAME');
     dsMat.SelectSQL.Add('  , NM.WH_ID');
     dsMat.SelectSQL.Add('  , iif(NM.MT = 1, ''Установка'', ''Возврат'') OPER, NM.RQ_ID, NM.RQ_EXEC_TIME');

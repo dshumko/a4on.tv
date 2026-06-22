@@ -88,7 +88,8 @@ type
     fSuperMode: Integer;
     // режим отображения абонентов -1 - режим отключен 0 - все 1 - скрыть абонентов
     FRightsList: TStringList;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     FUserGroups: TStringList;
     FSettingsList: TStringList;
     FA4onList: TStringList;
@@ -220,7 +221,7 @@ var
 implementation
 
 uses
-  System.StrUtils, System.Rtti,
+  System.StrUtils, System.Rtti, System.NetEncoding, System.Hash,
   pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, httpsend, synautil, ZLibExGZ,
   JsonDataObjects, mormot.crypt.core, synacode,
   SelectOneForma, MAIN;
@@ -312,7 +313,7 @@ begin
     dsmSrvTypes.append;
     dsmSrvTypes['ID'] := qRead.FN('O_ID').AsInteger;
     dsmSrvTypes['NAME'] := qRead.FN('O_NAME').AsString;
-    dsmSrvTypes['NAME_ID'] := qRead.FN('O_NAME').AsString + ' ('+qRead.FN('O_ID').AsString + ')';
+    dsmSrvTypes['NAME_ID'] := qRead.FN('O_NAME').AsString + ' (' + qRead.FN('O_ID').AsString + ')';
     dsmSrvTypes['DESCRIPTION'] := qRead.FN('O_DESCRIPTION').AsString;
     dsmSrvTypes.Post;
     qRead.Next;
@@ -330,7 +331,8 @@ begin
     frxDesigner := TfrxDesigner.Create(self);
     frxDesigner.OnShow := frxDesignerShow;
   end;
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := dmMain.AllowedAction(rght_Customer_PersonalData);
+  FHidePersonalName := dmMain.AllowedAction(rght_Customer_PersonalName);
   // пароль для работы с кассой или из настроек или из базы
   CPSWD := GetIniValue('CASHBOXPSWD');
   if CPSWD <> '' then
@@ -429,9 +431,14 @@ begin
         INN := '';
         isJur := 0;
       end;
-
-      if (isJur = 0) and (not FPersonalData) then
-        FIO := HideSurname(FIO);
+      Tarif_Month := -1;
+      Tarif_Day := -1;
+      if not dsFindCN.FN('M_Tarif').IsNull then
+        Tarif_Month := dsFindCN.FN('M_Tarif').AsCurrency;
+      if not dsFindCN.FN('D_Tarif').IsNull then
+        Tarif_Day := dsFindCN.FN('D_Tarif').AsCurrency;
+      if (isJur = 0) and (FHidePersonalData or FHidePersonalName) then
+        FIO := HideFullName(FIO, FHidePersonalData, FHidePersonalName);
     end;
   end;
   dsFindCN.Close;
@@ -599,7 +606,6 @@ var
   LOCKEDOUT: Boolean;
   setting_pass: string;
 begin
-{$IFDEF WITHRIGHTS}
   // Если юзер блокирован. выйдем из системы
   if GetUser.ToUpper <> 'SYSDBA' then
   begin
@@ -651,7 +657,7 @@ begin
       SQL.Add('       inner join sys$user_groups ug on (u.id = ug.user_id)          ');
       SQL.Add('       inner join sys$group_rights gr on (ug.group_id = gr.group_id) ');
       SQL.Add('       inner join sys$group g on (ug.group_id = g.id)                ');
-      SQL.Add('  where (g.lockedout = 0)                                            ');
+      SQL.Add('  where g.lockedout = 0 and u.Lockedout = 0                          ');
       SQL.Add('        and coalesce(gr.rights_type,0)=0                             ');
       SQL.Add('        and u.ibname = current_user                                  ');
       Transaction.StartTransaction;
@@ -681,7 +687,7 @@ begin
       SQL.Add('  from sys$user u                                                    ');
       SQL.Add('       inner join sys$user_groups ug on (u.id = ug.user_id)          ');
       SQL.Add('       inner join sys$group g on (ug.group_id = g.id)                ');
-      SQL.Add('  where (g.lockedout = 0)                                            ');
+      SQL.Add('  where g.lockedout = 0 and u.Lockedout = 0                          ');
       SQL.Add('        and u.ibname = current_user                                  ');
       Transaction.StartTransaction;
       ExecQuery;
@@ -728,7 +734,6 @@ begin
     frxSimpleExp := TfrxSimpleTextExport.Create(self);
     frxSVGExport := TfrxSVGExport.Create(self);
   end;
-{$ENDIF}
 end;
 
 function TdmMain.AllowedAction(const aRightsID: Integer): Boolean;
@@ -741,7 +746,8 @@ begin
   begin
     // исключим ограничивающие права для SYSDBA
     Result := true and (not(aRightsID in [rght_Customer_View, rght_Customer_Only_ONE, rght_Customer_PersonalData,
-      rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner, rght_OrdersTP_Today]));
+      rght_Customer_PersonalName, rght_Pays_TheirAdd, rght_Pays_AddToday, rght_Recourses_owner,
+      rght_Recourses_TodayOnly, rght_OrdersTP_Today]));
   end;
 
   // справочник документов скроем, если не включен в настройках
@@ -793,7 +799,11 @@ function TdmMain.GetCompanyValue(const aSettingName: string): Variant;
 begin
   if (not mdsCompany.Active) or (aSettingName = 'ReloadSettingsFromDB') then
     GetCompany;
-  Result := mdsCompany.FieldByName(aSettingName).Value;
+
+  if mdsCompany.FindField(aSettingName) <> nil then
+    Result := mdsCompany.FieldByName(aSettingName).Value
+  else
+    Result := '';
 end;
 
 function TdmMain.GetSettingsValue(const aSettingName: string): Variant;
@@ -835,7 +845,6 @@ begin
   FA4onList.Values[aSettingName] := aValue;
 end;
 
-
 procedure TdmMain.FibErrorHandlerFIBErrorEvent(Sender: TObject; ErrorValue: EFIBError; KindIBError: TKindIBError;
   var DoRaise: Boolean);
 var
@@ -866,7 +875,8 @@ begin
           335544344:
             begin
               s := ErrorValue.IBMessage;
-              MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_NOT_FOUND + rsEOL + s, mtWarning, [mbOK], 0);
+              MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_NOT_FOUND + rsEOL + s, mtWarning,
+                [mbOK], 0);
               DoRaise := False;
             end;
 
@@ -877,7 +887,8 @@ begin
               if dbTV.Tag = 1 then
               begin
                 s := ErrorValue.IBMessage;
-                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER + rsEOL + s, mtWarning, [mbOK], 0);
+                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER + rsEOL + s, mtWarning,
+                  [mbOK], 0);
               end;
               dbTV.Tag := 1;
             end;
@@ -889,7 +900,8 @@ begin
               if dbTV.Tag = 1 then
               begin
                 s := ErrorValue.IBMessage;
-                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER + rsEOL + s, mtWarning, [mbOK], 0);
+                MessageDlg(rsERROR_CONNECT + rsEOL + rsERROR_RESONE + rsEOL + rsERROR_DB_USER + rsEOL + s, mtWarning,
+                  [mbOK], 0);
               end;
               dbTV.Tag := 1;
             end;
@@ -906,7 +918,8 @@ begin
           335544379:
             begin
               s := ErrorValue.IBMessage;
-              MessageDlg(rsERROR_FIREBIRD_WRONG_VERSION + rsEOL + rsERROR_FIREBIRD_LAST_VERSION + rsEOL + s, mtWarning, [mbOK], 0);
+              MessageDlg(rsERROR_FIREBIRD_WRONG_VERSION + rsEOL + rsERROR_FIREBIRD_LAST_VERSION + rsEOL + s, mtWarning,
+                [mbOK], 0);
               DoRaise := False;
             end;
           // нет активной БД
@@ -1091,10 +1104,16 @@ begin
     Result := NumToStr(Params[0], Params[1])
   else if MethodName = 'STRREPLACE' then
     Result := StringReplace(Params[0], Params[1], Params[2], [rfReplaceAll, rfIgnoreCase])
-  else if MethodName = 'BASE64_DECODE' then
-    Result := DecodeBase64(AnsiString(Params[0]))
-  else if MethodName = 'BASE64_ENCODE' then
-    Result := EncodeBase64(AnsiString(Params[0]))
+  else if MethodName = 'BASE64_ENCODE' then // я напутал с названием, нужно наоборот, но будет уже так
+    Result := TNetEncoding.Base64.EncodeBytesToString(TEncoding.UTF8.GetBytes(String(Params[0])))
+    // DecodeBase64(AnsiString(Params[0]))
+  else if MethodName = 'BASE64_DECODE' then // я напутал с названием, нужно наоборот, но будет уже так
+    Result := TEncoding.UTF8.GetString(TNetEncoding.Base64.DecodeStringToBytes(String(Params[0])))
+    // EncodeBase64(AnsiString(Params[0]))
+  else if MethodName = 'DECODE_BASE64' then // так правільно
+    Result := TNetEncoding.Base64.EncodeBytesToString(TEncoding.UTF8.GetBytes(String(Params[0])))
+  else if MethodName = 'ENCODE_BASE64' then // так правільно
+    Result := TEncoding.UTF8.GetString(TNetEncoding.Base64.DecodeStringToBytes(String(Params[0])))
   else if MethodName = 'GEN_BARCODE' then
     Result := GenerateBarCode(Params[0], Params[1], Params[2], Params[3], Params[4], Params[5], Params[5])
   else if MethodName = 'INMODE' then
@@ -1141,8 +1160,10 @@ begin
     (* #13#10 *) '  с=1 - 21.05 : "двадцать один"' +
     (* #13#10 *) '  c=2 - 21.05 : "21-05", 21.00 : "21="');
   Report.AddFunction('function StrReplace(const S, OldS, NewS: string): string', rsFunctionsA4onTV, rsNumToStrDesc);
-  Report.AddFunction('function BASE64_ENCODE(s: String):String', rsFunctionsA4onTV, rsFromBASE64toString);
-  Report.AddFunction('function BASE64_DECODE(s: String):String', rsFunctionsA4onTV, rsStringToBASE64);
+  Report.AddFunction('function BASE64_ENCODE(s: String):String', rsFunctionsA4onTV, rsStringToBASE64);
+  Report.AddFunction('function BASE64_DECODE(s: String):String', rsFunctionsA4onTV, rsFromBASE64toString);
+  Report.AddFunction('function DECODE_BASE64(s: String):String', rsFunctionsA4onTV, rsFromBASE64toString);
+  Report.AddFunction('function ENCODE_BASE64(s: String):String', rsFunctionsA4onTV, rsStringToBASE64);
   Report.AddFunction('function GEN_BARCODE(const ACCOUNT : string; const DEBT : Currency;' +
     ' const ID : INTEGER; const UL, HOUSE, FLAT, FIO : string):string', rsFunctionsA4onTV, rsFunctionBarCode);
   Report.AddFunction('function INMODE:Integer', rsFunctionsA4onTV, rsSOFTMODE);
@@ -1718,11 +1739,11 @@ begin
     System.SysUtils.DeleteFile(FileName);
 
   action := 'day';
-  //action := 'channels';
+  // action := 'channels';
   json := TJsonObject.Create;
   json.s['login'] := Str;
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := string(mormot.crypt.core.MD5(json.ToString));
+  Str := THashMD5.GetHashString(json.ToString); // string(mormot.crypt.core.MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
 
@@ -1773,7 +1794,7 @@ begin
   json := TJsonObject.Create;
   json.s['login'] := dmMain.GetSettingsValue('A4LOGIN');
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
-  Str := string(mormot.crypt.core.MD5(json.ToString));
+  Str := THashMD5.GetHashString(json.ToString); // string(mormot.crypt.core.MD5(json.ToString));
   json.s['hash'] := Str;
   fError := '';
   proxy_url := dmMain.GetSettingsValue('A4ON_EPG_PROXY');
@@ -1789,14 +1810,16 @@ begin
     fHTTP.Headers.Add('Accept-Encoding: gzip');
     fHTTP.Document.LoadFromStream(strmData);
 
-    if (proxy_url = '') then begin
+    if (proxy_url = '') then
+    begin
       fHTTP.TargetHost := 'a4on.tv';
-      fHTTP.HTTPMethod('post', API_URL + Action + '/');
+      fHTTP.HTTPMethod('post', API_URL + action + '/');
     end
-    else begin
+    else
+    begin
       fHTTP.TargetHost := 'api.a4on.net';
       proxy_url := proxy_url.TrimRight(['/']) + '/';
-      fHTTP.HTTPMethod('post', proxy_url + Action + '/');
+      fHTTP.HTTPMethod('post', proxy_url + action + '/');
     end;
 
     strmData.Clear;
@@ -1805,7 +1828,7 @@ begin
       GZDecompressStream(fHTTP.Document, strmData)
     else
       fHTTP.Document.SaveToStream(strmData);
-      strmData.SaveToFile(FileName);
+    strmData.SaveToFile(FileName);
   finally
     strmData.Free;
     fHTTP.Free;

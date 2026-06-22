@@ -11,7 +11,7 @@ uses
   Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
   DBGridEh, FIBDataSet, frxClass, pFIBDataSet, GridsEh, DBLookupEh, DBCtrlsEh, FIBDatabase, pFIBDatabase,
   ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBVertGridsEh,
-  CnErrorProvider, amSplitter;
+  CnErrorProvider, amSplitter, CnClasses;
 
 type
   TPaymentDocForm = class(TForm)
@@ -159,7 +159,8 @@ type
   private
     { Private declarations }
     FullAccess: Boolean;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     FCanAdd: Boolean;
     FTodayOnly: Boolean;
     FOnlyTheir: Boolean;
@@ -202,10 +203,11 @@ begin
 
   b := false;
   for i := A4MainForm.MDIChildCount - 1 DownTo 0 Do
-    if Assigned(A4MainForm.MDIChildren[i]) then
+    if Assigned(A4MainForm.MDIChildren[i]) and (A4MainForm.MDIChildren[i] is TPaymentDocForm) then
       if A4MainForm.MDIChildren[i].tag = aPayDocID then
       begin
         b := true;
+        PDF := (A4MainForm.MDIChildren[i] as TPaymentDocForm);
         A4MainForm.MDIChildren[i].Show;
       end;
 
@@ -213,9 +215,10 @@ begin
   begin
     PDF := TPaymentDocForm.Create(Application);
     PDF.PayDocId := aPayDocID;
-    if PAYMENT_ID <> -1 then
-      PDF.FindPaymentId(PAYMENT_ID);
   end;
+
+  if Assigned(PDF) and (PAYMENT_ID > 0) then
+    PDF.FindPaymentId(PAYMENT_ID);
 end;
 
 procedure TPaymentDocForm.actCopyIDExecute(Sender: TObject);
@@ -319,7 +322,7 @@ begin
             Screen.Cursor := crHourGlass;
             for i := 0 to (dbgPayDocPayment.SelectedRows.Count - 1) do
             begin
-              dbgPayDocPayment.DataSource.DataSet.GotoBookmark(pointer(dbgPayDocPayment.SelectedRows.Items[i]));
+              dbgPayDocPayment.DataSource.DataSet.GotoBookmark(TBookmark(dbgPayDocPayment.SelectedRows.Items[i]));
               ParamByName('doc_id').AsInteger := pd;
               ParamByName('pay_id').AsInteger := dbgPayDocPayment.DataSource.DataSet.FieldByName('payment_id')
                 .AsInteger;
@@ -421,27 +424,48 @@ begin
     begin
       Clear;
       Add('select');
-      Add('  D.PAY_DOC_ID, D.PAYSOURCE_ID, D.PAY_DOC_NO, D.PAY_DOC_DATE, D.PAY_DOC_SUM, D.NOTICE, ps.paysource_descr, ps.leak_prc,');
-      Add('  p.c_SUM_leak,');
-      Add('  round(ps.tax_prc * p.c_SUM_leak / 100, 2) as c_SUM_TAX,');
-      Add(' ((SUM_INTERED + FINE_SUM) - round(((ps.tax_prc * p.c_SUM_leak / 100) + p.c_SUM_leak), 2)) as c_SUM_LEAK_TAX,');
-      Add('    p.SUM_INTERED,');
-      Add('    ( coalesce(D.PAY_DOC_SUM,0) - coalesce(p.SUM_INTERED,0) - coalesce(p.FINE_SUM, 0) ) SUM_DIFFERENCE ,');
-      Add('    (select count(*) from pay_errors pe where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors');
-      Add('    , ps.FOR_FORM ');
+      Add('    D.PAY_DOC_ID');
+      Add('  , D.PAYSOURCE_ID');
+      Add('  , D.PAY_DOC_NO');
+      Add('  , D.PAY_DOC_DATE');
+      Add('  , D.PAY_DOC_SUM');
+      Add('  , D.NOTICE');
+      Add('  , ps.paysource_descr');
+      Add('  , ps.leak_prc');
+      Add('  , ps.tax_prc');
+      Add('  , p.c_SUM_leak');
+      Add('  , iif(coalesce(ps.tax_prc,0) <> 0, round(p.SUM_Entered*ps.tax_prc/(100+ps.tax_prc),2), 0) as c_SUM_TAX');
+      Add('  , (p.TOTAL - round(iif(coalesce(ps.tax_prc,0) <> 0, round(p.SUM_Entered*ps.tax_prc/(100+ps.tax_prc),2), 0) + p.c_SUM_leak, 2)) as c_SUM_LEAK_TAX');
+      Add('  , p.SUM_Entered');
+      Add('  , p.SUM_Entered as SUM_Intered');
+      Add('  , p.TOTAL SUM_PAID');
+      Add('  , FINE_SUM');
+      Add('  , CNT_PAYS');
+      Add('  , (coalesce(D.PAY_DOC_SUM, 0) - p.TOTAL) as SUM_DIFFERENCE');
+      Add('  , (select count(*) from pay_errors pe where pe.pay_doc_id = d.Pay_Doc_Id) pay_errors');
+      Add('  , coalesce(w.Surname, d.Added_By) Added_By');
+      Add('  , d.Added_On');
+      Add('  , ps.FOR_FORM ');
       Add('  from PAY_DOC D');
       Add('       left outer join PAYSOURCE PS on (D.PAYSOURCE_ID = PS.PAYSOURCE_ID)');
-      Add('       left outer join(select p.PAY_DOC_ID, sum(p.PAY_SUM) as SUM_INTERED , sum(coalesce(p.Fine_Sum, 0)) as FINE_SUM ');
-      Add(', sum(coalesce(p.Cmsn, ((p.Pay_Sum + coalesce(p.Fine_Sum,0)) * ss.Leak_Prc)/ 100, 0)) as c_SUM_leak');
-      Add('  from PAYMENT p ');
-      Add('    inner join PAY_DOC ds on (p.Pay_Doc_Id = ds.Pay_Doc_Id)');
-      Add('    inner join PAYSOURCE ss on (ds.PAYSOURCE_ID = ss.PAYSOURCE_ID)');
+      Add('       left outer join Worker w on (w.Ibname = d.Added_By)');
+      Add('       left outer join(select');
+      Add('                           p.PAY_DOC_ID');
+      Add('                         , count(*) as CNT_PAYS');
+      Add('                         , sum(p.PAY_SUM) as SUM_Entered');
+      Add('                         , sum(coalesce(p.Fine_Sum, 0)) as FINE_SUM');
+      Add('                         , sum(coalesce(p.Cmsn, ((coalesce(p.Pay_Sum,0) + coalesce(p.Fine_Sum,0)) * ss.Leak_Prc)/ 100, 0)) as c_SUM_leak');
+      Add('                         , sum(coalesce(p.Pay_Sum,0) + coalesce(p.Fine_Sum,0))  as TOTAL');
+      Add('                         from PAYMENT p');
+      Add('                           inner join PAY_DOC ds on (p.Pay_Doc_Id = ds.Pay_Doc_Id)');
+      Add('                           left outer join PAYSOURCE ss on (ds.PAYSOURCE_ID = ss.PAYSOURCE_ID)');
       if dmMain.SuperMode = 0 then
-        Add(' inner join customer c on (p.customer_id = c.customer_id) where c.INVISIBLE = 0');
-      Add(' group by PAY_DOC_ID) P on (P.PAY_DOC_ID = D.PAY_DOC_ID)');
-      Add(' where D.PAY_DOC_ID = :PAY_DOC_ID');
+        Add('inner join customer c on (p.customer_id = c.customer_id and c.INVISIBLE = 0)');
+      Add('                         group by PAY_DOC_ID) P on (P.PAY_DOC_ID = D.PAY_DOC_ID)');
     end;
     dsPayDoc.SQLs.RefreshSQL.Text := dsPayDoc.SQLs.SelectSQL.Text;
+    dsPayDoc.SQLs.SelectSQL.Add(' where D.PAY_DOC_ID = :PAY_DOC_ID');
+    dsPayDoc.SQLs.RefreshSQL.Add(' where D.PAY_DOC_ID = :OLD_PAY_DOC_ID');
     dsPayDoc.ParamByName('PAY_DOC_ID').AsInt64 := Value;
     fPayDocId := Value;
   end;
@@ -584,7 +608,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -608,6 +635,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then
@@ -636,7 +672,8 @@ begin
   FullAccess := dmMain.AllowedAction(rght_Pays_full); // полный доступ
   FCanAdd := dmMain.AllowedAction(rght_Pays_add); // добавление
   FCanDelete := dmMain.AllowedAction(rght_Pays_del); // удаление
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
 
   actPaymentNew.Enabled := FCanAdd or FullAccess or FTodayOnly; // полный доступ или добавление
   actPaymentDelete.Enabled := FCanDelete or FullAccess; // полный доступ или удаление
@@ -658,7 +695,8 @@ begin
   if dmMain.SuperMode = 0 then
     dsPayDocDetail.SQLs.SelectSQL.Add(' and ( cs.INVISIBLE = 0 )');
 
-  if FOnlyTheir then begin
+  if FOnlyTheir then
+  begin
     dsPayDocDetail.SQLs.SelectSQL.Add(' and p.Added_By = current_user ');
     if FTodayOnly then
       dsPayDocDetail.SQLs.SelectSQL.Add(' and p.Pay_Date = current_date ');
@@ -799,7 +837,7 @@ begin
       Screen.Cursor := crHourGlass;
       for i := 0 to (dbgPayDocPayment.SelectedRows.Count - 1) do
       begin
-        dbgPayDocPayment.DataSource.DataSet.GotoBookmark(pointer(dbgPayDocPayment.SelectedRows.Items[i]));
+        dbgPayDocPayment.DataSource.DataSet.GotoBookmark(TBookmark(dbgPayDocPayment.SelectedRows.Items[i]));
         dbgPayDocPayment.DataSource.DataSet.Delete;
       end;
     finally
@@ -840,8 +878,8 @@ end;
 procedure TPaymentDocForm.dbgPayDocPaymentColumns5GetCellParams(Sender: TObject; EditMode: Boolean;
   Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TPaymentDocForm.dbgPayDocPaymentColumns6GetCellParams(Sender: TObject; EditMode: Boolean;

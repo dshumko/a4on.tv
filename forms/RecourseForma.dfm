@@ -3,9 +3,9 @@ object RecourseForm: TRecourseForm
   Top = 390
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
-  Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1077' '#1072#1073#1086#1085#1077#1085#1090#1072
-  ClientHeight = 307
-  ClientWidth = 467
+  Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1077' / '#1079#1074#1086#1085#1086#1082
+  ClientHeight = 390
+  ClientWidth = 451
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,6 @@ object RecourseForm: TRecourseForm
   Font.Style = []
   FormStyle = fsStayOnTop
   KeyPreview = True
-  OldCreateOrder = False
   Position = poDesigned
   ShowHint = True
   OnClose = FormClose
@@ -22,33 +21,44 @@ object RecourseForm: TRecourseForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter
     Left = 0
     Top = 71
-    Width = 467
+    Width = 451
     Height = 4
     Cursor = crVSplit
     Align = alTop
+    ExplicitWidth = 467
+  end
+  object splTags: TSplitter
+    Left = 0
+    Top = 283
+    Width = 451
+    Height = 3
+    Cursor = crVSplit
+    Align = alBottom
+    Visible = False
+    ExplicitLeft = -8
+    ExplicitTop = 308
   end
   object pnlNotice: TPanel
     Left = 0
-    Top = 174
-    Width = 467
-    Height = 98
+    Top = 201
+    Width = 451
+    Height = 51
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 4
-    DesignSize = (
-      467
-      98)
+    TabOrder = 5
     object mmoNotice: TDBMemoEh
-      Left = 5
-      Top = 0
-      Width = 457
-      Height = 98
-      Anchors = [akLeft, akTop, akRight, akBottom]
+      AlignWithMargins = True
+      Left = 4
+      Top = 3
+      Width = 443
+      Height = 45
+      Margins.Left = 4
+      Margins.Right = 4
+      Align = alClient
       AutoSize = False
       DynProps = <>
       EditButtons = <>
@@ -61,26 +71,26 @@ object RecourseForm: TRecourseForm
   end
   object pnlRecourse: TPanel
     Left = 0
-    Top = 118
-    Width = 467
-    Height = 25
+    Top = 148
+    Width = 451
+    Height = 28
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 3
     DesignSize = (
-      467
-      25)
+      451
+      28)
     object lblAttribute: TLabel
-      Left = 5
-      Top = 6
+      Left = 6
+      Top = 5
       Width = 64
       Height = 13
       Caption = #1057#1086#1076#1077#1088#1078#1072#1085#1080#1077
     end
     object cbRecourse: TDBLookupComboboxEh
       Left = 74
-      Top = 3
-      Width = 388
+      Top = 2
+      Width = 373
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -121,13 +131,14 @@ object RecourseForm: TRecourseForm
       Visible = True
       OnChange = cbRecourseChange
       OnClick = DBLookupComboboxClick
+      OnDropDownBoxGetCellParams = cbRecourseDropDownBoxGetCellParams
       OnEnter = cbRecourseEnter
     end
   end
   object pnlInfo: TPanel
     Left = 0
     Top = 0
-    Width = 467
+    Width = 451
     Height = 71
     Align = alTop
     BevelOuter = bvNone
@@ -135,32 +146,32 @@ object RecourseForm: TRecourseForm
     inline CustomerInfoFrm: TCustomerInfoFrm
       Left = 0
       Top = 0
-      Width = 467
+      Width = 451
       Height = 71
       Align = alClient
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      ExplicitWidth = 451
+      ExplicitHeight = 71
       inherited gbInfo: TGroupBox
-        Width = 467
+        Width = 451
         Height = 71
-        inherited HtmlViewer: THtmlViewer
-          Width = 463
-          Height = 54
-        end
+        ExplicitWidth = 451
+        ExplicitHeight = 71
       end
     end
   end
   object pnlAdres: TPanel
     Left = 0
     Top = 75
-    Width = 467
+    Width = 451
     Height = 43
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      467
+      451
       43)
     object lbl3: TLabel
       Left = 2
@@ -176,7 +187,7 @@ object RecourseForm: TRecourseForm
       ParentFont = False
     end
     object lbl4: TLabel
-      Left = 212
+      Left = 196
       Top = 2
       Width = 20
       Height = 13
@@ -188,17 +199,19 @@ object RecourseForm: TRecourseForm
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitLeft = 212
     end
     object lbl5: TLabel
-      Left = 284
+      Left = 268
       Top = 2
       Width = 13
       Height = 13
       Anchors = [akTop, akRight]
       Caption = #1050#1074
+      ExplicitLeft = 284
     end
     object btnFind: TButton
-      Left = 339
+      Left = 323
       Top = 9
       Width = 95
       Height = 33
@@ -209,7 +222,7 @@ object RecourseForm: TRecourseForm
     object LupStreets: TDBLookupComboboxEh
       Left = 5
       Top = 15
-      Width = 203
+      Width = 187
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -235,7 +248,7 @@ object RecourseForm: TRecourseForm
       Visible = True
     end
     object LupHOUSE: TDBLookupComboboxEh
-      Left = 212
+      Left = 196
       Top = 15
       Width = 68
       Height = 21
@@ -254,7 +267,7 @@ object RecourseForm: TRecourseForm
     end
     object eFLAT_NO: TDBEditEh
       Tag = 7
-      Left = 284
+      Left = 268
       Top = 15
       Width = 52
       Height = 21
@@ -268,7 +281,7 @@ object RecourseForm: TRecourseForm
       OnExit = eFLAT_NOExit
     end
     object btnClear: TButton
-      Left = 436
+      Left = 421
       Top = 13
       Width = 26
       Height = 25
@@ -280,26 +293,26 @@ object RecourseForm: TRecourseForm
   end
   object pnlContact: TPanel
     Left = 0
-    Top = 143
-    Width = 467
-    Height = 31
+    Top = 176
+    Width = 451
+    Height = 25
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 4
     DesignSize = (
-      467
-      31)
+      451
+      25)
     object lbl2: TLabel
       Left = 5
-      Top = 8
+      Top = 5
       Width = 43
       Height = 13
       Caption = #1050#1086#1085#1090#1072#1082#1090
     end
     object edtContact: TDBComboBoxEh
       Left = 74
-      Top = 5
-      Width = 388
+      Top = 2
+      Width = 373
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -315,58 +328,200 @@ object RecourseForm: TRecourseForm
   end
   object pnlBtm: TPanel
     Left = 0
-    Top = 272
-    Width = 467
+    Top = 355
+    Width = 451
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 5
+    TabOrder = 9
     DesignSize = (
-      467
+      451
       35)
     object btnOkandRequest: TBitBtn
-      Left = 5
+      Left = 123
       Top = 4
-      Width = 142
+      Width = 116
       Height = 27
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1103#1074#1082#1091
       Anchors = [akLeft, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1089' '#1079#1072#1103#1074#1082#1086#1081
-      ModalResult = 1
       NumGlyphs = 2
-      TabOrder = 0
+      TabOrder = 3
+      TabStop = False
       OnClick = btnOkandRequestClick
     end
     object btnCancel: TBitBtn
-      Left = 339
+      Left = 360
       Top = 4
-      Width = 123
+      Width = 87
       Height = 27
       Anchors = [akRight, akBottom]
       Cancel = True
       Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
-      TabOrder = 2
+      TabOrder = 1
       OnClick = btnCancelClick
     end
     object btnOk: TButton
-      Left = 152
+      Left = 245
       Top = 4
-      Width = 180
+      Width = 109
       Height = 27
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
       Anchors = [akLeft, akTop, akRight]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 1
-      TabOrder = 1
+      TabOrder = 0
       OnClick = btnOkClick
     end
+    object btnOkandTask: TBitBtn
+      Left = 5
+      Top = 4
+      Width = 116
+      Height = 27
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1076#1072#1095#1091
+      Anchors = [akLeft, akBottom]
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1089' '#1079#1072#1076#1072#1095#1077#1081
+      NumGlyphs = 2
+      TabOrder = 2
+      TabStop = False
+      OnClick = btnOkandTaskClick
+    end
+  end
+  object pnlAddData: TPanel
+    Left = 0
+    Top = 252
+    Width = 451
+    Height = 31
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 6
+    Visible = False
+  end
+  object pnlDirect: TPanel
+    Left = 0
+    Top = 118
+    Width = 451
+    Height = 30
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 2
+    DesignSize = (
+      451
+      30)
+    object lblDirect: TLabel
+      Left = 5
+      Top = 8
+      Width = 67
+      Height = 13
+      Caption = #1053#1072#1087#1088#1072#1074#1083#1077#1085#1080#1077
+    end
+    object cbDirect: TDBComboBoxEh
+      Left = 74
+      Top = 6
+      Width = 373
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DropDownBox.AutoDrop = True
+      EmptyDataInfo.Text = #1053#1072#1087#1088#1072#1074#1083#1077#1085#1080#1077
+      EditButtons = <>
+      Items.Strings = (
+        #1042#1093#1086#1076#1103#1097#1077#1077
+        #1048#1089#1093#1086#1076#1103#1097#1077#1077)
+      KeyItems.Strings = (
+        '0'
+        '1')
+      ShowHint = True
+      TabOrder = 0
+      Visible = True
+      OnChange = cbDirectChange
+    end
+  end
+  object pnlResult: TPanel
+    Left = 0
+    Top = 327
+    Width = 451
+    Height = 28
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 8
+    Visible = False
+    DesignSize = (
+      451
+      28)
+    object lblResult: TLabel
+      Left = 5
+      Top = 5
+      Width = 53
+      Height = 13
+      Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+    end
+    object lcbResult: TDBLookupComboboxEh
+      Left = 75
+      Top = 2
+      Width = 372
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DynProps = <>
+      DataField = ''
+      DropDownBox.Columns = <
+        item
+          FieldName = 'O_NAME'
+          Width = 25
+        end
+        item
+          FieldName = 'NOTICE'
+          Width = 20
+        end
+        item
+          AutoFitColWidth = False
+          Checkboxes = True
+          FieldName = 'SET_BID'
+          Title.Caption = 'BID'
+          Width = 10
+        end
+        item
+          AutoFitColWidth = False
+          Checkboxes = True
+          FieldName = 'SET_TASK'
+          Title.Caption = 'TASK'
+          Width = 10
+        end>
+      DropDownBox.ListSource = srcResult
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
+      DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+      DropDownBox.AutoDrop = True
+      DropDownBox.Sizable = True
+      EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1088#1077#1079#1091#1083#1100#1090#1072#1090' '#1079#1074#1086#1085#1082#1072
+      EditButtons = <>
+      KeyField = 'O_ID'
+      ListField = 'O_NAME'
+      ListSource = srcResult
+      ShowHint = True
+      Style = csDropDownEh
+      TabOrder = 0
+      Visible = True
+      OnClick = DBLookupComboboxClick
+    end
+  end
+  object pnlTags: TPanel
+    Left = 0
+    Top = 286
+    Width = 451
+    Height = 41
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 7
+    Visible = False
   end
   object srcRecourse: TDataSource
     AutoEdit = False
     DataSet = dsRecourses
-    Left = 155
-    Top = 198
+    Left = 371
+    Top = 190
   end
   object dsRecourses: TpFIBDataSet
     SelectSQL.Strings = (
@@ -377,21 +532,56 @@ object RecourseForm: TRecourseForm
       '  , NOTICE'
       '  , rt.NEED_REQUEST'
       '  , r.o_name'
+      '  , coalesce(r.O_CHARFIELD, '#39#39') AddData'
+      '  , coalesce(r.O_Check, '#39#39') TagsList'
+      '  , cast(coalesce(r.O_Numericfield, -1) as integer) DIRECT'
       '  from RECOURSE_TEMPLATES rt'
-      '       inner join Objects r on (rt.type_id = r.o_id and'
-      '             r.o_type = 8 and r.o_deleted = 0)'
-      '  where coalesce(rt.Deleted,0) = 0'
+      
+        '       inner join Objects r on (rt.type_id = r.o_id and r.o_type' +
+        ' = 8 and r.o_deleted = 0)'
+      '  where coalesce(rt.Deleted, 0) = 0'
+      '        and ((:direct is null)'
+      
+        '          or (cast(coalesce(r.O_Numericfield, -1) as integer) = ' +
+        '-1)'
+      
+        '          or (cast(coalesce(r.O_Numericfield, -1) as integer) = ' +
+        ':direct))'
+      '        and (:current_user = '#39'SYSDBA'#39
+      '          or (not exists(select'
+      '                             gr.Group_Id'
+      '                           from Sys$Group_Rights gr'
+      '                           where gr.Rights_Type = 4))'
+      '          or (exists(select'
+      '                         gr.Right_Id'
+      '                       from sys$user u'
+      
+        '                            inner join sys$user_groups ug on (u.' +
+        'id = ug.user_id)'
+      
+        '                            inner join sys$group_rights gr on (u' +
+        'g.group_id = gr.group_id)'
+      
+        '                            inner join sys$group g on (ug.group_' +
+        'id = g.id)'
+      '                       where g.lockedout = 0'
+      '                             and u.Lockedout = 0'
+      '                             and gr.rights_type = 4'
+      '                             and u.ibname = current_user'
+      '                             and gr.Right_Id = rt.Type_Id)))'
       '  order by rt.NAME, r.o_name')
     AutoCalcFields = False
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 91
-    Top = 179
+    Left = 371
+    Top = 251
   end
   object dsTypes: TpFIBDataSet
     SelectSQL.Strings = (
-      'SELECT O_ID, O_NAME, O_DESCRIPTION'
+      
+        'SELECT O_ID, O_NAME, O_DESCRIPTION, coalesce(O_CHARFIELD, '#39#39') O_' +
+        'CHARFIELD'
       'FROM OBJECTS'
       'WHERE O_TYPE = 8 AND O_DELETED = 0'
       'order BY O_NAME')
@@ -399,13 +589,13 @@ object RecourseForm: TRecourseForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 215
-    Top = 204
+    Left = 95
+    Top = 244
   end
   object srcTypes: TDataSource
     DataSet = dsTypes
-    Left = 262
-    Top = 201
+    Left = 142
+    Top = 249
   end
   object dsStreets: TpFIBDataSet
     SelectSQL.Strings = (
@@ -417,13 +607,13 @@ object RecourseForm: TRecourseForm
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
-    Left = 53
-    Top = 215
+    Left = 93
+    Top = 15
   end
   object srcStreet: TDataSource
     DataSet = dsStreets
-    Left = 352
-    Top = 227
+    Left = 48
+    Top = 19
   end
   object dsHomes: TpFIBDataSet
     SelectSQL.Strings = (
@@ -442,17 +632,17 @@ object RecourseForm: TRecourseForm
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     DataSource = srcStreet
-    Left = 290
-    Top = 153
+    Left = 202
+    Top = 17
   end
   object srcHouse: TDataSource
     DataSet = dsHomes
-    Left = 331
-    Top = 169
+    Left = 155
+    Top = 17
   end
   object actlst1: TActionList
-    Left = 18
-    Top = 175
+    Left = 234
+    Top = 231
     object actSave: TAction
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ShortCut = 16397
@@ -471,8 +661,8 @@ object RecourseForm: TRecourseForm
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
-    Left = 128
-    Top = 32
+    Left = 272
+    Top = 16
   end
   object PropStorageEh: TPropStorageEh
     Section = 'RECOURSE'
@@ -484,7 +674,33 @@ object RecourseForm: TRecourseForm
       '<P>.Top'
       '<P>.Width'
       'pnlInfo.<P>.Height')
-    Left = 338
+    Left = 378
     Top = 16
+  end
+  object dsResult: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select'
+      '    O_ID'
+      '  , O_NAME'
+      '  , O_DESCRIPTION'
+      '  , iif(position('#39'bid'#39', o_check) > 0, 1, 0) SET_BID'
+      '  , iif(position('#39'task'#39', o_check) > 0, 1, 0) SET_TASK'
+      '  from OBJECTS o'
+      '  where O_TYPE = 81'
+      '        and O_DELETED = 0'
+      '        and O_Numericfield = :RT_ID'
+      '  order by O_NAME  ')
+    AutoCalcFields = False
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    Left = 239
+    Top = 308
+  end
+  object srcResult: TDataSource
+    AutoEdit = False
+    DataSet = dsResult
+    Left = 294
+    Top = 305
   end
 end

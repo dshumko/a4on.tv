@@ -11,7 +11,7 @@ uses
   Vcl.ActnList,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
   FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, amSplitter;
+  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, amSplitter, CnClasses;
 
 type
   TMatIncomeDocForm = class(TForm)
@@ -310,7 +310,7 @@ begin
     FAddedMatID := DynParams['ID'].AsInteger;
     if actUNITS.Visible then
     begin
-      qnt := InputUnits(fMatDocID, FAddedMatID, -1);
+      qnt := InputUnits(FMatDocID, FAddedMatID, -1);
       if qnt >= 0 then
         edtQuant.value := qnt;
     end
@@ -386,7 +386,10 @@ var
   Font_size: Integer;
   Font_name: string;
   Row_height: Integer;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if not TryStrToInt(dmMain.GetIniValue('ROW_HEIGHT'), i) then
     i := 0;
   Row_height := i;
@@ -394,7 +397,7 @@ begin
   dsDocMat.Open;
   dsWH.Open;
   dsShippers.Open;
-  fAddedMatID := -1;
+  FAddedMatID := -1;
 
   fVisibleCost := (dmMain.AllowedAction(rght_Material_Cost));
   for i := 0 to dbgDocMat.Columns.Count - 1 do
@@ -428,6 +431,15 @@ begin
       begin
         (Components[i] as TDBGridEh).ColumnDefValues.Layout := tlCenter;
         (Components[i] as TDBGridEh).RowHeight := Row_height;
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then
@@ -470,14 +482,14 @@ function TMatIncomeDocForm.CheckRowData: Boolean;
 var
   qnt: Integer;
 begin
-  Result := (fAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
+  Result := (FAddedMatID <> -1) and (not edtQuant.Text.IsEmpty);
   if (edtQuant.Text.IsEmpty) then
   begin
     if edtQuant.Enabled then
       edtQuant.SetFocus
     else
     begin
-      qnt := InputUnits(fMatDocID, dsDocMat['MAT_ID'], dsDocMat['ID']);
+      qnt := InputUnits(FMatDocID, dsDocMat['MAT_ID'], dsDocMat['ID']);
       if qnt >= 0 then
         edtQuant.value := qnt;
     end;
@@ -533,15 +545,15 @@ procedure TMatIncomeDocForm.actUNITSExecute(Sender: TObject);
 var
   qnt: Integer;
 begin
-  if (fAddedMatID <> -1) then
+  if (FAddedMatID <> -1) then
   begin
-    qnt := InputUnits(fMatDocID, fAddedMatID, -1);
+    qnt := InputUnits(FMatDocID, FAddedMatID, -1);
     if qnt >= 0 then
       edtQuant.value := qnt;
   end
   else
   begin
-    qnt := InputUnits(fMatDocID, dsDocMat['M_Id'], dsDocMat['ID'], FReadOnly);
+    qnt := InputUnits(FMatDocID, dsDocMat['M_Id'], dsDocMat['ID'], FReadOnly);
     if qnt >= 0 then
     begin
       dsDocMat.Edit;
@@ -559,7 +571,7 @@ begin
   dsDocMat.Append;
   dsDocMat['DOC_ID'] := dsDoc['DOC_ID'];
   dsDocMat['NAME'] := edtMaterial.Text;
-  dsDocMat['M_Id'] := fAddedMatID;
+  dsDocMat['M_Id'] := FAddedMatID;
   dsDocMat['M_QUANT'] := edtQuant.value;
   if VarIsFloat(edtShipper.value) then
     dsDocMat['shipper_Cost'] := edtShipper.value
@@ -578,7 +590,7 @@ begin
   edtQuant.Text := '';
   edtShipper.Text := '';
   memNotice.Lines.Text := '';
-  fAddedMatID := -1;
+  FAddedMatID := -1;
   edtMaterial.SetFocus;
 end;
 

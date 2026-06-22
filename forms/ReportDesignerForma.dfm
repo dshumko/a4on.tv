@@ -11,7 +11,6 @@ object ReportDesignerForm: TReportDesignerForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   Position = poDefault
   Scaled = False
   ShowHint = True
@@ -21,7 +20,6 @@ object ReportDesignerForm: TReportDesignerForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnMouseWheel = FormMouseWheel
-  PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter
     Left = 266
@@ -175,7 +173,6 @@ object ReportDesignerForm: TReportDesignerForm
       ParentFont = False
       PopupMenu = PopupMenu1
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = False
       TabOrder = 1
       OnDblClick = aViewPrewievExecute
       OnDrawColumnCell = ReportsTreeDrawColumnCell

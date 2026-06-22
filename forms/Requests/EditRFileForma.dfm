@@ -13,14 +13,12 @@ object EditRFileForm: TEditRFileForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   DesignSize = (
     366
     168)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8

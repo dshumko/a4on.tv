@@ -12,14 +12,12 @@ object ReqMaterialsForm: TReqMaterialsForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlBottom: TPanel
     Left = 0
@@ -37,6 +35,18 @@ object ReqMaterialsForm: TReqMaterialsForm
       Align = alClient
       TabOrder = 0
       TabStop = True
+      ExplicitWidth = 884
+      ExplicitHeight = 37
+      inherited Label2: TLabel
+        Height = 13
+        StyleElements = [seFont, seClient, seBorder]
+        ExplicitHeight = 13
+      end
+      inherited Label1: TLabel
+        Height = 13
+        StyleElements = [seFont, seClient, seBorder]
+        ExplicitHeight = 13
+      end
       inherited bbOk: TBitBtn
         Left = 185
         Width = 453
@@ -45,6 +55,9 @@ object ReqMaterialsForm: TReqMaterialsForm
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         Visible = False
         OnClick = OkCancelFrame1bbOkClick
+        ExplicitLeft = 185
+        ExplicitWidth = 453
+        ExplicitHeight = 30
       end
       inherited bbCancel: TBitBtn
         Left = 644
@@ -52,6 +65,9 @@ object ReqMaterialsForm: TReqMaterialsForm
         Height = 30
         Caption = #1047#1072#1082#1088#1099#1090#1100
         OnClick = OkCancelFrame1bbCancelClick
+        ExplicitLeft = 644
+        ExplicitWidth = 234
+        ExplicitHeight = 30
       end
     end
   end
@@ -175,13 +191,13 @@ object ReqMaterialsForm: TReqMaterialsForm
             #1040#1088#1077#1085#1076#1072
             #1042#1099#1082#1091#1087)
           Title.Caption = #1053#1072#1095#1080#1089#1083'.'
-          Title.TitleButton = True
           Title.Font.Charset = DEFAULT_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -11
           Title.Font.Name = 'Tahoma'
           Title.Font.Style = [fsBold]
           Title.Hint = #1053#1077' '#1085#1072#1095#1080#1089#1083#1103#1090#1100' '#1072#1073#1086#1085#1077#1085#1090#1091' '#1101#1090#1086#1090' '#1084#1072#1090#1077#1088#1080#1072#1083
+          Title.TitleButton = True
         end
         item
           CellButtons = <>

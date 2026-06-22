@@ -22,17 +22,15 @@ implementation
 
 function GetEnvVarValue(const VarName: string): string;
 var
-  BufSize: Integer;  // buffer size required for value
+  BufSize: Integer; // buffer size required for value
 begin
   // Get required buffer size (inc. terminal #0)
-  BufSize := GetEnvironmentVariable(
-    PChar(VarName), nil, 0);
+  BufSize := GetEnvironmentVariable(PChar(VarName), nil, 0);
   if BufSize > 0 then
   begin
     // Read env var value into result string
     SetLength(Result, BufSize - 1);
-    GetEnvironmentVariable(PChar(VarName),
-      PChar(Result), BufSize);
+    GetEnvironmentVariable(PChar(VarName), PChar(Result), BufSize);
   end
   else
     // No such environment variable
@@ -42,7 +40,7 @@ end;
 // RunDosInMemo('ping -t 192.168.28.200',Memo1);
 procedure RunCmdWithOutInStrings(const CmdLine: AnsiString; ResLines: TStringList);
 const
-  BUFSIZE = 24000;
+  BufSize = 24000;
 var
   SecAttr: TSecurityAttributes;
   hReadPipe, hWritePipe: THandle;
@@ -59,14 +57,14 @@ begin
   end;
   if Createpipe(hReadPipe, hWritePipe, @SecAttr, 0) then
   begin
-    Buffer := AllocMem(BUFSIZE + 1);
+    Buffer := AllocMem(BufSize + 1);
     FillChar(StartupInfo, SizeOf(StartupInfo), #0);
     StartupInfo.cb := SizeOf(StartupInfo);
     StartupInfo.hStdOutput := hWritePipe;
     StartupInfo.hStdInput := hReadPipe;
     StartupInfo.dwFlags := STARTF_USESTDHANDLES + STARTF_USESHOWWINDOW;
     StartupInfo.wShowWindow := SW_HIDE;
-    if CreateProcess(nil, Pchar(CmdLine), @SecAttr, @SecAttr, true, NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo,
+    if CreateProcess(nil, PChar(CmdLine), @SecAttr, @SecAttr, true, NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo,
       ProcessInfo) then
     begin
       repeat
@@ -74,11 +72,11 @@ begin
       until (WaitReason <> WAIT_TIMEOUT);
       Repeat
         BytesRead := 0;
-        ReadFile(hReadPipe, Buffer[0], BUFSIZE, BytesRead, nil);
+        ReadFile(hReadPipe, Buffer[0], BufSize, BytesRead, nil);
         Buffer[BytesRead] := #0;
         OemToAnsi(Buffer, Buffer);
         ResLines.Text := ResLines.Text + String(Buffer);
-      until (BytesRead < BUFSIZE);
+      until (BytesRead < BufSize);
     end;
     FreeMem(Buffer);
     CloseHandle(ProcessInfo.hProcess);
@@ -118,7 +116,7 @@ begin
 
     ExecInfo.Wnd := AWnd;
     ExecInfo.lpVerb := Pointer(AOperation);
-    ExecInfo.lpFile := Pchar(AFileName);
+    ExecInfo.lpFile := PChar(AFileName);
     ExecInfo.lpParameters := Pointer(AParameters);
     ExecInfo.lpDirectory := Pointer(ADirectory);
     ExecInfo.nShow := AShowCmd;
@@ -156,8 +154,8 @@ begin
 
   SetLastError(ERROR_INVALID_PARAMETER);
 {$WARN SYMBOL_PLATFORM OFF}
-  Win32Check(CreateProcess(nil, Pchar(CmdLine), nil, nil, False, CREATE_DEFAULT_ERROR_MODE
-    {$IFDEF UNICODE} or CREATE_UNICODE_ENVIRONMENT{$ENDIF}, nil, nil, SI, PI));
+  Win32Check(CreateProcess(nil, PChar(CmdLine), nil, nil, False, CREATE_DEFAULT_ERROR_MODE
+{$IFDEF UNICODE} or CREATE_UNICODE_ENVIRONMENT{$ENDIF}, nil, nil, SI, PI));
 {$WARN SYMBOL_PLATFORM ON}
   CloseHandle(PI.hThread);
   CloseHandle(PI.hProcess);

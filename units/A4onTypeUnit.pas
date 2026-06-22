@@ -33,6 +33,8 @@ type
     isJur : Integer; // 0 - физик 1 - юрик
     INN : String;
     City: string;
+    Tarif_Month: Currency;
+    Tarif_Day: Currency;
   end;
 
   TAlertItem = record

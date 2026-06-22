@@ -40,13 +40,12 @@ const
   rsAttrName_node = 'Атрибуты узлов';
   rsAttrID_srv = 25;
   rsAttrName_srv = 'Атрибуты услуг';
+  rsAttrID_EP = 80;
+  rsAttrName_EP = 'Атрибуты точек учета электроэнергии';
 
   // константа для пароля. чтоб абоненты не могли войти в обход системы
-{$IFDEF WITHRIGHTS}
   passprefix: string = 'tv';
-{$ELSE}
-  passprefix: string = '';
-{$ENDIF}
+
   srv_Null = -1; // нет услуги
   srv_AutoBlock = -3; // Автоблокировка
 
@@ -97,7 +96,8 @@ const
   rght_Customer_Debt = 47;
   rght_Customer_PSWD = 48; // сброс пароля
   rght_Customer_Attribute = 189;
-  rght_Customer_PersonalData = 220;
+  rght_Customer_PersonalData = 220; // Скрыть фамилию и паспорт
+  rght_Customer_PersonalName = 231; // Скрыть имя и отчество
   rght_Customer_Contact_Edit = 223;
   rght_Customer_Letters = 224;
 
@@ -638,6 +638,7 @@ resourcestring
   rsDeleteSubArea = 'Удалить район %s?';
   rsDeleteOrder = 'Удалить заказ №%s?';
   rsDeleteDenyRelation = 'Удаление невозожно. Связано с %s.';
+  rsDeleteDenyChildExists = 'Удаление невозожно. Есть связанные данные.';
   rsDemo_Restrict = 'Ограничение Демо версии';
 
   rsDeleteViaRequest = 'Удалить можно через заявку, вернуть на склад';
@@ -761,20 +762,29 @@ resourcestring
   // Поиск шорткат
   rsFindContract = 'Д';
   rsFindAccount = 'Л';
+  rsFindAccountEng = 'K';
   rsFindCode = 'К';
+  rsFindCodeEng = 'R';
   rsFindSurname = 'Ф';
+  rsFindSurnameEng = 'A';
   rsFindNotice = 'П';
+  rsFindNoticeEng = 'G';
   rsFindPhone = 'Т';
-  rsFindPhoneEng = 'T';
+  rsFindPhoneEng = 'N';
   rsFindStreet = 'У';
+  rsFindStreetEng = 'E';
   rsFindDigit = 'Ц';
+  rsFindDigitEng = 'W';
   rsFindIP = 'И';
   rsFindIPEng = 'I';
   rsFindMac = 'М';
   rsFindMacEng = 'M';
   rsFindRequest = 'З';
+  rsFindRequestEng = 'P';
   rsFindTask = 'Ч';
+  rsFindTaskEng = 'X';
   rsFindJur = 'Ю';
+  rsFindJurEng = '.';
   rsFindContact = 'О';
   rsFindContactEng = 'O';
 
@@ -792,6 +802,7 @@ resourcestring
   rsFldCodeArea = '[КОД УЧАСТКА]';
   rsFldCodeStreet = '[КОД УЛИЦЫ]';
   rsFldBalance = '[БАЛАНС]';
+  rsFldSaldoDolg = '[САЛЬДО/ДОЛГ]';
   rsFldCurrentDay = '[ДЕНЬ]';
   rsFldCurrentDate = '[ДАТА]';
   rsFldCurrentTime = '[ВРЕМЯ]';
@@ -855,6 +866,7 @@ resourcestring
   rsFldPAYMENTINFO = '[ПЛАТЕЖ_ИНФО]';
   rsFldNOTICE = '[ПРИМЕЧАНИЕ]';
   rsFldMaterial = '[МАТЕРИАЛ]';
+  rsFldMonTarif = '[МЕС_ТАРИФ]';
 
   rsLanUserEquipment = 'Пользователь оборудования';
   rsLanPasswordEquipment = 'Пароль оборудования';
@@ -1003,6 +1015,8 @@ resourcestring
   rsNotAllowedService = 'Этой услугой запрещено отключать. Укажите другую.';
 
   rsCabelLabelError = 'Mетки "%s" нет в маркировке кабеля';
+
+  rsMonthInput = 'Ввести кол-во месяцев';
 
   ms_CANT_DALETE_PAY_DOC = 'Данный документ удалить нельзя, т.к. он содержит платежи';
   ms_DELETE_PAY_DOC = 'Удалить документ № %s от %s';

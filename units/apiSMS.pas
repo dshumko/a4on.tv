@@ -179,7 +179,6 @@ var
   i: Integer;
   c: Char;
 begin
-  Result := 1;
   isCYR := False;
   i := 1;
   while (not isCYR) and (i < Length(Text)) do
@@ -324,9 +323,6 @@ var
   sqlPart: string;
   sendedSmsCount: Integer;
   CountSMS: Integer;
-  CountReciver: Integer;
-  // trR  : TpFIBTransaction;
-  // trW  : TpFIBTransaction;
 begin
   Result := 0;
   ErrorText := '';
@@ -352,7 +348,6 @@ begin
     UpdateInDB.SQL.Text := ' update Messages set Mes_Result = :Mes_Result, ext_id = :ext_id where Mes_Id = :Mes_Id ';
 
     sendedSmsCount := 0;
-    CountReciver := 0;
     repeat
     begin
       SMSList.Clear;
@@ -370,7 +365,6 @@ begin
           sendedSmsCount := sendedSmsCount + CountSMS;
           SMSList.Add(sms);
         end;
-        Inc(CountReciver);
         ReadfromDB.NEXT;
       end;
       ReadfromDB.Close;

@@ -225,6 +225,8 @@ type
     dbgRAW: TDBGridEh;
     srcRAW: TDataSource;
     lbl26: TLabel;
+    Label9: TLabel;
+    edtUrlMVD: TDBEditEh;
     procedure BillIPExit(Sender: TObject);
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -326,47 +328,6 @@ begin
   SaveSettingsStr(name, s);
 end;
 
-{
-  procedure TSettingsForm.SaveBilling;
-  var
-  s: string;
-  begin
-  SaveSettingsInt('USED_BILLING', cbBilling.value);
-  SaveSettingsStr('BILLING_IP', BillIP.value);
-  SaveSettingsInt('BILLING_PORT', BillPort.value);
-  if not VarIsClear(edtRP.value) then
-  SaveSettingsInt('UTM_RP_ID', edtRP.value)
-  else
-  begin
-  Query.SQL.Text := 'execute procedure set_settings(''' + name + ''', '''')';
-  Query.Transaction.StartTransaction;
-  Query.ExecQuery;
-  Query.Transaction.Commit;
-  end;
-  SaveSettingsStr('BILLING_LOGIN', BillLogin.value);
-  try
-  s := billPass.value;
-  except
-  s := '';
-  end;
-  if PassChanged then
-  s := EncodeBase64(s);
-  SaveSettingsStr('BILLING_SECRET', s);
-
-  if billSSL.Checked then
-  s := '1'
-  else
-  s := '0';
-  SaveSettingsStr('BILLING_SSL', s);
-
-  if chkAddTarif.Checked then
-  s := '1'
-  else
-  s := '0';
-  SaveSettingsStr('BILLING_TP', s);
-
-  end;
-}
 procedure TSettingsForm.cbBillingChange(Sender: TObject);
 var
   i: integer;
@@ -469,7 +430,9 @@ begin
       SaveSettingsStr('REG_PASSN', edtCheckPassportN.Text);
       SaveSettingsStr('REG_PERSN', edtCheckPersN.Text);
 
-      SaveSettingsStr('KEY_MVD', edtKeyMVD.Text);
+      SaveSettingsStr('MVD_KEY', edtKeyMVD.Text);
+      SaveSettingsStr('MVD_URL', edtUrlMVD.Text);
+
       SaveSettingsStr('MAP_URL', edtMapUrl.Text);
       SaveSettingsStr('MAP_HOUSE_URL', edtMapHouseUrl.Text);
       SaveSettingsInt('FEE_ROUND', FEE.value);
@@ -961,8 +924,12 @@ begin
         edtCheckPassportN.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'REG_PERSN' then
         edtCheckPersN.Text := select.FN('VAR_VALUE').AsString;
-      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'KEY_MVD' then
+      if (AnsiUpperCase(select.FN('VAR_NAME').value) = 'KEY_MVD') and (edtKeyMVD.Text.IsEmpty) then
         edtKeyMVD.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'MVD_KEY' then
+        edtKeyMVD.Text := select.FN('VAR_VALUE').AsString;
+      if AnsiUpperCase(select.FN('VAR_NAME').value) = 'MVD_URL' then
+        edtUrlMVD.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'MAP_URL' then
         edtMapUrl.Text := select.FN('VAR_VALUE').AsString;
       if AnsiUpperCase(select.FN('VAR_NAME').value) = 'IPV6GETURL' then

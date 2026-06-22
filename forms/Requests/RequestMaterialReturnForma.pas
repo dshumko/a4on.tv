@@ -29,8 +29,7 @@ type
     lbl3: TLabel;
     lbl4: TLabel;
     lbl5: TLabel;
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -58,21 +57,21 @@ begin
   with TRequestMaterialReturn.Create(Application) do
     try
       {
-      ReadOnlyMode := aReadOnly;
-      dsMatGropups.Open;
-      pRequest := aRequest;
+        ReadOnlyMode := aReadOnly;
+        dsMatGropups.Open;
+        pRequest := aRequest;
 
-      FWHOwner := (dmMain.GetSettingsValue('WH_REQ_OWNER') = '1');
+        FWHOwner := (dmMain.GetSettingsValue('WH_REQ_OWNER') = '1');
 
-      // if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full))))
-      if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full)))) then
+        // if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full) or dmMain.AllowedAction(rght_Dictionary_full))))
+        if (FWHOwner and (not(dmMain.AllowedAction(rght_Materials_full)))) then
         dsReqMaterials.ParamByName('WH_OWNER').Value := '1'
-      else
+        else
         dsReqMaterials.ParamByName('WH_OWNER').Value := '0';
 
-      dsReqMaterials.ParamByName('RQ_ID').AsInteger := aRequest;
+        dsReqMaterials.ParamByName('RQ_ID').AsInteger := aRequest;
 
-      dsMatGropups.Open;
+        dsMatGropups.Open;
       }
       if ShowModal = mrOk then
         result := True;
@@ -84,7 +83,7 @@ end;
 
 procedure TRequestMaterialReturn.btnOkClick(Sender: TObject);
 begin
-//
+  //
 end;
 
 procedure TRequestMaterialReturn.FormCreate(Sender: TObject);
@@ -92,8 +91,7 @@ begin
   cbProp.Value := 4;
 end;
 
-procedure TRequestMaterialReturn.FormKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TRequestMaterialReturn.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) then
   begin
@@ -104,14 +102,13 @@ begin
   end;
 end;
 
-procedure TRequestMaterialReturn.FormKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TRequestMaterialReturn.FormKeyPress(Sender: TObject; var Key: Char);
 var
   go: Boolean;
 begin
   if (Key = #13) then // (Ord(Key) = VK_RETURN)
   begin
-    go := true;
+    go := True;
     if (ActiveControl is TDBLookupComboboxEh) then
       go := not(ActiveControl as TDBLookupComboboxEh).ListVisible
     else if (ActiveControl is TDBComboBoxEh) then
@@ -121,14 +118,14 @@ begin
       if (ActiveControl is TDBMemoEh) and
         (not((Trim((ActiveControl as TDBMemoEh).Lines.Text) = '') or FEnterSecondPress)) then
       begin
-        go := False;
-        FEnterSecondPress := true;
+        go := false;
+        FEnterSecondPress := True;
       end;
     end;
 
     if go then
     begin
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
       Key := #0; // eat enter key
       PostMessage(self.Handle, WM_NEXTDLGCTL, 0, 0);
     end;
@@ -136,7 +133,7 @@ begin
   else
   begin
     if (ActiveControl is TDBMemoEh) then
-      FEnterSecondPress := False;
+      FEnterSecondPress := false;
   end;
 
 end;

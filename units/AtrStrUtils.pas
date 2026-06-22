@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, System.SysUtils, System.Variants, System.Types,
-  System.StrUtils, Data.DB;
+  System.StrUtils, System.NetEncoding, Data.DB;
 
 const
   Codes64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
@@ -94,6 +94,8 @@ function MonthAsString(const D: TDateTime; const beforeDay: string = '«'; const
 
 // Форматируем Фамилию как Ф***я
 function HideSurname(const S: String): string;
+function HideFullName(const FullName: String; const aHideSurname: Boolean = False;
+  const aHideName: Boolean = False): string;
 
 // есть ли в телефоне ошибка согласно маски
 function ValueHasMaskError(const inMask, inValue: string): Boolean;
@@ -113,11 +115,8 @@ uses
   CnBigNumber,
   RxStrUtils;
 
-const
-  SErrWrongBase64EncodedString = 'Формат строки не соответствует способу кодирования Base64.';
-
-  // IBAN = International Bank Account Number
-  // Example : CH10002300A1023502601
+// IBAN = International Bank Account Number
+// Example : CH10002300A1023502601
 
 function ChangeAlpha(input: string): string;
 // A -> 10, B -> 11, C -> 12 ...
@@ -544,7 +543,7 @@ begin
   bnStep := BigNumberNew;
   bnRes := BigNumberNew;
   try
-    bnMac.SetHex(Result);
+    bnMac.SetHex(AnsiString(Result));
     if step >= 0 then
     begin
       bnStep.SetInteger(step);
@@ -818,6 +817,26 @@ begin
   Result := Copy(S, 1, 1) + '***' + Copy(S, Length(S), 1);
 end;
 
+function HideFullName(const FullName: String; const aHideSurname: Boolean = False;
+  const aHideName: Boolean = False): string;
+var
+  SFM: TStringDynArray;
+begin
+  Result := FullName;
+  if aHideSurname or aHideName then
+  begin
+    SFM := Explode(' ', FullName);
+    if (Length(SFM) > 0) and aHideSurname then
+      SFM[0] := HideSurname(SFM[0]);
+    if (Length(SFM) > 1) and aHideName then
+      SFM[1] := HideSurname(SFM[1]);
+    if (Length(SFM) > 2) and aHideName then
+      SFM[2] := HideSurname(SFM[1]);
+
+    Result := string.Join(' ', SFM);
+  end;
+end;
+
 function ValueHasMaskError(const inMask, inValue: string): Boolean;
 var
   i: Integer;
@@ -851,13 +870,13 @@ end;
 
 function ExtractDigit(const S: String): string;
 var
-  i : Integer;
+  i: Integer;
 begin
   Result := '';
-  for i := 1 to Length(s) do
+  for i := 1 to Length(S) do
   begin
-      if (CharInSet(s[i], ['0' .. '9'])) then
-        Result := Result + s[i];
+    if (CharInSet(S[i], ['0' .. '9'])) then
+      Result := Result + S[i];
   end;
 end;
 

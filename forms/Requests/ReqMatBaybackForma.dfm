@@ -11,12 +11,10 @@ object ReqMatBaybackForm: TReqMatBaybackForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
     Left = 0

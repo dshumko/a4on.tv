@@ -13,7 +13,6 @@ object RequestForm: TRequestForm
   FormStyle = fsMDIChild
   KeyPreview = True
   Menu = mmRequest
-  OldCreateOrder = False
   Position = poMainFormCenter
   Visible = True
   WindowState = wsMaximized
@@ -26,7 +25,6 @@ object RequestForm: TRequestForm
   DesignSize = (
     882
     562)
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -36,6 +34,19 @@ object RequestForm: TRequestForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
+    ExplicitTop = 505
+    ExplicitWidth = 882
+    ExplicitHeight = 37
+    inherited Label2: TLabel
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
+    end
+    inherited Label1: TLabel
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
+    end
     inherited bbOk: TBitBtn
       Left = 360
       Top = 6
@@ -44,6 +55,10 @@ object RequestForm: TRequestForm
       Anchors = [akLeft, akRight, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 360
+      ExplicitTop = 6
+      ExplicitWidth = 348
+      ExplicitHeight = 27
     end
     inherited bbCancel: TBitBtn
       Left = 714
@@ -51,6 +66,10 @@ object RequestForm: TRequestForm
       Width = 166
       Height = 27
       OnClick = OkCancelFrame1bbCancelClick
+      ExplicitLeft = 714
+      ExplicitTop = 6
+      ExplicitWidth = 166
+      ExplicitHeight = 27
     end
   end
   object pnlHead: TPanel
@@ -428,13 +447,13 @@ object RequestForm: TRequestForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
+        ExplicitWidth = 472
+        ExplicitHeight = 137
         inherited gbInfo: TGroupBox
           Width = 472
           Height = 137
-          inherited HtmlViewer: THtmlViewer
-            Width = 468
-            Height = 120
-          end
+          ExplicitWidth = 472
+          ExplicitHeight = 137
         end
       end
     end
@@ -444,11 +463,12 @@ object RequestForm: TRequestForm
     Top = 188
     Width = 882
     Height = 337
-    ActivePage = tabExecute
+    ActivePage = tabRequest
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
     OnChanging = PageControlChanging
+    ExplicitHeight = 317
     object tabRequest: TTabSheet
       Caption = #1055#1088#1080#1077#1084
       object Splitter: TSplitter
@@ -467,6 +487,7 @@ object RequestForm: TRequestForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
+        ExplicitHeight = 173
         object Label5: TLabel
           Left = 0
           Top = 29
@@ -474,6 +495,7 @@ object RequestForm: TRequestForm
           Height = 13
           Align = alTop
           Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+          ExplicitWidth = 67
         end
         object mmoNotice: TDBMemoEh
           Left = 0
@@ -491,6 +513,7 @@ object RequestForm: TRequestForm
           TabOrder = 1
           Visible = True
           WantReturns = True
+          ExplicitHeight = 131
         end
         object pnlAddInfo: TPanel
           Left = 0
@@ -1203,7 +1226,6 @@ object RequestForm: TRequestForm
                   FieldName = 'DIMENSION'
                   Footers = <>
                   Title.Caption = #1045#1076'. '#1080#1079#1084'.'
-
                 end
                 item
                   AutoFitColWidth = False
@@ -1299,7 +1321,7 @@ object RequestForm: TRequestForm
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 874
+          Width = 115
           Height = 13
           Align = alTop
           Caption = #1042#1099#1103#1074#1083'. '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100
@@ -1732,6 +1754,7 @@ object RequestForm: TRequestForm
     Action = actPrint
     Anchors = [akLeft, akBottom]
     TabOrder = 3
+    ExplicitTop = 511
   end
   object srcExecutor: TDataSource
     AutoEdit = False
@@ -2337,8 +2360,8 @@ object RequestForm: TRequestForm
       '                       from tarif t'
       
         '                       where t.service_id = s.service_id and coa' +
-        'lesce(r.rq_exec_time, localtimestamp) between t.date_from and t.' +
-        'date_to'
+        'lesce(cast(r.rq_exec_time as DATE) , CURRENT_DATE) between t.dat' +
+        'e_from and t.date_to'
       '                     )'
       '                  )'
       '              ),'
@@ -2546,7 +2569,7 @@ object RequestForm: TRequestForm
       '    ')
     SelectSQL.Strings = (
       'select'
-      'p.Id, p.Rq_Id, p.Jpg, p.Notice'
+      'p.*'
       'from Request_Photos p'
       'where p.Rq_Id = :RQ_ID'
       'order by 1')

@@ -12,14 +12,12 @@ object MatIncomeDocForm: TMatIncomeDocForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlHead: TPanel
     Left = 0

@@ -227,7 +227,9 @@ var
   Font_name, S: string;
   ini: string;
   formName: String;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   ini := A4MainForm.GetIniFileName;
   formName := Self.Name;
   i := Pos('_', formName);
@@ -266,6 +268,15 @@ begin
         if (S.Contains('NOTICE') or S.Contains('DESCRIPTION')) and
           (not Assigned((Components[i] as TDBGridEh).Columns[c].OnGetCellParams)) then
           (Components[i] as TDBGridEh).Columns[c].OnGetCellParams := dbGridColumnsGetCellParams
+      end;
+
+      if ShowToolTips then
+      begin
+        if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+          (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+        (Components[i] as TDBGridEh).ShowHint := true;
+        for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+          (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
       end;
     end
     else if Font_size <> 0 then
@@ -315,7 +326,8 @@ var
 begin
   for i := 0 to ComponentCount - 1 do
   begin
-    if Components[i] is TDBGridEh then begin
+    if Components[i] is TDBGridEh then
+    begin
       (Components[i] as TDBGridEh).STFilter.Visible := aShow;
       (Components[i] as TDBGridEh).STFilter.Local := aShow;
 
@@ -368,7 +380,7 @@ begin
   ini := A4MainForm.GetIniFileName;
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TDBGridEh then
-      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(ini, formName + '.' + Components[i].Name, false);
+      (Components[i] as TDBGridEh).SaveColumnsLayoutIni(ini, formName + '.' + Components[i].Name, False);
 end;
 
 procedure TA4onPage.CloseData;

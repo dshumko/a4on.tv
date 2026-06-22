@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
   DBCtrlsEh, EhLibVCL, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, DBGridEhGrouping, DynVarsEh,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TFreqPlanForm = class(TGridForm)

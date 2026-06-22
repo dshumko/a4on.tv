@@ -12,14 +12,12 @@ object PaymentsForm: TPaymentsForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDefault
   Visible = True
   WindowState = wsMaximized
   OnActivate = FormActivate
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAll: TPanel
     Left = 0
@@ -28,6 +26,7 @@ object PaymentsForm: TPaymentsForm
     Height = 283
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 263
     object dbgPayments: TDBGridEh
       Left = 1
       Top = 30
@@ -45,10 +44,11 @@ object PaymentsForm: TPaymentsForm
       GridLineParams.VertEmptySpaceStyle = dessNonEh
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgMultiSelect]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghColumnResize, dghColumnMove]
+      ParentShowHint = False
       PopupMenu = gridPopUp
       ReadOnly = True
       SearchPanel.Enabled = True
-      SearchPanel.FilterOnTyping = False
+      ShowHint = True
       SortLocal = True
       STFilter.Local = True
       SumList.Active = True
@@ -480,6 +480,7 @@ object PaymentsForm: TPaymentsForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 263
     object lbl1: TLabel
       Left = 0
       Top = 0
@@ -487,6 +488,7 @@ object PaymentsForm: TPaymentsForm
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
+      ExplicitWidth = 141
     end
     object dbgrdErrors: TDBGridEh
       Left = 0

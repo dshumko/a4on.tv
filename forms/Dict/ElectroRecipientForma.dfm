@@ -4,11 +4,15 @@ inherited ElectroRecipientForm: TElectroRecipientForm
   Caption = #1055#1086#1083#1091#1095#1072#1090#1077#1083#1080' '#1086#1087#1083#1072#1090#1099' '#1101#1083#1077#1082#1090#1088#1086#1101#1085#1077#1088#1075#1080#1080
   ClientHeight = 550
   ClientWidth = 939
+  ExplicitWidth = 955
+  ExplicitHeight = 589
   PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 939
+    ExplicitTop = 193
+    ExplicitWidth = 939
   end
   object spl1: TSplitter [1]
     Left = 0
@@ -96,6 +100,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
   end
   inherited tlbMain: TToolBar
     Width = 939
+    ExplicitWidth = 939
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -119,6 +124,8 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Width = 939
     Height = 168
     ParentCtl3D = False
+    ExplicitWidth = 939
+    ExplicitHeight = 168
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -138,6 +145,9 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       Top = 135
       Width = 744
       TabOrder = 2
+      ExplicitLeft = 82
+      ExplicitTop = 135
+      ExplicitWidth = 744
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
@@ -145,6 +155,9 @@ inherited ElectroRecipientForm: TElectroRecipientForm
       Width = 98
       Cancel = True
       TabOrder = 3
+      ExplicitLeft = 832
+      ExplicitTop = 135
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 82

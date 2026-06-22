@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh,
-  VCLTee.TeCanvas, PrnDbgeh;
+  VCLTee.TeCanvas, PrnDbgeh, CnClasses;
 
 type
   TFileTypeForm = class(TGridForm)
@@ -319,6 +319,16 @@ begin
 
   NewItem := TMenuItem.Create(pmMemo);
   NewItem.Caption := rsFldNOTICE;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldSaldoDolg;
+  NewItem.OnClick := memoMiClick;
+  pmMemo.Items.Add(NewItem);
+
+  NewItem := TMenuItem.Create(pmMemo);
+  NewItem.Caption := rsFldMonTarif;
   NewItem.OnClick := memoMiClick;
   pmMemo.Items.Add(NewItem);
 
@@ -905,23 +915,48 @@ procedure TFileTypeForm.InitControls;
 var
   I: Integer;
 begin
-  cbOnOff.Value := null;
-  lcbSrvType.Value := null;
-  lcbOnOffSrv.Value := null;
-  lcbRequest.Value := null;
-  lcbTempl.Value := null;
-  lcbSingleSrv.Value := null;
-  lcbAllowFT.Value := null;
-  edtNameFmt.Text := '';
-  edtHint.Text := '';
-  edtText1.Text := '';
-  edtText2.Text := '';
-  edtText3.Text := '';
-  edtText4.Text := '';
-  for I := 0 to pnlEdit.ComponentCount - 1 do
-  begin
+  {
+    cbOnOff.Value := null;
+    lcbSrvType.Value := null;
+    lcbOnOffSrv.Value := null;
+    lcbRequest.Value := null;
+    lcbTempl.Value := null;
+    lcbSingleSrv.Value := null;
+    lcbAllowFT.Value := null;
+    lcbService.Value := null;
+    lcbServiceFrom.Value := null;
+    edtNameFmt.Text := '';
+    edtHint.Text := '';
+    edtText1.Text := '';
+    edtText2.Text := '';
+    edtText3.Text := '';
+    edtText4.Text := '';
+
+    for I := 0 to pnlEdit.ComponentCount - 1 do
+    begin
     if pnlEdit.Components[I] is TDBCheckBoxEh then
-      (pnlEdit.Components[I] as TDBCheckBoxEh).Checked := False;
+    (pnlEdit.Components[I] as TDBCheckBoxEh).Checked := False
+    else if (pnlEdit.Components[I] is TDBEditEh) and () then
+    (pnlEdit.Components[I] as TDBEditEh).Checked := False;
+    end;
+  }
+  for I := 0 to ComponentCount - 1 do
+  begin
+    if (Components[I] is TDBCheckBoxEh) and (not Assigned((Components[I] as TDBCheckBoxEh).DataSource)) and
+      ((Components[I] as TDBCheckBoxEh).DataField.IsEmpty) then
+      (Components[I] as TDBCheckBoxEh).Checked := False
+    else if (Components[I] is TDBEditEh) and (not Assigned((Components[I] as TDBEditEh).DataSource)) and
+      ((Components[I] as TDBEditEh).DataField.IsEmpty) then
+      (Components[I] as TDBEditEh).Text := ''
+    else if (Components[I] is TDBLookupComboboxEh) and (not Assigned((Components[I] as TDBLookupComboboxEh).DataSource))
+      and ((Components[I] as TDBLookupComboboxEh).DataField.IsEmpty) then
+      (Components[I] as TDBLookupComboboxEh).Value := null
+    else if (Components[I] is TDBComboBoxEh) and (not Assigned((Components[I] as TDBComboBoxEh).DataSource)) and
+      ((Components[I] as TDBComboBoxEh).DataField.IsEmpty) then
+      (Components[I] as TDBComboBoxEh).Value := null
+    else if (Components[I] is TDBComboBoxEh) and (not Assigned((Components[I] as TDBComboBoxEh).DataSource)) and
+      ((Components[I] as TDBComboBoxEh).DataField.IsEmpty) then
+      (Components[I] as TDBComboBoxEh).Value := null;
   end;
 end;
 

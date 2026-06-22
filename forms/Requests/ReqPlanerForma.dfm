@@ -11,14 +11,12 @@ object ReqPlanerForm: TReqPlanerForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlCalPickerPanel: TPanel
     Left = 0

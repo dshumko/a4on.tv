@@ -13,7 +13,8 @@ uses
   DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh, PropFilerEh, CnErrorProvider,
   PropStorageEh, CustomerInfoFrame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableEh, DBCtrlsEh,
   DBLookupEh,
-  EhLibVCL, GridsEh, DBAxisGridsEh, OkCancel_frame, PrjConst, DM, A4onTypeUnit;
+  EhLibVCL, GridsEh, DBAxisGridsEh, OkCancel_frame, PrjConst, DM, A4onTypeUnit,
+  CnClasses;
 
 type
   TRequestNewForm = class(TForm)
@@ -160,7 +161,7 @@ type
     FReqTempl: Integer;
     FLastFlat: string;
     FDenyCancel: Boolean;
-    FAllowEmptyPhone : Boolean;
+    FAllowEmptyPhone: Boolean;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0): Integer;
     procedure CheckData;
     function FindNearFreeDay: Boolean;
@@ -193,12 +194,13 @@ type
     property FindNode: Boolean read GetFindNode write SetFindNode; // поиск узлов
     property FromRequest: Integer write SetFromRequest;
     property CanCancel: Boolean write SetCanCancel;
+    procedure SetRequestForRocourse(const rc_id: Integer; const RQ_ID: Integer);
   end;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
-  const Phone: string = ''; const notice: string = ''): Integer;
+  const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
 function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
-  const Phone: string = ''; const notice: string = ''): Integer;
+  const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
 function NewRequestFromRequest(const aRequest: Integer = -1): Integer;
 function NewRequestFromPlaner(const plan_date: TDateTime; const TYPE_ID: Integer = -1): Integer;
 function NewNodeRequest(const aNode: Integer = -1; CallBack: TCallBack = nil): Integer;
@@ -216,7 +218,7 @@ uses
   RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
-  const Phone: string = ''; const notice: string = ''): Integer;
+  const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
@@ -241,6 +243,7 @@ begin
     if showModal = mrOk then
     begin
       Result := Request_id;
+      SetRequestForRocourse(rc_id, Request_id);
       if Assigned(CallBack) then
         CallBack;
     end;
@@ -253,7 +256,7 @@ begin
 end;
 
 function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
-  const Phone: string = ''; const notice: string = ''): Integer;
+  const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
 begin
   Result := -1;
   with TRequestNewForm.Create(Application) do
@@ -273,7 +276,10 @@ begin
       mmoNotice.Lines.Text := notice;
 
     if showModal = mrOk then
+    begin
       Result := Request_id;
+      SetRequestForRocourse(rc_id, Request_id);
+    end;
     Free;
   end;
 end;
@@ -302,7 +308,7 @@ function NewRequestFromRequest(const aRequest: Integer = -1): Integer;
 begin
   Result := -1;
   if aRequest = -1 then
-    Exit;
+    exit;
   with TRequestNewForm.Create(Application) do
   begin
     FromRequest := aRequest;
@@ -343,6 +349,29 @@ begin
       Result := Request_id;
     Free;
   end;
+end;
+
+procedure TRequestNewForm.SetRequestForRocourse(const rc_id: Integer; const RQ_ID: Integer);
+begin
+  if (rc_id = -1) or (RQ_ID = -1) then
+    exit;
+
+  with TpFIBQuery.Create(Application) do
+    try
+      DataBase := dmMain.dbTV;
+      Transaction := dmMain.trWriteQ;
+      SQL.Clear;
+      SQL.Add('update Recourse set Rq_Id = :Rq_Id where Rc_Id = :Rc_Id');
+
+      ParamByName('Rc_Id').AsInteger := rc_id;
+      ParamByName('Rq_Id').AsInteger := RQ_ID;
+      Transaction.StartTransaction;
+      ExecQuery;
+      Close;
+      Transaction.Commit;
+    finally
+      Free;
+    end;
 end;
 
 function TRequestNewForm.GetCustomer_ID: Integer;
@@ -609,7 +638,7 @@ var
   notice: string;
 begin
   if varIsNull(lupType.Value) then
-    Exit;
+    exit;
   if SelectRequestWork(lupType.Value, work_id, wname, quant, w_time, w_cost, notice) then
   begin
     if not dsWorks.Active then
@@ -649,7 +678,7 @@ var
   s: string;
 begin
   if dsWorks.FieldByName('NAME').IsNull or dsWorks.FieldByName('W_ID').IsNull then
-    Exit;
+    exit;
 
   CanDelete := FFullAccess;
   // проверим, можно ли удалять работу добавленную автоматически
@@ -685,7 +714,7 @@ begin
   begin
     LupHOUSE.SetFocus;
     LupHOUSE.DropDown;
-    Exit;
+    exit;
   end;
 
   if varIsNull(edFLAT_NO.Value) then
@@ -806,7 +835,7 @@ begin
   else
     cnError.Dispose(luTemplate);
 
-  if ((GetCustomer_ID <> -1) and (cbContact.Text = '') and (Not FAllowEmptyPhone) ) then
+  if ((GetCustomer_ID <> -1) and (cbContact.Text = '') and (Not FAllowEmptyPhone)) then
   begin
     cbContact.SetFocus;
     ExistsError := True;
@@ -816,7 +845,7 @@ begin
     cnError.Dispose(cbContact);
 
   if ExistsError then
-    Exit;
+    exit;
 
   with TpFIBQuery.Create(Nil) do
     try
@@ -961,7 +990,7 @@ begin
         begin
           i := dmMain.GET_ID_REPORT_BY_PATH(PrintForm);
           if i < 0 then
-            Exit;
+            exit;
           // Загрузим отчет из БД
           try
             dmMain.fdsLoadReport.ParamByName('ID_REPORT').Value := i;
@@ -1089,7 +1118,7 @@ var
   NeedSave: Boolean;
 begin
   if (not FAddressRight) and (dmMain.GetSettingsValue('FP_ADDRESS_CHECK') = '1') then
-    Exit;
+    exit;
 
   NeedSave := False;
 
@@ -1139,26 +1168,26 @@ var
   Phone: string;
 begin
   if not FPhoneChanged then
-    Exit;
+    exit;
 
   Phone := Trim(edPhone.Text);
 
   if (Phone = '') or (FCustomerInfo.Customer_id = -1) then
   begin
     FPhoneChanged := False;
-    Exit;
+    exit;
   end;
 
   if (Phone = Trim(FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO)) then
   begin
     FPhoneChanged := False;
-    Exit;
+    exit;
   end;
 
   if (Pos(edPhone.Text, FCustomerInfo.mobile + ',' + FCustomerInfo.PHONE_NO) <> 0) then
   begin
     FPhoneChanged := False;
-    Exit;
+    exit;
   end;
 
   edPhone.OnChange := nil;
@@ -1337,7 +1366,7 @@ var
 begin
   cb := (Sender as TComponent).Owner;
   if not(cb is TDBComboBoxEh) then
-    Exit;
+    exit;
 
   if (cb as TDBComboBoxEh).Tag = 2 then
   begin
@@ -1358,10 +1387,10 @@ end;
 procedure TRequestNewForm.cbContactClick(Sender: TObject);
 begin
   if not(Sender is TDBComboBoxEh) then
-    Exit;
+    exit;
 
   if (Sender as TDBComboBoxEh).Items.Count = 0 then
-    Exit;
+    exit;
 
   if (Sender as TDBComboBoxEh).Tag = 0 then
   begin
@@ -1377,7 +1406,7 @@ end;
 procedure TRequestNewForm.cbContactEnter(Sender: TObject);
 begin
   if not(Sender is TDBComboBoxEh) then
-    Exit;
+    exit;
 
   if not(Sender as TDBComboBoxEh).ListVisible then
   begin
@@ -1421,7 +1450,7 @@ begin
   if (not VarIsNumeric(LupStreets.Value)) then
   begin
     LupStreets.SetFocus;
-    Exit;
+    exit;
   end;
   sid := LupStreets.Value;
   i := EditHouse(-1, sid);
@@ -1467,7 +1496,7 @@ var
 begin
   cb := (Sender as TComponent).Owner;
   if not(cb is TDBLookupComboboxEh) then
-    Exit;
+    exit;
 
   i := (cb as TDBLookupComboboxEh).Tag;
   v := (cb as TDBLookupComboboxEh).ListVisible;
@@ -1503,7 +1532,7 @@ end;
 procedure TRequestNewForm.DBLookupComboboxClick(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
-    Exit;
+    exit;
 
   if (Sender as TDBLookupComboboxEh).Tag = 0 then
   begin
@@ -1535,7 +1564,7 @@ end;
 procedure TRequestNewForm.DBLookupComboboxEnter(Sender: TObject);
 begin
   if not(Sender is TDBLookupComboboxEh) then
-    Exit;
+    exit;
 
   if not(Sender as TDBLookupComboboxEh).ListVisible then
   begin
@@ -1558,47 +1587,55 @@ begin
 
     ShowAddInfo;
   end;
-
 end;
 
 procedure TRequestNewForm.InsertWorks;
 var
   ja: TJsonArray;
   jv: TJsonDataValueHelper;
+  s: String;
 begin
   dsWorks.DisableControls;
   ClearWorks;
 
-  if not dsErrors.FieldByName('WORKS').IsNull then
+  if (not dsErrors.FieldByName('WORKS').IsNull) and (not dsErrors.FieldByName('WORKS').AsString.IsEmpty) then
   begin
-    ja := (TJsonObject.Parse(dsErrors['WORKS']) as TJsonArray);
+    s := dsErrors.FieldByName('WORKS').AsString;
     try
-      if (ja.Count > 0) then
-      begin
-        if not dsAllWorks.Active then
-          dsAllWorks.Open;
-
-        if dsAllWorks.RecordCount > 0 then
+      ja := (TJsonObject.Parse(s) as TJsonArray);
+      try
+        if (ja.Count > 0) then
         begin
-          for jv in ja do
+          if not dsAllWorks.Active then
+            dsAllWorks.Open;
+
+          if dsAllWorks.RecordCount > 0 then
           begin
-            if dsAllWorks.Locate('W_ID', jv.i['i'], []) then
+            for jv in ja do
             begin
-              dsWorks.Append;
-              dsWorks['W_ID'] := dsAllWorks['W_ID'];
-              dsWorks['name'] := dsAllWorks['NAME'];
-              dsWorks['quant'] := jv.f['q'];
-              dsWorks['w_time'] := dsAllWorks['W_TIME'];
-              dsWorks['w_cost'] := dsAllWorks['W_COST'];
-              if (jv.s['n'] <> '') then
-                dsWorks['notice'] := jv.s['n'];
-              dsWorks.Post;
+              if dsAllWorks.Locate('W_ID', jv.i['i'], []) then
+              begin
+                dsWorks.Append;
+                dsWorks['W_ID'] := dsAllWorks['W_ID'];
+                dsWorks['name'] := dsAllWorks['NAME'];
+                dsWorks['quant'] := jv.f['q'];
+                dsWorks['w_time'] := dsAllWorks['W_TIME'];
+                dsWorks['w_cost'] := dsAllWorks['W_COST'];
+                if (jv.s['n'] <> '') then
+                  dsWorks['notice'] := jv.s['n'];
+                dsWorks.Post;
+              end;
             end;
           end;
         end;
+      finally
+        ja.Free;
       end;
-    finally
-      ja.Free;
+    except
+      if dsErrors.RecordCount > 0 then
+      begin
+        s := 'update REQUEST_TEMPLATES set WORKS = null where RQTL_ID = :ID';
+      end;
     end;
   end;
   dsWorks.EnableControls;
@@ -1608,7 +1645,7 @@ procedure TRequestNewForm.luTemplateEditButtons0Click(Sender: TObject; var Handl
 begin
   Handled := True;
   if lupType.Text = '' then
-    Exit;
+    exit;
 
   if ReguestTemplateModify(-1, dsRequestType['RT_ID']) > -1 then
     dsErrors.CloseOpen(True);
@@ -1716,7 +1753,7 @@ var
 begin
   Result := False;
   if varIsNull(LupHOUSE.Value) then
-    Exit;
+    exit;
   isSet := False;
   with TpFIBQuery.Create(Nil) do
     try
@@ -1786,7 +1823,7 @@ begin
   if dsErrors.FieldByName('ADD_FIELD').IsNull then
   begin
     pnlAddInfo.Visible := False;
-    Exit;
+    exit;
   end;
 
   s := dsErrors['ADD_FIELD'];

@@ -66,6 +66,12 @@ type
     srcEPoint: TDataSource;
     lcbEpoint: TDBLookupComboboxEh;
     lbl21: TLabel;
+    dsAttributes: TpFIBDataSet;
+    srcAttributes: TDataSource;
+    chkCUST_NOT_ATTRIBUTE: TDBCheckBoxEh;
+    lbl2: TLabel;
+    lcbCUST_ATTRIBUTE: TDBLookupComboboxEh;
+    edtATTRIB_VALUE: TDBEditEh;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -105,6 +111,7 @@ begin
   dsSubArea.Close;
   dsNodeType.Close;
   dsEPoint.Close;
+  dsAttributes.Close;
 end;
 
 procedure TNodesFilterForm.FormCreate(Sender: TObject);
@@ -147,7 +154,7 @@ begin
   dsSubArea.Open;
   dsNodeType.Open;
   dsEPoint.Open;
-
+  dsAttributes.Open;
   pgcFilter.ActivePage := tsFilter;
 end;
 

@@ -14,13 +14,11 @@ object MatDocUnitForm: TMatDocUnitForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = True
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object splPG: TSplitter
     Left = 0

@@ -1,23 +1,28 @@
 inherited TimeSeriesForm: TTimeSeriesForm
   Caption = #1061#1088#1086#1085#1086#1083#1086#1075#1080#1095#1077#1089#1082#1080#1077' '#1076#1072#1085#1085#1099#1077
-  ClientHeight = 513
+  ClientHeight = 469
   ClientWidth = 777
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 793
+  ExplicitHeight = 508
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 129
     Width = 777
+    ExplicitTop = 129
+    ExplicitWidth = 777
   end
   object spl1: TSplitter [1]
     Left = 476
     Top = 133
     Width = 4
-    Height = 380
+    Height = 336
+    ExplicitHeight = 380
   end
   inherited dbGrid: TDBGridEh
     Top = 133
     Width = 476
-    Height = 380
+    Height = 336
     Align = alLeft
     Columns = <
       item
@@ -43,10 +48,14 @@ inherited TimeSeriesForm: TTimeSeriesForm
   end
   inherited tlbMain: TToolBar
     Width = 777
+    ExplicitWidth = 777
   end
   inherited pnlEdit: TPanel
     Width = 777
     Height = 104
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 777
+    ExplicitHeight = 104
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -57,10 +66,14 @@ inherited TimeSeriesForm: TTimeSeriesForm
     inherited btnSaveLink: TBitBtn
       Top = 76
       Width = 591
+      ExplicitTop = 76
+      ExplicitWidth = 591
     end
     inherited btnCancelLink: TBitBtn
       Left = 682
       Top = 76
+      ExplicitLeft = 682
+      ExplicitTop = 76
     end
     object edtName: TDBEditEh
       Left = 97
@@ -99,7 +112,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
     Left = 480
     Top = 133
     Width = 297
-    Height = 380
+    Height = 336
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
@@ -145,11 +158,12 @@ inherited TimeSeriesForm: TTimeSeriesForm
       Left = 0
       Top = 33
       Width = 297
-      Height = 347
+      Height = 303
       Align = alClient
       DataSource = srcValues
       DynProps = <>
       Flat = True
+      OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines]
       TabOrder = 1
       TitleParams.MultiTitle = True
       Columns = <

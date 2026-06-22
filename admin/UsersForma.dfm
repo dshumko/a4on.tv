@@ -12,7 +12,6 @@ object UsersForm: TUsersForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
@@ -20,7 +19,6 @@ object UsersForm: TUsersForm
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pc: TPageControl
     Left = 0
@@ -401,6 +399,58 @@ object UsersForm: TUsersForm
                 FieldName = 'NAME'
                 Footers = <>
                 Title.Caption = #1058#1080#1087' '#1079#1072#1103#1074#1086#1082
+                Title.TitleButton = True
+                Title.SortIndex = 1
+                Title.SortMarker = smUpEh
+                Width = 319
+              end>
+            object RowDetailData: TRowDetailPanelControlEh
+            end
+          end
+        end
+        object tsRec: TTabSheet
+          Caption = #1058#1080#1087#1099' '#1086#1073#1088#1072#1097#1077#1085#1080#1081
+          ImageIndex = 4
+          object dbgRecourses: TDBGridEh
+            Left = 0
+            Top = 0
+            Width = 580
+            Height = 431
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            DataSource = srcRecourses
+            DynProps = <>
+            Flat = True
+            FooterParams.Color = clWindow
+            GridLineParams.VertEmptySpaceStyle = dessNonEh
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+            SearchPanel.Enabled = True
+            STFilter.Local = True
+            STFilter.Visible = True
+            TabOrder = 0
+            OnExit = dbgRightsExit
+            OnGetCellParams = dbgReportsGetCellParams
+            Columns = <
+              item
+                AutoFitColWidth = False
+                CellButtons = <>
+                Checkboxes = True
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'RALLOWED'
+                Footers = <>
+                Title.Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100
+                Title.TitleButton = True
+                Width = 109
+              end
+              item
+                CellButtons = <>
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'NAME'
+                Footers = <>
+                Title.Caption = #1058#1080#1087' '#1086#1073#1088#1072#1097#1077#1085#1080#1081' / '#1079#1074#1086#1085#1082#1086#1074
                 Title.TitleButton = True
                 Title.SortIndex = 1
                 Title.SortMarker = smUpEh
@@ -860,7 +910,7 @@ object UsersForm: TUsersForm
               object lbl2: TLabel
                 Left = 0
                 Top = 0
-                Width = 337
+                Width = 89
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -984,7 +1034,7 @@ object UsersForm: TUsersForm
               object lbl1: TLabel
                 Left = 0
                 Top = 0
-                Width = 548
+                Width = 104
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '
@@ -2477,6 +2527,94 @@ object UsersForm: TUsersForm
     DataSource = srcGroups
     Left = 760
     Top = 220
+    WaitEndMasterScroll = True
+    dcForceMasterRefresh = True
+    dcForceOpen = True
+    oFetchAll = True
+  end
+  object srcRecourses: TDataSource
+    DataSet = dsRecourses
+    Left = 688
+    Top = 356
+  end
+  object dsRecourses: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'execute block ('
+      '    GROUP_ID  integer = :GROUP_ID,'
+      '    MODULE_ID integer = :id_MODULE,'
+      '    rALLOWED  integer = :rALLOWED)'
+      'as'
+      'begin'
+      
+        '  if ((not(rALLOWED is null)) and (not(GROUP_ID is null)) and (n' +
+        'ot(MODULE_ID is null))) then begin'
+      '    if (rALLOWED = 1) then begin'
+      
+        '      insert into Sys$Group_Rights (Group_Id, Rights_Type, Right' +
+        '_Id)'
+      '      values (:GROUP_ID, 4, :MODULE_ID);'
+      '    end'
+      '    else begin'
+      '      delete from Sys$Group_Rights where Rights_Type = 4'
+      '            and Right_Id = :MODULE_ID'
+      '            and Group_Id = :Group_Id;'
+      '    end'
+      '  end'
+      'end')
+    InsertSQL.Strings = (
+      'execute block ('
+      '    GROUP_ID  integer = :GROUP_ID,'
+      '    MODULE_ID integer = :id_MODULE,'
+      '    rALLOWED  integer = :rALLOWED)'
+      'as'
+      'begin'
+      
+        '  if ((not(rALLOWED is null)) and (not(GROUP_ID is null)) and (n' +
+        'ot(MODULE_ID is null))) then begin'
+      '    if (rALLOWED = 1) then begin'
+      
+        '      insert into Sys$Group_Rights (Group_Id, Rights_Type, Right' +
+        '_Id)'
+      '      values (:GROUP_ID, 4, :MODULE_ID);'
+      '    end'
+      '    else begin'
+      '      delete from Sys$Group_Rights where Rights_Type = 4'
+      '            and Right_Id = :MODULE_ID'
+      '            and Group_Id = :Group_Id;'
+      '    end'
+      '  end'
+      'end')
+    RefreshSQL.Strings = (
+      'select'
+      '  m.Rt_Id Id_Module,'
+      '  m.Rt_Name Name,'
+      '  coalesce(gr.Group_Id,:ID) Group_Id ,'
+      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      'from Request_Types m'
+      
+        '  left outer join Sys$Group_Rights gr on (m.Rt_Id = gr.Right_Id ' +
+        'and gr.Rights_Type = 3 and gr.Group_Id = :ID)'
+      'where m.Rt_Id = :old_Id_Module')
+    SelectSQL.Strings = (
+      'select'
+      '  o.O_Id Id_Module,'
+      '  o.O_Name Name,'
+      '  coalesce(gr.Group_Id,:ID) Group_Id ,'
+      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      'from objects o'
+      
+        '  left outer join Sys$Group_Rights gr on (o.O_Id = gr.Right_Id a' +
+        'nd gr.Rights_Type = 4 and gr.Group_Id = :ID)'
+      'where o.O_TYPE = 8'
+      '  and O_DELETED = 0'
+      'order by o.O_Name')
+    Transaction = dmMain.trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = dmMain.trWrite
+    AutoCommit = True
+    DataSource = srcGroups
+    Left = 752
+    Top = 356
     WaitEndMasterScroll = True
     dcForceMasterRefresh = True
     dcForceOpen = True

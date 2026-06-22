@@ -2,27 +2,32 @@ inherited ElectroPointForm: TElectroPointForm
   Left = 381
   Top = 171
   Caption = #1058#1086#1095#1082#1080' '#1091#1095#1077#1090#1072' '#1101#1083#1077#1082#1090#1088#1086#1101#1085#1077#1088#1075#1080#1080
-  ClientHeight = 530
+  ClientHeight = 579
   ClientWidth = 939
   Menu = mmMenu
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 955
+  ExplicitHeight = 618
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 939
+    ExplicitTop = 193
+    ExplicitWidth = 939
   end
   object spl1: TSplitter [1]
     Left = 0
-    Top = 301
+    Top = 350
     Width = 939
     Height = 3
     Cursor = crVSplit
     Align = alBottom
+    ExplicitTop = 301
   end
   inherited dbGrid: TDBGridEh
     Top = 197
     Width = 939
-    Height = 104
+    Height = 153
     AllowedOperations = [alopUpdateEh]
     FooterRowCount = 1
     SumList.Active = True
@@ -139,41 +144,53 @@ inherited ElectroPointForm: TElectroPointForm
   end
   inherited tlbMain: TToolBar
     Width = 939
+    ExplicitWidth = 939
     inherited ToolButton5: TToolButton
       Width = 8
+      ExplicitWidth = 8
     end
     inherited ToolButton6: TToolButton
       Left = 59
       Width = 8
       Visible = False
+      ExplicitLeft = 59
+      ExplicitWidth = 8
     end
     inherited btnDelete: TToolButton
       Left = 67
+      ExplicitLeft = 67
     end
     inherited ToolButton9: TToolButton
       Left = 90
       Visible = False
+      ExplicitLeft = 90
     end
     inherited tbOk: TToolButton
       Left = 105
       Visible = False
+      ExplicitLeft = 105
     end
     inherited ToolButton10: TToolButton
       Left = 128
       Visible = False
+      ExplicitLeft = 128
     end
     inherited tbCancel: TToolButton
       Left = 132
       Visible = False
+      ExplicitLeft = 132
     end
     inherited ToolButton20: TToolButton
       Left = 155
+      ExplicitLeft = 155
     end
     inherited btnQuickFilter: TToolButton
       Left = 163
+      ExplicitLeft = 163
     end
     inherited sep444: TToolButton
       Left = 186
+      ExplicitLeft = 186
     end
     object btnSetCountersValue: TToolButton
       Left = 194
@@ -198,6 +215,9 @@ inherited ElectroPointForm: TElectroPointForm
     Width = 939
     Height = 168
     ParentCtl3D = False
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 939
+    ExplicitHeight = 168
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -246,6 +266,9 @@ inherited ElectroPointForm: TElectroPointForm
       Top = 135
       Width = 744
       TabOrder = 6
+      ExplicitLeft = 82
+      ExplicitTop = 135
+      ExplicitWidth = 744
     end
     inherited btnCancelLink: TBitBtn
       Left = 832
@@ -253,6 +276,9 @@ inherited ElectroPointForm: TElectroPointForm
       Width = 98
       Cancel = True
       TabOrder = 7
+      ExplicitLeft = 832
+      ExplicitTop = 135
+      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 82
@@ -387,13 +413,14 @@ inherited ElectroPointForm: TElectroPointForm
   end
   object pgcInfo: TPageControl [5]
     Left = 0
-    Top = 304
+    Top = 353
     Width = 939
     Height = 226
-    ActivePage = tsCoverage
+    ActivePage = tsNodes
     Align = alBottom
     TabOrder = 3
     OnChange = pgcInfoChange
+    ExplicitTop = 333
     object tsCoverage: TTabSheet
       Caption = #1055#1086#1082#1072#1079#1072#1085#1080#1103
       object pnlButtons: TPanel
@@ -733,10 +760,11 @@ inherited ElectroPointForm: TElectroPointForm
         object lbl4: TLabel
           Left = 0
           Top = 0
-          Width = 124
+          Width = 185
           Height = 13
           Align = alTop
           Caption = #1048#1089#1090#1086#1088#1080#1103' '#1087#1086#1082#1072#1079#1072#1085#1080#1081' '#1091#1079#1083#1072
+          ExplicitWidth = 124
         end
         object dbgNPce: TDBGridEh
           Left = 0
@@ -772,6 +800,110 @@ inherited ElectroPointForm: TElectroPointForm
             end>
           object RowDetailData: TRowDetailPanelControlEh
           end
+        end
+      end
+    end
+    object tsAttr: TTabSheet
+      Caption = #1040#1090#1088#1080#1073#1091#1090#1099
+      ImageIndex = 2
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 26
+        Height = 198
+        Align = alLeft
+        BevelOuter = bvNone
+        TabOrder = 0
+        DesignSize = (
+          26
+          198)
+        object SpeedButton2: TSpeedButton
+          Left = 2
+          Top = 115
+          Width = 22
+          Height = 22
+          Anchors = [akLeft, akBottom]
+          Flat = True
+          Layout = blGlyphTop
+        end
+        object btnAAdd: TSpeedButton
+          Left = 2
+          Top = 3
+          Width = 22
+          Height = 22
+          Action = actAAdd
+          Flat = True
+        end
+        object btnAEdit: TSpeedButton
+          Left = 2
+          Top = 31
+          Width = 22
+          Height = 22
+          Action = actAEdit
+          Flat = True
+        end
+        object btnADel: TSpeedButton
+          Left = 2
+          Top = 173
+          Width = 22
+          Height = 22
+          Action = actADel
+          Anchors = [akLeft, akBottom]
+          Flat = True
+          Layout = blGlyphTop
+        end
+      end
+      object dbgAttr: TDBGridEh
+        Left = 26
+        Top = 0
+        Width = 905
+        Height = 198
+        Align = alClient
+        AllowedOperations = []
+        DataSource = srcAttributes
+        DynProps = <>
+        Flat = True
+        FooterParams.Color = clWindow
+        GridLineParams.VertEmptySpaceStyle = dessNonEh
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
+        SearchPanel.Enabled = True
+        TabOrder = 1
+        TitleParams.MultiTitle = True
+        Columns = <
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'O_NAME'
+            Footers = <>
+            Title.Caption = #1040#1090#1088#1080#1073#1091#1090
+            Title.TitleButton = True
+            Title.SortIndex = 1
+            Title.SortMarker = smDownEh
+            Width = 82
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'AVALUE'
+            Footers = <>
+            Title.Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+            Title.TitleButton = True
+            Width = 129
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'NOTICE'
+            Footers = <>
+            Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+            Title.TitleButton = True
+            Width = 275
+          end>
+        object RowDetailData: TRowDetailPanelControlEh
         end
       end
     end
@@ -1301,7 +1433,6 @@ inherited ElectroPointForm: TElectroPointForm
       '  order by o.O_Name')
     Transaction = trRead
     Database = dmMain.dbTV
-    UpdateTransaction = dmMain.trWrite
     Left = 633
     Top = 424
     oFetchAll = True
@@ -1311,5 +1442,64 @@ inherited ElectroPointForm: TElectroPointForm
     DataSet = dsTarif
     Left = 630
     Top = 376
+  end
+  object srcAttributes: TDataSource
+    DataSet = dsAttributes
+    Left = 207
+    Top = 459
+  end
+  object ActAttrList: TActionList
+    Images = A4MainForm.ICONS_ACTIVE
+    Left = 350
+    Top = 461
+    object actAAdd: TAction
+      ImageIndex = 2
+      OnExecute = actAAddExecute
+    end
+    object actAEdit: TAction
+      ImageIndex = 4
+      OnExecute = actAEditExecute
+    end
+    object actADel: TAction
+      ImageIndex = 3
+      OnExecute = actADelExecute
+    end
+  end
+  object dsAttributes: TpFIBDataSet
+    DeleteSQL.Strings = (
+      'update'
+      '    ATTRIBUTE'
+      'set ADELETED = 1    '
+      'WHERE'
+      '        TYPE_ID = :OLD_TYPE_ID'
+      '    and OBJECT_ID = :OLD_OBJECT_ID'
+      '    and AID = :OLD_AID'
+      '    ')
+    RefreshSQL.Strings = (
+      'SELECT A.O_NAME, CA.*'
+      'FROM attribute CA'
+      
+        '   INNER JOIN OBJECTS A ON (A.O_ID = CA.Aid and a.O_Type = ca.Ty' +
+        'pe_Id)'
+      'where CA.TYPE_ID = :OLD_TYPE_ID'
+      '    and CA.OBJECT_ID = :OLD_O_ID'
+      '    and CA.AID = :OLD_AID'
+      ''
+      '    ')
+    SelectSQL.Strings = (
+      'SELECT A.O_NAME, CA.Object_Id O_ID,  CA.*'
+      'FROM attribute CA'
+      
+        '   INNER JOIN OBJECTS A ON (A.O_ID = CA.Aid and a.O_Type = ca.Ty' +
+        'pe_Id)'
+      'where CA.Object_Id = :O_Id and ca.Type_Id = 80 and ADELETED = 0')
+    AutoCalcFields = False
+    Transaction = trRead
+    Database = dmMain.dbTV
+    UpdateTransaction = trWrite
+    AutoCommit = True
+    DataSource = srcDataSource
+    Left = 267
+    Top = 501
   end
 end

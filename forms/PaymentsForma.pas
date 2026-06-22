@@ -129,7 +129,8 @@ type
     FullAccess: Boolean;
     FTodayOnly: Boolean;
     FOnlyTheir: Boolean;
-    FPersonalData: Boolean;
+    FHidePersonalData: Boolean;
+    FHidePersonalName: Boolean;
     FShowLCPS: Boolean;
     procedure SetPaymentsFilter;
   public
@@ -293,7 +294,10 @@ var
   vBalance: Boolean;
   Font_size: Integer;
   Font_name: string;
+  c: Integer;
+  ShowToolTips: Boolean;
 begin
+  ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
   begin
     Font_size := i;
@@ -304,6 +308,14 @@ begin
       begin
         (Components[i] as TDBGridEh).Font.Name := Font_name;
         (Components[i] as TDBGridEh).Font.Size := Font_size;
+        if ShowToolTips then
+        begin
+          if (not Assigned((Components[i] as TDBGridEh).OnDataHintShow)) then
+            (Components[i] as TDBGridEh).OnDataHintShow := A4MainForm.dbGridEhDataHintShow;
+          (Components[i] as TDBGridEh).ShowHint := true;
+          for c := 0 to (Components[i] as TDBGridEh).Columns.Count - 1 do
+            (Components[i] as TDBGridEh).Columns[c].ToolTips := true;
+        end;
       end
       else if (Components[i] is TMemo) then
       begin
@@ -331,7 +343,8 @@ begin
 
   // права пользователей
   FullAccess := dmMain.AllowedAction(rght_Pays_full);
-  FPersonalData := (not dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
+  FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
   vSF := dmMain.AllowedAction(rght_Pays_add) or FTodayOnly; // добавление
   actPayDocNew.Visible := (vSF or FullAccess);
   actPayDocEdit.Visible := (vSF or FullAccess);
@@ -384,8 +397,8 @@ end;
 
 procedure TPaymentsForm.dbgPaymentsColumns2GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
 begin
-  if (not FPersonalData) and (not Params.Text.IsEmpty) then
-    Params.Text := HideSurname(Params.Text);
+  if (FHidePersonalData or FHidePersonalName) and (not Params.Text.IsEmpty) then
+    Params.Text := HideFullName(Params.Text, FHidePersonalData, FHidePersonalName);
 end;
 
 procedure TPaymentsForm.dbgPaymentsDataGroupGetRowText(Sender: TCustomDBGridEh; GroupDataTreeNode: TGroupDataTreeNodeEh;

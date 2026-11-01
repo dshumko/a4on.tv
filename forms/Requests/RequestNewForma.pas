@@ -18,8 +18,8 @@ uses
 
 type
   TRequestNewForm = class(TForm)
-    pnlAdresInfo: TPanel;
-    pnlAdres: TPanel;
+    pnlAddressInfo: TPanel;
+    pnlAddress: TPanel;
     lbl1: TLabel;
     lbl3: TLabel;
     lbl4: TLabel;
@@ -178,7 +178,7 @@ type
     procedure SetReqTempl(Value: Integer);
     procedure ShowReqForAdres(HOUSE_ID: Integer; plan_date: Variant);
     procedure ShowAddInfo;
-    procedure AplySortSameReq(const AdresSort: Boolean = False);
+    procedure AplySortSameReq(const AddressSort: Boolean = False);
     function SavePhone(Const Phone: String): String;
     procedure SetPhonesCB(const list: String);
     procedure InitDataSetFilters;
@@ -199,7 +199,7 @@ type
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
   const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
-function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
+function NewRequestByAddress(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
   const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
 function NewRequestFromRequest(const aRequest: Integer = -1): Integer;
 function NewRequestFromPlaner(const plan_date: TDateTime; const TYPE_ID: Integer = -1): Integer;
@@ -215,7 +215,7 @@ uses
   System.StrUtils, System.DateUtils, System.MaskUtils, JsonDataObjects,
   SelectDateForma, pFIBQuery, ReqAddWorkForma, MAIN, FIBQuery, pFIBProps,
   AtrStrUtils, AtrCommon, HouseForma, StreetEditForma, CF,
-  RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma;
+  RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma, AtrEhLibAddons;
 
 function NewRequest(const aCustomer: Integer = -1; CallBack: TCallBack = nil; const FindNodes: Boolean = False;
   const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
@@ -238,7 +238,7 @@ begin
     end;
 
     if not notice.IsEmpty then
-      mmoNotice.Lines.Text := notice;
+      mmoContent.Lines.Text := notice; // mmoNotice
 
     if showModal = mrOk then
     begin
@@ -255,7 +255,7 @@ begin
   end;
 end;
 
-function NewRequestByAdres(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
+function NewRequestByAddress(const Street_ID: Integer = -1; const HOUSE_ID: Integer = -1; const Flat: String = '';
   const Phone: string = ''; const notice: string = ''; const rc_id: Integer = -1): Integer;
 begin
   Result := -1;
@@ -273,7 +273,7 @@ begin
     end;
 
     if not notice.IsEmpty then
-      mmoNotice.Lines.Text := notice;
+      mmoContent.Lines.Text := notice; // mmoNotice
 
     if showModal = mrOk then
     begin
@@ -333,7 +333,7 @@ begin
     edtPLANDATE.Value := rd;
     edtPLANDATE.Enabled := False;
     actDateSelect.Enabled := False;
-    mmoNotice.Lines.Text := notice;
+    mmoContent.Lines.Text := notice;
 
     CanCancel := CanClose;
 
@@ -614,17 +614,17 @@ begin
     if FCustomerInfo.floor_n <> '' then
       EdFloor.Text := FCustomerInfo.floor_n;
 
-    ActiveControl := EdPorch;
-    if EdPorch.Text = '' then
-      ActiveControl := EdPorch
-    else
+    ActiveControl := lupType;
+    if (dmMain.GetSettingsValue('REQUEST_P_F_DISBLE') <> '1') then
     begin
       if EdPorch.Text = '' then
         ActiveControl := EdPorch
       else
-        ActiveControl := lupType;
+      begin
+        if EdFloor.Text = '' then
+          ActiveControl := EdFloor
+      end;
     end;
-
   end;
 end;
 
@@ -729,7 +729,7 @@ begin
     fn := -1
   else
     fn := 0;
-  FCustomerInfo := dmMain.FindCustomerAtAdress(LupHOUSE.Value, Flat, fn, p, f);
+  FCustomerInfo := dmMain.FindCustomerAtAddress(LupHOUSE.Value, Flat, fn, p, f);
 
   CustomerInfoFrm.Customer := FCustomerInfo;
   if FCustomerInfo.Customer_id > -1 then
@@ -933,7 +933,6 @@ begin
           end;
           dsWorks.Next;
         end;
-        allFine := True;
       end;
 
       // если автоматом создавать заявку на узел, то создадим ее
@@ -1337,6 +1336,9 @@ begin
     dmMain.AllowedAction(rght_Dictionary_ReqType));
   luTemplate.EditButtons[0].Visible := (dmMain.AllowedAction(rght_Dictionary_full) or
     dmMain.AllowedAction(rght_Dictionary_ReqTemplate));
+
+  EdPorch.TabStop := (dmMain.GetSettingsValue('REQUEST_P_F_DISBLE') <> '1');
+  EdFloor.TabStop := EdPorch.TabStop;
 end;
 
 procedure TRequestNewForm.frmOkCancelbbCancelClick(Sender: TObject);
@@ -1531,18 +1533,7 @@ end;
 
 procedure TRequestNewForm.DBLookupComboboxClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TRequestNewForm.lupTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -1563,14 +1554,7 @@ end;
 
 procedure TRequestNewForm.DBLookupComboboxEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-  begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TRequestNewForm.luTemplateChange(Sender: TObject);
@@ -1666,20 +1650,20 @@ begin
   AplySortSameReq(False);
 end;
 
-procedure TRequestNewForm.AplySortSameReq(const AdresSort: Boolean = False);
+procedure TRequestNewForm.AplySortSameReq(const AddressSort: Boolean = False);
 var
   isOpen: Boolean;
 begin
   isOpen := dsSame.Active;
   if isOpen then
     dsSame.Close;
-  if AdresSort then
-    dsSame.ParamByName('FILTER').AsString := ' ( exists(select H1.HOUSE_ID ' +
-      ' from HOUSE H1 where H1.HOUSE_ID = R.HOUSE_ID and exists(select h2.STREET_ID from HOUSE h2 ' +
-      ' where H2.STREET_ID = H1.STREET_ID and HOUSE_ID = :HOUSE_ID))) '
+
+  if AddressSort then
+    dsSame.ParamByName('FILTER').AsString :=
+      'exists(select H1.HOUSE_ID from HOUSE H1 where H1.HOUSE_ID = R.HOUSE_ID and exists(select h2.STREET_ID from HOUSE h2 where H2.STREET_ID = H1.STREET_ID and h2.HOUSE_ID = :HOUSE_ID))'
   else
     dsSame.ParamByName('FILTER').AsString :=
-      ' (exists(select WG_ID from HOUSE where WG_ID = H.WG_ID and HOUSE_ID = :HOUSE_ID)) ';
+      ' (exists(select WG_ID from HOUSE h1 where h1.WG_ID = H.WG_ID and h1.HOUSE_ID = :HOUSE_ID)) ';
   if isOpen then
     dsSame.Open;
 end;
@@ -1799,20 +1783,19 @@ begin
 end;
 
 procedure TRequestNewForm.ShowReqForAdres(HOUSE_ID: Integer; plan_date: Variant);
-var
-  i: Integer;
 begin
   if dsSame.Active then
     dsSame.Close;
 
   dsSame.ParamByName('RQ_ID').AsInteger := -1;
-  if dsSame.ParamExist('HOUSE_ID', i) then
-    dsSame.Params[i].AsInteger := HOUSE_ID;
+  if Assigned(dsSame.FindParam('HOUSE_ID')) then
+    dsSame.ParamByName('HOUSE_ID').AsInteger := HOUSE_ID;
 
   if varIsNull(plan_date) then
     dsSame.ParamByName('RQ_PLAN_DATE').Clear
   else
     dsSame.ParamByName('RQ_PLAN_DATE').AsDate := plan_date;
+
   dsSame.Open;
 end;
 

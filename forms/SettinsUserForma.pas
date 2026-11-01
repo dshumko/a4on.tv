@@ -60,6 +60,10 @@ type
     lbl3: TLabel;
     cbStyles: TDBComboBoxEh;
     chkShowToolTips: TCheckBox;
+    cbCallDirect: TDBComboBoxEh;
+    chkAutoDropDown: TCheckBox;
+    lbl21: TLabel;
+    ednSearchTimer: TDBNumberEditEh;
     procedure frmOkCancelbbOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbAutoClick(Sender: TObject);
@@ -153,6 +157,7 @@ procedure TSettingsUserForm.FormShow(Sender: TObject);
 
 var
   i: Integer;
+  f: Double;
   s: String;
 begin
   CreateStyleItems;
@@ -213,7 +218,13 @@ begin
   else
     ednRH.Value := 0;
 
+  if TryStrToFloat(dmMain.GetIniValue('SEARCH_TIMER'), f) then
+     ednSearchTimer.Value := f
+  else
+     ednSearchTimer.Value := 3;
+
   chkShowToolTips.Checked := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
+  chkAutoDropDown.Checked := (dmMain.GetIniValue('AUTODROPDOWN') = '1');
 
   if not TryStrToInt(dmMain.GetIniValue('BUTTONS'), i) then
     i := 0;
@@ -230,6 +241,12 @@ begin
   s := dmMain.GetIniValue('AppStyle');
   // if not s.IsEmpty then
   cbStyles.Text := s;
+
+  if dmMain.GetSettingsValue('RECOURSE_DIRECT') = '1' then
+  begin
+    if TryStrToInt(dmMain.GetIniValue('CALL_DIRECT'), i) then
+      cbCallDirect.Value := i;
+  end;
 end;
 
 procedure TSettingsUserForm.frmOkCancelbbOkClick(Sender: TObject);
@@ -297,11 +314,27 @@ begin
   else
     dmMain.SetIniValue('SHOW_TOOLTIPS', '0');
 
+  if chkAutoDropDown.Checked then
+    dmMain.SetIniValue('AUTODROPDOWN', '1')
+  else
+    dmMain.SetIniValue('AUTODROPDOWN', '0');
+
+
+  dmMain.SetIniValue('SEARCH_TIMER', ednSearchTimer.Text);
+
   dmMain.SetIniValue('FONT_SIZE', IntToStr(btnFont.Font.Size));
   dmMain.SetIniValue('FONT_NAME', btnFont.Font.name);
   dmMain.SetIniValue('ROW_HEIGHT', ednRH.Text);
   if cbStyles.Text <> '' then
     dmMain.SetIniValue('AppStyle', cbStyles.Text);
+
+  if dmMain.GetSettingsValue('RECOURSE_DIRECT') = '1' then
+  begin
+    if cbCallDirect.Text.IsEmpty then
+      dmMain.SetIniValue('CALL_DIRECT', '0')
+    else
+      dmMain.SetIniValue('CALL_DIRECT', cbCallDirect.Value);
+  end;
 
   ModalResult := mrOk;
 end;

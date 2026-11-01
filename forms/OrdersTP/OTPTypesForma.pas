@@ -10,7 +10,7 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh, DBCtrlsEh, MemTableDataEh, MemTableEh, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TOTPTypesForm = class(TGridForm)
@@ -321,8 +321,9 @@ begin
           mtAddons['dc'] := JO.A['Params'].O[i].i['dc']
         else
           mtAddons['dc'] := 0;
-        if JO.A['Params'].O[i].Contains('rc') then
-          mtAddons['rc'] := JO.A['Params'].O[i].i['rc']
+        if JO.A['Params'].O[i].Contains('rc') then begin
+          mtAddons['rc'] := JO.A['Params'].O[i].i['rc'];
+        end
         else
           mtAddons['rc'] := 0;
         mtAddons.Post;

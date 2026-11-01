@@ -14,7 +14,6 @@ object CustomersFilterForm: TCustomersFilterForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -22,7 +21,6 @@ object CustomersFilterForm: TCustomersFilterForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -1677,13 +1675,12 @@ object CustomersFilterForm: TCustomersFilterForm
       object lbl2: TLabel
         Left = 0
         Top = 0
-        Width = 602
+        Width = 581
         Height = 13
         Align = alTop
         Caption = 
           #1055#1086#1079#1074#1086#1083#1103#1077#1090' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1079#1072#1087#1088#1086#1089' SQL '#1076#1083#1103' '#1091#1089#1090#1072#1085#1086#1074#1082#1080' '#1089#1083#1086#1078#1085#1099#1093' '#1092#1080#1083#1100#1090#1088#1086#1074 +
           ' ('#1076#1086#1083#1078#1077#1085' '#1074#1099#1076#1074#1072#1074#1090#1100' '#1089#1087#1080#1089#1086#1082' CUSTOMER_ID)'
-        ExplicitWidth = 581
       end
       object memSQL: TDBSynEdit
         Left = 0
@@ -2216,10 +2213,10 @@ object CustomersFilterForm: TCustomersFilterForm
     object miCut1: TMenuItem
       Action = A4MainForm.EditCut1
     end
-    object Copy1: TMenuItem
+    object miactCnPrefixWizard: TMenuItem
       Action = A4MainForm.EditCopy1
     end
-    object Paste1: TMenuItem
+    object miactCnPrefixWizard1: TMenuItem
       Action = A4MainForm.EditPaste1
     end
     object SelectAll1: TMenuItem

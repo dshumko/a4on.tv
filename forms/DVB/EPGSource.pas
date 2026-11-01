@@ -112,7 +112,6 @@ type
     procedure OnMonitor(Sender: TObject; Writing: Boolean; const Buffer: TMemory; Len: Integer);
     procedure LoadMapFromDB;
     procedure LoadGenreMapFromDB;
-    function GetFileFormat(const aFileName: String): string;
   public
     property SourceId: Integer read fSourceId write SetSource default -1;
   end;
@@ -126,7 +125,7 @@ uses
 {$IFNDEF VER300}
   EConsts, ETypes, EClasses, EHash, ESysInfo, ESend, ESendAPIMantis,
 {$ENDIF}
-  DM, AtrStrUtils, AtrCommon, JsonDataObjects, sevenzip;
+  DM, AtrStrUtils, AtrCommon, JsonDataObjects;
 
 {$R *.dfm}
 
@@ -748,7 +747,7 @@ begin
     if canOpen then
     begin
       try
-        fTmpFilename := GetFileFormat(fTmpFilename);
+        fTmpFilename := CheckAndExtractArchive(fTmpFilename);
         case cbType.Value of
           0:
             Load_xmltv_map;
@@ -1065,71 +1064,6 @@ begin
   dsMAPGenre.EnableControls;
 end;
 
-function TEPGSourceForm.GetFileFormat(const aFileName: String): string;
-var
-  s: string;
-  i: Integer;
-  Finded: Boolean;
-  z: I7zInArchive;
-begin
-  s := aFileName;
-  // проверим, есть ли в папке длл для распакрвки
-  if FileExists('7z.dll') then
-    try
-      i := Length(aFileName);
-      Finded := False;
-      while (i > 0) and (not Finded) do
-      begin
-        Finded := ('.' = aFileName[i]);
-        Dec(i);
-      end;
-      s := Copy(aFileName, i + 2, Length(aFileName) - i - 1);
-      s := UpperCase(s);
-      Finded := False;
-      if (s = 'ZIP') or (s = 'JAR') or (s = 'XPI') then
-      begin
-        z := CreateInArchive(CLSID_CFormatZip);
-        Finded := True;
-      end
-      else if (s = '7Z') then
-      begin
-        z := CreateInArchive(CLSID_CFormat7z);
-        Finded := True;
-      end
-      else if (s = 'RAR') then
-      begin
-        z := CreateInArchive(CLSID_CFormatRar);
-        Finded := True;
-      end
-      else if (s = 'GZ') or (s = 'GZIP') or (s = 'TGZ') or (s = 'TPZ') then
-      begin
-        z := CreateInArchive(CLSID_CFormatGZip);
-        Finded := True;
-      end
-      else if (s = 'ARJ') then
-      begin
-        z := CreateInArchive(CLSID_CFormatArj);
-        Finded := True;
-      end
-      else if (s = 'BZ2') or (s = 'BZIP2') or (s = 'TBZ2') or (s = 'TBZ') then
-      begin
-        z := CreateInArchive(CLSID_CFormatBZ2);
-        Finded := True;
-      end
-      else
-        s := aFileName;
 
-      if Finded then
-      begin
-        z.OpenFile(aFileName);
-        s := z.ItemPath[0];
-        s := GetTempDir + s;
-        z.ExtractTo(GetTempDir);
-      end;
-    except
-      s := aFileName;
-    end;
-  Result := s;
-end;
 
 end.

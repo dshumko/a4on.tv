@@ -34,6 +34,7 @@ type
     procedure dbgRecoursesDblClick(Sender: TObject);
     procedure dbgRecoursesGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor;
       State: TGridDrawState);
+    procedure btnEdit1Click(Sender: TObject);
   private
     { Private declarations }
     FSavedID: Integer;
@@ -106,8 +107,7 @@ begin
     i := 0;
   if i = 1 then
     dsRecourses.ParamByName('FILTER_BY').Asstring := 'R.Customer_Id = :CUSTOMER_ID';
-  // else
-  // dsRecourses.Params[0].SetDefaultMacroValue;
+
   dsRecourses.DataSource := FDataSource;
 end;
 
@@ -121,25 +121,93 @@ begin
 end;
 
 procedure TapgCustomerRecourse.actAddRecExecute(Sender: TObject);
+var
+  CanAdd: boolean;
+  Terminated: boolean;
 begin
-  if (not dmMain.AllowedAction(rght_Recourses_add)) then
-    exit;
-  if FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
-    exit;
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Recourses_add);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   EditRecourse(FDataSource.DataSet.FieldByName('CUSTOMER_ID').AsInteger, RefreshDS);
   EnableControls;
 end;
 
 procedure TapgCustomerRecourse.actDelRecExecute(Sender: TObject);
+var
+  CanAdd: boolean;
+  Terminated: boolean;
 begin
-  if (not dmMain.AllowedAction(rght_Recourses_del)) then
-    exit;
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  if (dsRecourses.RecordCount = 0) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Recourses_del);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   if (MessageDlg(rsDeleteCustomerRec, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     dsRecourses.Delete;
     dsRecourses.CloseOpen(true);
     EnableControls;
+  end;
+end;
+
+procedure TapgCustomerRecourse.btnEdit1Click(Sender: TObject);
+var
+  CanAdd: boolean;
+  Terminated: boolean;
+begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  if (dsRecourses.RecordCount = 0) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Recourses_edit);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
   end;
 end;
 
@@ -156,14 +224,14 @@ var
   vContinue: boolean;
 begin
   if (not dsRecourses.Active) or (dsRecourses.RecordCount = 0) then
-    exit;
+    Exit;
 
   vContinue := true;
   ScrPt := Mouse.CursorPos;
   GrdPt := dbgRecourses.ScreenToClient(ScrPt);
   Cell := dbgRecourses.MouseCoord(GrdPt.X, GrdPt.Y);
   if Cell.X <= 0 then
-    exit;
+    Exit;
   s := UpperCase(dbgRecourses.Fields[Cell.X - 1].FieldName);
   if (s = 'NOTICE') then
   begin
@@ -204,7 +272,7 @@ procedure TapgCustomerRecourse.dbgRecoursesGetCellParams(Sender: TObject; Column
   var Background: TColor; State: TGridDrawState);
 begin
   if not(Sender as TDBGridEh).DataSource.DataSet.Active then
-    exit;
+    Exit;
 
   if (not(gdSelected in State)) and ((Sender as TDBGridEh).DataSource.DataSet.FieldByName('REC_TYPE').AsInteger = 1)
   then

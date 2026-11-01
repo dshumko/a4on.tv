@@ -10,7 +10,8 @@ uses
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
   GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst, amSplitter,
-  EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, DBLookupEh, PrnDbgeh;
+  EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, DBLookupEh, PrnDbgeh,
+  CnClasses;
 
 type
   TWHform = class(TGridForm)

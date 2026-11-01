@@ -232,8 +232,32 @@ procedure TapgCustomerPayments.ActAddPaymentExecute(Sender: TObject);
 var
   dt: TDate;
   sm: Currency;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  dt := NOW;
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and //
+      (dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_add) or
+      dmMain.AllowedAction(rght_Pays_AddToday));
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
+  dt := Now;
   sm := 0;
   if ReceivePayment(FDataSource.DataSet['CUSTOMER_ID'], -1, -1, dt, sm) <> -1 then
   begin
@@ -316,7 +340,26 @@ procedure TapgCustomerPayments.actPrepayExecute(Sender: TObject);
 var
   s: string;
   v: extended;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   s := '0';
   if InputQuery(rsPrepay, rsAmount, s) then
   begin
@@ -343,9 +386,31 @@ begin
 end;
 
 procedure TapgCustomerPayments.btnDelClick(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if (not FFullAccess) then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     exit;
+
+  if (dsPayment.RecordCount = 0) or (dsPayment.FieldByName('PAYMENT_ID').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Pays_del));
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
 
   // удалим обещанный
   if (not dsPayment.FieldByName('PT').IsNull) and (dsPayment['PT'] = 0) and

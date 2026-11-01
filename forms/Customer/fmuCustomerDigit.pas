@@ -117,27 +117,29 @@ begin
   actChanEdit.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
   actChanDel.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
 
-  actPairing.Visible := FRghtAdd or FRghtEdit or  FRghtFullAccess;
+  actPairing.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
   actResetPIN1.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
   actMenu.Visible := FRghtAdd or FRghtEdit or FRghtFullAccess;
 
   pnlDecPackets.Visible := (dmMain.GetSettingsValue('PERS_PACKETS') = '1');
   pnlPersChannels.Visible := (dmMain.GetSettingsValue('PERS_CHANNEL') = '1');
   splSC.Visible := pnlDecPackets.Visible and pnlPersChannels.Visible;
-  if (not pnlDecPackets.Visible) and (pnlPersChannels.Visible) then begin
+  if (not pnlDecPackets.Visible) and (pnlPersChannels.Visible) then
+  begin
     pnlDecPackets.Align := alLeft;
     pnlPersChannels.Align := alClient;
   end
-  else begin
+  else
+  begin
     pnlDecPackets.Align := alClient;
     pnlPersChannels.Align := alRight;
   end;
 
-  //pnlPers.Width := 200;
+  // pnlPers.Width := 200;
   pnlPers.Visible := pnlDecPackets.Visible or pnlPersChannels.Visible;
   splPers.Visible := pnlPers.Visible;
   pnlPers.Realign;
-  //Self.Realign;
+  // Self.Realign;
 
   dsDecoders.DataSource := FDataSource;
 end;
@@ -204,12 +206,29 @@ end;
 procedure TapgCustomerDigit.actDigitDecoderAddExecute(Sender: TObject);
 var
   DECODER: String;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_DigitAdd);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   if not(FRghtFullAccess or FRghtAdd) then
-    Exit;
-  if FDataSource.DataSet.RecordCount = 0 then
-    Exit;
-  if FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
     Exit;
 
   DECODER := AddDecoder(FDataSource.DataSet['CUSTOMER_ID']);
@@ -253,12 +272,33 @@ procedure TapgCustomerDigit.actDigitDecoderEditExecute(Sender: TObject);
 var
   bm: TBookmark;
   oldDECODER, newDECODER: String;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  if (dsDecoders.RecordCount = 0) or (dsDecoders.FieldByName('DEC_ID').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_DigitEdit);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if not(FRghtFullAccess or FRghtAdd or FRghtEdit) then
-    Exit;
-  if dsDecoders.RecordCount = 0 then
-    Exit;
-  if dsDecoders.FieldByName('DEC_ID').IsNull then
     Exit;
 
   if not dsDecoders.FieldByName('DECODER_N').IsNull then

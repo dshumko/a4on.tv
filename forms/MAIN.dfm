@@ -69,7 +69,7 @@ object A4MainForm: TA4MainForm
       Align = alLeft
       BorderWidth = 1
       ButtonHeight = 21
-      ButtonWidth = 117
+      ButtonWidth = 122
       GradientEndColor = clBtnFace
       GradientStartColor = clBtnFace
       HotTrackColor = clBtnFace
@@ -85,7 +85,7 @@ object A4MainForm: TA4MainForm
       end
       object spP: TToolButton
         Tag = 2
-        Left = 122
+        Left = 127
         Top = 0
         Width = 4
         Caption = 'spP'
@@ -94,13 +94,13 @@ object A4MainForm: TA4MainForm
       end
       object btnP: TToolButton
         Tag = 2
-        Left = 126
+        Left = 131
         Top = 0
         Action = OpenPaymentsDoc
       end
       object spR: TToolButton
         Tag = 4
-        Left = 243
+        Left = 253
         Top = 0
         Width = 4
         Caption = 'spR'
@@ -109,13 +109,13 @@ object A4MainForm: TA4MainForm
       end
       object btnR: TToolButton
         Tag = 4
-        Left = 247
+        Left = 257
         Top = 0
         Action = ActRequest
       end
       object spE: TToolButton
         Tag = 8
-        Left = 364
+        Left = 379
         Top = 0
         Width = 4
         Caption = 'spE'
@@ -124,12 +124,12 @@ object A4MainForm: TA4MainForm
       end
       object btnE: TToolButton
         Tag = 8
-        Left = 368
+        Left = 383
         Top = 0
         Action = actEquipment
       end
       object spN: TToolButton
-        Left = 485
+        Left = 505
         Top = 0
         Width = 6
         Caption = 'spN'
@@ -138,12 +138,12 @@ object A4MainForm: TA4MainForm
       end
       object btnN: TToolButton
         Tag = 16
-        Left = 491
+        Left = 511
         Top = 0
         Action = actNodes
       end
       object spT: TToolButton
-        Left = 608
+        Left = 633
         Top = 0
         Width = 6
         Caption = 'spT'
@@ -152,7 +152,7 @@ object A4MainForm: TA4MainForm
       end
       object btnT: TToolButton
         Tag = 32
-        Left = 614
+        Left = 639
         Top = 0
         Action = actTaskList
       end

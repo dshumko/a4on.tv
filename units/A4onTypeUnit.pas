@@ -35,6 +35,7 @@ type
     City: string;
     Tarif_Month: Currency;
     Tarif_Day: Currency;
+    Terminated: Boolean;
   end;
 
   TAlertItem = record

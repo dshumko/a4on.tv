@@ -12,14 +12,12 @@ object fmCardsPay: TfmCardsPay
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = mm1
-  OldCreateOrder = False
   Position = poDefault
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgrdhCardPay: TDBGridEh
     Left = 0

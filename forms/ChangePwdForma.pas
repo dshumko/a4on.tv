@@ -8,7 +8,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  OkCancel_frame, PrjConst, FIBQuery, pFIBQuery, CnErrorProvider;
+  OkCancel_frame, PrjConst, FIBQuery, pFIBQuery, CnErrorProvider, CnClasses;
 
 type
   TChangePwdForm = class(TForm)
@@ -98,9 +98,8 @@ begin
       p := rsQUOTE + ReplaceStr(p, rsQUOTE, rsQUOTE + rsQUOTE) + rsQUOTE;
       SQL := Format('ALTER USER %s PASSWORD %s', [dmMain.User, p]);
       ExecSQL(SQL);
-      ExecSQL(SQL + ' ACTIVE USING PLUGIN Legacy_UserManager');
-      ExecSQL(SQL + ' ACTIVE USING PLUGIN Srp');
-
+      ExecSQL(SQL + ' USING PLUGIN Legacy_UserManager');
+      ExecSQL(SQL + ' USING PLUGIN Srp');
       SQL := Format('update Sys$User set Pswd_Changed = LOCALTIMESTAMP where Ibname = ''%s''', [dmMain.User]);
       ExecSQL(SQL);
       Changed := True;

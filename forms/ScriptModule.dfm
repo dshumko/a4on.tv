@@ -1,5 +1,4 @@
 object SM: TSM
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Height = 659

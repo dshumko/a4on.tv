@@ -26,6 +26,7 @@ type
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dsBonusAfterOpen(DataSet: TDataSet);
+    procedure btnAdd1Click(Sender: TObject);
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -71,9 +72,29 @@ begin
 end;
 
 procedure TapgCustomerBonus.actDelExecute(Sender: TObject);
+var
+  AllowDelete: Boolean;
+  Terminated: Boolean;
 begin
   if dsBonus.RecordCount = 0 then
-    Exit;
+    exit;
+
+  AllowDelete := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not AllowDelete then
+  begin
+    AllowDelete := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    AllowDelete := AllowDelete and dmMain.AllowedAction(rght_Customer_Bonus);
+  end;
+
+  if (not AllowDelete) then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if not dsBonus.FieldByName('BONUS').IsNull then
   begin
     if (MessageDlg(Format(rsDeleteBonus, [dsBonus.FieldByName('BONUS').AsFloat]), mtConfirmation, [mbYes, mbNo], 0)
@@ -85,9 +106,29 @@ end;
 
 procedure TapgCustomerBonus.actEditExecute(Sender: TObject);
 begin
-  // AddEditDiscount(dsDiscount['DISCOUNT_ID'], FDataSource.Dataset['CUSTOMER_ID']);
-  // dsDiscount.CloseOpen(true);
-  // RecalcCustomer;
+  //
+end;
+
+procedure TapgCustomerBonus.btnAdd1Click(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
+begin
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Bonus);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
 end;
 
 procedure TapgCustomerBonus.CloseData;

@@ -553,6 +553,7 @@ end;
 procedure TMatMoveDocForm.btnCloseClick(Sender: TObject);
 var
   s: string;
+  res_str: String;
 begin
   if dsDoc.State in [dsEdit, dsEdit] then
   begin
@@ -581,6 +582,8 @@ begin
       = IDYES) then
       s := '';
   end;
+
+  res_str := '';
   // если с колвом все хорошо или согласны закрыть - закрываем
   if s = '' then
   begin
@@ -590,18 +593,25 @@ begin
       qCloseDoc.Transaction.StartTransaction;
       try
         qCloseDoc.ExecQuery;
-        qCloseDoc.Transaction.Commit;
-        dsDoc.Refresh;
-        SetReadOnlyMode(true);
+        if not qCloseDoc.FN('RESULT_TEXT').IsNull then begin
+          res_str := qCloseDoc.FN('RESULT_TEXT').AsString;
+          qCloseDoc.Transaction.Rollback;
+        end
+        else begin
+          qCloseDoc.Transaction.Commit;
+          dsDoc.Refresh;
+          SetReadOnlyMode(true);
+        end;
       except
-
         on E: Exception do
           if (E.Message.Contains('#8 Materials less then entered')) then
             ShowMessage(rsMatQuantLess);
-
       end;
     end;
   end;
+
+  if not res_str.IsEmpty then
+    Application.MessageBox(PWideChar(res_str), PWideChar(rsMatDocNotClosed), MB_OK + MB_ICONWARNING + MB_DEFBUTTON2);
 end;
 
 procedure TMatMoveDocForm.btnDelClick(Sender: TObject);

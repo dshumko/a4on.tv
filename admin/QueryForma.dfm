@@ -11,12 +11,10 @@ object QueryForm: TQueryForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = True
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -247,7 +245,7 @@ object QueryForm: TQueryForm
   end
   object FIBScript: TpFIBScripter
     Database = dmMain.dbTV
-    Transaction = transaction
+    Transaction = trMetaData
     OnExecuteError = FIBScriptExecuteError
     Left = 168
     Top = 69
@@ -302,5 +300,16 @@ object QueryForm: TQueryForm
     object SelectAll1: TMenuItem
       Action = A4MainForm.EditSelectAll1
     end
+  end
+  object trMetaData: TpFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'wait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 264
+    Top = 272
   end
 end

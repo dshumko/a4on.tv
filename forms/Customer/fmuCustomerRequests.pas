@@ -164,7 +164,32 @@ begin
 end;
 
 procedure TapgCustomerRequests.actDelExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  if (dsRequests.RecordCount = 0) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Request_Del);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   if not dsRequests.FieldByName('RQ_ID').IsNull then
   begin
     if ((dsRequests.FieldByName('REQ_RESULT').IsNull) or (dsRequests.FieldByName('REQ_RESULT').AsInteger = 0)) then
@@ -189,9 +214,31 @@ var
   aCustomer: Integer;
   aMode: Byte;
   aNodeId: Integer;
-Begin
-  if not(FullAccess or CE or CC or CG or CA) then
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
+begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
+
+  if (dsRequests.RecordCount = 0) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (CE or CC or CG or CA);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   if not dsRequests.FieldByName('RQ_ID').IsNull then
   begin
@@ -236,7 +283,28 @@ end;
 procedure TapgCustomerRequests.actAddExecute(Sender: TObject);
 var
   aCustomer: Integer;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (dmMain.AllowedAction(rght_Request_full) or dmMain.AllowedAction(rght_Request_add));
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   if not FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull then
     aCustomer := FDataSource.DataSet['CUSTOMER_ID']
   else

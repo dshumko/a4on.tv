@@ -2,7 +2,7 @@ inherited WHform: TWHform
   Caption = #1057#1082#1083#1072#1076#1099
   ClientHeight = 516
   ClientWidth = 692
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 161
@@ -99,6 +99,7 @@ inherited WHform: TWHform
   inherited pnlEdit: TPanel
     Width = 692
     Height = 136
+    StyleElements = [seFont, seClient, seBorder]
     object lbl2: TLabel [0]
       Left = 5
       Top = 9
@@ -244,9 +245,9 @@ inherited WHform: TWHform
           Footers = <>
           ReadOnly = True
           Title.Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100'|'#1060#1048#1054
+          Title.TitleButton = True
           Title.SortIndex = 1
           Title.SortMarker = smDownEh
-          Title.TitleButton = True
           Width = 178
         end
         item
@@ -337,15 +338,22 @@ inherited WHform: TWHform
   end
   object dsWH: TpFIBDataSet
     UpdateSQL.Strings = (
-      'DELETE FROM OBJECTS'
+      'UPDATE'
+      '    OBJECTS '
+      'SET'
+      '    O_NAME          = :O_NAME,'
+      '    O_DESCRIPTION   = :O_DESCRIPTION,'
+      '    O_NUMERICFIELD  = :OWNER_ID,'
+      '    O_DELETED       = :O_DELETED'
       'WHERE'
-      '    O_ID = :OLD_O_ID and O_TYPE = 10'
-      '    ')
+      '    O_ID = :OLD_O_ID and O_TYPE = 10')
     DeleteSQL.Strings = (
       'UPDATE'
-      '    OBJECTS SET O_DELETED = 1'
+      '    OBJECTS'
+      'SET'
+      '    O_DELETED = 1'
       'WHERE'
-      '        O_ID = :OLD_O_ID and O_TYPE = 10'
+      '    O_ID = :OLD_O_ID and O_TYPE = 10'
       '    ')
     InsertSQL.Strings = (
       'INSERT INTO OBJECTS('

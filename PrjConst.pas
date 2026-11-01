@@ -99,7 +99,9 @@ const
   rght_Customer_PersonalData = 220; // Скрыть фамилию и паспорт
   rght_Customer_PersonalName = 231; // Скрыть имя и отчество
   rght_Customer_Contact_Edit = 223;
+  rght_Customer_Contact_Add = 233;
   rght_Customer_Letters = 224;
+  rght_Customer_Edit_Terminated = 232;
 
   rght_Dictionary_full = 40;
 
@@ -1013,6 +1015,7 @@ resourcestring
   rsTaskCommentInEdit = 'Перед редактированием, необходимо сохранить или отменить комментарий к задаче.';
   rsPromoWarning = 'Внимане. Абонент подключен по АКЦИИ!';
   rsNotAllowedService = 'Этой услугой запрещено отключать. Укажите другую.';
+  rsMatDocNotClosed = 'Документ не закрыт';
 
   rsCabelLabelError = 'Mетки "%s" нет в маркировке кабеля';
 

@@ -175,12 +175,12 @@ begin
   inherited;
   FHidePersonalData := (dmMain.AllowedAction(rght_Customer_PersonalData));
   FHidePersonalName := (dmMain.AllowedAction(rght_Customer_PersonalName));
-  if dmMain.SuperMode = 0 then
+  if (dmMain.SuperMode = 0) and Assigned(dsEQ.FindParam('SupeMode')) then
   begin
     a := dsEQ.Active;
     if a then
       dsEQ.Close;
-    dsEQ.Params[0].AsString := ' and c.INVISIBLE = 0 ';
+    dsEQ.ParamByName('SupeMode').AsString := ' and c.INVISIBLE = 0 ';
     if a then
       dsEQ.Open;
   end;

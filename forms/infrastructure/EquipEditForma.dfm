@@ -12,14 +12,12 @@ object EquipEditForm: TEquipEditForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyPress = FormKeyPress
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pgcTypeInfo: TPageControl
     Left = 0
@@ -254,6 +252,7 @@ object EquipEditForm: TEquipEditForm
         Action = actFindIP
         Anchors = [akTop, akRight]
         Caption = #1053#1072#1081#1090#1080' IP'
+        ImageIndex = 7
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FF00FF00AD6D

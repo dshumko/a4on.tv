@@ -1,4 +1,4 @@
-{-----------------------------------------------------------------------------
+п»ї{-----------------------------------------------------------------------------
 The contents of this file are subject to the Mozilla Public License
 Version 1.1 (the "License"); you may not use this file except in compliance
 with the License. You may obtain a copy of the License at
@@ -230,7 +230,7 @@ function AddSpaces(const S: string; const N: Integer): string;
 function SpacesW(const N: Integer): WideString;
 function AddSpacesW(const S: WideString; const N: Integer): WideString;
 { function LastDateRUS for russian users only }
-{ returns date relative to current date: 'два дня назад' }
+{ returns date relative to current date: 'пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ' }
 function LastDateRUS(const Dat: TDateTime): string;
 { CurrencyToStr format Currency, Cur, using ffCurrency float format}
 function CurrencyToStr(const Cur: Currency): string;
@@ -1122,7 +1122,7 @@ uses
   {$IFDEF HAS_UNIT_CHARACTER}
   Character, // needed for JclStrings inlined functions
   {$ENDIF HAS_UNIT_CHARACTER}
-  Consts,
+  VCL.Consts,
   JclStrings, JclSysInfo, JclFileUtils,
   Math, JclSysUtils;
 
@@ -2005,8 +2005,8 @@ end;
 
 function Win2Koi(const S: AnsiString): AnsiString;
 const
-  W: AnsiString = 'абвгдеёжзийклмнопрс=уфхчцшщьыъэЭя+--+-+ЁЖЗ++--Э-+ПРСТУФiЧЦШ+_Э+ЭЮо';
-  K: AnsiString = '--ЧЗ-+ЈЦ++--Э-+ПРТУФiЖ+Ю+ЭЭШ+о_+СбвчздеЭцъйклмнопр=уфхжиЭгыэшщяьас';
+  W: AnsiString = 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ=пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ+--+-+пїЅпїЅпїЅ++--пїЅ-+пїЅпїЅпїЅпїЅпїЅпїЅiпїЅпїЅпїЅ+_пїЅ+пїЅпїЅпїЅ';
+  K: AnsiString = '--пїЅпїЅ-+пїЅпїЅ++--пїЅ-+пїЅпїЅпїЅпїЅпїЅiпїЅ+пїЅ+пїЅпїЅпїЅ+пїЅ_+пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ=пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ';
 var
   I, J: Integer;
 begin
@@ -2166,43 +2166,43 @@ const
   D2D: array [0..9] of Byte =
     (3, 1, 2, 2, 2, 3, 3, 3, 3, 3);
   Day: array [1..3] of string =
-    ('день', 'дня', 'дней'); // Day, Days, Days
+    ('пїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅ'); // Day, Days, Days
   Month: array [1..3] of string =
-    ('месяц', 'месяца', 'месяцев'); // Month, Months, Months
+    ('пїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ'); // Month, Months, Months
   Year: array [1..3] of string =
-    ('год', 'года', 'ле='); // Year, Years, Years
+    ('пїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅ', 'пїЅпїЅ='); // Year, Years, Years
   Week: array [1..4] of string =
-    ('неделЭ', '2 недели', '3 недели', 'месяц'); // Week, 2 Weeks, 3 Weeks, Month
+    ('пїЅпїЅпїЅпїЅпїЅпїЅ', '2 пїЅпїЅпїЅпїЅпїЅпїЅ', '3 пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅ'); // Week, 2 Weeks, 3 Weeks, Month
 var
   Y, M, D: Integer;
 begin
   if Date = Dat then
-    Result := 'сегодня' // Today
+    Result := 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ' // Today
   else
   if Dat = Date - 1 then
-    Result := 'вчера' // Yesterday
+    Result := 'пїЅпїЅпїЅпїЅпїЅ' // Yesterday
   else
   if Dat = Date - 2 then
-    Result := 'позавчера' // Day before yesterday
+    Result := 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' // Day before yesterday
   else
   if Dat > Date then
-    Result := 'в будущем' // In the future
+    Result := 'пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ' // In the future
   else
   begin
     D := Trunc(Date - Dat);
     Y := Round(D / 365);
     M := Round(D / 30);
     if Y > 0 then
-      Result := IntToStr(Y) + ' ' + Year[D2D[StrToInt(IntToStr(Y)[Length(IntToStr(Y))])]] + ' назад' // ago
+      Result := IntToStr(Y) + ' ' + Year[D2D[StrToInt(IntToStr(Y)[Length(IntToStr(Y))])]] + ' пїЅпїЅпїЅпїЅпїЅ' // ago
     else
     if M > 0 then
-      Result := IntToStr(M) + ' ' + Month[D2D[StrToInt(IntToStr(M)[Length(IntToStr(M))])]] + ' назад' // ago
+      Result := IntToStr(M) + ' ' + Month[D2D[StrToInt(IntToStr(M)[Length(IntToStr(M))])]] + ' пїЅпїЅпїЅпїЅпїЅ' // ago
     else
     if D > 6 then
-      Result := Week[D div 7] + ' назад' // ago
+      Result := Week[D div 7] + ' пїЅпїЅпїЅпїЅпїЅ' // ago
     else
     if D > 0 then
-      Result := IntToStr(D) + ' ' + Day[D2D[StrToInt(IntToStr(D)[Length(IntToStr(D))])]] + ' назад' // ago
+      Result := IntToStr(D) + ' ' + Day[D2D[StrToInt(IntToStr(D)[Length(IntToStr(D))])]] + ' пїЅпїЅпїЅпїЅпїЅ' // ago
   end;
 end;
 

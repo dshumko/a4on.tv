@@ -292,7 +292,7 @@ procedure TMessagesForm.FormShow(Sender: TObject);
 var
   i, c: Integer;
   Font_size: Integer;
-  Font_name, s: string;
+  Font_name: string;
   Row_height: Integer;
   ShowToolTips: Boolean;
 begin

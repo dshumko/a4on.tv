@@ -37,7 +37,6 @@ object CustomerForm: TCustomerForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 143
     object spl1: TSplitter
       Left = 145
       Top = 0
@@ -51,7 +50,6 @@ object CustomerForm: TCustomerForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitHeight = 143
     end
     object dbgForms: TDBGridEh
       Left = 0

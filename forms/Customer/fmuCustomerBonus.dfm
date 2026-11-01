@@ -10,9 +10,7 @@ object apgCustomerBonus: TapgCustomerBonus
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgGrid: TDBGridEh
     Left = 26
@@ -31,7 +29,6 @@ object apgCustomerBonus: TapgCustomerBonus
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = False
     SumList.Active = True
     TabOrder = 1
     TitleParams.MultiTitle = True
@@ -229,6 +226,7 @@ object apgCustomerBonus: TapgCustomerBonus
         6000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+      OnClick = btnAdd1Click
     end
   end
   object dsBonus: TpFIBDataSet

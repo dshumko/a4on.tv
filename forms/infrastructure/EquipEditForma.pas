@@ -10,7 +10,7 @@ uses
   Vcl.Dialogs, Vcl.DBCtrls,
   DBGridEh, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DM, GridsEH,
   PrjConst,
-  A4onTypeUnit, CnErrorProvider;
+  A4onTypeUnit, CnErrorProvider, CnClasses;
 
 type
   TEquipEditForm = class(TForm)
@@ -650,7 +650,6 @@ end;
 
 procedure TEquipEditForm.FormShow(Sender: TObject);
 var
-  i: Integer;
   f: string;
 begin
   dsEQtype.Open;

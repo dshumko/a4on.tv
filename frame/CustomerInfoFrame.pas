@@ -61,7 +61,7 @@ type
 implementation
 
 uses
-  AtrStrUtils, MAIN, CustomerForma;
+  System.StrUtils, AtrStrUtils, MAIN, CustomerForma;
 
 {$R *.dfm}
 
@@ -137,7 +137,7 @@ begin
     FHtml := '<html><body>' + rsNOT_FOUND_CUST + '</body></html>'
   else
   begin
-    if FShowMoney // просмотр сумм
+    if (ci.isType = 0) and FShowMoney // просмотр сумм
     then
     begin
       dColor := '';
@@ -186,10 +186,11 @@ begin
     fo := GetParentForm(Self);
     if (not(fsModal in fo.FormState)) then
       lText := '<a href="ls:' + ci.Account_no + '">' + lText + '</a>';
+    lText := IfThen(ci.isType = 0, '<i>ЛC</i>:', '<i>Узел</i>:') + ' ' + lText;
 
     FHtml := '<html><body>' +
     // для соохранения форматирования
-      '<i>ЛC</i>: ' + lText + ' ' + ci.FIO + '<br>' +
+      lText + ' ' + ci.FIO + '<br>' +
     // для соохранения форматирования
       dText +
     // для соохранения форматирования
@@ -270,7 +271,14 @@ end;
 procedure TCustomerInfoFrm.HtmlViewerHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
 begin
   if ci.CUSTOMER_ID <> -1 then
-    ShowCustomer(ci.CUSTOMER_ID);
+  begin
+
+    if ci.isType = 0 then
+      ShowCustomer(ci.CUSTOMER_ID)
+    else
+      A4MainForm.OpnenNodeByID(ci.CUSTOMER_ID);
+  end;
+
   Handled := True;
 end;
 

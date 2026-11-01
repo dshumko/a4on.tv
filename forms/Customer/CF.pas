@@ -338,7 +338,7 @@ type
     FFrozencols: Integer;
     FKeyMVD: string;
     FUrlMVD: String;
-    FDataMVD: String;
+
     function GenerateFilter: String;
     function ReplaceFields(const str: string): string;
     procedure ShowPage(Page: TA4onPage);
@@ -427,11 +427,12 @@ uses
   fmuCustomerAppl, fmuCustomerCard, PaymentForma, CancelContractForma,
   SelectLetterTypeForma, CustomersFilter,
   ReportPreview,
-  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma;
+  fmuCustomerNew, fmuCustomerBonus, fmuCustomerFiles, NPSAddForma, OrderTPForma, AtrEhLibAddons, Mvd30903Client;
 
 const
   cst_OneRecord: string = ' first 1 ';
   const_default_filter: string = ' ((C.Valid_To > CURRENT_DATE) or (C.Valid_To is null)) ';
+
   clc_FullIO = 1; // Полное И.О.
   clc_DatDog = 1024; // Дата договора
   clc_Passport = 128; // Паспорт
@@ -1433,9 +1434,19 @@ begin
 end;
 
 procedure TCustomersForm.actCustomerEditExecute(Sender: TObject);
+var
+  CanEdit: Boolean;
 begin
-  if not dsCustomers.FieldByName('Customer_ID').IsNull then
-    ShowCustomer(dsCustomers.FieldValues['Customer_ID'], true);
+  if dsCustomers.FieldByName('Customer_ID').IsNull then
+    Exit;
+
+  // Разрешим редактирование абонента, только если он не расторг договор
+  if (not dsCustomers.FieldByName('VALID_TO').IsNull) then
+    CanEdit := dmMain.AllowedAction(rght_Customer_Edit_Terminated) or dmMain.AllowedAction(rght_Customer_full)
+  else
+    CanEdit := dmMain.AllowedAction(rght_Customer_Edit) or dmMain.AllowedAction(rght_Customer_full);
+
+  ShowCustomer(dsCustomers.FieldValues['Customer_ID'], CanEdit);
   // dsCustomers_Refresh;
 end;
 
@@ -1910,6 +1921,7 @@ var
 begin
   filter := '';
   with TCustomersFilterForm.Create(Application) do
+  begin
     try
       if not dsFilter.Active then
         SetDefaultFilter;
@@ -1920,6 +1932,7 @@ begin
     finally
       Free;
     end;
+  end;
 
   if not Ok then
     Exit;
@@ -1936,16 +1949,6 @@ begin
   if filter <> '' then
   begin
     dsCustomers.Close;
-    {
-      if (dmMain.AllowedAction(rght_Customer_Only_ONE) and (filter = const_default_filter)) then
-      begin
-      fidx := dsCustomers.SelectSQL.IndexOf(cst_OneRecord);
-      if (fidx = -1) then
-      begin
-      dsCustomers.SelectSQL.Insert(1, cst_OneRecord);
-      end;
-      end;
-    }
     dsCustomers.ParamByName('Filter').value := filter;
     try
       OpenDataSet;
@@ -2171,33 +2174,12 @@ end;
 
 procedure TCustomersForm.AddrSearchFieldClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 1 then
-    (Sender as TDBLookupComboboxEh).Tag := 0
-  else
-    (Sender as TDBLookupComboboxEh).Tag := 1;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TCustomersForm.AddrSearchFieldEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-  begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TCustomersForm.lcbStreetsButtonClick(Sender: TObject; var Handled: Boolean);
@@ -3132,7 +3114,6 @@ const
   function RecordToFilter(): String;
   var
     startSQL, tmpSQL, s: string;
-    st: String;
     AFormatSettings: TFormatSettings;
   begin
     AFormatSettings := TFormatSettings.Create;
@@ -3152,7 +3133,7 @@ const
       tmpSQL := fltr_1_1;
 
     // Признак разрыва договора
-    if (dsFilter['VALID_TO_SGN'] = 1) then
+    if (not dsFilter.FieldByName('VALID_TO_SGN').IsNull) and (dsFilter['VALID_TO_SGN'] = 1) then
     begin
       s := const_default_filter;
       if (dsFilter['VALID_TO_ON'] = 1) AND (dsFilter['VALID_TO_OFF'] = 1) then
@@ -3173,11 +3154,12 @@ const
     tmpSQL := tmpSQL + FilterForAddress;
 
     // юр. лица
-    if (dsFilter.FieldByName('JURIDICAL').AsInteger in [0, 1]) then
+    if (not dsFilter.FieldByName('JURIDICAL').IsNull) and (dsFilter.FieldByName('JURIDICAL').AsInteger in [0, 1]) then
       tmpSQL := tmpSQL + Format(' AND (c.juridical = %d) ', [dsFilter.FieldByName('JURIDICAL').AsInteger]);
 
     // ручное управление
-    if ((not dsFilter.FieldByName('HANDCONTROL').IsNull)) then
+    if (not dsFilter.FieldByName('HANDCONTROL').IsNull) and (dsFilter.FieldByName('HANDCONTROL').AsInteger in [0, 1])
+    then
       tmpSQL := tmpSQL + Format(' AND (c.HAND_CONTROL = %d) ', [dsFilter.FieldByName('HANDCONTROL').AsInteger]);
 
     // установлен атрибут
@@ -3188,7 +3170,8 @@ const
     begin
       tmpSQL := tmpSQL + ' AND (';
 
-      if (dsFilter.FieldByName('FILE_TYPE_EXCLUDE').AsInteger = 1) then
+      if (not dsFilter.FieldByName('FILE_TYPE_EXCLUDE').IsNull) and
+        (dsFilter.FieldByName('FILE_TYPE_EXCLUDE').AsInteger = 1) then
         tmpSQL := tmpSQL + ' not ';
 
       tmpSQL := tmpSQL +
@@ -3199,7 +3182,7 @@ const
     end;
 
     // имеющие скидку
-    if (dsFilter['DISCOUNT_FACTOR_SGN'] = 1) then
+    if (not dsFilter.FieldByName('DISCOUNT_FACTOR_SGN').IsNull) and (dsFilter['DISCOUNT_FACTOR_SGN'] = 1) then
     begin
       tmpSQL := tmpSQL + ' AND (exists (select D.Customer_Id from  Discount_Factor D' +
         ' where C.Customer_Id = D.Customer_Id AND D.Factor_Value <> 1';
@@ -3211,7 +3194,7 @@ const
     end;
 
     // имеющие персональный тариф
-    if (dsFilter['PERS_TARIF'] = 1) then
+    if (not dsFilter.FieldByName('PERS_TARIF').IsNull) and (dsFilter['PERS_TARIF'] = 1) then
     begin
       tmpSQL := tmpSQL + ' AND (exists (select D.Customer_Id from PERSONAL_TARIF D' +
         ' where C.Customer_Id = D.Customer_Id';
@@ -3224,7 +3207,7 @@ const
     end;
 
     // дата активизации меньше даты договора
-    if (dsFilter['INVALID_CONTRACT_DATE'] = 1) then
+    if (not dsFilter.FieldByName('INVALID_CONTRACT_DATE').IsNull) and (dsFilter['INVALID_CONTRACT_DATE'] = 1) then
       tmpSQL := tmpSQL + ' AND (C.CONTRACT_DATE > C.ACTIVIZ_DATE)';
 
     // повторяющиеся адреса
@@ -3459,8 +3442,6 @@ begin
     Result := const_default_filter;
 
   Result := JoinFilter('AND', [Result, AddInvisible], true);
-
-  // ShowMessage(result);
 end;
 
 procedure TCustomersForm.SetDefaultFilter;
@@ -3554,13 +3535,12 @@ begin
 
   FKeyMVD := dmMain.GetSettingsValue('MVD_KEY');
   FUrlMVD := dmMain.GetSettingsValue('MVD_URL');
-  FDataMVD := dmMain.GetSettingsValue('MVD_DATA');
 
   FHidePersonalData := dmMain.AllowedAction(rght_Customer_PersonalData);
   FHideCustomerName := dmMain.AllowedAction(rght_Customer_PersonalName);
   FVisiblePassport := ((not FHidePersonalData) and //
     (dmMain.AllowedAction(rght_Customer_add) //
-    or dmMain.AllowedAction(rght_Customer_edit) //
+    or dmMain.AllowedAction(rght_Customer_Edit) //
     or dmMain.AllowedAction(rght_Customer_Files_Add) //
     or dmMain.AllowedAction(rght_Customer_LanFull) //
     or dmMain.AllowedAction(rght_Customer_DigitAdd) //
@@ -3572,7 +3552,7 @@ begin
   actSaveAs.Visible := notEmptyDS and ((dmMain.AllowedAction(rght_Export)));
   miExport.Visible := notEmptyDS and ((dmMain.AllowedAction(rght_Export)));
 
-  actCustomerEdit.Enabled := notEmptyDS and (dmMain.AllowedAction(rght_Customer_edit) or FullAccess);
+  actCustomerEdit.Enabled := notEmptyDS and (dmMain.AllowedAction(rght_Customer_Edit) or FullAccess);
   actCustomerAdd.Enabled := dmMain.AllowedAction(rght_Customer_add) or FullAccess;
   actCustomerDelete.Enabled := notEmptyDS and (not dmMain.InStrictMode) and
     (dmMain.AllowedAction(rght_Customer_del) or FullAccess);
@@ -4602,11 +4582,12 @@ begin
 
   if (id <> 0) or (not actAddressSearch.Checked) then
     Exit;
+
   scr_cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   filter := '';
-  try
 
+  try
     if VarIsNumeric(lcbHOUSE.KeyValue) then
     begin
       id := lcbHOUSE.KeyValue;
@@ -4629,11 +4610,10 @@ begin
         id := lcbStreets.KeyValue;
         filter := Format('STREET_ID = %d ', [id]);
         if not dsHomes.Active then
-        begin
           dsHomes.Open;
-        end;
       end
     end;
+
     lcbHOUSE.Enabled := VarIsNumeric(lcbStreets.KeyValue);
     lcbFLAT.Enabled := lcbHOUSE.Enabled and VarIsNumeric(lcbHOUSE.KeyValue);
     if (not lcbFLAT.Enabled) and dsFLAT.Active then
@@ -5074,6 +5054,7 @@ procedure TCustomersForm.InitForm;
 var
   s: string;
   i: Integer;
+  f: Double;
   Font_size: Integer;
   Row_height: Integer;
   Font_name: string;
@@ -5083,6 +5064,11 @@ begin
   ShowToolTips := (dmMain.GetIniValue('SHOW_TOOLTIPS') = '1');
 
   InitSecurity;
+
+  if TryStrToFloat(dmMain.GetIniValue('SEARCH_TIMER'), f) then
+    tmrSearch.Interval := trunc(f * 1000)
+  else
+    tmrSearch.Interval := 3000;
 
   Font_size := 0;
   if TryStrToInt(dmMain.GetIniValue('FONT_SIZE'), i) then
@@ -5275,22 +5261,17 @@ end;
 
 procedure TCustomersForm.ValidatePassport;
 var
-  FHttpCli: TSslHttpCli;
-  FSslContext: TSslContext;
-  Datax: TStringStream;
-  url: string;
-  unp, ps, pn: string;
   answer: string;
   pValid: Integer;
-  qry: TpFIBQuery;
-  RequestData: TStringStream;
-  CheckPassportURL: String;
-  sToPost: string;
-
   ePERSONAL_N, ePASSPORT_NUMBER: string;
   eFIRSTNAME: string;
   eSURNAME: string;
   eMIDLENAME: string;
+  DocType: Integer;
+  Client: TMvdApiClient;
+  Req: TMvdRequest;
+  Resp: TMvdResult;
+  qry: TpFIBQuery;
 
   function HasInvalidChar(const s: string): Boolean;
   var
@@ -5306,15 +5287,6 @@ var
     end;
   end;
 
-  procedure SplitNumber(const s: string; var ser: string; var num: string);
-  var
-    v: string;
-  begin
-    v := Trim(UpperCase(s));
-    ser := Copy(v, 1, 2);
-    num := Trim(Copy(v, 3, 15));
-  end;
-
   function GetV(const FN: string): String;
   begin
     if (not dsCustomers.FieldByName(FN).IsNull) then
@@ -5327,23 +5299,23 @@ begin
   if (not FCheckPassport) or (not dsCustomers.Active) or (dsCustomers.RecordCount = 0) then
     Exit;
 
-  if FUrlMVD.IsEmpty then
-    CheckPassportURL := rsCheckPassportURL
-  else
-    CheckPassportURL := FUrlMVD;
-
   if (not dsCustomers.FieldByName('JURIDICAL').IsNull) and (dsCustomers['JURIDICAL'] = 1) then
     Exit;
 
   if (not dsCustomers.FieldByName('PASSPORT_VALID').IsNull) and (dsCustomers['PASSPORT_VALID'] = 1) then
     Exit;
 
-  answer := '';
   ePERSONAL_N := GetV('PERSONAL_N');
   eFIRSTNAME := GetV('FIRSTNAME');
   eSURNAME := GetV('SURNAME');
   eMIDLENAME := GetV('MIDLENAME');
   ePASSPORT_NUMBER := GetV('PASSPORT_NUMBER');
+  if (not dsCustomers.FieldByName('DocType').IsNull) then
+    DocType := dsCustomers['DocType']
+  else
+    DocType := -1;
+
+  answer := '';
 
   if eSURNAME = '' then
     answer := 'Фамилия - ' + rsEmptyFieldError + #13#10;
@@ -5351,11 +5323,20 @@ begin
   if eFIRSTNAME = '' then
     answer := answer + 'Имя - ' + rsEmptyFieldError + #13#10;
 
-  if ((ePERSONAL_N = '') or (HasInvalidChar(ePERSONAL_N)) or (Length(ePERSONAL_N) <> 14)) then
-    answer := answer + 'Личный номер - ' + rsEmptyOrIncorrect + #13#10;
+  if (ePERSONAL_N = '') then
+    answer := answer + 'Личный номер - ' + rsEmptyOrIncorrect + #13#10
+  else if (HasInvalidChar(ePERSONAL_N)) then
+    answer := answer + 'Личный номер содержит некорректные символы ' + #13#10
+  else if (Length(ePERSONAL_N) <> 14) then
+    answer := answer + 'Личный номер количество симолов <> 14 '#13#10;
 
-  if ((ePASSPORT_NUMBER = '') or (HasInvalidChar(ePASSPORT_NUMBER))) then
-    answer := answer + 'Номер паспорта - ' + rsEmptyOrIncorrect + #13#10;
+  if (ePASSPORT_NUMBER = '') then
+    answer := answer + 'Номер документа - ' + rsEmptyOrIncorrect + #13#10
+  else if (HasInvalidChar(ePASSPORT_NUMBER)) then
+    answer := answer + 'Номер документа содержит некорректные символы ' + #13#10;
+
+  if DocType < 1 then
+    answer := answer + 'Неопределен тип документа - ' + DocType.ToString + #13#10;
 
   if not answer.IsEmpty then
   begin
@@ -5363,122 +5344,45 @@ begin
     Exit;
   end;
 
-  SplitNumber(ePASSPORT_NUMBER, ps, pn);
-  unp := dmMain.GetCompanyValue('UNN');
-  if unp = '' then
-    unp := dmMain.GetCompanyValue('UNP');
-
-  Datax := TStringStream.Create('', TEncoding.UTF8);
-  RequestData := TStringStream.Create('', TEncoding.UTF8);
-
-  FSslContext := TSslContext.Create(nil);
-  FSslContext.Name := 'FSslContext';
-  // FSslContext.SslDHParamLines.Clear;
-  FSslContext.SslVerifyPeer := False;
-
-  FHttpCli := TSslHttpCli.Create(nil);
-  FHttpCli.Name := 'FHttpCli';
-  FHttpCli.Agent := 'a4on/1.0';
-  FHttpCli.ServerAuth := httpAuthBearer;
-  FHttpCli.AuthBearerToken := FKeyMVD;
-  FHttpCli.ProxyAuth := httpAuthNone;
-  FHttpCli.TimeOut := 30;
-  FHttpCli.SslContext := FSslContext;
-  FHttpCli.ResponseNoException := true;
-  FHttpCli.OnRequestDone := Nil;
-  FHttpCli.RcvdStream := Datax;
-  FHttpCli.url := CheckPassportURL;
-
   try
-    if CheckPassportURL.Contains('/v1/') then
-    begin
-      url := Format('surname=%s&name=%s&lastname=%s', [UrlEncode(eSURNAME), UrlEncode(eFIRSTNAME), UrlEncode(eMIDLENAME)
-        ]) + Format('&ser=%s&num=%s&identif=%s', [UrlEncode(ps), UrlEncode(pn), UrlEncode(ePERSONAL_N)]) +
-        Format('&unp=%s&region=%s&district=%s&city=%s&street=%s&house=%s&housing=%s&room=%s',
-        [UrlEncode(unp), UrlEncode(dmMain.GetCompanyValue('REGION')), UrlEncode(dmMain.GetCompanyValue('DISTRICT')),
-        UrlEncode(dmMain.GetCompanyValue('CITY')), UrlEncode(dmMain.GetCompanyValue('STREET')),
-        UrlEncode(dmMain.GetCompanyValue('HOUSE')), UrlEncode(dmMain.GetCompanyValue('HOUSING')),
-        UrlEncode(dmMain.GetCompanyValue('ROOM'))]);
+    Client := TMvdApiClient.Create(FUrlMVD, FKeyMVD);
+    try
+      Req.Desc := dmMain.GetCompanyValue('NAME'); // 'белтелеком',
+      Req.city := dmMain.GetCompanyValue('CITY');
+      Req.STREET := dmMain.GetCompanyValue('STREET');
+      Req.house := dmMain.GetCompanyValue('HOUSE');
+      Req.room := dmMain.GetCompanyValue('ROOM');
 
-      FHttpCli.url := FHttpCli.url + url;
-      FHttpCli.Get; // sync
-    end
-    else
-    begin // v2
-      if FDataMVD.IsEmpty then
-        sToPost := '{"desc":"[COMPANY]","desc_address":"[CITY] [STREET] [HOUSE]",' +
-          '"sery":"[SER]","num":"[NUM]","identif":"[IDENTIF]",' +
-          '"surname":"[SURNAME]","name":"[NAME]","lastname":"[LASTNAME]"}'
-      else
-        sToPost := FDataMVD;
+      Client.SplitNumber(DocType, ePASSPORT_NUMBER, Req.Serie, Req.Number);
+      Req.Identif := ePERSONAL_N; // '4150223A115PB2',
+      Req.Surname := eSURNAME; // 'Иванов',
+      Req.Name := eFIRSTNAME; // 'Иван',
+      Req.Lastname := eMIDLENAME; // 'Иванович'
 
-      sToPost := sToPost.Replace('[SURNAME]', eSURNAME);
-      sToPost := sToPost.Replace('[NAME]', eFIRSTNAME);
-      sToPost := sToPost.Replace('[LASTNAME]', eMIDLENAME);
-      sToPost := sToPost.Replace('[SER]', ps);
-      sToPost := sToPost.Replace('[NUM]', pn);
-      sToPost := sToPost.Replace('[IDENTIF]', ePERSONAL_N);
+      Resp := Client.CheckDocument(Req);
 
-      sToPost := sToPost.Replace('[UNP]', unp);
-      sToPost := sToPost.Replace('[COMPANY]', dmMain.GetCompanyValue('NAME'));
-      sToPost := sToPost.Replace('[REGION]', dmMain.GetCompanyValue('REGION'));
-      sToPost := sToPost.Replace('[DISTRICT]', dmMain.GetCompanyValue('DISTRICT'));
-      sToPost := sToPost.Replace('[CITY]', dmMain.GetCompanyValue('CITY'));
-      sToPost := sToPost.Replace('[STREET]', dmMain.GetCompanyValue('STREET'));
-      sToPost := sToPost.Replace('[HOUSE]', dmMain.GetCompanyValue('HOUSE'));
-      sToPost := sToPost.Replace('[HOUSING]', dmMain.GetCompanyValue('HOUSING'));
-      sToPost := sToPost.Replace('[ROOM]', dmMain.GetCompanyValue('ROOM'));
-
-      RequestData.WriteString(sToPost);
-      RequestData.Position := 0;
-
-      FHttpCli.ContentTypePost := 'application/json';
-      FHttpCli.Accept := 'application/json';
-      FHttpCli.SendStream := RequestData;
-      FHttpCli.SendStream.Position := 0;
-      FHttpCli.Post;
+      try
+        if Resp.IsSuccess then
+          pValid := Resp.DocState
+        else
+          pValid := DocNeedRecheck;
+        if Resp.HttpStatusCode = 200 then
+          answer := Resp.RawResponse
+        else
+          answer := Resp.ErrorMessage;
+      finally
+        Resp.Free;
+      end;
+    finally
+      Client.Free;
     end;
 
-    if FHttpCli.StatusCode = 200 then
+  except
+    on e: Exception do
     begin
-      // {"rs":"Машиночитаемый документ - 0A0007083 - не выдавался"}
-      // {"rs":"Машиночитаемый документ - MC2134811 - выдан, действителен, дата выдачи 11.06.2010"}
-      // {"rs":"Машиночитаемый документ - MC1828933 - недействителен, дата постановки на учет 10.12.2019"}
-      answer := Datax.DataString;
-      if answer.ToLower.Contains('выдан, действителен') then
-      begin
-        pValid := 1;
-      end
-      else
-      begin
-        ShowMessage(answer);
-        pValid := 0;
-      end
+      answer := e.ClassName + ': ' + e.Message;
+      pValid := DocNeedRecheck;
     end
-    else
-    begin
-      answer := rsError + ' ' + FHttpCli.StatusCode.ToString;
-      ShowMessage(answer);
-      pValid := -1;
-      {
-        401 Unauthorized	Возвращается в случаях несанкционированного доступа к сервису
-        403 Forbidden	Возвращается в случае, если запрашиваемый ресурс существует, но у клиента  недостаточно прав на его просмотр или модификацию
-        500 Internal Server Error
-        502 Bad Gateway
-        504 Gateway Timeout
-        200 ОК	Пакет получен
-        400 Bad Request	Структура пакета неверна
-        500 Internal Server Error	Непредвиденная ошибка сервера
-      }
-    end;
-  finally
-    FHttpCli.RcvdStream := nil;
-    FHttpCli.Free;
-    FSslContext.Free;
-    if Assigned(Datax) then
-      Datax.Free;
-    if Assigned(RequestData) then
-      RequestData.Free;
   end;
 
   qry := TpFIBQuery.Create(Nil);
@@ -5499,8 +5403,8 @@ begin
     qry.sql.Add(' values (:Log_Group, :Object_Id, :Value_Before, :Value_After)');
     qry.ParamByName('Log_Group').value := 'PASSPORT_CHECK';
     qry.ParamByName('Object_Id').value := dsCustomers['CUSTOMER_ID'];
-    qry.ParamByName('Value_Before').value := Format('%s %s %s|%s%s|%s', [eSURNAME, eFIRSTNAME, eMIDLENAME, ps, pn,
-      ePERSONAL_N]);
+    qry.ParamByName('Value_Before').value :=
+      Format('%s %s %s %s %s', [eSURNAME, eFIRSTNAME, eMIDLENAME, ePASSPORT_NUMBER, ePERSONAL_N]);
     qry.ParamByName('Value_After').value := answer;
     qry.Transaction.StartTransaction;
     qry.ExecQuery;
@@ -5559,7 +5463,7 @@ begin
   Result := '';
   tmpSQL := '';
 
-  if (dsFilter.FieldByName('CHECK_ADRESS').IsNull) or (dsFilter['CHECK_ADRESS'] <> 1) then
+  if (dsFilter.FieldByName('CHECK_ADRESS').IsNull) or (dsFilter['CHECK_ADRESS'] = 0) then
     Exit;
 
   if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
@@ -5682,12 +5586,12 @@ end;
 
 function TCustomersForm.FilterForPeriod: String;
 var
-  tmpSQL, s: String;
+  tmpSQL: String;
 begin
   Result := '';
   tmpSQL := '';
 
-  if (dsFilter.FieldByName('PERIOD_SGN').IsNull) or (dsFilter['PERIOD_SGN'] > 0) then
+  if (dsFilter.FieldByName('PERIOD_SGN').IsNull) or (dsFilter['PERIOD_SGN'] = 0) then
     Exit;
 
   // Заключили договор
@@ -5874,14 +5778,14 @@ end;
 
 function TCustomersForm.FilterForDebt: String;
 var
-  tmpSQL, s: String;
+  tmpSQL: String;
   AFormatSettings: TFormatSettings;
 begin
 
   Result := '';
   tmpSQL := '';
 
-  if (dsFilter.FieldByName('CHECK_DEBT').IsNull) or (dsFilter['CHECK_DEBT'] <> 1) then
+  if (dsFilter.FieldByName('CHECK_DEBT').IsNull) or (dsFilter['CHECK_DEBT'] = 0) then
     Exit;
 
   AFormatSettings := TFormatSettings.Create;
@@ -5976,10 +5880,7 @@ begin
   Result := '';
   tmpSQL := '';
 
-  if (dsFilter.FieldByName('SFLTR_TYPE').IsNull) then
-    Exit;
-
-  if (dsFilter.FieldByName('SFLTR_TEXT').IsNull) then
+  if (dsFilter.FieldByName('SFLTR_TYPE').IsNull) or (dsFilter.FieldByName('SFLTR_TEXT').IsNull) then
     Exit;
 
   s := dsFilter.FieldByName('SFLTR_TEXT').AsString;
@@ -6095,12 +5996,12 @@ end;
 
 function TCustomersForm.FilterForCustSrvState: String;
 var
-  tmpSQL, s, st: String;
+  tmpSQL, st: String;
 begin
   Result := '';
   tmpSQL := '';
 
-  if (dsFilter.FieldByName('STATE_1').IsNull) or (dsFilter['STATE_1'] < 1) then
+  if (dsFilter.FieldByName('STATE_1').IsNull) or (dsFilter['STATE_1'] = 0) then
     Exit;
 
   // 1. Предоставлялась

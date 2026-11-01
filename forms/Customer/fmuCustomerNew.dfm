@@ -161,6 +161,9 @@ object apgCustomerNew: TapgCustomerNew
         DynProps = <>
         DataField = 'MANAGER_ID'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EmptyDataInfo.Text = #1044#1086#1075#1086#1074#1086#1088' '#1089#1086#1089#1090#1072#1074#1080#1083
         EditButtons = <>
         KeyField = 'WORKER_ID'
@@ -261,6 +264,9 @@ object apgCustomerNew: TapgCustomerNew
             FieldName = 'AREA_NAME'
             Title.Caption = #1043#1086#1088#1086#1076
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
@@ -303,6 +309,9 @@ object apgCustomerNew: TapgCustomerNew
             FieldName = 'INSERVICE'
             Width = 10
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 200
         EmptyDataInfo.Text = #1044#1086#1084
@@ -645,6 +654,9 @@ object apgCustomerNew: TapgCustomerNew
         DynProps = <>
         DataField = 'DocType'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
         EditButtons = <>
@@ -823,6 +835,9 @@ object apgCustomerNew: TapgCustomerNew
         DynProps = <>
         DataField = 'VATG_ID'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EditButtons = <>
         KeyField = 'O_ID'
@@ -909,6 +924,7 @@ object apgCustomerNew: TapgCustomerNew
         DropDownBox.ListSource = srcBanks
         DropDownBox.ListSourceAutoFilter = True
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1073#1072#1085#1082' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080
         EditButtons = <>
@@ -981,7 +997,7 @@ object apgCustomerNew: TapgCustomerNew
         ValueChecked = '1'
         ValueUnchecked = '0'
       end
-      object Button1: TButton
+      object btnColor: TButton
         Left = 236
         Top = 76
         Width = 120
@@ -991,7 +1007,7 @@ object apgCustomerNew: TapgCustomerNew
         Caption = #1042#1099#1073#1088#1072#1090#1100' '#1092#1086#1085
         TabOrder = 1
         TabStop = False
-        OnClick = Button1Click
+        OnClick = btnColorClick
       end
       object Button2: TButton
         Left = 364
@@ -1014,6 +1030,9 @@ object apgCustomerNew: TapgCustomerNew
         DynProps = <>
         DataField = 'ORG_ID'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1054#1073#1089#1083#1091#1097#1080#1074#1072#1102#1097#1072#1103' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
         EditButtons = <>
@@ -1039,7 +1058,7 @@ object apgCustomerNew: TapgCustomerNew
         TabOrder = 3
         Visible = True
       end
-      object DBEditEh1: TDBEditEh
+      object edtExtId: TDBEditEh
         Left = 107
         Top = 52
         Width = 377
@@ -1263,6 +1282,7 @@ object apgCustomerNew: TapgCustomerNew
           Top = 15
           Width = 454
           Height = 128
+          ScrollBars = ssBoth
           Align = alClient
           AutoSize = False
           DataField = 'NOTICE'

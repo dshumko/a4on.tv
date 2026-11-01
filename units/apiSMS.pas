@@ -359,6 +359,7 @@ begin
         sms.a4ID := ReadfromDB.fn('Mes_Id').AsInteger;
         sms.phone := ReadfromDB.fn('PHONE').AsString;
         sms.Text := ReadfromDB.fn('Mes_Text').AsString;
+        sms.date := 0;
         CountSMS := SMSCount(sms.Text);
         if (sendedSmsCount + CountSMS) < fBalance then
         begin

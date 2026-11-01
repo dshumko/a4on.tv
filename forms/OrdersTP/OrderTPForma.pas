@@ -108,6 +108,7 @@ type
     function CheckData: Boolean;
     function CheckDataAndSave: Boolean;
     procedure RecalAmount;
+    function CheckOrderAddons: String;
     procedure SaveOrderAddons;
     procedure SaveContact;
     procedure SetInUpdateMode(const value: Boolean);
@@ -658,6 +659,13 @@ begin
   end;
 
   Result := not errors;
+  if Result then begin
+    s := CheckOrderAddons;
+    if s<>'' then begin
+      ShowMessage('Заполните данные для: '+ s);
+      Result := False;
+    end;
+  end;
 end;
 
 procedure TOrderTPForm.SetCustomerInfo(ci: TCustomerInfo);
@@ -838,8 +846,11 @@ begin
     ParseJson(dsOTPTypes['O_CHARFIELD']);
 
   // сделано так чтоб сплиттер оставвался на месте
-  splitter.Visible := (pnlPeriod.Visible or mtAddons.Active);
-  pnlAddons.Visible := splitter.Visible;
+  pnlAddons.Visible := (pnlPeriod.Visible or mtAddons.Active);
+  splitter.Visible := pnlAddons.Visible;
+  splitter.Align := alLeft;
+  pnlAddons.Align := alRight;
+  splitter.Align := alRight;
 
   dbgAddons.Visible := mtAddons.Active;
   pnlAddonsResize(Self);
@@ -1014,9 +1025,7 @@ begin
 
   d := 0;
   if pnlPeriod.Visible and (not(VarIsNull(edFROM.value) or VarIsNull(edTO.value))) then
-  begin
     d := (DaysBetween(edTO.value, edFROM.value) + 1);
-  end;
 
   if mtAddons.Active then
   begin
@@ -1042,9 +1051,7 @@ begin
         k := 1;
       gc := gc * k;
       if ((not mtAddons.FieldByName('dc').IsNull) and (mtAddons['dc'] = 1)) then
-      begin
         gc := gc * d;
-      end;
       cost := cost + gc;
       mtAddons.Next;
     end;
@@ -1182,6 +1189,29 @@ begin
       Transaction.Commit;
     finally
       free;
+    end;
+  end;
+end;
+
+function TOrderTPForm.CheckOrderAddons: String;
+begin
+  Result := '';
+  if pnlAddons.Visible then
+  begin
+    if (mtAddons.Active and (mtAddons.RecordCount > 0)) then
+    begin
+      mtAddons.DisableControls;
+      mtAddons.First;
+      while not mtAddons.Eof do
+      begin
+        if (not mtAddons.FieldByName('dc').IsNull) and (mtAddons['dc'] = 1) then
+        if (mtAddons.FieldByName('qnt').IsNull) or (mtAddons['qnt'] = 0) then
+            Result := Result + ',' + mtAddons['name'];
+        mtAddons.Next;
+      end;
+      mtAddons.First;
+      mtAddons.EnableControls;
+      Result := Result.TrimLeft([',']);
     end;
   end;
 end;

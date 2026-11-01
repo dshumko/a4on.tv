@@ -11,7 +11,7 @@ uses
   GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
   pFIBDataSet,
   frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TWireForm = class(TGridForm)
@@ -592,7 +592,7 @@ function TWireForm.GenerateFilter: string;
     tmpSQL := '';
 
     // Условие отбора по адресу
-    if (dsFilter['CHECK_ADRESS'] = 1) then
+    if (dsFilter['CHECK_ADDRESS'] = 1) then
     begin
       if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
       begin

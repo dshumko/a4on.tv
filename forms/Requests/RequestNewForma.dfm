@@ -22,7 +22,7 @@ object RequestNewForm: TRequestNewForm
     832
     522)
   TextHeight = 13
-  object pnlAdresInfo: TPanel
+  object pnlAddressInfo: TPanel
     Left = 0
     Top = 0
     Width = 832
@@ -30,7 +30,7 @@ object RequestNewForm: TRequestNewForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    object pnlAdres: TPanel
+    object pnlAddress: TPanel
       Left = 0
       Top = 0
       Width = 363
@@ -162,6 +162,9 @@ object RequestNewForm: TRequestNewForm
             FieldName = 'SUBAREA_NAME'
             Width = 40
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 200
@@ -274,13 +277,9 @@ object RequestNewForm: TRequestNewForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
-        ExplicitWidth = 469
-        ExplicitHeight = 129
         inherited gbInfo: TGroupBox
           Width = 469
           Height = 129
-          ExplicitWidth = 469
-          ExplicitHeight = 129
         end
       end
     end
@@ -293,19 +292,13 @@ object RequestNewForm: TRequestNewForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 487
-    ExplicitWidth = 832
     inherited Label2: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited Label1: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 358
@@ -317,18 +310,12 @@ object RequestNewForm: TRequestNewForm
       Caption = '&'#1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = bbOkClick
-      ExplicitLeft = 358
-      ExplicitTop = 6
-      ExplicitWidth = 334
     end
     inherited bbCancel: TBitBtn
       Left = 704
       Top = 6
       Width = 123
       OnClick = frmOkCancelbbCancelClick
-      ExplicitLeft = 704
-      ExplicitTop = 6
-      ExplicitWidth = 123
     end
   end
   object pnl1: TPanel
@@ -552,6 +539,7 @@ object RequestNewForm: TRequestNewForm
             DataField = ''
             DropDownBox.ListSource = srcRequestType
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
             DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
@@ -585,6 +573,7 @@ object RequestNewForm: TRequestNewForm
             DataField = ''
             DropDownBox.ListSource = srcErrors
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
             DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
@@ -1333,7 +1322,7 @@ object RequestNewForm: TRequestNewForm
     DeleteSQL.Strings = (
       '')
     SelectSQL.Strings = (
-      'select '
+      'select'
       '    s.street_name||'#39' '#39'||s.street_short street_name,'
       '    h.house_no,'
       '    r.rq_id,'
@@ -1351,16 +1340,16 @@ object RequestNewForm: TRequestNewForm
       'left outer join request_templates t on (t.rqtl_id = r.rqtl_id)'
       'left outer join WORKGROUPS W on (W.WG_ID = H.WG_ID)'
       
-        'where @@filter%(( exists(select H1.HOUSE_ID from HOUSE H1 where ' +
-        'H1.HOUSE_ID = R.HOUSE_ID and exists(select h2.STREET_ID from HOU' +
-        'SE h2 where H2.STREET_ID = H1.STREET_ID and HOUSE_ID = :HOUSE_ID' +
-        '))))@'
+        'where @@filter%exists(select H1.HOUSE_ID from HOUSE H1 where H1.' +
+        'HOUSE_ID = R.HOUSE_ID and exists(select h2.STREET_ID from HOUSE ' +
+        'h2 where H2.STREET_ID = H1.STREET_ID and h2.HOUSE_ID = :HOUSE_ID' +
+        '))@'
       
         '      and ((R.RQ_PLAN_DATE = :RQ_PLAN_DATE) or (:RQ_PLAN_DATE is' +
-        ' null)) '
-      '      and R.REQ_RESULT < 2 '
+        ' null))'
+      '      and R.REQ_RESULT < 2'
       '      and R.RQ_ID <> :RQ_ID'
-      'order by 1, 2, RQ_PLAN_DATE  ')
+      'order by 1, 2, RQ_PLAN_DATE')
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     AutoCommit = True

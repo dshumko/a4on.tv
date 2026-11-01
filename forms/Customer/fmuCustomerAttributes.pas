@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, Vcl.Buttons,
   Vcl.ExtCtrls;
 
@@ -59,8 +60,8 @@ begin
 
   FullAccess := (dmMain.AllowedAction(rght_Customer_full)); // Полный доступ
   // атрибуты
-  pnlButtons.Visible := (dmMain.AllowedAction(rght_Customer_Attribute)) or (dmMain.AllowedAction(rght_Customer_edit))
-    or FullAccess;
+  pnlButtons.Visible := (dmMain.AllowedAction(rght_Customer_Attribute)) or (dmMain.AllowedAction(rght_Customer_edit)) or
+    FullAccess;
   actAdd.Visible := pnlButtons.Visible;
   actDel.Visible := pnlButtons.Visible;
   actEdit.Visible := pnlButtons.Visible;
@@ -84,31 +85,70 @@ begin
 end;
 
 procedure TapgCustomerAttributes.actAddExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  // dsCustAttributes.append;
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Attribute);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if EditAttribute(FDataSource.DataSet['CUSTOMER_ID'], '') then
   begin
-    // dsCustAttributes.Post;
     dsCustAttributes.CloseOpen(true);
     EnableControls;
     UpdatePage;
-  end
+  end;
 end;
 
 procedure TapgCustomerAttributes.actDelExecute(Sender: TObject);
+var
+  AllowDelete: Boolean;
+  Terminated: Boolean;
 begin
-  if srcCustAttributes.DataSet.State in [dsInsert, dsEdit] then
-    srcCustAttributes.DataSet.Cancel
+  if dsCustAttributes.RecordCount = 0 then
+    exit;
+
+  AllowDelete := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not AllowDelete then
+  begin
+    AllowDelete := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    AllowDelete := AllowDelete and dmMain.AllowedAction(rght_Customer_Attribute);
+  end;
+
+  if (not AllowDelete) then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
+  if dsCustAttributes.State in [dsInsert, dsEdit] then
+    dsCustAttributes.Cancel
   else
   begin
     if ((not dsCustAttributes.Active) or (dsCustAttributes.RecordCount = 0)) then
-      Exit;
-    if (not srcCustAttributes.DataSet.FieldByName('O_NAME').IsNull) then
+      exit;
+    if (not dsCustAttributes.FieldByName('O_NAME').IsNull) then
     begin
-      if (MessageDlg(Format(rsDeleteWithName, [srcCustAttributes.DataSet['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0)
-        = mrYes) then
+      if (MessageDlg(Format(rsDeleteWithName, [dsCustAttributes['O_NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
+      then
       begin
-        srcCustAttributes.DataSet.Delete;
+        dsCustAttributes.Delete;
         EnableControls;
         UpdatePage;
       end;
@@ -117,21 +157,40 @@ begin
 end;
 
 procedure TapgCustomerAttributes.actEditExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  // dsCustAttributes.Edit;
+  if (dsCustAttributes.RecordCount = 0) or (dsCustAttributes.FieldByName('CA_ID').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Attribute);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if ((not dsCustAttributes.Active) or (dsCustAttributes.RecordCount = 0)) then
-    Exit;
+    exit;
   if (dsCustAttributes.FieldByName('O_NAME').IsNull) or (dsCustAttributes.FieldByName('CA_ID').IsNull) or
     (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
-    Exit;
+    exit;
   if EditAttribute(FDataSource.DataSet['CUSTOMER_ID'], dsCustAttributes['O_NAME'], dsCustAttributes['CA_ID']) then
   begin
-    // dsCustAttributes.Post;
     dsCustAttributes.Refresh;
     EnableControls;
     UpdatePage;
   end
-  // else dsCustAttributes.Cancel;
 end;
 
 procedure TapgCustomerAttributes.CloseData;

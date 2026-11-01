@@ -74,7 +74,6 @@ type
     FRowID: Integer;
     FRecordCount: Integer;
     FItsInvenoty: Boolean;
-    function GetCount: Integer;
     procedure OpenDataset();
     function SaveUnits(): Boolean;
     function CheckUnitsInDB(): String;
@@ -524,11 +523,6 @@ begin
     if i > 1 then
       Text := IntToStr(i);
   end;
-end;
-
-function TMatDocUnitForm.GetCount: Integer;
-begin
-  Result := FRecordCount;
 end;
 
 procedure TMatDocUnitForm.mtUnitsNewRecord(DataSet: TDataSet);

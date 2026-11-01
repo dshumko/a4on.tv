@@ -137,7 +137,7 @@ implementation
 uses
   Winapi.ShellAPI,
   DM, MAIN, AtrCommon, A4onTypeUnit, PeriodForma, AtrStrUtils,
-  CF, CustomerForma, ReportPreview, TextEditForma, EditCFileForma;
+  CF, CustomerForma, ReportPreview, TextEditForma, EditCFileForma, AtrEhLibAddons;
 
 {$R *.dfm}
 
@@ -642,18 +642,7 @@ end;
 
 procedure TCustFilesForm.luPaymentClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(false);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TCustFilesForm.luPaymentEnter(Sender: TObject);

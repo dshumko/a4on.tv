@@ -10,9 +10,7 @@ object apgCustomerKoef: TapgCustomerKoef
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgCustDiscFactor: TDBGridEh
     Left = 26

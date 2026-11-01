@@ -2,18 +2,18 @@ inherited OTPTypesForm: TOTPTypesForm
   Left = 381
   Top = 171
   Caption = #1058#1080#1087#1099' '#1089#1090#1086#1088#1086#1085#1085#1080#1093' '#1079#1072#1082#1072#1079#1086#1074
-  ClientHeight = 463
-  ClientWidth = 698
-  PixelsPerInch = 96
+  ClientHeight = 549
+  ClientWidth = 811
+  StyleElements = [seFont, seClient, seBorder]
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 353
-    Width = 698
+    Width = 811
   end
   inherited dbGrid: TDBGridEh
     Top = 357
-    Width = 698
-    Height = 106
+    Width = 811
+    Height = 192
     AllowedOperations = []
     Columns = <
       item
@@ -85,18 +85,19 @@ inherited OTPTypesForm: TOTPTypesForm
       end>
   end
   inherited tlbMain: TToolBar
-    Width = 698
+    Width = 811
   end
   inherited pnlEdit: TPanel
-    Width = 698
+    Width = 811
     Height = 328
+    StyleElements = [seFont, seClient, seBorder]
     inherited btnSaveLink: TBitBtn
       Top = 298
-      Width = 512
+      Width = 625
       TabOrder = 1
     end
     inherited btnCancelLink: TBitBtn
-      Left = 603
+      Left = 716
       Top = 298
       Width = 90
       TabOrder = 2
@@ -104,14 +105,14 @@ inherited OTPTypesForm: TOTPTypesForm
     object pnlMain: TPanel
       Left = 0
       Top = 0
-      Width = 698
+      Width = 811
       Height = 294
       Align = alCustom
       Anchors = [akLeft, akTop, akRight, akBottom]
       BevelOuter = bvNone
       TabOrder = 0
       object spl1: TSplitter
-        Left = 375
+        Left = 488
         Top = 0
         Height = 294
         Align = alRight
@@ -119,13 +120,13 @@ inherited OTPTypesForm: TOTPTypesForm
       object pnl1: TPanel
         Left = 0
         Top = 0
-        Width = 375
+        Width = 488
         Height = 294
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          375
+          488
           294)
         object lbl2: TLabel
           Left = 5
@@ -137,7 +138,7 @@ inherited OTPTypesForm: TOTPTypesForm
         object mmoO_DESCRIPTION: TDBMemoEh
           Left = 5
           Top = 60
-          Width = 370
+          Width = 483
           Height = 234
           ScrollBars = ssVertical
           Anchors = [akLeft, akTop, akRight, akBottom]
@@ -155,7 +156,7 @@ inherited OTPTypesForm: TOTPTypesForm
         object edtName: TDBEditEh
           Left = 32
           Top = 6
-          Width = 343
+          Width = 456
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DataField = 'O_NAME'
@@ -170,7 +171,7 @@ inherited OTPTypesForm: TOTPTypesForm
         object cbReport: TDBComboBoxEh
           Left = 5
           Top = 33
-          Width = 370
+          Width = 483
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           DynProps = <>
@@ -182,7 +183,7 @@ inherited OTPTypesForm: TOTPTypesForm
         end
       end
       object pnl2: TPanel
-        Left = 378
+        Left = 491
         Top = 0
         Width = 320
         Height = 294

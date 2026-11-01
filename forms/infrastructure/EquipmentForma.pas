@@ -80,6 +80,13 @@ type
     btnGroup: TToolButton;
     btn3: TToolButton;
     btnLayout: TToolButton;
+    pmGridTitle: TPopupMenu;
+    N45: TMenuItem;
+    N46: TMenuItem;
+    N44: TMenuItem;
+    N47: TMenuItem;
+    miFrozenCols1: TMenuItem;
+    actGTSelectColumns1: TMenuItem;
     procedure tbCancelClick(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -1111,7 +1118,7 @@ function TEquipmentForm.GenerateFilter: string;
     tmpSQL := '';
 
     // Условие отбора по адресу
-    if (dsFilter['CHECK_ADRESS'] = 1) then
+    if (dsFilter['CHECK_ADDRESS'] = 1) then
     begin
       if (not dsFilter.FieldByName('HOUSE_ID').IsNull) then
       begin

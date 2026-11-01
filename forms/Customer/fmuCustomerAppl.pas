@@ -1,6 +1,5 @@
 ﻿unit fmuCustomerAppl;
 
-
 interface
 
 uses
@@ -106,10 +105,29 @@ procedure TapgCustomerAppl.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
   aid: Integer;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Appliance);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   ci := GetCustomerInfo;
   if ci.CUSTOMER_ID = -1 then
-    Exit;
+    exit;
+
   aid := EditAppliance(ci, -1);
   if aid > -1 then
   begin
@@ -119,39 +137,74 @@ begin
 end;
 
 procedure TapgCustomerAppl.actDelExecute(Sender: TObject);
+var
+  AllowDelete: Boolean;
+  Terminated: Boolean;
 begin
   if dsAppliance.RecordCount = 0 then
-    Exit;
+    exit;
 
   if not dsAppliance.FieldByName('RQ_ID').IsNull then
   begin
     ShowMessage(rsDeleteViaRequest);
-    Exit;
+    exit;
+  end;
+
+  AllowDelete := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not AllowDelete then
+  begin
+    AllowDelete := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    AllowDelete := AllowDelete and dmMain.AllowedAction(rght_Customer_Appliance);
+  end;
+
+  if (not AllowDelete) then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
   end;
 
   if (MessageDlg(Format(rsDeleteWithName, [dsAppliance['Name']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-  begin
     dsAppliance.Delete;
-  end;
 end;
 
 procedure TapgCustomerAppl.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
   aid: Integer;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
   if (dsAppliance.RecordCount = 0) or (dsAppliance.FieldByName('ID').IsNull) then
-    Exit;
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Appliance);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
 
   ci := GetCustomerInfo;
-  if ci.CUSTOMER_ID <> -1 then
+  if ci.CUSTOMER_ID = -1 then
+    exit;
+
+  aid := EditAppliance(ci, dsAppliance['ID']);
+  if aid > -1 then
   begin
-    aid := EditAppliance(ci, dsAppliance['ID']);
-    if aid > -1 then
-    begin
-      dsAppliance.CloseOpen(true);
-      dsAppliance.Locate('ID', aid, []);
-    end;
+    dsAppliance.CloseOpen(true);
+    dsAppliance.Locate('ID', aid, []);
   end;
 end;
 
@@ -163,9 +216,9 @@ var
   FullAccess, CE, CC, CG, CA: Boolean;
 Begin
   if dsAppliance.FieldByName('RQ_ID').IsNull then
-    Exit;
+    exit;
   if dsAppliance.FieldByName('OWN_ID').IsNull then
-    Exit;
+    exit;
 
   // права пользователей
   FullAccess := dmMain.AllowedAction(rght_Request_full);
@@ -175,7 +228,7 @@ Begin
   CG := dmMain.AllowedAction(rght_Request_Give);
 
   if not(FullAccess or CE or CC or CG or CA) then
-    Exit;
+    exit;
 
   aRequest := dsAppliance.FieldByName('RQ_ID').AsInteger;
   aCustomer := dsAppliance.FieldByName('OWN_ID').AsInteger;
@@ -290,4 +343,3 @@ begin
 end;
 
 end.
-

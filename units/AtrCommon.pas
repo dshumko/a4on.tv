@@ -98,7 +98,8 @@ function LeftTrimChar(const S: string; const chr: Char): string;
 
 procedure ComressStream(aSource, aTarget: TStream);
 procedure DecompressStream(aSource, aTarget: TStream);
-
+procedure DecompressGZipFile(const InFile, OutFile: string);
+function CheckAndExtractArchive(const aFileName: String): string;
 // получаем версию файла
 function GetFileVersion(const FileName: TFileName; var Major, Minor, Release, Build: Integer): Boolean;
 // удаляет символы из строки
@@ -146,10 +147,9 @@ implementation
 
 uses
   Winapi.Messages, Winapi.ShlObj, Winapi.ActiveX, Winapi.SHFolder,
-  System.DateUtils, System.IniFiles, System.ZLib, System.ZLibConst, System.IOUtils,
+  System.StrUtils, System.DateUtils, System.IniFiles, System.ZLib, System.ZLibConst, System.IOUtils, System.Zip,
   Vcl.Clipbrd, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
-  JsonDataObjects, PrjConst, Winapi.GDIPOBJ // , WebpHelpers, libwebp
-    ;
+  JsonDataObjects, PrjConst, Winapi.GDIPOBJ, SevenZip;
 
 function GetTempDir: String;
 begin
@@ -1715,6 +1715,128 @@ begin
     Result := buffer
   else
     Result := ''
+end;
+
+procedure DecompressGZipFile(const InFile, OutFile: string);
+var
+  InStream: TFileStream;
+  OutStream: TFileStream;
+  Decompressor: TDecompressionStream;
+const
+  // 15 is the maximum window size (speed/memory optimization)
+  // +16 tells the ZLib engine to look for and decode the GZip header/footer
+  GZipWindowBits = 15 + 16;
+begin
+  InStream := TFileStream.Create(InFile, fmOpenRead or fmShareDenyWrite);
+  try
+    OutStream := TFileStream.Create(OutFile, fmCreate);
+    try
+      // Pass False as the last argument to prevent the compressor from taking ownership of InStream
+      Decompressor := TDecompressionStream.Create(InStream, GZipWindowBits, False);
+      try
+        // Copy data from the decompressor stream to the output stream
+        OutStream.CopyFrom(Decompressor, 0);
+      finally
+        Decompressor.Free;
+      end;
+    finally
+      OutStream.Free;
+    end;
+  finally
+    InStream.Free;
+  end;
+end;
+
+function CheckAndExtractArchive(const aFileName: String): string;
+var
+  s: string;
+  i: Integer;
+  Finded: Boolean;
+  z: I7zInArchive;
+  ext : String;
+  Zip: TZipFile;
+begin
+  s := ExtractFileName(aFileName);
+  i := s.LastDelimiter(['.']);
+  if (i > 0) and (s.Chars[i] = '.') then
+      ext := UpperCase(Copy(s, i+2));
+
+  if MatchStr(ext, ['GZ','GZIP','TGZ','TPZ']) then begin
+     s := ExtractFileName(aFileName);
+     i := s.LastDelimiter(['.']);
+     if (i > 0) and (s.Chars[i] = '.') then
+              s := Copy(s, 0, i);
+     s := GetTempDir + s;
+     DecompressGZipFile(aFileName, s);
+  end
+  else if (ext = 'ZIP') then begin
+    Zip := TZipFile.Create;
+    try
+      Zip.Open(aFileName, TZipMode.zmRead);
+      if Length(Zip.FileNames) > 0 then begin
+        s := Zip.FileNames[0];
+        Zip.Extract(s, GetTempDir, True);
+        s := GetTempDir + s;
+      end;
+      Zip.Close;
+    finally
+      Zip.Free;
+    end;
+  end
+  else begin
+  s := ExtractFilePath(Application.ExeName) + '7z.dll';
+  // проверим, есть ли в папке длл для распакрвки
+  if FileExists(s) then begin
+    s := aFileName;
+    try
+      Finded := False;
+      if MatchStr(ext, ['JAR','XPI']) then
+      begin
+        z := CreateInArchive(CLSID_CFormatZip);
+        Finded := True;
+      end
+      else if (ext = '7Z') then
+      begin
+        z := CreateInArchive(CLSID_CFormat7z);
+        Finded := True;
+      end
+      else if (ext = 'RAR') then
+      begin
+        z := CreateInArchive(CLSID_CFormatRar);
+        Finded := True;
+      end
+      else if (ext = 'ARJ') then
+      begin
+        z := CreateInArchive(CLSID_CFormatArj);
+        Finded := True;
+      end
+      else if MatchStr(ext, ['BZ2', 'BZIP2', 'TBZ2', 'TBZ']) then
+      begin
+        z := CreateInArchive(CLSID_CFormatBZ2);
+        Finded := True;
+      end
+      else
+        s := aFileName;
+
+      if Finded then
+      begin
+        z.OpenFile(aFileName);
+        s := z.ItemPath[0];
+        if not s.IsEmpty then begin
+          s := GetTempDir + s;
+          z.ExtractTo(GetTempDir);
+        end
+        else
+          s := aFileName;
+      end;
+    except
+      s := aFileName;
+    end;
+  end
+  else
+    s := aFileName;
+  end;
+  Result := s;
 end;
 
 initialization

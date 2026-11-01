@@ -2677,11 +2677,12 @@ DETERMINISTIC
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION DATE_FORMAT (A_DATE D_DATE = current_date,
-FORMAT D_VARCHAR1000 = null,
-LONG_DAY_NAMES D_VARCHAR100 = null,
-SHORT_DAY_NAMES D_VARCHAR50 = null,
-LONG_MONTH_NAMES D_VARCHAR255 = null,
-SHORT_MONTH_NAMES D_VARCHAR255 = null)
+FORMAT D_VARCHAR1000 = null /* COLLATE UTF8 - default */,
+LONG_WDAY_NAMES D_VARCHAR100 = null /* COLLATE UTF8 - default */,
+SHORT_WDAY_NAMES D_VARCHAR50 = null /* COLLATE UTF8 - default */,
+LONG_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+SHORT_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS D_VARCHAR255
 AS 
 BEGIN END ^
@@ -2727,7 +2728,7 @@ RETURNS D_N15_5
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_NEW_ACCOUNT (HOUSE_ID TYPE OF UID = null,
-FLAT D_FLAT = null,
+FLAT D_FLAT = null /* COLLATE UTF8 - default */,
 SRV_ID TYPE OF UID = null)
 RETURNS D_ACCOUNT_NS
 AS 
@@ -2739,6 +2740,17 @@ AS
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_REQUEST_MONEY (RQ_ID D_UID_NULL)
 RETURNS D_N15_2
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION GET_SETTINGS_INT_VALUE (SETTING D_NAME,
+DEF_VALUE D_INTEGER = 0)
+RETURNS D_INTEGER
+AS 
+BEGIN END ^
+CREATE OR ALTER FUNCTION GET_SETTINGS_VALUE (SETTING D_NAME,
+DEF_VALUE D_VARCHAR1000 = '')
+RETURNS D_VARCHAR1000
+DETERMINISTIC 
 AS 
 BEGIN END ^
 CREATE OR ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
@@ -3484,6 +3496,11 @@ AS
 BEGIN EXIT; END ^
 CREATE OR ALTER PROCEDURE CLOSE_MATERIAL_DOC (DOC_ID UID)
 RETURNS (RESULT D_INTEGER)
+AS 
+BEGIN SUSPEND; END ^
+CREATE OR ALTER PROCEDURE CLOSE_MATERIAL_DOC_MOVE (DOC_ID UID)
+RETURNS (RESULT D_INTEGER,
+RESULT_TEXT D_NOTICE)
 AS 
 BEGIN SUSPEND; END ^
 CREATE OR ALTER PROCEDURE CLOSE_MONTH_PROC (P_MONTH D_DATE,
@@ -5299,35 +5316,33 @@ begin
 end ^
 
 ALTER FUNCTION DATE_FORMAT (A_DATE D_DATE = current_date,
-FORMAT D_VARCHAR1000 = null,
-LONG_DAY_NAMES D_VARCHAR100 = null,
-SHORT_DAY_NAMES D_VARCHAR50 = null,
-LONG_MONTH_NAMES D_VARCHAR255 = null,
-SHORT_MONTH_NAMES D_VARCHAR255 = null)
+FORMAT D_VARCHAR1000 = null /* COLLATE UTF8 - default */,
+LONG_WDAY_NAMES D_VARCHAR100 = null /* COLLATE UTF8 - default */,
+SHORT_WDAY_NAMES D_VARCHAR50 = null /* COLLATE UTF8 - default */,
+LONG_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+SHORT_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS D_VARCHAR255
 AS 
-declare variable D_Year  D_Smallint;
+declare variable D_Year  D_Integer;
 declare variable D_Month D_Smallint;
 declare variable D_Day   D_Smallint;
-declare variable M       D_Smallint;
-declare variable D       D_Smallint;
-declare variable L       D_Smallint;
-declare variable S       D_Smallint;
-declare variable L_Month D_Varchar20;
-declare variable S_Month D_Varchar10;
-declare variable L_Day   D_Varchar20;
-declare variable S_Day   D_Varchar10;
+declare variable I       D_Smallint;
+declare variable STR     D_Varchar20;
 declare variable Result  D_Varchar255;
 begin
 
-  if (Long_Day_Names is null) then
-    Long_Day_Names = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
-  if (Short_Day_Names is null) then
-    Short_Day_Names = 'пн,вт,ср,чт,пт,сб,вс';
+  if (LONG_WDAY_NAMES is null) then
+    LONG_WDAY_NAMES = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
+  if (SHORT_WDAY_NAMES is null) then
+    SHORT_WDAY_NAMES = 'пн,вт,ср,чт,пт,сб,вс';
   if (Long_Month_Names is null) then
     Long_Month_Names = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря';
   if (Short_Month_Names is null) then
     Short_Month_Names = 'янв,фев,мар,апр,мая,июн,июл,авг,сен,окт,ноя,дек';
+  if (Month_Names is null) then
+    Month_Names = 'январь,февраль,март,апрель,май,июнь,июль,август,сентябрь,октябрь,ноябрь,декабрь';
+
   if (Format is null) then
     Format = 'DD.MM.YYYY';
   else
@@ -5341,50 +5356,75 @@ begin
     D_DAY = extract(day from A_DATE);
     RESULT = FORMAT;
 
-    if (FORMAT is null) then
-      RESULT = D_DAY || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
+    if (FORMAT = 'DD.MM.YYYY') then
+      RESULT = lpad(cast(D_DAY as varchar(2)), 2, '0') || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
     else begin
-      RESULT = replace(replace(RESULT, 'YYYY', D_YEAR), 'YY', mod(extract(year from current_date), 100));
-      S_MONTH = '';
-      L_MONTH = '';
-      if (RESULT like '%MMM%') then begin
-        M = D_MONTH;
-        while (M > 0) do begin
-          L = position(',', LONG_MONTH_NAMES);
-          S = position(',', SHORT_MONTH_NAMES);
-          if (M = 1) then begin
-            L_MONTH = substring(LONG_MONTH_NAMES from 1 for L - 1);
-            S_MONTH = substring(SHORT_MONTH_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_MONTH_NAMES = substring(LONG_MONTH_NAMES from L + 1);
-            SHORT_MONTH_NAMES = substring(SHORT_MONTH_NAMES from S + 1);
-          end
-          M = M - 1;
-        end
-        RESULT = replace(replace(RESULT, 'MMMM', coalesce(L_MONTH, '')), 'MMM', coalesce(S_MONTH, ''));
+      -- работа с годом
+      I = char_length(RESULT) - char_length(replace(RESULT, 'Y', ''));
+      if (I = 1) then
+        RESULT = replace(RESULT, 'Y', D_YEAR);
+      else
+      if (I = 2) then
+        RESULT = replace(RESULT, 'YY', lpad(cast(mod(D_YEAR, 100) as varchar(2)), 2, '0'));
+      else
+      if (I = 3) then
+        RESULT = replace(RESULT, 'YYY', lpad(cast(mod(D_YEAR, 1000) as varchar(3)), 3, '0'));
+      else
+      if (I = 4) then
+        RESULT = replace(RESULT, 'YYYY', lpad(cast(D_YEAR as varchar(4)), 4, '0'));
+
+      -- работа с месяцем
+      I = char_length(RESULT) - char_length(replace(RESULT, 'M', ''));
+      if (I = 1) then
+        RESULT = replace(RESULT, 'M', D_MONTH);
+      else
+      if (I = 2) then
+        RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
+      else
+      if (I = 3) then begin
+        STR = '';
+        execute statement('select first 1 skip ' ||(D_MONTH - 1) || ' Str from Explode('','', :lst)')(lst := :SHORT_MONTH_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'MMM', coalesce(STR, ''));
       end
-      if (RESULT like '%DDD%') then begin
-        D = coalesce(nullif(extract(weekday from A_DATE), 0), 7);
-        while (D > 0) do begin
-          L = position(',', LONG_DAY_NAMES);
-          S = position(',', SHORT_DAY_NAMES);
-          if (D = 1) then begin
-            L_DAY = substring(LONG_DAY_NAMES from 1 for L - 1);
-            S_DAY = substring(SHORT_DAY_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_DAY_NAMES = substring(LONG_DAY_NAMES from L + 1);
-            SHORT_DAY_NAMES = substring(SHORT_DAY_NAMES from S + 1);
-          end
-          D = D - 1;
-        end
-        RESULT = replace(replace(RESULT, 'DDDD', coalesce(L_DAY, '')), 'DDD', coalesce(S_DAY, ''));
+      else
+      if (I = 4) then begin
+        STR = '';
+        execute statement('select first 1 skip ' ||(D_MONTH - 1) || ' Str from Explode('','', :lst)')(lst := :LONG_MONTH_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'MMMM', coalesce(STR, ''));
       end
-      RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'M', D_MONTH);
-      RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'D', D_DAY);
+      else
+      if (I = 5) then begin
+        STR = '';
+        execute statement('select first 1 skip ' ||(D_MONTH - 1) || ' Str from Explode('','', :lst)')(lst := :MONTH_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'MMMMM', coalesce(STR, ''));
+      end
+
+      -- работа с днем
+      I = char_length(RESULT) - char_length(replace(RESULT, 'D', ''));
+      if (I = 1) then
+        RESULT = replace(RESULT, 'D', D_DAY);
+      else
+      if (I = 2) then
+        RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
+      else
+      if (I = 3) then begin
+        STR = '';
+        D_DAY = extract(weekday from A_DATE);
+        execute statement('select first 1 skip ' ||(D_DAY - 1) || ' Str from Explode('','', :lst)')(lst := :SHORT_WDAY_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'DDD', coalesce(STR, ''));
+      end
+      else
+      if (I = 4) then begin
+        STR = '';
+        D_DAY = extract(weekday from A_DATE);
+        execute statement('select first 1 skip ' ||(D_DAY - 1) || ' Str from Explode('','', :lst)')(lst := :LONG_WDAY_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'DDDD', coalesce(STR, ''));
+      end
     end
   end
 
@@ -5793,7 +5833,7 @@ begin
 end ^
 
 ALTER FUNCTION GET_NEW_ACCOUNT (HOUSE_ID TYPE OF UID = null,
-FLAT D_FLAT = null,
+FLAT D_FLAT = null /* COLLATE UTF8 - default */,
 SRV_ID TYPE OF UID = null)
 RETURNS D_ACCOUNT_NS
 AS 
@@ -5946,7 +5986,7 @@ begin
           end -- house id is null
         end
       end
-      v = coalesce(r, '');
+      v = coalesce(r, prt0, '');
 
       PRT2 = coalesce(PRT2, '0');
       result = left(result || right(lpad(v, :prt1, :prt2), :prt1), 15);
@@ -5999,7 +6039,7 @@ declare variable d       D_INTEGER;
 declare variable vIgnoreList D_Varchar1000;
 begin
 
-  vIgnoreList = ',' || Get_Setting_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
+  vIgnoreList = ',' || Get_Settings_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
   PREPAY = 0;
 
   -- текущий месяц
@@ -6265,15 +6305,15 @@ begin
   return COST;
 end ^
 
-ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
+ALTER FUNCTION GET_SETTINGS_INT_VALUE (SETTING D_NAME,
 DEF_VALUE D_INTEGER = 0)
 RETURNS D_INTEGER
 AS 
 begin
-  return GET_SETTING_VALUE(:SETTING, :DEF_VALUE);
+  return GET_SETTINGS_VALUE(:SETTING, :DEF_VALUE);
 end ^
 
-ALTER FUNCTION GET_SETTING_VALUE (SETTING D_NAME,
+ALTER FUNCTION GET_SETTINGS_VALUE (SETTING D_NAME,
 DEF_VALUE D_VARCHAR1000 = '')
 RETURNS D_VARCHAR1000
 DETERMINISTIC 
@@ -6286,6 +6326,23 @@ begin
     where VAR_NAME = :SETTING
   into :vVALUE;
   return coalesce(:vVALUE, coalesce(DEF_VALUE, ''));
+end ^
+
+ALTER FUNCTION GET_SETTING_INT_VALUE (SETTING D_NAME,
+DEF_VALUE D_INTEGER = 0)
+RETURNS D_INTEGER
+AS 
+begin
+  return GET_SETTINGS_INT_VALUE(:SETTING, :DEF_VALUE);
+end ^
+
+ALTER FUNCTION GET_SETTING_VALUE (SETTING D_NAME,
+DEF_VALUE D_VARCHAR1000 = '')
+RETURNS D_VARCHAR1000
+DETERMINISTIC 
+AS 
+begin
+  return GET_SETTINGS_VALUE(:SETTING, :DEF_VALUE);
 end ^
 
 ALTER FUNCTION GET_SRV_TARIF_FOR_CUSTOMER (CUSTOMER_ID UID,
@@ -7385,7 +7442,7 @@ begin
 
   -- если дата ранее или текущего месяца - просчитаем
   if (RECALC = 1) then begin
-    V_C_MONTH = cast(Get_Setting_Value('CURRENT_DATE') as date);
+    V_C_MONTH = cast(Get_Settings_Value('CURRENT_DATE') as date);
 
     if (Month_First_Day(:P_DATE) < V_C_MONTH) then begin
       -- полный пересчет, при добавлении "задним" числом
@@ -7395,9 +7452,9 @@ begin
       if (Month_First_Day(:P_DATE) = V_C_MONTH) then begin
         -- пересчитаем только текущий месяц
         -- посмотрим нужно ли начислять разовые при закрытии дня
-        SINGLE_FEE = GET_SETTING_INT_VALUE('DAILY_SINGLE_FEE', 0);
+        SINGLE_FEE = GET_SETTINGS_INT_VALUE('DAILY_SINGLE_FEE', 0);
         if (SINGLE_FEE = 1) then
-          execute procedure Close_DAY_Proc(CURRENT_DATE, :P_CUSTOMER_ID);
+          execute procedure Close_DAY_Proc(current_date, :P_CUSTOMER_ID);
         else
           execute procedure Close_MONTH_Proc(:P_DATE, :P_CUSTOMER_ID);
       end
@@ -7569,7 +7626,7 @@ declare variable Rmonth       D_date;
 declare variable P_DAILY      D_INTEGER;
 declare variable SAVE_DEBT    D_N15_2;
 begin
-  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
+  P_DAILY = GET_SETTINGS_INT_VALUE('DAILY_FEE', 0);
   select
       -1 * c.Debt_Sum
     from Customer c
@@ -8743,7 +8800,7 @@ declare variable CALC_TYPE     D_INTEGER;
 declare variable EXTRA         D_INTEGER;
 begin
   -- если сняли обещанный, то проверим и заблоируем услуги абонента
-  if (GET_SETTING_INT_VALUE('BLOCK_SRV_AFTER_DEL_PREPAY', 0) = 0) then
+  if (GET_SETTINGS_INT_VALUE('BLOCK_SRV_AFTER_DEL_PREPAY', 0) = 0) then
     exit;
 
   -- баланс и юрик
@@ -8938,7 +8995,7 @@ begin
   -- если переплата, то какая пеня?
   if (vSUM >= 0) then begin
     /* получим значение число знаков после запятой для округления*/
-    V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
+    V_FEE_ROUND = GET_SETTINGS_INT_VALUE('FEE_ROUND', 2);
 
     if (fine_day is null) then
       select
@@ -9123,7 +9180,7 @@ FEE_ROUND D_INTEGER,
 P_CALC_TYPE D_INTEGER,
 P_DAILY D_INTEGER = 0)
 AS 
-declare variable V_SERVICE_ID  D_INTEGER; -- declare variable DAYS_IN_MON   D_INTEGER;
+declare variable V_SERVICE_ID  D_INTEGER;
 declare variable V_S_MONTH     D_DATE;
 declare variable V_E_MONTH     D_DATE;
 declare variable V_UNITS       D_N15_2;
@@ -9143,7 +9200,7 @@ declare variable PERS_TABLE    D_Integer;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 5);
   P_DAILY = coalesce(P_DAILY, 0);
-  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
 
   for select
           S.SERVICE_ID
@@ -9151,8 +9208,7 @@ begin
         , C.JURIDICAL
         , C.VATG_ID
         , s.BUSINESS_TYPE
-        ,
-          (-1 * c.Debt_Sum + coalesce(c.Prepay, 0))
+        , coalesce((-1 * c.Debt_Sum + coalesce(c.Prepay, 0)), 0)
         , coalesce(c.Hand_Control, 0)
         , coalesce(POSITIVE_ONLY, 0)
         from SERVICES S
@@ -9164,13 +9220,10 @@ begin
         order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :AUTOOFF, :V_IS_JUR, :V_VATG_ID, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY
   do begin
-
-    if (V_IS_JUR is null) then
-      V_IS_JUR = 0;
-
+    V_IS_JUR = coalesce(V_IS_JUR, 0);
+    AUTOOFF = coalesce(AUTOOFF, 0);
     V_UNITS = null;
-    if (AUTOOFF is null) then
-      AUTOOFF = 0;
+
     if (P_MONTH <> current_date) then
       AUTOOFF = 0; -- автоотключение только текущим числом
     -- начало месяца
@@ -9219,6 +9272,7 @@ begin
       into :V_UNITS, :V_FEE, :V_FEE_JUR;
 
     PERS_TABLE = 0;
+    V_UNITS = coalesce(V_UNITS, 0);
 
     -- если был подключен в этом месяце
     if (V_UNITS <> 0) then begin
@@ -9327,7 +9381,7 @@ begin
         VAT = coalesce(VAT, 0);
         V_FEE = V_FEE + V_FEE * VAT / 100;
       end
-      V_FEE = round(V_FEE, FEE_ROUND);
+      V_FEE = round(coalesce(V_FEE, 0), FEE_ROUND);
 
       /* проверим автоблкировка услуги включена и разрешена ли автоблокировка пользователя */
       if ((AUTOOFF = 0)
@@ -9344,8 +9398,7 @@ begin
                   and CUSTOMER_ID = :P_CUSTOMER_ID
                   and SERVICE_ID = :V_SERVICE_ID
           into :V_FEE_BEFORE;
-          if (V_FEE_BEFORE is not null) then
-            Debt_Sum = Debt_Sum + V_FEE_BEFORE;
+          Debt_Sum = Debt_Sum + coalesce(V_FEE_BEFORE, 0);
         end
       end
 
@@ -9431,7 +9484,7 @@ declare variable PERS_TABLE    D_INTEGER;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 2);
   P_DAILY = coalesce(P_DAILY, 0);
-  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
 
   for select
           S.SERVICE_ID
@@ -9439,8 +9492,7 @@ begin
         , C.JURIDICAL
         , C.VATG_ID
         , s.BUSINESS_TYPE
-        ,
-          (-1 * c.Debt_Sum + coalesce(c.Prepay, 0))
+        , coalesce((-1 * c.Debt_Sum + coalesce(c.Prepay, 0)), 0)
         , coalesce(c.Hand_Control, 0)
         , coalesce(POSITIVE_ONLY, 0)
         from SERVICES S
@@ -9452,13 +9504,10 @@ begin
         order by coalesce(s.Priority, 99), s.Autooff
       into :V_SERVICE_ID, :AUTOOFF, :V_IS_JUR, :V_VATG_ID, :SrvType, :Debt_Sum, :hand_control, :POSITIVE_ONLY
   do begin
-
-    if (V_IS_JUR is null) then
-      V_IS_JUR = 0;
-
+    V_IS_JUR = coalesce(V_IS_JUR, 0);
+    AUTOOFF = coalesce(AUTOOFF, 0);
     V_UNITS = null;
-    if (AUTOOFF is null) then
-      AUTOOFF = 0;
+
     if (P_MONTH <> current_date) then
       AUTOOFF = 0; -- автоотключение только текущим числом
     -- начало месяца
@@ -9481,6 +9530,8 @@ begin
             and DT.T_DAY between :V_S_MONTH and :V_E_MONTH
     into :V_UNITS, :V_FEE, :V_FEE_JUR;
     PERS_TABLE = 0;
+    V_FEE = coalesce(V_FEE, 0);
+    V_UNITS = coalesce(V_UNITS, 0);
 
     -- если был подключен в этом месяце
     if (V_UNITS <> 0) then begin
@@ -9554,7 +9605,7 @@ begin
         VAT = coalesce(VAT, 0);
         V_FEE = V_FEE + V_FEE * VAT / 100;
       end
-      V_FEE = round(V_FEE, FEE_ROUND);
+      V_FEE = round(coalesce(V_FEE, 0), FEE_ROUND);
       /* проверим автоблкировка услуги включена и разрешена ли автоблокировка пользователя */
       if ((AUTOOFF = 0)
           or
@@ -9570,8 +9621,7 @@ begin
                   and CUSTOMER_ID = :P_CUSTOMER_ID
                   and SERVICE_ID = :V_SERVICE_ID
           into :V_FEE_BEFORE;
-          if (V_FEE_BEFORE is not null) then
-            Debt_Sum = Debt_Sum + V_FEE_BEFORE;
+          Debt_Sum = Debt_Sum + coalesce(V_FEE_BEFORE, 0);
         end
       end
 
@@ -9647,8 +9697,7 @@ declare variable j           d_integer;
 declare variable cd          d_integer;
 declare variable extra       d_integer;
 begin
-  if (p_calc_type is null) then
-    p_calc_type = 0;
+  p_calc_type = coalesce(p_calc_type, 0);
 
   delete from days_tarif;
 
@@ -9663,10 +9712,7 @@ begin
   j = min_shift;
   while (j <= max_shift) do begin
     p_month = dateadd(j month to START_MONTH);
-
-    -- кол-во дней в месяце
     ld = extract(day from MONTH_LAST_DAY(p_month));
-
     i = 0;
     while (i < ld) do begin
       t_day = :p_month + i;
@@ -9683,22 +9729,16 @@ begin
           into :p_serv_id, :vtarif, :jtarif, :extra
       do begin
         cd = iif((P_CALC_TYPE <> 6), ld, coalesce(extra, 30));
-        if (vtarif is not null) then
-          vtarif = round(vtarif / cd, 5);
-        else
-          vtarif = 0;
-        if (jtarif is not null) then
-          jtarif = round(jtarif / cd, 5);
-        else
-          jtarif = 0;
+        vtarif = round(coalesce(vtarif, 0) / cd, 5);
+        jtarif = round(coalesce(jtarif, 0) / cd, 5);
+
         insert into days_tarif
         values (:p_serv_id, :t_day, :vtarif, :jtarif);
-      end
+      end -- for
       i = i + 1;
-    end
+    end -- while
     j = j + 1;
-  end
-
+  end -- while
 end ^
 
 ALTER PROCEDURE CALC_DISCOUNT (FOR_MONTH TYPE OF D_DATE)
@@ -9964,7 +10004,7 @@ begin
     , SS.CUSTOMER_ID
     , SS.SERVICE_ID
     , 1
-    , SS.UNITS
+    , coalesce(SS.UNITS, 0)
     from SINGLE_SERV SS
          inner join SERVICES S on (SS.SERVICE_ID = S.SERVICE_ID)
     where S.SRV_TYPE_ID = 2
@@ -9979,7 +10019,7 @@ begin
       , SS.CUSTOMER_ID
       , SS.SERVICE_ID
       , 1
-      , SS.UNITS
+      , coalesce(SS.UNITS, 0)
       from SINGLE_SERV SS
            inner join SERVICES S on (SS.SERVICE_ID = S.SERVICE_ID)
       where S.SRV_TYPE_ID = 2
@@ -10082,15 +10122,14 @@ declare variable POSITIVE_ONLY D_Iboolean; --declare variable V_FEE_BEFORE  D_N1
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 0);
   P_DAILY = coalesce(P_DAILY, 0);
-  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
 
   for select
           S.SERVICE_ID
         , S.SHIFT_MONTHS
         , coalesce(s.Autooff, 0)
         , s.BUSINESS_TYPE
-        ,
-          (-1 * c.Debt_Sum + coalesce(c.Prepay, 0))
+        , coalesce((-1 * c.Debt_Sum + coalesce(c.Prepay, 0)), 0)
         , coalesce(c.Hand_Control, 0)
         , coalesce(POSITIVE_ONLY, 0)
         , coalesce(C.JURIDICAL, 0)
@@ -10126,7 +10165,7 @@ begin
             and DT.T_DAY between S.DATE_FROM and S.DATE_TO
             and S.CUSTOMER_ID = :P_CUSTOMER_ID
     into :V_UNITS, :V_FEE, :V_FEE_JUR;
-
+    V_FEE = coalesce(V_FEE, 0);
     -- если был подключен в этом месяце
     if (V_UNITS > 0) then begin
       if (V_IS_JUR = 1) then
@@ -10194,28 +10233,12 @@ begin
         VAT = coalesce(VAT, 0);
         V_FEE = V_FEE + V_FEE * VAT / 100;
       end
-      V_FEE = round(V_FEE, FEE_ROUND);
+      V_FEE = round(coalesce(V_FEE, 0), FEE_ROUND);
       /* проверим автоблкировка услуги включена и разрешена ли автоблокировка пользователя */
       if ((AUTOOFF = 0)
           or
           (hand_control = 1)) then
         Debt_Sum = V_FEE + 1; -- если не отключать, то баланс должен быть больше начислений
-      /* else begin
-          -- Если нужно блокировать то посмотрим сколько за услугу уже начисленно
-          -- в этом месяце и учтем это при блокировке
-          if (POSITIVE_ONLY = 1) then begin
-            select
-                sum(FEE)
-              from MONTHLY_FEE
-              where MONTH_ID = :V_S_MONTH
-                    and CUSTOMER_ID = :P_CUSTOMER_ID
-                    and SERVICE_ID = :V_SERVICE_ID
-            into :V_FEE_BEFORE;
-            if (V_FEE_BEFORE is not null) then
-              Debt_Sum = Debt_Sum + V_FEE_BEFORE;
-          end
-        end
-        */
 
       if (((Debt_Sum >= V_FEE) and (POSITIVE_ONLY = 1)) -- не допускаем минус у абонента
           or
@@ -10285,8 +10308,8 @@ begin
   */
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 3);
   P_DAILY = coalesce(P_DAILY, 0);
-  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
-  DaylyOnlyForNew = GET_SETTING_INT_VALUE('CALC3_DAYLY_FOR_NEW_ONLY', 0);
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
+  DaylyOnlyForNew = GET_SETTINGS_INT_VALUE('CALC3_DAYLY_FOR_NEW_ONLY', 0);
 
   V_CUR_MONTH = MONTH_FIRST_DAY(current_date);
 
@@ -10296,8 +10319,7 @@ begin
         , coalesce(s.Autooff, 0) Autooff
         , s.BUSINESS_TYPE
         , coalesce(s.POSITIVE_ONLY, 0) POSITIVE_ONLY
-        ,
-          (-1 * c.Debt_Sum + coalesce(c.Prepay, 0))
+        , coalesce((-1 * c.Debt_Sum + coalesce(c.Prepay, 0)), 0)
         , C.VATG_ID
         , coalesce(C.JURIDICAL, 0)
         , coalesce(c.Hand_Control, 0)
@@ -10331,6 +10353,7 @@ begin
               and sh.Date_From < :P_MONTH
       into :V_EXTRA;
 
+    V_EXTRA = coalesce(V_EXTRA, 0);
     if (V_EXTRA > 0) then begin
       -- Считаем по полной если месяц подключения не первый
       V_TARIF = null;
@@ -10461,7 +10484,7 @@ begin
               VAT = coalesce(VAT, 0);
               V_FEE = V_FEE + V_FEE * VAT / 100;
             end
-            V_FEE = round(V_FEE, FEE_ROUND);
+            V_FEE = round(coalesce(V_FEE, 0), FEE_ROUND);
 
             -- проверим автоблкировка услуги включена
             -- или абонент с ручным управлением (безавтоблока)
@@ -10661,7 +10684,7 @@ declare variable SrvType       D_Integer;
 begin
   P_CALC_TYPE = coalesce(P_CALC_TYPE, 1);
   P_DAILY = coalesce(P_DAILY, 0);
-  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
 
   V_CUR_MONTH = MONTH_FIRST_DAY(current_date);
 
@@ -10672,8 +10695,7 @@ begin
         , coalesce(s.Autooff, 0) Autooff
         , s.BUSINESS_TYPE
         , coalesce(s.POSITIVE_ONLY, 0) POSITIVE_ONLY
-        ,
-          (-1 * c.Debt_Sum + coalesce(c.Prepay, 0))
+        , coalesce((-1 * c.Debt_Sum + coalesce(c.Prepay, 0)), 0)
         , coalesce(C.JURIDICAL, 0)
         , coalesce(c.Hand_Control, 0)
         from SERVICES S
@@ -10776,7 +10798,7 @@ begin
             VAT = coalesce(VAT, 0);
             V_FEE = V_FEE + V_FEE * VAT / 100;
           end
-          V_FEE = round(V_FEE, FEE_ROUND);
+          V_FEE = round(coalesce(V_FEE, 0), FEE_ROUND);
 
           /* проверим автоблкировка услуги включена и разрешена ли автоблокировка пользователя */
           if ((AUTOOFF = 0)
@@ -10927,7 +10949,7 @@ begin
   /*                     расчитываем разовые услуги                                  */
   /*---------------------------------------------------------------------------------*/
   P_DAILY = coalesce(P_DAILY, 0);
-  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+  FEE_ROUND = coalesce(FEE_ROUND, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
 
   -- начало месяца и конец месяца
   V_S_MONTH = Month_First_Day(P_MONTH);
@@ -10989,7 +11011,8 @@ begin
         VAT = coalesce(VAT, 0);
         V_FEE = V_FEE + V_FEE * VAT / 100;
       end
-      V_FEE = round(V_FEE, FEE_ROUND);
+      V_FEE = round(coalesce(V_FEE, 0), FEE_ROUND);
+
       insert into MONTHLY_FEE (MONTH_ID, CUSTOMER_ID, SERVICE_ID, UNITS, FEE)
       values (:V_DATE, :P_CUSTOMER_ID, :V_SERVICE_ID, :V_UNITS, :V_FEE);
       if (P_DAILY = 1) then begin
@@ -12209,7 +12232,7 @@ begin
           V_Result = 1;
       end
       else begin
-        if ((CALC_TYPE = 3) and (GET_SETTING_INT_VALUE('BLOCK_SRV_AFTER_DEL_PREPAY', 0) = 1) and (DEBT >= 0)) then
+        if ((CALC_TYPE = 3) and (GET_SETTINGS_INT_VALUE('BLOCK_SRV_AFTER_DEL_PREPAY', 0) = 1) and (DEBT >= 0)) then
         -- если признак блокировки при снятии обещанного, то разблокируем при 0 балансе
           V_Result = 1;
       end
@@ -12228,7 +12251,7 @@ begin
       else
         V_DAYS = iif(EXTRA > 0, EXTRA, 1);
 
-      M_TARIF = round(M_TARIF / V_DAYS, GET_SETTING_INT_VALUE('FEE_ROUND', 2));
+      M_TARIF = round(M_TARIF / V_DAYS, GET_SETTINGS_INT_VALUE('FEE_ROUND', 2));
       if (DEBT >= M_TARIF) then
         V_Result = 1;
     end
@@ -12350,11 +12373,11 @@ begin
   P_DAY = coalesce(P_DAY, current_date);
   -- начало месяца
   V_S_MONTH = Month_First_Day(P_DAY);
-  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
+  P_DAILY = GET_SETTINGS_INT_VALUE('DAILY_FEE', 0);
   -- получим значение число знаков после запятой для округления
-  V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
+  V_FEE_ROUND = GET_SETTINGS_INT_VALUE('FEE_ROUND', 2);
   -- посмотрим нужно ли начислять разовые при закрытии дня
-  SINGLE_FEE = GET_SETTING_INT_VALUE('DAILY_SINGLE_FEE', 0);
+  SINGLE_FEE = GET_SETTINGS_INT_VALUE('DAILY_SINGLE_FEE', 0);
 
   if (SINGLE_FEE = 1) then begin
     -- начисляем разовые только если календарный месяц и день закрытия совпадают
@@ -12808,6 +12831,58 @@ begin
   suspend;
 end ^
 
+ALTER PROCEDURE CLOSE_MATERIAL_DOC_MOVE (DOC_ID UID)
+RETURNS (RESULT D_INTEGER,
+RESULT_TEXT D_NOTICE)
+AS 
+declare variable M_ID     d_Integer;
+declare variable M_QANT   D_N15_5;
+declare variable WH_ID    d_Integer;
+declare variable WH_QUANT D_N15_5;
+declare variable MAT      D_Varchar500;
+begin
+  RESULT_TEXT = null;
+  select
+      d.From_Wh
+    from Material_Docs d
+    where d.Doc_Id = :DOC_ID
+  into :WH_ID;
+
+  for select
+          d.M_Id
+        , d.M_Quant
+        , m.Name
+        from Materials_In_Doc d
+             inner join Materials m on (m.M_Id = d.M_Id)
+        where Doc_Id = :Doc_Id
+        order by m.Name
+      into :M_Id, :M_QANT, :MAT
+  do begin
+    WH_QUANT = null;
+    select
+        r.Mr_Quant
+      from Materials_Remain r
+      where r.Wh_Id = :WH_ID
+            and r.M_Id = :m_ID
+    into :WH_QUANT;
+    WH_QUANT = coalesce(WH_QUANT, 0);
+
+    if (WH_QUANT < M_QANT) then
+      RESULT_TEXT = coalesce(RESULT_TEXT, '') || MAT || ' в наличии ' || WH_QUANT || ' перемещаем ' || M_QANT || ascii_char(13) || ascii_char(10);
+  end
+
+  if (RESULT_TEXT is null) then begin
+    select
+        Result
+      from Close_Material_Doc(:Doc_Id)
+    into :Result;
+  end
+  else
+    RESULT_TEXT = 'Недостаточно материала:' || ascii_char(13) || ascii_char(10) || RESULT_TEXT;
+
+  suspend;
+end ^
+
 ALTER PROCEDURE CLOSE_MONTH_PROC (P_MONTH D_DATE,
 P_CUSTOMER_ID TYPE OF UID = null,
 P_DAILY D_INTEGER = null,
@@ -12836,7 +12911,7 @@ begin
 
   if (coalesce(RCWCM_IGONRE, 0) = 0) then
     -- Пересчитываем текущий месяц, когда переходим на следующий
-    vRC = GET_SETTING_INT_VALUE('RECALC_CURRENT_WHEN_CLOSE_MONTH', 0);
+    vRC = GET_SETTINGS_INT_VALUE('RECALC_CURRENT_WHEN_CLOSE_MONTH', 0);
   vRC = coalesce(vRC, 0);
   -- признак имеет значения или 1 или 0
   vRC = iif(((vRC <> 1) and (vRC <> 0)), 0, vRc);
@@ -12846,7 +12921,7 @@ begin
 
   if (vRC = 1) then begin
     -- если строгий режим, то не пересчитываем прошлый период
-    need_0 = GET_SETTING_INT_VALUE('STRICT_MODE', 0);
+    need_0 = GET_SETTINGS_INT_VALUE('STRICT_MODE', 0);
 
     if (need_0 = 0) then
       P_MONTH = dateadd(month, -1, P_MONTH);
@@ -12897,9 +12972,9 @@ begin
     end
 
     /* получим значение число знаков после запятой для округления*/
-    V_FEE_ROUND = GET_SETTING_INT_VALUE('FEE_ROUND', 2);
+    V_FEE_ROUND = GET_SETTINGS_INT_VALUE('FEE_ROUND', 2);
     /* проверим нужно ли записывать в таблицу ежедневных начислений*/
-    P_DAILY = coalesce(P_DAILY, GET_SETTING_INT_VALUE('DAILY_FEE', 0));
+    P_DAILY = coalesce(P_DAILY, GET_SETTINGS_INT_VALUE('DAILY_FEE', 0));
 
     -- начало месяца и конец месяца
     V_S_MONTH = P_MONTH;
@@ -13908,7 +13983,7 @@ begin
   delete from MONTHLY_FEE M
       where M.MONTH_ID >= :P_MONTH;
 
-  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
+  P_DAILY = GET_SETTINGS_INT_VALUE('DAILY_FEE', 0);
   if (P_DAILY = 1) then begin
     -- Удалим все начисления за день
     delete from DAILY_FEE F
@@ -14865,8 +14940,8 @@ declare variable inStrict    D_IBOOLEAN;
 declare variable V_DATE      D_DATE;
 declare variable P_DAILY     D_INTEGER;
 begin
-  inStrict = GET_SETTING_INT_VALUE('STRICT_MODE', 1);
-  P_DAILY = GET_SETTING_INT_VALUE('DAILY_FEE', 0);
+  inStrict = GET_SETTINGS_INT_VALUE('STRICT_MODE', 1);
+  P_DAILY = GET_SETTINGS_INT_VALUE('DAILY_FEE', 0);
 
   -- проверим в строгом режиме или нет
   if (inStrict = 0) then begin
@@ -14879,7 +14954,7 @@ begin
       F_MONTH = null;
 
       -- определим дату начала расчетов (дату договора)
-      IGNOR = GET_SETTING_INT_VALUE('IGNORE_CONTRACT', 0);
+      IGNOR = GET_SETTINGS_INT_VALUE('IGNORE_CONTRACT', 0);
       if (IGNOR <> 1) then
         select
             CONTRACT_DATE
@@ -20493,7 +20568,7 @@ begin
     CP = Lt_Position;
   end
 
-  if ((ban_text <> '') and (get_setting_value('REQ_LAYOUT_BLOCK') = '1')) then begin
+  if ((ban_text <> '') and (get_settings_value('REQ_LAYOUT_BLOCK') = '1')) then begin
     ban = 1;
   end
   else
@@ -24554,6 +24629,8 @@ begin
   if ((old.Passport_Number is distinct from new.Passport_Number)
       or
       (old.Passport_Registration is distinct from new.Passport_Registration)
+      or
+      (old.PERSONAL_N is distinct from new.PERSONAL_N)
       or
       (old.Surname is distinct from new.Surname)
       or
@@ -30092,6 +30169,7 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_LINKS TO ROLE ROLE_
 GRANT SELECT ON SERVICES_TYPE TO ROLE ROLE_A4READER;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SERVICES_TYPE TO ROLE ROLE_A4USER;
 GRANT SELECT ON SETTINGS TO PROCEDURE API_GET_CUSTOMER_BALANCE;
+GRANT SELECT ON SETTINGS TO FUNCTION GET_SETTINGS_VALUE;
 GRANT SELECT ON SETTINGS TO FUNCTION GET_SETTING_VALUE;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON SETTINGS TO ROLE RDB$ADMIN;
 GRANT SELECT ON SETTINGS TO ROLE ROLE_A4READER;
@@ -30234,6 +30312,7 @@ GRANT ROLE_A4USER TO MAKAR;
 GRANT ROLE_A4USER TO MIKHNOVETS;
 GRANT ROLE_A4USER TO NA;
 GRANT ROLE_A4USER TO OSETROV;
+GRANT ROLE_A4USER TO PAYDEAMON;
 GRANT ROLE_A4USER TO PETRUL;
 GRANT ROLE_A4USER TO S2;
 GRANT ROLE_A4USER TO S3;
@@ -30389,6 +30468,7 @@ GRANT EXECUTE ON PROCEDURE CLOSE_DAY_PROC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_DAY_PROC TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CLOSE_MATERIAL_DOC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_MATERIAL_DOC TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON PROCEDURE CLOSE_MATERIAL_DOC_MOVE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CLOSE_MONTH_PROC TO ROLE RDB$ADMIN;
 GRANT EXECUTE ON PROCEDURE CLOSE_MONTH_PROC TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON PROCEDURE CLOSE_PERIOD_PROC TO ROLE RDB$ADMIN;
@@ -30743,6 +30823,14 @@ GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4READER;
 GRANT EXECUTE ON FUNCTION GET_REQUEST_MONEY TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_INT_VALUE TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_INT_VALUE TO PROCEDURE CHECK_FOR_UNBLOCK;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_INT_VALUE TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_INT_VALUE TO ROLE ROLE_A4USER;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_VALUE TO FUNCTION GET_RECOM_PREPAY_FOR_CUSTOMER;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_VALUE TO FUNCTION GET_SETTINGS_INT_VALUE;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_VALUE TO ROLE ROLE_A4READER;
+GRANT EXECUTE ON FUNCTION GET_SETTINGS_VALUE TO ROLE ROLE_A4USER;
 GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO PROCEDURE BLOCK_CUSTOMER_SERVICE;
 GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO PROCEDURE CHECK_FOR_UNBLOCK;
 GRANT EXECUTE ON FUNCTION GET_SETTING_INT_VALUE TO ROLE ROLE_A4READER;
@@ -32422,6 +32510,8 @@ COMMENT ON PROCEDURE    CHECK_SRV_ACTIVE IS 'Процедура проверки
 если услуга не указана смотрим любую услугу';
 COMMENT ON PROCEDURE    CLOSE_DAY_PROC IS 'Процедура закрытия дня';
 COMMENT ON PROCEDURE    CLOSE_MATERIAL_DOC IS 'Процедура закрытия документа движения.';
+COMMENT ON PROCEDURE    CLOSE_MATERIAL_DOC_MOVE IS 'Закрытие документа перемещения материалов.
+перед закрытием проверим соответствие коли-во наличия и перемещения';
 COMMENT ON PROCEDURE    CLOSE_MONTH_PROC IS 'Процедура расчета платы абонентов за месяц
 с учетом предоплаты / постплаты ....
 
@@ -32678,12 +32768,13 @@ M — месяц без лидирующего пробела
 MM — месяц с лидирующим пробелом
 MMM — месяц, краткое название
 MMMM — месяц, полное название
+MMMMM — месяц, полное название, без склонения
 YY — год, 2 последние цифры
 YYYY — год, 4 цифры.';
 COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.A_DATE IS 'Дата';
 COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.FORMAT IS 'строка, содержащая шаблон форматирования даты. Заменяются следующие комбинации символов:';
-COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.LONG_DAY_NAMES IS 'полные названия дней недели через запятую (с понедельника по воскресенье)';
-COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.SHORT_DAY_NAMES IS 'сокращённые названия дней недели через запятую';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.LONG_WDAY_NAMES IS 'полные названия дней недели через запятую';
+COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.SHORT_WDAY_NAMES IS 'сокращенные названия дней недели через запятую';
 COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.LONG_MONTH_NAMES IS 'полные названия месяцев через запятую';
 COMMENT ON    FUNCTION PARAMETER DATE_FORMAT.SHORT_MONTH_NAMES IS 'сокращённые названия месяцев через запятую';
 COMMENT ON FUNCTION     ESCAPE_STRING IS 'экранирование строк для json';
@@ -32694,8 +32785,10 @@ COMMENT ON FUNCTION     GET_MAT_REMAIN_FOR_DATE IS 'Пересчет отста�
 COMMENT ON FUNCTION     GET_NEW_ACCOUNT IS 'Возвращает новый номер лицевого. делаеет 1000 попыток найти свободный номер, если не найдет, то выдает null';
 COMMENT ON FUNCTION     GET_RECOM_PREPAY_FOR_CUSTOMER IS 'Функция выдает сумму рекомендованой оплаты на месяц, с учетом баланса. целое чесло, без копеек';
 COMMENT ON FUNCTION     GET_REQUEST_MONEY IS 'Возврат начислений по заявке';
-COMMENT ON FUNCTION     GET_SETTING_INT_VALUE IS 'Возвращает числовой параметр настройки';
-COMMENT ON FUNCTION     GET_SETTING_VALUE IS 'Возвращает строковый параметр настройки';
+COMMENT ON FUNCTION     GET_SETTINGS_INT_VALUE IS 'Возвращает числовой параметр настройки';
+COMMENT ON FUNCTION     GET_SETTINGS_VALUE IS 'Возвращает строковый параметр настройки';
+COMMENT ON FUNCTION     GET_SETTING_INT_VALUE IS 'Depricated. Будет удалена. Возвращает числовой параметр настройки';
+COMMENT ON FUNCTION     GET_SETTING_VALUE IS 'Depricated. Будет удалена. Возвращает строковый параметр настройки';
 COMMENT ON FUNCTION     INET_ATON IS 'переводит строковое представление IPv4 в двоичное';
 COMMENT ON FUNCTION     INET_NTOA IS 'переводит двоичное представление IPv4 в строковое';
 COMMENT ON FUNCTION     MAC_FORMAT IS 'Форматирование MAC разделитель :';

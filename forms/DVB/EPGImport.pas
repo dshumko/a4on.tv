@@ -69,7 +69,6 @@ type
     procedure ClearEPGinDBUTC(const DatesList: TStringList);
     function OpenFile: Boolean;
     function LoadFile: Boolean;
-    function GetFileFormat(const aFileName: String): string;
     procedure CreateOrEditSource(const New: Boolean = true);
   public
     { Public declarations }
@@ -548,7 +547,7 @@ begin
     oXml := OXmlPDOM.CreateXMLDoc;
     oXml.WhiteSpaceHandling := wsPreserveAll;
     oXml.ReaderSettings.ErrorHandling := ehSilent;
-    XmlTVFileNAme := GetFileFormat(edtXMLFile.Text);
+    XmlTVFileNAme := CheckAndExtractArchive(edtXMLFile.Text);
     oXml.LoadFromFile(XmlTVFileNAme);
     if oXml.DocumentElement = nil then begin
       ShowMessage(rsXMLTVFormatError);
@@ -1008,64 +1007,6 @@ begin
     mtAssoc.Close;
 end;
 
-function TEPGImportForm.GetFileFormat(const aFileName: String): string;
-var
-  s: string;
-  i: Integer;
-  Finded: Boolean;
-  z: I7zInArchive;
-begin
-  s := aFileName;
-  // проверим, есть ли в папке длл для распакрвки
-  if FileExists('7z.dll') then
-    try
-      i := Length(aFileName);
-      Finded := False;
-      while (i > 0) and (not Finded) do begin
-        Finded := ('.' = aFileName[i]);
-        Dec(i);
-      end;
-      s := Copy(aFileName, i + 2, Length(aFileName) - i - 1);
-      s := UpperCase(s);
-      Finded := False;
-      if (s = 'ZIP') or (s = 'JAR') or (s = 'XPI') then begin
-        z := CreateInArchive(CLSID_CFormatZip);
-        Finded := true;
-      end
-      else if (s = '7Z') then begin
-        z := CreateInArchive(CLSID_CFormat7z);
-        Finded := true;
-      end
-      else if (s = 'RAR') then begin
-        z := CreateInArchive(CLSID_CFormatRar);
-        Finded := true;
-      end
-      else if (s = 'GZ') or (s = 'GZIP') or (s = 'TGZ') or (s = 'TPZ') then begin
-        z := CreateInArchive(CLSID_CFormatGZip);
-        Finded := true;
-      end
-      else if (s = 'ARJ') then begin
-        z := CreateInArchive(CLSID_CFormatArj);
-        Finded := true;
-      end
-      else if (s = 'BZ2') or (s = 'BZIP2') or (s = 'TBZ2') or (s = 'TBZ') then begin
-        z := CreateInArchive(CLSID_CFormatBZ2);
-        Finded := true;
-      end
-      else
-        s := aFileName;
-
-      if Finded then begin
-        z.OpenFile(aFileName);
-        s := z.ItemPath[0];
-        s := GetTempDir + s;
-        z.ExtractTo(GetTempDir);
-      end;
-    except
-      s := aFileName;
-    end;
-  Result := s;
-end;
 
 procedure TEPGImportForm.cbSourceChange(Sender: TObject);
 begin

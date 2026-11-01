@@ -355,6 +355,9 @@ UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (228, 'В
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (229, 'Учет электроэнергии ', 'ЭЛЕКТРОЭНЕРГИЯ', 'Работа с показателями электроэнергии') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (230, 'Хронологические данные', 'СПРАВОЧНИКИ', 'Внесение переодических данных') MATCHING (ID);
 UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (231, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ. ИМЯ И ОТЧЕСТВО', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным (имя и отчество)') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (232, 'РЕДАКТИРОВАНИЕ РАСТОРГНУВШИХ ДОГОВОР', 'АБОНЕНТЫ', 'Разрешить редактирование карточки у абонентов расторгнувших договор ') MATCHING (ID);
+UPDATE OR INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (233, 'ДОБАВЛЕНИЕ КОНТАКТОВ', 'АБОНЕНТЫ', 'Возможность добавить контакты абонента')  MATCHING (ID);
+
 commit;
 
 execute block as
@@ -691,12 +694,6 @@ begin
       MATCHING (VAR_NAME);
   end
 
-  s = 'MVD_DATA';
-  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
-    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
-    VALUES (:s, '{"desc":"[COMPANY]","desc_address":"[CITY] [STREET] [HOUSE]","sery":"[SER]","num":"[NUM]","identif":"[IDENTIF]","surname":"[SURNAME]","name":"[NAME]","lastname":"[LASTNAME]"}', 'STRING', NULL, 'джсон для проверки паспорта')
-    MATCHING (VAR_NAME);
-
   s = 'HOUSE_NEED_WORKGROUP';
   if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
     UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
@@ -709,6 +706,11 @@ begin
     VALUES (:s, '0', 'BOOLEAN', NULL, 'Отображать направление обращения / звонка ')
     MATCHING (VAR_NAME);
 
+  s = 'REQUEST_P_F_DISBLE';
+  if (not exists(select VAR_NAME from SETTINGS where upper(VAR_NAME) = upper(:s))) then
+    UPDATE OR INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE) 
+    VALUES (:s, '0', 'BOOLEAN', NULL, 'При редактировании заявки не переходить в поля подъезд/этаж ')
+    MATCHING (VAR_NAME);
 end;
 
 COMMIT;

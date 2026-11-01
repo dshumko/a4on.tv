@@ -1,6 +1,7 @@
 object RecourseForm: TRecourseForm
   Left = 540
   Top = 390
+  ActiveControl = cbRecourse
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = #1054#1073#1088#1072#1097#1077#1085#1080#1077' / '#1079#1074#1086#1085#1086#1082
@@ -29,7 +30,6 @@ object RecourseForm: TRecourseForm
     Height = 4
     Cursor = crVSplit
     Align = alTop
-    ExplicitWidth = 467
   end
   object splTags: TSplitter
     Left = 0
@@ -39,8 +39,6 @@ object RecourseForm: TRecourseForm
     Cursor = crVSplit
     Align = alBottom
     Visible = False
-    ExplicitLeft = -8
-    ExplicitTop = 308
   end
   object pnlNotice: TPanel
     Left = 0
@@ -130,7 +128,7 @@ object RecourseForm: TRecourseForm
       TabOrder = 0
       Visible = True
       OnChange = cbRecourseChange
-      OnClick = DBLookupComboboxClick
+      OnClick = cbRecourseClick
       OnDropDownBoxGetCellParams = cbRecourseDropDownBoxGetCellParams
       OnEnter = cbRecourseEnter
     end
@@ -152,13 +150,9 @@ object RecourseForm: TRecourseForm
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      ExplicitWidth = 451
-      ExplicitHeight = 71
       inherited gbInfo: TGroupBox
         Width = 451
         Height = 71
-        ExplicitWidth = 451
-        ExplicitHeight = 71
       end
     end
   end
@@ -199,7 +193,6 @@ object RecourseForm: TRecourseForm
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      ExplicitLeft = 212
     end
     object lbl5: TLabel
       Left = 268
@@ -208,7 +201,6 @@ object RecourseForm: TRecourseForm
       Height = 13
       Anchors = [akTop, akRight]
       Caption = #1050#1074
-      ExplicitLeft = 284
     end
     object btnFind: TButton
       Left = 323
@@ -236,6 +228,9 @@ object RecourseForm: TRecourseForm
           FieldName = 'AREA_NAME'
           Title.Caption = #1056#1072#1081#1086#1085
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1091#1083#1080#1094#1091
@@ -255,6 +250,9 @@ object RecourseForm: TRecourseForm
       Anchors = [akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1044#1086#1084
       EditButtons = <>
       KeyField = 'HOUSE_ID'
@@ -322,8 +320,6 @@ object RecourseForm: TRecourseForm
       ShowHint = True
       TabOrder = 0
       Visible = True
-      OnClick = edtContactClick
-      OnEnter = edtContactEnter
     end
   end
   object pnlBtm: TPanel
@@ -342,12 +338,11 @@ object RecourseForm: TRecourseForm
       Top = 4
       Width = 116
       Height = 27
-      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1103#1074#1082#1091
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1103#1074#1082#1091'. Alt+Enter'
       Anchors = [akLeft, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1089' '#1079#1072#1103#1074#1082#1086#1081
       NumGlyphs = 2
-      TabOrder = 3
-      TabStop = False
+      TabOrder = 0
       OnClick = btnOkandRequestClick
     end
     object btnCancel: TBitBtn
@@ -355,11 +350,12 @@ object RecourseForm: TRecourseForm
       Top = 4
       Width = 87
       Height = 27
+      Hint = #1047#1072#1082#1088#1099#1090#1100' '#1085#1077' '#1089#1086#1093#1088#1072#1085#1103#1103'. Esc'
       Anchors = [akRight, akBottom]
       Cancel = True
       Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
-      TabOrder = 1
+      TabOrder = 3
       OnClick = btnCancelClick
     end
     object btnOk: TButton
@@ -367,11 +363,11 @@ object RecourseForm: TRecourseForm
       Top = 4
       Width = 109
       Height = 27
-      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103'. Ctrl+Enter'
       Anchors = [akLeft, akTop, akRight]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 1
-      TabOrder = 0
+      TabOrder = 1
       OnClick = btnOkClick
     end
     object btnOkandTask: TBitBtn
@@ -379,12 +375,11 @@ object RecourseForm: TRecourseForm
       Top = 4
       Width = 116
       Height = 27
-      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1076#1072#1095#1091
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1079#1072#1076#1072#1095#1091'. Alt+Shift+Enter'
       Anchors = [akLeft, akBottom]
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1089' '#1079#1072#1076#1072#1095#1077#1081
       NumGlyphs = 2
       TabOrder = 2
-      TabStop = False
       OnClick = btnOkandTaskClick
     end
   end
@@ -504,7 +499,6 @@ object RecourseForm: TRecourseForm
       Style = csDropDownEh
       TabOrder = 0
       Visible = True
-      OnClick = DBLookupComboboxClick
     end
   end
   object pnlTags: TPanel

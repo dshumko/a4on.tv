@@ -9,7 +9,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls,
   OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, CnErrorProvider,
-  PrjConst;
+  PrjConst, CnClasses;
 
 type
   TOnOffServiceForm = class(TForm)
@@ -133,7 +133,7 @@ function PauseService(const aCustomer_ID, aService_ID, aSubscr_Serv_ID: Integer;
 implementation
 
 uses
-  DM, AtrCommon, CF, SelectPromoForma;
+  DM, AtrCommon, CF, SelectPromoForma, AtrEhLibAddons;
 
 function PauseService(const aCustomer_ID, aService_ID, aSubscr_Serv_ID: Integer; const Notice: String): Boolean;
 var
@@ -396,8 +396,8 @@ begin
         if not(fFullAccess or fCanAdd or fCanEdit or fChangeHistory) then
           exit;
 
-        Query.SQL.Text := 'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID,:SERV_ID,' +
-          ':ACTSERVICE,:DATE,:OFF,:NOTICE,:AUNITS,1,:WORKER,:CONTR_N,:CONTR_DATE);';
+        Query.SQL.Text :=
+          'EXECUTE PROCEDURE ONOFF_SERVICE_FOR_GROUP(:CUSTOMER_ID,:SERV_ID,:ACTSERVICE,:DATE,:OFF,:NOTICE,:AUNITS,1,:WORKER,:CONTR_N,:CONTR_DATE);';
         Query.ParamByName('ACTSERVICE').AsInteger := luOnOffService.value;
         Query.ParamByName('SERV_ID').AsInteger := aService_ID;
         Query.ParamByName('DATE').AsDate := eDate.value;
@@ -689,30 +689,15 @@ begin
   end
 
 end;
+
 procedure TOnOffServiceForm.luServiceClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TOnOffServiceForm.luServiceEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TOnOffServiceForm.OkCancelFramebbOkClick(Sender: TObject);

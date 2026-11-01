@@ -79,7 +79,32 @@ begin
 end;
 
 procedure TapgCustomerLetters.actLetterDelExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  if (dsLetters.RecordCount = 0) or (dsLetters.FieldByName('Mes_Id').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Letters);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   // служебные письма не удалять
   if (dsLetters['Mes_Id'] < 0) or ((not dsLetters.FieldByName('TYPE_ID').IsNull) and (dsLetters['TYPE_ID'] < 0))
   then

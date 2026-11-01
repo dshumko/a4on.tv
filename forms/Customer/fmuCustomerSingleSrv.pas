@@ -143,45 +143,64 @@ end;
 procedure TapgCustomerSingleSrv.actAddExecute(Sender: TObject);
 var
   CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if FDataSource.DataSet.FieldByName('VALID_TO').IsNull then
-    CanAdd := True
-  else
-    CanAdd := (FDataSource.DataSet['VALID_TO'] > Now()) or (dmMain.AllowedAction(rght_Customer_full));
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
 
-  if CanAdd then
+  if not CanAdd then
   begin
-    if NewService(FDataSource.DataSet['Customer_ID'], 1) then
-    begin
-      dsSingleService.CloseOpen(True);
-      EnableControls;
-      UpdatePage;
-    end;
-  end
-  else
-    ShowMessage(rsContractNotValid);
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_AddSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
+  if NewService(FDataSource.DataSet['Customer_ID'], 1) then
+  begin
+    dsSingleService.CloseOpen(True);
+    EnableControls;
+    UpdatePage;
+  end;
 end;
 
 procedure TapgCustomerSingleSrv.actDelExecute(Sender: TObject);
 var
   AllowDelete: Boolean;
+  Terminated: Boolean;
 begin
   if dsSingleService.RecordCount = 0 then
-    Exit;
+    exit;
 
-  AllowDelete := (dmMain.AllowedAction(rght_Customer_DelSrv));
+  AllowDelete := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
 
-  if not(AllowDelete or FullAccess) then
-    Exit;
+  if not AllowDelete then
+  begin
+    AllowDelete := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    AllowDelete := AllowDelete and dmMain.AllowedAction(rght_Customer_DelSrv);
+  end;
+
+  if (not AllowDelete) then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
 
   if not(FullAccess or ChangeHistory or (dsSingleService.FieldByName('SERV_DATE').AsDateTime >= dmMain.CurrentMonth))
   then
-    Exit;
+    exit;
 
   if (dmMain.InStrictMode) and (dsSingleService['SERV_DATE'] < dmMain.CurrentMonth) then
   begin
     ShowMessage(rsPastDateIncorrect);
-    Exit;
+    exit;
   end;
 
   if (MessageDlg(Format(rsDeleteRequest, [dsSingleService['name']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
@@ -190,7 +209,6 @@ begin
     EnableControls;
     UpdatePage;
   end;
-
 end;
 
 procedure TapgCustomerSingleSrv.actEditNoticeExecute(Sender: TObject);
@@ -199,7 +217,7 @@ var
 begin
   if (not dsSingleService.Active) or (dsSingleService.RecordCount = 0) or
     (dsSingleService.FieldByName('SINGLE_SERVICE_ID').IsNull) then
-    Exit;
+    exit;
 
   if dsSingleService.FieldByName('NOTICE').IsNull then
     s := ''
@@ -237,9 +255,9 @@ begin
     OpenRequest;
 
   if dsSingleService.FieldByName('HISTORY_ID').IsNull then
-    Exit;
+    exit;
   if dsSingleService.FieldByName('NOTICE').IsNull then
-    Exit;
+    exit;
 
   if dsSingleService.FieldByName('NOTICE').AsString.Contains(rsOrderN) then
   begin
@@ -256,7 +274,7 @@ var
   aMode: Byte;
 Begin
   if dsSingleService.FieldByName('RQ_ID').IsNull then
-    Exit;
+    exit;
   aRequest := dsSingleService.FieldByName('RQ_ID').AsInteger;
   if aRequest > 0 then
   begin
@@ -336,4 +354,3 @@ begin
 end;
 
 end.
-

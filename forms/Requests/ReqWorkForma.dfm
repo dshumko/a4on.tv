@@ -12,14 +12,12 @@ object ReqWorkForm: TReqWorkForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   DesignSize = (
     455
     382)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
     Left = 8
@@ -57,19 +55,30 @@ object ReqWorkForm: TReqWorkForm
     Align = alBottom
     TabOrder = 6
     TabStop = True
+    ExplicitTop = 347
+    ExplicitWidth = 455
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 222
       Width = 143
       OnClick = okcnclfrm1bbOkClick
+      ExplicitLeft = 222
+      ExplicitWidth = 143
     end
     inherited bbCancel: TBitBtn
       Left = 371
+      ExplicitLeft = 371
     end
   end
   object dbmmoSolution: TDBMemoEh

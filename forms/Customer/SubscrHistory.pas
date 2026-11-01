@@ -453,8 +453,10 @@ begin
 
   if FFullAccess or FChangeHistory or ((dsServicesHistory[srv_date] >= dmMain.CurrentMonth) and FCanAddEdit) then
   begin
-    if MessageDlg(PChar(Format(rsHistoryQuestion, [dsServicesHistory[srv_name], dsServices['NAME']])), mtConfirmation,
-      [mbYes, mbNo], 0) = mrYes then
+    if Application.MessageBox( //
+      PWideChar(Format(rsHistoryQuestion, [dsServicesHistory[srv_name], dsServices['NAME']])), //
+      PWideChar(mtConfirmation), //
+      MB_YESNO + MB_ICONWARNING + MB_DEFBUTTON2) = IDYES then
     begin
       with TpFIBQuery.Create(Nil) do
         try

@@ -10,8 +10,6 @@ object apgCustomerAttributes: TapgCustomerAttributes
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgCustAttr: TDBGridEh
     Left = 26
@@ -29,7 +27,6 @@ object apgCustomerAttributes: TapgCustomerAttributes
     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghRowHighlight, dghDialogFind, dghColumnResize, dghColumnMove]
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = False
     TabOrder = 0
     TitleParams.MultiTitle = True
     OnDblClick = dbgCustAttrDblClick

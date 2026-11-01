@@ -74,7 +74,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
-    procedure checkAdressSign(Sender: TObject);
+    procedure checkAddressSign(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure bbOkClick(Sender: TObject);
@@ -233,7 +233,7 @@ begin
   srcFilter.DataSet['next_condition'] := 0;
 end;
 
-procedure TEquipFilterForm.checkAdressSign(Sender: TObject);
+procedure TEquipFilterForm.checkAddressSign(Sender: TObject);
 begin
   if (Sender is TDBLookupComboboxEh) then
     if not VarIsClear((Sender as TDBLookupComboboxEh).Value) then

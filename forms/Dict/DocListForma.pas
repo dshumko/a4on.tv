@@ -34,7 +34,7 @@ type
     actCustHist: TAction;
     edtPlaceBirth: TDBEditEh;
     lbl9: TLabel;
-    edtADRES_REGISTR: TDBEditEh;
+    edtADDRESS_REGISTR: TDBEditEh;
     lbl3: TLabel;
     edtDOCDATE: TDBDateTimeEditEh;
     lbl21: TLabel;

@@ -211,7 +211,6 @@ begin
       else if (AnsiUpperCase(Grid.SortMarkedColumns[I].fieldname) = 'DEBT_SUM') then
         s := s + 'C.Debt_Sum'
       else if (AnsiUpperCase(Grid.SortMarkedColumns[I].fieldname) = 'CUST_CODE')
-      // then s := s + 'FOR_ADRES_SORT'
       then
         s := s + 'C.CUST_CODE'
       else

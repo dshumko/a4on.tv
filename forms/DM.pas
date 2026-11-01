@@ -185,7 +185,7 @@ type
     function GetCustomerFine(const aCUSTOMER_ID: Integer; const aPayDate: TDateTime): Extended;
     function FindCustomer(const lic: string; const code: string; id: Integer; const FindNode: Integer = 0)
       : TCustomerInfo;
-    function FindCustomerAtAdress(HOUSE_ID: Integer; const Flat: string; const FindNode: Integer = 0;
+    function FindCustomerAtAddress(HOUSE_ID: Integer; const Flat: string; const FindNode: Integer = 0;
       const porch: string = ''; const floor: string = ''): TCustomerInfo;
     function GetNextIP(InetIP: Boolean; const mask: string = ''): string;
     function GetNextVlanIP(const id: Integer; const itsVlan: Boolean): string;
@@ -419,6 +419,8 @@ begin
       mobile_wn := dsFindCN.FN('MOBILE_WN').AsString;
       City := dsFindCN.FN('City').AsString;
       email := dsFindCN.FN('email').AsString;
+      Terminated := (not dsFindCN.FN('VALID_TO').IsNull) and (dsFindCN['VALID_TO'] < Now());
+
       if dsFindCN.FN('O_TYPE').AsString = 'А' then
       begin
         isType := 0;
@@ -444,7 +446,7 @@ begin
   dsFindCN.Close;
 end;
 
-function TdmMain.FindCustomerAtAdress(HOUSE_ID: Integer; const Flat: string; const FindNode: Integer = 0;
+function TdmMain.FindCustomerAtAddress(HOUSE_ID: Integer; const Flat: string; const FindNode: Integer = 0;
   const porch: string = ''; const floor: string = ''): TCustomerInfo;
 var
   where, tmp: string;
@@ -1122,6 +1124,8 @@ begin
     Result := MonthAsString(Params[0], Params[1], Params[2])
   else if MethodName = 'OPENCUSTOMERBYACCOUNT' then
     Result := A4MainForm.ShowCustomers(100, Trim(Params[0])) // 100 - лицевой
+  else if MethodName = 'OPENCUSTOMERS' then
+    Result := A4MainForm.ShowCustomers(2, Trim(Params[0])) // 2 - список лицевых
   else if MethodName = 'OPENCUSTOMERBYID' then
     Result := A4MainForm.ShowCustomers(104, Trim(Params[0])) // 104 - customer_id
   else if MethodName = 'OPENREQUEST' then
@@ -1173,6 +1177,8 @@ begin
     rsFunctionsA4onTV, 'Вывод месяца как строка, например 01.01.2013 - «1» января 2013');
   Report.AddFunction('function OpenCustomerByAccount(const ACCOUNT: String): Integer', rsFunctionsA4onTV,
     'Открыть абонента в списке абонентов по лицевому');
+  Report.AddFunction('function OpenCustomers(const ACCOUNTs: String): Integer', rsFunctionsA4onTV,
+    'Открыть абонента в списке абонентов по списку лицевых. Список разделен запятыми (пример 1,2,3) ');
   Report.AddFunction('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', rsFunctionsA4onTV,
     'Открыть абонента в списке абонентов по его ID');
   Report.AddFunction('function OpenRequest(const RQ_ID: String): Integer', rsFunctionsA4onTV, 'Открыть заявку');

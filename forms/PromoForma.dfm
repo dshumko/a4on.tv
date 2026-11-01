@@ -4,11 +4,15 @@ inherited PromoForm: TPromoForm
   Caption = #1040#1082#1094#1080#1080' '
   ClientHeight = 435
   ClientWidth = 863
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
+  ExplicitWidth = 879
+  ExplicitHeight = 474
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 203
     Width = 863
+    ExplicitTop = 203
+    ExplicitWidth = 863
   end
   inherited dbGrid: TDBGridEh
     Top = 207
@@ -87,6 +91,7 @@ inherited PromoForm: TPromoForm
   end
   inherited tlbMain: TToolBar
     Width = 863
+    ExplicitWidth = 863
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -107,6 +112,9 @@ inherited PromoForm: TPromoForm
   inherited pnlEdit: TPanel
     Width = 863
     Height = 178
+    StyleElements = [seFont, seClient, seBorder]
+    ExplicitWidth = 863
+    ExplicitHeight = 178
     object Label1: TLabel [0]
       Left = 5
       Top = 7
@@ -150,12 +158,17 @@ inherited PromoForm: TPromoForm
       Top = 150
       Width = 668
       TabOrder = 8
+      ExplicitLeft = 82
+      ExplicitTop = 150
+      ExplicitWidth = 668
     end
     inherited btnCancelLink: TBitBtn
       Left = 768
       Top = 150
       Cancel = True
       TabOrder = 9
+      ExplicitLeft = 768
+      ExplicitTop = 150
     end
     object dbeName: TDBEditEh
       Left = 82
@@ -410,9 +423,6 @@ inherited PromoForm: TPromoForm
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       OnExecute = actEditExecute
-    end
-    inherited actQuickFilter: TAction
-      Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
     end
   end
   inherited pmPopUp: TPopupMenu

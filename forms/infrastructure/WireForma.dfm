@@ -2,7 +2,7 @@ inherited WireForm: TWireForm
   Caption = #1050#1072#1073#1077#1083#1100#1085#1072#1103' '#1080#1085#1092#1088#1072#1089#1090#1088#1091#1082#1090#1091#1088#1072
   ClientHeight = 490
   ClientWidth = 914
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 57
@@ -237,6 +237,7 @@ inherited WireForm: TWireForm
   inherited pnlEdit: TPanel
     Width = 914
     Height = 32
+    StyleElements = [seFont, seClient, seBorder]
     inherited btnSaveLink: TBitBtn
       Top = -1
       Width = 728

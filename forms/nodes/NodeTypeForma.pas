@@ -21,7 +21,7 @@ type
     edtName: TDBEditEh;
     lbl3: TLabel;
     dbmmoO_DESCRIPTION: TDBMemoEh;
-    edtO_DIMENSION: TDBEditEh;
+    edtCHRFLD: TDBEditEh;
     lbl1: TLabel;
     btnColorSet: TButtonColor;
     btnColorClear: TButton;
@@ -83,7 +83,7 @@ begin
   btnColorSet.SymbolColor := clBtnFace;
   if not(srcDataSource.DataSet.State in [dsInsert, dsEdit]) then
     srcDataSource.DataSet.Edit;
-  srcDataSource.DataSet.FieldByName('O_DIMENSION').Clear;
+  srcDataSource.DataSet.FieldByName('O_CHECK').Clear;
 end;
 
 procedure TNodeTypeForm.btnColorSetClick(Sender: TObject);
@@ -91,7 +91,7 @@ begin
   inherited;
   if not(srcDataSource.State in [dsInsert, dsEdit]) then
     srcDataSource.DataSet.Edit;
-  srcDataSource.DataSet['O_DIMENSION'] := ColorToString(btnColorSet.SymbolColor);
+  srcDataSource.DataSet['O_CHECK'] := ColorToString(btnColorSet.SymbolColor);
 end;
 
 procedure TNodeTypeForm.btnSaveLinkClick(Sender: TObject);
@@ -118,9 +118,9 @@ procedure TNodeTypeForm.dbGridGetCellParams(Sender: TObject; Column: TColumnEh; 
   State: TGridDrawState);
 begin
   inherited;
-  if not dsFileType.FieldByName('O_DIMENSION').IsNull then
+  if not dsFileType.FieldByName('O_CHECK').IsNull then
     try
-      Background := StringToColor(dsFileType.FieldByName('O_DIMENSION').Value);
+      Background := StringToColor(dsFileType.FieldByName('O_CHECK').Value);
     except
     end;
 end;

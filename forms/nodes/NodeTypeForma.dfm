@@ -5,14 +5,10 @@ inherited NodeTypeForm: TNodeTypeForm
   ClientHeight = 495
   ClientWidth = 762
   StyleElements = [seFont, seClient, seBorder]
-  ExplicitWidth = 778
-  ExplicitHeight = 534
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 169
     Width = 762
-    ExplicitTop = 169
-    ExplicitWidth = 762
   end
   inherited dbGrid: TDBGridEh
     Top = 173
@@ -62,7 +58,6 @@ inherited NodeTypeForm: TNodeTypeForm
   end
   inherited tlbMain: TToolBar
     Width = 762
-    ExplicitWidth = 762
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -81,8 +76,6 @@ inherited NodeTypeForm: TNodeTypeForm
     Height = 144
     ParentCtl3D = False
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 762
-    ExplicitHeight = 144
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -110,9 +103,6 @@ inherited NodeTypeForm: TNodeTypeForm
       Top = 116
       Width = 577
       TabOrder = 4
-      ExplicitLeft = 72
-      ExplicitTop = 116
-      ExplicitWidth = 577
     end
     inherited btnCancelLink: TBitBtn
       Left = 655
@@ -120,9 +110,6 @@ inherited NodeTypeForm: TNodeTypeForm
       Width = 98
       Cancel = True
       TabOrder = 5
-      ExplicitLeft = 655
-      ExplicitTop = 116
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -156,7 +143,7 @@ inherited NodeTypeForm: TNodeTypeForm
       Visible = True
       WantReturns = True
     end
-    object edtO_DIMENSION: TDBEditEh
+    object edtCHRFLD: TDBEditEh
       Left = 655
       Top = 11
       Width = 92

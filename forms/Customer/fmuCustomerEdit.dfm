@@ -212,7 +212,8 @@ object apgCustomerEdit: TapgCustomerEdit
             D9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnCdelClick
-          ExplicitLeft = 402
+          ExplicitLeft = 382
+          ExplicitTop = -3
         end
         object Label20: TLabel
           Left = 355

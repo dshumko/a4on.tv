@@ -36,11 +36,26 @@ object PaymentForm: TPaymentForm
     Align = alRight
     TabOrder = 1
     TabStop = True
+    object lblWarning: TLabel
+      Left = 1
+      Top = 1
+      Width = 335
+      Height = 13
+      Align = alTop
+      Alignment = taCenter
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      WordWrap = True
+    end
     object dbgFine: TDBGridEh
       Left = 1
-      Top = 29
+      Top = 14
       Width = 335
-      Height = 444
+      Height = 459
       TabStop = False
       Align = alClient
       DataSource = srcFine
@@ -50,7 +65,7 @@ object PaymentForm: TPaymentForm
       FooterParams.Color = clWindow
       ReadOnly = True
       SumList.Active = True
-      TabOrder = 1
+      TabOrder = 0
       TitleParams.MultiTitle = True
       OnDblClick = dbgFineDblClick
       Columns = <
@@ -113,21 +128,6 @@ object PaymentForm: TPaymentForm
         end>
       object RowDetailData: TRowDetailPanelControlEh
       end
-    end
-    object Panel6: TPanel
-      Left = 1
-      Top = 1
-      Width = 335
-      Height = 28
-      Align = alTop
-      BevelOuter = bvNone
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clRed
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
     end
   end
   object pnlAll: TPanel
@@ -320,6 +320,9 @@ object PaymentForm: TPaymentForm
         DynProps = <>
         DataField = 'PAYMENT_SRV'
         DataSource = srcMemPayment
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EditButtons = <>
         KeyField = 'SERVICE_ID'
         ListField = 'NAME'
@@ -376,6 +379,7 @@ object PaymentForm: TPaymentForm
           end>
         DropDownBox.ListSource = srcPaymentDocs
         DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
@@ -403,7 +407,6 @@ object PaymentForm: TPaymentForm
         Height = 13
         Align = alTop
         Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-        ExplicitWidth = 64
       end
       object mmoNOTICE: TDBMemoEh
         Left = 1
@@ -447,6 +450,9 @@ object PaymentForm: TPaymentForm
         DynProps = <>
         DataField = 'PAYMENT_TYPE'
         DataSource = srcMemPayment
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EmptyDataInfo.Text = #1042#1080#1076' '#1087#1083#1072#1090#1077#1078#1072
         EditButtons = <>
         KeyField = 'O_ID'
@@ -648,7 +654,6 @@ object PaymentForm: TPaymentForm
           Height = 13
           Align = alTop
           Caption = '  '#1055#1086#1080#1089#1082' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1087#1086':'
-          ExplicitWidth = 106
         end
         object edCode: TDBEditEh
           Left = 9
@@ -704,15 +709,9 @@ object PaymentForm: TPaymentForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
-        ExplicitLeft = 168
-        ExplicitTop = 1
-        ExplicitWidth = 200
-        ExplicitHeight = 92
         inherited gbInfo: TGroupBox
           Width = 200
           Height = 92
-          ExplicitWidth = 200
-          ExplicitHeight = 92
         end
       end
     end
@@ -742,6 +741,9 @@ object PaymentForm: TPaymentForm
         DynProps = <>
         DataField = 'PAY_TYPE_STR'
         DataSource = srcMemPayment
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EmptyDataInfo.Text = #1057#1087#1086#1089#1086#1073' '#1086#1087#1083#1072#1090#1099
         EditButtons = <>
         KeyField = 'O_NAME'
@@ -1178,10 +1180,10 @@ object PaymentForm: TPaymentForm
           Size = 500
           Transliterate = True
         end
-        object adres: TMTStringDataFieldEh
-          FieldName = 'adres'
+        object address: TMTStringDataFieldEh
+          FieldName = 'address'
           StringDataType = fdtStringEh
-          DisplayLabel = 'adres'
+          DisplayLabel = 'address'
           DisplayWidth = 250
           Size = 250
           Transliterate = True

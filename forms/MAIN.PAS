@@ -915,6 +915,9 @@ begin
       end;
       AppIni.WriteString('MAIN', 'ROW_HEIGHT', dmMain.GetIniValue('ROW_HEIGHT'));
       AppIni.WriteString('MAIN', 'SHOW_TOOLTIPS', dmMain.GetIniValue('SHOW_TOOLTIPS'));
+      AppIni.WriteString('MAIN', 'AUTODROPDOWN', dmMain.GetIniValue('AUTODROPDOWN'));
+      AppIni.WriteString('MAIN', 'CALL_DIRECT', dmMain.GetIniValue('CALL_DIRECT'));
+      AppIni.WriteString('MAIN', 'SEARCH_TIMER', dmMain.GetIniValue('SEARCH_TIMER'));
 
       AppIni.WriteString('GRIDS', 'ServiceGrid', dmMain.GetIniValue('ServiceGrid'));
       AppIni.WriteString('GRIDS', 'StreetGrid', dmMain.GetIniValue('StreetGrid'));
@@ -1018,7 +1021,10 @@ begin
       dmMain.SetIniValue('FONT_NAME', s);
     end;
     SetFromIniSettings('MAIN', 'SHOW_TOOLTIPS', '0');
+    SetFromIniSettings('MAIN', 'SEARCH_TIMER', '3');
+    SetFromIniSettings('MAIN', 'AUTODROPDOWN', '1');
 
+    SetFromIniSettings('MAIN', 'CALL_DIRECT', '');
     FreeAndNil(AppIni);
   end
   else
@@ -1050,6 +1056,9 @@ begin
     dmMain.SetIniValue('REQGRIDFROZEN', '0');
     dmMain.SetIniValue('SHOW_WORKS_IN_SINGLE', '0');
     dmMain.SetIniValue('QUICK_FILTER', '0');
+    dmMain.SetIniValue('SHOW_TOOLTIPS', '0');
+    dmMain.SetIniValue('AUTODROPDOWN', '1');
+    dmMain.SetIniValue('CALL_DIRECT', '');
     actSettingUser.Execute;
   end;
 
@@ -2433,6 +2442,7 @@ var
   DateFile, DateUpdate: TDateTime;
   DTF: Extended;
   dstr: string;
+  id: string;
 begin
   // Отключено автообновление
   if dmMain.GetIniValue('NOTAUTOUPDATE') = '1' then
@@ -2448,7 +2458,8 @@ begin
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trReadQ;
-      SQL.text := 'SELECT NOTICE FROM BLB_GZIP WHERE BLB_ID=-111';
+      id := ifThen(GetWineAvail, '-110' , '-111');
+      SQL.text := 'SELECT NOTICE FROM BLB_GZIP WHERE BLB_ID = ' + id;
       Transaction.StartTransaction;
       ExecQuery;
       if not(fn('NOTICE').IsNull) then
@@ -2482,6 +2493,7 @@ var
   filename: string;
   dstr: string;
   CR: TCursor;
+  id : String;
 begin
   CR := Screen.Cursor;
   Screen.Cursor := CrHourGlass;
@@ -2496,14 +2508,16 @@ begin
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
-          SQL.text := 'DELETE FROM BLB_GZIP WHERE BLB_ID=-111';
+          id := ifThen(GetWineAvail, '-110' , '-111');
+          SQL.text := 'DELETE FROM BLB_GZIP WHERE BLB_ID = ' + id;
           Transaction.StartTransaction;
           ExecQuery;
           Close;
           Transaction.Commit;
           SQL.text := 'insert into BLB_GZIP (BLB_ID, BL_NAME, BLB_BODY, NOTICE) ' +
-            ' VALUES(-111, :BL_NAME, :BLB_BODY, :NOTICE)';
+            ' VALUES(:BLB_ID, :BL_NAME, :BLB_BODY, :NOTICE)';
           Transaction.StartTransaction;
+          ParamByName('BLB_ID').AsString := id;
           ParamByName('BL_NAME').AsString := ExtractFileName(Application.ExeName);
           ParamByName('NOTICE').AsString := dstr;
           ParamByName('BLB_BODY').LoadFromFile(filename);
@@ -2523,7 +2537,7 @@ begin
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
-          SQL.text := 'DELETE FROM BLB_GZIP WHERE BLB_ID=-112';
+          SQL.text := 'DELETE FROM BLB_GZIP WHERE BLB_ID = -112';
           Transaction.StartTransaction;
           ExecQuery;
           Close;
@@ -2558,7 +2572,7 @@ var
   CR: TCursor;
   i: Int64;
   strm: TFileStream;
-
+  id : String;
 begin
   CR := Screen.Cursor;
   Screen.Cursor := CrHourGlass;
@@ -2636,7 +2650,8 @@ begin
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trReadQ;
-          SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = -111';
+          id := ifThen(GetWineAvail, '-110' , '-111');
+          SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = ' + id;
           Transaction.StartTransaction;
           ExecQuery;
           fn('BLB_BODY').SaveToStream(strm);

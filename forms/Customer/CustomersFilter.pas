@@ -178,8 +178,8 @@ type
     actLoadFromDb: TAction;
     pmMemo: TPopupMenu;
     miCut1: TMenuItem;
-    Copy1: TMenuItem;
-    Paste1: TMenuItem;
+    miactCnPrefixWizard: TMenuItem;
+    miactCnPrefixWizard1: TMenuItem;
     SelectAll1: TMenuItem;
     lblSrvAtr: TLabel;
     lcbSrvAtr: TDBLookupComboboxEh;
@@ -231,7 +231,7 @@ var
 implementation
 
 uses
-  DM, CF, MAIN, AtrCommon, MemTableEh, SelectFilterForma;
+  DM, CF, MAIN, AtrCommon, MemTableEh, SelectFilterForma, AtrEhLibAddons;
 
 {$R *.dfm}
 
@@ -730,17 +730,7 @@ end;
 
 procedure TCustomersFilterForm.DBLookupComboboxClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 end.

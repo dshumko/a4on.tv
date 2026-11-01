@@ -6,8 +6,6 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   ClientWidth = 778
   Position = poDesigned
   StyleElements = [seFont, seClient, seBorder]
-  ExplicitWidth = 794
-  ExplicitHeight = 461
   TextHeight = 13
   object splitter: TSplitter [0]
     Left = 0
@@ -20,7 +18,6 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   end
   inherited splPG: TSplitter
     Width = 778
-    ExplicitWidth = 778
   end
   inherited dbGrid: TDBGridEh
     Width = 778
@@ -175,7 +172,6 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   end
   inherited tlbMain: TToolBar
     Width = 778
-    ExplicitWidth = 778
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -349,7 +345,6 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
   inherited pnlEdit: TPanel
     Width = 778
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 778
   end
   inherited srcDataSource: TDataSource
     DataSet = dsEQ
@@ -452,7 +447,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       '        D.EQ_N = :OLD_DECODER_N'
       '    ')
     SelectSQL.Strings = (
-      'select '
+      'select'
       '    d.eq_id,'
       '    d.eq_type,'
       '    t.o_name eq_type_name,'
@@ -497,7 +492,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
         '_n)or (d.eq_n = cd.stb_n))'
       
         '   left outer join customer c on (cd.customer_id = c.customer_id' +
-        ' @@SupeMode@)      '
+        ' @@SupeMode%@)      '
       '   left outer join house h on (c.house_id = h.house_id)'
       '   left outer join street s on (h.street_id = s.street_id)'
       

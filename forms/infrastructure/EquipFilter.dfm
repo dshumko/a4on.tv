@@ -13,7 +13,6 @@ object EquipFilterForm: TEquipFilterForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -21,7 +20,6 @@ object EquipFilterForm: TEquipFilterForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -219,6 +217,9 @@ object EquipFilterForm: TEquipFilterForm
                 Title.Caption = #1056#1072#1081#1086#1085
                 Width = 60
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -231,7 +232,7 @@ object EquipFilterForm: TEquipFilterForm
             TabOrder = 0
             Visible = True
             OnChange = dblStreetChange
-            OnExit = checkAdressSign
+            OnExit = checkAddressSign
           end
           object dblHouseNo: TDBLookupComboboxEh
             Left = 75
@@ -250,6 +251,9 @@ object EquipFilterForm: TEquipFilterForm
                 FieldName = 'Subarea_Name'
                 Width = 40
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1044#1086#1084
@@ -260,7 +264,7 @@ object EquipFilterForm: TEquipFilterForm
             ShowHint = True
             TabOrder = 1
             Visible = True
-            OnExit = checkAdressSign
+            OnExit = checkAddressSign
           end
           object dblArea: TDBLookupComboboxEh
             Left = 75
@@ -271,6 +275,9 @@ object EquipFilterForm: TEquipFilterForm
             DynProps = <>
             DataField = 'AREA_ID'
             DataSource = srcFilter
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
@@ -281,7 +288,7 @@ object EquipFilterForm: TEquipFilterForm
             ShowHint = True
             TabOrder = 5
             Visible = True
-            OnExit = checkAdressSign
+            OnExit = checkAddressSign
           end
           object dblSubArea: TDBLookupComboboxEh
             Left = 75
@@ -301,6 +308,9 @@ object EquipFilterForm: TEquipFilterForm
                 FieldName = 'AREA_NAME'
                 Title.Caption = #1056#1072#1081#1086#1085
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -312,7 +322,7 @@ object EquipFilterForm: TEquipFilterForm
             ShowHint = True
             TabOrder = 6
             Visible = True
-            OnExit = checkAdressSign
+            OnExit = checkAddressSign
           end
           object edtPORCH: TDBEditEh
             Left = 75
@@ -367,7 +377,7 @@ object EquipFilterForm: TEquipFilterForm
           Width = 176
           Height = 17
           Caption = #1042#1082#1083#1102#1095#1072#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086' '#1072#1076#1088#1077#1089#1091
-          DataField = 'CHECK_ADRESS'
+          DataField = 'CHECK_ADDRESS'
           DataSource = srcFilter
           DynProps = <>
           TabOrder = 0
@@ -447,6 +457,7 @@ object EquipFilterForm: TEquipFilterForm
             end>
           DropDownBox.ListSource = srcNodes
           DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
           DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
           DropDownBox.AutoDrop = True
@@ -461,7 +472,7 @@ object EquipFilterForm: TEquipFilterForm
           Style = csDropDownEh
           TabOrder = 5
           Visible = True
-          OnExit = checkAdressSign
+          OnExit = checkAddressSign
         end
       end
     end

@@ -52,11 +52,12 @@ END^
 
 CREATE FUNCTION DATE_FORMAT (
     A_DATE D_DATE = current_date,
-    FORMAT D_VARCHAR1000 = null,
-    LONG_DAY_NAMES D_VARCHAR100 = null,
-    SHORT_DAY_NAMES D_VARCHAR50 = null,
-    LONG_MONTH_NAMES D_VARCHAR255 = null,
-    SHORT_MONTH_NAMES D_VARCHAR255 = null)
+    FORMAT D_VARCHAR1000 = null /* COLLATE UTF8 - default */,
+    LONG_WDAY_NAMES D_VARCHAR100 = null /* COLLATE UTF8 - default */,
+    SHORT_WDAY_NAMES D_VARCHAR50 = null /* COLLATE UTF8 - default */,
+    LONG_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+    SHORT_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+    MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS D_VARCHAR255
 AS
 BEGIN
@@ -163,7 +164,7 @@ END^
 
 CREATE FUNCTION GET_NEW_ACCOUNT (
     HOUSE_ID TYPE OF UID = null,
-    FLAT D_FLAT = null,
+    FLAT D_FLAT = null /* COLLATE UTF8 - default */,
     SRV_ID TYPE OF UID = null)
 RETURNS D_ACCOUNT_NS
 AS
@@ -214,6 +215,32 @@ END^
 
 
 CREATE FUNCTION GET_SETTING_VALUE (
+    SETTING D_NAME,
+    DEF_VALUE D_VARCHAR1000 = '')
+RETURNS D_VARCHAR1000 DETERMINISTIC
+AS
+BEGIN
+  RETURN NULL;
+END^
+
+
+
+
+
+CREATE FUNCTION GET_SETTINGS_INT_VALUE (
+    SETTING D_NAME,
+    DEF_VALUE D_INTEGER = 0)
+RETURNS D_INTEGER
+AS
+BEGIN
+  RETURN NULL;
+END^
+
+
+
+
+
+CREATE FUNCTION GET_SETTINGS_VALUE (
     SETTING D_NAME,
     DEF_VALUE D_VARCHAR1000 = '')
 RETURNS D_VARCHAR1000 DETERMINISTIC
@@ -497,6 +524,7 @@ INSERT INTO LETTERTYPE (LETTERTYPEID, LETTERTYPEDESCR, FILENAME, RECORDINDB, FOR
 INSERT INTO LETTERTYPE (LETTERTYPEID, LETTERTYPEDESCR, FILENAME, RECORDINDB, FOR_FORM, SAVE_PDF) VALUES (866490, 'Конверт', 'Конверт', 0, 0, NULL);
 INSERT INTO LETTERTYPE (LETTERTYPEID, LETTERTYPEDESCR, FILENAME, RECORDINDB, FOR_FORM, SAVE_PDF) VALUES (866765, 'Конверт(С6)', 'Конверт(С6)', 0, 0, NULL);
 INSERT INTO LETTERTYPE (LETTERTYPEID, LETTERTYPEDESCR, FILENAME, RECORDINDB, FOR_FORM, SAVE_PDF) VALUES (877819, 'Договора\Проверка', 'Договор', 0, 0, 0);
+INSERT INTO LETTERTYPE (LETTERTYPEID, LETTERTYPEDESCR, FILENAME, RECORDINDB, FOR_FORM, SAVE_PDF) VALUES (886820, 'Платежи абонента', 'Платежи абонента', 0, 0, 0);
 
 
 COMMIT WORK;
@@ -796,12 +824,15 @@ INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28010, 29, 'ЧТУП "Вистопт"', NULL, 0, NULL, '220037, г.Минск, переулок Козлова, д.7. пом 29, оф.1', NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28045, 7, 'OMNY VIBe4', 'корпусная, вариофокальная', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (6, 15, 'Аренда', 'Услуги аренды', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
-INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28054, 8, 'NPS', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
+INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28054, 8, 'NPS', NULL, 0, NULL, NULL, -1, NULL, NULL, '0
+1
+2
+3', NULL, NULL, 'SYSDBA', '9-JUL-2026 09:50:08', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28055, 8, 'Возврат оборудования', NULL, 0, NULL, 'Состояние=Исправен;Неисправен;', 1, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '10-JUN-2026 09:36:53', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28056, 8, 'Долг', NULL, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '10-JUN-2026 09:37:09', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28057, 8, 'Акция', NULL, 0, NULL, 'Отдел=АО;ТП;ВЫ;
 Текст=
-', 1, NULL, NULL, 'реклама;интеренет;сарафанное радио;реклама;интеренет;сарафанное радио;реклама;интеренет;сарафанное радио;реклама;интеренет;сарафанное радио;реклама;интеренет;сарафанное радио;реклама;интеренет;сарафанное радио;реклама;интеренет;сарафанное радио;реклама;ин', NULL, NULL, 'SYSDBA', '12-JUN-2026 07:59:25', NULL);
+', 1, NULL, NULL, 'реклама;интеренет;сарафанное радио', NULL, NULL, 'SYSDBA', '27-OCT-2026 13:26:13', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28241, 7, 'D-Link DCS-6113V', 'купольная (со звуком)', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28389, 7, 'Конвертер', 'Медиаконвертор 100М', 0, '$00D6FA29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
 INSERT INTO OBJECTS (O_ID, O_TYPE, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION, O_CHARFIELD, O_NUMERICFIELD, O_DATEFIELD, O_DATEEND, O_CHECK, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, O_DATEFILED) VALUES (28431, 29, 'ООО "Версанатрейд"', NULL, 0, NULL, '224020, г.Брест, ул. Пионерская, д.85', NULL, NULL, NULL, NULL, NULL, NULL, 'SYSDBA', '24-FEB-2017 07:50:30', NULL);
@@ -1205,6 +1236,7 @@ INSERT INTO PAYSOURCE (PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC, CODE, F
 INSERT INTO PAYSOURCE (PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC, CODE, FOR_FORM, DELETED) VALUES (876015, 'ТС дома №16 по у л.Махновича', 0, 0, NULL, NULL, NULL);
 INSERT INTO PAYSOURCE (PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC, CODE, FOR_FORM, DELETED) VALUES (876030, 'ТС "Сальникова 31 г.Бреста"', 0, 0, NULL, NULL, NULL);
 INSERT INTO PAYSOURCE (PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC, CODE, FOR_FORM, DELETED) VALUES (877495, 'WEB', 0, 0, 'WEB', NULL, NULL);
+INSERT INTO PAYSOURCE (PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC, CODE, FOR_FORM, DELETED) VALUES (886828, 'KASPI', 0, 0, 'KASPI', NULL, 0);
 
 
 COMMIT WORK;
@@ -1406,6 +1438,7 @@ INSERT INTO REPORTS (ID_REPORT, ID_PARENT, REPORT_NAME, NO_VISIBLE, ADDED_BY, AD
 INSERT INTO REPORTS (ID_REPORT, ID_PARENT, REPORT_NAME, NO_VISIBLE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, REPORT_BODY) VALUES (388, 56, 'Доходы по домам', 0, 'SYSDBA', '9-MAR-2025 23:44:59', 'SYSDBA', '11-MAR-2025 23:54:40', :h1150E7_F05);
 INSERT INTO REPORTS (ID_REPORT, ID_PARENT, REPORT_NAME, NO_VISIBLE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, REPORT_BODY) VALUES (389, 21, 'Работы. Список заявок за период', 0, 'SYSDBA', '31-MAR-2025 00:14:28', 'SYSDBA', '31-MAR-2025 09:41:16', :h115FEC_DEE);
 INSERT INTO REPORTS (ID_REPORT, ID_PARENT, REPORT_NAME, NO_VISIBLE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, REPORT_BODY) VALUES (371, 0, 'PreviewOrder', 1, 'SYSDBA', '7-NOV-2022 11:34:30', 'SYSDBA', '7-NOV-2022 11:58:20', :h116DDA_3D1);
+INSERT INTO REPORTS (ID_REPORT, ID_PARENT, REPORT_NAME, NO_VISIBLE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON, REPORT_BODY) VALUES (391, 0, 'Платежи абонента', 1, 'SYSDBA', '8-SEP-2026 15:36:31', 'SYSDBA', '8-SEP-2026 15:36:37', :h1171AB_9C3);
 
 
 COMMIT WORK;
@@ -1654,10 +1687,10 @@ COMMIT WORK;
 
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('FEE_ROUND', '2', 'INTEGER', NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:40', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('START_DATE', '2002-10-01', 'DATE', NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
-INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('CURRENT_DATE', '2025-8-1', 'DATE', NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '20-AUG-2025 09:16:57');
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('CURRENT_DATE', '2026-4-1', 'DATE', NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '8-OCT-2026 16:28:14');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('DOLG', '100', 'INTEGER', NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('PAYMENT_TYPE', '0', 'BOOLEAN', 'ВИД ПЛАТЕЖА', 'При вводе платежа необходимость указывать за что платеж (абонплата/подключение/отключение...)', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
-INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('PERSONEL_TARIF', '0', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '13-SEP-2024 15:52:12');
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('PERSONEL_TARIF', '1', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '8-OCT-2026 16:06:26');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('PAYMENT_SRV', '0', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('ACCOUNT_PREFIX', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('USED_BILLING', '2', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
@@ -1680,7 +1713,7 @@ INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, AD
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SHOW_AS_BALANCE', '1', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SMTP', 'smtp.timeweb.ru', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '15-AUG-2025 12:51:20');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SMTP_LOGIN', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '15-AUG-2025 12:54:06');
-INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SMTP_PASS', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '22-JUN-2026 13:36:27');
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SMTP_PASS', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '1-NOV-2026 18:06:14');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('EMAIL', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '15-AUG-2025 12:54:06');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('COLOR_DOLG', '$000000D5', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '15-DEC-2022 19:08:18');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('COLOR_OFF', '$006A6A6A', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '15-DEC-2022 19:07:23');
@@ -1699,7 +1732,7 @@ INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, AD
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MYSQL_SERVER', '', NULL, NULL, 'IP adress servera MySQL for UTM', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MYSQL_DB', '', NULL, NULL, '', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MYSQL_USER', '', NULL, NULL, '', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
-INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MYSQL_PASS', '', NULL, NULL, '', 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '22-JUN-2026 13:36:27');
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MYSQL_PASS', '', NULL, NULL, '', 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '1-NOV-2026 18:06:14');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('PREPAYEXPIRE', '5', 'INTEGER', NULL, 'Срок сгорания обещ. платежей (дней)', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('DECODER_DEL_ZERRO', '1', 'BOOLEAN', 'Формат КАМ', 'Удалять ли лидирующий 0 в карточке', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('BARDELZERRO', '0', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
@@ -1717,7 +1750,7 @@ INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, AD
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('INVISIBLE_MODE', '', 'STRING', NULL, 'Если установлено, что либо отличное от '''' то включается режим скрытия абонентов. Само поле является паролем включения всех абонентов', 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('IGNORE_CONTRACT', '1', 'BOOLEAN', 'Игнорировать дату договора в расчетах', NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('A4LOGIN', 'post@a4on.tv', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '17-JUN-2025 11:52:48');
-INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('A4APIKEY', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '22-JUN-2026 13:36:27');
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('A4APIKEY', '', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '1-NOV-2026 18:06:14');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('FORMATN', 'RU', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '29-DEC-2025 11:40:02');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SMTP_PORT', '465', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', 'SYSDBA', '4-FEB-2024 00:15:53');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SMTP_AUTH', 'Plain', NULL, NULL, NULL, 'SYSDBA', '26-JUN-2022 10:22:41', NULL, NULL);
@@ -1809,6 +1842,8 @@ INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, AD
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('SHOW_ONLY_ACTIVE_PREPAY', '0', 'BOOLEAN', NULL, 'В платежах обонента отображать только активный обещанный платеж', 'SYSDBA', '12-FEB-2026 13:58:05', 'SYSDBA', '12-FEB-2026 14:00:53');
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MVD_KEY', 'key', NULL, NULL, NULL, 'SYSDBA', '6-MAY-2026 15:46:07', NULL, NULL);
 INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('MVD_URL', 'https://localhost/logger.php', NULL, NULL, NULL, 'SYSDBA', '6-MAY-2026 15:46:07', NULL, NULL);
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('RECOURSE_DIRECT', '0', NULL, NULL, NULL, 'SYSDBA', '23-JUN-2026 09:05:04', 'SYSDBA', '5-AUG-2026 14:57:12');
+INSERT INTO SETTINGS (VAR_NAME, VAR_VALUE, VAR_TYPE, VAR_CAPTION, VAR_NOTICE, ADDED_BY, ADDED_ON, EDIT_BY, EDIT_ON) VALUES ('REQUEST_P_F_DISBLE', '0', 'BOOLEAN', NULL, 'При редактировании заявки не переходить в поля подъезд/этаж ', 'SYSDBA', '4-AUG-2026 16:24:36', 'SYSDBA', '4-AUG-2026 16:48:35');
 
 
 COMMIT WORK;
@@ -1983,6 +2018,8 @@ INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (228, 'ВОЗВРА
 INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (229, 'УЧЕТ ЭЛЕКТРОЭНЕРГИИ ', 'ЭЛЕКТРОЭНЕРГИЯ', 'Работа с показателями электроэнергии');
 INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (230, 'ХРОНОЛОГИЧЕСКИЕ ДАННЫЕ', 'СПРАВОЧНИКИ', 'Внесение переодических данных');
 INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (231, 'СКРЫТЬ ПЕРСОНАЛЬНЫЕ ДАННЫЕ. ИМЯ И ОТЧЕСТВО', 'АБОНЕНТЫ', 'Внимание, ограничение! Запретить доступ к персональным данным (имя и отчество)');
+INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (232, 'РЕДАКТИРОВАНИЕ РАСТОРГНУВШИХ ДОГОВОР', 'АБОНЕНТЫ', 'Разрешить редактирование карточки у абонентов расторгнувших договор ');
+INSERT INTO SYS$RIGHTS (ID, RIGHTS, CATEGORY, NOTICE) VALUES (233, 'ДОБАВЛЕНИЕ КОНТАКТОВ', 'АБОНЕНТЫ', 'Возможность добавить контакты абонента');
 
 
 COMMIT WORK;
@@ -2120,35 +2157,33 @@ end^
 
 ALTER FUNCTION DATE_FORMAT (
     A_DATE D_DATE = current_date,
-    FORMAT D_VARCHAR1000 = null,
-    LONG_DAY_NAMES D_VARCHAR100 = null,
-    SHORT_DAY_NAMES D_VARCHAR50 = null,
-    LONG_MONTH_NAMES D_VARCHAR255 = null,
-    SHORT_MONTH_NAMES D_VARCHAR255 = null)
+    FORMAT D_VARCHAR1000 = null /* COLLATE UTF8 - default */,
+    LONG_WDAY_NAMES D_VARCHAR100 = null /* COLLATE UTF8 - default */,
+    SHORT_WDAY_NAMES D_VARCHAR50 = null /* COLLATE UTF8 - default */,
+    LONG_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+    SHORT_MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */,
+    MONTH_NAMES D_VARCHAR255 = null /* COLLATE UTF8 - default */)
 RETURNS D_VARCHAR255
 AS
-declare variable D_Year  D_Smallint;
+declare variable D_Year  D_Integer;
 declare variable D_Month D_Smallint;
 declare variable D_Day   D_Smallint;
-declare variable M       D_Smallint;
-declare variable D       D_Smallint;
-declare variable L       D_Smallint;
-declare variable S       D_Smallint;
-declare variable L_Month D_Varchar20;
-declare variable S_Month D_Varchar10;
-declare variable L_Day   D_Varchar20;
-declare variable S_Day   D_Varchar10;
+declare variable I       D_Smallint;
+declare variable STR     D_Varchar20;
 declare variable Result  D_Varchar255;
 begin
 
-  if (Long_Day_Names is null) then
-    Long_Day_Names = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
-  if (Short_Day_Names is null) then
-    Short_Day_Names = 'пн,вт,ср,чт,пт,сб,вс';
+  if (LONG_WDAY_NAMES is null) then
+    LONG_WDAY_NAMES = 'понедельник,вторник,среда,четверг,пятница,суббота,воскресенье';
+  if (SHORT_WDAY_NAMES is null) then
+    SHORT_WDAY_NAMES = 'пн,вт,ср,чт,пт,сб,вс';
   if (Long_Month_Names is null) then
     Long_Month_Names = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря';
   if (Short_Month_Names is null) then
     Short_Month_Names = 'янв,фев,мар,апр,мая,июн,июл,авг,сен,окт,ноя,дек';
+  if (Month_Names is null) then
+    Month_Names = 'январь,февраль,март,апрель,май,июнь,июль,август,сентябрь,октябрь,ноябрь,декабрь';
+
   if (Format is null) then
     Format = 'DD.MM.YYYY';
   else
@@ -2162,50 +2197,75 @@ begin
     D_DAY = extract(day from A_DATE);
     RESULT = FORMAT;
 
-    if (FORMAT is null) then
-      RESULT = D_DAY || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
+    if (FORMAT = 'DD.MM.YYYY') then
+      RESULT = lpad(cast(D_DAY as varchar(2)), 2, '0') || '.' || lpad(cast(D_MONTH as varchar(2)), 2, '0') || '.' || D_YEAR;
     else begin
-      RESULT = replace(replace(RESULT, 'YYYY', D_YEAR), 'YY', mod(extract(year from current_date), 100));
-      S_MONTH = '';
-      L_MONTH = '';
-      if (RESULT like '%MMM%') then begin
-        M = D_MONTH;
-        while (M > 0) do begin
-          L = position(',', LONG_MONTH_NAMES);
-          S = position(',', SHORT_MONTH_NAMES);
-          if (M = 1) then begin
-            L_MONTH = substring(LONG_MONTH_NAMES from 1 for L - 1);
-            S_MONTH = substring(SHORT_MONTH_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_MONTH_NAMES = substring(LONG_MONTH_NAMES from L + 1);
-            SHORT_MONTH_NAMES = substring(SHORT_MONTH_NAMES from S + 1);
-          end
-          M = M - 1;
-        end
-        RESULT = replace(replace(RESULT, 'MMMM', coalesce(L_MONTH, '')), 'MMM', coalesce(S_MONTH, ''));
+      -- работа с годом
+      I = char_length(RESULT) - char_length(replace(RESULT, 'Y', ''));
+      if (I = 1) then
+        RESULT = replace(RESULT, 'Y', D_YEAR);
+      else
+      if (I = 2) then
+        RESULT = replace(RESULT, 'YY', lpad(cast(mod(D_YEAR, 100) as varchar(2)), 2, '0'));
+      else
+      if (I = 3) then
+        RESULT = replace(RESULT, 'YYY', lpad(cast(mod(D_YEAR, 1000) as varchar(3)), 3, '0'));
+      else
+      if (I = 4) then
+        RESULT = replace(RESULT, 'YYYY', lpad(cast(D_YEAR as varchar(4)), 4, '0'));
+
+      -- работа с месяцем
+      I = char_length(RESULT) - char_length(replace(RESULT, 'M', ''));
+      if (I = 1) then
+        RESULT = replace(RESULT, 'M', D_MONTH);
+      else
+      if (I = 2) then
+        RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
+      else
+      if (I = 3) then begin
+        STR = '';
+        execute statement('select first 1 skip ' ||(D_MONTH - 1) || ' Str from Explode('','', :lst)')(lst := :SHORT_MONTH_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'MMM', coalesce(STR, ''));
       end
-      if (RESULT like '%DDD%') then begin
-        D = coalesce(nullif(extract(weekday from A_DATE), 0), 7);
-        while (D > 0) do begin
-          L = position(',', LONG_DAY_NAMES);
-          S = position(',', SHORT_DAY_NAMES);
-          if (D = 1) then begin
-            L_DAY = substring(LONG_DAY_NAMES from 1 for L - 1);
-            S_DAY = substring(SHORT_DAY_NAMES from 1 for S - 1);
-          end
-          else begin
-            LONG_DAY_NAMES = substring(LONG_DAY_NAMES from L + 1);
-            SHORT_DAY_NAMES = substring(SHORT_DAY_NAMES from S + 1);
-          end
-          D = D - 1;
-        end
-        RESULT = replace(replace(RESULT, 'DDDD', coalesce(L_DAY, '')), 'DDD', coalesce(S_DAY, ''));
+      else
+      if (I = 4) then begin
+        STR = '';
+        execute statement('select first 1 skip ' ||(D_MONTH - 1) || ' Str from Explode('','', :lst)')(lst := :LONG_MONTH_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'MMMM', coalesce(STR, ''));
       end
-      RESULT = replace(RESULT, 'MM', lpad(cast(D_MONTH as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'M', D_MONTH);
-      RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
-      RESULT = replace(RESULT, 'D', D_DAY);
+      else
+      if (I = 5) then begin
+        STR = '';
+        execute statement('select first 1 skip ' ||(D_MONTH - 1) || ' Str from Explode('','', :lst)')(lst := :MONTH_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'MMMMM', coalesce(STR, ''));
+      end
+
+      -- работа с днем
+      I = char_length(RESULT) - char_length(replace(RESULT, 'D', ''));
+      if (I = 1) then
+        RESULT = replace(RESULT, 'D', D_DAY);
+      else
+      if (I = 2) then
+        RESULT = replace(RESULT, 'DD', lpad(cast(D_DAY as varchar(2)), 2, '0'));
+      else
+      if (I = 3) then begin
+        STR = '';
+        D_DAY = extract(weekday from A_DATE);
+        execute statement('select first 1 skip ' ||(D_DAY - 1) || ' Str from Explode('','', :lst)')(lst := :SHORT_WDAY_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'DDD', coalesce(STR, ''));
+      end
+      else
+      if (I = 4) then begin
+        STR = '';
+        D_DAY = extract(weekday from A_DATE);
+        execute statement('select first 1 skip ' ||(D_DAY - 1) || ' Str from Explode('','', :lst)')(lst := :LONG_WDAY_NAMES)
+            into :STR;
+        RESULT = replace(RESULT, 'DDDD', coalesce(STR, ''));
+      end
     end
   end
 
@@ -2627,7 +2687,7 @@ end^
 
 ALTER FUNCTION GET_NEW_ACCOUNT (
     HOUSE_ID TYPE OF UID = null,
-    FLAT D_FLAT = null,
+    FLAT D_FLAT = null /* COLLATE UTF8 - default */,
     SRV_ID TYPE OF UID = null)
 RETURNS D_ACCOUNT_NS
 AS
@@ -2780,7 +2840,7 @@ begin
           end -- house id is null
         end
       end
-      v = coalesce(r, '');
+      v = coalesce(r, prt0, '');
 
       PRT2 = coalesce(PRT2, '0');
       result = left(result || right(lpad(v, :prt1, :prt2), :prt1), 15);
@@ -2835,7 +2895,7 @@ declare variable d       D_INTEGER;
 declare variable vIgnoreList D_Varchar1000;
 begin
 
-  vIgnoreList = ',' || Get_Setting_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
+  vIgnoreList = ',' || Get_Settings_Value('SRV_PREPAY_IGNORE') || ','; -- спісок ID услуг через , без предоплаты. 1,2,3
   PREPAY = 0;
 
   -- текущий месяц
@@ -3104,17 +3164,17 @@ begin
 end^
 
 
-ALTER FUNCTION GET_SETTING_INT_VALUE (
+ALTER FUNCTION GET_SETTINGS_INT_VALUE (
     SETTING D_NAME,
     DEF_VALUE D_INTEGER = 0)
 RETURNS D_INTEGER
 AS
 begin
-  return GET_SETTING_VALUE(:SETTING, :DEF_VALUE);
+  return GET_SETTINGS_VALUE(:SETTING, :DEF_VALUE);
 end^
 
 
-ALTER FUNCTION GET_SETTING_VALUE (
+ALTER FUNCTION GET_SETTINGS_VALUE (
     SETTING D_NAME,
     DEF_VALUE D_VARCHAR1000 = '')
 RETURNS D_VARCHAR1000 DETERMINISTIC
@@ -3127,6 +3187,26 @@ begin
     where VAR_NAME = :SETTING
   into :vVALUE;
   return coalesce(:vVALUE, coalesce(DEF_VALUE, ''));
+end^
+
+
+ALTER FUNCTION GET_SETTING_INT_VALUE (
+    SETTING D_NAME,
+    DEF_VALUE D_INTEGER = 0)
+RETURNS D_INTEGER
+AS
+begin
+  return GET_SETTINGS_INT_VALUE(:SETTING, :DEF_VALUE);
+end^
+
+
+ALTER FUNCTION GET_SETTING_VALUE (
+    SETTING D_NAME,
+    DEF_VALUE D_VARCHAR1000 = '')
+RETURNS D_VARCHAR1000 DETERMINISTIC
+AS
+begin
+  return GET_SETTINGS_VALUE(:SETTING, :DEF_VALUE);
 end^
 
 

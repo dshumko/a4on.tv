@@ -5,15 +5,11 @@ inherited EquipmentForm: TEquipmentForm
   ClientHeight = 603
   ClientWidth = 979
   Menu = mmMain
-  ExplicitWidth = 995
-  ExplicitHeight = 662
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 25
     Width = 979
-    ExplicitTop = 25
-    ExplicitWidth = 979
   end
   object splMain: TSplitter [1]
     Left = 0
@@ -263,11 +259,28 @@ inherited EquipmentForm: TEquipmentForm
         Footers = <>
         Title.Caption = #1057#1083'. '#1080#1084#1103
         Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'DISTRICT'
+        Footers = <>
+        Title.Caption = #1056#1072#1081#1086#1085
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'LOCALITY'
+        Footers = <>
+        Title.Caption = #1053#1072#1089'. '#1087#1091#1085#1082#1090
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
     Width = 979
-    ExplicitWidth = 979
     inherited ToolButton5: TToolButton
       Visible = False
     end
@@ -345,26 +358,18 @@ inherited EquipmentForm: TEquipmentForm
     Top = 29
     Width = 979
     Height = 0
-    ExplicitTop = 29
-    ExplicitWidth = 979
-    ExplicitHeight = 0
+    StyleElements = [seFont, seClient, seBorder]
     inherited btnSaveLink: TBitBtn
       Left = 108
       Top = 71
       Width = 300
       TabOrder = 1
-      ExplicitLeft = 108
-      ExplicitTop = 71
-      ExplicitWidth = 300
     end
     inherited btnCancelLink: TBitBtn
       Left = 5
       Top = -20
       Height = 14
       TabOrder = 0
-      ExplicitLeft = 5
-      ExplicitTop = -20
-      ExplicitHeight = 14
     end
   end
   object pnlForms: TPanel [5]
@@ -602,12 +607,14 @@ inherited EquipmentForm: TEquipmentForm
       '  , p.name as parent_name'
       '  , o.O_DIMENSION as COLOR'
       '  , n.NAME NODE_NAME'
-      '  , nt.o_name as node_type '
+      '  , nt.o_name as node_type'
       '  , case(char_length(e.Parent_Port))'
       '      when 1 then '#39'0'#39' || e.Parent_Port'
       '      when 3 then '#39'0'#39' || e.Parent_Port'
       '      else e.Parent_Port'
-      '    end Parent_Port_sort  '
+      '    end Parent_Port_sort'
+      '  , a.Subarea_Name DISTRICT'
+      '  , lc.Area_Name LOCALITY'
       '  from EQUIPMENT E'
       '       left outer join house h on (e.house_id = h.house_id)'
       '       left outer join street s on (s.street_id = h.street_id)'
@@ -617,11 +624,15 @@ inherited EquipmentForm: TEquipmentForm
       '       left outer join equipment p on (e.parent_id = p.eid)'
       '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
       
-        '       left join objects nt on (nt.O_Id = n.Type_Id and nt.O_Typ' +
-        'e = 38)    '
+        '       left outer join objects nt on (nt.O_Id = n.Type_Id and nt' +
+        '.O_Type = 38)'
       
-        '       left join objects et on (et.O_Id = e.Eq_Type and et.O_Typ' +
-        'e = 73)              '
+        '       left outer join objects et on (et.O_Id = e.Eq_Type and et' +
+        '.O_Type = 73)'
+      
+        '       left outer join subarea a on (a.Subarea_Id = h.Subarea_Id' +
+        ')'
+      '       left outer join area lc on (lc.Area_Id = a.Area_Id)'
       'where'
       '        E.EID = :OLD_EID'
       '    ')
@@ -635,12 +646,14 @@ inherited EquipmentForm: TEquipmentForm
       '  , p.name as parent_name'
       '  , o.O_DIMENSION as COLOR'
       '  , n.NAME NODE_NAME'
-      '  , nt.o_name as node_type '
+      '  , nt.o_name as node_type'
       '  , case(char_length(e.Parent_Port))'
       '      when 1 then '#39'0'#39' || e.Parent_Port'
       '      when 3 then '#39'0'#39' || e.Parent_Port'
       '      else e.Parent_Port'
-      '    end Parent_Port_sort  '
+      '    end Parent_Port_sort'
+      '  , a.Subarea_Name DISTRICT'
+      '  , lc.Area_Name LOCALITY'
       '  from EQUIPMENT E'
       '       left outer join house h on (e.house_id = h.house_id)'
       '       left outer join street s on (s.street_id = h.street_id)'
@@ -650,11 +663,15 @@ inherited EquipmentForm: TEquipmentForm
       '       left outer join equipment p on (e.parent_id = p.eid)'
       '       left outer join nodes n on (n.NODE_ID = e.NODE_ID)'
       
-        '       left join objects nt on (nt.O_Id = n.Type_Id and nt.O_Typ' +
-        'e = 38)    '
+        '       left outer join objects nt on (nt.O_Id = n.Type_Id and nt' +
+        '.O_Type = 38)'
       
-        '       left join objects et on (et.O_Id = e.Eq_Type and et.O_Typ' +
-        'e = 73)'
+        '       left outer join objects et on (et.O_Id = e.Eq_Type and et' +
+        '.O_Type = 73)'
+      
+        '       left outer join subarea a on (a.Subarea_Id = h.Subarea_Id' +
+        ')'
+      '       left outer join area lc on (lc.Area_Id = a.Area_Id)'
       'WHERE @@filter%1=1@'
       'order by NAME')
     AutoUpdateOptions.UpdateTableName = 'EQUIPMENT'
@@ -863,6 +880,23 @@ inherited EquipmentForm: TEquipmentForm
       object miDelete: TMenuItem
         Action = actDelete
       end
+    end
+  end
+  object pmGridTitle: TPopupMenu
+    Left = 484
+    Top = 267
+    object N45: TMenuItem
+    end
+    object N46: TMenuItem
+    end
+    object N44: TMenuItem
+    end
+    object N47: TMenuItem
+      Caption = '-'
+    end
+    object miFrozenCols1: TMenuItem
+    end
+    object actGTSelectColumns1: TMenuItem
     end
   end
 end

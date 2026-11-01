@@ -14,14 +14,12 @@ object EditRecResultForm: TEditRecResultForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     401
     194)
-  PixelsPerInch = 96
   TextHeight = 13
   object lblResult: TLabel
     Left = 8

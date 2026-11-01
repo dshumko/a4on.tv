@@ -1,6 +1,5 @@
 ﻿unit fmuCustomerFiles;
 
-
 interface
 
 uses
@@ -102,9 +101,27 @@ end;
 procedure TapgCustomerFiles.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if not(FFullAccess or FCanAdd) then
-    exit;
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  CanAdd := FFullAccess;
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and FCanAdd;
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   SetCustomerInfo(ci);
 
@@ -117,42 +134,80 @@ begin
 end;
 
 procedure TapgCustomerFiles.actDelExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
+  s: String;
 begin
-  if not(FFullAccess or FCanEdit) then
-    exit;
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
 
   if ((not dsCustFiles.Active) or (dsCustFiles.RecordCount = 0)) then
-    exit;
+    Exit;
+
+  CanAdd := FFullAccess;
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and FCanEdit;
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   if (dsCustFiles['isReq'] = 1) then
-    exit;
+    Exit;
 
   if (not srcCustFiles.DataSet.FieldByName('NAME').IsNull) then
+    s := srcCustFiles.DataSet['NAME']
+  else
+    s := '';
+
+  if (MessageDlg(Format(rsDeleteWithName, [s]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
-    if (MessageDlg(Format(rsDeleteWithName, [srcCustFiles.DataSet['NAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
-    then
-    begin
-      srcCustFiles.DataSet.Delete;
-      EnableControls;
-      UpdatePage;
-    end;
+    srcCustFiles.DataSet.Delete;
+    EnableControls;
+    UpdatePage;
   end;
 end;
 
 procedure TapgCustomerFiles.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
   if ((not dsCustFiles.Active) or (dsCustFiles.RecordCount = 0)) then
-    exit;
+    Exit;
   if (dsCustFiles.FieldByName('NAME').IsNull) or (dsCustFiles.FieldByName('CF_ID').IsNull) or
     (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
-    exit;
+    Exit;
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  CanAdd := FFullAccess;
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Files_Edit);
+  end;
 
   if (dsCustFiles['isReq'] = 0) then
   begin
-    if not((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_Files_Edit))) then
-      exit;
+    if not CanAdd then
+    begin
+      if Terminated then
+        ShowMessage(rsContractNotValid);
+      Exit;
+    end;
 
     SetCustomerInfo(ci);
 
@@ -163,11 +218,8 @@ begin
       UpdatePage;
     end
   end
-  else
-  begin
-    if not dsCustFiles.FieldByName('RQ_ID').IsNull then
-      ViewRequest(dsCustFiles.FieldByName('RQ_ID').AsInteger);
-  end;
+  else if not dsCustFiles.FieldByName('RQ_ID').IsNull then
+    ViewRequest(dsCustFiles.FieldByName('RQ_ID').AsInteger);
 end;
 
 procedure TapgCustomerFiles.CloseData;
@@ -188,7 +240,7 @@ var
   Processed: Boolean;
 begin
   if ((not dsCustFiles.Active) or (dsCustFiles.RecordCount = 0)) then
-    exit;
+    Exit;
 
   Processed := False;
   ScrPt := Mouse.CursorPos;
@@ -212,7 +264,7 @@ begin
   end;
 
   if Processed then
-    exit;
+    Exit;
 
   // если отметка обработан стоит, то откроем на просмотр
   if (FClickOnAct and (not dsCustFiles.FieldByName('Act').IsNull) and (dsCustFiles['ACT'])) then
@@ -265,7 +317,7 @@ var
   fileName: string;
 begin
   if (dbgCustFiles.DataSource.DataSet.RecordCount = 0) or (dsCustFiles.FieldByName('CF_ID').IsNull) then
-    exit;
+    Exit;
 
   if not dsCustFiles.FieldByName('FILENAME').IsNull then
   begin
@@ -279,7 +331,7 @@ begin
     fileName := GetTempA4onFile('');
 
   if fileName.IsEmpty then
-    exit;
+    Exit;
 
   if FileExists(fileName) then
     DeleteFile(fileName);
@@ -370,7 +422,7 @@ var
   FullAccess: Boolean;
 Begin
   if aRequest = -1 then
-    exit;
+    Exit;
 
   FullAccess := dmMain.AllowedAction(rght_Request_full); // (50, 'ПОЛНЫЙ ДОСТУП', 'ЗАЯВКИ', 'Полный доступ');
   // CA := dmMain.AllowedAction(rght_Request_add); // (51, 'ДОБАВЛЕНИЕ', 'ЗАЯВКИ', 'Добавление заявок');
@@ -379,7 +431,7 @@ Begin
   CG := dmMain.AllowedAction(rght_Request_Give); // (53, 'ВЫДАЧА', 'ЗАЯВКИ', 'Выдача заявок в работу');
 
   if not(FullAccess or CE or CC or CG) then
-    exit;
+    Exit;
 
   aMode := 1;
 
@@ -429,4 +481,3 @@ begin
 end;
 
 end.
-

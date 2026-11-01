@@ -22,56 +22,7 @@ object RequestForm: TRequestForm
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   OnShow = FormShow
-  DesignSize = (
-    882
-    562)
   TextHeight = 13
-  inline OkCancelFrame: TOkCancelFrame
-    Left = 0
-    Top = 525
-    Width = 882
-    Height = 37
-    Align = alBottom
-    TabOrder = 2
-    TabStop = True
-    ExplicitTop = 505
-    ExplicitWidth = 882
-    ExplicitHeight = 37
-    inherited Label2: TLabel
-      Height = 13
-      StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
-    end
-    inherited Label1: TLabel
-      Height = 13
-      StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
-    end
-    inherited bbOk: TBitBtn
-      Left = 360
-      Top = 6
-      Width = 348
-      Height = 27
-      Anchors = [akLeft, akRight, akBottom]
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      OnClick = OkCancelFramebbOkClick
-      ExplicitLeft = 360
-      ExplicitTop = 6
-      ExplicitWidth = 348
-      ExplicitHeight = 27
-    end
-    inherited bbCancel: TBitBtn
-      Left = 714
-      Top = 6
-      Width = 166
-      Height = 27
-      OnClick = OkCancelFrame1bbCancelClick
-      ExplicitLeft = 714
-      ExplicitTop = 6
-      ExplicitWidth = 166
-      ExplicitHeight = 27
-    end
-  end
   object pnlHead: TPanel
     Left = 0
     Top = 0
@@ -117,6 +68,9 @@ object RequestForm: TRequestForm
           DynProps = <>
           DataField = 'RQ_TYPE'
           DataSource = srcRequest
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           EmptyDataInfo.Text = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
           EditButtons = <>
           KeyField = 'RT_ID'
@@ -262,6 +216,9 @@ object RequestForm: TRequestForm
               FieldName = 'AREA_NAME'
               Title.Caption = #1056#1072#1081#1086#1085
             end>
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.ShowTitles = True
           DropDownBox.Sizable = True
@@ -290,6 +247,9 @@ object RequestForm: TRequestForm
               FieldName = 'SUBAREA_NAME'
               Width = 40
             end>
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.Sizable = True
           DropDownBox.Width = 200
           EditButtons = <>
@@ -447,13 +407,9 @@ object RequestForm: TRequestForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
-        ExplicitWidth = 472
-        ExplicitHeight = 137
         inherited gbInfo: TGroupBox
           Width = 472
           Height = 137
-          ExplicitWidth = 472
-          ExplicitHeight = 137
         end
       end
     end
@@ -462,13 +418,12 @@ object RequestForm: TRequestForm
     Left = 0
     Top = 188
     Width = 882
-    Height = 337
+    Height = 336
     ActivePage = tabRequest
     Align = alClient
     TabOrder = 1
     OnChange = PageControlChange
     OnChanging = PageControlChanging
-    ExplicitHeight = 317
     object tabRequest: TTabSheet
       Caption = #1055#1088#1080#1077#1084
       object Splitter: TSplitter
@@ -483,11 +438,10 @@ object RequestForm: TRequestForm
         Left = 0
         Top = 116
         Width = 874
-        Height = 193
+        Height = 172
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
-        ExplicitHeight = 173
         object Label5: TLabel
           Left = 0
           Top = 29
@@ -495,13 +449,12 @@ object RequestForm: TRequestForm
           Height = 13
           Align = alTop
           Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-          ExplicitWidth = 67
         end
         object mmoNotice: TDBMemoEh
           Left = 0
           Top = 42
           Width = 874
-          Height = 151
+          Height = 130
           ScrollBars = ssVertical
           Align = alClient
           AutoSize = False
@@ -513,7 +466,6 @@ object RequestForm: TRequestForm
           TabOrder = 1
           Visible = True
           WantReturns = True
-          ExplicitHeight = 131
         end
         object pnlAddInfo: TPanel
           Left = 0
@@ -585,6 +537,9 @@ object RequestForm: TRequestForm
           DynProps = <>
           DataField = 'RQTL_ID'
           DataSource = srcRequest
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           EmptyDataInfo.Text = #1055#1088#1080#1095#1080#1085#1072' '#1074#1099#1079#1086#1074#1072
           EditButtons = <>
@@ -728,13 +683,13 @@ object RequestForm: TRequestForm
         Left = 0
         Top = 33
         Width = 874
-        Height = 276
+        Height = 255
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
           874
-          276)
+          275)
         object Label17: TLabel
           Left = 0
           Top = 0
@@ -757,7 +712,7 @@ object RequestForm: TRequestForm
           Left = 0
           Top = 21
           Width = 874
-          Height = 255
+          Height = 254
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
@@ -766,7 +721,7 @@ object RequestForm: TRequestForm
             Left = 3
             Top = 3
             Width = 868
-            Height = 249
+            Height = 248
             TabStop = False
             Align = alClient
             DataSource = srcExecutor
@@ -890,7 +845,7 @@ object RequestForm: TRequestForm
       ImageIndex = 1
       object spl2: TSplitter
         Left = 0
-        Top = 238
+        Top = 217
         Width = 874
         Height = 3
         Cursor = crVSplit
@@ -900,7 +855,7 @@ object RequestForm: TRequestForm
         Left = 0
         Top = 0
         Width = 874
-        Height = 238
+        Height = 217
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -991,6 +946,9 @@ object RequestForm: TRequestForm
             DynProps = <>
             DataField = 'RESULT_ID'
             DataSource = srcRequest
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             EmptyDataInfo.Text = #1056#1077#1079#1091#1083#1100#1090#1072#1090' '#1084#1086#1078#1085#1086' '#1076#1086#1087#1086#1083#1085#1080#1090#1100' '#1074' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1077' '#1058#1080#1087#1099' '#1079#1072#1103#1074#1086#1082
             EditButtons = <>
@@ -1022,7 +980,7 @@ object RequestForm: TRequestForm
           Left = 0
           Top = 55
           Width = 874
-          Height = 183
+          Height = 182
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -1030,13 +988,13 @@ object RequestForm: TRequestForm
             Left = 0
             Top = 0
             Width = 100
-            Height = 183
+            Height = 162
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 0
             DesignSize = (
               100
-              183)
+              182)
             object lbl1: TLabel
               Left = 4
               Top = 22
@@ -1085,7 +1043,7 @@ object RequestForm: TRequestForm
             Left = 100
             Top = 0
             Width = 774
-            Height = 183
+            Height = 182
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
@@ -1185,7 +1143,7 @@ object RequestForm: TRequestForm
               Left = 0
               Top = 85
               Width = 774
-              Height = 98
+              Height = 97
               Align = alClient
               DataSource = srcMaterials
               DynProps = <>
@@ -1312,7 +1270,7 @@ object RequestForm: TRequestForm
       end
       object pnlNotice: TPanel
         Left = 0
-        Top = 241
+        Top = 240
         Width = 874
         Height = 68
         Align = alBottom
@@ -1449,13 +1407,13 @@ object RequestForm: TRequestForm
       object spl1: TSplitter
         Left = 369
         Top = 0
-        Height = 309
+        Height = 288
       end
       object dbgPhotos: TDBGridEh
         Left = 24
         Top = 0
         Width = 345
-        Height = 309
+        Height = 288
         Align = alLeft
         AllowedOperations = [alopUpdateEh]
         DataSource = srcPhotos
@@ -1492,16 +1450,16 @@ object RequestForm: TRequestForm
         Left = 0
         Top = 0
         Width = 24
-        Height = 309
+        Height = 288
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
           24
-          309)
+          308)
         object btnFileDel: TSpeedButton
           Left = 1
-          Top = 285
+          Top = 364
           Width = 22
           Height = 22
           Action = actFileDel
@@ -1558,7 +1516,7 @@ object RequestForm: TRequestForm
         Left = 372
         Top = 0
         Width = 502
-        Height = 309
+        Height = 308
         Align = alClient
         BevelOuter = bvNone
         Caption = #1044#1074#1086#1081#1085#1086#1081' '#1097#1077#1083#1095#1086#1082' '#1084#1099#1096#1080' '#1076#1083#1103' '#1087#1088#1086#1089#1084#1086#1090#1088#1072' '#1092#1072#1081#1083#1072
@@ -1568,7 +1526,7 @@ object RequestForm: TRequestForm
           Left = 0
           Top = 0
           Width = 502
-          Height = 309
+          Height = 308
           Align = alClient
           DataField = 'JPG'
           DataSource = srcPhotos
@@ -1585,16 +1543,16 @@ object RequestForm: TRequestForm
         Left = 0
         Top = 0
         Width = 26
-        Height = 309
+        Height = 288
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
           26
-          309)
+          308)
         object btnDel1: TSpeedButton
           Left = 2
-          Top = 285
+          Top = 364
           Width = 22
           Height = 22
           Action = actMSGDel
@@ -1615,7 +1573,7 @@ object RequestForm: TRequestForm
         Left = 26
         Top = 0
         Width = 848
-        Height = 309
+        Height = 308
         Align = alClient
         BevelOuter = bvNone
         Caption = 'pnlMSG'
@@ -1632,7 +1590,7 @@ object RequestForm: TRequestForm
           Left = 0
           Top = 107
           Width = 848
-          Height = 202
+          Height = 181
           Align = alClient
           ColumnDefValues.ToolTips = True
           Ctl3D = True
@@ -1746,15 +1704,66 @@ object RequestForm: TRequestForm
       end
     end
   end
-  object btnPrint: TButton
-    Left = 211
-    Top = 531
-    Width = 117
-    Height = 27
-    Action = actPrint
-    Anchors = [akLeft, akBottom]
-    TabOrder = 3
-    ExplicitTop = 511
+  object pnlBottom: TPanel
+    Left = 0
+    Top = 524
+    Width = 882
+    Height = 38
+    Align = alBottom
+    BevelOuter = bvNone
+    Caption = 'pnlBottom'
+    TabOrder = 2
+    DesignSize = (
+      882
+      38)
+    object LblEdit: TLabel
+      Left = 4
+      Top = 18
+      Width = 31
+      Height = 13
+      Caption = 'LblEdit'
+    end
+    object lblAdded: TLabel
+      Left = 4
+      Top = 3
+      Width = 41
+      Height = 13
+      Caption = 'lblAdded'
+    end
+    object btnOk: TBitBtn
+      Left = 360
+      Top = 3
+      Width = 348
+      Height = 27
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
+      Anchors = [akLeft, akRight, akBottom]
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      ModalResult = 1
+      NumGlyphs = 2
+      TabOrder = 0
+      OnClick = OkCancelFramebbOkClick
+    end
+    object btnClose: TBitBtn
+      Left = 714
+      Top = 3
+      Width = 166
+      Height = 27
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      Caption = #1054#1090#1084#1077#1085#1072
+      ModalResult = 2
+      TabOrder = 1
+      OnClick = OkCancelFrame1bbCancelClick
+    end
+    object btnPrint: TButton
+      Left = 233
+      Top = 3
+      Width = 117
+      Height = 27
+      Action = actPrint
+      Anchors = [akLeft, akBottom]
+      TabOrder = 2
+    end
   end
   object srcExecutor: TDataSource
     AutoEdit = False

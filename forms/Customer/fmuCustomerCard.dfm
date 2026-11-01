@@ -10,9 +10,7 @@ object apgCustomerCard: TapgCustomerCard
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object frxPreview: TfrxPreview
     Left = 0
@@ -35,7 +33,7 @@ object apgCustomerCard: TapgCustomerCard
     HideScrolls = False
   end
   object frxReport: TfrxReport
-    Version = '2021.2.8'
+    Version = '2023.1.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     Preview = frxPreview

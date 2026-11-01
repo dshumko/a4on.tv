@@ -79,16 +79,60 @@ begin
 end;
 
 procedure TapgCustomerKoef.actAddExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Discount);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   AddEditDiscount(-1, FDataSource.DataSet['CUSTOMER_ID']);
   dsDiscount.CloseOpen(true);
   RecalcCustomer;
 end;
 
 procedure TapgCustomerKoef.actDelExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
   if dsDiscount.RecordCount = 0 then
     Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Discount);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   if (dmMain.InStrictMode) and ((dsDiscount['DATE_FROM'] < dmMain.CurrentMonth) or
     (dsDiscount['DATE_TO'] < dmMain.CurrentMonth)) then
@@ -104,7 +148,32 @@ begin
 end;
 
 procedure TapgCustomerKoef.actEditExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  if (dsDiscount.RecordCount = 0) or (dsDiscount.FieldByName('DISCOUNT_ID').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_Discount);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   AddEditDiscount(dsDiscount['DISCOUNT_ID'], FDataSource.DataSet['CUSTOMER_ID']);
   dsDiscount.CloseOpen(true);
   RecalcCustomer;
@@ -141,4 +210,3 @@ begin
 end;
 
 end.
-

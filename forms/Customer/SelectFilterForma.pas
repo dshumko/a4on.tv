@@ -37,7 +37,7 @@ implementation
 
 uses
   System.Variants,
-  DM, AtrCommon, PrjConst;
+  DM, AtrCommon, PrjConst, AtrEhLibAddons;
 
 {$R *.DFM}
 
@@ -89,28 +89,12 @@ end;
 
 procedure TfrmSelectFilter.cbFilterClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TfrmSelectFilter.cbFilterEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TfrmSelectFilter.FormCreate(Sender: TObject);

@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   DBCtrlsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh,
   FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh,
-  JsonDataObjects, PrnDbgeh;
+  JsonDataObjects, PrnDbgeh, CnClasses;
 
 type
   TPromoForm = class(TGridForm)
@@ -81,7 +81,7 @@ var
 implementation
 
 uses
-  System.StrUtils, DM;
+  System.StrUtils, DM, AtrEhLibAddons;
 
 {$R *.dfm}
 
@@ -266,29 +266,14 @@ procedure TPromoForm.lcbServiceClick(Sender: TObject);
 begin
   inherited;
 
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TPromoForm.lcbServiceEnter(Sender: TObject);
 begin
   inherited;
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
 
-  if not(Sender as TDBLookupComboboxEh).ListVisible then begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TPromoForm.ParseJson(const json: String);

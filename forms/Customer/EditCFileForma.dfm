@@ -547,6 +547,7 @@ object EditCFileForm: TEditCFileForm
         DynProps = <>
         EditButtons = <>
         EmptyDataInfo.Text = #1053#1086#1084#1077#1088' '#1087#1072#1089#1087#1086#1088#1090#1072
+        MRUList.AutoAdd = False
         ShowHint = True
         TabOrder = 0
         Visible = True
@@ -654,6 +655,7 @@ object EditCFileForm: TEditCFileForm
         DropDownBox.ListSource = srcService
         DropDownBox.ListSourceAutoFilter = True
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EditButtons = <>
         KeyField = 'SERVICE_ID'
@@ -675,6 +677,9 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = ''
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EditButtons = <>
         KeyField = 'ID'
         ListField = 'NAME'
@@ -695,6 +700,7 @@ object EditCFileForm: TEditCFileForm
         DropDownBox.ListSource = srcService
         DropDownBox.ListSourceAutoFilter = True
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EditButtons = <>
         KeyField = 'SERVICE_ID'
@@ -825,6 +831,9 @@ object EditCFileForm: TEditCFileForm
             FieldName = 'AREA_NAME'
             Title.Caption = #1043#1086#1088#1086#1076
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
@@ -854,6 +863,9 @@ object EditCFileForm: TEditCFileForm
             FieldName = 'SUBAREA_NAME'
             Width = 40
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EmptyDataInfo.Text = #1044#1086#1084
         EditButtons = <>
@@ -872,6 +884,9 @@ object EditCFileForm: TEditCFileForm
         Hint = #1053#1086#1084#1077#1088' '#1082#1074#1072#1088#1090#1080#1088#1099' '#1080#1083#1080' - , '#1077#1089#1083#1080' '#1085#1077#1090' '#1082#1074#1072#1088#1090#1080#1088#1099
         DynProps = <>
         DataField = ''
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EmptyDataInfo.Text = #1050#1074#1072#1088#1090#1080#1088#1072
         EditButtons = <>
@@ -1137,6 +1152,9 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = ''
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EditButtons = <>
         KeyField = 'PAYMENT_ID'
         ListField = 'INFO'
@@ -1176,6 +1194,9 @@ object EditCFileForm: TEditCFileForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = ''
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EditButtons = <>
         KeyField = 'COST'
         ListField = 'NAME'
@@ -1606,6 +1627,7 @@ object EditCFileForm: TEditCFileForm
   object dsPayment: TpFIBDataSet
     SelectSQL.Strings = (
       'select'
+      '    @@M_TOP%@'
       '    p.Payment_Id'
       '  , p.Pay_Sum'
       '  , p.Fine_Sum'
@@ -1620,10 +1642,9 @@ object EditCFileForm: TEditCFileForm
         'rv)'
       '  where p.CUSTOMER_ID = :CID'
       
-        '        and (((p.Added_By = current_user) and (p.Pay_Date = curr' +
-        'ent_date))'
-      '          or (current_user = '#39'SYSDBA'#39'))'
-      '  order by info')
+        '      @@M_WHERE% and (((p.Added_By = current_user) and (p.Pay_Da' +
+        'te = current_date)) or (current_user = '#39'SYSDBA'#39')) @'
+      'order by p.Pay_Date desc, info')
     Transaction = trRead
     Database = dmMain.dbTV
     DataSource = srcHouse

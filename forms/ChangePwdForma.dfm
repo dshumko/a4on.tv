@@ -11,14 +11,12 @@ object ChangePwdForm: TChangePwdForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poMainFormCenter
   ShowHint = True
   OnShow = FormShow
   DesignSize = (
     261
     156)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 16

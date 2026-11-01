@@ -28,7 +28,6 @@ object CustFilesForm: TCustFilesForm
     Height = 491
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 471
     object dbgFiles: TDBGridEh
       Left = 1
       Top = 30

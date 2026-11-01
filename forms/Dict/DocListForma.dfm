@@ -7,8 +7,6 @@ inherited DocListForm: TDocListForm
   Menu = mmDoc
   Position = poDesigned
   StyleElements = [seFont, seClient, seBorder]
-  ExplicitWidth = 714
-  ExplicitHeight = 603
   TextHeight = 13
   object splitter: TSplitter [0]
     Left = 0
@@ -22,8 +20,6 @@ inherited DocListForm: TDocListForm
   inherited splPG: TSplitter
     Top = 297
     Width = 698
-    ExplicitTop = 297
-    ExplicitWidth = 698
   end
   inherited dbGrid: TDBGridEh
     Top = 301
@@ -209,16 +205,13 @@ inherited DocListForm: TDocListForm
   end
   inherited tlbMain: TToolBar
     Width = 698
-    ExplicitWidth = 698
     inherited ToolButton5: TToolButton
       Width = 8
       Visible = False
-      ExplicitWidth = 8
     end
     inherited ToolButton6: TToolButton
       Left = 59
       Visible = False
-      ExplicitLeft = 59
     end
     inherited btnDelete: TToolButton
       Left = 63
@@ -228,39 +221,31 @@ inherited DocListForm: TDocListForm
       Enabled = False
       Visible = False
       OnClick = actDeleteExecute
-      ExplicitLeft = 63
     end
     inherited ToolButton9: TToolButton
       Left = 86
       Visible = False
-      ExplicitLeft = 86
     end
     inherited tbOk: TToolButton
       Left = 101
       Visible = False
-      ExplicitLeft = 101
     end
     inherited ToolButton10: TToolButton
       Left = 124
       Visible = False
-      ExplicitLeft = 124
     end
     inherited tbCancel: TToolButton
       Left = 128
       Visible = False
-      ExplicitLeft = 128
     end
     inherited ToolButton20: TToolButton
       Left = 151
-      ExplicitLeft = 151
     end
     inherited btnQuickFilter: TToolButton
       Left = 159
-      ExplicitLeft = 159
     end
     inherited sep444: TToolButton
       Left = 182
-      ExplicitLeft = 182
     end
     object btn2: TToolButton
       Left = 190
@@ -300,7 +285,6 @@ inherited DocListForm: TDocListForm
     Caption = 'pnlHistory'
     TabOrder = 3
     Visible = False
-    ExplicitTop = 380
     object dbgHistory: TDBGridEh
       Left = 28
       Top = 1
@@ -541,8 +525,6 @@ inherited DocListForm: TDocListForm
     Width = 698
     Height = 272
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 698
-    ExplicitHeight = 272
     object lbl9: TLabel [0]
       Tag = 1
       Left = 221
@@ -622,18 +604,12 @@ inherited DocListForm: TDocListForm
       Top = 241
       Width = 480
       TabOrder = 12
-      ExplicitLeft = 99
-      ExplicitTop = 241
-      ExplicitWidth = 480
     end
     inherited btnCancelLink: TBitBtn
       Left = 584
       Top = 241
       Width = 108
       TabOrder = 13
-      ExplicitLeft = 584
-      ExplicitTop = 241
-      ExplicitWidth = 108
     end
     object edtPlaceBirth: TDBEditEh
       Tag = 1
@@ -652,7 +628,7 @@ inherited DocListForm: TDocListForm
       Visible = True
       OnChange = mmoNoticeChange
     end
-    object edtADRES_REGISTR: TDBEditEh
+    object edtADDRESS_REGISTR: TDBEditEh
       Tag = 1
       Left = 295
       Top = 132

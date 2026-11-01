@@ -12,7 +12,7 @@ uses
   GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   FIBDatabase,
   pFIBDatabase, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TWorkersForm = class(TGridForm)
@@ -234,9 +234,9 @@ end;
 procedure TWorkersForm.dsWorkersNewRecord(DataSet: TDataSet);
 begin
   inherited;
-  dsWorkers['IN_DOGOVOR'] := False;
-  dsWorkers['IN_REQUEST'] := True;
-  dsWorkers['WORKING'] := True;
+  dsWorkers['IN_DOGOVOR'] := 0;
+  dsWorkers['IN_REQUEST'] := 0;
+  dsWorkers['WORKING'] := 1;
 end;
 
 procedure TWorkersForm.actSendSMSExecute(Sender: TObject);

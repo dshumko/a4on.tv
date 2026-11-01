@@ -319,6 +319,11 @@ type
     procedure GetRentReturnFields;
     function CheckFileTypeExists(const TypeID: Integer): Boolean;
     procedure FillFields;
+    procedure SetEditTextFileds(edt: TDBEditEh; Hint: String);
+    procedure SetTextMRU(cntrl: TDBEditEh);
+    procedure SetPassportMRU(cntrl: TDBEditEh);
+    procedure SetWorkerMRU(cntrl: TDBEditEh);
+    procedure SetMRUFromSelect(cntrl: TDBEditEh; SQL: string);
     // procedure CheckRegistration; // отключили проверку прописку пасопрта
   public
     property CustomerInfo: TCustomerInfo read FCustomerInfo write SetCustomerInfo;
@@ -339,7 +344,7 @@ uses
   System.NetEncoding,
   AtrCommon, AtrStrUtils, DM, JsonDataObjects, ScanImageForma, BillEditForma,
   RequestNewForma, synacode, MAIN,
-  RequestForma;
+  RequestForma, AtrEhLibAddons;
 
 {$R *.dfm}
 
@@ -890,18 +895,7 @@ end;
 
 procedure TEditCFileForm.dbluFileTypeClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TEditCFileForm.dbluFileTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -915,14 +909,7 @@ end;
 
 procedure TEditCFileForm.dbluFileTypeEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-  begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TEditCFileForm.dbluFileTypeExit(Sender: TObject);
@@ -1507,30 +1494,12 @@ end;
 
 procedure TEditCFileForm.lcbServiceClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TEditCFileForm.lcbServiceEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-  begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TEditCFileForm.GetDefValues;
@@ -1744,35 +1713,6 @@ var
   w: Integer;
   sa: TStringDynArray;
 
-  procedure SetTextField(cntrl: TDBEditEh; lbl: TLabel; fld: string; var regFld: string);
-  begin
-    if JO.Contains(fld) and (not JO[fld].IsNull) then
-    begin
-      cntrl.Visible := true;
-      s := JO.s[fld];
-      if s.Contains('|') then
-      begin
-        // меняем двойной || на символы чтоб корректно разбить строук
-        s := s.Replace('||', '@^#');
-        sa := Explode('|', s);
-        cntrl.Text := sa[0];
-        if length(sa) > 1 then
-          cntrl.EmptyDataInfo.Text := sa[1];
-        if length(sa) > 2 then
-        begin
-          FText1Reg := sa[2].Replace('@^#', '|');
-        end;
-        if not cntrl.EmptyDataInfo.Text.IsEmpty then
-        begin
-          lbl.Caption := cntrl.EmptyDataInfo.Text;
-          cntrl.Hint := cntrl.EmptyDataInfo.Text;
-        end;
-      end
-      else
-        cntrl.Text := s;
-    end;
-  end;
-
 begin
   JO := TJsonObject.Parse(json) as TJsonObject;
   try
@@ -1894,6 +1834,9 @@ begin
       if not JO['Psprt'].IsNull then
         pnlPassport.Visible := JO.B['Psprt'];
 
+      if pnlPassport.Visible then
+        SetTextMRU(edtPASSPORT);
+
       if JO.Contains('Card') and (not JO['Card'].IsNull) then
       begin
         pnlDoc.Visible := JO.B['Card'];
@@ -1914,143 +1857,41 @@ begin
         pnlText.Visible := JO.B['Txt'];
         edtText.Visible := JO.B['Txt'];
       end;
-      {
-        SetTextField(edtText, lblText, 'Hint', FTextReg);
-        SetTextField(edtText1, lblText1, 'Txt1', FText1Reg);
-        SetTextField(edtText2, lblText2, 'Txt2', FText2Reg);
-        SetTextField(edtText3, lblText3, 'Txt3', FText3Reg);
-      }
+
       if JO.Contains('Hint') then
       begin
         if not JO['Hint'].IsNull then
         begin
-          s := JO.s['Hint'];
-          if s.Contains('|') then
-          begin
-            // меняем двойной || на символы чтоб корректно разбить строук
-            s := s.Replace('||', '@^#');
-            sa := Explode('|', s);
-            edtText.Text := sa[0];
-            if length(sa) > 1 then
-              edtText.EmptyDataInfo.Text := sa[1];
-            if length(sa) > 2 then
-            begin
-              FTextReg := sa[2].Replace('@^#', '|');
-            end;
-
-            if not edtText.EmptyDataInfo.Text.IsEmpty then
-            begin
-              lblText.Caption := edtText.EmptyDataInfo.Text;
-              edtText.Hint := edtText.EmptyDataInfo.Text;
-            end;
-          end
-          else
-            edtText.Text := s;
+          SetEditTextFileds(edtText, JO.s['Hint']);
         end;
       end;
 
       if JO.Contains('Txt1') and (not JO['Txt1'].IsNull) then
       begin
         edtText1.Visible := true;
-        s := JO.s['Txt1'];
-        if s.Contains('|') then
-        begin
-          // меняем двойной || на символы чтоб корректно разбить строук
-          s := s.Replace('||', '@^#');
-          sa := Explode('|', s);
-          edtText1.Text := sa[0];
-          if length(sa) > 1 then
-            edtText1.EmptyDataInfo.Text := sa[1];
-          if length(sa) > 2 then
-          begin
-            FText1Reg := sa[2].Replace('@^#', '|');
-          end;
-          if not edtText1.EmptyDataInfo.Text.IsEmpty then
-          begin
-            lblText1.Caption := edtText1.EmptyDataInfo.Text;
-            edtText1.Hint := edtText1.EmptyDataInfo.Text;
-          end;
-        end
-        else
-          edtText1.Text := s;
+        lblText1.Visible := true;
+        SetEditTextFileds(edtText1, JO.s['Txt1']);
       end;
 
       if JO.Contains('Txt2') and (not JO['Txt2'].IsNull) then
       begin
         edtText2.Visible := true;
         lblText2.Visible := true;
-        s := JO.s['Txt2'];
-        if s.Contains('|') then
-        begin
-          s := s.Replace('||', '@^#');
-          sa := Explode('|', s);
-          edtText2.Text := sa[0];
-          if length(sa) > 1 then
-            edtText2.EmptyDataInfo.Text := sa[1];
-          if length(sa) > 2 then
-          begin
-            FText2Reg := sa[2].Replace('@^#', '|');
-          end;
-          if not edtText2.EmptyDataInfo.Text.IsEmpty then
-          begin
-            lblText2.Caption := edtText2.EmptyDataInfo.Text;
-            edtText2.Hint := edtText2.EmptyDataInfo.Text;
-          end;
-        end
-        else
-          edtText2.Text := s;
+        SetEditTextFileds(edtText2, JO.s['Txt2']);
       end;
 
       if JO.Contains('Txt3') and (not JO['Txt3'].IsNull) then
       begin
         edtText3.Visible := true;
         lblText3.Visible := true;
-        s := JO.s['Txt3'];
-        if s.Contains('|') then
-        begin
-          s := s.Replace('||', '@^#');
-          sa := Explode('|', s);
-          edtText3.Text := sa[0];
-          if length(sa) > 1 then
-            edtText3.EmptyDataInfo.Text := sa[1];
-          if length(sa) > 2 then
-          begin
-            FText3Reg := sa[2].Replace('@^#', '|');
-          end;
-          if not edtText3.EmptyDataInfo.Text.IsEmpty then
-          begin
-            lblText3.Caption := edtText3.EmptyDataInfo.Text;
-            edtText3.Hint := edtText3.EmptyDataInfo.Text;
-          end;
-        end
-        else
-          edtText3.Text := s;
+        SetEditTextFileds(edtText3, JO.s['Txt3']);
       end;
 
       if JO.Contains('Txt4') and (not JO['Txt4'].IsNull) then
       begin
         edtText4.Visible := true;
         lblText4.Visible := true;
-        s := JO.s['Txt4'];
-        if s.Contains('|') then
-        begin
-          s := s.Replace('||', '@^#');
-          sa := Explode('|', s);
-          edtText4.Text := sa[0];
-          if length(sa) > 1 then
-            edtText4.EmptyDataInfo.Text := sa[1];
-          if length(sa) > 2 then
-          begin
-            FText4Reg := sa[2].Replace('@^#', '|');
-          end;
-          if not edtText4.EmptyDataInfo.Text.IsEmpty then
-          begin
-            lblText4.Caption := edtText4.EmptyDataInfo.Text;
-            edtText4.Hint := edtText4.EmptyDataInfo.Text;
-          end;
-        end
-        else
-          edtText4.Text := s;
+        SetEditTextFileds(edtText4, JO.s['Txt4']);
       end;
 
     end;
@@ -2110,17 +1951,36 @@ begin
     pnlBidPay.Visible := ednBid.Visible or ednCheckSum.Visible;
     if (FIsLTV) then
     begin
-      if (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.') or //
-        (FFileTypeName.Contains('СЧЕТ') and FFileTypeName.Contains('П_ПОРУЧЕНИЕ') and FFileTypeName.Contains('УСЛУГИ'))
-      then
+      if (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.') //
+        or (FFileTypeName.Contains('СЧЕТ') and FFileTypeName.Contains('П_ПОРУЧЕНИЕ') and
+        FFileTypeName.Contains('УСЛУГИ')) //
+        or (FFileTypeName.Contains('СТВ.') and FFileTypeName.Contains('ВОЗОБНОВИТЬ')) then
+
       begin
-        pnlPayment.Visible := (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.');
-        pnlBidPay.Visible := true;
-        ednCheckSum.Visible := true;
-        ednFineSum.Visible := true;
+        pnlBidPay.Visible := not(FFileTypeName.Contains('СТВ.') and FFileTypeName.Contains('ВОЗОБНОВИТЬ'));
+        ednCheckSum.Visible := pnlBidPay.Visible;
+        ednFineSum.Visible := pnlBidPay.Visible;
         ednFineSum.ReadOnly := (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.') and (not dmMain.UserIsAdmin);
+
+        pnlPayment.Visible := (FFileTypeName.Trim = 'КОРРЕКТИРОВКА ПЛАТЕЖА.') //
+          or (FFileTypeName.Contains('СТВ.') and FFileTypeName.Contains('ВОЗОБНОВИТЬ'));
         dsPayment.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
-        dsPayment.Open;
+        if (FFileTypeName.Contains('СТВ.') and FFileTypeName.Contains('ВОЗОБНОВИТЬ')) then
+        begin
+          if not dmMain.UserIsAdmin then
+            dsPayment.ParamByName('M_TOP').AsString := ' first 1 ';
+          dsPayment.ParamByName('M_WHERE').AsString := '';
+        end
+        else
+        begin
+          dsPayment.ParamByName('M_TOP').AsString := '';
+          if not dmMain.UserIsAdmin then
+            dsPayment.ParamByName('M_WHERE').AsString :=
+              ' and ((p.Added_By = current_user) and (p.Pay_Date = current_date)) '
+          else
+            dsPayment.ParamByName('M_WHERE').AsString := '';
+        end;
+        dsPayment.Active := pnlPayment.Visible;
       end;
 
       if (FFileTypeName.Contains('ШТРАФ')) then
@@ -5042,6 +4902,41 @@ begin
     end;
   end;
 
+  if pnlSrv.Visible then
+  begin
+    if (lcbServiceFrom.Visible) and (lcbServiceFrom.Text.IsEmpty) then
+    begin
+      Result := true;
+      CnErrors.SetError(lcbServiceFrom, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+    end
+    else
+      CnErrors.Dispose(lcbServiceFrom);
+
+    if (lcbService.Visible) and (lcbService.Text.IsEmpty) then
+    begin
+      Result := true;
+      CnErrors.SetError(lcbService, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+    end
+    else
+      CnErrors.Dispose(lcbService);
+
+    if (lcbOnOffSrv.Visible) and (lcbOnOffSrv.Text.IsEmpty) then
+    begin
+      Result := true;
+      CnErrors.SetError(lcbOnOffSrv, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+    end
+    else
+      CnErrors.Dispose(lcbOnOffSrv);
+
+    if (edDateSrv.Visible) and VarIsNull(edDateSrv.value) then
+    begin
+      Result := true;
+      CnErrors.SetError(edDateSrv, rsEmptyFieldError, iaMiddleLeft, bsNeverBlink);
+    end
+    else
+      CnErrors.Dispose(edDateSrv);
+  end;
+
   if (pnlText.Visible) then
   begin
     if (edtText.Text.IsEmpty) then
@@ -6652,6 +6547,153 @@ begin
   finally
     Screen.Cursor := Save_Cursor;
   end;
+end;
+
+procedure TEditCFileForm.SetEditTextFileds(edt: TDBEditEh; Hint: String);
+var
+  s: string;
+  reg: String;
+  sa: TStringDynArray;
+
+  {
+    procedure SetTextField(cntrl: TDBEditEh; lbl: TLabel; fld: string; var regFld: string);
+    begin
+    if JO.Contains(fld) and (not JO[fld].IsNull) then
+    begin
+    cntrl.Visible := true;
+    s := JO.s[fld];
+    if s.Contains('|') then
+    begin
+    // меняем двойной || на символы чтоб корректно разбить строук
+    s := s.Replace('||', '@^#');
+    sa := Explode('|', s);
+    cntrl.Text := sa[0];
+    if length(sa) > 1 then
+    cntrl.EmptyDataInfo.Text := sa[1];
+    if length(sa) > 2 then
+    begin
+    FText1Reg := sa[2].Replace('@^#', '|');
+    end;
+    if not cntrl.EmptyDataInfo.Text.IsEmpty then
+    begin
+    lbl.Caption := cntrl.EmptyDataInfo.Text;
+    cntrl.Hint := cntrl.EmptyDataInfo.Text;
+    end;
+    end
+    else
+    cntrl.Text := s;
+    end;
+    end;
+
+  }
+
+begin
+  s := Hint;
+  if s.Contains('|') then
+  begin
+    // меняем двойной || на символы чтоб корректно разбить строук
+    s := s.Replace('||', '@^#');
+    sa := Explode('|', s);
+    edt.Text := sa[0];
+    if length(sa) > 1 then
+      edt.EmptyDataInfo.Text := sa[1];
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      SetTextMRU(edt);
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      edt.Hint := edt.EmptyDataInfo.Text;
+  end
+  else
+    edt.Text := s;
+
+  if edt = edtText then
+  begin
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      lblText.Caption := edt.EmptyDataInfo.Text;
+    if length(sa) > 2 then
+      FTextReg := sa[2].Replace('@^#', '|');
+  end
+  else if edt = edtText1 then
+  begin
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      lblText1.Caption := edt.EmptyDataInfo.Text;
+    if length(sa) > 2 then
+      FText1Reg := sa[2].Replace('@^#', '|');
+  end
+  else if edt = edtText2 then
+  begin
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      lblText2.Caption := edt.EmptyDataInfo.Text;
+    if length(sa) > 2 then
+      FText2Reg := sa[2].Replace('@^#', '|');
+  end
+  else if edt = edtText3 then
+  begin
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      lblText3.Caption := edt.EmptyDataInfo.Text;
+    if length(sa) > 2 then
+      FText3Reg := sa[2].Replace('@^#', '|');
+  end
+  else if edt = edtText4 then
+  begin
+    if not edt.EmptyDataInfo.Text.IsEmpty then
+      lblText4.Caption := edt.EmptyDataInfo.Text;
+    if length(sa) > 2 then
+      FText4Reg := sa[2].Replace('@^#', '|');
+  end;
+end;
+
+procedure TEditCFileForm.SetTextMRU(cntrl: TDBEditEh);
+var
+  s: String;
+begin
+  cntrl.MRUList.Items.Clear;
+  if cntrl = edtPASSPORT then
+    SetPassportMRU(cntrl)
+  else
+  begin
+    s := cntrl.EmptyDataInfo.Text.ToUpper;
+    if s.Contains('ИСПОЛНИТЕЛЬ') or s.Contains('ИСП-Л') then
+      SetWorkerMRU(cntrl);
+  end;
+  cntrl.MRUList.Active := (cntrl.MRUList.Items.Count > 0);
+end;
+
+procedure TEditCFileForm.SetPassportMRU(cntrl: TDBEditEh);
+var
+  SQL: String;
+begin
+  if FIsLTV then
+    SQL := 'select distinct OVERLAY(Only_Digits(Contract) PLACING '' ''  FROM 5 FOR 0) MRU from Subscr_Serv ' +
+      ' where Customer_Id =:CID and not Contract is null order by State_Date desc'
+  else
+    SQL := 'select ss.Passport_Number MRU from CUSTOMER ss where ss.Customer_Id =:CID';
+
+  SetMRUFromSelect(cntrl, SQL);
+end;
+
+procedure TEditCFileForm.SetWorkerMRU(cntrl: TDBEditEh);
+begin
+  SetMRUFromSelect(cntrl, 'Select distinct Surname MRU from worker where Working = 1 order by Surname');
+end;
+
+procedure TEditCFileForm.SetMRUFromSelect(cntrl: TDBEditEh; SQL: string);
+begin
+  if SQL.IsEmpty then
+    Exit;
+
+  dmMain.qRead.SQL.Clear;
+  dmMain.qRead.SQL.Add(SQL);
+  if Assigned(dmMain.qRead.FindParam('CID')) then
+    dmMain.qRead.ParamByName('CID').AsInteger := FCustomerInfo.CUSTOMER_ID;
+  dmMain.qRead.Transaction.StartTransaction;
+  dmMain.qRead.ExecQuery;
+  while not dmMain.qRead.EOF do
+  begin
+    if not dmMain.qRead.FieldByName('MRU').IsNull then
+      cntrl.MRUList.Items.Add(dmMain.qRead['MRU'].AsString);
+    dmMain.qRead.Next;
+  end;
+  dmMain.qRead.Close;
 end;
 
 end.

@@ -89,6 +89,7 @@ begin
     AddMethod('procedure FromUtf8toWin(const FileName: String)', CallMethod, grp);
     AddMethod('function RunCmd(const CmdLine: String; const params: String): String', CallMethodforCMD, grp);
     AddMethod('function OpenCustomerByAccount(const ACCOUNT: String): Integer', CallMethod, grp);
+    AddMethod('function OpenCustomers(const ACCOUNTs: String): Integer', CallMethod, grp);
     AddMethod('function OpenCustomerByID(const CUSTOMER_ID: Integer): Integer', CallMethod, grp);
     AddMethod('function IncMAC(const MAC: string; const step: Integer): String', CallMethod, grp);
     AddMethod('function SHA256(const Text: string): String', CallMethod, grp);
@@ -136,6 +137,8 @@ begin
     Result := FromWinToDos(Params[0])
   else if MethodName = 'OPENCUSTOMERBYACCOUNT' then
     Result := A4MainForm.ShowCustomers(100, Params[0]) // 100 - лицевой
+  else if MethodName = 'OPENCUSTOMERS' then
+    Result := A4MainForm.ShowCustomers(2, Trim(Params[0])) // 2 - список лицевых
   else if MethodName = 'OPENCUSTOMERBYID' then
     Result := A4MainForm.ShowCustomers(104, Params[0]) // 104 - customer_id
   else if MethodName = 'INCMAC' then

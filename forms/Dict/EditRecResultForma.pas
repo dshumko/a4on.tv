@@ -139,7 +139,6 @@ end;
 procedure TEditRecResultForm.SetID(value: Integer);
 var
   fq: TpFIBQuery;
-  s: string;
 begin
   FResult_ID := value;
   if FResult_ID < 0 then begin

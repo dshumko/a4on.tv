@@ -106,7 +106,6 @@ type
     FCheckPassport: Boolean;
     FKeyMVD: string;
     FUrlMVD: String;
-    FDataMVD: String;
     FEnterSecondPress: Boolean;
     procedure StartEdit();
     procedure StopEdit(const Cancel: Boolean);
@@ -137,7 +136,8 @@ uses
   fmuCustomerRecourse, fmuCustomerRequests, fmuCustomerAttributes, fmuCustomerLan, fmuCustomerInternet, fmuCustomerCard,
   fmuCustomerDigit, fmuCustomerEdit, fmuCustomerBonus, fmuCustomerFiles, fmuCustomerMaterialsMove, fmuCustomerAppl,
   PaymentForma,
-  RequestNewForma, RecourseForma, NPSAddForma, OrderTPForma, A4onTypeUnit, TextEditForma;
+  RequestNewForma, RecourseForma, NPSAddForma, OrderTPForma, A4onTypeUnit, TextEditForma,
+  Mvd30903Client;
 
 procedure ShowCustomer(aCustomer: Integer; const Edit: Boolean = False);
 var
@@ -240,8 +240,22 @@ begin
 end;
 
 procedure TCustomerForm.actEditExecute(Sender: TObject);
+var
+  CanEdit: Boolean;
 begin
-  StartEdit;
+  if dsCustomer.FieldByName('Customer_ID').IsNull then
+    Exit;
+
+  // Разрешим редактирование абонента, только если он не расторг договор
+  if (not dsCustomer.FieldByName('VALID_TO').IsNull) then
+    CanEdit := dmMain.AllowedAction(rght_Customer_Edit_Terminated) or dmMain.AllowedAction(rght_Customer_full)
+  else
+    CanEdit := dmMain.AllowedAction(rght_Customer_Edit) or dmMain.AllowedAction(rght_Customer_full);
+
+  if CanEdit then
+    StartEdit
+  else if (not dsCustomer.FieldByName('VALID_TO').IsNull) then
+    ShowMessage(rsContractNotValid);
 end;
 
 procedure TCustomerForm.actFilterCustomerExecute(Sender: TObject);
@@ -418,7 +432,7 @@ begin
   dsCustomer.Open;
   tag := aCustomer;
 
-  CanEdit := dmMain.AllowedAction(rght_Customer_add) or dmMain.AllowedAction(rght_Customer_edit) or
+  CanEdit := dmMain.AllowedAction(rght_Customer_add) or dmMain.AllowedAction(rght_Customer_Edit) or
     (dmMain.AllowedAction(rght_Customer_full));
 
   FPageList := TA4onPages.Create;
@@ -594,7 +608,7 @@ procedure TCustomerForm.CreateCustomerPage(const Edit: Boolean = False);
 var
   CanEdit: Boolean;
 begin
-  CanEdit := dmMain.AllowedAction(rght_Customer_add) or dmMain.AllowedAction(rght_Customer_edit) or
+  CanEdit := dmMain.AllowedAction(rght_Customer_add) or dmMain.AllowedAction(rght_Customer_Edit) or
     (dmMain.AllowedAction(rght_Customer_full));
 
   if Assigned(FInfoPage) then
@@ -798,22 +812,17 @@ end;
 
 procedure TCustomerForm.ValidatePassport;
 var
-  FHttpCli: TSslHttpCli;
-  FSslContext: TSslContext;
-  Datax: TStringStream;
-  RequestData: TStringStream;
-  url: string;
-  CheckPassportURL: String;
-  unp, ps, pn: string;
   answer: string;
-  sToPost: string;
   pValid: Integer;
-  qry: TpFIBQuery;
-
   ePERSONAL_N, ePASSPORT_NUMBER: string;
   eFIRSTNAME: string;
   eSURNAME: string;
   eMIDLENAME: string;
+  DocType: Integer;
+  Client: TMvdApiClient;
+  Req: TMvdRequest;
+  Resp: TMvdResult;
+  qry: TpFIBQuery;
 
   function HasInvalidChar(const s: string): Boolean;
   var
@@ -829,15 +838,6 @@ var
     end;
   end;
 
-  procedure SplitNumber(const s: string; var ser: string; var num: string);
-  var
-    v: string;
-  begin
-    v := Trim(UpperCase(s));
-    ser := Copy(v, 1, 2);
-    num := Trim(Copy(v, 3, 15));
-  end;
-
   function GetV(const FN: string): String;
   begin
     if (not dsCustomer.FieldByName(FN).IsNull) then
@@ -850,35 +850,43 @@ begin
   if (not FCheckPassport) or (not dsCustomer.Active) or (dsCustomer.RecordCount = 0) then
     Exit;
 
-  if FUrlMVD.IsEmpty then
-    CheckPassportURL := rsCheckPassportURL
-  else
-    CheckPassportURL := FUrlMVD;
-
   if (not dsCustomer.FieldByName('JURIDICAL').IsNull) and (dsCustomer['JURIDICAL'] = 1) then
     Exit;
 
   if (not dsCustomer.FieldByName('PASSPORT_VALID').IsNull) and (dsCustomer['PASSPORT_VALID'] = 1) then
     Exit;
 
-  answer := '';
   ePERSONAL_N := GetV('PERSONAL_N');
   eFIRSTNAME := GetV('FIRSTNAME');
   eSURNAME := GetV('SURNAME');
   eMIDLENAME := GetV('MIDLENAME');
   ePASSPORT_NUMBER := GetV('PASSPORT_NUMBER');
+  if (not dsCustomer.FieldByName('DocType').IsNull) then
+    DocType := dsCustomer['DocType']
+  else
+    DocType := -1;
 
+  answer := '';
   if eSURNAME = '' then
     answer := 'Фамилия - ' + rsEmptyFieldError + #13#10;
 
   if eFIRSTNAME = '' then
     answer := answer + 'Имя - ' + rsEmptyFieldError + #13#10;
 
-  if ((ePERSONAL_N = '') or (HasInvalidChar(ePERSONAL_N)) or (Length(ePERSONAL_N) <> 14)) then
-    answer := answer + 'Личный номер - ' + rsEmptyOrIncorrect + #13#10;
+  if (ePERSONAL_N = '') then
+    answer := answer + 'Личный номер - ' + rsEmptyOrIncorrect + #13#10
+  else if (HasInvalidChar(ePERSONAL_N)) then
+    answer := answer + 'Личный номер содержит некорректные символы ' + #13#10
+  else if (Length(ePERSONAL_N) <> 14) then
+    answer := answer + 'Личный номер количество симолов <> 14 '#13#10;
 
-  if ((ePASSPORT_NUMBER = '') or (HasInvalidChar(ePASSPORT_NUMBER))) then
-    answer := answer + 'Номер паспорта - ' + rsEmptyOrIncorrect + #13#10;
+  if (ePASSPORT_NUMBER = '') then
+    answer := answer + 'Номер документа - ' + rsEmptyOrIncorrect + #13#10
+  else if (HasInvalidChar(ePASSPORT_NUMBER)) then
+    answer := answer + 'Номер документа содержит некорректные символы ' + #13#10;
+
+  if DocType < 1 then
+    answer := answer + 'Неопределен тип документа - ' + DocType.ToString + #13#10;
 
   if not answer.IsEmpty then
   begin
@@ -886,116 +894,45 @@ begin
     Exit;
   end;
 
-  SplitNumber(ePASSPORT_NUMBER, ps, pn);
-  unp := dmMain.GetCompanyValue('UNN');
-  if unp = '' then
-    unp := dmMain.GetCompanyValue('UNP');
-
-  FSslContext := TSslContext.Create(nil);
-  Datax := TStringStream.Create('', TEncoding.UTF8);
-  FSslContext.Name := 'FSslContext';
-  // FSslContext.SslDHParamLines.Clear;
-  FSslContext.SslVerifyPeer := False;
-  FHttpCli := TSslHttpCli.Create(nil);
-  FHttpCli.Name := 'FHttpCli';
-  FHttpCli.Agent := 'a4on/1.0';
-  FHttpCli.ServerAuth := httpAuthBearer;
-  FHttpCli.AuthBearerToken := FKeyMVD;
-  FHttpCli.ProxyAuth := httpAuthNone;
-  FHttpCli.TimeOut := 30;
-  FHttpCli.SslContext := FSslContext;
-  FHttpCli.ResponseNoException := true;
-  FHttpCli.OnRequestDone := Nil;
-  FHttpCli.RcvdStream := Datax;
   try
-    if CheckPassportURL.Contains('/v1/') then
-    begin
-      url := Format('surname=%s&name=%s&lastname=%s', [UrlEncode(eSURNAME), UrlEncode(eFIRSTNAME), UrlEncode(eMIDLENAME)
-        ]) + Format('&ser=%s&num=%s&identif=%s', [UrlEncode(ps), UrlEncode(pn), UrlEncode(ePERSONAL_N)]) +
-        Format('&unp=%s&region=%s&district=%s&city=%s&street=%s&house=%s&housing=%s&room=%s',
-        [UrlEncode(unp), UrlEncode(dmMain.GetCompanyValue('REGION')), UrlEncode(dmMain.GetCompanyValue('DISTRICT')),
-        UrlEncode(dmMain.GetCompanyValue('CITY')), UrlEncode(dmMain.GetCompanyValue('STREET')),
-        UrlEncode(dmMain.GetCompanyValue('HOUSE')), UrlEncode(dmMain.GetCompanyValue('HOUSING')),
-        UrlEncode(dmMain.GetCompanyValue('ROOM'))]);
+    Client := TMvdApiClient.Create(FUrlMVD, FKeyMVD);
+    try
+      Req.Desc := dmMain.GetCompanyValue('NAME'); // 'белтелеком',
+      Req.city := dmMain.GetCompanyValue('CITY');
+      Req.STREET := dmMain.GetCompanyValue('STREET');
+      Req.house := dmMain.GetCompanyValue('HOUSE');
+      Req.room := dmMain.GetCompanyValue('ROOM');
 
-      FHttpCli.url := CheckPassportURL + url;
-      FHttpCli.Get; // sync
-    end
-    else
-    begin // v2
-      if FDataMVD.IsEmpty then
-        sToPost := '{"desc":"[COMPANY]","desc_address":"[CITY] [STREET] [HOUSE]",' +
-          '"sery":"[SER]","num":"[NUM]","identif":"[IDENTIF]",' +
-          '"surname":"[SURNAME]","name":"[NAME]","lastname":"[LASTNAME]"}'
-      else
-        sToPost := FDataMVD;
+      Client.SplitNumber(DocType, ePASSPORT_NUMBER, Req.Serie, Req.Number);
+      Req.Identif := ePERSONAL_N; // '4150223A115PB2',
+      Req.Surname := eSURNAME; // 'Иванов',
+      Req.Name := eFIRSTNAME; // 'Иван',
+      Req.Lastname := eMIDLENAME; // 'Иванович'
 
-      sToPost := sToPost.replace('[SURNAME]', eSURNAME);
-      sToPost := sToPost.replace('[NAME]', eFIRSTNAME);
-      sToPost := sToPost.replace('[LASTNAME]', eMIDLENAME);
-      sToPost := sToPost.replace('[SER]', ps);
-      sToPost := sToPost.replace('[NUM]', pn);
-      sToPost := sToPost.replace('[IDENTIF]', ePERSONAL_N);
+      Resp := Client.CheckDocument(Req);
 
-      sToPost := sToPost.replace('[UNP]', unp);
-      sToPost := sToPost.replace('[COMPANY]', dmMain.GetCompanyValue('NAME'));
-      sToPost := sToPost.replace('[REGION]', dmMain.GetCompanyValue('REGION'));
-      sToPost := sToPost.replace('[DISTRICT]', dmMain.GetCompanyValue('DISTRICT'));
-      sToPost := sToPost.replace('[CITY]', dmMain.GetCompanyValue('CITY'));
-      sToPost := sToPost.replace('[STREET]', dmMain.GetCompanyValue('STREET'));
-      sToPost := sToPost.replace('[HOUSE]', dmMain.GetCompanyValue('HOUSE'));
-      sToPost := sToPost.replace('[HOUSING]', dmMain.GetCompanyValue('HOUSING'));
-      sToPost := sToPost.replace('[ROOM]', dmMain.GetCompanyValue('ROOM'));
-
-      RequestData := TStringStream.Create(sToPost, TEncoding.UTF8);
-
-      FHttpCli.url := CheckPassportURL;
-      FHttpCli.ContentTypePost := 'application/json; charset=utf-8';
-      FHttpCli.SendStream := RequestData;
-      FHttpCli.Post;
+      try
+        if Resp.IsSuccess then
+          pValid := Resp.DocState
+        else
+          pValid := DocNeedRecheck;
+        if Resp.HttpStatusCode = 200 then
+          answer := Resp.RawResponse
+        else
+          answer := Resp.ErrorMessage;
+      finally
+        Resp.Free;
+      end;
+    finally
+      Client.Free;
     end;
 
-    if FHttpCli.StatusCode = 200 then
+  except
+    on E: Exception do
     begin
-      // {"rs":"Машиночитаемый документ - 0A0007083 - не выдавался"}
-      // {"rs":"Машиночитаемый документ - MC2134811 - выдан, действителен, дата выдачи 11.06.2010"}
-      // {"rs":"Машиночитаемый документ - MC1828933 - недействителен, дата постановки на учет 10.12.2019"}
-      answer := Datax.DataString;
-      if answer.ToLower.Contains('выдан, действителен') then
-      begin
-        pValid := 1;
-      end
-      else
-      begin
-        ShowMessage(answer);
-        pValid := 0;
-      end
+      answer := E.ClassName + ': ' + E.Message;
+      pValid := DocNeedRecheck;
     end
-    else
-    begin
-      answer := rsError + ' ' + FHttpCli.StatusCode.ToString;
-      ShowMessage(answer);
-      pValid := -1;
-      {
-        401 Unauthorized	Возвращается в случаях несанкционированного доступа к сервису
-        403 Forbidden	Возвращается в случае, если запрашиваемый ресурс существует, но у клиента  недостаточно прав на его просмотр или модификацию
-        500 Internal Server Error
-        502 Bad Gateway
-        504 Gateway Timeout
-        200 ОК	Пакет получен
-        400 Bad Request	Структура пакета неверна
-        500 Internal Server Error	Непредвиденная ошибка сервера
-      }
-    end;
-
-  finally
-    FHttpCli.RcvdStream := nil;
-    FHttpCli.Free;
-    FSslContext.Free;
-    if Assigned(Datax) then
-      Datax.Free;
-    if Assigned(RequestData) then
-      RequestData.Free;
   end;
 
   qry := TpFIBQuery.Create(Nil);
@@ -1012,12 +949,12 @@ begin
       qry.Transaction.Commit;
     end;
 
-    qry.sql.Text := 'insert into Changelog (Log_Group, Object_Id, Value_Before, Value_After)';
+    qry.sql.Text := 'insert into Changelog(Log_Group, Object_Id, Value_Before, Value_After)';
     qry.sql.Add(' values (:Log_Group, :Object_Id, :Value_Before, :Value_After)');
     qry.ParamByName('Log_Group').value := 'PASSPORT_CHECK';
     qry.ParamByName('Object_Id').value := dsCustomer['CUSTOMER_ID'];
-    qry.ParamByName('Value_Before').value := Format('%s %s %s|%s%s|%s', [eSURNAME, eFIRSTNAME, eMIDLENAME, ps, pn,
-      ePERSONAL_N]);
+    qry.ParamByName('Value_Before').value :=
+      Format('%s %s %s %s %s', [eSURNAME, eFIRSTNAME, eMIDLENAME, ePASSPORT_NUMBER, ePERSONAL_N]);
     qry.ParamByName('Value_After').value := answer;
     qry.Transaction.StartTransaction;
     qry.ExecQuery;
@@ -1035,7 +972,6 @@ begin
 
   FKeyMVD := dmMain.GetSettingsValue('MVD_KEY');
   FUrlMVD := dmMain.GetSettingsValue('MVD_URL');
-  FDataMVD := dmMain.GetSettingsValue('MVD_DATA');
 
   FCheckPassport := (FKeyMVD <> '');
 

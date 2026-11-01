@@ -78,15 +78,13 @@ type
     procedure actClearExecute(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
-    procedure DBLookupComboboxClick(Sender: TObject);
-    procedure edtContactClick(Sender: TObject);
-    procedure cbRecourseEnter(Sender: TObject);
-    procedure edtContactEnter(Sender: TObject);
     procedure cbDirectChange(Sender: TObject);
     procedure cbRecourseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
       var Background: TColor; State: TGridDrawState);
     procedure btnOkandTaskClick(Sender: TObject);
     procedure btnOkandRequestClick(Sender: TObject);
+    procedure cbRecourseClick(Sender: TObject);
+    procedure cbRecourseEnter(Sender: TObject);
   private
     { Private declarations }
     vCustomerInfo: TCustomerInfo;
@@ -119,7 +117,7 @@ implementation
 
 uses
   System.StrUtils, RequestNewForma, MAIN, AtrStrUtils, ad3SpellBase,
-  Pixie.TagBar.Vcl, Pixie.TagBar.Base, Pixie.TagBar.Render;
+  Pixie.TagBar.Vcl, Pixie.TagBar.Base, Pixie.TagBar.Render, AtrEhLibAddons;
 
 {$R *.dfm}
 
@@ -225,7 +223,7 @@ begin
   p := '';
   fn := 0;
 
-  FCustomerInfo := dmMain.FindCustomerAtAdress(LupHOUSE.Value, Flat, fn, p, f);
+  FCustomerInfo := dmMain.FindCustomerAtAddress(LupHOUSE.Value, Flat, fn, p, f);
   CustomerInfoFrm.Customer := FCustomerInfo;
 
   if FCustomerInfo.Customer_ID = -1 then
@@ -264,37 +262,6 @@ begin
   SaveRecourse();
 end;
 
-procedure TRecourseForm.edtContactClick(Sender: TObject);
-begin
-  if not(Sender is TDBComboBoxEh) then
-    exit;
-
-  if (Sender as TDBComboBoxEh).Items.Count = 0 then
-    exit;
-
-  if (Sender as TDBComboBoxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBComboBoxEh).ListVisible then
-      (Sender as TDBComboBoxEh).DropDown
-    else
-      (Sender as TDBComboBoxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBComboBoxEh).Tag := 0;
-end;
-
-procedure TRecourseForm.edtContactEnter(Sender: TObject);
-begin
-  if not(Sender is TDBComboBoxEh) then
-    exit;
-
-  if not(Sender as TDBComboBoxEh).ListVisible then
-  begin
-    (Sender as TDBComboBoxEh).DropDown;
-    (Sender as TDBComboBoxEh).Tag := 1;
-  end;
-end;
-
 procedure TRecourseForm.eFLAT_NOExit(Sender: TObject);
 begin
   ActFindExecute(Sender);
@@ -331,8 +298,15 @@ end;
 
 procedure TRecourseForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Shift = [ssCtrl]) and (Ord(Key) = VK_RETURN) then
-    actSave.Execute;
+  if (Ord(Key) = VK_RETURN) then
+  begin
+    if (Shift = [ssCtrl]) then
+      actSave.Execute
+    else if (Shift = [ssAlt]) and btnOkandRequest.Visible and btnOkandRequest.Enabled then
+      SaveRecourse(True)
+    else if (Shift = [ssShift, ssAlt]) and btnOkandTask.Visible and btnOkandTask.Enabled then
+      SaveRecourse(False, True);
+  end;
 end;
 
 procedure TRecourseForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -371,6 +345,8 @@ begin
 end;
 
 procedure TRecourseForm.FormShow(Sender: TObject);
+var
+  i: integer;
 begin
   if A4MainForm.AddictSpell.Tag = 1 then
   begin
@@ -378,10 +354,19 @@ begin
   end;
 
   if pnlAdres.Visible then
-    LupStreets.SetFocus
-  else
+    ActiveControl := LupStreets
+  else if pnlDirect.Visible then
   begin
-    cbRecourse.SetFocus;
+    if TryStrToInt(dmMain.GetIniValue('CALL_DIRECT'), i) then
+    begin
+      cbDirect.Value := i;
+      SetDirectCall;
+      cbRecourse.SetFocus;
+      // Tag := 0;
+      // cbRecourseEnter(cbRecourse);
+    end
+    else
+      ActiveControl := cbDirect;
   end;
 end;
 
@@ -527,7 +512,7 @@ begin
       else
       begin
         if ((s > -1) and (h > -1)) then
-          NewRequestByAdres(s, h, f, trim(edtContact.Text), trim(mmoNotice.Lines.Text), rc_id);
+          NewRequestByAddress(s, h, f, trim(edtContact.Text), trim(mmoNotice.Lines.Text), rc_id);
       end;
     end;
 
@@ -590,6 +575,11 @@ begin
   InitControls;
 end;
 
+procedure TRecourseForm.cbRecourseClick(Sender: TObject);
+begin
+  DBLookupComboboxClickAutoDropDown(Sender);
+end;
+
 procedure TRecourseForm.cbRecourseDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
   var Background: TColor; State: TGridDrawState);
 begin
@@ -605,30 +595,7 @@ end;
 
 procedure TRecourseForm.cbRecourseEnter(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if not(Sender as TDBLookupComboboxEh).ListVisible then
-  begin
-    (Sender as TDBLookupComboboxEh).DropDown;
-    (Sender as TDBLookupComboboxEh).Tag := 1;
-  end;
-end;
-
-procedure TRecourseForm.DBLookupComboboxClick(Sender: TObject);
-begin
-  if not(Sender is TDBLookupComboboxEh) then
-    exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxEnterAutoDropDown(Sender);
 end;
 
 procedure TRecourseForm.InitControls;
@@ -771,12 +738,15 @@ begin
     exit;
 
   dsRecourses.Close;
+
   if cbDirect.Text = '' then
     dsRecourses.ParamByName('direct').Clear
   else
     dsRecourses.ParamByName('direct').AsInteger := cbDirect.Value;
 
   dsRecourses.Open;
+  dsRecourses.Last;
+  dsRecourses.First;
 end;
 
 procedure TRecourseForm.PanelsClear;
@@ -882,7 +852,7 @@ begin
   if (dsRecourses.fn('TagsList').IsNull) or (dsRecourses['TagsList'] = '') then
     exit;
 
-  s := trim(dsRecourses['TagsList']).trim([';']);
+  s := trim(ReplaceStr(dsRecourses['TagsList'], sLineBreak, ';')).trim([';']);
   t := SplitString(s, ';');
   pnlTags.Visible := (Length(t) > 0);
   splTags.Visible := pnlTags.Visible;
@@ -922,7 +892,7 @@ function TRecourseForm.GetSelectedTags: string;
 var
   Bar: TPixieTagBar;
   s: string;
-  i: integer;
+  i, t: integer;
 begin
   s := '';
 
@@ -932,17 +902,14 @@ begin
   for i := ComponentCount - 1 downto 0 do
     if (Components[i] is TControl) and ((Components[i] as TControl).Parent = pnlTags) and
       ((Components[i] as TControl) is TPixieTagBar) then
-      Bar := (Components[i] as TControl) as TPixieTagBar;
-
-  if Assigned(Bar) then
-  begin
-    i := Bar.TagCount;
-    for i := 0 to Bar.TagCount - 1 do
     begin
-      if Bar.IsChecked(i) then
-        s := s + Bar.GetTag(i).Text + ';';
+      Bar := (Components[i] as TControl) as TPixieTagBar;
+      for t := 0 to Bar.TagCount - 1 do
+      begin
+        if Bar.IsChecked(t) then
+          s := s + Bar.GetTag(t).Text + ';';
+      end;
     end;
-  end;
 
   Result := s.trim([';']);
 end;

@@ -266,7 +266,29 @@ begin
 end;
 
 procedure TapgCustomerSrv.actPersAddExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_AddSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if not srcPersonelTarif.DataSet.Active then
     exit;
   if (dsServices['state_sgn'] = -999) then
@@ -280,7 +302,32 @@ begin
 end;
 
 procedure TapgCustomerSrv.actPersDelExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
+  if (dsPersonelTarif.RecordCount = 0) or (dsPersonelTarif.FieldByName('Service_Id').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_AddSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if (dsServices['state_sgn'] = -999) then
     exit;
 
@@ -296,7 +343,32 @@ begin
 end;
 
 procedure TapgCustomerSrv.actPersEditExecute(Sender: TObject);
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
+  if (dsPersonelTarif.RecordCount = 0) or (dsPersonelTarif.FieldByName('Service_Id').IsNull) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_AddSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if (dsServices['state_sgn'] = -999) then
     exit;
 
@@ -309,9 +381,7 @@ begin
 
   if EditTarif(dsServices['NAME'], dsPersonelTarif['Service_Id'], dsPersonelTarif['CUSTOMER_ID'],
     dsPersonelTarif['tarif_id']) then
-  begin
     srcPersonelTarif.DataSet.Refresh;
-  end;
 end;
 
 procedure TapgCustomerSrv.actServiceSummaryExecute(Sender: TObject);
@@ -325,32 +395,63 @@ end;
 procedure TapgCustomerSrv.actSrvAddExecute(Sender: TObject);
 var
   CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if FDataSource.DataSet.FieldByName('VALID_TO').IsNull then
-    CanAdd := true
-  else
-    CanAdd := FDataSource.DataSet['VALID_TO'] > Now();
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
 
-  if CanAdd then
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
   begin
-    if NewService(FDataSource.DataSet['Customer_ID'], 0) then
-    begin
-      dsServices.CloseOpen(true);
-      EnableControls;
-      UpdatePage;
-    end;
-  end
-  else
-    ShowMessage(rsContractNotValid);
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_AddSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
+  if NewService(FDataSource.DataSet['Customer_ID'], 0) then
+  begin
+    dsServices.CloseOpen(true);
+    EnableControls;
+    UpdatePage;
+  end;
 end;
 
 procedure TapgCustomerSrv.ActSrvOffExecute(Sender: TObject);
 var
   s: string;
   id: Integer;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if dsServices.RecordCount = 0 then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     exit;
+
+  if (dsServices.RecordCount = 0) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_EditSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
 
   if (dsServices['state_sgn'] = 1) then
   begin
@@ -404,8 +505,12 @@ var
   s: string;
   id: Integer;
   CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if dsServices.RecordCount = 0 then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
+  if (dsServices.RecordCount = 0) then
     exit;
 
   // включаем только если услуга отключена
@@ -419,37 +524,66 @@ begin
     exit;
   end;
 
-  if FDataSource.DataSet.FieldByName('VALID_TO').IsNull then
-    CanAdd := true
-  else
-    CanAdd := FDataSource.DataSet['VALID_TO'] > Now();
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
 
-  if CanAdd then
+  if not CanAdd then
   begin
-    if dsServices.FieldByName('Notice').IsNull then
-      s := ''
-    else
-      s := dsServices.FieldByName('Notice').AsString;
-    id := dsServices.FieldValues['SERV_ID'];
-    if OnOffService(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['SERV_ID'],
-      dsServices.FieldValues['SUBSCR_SERV_ID'], False, s) then
-    begin
-      dsServices.CloseOpen(true);
-      dsServices.Locate('SERV_ID', id, []);
-      EnableControls;
-      UpdatePage;
-    end;
-  end
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_EditSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
+  if dsServices.FieldByName('Notice').IsNull then
+    s := ''
   else
-    ShowMessage(rsContractNotValid);
+    s := dsServices.FieldByName('Notice').AsString;
+  id := dsServices.FieldValues['SERV_ID'];
+  if OnOffService(FDataSource.DataSet.FieldValues['Customer_ID'], dsServices.FieldValues['SERV_ID'],
+    dsServices.FieldValues['SUBSCR_SERV_ID'], False, s) then
+  begin
+    dsServices.CloseOpen(true);
+    dsServices.Locate('SERV_ID', id, []);
+    EnableControls;
+    UpdatePage;
+  end;
+
 end;
 
 procedure TapgCustomerSrv.actSrvPauseExecute(Sender: TObject);
 var
   s: string;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if dsServices.RecordCount = 0 then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     exit;
+
+  if (dsServices.RecordCount = 0) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_EditSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   if dsServices.FieldByName('SUBSCR_SERV_ID').IsNull then
     exit;
 
@@ -470,9 +604,30 @@ end;
 procedure TapgCustomerSrv.actSrvSwitchExecute(Sender: TObject);
 var
   s: string;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if dsServices.RecordCount = 0 then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     exit;
+
+  if (dsServices.RecordCount = 0) then
+    exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and dmMain.AllowedAction(rght_Customer_EditSrv);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
 
   if (dsServices['state_sgn'] = -999) then
     exit;
@@ -493,15 +648,32 @@ end;
 procedure TapgCustomerSrv.actSubscrHistoryExecute(Sender: TObject);
 var
   id: Integer;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    exit;
+
   if (not dsServices.Active) or (dsServices.RecordCount = 0) or (dsServices.FieldByName('Customer_ID').IsNull) or
     (not dsServices.Active) or (dsServices.RecordCount = 0) or (dsServices.FieldByName('Serv_ID').IsNull) then
     exit;
 
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    exit;
+  end;
+
   id := dsServices.FieldValues['Serv_ID'];
-  if ShowCustSubscrHistory(dsServices.FieldValues['Customer_ID'], id)
-  // and ((dmMain.AllowedAction(rght_Customer_full)) or (dmMain.AllowedAction(rght_Customer_History)))
-  then
+  if ShowCustSubscrHistory(dsServices.FieldValues['Customer_ID'], id) then
   begin
     dsServices.CloseOpen(true);
     dsServices.Locate('Serv_ID', id, []);

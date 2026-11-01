@@ -43,6 +43,7 @@ type
     miactCnPrefixWizard: TMenuItem;
     miactCnPrefixWizard1: TMenuItem;
     SelectAll1: TMenuItem;
+    trMetaData: TpFIBTransaction;
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure SpeedButton2Click(Sender: TObject);

@@ -10,9 +10,7 @@ object apgCustomerLetters: TapgCustomerLetters
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgLetters: TDBGridEh
     Left = 26
@@ -33,7 +31,6 @@ object apgCustomerLetters: TapgCustomerLetters
     ReadOnly = True
     STFilter.InstantApply = True
     STFilter.Local = True
-    STFilter.Visible = False
     TabOrder = 1
     TitleParams.MultiTitle = True
     OnDblClick = dbgLettersDblClick

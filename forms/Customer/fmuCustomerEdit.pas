@@ -686,9 +686,27 @@ end;
 procedure TapgCustomerEdit.btnCAddClick(Sender: TObject);
 var
   Contact: TContact;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full)) then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_add));
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   if not dsContacts.Active then
     dsContacts.Open;
@@ -713,11 +731,33 @@ end;
 procedure TapgCustomerEdit.btnCdelClick(Sender: TObject);
 var
   s: String;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
   if not dsContacts.Active then
     Exit;
   if dsContacts.RecordCount = 0 then
     Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_add));
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   if not dsContacts.FieldByName('CC_VALUE').IsNull then
     s := Format(rsDeleteWithName, [dsContacts.FieldByName('CC_VALUE').AsString])
@@ -731,11 +771,31 @@ end;
 procedure TapgCustomerEdit.btnCEditClick(Sender: TObject);
 var
   Contact: TContact;
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if not(dmMain.AllowedAction(rght_Customer_edit) or dmMain.AllowedAction(rght_Customer_full)) then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (dmMain.AllowedAction(rght_Customer_Contact_Edit));
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   if (not dsContacts.Active) then
     dsContacts.Open;
+
   if dsContacts.RecordCount > 0 then
   begin
     Contact.cID := dsContacts['CC_TYPE'];

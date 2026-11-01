@@ -39,7 +39,6 @@ type
     srcPaymentDocs: TDataSource;
     Panel5: TPanel;
     Label9: TLabel;
-    Panel6: TPanel;
     dsFine: TpFIBDataSet;
     srcFine: TDataSource;
     pnlPayType: TPanel;
@@ -96,6 +95,7 @@ type
     ednLCPS: TDBNumberEditEh;
     spl2: TSplitter;
     pmMonthCalc: TPopupMenu;
+    lblWarning: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCalcFineClick(Sender: TObject);
@@ -494,7 +494,7 @@ begin
   else
     dsMemPayment['Debt_sum'] := FCustomerRecord.Debt_sum;
 
-  dsMemPayment['adres'] := FCustomerRecord.Street + ' ' + FCustomerRecord.HOUSE_NO + ' ' + FCustomerRecord.flat_No;
+  dsMemPayment['address'] := FCustomerRecord.Street + ' ' + FCustomerRecord.HOUSE_NO + ' ' + FCustomerRecord.flat_No;
 
   actAdd.Enabled := dsMemPayment['Customer_Id'] <> -1;
   actPrint.Enabled := dsMemPayment['Customer_Id'] <> -1;
@@ -502,7 +502,14 @@ begin
     CalculateFine;
 
   if (FIsLTV) and (dsMemPayment['Customer_Id'] > -1) then
+  begin
     CheckRequestPay(dsMemPayment['Customer_Id']);
+  end;
+
+  actAdd.Enabled := (not FCustomerRecord.Terminated) or dmMain.AllowedAction(rght_Customer_full);
+  actPrint.Enabled := actAdd.Enabled;
+  if (not actAdd.Enabled) and (FCustomerRecord.Terminated) then
+    ShowMessage(rsContractNotValid);
 end;
 
 procedure TPaymentForm.FormShow(Sender: TObject);
@@ -583,9 +590,6 @@ begin
   FShowLCPS := (dmMain.GetSettingsValue('SHOW_LCPS') = '1');
   pnlLCPS.Visible := FShowLCPS;
 
-  // ЛТВ
-  // if (FIsLTV) and (dsMemPayment['Customer_Id'] > -1) then
-  // CheckRequestPay(dsMemPayment['Customer_Id']);
   CreateMonthMenu;
 end;
 
@@ -1508,20 +1512,22 @@ var
   Q: TpFIBQuery;
   s: string;
 begin
+  lblWarning.Visible := False;
   s := '';
   Q := TpFIBQuery.Create(Nil);
   try
     Q.DataBase := dmMain.dbTV;
     Q.Transaction := dmMain.trReadQ;
-    Q.SQL.Text := 'select list(RQ_ID) RQ_LIST from ( select r.RQ_ID , coalesce(Get_Request_Money(r.Rq_Id), 0) RQ_FEE ' +
-      ' , coalesce((select sum(p.Pay_Sum + coalesce(p.fine_sum,0)) from payment p where p.Customer_Id = r.Rq_Customer and p.Rq_Id = r.Rq_Id), 0) RQ_PAY '
-      + ' , coalesce((select sum(w.w_quant) from request_works w where w.rq_id = r.rq_id and w.w_id in (984742, 983987)), 0) PAY_SRV '
-      + ' from REQUEST R where r.Rq_Customer = :CID and r.Rq_Exec_Time >= ''2024-01-01'') where RQ_FEE + PAY_SRV > RQ_PAY';
+    Q.SQL.Text := 'execute block (CID integer = :CID)' //
+      + ' returns ( PROHIBIT_TEXT D_NOTICE) as begin' //
+      + ' if (exists(select 1 from RDB$PROCEDURES R where RDB$PROCEDURE_NAME = ''IBE$CHECK_BEFORE_PAYMENT'')) then ' //
+      + ' for execute statement(''select PROHIBIT_TEXT from IBE$CHECK_BEFORE_PAYMENT(?)'')(CID)' //
+      + ' into :PROHIBIT_TEXT  do  suspend; end';
     Q.ParamByName('CID').AsInteger := CID;
     Q.Transaction.StartTransaction;
     Q.ExecQuery;
-    if not Q.FieldByName('RQ_LIST').IsNull then
-      s := Q.FieldByName('RQ_LIST').AsString;
+    if not Q.FieldByName('PROHIBIT_TEXT').IsNull then
+      s := Q.FieldByName('PROHIBIT_TEXT').AsString;
     Q.Close;
     Q.Transaction.Commit;
   finally
@@ -1529,8 +1535,9 @@ begin
   end;
   if s.IsEmpty then
     Exit;
-  s := 'Необходимо внести оплату по заявкам: ' + #13#10 + s;
-  Panel6.Caption := s;
+
+  lblWarning.Visible := true;
+  lblWarning.Caption := Trim(s);
   application.MessageBox(PWideChar(s), 'Внимание!', MB_OK + MB_ICONWARNING);
 end;
 

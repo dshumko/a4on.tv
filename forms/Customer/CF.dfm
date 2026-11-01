@@ -393,7 +393,6 @@ object CustomersForm: TCustomersForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
-        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46
@@ -591,6 +590,11 @@ object CustomersForm: TCustomersForm
           FieldName = 'AREA_NAME'
           Title.Caption = #1043#1086#1088#1086#1076
         end>
+      DropDownBox.ListFieldNames = 'STREET_NAME'
+      DropDownBox.ListSource = srcStreet
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.ShowTitles = True
       DropDownBox.Sizable = True
@@ -600,6 +604,7 @@ object CustomersForm: TCustomersForm
       ListField = 'STREET_NAME'
       ListSource = srcStreet
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 1
       Visible = True
       OnButtonClick = lcbStreetsButtonClick
@@ -626,6 +631,11 @@ object CustomersForm: TCustomersForm
           FieldName = 'SUBAREA_NAME'
           Width = 40
         end>
+      DropDownBox.ListFieldNames = 'HOUSE_NO'
+      DropDownBox.ListSource = srcHouse
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       EmptyDataInfo.Text = #1044#1086#1084
       EditButtons = <>
@@ -633,6 +643,7 @@ object CustomersForm: TCustomersForm
       ListField = 'HOUSE_NO'
       ListSource = srcHouse
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 2
       Visible = True
       OnButtonClick = lcbHOUSEButtonClick
@@ -651,6 +662,11 @@ object CustomersForm: TCustomersForm
       Hint = #1053#1086#1084#1077#1088' '#1082#1074#1072#1088#1090#1080#1088#1099' '#1080#1083#1080' - , '#1077#1089#1083#1080' '#1085#1077#1090' '#1082#1074#1072#1088#1090#1080#1088#1099
       DynProps = <>
       DataField = ''
+      DropDownBox.ListFieldNames = 'FLAT_NO'
+      DropDownBox.ListSource = srcFLAT
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       EmptyDataInfo.Text = #1050#1074#1072#1088#1090#1080#1088#1072
       EditButtons = <>
@@ -658,6 +674,7 @@ object CustomersForm: TCustomersForm
       ListField = 'FLAT_NO'
       ListSource = srcFLAT
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 3
       Visible = True
       OnButtonClick = lcbFLATButtonClick
@@ -674,6 +691,11 @@ object CustomersForm: TCustomersForm
       Height = 21
       DynProps = <>
       DataField = ''
+      DropDownBox.ListFieldNames = 'AREA_NAME'
+      DropDownBox.ListSource = srcArea
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
@@ -683,6 +705,7 @@ object CustomersForm: TCustomersForm
       ListSource = srcArea
       ParentShowHint = False
       ShowHint = True
+      Style = csDropDownEh
       TabOrder = 0
       Visible = True
       OnButtonClick = cbbAREAButtonClick
@@ -2285,6 +2308,7 @@ object CustomersForm: TCustomersForm
   end
   object tmrSearch: TTimer
     Enabled = False
+    Interval = 3000
     OnTimer = tmrSearchTimer
     Left = 712
     Top = 336

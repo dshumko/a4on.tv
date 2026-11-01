@@ -2,16 +2,16 @@
 {                                                       }
 {            Delphi Visual Component Library            }
 {                                                       }
-{ Copyright(c) 1995-2025 Embarcadero Technologies, Inc. }
+{ Copyright(c) 1995-2026 Embarcadero Technologies, Inc. }
 {              All rights reserved                      }
 {                                                       }
 {*******************************************************}
 
 unit Vcl.Mask;
-
+{$IF CompilerVersion >= 34}  // Delphi 10.4 Sydney
 {$HPPEMIT LEGACYHPP}
 {$R-,T-,H+,X+}
-
+{$IFEND}
 interface
 
 uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, System.MaskUtils, Vcl.Controls,
@@ -21,8 +21,12 @@ type
 { TCustomMaskEdit }
 
   EDBEditError = class(Exception);
+  {$IF CompilerVersion >= 36} // Delphi 12 Athens
   TMaskedStateItem = (msMasked, msReEnter, msDBSetText);
   TMaskedState = set of TMaskedStateItem;
+  {$ELSE}
+  TMaskedState = set of (msMasked, msReEnter, msDBSetText);
+  {$IFEND}
 
   TCustomMaskEdit = class(TCustomEdit)
   private
@@ -35,7 +39,9 @@ type
     FBtnDownX: Integer;
     FOldValue: string;
     FSettingCursor: Boolean;
-    FSavedEditMask: TEditMask;
+    {$IF CompilerVersion >= 34}  // Delphi 10.4 Sydney
+    FSavedEditMask: TEditMask;						  
+    {$IFEND}
     function DoInputChar(var NewChar: Char; MaskOffset: Integer): Boolean;
     function InputChar(var NewChar: Char; Offset: Integer): Boolean;
     function DeleteSelection(var Value: string; Offset: Integer;
@@ -86,7 +92,9 @@ type
     function Validate(const Value: string; var Pos: Integer): Boolean; virtual;
     procedure ValidateError; virtual;
     procedure CheckCursor;
+    {$IF CompilerVersion >= 34}  // Delphi 10.4 Sydney
     procedure ObserverToggle(const AObserver: IObserver; const Value: Boolean); override;
+    {$IFEND}
     property EditMask: TEditMask read FEditMask write SetEditMask;
     property MaskState: TMaskedState read FMaskState write FMaskState;
     property MaxLength: Integer read GetMaxLength write SetMaxLength default 0;
@@ -121,7 +129,9 @@ type
     property Constraints;
     property Ctl3D;
     property DoubleBuffered;
+	{$IF CompilerVersion >= 36} // Delphi 12 Athens
     property DoubleBufferedMode;
+    {$IFEND}
     property DragCursor;
     property DragKind;
     property DragMode;
@@ -148,7 +158,9 @@ type
     property Touch;
     property Visible;
     property StyleElements;
+    {$IF CompilerVersion >= 34}  // Delphi 10.4 Sydney
     property StyleName;
+    {$IFEND}
     property OnChange;
     property OnClick;
     property OnDblClick;
@@ -236,6 +248,7 @@ begin
   end;
 end;
 
+{$IF CompilerVersion >= 34}  // Delphi 10.4 Sydney
 procedure TCustomMaskEdit.ObserverToggle(const AObserver: IObserver;
   const Value: Boolean);
 var
@@ -256,6 +269,7 @@ begin
           EditMask := FSavedEditMask;
     end;
 end;
+{$IFEND}
 
 procedure TCustomMaskEdit.KeyPress(var Key: Char);
 begin
@@ -466,7 +480,9 @@ begin
        not (csDesigning in ComponentState) then
       SetCursor(SelStart);
   end;
+  {$IF CompilerVersion >= 34}  // Delphi 10.4 Sydney
   FSavedEditMask := FEditMask;
+  {$IFEND}
 end;
 
 function TCustomMaskEdit.GetMaxLength: Integer;
@@ -1154,7 +1170,7 @@ begin
   end;
 end;
 
-// My Module with fix
+// SDG Module with fix paste masked text
 function TCustomMaskEdit.InputString(var Value: string; const NewValue: string;
   Offset: Integer): Integer;
 var

@@ -12,12 +12,10 @@ object fmSelectPromo: TfmSelectPromo
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = True
   Position = poOwnerFormCenter
   ShowHint = True
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0

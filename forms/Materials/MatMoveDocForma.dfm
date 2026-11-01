@@ -806,7 +806,9 @@ object MatMoveDocForm: TMatMoveDocForm
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
-      'select Result from Close_Material_Doc(:Doc_Id) ')
+      
+        'select Result, RESULT_TEXT from Close_Material_Doc_MOVE(:Doc_Id)' +
+        ' ')
     Left = 520
     Top = 268
   end

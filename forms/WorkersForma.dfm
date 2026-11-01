@@ -4,7 +4,7 @@ inherited WorkersForm: TWorkersForm
   Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080
   ClientHeight = 537
   ClientWidth = 823
-  PixelsPerInch = 96
+  StyleElements = [seFont, seClient, seBorder]
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 273
@@ -217,7 +217,7 @@ inherited WorkersForm: TWorkersForm
       Visible = False
     end
     object ToolButton7: TToolButton
-      Left = 178
+      Left = 186
       Top = 0
       Width = 8
       Caption = 'ToolButton7'
@@ -225,7 +225,7 @@ inherited WorkersForm: TWorkersForm
       Style = tbsSeparator
     end
     object btnSendSMS: TToolButton
-      Left = 186
+      Left = 194
       Top = 0
       Action = actSendSMS
       ImageIndex = 74
@@ -234,6 +234,7 @@ inherited WorkersForm: TWorkersForm
   inherited pnlEdit: TPanel
     Width = 823
     Height = 248
+    StyleElements = [seFont, seClient, seBorder]
     object lbl3: TLabel [0]
       Left = 8
       Top = 9

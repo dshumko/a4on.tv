@@ -95,7 +95,7 @@ type
     Label16: TLabel;
     pnlSecret: TPanel;
     dbchkHiden: TDBCheckBox;
-    Button1: TButton;
+    btnColor: TButton;
     Button2: TButton;
     lblOrg: TLabel;
     cbbORG_ID: TDBLookupComboboxEh;
@@ -118,7 +118,7 @@ type
     trReadQ: TpFIBTransaction;
     trWriteQ: TpFIBTransaction;
     Label11: TLabel;
-    DBEditEh1: TDBEditEh;
+    edtExtId: TDBEditEh;
     lbl8: TLabel;
     edtCONTRACT_BASIS: TDBEditEh;
     edtPlaceBirth: TDBEditEh;
@@ -148,7 +148,7 @@ type
     splMemo: TSplitter;
     procedure dbgrdhContactsExit(Sender: TObject);
     procedure chkJURIDICALClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btnColorClick(Sender: TObject);
     procedure btnGetDogNumberClick(Sender: TObject);
     procedure eFLAT_NOExit(Sender: TObject);
     procedure btnCAddClick(Sender: TObject);
@@ -196,13 +196,13 @@ type
     FFileScan: String;
     FKeyMVD: string;
     FUrlMVD: String;
-    FDataMVD: String;
     FNeedCheckAccount: Boolean;
     FEnterSecondPress: Boolean;
+    FItsAccWaring: Boolean;
+    procedure SetWarningText(const s: String = '');
     procedure GenerateAccountN;
-    procedure SetJurVisible;
+    procedure SetControlsVisibility;
     function SaveInDB: Integer;
-    function CheckValidData: Boolean;
     procedure TextToFileds(scResult: TStringList);
     function ParseCaptured(const _scanName: string; scResult: TStringList): Boolean;
     procedure CheckInBlackList(const Sender: TDBEditEh; const NT: Integer = 0);
@@ -217,6 +217,7 @@ type
     procedure HideWarningMessage;
     procedure FindSamePassport;
     function DocNumberOk: Boolean;
+    function ValidateData: Boolean; override;
   public
     procedure InitForm; override;
     procedure OpenData; override;
@@ -232,7 +233,7 @@ uses
   System.TypInfo, System.RegularExpressions,
   OverbyteIcsWndControl, OverbyteIcsHttpProt, OverbyteIcsWSocket, OverbyteIcsUrl, OverbyteIcsSslBase, OverbyteIcsTypes,
   DM, MAIN, PrjConst, HouseForma, StreetEditForma, AtrStrUtils, ScanImageForma, AtrCommon, EditCFileForma, A4onTypeUnit,
-  ContactForma;
+  ContactForma, Mvd30903Client;
 
 {$R *.dfm}
 
@@ -302,7 +303,7 @@ begin
   FNotIgnoreContract := dmMain.GetSettingsValue('IGNORE_CONTRACT') <> '1';
   FKeyMVD := dmMain.GetSettingsValue('MVD_KEY');
   FUrlMVD := dmMain.GetSettingsValue('MVD_URL');
-  FDataMVD := dmMain.GetSettingsValue('MVD_DATA');
+
   dsContacts.Open;
   dsOrg.Open;
   dsVATG.Open;
@@ -342,7 +343,7 @@ begin
   dsCustomerMEM['DocType'] := 1;
   edtSecret.Text := GenPassword(8);
 
-  SetJurVisible;
+  //SetControlsVisibility;
 
   // pnlPassport.Visible := ;
   actScan.Enabled := DirectoryExists(ExtractFileDir(Application.ExeName) + '\smartid');
@@ -425,13 +426,12 @@ var
   s: string;
 begin
   s := DelBlankChars(eACCOUNT_NO.Text);
-  if (s <> eACCOUNT_NO.Text) then
+  if (s <> eACCOUNT_NO.Text) or FNeedCheckAccount then
   begin
     eACCOUNT_NO.Text := s;
     FNeedCheckAccount := True;
+    CheckAccount;
   end;
-
-  CheckValidData;
 end;
 
 procedure TapgCustomerNew.eFLAT_NOExit(Sender: TObject);
@@ -471,7 +471,7 @@ begin
     if ds.DataSet.State = dsInsert then
     begin
       GenerateAccountN;
-      CheckValidData;
+      ValidateData;
     end;
   end;
 end;
@@ -656,7 +656,7 @@ end;
 procedure TapgCustomerNew.btnGetDogNumberClick(Sender: TObject);
 begin
   GenerateAccountN;
-  CheckValidData;
+  ValidateData;
 end;
 
 function TapgCustomerNew.CheckFlatOwner: Boolean;
@@ -738,7 +738,7 @@ procedure TapgCustomerNew.btnSAVEClick(Sender: TObject);
 var
   AllOk: Boolean;
 begin
-  AllOk := CheckValidData;
+  AllOk := ValidateData;
   if AllOk then
   begin
     if (dsContacts.RecordCount = 0) and (Application.MessageBox(PWideChar(rsNeedContact), PWideChar(rsContact),
@@ -749,7 +749,7 @@ begin
     end
     else
     begin
-      if (not FKeyMVD.IsEmpty) and (Application.MessageBox(PWideChar(rsNeedPassportCheck), PWideChar(rsAplicationName),
+      if (not chkJURIDICAL.Checked) and (not FKeyMVD.IsEmpty) and (Application.MessageBox(PWideChar(rsNeedPassportCheck), PWideChar(rsAplicationName),
         MB_YESNO + MB_ICONWARNING) = IDYES) then
         AllOk := ValidPassport
       else
@@ -761,7 +761,7 @@ begin
   if (dmMain.GetSettingsValue('FLAT_OWNER') = '1') then
   begin
     // проверим, владелиц ли квартиры и пометим если да
-    if (not CheckFlatOwner) and (Application.MessageBox(PWideChar(rsQstFlatOwner), PWideChar(rsAplicationName),
+    if (not chkJURIDICAL.Checked) and (not CheckFlatOwner) and (Application.MessageBox(PWideChar(rsQstFlatOwner), PWideChar(rsAplicationName),
       MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES) then
     begin
       SaveFlatOwner;
@@ -774,7 +774,7 @@ begin
     modalResult := mrNone;
 end;
 
-procedure TapgCustomerNew.Button1Click(Sender: TObject);
+procedure TapgCustomerNew.btnColorClick(Sender: TObject);
 begin
   if ColorDialog1.Execute then
   begin
@@ -795,7 +795,8 @@ end;
 
 procedure TapgCustomerNew.chkJURIDICALClick(Sender: TObject);
 begin
-  SetJurVisible;
+  SetControlsVisibility;
+  ValidateData;
 end;
 
 procedure TapgCustomerNew.CloseData;
@@ -862,20 +863,37 @@ begin
     deDogovor.Text := eACCOUNT_NO.Text;
 end;
 
-procedure TapgCustomerNew.SetJurVisible;
+procedure TapgCustomerNew.SetControlsVisibility;
+var
+  WindowLocked: Boolean;
+  h : Integer;
 begin
-  // Важна последовательность включения
-  if chkJURIDICAL.Checked then
-  begin
-    pnlJUR.Visible := True;
-    pnlFIZ.Visible := False;
-  end
-  else
-  begin
-    pnlFIZ.Visible := True;
-    pnlJUR.Visible := False;
+  WindowLocked := LockWindowUpdate(Self.Handle);
+  try
+    // Важна последовательность включения
+    if chkJURIDICAL.Checked then
+    begin
+      pnlJUR.Visible := True;
+      pnlFIZ.Visible := False;
+    end
+    else
+    begin
+      pnlFIZ.Visible := True;
+      pnlJUR.Visible := False;
+    end;
+    h := pnlSecret.Top + btnColor.Top + btnColor.Height + 10;
+    if (pnlBUTTONS.Top <> h) then begin
+      Self.ClientHeight  := h + pnlBUTTONS.Height + 10;
+      pnlNotice.Height := trunc(Self.Height/2) + 10;
+      if pnlWarningInfo.Visible then
+        pnlNotice.Height := pnlNotice.Height - pnlWarningInfo.Height - 10;
+    end;
+
+    pnlInfo.Update;
+  finally
+    if WindowLocked then
+      LockWindowUpdate(0);
   end;
-  pnlInfo.Update;
 end;
 
 function TapgCustomerNew.SaveInDB: Integer;
@@ -1065,7 +1083,7 @@ begin
   end;
 end;
 
-function TapgCustomerNew.CheckValidData: Boolean;
+function TapgCustomerNew.ValidateData: Boolean;
 var
   AllRight: Boolean;
   reg: string;
@@ -1123,11 +1141,15 @@ end;
 
 function TapgCustomerNew.DocNumberOk: Boolean;
 begin
-  Result := True;
+  if (chkJURIDICAL.Checked) then begin
+    Result := True;
+    exit;
+  end;
 
   if (lcbDT.Text <> '') then
   begin
     dsDocType.DisableControls;
+    Result := True;
     if dsDocType.Locate('O_ID', lcbDT.Value, []) and (not dsDocType.FieldByName('O_CHECK').IsNull) then
     begin
       if (dsDocType['O_CHECK'] <> '') then
@@ -1156,7 +1178,7 @@ end;
 
 procedure TapgCustomerNew.eCONTRACT_DATEExit(Sender: TObject);
 begin
-  CheckValidData;
+  ValidateData;
 end;
 
 procedure TapgCustomerNew.srcContactsUpdateData(Sender: TObject);
@@ -1385,11 +1407,12 @@ var
 begin
   // NT 0 - Личный номер 1 - номер паспота
   CnErrors.Dispose(Sender);
-  if (Sender.Text = '') then
+  if (Sender.Text = '') or (chkJURIDICAL.Checked) then
   begin
     btnSAVE.Enabled := True;
     exit;
   end;
+
   s := '';
   n := Trim(Sender.Text);
   if ds.DataSet.State in [dsInsert, dsEdit] then
@@ -1458,17 +1481,14 @@ end;
 
 function TapgCustomerNew.ValidPassport: Boolean;
 var
-  FHttpCli: TSslHttpCli;
-  FSslContext: TSslContext;
-  Datax: TStringStream;
-  RequestData: TStringStream;
-  url: string;
-  CheckPassportURL: String;
   errors: Boolean;
-  unp, ps, pn: string;
   answer: string;
-  sToPost: string;
   pValid: Integer;
+  ePERSONAL_N, ePASSPORT_NUMBER: string;
+  DocType: Integer;
+  Client: TMvdApiClient;
+  Req: TMvdRequest;
+  Resp: TMvdResult;
   qry: TpFIBQuery;
 
   function HasInvalidChar(const s: string): Boolean;
@@ -1485,15 +1505,6 @@ var
     end;
   end;
 
-  procedure SplitNumber(const s: string; var ser: string; var num: string);
-  var
-    v: string;
-  begin
-    v := Trim(UpperCase(s));
-    ser := Copy(v, 1, 2);
-    num := Trim(Copy(v, 3, 15));
-  end;
-
 begin
   Result := False;
   errors := False;
@@ -1503,11 +1514,6 @@ begin
   // Еслі не паспорт, то не проверяем
   if (lcbDT.Text.IsEmpty) and (lcbDT.Value > 1) then
     exit;
-
-  if FUrlMVD.IsEmpty then
-    CheckPassportURL := rsCheckPassportURL
-  else
-    CheckPassportURL := FUrlMVD;
 
   if eSURNAME.Text.IsEmpty then
   begin
@@ -1533,155 +1539,91 @@ begin
   else
     CnErrors.Dispose(edtPERSONAL_N);
 
-  CnErrors.Dispose(edtPASSPORT_NUMBER);
   if ((edtPASSPORT_NUMBER.Text.IsEmpty) or (HasInvalidChar(edtPASSPORT_NUMBER.Text))) then
   begin
     errors := True;
     CnErrors.SetError(edtPASSPORT_NUMBER, rsEmptyOrIncorrect, iaTopCenter, bsNeverBlink);
+  end
+  else
+    CnErrors.Dispose(edtPASSPORT_NUMBER);
+
+
+  if (lcbDT.Text.IsEmpty) then
+  begin
+    errors := True;
+    CnErrors.SetError(lcbDT, rsEmptyOrIncorrect, iaTopCenter, bsNeverBlink);
+  end
+  else begin
+    CnErrors.Dispose(lcbDT);
+    DocType := lcbDT.Value;
   end;
 
   if errors then
     exit;
 
-  SplitNumber(edtPASSPORT_NUMBER.Text, ps, pn);
-  unp := dmMain.GetCompanyValue('UNN');
-  if unp = '' then
-    unp := dmMain.GetCompanyValue('UNP');
-
-  Datax := TStringStream.Create('', TEncoding.UTF8);
-
-  FSslContext := TSslContext.Create(nil);
-  FSslContext.Name := 'FSslContext';
-  // FSslContext.SslDHParamLines.Clear;
-  FSslContext.SslVerifyPeer := False;
-
-  FHttpCli := TSslHttpCli.Create(nil);
-  FHttpCli.Name := 'FHttpCli';
-  FHttpCli.Agent := 'a4on/1.0';
-  FHttpCli.ProxyAuth := httpAuthNone;
-  FHttpCli.TimeOut := 10;
-  FHttpCli.NoCache := True;
-  FHttpCli.SslContext := FSslContext;
-  FHttpCli.ResponseNoException := True;
-  FHttpCli.OnRequestDone := Nil;
-  FHttpCli.RcvdStream := Datax;
-  FHttpCli.url := CheckPassportURL;
-  FHttpCli.ServerAuth := httpAuthBearer;
-  FHttpCli.AuthBearerToken := FKeyMVD;
-
+  pValid := DocNeedRecheck;
   try
-    if CheckPassportURL.Contains('/v1/') then
-    begin
-      url := Format('surname=%s&name=%s&lastname=%s', [UrlEncode(eSURNAME.Text), UrlEncode(eFIRSTNAME.Text),
-        UrlEncode(eMIDLENAME.Text)]) + Format('&ser=%s&num=%s&identif=%s',
-        [UrlEncode(ps), UrlEncode(pn), UrlEncode(edtPERSONAL_N.Text)]) +
-        Format('&unp=%s&region=%s&district=%s&city=%s&street=%s&house=%s&housing=%s&room=%s',
-        [UrlEncode(unp), UrlEncode(dmMain.GetCompanyValue('REGION')), UrlEncode(dmMain.GetCompanyValue('DISTRICT')),
-        UrlEncode(dmMain.GetCompanyValue('CITY')), UrlEncode(dmMain.GetCompanyValue('STREET')),
-        UrlEncode(dmMain.GetCompanyValue('HOUSE')), UrlEncode(dmMain.GetCompanyValue('HOUSING')),
-        UrlEncode(dmMain.GetCompanyValue('ROOM'))]);
+    Client := TMvdApiClient.Create(FUrlMVD, FKeyMVD);
+    try
+      Req.Desc := dmMain.GetCompanyValue('NAME'); // 'белтелеком',
+      Req.city := dmMain.GetCompanyValue('CITY');
+      Req.STREET := dmMain.GetCompanyValue('STREET');
+      Req.house := dmMain.GetCompanyValue('HOUSE');
+      Req.room := dmMain.GetCompanyValue('ROOM');
 
-      FHttpCli.url := FHttpCli.url + url;
-      FHttpCli.Get;
-    end
-    else
-    begin // v2
-      if FDataMVD.IsEmpty then
-        sToPost := '{"desc":"[COMPANY]","desc_address":"[CITY] [STREET] [HOUSE]",' +
-          '"sery":"[SER]","num":"[NUM]","identif":"[IDENTIF]",' +
-          '"surname":"[SURNAME]","name":"[NAME]","lastname":"[LASTNAME]"}'
-      else
-        sToPost := FDataMVD;
+      Client.SplitNumber(DocType, edtPASSPORT_NUMBER.Text, Req.Serie, Req.Number);
+      Req.Identif := edtPERSONAL_N.Text; // '4150223A115PB2',
+      Req.Surname := eSURNAME.Text; // 'Иванов',
+      Req.Name := eFIRSTNAME.Text; // 'Иван',
+      Req.Lastname := eMIDLENAME.Text; // 'Иванович'
 
-      sToPost := sToPost.replace('[SURNAME]', eSURNAME.Text);
-      sToPost := sToPost.replace('[NAME]', eFIRSTNAME.Text);
-      sToPost := sToPost.replace('[LASTNAME]', eMIDLENAME.Text);
-      sToPost := sToPost.replace('[SER]', ps);
-      sToPost := sToPost.replace('[NUM]', pn);
-      sToPost := sToPost.replace('[IDENTIF]', edtPERSONAL_N.Text);
+      Resp := Client.CheckDocument(Req);
 
-      sToPost := sToPost.replace('[UNP]', unp);
-      sToPost := sToPost.replace('[COMPANY]', dmMain.GetCompanyValue('NAME'));
-      sToPost := sToPost.replace('[REGION]', dmMain.GetCompanyValue('REGION'));
-      sToPost := sToPost.replace('[DISTRICT]', dmMain.GetCompanyValue('DISTRICT'));
-      sToPost := sToPost.replace('[CITY]', dmMain.GetCompanyValue('CITY'));
-      sToPost := sToPost.replace('[STREET]', dmMain.GetCompanyValue('STREET'));
-      sToPost := sToPost.replace('[HOUSE]', dmMain.GetCompanyValue('HOUSE'));
-      sToPost := sToPost.replace('[HOUSING]', dmMain.GetCompanyValue('HOUSING'));
-      sToPost := sToPost.replace('[ROOM]', dmMain.GetCompanyValue('ROOM'));
+      try
+        if Resp.IsSuccess then
+          pValid := Resp.DocState;
+        if Resp.HttpStatusCode = 200 then
+          answer := Resp.RawResponse
+        else
+          answer := Resp.ErrorMessage;
 
-      RequestData := TStringStream.Create(sToPost, TEncoding.UTF8);
-
-      FHttpCli.ContentTypePost := 'application/json';
-      FHttpCli.SendStream := RequestData;
-      FHttpCli.SendStream.Position := 0;
-      FHttpCli.Post;
+      finally
+        Resp.Free;
+      end;
+    finally
+      Client.Free;
     end;
 
-    if FHttpCli.StatusCode = 200 then
-    begin
-      // {"rs":"Машиночитаемый документ - 0A0007083 - не выдавался"}
-      // {"rs":"Машиночитаемый документ - MC2134811 - выдан, действителен, дата выдачи 11.06.2010"}
-      // {"rs":"Машиночитаемый документ - MC1828933 - недействителен, дата постановки на учет 10.12.2019"}
-      answer := Datax.DataString;
-      if answer.ToLower.Contains('выдан, действителен') then
-      begin
-        pValid := 1;
-      end
-      else
-      begin
-        ShowWarningMessage(answer);
-        CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
-        pValid := 0;
-      end
-    end
-    else
-    begin
-      answer := rsError + ' ' + FHttpCli.StatusCode.ToString;
-      ShowWarningMessage(answer);
-      CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
-      pValid := -1;
-      {
-        401 Unauthorized	Возвращается в случаях несанкционированного доступа к сервису
-        403 Forbidden	Возвращается в случае, если запрашиваемый ресурс существует, но у клиента  недостаточно прав на его просмотр или модификацию
-        500 Internal Server Error
-        502 Bad Gateway
-        504 Gateway Timeout
-        200 ОК	Пакет получен
-        400 Bad Request	Структура пакета неверна
-        500 Internal Server Error	Непредвиденная ошибка сервера
-      }
-    end;
-
-  finally
-    FHttpCli.RcvdStream := nil;
-    FHttpCli.Free;
-    FSslContext.Free;
-    if Assigned(Datax) then
-      Datax.Free;
-    if Assigned(RequestData) then
-      RequestData.Free;
+  except
+    on e: Exception do
+      answer := e.ClassName + ': ' + e.Message;
   end;
 
-  if dsCustomerMEM.FieldByName('CUSTOMER_ID').IsNull then
+  if pValid <> DocValid then
   begin
-    if not(dsCustomerMEM.State in [dsEdit, dsInsert]) then
+    ShowWarningMessage(answer);
+    CnErrors.SetError(edtPASSPORT_NUMBER, answer, iaTopCenter, bsAlwaysBlink);
+  end
+  else
+  begin
+    errors := not(dsCustomerMEM.State in [dsEdit, dsInsert]);
+    if errors then
       dsCustomerMEM.Edit;
-    dsCustomerMEM['CUSTOMER_ID'] := dmMain.dbTV.Gen_Id('GEN_CUSTOMER_UID', 1);;
-    dsCustomerMEM['PASSPORT_VALID'] := pValid;
-    dsCustomerMEM.Post;
+    dsCustomerMEM['Passport_Valid'] := pValid;
+    if errors then
+      dsCustomerMEM.Post;
   end;
 
   qry := TpFIBQuery.Create(Nil);
   try
     qry.DataBase := dmMain.dbTV;
     qry.Transaction := dmMain.trWriteQ;
-    qry.SQL.Text := 'insert into Changelog (Log_Group, Object_Id, Value_Before, Value_After)';
+    qry.SQL.Text := 'insert into Changelog(Log_Group, Object_Id, Value_Before, Value_After)';
     qry.SQL.Add(' values (:Log_Group, :Object_Id, :Value_Before, :Value_After)');
     qry.ParamByName('Log_Group').Value := 'PASSPORT_CHECK';
     qry.ParamByName('Object_Id').Value := dsCustomerMEM['CUSTOMER_ID'];
-    qry.ParamByName('Value_Before').Value := Format('%s %s %s|%s%s|%s',
-      [eSURNAME.Text, eFIRSTNAME.Text, eMIDLENAME.Text, ps, pn, edtPERSONAL_N.Text]);
+    qry.ParamByName('Value_Before').Value := Format('%s %s %s %s %s', [eSURNAME.Text, eFIRSTNAME.Text, eMIDLENAME.Text,
+      edtPASSPORT_NUMBER.Text, edtPERSONAL_N.Text]);
     qry.ParamByName('Value_After').Value := answer;
     qry.Transaction.StartTransaction;
     qry.ExecQuery;
@@ -1728,7 +1670,9 @@ begin
         s := Format(s, [ac, Query.Fields[4].AsString, Query.Fields[1].AsString + ' ' + Query.Fields[2].AsString + ' ' +
           Query.Fields[3].AsString, Query.Fields[5].AsString]);
 
+      FItsAccWaring := True;
       ShowWarningMessage(s);
+
       CnErrors.SetError(eACCOUNT_NO, s, iaTopCenter, bsNeverBlink);
       Result := False;
       eACCOUNT_NO.SetFocus;
@@ -1743,8 +1687,21 @@ begin
   else
     FNeedCheckAccount := False;
 
-  if Result then
+  if Result then begin
     CnErrors.Dispose(eACCOUNT_NO);
+    if FItsAccWaring then begin
+     SetWarningText();
+     FItsAccWaring := False;
+    end;
+
+  end;
+end;
+
+procedure TapgCustomerNew.SetWarningText(const s: String = '');
+begin
+  mmoWarning.Lines.Text := s;
+  pnlWarningInfo.Visible := not s.IsEmpty;
+  SetControlsVisibility;
 end;
 
 procedure TapgCustomerNew.CheckIOfromDB();
@@ -1788,13 +1745,12 @@ end;
 
 procedure TapgCustomerNew.ShowWarningMessage(const s: String);
 begin
-  mmoWarning.Lines.Text := s;
-  pnlWarningInfo.Visible := True;
+  SetWarningText(s);
 end;
 
 procedure TapgCustomerNew.HideWarningMessage;
 begin
-  pnlWarningInfo.Visible := False;
+  SetWarningText('');
 end;
 
 procedure TapgCustomerNew.FindSamePassport;

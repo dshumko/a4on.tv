@@ -895,7 +895,7 @@ const
 implementation
 
 uses
-  Consts,
+  VCL.Consts,
   {$IFDEF MSWINDOWS}
   CommCtrl, ShlObj, ActiveX,
   {$ENDIF MSWINDOWS}

@@ -3,14 +3,14 @@ object EPGImportForm: TEPGImportForm
   Top = 132
   Caption = #1048#1084#1087#1086#1088#1090' EPG'
   ClientHeight = 479
-  ClientWidth = 530
+  ClientWidth = 575
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -10
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
+  OldCreateOrder = True
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -22,15 +22,16 @@ object EPGImportForm: TEPGImportForm
   object Splitter1: TSplitter
     Left = 0
     Top = 414
-    Width = 530
+    Width = 575
     Height = 3
     Cursor = crVSplit
     Align = alBottom
+    ExplicitWidth = 530
   end
   object memLog: TDBMemoEh
     Left = 0
     Top = 417
-    Width = 530
+    Width = 575
     Height = 62
     ScrollBars = ssBoth
     Align = alBottom
@@ -45,17 +46,19 @@ object EPGImportForm: TEPGImportForm
     TabOrder = 2
     Visible = True
     WantReturns = True
+    ExplicitWidth = 530
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 530
+    Width = 575
     Height = 93
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 530
     DesignSize = (
-      530
+      575
       93)
     object Label1: TLabel
       Left = 8
@@ -74,15 +77,16 @@ object EPGImportForm: TEPGImportForm
     object Label2: TLabel
       Left = 0
       Top = 81
-      Width = 530
+      Width = 575
       Height = 12
       Align = alBottom
       Caption = ' '#1050#1072#1085#1072#1083#1099' '#1080#1079' '#1080#1089#1090#1086#1095#1085#1080#1082#1072
+      ExplicitWidth = 106
     end
     object cbSource: TDBLookupComboboxEh
       Left = 80
       Top = 6
-      Width = 320
+      Width = 337
       Height = 20
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -110,7 +114,7 @@ object EPGImportForm: TEPGImportForm
     object edtXMLFile: TDBEditEh
       Left = 80
       Top = 31
-      Width = 320
+      Width = 337
       Height = 20
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
@@ -121,9 +125,9 @@ object EPGImportForm: TEPGImportForm
       Visible = True
     end
     object btnOpenAndLoad: TButton
-      Left = 406
+      Left = 423
       Top = 30
-      Width = 121
+      Width = 149
       Height = 45
       Hint = #1054#1090#1082#1088#1099#1090#1100' ('#1080#1083#1080' '#1057#1082#1072#1095#1072#1090#1100' '#1092#1072#1081#1083') '#1080' '#1089#1088#1072#1079#1091' '#1077#1075#1086' '#1086#1073#1088#1072#1073#1086#1090#1072#1090#1100'  '#1086#1073#1088#1072#1073#1086#1090#1072#1090#1100
       Anchors = [akTop, akRight]
@@ -140,10 +144,10 @@ object EPGImportForm: TEPGImportForm
       OnClick = btnOpenAndLoadClick
     end
     object btnCreate: TButton
-      Left = 404
+      Left = 423
       Top = 6
-      Width = 60
-      Height = 20
+      Width = 70
+      Height = 21
       Hint = #1057#1086#1079#1076#1072#1090#1100' '#1085#1086#1074#1099#1081' '#1080#1089#1090#1086#1095#1085#1080#1082' EPG'
       Anchors = [akTop, akRight]
       Caption = #1057#1086#1079#1076#1072#1090#1100
@@ -152,8 +156,8 @@ object EPGImportForm: TEPGImportForm
     end
     object btnLoad: TButton
       Left = 244
-      Top = 54
-      Width = 156
+      Top = 53
+      Width = 173
       Height = 22
       Anchors = [akLeft, akTop, akRight]
       Caption = #1054#1073#1088#1072#1073#1086#1090#1072#1090#1100' '#1092#1072#1081#1083
@@ -163,7 +167,7 @@ object EPGImportForm: TEPGImportForm
     end
     object btnOpen: TButton
       Left = 80
-      Top = 54
+      Top = 53
       Width = 158
       Height = 22
       Caption = #1054#1090#1082#1088#1099#1090#1100' '#1080#1083#1080' '#1057#1082#1072#1095#1072#1090#1100' '#1092#1072#1081#1083
@@ -173,10 +177,10 @@ object EPGImportForm: TEPGImportForm
       OnClick = btnOpenClick
     end
     object btnEdit: TButton
-      Left = 466
+      Left = 502
       Top = 6
-      Width = 60
-      Height = 20
+      Width = 70
+      Height = 21
       Hint = #1048#1079#1084#1077#1085#1080#1090#1100' '#1074#1099#1073#1088#1072#1085#1085#1099#1081' '#1080#1089#1090#1086#1095#1085#1080#1082' EPG'
       Anchors = [akTop, akRight]
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
@@ -187,16 +191,17 @@ object EPGImportForm: TEPGImportForm
   object Panel2: TPanel
     Left = 0
     Top = 93
-    Width = 530
+    Width = 575
     Height = 321
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 1
+    ExplicitWidth = 530
     object DBGridEh2: TDBGridEh
       Left = 0
       Top = 15
-      Width = 530
+      Width = 575
       Height = 306
       Align = alClient
       AutoFitColWidths = True
@@ -236,13 +241,14 @@ object EPGImportForm: TEPGImportForm
     object ProgressBar: TProgressBar
       Left = 0
       Top = 0
-      Width = 530
+      Width = 575
       Height = 15
       Align = alTop
       Smooth = True
       Step = 1
       TabOrder = 0
       Visible = False
+      ExplicitWidth = 530
     end
   end
   object srcSources: TDataSource

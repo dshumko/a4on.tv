@@ -104,7 +104,8 @@ var
   s: string;
 begin
   ShowAddr := (dmMain.GetSettingsValue('LAN_ADDRES') = '1');
-  for i := 0 to dbgCustLAN.Columns.Count - 1 do begin
+  for i := 0 to dbgCustLAN.Columns.Count - 1 do
+  begin
     if (AnsiUpperCase(dbgCustLAN.Columns[i].FieldName) = 'PLACE') then
       dbgCustLAN.Columns[i].Visible := ShowAddr;
     if (AnsiUpperCase(dbgCustLAN.Columns[i].FieldName) = 'HOUSE_NO') then
@@ -138,7 +139,8 @@ begin
   splitter.Enabled := PanelIPTV.Visible;
 
   s := dmMain.GetSettingsValue('ROW_HL_COLOR');
-  if (s <> '') then begin
+  if (s <> '') then
+  begin
     try
       FHL_COLOR := StringToColor(s);
     except
@@ -149,7 +151,8 @@ begin
     FHL_COLOR := clYellow;
 
   s := dmMain.GetSettingsValue('ROW_HL_ERROR');
-  if (s <> '') then begin
+  if (s <> '') then
+  begin
     try
       FER_COLOR := StringToColor(dmMain.GetSettingsValue('ROW_HL_ERROR'));
     except
@@ -192,14 +195,36 @@ end;
 procedure TapgCustomerLan.actAddExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
-
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (FRightFull or FRightAdd);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
   ci := GetCustomerInfo;
   if ci.CUSTOMER_ID = -1 then
     Exit;
 
-  if (dmMain.GetSettingsValue('LAN_SRV_EXISTS') = '1') then begin
-    if (not LanServicesExists()) then begin
+  if (dmMain.GetSettingsValue('LAN_SRV_EXISTS') = '1') then
+  begin
+    if (not LanServicesExists()) then
+    begin
       ShowMessage(rsErrorLANsrvNotExists);
       Exit;
     end;
@@ -212,19 +237,45 @@ end;
 procedure TapgCustomerLan.actDelExecute(Sender: TObject);
 var
   eq_id: Integer;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
-  if dsLAN.RecordCount = 0 then
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
 
-  if (MessageDlg(Format(rsDelIP, [dsLAN['IP']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then begin
+  if (dsLAN.RecordCount = 0) or (dsLAN.FieldByName('LAN_ID').IsNull) then
+    Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (FRightFull or FRightDel);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
+
+  if (MessageDlg(Format(rsDelIP, [dsLAN['IP']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  begin
     eq_id := -1;
-    if (dmMain.GetSettingsValue('LAN_DELEQPMNT') = '1') then begin
+    if (dmMain.GetSettingsValue('LAN_DELEQPMNT') = '1') then
+    begin
       if not dsLAN.FieldByName('EQ_ID').IsNull then
         eq_id := dsLAN['EQ_ID'];
     end;
     dsLAN.Delete;
-    if eq_id <> -1 then begin
-      with dmMain.Query do begin
+    if eq_id <> -1 then
+    begin
+      with dmMain.Query do
+      begin
         SQL.Clear;
         SQL.Add('delete from Equipment where Eid = :Eid');
         ParamByName('Eid').AsInteger := eq_id;
@@ -239,14 +290,37 @@ end;
 procedure TapgCustomerLan.actEditExecute(Sender: TObject);
 var
   ci: TCustomerInfo;
+var
+  CanAdd: Boolean;
+  Terminated: Boolean;
 begin
+  if (FDataSource.DataSet.RecordCount = 0) or (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
+    Exit;
+
   if (dsLAN.RecordCount = 0) or (dsLAN.FieldByName('LAN_ID').IsNull) then
     Exit;
+
+  CanAdd := dmMain.AllowedAction(rght_Customer_full);
+  Terminated := (not FDataSource.DataSet.FieldByName('VALID_TO').IsNull) and (FDataSource.DataSet['VALID_TO'] < Now());
+
+  if not CanAdd then
+  begin
+    CanAdd := (not Terminated) or dmMain.AllowedAction(rght_Customer_Edit_Terminated);
+    CanAdd := CanAdd and (FRightFull or FRightEdit);
+  end;
+
+  if not CanAdd then
+  begin
+    if Terminated then
+      ShowMessage(rsContractNotValid);
+    Exit;
+  end;
 
   ci := GetCustomerInfo;
   if ci.CUSTOMER_ID = -1 then
     dsLAN.CloseOpen(true)
-  else begin
+  else
+  begin
     if EditCustomerLAN(ci, dsLAN['LAN_ID']) then
       dsLAN.CloseOpen(true);
   end;
@@ -261,7 +335,8 @@ begin
 
   s := '';
 
-  if (dbgCustLAN.Columns[dbgCustLAN.Col - 1].FieldName = 'EQ_IP') then begin
+  if (dbgCustLAN.Columns[dbgCustLAN.Col - 1].FieldName = 'EQ_IP') then
+  begin
     if not dsLAN.FieldByName('EQ_IP').IsNull then
       s := dsLAN['EQ_IP'];
   end;
@@ -269,7 +344,8 @@ begin
   if (not dsLAN.FieldByName('IP').IsNull) and (s = '') then
     s := dsLAN['IP'];
 
-  if (s <> '') then begin
+  if (s <> '') then
+  begin
     atrCmdUtils.ShellExecute(Application.MainForm.Handle, 'open', 'cmd', '/K ping ' + s + ' -t', '', SW_SHOW)
     {
       if not FileExists( ExtractFilePath(Application.ExeName) +  'ping.bat')
@@ -303,8 +379,10 @@ end;
 
 function TapgCustomerLan.GetCustomerInfo: TCustomerInfo;
 begin
-  with Result do begin
-    if not FDataSource.DataSet.Eof then begin
+  with Result do
+  begin
+    if not FDataSource.DataSet.Eof then
+    begin
       FLAT_NO := '';
       phone_no := '';
       notice := '';
@@ -342,11 +420,13 @@ begin
         FIO := FDataSource.DataSet['SURNAME']
       else
         FIO := '';
-      if not FDataSource.DataSet.FieldByName('street_ID').IsNull then begin
+      if not FDataSource.DataSet.FieldByName('street_ID').IsNull then
+      begin
         STREET_ID := FDataSource.DataSet['street_ID'];
         STREET := FDataSource.DataSet['STREET_NAME'];
       end;
-      if not FDataSource.DataSet.FieldByName('HOUSE_ID').IsNull then begin
+      if not FDataSource.DataSet.FieldByName('HOUSE_ID').IsNull then
+      begin
         HOUSE_ID := FDataSource.DataSet['HOUSE_ID'];
         HOUSE_NO := FDataSource.DataSet['House_No'];
       end;
@@ -391,7 +471,8 @@ begin
   NewItem.Caption := '-';
   NewItem.Tag := 0;
   pmLanPopUp.Items.Add(NewItem);
-  with dmMain.qRead do begin
+  with dmMain.qRead do
+  begin
     SQL.Clear;
     SQL.Add('select distinct *');
     SQL.Add('  from (select ec.ec_id, ec.name, ec.command');
@@ -407,7 +488,8 @@ begin
     ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
     Transaction.StartTransaction;
     ExecQuery;
-    while not Eof do begin
+    while not Eof do
+    begin
       NewItem := TMenuItem.Create(pmLanPopUp);
       NewItem.Caption := FieldByName('name').AsString;
       NewItem.Tag := FieldByName('ec_id').AsInteger;
@@ -419,7 +501,8 @@ begin
     Transaction.Rollback;
   end;
 
-  if pmLanPopUp.Items.Count > 0 then begin
+  if pmLanPopUp.Items.Count > 0 then
+  begin
     GetCursorPos(rCursor);
     pmLanPopUp.Popup(rCursor.X, rCursor.Y);
   end;
@@ -480,7 +563,8 @@ begin
   if not dsLAN.FieldByName('TAG_STR').IsNull then
     C_TAGSTR := dsLAN.FieldByName('TAG_STR').AsString;
 
-  with dmMain.qRead do begin
+  with dmMain.qRead do
+  begin
     SQL.Clear;
     SQL.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
     SQL.Add(', ec.CMD_TYPE, ec.URL, ec.AUT_USER, ec.AUT_PSWD, e.eid, e.PARENT_ID');
@@ -509,7 +593,8 @@ begin
 
     if FieldByName('eol_chrs').IsNull then
       eol_chars := 0
-    else begin
+    else
+    begin
       if FieldByName('eol_chrs').AsString = '\r\n' then
         eol_chars := 0
       else if FieldByName('eol_chrs').AsString = '\n\r' then
@@ -576,7 +661,8 @@ begin
     Exit;
 
   if (MessageDlg(Format(rsDelIpPacket, [dsIPPacket['NAME'], dsLAN['IP']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes)
-  then begin
+  then
+  begin
     dsIPPacket.Delete;
   end;
 end;
@@ -590,7 +676,8 @@ begin
 
   s := '';
 
-  if (dbgCustLAN.Columns[dbgCustLAN.Col - 1].FieldName = 'EQ_IP') then begin
+  if (dbgCustLAN.Columns[dbgCustLAN.Col - 1].FieldName = 'EQ_IP') then
+  begin
     if not dsLAN.FieldByName('EQ_IP').IsNull then
       s := dsLAN['EQ_IP'];
   end;
@@ -626,7 +713,8 @@ begin
 
   s := '';
 
-  if (dbgCustLAN.Columns[dbgCustLAN.Col - 1].FieldName = 'EQ_IP') then begin
+  if (dbgCustLAN.Columns[dbgCustLAN.Col - 1].FieldName = 'EQ_IP') then
+  begin
     if not dsLAN.FieldByName('EQ_IP').IsNull then
       s := 'http://' + dsLAN['EQ_IP'];
   end;
@@ -640,11 +728,13 @@ end;
 
 procedure TapgCustomerLan.dbgCustLANDblClick(Sender: TObject);
 begin
-  if (Sender as TDBGridEh).DataSource.DataSet.RecordCount > 0 then begin
+  if (Sender as TDBGridEh).DataSource.DataSet.RecordCount > 0 then
+  begin
     if actEdit.Enabled then
       actEdit.Execute;
   end
-  else begin
+  else
+  begin
     if actAdd.Enabled then
       actAdd.Execute;
   end;
@@ -657,12 +747,15 @@ var
 begin
   if not(Sender as TDBGridEh).DataSource.DataSet.Active then
     Exit;
-  if (gdSelected in State) then begin
+  if (gdSelected in State) then
+  begin
     AFont.color := clHighlightText;
     Background := clHighlight;
   end
-  else begin
-    if not((Sender as TDBGridEh).DataSource.DataSet.FieldByName('P_STATE').IsNull) then begin
+  else
+  begin
+    if not((Sender as TDBGridEh).DataSource.DataSet.FieldByName('P_STATE').IsNull) then
+    begin
       {
         0 Нерабочий
         1 Исправен
@@ -672,7 +765,8 @@ begin
 
       s := (Sender as TDBGridEh).DataSource.DataSet.FieldByName('P_STATE').AsInteger;
       if (s = 0) // Нерабочий
-      then begin
+      then
+      begin
         AFont.Style := AFont.Style + [fsStrikeOut];
         AFont.color := FER_COLOR; // ROW_HL_ERROR
       end
@@ -689,7 +783,8 @@ end;
 function TapgCustomerLan.LanServicesExists(): Boolean;
 begin
   try
-    with dmMain.qRead do begin
+    with dmMain.qRead do
+    begin
       SQL.Clear;
       SQL.Add('select  count(*) CNT');
       SQL.Add('  from Subscr_serv h');

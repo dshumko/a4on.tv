@@ -14,7 +14,7 @@ uses
   FIBQuery,
   pFIBQuery, DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh, CnErrorProvider, FIBDatabase, pFIBDatabase, GridsEh,
   DBCtrlsEh,
-  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, OkCancel_frame, amSplitter,
+  A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, amSplitter,
   CnClasses
   // , WebpImageX
     ;
@@ -27,7 +27,6 @@ type
     dsRequest: TpFIBDataSet;
     srcRequestType: TDataSource;
     dsRequestType: TpFIBDataSet;
-    OkCancelFrame: TOkCancelFrame;
     pnlHead: TPanel;
     ActionList1: TActionList;
     srcErrors: TDataSource;
@@ -108,7 +107,6 @@ type
     Label6: TLabel;
     dbMemDefect: TDBMemoEh;
     mmoContent: TDBMemoEh;
-    btnPrint: TButton;
     actPrint: TAction;
     frxReport: TfrxReport;
     btnWorks: TButton;
@@ -205,6 +203,12 @@ type
     btnCancel: TButton;
     PLANDATE: TDBDateTimeEditEh;
     Label7: TLabel;
+    pnlBottom: TPanel;
+    btnOk: TBitBtn;
+    btnClose: TBitBtn;
+    btnPrint: TButton;
+    LblEdit: TLabel;
+    lblAdded: TLabel;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -403,9 +407,10 @@ end;
 constructor TRequestForm.CreateA(aOwner: TComponent; aRequest: Integer; const aCustomer: Integer; const aEditMode: Byte;
   const FindNode: Integer = 0);
 begin
+  // fRequest := aRequest;
   Create(aOwner);
-  fEditMode := aEditMode;
   SetRequest(aRequest);
+  fEditMode := aEditMode;
   SetCustomer(aCustomer, FindNode);
 end;
 
@@ -526,7 +531,7 @@ begin
     p := '';
   end;
 
-  FCustomerInfo := dmMain.FindCustomerAtAdress(dsRequest['HOUSE_ID'], flat, -1, p, f);
+  FCustomerInfo := dmMain.FindCustomerAtAddress(dsRequest['HOUSE_ID'], flat, -1, p, f);
   CustomerInfoFrm.Customer := FCustomerInfo;
 
   if dsRequest.State in [dsEdit, dsInsert] then
@@ -637,7 +642,7 @@ end;
 
 procedure TRequestForm.actSaveExecute(Sender: TObject);
 begin
-  if OkCancelFrame.bbOk.Enabled then
+  if btnOk.Enabled then
     OkCancelFramebbOkClick(Sender);
 end;
 
@@ -939,18 +944,19 @@ begin
 
     // права пользователей
     InitSecurity;
-
+    lblAdded.Caption := '';
+    LblEdit.Caption := '';
     if not dsRequest.FieldByName('ADDED_BY').IsNull then
     begin
-      OkCancelFrame.Label1.Caption := Format(rsTook, [dsRequest.FieldByName('ADDED_BY').AsString]);
+      lblAdded.Caption := Format(rsTook, [dsRequest.FieldByName('ADDED_BY').AsString]);
       if not dsRequest.FieldByName('ADDED_on').IsNull then
-        OkCancelFrame.Label1.Caption := OkCancelFrame.Label1.Caption + ' ' + dsRequest.FieldByName('ADDED_on').AsString;
+        lblAdded.Caption := lblAdded.Caption + ' ' + dsRequest.FieldByName('ADDED_on').AsString;
     end;
     if not dsRequest.FieldByName('edit_by').IsNull then
     begin
-      OkCancelFrame.Label2.Caption := rsChangeBy + dsRequest.FieldByName('edit_by').AsString;
+      LblEdit.Caption := rsChangeBy + dsRequest.FieldByName('edit_by').AsString;
       if not dsRequest.FieldByName('edit_on').IsNull then
-        OkCancelFrame.Label2.Caption := OkCancelFrame.Label2.Caption + ' ' + dsRequest.FieldByName('edit_on').AsString;
+        LblEdit.Caption := LblEdit.Caption + ' ' + dsRequest.FieldByName('edit_on').AsString;
     end;
 
     if fEditMode = 0 then
@@ -1014,6 +1020,10 @@ begin
         dbgWorks.Columns[i].Visible := true
     end;
   end;
+
+  EdPorch.TabStop := (dmMain.GetSettingsValue('REQUEST_P_F_DISBLE') <> '1');
+  EdFloor.TabStop := EdPorch.TabStop;
+  edDOOR.TabStop := EdPorch.TabStop;
 end;
 
 procedure TRequestForm.luResultChange(Sender: TObject);
@@ -1249,7 +1259,7 @@ begin
   if b then
     FindNearFreeDay;
   btnSelectDate.Enabled := b;
-  OkCancelFrame.bbOk.Enabled := b and (FCanCreate or FCanEdit or FCanClose or FCanCloseDay or FCanGive or FFullAccess);
+  btnOk.Enabled := b and (FCanCreate or FCanEdit or FCanClose or FCanCloseDay or FCanGive or FFullAccess);
 end;
 
 function TRequestForm.CheckNodeLayout: Boolean;
@@ -1730,7 +1740,7 @@ begin
 
   srcFlats.AutoEdit := ((FCanClose or FCanCloseDay) and NotClosed) or FFullAccess;
 
-  OkCancelFrame.bbOk.Enabled := ((FCanCreate or FCanEdit or FCanCloseDay or FCanClose or FCanGive) and NotClosed) or
+  btnOk.Enabled := ((FCanCreate or FCanEdit or FCanCloseDay or FCanClose or FCanGive) and NotClosed) or
     ((not NotClosed) and FCanUnclose) or FFullAccess;
 
   pnlGiveTime.Enabled := (FCanGive and NotClosed) or FFullAccess;
@@ -1745,7 +1755,7 @@ begin
     // дадим править текст результата если заявка закрыта сегодня
     dbMemDefect.Enabled := (CloseDay >= Today) and (FCanClose or FCanCloseDay);
     // tabExecute.Enabled := dbMemDefect.Enabled;
-    OkCancelFrame.bbOk.Enabled := dbMemDefect.Enabled;
+    btnOk.Enabled := dbMemDefect.Enabled;
   end;
 
   // pnlExecTime.Enabled := ((FCanClose or FCanCloseDay) and NotClosed) or ((not NotClosed) and FCanUnclose) or FFullAccess;
@@ -2309,11 +2319,11 @@ begin
 
         if CanDelete then
         begin
-          cnError.SetError(OkCancelFrame.bbOk, 'Нет необходимых работ: ' + s, iaMiddleLeft, bsNeverBlink);
+          cnError.SetError(btnOk, 'Нет необходимых работ: ' + s, iaMiddleLeft, bsNeverBlink);
           Result := False;
         end
         else
-          cnError.Dispose(OkCancelFrame.bbOk);
+          cnError.Dispose(btnOk);
       end;
     end;
     if nc then
@@ -2345,10 +2355,10 @@ begin
     Result := (c > 0);
     if c = 0 then
     begin
-      cnError.SetError(OkCancelFrame.bbOk, rsNeedBidExecutor, iaMiddleLeft, bsNeverBlink);
+      cnError.SetError(btnOk, rsNeedBidExecutor, iaMiddleLeft, bsNeverBlink);
     end
     else
-      cnError.Dispose(OkCancelFrame.bbOk);
+      cnError.Dispose(btnOk);
   end;
 end;
 

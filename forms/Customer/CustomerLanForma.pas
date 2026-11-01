@@ -163,7 +163,7 @@ implementation
 uses
   System.StrUtils, httpsend, synacode, JsonDataObjects,
   MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery,
-  TelnetForma, atrCmdUtils, EQPort, HtmlForma;
+  TelnetForma, atrCmdUtils, EQPort, HtmlForma, AtrEhLibAddons;
 
 {$R *.dfm}
 
@@ -1475,18 +1475,7 @@ end;
 
 procedure TCustomerLanForm.DBLookupComboboxClick(Sender: TObject);
 begin
-  if not(Sender is TDBLookupComboboxEh) then
-    Exit;
-
-  if (Sender as TDBLookupComboboxEh).Tag = 0 then
-  begin
-    if not(Sender as TDBLookupComboboxEh).ListVisible then
-      (Sender as TDBLookupComboboxEh).DropDown
-    else
-      (Sender as TDBLookupComboboxEh).CloseUp(False);
-  end;
-
-  (Sender as TDBLookupComboboxEh).Tag := 0;
+  DBLookupComboboxClickAutoDropDown(Sender);
 end;
 
 procedure TCustomerLanForm.IPv6Get;
@@ -1592,7 +1581,7 @@ begin
       for i := 0 to Params.Count - 1 do
       begin
         // Params.Strings[i] := StringReplace(Params.Strings[i], '+', ' ', [rfReplaceAll]);
-        Params.Strings[i] := string(DecodeURL(Params.Strings[i]));
+        Params.Strings[i] := string(DecodeURL(AnsiString(Params.Strings[i])));
       end;
 
       eIPv6.Text := Params.Values['ipv6'];

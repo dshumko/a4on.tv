@@ -12,13 +12,11 @@ object OnOffServiceForm: TOnOffServiceForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -28,11 +26,20 @@ object OnOffServiceForm: TOnOffServiceForm
     Align = alBottom
     TabOrder = 9
     TabStop = True
+    ExplicitTop = 341
+    ExplicitWidth = 424
+    ExplicitHeight = 37
     inherited Label2: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited Label1: TLabel
+      Height = 13
       Margins.Bottom = 0
+      StyleElements = [seFont, seClient, seBorder]
+      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 3
@@ -41,12 +48,20 @@ object OnOffServiceForm: TOnOffServiceForm
       Height = 25
       ModalResult = 0
       OnClick = OkCancelFramebbOkClick
+      ExplicitLeft = 3
+      ExplicitTop = 6
+      ExplicitWidth = 311
+      ExplicitHeight = 25
     end
     inherited bbCancel: TBitBtn
       Left = 325
       Top = 6
       Width = 95
       Height = 25
+      ExplicitLeft = 325
+      ExplicitTop = 6
+      ExplicitWidth = 95
+      ExplicitHeight = 25
     end
   end
   object servPanel: TPanel
@@ -251,6 +266,7 @@ object OnOffServiceForm: TOnOffServiceForm
       Height = 13
       Align = alTop
       Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      ExplicitWidth = 67
     end
     object memNotice: TDBMemoEh
       AlignWithMargins = True

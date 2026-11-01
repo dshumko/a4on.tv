@@ -2,7 +2,7 @@ object MessagesForm: TMessagesForm
   Left = 256
   Top = 314
   Caption = #1057#1086#1086#1073#1097#1077#1085#1080#1103' '#1079#1072' '#1087#1077#1088#1080#1086#1076
-  ClientHeight = 450
+  ClientHeight = 430
   ClientWidth = 827
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -25,10 +25,9 @@ object MessagesForm: TMessagesForm
     Left = 0
     Top = 0
     Width = 827
-    Height = 450
+    Height = 430
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 430
     object Splitter1: TSplitter
       Left = 1
       Top = 257
@@ -41,7 +40,7 @@ object MessagesForm: TMessagesForm
       Left = 1
       Top = 260
       Width = 825
-      Height = 189
+      Height = 169
       Align = alClient
       AllowedOperations = []
       AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
@@ -505,7 +504,6 @@ object MessagesForm: TMessagesForm
           Width = 825
           Height = 13
           Align = alTop
-          ExplicitWidth = 3
         end
         object pnlHead: TPanel
           Left = 0

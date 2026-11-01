@@ -3,8 +3,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
   ClientHeight = 699
   ClientWidth = 764
   StyleElements = [seFont, seClient, seBorder]
-  ExplicitWidth = 780
-  ExplicitHeight = 738
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 0
@@ -13,14 +11,10 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitTop = 328
-    ExplicitWidth = 758
   end
   inherited splPG: TSplitter
     Top = 277
     Width = 764
-    ExplicitTop = 145
-    ExplicitWidth = 758
   end
   inherited dbGrid: TDBGridEh
     Top = 281
@@ -89,11 +83,28 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         Title.Caption = #1059#1076#1072#1083#1077#1085#1086
         Title.TitleButton = True
         Width = 49
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'O_CHARFIELD'
+        Footers = <>
+        Title.Caption = #1044#1086#1087'. '#1076#1072#1085#1085#1099#1077
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'O_CHECK'
+        Footers = <>
+        Title.Caption = #1052#1077#1090#1082#1080
+        Title.TitleButton = True
       end>
   end
   inherited tlbMain: TToolBar
     Width = 764
-    ExplicitWidth = 764
     inherited tbOk: TToolButton
       Visible = False
       OnClick = tbOkClick
@@ -113,8 +124,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     Width = 764
     Height = 252
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 764
-    ExplicitHeight = 252
     object spl2: TSplitter [0]
       Left = 0
       Top = 114
@@ -122,22 +131,16 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       Height = 3
       Cursor = crVSplit
       Align = alTop
-      ExplicitTop = 145
     end
     inherited btnSaveLink: TBitBtn
       Left = 92
       Top = 221
       Width = 568
-      ExplicitLeft = 92
-      ExplicitTop = 221
-      ExplicitWidth = 568
     end
     inherited btnCancelLink: TBitBtn
       Left = 671
       Top = 221
       TabOrder = 2
-      ExplicitLeft = 671
-      ExplicitTop = 221
     end
     object chkDel: TDBCheckBoxEh
       Left = 5
@@ -224,9 +227,6 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         Top = 0
         Height = 85
         Align = alRight
-        ExplicitLeft = 488
-        ExplicitTop = 64
-        ExplicitHeight = 100
       end
       object mmoData: TDBMemoEh
         AlignWithMargins = True
@@ -260,7 +260,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
         Height = 79
         Hint = 
           #1057#1087#1080#1089#1086#1082' '#1084#1077#1090#1086#1082', '#1082#1086#1090#1086#1088#1099#1084#1080' '#1084#1086#1078#1085#1086' '#1087#1086#1084#1077#1095#1072#1090#1100' '#1079#1074#1086#1085#1086#1082'.  '#1056#1072#1079#1076#1077#1083#1080#1090#1077#1083#1100' - '#1085#1086#1074 +
-          #1072#1103' '#1090#1088#1086#1082#1072
+          #1072#1103' c'#1090#1088#1086#1082#1072' '#1080#1083#1080' ;'
         ScrollBars = ssVertical
         Align = alRight
         AutoSize = False
